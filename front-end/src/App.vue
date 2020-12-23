@@ -1,10 +1,23 @@
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link> |
+    <h1>Ma Cantine Egalim</h1>
+    <Welcome msg="Tout savoir sur la loi Egalim"/>
+
     <router-link to="/about">About</router-link>
   </div>
   <router-view/>
 </template>
+
+<script>
+// @ is an alias to /src
+import Welcome from '@/components/Welcome.vue'
+
+export default {
+  components: {
+    Welcome
+  }
+}
+</script>
 
 <style>
 #app {
