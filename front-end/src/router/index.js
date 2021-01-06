@@ -1,11 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import About from '@/views/About.vue';
+import Landing from '@/views/Landing.vue';
+import Keypoints from '@/views/Keypoints.vue';
 
 const routes = [
   {
-    path: '/about',
-    name: 'About',
-    component: About,
+    path: '/',
+    name: 'landing',
+    component: Landing,
+  },
+  {
+    path: '/mesures-phares',
+    name: 'keypoints',
+    component: Keypoints,
   }
 ];
 
