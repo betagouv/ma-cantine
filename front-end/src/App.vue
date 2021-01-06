@@ -1,8 +1,6 @@
 <template>
   <Navbar/>
 
-  <router-link to="/About">About</router-link>
-
   <router-view/>
 </template>
 

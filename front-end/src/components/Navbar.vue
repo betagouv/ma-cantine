@@ -1,15 +1,14 @@
 <template>
   <div id="navbar">
-    <router-link to="/">
-      <div id="home">
-        <img src="@/assets/Marianne.png" id="Marianne">
-        <div id="logo">
-          <div id="ma-cantine-beta-gouv"><span id="ma-cantine">ma-cantine</span>.beta.gouv.fr</div>
-          <div id="egalim">Pour une alimentatation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</div>
-        </div>
+    <router-link :to="{ name: 'landing' }" id="landing">
+      <img src="@/assets/Marianne.png" id="Marianne">
+      <div id="logo">
+        <div id="ma-cantine-beta-gouv"><span id="ma-cantine">ma-cantine</span>.beta.gouv.fr</div>
+        <div id="egalim">Pour une alimentatation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</div>
       </div>
     </router-link>
-    <a id="about" href="https://beta.gouv.fr/startups/egalim.html" target="_blank">A propos</a>
+    <router-link :to="{ name: 'keypoints' }" class="navbar-item">Mesures phares</router-link>
+    <a class="navbar-item" href="https://beta.gouv.fr/startups/egalim.html" target="_blank">A propos</a>
   </div>
 </template>
 
@@ -31,7 +30,7 @@ a {
   padding: 10px 50px;
 }
 
-#home {
+#landing {
   display: flex;
 }
 
@@ -69,7 +68,7 @@ a {
   color: rgba(0,0,0,0.83);
 }
 
-#about {
+.navbar-item {
   margin: auto 0;
   border-radius: 25px;
   padding: 15px;
@@ -78,7 +77,7 @@ a {
   color: rgba(64, 64, 64, 0.85);
 }
 
-#about:hover {
+.navbar-item:hover {
   color: white;
   background-color: #F7B48E;
 }
