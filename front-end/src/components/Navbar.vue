@@ -2,8 +2,11 @@
   <div id="navbar">
     <router-link to="/">
       <div id="home">
-        <img src="@/assets/logo-ma-cantine.png">
-        <div>Pour une alimentatation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</div>
+        <img src="@/assets/Marianne.png" id="Marianne">
+        <div id="logo">
+          <div id="ma-cantine-beta-gouv"><span id="ma-cantine">ma-cantine</span>.beta.gouv.fr</div>
+          <div id="egalim">Pour une alimentatation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</div>
+        </div>
       </div>
     </router-link>
     <a id="about" href="https://beta.gouv.fr/startups/egalim.html" target="_blank">A propos</a>
@@ -25,17 +28,45 @@ a {
 #navbar {
   display: flex;
   justify-content: space-between;
-  padding: 0px 50px;
+  padding: 10px 50px;
 }
 
 #home {
+  display: flex;
+}
+
+#Marianne {
+  height: 75px;
+}
+
+#logo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-left: 30px;
   text-align: left;
   width: 300px;
+  text-decoration: none;
+}
+
+#ma-cantine-beta-gouv {
+  font-style: italic;
+  font-weight: 200;
+  font-size: 25px;
+  line-height: 29px;
+  color: rgba(64, 64, 64, 0.85);
+}
+
+#ma-cantine {
+  font-weight: bold;
+  color: #F7B48E;
+}
+
+#egalim {
   font-size: 11px;
   font-weight: 600;
   line-height: 15px;
-  text-decoration: none;
-  color: rgba(0,0,0,0.83);;
+  color: rgba(0,0,0,0.83);
 }
 
 #about {
@@ -49,6 +80,6 @@ a {
 
 #about:hover {
   color: white;
-  background-color: rgba(0,0,0,0.33);
+  background-color: #F7B48E;
 }
 </style>
