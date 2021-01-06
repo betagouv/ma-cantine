@@ -6,6 +6,9 @@ lié à la [fiche produit](https://beta.gouv.fr/startups/egalim.html) de la star
 ## equipe
 - Valérie Merle : intrapreneuse
 - Jennifer Stephan : responsable produit (PO)
+- Stéphane Langlois : PO senior
+- Forster Groux : développeur web
+- Helen Root : developpeuse web
 
 ## vision produit
 pourquoi ? Pour une alimentation plus saine et durable dès la cantine de nos enfants et dans la restauration collective en général,
