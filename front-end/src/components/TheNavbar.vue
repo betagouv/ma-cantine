@@ -1,20 +1,20 @@
 <template>
   <div id="navbar">
-    <router-link :to="{ name: 'landing' }" id="landing">
+    <router-link :to="{ name: 'LandingPage' }" id="landing">
       <img src="@/assets/Marianne.png" id="Marianne">
       <div id="logo">
         <div id="ma-cantine-beta-gouv"><span id="ma-cantine">ma-cantine</span>.beta.gouv.fr</div>
         <div id="egalim">Pour une alimentatation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</div>
       </div>
     </router-link>
-    <router-link :to="{ name: 'keypoints' }" class="navbar-item">Mesures phares</router-link>
+    <router-link :to="{ name: 'KeypointsPage' }" class="navbar-item">Mesures phares</router-link>
     <a class="navbar-item" href="https://beta.gouv.fr/startups/egalim.html" target="_blank">A propos</a>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Navbar',
+  name: 'TheNavbar',
 }
 </script>
 

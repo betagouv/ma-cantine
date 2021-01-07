@@ -1,16 +1,16 @@
 <template>
-  <Navbar/>
+  <TheNavbar/>
 
   <router-view/>
 </template>
 
 <script>
 // @ is an alias to /src
-import Navbar from '@/components/Navbar.vue'
+import TheNavbar from '@/components/TheNavbar.vue'
 
 export default {
   components: {
-    Navbar
+    TheNavbar
   }
 }
 </script>
