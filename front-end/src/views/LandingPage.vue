@@ -3,7 +3,7 @@
     <div class="presentation-content">
       <h1>Mes approvisionnements sont-ils compatibles avec EGAlim ?</h1>
       <div class="presentation-information">
-        <img src="@/assets/petitdej-dessin.svg" class="presentation-left-image">
+        <img src="@/assets/plate.png" class="presentation-left-image">
         <div class="presentation-details">
           <div>
             Une des mesures-phare de la loi : à horizon 2022, au moins 50 % de produits
@@ -19,7 +19,18 @@
         </div>
       </div>
     </div>
-    <img src="@/assets/toque-dessin.svg" class="presentation-right-image">
+    <img src="@/assets/toque.svg" class="presentation-right-image">
+  </div>
+
+  <div id="goal">
+    <h2>Les enjeux de la loi EGAlim en restauration collective</h2>
+    <div class="goal-information">
+      Issu des Etats Généraux de l'Alimentation (EGA), la loi EGAlim pour
+      l’équilibre des relations commerciales dans le secteur agricole et une
+      alimentation saine et durable du 30 octobre 2018 (entrée en vigueur progressive).
+      Elle utilise la restauration collective et ses 3 milliards de repas par an
+      comme levier de la transition agricole et alimentaire.
+    </div>
   </div>
 
   <div id="discover-measures">
@@ -61,7 +72,7 @@
   justify-content: space-between;
 }
 
-h1 {
+h1, h2 {
   font-weight: bold;
   font-size: 37px;
   line-height: 52px;
@@ -74,11 +85,12 @@ h1 {
 }
 
 .presentation-left-image {
-  width: 300px;
+  width: 250px;
   height: 250px;
 }
 
 .presentation-details {
+  width: 450px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -100,6 +112,19 @@ h1 {
 .presentation-right-image {
   width: 450px;
   height: 450px;
+}
+
+#goal {
+  margin: auto;
+  margin-top: 70px;
+  max-width: 1200px;
+}
+
+.goal-information {
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 31px;
+  color: rgba(0, 0, 0, 0.33);
 }
 
 #discover-measures {
