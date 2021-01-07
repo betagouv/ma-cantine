@@ -1,33 +1,107 @@
 <template>
-  <div>
-    <h1>Welcome</h1>
-    <div id="discover-measures">
-      <h3>Les mesures phares de la loi EGAlim</h3>
-      <h4>
-        Découvrez les échéances de chaque mesure et des ressources pour vous
-        aider à atteindre vos objectifs.
-      </h4>
-      <ol id="measures-list">
-        <router-link
-          v-for="measure in keyMeasures"
-          :key="measure.id"
-          :to="{ name: 'KeyMeasuresPage', hash: '#' + measure.id }"
-          class="measure-link"
-        >
-          <li class="measure-item">
-            <p class="measure-title">{{ measure.title }}</p>
-            <p class="discover-measure">→ En savoir plus</p>
-          </li>
-        </router-link>
-      </ol>
-      <a id="download-documentation" download href="">
-        Télécharger la documentation complète
-      </a>
+  <div id="presentation">
+    <div class="presentation-content">
+      <h1>Mes approvisionnements sont-ils compatibles avec EGAlim ?</h1>
+      <div class="presentation-information">
+        <img src="@/assets/petitdej-dessin.svg" class="presentation-left-image">
+        <div class="presentation-details">
+          <div>
+            Une des mesures-phare de la loi : à horizon 2022, au moins 50 % de produits
+            de qualité et durables, dont au moins 20 % de produits biologiques dans
+            les repas servis de votre cantine scolaire en gestion directe.
+          </div>
+          <div>
+            <b>Vous êtes acheteur.ses et désirez savoir où vous en êtes dès aujourd’hui ?</b>
+          </div>
+          <div class="presentation-diagnostic">
+            (bientôt disponible)
+          </div>
+        </div>
+      </div>
     </div>
+    <img src="@/assets/toque-dessin.svg" class="presentation-right-image">
+  </div>
+
+  <div id="discover-measures">
+    <h3>Les mesures phares de la loi EGAlim</h3>
+    <h4>
+      Découvrez les échéances de chaque mesure et des ressources pour vous
+      aider à atteindre vos objectifs.
+    </h4>
+    <ol id="measures-list">
+      <router-link
+        v-for="measure in keyMeasures"
+        :key="measure.id"
+        :to="{ name: 'KeyMeasuresPage', hash: '#' + measure.id }"
+        class="measure-link"
+      >
+        <li class="measure-item">
+          <p class="measure-title">{{ measure.title }}</p>
+          <p class="discover-measure">→ En savoir plus</p>
+        </li>
+      </router-link>
+    </ol>
+    <a id="download-documentation" download href="">
+      Télécharger la documentation complète
+    </a>
   </div>
 </template>
 
 <style scoped>
+#presentation {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+}
+
+.presentation-content {
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 37px;
+  line-height: 52px;
+  color: rgba(64, 64, 64, 0.85);
+}
+
+.presentation-information {
+  display: flex;
+  justify-content: space-around;
+}
+
+.presentation-left-image {
+  width: 300px;
+  height: 250px;
+}
+
+.presentation-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 22px;
+  color: rgba(0, 0, 0, 0.58);
+}
+
+.presentation-diagnostic {
+  margin: 0 15%;
+  height: 50px;
+  line-height: 50px;
+  color: white;
+  background-color: #EB5B25;
+  border-radius: 50px;
+}
+
+.presentation-right-image {
+  width: 450px;
+  height: 450px;
+}
+
 #discover-measures {
   display: flex;
   flex-direction: column;
