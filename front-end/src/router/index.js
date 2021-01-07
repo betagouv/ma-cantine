@@ -1,17 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Landing from '@/views/Landing.vue';
-import Keypoints from '@/views/Keypoints.vue';
+import LandingPage from '@/views/LandingPage.vue';
+import KeypointsPage from '@/views/KeypointsPage.vue';
 
 const routes = [
   {
     path: '/',
-    name: 'landing',
-    component: Landing,
+    name: 'LandingPage',
+    component: LandingPage,
   },
   {
     path: '/mesures-phares',
-    name: 'keypoints',
-    component: Keypoints,
+    name: 'KeypointsPage',
+    component: KeypointsPage,
   }
 ];
 
