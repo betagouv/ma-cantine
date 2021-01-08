@@ -8,7 +8,9 @@
       </div>
     </router-link>
     <router-link :to="{ name: 'KeypointsPage' }" class="navbar-item">Mesures phares</router-link>
-    <a class="navbar-item" href="https://beta.gouv.fr/startups/egalim.html" target="_blank">A propos</a>
+    <a class="navbar-item" href="https://beta.gouv.fr/startups/egalim.html" target="_blank">
+      À propos <i class="fas fa-external-link-alt"></i>
+    </a>
   </div>
 </template>
 
