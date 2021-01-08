@@ -17,7 +17,7 @@
           <p class="mesure-x">MESURE {{idx + 1}}</p>
           <h2>{{point.title}}</h2>
           <div class="tags" v-if="point.tags">
-            <p v-for="tag in point.tags" :key="tag" :style="tags.find(element => element.id === tag).style">
+            <p class="tag" v-for="tag in point.tags" :key="tag" :style="tags.find(element => element.id === tag).style">
               {{tags.find(element => element.id === tag).title}}
             </p>
           </div>
@@ -25,7 +25,7 @@
           <div v-for="subPoint in point.subPoints" :key="subPoint.id">
             <h3>{{subPoint.title}}</h3>
             <div class="tags" v-if="subPoint.tags">
-              <p v-for="spTag in subPoint.tags" :key="spTag" :style="tags.find(element => element.id === spTag).style">
+              <p class="tag" v-for="spTag in subPoint.tags" :key="spTag" :style="tags.find(element => element.id === spTag).style">
                 {{tags.find(element => element.id === spTag).title}}
               </p>
             </div>
@@ -52,13 +52,13 @@
 h1 {
   font-size: 37px;
   color: rgba(64,64,64,0.87);
+  font-weight: 700;
 }
 
 #actions {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  font-size: 16px;
 }
 
 #guide-download {
@@ -67,12 +67,15 @@ h1 {
   color: #FFF;
   padding: 0.7em 2em;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 14px;
 }
 
 #cnrc {
   text-decoration: none;
   color: rgba(64,64,64,0.87);
+  font-weight: 400;
+  font-size: 17px;
 }
 
 #cnrc:visited {
@@ -87,29 +90,56 @@ h1 {
 p.mesure-x {
   font-weight: 400;
   margin-bottom: 0;
-  font-size: 20px;
+  font-size: 24px;
+}
+
+h2 {
+  font-size: 32px;
+  font-weight: 700;
 }
 
 .tags {
   display: flex;
 }
 
-.tags > p {
-  height: 20px;
-  padding: 0.2em 1em;
-  left: 0px;
-  top: 0px;
-  border-radius: 50px;
+.tag {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
   color: #FFF;
-  margin: 0 0.5em;
+  text-align: center;
+  line-height: 20px;
+
+  border-radius: 50px;
+  padding: 0 1em;
+  margin: 0 0.3em;
+}
+
+.deadline {
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 31px;
 }
 
 .deadline::before {
   content: "📅 ";
 }
 
+h3 {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 23px;
+}
+
+.description {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18px;
+}
+
 /* alternating alignment of measures content left and right */
-#qualite-durable, #contre-gaspillage, #plastiques .point {
+#qualite-durable, #contre-gaspillage, #plastiques {
   text-align: left;
 }
 
@@ -142,7 +172,6 @@ export default {
             "entreprises"
           ],
           deadline: "1er janvier 2022",
-          img: "@/assets/orange.png",
           subPoints: [
             {
               id: "cinqante",
