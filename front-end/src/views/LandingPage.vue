@@ -22,6 +22,29 @@
     <img src="@/assets/toque.svg" class="presentation-right-image">
   </div>
 
+  <div id="key-goals">
+    <div class="key-goal">
+      <img src="@/assets/checklist.png">
+      <div>
+        Assurer l’équilibre des relations commerciales dans le secteur agricole
+        et alimentaire et la juste rémunération des agriculteurs.
+      </div>
+    </div>
+    <div class="key-goal">
+      <img src="@/assets/broco.png">
+      <div>
+        Promouvoir des choix alimentaires favorables pour la santé et respectueux
+        de l’environnement.
+      </div>
+    </div>
+    <div class="key-goal">
+      <img src="@/assets/convive.png">
+      <div>
+        Réduire les inégalités d’accès à une alimentation de qualité et durable.
+      </div>
+    </div>
+  </div>
+
   <div id="goal">
     <h2>Les enjeux de la loi EGAlim en restauration collective</h2>
     <div class="goal-information">
@@ -112,6 +135,27 @@ h1, h2 {
 .presentation-right-image {
   width: 450px;
   height: 450px;
+}
+
+#key-goals {
+  display: flex;
+  justify-content: space-around;
+  background-color: #F7B48E;
+  padding: 30px;
+  margin-top: 50px;
+}
+
+.key-goal {
+  width: 250px;
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: bold;
+  color: white;
+}
+
+.key-goal > img {
+  width: 60px;
+  margin-bottom: 20px;
 }
 
 #goal {
