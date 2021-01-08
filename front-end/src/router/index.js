@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LandingPage from '@/views/LandingPage.vue';
-import KeypointsPage from '@/views/KeypointsPage.vue';
+import KeyMeasuresPage from '@/views/KeyMeasuresPage.vue';
 
 const routes = [
   {
@@ -10,8 +10,8 @@ const routes = [
   },
   {
     path: '/mesures-phares',
-    name: 'KeypointsPage',
-    component: KeypointsPage,
+    name: 'KeyMeasuresPage',
+    component: KeyMeasuresPage,
   }
 ];
 

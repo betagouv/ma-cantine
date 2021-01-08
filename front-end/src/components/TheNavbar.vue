@@ -7,7 +7,7 @@
         <div id="egalim">Pour une alimentatation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</div>
       </div>
     </router-link>
-    <router-link :to="{ name: 'KeypointsPage' }" class="navbar-item">Mesures phares</router-link>
+    <router-link :to="{ name: 'KeyMeasuresPage' }" class="navbar-item">Mesures phares</router-link>
     <a class="navbar-item" href="https://beta.gouv.fr/startups/egalim.html" target="_blank">
       À propos <i class="fas fa-external-link-alt"></i>
     </a>

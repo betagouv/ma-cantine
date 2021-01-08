@@ -1,5 +1,5 @@
 <template>
-  <div id="keypoints">
+  <div id="key-measures">
     <div id="banner">
       <img src="@/assets/online-groceries.svg" id="groceries">
       <div id="banner-content">
@@ -11,30 +11,30 @@
       </div>
       <img src="@/assets/lighthouse.svg" id="lighthouse">
     </div>
-    <div id="points">
-      <div class="point" v-for="(point, idx) in keyPoints" :key="point.id" :id="point.id">
-        <div class="point-content">
+    <div id="measures">
+      <div class="measure" v-for="(measure, idx) in keyMeasures" :key="measure.id" :id="measure.id">
+        <div class="measure-content">
           <p class="mesure-x">MESURE {{idx + 1}}</p>
-          <h2>{{point.title}}</h2>
-          <div class="tags" v-if="point.tags">
-            <p class="tag" v-for="tag in point.tags" :key="tag" :style="tags[tag].style">
+          <h2>{{measure.title}}</h2>
+          <div class="tags" v-if="measure.tags">
+            <p class="tag" v-for="tag in measure.tags" :key="tag" :style="tags[tag].style">
               {{tags[tag].title}}
             </p>
           </div>
-          <p class="deadline" v-if="point.deadline">{{point.deadline}}</p>
-          <div v-for="subPoint in point.subPoints" :key="subPoint.id">
-            <h3>{{subPoint.title}}</h3>
-            <div class="tags" v-if="subPoint.tags">
-              <p class="tag" v-for="spTag in subPoint.tags" :key="spTag" :style="tags[spTag].style">
+          <p class="deadline" v-if="measure.deadline">{{measure.deadline}}</p>
+          <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
+            <h3>{{subMeasure.title}}</h3>
+            <div class="tags" v-if="subMeasure.tags">
+              <p class="tag" v-for="spTag in subMeasure.tags" :key="spTag" :style="tags[spTag].style">
                 {{tags[spTag].title}}
               </p>
             </div>
-            <p class="deadline" v-if="subPoint.deadline">{{subPoint.deadline}}</p>
-            <p class="description">{{subPoint.description}}</p>
+            <p class="deadline" v-if="subMeasure.deadline">{{subMeasure.deadline}}</p>
+            <p class="description">{{subMeasure.description}}</p>
           </div>
         </div>
         <div class="decorative-image">
-          <img :src="point.image" alt=""/>
+          <img :src="measure.image" alt=""/>
         </div>
       </div>
     </div>
@@ -86,17 +86,17 @@ h1 {
 }
 
 /* measures styling */
-.points {
+.measures {
   width: 100%;
 }
 
-.point {
+.measure {
   display: flex;
   overflow: hidden;
   align-items: center;
 }
 
-.point-content {
+.measure-content {
   margin: 2em;
 }
 
@@ -181,7 +181,7 @@ export default {
   data() {
 
     return {
-      keyPoints: [
+      keyMeasures: [
         {
           id: "qualite-durable",
           title: "🍎 Au moins 50% de produits de qualité et durables dont 20% de bio",
@@ -196,7 +196,7 @@ export default {
             "entreprises"
           ],
           deadline: "1er janvier 2022",
-          subPoints: [
+          subMeasures: [
             {
               id: "cinqante",
               title: "Au moins 50 % de produits de qualité et durables...",
@@ -213,7 +213,7 @@ export default {
         {
           id: "information",
           title: "👨‍👩‍👧‍👧 Information des usagers et convives",
-          subPoints: [
+          subMeasures: [
             {
               title: "Information obligatoire des convives une fois par an",
               tags: [
@@ -265,7 +265,7 @@ export default {
             "loisirs",
             "entreprises"
           ],
-          subPoints: [
+          subMeasures: [
             {
               title: "Diagnostic et démarches de lutte contre le gaspillage alimentaire",
               deadline: "22 octobre 2020",
@@ -287,7 +287,7 @@ export default {
         {
           id: "diversification",
           title: "💪 Diversification des sources de protéines et menus végétariens",
-          subPoints: [
+          subMeasures: [
             {
               title: "Plan pluriannuel de diversification des sources de protéines (si > 200 couverts/jour)",
               tags: [
@@ -315,7 +315,7 @@ export default {
         {
           id: "plastiques",
           title: "💨 Substitution des plastiques",
-          subPoints: [
+          subMeasures: [
             {
               title: "Interdiction des ustensiles en plastique à usage unique",
               tags: [
