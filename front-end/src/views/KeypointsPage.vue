@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="keypoints">
     <div id="banner">
       <img src="@/assets/online-groceries.svg" id="groceries">
       <div id="banner-content">
@@ -13,7 +13,7 @@
     </div>
     <div id="points">
       <div class="point" v-for="(point, idx) in keyPoints" :key="point.id" :id="point.id">
-        <div class="point">
+        <div class="point-content">
           <p class="mesure-x">MESURE {{idx + 1}}</p>
           <h2>{{point.title}}</h2>
           <div class="tags" v-if="point.tags">
@@ -32,6 +32,9 @@
             <p class="deadline" v-if="subPoint.deadline">{{subPoint.deadline}}</p>
             <p class="description">{{subPoint.description}}</p>
           </div>
+        </div>
+        <div class="decorative-image">
+          <img :src="point.image" alt=""/>
         </div>
       </div>
     </div>
@@ -83,8 +86,22 @@ h1 {
 }
 
 /* measures styling */
+.points {
+  width: 100%;
+}
+
 .point {
-  margin: 1em;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+}
+
+.point-content {
+  margin: 2em;
+}
+
+.decorative-image {
+  width: 20%;
 }
 
 p.mesure-x {
@@ -145,10 +162,16 @@ h3 {
 
 #information, #diversification {
   text-align: right;
+  flex-direction: row-reverse;
 }
 
 #information .tags, #diversification .tags {
   justify-content: flex-end;
+}
+
+#information div img, #diversification div img {
+  position: relative;
+  right: 250px;
 }
 
 </style>
@@ -156,6 +179,7 @@ h3 {
 <script>
 export default {
   data() {
+
     return {
       keyPoints: [
         {
@@ -183,7 +207,8 @@ export default {
               title: ".... dont au moins 20 % de produits biologiques",
               description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             }
-          ]
+          ],
+          image: require('@/assets/orange.png')
         },
         {
           id: "information",
@@ -224,7 +249,8 @@ export default {
               deadline: "Du 14 avril 2019 au 31 octobre 2021",
               description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
-          ]
+          ],
+          image: require('@/assets/bleubronze.png')
         },
         {
           id: "contre-gaspillage",
@@ -255,7 +281,8 @@ export default {
               deadline: "22 octobre 2020",
               description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             }
-          ]
+          ],
+          image: require('@/assets/saumon.png')
         },
         {
           id: "diversification",
@@ -282,7 +309,8 @@ export default {
               deadline: "Du 1er nov 2019 au 1er nov 2021",
               description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             }
-          ]
+          ],
+          image: require('@/assets/rose.png')
         },
         {
           id: "plastiques",
@@ -320,7 +348,8 @@ export default {
               deadline: "1er janvier 2020",
               description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             }
-          ]
+          ],
+          image: require('@/assets/vert.png')
         }
       ],
       tags: [
