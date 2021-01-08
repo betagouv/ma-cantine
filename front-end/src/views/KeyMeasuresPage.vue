@@ -1,44 +1,36 @@
 <template>
   <div id="key-measures">
     <div id="banner">
-      <img src="@/assets/online-groceries.svg" id="groceries" alt="">
+      <img src="@/assets/online-groceries.svg" id="groceries">
       <div id="banner-content">
         <h1>Les 5 mesures-phares de la loi EGAlim</h1>
         <div id="actions">
           <a id="guide-download" download href="">Télécharger le guide du CNRC</a>
-          <a id="about-cnrc" href="">Qu'est ce que le CNRC ?</a>
+          <a id="cnrc" href="">Qu’est ce que le CNRC ?</a>
         </div>
       </div>
-      <img src="@/assets/lighthouse.svg" id="lighthouse" alt="">
+      <img src="@/assets/lighthouse.svg" id="lighthouse">
     </div>
     <div id="measures">
       <div class="measure" v-for="(measure, idx) in keyMeasures" :key="measure.id" :id="measure.id">
         <div class="measure-content">
-          <p class="measure-x">MESURE {{idx + 1}}</p>
+          <p class="mesure-x">MESURE {{idx + 1}}</p>
           <h2>{{measure.title}}</h2>
-          <SectorTags :tags="measure.tags"/>
-          <p class="deadline" v-if="measure.deadline">{{measure.deadline}}</p>
-          <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
-            <h3>{{subMeasure.title}}</h3>
-            <SectorTags :tags="subMeasure.tags"/>
-            <p class="deadline" v-if="subMeasure.deadline">
-              <span class="deadline-emoji">📅 </span>
-              {{subMeasure.deadline}}
+          <div class="tags" v-if="measure.tags">
+            <p class="tag" v-for="tag in measure.tags" :key="tag" :style="tags[tag].style">
+              {{tags[tag].title}}
             </p>
-            <div class="description-container">
-              <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
-              <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
-              <img v-if="subMeasure.id === 'vingt'" src="@/assets/logos/logo_bio_eurofeuille.png" id="eurofeuille">
+          </div>
+          <p class="deadline" v-if="measure.deadline">{{measure.deadline}}</p>
+          <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
+            <h3>{{subMeasure.title}}</h3>
+            <div class="tags" v-if="subMeasure.tags">
+              <p class="tag" v-for="spTag in subMeasure.tags" :key="spTag" :style="tags[spTag].style">
+                {{tags[spTag].title}}
+              </p>
             </div>
-            <div id="logos" v-if="subMeasure.id === 'cinquante'">
-              <img src="@/assets/logos/label-rouge.png" alt="logo Label Rouge"/>
-              <img src="@/assets/logos/Logo-AOC-AOP.png" alt="logo appellation d’origine"/>
-              <img src="@/assets/logos/IGP.png" alt="logo indication géographique"/>
-              <img src="@/assets/logos/STG.png" alt="logo Spécialité traditionnelle garantie"/>
-              <img src="@/assets/logos/hve.png" alt="logo Haute Valeur Environnementale"/>
-              <img src="@/assets/logos/logo_label-peche-durable.png" alt="logo écolabel pêche durable"/>
-              <img src="@/assets/logos/rup.png" alt="logo Région Ultrapériphérique"/>
-            </div>
+            <p class="deadline" v-if="subMeasure.deadline">{{subMeasure.deadline}}</p>
+            <p class="description">{{subMeasure.description}}</p>
           </div>
         </div>
         <div class="decorative-image">
@@ -70,9 +62,6 @@ h1 {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-
-  /* TODO: supprimer ça quand on a des liens */
-  display: none;
 }
 
 #guide-download {
@@ -85,18 +74,22 @@ h1 {
   font-size: 14px;
 }
 
-#about-cnrc {
+#cnrc {
   text-decoration: none;
   color: rgba(64,64,64,0.87);
   font-weight: 400;
   font-size: 17px;
 }
 
-#about-cnrc:visited {
+#cnrc:visited {
   color: rgba(64,64,64,0.87);
 }
 
 /* measures styling */
+.measures {
+  width: 100%;
+}
+
 .measure {
   display: flex;
   overflow: hidden;
@@ -111,7 +104,7 @@ h1 {
   width: 20%;
 }
 
-p.measure-x {
+p.mesure-x {
   font-weight: 400;
   margin-bottom: 0;
   font-size: 24px;
@@ -122,6 +115,23 @@ h2 {
   font-weight: 700;
 }
 
+.tags {
+  display: flex;
+}
+
+.tag {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  color: #FFF;
+  text-align: center;
+  line-height: 20px;
+
+  border-radius: 50px;
+  padding: 0 1em;
+  margin: 0 0.3em;
+}
+
 .deadline {
   font-size: 18px;
   font-style: italic;
@@ -129,8 +139,8 @@ h2 {
   line-height: 31px;
 }
 
-.deadline-emoji {
-  font-style: normal;
+.deadline::before {
+  content: "📅 ";
 }
 
 h3 {
@@ -143,27 +153,6 @@ h3 {
   font-size: 14px;
   font-weight: 400;
   line-height: 18px;
-  white-space: pre-wrap;
-}
-
-#logos {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-#logos > img {
-  max-height: 75px;
-}
-
-#vingt div.description-container {
-  display: flex;
-  align-items: center;
-}
-
-#eurofeuille {
-  max-height: 66px;
-  margin-left: 71px;
 }
 
 /* alternating alignment of measures content left and right */
@@ -188,13 +177,9 @@ h3 {
 </style>
 
 <script>
-import SectorTags from '@/components/SectorTags.vue'
-
 export default {
-  components: {
-    SectorTags
-  },
   data() {
+
     return {
       keyMeasures: [
         {
@@ -213,17 +198,17 @@ export default {
           deadline: "1er janvier 2022",
           subMeasures: [
             {
-              id: "cinquante",
+              id: "cinqante",
               title: "Au moins 50 % de produits de qualité et durables...",
-              htmlDescription: "Les produits bénéficiant des autres signes officiels d’identification de la qualité et de l’origine (SIQO) ou des mentions valorisantes suivants : le <b>Label rouge</b>, l’<b>appellation d’origine (AOC/AOP)</b>, l’<b>indication géographique (IGP)</b>, la <b>Spécialité traditionnelle garantie (STG)</b>, la mention « issu d’une exploitation à <b>Haute Valeur Environnementale</b> » (HVE), la mention <b>« fermier » ou « produit de la ferme » ou « produit à la ferme »</b>, uniquement pour les produits pour lesquels existe une définition réglementaire des conditions de production, l’<b>écolabel pêche durable, logo « Région ultrapériphérique » (RUP)</b>."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             {
               id: "vingt",
               title: ".... dont au moins 20 % de produits biologiques",
-              description: "L'ensemble des produits issus de l'agriculture biologique, ainsi que les produits végétaux en conversion de plus d'un an qui entrent également dans le décompte.\nIl ne peut s’agir que de produits bruts ou transformés composés d’un seul ingrédient d’origine végétale et issus d’une exploitation qui est en conversion depuis plus d’un an,"
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             }
           ],
-          image: require('@/assets/background/orange.png')
+          image: require('@/assets/orange.png')
         },
         {
           id: "information",
@@ -242,7 +227,7 @@ export default {
                 "entreprises"
               ],
               deadline: "1er janvier 2022",
-              description: "Les usagers des restaurants collectifs devront être informés une fois par an, par voie d’affichage et de communication électronique, de la part des produits de qualité et durables."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             {
               title: "Information nutritionnelle",
@@ -252,7 +237,7 @@ export default {
                 "creche",
               ],
               deadline: "30 octobre 2018",
-              description: "Les gestionnaires des services de restauration collective scolaire et universitaire ainsi que des services de restauration collective des crèches sont tenus d’informer et de consulter régulièrement, dans chaque établissement et par tous moyens utiles, les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis. La restauration scolaire fixe des exigences nutritionnelles basées sur 20 repas successifs. Il s’agit notamment de veiller à la diversité de la structure du repas, garantir une variété suffisante pour favoriser les apports en fibres et en fer, limiter la fréquence des plats trop gras et trop sucrés et de favoriser l’emploi de produits de saison."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             {
               title: "Expérimentation de l’affichage de la nature des produits (facultatif)",
@@ -262,10 +247,10 @@ export default {
                 "creche"
               ],
               deadline: "Du 14 avril 2019 au 31 octobre 2021",
-              description: "À titre expérimental, pour une durée de 3 ans (soit jusqu’au 1er novembre 2021), les collectivités territoriales qui le souhaitent peuvent participer à une expérimentation sur l’affichage obligatoire, pour l’information des usagers, de la nature des produits entrant dans la composition des menus dans les services de restauration collective dont elles ont la charge."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
           ],
-          image: require('@/assets/background/bleubronze.png')
+          image: require('@/assets/bleubronze.png')
         },
         {
           id: "contre-gaspillage",
@@ -284,20 +269,20 @@ export default {
             {
               title: "Diagnostic et démarches de lutte contre le gaspillage alimentaire",
               deadline: "22 octobre 2020",
-              description: "L’obligation de mettre en place une démarche de lutte contre le gaspillage alimentaire est étendue aux opérateurs de la restauration collective privée. À compter du 21 octobre 2019, les opérateurs de la restauration collective qui ne sont pas engagés dans une démarche de lutte contre le gaspillage alimentaire disposent d’un délai d’un an pour effectuer un diagnostic préalable à la mise en place de cette démarche, incluant l’approvisionnement durable."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             {
               title: "Interdiction de rendre impropres à la consommation les excédents alimentaires encore consommables",
               deadline: "1er janvier 2020",
-              description: "L’interdiction de rendre impropres à la consommation les excédents alimentaires encore consommables est étendue à la restauration collective (amende de 3 750 €) à partir du 1er janvier 2020."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             {
               title: "Proposition de convention de dons aux associations habilitées (si >3000 repas/jour)",
               deadline: "22 octobre 2020",
-              description: "Les opérateurs de la restauration collective préparant plus de 3 000 repas/jour disposent d’un délai d’un an pour proposer à une association habilitée en application de l’article L.266-2 du code de l’action sociale et des familles une convention de dons."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             }
           ],
-          image: require('@/assets/background/saumon.png')
+          image: require('@/assets/saumon.png')
         },
         {
           id: "diversification",
@@ -314,7 +299,7 @@ export default {
                 "creche"
               ],
               deadline: "30 octobre 2018",
-              description: "Les gestionnaires des restaurants collectifs sont tenus de présenter à leurs structures dirigeantes un plan pluriannuel de diversification de protéines incluant des alternatives à base de protéines végétales dans les repas qu’ils proposent."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             {
               title: "Expérimentation d’un menu végétarien par semaine",
@@ -322,10 +307,10 @@ export default {
                 "scolaire",
               ],
               deadline: "Du 1er nov 2019 au 1er nov 2021",
-              htmlDescription: "Tous les restaurants collectifs scolaires (publics ou privés) sont tenus de proposer, au moins une fois par semaine, un menu végétarien, sur une durée de 2 ans. Ce menu végétarien peut constituer une alternative à d’autres menus dans le cas où plusieurs menus sont proposés. Dans le cas où un menu unique est proposé, il s’agit d’un menu unique végétarien. Par ailleurs, le menu végétarien doit s’insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n<b>Qu’est-ce qu’un menu végétarien ?</b> Il s’agit d’un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             }
           ],
-          image: require('@/assets/background/rose.png')
+          image: require('@/assets/rose.png')
         },
         {
           id: "plastiques",
@@ -343,7 +328,7 @@ export default {
                 "entreprises"
               ],
               deadline: "1er janvier 2020",
-              htmlDescription: "La mise à disposition des ustensiles à usage unique en matière plastique (sauf, jusqu’au 3 juillet 2021, ceux compostables en compostage domestique et constitués, pour tout ou partie, de matières biosourcées) suivants est <b>interdite : gobelets, verres, assiettes, pailles, couverts, piques à steak, couvercles à verre, plateaux-repas, pots à glace, saladiers, boîtes et bâtonnets mélangeurs pour boissons</b>. On entend par « mise à disposition » la fourniture d’un produit destiné à être distribué, consommé ou utilisé sur le territoire national dans le cadre d’une activité commerciale, à titre onéreux ou gratuit. Certains matériaux alternatifs au plastique peuvent être considérés comme des fournitures innovantes et entrer dans le cadre de l’expérimentation lancée fin 2018, pour une durée de trois ans, permettant de déroger aux obligations de publication et de mise en concurrence pour les achats innovants de moins de 100 000 € HT."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             {
               title: "Interdiction des contenants alimentaires en plastique",
@@ -353,7 +338,7 @@ export default {
                 "creche"
               ],
               deadline: "1er janvier 2025 / 2028 si < 2000 habitants",
-              description: "L’utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite dans les services de restauration collective d’établissements scolaires et universitaires, ainsi que des établissements d’accueil des enfants de moins de 6 ans. Dans les collectivités territoriales de moins de 2 000 habitants, cette mesure est applicable au plus tard le 1er janvier 2028."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             {
               title: "Interdiction des bouteilles d’eau plate en plastique",
@@ -361,12 +346,62 @@ export default {
                 "scolaire",
               ],
               deadline: "1er janvier 2020",
-              description: "L’utilisation de bouteilles d’eau plate en plastique est interdite en restauration scolaire. Cette mesure s’applique aux territoires desservis par un réseau d’eau potable et peut être suspendue en cas exceptionnel de restriction de l’eau destinée à la consommation humaine prononcée par le Préfet."
+              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             }
           ],
-          image: require('@/assets/background/vert.png')
+          image: require('@/assets/vert.png')
         }
-      ]
+      ],
+      tags: {
+        scolaire: {
+          title: "Scolaire",
+          style: {
+            "background-color": "#EB5C2E"
+          }
+        },
+        administration: {
+          title: "Administration",
+          style: {
+            "background-color": "rgba(255,82,82,0.28)"
+          }
+        },
+        universitaire: {
+          title: "Universitaire",
+          style: {
+            "background-color": "rgba(57,107,200,0.42)"
+          }
+        },
+        medical: {
+          title: "Médical",
+          style: {
+            "background-color": "rgba(235,92,46,0.56)"
+          }
+        },
+        social: {
+          title: "Social",
+          style: {
+            "background-color": "rgba(150,93,123,0.46)"
+          }
+        },
+        creche: {
+          title: "Crèche",
+          style: {
+            "background-color": "rgba(249,168,38,0.31)"
+          }
+        },
+        loisirs: {
+          title: "Loisirs",
+          style: {
+            "background-color": "rgba(159,97,106,1)"
+          }
+        },
+        entreprises: {
+          title: "Entreprises",
+          style: {
+            "background-color": "rgba(57,107,200,1)"
+          }
+        }
+      }
     }
   },
 }
