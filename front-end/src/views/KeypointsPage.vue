@@ -17,16 +17,16 @@
           <p class="mesure-x">MESURE {{idx + 1}}</p>
           <h2>{{point.title}}</h2>
           <div class="tags" v-if="point.tags">
-            <p class="tag" v-for="tag in point.tags" :key="tag" :style="tags.find(element => element.id === tag).style">
-              {{tags.find(element => element.id === tag).title}}
+            <p class="tag" v-for="tag in point.tags" :key="tag" :style="tags[tag].style">
+              {{tags[tag].title}}
             </p>
           </div>
           <p class="deadline" v-if="point.deadline">{{point.deadline}}</p>
           <div v-for="subPoint in point.subPoints" :key="subPoint.id">
             <h3>{{subPoint.title}}</h3>
             <div class="tags" v-if="subPoint.tags">
-              <p class="tag" v-for="spTag in subPoint.tags" :key="spTag" :style="tags.find(element => element.id === spTag).style">
-                {{tags.find(element => element.id === spTag).title}}
+              <p class="tag" v-for="spTag in subPoint.tags" :key="spTag" :style="tags[spTag].style">
+                {{tags[spTag].title}}
               </p>
             </div>
             <p class="deadline" v-if="subPoint.deadline">{{subPoint.deadline}}</p>
@@ -352,64 +352,56 @@ export default {
           image: require('@/assets/vert.png')
         }
       ],
-      tags: [
-        {
-          id: "scolaire",
+      tags: {
+        scolaire: {
           title: "Scolaire",
           style: {
             "background-color": "#EB5C2E"
           }
         },
-        {
-          id: "administration",
+        administration: {
           title: "Administration",
           style: {
             "background-color": "rgba(255,82,82,0.28)"
           }
         },
-        {
-          id: "universitaire",
+        universitaire: {
           title: "Universitaire",
           style: {
             "background-color": "rgba(57,107,200,0.42)"
           }
         },
-        {
-          id: "medical",
+        medical: {
           title: "Médical",
           style: {
             "background-color": "rgba(235,92,46,0.56)"
           }
         },
-        {
-          id: "social",
+        social: {
           title: "Social",
           style: {
             "background-color": "rgba(150,93,123,0.46)"
           }
         },
-        {
-          id: "creche",
+        creche: {
           title: "Crèche",
           style: {
             "background-color": "rgba(249,168,38,0.31)"
           }
         },
-        {
-          id: "loisirs",
+        loisirs: {
           title: "Loisirs",
           style: {
             "background-color": "rgba(159,97,106,1)"
           }
         },
-        {
-          id: "entreprises",
+        entreprises: {
           title: "Entreprises",
           style: {
             "background-color": "rgba(57,107,200,1)"
           }
         }
-      ]
+      }
     }
   },
 }
