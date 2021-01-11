@@ -32,6 +32,15 @@
             <p class="deadline" v-if="subMeasure.deadline">{{subMeasure.deadline}}</p>
             <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
             <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
+            <div id="logos" v-if="subMeasure.id === 'cinquante'">
+              <img src="@/assets/logos/label-rouge.png" alt="logo Label Rouge"/>
+              <img src="@/assets/logos/Logo-AOC-AOP.png" alt="logo appellation d’origine"/>
+              <img src="@/assets/logos/IGP.png" alt="logo indication géographique"/>
+              <img src="@/assets/logos/STG.png" alt="logo Spécialité traditionnelle garantie"/>
+              <img src="@/assets/logos/hve.png" alt="logo Haute Valeur Environnementale"/>
+              <img src="@/assets/logos/logo_label-peche-durable.png" alt="logo écolabel pêche durable"/>
+              <img src="@/assets/logos/rup.png" alt="logo Région Ultrapériphérique"/>
+            </div>
           </div>
         </div>
         <div class="decorative-image">
@@ -153,6 +162,16 @@ h3 {
   white-space: pre-wrap;
 }
 
+#logos {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#logos > img {
+  max-height: 75px;
+}
+
 /* alternating alignment of measures content left and right */
 #qualite-durable, #contre-gaspillage, #plastiques {
   text-align: left;
@@ -195,7 +214,7 @@ export default {
           deadline: "1er janvier 2022",
           subMeasures: [
             {
-              id: "cinqante",
+              id: "cinquante",
               title: "Au moins 50 % de produits de qualité et durables...",
               htmlDescription: "Les produits bénéficiant des autres signes officiels d’identification de la qualité et de l’origine (SIQO) ou des mentions valorisantes suivants : le <b>Label rouge</b>, l’<b>appellation d’origine (AOC/AOP)</b>, l’<b>indication géographique (IGP)</b>, la <b>Spécialité traditionnelle garantie (STG)</b>, la mention « issu d’une exploitation à <b>Haute Valeur Environnementale</b> » (HVE), la mention <b>« fermier » ou « produit de la ferme » ou « produit à la ferme »</b>, uniquement pour les produits pour lesquels existe une définition réglementaire des conditions de production*, l’<b>écolabel pêche durable, logo « Région ultrapériphérique » (RUP)</b>."
             },
@@ -205,7 +224,7 @@ export default {
               description: "L'ensemble des produits issus de l'agriculture biologique, ainsi que les produits végétaux en conversion de plus d'un an qui entrent également dans le décompte.\nIl ne peut s’agir que de produits bruts ou transformés composés d’un seul ingrédient d’origine végétale et issus d’une exploitation qui est en conversion depuis plus d’un an,"
             }
           ],
-          image: require('@/assets/orange.png')
+          image: require('@/assets/background/orange.png')
         },
         {
           id: "information",
@@ -247,7 +266,7 @@ export default {
               description: "À titre expérimental, pour une durée de 3 ans (soit jusqu’au 1er novembre 2021), les collectivités territoriales qui le souhaitent peuvent participer à une expérimentation sur l’affichage obligatoire, pour l’information des usagers, de la nature des produits entrant dans la composition des menus dans les services de restauration collective dont elles ont la charge."
             },
           ],
-          image: require('@/assets/bleubronze.png')
+          image: require('@/assets/background/bleubronze.png')
         },
         {
           id: "contre-gaspillage",
@@ -279,7 +298,7 @@ export default {
               description: "Les opérateurs de la restauration collective préparant plus de 3 000 repas/jour disposent d’un délai d’un an pour proposer à une association habilitée en application de l’article L.266-2 du code de l’action sociale et des familles une convention de dons."
             }
           ],
-          image: require('@/assets/saumon.png')
+          image: require('@/assets/background/saumon.png')
         },
         {
           id: "diversification",
@@ -307,7 +326,7 @@ export default {
               htmlDescription: "Tous les restaurants collectifs scolaires (publics ou privés) sont tenus de proposer, au moins une fois par semaine, un menu végétarien, sur une durée de 2 ans. Ce menu végétarien peut constituer une alternative à d’autres menus dans le cas où plusieurs menus sont proposés. Dans le cas où un menu unique est proposé, il s’agit d’un menu unique végétarien. Par ailleurs, le menu végétarien doit s’insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n<b>Qu’est-ce qu’un menu végétarien ?</b> Il s’agit d’un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers."
             }
           ],
-          image: require('@/assets/rose.png')
+          image: require('@/assets/background/rose.png')
         },
         {
           id: "plastiques",
@@ -346,7 +365,7 @@ export default {
               description: "L’utilisation de bouteilles d’eau plate en plastique est interdite en restauration scolaire. Cette mesure s’applique aux territoires desservis par un réseau d’eau potable et peut être suspendue en cas exceptionnel de restriction de l’eau destinée à la consommation humaine prononcée par le Préfet."
             }
           ],
-          image: require('@/assets/vert.png')
+          image: require('@/assets/background/vert.png')
         }
       ],
       tags: {
