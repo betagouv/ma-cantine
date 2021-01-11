@@ -1,20 +1,20 @@
 <template>
   <div id="key-measures">
     <div id="banner">
-      <img src="@/assets/online-groceries.svg" id="groceries">
+      <img src="@/assets/online-groceries.svg" id="groceries" alt="">
       <div id="banner-content">
         <h1>Les 5 mesures-phares de la loi EGAlim</h1>
         <div id="actions">
           <a id="guide-download" download href="">Télécharger le guide du CNRC</a>
-          <a id="cnrc" href="">Qu’est ce que le CNRC ?</a>
+          <a id="about-cnrc" href="">Qu'est ce que le CNRC ?</a>
         </div>
       </div>
-      <img src="@/assets/lighthouse.svg" id="lighthouse">
+      <img src="@/assets/lighthouse.svg" id="lighthouse" alt="">
     </div>
     <div id="measures">
       <div class="measure" v-for="(measure, idx) in keyMeasures" :key="measure.id" :id="measure.id">
         <div class="measure-content">
-          <p class="mesure-x">MESURE {{idx + 1}}</p>
+          <p class="measure-x">MESURE {{idx + 1}}</p>
           <h2>{{measure.title}}</h2>
           <div class="tags" v-if="measure.tags">
             <p class="tag" v-for="tag in measure.tags" :key="tag" :style="tags[tag].style">
@@ -74,22 +74,18 @@ h1 {
   font-size: 14px;
 }
 
-#cnrc {
+#about-cnrc {
   text-decoration: none;
   color: rgba(64,64,64,0.87);
   font-weight: 400;
   font-size: 17px;
 }
 
-#cnrc:visited {
+#about-cnrc:visited {
   color: rgba(64,64,64,0.87);
 }
 
 /* measures styling */
-.measures {
-  width: 100%;
-}
-
 .measure {
   display: flex;
   overflow: hidden;
@@ -104,7 +100,7 @@ h1 {
   width: 20%;
 }
 
-p.mesure-x {
+p.measure-x {
   font-weight: 400;
   margin-bottom: 0;
   font-size: 24px;
@@ -121,7 +117,6 @@ h2 {
 
 .tag {
   font-size: 12px;
-  font-style: normal;
   font-weight: 700;
   color: #FFF;
   text-align: center;
@@ -141,6 +136,7 @@ h2 {
 
 .deadline::before {
   content: "📅 ";
+  font-style: normal;
 }
 
 h3 {
@@ -179,7 +175,6 @@ h3 {
 <script>
 export default {
   data() {
-
     return {
       keyMeasures: [
         {
