@@ -30,7 +30,8 @@
               </p>
             </div>
             <p class="deadline" v-if="subMeasure.deadline">{{subMeasure.deadline}}</p>
-            <p class="description">{{subMeasure.description}}</p>
+            <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
+            <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
           </div>
         </div>
         <div class="decorative-image">
@@ -149,6 +150,7 @@ h3 {
   font-size: 14px;
   font-weight: 400;
   line-height: 18px;
+  white-space: pre-wrap;
 }
 
 /* alternating alignment of measures content left and right */
@@ -195,12 +197,12 @@ export default {
             {
               id: "cinqante",
               title: "Au moins 50 % de produits de qualité et durables...",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              htmlDescription: "Les produits bénéficiant des autres signes officiels d’identification de la qualité et de l’origine (SIQO) ou des mentions valorisantes suivants : le <b>Label rouge</b>, l’<b>appellation d’origine (AOC/AOP)</b>, l’<b>indication géographique (IGP)</b>, la <b>Spécialité traditionnelle garantie (STG)</b>, la mention « issu d’une exploitation à <b>Haute Valeur Environnementale</b> » (HVE), la mention <b>« fermier » ou « produit de la ferme » ou « produit à la ferme »</b>, uniquement pour les produits pour lesquels existe une définition réglementaire des conditions de production*, l’<b>écolabel pêche durable, logo « Région ultrapériphérique » (RUP)</b>."
             },
             {
               id: "vingt",
               title: ".... dont au moins 20 % de produits biologiques",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              description: "L'ensemble des produits issus de l'agriculture biologique, ainsi que les produits végétaux en conversion de plus d'un an qui entrent également dans le décompte.\nIl ne peut s’agir que de produits bruts ou transformés composés d’un seul ingrédient d’origine végétale et issus d’une exploitation qui est en conversion depuis plus d’un an,"
             }
           ],
           image: require('@/assets/orange.png')
@@ -222,7 +224,7 @@ export default {
                 "entreprises"
               ],
               deadline: "1er janvier 2022",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              description: "Les usagers des restaurants collectifs devront être informés une fois par an, par voie d’affichage et de communication électronique, de la part des produits de qualité et durables."
             },
             {
               title: "Information nutritionnelle",
@@ -232,7 +234,7 @@ export default {
                 "creche",
               ],
               deadline: "30 octobre 2018",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              description: "Les gestionnaires des services de restauration collective scolaire et universitaire ainsi que des services de restauration collective des crèches sont tenus d’informer et de consulter régulièrement, dans chaque établissement et par tous moyens utiles, les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis. La restauration scolaire fixe des exigences nutritionnelles basées sur 20 repas successifs. Il s’agit notamment de veiller à la diversité de la structure du repas, garantir une variété suffisante pour favoriser les apports en fibres et en fer, limiter la fréquence des plats trop gras et trop sucrés et de favoriser l’emploi de produits de saison."
             },
             {
               title: "Expérimentation de l’affichage de la nature des produits (facultatif)",
@@ -242,7 +244,7 @@ export default {
                 "creche"
               ],
               deadline: "Du 14 avril 2019 au 31 octobre 2021",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              description: "À titre expérimental, pour une durée de 3 ans (soit jusqu’au 1er novembre 2021), les collectivités territoriales qui le souhaitent peuvent participer à une expérimentation sur l’affichage obligatoire, pour l’information des usagers, de la nature des produits entrant dans la composition des menus dans les services de restauration collective dont elles ont la charge."
             },
           ],
           image: require('@/assets/bleubronze.png')
@@ -264,17 +266,17 @@ export default {
             {
               title: "Diagnostic et démarches de lutte contre le gaspillage alimentaire",
               deadline: "22 octobre 2020",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              description: "L’obligation de mettre en place une démarche de lutte contre le gaspillage alimentaire est étendue aux opérateurs de la restauration collective privée. À compter du 21 octobre 2019, les opérateurs de la restauration collective qui ne sont pas engagés dans une démarche de lutte contre le gaspillage alimentaire disposent d’un délai d’un an pour effectuer un diagnostic préalable à la mise en place de cette démarche, incluant l’approvisionnement durable."
             },
             {
               title: "Interdiction de rendre impropres à la consommation les excédents alimentaires encore consommables",
               deadline: "1er janvier 2020",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              description: "L’interdiction de rendre impropres à la consommation les excédents alimentaires encore consommables est étendue à la restauration collective (amende de 3 750 €) à partir du 1er janvier 2020."
             },
             {
               title: "Proposition de convention de dons aux associations habilitées (si >3000 repas/jour)",
               deadline: "22 octobre 2020",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              description: "Les opérateurs de la restauration collective préparant plus de 3 000 repas/jour disposent d’un délai d’un an pour proposer à une association habilitée en application de l’article L.266-2 du code de l’action sociale et des familles une convention de dons."
             }
           ],
           image: require('@/assets/saumon.png')
@@ -294,7 +296,7 @@ export default {
                 "creche"
               ],
               deadline: "30 octobre 2018",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              description: "Les gestionnaires des restaurants collectifs sont tenus de présenter à leurs structures dirigeantes un plan pluriannuel de diversification de protéines incluant des alternatives à base de protéines végétales dans les repas qu’ils proposent."
             },
             {
               title: "Expérimentation d’un menu végétarien par semaine",
@@ -302,7 +304,7 @@ export default {
                 "scolaire",
               ],
               deadline: "Du 1er nov 2019 au 1er nov 2021",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              htmlDescription: "Tous les restaurants collectifs scolaires (publics ou privés) sont tenus de proposer, au moins une fois par semaine, un menu végétarien, sur une durée de 2 ans. Ce menu végétarien peut constituer une alternative à d’autres menus dans le cas où plusieurs menus sont proposés. Dans le cas où un menu unique est proposé, il s’agit d’un menu unique végétarien. Par ailleurs, le menu végétarien doit s’insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n<b>Qu’est-ce qu’un menu végétarien ?</b> Il s’agit d’un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers."
             }
           ],
           image: require('@/assets/rose.png')
@@ -323,7 +325,7 @@ export default {
                 "entreprises"
               ],
               deadline: "1er janvier 2020",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              htmlDescription: "La mise à disposition des ustensiles à usage unique en matière plastique (sauf, jusqu’au 3 juillet 2021, ceux compostables en compostage domestique et constitués, pour tout ou partie, de matières biosourcées) suivants est <b>interdite : gobelets, verres, assiettes, pailles, couverts, piques à steak, couvercles à verre, plateaux-repas, pots à glace, saladiers, boîtes et bâtonnets mélangeurs pour boissons</b>. On entend par « mise à disposition » la fourniture d’un produit destiné à être distribué, consommé ou utilisé sur le territoire national dans le cadre d’une activité commerciale, à titre onéreux ou gratuit. Certains matériaux alternatifs au plastique peuvent être considérés comme des fournitures innovantes et entrer dans le cadre de l’expérimentation lancée fin 2018, pour une durée de trois ans, permettant de déroger aux obligations de publication et de mise en concurrence pour les achats innovants de moins de 100 000 € HT."
             },
             {
               title: "Interdiction des contenants alimentaires en plastique",
@@ -333,7 +335,7 @@ export default {
                 "creche"
               ],
               deadline: "1er janvier 2025 / 2028 si < 2000 habitants",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              description: "L’utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite dans les services de restauration collective d’établissements scolaires et universitaires, ainsi que des établissements d’accueil des enfants de moins de 6 ans. Dans les collectivités territoriales de moins de 2 000 habitants, cette mesure est applicable au plus tard le 1er janvier 2028."
             },
             {
               title: "Interdiction des bouteilles d’eau plate en plastique",
@@ -341,7 +343,7 @@ export default {
                 "scolaire",
               ],
               deadline: "1er janvier 2020",
-              description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              description: "L’utilisation de bouteilles d’eau plate en plastique est interdite en restauration scolaire. Cette mesure s’applique aux territoires desservis par un réseau d’eau potable et peut être suspendue en cas exceptionnel de restriction de l’eau destinée à la consommation humaine prononcée par le Préfet."
             }
           ],
           image: require('@/assets/vert.png')
