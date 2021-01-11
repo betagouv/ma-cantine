@@ -22,7 +22,7 @@
             </p>
           </div>
           <p class="deadline" v-if="measure.deadline">{{measure.deadline}}</p>
-          <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
+          <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
             <h3>{{subMeasure.title}}</h3>
             <div class="tags" v-if="subMeasure.tags">
               <p class="tag" v-for="spTag in subMeasure.tags" :key="spTag" :style="tags[spTag].style">
@@ -30,8 +30,11 @@
               </p>
             </div>
             <p class="deadline" v-if="subMeasure.deadline">{{subMeasure.deadline}}</p>
-            <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
-            <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
+            <div class="description-container">
+              <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
+              <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
+              <img v-if="subMeasure.id === 'vingt'" src="@/assets/logos/logo_bio_eurofeuille.png" id="eurofeuille">
+            </div>
             <div id="logos" v-if="subMeasure.id === 'cinquante'">
               <img src="@/assets/logos/label-rouge.png" alt="logo Label Rouge"/>
               <img src="@/assets/logos/Logo-AOC-AOP.png" alt="logo appellation d’origine"/>
@@ -170,6 +173,16 @@ h3 {
 
 #logos > img {
   max-height: 75px;
+}
+
+#vingt div.description-container {
+  display: flex;
+  align-items: center;
+}
+
+#eurofeuille {
+  max-height: 66px;
+  margin-left: 71px;
 }
 
 /* alternating alignment of measures content left and right */
