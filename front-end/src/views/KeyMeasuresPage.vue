@@ -16,19 +16,11 @@
         <div class="measure-content">
           <p class="measure-x">MESURE {{idx + 1}}</p>
           <h2>{{measure.title}}</h2>
-          <div class="tags" v-if="measure.tags">
-            <p class="tag" v-for="tag in measure.tags" :key="tag" :style="tags[tag].style">
-              {{tags[tag].title}}
-            </p>
-          </div>
+          <SectorTags :tags="measure.tags"/>
           <p class="deadline" v-if="measure.deadline">{{measure.deadline}}</p>
           <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
             <h3>{{subMeasure.title}}</h3>
-            <div class="tags" v-if="subMeasure.tags">
-              <p class="tag" v-for="spTag in subMeasure.tags" :key="spTag" :style="tags[spTag].style">
-                {{tags[spTag].title}}
-              </p>
-            </div>
+            <SectorTags :tags="subMeasure.tags"/>
             <p class="deadline" v-if="subMeasure.deadline">{{subMeasure.deadline}}</p>
             <div class="description-container">
               <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
@@ -124,22 +116,6 @@ h2 {
   font-weight: 700;
 }
 
-.tags {
-  display: flex;
-}
-
-.tag {
-  font-size: 12px;
-  font-weight: 700;
-  color: #FFF;
-  text-align: center;
-  line-height: 20px;
-
-  border-radius: 50px;
-  padding: 0 1em;
-  margin: 0 0.3em;
-}
-
 .deadline {
   font-size: 18px;
   font-style: italic;
@@ -207,7 +183,12 @@ h3 {
 </style>
 
 <script>
+import SectorTags from '@/components/SectorTags.vue'
+
 export default {
+  components: {
+    SectorTags
+  },
   data() {
     return {
       keyMeasures: [
@@ -380,57 +361,7 @@ export default {
           ],
           image: require('@/assets/background/vert.png')
         }
-      ],
-      tags: {
-        scolaire: {
-          title: "Scolaire",
-          style: {
-            "background-color": "#EB5C2E"
-          }
-        },
-        administration: {
-          title: "Administration",
-          style: {
-            "background-color": "rgba(255,82,82,0.28)"
-          }
-        },
-        universitaire: {
-          title: "Universitaire",
-          style: {
-            "background-color": "rgba(57,107,200,0.42)"
-          }
-        },
-        medical: {
-          title: "Médical",
-          style: {
-            "background-color": "rgba(235,92,46,0.56)"
-          }
-        },
-        social: {
-          title: "Social",
-          style: {
-            "background-color": "rgba(150,93,123,0.46)"
-          }
-        },
-        creche: {
-          title: "Crèche",
-          style: {
-            "background-color": "rgba(249,168,38,0.31)"
-          }
-        },
-        loisirs: {
-          title: "Loisirs",
-          style: {
-            "background-color": "rgba(159,97,106,1)"
-          }
-        },
-        entreprises: {
-          title: "Entreprises",
-          style: {
-            "background-color": "rgba(57,107,200,1)"
-          }
-        }
-      }
+      ]
     }
   },
 }
