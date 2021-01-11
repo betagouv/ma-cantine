@@ -21,7 +21,10 @@
           <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
             <h3>{{subMeasure.title}}</h3>
             <SectorTags :tags="subMeasure.tags"/>
-            <p class="deadline" v-if="subMeasure.deadline">{{subMeasure.deadline}}</p>
+            <p class="deadline" v-if="subMeasure.deadline">
+              <span class="deadline-emoji">📅 </span>
+              {{subMeasure.deadline}}
+            </p>
             <div class="description-container">
               <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
               <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
@@ -123,8 +126,7 @@ h2 {
   line-height: 31px;
 }
 
-.deadline::before {
-  content: "📅 ";
+.deadline-emoji {
   font-style: normal;
 }
 
