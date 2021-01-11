@@ -212,7 +212,7 @@ export default {
             {
               id: "cinquante",
               title: "Au moins 50 % de produits de qualité et durables...",
-              htmlDescription: "Les produits bénéficiant des autres signes officiels d’identification de la qualité et de l’origine (SIQO) ou des mentions valorisantes suivants : le <b>Label rouge</b>, l’<b>appellation d’origine (AOC/AOP)</b>, l’<b>indication géographique (IGP)</b>, la <b>Spécialité traditionnelle garantie (STG)</b>, la mention « issu d’une exploitation à <b>Haute Valeur Environnementale</b> » (HVE), la mention <b>« fermier » ou « produit de la ferme » ou « produit à la ferme »</b>, uniquement pour les produits pour lesquels existe une définition réglementaire des conditions de production*, l’<b>écolabel pêche durable, logo « Région ultrapériphérique » (RUP)</b>."
+              htmlDescription: "Les produits bénéficiant des autres signes officiels d’identification de la qualité et de l’origine (SIQO) ou des mentions valorisantes suivants : le <b>Label rouge</b>, l’<b>appellation d’origine (AOC/AOP)</b>, l’<b>indication géographique (IGP)</b>, la <b>Spécialité traditionnelle garantie (STG)</b>, la mention « issu d’une exploitation à <b>Haute Valeur Environnementale</b> » (HVE), la mention <b>« fermier » ou « produit de la ferme » ou « produit à la ferme »</b>, uniquement pour les produits pour lesquels existe une définition réglementaire des conditions de production, l’<b>écolabel pêche durable, logo « Région ultrapériphérique » (RUP)</b>."
             },
             {
               id: "vingt",
