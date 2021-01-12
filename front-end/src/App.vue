@@ -20,10 +20,15 @@ export default {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+@font-face {
+  font-family: "Marianne";
+  src: local("Marianne"),
+    url('~@/assets/fonts/Marianne/Marianne-Regular.woff2') format("woff2"),
+    url('~@/assets/fonts/Marianne/Marianne-Regular.woff') format("woff");
+}
 
 #app {
-  font-family: Raleway, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Marianne, Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
