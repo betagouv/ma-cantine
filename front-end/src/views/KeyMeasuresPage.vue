@@ -194,9 +194,11 @@ import SectorTags from '@/components/SectorTags.vue'
 import keyMeasures from '@/data/key-measures.json'
 
 export default {
+  components: {
+    SectorTags
+  },
   data() {
     return {
-      SectorTags,
       keyMeasures
     };
   },
