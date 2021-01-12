@@ -107,6 +107,9 @@ p.discover-measure {
   line-height: 23px;
   text-align: center;
   color: rgba(255, 255, 255, 0.867527);
+
+  /* TODO: supprimer quand on a le lien */
+  display: none;
 }
 </style>
 
