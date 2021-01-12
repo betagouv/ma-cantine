@@ -5,12 +5,12 @@
       <h3>Les mesures phares de la loi EGAlim</h3>
       <h4>Découvrez les échéances de chaque mesure et des ressources pour vous aider à atteindre vos objectifs.</h4>
       <ol id="measures-list">
-        <a href="" class="measure-link">
+        <router-link v-for="measure in keyMeasures" :key="measure.id" :to="{ name: 'KeyMeasuresPage', hash: '#'+measure.id }" class="measure-link">
           <li class="measure-item">
-            <p class="measure-title">🍎 Au moins 50% de produits de qualité et durables dont 20% de bio</p>
+            <p class="measure-title">{{measure.title}}</p>
             <p class="discover-measure">→ En savoir plus</p>
           </li>
-        </a>
+        </router-link>
       </ol>
       <a id="download-documentation" download href="">Télécharger la documentation complète</a>
     </div>
@@ -41,6 +41,7 @@
 
 #measures-list {
   padding: 0;
+  display: flex;
 }
 
 a.measure-link {
@@ -57,6 +58,7 @@ a.measure-link {
   padding: 36px 16px;
   text-align: left;
   position: relative;
+  margin: 0 1em;
 }
 
 p.measure-title {
@@ -93,3 +95,15 @@ p.discover-measure {
 }
 
 </style>
+
+<script>
+import keyMeasures from '@/data/key-measures.json'
+
+export default {
+  data() {
+    return {
+      keyMeasures
+    };
+  }
+}
+</script>
