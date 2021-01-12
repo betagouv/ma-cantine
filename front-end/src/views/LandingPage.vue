@@ -3,7 +3,7 @@
     <h1>Welcome</h1>
     <div id="discover-measures">
       <h3>Les mesures phares de la loi EGAlim</h3>
-      <h4>Découvrez les échéances de chaque mesure et des ressources h4our vous aider à atteindre vos objectifs.</h4>
+      <h4>Découvrez les échéances de chaque mesure et des ressources pour vous aider à atteindre vos objectifs.</h4>
       <ol id="measures-list">
         <a href="" class="measure-link">
           <li class="measure-item">
