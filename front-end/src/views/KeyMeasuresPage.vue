@@ -55,14 +55,17 @@
   justify-content: space-around;
   padding: 5em 10em;
 }
+
 #banner-content {
   width: 60%;
 }
+
 h1 {
   font-size: 37px;
   color: rgba(64,64,64,0.87);
   font-weight: 700;
 }
+
 #actions {
   display: flex;
   justify-content: space-evenly;
@@ -70,6 +73,7 @@ h1 {
   /* TODO: supprimer ça quand on a des liens */
   display: none;
 }
+
 #guide-download {
   border-radius: 25px;
   background: rgb(0,191,113);
@@ -79,87 +83,107 @@ h1 {
   font-weight: 700;
   font-size: 14px;
 }
+
 #about-cnrc {
   text-decoration: none;
   color: rgba(64,64,64,0.87);
   font-weight: 400;
   font-size: 17px;
 }
+
 #about-cnrc:visited {
   color: rgba(64,64,64,0.87);
 }
+
 /* measures styling */
 .measure {
   display: flex;
   overflow: hidden;
   align-items: center;
 }
+
 .measure-content {
   margin: 2em;
 }
+
 .decorative-image {
   width: 20%;
 }
+
 p.measure-x {
   font-weight: 400;
   margin-bottom: 0;
   font-size: 24px;
 }
+
 h2 {
   font-size: 32px;
   font-weight: 700;
 }
+
 .deadline {
   font-size: 18px;
   font-style: italic;
   font-weight: 400;
   line-height: 31px;
 }
+
 .deadline-emoji {
   font-style: normal;
 }
+
 h3 {
   font-size: 20px;
   font-weight: 400;
   line-height: 23px;
 }
+
 .description {
   font-size: 14px;
   font-weight: 400;
   line-height: 18px;
   white-space: pre-wrap;
 }
+
 #logos {
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
+
 #logos > img {
   max-height: 75px;
 }
+
 #vingt div.description-container {
   display: flex;
   align-items: center;
 }
+
 #eurofeuille {
   max-height: 66px;
   margin-left: 71px;
 }
+
 /* alternating alignment of measures content left and right */
 #qualite-durable, #contre-gaspillage, #plastiques {
   text-align: left;
 }
+
 #information, #diversification {
   text-align: right;
   flex-direction: row-reverse;
 }
+
 #information .tags, #diversification .tags {
   justify-content: flex-end;
 }
+
 #information div img, #diversification div img {
   position: relative;
   right: 250px;
 }
+
 </style>
 
 <script>
