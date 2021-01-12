@@ -34,7 +34,7 @@
           </div>
         </div>
         <div class="decorative-image">
-          <img :src="measure.image" alt=""/>
+          <img :src="images[measure.id]" alt=""/>
         </div>
       </div>
     </div>
@@ -182,12 +182,17 @@ import keyMeasures from '@/data/key-measures.json'
 
 export default {
   data() {
-    keyMeasures.forEach((measure) => 
-      measure.image = require('@/assets/background/'+measure.image)
-    );
     return {
-      keyMeasures: keyMeasures
-    }
+      keyMeasures
+    };
   },
+  computed: {
+    images() {
+      let images = {};
+      keyMeasures.forEach((measure) =>
+        images[measure.id] = require('@/assets/background/'+measure.image));
+      return images;
+    }
+  }
 }
 </script>
