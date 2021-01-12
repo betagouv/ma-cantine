@@ -21,22 +21,7 @@ const tagsInfo = {
 export default {
   name: "SectorTags",
   props: {
-    tags: {
-      type: Array,
-      validator(value) {
-        let pass = false;
-        if (value) {
-          pass = value.every((v) => v in tagsInfo);
-          if (!pass) {
-            console.error(
-              "No information provided for tags: ",
-              value.filter((v) => !(v in tagsInfo))
-            );
-          }
-        }
-        return pass;
-      },
-    },
+    tags: Array
   },
   data() {
     return {
