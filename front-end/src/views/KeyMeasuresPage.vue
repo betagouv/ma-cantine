@@ -70,6 +70,9 @@ h1 {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+
+  /* TODO: supprimer ça quand on a des liens */
+  display: none;
 }
 
 #guide-download {
