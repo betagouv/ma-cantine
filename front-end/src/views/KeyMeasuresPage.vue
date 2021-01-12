@@ -17,7 +17,10 @@
           <p class="measure-x">MESURE {{idx + 1}}</p>
           <h2>{{measure.title}}</h2>
           <SectorTags :tags="measure.tags"/>
-          <p class="deadline" v-if="measure.deadline">{{measure.deadline}}</p>
+            <p class="deadline" v-if="measure.deadline">
+              <span class="deadline-emoji">📅 </span>
+              {{measure.deadline}}
+            </p>
           <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
             <h3>{{subMeasure.title}}</h3>
             <SectorTags :tags="subMeasure.tags"/>
