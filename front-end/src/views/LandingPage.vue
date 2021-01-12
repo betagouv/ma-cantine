@@ -3,16 +3,26 @@
     <h1>Welcome</h1>
     <div id="discover-measures">
       <h3>Les mesures phares de la loi EGAlim</h3>
-      <h4>Découvrez les échéances de chaque mesure et des ressources pour vous aider à atteindre vos objectifs.</h4>
+      <h4>
+        Découvrez les échéances de chaque mesure et des ressources pour vous
+        aider à atteindre vos objectifs.
+      </h4>
       <ol id="measures-list">
-        <router-link v-for="measure in keyMeasures" :key="measure.id" :to="{ name: 'KeyMeasuresPage', hash: '#'+measure.id }" class="measure-link">
+        <router-link
+          v-for="measure in keyMeasures"
+          :key="measure.id"
+          :to="{ name: 'KeyMeasuresPage', hash: '#' + measure.id }"
+          class="measure-link"
+        >
           <li class="measure-item">
-            <p class="measure-title">{{measure.title}}</p>
+            <p class="measure-title">{{ measure.title }}</p>
             <p class="discover-measure">→ En savoir plus</p>
           </li>
         </router-link>
       </ol>
-      <a id="download-documentation" download href="">Télécharger la documentation complète</a>
+      <a id="download-documentation" download href="">
+        Télécharger la documentation complète
+      </a>
     </div>
   </div>
 </template>
@@ -29,52 +39,57 @@
   font-weight: bold;
   font-size: 37px;
   text-align: center;
-  color: #EB5B25;
+  color: #eb5b25;
+  margin: 0.8em 0;
 }
 
 #discover-measures > h4 {
   font-size: 22px;
   text-align: center;
   color: #808080;
-  max-width: 872px;
+  max-width: 30em;
+  margin: 0.5px 0;
 }
 
 #measures-list {
   padding: 0;
+  margin: 5em 0;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  list-style: none;
 }
 
 a.measure-link {
   text-decoration: none;
+  margin: 0.5em 0.7em;
 }
 
 .measure-item {
-  list-style: none;
   background: rgba(240, 207, 137, 0.3);
   border-radius: 22px;
-  height: 240px;
-  width: 196px;
+  height: 10em;
+  width: 10em;
   border-radius: 22px;
-  padding: 36px 16px;
+  padding: 2em 1em;
   text-align: left;
   position: relative;
-  margin: 0 1em;
+}
+
+div.measure-text {
+  height: 100%;
 }
 
 p.measure-title {
-  position: static;
-  left: 8.16%;
-  right: 8.16%;
-  top: 15%;
-
   font-weight: bold;
   font-size: 16px;
   color: #333333;
+  margin: 0;
 }
 
 p.discover-measure {
   position: absolute;
-  bottom: 15%;
+  bottom: 2em;
 
   font-size: 16px;
   color: #333333;
@@ -83,7 +98,7 @@ p.discover-measure {
 #download-documentation {
   width: 423px;
   border-radius: 50px;
-  background: #EB5B25;
+  background: #eb5b25;
   padding: 1em 0;
 
   text-decoration: none;
@@ -93,17 +108,16 @@ p.discover-measure {
   text-align: center;
   color: rgba(255, 255, 255, 0.867527);
 }
-
 </style>
 
 <script>
-import keyMeasures from '@/data/key-measures.json'
+import keyMeasures from "@/data/key-measures.json";
 
 export default {
   data() {
     return {
-      keyMeasures
+      keyMeasures,
     };
-  }
-}
+  },
+};
 </script>
