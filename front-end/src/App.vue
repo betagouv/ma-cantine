@@ -15,7 +15,13 @@ export default {
   components: {
     TheNavbar,
     TheFooter,
-  }
+  },
+  watch: {
+    '$route' (to) {
+      const suffix = "ma-cantine.beta.gouv.fr";
+      document.title = to.meta.title ? to.meta.title + " - " + suffix : suffix;
+    }
+  },
 }
 </script>
 
