@@ -40,24 +40,27 @@
   </div>
 
   <div id="goal">
-    <h2>Les enjeux de la loi EGAlim en restauration collective</h2>
     <div class="goal-information">
-      Issu des Etats Généraux de l'Alimentation (EGA), la loi EGAlim pour
-      l’équilibre des relations commerciales dans le secteur agricole et une
-      alimentation saine et durable du 30 octobre 2018 (entrée en vigueur progressive).
-      Elle utilise la restauration collective et ses 3 milliards de repas par an
-      comme levier de la transition agricole et alimentaire.
+      La restauration collective représente <b>3 milliards de repas par an !</b>
+      Ces repas sont un levier de transition agricole et alimentaire fort.
+    </div>
+    <h3>Les enjeux pour la restauration collective</h3>
+    <div class="goal-list">
+      <ul>La loi EGAlim est issue des États Généraux de l'Alimentation (EGA). Elle permet :
+        <li>✔️ <b>l'équilibre des relations</b> commerciales dans le secteur agricole.</li>
+        <li>✔️ une entrée en vigueur progressive d'<b>une alimentation saine et durable</b></li>
+      </ul>
     </div>
   </div>
 
   <div class="divider"></div>
 
   <div id="discover-measures">
-    <h3>Les mesures phares de la loi EGAlim</h3>
-    <h4>
+    <h4>Les mesures phares de la loi EGAlim</h4>
+    <h5>
       Découvrez les échéances de chaque mesure et des ressources pour vous
       aider à atteindre vos objectifs.
-    </h4>
+    </h5>
     <ol id="measures-list">
       <router-link
         v-for="measure in keyMeasures"
@@ -146,11 +149,31 @@ h1, h2 {
   max-width: 1200px;
 }
 
-.goal-information {
+h3 {
   font-weight: bold;
-  font-size: 22px;
-  line-height: 31px;
-  color: rgba(0, 0, 0, 0.33);
+  font-size: 37px;
+  line-height: 52px;
+  color: #748852;
+}
+
+.goal-information {
+  width: 850px;
+  padding: 24px;
+  border-radius: 20px;
+  margin: auto;
+  text-align: left;
+  color: #748852;
+  background-color: rgba(185, 195, 168, 0.3);
+  font-size: 20px;
+}
+
+.goal-list {
+  width: 850px;
+  margin: auto;
+  margin-top: 30px;
+  text-align: left;
+  font-size: 20px;
+  line-height: 35px;
 }
 
 .divider {
@@ -165,7 +188,7 @@ h1, h2 {
   margin: 70px 0;
 }
 
-#discover-measures > h3 {
+#discover-measures > h4 {
   font-weight: bold;
   font-size: 37px;
   text-align: center;
@@ -173,7 +196,7 @@ h1, h2 {
   margin: 0.8em 0;
 }
 
-#discover-measures > h4 {
+#discover-measures > h5 {
   font-size: 22px;
   text-align: center;
   color: #808080;
