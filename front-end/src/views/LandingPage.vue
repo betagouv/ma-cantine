@@ -15,25 +15,26 @@
     <img src="@/assets/toque.svg" class="presentation-right-image">
   </div>
 
-  <div id="key-goals">
-    <div class="key-goal">
-      <img src="@/assets/checklist.png">
-      <div>
-        Assurer l’équilibre des relations commerciales dans le secteur agricole
-        et alimentaire et la juste rémunération des agriculteurs.
+  <div id="main-goal">
+    <h2>Les objectifs de la loi EGAlim</h2>
+    <div id="key-goals">
+      <div class="key-goal">
+        <img src="@/assets/broco.png">
+        <div>
+          Promouvoir une alimentation saine et respectueuse de l'environnement.
+        </div>
       </div>
-    </div>
-    <div class="key-goal">
-      <img src="@/assets/broco.png">
-      <div>
-        Promouvoir des choix alimentaires favorables pour la santé et respectueux
-        de l’environnement.
+      <div class="key-goal">
+        <img src="@/assets/convive.png">
+        <div>
+          Réduire les inégalités d'accès à une alimentation durable et de qualité.
+        </div>
       </div>
-    </div>
-    <div class="key-goal">
-      <img src="@/assets/convive.png">
-      <div>
-        Réduire les inégalités d’accès à une alimentation de qualité et durable.
+      <div class="key-goal">
+        <img src="@/assets/checklist.png">
+        <div>
+          Assurer la juste rémunération des agriculteurs du secteur agricole.
+        </div>
       </div>
     </div>
   </div>
@@ -116,20 +117,23 @@ h1, h2 {
   height: 400px;
 }
 
+#main-goal {
+  margin-top: 50px;
+  background-color: #FDEFE9;
+  padding: 30px;
+}
+
 #key-goals {
   display: flex;
-  justify-content: space-around;
-  background-color: #F7B48E;
-  padding: 30px;
-  margin-top: 50px;
+  justify-content: space-evenly;
+  margin: 30px 0;
 }
 
 .key-goal {
   width: 250px;
-  font-size: 16px;
-  line-height: 16px;
-  font-weight: bold;
-  color: white;
+  font-size: 20px;
+  line-height: 20px;
+  color: #333333;
 }
 
 .key-goal > img {
