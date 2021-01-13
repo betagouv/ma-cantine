@@ -56,6 +56,8 @@
     </div>
   </div>
 
+  <div class="divider"></div>
+
   <div id="discover-measures">
     <h3>Les mesures phares de la loi EGAlim</h3>
     <h4>
@@ -159,8 +161,7 @@ h1, h2 {
 }
 
 #goal {
-  margin: auto;
-  margin-top: 70px;
+  margin: 70px auto;
   max-width: 1200px;
 }
 
@@ -169,6 +170,11 @@ h1, h2 {
   font-size: 22px;
   line-height: 31px;
   color: rgba(0, 0, 0, 0.33);
+}
+
+.divider {
+  height: 50px;
+  background-image: url('../assets/divider-section.png');
 }
 
 #discover-measures {
