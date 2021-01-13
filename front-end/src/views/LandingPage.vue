@@ -1,22 +1,15 @@
 <template>
   <div id="presentation">
     <div class="presentation-content">
-      <h1>Mes approvisionnements sont-ils compatibles avec EGAlim ?</h1>
-      <div class="presentation-information">
-        <img src="@/assets/plate.png" class="presentation-left-image">
-        <div class="presentation-details">
-          <div>
-            Une des mesures-phare de la loi : à horizon 2022, au moins 50 % de produits
-            de qualité et durables, dont au moins 20 % de produits biologiques dans
-            les repas servis de votre cantine scolaire en gestion directe.
-          </div>
-          <div>
-            <b>Vous êtes acheteur.ses et désirez savoir où vous en êtes dès aujourd’hui ?</b>
-          </div>
-          <div class="presentation-diagnostic">
-            (bientôt disponible)
-          </div>
-        </div>
+      <h1>Approvisionner ma cantine en denrées de qualité</h1>
+      <div>
+        La loi EGAlim vise à apporter une alimentation saine, de qualité et plus durable dans nos assiettes.
+      </div>
+      <div>
+        Vous êtes en charge de l'approvisionnement d'une restauration collective ?
+      </div>
+      <div class="presentation-diagnostic">
+        (bientôt disponible)
       </div>
     </div>
     <img src="@/assets/toque.svg" class="presentation-right-image">
@@ -91,52 +84,36 @@
 }
 
 .presentation-content {
-  width: 800px;
+  text-align: left;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.60);
 }
 
 h1, h2 {
   font-weight: bold;
   font-size: 37px;
   line-height: 52px;
-  color: rgba(64, 64, 64, 0.85);
-}
-
-.presentation-information {
-  display: flex;
-  justify-content: space-around;
-}
-
-.presentation-left-image {
-  width: 250px;
-  height: 250px;
-}
-
-.presentation-details {
-  width: 450px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  font-weight: 600;
-  font-size: 17px;
-  line-height: 22px;
-  color: rgba(0, 0, 0, 0.58);
+  color: #EB5B25;
 }
 
 .presentation-diagnostic {
-  margin: 0 15%;
+  text-align: center;
+  max-width: 400px;
   height: 50px;
   line-height: 50px;
   color: white;
   background-color: #EB5B25;
   border-radius: 50px;
+  font-weight: bold;
 }
 
 .presentation-right-image {
   width: 450px;
-  height: 450px;
+  height: 400px;
 }
 
 #key-goals {
