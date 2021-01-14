@@ -219,6 +219,7 @@ a.measure-link {
 }
 
 .measure-item {
+  border: 1px solid rgba(240, 207, 137, 0.3);
   background: rgba(240, 207, 137, 0.3);
   border-radius: 22px;
   height: 10em;
@@ -227,6 +228,12 @@ a.measure-link {
   padding: 2em 1em;
   text-align: left;
   position: relative;
+  transition: all ease .25s;
+}
+
+.measure-item:hover {
+  border-color: #eb5b25;
+  transform: scale(1.02);
 }
 
 div.measure-text {
