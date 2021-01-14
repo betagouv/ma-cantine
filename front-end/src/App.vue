@@ -1,7 +1,9 @@
 <template>
   <TheNavbar/>
 
-  <router-view/>
+  <div id="router-view">
+    <router-view/>
+  </div>
 
   <TheFooter/>
 </template>
@@ -39,6 +41,10 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+#router-view {
+  margin-top: 100px;
 }
 
 ul {
