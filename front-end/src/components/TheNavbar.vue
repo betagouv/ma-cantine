@@ -27,10 +27,15 @@ a {
 }
 
 #navbar {
+  top: 0;
+  z-index: 1000;
+  position: fixed;
+  width: 96%;
+  padding: 10px 2%;
   display: flex;
   justify-content: space-between;
-  padding: 10px 50px;
   border-bottom: 1px solid #E1E1E1;
+  background-color: white;
 }
 
 #goto-landing {
