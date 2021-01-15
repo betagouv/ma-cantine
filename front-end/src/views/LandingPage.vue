@@ -19,15 +19,15 @@
     <h2>Les objectifs de la loi EGAlim</h2>
     <div id="key-goals">
       <div class="key-goal">
-        <img src="@/assets/broco.png">
+        <img src="@/assets/broco.png" alt="">
         <p>Promouvoir une alimentation saine et respectueuse de l'environnement.</p>
       </div>
       <div class="key-goal">
-        <img src="@/assets/convive.png">
+        <img src="@/assets/convive.png" alt="">
         <p>Réduire les inégalités d'accès à une alimentation durable et de qualité.</p>
       </div>
       <div class="key-goal">
-        <img src="@/assets/checklist.png">
+        <img src="@/assets/checklist.png" alt="">
         <p>Assurer la juste rémunération des agriculteurs du secteur agricole.</p>
       </div>
     </div>
