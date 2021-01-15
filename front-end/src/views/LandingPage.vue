@@ -1,67 +1,60 @@
 <template>
   <div id="presentation">
     <div class="presentation-content">
-      <h1>Mes approvisionnements sont-ils compatibles avec EGAlim ?</h1>
-      <div class="presentation-information">
-        <img src="@/assets/plate.png" class="presentation-left-image">
-        <div class="presentation-details">
-          <div>
-            Une des mesures-phare de la loi : à horizon 2022, au moins 50 % de produits
-            de qualité et durables, dont au moins 20 % de produits biologiques dans
-            les repas servis de votre cantine scolaire en gestion directe.
-          </div>
-          <div>
-            <b>Vous êtes acheteur.ses et désirez savoir où vous en êtes dès aujourd’hui ?</b>
-          </div>
-          <div class="presentation-diagnostic">
-            (bientôt disponible)
-          </div>
-        </div>
-      </div>
+      <h1>Approvisionner ma cantine en denrées de qualité</h1>
+      <p>
+        La loi EGAlim vise à apporter une alimentation saine, de qualité et plus durable dans nos assiettes.
+      </p>
+      <p>
+        Vous êtes en charge de l'approvisionnement d'une restauration collective ?
+      </p>
+      <a :href="`${publicPath}Diagnostic approvisionnement (ma-cantine-alpha) v0.1.ods`" download class="presentation-diagnostic">
+        Télécharger notre calculateur
+      </a>
     </div>
     <img src="@/assets/toque.svg" class="presentation-right-image">
   </div>
 
-  <div id="key-goals">
-    <div class="key-goal">
-      <img src="@/assets/checklist.png">
-      <div>
-        Assurer l’équilibre des relations commerciales dans le secteur agricole
-        et alimentaire et la juste rémunération des agriculteurs.
+  <div id="main-goal">
+    <h2>Les objectifs de la loi EGAlim</h2>
+    <div id="key-goals">
+      <div class="key-goal">
+        <img src="@/assets/broco.png" alt="">
+        <p>Promouvoir une alimentation saine et respectueuse de l'environnement.</p>
       </div>
-    </div>
-    <div class="key-goal">
-      <img src="@/assets/broco.png">
-      <div>
-        Promouvoir des choix alimentaires favorables pour la santé et respectueux
-        de l’environnement.
+      <div class="key-goal">
+        <img src="@/assets/convive.png" alt="">
+        <p>Réduire les inégalités d'accès à une alimentation durable et de qualité.</p>
       </div>
-    </div>
-    <div class="key-goal">
-      <img src="@/assets/convive.png">
-      <div>
-        Réduire les inégalités d’accès à une alimentation de qualité et durable.
+      <div class="key-goal">
+        <img src="@/assets/checklist.png" alt="">
+        <p>Assurer la juste rémunération des agriculteurs du secteur agricole.</p>
       </div>
     </div>
   </div>
 
   <div id="goal">
-    <h2>Les enjeux de la loi EGAlim en restauration collective</h2>
     <div class="goal-information">
-      Issu des Etats Généraux de l'Alimentation (EGA), la loi EGAlim pour
-      l’équilibre des relations commerciales dans le secteur agricole et une
-      alimentation saine et durable du 30 octobre 2018 (entrée en vigueur progressive).
-      Elle utilise la restauration collective et ses 3 milliards de repas par an
-      comme levier de la transition agricole et alimentaire.
+      La restauration collective représente <b>3 milliards de repas par an !</b>
+      Ces repas sont un levier de transition agricole et alimentaire fort.
+    </div>
+    <h3>Les enjeux pour la restauration collective</h3>
+    <div class="goal-list">
+      <ul>La loi EGAlim est issue des États Généraux de l'Alimentation (EGA). Elle permet :
+        <li>✔️ <b>l'équilibre des relations</b> commerciales dans le secteur agricole.</li>
+        <li>✔️ une entrée en vigueur progressive d'<b>une alimentation saine et durable</b></li>
+      </ul>
     </div>
   </div>
 
+  <div class="divider"></div>
+
   <div id="discover-measures">
-    <h3>Les mesures phares de la loi EGAlim</h3>
-    <h4>
+    <h4>Les mesures phares de la loi EGAlim</h4>
+    <h5>
       Découvrez les échéances de chaque mesure et des ressources pour vous
       aider à atteindre vos objectifs.
-    </h4>
+    </h5>
     <ol id="measures-list">
       <router-link
         v-for="measure in keyMeasures"
@@ -89,68 +82,60 @@
 }
 
 .presentation-content {
-  width: 800px;
+  text-align: left;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.60);
 }
 
 h1, h2 {
   font-weight: bold;
   font-size: 37px;
   line-height: 52px;
-  color: rgba(64, 64, 64, 0.85);
+  color: #EB5B25;
 }
 
-.presentation-information {
-  display: flex;
-  justify-content: space-around;
-}
-
-.presentation-left-image {
-  width: 250px;
-  height: 250px;
-}
-
-.presentation-details {
-  width: 450px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  font-weight: 600;
-  font-size: 17px;
-  line-height: 22px;
-  color: rgba(0, 0, 0, 0.58);
+p {
+  margin: 0;
 }
 
 .presentation-diagnostic {
-  margin: 0 15%;
+  text-align: center;
+  max-width: 400px;
   height: 50px;
   line-height: 50px;
   color: white;
   background-color: #EB5B25;
   border-radius: 50px;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 .presentation-right-image {
   width: 450px;
-  height: 450px;
+  height: 400px;
+}
+
+#main-goal {
+  margin-top: 50px;
+  background-color: #FDEFE9;
+  padding: 30px;
 }
 
 #key-goals {
   display: flex;
-  justify-content: space-around;
-  background-color: #F7B48E;
-  padding: 30px;
-  margin-top: 50px;
+  justify-content: space-evenly;
+  margin: 30px 0;
 }
 
 .key-goal {
   width: 250px;
-  font-size: 16px;
-  line-height: 16px;
-  font-weight: bold;
-  color: white;
+  font-size: 20px;
+  line-height: 20px;
+  color: #333333;
 }
 
 .key-goal > img {
@@ -159,16 +144,40 @@ h1, h2 {
 }
 
 #goal {
-  margin: auto;
-  margin-top: 70px;
+  margin: 70px auto;
   max-width: 1200px;
 }
 
-.goal-information {
+h3 {
   font-weight: bold;
-  font-size: 22px;
-  line-height: 31px;
-  color: rgba(0, 0, 0, 0.33);
+  font-size: 37px;
+  line-height: 52px;
+  color: #748852;
+}
+
+.goal-information {
+  width: 850px;
+  padding: 24px;
+  border-radius: 20px;
+  margin: auto;
+  text-align: left;
+  color: #748852;
+  background-color: rgba(185, 195, 168, 0.3);
+  font-size: 20px;
+}
+
+.goal-list {
+  width: 850px;
+  margin: auto;
+  margin-top: 30px;
+  text-align: left;
+  font-size: 20px;
+  line-height: 35px;
+}
+
+.divider {
+  height: 50px;
+  background-image: url('../assets/divider-section.png');
 }
 
 #discover-measures {
@@ -178,7 +187,7 @@ h1, h2 {
   margin: 70px 0;
 }
 
-#discover-measures > h3 {
+#discover-measures > h4 {
   font-weight: bold;
   font-size: 37px;
   text-align: center;
@@ -186,7 +195,7 @@ h1, h2 {
   margin: 0.8em 0;
 }
 
-#discover-measures > h4 {
+#discover-measures > h5 {
   font-size: 22px;
   text-align: center;
   color: #808080;
@@ -209,6 +218,7 @@ a.measure-link {
 }
 
 .measure-item {
+  border: 1px solid rgba(240, 207, 137, 0.3);
   background: rgba(240, 207, 137, 0.3);
   border-radius: 22px;
   height: 10em;
@@ -217,6 +227,12 @@ a.measure-link {
   padding: 2em 1em;
   text-align: left;
   position: relative;
+  transition: all ease .25s;
+}
+
+.measure-item:hover {
+  border-color: #eb5b25;
+  transform: scale(1.02);
 }
 
 div.measure-text {
@@ -263,6 +279,7 @@ export default {
   data() {
     return {
       keyMeasures,
+      publicPath: process.env.BASE_URL,
     };
   },
 };
