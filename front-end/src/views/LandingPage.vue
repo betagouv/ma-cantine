@@ -95,7 +95,7 @@ h1, h2 {
   font-weight: bold;
   font-size: 37px;
   line-height: 52px;
-  color: #EB5B25;
+  color: $orange;
 }
 
 p {
@@ -108,7 +108,7 @@ p {
   height: 50px;
   line-height: 50px;
   color: white;
-  background-color: #EB5B25;
+  background-color: $orange;
   border-radius: 50px;
   font-weight: bold;
   text-decoration: none;
@@ -191,7 +191,7 @@ h3 {
   font-weight: bold;
   font-size: 37px;
   text-align: center;
-  color: #eb5b25;
+  color: $orange;
   margin: 0.8em 0;
 }
 
@@ -231,7 +231,7 @@ a.measure-link {
 }
 
 .measure-item:hover {
-  border-color: #eb5b25;
+  border-color: $orange;
   transform: scale(1.02);
 }
 
@@ -257,7 +257,7 @@ p.discover-measure {
 #download-documentation {
   width: 423px;
   border-radius: 50px;
-  background: #eb5b25;
+  background: $orange;
   padding: 1em 0;
 
   text-decoration: none;
