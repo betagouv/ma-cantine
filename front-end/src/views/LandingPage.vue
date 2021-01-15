@@ -2,12 +2,12 @@
   <div id="presentation">
     <div class="presentation-content">
       <h1>Approvisionner ma cantine en denrées de qualité</h1>
-      <div>
+      <p>
         La loi EGAlim vise à apporter une alimentation saine, de qualité et plus durable dans nos assiettes.
-      </div>
-      <div>
+      </p>
+      <p>
         Vous êtes en charge de l'approvisionnement d'une restauration collective ?
-      </div>
+      </p>
       <div class="presentation-diagnostic">
         (bientôt disponible)
       </div>
@@ -20,21 +20,15 @@
     <div id="key-goals">
       <div class="key-goal">
         <img src="@/assets/broco.png">
-        <div>
-          Promouvoir une alimentation saine et respectueuse de l'environnement.
-        </div>
+        <p>Promouvoir une alimentation saine et respectueuse de l'environnement.</p>
       </div>
       <div class="key-goal">
         <img src="@/assets/convive.png">
-        <div>
-          Réduire les inégalités d'accès à une alimentation durable et de qualité.
-        </div>
+        <p>Réduire les inégalités d'accès à une alimentation durable et de qualité.</p>
       </div>
       <div class="key-goal">
         <img src="@/assets/checklist.png">
-        <div>
-          Assurer la juste rémunération des agriculteurs du secteur agricole.
-        </div>
+        <p>Assurer la juste rémunération des agriculteurs du secteur agricole.</p>
       </div>
     </div>
   </div>
@@ -102,6 +96,10 @@ h1, h2 {
   font-size: 37px;
   line-height: 52px;
   color: #EB5B25;
+}
+
+p {
+  margin: 0;
 }
 
 .presentation-diagnostic {
