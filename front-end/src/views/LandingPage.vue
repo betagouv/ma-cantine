@@ -8,9 +8,9 @@
       <p>
         Vous êtes en charge de l'approvisionnement d'une restauration collective ?
       </p>
-      <div class="presentation-diagnostic">
-        (bientôt disponible)
-      </div>
+      <a :href="`${publicPath}Diagnostic approvisionnement (ma-cantine-alpha) v0.1.ods`" download class="presentation-diagnostic">
+        Télécharger notre calculateur
+      </a>
     </div>
     <img src="@/assets/toque.svg" class="presentation-right-image">
   </div>
@@ -111,6 +111,7 @@ p {
   background-color: #EB5B25;
   border-radius: 50px;
   font-weight: bold;
+  text-decoration: none;
 }
 
 .presentation-right-image {
@@ -278,6 +279,7 @@ export default {
   data() {
     return {
       keyMeasures,
+      publicPath: process.env.BASE_URL,
     };
   },
 };
