@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import LandingPage from '@/views/LandingPage.vue';
-import KeyMeasuresPage from '@/views/KeyMeasuresPage.vue';
+import LandingPage from '@/views/LandingPage';
+import KeyMeasuresPage from '@/views/KeyMeasuresPage';
 
 const routes = [
   {

@@ -10,8 +10,8 @@
 
 <script>
 // @ is an alias to /src
-import TheNavbar from '@/components/TheNavbar.vue'
-import TheFooter from '@/components/TheFooter.vue'
+import TheNavbar from '@/components/TheNavbar'
+import TheFooter from '@/components/TheFooter'
 
 export default {
   components: {
