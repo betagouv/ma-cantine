@@ -177,7 +177,7 @@ h3 {
 
 .divider {
   height: 50px;
-  background-image: url('../assets/divider-section.png');
+  background-image: url('../../assets/divider-section.png');
 }
 
 #discover-measures {
