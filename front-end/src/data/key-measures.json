@@ -9,15 +9,14 @@
             "medical",
             "social",
             "creche",
-            "loisirs",
-            "entreprises"
+            "loisirs"
         ],
         "deadline": "1er janvier 2022",
         "subMeasures": [
             {
                 "id": "cinquante",
                 "title": "Au moins 50 % de produits de qualité et durables...",
-                "htmlDescription": "Les produits bénéficiant des autres signes officiels d’identification de la qualité et de l’origine (SIQO) ou des mentions valorisantes suivants : le <b>Label rouge</b>, l’<b>appellation d’origine (AOC/AOP)</b>, l’<b>indication géographique (IGP)</b>, la <b>Spécialité traditionnelle garantie (STG)</b>, la mention « issu d’une exploitation à <b>Haute Valeur Environnementale</b> » (HVE), la mention <b>« fermier » ou « produit de la ferme » ou « produit à la ferme »</b>, uniquement pour les produits pour lesquels existe une définition réglementaire des conditions de production, l’<b>écolabel pêche durable, logo « Région ultrapériphérique » (RUP)</b>."
+                "htmlDescription": "Les produits bénéficiant des autres signes officiels d’identification de la qualité et de l’origine (SIQO) ou des mentions valorisantes suivants : le <b>Label rouge</b>, l’<b>appellation d’origine (AOC/AOP)</b>, l’<b>indication géographique (IGP)</b>, la <b>Spécialité traditionnelle garantie (STG)</b>, la mention « issu d’une exploitation à <b>Haute Valeur Environnementale</b> » (HVE, ou niveau 2 jusqu'en 2029), la mention <b>« fermier » ou « produit de la ferme » ou « produit à la ferme »</b>, uniquement pour les produits pour lesquels existe une définition réglementaire des conditions de production, l’<b>écolabel pêche durable, logo « Région ultrapériphérique » (RUP)</b>, les <b>produits équivalents</b> et ceux <b>acquis selon des modalités prenant en compte les coûts qui sont imputés aux externalités environnementales.</b>."
             },
             {
                 "id": "vingt",
@@ -40,11 +39,10 @@
                     "medical",
                     "social",
                     "creche",
-                    "loisirs",
-                    "entreprises"
+                    "loisirs"
                 ],
-                "deadline": "1er janvier 2022",
-                "description": "Les usagers des restaurants collectifs devront être informés une fois par an, par voie d’affichage et de communication électronique, de la part des produits de qualité et durables."
+                "deadline": "1er janvier 2020",
+                "description": "Les usagers des restaurants collectifs devront être informés une fois par an, par voie d’affichage et de communication électronique, de la part des produits de qualité et durables, ainsi que des démarches issues du commerce équitable."
             },
             {
                 "title": "Information nutritionnelle",
