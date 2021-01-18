@@ -9,11 +9,16 @@
     </div>
     <ul id="tag-filter" class="filter">
       <!-- refactor the button into a component: KeyMeasuresFilterOption -->
-      <li><button type="button" class="filter-button is-active">Tous les secteurs</button></li>
+      <li>
+        <key-measures-filter-button text="Tous les secteurs" :isActive="activeTags.indexOf(allTagsId) > -1" @toggle-activation="toggleActivation(allTagsId)"/>
+      </li>
+      <li v-for="(tag, id) in tags" :key="tag">
+        <key-measures-filter-button :text="tag" :isActive="activeTags.indexOf(id) > -1" @toggle-activation="toggleActivation(id)"/>
+      </li>
     </ul>
     <ul id="deadline-filter" class="filter">
-      <li><button type="button" class="filter-button is-active">Toutes les mesures</button></li>
-      <li><button type="button" class="filter-button">Seulement les mesures à venir</button></li>
+      <li><key-measures-filter-button text="Toutes les mesures" :isActive="true"/></li>
+      <li><key-measures-filter-button text="Seulement les mesures à venir"/></li>
     </ul>
     <div id="measures">
       <div class="measure" v-for="measure in keyMeasures" :key="measure.id" :id="measure.id">
@@ -48,15 +53,6 @@
   text-align: center;
   padding: 1em 1em;
 }
-/* #banner {
-  display: flex;
-  justify-content: space-around;
-  padding: 5em 10em;
-}
-
-#banner-content {
-  width: 60%;
-} */
 
 h1 {
   font-weight: bold;
@@ -82,33 +78,10 @@ p {
 
 .filter {
   display: flex;
-  padding: 0.5em 10%;
-  justify-content: center;
+  padding: 0.5em 5%;
+  justify-content: space-around;
   align-items: center;
-}
-
-.filter-button {
-  border: none;
-  background-color: #fff;
-  cursor: pointer;
-  margin: 0 1em;
-  font-weight: bold;
-  font-size: 22px;
-  /* Dark 1 */
-  color: #333333;
-}
-
-.filter-button.is-active {
-  width: 244px;
-  height: 43px;
-  left: 0px;
-  top: 0px;
-
-  /* Green 3 */
-  background: #F1F3EE;
-  border-radius: 42px;
-  /* Green 1 */
-  color: #748852;
+  flex-wrap: wrap;
 }
 
 #guide-download {
@@ -181,15 +154,23 @@ h3 {
 
 <script>
 import KeyMeasureInfoCard from '@/components/KeyMeasureInfoCard.vue'
+import KeyMeasuresFilterButton from '@/components/KeyMeasuresFilterButton.vue'
 import keyMeasures from '@/data/key-measures.json'
+import tags from '@/data/sector-tags.json'
+
+const allTagsId = 'all';
 
 export default {
   components: {
-    KeyMeasureInfoCard
+    KeyMeasureInfoCard,
+    KeyMeasuresFilterButton
   },
   data() {
     return {
-      keyMeasures
+      keyMeasures,
+      tags,
+      activeTags: [allTagsId],
+      allTagsId
     };
   },
   computed: {
@@ -198,6 +179,27 @@ export default {
       keyMeasures.forEach((measure) =>
         images[measure.id] = require('@/assets/background/'+measure.image));
       return images;
+    }
+  },
+  methods: {
+    toggleActivation(id) {
+      const tagIndex = this.activeTags.indexOf(id);
+      if(tagIndex > -1) { // currently active, want to deactivate
+        this.activeTags.splice(tagIndex, 1);
+        // add back all to avoid losing all text on screen
+        if(this.activeTags.length === 0) {
+          this.activeTags.push(allTagsId);
+        }
+      } else if(id === allTagsId) {
+        // reset to avoid having 'all' and other tags
+        this.activeTags = [allTagsId];
+      } else {
+        this.activeTags.push(id);
+        // remove 'all' to avoid having 'all' and other tags
+        if(this.activeTags.indexOf(allTagsId) > -1) {
+          this.activeTags.splice(this.activeTags.indexOf(allTagsId), 1);
+        }
+      }
     }
   }
 }
