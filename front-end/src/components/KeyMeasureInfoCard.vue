@@ -47,7 +47,7 @@ h4 {
 </style>
 
 <script>
-import tags from "@/data/tags.json";
+import tags from "@/data/sector-tags.json";
 
 export default {
   name: "KeyMeasureInfoCard",
