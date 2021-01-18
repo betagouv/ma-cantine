@@ -1,51 +1,48 @@
 <template>
   <div id="key-measures">
-    <div id="banner">
-      <img src="@/assets/online-groceries.svg" id="groceries" alt="">
-      <div id="banner-content">
-        <h1>Les 5 mesures-phares de la loi EGAlim</h1>
-        <div id="actions">
-          <a id="guide-download" download href="">Télécharger le guide du CNRC</a>
-          <a id="about-cnrc" href="">Qu'est ce que le CNRC ?</a>
-        </div>
-      </div>
-      <img src="@/assets/lighthouse.svg" id="lighthouse" alt="">
+    <h1>Les 5 mesures-phares de la loi EGAlim</h1>
+    <p>Découvrez vos obligations légales selon votre secteur.</p>
+    <!-- remove actions entirely? -->
+    <div id="actions">
+      <a id="guide-download" download href="">Télécharger le guide du CNRC</a>
+      <a id="about-cnrc" href="">Qu'est ce que le CNRC ?</a>
     </div>
+    <ul id="tag-filter" class="filter">
+      <!-- refactor the button into a component: KeyMeasuresFilterOption -->
+      <li><button type="button" class="filter-button is-active">Tous les secteurs</button></li>
+    </ul>
+    <ul id="deadline-filter" class="filter">
+      <li><button type="button" class="filter-button is-active">Toutes les mesures</button></li>
+      <li><button type="button" class="filter-button">Seulement les mesures à venir</button></li>
+    </ul>
     <div id="measures">
-      <div class="measure" v-for="(measure, idx) in keyMeasures" :key="measure.id" :id="measure.id">
+      <div class="measure" v-for="measure in keyMeasures" :key="measure.id" :id="measure.id">
         <div class="measure-content">
-          <p class="measure-x">MESURE {{idx + 1}}</p>
           <h2>{{measure.title}}</h2>
-          <SectorTags :tags="measure.tags"/>
-            <p class="deadline" v-if="measure.deadline">
-              <span class="deadline-emoji">📅 </span>
-              {{measure.deadline}}
-            </p>
-          <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
-            <h3>{{subMeasure.title}}</h3>
-            <SectorTags :tags="subMeasure.tags"/>
-            <p class="deadline" v-if="subMeasure.deadline">
-              <span class="deadline-emoji">📅 </span>
-              {{subMeasure.deadline}}
-            </p>
-            <div class="description-container">
-              <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
-              <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
-              <img v-if="subMeasure.id === 'vingt'" src="@/assets/logos/logo_bio_eurofeuille.png" id="eurofeuille">
+          <div class="measure-details" v-if="measure.tags">
+            <!-- Refactor into own component KeyMeasureInfoCard -->
+            <div class="measure-info-card">
+              <div class="deadline" v-if="measure.deadline">
+                <p>🗓  Entrée en vigeur</p>
+                <p>{{measure.deadline}}</p>
+              </div>
+              <SectorTags :tags="measure.tags"/>
             </div>
-            <div id="logos" v-if="subMeasure.id === 'cinquante'">
-              <img src="@/assets/logos/label-rouge.png" alt="logo Label Rouge"/>
-              <img src="@/assets/logos/Logo-AOC-AOP.png" alt="logo appellation d’origine"/>
-              <img src="@/assets/logos/IGP.png" alt="logo indication géographique"/>
-              <img src="@/assets/logos/STG.png" alt="logo Spécialité traditionnelle garantie"/>
-              <img src="@/assets/logos/hve.png" alt="logo Haute Valeur Environnementale"/>
-              <img src="@/assets/logos/logo_label-peche-durable.png" alt="logo écolabel pêche durable"/>
-              <img src="@/assets/logos/rup.png" alt="logo Région Ultrapériphérique"/>
+            <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
+              <h3>{{subMeasure.title}}</h3>
+              <!-- Add KeyMeasureInfoCard here -->
+              <!-- <SectorTags :tags="subMeasure.tags"/>
+              <p class="deadline" v-if="subMeasure.deadline">
+                <span class="deadline-emoji">📅 </span>
+                {{subMeasure.deadline}}
+              </p> -->
+              <div class="description-container">
+                <!-- Is there a better way to manage the formatting of descriptions now more need HTML? -->
+                <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
+                <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="decorative-image">
-          <img :src="images[measure.id]" alt=""/>
         </div>
       </div>
     </div>
@@ -53,7 +50,11 @@
 </template>
 
 <style scoped>
-#banner {
+#key-measures {
+  text-align: center;
+  padding: 1em 1em;
+}
+/* #banner {
   display: flex;
   justify-content: space-around;
   padding: 5em 10em;
@@ -61,12 +62,20 @@
 
 #banner-content {
   width: 60%;
-}
+} */
 
 h1 {
-  font-size: 37px;
-  color: rgba(64,64,64,0.87);
-  font-weight: 700;
+  font-weight: bold;
+  font-size: 48px;
+  /* Green 1 */
+  color: #748852;
+  margin: 1em 0em;
+}
+
+p {
+  font-size: 18px;
+  /* Dark 1 */
+  color: #333333;
 }
 
 #actions {
@@ -75,6 +84,37 @@ h1 {
   align-items: center;
   /* TODO: supprimer ça quand on a des liens */
   display: none;
+}
+
+.filter {
+  display: flex;
+  padding: 0.5em 10%;
+  justify-content: center;
+  align-items: center;
+}
+
+.filter-button {
+  border: none;
+  background-color: #fff;
+  cursor: pointer;
+  margin: 0 1em;
+  font-weight: bold;
+  font-size: 22px;
+  /* Dark 1 */
+  color: #333333;
+}
+
+.filter-button.is-active {
+  width: 244px;
+  height: 43px;
+  left: 0px;
+  top: 0px;
+
+  /* Green 3 */
+  background: #F1F3EE;
+  border-radius: 42px;
+  /* Green 1 */
+  color: #748852;
 }
 
 #guide-download {
