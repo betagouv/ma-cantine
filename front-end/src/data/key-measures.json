@@ -2,6 +2,7 @@
     {
         "id": "qualite-durable",
         "title": "🍎 Au moins 50% de produits de qualité et durables dont 20% de bio",
+        "description": "La Loi EGAlim encadre la répartition des produits achetés pour la conception des repas.",
         "tags": [
             "scolaire",
             "administration",
@@ -80,6 +81,7 @@
             "loisirs",
             "entreprises"
         ],
+        "deadline": "Depuis 2020",
         "subMeasures": [
             {
                 "title": "Diagnostic et démarches de lutte contre le gaspillage alimentaire",
