@@ -21,20 +21,18 @@
           <h2>{{measure.title}}</h2>
           <div class="measure-details">
             <KeyMeasureInfoCard v-if="measure.tags" :measure="measure"/>
-            <div class="sub-measures">
+            <div class="description-container">
               <p v-if="measure.description">{{measure.description}}</p>
               <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
                 <h3>{{subMeasure.title}}</h3>
                 <!-- Add KeyMeasureInfoCard here -->
-                <!-- <SectorTags :tags="subMeasure.tags"/>
-                <p class="deadline" v-if="subMeasure.deadline">
-                  <span class="deadline-emoji">📅 </span>
-                  {{subMeasure.deadline}}
-                </p> -->
-                <div class="description-container">
-                  <!-- Is there a better way to manage the formatting of descriptions now more need HTML? -->
-                  <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
-                  <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
+                <div class="measure-details">
+                  <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
+                  <div class="description-container">
+                    <!-- Is there a better way to manage the formatting of descriptions now more need HTML? -->
+                    <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
+                    <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -162,7 +160,7 @@ h2 {
   align-items: flex-start;
 }
 
-.sub-measures {
+.description-container {
   flex: 4;
 }
 
