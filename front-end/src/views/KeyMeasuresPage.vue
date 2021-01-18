@@ -21,7 +21,7 @@
       <li><key-measures-filter-button text="Seulement les mesures à venir"/></li>
     </ul>
     <div id="measures">
-      <div class="measure" v-for="measure in keyMeasures" :key="measure.id" :id="measure.id">
+      <div class="measure" v-for="measure in filteredKeyMeasures" :key="measure.id" :id="measure.id">
         <div class="measure-content">
           <h2>{{measure.title}}</h2>
           <div class="measure-details">
@@ -179,6 +179,24 @@ export default {
       keyMeasures.forEach((measure) =>
         images[measure.id] = require('@/assets/background/'+measure.image));
       return images;
+    },
+    filteredKeyMeasures() {
+      const activeTags = this.activeTags;
+      function testTags(measure) {
+        return (measure.tags || []).some((tag) => activeTags.indexOf(tag) > -1);
+      }
+      if(activeTags.indexOf(allTagsId) > -1) {
+        return this.keyMeasures;
+      } else {
+        return this.keyMeasures.filter((measure) => {
+          return testTags(measure) || (measure.subMeasures || []).some(testTags);
+        }).map((measure) => {
+          if(measure.subMeasures) {
+            measure.subMeasures = measure.subMeasures.filter(testTags)
+          }
+          return measure;
+        });
+      }
     }
   },
   methods: {
