@@ -4,7 +4,12 @@
       <h4>🗓 Entrée en vigeur</h4>
       <p>{{ measure.deadline }}</p>
     </div>
-    <SectorTags :tags="measure.tags" />
+    <div class="tags" v-if="measure.tags">
+      <h4>🍽 Pour qui ?</h4>
+      <p class="tag" :class="tag" v-for="tag in measure.tags" :key="tag">
+        {{ tagsInfo[tag] }}
+      </p>
+    </div>
   </div>
 </template>
 
@@ -18,7 +23,7 @@
   margin-right: 2em;
 }
 
-.deadline > h4 {
+h4 {
   margin-top: 0.5em;
   font-weight: bold;
   font-size: 18px;
@@ -31,18 +36,28 @@
   font-size: 14px;
   color: #000000;
 }
+
+.tag {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0.5em 0em;
+  /* Green 1 */
+  color: #748852;
+}
 </style>
 
 <script>
-import SectorTags from "@/components/SectorTags.vue";
+import tags from "@/data/tags.json";
 
 export default {
   name: "KeyMeasureInfoCard",
   props: {
     measure: Object
   },
-  components: {
-    SectorTags,
+  data() {
+    return {
+      tagsInfo: tags
+    }
   },
 };
 </script>
