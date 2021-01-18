@@ -20,14 +20,7 @@
         <div class="measure-content">
           <h2>{{measure.title}}</h2>
           <div class="measure-details">
-            <!-- Refactor into own component KeyMeasureInfoCard -->
-            <div class="measure-info-card" v-if="measure.tags">
-              <div class="deadline" v-if="measure.deadline">
-                <h4>🗓  Entrée en vigeur</h4>
-                <p>{{measure.deadline}}</p>
-              </div>
-              <SectorTags :tags="measure.tags"/>
-            </div>
+            <KeyMeasureInfoCard v-if="measure.tags" :measure="measure"/>
             <div class="sub-measures">
               <p v-if="measure.description">{{measure.description}}</p>
               <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
@@ -169,31 +162,8 @@ h2 {
   align-items: flex-start;
 }
 
-.measure-info-card {
-  max-width: 274px;
-  flex: 1;
-  background: #F1F3EE;
-  border-radius: 15px;
-  padding: 1em 1.5em;
-  margin-right: 2em;
-}
-
 .sub-measures {
   flex: 4;
-}
-
-.deadline > h4 {
-  margin-top: 0.5em;
-  font-weight: bold;
-  font-size: 18px;
-  margin-bottom: 1em;
-  /* Dark 1 */
-  color: #333333;
-}
-
-.deadline > p {
-  font-size: 14px;
-  color: #000000;
 }
 
 h3 {
@@ -212,12 +182,12 @@ h3 {
 </style>
 
 <script>
-import SectorTags from '@/components/SectorTags'
+import KeyMeasureInfoCard from '@/components/KeyMeasureInfoCard.vue'
 import keyMeasures from '@/data/key-measures.json'
 
 export default {
   components: {
-    SectorTags
+    KeyMeasureInfoCard
   },
   data() {
     return {
