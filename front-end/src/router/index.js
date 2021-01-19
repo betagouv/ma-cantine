@@ -13,7 +13,7 @@ const routes = [
     name: 'KeyMeasuresPage',
     component: KeyMeasuresPage,
     meta: {
-      title: "Les 5 mesures-phares de la loi EGAlim"
+      title: "Les 5 mesures phares de la loi EGAlim"
     }
   }
 ];
