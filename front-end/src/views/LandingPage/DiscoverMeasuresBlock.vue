@@ -1,6 +1,6 @@
 <template>
   <div id="discover-measures">
-    <h4>Les mesures-phares de la loi EGAlim</h4>
+    <h4>Les mesures phares de la loi EGAlim</h4>
     <h5>
       Découvrez les échéances de chaque mesure et des ressources pour vous
       aider à atteindre vos objectifs.
