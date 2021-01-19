@@ -100,7 +100,7 @@ p {
 import tags from "@/data/sector-tags.json";
 
 export default {
-  name: "KeyMeasureInfoCard",
+  name: "InfoCard",
   props: {
     measure: Object,
     includeCalculatorCard: Boolean
