@@ -44,6 +44,12 @@ h4 {
   /* Green 1 */
   color: #748852;
 }
+
+@media (max-width: 480px) {
+  .measure-info-card {
+    margin-right: 0em;
+  }
+}
 </style>
 
 <script>
