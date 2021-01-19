@@ -1,6 +1,6 @@
 <template>
   <div id="key-measures">
-    <h1>Les 5 mesures-phares de la loi EGAlim</h1>
+    <h1>Les 5 mesures phares de la loi EGAlim</h1>
     <p>Découvrez vos obligations légales selon votre secteur.</p>
     <!-- remove actions entirely? -->
     <div id="actions">
