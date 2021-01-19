@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: "KeyMeasuresFilterButton",
+  name: "FilterButton",
   props: {
     text: String,
     isActive: Boolean
