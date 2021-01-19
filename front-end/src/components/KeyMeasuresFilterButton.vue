@@ -12,7 +12,7 @@
   padding: 0.5em 1em;
   border-radius: 42px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 18px;
   /* Dark 1 */
   color: #333333;
 }
