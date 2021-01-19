@@ -24,13 +24,13 @@
         <div class="measure-content">
           <h2>{{measure.title}}</h2>
           <div class="measure-details">
-            <KeyMeasureInfoCard v-if="measure.tags" :measure="measure"/>
+            <KeyMeasureCard v-if="measure.tags" :measure="measure" :includeCalculatorCard="measure.id === 'qualite-durable'"/>
             <div class="description-container">
               <p v-if="measure.description">{{measure.description}}</p>
               <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
                 <h3>{{subMeasure.title}}</h3>
                 <div class="measure-details">
-                  <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
+                  <KeyMeasureCard v-if="subMeasure.tags" :measure="subMeasure"/>
                   <!-- refactor to a KeyMeasureDescription, which has all the HTML formatting when switch to fontawesome icons -->
                   <div class="description-container">
                     <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
@@ -191,8 +191,8 @@ h3 {
 </style>
 
 <script>
-import KeyMeasureInfoCard from '@/components/KeyMeasureInfoCard.vue'
-import KeyMeasuresFilterButton from '@/components/KeyMeasuresFilterButton.vue'
+import KeyMeasureCard from '@/components/KeyMeasureCard'
+import KeyMeasuresFilterButton from '@/components/KeyMeasuresFilterButton'
 import keyMeasures from '@/data/key-measures.json'
 import tags from '@/data/sector-tags.json'
 
@@ -200,7 +200,7 @@ const allSectorsId = 'allSectors';
 
 export default {
   components: {
-    KeyMeasureInfoCard,
+    KeyMeasureCard,
     KeyMeasuresFilterButton
   },
   data() {
