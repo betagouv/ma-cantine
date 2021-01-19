@@ -31,8 +31,8 @@
                 <h3>{{subMeasure.title}}</h3>
                 <div class="measure-details">
                   <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
+                  <!-- refactor to a KeyMeasureDescription, which has all the HTML formatting when switch to fontawesome icons -->
                   <div class="description-container">
-                    <!-- Is there a better way to manage the formatting of descriptions now more need HTML? -->
                     <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
                     <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
                   </div>
@@ -145,8 +145,15 @@ h3 {
 .description {
   font-size: 14px;
   font-weight: 400;
-  line-height: 18px;
+  line-height: 1.5em;
   white-space: pre-wrap;
+}
+
+@media (max-width: 480px) {
+  .measure-details {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 </style>
 
