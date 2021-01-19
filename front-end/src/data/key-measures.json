@@ -24,8 +24,7 @@
                 "title": ".... dont au moins 20 % de produits biologiques",
                 "description": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio », c’est à dire : \n\n✅  des produits issus de l'agriculture biologique.\n✅  des produits végétaux en conversion de plus d'un an.\n\nCette mesure concerne notamment :\n\n👉 Les produits bruts,\n👉 Les produits transformés composés d’un seul ingrédient bio. "
             }
-        ],
-        "image": "orange.png"
+        ]
     },
     {
         "id": "information",
@@ -68,8 +67,7 @@
                 },
                 "description": "À titre expérimental, pour une durée de 3 ans (soit jusqu’au 1er novembre 2021), les collectivités territoriales qui le souhaitent peuvent participer à une expérimentation sur l’affichage obligatoire, pour l’information des usagers, de la nature des produits entrant dans la composition des menus dans les services de restauration collective dont elles ont la charge."
             }
-        ],
-        "image": "bleubronze.png"
+        ]
     },
     {
         "id": "contre-gaspillage",
@@ -98,8 +96,7 @@
                 "title": "Les grosses restaurations collectives doivent donner aux associations.",
                 "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives <b>préparant plus de 3000 repas</b> par jour ont un an pour établir une convention de don avec une association. Cette association doit être habilitée par l’article L.266-2 du code de l’action sociale et des familles."
             }
-        ],
-        "image": "saumon.png"
+        ]
     },
     {
         "id": "diversification",
@@ -128,8 +125,7 @@
                 "deadline": "Expérimentation de 2 ans (du 1er novembre 2019 au 1er novembre 2021)",
                 "description": "Tous les restaurants collectifs scolaires (publics ou privés) sont tenus de proposer, au moins une fois par semaine, un menu végétarien, sur une durée de 2 ans. Ce menu végétarien peut constituer une alternative à d’autres menus dans le cas où plusieurs menus sont proposés. Dans le cas où un menu unique est proposé, il s’agit d’un menu unique végétarien. Par ailleurs, le menu végétarien doit s’insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\nQu’est-ce qu’un menu végétarien ? Il s’agit d’un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers."
             }
-        ],
-        "image": "rose.png"
+        ]
     },
     {
         "id": "plastiques",
@@ -169,7 +165,6 @@
                 "deadline": "Depuis le 1er janvier 2020",
                 "description": "L’utilisation de bouteilles d’eau plate en plastique est interdite en restauration scolaire. Cette mesure s’applique aux territoires desservis par un réseau d’eau potable et peut être suspendue en cas exceptionnel de restriction de l’eau destinée à la consommation humaine prononcée par le Préfet."
             }
-        ],
-        "image": "vert.png"
+        ]
     }
 ]
