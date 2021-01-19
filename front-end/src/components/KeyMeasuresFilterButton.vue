@@ -7,7 +7,8 @@
   border: none;
   background-color: #fff;
   cursor: pointer;
-  margin: 0.5em;
+  margin: 0.2em 0em;
+  padding: 0.5em 1em;
   font-weight: bold;
   font-size: 20px;
   /* Dark 1 */
@@ -15,11 +16,6 @@
 }
 
 .filter-button.active {
-  width: 244px;
-  height: 43px;
-  left: 0px;
-  top: 0px;
-
   /* Green 3 */
   background: #F1F3EE;
   border-radius: 42px;
