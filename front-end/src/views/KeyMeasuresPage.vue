@@ -35,6 +35,15 @@
                   <div class="description-container">
                     <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
                     <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
+                    <div id="logos" v-if="subMeasure.id === 'cinquante'">
+                      <img src="@/assets/logos/label-rouge.png" alt="logo Label Rouge"/>
+                      <img src="@/assets/logos/Logo-AOC-AOP.png" alt="logo appellation d’origine"/>
+                      <img src="@/assets/logos/IGP.png" alt="logo indication géographique"/>
+                      <img src="@/assets/logos/STG.png" alt="logo Spécialité traditionnelle garantie"/>
+                      <img src="@/assets/logos/hve.png" alt="logo Haute Valeur Environnementale"/>
+                      <img src="@/assets/logos/logo_label-peche-durable.png" alt="logo écolabel pêche durable"/>
+                      <img src="@/assets/logos/rup.png" alt="logo Région Ultrapériphérique"/>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -149,10 +158,34 @@ h3 {
   white-space: pre-wrap;
 }
 
+#logos {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#logos > img {
+  max-height: 75px;
+}
+
 @media (max-width: 480px) {
+  #key-measures {
+    text-align: center;
+    padding: 1em 0.5em;
+  }
+
+  .measure-content {
+    margin: 0.5em;
+  }
+
   .measure-details {
     flex-direction: column;
     align-items: center;
+  }
+
+  #logos > img {
+    max-height: 4em;
   }
 }
 </style>
