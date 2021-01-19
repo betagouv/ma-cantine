@@ -8,17 +8,16 @@
       <a id="about-cnrc" href="">Qu'est ce que le CNRC ?</a>
     </div>
     <ul id="tag-filter" class="filter">
-      <!-- refactor the button into a component: KeyMeasuresFilterOption -->
       <li>
-        <key-measures-filter-button text="Tous les secteurs" :isActive="activeTags.indexOf(allTagsId) > -1" @toggle-activation="toggleActivation(allTagsId)"/>
+        <KeyMeasuresFilterButton text="Tous les secteurs" :isActive="activeTags.includes(allSectorsId)" @toggle-activation="updateSectorFilter(allSectorsId)"/>
       </li>
       <li v-for="(tag, id) in tags" :key="tag">
-        <key-measures-filter-button :text="tag" :isActive="activeTags.indexOf(id) > -1" @toggle-activation="toggleActivation(id)"/>
+        <KeyMeasuresFilterButton :text="tag" :isActive="activeTags.includes(id)" @toggle-activation="updateSectorFilter(id)"/>
       </li>
     </ul>
     <ul id="deadline-filter" class="filter">
-      <li><key-measures-filter-button text="Toutes les mesures" :isActive="true"/></li>
-      <li><key-measures-filter-button text="Seulement les mesures à venir"/></li>
+      <li><KeyMeasuresFilterButton text="Toutes les mesures" :isActive="true"/></li>
+      <li><KeyMeasuresFilterButton text="Seulement les mesures à venir"/></li>
     </ul>
     <div id="measures">
       <div class="measure" v-for="measure in filteredKeyMeasures" :key="measure.id" :id="measure.id">
@@ -30,7 +29,6 @@
               <p v-if="measure.description">{{measure.description}}</p>
               <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
                 <h3>{{subMeasure.title}}</h3>
-                <!-- Add KeyMeasureInfoCard here -->
                 <div class="measure-details">
                   <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
                   <div class="description-container">
@@ -158,7 +156,7 @@ import KeyMeasuresFilterButton from '@/components/KeyMeasuresFilterButton.vue'
 import keyMeasures from '@/data/key-measures.json'
 import tags from '@/data/sector-tags.json'
 
-const allTagsId = 'all';
+const allSectorsId = 'allSectors';
 
 export default {
   components: {
@@ -169,8 +167,8 @@ export default {
     return {
       keyMeasures,
       tags,
-      activeTags: [allTagsId],
-      allTagsId
+      activeTags: [allSectorsId],
+      allSectorsId
     };
   },
   computed: {
@@ -182,17 +180,18 @@ export default {
     },
     filteredKeyMeasures() {
       const activeTags = this.activeTags;
-      function testTags(measure) {
-        return (measure.tags || []).some((tag) => activeTags.indexOf(tag) > -1);
+      function hasActiveTag(measure) {
+        return (measure.tags || []).some((tag) => activeTags.includes(tag));
       }
-      if(activeTags.indexOf(allTagsId) > -1) {
+      const hasNoTagsOrSomeActiveTag = (measure) => !measure.tags || hasActiveTag(measure);
+      if(activeTags.includes(allSectorsId)) {
         return this.keyMeasures;
       } else {
         return this.keyMeasures.filter((measure) => {
-          return testTags(measure) || (measure.subMeasures || []).some(testTags);
+          return hasActiveTag(measure) || (measure.subMeasures || []).some(hasActiveTag);
         }).map((measure) => {
           if(measure.subMeasures) {
-            measure.subMeasures = measure.subMeasures.filter(testTags)
+            measure.subMeasures = measure.subMeasures.filter(hasNoTagsOrSomeActiveTag)
           }
           return measure;
         });
@@ -200,22 +199,22 @@ export default {
     }
   },
   methods: {
-    toggleActivation(id) {
+    updateSectorFilter(id) {
       const tagIndex = this.activeTags.indexOf(id);
       if(tagIndex > -1) { // currently active, want to deactivate
         this.activeTags.splice(tagIndex, 1);
         // add back all to avoid losing all text on screen
         if(this.activeTags.length === 0) {
-          this.activeTags.push(allTagsId);
+          this.activeTags.push(allSectorsId);
         }
-      } else if(id === allTagsId) {
+      } else if(id === allSectorsId) {
         // reset to avoid having 'all' and other tags
-        this.activeTags = [allTagsId];
+        this.activeTags = [allSectorsId];
       } else {
         this.activeTags.push(id);
         // remove 'all' to avoid having 'all' and other tags
-        if(this.activeTags.indexOf(allTagsId) > -1) {
-          this.activeTags.splice(this.activeTags.indexOf(allTagsId), 1);
+        if(this.activeTags.includes(allSectorsId)) {
+          this.activeTags.splice(this.activeTags.indexOf(allSectorsId), 1);
         }
       }
     }
