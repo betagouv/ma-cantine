@@ -216,12 +216,6 @@ export default {
     };
   },
   computed: {
-    images() {
-      let images = {};
-      keyMeasures.forEach((measure) =>
-        images[measure.id] = require('@/assets/background/'+measure.image));
-      return images;
-    },
     measuresFilteredBySector() {
       const activeTags = this.activeTags;
       function hasActiveTag(measure) {
