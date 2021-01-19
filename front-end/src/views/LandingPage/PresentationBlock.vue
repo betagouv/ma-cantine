@@ -26,7 +26,7 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   #presentation {
     display: flex;
     justify-content: space-around;
@@ -47,7 +47,7 @@
     font-weight: bold;
     font-size: 37px;
     line-height: 52px;
-    color: #EB5B25;
+    color: $orange;
   }
 
   p {
@@ -60,7 +60,7 @@
     height: 50px;
     line-height: 50px;
     color: white;
-    background-color: #EB5B25;
+    background-color: $orange;
     border-radius: 50px;
     font-weight: bold;
     text-decoration: none;
