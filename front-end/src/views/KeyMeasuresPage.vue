@@ -190,7 +190,7 @@ h3 {
 </style>
 
 <script>
-import SectorTags from '@/components/SectorTags.vue'
+import SectorTags from '@/components/SectorTags'
 import keyMeasures from '@/data/key-measures.json'
 
 export default {
