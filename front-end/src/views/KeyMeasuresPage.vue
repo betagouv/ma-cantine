@@ -225,7 +225,8 @@ export default {
       if(activeTags.includes(allSectorsId)) {
         return this.keyMeasures;
       } else {
-        return this.keyMeasures.filter((measure) => {
+        const keyMeasuresDeepCopy = JSON.parse(JSON.stringify(this.keyMeasures));
+        return keyMeasuresDeepCopy.filter((measure) => {
           return hasActiveTag(measure) || (measure.subMeasures || []).some(hasActiveTag);
         }).map((measure) => {
           if(measure.subMeasures) {
