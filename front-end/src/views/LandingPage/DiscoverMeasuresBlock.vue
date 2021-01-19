@@ -36,7 +36,7 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   #discover-measures {
     display: flex;
     flex-direction: column;
@@ -48,7 +48,7 @@
     font-weight: bold;
     font-size: 37px;
     text-align: center;
-    color: #eb5b25;
+    color: $orange;
     margin: 0.8em 0;
   }
 
@@ -88,7 +88,7 @@
   }
 
   .measure-item:hover {
-    border-color: #eb5b25;
+    border-color: $orange;
     transform: scale(1.02);
   }
 
@@ -114,7 +114,7 @@
   #download-documentation {
     width: 423px;
     border-radius: 50px;
-    background: #eb5b25;
+    background: $orange;
     padding: 1em 0;
 
     text-decoration: none;
