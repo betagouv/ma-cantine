@@ -12,7 +12,7 @@
             "creche",
             "loisirs"
         ],
-        "deadline": "1er janvier 2022",
+        "deadline": "À partir du 1er janvier 2022",
         "subMeasures": [
             {
                 "id": "cinquante",
@@ -29,10 +29,10 @@
     },
     {
         "id": "information",
-        "title": "👨‍👩‍👧‍👧 Information des usagers et convives",
+        "title": "📣 Information des usagers et convives",
         "subMeasures": [
             {
-                "title": "Information obligatoire des convives une fois par an",
+                "title": "Les convives doivent être informées une fois par an.",
                 "tags": [
                     "scolaire",
                     "administration",
@@ -42,7 +42,7 @@
                     "creche",
                     "loisirs"
                 ],
-                "deadline": "1er janvier 2020",
+                "deadline": "Depuis le 1er janvier 2020",
                 "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables qu’ils consomment. Cette information peut se faire par affichage (dans l’espace commun par exemple) ou par email. \n\n▶️ <b>Télécharger un modèle d’email</b>\n▶️ <b>Voir un exemple d’affiche</b>"
             },
             {
@@ -52,7 +52,7 @@
                     "universitaire",
                     "creche"
                 ],
-                "deadline": "30 octobre 2018",
+                "deadline": "Depuis le 30 octobre 2018",
                 "description": "Qui est concerné ?\n\n✅ Les gestionnaires des services de restauration collective scolaire et universitaire \n✅ Les services de restauration collective des crèche\n\nQuels sont les objectifs\n\n✅ Informer\n✅ Consulter\n\nÀ quelle fréquence\nrégulièrement\nchaque établissement\n\n le respect de la qualité alimentaire et nutritionnelle des repas servis\n\nla restauration scolaire fixe des exigences nutritionnelles basées sur 20 repas successifs.\n\n✅ veiller à la diversité de la structure du repas\n✅  garantir une variété suffisante pour favoriser les apports en fibres et en fer\n✅ limiter la fréquence des plats trop gras et trop sucrés\n✅ favoriser l’emploi de produits de saison."
             },
             {
@@ -62,7 +62,10 @@
                     "administration",
                     "creche"
                 ],
-                "deadline": "Du 14 avril 2019 au 31 octobre 2021",
+                "deadline": {
+                    "type": "Expérimentation",
+                    "display": "Du 14 avril 2019 au 31 octobre 2021"
+                },
                 "description": "À titre expérimental, pour une durée de 3 ans (soit jusqu’au 1er novembre 2021), les collectivités territoriales qui le souhaitent peuvent participer à une expérimentation sur l’affichage obligatoire, pour l’information des usagers, de la nature des produits entrant dans la composition des menus dans les services de restauration collective dont elles ont la charge."
             }
         ],
@@ -107,12 +110,14 @@
                 "tags": [
                     "scolaire",
                     "administration",
+                    "universitaire",
                     "social",
                     "medical",
                     "loisirs",
                     "creche"
                 ],
-                "deadline": "30 octobre 2018",
+                "deadline": "Depuis le  30 octobre 2018",
+                "who": "Pour les cantines servant plus de 200 couverts par jour.",
                 "description": "Les gestionnaires des restaurants collectifs sont tenus de présenter à leurs structures dirigeantes un plan pluriannuel de diversification de protéines incluant des alternatives à base de protéines végétales dans les repas qu’ils proposent."
             },
             {
@@ -120,7 +125,7 @@
                 "tags": [
                     "scolaire"
                 ],
-                "deadline": "Du 1er nov 2019 au 1er nov 2021",
+                "deadline": "Expérimentation de 2 ans (du 1er novembre 2019 au 1er novembre 2021)",
                 "description": "Tous les restaurants collectifs scolaires (publics ou privés) sont tenus de proposer, au moins une fois par semaine, un menu végétarien, sur une durée de 2 ans. Ce menu végétarien peut constituer une alternative à d’autres menus dans le cas où plusieurs menus sont proposés. Dans le cas où un menu unique est proposé, il s’agit d’un menu unique végétarien. Par ailleurs, le menu végétarien doit s’insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\nQu’est-ce qu’un menu végétarien ? Il s’agit d’un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers."
             }
         ],
@@ -135,13 +140,14 @@
                 "tags": [
                     "scolaire",
                     "administration",
+                    "universitaire",
                     "social",
                     "medical",
                     "loisirs",
                     "creche",
                     "entreprises"
                 ],
-                "deadline": "1er janvier 2020",
+                "deadline": "Depuis le 1er janvier 2020",
                 "description": "La mise à disposition des ustensiles à usage unique en matière plastique (sauf, jusqu’au 3 juillet 2021, ceux compostables en compostage domestique et constitués, pour tout ou partie, de matières biosourcées) suivants est interdite : gobelets, verres, assiettes, pailles, couverts, piques à steak, couvercles à verre, plateaux-repas, pots à glace, saladiers, boîtes et bâtonnets mélangeurs pour boissons. On entend par « mise à disposition » la fourniture d’un produit destiné à être distribué, consommé ou utilisé sur le territoire national dans le cadre d’une activité commerciale, à titre onéreux ou gratuit. Certains matériaux alternatifs au plastique peuvent être considérés comme des fournitures innovantes et entrer dans le cadre de l’expérimentation lancée fin 2018, pour une durée de trois ans, permettant de déroger aux obligations de publication et de mise en concurrence pour les achats innovants de moins de 100 000 € HT."
             },
             {
@@ -151,7 +157,8 @@
                     "universitaire",
                     "creche"
                 ],
-                "deadline": "1er janvier 2025 / 2028 si < 2000 habitants",
+                "deadline": "À partir du 1er janvier 2025 / 2028",
+                "who": "Pour les communes de moins de 2000 habitants.",
                 "description": "L’utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite dans les services de restauration collective d’établissements scolaires et universitaires, ainsi que des établissements d’accueil des enfants de moins de 6 ans. Dans les collectivités territoriales de moins de 2 000 habitants, cette mesure est applicable au plus tard le 1er janvier 2028."
             },
             {
@@ -159,8 +166,8 @@
                 "tags": [
                     "scolaire"
                 ],
-                "deadline": "1er janvier 2020",
-                "description": "L’ utilisation de bouteilles d’eau plate en plastique est interdite en restauration scolaire. Cette mesure s’applique aux territoires desservis par un réseau d’eau potable et peut être suspendue en cas exceptionnel de restriction de l’eau destinée à la consommation humaine prononcée par le Préfet."
+                "deadline": "Depuis le 1er janvier 2020",
+                "description": "L’utilisation de bouteilles d’eau plate en plastique est interdite en restauration scolaire. Cette mesure s’applique aux territoires desservis par un réseau d’eau potable et peut être suspendue en cas exceptionnel de restriction de l’eau destinée à la consommation humaine prononcée par le Préfet."
             }
         ],
         "image": "vert.png"

@@ -2,11 +2,12 @@
   <div class="measure-card">
     <div class="measure-info-card">
       <div class="deadline">
-        <h4>🗓 Entrée en vigeur</h4>
-        <p>{{ measure.deadline }}</p>
+        <h4>🗓 {{ measure.deadline.type || "Entrée en vigeur" }}</h4>
+        <p>{{ measure.deadline.display || measure.deadline }}</p>
       </div>
       <div class="tags">
         <h4>🍽 Pour qui ?</h4>
+        <p v-if="measure.who">{{measure.who}}</p>
         <p class="tag" :class="tag" v-for="tag in measure.tags" :key="tag">
           {{ tagsInfo[tag] }}
         </p>
@@ -40,9 +41,10 @@ h4 {
   margin-bottom: 1em;
   /* Dark 1 */
   color: #333333;
+  white-space: nowrap;
 }
 
-.deadline > p {
+p {
   font-size: 14px;
   color: #000000;
 }
@@ -69,11 +71,15 @@ h4 {
   /* Green 1 */
   background: #748852;
   border-radius: 50px;
-  padding: 0.8em;
-  line-height: 4em;
+  padding: 0.5em 0.8em;
+  line-height: 3.5em;
 }
 
 @media (max-width: 800px) {
+  h4 {
+    font-size: 16px;
+  }
+
   .simulator-link {
     font-size: 14px;
   }
