@@ -20,7 +20,7 @@
       <li><KeyMeasuresFilterButton text="Seulement les mesures à venir"/></li>
     </ul>
     <div id="measures">
-      <div class="measure" v-for="measure in filteredKeyMeasures" :key="measure.id" :id="measure.id">
+      <div class="measure" v-for="measure in measuresFilteredBySector" :key="measure.id" :id="measure.id">
         <div class="measure-content">
           <h2>{{measure.title}}</h2>
           <div class="measure-details">
@@ -89,6 +89,10 @@ p {
   justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
+}
+
+#deadline-filter {
+  display: none;
 }
 
 #guide-download {
@@ -218,7 +222,7 @@ export default {
         images[measure.id] = require('@/assets/background/'+measure.image));
       return images;
     },
-    filteredKeyMeasures() {
+    measuresFilteredBySector() {
       const activeTags = this.activeTags;
       function hasActiveTag(measure) {
         return (measure.tags || []).some((tag) => activeTags.includes(tag));
