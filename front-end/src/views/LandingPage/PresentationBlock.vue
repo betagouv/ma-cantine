@@ -56,7 +56,7 @@
 
   .presentation-diagnostic {
     text-align: center;
-    max-width: 400px;
+    width: 350px;
     height: 50px;
     line-height: 50px;
     color: white;
@@ -69,5 +69,29 @@
   .presentation-right-image {
     width: 450px;
     height: 400px;
+  }
+
+  @media (max-width: 1000px) {
+    .presentation-content {
+      p {
+        margin: 15px 0;
+      }
+    }
+
+    .presentation-diagnostic {
+      margin: 30px auto 0 auto;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .presentation-right-image {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .presentation-content {
+      text-align: center;
+    }
   }
 </style>
