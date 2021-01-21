@@ -17,7 +17,7 @@
 <style scoped>
   #goal {
     margin: 70px auto;
-    max-width: 1200px;
+    max-width: 850px;
   }
 
   h3 {
@@ -28,7 +28,6 @@
   }
 
   .goal-information {
-    width: 850px;
     padding: 24px;
     border-radius: 20px;
     margin: auto;
@@ -39,11 +38,11 @@
   }
 
   .goal-list {
-    width: 850px;
     margin: auto;
     margin-top: 30px;
     text-align: left;
     font-size: 20px;
     line-height: 35px;
+    padding: 0 24px;
   }
 </style>
