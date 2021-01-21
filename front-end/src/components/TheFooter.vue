@@ -62,6 +62,7 @@ export default {
     width: 100%;
     display: flex;
     justify-content: space-around;
+    margin-left: 30px;
   }
 
   .footer-column {
@@ -86,5 +87,26 @@ export default {
 
   .footer-column a:hover {
     text-decoration: underline;
+  }
+
+  @media (max-width: 1000px) {
+    #footer-columns {
+      flex-wrap: wrap;
+      justify-content: left;
+    }
+
+    .footer-column {
+      padding: 20px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    #footer {
+      flex-direction: column;
+    }
+
+    #footer-columns {
+      margin-left: 0;
+    }
   }
 </style>
