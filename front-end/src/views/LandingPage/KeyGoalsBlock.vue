@@ -34,6 +34,7 @@
 
   #key-goals-list {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-evenly;
     margin: 30px 0;
   }
@@ -43,10 +44,10 @@
     font-size: 20px;
     line-height: 20px;
     color: #333333;
+    padding: 30px 0;
   }
 
   .key-goal > img {
     width: 60px;
-    margin-bottom: 20px;
   }
 </style>
