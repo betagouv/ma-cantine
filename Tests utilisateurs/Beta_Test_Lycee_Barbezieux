@@ -6,13 +6,13 @@ Laurent : chef cuisine responsable restauration
 L’établissement a été lauréat du challenge anti gaspi organisé par l’intermédiaire du projet GARP sur le département 16
 Obligation d’un menu végétarien, pesée, Menus loi Egalim. Ici menu unique car trop peu d’élèves
 
-Introduction
+Introduction :
 Jenn : Un des constats faits pendant la phase d’investigation : méconnaissance de la loi d’où proposition d’information dans la plateforme en cours de création
 Jenn : montre le site en construction (http://ma-cantine-demo.surge.sh/)
 Connaissez-vous les 5 mesures ? surtout celle sur les appro ?
 Laurent : le bio est intégré le plus souvent possible dans les repas servis et on essaie de faire du local. La problématique principale est celle liée au budget (le bio est cher). On travaille avec des fournisseurs bio locaux : ex centre social de Barbezieux mais production limitée en volume, avec un producteur fermier local (departement16) pour les yaourts.
 Nathaly : lien entre Bio et local. Sur le lycée, l’exploitation est en viande bio mais conditionnement en barquette et format pas utilisable pour la RC. La cantine du lycée n’utile pas leurs produits.
-Jenn : % de bio connu ? 
+Jenn : % de bio connu ?
 Jenn : et les produits durables ? Ils sont dans la loi, alors que le « local » n’est pas dans la loi
 Objectif du site : proposer à terme un autodiagnostic sur l’ensemble des mesures EGAlim mais ciblé au début sur l’appro
 Jenn : présente le tableur et ses fonctionnalités
@@ -24,3 +24,17 @@ Pour les autres signes qualité le problème est que les bons de livraison ne le
 Le lycée passe par un groupement de commande pour une partie de ses achats (combien ? ne sait pas dire sur le moment) 15 fournisseurs sont dans ce marché (prop pro/fornel/delice de l’ouest /Pomona..). D’autres achats se font hors marché (Centre social par ex).
 Jenn : Demande si possibilité de renseignement du tableau EGAlim avec un appui de l’équipe beta. Les bons de commande sont scannés et sont disponibles par mail sur un mois, par ex novembre décembre 2020. Attention, les montants des bons de commande sont différents de ceux des factures. Certaines factures de fournisseur (Fornel par ex) n’ont pas bcq d’info.
 Lycée de Barbezieux OK. Programmation d’un nouveau RDV, le 3 février pour rentrer ensemble les info des factures dans le tableau EGAlim. Valérie se rendra sur place.
+
+Notes observateur :
+150 élèves
+bonne connaissance préalable de la loi et ses enjeux
+particulièrement sensibles à ces questions
+par forcément rentable pour les fournisseurs locaux de se déplacer
+déjà des tableaux excel incluant le local fait soi-même, pas sûr de la fiabilité
+objectifs anticipés par le prédécesseur
+par mois et par facture, par la comptable
+viande bio trop cher
+cuistot pas le temps de faire ça
+labels par forcément présent sur les factures
+beaucoup de fournisseurs
+bons de commande peut être plus simple ? (mais diffenretiel par rapport au réel)
