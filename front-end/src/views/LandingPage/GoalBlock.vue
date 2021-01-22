@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
   #goal {
     margin: 70px auto;
     max-width: 850px;
@@ -24,7 +24,7 @@
     font-weight: bold;
     font-size: 37px;
     line-height: 52px;
-    color: #748852;
+    color: $green;
   }
 
   .goal-information {
@@ -32,8 +32,8 @@
     border-radius: 20px;
     margin: auto;
     text-align: left;
-    color: #748852;
-    background-color: rgba(185, 195, 168, 0.3);
+    color: $green;
+    background-color: $light-green;
     font-size: 20px;
   }
 
