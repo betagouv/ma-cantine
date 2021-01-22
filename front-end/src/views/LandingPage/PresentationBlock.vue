@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  import CalculatorLink from '@/components/CalculatorLink.vue';
+  import CalculatorLink from '@/components/CalculatorLink';
   export default {
     components: {
       CalculatorLink

@@ -98,7 +98,7 @@
 
 <script>
   import tags from "@/data/sector-tags.json";
-  import CalculatorLink from '@/components/CalculatorLink.vue';
+  import CalculatorLink from '@/components/CalculatorLink';
 
   export default {
     name: "InfoCard",
