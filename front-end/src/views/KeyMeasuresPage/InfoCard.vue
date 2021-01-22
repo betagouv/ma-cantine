@@ -16,7 +16,7 @@
     <div class="calculator-card" v-if="includeCalculatorCard">
       <h4>👉 Suis-je en règle ?</h4>
       <p>Utilisez notre simulateur pour calculer votre répartition de produits durables et bio.</p>
-      <a :href="`${publicPath}Diagnostic approvisionnement (ma-cantine-alpha) v0.1.ods`" download class="simulator-link">Vérifier mes achats</a>
+      <CalculatorLink message="Vérifier mes achats" class="simulator-link"/>
     </div>
   </div>
 </template>
@@ -98,9 +98,13 @@
 
 <script>
 import tags from "@/data/sector-tags.json";
+import CalculatorLink from '@/components/CalculatorLink.vue';
 
 export default {
   name: "InfoCard",
+  components: {
+    CalculatorLink
+  },
   props: {
     measure: Object,
     includeCalculatorCard: Boolean
@@ -108,7 +112,6 @@ export default {
   data() {
     return {
       tagsInfo: tags,
-      publicPath: process.env.BASE_URL,
     }
   },
 };
