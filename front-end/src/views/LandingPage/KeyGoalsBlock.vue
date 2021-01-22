@@ -20,7 +20,6 @@
 
 <style scoped lang="scss">
   h2 {
-    font-weight: bold;
     font-size: 37px;
     line-height: 52px;
     color: $orange;
