@@ -43,11 +43,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   #footer {
     display: flex;
     padding: 50px;
-    border-top: 1px solid #F7B48E;
+    border-top: 1px solid $orange;
   }
 
   #logos {
@@ -69,7 +69,7 @@ export default {
     display: flex;
     flex-direction: column;
     font-size: 14px;
-    color: #414141;
+    color: $dark-grey;
     text-align: left;
   }
 
@@ -82,7 +82,7 @@ export default {
   .footer-column a {
     text-decoration: none;
     line-height: 30px;
-    color: #414141;
+    color: $dark-grey;
   }
 
   .footer-column a:hover {

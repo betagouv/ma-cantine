@@ -55,7 +55,7 @@
   #discover-measures > h5 {
     font-size: 22px;
     text-align: center;
-    color: #808080;
+    color: $light-grey;
     max-width: 30em;
     margin: 0.5px 0;
   }
@@ -75,8 +75,8 @@
   }
 
   .measure-item {
-    border: 1px solid rgba(240, 207, 137, 0.3);
-    background: rgba(240, 207, 137, 0.3);
+    border: 1px solid $light-yellow;
+    background: $light-yellow;
     border-radius: 22px;
     height: 10em;
     width: 10em;
@@ -99,7 +99,7 @@
   p.measure-title {
     font-weight: bold;
     font-size: 16px;
-    color: #333333;
+    color: $grey;
     margin: 0;
   }
 
@@ -108,7 +108,7 @@
     bottom: 2em;
 
     font-size: 16px;
-    color: #333333;
+    color: $grey;
   }
 
   #download-documentation {
@@ -122,7 +122,7 @@
     font-size: 18px;
     line-height: 23px;
     text-align: center;
-    color: rgba(255, 255, 255, 0.867527);
+    color: $white;
 
     /* TODO: supprimer quand on a le lien */
     display: none;

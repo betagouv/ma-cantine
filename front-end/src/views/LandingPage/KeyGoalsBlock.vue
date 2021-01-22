@@ -28,7 +28,7 @@
 
   #key-goals {
     margin-top: 50px;
-    background-color: #FDEFE9;
+    background-color: $light-orange;
     padding: 30px;
   }
 
