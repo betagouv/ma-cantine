@@ -8,7 +8,7 @@
       <p>
         Vous êtes en charge de l'approvisionnement d'une restauration collective ?
       </p>
-      <a :href="`${publicPath}Diagnostic approvisionnement (ma-cantine-alpha) v0.1.ods`" download class="presentation-diagnostic">
+      <a :href="`${publicPath}Diagnostic approvisionnement (ma-cantine-alpha) v0.2.ods`" download class="presentation-diagnostic">
         Télécharger notre calculateur
       </a>
     </div>
