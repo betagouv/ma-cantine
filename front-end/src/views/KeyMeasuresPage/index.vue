@@ -7,20 +7,8 @@
       <a id="guide-download" download href="">Télécharger le guide du CNRC</a>
       <a id="about-cnrc" href="">Qu'est ce que le CNRC ?</a>
     </div>
-    <ul id="tag-filter" class="filter">
-      <li>
-        <FilterButton text="Tous les secteurs" :isActive="activeTags.includes(allSectorsId)" @toggle-activation="updateSectorFilter(allSectorsId)"/>
-      </li>
-      <li v-for="(tag, id) in tags" :key="tag">
-        <FilterButton :text="tag" :isActive="activeTags.includes(id)" @toggle-activation="updateSectorFilter(id)"/>
-      </li>
-    </ul>
-    <ul id="deadline-filter" class="filter">
-      <li><FilterButton text="Toutes les mesures" :isActive="true"/></li>
-      <li><FilterButton text="Seulement les mesures à venir"/></li>
-    </ul>
     <div id="measures">
-      <div class="measure" v-for="measure in measuresFilteredBySector" :key="measure.id" :id="measure.id">
+      <div class="measure" v-for="measure in keyMeasures" :key="measure.id" :id="measure.id">
         <div class="measure-content">
           <h2>{{measure.title}}</h2>
           <div class="measure-details">

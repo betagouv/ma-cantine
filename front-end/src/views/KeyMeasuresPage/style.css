@@ -25,18 +25,6 @@
     display: none;
   }
   
-  .filter {
-    display: flex;
-    padding: 0.5em 5%;
-    justify-content: space-around;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  
-  #deadline-filter {
-    display: none;
-  }
-  
   #guide-download {
     border-radius: 25px;
     background: rgb(0,191,113);
