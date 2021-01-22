@@ -97,22 +97,22 @@
 </style>
 
 <script>
-import tags from "@/data/sector-tags.json";
-import CalculatorLink from '@/components/CalculatorLink.vue';
+  import tags from "@/data/sector-tags.json";
+  import CalculatorLink from '@/components/CalculatorLink.vue';
 
-export default {
-  name: "InfoCard",
-  components: {
-    CalculatorLink
-  },
-  props: {
-    measure: Object,
-    includeCalculatorCard: Boolean
-  },
-  data() {
-    return {
-      tagsInfo: tags,
-    }
-  },
-};
+  export default {
+    name: "InfoCard",
+    components: {
+      CalculatorLink
+    },
+    props: {
+      measure: Object,
+      includeCalculatorCard: Boolean
+    },
+    data() {
+      return {
+        tagsInfo: tags,
+      }
+    },
+  };
 </script>
