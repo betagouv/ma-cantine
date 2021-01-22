@@ -37,7 +37,7 @@
     flex-direction: column;
     justify-content: space-between;
     font-size: 20px;
-    color: rgba(0, 0, 0, 0.60);
+    color: $dark-grey;
   }
 
   h1 {
@@ -56,7 +56,7 @@
     width: 350px;
     height: 50px;
     line-height: 50px;
-    color: white;
+    color: $white;
     background-color: $orange;
     border-radius: 50px;
     font-weight: bold;

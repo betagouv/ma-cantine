@@ -21,7 +21,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
   a {
     text-decoration: none;
   }
@@ -34,8 +34,8 @@ export default {
     padding: 10px 2%;
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px solid #E1E1E1;
-    background-color: white;
+    border-bottom: 1px solid $dark-white;
+    background-color: $white;
   }
 
   #goto-landing {
@@ -67,7 +67,7 @@ export default {
 
   #ma-cantine {
     font-weight: bold;
-    color: #EB5B25;
+    color: $orange;
   }
 
   #slogan {
@@ -88,8 +88,8 @@ export default {
   }
 
   .navbar-item:hover {
-    color: white;
-    background-color: #F7B48E;
+    color: $white;
+    background-color: $orange;
   }
 
   @media (max-width: 800px) {
