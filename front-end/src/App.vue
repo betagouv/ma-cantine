@@ -46,6 +46,15 @@ export default {
     margin-top: 100px;
   }
 
+  h1 {
+    font-size: 37px;
+    font-weight: 700;
+  }
+
+  h2 {
+    font-weight: 700;
+  }
+
   ul {
     list-style-type: none;
     padding: 0;

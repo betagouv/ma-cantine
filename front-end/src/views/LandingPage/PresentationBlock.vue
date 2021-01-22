@@ -44,8 +44,6 @@
   }
 
   h1 {
-    font-weight: bold;
-    font-size: 37px;
     line-height: 52px;
     color: $orange;
   }
