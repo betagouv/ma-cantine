@@ -8,20 +8,17 @@
       <p>
         Vous êtes en charge de l'approvisionnement d'une restauration collective ?
       </p>
-      <a :href="`${publicPath}Diagnostic approvisionnement (ma-cantine-alpha) v0.2.ods`" download class="presentation-diagnostic">
-        Télécharger notre calculateur
-      </a>
+      <CalculatorLink message="Télécharger notre calculateur" class="presentation-diagnostic"/>
     </div>
     <img src="@/assets/toque.svg" class="presentation-right-image">
   </div>
 </template>
 
 <script>
+  import CalculatorLink from '@/components/CalculatorLink.vue';
   export default {
-    data() {
-      return {
-        publicPath: process.env.BASE_URL,
-      };
+    components: {
+      CalculatorLink
     },
   }
 </script>
