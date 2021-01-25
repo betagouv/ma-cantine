@@ -100,7 +100,8 @@ h3 {
 }
 
 #logos > img {
-  max-height: 75px;
+  max-height: 65px;
+  margin: 0.5em;
 }
 
 @media (max-width: 480px) {
