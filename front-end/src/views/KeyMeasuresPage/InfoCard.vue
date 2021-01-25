@@ -2,7 +2,7 @@
   <div class="measure-card">
     <div class="measure-info-card">
       <div class="deadline">
-        <h4>🗓 {{ measure.deadline.type || "Entrée en vigeur" }}</h4>
+        <h4>🗓 {{ measure.deadline.type || "Entrée en vigueur" }}</h4>
         <p>{{ measure.deadline.display || measure.deadline }}</p>
       </div>
       <div class="tags">
