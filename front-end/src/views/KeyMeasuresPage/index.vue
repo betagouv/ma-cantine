@@ -31,6 +31,7 @@
                       <img src="@/assets/logos/hve.png" alt="logo Haute Valeur Environnementale"/>
                       <img src="@/assets/logos/logo_label-peche-durable.png" alt="logo écolabel pêche durable"/>
                       <img src="@/assets/logos/rup.png" alt="logo Région Ultrapériphérique"/>
+                      <img src="@/assets/logos/logo_bio_eurofeuille.png" alt="logo Agriculture Biologique"/>
                     </div>
                   </div>
                 </div>
