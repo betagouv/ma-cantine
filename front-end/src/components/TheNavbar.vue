@@ -7,9 +7,12 @@
         <div id="slogan">Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</div>
       </div>
     </router-link>
-    <router-link :to="{ name: 'KeyMeasuresPage' }" class="navbar-item key-measures-link">Mesures phares</router-link>
+    <router-link :to="{ name: 'KeyMeasuresPage' }" class="navbar-item">Mesures phares</router-link>
     <a class="navbar-item about" href="https://beta.gouv.fr/startups/egalim.html" target="_blank">
       À propos <i class="fas fa-external-link-alt"></i>
+    </a>
+    <a class="navbar-item" href="https://ma-cantine.gitbook.io/ma-cantine-beta-gouv-fr/" target="_blank">
+      Ressources <i class="fas fa-external-link-alt"></i>
     </a>
   </div>
 </template>
@@ -108,7 +111,7 @@ export default {
       position: relative;
     }
 
-    .key-measures-link {
+    .navbar-item {
       text-align: left;
       margin-top: 30px;
       padding: 3px;
