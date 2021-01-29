@@ -7,7 +7,7 @@
     <div id="footer-columns">
       <div class="footer-column">
         <div class="footer-column-title">Ma Cantine</div>
-        <a class="navbar-item" href="https://beta.gouv.fr/startups/egalim.html" target="_blank">
+        <a class="navbar-item" href="https://beta.gouv.fr/startups/ma-cantine-egalim.html" target="_blank">
           Qui sommes nous ? <i class="fas fa-external-link-alt"></i>
         </a>
         <a class="navbar-item" href="https://beta.gouv.fr/approche/" target="_blank">
