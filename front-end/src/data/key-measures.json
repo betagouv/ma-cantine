@@ -1,7 +1,7 @@
 [
     {
         "id": "qualite-durable",
-        "title": "🍎 Au moins 50% de produits de qualité et durables dont 20% de bio",
+        "title": "🍎 Au moins 50% de produits de qualité et durable dont 20% de bio",
         "description": "La Loi EGAlim encadre la répartition des produits achetés pour la conception des repas.",
         "tags": [
             "scolaire",
@@ -16,8 +16,8 @@
         "subMeasures": [
             {
                 "id": "cinquante",
-                "title": "Au moins 50 % de produits de qualité et durables...",
-                "description": "Un produit de qualité et durables doit bénéficier d’un des labels suivants : \n\n✅ Label rouge\n✅ Appellation d’origine (AOC/AOP)\n✅ Indication géographique (IGP)\n✅ Spécialité traditionnelle garantie (STG)\n✅ Mention « issu d’une exploitation à Haute Valeur Environnementale » (HVE + niveau 2 accepté jusqu’au 31/12/2029)\n✅ Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »\n✅ Écolabel pêche durable\n✅ Logo « Région ultrapériphérique » (RUP)"
+                "title": "Au moins 50 % de produits de qualité et durable...",
+                "description": "Un produit de qualité et durable doit bénéficier d’un des labels suivants : \n\n✅ Label rouge\n✅ Appellation d’origine (AOC/AOP)\n✅ Indication géographique (IGP)\n✅ Spécialité traditionnelle garantie (STG)\n✅ Mention « issu d’une exploitation à Haute Valeur Environnementale » (HVE + niveau 2 accepté jusqu’au 31/12/2029)\n✅ Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »\n✅ Écolabel pêche durable\n✅ Logo « Région ultrapériphérique » (RUP)"
             },
             {
                 "id": "vingt",
@@ -42,7 +42,7 @@
                     "loisirs"
                 ],
                 "deadline": "Depuis le 1er janvier 2020",
-                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables qu’ils consomment. Cette information peut se faire par affichage (dans l’espace commun par exemple) ou par email. \n\n▶️ <b>Télécharger un modèle d’email</b> (à venir)\n▶️ <b>Voir un exemple d’affiche</b> (à venir)"
+                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durable qu’ils consomment. Cette information peut se faire par affichage (dans l’espace commun par exemple) ou par email. \n\n▶️ <b>Télécharger un modèle d’email</b> (à venir)\n▶️ <b>Voir un exemple d’affiche</b> (à venir)"
             },
             {
                 "title": "Les collectivités communiquent sur les informations nutritionnelles des repas servis.",
