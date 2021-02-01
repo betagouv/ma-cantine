@@ -2,11 +2,11 @@
   <div class="measure-card">
     <div class="measure-info-card">
       <div class="deadline">
-        <h4>🗓 {{ measure.deadline.type || "Entrée en vigueur" }}</h4>
+        <h4><i class="far fa-calendar-alt"></i> {{ measure.deadline.type || "Entrée en vigueur" }}</h4>
         <p>{{ measure.deadline.display || measure.deadline }}</p>
       </div>
       <div class="tags">
-        <h4>🍽 Pour qui ?</h4>
+        <h4><i class="fas fa-chart-pie"></i> Pour qui ?</h4>
         <p v-if="measure.who">{{measure.who}}</p>
         <p class="tag" :class="tag" v-for="tag in measure.tags" :key="tag">
           {{ tagsInfo[tag] }}
@@ -14,14 +14,14 @@
       </div>
     </div>
     <div class="calculator-card" v-if="includeCalculatorCard">
-      <h4>👉 Vérifier où en suis-je de mes appros ?</h4>
+      <h4><i class="fas fa-hand-point-right"></i> Vérifier où en suis-je de mes appros ?</h4>
       <p>Utilisez notre simulateur pour calculer votre répartition de produits durables et bio.</p>
       <CalculatorLink message="Vérifier mes achats" class="simulator-link"/>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
   .measure-card {
     max-width: 274px;
     flex: 1.2;
@@ -76,6 +76,10 @@
     border-radius: 50px;
     padding: 0.5em 0.8em;
     line-height: 3.5em;
+  }
+
+  .fa-calendar-alt, .fa-chart-pie, .fa-hand-point-right {
+    color: $grey;
   }
 
   @media (max-width: 800px) {

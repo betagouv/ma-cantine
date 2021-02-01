@@ -1,7 +1,8 @@
 [
     {
         "id": "qualite-durable",
-        "title": "🍎 Au moins 50% de produits de qualité et durables dont 20% de bio",
+        "title": "Au moins 50% de produits de qualité et durables dont 20% de bio",
+        "faIcon": "fa-apple-alt",
         "description": "La Loi EGAlim encadre la répartition des produits achetés pour la conception des repas.",
         "tags": [
             "scolaire",
@@ -28,7 +29,8 @@
     },
     {
         "id": "information",
-        "title": "📣 Information des usagers et convives",
+        "title": "Information des usagers et convives",
+        "faIcon": "fa-bullhorn",
         "subMeasures": [
             {
                 "title": "Les convives doivent être informés une fois par an.",
@@ -58,7 +60,8 @@
     },
     {
         "id": "contre-gaspillage",
-        "title": "🙌🏻 Lutte contre le gaspillage alimentaire et dons alimentaires",
+        "title": "Lutte contre le gaspillage alimentaire et dons alimentaires",
+        "faIcon": "fa-hands",
         "tags": [
             "scolaire",
             "administration",
@@ -87,7 +90,8 @@
     },
     {
         "id": "diversification",
-        "title": "💪 Diversification des sources de protéines et menus végétariens",
+        "title": "Diversification des sources de protéines et menus végétariens",
+        "faIcon": "fa-leaf",
         "subMeasures": [
             {
                 "title": "Les sources de protéines doivent être diversifiées.",
@@ -116,7 +120,8 @@
     },
     {
         "id": "plastiques",
-        "title": "💨 Substitution des plastiques",
+        "title": "Substitution des plastiques",
+        "faIcon": "fa-wind",
         "subMeasures": [
             {
                 "title": "Les ustensiles en plastique à usage unique sont interdits.",
