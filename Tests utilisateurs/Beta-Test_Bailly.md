@@ -37,3 +37,15 @@ dans nos menus pour l’instant, on communique les allergènes et calories par r
 “lutte contre le gaspillage on est bon”, “on va acheter une balance d’occasion”
 
 “la cantiniere travaille bien sur les menus vege : 1 menu avec poisson / 1 menu vege / 2 menus avec viandes”
+
+---
+
+Ajouter un lien pour les labels dans le calculateur pour les expliquer? (Car elle ne connait pas tous les sigles)
+
+Les emojis ne rendre pas correctement dans leur téléchargement.
+
+On peut être plus clair les noms de logos - highlight l’image quand on ‘hover’ sur le nom de label?
+
+Est-ce que deux liens pour télécharger le même document c’est confus? (Sur le page mesures phares ainsi que le landing page)
+
+Barre de progrès pour le page mesures phare? (Pour indiquer qu’il y a plus en dessous)
