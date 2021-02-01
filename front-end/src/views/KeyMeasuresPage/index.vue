@@ -10,7 +10,7 @@
     <div id="measures">
       <div class="measure" v-for="measure in keyMeasures" :key="measure.id" :id="measure.id">
         <div class="measure-content">
-          <h2>{{measure.title}}</h2>
+          <h2><i :class="'fas '+measure.faIcon" v-if="measure.faIcon"></i> {{measure.title}}</h2>
           <div class="measure-details">
             <InfoCard v-if="measure.tags" :measure="measure" :includeCalculatorCard="measure.id === 'qualite-durable'"/>
             <div class="description-container">
@@ -45,4 +45,4 @@
 </template>
 
 <script src="./script.js"></script>
-<style scoped src="./style.css"></style>
+<style scoped lang="scss" src="./style.scss"></style>
