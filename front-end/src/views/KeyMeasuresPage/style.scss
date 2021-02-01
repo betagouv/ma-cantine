@@ -69,6 +69,14 @@ h2 {
   color: #000000;
 }
 
+.fa-apple-alt, .fa-hands, .fa-wind {
+  color: $orange;
+}
+
+.fa-bullhorn, .fa-leaf {
+  color: $green;
+}
+
 .measure-details {
   display: flex;
   align-items: flex-start;
