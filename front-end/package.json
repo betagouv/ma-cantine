@@ -6,10 +6,12 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "stage": "npm run build && surge dist staging-ma-cantine.surge.sh"
+    "stage": "npm run build && surge dist staging-ma-cantine.surge.sh",
+    "start": "serve -s dist"
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "serve": "^11.3.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0"
   },
