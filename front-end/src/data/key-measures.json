@@ -17,12 +17,12 @@
             {
                 "id": "cinquante",
                 "title": "Au moins 50 % de produits de qualité et durables...",
-                "description": "Un produit de qualité et durable doit bénéficier d’un des labels suivants : \n\n✅ Label rouge\n✅ Appellation d’origine (AOC/AOP)\n✅ Indication géographique (IGP)\n✅ Spécialité traditionnelle garantie (STG)\n✅ Mention « issu d’une exploitation à Haute Valeur Environnementale » (HVE + niveau 2 accepté jusqu’au 31/12/2029)\n✅ Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »\n✅ Écolabel pêche durable\n✅ Logo « Région ultrapériphérique » (RUP)"
+                "description": "Un produit de qualité et durable doit bénéficier d’un des labels suivants : \n\n✅ Label rouge\n✅ Appellation d’origine (AOC/AOP)\n✅ Indication géographique (IGP)\n✅ Spécialité traditionnelle garantie (STG)\n✅ Mention « issu d’une exploitation à Haute Valeur Environnementale » (HVE + niveau 2 accepté jusqu’au 31/12/2029)\n✅ Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »\n✅ Écolabel pêche durable\n✅ Logo « Région ultrapériphérique » (RUP)\n✅ Produits équivalents\n✅ Produit acquis suivant des modalités prenant en compte les coûts imputés aux externalités environnementales liées au produit pendant son cycle de vie"
             },
             {
                 "id": "vingt",
                 "title": ".... dont au moins 20 % de produits biologiques",
-                "description": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio », c’est à dire : \n\n✅  des produits issus de l'agriculture biologique.\n✅  des produits végétaux en conversion de plus d'un an.\n\nCette mesure concerne notamment :\n\n👉 Les produits bruts,\n👉 Les produits transformés composés d’un seul ingrédient bio. "
+                "description": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio », c’est à dire : \n\n✅  des produits issus de l'agriculture biologique.\n✅  des produits végétaux en conversion de plus d'un an."
             }
         ]
     },
@@ -31,7 +31,7 @@
         "title": "📣 Information des usagers et convives",
         "subMeasures": [
             {
-                "title": "Les convives doivent être informées une fois par an.",
+                "title": "Les convives doivent être informés une fois par an.",
                 "tags": [
                     "scolaire",
                     "administration",
@@ -42,7 +42,7 @@
                     "loisirs"
                 ],
                 "deadline": "Depuis le 1er janvier 2020",
-                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables qu’ils consomment. Cette information peut se faire par affichage (dans l’espace commun par exemple) ou par email. \n\n▶️ <b>Télécharger un modèle d’email</b> (à venir)\n▶️ <b>Voir un exemple d’affiche</b> (à venir)"
+                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l'acquisition de produits issus du commerce équitable. Cette information peut se faire par affichage (dans l’espace commun par exemple) ou par email. \n\n▶️ <b>Télécharger un modèle d’email</b> (à venir)\n▶️ <b>Voir un exemple d’affiche</b> (à venir)"
             },
             {
                 "title": "Les gestionnaires en restauration collective communiquent sur les informations nutritionnelles des repas servis.",
@@ -73,15 +73,15 @@
         "subMeasures": [
             {
                 "title": "Le gaspillage alimentaire doit être analysé afin d'être réduit.",
-                "htmlDescription": "Depuis le 21 octobre 2019, les restaurations collectives ont eu <b>un an pour effectuer un diagnostic</b> de lutte contre le gaspillage. Une fois ce diagnostic établi, ils ont pu commencer à lutter contre le gaspillage alimentaire, depuis le 22 octobre 2020."
+                "htmlDescription": "Obligation de mettre en place une démarche de lutte contre le gaspillage alimentaire étendu à la restauration collective privée et obligation d'effectuer un diagnostic préalable à la réalisation de cette démarche."
             },
             {
                 "title": "Les restes encore consommables doivent être protégés.",
-                "htmlDescription": "Depuis le 1er janvier 2020, il est <b>interdit de rendre impropre à la consommation</b> les reste alimentaires. L’infraction à cette loi est susceptible d’une amende de 3 750 €."
+                "htmlDescription": "Depuis le 1er janvier 2020, il est <b>interdit de rendre impropre à la consommation</b> les excédents alimentaires. L’infraction à cette loi est susceptible d’une amende de 3 750 €."
             },
             {
                 "title": "Les services volumineux de restauration collective se doivent de faire des dons aux associations.",
-                "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives <b>préparant plus de 3000 repas</b> par jour ont un an pour établir une convention de don avec une association. Cette association doit être habilitée par l’article L.266-2 du code de l’action sociale et des familles."
+                "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui <b>préparant plus de 3000 repas</b> par jour ont l'obligation de proposer une convention de don à association habilitée."
             }
         ]
     },
@@ -100,7 +100,7 @@
                     "loisirs",
                     "creche"
                 ],
-                "deadline": "Depuis le  30 octobre 2018",
+                "deadline": "Depuis le 30 octobre 2018",
                 "who": "Pour les restaurants collectifs servant plus de 200 couverts par jour.",
                 "description": "Les gestionnaires des restaurants collectifs sont tenus de présenter à leurs structures dirigeantes un plan pluriannuel de diversification de protéines incluant des alternatives à base de protéines végétales dans les repas qu’ils proposent."
             },
