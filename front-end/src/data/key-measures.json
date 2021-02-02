@@ -53,19 +53,6 @@
                 ],
                 "deadline": "Depuis le 30 octobre 2018",
                 "description": "Les gestionnaires de restauration collective doivent communiquer, informer et consulter les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis."
-            },
-            {
-                "title": "La nature des produits est affichée (facultatif).",
-                "tags": [
-                    "scolaire",
-                    "administration",
-                    "creche"
-                ],
-                "deadline": {
-                    "type": "Expérimentation",
-                    "display": "Du 14 avril 2019 au 31 octobre 2021"
-                },
-                "description": "À titre expérimental, pour une durée de 3 ans (soit jusqu’au 1er novembre 2021), les collectivités territoriales qui le souhaitent peuvent participer à une expérimentation sur l’affichage obligatoire, pour l’information des usagers, de la nature des produits entrant dans la composition des menus dans les services de restauration collective dont elles ont la charge."
             }
         ]
     },
