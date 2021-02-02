@@ -45,14 +45,14 @@
                 "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables qu’ils consomment. Cette information peut se faire par affichage (dans l’espace commun par exemple) ou par email. \n\n▶️ <b>Télécharger un modèle d’email</b> (à venir)\n▶️ <b>Voir un exemple d’affiche</b> (à venir)"
             },
             {
-                "title": "Les collectivités communiquent sur les informations nutritionnelles des repas servis.",
+                "title": "Les gestionnaires en restauration collective communiquent sur les informations nutritionnelles des repas servis.",
                 "tags": [
                     "scolaire",
                     "universitaire",
                     "creche"
                 ],
                 "deadline": "Depuis le 30 octobre 2018",
-                "description": "Qui est concerné ?\n\n✅ Les gestionnaires des services de restauration collective scolaire et universitaire \n✅ Les services de restauration collective des crèche\n\nQuels sont les objectifs\n\n✅ Informer\n✅ Consulter\n\nÀ quelle fréquence\nrégulièrement\nchaque établissement\n\n le respect de la qualité alimentaire et nutritionnelle des repas servis\n\nla restauration scolaire fixe des exigences nutritionnelles basées sur 20 repas successifs.\n\n✅ veiller à la diversité de la structure du repas\n✅  garantir une variété suffisante pour favoriser les apports en fibres et en fer\n✅ limiter la fréquence des plats trop gras et trop sucrés\n✅ favoriser l’emploi de produits de saison."
+                "description": "Les gestionnaires de restauration collective doivent communiquer, informer et consulter les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis."
             },
             {
                 "title": "La nature des produits est affichée (facultatif).",
@@ -82,15 +82,15 @@
             "loisirs",
             "entreprises"
         ],
-        "deadline": "Depuis 2020",
+        "deadline": "Janvier et octobre 2020",
         "subMeasures": [
             {
-                "title": "Le gaspillage alimentaire doit être analysé.",
+                "title": "Le gaspillage alimentaire doit être analysé afin d'être réduit.",
                 "htmlDescription": "Depuis le 21 octobre 2019, les restaurations collectives ont eu <b>un an pour effectuer un diagnostic</b> de lutte contre le gaspillage. Une fois ce diagnostic établi, ils ont pu commencer à lutter contre le gaspillage alimentaire, depuis le 22 octobre 2020."
             },
             {
                 "title": "Les restes encore consommables doivent être protégés.",
-                "htmlDescription": "Depuis le 1er janvier 2020, il est <b>interdit de rendre impropre à la consommation</b> les reste alimentaires. L’infraction à cette loi est suceptible d’une amende de 3 750 €."
+                "htmlDescription": "Depuis le 1er janvier 2020, il est <b>interdit de rendre impropre à la consommation</b> les reste alimentaires. L’infraction à cette loi est susceptible d’une amende de 3 750 €."
             },
             {
                 "title": "Les services volumineux de restauration collective se doivent de faire des dons aux associations.",
