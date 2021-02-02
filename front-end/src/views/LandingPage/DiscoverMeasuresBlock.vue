@@ -2,8 +2,8 @@
   <div id="discover-measures">
     <h4>Les mesures phares de la loi EGAlim</h4>
     <h5>
-      Découvrez les échéances de chaque mesure et des ressources pour vous
-      aider à atteindre vos objectifs.
+      Découvrez les mesures, leur échéance,
+      le public cible ainsi que les ressources pour vous aider à atteindre leurs objectifs.
     </h5>
     <ol id="measures-list">
       <router-link

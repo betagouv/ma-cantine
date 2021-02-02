@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="calculator-card" v-if="includeCalculatorCard">
-      <h4>👉 Suis-je en règle ?</h4>
+      <h4>👉 Vérifier où en suis-je de mes appros ?</h4>
       <p>Utilisez notre simulateur pour calculer votre répartition de produits durables et bio.</p>
       <CalculatorLink message="Vérifier mes achats" class="simulator-link"/>
     </div>
@@ -41,6 +41,9 @@
     margin-bottom: 1em;
     /* Dark 1 */
     color: #333333;
+  }
+
+  .deadline > h2, .tags > h2 {
     white-space: nowrap;
   }
 
@@ -92,6 +95,10 @@
 
     .simulator-link {
       font-size: 18px;
+    }
+
+    .calculator-card {
+      margin-top: 1em;
     }
   }
 </style>
