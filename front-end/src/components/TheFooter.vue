@@ -7,7 +7,7 @@
     <div id="footer-columns">
       <div class="footer-column">
         <div class="footer-column-title">Ma Cantine</div>
-        <a class="navbar-item" href="https://beta.gouv.fr/startups/egalim.html" target="_blank">
+        <a class="navbar-item" href="https://beta.gouv.fr/startups/ma-cantine-egalim.html" target="_blank">
           Qui sommes nous ? <i class="fas fa-external-link-alt"></i>
         </a>
         <a class="navbar-item" href="https://beta.gouv.fr/approche/" target="_blank">
@@ -43,11 +43,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   #footer {
     display: flex;
     padding: 50px;
-    border-top: 1px solid #F7B48E;
+    border-top: 1px solid $orange;
   }
 
   #logos {
@@ -62,13 +62,14 @@ export default {
     width: 100%;
     display: flex;
     justify-content: space-around;
+    margin-left: 30px;
   }
 
   .footer-column {
     display: flex;
     flex-direction: column;
     font-size: 14px;
-    color: #414141;
+    color: $dark-grey;
     text-align: left;
   }
 
@@ -81,10 +82,31 @@ export default {
   .footer-column a {
     text-decoration: none;
     line-height: 30px;
-    color: #414141;
+    color: $dark-grey;
   }
 
   .footer-column a:hover {
     text-decoration: underline;
+  }
+
+  @media (max-width: 1000px) {
+    #footer-columns {
+      flex-wrap: wrap;
+      justify-content: left;
+    }
+
+    .footer-column {
+      padding: 20px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    #footer {
+      flex-direction: column;
+    }
+
+    #footer-columns {
+      margin-left: 0;
+    }
   }
 </style>

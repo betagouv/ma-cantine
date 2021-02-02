@@ -1,6 +1,6 @@
 <template>
   <div id="discover-measures">
-    <h4>Les mesures-phares de la loi EGAlim</h4>
+    <h4>Les mesures phares de la loi EGAlim</h4>
     <h5>
       Découvrez les échéances de chaque mesure et des ressources pour vous
       aider à atteindre vos objectifs.
@@ -36,7 +36,7 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   #discover-measures {
     display: flex;
     flex-direction: column;
@@ -48,14 +48,14 @@
     font-weight: bold;
     font-size: 37px;
     text-align: center;
-    color: #eb5b25;
+    color: $orange;
     margin: 0.8em 0;
   }
 
   #discover-measures > h5 {
     font-size: 22px;
     text-align: center;
-    color: #808080;
+    color: $light-grey;
     max-width: 30em;
     margin: 0.5px 0;
   }
@@ -75,8 +75,8 @@
   }
 
   .measure-item {
-    border: 1px solid rgba(240, 207, 137, 0.3);
-    background: rgba(240, 207, 137, 0.3);
+    border: 1px solid $light-yellow;
+    background: $light-yellow;
     border-radius: 22px;
     height: 10em;
     width: 10em;
@@ -88,7 +88,7 @@
   }
 
   .measure-item:hover {
-    border-color: #eb5b25;
+    border-color: $orange;
     transform: scale(1.02);
   }
 
@@ -99,7 +99,7 @@
   p.measure-title {
     font-weight: bold;
     font-size: 16px;
-    color: #333333;
+    color: $grey;
     margin: 0;
   }
 
@@ -108,13 +108,13 @@
     bottom: 2em;
 
     font-size: 16px;
-    color: #333333;
+    color: $grey;
   }
 
   #download-documentation {
     width: 423px;
     border-radius: 50px;
-    background: #eb5b25;
+    background: $orange;
     padding: 1em 0;
 
     text-decoration: none;
@@ -122,7 +122,7 @@
     font-size: 18px;
     line-height: 23px;
     text-align: center;
-    color: rgba(255, 255, 255, 0.867527);
+    color: $white;
 
     /* TODO: supprimer quand on a le lien */
     display: none;

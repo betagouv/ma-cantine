@@ -1,0 +1,125 @@
+#key-measures {
+  text-align: center;
+  padding: 1em 1em;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 48px;
+  /* Green 1 */
+  color: #748852;
+  margin: 1em 0em;
+}
+
+p {
+  font-size: 18px;
+  /* Dark 1 */
+  color: #333333;
+}
+
+#actions {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  /* TODO: supprimer ça quand on a des liens */
+  display: none;
+}
+
+#guide-download {
+  border-radius: 25px;
+  background: rgb(0,191,113);
+  color: #FFF;
+  padding: 0.7em 2em;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+#about-cnrc {
+  text-decoration: none;
+  color: rgba(64,64,64,0.87);
+  font-weight: 400;
+  font-size: 17px;
+}
+
+#about-cnrc:visited {
+  color: rgba(64,64,64,0.87);
+}
+
+/* measures styling */
+#measures {
+  text-align: left;
+}
+
+.measure {
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  max-width: 1170px;
+  margin: auto;
+}
+
+.measure-content {
+  margin: 2em;
+}
+
+h2 {
+  font-weight: bold;
+  font-size: 32px;
+  color: #000000;
+}
+
+.measure-details {
+  display: flex;
+  align-items: flex-start;
+}
+
+.description-container {
+  flex: 4;
+}
+
+h3 {
+  font-weight: bold;
+  font-size: 24px;
+  /* Green 1 */
+  color: #748852;
+}
+
+.description {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5em;
+  white-space: pre-wrap;
+}
+
+#logos {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#logos > img {
+  max-height: 65px;
+  margin: 0.5em;
+}
+
+@media (max-width: 480px) {
+  #key-measures {
+    text-align: center;
+    padding: 1em 0.5em;
+  }
+
+  .measure-content {
+    margin: 0.5em;
+  }
+
+  .measure-details {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #logos > img {
+    max-height: 4em;
+  }
+}
