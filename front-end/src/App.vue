@@ -28,27 +28,41 @@ export default {
 </script>
 
 <style>
-@font-face {
-  font-family: "Marianne";
-  src: local("Marianne"),
-    url('~@/assets/fonts/Marianne/Marianne-Regular.woff2') format("woff2"),
-    url('~@/assets/fonts/Marianne/Marianne-Regular.woff') format("woff");
-}
+  @font-face {
+    font-family: "Marianne";
+    src: local("Marianne"),
+      url('~@/assets/fonts/Marianne/Marianne-Regular.woff2') format("woff2"),
+      url('~@/assets/fonts/Marianne/Marianne-Regular.woff') format("woff");
+  }
 
-#app {
-  font-family: Marianne, Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+  #app {
+    font-family: Marianne, Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+  }
 
-#router-view {
-  margin-top: 100px;
-}
+  #router-view {
+    margin-top: 100px;
+  }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
+  h1 {
+    font-size: 37px;
+    font-weight: 700;
+  }
+
+  h2 {
+    font-weight: 700;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  @media (max-width: 480px) {
+    #router-view {
+      margin-top: 0;
+    }
+  }
 </style>

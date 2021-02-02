@@ -18,22 +18,22 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
   h2 {
-    font-weight: bold;
     font-size: 37px;
     line-height: 52px;
-    color: #EB5B25;
+    color: $orange;
   }
 
   #key-goals {
     margin-top: 50px;
-    background-color: #FDEFE9;
+    background-color: $light-orange;
     padding: 30px;
   }
 
   #key-goals-list {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-evenly;
     margin: 30px 0;
   }
@@ -43,10 +43,10 @@
     font-size: 20px;
     line-height: 20px;
     color: #333333;
+    padding: 30px 0;
   }
 
   .key-goal > img {
     width: 60px;
-    margin-bottom: 20px;
   }
 </style>

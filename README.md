@@ -1,7 +1,7 @@
 # ma-cantine
 accompagner les acteurs restau co dans la loi EGalim
 
-lié à la [fiche produit](https://beta.gouv.fr/startups/egalim.html) de la startup en construction 
+lié à la [fiche produit](https://beta.gouv.fr/startups/ma-cantine-egalim.html) de la startup en construction 
 
 ## equipe
 - Valérie Merle : intrapreneuse
@@ -17,7 +17,3 @@ comment ? En leur proposant un outil d'aide au diagnostic, des ressources, des r
 
 premier périmètre : 5290 collèges en France (source : [Statistica 2018](https://fr.statista.com/statistiques/499975/nombre-colleges-enseignements-publics-france/#:~:text=Cette%20statistique%20repr%C3%A9sente%20le%20nombre,moins%20de%205.000%20en%201980.)
 54% des collégiens mangent à la cantine
-
-
-
-

@@ -1,7 +1,7 @@
 <template>
   <div id="goal">
     <div class="goal-information">
-      La restauration collective représente <b>3 milliards de repas par an !</b>
+      La restauration collective représente <b>près 4 milliards de repas/an !</b>
       Ces repas sont un levier de transition agricole et alimentaire fort.
     </div>
     <h3>Les enjeux pour la restauration collective</h3>
@@ -14,36 +14,35 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
   #goal {
     margin: 70px auto;
-    max-width: 1200px;
+    max-width: 850px;
   }
 
   h3 {
     font-weight: bold;
     font-size: 37px;
     line-height: 52px;
-    color: #748852;
+    color: $green;
   }
 
   .goal-information {
-    width: 850px;
     padding: 24px;
     border-radius: 20px;
     margin: auto;
     text-align: left;
-    color: #748852;
-    background-color: rgba(185, 195, 168, 0.3);
+    color: $green;
+    background-color: $light-green;
     font-size: 20px;
   }
 
   .goal-list {
-    width: 850px;
     margin: auto;
     margin-top: 30px;
     text-align: left;
     font-size: 20px;
     line-height: 35px;
+    padding: 0 24px;
   }
 </style>
