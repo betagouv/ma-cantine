@@ -44,3 +44,8 @@ Les achats sont faits via un groupement de commandes. Un gestionnaire comptable 
 Il y a differents lots dans le marché public. Le fournisseur a le nb de parts que lui a attribué le marché.
 Entre 20 et 25 fournisseurs. 
 Aucune présence des labels sur les factures ou bc.
+
+Total d'achat connu TTC pas HT
+N'a pas vu qu'il fallait scrollé vers la droite pour avoir les autres chiffres. 
+N'a pas compris pourquoi le tableau etait pre-rempli => mettre un tableau exemple. 
+Par fournisseur, il faut un travail prealable de compilation; on a les factures par ordre chronologique.
