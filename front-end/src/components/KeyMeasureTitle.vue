@@ -1,6 +1,6 @@
 <template>
-  <span><i :class="'fas '+measure.faIcon" v-if="measure.faIcon"></i>
-   {{measure.title}}</span>
+  <i :class="'fas '+measure.faIcon" v-if="measure.faIcon"></i>
+   {{measure.title}}
 </template>
 
 <script>
