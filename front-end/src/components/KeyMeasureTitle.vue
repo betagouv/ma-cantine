@@ -13,11 +13,23 @@
 </script>
 
 <style scoped lang="scss">
-  .fa-apple-alt, .fa-hands, .fa-wind {
-    color: $orange;
+  .fa-apple-alt {
+    color: $red;
   }
   
-  .fa-bullhorn, .fa-leaf {
+  .fa-bullhorn {
+    color: $yellow;
+  }
+
+  .fa-hands {
+    color: $orange;
+  }
+
+  .fa-leaf {
     color: $green;
+  }
+
+  .fa-wind {
+    color: $blue;
   }
 </style>
