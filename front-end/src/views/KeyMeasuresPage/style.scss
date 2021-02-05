@@ -76,6 +76,10 @@ h2 {
 
 .description-container {
   flex: 4;
+
+  /deep/ .fa-check-square, /deep/ .fa-arrow-alt-circle-right {
+    color: $green;
+  }
 }
 
 h3 {
