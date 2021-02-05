@@ -13,7 +13,7 @@
         class="measure-link"
       >
         <li class="measure-item">
-          <p class="measure-title">{{ measure.title }}</p>
+          <p class="measure-title"><KeyMeasureTitle :measure="measure"/></p>
           <p class="discover-measure">→ En savoir plus</p>
         </li>
       </router-link>
@@ -25,9 +25,13 @@
 </template>
 
 <script>
+  import KeyMeasureTitle from "@/components/KeyMeasureTitle";
   import keyMeasures from "@/data/key-measures.json";
 
   export default {
+    components: {
+      KeyMeasureTitle
+    },
     data() {
       return {
         keyMeasures,

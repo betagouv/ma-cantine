@@ -10,7 +10,7 @@
     <div id="measures">
       <div class="measure" v-for="measure in keyMeasures" :key="measure.id" :id="measure.id">
         <div class="measure-content">
-          <h2><i :class="'fas '+measure.faIcon" v-if="measure.faIcon"></i> {{measure.title}}</h2>
+          <h2><KeyMeasureTitle :measure="measure"/></h2>
           <div class="measure-details">
             <InfoCard v-if="measure.tags" :measure="measure" :includeCalculatorCard="measure.id === 'qualite-durable'"/>
             <div class="description-container">
@@ -19,7 +19,6 @@
                 <h3>{{subMeasure.title}}</h3>
                 <div class="measure-details">
                   <InfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
-                  <!-- refactor to a KeyMeasureDescription, which has all the HTML formatting when switch to fontawesome icons -->
                   <div class="description-container">
                     <p class="description" v-if="subMeasure.htmlDescription" v-html="subMeasure.htmlDescription"></p>
                     <p class="description" v-if="subMeasure.description">{{subMeasure.description}}</p>
