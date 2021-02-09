@@ -29,7 +29,7 @@
   }
 
   .measure-info-card, .calculator-card {
-    background: #F1F3EE;
+    background: $light-green;
     border-radius: 15px;
     padding: 1em 1.5em;
   }
@@ -39,8 +39,7 @@
     font-weight: bold;
     font-size: 18px;
     margin-bottom: 1em;
-    /* Dark 1 */
-    color: #333333;
+    color: $grey;
   }
 
   .deadline > h2, .tags > h2 {
@@ -49,15 +48,14 @@
 
   p {
     font-size: 14px;
-    color: #000000;
+    color: $black;
   }
 
   .tag {
     font-size: 14px;
     font-weight: bold;
     margin: 0.5em 0em;
-    /* Green 1 */
-    color: #748852;
+    color: $green;
   }
 
   .calculator-card {
@@ -67,12 +65,11 @@
   .simulator-link {
     font-size: 18px;
     text-align: center;
-    color: rgba(255, 255, 255, 0.867527);
+    color: $dark-white;
     font-weight: bold;
     text-decoration: none;
     white-space: nowrap;
-    /* Green 1 */
-    background: #748852;
+    background: $green;
     border-radius: 50px;
     padding: 0.5em 0.8em;
     line-height: 3.5em;
