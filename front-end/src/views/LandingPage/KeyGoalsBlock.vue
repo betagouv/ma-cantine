@@ -42,7 +42,7 @@
     width: 250px;
     font-size: 20px;
     line-height: 20px;
-    color: #333333;
+    color: $grey;
     padding: 30px 0;
   }
 
