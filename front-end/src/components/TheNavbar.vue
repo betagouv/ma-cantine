@@ -65,7 +65,7 @@ export default {
     font-weight: 200;
     font-size: 25px;
     line-height: 29px;
-    color: rgba(64, 64, 64, 0.85);
+    color: $grey;
   }
 
   #ma-cantine {
@@ -77,7 +77,7 @@ export default {
     font-size: 11px;
     font-weight: 600;
     line-height: 15px;
-    color: rgba(0,0,0,0.83);
+    color: $light-black;
   }
 
   .navbar-item {
@@ -87,7 +87,7 @@ export default {
     font-size: 17px;
     font-weight: bold;
     line-height: 20px;
-    color: rgba(64, 64, 64, 0.85);
+    color: $grey;
   }
 
   .navbar-item:hover {
