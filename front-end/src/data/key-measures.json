@@ -33,6 +33,7 @@
         "faIcon": "fa-bullhorn",
         "subMeasures": [
             {
+                "id": "convives-informes",
                 "title": "Les convives doivent être informés une fois par an.",
                 "tags": [
                     "scolaire",
@@ -47,6 +48,7 @@
                 "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l’acquisition de produits issus du commerce équitable. Cette information peut se faire par affichage (dans l’espace commun par exemple) ou par email. \n\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Télécharger un modèle d’email</b> (à venir)\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Voir un exemple d’affiche</b> (à venir)"
             },
             {
+                "id": "informations-nutritionnelles",
                 "title": "Les gestionnaires en restauration collective communiquent sur les informations nutritionnelles des repas servis.",
                 "tags": [
                     "scolaire",
@@ -75,14 +77,17 @@
         "deadline": "Janvier et octobre 2020",
         "subMeasures": [
             {
+                "id": "gasipillage-analyse",
                 "title": "Le gaspillage alimentaire doit être analysé afin d’être réduit.",
                 "description": "Obligation de mettre en place une démarche de lutte contre le gaspillage alimentaire étendu à la restauration collective privée et obligation d’effectuer un diagnostic préalable à la réalisation de cette démarche."
             },
             {
+                "id": "restes",
                 "title": "Les restes encore consommables doivent être protégés.",
                 "htmlDescription": "Depuis le 1er janvier 2020, il est <b>interdit de rendre impropre à la consommation</b> les excédents alimentaires. L’infraction à cette loi est susceptible d’une amende de 3 750 €."
             },
             {
+                "id": "dons",
                 "title": "Les services volumineux de restauration collective se doivent de faire des dons aux associations.",
                 "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui <b>préparant plus de 3000 repas</b> par jour ont l’obligation de proposer une convention de don à association habilitée."
             }
@@ -94,6 +99,7 @@
         "faIcon": "fa-leaf",
         "subMeasures": [
             {
+                "id": "proteines",
                 "title": "Les sources de protéines doivent être diversifiées.",
                 "tags": [
                     "scolaire",
@@ -109,6 +115,7 @@
                 "description": "Les gestionnaires des restaurants collectifs sont tenus de présenter à leurs structures dirigeantes un plan pluriannuel de diversification de protéines incluant des alternatives à base de protéines végétales dans les repas qu’ils proposent."
             },
             {
+                "id": "menu-vege",
                 "title": "Expérimentation d’un menu végétarien par semaine",
                 "tags": [
                     "scolaire"
@@ -124,6 +131,7 @@
         "faIcon": "fa-wind",
         "subMeasures": [
             {
+                "id": "ustensiles",
                 "title": "Les ustensiles en plastique à usage unique sont interdits.",
                 "tags": [
                     "scolaire",
@@ -139,6 +147,7 @@
                 "description": "La mise à disposition des ustensiles à usage unique en matière plastique (sauf, jusqu’au 3 juillet 2021, ceux compostables en compostage domestique et constitués, pour tout ou partie, de matières biosourcées) suivants est interdite : gobelets, verres, assiettes, pailles, couverts, piques à steak, couvercles à verre, plateaux-repas, pots à glace, saladiers, boîtes et bâtonnets mélangeurs pour boissons."
             },
             {
+                "id": "contenants",
                 "title": "Les contenants alimentaires en plastique sont interdits.",
                 "tags": [
                     "scolaire",
@@ -149,6 +158,7 @@
                 "description": "L’utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite."
             },
             {
+                "id": "bouteilles",
                 "title": "Les bouteilles d’eau plate en plastique sont interdites.",
                 "tags": [
                     "scolaire"
