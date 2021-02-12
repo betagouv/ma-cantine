@@ -2,7 +2,7 @@
   <div class="description-container">
     <p class="description" v-if="measure.htmlDescription" v-html="measure.htmlDescription"></p>
     <p class="description" v-else-if="measure.description">{{measure.description}}</p>
-    <div id="logos" v-if="measure.id === 'cinquante'">
+    <div id="logos" v-if="measure.id === 'cinquante'" :class="{ shrink: shrinkLogos }">
       <img src="@/assets/logos/label-rouge.png" alt="logo Label Rouge"/>
       <img src="@/assets/logos/Logo-AOC-AOP.png" alt="logo appellation d’origine"/>
       <img src="@/assets/logos/IGP.png" alt="logo indication géographique"/>
@@ -19,7 +19,8 @@
   export default {
     name: "KeyMeasureDescription",
     props: {
-      measure: Object
+      measure: Object,
+      shrinkLogos: Boolean
     }
   }
 </script>
@@ -52,9 +53,14 @@
     margin: 0.5em;
   }
 
+  #logos.shrink > img {
+    max-height: 3em;
+    margin: 0.1em;
+  }
+
   @media ( max-width: 480px ) {
     #logos > img {
-      max-height: 4em;
+      max-height: 3em;
     }
   }
 </style>
