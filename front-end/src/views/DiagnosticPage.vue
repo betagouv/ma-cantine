@@ -11,9 +11,27 @@
             {{ readMore[subMeasure.id] ? "Moins" : "En savoir plus" }}
           </button>
           <div class="measure-status">
-            <button class="status">Fait</button>
-            <button class="status">Programmé</button>
-            <button class="status">Pas fait</button>
+            <button
+              class="status"
+              :class="{selected: statuses[subMeasure.id] === STATUSES.done}"
+              @click="statuses[subMeasure.id] = STATUSES.done"
+            >
+              Fait
+            </button>
+            <button
+              class="status"
+              :class="{selected: statuses[subMeasure.id] === STATUSES.planned}"
+              @click="statuses[subMeasure.id] = STATUSES.planned"
+            >
+              Programmé
+            </button>
+            <button
+              class="status"
+              :class="{selected: statuses[subMeasure.id] === STATUSES.notDone}"
+              @click="statuses[subMeasure.id] = STATUSES.notDone"
+            >
+              Pas fait
+            </button>
           </div>
         </div>
         <KeyMeasureDescription 
@@ -30,8 +48,14 @@
 
 <script>
   import keyMeasures from "@/data/key-measures.json"
-  import KeyMeasureTitle from '../components/KeyMeasureTitle';
-  import KeyMeasureDescription from '../components/KeyMeasureDescription';
+  import KeyMeasureTitle from '@/components/KeyMeasureTitle';
+  import KeyMeasureDescription from '@/components/KeyMeasureDescription';
+
+  const STATUSES = {
+    done: 'done',
+    planned: 'planned',
+    notDone: 'not done'
+  };
 
   export default {
     components: {
@@ -39,11 +63,14 @@
       KeyMeasureDescription
     },
     data() {
-      let readMore = {};
+      let readMore = {}, statuses = {};
       Object.keys(keyMeasures).forEach(key => readMore[key] = false);
+      Object.keys(keyMeasures).forEach(key => statuses[key] = undefined);
       return {
         keyMeasures,
-        readMore
+        readMore,
+        STATUSES,
+        statuses
       };
     }
   }
@@ -77,6 +104,7 @@
 
   .measure-headline {
     display: flex;
+    align-items: center;
   }
 
   h4 {
@@ -93,6 +121,27 @@
     font-size: 14px;
     color: $black;
     cursor: pointer;
+  }
+
+  .measure-status {
+    border-radius: 1em;
+    overflow: hidden;
+    /* offset-x | offset-y | blur-radius | spread-radius | color */
+    box-shadow: 0px 0px 5px 1px $dark-white;
+    height: 2.5em;
+    display: flex;
+  }
+
+  .status {
+    border: none;
+    margin: 0;
+    background-color: $white;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .status.selected, .status:hover {
+    background-color: $light-yellow;
   }
 
   .measure-description {
