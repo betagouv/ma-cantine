@@ -150,20 +150,41 @@
     border-left: 1px $green solid;
   }
 
+  #summarise {
+    color: $white;
+    font-size: 24px;
+    background-color: $orange;
+    width: 10em;
+    padding: 0.2em;
+    border-radius: 1em;
+    border: none;
+    margin-top: 2em;
+    cursor: pointer;
+  }
+
   @media (max-width: 700px) {
     .measure-headline {
       flex-direction: column;
+      align-items: flex-start;
     }
 
     h4 {
       width: 100%;
-      margin: 0;
+      margin-bottom: 0;
     }
 
     .read-more {
       margin-left: 0;
       padding: 0;
       height: 3em;
+    }
+
+    .measure-status {
+      margin: 0.5em 0;
+    }
+
+    .measure-description {
+      width: 100%;
     }
   }
 </style>
