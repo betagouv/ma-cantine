@@ -13,8 +13,7 @@
             <button class="status">Pas fait</button>
           </div>
         </div>
-        <!-- TODO: refactor description handling to a reusable component -->
-        <p>{{ subMeasure.description || subMeasure.htmlDescription }}</p>
+        <KeyMeasureDescription :measure="subMeasure" />
       </div>
     </div>
     <button id="summarise">Récapitulatif</button>
@@ -24,9 +23,13 @@
 <script>
   import keyMeasures from "@/data/key-measures.json"
   import KeyMeasureTitle from '../components/KeyMeasureTitle';
+  import KeyMeasureDescription from '../components/KeyMeasureDescription';
 
   export default {
-  components: { KeyMeasureTitle },
+    components: {
+      KeyMeasureTitle,
+      KeyMeasureDescription
+    },
     data() {
       return {
         keyMeasures
