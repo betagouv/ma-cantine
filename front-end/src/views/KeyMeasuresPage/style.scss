@@ -72,37 +72,10 @@ h2 {
   align-items: flex-start;
 }
 
-.description-container {
-  flex: 4;
-
-  /deep/ .fa-check-square, /deep/ .fa-arrow-alt-circle-right {
-    color: $green;
-  }
-}
-
 h3 {
   font-weight: bold;
   font-size: 24px;
   color: $green;
-}
-
-.description {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5em;
-  white-space: pre-wrap;
-}
-
-#logos {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-#logos > img {
-  max-height: 65px;
-  margin: 0.5em;
 }
 
 @media (max-width: 480px) {
@@ -118,9 +91,5 @@ h3 {
   .measure-details {
     flex-direction: column;
     align-items: center;
-  }
-
-  #logos > img {
-    max-height: 4em;
   }
 }
