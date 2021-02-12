@@ -105,6 +105,7 @@
   .measure-headline {
     display: flex;
     align-items: center;
+    justify-content: space-between;
   }
 
   h4 {
@@ -115,7 +116,8 @@
   .read-more {
     border: none;
     background-color: $white;
-    width: 10em;
+    max-width: 10em;
+    padding: 1em 0;
     margin-left: 0.5em;
     text-align: left;
     font-size: 14px;
@@ -135,6 +137,8 @@
   .status {
     border: none;
     margin: 0;
+    padding: 0 1em;
+    white-space: nowrap;
     background-color: $white;
     font-size: 14px;
     cursor: pointer;
@@ -160,6 +164,16 @@
     border: none;
     margin-top: 2em;
     cursor: pointer;
+  }
+
+  @media (max-width: 1200px) {
+    .measure-status {
+      min-width: 11em;
+    }
+
+    .status {
+      padding: 0 0.4em;
+    }
   }
 
   @media (max-width: 700px) {
