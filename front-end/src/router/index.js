@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LandingPage from '@/views/LandingPage';
 import KeyMeasuresPage from '@/views/KeyMeasuresPage';
+import DiagnosticPage from '@/views/DiagnosticPage';
 
 const routes = [
   {
@@ -14,6 +15,14 @@ const routes = [
     component: KeyMeasuresPage,
     meta: {
       title: "Les 5 mesures phares de la loi EGAlim"
+    }
+  },
+  {
+    path: '/auto-evaluer',
+    name: 'DiagnosticPage',
+    component: DiagnosticPage,
+    meta: {
+      title: "M'auto-évaluer"
     }
   }
 ];
