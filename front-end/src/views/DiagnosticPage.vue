@@ -6,14 +6,16 @@
       <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
         <div class="measure-headline">
           <h3>{{ subMeasure.title }}</h3>
-          <button class="about">En savoir plus</button>
+          <button class="about" @click="readMore[subMeasure.id] = !readMore[subMeasure.id]">
+            {{ readMore[subMeasure.id] ? "Moins" : "En savoir plus" }}
+          </button>
           <div class="measure-status">
             <button class="status">Fait</button>
             <button class="status">Programmé</button>
             <button class="status">Pas fait</button>
           </div>
         </div>
-        <KeyMeasureDescription :measure="subMeasure" />
+        <KeyMeasureDescription :measure="subMeasure" v-if="readMore[subMeasure.id]"/>
       </div>
     </div>
     <button id="summarise">Récapitulatif</button>
@@ -31,14 +33,17 @@
       KeyMeasureDescription
     },
     data() {
+      let readMore = {};
+      Object.keys(keyMeasures).forEach(key => readMore[key] = false);
       return {
-        keyMeasures
+        keyMeasures,
+        readMore
       };
     }
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   #diagnostic {
     text-align: left;
   }
@@ -49,5 +54,15 @@
 
   h3 {
     flex-grow: 2;
+  }
+
+  .about {
+    border: none;
+    background-color: $white;
+    width: 10em;
+    text-align: left;
+    font-size: 14px;
+    color: $black;
+    cursor: pointer;
   }
 </style>
