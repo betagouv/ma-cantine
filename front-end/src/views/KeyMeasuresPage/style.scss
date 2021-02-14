@@ -1,95 +1,27 @@
 #key-measures {
   text-align: center;
   padding: 1em 1em;
-}
 
-h1 {
-  font-weight: bold;
-  font-size: 48px;
-  color: $green;
-  margin: 1em 0em;
-}
+  h1 {
+    font-weight: bold;
+    font-size: 48px;
+    color: $green;
+    margin: 1em 0em;
+  }
 
-p {
-  font-size: 18px;
-  color: $grey;
-}
-
-#actions {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  /* TODO: supprimer ça quand on a des liens */
-  display: none;
-}
-
-#guide-download {
-  border-radius: 25px;
-  background: rgb(0,191,113);
-  color: $white;
-  padding: 0.7em 2em;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-#about-cnrc {
-  text-decoration: none;
-  color: $grey;
-  font-weight: 400;
-  font-size: 17px;
-}
-
-#about-cnrc:visited {
-  color: $grey;
-}
-
-/* measures styling */
-#measures {
-  text-align: left;
-}
-
-.measure {
-  display: flex;
-  overflow: hidden;
-  align-items: center;
-  max-width: 1170px;
-  margin: auto;
-}
-
-.measure-content {
-  margin: 2em;
-}
-
-h2 {
-  font-weight: bold;
-  font-size: 32px;
-  color: $black;
-}
-
-.measure-details {
-  display: flex;
-  align-items: flex-start;
-}
-
-h3 {
-  font-weight: bold;
-  font-size: 24px;
-  color: $green;
+  #measures {
+    text-align: left;
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+    max-width: 1170px;
+    margin: auto;
+  }
 }
 
 @media (max-width: 480px) {
   #key-measures {
     text-align: center;
     padding: 1em 0.5em;
-  }
-
-  .measure-content {
-    margin: 0.5em;
-  }
-
-  .measure-details {
-    flex-direction: column;
-    align-items: center;
   }
 }
