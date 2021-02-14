@@ -3,6 +3,7 @@ import LandingPage from '@/views/LandingPage';
 import DiagnosticPage from '@/views/DiagnosticPage';
 import KeyMeasuresPage from '@/views/KeyMeasuresPage';
 import KeyMeasuresHome from '@/views/KeyMeasuresPage/KeyMeasuresHome';
+import KeyMeasurePage from '@/views/KeyMeasuresPage/KeyMeasurePage';
 
 const routes = [
   {
@@ -25,11 +26,19 @@ const routes = [
     meta: {
       title: "Les 5 mesures phares de la loi EGAlim"
     },
-    children: [{
-      path: '',
-      name: 'KeyMeasuresHome',
-      component: KeyMeasuresHome,
-    }]
+    children: [
+      {
+        path: '',
+        name: 'KeyMeasuresHome',
+        component: KeyMeasuresHome,
+      },
+      {
+        path: ':id',
+        name: 'KeyMeasurePage',
+        component: KeyMeasurePage,
+        props: true,
+      }
+    ]
   }
 ];
 
