@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LandingPage from '@/views/LandingPage';
-import KeyMeasuresPage from '@/views/KeyMeasuresPage';
 import DiagnosticPage from '@/views/DiagnosticPage';
+import KeyMeasuresPage from '@/views/KeyMeasuresPage';
+import KeyMeasuresHome from '@/views/KeyMeasuresPage/KeyMeasuresHome';
 
 const routes = [
   {
@@ -10,20 +11,25 @@ const routes = [
     component: LandingPage,
   },
   {
-    path: '/mesures-phares',
-    name: 'KeyMeasuresPage',
-    component: KeyMeasuresPage,
-    meta: {
-      title: "Les 5 mesures phares de la loi EGAlim"
-    }
-  },
-  {
     path: '/auto-evaluer',
     name: 'DiagnosticPage',
     component: DiagnosticPage,
     meta: {
       title: "M'auto-évaluer"
     }
+  },
+  {
+    path: '/mesures-phares',
+    name: 'KeyMeasuresPage',
+    component: KeyMeasuresPage,
+    meta: {
+      title: "Les 5 mesures phares de la loi EGAlim"
+    },
+    children: [{
+      path: '',
+      name: 'KeyMeasuresHome',
+      component: KeyMeasuresHome,
+    }]
   }
 ];
 
