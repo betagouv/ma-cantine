@@ -42,6 +42,7 @@
 
 <style scoped lang="scss">
   .measure-content {
+    text-align: left;
     margin: 2em;
   }
 
