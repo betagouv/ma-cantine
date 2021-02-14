@@ -12,13 +12,13 @@
         <div class="measure-content">
           <h2><KeyMeasureTitle :measure="measure"/></h2>
           <div class="measure-details">
-            <InfoCard v-if="measure.tags" :measure="measure" :includeCalculatorCard="measure.id === 'qualite-durable'"/>
+            <KeyMeasureInfoCard v-if="measure.tags" :measure="measure" :includeCalculatorCard="measure.id === 'qualite-durable'"/>
             <div class="description-container">
               <KeyMeasureDescription :measure="measure" v-if="measure.description"/>
               <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
                 <h3>{{subMeasure.title}}</h3>
                 <div class="measure-details">
-                  <InfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
+                  <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
                   <KeyMeasureDescription :measure="subMeasure"/>
                 </div>
               </div>
