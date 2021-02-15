@@ -1,7 +1,9 @@
 <template>
-  <h1>Les 5 mesures phares de la loi EGAlim</h1>
-  <div id="measures" v-for="measure in keyMeasures" :key="measure.id">
-    <KeyMeasure :measure="measure"/>
+  <div id="key-measures">
+    <h1>Les 5 mesures phares de la loi EGAlim</h1>
+    <div class="measure" v-for="measure in keyMeasures" :key="measure.id" :id="measure.id">
+      <KeyMeasure :measure="measure"/>
+    </div>
   </div>
 </template>
 
@@ -22,14 +24,31 @@
 </script>
 
 <style scoped lang="scss">
-  h1 {
-    font-weight: bold;
-    font-size: 48px;
-    color: $green;
-    margin: 1em 0em;
+  #key-measures {
+    text-align: center;
+    padding: 1em 1em;
+
+    h1 {
+      font-weight: bold;
+      font-size: 48px;
+      color: $green;
+      margin: 1em 0em;
+    }
+
+    .measure {
+      text-align: left;
+      display: flex;
+      overflow: hidden;
+      align-items: center;
+      max-width: 1170px;
+      margin: auto;
+    }
   }
 
-  #measures {
-    display: flex;
+  @media (max-width: 480px) {
+    #key-measures {
+      text-align: center;
+      padding: 1em 0.5em;
+    }
   }
 </style>
