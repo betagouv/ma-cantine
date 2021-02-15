@@ -7,7 +7,7 @@
       <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
         <div class="measure-headline">
           <h4>{{ subMeasure.title }}</h4>
-          <button class="read-more" @click="readMore[subMeasure.id] = !readMore[subMeasure.id]">
+          <button class="read-more" @click="toggleDescriptionDisplay(subMeasure.id)">
             {{ readMore[subMeasure.id] ? "Moins" : "En savoir plus" }}
           </button>
           <div class="measure-status">
@@ -57,6 +57,11 @@
         STATUSES,
         statuses: {}
       };
+    },
+    methods: {
+      toggleDescriptionDisplay(id) {
+        this.readMore[id] = !this.readMore[id]
+      }
     }
   }
 </script>
