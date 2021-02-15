@@ -29,19 +29,15 @@
         />
       </div>
     </div>
+    <button id="summarise" @click="saveStatuses">Récapitulatif</button>
   </div>
 </template>
 
 <script>
-  import keyMeasures from "@/data/key-measures.json"
+  import keyMeasures from "@/data/KeyMeasures.js"
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import KeyMeasureDescription from '@/components/KeyMeasureDescription';
-
-  const STATUSES = {
-    done: 'Fait',
-    planned: 'Programmé',
-    notDone: 'Pas fait'
-  };
+  import STATUSES from '@/data/STATUSES.json';
 
   export default {
     components: {
@@ -57,6 +53,18 @@
     methods: {
       toggleDescriptionDisplay(subMeasure) {
         subMeasure.readMore = !subMeasure.readMore;
+      },
+      saveStatuses() {
+        let statuses = {};
+        this.keyMeasures.forEach((measure) => {
+          measure.subMeasures.forEach((subMeasure) => {
+            if(subMeasure.status) {
+              statuses[subMeasure.id] = subMeasure.status;
+            }
+          });
+        });
+        localStorage.setItem('statuses', JSON.stringify(statuses));
+        this.$router.push({name: 'DiagnosticResultsPage'});
       }
     }
   }
@@ -144,6 +152,18 @@
     width: 70%;
     padding-left: 1em;
     border-left: 1px $green solid;
+  }
+
+  #summarise {
+    color: $white;
+    font-size: 24px;
+    background-color: $orange;
+    width: 10em;
+    padding: 0.2em;
+    border-radius: 1em;
+    border: none;
+    margin-top: 2em;
+    cursor: pointer;
   }
 
   @media (max-width: 1200px) {
