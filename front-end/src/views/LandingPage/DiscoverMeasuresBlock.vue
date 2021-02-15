@@ -9,7 +9,7 @@
       <router-link
         v-for="measure in keyMeasures"
         :key="measure.id"
-        :to="{ name: 'KeyMeasuresPage', hash: '#' + measure.id }"
+        :to="{ name: 'KeyMeasuresHome', hash: '#' + measure.id }"
         class="measure-link"
       >
         <li class="measure-item">
