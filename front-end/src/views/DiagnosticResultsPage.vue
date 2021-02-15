@@ -3,15 +3,18 @@
     <h1>Votre auto-évaluation mesures EGAlim</h1>
     <h2>Merci d’avoir répondu. Voici vos résultats d’auto-diagnostic.<br>Vous souhaitez nous contacter : <a href="mailto:contact@egalim.beta.gouv.fr" id="contact">contact@egalim.beta.gouv.fr</a>.</h2>
     <ul id="measure-cards">
-      <li class="measure-card" v-for="measure in keyMeasures" :key="measure.id">
-        <p class="measure-title"><KeyMeasureTitle :measure="measure"/></p>
-        <ul class="statuses">
-          <li v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
-            <!-- TODO: improve a11y https://fontawesome.com/how-to-use/on-the-web/other-topics/accessibility -->
-            <p class="sub-measure-title" :title="STATUSES[subMeasure.status || 'notDone']"><i class="fas fa-fw" :class="iconClass(subMeasure.status)"></i>
-            {{ subMeasure.shortTitle }}</p>
-          </li>
-        </ul>
+      <li v-for="measure in keyMeasures" :key="measure.id">
+        <div class="measure-card">
+          <p class="measure-title"><KeyMeasureTitle :measure="measure"/></p>
+          <ul class="statuses">
+            <li v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
+              <!-- TODO: improve a11y https://fontawesome.com/how-to-use/on-the-web/other-topics/accessibility -->
+              <p class="sub-measure-title" :title="STATUSES[subMeasure.status || 'notDone']"><i class="fas fa-fw" :class="iconClass(subMeasure.status)"></i>
+              {{ subMeasure.shortTitle }}</p>
+            </li>
+          </ul>
+        </div>
+        <p class="measure-score">{{ measure.statusScore }} / {{ measure.statusMaxScore }}</p>
       </li>
     </ul>
   </div>
@@ -79,11 +82,11 @@
     background: $light-yellow;
     border-radius: 22px;
     width: 12em;
+    height: 75%;
     border-radius: 22px;
     padding: 0.5em 1em;
     margin: 0.5em;
     text-align: left;
-    font-size: 14px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
