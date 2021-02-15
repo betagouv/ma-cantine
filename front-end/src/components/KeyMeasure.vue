@@ -57,6 +57,10 @@
     align-items: flex-start;
   }
 
+  .description-container {
+    flex: 4;
+  }
+
   h3 {
     font-weight: bold;
     font-size: 24px;
