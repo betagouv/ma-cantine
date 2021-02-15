@@ -109,7 +109,7 @@
   import CalculatorLink from '@/components/CalculatorLink';
 
   export default {
-    name: "InfoCard",
+    name: "KeyMeasureInfoCard",
     components: {
       CalculatorLink
     },
