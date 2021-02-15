@@ -8,9 +8,11 @@
           <p class="measure-title"><KeyMeasureTitle :measure="measure"/></p>
           <ul class="statuses">
             <li v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
-              <!-- TODO: improve a11y https://fontawesome.com/how-to-use/on-the-web/other-topics/accessibility -->
-              <p class="sub-measure-title" :title="STATUSES[subMeasure.status || 'notDone']"><i class="fas fa-fw" :class="iconClass(subMeasure.status)"></i>
-              {{ subMeasure.shortTitle }}</p>
+              <p class="sub-measure-title" :title="STATUSES[subMeasure.status || 'notDone']">
+                <i class="fas fa-fw" :class="iconClass(subMeasure.status)" aria-hidden="true"></i>
+                <span class="sr-only">{{ STATUSES[subMeasure.status || 'notDone'] }}:</span>
+                {{ subMeasure.shortTitle }}
+              </p>
             </li>
           </ul>
         </div>
