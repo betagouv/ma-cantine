@@ -11,27 +11,14 @@
             {{ readMore[subMeasure.id] ? "Moins" : "En savoir plus" }}
           </button>
           <div class="measure-status">
-            <button
-              class="status"
-              :class="{selected: statuses[subMeasure.id] === STATUSES.done}"
-              @click="statuses[subMeasure.id] = STATUSES.done"
+            <span v-for="(text, status) in STATUSES"
+              :key="status"
+              class="status-radio-button" :class="{selected: statuses[subMeasure.id] === status}"
             >
-              Fait
-            </button>
-            <button
-              class="status"
-              :class="{selected: statuses[subMeasure.id] === STATUSES.planned}"
-              @click="statuses[subMeasure.id] = STATUSES.planned"
-            >
-              Programmé
-            </button>
-            <button
-              class="status"
-              :class="{selected: statuses[subMeasure.id] === STATUSES.notDone}"
-              @click="statuses[subMeasure.id] = STATUSES.notDone"
-            >
-              Pas fait
-            </button>
+              <input type="radio" :id="subMeasure.id + '-' + status" class="status-input"
+              :name="'status-'+subMeasure.id" :value="status" v-model="statuses[subMeasure.id]">
+              <label :for="subMeasure.id + '-' + status" class="status-label">{{ text }}</label>
+            </span>
           </div>
         </div>
         <KeyMeasureDescription 
@@ -42,7 +29,6 @@
         />
       </div>
     </div>
-    <button id="summarise">Récapitulatif</button>
   </div>
 </template>
 
@@ -52,9 +38,9 @@
   import KeyMeasureDescription from '@/components/KeyMeasureDescription';
 
   const STATUSES = {
-    done: 'done',
-    planned: 'planned',
-    notDone: 'not done'
+    done: 'Fait',
+    planned: 'Programmé',
+    notDone: 'Pas fait'
   };
 
   export default {
@@ -63,14 +49,13 @@
       KeyMeasureDescription
     },
     data() {
-      let readMore = {}, statuses = {};
+      let readMore = {};
       Object.keys(keyMeasures).forEach(key => readMore[key] = false);
-      Object.keys(keyMeasures).forEach(key => statuses[key] = undefined);
       return {
         keyMeasures,
         readMore,
         STATUSES,
-        statuses
+        statuses: {}
       };
     }
   }
@@ -134,17 +119,23 @@
     display: flex;
   }
 
-  .status {
+  .status-label {
     border: none;
     margin: 0;
-    padding: 0 1em;
+    padding: 1em;
     white-space: nowrap;
-    background-color: $white;
     font-size: 14px;
     cursor: pointer;
+    position: relative;
+    top: 0.4em;
   }
 
-  .status.selected, .status:hover {
+  .status-input {
+    opacity: 0;
+    position: absolute;
+  }
+
+  .status-radio-button.selected, .status-radio-button:hover {
     background-color: $light-yellow;
   }
 
@@ -152,18 +143,6 @@
     width: 70%;
     padding-left: 1em;
     border-left: 1px $green solid;
-  }
-
-  #summarise {
-    color: $white;
-    font-size: 24px;
-    background-color: $orange;
-    width: 10em;
-    padding: 0.2em;
-    border-radius: 1em;
-    border: none;
-    margin-top: 2em;
-    cursor: pointer;
   }
 
   @media (max-width: 1200px) {
