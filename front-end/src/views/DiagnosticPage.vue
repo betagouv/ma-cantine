@@ -7,22 +7,22 @@
       <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
         <div class="measure-headline">
           <h4>{{ subMeasure.title }}</h4>
-          <button class="read-more" @click="toggleDescriptionDisplay(subMeasure.id)">
-            {{ readMore[subMeasure.id] ? "Moins" : "En savoir plus" }}
+          <button class="read-more" @click="toggleDescriptionDisplay(subMeasure)">
+            {{ subMeasure.readMore ? "Moins" : "En savoir plus" }}
           </button>
           <div class="measure-status">
             <span v-for="(text, status) in STATUSES"
               :key="status"
-              class="status-radio-button" :class="{selected: statuses[subMeasure.id] === status}"
+              class="status-radio-button" :class="{selected: subMeasure.status === status}"
             >
               <input type="radio" :id="subMeasure.id + '-' + status" class="status-input"
-              :name="'status-'+subMeasure.id" :value="status" v-model="statuses[subMeasure.id]">
+              :name="'status-'+subMeasure.id" :value="status" v-model="subMeasure.status">
               <label :for="subMeasure.id + '-' + status" class="status-label">{{ text }}</label>
             </span>
           </div>
         </div>
         <KeyMeasureDescription 
-          v-if="readMore[subMeasure.id]"
+          v-if="subMeasure.readMore"
           class="measure-description"
           :measure="subMeasure" 
           :shrinkLogos="true"
@@ -49,18 +49,14 @@
       KeyMeasureDescription
     },
     data() {
-      let readMore = {};
-      Object.keys(keyMeasures).forEach(key => readMore[key] = false);
       return {
         keyMeasures,
-        readMore,
-        STATUSES,
-        statuses: {}
+        STATUSES
       };
     },
     methods: {
-      toggleDescriptionDisplay(id) {
-        this.readMore[id] = !this.readMore[id]
+      toggleDescriptionDisplay(subMeasure) {
+        subMeasure.readMore = !subMeasure.readMore;
       }
     }
   }
@@ -106,7 +102,7 @@
   .read-more {
     border: none;
     background-color: $white;
-    max-width: 10em;
+    width: 15%;
     padding: 1em 0;
     margin-left: 0.5em;
     text-align: left;
@@ -160,6 +156,12 @@
     }
   }
 
+  @media (max-width: 1000px) {
+    .status-label {
+      padding: 1em 0.3em;
+    }
+  }
+
   @media (max-width: 700px) {
     .measure-headline {
       flex-direction: column;
@@ -175,6 +177,7 @@
       margin-left: 0;
       padding: 0;
       height: 3em;
+      width: 10em;
     }
 
     .measure-status {
@@ -183,6 +186,10 @@
 
     .measure-description {
       width: 100%;
+    }
+
+    .status-label {
+      padding: 1em;
     }
   }
 </style>
