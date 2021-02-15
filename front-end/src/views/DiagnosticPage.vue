@@ -2,11 +2,11 @@
   <div id="diagnostic-page">
     <h1>M'auto-évaluer</h1>
     <h2>Évaluez-vous sur les mesures déjà mises en place dans votre établissement, en cours ou les restes à faire.</h2>
-    <div id="diagnostic" v-for="measure in keyMeasures" :key="measure.id">
+    <div class="measure-diagnostic" v-for="measure in keyMeasures" :key="measure.id">
       <h3><KeyMeasureTitle :measure="measure"/></h3>
-      <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
-        <div class="measure-headline">
-          <h4>{{ subMeasure.title }}</h4>
+      <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" class="sub-measure">
+        <fieldset class="measure-headline">
+          <legend>{{ subMeasure.title }}</legend>
           <button class="read-more" @click="toggleDescriptionDisplay(subMeasure)">
             {{ subMeasure.readMore ? "Moins" : "En savoir plus" }}
           </button>
@@ -20,7 +20,7 @@
               <label :for="subMeasure.id + '-' + status" class="status-label">{{ text }}</label>
             </span>
           </div>
-        </div>
+        </fieldset>
         <KeyMeasureDescription 
           v-if="subMeasure.readMore"
           class="measure-description"
@@ -76,6 +76,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 1170px;
+    margin: auto;
   }
 
   h1 {
@@ -90,10 +92,25 @@
     font-weight: normal;
   }
 
-  #diagnostic {
+  .measure-diagnostic {
     text-align: left;
-    margin-top: 3em;
+    margin-top: 1em;
     width: 90%;
+  }
+
+  .sub-measure {
+    margin: 1.5em 0;
+  }
+
+  fieldset {
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    padding-block-start: 0;
+    padding-block-end: 0;
+    padding-inline-start: 0;
+    padding-inline-end: 0;
+    border: none;
+    min-inline-size: min-content;
   }
 
   .measure-headline {
@@ -102,9 +119,10 @@
     justify-content: space-between;
   }
 
-  h4 {
+  legend {
     width: 60%;
     font-weight: normal;
+    float: left;
   }
 
   .read-more {
@@ -125,6 +143,7 @@
     /* offset-x | offset-y | blur-radius | spread-radius | color */
     box-shadow: 0px 0px 5px 1px $dark-white;
     height: 2.5em;
+    min-width: 11em;
     display: flex;
   }
 
@@ -166,16 +185,6 @@
     cursor: pointer;
   }
 
-  @media (max-width: 1200px) {
-    .measure-status {
-      min-width: 11em;
-    }
-
-    .status {
-      padding: 0 0.4em;
-    }
-  }
-
   @media (max-width: 1000px) {
     .status-label {
       padding: 1em 0.3em;
@@ -188,7 +197,7 @@
       align-items: flex-start;
     }
 
-    h4 {
+    legend {
       width: 100%;
       margin-bottom: 0;
     }
