@@ -10,12 +10,22 @@
         <stop offset="100%" stop-color="#C13331" />
       </linearGradient>
     </defs>
+    <title>Score pour "{{ measure.title }}"</title>
     <text x="50%" y="50%" text-anchor="middle" stroke="#333" stroke-width="0.5px" dy=".3em">
       {{ score }} / {{ maxScore }}
     </text>
     <circle
+      stroke="#E1E1E1"
+      fill="none"
+      :stroke-dasharray="circumference + ' ' + circumference"
+      :stroke-width="stroke"
+      :r="normalizedRadius"
+      :cx="radius"
+      :cy="radius"
+    />
+    <circle
       :stroke="colourForScore"
-      fill="transparent"
+      fill="none"
       :stroke-dasharray="circumference + ' ' + circumference"
       :style="{ strokeDashoffset: strokeDashoffset }"
       :stroke-width="stroke"
@@ -29,8 +39,7 @@
 <script>
   export default {
     props: {
-      score: Number,
-      maxScore: Number,
+      measure: Object,
       radius: Number,
       stroke: Number
     },
@@ -42,6 +51,20 @@
       }
     },
     computed: {
+      score() {
+        let score = 0;
+        this.measure.subMeasures.forEach(subMeasure => {
+          if(subMeasure.status === 'done') {
+            score += 1;
+          } else if(subMeasure.status === 'planned') {
+            score += 0.5;
+          }
+        });
+        return score;
+      },
+      maxScore() {
+        return this.measure.subMeasures.length;
+      },
       strokeDashoffset() {
         const percentageScore = (this.score / this.maxScore) * 100;
         return this.circumference - percentageScore / 100 * this.circumference;
