@@ -60,7 +60,7 @@ export default {
     padding: 0;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 750px) {
     #router-view {
       margin-top: 0;
     }
