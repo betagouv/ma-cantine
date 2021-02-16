@@ -19,22 +19,17 @@
       </li>
     </ul>
     <p id="contact">Vous souhaitez nous contacter : <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>.</p>
-    <div class="measure" v-for="measure in keyMeasures" :key="measure.id" :id="measure.id">
-      <KeyMeasure :measure="measure"/>
-    </div>
   </div>
 </template>
 
 <script>
-  import KeyMeasure from '@/components/KeyMeasure'
   import { keyMeasures } from '@/data/KeyMeasures.js';
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import STATUSES from '@/data/STATUSES.json';
   import KeyMeasureScore from './KeyMeasureScore';
 
   export default {
-    components: {
-      KeyMeasure,
+    components: { 
       KeyMeasureTitle,
       KeyMeasureScore,
     },
