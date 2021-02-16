@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LandingPage from '@/views/LandingPage';
 import DiagnosticPage from '@/views/DiagnosticPage';
-import DiagnosticResultsPage from '@/views/DiagnosticResultsPage';
 import KeyMeasuresPage from '@/views/KeyMeasuresPage';
 import KeyMeasuresHome from '@/views/KeyMeasuresPage/KeyMeasuresHome';
 import KeyMeasurePage from '@/views/KeyMeasuresPage/KeyMeasurePage';
@@ -18,14 +17,6 @@ const routes = [
     component: DiagnosticPage,
     meta: {
       title: "M'auto-évaluer"
-    }
-  },
-  {
-    path: '/resultats-evaluation',
-    name: 'DiagnosticResultsPage',
-    component: DiagnosticResultsPage,
-    meta: {
-      title: "Votre auto-évaluation mesures EGAlim"
     }
   },
   {
