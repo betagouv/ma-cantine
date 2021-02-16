@@ -3,19 +3,12 @@
     :height="radius * 2"
     :width="radius * 2"
   >
-    <defs>
-      <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#748852" />
-        <stop offset="50%" stop-color="#E2A013" />
-        <stop offset="100%" stop-color="#C13331" />
-      </linearGradient>
-    </defs>
-    <title>Score pour "{{ measure.title }}"</title>
-    <text x="50%" y="50%" text-anchor="middle" stroke="#333" stroke-width="0.5px" dy=".3em">
+    <title>Score d'achèvement pour "{{ measure.title }}"</title>
+    <text x="50%" y="50%" text-anchor="middle" stroke-width="0.5px" dy=".3em">
       {{ score }} / {{ maxScore }}
     </text>
     <circle
-      stroke="#E1E1E1"
+      class="background"
       fill="none"
       :stroke-dasharray="circumference + ' ' + circumference"
       :stroke-width="stroke"
@@ -24,7 +17,7 @@
       :cy="radius"
     />
     <circle
-      :stroke="colourForScore"
+      :class="classForScore"
       fill="none"
       :stroke-dasharray="circumference + ' ' + circumference"
       :style="{ strokeDashoffset: strokeDashoffset }"
@@ -47,7 +40,8 @@
       const normalizedRadius = this.radius - this.stroke * 2;
       return {
         normalizedRadius,
-        circumference: normalizedRadius * 2 * Math.PI
+        circumference: normalizedRadius * 2 * Math.PI,
+        maxScore: this.measure.subMeasures.length
       }
     },
     computed: {
@@ -62,30 +56,47 @@
         });
         return score;
       },
-      maxScore() {
-        return this.measure.subMeasures.length;
-      },
       strokeDashoffset() {
         const percentageScore = (this.score / this.maxScore) * 100;
         return this.circumference - percentageScore / 100 * this.circumference;
       },
-      colourForScore() {
+      classForScore() {
         let proportion = this.score / this.maxScore;
         if(proportion === 1) {
-          return '#748852';
+          return { green: true };
         } else if(proportion > 0.25) {
-          return '#E2A013';
+          return { yellow: true };
         } else {
-          return '#C13331';
+          return { red: true };
         }
       }
     }
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  text {
+    stroke: $grey;
+  }
+
   circle {
     transform: rotate(-90deg);
     transform-origin: 50% 50%;
+  }
+
+  circle.background {
+    stroke: $dark-white;
+  }
+
+  circle.red {
+    stroke: $red;
+  }
+
+  circle.yellow {
+    stroke: $yellow;
+  }
+
+  circle.green {
+    stroke: $green;
   }
 </style>
