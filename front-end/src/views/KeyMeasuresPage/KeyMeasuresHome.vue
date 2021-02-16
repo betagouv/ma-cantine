@@ -61,9 +61,6 @@
   #key-measures {
     text-align: center;
     padding: 1em 1em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 
     h1 {
       font-weight: bold;
@@ -89,9 +86,7 @@
   }
 
   .measure-card {
-    border: 1px solid $light-yellow;
     background: $light-yellow;
-    border-radius: 22px;
     width: 11em;
     height: 15em;
     border-radius: 22px;
@@ -125,6 +120,10 @@
 
   .fa-times {
     color: $red;
+  }
+
+  .fa-question {
+    color: $grey;
   }
 
   #contact, #contact a {
