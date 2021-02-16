@@ -1,7 +1,7 @@
 <template>
   <div id="diagnostic-results">
     <h1>Votre auto-évaluation mesures EGAlim</h1>
-    <h2>Merci d’avoir répondu. Voici vos résultats d’auto-diagnostic.<br>Vous souhaitez nous contacter : <a href="mailto:contact@egalim.beta.gouv.fr" id="contact">contact@egalim.beta.gouv.fr</a>.</h2>
+    <h2>Merci d’avoir répondu. Voici vos résultats d’auto-diagnostic.</h2>
     <ul id="measure-cards">
       <li v-for="measure in keyMeasures" :key="measure.id">
         <div class="measure-card">
@@ -19,6 +19,7 @@
         <p class="measure-score">{{ measure.statusScore }} / {{ measure.statusMaxScore }}</p>
       </li>
     </ul>
+    <p id="contact">Vous souhaitez nous contacter : <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>.</p>
   </div>
 </template>
 
@@ -69,8 +70,8 @@
     font-weight: normal;
   }
 
-  #contact {
-    color: $light-grey;
+  #contact, #contact a {
+    color: $grey;
   }
 
   #measure-cards {
