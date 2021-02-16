@@ -27,7 +27,7 @@
 
 <script>
   import KeyMeasure from '@/components/KeyMeasure'
-  import keyMeasures from '@/data/KeyMeasures.js';
+  import { keyMeasures } from '@/data/KeyMeasures.js';
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import STATUSES from '@/data/STATUSES.json';
   import KeyMeasureScore from './KeyMeasureScore';
