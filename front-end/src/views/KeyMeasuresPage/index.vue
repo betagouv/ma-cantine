@@ -57,17 +57,11 @@
   @media (max-width: 750px) {
     #measures-nav {
       flex-direction: column;
-      margin-top: 6em;
+      margin-top: 2em;
     }
 
     .nav-item {
       margin: 3px 0;
-    }
-  }
-
-  @media (max-width: 480px) {
-    #measures-nav {
-      margin-top: 2em;
     }
   }
 </style>

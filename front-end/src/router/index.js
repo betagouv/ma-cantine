@@ -12,7 +12,7 @@ const routes = [
     component: LandingPage,
   },
   {
-    path: '/auto-evaluer',
+    path: '/diagnostique',
     name: 'DiagnosticPage',
     component: DiagnosticPage,
     meta: {
