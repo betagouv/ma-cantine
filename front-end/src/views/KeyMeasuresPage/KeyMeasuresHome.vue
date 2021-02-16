@@ -100,10 +100,12 @@
 
   .measure-title {
     font-weight: bold;
+    margin-bottom: 0;
   }
 
   .sub-measure-title {
     font-size: 15px;
+    margin: 0.8em 0;
   }
 
   .fas {
