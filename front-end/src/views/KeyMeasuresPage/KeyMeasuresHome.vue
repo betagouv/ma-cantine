@@ -2,7 +2,7 @@
   <div id="key-measures">
     <h1>Les 5 mesures phares de la loi EGAlim</h1>
     <ul id="measure-cards">
-      <li v-for="measure in keyMeasures" :key="measure.id">
+      <li v-for="measure in scoredKeyMeasures" :key="measure.id">
         <div class="measure-card">
           <p class="measure-title"><KeyMeasureTitle :measure="measure"/></p>
           <ul class="statuses">
@@ -15,11 +15,11 @@
             </li>
           </ul>
         </div>
-        <p class="measure-score">{{ measure.statusScore }} / {{ measure.statusMaxScore }}</p>
+        <KeyMeasureScore :score="measure.statusScore" :maxScore="measure.statusMaxScore" :stroke="4" :radius="50" />
       </li>
     </ul>
     <p id="contact">Vous souhaitez nous contacter : <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>.</p>
-    <div class="measure" v-for="measure in keyMeasures" :key="measure.id" :id="measure.id">
+    <div class="measure" v-for="measure in scoredKeyMeasures" :key="measure.id" :id="measure.id">
       <KeyMeasure :measure="measure"/>
     </div>
   </div>
@@ -30,15 +30,16 @@
   import keyMeasures from '@/data/KeyMeasures.js';
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import STATUSES from '@/data/STATUSES.json';
+  import KeyMeasureScore from './KeyMeasureScore';
 
   export default {
     components: {
       KeyMeasure,
       KeyMeasureTitle,
+      KeyMeasureScore,
     },
     data() {
       return {
-        keyMeasures,
         STATUSES
       };
     },
@@ -49,6 +50,23 @@
           'fa-pencil-alt': status === 'planned',
           'fa-times': status === 'notDone' || !status
         }
+      }
+    },
+    computed: {
+      scoredKeyMeasures() {
+        keyMeasures.forEach(measure => {
+          let score = 0;
+          measure.subMeasures.forEach(subMeasure => {
+            if(subMeasure.status === 'done') {
+              score += 1;
+            } else if(subMeasure.status === 'planned') {
+              score += 0.5;
+            }
+          });
+          measure.statusMaxScore = measure.subMeasures.length;
+          measure.statusScore = score;
+        });
+        return keyMeasures;
       }
     }
   }
@@ -83,6 +101,7 @@
     display: flex;
     justify-content: space-evenly;
     flex-wrap: wrap;
+    margin-bottom: 5em;
   }
 
   .measure-card {
