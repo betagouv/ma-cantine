@@ -1,27 +1,20 @@
 <template>
   <div id="presentation">
     <div class="presentation-content">
-      <h1>Approvisionner ma cantine en denrées de qualité</h1>
+      <h1>Diagnostiquer ma cantine sur les mesures de la loi EGAlim</h1>
       <p>
         La loi EGAlim vise à apporter une alimentation saine, de qualité et plus durable dans nos assiettes.
       </p>
       <p>
         Vous êtes en charge de l'approvisionnement d'une restauration collective ?
       </p>
-      <CalculatorLink message="Télécharger notre calculateur" class="presentation-diagnostic"/>
+      <router-link :to="{ name: 'DiagnosticPage' }" class="presentation-diagnostic">
+        Savoir où j'en suis des mesures EGAlim
+      </router-link>
     </div>
     <img src="@/assets/toque.svg" class="presentation-right-image">
   </div>
 </template>
-
-<script>
-  import CalculatorLink from '@/components/CalculatorLink';
-  export default {
-    components: {
-      CalculatorLink
-    },
-  }
-</script>
 
 <style scoped lang="scss">
   #presentation {
