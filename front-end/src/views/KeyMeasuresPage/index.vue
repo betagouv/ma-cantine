@@ -3,7 +3,7 @@
     <router-link :to="{ name: 'KeyMeasuresHome' }" class="nav-item">Tableau de bord</router-link>
     <template v-for="measure in keyMeasures" :key="measure.id">
       <router-link :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }" class="nav-item">
-        {{ measure.id }}
+        {{ measure.shortTitle }}
       </router-link>
     </template>
   </nav>
