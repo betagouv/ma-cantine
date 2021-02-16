@@ -133,6 +133,7 @@
     box-shadow: 0px 0px 5px 1px $dark-white;
     height: 2.5em;
     min-width: 11em;
+    max-width: 14.5em;
     display: flex;
   }
 
