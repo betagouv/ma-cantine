@@ -16,7 +16,7 @@
               class="status-radio-button" :class="{selected: subMeasure.status === status}"
             >
               <input type="radio" :id="subMeasure.id + '-' + status" class="status-input"
-              :name="'status-'+subMeasure.id" :value="status" v-model="subMeasure.status">
+              :name="'status-'+subMeasure.id" :value="status" v-model="subMeasure.status" @change="saveStatusesLocally">
               <label :for="subMeasure.id + '-' + status" class="status-label">{{ text }}</label>
             </span>
           </div>
@@ -29,7 +29,7 @@
         />
       </div>
     </div>
-    <button id="summarise" @click="saveStatuses">Récapitulatif</button>
+    <router-link :to="{ name: 'KeyMeasuresHome' }" id="summarise">Récapitulatif</router-link>
   </div>
 </template>
 
@@ -54,10 +54,7 @@
       toggleDescriptionDisplay(subMeasure) {
         subMeasure.readMore = !subMeasure.readMore;
       },
-      saveStatuses() {
-        saveStatusesLocally();
-        this.$router.push({name: 'KeyMeasuresHome'});
-      }
+      saveStatusesLocally
     }
   }
 </script>
@@ -175,6 +172,7 @@
     border: none;
     margin-top: 2em;
     cursor: pointer;
+    text-decoration: none;
   }
 
   @media (max-width: 1000px) {
