@@ -7,9 +7,9 @@
           <p class="measure-title"><KeyMeasureTitle :measure="measure"/></p>
           <ul class="statuses">
             <li v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
-              <p class="sub-measure-title" :title="STATUSES[subMeasure.status || 'notDone']">
+              <p class="sub-measure-title" :title="STATUSES[subMeasure.status] || 'Statut inconnu'">
                 <i class="fas fa-fw" :class="iconClass(subMeasure.status)" aria-hidden="true"></i>
-                <span class="sr-only">{{ STATUSES[subMeasure.status || 'notDone'] }}:</span>
+                <span class="sr-only">{{ STATUSES[subMeasure.status] || "Statut inconnu" }}:</span>
                 {{ subMeasure.shortTitle }}
               </p>
             </li>
@@ -49,7 +49,8 @@
         return {
           'fa-check-square': status === 'done',
           'fa-pencil-alt': status === 'planned',
-          'fa-times': status === 'notDone' || !status
+          'fa-times': status === 'notDone',
+          'fa-question': !status
         }
       }
     }
