@@ -34,7 +34,7 @@
 </template>
 
 <script>
-  import keyMeasures from "@/data/KeyMeasures.js"
+  import { keyMeasures, saveStatusesLocally } from "@/data/KeyMeasures.js"
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import KeyMeasureDescription from '@/components/KeyMeasureDescription';
   import STATUSES from '@/data/STATUSES.json';
@@ -55,15 +55,7 @@
         subMeasure.readMore = !subMeasure.readMore;
       },
       saveStatuses() {
-        let statuses = {};
-        this.keyMeasures.forEach((measure) => {
-          measure.subMeasures.forEach((subMeasure) => {
-            if(subMeasure.status) {
-              statuses[subMeasure.id] = subMeasure.status;
-            }
-          });
-        });
-        localStorage.setItem('statuses', JSON.stringify(statuses));
+        saveStatusesLocally();
         this.$router.push({name: 'KeyMeasuresHome'});
       }
     }
