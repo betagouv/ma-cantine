@@ -64,7 +64,7 @@
           });
         });
         localStorage.setItem('statuses', JSON.stringify(statuses));
-        this.$router.push({name: 'DiagnosticResultsPage'});
+        this.$router.push({name: 'KeyMeasuresHome'});
       }
     }
   }
