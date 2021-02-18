@@ -10,16 +10,7 @@
           <button class="read-more" @click="toggleDescriptionDisplay(subMeasure)">
             {{ subMeasure.readMore ? "Moins" : "En savoir plus" }}
           </button>
-          <div class="measure-status">
-            <span v-for="(text, status) in STATUSES"
-              :key="status"
-              class="status-radio-button" :class="{selected: subMeasure.status === status}"
-            >
-              <input type="radio" :id="subMeasure.id + '-' + status" class="status-input"
-              :name="'status-'+subMeasure.id" :value="status" v-model="subMeasure.status" @change="saveStatuses">
-              <label :for="subMeasure.id + '-' + status" class="status-label">{{ text }}</label>
-            </span>
-          </div>
+          <KeyMeasureStatusOption :initialMeasure="subMeasure" />
         </fieldset>
         <KeyMeasureDescription 
           v-if="subMeasure.readMore"
@@ -34,27 +25,26 @@
 </template>
 
 <script>
-  import { keyMeasures, saveStatuses } from "@/data/KeyMeasures.js"
+  import { keyMeasures } from "@/data/KeyMeasures.js"
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import KeyMeasureDescription from '@/components/KeyMeasureDescription';
-  import STATUSES from '@/data/STATUSES.json';
+  import KeyMeasureStatusOption from '@/components/KeyMeasureStatusOption';
 
   export default {
     components: {
       KeyMeasureTitle,
-      KeyMeasureDescription
+      KeyMeasureDescription,
+      KeyMeasureStatusOption
     },
     data() {
       return {
-        keyMeasures,
-        STATUSES
+        keyMeasures
       };
     },
     methods: {
       toggleDescriptionDisplay(subMeasure) {
         subMeasure.readMore = !subMeasure.readMore;
-      },
-      saveStatuses
+      }
     }
   }
 </script>
@@ -126,37 +116,6 @@
     cursor: pointer;
   }
 
-  .measure-status {
-    border-radius: 1em;
-    overflow: hidden;
-    /* offset-x | offset-y | blur-radius | spread-radius | color */
-    box-shadow: 0px 0px 5px 1px $dark-white;
-    height: 2.5em;
-    min-width: 11em;
-    max-width: 14.5em;
-    display: flex;
-  }
-
-  .status-label {
-    border: none;
-    margin: 0;
-    padding: 1em;
-    white-space: nowrap;
-    font-size: 14px;
-    cursor: pointer;
-    position: relative;
-    top: 0.4em;
-  }
-
-  .status-input {
-    opacity: 0;
-    position: absolute;
-  }
-
-  .status-radio-button.selected, .status-radio-button:hover {
-    background-color: $light-yellow;
-  }
-
   .measure-description {
     width: 70%;
     padding-left: 1em;
@@ -174,12 +133,6 @@
     margin-top: 2em;
     cursor: pointer;
     text-decoration: none;
-  }
-
-  @media (max-width: 1000px) {
-    .status-label {
-      padding: 1em 0.3em;
-    }
   }
 
   @media (max-width: 700px) {
@@ -200,16 +153,8 @@
       width: 10em;
     }
 
-    .measure-status {
-      margin: 0.5em 0;
-    }
-
     .measure-description {
       width: 100%;
-    }
-
-    .status-label {
-      padding: 1em;
     }
   }
 </style>
