@@ -14,7 +14,10 @@
             "creche",
             "loisirs"
         ],
-        "deadline": "À partir du 1er janvier 2022",
+        "deadline": {
+            "display": "À partir du 1er janvier 2022",
+            "earliestISO": "2022-01-01"
+        },
         "subMeasures": [
             {
                 "id": "cinquante",
@@ -49,7 +52,10 @@
                     "creche",
                     "loisirs"
                 ],
-                "deadline": "Depuis le 1er janvier 2020",
+                "deadline": {
+                    "display": "Depuis le 1er janvier 2020",
+                    "earliestISO": "2020-01-01"
+                },
                 "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l’acquisition de produits issus du commerce équitable. Cette information peut se faire par affichage (dans l’espace commun par exemple) ou par email. \n\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Télécharger un modèle d’email</b> (à venir)\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Voir un exemple d’affiche</b> (à venir)"
             },
             {
@@ -61,7 +67,10 @@
                     "universitaire",
                     "creche"
                 ],
-                "deadline": "Depuis le 30 octobre 2018",
+                "deadline": {
+                    "display": "Depuis le 30 octobre 2018",
+                    "earliestISO": "2018-10-30"
+                },
                 "description": "Les gestionnaires de restauration collective doivent communiquer, informer et consulter les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis."
             }
         ]
@@ -81,7 +90,10 @@
             "loisirs",
             "entreprises"
         ],
-        "deadline": "Janvier et octobre 2020",
+        "deadline": {
+            "display": "Janvier et octobre 2020",
+            "earliestISO": "2020-01-01"
+        },
         "subMeasures": [
             {
                 "id": "gaspillage-analyse",
@@ -93,13 +105,19 @@
                 "id": "restes",
                 "title": "Les restes encore consommables doivent être protégés.",
                 "shortTitle": "Restes protégés",
-                "htmlDescription": "Depuis le 1er janvier 2020, il est <b>interdit de rendre impropre à la consommation</b> les excédents alimentaires. L’infraction à cette loi est susceptible d’une amende de 3 750 €."
+                "htmlDescription": "Depuis le 1er janvier 2020, il est <b>interdit de rendre impropre à la consommation</b> les excédents alimentaires. L’infraction à cette loi est susceptible d’une amende de 3 750 €.",
+                "deadline": {
+                    "earliestISO": "2020-01-01"
+                }
             },
             {
                 "id": "dons",
                 "title": "Les services volumineux de restauration collective se doivent de faire des dons aux associations.",
                 "shortTitle": "Faire des dons",
-                "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui <b>préparant plus de 3000 repas</b> par jour ont l’obligation de proposer une convention de don à association habilitée."
+                "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui <b>préparant plus de 3000 repas</b> par jour ont l’obligation de proposer une convention de don à association habilitée.",
+                "deadline": {
+                    "earliestISO": "2020-10-22"
+                }
             }
         ]
     },
@@ -122,7 +140,10 @@
                     "loisirs",
                     "creche"
                 ],
-                "deadline": "Depuis le 30 octobre 2018",
+                "deadline": {
+                    "display": "Depuis le 30 octobre 2018",
+                    "earliestISO": "2018-10-30"
+                },
                 "who": "Pour les restaurants collectifs servant plus de 200 couverts par jour.",
                 "description": "Les gestionnaires des restaurants collectifs sont tenus de présenter à leurs structures dirigeantes un plan pluriannuel de diversification de protéines incluant des alternatives à base de protéines végétales dans les repas qu’ils proposent."
             },
@@ -133,7 +154,10 @@
                 "tags": [
                     "scolaire"
                 ],
-                "deadline": "Expérimentation de 2 ans (du 1er novembre 2019 au 1er novembre 2021)",
+                "deadline": {
+                    "display": "Expérimentation de 2 ans (du 1er novembre 2019 au 1er novembre 2021)",
+                    "earliestISO": "2019-11-01"
+                },
                 "description": "Tous les restaurants collectifs scolaires (publics ou privés) sont tenus de proposer, au moins une fois par semaine, un menu végétarien, sur une durée de 2 ans. Ce menu végétarien peut constituer une alternative à d’autres menus dans le cas où plusieurs menus sont proposés. Dans le cas où un menu unique est proposé, il s’agit d’un menu unique végétarien. Par ailleurs, le menu végétarien doit s’insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\nQu’est-ce qu’un menu végétarien ? Il s’agit d’un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers."
             }
         ]
@@ -158,7 +182,10 @@
                     "creche",
                     "entreprises"
                 ],
-                "deadline": "Depuis le 1er janvier 2020",
+                "deadline": {
+                    "display": "Depuis le 1er janvier 2020",
+                    "earliestISO": "2020-01-01"
+                },
                 "description": "La mise à disposition des ustensiles à usage unique en matière plastique (sauf, jusqu’au 3 juillet 2021, ceux compostables en compostage domestique et constitués, pour tout ou partie, de matières biosourcées) suivants est interdite : gobelets, verres, assiettes, pailles, couverts, piques à steak, couvercles à verre, plateaux-repas, pots à glace, saladiers, boîtes et bâtonnets mélangeurs pour boissons."
             },
             {
@@ -170,7 +197,10 @@
                     "universitaire",
                     "creche"
                 ],
-                "deadline": "À partir du 1er janvier 2025 (sauf pour les communes de - de 2000 hab : 1er janvier 2028)",
+                "deadline": {
+                    "display": "À partir du 1er janvier 2025 (sauf pour les communes de - de 2000 hab : 1er janvier 2028)",
+                    "earliestISO": "2025-01-01"
+                },
                 "description": "L’utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite."
             },
             {
@@ -180,7 +210,10 @@
                 "tags": [
                     "scolaire"
                 ],
-                "deadline": "Depuis le 1er janvier 2020",
+                "deadline": {
+                    "display": "Depuis le 1er janvier 2020",
+                    "earliestISO": "2020-01-01"
+                },
                 "description": "L’utilisation de bouteilles d’eau plate en plastique est interdite en restauration scolaire. Cette mesure s’applique aux territoires desservis par un réseau d’eau potable et peut être suspendue en cas exceptionnel de restriction de l’eau destinée à la consommation humaine prononcée par le Préfet."
             }
         ]
