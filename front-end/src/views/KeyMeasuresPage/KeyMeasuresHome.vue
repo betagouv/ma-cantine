@@ -12,6 +12,9 @@
                 <span class="sr-only">{{ STATUSES[subMeasure.status] || "Statut inconnu" }}:</span>
                 {{ subMeasure.shortTitle }}
               </p>
+              <p class="already-applicable" v-if="warnMissedDeadline(subMeasure)">
+                Déjà applicable
+              </p>
             </li>
           </ul>
         </div>
@@ -46,6 +49,12 @@
           'fa-times': status === 'notDone',
           'fa-question': !status
         }
+      },
+      warnMissedDeadline(measure) {
+        let deadline = measure.deadline?.earliestISO;
+        if(measure.status !== 'done' && deadline) {
+          return new Date(deadline) < new Date();
+        }
       }
     }
   }
@@ -77,12 +86,14 @@
     display: flex;
     justify-content: space-evenly;
     flex-wrap: wrap;
+    align-items: stretch;
   }
 
   .measure-card {
     background: $light-yellow;
     width: 11em;
-    height: 15em;
+    height: calc(100% - 120px);
+    min-height: 13em;
     border-radius: 22px;
     padding: 0.5em 1em;
     margin: 0.5em;
@@ -100,6 +111,14 @@
   .sub-measure-title {
     font-size: 15px;
     margin: 0.8em 0;
+  }
+
+  .already-applicable {
+    color: $red;
+    font-weight: bold;
+    font-size: 13px;
+    margin-top: -0.5em;
+    text-align: right;
   }
 
   .fas {

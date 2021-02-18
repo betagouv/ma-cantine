@@ -2,8 +2,8 @@
   <div class="measure-card">
     <div class="measure-info-card">
       <div class="deadline">
-        <h4><i class="far fa-calendar-alt"></i> {{ measure.deadline.type || "Entrée en vigueur" }}</h4>
-        <p>{{ measure.deadline.display || measure.deadline }}</p>
+        <h4><i class="far fa-calendar-alt"></i> Entrée en vigueur</h4>
+        <p>{{ measure.deadline.display }}</p>
       </div>
       <div class="tags">
         <h4><i class="fas fa-chart-pie"></i> Pour qui ?</h4>
