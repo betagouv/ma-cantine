@@ -6,7 +6,10 @@
       <div class="description-container">
         <KeyMeasureDescription :measure="measure" v-if="measure.description"/>
         <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
-          <h3>{{subMeasure.title}}</h3>
+          <fieldset class="measure-headline">
+            <legend>{{subMeasure.title}}</legend>
+            <KeyMeasureStatusOption :initialMeasure="subMeasure" />
+          </fieldset>
           <div class="measure-details">
             <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
             <KeyMeasureDescription :measure="subMeasure"/>
@@ -21,13 +24,15 @@
   import KeyMeasureDescription from '@/components/KeyMeasureDescription'
   import KeyMeasureInfoCard from '@/components/KeyMeasureInfoCard'
   import KeyMeasureTitle from '@/components/KeyMeasureTitle'
+  import KeyMeasureStatusOption from '@/components/KeyMeasureStatusOption'
   import tags from '@/data/sector-tags.json'
 
   export default {
     components: {
       KeyMeasureDescription,
       KeyMeasureInfoCard,
-      KeyMeasureTitle
+      KeyMeasureTitle,
+      KeyMeasureStatusOption
     },
     props: {
       measure: Object,
@@ -61,10 +66,33 @@
     flex: 4;
   }
 
-  h3 {
-    font-weight: bold;
-    font-size: 24px;
-    color: $green;
+  .measure-headline {
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    padding-block-start: 0;
+    padding-block-end: 0;
+    padding-inline-start: 0;
+    padding-inline-end: 0;
+
+    legend {
+      font-weight: bold;
+      font-size: 24px;
+      color: $green;
+      float: left;
+      margin: 1em 0;
+      margin-right: 1em;
+    }
+  }
+
+  @media (max-width: 1000px) {
+    .measure-headline {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 
   @media (max-width: 480px) {
