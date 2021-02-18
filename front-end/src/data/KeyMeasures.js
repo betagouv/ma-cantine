@@ -1,14 +1,8 @@
 import keyMeasures from "@/data/key-measures.json";
 
-function saveStatuses() {
-  let statuses = {};
-  keyMeasures.forEach((measure) => {
-    measure.subMeasures.forEach((subMeasure) => {
-      if(subMeasure.status) {
-        statuses[subMeasure.id] = subMeasure.status;
-      }
-    });
-  });
+function saveStatus(id, status) {
+  const statuses = JSON.parse(localStorage.getItem('statuses') || '{}');
+  statuses[id] = status;
   localStorage.setItem('statuses', JSON.stringify(statuses));
 }
 
@@ -23,5 +17,5 @@ keyMeasures.forEach(measure => {
 
 export {
   keyMeasures,
-  saveStatuses
+  saveStatus
 };
