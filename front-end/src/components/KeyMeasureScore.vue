@@ -63,11 +63,11 @@
       classForScore() {
         let proportion = this.score / this.maxScore;
         if(proportion === 1) {
-          return { green: true };
+          return "green";
         } else if(proportion > 0.25) {
-          return { yellow: true };
+          return "yellow";
         } else {
-          return { red: true };
+          return "red";
         }
       }
     }
