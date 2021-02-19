@@ -18,7 +18,6 @@
         <KeyMeasureScore :measure="measure" :stroke="4" :radius="45" />
       </li>
     </ul>
-    <p id="contact">Vous souhaitez nous contacter : <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>.</p>
   </div>
 </template>
 
@@ -26,7 +25,7 @@
   import { keyMeasures } from '@/data/KeyMeasures.js';
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import STATUSES from '@/data/STATUSES.json';
-  import KeyMeasureScore from './KeyMeasureScore';
+  import KeyMeasureScore from '@/components/KeyMeasureScore';
 
   export default {
     components: { 
@@ -120,10 +119,6 @@
   }
 
   .fa-question {
-    color: $grey;
-  }
-
-  #contact, #contact a {
     color: $grey;
   }
 
