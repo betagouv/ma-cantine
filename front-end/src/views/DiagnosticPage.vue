@@ -16,7 +16,7 @@
               class="status-radio-button" :class="{selected: subMeasure.status === status}"
             >
               <input type="radio" :id="subMeasure.id + '-' + status" class="status-input"
-              :name="'status-'+subMeasure.id" :value="status" v-model="subMeasure.status" @change="saveStatusesLocally">
+              :name="'status-'+subMeasure.id" :value="status" v-model="subMeasure.status" @change="saveStatuses">
               <label :for="subMeasure.id + '-' + status" class="status-label">{{ text }}</label>
             </span>
           </div>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-  import { keyMeasures, saveStatusesLocally } from "@/data/KeyMeasures.js"
+  import { keyMeasures, saveStatuses } from "@/data/KeyMeasures.js"
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import KeyMeasureDescription from '@/components/KeyMeasureDescription';
   import STATUSES from '@/data/STATUSES.json';
@@ -54,7 +54,7 @@
       toggleDescriptionDisplay(subMeasure) {
         subMeasure.readMore = !subMeasure.readMore;
       },
-      saveStatusesLocally
+      saveStatuses
     }
   }
 </script>

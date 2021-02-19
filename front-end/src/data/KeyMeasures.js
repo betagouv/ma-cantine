@@ -1,6 +1,6 @@
 import keyMeasures from "@/data/key-measures.json";
 
-function saveStatusesLocally() {
+function saveStatuses() {
   let statuses = {};
   keyMeasures.forEach((measure) => {
     measure.subMeasures.forEach((subMeasure) => {
@@ -12,8 +12,8 @@ function saveStatusesLocally() {
   localStorage.setItem('statuses', JSON.stringify(statuses));
 }
 
-let statuses = localStorage.getItem('statuses') || "{}";
-statuses = JSON.parse(statuses);
+const statusesString = localStorage.getItem('statuses') || "{}";
+const statuses = JSON.parse(statusesString);
 
 keyMeasures.forEach(measure => {
   measure.subMeasures.forEach(subMeasure => {
@@ -23,5 +23,5 @@ keyMeasures.forEach(measure => {
 
 export {
   keyMeasures,
-  saveStatusesLocally
+  saveStatuses
 };
