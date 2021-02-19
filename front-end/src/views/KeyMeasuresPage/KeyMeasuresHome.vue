@@ -52,7 +52,7 @@
       },
       warnMissedDeadline(measure) {
         let deadline = measure.deadline?.earliestISO;
-        if(measure.status !== 'done' && deadline) {
+        if(measure.status && measure.status !== 'done' && deadline) {
           return new Date(deadline) < new Date();
         }
       }
