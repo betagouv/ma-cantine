@@ -62,12 +62,6 @@
     background-color: $light-yellow;
   }
 
-  @media (max-width: 1000px) {
-    .status-label {
-      padding: 1em 0.3em;
-    }
-  }
-
   @media (max-width: 700px) {
     .measure-status {
       margin: 0.5em 0;
