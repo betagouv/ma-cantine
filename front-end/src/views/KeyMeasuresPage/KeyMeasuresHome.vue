@@ -15,7 +15,7 @@
             </li>
           </ul>
         </div>
-        <KeyMeasureScore :measure="measure" :stroke="4" :radius="45" />
+        <KeyMeasureScore :measure="measure" />
       </li>
     </ul>
   </div>
