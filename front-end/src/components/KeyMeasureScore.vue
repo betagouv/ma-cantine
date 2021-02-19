@@ -33,12 +33,14 @@
   export default {
     props: {
       measure: Object,
-      radius: Number,
-      stroke: Number
     },
     data() {
-      const normalizedRadius = this.radius - this.stroke * 2;
+      const radius = 45;
+      const stroke = 4;
+      const normalizedRadius = radius - stroke * 2;
       return {
+        stroke,
+        radius,
         normalizedRadius,
         circumference: normalizedRadius * 2 * Math.PI,
         maxScore: this.measure.subMeasures.length
