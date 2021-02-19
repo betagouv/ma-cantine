@@ -1,5 +1,5 @@
 <template>
-  <div id="navbar">
+  <nav id="navbar">
     <router-link :to="{ name: 'LandingPage' }" id="goto-landing">
       <img src="@/assets/Marianne.png" id="Marianne">
       <div id="brand">
@@ -7,14 +7,12 @@
         <div id="slogan">Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</div>
       </div>
     </router-link>
-    <router-link :to="{ name: 'KeyMeasuresHome' }" class="navbar-item">Mesures phares</router-link>
-    <a class="navbar-item about" href="https://beta.gouv.fr/startups/ma-cantine-egalim.html" target="_blank">
-      À propos <i class="fas fa-external-link-alt"></i>
-    </a>
+    <router-link :to="{ name: 'DiagnosticPage' }" class="navbar-item">Savoir où j'en suis</router-link>
+    <router-link :to="{ name: 'KeyMeasuresHome' }" class="navbar-item">Les 5 mesures phares</router-link>
     <a class="navbar-item" href="https://jennifer-stephan.gitbook.io/ma-cantine-egalim/" target="_blank">
       Ressources <i class="fas fa-external-link-alt"></i>
     </a>
-  </div>
+  </nav>
 </template>
 
 <script>
@@ -23,7 +21,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
   a {
     text-decoration: none;
@@ -95,8 +92,8 @@ export default {
     background-color: $orange;
   }
 
-  @media (max-width: 800px) {
-    #Marianne, .about {
+  @media (max-width: 1000px) {
+    #Marianne {
       display: none;
     }
 
@@ -105,7 +102,7 @@ export default {
     }
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 750px) {
     #navbar {
       flex-direction: column;
       position: relative;
