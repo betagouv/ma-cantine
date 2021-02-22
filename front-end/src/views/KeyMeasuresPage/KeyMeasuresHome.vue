@@ -21,6 +21,7 @@
         <KeyMeasureScore :measure="measure" />
       </li>
     </ul>
+    <router-link :to="{ name: 'PosterFormPage' }">Générer affichage pour informer mes convives</router-link>
   </div>
 </template>
 
