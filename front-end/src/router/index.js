@@ -4,6 +4,7 @@ import DiagnosticPage from '@/views/DiagnosticPage';
 import KeyMeasuresPage from '@/views/KeyMeasuresPage';
 import KeyMeasuresHome from '@/views/KeyMeasuresPage/KeyMeasuresHome';
 import KeyMeasurePage from '@/views/KeyMeasuresPage/KeyMeasurePage';
+import PosterFormPage from '@/views/PosterFormPage';
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     meta: {
       title: "M'auto-évaluer"
     }
+  },
+  {
+    path: '/generer-affichage',
+    name: 'PosterFormPage',
+    component: PosterFormPage,
   },
   {
     path: '/mesures-phares',
