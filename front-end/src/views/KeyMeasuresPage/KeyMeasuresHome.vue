@@ -21,7 +21,7 @@
         <KeyMeasureScore :measure="measure" />
       </li>
     </ul>
-    <router-link :to="{ name: 'PosterFormPage' }">Générer affichage pour informer mes convives</router-link>
+    <router-link :to="{ name: 'PosterFormPage' }" id="poster">Générer affichage pour informer mes convives</router-link>
   </div>
 </template>
 
@@ -140,6 +140,17 @@
 
   .fa-question {
     color: $grey;
+  }
+
+  a#poster {
+    border: none;
+    background: $orange;
+    border-radius: 2em;
+    padding: 0.5em;
+    margin: 1em;
+    display: inline-block;
+    color: $white;
+    text-decoration: none;
   }
 
   @media (max-width: 480px) {
