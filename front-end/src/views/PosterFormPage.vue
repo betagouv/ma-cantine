@@ -1,12 +1,15 @@
 <template>
   <div id="poster-form-page">
     <h1>Générez votre affichage convives</h1>
-    <form id="poster-form">
+    <form id="poster-form" @submit.prevent="submit">
       <h2>À propos de votre cantine</h2>
       <p>
-        <label for="profession">Je suis </label> <input id="profession" v-model="form.profession" class="field" placeholder="chef.fe">
-        dans <label for="school">la cantine du </label> <input id="school" v-model="form.school" class="field" placeholder="nom de l'école" required="required">
-        dans <label for="commune">le commune de </label> <input id="commune" v-model="form.commune" class="field" placeholder="Plouër-sur-Rance">.
+        <label for="profession">Je suis </label>
+        <input id="profession" v-model="form.profession" class="field" placeholder="chef.fe" required>
+        dans <label for="school">la cantine du </label>
+        <input id="school" v-model="form.school" class="field" placeholder="nom de l'école" required>
+        dans <label for="commune">le commune de </label>
+        <input id="commune" v-model="form.commune" class="field" placeholder="Plouër-sur-Rance" required>.
       </p>
       <p>
         <label for="servings">Nous servons </label>
@@ -16,7 +19,7 @@
           inputmode="numeric"
           pattern="[0-9]*"
           placeholder="200"
-          required="required"
+          required
         >
         enfants par jour.
       </p>
@@ -30,7 +33,7 @@
           placeholder="1500,00"
           :pattern="pattern"
           aria-describedby="euros"
-          required="required"
+          required
         >
         <span id="euros">euros HT</span>.
       </p>
@@ -43,7 +46,7 @@
           placeholder="300,00"
           :pattern="pattern"
           aria-describedby="euros"
-          required="required"
+          required
         >
         euros HT correspondaient à des <label for="bio">produits bio</label>,
         <input id="quality"
@@ -53,7 +56,7 @@
           placeholder="200,00"
           :pattern="pattern"
           aria-describedby="euros"
-          required="required"
+          required
         >
         euros HT correspondaient à des <label for="quality">produits de qualité et durables (sauf bio)</label> et 
         <input id="equitable"
@@ -63,11 +66,11 @@
           placeholder="100,00"
           :pattern="pattern"
           aria-describedby="euros"
-          required="required"
+          required
         >
         euros HT correspondaient à des <label for="equitable">produits du commerce équitable</label>.
       </p>
-      <input type="submit" id="submit" value="Générer mon affichage" @click.prevent="submit">
+      <input type="submit" id="submit" value="Générer mon affichage">
     </form>
   </div>
 </template>
@@ -118,8 +121,13 @@
       font-size: 1.2em;
     }
 
+    input:required:invalid {
+      outline: none;
+      box-shadow: none;
+    }
+
     .number-field {
-      width: 8em;
+      width: 7em;
     }
 
     #submit {
