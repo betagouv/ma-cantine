@@ -13,6 +13,7 @@
     "core-js": "^3.6.5",
     "serve": "^11.3.2",
     "vue": "^3.0.0",
+    "vue-matomo": "^3.14.0-0",
     "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
