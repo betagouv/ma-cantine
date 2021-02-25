@@ -12,15 +12,17 @@
           </button>
           <KeyMeasureStatusOption :initialMeasure="subMeasure" />
         </fieldset>
-        <KeyMeasureDescription 
+        <KeyMeasureDescription
           v-if="subMeasure.readMore"
           class="measure-description"
-          :measure="subMeasure" 
+          :measure="subMeasure"
           :shrinkLogos="true"
         />
       </div>
     </div>
-    <router-link :to="{ name: 'KeyMeasuresHome' }" id="summarise">Récapitulatif</router-link>
+    <router-link :to="{ name: 'KeyMeasuresHome' }" id="summarise" @click="logMeasures()">
+      Récapitulatif
+    </router-link>
   </div>
 </template>
 
@@ -44,6 +46,18 @@
     methods: {
       toggleDescriptionDisplay(subMeasure) {
         subMeasure.readMore = !subMeasure.readMore;
+      },
+      logMeasures() {
+        let measuresScoreCode = '';
+        this.keyMeasures.forEach(measure => {
+          measure.subMeasures.forEach(subMeasure => {
+            measuresScoreCode += subMeasure.status === 'done' ? 4
+              : subMeasure.status === 'planned' ? 3
+              : subMeasure.status === 'notDone' ? 2
+              : 1
+          });
+        });
+        this.$matomo.trackEvent('diagnostic', 'summarise', 'summarise-diagnostic', measuresScoreCode);
       }
     }
   }
