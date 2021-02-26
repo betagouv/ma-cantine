@@ -4,7 +4,7 @@ import DiagnosticPage from '@/views/DiagnosticPage';
 import KeyMeasuresPage from '@/views/KeyMeasuresPage';
 import KeyMeasuresHome from '@/views/KeyMeasuresPage/KeyMeasuresHome';
 import KeyMeasurePage from '@/views/KeyMeasuresPage/KeyMeasurePage';
-import PosterFormPage from '@/views/PosterFormPage';
+import GeneratePosterPage from '@/views/GeneratePosterPage';
 
 const routes = [
   {
@@ -22,8 +22,8 @@ const routes = [
   },
   {
     path: '/generer-affichage',
-    name: 'PosterFormPage',
-    component: PosterFormPage,
+    name: 'GeneratePosterPage',
+    component: GeneratePosterPage,
   },
   {
     path: '/mesures-phares',

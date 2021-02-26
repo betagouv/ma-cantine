@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "jspdf": "^2.3.0",
     "serve": "^11.3.2",
     "vue": "^3.0.0",
     "vue-matomo": "^3.14.0-0",
