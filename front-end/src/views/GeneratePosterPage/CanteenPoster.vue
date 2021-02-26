@@ -2,7 +2,7 @@
   <div id="canteen-poster">
     <div id="poster-contents">
       <div id="heading">
-        <img src="@/assets/toque.svg" id="hat">
+        <img src="@/assets/toque.svg" id="hat" alt="">
         <div>
           <h1>Cantine du {{ school || "_________" }}</h1>
           <p>Nous servons {{ servingsNumber || "___" }} enfants par jour</p>
@@ -21,7 +21,7 @@
         </p>
       </div>
       <p><b>En savoir plus de la loi EGAlim:</b> <a href="https://ma-cantine.beta.gouv.fr">https://ma-cantine.beta.gouv.fr</a></p>
-      <img src="@/assets/qr-code.svg" id="qr">
+      <img src="@/assets/qr-code.svg" id="qr" alt="QR code vers https://ma-cantine.beta.gouv.fr">
     </div>
   </div>
 </template>

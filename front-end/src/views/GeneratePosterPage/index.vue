@@ -15,6 +15,7 @@
         <p>
           <label for="servings">Nous servons </label>
           <input id="servings"
+            aria-describedby="enfants"
             v-model="form.servings"
             class="number-field"
             inputmode="numeric"
@@ -23,7 +24,7 @@
             required
             @keydown="processNumber('servings')"
           >
-          enfants par jour.
+          <span id="enfants">enfants par jour</span>.
         </p>
         <h2>À propos de vos achats</h2>
         <p>
@@ -168,6 +169,7 @@
       padding: 0.5em;
       color: $white;
       float: right;
+      font-weight: bold;
     }
   }
 
