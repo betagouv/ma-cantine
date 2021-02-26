@@ -5,9 +5,6 @@
       <p>
         La loi EGAlim vise à apporter une alimentation saine, de qualité et plus durable dans nos assiettes.
       </p>
-      <p>
-        Vous êtes en charge de l'approvisionnement d'une restauration collective ?
-      </p>
       <router-link :to="{ name: 'DiagnosticPage' }" class="presentation-diagnostic">
         Savoir où j'en suis des mesures EGAlim
       </router-link>
