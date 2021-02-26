@@ -172,4 +172,10 @@
       float: right;
     }
   }
+
+  @media (max-width: 1200px) {
+    #poster-generation {
+      flex-direction: column;
+    }
+  }
 </style>
