@@ -85,8 +85,7 @@
 
 <script>
   import CanteenPoster from './CanteenPoster';
-  import jsPDF from 'jspdf';
-  import html2canvas from 'html2canvas';
+  import html2pdf from 'html2pdf.js';
 
   export default {
     components: {
@@ -109,16 +108,15 @@
         ["total", "bio", "quality", "equitable"].forEach(key => {
           this.form[key + "Number"] = parseFloat(this.form[key].replace(',', '.'))
         });
-        const filename = "affichage.pdf";
-        let doc = new jsPDF('p', 'pt', 'a4');
 
-        html2canvas(document.querySelector("#poster-contents")).then(canvas => {
-          const imgData = canvas.toDataURL('image/jpeg');
-          console.log('Report Image URL: '+imgData);
-
-          doc.addImage(imgData, 'JPEG', 5, 0, 580, 830);
-          doc.save(filename);
-        });
+        const element = document.getElementById('poster-contents');
+        const opt = {
+          filename:     'affichage.pdf',
+          image:        { type: 'jpeg', quality: 1 },
+          html2canvas:  { scale: 2, dpi: 300, letterRendering: true },
+          jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().from(element).set(opt).save();
       }
     }
   }
