@@ -170,6 +170,19 @@
         "faIcon": "fa-wind",
         "subMeasures": [
             {
+                "id": "bouteilles",
+                "title": "Les bouteilles d’eau plate en plastique sont interdites.",
+                "shortTitle": "Bouteilles",
+                "tags": [
+                    "scolaire"
+                ],
+                "deadline": {
+                    "display": "Depuis le 1er janvier 2020",
+                    "earliestISO": "2020-01-01"
+                },
+                "description": "L’utilisation de bouteilles d’eau plate en plastique est interdite en restauration scolaire. Cette mesure s’applique aux territoires desservis par un réseau d’eau potable et peut être suspendue en cas exceptionnel de restriction de l’eau destinée à la consommation humaine prononcée par le Préfet."
+            },
+            {
                 "id": "ustensiles",
                 "title": "Les ustensiles en plastique à usage unique sont interdits.",
                 "shortTitle": "Ustensiles",
@@ -203,19 +216,6 @@
                     "earliestISO": "2025-01-01"
                 },
                 "description": "L’utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite."
-            },
-            {
-                "id": "bouteilles",
-                "title": "Les bouteilles d’eau plate en plastique sont interdites.",
-                "shortTitle": "Bouteilles",
-                "tags": [
-                    "scolaire"
-                ],
-                "deadline": {
-                    "display": "Depuis le 1er janvier 2020",
-                    "earliestISO": "2020-01-01"
-                },
-                "description": "L’utilisation de bouteilles d’eau plate en plastique est interdite en restauration scolaire. Cette mesure s’applique aux territoires desservis par un réseau d’eau potable et peut être suspendue en cas exceptionnel de restriction de l’eau destinée à la consommation humaine prononcée par le Préfet."
             }
         ]
     }
