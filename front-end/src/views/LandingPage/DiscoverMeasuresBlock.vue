@@ -1,6 +1,6 @@
 <template>
   <div id="discover-measures">
-    <h4>Les mesures phares de la loi EGAlim</h4>
+    <h4>Les mesures phares de la loi EGAlim en restauration collective</h4>
     <h5>
       Découvrez les mesures, leurs échéances,
       le public cible ainsi que des ressources pour vous aider à atteindre leurs objectifs.
