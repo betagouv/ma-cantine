@@ -29,7 +29,7 @@
                 "id": "vingt",
                 "title": ".... dont au moins 20 % de produits biologiques",
                 "shortTitle": "20 % bio",
-                "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio », c’est à dire : \n\n<i class='fas fa-check-square'></i>  des produits issus de l’agriculture biologique.\n<i class='fas fa-check-square'></i>  des produits végétaux en conversion de plus d’un an."
+                "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio », c’est à dire : \n\n<i class='fas fa-check-square'></i>  des produits issus de l’agriculture biologique.\n<i class='fas fa-check-square'></i>  des produits végétaux étiquetés “en conversion"."
             }
         ]
     },
@@ -56,7 +56,7 @@
                     "display": "Depuis le 1er janvier 2020",
                     "earliestISO": "2020-01-01"
                 },
-                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l’acquisition de produits issus du commerce équitable. Cette information peut se faire par affichage (dans l’espace commun par exemple) ou par email. \n\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Télécharger un modèle d’email</b> (à venir)\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Voir un exemple d’affiche</b> (à venir)"
+                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l’acquisition de produits issus du commerce équitable. Cette information peut se faire par affichage ou par voie électronique (mail aux convives, affichage sur le logiciel de gestion de vie scolaire, envoi d’infolettre…). \n\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Voir un exemple d’affiche</b> (à venir)"
             },
             {
                 "id": "informations-nutritionnelles",
@@ -71,7 +71,7 @@
                     "display": "Depuis le 30 octobre 2018",
                     "earliestISO": "2018-10-30"
                 },
-                "description": "Les gestionnaires de restauration collective doivent communiquer, informer et consulter les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis."
+                "description": "Les gestionnaires de restauration collective doivent communiquer, informer et consulter les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis (arrêté du 30 septembre 2011 relatif à la qualité nutritionnelle des repas servis dans la restauration scolaire)."
             }
         ]
     },
@@ -103,18 +103,19 @@
             },
             {
                 "id": "restes",
-                "title": "Les restes encore consommables doivent être protégés.",
+                "title": "Interdiction de rendre impropre à la consommation les excédents alimentaires encore consommables.
+",
                 "shortTitle": "Restes protégés",
-                "htmlDescription": "Depuis le 1er janvier 2020, il est <b>interdit de rendre impropre à la consommation</b> les excédents alimentaires. L’infraction à cette loi est susceptible d’une amende de 3 750 €.",
+                "htmlDescription": "L’infraction à cette loi est susceptible d’une amende de 3 750 €.",
                 "deadline": {
                     "earliestISO": "2020-01-01"
                 }
             },
             {
                 "id": "dons",
-                "title": "Les services volumineux de restauration collective se doivent de faire des dons aux associations.",
+                "title": "Dons aux associations.",
                 "shortTitle": "Faire des dons",
-                "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui <b>préparent plus de 3000 repas</b> par jour ont l’obligation de proposer une convention de don à association habilitée.",
+                "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui préparent plus de 3000 repas par jour ont l’obligation de proposer une convention de dons à une association habilitée.",
                 "deadline": {
                     "earliestISO": "2020-10-22"
                 }
