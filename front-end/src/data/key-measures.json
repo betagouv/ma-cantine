@@ -56,7 +56,7 @@
                     "display": "Depuis le 1er janvier 2020",
                     "earliestISO": "2020-01-01"
                 },
-                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l’acquisition de produits issus du commerce équitable. Cette information peut se faire par affichage ou par voie électronique (mail aux convives, affichage sur le logiciel de gestion de vie scolaire, envoi d’infolettre…). \n\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Voir un exemple d’affiche</b> (à venir)"
+                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l’acquisition de produits issus du commerce équitable. Cette information peut se faire par affichage et par voie électronique (mail aux convives, affichage sur le logiciel de gestion de vie scolaire, envoi d’infolettre…). \n\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Voir un exemple d’affiche</b> (à venir)"
             },
             {
                 "id": "informations-nutritionnelles",
