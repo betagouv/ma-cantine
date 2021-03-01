@@ -115,7 +115,7 @@
                 "id": "dons",
                 "title": "Dons aux associations.",
                 "shortTitle": "Dons aux associations",
-                "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui préparent plus de 3000 repas par jour ont l’obligation de proposer une convention de dons à une association habilitée.",
+                "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui <b>préparent plus de 3000 repas par jour</b> ont l’obligation de proposer une convention de dons à une association habilitée.",
                 "deadline": {
                     "earliestISO": "2020-10-22"
                 }
