@@ -4,20 +4,24 @@
       <div id="heading">
         <img src="@/assets/toque.svg" id="hat" alt="">
         <div>
-          <h1>Cantine du {{ school || "_________" }}</h1>
-          <p>Nous servons {{ servingsNumber || "___" }} enfants par jour</p>
+          <h1>Cantine {{ school || "_________" }}</h1>
+          <p id="commune">{{ commune || "_________" }}</p>
+          <p>Nous servons {{ servingsNumber || "___" }} repas par jour</p>
           <p>Dans la cantine de votre enfant, sur l'année de 2020, nous avons servi en valeur d'achats:</p>
         </div>
       </div>
       <p class="percentage"><span id="bio-percent" class="number">{{ bioPercent }} %</span> de produits bio</p>
-      <p class="percentage"><span id="quality-percent" class="number">{{ qualityPercent }} %</span> de produits de qualité et durables (sauf bio)</p>
-      <p class="percentage"><span id="equitable-percent" class="number">{{ equitablePercent }} %</span> produits issus commerce équitable</p>
+      <p class="percentage"><span id="quality-percent" class="number">{{ qualityPercent }} %</span> de produits de qualité et durables (hors bio)</p>
+      <p class="percentage" v-if="equitableNumber"><span id="equitable-percent" class="number">{{ equitablePercent }} %</span> produits issus du commerce équitable</p>
       <div id="about">
-        <h2>Rappel de la loi</h2>
+        <h2>Pourquoi je vois cette affiche ?</h2>
         <p>
-          Une fois par an, les convives sont informés sur la part des produits de qualité et durables des repas servis et des démarches 
-          entreprises pour l’acquisition de produits issus du commerce équitable. Cette information peut se faire par affichage 
-          (dans l’espace commun par exemple) ou par email.
+          À partir du 1er janvier 2020, les usagers des restaurants collectifs devront être informés une fois par an,
+          par voie d’affichage et de communication électronique, de la part des produits de qualité et durables entrant dans la composition des repas servis
+          et des démarches entreprises pour développer des produits issus du commerce équitable.
+        </p>
+        <p>
+          <b>Un bon moyen de savoir ce qu'il y a dans votre assiette et d'en discuter avec le personnel de votre restaurant !</b>
         </p>
       </div>
       <p><b>En savoir plus de la loi EGAlim:</b> <a href="https://ma-cantine.beta.gouv.fr">https://ma-cantine.beta.gouv.fr</a></p>
@@ -30,6 +34,7 @@
   export default {
     props: {
       school: String,
+      commune: String,
       servingsNumber: Number,
       totalNumber: Number,
       bioNumber: Number,
@@ -91,6 +96,11 @@
     h1 {
       font-size: 35px;
     }
+
+    #commune {
+      font-size: 25px;
+      margin-top: -0.7em;
+    }
   }
 
   #hat {
@@ -101,6 +111,7 @@
   p.percentage {
     display: flex;
     align-items: center;
+    margin-top: 0;
   }
 
   #bio-percent {
