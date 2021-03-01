@@ -155,4 +155,10 @@
     width: 30mm;
     height: 30mmm; 
   }
+
+  @media (max-width: 210mm) {
+    #canteen-poster {
+      display: none;
+    }
+  }
 </style>
