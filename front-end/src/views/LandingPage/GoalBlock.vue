@@ -10,7 +10,7 @@
 <style scoped lang="scss">
   #goal {
     margin: 70px auto;
-    max-width: 850px;
+    max-width: 851px;
   }
 
   h3 {
