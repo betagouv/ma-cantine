@@ -125,7 +125,7 @@
 
         const element = document.getElementById('poster-contents');
         const opt = {
-          filename:     'affichage.pdf',
+          filename:     'Affiche_convives_2020.pdf',
           image:        { type: 'jpeg', quality: 1 },
           html2canvas:  { scale: 2, dpi: 300, letterRendering: true },
           jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
