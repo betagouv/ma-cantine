@@ -21,7 +21,11 @@
         <KeyMeasureScore :measure="measure" />
       </li>
     </ul>
-    <router-link :to="{ name: 'GeneratePosterPage' }" id="poster">Générer affichage pour informer mes convives</router-link>
+    <router-link :to="{ name: 'GeneratePosterPage' }" id="poster">
+      <div class="link-icon"><i class="fas fa-bullhorn"></i></div>
+      <p>L’information convives, par mail et par affichage, de la part de bio, durable et commerce équitable est d’ores et déjà en vigueur. Pour générer votre affiche, tester notre formulaire.</p>
+      <div class="link-icon"><i class="fas fa-arrow-circle-right"></i></div>
+    </router-link>
   </div>
 </template>
 
@@ -142,15 +146,34 @@
     color: $grey;
   }
 
-  a#poster {
-    border: none;
-    background: $orange;
-    border-radius: 2em;
-    padding: 0.5em;
-    margin: 1em;
-    display: inline-block;
-    color: $white;
+  #poster {
+    display: flex;
+    width: 90%;
+    margin: auto;
+    margin-top: 3em;
+    align-items: center;
+    background: $light-pink;
+    border: 4px solid $pink;
+    box-sizing: border-box;
     text-decoration: none;
+
+    .link-icon {
+      font-size: 2em;
+      padding: 0.5em;
+    }
+
+    .fa-bullhorn {
+      color: $light-grey;
+    }
+
+    .fa-arrow-circle-right {
+      color: $pink;
+    }
+
+    p {
+      text-align: left;
+      color: $pink;
+    }
   }
 
   @media (max-width: 480px) {
