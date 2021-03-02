@@ -83,7 +83,9 @@
         </p>
         <input type="submit" id="submit" value="Générer mon affiche">
       </form>
-      <CanteenPoster v-bind="form" />
+      <div id="poster-preview">
+        <CanteenPoster v-bind="form" id="canteen-poster" />
+      </div>
     </div>
   </div>
 </template>
@@ -114,7 +116,7 @@
       submit() {
         this.form["servingsNumber"] = parseInt(this.form["servings"], 10);
 
-        const htmlPoster = document.getElementById('poster-contents');
+        const htmlPoster = document.getElementById('canteen-poster');
         const pdfOptions = {
           filename:     'Affiche_convives_2020.pdf',
           image:        { type: 'jpeg', quality: 1 },
@@ -194,9 +196,24 @@
     }
   }
 
+  #poster-preview {
+    width: 210mm;
+    min-width: 210mm;
+    height: 296mm;
+    min-height: 296mm;
+    margin-left: 2em;
+    border: 1px solid $grey;
+  }
+
   @media (max-width: 1200px) {
     #poster-generation {
       flex-direction: column;
+    }
+  }
+
+  @media (max-width: 210mm) {
+    #poster-preview {
+      display: none;
     }
   }
 </style>
