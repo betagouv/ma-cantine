@@ -30,7 +30,7 @@
             class="currency-field"
             type="number"
             min="0"
-            placeholder="15 000"
+            placeholder="15000"
             aria-describedby="euros"
             required
           >
