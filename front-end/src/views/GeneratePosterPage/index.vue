@@ -22,12 +22,11 @@
           <label for="servings">Nous servons </label>
           <input id="servings"
             aria-describedby="repas"
-            v-model="form.servings"
-            inputmode="numeric"
-            pattern="[0-9]*"
+            v-model.number="form.servings"
+            type="number"
+            min="0"
             placeholder="200"
             required
-            @input="processNumber('servings')"
           >
           <span id="repas">repas par jour</span>.
         </p>
@@ -35,49 +34,45 @@
         <p>
           <label for="total">Sur l'année de 2020, les achats alimentaires (repas, collations et boissons) répresentent </label>
           <input id="total"
-            v-model="form.total"
+            v-model.number="form.total"
             class="currency-field"
-            inputmode="decimal"
-            placeholder="15 000,00"
-            :pattern="pattern"
+            type="number"
+            min="0"
+            placeholder="15 000"
             aria-describedby="euros"
             required
-            @input="processNumber('total')"
           >
           <span id="euros">euros HT</span>.
         </p>
         <p>
           Sur ce total,
           <input id="bio"
-            v-model="form.bio"
+            v-model.number="form.bio"
             class="currency-field"
-            inputmode="decimal"
-            placeholder="3 000,00"
-            :pattern="pattern"
+            type="number"
+            min="0"
+            placeholder="3000"
             aria-describedby="euros"
             required
-            @input="processNumber('bio')"
           >
           euros HT correspondaient à des <label for="bio">produits bio</label>,
           <input id="quality"
-            v-model="form.quality"
+            v-model.number="form.quality"
             class="currency-field"
-            inputmode="decimal"
-            placeholder="2 000,00"
-            :pattern="pattern"
+            type="number"
+            min="0"
+            placeholder="2000"
             aria-describedby="euros"
             required
-            @input="processNumber('quality')"
           >
           euros HT correspondaient à des <label for="quality">produits de qualité et durables (hors bio)</label> et 
           <input id="equitable"
-            v-model="form.equitable"
+            v-model.number="form.equitable"
             class="currency-field"
-            inputmode="decimal"
-            placeholder="100,00"
-            :pattern="pattern"
+            type="number"
+            min="0"
+            placeholder="100"
             aria-describedby="euros"
-            @input="processNumber('equitable')"
           >
           euros HT correspondaient à des <label for="equitable">produits issus du commerce équitable</label>.
         </p>
@@ -101,21 +96,10 @@
     data() {
       return {
         form: {},
-        pattern: "[0-9 ]*(,[0-9]{2})?"
       };
     },
     methods: {
-      processNumber(key) {
-        const numberKey = key + "Number";
-        if(this.form[key]) {
-          this.form[numberKey] = parseFloat(this.form[key].replaceAll(' ', '').replace(',', '.'));
-        } else if(this.form[numberKey]) {
-          delete this.form[numberKey];
-        }
-      },
       submit() {
-        this.form["servingsNumber"] = parseInt(this.form["servings"], 10);
-
         const htmlPoster = document.getElementById('canteen-poster');
         const pdfOptions = {
           filename:     'Affiche_convives_2020.pdf',
@@ -123,7 +107,7 @@
           html2canvas:  { scale: 2, dpi: 300, letterRendering: true },
           jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
-        html2pdf().from(htmlPoster).set(pdfOptions).save();
+        return html2pdf().from(htmlPoster).set(pdfOptions).save();
       }
     }
   }
