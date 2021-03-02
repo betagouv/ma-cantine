@@ -4,7 +4,7 @@
         "title": "Au moins 50% de produits de qualité et durables dont 20% de bio",
         "shortTitle": "Qualité des produits",
         "faIcon": "fa-apple-alt",
-        "description": "La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent comporter, au cours de l'année 2022, 50% de produits de qualité et durables dont 20% issus de l’agriculture biologique ou en conversion. Ces seuils (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, 20 euros doivent correspondre à des produits bio ou en conversion et au moins 30 euros doivent correspondre à des produits durables et de qualité (hors bio).",
+        "description": "La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent comporter, au cours de l'année 2022, 50% de produits de qualité et durables dont 20% issus de l’agriculture biologique ou en conversion. Ces seuils (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre à des produits bio ou en conversion et au total au moins 50 euros doivent correspondre à des produits durables et de qualité (bio inclus).",
         "tags": [
             "scolaire",
             "administration",
