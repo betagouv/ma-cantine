@@ -1,7 +1,7 @@
 <template>
   <div id="diagnostic-page">
     <h1>M'auto-évaluer</h1>
-    <h2>Évaluez-vous sur les mesures déjà mises en place dans votre établissement, en cours ou les restes à faire.</h2>
+    <h2>Évaluez-vous sur les mesures déjà mises en place dans votre établissement, programmées ou celles restantes à faire.</h2>
     <div class="measure-diagnostic" v-for="measure in keyMeasures" :key="measure.id">
       <h3><KeyMeasureTitle :measure="measure"/></h3>
       <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" class="sub-measure">

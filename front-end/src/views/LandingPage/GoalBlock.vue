@@ -1,15 +1,8 @@
 <template>
   <div id="goal">
+    <h3>Les enjeux de la restauration collective</h3>
     <div class="goal-information">
-      La restauration collective représente <b>près 4 milliards de repas/an !</b>
-      Ces repas sont un levier de transition agricole et alimentaire fort.
-    </div>
-    <h3>Les enjeux pour la restauration collective</h3>
-    <div class="goal-list">
-      <ul>La loi EGAlim est issue des États Généraux de l'Alimentation (EGA). Elle permet :
-        <li>✔️ <b>l'équilibre des relations</b> commerciales dans le secteur agricole.</li>
-        <li>✔️ une entrée en vigueur progressive d'<b>une alimentation saine et durable</b></li>
-      </ul>
+      La restauration collective représente près <b>4 milliards de repas servis par an</b> dans plus de 70 000 sites de restauration, des cantines scolaires, des hopitaux, des EPHAD, des entreprises des administrations...  Agir sur la composition des assiettes est un levier fort pour améliorer l'impact sur notre santé et sur l'environnement tout en influançant positivement les filières d'agriculture biologiques et de qualités. Les mesures en faveur d'une alimentation plus durable peuvent contribuer à modifier les comportements alimentaires notamment chez les plus jeunes.
     </div>
   </div>
 </template>
@@ -17,7 +10,7 @@
 <style scoped lang="scss">
   #goal {
     margin: 70px auto;
-    max-width: 850px;
+    max-width: 851px;
   }
 
   h3 {
@@ -36,13 +29,5 @@
     background-color: $light-green;
     font-size: 20px;
   }
-
-  .goal-list {
-    margin: auto;
-    margin-top: 30px;
-    text-align: left;
-    font-size: 20px;
-    line-height: 35px;
-    padding: 0 24px;
-  }
+  
 </style>

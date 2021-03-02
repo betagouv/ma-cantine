@@ -4,7 +4,7 @@
         "title": "Au moins 50% de produits de qualité et durables dont 20% de bio",
         "shortTitle": "Qualité des produits",
         "faIcon": "fa-apple-alt",
-        "description": "La Loi EGAlim encadre la répartition des produits achetés pour la conception des repas.",
+        "description": "La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent comporter, au cours de l'année 2022, 50% de produits de qualité et durables dont 20% issus de l’agriculture biologique ou en conversion. Ces seuils (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre à des produits bio ou en conversion et au total au moins 50 euros doivent correspondre à des produits durables et de qualité (bio inclus).",
         "tags": [
             "scolaire",
             "administration",
@@ -23,13 +23,13 @@
                 "id": "cinquante",
                 "title": "Au moins 50 % de produits de qualité et durables...",
                 "shortTitle": "50 % de qualité et durables",
-                "htmlDescription": "Un produit de qualité et durable doit bénéficier d’un des labels suivants : \n\n<i class='fas fa-check-square'></i> Label rouge\n<i class='fas fa-check-square'></i> Appellation d’origine (AOC/AOP)\n<i class='fas fa-check-square'></i> Indication géographique (IGP)\n<i class='fas fa-check-square'></i> Spécialité traditionnelle garantie (STG)\n<i class='fas fa-check-square'></i> Mention « issu d’une exploitation à Haute Valeur Environnementale » (HVE + niveau 2 accepté jusqu’au 31/12/2029)\n<i class='fas fa-check-square'></i> Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »\n<i class='fas fa-check-square'></i> Écolabel pêche durable\n<i class='fas fa-check-square'></i> Logo « Région ultrapériphérique » (RUP)\n<i class='fas fa-check-square'></i> Produits équivalents\n<i class='fas fa-check-square'></i> Produit acquis suivant des modalités prenant en compte les coûts imputés aux externalités environnementales liées au produit pendant son cycle de vie"
+                "htmlDescription": "Un produit de qualité et durable doit bénéficier d’un des labels suivants : \n\n<i class='fas fa-check-square'></i> Label rouge - Signe national qui atteste qu’un produit possède un ensemble de caractéristiques spécifiques établissant un niveau de qualité supérieur à celui d’un produit similaire. \n<i class='fas fa-check-square'></i> Appellation d’origine (AOC/AOP) - L’Appellation d’origine protégée (AOP) désigne un produit dont toutes les étapes de production sont réalisées selon un savoir-faire reconnu dans une même aire géographique, qui donne ses caractéristiques au produit. \n<i class='fas fa-check-square'></i> Indication géographique (IGP) - L’Indication géographique protégée (IGP) identifie un produit agricole, brut ou transformé, dont la qualité, la réputation ou d’autres caractéristiques sont liées à son origine géographique. \n<i class='fas fa-check-square'></i> Spécialité traditionnelle garantie (STG) - Un produit dont les qualités spécifiques sont liées à une composition, des méthodes de fabrication ou de transformation fondées sur une tradition.\n<i class='fas fa-check-square'></i> Mention « issu d’une exploitation à Haute Valeur Environnementale » (HVE + niveau 2 accepté jusqu’au 31/12/2029)\n<i class='fas fa-check-square'></i> Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »\n<i class='fas fa-check-square'></i> Écolabel pêche durable\n<i class='fas fa-check-square'></i> Logo « Région ultrapériphérique » (RUP) - Produits issus de 9 régions ultra-phériques à l’UE (Azores, Maderes, Canaries, Guadeloupe, Guyane, Martinique, à la Réunion, à Mayotte, Saint-Martin) \n<i class='fas fa-check-square'></i> Produit acquis suivant des modalités prenant en compte les coûts imputés aux externalités environnementales liées au produit pendant son cycle de vie (production, transformation, conditionnement, transport, stockage, utilisation) - À ce jour, il n’existe pas de référentiel ni de méthodologie offciels afin d’effectuer une sélection des produits alimentaires sur la base de ces coûts.\n<i class='fas fa-check-square'></i> Produits équivalents aux produits bénéficiant de ces mentions ou labels"
             },
             {
                 "id": "vingt",
                 "title": ".... dont au moins 20 % de produits biologiques",
                 "shortTitle": "20 % bio",
-                "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio », c’est à dire : \n\n<i class='fas fa-check-square'></i>  des produits issus de l’agriculture biologique.\n<i class='fas fa-check-square'></i>  des produits végétaux en conversion de plus d’un an."
+                "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio », c’est à dire : \n\n<i class='fas fa-check-square'></i>  des produits issus de l’agriculture biologique.\n<i class='fas fa-check-square'></i>  des produits végétaux étiquetés 'en conversion'."
             }
         ]
     },
@@ -56,7 +56,7 @@
                     "display": "Depuis le 1er janvier 2020",
                     "earliestISO": "2020-01-01"
                 },
-                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l’acquisition de produits issus du commerce équitable. Cette information peut se faire par affichage (dans l’espace commun par exemple) ou par email. \n\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Télécharger un modèle d’email</b> (à venir)\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Voir un exemple d’affiche</b> (à venir)"
+                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l’acquisition de produits issus du commerce équitable. Cette information doit se faire par affichage et par voie électronique (mail aux convives, affichage sur le logiciel de gestion de vie scolaire, envoi d’infolettre…). \n\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Voir un exemple d’affiche</b> (à venir)"
             },
             {
                 "id": "informations-nutritionnelles",
@@ -71,7 +71,7 @@
                     "display": "Depuis le 30 octobre 2018",
                     "earliestISO": "2018-10-30"
                 },
-                "description": "Les gestionnaires de restauration collective doivent communiquer, informer et consulter les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis."
+                "description": "Les gestionnaires de restauration collective doivent communiquer, informer et consulter les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis (arrêté du 30 septembre 2011 relatif à la qualité nutritionnelle des repas servis dans la restauration scolaire)."
             }
         ]
     },
@@ -103,18 +103,18 @@
             },
             {
                 "id": "restes",
-                "title": "Les restes encore consommables doivent être protégés.",
+                "title": "Interdiction de rendre impropre à la consommation les excédents alimentaires encore consommables.",
                 "shortTitle": "Restes protégés",
-                "htmlDescription": "Depuis le 1er janvier 2020, il est <b>interdit de rendre impropre à la consommation</b> les excédents alimentaires. L’infraction à cette loi est susceptible d’une amende de 3 750 €.",
+                "htmlDescription": "L’infraction à cette loi est susceptible d’une amende de 3 750 €.",
                 "deadline": {
                     "earliestISO": "2020-01-01"
                 }
             },
             {
                 "id": "dons",
-                "title": "Les services volumineux de restauration collective se doivent de faire des dons aux associations.",
-                "shortTitle": "Faire des dons",
-                "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui <b>préparant plus de 3000 repas</b> par jour ont l’obligation de proposer une convention de don à association habilitée.",
+                "title": "Dons aux associations.",
+                "shortTitle": "Dons aux associations",
+                "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui <b>préparent plus de 3000 repas par jour</b> ont l’obligation de proposer une convention de dons à une association habilitée.",
                 "deadline": {
                     "earliestISO": "2020-10-22"
                 }
@@ -169,6 +169,19 @@
         "faIcon": "fa-wind",
         "subMeasures": [
             {
+                "id": "bouteilles",
+                "title": "Les bouteilles d’eau plate en plastique sont interdites.",
+                "shortTitle": "Bouteilles",
+                "tags": [
+                    "scolaire"
+                ],
+                "deadline": {
+                    "display": "Depuis le 1er janvier 2020",
+                    "earliestISO": "2020-01-01"
+                },
+                "description": "L’utilisation de bouteilles d’eau plate en plastique est interdite en restauration scolaire. Cette mesure s’applique aux territoires desservis par un réseau d’eau potable et peut être suspendue en cas exceptionnel de restriction de l’eau destinée à la consommation humaine prononcée par le Préfet."
+            },
+            {
                 "id": "ustensiles",
                 "title": "Les ustensiles en plastique à usage unique sont interdits.",
                 "shortTitle": "Ustensiles",
@@ -202,19 +215,6 @@
                     "earliestISO": "2025-01-01"
                 },
                 "description": "L’utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite."
-            },
-            {
-                "id": "bouteilles",
-                "title": "Les bouteilles d’eau plate en plastique sont interdites.",
-                "shortTitle": "Bouteilles",
-                "tags": [
-                    "scolaire"
-                ],
-                "deadline": {
-                    "display": "Depuis le 1er janvier 2020",
-                    "earliestISO": "2020-01-01"
-                },
-                "description": "L’utilisation de bouteilles d’eau plate en plastique est interdite en restauration scolaire. Cette mesure s’applique aux territoires desservis par un réseau d’eau potable et peut être suspendue en cas exceptionnel de restriction de l’eau destinée à la consommation humaine prononcée par le Préfet."
             }
         ]
     }
