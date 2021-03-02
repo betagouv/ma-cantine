@@ -5,15 +5,7 @@
       <form id="poster-form" @submit.prevent="submit">
         <h2>À propos de votre cantine</h2>
         <p>
-          <label for="profession">Je suis </label>
-          <select id="profession" v-model="form.profession" class="field">
-            <option value="cheffe">Chef.fe de cuisine</option>
-            <option value="elue">Élu.e</option>
-            <option value="magasiniere">Magasinier.e</option>
-            <option value="intendante">Intendant.e</option>
-            <option value="autre">Autre</option>
-          </select>
-          dans <label for="school">la cantine </label>
+          Je représente <label for="school">la cantine</label>
           <input id="school" v-model="form.school" class="field" placeholder="nom de l'école" required>
           dans <label for="commune">le commune de </label>
           <input id="commune" v-model="form.commune" class="field" placeholder="Plouër-sur-Rance" required>.
