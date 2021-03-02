@@ -1,32 +1,30 @@
 <template>
-  <div id="canteen-poster">
-    <div id="poster-contents">
-      <div id="heading">
-        <img src="@/assets/toque.svg" id="hat" alt="">
-        <div>
-          <h1>Cantine {{ school || "_________" }}</h1>
-          <p id="commune">{{ commune || "_________" }}</p>
-          <p>Nous servons {{ servingsNumber || "___" }} repas par jour</p>
-          <p>Dans la cantine de votre enfant, sur l'année de 2020, nous avons servi en valeur d'achats:</p>
-        </div>
+  <div class="poster-contents">
+    <div id="heading">
+      <img src="@/assets/toque.svg" id="hat" alt="">
+      <div>
+        <h1>Cantine {{ school || "_________" }}</h1>
+        <p id="commune">{{ commune || "_________" }}</p>
+        <p>Nous servons {{ servingsNumber || "___" }} repas par jour</p>
+        <p>Dans la cantine de votre enfant, sur l'année de 2020, nous avons servi en valeur d'achats:</p>
       </div>
-      <p class="percentage"><span id="bio-percent" class="number">{{ bioPercent }} %</span> de produits bio</p>
-      <p class="percentage"><span id="quality-percent" class="number">{{ qualityPercent }} %</span> de produits de qualité et durables (hors bio)</p>
-      <p class="percentage" v-if="equitableNumber"><span id="equitable-percent" class="number">{{ equitablePercent }} %</span> produits issus du commerce équitable</p>
-      <div id="about">
-        <h2>Pourquoi je vois cette affiche ?</h2>
-        <p>
-          À partir du 1er janvier 2020, les usagers des restaurants collectifs devront être informés une fois par an,
-          par voie d’affichage et de communication électronique, de la part des produits de qualité et durables entrant dans la composition des repas servis
-          et des démarches entreprises pour développer des produits issus du commerce équitable.
-        </p>
-        <p>
-          <b>Un bon moyen de savoir ce qu'il y a dans votre assiette et d'en discuter avec le personnel de votre restaurant !</b>
-        </p>
-      </div>
-      <p><b>En savoir plus de la loi EGAlim:</b> <a href="https://ma-cantine.beta.gouv.fr">https://ma-cantine.beta.gouv.fr</a></p>
-      <img src="@/assets/qr-code.svg" id="qr" alt="QR code vers https://ma-cantine.beta.gouv.fr">
     </div>
+    <p class="percentage"><span id="bio-percent" class="number">{{ bioPercent }} %</span> de produits bio</p>
+    <p class="percentage"><span id="quality-percent" class="number">{{ qualityPercent }} %</span> de produits de qualité et durables (hors bio)</p>
+    <p class="percentage" v-if="equitableNumber"><span id="equitable-percent" class="number">{{ equitablePercent }} %</span> produits issus du commerce équitable</p>
+    <div id="about">
+      <h2>Pourquoi je vois cette affiche ?</h2>
+      <p>
+        À partir du 1er janvier 2020, les usagers des restaurants collectifs devront être informés une fois par an,
+        par voie d’affichage et de communication électronique, de la part des produits de qualité et durables entrant dans la composition des repas servis
+        et des démarches entreprises pour développer des produits issus du commerce équitable.
+      </p>
+      <p>
+        <b>Un bon moyen de savoir ce qu'il y a dans votre assiette et d'en discuter avec le personnel de votre restaurant !</b>
+      </p>
+    </div>
+    <p><b>En savoir plus de la loi EGAlim:</b> <a href="https://ma-cantine.beta.gouv.fr">https://ma-cantine.beta.gouv.fr</a></p>
+    <img src="@/assets/qr-code.svg" id="qr" alt="QR code vers https://ma-cantine.beta.gouv.fr">
   </div>
 </template>
 
@@ -65,16 +63,7 @@
 </script>
 
 <style scoped lang="scss">
-  #canteen-poster {
-    width: 210mm;
-    min-width: 210mm;
-    height: 296mm;
-    min-height: 296mm;
-    margin-left: 2em;
-    border: 1px solid $grey;
-  }
-
-  #poster-contents {
+  .poster-contents {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -154,11 +143,5 @@
     margin: 0.5em;
     width: 30mm;
     height: 30mmm; 
-  }
-
-  @media (max-width: 210mm) {
-    #canteen-poster {
-      display: none;
-    }
   }
 </style>
