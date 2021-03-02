@@ -3,7 +3,7 @@
     <router-link :to="{ name: 'LandingPage' }" id="goto-landing">
       <img src="@/assets/Marianne.png" id="Marianne">
       <div id="brand">
-        <div id="logo"><span id="ma-cantine">ma-cantine</span>.beta.gouv.fr</div>
+        <img id="logo" src="@/assets/logo_transparent.png" alt="Ma cantine">
         <div id="slogan">Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</div>
       </div>
     </router-link>
@@ -57,17 +57,7 @@ export default {
   }
 
   #logo {
-    white-space: nowrap;
-    font-style: italic;
-    font-weight: 200;
-    font-size: 25px;
-    line-height: 29px;
-    color: $grey;
-  }
-
-  #ma-cantine {
-    font-weight: bold;
-    color: $orange;
+    width: 15em;
   }
 
   #slogan {
