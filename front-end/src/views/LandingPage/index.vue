@@ -8,6 +8,8 @@
   <div class="divider"></div>
 
   <DiscoverMeasuresBlock/>
+
+  <NewsletterBlock/>
 </template>
 
 <script>
@@ -15,6 +17,7 @@
   import KeyGoalsBlock from '@/views/LandingPage/KeyGoalsBlock';
   import GoalBlock from '@/views/LandingPage/GoalBlock';
   import DiscoverMeasuresBlock from '@/views/LandingPage/DiscoverMeasuresBlock';
+  import NewsletterBlock from '@/views/LandingPage/NewsletterBlock';
 
   export default {
     components: {
@@ -22,6 +25,7 @@
       KeyGoalsBlock,
       GoalBlock,
       DiscoverMeasuresBlock,
+      NewsletterBlock,
     },
   }
 </script>

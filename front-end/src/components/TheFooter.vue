@@ -47,7 +47,6 @@ export default {
   #footer {
     display: flex;
     padding: 50px;
-    border-top: 1px solid $orange;
   }
 
   #logos {
