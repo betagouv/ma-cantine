@@ -9,6 +9,10 @@
     "stage": "npm run build && surge dist staging-ma-cantine.surge.sh",
     "start": "serve -s dist"
   },
+  "engines": {
+    "node": "15.5.0",
+    "npm": "7.3.0"
+  },
   "dependencies": {
     "core-js": "^3.6.5",
     "html2pdf.js": "^0.9.2",
