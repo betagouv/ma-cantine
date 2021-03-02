@@ -5,13 +5,13 @@
       <div>
         <h1>Cantine {{ school || "_________" }}</h1>
         <p id="commune">{{ commune || "_________" }}</p>
-        <p>Nous servons {{ servingsNumber || "___" }} repas par jour</p>
+        <p>Nous servons {{ servings || "___" }} repas par jour</p>
         <p>Dans la cantine de votre enfant, sur l'année de 2020, nous avons servi en valeur d'achats:</p>
       </div>
     </div>
     <p class="percentage"><span id="bio-percent" class="number">{{ bioPercent }} %</span> de produits bio</p>
     <p class="percentage"><span id="quality-percent" class="number">{{ qualityPercent }} %</span> de produits de qualité et durables (hors bio)</p>
-    <p class="percentage" v-if="equitableNumber"><span id="equitable-percent" class="number">{{ equitablePercent }} %</span> produits issus du commerce équitable</p>
+    <p class="percentage" v-if="equitable"><span id="equitable-percent" class="number">{{ equitablePercent }} %</span> produits issus du commerce équitable</p>
     <div id="about">
       <h2>Pourquoi je vois cette affiche ?</h2>
       <p>
@@ -33,27 +33,27 @@
     props: {
       school: String,
       commune: String,
-      servingsNumber: Number,
-      totalNumber: Number,
-      bioNumber: Number,
-      qualityNumber: Number,
-      equitableNumber: Number
+      servings: Number,
+      total: Number,
+      bio: Number,
+      quality: Number,
+      equitable: Number
     },
     computed: {
       bioPercent() {
-        return this.percentageString(this.bioNumber);
+        return this.percentageString(this.bio);
       },
       qualityPercent() {
-        return this.percentageString(this.qualityNumber);
+        return this.percentageString(this.quality);
       },
       equitablePercent() {
-        return this.percentageString(this.equitableNumber);
+        return this.percentageString(this.equitable);
       }
     },
     methods: {
       percentageString(number) {
-        if(!isNaN(number) && this.totalNumber) {
-          const value = Math.floor(number / this.totalNumber * 1000) / 10;
+        if(!isNaN(number) && this.total) {
+          const value = Math.floor(number / this.total * 1000) / 10;
           return value.toLocaleString("fr-FR");
         }
         return "__";
