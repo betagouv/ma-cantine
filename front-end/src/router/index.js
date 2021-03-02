@@ -21,7 +21,7 @@ const routes = [
     }
   },
   {
-    path: '/generer-affichage',
+    path: '/creation-affiche',
     name: 'GeneratePosterPage',
     component: GeneratePosterPage,
   },
