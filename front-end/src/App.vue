@@ -5,18 +5,21 @@
     <router-view/>
   </div>
 
+  <TheNewsletter/>
+
   <TheFooter/>
 </template>
 
 <script>
-// @ is an alias to /src
-import TheNavbar from '@/components/TheNavbar'
-import TheFooter from '@/components/TheFooter'
+import TheNavbar from '@/components/TheNavbar';
+import TheFooter from '@/components/TheFooter';
+import TheNewsletter from '@/components/TheNewsletter';
 
 export default {
   components: {
     TheNavbar,
     TheFooter,
+    TheNewsletter,
   },
   watch: {
     '$route' (to) {
