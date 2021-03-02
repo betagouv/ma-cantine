@@ -13,7 +13,7 @@
             <option value="intendante">Intendant.e</option>
             <option value="autre">Autre</option>
           </select>
-          dans <label for="school">la cantine du </label>
+          dans <label for="school">la cantine </label>
           <input id="school" v-model="form.school" class="field" placeholder="nom de l'école" required>
           dans <label for="commune">le commune de </label>
           <input id="commune" v-model="form.commune" class="field" placeholder="Plouër-sur-Rance" required>.
@@ -27,7 +27,7 @@
             pattern="[0-9]*"
             placeholder="200"
             required
-            @keydown="processNumber('servings')"
+            @input="processNumber('servings')"
           >
           <span id="repas">repas par jour</span>.
         </p>
@@ -42,7 +42,7 @@
             :pattern="pattern"
             aria-describedby="euros"
             required
-            @keydown="processNumber('total')"
+            @input="processNumber('total')"
           >
           <span id="euros">euros HT</span>.
         </p>
@@ -56,7 +56,7 @@
             :pattern="pattern"
             aria-describedby="euros"
             required
-            @keydown="processNumber('bio')"
+            @input="processNumber('bio')"
           >
           euros HT correspondaient à des <label for="bio">produits bio</label>,
           <input id="quality"
@@ -67,7 +67,7 @@
             :pattern="pattern"
             aria-describedby="euros"
             required
-            @keydown="processNumber('quality')"
+            @input="processNumber('quality')"
           >
           euros HT correspondaient à des <label for="quality">produits de qualité et durables (hors bio)</label> et 
           <input id="equitable"
@@ -77,7 +77,7 @@
             placeholder="100,00"
             :pattern="pattern"
             aria-describedby="euros"
-            @keydown="processNumber('equitable')"
+            @input="processNumber('equitable')"
           >
           euros HT correspondaient à des <label for="equitable">produits issus du commerce équitable</label>.
         </p>
@@ -92,10 +92,6 @@
   import CanteenPoster from './CanteenPoster';
   import html2pdf from 'html2pdf.js';
 
-  function parseCurrency(string) {
-    return parseFloat(string.replaceAll(' ', '').replace(',', '.'));
-  }
-
   export default {
     components: {
       CanteenPoster
@@ -108,29 +104,24 @@
     },
     methods: {
       processNumber(key) {
+        const numberKey = key + "Number";
         if(this.form[key]) {
-          this.form[key + "Number"] = parseCurrency(this.form[key]);
+          this.form[numberKey] = parseFloat(this.form[key].replaceAll(' ', '').replace(',', '.'));
+        } else if(this.form[numberKey]) {
+          delete this.form[numberKey];
         }
       },
       submit() {
         this.form["servingsNumber"] = parseInt(this.form["servings"], 10);
-        ["total", "bio", "quality", "equitable"].forEach(key => {
-          const numberKey = key + "Number";
-          if(this.form[key]) {
-            this.form[numberKey] = parseCurrency(this.form[key]);
-          } else if(this.form[numberKey]) {
-            delete this.form[numberKey];
-          }
-        });
 
-        const element = document.getElementById('poster-contents');
-        const opt = {
+        const htmlPoster = document.getElementById('poster-contents');
+        const pdfOptions = {
           filename:     'Affiche_convives_2020.pdf',
           image:        { type: 'jpeg', quality: 1 },
           html2canvas:  { scale: 2, dpi: 300, letterRendering: true },
           jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
-        html2pdf().from(element).set(opt).save();
+        html2pdf().from(htmlPoster).set(pdfOptions).save();
       }
     }
   }
@@ -199,6 +190,7 @@
       color: $white;
       float: right;
       font-weight: bold;
+      cursor: pointer;
     }
   }
 
