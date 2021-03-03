@@ -21,12 +21,35 @@
         <KeyMeasureScore :measure="measure" />
       </li>
     </ul>
-    <router-link :to="{ name: 'GeneratePosterPage' }" id="poster">
-      <div class="link-icon"><i class="fas fa-bullhorn"></i></div>
-      <p>L’information convives, par mail et par affichage, de la part de bio, durable et commerce équitable est d’ores et déjà en vigueur. Pour générer votre affiche, tester notre formulaire.</p>
-      <div class="link-icon"><i class="fas fa-arrow-circle-right"></i></div>
-    </router-link>
   </div>
+  <router-link :to="{ name: 'GeneratePosterPage' }" id="poster">
+    <div class="link-icon"><i class="fas fa-bullhorn"></i></div>
+    <p>
+      L’information convives, par mail et par affichage, de la part de bio,
+      durable et commerce équitable est d’ores et déjà en vigueur.
+      Pour générer votre affiche, tester notre formulaire.
+    </p>
+    <div class="link-icon"><i class="fas fa-arrow-circle-right"></i></div>
+  </router-link>
+  <form id="publish-form" @submit.prevent="submit">
+    <h2>Devenir béta-testeur</h2>
+    <p>
+      Nous sommes en version de test et cherchons continuellement à améliorer la plateforme.
+      Pour cela nous cherchons des cantines prêtes à nous accompagner en devenant béta-testeur.
+      Si vous souhaitez y participer merci de nous communiquer vos informations ci-dessous.
+    </p>
+    <label for="school" class="publish-label">Nom de votre cantine</label>
+    <input id="school" class="publish-input" v-model="form.school" required>
+    <label for="city" class="publish-label">Ville / commune</label>
+    <input id="city" class="publish-input" v-model="form.city" required>
+    <label for="email" class="publish-label">Votre email</label>
+    <input id="email" class="publish-input" v-model="form.email" type="email" required>
+    <label for="phone" class="publish-label" type="tel">Numéro de téléphone (optionnel)</label>
+    <input id="phone" class="publish-input" v-model="form.phone">
+    <label for="message" class="publish-label">Message (optionnel)</label>
+    <textarea id="message" class="publish-input" v-model="form.message" />
+    <input type="submit" id="submit" value="Je participe">
+  </form>
 </template>
 
 <script>
@@ -36,14 +59,15 @@
   import KeyMeasureScore from '@/components/KeyMeasureScore';
 
   export default {
-    components: { 
+    components: {
       KeyMeasureTitle,
       KeyMeasureScore,
     },
     data() {
       return {
         keyMeasures,
-        STATUSES
+        STATUSES,
+        form: {},
       };
     },
     methods: {
@@ -59,6 +83,46 @@
         let deadline = measure.deadline?.earliestISO;
         if(measure.status && measure.status !== 'done' && deadline) {
           return new Date(deadline) < new Date();
+        }
+      },
+      async submit() {
+        let measuresHtml = '';
+        this.keyMeasures.forEach(measure => {
+          measuresHtml += `<p><b>${measure.shortTitle} :</b></p>`;
+          measure.subMeasures.forEach(subMeasure => {
+            measuresHtml += `<p>${subMeasure.shortTitle} : ${subMeasure.status || ''}</p>`
+          });
+        });
+
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "api-key": process.env.VUE_APP_SENDINBLUE_API_KEY },
+          body: JSON.stringify({
+            sender: { email: process.env.VUE_APP_SENDER_EMAIL, name: "site web ma cantine" },
+            to: [{ email: process.env.VUE_APP_CONTACT_EMAIL }],
+            replyTo: { email: process.env.VUE_APP_CONTACT_EMAIL },
+            subject: "Nouveau Béta-testeur ma cantine",
+            htmlContent: `<!DOCTYPE html> <html> <body>` +
+                         `<p><b>Cantine:</b> ${this.form.school}</p>` +
+                         `<p><b>Ville:</b> ${this.form.city}</p>` +
+                         `<p><b>Email:</b> ${this.form.email}</p>` +
+                         `<p><b>Téléphone:</b> ${this.form.phone || ''}</p>` +
+                         `<p><b>Message:</b></p>` +
+                         `<p>${this.form.message || ''}</p>` +
+                         `${measuresHtml}` +
+                         `</body> </html>`,
+          })
+        };
+
+        const response = await fetch("https://api.sendinblue.com/v3/smtp/email", requestOptions);
+
+        if (response.status === 201) {
+          this.form = {};
+          alert("Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.")
+        } else {
+          const error = await response.json();
+          console.log(error);
+          alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
         }
       }
     }
@@ -173,6 +237,59 @@
     p {
       text-align: left;
       color: $pink;
+    }
+  }
+
+  #publish-form {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    margin: 50px auto;
+
+    .publish-label {
+      text-align: left;
+      margin-top: 15px;
+    }
+
+    .publish-input {
+      margin-top: 10px;
+      border: none;
+      border-bottom: 6px solid $light-orange;
+      font-size: 1.2em;
+      padding: 5px;
+      background-color: $light-orange;
+    }
+
+    .publish-input:required {
+      border-bottom-color: $orange;
+    }
+
+    .publish-input:required:invalid {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .publish-input:required:valid {
+      border-bottom-color: $light-orange;
+    }
+
+    #message {
+      height: 100px;
+    }
+
+    #submit {
+      width: 150px;
+      font-size: 1.2em;
+      margin: auto;
+      margin-top: 30px;
+      border: none;
+      background: $orange;
+      border-radius: 1em;
+      padding: 0.5em;
+      color: $white;
+      float: right;
+      font-weight: bold;
+      cursor: pointer;
     }
   }
 
