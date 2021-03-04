@@ -2,7 +2,7 @@
   <div id="newsletter">
     <div class="newsletter-content">
       <div>
-        <p>Vous souhaitez suivre les actualités de <b>ma cantine</b> ?</p>
+        <h3>Suivre les actualités du site ma cantine</h3>
         <p>Inscrivez-vous à la newsletter et recevez environ 1 email par mois.</p>
       </div>
       <form class="newsletter-form" @submit.prevent="submit">
@@ -124,6 +124,12 @@
     .form-button {
       margin-top: 10px;
       margin-left: 0;
+    }
+  }
+
+  @media (max-width: 430px) {
+    #newsletter {
+      height: 350px;
     }
   }
 </style>
