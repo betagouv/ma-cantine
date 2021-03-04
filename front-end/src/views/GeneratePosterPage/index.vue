@@ -1,14 +1,22 @@
 <template>
   <div id="poster-form-page">
     <h1>Générez votre affiche convives</h1>
+    <p class="poster-presentation">
+      En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives.
+      Cette affiche présente vos données d'achats à vos convives comme demandé
+      par une sous-mesure de la loi EGAlim.
+    </p>
+    <router-link :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }">
+      En savoir plus sur la mesure
+    </router-link>
     <div id="poster-generation">
       <form id="poster-form" @submit.prevent="submit">
         <h2>À propos de votre cantine</h2>
         <p>
           Je représente <label for="school">la cantine</label>
-          <input id="school" v-model="form.school" class="field" placeholder="nom de l'école" required>
-          dans <label for="commune">le commune de </label>
-          <input id="commune" v-model="form.commune" class="field" placeholder="Plouër-sur-Rance" required>.
+          <input id="school" v-model="form.school" class="field" placeholder="nom de l'établissement" required>
+          dans <label for="commune">la commune de </label>
+          <input id="commune" v-model="form.commune" class="field" placeholder="nom de la commune" required>.
         </p>
         <p>
           <label for="servings">Nous servons </label>
@@ -57,7 +65,7 @@
             aria-describedby="euros"
             required
           >
-          euros HT correspondaient à des <label for="quality">produits de qualité et durables (hors bio)</label> et 
+          euros HT correspondaient à des <label for="quality">produits de qualité et durables (hors bio)</label> et
           <input id="equitable"
             v-model.number="form.equitable"
             class="currency-field"
@@ -92,6 +100,9 @@
     },
     methods: {
       submit() {
+        //this fix an issue where the beginning of the pdf is blank depending on the scroll position
+        window.scrollTo({ top: 0 });
+
         const htmlPoster = document.getElementById('canteen-poster');
         const pdfOptions = {
           filename:     'Affiche_convives_2020.pdf',
@@ -119,14 +130,24 @@
       color: $green;
       margin: 1em 0em;
     }
+
+    .poster-presentation {
+      max-width: 1170px;
+    }
   }
 
   #poster-generation {
     display: flex;
+    margin-top: 50px;
   }
 
   #poster-form {
     text-align: left;
+
+    p {
+      line-height: 50px;
+      margin: 0;
+    }
 
     input, select {
       border: none;
