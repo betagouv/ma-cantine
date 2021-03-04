@@ -12,6 +12,7 @@
     <p class="percentage"><span id="bio-percent" class="number">{{ bioPercent }} %</span> de produits bio</p>
     <p class="percentage"><span id="quality-percent" class="number">{{ qualityPercent }} %</span> de produits de qualité et durables (hors bio)</p>
     <p class="percentage" v-if="equitable"><span id="equitable-percent" class="number">{{ equitablePercent }} %</span> produits issus du commerce équitable</p>
+    <LogoList id="logos"/>
     <div id="about">
       <h2>Pourquoi je vois cette affiche ?</h2>
       <p>
@@ -23,13 +24,23 @@
         <b>Un bon moyen de savoir ce qu'il y a dans votre assiette et d'en discuter avec le personnel de votre restaurant !</b>
       </p>
     </div>
-    <p><b>En savoir plus de la loi EGAlim:</b> <a href="https://ma-cantine.beta.gouv.fr">https://ma-cantine.beta.gouv.fr</a></p>
-    <img src="@/assets/qr-code.svg" id="qr" alt="QR code vers https://ma-cantine.beta.gouv.fr">
+    <div id="more-information">
+      <p class="url">
+        <span>En savoir plus de la loi EGAlim :</span>
+        <a href="https://ma-cantine.beta.gouv.fr">https://ma-cantine.beta.gouv.fr</a>
+      </p>
+      <img src="@/assets/qr-code.svg" id="qr" alt="QR code vers https://ma-cantine.beta.gouv.fr">
+    </div>
   </div>
 </template>
 
 <script>
+  import LogoList from '@/components/LogoList'
+
   export default {
+    components: {
+      LogoList,
+    },
     props: {
       school: String,
       commune: String,
@@ -117,6 +128,10 @@
     margin-right: 6px;
   }
 
+  #logos {
+    width: 100%;
+  }
+
   #about {
     width: 100%;
     margin: 0.5em 0;
@@ -134,14 +149,30 @@
     }
   }
 
-  a {
-    color: $grey;
-    text-decoration: none;
-  }
+  #more-information {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
 
-  #qr {
-    margin: 0.5em;
-    width: 30mm;
-    height: 30mmm; 
+    .url {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+
+      span {
+        font-weight: bold;
+      }
+
+      a {
+        color: $grey;
+        text-decoration: none;
+      }
+    }
+
+    #qr {
+      margin: 0.5em;
+      width: 30mm;
+      height: 30mmm;
+    }
   }
 </style>
