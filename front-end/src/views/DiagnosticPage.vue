@@ -16,7 +16,6 @@
           v-if="subMeasure.readMore"
           class="measure-description"
           :measure="subMeasure"
-          :shrinkLogos="true"
         />
       </div>
     </div>
