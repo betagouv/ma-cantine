@@ -22,15 +22,39 @@
       </li>
     </ul>
   </div>
-  <router-link :to="{ name: 'GeneratePosterPage' }" id="poster">
+  <h2> Quelques ressources pour répondre aux mesures</h2>
+  <router-link :to="{ name: 'GeneratePosterPage' }" class="ressource poster">
     <div class="link-icon"><i class="fas fa-bullhorn"></i></div>
     <p>
       L’information convives, par mail et par affichage, de la part de bio,
-      durable et commerce équitable est d’ores et déjà en vigueur.
-      Pour générer votre affiche, tester notre formulaire.
+      durable et commerce équitable est d’ores et déjà en vigueur. Pour générer votre affiche, tester notre formulaire.
     </p>
     <div class="link-icon"><i class="fas fa-arrow-circle-right"></i></div>
   </router-link>
+  <a href="Diagnostic approvisionnement (ma-cantine-alpha) v0.2.ods" class="ressource calculator" download>
+    <div class="link-icon"><i class="fas fa-calculator"></i></div>
+    <p>
+      Si vous avez besoin d'aide pour calculer votre part de bios et de produits labélisés,
+      vous pouvez tester notre calculateur sous format excel.
+    </p>
+    <div class="link-icon"><i class="fas fa-file-download"></i></div>
+  </a>
+  <a href="Convention de dons type - restauration collective.pdf" class="ressource" download>
+    <div class="link-icon"><i class="fas fa-clipboard"></i></div>
+    <p>
+      Vous voulez éviter le gaspillage ? Télécharger ce modèle type de convention
+      aux associations auxquelles faire des dons.
+    </p>
+    <div class="link-icon"><i class="fas fa-file-download"></i></div>
+  </a>
+  <a href="https://www.inao.gouv.fr/Espace-professionnel-et-outils/Rechercher-un-produit" class="ressource" target="_blank">
+    <div class="link-icon"><i class="fas fa-seedling"></i></div>
+    <p>
+      Trouver des catégories de produits en recherchant par labels, siqo et/ou régions
+      avec le moteur de recherche de l'INAO.
+    </p>
+    <div class="link-icon"><i class="fas fa-external-link-alt"></i></div>
+  </a>
   <form id="publish-form" @submit.prevent="submit">
     <h2>Devenir béta-testeur</h2>
     <p>
@@ -211,14 +235,18 @@
     color: $grey;
   }
 
-  #poster {
+  h2 {
+    margin-top: 50px;
+  }
+
+  .ressource {
     display: flex;
     width: 90%;
     margin: auto;
     margin-top: 3em;
     align-items: center;
-    background: $light-pink;
-    border: 4px solid $pink;
+    background: $light-yellow;
+    border: 4px solid $yellow;
     box-sizing: border-box;
     text-decoration: none;
 
@@ -226,6 +254,32 @@
       font-size: 2em;
       padding: 0.5em;
     }
+
+    .fa-clipboard {
+      color: $orange;
+    }
+
+    .fa-file-download {
+      color: $orange;
+    }
+
+    .fa-seedling {
+      color: $green;
+    }
+
+    .fa-external-link-alt {
+      color: $orange;
+    }
+
+    p {
+      text-align: left;
+      color: $dark-orange;
+    }
+  }
+
+  .ressource.poster {
+    background: $light-pink;
+    border-color: $pink;
 
     .fa-bullhorn {
       color: $light-grey;
@@ -236,8 +290,24 @@
     }
 
     p {
-      text-align: left;
       color: $pink;
+    }
+  }
+
+  .ressource.calculator {
+    background: $light-blue;
+    border-color: $blue;
+
+    .fa-calculator {
+      color: $blue;
+    }
+
+    .fa-file-download {
+      color: $blue;
+    }
+
+    p {
+      color: $blue;
     }
   }
 
