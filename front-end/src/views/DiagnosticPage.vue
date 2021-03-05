@@ -6,7 +6,7 @@
       <h3><KeyMeasureTitle :measure="measure"/></h3>
       <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" class="sub-measure">
         <fieldset class="measure-headline">
-          <legend>{{ subMeasure.title }}</legend>
+          <span><legend>{{ subMeasure.title }}</legend></span>
           <button class="read-more" @click="toggleDescriptionDisplay(subMeasure)">
             {{ subMeasure.readMore ? "Moins" : "En savoir plus" }}
           </button>
@@ -109,12 +109,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-
-  legend {
-    width: 60%;
-    font-weight: normal;
-    float: left;
+    
+    span {
+      width: 60%;
+      font-weight: normal;
+    }
   }
 
   .read-more {
@@ -122,7 +121,7 @@
     background-color: $white;
     width: 15%;
     padding: 1em 0;
-    margin-left: 0.5em;
+    margin: 0 0.5em;
     text-align: left;
     font-size: 14px;
     color: $black;
@@ -152,11 +151,11 @@
     .measure-headline {
       flex-direction: column;
       align-items: flex-start;
-    }
 
-    legend {
-      width: 100%;
-      margin-bottom: 0;
+      span {
+        width: 100%;
+        margin-bottom: 0;
+      }
     }
 
     .read-more {
