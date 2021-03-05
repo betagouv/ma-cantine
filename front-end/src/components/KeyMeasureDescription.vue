@@ -2,20 +2,93 @@
   <div class="description-container">
     <p class="description" v-if="measure.htmlDescription" v-html="measure.htmlDescription"></p>
     <p class="description" v-else-if="measure.description">{{measure.description}}</p>
-    <LogoList v-if="measure.id === 'cinquante'" />
+    <div class="description" v-if="measure.id === 'cinquante'">
+      <p>Un produit de qualité et durable doit bénéficier d’un des labels suivants :</p>
+      <ul id="about-logos">
+        <li v-for="logo in logos" class="logo" :key="logo.src">
+          <img :src="require(`@/assets/logos/${logo.src}`)" :alt="logo.title" :title="logo.title"/>
+          {{ logo.text }}
+        </li>
+        <li>
+          <i class='fas fa-check-square'></i>
+          Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »
+        </li>
+        <li>
+          <i class='fas fa-check-square'></i>
+          Produit acquis suivant des modalités prenant en compte les coûts imputés aux externalités
+          environnementales liées au produit pendant son cycle de vie (production, transformation,
+          conditionnement, transport, stockage, utilisation) - À ce jour, il n’existe pas de référentiel
+          ni de méthodologie offciels afin d’effectuer une sélection des produits alimentaires sur la base de ces coûts.
+        </li>
+        <li>
+          <i class='fas fa-check-square'></i>
+          Produits équivalents aux produits bénéficiant de ces mentions ou labels
+        </li>
+      </ul>
+    </div>
+    <img
+      v-if="measure.id === 'vingt'"
+      id="bio-logo"
+      src="@/assets/logos/logo_bio_eurofeuille.png"
+      alt="Logo Agriculture Biologique"
+      title="Logo Agriculture Biologique"
+    >
   </div>
 </template>
 
 <script>
-  import LogoList from '@/components/LogoList'
+  const logos = [
+    {
+      src: "label-rouge.png",
+      title: "Logo Label Rouge",
+      text: "Label rouge - Signe national qui atteste qu’un produit possède un ensemble de caractéristiques spécifiques "+
+        "établissant un niveau de qualité supérieur à celui d’un produit similaire."
+    },
+    {
+      src: "Logo-AOC-AOP.png",
+      title: "Logo Appellation d’origine (AOC/AOP)",
+      text: "Appellation d’origine (AOC/AOP) - L’Appellation d’origine protégée (AOP) désigne un produit dont toutes les "+
+        "étapes de production sont réalisées selon un savoir-faire reconnu dans une même aire géographique, "+
+        "qui donne ses caractéristiques au produit."
+    },
+    {
+      src: "IGP.png",
+      title: "logo indication géographique",
+      text: "Indication géographique (IGP) - L’Indication géographique protégée (IGP) identifie un produit agricole, "+
+        "brut ou transformé, dont la qualité, la réputation ou d’autres caractéristiques sont liées à son origine géographique."
+    },
+    {
+      src: "STG.png",
+      title: "logo Spécialité traditionnelle garantie",
+      text: "Spécialité traditionnelle garantie (STG) - Un produit dont les qualités spécifiques sont liées à une composition, "+
+        "des méthodes de fabrication ou de transformation fondées sur une tradition."
+    },
+    {
+      src: "hve.png",
+      title: "logo Haute Valeur Environnementale",
+      text: "Mention « issu d’une exploitation à Haute Valeur Environnementale » (HVE + niveau 2 accepté jusqu’au 31/12/2029)"
+    },
+    {
+      src: "logo_label-peche-durable.png",
+      title: "Écolabel pêche durable",
+      text: "Écolabel pêche durable"
+    },
+    {
+      src: "rup.png",
+      title: "Logo Région Ultrapériphérique",
+      text: "Logo « Région ultrapériphérique » (RUP) - Produits issus de 9 régions ultra-phériques à l’UE (Azores, Maderes, Canaries, Guadeloupe, Guyane, Martinique, à la Réunion, à Mayotte, Saint-Martin)"
+    }
+  ];
 
   export default {
     name: "KeyMeasureDescription",
-    components: {
-      LogoList,
-    },
     props: {
       measure: Object,
+    },
+    data() {
+      return {
+        logos
+      }
     }
   }
 </script>
@@ -34,5 +107,26 @@
     font-weight: 400;
     line-height: 1.5em;
     white-space: pre-wrap;
+  }
+
+  #about-logos {
+    li {
+      margin: 1em 0;
+    }
+  }
+
+  .logo {
+    min-height: 3em;
+  }
+
+  .logo > img {
+    height: 2.9em;
+    margin-right: 0.5em;
+    float: left;
+  }
+
+  #bio-logo {
+    height: 2.9em;
+    margin-top: 1em;
   }
 </style>
