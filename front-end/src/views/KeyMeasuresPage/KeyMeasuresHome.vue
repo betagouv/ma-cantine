@@ -57,6 +57,7 @@
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import STATUSES from '@/data/STATUSES.json';
   import KeyMeasureScore from '@/components/KeyMeasureScore';
+  import _ from 'lodash';
 
   export default {
     components: {
@@ -103,12 +104,12 @@
             replyTo: { email: process.env.VUE_APP_CONTACT_EMAIL },
             subject: "Nouveau Béta-testeur ma cantine",
             htmlContent: `<!DOCTYPE html> <html> <body>` +
-                         `<p><b>Cantine:</b> ${this.form.school}</p>` +
-                         `<p><b>Ville:</b> ${this.form.city}</p>` +
-                         `<p><b>Email:</b> ${this.form.email}</p>` +
-                         `<p><b>Téléphone:</b> ${this.form.phone || ''}</p>` +
+                         `<p><b>Cantine:</b> ${_.escape(this.form.school)}</p>` +
+                         `<p><b>Ville:</b> ${_.escape(this.form.city)}</p>` +
+                         `<p><b>Email:</b> ${_.escape(this.form.email)}</p>` +
+                         `<p><b>Téléphone:</b> ${_.escape(this.form.phone || '')}</p>` +
                          `<p><b>Message:</b></p>` +
-                         `<p>${this.form.message || ''}</p>` +
+                         `<p>${_.escape(this.form.message || '')}</p>` +
                          `${measuresHtml}` +
                          `</body> </html>`,
           })
