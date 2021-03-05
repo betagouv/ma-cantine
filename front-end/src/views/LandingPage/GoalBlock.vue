@@ -2,7 +2,7 @@
   <div id="goal">
     <h3>Les enjeux de la restauration collective</h3>
     <div class="goal-information">
-      La restauration collective représente près <b>4 milliards de repas servis par an</b> dans plus de 70 000 sites de restauration, des cantines scolaires, des hopitaux, des EPHAD, des entreprises des administrations...  Agir sur la composition des assiettes est un levier fort pour améliorer l'impact sur notre santé et sur l'environnement tout en influançant positivement les filières d'agriculture biologiques et de qualités. Les mesures en faveur d'une alimentation plus durable peuvent contribuer à modifier les comportements alimentaires notamment chez les plus jeunes.
+      La restauration collective représente près de <b>4 milliards de repas servis par an</b> dans plus de 70 000 sites de restauration, des cantines scolaires, des hopitaux, des EPHAD, des entreprises, des administrations...  Agir sur la composition des assiettes est un levier fort pour améliorer l'impact sur notre santé et sur l'environnement tout en influançant positivement les filières d'agriculture biologique et de qualité. Les mesures en faveur d'une alimentation plus durable peuvent contribuer à modifier les comportements alimentaires notamment chez les plus jeunes.
     </div>
   </div>
 </template>
