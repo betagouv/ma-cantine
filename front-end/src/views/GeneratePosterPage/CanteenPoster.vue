@@ -153,6 +153,7 @@
     width: 100%;
     display: flex;
     justify-content: space-around;
+    max-height: 30mm;
 
     .url {
       display: flex;
