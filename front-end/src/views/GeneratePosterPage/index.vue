@@ -16,8 +16,27 @@
           Je représente <label for="school">la cantine</label>
           <input id="school" v-model="form.school" class="field" placeholder="nom de l'établissement" required>
           dans <label for="commune">la commune de </label>
-          <input id="commune" v-model="form.commune" class="field" placeholder="nom de la commune" required>.
+          <input id="commune"
+            v-model="form.commune"
+            class="field"
+            placeholder="nom de la commune"
+            required
+            type="search"
+            @input="search"
+            list="communes"
+          >
+          <datalist id="communes">
+            <option v-for="commune in communes" :value="commune.properties.label" :key="commune.properties.id">
+              {{ commune.properties.label }} ({{ commune.properties.context }})
+            </option>
+          </datalist>
+          .
         </p>
+        <!-- TODO: remove after debugging -->
+        <p v-for="commune in communes" :value="commune.properties.label" :key="commune.properties.id">
+          {{ commune.properties.label }} ({{ commune.properties.context }})
+        </p>
+        <!-- END -->
         <p>
           <label for="servings">Nous servons </label>
           <input id="servings"
@@ -96,9 +115,21 @@
     data() {
       return {
         form: {},
+        communes: []
       };
     },
     methods: {
+      async search() {
+        if(!this.form.commune) {
+          this.communes = [];
+          return;
+        }
+        const queryUrl = "https://api-adresse.data.gouv.fr/search/?q="+this.form.commune+"&type=municipality&autocomplete=1";
+        const response = await fetch(queryUrl);
+        const { features: communes } = await response.json();
+        this.communes = communes;
+        console.log(this.communes); // TODO: remove after debugging
+      },
       submit() {
         //this fix an issue where the beginning of the pdf is blank depending on the scroll position
         window.scrollTo({ top: 0 });
