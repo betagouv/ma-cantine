@@ -2,6 +2,27 @@
   <div class="description-container">
     <p class="description" v-if="measure.htmlDescription" v-html="measure.htmlDescription"></p>
     <p class="description" v-else-if="measure.description">{{measure.description}}</p>
+    <div id="appro-graphs" v-if="measure.id === 'qualite-des-produits'">
+      <div>
+        <p>Bons exemples :</p>
+        <div class="good graphs">
+          <img src="@/assets/appro-graphs/good-1.svg" class="graph" alt="Graphe du bon exemple : 20 % bio, 30 % durable (hors bio)" title="20 % bio, 30 % durable (hors bio)">
+          <img src="@/assets/appro-graphs/good-2.svg" class="graph" alt="Graphe du bon exemple : 50 % bio, 0 % durable (hors bio)" title="50 % bio, 0 % durable (hors bio)">
+        </div>
+      </div>
+      <div>
+        <p>Mauvais exemples :</p>
+        <div class="bad graphs">
+          <img src="@/assets/appro-graphs/bad.svg" class="graph" alt="Graphe du mauvais exemple : 20 % bio, 20 % durable (hors bio)" title="20 % bio, 20 % durable (hors bio)">
+          <img src="@/assets/appro-graphs/bad-1.svg" class="graph" alt="Graphe du mauvais exemple : 15 % bio, 50 % durable (hors bio)" title="15 % bio, 50 % durable (hors bio)">
+        </div>
+      </div>
+      <div id="legend">
+        <p><span class="dot bio"></span>Bio</p>
+        <p><span class="dot durable"></span>Durable (hors bio)</p>
+        <p><span class="dot other"></span>Autre</p>
+      </div>
+    </div>
     <div class="description" v-if="measure.id === 'cinquante'">
       <p>Un produit de qualité et durable doit bénéficier d’un des labels suivants :</p>
       <ul id="about-logos">
@@ -107,6 +128,65 @@
     font-weight: 400;
     line-height: 1.5em;
     white-space: pre-wrap;
+  }
+
+  #appro-graphs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    p {
+      margin-bottom: 0.6em;
+      margin-left: 1em;
+      font-size: 15px;
+    }
+
+    .graphs {
+      border: 3px solid;
+      border-radius: 0.5em;
+      padding: 0.2em;
+    }
+
+    .good {
+      border-color: $green;
+      margin-right: 0.2em;
+    }
+
+    .bad {
+      border-color: $red;
+    }
+
+    .graph {
+      max-width: 50%;
+    }
+  }
+
+  #legend {
+    width: 11em;
+
+    p {
+      font-size: 0.8em;
+    }
+
+    .dot {
+      height: 1em;
+      width: 1em;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 0.3em;
+    }
+
+    .bio {
+      background-color: #50b04E;
+    }
+
+    .durable {
+      background-color: #fbbc04;
+    }
+
+    .other {
+      background-color: #FFF4CA;
+    }
   }
 
   #about-logos {
