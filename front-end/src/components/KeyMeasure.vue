@@ -7,7 +7,8 @@
         <KeyMeasureDescription :measure="measure" v-if="measure.description"/>
         <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
           <fieldset class="measure-headline">
-            <legend>{{subMeasure.title}}</legend>
+            <!-- Wrap legend in span to correctly position with flexbox in Safari -->
+            <span><legend>{{subMeasure.title}}</legend></span>
             <KeyMeasureStatusOption :initialMeasure="subMeasure" />
           </fieldset>
           <div class="measure-details">
