@@ -4,17 +4,17 @@
     <p class="description" v-else-if="measure.description">{{measure.description}}</p>
     <div id="appro-graphs" v-if="measure.id === 'qualite-des-produits'">
       <div>
-        <p>Bons exemples :</p>
+        <p>Exemple de ce qui est attendu fin 2022 :</p>
         <div class="good graphs">
-          <img src="@/assets/appro-graphs/good-1.svg" class="graph" alt="Graphe du bon exemple : 20 % bio, 30 % durable (hors bio)" title="20 % bio, 30 % durable (hors bio)">
-          <img src="@/assets/appro-graphs/good-2.svg" class="graph" alt="Graphe du bon exemple : 50 % bio, 0 % durable (hors bio)" title="50 % bio, 0 % durable (hors bio)">
+          <img src="@/assets/appro-graphs/good-1.svg" class="graph" alt="Graphe du exemple satisfaisant fin 2022" title="20 % bio, 30 % durable (hors bio)">
+          <img src="@/assets/appro-graphs/good-2.svg" class="graph" alt="Graphe du exemple satisfaisant fin 2022" title="50 % bio, 0 % durable (hors bio)">
         </div>
       </div>
       <div>
-        <p>Mauvais exemples :</p>
+        <p>A améliorer d'ici fin 2022 :</p>
         <div class="bad graphs">
-          <img src="@/assets/appro-graphs/bad.svg" class="graph" alt="Graphe du mauvais exemple : 20 % bio, 20 % durable (hors bio)" title="20 % bio, 20 % durable (hors bio)">
-          <img src="@/assets/appro-graphs/bad-1.svg" class="graph" alt="Graphe du mauvais exemple : 15 % bio, 50 % durable (hors bio)" title="15 % bio, 50 % durable (hors bio)">
+          <img src="@/assets/appro-graphs/bad.svg" class="graph" alt="Graphe du exemple insuffisant fin 2022" title="20 % bio, 20 % durable (hors bio)">
+          <img src="@/assets/appro-graphs/bad-1.svg" class="graph" alt="Graphe du exemple insuffisant fin 2022" title="15 % bio, 50 % durable (hors bio)">
         </div>
       </div>
       <div id="legend">
@@ -208,5 +208,21 @@
   #bio-logo {
     height: 2.9em;
     margin-top: 1em;
+  }
+
+  @media (max-width: 1120px) {
+    #appro-graphs {
+      flex-direction: column;
+
+      .graphs {
+        max-width: 25em;
+      }
+    }
+
+    #legend {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+    }
   }
 </style>
