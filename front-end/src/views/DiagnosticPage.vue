@@ -6,6 +6,7 @@
       <h3><KeyMeasureTitle :measure="measure"/></h3>
       <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" class="sub-measure">
         <fieldset class="measure-headline">
+          <!-- Wrap legend in span to correctly position with flexbox in Safari -->
           <span><legend>{{ subMeasure.title }}</legend></span>
           <button class="read-more" @click="toggleDescriptionDisplay(subMeasure)">
             {{ subMeasure.readMore ? "Moins" : "En savoir plus" }}
