@@ -6,7 +6,7 @@
         <h1>Cantine {{ school || "_________" }}</h1>
         <p id="commune">{{ commune || "_________" }}</p>
         <p>Nous servons {{ servings || "___" }} repas par jour</p>
-        <p>Dans la cantine de votre enfant, sur l'année de 2020, nous avons servi en valeur d'achats:</p>
+        <p>Dans la cantine de votre enfant, sur l'année de 2020, nous déclarons avoir servi en valeur d'achats:</p>
       </div>
     </div>
     <p class="percentage"><span id="bio-percent" class="number">{{ bioPercent }} %</span> de produits bio</p>
@@ -16,9 +16,8 @@
     <div id="about">
       <h2>Pourquoi je vois cette affiche ?</h2>
       <p>
-        À partir du 1er janvier 2020, les usagers des restaurants collectifs devront être informés une fois par an,
-        par voie d’affichage et de communication électronique, de la part des produits de qualité et durables entrant dans la composition des repas servis
-        et des démarches entreprises pour développer des produits issus du commerce équitable.
+        À partir du 1er janvier 2020, les gestionnaires de restaurant collectif doivent informer les convives une fois par an de la part des produits de qualité et durables entrant dans la composition des repas servis
+        ainsi des démarches entreprises pour développer des produits issus du commerce équitable. Ces informations sont fonctions de la valeur totale des achats réalisés sur année.
       </p>
       <p>
         <b>Un bon moyen de savoir ce qu'il y a dans votre assiette et d'en discuter avec le personnel de votre restaurant !</b>
