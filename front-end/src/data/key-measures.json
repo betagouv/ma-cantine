@@ -41,6 +41,7 @@
         "title": "Information des usagers et convives",
         "shortTitle": "Information des usagers",
         "faIcon": "fa-bullhorn",
+        "baseComponent": "InformationMeasure",
         "subMeasures": [
             {
                 "id": "convives-informes",
@@ -131,6 +132,7 @@
         "title": "Diversification des sources de protéines et menus végétariens",
         "shortTitle": "Diversification des menus",
         "faIcon": "fa-leaf",
+        "baseComponent": "DiversificationMeasure",
         "subMeasures": [
             {
                 "id": "proteines",
@@ -172,6 +174,7 @@
         "title": "Substitution des plastiques",
         "shortTitle": "Interdiction du plastique",
         "faIcon": "fa-wind",
+        "baseComponent": "NoPlasticMeasure",
         "subMeasures": [
             {
                 "id": "bouteilles",

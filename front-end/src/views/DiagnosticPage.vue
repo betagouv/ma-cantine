@@ -3,7 +3,10 @@
     <h1>M'auto-évaluer</h1>
     <h2>Évaluez-vous sur les mesures déjà mises en place dans votre établissement, programmées ou celles restantes à faire.</h2>
     <div class="measure-diagnostic" v-for="measure in keyMeasures" :key="measure.id">
-      <h3><KeyMeasureTitle :measure="measure"/></h3>
+      <div class="measure-title">
+        <h3><KeyMeasureTitle :measure="measure"/></h3>
+        <button @click="showDiagnosticModal(measure)">Je m'évalue !</button>
+      </div>
       <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" class="sub-measure">
         <fieldset class="measure-headline">
           <!-- Wrap legend in span to correctly position with flexbox in Safari -->
@@ -11,7 +14,7 @@
           <button class="read-more" @click="toggleDescriptionDisplay(subMeasure)">
             {{ subMeasure.readMore ? "Moins" : "En savoir plus" }}
           </button>
-          <KeyMeasureStatusOption :initialMeasure="subMeasure" />
+          <KeyMeasureStatusOption :initialMeasure="subMeasure"/>
         </fieldset>
         <KeyMeasureDescription
           v-if="subMeasure.readMore"
@@ -20,6 +23,11 @@
         />
       </div>
     </div>
+    <KeyMeasureDiagnostic
+      v-if="measureDiagnosticModal"
+      @closeModal="closeDiagnosticModal"
+      :measure="measureDiagnosticModal"
+    />
     <router-link :to="{ name: 'KeyMeasuresHome' }" id="summarise">
       Récapitulatif
     </router-link>
@@ -31,21 +39,30 @@
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import KeyMeasureDescription from '@/components/KeyMeasureDescription';
   import KeyMeasureStatusOption from '@/components/KeyMeasureStatusOption';
+  import KeyMeasureDiagnostic from '@/components/KeyMeasureDiagnostic';
 
   export default {
     components: {
       KeyMeasureTitle,
       KeyMeasureDescription,
-      KeyMeasureStatusOption
+      KeyMeasureStatusOption,
+      KeyMeasureDiagnostic
     },
     data() {
       return {
-        keyMeasures
+        keyMeasures,
+        measureDiagnosticModal: null,
       };
     },
     methods: {
       toggleDescriptionDisplay(subMeasure) {
         subMeasure.readMore = !subMeasure.readMore;
+      },
+      showDiagnosticModal(measure) {
+        this.measureDiagnosticModal = measure;
+      },
+      closeDiagnosticModal() {
+        this.measureDiagnosticModal = null;
       },
     }
   }
@@ -79,6 +96,24 @@
     width: 90%;
   }
 
+  .measure-title {
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      background-color: $white;
+      font-size: 1em;
+      margin: auto 0;
+      color: $orange;
+      border: 1px solid $orange;
+      border-radius: 20px;
+      width: 130px;
+      text-align: center;
+      padding: 5px;
+      cursor: pointer;
+    }
+  }
+
   .sub-measure {
     margin: 1.5em 0;
   }
@@ -98,7 +133,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    
+
     span {
       width: 60%;
       font-weight: normal;
@@ -137,6 +172,10 @@
   }
 
   @media (max-width: 700px) {
+    .measure-title {
+      flex-direction: column;
+    }
+
     .measure-headline {
       flex-direction: column;
       align-items: flex-start;

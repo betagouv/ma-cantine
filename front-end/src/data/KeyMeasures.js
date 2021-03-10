@@ -23,8 +23,57 @@ function findSubMeasure(id) {
   }
 }
 
+const diagnosticsString = localStorage.getItem('diagnostics');
+let diagnostics = {};
+if (diagnosticsString) {
+  diagnostics = JSON.parse(diagnosticsString);
+} else {
+  diagnostics = {
+    "qualite-des-produits": {
+      "2019": {
+        valueBio: null,
+        valueFairTrade: null,
+        valueSustainable: null,
+        valueTotal: null,
+      },
+      "2020": {
+        valueBio: null,
+        valueFairTrade: null,
+        valueSustainable: null,
+        valueTotal: null,
+      }
+    },
+    "information-des-usagers": {
+      communicationSupport: [],
+      communicationSupportLink: null,
+    },
+    "gaspillage-alimentaire": {
+      hasMadeWasteDiagnostic: false,
+      wasteActions: [],
+      hasCovenant: false,
+    },
+    "diversification-des-menus": {
+      vegetarianFrequency: null,
+      vegetarianMenuIsStandalone: false,
+    },
+    "interdiction-du-plastique": {
+      cookingFoodContainersSubstituted: false,
+      serviceFoodContainersSubstituted: false,
+      waterBottlesSubstituted: false,
+      disposableUstensilsSubstituted: false,
+    }
+  };
+}
+
+function saveDiagnostic(id, diagnostic) {
+  diagnostics[id] = diagnostic;
+  localStorage.setItem('diagnostics', JSON.stringify(diagnostics));
+}
+
 export {
   keyMeasures,
   saveStatus,
-  findSubMeasure
+  findSubMeasure,
+  saveDiagnostic,
+  diagnostics
 };
