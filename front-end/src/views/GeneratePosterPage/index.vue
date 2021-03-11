@@ -32,11 +32,6 @@
           </datalist>
           .
         </p>
-        <!-- TODO: remove after debugging -->
-        <p v-for="commune in communes" :value="commune.properties.label" :key="commune.properties.id">
-          {{ commune.properties.label }} ({{ commune.properties.context }})
-        </p>
-        <!-- END -->
         <p>
           <label for="servings">Nous servons </label>
           <input id="servings"
@@ -128,7 +123,6 @@
         const response = await fetch(queryUrl);
         const { features: communes } = await response.json();
         this.communes = communes;
-        console.log(this.communes); // TODO: remove after debugging
       },
       submit() {
         //this fix an issue where the beginning of the pdf is blank depending on the scroll position
