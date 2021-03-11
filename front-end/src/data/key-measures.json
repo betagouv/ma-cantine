@@ -18,17 +18,20 @@
             "display": "À partir du 1er janvier 2022",
             "earliestISO": "2022-01-01"
         },
+        "descriptionComponent": "KeyMeasureDescriptionQuality",
         "subMeasures": [
             {
                 "id": "cinquante",
                 "title": "Au moins 50 % de produits de qualité et durables...",
-                "shortTitle": "50 % de qualité et durables"
+                "shortTitle": "50 % de qualité et durables",
+                "descriptionComponent": "KeyMeasureDescriptionLabels"
             },
             {
                 "id": "vingt",
                 "title": ".... dont au moins 20 % de produits biologiques",
                 "shortTitle": "20 % bio",
-                "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio », c’est à dire : \n\n<i class='fas fa-check-square'></i>  des produits issus de l’agriculture biologique.\n<i class='fas fa-check-square'></i>  des produits végétaux étiquetés 'en conversion'."
+                "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio », c’est à dire : \n\n<i class='fas fa-check-square'></i>  des produits issus de l’agriculture biologique.\n<i class='fas fa-check-square'></i>  des produits végétaux étiquetés 'en conversion'.",
+                "descriptionComponent": "LogoBio"
             }
         ]
     },
