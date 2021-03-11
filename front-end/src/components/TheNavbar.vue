@@ -9,6 +9,7 @@
     </router-link>
     <router-link :to="{ name: 'DiagnosticPage' }" class="navbar-item">Savoir où j'en suis</router-link>
     <router-link :to="{ name: 'KeyMeasuresHome' }" class="navbar-item">Les 5 mesures phares</router-link>
+    <router-link :to="{ name: 'CanteensPage' }" class="navbar-item">Nos cantines</router-link>
     <a class="navbar-item" href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/" target="_blank">
       Ressources <i class="fas fa-external-link-alt"></i>
     </a>
