@@ -5,6 +5,7 @@ import KeyMeasuresPage from '@/views/KeyMeasuresPage';
 import KeyMeasuresHome from '@/views/KeyMeasuresPage/KeyMeasuresHome';
 import KeyMeasurePage from '@/views/KeyMeasuresPage/KeyMeasurePage';
 import GeneratePosterPage from '@/views/GeneratePosterPage';
+import CanteensPage from '@/views/CanteensPage';
 
 const routes = [
   {
@@ -45,6 +46,11 @@ const routes = [
         props: true,
       }
     ]
+  },
+  {
+    path: '/nos-cantines',
+    name: 'CanteensPage',
+    component: CanteensPage,
   }
 ];
 
