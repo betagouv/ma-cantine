@@ -1,0 +1,33 @@
+[
+  {
+    "title": "Test",
+    "statistics": {
+      "bio": 30,
+      "quality": 10,
+      "equitable": 20
+    },
+    "completedMeasures": [
+      "cinquante",
+      "convives-informes",
+      "gaspillage-analyse",
+      "restes",
+      "menu-vege",
+      "contenants"
+    ],
+    "mealCount": 600
+  },
+  {
+    "title": "Another test",
+    "statistics": {
+      "bio": 15,
+      "quality": 40,
+      "equitable": 9
+    },
+    "completedMeasures": [
+      "convives-informes",
+      "restes",
+      "contenants"
+    ],
+    "mealCount": 90
+  }
+]
