@@ -121,8 +121,7 @@
         }
         const queryUrl = "https://api-adresse.data.gouv.fr/search/?q="+this.form.commune+"&type=municipality&autocomplete=1";
         const response = await fetch(queryUrl);
-        const { features: communes } = await response.json();
-        this.communes = communes;
+        this.communes = (await response.json()).features;
       },
       submit() {
         //this fix an issue where the beginning of the pdf is blank depending on the scroll position
