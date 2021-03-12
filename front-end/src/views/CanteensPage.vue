@@ -8,7 +8,10 @@
   </div>
   <ul id="canteens-block">
     <li v-for="canteen in canteens" :key="canteen.title" class="canteen-card">
-      <div class="location"></div>
+      <a class="location" :title="map[canteen.region].title" :href="map[canteen.region].href">
+        <img :alt="map[canteen.region].alt" :src="map[canteen.region].src">
+        <p class="attribution">{{ map[canteen.region].attribution }}</p>
+      </a>
       <div class="summary">
         <h2>{{ canteen.title }}</h2>
         <ul class="statistics">
@@ -39,11 +42,29 @@
   import { keyMeasures } from "@/data/KeyMeasures.js";
   import canteens from "@/data/canteens.json";
 
+  const map = {
+    "nouvelle-acquitaine": {
+      href: "https://commons.wikimedia.org/wiki/File:Nouvelle-Aquitaine_in_France_2016.svg",
+      src: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Nouvelle-Aquitaine_in_France_2016.svg",
+      title: "Nouvelle-Aquitaine",
+      alt: "Nouvelle-Aquitaine",
+      attribution: "TUBS, CC BY-SA 3.0 DE, via Wikimedia Commons"
+    },
+    "normandy": {
+      href: "https://commons.wikimedia.org/wiki/File:Normandy_in_France_2016.svg",
+      src: "https://upload.wikimedia.org/wikipedia/commons/1/17/Normandy_in_France_2016.svg",
+      title: "Normandie",
+      alt: "Normandie",
+      attribution: "TUBS, CC BY-SA 3.0 DE, via Wikimedia Commons"
+    }
+  };
+
   export default {
     data() {
       return {
         keyMeasures,
-        canteens
+        canteens,
+        map
       }
     },
     methods: {
@@ -96,10 +117,21 @@
     padding: 1em 2em;
 
     .location {
-      height: 10em;
-      width: 10em;
-      background-color: $orange;
-      margin-right: 1em;
+      position: relative;
+
+      img {
+        max-height: 20vw;
+        margin-right: 1em;
+      }
+
+      .attribution {
+        font-size: 0.6em;
+        color: $grey;
+        position: absolute;
+        bottom: -0.7em;
+        padding: 0.4em;
+        background-color: $white;
+      }
     }
 
     h2 {
