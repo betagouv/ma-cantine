@@ -70,8 +70,8 @@
             required
           >
           euros HT correspondaient à des <label for="bio">produits bio</label>,
-          <input id="quality"
-            v-model.number="form.quality"
+          <input id="sustainable"
+            v-model.number="form.sustainable"
             class="currency-field"
             type="number"
             min="0"
@@ -79,16 +79,16 @@
             aria-describedby="euros"
             required
           >
-          euros HT correspondaient à des <label for="quality">produits de qualité et durables (hors bio)</label> et
-          <input id="equitable"
-            v-model.number="form.equitable"
+          euros HT correspondaient à des <label for="sustainable">produits de qualité et durables (hors bio)</label> et
+          <input id="fair-trade"
+            v-model.number="form.fairTrade"
             class="currency-field"
             type="number"
             min="0"
             placeholder="100"
             aria-describedby="euros"
           >
-          euros HT correspondaient à des <label for="equitable">produits issus du commerce équitable</label>.
+          euros HT correspondaient à des <label for="fair-trade">produits issus du commerce équitable</label>.
         </p>
         <input type="submit" id="submit" value="Générer mon affiche">
       </form>
@@ -130,7 +130,7 @@
         const htmlPoster = document.getElementById('canteen-poster');
         const pdfOptions = {
           filename:     'Affiche_convives_2020.pdf',
-          image:        { type: 'jpeg', quality: 1 },
+          image:        { type: 'jpeg', sustainable: 1 },
           html2canvas:  { scale: 2, dpi: 300, letterRendering: true },
           jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
         };

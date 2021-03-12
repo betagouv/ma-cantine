@@ -3,8 +3,8 @@
     "title": "Exemple 1",
     "statistics": {
       "bio": 30,
-      "quality": 20,
-      "equitable": 20
+      "sustainable": 20,
+      "fairTrade": 20
     },
     "completedMeasures": [
       "cinquante",
@@ -22,8 +22,8 @@
     "title": "Exemple 2",
     "statistics": {
       "bio": 20,
-      "quality": 5,
-      "equitable": 9
+      "sustainable": 5,
+      "fairTrade": 9
     },
     "completedMeasures": [
       "vingt",
@@ -36,8 +36,8 @@
     "title": "Exemple 3",
     "statistics": {
       "bio": 30,
-      "quality": 20,
-      "equitable": 20
+      "sustainable": 20,
+      "fairTrade": 20
     },
     "completedMeasures": [
       "cinquante",
