@@ -1,13 +1,14 @@
 [
   {
-    "title": "Test",
+    "title": "Exemple 1",
     "statistics": {
       "bio": 30,
-      "quality": 10,
+      "quality": 20,
       "equitable": 20
     },
     "completedMeasures": [
       "cinquante",
+      "vingt",
       "convives-informes",
       "gaspillage-analyse",
       "restes",
@@ -18,18 +19,41 @@
     "region": "normandy"
   },
   {
-    "title": "Another test",
+    "title": "Exemple 2",
     "statistics": {
-      "bio": 15,
-      "quality": 40,
+      "bio": 20,
+      "quality": 5,
       "equitable": 9
     },
     "completedMeasures": [
-      "convives-informes",
-      "restes",
-      "contenants"
+      "vingt",
+      "convives-informes"
     ],
     "mealCount": 90,
+    "region": "nouvelle-acquitaine"
+  },
+  {
+    "title": "Exemple 3",
+    "statistics": {
+      "bio": 30,
+      "quality": 20,
+      "equitable": 20
+    },
+    "completedMeasures": [
+      "cinquante",
+      "vingt",
+      "convives-informes",
+      "informations-nutritionnelles",
+      "gaspillage-analyse",
+      "restes",
+      "dons",
+      "proteines",
+      "menu-vege",
+      "bouteilles",
+      "ustensiles",
+      "contenants"
+    ],
+    "mealCount": 120,
     "region": "nouvelle-acquitaine"
   }
 ]
