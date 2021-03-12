@@ -15,7 +15,16 @@ keyMeasures.forEach(measure => {
   });
 });
 
+function findSubMeasure(id) {
+  for (let measureIdx = 0; measureIdx < keyMeasures.length; measureIdx++) {
+    const measure = keyMeasures[measureIdx];
+    const subMeasure = measure.subMeasures.find((subMeasure) => subMeasure.id === id);
+    if(subMeasure) { return subMeasure; }
+  }
+}
+
 export {
   keyMeasures,
-  saveStatus
+  saveStatus,
+  findSubMeasure
 };

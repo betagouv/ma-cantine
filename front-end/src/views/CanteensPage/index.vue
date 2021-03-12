@@ -39,7 +39,7 @@
 </template>
 
 <script>
-  import { keyMeasures } from "@/data/KeyMeasures.js";
+  import { keyMeasures, findSubMeasure } from "@/data/KeyMeasures.js";
   import canteens from "@/data/canteens.json";
   import SummaryStatistic from './SummaryStatistic';
 
@@ -66,13 +66,7 @@
       }
     },
     methods: {
-      findSubMeasure(id) {
-        for (let measureIdx = 0; measureIdx < keyMeasures.length; measureIdx++) {
-          const measure = keyMeasures[measureIdx];
-          const subMeasure = measure.subMeasures.find((subMeasure) => subMeasure.id === id);
-          if(subMeasure) { return subMeasure; }
-        }
-      }
+      findSubMeasure
     }
   }
 </script>
