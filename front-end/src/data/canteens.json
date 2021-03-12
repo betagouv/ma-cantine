@@ -14,7 +14,8 @@
       "menu-vege",
       "contenants"
     ],
-    "mealCount": 600
+    "mealCount": 600,
+    "region": "normandy"
   },
   {
     "title": "Another test",
@@ -28,6 +29,7 @@
       "restes",
       "contenants"
     ],
-    "mealCount": 90
+    "mealCount": 90,
+    "region": "nouvelle-acquitaine"
   }
 ]
