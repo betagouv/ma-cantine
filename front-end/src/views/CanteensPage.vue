@@ -19,11 +19,12 @@
             <div class="vertically-align-header">
               <h3>{{ statisticTitle(key) }}</h3>
             </div>
-            <p class="number">{{ statistic }} %</p>
+            <p class="number">{{ statistic }}&nbsp;%</p>
           </li>
         </ul>
         <p class="meal-count">
-          <i class="fas fa-utensils"></i> {{ canteen.mealCount }} repas par jour
+          <i class="fas fa-utensils"></i>&nbsp;
+          {{ canteen.mealCount }} repas par jour
         </p>
       </div>
       <div class="completed-measures">
@@ -76,9 +77,11 @@
         }[key];
       },
       findSubMeasure(id) {
-        return keyMeasures.find((measure) => {
-          return measure.subMeasures.find((subMeasure) => subMeasure.id === id);
-        });
+        for (let measureIdx = 0; measureIdx < keyMeasures.length; measureIdx++) {
+          const measure = keyMeasures[measureIdx];
+          const subMeasure = measure.subMeasures.find((subMeasure) => subMeasure.id === id);
+          if(subMeasure) { return subMeasure; }
+        }
       }
     }
   }
@@ -103,6 +106,7 @@
     padding: 3em;
     margin-top: 0;
     text-align: left;
+    font-size: 14px;
   }
 
   .canteen-card {
@@ -114,14 +118,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1em 2em;
+    padding: 0 2em;
 
     .location {
       position: relative;
 
       img {
-        max-height: 20vw;
-        margin-right: 1em;
+        max-height: 17vw;
       }
 
       .attribution {
@@ -135,7 +138,7 @@
     }
 
     h2 {
-      margin-bottom: 0;
+      margin: 0;
       font-size: 2em;
       text-transform: uppercase;
     }
@@ -147,7 +150,9 @@
   }
 
   .summary {
-    padding: 1em;
+    margin: 2em;
+    border-right: 5px solid $dark-white;
+    padding-right: 2em;
   }
 
   .statistics {
@@ -156,7 +161,7 @@
   }
 
   .statistic {
-    min-width: 30%;
+    width: 30%;
     text-align: center;
 
     .vertically-align-header {
@@ -168,19 +173,19 @@
 
     h3 {
       font-size: 1em;
-    }
-
-    .number {
-      font-size: 2.5em;
-      margin-top: 0.2em;
+      font-weight: normal;
     }
   }
 
+  .number {
+    font-size: 2.5em;
+    margin-top: 0.2em;
+  }
+
   .completed-measures {
-    border-left: 5px solid $dark-white;
-    padding: 1em;
-    padding-top: 0;
+    padding: 2em 1em 3em 1em;
     width: 40%;
+    align-self: flex-start;
   }
 
   @media (max-width: 1000px) {
@@ -198,13 +203,19 @@
       justify-content: left;
     }
 
+    .summary {
+      border: none;
+      padding-right: 0;
+      margin: 0.3em;
+    }
+
     .completed-measures {
       width: unset;
-      border: none;
+      padding-top: 0;
     }
   }
 
-  @media (max-width: 920px) {
+  @media (max-width: 850px) {
     #canteens-block {
       h2 {
         text-align: center;
@@ -224,6 +235,7 @@
     .number {
       margin: 0;
       margin-bottom: 0.7em;
+      font-size: 2em;
     }
 
     .meal-count {
@@ -233,10 +245,6 @@
   }
 
   @media (max-width: 600px) {
-    #welcome-block, #canteens-block {
-      font-size: 12px;
-    }
-
     #canteens-block {
       padding: 0.5em;
     }
