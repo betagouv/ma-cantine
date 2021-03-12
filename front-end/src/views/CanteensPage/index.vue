@@ -1,7 +1,7 @@
 <template>
   <div id="welcome-block">
     <h1>
-      Découvrez les initiatives prises pour par nos cantines
+      Découvrez les initiatives prises par nos cantines
       pour une alimentation plus durable
     </h1>
     <img src="@/assets/desktop.svg" alt="">
@@ -17,18 +17,9 @@
       <div class="summary">
         <h2>{{ canteen.title }}</h2>
         <ul class="statistics">
-          <li v-for="(statistic, key) in canteen.statistics" :key="key" class="statistic">
-            <div class="vertically-align-header">
-              <h3>{{
-                  {
-                    bio: "Produits bio",
-                    quality: "Produits durables",
-                    equitable: "Produits issus du commerce équitable"
-                  }[key]
-              }}</h3>
-            </div>
-            <p class="number" :class="key">{{ statistic }} %</p>
-          </li>
+          <SummaryStatistic title="Produits bio" :value="canteen.statistics.bio" class="bio"/>
+          <SummaryStatistic title="Produits durables" :value="canteen.statistics.sustainable" class="sustainable"/>
+          <SummaryStatistic title="Produits issus du commerce équitable" :value="canteen.statistics.fairTrade"/>
         </ul>
         <p class="meal-count">
           <i class="fas fa-utensils"></i>&nbsp;
@@ -50,6 +41,7 @@
 <script>
   import { keyMeasures } from "@/data/KeyMeasures.js";
   import canteens from "@/data/canteens.json";
+  import SummaryStatistic from './SummaryStatistic';
 
   const map = {
     "nouvelle-acquitaine": {
@@ -63,6 +55,9 @@
   };
 
   export default {
+    components: {
+      SummaryStatistic
+    },
     data() {
       return {
         keyMeasures,
@@ -85,14 +80,18 @@
 <style scoped lang="scss">
   #welcome-block {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     padding: 3em;
     padding-bottom: 0;
     text-align: left;
 
+    h1 {
+      max-width: 730px;
+    }
+
     img {
       height: 20em;
-      margin-left: 1em;
+      padding-left: 3em;
     }
   }
 
@@ -120,7 +119,8 @@
       position: relative;
 
       img {
-        max-height: 17vw;
+        height: 17vw;
+        max-height: 17em;
       }
 
       .attribution {
@@ -155,36 +155,6 @@
   .statistics {
     display: flex;
     justify-content: space-between;
-  }
-
-  .statistic {
-    width: 30%;
-    text-align: center;
-
-    .vertically-align-header {
-      height: 5em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    h3 {
-      font-size: 1em;
-      font-weight: normal;
-    }
-  }
-
-  .number {
-    font-size: 2.5em;
-    margin-top: 0.2em;
-  }
-
-  .number.bio {
-    color: $green;
-  }
-
-  .number.quality {
-    color: $orange;
   }
 
   .completed-measures {
@@ -243,12 +213,6 @@
 
     .location {
       display: none;
-    }
-
-    .number {
-      margin: 0;
-      margin-bottom: 0.7em;
-      font-size: 2em;
     }
 
     .meal-count {
