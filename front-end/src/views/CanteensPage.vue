@@ -8,18 +8,26 @@
   </div>
   <ul id="canteens-block">
     <li v-for="canteen in canteens" :key="canteen.title" class="canteen-card">
-      <a class="location" :title="map[canteen.region].title" :href="map[canteen.region].href">
-        <img :alt="map[canteen.region].alt" :src="map[canteen.region].src">
-        <p class="attribution">{{ map[canteen.region].attribution }}</p>
-      </a>
+      <div class="location" :title="map[canteen.region].title">
+        <img :alt="map[canteen.region].title" :src="map[canteen.region].src">
+        <p class="attribution">
+          TUBS, <a href="https://creativecommons.org/licenses/by-sa/3.0/de/deed.en">CC BY-SA 3.0 DE</a>, via Wikimedia Commons
+        </p>
+      </div>
       <div class="summary">
         <h2>{{ canteen.title }}</h2>
         <ul class="statistics">
           <li v-for="(statistic, key) in canteen.statistics" :key="key" class="statistic">
             <div class="vertically-align-header">
-              <h3>{{ statisticTitle(key) }}</h3>
+              <h3>{{
+                  {
+                    bio: "Produits bio",
+                    quality: "Produits durables",
+                    equitable: "Produits issus du commerce équitable"
+                  }[key]
+              }}</h3>
             </div>
-            <p class="number">{{ statistic }}&nbsp;%</p>
+            <p class="number" :class="key">{{ statistic }} %</p>
           </li>
         </ul>
         <p class="meal-count">
@@ -28,9 +36,9 @@
         </p>
       </div>
       <div class="completed-measures">
-        <h3>Notre sous-mesures faits :</h3>
+        <h3>Nos mesures mises en place :</h3>
         <ul>
-          <li v-for="measureId in canteen.completedMeasures" :key="measureId">
+          <li v-for="measureId in canteen.completedMeasures.slice(0, 3)" :key="measureId">
             {{ findSubMeasure(measureId).title }}
           </li>
         </ul>
@@ -45,18 +53,12 @@
 
   const map = {
     "nouvelle-acquitaine": {
-      href: "https://commons.wikimedia.org/wiki/File:Nouvelle-Aquitaine_in_France_2016.svg",
       src: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Nouvelle-Aquitaine_in_France_2016.svg",
-      title: "Nouvelle-Aquitaine",
-      alt: "Nouvelle-Aquitaine",
-      attribution: "TUBS, CC BY-SA 3.0 DE, via Wikimedia Commons"
+      title: "Nouvelle-Aquitaine"
     },
     "normandy": {
-      href: "https://commons.wikimedia.org/wiki/File:Normandy_in_France_2016.svg",
       src: "https://upload.wikimedia.org/wikipedia/commons/1/17/Normandy_in_France_2016.svg",
-      title: "Normandie",
-      alt: "Normandie",
-      attribution: "TUBS, CC BY-SA 3.0 DE, via Wikimedia Commons"
+      title: "Normandie"
     }
   };
 
@@ -69,13 +71,6 @@
       }
     },
     methods: {
-      statisticTitle(key) {
-        return {
-          bio: "Produits bio",
-          quality: "Produits durables",
-          equitable: "Produits issus du commerce équitable"
-        }[key];
-      },
       findSubMeasure(id) {
         for (let measureIdx = 0; measureIdx < keyMeasures.length; measureIdx++) {
           const measure = keyMeasures[measureIdx];
@@ -119,6 +114,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 2em;
+    max-width: 1170px;
 
     .location {
       position: relative;
@@ -146,6 +142,7 @@
     .meal-count {
       margin-top: 0;
       color: $grey;
+      font-size: 1.1em;
     }
   }
 
@@ -182,10 +179,26 @@
     margin-top: 0.2em;
   }
 
+  .number.bio {
+    color: $green;
+  }
+
+  .number.quality {
+    color: $orange;
+  }
+
   .completed-measures {
     padding: 2em 1em 3em 1em;
     width: 40%;
     align-self: flex-start;
+
+    ul {
+      padding-top: 1em;
+    }
+
+    li {
+      padding-bottom: 2em;
+    }
   }
 
   @media (max-width: 1000px) {
