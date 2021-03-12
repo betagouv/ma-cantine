@@ -10,8 +10,8 @@
       </div>
     </div>
     <p class="percentage"><span id="bio-percent" class="number">{{ bioPercent }} %</span> de produits bio</p>
-    <p class="percentage"><span id="quality-percent" class="number">{{ qualityPercent }} %</span> de produits de qualité et durables (hors bio)</p>
-    <p class="percentage" v-if="equitable"><span id="equitable-percent" class="number">{{ equitablePercent }} %</span> produits issus du commerce équitable</p>
+    <p class="percentage"><span id="sustainable-percent" class="number">{{ sustainablePercent }} %</span> de produits de qualité et durables (hors bio)</p>
+    <p class="percentage" v-if="fairTrade"><span id="fair-trade-percent" class="number">{{ fairTradePercent }} %</span> produits issus du commerce équitable</p>
     <LogoList id="logos"/>
     <div id="about">
       <h2>Pourquoi je vois cette affiche ?</h2>
@@ -46,18 +46,18 @@
       servings: Number,
       total: Number,
       bio: Number,
-      quality: Number,
-      equitable: Number
+      sustainable: Number,
+      fairTrade: Number
     },
     computed: {
       bioPercent() {
         return this.percentageString(this.bio);
       },
-      qualityPercent() {
-        return this.percentageString(this.quality);
+      sustainablePercent() {
+        return this.percentageString(this.sustainable);
       },
-      equitablePercent() {
-        return this.percentageString(this.equitable);
+      fairTradePercent() {
+        return this.percentageString(this.fairTrade);
       }
     },
     methods: {
@@ -117,7 +117,7 @@
     color: $green;
   }
 
-  #quality-percent {
+  #sustainable-percent {
     color: $orange;
   }
 
