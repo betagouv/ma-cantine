@@ -23,7 +23,7 @@
     </ul>
   </div>
   <h2> Quelques ressources pour répondre aux mesures</h2>
-  <router-link :to="{ name: 'GeneratePosterPage' }" class="ressource poster">
+  <router-link :to="{ name: 'GeneratePosterPage' }" class="ressource poster" v-if="isIncomplete('convives-informes')">
     <div class="link-icon"><i class="fas fa-bullhorn"></i></div>
     <p>
       L’information convives, par mail et par affichage, de la part de bio,
@@ -31,7 +31,12 @@
     </p>
     <div class="link-icon"><i class="fas fa-arrow-circle-right"></i></div>
   </router-link>
-  <a href="Diagnostic approvisionnement (ma-cantine-alpha) v0.2.ods" class="ressource calculator" download>
+  <a
+    href="Diagnostic approvisionnement (ma-cantine-alpha) v0.2.ods"
+    class="ressource calculator"
+    download
+    v-if="isIncomplete('cinquante') || isIncomplete('vingt')"
+  >
     <div class="link-icon"><i class="fas fa-calculator"></i></div>
     <p>
       Si vous avez besoin d'aide pour calculer votre part de bios et de produits labélisés,
@@ -39,7 +44,12 @@
     </p>
     <div class="link-icon"><i class="fas fa-file-download"></i></div>
   </a>
-  <a href="Convention de dons type - restauration collective.pdf" class="ressource" download>
+  <a
+    href="Convention de dons type - restauration collective.pdf"
+    class="ressource"
+    download
+    v-if="isIncomplete('restes')"
+  >
     <div class="link-icon"><i class="fas fa-clipboard"></i></div>
     <p>
       Vous voulez éviter le gaspillage ? Télécharger ce modèle type de convention
@@ -77,7 +87,7 @@
 </template>
 
 <script>
-  import { keyMeasures } from '@/data/KeyMeasures.js';
+  import { keyMeasures, findSubMeasure } from '@/data/KeyMeasures.js';
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import STATUSES from '@/data/STATUSES.json';
   import KeyMeasureScore from '@/components/KeyMeasureScore';
@@ -149,6 +159,9 @@
           console.log(error);
           alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
         }
+      },
+      isIncomplete(subMeasureId) {
+        return findSubMeasure(subMeasureId).status !== "done";
       }
     }
   }
