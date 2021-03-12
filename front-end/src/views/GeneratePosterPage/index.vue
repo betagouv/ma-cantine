@@ -130,7 +130,7 @@
         const htmlPoster = document.getElementById('canteen-poster');
         const pdfOptions = {
           filename:     'Affiche_convives_2020.pdf',
-          image:        { type: 'jpeg', sustainable: 1 },
+          image:        { type: 'jpeg', quality: 1 },
           html2canvas:  { scale: 2, dpi: 300, letterRendering: true },
           jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
