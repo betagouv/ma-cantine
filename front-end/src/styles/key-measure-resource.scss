@@ -1,0 +1,39 @@
+.resource {
+  display: flex;
+  width: 90%;
+  margin: auto;
+  margin-top: 3em;
+  align-items: center;
+  justify-content: space-between;
+  background: $light-yellow;
+  border: 4px solid $yellow;
+  box-sizing: border-box;
+  text-decoration: none;
+
+  .link-icon {
+    font-size: 2em;
+    padding: 0.5em;
+  }
+
+  .fa-clipboard {
+    color: $orange;
+  }
+
+  .fa-file-download {
+    color: $orange;
+  }
+
+  .fa-seedling {
+    color: $green;
+  }
+
+  .fa-external-link-alt {
+    color: $orange;
+  }
+
+  p {
+    text-align: left;
+    color: $dark-orange;
+    width: 100%;
+  }
+}

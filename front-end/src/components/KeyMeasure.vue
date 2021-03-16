@@ -12,11 +12,15 @@
           </fieldset>
           <div class="measure-details">
             <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
-            <KeyMeasureDescription :measure="subMeasure"/>
+            <div>
+              <KeyMeasureDescription :measure="subMeasure"/>
+              <component :is="subMeasure.baseComponent + 'Resource'" class="resource-block"/>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <component :is="measure.baseComponent + 'Resource'" class="resource-block"/>
   </div>
 </template>
 
@@ -25,12 +29,18 @@
   import KeyMeasureInfoCard from '@/components/KeyMeasureInfoCard'
   import KeyMeasureTitle from '@/components/KeyMeasureTitle'
   import tags from '@/data/sector-tags.json'
+  import InformDinersResource from "@/components/KeyMeasureResources/InformDiners"
+  import QualityMeasureResource from "@/components/KeyMeasureResources/QualityMeasure"
+  import SaveLeftoversResource from "@/components/KeyMeasureResources/SaveLeftovers"
 
   export default {
     components: {
       KeyMeasureDescription,
       KeyMeasureInfoCard,
       KeyMeasureTitle,
+      InformDinersResource,
+      QualityMeasureResource,
+      SaveLeftoversResource
     },
     props: {
       measure: Object,
@@ -84,6 +94,10 @@
       margin: 1em 0;
       margin-right: 1em;
     }
+  }
+
+  .resource-block {
+    font-size: 14px;
   }
 
   @media (max-width: 1000px) {

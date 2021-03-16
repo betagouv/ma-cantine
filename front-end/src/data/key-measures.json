@@ -4,6 +4,7 @@
         "title": "Au moins 50% de produits de qualité et durables dont 20% de bio",
         "shortTitle": "Qualité des produits",
         "faIcon": "fa-apple-alt",
+        "baseComponent": "QualityMeasure",
         "description": "La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent comporter, au cours de l'année 2022, 50% de produits de qualité et durables dont 20% issus de l’agriculture biologique ou en conversion. Ces seuils (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre à des produits bio ou en conversion et au total au moins 50 euros doivent correspondre à des produits durables et de qualité (bio inclus).",
         "tags": [
             "scolaire",
@@ -58,7 +59,8 @@
                     "display": "Depuis le 1er janvier 2020",
                     "earliestISO": "2020-01-01"
                 },
-                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l’acquisition de produits issus du commerce équitable. Cette information doit se faire par affichage et par voie électronique (mail aux convives, affichage sur le logiciel de gestion de vie scolaire, envoi d’infolettre…). \n\n<i class='fas fa-arrow-alt-circle-right'></i> <b>Voir un exemple d’affiche</b> (à venir)"
+                "baseComponent": "InformDiners",
+                "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l’acquisition de produits issus du commerce équitable. Cette information doit se faire par affichage et par voie électronique (mail aux convives, affichage sur le logiciel de gestion de vie scolaire, envoi d’infolettre…)."
             },
             {
                 "id": "informations-nutritionnelles",
@@ -110,7 +112,8 @@
                 "htmlDescription": "L’infraction à cette loi est susceptible d’une amende de 3 750 €.",
                 "deadline": {
                     "earliestISO": "2020-01-01"
-                }
+                },
+                "baseComponent": "SaveLeftovers"
             },
             {
                 "id": "dons",

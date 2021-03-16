@@ -22,49 +22,12 @@
       </li>
     </ul>
   </div>
-  <h2> Quelques ressources pour répondre aux mesures</h2>
-  <router-link :to="{ name: 'GeneratePosterPage' }" class="ressource poster" v-if="isIncomplete('convives-informes')">
-    <div class="link-icon"><i class="fas fa-bullhorn"></i></div>
-    <p>
-      L’information convives, par mail et par affichage, de la part de bio,
-      durable et commerce équitable est d’ores et déjà en vigueur. Pour générer votre affiche, tester notre formulaire.
-    </p>
-    <div class="link-icon"><i class="fas fa-arrow-circle-right"></i></div>
-  </router-link>
-  <a
-    href="Diagnostic approvisionnement (ma-cantine-alpha) v0.2.ods"
-    class="ressource calculator"
-    download
-    v-if="isIncomplete('cinquante') || isIncomplete('vingt')"
-  >
-    <div class="link-icon"><i class="fas fa-calculator"></i></div>
-    <p>
-      Si vous avez besoin d'aide pour calculer votre part de bios et de produits labélisés,
-      vous pouvez tester notre calculateur sous format excel.
-    </p>
-    <div class="link-icon"><i class="fas fa-file-download"></i></div>
-  </a>
-  <a
-    href="Convention de dons type - restauration collective.pdf"
-    class="ressource"
-    download
-    v-if="isIncomplete('restes')"
-  >
-    <div class="link-icon"><i class="fas fa-clipboard"></i></div>
-    <p>
-      Vous voulez éviter le gaspillage ? Télécharger ce modèle type de convention
-      aux associations auxquelles faire des dons.
-    </p>
-    <div class="link-icon"><i class="fas fa-file-download"></i></div>
-  </a>
-  <a href="https://www.inao.gouv.fr/Espace-professionnel-et-outils/Rechercher-un-produit" class="ressource" target="_blank">
-    <div class="link-icon"><i class="fas fa-seedling"></i></div>
-    <p>
-      Trouver des catégories de produits en recherchant par labels, siqo et/ou régions
-      avec le moteur de recherche de l'INAO.
-    </p>
-    <div class="link-icon"><i class="fas fa-external-link-alt"></i></div>
-  </a>
+  <div class="resources">
+    <h2> Quelques ressources pour répondre aux mesures</h2>
+    <QualityMeasure v-if="isIncomplete('cinquante') || isIncomplete('vingt')"/>
+    <InformDiners v-if="isIncomplete('convives-informes')"/>
+    <SaveLeftovers v-if="isIncomplete('restes')"/>
+  </div>
   <form id="publish-form" @submit.prevent="submit">
     <h2>Devenir béta-testeur</h2>
     <p>
@@ -92,11 +55,17 @@
   import STATUSES from '@/data/STATUSES.json';
   import KeyMeasureScore from '@/components/KeyMeasureScore';
   import _ from 'lodash';
+  import InformDiners from "@/components/KeyMeasureResources/InformDiners";
+  import QualityMeasure from "@/components/KeyMeasureResources/QualityMeasure";
+  import SaveLeftovers from "@/components/KeyMeasureResources/SaveLeftovers";
 
   export default {
     components: {
       KeyMeasureTitle,
       KeyMeasureScore,
+      InformDiners,
+      QualityMeasure,
+      SaveLeftovers
     },
     data() {
       return {
@@ -252,76 +221,8 @@
     margin-top: 50px;
   }
 
-  .ressource {
-    display: flex;
-    width: 90%;
-    margin: auto;
-    margin-top: 3em;
-    align-items: center;
-    background: $light-yellow;
-    border: 4px solid $yellow;
-    box-sizing: border-box;
-    text-decoration: none;
-
-    .link-icon {
-      font-size: 2em;
-      padding: 0.5em;
-    }
-
-    .fa-clipboard {
-      color: $orange;
-    }
-
-    .fa-file-download {
-      color: $orange;
-    }
-
-    .fa-seedling {
-      color: $green;
-    }
-
-    .fa-external-link-alt {
-      color: $orange;
-    }
-
-    p {
-      text-align: left;
-      color: $dark-orange;
-    }
-  }
-
-  .ressource.poster {
-    background: $light-pink;
-    border-color: $pink;
-
-    .fa-bullhorn {
-      color: $light-grey;
-    }
-
-    .fa-arrow-circle-right {
-      color: $pink;
-    }
-
-    p {
-      color: $pink;
-    }
-  }
-
-  .ressource.calculator {
-    background: $light-blue;
-    border-color: $blue;
-
-    .fa-calculator {
-      color: $blue;
-    }
-
-    .fa-file-download {
-      color: $blue;
-    }
-
-    p {
-      color: $blue;
-    }
+  .resources h2:only-child {
+    display: none;
   }
 
   #publish-form {
