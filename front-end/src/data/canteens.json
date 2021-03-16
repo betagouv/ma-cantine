@@ -16,7 +16,8 @@
       "contenants"
     ],
     "mealCount": 600,
-    "region": "dordogne"
+    "region": "dordogne",
+    "timePeriod": "2019-2020"
   },
   {
     "title": "Exemple 2",
@@ -30,7 +31,8 @@
       "convives-informes"
     ],
     "mealCount": 90,
-    "region": "paris"
+    "region": "paris",
+    "timePeriod": "2019-2020"
   },
   {
     "title": "Exemple 3",
@@ -54,6 +56,7 @@
       "contenants"
     ],
     "mealCount": 120,
-    "region": "guyane"
+    "region": "guyane",
+    "timePeriod": "2019-2020"
   }
 ]

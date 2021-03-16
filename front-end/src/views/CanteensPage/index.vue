@@ -22,10 +22,17 @@
           <SummaryStatistic title="Produits durables" :value="canteen.statistics.sustainable" class="sustainable"/>
           <SummaryStatistic title="Produits issus du commerce équitable" :value="canteen.statistics.fairTrade"/>
         </ul>
-        <p class="meal-count">
-          <i class="fas fa-utensils"></i>&nbsp;
-          {{ canteen.mealCount }} repas par jour
-        </p>
+        <div class="context">
+          <p class="meal-count">
+            <i class="fas fa-utensils"></i>&nbsp;
+            {{ canteen.mealCount }} repas par jour
+          </p>
+          <p class="time-period" title="Données pour l'année">
+            <i class="far fa-calendar-alt"></i>&nbsp;
+            <span class="sr-only">Données pour l'année</span>
+            {{ canteen.timePeriod }}
+          </p>
+        </div>
       </div>
       <div class="completed-measures">
         <h3>Nos mesures mises en place :</h3>
@@ -143,10 +150,17 @@
       text-transform: uppercase;
     }
 
-    .meal-count {
-      margin-top: 0;
-      color: $grey;
-      font-size: 1.1em;
+    .context {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 1em;
+      flex-wrap: wrap;
+
+      p {
+        margin-top: 0;
+        color: $grey;
+        font-size: 1.1em;
+      }
     }
   }
 
