@@ -9,9 +9,10 @@
   <ul id="canteens-block">
     <li v-for="canteen in canteens" :key="canteen.title" class="canteen-card">
       <div class="location" :title="map[canteen.region].title">
-        <img :alt="map[canteen.region].title" :src="map[canteen.region].src">
+        <p class="location-name"><i class="far fa-compass"></i> {{ map[canteen.region].title }}</p>
+        <img :src="require(`@/assets/map/${canteen.region}.svg`)" alt="">
         <p class="attribution">
-          TUBS, <a href="https://creativecommons.org/licenses/by-sa/3.0/de/deed.en">CC BY-SA 3.0 DE</a>, via Wikimedia Commons
+          Nilstilar, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>, via Wikimedia Commons (modifié)
         </p>
       </div>
       <div class="summary">
@@ -44,13 +45,14 @@
   import SummaryStatistic from './SummaryStatistic';
 
   const map = {
-    "nouvelle-acquitaine": {
-      src: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Nouvelle-Aquitaine_in_France_2016.svg",
-      title: "Nouvelle-Aquitaine"
+    "dordogne": {
+      title: "Dordogne"
     },
-    "normandy": {
-      src: "https://upload.wikimedia.org/wikipedia/commons/1/17/Normandy_in_France_2016.svg",
-      title: "Normandie"
+    "guyane": {
+      title: "Guyane"
+    },
+    "paris": {
+      title: "Paris"
     }
   };
 
@@ -115,6 +117,14 @@
       img {
         height: 17vw;
         max-height: 17em;
+      }
+
+      .location-name {
+        color: $grey;
+        position: absolute;
+        top: -1em;
+        padding: 0.4em;
+        background-color: $white;
       }
 
       .attribution {

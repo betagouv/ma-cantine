@@ -16,7 +16,7 @@
       "contenants"
     ],
     "mealCount": 600,
-    "region": "normandy"
+    "region": "dordogne"
   },
   {
     "title": "Exemple 2",
@@ -30,7 +30,7 @@
       "convives-informes"
     ],
     "mealCount": 90,
-    "region": "nouvelle-acquitaine"
+    "region": "paris"
   },
   {
     "title": "Exemple 3",
@@ -54,6 +54,6 @@
       "contenants"
     ],
     "mealCount": 120,
-    "region": "nouvelle-acquitaine"
+    "region": "guyane"
   }
 ]
