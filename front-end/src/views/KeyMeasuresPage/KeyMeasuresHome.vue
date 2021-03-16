@@ -125,7 +125,7 @@
         this.keyMeasures.forEach(measure => {
           measuresHtml += `<p><b>${measure.shortTitle} :</b></p>`;
           measure.subMeasures.forEach(subMeasure => {
-            measuresHtml += `<p>${subMeasure.shortTitle} : ${subMeasure.status || ''}</p>`
+            measuresHtml += `<p>${subMeasure.shortTitle} : ${STATUSES[subMeasure.status] || ''}</p>`
           });
         });
 
