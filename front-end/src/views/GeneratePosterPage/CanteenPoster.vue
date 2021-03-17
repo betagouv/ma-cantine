@@ -11,7 +11,7 @@
     </div>
     <p class="percentage"><span id="bio-percent" class="number">{{ bioPercent }} %</span> de produits bio</p>
     <p class="percentage"><span id="sustainable-percent" class="number">{{ sustainablePercent }} %</span> de produits de qualité et durables (hors bio)</p>
-    <p class="percentage" v-if="fairTrade"><span id="fair-trade-percent" class="number">{{ fairTradePercent }} %</span> produits issus du commerce équitable</p>
+    <p class="percentage" v-if="qualityValues.valueFairTrade"><span id="fair-trade-percent" class="number">{{ fairTradePercent }} %</span> produits issus du commerce équitable</p>
     <LogoList id="logos"/>
     <div id="about">
       <h2>Pourquoi je vois cette affiche ?</h2>
@@ -44,26 +44,23 @@
       school: String,
       commune: String,
       servings: Number,
-      total: Number,
-      bio: Number,
-      sustainable: Number,
-      fairTrade: Number
+      qualityValues: Object
     },
     computed: {
       bioPercent() {
-        return this.percentageString(this.bio);
+        return this.percentageString(this.qualityValues.valueBio);
       },
       sustainablePercent() {
-        return this.percentageString(this.sustainable);
+        return this.percentageString(this.qualityValues.valueSustainable);
       },
       fairTradePercent() {
-        return this.percentageString(this.fairTrade);
+        return this.percentageString(this.qualityValues.valueFairTrade);
       }
     },
     methods: {
       percentageString(number) {
-        if(!isNaN(number) && this.total) {
-          const value = Math.floor(number / this.total * 1000) / 10;
+        if(!isNaN(number) && this.qualityValues.valueTotal) {
+          const value = Math.floor(number / this.qualityValues.valueTotal * 1000) / 10;
           return value.toLocaleString("fr-FR");
         }
         return "__";
