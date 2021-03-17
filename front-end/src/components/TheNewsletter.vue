@@ -82,7 +82,7 @@
 
   .form-input {
     height: 60px;
-    width: 485px;
+    width: 400px;
     font-size: 20px;
     padding-left: 15px;
     border-radius: 30px;
@@ -92,7 +92,7 @@
   .form-button {
     height: 60px;
     width: 120px;
-    margin-left: -45PX;
+    margin-left: 15px;
     background-color: $dark-yellow;
     font-weight: bold;
     font-size: 1em;
