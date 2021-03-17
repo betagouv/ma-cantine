@@ -1,6 +1,7 @@
 <template>
   <div id="advanced-diagnostic-modal" @click.self="$emit('closeModal')">
     <div id="advanced-diagnostic-content">
+      <div class="close" @click="$emit('closeModal')"><i class="fas fa-times"></i></div>
       <h2><KeyMeasureTitle :measure="measure"/></h2>
 
       <form id="diagnostic-form" @submit.prevent="submit">
@@ -70,6 +71,23 @@
     background-color: $dark-white;
     overflow-y: auto;
     max-height: calc(100vh - 300px);
+  }
+
+  .close {
+    float: right;
+    cursor: pointer;
+
+    .fa-times {
+      width: 25px;
+      height: 25px;
+      color: $grey;
+    }
+  }
+
+  .close:hover {
+    .fa-times:hover {
+      color: $light-grey;
+    }
   }
 
   #diagnostic-form {
