@@ -9,7 +9,6 @@
           <fieldset class="measure-headline">
             <!-- Wrap legend in span to correctly position with flexbox in Safari -->
             <span><legend>{{subMeasure.title}}</legend></span>
-            <KeyMeasureStatusOption :initialMeasure="subMeasure" />
           </fieldset>
           <div class="measure-details">
             <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
@@ -25,7 +24,6 @@
   import KeyMeasureDescription from '@/components/KeyMeasureDescription'
   import KeyMeasureInfoCard from '@/components/KeyMeasureInfoCard'
   import KeyMeasureTitle from '@/components/KeyMeasureTitle'
-  import KeyMeasureStatusOption from '@/components/KeyMeasureStatusOption'
   import tags from '@/data/sector-tags.json'
 
   export default {
@@ -33,7 +31,6 @@
       KeyMeasureDescription,
       KeyMeasureInfoCard,
       KeyMeasureTitle,
-      KeyMeasureStatusOption
     },
     props: {
       measure: Object,
