@@ -48,7 +48,7 @@
         <p>
           <label for="total">Sur l'année de 2020, les achats alimentaires (repas, collations et boissons) répresentent </label>
           <input id="total"
-            v-model.number="form.total"
+            v-model.number="form.qualityValues.valueTotal"
             class="currency-field"
             type="number"
             min="0"
@@ -61,7 +61,7 @@
         <p>
           Sur ce total,
           <input id="bio"
-            v-model.number="form.bio"
+            v-model.number="form.qualityValues.valueBio"
             class="currency-field"
             type="number"
             min="0"
@@ -71,7 +71,7 @@
           >
           euros HT correspondaient à des <label for="bio">produits bio</label>,
           <input id="sustainable"
-            v-model.number="form.sustainable"
+            v-model.number="form.qualityValues.valueSustainable"
             class="currency-field"
             type="number"
             min="0"
@@ -81,7 +81,7 @@
           >
           euros HT correspondaient à des <label for="sustainable">produits de qualité et durables (hors bio)</label> et
           <input id="fair-trade"
-            v-model.number="form.fairTrade"
+            v-model.number="form.qualityValues.valueFairTrade"
             class="currency-field"
             type="number"
             min="0"
@@ -101,7 +101,11 @@
 
 <script>
   import CanteenPoster from './CanteenPoster';
+  import { diagnostics, saveDiagnostic } from "@/data/KeyMeasures.js";
   import html2pdf from 'html2pdf.js';
+
+  const qualityMeasureId = 'qualite-des-produits';
+  const qualityDiagnostic = diagnostics[qualityMeasureId];
 
   export default {
     components: {
@@ -109,8 +113,10 @@
     },
     data() {
       return {
-        form: {},
-        communes: []
+        form: {
+          qualityValues: qualityDiagnostic['2020']
+        },
+        communes: [],
       };
     },
     methods: {
@@ -126,6 +132,9 @@
       submit() {
         //this fix an issue where the beginning of the pdf is blank depending on the scroll position
         window.scrollTo({ top: 0 });
+
+        qualityDiagnostic['2020'] = this.form.qualityValues;
+        saveDiagnostic(qualityMeasureId, qualityDiagnostic);
 
         const htmlPoster = document.getElementById('canteen-poster');
         const pdfOptions = {
