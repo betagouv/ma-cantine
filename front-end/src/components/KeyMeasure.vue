@@ -1,15 +1,12 @@
 <template>
   <div class="measure-content">
-    <h2><KeyMeasureTitle :measure="measure"/></h2>
+    <h1><KeyMeasureTitle :measure="measure"/></h1>
     <div class="measure-details">
       <KeyMeasureInfoCard v-if="measure.tags" :measure="measure"/>
       <div class="description-container">
         <KeyMeasureDescription :measure="measure" v-if="measure.description"/>
         <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
-          <fieldset class="measure-headline">
-            <!-- Wrap legend in span to correctly position with flexbox in Safari -->
-            <span><legend>{{subMeasure.title}}</legend></span>
-          </fieldset>
+          <h2 class="measure-headline">{{ subMeasure.title }}</h2>
           <div class="measure-details">
             <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
             <div>
@@ -55,7 +52,7 @@
     margin: 2em;
   }
 
-  h2 {
+  h1 {
     font-weight: bold;
     font-size: 32px;
     color: $black;
@@ -71,25 +68,11 @@
   }
 
   .measure-headline {
-    border: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-inline-start: 0;
-    margin-inline-end: 0;
-    padding-block-start: 0;
-    padding-block-end: 0;
-    padding-inline-start: 0;
-    padding-inline-end: 0;
-
-    legend {
-      font-weight: bold;
-      font-size: 24px;
-      color: $green;
-      float: left;
-      margin: 1em 0;
-      margin-right: 1em;
-    }
+    font-weight: bold;
+    font-size: 24px;
+    color: $green;
+    margin: 1em 0;
+    margin-right: 1em;
   }
 
   .resource-block {

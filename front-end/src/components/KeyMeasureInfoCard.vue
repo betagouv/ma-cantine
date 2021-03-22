@@ -1,11 +1,11 @@
 <template>
   <div class="measure-info-card">
     <div class="deadline">
-      <h4><i class="far fa-calendar-alt"></i> Entrée en vigueur</h4>
+      <h3><i class="far fa-calendar-alt"></i> Entrée en vigueur</h3>
       <p>{{ measure.deadline.display }}</p>
     </div>
     <div class="for-who">
-      <h4><i class="fas fa-chart-pie"></i> Pour qui ?</h4>
+      <h3><i class="fas fa-chart-pie"></i> Pour qui ?</h3>
       <p v-if="measure.who">{{measure.who}}</p>
       <div class="tags">
         <p class="tag" :class="tag" v-for="tag in measure.tags" :key="tag">
@@ -26,7 +26,7 @@
     flex-shrink: 0;
   }
 
-  h4 {
+  h3 {
     margin-top: 0.5em;
     font-weight: bold;
     font-size: 18px;
@@ -55,7 +55,7 @@
   }
 
   @media (max-width: 800px) {
-    h4 {
+    h3 {
       font-size: 16px;
     }
   }
