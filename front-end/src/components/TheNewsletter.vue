@@ -13,7 +13,7 @@
         </div>
       </form>
     </div>
-    <img src="@/assets/appli-food.svg" class="newsletter-right-image">
+    <img src="@/assets/appli-food.svg" class="newsletter-right-image" alt="">
   </div>
 </template>
 
