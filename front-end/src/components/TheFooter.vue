@@ -1,8 +1,8 @@
 <template>
   <div id="footer">
     <div id="logos">
-      <img src="@/assets/Marianne.png" id="Marianne">
-      <img src="@/assets/beta-gouv-logo.jpg" id="Marianne">
+      <img src="@/assets/Marianne.png" alt="Le bloc Marianne">
+      <img src="@/assets/beta-gouv-logo.jpg" alt="Beta gouv">
     </div>
     <div id="footer-columns">
       <div class="footer-column">
