@@ -2,7 +2,7 @@
   <div class="measure-content">
     <h2><KeyMeasureTitle :measure="measure"/></h2>
     <div class="measure-details">
-      <KeyMeasureInfoCard v-if="measure.tags" :measure="measure" :includeCalculatorCard="measure.id === 'qualite-des-produits'"/>
+      <KeyMeasureInfoCard v-if="measure.tags" :measure="measure"/>
       <div class="description-container">
         <KeyMeasureDescription :measure="measure" v-if="measure.description"/>
         <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
@@ -14,13 +14,13 @@
             <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
             <div>
               <KeyMeasureDescription :measure="subMeasure"/>
-              <component :is="subMeasure.baseComponent + 'Resource'" class="resource-block"/>
+              <KeyMeasureResource :baseComponent="subMeasure.baseComponent" class="resource-block"/>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <component :is="measure.baseComponent + 'Resource'" class="resource-block"/>
+    <KeyMeasureResource :baseComponent="measure.baseComponent" class="resource-block"/>
   </div>
 </template>
 
@@ -29,18 +29,14 @@
   import KeyMeasureInfoCard from '@/components/KeyMeasureInfoCard'
   import KeyMeasureTitle from '@/components/KeyMeasureTitle'
   import tags from '@/data/sector-tags.json'
-  import InformDinersResource from "@/components/KeyMeasureResources/InformDiners"
-  import QualityMeasureResource from "@/components/KeyMeasureResources/QualityMeasure"
-  import SaveLeftoversResource from "@/components/KeyMeasureResources/SaveLeftovers"
+  import KeyMeasureResource from '@/components/KeyMeasureResource'
 
   export default {
     components: {
       KeyMeasureDescription,
       KeyMeasureInfoCard,
       KeyMeasureTitle,
-      InformDinersResource,
-      QualityMeasureResource,
-      SaveLeftoversResource
+      KeyMeasureResource
     },
     props: {
       measure: Object,

@@ -24,9 +24,9 @@
   </div>
   <div class="resources">
     <h2> Quelques ressources pour répondre aux mesures</h2>
-    <QualityMeasure v-if="isIncomplete('cinquante') || isIncomplete('vingt')"/>
-    <InformDiners v-if="isIncomplete('convives-informes')"/>
-    <SaveLeftovers v-if="isIncomplete('restes')"/>
+    <KeyMeasureResource baseComponent='QualityMeasure' v-if="isIncomplete('cinquante') || isIncomplete('vingt')"/>
+    <KeyMeasureResource baseComponent='InformDiners' v-if="isIncomplete('convives-informes')"/>
+    <KeyMeasureResource baseComponent='WasteMeasure' v-if="isIncomplete('dons')"/>
   </div>
   <form id="publish-form" @submit.prevent="submit">
     <h2>Devenir béta-testeur</h2>
@@ -55,17 +55,13 @@
   import STATUSES from '@/data/STATUSES.json';
   import KeyMeasureScore from '@/components/KeyMeasureScore';
   import _ from 'lodash';
-  import InformDiners from "@/components/KeyMeasureResources/InformDiners";
-  import QualityMeasure from "@/components/KeyMeasureResources/QualityMeasure";
-  import SaveLeftovers from "@/components/KeyMeasureResources/SaveLeftovers";
+  import KeyMeasureResource from '@/components/KeyMeasureResource';
 
   export default {
     components: {
       KeyMeasureTitle,
       KeyMeasureScore,
-      InformDiners,
-      QualityMeasure,
-      SaveLeftovers
+      KeyMeasureResource,
     },
     data() {
       return {
