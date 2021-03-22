@@ -78,7 +78,6 @@
     name: "KeyMeasureInfoCard",
     props: {
       measure: Object,
-      includeCalculatorCard: Boolean
     },
     data() {
       return {
