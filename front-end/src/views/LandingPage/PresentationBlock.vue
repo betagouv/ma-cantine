@@ -9,7 +9,7 @@
         Savoir où j'en suis des mesures EGAlim
       </router-link>
     </div>
-    <img src="@/assets/toque.svg" class="presentation-right-image">
+    <img src="@/assets/toque.svg" class="presentation-right-image" alt="">
   </div>
 </template>
 

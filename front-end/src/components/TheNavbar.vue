@@ -1,7 +1,7 @@
 <template>
   <nav id="navbar">
     <router-link :to="{ name: 'LandingPage' }" id="goto-landing">
-      <img src="@/assets/Marianne.png" id="Marianne">
+      <img src="@/assets/Marianne.png" id="Marianne" alt="">
       <div id="brand">
         <img id="logo" src="@/assets/logo_transparent.png" alt="Ma cantine">
         <div id="slogan">Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</div>

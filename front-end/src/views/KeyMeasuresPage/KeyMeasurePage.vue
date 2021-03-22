@@ -17,6 +17,11 @@
       return {
         measure: keyMeasures.find(measure => measure.id === this.id),
       };
+    },
+    created() {
+      // simpler to specify the title here than in vue router meta data
+      // due to the title being a function of the id parameter
+      document.title = this.measure.title;
     }
   }
 </script>
