@@ -84,6 +84,7 @@
         "title": "Lutte contre le gaspillage alimentaire et dons alimentaires",
         "shortTitle": "Gaspillage alimentaire",
         "faIcon": "fa-hands",
+        "baseComponent": "WasteMeasure",
         "tags": [
             "scolaire",
             "administration",
@@ -112,8 +113,7 @@
                 "htmlDescription": "L’infraction à cette loi est susceptible d’une amende de 3 750 €.",
                 "deadline": {
                     "earliestISO": "2020-01-01"
-                },
-                "baseComponent": "SaveLeftovers"
+                }
             },
             {
                 "id": "dons",
