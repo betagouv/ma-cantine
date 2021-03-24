@@ -1,10 +1,9 @@
 <template>
-  <div class="form-item-checkbox">
-    <label for="diagnostic-made">
-      J’ai réalisé un diagnostic sur tout ou partie des postes de gaspillage alimentaire
-    </label>
-    <input id="diagnostic-made" v-model="diagnostic.hasMadeWasteDiagnostic" type="checkbox" />
-  </div>
+  <CheckboxUnique
+    v-model="diagnostic.hasMadeWasteDiagnostic"
+    :label="'J’ai réalisé un diagnostic sur tout ou partie des postes de gaspillage alimentaire'"
+    :inputId="'diagnostic-made'"
+  />
 
   <fieldset class="form-bloc">
     <legend>Quelles actions avez vous mises en place contre le gaspillage alimentaire ?</legend>
@@ -42,16 +41,20 @@
     </div>
   </fieldset>
 
-  <div class="form-item-checkbox">
-    <label for="has-covenant">
-      J’ai proposé des conventions de dons à des associations habilitées d’aide alimentaire
-    </label>
-    <input id="has-covenant" v-model="diagnostic.hasCovenant" type="checkbox" />
-  </div>
+  <CheckboxUnique
+    v-model="diagnostic.hasCovenant"
+    :label="'J’ai proposé des conventions de dons à des associations habilitées d’aide alimentaire'"
+    :inputId="'has-covenant'"
+  />
 </template>
 
 <script>
+  import CheckboxUnique from '@/components/KeyMeasureDiagnostic/Inputs/CheckboxUnique';
+
   export default {
+    components: {
+      CheckboxUnique
+    },
     props: {
       modelValue: Object,
     },
@@ -64,23 +67,6 @@
 </script>
 
 <style scoped lang="scss">
-  .form-item-checkbox {
-    display: flex;
-    justify-content: space-between;
-
-    label {
-      font-weight: bold;
-      max-width: 45%;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    input {
-      width: 30px;
-      height: 30px;
-    }
-  }
-
   fieldset {
     border: none;
     padding: 0;
@@ -101,7 +87,6 @@
 
     .form-item {
       display: flex;
-      justify-content: space-between;
       justify-content: left;
 
       label {
