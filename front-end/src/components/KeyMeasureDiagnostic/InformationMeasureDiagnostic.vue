@@ -25,14 +25,21 @@
     </div>
   </fieldset>
 
-  <div class="form-item">
-    <label for="communication-link" class="form-label">Lien vers le support de communication</label>
-    <input id="communication-link" class="form-input" v-model="diagnostic.communicationSupportLink" type="text">
-  </div>
+  <BasicInput
+    v-model="diagnostic.communicationSupportLink"
+    :label="'Lien vers le support de communication'"
+    :inputId="'communication-link'"
+    :type="'text'"
+  />
 </template>
 
 <script>
+  import BasicInput from '@/components/KeyMeasureDiagnostic/Inputs/BasicInput';
+
   export default {
+    components: {
+      BasicInput
+    },
     props: {
       modelValue: Object,
     },
@@ -64,6 +71,7 @@
     }
 
     .form-item {
+      display: flex;
       justify-content: left;
 
       label {
@@ -78,25 +86,5 @@
         height: 30px;
       }
     }
-  }
-
-  .form-item {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  label {
-    font-weight: bold;
-    max-width: 45%;
-    text-align: left;
-  }
-
-  input {
-    border: none;
-    height: 50px;
-    width: 35%;
-    padding: 5px;
-    font-size: 1.5em;
-    text-align: right;
   }
 </style>
