@@ -20,7 +20,7 @@
         />
       </div>
     </div>
-    <router-link :to="{ name: 'KeyMeasuresHome' }" id="summarise" @click="logMeasures()">
+    <router-link :to="{ name: 'KeyMeasuresHome' }" id="summarise">
       Récapitulatif
     </router-link>
   </div>
@@ -47,18 +47,6 @@
       toggleDescriptionDisplay(subMeasure) {
         subMeasure.readMore = !subMeasure.readMore;
       },
-      logMeasures() {
-        let measuresScoreCode = '';
-        this.keyMeasures.forEach(measure => {
-          measure.subMeasures.forEach(subMeasure => {
-            measuresScoreCode += subMeasure.status === 'done' ? 4
-              : subMeasure.status === 'planned' ? 3
-              : subMeasure.status === 'notDone' ? 2
-              : 1
-          });
-        });
-        this.$matomo.trackEvent('diagnostic', 'summarise', 'summarise-diagnostic', measuresScoreCode);
-      }
     }
   }
 </script>
