@@ -1,7 +1,7 @@
 <template>
   <div id="footer">
     <div id="logos">
-      <img src="@/assets/Marianne.png" alt="Le bloc Marianne">
+      <img src="@/assets/Marianne.png" alt="Ministère de l'Agriculture et de l'Alimentation">
       <img src="@/assets/beta-gouv-logo.jpg" alt="Beta gouv">
     </div>
     <div id="footer-columns">
