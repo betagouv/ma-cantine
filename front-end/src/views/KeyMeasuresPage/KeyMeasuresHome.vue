@@ -54,7 +54,6 @@
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import STATUSES from '@/data/STATUSES.json';
   import KeyMeasureScore from '@/components/KeyMeasureScore';
-  import _ from 'lodash';
   import KeyMeasureResource from '@/components/KeyMeasureResource';
 
   export default {
@@ -86,42 +85,19 @@
         }
       },
       async submit() {
-        let measuresHtml = '';
-        this.keyMeasures.forEach(measure => {
-          measuresHtml += `<p><b>${measure.shortTitle} :</b></p>`;
-          measure.subMeasures.forEach(subMeasure => {
-            measuresHtml += `<p>${subMeasure.shortTitle} : ${STATUSES[subMeasure.status] || ''}</p>`
-          });
+        const response = await fetch("http://localhost:3000/subscribe-beta-tester", {
+          method: "POST",
+          body: JSON.stringify({
+            keyMeasures: this.keyMeasures,
+            form: this.form
+          })
         });
 
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "api-key": process.env.VUE_APP_SENDINBLUE_API_KEY },
-          body: JSON.stringify({
-            sender: { email: process.env.VUE_APP_SENDER_EMAIL, name: "site web ma cantine" },
-            to: [{ email: process.env.VUE_APP_CONTACT_EMAIL }],
-            replyTo: { email: process.env.VUE_APP_CONTACT_EMAIL },
-            subject: "Nouveau Béta-testeur ma cantine",
-            htmlContent: `<!DOCTYPE html> <html> <body>` +
-                         `<p><b>Cantine:</b> ${_.escape(this.form.school)}</p>` +
-                         `<p><b>Ville:</b> ${_.escape(this.form.city)}</p>` +
-                         `<p><b>Email:</b> ${_.escape(this.form.email)}</p>` +
-                         `<p><b>Téléphone:</b> ${_.escape(this.form.phone || '')}</p>` +
-                         `<p><b>Message:</b></p>` +
-                         `<p>${_.escape(this.form.message || '')}</p>` +
-                         `${measuresHtml}` +
-                         `</body> </html>`,
-          })
-        };
-
-        const response = await fetch("https://api.sendinblue.com/v3/smtp/email", requestOptions);
-
-        if (response.status === 201) {
+        if (response.status === 200) {
           this.form = {};
           alert("Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.")
         } else {
-          const error = await response.json();
-          console.log(error);
+          console.log("Response status !== 200: ", response);
           alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
         }
       },
