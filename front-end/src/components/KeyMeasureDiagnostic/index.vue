@@ -1,8 +1,8 @@
 <template>
-  <div id="advanced-diagnostic-modal" @click.self="$emit('closeModal')">
+  <div id="advanced-diagnostic-modal" @click.self="$emit('closeModal')" role="dialog" aria-labelledby="measure-title">
     <div id="advanced-diagnostic-content">
-      <div class="close" @click="$emit('closeModal')"><i class="fas fa-times"></i></div>
-      <h2><KeyMeasureTitle :measure="measure"/></h2>
+      <button class="close" @click="$emit('closeModal')" aria-label="Fermer" title="Fermer"><i class="fas fa-times"></i></button>
+      <h2 id="measure-title" tabindex="-1"><KeyMeasureTitle :measure="measure"/></h2>
 
       <form id="diagnostic-form" @submit.prevent="submit">
         <component
@@ -76,6 +76,8 @@
   .close {
     float: right;
     cursor: pointer;
+    border: none;
+    background-color: transparent;
 
     .fa-times {
       width: 25px;
@@ -108,6 +110,8 @@
       margin-left: auto;
       text-align: center;
       border: none;
+      margin-top: 10px;
+      margin-bottom: 10px;
     }
   }
 
