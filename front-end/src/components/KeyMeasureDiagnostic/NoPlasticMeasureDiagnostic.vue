@@ -18,9 +18,9 @@
   />
 
   <CheckboxUnique
-    v-model="diagnostic.disposableUstensilsSubstituted"
+    v-model="diagnostic.disposableUtensilsSubstituted"
     :label="'Je ne mets plus à disposition des convives des ustensiles à usage unique en matière plastique'"
-    :inputId="'disposable-ustensils'"
+    :inputId="'disposable-utensils'"
   />
 </template>
 
