@@ -1,6 +1,6 @@
 <template>
   <fieldset class="form-bloc">
-    <legend>A quelle fréquence proposez-vous un repas végétarien ?</legend>
+    <legend>J’ai mis en place un menu végétarien dans ma cantine :</legend>
 
     <div class="form-group">
       <div class="form-item">
@@ -21,22 +21,17 @@
   </fieldset>
 
   <fieldset class="form-bloc">
-    <legend>Le menu végétarien proposé est un menu unique ou une alternative à d’autres menus ?</legend>
+    <legend>Le menu végétarien proposé est :</legend>
 
     <div class="form-group">
       <div class="form-item">
-        <input id="standalone" value="standalone" v-model="diagnostic.vegetarianMenuIsStandalone" type="radio" >
+        <input id="standalone" value="standalone" v-model="diagnostic.vegetarianMenuType" type="radio" >
         <label for="standalone">Un menu végétarien unique</label>
       </div>
 
       <div class="form-item">
-        <input id="vegetarian-or-meat" value="vegetarianOrMeat" v-model="diagnostic.vegetarianMenuIsStandalone" type="radio" >
-        <label for="vegetarian-or-meat">Un menu végétarien alternatif à un menu carné</label>
-      </div>
-
-      <div class="form-item">
-        <input id="all-vegetarians" value="allVegetarians" v-model="diagnostic.vegetarianMenuIsStandalone" type="radio" >
-        <label for="all-vegetarians">Menus tous végétariens</label>
+        <input id="alternative" value="alternative" v-model="diagnostic.vegetarianMenuType" type="radio" >
+        <label for="alternative">Un menu végétarien alternatif à d'autres menus</label>
       </div>
     </div>
   </fieldset>
@@ -72,13 +67,13 @@
       display: flex;
       margin-top: 20px;
       flex-wrap: wrap;
-      justify-content: space-between;
     }
 
     .form-item {
       display: flex;
       justify-content: space-between;
-      width: 180px;
+      min-width: 150px;
+      width: 30%;
       justify-content: left;
       padding: 10px;
       text-align: left;

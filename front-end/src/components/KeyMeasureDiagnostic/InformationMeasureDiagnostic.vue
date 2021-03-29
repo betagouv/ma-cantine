@@ -4,23 +4,23 @@
 
     <div class="form-group">
       <div class="form-item">
-        <input id="email" value="email" v-model="diagnostic.communicationSupport" type="checkbox" >
-        <label for="email">Envoi d’e-mail aux convives</label>
+        <input id="email-communication" value="email" v-model="diagnostic.communicationSupport" type="checkbox" >
+        <label for="email-communication"><p>Envoi d’e-mail aux convives ou à leurs représentants</p></label>
       </div>
 
       <div class="form-item">
-        <input id="display" value="display" v-model="diagnostic.communicationSupport" type="checkbox" >
-        <label for="display">Par affichage sur le lieu de restauration</label>
+        <input id="display-communication" value="display" v-model="diagnostic.communicationSupport" type="checkbox" >
+        <label for="display-communication"><p>Par affichage sur le lieu de restauration</p></label>
       </div>
 
       <div class="form-item">
-        <input id="website" value="website" v-model="diagnostic.communicationSupport" type="checkbox" >
-        <label for="website">Sur site internet (mairie, cantine)</label>
+        <input id="website-communication" value="website" v-model="diagnostic.communicationSupport" type="checkbox" >
+        <label for="website-communication"><p>Sur site internet ou intranet (mairie, cantine)</p></label>
       </div>
 
       <div class="form-item">
-        <input id="other" value="other" v-model="diagnostic.communicationSupport" type="checkbox" >
-        <label for="other">Autre(s)</label>
+        <input id="other-communication" value="other" v-model="diagnostic.communicationSupport" type="checkbox" >
+        <label for="other-communication"><p>Autres moyens d'affichage et de communication électronique</p></label>
       </div>
     </div>
   </fieldset>
@@ -73,12 +73,21 @@
     .form-item {
       display: flex;
       justify-content: left;
+      padding: 5px 0;
 
       label {
+        text-align: left;
         font-weight: normal;
-        line-height: 35px;
+        max-width: 85%;
         padding-left: 5px;
         cursor: pointer;
+        height: 30px;
+        display: table;
+
+        p {
+          display: table-cell;
+          vertical-align: middle;
+        }
       }
 
       input {
