@@ -54,13 +54,13 @@ if (diagnosticsString) {
     },
     "diversification-des-menus": {
       vegetarianFrequency: null,
-      vegetarianMenuIsStandalone: false,
+      vegetarianMenuType: null,
     },
     "interdiction-du-plastique": {
       cookingFoodContainersSubstituted: false,
       serviceFoodContainersSubstituted: false,
       waterBottlesSubstituted: false,
-      disposableUstensilsSubstituted: false,
+      disposableUtensilsSubstituted: false,
     }
   };
 }
