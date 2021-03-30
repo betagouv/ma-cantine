@@ -1,10 +1,16 @@
 <template>
   <nav id="navbar">
     <router-link :to="{ name: 'LandingPage' }" id="goto-landing">
-      <img src="@/assets/Marianne.png" id="Marianne" alt="Ministère de l'Agriculture et de l'Alimentation">
+      <img src="@/assets/Marianne.png" class="gov-logo" alt="Ministère de l'Agriculture et de l'Alimentation">
+      <img src="@/assets/beta-gouv-logo.png" id="beta-logo" class="gov-logo" alt="Beta gouv">
       <div id="brand">
         <img id="logo" src="@/assets/logo_transparent.png" alt="Ma cantine">
-        <div id="slogan">Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</div>
+        <p id="slogan">Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim</p>
+        <p id="beta-message">
+          <router-link :to="{ name: 'KeyMeasuresHome', hash: '#publish-form' }" id="tester-link">
+            <i class="fas fa-tools"></i> Site en expérimentation, devenir testeur !
+          </router-link>
+        </p>
       </div>
     </router-link>
     <router-link :to="{ name: 'DiagnosticPage' }" class="navbar-item">Savoir où j'en suis</router-link>
@@ -40,16 +46,21 @@ export default {
 
   #goto-landing {
     display: flex;
+    align-items: center;
   }
 
-  #Marianne {
+  .gov-logo {
     height: 75px;
+  }
+
+  #beta-logo {
+    margin-left: 1em;
   }
 
   #brand {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     margin-left: 50px;
     text-align: left;
     max-width: 300px;
@@ -57,7 +68,7 @@ export default {
   }
 
   #logo {
-    width: 15em;
+    width: 13em;
   }
 
   #slogan {
@@ -65,6 +76,17 @@ export default {
     font-weight: 600;
     line-height: 15px;
     color: $light-black;
+    margin: 0;
+  }
+
+  #beta-message {
+    margin: 0;
+    margin-top: 0.5em;
+    font-size: 12px;
+  }
+
+  #tester-link {
+    color: $dark-orange;
   }
 
   .navbar-item {
@@ -83,7 +105,7 @@ export default {
   }
 
   @media (max-width: 1000px) {
-    #Marianne {
+    .gov-logo {
       display: none;
     }
 
