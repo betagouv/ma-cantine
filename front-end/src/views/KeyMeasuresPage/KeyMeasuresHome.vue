@@ -93,11 +93,12 @@
           })
         });
 
-        if (response.status === 200) {
+        if (response.status === 201) {
           this.form = {};
           alert("Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.")
         } else {
-          console.log("Response status !== 200: ", response);
+          const error = await response.json();
+          console.log(error);
           alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
         }
       },
