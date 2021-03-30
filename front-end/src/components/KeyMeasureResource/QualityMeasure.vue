@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a href="Diagnostic approvisionnement (ma-cantine-alpha) v0.2.ods" class="resource calculator" download>
+    <a href="Diagnostic approvisionnement (ma-cantine-alpha) v0.3.ods" class="resource calculator" download>
       <div class="resource-icon"><i class="fas fa-calculator"></i></div>
       <p class="resource-prompt">
         Si vous avez besoin d'aide pour calculer votre part de bios et de produits labélisés,
