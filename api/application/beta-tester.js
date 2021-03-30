@@ -23,11 +23,11 @@ async function createBetaTester(request, h) {
   const form = payload.form;
   const requestOptions = {
     method: "POST",
-    headers: { "Content-Type": "application/json", "api-key": process.env.VUE_APP_SENDINBLUE_API_KEY },
+    headers: { "Content-Type": "application/json", "api-key": process.env.SENDINBLUE_API_KEY },
     body: JSON.stringify({
-      sender: { email: process.env.VUE_APP_SENDER_EMAIL, name: "site web ma cantine" },
-      to: [{ email: process.env.VUE_APP_CONTACT_EMAIL }],
-      replyTo: { email: process.env.VUE_APP_CONTACT_EMAIL },
+      sender: { email: process.env.SENDINBLUE_SENDER_EMAIL, name: "site web ma cantine" },
+      to: [{ email: process.env.SENDINBLUE_CONTACT_EMAIL }],
+      replyTo: { email: process.env.SENDINBLUE_CONTACT_EMAIL },
       subject: "Nouveau Béta-testeur ma cantine",
       htmlContent: `<!DOCTYPE html> <html> <body>` +
                    `<p><b>Cantine:</b> ${_.escape(form.school)}</p>` +
@@ -42,5 +42,9 @@ async function createBetaTester(request, h) {
   };
 
   const response = await fetch("https://api.sendinblue.com/v3/smtp/email", requestOptions);
-  return response;
+  const json = await response.json();
+  return h.response({
+      message: json.message
+    }).
+    code(response.status);
 }
