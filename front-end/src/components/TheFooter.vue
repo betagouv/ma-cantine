@@ -14,6 +14,7 @@
           Les start-ups d'état <i class="fas fa-external-link-alt"></i>
         </a>
         <a class="navbar-item" href="mailto:contact@egalim.beta.gouv.fr">Contactez-nous !</a>
+        <router-link :to="{ name: 'LegalNotices' }">Mentions légales</router-link>
       </div>
       <div class="footer-column">
         <div class="footer-column-title">Aidez-nous à améliorer cet outils</div>
