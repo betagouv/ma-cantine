@@ -8,18 +8,22 @@
   <TheNewsletter/>
 
   <TheFooter/>
+
+  <JeDonneMonAvis id="feedback"/>
 </template>
 
 <script>
 import TheNavbar from '@/components/TheNavbar';
 import TheFooter from '@/components/TheFooter';
 import TheNewsletter from '@/components/TheNewsletter';
+import JeDonneMonAvis from '@/components/JeDonneMonAvis';
 
 export default {
   components: {
     TheNavbar,
     TheFooter,
     TheNewsletter,
+    JeDonneMonAvis
   },
   watch: {
     '$route' (to) {
@@ -63,9 +67,19 @@ export default {
     padding: 0;
   }
 
+  #feedback {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+  }
+
   @media (max-width: 750px) {
     #router-view {
       margin-top: 0;
+    }
+
+    #feedback {
+      position: relative;
     }
   }
 </style>
