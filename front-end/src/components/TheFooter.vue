@@ -56,6 +56,11 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    img {
+      // without this, safari stretches the height of beta logo
+      width: 240px;
+    }
   }
 
   #footer-columns {
