@@ -15,7 +15,7 @@
       </p>
     </router-link>
     <div class="divider"></div>
-    <a class="action" href="Diagnostic approvisionnement (ma-cantine-alpha) v0.3.ods" download>
+    <a class="action" href="/Diagnostic approvisionnement (ma-cantine-alpha) v0.3.ods" download>
       <h2>
         Vous avez besoin d’aide pour le calcul&nbsp;?
       </h2>
