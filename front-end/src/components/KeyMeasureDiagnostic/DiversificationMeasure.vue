@@ -70,7 +70,7 @@ import CheckboxUnique from '@/components/KeyMeasureDiagnostic/Inputs/CheckboxUni
   fieldset {
     border: none;
     padding: 0;
-    margin: 0;
+    margin: 10px 0;
   }
 
   .form-bloc {
@@ -79,6 +79,7 @@ import CheckboxUnique from '@/components/KeyMeasureDiagnostic/Inputs/CheckboxUni
     legend {
       text-align: left;
       font-weight: bold;
+      padding: 0;
     }
 
     .form-group {

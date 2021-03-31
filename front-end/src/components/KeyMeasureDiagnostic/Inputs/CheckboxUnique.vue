@@ -15,7 +15,7 @@
   .checkbox-unique {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
+    margin: 10px 0;
 
     label {
       font-weight: bold;
