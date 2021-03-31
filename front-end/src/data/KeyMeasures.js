@@ -46,9 +46,11 @@ if (diagnosticsString) {
     "information-des-usagers": {
       communicationSupport: [],
       communicationSupportLink: null,
+      communicateOnFoodPlan: false,
     },
     "gaspillage-alimentaire": {
       hasMadeWasteDiagnostic: false,
+      hasMadeWastePlan: false,
       wasteActions: [],
       hasCovenant: false,
     },
