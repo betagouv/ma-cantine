@@ -1,4 +1,10 @@
 <template>
+  <CheckboxUnique
+    v-model="diagnostic.hasMadeDiversificationPlan"
+    :label="'J’ai mis en place un plan pluriannuel de diversification des protéines'"
+    :inputId="'plan-made'"
+  />
+
   <fieldset class="form-bloc">
     <legend>J’ai mis en place un menu végétarien dans ma cantine :</legend>
 
@@ -30,15 +36,25 @@
       </div>
 
       <div class="form-item">
+        <input id="all-vegetarian" value="allVegetarian" v-model="diagnostic.vegetarianMenuType" type="radio" >
+        <label for="all-vegetarian">Plusieurs menus végétariens alternatifs</label>
+      </div>
+
+      <div class="form-item">
         <input id="alternative" value="alternative" v-model="diagnostic.vegetarianMenuType" type="radio" >
-        <label for="alternative">Un menu végétarien alternatif à d'autres menus</label>
+        <label for="alternative">Un menu végétarien alternatif à d'autres menus non-végétariens</label>
       </div>
     </div>
   </fieldset>
 </template>
 
 <script>
+import CheckboxUnique from '@/components/KeyMeasureDiagnostic/Inputs/CheckboxUnique';
+
   export default {
+    components: {
+      CheckboxUnique
+    },
     props: {
       modelValue: Object,
     },
@@ -58,6 +74,8 @@
   }
 
   .form-bloc {
+    margin: 20px 0;
+
     legend {
       text-align: left;
       font-weight: bold;

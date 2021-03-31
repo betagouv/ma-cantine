@@ -53,6 +53,7 @@ if (diagnosticsString) {
       hasCovenant: false,
     },
     "diversification-des-menus": {
+      hasMadeDiversificationPlan: false,
       vegetarianFrequency: null,
       vegetarianMenuType: null,
     },
