@@ -5,6 +5,12 @@
     :inputId="'diagnostic-made'"
   />
 
+  <CheckboxUnique
+    v-model="diagnostic.hasMadeWastePlan"
+    :label="'J’ai mis en place un plan d’actions adapté au diagnostic réalisé'"
+    :inputId="'plan-made'"
+  />
+
   <fieldset class="form-bloc">
     <legend>J'ai réalisé des actions de lutte contre le gaspillage alimentaire</legend>
 
@@ -70,13 +76,14 @@
   fieldset {
     border: none;
     padding: 0;
-    margin: 0;
+    margin: 10px 0;
   }
 
   .form-bloc {
     legend {
       text-align: left;
       font-weight: bold;
+      padding: 0;
     }
 
     .form-group {

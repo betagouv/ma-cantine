@@ -1,6 +1,6 @@
 <template>
   <fieldset class="form-communication-support">
-    <legend>Quel(s) support(s) de communication utilisez vous ?</legend>
+    <legend>Information sur la qualité des approvisionnements :</legend>
 
     <div class="form-group">
       <div class="form-item">
@@ -31,14 +31,22 @@
     :inputId="'communication-link'"
     :type="'text'"
   />
+
+  <CheckboxUnique
+    v-model="diagnostic.communicateOnFoodPlan"
+    :label="'Je communique sur la mise en place d\'un plan alimentaire'"
+    :inputId="'food-plan'"
+  />
 </template>
 
 <script>
   import BasicInput from '@/components/KeyMeasureDiagnostic/Inputs/BasicInput';
+  import CheckboxUnique from '@/components/KeyMeasureDiagnostic/Inputs/CheckboxUnique';
 
   export default {
     components: {
-      BasicInput
+      BasicInput,
+      CheckboxUnique
     },
     props: {
       modelValue: Object,
@@ -55,13 +63,14 @@
   fieldset {
     border: none;
     padding: 0;
-    margin: 0;
+    margin: 10px 0;
   }
 
   .form-communication-support {
     legend {
       text-align: left;
       font-weight: bold;
+      padding: 0;
     }
 
     .form-group {
