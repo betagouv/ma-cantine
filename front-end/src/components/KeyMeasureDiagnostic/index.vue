@@ -18,11 +18,11 @@
 
 <script>
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
-  import DiversificationMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/DiversificationMeasureDiagnostic';
-  import InformationMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/InformationMeasureDiagnostic';
-  import NoPlasticMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/NoPlasticMeasureDiagnostic';
-  import QualityMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/QualityMeasureDiagnostic';
-  import WasteMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/WasteMeasureDiagnostic';
+  import DiversificationMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/DiversificationMeasure';
+  import InformationMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/InformationMeasure';
+  import NoPlasticMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/NoPlasticMeasure';
+  import QualityMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/QualityMeasure';
+  import WasteMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/WasteMeasure';
   import { diagnostics, saveDiagnostic } from "@/data/KeyMeasures.js";
 
   export default {
