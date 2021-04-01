@@ -15,6 +15,9 @@
         <p>Assurer la juste rémunération des agriculteurs du secteur agricole.</p>
       </div>
     </div>
+    <a id="guide-cnrc" href="/Les mesures de la loi EGAlim restauration collective.pdf" download>
+      Télécharger le livret de la loi EGAlim concernant la restauration collective <i class="fas fa-arrow-circle-down"></i>
+    </a>
   </div>
 </template>
 
@@ -48,5 +51,10 @@
 
   .key-goal > img {
     width: 60px;
+  }
+
+  #guide-cnrc {
+    color: $orange;
+    font-size: 20px;
   }
 </style>
