@@ -1,62 +1,34 @@
 [
   {
-    "title": "Exemple 1",
+    "title": "Arles Eparca",
     "statistics": {
-      "bio": 30,
-      "sustainable": 20,
-      "fairTrade": 20
+      "bio": 17,
+      "sustainable": 10,
+      "fairTrade": 0
     },
-    "completedMeasures": [
-      "cinquante",
-      "vingt",
-      "convives-informes",
-      "gaspillage-analyse",
-      "restes",
-      "menu-vege",
-      "contenants"
+    "keyPoints": [
+      "Convention de dons avec le Secours Populaire",
+      "2 repas végétariens par semaine",
+      "Diagnostic et plan d'action contre le gaspillage alimentaire"
     ],
-    "mealCount": 600,
-    "region": "dordogne",
-    "timePeriod": "2019-2020"
+    "mealCount": 3000,
+    "region": "Bouches-du-Rhône",
+    "timePeriod": "2019"
   },
   {
-    "title": "Exemple 2",
+    "title": "Briançon",
     "statistics": {
-      "bio": 20,
-      "sustainable": 5,
-      "fairTrade": 9
+      "bio": 67,
+      "sustainable": 0,
+      "fairTrade": 2
     },
-    "completedMeasures": [
-      "vingt",
-      "convives-informes"
+    "keyPoints": [
+      "Convention de dons avec le Refuge",
+      "2 repas végétariens par semaine",
+      "Certifié Ecocert niveau 3"
     ],
-    "mealCount": 90,
-    "region": "paris",
-    "timePeriod": "2019-2020"
-  },
-  {
-    "title": "Exemple 3",
-    "statistics": {
-      "bio": 30,
-      "sustainable": 20,
-      "fairTrade": 20
-    },
-    "completedMeasures": [
-      "cinquante",
-      "vingt",
-      "convives-informes",
-      "informations-nutritionnelles",
-      "gaspillage-analyse",
-      "restes",
-      "dons",
-      "proteines",
-      "menu-vege",
-      "bouteilles",
-      "ustensiles",
-      "contenants"
-    ],
-    "mealCount": 120,
-    "region": "guyane",
-    "timePeriod": "2019-2020"
+    "mealCount": 650,
+    "region": "Hautes-Alpes",
+    "timePeriod": "2020"
   }
 ]
