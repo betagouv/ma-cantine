@@ -85,7 +85,7 @@
         }
       },
       async submit() {
-        const response = await fetch("http://localhost:3000/subscribe-beta-tester", {
+        const response = await fetch(`${this.$api_url}/subscribe-beta-tester`, {
           method: "POST",
           body: JSON.stringify({
             keyMeasures: this.keyMeasures,
