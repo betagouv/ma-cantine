@@ -54,7 +54,6 @@
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import STATUSES from '@/data/STATUSES.json';
   import KeyMeasureScore from '@/components/KeyMeasureScore';
-  import _ from 'lodash';
   import KeyMeasureResource from '@/components/KeyMeasureResource';
 
   export default {
@@ -86,35 +85,13 @@
         }
       },
       async submit() {
-        let measuresHtml = '';
-        this.keyMeasures.forEach(measure => {
-          measuresHtml += `<p><b>${measure.shortTitle} :</b></p>`;
-          measure.subMeasures.forEach(subMeasure => {
-            measuresHtml += `<p>${subMeasure.shortTitle} : ${STATUSES[subMeasure.status] || ''}</p>`
-          });
-        });
-
-        const requestOptions = {
+        const response = await fetch(`${this.$api_url}/subscribe-beta-tester`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", "api-key": process.env.VUE_APP_SENDINBLUE_API_KEY },
           body: JSON.stringify({
-            sender: { email: process.env.VUE_APP_SENDER_EMAIL, name: "site web ma cantine" },
-            to: [{ email: process.env.VUE_APP_CONTACT_EMAIL }],
-            replyTo: { email: process.env.VUE_APP_CONTACT_EMAIL },
-            subject: "Nouveau Béta-testeur ma cantine",
-            htmlContent: `<!DOCTYPE html> <html> <body>` +
-                         `<p><b>Cantine:</b> ${_.escape(this.form.school)}</p>` +
-                         `<p><b>Ville:</b> ${_.escape(this.form.city)}</p>` +
-                         `<p><b>Email:</b> ${_.escape(this.form.email)}</p>` +
-                         `<p><b>Téléphone:</b> ${_.escape(this.form.phone || '')}</p>` +
-                         `<p><b>Message:</b></p>` +
-                         `<p>${_.escape(this.form.message || '')}</p>` +
-                         `${measuresHtml}` +
-                         `</body> </html>`,
+            keyMeasures: this.keyMeasures,
+            form: this.form
           })
-        };
-
-        const response = await fetch("https://api.sendinblue.com/v3/smtp/email", requestOptions);
+        });
 
         if (response.status === 201) {
           this.form = {};
