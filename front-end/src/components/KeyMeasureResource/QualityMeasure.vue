@@ -16,6 +16,14 @@
       </p>
       <div class="resource-icon"><i class="fas fa-external-link-alt"></i></div>
     </a>
+    <a href="/Guide Pratique MP Gestion directe.pdf" class="resource" download>
+      <div class="resource-icon"><i class="fas fa-archive"></i></div>
+      <p class="resource-prompt">
+        Télécharger le guide pratique de rédaction des marchés publics pour des appros
+        durables à destination des acteurs la restauration collective en gestion directe.
+      </p>
+      <div class="resource-icon"><i class="fas fa-file-download"></i></div>
+    </a>
   </div>
 </template>
 
