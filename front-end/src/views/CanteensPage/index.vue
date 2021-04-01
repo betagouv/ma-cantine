@@ -8,8 +8,8 @@
   </div>
   <ul id="canteens-block">
     <li v-for="canteen in canteens" :key="canteen.title" class="canteen-card">
-      <div class="location" :title="map[canteen.region].title">
-        <p class="location-name"><i class="far fa-compass"></i> {{ map[canteen.region].title }}</p>
+      <div class="location" :title="canteen.region">
+        <p class="location-name"><i class="far fa-compass"></i> {{ canteen.region }}</p>
         <img :src="require(`@/assets/map/${canteen.region}.svg`)" alt="">
         <p class="attribution">
           Nilstilar, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>, via Wikimedia Commons (modifié)
@@ -34,11 +34,11 @@
           </p>
         </div>
       </div>
-      <div class="completed-measures">
+      <div class="key-points">
         <h3>Nos mesures mises en place :</h3>
         <ul>
-          <li v-for="measureId in canteen.completedMeasures.slice(0, 3)" :key="measureId">
-            {{ findSubMeasure(measureId).title }}
+          <li v-for="keyPoint in canteen.keyPoints" :key="keyPoint">
+            {{ keyPoint }}
           </li>
         </ul>
       </div>
@@ -47,21 +47,9 @@
 </template>
 
 <script>
-  import { keyMeasures, findSubMeasure } from "@/data/KeyMeasures.js";
+  import { keyMeasures } from "@/data/KeyMeasures.js";
   import canteens from "@/data/canteens.json";
   import SummaryStatistic from './SummaryStatistic';
-
-  const map = {
-    "dordogne": {
-      title: "Dordogne"
-    },
-    "guyane": {
-      title: "Guyane"
-    },
-    "paris": {
-      title: "Paris"
-    }
-  };
 
   export default {
     components: {
@@ -71,11 +59,7 @@
       return {
         keyMeasures,
         canteens,
-        map
       }
-    },
-    methods: {
-      findSubMeasure
     }
   }
 </script>
@@ -175,7 +159,7 @@
     justify-content: space-between;
   }
 
-  .completed-measures {
+  .key-points {
     padding: 2em 1em 3em 1em;
     width: 40%;
     align-self: flex-start;
