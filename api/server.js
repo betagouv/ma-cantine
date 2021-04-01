@@ -5,11 +5,11 @@ const betaTester = require('./application/beta-tester.js');
 
 const init = async () => {
   const server = Hapi.server({
-    port: 3000,
-    host: 'localhost',
+    host: process.env.HOST || 'localhost',
+    port: process.env.PORT || 3000,
     routes: {
       cors: {
-        origin: ['*'] // an array of origins or 'ignore'
+        origin: ['*']
       }
     }
   });
@@ -17,11 +17,11 @@ const init = async () => {
   betaTester.register(server);
 
   await server.start();
-    console.log('Server running on %s', server.info.uri);
-  };
 
-  process.on('unhandledRejection', (err) => {
+  console.log('Server running on %s', server.info.uri);
+};
 
+process.on('unhandledRejection', (err) => {
   console.log(err);
   process.exit(1);
 });

@@ -4,10 +4,12 @@
   "description": "Ma cantine API",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "start": "node server.js"
   },
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": "15.5.0",
+    "npm": "7.3.0"
+  },
   "dependencies": {
     "@hapi/hapi": "^20.1.2",
     "dotenv": "^8.2.0",

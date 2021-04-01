@@ -13,4 +13,6 @@ app.use(VueMatomo, {
   router: router,
 });
 
+app.config.globalProperties.$api_url = process.env.VUE_APP_API_URL || 'http://localhost:3000';
+
 app.use(router).mount('#app');

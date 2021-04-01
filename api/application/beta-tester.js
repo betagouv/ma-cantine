@@ -10,17 +10,19 @@ exports.register = async function(server) {
 }
 
 async function createBetaTester(request, h) {
-  let measuresHtml = '';
   const payload = JSON.parse(request.payload);
-  const keyMeasures = payload.keyMeasures;
-  keyMeasures.forEach(measure => {
+
+  const form = payload.form;
+
+  let measuresHtml = '';
+  payload.keyMeasures.forEach(measure => {
     measuresHtml += `<p><b>${measure.shortTitle} :</b></p>`;
     measure.subMeasures.forEach(subMeasure => {
       // If move key measures to back-end, put back STATUSES[subMeasure.status] to francise
       measuresHtml += `<p>${subMeasure.shortTitle} : ${subMeasure.status || ''}</p>`
     });
   });
-  const form = payload.form;
+
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json", "api-key": process.env.SENDINBLUE_API_KEY },
@@ -43,8 +45,6 @@ async function createBetaTester(request, h) {
 
   const response = await fetch("https://api.sendinblue.com/v3/smtp/email", requestOptions);
   const json = await response.json();
-  return h.response({
-      message: json.message
-    }).
-    code(response.status);
+
+  return h.response({ message: json.message }).code(response.status);
 }
