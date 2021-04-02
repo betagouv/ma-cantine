@@ -3,12 +3,17 @@
     <h1>Les 5 mesures phares de la loi EGAlim</h1>
     <ul id="measure-cards">
       <li v-for="measure in keyMeasures" :key="measure.id">
-        <div class="measure-card">
+        <router-link :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }" class="measure-card">
           <p class="measure-title"><KeyMeasureTitle :measure="measure"/></p>
           <ul class="statuses">
             <li v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
-              <p class="sub-measure-title" :title="STATUSES[subMeasure.status] || 'Statut inconnu'">
-                <i class="fas fa-fw" :class="iconClass(subMeasure.status)" aria-hidden="true"></i>
+              <p class="sub-measure-title" :title="getSubMeasureTitle(subMeasure)">
+                <i
+                  class="fas fa-fw"
+                  :class="iconClass(subMeasure.status)"
+                  aria-hidden="true"
+                  v-if="haveDiagnosticResults"
+                ></i>
                 <span class="sr-only">{{ STATUSES[subMeasure.status] || "Statut inconnu" }}:</span>
                 {{ subMeasure.shortTitle }}
               </p>
@@ -17,11 +22,14 @@
               </p>
             </li>
           </ul>
-        </div>
-        <KeyMeasureScore :measure="measure" />
+        </router-link>
+        <KeyMeasureScore :measure="measure" v-if="haveDiagnosticResults"/>
       </li>
     </ul>
   </div>
+  <router-link :to="{ name: 'DiagnosticPage' }">
+    <div class="presentation-diagnostic">Savoir où j'en suis des mesures EGAlim</div>
+  </router-link>
   <div class="resources">
     <h2> Quelques ressources pour répondre aux mesures</h2>
     <KeyMeasureResource baseComponent='QualityMeasure' v-if="isIncomplete('cinquante') || isIncomplete('vingt')"/>
@@ -50,7 +58,7 @@
 </template>
 
 <script>
-  import { keyMeasures, findSubMeasure } from '@/data/KeyMeasures.js';
+  import { keyMeasures, findSubMeasure, haveDiagnosticResults } from '@/data/KeyMeasures.js';
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import STATUSES from '@/data/STATUSES.json';
   import KeyMeasureScore from '@/components/KeyMeasureScore';
@@ -67,6 +75,7 @@
         keyMeasures,
         STATUSES,
         form: {},
+        haveDiagnosticResults: haveDiagnosticResults()
       };
     },
     methods: {
@@ -104,8 +113,13 @@
       },
       isIncomplete(subMeasureId) {
         return findSubMeasure(subMeasureId).status !== "done";
+      },
+      getSubMeasureTitle(subMeasure) {
+        if(this.haveDiagnosticResults) {
+          return STATUSES[subMeasure.status] || 'Statut inconnu';
+        }
       }
-    }
+    },
   }
 </script>
 
@@ -131,18 +145,20 @@
     }
   }
 
+  a {
+    text-decoration: none;
+  }
+
   #measure-cards {
     display: flex;
     justify-content: space-evenly;
     flex-wrap: wrap;
-    align-items: stretch;
   }
 
   .measure-card {
     background: $light-yellow;
     width: 11em;
-    height: calc(100% - 120px);
-    min-height: 13em;
+    height: 15em;
     border-radius: 22px;
     padding: 0.5em 1em;
     margin: 0.5em;
@@ -150,6 +166,14 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    color: $black;
+    transition: all ease .25s;
+    border: 1px solid $light-yellow;
+  }
+
+  .measure-card:hover {
+    border-color: $orange;
+    transform: scale(1.02);
   }
 
   .measure-title {
@@ -188,6 +212,17 @@
 
   .fa-question {
     color: $grey;
+  }
+
+  .presentation-diagnostic {
+    display: inline-block;
+    margin: auto;
+    padding: 1em 2em;
+    color: $white;
+    background-color: $orange;
+    border-radius: 50px;
+    font-weight: bold;
+    text-align: center;
   }
 
   h2 {
