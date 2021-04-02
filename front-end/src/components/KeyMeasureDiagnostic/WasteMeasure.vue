@@ -1,19 +1,19 @@
 <template>
   <BaseCheckbox
     v-model="diagnostic.hasMadeWasteDiagnostic"
-    :label="'J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire'"
-    :inputId="'diagnostic-made'"
+    label="J'ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire"
+    inputId="diagnostic-made"
   />
 
   <BaseCheckbox
     v-model="diagnostic.hasMadeWastePlan"
-    :label="'J’ai mis en place un plan d’actions adapté au diagnostic réalisé'"
-    :inputId="'plan-made'"
+    label="J'ai mis en place un plan d’actions adapté au diagnostic réalisé"
+    inputId="plan-made"
   />
 
   <BaseCheckboxes
     v-model="diagnostic.wasteActions"
-    :legend="'J\'ai réalisé des actions de lutte contre le gaspillage alimentaire :'"
+    legend="J'ai réalisé des actions de lutte contre le gaspillage alimentaire :"
     :options="[
       { inputId: 'pre-registration', value: 'preRegistration', label: 'Pré-inscription des convives obligatoire' },
       { inputId: 'raise-awareness', value: 'raiseAwareness', label: 'Sensibilisation par affichage ou autre média' },
@@ -26,8 +26,8 @@
 
   <BaseCheckbox
     v-model="diagnostic.hasCovenant"
-    :label="'J’ai proposé des conventions de dons à des associations habilitées d’aide alimentaire'"
-    :inputId="'has-covenant'"
+    label="J'ai proposé des conventions de dons à des associations habilitées d’aide alimentaire"
+    inputId="has-covenant"
   />
 </template>
 
