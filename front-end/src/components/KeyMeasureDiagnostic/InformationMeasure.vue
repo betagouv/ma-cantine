@@ -1,7 +1,7 @@
 <template>
   <BaseCheckboxes
     v-model="diagnostic.communicationSupport"
-    :legend="'Information sur la qualité des approvisionnements :'"
+    legend="Information sur la qualité des approvisionnements :"
     :options="[
       { inputId: 'email-communication', value: 'email', label: 'Envoi d\'e-mail aux convives ou à leurs représentants' },
       { inputId: 'display-communication', value: 'display', label: 'Par affichage sur le lieu de restauration' },
@@ -12,15 +12,15 @@
 
   <BaseInput
     v-model="diagnostic.communicationSupportLink"
-    :label="'Lien vers le support de communication'"
-    :inputId="'communication-link'"
-    :type="'text'"
+    label="Lien vers le support de communication"
+    inputId="communication-link"
+    type="text"
   />
 
   <BaseCheckbox
     v-model="diagnostic.communicateOnFoodPlan"
-    :label="'Je communique sur la mise en place d\'un plan alimentaire'"
-    :inputId="'food-plan'"
+    label="Je communique sur la mise en place d'un plan alimentaire"
+    inputId="food-plan"
   />
 </template>
 
