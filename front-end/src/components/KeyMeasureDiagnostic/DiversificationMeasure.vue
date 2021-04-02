@@ -1,13 +1,13 @@
 <template>
   <BaseCheckbox
     v-model="diagnostic.hasMadeDiversificationPlan"
-    :label="'J’ai mis en place un plan pluriannuel de diversification des protéines'"
-    :inputId="'plan-made'"
+    label="J'ai mis en place un plan pluriannuel de diversification des protéines"
+    inputId="plan-made"
   />
 
   <BaseRadios
     v-model="diagnostic.vegetarianFrequency"
-    :legend="'J’ai mis en place un menu végétarien dans ma cantine :'"
+    legend="J'ai mis en place un menu végétarien dans ma cantine :"
     :options="[
       { inputId: 'less-than-once', value: 'lessThanOnce', label: 'Moins d\'une fois par semaine' },
       { inputId: 'once', value: 'once', label: 'Une fois par semaine' },
@@ -17,7 +17,7 @@
 
   <BaseRadios
     v-model="diagnostic.vegetarianMenuType"
-    :legend="'Le menu végétarien proposé est :'"
+    legend="Le menu végétarien proposé est :"
     :options="[
       { inputId: 'standalone', value: 'standalone', label: 'Un menu végétarien unique' },
       { inputId: 'all-vegetarian', value: 'allVegetarian', label: 'Plusieurs menus végétariens alternatifs' },
