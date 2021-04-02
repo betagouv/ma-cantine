@@ -1,6 +1,6 @@
 <template>
   <nav id="measures-nav">
-    <router-link :to="{ name: 'KeyMeasuresHome' }" class="nav-item">Tableau de bord</router-link>
+    <router-link :to="{ name: 'KeyMeasuresHome' }" class="nav-item">Tous les mesures</router-link>
     <template v-for="measure in keyMeasures" :key="measure.id">
       <router-link :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }" class="nav-item">
         {{ measure.shortTitle }}

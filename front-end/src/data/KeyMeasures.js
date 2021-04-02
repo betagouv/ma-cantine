@@ -73,10 +73,15 @@ function saveDiagnostic(id, diagnostic) {
   localStorage.setItem('diagnostics', JSON.stringify(diagnostics));
 }
 
+function haveDiagnosticResults() {
+  return !!localStorage.getItem('statuses');
+}
+
 export {
   keyMeasures,
   saveStatus,
   findSubMeasure,
   saveDiagnostic,
-  diagnostics
+  diagnostics,
+  haveDiagnosticResults
 };
