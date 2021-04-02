@@ -9,21 +9,21 @@
 
   <TheFooter/>
 
-  <JeDonneMonAvis id="feedback"/>
+  <GiveFeedbackLink id="feedback"/>
 </template>
 
 <script>
 import TheNavbar from '@/components/TheNavbar';
 import TheFooter from '@/components/TheFooter';
 import TheNewsletter from '@/components/TheNewsletter';
-import JeDonneMonAvis from '@/components/JeDonneMonAvis';
+import GiveFeedbackLink from '@/components/GiveFeedbackLink';
 
 export default {
   components: {
     TheNavbar,
     TheFooter,
     TheNewsletter,
-    JeDonneMonAvis
+    GiveFeedbackLink
   },
   watch: {
     '$route' (to) {
