@@ -7,7 +7,7 @@
           <p class="measure-title"><KeyMeasureTitle :measure="measure"/></p>
           <ul class="statuses">
             <li v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
-              <p class="sub-measure-title" :title="getSubMeasureTitle(subMeasure)">
+              <p class="sub-measure-title" :title="getSubMeasureStatusTitle(subMeasure)">
                 <i
                   class="fas fa-fw"
                   :class="iconClass(subMeasure.status)"
@@ -114,7 +114,7 @@
       isIncomplete(subMeasureId) {
         return findSubMeasure(subMeasureId).status !== "done";
       },
-      getSubMeasureTitle(subMeasure) {
+      getSubMeasureStatusTitle(subMeasure) {
         if(this.haveDiagnosticResults) {
           return STATUSES[subMeasure.status] || 'Statut inconnu';
         }
