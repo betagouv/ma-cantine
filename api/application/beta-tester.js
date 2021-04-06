@@ -10,8 +10,7 @@ exports.register = async function(server) {
 }
 
 async function createBetaTester(request, h) {
-  const payload = JSON.parse(request.payload);
-
+  const payload = request.payload;
   const form = payload.form;
 
   let measuresHtml = '';

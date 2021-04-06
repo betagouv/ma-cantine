@@ -87,6 +87,9 @@
       async submit() {
         const response = await fetch(`${this.$api_url}/subscribe-beta-tester`, {
           method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({
             keyMeasures: this.keyMeasures,
             form: this.form
