@@ -4,7 +4,8 @@
   "description": "Ma cantine API",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node start.js",
+    "test": "jasmine"
   },
   "engines": {
     "node": "15.5.0",
@@ -15,5 +16,8 @@
     "dotenv": "^8.2.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "jasmine": "^3.7.0"
   }
 }
