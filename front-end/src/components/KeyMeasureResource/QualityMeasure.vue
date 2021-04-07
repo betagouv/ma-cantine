@@ -20,7 +20,7 @@
       <div class="resource-icon"><i class="fas fa-archive"></i></div>
       <p class="resource-prompt">
         Télécharger le guide pratique de rédaction des marchés publics pour des appros
-        durables à destination des acteurs la restauration collective en gestion directe.
+        durables à destination des acteurs de la restauration collective en gestion directe.
       </p>
       <div class="resource-icon"><i class="fas fa-file-download"></i></div>
     </a>
