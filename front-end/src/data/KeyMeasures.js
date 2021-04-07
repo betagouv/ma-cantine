@@ -74,7 +74,7 @@ function saveDiagnostic(id, diagnostic) {
 }
 
 function haveDiagnosticResults() {
-  return !!localStorage.getItem('statuses');
+  return !!localStorage.getItem('statuses') || !!localStorage.getItem('diagnostics');
 }
 
 export {
