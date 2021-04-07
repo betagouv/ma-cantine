@@ -104,8 +104,8 @@
       background-color: $white;
       font-size: 1em;
       margin: auto 0;
-      color: $orange;
-      border: 1px solid $orange;
+      color: $dark-orange;
+      border: 1px solid $dark-orange;
       border-radius: 20px;
       width: 130px;
       text-align: center;
