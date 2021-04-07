@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const fetch = require('node-fetch');
+const FetchWrapper = require('../fetch');
 
 exports.register = async function(server) {
   server.route([{
@@ -42,7 +42,7 @@ async function createBetaTester(request, h) {
     })
   };
 
-  const response = await fetch("https://api.sendinblue.com/v3/smtp/email", requestOptions);
+  const response = await FetchWrapper.fetch("https://api.sendinblue.com/v3/smtp/email", requestOptions);
   const json = await response.json();
 
   return h.response({ message: json.message }).code(response.status);
