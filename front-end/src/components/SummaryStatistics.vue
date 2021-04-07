@@ -2,21 +2,21 @@
   <ul class="statistics">
     <li class="statistic">
       <div class="vertically-align-header">
-        <h3>Produits bio :</h3>
+        <h4>Produits bio :</h4>
       </div>
       <p class="number bio">{{ statistics.bio }} %</p>
     </li>
 
     <li class="statistic">
       <div class="vertically-align-header">
-        <h3>Produits de qualité et durables :</h3>
+        <h4>Produits de qualité et durables :</h4>
       </div>
       <p class="number sustainable">{{ statistics.sustainable }} %</p>
     </li>
 
     <li class="statistic">
       <div class="vertically-align-header">
-        <h3>Produits issus du commerce équitable :</h3>
+        <h4>Produits issus du commerce équitable :</h4>
       </div>
       <p class="number">{{ statistics.fairTrade }} %</p>
     </li>
@@ -49,7 +49,7 @@
     justify-content: center;
   }
 
-  h3 {
+  h4 {
     font-size: 1em;
     font-weight: normal;
   }

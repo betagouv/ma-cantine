@@ -43,11 +43,6 @@ if (diagnosticsString) {
         valueTotal: null,
       }
     },
-    "information-des-usagers": {
-      communicationSupport: [],
-      communicationSupportLink: null,
-      communicateOnFoodPlan: false,
-    },
     "gaspillage-alimentaire": {
       hasMadeWasteDiagnostic: false,
       hasMadeWastePlan: false,
@@ -64,7 +59,12 @@ if (diagnosticsString) {
       serviceFoodContainersSubstituted: false,
       waterBottlesSubstituted: false,
       disposableUtensilsSubstituted: false,
-    }
+    },
+    "information-des-usagers": {
+      communicationSupport: [],
+      communicationSupportLink: null,
+      communicateOnFoodPlan: false,
+    },
   };
 }
 
