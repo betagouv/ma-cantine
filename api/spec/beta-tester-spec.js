@@ -1,4 +1,5 @@
 const { init } = require('../server');
+const FetchWrapper = require('../fetch');
 
 describe("Beta-tester creation endpoint /subscribe-beta-tester", () => {
   let server;
@@ -6,8 +7,10 @@ describe("Beta-tester creation endpoint /subscribe-beta-tester", () => {
   beforeEach(async () => {
     server = await init();
 
-    // TODO: spyOn 'fetch', but Jasmine cannot spy on a function that isn't a property of an object
-    // maybe try suggestions here: https://github.com/jasmine/jasmine/issues/1414
+    spyOn(FetchWrapper, 'fetch').and.returnValue({
+      status: 201,
+      json: async () => { return {}; }
+    });
   });
 
   afterEach(async () => {
@@ -42,7 +45,7 @@ describe("Beta-tester creation endpoint /subscribe-beta-tester", () => {
       }
     });
     expect(res.statusCode).toBe(201);
-    // expect fetch to have been called once
+    expect(FetchWrapper.fetch).toHaveBeenCalledTimes(1);
   });
 
   // fails as expected with missing environment variables (multiple tests?) - but this is testing sendinblue?
