@@ -6,9 +6,9 @@
         <p>Inscrivez-vous à la newsletter et recevez environ 1 email par mois.</p>
       </div>
       <form class="newsletter-form" @submit.prevent="submit">
-        <label class="form-label" for="email">Votre adresse email</label>
+        <label class="form-label" for="newsletter-email">Votre adresse email</label>
         <div class="form-content">
-          <input class="form-input" id="email" v-model="email" name="email" type="email" required>
+          <input class="form-input" id="newsletter-email" v-model="email" name="email" type="email" required>
           <button class="form-button" type="submit">Valider</button>
         </div>
       </form>
