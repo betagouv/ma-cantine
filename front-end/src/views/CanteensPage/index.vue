@@ -35,7 +35,7 @@
         </div>
       </div>
       <div class="key-points">
-        <h3>Nos mesures mises en place :</h3>
+        <h3>Nos mesures mises en place&nbsp;:</h3>
         <ul>
           <li v-for="keyPoint in canteen.keyPoints" :key="keyPoint">
             {{ keyPoint }}
@@ -104,10 +104,13 @@
 
     .location {
       position: relative;
+      width: 25vw;
+      max-width: 22%;
+      min-height: 15em;
 
       img {
-        height: 17vw;
-        max-height: 17em;
+        height: auto;
+        width: 100%;
       }
 
       .location-name {
@@ -220,6 +223,15 @@
     .meal-count {
       text-align: center;
       margin-bottom: 0;
+    }
+
+    .key-points {
+      padding: 0.5em;
+      width: 90%;
+
+      li {
+        padding-bottom: 1em;
+      }
     }
   }
 
