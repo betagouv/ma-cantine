@@ -17,11 +17,7 @@
       </div>
       <div class="summary">
         <h2>{{ canteen.title }}</h2>
-        <ul class="statistics">
-          <SummaryStatistic title="Produits bio" :value="canteen.statistics.bio" class="bio"/>
-          <SummaryStatistic title="Produits durables" :value="canteen.statistics.sustainable" class="sustainable"/>
-          <SummaryStatistic title="Produits issus du commerce équitable" :value="canteen.statistics.fairTrade"/>
-        </ul>
+        <SummaryStatistics :statistics="canteen.statistics"/>
         <div class="context">
           <p class="meal-count">
             <i class="fas fa-utensils"></i>&nbsp;
@@ -49,11 +45,11 @@
 <script>
   import { keyMeasures } from "@/data/KeyMeasures.js";
   import canteens from "@/data/canteens.json";
-  import SummaryStatistic from './SummaryStatistic';
+  import SummaryStatistics from '@/components/SummaryStatistics';
 
   export default {
     components: {
-      SummaryStatistic
+      SummaryStatistics
     },
     data() {
       return {
@@ -155,11 +151,6 @@
     margin: 2em;
     border-right: 5px solid $dark-white;
     padding-right: 2em;
-  }
-
-  .statistics {
-    display: flex;
-    justify-content: space-between;
   }
 
   .key-points {
