@@ -1,16 +1,24 @@
 const { init } = require('../server');
-const FetchWrapper = require('../fetch');
+jest.mock('node-fetch');
+const fetch = require('node-fetch');
+const { Response, Headers } = jest.requireActual('node-fetch');
 
 describe("Beta-tester creation endpoint /subscribe-beta-tester", () => {
   let server;
+  let responseBodyJSON = { message: "test" };
 
   beforeEach(async () => {
     server = await init();
 
-    spyOn(FetchWrapper, 'fetch').and.returnValue({
+    responseInit = {
       status: 201,
-      json: async () => { return {}; }
-    });
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    };
+    fetch.mockReturnValue(
+      Promise.resolve(new Response(JSON.stringify(responseBodyJSON), responseInit))
+    );
   });
 
   afterEach(async () => {
@@ -45,7 +53,8 @@ describe("Beta-tester creation endpoint /subscribe-beta-tester", () => {
       }
     });
     expect(res.statusCode).toBe(201);
-    expect(FetchWrapper.fetch).toHaveBeenCalledTimes(1);
+    expect(res.result).toStrictEqual(responseBodyJSON);
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 
   // fails as expected with missing environment variables (multiple tests?) - but this is testing sendinblue?
