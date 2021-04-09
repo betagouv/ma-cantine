@@ -57,7 +57,6 @@ describe("Beta-tester creation endpoint /subscribe-beta-tester", () => {
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 
-  // fails as expected with missing environment variables (multiple tests?) - but this is testing sendinblue?
-  // fails without form or keyMeasures in payload
-  // server registration
+  // TODO: fails as expected with missing environment variables
+  // TODO: fails without form or keyMeasures in payload
 });
