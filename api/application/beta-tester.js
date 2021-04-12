@@ -47,3 +47,5 @@ async function createBetaTester(request, h) {
 
   return h.response({ message: json.message }).code(response.status);
 }
+
+exports.createBetaTester = createBetaTester;
