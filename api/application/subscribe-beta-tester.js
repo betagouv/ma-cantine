@@ -5,11 +5,11 @@ exports.register = async function(server) {
   server.route([{
     method: 'POST',
     path: '/subscribe-beta-tester',
-    handler: createBetaTester
+    handler: subscribeBetaTester
   }]);
 }
 
-async function createBetaTester(request, h) {
+async function subscribeBetaTester(request, h) {
   const payload = request.payload;
   const form = payload.form;
 
@@ -48,4 +48,4 @@ async function createBetaTester(request, h) {
   return h.response({ message: json.message }).code(response.status);
 }
 
-exports.createBetaTester = createBetaTester;
+exports.subscribeBetaTester = subscribeBetaTester;
