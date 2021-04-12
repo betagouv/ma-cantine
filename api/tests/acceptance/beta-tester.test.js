@@ -1,4 +1,4 @@
-const { init } = require('../server');
+const { init } = require('../../server');
 jest.mock('node-fetch');
 const fetch = require('node-fetch');
 const { Response, Headers } = jest.requireActual('node-fetch');
@@ -37,13 +37,6 @@ describe("Beta-tester creation endpoint /subscribe-beta-tester", () => {
               shortTitle: "Test sub measure 1",
               status: "done"
             }]
-          },
-          {
-            shortTitle: "Test measure 2",
-            subMeasures: [{
-              shortTitle: "Test sub measure 2",
-              status: "done"
-            }]
           }
         ],
         form: {
@@ -55,8 +48,8 @@ describe("Beta-tester creation endpoint /subscribe-beta-tester", () => {
     expect(res.statusCode).toBe(201);
     expect(res.result).toStrictEqual(responseBodyJSON);
     expect(fetch).toHaveBeenCalledTimes(1);
+    expect(process.env.SENDINBLUE_API_KEY).toBeDefined();
+    expect(process.env.SENDINBLUE_SENDER_EMAIL).toBeDefined();
+    expect(process.env.SENDINBLUE_CONTACT_EMAIL).toBeDefined();
   });
-
-  // TODO: fails as expected with missing environment variables
-  // TODO: fails without form or keyMeasures in payload
 });
