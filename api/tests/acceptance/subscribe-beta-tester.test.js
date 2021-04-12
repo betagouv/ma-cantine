@@ -44,8 +44,5 @@ describe("Beta-tester subscription endpoint /subscribe-beta-tester", () => {
     expect(res.statusCode).toBe(201);
     expect(res.result).toStrictEqual(responseBodyJSON);
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(process.env.SENDINBLUE_API_KEY).toBeDefined();
-    expect(process.env.SENDINBLUE_SENDER_EMAIL).toBeDefined();
-    expect(process.env.SENDINBLUE_CONTACT_EMAIL).toBeDefined();
   });
 });
