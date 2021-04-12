@@ -1,7 +1,7 @@
 'use strict';
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
-const betaTester = require('./application/beta-tester.js');
+const subscribeBetaTester = require('./application/subscribe-beta-tester.js');
 
 const server = Hapi.server({
   host: process.env.HOST || 'localhost',
@@ -13,7 +13,7 @@ const server = Hapi.server({
   }
 });
 
-betaTester.register(server);
+subscribeBetaTester.register(server);
 
 exports.init = async () => {
   await server.initialize();

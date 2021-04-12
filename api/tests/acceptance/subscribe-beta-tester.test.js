@@ -1,24 +1,20 @@
 const { init } = require('../../server');
 jest.mock('node-fetch');
 const fetch = require('node-fetch');
-const { Response, Headers } = jest.requireActual('node-fetch');
 
-describe("Beta-tester creation endpoint /subscribe-beta-tester", () => {
+describe("Beta-tester subscription endpoint /subscribe-beta-tester", () => {
   let server;
   let responseBodyJSON = { message: "test" };
 
   beforeEach(async () => {
     server = await init();
 
-    responseInit = {
+    fetch.mockReturnValue({
       status: 201,
-      headers: new Headers({
-        'Content-Type': 'application/json'
-      })
-    };
-    fetch.mockReturnValue(
-      Promise.resolve(new Response(JSON.stringify(responseBodyJSON), responseInit))
-    );
+      json() {
+        return Promise.resolve(responseBodyJSON);
+      }
+    });
   });
 
   afterEach(async () => {

@@ -1,11 +1,9 @@
 jest.mock('node-fetch');
 const fetch = require('node-fetch');
-const { Response, Headers } = jest.requireActual('node-fetch');
-const { when } = require('jest-when');
 
-const { createBetaTester } = require('../../application/beta-tester');
+const { subscribeBetaTester } = require('../../application/subscribe-beta-tester');
 
-describe("Beta-tester creation", () => {
+describe("Beta-tester subscription", () => {
 
   it("successfully makes GET request to third party API", async () => {
     // prepare function arguments
@@ -46,6 +44,13 @@ describe("Beta-tester creation", () => {
 
     // mock fetch call
     const responseBodyJSON = { message: "test" };
+    fetch.mockReturnValue({
+      status: 201,
+      json() {
+        return Promise.resolve(responseBodyJSON);
+      }
+    });
+
     const sendinblueRequest = {
       method: "POST",
       headers: {
@@ -65,37 +70,12 @@ describe("Beta-tester creation", () => {
                      "</body> </html>"
       })
     }
-    when(fetch).
-      calledWith("https://api.sendinblue.com/v3/smtp/email", sendinblueRequest).
-      mockReturnValue(
-        Promise.resolve(new Response(JSON.stringify(responseBodyJSON), {
-            status: 201,
-            headers: new Headers({
-              'Content-Type': 'application/json'
-            })
-          }
-        ))
-      );
 
     // run tests
-    const res = await createBetaTester(request, hFake);
+    const res = await subscribeBetaTester(request, hFake);
 
     expect(res.statusCode).toBe(201);
     expect(res.result).toStrictEqual(responseBodyJSON);
-    expect(fetch).toHaveBeenCalledTimes(1);
-  });
-
-  it("throws error when missing data in payload", async () => {
-    await expect(createBetaTester({ payload: {} }, {})).rejects.toThrow();
-    await expect(createBetaTester({ payload: { keyMeasures: [] } }, {})).rejects.toThrow();
-    const validMeasuresInvalidForm = {
-      payload: {
-        keyMeasures: [
-          { subMeasures: [] }
-        ]
-      }
-    };
-    await expect(createBetaTester(validMeasuresInvalidForm, {})).rejects.toThrow();
-    await expect(createBetaTester({ payload: { form: {} } }, {})).rejects.toThrow();
+    expect(fetch).toHaveBeenCalledWith("https://api.sendinblue.com/v3/smtp/email", sendinblueRequest);
   });
 });
