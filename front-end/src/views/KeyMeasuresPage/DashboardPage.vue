@@ -21,117 +21,62 @@
         <div class="measures-left">
           <div class="measure measure-top-left">
             <h2>{{ wasteMeasure.shortTitle }}</h2>
-            <div class="waste-actions">
-              <div class="waste-action">
-                <i
-                  class="fas"
-                  :class="diagnostics['gaspillage-alimentaire'].hasMadeWastePlan ? 'fa-check' : 'fa-times'"
-                  :title="diagnostics['gaspillage-alimentaire'].hasMadeWastePlan ? 'fait' : 'pas fait'"
-                >
-                </i>
-                <span>Mise en place d'un plan d'actions contre le gaspillage</span>
-              </div>
-              <div class="waste-action">
-                <i
-                  class="fas"
-                  :class="diagnostics['gaspillage-alimentaire'].hasCovenant ? 'fa-check' : 'fa-times'"
-                  :title="diagnostics['gaspillage-alimentaire'].hasCovenant ? 'fait' : 'pas fait'"
-                >
-                </i>
-                <span>Dons aux associations</span>
-              </div>
+            <div class="actions">
+              <KeyMeasureAction
+                :isDone="diagnostics['gaspillage-alimentaire'].hasMadeWastePlan"
+                label="Mise en place d'un plan d'actions contre le gaspillage"
+              />
+              <KeyMeasureAction
+                :isDone="diagnostics['gaspillage-alimentaire'].hasCovenant"
+                label="Dons aux associations"
+              />
             </div>
             <KeyMeasureResource baseComponent='WasteMeasure'/>
           </div>
           <div class="measure measure-bottom-left">
             <h2>{{ noPlasticMeasure.shortTitle }}</h2>
-            <div class="plastics-substituted">
-              <div class="plastic-substituted">
-                <i
-                  class="fas"
-                  :class="diagnostics['interdiction-du-plastique'].cookingFoodContainersSubstituted ? 'fa-check' : 'fa-times'"
-                  :title="diagnostics['interdiction-du-plastique'].cookingFoodContainersSubstituted ? 'fait' : 'pas fait'"
-                >
-                </i>
-                <span>Contenants de cuisson / de réchauffe en plastique</span>
-              </div>
-              <div class="plastic-substituted">
-                <i
-                  class="fas"
-                  :class="diagnostics['interdiction-du-plastique'].serviceFoodContainersSubstituted ? 'fa-check' : 'fa-times'"
-                  :title="diagnostics['interdiction-du-plastique'].serviceFoodContainersSubstituted ? 'fait' : 'pas fait'"
-                >
-                </i>
-                <span>Contenants de service en plastique</span>
-              </div>
-              <div class="plastic-substituted">
-                <i
-                  class="fas"
-                  :class="diagnostics['interdiction-du-plastique'].waterBottlesSubstituted ? 'fa-check' : 'fa-times'"
-                  :title="diagnostics['interdiction-du-plastique'].waterBottlesSubstituted ? 'fait' : 'pas fait'"
-                >
-                </i>
-                <span>Bouteilles d'eau en plastique</span>
-              </div>
-              <div class="plastic-substituted">
-                <i
-                  class="fas"
-                  :class="diagnostics['interdiction-du-plastique'].disposableUtensilsSubstituted ? 'fa-check' : 'fa-times'"
-                  :title="diagnostics['interdiction-du-plastique'].disposableUtensilsSubstituted ? 'fait' : 'pas fait'"
-                >
-                </i>
-                <span>Ustensiles à usage unique en plastique</span>
-              </div>
+            <div class="actions">
+              <KeyMeasureAction
+                :isDone="diagnostics['interdiction-du-plastique'].cookingFoodContainersSubstituted"
+                label="Contenants de cuisson / de réchauffe en plastique"
+              />
+              <KeyMeasureAction
+                :isDone="diagnostics['interdiction-du-plastique'].serviceFoodContainersSubstituted"
+                label="Contenants de service en plastique"
+              />
+              <KeyMeasureAction
+                :isDone="diagnostics['interdiction-du-plastique'].waterBottlesSubstituted"
+                label="Bouteilles d'eau en plastique"
+              />
+              <KeyMeasureAction
+                :isDone="diagnostics['interdiction-du-plastique'].disposableUtensilsSubstituted"
+                label="Ustensiles à usage unique en plastique"
+              />
             </div>
           </div>
         </div>
         <div class="measures-right">
           <div class="measure measure-top-right">
             <h2>{{ diversificationMeasure.shortTitle }}</h2>
-            <div class="diversification-actions">
-              <div class="diversification-action">
-                <i
-                  class="fas"
-                  :class="diagnostics['diversification-des-menus'].hasMadeDiversificationPlan ? 'fa-check' : 'fa-times'"
-                  :title="diagnostics['diversification-des-menus'].hasMadeDiversificationPlan ? 'fait' : 'pas fait'"
-                >
-                </i>
-                <span>Mise en place d'un plan pluriannuel de diversification des protéines</span>
-              </div>
-              <div class="diversification-action">
-                <i
-                  class="fas"
-                  :class="hasVegetarianMenu ? 'fa-check' : 'fa-times'"
-                  :title="hasVegetarianMenu ? 'fait' : 'pas fait'"
-                >
-                </i>
-                <span v-if="!hasVegetarianMenu">Pas de menu végétarien</span>
-                <span v-if="hasVegetarianMenu && vegetarianFrequency === 'once'">Mise en place d'un menu végétarien</span>
-                <span v-if="hasVegetarianMenu && vegetarianFrequency === 'moreThanOnce'">Plusieurs menus végétariens</span>
-              </div>
+            <div class="actions">
+              <KeyMeasureAction
+                :isDone="diagnostics['diversification-des-menus'].hasMadeDiversificationPlan"
+                label="Mise en place d'un plan pluriannuel de diversification des protéines"
+              />
+              <KeyMeasureAction :isDone="hasVegetarianMenu" :label="vegetarianMenuActionLabel"/>
             </div>
           </div>
           <div class="measure measure-bottom-right">
             <h2>{{ informationMeasure.shortTitle }}</h2>
-            <div class="information-actions">
-              <div class="information-action">
-                <i
-                  class="fas"
-                  :class="diagnostics['information-des-usagers'].communicationSupport.length ? 'fa-check' : 'fa-times'"
-                  :title="diagnostics['information-des-usagers'].communicationSupport.length ? 'fait' : 'pas fait'"
-                >
-                </i>
-                <span>Communication à disposition des convives sur la qualité des approvisionnement</span>
-              </div>
-              <div class="information-action">
-                <i
-                  class="fas"
-                  :class="diagnostics['information-des-usagers'].communicateOnFoodPlan ? 'fa-check' : 'fa-times'"
-                  :title="diagnostics['information-des-usagers'].communicateOnFoodPlan ? 'fait' : 'pas fait'"
-                >
-                </i>
-                <span>Communication sur le plan alimentaire</span>
-              </div>
+            <div class="actions">
+              <KeyMeasureAction
+                :isDone="diagnostics['information-des-usagers'].communicationSupport.length > 0"
+                label="Communication à disposition des convives sur la qualité des approvisionnement"
+              />
+              <KeyMeasureAction
+                :isDone="diagnostics['information-des-usagers'].communicateOnFoodPlan"
+                label="Communication sur le plan alimentaire"
+              />
             </div>
             <KeyMeasureResource baseComponent='InformDiners'/>
           </div>
@@ -145,11 +90,13 @@
   import { keyMeasures, diagnostics } from '@/data/KeyMeasures.js';
   import SummaryStatistics from '@/components/SummaryStatistics';
   import KeyMeasureResource from '@/components/KeyMeasureResource';
+  import KeyMeasureAction from '@/components/KeyMeasureAction';
 
   export default {
     components: {
       SummaryStatistics,
       KeyMeasureResource,
+      KeyMeasureAction,
     },
     data() {
       const quality2019 = diagnostics['qualite-des-produits']['2019'];
@@ -159,6 +106,7 @@
       const total2020 = quality2020.valueTotal;
 
       const vegetarianFrequency = diagnostics['diversification-des-menus'].vegetarianFrequency;
+      const hasVegetarianMenu = vegetarianFrequency && vegetarianFrequency !== "less-than-once";
 
       return {
         keyMeasures,
@@ -181,13 +129,24 @@
           }
         },
         vegetarianFrequency,
-        hasVegetarianMenu: vegetarianFrequency && vegetarianFrequency !== "less-than-once",
+        hasVegetarianMenu,
+        vegetarianMenuActionLabel: getVegetarianMenuActionLabel(hasVegetarianMenu, vegetarianFrequency),
       };
     },
   };
 
   function getPercentage(partialValue, totalValue) {
     return !!partialValue && !!totalValue ? Math.round((100 * partialValue) / totalValue) : '--';
+  }
+
+  function getVegetarianMenuActionLabel(hasVegetarianMenu, vegetarianFrequency) {
+    if (!hasVegetarianMenu) {
+      return "Pas de menu végétarien";
+    } else if (vegetarianFrequency === 'once') {
+      return "Mise en place d'un menu végétarien";
+    } else if (vegetarianFrequency === 'moreThanOnce') {
+      return "Plusieurs menus végétariens";
+    }
   }
 </script>
 
@@ -211,6 +170,13 @@
   .measure {
     padding: 30px;
     border-radius: 20px;
+    margin-top: 20px;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
   }
 
   .measure-top {
@@ -229,165 +195,36 @@
 
   .measures-bottom {
     display: flex;
-    justify-content: space-between;
-
-    .measure {
-      margin-top: 20px;
-    }
   }
 
   .measures-left {
     margin-right: 20px;
-    width: 100%;
     display: flex;
     flex-direction: column;
+    flex: 1;
   }
 
   .measures-right {
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
 
   .measure-top-left {
     background-color: $light-yellow;
-
-    .waste-actions {
-      display: flex;
-      flex-direction: column;
-      margin-top: 20px;
-    }
-
-    .waste-action {
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      text-align: left;
-    }
-
-    span {
-      padding-left: 10px;
-      max-width: 90%;
-    }
-
-    .fa-check, .fa-times {
-      height: 30px;
-      width: 30px;
-    }
-
-    .fa-check {
-      color: $green;
-    }
-
-    .fa-times {
-      color: $red;
-    }
   }
 
   .measure-bottom-left {
     background-color: $light-blue;
-    flex: 1;
-
-    .plastics-substituted {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-
-    .plastic-substituted {
-      max-width: 46%;
-      padding: 2%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    span {
-      padding-left: 10px;
-      max-width: 80%;
-    }
-
-    .fa-check, .fa-times {
-      height: 30px;
-      width: 30px;
-    }
-
-    .fa-check {
-      color: $green;
-    }
-
-    .fa-times {
-      color: $red;
-    }
   }
 
   .measure-top-right {
     background-color: $light-green;
-
-    .diversification-actions {
-      display: flex;
-      flex-direction: column;
-      margin-top: 20px;
-    }
-
-    .diversification-action {
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      text-align: left;
-    }
-
-    span {
-      padding-left: 10px;
-      max-width: 90%;
-    }
-
-    .fa-check, .fa-times {
-      height: 30px;
-      width: 30px;
-    }
-
-    .fa-check {
-      color: $green;
-    }
-
-    .fa-times {
-      color: $red;
-    }
   }
 
   .measure-bottom-right {
     background-color: $light-pink;
-
-    .information-actions {
-      display: flex;
-      flex-direction: column;
-      margin-top: 20px;
-    }
-
-    .information-action {
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      text-align: left;
-    }
-
-    span {
-      padding-left: 10px;
-      max-width: 90%;
-    }
-
-    .fa-check, .fa-times {
-      height: 30px;
-      width: 30px;
-    }
-
-    .fa-check {
-      color: $green;
-    }
-
-    .fa-times {
-      color: $red;
-    }
+    flex: 1;
   }
 
   @media (max-width: 750px) {
@@ -397,7 +234,7 @@
 
         .separator {
           border-left: none;
-          border-bottom: 3px solid #CA3A04;
+          border-bottom: 3px solid $dark-orange;
           margin: 20px;
         }
       }
@@ -405,33 +242,6 @@
 
     .measures-bottom {
       display: block;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .measure-top {
-      .statistics-by-year {
-        display: block;
-
-        .separator {
-          border-left: none;
-          border-bottom: 3px solid #CA3A04;
-          margin: 20px;
-        }
-      }
-    }
-
-    .measures-bottom {
-      display: block;
-
-      .plastics-substituted {
-        flex-direction: column;
-      }
-
-      .plastic-substituted {
-        max-width: none;
-        justify-content: flex-start;
-      }
     }
   }
 </style>
