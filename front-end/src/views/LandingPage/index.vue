@@ -1,15 +1,17 @@
 <template>
-  <PresentationBlock/>
+  <div>
+    <PresentationBlock/>
 
-  <ActionsBlock/>
+    <ActionsBlock/>
 
-  <KeyGoalsBlock/>
+    <KeyGoalsBlock/>
 
-  <GoalBlock/>
+    <GoalBlock/>
 
-  <div class="divider"></div>
+    <div class="divider"></div>
 
-  <DiscoverMeasuresBlock/>
+    <DiscoverMeasuresBlock/>
+  </div>
 </template>
 
 <script>

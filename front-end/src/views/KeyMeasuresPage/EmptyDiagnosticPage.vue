@@ -1,29 +1,31 @@
 <template>
-  <div id="key-measures">
-    <h1>Les 5 mesures phares de la loi EGAlim</h1>
-    <ul id="measure-cards">
-      <li v-for="measure in keyMeasures" :key="measure.id">
-        <router-link :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }" class="measure-card">
-          <p class="measure-title"><KeyMeasureTitle :measure="measure"/></p>
-          <ul class="statuses">
-            <li v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
-              <p class="sub-measure-title">
-                {{ subMeasure.shortTitle }}
-              </p>
-            </li>
-          </ul>
-        </router-link>
-      </li>
-    </ul>
-  </div>
-  <router-link :to="{ name: 'DiagnosticPage' }">
-    <div class="presentation-diagnostic">Savoir où j'en suis des mesures EGAlim</div>
-  </router-link>
-  <div class="resources">
-    <h2>Quelques ressources pour répondre aux mesures</h2>
-    <KeyMeasureResource baseComponent='QualityMeasure'/>
-    <KeyMeasureResource baseComponent='InformDiners'/>
-    <KeyMeasureResource baseComponent='WasteMeasure'/>
+  <div>
+    <div id="key-measures">
+      <h1>Les 5 mesures phares de la loi EGAlim</h1>
+      <ul id="measure-cards">
+        <li v-for="measure in keyMeasures" :key="measure.id">
+          <router-link :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }" class="measure-card">
+            <p class="measure-title"><KeyMeasureTitle :measure="measure"/></p>
+            <ul class="statuses">
+              <li v-for="subMeasure in measure.subMeasures" :key="subMeasure.id">
+                <p class="sub-measure-title">
+                  {{ subMeasure.shortTitle }}
+                </p>
+              </li>
+            </ul>
+          </router-link>
+        </li>
+      </ul>
+    </div>
+    <router-link :to="{ name: 'DiagnosticPage' }">
+      <div class="presentation-diagnostic">Savoir où j'en suis des mesures EGAlim</div>
+    </router-link>
+    <div class="resources">
+      <h2>Quelques ressources pour répondre aux mesures</h2>
+      <KeyMeasureResource baseComponent='QualityMeasure'/>
+      <KeyMeasureResource baseComponent='InformDiners'/>
+      <KeyMeasureResource baseComponent='WasteMeasure'/>
+    </div>
   </div>
 </template>
 

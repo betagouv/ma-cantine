@@ -1,15 +1,17 @@
 <template>
-  <nav id="measures-nav">
-    <router-link :to="{ name: 'KeyMeasuresHome' }" class="nav-item">Toutes les mesures</router-link>
-    <template v-for="measure in keyMeasures" :key="measure.id">
-      <router-link :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }" class="nav-item">
-        {{ measure.shortTitle }}
-      </router-link>
-    </template>
-  </nav>
+  <div>
+    <nav id="measures-nav">
+      <router-link :to="{ name: 'KeyMeasuresHome' }" class="nav-item">Toutes les mesures</router-link>
+      <template v-for="measure in keyMeasures" :key="measure.id">
+        <router-link :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }" class="nav-item">
+          {{ measure.shortTitle }}
+        </router-link>
+      </template>
+    </nav>
 
-  <div id="router-view">
-    <router-view :key="$route.fullPath"/>
+    <div id="router-view">
+      <router-view :key="$route.fullPath"/>
+    </div>
   </div>
 </template>
 
