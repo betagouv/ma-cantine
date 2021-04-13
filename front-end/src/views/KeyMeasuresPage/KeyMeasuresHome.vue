@@ -1,7 +1,9 @@
 <template>
-  <DashboardPage v-if="haveDiagnosticResults"/>
-  <EmptyDiagnosticPage v-else/>
-  <BetaTesterForm />
+  <div>
+    <DashboardPage v-if="haveDiagnosticResults"/>
+    <EmptyDiagnosticPage v-else/>
+    <BetaTesterForm />
+  </div>
 </template>
 
 <script>
