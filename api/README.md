@@ -45,3 +45,5 @@ DB_PASSWORD=password
 DB_HOST=localhost
 DB_PORT=XXXX
 ```
+
+Pour arretez postgres: `brew services stop postgres`.
