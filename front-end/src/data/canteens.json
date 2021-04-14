@@ -1,6 +1,7 @@
 [
   {
-    "title": "Arles Eparca",
+    "id": "cantine-scolaire-arles",
+    "title": "Cantine scolaire de Arles",
     "statistics": {
       "bio": 17,
       "sustainable": 10,
@@ -13,9 +14,38 @@
     ],
     "mealCount": 3000,
     "region": "Bouches-du-Rhône",
-    "timePeriod": "2019"
+    "timePeriod": "2019",
+    "diagnostics": {
+      "qualite-des-produits": {
+        "2019": { "valueBio": "130000", "valueFairTrade": "0", "valueSustainable": "75000", "valueTotal": "755000" },
+        "2020":{ "valueBio": null, "valueFairTrade": null, "valueSustainable": null, "valueTotal": null }
+      },
+      "information-des-usagers": {
+        "communicationSupport": [],
+        "communicationSupportLink": null,
+        "communicateOnFoodPlan": false
+      },
+      "gaspillage-alimentaire": {
+        "hasMadeWasteDiagnostic": true,
+        "hasMadeWastePlan": true,
+        "wasteActions": [],
+        "hasCovenant": true
+      },
+      "diversification-des-menus": {
+        "hasMadeDiversificationPlan": false,
+        "vegetarianFrequency": "moreThanOnce",
+        "vegetarianMenuType": "allVegetarian"
+      },
+      "interdiction-du-plastique": {
+        "cookingFoodContainersSubstituted": true,
+        "serviceFoodContainersSubstituted": true,
+        "waterBottlesSubstituted": true,
+        "disposableUtensilsSubstituted": true
+      }
+    }
   },
   {
+    "id": "briancon",
     "title": "Briançon",
     "statistics": {
       "bio": 67,
@@ -29,6 +59,34 @@
     ],
     "mealCount": 650,
     "region": "Hautes-Alpes",
-    "timePeriod": "2020"
+    "timePeriod": "2020",
+    "diagnostics": {
+      "qualite-des-produits": {
+        "2019": { "valueBio": "119640", "valueFairTrade": "1000", "valueSustainable": "0", "valueTotal": "193092" },
+        "2020":{ "valueBio": "102599", "valueFairTrade": "1000", "valueSustainable": "0", "valueTotal": "154000" }
+      },
+      "information-des-usagers": {
+        "communicationSupport": ["email", "display", "website", "other"],
+        "communicationSupportLink": null,
+        "communicateOnFoodPlan": false
+      },
+      "gaspillage-alimentaire": {
+        "hasMadeWasteDiagnostic": true,
+        "hasMadeWastePlan": true,
+        "wasteActions": ["preRegistration", "raiseAwareness", "training", "reorganization", "portionSize", "reuse"],
+        "hasCovenant": true
+      },
+      "diversification-des-menus": {
+        "hasMadeDiversificationPlan": false,
+        "vegetarianFrequency": "moreThanOnce",
+        "vegetarianMenuType": "allVegetarian"
+      },
+      "interdiction-du-plastique": {
+        "cookingFoodContainersSubstituted": true,
+        "serviceFoodContainersSubstituted": true,
+        "waterBottlesSubstituted": true,
+        "disposableUtensilsSubstituted": true
+      }
+    }
   }
 ]

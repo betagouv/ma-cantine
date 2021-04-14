@@ -8,9 +8,7 @@
       <img src="@/assets/desktop.svg" alt="">
     </div>
 
-    <div id="router-view">
-      <router-view :key="$route.fullPath"/>
-    </div>
+    <router-view :key="$route.fullPath"/>
   </div>
 </template>
 
