@@ -13,7 +13,7 @@
         </div>
         <div class="summary">
           <h2>{{ canteen.title }}</h2>
-          <SummaryStatistics :statistics="canteen.statistics"/>
+          <SummaryStatistics :qualityDiagnostic="canteen.diagnostics['qualite-des-produits'][canteen.timePeriod]"/>
           <div class="context">
             <p class="meal-count">
               <i class="fas fa-utensils"></i>&nbsp;

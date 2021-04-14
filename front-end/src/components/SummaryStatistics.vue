@@ -26,8 +26,21 @@
 <script>
   export default {
     props: {
-      statistics: Object,
+      qualityDiagnostic: Object,
+    },
+    data() {
+      return {
+        statistics: {
+          bio: getPercentage(this.qualityDiagnostic.valueBio, this.qualityDiagnostic.valueTotal),
+          sustainable: getPercentage(this.qualityDiagnostic.valueSustainable, this.qualityDiagnostic.valueTotal),
+          fairTrade: getPercentage(this.qualityDiagnostic.valueFairTrade, this.qualityDiagnostic.valueTotal),
+        },
+      }
     }
+  }
+
+  function getPercentage(partialValue, totalValue) {
+    return !!partialValue && !!totalValue ? Math.round((100 * partialValue) / totalValue) : '--';
   }
 </script>
 
