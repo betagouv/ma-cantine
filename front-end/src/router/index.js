@@ -7,6 +7,7 @@ import KeyMeasurePage from '@/views/KeyMeasuresPage/KeyMeasurePage';
 import GeneratePosterPage from '@/views/GeneratePosterPage';
 import CanteensPage from '@/views/CanteensPage';
 import CanteensHome from '@/views/CanteensPage/CanteensHome';
+import CanteenPage from '@/views/CanteensPage/CanteenPage';
 import LegalNotices from '@/views/LegalNotices';
 
 const routes = [
@@ -59,6 +60,12 @@ const routes = [
         name: 'CanteensHome',
         component: CanteensHome,
       },
+      {
+        path: ':id',
+        name: 'CanteenPage',
+        component: CanteenPage,
+        props: true,
+      }
     ]
   },
   {
