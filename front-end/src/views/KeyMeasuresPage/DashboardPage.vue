@@ -3,7 +3,7 @@
     <h1>Mon tableau de bord</h1>
     <div id="key-measures">
       <div class="measure measure-top">
-        <h2>{{ qualityMeasure.shortTitle }}</h2>
+        <h2>Données d'approvisionnements en produits durables et de qualité</h2>
         <div class="statistics-by-year">
           <div>
             <h3>Sur l'année 2019 :</h3>
@@ -20,7 +20,7 @@
       <div class="measures-bottom">
         <div class="measures-left">
           <div class="measure measure-top-left">
-            <h2>{{ wasteMeasure.shortTitle }}</h2>
+            <h2>Initiatives contre le gaspillage alimentaire</h2>
             <div class="actions">
               <KeyMeasureAction
                 :isDone="diagnostics['gaspillage-alimentaire'].hasMadeWastePlan"
@@ -35,6 +35,7 @@
           </div>
           <div class="measure measure-bottom-left">
             <h2>{{ noPlasticMeasure.shortTitle }}</h2>
+            <h3>Dans l'établissement, ont été supprimé l'usage des :</h3>
             <div class="actions">
               <KeyMeasureAction
                 :isDone="diagnostics['interdiction-du-plastique'].cookingFoodContainersSubstituted"
@@ -71,7 +72,7 @@
             <div class="actions">
               <KeyMeasureAction
                 :isDone="diagnostics['information-des-usagers'].communicationSupport.length > 0"
-                label="Communication à disposition des convives sur la qualité des approvisionnement"
+                label="Communication à disposition des convives sur la qualité des approvisionnements"
               />
               <KeyMeasureAction
                 :isDone="diagnostics['information-des-usagers'].communicateOnFoodPlan"
