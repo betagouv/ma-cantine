@@ -1,5 +1,9 @@
 <template>
-  <CanteenDashboard :diagnostics="diagnostics"/>
+  <div>
+    <h1>Mon tableau de bord</h1>
+
+    <CanteenDashboard :diagnostics="diagnostics"/>
+  </div>
 </template>
 
 <script>
@@ -17,3 +21,12 @@
     },
   };
 </script>
+
+<style scoped lang="scss">
+  h1 {
+    font-weight: bold;
+    font-size: 48px;
+    color: $green;
+    margin: 1em 0em;
+  }
+</style>

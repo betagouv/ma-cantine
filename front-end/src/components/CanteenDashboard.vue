@@ -1,87 +1,84 @@
 <template>
-  <div>
-    <h1>Mon tableau de bord</h1>
-    <div id="key-measures">
-      <div class="measure measure-top">
-        <h2>Données d'approvisionnements en produits durables et de qualité</h2>
-        <div class="statistics-by-year">
-          <div>
-            <h3>Sur l'année 2019 :</h3>
-            <SummaryStatistics :statistics="statistics['2019']"/>
-          </div>
-          <div class="separator"></div>
-          <div>
-            <h3>Sur l'année 2020 :</h3>
-            <SummaryStatistics :statistics="statistics['2020']"/>
-          </div>
+  <div id="key-measures">
+    <div class="measure measure-top">
+      <h2>Données d'approvisionnements en produits durables et de qualité</h2>
+      <div class="statistics-by-year">
+        <div>
+          <h3>Sur l'année 2019 :</h3>
+          <SummaryStatistics :statistics="statistics['2019']"/>
         </div>
-        <KeyMeasureResource :baseComponent='qualityMeasure.baseComponent'/>
+        <div class="separator"></div>
+        <div>
+          <h3>Sur l'année 2020 :</h3>
+          <SummaryStatistics :statistics="statistics['2020']"/>
+        </div>
       </div>
-      <div class="measures-bottom">
-        <div class="measures-left">
-          <div class="measure measure-top-left">
-            <h2>Initiatives contre le gaspillage alimentaire</h2>
-            <div class="actions">
-              <KeyMeasureAction
-                :isDone="diagnostics['gaspillage-alimentaire'].hasMadeWastePlan"
-                label="Mise en place d'un plan d'actions contre le gaspillage"
-              />
-              <KeyMeasureAction
-                :isDone="diagnostics['gaspillage-alimentaire'].hasCovenant"
-                label="Dons aux associations"
-              />
-            </div>
-            <KeyMeasureResource :baseComponent='wasteMeasure.baseComponent'/>
+      <KeyMeasureResource :baseComponent='qualityMeasure.baseComponent'/>
+    </div>
+    <div class="measures-bottom">
+      <div class="measures-left">
+        <div class="measure measure-top-left">
+          <h2>Initiatives contre le gaspillage alimentaire</h2>
+          <div class="actions">
+            <KeyMeasureAction
+              :isDone="diagnostics['gaspillage-alimentaire'].hasMadeWastePlan"
+              label="Mise en place d'un plan d'actions contre le gaspillage"
+            />
+            <KeyMeasureAction
+              :isDone="diagnostics['gaspillage-alimentaire'].hasCovenant"
+              label="Dons aux associations"
+            />
           </div>
-          <div class="measure measure-bottom-left">
-            <h2>{{ noPlasticMeasure.shortTitle }}</h2>
-            <h3>Dans l'établissement, ont été supprimé l'usage des :</h3>
-            <div class="actions">
-              <KeyMeasureAction
-                :isDone="diagnostics['interdiction-du-plastique'].cookingFoodContainersSubstituted"
-                label="Contenants de cuisson / de réchauffe en plastique"
-              />
-              <KeyMeasureAction
-                :isDone="diagnostics['interdiction-du-plastique'].serviceFoodContainersSubstituted"
-                label="Contenants de service en plastique"
-              />
-              <KeyMeasureAction
-                :isDone="diagnostics['interdiction-du-plastique'].waterBottlesSubstituted"
-                label="Bouteilles d'eau en plastique"
-              />
-              <KeyMeasureAction
-                :isDone="diagnostics['interdiction-du-plastique'].disposableUtensilsSubstituted"
-                label="Ustensiles à usage unique en plastique"
-              />
-            </div>
+          <KeyMeasureResource :baseComponent='wasteMeasure.baseComponent'/>
+        </div>
+        <div class="measure measure-bottom-left">
+          <h2>{{ noPlasticMeasure.shortTitle }}</h2>
+          <h3>Dans l'établissement, ont été supprimé l'usage des :</h3>
+          <div class="actions">
+            <KeyMeasureAction
+              :isDone="diagnostics['interdiction-du-plastique'].cookingFoodContainersSubstituted"
+              label="Contenants de cuisson / de réchauffe en plastique"
+            />
+            <KeyMeasureAction
+              :isDone="diagnostics['interdiction-du-plastique'].serviceFoodContainersSubstituted"
+              label="Contenants de service en plastique"
+            />
+            <KeyMeasureAction
+              :isDone="diagnostics['interdiction-du-plastique'].waterBottlesSubstituted"
+              label="Bouteilles d'eau en plastique"
+            />
+            <KeyMeasureAction
+              :isDone="diagnostics['interdiction-du-plastique'].disposableUtensilsSubstituted"
+              label="Ustensiles à usage unique en plastique"
+            />
           </div>
         </div>
-        <div class="measures-right">
-          <div class="measure measure-top-right">
-            <h2>{{ diversificationMeasure.shortTitle }}</h2>
-            <div class="actions">
-              <KeyMeasureAction
-                :isDone="diagnostics['diversification-des-menus'].hasMadeDiversificationPlan"
-                label="Mise en place d'un plan pluriannuel de diversification des protéines"
-              />
-              <KeyMeasureAction :isDone="hasVegetarianMenu" :label="vegetarianMenuActionLabel"/>
-            </div>
-            <KeyMeasureResource :baseComponent='diversificationMeasure.baseComponent'/>
+      </div>
+      <div class="measures-right">
+        <div class="measure measure-top-right">
+          <h2>{{ diversificationMeasure.shortTitle }}</h2>
+          <div class="actions">
+            <KeyMeasureAction
+              :isDone="diagnostics['diversification-des-menus'].hasMadeDiversificationPlan"
+              label="Mise en place d'un plan pluriannuel de diversification des protéines"
+            />
+            <KeyMeasureAction :isDone="hasVegetarianMenu" :label="vegetarianMenuActionLabel"/>
           </div>
-          <div class="measure measure-bottom-right">
-            <h2>{{ informationMeasure.shortTitle }}</h2>
-            <div class="actions">
-              <KeyMeasureAction
-                :isDone="diagnostics['information-des-usagers'].communicationSupport.length > 0"
-                label="Communication à disposition des convives sur la qualité des approvisionnements"
-              />
-              <KeyMeasureAction
-                :isDone="diagnostics['information-des-usagers'].communicateOnFoodPlan"
-                label="Communication sur le plan alimentaire"
-              />
-            </div>
-            <KeyMeasureResource baseComponent='InformDiners'/>
+          <KeyMeasureResource :baseComponent='diversificationMeasure.baseComponent'/>
+        </div>
+        <div class="measure measure-bottom-right">
+          <h2>{{ informationMeasure.shortTitle }}</h2>
+          <div class="actions">
+            <KeyMeasureAction
+              :isDone="diagnostics['information-des-usagers'].communicationSupport.length > 0"
+              label="Communication à disposition des convives sur la qualité des approvisionnements"
+            />
+            <KeyMeasureAction
+              :isDone="diagnostics['information-des-usagers'].communicateOnFoodPlan"
+              label="Communication sur le plan alimentaire"
+            />
           </div>
+          <KeyMeasureResource baseComponent='InformDiners'/>
         </div>
       </div>
     </div>
@@ -154,13 +151,6 @@
 </script>
 
 <style scoped lang="scss">
-  h1 {
-    font-weight: bold;
-    font-size: 48px;
-    color: $green;
-    margin: 1em 0em;
-  }
-
   #key-measures {
     text-align: left;
 
