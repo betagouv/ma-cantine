@@ -1,20 +1,5 @@
 import keyMeasures from "@/data/key-measures.json";
 
-function saveStatus(id, status) {
-  const statuses = JSON.parse(localStorage.getItem('statuses') || '{}');
-  statuses[id] = status;
-  localStorage.setItem('statuses', JSON.stringify(statuses));
-}
-
-const statusesString = localStorage.getItem('statuses') || "{}";
-const statuses = JSON.parse(statusesString);
-
-keyMeasures.forEach(measure => {
-  measure.subMeasures.forEach(subMeasure => {
-    subMeasure.status = statuses[subMeasure.id];
-  });
-});
-
 function findSubMeasure(id) {
   for (let measureIdx = 0; measureIdx < keyMeasures.length; measureIdx++) {
     const measure = keyMeasures[measureIdx];
@@ -43,11 +28,6 @@ if (diagnosticsString) {
         valueTotal: null,
       }
     },
-    "information-des-usagers": {
-      communicationSupport: [],
-      communicationSupportLink: null,
-      communicateOnFoodPlan: false,
-    },
     "gaspillage-alimentaire": {
       hasMadeWasteDiagnostic: false,
       hasMadeWastePlan: false,
@@ -64,7 +44,12 @@ if (diagnosticsString) {
       serviceFoodContainersSubstituted: false,
       waterBottlesSubstituted: false,
       disposableUtensilsSubstituted: false,
-    }
+    },
+    "information-des-usagers": {
+      communicationSupport: [],
+      communicationSupportLink: null,
+      communicateOnFoodPlan: false,
+    },
   };
 }
 
@@ -74,12 +59,11 @@ function saveDiagnostic(id, diagnostic) {
 }
 
 function haveDiagnosticResults() {
-  return !!localStorage.getItem('statuses');
+  return !!localStorage.getItem('diagnostics');
 }
 
 export {
   keyMeasures,
-  saveStatus,
   findSubMeasure,
   saveDiagnostic,
   diagnostics,

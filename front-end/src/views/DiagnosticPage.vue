@@ -14,7 +14,6 @@
           <button class="read-more" @click="toggleDescriptionDisplay(subMeasure)">
             {{ subMeasure.readMore ? "Moins" : "En savoir plus" }}
           </button>
-          <KeyMeasureStatusOption :initialMeasure="subMeasure"/>
         </fieldset>
         <KeyMeasureDescription
           v-if="subMeasure.readMore"
@@ -38,14 +37,12 @@
   import { keyMeasures } from "@/data/KeyMeasures.js"
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import KeyMeasureDescription from '@/components/KeyMeasureDescription';
-  import KeyMeasureStatusOption from '@/components/KeyMeasureStatusOption';
   import KeyMeasureDiagnostic from '@/components/KeyMeasureDiagnostic';
 
   export default {
     components: {
       KeyMeasureTitle,
       KeyMeasureDescription,
-      KeyMeasureStatusOption,
       KeyMeasureDiagnostic
     },
     data() {
@@ -146,7 +143,7 @@
     width: 15%;
     padding: 1em 0;
     margin: 0 0.5em;
-    text-align: left;
+    text-align: right;
     font-size: 14px;
     color: $black;
     cursor: pointer;
@@ -191,6 +188,7 @@
       padding: 0;
       height: 3em;
       width: 10em;
+      text-align: left;
     }
 
     .measure-description {

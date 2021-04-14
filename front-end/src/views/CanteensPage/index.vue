@@ -1,59 +1,57 @@
 <template>
-  <div id="welcome-block">
-    <h1>
-      Découvrez les initiatives prises par nos cantines
-      pour une alimentation plus durable
-    </h1>
-    <img src="@/assets/desktop.svg" alt="">
-  </div>
-  <ul id="canteens-block">
-    <li v-for="canteen in canteens" :key="canteen.title" class="canteen-card">
-      <div class="location" :title="canteen.region">
-        <p class="location-name"><i class="far fa-compass"></i> {{ canteen.region }}</p>
-        <img :src="require(`@/assets/map/${canteen.region}.svg`)" alt="">
-        <p class="attribution">
-          Nilstilar, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>, via Wikimedia Commons (modifié)
-        </p>
-      </div>
-      <div class="summary">
-        <h2>{{ canteen.title }}</h2>
-        <ul class="statistics">
-          <SummaryStatistic title="Produits bio" :value="canteen.statistics.bio" class="bio"/>
-          <SummaryStatistic title="Produits durables" :value="canteen.statistics.sustainable" class="sustainable"/>
-          <SummaryStatistic title="Produits issus du commerce équitable" :value="canteen.statistics.fairTrade"/>
-        </ul>
-        <div class="context">
-          <p class="meal-count">
-            <i class="fas fa-utensils"></i>&nbsp;
-            {{ canteen.mealCount }} repas par jour
-          </p>
-          <p class="time-period" title="Données pour l'année">
-            <i class="far fa-calendar-alt"></i>&nbsp;
-            <span class="sr-only">Données pour l'année</span>
-            {{ canteen.timePeriod }}
+  <div>
+    <div id="welcome-block">
+      <h1>
+        Découvrez les initiatives prises par nos cantines
+        pour une alimentation plus durable
+      </h1>
+      <img src="@/assets/desktop.svg" alt="">
+    </div>
+    <ul id="canteens-block">
+      <li v-for="canteen in canteens" :key="canteen.title" class="canteen-card">
+        <div class="location" :title="canteen.region">
+          <p class="location-name"><i class="far fa-compass"></i> {{ canteen.region }}</p>
+          <img :src="require(`@/assets/map/${canteen.region}.svg`)" alt="">
+          <p class="attribution">
+            Nilstilar, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>, via Wikimedia Commons (modifié)
           </p>
         </div>
-      </div>
-      <div class="key-points">
-        <h3>Nos mesures mises en place&nbsp;:</h3>
-        <ul>
-          <li v-for="keyPoint in canteen.keyPoints" :key="keyPoint">
-            {{ keyPoint }}
-          </li>
-        </ul>
-      </div>
-    </li>
-  </ul>
+        <div class="summary">
+          <h2>{{ canteen.title }}</h2>
+          <SummaryStatistics :statistics="canteen.statistics"/>
+          <div class="context">
+            <p class="meal-count">
+              <i class="fas fa-utensils"></i>&nbsp;
+              {{ canteen.mealCount }} repas par jour
+            </p>
+            <p class="time-period" title="Données pour l'année">
+              <i class="far fa-calendar-alt"></i>&nbsp;
+              <span class="sr-only">Données pour l'année</span>
+              {{ canteen.timePeriod }}
+            </p>
+          </div>
+        </div>
+        <div class="key-points">
+          <h3>Nos mesures mises en place&nbsp;:</h3>
+          <ul>
+            <li v-for="keyPoint in canteen.keyPoints" :key="keyPoint">
+              {{ keyPoint }}
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
   import { keyMeasures } from "@/data/KeyMeasures.js";
   import canteens from "@/data/canteens.json";
-  import SummaryStatistic from './SummaryStatistic';
+  import SummaryStatistics from '@/components/SummaryStatistics';
 
   export default {
     components: {
-      SummaryStatistic
+      SummaryStatistics
     },
     data() {
       return {
@@ -155,11 +153,6 @@
     margin: 2em;
     border-right: 5px solid $dark-white;
     padding-right: 2em;
-  }
-
-  .statistics {
-    display: flex;
-    justify-content: space-between;
   }
 
   .key-points {

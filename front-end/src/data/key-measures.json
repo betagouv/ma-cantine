@@ -185,7 +185,7 @@
     {
         "id": "information-des-usagers",
         "title": "Information des usagers et convives",
-        "shortTitle": "Information des usagers",
+        "shortTitle": "Information des convives",
         "faIcon": "fa-bullhorn",
         "baseComponent": "InformationMeasure",
         "subMeasures": [

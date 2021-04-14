@@ -3,6 +3,7 @@
 </template>
 
 <script>
+  import DiversificationMeasure from "./DiversificationMeasure";
   import InformDiners from "./InformDiners";
   import QualityMeasure from "./QualityMeasure";
   import WasteMeasure from "./WasteMeasure";
@@ -12,6 +13,7 @@
       baseComponent: String
     },
     components: {
+      DiversificationMeasure,
       InformDiners,
       QualityMeasure,
       WasteMeasure
