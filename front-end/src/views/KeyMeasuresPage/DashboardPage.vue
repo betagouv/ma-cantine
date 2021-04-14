@@ -66,6 +66,7 @@
               />
               <KeyMeasureAction :isDone="hasVegetarianMenu" :label="vegetarianMenuActionLabel"/>
             </div>
+            <KeyMeasureResource baseComponent='DiversificationMeasure'/>
           </div>
           <div class="measure measure-bottom-right">
             <h2>{{ informationMeasure.shortTitle }}</h2>
@@ -213,14 +214,17 @@
 
   .measure-top-left {
     background-color: $light-yellow;
+    flex: 1;
   }
 
   .measure-bottom-left {
     background-color: $light-blue;
+    flex: 1;
   }
 
   .measure-top-right {
     background-color: $light-green;
+    flex: 1;
   }
 
   .measure-bottom-right {
