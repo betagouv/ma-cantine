@@ -13,7 +13,7 @@
           <SummaryStatistics :qualityDiagnostic="diagnostics['qualite-des-produits']['2020']"/>
         </div>
       </div>
-      <KeyMeasureResource :baseComponent='qualityMeasure.baseComponent'/>
+      <KeyMeasureResource :baseComponent='qualityMeasure.baseComponent' v-if="showResources"/>
     </div>
     <div class="measures-bottom">
       <div class="measures-left">
@@ -29,7 +29,7 @@
               label="Dons aux associations"
             />
           </div>
-          <KeyMeasureResource :baseComponent='wasteMeasure.baseComponent'/>
+          <KeyMeasureResource :baseComponent='wasteMeasure.baseComponent' v-if="showResources"/>
         </div>
         <div class="measure measure-bottom-left">
           <h2>{{ noPlasticMeasure.shortTitle }}</h2>
@@ -64,7 +64,7 @@
             />
             <KeyMeasureAction :isDone="hasVegetarianMenu" :label="vegetarianMenuActionLabel"/>
           </div>
-          <KeyMeasureResource :baseComponent='diversificationMeasure.baseComponent'/>
+          <KeyMeasureResource :baseComponent='diversificationMeasure.baseComponent' v-if="showResources"/>
         </div>
         <div class="measure measure-bottom-right">
           <h2>{{ informationMeasure.shortTitle }}</h2>
@@ -78,7 +78,7 @@
               label="Communication sur le plan alimentaire"
             />
           </div>
-          <KeyMeasureResource baseComponent='InformDiners'/>
+          <KeyMeasureResource baseComponent='InformDiners' v-if="showResources"/>
         </div>
       </div>
     </div>
@@ -99,6 +99,7 @@
     },
     props: {
       diagnostics: Object,
+      showResources: Boolean,
     },
     data() {
       const vegetarianFrequency = this.diagnostics['diversification-des-menus'].vegetarianFrequency;
