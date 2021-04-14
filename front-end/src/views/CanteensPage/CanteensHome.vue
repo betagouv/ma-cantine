@@ -1,36 +1,40 @@
 <template>
   <ul id="canteens-block">
-    <li v-for="canteen in canteens" :key="canteen.title" class="canteen-card">
-      <div class="location" :title="canteen.region">
-        <p class="location-name"><i class="far fa-compass"></i> {{ canteen.region }}</p>
-        <img :src="require(`@/assets/map/${canteen.region}.svg`)" alt="">
-        <p class="attribution">
-          Nilstilar, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>, via Wikimedia Commons (modifié)
-        </p>
-      </div>
-      <div class="summary">
-        <h2>{{ canteen.title }}</h2>
-        <SummaryStatistics :statistics="canteen.statistics"/>
-        <div class="context">
-          <p class="meal-count">
-            <i class="fas fa-utensils"></i>&nbsp;
-            {{ canteen.mealCount }} repas par jour
-          </p>
-          <p class="time-period" title="Données pour l'année">
-            <i class="far fa-calendar-alt"></i>&nbsp;
-            <span class="sr-only">Données pour l'année</span>
-            {{ canteen.timePeriod }}
+    <router-link :to="{ name: 'KeyMeasuresHome' }" id="summarise">
+    </router-link>
+    <li v-for="canteen in canteens" :key="canteen.title">
+      <router-link :to="{ name: 'CanteenPage', params: { id: canteen.id } }" class="canteen-card">
+        <div class="location" :title="canteen.region">
+          <p class="location-name"><i class="far fa-compass"></i> {{ canteen.region }}</p>
+          <img :src="require(`@/assets/map/${canteen.region}.svg`)" alt="">
+          <p class="attribution">
+            Nilstilar, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>, via Wikimedia Commons (modifié)
           </p>
         </div>
-      </div>
-      <div class="key-points">
-        <h3>Nos mesures mises en place&nbsp;:</h3>
-        <ul>
-          <li v-for="keyPoint in canteen.keyPoints" :key="keyPoint">
-            {{ keyPoint }}
-          </li>
-        </ul>
-      </div>
+        <div class="summary">
+          <h2>{{ canteen.title }}</h2>
+          <SummaryStatistics :statistics="canteen.statistics"/>
+          <div class="context">
+            <p class="meal-count">
+              <i class="fas fa-utensils"></i>&nbsp;
+              {{ canteen.mealCount }} repas par jour
+            </p>
+            <p class="time-period" title="Données pour l'année">
+              <i class="far fa-calendar-alt"></i>&nbsp;
+              <span class="sr-only">Données pour l'année</span>
+              {{ canteen.timePeriod }}
+            </p>
+          </div>
+        </div>
+        <div class="key-points">
+          <h3>Nos mesures mises en place&nbsp;:</h3>
+          <ul>
+            <li v-for="keyPoint in canteen.keyPoints" :key="keyPoint">
+              {{ keyPoint }}
+            </li>
+          </ul>
+        </div>
+      </router-link>
     </li>
   </ul>
 </template>
@@ -65,15 +69,16 @@
 
   .canteen-card {
     background-color: $white;
+    border: 1px solid $orange;
     border-radius: 2em;
-    /* offset-x | offset-y | blur-radius | spread-radius | color */
-    box-shadow: 0px 0px 4px 0.5px $orange;
     margin: 2em auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 2em;
     max-width: 1170px;
+    text-decoration: none;
+    color: $black;
 
     .location {
       position: relative;
@@ -122,6 +127,11 @@
         font-size: 1.1em;
       }
     }
+  }
+
+  .canteen-card:hover {
+    box-shadow: 0px 0px 4px 0.5px $orange;
+    transform: scale(1.01);
   }
 
   .summary {
