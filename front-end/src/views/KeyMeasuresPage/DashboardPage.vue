@@ -15,7 +15,7 @@
             <SummaryStatistics :statistics="statistics['2020']"/>
           </div>
         </div>
-        <KeyMeasureResource baseComponent='QualityMeasure'/>
+        <KeyMeasureResource :baseComponent='qualityMeasure.baseComponent'/>
       </div>
       <div class="measures-bottom">
         <div class="measures-left">
@@ -31,7 +31,7 @@
                 label="Dons aux associations"
               />
             </div>
-            <KeyMeasureResource baseComponent='WasteMeasure'/>
+            <KeyMeasureResource :baseComponent='wasteMeasure.baseComponent'/>
           </div>
           <div class="measure measure-bottom-left">
             <h2>{{ noPlasticMeasure.shortTitle }}</h2>
@@ -66,7 +66,7 @@
               />
               <KeyMeasureAction :isDone="hasVegetarianMenu" :label="vegetarianMenuActionLabel"/>
             </div>
-            <KeyMeasureResource baseComponent='DiversificationMeasure'/>
+            <KeyMeasureResource :baseComponent='diversificationMeasure.baseComponent'/>
           </div>
           <div class="measure measure-bottom-right">
             <h2>{{ informationMeasure.shortTitle }}</h2>
