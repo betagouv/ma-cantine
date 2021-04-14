@@ -2,11 +2,6 @@
   {
     "id": "cantine-scolaire-arles",
     "title": "Cantine scolaire de Arles",
-    "statistics": {
-      "bio": 17,
-      "sustainable": 10,
-      "fairTrade": 0
-    },
     "keyPoints": [
       "Convention de dons avec le Secours Populaire",
       "2 repas végétariens par semaine",
@@ -47,11 +42,6 @@
   {
     "id": "briancon",
     "title": "Briançon",
-    "statistics": {
-      "bio": 67,
-      "sustainable": 0,
-      "fairTrade": 2
-    },
     "keyPoints": [
       "Convention de dons avec le Refuge",
       "2 repas végétariens par semaine",
