@@ -3,12 +3,12 @@
     <div class="measure measure-top">
       <h2>Données d'approvisionnements en produits durables et de qualité</h2>
       <div class="statistics-by-year">
-        <div>
+        <div class="statistics-for-year">
           <h3>Sur l'année 2019 :</h3>
           <SummaryStatistics :qualityDiagnostic="diagnostics['qualite-des-produits']['2019']"/>
         </div>
         <div class="separator"></div>
-        <div>
+        <div class="statistics-for-year">
           <h3>Sur l'année 2020 :</h3>
           <SummaryStatistics :qualityDiagnostic="diagnostics['qualite-des-produits']['2020']"/>
         </div>
@@ -157,6 +157,10 @@
     .statistics-by-year {
       display: flex;
       margin-top: 30px;
+
+      .statistics-for-year {
+        flex: 1;
+      }
 
       .separator {
         border-left: 3px solid $dark-orange;

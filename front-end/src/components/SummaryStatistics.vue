@@ -1,39 +1,75 @@
 <template>
-  <ul class="statistics">
-    <li class="statistic">
-      <div class="vertically-align-header">
-        <h4>Produits bio :</h4>
-      </div>
-      <p class="number bio">{{ statistics.bio }} %</p>
-    </li>
-
-    <li class="statistic">
-      <div class="vertically-align-header">
-        <h4>Produits de qualité et durables :</h4>
-      </div>
-      <p class="number sustainable">{{ statistics.sustainable }} %</p>
-    </li>
-
-    <li class="statistic">
-      <div class="vertically-align-header">
-        <h4>Produits issus du commerce équitable :</h4>
-      </div>
-      <p class="number">{{ statistics.fairTrade }} %</p>
-    </li>
-  </ul>
+  <div>
+    <VueApexCharts
+      width="400"
+      :options="chartOptions"
+      :series="series"
+      v-if="dataPresent"
+      role="img"
+      :aria-label="series[0] +' % produits bio, ' + series[1] + ' % produits de qualité et durables'"
+    />
+    <div class="no-data" v-else>Données non renseignées</div>
+  </div>
 </template>
 
 <script>
+  import VueApexCharts from "vue3-apexcharts";
+
   export default {
+    el: '#appl',
+    components: {
+      VueApexCharts,
+    },
     props: {
       qualityDiagnostic: Object,
     },
     data() {
+      const bioPercentage = getPercentage(this.qualityDiagnostic.valueBio, this.qualityDiagnostic.valueTotal);
+      const sustainablePercentage = getPercentage(this.qualityDiagnostic.valueSustainable, this.qualityDiagnostic.valueTotal);
+
       return {
-        statistics: {
-          bio: getPercentage(this.qualityDiagnostic.valueBio, this.qualityDiagnostic.valueTotal),
-          sustainable: getPercentage(this.qualityDiagnostic.valueSustainable, this.qualityDiagnostic.valueTotal),
-          fairTrade: getPercentage(this.qualityDiagnostic.valueFairTrade, this.qualityDiagnostic.valueTotal),
+        dataPresent: !!this.qualityDiagnostic.valueTotal && (!!this.qualityDiagnostic.valueBio || !!this.qualityDiagnostic.valueSustainable),
+        series: [
+          bioPercentage,
+          sustainablePercentage,
+          100 - bioPercentage - sustainablePercentage
+        ],
+        chartOptions: {
+          chart: {
+            type: 'pie',
+          },
+          labels: ['Bio', 'Qualité et durable', 'Hors EGAlim'],
+          colors: ['#61753f', '#EB5B25', '#E2A013'],
+          legend: {
+            fontSize: '16px',
+          },
+          dataLabels: {
+            formatter: function (value) {
+              return value + "%";
+            },
+            dropShadow: {
+              enabled: false,
+            },
+          },
+          responsive: [{
+            breakpoint: 930,
+            options: {
+              chart: {
+                width: 350
+              },
+            }
+          },
+          {
+            breakpoint: 420,
+            options: {
+              chart: {
+                width: 300
+              },
+              legend: {
+                fontSize: '12px',
+              },
+            }
+          }]
         },
       }
     }
@@ -45,46 +81,21 @@
 </script>
 
 <style scoped lang="scss">
-  .statistics {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .statistic {
-    width: 30%;
+  .no-data {
     text-align: center;
+    line-height: 200px;
+    font-style: italic;
   }
 
-  .vertically-align-header {
-    height: 5em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  @media (max-width: 930px) {
+    .no-data {
+      line-height: 150px;
+    }
   }
 
-  h4 {
-    font-size: 1em;
-    font-weight: normal;
-  }
-
-  .number {
-    font-size: 2.5em;
-    margin-top: 0.2em;
-  }
-
-  .bio {
-    color: $green;
-  }
-
-  .sustainable {
-    color: $orange;
-  }
-
-  @media (max-width: 850px) {
-    .number {
-      margin: 0;
-      margin-bottom: 0.7em;
-      font-size: 2em;
+  @media (max-width: 420px) {
+    .no-data {
+      line-height: 100px;
     }
   }
 </style>
