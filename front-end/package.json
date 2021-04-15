@@ -20,7 +20,8 @@
     "serve": "^11.3.2",
     "vue": "^3.0.0",
     "vue-matomo": "^3.14.0-0",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "vue3-apexcharts": "^1.2.1"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.1",
