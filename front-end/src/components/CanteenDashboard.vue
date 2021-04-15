@@ -70,13 +70,21 @@
           <h2>{{ informationMeasure.shortTitle }}</h2>
           <div class="actions">
             <KeyMeasureAction
-              :isDone="diagnostics['information-des-usagers'].communicationSupport.length > 0"
-              label="Communication à disposition des convives sur la qualité des approvisionnements"
-            />
-            <KeyMeasureAction
               :isDone="diagnostics['information-des-usagers'].communicateOnFoodPlan"
               label="Communication sur le plan alimentaire"
             />
+            <KeyMeasureAction
+              :isDone="diagnostics['information-des-usagers'].communicationSupport.length > 0"
+              label="Communication à disposition des convives sur la qualité des approvisionnements"
+            />
+            <a
+              v-if="diagnostics['information-des-usagers'].communicationSupportLink"
+              :href="diagnostics['information-des-usagers'].communicationSupportLink"
+              class="communication-support-link"
+              target="_blank"
+            >
+              Lien vers le support de communication <i class="fas fa-external-link-alt"></i>
+            </a>
           </div>
           <KeyMeasureResource baseComponent='InformDiners' v-if="showResources"/>
         </div>
@@ -145,28 +153,8 @@
     margin-top: 20px;
   }
 
-  .actions {
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-  }
-
   .measure-top {
     background-color: $light-orange;
-
-    .statistics-by-year {
-      display: flex;
-      margin-top: 30px;
-
-      .statistics-for-year {
-        flex: 1;
-      }
-
-      .separator {
-        border-left: 3px solid $dark-orange;
-        margin: 0 20px;
-      }
-    }
   }
 
   .measures-bottom {
@@ -204,6 +192,30 @@
   .measure-bottom-right {
     background-color: $light-pink;
     flex: 1;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+
+  .statistics-by-year {
+    display: flex;
+    margin-top: 30px;
+
+    .statistics-for-year {
+      flex: 1;
+    }
+
+    .separator {
+      border-left: 3px solid $dark-orange;
+      margin: 0 20px;
+    }
+  }
+
+  .communication-support-link {
+    color: $dark-grey;
   }
 
   @media (max-width: 750px) {
