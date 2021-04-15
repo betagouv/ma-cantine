@@ -1,7 +1,5 @@
 <template>
   <ul id="canteens-block">
-    <router-link :to="{ name: 'KeyMeasuresHome' }" id="summarise">
-    </router-link>
     <li v-for="canteen in canteens" :key="canteen.title">
       <router-link :to="{ name: 'CanteenPage', params: { id: canteen.id } }" class="canteen-card">
         <div class="location" :title="canteen.region">
@@ -27,7 +25,7 @@
           </div>
         </div>
         <div class="key-points">
-          <h3>Nos mesures mises en place&nbsp;:</h3>
+          <h3>Nos initiatives mises en place&nbsp;:</h3>
           <ul>
             <li v-for="keyPoint in canteen.keyPoints" :key="keyPoint">
               {{ keyPoint }}

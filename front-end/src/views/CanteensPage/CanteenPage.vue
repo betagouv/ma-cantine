@@ -3,11 +3,18 @@
     <div id="canteen-infos">
       <div class="context">
         <h2>{{ canteen.title }}</h2>
-        <div><i class="far fa-compass"></i> {{ canteen.region }}</div>
-        <div><i class="fas fa-utensils"></i> {{canteen.mealCount}} repas par jour</div>
+        <div>
+          <i class="far fa-compass" aria-hidden="true" title="Région"></i>
+          <span class="sr-only">Région :</span>
+          {{ canteen.region }}
+        </div>
+        <div>
+          <i class="fas fa-utensils" aria-hidden="true"></i>
+          {{canteen.mealCount}} repas par jour
+        </div>
       </div>
       <div class="key-points">
-        <h3>Nos mesures mises en place&nbsp;:</h3>
+        <h3>Nos initiatives mises en place&nbsp;:</h3>
         <ul>
           <li v-for="keyPoint in canteen.keyPoints" :key="keyPoint">
             {{ keyPoint }}
