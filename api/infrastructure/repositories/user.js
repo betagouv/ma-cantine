@@ -1,6 +1,6 @@
-require('../database/setup');
-const { createCanteen } = require('./create-canteen');
-const { User } = require('../database/models');
+require('../postgres-database');
+const { createCanteen } = require('./canteen');
+const { User } = require('../models/user');
 
 var createUser = function(user, canteenId) {
   user.canteenId = canteenId;
