@@ -1,6 +1,6 @@
-const { sequelize } = require('../../database/setup')
-const { Canteen } = require('../../database/models')
-const { createCanteen } = require('../../application/create-canteen');
+const { sequelize } = require('../../infrastructure/postgres-database')
+const { Canteen } = require('../../infrastructure/models/canteen')
+const { createCanteen } = require('../../infrastructure/repositories/canteen');
 
 const canteenPayload = {
   name: "Test canteen",
@@ -30,7 +30,6 @@ describe('Canteen model', () => {
   });
 
   afterAll(async () => {
-    await Canteen.drop();
     await sequelize.close();
   });
 

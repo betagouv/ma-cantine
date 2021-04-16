@@ -1,7 +1,8 @@
-const { sequelize } = require('../../database/setup');
-const { User, Canteen } = require('../../database/models');
-const { createCanteen } = require('../../application/create-canteen');
-const { createUser, createUserWithCanteen } = require('../../application/create-user');
+const { sequelize } = require('../../infrastructure/postgres-database');
+const { Canteen } = require('../../infrastructure/models/canteen');
+const { User } = require('../../infrastructure/models/user');
+const { createCanteen } = require('../../infrastructure/repositories/canteen');
+const { createUser, createUserWithCanteen } = require('../../infrastructure/repositories/user');
 
 const canteenPayload = {
   name: "Test canteen",
@@ -92,8 +93,6 @@ describe('User model', () => {
   });
 
   afterAll(async () => {
-    await Canteen.drop();
-    await User.drop();
     await sequelize.close();
   });
 });
