@@ -22,11 +22,12 @@ DB_PORT=
 
 ### BDD
 
-On doit avoir une base de données (BDD) pour utiliser `api`. Pour démarrer un instance d'une BDD PostgreSQL:
+On doit avoir une base de données (BDD) pour utiliser `api`. Pour démarrer un instance d'une BDD PostgreSQL sur OSX, ouvrez un Terminal et suivez:
 
 ```
 brew install postgres
 brew services start postgresql
+psql postgres
 CREATE ROLE me with LOGIN PASSWORD 'password';
 ALTER ROLE me CREATEDB;
 \q

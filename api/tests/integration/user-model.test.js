@@ -1,10 +1,11 @@
-const { sequelize } = require('../../database/setup')
-const { User, Canteen } = require('../../database/models')
-const { createUser, createCanteen, createUserAndCanteen } = require('../../application/create-user-and-canteen');
+const { sequelize } = require('../../database/setup');
+const { User, Canteen } = require('../../database/models');
+const { createCanteen } = require('../../application/create-canteen');
+const { createUser, createUserWithCanteen } = require('../../application/create-user');
 
 const canteenPayload = {
   name: "Test canteen",
-  city: "Lyon",
+  department: "Bouches-du-Rhône",
   sector: "school"
 };
 
@@ -17,10 +18,17 @@ const userPayload = {
 describe('User model', () => {
   let canteenId;
 
+  beforeAll(async () => {
+    await Canteen.sync({ force: true });
+    await User.sync({ force: true });
+    // need canteen to exist to create user
+    canteenId = (await createCanteen(canteenPayload)).id;
+  });
+
   beforeEach(async () => {
-    await sequelize.sync({ force: true });
-    await createCanteen(canteenPayload); // need canteen to exist to create user
-    canteenId = (await Canteen.findAll())[0].id;
+    await User.destroy({
+      truncate: true
+    });
   });
 
   it('successfully creates user given valid data', async () => {
@@ -36,7 +44,7 @@ describe('User model', () => {
     expect(user.lastName).toBe(userPayload.lastName);
     expect(user.email).toBe(userPayload.email);
     expect(user.id).toBe(1);
-    expect(user.managesCanteen).toBe(canteenId);
+    expect(user.canteenId).toBe(canteenId);
   });
 
   it('successfully increments user ids', async () => {
@@ -44,12 +52,6 @@ describe('User model', () => {
     userPayload.email = "other@other.com";
     const user2 = await createUser(userPayload, canteenId);
     expect(user1.id).toBe(user2.id - 1);
-  });
-
-  it('fails to create a user given invalid data', async () => {
-    await expect(createUser({})).rejects.toThrow();
-    const users = await User.findAll();
-    expect(users.length).toBe(0);
   });
 
   it('fails to create a user given invalid email', async () => {
@@ -74,7 +76,6 @@ describe('User model', () => {
     expect(users.length).toBe(1);
   });
 
-  // TODO: should this test be in a different suite?
   it('successfully creates user and canteen in database given valid data', async () => {
     const request = {
       payload: {
@@ -82,16 +83,17 @@ describe('User model', () => {
         canteen: canteenPayload
       }
     };
-    await createUserAndCanteen(request);
+    await createUserWithCanteen(request);
 
     const canteens = await Canteen.findAll();
     const users = await User.findAll();
-    // use second canteen because a canteen was created in beforeEach
-    expect(users[0].managesCanteen).toBe(canteens[1].id);
+    // use second canteen because a canteen was created in tests setup
+    expect(users[0].canteenId).toBe(canteens[1].id);
   });
 
   afterAll(async () => {
-    await sequelize.drop();
+    await Canteen.drop();
+    await User.drop();
     await sequelize.close();
   });
 });
