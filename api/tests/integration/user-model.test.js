@@ -33,48 +33,14 @@ describe('User model', () => {
   });
 
   it('successfully creates user given valid data', async () => {
-    let users = await User.findAll();
-    expect(users.length).toBe(0); // make sure anything in db was added in this test
+    const createdUser = await createUser(userPayload, canteenId);
 
-    await createUser(userPayload, canteenId);
-
-    users = await User.findAll();
-    expect(users.length).toBe(1);
-    const user = users[0];
-    expect(user.firstName).toBe(userPayload.firstName);
-    expect(user.lastName).toBe(userPayload.lastName);
-    expect(user.email).toBe(userPayload.email);
-    expect(user.id).toBe(1);
-    expect(user.canteenId).toBe(canteenId);
-  });
-
-  it('successfully increments user ids', async () => {
-    const user1 = await createUser(userPayload, canteenId);
-    userPayload.email = "other@other.com";
-    const user2 = await createUser(userPayload, canteenId);
-    expect(user1.id).toBe(user2.id - 1);
-  });
-
-  it('fails to create a user given invalid email', async () => {
-    const badEmail = {
-      firstName: userPayload.firstName,
-      lastName: userPayload.lastName,
-      email: "badEmail@incomplete"
-    };
-    await expect(createUser(badEmail)).rejects.toThrow();
-    const users = await User.findAll();
-    expect(users.length).toBe(0);
-  });
-
-  it('fails to create a user given duplicate email', async () => {
-    await createUser(userPayload, canteenId);
-    await expect(createUser({
-      email: userPayload.email,
-      firstName: "Other",
-      lastName: "Other",
-    }, canteenId)).rejects.toThrow();
     const users = await User.findAll();
     expect(users.length).toBe(1);
+
+    const persistedUser = await User.findByPk(createdUser.id);
+    expect(createdUser.toJSON()).toStrictEqual(persistedUser.toJSON());
+    expect(createdUser.canteenId).toBe(canteenId);
   });
 
   it('successfully creates user and canteen in database given valid data', async () => {
