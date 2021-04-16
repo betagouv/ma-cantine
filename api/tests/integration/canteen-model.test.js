@@ -1,17 +1,17 @@
 const { sequelize } = require('../../database/setup')
 const { Canteen } = require('../../database/models')
-const { createCanteen } = require('../../application/create-user-and-canteen');
+const { createCanteen } = require('../../application/create-canteen');
 
 const canteenPayload = {
   name: "Test canteen",
-  city: "Lyon",
+  department: "Bouches-du-Rhône",
   sector: "school"
 };
 
 describe('Canteen model', () => {
 
-  beforeEach(async () => {
-    await sequelize.sync({ force: true });
+  beforeAll(async () => {
+    await Canteen.sync({ force: true });
   });
 
   it('successfully creates canteen given valid data', async () => {
@@ -24,19 +24,13 @@ describe('Canteen model', () => {
     expect(canteens.length).toBe(1);
     const canteen = canteens[0];
     expect(canteen.name).toBe(canteenPayload.name);
-    expect(canteen.city).toBe(canteenPayload.city);
+    expect(canteen.department).toBe(canteenPayload.department);
     expect(canteen.sector).toBe(canteenPayload.sector);
     expect(canteen.id).toBe(1);
   });
 
-  it('fails to create a canteen given invalid data', async () => {
-    await expect(createCanteen({})).rejects.toThrow();
-    const canteens = await Canteen.findAll();
-    expect(canteens.length).toBe(0);
-  });
-
   afterAll(async () => {
-    await sequelize.drop();
+    await Canteen.drop();
     await sequelize.close();
   });
 

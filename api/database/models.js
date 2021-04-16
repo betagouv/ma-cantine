@@ -28,7 +28,7 @@ exports.User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  managesCanteen: {
+  canteenId: {
     type: DataTypes.INTEGER,
     allowNull: false,
   }
@@ -46,9 +46,8 @@ exports.Canteen = sequelize.define('Canteen', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  // TODO: name this city or commune ?
-  // TODO: validate city and sector input
-  city: {
+  // TODO: validate department and sector input
+  department: {
     type: DataTypes.STRING,
     allowNull: false
   },
