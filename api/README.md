@@ -14,6 +14,7 @@ SENDINBLUE_API_KEY=
 SENDINBLUE_SENDER_EMAIL=
 SENDINBLUE_CONTACT_EMAIL=
 DB_NAME=
+TEST_DB_NAME=
 DB_USERNAME=
 DB_PASSWORD=
 DB_HOST=
@@ -40,7 +41,7 @@ CREATE DATABASE test;
 En utilisant l'information donnée par `\conninfo`, completez une fichier `.env` dans `ma-cantine/api` (ici) avec:
 
 ```
-DB_NAME=test
+TEST_DB_NAME=test
 DB_USERNAME=me
 DB_PASSWORD=password
 DB_HOST=localhost
