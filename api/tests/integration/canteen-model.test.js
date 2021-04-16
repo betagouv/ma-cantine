@@ -14,19 +14,14 @@ describe('Canteen model', () => {
     await Canteen.sync({ force: true });
   });
 
-  it('successfully creates canteen given valid data', async () => {
-    let canteens = await Canteen.findAll();
-    expect(canteens.length).toBe(0); // make sure anything in db was added in this test
+  it('successfully creates one canteen given valid data', async () => {
+    const createdCanteen = await createCanteen(canteenPayload);
 
-    await createCanteen(canteenPayload);
-
-    canteens = await Canteen.findAll();
+    const canteens = await Canteen.findAll();
     expect(canteens.length).toBe(1);
-    const canteen = canteens[0];
-    expect(canteen.name).toBe(canteenPayload.name);
-    expect(canteen.department).toBe(canteenPayload.department);
-    expect(canteen.sector).toBe(canteenPayload.sector);
-    expect(canteen.id).toBe(1);
+
+    const persistedCanteen = await Canteen.findByPk(createdCanteen.id);
+    expect(createdCanteen.toJSON()).toStrictEqual(persistedCanteen.toJSON());
   });
 
   afterAll(async () => {
