@@ -4,7 +4,7 @@ const { createCanteen } = require('../../infrastructure/repositories/canteen');
 
 const canteenPayload = {
   name: "Test canteen",
-  department: "Bouches-du-Rhône",
+  city: "Lyon",
   sector: "school"
 };
 

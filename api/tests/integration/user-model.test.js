@@ -6,7 +6,7 @@ const { createUser, createUserWithCanteen } = require('../../infrastructure/repo
 
 const canteenPayload = {
   name: "Test canteen",
-  department: "Bouches-du-Rhône",
+  city: "Lyon",
   sector: "school"
 };
 
