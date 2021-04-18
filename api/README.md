@@ -1,13 +1,11 @@
 # API
 
-Pour tester: `npm run test`
-Pour démarré: `npm run start`
+Pour lancer les tests: `npm run test`
+Pour lancer l'api: `npm run start`
 
-N'oubliez pas de `npm install` le premiere fois que vous installer ce projet.
+N'oubliez pas de `npm install` la première fois que vous installez ce projet.
 
-## Setup
-
-On doit avoir une fichier `.env` avec les variables:
+## Variables d'environnements
 
 ```
 SENDINBLUE_API_KEY=
@@ -21,13 +19,26 @@ DB_HOST=
 DB_PORT=
 ```
 
-### BDD
+## BDD
 
-On doit avoir une base de données (BDD) pour utiliser `api`. Pour démarrer un instance d'une BDD PostgreSQL sur OSX, ouvrez un Terminal et suivez:
+### Pour installer PostgreSQL :
 
+#### OSX
 ```
 brew install postgres
 brew services start postgresql
+
+```
+
+#### Linux
+```
+sudo apt-get install postgresql
+sudo -i -u postgres
+```
+
+### Pour configurer PostgreSQL :
+
+```
 psql postgres
 CREATE ROLE me with LOGIN PASSWORD 'password';
 ALTER ROLE me CREATEDB;
@@ -38,7 +49,7 @@ CREATE DATABASE test;
 \conninfo
 ```
 
-En utilisant l'information donnée par `\conninfo`, completez une fichier `.env` dans `ma-cantine/api` (ici) avec:
+Récupérer l'information du port en utilisant l'information donnée par `\conninfo`, completez une fichier `.env` dans `ma-cantine/api` (ici) avec:
 
 ```
 TEST_DB_NAME=test
@@ -47,5 +58,3 @@ DB_PASSWORD=password
 DB_HOST=localhost
 DB_PORT=XXXX
 ```
-
-Pour arretez postgres: `brew services stop postgres`.
