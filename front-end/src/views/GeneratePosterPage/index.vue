@@ -69,7 +69,7 @@
             aria-describedby="euros"
             required
           >
-          euros HT correspondaient à des <label for="bio">produits bio</label>,
+          euros HT correspondaient à des <label for="bio">produits bio</label> et
           <input id="sustainable"
             v-model.number="form.qualityValues.valueSustainable"
             class="currency-field"
@@ -79,16 +79,7 @@
             aria-describedby="euros"
             required
           >
-          euros HT correspondaient à des <label for="sustainable">produits de qualité et durables (hors bio)</label> et
-          <input id="fair-trade"
-            v-model.number="form.qualityValues.valueFairTrade"
-            class="currency-field"
-            type="number"
-            min="0"
-            placeholder="100"
-            aria-describedby="euros"
-          >
-          euros HT correspondaient à des <label for="fair-trade">produits issus du commerce équitable</label>.
+          euros HT correspondaient à des <label for="sustainable">produits de qualité et durables (hors bio)</label>.
         </p>
         <input type="submit" id="submit" value="Générer mon affiche">
       </form>
