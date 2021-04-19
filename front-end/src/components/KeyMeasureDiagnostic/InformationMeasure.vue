@@ -2,12 +2,7 @@
   <BaseCheckboxes
     v-model="diagnostic.communicationSupport"
     legend="Information sur la qualité des approvisionnements :"
-    :options="[
-      { inputId: 'email-communication', value: 'email', label: 'Envoi d\'e-mail aux convives ou à leurs représentants' },
-      { inputId: 'display-communication', value: 'display', label: 'Par affichage sur le lieu de restauration' },
-      { inputId: 'website-communication', value: 'website', label: 'Sur site internet ou intranet (mairie, cantine)' },
-      { inputId: 'other-communication', value: 'other', label: 'Autres moyens d\'affichage et de communication électronique' },
-    ]"
+    :options="communicationSupports"
   />
 
   <BaseInput
@@ -28,6 +23,7 @@
   import BaseInput from '@/components/KeyMeasureDiagnostic/Inputs/BaseInput';
   import BaseCheckboxes from '@/components/KeyMeasureDiagnostic/Inputs/BaseCheckboxes';
   import BaseCheckbox from '@/components/KeyMeasureDiagnostic/Inputs/BaseCheckbox';
+  import communicationSupports from '@/data/communication-supports.json';
 
   export default {
     components: {
@@ -37,6 +33,11 @@
     },
     props: {
       modelValue: Object,
+    },
+    data() {
+      return {
+        communicationSupports
+      }
     },
     computed: {
       diagnostic() {
