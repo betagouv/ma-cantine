@@ -20,8 +20,8 @@ describe('User model', () => {
   let canteenId;
 
   beforeAll(async () => {
-    await Canteen.sync({ force: true });
     await User.sync({ force: true });
+    await Canteen.sync({ force: true });
     // need canteen to exist to create user
     canteenId = (await createCanteen(canteenPayload)).id;
   });
@@ -44,13 +44,7 @@ describe('User model', () => {
   });
 
   it('successfully creates user and canteen in database given valid data', async () => {
-    const request = {
-      payload: {
-        user: userPayload,
-        canteen: canteenPayload
-      }
-    };
-    await createUserWithCanteen(request);
+    await createUserWithCanteen(userPayload, canteenPayload);
 
     const canteens = await Canteen.findAll();
     const users = await User.findAll();
