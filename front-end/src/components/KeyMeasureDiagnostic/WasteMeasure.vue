@@ -14,14 +14,7 @@
   <BaseCheckboxes
     v-model="diagnostic.wasteActions"
     legend="J'ai réalisé des actions de lutte contre le gaspillage alimentaire :"
-    :options="[
-      { inputId: 'pre-registration', value: 'preRegistration', label: 'Pré-inscription des convives obligatoire' },
-      { inputId: 'raise-awareness', value: 'raiseAwareness', label: 'Sensibilisation par affichage ou autre média' },
-      { inputId: 'training', value: 'training', label: 'Formation / information du personnel de restauration' },
-      { inputId: 'reorganization', value: 'reorganization', label: 'Réorganisation de la distribution des composantes du repas' },
-      { inputId: 'portion-size', value: 'portionSize', label: 'Choix des portions (grande faim, petite faim)' },
-      { inputId: 'reuse', value: 'reuse', label: 'Réutilisation des restes de préparation / surplus' },
-    ]"
+    :options="wasteActions"
   />
 
   <BaseCheckbox
@@ -34,6 +27,7 @@
 <script>
   import BaseCheckboxes from '@/components/KeyMeasureDiagnostic/Inputs/BaseCheckboxes';
   import BaseCheckbox from '@/components/KeyMeasureDiagnostic/Inputs/BaseCheckbox';
+  import wasteActions from '@/data/waste-actions.json';
 
   export default {
     components: {
@@ -42,6 +36,11 @@
     },
     props: {
       modelValue: Object,
+    },
+    data() {
+      return {
+        wasteActions
+      };
     },
     computed: {
       diagnostic() {

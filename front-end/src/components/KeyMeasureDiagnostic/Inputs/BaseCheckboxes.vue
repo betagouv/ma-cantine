@@ -3,9 +3,9 @@
     <legend>{{legend}}</legend>
 
     <div class="checkboxes">
-      <div v-for="option in options" :key="option.inputId" class="checkbox">
-        <input :id="option.inputId" :checked="modelValue.includes(option.value)" @input="updateInput(option.value, $event)" type="checkbox" >
-        <label :for="option.inputId"><p>{{option.label}}</p></label>
+      <div v-for="(option, key) in options" :key="key" class="checkbox">
+        <input :id="key" :checked="modelValue.includes(key)" @input="updateInput(key, $event)" type="checkbox" >
+        <label :for="key"><p>{{option}}</p></label>
       </div>
     </div>
   </fieldset>
