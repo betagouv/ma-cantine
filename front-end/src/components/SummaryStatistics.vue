@@ -1,7 +1,7 @@
 <template>
   <div>
     <VueApexCharts
-      width="400"
+      width="470"
       :options="chartOptions"
       :series="series"
       v-if="dataPresent"
@@ -24,21 +24,13 @@
       qualityDiagnostic: Object,
     },
     data() {
-      const bioPercentage = getPercentage(this.qualityDiagnostic.valueBio, this.qualityDiagnostic.valueTotal);
-      const sustainablePercentage = getPercentage(this.qualityDiagnostic.valueSustainable, this.qualityDiagnostic.valueTotal);
-
       return {
         dataPresent: !!this.qualityDiagnostic.valueTotal && (!!this.qualityDiagnostic.valueBio || !!this.qualityDiagnostic.valueSustainable),
-        series: [
-          bioPercentage,
-          sustainablePercentage,
-          100 - bioPercentage - sustainablePercentage
-        ],
         chartOptions: {
           chart: {
             type: 'pie',
           },
-          labels: ['Bio', 'Qualité et durable', 'Hors EGAlim'],
+          labels: ['Bio', 'Qualité et durable (hors bio)', 'Hors EGAlim'],
           colors: ['#61753f', '#EB5B25', '#E2A013'],
           legend: {
             fontSize: '16px',
@@ -71,6 +63,21 @@
             }
           }]
         },
+      }
+    },
+    computed: {
+      bioPercentage() {
+        return getPercentage(this.qualityDiagnostic.valueBio, this.qualityDiagnostic.valueTotal);
+      },
+      sustainablePercentage() {
+        return getPercentage(this.qualityDiagnostic.valueSustainable, this.qualityDiagnostic.valueTotal);
+      },
+      series() {
+        return [
+          this.bioPercentage,
+          this.sustainablePercentage,
+          100 - this.bioPercentage - this.sustainablePercentage
+        ];
       }
     }
   }

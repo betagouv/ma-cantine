@@ -9,9 +9,7 @@
         <p>Dans la cantine de votre enfant, sur l'année de 2020, nous déclarons avoir servi en valeur d'achats:</p>
       </div>
     </div>
-    <p class="percentage"><span id="bio-percent" class="number">{{ bioPercent }} %</span> de produits bio</p>
-    <p class="percentage"><span id="sustainable-percent" class="number">{{ sustainablePercent }} %</span> de produits de qualité et durables (hors bio)</p>
-    <p class="percentage" v-if="qualityValues.valueFairTrade"><span id="fair-trade-percent" class="number">{{ fairTradePercent }} %</span> produits issus du commerce équitable</p>
+    <SummaryStatistics :qualityDiagnostic="qualityValues"/>
     <LogoList id="logos"/>
     <div id="about">
       <h2>Pourquoi je vois cette affiche ?</h2>
@@ -34,11 +32,13 @@
 </template>
 
 <script>
-  import LogoList from '@/components/LogoList'
+  import LogoList from '@/components/LogoList';
+  import SummaryStatistics from '@/components/SummaryStatistics';
 
   export default {
     components: {
       LogoList,
+      SummaryStatistics,
     },
     props: {
       school: String,
