@@ -21,9 +21,18 @@
           <h2>Initiatives contre le gaspillage alimentaire</h2>
           <div class="actions">
             <KeyMeasureAction
+              :isDone="diagnostics['gaspillage-alimentaire'].hasMadeWasteDiagnostic"
+              label="Réalisation d'un diagnostic sur le gaspillage alimenataire"
+            />
+            <KeyMeasureAction
               :isDone="diagnostics['gaspillage-alimentaire'].hasMadeWastePlan"
               label="Mise en place d'un plan d'actions contre le gaspillage"
             />
+            <ul class="specifics-actions">
+              <li v-for="action in diagnostics['gaspillage-alimentaire'].wasteActions" :key="action">
+                - {{wasteActions[action]}}
+              </li>
+            </ul>
             <KeyMeasureAction
               :isDone="diagnostics['gaspillage-alimentaire'].hasCovenant"
               label="Dons aux associations"
@@ -77,6 +86,11 @@
               :isDone="diagnostics['information-des-usagers'].communicationSupport.length > 0"
               label="Communication à disposition des convives sur la qualité des approvisionnements"
             />
+            <ul class="specifics-actions">
+              <li v-for="action in diagnostics['information-des-usagers'].communicationSupport" :key="action">
+                - {{communicationSupports[action]}}
+              </li>
+            </ul>
             <a
               v-if="diagnostics['information-des-usagers'].communicationSupportLink"
               :href="diagnostics['information-des-usagers'].communicationSupportLink"
@@ -95,6 +109,8 @@
 
 <script>
   import { keyMeasures } from '@/data/KeyMeasures.js';
+  import wasteActions from '@/data/waste-actions.json';
+  import communicationSupports from '@/data/communication-supports.json';
   import SummaryStatistics from '@/components/SummaryStatistics';
   import KeyMeasureResource from '@/components/KeyMeasureResource';
   import KeyMeasureAction from '@/components/KeyMeasureAction';
@@ -114,6 +130,8 @@
       const hasVegetarianMenu = vegetarianFrequency && vegetarianFrequency !== "less-than-once";
 
       return {
+        wasteActions,
+        communicationSupports,
         qualityMeasure: keyMeasures.find(measure => measure.id === 'qualite-des-produits'),
         wasteMeasure: keyMeasures.find(measure => measure.id === 'gaspillage-alimentaire'),
         diversificationMeasure: keyMeasures.find(measure => measure.id === 'diversification-des-menus'),
@@ -198,6 +216,11 @@
     display: flex;
     flex-direction: column;
     margin-top: 20px;
+  }
+
+  .specifics-actions {
+    padding-left: 20px;
+    margin-top: -5px;
   }
 
   .statistics-by-year {
