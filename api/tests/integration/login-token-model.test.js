@@ -22,16 +22,11 @@ describe('Login token model', () => {
   let user;
 
   beforeAll(async () => {
-    await Canteen.sync({ force: true });
-    await User.sync({ force: true });
     await LoginToken.sync({ force: true });
+    await User.sync({ force: true });
+    await Canteen.sync({ force: true });
     // need to create user and canteen because userId is foreign key in LoginToken
-    user = await createUserWithCanteen({
-      payload: {
-        user: userPayload,
-        canteen: canteenPayload
-      }
-    });
+    user = await createUserWithCanteen(userPayload, canteenPayload);
   });
 
   beforeEach(async () => {
@@ -89,6 +84,10 @@ describe('Login token model', () => {
       }
     });
     expect(tokens.length).toBe(0); // getValidToken to delete expired tokens
+  });
+
+  it('requires a user', async () => {
+    await expect(saveTokenForUser({ id: null }, tokenString)).rejects.toThrow();
   });
 
   afterAll(async () => {

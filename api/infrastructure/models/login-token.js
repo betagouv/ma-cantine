@@ -5,21 +5,12 @@ const { User } = require('./user');
 const EXPIRE_MINUTES = 60;
 const MILLISECONDS_IN_MINUTE = 60000;
 
-exports.LoginToken = sequelize.define('LoginToken', {
+let LoginToken = sequelize.define('LoginToken', {
   token: {
     type: DataTypes.STRING,
     primaryKey: true,
     unique: true,
     allowNull: false
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    unique: true,
-    references: {
-      model: User,
-      key: 'id'
-    }
   },
   expirationDate: {
     type: DataTypes.VIRTUAL,
@@ -29,3 +20,13 @@ exports.LoginToken = sequelize.define('LoginToken', {
     }
   }
 });
+
+User.hasOne(LoginToken, {
+  foreignKey: {
+    name: 'userId',
+    allowNull: false
+  }
+});
+LoginToken.belongsTo(User);
+
+exports.LoginToken = LoginToken;
