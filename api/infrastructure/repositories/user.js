@@ -7,9 +7,9 @@ var createUser = function(user, canteenId) {
   return User.create(user);
 };
 
-var createUserWithCanteen = async function(request) {
-  const canteen = await createCanteen(request.payload.canteen);
-  return createUser(request.payload.user, canteen.id);
+var createUserWithCanteen = async function(userPayload, canteenPayload) {
+  const canteen = await createCanteen(canteenPayload);
+  return createUser(userPayload, canteen.id);
 };
 
 module.exports = {
