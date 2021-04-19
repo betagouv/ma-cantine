@@ -11,12 +11,8 @@ N'oubliez pas de `npm install` la première fois que vous installez ce projet.
 SENDINBLUE_API_KEY=
 SENDINBLUE_SENDER_EMAIL=
 SENDINBLUE_CONTACT_EMAIL=
-DB_NAME=
-TEST_DB_NAME=
-DB_USERNAME=
-DB_PASSWORD=
-DB_HOST=
-DB_PORT=
+DATABASE_URL=
+TEST_DATABASE_URL=
 ```
 
 ## BDD
@@ -52,9 +48,5 @@ CREATE DATABASE test;
 Récupérer l'information du port en utilisant l'information donnée par `\conninfo`, completez une fichier `.env` dans `ma-cantine/api` (ici) avec:
 
 ```
-TEST_DB_NAME=test
-DB_USERNAME=me
-DB_PASSWORD=password
-DB_HOST=localhost
-DB_PORT=XXXX
+TEST_DATABASE_URL=postgres://me:password@localhost:5432/test
 ```
