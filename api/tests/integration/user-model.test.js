@@ -20,8 +20,8 @@ describe('User model', () => {
   let canteenId;
 
   beforeAll(async () => {
-    await User.sync({ force: true });
     await Canteen.sync({ force: true });
+    await User.sync({ force: true });
     // need canteen to exist to create user
     canteenId = (await createCanteen(canteenPayload)).id;
   });

@@ -5,7 +5,7 @@ const { User } = require('./user');
 const EXPIRE_MINUTES = 60;
 const MILLISECONDS_IN_MINUTE = 60000;
 
-let LoginToken = sequelize.define('LoginToken', {
+let LoginToken = sequelize.define('loginToken', {
   token: {
     type: DataTypes.STRING,
     primaryKey: true,
@@ -23,7 +23,6 @@ let LoginToken = sequelize.define('LoginToken', {
 
 User.hasOne(LoginToken, {
   foreignKey: {
-    name: 'userId',
     allowNull: false
   }
 });
