@@ -2,7 +2,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const { sequelize } = require('../postgres-database');
 
-exports.Canteen = sequelize.define('Canteen', {
+exports.Canteen = sequelize.define('canteen', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
