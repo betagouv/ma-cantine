@@ -1,6 +1,7 @@
 'use strict';
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
+const login = require('./application/login.js');
 const subscribeBetaTester = require('./application/subscribe-beta-tester.js');
 
 const server = Hapi.server({
@@ -11,9 +12,11 @@ const server = Hapi.server({
       origin: ['*']
     }
   }
+  // jwt authentication
 });
 
 subscribeBetaTester.register(server);
+login.register(server);
 
 exports.init = async () => {
   await server.initialize();
