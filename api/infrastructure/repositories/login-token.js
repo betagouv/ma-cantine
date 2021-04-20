@@ -1,6 +1,7 @@
 const { LoginToken } = require('../models/login-token');
+const { User } = require('../models/user');
 
-var saveTokenForUser = async function(user, token) {
+var saveLoginTokenForUser = async function(user, token) {
   await LoginToken.destroy({
     where: {
       userId: user.id
@@ -12,20 +13,24 @@ var saveTokenForUser = async function(user, token) {
   });
 };
 
-var getValidToken = async function(user) {
-  let token = await LoginToken.findOne({
+var getUserForLoginToken = async function(token) {
+  let tokenEntry = await LoginToken.findOne({
     where: {
-      userId: user.id
-    }
+      token
+    },
+    include: User
   });
-  if(new Date(token.expirationDate) > new Date()) {
-    return token.token;
-  } else {
-    token.destroy();
+  let user;
+  if(tokenEntry) {
+    if(new Date(tokenEntry.expirationDate) > new Date()) {
+      user = tokenEntry.user;
+    }
+    tokenEntry.destroy();
   }
+  return user;
 };
 
 module.exports = {
-  saveTokenForUser,
-  getValidToken
+  saveLoginTokenForUser,
+  getUserForLoginToken
 };

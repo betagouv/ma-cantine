@@ -2,7 +2,7 @@ const { Canteen } = require('../../infrastructure/models/canteen');
 const { LoginToken } = require('../../infrastructure/models/login-token');
 const { User } = require('../../infrastructure/models/user');
 const { sequelize } = require('../../infrastructure/postgres-database');
-const { saveTokenForUser, getValidToken } = require('../../infrastructure/repositories/login-token');
+const { saveLoginTokenForUser, getUserForLoginToken } = require('../../infrastructure/repositories/login-token');
 const { createUserWithCanteen } = require('../../infrastructure/repositories/user');
 
 const canteenPayload = {
@@ -22,9 +22,9 @@ describe('Login token model', () => {
   let user;
 
   beforeAll(async () => {
-    await LoginToken.sync({ force: true });
-    await User.sync({ force: true });
     await Canteen.sync({ force: true });
+    await User.sync({ force: true });
+    await LoginToken.sync({ force: true });
     // need to create user and canteen because userId is foreign key in LoginToken
     user = await createUserWithCanteen(userPayload, canteenPayload);
   });
@@ -36,7 +36,7 @@ describe('Login token model', () => {
   });
 
   it('saves token', async () => {
-    await saveTokenForUser(user, tokenString);
+    await saveLoginTokenForUser(user, tokenString);
     const tokens = await LoginToken.findAll({
       where: {
         userId: user.id
@@ -50,8 +50,8 @@ describe('Login token model', () => {
   });
 
   it('updates token for user given duplicate', async () => {
-    await saveTokenForUser(user, 'firsttokenstring');
-    await saveTokenForUser(user, tokenString);
+    await saveLoginTokenForUser(user, 'firsttokenstring');
+    await saveLoginTokenForUser(user, tokenString);
     const tokens = await LoginToken.findAll({
       where: {
         userId: user.id
@@ -62,13 +62,13 @@ describe('Login token model', () => {
     expect(token.token).toBe(tokenString);
   });
 
-  it('returns valid token for user', async () => {
-    await saveTokenForUser(user, tokenString);
-    const token = await getValidToken(user);
-    expect(token).toBe(tokenString);
+  it('returns user for valid token', async () => {
+    await saveLoginTokenForUser(user, tokenString);
+    const tokenUser = await getUserForLoginToken(tokenString);
+    expect(tokenUser.email).toBe(user.email);
   });
 
-  it('does not return expired token for user', async () => {
+  it('does not return user for expired token', async () => {
     const now = new Date();
     await LoginToken.create({
       userId: user.id,
@@ -76,8 +76,8 @@ describe('Login token model', () => {
       // TODO: is this the right way to mock the date?
       createdAt: now.setHours(now.getHours() - 2)
     });
-    const token = await getValidToken(user);
-    expect(token).toBeUndefined();
+    const tokenUser = await getUserForLoginToken(tokenString);
+    expect(tokenUser).not.toBeDefined();
     const tokens = await LoginToken.findAll({
       where: {
         userId: user.id
@@ -86,8 +86,15 @@ describe('Login token model', () => {
     expect(tokens.length).toBe(0); // getValidToken to delete expired tokens
   });
 
+  it('deletes login token after one access', async () => {
+    await saveLoginTokenForUser(user, tokenString);
+    await getUserForLoginToken(tokenString);
+    const tokenUser = await getUserForLoginToken(tokenString);
+    expect(tokenUser).not.toBeDefined();
+  });
+
   it('requires a user', async () => {
-    await expect(saveTokenForUser({ id: null }, tokenString)).rejects.toThrow();
+    await expect(saveLoginTokenForUser({ id: null }, tokenString)).rejects.toThrow();
   });
 
   afterAll(async () => {

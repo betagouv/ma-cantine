@@ -12,7 +12,14 @@ var createUserWithCanteen = async function(userPayload, canteenPayload) {
   return createUser(userPayload, canteen.id);
 };
 
+var findUser = function(user) {
+  return User.findOne({
+    where: user
+  });
+};
+
 module.exports = {
   createUser,
-  createUserWithCanteen
+  createUserWithCanteen,
+  findUser
 }
