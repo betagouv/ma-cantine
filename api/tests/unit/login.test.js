@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { initiateMagicLinkLogin, generateJWTokenForUser } = require('../../application/login');
+const { initiateMagicLinkLogin, generateJWTokenForUser } = require('../../controllers/login');
 
 jest.mock('node-fetch');
 const fetch = require('node-fetch');
@@ -15,10 +15,10 @@ jest.mock('../../infrastructure/repositories/user', () => ({
 }));
 const { findUser } = require('../../infrastructure/repositories/user');
 
-jest.mock('../../application/sign-up', () => ({
+jest.mock('../../controllers/sign-up', () => ({
   sendSignUpLink: jest.fn()
 }));
-const { sendSignUpLink } = require('../../application/sign-up');
+const { sendSignUpLink } = require('../../controllers/sign-up');
 
 const user = {
   email: "test@email.com"
