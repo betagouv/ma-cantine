@@ -9,6 +9,7 @@ lié à la [fiche produit](https://beta.gouv.fr/startups/ma-cantine-egalim.html)
 - Stéphane Langlois : PO senior
 - Forster Groux : développeur web
 - Helen Root : developpeuse web
+- Alice Rouvellou : chargée de déploiement / relation utilisateurices
 
 ## vision produit
 pourquoi ? Pour une alimentation plus saine et durable dès la cantine de nos enfants et dans la restauration collective en général,
