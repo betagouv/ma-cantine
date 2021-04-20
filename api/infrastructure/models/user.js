@@ -3,7 +3,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const { sequelize } = require('../postgres-database');
 const { Canteen } = require('./canteen');
 
-let User = sequelize.define('User', {
+let User = sequelize.define('user', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -33,7 +33,6 @@ let User = sequelize.define('User', {
 
 Canteen.hasMany(User, {
   foreignKey: {
-    name: "canteenId",
     allowNull: false // user must be associated with a canteen
   }
 });
