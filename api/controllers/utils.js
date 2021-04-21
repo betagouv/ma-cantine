@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
 
+// use templates and params instead of html?
+// https://developers.sendinblue.com/docs/send-a-transactional-email#send-a-transactional-email-using-a-basic-html-content
 exports.sendEmail = function(to, subject, html) {
   const requestOptions = {
     method: "POST",

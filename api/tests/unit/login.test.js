@@ -5,10 +5,10 @@ jest.mock('node-fetch');
 const fetch = require('node-fetch');
 
 jest.mock('../../infrastructure/repositories/login-token', () => ({
-  saveTokenForUser: jest.fn(),
+  saveLoginTokenForUser: jest.fn(),
   getUserForLoginToken: jest.fn()
 }));
-const { saveTokenForUser, getUserForLoginToken } = require('../../infrastructure/repositories/login-token');
+const { saveLoginTokenForUser, getUserForLoginToken } = require('../../infrastructure/repositories/login-token');
 
 jest.mock('../../infrastructure/repositories/user', () => ({
   findUser: jest.fn()
@@ -27,7 +27,7 @@ const user = {
 describe('Log in', () => {
 
   beforeAll(() => {
-    saveTokenForUser.mockResolvedValue(0);
+    saveLoginTokenForUser.mockResolvedValue(0);
     fetch.mockReturnValue({
       status: 201
     });
@@ -36,8 +36,8 @@ describe('Log in', () => {
   it('generates, saves, and emails temp token given known email', async () => {
     findUser.mockReturnValue(user);
     await initiateMagicLinkLogin(user.email);
-    expect(saveTokenForUser).toHaveBeenCalledTimes(1);
-    const token = saveTokenForUser.mock.calls[0][1]; // token is second argument
+    expect(saveLoginTokenForUser).toHaveBeenCalledTimes(1);
+    const token = saveLoginTokenForUser.mock.calls[0][1]; // token is second argument
     expect(token).toBeDefined();
 
     // mock fetch call
@@ -60,7 +60,7 @@ describe('Log in', () => {
   it('does not send login link given unknown email', async () => {
     findUser.mockResolvedValue(null);
     await initiateMagicLinkLogin('unknown@test.com');
-    expect(saveTokenForUser).not.toHaveBeenCalled();
+    expect(saveLoginTokenForUser).not.toHaveBeenCalled();
     expect(sendSignUpLink).toHaveBeenCalledTimes(1);
   });
 
@@ -68,22 +68,22 @@ describe('Log in', () => {
     findUser.mockReturnValue(user);
     await initiateMagicLinkLogin(user.email);
     await initiateMagicLinkLogin(user.email);
-    const token1 = saveTokenForUser.mock.calls[0][1];
-    const token2 = saveTokenForUser.mock.calls[1][1];
+    const token1 = saveLoginTokenForUser.mock.calls[0][1];
+    const token2 = saveLoginTokenForUser.mock.calls[1][1];
     expect(token1).not.toBe(token2);
   });
 
   it('generates a JSON web token given a valid login token', async () => {
     findUser.mockReturnValue(user);
     await initiateMagicLinkLogin(user.email);
-    const loginToken = saveTokenForUser.mock.calls[0][1];
+    const loginToken = saveLoginTokenForUser.mock.calls[0][1];
     getUserForLoginToken.mockReturnValue(user);
     const token = await generateJWTokenForUser(loginToken);
     expect(jwt.decode(token).email).toBe(user.email);
   });
 
   afterEach(() => {
-    saveTokenForUser.mockClear();
+    saveLoginTokenForUser.mockClear();
     findUser.mockClear();
     fetch.mockClear();
   });
