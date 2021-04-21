@@ -9,6 +9,7 @@ import CanteensPage from '@/views/CanteensPage';
 import CanteensHome from '@/views/CanteensPage/CanteensHome';
 import CanteenPage from '@/views/CanteensPage/CanteenPage';
 import LegalNotices from '@/views/LegalNotices';
+import ConnectPage from '@/views/ConnectPage';
 
 const routes = [
   {
@@ -72,6 +73,11 @@ const routes = [
     path: '/mentions-legales',
     name: 'LegalNotices',
     component: LegalNotices,
+  },
+  {
+    path: '/connecter',
+    name: 'ConnectPage',
+    component: ConnectPage
   }
 ];
 
