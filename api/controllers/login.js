@@ -1,4 +1,4 @@
-const { saveTokenForUser, getUserForLoginToken } = require("../infrastructure/repositories/login-token");
+const { saveLoginTokenForUser, getUserForLoginToken } = require("../infrastructure/repositories/login-token");
 const { findUser } = require('../infrastructure/repositories/user');
 const { sendSignUpLink } = require('./sign-up');
 const crypto = require('crypto');
@@ -7,14 +7,15 @@ const { sendEmail } = require("./utils");
 require('dotenv').config();
 
 function generateToken() {
-  return crypto.randomBytes(256).toString('base64');
+  // TODO: test adding a string of the length generated here, how many bytes? originally 256
+  return crypto.randomBytes(50).toString('base64');
 };
 
 function sendLoginLink(email, token) {
-  // TODO: better way of generating html string (ejs.renderFile ?)
-  const htmlBody = "<!DOCTYPE html> <html> <body>"+
-                   "<a href='?token="+encodeURIComponent(token)+">Connectez-moi</a>"+
-                   "</body> </html>";
+  // TODO: better way of generating html string (ejs.renderFile/send in blue templates ?)
+  const htmlBody = `<!DOCTYPE html> <html> <body>`+
+                   `<p><a href='${process.env.LOGIN_URL}?token=${encodeURIComponent(token)}'>Connectez-moi</a></p>`+
+                   `</body> </html>`;
 
   sendEmail([{ email }], "Votre lien de connexion avec ma cantine", htmlBody)
 };
@@ -24,7 +25,7 @@ async function initiateMagicLinkLogin(email) {
   if(user) {
     const token = generateToken();
     // wait to make sure token is saved successfully before it is sent
-    await saveTokenForUser(user, token);
+    await saveLoginTokenForUser(user, token);
     sendLoginLink(email, token);
   } else {
     sendSignUpLink(email);
