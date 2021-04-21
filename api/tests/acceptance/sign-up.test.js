@@ -3,7 +3,12 @@ const { init } = require("../../server");
 jest.mock("../../infrastructure/repositories/user", () => ({
   createUserWithCanteen: jest.fn()
 }));
-const { createUserWithCanteen, createUser } = require("../../infrastructure/repositories/user");
+const { createUserWithCanteen } = require("../../infrastructure/repositories/user");
+
+jest.mock("../../controllers/login", () => ({
+  initiateMagicLinkLogin: jest.fn()
+}));
+const { initiateMagicLinkLogin } = require("../../controllers/login");
 
 const canteen = {
   name: "Test canteen",
@@ -37,6 +42,8 @@ describe('Sign up endpoint /sign-up', () => {
     expect(res.statusCode).toBe(201);
     expect(createUserWithCanteen).toHaveBeenCalledTimes(1);
     expect(createUserWithCanteen).toHaveBeenCalledWith(user, canteen);
+    expect(initiateMagicLinkLogin).toHaveBeenCalledTimes(1);
+    expect(initiateMagicLinkLogin).toHaveBeenCalledWith(user.email);
   });
 
   // TODO:
