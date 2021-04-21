@@ -2,6 +2,7 @@
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const login = require('./application/login.js');
+const signUp = require('./application/sign-up.js');
 const subscribeBetaTester = require('./application/subscribe-beta-tester.js');
 
 const server = Hapi.server({
@@ -11,12 +12,14 @@ const server = Hapi.server({
     cors: {
       origin: ['*']
     }
-  }
+  },
   // jwt authentication
+  debug: { request: ['error'] }
 });
 
 subscribeBetaTester.register(server);
 login.register(server);
+signUp.register(server);
 
 exports.init = async () => {
   await server.initialize();
