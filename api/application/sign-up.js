@@ -1,3 +1,4 @@
+const { initiateMagicLinkLogin } = require("../controllers/login");
 const { createUserWithCanteen } = require("../infrastructure/repositories/user");
 
 // TODO: fail with 400 for badly formatted request payload
@@ -8,6 +9,7 @@ const handler = async function(request, h) {
   const createdUser = await createUserWithCanteen(user, canteen);
   if(createdUser) {
     code = 201;
+    initiateMagicLinkLogin(createdUser.email);
   } else {
     code = 400;
   }
