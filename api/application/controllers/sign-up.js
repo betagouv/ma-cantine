@@ -1,8 +1,8 @@
-const { initiateMagicLinkLogin } = require("../controllers/login");
-const { createUserWithCanteen } = require("../infrastructure/repositories/user");
+const { initiateMagicLinkLogin } = require("../../domain/usecases/login");
+const { createUserWithCanteen } = require("../../infrastructure/repositories/user");
 
 // TODO: fail with 400 for badly formatted request payload
-const handler = async function(request, h) {
+exports.signUp = async function(request, h) {
   let code;
   const user = request.payload.user;
   const canteen = request.payload.canteen;
@@ -14,12 +14,4 @@ const handler = async function(request, h) {
     code = 400;
   }
   return h.response().code(code);
-};
-
-exports.register = async function(server) {
-  server.route([{
-    method: "POST",
-    path: "/sign-up",
-    handler
-  }]);
 };

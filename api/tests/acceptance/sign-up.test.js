@@ -5,10 +5,10 @@ jest.mock("../../infrastructure/repositories/user", () => ({
 }));
 const { createUserWithCanteen } = require("../../infrastructure/repositories/user");
 
-jest.mock("../../controllers/login", () => ({
+jest.mock("../../domain/usecases/login", () => ({
   initiateMagicLinkLogin: jest.fn()
 }));
-const { initiateMagicLinkLogin } = require("../../controllers/login");
+const { initiateMagicLinkLogin } = require("../../domain/usecases/login");
 
 const canteen = {
   name: "Test canteen",
