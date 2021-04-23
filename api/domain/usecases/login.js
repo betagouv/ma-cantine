@@ -1,9 +1,9 @@
-const { saveLoginTokenForUser, getUserForLoginToken } = require("../infrastructure/repositories/login-token");
-const { findUser } = require('../infrastructure/repositories/user');
-const { sendSignUpLink } = require('./sign-up');
+const { saveLoginTokenForUser, getUserForLoginToken } = require("../../infrastructure/repositories/login-token");
+const { findUser } = require('../../infrastructure/repositories/user');
+const { sendSignUpLink } = require('../../domain/usecases/sign-up');
 const crypto = require('crypto');
 const jwt = require("jsonwebtoken");
-const { sendEmail } = require("./utils");
+const { sendEmail } = require("../services/send-email");
 require('dotenv').config();
 
 function generateToken() {

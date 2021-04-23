@@ -1,13 +1,5 @@
 const _ = require('lodash');
-const { sendEmail } = require('../controllers/utils');
-
-exports.register = async function(server) {
-  server.route([{
-    method: 'POST',
-    path: '/subscribe-beta-tester',
-    handler: subscribeBetaTester
-  }]);
-}
+const { sendEmail } = require('../../domain/services/send-email');
 
 async function subscribeBetaTester(request, h) {
   const payload = request.payload;

@@ -1,7 +1,7 @@
 jest.mock('node-fetch');
 const fetch = require('node-fetch');
 
-const { subscribeBetaTester } = require('../../application/subscribe-beta-tester');
+const { subscribeBetaTester } = require('../../application/controllers/subscribe-beta-tester');
 
 describe("Beta-tester subscription", () => {
 
