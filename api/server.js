@@ -1,9 +1,9 @@
 'use strict';
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
-const login = require('./application/login.js');
-const signUp = require('./application/sign-up.js');
-const subscribeBetaTester = require('./application/subscribe-beta-tester.js');
+const login = require('./application/routes/login.js');
+const signUp = require('./application/routes/sign-up.js');
+const subscribeBetaTester = require('./application/routes/subscribe-beta-tester.js');
 
 const server = Hapi.server({
   host: process.env.HOST || 'localhost',
