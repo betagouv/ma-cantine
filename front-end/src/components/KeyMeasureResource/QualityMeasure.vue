@@ -28,7 +28,7 @@
 
       <a
         class="calculator-download"
-        href="/Diagnostic approvisionnement (ma-cantine-alpha) v0.3.ods"
+        href="/Diagnostic approvisionnement (ma-cantine-alpha) v0.4.ods"
         download
         @click="closeCalculatorModal"
       >
