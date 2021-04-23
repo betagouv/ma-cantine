@@ -61,6 +61,17 @@ describe('Login process', () => {
     expect(initiateMagicLinkLogin).toHaveBeenCalledWith(userPayload.email);
   });
 
+  it('returns 400 given no email at /login', async () => {
+    const res = await server.inject({
+      method: "POST",
+      url: "/login",
+      payload: {
+        email: ''
+      }
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
   it('successfully returns a JSON web token with GET /complete-login', async () => {
     const token = 'test';
     const jwt = 'xxxx.yyyy.zzzz';
@@ -75,18 +86,29 @@ describe('Login process', () => {
     // TODO: is there a test I should be doing for jwt server config?
   });
 
-  it('returns a 404 given invalid token to /complete-login', async () => {
+  it('returns a 400 given invalid token to /complete-login', async () => {
     generateJWTokenForUser.mockReturnValue(undefined);
     const res = await server.inject({
       method: "GET",
       url: "/complete-login?token=notatoken",
     });
     expect(res.statusCode).toBe(400);
+    expect(generateJWTokenForUser).toHaveBeenCalledTimes(1);
     expect(res.result).toBeNull();
+  });
+
+  it('returns a 400 given no token to /complete-login', async () => {
+    const res = await server.inject({
+      method: "GET",
+      url: "/complete-login?",
+    });
+    expect(res.statusCode).toBe(400);
+    expect(generateJWTokenForUser).not.toHaveBeenCalled();
   });
 
   afterEach(async() => {
     initiateMagicLinkLogin.mockClear();
+    generateJWTokenForUser.mockClear();
   });
 
   afterAll(async () => {

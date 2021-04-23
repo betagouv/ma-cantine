@@ -45,4 +45,13 @@ describe("Beta-tester subscription endpoint /subscribe-beta-tester", () => {
     expect(res.result).toStrictEqual(responseBodyJSON);
     expect(fetch).toHaveBeenCalledTimes(1);
   });
+
+  it("returns 400 given invalid payload", async () => {
+    const res = await server.inject({
+      method: 'POST',
+      url: '/subscribe-beta-tester',
+      payload: {}
+    });
+    expect(res.statusCode).toBe(400);
+  })
 });
