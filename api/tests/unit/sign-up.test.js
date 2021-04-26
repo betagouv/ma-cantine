@@ -5,14 +5,11 @@ jest.mock('../../domain/services/initiate-login', () => ({
 }));
 const { initiateMagicLinkLogin } = require('../../domain/services/initiate-login');
 
-jest.mock('../../infrastructure/repositories/user', () => {
-  const origin = jest.requireActual('../../infrastructure/repositories/user');
-  return {
-    ...origin,
-    createUserWithCanteen: jest.fn()
-  };
-});
-const { createUserWithCanteen, DuplicateUserError } = require('../../infrastructure/repositories/user');
+jest.mock('../../infrastructure/repositories/user', () => ({
+  createUserWithCanteen: jest.fn()
+}));
+const { createUserWithCanteen } = require('../../infrastructure/repositories/user');
+const { DuplicateUserError } = require('../../infrastructure/errors');
 
 const canteen = {
   name: "Test canteen",

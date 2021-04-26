@@ -1,5 +1,6 @@
 const { initiateMagicLinkLogin } = require("../services/initiate-login");
-const { createUserWithCanteen, DuplicateUserError } = require("../../infrastructure/repositories/user");
+const { createUserWithCanteen } = require("../../infrastructure/repositories/user");
+const { DuplicateUserError } = require("../../infrastructure/errors");
 
 exports.signUp = async function(user, canteen) {
   try {
