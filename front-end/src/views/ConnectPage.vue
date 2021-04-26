@@ -26,9 +26,10 @@
         <input id="canteen" v-model="canteen.name" required>
         <label for="city">Ville / commune</label>
         <input id="city" v-model="canteen.city" required>
-        <label for="sector">Sector</label>
-        <!-- TODO: make sector limited list matching back-end -->
-        <input id="sector" v-model="canteen.sector" required>
+        <label for="sector">Secteur</label>
+        <select id="sector" v-model="canteen.sector" required>
+          <option v-for="(title, id) in sectors" :key="id" :value="id">{{ title }}</option>
+        </select>
         <input type="submit" class="submit" value="Inscrivez-moi">
       </form>
     </div>
@@ -37,6 +38,8 @@
 </template>
 
 <script>
+import sectors from "@/data/sector-tags";
+
 var post = function(apiUrl, url, json) {
   return fetch(`${apiUrl}/${url}`, {
     method: "POST",
@@ -54,8 +57,11 @@ export default {
       token: this.$route.query.token,
       loginEmail: null,
       user: {},
-      canteen: {},
-      loginUrl: (process.env.SITE_URL || "http://localhost:8080") + this.$route.path + "?token="
+      canteen: {
+        sector: "scolaire"
+      },
+      loginUrl: (process.env.SITE_URL || "http://localhost:8080") + this.$route.path + "?token=",
+      sectors
     }
   },
   created() {
@@ -145,7 +151,7 @@ export default {
       margin-top: 15px;
     }
 
-    input {
+    input, select {
       margin-top: 10px;
       border: none;
       font-size: 1.2em;
