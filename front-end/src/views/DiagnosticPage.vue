@@ -4,7 +4,7 @@
     <h2>Évaluez-vous sur les mesures déjà mises en place dans votre établissement, programmées ou celles restantes à faire.</h2>
     <div class="sector">
       <label for="sectors">Secteur de mon restaurant : </label>
-      <select id="sectors" v-model="sector">
+      <select id="sectors" v-model="sector" @change="saveCanteenSector($event.target.value)">
         <option v-for="(label, key) in sectors" :key="key" :value="key">
           {{label}}
         </option>
@@ -49,6 +49,7 @@
   import KeyMeasureDiagnostic from '@/components/KeyMeasureDiagnostic';
   import BaseModal from '@/components/BaseModal';
   import sectors from "@/data/sectors.json";
+  import { getCanteenSector, saveCanteenSector } from "@/data/CanteenSector.js";
 
   export default {
     components: {
@@ -61,7 +62,7 @@
       return {
         sectors,
         measureDiagnosticModal: null,
-        sector: "scolaire",
+        sector: getCanteenSector(),
       };
     },
     computed: {
@@ -83,7 +84,8 @@
         return measure.specificSectorsForSubMeasures ?
           measure.subMeasures.filter(subMeasure => subMeasure.sectors.includes(this.sector)) :
           measure.subMeasures;
-      }
+      },
+      saveCanteenSector,
     }
   }
 </script>
