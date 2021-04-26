@@ -6,30 +6,33 @@
     <p>Votre demande est en cours de vérification...</p>
   </div>
   <div v-else>
-    <h1>Connecter</h1>
-    <form id="login" @submit.prevent="submitLogin">
-      <h2>Connexion</h2>
-      <label for="email">Email : </label>
-      <input id="email" v-model="loginEmail" type="email" required>
-      <input type="submit" value="Connecter-moi">
-    </form>
-    <form id="sign-up" @submit.prevent="submitSignUp">
-      <h2>M'inscrire</h2>
-      <label for="email">Email : </label>
-      <input id="email" v-model="user.email" type="email" required>
-      <label for="name-first">Prénom : </label>
-      <input id="name-first" v-model="user.firstName" required>
-      <label for="name-last">Nom : </label>
-      <input id="name-last" v-model="user.lastName" required>
-      <label for="canteen">Nom de la cantine : </label>
-      <input id="canteen" v-model="canteen.name" required>
-      <label for="city">Ville / commune : </label>
-      <input id="city" v-model="canteen.city" required>
-      <label for="sector">Sector : </label>
-      <!-- TODO: make sector limited list matching back-end -->
-      <input id="sector" v-model="canteen.sector" required>
-      <input type="submit" value="Inscrivez-moi">
-    </form>
+    <h1>Se connecter</h1>
+    <div id="forms">
+      <form id="login" @submit.prevent="submitLogin">
+        <h2>Connexion</h2>
+        <label for="login-email">Email</label>
+        <input id="login-email" v-model="loginEmail" type="email" required>
+        <input type="submit" class="submit" value="Connectez-moi">
+      </form>
+      <form id="sign-up" @submit.prevent="submitSignUp">
+        <h2>Inscription</h2>
+        <label for="sign-up-email">Email</label>
+        <input id="sign-up-email" v-model="user.email" type="email" required>
+        <label for="name-first">Prénom</label>
+        <input id="name-first" v-model="user.firstName" required>
+        <label for="name-last">Nom</label>
+        <input id="name-last" v-model="user.lastName" required>
+        <label for="canteen">Nom de la cantine</label>
+        <input id="canteen" v-model="canteen.name" required>
+        <label for="city">Ville / commune</label>
+        <input id="city" v-model="canteen.city" required>
+        <label for="sector">Sector</label>
+        <!-- TODO: make sector limited list matching back-end -->
+        <input id="sector" v-model="canteen.sector" required>
+        <input type="submit" class="submit" value="Inscrivez-moi">
+      </form>
+    </div>
+    <p>Si vous avez des difficultés de connexion, contactez nous par email : <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a></p>
   </div>
 </template>
 
@@ -115,7 +118,53 @@ export default {
 </script>
 
 <style lang="scss" scoped>
- div {
-   padding: 2em;
- }
+  div {
+    padding: 2em;
+  }
+
+  h1 {
+    font-weight: bold;
+    font-size: 48px;
+    color: $green;
+  }
+
+  #forms {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 50em;
+    margin: 2em;
+
+    label {
+      text-align: left;
+      margin-top: 15px;
+    }
+
+    input {
+      margin-top: 10px;
+      border: none;
+      font-size: 1.2em;
+      padding: 5px;
+      background-color: $light-orange;
+    }
+
+    .submit {
+      max-width: 30em;
+      font-size: 1.2em;
+      margin: auto;
+      margin-top: 2em;
+      border: none;
+      background: $orange;
+      border-radius: 1em;
+      padding: 0.5em;
+      color: $white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
 </style>
