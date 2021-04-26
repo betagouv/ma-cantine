@@ -6,7 +6,7 @@
         "faIcon": "fa-apple-alt",
         "baseComponent": "QualityMeasure",
         "description": "La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent comporter, au cours de l'année 2022, 50% de produits de qualité et durables dont 20% issus de l’agriculture biologique ou en conversion. Ces seuils (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre à des produits bio ou en conversion et au total au moins 50 euros doivent correspondre à des produits durables et de qualité (bio inclus).",
-        "tags": [
+        "sectors": [
             "scolaire",
             "administration",
             "universitaire",
@@ -42,7 +42,7 @@
         "shortTitle": "Gaspillage alimentaire",
         "faIcon": "fa-hands",
         "baseComponent": "WasteMeasure",
-        "tags": [
+        "sectors": [
             "scolaire",
             "administration",
             "universitaire",
@@ -94,7 +94,7 @@
                 "id": "proteines",
                 "title": "Les sources de protéines doivent être diversifiées.",
                 "shortTitle": "Protéines diversifiées",
-                "tags": [
+                "sectors": [
                     "scolaire",
                     "administration",
                     "universitaire",
@@ -114,7 +114,7 @@
                 "id": "menu-vege",
                 "title": "Expérimentation d’un menu végétarien par semaine",
                 "shortTitle": "Menu végé hebdo",
-                "tags": [
+                "sectors": [
                     "scolaire"
                 ],
                 "deadline": {
@@ -136,7 +136,7 @@
                 "id": "bouteilles",
                 "title": "Les bouteilles d’eau plate en plastique sont interdites.",
                 "shortTitle": "Bouteilles",
-                "tags": [
+                "sectors": [
                     "scolaire"
                 ],
                 "deadline": {
@@ -149,7 +149,7 @@
                 "id": "ustensiles",
                 "title": "Les ustensiles en plastique à usage unique sont interdits.",
                 "shortTitle": "Ustensiles",
-                "tags": [
+                "sectors": [
                     "scolaire",
                     "administration",
                     "universitaire",
@@ -169,7 +169,7 @@
                 "id": "contenants",
                 "title": "Les contenants alimentaires en plastique sont interdits.",
                 "shortTitle": "Contenants",
-                "tags": [
+                "sectors": [
                     "scolaire",
                     "universitaire",
                     "creche"
@@ -193,7 +193,7 @@
                 "id": "convives-informes",
                 "title": "Les convives doivent être informés une fois par an.",
                 "shortTitle": "Convives informés",
-                "tags": [
+                "sectors": [
                     "scolaire",
                     "administration",
                     "universitaire",
@@ -213,7 +213,7 @@
                 "id": "informations-nutritionnelles",
                 "title": "Les gestionnaires en restauration collective communiquent sur les informations nutritionnelles des repas servis.",
                 "shortTitle": "Infos nutritionnelles",
-                "tags": [
+                "sectors": [
                     "scolaire",
                     "universitaire",
                     "creche"

@@ -7,14 +7,30 @@
     <div class="for-who">
       <h3><i class="fas fa-chart-pie"></i> Pour qui ?</h3>
       <p v-if="measure.who">{{measure.who}}</p>
-      <div class="tags">
-        <p class="tag" :class="tag" v-for="tag in measure.tags" :key="tag">
-          {{ tagsInfo[tag] }}
+      <div class="sectors">
+        <p class="sector" :class="sector" v-for="sector in measure.sectors" :key="sector">
+          {{ sectors[sector] }}
         </p>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+  import sectors from "@/data/sectors.json";
+
+  export default {
+    name: "KeyMeasureInfoCard",
+    props: {
+      measure: Object,
+    },
+    data() {
+      return {
+        sectors,
+      }
+    },
+  };
+</script>
 
 <style scoped lang="scss">
   .measure-info-card {
@@ -43,7 +59,7 @@
     color: $black;
   }
 
-  .tag {
+  .sector {
     font-size: 14px;
     font-weight: bold;
     margin: 0.5em 0em;
@@ -65,24 +81,8 @@
       width: 70%;
     }
 
-    .tags {
+    .sectors {
       column-count: 2;
     }
   }
 </style>
-
-<script>
-  import tags from "@/data/sector-tags.json";
-
-  export default {
-    name: "KeyMeasureInfoCard",
-    props: {
-      measure: Object,
-    },
-    data() {
-      return {
-        tagsInfo: tags,
-      }
-    },
-  };
-</script>

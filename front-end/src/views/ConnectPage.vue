@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import sectors from "@/data/sector-tags";
+import sectors from "@/data/sectors.json";
 
 var post = function(apiUrl, url, json) {
   return fetch(`${apiUrl}/${url}`, {

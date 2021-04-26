@@ -2,13 +2,13 @@
   <div class="measure-content">
     <h1><KeyMeasureTitle :measure="measure"/></h1>
     <div class="measure-details">
-      <KeyMeasureInfoCard v-if="measure.tags" :measure="measure"/>
+      <KeyMeasureInfoCard v-if="measure.sectors" :measure="measure"/>
       <div class="description-container">
         <KeyMeasureDescription :measure="measure" v-if="measure.description"/>
         <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
           <h2 class="measure-headline">{{ subMeasure.title }}</h2>
           <div class="measure-details">
-            <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure"/>
+            <KeyMeasureInfoCard v-if="subMeasure.sectors" :measure="subMeasure"/>
             <div>
               <KeyMeasureDescription :measure="subMeasure"/>
               <KeyMeasureResource :baseComponent="subMeasure.baseComponent" class="resource-block"/>
@@ -25,7 +25,6 @@
   import KeyMeasureDescription from '@/components/KeyMeasureDescription'
   import KeyMeasureInfoCard from '@/components/KeyMeasureInfoCard'
   import KeyMeasureTitle from '@/components/KeyMeasureTitle'
-  import tags from '@/data/sector-tags.json'
   import KeyMeasureResource from '@/components/KeyMeasureResource'
 
   export default {
@@ -38,11 +37,6 @@
     props: {
       measure: Object,
     },
-    data() {
-      return {
-        tags
-      };
-    }
   }
 </script>
 
