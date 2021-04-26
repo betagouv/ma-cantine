@@ -1,11 +1,17 @@
 const Joi = require('joi');
-const { signUp } = require("../controllers/sign-up");
+const { signUp } = require("../../domain/usecases/sign-up");
+
+const signUpHandler = async function(request, h) {
+  const { user, canteen } = request.payload;
+  signUp(user, canteen);
+  return h.response().code(200);
+};
 
 exports.register = async function(server) {
   server.route([{
     method: "POST",
     path: "/sign-up",
-    handler: signUp,
+    handler: signUpHandler,
     options: {
       validate: {
         payload: Joi.object({
