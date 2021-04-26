@@ -1,15 +1,12 @@
-const jwt = require('jsonwebtoken');
-const { generateJWTokenForUser } = require('../../domain/usecases/complete-login');
 const { initiateMagicLinkLogin } = require('../../domain/services/initiate-login');
 
 jest.mock('node-fetch');
 const fetch = require('node-fetch');
 
 jest.mock('../../infrastructure/repositories/login-token', () => ({
-  saveLoginTokenForUser: jest.fn(),
-  getUserForLoginToken: jest.fn()
+  saveLoginTokenForUser: jest.fn()
 }));
-const { saveLoginTokenForUser, getUserForLoginToken } = require('../../infrastructure/repositories/login-token');
+const { saveLoginTokenForUser } = require('../../infrastructure/repositories/login-token');
 
 jest.mock('../../infrastructure/repositories/user', () => ({
   findUser: jest.fn()
@@ -25,7 +22,7 @@ const user = {
   email: "test@email.com"
 };
 
-describe('Log in', () => {
+describe('Log in initiation', () => {
 
   beforeAll(() => {
     saveLoginTokenForUser.mockResolvedValue(0);
@@ -72,15 +69,6 @@ describe('Log in', () => {
     const token1 = saveLoginTokenForUser.mock.calls[0][1];
     const token2 = saveLoginTokenForUser.mock.calls[1][1];
     expect(token1).not.toBe(token2);
-  });
-
-  it('generates a JSON web token given a valid login token', async () => {
-    findUser.mockReturnValue(user);
-    await initiateMagicLinkLogin(user.email);
-    const loginToken = saveLoginTokenForUser.mock.calls[0][1];
-    getUserForLoginToken.mockReturnValue(user);
-    const token = await generateJWTokenForUser(loginToken);
-    expect(jwt.decode(token).email).toBe(user.email);
   });
 
   afterEach(() => {
