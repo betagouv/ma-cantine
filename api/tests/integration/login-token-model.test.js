@@ -76,8 +76,7 @@ describe('Login token model', () => {
       // TODO: is this the right way to mock the date?
       createdAt: now.setHours(now.getHours() - 2)
     });
-    const tokenUser = await getUserForLoginToken(tokenString);
-    expect(tokenUser).not.toBeDefined();
+    expect(await getUserForLoginToken(tokenString)).not.toBeDefined();
     const tokens = await LoginToken.findAll({
       where: {
         userId: user.id
@@ -89,8 +88,7 @@ describe('Login token model', () => {
   it('deletes login token after one access', async () => {
     await saveLoginTokenForUser(user, tokenString);
     await getUserForLoginToken(tokenString);
-    const tokenUser = await getUserForLoginToken(tokenString);
-    expect(tokenUser).not.toBeDefined();
+    expect(await getUserForLoginToken(tokenString)).not.toBeDefined();
   });
 
   it('requires a user', async () => {

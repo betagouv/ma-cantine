@@ -5,11 +5,6 @@ const { createUserWithCanteen } = require('../../infrastructure/repositories/use
 const { init } = require('../../server');
 const { sequelize } = require('../../infrastructure/postgres-database');
 
-jest.mock('../../domain/usecases/complete-login', () => ({
-  generateJWTokenForUser: jest.fn()
-}));
-const { generateJWTokenForUser } = require('../../domain/usecases/complete-login');
-
 jest.mock('../../domain/services/initiate-login', () => ({
   initiateMagicLinkLogin: jest.fn()
 }));
@@ -76,43 +71,8 @@ describe('Login process', () => {
     expect(res.statusCode).toBe(400);
   });
 
-  it('successfully returns a JSON web token with GET /complete-login', async () => {
-    const token = 'test';
-    const jwt = 'xxxx.yyyy.zzzz';
-    generateJWTokenForUser.mockReturnValue(jwt);
-    const res = await server.inject({
-      method: "GET",
-      url: "/complete-login?token="+token,
-    });
-    expect(res.statusCode).toBe(200);
-    expect(generateJWTokenForUser).toHaveBeenCalledWith(token);
-    expect(res.result.jwt).toBe(jwt);
-    // TODO: is there a test I should be doing for jwt server config?
-  });
-
-  it('returns a 400 given invalid token to /complete-login', async () => {
-    generateJWTokenForUser.mockReturnValue(undefined);
-    const res = await server.inject({
-      method: "GET",
-      url: "/complete-login?token=notatoken",
-    });
-    expect(res.statusCode).toBe(400);
-    expect(generateJWTokenForUser).toHaveBeenCalledTimes(1);
-    expect(res.result).toBeNull();
-  });
-
-  it('returns a 400 given no token to /complete-login', async () => {
-    const res = await server.inject({
-      method: "GET",
-      url: "/complete-login?",
-    });
-    expect(res.statusCode).toBe(400);
-    expect(generateJWTokenForUser).not.toHaveBeenCalled();
-  });
-
   afterEach(async() => {
     initiateMagicLinkLogin.mockClear();
-    generateJWTokenForUser.mockClear();
   });
 
   afterAll(async () => {

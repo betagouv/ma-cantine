@@ -1,8 +1,7 @@
 require('../postgres-database');
 const { createCanteen } = require('./canteen');
 const { User } = require('../models/user');
-
-class DuplicateUserError extends Error {};
+const { DuplicateUserError } = require('../errors');
 
 var createUser = function(user, canteenId) {
   user.canteenId = canteenId;
@@ -32,6 +31,5 @@ var findUser = function(user) {
 module.exports = {
   createUser,
   createUserWithCanteen,
-  findUser,
-  DuplicateUserError
+  findUser
 }
