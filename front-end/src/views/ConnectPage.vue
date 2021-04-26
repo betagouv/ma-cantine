@@ -51,7 +51,8 @@ export default {
       token: this.$route.query.token,
       loginEmail: null,
       user: {},
-      canteen: {}
+      canteen: {},
+      loginUrl: (process.env.SITE_URL || "http://localhost:8080") + this.$route.path + "?token="
     }
   },
   created() {
@@ -59,17 +60,21 @@ export default {
   },
   methods: {
     async submitLogin() {
-      post(this.$api_url, 'login', { email: this.loginEmail });
+      post(this.$api_url, 'login', {
+        email: this.loginEmail,
+        loginUrl: this.loginUrl
+      });
       alert("Merci, si vous avez un compte vous recevriez un email.");
       this.loginEmail = null;
     },
     async submitSignUp() {
       const response = await post(this.$api_url, 'sign-up', {
         user: this.user,
-        canteen: this.canteen
+        canteen: this.canteen,
+        loginUrl: this.loginUrl
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         this.user = {};
         this.canteen = {};
         alert("Merci, vous recevrez un email bientôt pour connecter.")

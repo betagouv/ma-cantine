@@ -14,7 +14,6 @@ SENDINBLUE_CONTACT_EMAIL=
 DATABASE_URL=
 TEST_DATABASE_URL=
 JWT_SECRET_KEY=
-LOGIN_URL= // lien vers le front-end pour finaliser le login
 ```
 
 ## BDD

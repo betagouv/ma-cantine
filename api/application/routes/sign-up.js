@@ -2,8 +2,8 @@ const Joi = require('joi');
 const { signUp } = require("../../domain/usecases/sign-up");
 
 const signUpHandler = async function(request, h) {
-  const { user, canteen } = request.payload;
-  signUp(user, canteen);
+  const { user, canteen, loginUrl } = request.payload;
+  signUp(user, canteen, loginUrl);
   return h.response().code(200);
 };
 
@@ -24,7 +24,8 @@ exports.register = async function(server) {
             name: Joi.string().required(),
             city: Joi.string().required(),
             sector: Joi.string().required() // TODO: validate from sector list
-          })
+          }),
+          loginUrl: Joi.string().uri().required()
         })
       }
     }
