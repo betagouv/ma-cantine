@@ -1,10 +1,8 @@
-const { saveLoginTokenForUser, getUserForLoginToken } = require("../../infrastructure/repositories/login-token");
-const { findUser } = require('../../infrastructure/repositories/user');
-const { sendSignUpLink } = require('../../domain/usecases/sign-up');
 const crypto = require('crypto');
-const jwt = require("jsonwebtoken");
-const { sendEmail } = require("../services/send-email");
-require('dotenv').config();
+const { sendEmail } = require("./send-email");
+const { sendSignUpLink } = require('./send-sign-up-link');
+const { findUser } = require('../../infrastructure/repositories/user');
+const { saveLoginTokenForUser } = require('../../infrastructure/repositories/login-token');
 
 function generateToken() {
   // TODO: test adding a string of the length generated here, how many bytes? originally 256
@@ -33,14 +31,6 @@ async function initiateMagicLinkLogin(email) {
   }
 };
 
-async function generateJWTokenForUser(loginTokenString) {
-  let user = await getUserForLoginToken(loginTokenString);
-  if(user) {
-    return jwt.sign({ email: user.email }, process.env.JWT_SECRET_KEY, { expiresIn: '7 days' });
-  }
-};
-
 module.exports = {
-  initiateMagicLinkLogin,
-  generateJWTokenForUser
-};
+  initiateMagicLinkLogin
+}

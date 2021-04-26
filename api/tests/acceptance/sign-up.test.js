@@ -1,14 +1,9 @@
 const { init } = require("../../server");
 
-jest.mock("../../infrastructure/repositories/user", () => ({
-  createUserWithCanteen: jest.fn()
+jest.mock("../../domain/usecases/sign-up", () => ({
+  signUp: jest.fn()
 }));
-const { createUserWithCanteen } = require("../../infrastructure/repositories/user");
-
-jest.mock("../../domain/usecases/login", () => ({
-  initiateMagicLinkLogin: jest.fn()
-}));
-const { initiateMagicLinkLogin } = require("../../domain/usecases/login");
+const { signUp } = require("../../domain/usecases/sign-up");
 
 const canteen = {
   name: "Test canteen",
@@ -29,8 +24,7 @@ describe('Sign up endpoint /sign-up', () => {
     server = await init();
   });
 
-  it('triggers user creation on POST with valid data', async () => {
-    createUserWithCanteen.mockReturnValue(user);
+  it('triggers sign up on POST with valid data', async () => {
     const res = await server.inject({
       method: "POST",
       url: "/sign-up",
@@ -39,22 +33,12 @@ describe('Sign up endpoint /sign-up', () => {
         canteen
       }
     });
-    expect(res.statusCode).toBe(201);
-    expect(createUserWithCanteen).toHaveBeenCalledTimes(1);
-    expect(createUserWithCanteen).toHaveBeenCalledWith(user, canteen);
-    expect(initiateMagicLinkLogin).toHaveBeenCalledTimes(1);
-    expect(initiateMagicLinkLogin).toHaveBeenCalledWith(user.email);
+    expect(res.statusCode).toBe(200);
+    expect(signUp).toHaveBeenCalledTimes(1);
+    expect(signUp).toHaveBeenCalledWith(user, canteen);
   });
 
-  // TODO:
-  // it('triggers login link on POST to /sign-up if duplicate email', async() => {
-  //   const res = await server.inject({
-
-  //   })
-  // })
-
   it('errors if invalid data on POST', async () => {
-    createUserWithCanteen.mockReturnValue();
     const res = await server.inject({
       method: "POST",
       url: "/sign-up",

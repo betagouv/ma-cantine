@@ -2,7 +2,7 @@ const { sequelize } = require('../../infrastructure/postgres-database');
 const { Canteen } = require('../../infrastructure/models/canteen');
 const { User } = require('../../infrastructure/models/user');
 const { createCanteen } = require('../../infrastructure/repositories/canteen');
-const { createUser, createUserWithCanteen } = require('../../infrastructure/repositories/user');
+const { createUser, createUserWithCanteen, DuplicateUserError } = require('../../infrastructure/repositories/user');
 
 const canteenPayload = {
   name: "Test canteen",
@@ -50,6 +50,13 @@ describe('User model', () => {
     const users = await User.findAll();
     // use second canteen because a canteen was created in tests setup
     expect(users[0].canteenId).toBe(canteens[1].id);
+  });
+
+  it('throws user exists error given duplicate user to create', async () => {
+    await createUserWithCanteen(userPayload, canteenPayload);
+    await expect(async () => {
+      await createUserWithCanteen(userPayload, canteenPayload);
+    }).rejects.toThrow(DuplicateUserError);
   });
 
   afterAll(async () => {
