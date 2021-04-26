@@ -34,6 +34,7 @@
       <KeyMeasureDiagnostic
         :measure="measureDiagnosticModal"
         @closeModal="closeDiagnosticModal"
+        :sector="sector"
       />
     </BaseModal>
     <router-link :to="{ name: 'KeyMeasuresHome' }" id="summarise">

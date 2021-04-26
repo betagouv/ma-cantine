@@ -6,6 +6,7 @@
       <component
         :is="measureDiagnosticComponentName"
         v-model="diagnostic"
+        :showQuestionForSubMeasure="showQuestionForSubMeasure"
       />
 
       <input type="submit" id="submit" value="Valider">
@@ -31,7 +32,7 @@
       QualityMeasureDiagnostic,
       WasteMeasureDiagnostic
     },
-    props: ['measure', 'closeModal'],
+    props: ['measure', 'closeModal', 'sector'],
     data() {
       return {
         diagnostic: diagnostics[this.measure.id] || {},
@@ -39,6 +40,11 @@
       };
     },
     methods: {
+      showQuestionForSubMeasure(subMeasureId) {
+        return this.measure.specificSectorsForSubMeasures ?
+          this.measure.subMeasures.find((subMeasure) => subMeasure.id === subMeasureId).sectors.includes(this.sector) :
+          true;
+      },
       submit() {
         saveDiagnostic(this.measure.id, this.diagnostic);
         this.$emit('closeModal');
@@ -49,10 +55,10 @@
 
 <style scoped lang="scss">
   #diagnostic-form {
-    margin-top: 30px;
+    margin-top: 50px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     min-height: 500px;
 
     #submit {

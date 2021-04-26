@@ -1,12 +1,14 @@
 <template>
   <BaseCheckbox
     v-model="diagnostic.hasMadeDiversificationPlan"
+    v-if="showQuestionForSubMeasure('proteines')"
     label="J'ai mis en place un plan pluriannuel de diversification des protéines"
     inputId="plan-made"
   />
 
   <BaseRadios
     v-model="diagnostic.vegetarianFrequency"
+    v-if="showQuestionForSubMeasure('menu-vege')"
     legend="J'ai mis en place un menu végétarien dans ma cantine :"
     :options="[
       { inputId: 'less-than-once', value: 'lessThanOnce', label: 'Moins d\'une fois par semaine' },
@@ -17,6 +19,7 @@
 
   <BaseRadios
     v-model="diagnostic.vegetarianMenuType"
+    v-if="showQuestionForSubMeasure('menu-vege')"
     legend="Le menu végétarien proposé est :"
     :options="[
       { inputId: 'standalone', value: 'standalone', label: 'Un menu végétarien unique' },
@@ -37,6 +40,7 @@ import BaseRadios from '@/components/KeyMeasureDiagnostic/Inputs/BaseRadios';
     },
     props: {
       modelValue: Object,
+      showQuestionForSubMeasure: Function,
     },
     computed: {
       diagnostic() {
