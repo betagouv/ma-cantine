@@ -15,6 +15,7 @@
             "creche",
             "loisirs"
         ],
+        "specificSectorsForSubMeasures": false,
         "deadline": {
             "display": "À partir du 1er janvier 2022",
             "earliestISO": "2022-01-01"
@@ -52,6 +53,7 @@
             "loisirs",
             "entreprises"
         ],
+        "specificSectorsForSubMeasures": false,
         "deadline": {
             "display": "Janvier et octobre 2020",
             "earliestISO": "2020-01-01"
@@ -89,6 +91,16 @@
         "shortTitle": "Diversification des menus",
         "faIcon": "fa-leaf",
         "baseComponent": "DiversificationMeasure",
+        "sectors": [
+            "scolaire",
+            "administration",
+            "universitaire",
+            "social",
+            "medical",
+            "loisirs",
+            "creche"
+        ],
+        "specificSectorsForSubMeasures": true,
         "subMeasures": [
             {
                 "id": "proteines",
@@ -131,6 +143,17 @@
         "shortTitle": "Interdiction du plastique",
         "faIcon": "fa-wind",
         "baseComponent": "NoPlasticMeasure",
+        "sectors": [
+            "scolaire",
+            "administration",
+            "universitaire",
+            "social",
+            "medical",
+            "loisirs",
+            "creche",
+            "entreprises"
+        ],
+        "specificSectorsForSubMeasures": true,
         "subMeasures": [
             {
                 "id": "bouteilles",
@@ -188,6 +211,16 @@
         "shortTitle": "Information des convives",
         "faIcon": "fa-bullhorn",
         "baseComponent": "InformationMeasure",
+        "sectors": [
+            "scolaire",
+            "administration",
+            "universitaire",
+            "medical",
+            "social",
+            "creche",
+            "loisirs"
+        ],
+        "specificSectorsForSubMeasures": true,
         "subMeasures": [
             {
                 "id": "convives-informes",

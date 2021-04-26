@@ -2,13 +2,13 @@
   <div class="measure-content">
     <h1><KeyMeasureTitle :measure="measure"/></h1>
     <div class="measure-details">
-      <KeyMeasureInfoCard v-if="measure.sectors" :measure="measure"/>
+      <KeyMeasureInfoCard v-if="!measure.specificSectorsForSubMeasures" :measure="measure"/>
       <div class="description-container">
         <KeyMeasureDescription :measure="measure" v-if="measure.description"/>
         <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
           <h2 class="measure-headline">{{ subMeasure.title }}</h2>
           <div class="measure-details">
-            <KeyMeasureInfoCard v-if="subMeasure.sectors" :measure="subMeasure"/>
+            <KeyMeasureInfoCard v-if="measure.specificSectorsForSubMeasures" :measure="subMeasure"/>
             <div>
               <KeyMeasureDescription :measure="subMeasure"/>
               <KeyMeasureResource :baseComponent="subMeasure.baseComponent" class="resource-block"/>
