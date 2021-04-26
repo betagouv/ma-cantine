@@ -2,12 +2,20 @@
   <div id="diagnostic-page">
     <h1>M'auto-évaluer</h1>
     <h2>Évaluez-vous sur les mesures déjà mises en place dans votre établissement, programmées ou celles restantes à faire.</h2>
-    <div class="measure-diagnostic" v-for="measure in keyMeasures" :key="measure.id">
+    <div class="sector">
+      <label for="sectors">Secteur de mon restaurant : </label>
+      <select id="sectors" v-model="sector">
+        <option v-for="(label, key) in sectors" :key="key" :value="key">
+          {{label}}
+        </option>
+      </select>
+    </div>
+    <div class="measure-diagnostic" v-for="measure in sectorMeasures" :key="measure.id">
       <div class="measure-title">
         <h3><KeyMeasureTitle :measure="measure"/></h3>
         <button @click="showDiagnosticModal(measure)">Je m'évalue !</button>
       </div>
-      <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" class="sub-measure">
+      <div v-for="subMeasure in getFilteredSubMeasures(measure)" :key="subMeasure.id" class="sub-measure">
         <fieldset class="measure-headline">
           <!-- Wrap legend in span to correctly position with flexbox in Safari -->
           <span><legend>{{ subMeasure.title }}</legend></span>
@@ -40,6 +48,7 @@
   import KeyMeasureDescription from '@/components/KeyMeasureDescription';
   import KeyMeasureDiagnostic from '@/components/KeyMeasureDiagnostic';
   import BaseModal from '@/components/BaseModal';
+  import sectors from "@/data/sectors.json";
 
   export default {
     components: {
@@ -50,9 +59,15 @@
     },
     data() {
       return {
-        keyMeasures,
+        sectors,
         measureDiagnosticModal: null,
+        sector: "scolaire",
       };
+    },
+    computed: {
+      sectorMeasures() {
+        return keyMeasures.filter(keyMeasure => keyMeasure.sectors.includes(this.sector));
+      },
     },
     methods: {
       toggleDescriptionDisplay(subMeasure) {
@@ -64,6 +79,11 @@
       closeDiagnosticModal() {
         this.measureDiagnosticModal = null;
       },
+      getFilteredSubMeasures(measure) {
+        return measure.specificSectorsForSubMeasures ?
+          measure.subMeasures.filter(subMeasure => subMeasure.sectors.includes(this.sector)) :
+          measure.subMeasures;
+      }
     }
   }
 </script>
@@ -90,9 +110,25 @@
     font-weight: normal;
   }
 
+  .sector {
+    text-align: left;
+    width: 90%;
+    font-size: 24px;
+    margin-top: 1em;
+
+    select {
+      font-size: 20px;
+      padding: 5px;
+      border: none;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 0 5px $light-grey;
+    }
+  }
+
   .measure-diagnostic {
     text-align: left;
-    margin-top: 1em;
+    margin-top: 2em;
     width: 90%;
   }
 
