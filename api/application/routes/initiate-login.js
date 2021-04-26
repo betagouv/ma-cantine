@@ -2,7 +2,7 @@ const Joi = require('joi');
 const { initiateMagicLinkLogin } = require("../../domain/services/initiate-login");
 
 const initiateLogin = async function (request, h) {
-  initiateMagicLinkLogin(request.payload.email);
+  initiateMagicLinkLogin(request.payload.email, request.payload.loginUrl);
   return h.response().code(200);
 };
 
@@ -15,7 +15,8 @@ exports.register = async function(server) {
       options: {
         validate: {
           payload: Joi.object({
-            email: Joi.string().email().required()
+            email: Joi.string().email().required(),
+            loginUrl: Joi.string().uri().required()
           })
         }
       }

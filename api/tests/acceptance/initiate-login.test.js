@@ -22,6 +22,8 @@ const userPayload = {
   lastName: "Dupont",
 };
 
+const loginUrl = 'https://example.com/login?token=';
+
 describe('Login process', () => {
   let server;
 
@@ -39,12 +41,13 @@ describe('Login process', () => {
       method: "POST",
       url: "/login",
       payload: {
+        loginUrl,
         email: userPayload.email
       }
     });
     expect(res.statusCode).toBe(200);
     expect(initiateMagicLinkLogin).toHaveBeenCalledTimes(1);
-    expect(initiateMagicLinkLogin).toHaveBeenCalledWith(userPayload.email);
+    expect(initiateMagicLinkLogin).toHaveBeenCalledWith(userPayload.email, loginUrl);
   });
 
   it('does not leak information given invalid email POSTed to /login', async () => {
@@ -52,12 +55,13 @@ describe('Login process', () => {
       method: "POST",
       url: "/login",
       payload: {
+        loginUrl,
         email: userPayload.email
       }
     });
     expect(res.statusCode).toBe(200);
     expect(initiateMagicLinkLogin).toHaveBeenCalledTimes(1);
-    expect(initiateMagicLinkLogin).toHaveBeenCalledWith(userPayload.email);
+    expect(initiateMagicLinkLogin).toHaveBeenCalledWith(userPayload.email, loginUrl);
   });
 
   it('returns 400 given no email at /login', async () => {
@@ -65,7 +69,19 @@ describe('Login process', () => {
       method: "POST",
       url: "/login",
       payload: {
+        loginUrl,
         email: ''
+      }
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it('returns 400 given no URL at /login', async () => {
+    const res = await server.inject({
+      method: "POST",
+      url: "/login",
+      payload: {
+        email: 'some@email.com'
       }
     });
     expect(res.statusCode).toBe(400);

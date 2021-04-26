@@ -9,22 +9,22 @@ function generateToken() {
   return crypto.randomBytes(50).toString('base64');
 };
 
-function sendLoginLink(email, token) {
+function sendLoginLink(email, token, urlPrefix) {
   // TODO: better way of generating html string (ejs.renderFile/send in blue templates ?)
   const htmlBody = `<!DOCTYPE html> <html> <body>`+
-                   `<p><a href='${process.env.LOGIN_URL}?token=${encodeURIComponent(token)}'>Connectez-moi</a></p>`+
+                   `<p><a href='${urlPrefix + encodeURIComponent(token)}'>Connectez-moi</a></p>`+
                    `</body> </html>`;
 
   sendEmail([{ email }], "Votre lien de connexion avec ma cantine", htmlBody)
 };
 
-async function initiateMagicLinkLogin(email) {
+async function initiateMagicLinkLogin(email, completeLoginUrl) {
   let user = await findUser({ email: email });
   if(user) {
     const token = generateToken();
     // wait to make sure token is saved successfully before it is sent
     await saveLoginTokenForUser(user, token);
-    sendLoginLink(email, token);
+    sendLoginLink(email, token, completeLoginUrl);
   } else {
     sendSignUpLink(email);
     return;

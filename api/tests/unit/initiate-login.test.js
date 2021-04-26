@@ -22,6 +22,8 @@ const user = {
   email: "test@email.com"
 };
 
+const URL_PREFIX = 'https://example.com/login?token=';
+
 describe('Log in initiation', () => {
 
   beforeAll(() => {
@@ -33,7 +35,7 @@ describe('Log in initiation', () => {
 
   it('generates, saves, and emails temp token given known email', async () => {
     findUser.mockReturnValue(user);
-    await initiateMagicLinkLogin(user.email);
+    await initiateMagicLinkLogin(user.email, URL_PREFIX);
     expect(saveLoginTokenForUser).toHaveBeenCalledTimes(1);
     const token = saveLoginTokenForUser.mock.calls[0][1]; // token is second argument
     expect(token).toBeDefined();
@@ -52,20 +54,20 @@ describe('Log in initiation', () => {
     expect(emailEndpoint).toBe("https://api.sendinblue.com/v3/smtp/email");
     const requestBody = JSON.parse(fetch.mock.calls[0][1].body);
     expect(requestBody.to).toStrictEqual([{ email: user.email }]);
-    expect(requestBody.htmlContent).toMatch('?token='+encodeURIComponent(token));
+    expect(requestBody.htmlContent).toMatch(URL_PREFIX+encodeURIComponent(token));
   });
 
   it('does not send login link given unknown email', async () => {
     findUser.mockResolvedValue(null);
-    await initiateMagicLinkLogin('unknown@test.com');
+    await initiateMagicLinkLogin('unknown@test.com', URL_PREFIX);
     expect(saveLoginTokenForUser).not.toHaveBeenCalled();
     expect(sendSignUpLink).toHaveBeenCalledTimes(1);
   });
 
   it('generates unique tokens', async () => {
     findUser.mockReturnValue(user);
-    await initiateMagicLinkLogin(user.email);
-    await initiateMagicLinkLogin(user.email);
+    await initiateMagicLinkLogin(user.email, URL_PREFIX);
+    await initiateMagicLinkLogin(user.email, URL_PREFIX);
     const token1 = saveLoginTokenForUser.mock.calls[0][1];
     const token2 = saveLoginTokenForUser.mock.calls[1][1];
     expect(token1).not.toBe(token2);
