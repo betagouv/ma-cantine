@@ -1,15 +1,20 @@
 const Joi = require('joi');
 const { generateJWTokenForUser } = require("../../domain/usecases/complete-login");
+const { NoLoginTokenError } = require("../../domain/errors");
 
 const completeLogin = async function(request, h) {
   // buffer for email crawlers ?
   let response, code;
-  const jwt = await generateJWTokenForUser(request.query.token);
-  if(jwt) {
+  try {
+    const jwt = await generateJWTokenForUser(request.query.token);
     response = { jwt };
     code = 200;
-  } else {
-    code = 400;
+  } catch(e) {
+    if(e instanceof NoLoginTokenError) {
+      code = 400;
+    } else {
+      throw e;
+    }
   }
   // do something with token?
   // log within functions so reason shows up in sclaingo for debugging?
