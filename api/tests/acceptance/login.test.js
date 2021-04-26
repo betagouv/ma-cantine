@@ -3,13 +3,17 @@ const { LoginToken } = require('../../infrastructure/models/login-token');
 const { User } = require('../../infrastructure/models/user');
 const { createUserWithCanteen } = require('../../infrastructure/repositories/user');
 const { init } = require('../../server');
+const { sequelize } = require('../../infrastructure/postgres-database');
 
-jest.mock('../../domain/usecases/login', () => ({
-  initiateMagicLinkLogin: jest.fn(),
+jest.mock('../../domain/usecases/complete-login', () => ({
   generateJWTokenForUser: jest.fn()
 }));
-const { initiateMagicLinkLogin, generateJWTokenForUser } = require('../../domain/usecases/login');
-const { sequelize } = require('../../infrastructure/postgres-database');
+const { generateJWTokenForUser } = require('../../domain/usecases/complete-login');
+
+jest.mock('../../domain/services/initiate-login', () => ({
+  initiateMagicLinkLogin: jest.fn()
+}));
+const { initiateMagicLinkLogin } = require('../../domain/services/initiate-login');
 
 const canteenPayload = {
   name: "Test canteen",
