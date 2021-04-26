@@ -2,7 +2,7 @@ const { initiateMagicLinkLogin } = require("../services/initiate-login");
 const { createUserWithCanteen } = require("../../infrastructure/repositories/user");
 const { DuplicateUserError } = require("../../infrastructure/errors");
 
-exports.signUp = async function(user, canteen) {
+exports.signUp = async function(user, canteen, loginUrl) {
   try {
     await createUserWithCanteen(user, canteen);
   } catch(e) {
@@ -11,5 +11,5 @@ exports.signUp = async function(user, canteen) {
       throw e;
     }
   }
-  initiateMagicLinkLogin(user.email);
+  initiateMagicLinkLogin(user.email, loginUrl);
 }

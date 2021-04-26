@@ -18,6 +18,13 @@ const server = Hapi.server({
   debug: { request: ['error'] }
 });
 
+// development logging
+if(process.env.NODE_ENV !== 'test') {
+  server.events.on('response', function (request) {
+    console.log(request.info.remoteAddress + ': ' + request.method.toUpperCase() + ' ' + request.path + ' ' + JSON.stringify(request.payload) + ' --> ' + request.response.statusCode);
+  });
+}
+
 subscribeBetaTester.register(server);
 initiateLogin.register(server);
 completeLogin.register(server);
