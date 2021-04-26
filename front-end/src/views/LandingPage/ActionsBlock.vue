@@ -1,36 +1,63 @@
 <template>
-  <div id="actions">
-    <router-link class="action" :to="{ name: 'GeneratePosterPage' }">
-      <h2>
-        Vous connaissez déjà la part de bio, durable et produits issus
-        du commerce équitable de votre cantine scolaire&nbsp;?
-      </h2>
-      <p>
-        Vous pouvez générer une affiche à poser dans votre cantine ainsi qu’un email-type à destination
-        des convives et parents d'élèves.
-      </p>
-      <img src="@/assets/inform-action.svg" alt="">
-      <p class="call-to-action">
-        J’informe mes convives &nbsp;<i class="fas fa-arrow-circle-right"></i>
-      </p>
-    </router-link>
-    <div class="divider"></div>
-    <a class="action" href="/Diagnostic approvisionnement (ma-cantine-alpha) v0.4.ods" download>
-      <h2>
-        Vous avez besoin d’aide pour le calcul&nbsp;?
-      </h2>
-      <p>
-        Si vous ne connaissez pas votre part de bio, produits durables, produits issues du commerce équitable,
-        nous vous proposons un outil simple pour les calculer. Sous forme de tableur, remplissez vos achats HT
-        suivant leurs labels et/ou sigles de qualité.
-      </p>
-      <img src="@/assets/calculator-action.svg" alt="">
-      <p class="call-to-action">
-        Télécharger notre tableur &nbsp;<i class="fas fa-arrow-circle-down"></i>
-      </p>
-    </a>
+  <div>
+    <div id="actions">
+      <router-link class="action" :to="{ name: 'GeneratePosterPage' }">
+        <h2>
+          Vous connaissez déjà la part de bio, durable et produits issus
+          du commerce équitable de votre cantine scolaire&nbsp;?
+        </h2>
+        <p>
+          Vous pouvez générer une affiche à poser dans votre cantine ainsi qu’un email-type à destination
+          des convives et parents d'élèves.
+        </p>
+        <img src="@/assets/inform-action.svg" alt="">
+        <p class="call-to-action">
+          J’informe mes convives &nbsp;<i class="fas fa-arrow-circle-right"></i>
+        </p>
+      </router-link>
+      <div class="divider"></div>
+      <div class="action" @click="showCalculatorModal">
+        <h2>
+          Vous avez besoin d’aide pour le calcul&nbsp;?
+        </h2>
+        <p>
+          Si vous ne connaissez pas votre part de bio, produits durables, produits issues du commerce équitable,
+          nous vous proposons un outil simple pour les calculer. Sous forme de tableur, remplissez vos achats HT
+          suivant leurs labels et/ou sigles de qualité.
+        </p>
+        <img src="@/assets/calculator-action.svg" alt="">
+        <p class="call-to-action">
+          Télécharger notre tableur &nbsp;<i class="fas fa-arrow-circle-down"></i>
+        </p>
+      </div>
+    </div>
+
+    <CalculatorResourceModal v-if="calculatorModal" @closeModal="closeCalculatorModal"/>
   </div>
 </template>
+
+<script>
+  import CalculatorResourceModal from '@/components/KeyMeasureResource/CalculatorResourceModal';
+
+  export default {
+    components: {
+      CalculatorResourceModal
+    },
+    data() {
+      return {
+        calculatorModal: false,
+      };
+    },
+    methods: {
+      showCalculatorModal() {
+        this.calculatorModal = true;
+      },
+      closeCalculatorModal() {
+        this.calculatorModal = false;
+      },
+    }
+  }
+</script>
 
 <style scoped lang="scss">
   #actions {
