@@ -1,7 +1,8 @@
 'use strict';
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
-const login = require('./application/routes/login.js');
+const initiateLogin = require('./application/routes/initiate-login.js');
+const completeLogin = require('./application/routes/complete-login.js');
 const signUp = require('./application/routes/sign-up.js');
 const subscribeBetaTester = require('./application/routes/subscribe-beta-tester.js');
 
@@ -18,7 +19,8 @@ const server = Hapi.server({
 });
 
 subscribeBetaTester.register(server);
-login.register(server);
+initiateLogin.register(server);
+completeLogin.register(server);
 signUp.register(server);
 
 exports.init = async () => {
