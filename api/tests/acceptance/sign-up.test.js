@@ -17,6 +17,8 @@ const user = {
   lastName: "Dupont",
 };
 
+const loginUrl = "https://example.com/login?token=";
+
 describe('Sign up endpoint /sign-up', () => {
   let server;
 
@@ -30,12 +32,13 @@ describe('Sign up endpoint /sign-up', () => {
       url: "/sign-up",
       payload: {
         user,
-        canteen
+        canteen,
+        loginUrl
       }
     });
     expect(res.statusCode).toBe(200);
     expect(signUp).toHaveBeenCalledTimes(1);
-    expect(signUp).toHaveBeenCalledWith(user, canteen);
+    expect(signUp).toHaveBeenCalledWith(user, canteen, loginUrl);
   });
 
   it('errors if invalid data on POST', async () => {
@@ -44,7 +47,8 @@ describe('Sign up endpoint /sign-up', () => {
       url: "/sign-up",
       payload: {
         user: {},
-        canteen: {}
+        canteen: {},
+        loginUrl: "hello"
       }
     });
     expect(res.statusCode).toBe(400);
