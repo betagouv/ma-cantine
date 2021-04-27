@@ -5,10 +5,8 @@ const { createUserWithCanteen } = require('../../infrastructure/repositories/use
 const { init } = require('../../server');
 const { sequelize } = require('../../infrastructure/postgres-database');
 
-jest.mock('../../domain/services/initiate-login', () => ({
-  initiateMagicLinkLogin: jest.fn()
-}));
-const { initiateMagicLinkLogin } = require('../../domain/services/initiate-login');
+jest.mock('node-fetch');
+const fetch = require('node-fetch');
 
 const canteenPayload = {
   name: "Test canteen",
@@ -24,7 +22,7 @@ const userPayload = {
 
 const loginUrl = 'https://example.com/login?token=';
 
-describe('Login process', () => {
+describe('Login initiation endpoint /login', () => {
   let server;
 
   beforeAll(async () => {
@@ -33,10 +31,9 @@ describe('Login process', () => {
     await User.sync({ force: true });
     await LoginToken.sync({ force: true });
     await createUserWithCanteen(userPayload, canteenPayload);
-    userPayload.id = 1;
   });
 
-  it('sends login link when POST valid email to /login', async () => {
+  it('sends login link when POST valid email', async () => {
     const res = await server.inject({
       method: "POST",
       url: "/login",
@@ -46,25 +43,23 @@ describe('Login process', () => {
       }
     });
     expect(res.statusCode).toBe(200);
-    expect(initiateMagicLinkLogin).toHaveBeenCalledTimes(1);
-    expect(initiateMagicLinkLogin).toHaveBeenCalledWith(userPayload.email, loginUrl);
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('does not leak information given invalid email POSTed to /login', async () => {
+  it('does not leak information given unknown email', async () => {
     const res = await server.inject({
       method: "POST",
       url: "/login",
       payload: {
         loginUrl,
-        email: userPayload.email
+        email: "unknown@email.com"
       }
     });
     expect(res.statusCode).toBe(200);
-    expect(initiateMagicLinkLogin).toHaveBeenCalledTimes(1);
-    expect(initiateMagicLinkLogin).toHaveBeenCalledWith(userPayload.email, loginUrl);
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('returns 400 given no email at /login', async () => {
+  it('returns 400 given no email', async () => {
     const res = await server.inject({
       method: "POST",
       url: "/login",
@@ -74,9 +69,10 @@ describe('Login process', () => {
       }
     });
     expect(res.statusCode).toBe(400);
+    expect(fetch).not.toHaveBeenCalled();
   });
 
-  it('returns 400 given no URL at /login', async () => {
+  it('returns 400 given no URL', async () => {
     const res = await server.inject({
       method: "POST",
       url: "/login",
@@ -85,10 +81,11 @@ describe('Login process', () => {
       }
     });
     expect(res.statusCode).toBe(400);
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   afterEach(async() => {
-    initiateMagicLinkLogin.mockClear();
+    fetch.mockClear();
   });
 
   afterAll(async () => {

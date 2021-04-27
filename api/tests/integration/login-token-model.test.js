@@ -27,6 +27,7 @@ describe('Login token model', () => {
     await LoginToken.sync({ force: true });
     // need to create user and canteen because userId is foreign key in LoginToken
     user = await createUserWithCanteen(userPayload, canteenPayload);
+    user.id = 1;
   });
 
   beforeEach(async () => {
@@ -46,7 +47,7 @@ describe('Login token model', () => {
     const token = tokens[0];
     expect(token.userId).toBe(user.id);
     expect(token.token).toBe(tokenString);
-    expect(token.expirationDate).toBeDefined(); // TODO: check < 1 hour from now ?
+    expect(token.expirationDate).toBeDefined();
   });
 
   it('updates token for user given duplicate', async () => {
@@ -73,7 +74,6 @@ describe('Login token model', () => {
     await LoginToken.create({
       userId: user.id,
       token: tokenString,
-      // TODO: is this the right way to mock the date?
       createdAt: now.setHours(now.getHours() - 2)
     });
     expect(await getUserForLoginToken(tokenString)).not.toBeDefined();

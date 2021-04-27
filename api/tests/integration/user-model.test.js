@@ -2,7 +2,7 @@ const { sequelize } = require('../../infrastructure/postgres-database');
 const { Canteen } = require('../../infrastructure/models/canteen');
 const { User } = require('../../infrastructure/models/user');
 const { createCanteen } = require('../../infrastructure/repositories/canteen');
-const { createUser, createUserWithCanteen, DuplicateUserError } = require('../../infrastructure/repositories/user');
+const { createUser, createUserWithCanteen, findUser, DuplicateUserError } = require('../../infrastructure/repositories/user');
 
 const canteenPayload = {
   name: "Test canteen",
@@ -19,17 +19,11 @@ const userPayload = {
 describe('User model', () => {
   let canteenId;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await Canteen.sync({ force: true });
     await User.sync({ force: true });
     // need canteen to exist to create user
     canteenId = (await createCanteen(canteenPayload)).id;
-  });
-
-  beforeEach(async () => {
-    await User.destroy({
-      truncate: true
-    });
   });
 
   it('successfully creates user given valid data', async () => {
@@ -57,6 +51,23 @@ describe('User model', () => {
     await expect(async () => {
       await createUserWithCanteen(userPayload, canteenPayload);
     }).rejects.toThrow(DuplicateUserError);
+  });
+
+  it('does not create new canteen if user fails to create', async () => {
+    try {
+      await createUserWithCanteen({ firstName: "Incomplete" }, canteenPayload);
+    } catch(e) {}
+    const users = await User.findAll();
+    expect(users.length).toBe(0);
+    const canteens = await Canteen.findAll();
+    expect(canteens.length).toBe(1); // only have the one created in beforeEach
+  });
+
+  it('finds user successfully', async () => {
+    const createdUser = await createUser(userPayload, canteenId);
+    const foundUser = await findUser(userPayload);
+    expect(foundUser.id).toBe(createdUser.id);
+    expect(foundUser.email).toBe(createdUser.email);
   });
 
   afterAll(async () => {
