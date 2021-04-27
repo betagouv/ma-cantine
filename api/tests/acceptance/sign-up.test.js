@@ -1,8 +1,6 @@
 const { init } = require("../../server");
 
-jest.mock("../../domain/usecases/sign-up", () => ({
-  signUp: jest.fn()
-}));
+jest.mock("../../domain/usecases/sign-up");
 const { signUp } = require("../../domain/usecases/sign-up");
 
 const canteen = {
