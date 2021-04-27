@@ -4,12 +4,14 @@
 
     <div class="calculator-i-frame">
       <iframe
-        src="https://www.loom.com/embed/c1cb4020b3f44b24adec8367861ebc0d"
-        frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen
+        src="https://www.youtube-nocookie.com/embed/3i5-eDwU9mc"
         @load="iframeLoad"
         v-show="iframeIsLoaded"
         class="calculator-video"
         title="Vidéo de présentation du calculateur"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
       />
 
       <div class="video-loader" v-show="!iframeIsLoaded">
