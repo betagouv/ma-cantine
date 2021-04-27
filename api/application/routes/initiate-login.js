@@ -1,8 +1,8 @@
 const Joi = require('joi');
-const { initiateMagicLinkLogin } = require("../../domain/services/initiate-login");
+const { initiateLogin } = require("../../domain/usecases/initiate-login");
 
-const initiateLogin = async function (request, h) {
-  await initiateMagicLinkLogin(request.payload.email, request.payload.loginUrl);
+const handler = async function (request, h) {
+  await initiateLogin(request.payload.email, request.payload.loginUrl);
   return h.response().code(200);
 };
 
@@ -11,7 +11,7 @@ exports.register = async function(server) {
     {
       method: "POST",
       path: "/login",
-      handler: initiateLogin,
+      handler,
       options: {
         validate: {
           payload: Joi.object({
