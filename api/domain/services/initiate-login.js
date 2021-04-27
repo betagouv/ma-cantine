@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 const { sendEmail } = require("./send-email");
-const { sendSignUpLink } = require('./send-sign-up-link');
 const { findUser } = require('../../infrastructure/repositories/user');
 const { saveLoginTokenForUser } = require('../../infrastructure/repositories/login-token');
 
@@ -18,6 +17,15 @@ function sendLoginLink(email, token, urlPrefix) {
   sendEmail([{ email }], "Votre lien de connexion avec ma cantine", htmlBody)
 };
 
+function sendSignUpLink(email) {
+  const htmlBody = `<!DOCTYPE html> <html> <body>`+
+                   `<p>Une personne a essayé de connecter avec cette adresse email, mais nous n'avons pas trouvé un compte afilié.</p>`+
+                   `<p>Si vous voulez créer un compte, visitez-nous a <a href='https://ma-cantine.beta.gouv.fr'>ma-cantine.beta.gouv.fr</a>.</p>`+
+                   `<p>Sinon, vous pouvez ignorer ce message.</p>`+
+                   `</body> </html>`;
+  sendEmail([{ email }], "Demande de connexion avec ma cantine", htmlBody);
+};
+
 async function initiateMagicLinkLogin(email, completeLoginUrl) {
   let user = await findUser({ email: email });
   if(user) {
@@ -27,7 +35,6 @@ async function initiateMagicLinkLogin(email, completeLoginUrl) {
     sendLoginLink(email, token, completeLoginUrl);
   } else {
     sendSignUpLink(email);
-    return;
   }
 };
 
