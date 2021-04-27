@@ -2,11 +2,7 @@ const jwt = require('jsonwebtoken');
 const { generateJWTokenForUser } = require('../../domain/usecases/complete-login');
 const { NoLoginTokenError } = require('../../domain/errors');
 
-jest.mock('../../infrastructure/repositories/login-token', () => {
-  return {
-    getUserForLoginToken: jest.fn()
-  };
-});
+jest.mock('../../infrastructure/repositories/login-token');
 const { getUserForLoginToken } = require('../../infrastructure/repositories/login-token');
 
 describe('Log in completion', () => {

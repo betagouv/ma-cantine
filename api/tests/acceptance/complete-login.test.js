@@ -6,9 +6,7 @@ const { init } = require('../../server');
 const { sequelize } = require('../../infrastructure/postgres-database');
 const { NoLoginTokenError } = require('../../domain/errors');
 
-jest.mock('../../domain/usecases/complete-login', () => ({
-  generateJWTokenForUser: jest.fn()
-}));
+jest.mock('../../domain/usecases/complete-login');
 const { generateJWTokenForUser } = require('../../domain/usecases/complete-login');
 
 const canteenPayload = {

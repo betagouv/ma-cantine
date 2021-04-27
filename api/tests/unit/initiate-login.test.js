@@ -1,11 +1,9 @@
-const { initiateMagicLinkLogin } = require('../../domain/services/initiate-login');
+const { initiateLogin } = require('../../domain/usecases/initiate-login');
 
 jest.mock('node-fetch');
 const fetch = require('node-fetch');
 
-jest.mock('../../infrastructure/repositories/login-token', () => ({
-  saveLoginTokenForUser: jest.fn()
-}));
+jest.mock('../../infrastructure/repositories/login-token');
 const { saveLoginTokenForUser } = require('../../infrastructure/repositories/login-token');
 
 jest.mock('../../infrastructure/repositories/user', () => ({
@@ -30,7 +28,7 @@ describe('Log in initiation', () => {
 
   it('generates, saves, and emails temp token given known email', async () => {
     findUser.mockReturnValue(user);
-    await initiateMagicLinkLogin(user.email, URL_PREFIX);
+    await initiateLogin(user.email, URL_PREFIX);
     expect(saveLoginTokenForUser).toHaveBeenCalledTimes(1);
     const token = saveLoginTokenForUser.mock.calls[0][1]; // token is second argument
     expect(token).toBeDefined();
@@ -52,7 +50,7 @@ describe('Log in initiation', () => {
 
   it('sends a sign up, not login, link given unknown email', async () => {
     findUser.mockResolvedValue(null);
-    await initiateMagicLinkLogin('unknown@test.com', URL_PREFIX);
+    await initiateLogin('unknown@test.com', URL_PREFIX);
     expect(saveLoginTokenForUser).not.toHaveBeenCalled();
 
     // mock fetch call
@@ -71,8 +69,8 @@ describe('Log in initiation', () => {
 
   it('generates unique tokens', async () => {
     findUser.mockReturnValue(user);
-    await initiateMagicLinkLogin(user.email, URL_PREFIX);
-    await initiateMagicLinkLogin(user.email, URL_PREFIX);
+    await initiateLogin(user.email, URL_PREFIX);
+    await initiateLogin(user.email, URL_PREFIX);
     const token1 = saveLoginTokenForUser.mock.calls[0][1];
     const token2 = saveLoginTokenForUser.mock.calls[1][1];
     expect(token1).not.toBe(token2);
