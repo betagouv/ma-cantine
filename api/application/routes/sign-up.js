@@ -23,7 +23,7 @@ exports.register = async function(server) {
           canteen: Joi.object({
             name: Joi.string().required(),
             city: Joi.string().required(),
-            sector: Joi.string().required() // TODO: validate from sector list
+            sector: Joi.string().required()
           }),
           loginUrl: Joi.string().uri().required()
         })

@@ -46,7 +46,6 @@ describe('Login completion', () => {
     expect(res.statusCode).toBe(200);
     expect(generateJWTokenForUser).toHaveBeenCalledWith(token);
     expect(res.result.jwt).toBe(jwt);
-    // TODO: is there a test I should be doing for jwt server config?
   });
 
   it('returns a 400 given invalid token to /complete-login', async () => {
