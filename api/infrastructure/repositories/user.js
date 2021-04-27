@@ -8,12 +8,12 @@ var createUser = function(user, canteenId) {
   return User.create(user);
 };
 
-// TODO: avoid creating a canteen if the user fails to create (e.g. duplicate email)
 var createUserWithCanteen = async function(userPayload, canteenPayload) {
   const canteen = await createCanteen(canteenPayload);
   try {
     return (await createUser(userPayload, canteen.id));
   } catch(e) {
+    await canteen.destroy();
     if(e.name === 'SequelizeUniqueConstraintError' && e.errors[0].path === 'email') {
       throw new DuplicateUserError();
     } else {

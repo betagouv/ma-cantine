@@ -4,8 +4,7 @@ const { findUser } = require('../../infrastructure/repositories/user');
 const { saveLoginTokenForUser } = require('../../infrastructure/repositories/login-token');
 
 function generateToken() {
-  // TODO: test adding a string of the length generated here, how many bytes? originally 256
-  return crypto.randomBytes(50).toString('base64');
+  return crypto.randomBytes(200).toString('base64').slice(0, 255);
 };
 
 function sendLoginLink(email, token, urlPrefix) {

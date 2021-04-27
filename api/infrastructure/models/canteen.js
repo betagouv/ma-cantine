@@ -14,7 +14,6 @@ exports.Canteen = sequelize.define('canteen', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  // TODO: validate city and sector input
   city: {
     type: DataTypes.STRING,
     allowNull: false
