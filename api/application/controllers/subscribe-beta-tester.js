@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { sendEmail } = require('../../domain/services/send-email');
+const { sendEmail } = require('../../domain/services/mailer');
 
 // TODO: refactor into call to a new usecase
 async function subscribeBetaTester(request, h) {
