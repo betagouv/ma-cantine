@@ -2,7 +2,7 @@ const Joi = require('joi');
 const { initiateMagicLinkLogin } = require("../../domain/services/initiate-login");
 
 const initiateLogin = async function (request, h) {
-  initiateMagicLinkLogin(request.payload.email, request.payload.loginUrl);
+  await initiateMagicLinkLogin(request.payload.email, request.payload.loginUrl);
   return h.response().code(200);
 };
 

@@ -1,4 +1,3 @@
-
 class NoLoginTokenError extends Error {};
 
 module.exports = {
