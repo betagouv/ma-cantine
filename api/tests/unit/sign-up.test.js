@@ -1,13 +1,9 @@
 const { signUp } = require('../../domain/usecases/sign-up')
 
-jest.mock('../../domain/services/initiate-login', () => ({
-  initiateMagicLinkLogin: jest.fn()
-}));
-const { initiateMagicLinkLogin } = require('../../domain/services/initiate-login');
+jest.mock('../../domain/services/authentication');
+const { sendLoginLink } = require('../../domain/services/authentication');
 
-jest.mock('../../infrastructure/repositories/user', () => ({
-  createUserWithCanteen: jest.fn()
-}));
+jest.mock('../../infrastructure/repositories/user');
 const { createUserWithCanteen } = require('../../infrastructure/repositories/user');
 const { DuplicateUserError } = require('../../infrastructure/errors');
 
@@ -30,14 +26,14 @@ describe('Sign up', () => {
     createUserWithCanteen.mockReturnValue(user);
     await signUp(user, canteen, loginUrl);
     expect(createUserWithCanteen).toHaveBeenCalledWith(user, canteen);
-    expect(initiateMagicLinkLogin).toHaveBeenCalledWith(user.email, loginUrl);
+    expect(sendLoginLink).toHaveBeenCalledWith(user, loginUrl);
   });
 
   it('triggers login link if user is duplicate', async () => {
     createUserWithCanteen.mockRejectedValue(new DuplicateUserError());
     await signUp(user, canteen, loginUrl);
     expect(createUserWithCanteen).toHaveBeenCalledWith(user, canteen);
-    expect(initiateMagicLinkLogin).toHaveBeenCalledWith(user.email, loginUrl);
+    expect(sendLoginLink).toHaveBeenCalledWith(user, loginUrl);
   });
 
   it('throws if encounters unexpected error', async () => {
@@ -46,11 +42,11 @@ describe('Sign up', () => {
       await signUp(user, canteen, loginUrl);
     }).rejects.toThrow();
     expect(createUserWithCanteen).toHaveBeenCalledWith(user, canteen);
-    expect(initiateMagicLinkLogin).not.toHaveBeenCalled();
+    expect(sendLoginLink).not.toHaveBeenCalled();
   });
 
   afterEach(() => {
     createUserWithCanteen.mockClear();
-    initiateMagicLinkLogin.mockClear();
+    sendLoginLink.mockClear();
   });
 });
