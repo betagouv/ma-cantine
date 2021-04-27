@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { sendEmail } = require("./send-email");
+const { sendEmail } = require("./mailer");
 const { saveLoginTokenForUser } = require('../../infrastructure/repositories/login-token')
 
 function generateToken() {
