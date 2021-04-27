@@ -3,7 +3,7 @@ const { signUp } = require("../../domain/usecases/sign-up");
 
 const signUpHandler = async function(request, h) {
   const { user, canteen, loginUrl } = request.payload;
-  signUp(user, canteen, loginUrl);
+  await signUp(user, canteen, loginUrl);
   return h.response().code(200);
 };
 
