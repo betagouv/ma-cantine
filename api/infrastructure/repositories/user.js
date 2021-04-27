@@ -1,6 +1,7 @@
 require('../postgres-database');
 const { createCanteen } = require('./canteen');
 const { User } = require('../models/user');
+const { NotFoundError } = require("../../infrastructure/errors");
 
 var createUser = function(user, canteenId) {
   user.canteenId = canteenId;
@@ -15,7 +16,7 @@ var createUserWithCanteen = async function(userPayload, canteenPayload) {
   } catch(e) {
     await canteen.destroy();
     if(e.name === 'SequelizeUniqueConstraintError' && e.errors[0].path === 'email') {
-      user = await findUser({ email: userPayload.email });
+      user = await findUserByEmail(userPayload.email);
     } else {
       throw e;
     }
@@ -23,14 +24,20 @@ var createUserWithCanteen = async function(userPayload, canteenPayload) {
   return user;
 };
 
-var findUser = function(user) {
-  return User.findOne({
-    where: user
+var findUserByEmail = async function(email) {
+  const user = await User.findOne({
+    where: {
+      email
+    }
   });
+  if(!user) {
+    throw new NotFoundError("No user for email: " + email);
+  }
+  return user;
 };
 
 module.exports = {
   createUser,
   createUserWithCanteen,
-  findUser
+  findUserByEmail
 }
