@@ -5,7 +5,6 @@ const { sendLoginLink } = require('../../domain/services/authentication');
 
 jest.mock('../../infrastructure/repositories/user');
 const { createUserWithCanteen } = require('../../infrastructure/repositories/user');
-const { DuplicateUserError } = require('../../infrastructure/errors');
 
 const canteen = {
   name: "Test canteen",
@@ -27,22 +26,6 @@ describe('Sign up', () => {
     await signUp(user, canteen, loginUrl);
     expect(createUserWithCanteen).toHaveBeenCalledWith(user, canteen);
     expect(sendLoginLink).toHaveBeenCalledWith(user, loginUrl);
-  });
-
-  it('triggers login link if user is duplicate', async () => {
-    createUserWithCanteen.mockRejectedValue(new DuplicateUserError());
-    await signUp(user, canteen, loginUrl);
-    expect(createUserWithCanteen).toHaveBeenCalledWith(user, canteen);
-    expect(sendLoginLink).toHaveBeenCalledWith(user, loginUrl);
-  });
-
-  it('throws if encounters unexpected error', async () => {
-    createUserWithCanteen.mockRejectedValue(new Error('Another error'));
-    await expect(async () => {
-      await signUp(user, canteen, loginUrl);
-    }).rejects.toThrow();
-    expect(createUserWithCanteen).toHaveBeenCalledWith(user, canteen);
-    expect(sendLoginLink).not.toHaveBeenCalled();
   });
 
   afterEach(() => {
