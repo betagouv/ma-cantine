@@ -1,15 +1,21 @@
-const { findUser } = require('../../infrastructure/repositories/user');
+const { findUserByEmail } = require('../../infrastructure/repositories/user');
 const authenticationService = require('../services/authentication');
 
 async function initiateLogin(email, completeLoginUrl) {
-  let user = await findUser({ email: email });
+  let user;
+  try {
+    user = await findUserByEmail(email);
+  } catch(e) {
+    if(e instanceof NotFoundError) {
+      return authenticationService.sendSignUpLink(email);
+    } else {
+      throw e;
+    }
+  }
   if(user) {
-    await authenticationService.sendLoginLink(user, completeLoginUrl);
-  } else {
-    authenticationService.sendSignUpLink(email);
+    return authenticationService.sendLoginLink(user, completeLoginUrl);
   }
 };
-
 module.exports = {
   initiateLogin
 }
