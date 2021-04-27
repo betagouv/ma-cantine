@@ -37,9 +37,6 @@ Canteen.hasMany(User, {
   }
 });
 
-User.belongsTo(Canteen, {
-  onDelete: 'CASCADE', // if canteen is deleted, delete user
-  onUpdate: 'CASCADE'
-});
+User.belongsTo(Canteen);
 
 exports.User = User;
