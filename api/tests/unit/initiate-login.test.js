@@ -13,11 +13,6 @@ jest.mock('../../infrastructure/repositories/user', () => ({
 }));
 const { findUser } = require('../../infrastructure/repositories/user');
 
-jest.mock('../../domain/services/send-sign-up-link', () => ({
-  sendSignUpLink: jest.fn()
-}));
-const { sendSignUpLink } = require('../../domain/services/send-sign-up-link');
-
 const user = {
   email: "test@email.com"
 };
@@ -50,18 +45,28 @@ describe('Log in initiation', () => {
     });
 
     expect(fetch).toHaveBeenCalledTimes(1);
-    const emailEndpoint = fetch.mock.calls[0][0];
-    expect(emailEndpoint).toBe("https://api.sendinblue.com/v3/smtp/email");
     const requestBody = JSON.parse(fetch.mock.calls[0][1].body);
     expect(requestBody.to).toStrictEqual([{ email: user.email }]);
     expect(requestBody.htmlContent).toMatch(URL_PREFIX+encodeURIComponent(token));
   });
 
-  it('does not send login link given unknown email', async () => {
+  it('sends a sign up, not login, link given unknown email', async () => {
     findUser.mockResolvedValue(null);
     await initiateMagicLinkLogin('unknown@test.com', URL_PREFIX);
     expect(saveLoginTokenForUser).not.toHaveBeenCalled();
-    expect(sendSignUpLink).toHaveBeenCalledTimes(1);
+
+    // mock fetch call
+    const responseBodyJSON = { message: "test" };
+    fetch.mockReturnValue({
+      status: 201,
+      json() {
+        return Promise.resolve(responseBodyJSON);
+      }
+    });
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    const requestBody = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(requestBody.to).toStrictEqual([{ email: 'unknown@test.com' }]);
   });
 
   it('generates unique tokens', async () => {
