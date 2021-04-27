@@ -1,7 +1,6 @@
 require('../postgres-database');
 const { createCanteen } = require('./canteen');
 const { User } = require('../models/user');
-const { DuplicateUserError } = require('../errors');
 
 var createUser = function(user, canteenId) {
   user.canteenId = canteenId;
@@ -10,16 +9,18 @@ var createUser = function(user, canteenId) {
 
 var createUserWithCanteen = async function(userPayload, canteenPayload) {
   const canteen = await createCanteen(canteenPayload);
+  let user;
   try {
-    return (await createUser(userPayload, canteen.id));
+    user = await createUser(userPayload, canteen.id);
   } catch(e) {
     await canteen.destroy();
     if(e.name === 'SequelizeUniqueConstraintError' && e.errors[0].path === 'email') {
-      throw new DuplicateUserError();
+      user = await findUser({ email: userPayload.email });
     } else {
       throw e;
     }
   }
+  return user;
 };
 
 var findUser = function(user) {

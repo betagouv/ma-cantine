@@ -2,7 +2,7 @@ const { sequelize } = require('../../infrastructure/postgres-database');
 const { Canteen } = require('../../infrastructure/models/canteen');
 const { User } = require('../../infrastructure/models/user');
 const { createCanteen } = require('../../infrastructure/repositories/canteen');
-const { createUser, createUserWithCanteen, findUser, DuplicateUserError } = require('../../infrastructure/repositories/user');
+const { createUser, createUserWithCanteen, findUser } = require('../../infrastructure/repositories/user');
 
 const canteenPayload = {
   name: "Test canteen",
@@ -46,11 +46,16 @@ describe('User model', () => {
     expect(users[0].canteenId).toBe(canteens[1].id);
   });
 
-  it('throws user exists error given duplicate user to create', async () => {
-    await createUserWithCanteen(userPayload, canteenPayload);
-    await expect(async () => {
-      await createUserWithCanteen(userPayload, canteenPayload);
-    }).rejects.toThrow(DuplicateUserError);
+  it('returns existing user given duplicate user to create', async () => {
+    const createdUser = await createUserWithCanteen(userPayload, canteenPayload);
+    const foundUser = await createUserWithCanteen(userPayload, {
+      name: "This shouldn't exist",
+      city: "Atlantis",
+      sector: "fake"
+    });
+    expect(foundUser.id).toBe(createdUser.id);
+    const badCanteen = await Canteen.findOne({ where: { city: "Atlantis" } });
+    expect(badCanteen).toBeNull();
   });
 
   it('does not create new canteen if user fails to create', async () => {
