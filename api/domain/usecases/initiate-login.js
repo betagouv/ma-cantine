@@ -1,5 +1,6 @@
 const { findUserByEmail } = require('../../infrastructure/repositories/user');
 const authenticationService = require('../services/authentication');
+const { NotFoundError } = require('../../infrastructure/errors');
 
 async function initiateLogin(email, completeLoginUrl) {
   let user;
