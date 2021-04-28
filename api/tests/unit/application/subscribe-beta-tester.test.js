@@ -2,6 +2,7 @@ jest.mock('node-fetch');
 const fetch = require('node-fetch');
 
 const { subscribeBetaTester } = require('../../../application/controllers/subscribe-beta-tester');
+const { hFake } = require('../../test-helper');
 
 describe("Beta-tester subscription", () => {
 
@@ -31,16 +32,6 @@ describe("Beta-tester subscription", () => {
         }
       }
     };
-    const hFake = {
-      response(json) {
-        this.result = json;
-        return this;
-      },
-      code(number) {
-        this.statusCode = number;
-        return this;
-      }
-    }
 
     // mock fetch call
     const responseBodyJSON = { message: "test" };

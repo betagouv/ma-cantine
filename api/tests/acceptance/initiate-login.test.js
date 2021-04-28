@@ -46,19 +46,6 @@ describe('Login initiation endpoint /login', () => {
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('does not leak information given unknown email', async () => {
-    const res = await server.inject({
-      method: "POST",
-      url: "/login",
-      payload: {
-        loginUrl,
-        email: "unknown@email.com"
-      }
-    });
-    expect(res.statusCode).toBe(200);
-    expect(fetch).toHaveBeenCalledTimes(1);
-  });
-
   it('returns 400 given no email', async () => {
     const res = await server.inject({
       method: "POST",
