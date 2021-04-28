@@ -1,3 +1,4 @@
+const { NotFoundError } = require('../../infrastructure/errors');
 const { Canteen } = require('../../infrastructure/models/canteen');
 const { LoginToken } = require('../../infrastructure/models/login-token');
 const { User } = require('../../infrastructure/models/user');
@@ -69,26 +70,28 @@ describe('Login token model', () => {
     expect(tokenUser.email).toBe(user.email);
   });
 
-  it('does not return user for expired token', async () => {
+  it('throws error given expired token and deletes it from database', async () => {
     const now = new Date();
     await LoginToken.create({
       userId: user.id,
       token: tokenString,
       createdAt: now.setHours(now.getHours() - 2)
     });
-    expect(await getUserForLoginToken(tokenString)).not.toBeDefined();
+    await expect(getUserForLoginToken(tokenString)).rejects.toThrow(NotFoundError);
+    await expect(getUserForLoginToken(tokenString)).rejects.toThrow(/testtoken1234/);
     const tokens = await LoginToken.findAll({
       where: {
         userId: user.id
       }
     });
-    expect(tokens.length).toBe(0); // getValidToken to delete expired tokens
+    expect(tokens.length).toBe(0);
   });
 
   it('deletes login token after one access', async () => {
     await saveLoginTokenForUser(user, tokenString);
     await getUserForLoginToken(tokenString);
-    expect(await getUserForLoginToken(tokenString)).not.toBeDefined();
+    await expect(getUserForLoginToken(tokenString)).rejects.toThrow(NotFoundError);
+    await expect(getUserForLoginToken(tokenString)).rejects.toThrow(/testtoken1234/);
   });
 
   it('requires a user', async () => {
