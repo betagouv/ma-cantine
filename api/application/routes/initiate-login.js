@@ -6,7 +6,7 @@ const handler = async function (request, h) {
   return h.response().code(200);
 };
 
-exports.register = async function(server) {
+const register = async function(server) {
   server.route([
     {
       method: "POST",
@@ -22,4 +22,9 @@ exports.register = async function(server) {
       }
     }
   ]);
+};
+
+module.exports = {
+  handler,
+  register
 };
