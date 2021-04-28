@@ -1,21 +1,8 @@
 const { init } = require("../../server");
+const { sequelize } = require("../../infrastructure/postgres-database");
 
-jest.mock("../../domain/usecases/sign-up");
-const { signUp } = require("../../domain/usecases/sign-up");
-
-const canteen = {
-  name: "Test canteen",
-  city: "Lyon",
-  sector: "school"
-};
-
-const user = {
-  email: "test@example.com",
-  firstName: "Camille",
-  lastName: "Dupont",
-};
-
-const loginUrl = "https://example.com/login?token=";
+jest.mock('node-fetch');
+const fetch = require('node-fetch');
 
 describe('Sign up endpoint /sign-up', () => {
   let server;
@@ -29,14 +16,21 @@ describe('Sign up endpoint /sign-up', () => {
       method: "POST",
       url: "/sign-up",
       payload: {
-        user,
-        canteen,
-        loginUrl
+        user: {
+          email: "test@example.com",
+          firstName: "Camille",
+          lastName: "Dupont",
+        },
+        canteen: {
+          name: "Test canteen",
+          city: "Lyon",
+          sector: "school"
+        },
+        loginUrl: "https://example.com/login?token="
       }
     });
     expect(res.statusCode).toBe(200);
-    expect(signUp).toHaveBeenCalledTimes(1);
-    expect(signUp).toHaveBeenCalledWith(user, canteen, loginUrl);
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 
   it('errors if invalid data on POST', async () => {
@@ -54,5 +48,6 @@ describe('Sign up endpoint /sign-up', () => {
 
   afterAll(async () => {
     await server.stop();
+    await sequelize.close();
   });
 });
