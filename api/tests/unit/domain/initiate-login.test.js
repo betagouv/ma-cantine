@@ -1,14 +1,14 @@
-const { initiateLogin } = require('../../domain/usecases/initiate-login');
+const { initiateLogin } = require('../../../domain/usecases/initiate-login');
 
 jest.mock('node-fetch');
 const fetch = require('node-fetch');
 
-jest.mock('../../infrastructure/repositories/login-token');
-const { saveLoginTokenForUser } = require('../../infrastructure/repositories/login-token');
+jest.mock('../../../infrastructure/repositories/login-token');
+const { saveLoginTokenForUser } = require('../../../infrastructure/repositories/login-token');
 
-jest.mock('../../infrastructure/repositories/user');
-const { findUserByEmail } = require('../../infrastructure/repositories/user');
-const { NotFoundError } = require('../../infrastructure/errors');
+jest.mock('../../../infrastructure/repositories/user');
+const { findUserByEmail } = require('../../../infrastructure/repositories/user');
+const { NotFoundError } = require('../../../infrastructure/errors');
 
 const user = {
   email: "test@email.com"

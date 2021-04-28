@@ -1,3 +1,4 @@
+const { NotFoundError } = require('../errors');
 const { LoginToken } = require('../models/login-token');
 const { User } = require('../models/user');
 
@@ -26,6 +27,9 @@ var getUserForLoginToken = async function(token) {
       user = tokenEntry.user;
     }
     tokenEntry.destroy();
+  }
+  if(!user) {
+    throw new NotFoundError("No login token: " + token);
   }
   return user;
 };

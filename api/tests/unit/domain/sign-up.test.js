@@ -1,10 +1,10 @@
-const { signUp } = require('../../domain/usecases/sign-up')
+const { signUp } = require('../../../domain/usecases/sign-up')
 
-jest.mock('../../domain/services/authentication');
-const { sendLoginLink } = require('../../domain/services/authentication');
+jest.mock('../../../domain/services/authentication');
+const { sendLoginLink } = require('../../../domain/services/authentication');
 
-jest.mock('../../infrastructure/repositories/user');
-const { createUserWithCanteen } = require('../../infrastructure/repositories/user');
+jest.mock('../../../infrastructure/repositories/user');
+const { createUserWithCanteen } = require('../../../infrastructure/repositories/user');
 
 const canteen = {
   name: "Test canteen",

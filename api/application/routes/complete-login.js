@@ -1,32 +1,28 @@
 const Joi = require('joi');
-const { generateJWTokenForUser } = require("../../domain/usecases/complete-login");
-const { NoLoginTokenError } = require("../../domain/errors");
+const { completeLogin } = require("../../domain/usecases/complete-login");
+const { NotFoundError } = require('../../infrastructure/errors');
 
-const completeLogin = async function(request, h) {
-  // buffer for email crawlers ?
+const handler = async function(request, h) {
   let response, code;
   try {
-    const jwt = await generateJWTokenForUser(request.query.token);
-    response = { jwt };
+    response = await completeLogin(request.query.token);
     code = 200;
   } catch(e) {
-    if(e instanceof NoLoginTokenError) {
+    if(e instanceof NotFoundError) {
       code = 400;
     } else {
       throw e;
     }
   }
-  // do something with token?
-  // log within functions so reason shows up in sclaingo for debugging?
   return h.response(response).code(code);
 };
 
-exports.register = async function(server) {
+const register = async function(server) {
   server.route([
     {
       method: "GET",
       path: "/complete-login",
-      handler: completeLogin,
+      handler,
       options: {
         validate: {
           query: Joi.object({
@@ -37,3 +33,8 @@ exports.register = async function(server) {
     }
   ]);
 };
+
+module.exports = {
+  handler,
+  register
+}
