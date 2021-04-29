@@ -16,7 +16,7 @@ var createUserWithCanteen = async function(userPayload, canteenPayload) {
   } catch(e) {
     await canteen.destroy();
     if(e.name === 'SequelizeUniqueConstraintError' && e.errors[0].path === 'email') {
-      user = await findUserByEmail(userPayload.email);
+      user = await getUserByEmail(userPayload.email);
     } else {
       throw e;
     }
@@ -24,7 +24,7 @@ var createUserWithCanteen = async function(userPayload, canteenPayload) {
   return user;
 };
 
-var findUserByEmail = async function(email) {
+var getUserByEmail = async function(email) {
   const user = await User.findOne({
     where: {
       email
@@ -39,5 +39,5 @@ var findUserByEmail = async function(email) {
 module.exports = {
   createUser,
   createUserWithCanteen,
-  findUserByEmail
+  getUserByEmail
 }
