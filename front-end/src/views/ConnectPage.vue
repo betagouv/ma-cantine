@@ -50,6 +50,8 @@ var post = function(apiUrl, url, json) {
   });
 };
 
+var DEFAULT_SECTOR = "scolaire";
+
 export default {
   data() {
     return {
@@ -58,7 +60,7 @@ export default {
       loginEmail: null,
       user: {},
       canteen: {
-        sector: "scolaire"
+        sector: DEFAULT_SECTOR
       },
       loginUrl: (process.env.SITE_URL || "http://localhost:8080") + this.$route.path + "?token=",
       sectors
@@ -85,7 +87,7 @@ export default {
 
       if (response.status === 200) {
         this.user = {};
-        this.canteen = {};
+        this.canteen = { sector: DEFAULT_SECTOR };
         alert("Merci, vous recevrez un email bientôt pour connecter.")
       } else {
         const error = await response.json();
@@ -143,7 +145,7 @@ export default {
   form {
     display: flex;
     flex-direction: column;
-    width: 50em;
+    width: 35em;
     margin: 2em;
 
     label {
