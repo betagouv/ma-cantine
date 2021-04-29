@@ -20,7 +20,7 @@ async function sendLoginLink(user, urlPrefix) {
 
 function sendSignUpLink(email) {
   const htmlBody = `<!DOCTYPE html> <html> <body>`+
-                   `<p>Une personne a essayé de connecter avec cette adresse email, mais nous n'avons pas trouvé un compte afilié.</p>`+
+                   `<p>Une personne a essayé de se connecter avec cette adresse email, mais nous n'avons pas trouvé un compte afilié.</p>`+
                    `<p>Si vous voulez créer un compte, visitez-nous a <a href='https://ma-cantine.beta.gouv.fr'>ma-cantine.beta.gouv.fr</a>.</p>`+
                    `<p>Sinon, vous pouvez ignorer ce message.</p>`+
                    `</body> </html>`;

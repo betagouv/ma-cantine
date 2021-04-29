@@ -7,7 +7,7 @@ jest.mock('../../../infrastructure/repositories/login-token');
 const { saveLoginTokenForUser } = require('../../../infrastructure/repositories/login-token');
 
 jest.mock('../../../infrastructure/repositories/user');
-const { findUserByEmail } = require('../../../infrastructure/repositories/user');
+const { getUserByEmail } = require('../../../infrastructure/repositories/user');
 const { NotFoundError } = require('../../../infrastructure/errors');
 
 const user = {
@@ -26,7 +26,7 @@ describe('Log in initiation', () => {
   });
 
   it('generates, saves, and emails temp token given known email', async () => {
-    findUserByEmail.mockReturnValue(user);
+    getUserByEmail.mockReturnValue(user);
     await initiateLogin(user.email, URL_PREFIX);
     expect(saveLoginTokenForUser).toHaveBeenCalledTimes(1);
     const token = saveLoginTokenForUser.mock.calls[0][1]; // token is second argument
@@ -48,7 +48,7 @@ describe('Log in initiation', () => {
   });
 
   it('sends a sign up, not login, link given unknown email', async () => {
-    findUserByEmail.mockRejectedValue(new NotFoundError());
+    getUserByEmail.mockRejectedValue(new NotFoundError());
     await initiateLogin('unknown@test.com', URL_PREFIX);
     expect(saveLoginTokenForUser).not.toHaveBeenCalled();
 
@@ -67,7 +67,7 @@ describe('Log in initiation', () => {
   });
 
   it('generates unique tokens', async () => {
-    findUserByEmail.mockReturnValue(user);
+    getUserByEmail.mockReturnValue(user);
     await initiateLogin(user.email, URL_PREFIX);
     await initiateLogin(user.email, URL_PREFIX);
     const token1 = saveLoginTokenForUser.mock.calls[0][1];
@@ -77,7 +77,7 @@ describe('Log in initiation', () => {
 
   afterEach(() => {
     saveLoginTokenForUser.mockClear();
-    findUserByEmail.mockClear();
+    getUserByEmail.mockClear();
     fetch.mockClear();
   });
 
