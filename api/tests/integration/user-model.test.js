@@ -2,7 +2,7 @@ const { sequelize } = require('../../infrastructure/postgres-database');
 const { Canteen } = require('../../infrastructure/models/canteen');
 const { User } = require('../../infrastructure/models/user');
 const { createCanteen } = require('../../infrastructure/repositories/canteen');
-const { createUser, createUserWithCanteen, findUserByEmail } = require('../../infrastructure/repositories/user');
+const { createUser, createUserWithCanteen, getUserByEmail } = require('../../infrastructure/repositories/user');
 const { NotFoundError } = require('../../infrastructure/errors');
 
 const canteenPayload = {
@@ -71,15 +71,15 @@ describe('User model', () => {
 
   it('finds user successfully', async () => {
     const createdUser = await createUser(userPayload, canteenId);
-    const foundUser = await findUserByEmail(userPayload.email);
+    const foundUser = await getUserByEmail(userPayload.email);
     expect(foundUser.id).toBe(createdUser.id);
     expect(foundUser.email).toBe(createdUser.email);
   });
 
   it('throws error which includes email if user is not found', async () => {
-    await expect(findUserByEmail("fake@email.com"))
+    await expect(getUserByEmail("fake@email.com"))
       .rejects.toThrow(NotFoundError);
-    await expect(findUserByEmail("fake@email.com"))
+    await expect(getUserByEmail("fake@email.com"))
       .rejects.toThrow(/fake@email.com/);
   });
 
