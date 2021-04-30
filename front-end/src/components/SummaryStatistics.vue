@@ -8,7 +8,7 @@
       role="img"
       :aria-label="series[0] +' % produits bio, ' + series[1] + ' % produits de qualité et durables'"
     />
-    <div class="no-data" v-else>Données non renseignées</div>
+    <div class="no-data" v-if="!dataPresent">Données non renseignées</div>
   </div>
 </template>
 
@@ -25,7 +25,6 @@
     },
     data() {
       return {
-        dataPresent: !!this.qualityDiagnostic.valueTotal && (!!this.qualityDiagnostic.valueBio || !!this.qualityDiagnostic.valueSustainable),
         chartOptions: {
           chart: {
             type: 'pie',
@@ -66,6 +65,9 @@
       }
     },
     computed: {
+      dataPresent() {
+        return !!this.qualityDiagnostic.valueTotal && (!!this.qualityDiagnostic.valueBio || !!this.qualityDiagnostic.valueSustainable);
+      },
       bioPercentage() {
         return getPercentage(this.qualityDiagnostic.valueBio, this.qualityDiagnostic.valueTotal);
       },
