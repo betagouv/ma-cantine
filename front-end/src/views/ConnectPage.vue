@@ -62,7 +62,7 @@ export default {
       canteen: {
         sector: DEFAULT_SECTOR
       },
-      loginUrl: (process.env.SITE_URL || "http://localhost:8080") + this.$route.path + "?token=",
+      loginUrl: (process.env.VUE_APP_SITE_URL || "http://localhost:8080") + this.$route.path + "?token=",
       sectors
     }
   },
