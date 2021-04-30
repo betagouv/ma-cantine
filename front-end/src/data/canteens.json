@@ -78,5 +78,45 @@
         "disposableUtensilsSubstituted": true
       }
     }
+  },
+  {
+    "id": "tarnos",
+    "title": "Tarnos",
+    "keyPoints": [
+      "Plan pluriannulel de diversification des protéines",
+      "Plus aucun plastique",
+      "Diagnostic et plan d'action contre le gaspillage alimentaire"
+    ],
+    "mealCount": 2800,
+    "region": "Landes",
+    "timePeriod": "2020",
+    "diagnostics": {
+      "qualite-des-produits": {
+        "2019": { "valueBio": "59400", "valueFairTrade": "0", "valueSustainable": "6762", "valueTotal": "319000" },
+        "2020": { "valueBio": "56462", "valueFairTrade": "0", "valueSustainable": "5549", "valueTotal": "232068" }
+      },
+      "information-des-usagers": {
+        "communicationSupport": ["website"],
+        "communicationSupportLink": null,
+        "communicateOnFoodPlan": true
+      },
+      "gaspillage-alimentaire": {
+        "hasMadeWasteDiagnostic": true,
+        "hasMadeWastePlan": true,
+        "wasteActions": ["preRegistration", "training"],
+        "hasCovenant": false
+      },
+      "diversification-des-menus": {
+        "hasMadeDiversificationPlan": true,
+        "vegetarianFrequency": "once",
+        "vegetarianMenuType": "standalone"
+      },
+      "interdiction-du-plastique": {
+        "cookingFoodContainersSubstituted": true,
+        "serviceFoodContainersSubstituted": true,
+        "waterBottlesSubstituted": true,
+        "disposableUtensilsSubstituted": true
+      }
+    }
   }
 ]
