@@ -85,7 +85,7 @@
   }
 
   function getPercentage(partialValue, totalValue) {
-    return !!partialValue && !!totalValue ? Math.round((100 * partialValue) / totalValue) : '--';
+    return !!partialValue && !!totalValue ? Math.round((100 * partialValue) / totalValue) : 0;
   }
 </script>
 
