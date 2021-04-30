@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node start.js",
     "test": "jest --runInBand",
-    "coverage": "jest --runInBand --collectCoverage"
+    "coverage": "jest --runInBand --collectCoverage",
+    "db:migrate": "npx sequelize-cli db:migrate"
   },
   "engines": {
     "node": "15.5.0",

@@ -51,3 +51,12 @@ Récupérer l'information du port en utilisant l'information donnée par `\conni
 ```
 TEST_DATABASE_URL=postgres://me:password@localhost:5432/test
 ```
+
+#### Migrations
+
+`npm run db:migrate`
+
+Lisez plus:
+
+ - https://github.com/sequelize/cli
+ - https://sequelize.org/master/manual/migrations.html
