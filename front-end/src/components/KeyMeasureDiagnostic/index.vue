@@ -31,9 +31,7 @@
       QualityMeasureDiagnostic,
       WasteMeasureDiagnostic
     },
-    props: {
-      measure: Object,
-    },
+    props: ['measure', 'closeModal'],
     data() {
       return {
         diagnostic: diagnostics[this.measure.id] || {},
