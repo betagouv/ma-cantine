@@ -25,6 +25,7 @@
     <BaseModal v-if="measureDiagnosticModal" @closeModal="closeDiagnosticModal">
       <KeyMeasureDiagnostic
         :measure="measureDiagnosticModal"
+        @closeModal="closeDiagnosticModal"
       />
     </BaseModal>
     <router-link :to="{ name: 'KeyMeasuresHome' }" id="summarise">
