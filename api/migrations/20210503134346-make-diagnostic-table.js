@@ -34,7 +34,7 @@ module.exports = {
       serviceFoodContainersSubstituted: Sequelize.BOOLEAN,
       waterBottlesSubstituted: Sequelize.BOOLEAN,
       disposableUtensilsSubstituted: Sequelize.BOOLEAN,
-      communicationSupport: Sequelize.ARRAY(Sequelize.STRING),
+      communicationSupports: Sequelize.ARRAY(Sequelize.STRING),
       communicationSupportLink: Sequelize.STRING,
       communicateOnFoodPlan: Sequelize.BOOLEAN,
       createdAt: {

@@ -23,7 +23,7 @@ let Diagnostic = sequelize.define('diagnostic', {
   serviceFoodContainersSubstituted: DataTypes.BOOLEAN,
   waterBottlesSubstituted: DataTypes.BOOLEAN,
   disposableUtensilsSubstituted: DataTypes.BOOLEAN,
-  communicationSupport: DataTypes.ARRAY(DataTypes.STRING),
+  communicationSupports: DataTypes.ARRAY(DataTypes.STRING),
   communicationSupportLink: DataTypes.STRING,
   communicateOnFoodPlan: DataTypes.BOOLEAN
 });
