@@ -3,7 +3,7 @@ const { Canteen } = require('../../infrastructure/models/canteen');
 const { createCanteen } = require('../../infrastructure/repositories/canteen');
 const { NotFoundError } = require('../../infrastructure/errors');
 const { Diagnostic } = require('../../infrastructure/models/diagnostic');
-const { saveDiagnosticForCanteen, getResultsByCanteen } = require('../../infrastructure/repositories/diagnostic');
+const { saveDiagnosticForCanteen, getAllDiagnosticsByCanteen } = require('../../infrastructure/repositories/diagnostic');
 
 const diagnosticPayload = {
   year: 2019,
@@ -104,7 +104,7 @@ describe('Diagnostic results model', () => {
       year: 2020,
       valueBio: 1234
     }, canteen.id);
-    const allRows = await getResultsByCanteen(canteen.id);
+    const allRows = await getAllDiagnosticsByCanteen(canteen.id);
     expect(allRows.length).toEqual(2);
     expect(allRows[0].valueBio).toEqual(diagnosticPayload.valueBio);
     expect(allRows[1].valueBio).toEqual(1234);
@@ -118,14 +118,9 @@ describe('Diagnostic results model', () => {
     });
     await saveDiagnosticForCanteen(diagnosticPayload, canteen.id);
     await saveDiagnosticForCanteen(diagnosticPayload, secondCanteen.id);
-    const allRows = await getResultsByCanteen(secondCanteen.id);
+    const allRows = await getAllDiagnosticsByCanteen(secondCanteen.id);
     expect(allRows.length).toEqual(1);
     expect(allRows[0].canteenId).toEqual(secondCanteen.id);
-  });
-
-  it('throws error if no rows for given canteen id', async () => {
-    await expect(getResultsByCanteen(canteen.id)).rejects.toThrow(NotFoundError);
-    await expect(getResultsByCanteen(canteen.id)).rejects.toThrow(/1/);
   });
 
   afterAll(async () => {
