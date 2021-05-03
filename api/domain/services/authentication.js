@@ -1,9 +1,15 @@
+require('dotenv').config();
 const crypto = require('crypto');
+const Jwt = require('@hapi/jwt');
 const { sendEmail } = require("./mailer");
 const { saveLoginTokenForUser } = require('../../infrastructure/repositories/login-token')
 
 function generateToken() {
   return crypto.randomBytes(200).toString('base64').slice(0, 255);
+};
+
+function generateJwtForUser(user) {
+  return Jwt.token.generate({ email: user.email }, process.env.JWT_SECRET_KEY);
 };
 
 async function sendLoginLink(user, urlPrefix) {
@@ -29,5 +35,6 @@ function sendSignUpLink(email) {
 
 module.exports = {
   sendLoginLink,
-  sendSignUpLink
+  sendSignUpLink,
+  generateJwtForUser
 }
