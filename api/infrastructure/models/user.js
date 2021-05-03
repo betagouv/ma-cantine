@@ -1,5 +1,4 @@
-// For some reason, removing the unused Sequelize from here causes the tests to break
-const { Sequelize, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const { sequelize } = require('../postgres-database');
 const { Canteen } = require('./canteen');
 
