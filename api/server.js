@@ -1,10 +1,11 @@
 'use strict';
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
-const initiateLogin = require('./application/routes/initiate-login.js');
-const completeLogin = require('./application/routes/complete-login.js');
-const signUp = require('./application/routes/sign-up.js');
-const subscribeBetaTester = require('./application/routes/subscribe-beta-tester.js');
+const Jwt = require('@hapi/jwt');
+const glob = require('glob');
+const path = require('path');
+const { NotFoundError } = require('./infrastructure/errors');
+const { getUserByEmail } = require('./infrastructure/repositories/user');
 
 const server = Hapi.server({
   host: process.env.HOST || 'localhost',
@@ -14,8 +15,7 @@ const server = Hapi.server({
       origin: ['*']
     }
   },
-  // jwt authentication
-  debug: { request: ['error'] }
+  debug: false
 });
 
 // development logging
@@ -25,17 +25,54 @@ if(process.env.NODE_ENV !== 'test') {
   });
 }
 
-subscribeBetaTester.register(server);
-initiateLogin.register(server);
-completeLogin.register(server);
-signUp.register(server);
+const prepareServer = async function(server) {
+  await server.register(Jwt);
+  server.auth.strategy('jwt', 'jwt', {
+    keys: process.env.JWT_SECRET_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      nbf: true,
+      exp: true,
+      maxAgeSec: 7 * 24 * 60 * 60, // 7 days
+      timeSkewSec: 15
+    },
+    validate: async (artifacts, request, h) => {
+      let user;
+      try {
+        user = await getUserByEmail(artifacts.decoded.payload.email);
+      } catch(e) {
+        if(e instanceof NotFoundError) {
+          return { isValid: false };
+        } else {
+          throw e;
+        }
+      }
+      return {
+        isValid: true,
+        credentials: { user }
+      };
+    }
+  });
+
+  // Look through the routes and register each
+  glob.sync('./application/routes/*.js', { 
+    root: __dirname 
+  }).forEach(file => {
+    const route = require(path.join(__dirname, file));
+    route.register(server);
+  });
+};
 
 exports.init = async () => {
+  await prepareServer(server);
   await server.initialize();
   return server;
 };
 
 exports.start = async () => {
+  await prepareServer(server);
   await server.start();
   console.log(`Server running at: ${server.info.uri}`);
   return server;

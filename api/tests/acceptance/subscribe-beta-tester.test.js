@@ -6,7 +6,7 @@ describe("Beta-tester subscription endpoint /subscribe-beta-tester", () => {
   let server;
   let responseBodyJSON = { message: "test" };
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     server = await init();
 
     fetch.mockReturnValue({
@@ -15,10 +15,6 @@ describe("Beta-tester subscription endpoint /subscribe-beta-tester", () => {
         return Promise.resolve(responseBodyJSON);
       }
     });
-  });
-
-  afterEach(async () => {
-    await server.stop();
   });
 
   it("returns successful response given valid payload", async () => {
@@ -53,5 +49,9 @@ describe("Beta-tester subscription endpoint /subscribe-beta-tester", () => {
       payload: {}
     });
     expect(res.statusCode).toBe(400);
-  })
+  });
+
+  afterAll(async () => {
+    await server.stop();
+  });
 });
