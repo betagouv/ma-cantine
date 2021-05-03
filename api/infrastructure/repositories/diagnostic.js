@@ -17,20 +17,15 @@ const saveDiagnosticForCanteen = async function(data, canteenId) {
   return diagnostic[0];
 };
 
-const getResultsByCanteen = async function(canteenId) {
-  const results = await Diagnostic.findAll({
+const getAllDiagnosticsByCanteen = function(canteenId) {
+  return Diagnostic.findAll({
     where: {
       canteenId
     }
   });
-  if(!results.length) {
-    throw new NotFoundError("No results for canteen with id: " + canteenId);
-  } else {
-    return results;
-  }
 };
 
 module.exports = {
   saveDiagnosticForCanteen,
-  getResultsByCanteen
+  getAllDiagnosticsByCanteen
 }
