@@ -29,7 +29,7 @@ const diagnosticPayload = {
   serviceFoodContainersSubstituted: true,
   waterBottlesSubstituted: true,
   disposableUtensilsSubstituted: true,
-  communicationSupport: [
+  communicationSupports: [
     "email",
     "display",
     "website",
