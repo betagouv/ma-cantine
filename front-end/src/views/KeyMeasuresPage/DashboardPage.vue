@@ -3,11 +3,14 @@
     <h1>Mon tableau de bord</h1>
 
     <CanteenDashboard :diagnostics="diagnostics" :showResources="true"/>
+
+    <button v-if="jwt" @click="saveDiagnostics">Sauvegardez mes données</button>
+    <router-link v-else :to="{ name: 'ConnectPage' }">Connectez pour sauvegarder mes données</router-link>
   </div>
 </template>
 
 <script>
-  import { diagnostics } from '@/data/KeyMeasures.js';
+  import { diagnostics, flattenedDiagnostics } from '@/data/KeyMeasures.js';
   import CanteenDashboard from '@/components/CanteenDashboard';
 
   export default {
@@ -17,8 +20,32 @@
     data() {
       return {
         diagnostics,
+        jwt: localStorage.getItem('jwt')
       };
     },
+    methods: {
+      async saveDiagnostics() {
+        const jwt = this.jwt;
+        const response = await fetch(`${this.$api_url}/save-diagnostics`, {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+jwt
+          },
+          body: JSON.stringify({
+            diagnostics: flattenedDiagnostics
+          })
+        });
+
+        if (response.status === 201) {
+          alert("Vos données ont été sauvgardées")
+        } else {
+          const error = await response.json();
+          console.log(error);
+          alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
+        }
+      },
+    }
   };
 </script>
 
@@ -29,4 +56,19 @@
     color: $green;
     margin: 1em 0em;
   }
+
+  button {
+    font-size: 1.2em;
+    margin: auto;
+    margin-top: 2em;
+    border: none;
+    background: $orange;
+    border-radius: 1em;
+    padding: 0.5em;
+    color: $white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  // TODO: style link
 </style>

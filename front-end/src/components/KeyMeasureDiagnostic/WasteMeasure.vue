@@ -18,7 +18,7 @@
   />
 
   <BaseCheckbox
-    v-model="diagnostic.hasCovenant"
+    v-model="diagnostic.hasDonationAgreement"
     label="J'ai proposé des conventions de dons à des associations habilitées d’aide alimentaire"
     inputId="has-covenant"
   />

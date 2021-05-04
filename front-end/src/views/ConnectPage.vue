@@ -96,7 +96,10 @@ export default {
       }
     },
     checkToken() {
-      if(this.token) {
+      const jwt = localStorage.getItem('jwt');
+      if(jwt) {
+        this.jwt = true; // TODO: redirect to dashboard if connected?
+      } else if(this.token) {
         const errorMessage = "Une erreur est survenue, essayez de connecter à nouveau ou contactez nous directement à contact@egalim.beta.gouv.fr";
         fetch(`${this.$api_url}/complete-login?token=${encodeURIComponent(this.token)}`)
           .then(response => {
@@ -105,7 +108,8 @@ export default {
               response.json()
                 .then(json => {
                   console.log(json);
-                  this.jwt = json.jwt;
+                  this.jwt = true;
+                  localStorage.setItem('jwt', json.jwt); // TODO: use cookie
                 })
                 .catch(error => {
                   console.log("JWT parsing error: ", error);

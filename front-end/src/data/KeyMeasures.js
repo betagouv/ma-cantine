@@ -32,7 +32,7 @@ if (diagnosticsString) {
       hasMadeWasteDiagnostic: false,
       hasMadeWastePlan: false,
       wasteActions: [],
-      hasCovenant: false,
+      hasDonationAgreement: false,
     },
     "diversification-des-menus": {
       hasMadeDiversificationPlan: false,
@@ -53,6 +53,47 @@ if (diagnosticsString) {
   };
 }
 
+// migration
+if(Object.keys(diagnostics["gaspillage-alimentaire"]).indexOf("hasCovenant") !== -1) {
+  diagnostics["gaspillage-alimentaire"].hasDonationAgreement = diagnostics["gaspillage-alimentaire"].hasCovenant;
+  delete diagnostics["gaspillage-alimentaire"].hasCovenant;
+}
+
+// TODO: see if this can be cleaned up
+function flattenDiagnostics(diags, defaultYear) {
+  let flattened = [{ year: defaultYear }];
+  for (const [measureKey, measureData] of Object.entries(diags)) {
+    if(measureKey === 'qualite-des-produits') {
+      for (const [yearKey, yearData] of Object.entries(measureData)) {
+        if(yearKey === defaultYear) {
+          flattened[0] = {
+            ...flattened[0],
+            ...yearData
+          };
+        } else {
+          yearData.year = yearKey;
+          flattened.push(yearData);
+        }
+      }
+    } else {
+      flattened[0] = {
+        ...flattened[0],
+        ...measureData
+      };
+    }
+  }
+  flattened.forEach(entry => {
+    for (const [key, data] of Object.entries(entry)) {
+      if(data === null) {
+        delete entry[key];
+      }
+    }
+  });
+  return flattened;
+}
+
+const flattenedDiagnostics = flattenDiagnostics(diagnostics, "2020");
+
 function saveDiagnostic(id, diagnostic) {
   diagnostics[id] = diagnostic;
   localStorage.setItem('diagnostics', JSON.stringify(diagnostics));
@@ -67,5 +108,6 @@ export {
   findSubMeasure,
   saveDiagnostic,
   diagnostics,
+  flattenedDiagnostics,
   haveDiagnosticResults
 };
