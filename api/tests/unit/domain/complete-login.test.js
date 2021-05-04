@@ -1,4 +1,4 @@
-const Jwt = require('@hapi/jwt');
+const jwt = require('jsonwebtoken');
 const { completeLogin } = require('../../../domain/usecases/complete-login');
 const { NotFoundError } = require('../../../infrastructure/errors');
 
@@ -11,8 +11,7 @@ describe('Log in completion', () => {
     const user = { email: "some@email.com" };
     getUserForLoginToken.mockReturnValue(user);
     const res = await completeLogin('somelogintoken');
-    const decodedEmail = Jwt.token.decode(res.jwt).decoded.payload.email;
-    expect(decodedEmail).toBe(user.email);
+    expect(jwt.decode(res.jwt).email).toBe(user.email);
   });
 
   it('throws an error given an invalid token', async () => {
