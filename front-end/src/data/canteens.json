@@ -24,7 +24,7 @@
         "hasMadeWasteDiagnostic": true,
         "hasMadeWastePlan": true,
         "wasteActions": ["preRegistration", "training", "portionSize"],
-        "hasCovenant": true
+        "hasDonationAgreement": true
       },
       "diversification-des-menus": {
         "hasMadeDiversificationPlan": false,
@@ -64,7 +64,7 @@
         "hasMadeWasteDiagnostic": true,
         "hasMadeWastePlan": true,
         "wasteActions": ["preRegistration", "raiseAwareness", "training", "reorganization", "portionSize", "reuse"],
-        "hasCovenant": true
+        "hasDonationAgreement": true
       },
       "diversification-des-menus": {
         "hasMadeDiversificationPlan": false,
@@ -104,7 +104,7 @@
         "hasMadeWasteDiagnostic": true,
         "hasMadeWastePlan": true,
         "wasteActions": ["preRegistration", "training"],
-        "hasCovenant": false
+        "hasDonationAgreement": false
       },
       "diversification-des-menus": {
         "hasMadeDiversificationPlan": true,
