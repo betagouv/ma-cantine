@@ -15,7 +15,9 @@ const server = Hapi.server({
       origin: ['*']
     }
   },
-  debug: false
+  debug: {
+    request: ['error']
+  }
 });
 
 // development logging
