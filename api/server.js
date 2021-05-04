@@ -41,6 +41,8 @@ const prepareServer = async function(server) {
       timeSkewSec: 15
     },
     validate: async (artifacts, request, h) => {
+      // TODO: getting the front-end to store token in localstorage is non-ideal
+      // use cookies instead? - in request.state to fetch then parse and validate token
       let user;
       try {
         user = await getUserByEmail(artifacts.decoded.payload.email);

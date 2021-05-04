@@ -34,7 +34,7 @@
               </li>
             </ul>
             <KeyMeasureAction
-              :isDone="diagnostics['gaspillage-alimentaire'].hasCovenant"
+              :isDone="diagnostics['gaspillage-alimentaire'].hasDonationAgreement"
               label="Dons aux associations"
             />
           </div>
