@@ -7,7 +7,7 @@ const signUpHandler = async function(request, h) {
   return h.response().code(200);
 };
 
-exports.register = async function(server) {
+const register = async function(server) {
   server.route([{
     method: "POST",
     path: "/sign-up",
@@ -30,4 +30,9 @@ exports.register = async function(server) {
       }
     }
   }]);
+};
+
+module.exports = {
+  signUpHandler,
+  register
 };
