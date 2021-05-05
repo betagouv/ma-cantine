@@ -13,6 +13,7 @@ import ConnectPage from '@/views/ConnectPage';
 import BlogsPage from '@/views/BlogsPage';
 import BlogsHome from '@/views/BlogsPage/BlogsHome';
 import BlogPage from '@/views/BlogsPage/BlogPage';
+import Stats from '@/views/Stats';
 
 const routes = [
   {
@@ -25,8 +26,8 @@ const routes = [
     name: 'DiagnosticPage',
     component: DiagnosticPage,
     meta: {
-      title: "M'auto-évaluer"
-    }
+      title: "M'auto-évaluer",
+    },
   },
   {
     path: '/creation-affiche',
@@ -38,7 +39,7 @@ const routes = [
     name: 'KeyMeasuresPage',
     component: KeyMeasuresPage,
     meta: {
-      title: "Les 5 mesures phares de la loi EGAlim"
+      title: 'Les 5 mesures phares de la loi EGAlim',
     },
     children: [
       {
@@ -51,8 +52,8 @@ const routes = [
         name: 'KeyMeasurePage',
         component: KeyMeasurePage,
         props: true,
-      }
-    ]
+      },
+    ],
   },
   {
     path: '/nos-cantines',
@@ -69,8 +70,8 @@ const routes = [
         name: 'CanteenPage',
         component: CanteenPage,
         props: true,
-      }
-    ]
+      },
+    ],
   },
   {
     path: '/mentions-legales',
@@ -99,26 +100,31 @@ const routes = [
         props: true,
       }
     ]
-  }
+  },
+  {
+    path: '/stats',
+    name: 'Stats',
+    component: Stats,
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior (to, from, savedPosition) {
+  scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
     } else if (to.hash) {
       return {
         el: to.hash,
-        top: 80
+        top: 80,
       }
     } else {
       return {
-        top: 0
-      };
+        top: 0,
+      }
     }
-  }
-});
+  },
+})
 
-export default router;
+export default router
