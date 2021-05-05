@@ -20,12 +20,16 @@ const saveDiagnosticsForCanteen = async function(canteenId, diagnostics) {
   }
 };
 
-const getAllDiagnosticsByCanteen = function(canteenId) {
-  return Diagnostic.findAll({
+const getAllDiagnosticsByCanteen = async function(canteenId) {
+  const diagnostics = await Diagnostic.findAll({
     where: {
       canteenId
-    }
+    },
+    order: [
+      ['year', 'DESC'],
+    ],
   });
+  return diagnostics.map(diagnostic => diagnostic.toJSON());
 };
 
 module.exports = {

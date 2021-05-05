@@ -85,15 +85,17 @@ describe('Diagnostic results model', () => {
     expect(allRows.length).toEqual(0);
   });
 
-  it('fetches all rows given canteen id', async () => {
+  it('fetches all diagnostics sorted by year given canteen id', async () => {
     await Diagnostic.create({ ...diagnosticPayload, canteenId: 1 });
     await Diagnostic.create({ year: 2020, valueBio: 1234, canteenId: 1 });
 
-    const allRows = await getAllDiagnosticsByCanteen(1);
+    const diagnostics = await getAllDiagnosticsByCanteen(1);
 
-    expect(allRows.length).toEqual(2);
-    expect(allRows[0].valueBio).toEqual(diagnosticPayload.valueBio);
-    expect(allRows[1].valueBio).toEqual(1234);
+    expect(diagnostics.length).toEqual(2);
+    expect(diagnostics[0].year).toEqual(2020);
+    expect(diagnostics[0].valueBio).toEqual(1234);
+    expect(diagnostics[1].valueBio).toEqual(diagnosticPayload.valueBio);
+    expect(diagnostics[1].year).toEqual(diagnosticPayload.year);
   });
 
   it('only returns rows for given canteen id', async () => {
