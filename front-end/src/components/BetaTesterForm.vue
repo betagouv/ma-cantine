@@ -21,9 +21,7 @@
 </template>
 
 <script>
-  import { keyMeasures } from '@/data/KeyMeasures.js';
-
-  export default {
+export default {
     data() {
       return {
         form: {},
@@ -36,10 +34,7 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            keyMeasures: keyMeasures,
-            form: this.form
-          })
+          body: JSON.stringify(this.form)
         });
 
         if (response.status === 201) {
