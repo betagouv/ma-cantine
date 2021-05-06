@@ -7,6 +7,10 @@ const createCanteen = function(canteen) {
   return Canteen.create(canteen);
 };
 
+const updateCanteen = async function(canteen) {
+  return Canteen.update(canteen, { where: { id: canteen.id } });
+};
+
 const getCanteenById = async function(id) {
   const canteen = await Canteen.findOne({ where: { id } });
 
@@ -19,5 +23,6 @@ const getCanteenById = async function(id) {
 
 module.exports = {
   createCanteen,
+  updateCanteen,
   getCanteenById
 }
