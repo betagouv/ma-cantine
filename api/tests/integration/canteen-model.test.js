@@ -1,6 +1,6 @@
 const { sequelize } = require('../../infrastructure/postgres-database')
 const { Canteen } = require('../../infrastructure/models/canteen')
-const { createCanteen, getCanteenById } = require('../../infrastructure/repositories/canteen');
+const { createCanteen, getCanteenById, updateCanteen } = require('../../infrastructure/repositories/canteen');
 const { NotFoundError } = require('../../infrastructure/errors');
 
 const canteenPayload = {
@@ -22,6 +22,26 @@ describe('Canteen repository', () => {
       const canteens = await Canteen.findAll();
       expect(canteens.length).toBe(1);
       expect(createdCanteen.toJSON()).toStrictEqual(canteens[0].toJSON());
+    });
+  });
+
+  describe('updateCanteen', () => {
+    it('successfully updates a canteen', async () => {
+      const createdCanteen = await createCanteen(canteenPayload);
+
+      await updateCanteen({
+        id: createdCanteen.id,
+        name: "updatedName",
+      });
+
+      const canteen = await getCanteenById(createdCanteen.id);
+
+      expect(canteen).toMatchObject({
+        id: createdCanteen.id,
+        name: "updatedName",
+        city: "Lyon",
+        sector: "school",
+      });
     });
   });
 
