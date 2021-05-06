@@ -4,12 +4,14 @@ const { User } = require("../../infrastructure/models/user");
 const { createUserWithCanteen } = require('../../infrastructure/repositories/user');
 const { generateJwtForUser } = require('../../domain/services/authentication');
 const { sequelize } = require("../../infrastructure/postgres-database");
+const { Diagnostic } = require("../../infrastructure/models/diagnostic");
 
 describe('Save diagnostic endpoint /save-diagnostics', () => {
   let server, user;
 
   beforeAll(async () => {
     server = await init();
+    await Diagnostic.sync({ force: true });
     await Canteen.sync({ force: true });
     await User.sync({ force: true });
     user = await createUserWithCanteen({
@@ -56,7 +58,7 @@ describe('Save diagnostic endpoint /save-diagnostics', () => {
         serviceFoodContainersSubstituted: true,
         waterBottlesSubstituted: true,
         disposableUtensilsSubstituted: true,
-        communicationSupport: [
+        communicationSupports: [
           "email",
           "display",
           "website",
@@ -77,6 +79,12 @@ describe('Save diagnostic endpoint /save-diagnostics', () => {
       }
     });
     expect(res.statusCode).toBe(201);
+    const diagnosticsCount = await Diagnostic.count();
+    expect(diagnosticsCount).toBe(2);
+    const diag2019 = await Diagnostic.findOne({ where: { year: 2019 }});
+    expect(diag2019).toMatchObject(diagnostics[0]);
+    const diag2020 = await Diagnostic.findOne({ where: { year: 2020 }});
+    expect(diag2020).toMatchObject(diagnostics[1]);
   });
 
   it('returns 401 given JWT with unknown email', async () => {

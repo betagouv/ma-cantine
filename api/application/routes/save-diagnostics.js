@@ -23,7 +23,7 @@ const JoiDiagnostic = Joi.object({
   serviceFoodContainersSubstituted: Joi.boolean(),
   waterBottlesSubstituted: Joi.boolean(),
   disposableUtensilsSubstituted: Joi.boolean(),
-  communicationSupport: Joi.array().items(Joi.string()),
+  communicationSupports: Joi.array().items(Joi.string()),
   communicationSupportLink: Joi.string(),
   communicateOnFoodPlan: Joi.boolean()
 });
