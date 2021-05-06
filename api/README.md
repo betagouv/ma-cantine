@@ -11,6 +11,7 @@ N'oubliez pas de `npm install` la première fois que vous installez ce projet.
 SENDINBLUE_API_KEY=
 SENDINBLUE_SENDER_EMAIL=
 SENDINBLUE_CONTACT_EMAIL=
+SENDINBLUE_LIST_ID=
 DATABASE_URL=
 TEST_DATABASE_URL=
 JWT_SECRET_KEY=

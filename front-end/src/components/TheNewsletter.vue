@@ -26,17 +26,13 @@
     },
     methods: {
       async submit() {
-        const requestOptions = {
+        const response = await fetch(`${this.$api_url}/subscribe-newsletter`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", "api-key": process.env.VUE_APP_SENDINBLUE_API_KEY },
-          body: JSON.stringify({
-            email: this.email,
-            listIds: [parseInt(process.env.VUE_APP_SENDINBLUE_LIST_ID)],
-            updateEnabled: true,
-          })
-        };
-
-        const response = await fetch("https://api.sendinblue.com/v3/contacts", requestOptions);
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email: this.email })
+        });
 
         if (response.status === 201 || response.status === 204) {
           this.email = null;
