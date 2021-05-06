@@ -26,7 +26,7 @@ var getUserForLoginToken = async function(token) {
     if(new Date(tokenEntry.expirationDate) > new Date()) {
       user = tokenEntry.user;
     }
-    tokenEntry.destroy();
+    await tokenEntry.destroy();
   }
   if(!user) {
     throw new NotFoundError("No login token: " + token);
