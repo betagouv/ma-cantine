@@ -1,8 +1,8 @@
 const Joi = require('joi');
-const { saveDiagnosticsForUser } = require('../../domain/usecases/save-diagnostics');
+const { saveDiagnosticsForCanteen } = require('../../domain/usecases/save-diagnostics');
 
 const saveDiagnosticsHandler = async function(request, h) {
-  await saveDiagnosticsForUser(request.auth.credentials.user, request.payload.diagnostics);
+  await saveDiagnosticsForCanteen(request.auth.credentials.user.canteenId, request.payload.diagnostics);
   return h.response().code(201);
 };
 
