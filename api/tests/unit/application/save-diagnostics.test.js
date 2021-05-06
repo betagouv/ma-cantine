@@ -3,7 +3,7 @@ const { saveDiagnosticsHandler } = require('../../../application/routes/save-dia
 const { hFake } = require('../../test-helper');
 
 jest.mock('../../../domain/usecases/save-diagnostics');
-const { saveDiagnosticsForUser } = require('../../../domain/usecases/save-diagnostics');
+const { saveDiagnosticsForCanteen } = require('../../../domain/usecases/save-diagnostics');
 
 const diagnostics = [
   {
@@ -18,13 +18,15 @@ const diagnostics = [
 
 describe('Save diagnostic handler', () => {
   it('calls save diagnostic usecase with diagnostic in payload', async () => {
-    const user = { email: "test@example.com" };
     const request = {
-      auth: { credentials: { user: user } },
+      auth: { credentials: { user: {
+        email: "test@example.com",
+        canteenId: 5
+      } } },
       payload: { diagnostics }
     };
     const res = await saveDiagnosticsHandler(request, hFake);
     expect(res.statusCode).toBe(201);
-    expect(saveDiagnosticsForUser).toHaveBeenCalledWith(user, diagnostics);
+    expect(saveDiagnosticsForCanteen).toHaveBeenCalledWith(5, diagnostics);
   });
 });
