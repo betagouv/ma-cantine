@@ -1,72 +1,24 @@
-jest.mock('node-fetch');
-const fetch = require('node-fetch');
-
-const { subscribeBetaTester } = require('../../../application/controllers/subscribe-beta-tester');
+const { subscribeBetaTesterHandler } = require('../../../application/routes/subscribe-beta-tester');
 const { hFake } = require('../../test-helper');
 
-describe("Beta-tester subscription", () => {
+jest.mock('../../../domain/usecases/subscribe-beta-tester');
+const { subscribeBetaTester } = require('../../../domain/usecases/subscribe-beta-tester');
 
-  it("successfully makes GET request to third party API", async () => {
-    // prepare function arguments
-    const request = {
-      payload: {
-        keyMeasures: [
-          {
-            shortTitle: "Test measure 1",
-            subMeasures: [{
-              shortTitle: "Test sub measure 1",
-              status: "done"
-            }]
-          },
-          {
-            shortTitle: "Test measure 2",
-            subMeasures: [{
-              shortTitle: "Test sub measure 2"
-            }]
-          }
-        ],
-        form: {
-          school: "Test school",
-          city: "<b>Dangerous input</b>",
-          email: "requester@test.com"
-        }
-      }
-    };
-
-    // mock fetch call
-    const responseBodyJSON = { message: "test" };
-    fetch.mockReturnValue({
+describe('Subscribe Beta Tester handler', () => {
+  it('triggers subscribe-beta-tester', async () => {
+    subscribeBetaTester.mockReturnValue({
       status: 201,
       json() {
-        return Promise.resolve(responseBodyJSON);
+        return Promise.resolve({ message: "test" });
       }
     });
 
-    const sendinblueRequest = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "api-key": undefined
-      },
-      body: JSON.stringify({
-        sender: { email: undefined, name: "site web ma cantine" },
-        to: [{ email: undefined }],
-        replyTo: { email: undefined },
-        subject: "Nouveau Béta-testeur ma cantine",
-        htmlContent: "<!DOCTYPE html> <html> <body><p><b>Cantine:</b> Test school</p>"+
-                     "<p><b>Ville:</b> &lt;b&gt;Dangerous input&lt;/b&gt;</p>"+
-                     "<p><b>Email:</b> requester@test.com</p><p><b>Téléphone:</b> </p><p><b>Message:</b></p><p></p>"+
-                     "<p><b>Test measure 1 :</b></p><p>Test sub measure 1 : done</p>"+
-                     "<p><b>Test measure 2 :</b></p><p>Test sub measure 2 : </p>"+
-                     "</body> </html>"
-      })
-    }
+    const response = await subscribeBetaTesterHandler({
+      payload: { email: "test@email.com" }
+    }, hFake);
 
-    // run tests
-    const res = await subscribeBetaTester(request, hFake);
-
-    expect(res.statusCode).toBe(201);
-    expect(res.result).toStrictEqual(responseBodyJSON);
-    expect(fetch).toHaveBeenCalledWith("https://api.sendinblue.com/v3/smtp/email", sendinblueRequest);
+    expect(response.statusCode).toBe(201);
+    expect(response.result).toStrictEqual({ message: "test" });
+    expect(subscribeBetaTester).toHaveBeenCalledWith({ email: "test@email.com" });
   });
 });
