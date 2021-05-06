@@ -6,8 +6,8 @@
       data-id="d79b1af3-0ab5-4338-a1c9-553d9e0d050e"
       data-type="interactive"
     />
-    <h1>👾 Statistiques d’usage et de comportement des personnes utilisatrices de la plateforme</h1>
-    <h2>Nombre de visites</h2>
+    <h2>👾 Statistiques d’usage et de comportement des personnes utilisatrices de la plateforme</h2>
+    <h3>Nombre de visites</h3>
     <iframe
       width="100%"
       height="300"
@@ -17,7 +17,7 @@
       marginheight="0"
       marginwidth="0"
     />
-    <h2>Canaux d'acquisition</h2>
+    <h3>Canaux d'acquisition</h3>
     <iframe
       width="100%"
       height="350"
@@ -27,7 +27,7 @@
       marginheight="0"
       marginwidth="0"
     />
-    <h2>Pages visitées</h2>
+    <h3>Pages visitées</h3>
     <iframe
       id="matomo-pages"
       width="100%"
@@ -45,7 +45,6 @@
 export default {
   data() {
     return {
-      // Change for 162 when public
       matomoId: 162,
     }
   },
