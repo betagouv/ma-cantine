@@ -3,7 +3,7 @@ const { Canteen } = require('../../infrastructure/models/canteen');
 const { createCanteen } = require('../../infrastructure/repositories/canteen');
 const { NotFoundError } = require('../../infrastructure/errors');
 const { Diagnostic } = require('../../infrastructure/models/diagnostic');
-const { saveDiagnosticForCanteen, getAllDiagnosticsByCanteen } = require('../../infrastructure/repositories/diagnostic');
+const { saveDiagnosticsForCanteen, getAllDiagnosticsByCanteen } = require('../../infrastructure/repositories/diagnostic');
 
 const diagnosticPayload = {
   year: 2019,
@@ -56,55 +56,41 @@ describe('Diagnostic results model', () => {
     await Diagnostic.sync({ force: true });
   });
 
-  it('successfully adds one row of diagnostic results', async () => {
-    const createdResult = await saveDiagnosticForCanteen(diagnosticPayload, canteen.id);
-    const persistedResult = await Diagnostic.findOne({
-      where: {
-        canteenId: canteen.id,
-        year: 2019
-      }
-    });
-    expect(persistedResult.toJSON()).toMatchObject({
-      ...diagnosticPayload,
-      canteenId: canteen.id
-    });
-    expect(createdResult.toJSON()).toStrictEqual(persistedResult.toJSON());
+  it('saves multiple diagnostics', async () => {
+    await saveDiagnosticsForCanteen(canteen.id, [diagnosticPayload, { year: 2020, valueBio: 6000 }]);
+
+    const allRows = await Diagnostic.findAll();
+    expect(allRows.length).toBe(2);
+    expect(allRows[0]).toMatchObject(diagnosticPayload);
+    expect(allRows[1]).toMatchObject({ canteenId: 1, year: 2020, valueBio: 6000 });
   });
 
-  it('updates data given existing canteen id and year combination', async () => {
-    await saveDiagnosticForCanteen(diagnosticPayload, canteen.id);
-    await saveDiagnosticForCanteen({
-      year: 2019,
-      valueBio: 1234
-    }, canteen.id);
-    const persistedResult = await Diagnostic.findOne({
-      where: {
-        canteenId: canteen.id,
-        year: 2019
-      }
-    });
-    expect(persistedResult.valueBio).not.toEqual(diagnosticPayload.valueBio);
-    expect(persistedResult.valueBio).toEqual(1234);
-    expect(persistedResult.valueSustainable).toEqual(diagnosticPayload.valueSustainable);
+  it('overwrites data given existing canteen id and year combination', async () => {
+    await Diagnostic.create({ canteenId: 1, year: 2020, valueBio: 3000, hasDonationAgreement: true });
+
+    await saveDiagnosticsForCanteen(canteen.id, [{ year: 2020, valueBio: 6000 }]);
+
+    const allRows = await Diagnostic.findAll();
+    expect(allRows.length).toBe(1);
+    expect(allRows[0].valueBio).toBe(6000);
+    expect(allRows[0].hasDonationAgreement).toBeNull();
   });
 
-  it('throws error and does not save data given invalid canteen id', async () => {
-    await expect(saveDiagnosticForCanteen(diagnosticPayload, 99))
+  it('throws error and does not save diagnostics given invalid canteen id', async () => {
+    await expect(saveDiagnosticsForCanteen(99, [{ year: 2020 }]))
       .rejects.toThrow(NotFoundError);
-    await expect(saveDiagnosticForCanteen(diagnosticPayload, 99))
+    await expect(saveDiagnosticsForCanteen(99, [{ year: 2020 }]))
       .rejects.toThrow(/99/);
     const allRows = await Diagnostic.findAll();
     expect(allRows.length).toEqual(0);
   });
 
   it('fetches all rows given canteen id', async () => {
-    await saveDiagnosticForCanteen(diagnosticPayload, canteen.id);
-    await saveDiagnosticForCanteen({
-      ...diagnosticPayload,
-      year: 2020,
-      valueBio: 1234
-    }, canteen.id);
-    const allRows = await getAllDiagnosticsByCanteen(canteen.id);
+    await Diagnostic.create({ ...diagnosticPayload, canteenId: 1 });
+    await Diagnostic.create({ year: 2020, valueBio: 1234, canteenId: 1 });
+
+    const allRows = await getAllDiagnosticsByCanteen(1);
+
     expect(allRows.length).toEqual(2);
     expect(allRows[0].valueBio).toEqual(diagnosticPayload.valueBio);
     expect(allRows[1].valueBio).toEqual(1234);
@@ -116,9 +102,11 @@ describe('Diagnostic results model', () => {
       city: "Paris",
       sector: "other"
     });
-    await saveDiagnosticForCanteen(diagnosticPayload, canteen.id);
-    await saveDiagnosticForCanteen(diagnosticPayload, secondCanteen.id);
+    await Diagnostic.create({ ...diagnosticPayload, canteenId: 1 });
+    await Diagnostic.create({ ...diagnosticPayload, canteenId: 2 });
+
     const allRows = await getAllDiagnosticsByCanteen(secondCanteen.id);
+
     expect(allRows.length).toEqual(1);
     expect(allRows[0].canteenId).toEqual(secondCanteen.id);
   });
