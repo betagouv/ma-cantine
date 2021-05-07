@@ -25,7 +25,7 @@
     <BaseModal v-if="measureDiagnosticModal" @closeModal="closeDiagnosticModal">
       <KeyMeasureDiagnostic
         :measure="measureDiagnosticModal"
-        @closeModal="closeDiagnosticModal"
+        @afterSave="closeDiagnosticModal"
         :originalDiagnostics="diagnostics"
       />
     </BaseModal>

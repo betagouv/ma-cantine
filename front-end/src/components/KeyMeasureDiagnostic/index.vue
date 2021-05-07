@@ -36,7 +36,7 @@
       QualityMeasureDiagnostic,
       WasteMeasureDiagnostic
     },
-    props: ['measure', 'closeModal', 'originalDiagnostics'],
+    props: ['measure', 'afterSave', 'originalDiagnostics'],
     data() {
       return {
         measureDiagnosticComponentName: this.measure.baseComponent + "Diagnostic",
@@ -46,7 +46,7 @@
     methods: {
       async submit() {
         await saveDiagnostics(this.diagnostics);
-        this.$emit('closeModal');
+        this.$emit('afterSave');
       },
     },
   }
