@@ -4,6 +4,10 @@ import DiagnosticPage from '@/views/DiagnosticPage';
 import KeyMeasuresPage from '@/views/KeyMeasuresPage';
 import KeyMeasuresHome from '@/views/KeyMeasuresPage/KeyMeasuresHome';
 import KeyMeasurePage from '@/views/KeyMeasuresPage/KeyMeasurePage';
+import PublishPage from '@/views/PublishPage';
+import CanteenInfo from '@/views/PublishPage/CanteenInfo';
+import PublishMeasurePage from '@/views/PublishPage/PublishMeasurePage';
+import SubmitPublicationPage from '@/views/PublishPage/SubmitPublicationPage';
 import GeneratePosterPage from '@/views/GeneratePosterPage';
 import CanteensPage from '@/views/CanteensPage';
 import CanteensHome from '@/views/CanteensPage/CanteensHome';
@@ -60,6 +64,29 @@ const routes = [
         props: true,
       },
     ],
+  },
+  {
+    path: '/publication',
+    name: 'PublishPage',
+    component: PublishPage,
+    children: [
+      {
+        path: '',
+        name: 'CanteenInfo',
+        component: CanteenInfo,
+      },
+      {
+        path: ':id',
+        name: 'PublishMeasurePage',
+        component: PublishMeasurePage,
+        props: true,
+      },
+      {
+        path: 'validation',
+        name: 'SubmitPublicationPage',
+        component: SubmitPublicationPage,
+      }
+    ]
   },
   {
     path: '/nos-cantines',
