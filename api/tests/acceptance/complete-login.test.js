@@ -3,6 +3,7 @@ const { LoginToken } = require('../../infrastructure/models/login-token');
 const { User } = require('../../infrastructure/models/user');
 const { init } = require('../../server');
 const { sequelize } = require('../../infrastructure/postgres-database');
+const { Diagnostic } = require('../../infrastructure/models/diagnostic');
 
 const canteenPayload = {
   name: "Test canteen",
@@ -16,30 +17,56 @@ const userPayload = {
   lastName: "Dupont",
 };
 
-describe('Login completion', () => {
-  let server, token;
+describe('Login completion endpoint /complete-login', () => {
+  let server, user;
 
   beforeAll(async () => {
     server = await init();
     await Canteen.sync({ force: true });
     await User.sync({ force: true });
     await LoginToken.sync({ force: true });
+    await Diagnostic.sync({ force: true });
     const canteen = await Canteen.create(canteenPayload);
     userPayload.canteenId = canteen.id;
-    const user = await User.create(userPayload);
-    token = await LoginToken.create({
+    user = await User.create(userPayload);
+  });
+
+  it('successfully returns a JSON web token with POST', async () => {
+    await LoginToken.create({
       token: "someLoginToken1234",
       userId: user.id
     });
-  });
-
-  it('successfully returns a JSON web token with GET /complete-login', async () => {
     const res = await server.inject({
-      method: "GET",
-      url: "/complete-login?token="+token.token,
+      method: "POST",
+      url: "/complete-login",
+      payload: {
+        token: 'someLoginToken1234'
+      }
     });
     expect(res.statusCode).toBe(200);
     expect(res.result.jwt).toBeDefined();
+  });
+
+  it('successfully returns a JSON web token and saves diagnostic data with POST', async () => {
+    await LoginToken.create({
+      token: "someLoginToken1234",
+      userId: user.id
+    });
+    const res = await server.inject({
+      method: "POST",
+      url: "/complete-login",
+      payload: {
+        token: 'someLoginToken1234',
+        diagnostics: [{
+          year: 2019,
+          valueBio: 50
+        }]
+      }
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.result.jwt).toBeDefined();
+    const persistedDiagnostics = await Diagnostic.findAll();
+    expect(persistedDiagnostics.length).toBe(1);
   });
 
   afterAll(async () => {

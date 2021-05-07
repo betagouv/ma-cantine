@@ -39,6 +39,7 @@
 
 <script>
 import sectors from "@/data/sector-tags";
+import { flattenedDiagnostics } from "@/data/KeyMeasures";
 
 var post = function(apiUrl, url, json) {
   return fetch(`${apiUrl}/${url}`, {
@@ -101,8 +102,11 @@ export default {
         this.jwt = true; // TODO: redirect to dashboard if connected?
       } else if(this.token) {
         const errorMessage = "Une erreur est survenue, essayez de connecter à nouveau ou contactez nous directement à contact@egalim.beta.gouv.fr";
-        fetch(`${this.$api_url}/complete-login?token=${encodeURIComponent(this.token)}`)
-          .then(response => {
+        // TODO: this works for new sign ups, but want to provide the option to users on log in whether to overwrite data or not
+        post(this.$api_url, 'complete-login', {
+          token: this.token,
+          diagnostics: flattenedDiagnostics
+        }).then(response => {
             console.log("Response: ", response);
             if(response.status === 200) {
               response.json()
