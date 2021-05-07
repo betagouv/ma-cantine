@@ -7,6 +7,9 @@ const { getUserForLoginToken } = require('../../../infrastructure/repositories/l
 jest.mock('../../../domain/services/authentication');
 const { generateJwtForUser } = require('../../../domain/services/authentication');
 
+jest.mock('../../../infrastructure/repositories/diagnostic');
+const { saveDiagnosticsForCanteen } = require('../../../infrastructure/repositories/diagnostic');
+
 describe('Log in completion', () => {
 
   it('generates a JSON web token given a valid login token', async () => {
@@ -26,6 +29,16 @@ describe('Log in completion', () => {
     await expect(async () => {
       await completeLogin('notatoken');
     }).rejects.toThrow(NotFoundError);
+  });
+
+  it('triggers saving diagnostics if provided', async () => {
+    getUserForLoginToken.mockReturnValue({ email: "some@email.com", canteenId: 5 });
+    generateJwtForUser.mockReturnValue('xxx.yyy.zzz');
+
+    const res = await completeLogin('somelogintoken', [{ year: 2020, valueBio: 20 }]);
+    expect(generateJwtForUser).toHaveBeenCalledWith({ email: "some@email.com", canteenId: 5 });
+    expect(saveDiagnosticsForCanteen).toHaveBeenCalledWith(5, [{ year: 2020, valueBio: 20 }]);
+    expect(res).toStrictEqual({ jwt: 'xxx.yyy.zzz' });
   });
 
 });

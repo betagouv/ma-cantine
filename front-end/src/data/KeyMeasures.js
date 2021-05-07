@@ -46,7 +46,7 @@ if (diagnosticsString) {
       disposableUtensilsSubstituted: false,
     },
     "information-des-usagers": {
-      communicationSupport: [],
+      communicationSupports: [],
       communicationSupportLink: null,
       communicateOnFoodPlan: false,
     },
@@ -57,6 +57,10 @@ if (diagnosticsString) {
 if(Object.keys(diagnostics["gaspillage-alimentaire"]).indexOf("hasCovenant") !== -1) {
   diagnostics["gaspillage-alimentaire"].hasDonationAgreement = diagnostics["gaspillage-alimentaire"].hasCovenant;
   delete diagnostics["gaspillage-alimentaire"].hasCovenant;
+}
+if(Object.keys(diagnostics["information-des-usagers"]).indexOf("communicationSupport") !== -1) {
+  diagnostics["information-des-usagers"].communicationSupports = diagnostics["information-des-usagers"].communicationSupport;
+  delete diagnostics["information-des-usagers"].communicationSupport;
 }
 
 // TODO: see if this can be cleaned up

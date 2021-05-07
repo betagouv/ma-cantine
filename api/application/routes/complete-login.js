@@ -1,11 +1,12 @@
 const Joi = require('joi');
+const { JoiDiagnostic } = require('../validation');
 const { completeLogin } = require("../../domain/usecases/complete-login");
 const { NotFoundError } = require('../../infrastructure/errors');
 
 const handler = async function(request, h) {
   let response, code;
   try {
-    response = await completeLogin(request.query.token);
+    response = await completeLogin(request.payload.token, request.payload.diagnostics);
     code = 200;
   } catch(e) {
     if(e instanceof NotFoundError) {
@@ -20,13 +21,14 @@ const handler = async function(request, h) {
 const register = async function(server) {
   server.route([
     {
-      method: "GET",
+      method: "POST",
       path: "/complete-login",
       handler,
       options: {
         validate: {
-          query: Joi.object({
-            token: Joi.string().required()
+          payload: Joi.object({
+            token: Joi.string().required(),
+            diagnostics: Joi.array().items(JoiDiagnostic)
           })
         }
       }

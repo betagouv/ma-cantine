@@ -16,7 +16,7 @@
         "2020": { "valueBio": "123000", "valueFairTrade": "0", "valueSustainable": "28500", "valueTotal": "500000" }
       },
       "information-des-usagers": {
-        "communicationSupport": [],
+        "communicationSupports": [],
         "communicationSupportLink": null,
         "communicateOnFoodPlan": false
       },
@@ -56,7 +56,7 @@
         "2020": { "valueBio": "102599", "valueFairTrade": "1000", "valueSustainable": "0", "valueTotal": "154000" }
       },
       "information-des-usagers": {
-        "communicationSupport": ["email", "display", "website", "other"],
+        "communicationSupports": ["email", "display", "website", "other"],
         "communicationSupportLink": null,
         "communicateOnFoodPlan": false
       },
@@ -96,7 +96,7 @@
         "2020": { "valueBio": "56462", "valueFairTrade": "0", "valueSustainable": "5549", "valueTotal": "232068" }
       },
       "information-des-usagers": {
-        "communicationSupport": ["website"],
+        "communicationSupports": ["website"],
         "communicationSupportLink": null,
         "communicateOnFoodPlan": true
       },
