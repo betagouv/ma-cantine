@@ -15,6 +15,7 @@
     </router-link>
     <router-link :to="{ name: 'DiagnosticPage' }" class="navbar-item">Savoir où j'en suis</router-link>
     <router-link :to="{ name: 'KeyMeasuresHome' }" class="navbar-item">Les 5 mesures phares</router-link>
+    <router-link :to="{ name: 'CanteenInfo' }" v-if="jwt" class="navbar-item">Publier mes données</router-link>
     <a class="navbar-item" href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/" target="_blank">
       Ressources <i class="fas fa-external-link-alt"></i>
     </a>
@@ -25,9 +26,14 @@
 </template>
 
 <script>
-export default {
-  name: 'TheNavbar',
-}
+  export default {
+    name: 'TheNavbar',
+    data() {
+      return {
+        jwt: localStorage.getItem('jwt'),
+      };
+    },
+  }
 </script>
 
 <style scoped lang="scss">

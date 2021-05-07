@@ -22,7 +22,7 @@
           <div class="actions">
             <KeyMeasureAction
               :isDone="latestDiagnostic.hasMadeWasteDiagnostic"
-              label="Réalisation d'un diagnostic sur le gaspillage alimenataire"
+              label="Réalisation d'un diagnostic sur le gaspillage alimentaire"
             />
             <KeyMeasureAction
               :isDone="latestDiagnostic.hasMadeWastePlan"
