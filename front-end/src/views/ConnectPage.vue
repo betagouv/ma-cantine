@@ -1,6 +1,7 @@
 <template>
   <div v-if="jwt">
-    <p>La connexion est reussi</p>
+    <p>La connexion est reussi.</p>
+    <p>Adresse email du compte : {{ email }}.</p>
   </div>
   <div v-else-if="token">
     <p>Votre demande est en cours de vérification...</p>
@@ -38,6 +39,7 @@
 </template>
 
 <script>
+import jwt from "jsonwebtoken";
 import sectors from "@/data/sector-tags";
 import { flattenedDiagnostics } from "@/data/KeyMeasures";
 
@@ -65,6 +67,11 @@ export default {
       },
       loginUrl: (process.env.VUE_APP_SITE_URL || "http://localhost:8080") + this.$route.path + "?token=",
       sectors
+    }
+  },
+  computed: {
+    email() {
+      return jwt.decode(this.jwt).email;
     }
   },
   created() {
@@ -97,9 +104,9 @@ export default {
       }
     },
     checkToken() {
-      const jwt = localStorage.getItem('jwt');
-      if(jwt) {
-        this.jwt = true; // TODO: redirect to dashboard if connected?
+      const localJwt = localStorage.getItem('jwt');
+      if(localJwt) {
+        this.jwt = localJwt;
       } else if(this.token) {
         const errorMessage = "Une erreur est survenue, essayez de connecter à nouveau ou contactez nous directement à contact@egalim.beta.gouv.fr";
         // TODO: this works for new sign ups, but want to provide the option to users on log in whether to overwrite data or not
@@ -107,13 +114,12 @@ export default {
           token: this.token,
           diagnostics: flattenedDiagnostics
         }).then(response => {
-            console.log("Response: ", response);
             if(response.status === 200) {
               response.json()
                 .then(json => {
-                  console.log(json);
-                  this.jwt = true;
-                  localStorage.setItem('jwt', json.jwt); // TODO: use cookie
+                  this.jwt = json.jwt;
+                  localStorage.setItem('jwt', json.jwt);
+                  this.$router.replace({ name: 'KeyMeasuresHome' });
                 })
                 .catch(error => {
                   console.log("JWT parsing error: ", error);
