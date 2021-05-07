@@ -16,4 +16,8 @@ describe('Authentication service', () => {
     expect(Jwt.token.generate).toHaveBeenCalledWith({ email }, process.env.JWT_SECRET_KEY);
     expect(jwt).toBe(mockedToken);
   });
+
+  // TODO: test send login link
+
+  // TODO: test send sign up link
 });
