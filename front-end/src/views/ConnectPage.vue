@@ -83,7 +83,7 @@ export default {
         email: this.loginEmail,
         loginUrl: this.loginUrl
       });
-      alert("Merci, si vous avez un compte vous recevriez un email.");
+      alert("Merci, vous allez recevoir un email pour vous connecter.");
       this.loginEmail = null;
     },
     async submitSignUp() {
@@ -96,7 +96,7 @@ export default {
       if (response.status === 200) {
         this.user = {};
         this.canteen = { sector: DEFAULT_SECTOR };
-        alert("Merci, vous recevrez un email bientôt pour connecter.")
+        alert("Merci, vous allez recevoir un email pour vous connecter.")
       } else {
         const error = await response.json();
         console.log(error);
