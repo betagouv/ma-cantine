@@ -2,11 +2,15 @@ require('../postgres-database');
 const { NotFoundError } = require("../../infrastructure/errors");
 const { Diagnostic } = require('../models/diagnostic');
 
-const saveDiagnosticForCanteen = async function(data, canteenId) {
-  data.canteenId = canteenId;
-  let diagnostic;
+const saveDiagnosticsForCanteen = async function(canteenId, diagnostics) {
+  diagnostics.forEach(diagnostic => {
+    diagnostic.canteenId = canteenId;
+  });
+  const modelAttributes = await Diagnostic.describe();
   try {
-    diagnostic = await Diagnostic.upsert(data);
+    await Diagnostic.bulkCreate(diagnostics, {
+      updateOnDuplicate: Object.keys(modelAttributes)
+    });
   } catch(e) {
     if(e.name === 'SequelizeForeignKeyConstraintError') {
       throw new NotFoundError("Error when saving diagnostic, no canteen found for id: " + canteenId);
@@ -14,7 +18,6 @@ const saveDiagnosticForCanteen = async function(data, canteenId) {
       throw e;
     }
   }
-  return diagnostic[0];
 };
 
 const getAllDiagnosticsByCanteen = function(canteenId) {
@@ -26,6 +29,6 @@ const getAllDiagnosticsByCanteen = function(canteenId) {
 };
 
 module.exports = {
-  saveDiagnosticForCanteen,
+  saveDiagnosticsForCanteen,
   getAllDiagnosticsByCanteen
 }

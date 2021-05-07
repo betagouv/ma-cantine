@@ -83,11 +83,11 @@
               label="Communication sur le plan alimentaire"
             />
             <KeyMeasureAction
-              :isDone="diagnostics['information-des-usagers'].communicationSupport.length > 0"
+              :isDone="diagnostics['information-des-usagers'].communicationSupports.length > 0"
               label="Communication à disposition des convives sur la qualité des approvisionnements"
             />
             <ul class="specifics-actions">
-              <li v-for="action in diagnostics['information-des-usagers'].communicationSupport" :key="action">
+              <li v-for="action in diagnostics['information-des-usagers'].communicationSupports" :key="action">
                 - {{communicationSupports[action]}}
               </li>
             </ul>

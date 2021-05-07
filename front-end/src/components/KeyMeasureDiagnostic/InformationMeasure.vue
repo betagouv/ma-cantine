@@ -1,6 +1,6 @@
 <template>
   <BaseCheckboxes
-    v-model="diagnostic.communicationSupport"
+    v-model="diagnostic.communicationSupports"
     legend="Information sur la qualité des approvisionnements :"
     :options="communicationSupports"
   />
