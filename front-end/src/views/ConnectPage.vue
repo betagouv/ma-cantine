@@ -93,7 +93,7 @@ export default {
         loginUrl: this.loginUrl
       });
 
-      if (response.status === 200) {
+      if(response.status === 200) {
         this.user = {};
         this.canteen = { sector: DEFAULT_SECTOR };
         alert("Merci, vous allez recevoir un email pour vous connecter.")
@@ -103,36 +103,25 @@ export default {
         alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
       }
     },
-    checkToken() {
+    async checkToken() {
       const localJwt = localStorage.getItem('jwt');
       if(localJwt) {
         this.jwt = localJwt;
       } else if(this.token) {
-        const errorMessage = "Une erreur est survenue, essayez de connecter à nouveau ou contactez nous directement à contact@egalim.beta.gouv.fr";
         // TODO: this works for new sign ups, but want to provide the option to users on log in whether to overwrite data or not
-        post(this.$api_url, 'complete-login', {
+        const response = await post(this.$api_url, 'complete-login', {
           token: this.token,
           diagnostics: flattenedDiagnostics
-        }).then(response => {
-            if(response.status === 200) {
-              response.json()
-                .then(json => {
-                  this.jwt = json.jwt;
-                  localStorage.setItem('jwt', json.jwt);
-                  this.$router.replace({ name: 'KeyMeasuresHome' });
-                })
-                .catch(error => {
-                  console.log("JWT parsing error: ", error);
-                });
-            } else {
-              alert(errorMessage)
-              this.token = null;
-            }
-          }).catch(error => {
-            console.log("Error: ", error)
-            alert(errorMessage)
-            this.token = null;
-          });
+        });
+        if(response.status === 200) {
+          const json = await response.json();
+          this.jwt = json.jwt;
+          localStorage.setItem('jwt', json.jwt);
+          this.$router.replace({ name: 'KeyMeasuresHome' });
+        } else {
+          this.token = null;
+          alert("Une erreur est survenue, essayez de vous connecter à nouveau ou contactez nous directement à contact@egalim.beta.gouv.fr");
+        }
       }
     }
   }
