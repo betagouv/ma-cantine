@@ -5,5 +5,15 @@ module.exports = {
         additionalData: '@import "@/styles/_variables.scss";'
       }
     }
-  }
+  },
+  configureWebpack: {
+    module: {
+      rules: [
+        {
+          test: /\.md$/i,
+          loader: "raw-loader",
+        },
+      ],
+    },
+  },
 }
