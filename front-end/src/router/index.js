@@ -10,6 +10,9 @@ import CanteensHome from '@/views/CanteensPage/CanteensHome';
 import CanteenPage from '@/views/CanteensPage/CanteenPage';
 import LegalNotices from '@/views/LegalNotices';
 import ConnectPage from '@/views/ConnectPage';
+import BlogsPage from '@/views/BlogsPage';
+import BlogsList from '@/views/BlogsPage/BlogsList';
+import BlogPage from '@/views/BlogsPage/BlogPage';
 
 const routes = [
   {
@@ -78,6 +81,24 @@ const routes = [
     path: '/connecter',
     name: 'ConnectPage',
     component: ConnectPage
+  },
+  {
+    path: '/blog',
+    name: 'BlogsPage',
+    component: BlogsPage,
+    children: [
+      {
+        path: '',
+        name: 'BlogsList',
+        component: BlogsList,
+      },
+      {
+        path: ':id',
+        name: 'BlogPage',
+        component: BlogPage,
+        props: true,
+      }
+    ]
   }
 ];
 
