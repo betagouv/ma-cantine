@@ -1,16 +1,20 @@
 <template>
-  <div id="blogs-list">
+  <div id="blogs-home">
     <div id="welcome-block">
-      <h1> Découvrez notre espace témoignages </h1>
+      <h1>Découvrez notre espace témoignages</h1>
       <img src="@/assets/lighthouse.svg" alt="">
     </div>
 
-    <div id="blogs">
+    <ol id="blogs-list">
       <router-link v-for="(post, idx) in posts" :key="idx" :to="{ name: 'BlogPage', params: { id: post.id } }" class="blog-card">
-        <p>{{ post.meta.title }}</p>
-        <p>{{ post.meta.date }}</p>
+        <li>
+          <h2>{{ post.meta.title }}</h2>
+          <p class="date">{{ new Date(post.meta.date).toLocaleDateString("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
+          <p class="tagline">{{ post.meta.tagline }}</p>
+          <p class="read-more">Lire la suite</p>
+        </li>
       </router-link>
-    </div>
+    </ol>
   </div>
 </template>
 
@@ -37,12 +41,45 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  #blogs {
+  #blogs-list {
     display: flex;
+    list-style: none;
 
     .blog-card {
-      border: 1px solid $black;
-      width: min-content;
+      text-decoration: none;
+      margin: 0.5em 0.7em;
+      color: $black;
+      background: $light-yellow;
+      width: 20em;
+      min-height: 15em;
+      border-radius: 22px;
+      padding: 1em;
+      text-align: left;
+      position: relative;
+      border-bottom: 3px solid $orange;
+    }
+
+    .date {
+      color: $dark-grey;
+      font-style: italic;
+    }
+
+    .read-more {
+      background-color: $orange;
+      color: $white;
+      font-weight: bold;
+      width: max-content;
+      padding: 0.3em;
+      position: absolute;
+      bottom: 0.5em;
+      right: 1em;
+      transition: all ease .25s;
+      border: 1px solid $light-yellow;
+    }
+
+    .read-more:hover {
+      border-color: $orange;
+      transform: scale(1.02);
     }
   }
 

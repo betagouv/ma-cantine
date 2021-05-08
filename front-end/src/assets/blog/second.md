@@ -1,6 +1,7 @@
 ---
 title: Second post
 date: 2021-08-11
+tagline: Nunc posuere quam vitae semper ullamcorper. Quisque elementum sapien ac egestas ultrices.
 ---
 
 # Lorem Ipsum
