@@ -4,8 +4,8 @@
 
     <CanteenDashboard :diagnostics="diagnostics" :showResources="true"/>
 
-    <button v-if="jwt" @click="saveDiagnostics">Sauvegardez mes données</button>
-    <router-link v-else :to="{ name: 'ConnectPage' }">Connectez pour sauvegarder mes données</router-link>
+    <button class="save-data" v-if="jwt" @click="saveDiagnostics">Sauvegarder mes données</button>
+    <router-link class="save-data" v-else :to="{ name: 'ConnectPage' }">Sauvegarder mes données</router-link>
   </div>
 </template>
 
@@ -57,7 +57,7 @@
     margin: 1em 0em;
   }
 
-  button {
+  .save-data {
     font-size: 1.2em;
     margin: auto;
     margin-top: 2em;
@@ -68,7 +68,11 @@
     color: $white;
     font-weight: bold;
     cursor: pointer;
+    text-decoration: none;
   }
 
-  // TODO: style link
+  a.save-data {
+    display: block;
+    width: max-content;
+  }
 </style>
