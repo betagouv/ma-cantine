@@ -17,13 +17,13 @@ async function sendLoginLink(user, urlPrefix) {
   // wait to make sure token is saved successfully before it is sent
   await saveLoginTokenForUser(user, token);
 
-  sendTransactionalEmail([{ email: user.email }], Number.parseInt(process.env.SENDINBLUE_TEMPLATE_LOGIN, 10), {
+  return sendTransactionalEmail([{ email: user.email }], Number.parseInt(process.env.SENDINBLUE_TEMPLATE_LOGIN, 10), {
     LINK: urlPrefix + encodeURIComponent(token)
   });
 };
 
 function sendSignUpLink(email) {
-  sendTransactionalEmail([{ email }], Number.parseInt(process.env.SENDINBLUE_TEMPLATE_SIGN_UP, 10));
+  return sendTransactionalEmail([{ email }], Number.parseInt(process.env.SENDINBLUE_TEMPLATE_SIGN_UP, 10));
 };
 
 module.exports = {
