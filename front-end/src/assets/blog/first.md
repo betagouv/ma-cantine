@@ -1,6 +1,7 @@
 ---
 title: First post
 date: 2021-05-08
+tagline: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 ---
 
 # Lorem Ipsum

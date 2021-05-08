@@ -1,5 +1,8 @@
 <template>
-  <div id="content" v-html="html"></div>
+  <div id="blog-page">
+    <img src="@/assets/lighthouse.svg" alt="">
+    <div id="content" v-html="html"></div>
+  </div>
 </template>
 
 <script>
@@ -21,5 +24,9 @@ export default {
 <style scoped lang="scss">
   #content {
     text-align: left;
+  }
+
+  img {
+    float: right;
   }
 </style>
