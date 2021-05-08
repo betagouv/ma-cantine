@@ -11,7 +11,7 @@ import CanteenPage from '@/views/CanteensPage/CanteenPage';
 import LegalNotices from '@/views/LegalNotices';
 import ConnectPage from '@/views/ConnectPage';
 import BlogsPage from '@/views/BlogsPage';
-import BlogsList from '@/views/BlogsPage/BlogsList';
+import BlogsHome from '@/views/BlogsPage/BlogsHome';
 import BlogPage from '@/views/BlogsPage/BlogPage';
 
 const routes = [
@@ -89,8 +89,8 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'BlogsList',
-        component: BlogsList,
+        name: 'BlogsHome',
+        component: BlogsHome,
       },
       {
         path: ':id',
