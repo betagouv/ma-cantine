@@ -45,7 +45,7 @@
       margin: 1em 0;
     }
     
-    .fa-check-square, .fa-arrow-alt-circle-right {
+    .fa-check-square {
       color: $green;
     }
   }

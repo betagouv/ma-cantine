@@ -42,11 +42,11 @@ export default {
   }
 
   #content {
-    ::v-deep img {
+    :deep(img) {
       max-width: 100%;
     }
 
-    ::v-deep ul {
+    :deep(ul) {
       list-style: disclosure-closed;
       padding-left: 2.5em;
     }
