@@ -22,7 +22,7 @@ describe('Authentication service', () => {
     expect(token).toBeDefined();
 
     expect(sendTransactionalEmail).toHaveBeenCalledWith([{ email:"test@example.com" }], 60, {
-      LINK: 'https://example.com?token='+encodeURIComponent(token)
+      LOGIN_LINK: 'https://example.com?token='+encodeURIComponent(token)
     });
   });
 
