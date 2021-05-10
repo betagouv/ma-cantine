@@ -72,4 +72,8 @@
       color: $blue;
     }
   }
+
+  .fa-seedling {
+    color: $green;
+  }
 </style>

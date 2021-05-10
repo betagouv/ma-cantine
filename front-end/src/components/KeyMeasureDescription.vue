@@ -28,7 +28,7 @@
   .description-container {
     flex: 4;
 
-    /deep/ .fa-check-square, /deep/ .fa-arrow-alt-circle-right {
+    :deep(.fa-check-square) {
       color: $green;
     }
   }
