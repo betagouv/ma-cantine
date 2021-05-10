@@ -5,12 +5,12 @@
       <div class="statistics-by-year">
         <div class="statistics-for-year">
           <h3>Sur l'année 2019 :</h3>
-          <SummaryStatistics :qualityDiagnostic="diagnostics['qualite-des-produits']['2019']"/>
+          <SummaryStatistics :qualityDiagnostic="previousDiagnostic"/>
         </div>
         <div class="separator"></div>
         <div class="statistics-for-year">
           <h3>Sur l'année 2020 :</h3>
-          <SummaryStatistics :qualityDiagnostic="diagnostics['qualite-des-produits']['2020']"/>
+          <SummaryStatistics :qualityDiagnostic="latestDiagnostic"/>
         </div>
       </div>
       <KeyMeasureResource :baseComponent='qualityMeasure.baseComponent' v-if="showResources"/>
@@ -21,20 +21,20 @@
           <h2>Initiatives contre le gaspillage alimentaire</h2>
           <div class="actions">
             <KeyMeasureAction
-              :isDone="diagnostics['gaspillage-alimentaire'].hasMadeWasteDiagnostic"
+              :isDone="latestDiagnostic.hasMadeWasteDiagnostic"
               label="Réalisation d'un diagnostic sur le gaspillage alimenataire"
             />
             <KeyMeasureAction
-              :isDone="diagnostics['gaspillage-alimentaire'].hasMadeWastePlan"
+              :isDone="latestDiagnostic.hasMadeWastePlan"
               label="Mise en place d'un plan d'actions contre le gaspillage"
             />
             <ul class="specifics-actions">
-              <li v-for="action in diagnostics['gaspillage-alimentaire'].wasteActions" :key="action">
+              <li v-for="action in latestDiagnostic.wasteActions" :key="action">
                 - {{wasteActions[action]}}
               </li>
             </ul>
             <KeyMeasureAction
-              :isDone="diagnostics['gaspillage-alimentaire'].hasDonationAgreement"
+              :isDone="latestDiagnostic.hasDonationAgreement"
               label="Dons aux associations"
             />
           </div>
@@ -45,19 +45,19 @@
           <h3>Dans l'établissement, ont été supprimé l'usage des :</h3>
           <div class="actions">
             <KeyMeasureAction
-              :isDone="diagnostics['interdiction-du-plastique'].cookingFoodContainersSubstituted"
+              :isDone="latestDiagnostic.cookingFoodContainersSubstituted"
               label="Contenants de cuisson / de réchauffe en plastique"
             />
             <KeyMeasureAction
-              :isDone="diagnostics['interdiction-du-plastique'].serviceFoodContainersSubstituted"
+              :isDone="latestDiagnostic.serviceFoodContainersSubstituted"
               label="Contenants de service en plastique"
             />
             <KeyMeasureAction
-              :isDone="diagnostics['interdiction-du-plastique'].waterBottlesSubstituted"
+              :isDone="latestDiagnostic.waterBottlesSubstituted"
               label="Bouteilles d'eau en plastique"
             />
             <KeyMeasureAction
-              :isDone="diagnostics['interdiction-du-plastique'].disposableUtensilsSubstituted"
+              :isDone="latestDiagnostic.disposableUtensilsSubstituted"
               label="Ustensiles à usage unique en plastique"
             />
           </div>
@@ -68,7 +68,7 @@
           <h2>{{ diversificationMeasure.shortTitle }}</h2>
           <div class="actions">
             <KeyMeasureAction
-              :isDone="diagnostics['diversification-des-menus'].hasMadeDiversificationPlan"
+              :isDone="latestDiagnostic.hasMadeDiversificationPlan"
               label="Mise en place d'un plan pluriannuel de diversification des protéines"
             />
             <KeyMeasureAction :isDone="hasVegetarianMenu" :label="vegetarianMenuActionLabel"/>
@@ -79,21 +79,21 @@
           <h2>{{ informationMeasure.shortTitle }}</h2>
           <div class="actions">
             <KeyMeasureAction
-              :isDone="diagnostics['information-des-usagers'].communicateOnFoodPlan"
+              :isDone="latestDiagnostic.communicateOnFoodPlan"
               label="Communication sur le plan alimentaire"
             />
             <KeyMeasureAction
-              :isDone="diagnostics['information-des-usagers'].communicationSupports.length > 0"
+              :isDone="latestDiagnostic.communicationSupports.length > 0"
               label="Communication à disposition des convives sur la qualité des approvisionnements"
             />
             <ul class="specifics-actions">
-              <li v-for="action in diagnostics['information-des-usagers'].communicationSupports" :key="action">
+              <li v-for="action in latestDiagnostic.communicationSupports" :key="action">
                 - {{communicationSupports[action]}}
               </li>
             </ul>
             <a
-              v-if="diagnostics['information-des-usagers'].communicationSupportLink"
-              :href="diagnostics['information-des-usagers'].communicationSupportLink"
+              v-if="latestDiagnostic.communicationSupportLink"
+              :href="latestDiagnostic.communicationSupportLink"
               class="communication-support-link"
               target="_blank"
             >
@@ -108,7 +108,7 @@
 </template>
 
 <script>
-  import { keyMeasures } from '@/data/KeyMeasures.js';
+  import { defaultFlatDiagnostic, keyMeasures } from '@/data/KeyMeasures.js';
   import wasteActions from '@/data/waste-actions.json';
   import communicationSupports from '@/data/communication-supports.json';
   import SummaryStatistics from '@/components/SummaryStatistics';
@@ -126,12 +126,16 @@
       showResources: Boolean,
     },
     data() {
-      // TODO: update this and all other keying by measure
-      const vegetarianFrequency = this.diagnostics['diversification-des-menus'].vegetarianFrequency;
+      // TODO: how to default better
+      const latestDiagnostic = this.diagnostics.find(diagnostic => diagnostic.year === 2020) || defaultFlatDiagnostic;
+      const previousDiagnostic = this.diagnostics.find(diagnostic => diagnostic.year === 2019) || defaultFlatDiagnostic;
+
+      const vegetarianFrequency = latestDiagnostic.vegetarianFrequency;
       const hasVegetarianMenu = vegetarianFrequency && vegetarianFrequency !== "less-than-once";
 
       return {
-        // TODO: currentDiagnostic & previousDiagnostic for this year and last
+        latestDiagnostic,
+        previousDiagnostic,
         wasteActions,
         communicationSupports,
         qualityMeasure: keyMeasures.find(measure => measure.id === 'qualite-des-produits'),

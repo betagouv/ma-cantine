@@ -2,7 +2,7 @@
   <div>
     <h1>Mon tableau de bord</h1>
 
-    <CanteenDashboard :diagnostics="diagnostics" :showResources="true"/>
+    <CanteenDashboard :key="forceUpdate" :diagnostics="diagnostics" :showResources="true"/>
 
     <button class="save-data" v-if="jwt" @click="saveDiagnostics">Sauvegarder mes données</button>
     <router-link class="save-data" v-else :to="{ name: 'ConnectPage' }">Sauvegarder mes données</router-link>
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-  import { diagnostics, flattenedDiagnostics } from '@/data/KeyMeasures.js';
+  import { defaultFlatDiagnostics, getDiagnostics } from '@/data/KeyMeasures.js';
   import CanteenDashboard from '@/components/CanteenDashboard';
 
   export default {
@@ -19,14 +19,21 @@
     },
     data() {
       return {
-        // TODO: use flattened diagnostics
-        diagnostics,
+        forceUpdate: 0,
+        diagnostics: defaultFlatDiagnostics,
         jwt: localStorage.getItem('jwt')
       };
+    },
+    async mounted() {
+      const diags = await getDiagnostics();
+      this.diagnostics = diags.flatDiagnostics;
+      // TODO: is this really the way to force update child components?
+      this.forceUpdate = 1;
     },
     methods: {
       async saveDiagnostics() {
         const jwt = this.jwt;
+        const localDiagnostics = (await getDiagnostics()).localFlatDiagnostics;
         const response = await fetch(`${this.$api_url}/save-diagnostics`, {
           method: "POST",
           headers: {
@@ -34,7 +41,7 @@
             'Authorization': 'Bearer '+jwt
           },
           body: JSON.stringify({
-            diagnostics: flattenedDiagnostics
+            diagnostics: localDiagnostics
           })
         });
 

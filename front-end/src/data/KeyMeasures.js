@@ -8,61 +8,167 @@ function findSubMeasure(id) {
   }
 }
 
-// TODO: check if data returned by endpoint; if yes create temp restructured version
-// if no check local storage
-const diagnosticsString = localStorage.getItem('diagnostics');
-let diagnostics = {};
-if (diagnosticsString) {
-  diagnostics = JSON.parse(diagnosticsString);
-} else {
-  diagnostics = {
-    "qualite-des-produits": {
-      "2019": {
-        valueBio: null,
-        valueFairTrade: null,
-        valueSustainable: null,
-        valueTotal: null,
-      },
-      "2020": {
-        valueBio: null,
-        valueFairTrade: null,
-        valueSustainable: null,
-        valueTotal: null,
+const defaultDiagnostics = {
+  "qualite-des-produits": {
+    "2019": {
+      valueBio: null,
+      valueFairTrade: null,
+      valueSustainable: null,
+      valueTotal: null,
+    },
+    "2020": {
+      valueBio: null,
+      valueFairTrade: null,
+      valueSustainable: null,
+      valueTotal: null,
+    }
+  },
+  "gaspillage-alimentaire": {
+    hasMadeWasteDiagnostic: false,
+    hasMadeWastePlan: false,
+    wasteActions: [],
+    hasDonationAgreement: false,
+  },
+  "diversification-des-menus": {
+    hasMadeDiversificationPlan: false,
+    vegetarianFrequency: null,
+    vegetarianMenuType: null,
+  },
+  "interdiction-du-plastique": {
+    cookingFoodContainersSubstituted: false,
+    serviceFoodContainersSubstituted: false,
+    waterBottlesSubstituted: false,
+    disposableUtensilsSubstituted: false,
+  },
+  "information-des-usagers": {
+    communicationSupports: [],
+    communicationSupportLink: null,
+    communicateOnFoodPlan: false,
+  },
+};
+
+const defaultFlatDiagnostic = {
+  valueBio: null,
+  valueFairTrade: null,
+  valueSustainable: null,
+  valueTotal: null,
+  hasMadeWasteDiagnostic: false,
+  hasMadeWastePlan: false,
+  wasteActions: [],
+  hasDonationAgreement: false,
+  hasMadeDiversificationPlan: false,
+  vegetarianFrequency: null,
+  vegetarianMenuType: null,
+  cookingFoodContainersSubstituted: false,
+  serviceFoodContainersSubstituted: false,
+  waterBottlesSubstituted: false,
+  disposableUtensilsSubstituted: false,
+  communicationSupports: [],
+  communicationSupportLink: null,
+  communicateOnFoodPlan: false,
+};
+
+const defaultFlatDiagnostics = [defaultFlatDiagnostic];
+
+async function getDiagnostics() {
+  let flatDiagnostics, hasSavedResults;
+  let diagnostics = defaultDiagnostics;
+
+  const jwt = localStorage.getItem('jwt');
+  if(jwt) {
+    const response = await fetch(`${process.env.VUE_APP_API_URL}/get-diagnostics-by-canteen`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+jwt
       }
-    },
-    "gaspillage-alimentaire": {
-      hasMadeWasteDiagnostic: false,
-      hasMadeWastePlan: false,
-      wasteActions: [],
-      hasDonationAgreement: false,
-    },
-    "diversification-des-menus": {
-      hasMadeDiversificationPlan: false,
-      vegetarianFrequency: null,
-      vegetarianMenuType: null,
-    },
-    "interdiction-du-plastique": {
-      cookingFoodContainersSubstituted: false,
-      serviceFoodContainersSubstituted: false,
-      waterBottlesSubstituted: false,
-      disposableUtensilsSubstituted: false,
-    },
-    "information-des-usagers": {
-      communicationSupports: [],
-      communicationSupportLink: null,
-      communicateOnFoodPlan: false,
-    },
+    });
+    if(response.status === 200) {
+      flatDiagnostics = await response.json();
+      diagnostics = restructureDiagnostics(flatDiagnostics);
+      hasSavedResults = true;
+    }
+    // TODO: remove jwt from local if 401 ?
+  }
+
+  const localDiagnostics = getLocalDiagnostics();
+
+  if(!flatDiagnostics) {
+    diagnostics = localDiagnostics.diagnostics;
+    flatDiagnostics = localDiagnostics.flatDiagnostics;
+  }
+
+  return {
+    diagnostics,
+    flatDiagnostics,
+    localFlatDiagnostics: localDiagnostics.flatDiagnostics,
+    hasResults: hasSavedResults || !!localStorage.getItem('diagnostics')
   };
 }
 
-// migration
-if(Object.keys(diagnostics["gaspillage-alimentaire"]).indexOf("hasCovenant") !== -1) {
-  diagnostics["gaspillage-alimentaire"].hasDonationAgreement = diagnostics["gaspillage-alimentaire"].hasCovenant;
-  delete diagnostics["gaspillage-alimentaire"].hasCovenant;
+function getLocalDiagnostics() {
+  let diagnostics = defaultDiagnostics;
+  let flatDiagnostics;
+  const diagnosticsString = localStorage.getItem('diagnostics');
+  if(diagnosticsString) {
+    diagnostics = JSON.parse(diagnosticsString);
+  }
+
+  // migration
+  if(Object.keys(diagnostics["gaspillage-alimentaire"]).indexOf("hasCovenant") !== -1) {
+    diagnostics["gaspillage-alimentaire"].hasDonationAgreement = diagnostics["gaspillage-alimentaire"].hasCovenant;
+    delete diagnostics["gaspillage-alimentaire"].hasCovenant;
+  }
+  if(Object.keys(diagnostics["information-des-usagers"]).indexOf("communicationSupport") !== -1) {
+    diagnostics["information-des-usagers"].communicationSupports = diagnostics["information-des-usagers"].communicationSupport;
+    delete diagnostics["information-des-usagers"].communicationSupport;
+  }
+
+  flatDiagnostics = flattenDiagnostics(diagnostics, "2020");
+  return { diagnostics, flatDiagnostics };
 }
-if(Object.keys(diagnostics["information-des-usagers"]).indexOf("communicationSupport") !== -1) {
-  diagnostics["information-des-usagers"].communicationSupports = diagnostics["information-des-usagers"].communicationSupport;
-  delete diagnostics["information-des-usagers"].communicationSupport;
+
+// TODO: remove this once all diagnostic usage points to flat diagnostics
+function restructureDiagnostics(flatDiagnostics) {
+  const previousYear = flatDiagnostics.find(diagnostic => diagnostic.year === 2019) || defaultFlatDiagnostic;
+  const currentYear = flatDiagnostics.find(diagnostic => diagnostic.year === 2020) || defaultFlatDiagnostic;
+  return {
+    "qualite-des-produits": {
+      "2019": {
+        valueBio: previousYear.valueBio,
+        valueFairTrade: previousYear.valueFairTrade,
+        valueSustainable: previousYear.valueSustainable,
+        valueTotal: previousYear.valueTotal,
+      },
+      "2020": {
+        valueBio: currentYear.valueBio,
+        valueFairTrade: currentYear.valueFairTrade,
+        valueSustainable: currentYear.valueSustainable,
+        valueTotal: currentYear.valueTotal,
+      }
+    },
+    "gaspillage-alimentaire": {
+      hasMadeWasteDiagnostic: currentYear.hasMadeWasteDiagnostic,
+      hasMadeWastePlan: currentYear.hasMadeWastePlan,
+      wasteActions: currentYear.wasteActions,
+      hasDonationAgreement: currentYear.hasDonationAgreement,
+    },
+    "diversification-des-menus": {
+      hasMadeDiversificationPlan: currentYear.hasMadeDiversificationPlan,
+      vegetarianFrequency: currentYear.vegetarianFrequency,
+      vegetarianMenuType: currentYear.vegetarianMenuType,
+    },
+    "interdiction-du-plastique": {
+      cookingFoodContainersSubstituted: currentYear.cookingFoodContainersSubstituted,
+      serviceFoodContainersSubstituted: currentYear.serviceFoodContainersSubstituted,
+      waterBottlesSubstituted: currentYear.waterBottlesSubstituted,
+      disposableUtensilsSubstituted: currentYear.disposableUtensilsSubstituted,
+    },
+    "information-des-usagers": {
+      communicationSupports: currentYear.communicationSupports,
+      communicationSupportLink: currentYear.communicationSupportLink,
+      communicateOnFoodPlan: currentYear.communicateOnFoodPlan,
+    },
+  }
 }
 
 // temporary function whilst switching from structured to unstructured,
@@ -91,31 +197,37 @@ function flattenDiagnostics(diags, defaultYear) {
   }
   flattened.forEach(entry => {
     for (const [key, data] of Object.entries(entry)) {
-      if(data === null) {
+      if(data === null || data === "") {
         delete entry[key];
+      } else if(['year', 'valueBio', 'valueFairTrade', 'valueSustainable', 'valueTotal'].indexOf(key) !== -1) {
+        entry[key] = parseInt(data, 10);
       }
     }
   });
   return flattened;
 }
 
-const flattenedDiagnostics = flattenDiagnostics(diagnostics, "2020");
-
-function saveDiagnostic(id, diagnostic) {
+async function saveDiagnostic(id, diagnostic) {
+  const { diagnostics } = await getDiagnostics();
   diagnostics[id] = diagnostic;
   localStorage.setItem('diagnostics', JSON.stringify(diagnostics));
 }
 
-function haveDiagnosticResults() {
-  // TODO: update this
-  return !!localStorage.getItem('diagnostics');
+async function haveDiagnosticResults() {
+  return (await getDiagnostics()).hasResults;
 }
+
+const diagnostics = {};
 
 export {
   keyMeasures,
   findSubMeasure,
   saveDiagnostic,
+  getDiagnostics,
+  haveDiagnosticResults,
+  // TODO: review the following
   diagnostics,
-  flattenedDiagnostics,
-  haveDiagnosticResults
+  defaultDiagnostics,
+  defaultFlatDiagnostic,
+  defaultFlatDiagnostics
 };
