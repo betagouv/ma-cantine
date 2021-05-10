@@ -22,11 +22,22 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  #blog-page {
+    padding: 2em;
+  }
+
   #content {
     text-align: left;
   }
 
   img {
     float: right;
+    padding: 1em;
+  }
+
+  @media (max-width: 1000px) {
+    img {
+      display: none;
+    }
   }
 </style>

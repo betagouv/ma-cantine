@@ -41,13 +41,28 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  #welcome-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2em;
+    text-align: left;
+
+    img {
+      height: 15em;
+      padding-left: 3em;
+    }
+  }
+
   #blogs-list {
     display: flex;
+    flex-wrap: wrap;
     list-style: none;
+    padding: 2em;
 
     .blog-card {
       text-decoration: none;
-      margin: 0.5em 0.7em;
+      margin: 0.5em;
       color: $black;
       background: $light-yellow;
       width: 20em;
@@ -83,19 +98,6 @@ export default {
     }
   }
 
-  #welcome-block {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 3em;
-    text-align: left;
-
-    img {
-      height: 15em;
-      padding-left: 3em;
-    }
-  }
-
   @media (max-width: 1000px) {
     #welcome-block {
       text-align: center;
@@ -103,6 +105,11 @@ export default {
       img {
         display: none;
       }
+    }
+
+    #blogs-list {
+      justify-content: center;
+      padding: 0;
     }
   }
 </style>
