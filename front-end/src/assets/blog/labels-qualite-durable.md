@@ -6,7 +6,7 @@ tagline: Comprendre les labels rentrant dans la mesure des 50% de produits de qu
 
 ## Rappel de la mesure
 
-La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent comporter, au cours de l'année 2022, 50% de produits de qualité et durables dont 20% issus de l’agriculture biologique ou en conversion. Ces seuils (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre à des produits bio ou en conversion et au total au moins 50 euros doivent correspondre à des produits durables et de qualité (bio inclus).
+La loi EGAlim donne des objectifs sur la part des produits achetés pour la conception des repas. Les repas servis doivent comporter, au cours de l'année 2022, 50% de produits de qualité et durables dont 20% issus de l’agriculture biologique ou en conversion. Ces seuils (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre à des produits bio ou en conversion et au total au moins 50 euros doivent correspondre à des produits durables et de qualité (bio inclus).
 
 ## Qu'est-ce qu'un label ? 
 
@@ -58,15 +58,13 @@ Ces mentions valorisent les produits qui ont été fabriqués sur le lieu de la 
 
 2. __Haute Valeur Environnementale (HVE)__
 
-HVE est une mention valorisante encadrée qui certifie des exploitations agricoles. Il existe 3 niveaux de certification en fonction de la validation d'un certain nombre de critères et d'indicateurs. 
-Un logo HVE peut être apposé uniquement sur les produits bruts issus d'exploitations à haute valeur environnementale; c'est-à-dire de niveau 3, et sur les produits transformés si ces derniers contiennent au moins 95% de matières premières issues d'exploitations à haute valeur environnementale (niveau 3).
-4 domaines sur lequel l'agriculteur et agricultrice sont évaluer : la biodiversité, la stratégie phytosanitaire, la gestion de la fertilisation et la gestion de l'irrigation.
+La Haute Valeur Environnementale (HVE) correspond au niveau le plus élevé, le niveau 3 de la certification environnementale des exploitations agricoles. C’est est un dispositif public porté par les Ministères de l’Agriculture et de l’Alimentation et, Transition Ecologique et Solidaire. La certification est donnée par un organisme certificateur accrédité par l’Etat. Un logo HVE peut être apposé uniquement sur les produits bruts issus d'exploitations certifiée HVE; c'est-à-dire de niveau 3, et sur les produits transformés si ces derniers contiennent au moins 95% de matières premières issues d'exploitations à haute valeur environnementale (niveau 3). 4 domaines sur lequel l'agriculteur et agricultrice sont évalués : la biodiversité, la stratégie phytosanitaire, la gestion de la fertilisation et la gestion de l'irrigation. Pour plus d’info : [https://hve-asso.com/](https://hve-asso.com/)
 
 
 ## Ceux n'entrant pas dans la réglementation
 
-1. __Bleu-Blanc-Coeur__
-Bleu-Blanc-Coeur est une marque privée gérée par une association. Le cahier des charges portent sur les matières premières pour l'alimentation animale qui sont source en oméga 3. 
+1. __Labels privés__
+Des labels privés (par exemple Bleu-Blanc-Coeur et MSC) : Leur intégration dans les 50% dans les catégories « équivalentes ou acquis selon les modalités prenant en compte les couts imputés aux externalités environnementales » relève de la responsabilité de l’acheteur. Le cahier des charges portent sur les matières premières pour l'alimentation animale qui sont source en oméga 3. 
 
 2. __Commerce Equitable__
 Initialement, le commerce équitable a pour objectif de garantir des échanges commerciaux entre pays du Nord et du Sud basés sur des règles plus éthiques (recherche du prix juste, respect des droits fondamentaux des travailleurs.ses,...).
