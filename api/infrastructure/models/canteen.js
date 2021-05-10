@@ -20,5 +20,13 @@ exports.Canteen = sequelize.define('canteen', {
   sector: {
     type: DataTypes.STRING,
     allowNull: false
-  }
+  },
+  hasPublished: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  dataIsPublic: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
