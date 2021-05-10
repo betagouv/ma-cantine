@@ -126,10 +126,12 @@
       showResources: Boolean,
     },
     data() {
+      // TODO: update this and all other keying by measure
       const vegetarianFrequency = this.diagnostics['diversification-des-menus'].vegetarianFrequency;
       const hasVegetarianMenu = vegetarianFrequency && vegetarianFrequency !== "less-than-once";
 
       return {
+        // TODO: currentDiagnostic & previousDiagnostic for this year and last
         wasteActions,
         communicationSupports,
         qualityMeasure: keyMeasures.find(measure => measure.id === 'qualite-des-produits'),
