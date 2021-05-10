@@ -11,7 +11,7 @@
         </div>
         <div class="summary">
           <h2>{{ canteen.title }}</h2>
-          <SummaryStatistics :qualityDiagnostic="canteen.diagnostics['qualite-des-produits'][canteen.timePeriod]"/>
+          <SummaryStatistics :qualityDiagnostic="canteen.diagnostics.find(diagnostic => diagnostic.year === canteen.timePeriod)"/>
           <div class="context">
             <p class="meal-count">
               <i class="fas fa-utensils"></i>&nbsp;

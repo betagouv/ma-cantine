@@ -22,7 +22,7 @@ const routes = [
     component: LandingPage,
   },
   {
-    path: '/diagnostique',
+    path: '/diagnostic',
     name: 'DiagnosticPage',
     component: DiagnosticPage,
     meta: {
