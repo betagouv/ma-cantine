@@ -25,16 +25,15 @@ export default {
   data() {
     const converter = new showdown.Converter({metadata: true});
     const postsContext = require.context("@/assets/blog/", true, /\.md$/);
-    let posts = [];
-    postsContext.keys().forEach(filename => {
-      posts.push({
-        html: converter.makeHtml(postsContext(filename).default),
-        meta: converter.getMetadata(),
-        id: filename.split('./')[1].split('.md')[0]
-      });
-    });
     return {
-      posts
+      posts: postsContext.keys().map(filename => {
+        // call makeHtml so getMetadata returns metadata
+        converter.makeHtml(postsContext(filename).default);
+        return {
+          meta: converter.getMetadata(),
+          id: filename.split('./')[1].split('.md')[0]
+        };
+      })
     };
   }
 }
