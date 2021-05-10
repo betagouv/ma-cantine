@@ -18,7 +18,7 @@ async function sendLoginLink(user, urlPrefix) {
   await saveLoginTokenForUser(user, token);
 
   return sendTransactionalEmail([{ email: user.email }], Number.parseInt(process.env.SENDINBLUE_TEMPLATE_LOGIN, 10), {
-    LINK: urlPrefix + encodeURIComponent(token)
+    LOGIN_LINK: urlPrefix + encodeURIComponent(token)
   });
 };
 
