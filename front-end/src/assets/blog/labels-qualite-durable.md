@@ -13,9 +13,10 @@ La loi EGAlim encadre la répartition des produits achetés pour la conception d
 Un label est un signe distinctif garantissant un niveau de qualité et/ou certaines caractéristiques d'un produit. Certains labels sont délivrés par des organismes publics, d'autres sont privés.
 
 Selon l'article 640-2 du Code rural et de la pêche maritime, la France reconnait 3 modes de valorisation pour les produits alimentaires : 
-- les signes d'identification de la qualité et de l'origine ;
-- les mentions valorisantes ;
-- la démarche de certification de conformité des produits
+
+ - les signes d'identification de la qualité et de l'origine ;
+ - les mentions valorisantes ;
+ - la démarche de certification de conformité des produits
 
 ## Les labels rentrant dans la réglementation et la description de leur cahier des charges
 
@@ -32,7 +33,7 @@ Selon l'article 640-2 du Code rural et de la pêche maritime, la France reconnai
 Environ 23,5% des exploitations agricoles en France ont au moins une production sous IGP, label rouge ou AOC/AOP. Par ailleurs, 7,3% des exploitations sont engagées en agriculture biologique.
 Les signes d’identification de la qualité et de l’origine (SIQO) hors bio concernent plus de 1100 produits et leur importance en termes de production commercialisée, varie en fonction des filières. (source INAO)
 
-![SIQO CHIFFRES 2017](https://user-images.githubusercontent.com/36134318/117655282-255d9480-b197-11eb-8d4d-6c97a0ace43a.jpeg)
+![SIQO chiffres 2017 sur les labels d'appellation d'origine protégée, Indication géographique protégée, labels rouges, agriculture biologique](https://user-images.githubusercontent.com/36134318/117655282-255d9480-b197-11eb-8d4d-6c97a0ace43a.jpeg)
 
 
 ### Zoom sur le bio
@@ -46,7 +47,7 @@ Avec 7,15 milliards d’euros et un cinquième du marché bio de l’Union europ
 
 Par ailleurs, __36 664 producteurs sont engagés en agriculture biologique en 2017 (+15 % en un an)__ correspondant à plus de 1,77 million d’hectares cultivés (+ 12 % en un an). 
 
-<img width="766" alt="Capture d’écran 2021-05-10 à 14 02 07" src="https://user-images.githubusercontent.com/36134318/117656238-66a27400-b198-11eb-839b-41064326e587.png">
+<img width="766" alt="Le baromètre consommation Agence Bio, janvier 2017" src="https://user-images.githubusercontent.com/36134318/117656238-66a27400-b198-11eb-839b-41064326e587.png">
 
 
 ### Les mentions valorisantes et certification de conformité
@@ -74,6 +75,6 @@ Des organisations privées édictent les cahiers des charges. Il n'existe pas de
 
 ## En savoir plus : 
 
-https://www.economie.gouv.fr/dgccrf/Publications/Vie-pratique/Fiches-pratiques/Agriculture-biologique
+[https://www.economie.gouv.fr/dgccrf/Publications/Vie-pratique/Fiches-pratiques/Agriculture-biologique](https://www.economie.gouv.fr/dgccrf/Publications/Vie-pratique/Fiches-pratiques/Agriculture-biologique)
 
-https://ma-cantine-1.gitbook.io/ma-cantine-egalim/au-moins-50-de-produits-de-qualite-et-durables-dont-20-de-bio/referentiel-commerce-equitable
+[https://ma-cantine-1.gitbook.io/ma-cantine-egalim/au-moins-50-de-produits-de-qualite-et-durables-dont-20-de-bio/referentiel-commerce-equitable](https://ma-cantine-1.gitbook.io/ma-cantine-egalim/au-moins-50-de-produits-de-qualite-et-durables-dont-20-de-bio/referentiel-commerce-equitable)
