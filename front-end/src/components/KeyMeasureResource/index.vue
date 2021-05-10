@@ -22,7 +22,7 @@
 </script>
 
 <style scoped lang="scss">
-  .resource, /deep/ .resource {
+  .resource, :deep(.resource) {
     display: flex;
     width: 90%;
     margin: auto;
@@ -35,17 +35,13 @@
     text-decoration: none;
   }
 
-  /deep/ .resource-icon {
+  :deep(.resource-icon) {
     font-size: 2em;
     padding: 0.5em;
     color: $orange;
   }
 
-  /deep/ .fa-seedling {
-    color: $green;
-  }
-
-  /deep/ .resource-prompt {
+  :deep(.resource-prompt) {
     text-align: left;
     color: $dark-orange;
     width: 100%;
