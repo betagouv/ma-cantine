@@ -1,7 +1,7 @@
 <template>
   <div id="blogs-home">
     <div id="welcome-block">
-      <h1>Découvrez notre espace témoignages</h1>
+      <h1>Découvrez notre espace blog et témoignages</h1>
       <img src="@/assets/lighthouse.svg" alt="">
     </div>
 
@@ -65,7 +65,7 @@ export default {
       color: $black;
       background: $light-yellow;
       width: 20em;
-      min-height: 15em;
+      min-height: 19em;
       border-radius: 22px;
       padding: 1em;
       text-align: left;

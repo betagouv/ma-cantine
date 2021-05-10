@@ -2,8 +2,9 @@
   <div id="blog-page">
     <img src="@/assets/lighthouse.svg" alt="">
     <h1>{{ meta.title }}</h1>
-    <p class="date">{{ new Date(meta.date).toLocaleDateString("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
+    <p class="date">Publié le {{ new Date(meta.date).toLocaleDateString("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
     <div id="content" v-html="html"></div>
+    <router-link class="back-to-list" :to="{ name: 'BlogsHome' }">← Retour à la liste des articles</router-link>
   </div>
 </template>
 
@@ -38,6 +39,24 @@ export default {
   .date {
     color: $dark-grey;
     font-style: italic;
+  }
+
+  #content {
+    ::v-deep img {
+      max-width: 100%;
+    }
+
+    ::v-deep ul {
+      list-style: disclosure-closed;
+      padding-left: 2.5em;
+    }
+  }
+
+  .back-to-list {
+    color: $orange;
+    padding-top: 2em;
+    display: block;
+    text-align: right;
   }
 
   @media (max-width: 1000px) {
