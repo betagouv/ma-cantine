@@ -20,7 +20,7 @@
   import NoPlasticMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/NoPlasticMeasure';
   import QualityMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/QualityMeasure';
   import WasteMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/WasteMeasure';
-  import { diagnostics, saveDiagnostic } from "@/data/KeyMeasures.js";
+  import { saveDiagnostic } from "@/data/KeyMeasures.js";
 
   export default {
     components: {
@@ -31,10 +31,10 @@
       QualityMeasureDiagnostic,
       WasteMeasureDiagnostic
     },
-    props: ['measure', 'closeModal'],
+    props: ['measure', 'closeModal', 'originalDiagnostic'],
     data() {
       return {
-        diagnostic: diagnostics[this.measure.id] || {},
+        diagnostic: this.originalDiagnostic,
         measureDiagnosticComponentName: this.measure.baseComponent + "Diagnostic",
       };
     },

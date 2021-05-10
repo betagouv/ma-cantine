@@ -20,8 +20,11 @@
     },
     data() {
       return {
-        haveDiagnosticResults: haveDiagnosticResults()
+        haveDiagnosticResults: null
       };
     },
+    async mounted() {
+      this.haveDiagnosticResults = await haveDiagnosticResults();
+    }
   }
 </script>
