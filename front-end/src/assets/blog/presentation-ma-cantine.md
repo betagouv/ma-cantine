@@ -1,5 +1,5 @@
 ---
-title: Presentation de l'outil ma cantine
+title: Présentation de l'outil ma cantine
 date: 2021-05-10
 tagline: Accompagner les acteurs de la restauration collective dans leur offre aux consommateurs pour une alimentation de qualité, saine et durable
 ---
@@ -10,14 +10,14 @@ Garantir un système permettant une alimentation saine, durable, moins animale e
 
 15 millions de Français prennent chaque jour au moins un repas hors de leur domicile, dont plus de la moitié en restauration collective. Cette spécificité française fait de la restauration collective un passage obligé pour de nombreux français. Au total, ce sont près de 100 000 structures de restauration collective, publiques ou privées, qui distribuent plus de 3,5 milliards de repas par an. Compte tenu de l’importance de ce secteur, il est essentiel d’en faire un levier de premier plan dans la transformation de notre modèle alimentaire. La restauration collective est un levier puissant pour faire évoluer les pratiques alimentaires, réduire les inégalités et recréer de la valeur ajoutée pour les filières locales. Ce projet s’inscrit dans le cadre du Programme National de l’Alimentation, piloté par le Ministère en charge de l’Agriculture et de l’Alimentation.
 
-Accompagner les acteurs de la restauration collective vers des initiatives responsables en accord avec EGAlim
+Accompagner les acteurs de la restauration collective vers des initiatives responsables en accord avec EGAlim.
 La loi dite « EGAlim » du 30 octobre 2018 a introduit de nouvelles obligations pour la restauration collective. Elle fixe notamment un objectif d’au moins 50 % de produits durables et de qualité, dont au moins 20 % de produits biologiques, dans la composition des repas servis à partir du 1er janvier 2022. Or, il existe peu de données sur la qualité de l’alimentation dans ce secteur en France. Ainsi, il est difficile d’apprécier la mise en œuvre de ces objectifs et les niveaux actuels d’approvisionnement en produits de qualité et durables dans les restaurants collectifs.
 
 Par ailleurs, les attentes des citoyens envers leur alimentation sont extrêmement fortes : une alimentation respectueuse de la santé et de l’environnement. La loi EGAlim impose aux restaurants collectifs d’informer les convives de la qualité alimentaire et nutritionnelle et de part des produits de qualité et durables entrant dans la composition des repas servis.
 
 ## Bilan de l’investigation
 
-De début septembre à fin octobre 2020, une équipe de beta.gouv.fr et une intrapreneuse de la direction générale de l’alimentation (DGAL) ont mené une investigation pour mieux comprendre l’écosystème et les attentes et besoins de toutes les parties prenantes de la restauration collective. L’equipe interroge institutions, acheteurs publics, cuisiniers, prestataires, fournisseurs, commenssaux, opérateurs privés et publics… afin de proposer une hypothèse de solution qui réponde véritablement à leurs besoins. Le comité final de présentation des résultats auprès de la DGAL du 29 octobre a été concluant et a validé la construction du produit imaginé suite à cette phase d’investigation.
+De début septembre à fin octobre 2020, une équipe de [beta.gouv.fr](https://beta.gouv.fr) et une intrapreneuse de la Direction Générale de l’Alimentation (DGAL) ont mené une investigation pour mieux comprendre l’écosystème et les attentes et besoins de toutes les parties prenantes de la restauration collective. L’equipe interroge institutions, acheteurs publics, cuisiniers, prestataires, fournisseurs, commenssaux, opérateurs privés et publics… afin de proposer une hypothèse de solution qui réponde véritablement à leurs besoins. Le comité final de présentation des résultats auprès de la DGAL du 29 octobre a été concluant et a validé la construction du produit imaginé suite à cette phase d’investigation.
 
 ## ma cantine, autodiagnostiquer ma cantine scolaire et mettre en place les actions pour une transition vers une alimentation plus saine et durable
 
