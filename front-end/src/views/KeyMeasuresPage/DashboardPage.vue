@@ -19,6 +19,7 @@
     },
     data() {
       return {
+        // TODO: use flattened diagnostics
         diagnostics,
         jwt: localStorage.getItem('jwt')
       };

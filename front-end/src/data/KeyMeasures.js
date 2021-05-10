@@ -8,6 +8,8 @@ function findSubMeasure(id) {
   }
 }
 
+// TODO: check if data returned by endpoint; if yes create temp restructured version
+// if no check local storage
 const diagnosticsString = localStorage.getItem('diagnostics');
 let diagnostics = {};
 if (diagnosticsString) {
@@ -63,7 +65,8 @@ if(Object.keys(diagnostics["information-des-usagers"]).indexOf("communicationSup
   delete diagnostics["information-des-usagers"].communicationSupport;
 }
 
-// TODO: see if this can be cleaned up
+// temporary function whilst switching from structured to unstructured,
+// TODO: remove once fully moved over
 function flattenDiagnostics(diags, defaultYear) {
   let flattened = [{ year: defaultYear }];
   for (const [measureKey, measureData] of Object.entries(diags)) {
@@ -104,6 +107,7 @@ function saveDiagnostic(id, diagnostic) {
 }
 
 function haveDiagnosticResults() {
+  // TODO: update this
   return !!localStorage.getItem('diagnostics');
 }
 
