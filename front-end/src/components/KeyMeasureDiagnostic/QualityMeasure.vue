@@ -1,6 +1,6 @@
 <template>
   <BaseInput
-    v-model="diagnostic['2019'].valueTotal"
+    v-model="previousDiagnostic.valueTotal"
     label="Je connais la valeur totale (en HT) de mes achats alimentaires en 2019"
     inputId="value-total-2019"
     type="number"
@@ -8,7 +8,7 @@
   />
 
   <BaseInput
-    v-model="diagnostic['2019'].valueBio"
+    v-model="previousDiagnostic.valueBio"
     label="Je connais la valeur (en HT) des achats alimentaires de produits bio sur 2019"
     inputId="value-bio-2019"
     type="number"
@@ -16,7 +16,7 @@
   />
 
   <BaseInput
-    v-model="diagnostic['2019'].valueSustainable"
+    v-model="previousDiagnostic.valueSustainable"
     label="Je connais la valeur (en HT) des achats alimentaires de produits durables (hors bio) sur 2019"
     inputId="value-sustainable-2019"
     type="number"
@@ -24,7 +24,7 @@
   />
 
   <BaseInput
-    v-model="diagnostic['2019'].valueFairTrade"
+    v-model="previousDiagnostic.valueFairTrade"
     label="Je connais la valeur (en HT) des achats alimentaires de produits issus du commerce équitable sur 2019"
     inputId="value-fair-trade-2019"
     type="number"
@@ -32,7 +32,7 @@
   />
 
   <BaseInput
-    v-model="diagnostic['2020'].valueTotal"
+    v-model="latestDiagnostic.valueTotal"
     label="Je connais la valeur totale (en HT) de mes achats alimentaires en 2020"
     inputId="value-total-2020"
     type="number"
@@ -40,7 +40,7 @@
   />
 
   <BaseInput
-    v-model="diagnostic['2020'].valueBio"
+    v-model="latestDiagnostic.valueBio"
     label="Je connais la valeur (en HT) des achats alimentaires de produits bio sur 2020"
     inputId="value-bio-2020"
     type="number"
@@ -48,7 +48,7 @@
   />
 
   <BaseInput
-    v-model="diagnostic['2020'].valueSustainable"
+    v-model="latestDiagnostic.valueSustainable"
     label="Je connais la valeur (en HT) des achats alimentaires de produits durables (hors bio) sur 2020"
     inputId="value-sustainable-2020"
     type="number"
@@ -56,7 +56,7 @@
   />
 
   <BaseInput
-    v-model="diagnostic['2020'].valueFairTrade"
+    v-model="latestDiagnostic.valueFairTrade"
     label="Je connais la valeur (en HT) des achats alimentaires de produits issus du commerce équitable sur 2020"
     inputId="value-fair-trade-2020"
     type="number"
@@ -66,6 +66,7 @@
 
 <script>
   import BaseInput from '@/components/KeyMeasureDiagnostic/Inputs/BaseInput';
+  import { findLatestDiagnostic, findPreviousDiagnostic } from '@/data/KeyMeasures';
 
   export default {
     components: {
@@ -75,8 +76,11 @@
       modelValue: Object,
     },
     computed: {
-      diagnostic() {
-        return this.modelValue;
+      latestDiagnostic() {
+        return findLatestDiagnostic(this.modelValue);
+      },
+      previousDiagnostic() {
+        return findPreviousDiagnostic(this.modelValue);
       }
     }
   }
