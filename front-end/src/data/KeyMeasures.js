@@ -182,6 +182,31 @@ function findPreviousDiagnostic(diagnostics) {
   return diagnostics.find(diagnostic => diagnostic.year === 2019);
 }
 
+async function getDiagnosticsDateDescending() {
+  const diagnostics = await getDiagnostics();
+  return [
+    findLatestDiagnostic(diagnostics.flatDiagnostics),
+    findPreviousDiagnostic(diagnostics.flatDiagnostics)
+  ];
+}
+
+function getDiagnosticsForDashboard() {
+  return getDiagnosticsDateDescending();
+}
+
+function getDiagnosticsForDiagnosticForm() {
+  return getDiagnosticsDateDescending();
+}
+
+function getDiagnosticsForCanteenSummary(canteen) {
+  return canteen.diagnostics.find(diagnostic => diagnostic.year === canteen.timePeriod);
+}
+
+async function getDiagnosticsForPoster() {
+  const diagnostics = await getDiagnostics();
+  return findLatestDiagnostic(diagnostics.flatDiagnostics);
+}
+
 function deleteLocalDiagnostics() {
   localStorage.removeItem(LOCAL_FLAT_KEY);
   // TODO: remove when our testers are using the new structure
@@ -196,8 +221,9 @@ export {
   getDiagnostics,
   getLocalDiagnostics,
   deleteLocalDiagnostics,
-  defaultFlatDiagnostic,
   defaultFlatDiagnostics,
-  findLatestDiagnostic,
-  findPreviousDiagnostic
+  getDiagnosticsForDashboard,
+  getDiagnosticsForDiagnosticForm,
+  getDiagnosticsForCanteenSummary,
+  getDiagnosticsForPoster,
 };

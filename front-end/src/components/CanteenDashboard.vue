@@ -108,7 +108,7 @@
 </template>
 
 <script>
-  import { keyMeasures, findLatestDiagnostic, findPreviousDiagnostic } from '@/data/KeyMeasures.js';
+  import { keyMeasures } from '@/data/KeyMeasures.js';
   import wasteActions from '@/data/waste-actions.json';
   import communicationSupports from '@/data/communication-supports.json';
   import SummaryStatistics from '@/components/SummaryStatistics';
@@ -126,15 +126,13 @@
       showResources: Boolean,
     },
     data() {
-      const latestDiagnostic = findLatestDiagnostic(this.diagnostics);
-      const previousDiagnostic = findPreviousDiagnostic(this.diagnostics);
-
+      const latestDiagnostic = this.diagnostics[0];
       const vegetarianFrequency = latestDiagnostic.vegetarianFrequency;
       const hasVegetarianMenu = vegetarianFrequency && vegetarianFrequency !== "less-than-once";
 
       return {
         latestDiagnostic,
-        previousDiagnostic,
+        previousDiagnostic: this.diagnostics[1],
         wasteActions,
         communicationSupports,
         qualityMeasure: keyMeasures.find(measure => measure.id === 'qualite-des-produits'),

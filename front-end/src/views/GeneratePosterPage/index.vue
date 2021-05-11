@@ -92,7 +92,7 @@
 
 <script>
   import CanteenPoster from './CanteenPoster';
-  import { getDiagnostics, saveDiagnostic, findLatestDiagnostic } from "@/data/KeyMeasures.js";
+  import { getDiagnosticsForPoster, saveDiagnostic } from "@/data/KeyMeasures.js";
   import html2pdf from 'html2pdf.js';
 
   export default {
@@ -102,15 +102,13 @@
     data() {
       return {
         form: {
-          diagnostic: {},
-          diagnostics: []
+          diagnostic: {}
         },
         communes: [],
       };
     },
     async mounted() {
-      this.diagnostics = await getDiagnostics();
-      this.form.diagnostic = findLatestDiagnostic(this.diagnostics.flatDiagnostics);
+      this.form.diagnostic = await getDiagnosticsForPoster();
     },
     methods: {
       async search() {

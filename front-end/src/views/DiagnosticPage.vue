@@ -36,7 +36,7 @@
 </template>
 
 <script>
-  import { keyMeasures, getDiagnostics } from "@/data/KeyMeasures.js"
+  import { keyMeasures, getDiagnosticsForDiagnosticForm } from "@/data/KeyMeasures.js"
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import KeyMeasureDescription from '@/components/KeyMeasureDescription';
   import KeyMeasureDiagnostic from '@/components/KeyMeasureDiagnostic';
@@ -50,7 +50,7 @@
       BaseModal
     },
     async mounted() {
-      this.diagnostics = (await getDiagnostics()).flatDiagnostics;
+      this.diagnostics = await getDiagnosticsForDiagnosticForm();
     },
     data() {
       return {
