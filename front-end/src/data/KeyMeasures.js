@@ -81,7 +81,6 @@ const defaultFlatDiagnostics = [
 
 async function getDiagnostics() {
   let flatDiagnostics, hasSavedResults;
-  let diagnostics = defaultDiagnostics;
 
   const jwt = localStorage.getItem('jwt');
   if(jwt) {
@@ -93,7 +92,6 @@ async function getDiagnostics() {
     });
     if(response.status === 200) {
       flatDiagnostics = await response.json();
-      diagnostics = restructureDiagnostics(flatDiagnostics);
       hasSavedResults = true;
     }
   }
@@ -101,86 +99,45 @@ async function getDiagnostics() {
   const localDiagnostics = getLocalDiagnostics();
 
   if(!flatDiagnostics) {
-    diagnostics = localDiagnostics.diagnostics;
     flatDiagnostics = localDiagnostics.flatDiagnostics;
   }
 
   return {
-    diagnostics,
     flatDiagnostics,
     localFlatDiagnostics: localDiagnostics.flatDiagnostics,
-    hasResults: hasSavedResults || !!localStorage.getItem('diagnostics')
+    hasResults: hasSavedResults || !!localStorage.getItem(LOCAL_FLAT_KEY) || !!localStorage.getItem('diagnostics')
   };
 }
+
+const LOCAL_FLAT_KEY = 'flatDiagnostics';
 
 function getLocalDiagnostics() {
   let diagnostics = defaultDiagnostics;
   let flatDiagnostics = defaultFlatDiagnostics;
-  const diagnosticsString = localStorage.getItem('diagnostics');
+  const diagnosticsString = localStorage.getItem(LOCAL_FLAT_KEY) || localStorage.getItem('diagnostics');
   if(diagnosticsString) {
     diagnostics = JSON.parse(diagnosticsString);
   }
 
-  // migration
-  if(Object.keys(diagnostics["gaspillage-alimentaire"]).indexOf("hasCovenant") !== -1) {
-    diagnostics["gaspillage-alimentaire"].hasDonationAgreement = diagnostics["gaspillage-alimentaire"].hasCovenant;
-    delete diagnostics["gaspillage-alimentaire"].hasCovenant;
-  }
-  if(Object.keys(diagnostics["information-des-usagers"]).indexOf("communicationSupport") !== -1) {
-    diagnostics["information-des-usagers"].communicationSupports = diagnostics["information-des-usagers"].communicationSupport;
-    delete diagnostics["information-des-usagers"].communicationSupport;
+  // TODO: remove when our testers are using the new structure
+  if(!localStorage.getItem(LOCAL_FLAT_KEY)) {
+    if(Object.keys(diagnostics["gaspillage-alimentaire"]).indexOf("hasCovenant") !== -1) {
+      diagnostics["gaspillage-alimentaire"].hasDonationAgreement = diagnostics["gaspillage-alimentaire"].hasCovenant;
+      delete diagnostics["gaspillage-alimentaire"].hasCovenant;
+    }
+    if(Object.keys(diagnostics["information-des-usagers"]).indexOf("communicationSupport") !== -1) {
+      diagnostics["information-des-usagers"].communicationSupports = diagnostics["information-des-usagers"].communicationSupport;
+      delete diagnostics["information-des-usagers"].communicationSupport;
+    }
+    flatDiagnostics = flattenDiagnostics(diagnostics, 2020);
+  } else {
+    flatDiagnostics = diagnostics;
   }
 
-  flatDiagnostics = flattenDiagnostics(diagnostics, 2020);
-  return { diagnostics, flatDiagnostics };
+  return { flatDiagnostics };
 }
 
-// temporary functions whilst switching from structured to unstructured
-// TODO: remove this once all diagnostic usage points to flat diagnostics
-function restructureDiagnostics(flatDiagnostics) {
-  const previousDiagnostic = findPreviousDiagnostic(flatDiagnostics) || defaultFlatDiagnostic;
-  const latestDiagnostic = findLatestDiagnostic(flatDiagnostics) || defaultFlatDiagnostic;
-  return {
-    "qualite-des-produits": {
-      "2019": {
-        valueBio: previousDiagnostic.valueBio,
-        valueFairTrade: previousDiagnostic.valueFairTrade,
-        valueSustainable: previousDiagnostic.valueSustainable,
-        valueTotal: previousDiagnostic.valueTotal,
-      },
-      "2020": {
-        valueBio: latestDiagnostic.valueBio,
-        valueFairTrade: latestDiagnostic.valueFairTrade,
-        valueSustainable: latestDiagnostic.valueSustainable,
-        valueTotal: latestDiagnostic.valueTotal,
-      }
-    },
-    "gaspillage-alimentaire": {
-      hasMadeWasteDiagnostic: latestDiagnostic.hasMadeWasteDiagnostic,
-      hasMadeWastePlan: latestDiagnostic.hasMadeWastePlan,
-      wasteActions: latestDiagnostic.wasteActions,
-      hasDonationAgreement: latestDiagnostic.hasDonationAgreement,
-    },
-    "diversification-des-menus": {
-      hasMadeDiversificationPlan: latestDiagnostic.hasMadeDiversificationPlan,
-      vegetarianFrequency: latestDiagnostic.vegetarianFrequency,
-      vegetarianMenuType: latestDiagnostic.vegetarianMenuType,
-    },
-    "interdiction-du-plastique": {
-      cookingFoodContainersSubstituted: latestDiagnostic.cookingFoodContainersSubstituted,
-      serviceFoodContainersSubstituted: latestDiagnostic.serviceFoodContainersSubstituted,
-      waterBottlesSubstituted: latestDiagnostic.waterBottlesSubstituted,
-      disposableUtensilsSubstituted: latestDiagnostic.disposableUtensilsSubstituted,
-    },
-    "information-des-usagers": {
-      communicationSupports: latestDiagnostic.communicationSupports,
-      communicationSupportLink: latestDiagnostic.communicationSupportLink,
-      communicateOnFoodPlan: latestDiagnostic.communicateOnFoodPlan,
-    },
-  }
-}
-
-// TODO: remove with restructureDiagnostics once possible
+// TODO: remove when our testers are using the new structure
 function flattenDiagnostics(diags, defaultYear) {
   let flattened = [{ year: defaultYear }];
   for (const [measureKey, measureData] of Object.entries(diags)) {
@@ -204,17 +161,17 @@ function flattenDiagnostics(diags, defaultYear) {
       };
     }
   }
-  return cleanDiagnostics(flattened);
+  return preprocessDiagnostics(flattened);
 }
 
-function cleanDiagnostics(flatDiagnostics) {
+function preprocessDiagnostics(flatDiagnostics) {
   flatDiagnostics.forEach(entry => {
     for (const [key, data] of Object.entries(entry)) {
       // TODO: endpoint probably shouldn't send db keys in the first place
       if(data === null || data === "" || ['createdAt', 'updatedAt', 'canteenId'].indexOf(key) !== -1) {
         delete entry[key];
       } else if(key === 'year') {
-        // expect year to be number
+        // year expected to be number everywhere
         entry[key] = parseInt(entry[key], 10);
       }
     }
@@ -232,7 +189,7 @@ async function saveDiagnostic(diagnostic) {
 }
 
 async function saveDiagnostics(diagnostics) {
-  diagnostics = cleanDiagnostics(diagnostics);
+  diagnostics = preprocessDiagnostics(diagnostics);
   let isSaved = false;
   const jwt = localStorage.getItem('jwt');
   if(jwt) {
@@ -248,12 +205,14 @@ async function saveDiagnostics(diagnostics) {
     });
     if(response.status === 201) {
       isSaved = true;
+      localStorage.removeItem(LOCAL_FLAT_KEY);
+      // TODO: remove when our testers are using the new structure
       localStorage.removeItem('diagnostics');
     }
   }
 
   if(!isSaved) {
-    localStorage.setItem('diagnostics', JSON.stringify(restructureDiagnostics(diagnostics)));
+    localStorage.setItem(LOCAL_FLAT_KEY, JSON.stringify(diagnostics));
   }
 }
 
