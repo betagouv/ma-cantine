@@ -4,8 +4,18 @@ jest.mock("../../../infrastructure/repositories/diagnostic");
 const { getAllDiagnosticsByCanteen } = require("../../../infrastructure/repositories/diagnostic");
 
 describe('Get diagnostics by canteen usecase', () => {
-  it('returns results from repository getter', async () => {
-    getAllDiagnosticsByCanteen.mockReturnValue([{ year: 2030, valueBio: 600 }]);
+  it('returns results from repository getter, removing db-specific keys', async () => {
+    getAllDiagnosticsByCanteen.mockReturnValue([{
+      toJSON() {
+        return {
+          year: 2030,
+          valueBio: 600,
+          createdAt: "2020-08-01",
+          updatedAt: "2020-08-01",
+          canteenId: 5
+        };
+      }
+    }]);
 
     const diagnostics = await getDiagnosticsByCanteen(5);
 

@@ -78,14 +78,28 @@ describe('Get diagnostics by canteen endpoint /get-diagnostics-by-canteen', () =
     });
     expect(response.statusCode).toBe(200);
     expect(response.result.length).toBe(2);
-    expect(response.result[0]).toMatchObject({
+    expect(response.result[0]).toStrictEqual({
       year: 2019,
       valueBio: 50000,
       valueFairTrade: 999,
       valueSustainable: 3333,
-      valueTotal: 110000
+      valueTotal: 110000,
+      communicateOnFoodPlan: null,
+      communicationSupportLink: null,
+      communicationSupports: null,
+      cookingFoodContainersSubstituted: null,
+      disposableUtensilsSubstituted: null,
+      hasDonationAgreement: null,
+      hasMadeDiversificationPlan: null,
+      hasMadeWasteDiagnostic: null,
+      hasMadeWastePlan: null,
+      serviceFoodContainersSubstituted: null,
+      vegetarianFrequency: null,
+      vegetarianMenuType: null,
+      wasteActions: null,
+      waterBottlesSubstituted: null
     });
-    expect(response.result[1]).toMatchObject({
+    expect(response.result[1]).toStrictEqual({
       year: 2020,
       valueBio: 40000,
       valueFairTrade: 6000,
