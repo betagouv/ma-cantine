@@ -5,7 +5,7 @@
     <form id="diagnostic-form" @submit.prevent="submit">
       <component
         :is="measureDiagnosticComponentName"
-        v-model="diagnostic"
+        v-model="diagnostics"
       />
 
       <input type="submit" id="submit" value="Valider">
@@ -20,7 +20,7 @@
   import NoPlasticMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/NoPlasticMeasure';
   import QualityMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/QualityMeasure';
   import WasteMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/WasteMeasure';
-  import { saveDiagnostic } from "@/data/KeyMeasures.js";
+  import { saveDiagnostics } from "@/data/KeyMeasures.js";
 
   export default {
     components: {
@@ -31,16 +31,16 @@
       QualityMeasureDiagnostic,
       WasteMeasureDiagnostic
     },
-    props: ['measure', 'closeModal', 'originalDiagnostic'],
+    props: ['measure', 'closeModal', 'originalDiagnostics'],
     data() {
       return {
-        diagnostic: this.originalDiagnostic,
+        diagnostics: this.originalDiagnostics,
         measureDiagnosticComponentName: this.measure.baseComponent + "Diagnostic",
       };
     },
     methods: {
-      submit() {
-        saveDiagnostic(this.measure.id, this.diagnostic);
+      async submit() {
+        await saveDiagnostics(this.diagnostics);
         this.$emit('closeModal');
       },
     },
