@@ -2,7 +2,7 @@
   <div>
     <h1>Mon tableau de bord</h1>
 
-    <CanteenDashboard :key="forceUpdate" :diagnostics="diagnostics" :showResources="true"/>
+    <CanteenDashboard :diagnostics="diagnostics" :showResources="true"/>
 
     <button class="save-data" v-if="jwt" @click="saveDiagnostics">Sauvegarder mes données</button>
     <router-link class="save-data" v-else :to="{ name: 'ConnectPage' }">Sauvegarder mes données</router-link>
@@ -10,25 +10,18 @@
 </template>
 
 <script>
-  import { defaultFlatDiagnostics, getDiagnostics } from '@/data/KeyMeasures.js';
   import CanteenDashboard from '@/components/CanteenDashboard';
+  import { getDiagnostics } from '@/data/KeyMeasures.js';
 
   export default {
     components: {
       CanteenDashboard
     },
+    props: ['diagnostics'],
     data() {
       return {
-        forceUpdate: 0,
-        diagnostics: defaultFlatDiagnostics,
         jwt: localStorage.getItem('jwt')
       };
-    },
-    async mounted() {
-      const diags = await getDiagnostics();
-      this.diagnostics = diags.flatDiagnostics;
-      // force the dashboard to re render after diagnostics are fetched
-      this.forceUpdate = 1;
     },
     methods: {
       async saveDiagnostics() {

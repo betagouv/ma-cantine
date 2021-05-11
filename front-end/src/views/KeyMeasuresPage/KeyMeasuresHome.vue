@@ -1,13 +1,13 @@
 <template>
   <div>
-    <DashboardPage v-if="haveDiagnosticResults"/>
+    <DashboardPage v-if="haveDiagnosticResults" :diagnostics="diagnostics"/>
     <EmptyDiagnosticPage v-else/>
     <BetaTesterForm />
   </div>
 </template>
 
 <script>
-  import { haveDiagnosticResults } from '@/data/KeyMeasures.js';
+  import { getDiagnostics } from '@/data/KeyMeasures.js';
   import EmptyDiagnosticPage from '@/views/KeyMeasuresPage/EmptyDiagnosticPage';
   import DashboardPage from '@/views/KeyMeasuresPage/DashboardPage';
   import BetaTesterForm from '@/components/BetaTesterForm';
@@ -20,11 +20,14 @@
     },
     data() {
       return {
+        diagnostics: null,
         haveDiagnosticResults: null
       };
     },
     async mounted() {
-      this.haveDiagnosticResults = await haveDiagnosticResults();
-    }
+      const diags = await getDiagnostics();
+      this.diagnostics = diags.flatDiagnostics;
+      this.haveDiagnosticResults = (await getDiagnostics()).hasResults;
+    },
   }
 </script>
