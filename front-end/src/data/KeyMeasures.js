@@ -68,6 +68,17 @@ const defaultFlatDiagnostic = {
   communicateOnFoodPlan: false,
 };
 
+function defaultFlatDiagnosticWithYear(diagnostic, year) {
+  let diagnosticCopy = JSON.parse(JSON.stringify(diagnostic));
+  diagnosticCopy.year = year;
+  return diagnosticCopy;
+}
+
+const defaultFlatDiagnostics = [
+  defaultFlatDiagnosticWithYear(defaultFlatDiagnostic, 2019),
+  defaultFlatDiagnosticWithYear(defaultFlatDiagnostic, 2020)
+];
+
 async function getDiagnostics() {
   let flatDiagnostics, hasSavedResults;
   let diagnostics = defaultDiagnostics;
@@ -104,6 +115,7 @@ async function getDiagnostics() {
 
 function getLocalDiagnostics() {
   let diagnostics = defaultDiagnostics;
+  let flatDiagnostics = defaultFlatDiagnostics;
   const diagnosticsString = localStorage.getItem('diagnostics');
   if(diagnosticsString) {
     diagnostics = JSON.parse(diagnosticsString);
@@ -119,15 +131,15 @@ function getLocalDiagnostics() {
     delete diagnostics["information-des-usagers"].communicationSupport;
   }
 
-  const flatDiagnostics = flattenDiagnostics(diagnostics, "2020");
+  flatDiagnostics = flattenDiagnostics(diagnostics, 2020);
   return { diagnostics, flatDiagnostics };
 }
 
 // temporary functions whilst switching from structured to unstructured
 // TODO: remove this once all diagnostic usage points to flat diagnostics
 function restructureDiagnostics(flatDiagnostics) {
-  const previousDiagnostic = flatDiagnostics.find(diagnostic => diagnostic.year === 2019) || defaultFlatDiagnostic;
-  const latestDiagnostic = flatDiagnostics.find(diagnostic => diagnostic.year === 2020) || defaultFlatDiagnostic;
+  const previousDiagnostic = findPreviousDiagnostic(flatDiagnostics) || defaultFlatDiagnostic;
+  const latestDiagnostic = findLatestDiagnostic(flatDiagnostics) || defaultFlatDiagnostic;
   return {
     "qualite-des-produits": {
       "2019": {
@@ -174,13 +186,14 @@ function flattenDiagnostics(diags, defaultYear) {
   for (const [measureKey, measureData] of Object.entries(diags)) {
     if(measureKey === 'qualite-des-produits') {
       for (const [yearKey, yearData] of Object.entries(measureData)) {
-        if(yearKey === defaultYear) {
+        const year = parseInt(yearKey, 10);
+        if(year === defaultYear) {
           flattened[0] = {
             ...flattened[0],
             ...yearData
           };
         } else {
-          yearData.year = yearKey;
+          yearData.year = year;
           flattened.push(yearData);
         }
       }
@@ -191,31 +204,74 @@ function flattenDiagnostics(diags, defaultYear) {
       };
     }
   }
-  flattened.forEach(entry => {
+  return cleanDiagnostics(flattened);
+}
+
+function cleanDiagnostics(flatDiagnostics) {
+  flatDiagnostics.forEach(entry => {
     for (const [key, data] of Object.entries(entry)) {
-      if(data === null || data === "") {
+      // TODO: endpoint probably shouldn't send db keys in the first place
+      if(data === null || data === "" || ['createdAt', 'updatedAt', 'canteenId'].indexOf(key) !== -1) {
         delete entry[key];
-      } else if(['year', 'valueBio', 'valueFairTrade', 'valueSustainable', 'valueTotal'].indexOf(key) !== -1) {
-        entry[key] = parseInt(data, 10);
+      } else if(key === 'year') {
+        // expect year to be number
+        entry[key] = parseInt(entry[key], 10);
       }
     }
   });
-  return flattened;
+  return flatDiagnostics;
 }
 
-async function saveDiagnostic(id, diagnostic) {
-  const { diagnostics } = await getDiagnostics();
-  diagnostics[id] = diagnostic;
-  localStorage.setItem('diagnostics', JSON.stringify(diagnostics));
+async function saveDiagnostic(diagnostic) {
+  const { flatDiagnostics } = await getDiagnostics();
+  let diagnostics = flatDiagnostics;
+  const idx = diagnostics.findIndex(d => d.year === diagnostic.year);
+  // at the moment, the diagnostics are defaulted to guarantee a year match
+  diagnostics[idx] = diagnostic;
+  return saveDiagnostics(diagnostics);
 }
 
-const defaultFlatDiagnostics = [defaultFlatDiagnostic];
+async function saveDiagnostics(diagnostics) {
+  diagnostics = cleanDiagnostics(diagnostics);
+  let isSaved = false;
+  const jwt = localStorage.getItem('jwt');
+  if(jwt) {
+    const response = await fetch(`${process.env.VUE_APP_API_URL}/save-diagnostics`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+jwt
+      },
+      body: JSON.stringify({
+        diagnostics
+      })
+    });
+    if(response.status === 201) {
+      isSaved = true;
+    }
+  }
+
+  if(!isSaved) {
+    localStorage.setItem('diagnostics', JSON.stringify(restructureDiagnostics(diagnostics)));
+  }
+}
+
+function findLatestDiagnostic(diagnostics) {
+  return diagnostics.find(diagnostic => diagnostic.year === 2020);
+}
+
+function findPreviousDiagnostic(diagnostics) {
+  return diagnostics.find(diagnostic => diagnostic.year === 2019);
+}
 
 export {
   keyMeasures,
   findSubMeasure,
   saveDiagnostic,
+  saveDiagnostics,
   getDiagnostics,
   defaultFlatDiagnostic,
-  defaultFlatDiagnostics
+  defaultFlatDiagnostics,
+  findLatestDiagnostic,
+  findPreviousDiagnostic
 };

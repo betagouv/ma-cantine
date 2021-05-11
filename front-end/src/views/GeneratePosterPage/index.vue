@@ -92,7 +92,7 @@
 
 <script>
   import CanteenPoster from './CanteenPoster';
-  import { getDiagnostics, saveDiagnostic } from "@/data/KeyMeasures.js";
+  import { getDiagnostics, saveDiagnostic, findLatestDiagnostic } from "@/data/KeyMeasures.js";
   import html2pdf from 'html2pdf.js';
 
   export default {
@@ -110,7 +110,7 @@
     },
     async mounted() {
       this.diagnostics = await getDiagnostics();
-      this.form.diagnostic = this.diagnostics.flatDiagnostics.find(diagnostic => diagnostic.year === 2020);
+      this.form.diagnostic = findLatestDiagnostic(this.diagnostics.flatDiagnostics);
     },
     methods: {
       async search() {
@@ -122,13 +122,11 @@
         const response = await fetch(queryUrl);
         this.communes = (await response.json()).features;
       },
-      submit() {
+      async submit() {
         //this fix an issue where the beginning of the pdf is blank depending on the scroll position
         window.scrollTo({ top: 0 });
 
-        const { valueBio, valueSustainable, valueTotal, valueFairTrade } = this.form.diagnostic;
-        this.diagnostics.diagnostics['qualite-des-produits']['2020'] = { valueBio, valueSustainable, valueTotal, valueFairTrade };
-        saveDiagnostic('qualite-des-produits', this.diagnostics.diagnostics['qualite-des-produits']);
+        await saveDiagnostic(this.form.diagnostic);
 
         const htmlPoster = document.getElementById('canteen-poster');
         const pdfOptions = {
