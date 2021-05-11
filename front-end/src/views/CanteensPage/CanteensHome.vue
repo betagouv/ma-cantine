@@ -11,7 +11,7 @@
         </div>
         <div class="summary">
           <h2>{{ canteen.title }}</h2>
-          <SummaryStatistics :qualityDiagnostic="canteen.diagnostics.find(diagnostic => diagnostic.year === canteen.timePeriod)"/>
+          <SummaryStatistics :qualityDiagnostic="getDiagnosticsForCanteenSummary(canteen)"/>
           <div class="context">
             <p class="meal-count">
               <i class="fas fa-utensils"></i>&nbsp;
@@ -39,7 +39,7 @@
 
 
 <script>
-  import { keyMeasures } from "@/data/KeyMeasures.js";
+  import { keyMeasures, getDiagnosticsForCanteenSummary } from "@/data/KeyMeasures.js";
   import canteens from "@/data/canteens.json";
   import SummaryStatistics from '@/components/SummaryStatistics';
 
@@ -52,6 +52,9 @@
         keyMeasures,
         canteens,
       }
+    },
+    methods: {
+      getDiagnosticsForCanteenSummary
     }
   }
 </script>
