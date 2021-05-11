@@ -109,10 +109,10 @@ export default {
         this.jwt = localJwt;
       } else if(this.token) {
         // TODO: this works for new sign ups, but want to provide the option to users on log in whether to overwrite data or not
-        const flatDiagnostics = (await getDiagnostics()).localFlatDiagnostics;
+        const diagnostics = (await getDiagnostics()).localFlatDiagnostics;
         const response = await post(this.$api_url, 'complete-login', {
           token: this.token,
-          diagnostics: flatDiagnostics
+          diagnostics
         });
         if(response.status === 200) {
           const json = await response.json();

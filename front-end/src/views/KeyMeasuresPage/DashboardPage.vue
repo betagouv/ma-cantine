@@ -27,7 +27,7 @@
     async mounted() {
       const diags = await getDiagnostics();
       this.diagnostics = diags.flatDiagnostics;
-      // TODO: is this really the way to force update child components?
+      // force the dashboard to re render after diagnostics are fetched
       this.forceUpdate = 1;
     },
     methods: {
