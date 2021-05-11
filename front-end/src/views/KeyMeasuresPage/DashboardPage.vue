@@ -24,6 +24,7 @@
       };
     },
     methods: {
+      // TODO: remove save functionality from here, already would be saved
       async saveDiagnostics() {
         const jwt = this.jwt;
         const localDiagnostics = (await getDiagnostics()).localFlatDiagnostics;

@@ -108,7 +108,7 @@
 </template>
 
 <script>
-  import { defaultFlatDiagnostic, keyMeasures } from '@/data/KeyMeasures.js';
+  import { keyMeasures, findLatestDiagnostic, findPreviousDiagnostic } from '@/data/KeyMeasures.js';
   import wasteActions from '@/data/waste-actions.json';
   import communicationSupports from '@/data/communication-supports.json';
   import SummaryStatistics from '@/components/SummaryStatistics';
@@ -126,8 +126,8 @@
       showResources: Boolean,
     },
     data() {
-      const latestDiagnostic = this.diagnostics.find(diagnostic => diagnostic.year === 2020) || defaultFlatDiagnostic;
-      const previousDiagnostic = this.diagnostics.find(diagnostic => diagnostic.year === 2019) || defaultFlatDiagnostic;
+      const latestDiagnostic = findLatestDiagnostic(this.diagnostics);
+      const previousDiagnostic = findPreviousDiagnostic(this.diagnostics);
 
       const vegetarianFrequency = latestDiagnostic.vegetarianFrequency;
       const hasVegetarianMenu = vegetarianFrequency && vegetarianFrequency !== "less-than-once";
