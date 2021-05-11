@@ -126,7 +126,6 @@
       showResources: Boolean,
     },
     data() {
-      // TODO: how to default better
       const latestDiagnostic = this.diagnostics.find(diagnostic => diagnostic.year === 2020) || defaultFlatDiagnostic;
       const previousDiagnostic = this.diagnostics.find(diagnostic => diagnostic.year === 2019) || defaultFlatDiagnostic;
 

@@ -9,7 +9,7 @@
         <p>Dans la cantine de votre enfant, sur l'année de 2020, nous déclarons avoir servi en valeur d'achats:</p>
       </div>
     </div>
-    <SummaryStatistics :qualityDiagnostic="qualityValues"/>
+    <SummaryStatistics :qualityDiagnostic="diagnostic"/>
     <LogoList id="logos"/>
     <div id="about">
       <h2>Pourquoi je vois cette affiche ?</h2>
@@ -44,23 +44,23 @@
       school: String,
       commune: String,
       servings: Number,
-      qualityValues: Object
+      diagnostic: Object
     },
     computed: {
       bioPercent() {
-        return this.percentageString(this.qualityValues.valueBio);
+        return this.percentageString(this.diagnostic.valueBio);
       },
       sustainablePercent() {
-        return this.percentageString(this.qualityValues.valueSustainable);
+        return this.percentageString(this.diagnostic.valueSustainable);
       },
       fairTradePercent() {
-        return this.percentageString(this.qualityValues.valueFairTrade);
+        return this.percentageString(this.diagnostic.valueFairTrade);
       }
     },
     methods: {
       percentageString(number) {
-        if(!isNaN(number) && this.qualityValues.valueTotal) {
-          const value = Math.floor(number / this.qualityValues.valueTotal * 1000) / 10;
+        if(!isNaN(number) && this.diagnostic.valueTotal) {
+          const value = Math.floor(number / this.diagnostic.valueTotal * 1000) / 10;
           return value.toLocaleString("fr-FR");
         }
         return "__";
