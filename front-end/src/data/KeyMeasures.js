@@ -8,45 +8,6 @@ function findSubMeasure(id) {
   }
 }
 
-const defaultDiagnostics = {
-  "qualite-des-produits": {
-    "2019": {
-      valueBio: null,
-      valueFairTrade: null,
-      valueSustainable: null,
-      valueTotal: null,
-    },
-    "2020": {
-      valueBio: null,
-      valueFairTrade: null,
-      valueSustainable: null,
-      valueTotal: null,
-    }
-  },
-  "gaspillage-alimentaire": {
-    hasMadeWasteDiagnostic: false,
-    hasMadeWastePlan: false,
-    wasteActions: [],
-    hasDonationAgreement: false,
-  },
-  "diversification-des-menus": {
-    hasMadeDiversificationPlan: false,
-    vegetarianFrequency: null,
-    vegetarianMenuType: null,
-  },
-  "interdiction-du-plastique": {
-    cookingFoodContainersSubstituted: false,
-    serviceFoodContainersSubstituted: false,
-    waterBottlesSubstituted: false,
-    disposableUtensilsSubstituted: false,
-  },
-  "information-des-usagers": {
-    communicationSupports: [],
-    communicationSupportLink: null,
-    communicateOnFoodPlan: false,
-  },
-};
-
 const defaultFlatDiagnostic = {
   valueBio: null,
   valueFairTrade: null,
@@ -96,31 +57,30 @@ async function getDiagnostics() {
     }
   }
 
-  const localDiagnostics = getLocalDiagnostics();
-
   if(!flatDiagnostics) {
-    flatDiagnostics = localDiagnostics.flatDiagnostics;
+    flatDiagnostics = getLocalDiagnostics() || defaultFlatDiagnostics;
   }
 
   return {
     flatDiagnostics,
-    localFlatDiagnostics: localDiagnostics.flatDiagnostics,
     hasResults: hasSavedResults || !!localStorage.getItem(LOCAL_FLAT_KEY) || !!localStorage.getItem('diagnostics')
   };
 }
 
 const LOCAL_FLAT_KEY = 'flatDiagnostics';
 
+// returns nothing if no local diagnostics
 function getLocalDiagnostics() {
-  let diagnostics = defaultDiagnostics;
-  let flatDiagnostics = defaultFlatDiagnostics;
+  let flatDiagnostics, diagnostics;
+  const hasFlatDiagnostics = !!localStorage.getItem(LOCAL_FLAT_KEY);
+  const hasStructuredDiagnostics = !!localStorage.getItem('diagnostics');
   const diagnosticsString = localStorage.getItem(LOCAL_FLAT_KEY) || localStorage.getItem('diagnostics');
   if(diagnosticsString) {
     diagnostics = JSON.parse(diagnosticsString);
   }
 
   // TODO: remove when our testers are using the new structure
-  if(!localStorage.getItem(LOCAL_FLAT_KEY)) {
+  if(!hasFlatDiagnostics && hasStructuredDiagnostics) {
     if(Object.keys(diagnostics["gaspillage-alimentaire"]).indexOf("hasCovenant") !== -1) {
       diagnostics["gaspillage-alimentaire"].hasDonationAgreement = diagnostics["gaspillage-alimentaire"].hasCovenant;
       delete diagnostics["gaspillage-alimentaire"].hasCovenant;
@@ -130,11 +90,11 @@ function getLocalDiagnostics() {
       delete diagnostics["information-des-usagers"].communicationSupport;
     }
     flatDiagnostics = flattenDiagnostics(diagnostics, 2020);
-  } else {
+  } else if(hasFlatDiagnostics) {
     flatDiagnostics = diagnostics;
   }
 
-  return { flatDiagnostics };
+  return flatDiagnostics;
 }
 
 // TODO: remove when our testers are using the new structure
@@ -205,9 +165,7 @@ async function saveDiagnostics(diagnostics) {
     });
     if(response.status === 201) {
       isSaved = true;
-      localStorage.removeItem(LOCAL_FLAT_KEY);
-      // TODO: remove when our testers are using the new structure
-      localStorage.removeItem('diagnostics');
+      deleteLocalDiagnostics();
     }
   }
 
@@ -224,12 +182,20 @@ function findPreviousDiagnostic(diagnostics) {
   return diagnostics.find(diagnostic => diagnostic.year === 2019);
 }
 
+function deleteLocalDiagnostics() {
+  localStorage.removeItem(LOCAL_FLAT_KEY);
+  // TODO: remove when our testers are using the new structure
+  localStorage.removeItem('diagnostics');
+}
+
 export {
   keyMeasures,
   findSubMeasure,
   saveDiagnostic,
   saveDiagnostics,
   getDiagnostics,
+  getLocalDiagnostics,
+  deleteLocalDiagnostics,
   defaultFlatDiagnostic,
   defaultFlatDiagnostics,
   findLatestDiagnostic,
