@@ -248,6 +248,7 @@ async function saveDiagnostics(diagnostics) {
     });
     if(response.status === 201) {
       isSaved = true;
+      localStorage.removeItem('diagnostics');
     }
   }
 
