@@ -66,7 +66,6 @@
 
 <script>
   import BaseInput from '@/components/KeyMeasureDiagnostic/Inputs/BaseInput';
-  import { findLatestDiagnostic, findPreviousDiagnostic } from '@/data/KeyMeasures';
 
   export default {
     components: {
@@ -75,12 +74,10 @@
     props: {
       modelValue: Object,
     },
-    computed: {
-      latestDiagnostic() {
-        return findLatestDiagnostic(this.modelValue);
-      },
-      previousDiagnostic() {
-        return findPreviousDiagnostic(this.modelValue);
+    data() {
+      return {
+        latestDiagnostic: this.modelValue[0],
+        previousDiagnostic: this.modelValue[1]
       }
     }
   }
