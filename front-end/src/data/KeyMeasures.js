@@ -68,8 +68,6 @@ const defaultFlatDiagnostic = {
   communicateOnFoodPlan: false,
 };
 
-const defaultFlatDiagnostics = [defaultFlatDiagnostic];
-
 async function getDiagnostics() {
   let flatDiagnostics, hasSavedResults;
   let diagnostics = defaultDiagnostics;
@@ -87,7 +85,6 @@ async function getDiagnostics() {
       diagnostics = restructureDiagnostics(flatDiagnostics);
       hasSavedResults = true;
     }
-    // TODO: remove jwt from local if 401 ?
   }
 
   const localDiagnostics = getLocalDiagnostics();
@@ -107,7 +104,6 @@ async function getDiagnostics() {
 
 function getLocalDiagnostics() {
   let diagnostics = defaultDiagnostics;
-  let flatDiagnostics;
   const diagnosticsString = localStorage.getItem('diagnostics');
   if(diagnosticsString) {
     diagnostics = JSON.parse(diagnosticsString);
@@ -123,56 +119,56 @@ function getLocalDiagnostics() {
     delete diagnostics["information-des-usagers"].communicationSupport;
   }
 
-  flatDiagnostics = flattenDiagnostics(diagnostics, "2020");
+  const flatDiagnostics = flattenDiagnostics(diagnostics, "2020");
   return { diagnostics, flatDiagnostics };
 }
 
+// temporary functions whilst switching from structured to unstructured
 // TODO: remove this once all diagnostic usage points to flat diagnostics
 function restructureDiagnostics(flatDiagnostics) {
-  const previousYear = flatDiagnostics.find(diagnostic => diagnostic.year === 2019) || defaultFlatDiagnostic;
-  const currentYear = flatDiagnostics.find(diagnostic => diagnostic.year === 2020) || defaultFlatDiagnostic;
+  const previousDiagnostic = flatDiagnostics.find(diagnostic => diagnostic.year === 2019) || defaultFlatDiagnostic;
+  const latestDiagnostic = flatDiagnostics.find(diagnostic => diagnostic.year === 2020) || defaultFlatDiagnostic;
   return {
     "qualite-des-produits": {
       "2019": {
-        valueBio: previousYear.valueBio,
-        valueFairTrade: previousYear.valueFairTrade,
-        valueSustainable: previousYear.valueSustainable,
-        valueTotal: previousYear.valueTotal,
+        valueBio: previousDiagnostic.valueBio,
+        valueFairTrade: previousDiagnostic.valueFairTrade,
+        valueSustainable: previousDiagnostic.valueSustainable,
+        valueTotal: previousDiagnostic.valueTotal,
       },
       "2020": {
-        valueBio: currentYear.valueBio,
-        valueFairTrade: currentYear.valueFairTrade,
-        valueSustainable: currentYear.valueSustainable,
-        valueTotal: currentYear.valueTotal,
+        valueBio: latestDiagnostic.valueBio,
+        valueFairTrade: latestDiagnostic.valueFairTrade,
+        valueSustainable: latestDiagnostic.valueSustainable,
+        valueTotal: latestDiagnostic.valueTotal,
       }
     },
     "gaspillage-alimentaire": {
-      hasMadeWasteDiagnostic: currentYear.hasMadeWasteDiagnostic,
-      hasMadeWastePlan: currentYear.hasMadeWastePlan,
-      wasteActions: currentYear.wasteActions,
-      hasDonationAgreement: currentYear.hasDonationAgreement,
+      hasMadeWasteDiagnostic: latestDiagnostic.hasMadeWasteDiagnostic,
+      hasMadeWastePlan: latestDiagnostic.hasMadeWastePlan,
+      wasteActions: latestDiagnostic.wasteActions,
+      hasDonationAgreement: latestDiagnostic.hasDonationAgreement,
     },
     "diversification-des-menus": {
-      hasMadeDiversificationPlan: currentYear.hasMadeDiversificationPlan,
-      vegetarianFrequency: currentYear.vegetarianFrequency,
-      vegetarianMenuType: currentYear.vegetarianMenuType,
+      hasMadeDiversificationPlan: latestDiagnostic.hasMadeDiversificationPlan,
+      vegetarianFrequency: latestDiagnostic.vegetarianFrequency,
+      vegetarianMenuType: latestDiagnostic.vegetarianMenuType,
     },
     "interdiction-du-plastique": {
-      cookingFoodContainersSubstituted: currentYear.cookingFoodContainersSubstituted,
-      serviceFoodContainersSubstituted: currentYear.serviceFoodContainersSubstituted,
-      waterBottlesSubstituted: currentYear.waterBottlesSubstituted,
-      disposableUtensilsSubstituted: currentYear.disposableUtensilsSubstituted,
+      cookingFoodContainersSubstituted: latestDiagnostic.cookingFoodContainersSubstituted,
+      serviceFoodContainersSubstituted: latestDiagnostic.serviceFoodContainersSubstituted,
+      waterBottlesSubstituted: latestDiagnostic.waterBottlesSubstituted,
+      disposableUtensilsSubstituted: latestDiagnostic.disposableUtensilsSubstituted,
     },
     "information-des-usagers": {
-      communicationSupports: currentYear.communicationSupports,
-      communicationSupportLink: currentYear.communicationSupportLink,
-      communicateOnFoodPlan: currentYear.communicateOnFoodPlan,
+      communicationSupports: latestDiagnostic.communicationSupports,
+      communicationSupportLink: latestDiagnostic.communicationSupportLink,
+      communicateOnFoodPlan: latestDiagnostic.communicateOnFoodPlan,
     },
   }
 }
 
-// temporary function whilst switching from structured to unstructured,
-// TODO: remove once fully moved over
+// TODO: remove with restructureDiagnostics once possible
 function flattenDiagnostics(diags, defaultYear) {
   let flattened = [{ year: defaultYear }];
   for (const [measureKey, measureData] of Object.entries(diags)) {
@@ -217,7 +213,7 @@ async function haveDiagnosticResults() {
   return (await getDiagnostics()).hasResults;
 }
 
-const diagnostics = {};
+const defaultFlatDiagnostics = [defaultFlatDiagnostic];
 
 export {
   keyMeasures,
@@ -225,8 +221,6 @@ export {
   saveDiagnostic,
   getDiagnostics,
   haveDiagnosticResults,
-  // TODO: review the following
-  diagnostics,
   defaultFlatDiagnostic,
   defaultFlatDiagnostics
 };
