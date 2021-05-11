@@ -227,7 +227,6 @@ export {
   haveDiagnosticResults,
   // TODO: review the following
   diagnostics,
-  defaultDiagnostics,
   defaultFlatDiagnostic,
   defaultFlatDiagnostics
 };
