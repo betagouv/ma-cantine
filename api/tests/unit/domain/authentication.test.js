@@ -4,6 +4,11 @@ const { generateJwtForUser, sendLoginLink, sendSignUpLink } = require("../../../
 jest.mock('@hapi/jwt');
 const Jwt = require('@hapi/jwt');
 
+jest.mock('crypto', () => ({
+  randomBytes: jest.fn(() => ({ toString: () => "secret Token" }))
+}));
+const crypto = require('crypto');
+
 jest.mock('../../../domain/services/mailer');
 const { sendTransactionalEmail } = require('../../../domain/services/mailer');
 
@@ -16,13 +21,12 @@ describe('Authentication service', () => {
 
     await sendLoginLink({ email: "test@example.com" }, "https://example.com?token=");
 
+    expect(crypto.randomBytes).toHaveBeenCalledWith(200);
     expect(saveLoginTokenForUser).toHaveBeenCalledTimes(1);
-    expect(saveLoginTokenForUser.mock.calls[0][0]).toStrictEqual({ email: "test@example.com" });
-    const token = saveLoginTokenForUser.mock.calls[0][1]; // token is second argument
-    expect(token).toBeDefined();
+    expect(saveLoginTokenForUser).toHaveBeenCalledWith({ email: "test@example.com" }, "secret Token")
 
     expect(sendTransactionalEmail).toHaveBeenCalledWith([{ email:"test@example.com" }], 60, {
-      LOGIN_LINK: 'https://example.com?token='+encodeURIComponent(token)
+      LOGIN_LINK: 'https://example.com?token=secret%20Token'
     });
   });
 
@@ -30,14 +34,6 @@ describe('Authentication service', () => {
     process.env.SENDINBLUE_TEMPLATE_SIGN_UP = 7;
     await sendSignUpLink('unknown@test.com');
     expect(sendTransactionalEmail).toHaveBeenCalledWith([{ email:"unknown@test.com" }], 7);
-  });
-
-  it('generates unique login tokens', async () => {
-    await sendLoginLink("user@email.com", "");
-    await sendLoginLink("user@email.com", "");
-    const token1 = saveLoginTokenForUser.mock.calls[0][1];
-    const token2 = saveLoginTokenForUser.mock.calls[1][1];
-    expect(token1).not.toBe(token2);
   });
 
   it('uses user email and secret key to generate JWT', () => {
