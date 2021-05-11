@@ -41,7 +41,7 @@
 <script>
 import jwt from "jsonwebtoken";
 import sectors from "@/data/sector-tags";
-import { getDiagnostics } from "@/data/KeyMeasures";
+import { getLocalDiagnostics, deleteLocalDiagnostics } from "@/data/KeyMeasures";
 
 var post = function(apiUrl, url, json) {
   return fetch(`${apiUrl}/${url}`, {
@@ -109,7 +109,8 @@ export default {
         this.jwt = localJwt;
       } else if(this.token) {
         // TODO: this works for new sign ups, but want to provide the option to users on log in whether to overwrite data or not
-        const diagnostics = (await getDiagnostics()).localFlatDiagnostics;
+        // currently this overwrites db data if local data is present
+        const diagnostics = getLocalDiagnostics();
         const response = await post(this.$api_url, 'complete-login', {
           token: this.token,
           diagnostics
@@ -118,6 +119,7 @@ export default {
           const json = await response.json();
           this.jwt = json.jwt;
           localStorage.setItem('jwt', json.jwt);
+          deleteLocalDiagnostics();
           this.$router.replace({ name: 'KeyMeasuresHome' });
         } else {
           this.token = null;
