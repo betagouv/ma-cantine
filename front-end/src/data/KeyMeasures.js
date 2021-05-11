@@ -209,10 +209,6 @@ async function saveDiagnostic(id, diagnostic) {
   localStorage.setItem('diagnostics', JSON.stringify(diagnostics));
 }
 
-async function haveDiagnosticResults() {
-  return (await getDiagnostics()).hasResults;
-}
-
 const defaultFlatDiagnostics = [defaultFlatDiagnostic];
 
 export {
@@ -220,7 +216,6 @@ export {
   findSubMeasure,
   saveDiagnostic,
   getDiagnostics,
-  haveDiagnosticResults,
   defaultFlatDiagnostic,
   defaultFlatDiagnostics
 };
