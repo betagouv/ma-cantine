@@ -127,7 +127,6 @@ function flattenDiagnostics(diags, defaultYear) {
 function preprocessDiagnostics(flatDiagnostics) {
   flatDiagnostics.forEach(entry => {
     for (const [key, data] of Object.entries(entry)) {
-      // TODO: endpoint probably shouldn't send db keys in the first place
       if(data === null || data === "") {
         delete entry[key];
       } else if(key === 'year') {
