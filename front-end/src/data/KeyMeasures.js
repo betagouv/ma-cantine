@@ -182,12 +182,15 @@ function findPreviousDiagnostic(diagnostics) {
   return diagnostics.find(diagnostic => diagnostic.year === 2019);
 }
 
-async function getDiagnosticsDateDescending() {
+async function getDiagnosticsDateDescending(includeDefaults) {
   const diagnostics = await getDiagnostics();
-  return [
+  const orderedDiagnostics = [
     findLatestDiagnostic(diagnostics.flatDiagnostics),
     findPreviousDiagnostic(diagnostics.flatDiagnostics)
   ];
+  if(diagnostics.hasResults || includeDefaults) {
+    return orderedDiagnostics;
+  }
 }
 
 function getDiagnosticsForDashboard() {
@@ -195,7 +198,7 @@ function getDiagnosticsForDashboard() {
 }
 
 function getDiagnosticsForDiagnosticForm() {
-  return getDiagnosticsDateDescending();
+  return getDiagnosticsDateDescending(true);
 }
 
 function getDiagnosticsForCanteenSummary(canteen) {
