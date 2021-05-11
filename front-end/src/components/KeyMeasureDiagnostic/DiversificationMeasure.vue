@@ -29,7 +29,6 @@
 <script>
   import BaseCheckbox from '@/components/KeyMeasureDiagnostic/Inputs/BaseCheckbox';
   import BaseRadios from '@/components/KeyMeasureDiagnostic/Inputs/BaseRadios';
-  import { findLatestDiagnostic } from '@/data/KeyMeasures';
 
   export default {
     components: {
@@ -41,7 +40,7 @@
     },
     computed: {
       diagnostic() {
-        return findLatestDiagnostic(this.modelValue);
+        return this.modelValue;
       }
     }
   }

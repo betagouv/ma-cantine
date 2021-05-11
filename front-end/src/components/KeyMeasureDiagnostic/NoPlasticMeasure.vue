@@ -26,7 +26,6 @@
 
 <script>
   import BaseCheckbox from '@/components/KeyMeasureDiagnostic/Inputs/BaseCheckbox';
-  import { findLatestDiagnostic } from '@/data/KeyMeasures';
 
   export default {
     components: {
@@ -37,7 +36,7 @@
     },
     computed: {
       diagnostic() {
-        return findLatestDiagnostic(this.modelValue);
+        return this.modelValue;
       }
     }
   }
