@@ -4,14 +4,13 @@
 
     <CanteenDashboard :diagnostics="diagnostics" :showResources="true"/>
 
-    <button class="save-data" v-if="jwt" @click="saveDiagnostics">Sauvegarder mes données</button>
+    <p v-if="jwt"><i class="fas fa-check-square"></i> Vos données ont été sauvegardées</p>
     <router-link class="save-data" v-else :to="{ name: 'ConnectPage' }">Sauvegarder mes données</router-link>
   </div>
 </template>
 
 <script>
   import CanteenDashboard from '@/components/CanteenDashboard';
-  import { getDiagnostics } from '@/data/KeyMeasures.js';
 
   export default {
     components: {
@@ -23,31 +22,6 @@
         jwt: localStorage.getItem('jwt')
       };
     },
-    methods: {
-      // TODO: remove save functionality from here, already would be saved
-      async saveDiagnostics() {
-        const jwt = this.jwt;
-        const localDiagnostics = (await getDiagnostics()).localFlatDiagnostics;
-        const response = await fetch(`${this.$api_url}/save-diagnostics`, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+jwt
-          },
-          body: JSON.stringify({
-            diagnostics: localDiagnostics
-          })
-        });
-
-        if (response.status === 201) {
-          alert("Vos données ont été sauvgardées")
-        } else {
-          const error = await response.json();
-          console.log(error);
-          alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
-        }
-      },
-    }
   };
 </script>
 
@@ -71,10 +45,11 @@
     font-weight: bold;
     cursor: pointer;
     text-decoration: none;
-  }
-
-  a.save-data {
     display: block;
     width: max-content;
+  }
+
+  .fa-check-square {
+    color: $green;
   }
 </style>
