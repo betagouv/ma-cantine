@@ -48,7 +48,7 @@
         <p>
           <label for="total">Sur l'année de 2020, les achats alimentaires (repas, collations et boissons) répresentent </label>
           <input id="total"
-            v-model.number="form.qualityValues.valueTotal"
+            v-model.number="form.diagnostic.valueTotal"
             class="currency-field"
             type="number"
             min="0"
@@ -61,7 +61,7 @@
         <p>
           Sur ce total,
           <input id="bio"
-            v-model.number="form.qualityValues.valueBio"
+            v-model.number="form.diagnostic.valueBio"
             class="currency-field"
             type="number"
             min="0"
@@ -71,7 +71,7 @@
           >
           euros HT correspondaient à des <label for="bio">produits bio</label> et
           <input id="sustainable"
-            v-model.number="form.qualityValues.valueSustainable"
+            v-model.number="form.diagnostic.valueSustainable"
             class="currency-field"
             type="number"
             min="0"
@@ -92,11 +92,8 @@
 
 <script>
   import CanteenPoster from './CanteenPoster';
-  import { diagnostics, saveDiagnostic } from "@/data/KeyMeasures.js";
+  import { getDiagnostics, saveDiagnostic } from "@/data/KeyMeasures.js";
   import html2pdf from 'html2pdf.js';
-
-  const qualityMeasureId = 'qualite-des-produits';
-  const qualityDiagnostic = diagnostics[qualityMeasureId];
 
   export default {
     components: {
@@ -105,10 +102,15 @@
     data() {
       return {
         form: {
-          qualityValues: qualityDiagnostic['2020']
+          diagnostic: {},
+          diagnostics: []
         },
         communes: [],
       };
+    },
+    async mounted() {
+      this.diagnostics = await getDiagnostics();
+      this.form.diagnostic = this.diagnostics.flatDiagnostics.find(diagnostic => diagnostic.year === 2020);
     },
     methods: {
       async search() {
@@ -124,8 +126,9 @@
         //this fix an issue where the beginning of the pdf is blank depending on the scroll position
         window.scrollTo({ top: 0 });
 
-        qualityDiagnostic['2020'] = this.form.qualityValues;
-        saveDiagnostic(qualityMeasureId, qualityDiagnostic);
+        const { valueBio, valueSustainable, valueTotal, valueFairTrade } = this.form.diagnostic;
+        this.diagnostics.diagnostics['qualite-des-produits']['2020'] = { valueBio, valueSustainable, valueTotal, valueFairTrade };
+        saveDiagnostic('qualite-des-produits', this.diagnostics.diagnostics['qualite-des-produits']);
 
         const htmlPoster = document.getElementById('canteen-poster');
         const pdfOptions = {
