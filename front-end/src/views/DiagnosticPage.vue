@@ -22,11 +22,11 @@
         />
       </div>
     </div>
-    <BaseModal v-if="diagnostic" @closeModal="closeDiagnosticModal">
+    <BaseModal v-if="measureDiagnosticModal" @closeModal="closeDiagnosticModal">
       <KeyMeasureDiagnostic
         :measure="measureDiagnosticModal"
         @closeModal="closeDiagnosticModal"
-        :originalDiagnostic="diagnostic"
+        :originalDiagnostics="diagnostics"
       />
     </BaseModal>
     <router-link :to="{ name: 'KeyMeasuresHome' }" id="summarise">
@@ -50,11 +50,11 @@
       BaseModal
     },
     async mounted() {
-      this.diagnostics = (await getDiagnostics()).diagnostics;
+      this.diagnostics = (await getDiagnostics()).flatDiagnostics;
     },
     data() {
       return {
-        diagnostics: {},
+        diagnostics: [],
         keyMeasures,
         measureDiagnosticModal: null,
       };
@@ -70,11 +70,6 @@
         this.measureDiagnosticModal = null;
       },
     },
-    computed: {
-      diagnostic() {
-        return this.diagnostics[(this.measureDiagnosticModal || {}).id];
-      }
-    }
   }
 </script>
 
