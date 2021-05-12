@@ -6,12 +6,15 @@
     </div>
     <div id="footer-columns">
       <div class="footer-column">
-        <div class="footer-column-title">Ma Cantine</div>
+        <div class="footer-column-title">ma cantine</div>
         <a href="https://beta.gouv.fr/startups/ma-cantine-egalim.html" target="_blank">
           Qui sommes nous ? <i class="fas fa-external-link-alt"></i>
         </a>
         <router-link :to="{ name: 'BlogsHome' }">
           Blog
+        </router-link>
+        <router-link :to="{ name: 'StatsPage' }">
+          Statistiques
         </router-link>
         <a href="https://beta.gouv.fr/approche/" target="_blank">
           Les start-ups d'état <i class="fas fa-external-link-alt"></i>

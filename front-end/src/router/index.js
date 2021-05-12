@@ -13,7 +13,7 @@ import ConnectPage from '@/views/ConnectPage';
 import BlogsPage from '@/views/BlogsPage';
 import BlogsHome from '@/views/BlogsPage/BlogsHome';
 import BlogPage from '@/views/BlogsPage/BlogPage';
-import Stats from '@/views/Stats';
+import StatsPage from '@/views/StatsPage';
 
 const routes = [
   {
@@ -33,13 +33,16 @@ const routes = [
     path: '/creation-affiche',
     name: 'GeneratePosterPage',
     component: GeneratePosterPage,
+    meta: {
+      title: "Générez votre affiche",
+    },
   },
   {
     path: '/mesures-phares',
     name: 'KeyMeasuresPage',
     component: KeyMeasuresPage,
     meta: {
-      title: 'Les 5 mesures phares de la loi EGAlim',
+      title: "Les 5 mesures phares de la loi EGAlim",
     },
     children: [
       {
@@ -59,6 +62,9 @@ const routes = [
     path: '/nos-cantines',
     name: 'CanteensPage',
     component: CanteensPage,
+    meta: {
+      title: "Nos cantines",
+    },
     children: [
       {
         path: '',
@@ -77,16 +83,25 @@ const routes = [
     path: '/mentions-legales',
     name: 'LegalNotices',
     component: LegalNotices,
+    meta: {
+      title: "Mentions légales",
+    }
   },
   {
     path: '/connecter',
     name: 'ConnectPage',
-    component: ConnectPage
+    component: ConnectPage,
+    meta: {
+      title: "Connecter",
+    }
   },
   {
     path: '/blog',
     name: 'BlogsPage',
     component: BlogsPage,
+    meta: {
+      title: "Blog",
+    },
     children: [
       {
         path: '',
@@ -98,13 +113,16 @@ const routes = [
         name: 'BlogPage',
         component: BlogPage,
         props: true,
-      }
-    ]
+      },
+    ],
   },
   {
     path: '/stats',
-    name: 'Stats',
-    component: Stats,
+    name: 'StatsPage',
+    component: StatsPage,
+    meta: {
+      title: "Statistiques",
+    }
   },
 ];
 
@@ -127,4 +145,4 @@ const router = createRouter({
   },
 })
 
-export default router
+export default router;

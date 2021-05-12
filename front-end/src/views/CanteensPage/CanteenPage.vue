@@ -43,6 +43,9 @@
         canteen: getCanteenById(this.id),
       };
     },
+    created() {
+      document.title = `${this.canteen.title} - ma-cantine.beta.gouv.fr`;
+    }
   }
 </script>
 

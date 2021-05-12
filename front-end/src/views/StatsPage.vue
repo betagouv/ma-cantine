@@ -7,7 +7,7 @@
       data-type="interactive"
     />
     <h2>👾 Statistiques d’usage et de comportement des personnes utilisatrices de la plateforme</h2>
-    <h3>Nombre de visites</h3>
+    <h3 id="visits">Nombre de visites dans le mois dernier</h3>
     <iframe
       width="100%"
       height="300"
@@ -16,8 +16,9 @@
       frameborder="0"
       marginheight="0"
       marginwidth="0"
+      aria-labelledby="visits"
     />
-    <h3>Canaux d'acquisition</h3>
+    <h3 id="channels">Canaux d'acquisition</h3>
     <iframe
       width="100%"
       height="350"
@@ -26,8 +27,9 @@
       frameborder="0"
       marginheight="0"
       marginwidth="0"
+      aria-labelledby="channels"
     />
-    <h3>Pages visitées</h3>
+    <h3 id="pages">Pages visitées (total)</h3>
     <iframe
       id="matomo-pages"
       width="100%"
@@ -37,17 +39,15 @@
       frameborder="0"
       marginheight="0"
       marginwidth="0"
+      aria-labelledby="pages"
     />
   </div>
 </template>
 
 <script>
+const MATOMO_ID = 162;
+
 export default {
-  data() {
-    return {
-      matomoId: 162,
-    }
-  },
   created() {
     const script = document.createElement('script')
     script.type = 'text/javascript'
@@ -55,27 +55,31 @@ export default {
     document.body.appendChild(script)
   },
   computed: {
-    visits: function() {
-      return `https://stats.data.gouv.fr/index.php?module=Widgetize&action=iframe&forceView=1&viewDataTable=graphEvolution&disableLink=0&widget=1&moduleToWidgetize=VisitsSummary&actionToWidgetize=getEvolutionGraph&idSite=${this.matomoId}&period=day&date=yesterday&disableLink=1&widget=1`
+    visits() {
+      return `https://stats.data.gouv.fr/index.php?module=Widgetize&action=iframe&forceView=1&viewDataTable=graphEvolution&disableLink=0&`+
+        `widget=1&moduleToWidgetize=VisitsSummary&actionToWidgetize=getEvolutionGraph&idSite=${MATOMO_ID}&period=day&date=yesterday&disableLink=1&widget=1`
     },
-    channel: function() {
-      return `https://stats.data.gouv.fr/index.php?module=Widgetize&action=iframe&disableLink=0&widget=1&viewDataTable=graphPie&moduleToWidgetize=Referrers&actionToWidgetize=getReferrerType&idSite=${this.matomoId}&period=day&date=yesterday&disableLink=1&widget=1`
+    channel() {
+      return `https://stats.data.gouv.fr/index.php?module=Widgetize&action=iframe&disableLink=0&widget=1&viewDataTable=graphPie&`+
+        `moduleToWidgetize=Referrers&actionToWidgetize=getReferrerType&idSite=${MATOMO_ID}&period=year&date=yesterday&disableLink=1&widget=1`
     },
-    pages: function() {
-      return `https://stats.data.gouv.fr/index.php?module=Widgetize&action=iframe&disableLink=0&widget=1&moduleToWidgetize=Actions&actionToWidgetize=getPageUrls&idSite=${this.matomoId}&period=day&date=yesterday&disableLink=1&widget=1`
+    pages() {
+      return `https://stats.data.gouv.fr/index.php?module=Widgetize&action=iframe&disableLink=0&widget=1&moduleToWidgetize=Actions&`+
+        `actionToWidgetize=getPageUrls&idSite=${MATOMO_ID}&period=year&date=yesterday&disableLink=1&widget=1`
     },
   },
 }
 </script>
-<style scoped lang="scss">
-#stats {
-  padding: 2em;
-  max-width: 720px;
-  margin: auto;
-  text-align: left;
 
-  .infogram-embed {
-    margin-bottom: 4rem;
+<style scoped lang="scss">
+  #stats {
+    padding: 2em;
+    max-width: 900px;
+    margin: auto;
+    text-align: left;
+
+    .infogram-embed {
+      margin-bottom: 4rem;
+    }
   }
-}
 </style>
