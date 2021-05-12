@@ -8,13 +8,14 @@ tagline: Obtenez ici un éclairage sur les questions les plus fréquemment posé
 
 Tout à fait. La plateforme [ma-cantine.beta.gouv.fr](https://ma-cantine.beta.gouv.fr) est à destination de tous les acteurs et actrices de la restauration collective quelque soit leur secteur. Elle les aide à comprendre les mesures en faveur de la restauration collective issues de la loi EGAlim, comment les mettre en œuvre et comment s’améliorer. 
 Parce-que le secteur est vaste et les parties prenantes nombreuses, l'équipe a décidé de concentrer les efforts de développement sur les mesures applicables dans le secteur scolaire (i.e. la totalité des mesures). Cependant, rien ne vous empêche, en tant que restaurant d’un autre secteur : administratif, médical, médico-social, d'utiliser nos outils et ressources. 
+NB: le secteur de la restauration collective en entreprise n’est pour le moment pas concerné par la loi (sauf sur volet gaspillage).
 La plateforme est en constante amélioration et a vocation à s'ouvrir à toutes et tous. 
 
 ## 2. 🍽 Pourquoi avoir appelé la plateforme "ma cantine" ? 
 
 Dans un premier temps, et pour répondre progressivement au plus près des usages spécifiques de chaque secteur, la plateforme s'adresse en priorité à la restauration scolaire. 
 Il nous paraissait donc simple de raviver les madeleines de Proust des demi-pensionnaires en choisissant un nom court et compréhensible par tou.te.s. 
-Et puis, "restaurant-collectif" c'est un peu jargonneux non ? ☺️
+Et puis, "restaurant collectif" c'est un peu moins évident non ? ☺️
 
 ## 3. 🏬 Quel lien existe-t-il entre la plateforme "ma cantine" et le ministère de l'Agriculture ? 
 
@@ -49,4 +50,4 @@ Les sessions de tests et d'expérimentation durent en moyenne 30 minutes et peuv
 
 ## 8. J'ai des remarques, questions, suggestions à faire à l'équipe; comment les partager ?
 
-Vous pouvez nous contacter par mail : [contact@egalim.beta.gouv.fr](mailto:contact@egalim.beta.gouv.fr). Tous vos avis et sollicitations sont précieux et nous serons ravi.e.s d'échanger !
+Vous pouvez nous contacter par mail : [contact@egalim.beta.gouv.fr](mailto:contact@egalim.beta.gouv.fr). Tous vos avis et sollicitations sont précieux et nous serons ravi.e.s d'échanger ! Vous pouvez également nous partager des ressources et expériences...
