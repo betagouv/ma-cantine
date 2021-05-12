@@ -54,7 +54,7 @@ Par ailleurs, __36 664 producteurs sont engagés en agriculture biologique en 20
 
 1. __"fermier", "produit à la ferme", "produits de la ferme"__
 
-Ces mentions valorisent les produits qui ont été fabriqués sur le lieu de la ferme et ne sont pas definies de manière génerale. 
+Ces mentions valorisent les produits qui ont été fabriqués sur le lieu de la ferme et ne sont pas definies de manière génerale. Ce sont des produits pour lesquels existe une définition réglementaire des conditions de productions (principalement des œufs fermiers, des fromages fermiers (y compris fromage blanc), volailles de chair fermières... 
 
 2. __Haute Valeur Environnementale (HVE)__
 
