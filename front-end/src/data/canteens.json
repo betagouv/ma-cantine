@@ -118,5 +118,42 @@
         "disposableUtensilsSubstituted": true
       }
     }
+  },
+  {
+    "id": "montpellier",
+    "title": "Montpellier",
+    "keyPoints": [
+    ],
+    "mealCount": 15000,
+    "region": "Hérault",
+    "timePeriod": "2020",
+    "diagnostics": {
+      "qualite-des-produits": {
+        "2019": { "valueBio": "593000", "valueFairTrade": "0", "valueSustainable": "828660", "valueTotal": "2825568" },
+        "2020": { "valueBio": "193869", "valueFairTrade": "4000", "valueSustainable": "273439", "valueTotal": "994198" }
+      },
+      "information-des-usagers": {
+        "communicationSupports": ["email", "website", "other"],
+        "communicationSupportLink": null,
+        "communicateOnFoodPlan": true
+      },
+      "gaspillage-alimentaire": {
+        "hasMadeWasteDiagnostic": true,
+        "hasMadeWastePlan": true,
+        "wasteActions": ["preRegistration", "training", "reorganization", "reuse"],
+        "hasDonationAgreement": true
+      },
+      "diversification-des-menus": {
+        "hasMadeDiversificationPlan": true,
+        "vegetarianFrequency": "moreThanOnce",
+        "vegetarianMenuType": "alternative"
+      },
+      "interdiction-du-plastique": {
+        "cookingFoodContainersSubstituted": false,
+        "serviceFoodContainersSubstituted": false,
+        "waterBottlesSubstituted": false,
+        "disposableUtensilsSubstituted": true
+      }
+    }
   }
 ]
