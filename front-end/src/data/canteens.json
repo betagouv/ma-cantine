@@ -12,13 +12,6 @@
     "timePeriod": 2020,
     "diagnostics": [
       {
-        "year": 2019,
-        "valueBio": 130000,
-        "valueFairTrade": 0,
-        "valueSustainable": 75000,
-        "valueTotal": 755000
-      },
-      {
         "year": 2020,
         "valueBio": 123000,
         "valueFairTrade": 0,
@@ -38,6 +31,13 @@
         "serviceFoodContainersSubstituted": false,
         "waterBottlesSubstituted": true,
         "disposableUtensilsSubstituted": true
+      },
+      {
+        "year": 2019,
+        "valueBio": 130000,
+        "valueFairTrade": 0,
+        "valueSustainable": 75000,
+        "valueTotal": 755000
       }
     ]
   },
@@ -53,13 +53,6 @@
     "region": "Hautes-Alpes",
     "timePeriod": 2020,
     "diagnostics": [
-      {
-        "year": 2019,
-        "valueBio": 119640,
-        "valueFairTrade": 1000,
-        "valueSustainable": 0,
-        "valueTotal": 193092
-      },
       {
         "year": 2020,
         "valueBio": 102599,
@@ -80,6 +73,13 @@
         "serviceFoodContainersSubstituted": true,
         "waterBottlesSubstituted": true,
         "disposableUtensilsSubstituted": true
+      },
+      {
+        "year": 2019,
+        "valueBio": 119640,
+        "valueFairTrade": 1000,
+        "valueSustainable": 0,
+        "valueTotal": 193092
       }
     ]
   },
@@ -95,13 +95,6 @@
     "region": "Landes",
     "timePeriod": 2020,
     "diagnostics": [
-      {
-        "year": 2019,
-        "valueBio": 59400,
-        "valueFairTrade": 0,
-        "valueSustainable": 6762,
-        "valueTotal": 319000
-      },
       {
         "year": 2020,
         "valueBio": 56462,
@@ -122,6 +115,13 @@
         "serviceFoodContainersSubstituted": true,
         "waterBottlesSubstituted": true,
         "disposableUtensilsSubstituted": true
+      },
+      {
+        "year": 2019,
+        "valueBio": 59400,
+        "valueFairTrade": 0,
+        "valueSustainable": 6762,
+        "valueTotal": 319000
       }
     ]
   },
@@ -137,13 +137,6 @@
     "region": "Hérault",
     "timePeriod": 2020,
     "diagnostics": [
-      {
-        "year": 2019,
-        "valueBio": 593000,
-        "valueFairTrade": 0,
-        "valueSustainable": 828660,
-        "valueTotal": 2825568
-      },
       {
         "year": 2020,
         "valueBio": 193869,
@@ -164,6 +157,13 @@
         "serviceFoodContainersSubstituted": true,
         "waterBottlesSubstituted": true,
         "disposableUtensilsSubstituted": false
+      },
+      {
+        "year": 2019,
+        "valueBio": 593000,
+        "valueFairTrade": 0,
+        "valueSustainable": 828660,
+        "valueTotal": 2825568
       }
     ]
   }
