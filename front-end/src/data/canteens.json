@@ -123,6 +123,9 @@
     "id": "montpellier",
     "title": "Montpellier",
     "keyPoints": [
+      "Conventions de dons avec trois associations",
+      "Un plan alimentaire durable flexitarien avec intervention tous les ans d'une diététicienne",
+      "Tous les fruits exotiques sont bio et commerce équitable ou information détaillée aux convives sur chaque menu"
     ],
     "mealCount": 15000,
     "region": "Hérault",
@@ -149,10 +152,10 @@
         "vegetarianMenuType": "alternative"
       },
       "interdiction-du-plastique": {
-        "cookingFoodContainersSubstituted": false,
-        "serviceFoodContainersSubstituted": false,
-        "waterBottlesSubstituted": false,
-        "disposableUtensilsSubstituted": true
+        "cookingFoodContainersSubstituted": true,
+        "serviceFoodContainersSubstituted": true,
+        "waterBottlesSubstituted": true,
+        "disposableUtensilsSubstituted": false
       }
     }
   }
