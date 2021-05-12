@@ -21,6 +21,9 @@ export default {
       html: converter.makeHtml(require('@/assets/blog/'+this.id+".md").default),
       meta: converter.getMetadata()
     };
+  },
+  created() {
+    document.title = `${this.meta.title} - ma-cantine.beta.gouv.fr`;
   }
 }
 </script>
