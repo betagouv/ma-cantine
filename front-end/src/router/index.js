@@ -131,18 +131,18 @@ const router = createRouter({
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
-      return savedPosition
+      return savedPosition;
     } else if (to.hash) {
       return {
         el: to.hash,
         top: 80,
-      }
+      };
     } else {
       return {
         top: 0,
-      }
+      };
     }
   },
-})
+});
 
 export default router;
