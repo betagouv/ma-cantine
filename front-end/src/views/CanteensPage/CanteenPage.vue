@@ -16,7 +16,7 @@
       <div class="key-points">
         <h3>Nos initiatives mises en place&nbsp;:</h3>
         <ul>
-          <li v-for="keyPoint in canteen.keyPoints" :key="keyPoint">
+          <li v-for="keyPoint in canteen.keyPoints" :key="keyPoint" class="key-point">
             {{ keyPoint }}
           </li>
         </ul>
@@ -63,8 +63,11 @@
     .context {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       flex: 1;
+
+      div {
+        margin: 0.5em 0;
+      }
     }
 
     h2 {
@@ -77,6 +80,10 @@
 
     .key-points {
       flex: 1;
+    }
+
+    .key-point {
+      margin: 0.5em 0;
     }
   }
 
