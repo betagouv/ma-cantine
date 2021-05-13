@@ -18,6 +18,9 @@
     <a class="navbar-item" href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/" target="_blank">
       Ressources <i class="fas fa-external-link-alt"></i>
     </a>
+    <router-link :to="{ name: 'AccountSummaryPage' }" class="navbar-item">
+      <span class="optional">Mon compte </span><i class="fas fa-door-open" title="Mon compte"></i>
+    </router-link>
   </nav>
 </template>
 
@@ -104,6 +107,12 @@ export default {
     background-color: $orange;
   }
 
+  @media (max-width: 1300px) {
+    .optional {
+      display: none;
+    }
+  }
+
   @media (max-width: 1000px) {
     .gov-logo {
       display: none;
@@ -124,6 +133,10 @@ export default {
       text-align: left;
       margin-top: 30px;
       padding: 3px;
+    }
+
+    .optional {
+      display: inline;
     }
   }
 </style>
