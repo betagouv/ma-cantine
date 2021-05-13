@@ -20,7 +20,7 @@
             <p class="time-period" title="Données pour l'année">
               <i class="far fa-calendar-alt"></i>&nbsp;
               <span class="sr-only">Données pour l'année</span>
-              {{ canteen.timePeriod }}
+              {{ canteen.diagnostics.latest.year }}
             </p>
           </div>
         </div>
