@@ -17,9 +17,11 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    return Promise.all([
-      queryInterface.removeColumn('canteens', 'hasPublished', { transaction: t }),
-      queryInterface.removeColumn('canteens', 'dataIsPublic', { transaction: t })
-    ]);
+    return queryInterface.sequelize.transaction(t => {
+      return Promise.all([
+        queryInterface.removeColumn('canteens', 'hasPublished', { transaction: t }),
+        queryInterface.removeColumn('canteens', 'dataIsPublic', { transaction: t })
+      ]);
+    });
   }
 };

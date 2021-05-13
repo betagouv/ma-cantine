@@ -21,7 +21,7 @@ describe('Extend canteen infos /extend-canteen-infos', () => {
     }, {
       name: "Test canteen",
       city: "Lyon",
-      sector: "school"
+      sector: "school",
     })
   });
 
@@ -35,7 +35,8 @@ describe('Extend canteen infos /extend-canteen-infos', () => {
       payload: {
         name: "New canteen name",
         city: "Lyon",
-        sector: "school"
+        sector: "school",
+        mealCount: 150,
       }
     });
 
@@ -46,7 +47,8 @@ describe('Extend canteen infos /extend-canteen-infos', () => {
       id: user.canteenId,
       name: "New canteen name",
       city: "Lyon",
-      sector: "school"
+      sector: "school",
+      mealCount: 150,
     })
   });
 
