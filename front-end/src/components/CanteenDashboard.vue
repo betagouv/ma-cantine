@@ -93,7 +93,7 @@
             </ul>
             <a
               v-if="latestDiagnostic.communicationSupportLink"
-              :href="latestDiagnostic.communicationSupportLink"
+              :href="prepareHref(latestDiagnostic.communicationSupportLink)"
               class="communication-support-link"
               target="_blank"
             >
@@ -145,6 +145,11 @@
         vegetarianMenuActionLabel: getVegetarianMenuActionLabel(hasVegetarianMenu, vegetarianFrequency),
       };
     },
+    methods: {
+      prepareHref(link) {
+        return link.startsWith('http') ? link : '//' + link;
+      }
+    }
   };
 
   function getVegetarianMenuActionLabel(hasVegetarianMenu, vegetarianFrequency) {
