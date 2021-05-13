@@ -1,11 +1,11 @@
-const { initiateLogin } = require('../../../domain/usecases/initiate-login');
+const { initiateLogin } = require('../../../../domain/usecases/initiate-login');
 
-jest.mock('../../../infrastructure/repositories/user');
-const { getUserByEmail } = require('../../../infrastructure/repositories/user');
-const { NotFoundError } = require('../../../infrastructure/errors');
+jest.mock('../../../../infrastructure/repositories/user');
+const { getUserByEmail } = require('../../../../infrastructure/repositories/user');
+const { NotFoundError } = require('../../../../infrastructure/errors');
 
-jest.mock('../../../domain/services/authentication');
-const { sendLoginLink, sendSignUpLink } = require('../../../domain/services/authentication');
+jest.mock('../../../../domain/services/authentication');
+const { sendLoginLink, sendSignUpLink } = require('../../../../domain/services/authentication');
 
 describe('Log in initiation', () => {
   it('generates, saves, and emails temp token given known email', async () => {

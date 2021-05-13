@@ -11,7 +11,7 @@
         </div>
         <div class="summary">
           <h2>{{ canteen.title }}</h2>
-          <SummaryStatistics :qualityDiagnostic="getDiagnosticsForCanteenSummary(canteen)"/>
+          <SummaryStatistics :qualityDiagnostic="canteen.diagnostics.latest"/>
           <div class="context">
             <p class="meal-count">
               <i class="fas fa-utensils"></i>&nbsp;
@@ -39,7 +39,7 @@
 
 
 <script>
-  import { keyMeasures, getDiagnosticsForCanteenSummary } from "@/data/KeyMeasures.js";
+  import keyMeasures from "@/data/key-measures.json";
   import canteens from "@/data/canteens.json";
   import SummaryStatistics from '@/components/SummaryStatistics';
 
@@ -53,9 +53,6 @@
         canteens,
       }
     },
-    methods: {
-      getDiagnosticsForCanteenSummary
-    }
   }
 </script>
 

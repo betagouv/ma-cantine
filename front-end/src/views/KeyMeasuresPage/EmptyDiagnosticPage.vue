@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import { keyMeasures } from '@/data/KeyMeasures.js';
+  import keyMeasures from '@/data/key-measures.json';
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import KeyMeasureResource from '@/components/KeyMeasureResource';
 

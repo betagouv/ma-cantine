@@ -1,4 +1,4 @@
-const { sendEmail, sendTransactionalEmail } = require("../../../domain/services/mailer");
+const { sendEmail, sendTransactionalEmail } = require("../../../../domain/services/mailer");
 
 jest.mock('node-fetch');
 const fetch = require('node-fetch');

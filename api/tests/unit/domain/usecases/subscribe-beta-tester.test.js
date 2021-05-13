@@ -1,7 +1,7 @@
-const { subscribeBetaTester } = require('../../../domain/usecases/subscribe-beta-tester');
+const { subscribeBetaTester } = require('../../../../domain/usecases/subscribe-beta-tester');
 
-jest.mock('../../../domain/services/mailer');
-const { sendEmail } = require('../../../domain/services/mailer');
+jest.mock('../../../../domain/services/mailer');
+const { sendEmail } = require('../../../../domain/services/mailer');
 
 describe("Beta Tester subscription", () => {
   it('calls sendEmail with the expected parameters', async () => {
