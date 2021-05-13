@@ -126,13 +126,13 @@
       showResources: Boolean,
     },
     data() {
-      const latestDiagnostic = this.diagnostics[0];
+      const latestDiagnostic = this.diagnostics.latest;
       const vegetarianFrequency = latestDiagnostic.vegetarianFrequency;
       const hasVegetarianMenu = vegetarianFrequency && vegetarianFrequency !== "less-than-once";
 
       return {
         latestDiagnostic,
-        previousDiagnostic: this.diagnostics[1],
+        previousDiagnostic: this.diagnostics.previous,
         wasteActions,
         communicationSupports,
         qualityMeasure: keyMeasures.find(measure => measure.id === 'qualite-des-produits'),

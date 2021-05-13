@@ -41,7 +41,7 @@ const defaultFlatDiagnostics = [
 ];
 
 async function getDiagnostics() {
-  let flatDiagnostics, hasSavedResults;
+  let diagnostics, hasSavedResults;
 
   const jwt = localStorage.getItem('jwt');
   if(jwt) {
@@ -52,17 +52,22 @@ async function getDiagnostics() {
       }
     });
     if(response.status === 200) {
-      flatDiagnostics = await response.json();
-      hasSavedResults = !!flatDiagnostics.length;
+      diagnostics = await response.json();
+      hasSavedResults = !!diagnostics.latest;
     }
   }
 
   if(!hasSavedResults) {
-    flatDiagnostics = getLocalDiagnostics() || defaultFlatDiagnostics;
+    const localDiagnostics = (getLocalDiagnostics() || defaultFlatDiagnostics).
+      sort((earlierDiag, laterDiag) => laterDiag.year - earlierDiag.year);
+    diagnostics = {
+      latest: localDiagnostics[0],
+      previous: localDiagnostics[1]
+    }
   }
 
   return {
-    flatDiagnostics,
+    diagnostics,
     hasResults: hasSavedResults || !!localStorage.getItem(LOCAL_FLAT_KEY) || !!localStorage.getItem('diagnostics')
   };
 }
@@ -124,8 +129,8 @@ function flattenDiagnostics(diags, defaultYear) {
   return preprocessDiagnostics(flattened);
 }
 
-function preprocessDiagnostics(flatDiagnostics) {
-  flatDiagnostics.forEach(entry => {
+function preprocessDiagnostics(diagnosticsArray) {
+  diagnosticsArray.forEach(entry => {
     for (const [key, data] of Object.entries(entry)) {
       if(data === null || data === "") {
         delete entry[key];
@@ -135,19 +140,23 @@ function preprocessDiagnostics(flatDiagnostics) {
       }
     }
   });
-  return flatDiagnostics;
+  return diagnosticsArray;
 }
 
 async function saveDiagnostic(diagnostic) {
-  const { flatDiagnostics } = await getDiagnostics();
-  let diagnostics = flatDiagnostics;
+  const { diagnostics: diagnosticsObject } = await getDiagnostics();
+  let diagnostics = [ diagnosticsObject.latest, diagnosticsObject.previous ];
   const idx = diagnostics.findIndex(d => d.year === diagnostic.year);
   // at the moment, the diagnostics are defaulted to guarantee a year match
   diagnostics[idx] = diagnostic;
-  return saveDiagnostics(diagnostics);
+  return saveDiagnosticsArray(diagnostics);
 }
 
-async function saveDiagnostics(diagnostics) {
+function saveDiagnostics(diagnosticsObject) {
+  return saveDiagnosticsArray([ diagnosticsObject.latest, diagnosticsObject.previous ]);
+}
+
+async function saveDiagnosticsArray(diagnostics) {
   diagnostics = preprocessDiagnostics(diagnostics);
   let isSaved = false;
   const jwt = localStorage.getItem('jwt');
@@ -173,31 +182,18 @@ async function saveDiagnostics(diagnostics) {
   }
 }
 
-function findLatestDiagnostic(diagnostics) {
-  return diagnostics.find(diagnostic => diagnostic.year === 2020);
-}
-
-function findPreviousDiagnostic(diagnostics) {
-  return diagnostics.find(diagnostic => diagnostic.year === 2019);
-}
-
-async function getDiagnosticsDateDescending(includeDefaults) {
-  const diagnostics = await getDiagnostics();
-  const orderedDiagnostics = [
-    findLatestDiagnostic(diagnostics.flatDiagnostics),
-    findPreviousDiagnostic(diagnostics.flatDiagnostics)
-  ];
-  if(diagnostics.hasResults || includeDefaults) {
-    return orderedDiagnostics;
+// doen't return default values if data doesn't exist
+async function getDiagnosticsForDashboard() {
+  const diagnosticInfo = await getDiagnostics();
+  if(diagnosticInfo.hasResults) {
+    return diagnosticInfo.diagnostics;
   }
 }
 
-function getDiagnosticsForDashboard() {
-  return getDiagnosticsDateDescending();
-}
-
-function getDiagnosticsForDiagnosticForm() {
-  return getDiagnosticsDateDescending(true);
+// returns default values if data doesn't exist
+async function getDiagnosticsForDiagnosticForm() {
+  const diagnosticInfo = await getDiagnostics();
+  return diagnosticInfo.diagnostics;
 }
 
 function getDiagnosticsForCanteenSummary(canteen) {
@@ -205,8 +201,8 @@ function getDiagnosticsForCanteenSummary(canteen) {
 }
 
 async function getDiagnosticsForPoster() {
-  const diagnostics = await getDiagnostics();
-  return findLatestDiagnostic(diagnostics.flatDiagnostics);
+  const diagnosticsInfo = await getDiagnostics();
+  return diagnosticsInfo.diagnostics.latest;
 }
 
 function deleteLocalDiagnostics() {
