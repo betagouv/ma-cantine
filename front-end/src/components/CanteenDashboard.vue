@@ -108,7 +108,7 @@
 </template>
 
 <script>
-  import { keyMeasures } from '@/data/KeyMeasures.js';
+  import keyMeasures from '@/data/key-measures.json';
   import wasteActions from '@/data/waste-actions.json';
   import communicationSupports from '@/data/communication-supports.json';
   import SummaryStatistics from '@/components/SummaryStatistics';

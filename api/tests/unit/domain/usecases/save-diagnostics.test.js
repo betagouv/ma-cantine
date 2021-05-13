@@ -1,7 +1,7 @@
-const { saveDiagnosticsForCanteen: saveDiagnosticsForCanteenUsecase } = require('../../../domain/usecases/save-diagnostics');
+const { saveDiagnosticsForCanteen: saveDiagnosticsForCanteenUsecase } = require('../../../../domain/usecases/save-diagnostics');
 
-jest.mock('../../../infrastructure/repositories/diagnostic');
-const { saveDiagnosticsForCanteen } = require('../../../infrastructure/repositories/diagnostic');
+jest.mock('../../../../infrastructure/repositories/diagnostic');
+const { saveDiagnosticsForCanteen } = require('../../../../infrastructure/repositories/diagnostic');
 
 describe('Save diagnostic usecase', () => {
   it('triggers save of diagnostics to database', async () => {

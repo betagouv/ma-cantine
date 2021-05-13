@@ -1,10 +1,10 @@
-const { getDiagnosticsByCanteen } = require("../../../domain/usecases/get-diagnostics-by-canteen");
+const { getDiagnosticsByCanteen } = require("../../../../domain/usecases/get-diagnostics-by-canteen");
 
-jest.mock("../../../infrastructure/repositories/diagnostic");
-const { getAllDiagnosticsByCanteen } = require("../../../infrastructure/repositories/diagnostic");
+jest.mock("../../../../infrastructure/repositories/diagnostic");
+const { getAllDiagnosticsByCanteen } = require("../../../../infrastructure/repositories/diagnostic");
 
-jest.mock('../../../domain/services/diagnostic-builder');
-const { buildPreviousLatestDiagnostics } = require('../../../domain/services/diagnostic-builder');
+jest.mock('../../../../domain/services/diagnostic-builder');
+const { buildPreviousLatestDiagnostics } = require('../../../../domain/services/diagnostic-builder');
 
 describe('Get diagnostics by canteen usecase', () => {
   it('returns builded diagnostics', async () => {

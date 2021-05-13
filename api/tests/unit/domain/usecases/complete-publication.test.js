@@ -1,7 +1,7 @@
-const { completePublication } = require('../../../domain/usecases/complete-publication');
+const { completePublication } = require('../../../../domain/usecases/complete-publication');
 
-jest.mock('../../../infrastructure/repositories/canteen');
-const { updateCanteen } = require('../../../infrastructure/repositories/canteen');
+jest.mock('../../../../infrastructure/repositories/canteen');
+const { updateCanteen } = require('../../../../infrastructure/repositories/canteen');
 
 describe('Extend canteen infos', () => {
   it('completes the publication process for a canteen', async () => {
