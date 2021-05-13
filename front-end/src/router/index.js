@@ -69,6 +69,9 @@ const routes = [
     path: '/publication',
     name: 'PublishPage',
     component: PublishPage,
+    meta: {
+      requiresAuth: true,
+    },
     children: [
       {
         path: '',
@@ -196,5 +199,13 @@ const router = createRouter({
     }
   },
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth) && !localStorage.getItem('jwt')) {
+    next({ path: '/connecter' });
+  }
+
+  next();
+})
 
 export default router;
