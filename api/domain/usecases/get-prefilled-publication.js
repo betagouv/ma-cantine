@@ -11,6 +11,7 @@ exports.getPrefilledPublication = async function(canteenId) {
       name: canteen.name,
       city: canteen.city,
       sector: canteen.sector,
+      mealCount: canteen.mealCount,
     },
     diagnostics: buildPreviousLatestDiagnostics(diagnostics),
   };

@@ -12,7 +12,8 @@ const register = async function(server) {
         payload: Joi.object({
           name: Joi.string().required(),
           city: Joi.string().required(),
-          sector: Joi.string().required()
+          sector: Joi.string().required(),
+          mealCount: Joi.number(),
         })
       }
     }
@@ -25,6 +26,7 @@ const extendCanteenInfosHandler = async function (request, h) {
     name: request.payload.name,
     city: request.payload.city,
     sector: request.payload.sector,
+    mealCount: request.payload.mealCount,
   };
 
   await extendCanteenInfos(canteen);

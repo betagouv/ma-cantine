@@ -29,4 +29,5 @@ exports.Canteen = sequelize.define('canteen', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  mealCount: DataTypes.INTEGER,
 });
