@@ -77,8 +77,7 @@ describe('Get diagnostics by canteen endpoint /get-diagnostics-by-canteen', () =
       }
     });
     expect(response.statusCode).toBe(200);
-    expect(response.result.length).toBe(2);
-    expect(response.result[0]).toStrictEqual({
+    expect(response.result.previous).toStrictEqual({
       year: 2019,
       valueBio: 50000,
       valueFairTrade: 999,
@@ -99,7 +98,7 @@ describe('Get diagnostics by canteen endpoint /get-diagnostics-by-canteen', () =
       wasteActions: null,
       waterBottlesSubstituted: null
     });
-    expect(response.result[1]).toStrictEqual({
+    expect(response.result.latest).toStrictEqual({
       year: 2020,
       valueBio: 40000,
       valueFairTrade: 6000,

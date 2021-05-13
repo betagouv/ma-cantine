@@ -3,9 +3,14 @@
     <h2 id="modal-title" tabindex="-1"><KeyMeasureTitle :measure="measure"/></h2>
 
     <form id="diagnostic-form" @submit.prevent="submit">
-      <component
-        :is="measureDiagnosticComponentName"
+      <QualityMeasureDiagnostic
+        v-if="measureDiagnosticComponentName === 'QualityMeasureDiagnostic'"
         v-model="diagnostics"
+      />
+      <component
+        v-else
+        :is="measureDiagnosticComponentName"
+        v-model="diagnostics.latest"
       />
 
       <input type="submit" id="submit" value="Valider">
@@ -20,7 +25,7 @@
   import NoPlasticMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/NoPlasticMeasure';
   import QualityMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/QualityMeasure';
   import WasteMeasureDiagnostic from '@/components/KeyMeasureDiagnostic/WasteMeasure';
-  import { saveDiagnostics, saveDiagnostic } from "@/data/KeyMeasures.js";
+  import { saveDiagnostics } from "@/data/KeyMeasures.js";
 
   export default {
     components: {
@@ -35,23 +40,15 @@
     data() {
       return {
         measureDiagnosticComponentName: this.measure.baseComponent + "Diagnostic",
+        diagnostics: this.originalDiagnostics
       };
     },
     methods: {
       async submit() {
-        (this.measureDiagnosticComponentName === 'QualityMeasureDiagnostic') ?
-          await saveDiagnostics(this.diagnostics) :
-          await saveDiagnostic(this.diagnostics);
+        await saveDiagnostics(this.diagnostics);
         this.$emit('closeModal');
       },
     },
-    computed: {
-      diagnostics() {
-        return (this.measureDiagnosticComponentName === 'QualityMeasureDiagnostic') ?
-          this.originalDiagnostics :
-          this.originalDiagnostics[0];
-      }
-    }
   }
 </script>
 
