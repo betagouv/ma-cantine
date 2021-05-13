@@ -23,7 +23,8 @@ describe('Get prefilled publication endpoint /get-prefilled-publication', () => 
     }, {
       name: "Test canteen",
       city: "Lyon",
-      sector: "school"
+      sector: "school",
+      mealCount: 150,
     });
 
     await saveDiagnosticsForCanteen(user.canteenId, [{
@@ -63,7 +64,8 @@ describe('Get prefilled publication endpoint /get-prefilled-publication', () => 
       canteen: {
         name: "Test canteen",
         city: "Lyon",
-        sector: "school"
+        sector: "school",
+        mealCount: 150,
       },
       diagnostics: {
         latest: {

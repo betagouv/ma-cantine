@@ -17,6 +17,14 @@
         type="text"
       />
 
+      <BaseInput
+        v-model="canteen.mealCount"
+        label="Nombre de couverts moyen par jour"
+        inputId="canteen-meal-count"
+        type="number"
+        min=0
+      />
+
       <BaseSelect
         v-model="canteen.sector"
         label="Secteur d'activité"

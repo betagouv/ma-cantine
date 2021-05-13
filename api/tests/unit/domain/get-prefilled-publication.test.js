@@ -13,7 +13,8 @@ const canteen = {
   id: 3,
   name: "Test canteen",
   city: "Lyon",
-  sector: "school"
+  sector: "school",
+  mealCount: 150,
 };
 
 describe('Get prefilled publication', () => {
@@ -32,6 +33,7 @@ describe('Get prefilled publication', () => {
         name: canteen.name,
         city: canteen.city,
         sector: canteen.sector,
+        mealCount: canteen.mealCount,
       },
       diagnostics: {}
     });
