@@ -197,7 +197,7 @@ async function getDiagnosticsForDiagnosticForm() {
 }
 
 function getDiagnosticsForCanteenSummary(canteen) {
-  return canteen.diagnostics.find(diagnostic => diagnostic.year === canteen.timePeriod);
+  return canteen.diagnostics.latest;
 }
 
 async function getDiagnosticsForPoster() {
