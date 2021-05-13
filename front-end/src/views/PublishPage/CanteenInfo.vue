@@ -41,6 +41,7 @@
   import BaseInput from '@/components/KeyMeasureDiagnostic/Inputs/BaseInput';
   import BaseSelect from '@/components/KeyMeasureDiagnostic/Inputs/BaseSelect';
   import sectors from "@/data/sector-tags.json";
+  import { extendCanteenInfo } from "@/data/submit-actions.js";
 
   export default {
     components: {
@@ -60,14 +61,7 @@
     },
     methods: {
       async submit() {
-        const response = await fetch(`${this.$api_url}/extend-canteen-infos`, {
-          method: "PATCH",
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-          },
-          body: JSON.stringify(this.canteen)
-        });
+        const response = await extendCanteenInfo(this.canteen);
 
         if (response.status === 204) {
           return this.$router.push({ name: 'PublishMeasurePage', params: { id: 'qualite-des-produits' } });

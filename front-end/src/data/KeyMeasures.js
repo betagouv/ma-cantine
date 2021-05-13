@@ -1,4 +1,5 @@
 import keyMeasures from "@/data/key-measures.json";
+import { saveDiagnosticsOnServer } from "@/data/submit-actions.js";
 
 function findSubMeasure(id) {
   for (let measureIdx = 0; measureIdx < keyMeasures.length; measureIdx++) {
@@ -161,16 +162,8 @@ async function saveDiagnosticsArray(diagnostics) {
   let isSaved = false;
   const jwt = localStorage.getItem('jwt');
   if(jwt) {
-    const response = await fetch(`${process.env.VUE_APP_API_URL}/save-diagnostics`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+jwt
-      },
-      body: JSON.stringify({
-        diagnostics
-      })
-    });
+    const response = await saveDiagnosticsOnServer(diagnostics);
+
     if(response.status === 201) {
       isSaved = true;
       deleteLocalDiagnostics();

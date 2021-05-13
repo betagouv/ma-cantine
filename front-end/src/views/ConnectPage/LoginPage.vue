@@ -18,9 +18,9 @@
 
 <script>
 import { getLocalDiagnostics, deleteLocalDiagnostics } from "@/data/KeyMeasures";
+import { login, completeLogin } from "@/data/submit-actions.js";
 
 export default {
-  props: [ 'loginUrl', 'post' ],
   data() {
     return {
       token: this.$route.query.token,
@@ -32,10 +32,7 @@ export default {
   },
   methods: {
     submitLogin() {
-      this.post(this.$api_url, 'login', {
-        email: this.loginEmail,
-        loginUrl: this.loginUrl
-      });
+      login(this.loginEmail);
       alert("Merci, vous allez recevoir un email pour vous connecter.");
       this.loginEmail = null;
     },
@@ -46,10 +43,9 @@ export default {
         // TODO: this works for new sign ups, but want to provide the option to users on log in whether to overwrite data or not
         // currently this overwrites db data if local data is present
         const diagnostics = getLocalDiagnostics();
-        const response = await this.post(this.$api_url, 'complete-login', {
-          token: this.token,
-          diagnostics
-        });
+
+        const response = await completeLogin(this.token, diagnostics);
+
         if(response.status === 200) {
           const json = await response.json();
           localStorage.setItem('jwt', json.jwt);
