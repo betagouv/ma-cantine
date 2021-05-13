@@ -10,6 +10,9 @@ import CanteensHome from '@/views/CanteensPage/CanteensHome';
 import CanteenPage from '@/views/CanteensPage/CanteenPage';
 import LegalNotices from '@/views/LegalNotices';
 import ConnectPage from '@/views/ConnectPage';
+import LoginPage from '@/views/ConnectPage/LoginPage';
+import SignUpPage from '@/views/ConnectPage/SignUpPage';
+import AccountSummaryPage from '@/views/ConnectPage/AccountSummaryPage';
 import BlogsPage from '@/views/BlogsPage';
 import BlogsHome from '@/views/BlogsPage/BlogsHome';
 import BlogPage from '@/views/BlogsPage/BlogPage';
@@ -88,12 +91,34 @@ const routes = [
     }
   },
   {
-    path: '/connecter',
     name: 'ConnectPage',
     component: ConnectPage,
-    meta: {
-      title: "Connecter",
-    }
+    children: [
+      {
+        path: '/connecter',
+        name: 'LoginPage',
+        component: LoginPage,
+        meta: {
+          title: "Connecter"
+        }
+      },
+      {
+        path: '/inscrire',
+        name: 'SignUpPage',
+        component: SignUpPage,
+        meta: {
+          title: "Créer mon compte"
+        }
+      },
+      {
+        path: '/mon-compte',
+        name: 'AccountSummaryPage',
+        component: AccountSummaryPage,
+        meta: {
+          title: "Mon compte"
+        }
+      }
+    ]
   },
   {
     path: '/blog',
