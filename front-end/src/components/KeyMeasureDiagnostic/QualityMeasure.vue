@@ -76,8 +76,8 @@
     },
     data() {
       return {
-        latestDiagnostic: this.modelValue[0],
-        previousDiagnostic: this.modelValue[1]
+        latestDiagnostic: this.modelValue.latest,
+        previousDiagnostic: this.modelValue.previous
       }
     }
   }
