@@ -18,6 +18,8 @@
 </template>
 
 <script>
+  import { subscribeNewsletter } from "@/data/submit-actions.js";
+
   export default {
     data() {
       return {
@@ -26,13 +28,7 @@
     },
     methods: {
       async submit() {
-        const response = await fetch(`${this.$api_url}/subscribe-newsletter`, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email: this.email })
-        });
+        const response = await subscribeNewsletter(this.email);
 
         if (response.status === 201 || response.status === 204) {
           this.email = null;
