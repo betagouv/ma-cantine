@@ -3,7 +3,7 @@ const { extendCanteenInfos } = require("../../domain/usecases/extend-canteen-inf
 
 const register = async function(server) {
   server.route([{
-    method: 'PATCH',
+    method: 'POST',
     path: '/extend-canteen-infos',
     handler: extendCanteenInfosHandler,
     options: {

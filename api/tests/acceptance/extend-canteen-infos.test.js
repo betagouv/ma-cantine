@@ -27,7 +27,7 @@ describe('Extend canteen infos /extend-canteen-infos', () => {
 
   it('extends the canteen infos', async () => {
     const response = await server.inject({
-      method: 'PATCH',
+      method: 'POST',
       url: '/extend-canteen-infos',
       headers: {
         'Authorization': 'Bearer ' + generateJwtForUser(user)

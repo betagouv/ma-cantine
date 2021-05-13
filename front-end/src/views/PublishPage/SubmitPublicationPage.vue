@@ -16,6 +16,7 @@
 
 <script>
   import BaseCheckbox from '@/components/KeyMeasureDiagnostic/Inputs/BaseCheckbox';
+  import { completePublication } from "@/data/submit-actions.js";
 
   export default {
     components: {
@@ -34,14 +35,7 @@
     },
     methods: {
       async submit() {
-        const response = await fetch(`${this.$api_url}/complete-publication`, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-          },
-          body: JSON.stringify({ makeDataPublic: this.makeDataPublic })
-        });
+        const response = await completePublication(this.makeDataPublic);
 
         if (response.status === 204) {
           alert("Vos données ont bien été publiées");
