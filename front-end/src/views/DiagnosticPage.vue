@@ -36,7 +36,8 @@
 </template>
 
 <script>
-  import { keyMeasures, getDiagnosticsForDiagnosticForm } from "@/data/KeyMeasures.js"
+  import keyMeasures from "@/data/key-measures.json";
+  import { getDiagnosticsForDiagnosticForm } from "@/data/KeyMeasures.js"
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import KeyMeasureDescription from '@/components/KeyMeasureDescription';
   import KeyMeasureDiagnostic from '@/components/KeyMeasureDiagnostic';

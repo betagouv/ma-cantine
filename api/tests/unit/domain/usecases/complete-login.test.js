@@ -1,14 +1,14 @@
-const { completeLogin } = require('../../../domain/usecases/complete-login');
-const { NotFoundError } = require('../../../infrastructure/errors');
+const { completeLogin } = require('../../../../domain/usecases/complete-login');
+const { NotFoundError } = require('../../../../infrastructure/errors');
 
-jest.mock('../../../infrastructure/repositories/login-token');
-const { getUserForLoginToken } = require('../../../infrastructure/repositories/login-token');
+jest.mock('../../../../infrastructure/repositories/login-token');
+const { getUserForLoginToken } = require('../../../../infrastructure/repositories/login-token');
 
-jest.mock('../../../domain/services/authentication');
-const { generateJwtForUser } = require('../../../domain/services/authentication');
+jest.mock('../../../../domain/services/authentication');
+const { generateJwtForUser } = require('../../../../domain/services/authentication');
 
-jest.mock('../../../infrastructure/repositories/diagnostic');
-const { saveDiagnosticsForCanteen } = require('../../../infrastructure/repositories/diagnostic');
+jest.mock('../../../../infrastructure/repositories/diagnostic');
+const { saveDiagnosticsForCanteen } = require('../../../../infrastructure/repositories/diagnostic');
 
 describe('Log in completion', () => {
 

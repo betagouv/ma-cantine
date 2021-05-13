@@ -1,13 +1,13 @@
-const { getPrefilledPublication } = require('../../../domain/usecases/get-prefilled-publication')
+const { getPrefilledPublication } = require('../../../../domain/usecases/get-prefilled-publication')
 
-jest.mock('../../../infrastructure/repositories/canteen');
-const { getCanteenById } = require('../../../infrastructure/repositories/canteen');
+jest.mock('../../../../infrastructure/repositories/canteen');
+const { getCanteenById } = require('../../../../infrastructure/repositories/canteen');
 
-jest.mock('../../../infrastructure/repositories/diagnostic');
-const { getAllDiagnosticsByCanteen } = require('../../../infrastructure/repositories/diagnostic');
+jest.mock('../../../../infrastructure/repositories/diagnostic');
+const { getAllDiagnosticsByCanteen } = require('../../../../infrastructure/repositories/diagnostic');
 
-jest.mock('../../../domain/services/diagnostic-builder');
-const { buildPreviousLatestDiagnostics } = require('../../../domain/services/diagnostic-builder');
+jest.mock('../../../../domain/services/diagnostic-builder');
+const { buildPreviousLatestDiagnostics } = require('../../../../domain/services/diagnostic-builder');
 
 const canteen = {
   id: 3,
