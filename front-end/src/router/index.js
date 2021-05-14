@@ -95,7 +95,7 @@ const routes = [
     component: ConnectPage,
     children: [
       {
-        path: '/connecter',
+        path: '/connexion',
         name: 'LoginPage',
         component: LoginPage,
         meta: {
@@ -103,7 +103,7 @@ const routes = [
         }
       },
       {
-        path: '/inscrire',
+        path: '/inscription',
         name: 'SignUpPage',
         component: SignUpPage,
         meta: {

@@ -13,12 +13,10 @@
 import jwt from "jsonwebtoken";
 
 export default {
-  props: [ 'loginUrl', 'post' ],
   data() {
     return {
       jwt: localStorage.getItem('jwt'),
       token: this.$route.query.token,
-      loginEmail: null
     }
   },
   computed: {
@@ -41,7 +39,6 @@ export default {
     },
     logout() {
       localStorage.removeItem('jwt');
-      alert("Déconnection réussite");
       this.$router.push({ name: 'LandingPage' });
     }
   }
