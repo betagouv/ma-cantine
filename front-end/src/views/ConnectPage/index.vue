@@ -1,34 +1,13 @@
 <template>
   <div id="connect">
-    <router-view :key="$route.fullPath" :loginUrl="loginUrl" :post="post"/>
+    <router-view :key="$route.fullPath"/>
 
     <p id="help">
-      Vous avez besoin d'aide ? Contactez nous par email : 
+      Vous avez besoin d'aide ? Contactez nous par email :
       <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
     </p>
   </div>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      loginUrl: `${process.env.VUE_APP_SITE_URL || "http://localhost:8080"}/connexion?token=`,
-    }
-  },
-  methods: {
-    post(apiUrl, url, json) {
-      return fetch(`${apiUrl}/${url}`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(json)
-      });
-    }
-  }
-}
-</script>
 
 <style scoped lang="scss">
   #connect {

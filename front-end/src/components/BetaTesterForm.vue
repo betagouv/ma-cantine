@@ -21,7 +21,9 @@
 </template>
 
 <script>
-export default {
+  import { subscribeBetaTester } from "@/data/submit-actions.js";
+
+  export default {
     data() {
       return {
         form: {},
@@ -29,13 +31,7 @@ export default {
     },
     methods: {
       async submit() {
-        const response = await fetch(`${this.$api_url}/subscribe-beta-tester`, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(this.form)
-        });
+        const response = await subscribeBetaTester(this.form);
 
         if (response.status === 201) {
           this.form = {};

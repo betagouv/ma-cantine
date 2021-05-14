@@ -1,4 +1,4 @@
-const { subscribeNewsletter } = require('../../../domain/usecases/subscribe-newsletter');
+const { subscribeNewsletter } = require('../../../../domain/usecases/subscribe-newsletter');
 
 jest.mock('node-fetch');
 const fetch = require('node-fetch');

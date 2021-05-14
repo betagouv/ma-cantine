@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { generateJwtForUser, sendLoginLink, sendSignUpLink } = require("../../../domain/services/authentication");
+const { generateJwtForUser, sendLoginLink, sendSignUpLink } = require("../../../../domain/services/authentication");
 
 jest.mock('@hapi/jwt');
 const Jwt = require('@hapi/jwt');
@@ -9,11 +9,11 @@ jest.mock('crypto', () => ({
 }));
 const crypto = require('crypto');
 
-jest.mock('../../../domain/services/mailer');
-const { sendTransactionalEmail } = require('../../../domain/services/mailer');
+jest.mock('../../../../domain/services/mailer');
+const { sendTransactionalEmail } = require('../../../../domain/services/mailer');
 
-jest.mock('../../../infrastructure/repositories/login-token');
-const { saveLoginTokenForUser } = require('../../../infrastructure/repositories/login-token');
+jest.mock('../../../../infrastructure/repositories/login-token');
+const { saveLoginTokenForUser } = require('../../../../infrastructure/repositories/login-token');
 
 describe('Authentication service', () => {
   it('generates and saves a login token before sending an email with that token', async () => {

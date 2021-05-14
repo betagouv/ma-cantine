@@ -25,7 +25,7 @@
     <BaseModal v-if="measureDiagnosticModal" @closeModal="closeDiagnosticModal">
       <KeyMeasureDiagnostic
         :measure="measureDiagnosticModal"
-        @closeModal="closeDiagnosticModal"
+        @afterSave="closeDiagnosticModal"
         :originalDiagnostics="diagnostics"
       />
     </BaseModal>
@@ -36,7 +36,8 @@
 </template>
 
 <script>
-  import { keyMeasures, getDiagnosticsForDiagnosticForm } from "@/data/KeyMeasures.js"
+  import keyMeasures from "@/data/key-measures.json";
+  import { getDiagnosticsForDiagnosticForm } from "@/data/KeyMeasures.js"
   import KeyMeasureTitle from '@/components/KeyMeasureTitle';
   import KeyMeasureDescription from '@/components/KeyMeasureDescription';
   import KeyMeasureDiagnostic from '@/components/KeyMeasureDiagnostic';

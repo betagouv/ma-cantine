@@ -4,6 +4,10 @@ import DiagnosticPage from '@/views/DiagnosticPage';
 import KeyMeasuresPage from '@/views/KeyMeasuresPage';
 import KeyMeasuresHome from '@/views/KeyMeasuresPage/KeyMeasuresHome';
 import KeyMeasurePage from '@/views/KeyMeasuresPage/KeyMeasurePage';
+import PublishPage from '@/views/PublishPage';
+import CanteenInfo from '@/views/PublishPage/CanteenInfo';
+import PublishMeasurePage from '@/views/PublishPage/PublishMeasurePage';
+import SubmitPublicationPage from '@/views/PublishPage/SubmitPublicationPage';
 import GeneratePosterPage from '@/views/GeneratePosterPage';
 import CanteensPage from '@/views/CanteensPage';
 import CanteensHome from '@/views/CanteensPage/CanteensHome';
@@ -60,6 +64,38 @@ const routes = [
         props: true,
       },
     ],
+  },
+  {
+    path: '/publication',
+    name: 'PublishPage',
+    component: PublishPage,
+    meta: {
+      requiresAuth: true,
+    },
+    children: [
+      {
+        path: '',
+        name: 'CanteenInfo',
+        component: CanteenInfo,
+        meta: {
+          title: "Cantine information - Publication",
+        },
+      },
+      {
+        path: ':id',
+        name: 'PublishMeasurePage',
+        component: PublishMeasurePage,
+        props: true,
+      },
+      {
+        path: 'validation',
+        name: 'SubmitPublicationPage',
+        component: SubmitPublicationPage,
+        meta: {
+          title: "Validation - Publication",
+        },
+      }
+    ]
   },
   {
     path: '/nos-cantines',
@@ -169,5 +205,13 @@ const router = createRouter({
     }
   },
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth) && !localStorage.getItem('jwt')) {
+    next({ path: '/connecter' });
+  }
+
+  next();
+})
 
 export default router;

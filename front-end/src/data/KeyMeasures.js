@@ -1,49 +1,41 @@
-import keyMeasures from "@/data/key-measures.json";
+import { saveDiagnosticsOnServer } from "@/data/submit-actions.js";
 
-function findSubMeasure(id) {
-  for (let measureIdx = 0; measureIdx < keyMeasures.length; measureIdx++) {
-    const measure = keyMeasures[measureIdx];
-    const subMeasure = measure.subMeasures.find((subMeasure) => subMeasure.id === id);
-    if(subMeasure) { return subMeasure; }
-  }
-}
+const LOCAL_FLAT_KEY = 'flatDiagnostics';
 
-const defaultFlatDiagnostic = {
-  valueBio: null,
-  valueFairTrade: null,
-  valueSustainable: null,
-  valueTotal: null,
-  hasMadeWasteDiagnostic: false,
-  hasMadeWastePlan: false,
-  wasteActions: [],
-  hasDonationAgreement: false,
-  hasMadeDiversificationPlan: false,
-  vegetarianFrequency: null,
-  vegetarianMenuType: null,
-  cookingFoodContainersSubstituted: false,
-  serviceFoodContainersSubstituted: false,
-  waterBottlesSubstituted: false,
-  disposableUtensilsSubstituted: false,
-  communicationSupports: [],
-  communicationSupportLink: null,
-  communicateOnFoodPlan: false,
-};
-
-function defaultFlatDiagnosticWithYear(diagnostic, year) {
-  let diagnosticCopy = JSON.parse(JSON.stringify(diagnostic));
-  diagnosticCopy.year = year;
-  return diagnosticCopy;
+const defaultDiagnostic = function(year) {
+  return {
+    year,
+    valueBio: null,
+    valueFairTrade: null,
+    valueSustainable: null,
+    valueTotal: null,
+    hasMadeWasteDiagnostic: false,
+    hasMadeWastePlan: false,
+    wasteActions: [],
+    hasDonationAgreement: false,
+    hasMadeDiversificationPlan: false,
+    vegetarianFrequency: null,
+    vegetarianMenuType: null,
+    cookingFoodContainersSubstituted: false,
+    serviceFoodContainersSubstituted: false,
+    waterBottlesSubstituted: false,
+    disposableUtensilsSubstituted: false,
+    communicationSupports: [],
+    communicationSupportLink: null,
+    communicateOnFoodPlan: false,
+  };
 }
 
 const defaultFlatDiagnostics = [
-  defaultFlatDiagnosticWithYear(defaultFlatDiagnostic, 2019),
-  defaultFlatDiagnosticWithYear(defaultFlatDiagnostic, 2020)
+  defaultDiagnostic(2019),
+  defaultDiagnostic(2020)
 ];
 
 async function getDiagnostics() {
-  let diagnostics, hasSavedResults;
+  let diagnostics;
 
   const jwt = localStorage.getItem('jwt');
+
   if(jwt) {
     const response = await fetch(`${process.env.VUE_APP_API_URL}/get-diagnostics-by-canteen`, {
       headers: {
@@ -51,28 +43,20 @@ async function getDiagnostics() {
         'Authorization': 'Bearer '+jwt
       }
     });
-    if(response.status === 200) {
-      diagnostics = await response.json();
-      hasSavedResults = !!diagnostics.latest;
-    }
-  }
 
-  if(!hasSavedResults) {
+    diagnostics = await response.json();
+  } else {
     const localDiagnostics = (getLocalDiagnostics() || defaultFlatDiagnostics).
       sort((earlierDiag, laterDiag) => laterDiag.year - earlierDiag.year);
+
     diagnostics = {
       latest: localDiagnostics[0],
       previous: localDiagnostics[1]
     }
   }
 
-  return {
-    diagnostics,
-    hasResults: hasSavedResults || !!localStorage.getItem(LOCAL_FLAT_KEY) || !!localStorage.getItem('diagnostics')
-  };
+  return diagnostics;
 }
-
-const LOCAL_FLAT_KEY = 'flatDiagnostics';
 
 // returns nothing if no local diagnostics
 function getLocalDiagnostics() {
@@ -144,7 +128,7 @@ function preprocessDiagnostics(diagnosticsArray) {
 }
 
 async function saveDiagnostic(diagnostic) {
-  const { diagnostics: diagnosticsObject } = await getDiagnostics();
+  const diagnosticsObject = await getDiagnostics();
   let diagnostics = [ diagnosticsObject.latest, diagnosticsObject.previous ];
   const idx = diagnostics.findIndex(d => d.year === diagnostic.year);
   // at the moment, the diagnostics are defaulted to guarantee a year match
@@ -161,16 +145,8 @@ async function saveDiagnosticsArray(diagnostics) {
   let isSaved = false;
   const jwt = localStorage.getItem('jwt');
   if(jwt) {
-    const response = await fetch(`${process.env.VUE_APP_API_URL}/save-diagnostics`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+jwt
-      },
-      body: JSON.stringify({
-        diagnostics
-      })
-    });
+    const response = await saveDiagnosticsOnServer(diagnostics);
+
     if(response.status === 201) {
       isSaved = true;
       deleteLocalDiagnostics();
@@ -182,27 +158,20 @@ async function saveDiagnosticsArray(diagnostics) {
   }
 }
 
-// doen't return default values if data doesn't exist
-async function getDiagnosticsForDashboard() {
-  const diagnosticInfo = await getDiagnostics();
-  if(diagnosticInfo.hasResults) {
-    return diagnosticInfo.diagnostics;
+function getDiagnosticsForDashboard() {
+  if (!!localStorage.getItem('jwt') || !!localStorage.getItem(LOCAL_FLAT_KEY) || !!localStorage.getItem('diagnostics')) {
+    return getDiagnostics();
   }
 }
 
-// returns default values if data doesn't exist
-async function getDiagnosticsForDiagnosticForm() {
-  const diagnosticInfo = await getDiagnostics();
-  return diagnosticInfo.diagnostics;
-}
-
-function getDiagnosticsForCanteenSummary(canteen) {
-  return canteen.diagnostics.latest;
+function getDiagnosticsForDiagnosticForm() {
+  return getDiagnostics();
 }
 
 async function getDiagnosticsForPoster() {
-  const diagnosticsInfo = await getDiagnostics();
-  return diagnosticsInfo.diagnostics.latest;
+  const diagnostics = await getDiagnostics();
+
+  return diagnostics.latest;
 }
 
 function deleteLocalDiagnostics() {
@@ -212,16 +181,12 @@ function deleteLocalDiagnostics() {
 }
 
 export {
-  keyMeasures,
-  findSubMeasure,
   saveDiagnostic,
   saveDiagnostics,
   getDiagnostics,
   getLocalDiagnostics,
   deleteLocalDiagnostics,
-  defaultFlatDiagnostics,
   getDiagnosticsForDashboard,
   getDiagnosticsForDiagnosticForm,
-  getDiagnosticsForCanteenSummary,
   getDiagnosticsForPoster,
 };

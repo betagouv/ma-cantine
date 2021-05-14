@@ -22,7 +22,7 @@
           <div class="actions">
             <KeyMeasureAction
               :isDone="latestDiagnostic.hasMadeWasteDiagnostic"
-              label="Réalisation d'un diagnostic sur le gaspillage alimenataire"
+              label="Réalisation d'un diagnostic sur le gaspillage alimentaire"
             />
             <KeyMeasureAction
               :isDone="latestDiagnostic.hasMadeWastePlan"
@@ -108,7 +108,7 @@
 </template>
 
 <script>
-  import { keyMeasures } from '@/data/KeyMeasures.js';
+  import keyMeasures from '@/data/key-measures.json';
   import wasteActions from '@/data/waste-actions.json';
   import communicationSupports from '@/data/communication-supports.json';
   import SummaryStatistics from '@/components/SummaryStatistics';

@@ -27,11 +27,11 @@
 
 <script>
 import sectors from "@/data/sector-tags";
+import { signUp } from "@/data/submit-actions.js";
 
 var DEFAULT_SECTOR = "scolaire";
 
 export default {
-  props: [ 'loginUrl', 'post' ],
   data() {
     return {
       user: {},
@@ -46,11 +46,7 @@ export default {
   },
   methods: {
     async submitSignUp() {
-      const response = await this.post(this.$api_url, 'sign-up', {
-        user: this.user,
-        canteen: this.canteen,
-        loginUrl: this.loginUrl
-      });
+      const response = await signUp(this.user, this.canteen);
 
       if(response.status === 200) {
         this.user = {};
