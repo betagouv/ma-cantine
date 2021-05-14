@@ -127,11 +127,12 @@ const routes = [
     }
   },
   {
+    path: '/connexion',
     name: 'ConnectPage',
     component: ConnectPage,
     children: [
       {
-        path: '/connexion',
+        path: '',
         name: 'LoginPage',
         component: LoginPage,
         meta: {
