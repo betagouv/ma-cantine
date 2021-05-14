@@ -13,7 +13,7 @@
 export default {
   data() {
     return {
-      loginUrl: `${process.env.VUE_APP_SITE_URL || "http://localhost:8080"}/connecter?token=`,
+      loginUrl: `${process.env.VUE_APP_SITE_URL || "http://localhost:8080"}/connexion?token=`,
     }
   },
   methods: {
