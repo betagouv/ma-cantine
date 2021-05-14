@@ -77,6 +77,9 @@ const routes = [
         path: '',
         name: 'CanteenInfo',
         component: CanteenInfo,
+        meta: {
+          title: "Cantine information - Publication",
+        },
       },
       {
         path: ':id',
@@ -88,6 +91,9 @@ const routes = [
         path: 'validation',
         name: 'SubmitPublicationPage',
         component: SubmitPublicationPage,
+        meta: {
+          title: "Validation - Publication",
+        },
       }
     ]
   },
