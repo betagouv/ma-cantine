@@ -27,6 +27,9 @@
         return this.routeProps;
       },
     },
+    created() {
+      document.title = `${this.measure.title} - Publication`;
+    },
     methods: {
       goToNextStep() {
         const currentMeasureIndex = keyMeasures.findIndex(measure => measure.id === this.id);
