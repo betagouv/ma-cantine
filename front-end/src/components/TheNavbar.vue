@@ -16,7 +16,7 @@
 
     <router-link :to="{ name: 'DiagnosticPage' }" class="navbar-item">Savoir où j'en suis</router-link>
     <router-link :to="{ name: 'KeyMeasuresHome' }" class="navbar-item">Les 5 mesures phares</router-link>
-    <router-link :to="{ name: 'CanteenInfo' }" v-if="jwt" class="navbar-item">Publier mes données</router-link>
+    <router-link :to="{ name: 'CanteenInfo' }" v-if="$jwt.token" class="navbar-item">Publier</router-link>
     <router-link :to="{ name: 'CanteensHome' }" class="navbar-item">Nos cantines</router-link>
 
     <div class="navbar-icons">
@@ -32,17 +32,6 @@
     </div>
   </nav>
 </template>
-
-<script>
-  export default {
-    name: 'TheNavbar',
-    data() {
-      return {
-        jwt: localStorage.getItem('jwt'),
-      };
-    },
-  }
-</script>
 
 <style scoped lang="scss">
   a {
