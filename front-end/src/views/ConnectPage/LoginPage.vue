@@ -49,6 +49,7 @@ export default {
         if(response.status === 200) {
           const json = await response.json();
           localStorage.setItem('jwt', json.jwt);
+          this.$jwt.token = json.jwt;
           deleteLocalDiagnostics();
           this.$router.replace({ name: 'KeyMeasuresHome' });
         } else {
