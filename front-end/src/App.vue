@@ -73,6 +73,12 @@ export default {
     bottom: 10px;
   }
 
+  @media (max-width: 1450px) {
+    #router-view {
+      margin-top: 150px;
+    }
+  }
+
   @media (max-width: 750px) {
     #router-view {
       margin-top: 0;
