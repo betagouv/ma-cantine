@@ -13,15 +13,23 @@
         </p>
       </div>
     </router-link>
+
     <router-link :to="{ name: 'DiagnosticPage' }" class="navbar-item">Savoir où j'en suis</router-link>
     <router-link :to="{ name: 'KeyMeasuresHome' }" class="navbar-item">Les 5 mesures phares</router-link>
     <router-link :to="{ name: 'CanteenInfo' }" v-if="jwt" class="navbar-item">Publier mes données</router-link>
-    <a class="navbar-item" href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/" target="_blank">
-      Ressources <i class="fas fa-external-link-alt"></i>
-    </a>
-    <router-link :to="{ name: 'AccountSummaryPage' }" class="navbar-item">
-      <span class="optional">Mon compte </span><i class="fas fa-door-open" title="Mon compte"></i>
-    </router-link>
+    <router-link :to="{ name: 'CanteensHome' }" class="navbar-item">Nos cantines</router-link>
+
+    <div class="navbar-icons">
+      <router-link :to="{ name: 'BlogsHome' }" class="navbar-icon">
+        <i class="fas fa-newspaper" title="Blog"></i>
+      </router-link>
+      <a href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/" target="_blank" class="navbar-icon">
+        <i class="fas fa-book" title="Ressources"></i>
+      </a>
+      <router-link :to="{ name: 'AccountSummaryPage' }" class="navbar-icon">
+        <i class="fas fa-user" title="Mon compte"></i>
+      </router-link>
+    </div>
   </nav>
 </template>
 
@@ -113,13 +121,23 @@
     background-color: $orange;
   }
 
-  @media (max-width: 1300px) {
-    .optional {
-      display: none;
-    }
+  .navbar-icons {
+    margin: auto 0;
+    display: flex;
+    width: 130px;
+    justify-content: space-between;
+    font-size: 25px;
   }
 
-  @media (max-width: 1000px) {
+  .navbar-icon {
+    color: $grey;
+  }
+
+  .navbar-icon:hover {
+    color: $orange;
+  }
+
+  @media (max-width: 1200px) {
     .gov-logo {
       display: none;
     }
@@ -141,8 +159,8 @@
       padding: 3px;
     }
 
-    .optional {
-      display: inline;
+    .navbar-icons {
+      margin-top: 20px;
     }
   }
 </style>
