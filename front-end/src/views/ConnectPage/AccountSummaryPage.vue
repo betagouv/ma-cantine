@@ -39,6 +39,7 @@ export default {
     },
     logout() {
       localStorage.removeItem('jwt');
+      this.$jwt.token = null;
       this.$router.push({ name: 'LandingPage' });
     }
   }
