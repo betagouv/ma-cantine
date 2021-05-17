@@ -72,7 +72,7 @@
     align-items: center;
 
     .fa-clipboard-list {
-      color: $green;
+      color: $blue;
       font-size: 12em;
     }
 
