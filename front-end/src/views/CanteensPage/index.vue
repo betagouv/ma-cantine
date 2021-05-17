@@ -3,7 +3,7 @@
     <div id="welcome-block">
       <h1>
         Découvrez les initiatives prises par nos cantines
-        pour une une alimentation saine, de qualité, et plus durable.
+        pour une alimentation saine, de qualité, et plus durable.
       </h1>
       <img src="@/assets/desktop.svg" alt="">
     </div>
