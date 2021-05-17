@@ -14,7 +14,7 @@
     <div id="about">
       <h2>Pourquoi je vois cette affiche ?</h2>
       <p>
-        À partir du 1er janvier 2020, les gestionnaires de restaurant collectif doivent informer les convives une fois par an de la part des produits de qualité et durables entrant dans la composition des repas servis
+        Depuis le 1er janvier 2020, les gestionnaires de restaurant collectif doivent informer les convives une fois par an de la part des produits de qualité et durables entrant dans la composition des repas servis
         ainsi des démarches entreprises pour développer des produits issus du commerce équitable. Ces informations sont fonction de la valeur totale des achats réalisés sur l'année.
       </p>
       <p>
