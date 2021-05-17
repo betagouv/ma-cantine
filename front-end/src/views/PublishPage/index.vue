@@ -59,8 +59,9 @@
     max-width: 850px;
     margin: 30px auto;
     padding: 50px;
-    border-radius: 2em;
-    background-color: $dark-white;
+    border: dotted 1px $yellow;
+    border-radius: 4px;
+    background-color: $light-yellow;
   }
 
   #steps-nav {

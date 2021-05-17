@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="quality-measure">
     <fieldset>
       <legend>En 2019, la valeur (en HT) de mes achats alimentaires...</legend>
       <BaseInput
@@ -112,5 +112,11 @@
 
   :deep(label) {
     font-weight: normal !important;
+  }
+
+  @media (max-width: 2100px) {
+    fieldset {
+      max-width: 20em;
+    }
   }
 </style>

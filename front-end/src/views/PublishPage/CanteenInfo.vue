@@ -13,6 +13,7 @@
         label="Nom de la cantine"
         inputId="canteen-name"
         type="text"
+        :required="true"
       />
 
       <BaseInput
@@ -20,6 +21,7 @@
         label="Ville / commune"
         inputId="canteen-city"
         type="text"
+        :required="true"
       />
 
       <BaseInput
@@ -28,6 +30,7 @@
         inputId="canteen-meal-count"
         type="number"
         min=0
+        :required="true"
       />
 
       <BaseSelect
@@ -85,22 +88,6 @@
     margin-top: 30px;
     display: flex;
     flex-direction: column;
-
-    .sector {
-      text-align: left;
-      width: 90%;
-      font-size: 24px;
-      margin-top: 1em;
-
-      select {
-        font-size: 20px;
-        padding: 5px;
-        border: none;
-        background-color: white;
-        border-radius: 5px;
-        box-shadow: 0 0 5px $light-grey;
-      }
-    }
 
     #submit {
       color: $white;
