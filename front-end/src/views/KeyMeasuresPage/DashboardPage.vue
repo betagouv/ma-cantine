@@ -6,7 +6,7 @@
 
     <p v-if="jwt"><i class="fas fa-check-square"></i> Vos données ont été sauvegardées</p>
     <router-link class="call-to-action" v-if="jwt" :to="{ name: 'CanteenInfo' }">Publier mes données</router-link>
-    <router-link class="call-to-action" v-if="!jwt" :to="{ name: 'ConnectPage' }">Sauvegarder mes données</router-link>
+    <router-link class="call-to-action" v-if="!jwt" :to="{ name: 'SignUpPage' }">Sauvegarder mes données</router-link>
   </div>
 </template>
 

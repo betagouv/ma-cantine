@@ -45,3 +45,11 @@
     }
   }
 </script>
+
+<style scoped lang="scss">
+  :deep(#quality-measure) {
+    fieldset {
+      max-width: 25em;
+    }
+  }
+</style>

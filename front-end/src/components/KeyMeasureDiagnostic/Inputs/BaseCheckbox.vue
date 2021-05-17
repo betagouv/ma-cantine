@@ -18,6 +18,7 @@
     margin: 10px 0;
 
     label {
+      text-align: left;
       font-weight: bold;
       max-width: 85%;
       cursor: pointer;

@@ -1,13 +1,13 @@
 <template>
   <div class="basic-input">
     <label :for="inputId">{{label}}</label>
-    <input :id="inputId" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" :type="type" :min="min">
+    <input :id="inputId" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" :type="type" :min="min" :required="required">
   </div>
 </template>
 
 <script>
   export default {
-    props: ['modelValue', 'label', 'inputId', 'type', 'min'],
+    props: ['modelValue', 'label', 'inputId', 'type', 'min', 'required'],
   }
 </script>
 
