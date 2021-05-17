@@ -48,6 +48,7 @@
       padding-left: 5px;
       max-width: 105px;
       cursor: pointer;
+      font-weight: normal !important;
     }
 
     input {

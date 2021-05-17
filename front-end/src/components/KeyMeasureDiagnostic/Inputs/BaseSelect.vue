@@ -18,22 +18,22 @@
 <style scoped lang="scss">
   .select-input {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     margin: 10px 0;
 
     label {
-      font-weight: bold;
-      max-width: 45%;
       text-align: left;
+      font-weight: bold;
     }
 
     select {
+      max-width: 20em;
+      margin-top: 10px;
       border: none;
-      background-color: $white;
-      text-align-last: right;
-      height: 60px;
-      width: 17%;
-      font-size: 1.5em;
+      font-size: 1.2em;
+      padding: 5px;
+      border: 1px solid $yellow;
+      border-radius: 4px;
     }
   }
 </style>

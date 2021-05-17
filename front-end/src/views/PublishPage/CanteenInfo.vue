@@ -2,6 +2,11 @@
   <div>
     <h2>Information sur ma cantine</h2>
 
+    <p>
+      Mieux vous connaître. <br> Dîtes-nous en un peu plus sur votre établissement.
+      Cela permettra d'identifier facilement votre cantine parmi celles qui ont fait le choix de publier.
+    </p>
+
     <form v-if="canteen" @submit.prevent="submit">
       <BaseInput
         v-model="canteen.name"
