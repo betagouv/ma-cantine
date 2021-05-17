@@ -2,6 +2,22 @@
   <div>
     <h2>Publication de mes données</h2>
 
+    <div id="preamble">
+      <i class="fas fa-clipboard-list"></i>
+      <div>
+        <p>
+          Vous avez rempli votre auto-diagnostic et les données ont bien été enregistrées. Vous pouvez à présent décider de rendre publiques ces données afin d'accroître la transparence pour vos convives, les élu.e.s de votre collectivité...
+        </p>
+        <p>
+          Le cas échéant, un encart dédié à votre établissement apparaitra sur la page <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>.
+          Seront mis en avant vos initiatives, indicateurs et démarches entreprises pour une alimentation plus saine et durable.
+          C'est aussi un bon moyen de répondre à
+            <router-link :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }">l'obligation réglementaire de télédéclaration</router-link>
+          des parts de produits bio et durables qui sera en vigueur dès fin 2022.
+        </p>
+      </div>
+    </div>
+
     <form v-if="canteen" @submit.prevent="submit">
       <BaseCheckbox
         v-model="makeDataPublic"
@@ -51,6 +67,21 @@
 </script>
 
 <style scoped lang="scss">
+  #preamble {
+    display: flex;
+    align-items: center;
+
+    .fa-clipboard-list {
+      color: $green;
+      font-size: 12em;
+    }
+
+    p {
+      margin-left: 2em;
+      text-align: left;
+    }
+  }
+
   form {
     margin-top: 30px;
     display: flex;
