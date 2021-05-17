@@ -51,6 +51,7 @@
   .checkbox {
     display: flex;
     justify-content: left;
+    align-items: center;
     padding: 5px 0;
 
     label {
