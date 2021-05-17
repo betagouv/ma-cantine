@@ -1,67 +1,75 @@
 <template>
-  <BaseInput
-    v-model="previousDiagnostic.valueTotal"
-    label="Je connais la valeur totale (en HT) de mes achats alimentaires en 2019"
-    inputId="value-total-2019"
-    type="number"
-    min=0
-  />
+  <div>
+    <fieldset>
+      <legend>En 2019, la valeur (en HT) de mes achats alimentaires...</legend>
+      <BaseInput
+        v-model="previousDiagnostic.valueTotal"
+        label="...totale"
+        inputId="value-total-2019"
+        type="number"
+        min=0
+      />
 
-  <BaseInput
-    v-model="previousDiagnostic.valueBio"
-    label="Je connais la valeur (en HT) des achats alimentaires de produits bio sur 2019"
-    inputId="value-bio-2019"
-    type="number"
-    min=0
-  />
+      <BaseInput
+        v-model="previousDiagnostic.valueBio"
+        label="...de produits bio"
+        inputId="value-bio-2019"
+        type="number"
+        min=0
+      />
 
-  <BaseInput
-    v-model="previousDiagnostic.valueSustainable"
-    label="Je connais la valeur (en HT) des achats alimentaires de produits durables (hors bio) sur 2019"
-    inputId="value-sustainable-2019"
-    type="number"
-    min=0
-  />
+      <BaseInput
+        v-model="previousDiagnostic.valueSustainable"
+        label="...de produits durables (hors bio)"
+        inputId="value-sustainable-2019"
+        type="number"
+        min=0
+      />
 
-  <BaseInput
-    v-model="previousDiagnostic.valueFairTrade"
-    label="Je connais la valeur (en HT) des achats alimentaires de produits issus du commerce équitable sur 2019"
-    inputId="value-fair-trade-2019"
-    type="number"
-    min=0
-  />
+      <BaseInput
+        v-model="previousDiagnostic.valueFairTrade"
+        label="...de produits issus du commerce équitable"
+        inputId="value-fair-trade-2019"
+        type="number"
+        min=0
+      />
+    </fieldset>
 
-  <BaseInput
-    v-model="latestDiagnostic.valueTotal"
-    label="Je connais la valeur totale (en HT) de mes achats alimentaires en 2020"
-    inputId="value-total-2020"
-    type="number"
-    min=0
-  />
+    <fieldset>
+      <legend>En 2020, la valeur (en HT) de mes achats alimentaires...</legend>
+      <BaseInput
+        v-model="latestDiagnostic.valueTotal"
+        label="...totale"
+        inputId="value-total-2020"
+        type="number"
+        min=0
+      />
 
-  <BaseInput
-    v-model="latestDiagnostic.valueBio"
-    label="Je connais la valeur (en HT) des achats alimentaires de produits bio sur 2020"
-    inputId="value-bio-2020"
-    type="number"
-    min=0
-  />
+      <BaseInput
+        v-model="latestDiagnostic.valueBio"
+        label="...de produits bio"
+        inputId="value-bio-2020"
+        type="number"
+        min=0
+      />
 
-  <BaseInput
-    v-model="latestDiagnostic.valueSustainable"
-    label="Je connais la valeur (en HT) des achats alimentaires de produits durables (hors bio) sur 2020"
-    inputId="value-sustainable-2020"
-    type="number"
-    min=0
-  />
+      <BaseInput
+        v-model="latestDiagnostic.valueSustainable"
+        label="...de produits durables (hors bio)"
+        inputId="value-sustainable-2020"
+        type="number"
+        min=0
+      />
 
-  <BaseInput
-    v-model="latestDiagnostic.valueFairTrade"
-    label="Je connais la valeur (en HT) des achats alimentaires de produits issus du commerce équitable sur 2020"
-    inputId="value-fair-trade-2020"
-    type="number"
-    min=0
-  />
+      <BaseInput
+        v-model="latestDiagnostic.valueFairTrade"
+        label="...de produits issus du commerce équitable"
+        inputId="value-fair-trade-2020"
+        type="number"
+        min=0
+      />
+    </fieldset>
+  </div>
 </template>
 
 <script>
@@ -82,3 +90,27 @@
     }
   }
 </script>
+
+<style scoped>
+  div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 10px;
+  }
+
+  legend {
+    text-align: left;
+    font-weight: bold;
+    padding: 0;
+  }
+
+  :deep(label) {
+    font-weight: normal !important;
+  }
+</style>
