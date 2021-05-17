@@ -46,3 +46,9 @@
     }
   }
 </script>
+
+<style scoped>
+  :deep(label) {
+    font-weight: bold;
+  }
+</style>

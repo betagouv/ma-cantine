@@ -20,7 +20,6 @@
     label {
       font-weight: bold;
       max-width: 85%;
-      text-align: left;
       cursor: pointer;
     }
 

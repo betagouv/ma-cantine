@@ -22,8 +22,9 @@
     margin: auto;
     padding: 50px;
     width: 45%;
-    border-radius: 2em;
-    background-color: $dark-white;
+    border: dotted 1px $yellow;
+    border-radius: 4px;
+    background-color: $light-yellow;
     overflow-y: auto;
     max-height: calc(100vh - 300px);
   }

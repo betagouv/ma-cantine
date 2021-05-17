@@ -14,22 +14,22 @@
 <style scoped lang="scss">
   .basic-input {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     margin: 10px 0;
 
     label {
-      font-weight: bold;
-      max-width: 45%;
       text-align: left;
+      font-weight: bold;
     }
 
     input {
+      max-width: 20em;
+      margin-top: 10px;
       border: none;
-      height: 50px;
-      width: 35%;
+      font-size: 1.2em;
       padding: 5px;
-      font-size: 1.5em;
-      text-align: right;
+      border: 1px solid $yellow;
+      border-radius: 4px;
     }
   }
 </style>
