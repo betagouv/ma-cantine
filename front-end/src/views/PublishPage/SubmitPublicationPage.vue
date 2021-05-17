@@ -5,7 +5,7 @@
     <form v-if="canteen" @submit.prevent="submit">
       <BaseCheckbox
         v-model="makeDataPublic"
-        label="J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles par tout le monde."
+        label="J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles."
         inputId="data-public"
       />
 
