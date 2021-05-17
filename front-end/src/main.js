@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { createApp, reactive } from 'vue';
 import VueMatomo from "vue-matomo";
 import App from './App.vue';
 import router from './router';
@@ -14,5 +14,9 @@ app.use(VueMatomo, {
 });
 
 app.config.globalProperties.$api_url = process.env.VUE_APP_API_URL || 'http://localhost:3000';
+
+app.config.globalProperties.$jwt = reactive({
+  token: localStorage.getItem('jwt')
+});
 
 app.use(router).mount('#app');
