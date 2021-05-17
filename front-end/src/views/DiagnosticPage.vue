@@ -5,7 +5,9 @@
     <div class="measure-diagnostic" v-for="measure in keyMeasures" :key="measure.id">
       <div class="measure-title">
         <h3><KeyMeasureTitle :measure="measure"/></h3>
-        <button @click="showDiagnosticModal(measure)">Je m'évalue !</button>
+        <button @click="showDiagnosticModal(measure)" :class="{ 'is-evaluated': measure.isEvaluated }">
+          Je m'évalue ! <i class="fas fa-check" v-if="measure.isEvaluated" title="évalué"></i>
+        </button>
       </div>
       <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" class="sub-measure">
         <fieldset class="measure-headline">
@@ -25,7 +27,7 @@
     <BaseModal v-if="measureDiagnosticModal" @closeModal="closeDiagnosticModal">
       <KeyMeasureDiagnostic
         :measure="measureDiagnosticModal"
-        @afterSave="closeDiagnosticModal"
+        @afterSave="setMeasureEvaluated"
         :originalDiagnostics="diagnostics"
       />
     </BaseModal>
@@ -69,6 +71,11 @@
       },
       closeDiagnosticModal() {
         this.measureDiagnosticModal = null;
+      },
+      setMeasureEvaluated() {
+        const measureIndex = this.keyMeasures.findIndex((measure => measure.id === this.measureDiagnosticModal.id));
+        this.keyMeasures[measureIndex].isEvaluated = true;
+        this.closeDiagnosticModal();
       },
     },
   }
@@ -117,6 +124,11 @@
       text-align: center;
       padding: 5px;
       cursor: pointer;
+    }
+
+    .is-evaluated {
+      color: $green;
+      border-color: $green;
     }
   }
 
