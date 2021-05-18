@@ -26,8 +26,8 @@ La porteuse du project ("intrapreneuse") est elle-même un agent du ministere de
 
 ## 4. Quelle articulation entre la plateforme gouvernementale "ma cantine" et les initiatives des réseaux AGORES et Restau'Co ? 
 
-Il n'y a pas de lien direct entre les outils "mon restaurant responsable" du réseau Restau'co et de la Fondation Nicolas Hulot pour la Nature et l’Homme et la démarche reposant sur le label ECOCERT en cuisine d’Agores et de l’association Un plus bio. Cependant, nous sommes en constante collaboration avec des acteurs afin d'améliorer et communiquer autour de la plateforme. 
-Comme l'équipe de "ma cantine", ces deux instances font partie du CNRC - conseil national pour la restauration collective. 
+Il n'y a pas de lien direct entre les outils "mon restaurant responsable" du réseau Restau'co et de la Fondation Nicolas Hulot pour la Nature et l’Homme et la démarche reposant sur le label ECOCERT en cuisine portée par Agores et l’association Un plus bio. Cependant, nous sommes en collaboration avec les representants de ces réseaux acteurs afin d'améliorer et de communiquer autour de la plateforme. 
+Comme l'équipe de "ma cantine", ces instances font partie du CNRC - conseil national pour la restauration collective. 
 
 
 ## 5. Que signifie "site en expérimentation" ?
