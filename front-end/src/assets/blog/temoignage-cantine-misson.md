@@ -1,5 +1,5 @@
 ---
-title: Témoignage Cantine de Misson : Impliquer les élèves et l’équipe pédagogique vers plus de bio, moins de gaspillage en les faisant participer activement
+title: Témoignage Cantine de Misson Impliquer les élèves et l’équipe pédagogique vers plus de bio, moins de gaspillage en les faisant participer activement
 date: 2021-05-27
 tagline: Rencontre avec Xavier PETIT-GASTALDI qui nous explique comment la cantine de Misson a atteint les objectifs de la loi EGAlim
 ---
