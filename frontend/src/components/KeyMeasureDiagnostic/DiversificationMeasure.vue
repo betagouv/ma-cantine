@@ -1,0 +1,71 @@
+<template>
+  <div>
+    <v-checkbox
+      hide-details="auto"
+      v-model="diagnostic.hasDiversificationPlan"
+      label="J'ai mis en place un plan pluriannuel de diversification des protéines"
+    />
+
+    <p class="text-left mt-6 mb-2">J'ai mis en place un menu végétarien dans ma cantine :</p>
+    <v-radio-group v-model="diagnostic.vegetarianWeeklyRecurrence">
+      <v-radio
+        class="ml-8"
+        v-for="item in frequency"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      ></v-radio>
+    </v-radio-group>
+
+    <p class="text-left mt-6 mb-2">Le menu végétarien proposé est :</p>
+    <v-radio-group v-model="diagnostic.vegetarianMenuType">
+      <v-radio
+        class="ml-8"
+        v-for="item in menuTypes"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      ></v-radio>
+    </v-radio-group>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      frequency: [
+        {
+          label: "Moins d'une fois par semaine",
+          value: "LOW",
+        },
+        {
+          label: "Une fois par semaine",
+          value: "MID",
+        },
+        {
+          label: "Plus d'une fois par semaine",
+          value: "HIGH",
+        },
+      ],
+      menuTypes: [
+        {
+          label: "Un menu végétarien unique",
+          value: "UNIQUE",
+        },
+        {
+          label: "Plusieurs menus végétariens alternatifs",
+          value: "SEVERAL",
+        },
+        {
+          label: "Un menu végétarien alternatif à d'autres menus non-végétariens",
+          value: "ALTERNATIVES",
+        },
+      ],
+    }
+  },
+  props: {
+    diagnostic: Object,
+  },
+}
+</script>

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Renvoyer email d'activation de compte{% endblock %}
+{% load static %}
+
+{% block content %}
+    <h2><img src="{% static 'images/logo_transparent.png' %}" class="auth_logo" /></h2>
+
+    <p>Si vous n'avez pas reçu l'email de confirmation, remplissez-le ci-dessous et nous l'enverrons à nouveau.</p>
+
+    <form role="form" method="post">
+        {% csrf_token %}
+        <div class="control-group">
+            <label class="control-label" for="username">Votre nom d'utilisateur ou adresse email</label>
+            <input type="email" id="username" name="username">
+        </div>
+
+        <button type="submit">Renvoyer email de confirmation</button>
+    </form>
+{% endblock %}

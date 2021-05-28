@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}deconnexion{% endblock %}
+{% load static %}
+
+{% block content %}
+    <h2><img src="{% static 'images/logo_transparent.png' %}" class="auth_logo" /></h2>
+
+    <p>
+        Vous êtes déconnecté
+    </p>
+
+    <hr />
+    <button>M'identifier</button>
+    <button>Créer mon compte</button>
+{% endblock %}

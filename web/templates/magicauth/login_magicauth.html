@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}s'indentifier{% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <h2><img src="{% static 'images/logo_transparent.png' %}" class="auth_logo" /></h2>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <div class="error-container">
+                {{ error }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form role="form" method="post">
+        {% csrf_token %}
+
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}" />
+        {% endif %}
+
+        <div class="control-group">
+            <label class="control-label" for="{{form.email.id_for_label}}">Votre adresse email</label>
+            {{form.email}}
+            {% if form.email.errors %}
+                {% for error in form.email.errors %}
+                    <div class="inline-error-container">
+                        {{ error | safe }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit">Recevoir un email de connexion</button>
+            </div>
+        </div>
+    </form>
+    <hr />
+    <p style="font-size: 0.85em; margin-top: 20px;"><a href="{% url 'login' %}">Me connecter avec mon mot de passe</a></p>
+    <p style="font-size: 0.85em; margin-top: 20px;"><a href="{% url 'register' %}">Créer mon compte</a></p>
+    <p style="font-size: 0.85em; margin-top: 20px;"><a href="{% url 'password_reset' %}">J'ai perdu mon mot de passe</a></p>
+{% endblock %}

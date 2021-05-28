@@ -1,0 +1,30 @@
+{
+    "spellright.language": [
+        "fr_FR (modern)"
+    ],
+    "spellright.documentTypes": [
+        "latex",
+        "plaintext",
+        "markdown"
+    ],
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+        "--load-plugins=pylint_django",
+        "--rcfile",
+        "${workspaceRoot}/.pylintrc"
+    ],
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.wrappingIndent": "indent",
+        "editor.tabSize": 2,
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.wrappingIndent": "indent",
+        "editor.tabSize": 2,
+    },
+    "prettier.enable": true,
+    "prettier.prettierPath": "./frontend/node_modules/prettier",
+    "prettier.configPath": "./frontend/.prettierrc",
+    "files.eol": "\n"
+}
