@@ -1,0 +1,20 @@
+
+Cantine : {{ cantine }}
+
+
+Ville : {{ city }}
+
+
+Email : {{ email }}
+
+
+Téléphone : {{ phone }}
+
+
+Message : {{ message }}
+
+
+Measures :
+{% for measure in measures %}
+- {{ measure.short_title }} : {{ measure.status|default:"Non renseigné" }}
+{% endfor %}

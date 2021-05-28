@@ -1,0 +1,22 @@
+<p>Bonjour,</p>
+
+<p>Vous avez demandé vous connecter avec le site ma cantine. Pour completer votre demande, cliquez sur ce bouton :</p>
+
+<p style="margin: 30px 0px;">
+    <a
+    href="https://{{ site.domain }}{% url 'magicauth-wait' token.key %}?next={{ next_url|urlencode }}"
+    style="background: #139f43;padding: 10px 40px; border: none; border-radius: 3px; color: white; box-shadow: 1px 1px 2px 0px #333; cursor: pointer; text-decoration: none;">
+        Se connecter
+    </a>
+  </p>
+
+<p>Ce lien n'est valable que {{ TOKEN_DURATION_MINUTES }} minutes. Il est à usage unique</p>
+
+<p>En cas de difficulté, vous pouvez copier ce lien directement dans votre navigateur :</p>
+
+<p>https://{{ site.domain }}{% url 'magicauth-wait' token.key %}?next={{ next_url|urlencode }}</p>
+
+
+<p>Si vous n'êtes pas à l'origine de cette demande vous pouvez ignorer ce message.</p>
+
+<p>L'équipe Ma Cantine</p>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <p>
+            <b>
+                Cantine :
+            </b>
+            {{ cantine }}
+        </p>
+
+        <p>
+            <b>
+                Ville :
+            </b>
+            {{ city }}
+        </p>
+
+        <p>
+            <b>
+                Email :
+            </b>
+            {{ email }}
+        </p>
+
+        <p>
+            <b>
+                Téléphone :
+            </b>
+            {{ phone }}
+        </p>
+
+        <p>
+            <b>
+                Message :
+            </b>
+            {{ message }}
+        </p>
+
+        <p><b>Measures :</b></p>
+        {% for measure in measures %}
+            <p>
+                <b>
+                    {{ measure.short_title }} :
+                </b>
+                {{ measure.status|default:"Non renseigné" }}
+            </p>
+        {% endfor %}
+    </body>
+</html>

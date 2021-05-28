@@ -1,0 +1,18 @@
+{% load static %}
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ma Cantine EGALIM · {% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    </head>
+    <body>
+        <div id="wrapper">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <!-- Eventually add Analytics code here -->
+
+    </boby>
+</html>

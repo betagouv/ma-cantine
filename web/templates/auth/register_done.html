@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}email de création de compte envoyé{% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <h2><img src="{% static 'images/logo_transparent.png' %}" class="auth_logo" /></h2>
+    <h3>Nous avons envoyé un email à votre adresse</h3>
+    <div style="text-align: left;">
+        <p>Cliquez sur le lien pour activer votre compte.</p>
+        <p>Vérifiez votre dossier spam, vos courriers indésirables, ou tout autre dossier pour voir si le message a été filtré par votre fournisseur de messagerie. </p>
+    </div>
+    <hr />
+    <form method="post" action="{% url 'registration_email' %}">
+        {% csrf_token %}
+        <input type="hidden" name="username" value="{{ username }}">
+        <button type="submit">Renvoyer email de confirmation</button>
+    </form>
+    <a href="/"><button style="margin-top: 10px;">Accèder à Ma Cantine</button></a>
+{% endblock %}

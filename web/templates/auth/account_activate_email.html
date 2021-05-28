@@ -1,0 +1,20 @@
+<p>Bonjour,</p>
+
+<p>Merci d'avoir créé un compte Ma Cantine. Pour l'activer, il suffit de cliquer sur ce bouton :</p>
+
+<p style="margin: 30px 0px;">
+    <a
+    href="{{ protocol}}://{{ domain }}{% url 'activate' uidb64=uid token=token %}"
+    style="background: #139f43;padding: 10px 40px; border: none; border-radius: 3px; color: white; box-shadow: 1px 1px 2px 0px #333; cursor: pointer; text-decoration: none;">
+        Activer mon compte
+    </a>
+  </p>
+
+<p>En cas de difficultés, vous pouvez copier ce lien directement dans votre navigateur :</p>
+
+<p>{{ protocol}}://{{ domain }}{% url 'activate' uidb64=uid token=token %}</p>
+
+
+<p>Si vous n'êtes pas à l'origine de cette demande vous pouvez ignorer ce message.</p>
+
+<p>L'équipe Ma Cantine</p>

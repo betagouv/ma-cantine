@@ -1,0 +1,70 @@
+{% load static %}
+{% load render_bundle from webpack_loader %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <link rel="icon" type="image/png" href="{% static 'images/favicon-macantine.png' %}">
+
+    <title>ma-cantine.beta.gouv.fr</title>
+    <meta name="description" content="Pour une alimentatation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
+    <script type="text/javascript">
+        window.CSRF_TOKEN = "{{ csrf_token }}";
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="https://www.videoask.it/embed/embed.js"></script>
+    <style>
+        @font-face {
+            font-family: 'Marianne';
+            src: url({% static 'fonts/Marianne-Regular.woff2' %}) format('woff2'),
+                 url({% static 'fonts/Marianne-Regular.woff' %}) format('woff'),
+                 url({% static 'fonts/Marianne-Regular.ttf' %}) format('truetype');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Marianne';
+            src: url({% static 'fonts/Marianne-Medium.woff2' %}) format('woff2'),
+                 url({% static 'fonts/Marianne-Medium.woff' %}) format('woff');
+            font-weight: 500;
+        }
+        @font-face {
+            font-family: 'Marianne';
+            src: url({% static 'fonts/Marianne-Light.woff2' %}) format('woff2'),
+                 url({% static 'fonts/Marianne-Light.woff' %}) format('woff'),
+                 url({% static 'fonts/Marianne-Light.ttf' %}) format('truetype');
+            font-weight: 100 300;
+        }
+        @font-face {
+            font-family: 'Marianne';
+            src: url({% static 'fonts/Marianne-Bold.woff2' %}) format('woff2'),
+                 url({% static 'fonts/Marianne-Bold.woff' %}) format('woff'),
+                 url({% static 'fonts/Marianne-Bold.ttf' %}) format('truetype');
+            font-weight: 600 700;
+        }
+        @font-face {
+            font-family: 'Marianne';
+            src: url({% static 'fonts/Marianne-ExtraBold.woff2' %}) format('woff2'),
+                 url({% static 'fonts/Marianne-ExtraBold.woff' %}) format('woff'),
+                 url({% static 'fonts/Marianne-ExtraBold.ttf' %}) format('truetype');
+            font-weight: 800 900;
+        }
+    </style>
+</head>
+
+<body>
+    <noscript>
+        <strong>We're sorry but frontennd doesn't work properly without JavaScript enabled. Please enable it to
+            continue.</strong>
+    </noscript>
+    <div id="app">
+    </div>
+    {% render_bundle 'app' %}
+    <!-- built files will be auto injected -->
+</body>
+
+</html>

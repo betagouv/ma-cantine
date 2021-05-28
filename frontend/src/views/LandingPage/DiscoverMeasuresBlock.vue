@@ -1,0 +1,71 @@
+<template>
+  <div>
+    <v-row>
+      <v-spacer></v-spacer>
+      <v-col cols="12" sm="8">
+        <p class="text-h4 font-weight-black">Les mesures phares de la loi EGAlim en restauration collective</p>
+      </v-col>
+      <v-spacer></v-spacer>
+    </v-row>
+    <p class="text-left mt-8">
+      Découvrez les mesures, leurs échéances, le public cible ainsi que des ressources pour vous aider à atteindre leurs
+      objectifs.
+    </p>
+
+    <v-row class="justify-center mt-8">
+      <v-col cols="12" sm="4" v-for="measure in keyMeasures" :key="measure.id">
+        <v-card
+          hover
+          :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }"
+          class="fill-height d-flex flex-column"
+        >
+          <v-card-text class="pb-1 pt-6">
+            <i :class="`fas ${measure.faIcon} fa-lg mx-auto d-block`" v-if="measure.faIcon"></i>
+          </v-card-text>
+          <v-card-title class="text-body-1 font-weight-bold text-center">
+            {{ measure.title }}
+          </v-card-title>
+          <v-spacer></v-spacer>
+          <v-card-actions class="px-4 mr-4">
+            <v-spacer></v-spacer>
+            <p class="text-decoration-underline text-body-2 font-weight-medium primary--text">En savoir plus</p>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+  </div>
+</template>
+
+<script>
+import keyMeasures from "@/data/key-measures.json"
+
+export default {
+  data() {
+    return {
+      keyMeasures,
+    }
+  },
+}
+</script>
+
+<style scoped lang="scss">
+// .fa-apple-alt {
+//   color: $ma-cantine-red;
+// }
+
+// .fa-bullhorn {
+//   color: $ma-cantine-yellow;
+// }
+
+// .fa-hands {
+//   color: $ma-cantine-orange;
+// }
+
+// .fa-leaf {
+//   color: $ma-cantine-green;
+// }
+
+// .fa-wind {
+//   color: $ma-cantine-blue;
+// }
+</style>
