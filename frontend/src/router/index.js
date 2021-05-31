@@ -20,6 +20,7 @@ import BlogsPage from "@/views/BlogsPage"
 import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
 import StatsPage from "@/views/StatsPage"
+import NotFound from "@/views/NotFound"
 
 Vue.use(VueRouter)
 
@@ -154,6 +155,11 @@ const routes = [
     meta: {
       title: "Statistiques",
     },
+  },
+  {
+    path: "/:catchAll(.*)",
+    component: NotFound,
+    name: "NotFound",
   },
 ]
 
