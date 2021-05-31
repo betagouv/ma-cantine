@@ -6,7 +6,9 @@ const { NotFoundError } = require('../../infrastructure/errors');
 const canteenPayload = {
   name: "Test canteen",
   city: "Lyon",
-  sector: "school"
+  sector: "school",
+  siret: "01234567890123",
+  managementStyle: "direct"
 };
 
 describe('Canteen repository', () => {
@@ -22,6 +24,7 @@ describe('Canteen repository', () => {
       const canteens = await Canteen.findAll();
       expect(canteens.length).toBe(1);
       expect(createdCanteen.toJSON()).toStrictEqual(canteens[0].toJSON());
+      expect(createdCanteen.toJSON()).toMatchObject(canteenPayload);
     });
   });
 
