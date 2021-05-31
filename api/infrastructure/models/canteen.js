@@ -31,5 +31,5 @@ exports.Canteen = sequelize.define('canteen', {
   },
   mealCount: DataTypes.INTEGER,
   siret: DataTypes.STRING,
-  managementStyle: DataTypes.STRING,
+  managementType: DataTypes.STRING,
 });

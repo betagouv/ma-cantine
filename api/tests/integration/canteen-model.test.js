@@ -8,7 +8,7 @@ const canteenPayload = {
   city: "Lyon",
   sector: "school",
   siret: "01234567890123",
-  managementStyle: "direct"
+  managementType: "direct"
 };
 
 describe('Canteen repository', () => {
