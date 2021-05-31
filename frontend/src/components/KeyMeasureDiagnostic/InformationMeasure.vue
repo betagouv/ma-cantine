@@ -23,6 +23,7 @@
       :rules="[validators.isUrlOrEmpty]"
       solo
       v-model="diagnostic.communicationSupportUrl"
+      placeholder="https://"
       validate-on-blur
     ></v-text-field>
   </div>
