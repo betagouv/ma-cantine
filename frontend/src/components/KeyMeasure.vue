@@ -1,23 +1,42 @@
 <template>
-  <div class="measure-content">
-    <h1><KeyMeasureTitle :measure="measure" /></h1>
-    <div class="measure-details">
-      <KeyMeasureInfoCard v-if="measure.tags" :measure="measure" />
-      <div class="description-container">
+  <div class="text-left">
+    <KeyMeasureTitle :measure="measure" class="text-h5 text-sm-h4 font-weight-bold mb-8 mt-4" />
+
+    <v-row>
+      <v-col cols="12" sm="4" md="3">
+        <KeyMeasureInfoCard v-if="measure.tags" :measure="measure" />
+      </v-col>
+      <v-col>
         <KeyMeasureDescription :measure="measure" v-if="measure.description" />
-        <div v-for="subMeasure in measure.subMeasures" :key="subMeasure.id" :id="subMeasure.id">
-          <h2 class="measure-headline">{{ subMeasure.title }}</h2>
+        <div v-for="subMeasure in childSubMeasures" :key="subMeasure.id" :id="subMeasure.id">
+          <div class="text-body-1 font-weight-bold mt-6 mb-2">{{ subMeasure.title }}</div>
           <div class="measure-details">
             <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure" />
             <div>
               <KeyMeasureDescription :measure="subMeasure" />
-              <KeyMeasureResource :baseComponent="subMeasure.baseComponent" class="resource-block" />
+              <KeyMeasureResource :baseComponent="subMeasure.baseMeasureComponent" class="resource-block" />
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <KeyMeasureResource :baseComponent="measure.baseComponent" class="resource-block" />
+      </v-col>
+    </v-row>
+
+    <v-row v-for="subMeasure in independentSubMeasures" :key="subMeasure.id">
+      <v-col cols="12" v-if="subMeasure.title" class="text-body-1 font-weight-bold">
+        {{ subMeasure.title }}
+      </v-col>
+      <v-col cols="12" sm="4" md="3">
+        <KeyMeasureInfoCard :measure="subMeasure" />
+      </v-col>
+      <v-col>
+        <KeyMeasureDescription :measure="subMeasure" />
+        <KeyMeasureResource :baseComponent="subMeasure.baseMeasureComponent" class="resource-block" />
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <KeyMeasureResource :baseComponent="measure.baseMeasureComponent" class="resource-block" />
+    </v-row>
   </div>
 </template>
 
@@ -25,7 +44,6 @@
 import KeyMeasureDescription from "@/components/KeyMeasureDescription"
 import KeyMeasureInfoCard from "@/components/KeyMeasureInfoCard"
 import KeyMeasureTitle from "@/components/KeyMeasureTitle"
-import tags from "@/data/sector-tags.json"
 import KeyMeasureResource from "@/components/KeyMeasureResource"
 
 export default {
@@ -38,63 +56,13 @@ export default {
   props: {
     measure: Object,
   },
-  data() {
-    return {
-      tags,
-    }
+  computed: {
+    independentSubMeasures() {
+      return this.measure.subMeasures.filter((x) => !!x.tags && x.tags.length > 0)
+    },
+    childSubMeasures() {
+      return this.measure.subMeasures.filter((x) => !x.tags || x.tags.length === 0)
+    },
   },
 }
 </script>
-
-<style scoped lang="scss">
-.measure-content {
-  text-align: left;
-  margin: 2em;
-}
-
-h1 {
-  font-weight: bold;
-  font-size: 32px;
-  color: $ma-cantine-black;
-}
-
-.measure-details {
-  display: flex;
-  align-items: flex-start;
-}
-
-.description-container {
-  flex: 4;
-}
-
-.measure-headline {
-  font-weight: bold;
-  font-size: 24px;
-  color: $ma-cantine-green;
-  margin: 1em 0;
-  margin-right: 1em;
-}
-
-.resource-block {
-  font-size: 14px;
-}
-
-@media (max-width: 1000px) {
-  .measure-headline {
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 2em;
-  }
-}
-
-@media (max-width: 650px) {
-  .measure-content {
-    margin: 0.5em;
-  }
-
-  .measure-details {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-</style>
