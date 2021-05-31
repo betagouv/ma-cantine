@@ -15,13 +15,18 @@ const canteen = {
   city: "Lyon",
   sector: "school",
   mealCount: 150,
+  managementType: "conceded"
 };
 
 describe('Get prefilled publication', () => {
-  it('it returns the publication prefilled with diagnostics', async () => {
-    getCanteenById.mockReturnValue(canteen);
+
+  beforeAll(() => {
     getAllDiagnosticsByCanteen.mockReturnValue(['diag1', 'diag2']);
     build4YearDiagnostics.mockReturnValue({});
+  });
+
+  it('it returns the publication prefilled with diagnostics', async () => {
+    getCanteenById.mockReturnValue(canteen);
 
     const prefilledPublication = await getPrefilledPublication(3);
 
@@ -35,9 +40,17 @@ describe('Get prefilled publication', () => {
         sector: canteen.sector,
         mealCount: canteen.mealCount,
         siret: canteen.siret,
-        managementStyle: canteen.managementStyle,
+        managementType: canteen.managementType,
       },
       diagnostics: {}
     });
+  });
+
+  it('provides default values', async () => {
+    getCanteenById.mockReturnValue({ id: 3 });
+
+    const prefilledPublication = await getPrefilledPublication(3);
+
+    expect(prefilledPublication.canteen.managementType).toBe('direct');
   });
 });

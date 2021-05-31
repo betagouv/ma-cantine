@@ -1,7 +1,7 @@
 <template>
   <div class="select-input">
     <label :for="inputId">{{label}}</label>
-    <select :id="inputId" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)">
+    <select :id="inputId" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" :required="required">
       <option v-for="(option, key) in options" :key="key" :value="key">
         {{option}}
       </option>
@@ -11,7 +11,7 @@
 
 <script>
   export default {
-    props: ['modelValue', 'label', 'inputId', 'options'],
+    props: ['modelValue', 'label', 'inputId', 'options', 'required'],
   }
 </script>
 

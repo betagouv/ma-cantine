@@ -38,7 +38,7 @@ describe('Extend canteen infos /extend-canteen-infos', () => {
         sector: "school",
         mealCount: 150,
         siret: "01234567890123",
-        managementStyle: "direct",
+        managementType: "direct",
       }
     });
 
@@ -52,7 +52,7 @@ describe('Extend canteen infos /extend-canteen-infos', () => {
       sector: "school",
       mealCount: 150,
       siret: "01234567890123",
-      managementStyle: "direct",
+      managementType: "direct",
     })
   });
 

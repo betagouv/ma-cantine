@@ -13,7 +13,7 @@ exports.getPrefilledPublication = async function(canteenId) {
       sector: canteen.sector,
       mealCount: canteen.mealCount,
       siret: canteen.siret,
-      managementStyle: canteen.managementStyle,
+      managementType: canteen.managementType || 'direct',
     },
     diagnostics: build4YearDiagnostics(diagnostics),
   };

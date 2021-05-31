@@ -47,7 +47,7 @@ describe('Get prefilled publication endpoint /get-prefilled-publication', () => 
       sector: "school",
       mealCount: 150,
       siret: "01234567890123",
-      managementStyle: "direct",
+      managementType: "direct",
     });
 
     await saveDiagnosticsForCanteen(user.canteenId, [{
@@ -90,7 +90,7 @@ describe('Get prefilled publication endpoint /get-prefilled-publication', () => 
         sector: "school",
         mealCount: 150,
         siret: "01234567890123",
-        managementStyle: "direct",
+        managementType: "direct",
       },
       diagnostics: {
         latest: {

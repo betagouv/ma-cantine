@@ -47,10 +47,11 @@
       />
 
       <BaseSelect
-        v-model="canteen.managementStyle"
+        v-model="canteen.managementType"
         label="Mode de gestion"
         inputId="canteen-management-style"
         :options="{ 'direct': 'Directe', 'conceded': 'Concédée' }"
+        :required="true"
       />
 
       <input type="submit" id="submit" value="Valider">

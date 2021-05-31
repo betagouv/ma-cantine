@@ -7,7 +7,7 @@ module.exports = {
         queryInterface.addColumn('canteens', 'siret', {
           type: Sequelize.DataTypes.STRING,
         }, { transaction: t }),
-        queryInterface.addColumn('canteens', 'managementStyle', {
+        queryInterface.addColumn('canteens', 'managementType', {
           type: Sequelize.DataTypes.STRING,
         }, { transaction: t })
       ]);
@@ -18,7 +18,7 @@ module.exports = {
     return queryInterface.sequelize.transaction(t => {
       return Promise.all([
         queryInterface.removeColumn('canteens', 'siret', { transaction: t }),
-        queryInterface.removeColumn('canteens', 'managementStyle', { transaction: t })
+        queryInterface.removeColumn('canteens', 'managementType', { transaction: t })
       ]);
     });
   }
