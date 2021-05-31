@@ -137,7 +137,7 @@ async function saveDiagnostic(diagnostic) {
 }
 
 function saveDiagnostics(diagnosticsObject) {
-  return saveDiagnosticsArray([ diagnosticsObject.latest, diagnosticsObject.previous ]);
+  return saveDiagnosticsArray(Object.values(diagnosticsObject));
 }
 
 async function saveDiagnosticsArray(diagnostics) {

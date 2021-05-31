@@ -1,6 +1,6 @@
 const { getCanteenById } = require("../../infrastructure/repositories/canteen");
 const { getAllDiagnosticsByCanteen } = require("../../infrastructure/repositories/diagnostic");
-const { buildPreviousLatestDiagnostics } = require("../services/diagnostic-builder");
+const { build4YearDiagnostics } = require("../services/diagnostic-builder");
 
 exports.getPrefilledPublication = async function(canteenId) {
   const canteen = await getCanteenById(canteenId);
@@ -15,6 +15,6 @@ exports.getPrefilledPublication = async function(canteenId) {
       siret: canteen.siret,
       managementStyle: canteen.managementStyle,
     },
-    diagnostics: buildPreviousLatestDiagnostics(diagnostics),
+    diagnostics: build4YearDiagnostics(diagnostics),
   };
 };
