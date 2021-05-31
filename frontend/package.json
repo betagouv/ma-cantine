@@ -14,6 +14,7 @@
     "html2pdf.js": "^0.9.3",
     "vue": "^2.6.11",
     "vue-apexcharts": "^1.6.1",
+    "vue-matomo": "^4.0.0",
     "vue-router": "^3.5.1",
     "vuetify": "^2.4.0",
     "vuex": "^3.6.2"

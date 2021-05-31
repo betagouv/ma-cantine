@@ -66,6 +66,7 @@ L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), 
 - *CONTACT_EMAIL*  --  par ex. 'contact@example.com'
 - *SENDINBLUE_API_KEY*  --  La clé API de SendInBlue
 - *NEWSLETTER_SENDINBLUE_LIST_ID*  --  L'ID de la newsletter de SendInBlue
+- *MATOMO_ID* -- 162 pour la prod (peut-être laissé vide)
 
 ### Création des tables / Migration de la base de données
 
