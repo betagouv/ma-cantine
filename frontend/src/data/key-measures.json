@@ -1,6 +1,7 @@
 [
   {
     "baseComponent": "QualityMeasure",
+    "baseMeasureComponent": "QualityMeasure",
     "deadline": {
       "display": "\u00c0 partir du 1er janvier 2022",
       "earliestISO": "2022-01-01"
@@ -40,6 +41,7 @@
   },
   {
     "baseComponent": "WasteMeasure",
+    "baseMeasureComponent": "WasteMeasure",
     "deadline": {
       "display": "Janvier et octobre 2020",
       "earliestISO": "2020-01-01"
@@ -90,6 +92,7 @@
   },
   {
     "baseComponent": "DiversificationMeasure",
+    "baseMeasureComponent": "DiversificationMeasure",
     "faIcon": "fa-leaf",
     "id": "diversification-des-menus",
     "shortTitle": "Diversification des menus",
@@ -134,6 +137,7 @@
   },
   {
     "baseComponent": "NoPlasticMeasure",
+    "baseMeasureComponent": null,
     "faIcon": "fa-wind",
     "id": "interdiction-du-plastique",
     "shortTitle": "Interdiction du plastique",
@@ -194,12 +198,14 @@
   },
   {
     "baseComponent": "InformationMeasure",
+    "baseMeasureComponent": null,
     "faIcon": "fa-bullhorn",
     "id": "information-des-usagers",
     "shortTitle": "Information des convives",
     "subMeasures": [
       {
         "baseComponent": "InformDiners",
+        "baseMeasureComponent": "InformDiners",
         "deadline": {
           "display": "Depuis le 1er janvier 2020",
           "earliestISO": "2020-01-01"

@@ -64,7 +64,7 @@
   }
 
   .graphs {
-    border: 3px solid;
+    border: 1px solid;
     border-radius: 0.5em;
     padding: 0.2em;
   }
