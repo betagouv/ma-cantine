@@ -14,6 +14,8 @@ const register = async function(server) {
           city: Joi.string().required(),
           sector: Joi.string().required(),
           mealCount: Joi.number(),
+          siret: Joi.string(),
+          managementStyle: Joi.string()
         })
       }
     }
@@ -27,6 +29,8 @@ const extendCanteenInfosHandler = async function (request, h) {
     city: request.payload.city,
     sector: request.payload.sector,
     mealCount: request.payload.mealCount,
+    siret: request.payload.siret,
+    managementStyle: request.payload.managementStyle,
   };
 
   await extendCanteenInfos(canteen);

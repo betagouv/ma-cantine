@@ -34,6 +34,8 @@ describe('Get prefilled publication', () => {
         city: canteen.city,
         sector: canteen.sector,
         mealCount: canteen.mealCount,
+        siret: canteen.siret,
+        managementStyle: canteen.managementStyle,
       },
       diagnostics: {}
     });

@@ -37,6 +37,8 @@ describe('Extend canteen infos /extend-canteen-infos', () => {
         city: "Lyon",
         sector: "school",
         mealCount: 150,
+        siret: "01234567890123",
+        managementStyle: "direct",
       }
     });
 
@@ -49,6 +51,8 @@ describe('Extend canteen infos /extend-canteen-infos', () => {
       city: "Lyon",
       sector: "school",
       mealCount: 150,
+      siret: "01234567890123",
+      managementStyle: "direct",
     })
   });
 

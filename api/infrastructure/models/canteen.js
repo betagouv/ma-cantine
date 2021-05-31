@@ -30,4 +30,6 @@ exports.Canteen = sequelize.define('canteen', {
     defaultValue: false,
   },
   mealCount: DataTypes.INTEGER,
+  siret: DataTypes.STRING,
+  managementStyle: DataTypes.STRING,
 });
