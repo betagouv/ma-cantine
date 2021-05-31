@@ -88,18 +88,18 @@ const routes = [
         },
       },
       {
-        path: ":id",
-        name: "PublishMeasurePage",
-        component: PublishMeasurePage,
-        props: true,
-      },
-      {
         path: "validation",
         name: "SubmitPublicationPage",
         component: SubmitPublicationPage,
         meta: {
           title: "Validation - Publication",
         },
+      },
+      {
+        path: ":id",
+        name: "PublishMeasurePage",
+        component: PublishMeasurePage,
+        props: true,
       },
     ],
   },

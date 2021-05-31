@@ -26,5 +26,6 @@
     "prettier.enable": true,
     "prettier.prettierPath": "./frontend/node_modules/prettier",
     "prettier.configPath": "./frontend/.prettierrc",
-    "files.eol": "\n"
+    "files.eol": "\n",
+    "python.linting.enabled": true
 }
