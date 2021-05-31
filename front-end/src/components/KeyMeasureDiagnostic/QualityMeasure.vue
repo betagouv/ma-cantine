@@ -69,6 +69,76 @@
         min=0
       />
     </fieldset>
+
+    <fieldset v-if="provisionalYear1">
+      <legend>En 2021, la valeur (en HT) de mes achats alimentaires...</legend>
+      <BaseInput
+        v-model="provisionalYear1.valueTotal"
+        label="...totale"
+        inputId="value-total-2021"
+        type="number"
+        min=0
+      />
+
+      <BaseInput
+        v-model="provisionalYear1.valueBio"
+        label="...de produits bio"
+        inputId="value-bio-2021"
+        type="number"
+        min=0
+      />
+
+      <BaseInput
+        v-model="provisionalYear1.valueSustainable"
+        label="...de produits durables (hors bio)"
+        inputId="value-sustainable-2021"
+        type="number"
+        min=0
+      />
+
+      <BaseInput
+        v-model="provisionalYear1.valueFairTrade"
+        label="...de produits issus du commerce équitable"
+        inputId="value-fair-trade-2021"
+        type="number"
+        min=0
+      />
+    </fieldset>
+
+    <fieldset v-if="provisionalYear2">
+      <legend>En 2022, la valeur (en HT) de mes achats alimentaires...</legend>
+      <BaseInput
+        v-model="provisionalYear2.valueTotal"
+        label="...totale"
+        inputId="value-total-2022"
+        type="number"
+        min=0
+      />
+
+      <BaseInput
+        v-model="provisionalYear2.valueBio"
+        label="...de produits bio"
+        inputId="value-bio-2022"
+        type="number"
+        min=0
+      />
+
+      <BaseInput
+        v-model="provisionalYear2.valueSustainable"
+        label="...de produits durables (hors bio)"
+        inputId="value-sustainable-2022"
+        type="number"
+        min=0
+      />
+
+      <BaseInput
+        v-model="provisionalYear2.valueFairTrade"
+        label="...de produits issus du commerce équitable"
+        inputId="value-fair-trade-2022"
+        type="number"
+        min=0
+      />
+    </fieldset>
   </div>
 </template>
 
@@ -85,7 +155,9 @@
     data() {
       return {
         latestDiagnostic: this.modelValue.latest,
-        previousDiagnostic: this.modelValue.previous
+        previousDiagnostic: this.modelValue.previous,
+        provisionalYear1: this.modelValue.provisionalYear1,
+        provisionalYear2: this.modelValue.provisionalYear2,
       }
     }
   }

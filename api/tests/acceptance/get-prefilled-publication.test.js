@@ -7,6 +7,27 @@ const { saveDiagnosticsForCanteen } = require('../../infrastructure/repositories
 const { generateJwtForUser } = require('../../domain/services/authentication');
 const { sequelize } = require("../../infrastructure/postgres-database");
 
+const defaultDiagnostic = {
+  valueBio: null,
+  valueFairTrade: null,
+  valueSustainable: null,
+  valueTotal: null,
+  hasMadeWasteDiagnostic: false,
+  hasMadeWastePlan: false,
+  wasteActions: [],
+  hasDonationAgreement: false,
+  hasMadeDiversificationPlan: false,
+  vegetarianFrequency: null,
+  vegetarianMenuType: null,
+  cookingFoodContainersSubstituted: false,
+  serviceFoodContainersSubstituted: false,
+  waterBottlesSubstituted: false,
+  disposableUtensilsSubstituted: false,
+  communicationSupports: [],
+  communicationSupportLink: null,
+  communicateOnFoodPlan: false,
+};
+
 describe('Get prefilled publication endpoint /get-prefilled-publication', () => {
   let server, user;
 
@@ -93,27 +114,9 @@ describe('Get prefilled publication endpoint /get-prefilled-publication', () => 
           communicationSupportLink: "example.com",
           communicateOnFoodPlan: true
         },
-        previous: {
-          year: 2019,
-          valueBio: null,
-          valueFairTrade: null,
-          valueSustainable: null,
-          valueTotal: null,
-          hasMadeWasteDiagnostic: false,
-          hasMadeWastePlan: false,
-          wasteActions: [],
-          hasDonationAgreement: false,
-          hasMadeDiversificationPlan: false,
-          vegetarianFrequency: null,
-          vegetarianMenuType: null,
-          cookingFoodContainersSubstituted: false,
-          serviceFoodContainersSubstituted: false,
-          waterBottlesSubstituted: false,
-          disposableUtensilsSubstituted: false,
-          communicationSupports: [],
-          communicationSupportLink: null,
-          communicateOnFoodPlan: false,
-        }
+        previous: Object.assign({}, defaultDiagnostic, { year: 2019 }),
+        provisionalYear1: Object.assign({}, defaultDiagnostic, { year: 2021 }),
+        provisionalYear2: Object.assign({}, defaultDiagnostic, { year: 2022 })
       }
     });
   });
