@@ -40,6 +40,19 @@
         :options="sectors"
       />
 
+      <BaseInput
+        v-model="canteen.siret"
+        label="SIRET"
+        inputId="canteen-siret"
+      />
+
+      <BaseSelect
+        v-model="canteen.managementStyle"
+        label="Mode de gestion"
+        inputId="canteen-management-style"
+        :options="{ 'direct': 'Directe', 'conceded': 'Concédée' }"
+      />
+
       <input type="submit" id="submit" value="Valider">
     </form>
   </div>
