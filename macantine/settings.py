@@ -238,3 +238,6 @@ CKEDITOR_CONFIGS = {
         "removePlugins": ",".join(["image"]),
     }
 }
+
+# Analytics
+MATOMO_ID = os.getenv("MATOMO_ID", "")
