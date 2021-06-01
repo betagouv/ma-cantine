@@ -35,6 +35,20 @@
             item-value="id"
           ></v-select>
 
+          <p class="body-2 mt-6 mb-2">SIRET</p>
+          <v-text-field hide-details="auto" solo v-model="canteen.siret"></v-text-field>
+
+          <p class="body-2 mt-6 mb-2">Mode de gestion</p>
+          <v-radio-group v-model="canteen.managementType">
+            <v-radio
+              class="ml-8"
+              v-for="item in managementTypes"
+              :key="item.value"
+              :label="item.text"
+              :value="item.value"
+            ></v-radio>
+          </v-radio-group>
+
           <v-row class="mt-2 pr-4">
             <v-spacer></v-spacer>
             <v-btn x-large color="primary" @click="saveCanteen">Valider</v-btn>
@@ -55,6 +69,16 @@ export default {
   data() {
     return {
       formIsValid: true,
+      managementTypes: [
+        {
+          text: "Directe",
+          value: "direct",
+        },
+        {
+          text: "Concédée",
+          value: "conceded",
+        },
+      ],
     }
   },
   computed: {
@@ -81,6 +105,8 @@ export default {
         city: this.canteen.city,
         dailyMealCount: this.canteen.dailyMealCount,
         sectors: this.canteen.sectors,
+        siret: this.canteen.siret,
+        managementType: this.canteen.managementType,
       }
       this.$store
         .dispatch("updateCanteen", { id: this.canteen.id, payload })
