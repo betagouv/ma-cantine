@@ -1,1 +1,1 @@
-web: gunicorn macantine.wsgi
+web: bash bin/start.sh
