@@ -4,19 +4,13 @@ date: 2021-05-28
 tagline: Rencontre avec Luc Lignon, Directeur de la politique alimentaire de la Ville de Montpellier 
 ---
 
-Luc Lignon est directeur de la politique alimentaire de la Ville de Montpellier. La ville produit et distribue par jour en moyenne 14 600 repas; 22 000 familles sont impactées par la restauration scolaire. Travailler sur un plan alimentaire durable est donc un enjeu majeur de santé publique et d'intégration au territoire par le biais de l’alimentation. 
+Luc Lignon est directeur de la politique alimentaire de la Ville de Montpellier. La ville produit et distribue par jour en moyenne 15 400 repas; 22 000 familles sont impactées par la restauration scolaire. Travailler sur un plan alimentaire durable est donc un enjeu majeur de santé publique et d'intégration au territoire par le biais de l’alimentation. 
 
 
 ## Question : Vous avez connaissance des mesures et sous-mesures de la loi EGAlim qui incombent aux cantines scolaires; pouvez-vous nous en dire plus sur les actions mises en place afin de les atteindre dans la ville de Montpellier ?
 
-Luc : En 2016, la ville de Montpellier pose un vaste projet d’optimisation de sa restauration scolaire : promouvoir et développer une alimentation durable pour les enfants déjeunant dans les restaurants de la vie. Ce projet “Ma Cantine Autrement” - devenu “ma Cantine a tout bon” en 2018, est pensé comme un système interactif autour de 4 axes fondamentaux : 
-1. La politique d’achat
-2. La gestion de la production
-3. La distribution des repas
-4. La sensibilisation au développement durable
+Luc : En 2016, la ville de Montpellier pose un vaste projet d’optimisation de sa restauration scolaire : promouvoir et développer une alimentation durable pour les enfants déjeunant dans les restaurants de la vie. Ce projet “Ma Cantine Autrement” est est construit en approche systémique, chaque action en impacte une autre et entraîne l’ensemble du système. Nous avons une unité centrale en gestion directe donc nous sommes maîtres de notre politique d’achat, de la constitution de nos plans alimentaires, de nos recettes, de la qualité de notre production culinaire et de la façon dont nous constituons nos menus. Une des premières actions réalisées : un plan alimentaire durable. Dans celui-ci, nous avons intégré les menus végétariens, les menus alternatifs sans protéines animales, repas à 4 composantes ; le plan se décline en 4 cycles de menus de saison. L’approvisionnement local et de saison a donc été favorisé.
 
-Chaque action impacte une autre. Nous avons une unité centrale en gestion directe donc nous sommes maîtres de la constitution de nos plans alimentaires, de nos recettes, de notre production et de la façon dont nous constituons nos menus.
-Une des premières actions : un plan alimentaire durable. Dans celui-ci, nous avons intégré les menus végétariens, les menus alternatifs sans viande animale; le plan se décline en 4 cycles de saisons. L’approvisionnement local et de saison a donc été favorisé. 
 
 
 ## Q : Avez-vous des objectifs chiffrés à nous donner ?
@@ -24,13 +18,13 @@ Une des premières actions : un plan alimentaire durable. Dans celui-ci, nous av
 L : Bien sûr. Notre objectif est d’atteindre 100% de produits bio et/ou locaux d’ici 2026, la réduction des déchets, diversification des sources protéiniques pour limiter l’empreinte
 environnementale…
 Concernant le gaspillage alimentaire, nous avons 3 types de dons : une partie va à Saint-Vincent de Paul, une autre à la banque alimentaire et aux restos du cœur. 
-Sur l'année 2020, nous sommes à 20% de produits bio et 28% de produits durables (hors bio). Pas loin des 50% de la mesure EGAlim, on y est presque !…
+Sur l'année 2020, nous sommes à 20% de produits bio et 28% de produits durables (hors bio). A fin mai 2021 les objectifs EGALIM sont dépassés avec 51% de produits durables dont 28% de produits bio.
 
 Retrouvez les données de la cuisine centrale ici : https://ma-cantine.beta.gouv.fr/nos-cantines/montpellier
 
 ## Q : Faites-vous participer les différentes parties prenantes à des modules pédagogiques autour de l’alimentation ? 
 
-L : Tout à fait. Nous avons mis en place un livret pédagogique autour de l’alimentation durable. Cette sensibilisation s’appuie sur la mobilisation des animateurs de la direction Éducation autour d’animations interactives et de supports pédagogiques élaborés par notre partenaire Terre nourricière. Une manière ludique pour apprendre aux enfants l’importance de manger mieux et d’en comprendre les enjeux. 
+L : Tout à fait. Nous avons construit un programme complet de  sensibilisation à l’alimentation durable à destination des enfants et des professionnels de la ville. Composé d’animations, de spectacles et de formation et notamment le livret pédagogique. Cette sensibilisation s’appuie sur la mobilisation des animateurs de la direction Éducation autour d’animations interactives et de supports pédagogiques élaborés par notre partenaire Terre nourricière. Une manière ludique pour apprendre aux enfants l’importance de manger mieux et d’en comprendre les enjeux. 
 
 <img width="500" alt="Capture d’écran 2021-05-28 à 16 33 20" src="https://user-images.githubusercontent.com/36134318/120004786-795ddb00-bfd7-11eb-8418-d47b57ab81db.png">
 
@@ -45,9 +39,10 @@ De plus, nous avons  lancé la création d’un comité de suivi de la restaurat
 L : Nous sommes très actifs sur la communication que nous considérons comme un volet essentiel de transparence. Publier nos initiatives en termes d’approvisionnement, de réduction du gaspillage… sur votre plateforme ma-cantine.beta.gouv.fr participe de cet objectif de transparence des actions. 
 D’autres supports sont également envoyés par la ville aux parents, avec les menus du mois, la provenance des produits dans les recettes, des exemples de recettes complémentaires pour le soir chez eux… 
 
-<img width="490" alt="Capture d’écran 2021-05-28 à 16 46 06" src="https://user-images.githubusercontent.com/36134318/120004698-5d5a3980-bfd7-11eb-9a82-0df9f22196f6.png">
+<img width="395" alt="Capture d’écran 2021-06-01 à 17 15 33" src="https://user-images.githubusercontent.com/36134318/120347973-087f3180-c2fd-11eb-8b41-ca1d2fec3ff5.png">
 
-<img width="490" alt="Capture d’écran 2021-05-28 à 17 09 01" src="https://user-images.githubusercontent.com/36134318/120004759-6fd47300-bfd7-11eb-9ce0-0e5f37d1514d.png">
+<img width="389" alt="Capture d’écran 2021-06-01 à 17 15 42" src="https://user-images.githubusercontent.com/36134318/120347987-0b7a2200-c2fd-11eb-804b-9df18a8b824a.png">
+
 
 
 Retrouvez les données de la cuisine centrale ici : https://ma-cantine.beta.gouv.fr/nos-cantines/montpellier
