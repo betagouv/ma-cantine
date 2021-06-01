@@ -1,5 +1,5 @@
 
-Cantine : {{ cantine }}
+Cantine : {{ canteen }}
 
 
 Ville : {{ city }}

@@ -212,6 +212,12 @@ export default new Vuex.Store({
           throw e
         })
     },
+
+    subscribeBetaTester(context, payload) {
+      return fetch("/api/v1/subscribeBetaTester/", { method: "POST", headers, body: JSON.stringify(payload) }).then(
+        verifyResponse
+      )
+    },
   },
 
   getters: {
