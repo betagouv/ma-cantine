@@ -1,5 +1,0 @@
-{
-  "scripts": {
-    "start": "python manage.py buildnpm"
-  }
-}

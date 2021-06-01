@@ -47,7 +47,6 @@
 </template>
 
 <script>
-import { extendCanteenInfo } from "@/data/submit-actions.js"
 import validators from "@/validators"
 
 export default {
@@ -90,17 +89,6 @@ export default {
         .catch(() => {
           alert("Une erreur s'est produite. Merci de réesayer plus tard.")
         })
-    },
-    async submit() {
-      const response = await extendCanteenInfo(this.canteen)
-
-      if (response.status === 204) {
-        return this.$router.push({ name: "PublishMeasurePage", params: { id: "qualite-des-produits" } })
-      } else {
-        const error = await response.json()
-        console.log(error)
-        alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
-      }
     },
   },
 }
