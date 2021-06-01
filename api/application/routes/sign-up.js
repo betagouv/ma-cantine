@@ -23,7 +23,9 @@ const register = async function(server) {
           canteen: Joi.object({
             name: Joi.string().required(),
             city: Joi.string().required(),
-            sector: Joi.string().required()
+            sector: Joi.string().required(),
+            siret: Joi.string().allow('', null),
+            managementType: Joi.string().required()
           }),
           loginUrl: Joi.string().uri().required()
         })

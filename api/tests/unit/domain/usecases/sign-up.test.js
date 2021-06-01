@@ -9,7 +9,9 @@ const { createUserWithCanteen } = require('../../../../infrastructure/repositori
 const canteen = {
   name: "Test canteen",
   city: "Lyon",
-  sector: "school"
+  sector: "school",
+  siret: "TESTING123",
+  managementType: "conceded"
 };
 
 const user = {
