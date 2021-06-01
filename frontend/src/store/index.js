@@ -218,6 +218,12 @@ export default new Vuex.Store({
         verifyResponse
       )
     },
+
+    subscribeNewsletter(context, email) {
+      return fetch("/api/v1/subscribeNewsletter/", { method: "POST", headers, body: JSON.stringify({ email }) }).then(
+        verifyResponse
+      )
+    },
   },
 
   getters: {
