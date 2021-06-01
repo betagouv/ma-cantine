@@ -89,6 +89,10 @@ export default {
               to: { name: "BlogsHome" },
             },
             {
+              text: "Documentation",
+              url: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+            },
+            {
               text: "Statistiques",
               to: { name: "StatsPage" },
             },
