@@ -41,7 +41,7 @@ function unauthenticatedPost(route, body) {
   return post(route, body, false);
 }
 
-function post(route, body, withAuthentication) {
+async function post(route, body, withAuthentication) {
   let headers = {
     'Content-Type': 'application/json',
   };
@@ -49,11 +49,18 @@ function post(route, body, withAuthentication) {
     headers['Authorization'] = 'Bearer ' + localStorage.getItem('jwt');
   }
 
-  return fetch(`${api_url}/${route}`, {
+  const response = await fetch(`${api_url}/${route}`, {
     method: "POST",
     headers,
     body: JSON.stringify(body),
   });
+
+  if (response.status === 401) {
+    localStorage.removeItem('jwt');
+    location.reload();
+  }
+
+  return response;
 }
 
 export {

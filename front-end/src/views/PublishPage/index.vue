@@ -35,7 +35,7 @@
     },
     methods: {
       async fetchPrefilledPublication() {
-        const prefilledPublication = await fetch(`${this.$api_url}/get-prefilled-publication`, {
+        const response = await fetch(`${this.$api_url}/get-prefilled-publication`, {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -43,7 +43,12 @@
           },
         });
 
-        return this.prefilledPublication = await prefilledPublication.json();
+        if (response.status === 401) {
+          localStorage.removeItem('jwt');
+          location.reload();
+        }
+
+        return this.prefilledPublication = await response.json();
       }
     },
     computed: {

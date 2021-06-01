@@ -44,6 +44,11 @@ async function getDiagnostics() {
       }
     });
 
+    if (response.status === 401) {
+      localStorage.removeItem('jwt');
+      location.reload();
+    }
+
     diagnostics = await response.json();
   } else {
     const localDiagnostics = getLocalDiagnostics();
