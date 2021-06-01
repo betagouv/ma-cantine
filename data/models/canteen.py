@@ -31,7 +31,7 @@ class Canteen(models.Model):
         get_user_model(),
         blank=True,
         related_name="canteens",
-        verbose_name="Gestionaires",
+        verbose_name="gestionnaires",
     )
 
     daily_meal_count = models.IntegerField(
@@ -43,7 +43,7 @@ class Canteen(models.Model):
         choices=ManagementType.choices,
         null=True,
         blank=True,
-        verbose_name="Mode de gestion",
+        verbose_name="mode de gestion",
     )
 
     def __str__(self):

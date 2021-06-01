@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='canteen',
             name='management_type',
-            field=models.CharField(blank=True, choices=[('direct', 'Directe'), ('conceded', 'Concédée')], max_length=255, null=True, verbose_name='Mode de gestion'),
+            field=models.CharField(blank=True, choices=[('direct', 'Directe'), ('conceded', 'Concédée')], max_length=255, null=True, verbose_name='mode de gestion'),
         ),
         migrations.AddField(
             model_name='canteen',

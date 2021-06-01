@@ -80,7 +80,7 @@ input[type=text], input[type="password"], input[type="email"]{
 input[type=text]:focus, input[type="password"]:focus, input[type="email"]:focus{
     border: 2px solid #EB5B25;
 }
-.control-label {
+label {
     display: block;
     margin-bottom: 5px;
     font-size: 0.85em;
@@ -129,6 +129,12 @@ hr {
     background: #DDD;
     border: none;
     margin: 10px 0 18px 0;
+}
+ul {
+    padding-left: 0.5em;
+}
+li {
+    list-style: none;
 }
 label[for="id_cgu_approved"] {
     display: inline;
