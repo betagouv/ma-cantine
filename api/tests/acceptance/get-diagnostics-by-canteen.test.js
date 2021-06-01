@@ -64,6 +64,13 @@ describe('Get diagnostics by canteen endpoint /get-diagnostics-by-canteen', () =
         ],
         communicationSupportLink: "example.com",
         communicateOnFoodPlan: true
+      },
+      {
+        year: 2022,
+        valueBio: 1000,
+        valueFairTrade: 200,
+        valueSustainable: 222,
+        valueTotal: 20200
       }
     ]);
   });
@@ -130,6 +137,48 @@ describe('Get diagnostics by canteen endpoint /get-diagnostics-by-canteen', () =
       ],
       communicationSupportLink: "example.com",
       communicateOnFoodPlan: true
+    });
+    expect(response.result.provisionalYear1).toStrictEqual({
+      year: 2021,
+      valueBio: null,
+      valueFairTrade: null,
+      valueSustainable: null,
+      valueTotal: null,
+      communicateOnFoodPlan: false,
+      communicationSupportLink: null,
+      communicationSupports: [],
+      cookingFoodContainersSubstituted: false,
+      disposableUtensilsSubstituted: false,
+      hasDonationAgreement: false,
+      hasMadeDiversificationPlan: false,
+      hasMadeWasteDiagnostic: false,
+      hasMadeWastePlan: false,
+      serviceFoodContainersSubstituted: false,
+      vegetarianFrequency: null,
+      vegetarianMenuType: null,
+      wasteActions: [],
+      waterBottlesSubstituted: false
+    });
+    expect(response.result.provisionalYear2).toStrictEqual({
+      year: 2022,
+      valueBio: 1000,
+      valueFairTrade: 200,
+      valueSustainable: 222,
+      valueTotal: 20200,
+      communicateOnFoodPlan: null,
+      communicationSupportLink: null,
+      communicationSupports: null,
+      cookingFoodContainersSubstituted: null,
+      disposableUtensilsSubstituted: null,
+      hasDonationAgreement: null,
+      hasMadeDiversificationPlan: null,
+      hasMadeWasteDiagnostic: null,
+      hasMadeWastePlan: null,
+      serviceFoodContainersSubstituted: null,
+      vegetarianFrequency: null,
+      vegetarianMenuType: null,
+      wasteActions: null,
+      waterBottlesSubstituted: null
     });
   });
 

@@ -26,10 +26,10 @@ const defaultDiagnostic = function(year) {
   };
 }
 
-const defaultFlatDiagnostics = [
-  defaultDiagnostic(2019),
-  defaultDiagnostic(2020)
-];
+function findDiagnosticForYear(diagnostics, year) {
+  const diagnostic = (diagnostics || []).find(d => d.year === year);
+  return diagnostic || defaultDiagnostic(year);
+}
 
 async function getDiagnostics() {
   let diagnostics;
@@ -46,12 +46,13 @@ async function getDiagnostics() {
 
     diagnostics = await response.json();
   } else {
-    const localDiagnostics = (getLocalDiagnostics() || defaultFlatDiagnostics).
-      sort((earlierDiag, laterDiag) => laterDiag.year - earlierDiag.year);
+    const localDiagnostics = getLocalDiagnostics();
 
     diagnostics = {
-      latest: localDiagnostics[0],
-      previous: localDiagnostics[1]
+      latest: findDiagnosticForYear(localDiagnostics, 2020),
+      previous: findDiagnosticForYear(localDiagnostics, 2019),
+      provisionalYear1: findDiagnosticForYear(localDiagnostics, 2021),
+      provisionalYear2: findDiagnosticForYear(localDiagnostics, 2022),
     }
   }
 
@@ -129,7 +130,7 @@ function preprocessDiagnostics(diagnosticsArray) {
 
 async function saveDiagnostic(diagnostic) {
   const diagnosticsObject = await getDiagnostics();
-  let diagnostics = [ diagnosticsObject.latest, diagnosticsObject.previous ];
+  let diagnostics = Object.values(diagnosticsObject);
   const idx = diagnostics.findIndex(d => d.year === diagnostic.year);
   // at the moment, the diagnostics are defaulted to guarantee a year match
   diagnostics[idx] = diagnostic;
