@@ -22,31 +22,18 @@ const defaultDiagnostic = function(year) {
   }
 }
 
-function cleanDiagnostics(diagnostics) {
-  return diagnostics.map(diagnostic => {
-    delete diagnostic.createdAt;
-    delete diagnostic.updatedAt;
-    delete diagnostic.canteenId;
-    return diagnostic;
-  });
-}
-
 function findDiagnosticForYear(diagnostics, year) {
   const diagnostic = diagnostics.find(d => d.year === year);
   return diagnostic || defaultDiagnostic(year);
 }
 
-const buildPreviousLatestDiagnostics = function(diagnostics) {
-  const cleanedDiagnostics = cleanDiagnostics(diagnostics);
-
-  return {
-    latest: findDiagnosticForYear(cleanedDiagnostics, 2020),
-    previous: findDiagnosticForYear(cleanedDiagnostics, 2019),
-  }
-};
-
 const build4YearDiagnostics = function(diagnostics) {
-  const cleanedDiagnostics = cleanDiagnostics(diagnostics);
+  const cleanedDiagnostics = diagnostics.map(diagnostic => {
+    delete diagnostic.createdAt;
+    delete diagnostic.updatedAt;
+    delete diagnostic.canteenId;
+    return diagnostic;
+  });
 
   return {
     latest: findDiagnosticForYear(cleanedDiagnostics, 2020),
@@ -57,6 +44,5 @@ const build4YearDiagnostics = function(diagnostics) {
 };
 
 module.exports = {
-  buildPreviousLatestDiagnostics,
   build4YearDiagnostics
 }

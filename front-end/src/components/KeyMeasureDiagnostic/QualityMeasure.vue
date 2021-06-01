@@ -70,7 +70,7 @@
       />
     </fieldset>
 
-    <fieldset v-if="provisionalYear1">
+    <fieldset>
       <legend>En 2021, la valeur prévisionnelle (en HT) de mes achats alimentaires...</legend>
       <BaseInput
         v-model="provisionalYear1.valueTotal"
@@ -105,7 +105,7 @@
       />
     </fieldset>
 
-    <fieldset v-if="provisionalYear2">
+    <fieldset>
       <legend>En 2022, la valeur prévisionnelle (en HT) de mes achats alimentaires...</legend>
       <BaseInput
         v-model="provisionalYear2.valueTotal"
@@ -180,6 +180,7 @@
     text-align: left;
     font-weight: bold;
     padding: 0;
+    max-width: 25em;
   }
 
   :deep(label) {

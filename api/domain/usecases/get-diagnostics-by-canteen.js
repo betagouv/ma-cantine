@@ -1,8 +1,8 @@
 const { getAllDiagnosticsByCanteen } = require("../../infrastructure/repositories/diagnostic");
-const { buildPreviousLatestDiagnostics } = require("../services/diagnostic-builder");
+const { build4YearDiagnostics } = require("../services/diagnostic-builder");
 
 exports.getDiagnosticsByCanteen = async function(canteenId) {
   const diagnostics = await getAllDiagnosticsByCanteen(canteenId);
 
-  return buildPreviousLatestDiagnostics(diagnostics);
+  return build4YearDiagnostics(diagnostics);
 };
