@@ -1,2 +1,4 @@
 #!/bin/bash
-python manage.py buildnpm
+# python manage.py buildnpm
+
+print "pre-compile scalingo"

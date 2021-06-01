@@ -1,0 +1,6 @@
+// This is for Scalingo only
+{
+  "scripts": {
+    "start": "python manage.py buildnpm"
+  }
+}
