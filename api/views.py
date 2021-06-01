@@ -130,14 +130,14 @@ class BlogPostsView(ListAPIView):
 class SubscribeBetaTester(APIView):
     def post(self, request):
         try:
-            form = request.data.get("form")
+            data = request.data
             key_measures = request.data.get("key_measures", {})
             context = {
-                "canteen": form.get("school"),
-                "city": form.get("city"),
-                "email": form["email"],
-                "phone": form.get("phone", "Non renseigné"),
-                "message": form.get("message", "Non renseigné"),
+                "canteen": data.get("school"),
+                "city": data.get("city"),
+                "email": data["email"],
+                "phone": data.get("phone", "Non renseigné"),
+                "message": data.get("message", "Non renseigné"),
                 "measures": key_measures,
             }
             send_mail(
