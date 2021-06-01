@@ -24,7 +24,8 @@ describe('Sign up endpoint /sign-up', () => {
         canteen: {
           name: "Test canteen",
           city: "Lyon",
-          sector: "school"
+          sector: "school",
+          managementType: "direct"
         },
         loginUrl: "https://example.com/login?token="
       }

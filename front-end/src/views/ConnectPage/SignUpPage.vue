@@ -16,6 +16,12 @@
       <select id="sector" v-model="canteen.sector" required>
         <option v-for="(title, id) in sectors" :key="id" :value="id">{{ title }}</option>
       </select>
+      <label for="siret">SIRET (facultatif)</label>
+      <input id="siret" v-model="canteen.siret">
+      <label for="management-type">Mode de gestion</label>
+      <select id="management-type" v-model="canteen.managementType" required>
+        <option v-for="(title, id) in managementTypes" :key="id" :value="id">{{ title }}</option>
+      </select>
       <input type="submit" class="primary action" value="Inscrivez-moi">
     </form>
     <div id="alt-choice" class="container">
@@ -27,18 +33,22 @@
 
 <script>
 import sectors from "@/data/sector-tags";
+import managementTypes from "@/data/management-types";
 import { signUp } from "@/data/submit-actions.js";
 
 var DEFAULT_SECTOR = "scolaire";
+var DEFAULT_MANAGEMENT_TYPE = "direct";
 
 export default {
   data() {
     return {
       user: {},
       canteen: {
-        sector: DEFAULT_SECTOR
+        sector: DEFAULT_SECTOR,
+        managementType: DEFAULT_MANAGEMENT_TYPE
       },
-      sectors
+      sectors,
+      managementTypes
     }
   },
   created() {

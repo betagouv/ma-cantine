@@ -50,7 +50,7 @@
         v-model="canteen.managementType"
         label="Mode de gestion"
         inputId="canteen-management-style"
-        :options="{ 'direct': 'Directe', 'conceded': 'Concédée' }"
+        :options="managementTypes"
         :required="true"
       />
 
@@ -63,6 +63,7 @@
   import BaseInput from '@/components/KeyMeasureDiagnostic/Inputs/BaseInput';
   import BaseSelect from '@/components/KeyMeasureDiagnostic/Inputs/BaseSelect';
   import sectors from "@/data/sector-tags.json";
+  import managementTypes from "@/data/management-types.json";
   import { extendCanteenInfo } from "@/data/submit-actions.js";
 
   export default {
@@ -74,6 +75,7 @@
     data() {
       return {
         sectors,
+        managementTypes
       }
     },
     computed: {
