@@ -61,12 +61,17 @@ L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), 
 - *DEFAULT_FILE_STORAGE*  --  Le système de stockage de fichiers (par ex 'django.core.files.storage.FileSystemStorage')
 - *FORCE_HTTPS*  --  'False' si on développe en local, 'True' autrement
 - *SECURE*  --  'False' si on développe en local, 'True' autrement
-- *EMAIL_BACKEND*  --  par ex. 'django.core.mail.backends.console.EmailBackend'
+- *EMAIL_BACKEND*  --  par ex. 'django.core.mail.backends.console.EmailBackend'. Pour utiliser SendInBlue : 'anymail.backends.sendinblue.EmailBackend'
 - *DEFAULT_FROM_EMAIL*  --  par ex. 'ma-cantine@example.com'
 - *CONTACT_EMAIL*  --  par ex. 'contact@example.com'
 - *SENDINBLUE_API_KEY*  --  La clé API de SendInBlue
 - *NEWSLETTER_SENDINBLUE_LIST_ID*  --  L'ID de la newsletter de SendInBlue
 - *MATOMO_ID* -- 162 pour la prod (peut-être laissé vide)
+- *CELLAR_HOST* -- **Optionnel** - le host du service S3
+- *CELLAR_KEY* -- **Optionnel** - la clé du service S3
+- *CELLAR_SECRET* -- **Optionnel** - le secret du service S3
+- *CELLAR_BUCKET_NAME* -- **Optionnel** - le nom du bucket S3 à utiliser
+
 
 ### Création des tables / Migration de la base de données
 

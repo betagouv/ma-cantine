@@ -150,3 +150,6 @@ frontend/webpack-stats.json
 
 # Celery
 celerybeat-schedule.db
+
+# Hosting
+.clever.json

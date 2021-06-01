@@ -13,6 +13,9 @@ import os
 from pathlib import Path
 import dotenv  # noqa
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -30,6 +33,16 @@ AUTH_USER_MODEL = "data.User"
 AUTHENTICATION_BACKENDS = ["macantine.backends.EmailUsernameBackend"]
 ALLOWED_HOSTS = [x.strip() for x in os.getenv("ALLOWED_HOSTS").split(",")]
 
+
+# Sentry
+# No need making this one secret: https://forum.sentry.io/t/dsn-private-public/6297/3
+if not DEBUG:
+    sentry_sdk.init(
+        dsn="https://5bbe469c02b341c7ae1b85e280e28b15@o548798.ingest.sentry.io/5795837",
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=0,
+        send_default_pii=False
+    )
 
 # Application definition
 
@@ -138,9 +151,18 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Media and file storage
+AWS_ACCESS_KEY_ID = os.getenv('CELLAR_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('CELLAR_SECRET')
+AWS_S3_ENDPOINT_URL = os.getenv('CELLAR_HOST')
+AWS_STORAGE_BUCKET_NAME = os.getenv('CELLAR_BUCKET_NAME')
+AWS_LOCATION = 'media'
+AWS_QUERYSTRING_AUTH = False
+
 DEFAULT_FILE_STORAGE = os.getenv("DEFAULT_FILE_STORAGE")
 MEDIA_ROOT = os.getenv("MEDIA_ROOT", os.path.join(BASE_DIR, "media"))
 MEDIA_URL = "/media/"
+
 STATICFILES_STORAGE = os.getenv("STATICFILES_STORAGE")
 SESSION_COOKIE_AGE = 31536000
 
@@ -183,7 +205,7 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL")
 EMAIL_BACKEND = os.getenv(
     "EMAIL_BACKEND"
-)  # Set to "anymail.backends.sendinblue.EmailBackend" in .env for SendInBlue
+)
 ANYMAIL = {
     "SENDINBLUE_API_KEY": os.getenv("SENDINBLUE_API_KEY", ""),
 }

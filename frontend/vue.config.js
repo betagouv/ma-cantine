@@ -12,6 +12,10 @@ module.exports = {
     devtool: "source-map",
   },
 
+  css: {
+    sourceMap: true,
+  },
+
   chainWebpack: (config) => {
     config.optimization.splitChunks(false)
 
