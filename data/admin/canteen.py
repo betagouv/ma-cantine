@@ -9,6 +9,7 @@ class CanteenForm(forms.ModelForm):
         widgets = {
             "name": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "city": forms.Textarea(attrs={"cols": 35, "rows": 1}),
+            "siret": forms.Textarea(attrs={"cols": 35, "rows": 1}),
         }
 
 
@@ -26,6 +27,8 @@ class CanteenAdmin(admin.ModelAdmin):
         "data_is_public",
         "sectors",
         "managers",
+        "siret",
+        "management_type",
     )
     list_display = (
         "name",
@@ -33,12 +36,13 @@ class CanteenAdmin(admin.ModelAdmin):
         "published_state",
         "creation_date",
         "modification_date",
+        "management_type",
     )
     filter_vertical = (
         "sectors",
         "managers",
     )
-    list_filter = ("name", "city")
+    list_filter = ("name", "city", "management_type")
 
     def published_state(self, obj):
         return "✅ Publié" if obj.published else "🔒 Non publié"

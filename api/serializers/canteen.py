@@ -39,5 +39,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "published",
             "data_is_public",
             "daily_meal_count",
+            "siret",
+            "management_type",
             "diagnosis",
         )
