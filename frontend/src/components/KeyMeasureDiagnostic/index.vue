@@ -2,7 +2,7 @@
   <div>
     <h2 id="modal-title" class="mb-3" tabindex="-1"><KeyMeasureTitle :measure="measure" /></h2>
 
-    <v-form ref="form" v-model="formIsValid">
+    <v-form ref="form" v-model="formIsValid" @submit.prevent>
       <QualityMeasureDiagnostic
         v-if="measureDiagnosticComponentName === 'QualityMeasureDiagnostic'"
         :diagnostics="diagnosticsCopy"

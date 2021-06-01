@@ -12,7 +12,7 @@
           </v-card-subtitle>
 
           <v-card-text>
-            <v-form ref="form" class="d-flex" v-model="formIsValid">
+            <v-form ref="form" class="d-flex" v-model="formIsValid" @submit.prevent>
               <v-text-field
                 solo
                 v-model="email"
@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import { subscribeNewsletter } from "@/data/submit-actions.js"
 import validators from "@/validators"
 
 export default {
@@ -51,19 +50,20 @@ export default {
     },
   },
   methods: {
-    async subscribe() {
+    subscribe() {
       this.$refs.form.validate()
       if (!this.formIsValid) return
 
-      const response = await subscribeNewsletter(this.email)
-
-      if (response.status === 201 || response.status === 204) {
-        this.email = null
-        alert("Vous êtes bien inscrit.e à la newsletter de ma cantine.")
-      } else {
-        const error = await response.json()
-        console.log(error)
-      }
+      return this.$store
+        .dispatch("subscribeNewsletter", this.email)
+        .then(() => {
+          this.email = null
+          alert("Vous êtes bien inscrit.e à la newsletter de ma cantine.")
+        })
+        .catch((error) => {
+          alert("Une erreur est survenue, merci d'essayer plus tard")
+          console.log(error)
+        })
     },
   },
 }
