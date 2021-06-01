@@ -28,7 +28,7 @@ export default {
 .description-container {
   flex: 4;
 
-  ::v-deep(.fa-check-square) {
+  .fa-check-square {
     color: $ma-cantine-green;
   }
 }

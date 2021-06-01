@@ -49,7 +49,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep(#quality-measure) {
+#quality-measure {
   fieldset {
     max-width: 25em;
   }

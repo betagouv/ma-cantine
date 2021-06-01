@@ -17,18 +17,13 @@ class TestSubscription(APITestCase):
         data.
         """
         payload = {
-            "key_measures": [
-                {"short_title": "Qualité des produits", "status": "OK"},
-                {"short_title": "50 % de qualité et durables", "status": "Pending"},
-            ],
-            "form": {
-                "school": "Ma cantine",
-                "city": "Ma ville",
-                "email": "tester@exaple.com",
-                "phone": "099330033",
-                "message": "Hello world",
-            },
+            "school": "Ma cantine",
+            "city": "Ma ville",
+            "email": "tester@exaple.com",
+            "phone": "099330033",
+            "message": "Hello world",
         }
+
         response = self.client.post(
             reverse("subscribe_beta_tester"), payload, format="json"
         )
