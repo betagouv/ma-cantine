@@ -17,12 +17,12 @@
         <v-card
           hover
           :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }"
-          class="fill-height d-flex flex-column"
+          class="fill-height d-flex flex-column px-3"
         >
           <v-card-text class="pb-1 pt-6">
             <i :class="`fas ${measure.faIcon} fa-lg mx-auto d-block`" v-if="measure.faIcon"></i>
           </v-card-text>
-          <v-card-title class="text-body-1 font-weight-bold text-center">
+          <v-card-title class="text-body-1 text-left font-weight-bold">
             {{ measure.title }}
           </v-card-title>
           <v-spacer></v-spacer>
