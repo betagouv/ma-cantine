@@ -8,6 +8,10 @@ class Canteen(models.Model):
         verbose_name = "cantine"
         verbose_name_plural = "cantines"
 
+    class ManagementType(models.TextChoices):
+        DIRECT = "direct", "Directe"
+        CONCEDED = "conceded", "Concédée"
+
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
@@ -27,11 +31,19 @@ class Canteen(models.Model):
         get_user_model(),
         blank=True,
         related_name="canteens",
-        verbose_name="Gestionaires",
+        verbose_name="gestionnaires",
     )
 
     daily_meal_count = models.IntegerField(
         null=True, blank=True, verbose_name="repas par jour"
+    )
+    siret = models.TextField(null=True, blank=True)
+    management_type = models.CharField(
+        max_length=255,
+        choices=ManagementType.choices,
+        null=True,
+        blank=True,
+        verbose_name="mode de gestion",
     )
 
     def __str__(self):

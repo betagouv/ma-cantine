@@ -14,6 +14,12 @@ class RegisterForm(UserCreationForm):
     )
     email = forms.EmailField()
     canteen_name = forms.CharField(label="Nom de la cantine")
+    siret = forms.CharField(label="SIRET")
+    management_type = forms.ChoiceField(
+        label="Mode de gestion",
+        choices=(("direct", "Directe"), ("conceded", "Concédée")),
+        widget=forms.RadioSelect,
+    )
 
     class Meta:
         model = get_user_model()
@@ -22,6 +28,8 @@ class RegisterForm(UserCreationForm):
             "last_name",
             "email",
             "canteen_name",
+            "siret",
+            "management_type",
             "username",
             "password1",
             "password2",
@@ -36,6 +44,7 @@ class RegisterForm(UserCreationForm):
         self.fields["username"].widget.attrs.update({"placeholder": "agnes.dufresne"})
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com"})
         self.fields["canteen_name"].widget.attrs.update({"placeholder": "Ma cantine"})
+        self.fields["siret"].widget.attrs.update({"placeholder": "123 456 789 00001"})
         self.fields["password1"].widget.attrs.update(
             {"placeholder": "Entrez votre mot de passe"}
         )
@@ -71,7 +80,11 @@ class RegisterForm(UserCreationForm):
 
         if commit:
             user.save()
-            canteen = Canteen(name=self.cleaned_data.get("canteen_name"))
+            canteen = Canteen(
+                name=self.cleaned_data.get("canteen_name"),
+                siret=self.cleaned_data.get("siret"),
+                management_type=self.cleaned_data.get("management_type"),
+            )
             canteen.save()
             canteen.managers.add(user)
 
