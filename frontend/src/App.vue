@@ -41,15 +41,15 @@ export default {
     initialDataLoaded() {
       if (!this.$store.state.loggedUser) return
 
-      const hasDiagnostics = this.$store.state.userCanteens.some((x) => x.diagnosis && x.diagnosis.length > 0)
+      const hasDiagnostics = this.$store.state.userCanteens.some((x) => x.diagnostics && x.diagnostics.length > 0)
       if (hasDiagnostics) return
 
-      const localStorageDiagnostics = this.$store.getters.getLocalDiagnosis()
+      const localStorageDiagnostics = this.$store.getters.getLocalDiagnostics()
       const canteenId = this.$store.state.userCanteens[0].id
       Promise.all(
-        localStorageDiagnostics.map((payload) => this.$store.dispatch("createDiagnosis", { canteenId, payload }))
+        localStorageDiagnostics.map((payload) => this.$store.dispatch("createDiagnostic", { canteenId, payload }))
       )
-        .then(() => this.$store.dispatch("removeLocalStorageDiagnosis"))
+        .then(() => this.$store.dispatch("removeLocalStorageDiagnostics"))
         .catch((error) => console.error(error.message))
     },
   },

@@ -43,12 +43,12 @@ export default {
       return this.$store.state.userCanteens[0]
     },
     diagnostics() {
-      return this.userCanteen.diagnosis
+      return this.userCanteen.diagnostics
     },
     routeProps() {
       const canteenCopy = JSON.parse(JSON.stringify(this.userCanteen))
       const diagnosticsCopy = JSON.parse(JSON.stringify(this.diagnostics))
-      const diagnosis = {
+      const diagnostics = {
         previous:
           diagnosticsCopy.find((x) => x.year === 2019) ||
           Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
@@ -56,7 +56,7 @@ export default {
           diagnosticsCopy.find((x) => x.year === 2020) ||
           Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 }),
       }
-      return this.$route.name === "PublishMeasurePage" ? diagnosis : canteenCopy
+      return this.$route.name === "PublishMeasurePage" ? diagnostics : canteenCopy
     },
   },
 }

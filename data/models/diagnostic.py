@@ -4,10 +4,10 @@ from data.fields import ChoiceArrayField
 from .canteen import Canteen
 
 
-class Diagnosis(models.Model):
+class Diagnostic(models.Model):
     class Meta:
-        verbose_name = "diagnostique"
-        verbose_name_plural = "diagnostique"
+        verbose_name = "diagnostic"
+        verbose_name_plural = "diagnostics"
 
     class MenuFrequency(models.TextChoices):
         LOW = "LOW", "Moins d'une fois par semaine"

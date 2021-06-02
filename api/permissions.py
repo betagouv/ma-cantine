@@ -1,6 +1,6 @@
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
-from data.models import Canteen, Diagnosis
+from data.models import Canteen, Diagnostic
 
 
 class IsProfileOwner(permissions.BasePermission):
@@ -27,13 +27,13 @@ class IsCanteenManager(permissions.BasePermission):
         return obj in request.user.canteens.all()
 
 
-class CanEditDiagnosis(permissions.BasePermission):
+class CanEditDiagnostic(permissions.BasePermission):
     """
     This is for actions only permitted by managers of
-    the diagnosis' canteen
+    the diagnostic's canteen
     """
 
     def has_object_permission(self, request, view, obj):
-        if not isinstance(obj, Diagnosis):
+        if not isinstance(obj, Diagnostic):
             return False
         return request.user in obj.canteen.managers.all()

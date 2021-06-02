@@ -64,17 +64,18 @@ export default {
       return sectors.map((x) => x.name.toLowerCase()).join(", ")
     },
     initiativesForCanteen(canteen) {
-      if (!canteen.diagnosis || canteen.diagnosis.length === 0) return null
+      if (!canteen.diagnostics || canteen.diagnostics.length === 0) return null
 
-      const diagnosis = canteen.diagnosis.find((x) => x.year === 2020)
-      if (!diagnosis) return null
+      const diagnostic = canteen.diagnostics.find((x) => x.year === 2020)
+      if (!diagnostic) return null
 
       const initiatives = []
-      if (diagnosis.hasDonationAgreement) initiatives.push("Dons faits aux associations")
-      if (diagnosis.hasDiversificationPlan) initiatives.push("Mise en place d'un plan de diversification des protéines")
-      if (diagnosis.cookingPlasticSubstituted || diagnosis.servingPlasticSubstituted)
+      if (diagnostic.hasDonationAgreement) initiatives.push("Dons faits aux associations")
+      if (diagnostic.hasDiversificationPlan)
+        initiatives.push("Mise en place d'un plan de diversification des protéines")
+      if (diagnostic.cookingPlasticSubstituted || diagnostic.servingPlasticSubstituted)
         initiatives.push("Contenants en plastique remplacés")
-      if (diagnosis.communicatesOnFoodPlan) initiatives.push("Communique sur le plan alimentaire")
+      if (diagnostic.communicatesOnFoodPlan) initiatives.push("Communique sur le plan alimentaire")
       return initiatives
     },
   },

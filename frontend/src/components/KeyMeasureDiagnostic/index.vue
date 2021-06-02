@@ -63,7 +63,7 @@ export default {
 
         if (diagnostic.id) {
           saveOperations.push(
-            this.$store.dispatch("updateDiagnosis", {
+            this.$store.dispatch("updateDiagnostic", {
               canteenId: this.userCanteen.id,
               id: diagnostic.id,
               payload: diagnostic,
@@ -71,7 +71,7 @@ export default {
           )
         } else {
           saveOperations.push(
-            this.$store.dispatch("createDiagnosis", {
+            this.$store.dispatch("createDiagnostic", {
               canteenId: this.userCanteen.id,
               payload: diagnostic,
             })
@@ -82,8 +82,8 @@ export default {
       return Promise.all([saveOperations])
     },
     saveInLocalStorage() {
-      this.$store.dispatch("saveLocalStorageDiagnosis", this.diagnosticsCopy.latest)
-      this.$store.dispatch("saveLocalStorageDiagnosis", this.diagnosticsCopy.previous)
+      this.$store.dispatch("saveLocalStorageDiagnostic", this.diagnosticsCopy.latest)
+      this.$store.dispatch("saveLocalStorageDiagnostic", this.diagnosticsCopy.previous)
     },
     async submit() {
       await saveDiagnostics(this.diagnostics)

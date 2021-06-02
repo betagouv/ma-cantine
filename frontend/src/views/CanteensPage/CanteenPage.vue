@@ -43,12 +43,12 @@ export default {
       return this.$store.state.publishedCanteens.find((x) => x.id == this.id)
     },
     diagnostics() {
-      const diagnosis = this.canteen.diagnosis
+      const diagnostics = this.canteen.diagnostics
       return {
         previous:
-          diagnosis.find((x) => x.year === 2019) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
+          diagnostics.find((x) => x.year === 2019) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
         latest:
-          diagnosis.find((x) => x.year === 2020) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 }),
+          diagnostics.find((x) => x.year === 2020) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 }),
       }
     },
   },

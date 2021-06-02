@@ -1,19 +1,19 @@
 from rest_framework import serializers
 from data.models import Canteen, Sector
-from .diagnosis import DiagnosisSerializer
+from .diagnostic import DiagnosticSerializer
 
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
 
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    diagnosis = DiagnosisSerializer(many=True, read_only=True, source="diagnosis_set")
+    diagnostics = DiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
 
     class Meta:
         model = Canteen
         fields = (
             "id",
             "name",
-            "diagnosis",
+            "diagnostics",
             "city",
             "postal_code",
             "sectors",
@@ -26,7 +26,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Sector.objects.all()
     )
-    diagnosis = DiagnosisSerializer(many=True, read_only=True, source="diagnosis_set")
+    diagnostics = DiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
 
     class Meta:
         model = Canteen
@@ -41,5 +41,5 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "siret",
             "management_type",
-            "diagnosis",
+            "diagnostics",
         )
