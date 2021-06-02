@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from data.models import Diagnosis
+from data.models import Diagnostic
 
 
-class DiagnosisSerializer(serializers.ModelSerializer):
+class DiagnosticSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Diagnosis
+        model = Diagnostic
         read_only_fields = ("id",)
         fields = (
             "id",

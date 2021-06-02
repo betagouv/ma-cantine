@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 from data.models import Canteen
-from .diagnosis import DiagnosisInline
+from .diagnostic import DiagnosticInline
 
 
 class CanteenForm(forms.ModelForm):
@@ -17,7 +17,7 @@ class CanteenForm(forms.ModelForm):
 class CanteenAdmin(admin.ModelAdmin):
 
     form = CanteenForm
-    inlines = (DiagnosisInline,)
+    inlines = (DiagnosticInline,)
     fields = (
         "name",
         "city",

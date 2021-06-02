@@ -1,46 +1,46 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, DiagnosisFactory
-from data.models import Diagnosis
+from data.factories import CanteenFactory, DiagnosticFactory
+from data.models import Diagnostic
 from .utils import authenticate
 
 
-class TestDiagnosisApi(APITestCase):
-    def test_unauthenticated_create_diagnosis_call(self):
+class TestDiagnosticsApi(APITestCase):
+    def test_unauthenticated_create_diagnostic_call(self):
         """
         When calling this API unathenticated we expect a 403
         """
         canteen = CanteenFactory.create()
         response = self.client.post(
-            reverse("diagnosis_creation", kwargs={"canteen_pk": canteen.id}), {}
+            reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), {}
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_diagnosis_missing_canteen(self):
+    def test_diagnostic_missing_canteen(self):
         """
         When calling this API on an unexistent canteen we expect a 404
         """
         response = self.client.post(
-            reverse("diagnosis_creation", kwargs={"canteen_pk": 999}), {}
+            reverse("diagnostic_creation", kwargs={"canteen_pk": 999}), {}
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_diagnosis_forbidden_canteen(self):
+    def test_diagnostic_forbidden_canteen(self):
         """
         When calling this API on a canteen that the user doesn't manage,
         we expect a 403
         """
         canteen = CanteenFactory.create()
         response = self.client.post(
-            reverse("diagnosis_creation", kwargs={"canteen_pk": canteen.id}), {}
+            reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), {}
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_create_diagnosis(self):
+    def test_create_diagnostic(self):
         """
         When calling this API on a canteen that the user manages
         we expect a diagnostic to be created
@@ -70,52 +70,52 @@ class TestDiagnosisApi(APITestCase):
             "comunicates_on_food_plan": True,
         }
         response = self.client.post(
-            reverse("diagnosis_creation", kwargs={"canteen_pk": canteen.id}), payload
+            reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        diagnosis = Diagnosis.objects.get(canteen__id=canteen.id)
+        diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
 
-        self.assertEqual(diagnosis.year, 2020)
-        self.assertTrue(diagnosis.cooking_plastic_substituted)
-        self.assertFalse(diagnosis.has_donation_agreement)
-        self.assertIn("AWARENESS", diagnosis.waste_actions)
+        self.assertEqual(diagnostic.year, 2020)
+        self.assertTrue(diagnostic.cooking_plastic_substituted)
+        self.assertFalse(diagnostic.has_donation_agreement)
+        self.assertIn("AWARENESS", diagnostic.waste_actions)
 
     @authenticate
-    def test_edit_diagnosis_unauthorized(self):
+    def test_edit_diagnostic_unauthorized(self):
         """
-        The user can only edit diagnosis of canteens they
+        The user can only edit diagnostics of canteens they
         manage
         """
-        diagnosis = DiagnosisFactory.create()
+        diagnostic = DiagnosticFactory.create()
         payload = {"year": 2020}
 
         response = self.client.patch(
             reverse(
-                "diagnosis_edition",
-                kwargs={"canteen_pk": diagnosis.canteen.id, "pk": diagnosis.id},
+                "diagnostic_edition",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_edit_diagnosis(self):
+    def test_edit_diagnostic(self):
         """
-        The user can edit a diagnosis of a canteen they manage
+        The user can edit a diagnostic of a canteen they manage
         """
-        diagnosis = DiagnosisFactory.create(year=2019)
-        diagnosis.canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(year=2019)
+        diagnostic.canteen.managers.add(authenticate.user)
         payload = {"year": 2020}
 
         response = self.client.patch(
             reverse(
-                "diagnosis_edition",
-                kwargs={"canteen_pk": diagnosis.canteen.id, "pk": diagnosis.id},
+                "diagnostic_edition",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
         )
-        diagnosis.refresh_from_db()
+        diagnostic.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(diagnosis.year, 2020)
+        self.assertEqual(diagnostic.year, 2020)

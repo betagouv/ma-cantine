@@ -10,7 +10,7 @@ const headers = {
 }
 
 const LOCAL_STORAGE_VERSION = "1"
-const LOCAL_STORAGE_KEY = `diagnosis-local-${LOCAL_STORAGE_VERSION}`
+const LOCAL_STORAGE_KEY = `diagnostics-local-${LOCAL_STORAGE_VERSION}`
 
 const verifyResponse = function(response) {
   if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
@@ -56,14 +56,14 @@ export default new Vuex.Store({
       const canteenIndex = state.userCanteens.findIndex((x) => x.id === userCanteen.id)
       if (canteenIndex > -1) state.userCanteens.splice(canteenIndex, 1, userCanteen)
     },
-    ADD_DIAGNOSIS(state, { canteenId, diagnosis }) {
+    ADD_DIAGNOSTIC(state, { canteenId, diagnostic }) {
       const canteen = state.userCanteens.find((x) => x.id === canteenId)
-      canteen.diagnosis.push(diagnosis)
+      canteen.diagnostics.push(diagnostic)
     },
-    UPDATE_DIAGNOSIS(state, { canteenId, diagnosis }) {
+    UPDATE_DIAGNOSTIC(state, { canteenId, diagnostic }) {
       const canteen = state.userCanteens.find((x) => x.id === canteenId)
-      const diagnosisIndex = canteen.diagnosis.findIndex((x) => x.id === diagnosis.id)
-      if (diagnosisIndex > -1) canteen.diagnosis.splice(diagnosisIndex, 1, diagnosis)
+      const diagnosticIndex = canteen.diagnostics.findIndex((x) => x.id === diagnostic.id)
+      if (diagnosticIndex > -1) canteen.diagnostics.splice(diagnosticIndex, 1, diagnostic)
     },
     SET_BLOG_POSTS(state, blogPosts) {
       state.blogPosts = blogPosts
@@ -174,16 +174,16 @@ export default new Vuex.Store({
         })
     },
 
-    createDiagnosis(context, { canteenId, payload }) {
+    createDiagnostic(context, { canteenId, payload }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/canteens/${canteenId}/diagnosis/`, {
+      return fetch(`/api/v1/canteens/${canteenId}/diagnostics/`, {
         method: "POST",
         headers,
         body: JSON.stringify(payload),
       })
         .then(verifyResponse)
         .then((response) => {
-          context.commit("ADD_DIAGNOSIS", { canteenId, diagnosis: response })
+          context.commit("ADD_DIAGNOSTIC", { canteenId, diagnostic: response })
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
         })
         .catch((e) => {
@@ -192,16 +192,16 @@ export default new Vuex.Store({
         })
     },
 
-    updateDiagnosis(context, { canteenId, id, payload }) {
+    updateDiagnostic(context, { canteenId, id, payload }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/canteens/${canteenId}/diagnosis/${id}`, {
+      return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${id}`, {
         method: "PATCH",
         headers,
         body: JSON.stringify(payload),
       })
         .then(verifyResponse)
         .then((response) => {
-          context.commit("UPDATE_DIAGNOSIS", { canteenId, diagnosis: response })
+          context.commit("UPDATE_DIAGNOSTIC", { canteenId, diagnostic: response })
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
         })
         .catch((e) => {
@@ -210,13 +210,13 @@ export default new Vuex.Store({
         })
     },
 
-    saveLocalStorageDiagnosis(context, diagnosis) {
-      let savedDiagnosis = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || "{}")
-      savedDiagnosis[diagnosis.year] = diagnosis
-      return localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedDiagnosis))
+    saveLocalStorageDiagnostic(context, diagnostic) {
+      let savedDiagnostics = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || "{}")
+      savedDiagnostics[diagnostic.year] = diagnostic
+      return localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedDiagnostics))
     },
 
-    removeLocalStorageDiagnosis() {
+    removeLocalStorageDiagnostics() {
       return localStorage.removeItem(LOCAL_STORAGE_KEY)
     },
 
@@ -253,15 +253,15 @@ export default new Vuex.Store({
   },
 
   getters: {
-    getLocalDiagnosis: () => () => {
-      const savedDiagnosis = localStorage.getItem(LOCAL_STORAGE_KEY)
-      if (!savedDiagnosis) {
+    getLocalDiagnostics: () => () => {
+      const savedDiagnostics = localStorage.getItem(LOCAL_STORAGE_KEY)
+      if (!savedDiagnostics) {
         return [
           Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
           Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 }),
         ]
       }
-      return Object.values(JSON.parse(savedDiagnosis))
+      return Object.values(JSON.parse(savedDiagnostics))
     },
   },
 })

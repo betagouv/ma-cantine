@@ -107,19 +107,19 @@ export default {
   },
   computed: {
     diagnostics() {
-      let diagnosis = this.isAuthenticated ? this.serverDiagnostics : this.localDiagnostics
+      let diagnostics = this.isAuthenticated ? this.serverDiagnostics : this.localDiagnostics
       return {
         previous:
-          diagnosis.find((x) => x.year === 2019) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
+          diagnostics.find((x) => x.year === 2019) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
         latest:
-          diagnosis.find((x) => x.year === 2020) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 }),
+          diagnostics.find((x) => x.year === 2020) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 }),
       }
     },
     serverDiagnostics() {
-      return this.$store.state.userCanteens[0].diagnosis
+      return this.$store.state.userCanteens[0].diagnostics
     },
     localDiagnostics() {
-      return this.$store.getters.getLocalDiagnosis()
+      return this.$store.getters.getLocalDiagnostics()
     },
     isAuthenticated() {
       return !!this.$store.state.loggedUser

@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from api.views import LoggedUserView, SubscribeBetaTester, SubscribeNewsletter
 from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView
-from api.views import DiagnosisCreateView, UpdateUserCanteenView, DiagnosisUpdateView
+from api.views import DiagnosticCreateView, UpdateUserCanteenView, DiagnosticUpdateView
 from api.views import BlogPostsView, SectorListView
 
 
@@ -15,14 +15,14 @@ urlpatterns = {
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path("canteens/<int:pk>", UpdateUserCanteenView.as_view(), name="single_canteen"),
     path(
-        "canteens/<int:canteen_pk>/diagnosis/",
-        DiagnosisCreateView.as_view(),
-        name="diagnosis_creation",
+        "canteens/<int:canteen_pk>/diagnostics/",
+        DiagnosticCreateView.as_view(),
+        name="diagnostic_creation",
     ),
     path(
-        "canteens/<int:canteen_pk>/diagnosis/<int:pk>",
-        DiagnosisUpdateView.as_view(),
-        name="diagnosis_edition",
+        "canteens/<int:canteen_pk>/diagnostics/<int:pk>",
+        DiagnosticUpdateView.as_view(),
+        name="diagnostic_edition",
     ),
     path("sectors/", SectorListView.as_view(), name="sectors_list"),
     path("blogPosts/", BlogPostsView.as_view(), name="blog_posts_list"),

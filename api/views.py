@@ -1,4 +1,4 @@
-from data.models.diagnosis import Diagnosis
+from data.models.diagnostic import Diagnostic
 import json
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -12,14 +12,14 @@ from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.views import APIView
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound, PermissionDenied
-from api.serializers import LoggedUserSerializer, DiagnosisSerializer, SectorSerializer
+from api.serializers import LoggedUserSerializer, DiagnosticSerializer, SectorSerializer
 from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
     BlogPostSerializer,
 )
 from data.models import Canteen, BlogPost, Sector
-from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnosis
+from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
 import sib_api_v3_sdk
 
 
@@ -82,10 +82,10 @@ class UpdateUserCanteenView(UpdateAPIView):
         return self.partial_update(request, *args, **kwargs)
 
 
-class DiagnosisCreateView(CreateAPIView):
+class DiagnosticCreateView(CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    model = Diagnosis
-    serializer_class = DiagnosisSerializer
+    model = Diagnostic
+    serializer_class = DiagnosticSerializer
 
     def perform_create(self, serializer):
         try:
@@ -100,11 +100,11 @@ class DiagnosisCreateView(CreateAPIView):
             raise NotFound()
 
 
-class DiagnosisUpdateView(UpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated, CanEditDiagnosis]
-    model = Diagnosis
-    serializer_class = DiagnosisSerializer
-    queryset = Diagnosis.objects.all()
+class DiagnosticUpdateView(UpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated, CanEditDiagnostic]
+    model = Diagnostic
+    serializer_class = DiagnosticSerializer
+    queryset = Diagnostic.objects.all()
 
     def put(self, request, *args, **kwargs):
         return JsonResponse(

@@ -1,25 +1,25 @@
 from django import forms
 from django.contrib import admin
-from data.models import Diagnosis
+from data.models import Diagnostic
 
 
-class DiagnosisForm(forms.ModelForm):
+class DiagnosticForm(forms.ModelForm):
     class Meta:
         widgets = {}
 
 
-class DiagnosisInline(admin.TabularInline):
-    model = Diagnosis
+class DiagnosticInline(admin.TabularInline):
+    model = Diagnostic
     show_change_link = True
     fields = ("year", "creation_date")
     readonly_fields = fields
     extra = 0
 
 
-@admin.register(Diagnosis)
-class DiagnosisAdmin(admin.ModelAdmin):
+@admin.register(Diagnostic)
+class DiagnosticAdmin(admin.ModelAdmin):
 
-    form = DiagnosisForm
+    form = DiagnosticForm
     list_display = (
         "canteen_name",
         "year",
