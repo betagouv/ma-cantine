@@ -56,18 +56,30 @@ export default {
       }
     },
     saveInServer() {
-      return Promise.all([
-        this.$store.dispatch("updateDiagnosis", {
-          canteenId: this.userCanteen.id,
-          id: this.diagnosticsCopy.latest.id,
-          payload: this.diagnosticsCopy.latest,
-        }),
-        this.$store.dispatch("updateDiagnosis", {
-          canteenId: this.userCanteen.id,
-          id: this.diagnosticsCopy.previous.id,
-          payload: this.diagnosticsCopy.previous,
-        }),
-      ])
+      const saveOperations = []
+
+      for (let i = 0; i < Object.values(this.diagnosticsCopy).length; i++) {
+        const diagnostic = Object.values(this.diagnosticsCopy)[i]
+
+        if (diagnostic.id) {
+          saveOperations.push(
+            this.$store.dispatch("updateDiagnosis", {
+              canteenId: this.userCanteen.id,
+              id: diagnostic.id,
+              payload: diagnostic,
+            })
+          )
+        } else {
+          saveOperations.push(
+            this.$store.dispatch("createDiagnosis", {
+              canteenId: this.userCanteen.id,
+              payload: diagnostic,
+            })
+          )
+        }
+      }
+
+      return Promise.all([saveOperations])
     },
     saveInLocalStorage() {
       this.$store.dispatch("saveLocalStorageDiagnosis", this.diagnosticsCopy.latest)
