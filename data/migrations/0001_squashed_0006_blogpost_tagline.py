@@ -61,7 +61,7 @@ class Migration(migrations.Migration):
                 ('published', models.BooleanField(default=False, verbose_name='publié')),
                 ('data_is_public', models.BooleanField(default=False, verbose_name='données publiques')),
                 ('daily_meal_count', models.IntegerField(blank=True, null=True, verbose_name='repas par jour')),
-                ('managers', models.ManyToManyField(blank=True, related_name='canteens', to=settings.AUTH_USER_MODEL, verbose_name='Gestionaires')),
+                ('managers', models.ManyToManyField(blank=True, related_name='canteens', to=settings.AUTH_USER_MODEL, verbose_name='gestionnaires')),
             ],
             options={
                 'verbose_name': 'cantine',

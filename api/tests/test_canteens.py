@@ -88,10 +88,13 @@ class TestCanteenApi(APITestCase):
         """
         canteen = CanteenFactory.create(city="Paris")
         canteen.managers.add(authenticate.user)
-        payload = {"city": "Lyon"}
+        payload = {"city": "Lyon", "siret": "TESTING123", "management_type": "direct"}
         response = self.client.patch(
             reverse("single_canteen", kwargs={"pk": canteen.id}), payload
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.get(pk=canteen.id).city, "Lyon")
+        created_canteen = Canteen.objects.get(pk=canteen.id)
+        self.assertEqual(created_canteen.city, "Lyon")
+        self.assertEqual(created_canteen.siret, "TESTING123")
+        self.assertEqual(created_canteen.management_type, "direct")
