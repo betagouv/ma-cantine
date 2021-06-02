@@ -61,15 +61,7 @@ export default {
       bottomLinks: [
         {
           text: "Mentions légales",
-          to: { name: "LegalMentions" },
-        },
-        {
-          text: "Politique de confidentialité",
-          to: { name: "Confidentiality" },
-        },
-        {
-          text: "Conditions générales d'utilisation",
-          to: { name: "CGU" },
+          to: { name: "LegalNotices" },
         },
       ],
       columns: [

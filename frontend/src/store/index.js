@@ -56,6 +56,10 @@ export default new Vuex.Store({
       const canteenIndex = state.userCanteens.findIndex((x) => x.id === userCanteen.id)
       if (canteenIndex > -1) state.userCanteens.splice(canteenIndex, 1, userCanteen)
     },
+    ADD_DIAGNOSIS(state, { canteenId, diagnosis }) {
+      const canteen = state.userCanteens.find((x) => x.id === canteenId)
+      canteen.diagnosis.push(diagnosis)
+    },
     UPDATE_DIAGNOSIS(state, { canteenId, diagnosis }) {
       const canteen = state.userCanteens.find((x) => x.id === canteenId)
       const diagnosisIndex = canteen.diagnosis.findIndex((x) => x.id === diagnosis.id)
@@ -170,6 +174,24 @@ export default new Vuex.Store({
         })
     },
 
+    createDiagnosis(context, { canteenId, payload }) {
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/canteens/${canteenId}/diagnosis/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("ADD_DIAGNOSIS", { canteenId, diagnosis: response })
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
     updateDiagnosis(context, { canteenId, id, payload }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteens/${canteenId}/diagnosis/${id}`, {
@@ -191,7 +213,11 @@ export default new Vuex.Store({
     saveLocalStorageDiagnosis(context, diagnosis) {
       let savedDiagnosis = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || "{}")
       savedDiagnosis[diagnosis.year] = diagnosis
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedDiagnosis))
+      return localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedDiagnosis))
+    },
+
+    removeLocalStorageDiagnosis() {
+      return localStorage.removeItem(LOCAL_STORAGE_KEY)
     },
 
     publishCanteen(context, canteenId) {

@@ -38,6 +38,20 @@ export default {
       const suffix = "ma-cantine.beta.gouv.fr"
       document.title = to.meta.title ? to.meta.title + " - " + suffix : suffix
     },
+    initialDataLoaded() {
+      if (!this.$store.state.loggedUser) return
+
+      const hasDiagnostics = this.$store.state.userCanteens.some((x) => x.diagnosis && x.diagnosis.length > 0)
+      if (hasDiagnostics) return
+
+      const localStorageDiagnostics = this.$store.getters.getLocalDiagnosis()
+      const canteenId = this.$store.state.userCanteens[0].id
+      Promise.all(
+        localStorageDiagnostics.map((payload) => this.$store.dispatch("createDiagnosis", { canteenId, payload }))
+      )
+        .then(() => this.$store.dispatch("removeLocalStorageDiagnosis"))
+        .catch((error) => console.error(error.message))
+    },
   },
 }
 </script>
