@@ -26,10 +26,12 @@ Retrouvez les données de la cuisine centrale ici : https://ma-cantine.beta.gouv
 
 L : Tout à fait. Nous avons construit un programme complet de  sensibilisation à l’alimentation durable à destination des enfants et des professionnels de la ville. Composé d’animations, de spectacles et de formation et notamment le livret pédagogique. Cette sensibilisation s’appuie sur la mobilisation des animateurs de la direction Éducation autour d’animations interactives et de supports pédagogiques élaborés par notre partenaire Terre nourricière. Une manière ludique pour apprendre aux enfants l’importance de manger mieux et d’en comprendre les enjeux. 
 
-<img width="500" alt="Capture d’écran 2021-05-28 à 16 33 20" src="https://user-images.githubusercontent.com/36134318/120004786-795ddb00-bfd7-11eb-8418-d47b57ab81db.png">
+<img width="793" alt="Capture d’écran 2021-06-03 à 10 16 21" src="https://user-images.githubusercontent.com/36134318/120612954-01b80200-c456-11eb-8bf0-24d4ac83b7dc.png">
 
-<img width="500" alt="Capture d’écran 2021-05-28 à 16 34 00" src="https://user-images.githubusercontent.com/36134318/120004821-824eac80-bfd7-11eb-8bfa-1bc11cf367cd.png">
 
+<img width="500" alt="Capture d’écran 2021-06-03 à 10 15 49" src="https://user-images.githubusercontent.com/36134318/120612881-eea53200-c455-11eb-93dd-1ae62f8225d1.png">
+
+L’arrivée d’une nouvelle équipe municipale a donné une impulsion majeure à la politique alimentaire de la ville permettant d’envisager des résultats et une performance d’ensemble conséquente et notamment avec l’objectif d’atteindre 100 % de produits bio et/ou local à l’horizon 2026. 
 
 De plus, nous avons  lancé la création d’un comité de suivi de la restauration scolaire qui réunit élus, techniciens, chercheurs, agriculteurs, enseignants et parents d’élèves. Présidé par Marie Massart, adjointe au maire déléguée à la politique alimentaire et à l’agriculture urbaine, il a vocation à assurer la transparence des actions et des choix portés par la municipalité. Il s’appuiera en retour sur les remarques et les propositions issues du terrain. Les enfants seront également acteurs de leur assiette, avec un travail spécifique mené dans le cadre du Conseil municipal des enfants.
 
