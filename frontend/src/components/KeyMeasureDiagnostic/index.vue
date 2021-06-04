@@ -23,7 +23,6 @@ import InformationMeasureDiagnostic from "@/components/KeyMeasureDiagnostic/Info
 import NoPlasticMeasureDiagnostic from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
 import QualityMeasureDiagnostic from "@/components/KeyMeasureDiagnostic/QualityMeasure"
 import WasteMeasureDiagnostic from "@/components/KeyMeasureDiagnostic/WasteMeasure"
-import { saveDiagnostics } from "@/data/KeyMeasures.js"
 
 export default {
   components: {
@@ -84,10 +83,6 @@ export default {
     saveInLocalStorage() {
       this.$store.dispatch("saveLocalStorageDiagnostic", this.diagnosticsCopy.latest)
       this.$store.dispatch("saveLocalStorageDiagnostic", this.diagnosticsCopy.previous)
-    },
-    async submit() {
-      await saveDiagnostics(this.diagnostics)
-      this.$emit("afterSave")
     },
   },
   computed: {
