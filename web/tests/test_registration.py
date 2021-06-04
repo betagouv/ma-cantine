@@ -40,7 +40,7 @@ class TestRegistration(APITestCase):
         activation_response = self.client.get(
             reverse("activate", kwargs={"uidb64": uidb64, "token": token})
         )
-        self.assertRedirects(activation_response, reverse("app"), status.HTTP_302_FOUND)
+        self.assertRedirects(activation_response, reverse("app"), status.HTTP_302_FOUND, fetch_redirect_response=False)
 
     def test_user_registration_creates_canteen(self):
         """
