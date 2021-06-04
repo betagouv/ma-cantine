@@ -136,7 +136,7 @@ const routes = [
         name: 'LoginPage',
         component: LoginPage,
         meta: {
-          title: "Connecter"
+          title: "Connexion"
         }
       },
       {
@@ -209,7 +209,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth) && !localStorage.getItem('jwt')) {
-    next({ path: '/connecter' });
+    next({ path: '/connexion' });
   }
 
   next();
