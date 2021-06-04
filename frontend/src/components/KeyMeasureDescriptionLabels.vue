@@ -40,6 +40,8 @@ export default {
 <style scoped lang="scss">
 #about-labels {
   margin: 1em 0;
+  list-style-type: none;
+  padding: 0;
 
   li {
     margin: 1em 0;

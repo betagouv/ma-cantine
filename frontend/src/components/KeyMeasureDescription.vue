@@ -35,4 +35,8 @@ export default {
   line-height: 1.5em;
   white-space: pre-wrap;
 }
+
+ul {
+  list-style-type: none;
+}
 </style>
