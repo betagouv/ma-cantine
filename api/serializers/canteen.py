@@ -36,7 +36,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "city",
             "postal_code",
             "sectors",
-            "published",
             "data_is_public",
             "daily_meal_count",
             "siret",

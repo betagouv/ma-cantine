@@ -42,7 +42,10 @@ export default {
       if (!this.$store.state.loggedUser) return
 
       const hasDiagnostics = this.$store.state.userCanteens.some((x) => x.diagnostics && x.diagnostics.length > 0)
-      if (hasDiagnostics) return
+      if (hasDiagnostics) {
+        this.$store.dispatch("removeLocalStorageDiagnostics")
+        return
+      }
 
       const localStorageDiagnostics = this.$store.getters.getLocalDiagnostics()
       const canteenId = this.$store.state.userCanteens[0].id

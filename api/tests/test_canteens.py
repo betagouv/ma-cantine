@@ -13,13 +13,11 @@ class TestCanteenApi(APITestCase):
         returned from this call
         """
         published_canteens = [
-            CanteenFactory.create(published=True, data_is_public=True),
-            CanteenFactory.create(published=True, data_is_public=True),
+            CanteenFactory.create(data_is_public=True),
+            CanteenFactory.create(data_is_public=True),
         ]
         private_canteens = [
-            CanteenFactory.create(published=False, data_is_public=True),
-            CanteenFactory.create(published=True, data_is_public=False),
-            CanteenFactory.create(published=False, data_is_public=False),
+            CanteenFactory.create(data_is_public=False),
         ]
         response = self.client.get(reverse("published_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

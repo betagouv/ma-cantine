@@ -31,7 +31,7 @@
     </address>
     <h2>Hébergement de la Plateforme</h2>
     <p>Ce site est hébergé en propre par:</p>
-    <address>Scalingo SAS, 15 avenue du Rhin, 67100 Strasbourg, France.</address>
+    <address>Clevercloud, 3 rue de l'Allier, 44000 Nantes, France.</address>
     <h2>Accessibilité</h2>
     <p>
       La conformité aux normes d’accessibilité numérique est un objectif ultérieur dans le développement itératif de la
