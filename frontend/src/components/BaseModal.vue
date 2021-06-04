@@ -2,7 +2,7 @@
   <div id="modal" @click.self="$emit('closeModal')" role="dialog" aria-labelledby="modal-title">
     <div id="modal-content">
       <button class="close" @click="$emit('closeModal')" aria-label="Fermer" title="Fermer">
-        <i class="fas fa-times"></i>
+        <v-icon color="grey darken-3">mdi-close-thick</v-icon>
       </button>
       <slot />
     </div>
@@ -36,18 +36,6 @@
   cursor: pointer;
   border: none;
   background-color: transparent;
-
-  .fa-times {
-    width: 25px;
-    height: 25px;
-    color: $ma-cantine-grey;
-  }
-}
-
-.close:hover {
-  .fa-times:hover {
-    color: $ma-cantine-light-grey;
-  }
 }
 
 @media (max-width: 750px) {

@@ -15,7 +15,7 @@
       />
 
       <div class="video-loader" v-show="!iframeIsLoaded">
-        <i class="fas fa-spinner fa-spin"></i>
+        <v-progress-circular indeterminate></v-progress-circular>
         Chargement de la vidéo de présentation
       </div>
     </div>

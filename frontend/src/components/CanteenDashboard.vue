@@ -105,15 +105,18 @@
                   {{ communicationSupports[action] }}
                 </li>
               </ul>
-              <a
-                v-if="latestDiagnostic.communicationSupportLink"
-                :href="prepareHref(latestDiagnostic.communicationSupportLink)"
-                class="communication-support-link"
+
+              <v-btn
+                v-if="latestDiagnostic.communicationSupportUrl"
+                color="primary"
+                :href="prepareHref(latestDiagnostic.communicationSupportUrl)"
                 target="_blank"
+                outlined
+                class="my-2"
               >
                 Lien vers le support de communication
-                <i class="fas fa-external-link-alt"></i>
-              </a>
+                <v-icon small class="ml-2">mdi-open-in-new</v-icon>
+              </v-btn>
             </div>
             <KeyMeasureResource baseComponent="InformDiners" v-if="showResources" />
           </v-card-text>

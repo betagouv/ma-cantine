@@ -27,10 +27,6 @@ export default {
 <style scoped lang="scss">
 .description-container {
   flex: 4;
-
-  .fa-check-square {
-    color: $ma-cantine-green;
-  }
 }
 
 .description {

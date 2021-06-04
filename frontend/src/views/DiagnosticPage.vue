@@ -17,9 +17,9 @@
         <v-card-title class="font-weight-bold d-flex">
           <KeyMeasureTitle class="flex-shrink-1" :measure="measure" />
           <v-spacer></v-spacer>
-          <v-btn outlined :color="measure.isEvaluated ? 'secondary' : 'primary'" @click="showDiagnosticModal(measure)">
+          <v-btn outlined :color="measure.isEvaluated ? 'green' : 'primary'" @click="showDiagnosticModal(measure)">
             <span class="mx-2">Je m'évalue !</span>
-            <i class="fas fa-check" v-if="measure.isEvaluated" title="évalué"></i>
+            <v-icon small color="green" v-if="measure.isEvaluated">mdi-check</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text class="py-0" v-for="subMeasure in measure.subMeasures" :key="`submeasure: ${subMeasure.id}`">
