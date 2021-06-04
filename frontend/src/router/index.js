@@ -51,6 +51,9 @@ const routes = [
     path: "/creation-affiche",
     name: "GeneratePosterPage",
     component: GeneratePosterPage,
+    meta: {
+      title: "Affiche convives",
+    },
   },
   {
     path: "/mesures-phares",

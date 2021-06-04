@@ -13,13 +13,19 @@
         <h2>À propos de votre cantine</h2>
         <p>
           Je représente
-          <label for="school">la cantine</label>
-          <input id="school" v-model="form.school" class="field" placeholder="nom de l'établissement" required />
+          <label for="canteen-name">la cantine</label>
+          <input
+            id="canteen-name"
+            v-model="form.canteen.name"
+            class="field"
+            placeholder="nom de l'établissement"
+            required
+          />
           dans
           <label for="commune">la commune de</label>
           <input
             id="commune"
-            v-model="form.commune"
+            v-model="form.canteen.city"
             class="field"
             placeholder="nom de la commune"
             required
@@ -39,7 +45,7 @@
           <input
             id="servings"
             aria-describedby="repas"
-            v-model.number="form.servings"
+            v-model.number="form.canteen.dailyMealCount"
             type="number"
             min="0"
             placeholder="200"
@@ -55,7 +61,7 @@
           </label>
           <input
             id="total"
-            v-model.number="form.diagnostic.valueTotal"
+            v-model.number="form.diagnostic.valueTotalHt"
             class="currency-field"
             type="number"
             min="0"
@@ -70,7 +76,7 @@
           Sur ce total,
           <input
             id="bio"
-            v-model.number="form.diagnostic.valueBio"
+            v-model.number="form.diagnostic.valueBioHt"
             class="currency-field"
             type="number"
             min="0"
@@ -83,7 +89,7 @@
           et
           <input
             id="sustainable"
-            v-model.number="form.diagnostic.valueSustainable"
+            v-model.number="form.diagnostic.valueSustainableHt"
             class="currency-field"
             type="number"
             min="0"
@@ -105,8 +111,8 @@
 </template>
 
 <script>
+import Constants from "@/constants"
 import CanteenPoster from "./CanteenPoster"
-import { getDiagnosticsForPoster, saveDiagnostic } from "@/data/KeyMeasures.js"
 import html2pdf from "html2pdf.js"
 
 export default {
@@ -117,12 +123,32 @@ export default {
     return {
       form: {
         diagnostic: {},
+        canteen: {},
       },
       communes: [],
     }
   },
+  computed: {
+    userCanteen() {
+      return this.$store.state.userCanteens.length > 0 ? this.$store.state.userCanteens[0] : null
+    },
+    initialDiagnostic() {
+      let diagnostics = this.isAuthenticated ? this.serverDiagnostics : this.localDiagnostics
+      return diagnostics.find((x) => x.year === 2020) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 })
+    },
+    serverDiagnostics() {
+      return this.userCanteen.diagnostics
+    },
+    localDiagnostics() {
+      return this.$store.getters.getLocalDiagnostics()
+    },
+    isAuthenticated() {
+      return !!this.$store.state.loggedUser
+    },
+  },
   async mounted() {
-    this.form.diagnostic = await getDiagnosticsForPoster()
+    this.form.diagnostic = JSON.parse(JSON.stringify(this.initialDiagnostic))
+    this.form.canteen = JSON.parse(JSON.stringify(this.userCanteen)) || {}
   },
   methods: {
     async search() {
@@ -139,7 +165,8 @@ export default {
       //this fix an issue where the beginning of the pdf is blank depending on the scroll position
       window.scrollTo({ top: 0 })
 
-      await saveDiagnostic(this.form.diagnostic)
+      this.saveDiagnostic()
+      this.saveCanteen()
 
       const htmlPoster = document.getElementById("canteen-poster")
       const pdfOptions = {
@@ -152,6 +179,42 @@ export default {
         .from(htmlPoster)
         .set(pdfOptions)
         .save()
+    },
+    saveDiagnostic() {
+      if (this.isAuthenticated) {
+        this.saveInServer()
+      } else {
+        this.saveInLocalStorage()
+      }
+    },
+    saveInServer() {
+      let saveOperation
+
+      if (this.form.diagnostic.id) {
+        saveOperation = this.$store.dispatch("updateDiagnostic", {
+          canteenId: this.userCanteen.id,
+          id: this.form.diagnostic.id,
+          payload: this.form.diagnostic,
+        })
+      } else {
+        saveOperation = this.$store.dispatch("createDiagnostic", {
+          canteenId: this.userCanteen.id,
+          payload: this.form.diagnostic,
+        })
+      }
+
+      return saveOperation
+    },
+    saveInLocalStorage() {
+      this.$store.dispatch("saveLocalStorageDiagnostic", this.form.diagnostic)
+    },
+    saveCanteen() {
+      if (this.isAuthenticated) {
+        return this.$store.dispatch("updateCanteen", {
+          id: this.userCanteen.id,
+          payload: this.form.canteen,
+        })
+      }
     },
   },
 }
