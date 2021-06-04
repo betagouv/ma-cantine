@@ -15,7 +15,7 @@
     <v-checkbox
       hide-details="auto"
       v-model="diagnostic.hasDonationAgreement"
-      label="J'ai proposé des conventions de dons à des associations habilitées d’aide alimentaire"
+      label="Si ma cantine fabrique plus de 3 000 repas par jour en moyenne, je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire"
     />
 
     <p class="text-left mt-6 mb-2">J'ai réalisé des actions de lutte contre le gaspillage alimentaire :</p>
