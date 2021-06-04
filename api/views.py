@@ -51,7 +51,7 @@ class UpdateUserView(UpdateAPIView):
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects.filter(published=True, data_is_public=True)
+    queryset = Canteen.objects.filter(data_is_public=True)
 
 
 class UserCanteensView(ListCreateAPIView):
