@@ -1,7 +1,7 @@
 <template>
   <div class="action">
     <v-icon small v-if="isDone" color="secodary">mdi-check-bold</v-icon>
-    <v-icon small v-else>mdi-close</v-icon>
+    <v-icon small v-else>mdi-thumb-down-outline</v-icon>
     <span>{{ label }}</span>
   </div>
 </template>
