@@ -12,7 +12,7 @@
         v-model="previousDiagnostic.valueTotalHt"
       ></v-text-field>
 
-      <p class="body-2 mb-1 mt-4">...de produits bio</p>
+      <p class="body-2 mb-1 mt-4">...en produits bio</p>
       <v-text-field
         hide-details="auto"
         type="number"
@@ -21,7 +21,7 @@
         v-model="previousDiagnostic.valueBioHt"
       ></v-text-field>
 
-      <p class="body-2 mb-1 mt-4">...de produits durables (hors bio)</p>
+      <p class="body-2 mb-1 mt-4">...en autres produits de qualité et durables (hors bio)</p>
       <v-text-field
         hide-details="auto"
         type="number"
@@ -30,7 +30,7 @@
         v-model="previousDiagnostic.valueSustainableHt"
       ></v-text-field>
 
-      <p class="body-2 mb-1 mt-4">...de produits issus du commerce équitable</p>
+      <p class="body-2 mb-1 mt-4">...en produits issus du commerce équitable</p>
       <v-text-field
         hide-details="auto"
         type="number"
@@ -52,7 +52,7 @@
         v-model="latestDiagnostic.valueTotalHt"
       ></v-text-field>
 
-      <p class="body-2 mb-1 mt-4">...de produits bio</p>
+      <p class="body-2 mb-1 mt-4">...en produits bio</p>
       <v-text-field
         hide-details="auto"
         type="number"
@@ -61,7 +61,7 @@
         v-model="latestDiagnostic.valueBioHt"
       ></v-text-field>
 
-      <p class="body-2 mb-1 mt-4">...de produits durables (hors bio)</p>
+      <p class="body-2 mb-1 mt-4">...en autres produits de qualité et durables (hors bio)</p>
       <v-text-field
         hide-details="auto"
         type="number"
@@ -70,7 +70,7 @@
         v-model="latestDiagnostic.valueSustainableHt"
       ></v-text-field>
 
-      <p class="body-2 mb-1 mt-4">...de produits issus du commerce équitable</p>
+      <p class="body-2 mb-1 mt-4">...en produits issus du commerce équitable</p>
       <v-text-field
         hide-details="auto"
         type="number"

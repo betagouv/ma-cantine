@@ -9,7 +9,7 @@
     <v-checkbox
       hide-details="auto"
       v-model="diagnostic.servingPlasticSubstituted"
-      label="Je n’utilise plus de contenants de service en plastique"
+      label="Je n’utilise plus de contenants alimentaires de service en plastique"
     />
 
     <v-checkbox
