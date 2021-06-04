@@ -11,7 +11,7 @@
       </v-card-text>
       <v-card-text>
         Vous pouvez choisir de valoriser les démarches entreprises dans votre établissement en décidant de rendre
-        publique vos données. Les informations que vous avez renseignées dans l'auto-diagnostic seront donc visible sur
+        publique vos données. Les informations que vous avez renseignées dans l'auto-diagnostic seront donc visibles sur
         notre page
         <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
         . C'est une page que vous pouvez partager avec vos élu.e.s, convives, personnels...
