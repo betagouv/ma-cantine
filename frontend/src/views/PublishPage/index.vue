@@ -55,6 +55,12 @@ export default {
         latest:
           diagnosticsCopy.find((x) => x.year === 2020) ||
           Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 }),
+        provisionalYear1:
+          diagnosticsCopy.find((x) => x.year === 2021) ||
+          Object.assign({}, Constants.DefaultDiagnostics, { year: 2021 }),
+        provisionalYear2:
+          diagnosticsCopy.find((x) => x.year === 2022) ||
+          Object.assign({}, Constants.DefaultDiagnostics, { year: 2022 }),
       }
       return this.$route.name === "PublishMeasurePage" ? diagnostics : canteenCopy
     },

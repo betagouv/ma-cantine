@@ -259,6 +259,8 @@ export default new Vuex.Store({
         return [
           Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
           Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 }),
+          Object.assign({}, Constants.DefaultDiagnostics, { year: 2021 }),
+          Object.assign({}, Constants.DefaultDiagnostics, { year: 2022 }),
         ]
       }
       return Object.values(JSON.parse(savedDiagnostics))
