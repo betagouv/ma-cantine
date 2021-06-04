@@ -3,9 +3,9 @@
     <div id="heading">
       <img src="/static/images/toque.svg" id="hat" alt="" />
       <div>
-        <h1>Cantine {{ school || "_________" }}</h1>
-        <p id="commune">{{ commune || "_________" }}</p>
-        <p>Nous servons {{ servings || "___" }} repas par jour</p>
+        <h1>Cantine {{ canteen.name || "_________" }}</h1>
+        <p id="commune">{{ canteen.city || "_________" }}</p>
+        <p>Nous servons {{ canteen.dailyMealCount || "___" }} repas par jour</p>
         <p>Dans la cantine de votre enfant, sur l'année de 2020, nous déclarons avoir servi en valeur d'achats:</p>
       </div>
     </div>
@@ -46,9 +46,7 @@ export default {
     SummaryStatistics,
   },
   props: {
-    school: String,
-    commune: String,
-    servings: Number,
+    canteen: Object,
     diagnostic: Object,
   },
   computed: {
