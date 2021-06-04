@@ -1,7 +1,9 @@
 <template>
   <div class="action">
-    <v-icon small v-if="isDone" color="secodary">mdi-check-bold</v-icon>
-    <v-icon small v-else>mdi-close</v-icon>
+    <v-icon small v-if="isDone" color="light-green darken-4" aria-label="Fait" aria-hidden="false">
+      mdi-check-bold
+    </v-icon>
+    <v-icon small v-else aria-label="Pas encore fait" aria-hidden="false">mdi-close</v-icon>
     <span>{{ label }}</span>
   </div>
 </template>

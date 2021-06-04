@@ -2,7 +2,7 @@
   <div id="modal" @click.self="$emit('closeModal')" role="dialog" aria-labelledby="modal-title">
     <div id="modal-content">
       <button class="close" @click="$emit('closeModal')" aria-label="Fermer" title="Fermer">
-        <v-icon color="grey darken-3">mdi-close-thick</v-icon>
+        <v-icon color="grey darken-3" aria-label="fermer" aria-hidden="false">mdi-close-thick</v-icon>
       </button>
       <slot />
     </div>
