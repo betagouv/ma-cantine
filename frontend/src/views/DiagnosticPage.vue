@@ -93,7 +93,6 @@ export default {
       subMeasure.readMore = !subMeasure.readMore
     },
     showDiagnosticModal(measure) {
-      this.diagnosticsCopy = JSON.parse(JSON.stringify(this.diagnostics))
       this.measureDiagnosticModal = measure
     },
     closeDiagnosticModal() {
@@ -106,7 +105,7 @@ export default {
     },
   },
   computed: {
-    diagnostics() {
+    initialDiagnostics() {
       let diagnostics = this.isAuthenticated ? this.serverDiagnostics : this.localDiagnostics
       return {
         previous:
@@ -132,6 +131,9 @@ export default {
         if (!newValue) this.measureDiagnosticModal = null
       },
     },
+  },
+  mounted() {
+    this.diagnosticsCopy = JSON.parse(JSON.stringify(this.initialDiagnostics))
   },
 }
 </script>
