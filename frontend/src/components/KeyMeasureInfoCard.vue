@@ -10,7 +10,7 @@
     </v-card-text>
 
     <v-card-title class="font-weight-bold text-body-1">
-      <v-icon small class="mr-2" color="grey darken-4">mdi-chart-arc</v-icon>
+      <v-icon small class="mr-2" color="grey darken-4">mdi-account-group</v-icon>
       Pour qui ?
     </v-card-title>
 
