@@ -42,7 +42,7 @@
         </router-link>
       </v-app-bar-title>
 
-      <v-spacer></v-spacer>
+      <v-spacer v-if="$vuetify.breakpoint.name != 'xs'"></v-spacer>
 
       <v-btn
         text
@@ -94,10 +94,6 @@
           </v-list-item-group>
         </v-list>
       </v-menu>
-
-      <v-btn class="mr-8" icon v-if="hasSidebar" @click="toggleMobileSidebar">
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
     </v-app-bar>
   </div>
 </template>
@@ -117,9 +113,6 @@ export default {
     userDataReady() {
       return !!this.$store.state.initialDataLoaded
     },
-    hasSidebar() {
-      return false
-    },
     marianneFilename() {
       return this.extended && this.dynamicSizingEnabled ? "Republique-francaise-logo.svg" : "Marianne-logo.svg"
     },
@@ -135,9 +128,6 @@ export default {
     },
   },
   methods: {
-    toggleMobileSidebar() {
-      this.$store.dispatch("setSidebarState", !this.$store.state.isSidebarOpen)
-    },
     updateExtended() {
       this.extended = this.$refs && this.$refs.appbar && !this.$refs.appbar.classes["v-app-bar--is-scrolled"]
     },
