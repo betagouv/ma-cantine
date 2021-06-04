@@ -21,6 +21,7 @@ import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
 import StatsPage from "@/views/StatsPage"
 import NotFound from "@/views/NotFound"
+import TesterParticipation from "@/views/TesterParticipation"
 
 Vue.use(VueRouter)
 
@@ -154,6 +155,14 @@ const routes = [
     component: StatsPage,
     meta: {
       title: "Statistiques",
+    },
+  },
+  {
+    path: "/devenir-testeur",
+    name: "TesterParticipation",
+    component: TesterParticipation,
+    meta: {
+      title: "Devenir Testeur",
     },
   },
   {

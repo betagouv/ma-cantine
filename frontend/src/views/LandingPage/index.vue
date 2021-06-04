@@ -14,6 +14,10 @@
 
     <v-divider class="mt-16"></v-divider>
 
+    <Resources class="my-16" />
+
+    <v-divider class="mt-8"></v-divider>
+
     <TheNewsletter class="mt-12 mb-8" />
   </div>
 </template>
@@ -24,6 +28,7 @@ import ActionsBlock from "@/views/LandingPage/ActionsBlock"
 import KeyGoalsBlock from "@/views/LandingPage/KeyGoalsBlock"
 import GoalBlock from "@/views/LandingPage/GoalBlock"
 import DiscoverMeasuresBlock from "@/views/LandingPage/DiscoverMeasuresBlock"
+import Resources from "@/views/LandingPage/Resources"
 import TheNewsletter from "@/components/TheNewsletter"
 
 export default {
@@ -34,6 +39,7 @@ export default {
     GoalBlock,
     DiscoverMeasuresBlock,
     TheNewsletter,
+    Resources,
   },
 }
 </script>
