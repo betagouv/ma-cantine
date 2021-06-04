@@ -8,7 +8,8 @@
     },
     "description": "La loi EGAlim encadre la r\u00e9partition des produits achet\u00e9s pour la conception des repas. Les menus doivent comporter, au cours de l'ann\u00e9e 2022, 50% de produits de qualit\u00e9 et durables dont 20% issus de l\u2019agriculture biologique ou en conversion. Ces seuils (en %) sont calcul\u00e9s \u00e0 partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre \u00e0 des produits bio ou en conversion et au total au moins 50 euros doivent correspondre \u00e0 des produits durables et de qualit\u00e9 (bio inclus).",
     "descriptionComponent": "KeyMeasureDescriptionQuality",
-    "faIcon": "fa-apple-alt",
+    "mdiIcon": "mdi-food-apple",
+    "mdiIconColor": "red",
     "id": "qualite-des-produits",
     "shortTitle": "Qualit\u00e9 des produits",
     "subMeasures": [
@@ -21,7 +22,7 @@
       },
       {
         "descriptionComponent": "LogoBio",
-        "htmlDescription": "Parmi ces produits de qualit\u00e9, au moins 20 % des produits doivent \u00eatre \u00ab bio \u00bb, c\u2019est \u00e0 dire : \n\n<i class='fas fa-check-square'></i>  des produits issus de l\u2019agriculture biologique.\n<i class='fas fa-check-square'></i>  des produits v\u00e9g\u00e9taux \u00e9tiquet\u00e9s 'en conversion'.",
+        "htmlDescription": "Parmi ces produits de qualit\u00e9, au moins 20 % des produits doivent \u00eatre \u00ab bio \u00bb, c\u2019est \u00e0 dire : \n\n-  des produits issus de l\u2019agriculture biologique.\n-  des produits v\u00e9g\u00e9taux \u00e9tiquet\u00e9s 'en conversion'.",
         "id": "vingt",
         "readMore": false,
         "shortTitle": "20 % bio",
@@ -46,7 +47,8 @@
       "display": "Janvier et octobre 2020",
       "earliestISO": "2020-01-01"
     },
-    "faIcon": "fa-hands",
+    "mdiIcon": "mdi-offer",
+    "mdiIconColor": "orange darken-2",
     "id": "gaspillage-alimentaire",
     "shortTitle": "Gaspillage alimentaire",
     "subMeasures": [
@@ -93,7 +95,8 @@
   {
     "baseComponent": "DiversificationMeasure",
     "baseMeasureComponent": "DiversificationMeasure",
-    "faIcon": "fa-leaf",
+    "mdiIcon": "mdi-leaf",
+    "mdiIconColor": "green darken-1",
     "id": "diversification-des-menus",
     "shortTitle": "Diversification des menus",
     "subMeasures": [
@@ -138,7 +141,8 @@
   {
     "baseComponent": "NoPlasticMeasure",
     "baseMeasureComponent": null,
-    "faIcon": "fa-wind",
+    "mdiIcon": "mdi-weather-windy",
+    "mdiIconColor": "blue darken-1",
     "id": "interdiction-du-plastique",
     "shortTitle": "Interdiction du plastique",
     "subMeasures": [
@@ -199,7 +203,8 @@
   {
     "baseComponent": "InformationMeasure",
     "baseMeasureComponent": null,
-    "faIcon": "fa-bullhorn",
+    "mdiIcon": "mdi-bullhorn",
+    "mdiIconColor": "amber darken-2",
     "id": "information-des-usagers",
     "shortTitle": "Information des convives",
     "subMeasures": [

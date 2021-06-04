@@ -26,19 +26,5 @@ export default {
     padding-left: 10px;
     max-width: 90%;
   }
-
-  .fa-check,
-  .fa-times {
-    height: 30px;
-    width: 30px;
-  }
-
-  .fa-check {
-    color: $ma-cantine-green;
-  }
-
-  .fa-times {
-    color: $ma-cantine-red;
-  }
 }
 </style>
