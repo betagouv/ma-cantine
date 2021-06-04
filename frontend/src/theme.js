@@ -28,21 +28,6 @@ export default {
         darken4: "#9c350e",
       },
 
-      // blue
-      // primary: {
-      //     base: "#2A40D1",
-      //     lighten5: "#EEF0FB",
-      //     lighten4: "#D5DBFD",
-      //     lighten3: "#AAB8F9",
-      //     lighten2: "#7D8FF1",
-      //     lighten1: "#2A40D1",
-      //     darken1: "#1E31B4",
-      //     darken2: "#152295",
-      //     darken3: "#0D1779",
-      //     darken4: "#090F65",
-      //     darken5: "#060A46",
-      // },
-
       secondary: {
         base: "#61753f",
         lighten5: "#F1F3EE",
