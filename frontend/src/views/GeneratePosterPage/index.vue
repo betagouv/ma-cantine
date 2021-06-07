@@ -226,7 +226,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 1700px;
+  max-width: 1500px !important;
   margin: auto;
 
   h1 {
