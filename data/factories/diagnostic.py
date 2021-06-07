@@ -37,4 +37,4 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
         random.sample(list(Diagnostic.CommunicationType), random.randint(0, 2))
     )
     communication_support_url = factory.Faker("uri")
-    comunicates_on_food_plan = factory.Faker("boolean")
+    communicates_on_food_plan = factory.Faker("boolean")
