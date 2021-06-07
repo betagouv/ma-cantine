@@ -10,8 +10,8 @@ export default {
     return input.length && input.length > 0 ? true : errorMessage
   },
   positiveNumberOrEmpty(input) {
-    if (!input || input.length === 0 || parseFloat(input) > 0) return true
-    const errorMessage = "Ce champ doit contenir une chiffre supérieure à zéro"
+    if (!input || input.length === 0 || parseFloat(input) === 0) return true
+    const errorMessage = "Ce champ doit contenir un nombre positif ou rester vide"
     return errorMessage
   },
   isUrlOrEmpty(input) {
