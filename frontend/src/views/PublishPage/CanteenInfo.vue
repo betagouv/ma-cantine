@@ -20,7 +20,7 @@
           <p class="body-2 mt-6 mb-2">Nombre de couverts moyen par jour</p>
           <v-text-field
             hide-details="auto"
-            :rules="[validators.positiveNumber]"
+            :rules="[validators.positiveNumberOrEmpty]"
             solo
             v-model="canteen.dailyMealCount"
           ></v-text-field>
