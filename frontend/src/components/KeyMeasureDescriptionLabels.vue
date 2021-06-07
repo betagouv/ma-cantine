@@ -7,18 +7,18 @@
         {{ label.text }}
       </li>
       <li>
-        <i class="fas fa-check-square"></i>
+        <v-icon color="green" small>mdi-checkbox-marked</v-icon>
         Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »
       </li>
       <li>
-        <i class="fas fa-check-square"></i>
+        <v-icon color="green" small>mdi-checkbox-marked</v-icon>
         Produit acquis suivant des modalités prenant en compte les coûts imputés aux externalités environnementales
         liées au produit pendant son cycle de vie (production, transformation, conditionnement, transport, stockage,
         utilisation) - À ce jour, il n’existe pas de référentiel ni de méthodologie offciels afin d’effectuer une
         sélection des produits alimentaires sur la base de ces coûts.
       </li>
       <li>
-        <i class="fas fa-check-square"></i>
+        <v-icon color="green" small>mdi-checkbox-marked</v-icon>
         Produits équivalents aux produits bénéficiant de ces mentions ou labels
       </li>
     </ul>
@@ -40,13 +40,11 @@ export default {
 <style scoped lang="scss">
 #about-labels {
   margin: 1em 0;
+  list-style-type: none;
+  padding: 0;
 
   li {
     margin: 1em 0;
-  }
-
-  .fa-check-square {
-    color: $ma-cantine-green;
   }
 }
 

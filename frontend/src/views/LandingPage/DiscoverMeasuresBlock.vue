@@ -20,7 +20,7 @@
           class="fill-height d-flex flex-column px-3"
         >
           <v-card-text class="pb-1 pt-6">
-            <i :class="`fas ${measure.faIcon} fa-lg mx-auto d-block`" v-if="measure.faIcon"></i>
+            <v-icon>{{ measure.mdiIcon }}</v-icon>
           </v-card-text>
           <v-card-title class="text-body-1 text-left font-weight-bold">
             {{ measure.title }}
@@ -47,25 +47,3 @@ export default {
   },
 }
 </script>
-
-<style scoped lang="scss">
-// .fa-apple-alt {
-//   color: $ma-cantine-red;
-// }
-
-// .fa-bullhorn {
-//   color: $ma-cantine-yellow;
-// }
-
-// .fa-hands {
-//   color: $ma-cantine-orange;
-// }
-
-// .fa-leaf {
-//   color: $ma-cantine-green;
-// }
-
-// .fa-wind {
-//   color: $ma-cantine-blue;
-// }
-</style>
