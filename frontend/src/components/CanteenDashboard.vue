@@ -79,7 +79,7 @@
           <v-card-text>
             <div class="actions">
               <KeyMeasureAction
-                :isDone="latestDiagnostic.hasMadeDiversificationPlan"
+                :isDone="latestDiagnostic.hasDiversificationPlan"
                 label="Mise en place d'un plan pluriannuel de diversification des protéines"
               />
               <KeyMeasureAction :isDone="hasVegetarianMenu" :label="vegetarianMenuActionLabel" />
