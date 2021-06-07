@@ -26,5 +26,5 @@ class DiagnosticSerializer(serializers.ModelSerializer):
             "plastic_tableware_substituted",
             "communication_supports",
             "communication_support_url",
-            "comunicates_on_food_plan",
+            "communicates_on_food_plan",
         )

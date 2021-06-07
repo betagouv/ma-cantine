@@ -25,6 +25,6 @@ export default Object.freeze({
     plasticTablewareSubstituted: null,
     communicationSupports: [],
     communicationSupportUrl: null,
-    comunicatesOnFoodPlan: null,
+    communicatesOnFoodPlan: null,
   },
 })
