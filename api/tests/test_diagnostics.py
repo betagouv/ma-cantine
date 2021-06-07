@@ -67,7 +67,7 @@ class TestDiagnosticsApi(APITestCase):
             "plastic_tableware_substituted": False,
             "communication_supports": ["EMAIL", "WEBSITE"],
             "communication_support_url": "https://example.com",
-            "comunicates_on_food_plan": True,
+            "communicates_on_food_plan": True,
         }
         response = self.client.post(
             reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload

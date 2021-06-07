@@ -142,7 +142,7 @@ class Diagnostic(models.Model):
     communication_support_url = models.URLField(
         blank=True, null=True, verbose_name="Lien de communication"
     )
-    comunicates_on_food_plan = models.BooleanField(
+    communicates_on_food_plan = models.BooleanField(
         null=True, verbose_name="Communique sur le plan alimentaire"
     )
 

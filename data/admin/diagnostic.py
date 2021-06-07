@@ -87,7 +87,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
                 "fields": (
                     "communication_supports",
                     "communication_support_url",
-                    "comunicates_on_food_plan",
+                    "communicates_on_food_plan",
                 )
             },
         ),
