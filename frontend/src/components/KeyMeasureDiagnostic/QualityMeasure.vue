@@ -7,7 +7,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="previousDiagnostic.valueTotalHt"
       ></v-text-field>
@@ -16,7 +16,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="previousDiagnostic.valueBioHt"
       ></v-text-field>
@@ -25,7 +25,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="previousDiagnostic.valueSustainableHt"
       ></v-text-field>
@@ -34,7 +34,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="previousDiagnostic.valueFairTradeHt"
       ></v-text-field>
@@ -47,7 +47,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="latestDiagnostic.valueTotalHt"
       ></v-text-field>
@@ -56,7 +56,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="latestDiagnostic.valueBioHt"
       ></v-text-field>
@@ -65,7 +65,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="latestDiagnostic.valueSustainableHt"
       ></v-text-field>
@@ -74,7 +74,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="latestDiagnostic.valueFairTradeHt"
       ></v-text-field>
@@ -87,7 +87,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="provisionalYear1Diagnostic.valueTotalHt"
       ></v-text-field>
@@ -96,7 +96,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="provisionalYear1Diagnostic.valueBioHt"
       ></v-text-field>
@@ -105,7 +105,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="provisionalYear1Diagnostic.valueSustainableHt"
       ></v-text-field>
@@ -114,7 +114,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="provisionalYear1Diagnostic.valueFairTradeHt"
       ></v-text-field>
@@ -127,7 +127,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="provisionalYear2Diagnostic.valueTotalHt"
       ></v-text-field>
@@ -136,7 +136,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="provisionalYear2Diagnostic.valueBioHt"
       ></v-text-field>
@@ -145,7 +145,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="provisionalYear2Diagnostic.valueSustainableHt"
       ></v-text-field>
@@ -154,7 +154,7 @@
       <v-text-field
         hide-details="auto"
         type="number"
-        :rules="[validators.positiveNumberOrEmpty]"
+        :rules="[validators.nonNegativeOrEmpty]"
         solo
         v-model="provisionalYear2Diagnostic.valueFairTradeHt"
       ></v-text-field>
