@@ -25,6 +25,7 @@
           <p v-for="(link, index) in column.links" :key="index" class="text-left">
             <a v-if="link.url" :href="link.url" target="_blank">
               {{ link.text }}
+              <v-icon color="primary" x-small>mdi-open-in-new</v-icon>
             </a>
             <router-link v-if="link.to" :to="link.to">
               {{ link.text }}
