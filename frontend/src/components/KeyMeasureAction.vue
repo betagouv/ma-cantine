@@ -1,7 +1,9 @@
 <template>
   <div class="action">
-    <v-icon small v-if="isDone" color="secodary">mdi-check-bold</v-icon>
-    <v-icon small v-else>mdi-thumb-down-outline</v-icon>
+    <v-icon small v-if="isDone" color="light-green darken-4" aria-label="Fait" aria-hidden="false">
+      mdi-check-bold
+    </v-icon>
+    <v-icon small v-else aria-label="Pas encore fait" aria-hidden="false">mdi-thumb-down-outline</v-icon>
     <span>{{ label }}</span>
   </div>
 </template>
@@ -25,20 +27,6 @@ export default {
   span {
     padding-left: 10px;
     max-width: 90%;
-  }
-
-  .fa-check,
-  .fa-times {
-    height: 30px;
-    width: 30px;
-  }
-
-  .fa-check {
-    color: $ma-cantine-green;
-  }
-
-  .fa-times {
-    color: $ma-cantine-red;
   }
 }
 </style>
