@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-form ref="form" @submit.prevent>
+    <v-form v-model="formIsValid" ref="form" @submit.prevent>
       <h2 class="text-h4 font-weight-black mb-8">Devenir béta-testeur</h2>
       <p class="text-body-2 text-left">
         Nous sommes en version de test et cherchons continuellement à améliorer la plateforme. Pour cela nous cherchons
