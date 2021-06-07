@@ -77,11 +77,17 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: calc(296mm - 40mm);
-  padding: 20mm;
+  height: 296mm;
+  overflow: hidden; // to show how it will be on paper
+  padding: 15mm;
   // Need to repeat some styling directly here for PDF generation
   font-family: "Marianne";
   align-items: center;
+}
+
+// copy vuetify styling to have on generated PDF
+p {
+  margin-bottom: 16px;
 }
 
 #heading {
@@ -94,11 +100,11 @@ export default {
 
   h1 {
     font-size: 35px;
+    line-height: 1.3em;
   }
 
   #commune {
     font-size: 25px;
-    margin-top: -0.7em;
   }
 }
 
@@ -107,28 +113,9 @@ export default {
   margin-right: 1em;
 }
 
-p.percentage {
-  display: flex;
-  align-items: center;
-  margin-top: 0;
-}
-
-#bio-percent {
-  color: $ma-cantine-green;
-}
-
-#sustainable-percent {
-  color: $ma-cantine-orange;
-}
-
-.number {
-  font-size: 50px;
-  font-weight: bold;
-  margin-right: 6px;
-}
-
 #logos {
   width: 100%;
+  margin-bottom: 1em;
 }
 
 #about {
@@ -141,6 +128,7 @@ p.percentage {
 
   h2 {
     font-size: 18px;
+    margin-top: 16px;
   }
 
   p {
