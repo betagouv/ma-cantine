@@ -13,7 +13,7 @@ const defaultDiagnostic = function(year) {
     hasMadeWastePlan: false,
     wasteActions: [],
     hasDonationAgreement: false,
-    hasMadeDiversificationPlan: false,
+    hasDiversificationPlan: false,
     vegetarianFrequency: null,
     vegetarianMenuType: null,
     cookingFoodContainersSubstituted: false,
