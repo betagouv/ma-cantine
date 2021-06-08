@@ -1,9 +1,12 @@
 <template>
   <div id="quality-measure" class="text-left">
+    <p class="text-center"><em>Si vous ne savez pas quelques valeurs, vous pouvez laisser le champ vide.</em></p>
     <v-row>
       <v-spacer></v-spacer>
       <v-col cols="12" sm="5" class="my-8">
         <div class="d-flex flex-column">
+          <!-- TODO: Use text field suffix (euros HT) instead of (en HT) here? -->
+          <!-- TODO: Use text field labels instead of separate p tags? -->
           <p>En 2019, la valeur (en HT) de mes achats alimentaires...</p>
 
           <p class="body-2 mb-1 mt-2">...totale</p>
