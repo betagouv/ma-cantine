@@ -64,6 +64,10 @@ export default {
           text: "Mentions légales",
           to: { name: "LegalNotices" },
         },
+        {
+          text: "CGU",
+          to: { name: "CGU" },
+        },
       ],
       columns: [
         {

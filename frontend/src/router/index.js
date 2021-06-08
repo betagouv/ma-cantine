@@ -22,6 +22,7 @@ import BlogPage from "@/views/BlogsPage/BlogPage"
 import StatsPage from "@/views/StatsPage"
 import NotFound from "@/views/NotFound"
 import TesterParticipation from "@/views/TesterParticipation"
+import CGU from "@/views/CGU.vue"
 
 Vue.use(VueRouter)
 
@@ -167,6 +168,11 @@ const routes = [
     meta: {
       title: "Devenir Testeur",
     },
+  },
+  {
+    path: "/cgu",
+    name: "CGU",
+    component: CGU,
   },
   {
     path: "/:catchAll(.*)",
