@@ -72,6 +72,7 @@ L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), 
 - *CELLAR_SECRET* -- **Optionnel** - le secret du service S3
 - *CELLAR_BUCKET_NAME* -- **Optionnel** - le nom du bucket S3 à utiliser
 
+
 ### Création des tables / Migration de la base de données
 
 Pour créer les tables nécessaires :
