@@ -11,6 +11,7 @@
         type="number"
         :rules="[validators.nonNegativeOrEmpty]"
         solo
+        placeholder="Je ne sais pas"
         v-model="diagnostic.valueTotalHt"
       ></v-text-field>
 
@@ -20,6 +21,7 @@
         type="number"
         :rules="[validators.nonNegativeOrEmpty]"
         solo
+        placeholder="Je ne sais pas"
         v-model="diagnostic.valueBioHt"
       ></v-text-field>
 
@@ -29,6 +31,7 @@
         type="number"
         :rules="[validators.nonNegativeOrEmpty]"
         solo
+        placeholder="Je ne sais pas"
         v-model="diagnostic.valueSustainableHt"
       ></v-text-field>
 
@@ -38,6 +41,7 @@
         type="number"
         :rules="[validators.nonNegativeOrEmpty]"
         solo
+        placeholder="Je ne sais pas"
         v-model="diagnostic.valueFairTradeHt"
       ></v-text-field>
     </div>
