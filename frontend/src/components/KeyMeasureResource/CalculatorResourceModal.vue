@@ -29,10 +29,10 @@
       <p id="download-cta" class="mb-6"><b>Télécharger notre tableur</b></p>
       <v-row aria-labelledby="download-cta">
         <v-spacer></v-spacer>
-        <v-btn :href="`/static/documents/${filename}.ods`" download class="primary mx-2">
+        <v-btn :href="`${filepath}.ods`" download class="primary mx-2">
           Format .ods
         </v-btn>
-        <v-btn :href="`/static/documents/${filename}.xlsx`" download class="primary mx-2">
+        <v-btn :href="`${filepath}.xlsx`" download class="primary mx-2">
           Format .xlsx
         </v-btn>
         <v-spacer></v-spacer>
@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       iframeIsLoaded: false,
-      filename: process.env.VUE_APP_APPRO_TABLE_NAME,
+      filepath: "/static/documents/Diagnostic approvisionnement (ma-cantine-alpha) v0.5",
     }
   },
   methods: {
