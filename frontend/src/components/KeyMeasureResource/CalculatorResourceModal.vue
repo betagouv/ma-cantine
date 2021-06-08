@@ -1,6 +1,11 @@
 <template>
-  <BaseModal @closeModal="$emit('closeModal')">
-    <h2 id="modal-title" tabindex="-1">Vidéo d'introduction</h2>
+  <v-card class="pa-6">
+    <div class="mt-n6 mx-n6 mb-4 pa-4 d-flex" style="background-color: #F5F5F5">
+      <v-spacer></v-spacer>
+      <v-btn color="primary" outlined @click="$emit('closeModal')">
+        Fermer
+      </v-btn>
+    </div>
 
     <div class="calculator-i-frame">
       <iframe
@@ -20,28 +25,29 @@
       </div>
     </div>
 
-    <a
-      class="calculator-download"
-      href="/Diagnostic approvisionnement (ma-cantine-alpha) v0.4.ods"
-      download
-      @click="$emit('closeModal')"
-    >
-      Télécharger
-    </a>
-  </BaseModal>
+    <v-container>
+      <p id="download-cta" class="mb-6"><b>Télécharger notre tableur</b></p>
+      <v-row aria-labelledby="download-cta">
+        <v-spacer></v-spacer>
+        <v-btn :href="`${filepath}.ods`" download class="primary mx-2">
+          Format .ods
+        </v-btn>
+        <v-btn :href="`${filepath}.xlsx`" download class="primary mx-2">
+          Format .xlsx
+        </v-btn>
+        <v-spacer></v-spacer>
+      </v-row>
+    </v-container>
+  </v-card>
 </template>
 
 <script>
-import BaseModal from "@/components/BaseModal"
-
 export default {
-  components: {
-    BaseModal,
-  },
   props: ["closeModal"],
   data() {
     return {
       iframeIsLoaded: false,
+      filepath: "/static/documents/Diagnostic approvisionnement (ma-cantine-alpha) v0.5",
     }
   },
   methods: {
@@ -61,6 +67,7 @@ h2 {
   position: relative;
   width: 100%;
   padding-top: 70%;
+  margin: 1em 0;
 
   .calculator-video {
     position: absolute;

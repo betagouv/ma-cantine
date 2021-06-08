@@ -28,7 +28,8 @@
         text
         color="primary"
         class="mx-auto mt-4 text-decoration-underline"
-        href="/Les mesures de la loi EGAlim restauration collective.pdf"
+        href="/static/documents/Les mesures de la loi EGAlim restauration collective.pdf"
+        target="_blank"
       >
         Télécharger le livret de la loi EGAlim concernant la restauration collective
       </v-btn>

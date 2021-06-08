@@ -1,11 +1,23 @@
 <template>
   <div>
-    <v-card @click="showCalculatorModal" class="text-decoration-none text-left mt-4" hover>
-      <v-alert icon="mdi-calculator" class="text-body-2 mb-0" color="#3F62D5" prominent colored-border border="left">
-        Si vous avez besoin d'aide pour calculer votre part de bios et de produits labélisés, vous pouvez tester notre
-        calculateur sous format excel.
-      </v-alert>
-    </v-card>
+    <v-dialog max-width="700" v-model="calculatorModal">
+      <template v-slot:activator="{ on, attrs }">
+        <v-card class="text-decoration-none text-left mt-4" hover v-on="on" v-bind="attrs">
+          <v-alert
+            icon="mdi-calculator"
+            class="text-body-2 mb-0"
+            color="#3F62D5"
+            prominent
+            colored-border
+            border="left"
+          >
+            Si vous avez besoin d'aide pour calculer votre part de bios et de produits labélisés, vous pouvez tester
+            notre calculateur sous format excel.
+          </v-alert>
+        </v-card>
+      </template>
+      <CalculatorResourceModal @closeModal="closeCalculatorModal" />
+    </v-dialog>
 
     <v-card
       href="https://www.inao.gouv.fr/Espace-professionnel-et-outils/Rechercher-un-produit"
@@ -20,7 +32,7 @@
     </v-card>
 
     <v-card
-      href="/Guide Pratique MP Gestion directe.pdf"
+      href="/static/documents/Guide Pratique MP Gestion directe.pdf"
       target="_blank"
       class="text-decoration-none text-left mt-4"
       hover
@@ -30,8 +42,6 @@
         acteurs de la restauration collective en gestion directe.
       </v-alert>
     </v-card>
-
-    <CalculatorResourceModal v-if="calculatorModal" @closeModal="closeCalculatorModal" />
   </div>
 </template>
 
@@ -48,9 +58,6 @@ export default {
     }
   },
   methods: {
-    showCalculatorModal() {
-      this.calculatorModal = true
-    },
     closeCalculatorModal() {
       this.calculatorModal = false
     },
