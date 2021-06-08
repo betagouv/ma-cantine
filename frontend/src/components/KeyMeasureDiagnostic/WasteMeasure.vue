@@ -29,26 +29,38 @@
       <v-text-field :disabled="!otherActionEnabled" label="Autre : donnez plus d'informations"></v-text-field>
     </v-row>
 
-    <p class="text-left mt-6 mb-4">J'ai réalisé des mesures de mon gaspillage alimentaire :</p>
-    <v-text-field class="mx-8" label="Reste de pain" suffix="kg/an"></v-text-field>
-    <v-text-field class="mx-8" label="Reste plateau" suffix="kg/an"></v-text-field>
-    <v-text-field class="mx-8" label="Reste en production (non servi)" suffix="kg/an"></v-text-field>
-    <v-text-field class="mx-8" label="Reste de composantes (entrée, plat dessert...)" suffix="kg/an"></v-text-field>
+    <v-checkbox
+      hide-details="auto"
+      v-model="diagnostic.hasWasteMeasures"
+      label="J'ai réalisé des mesures de mon gaspillage alimentaire"
+    />
+    <v-expand-transition>
+      <div v-if="diagnostic.hasWasteMeasures" class="mt-4">
+        <v-text-field class="mx-8" label="Reste de pain" suffix="kg/an"></v-text-field>
+        <v-text-field class="mx-8" label="Reste plateau" suffix="kg/an"></v-text-field>
+        <v-text-field class="mx-8" label="Reste en production (non servi)" suffix="kg/an"></v-text-field>
+        <v-text-field class="mx-8" label="Reste de composantes (entrée, plat dessert...)" suffix="kg/an"></v-text-field>
+      </div>
+    </v-expand-transition>
 
     <v-checkbox
       hide-details="auto"
       v-model="diagnostic.hasDonationAgreement"
-      label="Si ma cantine fabrique plus de 3 000 repas par jour en moyenne, je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire"
+      label="Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire"
     />
-
-    <p class="text-left mt-6 mb-4">
-      Je propose, de toutes façons, une ou des conventions de dons à des associations habilitées d’aide alimentaire :
+    <p class="text-left mx-8 mt-2 explanation">
+      Seulement les cantines qui fabriquent plus de 3 000 repas par jour en moyenne doivent proposer des conventions.
     </p>
-    <v-text-field class="mx-8" label="Fréquence de dons" suffix="dons/an"></v-text-field>
-    <v-text-field class="mx-8" label="Quantité des denrées données" suffix="par an"></v-text-field>
-    <v-text-field class="mx-8" label="Type de denrées données"></v-text-field>
 
-    <v-textarea label="Autres commentaires" outlined></v-textarea>
+    <v-expand-transition>
+      <div v-if="diagnostic.hasDonationAgreement" class="my-4">
+        <v-text-field class="mx-8" label="Fréquence de dons" suffix="dons/an"></v-text-field>
+        <v-text-field class="mx-8" label="Quantité des denrées données" suffix="par an"></v-text-field>
+        <v-text-field class="mx-8" label="Type de denrées données"></v-text-field>
+      </div>
+    </v-expand-transition>
+
+    <v-textarea label="Autres commentaires" outlined rows="3"></v-textarea>
   </div>
 </template>
 
@@ -90,3 +102,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.explanation {
+  color: grey;
+  font-size: 0.8em;
+}
+</style>
