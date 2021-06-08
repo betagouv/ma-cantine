@@ -27,6 +27,17 @@
         :value="item.value"
       ></v-radio>
     </v-radio-group>
+
+    <p class="text-left mt-6 mb-2">Mon menu végétarien est à base :</p>
+    <v-checkbox
+      hide-details="auto"
+      class="ml-8"
+      v-model="diagnostic.vegetarianMenuBase"
+      v-for="item in menuBases"
+      :key="item.value"
+      :value="item.value"
+      :label="item.label"
+    />
   </div>
 </template>
 
@@ -62,10 +73,23 @@ export default {
           value: "ALTERNATIVES",
         },
       ],
+      menuBases: [
+        {
+          label: "De plats prêts à l'emploi",
+          value: "READYMADE",
+        },
+        {
+          label: "De légumes secs et céréales",
+          value: "GRAIN",
+        },
+      ],
     }
   },
   props: {
     diagnostic: Object,
+  },
+  mounted() {
+    this.diagnostic.vegetarianMenuBase = [] // TODO TEMP
   },
 }
 </script>
