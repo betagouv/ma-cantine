@@ -10,7 +10,7 @@
     <v-row>
       <v-spacer></v-spacer>
       <v-col cols="12" md="8">
-        <v-form class="text-left" ref="form" v-if="canteen" @submit.prevent>
+        <v-form class="text-left" ref="form" v-model="formIsValid" v-if="canteen" @submit.prevent>
           <p class="body-2 mt-6 mb-2">Nom de la cantine</p>
           <v-text-field hide-details="auto" :rules="[validators.notEmpty]" solo v-model="canteen.name"></v-text-field>
 
@@ -20,7 +20,7 @@
           <p class="body-2 mt-6 mb-2">Nombre de couverts moyen par jour</p>
           <v-text-field
             hide-details="auto"
-            :rules="[validators.positiveNumber]"
+            :rules="[validators.greaterThanZero]"
             solo
             v-model="canteen.dailyMealCount"
           ></v-text-field>
