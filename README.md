@@ -46,8 +46,6 @@ createdb macantine-egalim
 
 ### Compléter les variables d'environnement
 
-#### Backend
-
 L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), vous pouvez donc créer un fichier `.env` à la racine du projet avec ces variables définies :
 
 - *SECRET*  --  Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
@@ -73,12 +71,6 @@ L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), 
 - *CELLAR_KEY* -- **Optionnel** - la clé du service S3
 - *CELLAR_SECRET* -- **Optionnel** - le secret du service S3
 - *CELLAR_BUCKET_NAME* -- **Optionnel** - le nom du bucket S3 à utiliser
-
-#### Frontend
-
-Créez un fichier `.env.local` à `/frontend` avec ces variables définies :
-
-- *VUE_APP_APPRO_TABLE_NAME*  --  Le nom du fichier du tableur appro, sans extension (par ex. Diagnostic approvisionnement (ma-cantine-alpha) v0.5). Il doit être assorti avec les fichiers dans `/web/static/documents`
 
 ### Création des tables / Migration de la base de données
 
