@@ -2,7 +2,7 @@
   <div v-if="diagnostics">
     <v-row>
       <v-spacer></v-spacer>
-      <v-col cols="12" md="8">
+      <v-col cols="12" :md="measure && measure.baseComponent === 'QualityMeasure' ? 12 : 8">
         <KeyMeasureDiagnostic :measure="measure" :diagnosticsCopy="diagnostics" @afterSave="goToNextStep" />
       </v-col>
       <v-spacer></v-spacer>
