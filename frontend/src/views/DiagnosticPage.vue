@@ -49,7 +49,10 @@
       </v-btn>
     </v-row>
 
-    <v-dialog v-model="showModal" max-width="700">
+    <v-dialog
+      v-model="showModal"
+      :max-width="measureDiagnosticModal && measureDiagnosticModal.baseComponent === 'QualityMeasure' ? 900 : 700"
+    >
       <v-card class="pa-6">
         <div class="mt-n6 mx-n6 mb-4 pa-4 d-flex" style="background-color: #F5F5F5">
           <v-spacer></v-spacer>
