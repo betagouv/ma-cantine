@@ -1,6 +1,5 @@
 <template>
   <div id="quality-measure" class="text-left">
-    <p class="text-center"><em>Si vous ne savez pas quelques valeurs, vous pouvez laisser le champ vide.</em></p>
     <v-row>
       <v-spacer></v-spacer>
       <QualityMeasureValuesInput

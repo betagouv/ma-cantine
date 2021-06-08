@@ -21,7 +21,7 @@
     />
     <v-row align="center" class="ml-8 mt-2 mr-2">
       <v-checkbox v-model="otherContentEnabled" hide-details class="shrink mt-0"></v-checkbox>
-      <v-text-field :disabled="!otherContentEnabled" label="Autre : donnez plus d'information"></v-text-field>
+      <v-text-field :disabled="!otherContentEnabled" label="Autre : donnez plus d'informations"></v-text-field>
     </v-row>
 
     <p class="text-left mt-6 mb-2">Je fais cette information :</p>
@@ -47,14 +47,14 @@
     />
     <v-row align="center" class="ml-8 mt-2 mr-2">
       <v-checkbox v-model="otherSupportEnabled" hide-details class="shrink mt-0"></v-checkbox>
-      <v-text-field :disabled="!otherSupportEnabled" label="Autre : donnez plus d'information"></v-text-field>
+      <v-text-field :disabled="!otherSupportEnabled" label="Autre : donnez plus d'informations"></v-text-field>
     </v-row>
 
     <p class="text-left mt-4"><u>Information sur la qualité nutritionnelle des repas</u></p>
     <v-checkbox
       hide-details="auto"
       v-model="diagnostic.communicatesOnFoodPlan"
-      label="Je communique sur la mise en place d'un plan alimentaire"
+      label="J'informe sur la qualité nutritionnelle des repas"
     />
   </div>
 </template>
@@ -92,7 +92,7 @@ export default {
           value: "ONCE",
         },
         {
-          label: "Mois qu'une fois par an",
+          label: "Moins d'une fois par an",
           value: "LESS_THAN_ONCE",
         },
       ],
@@ -102,7 +102,7 @@ export default {
           value: "DISPLAY",
         },
         {
-          label: "Par voie électronique (Envoi d’e-mail aux convives, sur site internet ou intranet (mairie, pronote)",
+          label: "Par voie électronique (envoi d’e-mail aux convives, sur site internet ou intranet (mairie, pronote))",
           value: "DIGITAL",
         },
       ],

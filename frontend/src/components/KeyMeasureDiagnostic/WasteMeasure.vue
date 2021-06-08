@@ -1,6 +1,5 @@
 <template>
   <div>
-    <p><em>Pour l'année 2020.</em></p>
     <v-checkbox
       hide-details="auto"
       v-model="diagnostic.hasWasteDiagnostic"
@@ -27,7 +26,7 @@
     />
     <v-row align="center" class="ml-8 mt-2 mr-2">
       <v-checkbox v-model="otherActionEnabled" hide-details class="shrink mt-0"></v-checkbox>
-      <v-text-field :disabled="!otherActionEnabled" label="Autre : donnez plus d'information"></v-text-field>
+      <v-text-field :disabled="!otherActionEnabled" label="Autre : donnez plus d'informations"></v-text-field>
     </v-row>
 
     <p class="text-left mt-6 mb-4">J'ai réalisé des mesures de mon gaspillage alimentaire :</p>
@@ -35,10 +34,6 @@
     <v-text-field class="mx-8" label="Reste plateau" suffix="kg/an"></v-text-field>
     <v-text-field class="mx-8" label="Reste en production (non servi)" suffix="kg/an"></v-text-field>
     <v-text-field class="mx-8" label="Reste de composantes (entrée, plat dessert...)" suffix="kg/an"></v-text-field>
-    <v-row align="center" class="mx-8">
-      <v-checkbox v-model="otherMeasureEnabled" hide-details class="shrink mt-0"></v-checkbox>
-      <v-text-field :disabled="!otherMeasureEnabled" label="Autre : donnez plus d'information"></v-text-field>
-    </v-row>
 
     <v-checkbox
       hide-details="auto"
@@ -52,6 +47,8 @@
     <v-text-field class="mx-8" label="Fréquence de dons" suffix="dons/an"></v-text-field>
     <v-text-field class="mx-8" label="Quantité des denrées données" suffix="par an"></v-text-field>
     <v-text-field class="mx-8" label="Type de denrées données"></v-text-field>
+
+    <v-textarea label="Autres commentaires" outlined></v-textarea>
   </div>
 </template>
 
@@ -89,7 +86,6 @@ export default {
         },
       ],
       otherActionEnabled: false,
-      otherMeasureEnabled: false,
     }
   },
 }
