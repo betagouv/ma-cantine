@@ -25,7 +25,7 @@ Qualité des produits :
 - Valeur totale annuelle HT : {{ measures|get_item:"value_total_ht" }} €
 
 Gaspillage alimentaire :
-- Diagnostique sur le gaspillage réalisé : {{ measures|get_item:"has_waste_diagnostic"|yesno:"oui,non,non renseigné" }}
+- Diagnostic sur le gaspillage réalisé : {{ measures|get_item:"has_waste_diagnostic"|yesno:"oui,non,non renseigné" }}
 - Plan d'action contre le gaspillage en place : {{ measures|get_item:"has_waste_plan"|yesno:"oui,non,non renseigné" }}
 - Propose des dons alimentaires : {{ measures|get_item:"has_donation_agreement"|yesno:"oui,non,non renseigné" }}
 

@@ -40,7 +40,7 @@ const routes = [
     },
   },
   {
-    path: "/diagnostique",
+    path: "/diagnostic",
     name: "DiagnosticPage",
     component: DiagnosticPage,
     meta: {
