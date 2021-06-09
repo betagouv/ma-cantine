@@ -59,10 +59,11 @@ export default {
     validators() {
       return validators
     },
-    measures() {
-      const userCanteen = this.$store.state.loggedUser ? this.$store.state.userCanteens[0] : null
-      const diagnostics = userCanteen ? userCanteen.diagnostics : this.$store.getters.getLocalDiagnostics()
-      return diagnostics.find((x) => x.year === 2020) || {}
+    latestDiagnostic() {
+      const diagnostics = this.$store.state.loggedUser
+        ? this.$store.state.userCanteens[0].diagnostics
+        : this.$store.getters.getLocalDiagnostics()
+      return diagnostics.find((x) => x.year === 2020)
     },
   },
   methods: {
@@ -71,7 +72,7 @@ export default {
       if (!this.formIsValid) return
 
       this.$store
-        .dispatch("subscribeBetaTester", { ...this.formData, ...{ measures: this.measures } })
+        .dispatch("subscribeBetaTester", { ...this.formData, ...{ measures: this.latestDiagnostic } })
         .then(() => {
           this.formData = {}
           alert("Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.")
