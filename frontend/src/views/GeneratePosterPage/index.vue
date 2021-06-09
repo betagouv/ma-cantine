@@ -1,110 +1,127 @@
 <template>
-  <div id="poster-form-page">
-    <h1>Générez votre affiche convives</h1>
-    <p class="poster-presentation">
-      En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives. Cette
-      affiche présente vos données d'achats à vos convives comme demandé par une sous-mesure de la loi EGAlim.
-    </p>
-    <router-link :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }">
-      En savoir plus sur la mesure
-    </router-link>
-    <div id="poster-generation">
-      <form id="poster-form" @submit.prevent="submit">
-        <h2>À propos de votre cantine</h2>
-        <p>
-          Je représente
-          <label for="canteen-name">la cantine</label>
-          <input
-            id="canteen-name"
-            v-model="form.canteen.name"
-            class="field"
-            placeholder="nom de l'établissement"
-            required
-          />
-          dans
-          <label for="commune">la commune de</label>
-          <input
-            id="commune"
-            v-model="form.canteen.city"
-            class="field"
-            placeholder="nom de la commune"
-            required
-            type="search"
-            @input="search"
-            list="communes"
-          />
-          <datalist id="communes">
-            <option v-for="commune in communes" :value="commune.properties.label" :key="commune.properties.id">
-              {{ commune.properties.label }} ({{ commune.properties.context }})
-            </option>
-          </datalist>
-          .
+  <div>
+    <v-row>
+      <v-spacer></v-spacer>
+      <v-col cols="12" sm="10" md="8">
+        <h1 class="font-weight-black my-6">
+          Générez votre affiche convives
+        </h1>
+        <p class="text-body-2">
+          En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives.
+          Cette affiche présente vos données d'achats à vos convives comme demandé par une sous-mesure de la loi EGAlim.
         </p>
-        <p>
-          <label for="servings">Nous servons</label>
-          <input
-            id="servings"
-            aria-describedby="repas"
-            v-model.number="form.canteen.dailyMealCount"
-            type="number"
-            min="0"
-            placeholder="200"
-            required
-          />
-          <span id="repas">repas par jour</span>
-          .
-        </p>
-        <h2>À propos de vos achats</h2>
-        <p>
-          <label for="total">
-            Sur l'année de 2020, les achats alimentaires (repas, collations et boissons) répresentent
-          </label>
-          <input
-            id="total"
-            v-model.number="form.diagnostic.valueTotalHt"
-            class="currency-field"
-            type="number"
-            min="0"
-            placeholder="15000"
-            aria-describedby="euros"
-            required
-          />
-          <span id="euros">euros HT</span>
-          .
-        </p>
-        <p>
-          Sur ce total,
-          <input
-            id="bio"
-            v-model.number="form.diagnostic.valueBioHt"
-            class="currency-field"
-            type="number"
-            min="0"
-            placeholder="3000"
-            aria-describedby="euros"
-            required
-          />
-          euros HT correspondaient à des
-          <label for="bio">produits bio</label>
-          et
-          <input
-            id="sustainable"
-            v-model.number="form.diagnostic.valueSustainableHt"
-            class="currency-field"
-            type="number"
-            min="0"
-            placeholder="2000"
-            aria-describedby="euros"
-            required
-          />
-          euros HT correspondaient à des
-          <label for="sustainable">produits de qualité et durables (hors bio)</label>
-          .
-        </p>
-        <input type="submit" id="submit" value="Générer mon affiche" />
-      </form>
-      <div id="poster-preview">
-        <CanteenPoster v-bind="form" id="canteen-poster" />
+        <v-btn
+          color="primary"
+          class="text-decoration-underline"
+          text
+          :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
+        >
+          En savoir plus sur la mesure
+        </v-btn>
+      </v-col>
+      <v-spacer></v-spacer>
+    </v-row>
+
+    <div id="poster-form-page">
+      <p class="poster-presentation"></p>
+      <div id="poster-generation">
+        <form id="poster-form" @submit.prevent="submit">
+          <h2>À propos de votre cantine</h2>
+          <p>
+            Je représente
+            <label for="canteen-name">la cantine</label>
+            <input
+              id="canteen-name"
+              v-model="form.canteen.name"
+              class="field"
+              placeholder="nom de l'établissement"
+              required
+            />
+            dans
+            <label for="commune">la commune de</label>
+            <input
+              id="commune"
+              v-model="form.canteen.city"
+              class="field"
+              placeholder="nom de la commune"
+              required
+              type="search"
+              @input="search"
+              list="communes"
+            />
+            <datalist id="communes">
+              <option v-for="commune in communes" :value="commune.properties.label" :key="commune.properties.id">
+                {{ commune.properties.label }} ({{ commune.properties.context }})
+              </option>
+            </datalist>
+            .
+          </p>
+          <p>
+            <label for="servings">Nous servons</label>
+            <input
+              id="servings"
+              aria-describedby="repas"
+              v-model.number="form.canteen.dailyMealCount"
+              type="number"
+              min="0"
+              placeholder="200"
+              required
+            />
+            <span id="repas">repas par jour</span>
+            .
+          </p>
+          <h2>À propos de vos achats</h2>
+          <p>
+            <label for="total">
+              Sur l'année de 2020, les achats alimentaires (repas, collations et boissons) répresentent
+            </label>
+            <input
+              id="total"
+              v-model.number="form.diagnostic.valueTotalHt"
+              class="currency-field"
+              type="number"
+              min="0"
+              placeholder="15000"
+              aria-describedby="euros"
+              required
+            />
+            <span id="euros">euros HT</span>
+            .
+          </p>
+          <p>
+            Sur ce total,
+            <input
+              id="bio"
+              v-model.number="form.diagnostic.valueBioHt"
+              class="currency-field"
+              type="number"
+              min="0"
+              placeholder="3000"
+              aria-describedby="euros"
+              required
+            />
+            euros HT correspondaient à des
+            <label for="bio">produits bio</label>
+            et
+            <input
+              id="sustainable"
+              v-model.number="form.diagnostic.valueSustainableHt"
+              class="currency-field"
+              type="number"
+              min="0"
+              placeholder="2000"
+              aria-describedby="euros"
+              required
+            />
+            euros HT correspondaient à des
+            <label for="sustainable">produits de qualité et durables (hors bio)</label>
+            .
+          </p>
+          <input type="submit" id="submit" value="Générer mon affiche" />
+        </form>
+        <div id="poster-preview">
+          <CanteenPoster v-bind="form" id="canteen-poster" />
+        </div>
       </div>
     </div>
   </div>
@@ -222,18 +239,11 @@ export default {
 
 <style scoped lang="scss">
 #poster-form-page {
-  padding: 2em;
   display: flex;
   flex-direction: column;
   align-items: center;
   max-width: 1500px !important;
   margin: auto;
-
-  h1 {
-    font-size: 48px;
-    color: $ma-cantine-green;
-    margin: 1em 0em;
-  }
 
   .poster-presentation {
     max-width: 1170px;
