@@ -41,7 +41,10 @@
               {{ sectorsForCanteen(canteen) }}
             </div>
           </v-card-subtitle>
-          <v-card-text class="grey--text text--darken-4" v-if="initiativesForCanteen(canteen)">
+          <v-card-text
+            v-if="initiativesForCanteen(canteen) && initiativesForCanteen(canteen).length > 0"
+            class="grey--text text--darken-4"
+          >
             Nos initiatives mises en place :
             <div v-for="initiative in initiativesForCanteen(canteen)" :key="initiative">
               <v-icon small class="mt-n1" color="secondary">mdi-check</v-icon>
