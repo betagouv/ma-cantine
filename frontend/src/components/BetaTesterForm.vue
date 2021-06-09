@@ -23,7 +23,7 @@
         hide-details="auto"
         :rules="[validators.notEmpty]"
         solo
-        v-model="formData.vity"
+        v-model="formData.city"
       ></v-text-field>
 
       <p class="body-2 mb-1 mt-2 text-left">Votre email</p>
@@ -59,6 +59,11 @@ export default {
     validators() {
       return validators
     },
+    measures() {
+      const userCanteen = this.$store.state.loggedUser ? this.$store.state.userCanteens[0] : null
+      const diagnostics = userCanteen ? userCanteen.diagnostics : this.$store.getters.getLocalDiagnostics()
+      return diagnostics.find((x) => x.year === 2020) || {}
+    },
   },
   methods: {
     subscribeBetaTester() {
@@ -66,7 +71,7 @@ export default {
       if (!this.formIsValid) return
 
       this.$store
-        .dispatch("subscribeBetaTester", this.formData)
+        .dispatch("subscribeBetaTester", { ...this.formData, ...{ measures: this.measures } })
         .then(() => {
           this.formData = {}
           alert("Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.")
