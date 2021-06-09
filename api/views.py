@@ -131,7 +131,7 @@ class SubscribeBetaTester(APIView):
     def post(self, request):
         try:
             data = request.data
-            key_measures = request.data.get("key_measures", {})
+            key_measures = request.data.get("measures", {})
             context = {
                 "canteen": data.get("school"),
                 "city": data.get("city"),
@@ -148,7 +148,7 @@ class SubscribeBetaTester(APIView):
                 html_message=render_to_string("subscription-beta-tester.html", context),
             )
             return JsonResponse({}, status=status.HTTP_201_CREATED)
-        except Exception:
+        except Exception as e:
             return JsonResponse({}, status=status.HTTP_400_BAD_REQUEST)
 
 
