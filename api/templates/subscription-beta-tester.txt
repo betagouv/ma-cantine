@@ -16,7 +16,7 @@ Téléphone : {{ phone }}
 Message : {{ message }}
 
 --
-Mesures du dernier diangostic (2020)
+Mesures du dernier diagnostic (2020)
 
 Qualité des produits :
 - Bio - Valeur annuelle HT : {{ measures|get_item:"value_bio_ht" }} €
@@ -38,7 +38,7 @@ Interdiction du plastique :
 - Contenants de cuisson en plastique remplacés : {{ measures|get_item:"cooking_plastic_substituted"|yesno:"oui,non,non renseigné" }}
 - Contenants de service en plastique remplacés : {{ measures|get_item:"serving_plastic_substituted"|yesno:"oui,non,non renseigné" }}
 - Bouteilles en plastique remplacées : {{ measures|get_item:"plastic_bottles_substituted"|yesno:"oui,non,non renseigné" }}
-- Ustensils en plastique remplacés : {{ measures|get_item:"plastic_tableware_substituted"|yesno:"oui,non,non renseigné" }}
+- Ustensiles en plastique remplacés : {{ measures|get_item:"plastic_tableware_substituted"|yesno:"oui,non,non renseigné" }}
 
 Information des convives :
 - Communique sur le plan alimentaire : {{ measures|get_item:"communicates_on_food_plan"|yesno:"oui,non,non renseigné" }}
