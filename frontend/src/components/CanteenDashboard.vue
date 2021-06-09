@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-card outlined class="mt-4 pa-4">
           <v-card-title class="font-weight-bold">
-            Données d'approvisionnements en produits durables et de qualité
+            Données d'approvisionnement en produits de qualité et durables
           </v-card-title>
           <v-card-text>
             <v-row>
