@@ -11,8 +11,8 @@
     <p class="text-body-2 text-left">
       Le cas échéant, un encart dédié à votre établissement apparaitra sur la page
       <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
-      . Seront mis en avant vos initiatives, indicateurs et démarches entreprises pour une alimentation plus saine et
-      durable. C'est aussi un bon moyen de répondre à
+      . Seront mis en avant le résultat de votre auto-diagnostic; les initiatives mises en place, indicateurs et
+      démarches entreprises pour une alimentation plus saine et durable. C'est aussi un bon moyen de répondre à
       <router-link :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }">
         l'obligation réglementaire de télédéclaration
       </router-link>
