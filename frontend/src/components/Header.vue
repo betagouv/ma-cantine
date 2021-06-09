@@ -14,33 +14,38 @@
     >
       <v-app-bar-title class="align-self-center">
         <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex">
+          <!-- All three widths are needed because of a Firefox display bug -->
           <v-img
-            class="ml-4"
-            :width="90"
+            :class="{ 'ml-4': $vuetify.breakpoint.xs }"
+            :width="extended && dynamicSizingEnabled ? 130 : 87"
+            :max-width="extended && dynamicSizingEnabled ? 130 : 87"
+            :min-width="extended && dynamicSizingEnabled ? 130 : 87"
             contain
             :src="`/static/images/${marianneFilename}`"
-            v-if="showMarianne"
           ></v-img>
           <v-img
             :width="extended && dynamicSizingEnabled ? 135 : 114"
+            :min-width="extended && dynamicSizingEnabled ? 135 : 114"
             :max-width="extended && dynamicSizingEnabled ? 135 : 114"
             contain
-            class="ml-4"
+            :class="{ 'ml-4': $vuetify.breakpoint.xs }"
             src="/static/images/logo_transparent.png"
           ></v-img>
-          <div
-            v-bind:class="{
-              'beta-chip': true,
-              'd-inline-flex': true,
-              'ml-1': true,
-              'beta-chip--little': (extended && dynamicSizingEnabled) == false,
-            }"
-            class="grey--text"
-          >
-            beta
-          </div>
         </router-link>
       </v-app-bar-title>
+
+      <div class="mx-4 fill-height d-flex flex-column">
+        <v-spacer></v-spacer>
+        <div class="divider"></div>
+        <v-spacer></v-spacer>
+      </div>
+
+      <div class="fill-height d-flex flex-column text-left">
+        <v-spacer></v-spacer>
+        <div class="caption grey--text mt-n1" v-if="extended && dynamicSizingEnabled">Site en expérimentation</div>
+        <a class="text-caption grey--text text--darken-4 text-decoration-underline">Devenir testeur</a>
+        <v-spacer></v-spacer>
+      </div>
 
       <v-spacer v-if="$vuetify.breakpoint.name != 'xs'"></v-spacer>
 
@@ -114,14 +119,11 @@ export default {
       return !!this.$store.state.initialDataLoaded
     },
     marianneFilename() {
-      return this.extended && this.dynamicSizingEnabled ? "Republique-francaise-logo.svg" : "Marianne-logo.svg"
+      return this.extended && this.dynamicSizingEnabled ? "Marianne.png" : "Marianne-logo.svg"
     },
     dynamicSizingEnabled() {
       const viewNames = ["LandingPage", "BlogsHome"]
       return this.$vuetify.breakpoint.name !== "xs" && viewNames.includes(this.$route.name)
-    },
-    showMarianne() {
-      return this.dynamicSizingEnabled
     },
     elevateOnScroll() {
       return this.dynamicSizingEnabled
@@ -161,5 +163,10 @@ export default {
 }
 #profile::v-deep .v-btn__content {
   opacity: 1;
+}
+.divider {
+  height: 60%;
+  max-height: 30px;
+  border-left: solid 1px #ccc;
 }
 </style>
