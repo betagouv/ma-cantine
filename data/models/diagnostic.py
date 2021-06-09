@@ -82,7 +82,7 @@ class Diagnostic(models.Model):
 
     # Food waste
     has_waste_diagnostic = models.BooleanField(
-        null=True, verbose_name="diagnostique sur le gaspillage réalisé"
+        null=True, verbose_name="diagnostic sur le gaspillage réalisé"
     )
     has_waste_plan = models.BooleanField(
         null=True, verbose_name="plan d'action contre le gaspillage en place"
@@ -147,4 +147,4 @@ class Diagnostic(models.Model):
     )
 
     def __str__(self):
-        return f"Diagnostique pour {self.canteen.name} ({self.year})"
+        return f"Diagnostic pour {self.canteen.name} ({self.year})"
