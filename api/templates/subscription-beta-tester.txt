@@ -1,3 +1,5 @@
+{% load dictionary_extras %}
+{% load diagnostic_extras %}
 
 Cantine : {{ canteen }}
 
@@ -13,8 +15,30 @@ Téléphone : {{ phone }}
 
 Message : {{ message }}
 
+--
+Mesures du dernier diangostic (2020)
 
-Measures :
-{% for measure in measures %}
-- {{ measure.short_title }} : {{ measure.status|default:"Non renseigné" }}
-{% endfor %}
+Qualité des produits :
+- Bio - Valeur annuelle HT : {{ measures|get_item:"value_bio_ht" }} €
+- Commerce équitable - Valeur annuelle HT : {{ measures|get_item:"value_fair_trade_ht" }} €
+- Produits durables (hors bio) - Valeur annuelle HT : {{ measures|get_item:"value_sustainable_ht" }} €
+- Valeur totale annuelle HT : {{ measures|get_item:"value_total_ht" }} €
+
+Gaspillage alimentaire :
+- Diagnostique sur le gaspillage réalisé : {{ measures|get_item:"has_waste_diagnostic"|yesno:"oui,non,non renseigné" }}
+- Plan d'action contre le gaspillage en place : {{ measures|get_item:"has_waste_plan"|yesno:"oui,non,non renseigné" }}
+- Propose des dons alimentaires : {{ measures|get_item:"has_donation_agreement"|yesno:"oui,non,non renseigné" }}
+
+Diversification des menus :
+- Plan de diversification en place : {{ measures|get_item:"has_diversification_plan"|yesno:"oui,non,non renseigné" }}
+- Menus végétariens par semaine : {{ measures|get_item:"vegetarian_weekly_recurrence"|menu_frequency }}
+- Menu végétarien proposé : {{ measures|get_item:"vegetarian_menu_type"|menu_type }}
+
+Interdiction du plastique :
+- Contenants de cuisson en plastique remplacés : {{ measures|get_item:"cooking_plastic_substituted"|yesno:"oui,non,non renseigné" }}
+- Contenants de service en plastique remplacés : {{ measures|get_item:"serving_plastic_substituted"|yesno:"oui,non,non renseigné" }}
+- Bouteilles en plastique remplacées : {{ measures|get_item:"plastic_bottles_substituted"|yesno:"oui,non,non renseigné" }}
+- Ustensils en plastique remplacés : {{ measures|get_item:"plastic_tableware_substituted"|yesno:"oui,non,non renseigné" }}
+
+Information des convives :
+- Communique sur le plan alimentaire : {{ measures|get_item:"communicates_on_food_plan"|yesno:"oui,non,non renseigné" }}
