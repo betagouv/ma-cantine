@@ -20,7 +20,7 @@
         </v-list-item-title>
       </v-list-item>
       <v-divider class="mb-2" v-if="loggedUser || $vuetify.breakpoint.xs"></v-divider>
-      <v-list-item v-if="$vuetify.breakpoint.xs" :ripple="false">
+      <v-list-item v-if="$vuetify.breakpoint.xs && !this.loggedUser" :ripple="false">
         <v-list-item-title class="body-2">
           <v-icon small color="grey darken-2" class="mt-n1 mr-2">mdi-hammer-wrench</v-icon>
           Devenir testeur
