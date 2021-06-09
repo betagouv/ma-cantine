@@ -71,8 +71,10 @@ export default {
       this.$refs.form.validate()
       if (!this.formIsValid) return
 
+      const payload = Object.assign({ measures: this.latestDiagnostic }, this.formData)
+
       this.$store
-        .dispatch("subscribeBetaTester", { ...this.formData, ...{ measures: this.latestDiagnostic } })
+        .dispatch("subscribeBetaTester", payload)
         .then(() => {
           this.formData = {}
           alert("Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.")
