@@ -139,3 +139,11 @@ Il faut d'abord se placer sur "/frontend", ensuite la commande pour lancer les t
 cd frontend
 npm run test
 ```
+
+## Creation d'un superuser
+
+Afin de pouvoir s'identifier dans le backoffice (sous /admin), il est nécessaire de créer un utilisateur admin avec tous les droits. Pour ce faire, vous pouvez en console lancer :
+
+```
+python manage.py createsuperuser
+```
