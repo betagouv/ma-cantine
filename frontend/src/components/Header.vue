@@ -35,13 +35,13 @@
         </router-link>
       </v-app-bar-title>
 
-      <div class="mx-4 fill-height d-flex flex-column" v-if="$vuetify.breakpoint.smAndUp">
+      <div class="mx-4 fill-height d-flex flex-column" v-if="$vuetify.breakpoint.smAndUp && !this.loggedUser">
         <v-spacer></v-spacer>
         <div class="divider"></div>
         <v-spacer></v-spacer>
       </div>
 
-      <div class="fill-height d-flex flex-column text-left" v-if="$vuetify.breakpoint.smAndUp">
+      <div class="fill-height d-flex flex-column text-left" v-if="$vuetify.breakpoint.smAndUp && !this.loggedUser">
         <v-spacer></v-spacer>
         <div class="caption grey--text mt-n1" v-if="extended && dynamicSizingEnabled">Site en expérimentation</div>
         <a class="text-caption grey--text text--darken-4 text-decoration-underline">Devenir testeur</a>
