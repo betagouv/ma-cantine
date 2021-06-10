@@ -45,7 +45,7 @@
           Nos cantines
         </v-list-item-title>
       </v-list-item>
-      <v-list-item :ripple="false" :to="{ name: 'BlogsPage' }">
+      <v-list-item :ripple="false" :to="{ name: 'BlogsHome' }">
         <v-list-item-title class="body-2">
           <v-icon small color="grey darken-2" class="mt-n1 mr-2">mdi-newspaper-variant-outline</v-icon>
           Blog
