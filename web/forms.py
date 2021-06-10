@@ -19,7 +19,7 @@ class RegisterForm(UserCreationForm):
     siret = forms.CharField(label="SIRET", required=False)
     city = forms.CharField(label="Ville/Commune")
     department = forms.ChoiceField(label="Département", choices=[(None, '---')] + Department.choices)
-    sectors = forms.MultipleChoiceField(label="Secteurs d'activité", choices=Sector.choices(), widget=forms.CheckboxSelectMultiple)
+    sectors = forms.MultipleChoiceField(label="Secteurs d'activité", widget=forms.CheckboxSelectMultiple)
     daily_meal_count = forms.IntegerField(label="Nombre de repas moyen par jour")
     management_type = forms.ChoiceField(
         label="Mode de gestion",
@@ -82,6 +82,7 @@ class RegisterForm(UserCreationForm):
         self.fields["siret"].widget.attrs.update({"placeholder": "123 456 789 00001"})
         self.fields["city"].widget.attrs.update({"placeholder": "Ville/Commune"})
         self.fields["sectors"].widget.attrs.update({"class": "sector"})
+        self.fields["sectors"].choices = Sector.choices()
         self.fields["management_type"].widget.attrs.update({"class": "management-type"})
         self.fields["password1"].widget.attrs.update(
             {"placeholder": "Entrez votre mot de passe"}
