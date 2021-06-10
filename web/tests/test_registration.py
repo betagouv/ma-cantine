@@ -4,14 +4,17 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
-from data.models import Canteen
+from data.models import Canteen, Sector
+from data.factories import SectorFactory
 
 
 class TestRegistration(APITestCase):
+
     def test_user_registration(self):
         """
         Registering a user sends an email to verify their address
         """
+        sector = SectorFactory.create()
         email = "test-user@example.com"
         payload = {
             "first_name": "Test",
@@ -23,11 +26,15 @@ class TestRegistration(APITestCase):
             "management_type": "direct",
             "cgu_approved": True,
             "username": "test-user",
+            "department": "69",
             "email": email,
+            "city": "Lyon",
+            "sectors": [sector.id,],
+            "daily_meal_count": 100,
         }
 
         # activation email must be sent after registration
-        self.client.post(reverse("register"), payload)
+        response = self.client.post(reverse("register"), payload)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(
             mail.outbox[0].subject, "Activation de votre compte Ma Cantine"
@@ -42,11 +49,13 @@ class TestRegistration(APITestCase):
         )
         self.assertRedirects(activation_response, reverse("app"), status.HTTP_302_FOUND, fetch_redirect_response=False)
 
+
     def test_user_registration_creates_canteen(self):
         """
         Creating a user from the register form should create
         a canteen for them
         """
+        sector = SectorFactory.create()
         email = "test-user-2@example.com"
         payload = {
             "first_name": "Test",
@@ -59,6 +68,10 @@ class TestRegistration(APITestCase):
             "cgu_approved": True,
             "username": "test-user-2",
             "email": email,
+            "department": "69",
+            "city": "Lyon",
+            "sectors": [sector.id,],
+            "daily_meal_count": 100,
         }
 
         self.client.post(reverse("register"), payload)
@@ -67,6 +80,11 @@ class TestRegistration(APITestCase):
         user = get_user_model().objects.get(username="test-user-2")
 
         self.assertIn(user, canteen.managers.all())
+        self.assertIn(sector, canteen.sectors.all())
+
+        self.assertEqual(canteen.daily_meal_count, 100)
+        self.assertEqual(canteen.city, "Lyon")
+        self.assertEqual(canteen.department, "69")
 
     def test_register_email_username(self):
         """
