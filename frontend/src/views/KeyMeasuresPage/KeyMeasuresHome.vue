@@ -2,7 +2,7 @@
   <div>
     <DashboardPage v-if="diagnostics" :diagnostics="diagnostics" />
     <EmptyDiagnosticPage v-else />
-    <BetaTesterForm class="mt-12" />
+    <BetaTesterForm v-if="!isAuthenticated" class="mt-12" />
   </div>
 </template>
 
