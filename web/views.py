@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
-from django.contrib.auth import get_user_model, tokens, login
+from django.contrib.auth import get_user_model, tokens, login, logout
 from django.contrib import messages
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.conf import settings
@@ -32,16 +32,14 @@ class RegisterView(FormView):
         form.save()
         username = form.cleaned_data["username"]
         try:
-            _send_activation_email(username)
+            _login_and_send_activation_email(username, self.request)
         except Exception:
             self.success_url = reverse_lazy(
                 "registration_email_sent_error", kwargs={"username": username}
             )
             return super().form_valid(form)
         else:
-            self.success_url = reverse_lazy(
-                "registration_email_sent", kwargs={"username": username}
-            )
+            self.success_url = reverse_lazy("app")
             return super().form_valid(form)
 
 
@@ -56,7 +54,7 @@ class ActivationTokenView(View):
     def post(self, request, *args, **kwargs):
         username = request.POST.get("username")
         try:
-            return _send_activation_email(username)
+            return _login_and_send_activation_email(username, self.request)
         except Exception:
             return redirect(
                 reverse_lazy(
@@ -107,27 +105,28 @@ class AccountActivationView(View):
             user = get_user_model().objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, ObjectDoesNotExist):
             user = None
-        if user and user.is_active:
+        if user and user.email_confirmed:
             messages.info(
                 request,
-                "Votre compte est bien actif, vous pouvez vous identifier.",
+                "Votre compte est bien active, vous pouvez vous identifier.",
             )
             return redirect(reverse_lazy("login"))
         if user is not None and tokens.default_token_generator.check_token(user, token):
-            user.is_active = True
+            user.email_confirmed = True
             user.save()
             login(request, user)
-            # We could send a welcome email here
             return redirect(reverse_lazy("app"))
         else:
             return redirect(reverse_lazy("invalid_token"))
 
 
-def _send_activation_email(username):
+def _login_and_send_activation_email(username, request):
     if not username:
         return redirect(reverse_lazy("app"))
     try:
-        user = get_user_model().objects.get(username=username, is_active=False)
+        user = get_user_model().objects.get(username=username, email_confirmed=False)
+        login(request, user)
+
         token = tokens.default_token_generator.make_token(user)
         html_template = "auth/account_activate_email.html"
         text_template = "auth/account_activate_email.txt"
@@ -145,8 +144,6 @@ def _send_activation_email(username):
             recipient_list=[user.email],
             fail_silently=False,
         )
-        return redirect(
-            reverse_lazy("registration_email_sent", kwargs={"username": username})
-        )
+        return redirect(reverse_lazy("app"))
     except Exception:
         raise Exception("Error occurred : the mail could not be sent.")
