@@ -13,6 +13,7 @@ class MaCanteenUserAdmin(UserAdmin):
         "last_name",
         "email",
         "is_staff",
+        "email_confirmed",
         "date_joined",
     )
     search_fields = (
@@ -35,6 +36,7 @@ class MaCanteenUserAdmin(UserAdmin):
                     "is_active",
                     "is_staff",
                     "is_superuser",
+                    "email_confirmed",
                 ),
             },
         ),

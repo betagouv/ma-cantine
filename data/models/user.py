@@ -7,6 +7,7 @@ from data.utils import optimize_image
 class User(AbstractUser):
     avatar = models.ImageField("Photo de profil", null=True, blank=True)
     email = models.EmailField(_("email address"), unique=True)
+    email_confirmed = models.BooleanField(default="False", verbose_name="adresse email confirmée")
 
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None

@@ -115,7 +115,6 @@ class RegisterForm(UserCreationForm):
         user.email = get_user_model().objects.normalize_email(
             self.cleaned_data.get("email")
         )
-        user.is_active = False
 
         if commit:
             user.save()

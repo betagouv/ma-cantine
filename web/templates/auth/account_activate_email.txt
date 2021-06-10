@@ -1,6 +1,6 @@
 Bonjour,
 
-Merci d'avoir créé un compte Ma Cantine. Pour l'activer, il suffit de copier ce lien sur votre navigateur :
+Merci d'avoir créé un compte Ma Cantine. Pour confirmer votre adresse email, il suffit de copier ce lien sur votre navigateur :
 
 {{ protocol}}://{{ domain }}{% url 'activate' uidb64=uid token=token %}
 
