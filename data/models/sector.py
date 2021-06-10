@@ -11,5 +11,9 @@ class Sector(models.Model):
 
     name = models.TextField()
 
+    @classmethod
+    def choices(self):
+        return [(x.id, x.__str__()) for x in self.objects.all()]
+
     def __str__(self):
         return self.name

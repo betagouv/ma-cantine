@@ -44,7 +44,12 @@
       <div class="fill-height d-flex flex-column text-left" v-if="$vuetify.breakpoint.smAndUp && !this.loggedUser">
         <v-spacer></v-spacer>
         <div class="caption grey--text mt-n1" v-if="extended && dynamicSizingEnabled">Site en expérimentation</div>
-        <a class="text-caption grey--text text--darken-4 text-decoration-underline">Devenir testeur</a>
+        <router-link
+          :to="{ name: 'TesterParticipation' }"
+          class="text-caption grey--text text--darken-4 text-decoration-underline"
+        >
+          Devenir testeur
+        </router-link>
         <v-spacer></v-spacer>
       </div>
 
