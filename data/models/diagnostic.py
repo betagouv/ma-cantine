@@ -27,6 +27,12 @@ class Diagnostic(models.Model):
         DISPLAY = "DISPLAY", "Par affichage sur le lieu de restauration"
         WEBSITE = "WEBSITE", "Sur site internet ou intranet (mairie, cantine)"
         OTHER = "OTHER", "Autres moyens d'affichage et de communication électronique"
+        DIGITAL = "DIGITAL", "Par voie électronique"
+
+    class CommunicationFrequency(models.TextChoices):
+        REGULARLY = "REGULARLY", "Régulièrement au cours de l’année"
+        YEARLY = "YEARLY", "Une fois par an"
+        LESS_THAN_YEARLY = "LESS_THAN_YEARLY", "Moins d'une fois par an"
 
     class WasteActions(models.TextChoices):
         INSCRIPTION = "INSCRIPTION", "Pré-inscription des convives obligatoire"
@@ -38,6 +44,10 @@ class Diagnostic(models.Model):
         )
         PORTIONS = "PORTIONS", "Choix des portions (grande faim, petite faim)"
         REUSE = "REUSE", "Réutilisation des restes de préparation / surplus"
+
+    class VegetarianMenuBase(models.TextChoices):
+        GRAIN = "GRAIN", "Légumes secs et céréales"
+        READYMADE = "READYMADE", "Plats prêts à l'emploi"
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
@@ -94,8 +104,66 @@ class Diagnostic(models.Model):
         size=None,
         verbose_name="actions contre le gaspillage en place",
     )
+    other_waste_action = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="autre action contre le gaspillage alimentaire",
+    )
     has_donation_agreement = models.BooleanField(
         null=True, verbose_name="propose des dons alimentaires"
+    )
+    has_waste_measures = models.BooleanField(
+        null=True, verbose_name="réalise des mesures de gaspillage alimentaire"
+    )
+    bread_leftovers = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="reste de pain kg/an",
+    )
+    served_leftovers = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="reste plateau kg/an",
+    )
+    unserved_leftovers = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="reste en production (non servi) kg/an",
+    )
+    side_leftovers = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="reste de composantes kg/an",
+    )
+    donation_frequency = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name="fréquence de dons dons/an",
+    )
+    donation_quantity = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="quantité des denrées données kg/an",
+    )
+    donation_food_type = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="type de denrées données",
+    )
+    other_waste_comments = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="autres commentaires (gaspillage)",
     )
 
     # Vegetarian menus
@@ -115,6 +183,13 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Menu végétarien proposé",
+    )
+    vegetarian_menu_bases = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=VegetarianMenuBase.choices),
+        blank=True,
+        null=True,
+        size=None,
+        verbose_name="bases de menu végétarien",
     )
 
     # Plastic replacement
@@ -139,11 +214,27 @@ class Diagnostic(models.Model):
         size=None,
         verbose_name="Communication utilisée",
     )
+    other_communication_support = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="autre communication utilisée",
+    )
     communication_support_url = models.URLField(
         blank=True, null=True, verbose_name="Lien de communication"
     )
     communicates_on_food_plan = models.BooleanField(
         null=True, verbose_name="Communique sur le plan alimentaire"
+    )
+    communicates_on_food_quality = models.BooleanField(
+        null=True,
+        verbose_name="Communique sur les démarches qualité/durables/équitables",
+    )
+    communication_frequency = models.CharField(
+        max_length=255,
+        choices=CommunicationFrequency.choices,
+        blank=True,
+        null=True,
+        verbose_name="fréquence de communication",
     )
 
     def __str__(self):

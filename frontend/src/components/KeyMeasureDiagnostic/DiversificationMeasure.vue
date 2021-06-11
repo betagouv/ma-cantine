@@ -32,7 +32,7 @@
     <v-checkbox
       hide-details="auto"
       class="ml-8"
-      v-model="diagnostic.vegetarianMenuBase"
+      v-model="diagnostic.vegetarianMenuBases"
       v-for="item in menuBases"
       :key="item.value"
       :value="item.value"
@@ -87,9 +87,6 @@ export default {
   },
   props: {
     diagnostic: Object,
-  },
-  mounted() {
-    this.diagnostic.vegetarianMenuBase = [] // TODO TEMP
   },
 }
 </script>

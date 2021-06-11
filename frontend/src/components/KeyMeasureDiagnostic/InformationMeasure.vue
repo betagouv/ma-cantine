@@ -29,7 +29,11 @@
     />
     <v-row align="center" class="ml-8 mt-2 mr-2">
       <v-checkbox v-model="otherSupportEnabled" hide-details class="shrink mt-0"></v-checkbox>
-      <v-text-field :disabled="!otherSupportEnabled" label="Autre : donnez plus d'informations"></v-text-field>
+      <v-text-field
+        :disabled="!otherSupportEnabled"
+        v-model="diagnostic.otherCommunicationSupport"
+        label="Autre : donnez plus d'informations"
+      ></v-text-field>
     </v-row>
 
     <v-checkbox
@@ -49,20 +53,6 @@ export default {
   },
   data() {
     return {
-      communicationContents: [
-        {
-          label: "L’information porte sur la part en valeur d’achat (€) des produits servis",
-          value: "VALUE_OF_PRODUCTS",
-        },
-        {
-          label: "L’information porte sur la quantité de ces produits servis",
-          value: "QUANTITY",
-        },
-        {
-          label: "L’information porte sur le nombre de composantes servis",
-          value: "NUMBER",
-        },
-      ],
       communicationFrequencies: [
         {
           label: "Régulièrement au cours de l’année",
@@ -70,11 +60,11 @@ export default {
         },
         {
           label: "Une fois par an",
-          value: "ONCE",
+          value: "YEARLY",
         },
         {
           label: "Moins d'une fois par an",
-          value: "LESS_THAN_ONCE",
+          value: "LESS_THAN_YEARLY",
         },
       ],
       communicationSupports: [
@@ -87,13 +77,19 @@ export default {
           value: "DIGITAL",
         },
       ],
-      otherContentEnabled: false,
-      otherSupportEnabled: false,
+      otherSupportEnabled: !!this.diagnostic.otherCommunicationSupport,
     }
   },
   computed: {
     validators() {
       return validators
+    },
+  },
+  watch: {
+    otherSupportEnabled(val) {
+      if (!val) {
+        this.diagnostic.otherCommunicationSupport = null
+      }
     },
   },
 }
