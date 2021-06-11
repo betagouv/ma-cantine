@@ -12,28 +12,11 @@
       color="white"
       ref="appbar"
     >
-      <v-app-bar-title class="align-self-center">
+      <v-toolbar-title class="align-self-center">
         <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex">
-          <!-- All three widths are needed because of a Firefox display bug -->
-          <v-img
-            :class="{ 'ml-4': $vuetify.breakpoint.smAndUp, 'ml-n4': $vuetify.breakpoint.xs }"
-            :width="extended && dynamicSizingEnabled ? 130 : 87"
-            :max-width="extended && dynamicSizingEnabled ? 130 : 87"
-            :min-width="extended && dynamicSizingEnabled ? 130 : 87"
-            contain
-            :src="`/static/images/${marianneFilename}`"
-          ></v-img>
-          <v-img
-            :width="extended && dynamicSizingEnabled ? 135 : 114"
-            :min-width="extended && dynamicSizingEnabled ? 135 : 114"
-            :max-width="extended && dynamicSizingEnabled ? 135 : 114"
-            contain
-            v-if="$vuetify.breakpoint.smAndUp"
-            class="ml-4"
-            src="/static/images/logo_transparent.png"
-          ></v-img>
+          <v-img :src="`/static/images/${imageFilename}`" :width="imageWidth"></v-img>
         </router-link>
-      </v-app-bar-title>
+      </v-toolbar-title>
 
       <div class="mx-4 fill-height d-flex flex-column" v-if="$vuetify.breakpoint.smAndUp && !this.loggedUser">
         <v-spacer></v-spacer>
@@ -43,7 +26,9 @@
 
       <div class="fill-height d-flex flex-column text-left" v-if="$vuetify.breakpoint.smAndUp && !this.loggedUser">
         <v-spacer></v-spacer>
-        <div class="caption grey--text mt-n1" v-if="extended && dynamicSizingEnabled">Site en expérimentation</div>
+        <div class="caption grey--text mt-n1" v-if="extended && dynamicSizingEnabled">
+          Site en expérimentation
+        </div>
         <router-link
           :to="{ name: 'TesterParticipation' }"
           class="text-caption grey--text text--darken-4 text-decoration-underline"
@@ -59,7 +44,7 @@
         text
         elevation="0"
         class="align-self-center header-login-button"
-        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.smAndUp"
+        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
         href="/s-identifier"
         active-class="header-nav-active"
       >
@@ -69,7 +54,7 @@
       <v-btn
         text
         elevation="0"
-        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.smAndUp"
+        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
         href="/creer-mon-compte"
         class="d-none d-sm-flex align-self-center header-signup-button"
       >
@@ -116,8 +101,13 @@ export default {
     userDataReady() {
       return !!this.$store.state.initialDataLoaded
     },
-    marianneFilename() {
-      return this.extended && this.dynamicSizingEnabled ? "Marianne.png" : "Marianne-logo.svg"
+    imageFilename() {
+      if (this.$vuetify.breakpoint.xs) return "Marianne-logo.svg"
+      return this.extended && this.dynamicSizingEnabled ? "header-logos-extended.png" : "header-logos-compact.svg"
+    },
+    imageWidth() {
+      if (this.$vuetify.breakpoint.xs) return "80"
+      return this.extended && this.dynamicSizingEnabled ? "300" : "210"
     },
     dynamicSizingEnabled() {
       const viewNames = ["LandingPage", "BlogsHome"]
