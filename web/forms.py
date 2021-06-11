@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from django import forms
 from django.utils.safestring import mark_safe
 from data.models import Canteen
+from data.models import Sector
+from data.department_choices import Department
 
 
 class RegisterForm(UserCreationForm):
@@ -14,14 +16,20 @@ class RegisterForm(UserCreationForm):
     )
     email = forms.EmailField()
     canteen_name = forms.CharField(label="Nom de la cantine")
-    siret = forms.CharField(label="SIRET")
+    siret = forms.CharField(label="SIRET", required=False)
+    city = forms.CharField(label="Ville/Commune")
+    department = forms.ChoiceField(label="Département", choices=[(None, '---')] + Department.choices)
+    sectors = forms.MultipleChoiceField(label="Secteurs d'activité", widget=forms.CheckboxSelectMultiple)
+    daily_meal_count = forms.IntegerField(label="Nombre de repas moyen par jour")
     management_type = forms.ChoiceField(
         label="Mode de gestion",
         choices=(("direct", "Directe"), ("conceded", "Concédée")),
         widget=forms.RadioSelect,
     )
 
-    class Meta:
+    uses_columns = True
+
+    class Meta:  
         model = get_user_model()
         fields = (
             "first_name",
@@ -29,12 +37,39 @@ class RegisterForm(UserCreationForm):
             "email",
             "canteen_name",
             "siret",
+            "city",
+            "department",
+            "daily_meal_count",
+            "sectors",
             "management_type",
             "username",
             "password1",
             "password2",
             "cgu_approved",
         )
+
+    def left_column_fields(self):
+        field_names = [
+            "first_name",
+            "last_name",
+            "email",
+            "username",
+            "password1",
+            "password2",
+        ]
+        return [field for field in self if not field.is_hidden and field.name in field_names]
+
+    def right_column_fields(self):
+        field_names = [
+            "canteen_name",
+            "siret",
+            "city",
+            "department",
+            "daily_meal_count",
+            "sectors",
+            "management_type",
+        ]
+        return [field for field in self if not field.is_hidden and field.name in field_names]
 
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)
@@ -45,6 +80,10 @@ class RegisterForm(UserCreationForm):
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com"})
         self.fields["canteen_name"].widget.attrs.update({"placeholder": "Ma cantine"})
         self.fields["siret"].widget.attrs.update({"placeholder": "123 456 789 00001"})
+        self.fields["city"].widget.attrs.update({"placeholder": "Ville/Commune"})
+        self.fields["sectors"].widget.attrs.update({"class": "sector"})
+        self.fields["sectors"].choices = Sector.choices()
+        self.fields["management_type"].widget.attrs.update({"class": "management-type"})
         self.fields["password1"].widget.attrs.update(
             {"placeholder": "Entrez votre mot de passe"}
         )
@@ -76,16 +115,20 @@ class RegisterForm(UserCreationForm):
         user.email = get_user_model().objects.normalize_email(
             self.cleaned_data.get("email")
         )
-        user.is_active = False
 
         if commit:
             user.save()
             canteen = Canteen(
                 name=self.cleaned_data.get("canteen_name"),
                 siret=self.cleaned_data.get("siret"),
+                city=self.cleaned_data.get("city"),
+                department=self.cleaned_data.get("department"),
+                daily_meal_count=self.cleaned_data.get("daily_meal_count"),
                 management_type=self.cleaned_data.get("management_type"),
             )
             canteen.save()
             canteen.managers.add(user)
+            for sector in self.cleaned_data.get("sectors"):
+                canteen.sectors.add(sector)
 
         return user

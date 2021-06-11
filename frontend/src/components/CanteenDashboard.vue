@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-card outlined class="mt-4 pa-4">
           <v-card-title class="font-weight-bold">
-            Données d'approvisionnements en produits durables et de qualité
+            Données d'approvisionnement en produits de qualité et durables
           </v-card-title>
           <v-card-text>
             <v-row>
@@ -15,6 +15,14 @@
               <v-col cols="12" md="6" class="d-flex flex-column align-center">
                 <h3 class="text-h6">Sur l'année 2020</h3>
                 <SummaryStatistics :qualityDiagnostic="latestDiagnostic" />
+              </v-col>
+              <v-col cols="12" md="6" class="d-flex flex-column align-center">
+                <h3 class="text-h6">Prévisionnel 2021</h3>
+                <SummaryStatistics :qualityDiagnostic="this.diagnostics.provisionalYear1" />
+              </v-col>
+              <v-col cols="12" md="6" class="d-flex flex-column align-center">
+                <h3 class="text-h6">Prévisionnel 2022</h3>
+                <SummaryStatistics :qualityDiagnostic="this.diagnostics.provisionalYear2" />
               </v-col>
             </v-row>
             <KeyMeasureResource :baseComponent="qualityMeasure.baseComponent" v-if="showResources" />

@@ -18,7 +18,8 @@
       </v-card-text>
       <v-card-actions class="pa-4">
         <v-spacer></v-spacer>
-        <v-btn color="primary" large :to="{ name: 'CanteenInfo' }">
+        <GiveFeedbackLink class="mt-2 mb-n4" />
+        <v-btn color="primary" class="ml-8" large :to="{ name: 'CanteenInfo' }">
           Publier mes données
         </v-btn>
         <v-spacer></v-spacer>
@@ -33,7 +34,8 @@
       </v-card-text>
       <v-card-actions class="pa-4">
         <v-spacer></v-spacer>
-        <v-btn color="primary" large href="/creer-mon-compte">
+        <GiveFeedbackLink class="mt-2 mb-n4" />
+        <v-btn color="primary" class="ml-8" large href="/creer-mon-compte">
           Sauvegarder mes données
         </v-btn>
         <v-spacer></v-spacer>
@@ -46,10 +48,12 @@
 
 <script>
 import CanteenDashboard from "@/components/CanteenDashboard"
+import GiveFeedbackLink from "@/components/GiveFeedbackLink"
 
 export default {
   components: {
     CanteenDashboard,
+    GiveFeedbackLink,
   },
   props: ["diagnostics"],
   computed: {

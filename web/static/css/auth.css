@@ -50,7 +50,7 @@ h2 {
     font-weight: 900;
 }
 .auth_logo {
-    max-width: 60%;
+    max-width: 180px;
 }
 p {
     font-size: 0.85em;
@@ -68,7 +68,7 @@ p {
     text-align: left;
     margin-bottom: 20px;
 }
-input[type=text], input[type="password"], input[type="email"]{
+input[type=text], input[type="password"], input[type="email"], input[type="number"], select {
     width: 100%;
     height: 42px;
     box-sizing: border-box;
@@ -143,4 +143,40 @@ label[for="id_cgu_approved"] {
 input[type="checkbox"]#id_cgu_approved {
     float: left;
     margin-right: 10px;
+}
+
+#wrapper.columns {
+    width: 600px;
+}
+
+.column-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.left-column, .right-column {
+    width: 48%;
+}
+
+.sector, .management-type {
+    overflow: auto;
+}
+
+.sector > li, .management-type > li {
+    width: 45%;
+    float: left;
+}
+
+@media (max-width: 600px) {
+    #wrapper.columns {
+        width: 300px;
+    }
+    
+    .column-wrapper {
+        display: block;
+    }
+    
+    .left-column, .right-column {
+        width: auto;
+    }
 }

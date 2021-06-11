@@ -21,7 +21,7 @@ class CanteenAdmin(admin.ModelAdmin):
     fields = (
         "name",
         "city",
-        "postal_code",
+        "department",
         "daily_meal_count",
         "data_is_public",
         "sectors",

@@ -19,12 +19,6 @@
         démarches entreprises pour développer des produits issus du commerce équitable. Ces informations sont fonction
         de la valeur totale des achats réalisés sur l'année.
       </p>
-      <p>
-        <b>
-          Un bon moyen de savoir ce qu'il y a dans votre assiette et d'en discuter avec le personnel de votre restaurant
-          !
-        </b>
-      </p>
     </div>
     <div id="more-information">
       <p class="url">

@@ -22,8 +22,8 @@
       </v-row>
     </v-card>
     <v-row>
-      <v-col v-for="canteen in publishedCanteens" :key="canteen.id" cols="12" md="6">
-        <v-card :to="{ name: 'CanteenPage', params: { id: canteen.id } }" hover class="pa-4 text-left">
+      <v-col v-for="canteen in publishedCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
+        <v-card :to="{ name: 'CanteenPage', params: { id: canteen.id } }" hover class="pa-4 text-left fill-height">
           <v-card-title class="font-weight-black">
             {{ canteen.name }}
           </v-card-title>
@@ -41,7 +41,10 @@
               {{ sectorsForCanteen(canteen) }}
             </div>
           </v-card-subtitle>
-          <v-card-text class="grey--text text--darken-4" v-if="initiativesForCanteen(canteen)">
+          <v-card-text
+            v-if="initiativesForCanteen(canteen) && initiativesForCanteen(canteen).length > 0"
+            class="grey--text text--darken-4"
+          >
             Nos initiatives mises en place :
             <div v-for="initiative in initiativesForCanteen(canteen)" :key="initiative">
               <v-icon small class="mt-n1" color="secondary">mdi-check</v-icon>
