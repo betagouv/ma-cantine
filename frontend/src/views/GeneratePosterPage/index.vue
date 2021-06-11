@@ -244,15 +244,12 @@ export default {
   align-items: center;
   max-width: 1500px !important;
   margin: auto;
-
-  .poster-presentation {
-    max-width: 1170px;
-  }
 }
 
 #poster-generation {
   display: flex;
   margin-top: 50px;
+  width: 1200px;
 }
 
 #poster-form {
@@ -320,6 +317,7 @@ export default {
 @media (max-width: 1200px) {
   #poster-generation {
     flex-direction: column;
+    width: auto;
   }
 }
 
