@@ -22,8 +22,8 @@
       </v-row>
     </v-card>
     <v-row>
-      <v-col v-for="canteen in publishedCanteens" :key="canteen.id" cols="12" md="6">
-        <v-card :to="{ name: 'CanteenPage', params: { id: canteen.id } }" hover class="pa-4 text-left">
+      <v-col v-for="canteen in publishedCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
+        <v-card :to="{ name: 'CanteenPage', params: { id: canteen.id } }" hover class="pa-4 text-left fill-height">
           <v-card-title class="font-weight-black">
             {{ canteen.name }}
           </v-card-title>
