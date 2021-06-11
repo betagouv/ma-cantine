@@ -39,7 +39,7 @@
         </v-list-item-title>
       </v-list-item>
       <v-divider class="mb-2"></v-divider>
-      <v-list-item :ripple="false" :to="{ name: 'CanteensPage' }">
+      <v-list-item :ripple="false" :to="{ name: 'CanteensHome' }">
         <v-list-item-title class="body-2">
           <v-icon small color="grey darken-2" class="mt-n1 mr-2">mdi-silverware-fork-knife</v-icon>
           Nos cantines
