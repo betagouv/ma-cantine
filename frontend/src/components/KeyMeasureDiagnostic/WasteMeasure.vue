@@ -26,7 +26,11 @@
     />
     <v-row align="center" class="ml-8 mt-2 mr-2">
       <v-checkbox v-model="otherActionEnabled" hide-details class="shrink mt-0"></v-checkbox>
-      <v-text-field :disabled="!otherActionEnabled" label="Autre : donnez plus d'informations"></v-text-field>
+      <v-text-field
+        :disabled="!otherActionEnabled"
+        v-model="diagnostic.otherWasteAction"
+        label="Autre : donnez plus d'informations"
+      ></v-text-field>
     </v-row>
 
     <v-checkbox
@@ -36,10 +40,30 @@
     />
     <v-expand-transition>
       <div v-if="diagnostic.hasWasteMeasures" class="mt-4">
-        <v-text-field class="mx-8" label="Reste de pain" suffix="kg/an"></v-text-field>
-        <v-text-field class="mx-8" label="Reste plateau" suffix="kg/an"></v-text-field>
-        <v-text-field class="mx-8" label="Reste en production (non servi)" suffix="kg/an"></v-text-field>
-        <v-text-field class="mx-8" label="Reste de composantes (entrée, plat dessert...)" suffix="kg/an"></v-text-field>
+        <v-text-field
+          v-model="diagnostic.breadLeftovers"
+          class="mx-8"
+          label="Reste de pain"
+          suffix="kg/an"
+        ></v-text-field>
+        <v-text-field
+          v-model="diagnostic.servedLeftovers"
+          class="mx-8"
+          label="Reste plateau"
+          suffix="kg/an"
+        ></v-text-field>
+        <v-text-field
+          v-model="diagnostic.unservedLeftovers"
+          class="mx-8"
+          label="Reste en production (non servi)"
+          suffix="kg/an"
+        ></v-text-field>
+        <v-text-field
+          v-model="diagnostic.sideLeftovers"
+          class="mx-8"
+          label="Reste de composantes (entrée, plat dessert...)"
+          suffix="kg/an"
+        ></v-text-field>
       </div>
     </v-expand-transition>
 
@@ -54,13 +78,23 @@
 
     <v-expand-transition>
       <div v-if="diagnostic.hasDonationAgreement" class="my-4">
-        <v-text-field class="mx-8" label="Fréquence de dons" suffix="dons/an"></v-text-field>
-        <v-text-field class="mx-8" label="Quantité des denrées données" suffix="par an"></v-text-field>
-        <v-text-field class="mx-8" label="Type de denrées données"></v-text-field>
+        <v-text-field
+          v-model="diagnostic.donationFrequency"
+          class="mx-8"
+          label="Fréquence de dons"
+          suffix="dons/an"
+        ></v-text-field>
+        <v-text-field
+          v-model="diagnostic.donationQuantity"
+          class="mx-8"
+          label="Quantité des denrées données"
+          suffix="kg/an"
+        ></v-text-field>
+        <v-text-field v-model="diagnostic.donationFoodType" class="mx-8" label="Type de denrées données"></v-text-field>
       </div>
     </v-expand-transition>
 
-    <v-textarea label="Autres commentaires" outlined rows="3"></v-textarea>
+    <v-textarea v-model="diagnostic.otherWasteComments" label="Autres commentaires" outlined rows="3"></v-textarea>
   </div>
 </template>
 
@@ -97,8 +131,15 @@ export default {
           value: "REUSE",
         },
       ],
-      otherActionEnabled: false,
+      otherActionEnabled: !!this.diagnostic.otherWasteAction,
     }
+  },
+  watch: {
+    otherActionEnabled(val) {
+      if (!val) {
+        this.diagnostic.otherWasteAction = null
+      }
+    },
   },
 }
 </script>
