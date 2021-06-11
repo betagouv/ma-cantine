@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="{% static 'css/auth.css' %}">
     </head>
     <body>
-        <div id="wrapper">
+        <div id="wrapper" {% if form.uses_columns %}class="columns"{% endif %}>
             {% block content %}
             {% endblock %}
         </div>

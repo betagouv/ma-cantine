@@ -1,5 +1,6 @@
 <template>
   <div id="quality-measure" class="text-left">
+    <p class="text-center help">Si vous ne connaissez pas une valeur, laissez le champ vide.</p>
     <v-row>
       <v-spacer></v-spacer>
       <QualityMeasureValuesInput
@@ -13,6 +14,13 @@
       />
       <v-spacer></v-spacer>
     </v-row>
+    <p class="text-center help mx-4">
+      Indiquez ci-après les montants estimés de produits durables et de qualité sur la base des actions mises en œuvre
+      ou prévues.
+      <br />
+      (ex : renouvellement de marchés, modification de contrats d’approvisionnements, rationalisation des consommations
+      évolution des grammages, etc.)
+    </p>
     <v-row>
       <v-spacer></v-spacer>
       <QualityMeasureValuesInput
@@ -49,3 +57,10 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="scss">
+p.help {
+  color: $ma-cantine-grey;
+  font-size: 0.95em;
+}
+</style>

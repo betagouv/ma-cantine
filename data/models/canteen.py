@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from data.department_choices import Department
 from .sector import Sector
 
 
@@ -17,6 +18,7 @@ class Canteen(models.Model):
 
     name = models.TextField(verbose_name="nom")
     city = models.TextField(null=True, blank=True, verbose_name="ville")
+    department = models.TextField(null=True, blank=True, choices=Department.choices, verbose_name="département")
     postal_code = models.CharField(
         max_length=20, null=True, blank=True, verbose_name="code postal"
     )

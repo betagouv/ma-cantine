@@ -6,10 +6,10 @@
         <v-col cols="12" sm="2" :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.name != 'xs' }">
           <v-spacer />
           <v-img
-            src="/static/images/Marianne.jpg"
+            src="/static/images/Marianne.png"
             contain
             class="mb-4"
-            :max-width="$vuetify.breakpoint.smAndDown ? 70 : 100"
+            :max-width="$vuetify.breakpoint.smAndDown ? 90 : 140"
           ></v-img>
           <v-spacer />
           <v-img
