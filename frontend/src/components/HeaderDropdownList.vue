@@ -7,13 +7,13 @@
           Mon compte
         </v-list-item-title>
       </v-list-item>
-      <v-list-item v-if="!loggedUser && $vuetify.breakpoint.xs" :ripple="false" href="/s-identifier">
+      <v-list-item v-if="!loggedUser && $vuetify.breakpoint.smAndDown" :ripple="false" href="/s-identifier">
         <v-list-item-title class="body-2">
           <v-icon small color="grey darken-2" class="mt-n1 mr-2">mdi-key</v-icon>
           S'identifier
         </v-list-item-title>
       </v-list-item>
-      <v-list-item v-if="!loggedUser && $vuetify.breakpoint.xs" :ripple="false" href="/creer-mon-compte">
+      <v-list-item v-if="!loggedUser && $vuetify.breakpoint.smAndDown" :ripple="false" href="/creer-mon-compte">
         <v-list-item-title class="body-2">
           <v-icon small color="grey darken-2" class="mt-n1 mr-2">mdi-account</v-icon>
           Créer un compte
