@@ -17,7 +17,7 @@ djangorestframework==3.12.4
 djangorestframework-camel-case==1.2.0
 drf-base64==2.0
 factory-boy==3.2.0
-Faker==8.1.4
+Faker==8.8.0
 idna==2.10
 iniconfig==1.1.1
 isort==5.8.0
