@@ -48,6 +48,7 @@
               :loading="loadingCommunes"
               :items="communes"
               :search-input.sync="search"
+              auto-select-first
               cache-items
               hide-details="auto"
               :rules="[validators.notEmpty]"
@@ -67,7 +68,6 @@
               class="my-4"
               suffix="repas par jour"
               hide-details="auto"
-              auto-select-first
             />
           </p>
           <h2 class="mb-4">À propos de vos achats</h2>
@@ -174,7 +174,7 @@ export default {
       return !!this.$store.state.loggedUser
     },
   },
-  async mounted() {
+  beforeMount() {
     this.form.diagnostic = JSON.parse(JSON.stringify(this.initialDiagnostic))
     this.form.canteen = JSON.parse(JSON.stringify(this.userCanteen)) || {}
     // initialise autocomplete options so existing city is seen as valid input and displayed
