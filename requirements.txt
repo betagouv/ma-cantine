@@ -10,14 +10,14 @@ django-anymail==8.2
 django-ckeditor==6.0.0
 django-js-asset==1.2.2
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@00dde137e67b4f0cc9c58e6c8df6896d145089bf
-django-otp==1.0.5
+django-otp==1.0.6
 django-storages==1.11.1
 django-webpack-loader==1.0.0
 djangorestframework==3.12.4
 djangorestframework-camel-case==1.2.0
 drf-base64==2.0
 factory-boy==3.2.0
-Faker==8.1.4
+Faker==8.7.0
 idna==2.10
 iniconfig==1.1.1
 isort==5.8.0
