@@ -41,7 +41,7 @@ class CanteenAdmin(admin.ModelAdmin):
         "sectors",
         "managers",
     )
-    list_filter = ("name", "city", "management_type")
+    list_filter = ("sectors", "city", "management_type")
 
     def published_state(self, obj):
         return "✅ Publié" if obj.data_is_public else "🔒 Non publié"
