@@ -92,6 +92,11 @@ button {
     border-radius: 12px;
     border: solid 1px #DDD;
     cursor: pointer;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    display: inline-block;
+    font-family: Marianne;
 }
 button[type="submit"] {
     border: none;
@@ -171,11 +176,11 @@ input[type="checkbox"]#id_cgu_approved {
     #wrapper.columns {
         width: 300px;
     }
-    
+
     .column-wrapper {
         display: block;
     }
-    
+
     .left-column, .right-column {
         width: auto;
     }
