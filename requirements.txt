@@ -7,7 +7,7 @@ certifi==2020.12.5
 chardet==4.0.0
 Django==3.2.4
 django-anymail==8.3
-django-ckeditor==6.0.0
+django-ckeditor==6.1.0
 django-js-asset==1.2.2
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@00dde137e67b4f0cc9c58e6c8df6896d145089bf
 django-otp==1.0.6
