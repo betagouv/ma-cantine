@@ -25,100 +25,104 @@
     <div id="poster-form-page">
       <p class="poster-presentation"></p>
       <div id="poster-generation">
-        <form id="poster-form" @submit.prevent="submit">
-          <h2>À propos de votre cantine</h2>
+        <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent class="text-left">
+          <h2 class="mb-4">À propos de votre cantine</h2>
           <p>
             Je représente
             <label for="canteen-name">la cantine</label>
-            <input
+            <v-text-field
               id="canteen-name"
               v-model="form.canteen.name"
-              class="field"
               placeholder="nom de l'établissement"
-              required
-            />
+              hide-details="auto"
+              :rules="[validators.notEmpty]"
+              solo
+              class="my-4"
+            ></v-text-field>
             dans
             <label for="commune">la commune de</label>
-            <input
+            <v-autocomplete
               id="commune"
               v-model="form.canteen.city"
-              class="field"
               placeholder="nom de la commune"
-              required
-              type="search"
-              @input="search"
-              list="communes"
-            />
-            <datalist id="communes">
-              <option v-for="commune in communes" :value="commune.properties.label" :key="commune.properties.id">
-                {{ commune.properties.label }} ({{ commune.properties.context }})
-              </option>
-            </datalist>
-            .
+              :loading="loadingCommunes"
+              :items="communes"
+              :search-input.sync="search"
+              auto-select-first
+              cache-items
+              hide-details="auto"
+              :rules="[validators.notEmpty]"
+              solo
+              class="my-4"
+            ></v-autocomplete>
           </p>
           <p>
             <label for="servings">Nous servons</label>
-            <input
+            <v-text-field
               id="servings"
-              aria-describedby="repas"
               v-model.number="form.canteen.dailyMealCount"
               type="number"
-              min="0"
+              :rules="[validators.greaterThanZero]"
               placeholder="200"
-              required
+              solo
+              class="my-4"
+              suffix="repas par jour"
+              hide-details="auto"
             />
-            <span id="repas">repas par jour</span>
-            .
           </p>
-          <h2>À propos de vos achats</h2>
+          <h2 class="mb-4">À propos de vos achats</h2>
           <p>
             <label for="total">
               Sur l'année de 2020, les achats alimentaires (repas, collations et boissons) répresentent
             </label>
-            <input
+            <v-text-field
               id="total"
               v-model.number="form.diagnostic.valueTotalHt"
-              class="currency-field"
               type="number"
-              min="0"
+              :rules="[validators.greaterThanZero]"
               placeholder="15000"
-              aria-describedby="euros"
-              required
+              suffix="euros HT"
+              solo
+              class="my-4"
+              hide-details="auto"
+              validate-on-blur
             />
-            <span id="euros">euros HT</span>
-            .
           </p>
           <p>
             Sur ce total,
-            <input
+            <v-text-field
               id="bio"
               v-model.number="form.diagnostic.valueBioHt"
-              class="currency-field"
               type="number"
-              min="0"
+              :rules="[validators.greaterThanZero]"
               placeholder="3000"
-              aria-describedby="euros"
-              required
+              suffix="euros HT"
+              solo
+              class="my-4"
+              hide-details="auto"
+              validate-on-blur
             />
-            euros HT correspondaient à des
+            correspondaient à des
             <label for="bio">produits bio</label>
             et
-            <input
+            <v-text-field
               id="sustainable"
               v-model.number="form.diagnostic.valueSustainableHt"
-              class="currency-field"
               type="number"
-              min="0"
+              :rules="[validators.greaterThanZero]"
               placeholder="2000"
-              aria-describedby="euros"
-              required
+              suffix="euros HT"
+              solo
+              class="my-4"
+              hide-details="auto"
+              validate-on-blur
             />
-            euros HT correspondaient à des
+            correspondaient à des
             <label for="sustainable">produits de qualité et durables (hors bio)</label>
             .
           </p>
-          <input type="submit" id="submit" value="Générer mon affiche" />
-        </form>
+          <v-btn x-large color="primary" @click="submit">Générer mon affiche</v-btn>
+        </v-form>
         <div id="poster-preview">
           <CanteenPoster v-bind="form" id="canteen-poster" />
         </div>
@@ -131,6 +135,7 @@
 import Constants from "@/constants"
 import CanteenPoster from "./CanteenPoster"
 import html2pdf from "html2pdf.js"
+import validators from "@/validators"
 
 export default {
   components: {
@@ -143,9 +148,15 @@ export default {
         canteen: {},
       },
       communes: [],
+      loadingCommunes: false,
+      search: null,
+      formIsValid: true,
     }
   },
   computed: {
+    validators() {
+      return validators
+    },
     userCanteen() {
       return this.$store.state.userCanteens.length > 0 ? this.$store.state.userCanteens[0] : null
     },
@@ -163,22 +174,40 @@ export default {
       return !!this.$store.state.loggedUser
     },
   },
-  async mounted() {
+  beforeMount() {
     this.form.diagnostic = JSON.parse(JSON.stringify(this.initialDiagnostic))
     this.form.canteen = JSON.parse(JSON.stringify(this.userCanteen)) || {}
+    // initialise autocomplete options so existing city is seen as valid input and displayed
+    if (this.form.canteen.city) {
+      this.communes = [this.form.canteen.city]
+    }
+  },
+  watch: {
+    search(val) {
+      return val && val !== this.form.canteen.city && this.queryCommunes(val)
+    },
   },
   methods: {
-    async search() {
-      if (!this.form.commune) {
-        this.communes = []
-        return
-      }
-      const queryUrl =
-        "https://api-adresse.data.gouv.fr/search/?q=" + this.form.commune + "&type=municipality&autocomplete=1"
-      const response = await fetch(queryUrl)
-      this.communes = (await response.json()).features
+    queryCommunes(val) {
+      this.loadingCommunes = true
+      const queryUrl = "https://api-adresse.data.gouv.fr/search/?q=" + val + "&type=municipality&autocomplete=1"
+      return fetch(queryUrl)
+        .then((response) => response.json())
+        .then((response) => {
+          const communes = response.features
+          this.communes = communes.map((commune) => `${commune.properties.label}`)
+          this.loadingCommunes = false
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     async submit() {
+      this.$refs.form.validate()
+      if (!this.formIsValid) {
+        window.alert("Merci de vérifier les champs en rouge et réessayer")
+        return
+      }
       //this fix an issue where the beginning of the pdf is blank depending on the scroll position
       window.scrollTo({ top: 0 })
 
@@ -250,59 +279,6 @@ export default {
   display: flex;
   margin-top: 50px;
   width: 1200px;
-}
-
-#poster-form {
-  text-align: left;
-
-  p {
-    line-height: 50px;
-    margin: 0;
-  }
-
-  input,
-  select {
-    border: none;
-    border-bottom: 6px solid $ma-cantine-light-orange;
-    margin: 0.5em;
-    font-size: 1.2em;
-  }
-
-  input:required {
-    border-bottom-color: $ma-cantine-orange;
-  }
-
-  input:required:invalid {
-    outline: none;
-    box-shadow: none;
-  }
-
-  input:required:valid {
-    border-bottom-color: $ma-cantine-light-orange;
-  }
-
-  #servings {
-    width: 3em;
-  }
-
-  #total {
-    width: 6.5em;
-  }
-
-  .currency-field {
-    width: 5em;
-  }
-
-  #submit {
-    border: none;
-    background: $ma-cantine-orange;
-    border-radius: 1em;
-    padding: 0.5em;
-    color: $ma-cantine-white;
-    float: right;
-    font-weight: bold;
-    cursor: pointer;
-  }
 }
 
 #poster-preview {
