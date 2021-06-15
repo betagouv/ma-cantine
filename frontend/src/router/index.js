@@ -23,6 +23,7 @@ import StatsPage from "@/views/StatsPage"
 import NotFound from "@/views/NotFound"
 import TesterParticipation from "@/views/TesterParticipation"
 import CGU from "@/views/CGU.vue"
+import ManagementPage from "@/views/ManagementPage"
 
 Vue.use(VueRouter)
 
@@ -173,6 +174,14 @@ const routes = [
     path: "/cgu",
     name: "CGU",
     component: CGU,
+  },
+  {
+    path: "/gestion",
+    name: "ManagementPage",
+    component: ManagementPage,
+    meta: {
+      title: "Gérer mes cantines",
+    },
   },
   {
     path: "/:catchAll(.*)",
