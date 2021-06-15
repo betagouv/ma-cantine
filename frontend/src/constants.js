@@ -19,6 +19,7 @@ export default Object.freeze({
     hasDiversificationPlan: null,
     vegetarianWeeklyRecurrence: null,
     vegetarianMenuType: null,
+    vegetarianMenuBases: [],
     cookingPlasticSubstituted: null,
     servingPlasticSubstituted: null,
     plasticBottlesSubstituted: null,

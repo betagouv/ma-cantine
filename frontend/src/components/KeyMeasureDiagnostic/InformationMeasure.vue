@@ -2,11 +2,22 @@
   <div>
     <v-checkbox
       hide-details="auto"
-      v-model="diagnostic.communicatesOnFoodPlan"
-      label="Je communique sur la mise en place d'un plan alimentaire"
+      v-model="diagnostic.communicatesOnFoodQuality"
+      label="J’informe mes convives sur la part de produits de qualité et durables, entrant dans la composition des repas servis, et sur les démarches d’acquisition de produits issus du commerce équitable"
     />
 
-    <p class="text-left mt-6 mb-2">J'informe sur la qualité des approvisionnements :</p>
+    <p class="text-left mt-6 mb-2">Je fais cette information :</p>
+    <v-radio-group v-model="diagnostic.communicationFrequency">
+      <v-radio
+        class="ml-8"
+        v-for="item in communicationFrequencies"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      ></v-radio>
+    </v-radio-group>
+
+    <p class="text-left my-2">J'informe sur la qualité des approvisionnements :</p>
     <v-checkbox
       hide-details="auto"
       class="ml-8"
@@ -16,16 +27,20 @@
       :value="support.value"
       :label="support.label"
     />
+    <v-row align="center" class="ml-8 mt-2 mr-2">
+      <v-checkbox v-model="otherSupportEnabled" hide-details class="shrink mt-0"></v-checkbox>
+      <v-text-field
+        :disabled="!otherSupportEnabled"
+        v-model="diagnostic.otherCommunicationSupport"
+        label="Autre : donnez plus d'informations"
+      ></v-text-field>
+    </v-row>
 
-    <p class="text-left mt-6 mb-2">Lien vers le support de communication</p>
-    <v-text-field
+    <v-checkbox
       hide-details="auto"
-      :rules="[validators.isUrlOrEmpty]"
-      solo
-      v-model="diagnostic.communicationSupportUrl"
-      placeholder="https://"
-      validate-on-blur
-    ></v-text-field>
+      v-model="diagnostic.communicatesOnFoodPlan"
+      label="J'informe sur la qualité nutritionnelle des repas"
+    />
   </div>
 </template>
 
@@ -38,29 +53,43 @@ export default {
   },
   data() {
     return {
-      communicationSupports: [
+      communicationFrequencies: [
         {
-          label: "Envoi d'e-mail aux convives ou à leurs représentants",
-          value: "EMAIL",
+          label: "Régulièrement au cours de l’année",
+          value: "REGULARLY",
         },
+        {
+          label: "Une fois par an",
+          value: "YEARLY",
+        },
+        {
+          label: "Moins d'une fois par an",
+          value: "LESS_THAN_YEARLY",
+        },
+      ],
+      communicationSupports: [
         {
           label: "Par affichage sur le lieu de restauration",
           value: "DISPLAY",
         },
         {
-          label: "Sur site internet ou intranet (mairie, cantine)",
-          value: "WEBSITE",
-        },
-        {
-          label: "Autres moyens d'affichage et de communication électronique",
-          value: "OTHER",
+          label: "Par voie électronique (envoi d’e-mail aux convives, sur site internet ou intranet (mairie, pronote))",
+          value: "DIGITAL",
         },
       ],
+      otherSupportEnabled: !!this.diagnostic.otherCommunicationSupport,
     }
   },
   computed: {
     validators() {
       return validators
+    },
+  },
+  watch: {
+    otherSupportEnabled(val) {
+      if (!val) {
+        this.diagnostic.otherCommunicationSupport = null
+      }
     },
   },
 }
