@@ -52,6 +52,9 @@ export default new Vuex.Store({
     SET_USER_CANTEENS(state, userCanteens) {
       state.userCanteens = userCanteens
     },
+    ADD_USER_CANTEEN(state, userCanteen) {
+      state.userCanteens.push(userCanteen)
+    },
     UPDATE_USER_CANTEEN(state, userCanteen) {
       const canteenIndex = state.userCanteens.findIndex((x) => x.id === userCanteen.id)
       if (canteenIndex > -1) state.userCanteens.splice(canteenIndex, 1, userCanteen)
@@ -157,6 +160,20 @@ export default new Vuex.Store({
           const hasError = criticalLoadingStatuses.some((x) => context.state[x] === Constants.LoadingStatus.ERROR)
           if (hasError) throw new Error("Une erreur s'est produite lors du chargement des données intiales")
           else context.commit("SET_INITIAL_DATA_LOADED")
+        })
+    },
+
+    createCanteen(context, { payload }) {
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/canteens/`, { method: "POST", headers, body: JSON.stringify(payload) })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("ADD_USER_CANTEEN", response)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
         })
     },
 

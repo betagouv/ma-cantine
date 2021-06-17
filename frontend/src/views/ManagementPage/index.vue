@@ -1,5 +1,8 @@
 <template>
   <div class="text-left">
+    <v-alert type="success" v-if="$route.query.operation">
+      Cantine bien {{ $route.query.operation === "cree" ? "crée" : "modifiée" }}
+    </v-alert>
     <div class="mt-12">
       <h2 class="my-4">Mes cantines</h2>
       <v-row>
