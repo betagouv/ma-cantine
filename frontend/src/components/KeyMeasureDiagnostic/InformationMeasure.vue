@@ -41,6 +41,15 @@
       v-model="diagnostic.communicatesOnFoodPlan"
       label="J'informe sur la qualité nutritionnelle des repas"
     />
+
+    <p class="text-left mt-6 mb-2">Lien vers le support de communication</p>
+    <v-text-field
+      :rules="[validators.isUrlOrEmpty]"
+      solo
+      v-model="diagnostic.communicationSupportUrl"
+      placeholder="https://"
+      validate-on-blur
+    ></v-text-field>
   </div>
 </template>
 
