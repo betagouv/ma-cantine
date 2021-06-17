@@ -1,4 +1,6 @@
 from django.urls import reverse
+from django.db import transaction
+from django.core.exceptions import BadRequest
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, DiagnosticFactory
@@ -99,6 +101,35 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.donation_quantity, decimal.Decimal("60.6"))
         self.assertEqual(diagnostic.communication_frequency, "YEARLY")
         self.assertTrue(diagnostic.communicates_on_food_quality)
+
+    @authenticate
+    def test_create_duplicate_diagnostic(self):
+        """
+        Shouldn't be able to add a diagnostic with the same canteen and year
+        as an existing diagnostic
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        self.client.post(
+            reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}),
+            {"year": 2020, "value_bio_ht": 10},
+        )
+
+        payload = {
+            "year": 2020,
+            "value_bio_ht": 1000,
+        }
+        try:
+            with transaction.atomic():
+                response = self.client.post(
+                    reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}),
+                    payload,
+                )
+        except BadRequest:
+            pass
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
+        self.assertEqual(diagnostic.value_bio_ht, 10)
 
     @authenticate
     def test_edit_diagnostic_unauthorized(self):

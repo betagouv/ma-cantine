@@ -8,6 +8,11 @@ class Diagnostic(models.Model):
     class Meta:
         verbose_name = "diagnostic"
         verbose_name_plural = "diagnostics"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["canteen", "year"], name="annual_diagnostic"
+            ),
+        ]
 
     class MenuFrequency(models.TextChoices):
         LOW = "LOW", "Moins d'une fois par semaine"
