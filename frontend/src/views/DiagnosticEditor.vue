@@ -15,12 +15,13 @@
           <v-select
             solo
             ref="canteenSelect"
-            :value="canteen.id"
+            :value="canteen ? canteen.id : undefined"
             :rules="[validators.notEmpty]"
             :items="$store.state.userCanteens"
             item-text="name"
             item-value="id"
             hide-details="auto"
+            placeholder="Choisissez votre cantine"
           ></v-select>
         </v-col>
         <v-col cols="12" md="3">
@@ -31,6 +32,7 @@
             :rules="[validators.notEmpty]"
             :items="allowedYears"
             hide-details="auto"
+            placeholder="Année du diagnostic"
           ></v-select>
         </v-col>
         <v-col cols="12" class="mb-8 mt-4">
@@ -136,6 +138,7 @@ export default {
       return !this.canteenUrlComponent && !this.year
     },
     canteen() {
+      if (this.isNewDiagnostic) return null
       return this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
     },
     validators() {

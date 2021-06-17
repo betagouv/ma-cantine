@@ -224,6 +224,21 @@ const routes = [
     },
   },
   {
+    path: "/nouveau-diagnostic",
+    name: "NewDiagnostic",
+    component: DiagnosticEditor,
+    props: {
+      canteenUrlComponent: null,
+      year: null,
+    },
+    meta: {
+      title: "Ajouter un nouveau diagnostic",
+    },
+    beforeEnter: (route, _, next) => {
+      store.state.loggedUser ? next() : next({ name: "Landing" })
+    },
+  },
+  {
     path: "/:catchAll(.*)",
     component: NotFound,
     name: "NotFound",
