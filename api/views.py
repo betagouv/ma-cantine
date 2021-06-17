@@ -5,7 +5,8 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError, BadRequest
+from django.db.utils import IntegrityError
 from django.core.validators import validate_email
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import UpdateAPIView, CreateAPIView
@@ -98,6 +99,8 @@ class DiagnosticCreateView(CreateAPIView):
             serializer.save(canteen=canteen)
         except ObjectDoesNotExist:
             raise NotFound()
+        except IntegrityError:
+            raise BadRequest()
 
 
 class DiagnosticUpdateView(UpdateAPIView):
@@ -148,7 +151,7 @@ class SubscribeBetaTester(APIView):
                 html_message=render_to_string("subscription-beta-tester.html", context),
             )
             return JsonResponse({}, status=status.HTTP_201_CREATED)
-        except Exception as e:
+        except Exception:
             return JsonResponse({}, status=status.HTTP_400_BAD_REQUEST)
 
 

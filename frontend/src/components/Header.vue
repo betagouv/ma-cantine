@@ -14,7 +14,7 @@
     >
       <v-toolbar-title class="align-self-center">
         <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex">
-          <v-img :src="`/static/images/${imageFilename}`" :width="imageWidth"></v-img>
+          <v-img :src="`/static/images/${imageFilename}`" :width="imageWidth" alt="Page d'accueil ma cantine"></v-img>
         </router-link>
       </v-toolbar-title>
 
@@ -101,13 +101,14 @@ export default {
     userDataReady() {
       return !!this.$store.state.initialDataLoaded
     },
+    useLargeImage() {
+      return !this.$vuetify.breakpoint.xs && this.extended && this.dynamicSizingEnabled
+    },
     imageFilename() {
-      if (this.$vuetify.breakpoint.xs) return "Marianne-logo.svg"
-      return this.extended && this.dynamicSizingEnabled ? "header-logos-extended.png" : "header-logos-compact.svg"
+      return this.useLargeImage ? "header-logos-extended.png" : "header-logos-compact.svg"
     },
     imageWidth() {
-      if (this.$vuetify.breakpoint.xs) return "80"
-      return this.extended && this.dynamicSizingEnabled ? "300" : "210"
+      return this.useLargeImage ? "300" : "210"
     },
     dynamicSizingEnabled() {
       const viewNames = ["LandingPage", "BlogsHome"]
