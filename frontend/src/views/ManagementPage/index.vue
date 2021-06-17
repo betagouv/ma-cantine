@@ -49,7 +49,14 @@
             <v-spacer></v-spacer>
             <v-card-actions class="px-4">
               <v-spacer></v-spacer>
-              <v-btn outlined color="primary">Hello</v-btn>
+              <v-dialog max-width="700" v-model="calculatorModal">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn outlined color="primary" v-on="on" v-bind="attrs">
+                    Télécharger notre tableur
+                  </v-btn>
+                </template>
+                <CalculatorResourceModal @closeModal="closeCalculatorModal" />
+              </v-dialog>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -62,7 +69,9 @@
             <v-spacer></v-spacer>
             <v-card-actions class="px-4">
               <v-spacer></v-spacer>
-              <v-btn outlined color="primary">Hello</v-btn>
+              <v-btn href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/" target="_blank" outlined color="primary">
+                Visiter
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -78,7 +87,7 @@
             <v-spacer></v-spacer>
             <v-card-actions class="px-4">
               <v-spacer></v-spacer>
-              <v-btn outlined color="primary">Hello</v-btn>
+              <v-btn :to="{ name: 'GeneratePosterPage' }" outlined color="primary">J'informe mes convives</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -91,7 +100,7 @@
             <v-spacer></v-spacer>
             <v-card-actions class="px-4">
               <v-spacer></v-spacer>
-              <v-btn outlined color="primary">Hello</v-btn>
+              <v-btn :to="{ name: 'BlogsHome' }" outlined color="primary">Visiter</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -103,9 +112,15 @@
 <script>
 import CanteenCard from "@/components/CanteenCard"
 import DiagnosticCard from "@/components/DiagnosticCard"
+import CalculatorResourceModal from "@/components/KeyMeasureResource/CalculatorResourceModal"
 
 export default {
-  components: { CanteenCard, DiagnosticCard },
+  components: { CanteenCard, DiagnosticCard, CalculatorResourceModal },
+  data() {
+    return {
+      calculatorModal: false,
+    }
+  },
   computed: {
     loggedUser() {
       return this.$store.state.loggedUser
@@ -115,6 +130,11 @@ export default {
     },
     diagnostics() {
       return this.$store.state.userCanteens.flatMap((canteen) => canteen.diagnostics)
+    },
+  },
+  methods: {
+    closeCalculatorModal() {
+      this.calculatorModal = false
     },
   },
 }
