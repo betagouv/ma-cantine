@@ -24,6 +24,8 @@ import NotFound from "@/views/NotFound"
 import TesterParticipation from "@/views/TesterParticipation"
 import CGU from "@/views/CGU.vue"
 import ManagementPage from "@/views/ManagementPage"
+import CanteenEditor from "@/views/CanteenEditor"
+import DiagnosticEditor from "@/views/DiagnosticEditor"
 
 Vue.use(VueRouter)
 
@@ -181,6 +183,44 @@ const routes = [
     component: ManagementPage,
     meta: {
       title: "Gérer mes cantines",
+    },
+  },
+  {
+    path: "/nouvelle-cantine",
+    name: "NewCanteen",
+    component: CanteenEditor,
+    props: {
+      canteenUrlComponent: null,
+    },
+    meta: {
+      title: "Ajouter une nouvelle cantine",
+    },
+    beforeEnter: (route, _, next) => {
+      store.state.loggedUser ? next() : next({ name: "Landing" })
+    },
+  },
+  {
+    path: "/modifier-ma-cantine/:canteenUrlComponent",
+    name: "CanteenModification",
+    component: CanteenEditor,
+    props: true,
+    meta: {
+      title: "Modifier ma cantine",
+    },
+    beforeEnter: (route, _, next) => {
+      store.state.loggedUser ? next() : next({ name: "Landing" })
+    },
+  },
+  {
+    path: "/modifier-mon-diagnostic/:canteenUrlComponent/:year",
+    name: "DiagnosticModification",
+    component: DiagnosticEditor,
+    props: true,
+    meta: {
+      title: "Modifier mon diagnostic",
+    },
+    beforeEnter: (route, _, next) => {
+      store.state.loggedUser ? next() : next({ name: "Landing" })
     },
   },
   {

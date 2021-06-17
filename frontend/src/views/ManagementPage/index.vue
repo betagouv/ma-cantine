@@ -1,112 +1,117 @@
 <template>
   <div class="text-left">
-    <h1 class="text-center">Gérér mes cantines</h1>
-    <div>
+    <div class="mt-12">
       <h2 class="my-4">Mes cantines</h2>
       <v-row>
-        <v-col cols="4">
-          <v-card v-for="canteen in canteens" :key="canteen.name">
-            <v-card-title>{{ canteen.name }}</v-card-title>
-            <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city">
-              <div v-if="canteen.siret">SIRET : {{ canteen.siret }}</div>
-              <div v-if="canteen.dailyMealCount">
-                <v-icon small>mdi-silverware-fork-knife</v-icon>
-                {{ canteen.dailyMealCount }} repas par jour
-              </div>
-              <div v-if="canteen.city">
-                <v-icon small>mdi-compass</v-icon>
-                {{ canteen.city }}
-              </div>
-              <div v-if="canteen.sectors.length">
-                <v-icon small>mdi-office-building</v-icon>
-                {{ sectorsForCanteen(canteen) }}
-              </div>
-            </v-card-subtitle>
+        <v-col cols="12" sm="6" md="4" height="100%" v-for="canteen in canteens" :key="`canteen-${canteen.id}`">
+          <CanteenCard :canteen="canteen" class="fill-height" />
+        </v-col>
+        <v-col cols="12" sm="6" md="4" height="100%">
+          <v-card
+            color="grey lighten-5"
+            class="fill-height d-flex flex-column align-center justify-center"
+            :to="{ name: 'NewCanteen' }"
+          >
+            <v-icon size="100">mdi-plus</v-icon>
+            <v-card-text class="font-weight-bold pt-0 text-center">
+              Ajouter une cantine
+            </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="4" height="100%">
-          <v-card class="fill-height">
-            <v-icon xLarge>mdi-plus</v-icon>
+      </v-row>
+    </div>
+    <div class="my-12">
+      <h2 class="">Mes diagnostics</h2>
+      <v-btn text color="primary" class="mt-2 mb-8 ml-n4">
+        <v-icon class="mr-2">mdi-plus</v-icon>
+        Ajouter un diagnostic
+      </v-btn>
+      <v-row>
+        <v-col cols="12" v-for="diagnostic in diagnostics" :key="`diagnostic-${diagnostic.id}`">
+          <DiagnosticCard :diagnostic="diagnostic" class="fill-height" />
+        </v-col>
+      </v-row>
+    </div>
+    <div class="my-8">
+      <h2 class="my-4">Mes outils</h2>
+      <v-row>
+        <v-col cols="12" sm="6" md="8" height="100%">
+          <v-card outlined class="d-flex flex-column fill-height pa-2">
+            <v-card-title class="font-weight-bold">Tableur d'aide pour le calcul</v-card-title>
+            <v-card-text>
+              Si vous ne connaissez pas votre part de bio, produits durables, produits issues du commerce équitable,
+              nous vous proposons un outil simple pour les calculer. Sous forme de tableur, remplissez vos achats HT
+              suivant leurs labels et/ou sigles de qualité.
+            </v-card-text>
             <v-spacer></v-spacer>
-            <v-card-actions>
-              <v-btn text>Ajouter une cantine</v-btn>
+            <v-card-actions class="px-4">
+              <v-spacer></v-spacer>
+              <v-btn outlined color="primary">Hello</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6" md="4" height="100%">
+          <v-card outlined class="d-flex flex-column fill-height pa-2">
+            <v-card-title class="font-weight-bold">Documentation</v-card-title>
+            <v-card-text>
+              Ressources pour les acteurs et actrices de la restauration collective
+            </v-card-text>
+            <v-spacer></v-spacer>
+            <v-card-actions class="px-4">
+              <v-spacer></v-spacer>
+              <v-btn outlined color="primary">Hello</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" sm="6" height="100%">
+          <v-card outlined class="d-flex flex-column fill-height pa-2">
+            <v-card-title class="font-weight-bold">Générateur d'affiches</v-card-title>
+            <v-card-text>
+              Vous pouvez générer une affiche à poser dans votre cantine ainsi qu’un email-type à destination des
+              convives et parents d'élèves.
+            </v-card-text>
+            <v-spacer></v-spacer>
+            <v-card-actions class="px-4">
+              <v-spacer></v-spacer>
+              <v-btn outlined color="primary">Hello</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6" height="100%">
+          <v-card outlined class="d-flex flex-column fill-height pa-2">
+            <v-card-title class="font-weight-bold">Blog</v-card-title>
+            <v-card-text>
+              Découvrez notre espace blog et témoignages
+            </v-card-text>
+            <v-spacer></v-spacer>
+            <v-card-actions class="px-4">
+              <v-spacer></v-spacer>
+              <v-btn outlined color="primary">Hello</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
     </div>
-    <div class="mt-8">
-      <h2 class="my-4">Mes diagnostics</h2>
-      <v-card v-for="diagnostic in diagnostics" :key="diagnostic.name" class="my-4">
-        <v-card-title>{{ canteenForDiagnostic(diagnostic).name }}</v-card-title>
-        <v-card-text>
-          <v-row class="mx-1">
-            <p>{{ diagnostic.year }}</p>
-            <v-spacer></v-spacer>
-            <p>{{ dataStatus(diagnostic) }}</p>
-            <v-spacer></v-spacer>
-            <p>Ouvert il y a {{ diagnostic.lastOpened }}</p>
-            <v-spacer></v-spacer>
-            <p>
-              <v-icon>mdi-account-group</v-icon>
-              {{ canteenForDiagnostic(diagnostic).managers.length }} gestionnaires
-            </p>
-          </v-row>
-        </v-card-text>
-      </v-card>
-    </div>
   </div>
 </template>
 
 <script>
+import CanteenCard from "@/components/CanteenCard"
+import DiagnosticCard from "@/components/DiagnosticCard"
+
 export default {
-  data() {
-    return {
-      canteens: [
-        {
-          name: "Test kitchen",
-          dailyMealCount: 900,
-          city: "Paris",
-          siret: "987 654 321",
-          sectors: ["Scolaire", "Administration"],
-          managers: [0, 5, 8],
-        },
-      ],
-      diagnostics: [
-        {
-          canteenId: 0,
-          year: 2020,
-          status: "PUBLISHED",
-          lastOpened: "4 heures",
-        },
-        {
-          canteenId: 0,
-          year: 2021,
-          status: "INCOMPLETE",
-          lastOpened: "4 heures",
-        },
-      ],
-    }
-  },
-  methods: {
-    // TODO: consider how to share sector displays between views,
-    // or perhaps refactor the subtitles to own component to share
-    sectorsForCanteen(canteen) {
-      return canteen.sectors.map((sector) => sector.toLowerCase()).join(", ")
-    },
-    dataStatus(diagnostic) {
-      return {
-        PUBLISHED: "Données complètées, sauvegardées, et publiées",
-        INCOMPLETE: "Données incomplètées",
-      }[diagnostic.status]
-    },
-    canteenForDiagnostic(diagnostic) {
-      return this.canteens[diagnostic.canteenId]
-    },
-  },
+  components: { CanteenCard, DiagnosticCard },
   computed: {
     loggedUser() {
       return this.$store.state.loggedUser
+    },
+    canteens() {
+      return this.$store.state.userCanteens
+    },
+    diagnostics() {
+      return this.$store.state.userCanteens.flatMap((canteen) => canteen.diagnostics)
     },
   },
 }

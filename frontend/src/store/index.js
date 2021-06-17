@@ -265,5 +265,12 @@ export default new Vuex.Store({
       }
       return Object.values(JSON.parse(savedDiagnostics))
     },
+    getCanteenUrlComponent: () => (canteen) => {
+      return `${canteen.id}--${canteen.name}`
+    },
+    getCanteenFromUrlComponent: (state) => (canteenUrlComponent) => {
+      const canteenId = canteenUrlComponent.split("--")[0]
+      return [...state.userCanteens, ...state.publishedCanteens].find((x) => x.id === parseInt(canteenId))
+    },
   },
 })
