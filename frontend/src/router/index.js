@@ -32,6 +32,14 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: "/",
+    redirect() {
+      return !store.state.initialDataLoaded || store.state.loggedUser
+        ? { name: "ManagementPage" }
+        : { name: "LandingPage" }
+    },
+  },
+  {
+    path: "/accueil",
     name: "LandingPage",
     component: LandingPage,
   },
@@ -84,8 +92,8 @@ const routes = [
     path: "/publication",
     name: "PublishPage",
     component: PublishPage,
-    beforeEnter: (route, _, next) => {
-      store.state.loggedUser ? next() : next({ name: "LandingPage" })
+    meta: {
+      authenticationRequired: true,
     },
     children: [
       {
@@ -183,6 +191,7 @@ const routes = [
     component: ManagementPage,
     meta: {
       title: "Gérer mes cantines",
+      authenticationRequired: true,
     },
   },
   {
@@ -194,9 +203,7 @@ const routes = [
     },
     meta: {
       title: "Ajouter une nouvelle cantine",
-    },
-    beforeEnter: (route, _, next) => {
-      store.state.loggedUser ? next() : next({ name: "Landing" })
+      authenticationRequired: true,
     },
   },
   {
@@ -206,9 +213,7 @@ const routes = [
     props: true,
     meta: {
       title: "Modifier ma cantine",
-    },
-    beforeEnter: (route, _, next) => {
-      store.state.loggedUser ? next() : next({ name: "Landing" })
+      authenticationRequired: true,
     },
   },
   {
@@ -218,9 +223,7 @@ const routes = [
     props: true,
     meta: {
       title: "Modifier mon diagnostic",
-    },
-    beforeEnter: (route, _, next) => {
-      store.state.loggedUser ? next() : next({ name: "Landing" })
+      authenticationRequired: true,
     },
   },
   {
@@ -233,9 +236,7 @@ const routes = [
     },
     meta: {
       title: "Ajouter un nouveau diagnostic",
-    },
-    beforeEnter: (route, _, next) => {
-      store.state.loggedUser ? next() : next({ name: "Landing" })
+      authenticationRequired: true,
     },
   },
   {
@@ -261,9 +262,15 @@ router.beforeEach((to, from, next) => {
 
   store
     .dispatch("fetchInitialData")
-    .then(next)
+    .then(() => {
+      if (to.meta.authenticationRequired) {
+        store.state.loggedUser ? next() : next({ name: "LandingPage" })
+      } else {
+        next()
+      }
+    })
     .catch((e) => {
-      console.error(`An error ocurred: ${e}`)
+      console.error(`An error occurred: ${e}`)
       next(e)
     })
 })
