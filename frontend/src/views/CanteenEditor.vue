@@ -198,6 +198,8 @@ import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewD
 import departments from "@/departments.json"
 import { toBase64 } from "@/utils"
 
+const LEAVE_WARNING = "Est-ce que vous voulez partir ? Il y a des changements pas sauvegardés."
+
 export default {
   name: "CanteenEditor",
   components: { DiagnosticCard, PublicationPreviewDialog },
@@ -213,6 +215,7 @@ export default {
       formIsValid: true,
       originalCanteenIsPublished: false,
       showPreview: false,
+      editsToWarning: 2,
       managementTypes: [
         {
           text: "Directe",
@@ -247,6 +250,19 @@ export default {
       this.originalCanteenIsPublished = canteen.dataIsPublic
     } else this.$router.push({ name: "NewCanteen" })
   },
+  created() {
+    window.addEventListener("beforeunload", (e) => {
+      if (!this.editsToWarning) {
+        e.preventDefault()
+        e.returnValue = LEAVE_WARNING
+      }
+    })
+  },
+  destroyed() {
+    window.addEventListener("beforeunload", (e) => {
+      delete e["returnValue"]
+    })
+  },
   methods: {
     saveCanteen() {
       this.$refs.form.validate()
@@ -261,6 +277,7 @@ export default {
           payload: this.canteen,
         })
         .then(() => {
+          this.editsToWarning = 1
           this.$router.push({ name: "ManagementPage", query: { operation: this.isNewCanteen ? "cree" : "modifiee" } })
         })
         .catch(() => {
@@ -286,6 +303,24 @@ export default {
         this.canteen.mainImage = base64
       })
     },
+  },
+  watch: {
+    canteen: {
+      deep: true,
+      handler() {
+        if (this.editsToWarning) this.editsToWarning = this.editsToWarning - 1
+      },
+    },
+  },
+  beforeRouteLeave(to, from, next) {
+    if (!this.editsToWarning) {
+      const answer = window.confirm(LEAVE_WARNING)
+      if (answer) {
+        next()
+      } else {
+        next(false)
+      }
+    } else next()
   },
 }
 </script>
