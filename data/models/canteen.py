@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from data.department_choices import Department
+from data.utils import optimize_image
 from .sector import Sector
 
 
@@ -47,6 +48,16 @@ class Canteen(models.Model):
         blank=True,
         verbose_name="mode de gestion",
     )
+
+    main_image = models.ImageField(null=True, blank=True, verbose_name="Image principale")
+
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        max_image_size = 1024
+        if self.main_image:
+            self.main_image = optimize_image(self.main_image, self.main_image.name, max_image_size)
+        super(Canteen, self).save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
         return f'Cantine "{self.name}"'
