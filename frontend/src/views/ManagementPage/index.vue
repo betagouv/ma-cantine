@@ -129,7 +129,9 @@ export default {
       return this.$store.state.userCanteens
     },
     diagnostics() {
-      return this.$store.state.userCanteens.flatMap((canteen) => canteen.diagnostics)
+      let diagnostics = this.$store.state.userCanteens.flatMap((canteen) => canteen.diagnostics)
+      diagnostics.sort((diag1, diag2) => diag2.year - diag1.year)
+      return diagnostics
     },
   },
   methods: {
