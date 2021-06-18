@@ -8,7 +8,7 @@
         {{ canteen.dataIsPublic ? "Publiée" : "Pas encore publiée" }}
       </v-chip>
     </div>
-    <v-form>
+    <v-form ref="form" v-model="formIsValid">
       <v-row>
         <v-col cols="12" md="5">
           <p class="body-2 my-2">Cantine</p>
@@ -85,6 +85,7 @@
               Lutte contre le gaspillage alimentaire et dons alimentaires
             </div>
           </v-expansion-panel-header>
+          <!-- TODO: waste actions multiple choice not working -->
           <v-expansion-panel-content><WasteMeasure :diagnostic="diagnostic" /></v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
@@ -125,7 +126,12 @@
 
     <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
       <v-spacer></v-spacer>
-      <v-btn x-large color="primary">Valider</v-btn>
+      <v-btn large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
+        Annuler
+      </v-btn>
+      <v-btn x-large color="primary" @click="saveDiagnostic">
+        {{ isNewDiagnostic ? "Ajouter" : "Modifier" }}
+      </v-btn>
     </v-sheet>
   </div>
 </template>
@@ -144,6 +150,7 @@ export default {
     return {
       diagnostic: {},
       selectedCanteenId: undefined,
+      formIsValid: true,
     }
   },
   components: { InformationMeasure, WasteMeasure, DiversificationMeasure, NoPlasticMeasure, QualityMeasureValuesInput },
@@ -219,6 +226,32 @@ export default {
     const diagnostic = this.canteen.diagnostics.find((diagnostic) => diagnostic.year === parseInt(this.year))
     if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
     else this.$router.push({ name: "Landing" })
+  },
+  methods: {
+    saveDiagnostic() {
+      this.$refs.form.validate()
+
+      if (!this.formIsValid) {
+        // TODO: how to nicely handle revealing validation issues in collapsed panels?
+        window.alert("Merci de vérifier les champs en rouge et réessayer")
+        return
+      }
+      this.$store
+        .dispatch(this.isNewDiagnostic ? "createDiagnostic" : "updateDiagnostic", {
+          id: this.diagnostic.id,
+          canteenId: this.selectedCanteenId || this.canteen.id,
+          payload: this.diagnostic,
+        })
+        .then(() => {
+          this.$router.push({
+            name: "ManagementPage",
+            query: { diagnosticOperation: this.isNewDiagnostic ? "cree" : "modifiee" },
+          })
+        })
+        .catch(() => {
+          alert("Une erreur s'est produite. Merci de réesayer plus tard.")
+        })
+    },
   },
 }
 </script>

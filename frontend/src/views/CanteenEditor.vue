@@ -209,18 +209,11 @@ export default {
         window.alert("Merci de vérifier les champs en rouge et réessayer")
         return
       }
-      const payload = {
-        name: this.canteen.name,
-        city: this.canteen.city,
-        department: this.canteen.department,
-        dailyMealCount: this.canteen.dailyMealCount,
-        sectors: this.canteen.sectors,
-        siret: this.canteen.siret,
-        managementType: this.canteen.managementType,
-        mainImage: this.canteen.mainImage,
-      }
       this.$store
-        .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", { id: this.canteen.id, payload })
+        .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", {
+          id: this.canteen.id,
+          payload: this.canteen,
+        })
         .then(() => {
           this.$router.push({ name: "ManagementPage", query: { operation: this.isNewCanteen ? "cree" : "modifiee" } })
         })
