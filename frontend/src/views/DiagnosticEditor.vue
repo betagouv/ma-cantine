@@ -68,7 +68,12 @@
               Au moins 50% de produits de qualité et durables dont 20% de bio
             </div>
           </v-expansion-panel-header>
-          <v-expansion-panel-content>TODO</v-expansion-panel-content>
+          <v-expansion-panel-content>
+            <QualityMeasureValuesInput
+              :originalDiagnostic="diagnostic"
+              label="La valeur (en HT) de mes achats alimentaires..."
+            />
+          </v-expansion-panel-content>
         </v-expansion-panel>
 
         <v-expansion-panel>
@@ -131,6 +136,7 @@ import InformationMeasure from "@/components/KeyMeasureDiagnostic/InformationMea
 import WasteMeasure from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/DiversificationMeasure"
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
+import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 
 export default {
   name: "DiagnosticEditor",
@@ -140,7 +146,7 @@ export default {
       selectedCanteenId: undefined,
     }
   },
-  components: { InformationMeasure, WasteMeasure, DiversificationMeasure, NoPlasticMeasure },
+  components: { InformationMeasure, WasteMeasure, DiversificationMeasure, NoPlasticMeasure, QualityMeasureValuesInput },
   props: {
     canteenUrlComponent: {
       type: String,
