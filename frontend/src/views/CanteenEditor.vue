@@ -3,15 +3,56 @@
     <h1 class="font-weight-black text-h4 my-4">
       {{ isNewCanteen ? "Nouvelle cantine" : "Modifier ma cantine" }}
     </h1>
-    <div class="mb-8 mt-2" v-if="!isNewCanteen">
-      <v-chip small :color="canteen.dataIsPublic ? 'green lighten-4' : 'grey lighten-4'" label>
-        {{ canteen.dataIsPublic ? "Publiée" : "Pas encore publiée" }}
-      </v-chip>
-      <v-btn text small class="text-decoration-underline">
-        {{ canteen.dataIsPublic ? "Enlever la publication" : "Publier ma cantine" }}
-      </v-btn>
-    </div>
+
+    <PublicationPreviewDialog
+      v-if="!isNewCanteen"
+      :canteen="canteen"
+      :value="showPreview"
+      @close="showPreview = false"
+    />
+
     <v-form ref="form" v-model="formIsValid">
+      <v-row v-if="!isNewCanteen">
+        <v-col cols="12">
+          <p class="body-1 mb-0 mt-4 font-weight-black">Publication</p>
+          <v-checkbox hide-details="auto" class="mt-0" v-model="canteen.dataIsPublic">
+            <template v-slot:label>
+              <p class="text-body-2 grey--text text--darken-4 pt-3 ml-2">
+                J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles.
+                <br />
+                <span v-if="originalCanteenIsPublished">Cette cantine est actuellement publié sur</span>
+                <v-btn
+                  @click.stop
+                  class="text-body-2 pl-1 text-decoration-underline"
+                  small
+                  text
+                  v-if="originalCanteenIsPublished"
+                  :href="
+                    $router.resolve({
+                      name: 'CanteenPage',
+                      params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                    }).href
+                  "
+                  target="_blank"
+                >
+                  nos cantines
+                  <v-icon small class="ml-1">mdi-open-in-new</v-icon>
+                </v-btn>
+
+                <v-btn
+                  @click.stop="showPreview = true"
+                  class="text-body-2 px-0 text-decoration-underline"
+                  small
+                  text
+                  v-else
+                >
+                  Voir un aperçu de la publication
+                </v-btn>
+              </p>
+            </template>
+          </v-checkbox>
+        </v-col>
+      </v-row>
       <v-row>
         <v-col cols="12" md="8">
           <p class="body-2 my-2">Nom de la cantine</p>
@@ -153,12 +194,13 @@
 <script>
 import validators from "@/validators"
 import DiagnosticCard from "@/components/DiagnosticCard"
+import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewDialog"
 import departments from "@/departments.json"
 import { toBase64 } from "@/utils"
 
 export default {
   name: "CanteenEditor",
-  components: { DiagnosticCard },
+  components: { DiagnosticCard, PublicationPreviewDialog },
   props: {
     canteenUrlComponent: {
       type: String,
@@ -169,6 +211,8 @@ export default {
     return {
       canteen: {},
       formIsValid: true,
+      originalCanteenIsPublished: false,
+      showPreview: false,
       managementTypes: [
         {
           text: "Directe",
@@ -198,8 +242,10 @@ export default {
   beforeMount() {
     if (this.isNewCanteen) return
     const canteen = this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
-    if (canteen) this.canteen = JSON.parse(JSON.stringify(canteen))
-    else this.$router.push({ name: "NewCanteen" })
+    if (canteen) {
+      this.canteen = JSON.parse(JSON.stringify(canteen))
+      this.originalCanteenIsPublished = canteen.dataIsPublic
+    } else this.$router.push({ name: "NewCanteen" })
   },
   methods: {
     saveCanteen() {

@@ -131,7 +131,7 @@ const routes = [
         component: CanteensHome,
       },
       {
-        path: ":id",
+        path: ":canteenUrlComponent",
         name: "CanteenPage",
         component: CanteenPage,
         props: true,

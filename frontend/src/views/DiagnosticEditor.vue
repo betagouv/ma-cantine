@@ -3,11 +3,6 @@
     <h1 class="font-weight-black text-h4 my-4">
       {{ isNewDiagnostic ? "Nouveaux diagnostic" : "Modifier mon diagnostic" }}
     </h1>
-    <div class="mb-4 mt-2" v-if="!isNewDiagnostic && canteen">
-      <v-chip small :color="canteen.dataIsPublic ? 'green lighten-4' : 'grey lighten-4'" label>
-        {{ canteen.dataIsPublic ? "Publiée" : "Pas encore publiée" }}
-      </v-chip>
-    </div>
     <v-form ref="form" v-model="formIsValid">
       <v-row>
         <v-col cols="12" md="5">
