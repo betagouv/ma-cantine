@@ -33,6 +33,12 @@ export default {
           to: { name: "AccountSummaryPage" },
         },
         {
+          text: "Mes cantines",
+          icon: "mdi-chart-bubble",
+          authenticationState: true,
+          to: { name: "ManagementPage" },
+        },
+        {
           text: "S'identifier",
           icon: "mdi-key",
           breakpoint: "smAndDown",
@@ -85,7 +91,7 @@ export default {
         },
         {
           text: "Générer mon affiche",
-          icon: "mdi-text-box-check",
+          icon: "mdi-cloud-print-outline",
           to: { name: "GeneratePosterPage" },
         },
         {
