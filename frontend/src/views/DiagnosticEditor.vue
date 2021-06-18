@@ -56,12 +56,23 @@
       <v-expansion-panels class="mb-8">
         <v-expansion-panel>
           <v-expansion-panel-header>
-            <div class="font-weight-bold">
-              <v-icon class="mr-2" color="red">
-                mdi-food-apple
-              </v-icon>
-              Au moins 50% de produits de qualité et durables dont 20% de bio
-            </div>
+            <template v-slot:default="{ open }">
+              <v-row no-gutters>
+                <v-col cols="7" class="font-weight-bold">
+                  <v-icon class="mr-2" color="red">
+                    mdi-food-apple
+                  </v-icon>
+                  Au moins 50% de produits de qualité et durables dont 20% de bio
+                </v-col>
+                <v-col cols="5" class="text--secondary text-right pr-2 align-self-center align-self-center">
+                  <v-fade-transition leave-absolute>
+                    <span v-if="!open" key="0">
+                      {{ approSummary() || "Incomplèt" }}
+                    </span>
+                  </v-fade-transition>
+                </v-col>
+              </v-row>
+            </template>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <QualityMeasureValuesInput
@@ -96,12 +107,23 @@
         </v-expansion-panel>
         <v-expansion-panel>
           <v-expansion-panel-header>
-            <div class="font-weight-bold">
-              <v-icon class="mr-2" color="blue darken-1">
-                mdi-weather-windy
-              </v-icon>
-              Substitution des plastiques
-            </div>
+            <template v-slot:default="{ open }">
+              <v-row no-gutters>
+                <v-col cols="4" class="font-weight-bold">
+                  <v-icon class="mr-2" color="blue darken-1">
+                    mdi-weather-windy
+                  </v-icon>
+                  Substitution des plastiques
+                </v-col>
+                <v-col cols="8" class="text--secondary text-right pr-2 align-self-center">
+                  <v-fade-transition leave-absolute>
+                    <span v-if="!open" key="0">
+                      {{ plasticSummary() }}
+                    </span>
+                  </v-fade-transition>
+                </v-col>
+              </v-row>
+            </template>
           </v-expansion-panel-header>
           <v-expansion-panel-content><NoPlasticMeasure :diagnostic="diagnostic" /></v-expansion-panel-content>
         </v-expansion-panel>
@@ -138,6 +160,10 @@ import WasteMeasure from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/DiversificationMeasure"
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
+
+function percentage(part, total) {
+  return Math.round((part / total) * 100)
+}
 
 export default {
   name: "DiagnosticEditor",
@@ -223,6 +249,30 @@ export default {
     else this.$router.push({ name: "Landing" })
   },
   methods: {
+    approSummary() {
+      if (this.diagnostic.valueTotalHt > 0) {
+        let summary = []
+        if (this.diagnostic.valueBioHt) {
+          summary.push(`${percentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
+        }
+        if (this.diagnostic.valueSustainableHt) {
+          summary.push(
+            `${percentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
+          )
+        }
+        return summary.join(", ")
+      }
+    },
+    plasticSummary() {
+      let summary = []
+      if (this.diagnostic.cookingPlasticSubstituted) summary.push("contenants de cuisson")
+      if (this.diagnostic.servingPlasticSubstituted) summary.push("contenants de service")
+      if (this.diagnostic.plasticBottlesSubstituted) summary.push("bouteilles")
+      if (this.diagnostic.plasticTablewareSubstituted) summary.push("ustensils")
+      if (summary.length === 0) summary.push("rien")
+      summary = summary.join(", ") + " substitués"
+      return summary.charAt(0).toUpperCase() + summary.slice(1)
+    },
     saveDiagnostic() {
       this.$refs.form.validate()
 
