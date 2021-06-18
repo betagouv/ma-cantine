@@ -77,11 +77,17 @@ export default {
         .dispatch("subscribeBetaTester", payload)
         .then(() => {
           this.formData = {}
-          alert("Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.")
+          this.$store.dispatch("notify", {
+            message: "Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.",
+          })
         })
         .catch((error) => {
           console.log(error.message)
-          alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
+          this.$store.dispatch("notify", {
+            title: "Oops !",
+            message: "Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr",
+            status: "error",
+          })
         })
     },
   },

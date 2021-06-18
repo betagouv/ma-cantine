@@ -268,7 +268,10 @@ export default {
       this.$refs.form.validate()
 
       if (!this.formIsValid) {
-        window.alert("Merci de vérifier les champs en rouge et réessayer")
+        this.$store.dispatch("notify", {
+          message: "Merci de vérifier les champs en rouge et réessayer",
+          status: "error",
+        })
         return
       }
       this.$store
@@ -278,10 +281,19 @@ export default {
         })
         .then(() => {
           this.editsToWarning = 1
-          this.$router.push({ name: "ManagementPage", query: { operation: this.isNewCanteen ? "cree" : "modifiee" } })
+          this.$store.dispatch("notify", {
+            title: "Mise à jour prise en compte",
+            message: `Votre cantine a bien été ${this.isNewCanteen ? "créée" : "modifiée"}`,
+            status: "success",
+          })
+          this.$router.push({ name: "ManagementPage" })
         })
         .catch(() => {
-          alert("Une erreur s'est produite. Merci de réesayer plus tard.")
+          this.$store.dispatch("notify", {
+            title: "Oops !",
+            message: "Une erreur s'est produite. Merci de réesayer plus tard.",
+            status: "error",
+          })
         })
     },
     onProfilePhotoUploadClick() {

@@ -96,7 +96,10 @@ export default {
       this.$refs.form.validate()
 
       if (!this.formIsValid) {
-        window.alert("Merci de vérifier les champs en rouge et réessayer")
+        this.$store.dispatch("notify", {
+          message: "Merci de vérifier les champs en rouge et réessayer",
+          status: "error",
+        })
         return
       }
       const payload = {
@@ -113,7 +116,11 @@ export default {
           this.$router.push({ name: "PublishMeasurePage", params: { id: "qualite-des-produits" } })
         })
         .catch(() => {
-          alert("Une erreur s'est produite. Merci de réesayer plus tard.")
+          this.$store.dispatch("notify", {
+            title: "Oops !",
+            message: "Une erreur s'est produite. Merci de réesayer plus tard.",
+            status: "error",
+          })
         })
     },
   },
