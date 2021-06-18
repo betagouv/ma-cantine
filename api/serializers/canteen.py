@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_base64.fields import Base64ImageField
 from data.models import Canteen, Sector
 from .diagnostic import DiagnosticSerializer
 
@@ -7,6 +8,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
 
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     diagnostics = DiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    main_image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Canteen
@@ -19,6 +21,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "sectors",
             "daily_meal_count",
             "department",
+            "main_image",
         )
 
 
@@ -28,6 +31,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         many=True, queryset=Sector.objects.all()
     )
     diagnostics = DiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    main_image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Canteen
@@ -43,4 +47,5 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "management_type",
             "diagnostics",
             "department",
+            "main_image",
         )

@@ -22,12 +22,39 @@
             solo
             v-model="canteen.name"
           ></v-text-field>
-        </v-col>
-        <v-col cols="12" md="8">
-          <p class="body-2 my-2">SIRET</p>
+
+          <p class="body-2 mt-6 mb-2">SIRET</p>
           <v-text-field hide-details="auto" solo v-model="canteen.siret"></v-text-field>
         </v-col>
+
+        <v-col cols="12" md="4" height="100%" class="d-flex flex-column">
+          <div class="text-right">
+            <v-btn
+              class="mr-2 text-decoration-underline"
+              text
+              color="red"
+              small
+              v-if="canteen.mainImage"
+              @click="changeProfileImage(null)"
+            >
+              <v-icon class="mr-1" small>mdi-delete-forever</v-icon>
+              Supprimer
+            </v-btn>
+            <v-btn text class="text-decoration-underline" color="primary" @click="onProfilePhotoUploadClick" small>
+              <v-icon class="mr-1" small>mdi-image</v-icon>
+              Choisir une photo
+            </v-btn>
+            <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onProfilePhotoChanged" />
+          </div>
+          <div class="flex-grow-1 mt-2">
+            <v-sheet rounded color="grey lighten-2" class="fill-height d-flex align-center justify-center">
+              <v-img contain v-if="canteen.mainImage" :src="canteen.mainImage" max-height="150"></v-img>
+              <v-icon v-else size="40" color="grey">mdi-image-off-outline</v-icon>
+            </v-sheet>
+          </div>
+        </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="4">
           <p class="body-2 my-2">Ville / commune</p>
@@ -39,6 +66,7 @@
             v-model="canteen.city"
           ></v-text-field>
         </v-col>
+
         <v-col cols="12" md="4">
           <p class="body-2 my-2">Département</p>
           <v-select
@@ -126,6 +154,7 @@
 import validators from "@/validators"
 import DiagnosticCard from "@/components/DiagnosticCard"
 import departments from "@/departments.json"
+import { toBase64 } from "@/utils"
 
 export default {
   name: "CanteenEditor",
@@ -166,7 +195,7 @@ export default {
       return !this.canteenUrlComponent
     },
   },
-  mounted() {
+  beforeMount() {
     if (this.isNewCanteen) return
     const canteen = this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
     if (canteen) this.canteen = JSON.parse(JSON.stringify(canteen))
@@ -188,6 +217,7 @@ export default {
         sectors: this.canteen.sectors,
         siret: this.canteen.siret,
         managementType: this.canteen.managementType,
+        mainImage: this.canteen.mainImage,
       }
       this.$store
         .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", { id: this.canteen.id, payload })
@@ -197,6 +227,25 @@ export default {
         .catch(() => {
           alert("Une erreur s'est produite. Merci de réesayer plus tard.")
         })
+    },
+    onProfilePhotoUploadClick() {
+      this.$refs.uploader.click()
+    },
+    onProfilePhotoChanged(e) {
+      if (e && e.target && e.target.files && e.target.files.length > 0) {
+        this.changeProfileImage(e.target.files[0])
+      } else {
+        this.changeProfileImage(null)
+      }
+    },
+    changeProfileImage(file) {
+      if (!file) {
+        this.canteen.mainImage = null
+        return
+      }
+      toBase64(file, (base64) => {
+        this.canteen.mainImage = base64
+      })
     },
   },
 }
