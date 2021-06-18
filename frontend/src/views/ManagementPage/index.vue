@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import CanteenCard from "@/components/CanteenCard"
+import CanteenCard from "./CanteenCard"
 import DiagnosticCard from "@/components/DiagnosticCard"
 import CalculatorResourceModal from "@/components/KeyMeasureResource/CalculatorResourceModal"
 
