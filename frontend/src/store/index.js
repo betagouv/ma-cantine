@@ -28,6 +28,12 @@ export default new Vuex.Store({
     userCanteens: [],
     initialDataLoaded: false,
     blogPosts: null,
+
+    notification: {
+      message: "",
+      status: null,
+      title: "",
+    },
   },
 
   mutations: {
@@ -73,6 +79,20 @@ export default new Vuex.Store({
     },
     SET_INITIAL_DATA_LOADED(state) {
       state.initialDataLoaded = true
+    },
+    SET_NOTIFICATION(state, { message, title, status }) {
+      state.notification.message = message
+      state.notification.title = title
+      state.notification.status = status
+    },
+    REMOVE_NOTIFICATION(state, message) {
+      if (message && state.notification.message !== message) {
+        // in case there was another notification in between, do not remove it
+        return
+      }
+      state.notification.message = null
+      state.notification.status = null
+      state.notification.title = null
     },
   },
 
@@ -266,6 +286,14 @@ export default new Vuex.Store({
       return fetch("/api/v1/subscribeNewsletter/", { method: "POST", headers, body: JSON.stringify({ email }) }).then(
         verifyResponse
       )
+    },
+
+    notify(context, { title, message, status }) {
+      context.commit("SET_NOTIFICATION", { title, message, status })
+      setTimeout(() => context.commit("REMOVE_NOTIFICATION", message), 4000)
+    },
+    removeNotification(context) {
+      context.commit("REMOVE_NOTIFICATION")
     },
   },
 

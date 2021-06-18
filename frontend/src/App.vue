@@ -15,6 +15,7 @@
       </v-main>
 
       <Footer />
+      <NotificationSnackbar />
     </v-app>
   </div>
 </template>
@@ -22,11 +23,13 @@
 <script>
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import NotificationSnackbar from "@/components/NotificationSnackbar"
 
 export default {
   components: {
     Header,
     Footer,
+    NotificationSnackbar,
   },
   computed: {
     initialDataLoaded() {

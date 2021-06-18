@@ -1,9 +1,5 @@
 <template>
   <div class="text-left">
-    <v-alert type="success" v-if="$route.query.operation || $route.query.diagnosticOperation">
-      {{ $route.query.operation ? "Cantine" : "Diagnostic" }} bien
-      {{ ($route.query.operation || $route.query.diagnosticOperation) === "cree" ? "crée" : "modifiée" }}
-    </v-alert>
     <div class="mt-12">
       <h2 class="my-4">Mes cantines</h2>
       <v-row>
