@@ -164,6 +164,7 @@
 
         <v-col cols="12" md="4">
           <p class="body-2 my-2">Mode de gestion</p>
+          <!-- TODO: either make this optional in API or mandatory here -->
           <v-radio-group v-model="canteen.managementType">
             <v-radio
               class="ml-8"
@@ -251,14 +252,18 @@ export default {
       return departments
     },
     originalCanteen() {
-      return this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
+      return this.canteenUrlComponent && this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
     },
     isNewCanteen() {
       return !this.canteenUrlComponent
     },
     hasChanged() {
-      const diff = getObjectDiff(this.originalCanteen, this.canteen)
-      return Object.keys(diff).length > 0
+      if (this.originalCanteen) {
+        const diff = getObjectDiff(this.originalCanteen, this.canteen)
+        return Object.keys(diff).length > 0
+      } else {
+        return Object.keys(this.canteen).length > 0
+      }
     },
   },
   beforeMount() {
@@ -284,7 +289,7 @@ export default {
         return
       }
 
-      const payload = getObjectDiff(this.originalCanteen, this.canteen)
+      const payload = this.originalCanteen ? getObjectDiff(this.originalCanteen, this.canteen) : this.canteen
       this.$store
         .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", {
           id: this.canteen.id,
