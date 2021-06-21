@@ -211,7 +211,7 @@ import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewD
 import departments from "@/departments.json"
 import { toBase64, getObjectDiff } from "@/utils"
 
-const LEAVE_WARNING = "Est-ce que vous voulez partir ? Il y a des changements pas sauvegardés."
+const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "CanteenEditor",
@@ -318,7 +318,7 @@ export default {
         return
       }
       toBase64(file, (base64) => {
-        this.canteen.mainImage = base64
+        this.$set(this.canteen, "mainImage", base64)
       })
     },
     handleUnload(e) {
