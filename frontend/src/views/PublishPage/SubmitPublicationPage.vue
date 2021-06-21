@@ -58,11 +58,7 @@ export default {
         })
         .catch((error) => {
           console.log(error)
-          this.$store.dispatch("notify", {
-            title: "Oops !",
-            message: "Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr",
-            status: "error",
-          })
+          this.$store.dispatch("notifyServerError")
         })
     },
   },

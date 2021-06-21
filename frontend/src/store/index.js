@@ -292,6 +292,19 @@ export default new Vuex.Store({
       context.commit("SET_NOTIFICATION", { title, message, status })
       setTimeout(() => context.commit("REMOVE_NOTIFICATION", message), 4000)
     },
+    notifyRequiredFieldsError(context) {
+      const title = null
+      const message = "Merci de vérifier les champs en rouge et réessayer"
+      const status = "error"
+      context.dispatch("notify", { title, message, status })
+    },
+    notifyServerError(context) {
+      const title = "Oops !"
+      const message =
+        "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à contact@egalim.beta.gouv.fr"
+      const status = "error"
+      context.dispatch("notify", { title, message, status })
+    },
     removeNotification(context) {
       context.commit("REMOVE_NOTIFICATION")
     },

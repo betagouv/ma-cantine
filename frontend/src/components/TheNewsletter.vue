@@ -64,11 +64,7 @@ export default {
           })
         })
         .catch((error) => {
-          this.$store.dispatch("notify", {
-            title: "Oops !",
-            message: "Une erreur est survenue, merci d'essayer plus tard",
-            status: "error",
-          })
+          this.$store.dispatch("notifyServerError")
           console.log(error)
         })
     },
