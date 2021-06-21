@@ -228,7 +228,6 @@ export default {
       formIsValid: true,
       originalCanteenIsPublished: false,
       showPreview: false,
-      editsToWarning: 2,
       managementTypes: [
         {
           text: "Directe",
@@ -257,6 +256,10 @@ export default {
     isNewCanteen() {
       return !this.canteenUrlComponent
     },
+    hasChanged() {
+      const diff = getObjectDiff(this.originalCanteen, this.canteen)
+      return Object.keys(diff).length > 0
+    },
   },
   beforeMount() {
     if (this.isNewCanteen) return
@@ -268,7 +271,7 @@ export default {
   },
   created() {
     window.addEventListener("beforeunload", (e) => {
-      if (!this.editsToWarning) {
+      if (this.hasChanged) {
         e.preventDefault()
         e.returnValue = LEAVE_WARNING
       }
@@ -292,14 +295,12 @@ export default {
       }
 
       const payload = getObjectDiff(this.originalCanteen, this.canteen)
-      delete payload.diagnostics
       this.$store
         .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", {
           id: this.canteen.id,
           payload,
         })
         .then(() => {
-          this.editsToWarning = 1
           this.$store.dispatch("notify", {
             title: "Mise à jour prise en compte",
             message: `Votre cantine a bien été ${this.isNewCanteen ? "créée" : "modifiée"}`,
@@ -335,23 +336,12 @@ export default {
       })
     },
   },
-  watch: {
-    canteen: {
-      deep: true,
-      handler() {
-        if (this.editsToWarning) this.editsToWarning = this.editsToWarning - 1
-      },
-    },
-  },
   beforeRouteLeave(to, from, next) {
-    if (!this.editsToWarning) {
-      const answer = window.confirm(LEAVE_WARNING)
-      if (answer) {
-        next()
-      } else {
-        next(false)
-      }
-    } else next()
+    if (!this.hasChanged) {
+      next()
+      return
+    }
+    window.confirm(LEAVE_WARNING) ? next() : next(false)
   },
 }
 </script>
