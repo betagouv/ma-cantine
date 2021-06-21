@@ -12,7 +12,7 @@
         {{ canteen.dataIsPublic ? "Publiée" : "Pas encore publiée" }}
       </v-chip>
     </v-card-subtitle>
-    <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="mt-0">
+    <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city || canteen.sectors" class="mt-0">
       <div v-if="canteen.dailyMealCount">
         <v-icon small>mdi-silverware-fork-knife</v-icon>
         {{ canteen.dailyMealCount }} repas par jour

@@ -69,7 +69,10 @@ export default {
   methods: {
     subscribeBetaTester() {
       this.$refs.form.validate()
-      if (!this.formIsValid) return
+      if (!this.formIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
 
       const payload = Object.assign({ measures: this.latestDiagnostic }, this.formData)
 
