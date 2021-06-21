@@ -53,7 +53,7 @@
 
       <p class="caption grey--text">Cliquez sur les catégories ci-dessous pour remplir votre diagnostic</p>
 
-      <v-expansion-panels class="mb-8">
+      <v-expansion-panels class="mb-8" :disabled="!diagnosticIsUnique">
         <v-expansion-panel>
           <v-expansion-panel-header>
             <template v-slot:default="{ open }">
@@ -146,7 +146,7 @@
       <v-btn large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
         Annuler
       </v-btn>
-      <v-btn x-large color="primary" @click="saveDiagnostic">
+      <v-btn x-large color="primary" @click="saveDiagnostic" :disabled="!diagnosticIsUnique">
         {{ isNewDiagnostic ? "Ajouter" : "Modifier" }}
       </v-btn>
     </v-sheet>
@@ -201,7 +201,7 @@ export default {
     validators() {
       return {
         ...validators,
-        ...{ diagnosticIsUnique: this.diagnosticIsUnique },
+        diagnosticIsUnique: this.diagnosticIsUnique,
       }
     },
     originalDiagnostic() {
@@ -253,11 +253,11 @@ export default {
   beforeMount() {
     if (this.isNewDiagnostic) return
 
-    if (!this.canteen) this.$router.push({ name: "Landing" })
+    if (!this.canteen) this.$router.replace({ name: "NotFound" })
 
     const diagnostic = this.originalDiagnostic
     if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
-    else this.$router.push({ name: "Landing" })
+    else this.$router.replace({ name: "NotFound" })
   },
   methods: {
     approSummary() {

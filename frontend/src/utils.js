@@ -1,6 +1,6 @@
 export const timeAgo = (date, displayPrefix = false) => {
   if (typeof date === "string") {
-    date = new Date(Date.parse(date))
+    date = new Date(date)
   }
 
   let prefix = ""
