@@ -160,10 +160,13 @@ import WasteMeasure from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/DiversificationMeasure"
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
+import { getObjectDiff } from "@/utils"
 
 function percentage(part, total) {
   return Math.round((part / total) * 100)
 }
+
+const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
 export default {
   name: "DiagnosticEditor",
@@ -200,6 +203,10 @@ export default {
         ...validators,
         ...{ diagnosticIsUnique: this.diagnosticIsUnique },
       }
+    },
+    originalDiagnostic() {
+      if (!this.canteen) return {}
+      return this.canteen.diagnostics.find((diagnostic) => diagnostic.year === parseInt(this.year))
     },
     diagnosticIsUnique() {
       if (!this.isNewDiagnostic) return true
@@ -238,13 +245,17 @@ export default {
         },
       ]
     },
+    hasChanged() {
+      const diff = getObjectDiff(this.originalDiagnostic, this.diagnostic)
+      return Object.keys(diff).length > 0
+    },
   },
   beforeMount() {
     if (this.isNewDiagnostic) return
 
     if (!this.canteen) this.$router.push({ name: "Landing" })
 
-    const diagnostic = this.canteen.diagnostics.find((diagnostic) => diagnostic.year === parseInt(this.year))
+    const diagnostic = this.originalDiagnostic
     if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
     else this.$router.push({ name: "Landing" })
   },
@@ -281,11 +292,12 @@ export default {
         this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
+      const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
       this.$store
         .dispatch(this.isNewDiagnostic ? "createDiagnostic" : "updateDiagnostic", {
           id: this.diagnostic.id,
           canteenId: this.selectedCanteenId || this.canteen.id,
-          payload: this.diagnostic,
+          payload,
         })
         .then(() => {
           this.$router.push({
@@ -297,6 +309,20 @@ export default {
           this.$store.dispatch("notifyServerError")
         })
     },
+    handleUnload(e) {
+      if (this.hasChanged) {
+        e.preventDefault()
+        e.returnValue = LEAVE_WARNING
+      } else {
+        delete e["returnValue"]
+      }
+    },
+  },
+  created() {
+    window.addEventListener("beforeunload", this.handleUnload)
+  },
+  beforeDestroy() {
+    window.removeEventListener("beforeunload", this.handleUnload)
   },
 }
 </script>
