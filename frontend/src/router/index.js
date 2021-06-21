@@ -32,10 +32,8 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: "/",
-    redirect() {
-      return !store.state.initialDataLoaded || store.state.loggedUser
-        ? { name: "ManagementPage" }
-        : { name: "LandingPage" }
+    meta: {
+      home: true,
     },
   },
   {
@@ -49,6 +47,7 @@ const routes = [
     component: AccountSummaryPage,
     meta: {
       title: "Mon compte",
+      authenticationRequired: true,
     },
   },
   {
@@ -254,25 +253,25 @@ const router = new VueRouter({
   },
 })
 
-router.beforeEach((to, from, next) => {
-  if (store.state.initialDataLoaded) {
-    next()
-    return
+function chooseAuthorisedRoute(to, from, next) {
+  if (!store.state.initialDataLoaded) {
+    store
+      .dispatch("fetchInitialData")
+      .then(() => chooseAuthorisedRoute(to, from, next))
+      .catch((e) => {
+        console.error(`An error occurred: ${e}`)
+        next({ name: "LandingPage" })
+      })
+  } else {
+    if (to.meta.home && store.state.loggedUser) next({ name: "ManagementPage" })
+    else if (to.meta.home) next({ name: "LandingPage" })
+    else if (!to.meta.authenticationRequired || store.state.loggedUser) next()
+    else next({ name: "NotFound" })
   }
+}
 
-  store
-    .dispatch("fetchInitialData")
-    .then(() => {
-      if (to.meta.authenticationRequired) {
-        store.state.loggedUser ? next() : next({ name: "LandingPage" })
-      } else {
-        next()
-      }
-    })
-    .catch((e) => {
-      console.error(`An error occurred: ${e}`)
-      next(e)
-    })
+router.beforeEach((to, from, next) => {
+  chooseAuthorisedRoute(to, from, next)
 })
 
 export default router
