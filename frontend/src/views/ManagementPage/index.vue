@@ -28,7 +28,7 @@
       </v-btn>
       <v-row>
         <v-col cols="12" v-for="diagnostic in diagnostics" :key="`diagnostic-${diagnostic.id}`">
-          <DiagnosticCard :diagnostic="diagnostic" class="fill-height" />
+          <DiagnosticCard :diagnostic="diagnostic" :class="{ 'fill-height': $vuetify.breakpoint.mdAndUp }" />
         </v-col>
       </v-row>
     </div>
