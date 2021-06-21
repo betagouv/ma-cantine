@@ -41,11 +41,30 @@ export const toBase64 = (file, success, error) => {
   if (error) reader.onerror = error
 }
 
-function arraysMatch(arr1, arr2) {
+const arraysMatch = (arr1, arr2) => {
   if (arr1.length !== arr2.length) return false
 
+  function compare(item1, item2) {
+    var type1 = Object.prototype.toString.call(item1)
+    var type2 = Object.prototype.toString.call(item2)
+
+    // If items are different types
+    if (type1 !== type2) return false
+
+    // If an object, compare
+    if (type1 === "[object Object]") return Object.keys(getObjectDiff(item1, item2)).length === 0
+
+    // If an array, compare
+    if (type1 === "[object Array]") return arraysMatch(item1, item2)
+
+    // If it's a function, convert to a string and compare
+    if (type1 === "[object Function]") return item1.toString() === item2.toString()
+
+    return item1 === item2
+  }
+
   for (var i = 0; i < arr1.length; i++) {
-    if (arr1[i] !== arr2[i]) return false
+    if (!compare(arr1[i], arr2[i])) return false
   }
 
   return true
