@@ -229,6 +229,7 @@ export default {
       formIsValid: true,
       originalCanteenIsPublished: false,
       showPreview: false,
+      bypassLeaveWarning: false,
       managementTypes: [
         {
           text: "Directe",
@@ -296,6 +297,7 @@ export default {
           payload,
         })
         .then(() => {
+          this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
             title: "Mise à jour prise en compte",
             message: `Votre cantine a bien été ${this.isNewCanteen ? "créée" : "modifiée"}`,
@@ -311,11 +313,7 @@ export default {
       this.$refs.uploader.click()
     },
     onProfilePhotoChanged(e) {
-      if (e && e.target && e.target.files && e.target.files.length > 0) {
-        this.changeProfileImage(e.target.files[0])
-      } else {
-        this.changeProfileImage(null)
-      }
+      this.changeProfileImage(e.target.files[0])
     },
     changeProfileImage(file) {
       if (!file) {
@@ -327,7 +325,7 @@ export default {
       })
     },
     handleUnload(e) {
-      if (this.hasChanged) {
+      if (this.hasChanged && !this.bypassLeaveWarning) {
         e.preventDefault()
         e.returnValue = LEAVE_WARNING
       } else {
@@ -336,7 +334,7 @@ export default {
     },
   },
   beforeRouteLeave(to, from, next) {
-    if (!this.hasChanged) {
+    if (!this.hasChanged || this.bypassLeaveWarning) {
       next()
       return
     }
