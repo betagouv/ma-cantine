@@ -96,10 +96,7 @@ export default {
       this.$refs.form.validate()
 
       if (!this.formIsValid) {
-        this.$store.dispatch("notify", {
-          message: "Merci de vérifier les champs en rouge et réessayer",
-          status: "error",
-        })
+        this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
       const payload = {
@@ -116,11 +113,7 @@ export default {
           this.$router.push({ name: "PublishMeasurePage", params: { id: "qualite-des-produits" } })
         })
         .catch(() => {
-          this.$store.dispatch("notify", {
-            title: "Oops !",
-            message: "Une erreur s'est produite. Merci de réesayer plus tard.",
-            status: "error",
-          })
+          this.$store.dispatch("notifyServerError")
         })
     },
   },

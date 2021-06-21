@@ -278,10 +278,7 @@ export default {
 
       if (!this.formIsValid) {
         // TODO: how to nicely handle revealing validation issues in collapsed panels?
-        this.$store.dispatch("notify", {
-          message: "Merci de vérifier les champs en rouge et réessayer",
-          status: "error",
-        })
+        this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
       this.$store
@@ -297,11 +294,7 @@ export default {
           })
         })
         .catch(() => {
-          this.$store.dispatch("notify", {
-            title: "Oops !",
-            message: "Une erreur s'est produite. Merci de réesayer plus tard.",
-            status: "error",
-          })
+          this.$store.dispatch("notifyServerError")
         })
     },
   },
