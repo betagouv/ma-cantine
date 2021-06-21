@@ -18,33 +18,46 @@
           <v-checkbox hide-details="auto" class="mt-0" v-model="canteen.dataIsPublic">
             <template v-slot:label>
               <p class="text-body-2 grey--text text--darken-4 pt-3 ml-2">
-                J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles.
+                J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles sur
+                <router-link
+                  :to="{
+                    name: 'CanteensHome',
+                  }"
+                >
+                  nos cantines
+                </router-link>
+                .
                 <br />
                 <span v-if="originalCanteenIsPublished">Cette cantine est actuellement publié sur</span>
+
                 <v-btn
-                  @click.stop
-                  class="text-body-2 pl-1 text-decoration-underline"
-                  small
-                  text
                   v-if="originalCanteenIsPublished"
+                  @click.stop
                   :href="
                     $router.resolve({
                       name: 'CanteenPage',
                       params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
                     }).href
                   "
+                  class="text-body-2 pl-1 text-decoration-underline"
                   target="_blank"
+                  small
+                  text
+                  plain
+                  :ripple="false"
                 >
                   nos cantines
-                  <v-icon small class="ml-1">mdi-open-in-new</v-icon>
+                  <v-icon small color="grey darken-4" class="ml-1">mdi-open-in-new</v-icon>
                 </v-btn>
 
                 <v-btn
                   @click.stop="showPreview = true"
-                  class="text-body-2 px-0 text-decoration-underline"
+                  class="text-body-2 px-0 text-decoration-underline grey--text text--darken-4"
                   small
                   text
+                  plain
                   v-else
+                  :ripple="false"
                 >
                   Voir un aperçu de la publication
                 </v-btn>
@@ -196,7 +209,7 @@ import validators from "@/validators"
 import DiagnosticCard from "@/components/DiagnosticCard"
 import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewDialog"
 import departments from "@/departments.json"
-import { toBase64 } from "@/utils"
+import { toBase64, getObjectDiff } from "@/utils"
 
 const LEAVE_WARNING = "Est-ce que vous voulez partir ? Il y a des changements pas sauvegardés."
 
@@ -238,13 +251,16 @@ export default {
     departments() {
       return departments
     },
+    originalCanteen() {
+      return this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
+    },
     isNewCanteen() {
       return !this.canteenUrlComponent
     },
   },
   beforeMount() {
     if (this.isNewCanteen) return
-    const canteen = this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
+    const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
       this.originalCanteenIsPublished = canteen.dataIsPublic
@@ -274,10 +290,13 @@ export default {
         })
         return
       }
+
+      const payload = getObjectDiff(this.originalCanteen, this.canteen)
+      delete payload.diagnostics
       this.$store
         .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", {
           id: this.canteen.id,
-          payload: this.canteen,
+          payload,
         })
         .then(() => {
           this.editsToWarning = 1
@@ -336,3 +355,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.v-btn--plain:not(.v-btn--active):not(.v-btn--loading):not(:focus):not(:hover) >>> .v-btn__content {
+  opacity: 1;
+}
+</style>
