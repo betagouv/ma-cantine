@@ -270,17 +270,10 @@ export default {
     } else this.$router.push({ name: "NewCanteen" })
   },
   created() {
-    window.addEventListener("beforeunload", (e) => {
-      if (this.hasChanged) {
-        e.preventDefault()
-        e.returnValue = LEAVE_WARNING
-      }
-    })
+    window.addEventListener("beforeunload", this.handleUnload)
   },
-  destroyed() {
-    window.addEventListener("beforeunload", (e) => {
-      delete e["returnValue"]
-    })
+  beforeDestroy() {
+    window.removeEventListener("beforeunload", this.handleUnload)
   },
   methods: {
     saveCanteen() {
@@ -327,6 +320,14 @@ export default {
       toBase64(file, (base64) => {
         this.canteen.mainImage = base64
       })
+    },
+    handleUnload(e) {
+      if (this.hasChanged) {
+        e.preventDefault()
+        e.returnValue = LEAVE_WARNING
+      } else {
+        delete e["returnValue"]
+      }
     },
   },
   beforeRouteLeave(to, from, next) {
