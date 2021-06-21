@@ -174,6 +174,7 @@ export default {
     return {
       diagnostic: {},
       selectedCanteenId: undefined,
+      bypassLeaveWarning: false,
       formIsValid: true,
     }
   },
@@ -300,6 +301,7 @@ export default {
           payload,
         })
         .then(() => {
+          this.bypassLeaveWarning = true
           this.$router.push({
             name: "ManagementPage",
             query: { diagnosticOperation: this.isNewDiagnostic ? "cree" : "modifiee" },
@@ -310,7 +312,7 @@ export default {
         })
     },
     handleUnload(e) {
-      if (this.hasChanged) {
+      if (this.hasChanged && !this.bypassLeaveWarning) {
         e.preventDefault()
         e.returnValue = LEAVE_WARNING
       } else {
@@ -323,6 +325,13 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.handleUnload)
+  },
+  beforeRouteLeave(to, from, next) {
+    if (!this.hasChanged || this.bypassLeaveWarning) {
+      next()
+      return
+    }
+    window.confirm(LEAVE_WARNING) ? next() : next(false)
   },
 }
 </script>
