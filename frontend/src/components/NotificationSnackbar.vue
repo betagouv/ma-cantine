@@ -1,5 +1,13 @@
 <template>
-  <v-snackbar timeout="-1" :color="color" :value="show" :bottom="isMobile" :top="!isMobile" :right="!isMobile">
+  <v-snackbar
+    class="notification-snackbar"
+    timeout="-1"
+    :color="color"
+    :value="show"
+    :bottom="isMobile"
+    :top="!isMobile"
+    :right="!isMobile"
+  >
     <div class="d-flex">
       <v-icon small class="mr-3" width="20" @click="$store.dispatch('removeNotification')">{{ icon }}</v-icon>
       <div class="flex-grow-1 d-flex flex-column justify-center">
@@ -23,6 +31,7 @@ export default {
   computed: {
     color() {
       const colors = { success: "green", error: "red", warning: "amber darken-2" }
+      if (!this.show) return "white"
       return Object.prototype.hasOwnProperty.call(colors, this.notification.status)
         ? colors[this.notification.status]
         : "indigo"
@@ -46,17 +55,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.v-snack__wrapper {
-  background: white !important;
-}
-.v-application .v-snack__wrapper.success {
-  background-color: white !important;
-  border-color: white !important;
-  color: black;
-}
-.v-snack {
-  padding-bottom: 10px !important;
-}
-</style>
