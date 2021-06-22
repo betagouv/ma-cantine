@@ -16,7 +16,7 @@
     </v-col>
     <v-spacer></v-spacer>
     <v-col cols="12" md="4" class="py-0">
-      <v-card-text class="align-self-center">Ouvert {{ timeAgo(diagnostic.creationDate, true) }}</v-card-text>
+      <v-card-text class="align-self-center">{{ dateText }}</v-card-text>
     </v-col>
   </v-card>
 </template>
@@ -53,6 +53,14 @@ export default {
         status = approComplete ? "Données complètées" : status
       }
       return status
+    },
+    dateText() {
+      console.log(timeAgo)
+      const baseText = `Créé ${timeAgo(this.diagnostic.creationDate, true)}`
+      const dateDifference = new Date(this.diagnostic.modificationDate) - new Date(this.diagnostic.creationDate)
+      const showModificationDate = dateDifference > 1000 * 60 // one minute difference
+      if (showModificationDate) return `${baseText}, modifié ${timeAgo(this.diagnostic.modificationDate, true)}`
+      return baseText
     },
   },
   methods: {
