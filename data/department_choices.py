@@ -36,7 +36,7 @@ class Department(models.TextChoices):
         gers = "32", "32 - Gers"
         gironde = "33", "33 - Gironde"
         herault = "34", "34 - Hérault"
-        ille_et_Vilaine = "35", "35 - Ille-et-Vilaine"
+        ille_et_vilaine = "35", "35 - Ille-et-Vilaine"
         indre = "36", "36 - Indre"
         indre_et_Loire = "37", "37 - Indre-et-Loire"
         isere = "38", "38 - Isère"
