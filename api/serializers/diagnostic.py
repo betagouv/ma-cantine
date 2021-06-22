@@ -42,5 +42,4 @@ class DiagnosticSerializer(serializers.ModelSerializer):
             "communicates_on_food_quality",
             "communication_frequency",
             "creation_date",
-            "modification_date",
         )

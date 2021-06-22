@@ -66,8 +66,15 @@
             <v-spacer></v-spacer>
             <v-card-actions class="px-4">
               <v-spacer></v-spacer>
-              <v-btn href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/" target="_blank" outlined color="primary">
+              <v-btn
+                href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/"
+                target="_blank"
+                outlined
+                color="primary"
+                rel="noopener"
+              >
                 Visiter
+                <v-icon small class="ml-2">mdi-open-in-new</v-icon>
               </v-btn>
             </v-card-actions>
           </v-card>
