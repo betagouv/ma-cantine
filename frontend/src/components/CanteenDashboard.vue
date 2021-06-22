@@ -105,7 +105,7 @@
                 label="Communication sur le plan alimentaire"
               />
               <KeyMeasureAction
-                :isDone="latestDiagnostic.communicationSupports.length > 0"
+                :isDone="latestDiagnostic.communicationSupports && latestDiagnostic.communicationSupports.length > 0"
                 label="Communication à disposition des convives sur la qualité des approvisionnements"
               />
               <ul class="specifics-actions text-left ml-4">
