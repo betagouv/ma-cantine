@@ -6,7 +6,7 @@ class Department(models.TextChoices):
         allier = "03", "03 - Allier"
         alpes_de_haute_provence = "04", "04 - Alpes-de-Haute-Provence"
         hautes_alpes = "05", "05 - Hautes-Alpes"
-        alpes_Maritimes = "06", "06 - Alpes-Maritimes"
+        alpes_maritimes = "06", "06 - Alpes-Maritimes"
         ardeche = "07", "07 - Ardèche"
         ardennes = "08", "08 - Ardennes"
         ariege = "09", "09 - Ariège"
