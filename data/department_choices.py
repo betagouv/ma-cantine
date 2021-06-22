@@ -102,5 +102,5 @@ class Department(models.TextChoices):
         guyane = "973", "973 - Guyane"
         la_reunion = "974", "974 - La Réunion"
         mayotte = "976", "976 - Mayotte"
-        polynesie_française = "987", "987 - Polynésie Française"
+        polynesie_francaise = "987", "987 - Polynésie Française"
         nouvelle_caledonie = "988", "988 - Nouvelle Calédonie"
