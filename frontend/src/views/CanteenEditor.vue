@@ -100,10 +100,10 @@
             </v-btn>
             <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onProfilePhotoChanged" />
           </div>
-          <div class="flex-grow-1 mt-2">
+          <div class="flex-grow-1 mt-2 fill-height">
             <v-sheet rounded color="grey lighten-2" class="fill-height d-flex align-center justify-center">
               <v-img contain v-if="canteen.mainImage" :src="canteen.mainImage" max-height="150"></v-img>
-              <v-icon v-else size="40" color="grey">mdi-image-off-outline</v-icon>
+              <v-icon v-else size="40" color="grey" class="py-4">mdi-image-off-outline</v-icon>
             </v-sheet>
           </div>
         </v-col>
