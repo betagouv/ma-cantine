@@ -19,6 +19,7 @@
       hide-details="auto"
       class="ml-8"
       v-model="diagnostic.wasteActions"
+      :multiple="true"
       v-for="action in wasteActions"
       :key="action.value"
       :value="action.value"
