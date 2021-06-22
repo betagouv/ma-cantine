@@ -42,7 +42,7 @@ class Department(models.TextChoices):
         isere = "38", "38 - Isère"
         jura = "39", "39 - Jura"
         landes = "40", "40 - Landes"
-        loir_et_Cher = "41", "41 - Loir-et-Cher"
+        loir_et_cher = "41", "41 - Loir-et-Cher"
         loire = "42", "42 - Loire"
         haute_loire = "43", "43 - Haute-Loire"
         loire_atlantique = "44", "44 - Loire-Atlantique"
