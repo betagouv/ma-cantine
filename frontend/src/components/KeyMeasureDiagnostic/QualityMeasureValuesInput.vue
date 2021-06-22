@@ -9,6 +9,7 @@
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
+      validate-on-blur
       solo
       placeholder="Je ne sais pas"
       v-model="diagnostic.valueTotalHt"
@@ -19,6 +20,7 @@
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
+      validate-on-blur
       solo
       placeholder="Je ne sais pas"
       v-model="diagnostic.valueBioHt"
@@ -29,6 +31,7 @@
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
+      validate-on-blur
       solo
       placeholder="Je ne sais pas"
       v-model="diagnostic.valueSustainableHt"
@@ -39,6 +42,7 @@
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
+      validate-on-blur
       solo
       placeholder="Je ne sais pas"
       v-model="diagnostic.valueFairTradeHt"

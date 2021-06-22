@@ -3,7 +3,7 @@
     <h1 class="font-weight-black text-h4 my-4">
       {{ isNewDiagnostic ? "Nouveaux diagnostic" : "Modifier mon diagnostic" }}
     </h1>
-    <v-form ref="form" v-model="formIsValid">
+    <v-form ref="select" v-model="formIsValid.select">
       <v-row>
         <v-col cols="12" md="5">
           <p class="body-2 my-2">Cantine</p>
@@ -45,96 +45,71 @@
           <v-divider></v-divider>
         </v-col>
       </v-row>
-
-      <p class="caption grey--text">Cliquez sur les catégories ci-dessous pour remplir votre diagnostic</p>
-
-      <v-expansion-panels class="mb-8" :disabled="!diagnosticIsUnique">
-        <v-expansion-panel>
-          <v-expansion-panel-header>
-            <template v-slot:default="{ open }">
-              <v-row no-gutters>
-                <v-col cols="7" class="font-weight-bold">
-                  <v-icon class="mr-2" color="red">
-                    mdi-food-apple
-                  </v-icon>
-                  Au moins 50% de produits de qualité et durables dont 20% de bio
-                </v-col>
-                <v-col cols="5" class="text--secondary text-right pr-2 align-self-center align-self-center">
-                  <v-fade-transition leave-absolute>
-                    <span v-if="!open" key="0">
-                      {{ approSummary() || "Incomplèt" }}
-                    </span>
-                  </v-fade-transition>
-                </v-col>
-              </v-row>
-            </template>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <QualityMeasureValuesInput
-              :originalDiagnostic="diagnostic"
-              label="La valeur (en HT) de mes achats alimentaires..."
-            />
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-
-        <v-expansion-panel>
-          <v-expansion-panel-header>
-            <div class="font-weight-bold">
-              <v-icon class="mr-2" color="orange darken-2">
-                mdi-offer
-              </v-icon>
-              Lutte contre le gaspillage alimentaire et dons alimentaires
-            </div>
-          </v-expansion-panel-header>
-          <!-- TODO: waste actions multiple choice not working -->
-          <v-expansion-panel-content><WasteMeasure :diagnostic="diagnostic" /></v-expansion-panel-content>
-        </v-expansion-panel>
-        <v-expansion-panel>
-          <v-expansion-panel-header>
-            <div class="font-weight-bold">
-              <v-icon class="mr-2" color="green darken-1">
-                mdi-leaf
-              </v-icon>
-              Diversification des sources de protéines et menus végétariens
-            </div>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content><DiversificationMeasure :diagnostic="diagnostic" /></v-expansion-panel-content>
-        </v-expansion-panel>
-        <v-expansion-panel>
-          <v-expansion-panel-header>
-            <template v-slot:default="{ open }">
-              <v-row no-gutters>
-                <v-col cols="4" class="font-weight-bold">
-                  <v-icon class="mr-2" color="blue darken-1">
-                    mdi-weather-windy
-                  </v-icon>
-                  Substitution des plastiques
-                </v-col>
-                <v-col cols="8" class="text--secondary text-right pr-2 align-self-center">
-                  <v-fade-transition leave-absolute>
-                    <span v-if="!open" key="0">
-                      {{ plasticSummary() }}
-                    </span>
-                  </v-fade-transition>
-                </v-col>
-              </v-row>
-            </template>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content><NoPlasticMeasure :diagnostic="diagnostic" /></v-expansion-panel-content>
-        </v-expansion-panel>
-        <v-expansion-panel>
-          <v-expansion-panel-header>
-            <div class="font-weight-bold">
-              <v-icon class="mr-2" color="amber darken-2">
-                mdi-bullhorn
-              </v-icon>
-              Information des usagers et convives
-            </div>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content><InformationMeasure :diagnostic="diagnostic" /></v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
     </v-form>
+
+    <p class="caption grey--text">Cliquez sur les catégories ci-dessous pour remplir votre diagnostic</p>
+
+    <v-expansion-panels class="mb-8" :disabled="!diagnosticIsUnique" :value="openedPanel">
+      <DiagnosticExpansionPanel
+        iconColour="red"
+        icon="mdi-food-apple"
+        heading="Au moins 50% de produits de qualité et durables dont 20% de bio"
+        :summary="approSummary() || 'Incomplèt'"
+        :formIsValid="formIsValid.quality"
+      >
+        <v-form ref="quality" v-model="formIsValid.quality">
+          <QualityMeasureValuesInput
+            :originalDiagnostic="diagnostic"
+            label="La valeur (en HT) de mes achats alimentaires..."
+          />
+        </v-form>
+      </DiagnosticExpansionPanel>
+
+      <DiagnosticExpansionPanel
+        iconColour="orange darken-2"
+        icon="mdi-offer"
+        heading="Lutte contre le gaspillage alimentaire et dons alimentaires"
+        :formIsValid="formIsValid.waste"
+      >
+        <v-form ref="waste" v-model="formIsValid.waste">
+          <WasteMeasure :diagnostic="diagnostic" />
+        </v-form>
+      </DiagnosticExpansionPanel>
+
+      <DiagnosticExpansionPanel
+        iconColour="green darken-1"
+        icon="mdi-leaf"
+        heading="Diversification des sources de protéines et menus végétariens"
+        :formIsValid="formIsValid.diversification"
+      >
+        <v-form ref="diversification" v-model="formIsValid.diversification">
+          <DiversificationMeasure :diagnostic="diagnostic" />
+        </v-form>
+      </DiagnosticExpansionPanel>
+
+      <DiagnosticExpansionPanel
+        iconColour="blue darken-1"
+        icon="mdi-weather-windy"
+        heading="Substitution des plastiques"
+        :summary="plasticSummary()"
+        :formIsValid="formIsValid.plastic"
+      >
+        <v-form ref="plastic" v-model="formIsValid.plastic">
+          <NoPlasticMeasure :diagnostic="diagnostic" />
+        </v-form>
+      </DiagnosticExpansionPanel>
+
+      <DiagnosticExpansionPanel
+        iconColour="amber darken-2"
+        icon="mdi-bullhorn"
+        heading="Information des usagers et convives"
+        :formIsValid="formIsValid.information"
+      >
+        <v-form ref="information" v-model="formIsValid.information">
+          <InformationMeasure :diagnostic="diagnostic" />
+        </v-form>
+      </DiagnosticExpansionPanel>
+    </v-expansion-panels>
 
     <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
       <v-spacer></v-spacer>
@@ -155,6 +130,7 @@ import WasteMeasure from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/DiversificationMeasure"
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
+import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import { getObjectDiff } from "@/utils"
 
 function percentage(part, total) {
@@ -170,10 +146,25 @@ export default {
       diagnostic: {},
       selectedCanteenId: undefined,
       bypassLeaveWarning: false,
-      formIsValid: true,
+      formIsValid: {
+        quality: true,
+        waste: true,
+        plastic: true,
+        diversification: true,
+        information: true,
+        select: true,
+      },
+      openedPanel: null,
     }
   },
-  components: { InformationMeasure, WasteMeasure, DiversificationMeasure, NoPlasticMeasure, QualityMeasureValuesInput },
+  components: {
+    InformationMeasure,
+    WasteMeasure,
+    DiversificationMeasure,
+    NoPlasticMeasure,
+    QualityMeasureValuesInput,
+    DiagnosticExpansionPanel,
+  },
   props: {
     canteenUrlComponent: {
       type: String,
@@ -274,11 +265,11 @@ export default {
       return summary.charAt(0).toUpperCase() + summary.slice(1)
     },
     saveDiagnostic() {
-      this.$refs.form.validate()
+      const allFormsAreValid = this.validateForms()
 
-      if (!this.formIsValid) {
-        // TODO: how to nicely handle revealing validation issues in collapsed panels?
+      if (!allFormsAreValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
+        this.openedPanel = Object.values(this.formIsValid).findIndex((isValid) => !isValid)
         return
       }
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
@@ -309,6 +300,11 @@ export default {
       const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(existingCanteen)
       const year = this.diagnostic.year
       this.$router.replace({ name: "DiagnosticModification", params: { canteenUrlComponent, year } })
+    },
+    validateForms() {
+      const refs = this.$refs
+      Object.keys(this.formIsValid).forEach((ref) => refs[ref] && refs[ref].validate())
+      return Object.values(this.formIsValid).every((isValid) => isValid)
     },
     handleUnload(e) {
       if (this.hasChanged && !this.bypassLeaveWarning) {
