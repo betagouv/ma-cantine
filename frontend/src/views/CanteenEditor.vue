@@ -180,7 +180,7 @@
 
     <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
       <v-spacer></v-spacer>
-      <v-btn large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
+      <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
         Annuler
       </v-btn>
       <v-btn x-large color="primary" @click="saveCanteen">

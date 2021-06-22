@@ -143,7 +143,7 @@
 
     <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
       <v-spacer></v-spacer>
-      <v-btn large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
+      <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
         Annuler
       </v-btn>
       <v-btn x-large color="primary" @click="saveDiagnostic" :disabled="!diagnosticIsUnique">
@@ -302,9 +302,13 @@ export default {
         })
         .then(() => {
           this.bypassLeaveWarning = true
+          this.$store.dispatch("notify", {
+            title: "Mise à jour prise en compte",
+            message: `Votre diagnostic a bien été ${this.isNewDiagnostic ? "créé" : "modifié"}`,
+            status: "success",
+          })
           this.$router.push({
             name: "ManagementPage",
-            query: { diagnosticOperation: this.isNewDiagnostic ? "cree" : "modifiee" },
           })
         })
         .catch(() => {
