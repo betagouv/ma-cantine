@@ -147,7 +147,7 @@
         Annuler
       </v-btn>
       <v-btn x-large color="primary" @click="saveDiagnostic" :disabled="!diagnosticIsUnique">
-        {{ isNewDiagnostic ? "Ajouter" : "Modifier" }}
+        Valider
       </v-btn>
     </v-sheet>
   </div>

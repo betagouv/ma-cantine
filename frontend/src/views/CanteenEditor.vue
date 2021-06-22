@@ -184,7 +184,7 @@
         Annuler
       </v-btn>
       <v-btn x-large color="primary" @click="saveCanteen">
-        {{ isNewCanteen ? "Ajouter" : "Modifier" }}
+        Valider
       </v-btn>
     </v-sheet>
 

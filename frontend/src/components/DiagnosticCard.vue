@@ -12,7 +12,7 @@
     </v-sheet>
     <v-col cols="12" md="6" class="py-0">
       <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
-      <v-card-subtitle>{{ dataStatus }}</v-card-subtitle>
+      <v-card-subtitle class="caption">{{ dataStatus }}</v-card-subtitle>
     </v-col>
     <v-spacer></v-spacer>
     <v-col cols="12" md="4" class="py-0">
@@ -42,7 +42,7 @@ export default {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
     dataStatus() {
-      let status = "Données d'appro incomplètes"
+      let status = "Données manquantes"
       if (this.canteen.isPublished) {
         status = "Données publiées"
       } else {
@@ -50,12 +50,11 @@ export default {
           // sadly null >= 0 is true
           (key) => this.diagnostic[key] > 0 || this.diagnostic[key] === 0
         )
-        status = approComplete ? "Données complètées" : status
+        status = approComplete ? "Données d'approvisionnement complétées" : status
       }
       return status
     },
     dateText() {
-      console.log(timeAgo)
       const baseText = `Créé ${timeAgo(this.diagnostic.creationDate, true)}`
       const dateDifference = new Date(this.diagnostic.modificationDate) - new Date(this.diagnostic.creationDate)
       const showModificationDate = dateDifference > 1000 * 60 // one minute difference
