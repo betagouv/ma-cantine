@@ -7,22 +7,14 @@
       </v-btn>
     </div>
 
-    <div class="calculator-i-frame">
-      <iframe
-        src="https://www.youtube-nocookie.com/embed/3i5-eDwU9mc"
-        @load="iframeLoad"
-        v-show="iframeIsLoaded"
-        class="calculator-video"
-        title="Vidéo de présentation du calculateur"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-      />
-
-      <div class="video-loader" v-show="!iframeIsLoaded">
-        <v-progress-circular indeterminate></v-progress-circular>
-        Chargement de la vidéo de présentation
-      </div>
+    <div>
+      <video style="width: 100%; background: #333;" poster="/static/images/video-poster-tableur.webp" controls>
+        <source
+          type="video/mp4"
+          src="https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim/videos/demo-tableur-approvisionnements.mp4"
+        />
+        Votre navigateur ne peut pas afficher des vidéos.
+      </video>
     </div>
 
     <v-container>
@@ -46,56 +38,8 @@ export default {
   props: ["closeModal"],
   data() {
     return {
-      iframeIsLoaded: false,
       filepath: "/static/documents/Diagnostic approvisionnement (ma-cantine-alpha) v0.5",
     }
   },
-  methods: {
-    iframeLoad() {
-      this.iframeIsLoaded = true
-    },
-  },
 }
 </script>
-
-<style scoped lang="scss">
-h2 {
-  text-align: center;
-}
-
-.calculator-i-frame {
-  position: relative;
-  width: 100%;
-  padding-top: 70%;
-  margin: 1em 0;
-
-  .calculator-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  .video-loader {
-    position: absolute;
-    top: 50%;
-    width: 100%;
-    text-align: center;
-    font-size: 26px;
-  }
-}
-
-.calculator-download {
-  display: block;
-  width: 8em;
-  padding: 0.4em;
-  border-radius: 1.4em;
-  text-align: center;
-  margin: 30px auto 0 auto;
-  color: $ma-cantine-white;
-  font-size: 24px;
-  background-color: $ma-cantine-orange;
-  text-decoration: none;
-}
-</style>
