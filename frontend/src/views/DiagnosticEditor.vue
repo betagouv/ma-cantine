@@ -37,12 +37,7 @@
         </v-col>
         <v-col v-if="!diagnosticIsUnique" cols="12" class="ma-0 text-body-2 red--text">
           Un diagnostic pour cette cantine et cette année existe déjà.
-          <v-btn
-            small
-            text
-            class="text-decoration-underline text-body-2 mt-n1"
-            :to="{ name: 'DiagnosticModification', params: existingDiagnosticRouteParams }"
-          >
+          <v-btn small text class="text-decoration-underline text-body-2 mt-n1" @click="goToExistingDiagnostic">
             Modifier le diagnostic existant.
           </v-btn>
         </v-col>
@@ -219,13 +214,6 @@ export default {
 
       return !existingDiagnostic
     },
-    existingDiagnosticRouteParams() {
-      if (this.diagnosticIsUnique) return {}
-      const existingCanteen = this.userCanteens.find((x) => x.id === this.selectedCanteenId)
-      const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(existingCanteen)
-      const year = this.diagnostic.year
-      return { canteenUrlComponent, year }
-    },
     allowedYears() {
       return [
         {
@@ -314,6 +302,13 @@ export default {
         .catch(() => {
           this.$store.dispatch("notifyServerError")
         })
+    },
+    goToExistingDiagnostic() {
+      this.bypassLeaveWarning = true
+      const existingCanteen = this.userCanteens.find((x) => x.id === this.selectedCanteenId)
+      const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(existingCanteen)
+      const year = this.diagnostic.year
+      this.$router.replace({ name: "DiagnosticModification", params: { canteenUrlComponent, year } })
     },
     handleUnload(e) {
       if (this.hasChanged && !this.bypassLeaveWarning) {
