@@ -28,7 +28,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
 class FullCanteenSerializer(serializers.ModelSerializer):
 
     sectors = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Sector.objects.all()
+        many=True, queryset=Sector.objects.all(), required=False
     )
     diagnostics = DiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     main_image = Base64ImageField(required=False, allow_null=True)
