@@ -192,7 +192,7 @@
       <h2 class="font-weight-black text-h5 mt-10">
         Mes diagnostics pour cette cantine
       </h2>
-      <v-btn text color="primary" class="mt-2 mb-8 ml-n4">
+      <v-btn text color="primary" class="mt-2 mb-8 ml-n4" :to="{ name: 'NewDiagnostic' }">
         <v-icon class="mr-2">mdi-plus</v-icon>
         Ajouter un diagnostic
       </v-btn>
