@@ -1,0 +1,97 @@
+<template>
+  <div>
+    <v-row>
+      <v-col cols="12" sm="6" md="8" height="100%">
+        <v-card outlined class="d-flex flex-column fill-height pa-2">
+          <v-card-title class="font-weight-bold">Tableur d'aide pour le calcul</v-card-title>
+          <v-card-text>
+            Si vous ne connaissez pas votre part de bio, produits durables, produits issues du commerce équitable, nous
+            vous proposons un outil simple pour les calculer. Sous forme de tableur, remplissez vos achats HT suivant
+            leurs labels et/ou sigles de qualité.
+          </v-card-text>
+          <v-spacer></v-spacer>
+          <v-card-actions class="px-4">
+            <v-spacer></v-spacer>
+            <v-dialog max-width="700" v-model="calculatorModal">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn outlined color="primary" v-on="on" v-bind="attrs">
+                  Télécharger notre tableur
+                </v-btn>
+              </template>
+              <CalculatorResourceModal @closeModal="closeCalculatorModal" />
+            </v-dialog>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="4" height="100%">
+        <v-card outlined class="d-flex flex-column fill-height pa-2">
+          <v-card-title class="font-weight-bold">Documentation</v-card-title>
+          <v-card-text>
+            Ressources pour les acteurs et actrices de la restauration collective
+          </v-card-text>
+          <v-spacer></v-spacer>
+          <v-card-actions class="px-4">
+            <v-spacer></v-spacer>
+            <v-btn
+              href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/"
+              target="_blank"
+              outlined
+              color="primary"
+              rel="noopener"
+            >
+              Visiter
+              <v-icon small class="ml-2">mdi-open-in-new</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" sm="6" height="100%">
+        <v-card outlined class="d-flex flex-column fill-height pa-2">
+          <v-card-title class="font-weight-bold">Générateur d'affiches</v-card-title>
+          <v-card-text>
+            Vous pouvez générer une affiche à poser dans votre cantine ainsi qu’un email-type à destination des convives
+            et parents d'élèves.
+          </v-card-text>
+          <v-spacer></v-spacer>
+          <v-card-actions class="px-4">
+            <v-spacer></v-spacer>
+            <v-btn :to="{ name: 'GeneratePosterPage' }" outlined color="primary">J'informe mes convives</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6" height="100%">
+        <v-card outlined class="d-flex flex-column fill-height pa-2">
+          <v-card-title class="font-weight-bold">Blog</v-card-title>
+          <v-card-text>
+            Découvrez notre espace blog et témoignages
+          </v-card-text>
+          <v-spacer></v-spacer>
+          <v-card-actions class="px-4">
+            <v-spacer></v-spacer>
+            <v-btn :to="{ name: 'BlogsHome' }" outlined color="primary">Visiter</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+  </div>
+</template>
+
+<script>
+import CalculatorResourceModal from "@/components/KeyMeasureResource/CalculatorResourceModal"
+
+export default {
+  components: { CalculatorResourceModal },
+  data() {
+    return {
+      calculatorModal: false,
+    }
+  },
+  methods: {
+    closeCalculatorModal() {
+      this.calculatorModal = false
+    },
+  },
+}
+</script>
