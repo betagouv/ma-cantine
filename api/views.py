@@ -94,10 +94,10 @@ class UpdateUserCanteenView(UpdateAPIView):
                 "La cantine « %s » vient d'être publiée. Plus d'informations sur : %s" % (cantine.name, admin_url),
                 settings.DEFAULT_FROM_EMAIL,
                 [settings.CONTACT_EMAIL],
+                fail_silently=True,
             )
 
         return super(UpdateUserCanteenView, self).perform_update(serializer)
-
 
 
 class DiagnosticCreateView(CreateAPIView):
