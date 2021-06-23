@@ -50,12 +50,15 @@ export default {
       this.$store
         .dispatch("publishCanteen", this.canteen.id)
         .then(() => {
-          alert("Vos données ont bien été publiées")
+          this.$store.dispatch("notify", {
+            message: "Vos données ont bien été publiées",
+            status: "success",
+          })
           return this.$router.push({ name: "KeyMeasuresHome" })
         })
         .catch((error) => {
           console.log(error)
-          alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
+          this.$store.dispatch("notifyServerError")
         })
     },
   },

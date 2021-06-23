@@ -69,7 +69,10 @@ export default {
   methods: {
     subscribeBetaTester() {
       this.$refs.form.validate()
-      if (!this.formIsValid) return
+      if (!this.formIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
 
       const payload = Object.assign({ measures: this.latestDiagnostic }, this.formData)
 
@@ -77,11 +80,13 @@ export default {
         .dispatch("subscribeBetaTester", payload)
         .then(() => {
           this.formData = {}
-          alert("Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.")
+          this.$store.dispatch("notify", {
+            message: "Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.",
+          })
         })
         .catch((error) => {
           console.log(error.message)
-          alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
+          this.$store.dispatch("notifyServerError")
         })
     },
   },

@@ -28,6 +28,12 @@ export default new Vuex.Store({
     userCanteens: [],
     initialDataLoaded: false,
     blogPosts: null,
+
+    notification: {
+      message: "",
+      status: null,
+      title: "",
+    },
   },
 
   mutations: {
@@ -52,6 +58,9 @@ export default new Vuex.Store({
     SET_USER_CANTEENS(state, userCanteens) {
       state.userCanteens = userCanteens
     },
+    ADD_USER_CANTEEN(state, userCanteen) {
+      state.userCanteens.push(userCanteen)
+    },
     UPDATE_USER_CANTEEN(state, userCanteen) {
       const canteenIndex = state.userCanteens.findIndex((x) => x.id === userCanteen.id)
       if (canteenIndex > -1) state.userCanteens.splice(canteenIndex, 1, userCanteen)
@@ -70,6 +79,20 @@ export default new Vuex.Store({
     },
     SET_INITIAL_DATA_LOADED(state) {
       state.initialDataLoaded = true
+    },
+    SET_NOTIFICATION(state, { message, title, status }) {
+      state.notification.message = message
+      state.notification.title = title
+      state.notification.status = status
+    },
+    REMOVE_NOTIFICATION(state, message) {
+      if (message && state.notification.message !== message) {
+        // in case there was another notification in between, do not remove it
+        return
+      }
+      state.notification.message = null
+      state.notification.status = null
+      state.notification.title = null
     },
   },
 
@@ -157,6 +180,20 @@ export default new Vuex.Store({
           const hasError = criticalLoadingStatuses.some((x) => context.state[x] === Constants.LoadingStatus.ERROR)
           if (hasError) throw new Error("Une erreur s'est produite lors du chargement des données intiales")
           else context.commit("SET_INITIAL_DATA_LOADED")
+        })
+    },
+
+    createCanteen(context, { payload }) {
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/canteens/`, { method: "POST", headers, body: JSON.stringify(payload) })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("ADD_USER_CANTEEN", response)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
         })
     },
 
@@ -250,6 +287,27 @@ export default new Vuex.Store({
         verifyResponse
       )
     },
+
+    notify(context, { title, message, status }) {
+      context.commit("SET_NOTIFICATION", { title, message, status })
+      setTimeout(() => context.commit("REMOVE_NOTIFICATION", message), 4000)
+    },
+    notifyRequiredFieldsError(context) {
+      const title = null
+      const message = "Merci de vérifier les champs en rouge et réessayer"
+      const status = "error"
+      context.dispatch("notify", { title, message, status })
+    },
+    notifyServerError(context) {
+      const title = "Oops !"
+      const message =
+        "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à contact@egalim.beta.gouv.fr"
+      const status = "error"
+      context.dispatch("notify", { title, message, status })
+    },
+    removeNotification(context) {
+      context.commit("REMOVE_NOTIFICATION")
+    },
   },
 
   getters: {
@@ -264,6 +322,13 @@ export default new Vuex.Store({
         ]
       }
       return Object.values(JSON.parse(savedDiagnostics))
+    },
+    getCanteenUrlComponent: () => (canteen) => {
+      return `${canteen.id}--${canteen.name}`
+    },
+    getCanteenFromUrlComponent: (state) => (canteenUrlComponent) => {
+      const canteenId = canteenUrlComponent.split("--")[0]
+      return [...state.userCanteens, ...state.publishedCanteens].find((x) => x.id === parseInt(canteenId))
     },
   },
 })

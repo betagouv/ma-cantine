@@ -34,13 +34,20 @@ export default {
   components: {
     CanteenDashboard,
   },
-  props: ["id"],
+  props: {
+    canteenUrlComponent: {
+      type: String,
+      required: true,
+    },
+  },
   created() {
     document.title = `${this.canteen.name} - ma-cantine.beta.gouv.fr`
   },
   computed: {
     canteen() {
-      return this.$store.state.publishedCanteens.find((x) => x.id == this.id)
+      const previousIdVersion = this.canteenUrlComponent.indexOf("--") === -1
+      if (previousIdVersion) return this.$store.state.publishedCanteens.find((x) => x.id == this.id)
+      return this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
     },
     diagnostics() {
       const diagnostics = this.canteen.diagnostics

@@ -22,6 +22,7 @@
       hide-details="auto"
       class="ml-8"
       v-model="diagnostic.communicationSupports"
+      :multiple="true"
       v-for="support in communicationSupports"
       :key="support.value"
       :value="support.value"

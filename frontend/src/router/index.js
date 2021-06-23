@@ -23,12 +23,21 @@ import StatsPage from "@/views/StatsPage"
 import NotFound from "@/views/NotFound"
 import TesterParticipation from "@/views/TesterParticipation"
 import CGU from "@/views/CGU.vue"
+import ManagementPage from "@/views/ManagementPage"
+import CanteenEditor from "@/views/CanteenEditor"
+import DiagnosticEditor from "@/views/DiagnosticEditor"
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: "/",
+    meta: {
+      home: true,
+    },
+  },
+  {
+    path: "/accueil",
     name: "LandingPage",
     component: LandingPage,
   },
@@ -38,6 +47,7 @@ const routes = [
     component: AccountSummaryPage,
     meta: {
       title: "Mon compte",
+      authenticationRequired: true,
     },
   },
   {
@@ -81,8 +91,8 @@ const routes = [
     path: "/publication",
     name: "PublishPage",
     component: PublishPage,
-    beforeEnter: (route, _, next) => {
-      store.state.loggedUser ? next() : next({ name: "LandingPage" })
+    meta: {
+      authenticationRequired: true,
     },
     children: [
       {
@@ -120,7 +130,7 @@ const routes = [
         component: CanteensHome,
       },
       {
-        path: ":id",
+        path: ":canteenUrlComponent",
         name: "CanteenPage",
         component: CanteenPage,
         props: true,
@@ -175,6 +185,60 @@ const routes = [
     component: CGU,
   },
   {
+    path: "/gestion",
+    name: "ManagementPage",
+    component: ManagementPage,
+    meta: {
+      title: "Gérer mes cantines",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/nouvelle-cantine",
+    name: "NewCanteen",
+    component: CanteenEditor,
+    props: {
+      canteenUrlComponent: null,
+    },
+    meta: {
+      title: "Ajouter une nouvelle cantine",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/modifier-ma-cantine/:canteenUrlComponent",
+    name: "CanteenModification",
+    component: CanteenEditor,
+    props: true,
+    meta: {
+      title: "Modifier ma cantine",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/modifier-mon-diagnostic/:canteenUrlComponent/:year",
+    name: "DiagnosticModification",
+    component: DiagnosticEditor,
+    props: true,
+    meta: {
+      title: "Modifier mon diagnostic",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/nouveau-diagnostic",
+    name: "NewDiagnostic",
+    component: DiagnosticEditor,
+    props: {
+      canteenUrlComponent: null,
+      year: null,
+    },
+    meta: {
+      title: "Ajouter un nouveau diagnostic",
+      authenticationRequired: true,
+    },
+  },
+  {
     path: "/:catchAll(.*)",
     component: NotFound,
     name: "NotFound",
@@ -189,19 +253,25 @@ const router = new VueRouter({
   },
 })
 
-router.beforeEach((to, from, next) => {
-  if (store.state.initialDataLoaded) {
-    next()
-    return
+function chooseAuthorisedRoute(to, from, next) {
+  if (!store.state.initialDataLoaded) {
+    store
+      .dispatch("fetchInitialData")
+      .then(() => chooseAuthorisedRoute(to, from, next))
+      .catch((e) => {
+        console.error(`An error occurred: ${e}`)
+        next({ name: "LandingPage" })
+      })
+  } else {
+    if (to.meta.home && store.state.loggedUser) next({ name: "ManagementPage" })
+    else if (to.meta.home) next({ name: "LandingPage" })
+    else if (!to.meta.authenticationRequired || store.state.loggedUser) next()
+    else next({ name: "NotFound" })
   }
+}
 
-  store
-    .dispatch("fetchInitialData")
-    .then(next)
-    .catch((e) => {
-      console.error(`An error ocurred: ${e}`)
-      next(e)
-    })
+router.beforeEach((to, from, next) => {
+  chooseAuthorisedRoute(to, from, next)
 })
 
 export default router

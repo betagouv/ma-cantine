@@ -19,6 +19,7 @@
               :target="resource.url ? '_blank' : null"
             >
               {{ resource.ctaText }}
+              <v-icon v-if="resource.url" small class="ml-2">mdi-open-in-new</v-icon>
             </v-btn>
           </v-card-actions>
         </v-card>

@@ -58,10 +58,13 @@ export default {
         .dispatch("subscribeNewsletter", this.email)
         .then(() => {
           this.email = null
-          alert("Vous êtes bien inscrit.e à la newsletter de ma cantine.")
+          this.$store.dispatch("notify", {
+            message: "Vous êtes bien inscrit.e à la newsletter de ma cantine.",
+            status: "success",
+          })
         })
         .catch((error) => {
-          alert("Une erreur est survenue, merci d'essayer plus tard")
+          this.$store.dispatch("notifyServerError")
           console.log(error)
         })
     },
