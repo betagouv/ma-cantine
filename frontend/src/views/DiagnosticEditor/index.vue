@@ -260,7 +260,7 @@ export default {
       if (this.diagnostic.servingPlasticSubstituted) summary.push("contenants de service")
       if (this.diagnostic.plasticBottlesSubstituted) summary.push("bouteilles")
       if (this.diagnostic.plasticTablewareSubstituted) summary.push("ustensils")
-      if (summary.length === 0) summary.push("rien")
+      if (summary.length === 0) return "Pas de mesures de substitution"
       summary = summary.join(", ") + " substitués"
       return summary.charAt(0).toUpperCase() + summary.slice(1)
     },
