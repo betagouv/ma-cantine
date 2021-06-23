@@ -10,11 +10,12 @@
             style="position: absolute; left: 50%; top: 50%"
             v-if="!initialDataLoaded"
           ></v-progress-circular>
-          <router-view v-else class="mx-auto constrained" />
+          <router-view v-else class="mx-auto constrained" :key="$route.fullPath" />
         </v-container>
       </v-main>
 
       <Footer />
+      <NotificationSnackbar />
     </v-app>
   </div>
 </template>
@@ -22,11 +23,13 @@
 <script>
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import NotificationSnackbar from "@/components/NotificationSnackbar"
 
 export default {
   components: {
     Header,
     Footer,
+    NotificationSnackbar,
   },
   computed: {
     initialDataLoaded() {

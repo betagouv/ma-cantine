@@ -33,6 +33,7 @@
       hide-details="auto"
       class="ml-8"
       v-model="diagnostic.vegetarianMenuBases"
+      :multiple="true"
       v-for="item in menuBases"
       :key="item.value"
       :value="item.value"

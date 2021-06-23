@@ -19,6 +19,7 @@
       hide-details="auto"
       class="ml-8"
       v-model="diagnostic.wasteActions"
+      :multiple="true"
       v-for="action in wasteActions"
       :key="action.value"
       :value="action.value"
@@ -42,24 +43,36 @@
       <div v-if="diagnostic.hasWasteMeasures" class="mt-4">
         <v-text-field
           v-model="diagnostic.breadLeftovers"
+          type="number"
+          :rules="[validators.nonNegativeOrEmpty]"
+          validate-on-blur
           class="mx-8"
           label="Reste de pain"
           suffix="kg/an"
         ></v-text-field>
         <v-text-field
           v-model="diagnostic.servedLeftovers"
+          type="number"
+          :rules="[validators.nonNegativeOrEmpty]"
+          validate-on-blur
           class="mx-8"
           label="Reste plateau"
           suffix="kg/an"
         ></v-text-field>
         <v-text-field
           v-model="diagnostic.unservedLeftovers"
+          type="number"
+          :rules="[validators.nonNegativeOrEmpty]"
+          validate-on-blur
           class="mx-8"
           label="Reste en production (non servi)"
           suffix="kg/an"
         ></v-text-field>
         <v-text-field
           v-model="diagnostic.sideLeftovers"
+          type="number"
+          :rules="[validators.nonNegativeOrEmpty]"
+          validate-on-blur
           class="mx-8"
           label="Reste de composantes (entrée, plat dessert...)"
           suffix="kg/an"
@@ -80,12 +93,18 @@
       <div v-if="diagnostic.hasDonationAgreement" class="my-4">
         <v-text-field
           v-model="diagnostic.donationFrequency"
+          type="number"
+          :rules="[validators.nonNegativeOrEmpty]"
+          validate-on-blur
           class="mx-8"
           label="Fréquence de dons"
           suffix="dons/an"
         ></v-text-field>
         <v-text-field
           v-model="diagnostic.donationQuantity"
+          type="number"
+          :rules="[validators.nonNegativeOrEmpty]"
+          validate-on-blur
           class="mx-8"
           label="Quantité des denrées données"
           suffix="kg/an"
@@ -99,6 +118,8 @@
 </template>
 
 <script>
+import validators from "@/validators"
+
 export default {
   props: {
     diagnostic: Object,
@@ -133,6 +154,11 @@ export default {
       ],
       otherActionEnabled: !!this.diagnostic.otherWasteAction,
     }
+  },
+  computed: {
+    validators() {
+      return validators
+    },
   },
   watch: {
     otherActionEnabled(val) {

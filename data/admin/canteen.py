@@ -20,6 +20,7 @@ class CanteenAdmin(admin.ModelAdmin):
     inlines = (DiagnosticInline,)
     fields = (
         "name",
+        "main_image",
         "city",
         "department",
         "daily_meal_count",

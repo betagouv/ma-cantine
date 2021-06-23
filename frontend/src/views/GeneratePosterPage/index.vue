@@ -205,7 +205,7 @@ export default {
     async submit() {
       this.$refs.form.validate()
       if (!this.formIsValid) {
-        window.alert("Merci de vérifier les champs en rouge et réessayer")
+        this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
       //this fix an issue where the beginning of the pdf is blank depending on the scroll position
