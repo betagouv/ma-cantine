@@ -1,7 +1,7 @@
 <template>
   <div class="text-left pb-10">
     <h1 class="font-weight-black text-h4 my-4">
-      {{ isNewDiagnostic ? "Nouveaux diagnostic" : "Modifier mon diagnostic" }}
+      {{ isNewDiagnostic ? "Nouveau diagnostic" : "Modifier mon diagnostic" }}
     </h1>
     <v-form ref="select" v-model="formIsValid.select">
       <v-row>
@@ -54,7 +54,7 @@
         iconColour="red"
         icon="mdi-food-apple"
         heading="Au moins 50% de produits de qualité et durables dont 20% de bio"
-        :summary="approSummary() || 'Incomplèt'"
+        :summary="approSummary() || 'Incomplet'"
         :formIsValid="formIsValid.quality"
       >
         <v-form ref="quality" v-model="formIsValid.quality">
