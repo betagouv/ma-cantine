@@ -1,6 +1,6 @@
 <template>
   <v-expansion-panel>
-    <v-expansion-panel-header>
+    <v-expansion-panel-header :color="!open && !formIsValid ? 'red lighten-5' : 'white'">
       <template v-slot:default="{ open }">
         <v-row no-gutters>
           <v-col cols="7" class="font-weight-bold">
@@ -15,7 +15,7 @@
                 {{ summary }}
               </span>
               <span v-if="!open && !formIsValid" key="1" class="red--text">
-                Vérifier les champs en rouge
+                Veuillez vérifier les champs saisis.
               </span>
             </v-fade-transition>
           </v-col>
