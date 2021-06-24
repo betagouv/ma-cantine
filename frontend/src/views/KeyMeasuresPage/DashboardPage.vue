@@ -4,10 +4,8 @@
 
     <v-card v-if="isAuthenticated" elevation="0" class="text-left">
       <v-card-text>
-        Les données que vous avez renseignées précédemment ont été sauvegardées. Vous pouvez les modifier en effectuant
-        à nouveau
-        <router-link :to="{ name: 'DiagnosticPage' }">l'auto-diagnostic "savoir où j'en suis"</router-link>
-        . Votre tableau de bord sera mis à jour automatiquement.
+        Les données que vous avez renseignées précédemment ont été sauvegardées. Vous pouvez les modifier sur votre
+        <router-link :to="{ name: 'ManagementPage' }">page de gestion de cantines.</router-link>
       </v-card-text>
       <v-card-text>
         Vous pouvez choisir de valoriser les démarches entreprises dans votre établissement en décidant de rendre
@@ -19,7 +17,7 @@
       <v-card-actions class="pa-4">
         <v-spacer></v-spacer>
         <GiveFeedbackLink class="mt-2 mb-n4" />
-        <v-btn color="primary" class="ml-8" large :to="{ name: 'CanteenInfo' }">
+        <v-btn color="primary" class="ml-8" large :to="{ name: 'ManagementPage' }">
           Publier mes données
         </v-btn>
         <v-spacer></v-spacer>

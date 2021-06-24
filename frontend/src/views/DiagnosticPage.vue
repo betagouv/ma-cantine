@@ -122,7 +122,8 @@ export default {
       }
     },
     serverDiagnostics() {
-      return this.$store.state.userCanteens[0].diagnostics
+      const hasCanteen = !!this.$store.state.userCanteens.length
+      return hasCanteen ? this.$store.state.userCanteens[0].diagnostics : []
     },
     localDiagnostics() {
       return this.$store.getters.getLocalDiagnostics()

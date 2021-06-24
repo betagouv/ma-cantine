@@ -24,6 +24,8 @@
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import NotificationSnackbar from "@/components/NotificationSnackbar"
+import { getObjectDiff } from "@/utils"
+import Constants from "@/constants"
 
 export default {
   components: {
@@ -42,7 +44,7 @@ export default {
       document.title = to.meta.title ? to.meta.title + " - " + suffix : suffix
     },
     initialDataLoaded() {
-      if (!this.$store.state.loggedUser) return
+      if (!this.$store.state.loggedUser || !this.$store.state.userCanteens.length) return
 
       const hasDiagnostics = this.$store.state.userCanteens.some((x) => x.diagnostics && x.diagnostics.length > 0)
       if (hasDiagnostics) {
@@ -53,7 +55,13 @@ export default {
       const localStorageDiagnostics = this.$store.getters.getLocalDiagnostics()
       const canteenId = this.$store.state.userCanteens[0].id
       Promise.all(
-        localStorageDiagnostics.map((payload) => this.$store.dispatch("createDiagnostic", { canteenId, payload }))
+        localStorageDiagnostics.map((payload) => {
+          const diagnosticChanges = getObjectDiff(Constants.DefaultDiagnostics, payload)
+          const isDefaultDiagnostic = Object.keys(diagnosticChanges).length === 1 && "year" in diagnosticChanges
+
+          if (isDefaultDiagnostic) return true
+          return this.$store.dispatch("createDiagnostic", { canteenId, payload })
+        })
       )
         .then(() => this.$store.dispatch("removeLocalStorageDiagnostics"))
         .catch((error) => console.error(error.message))
