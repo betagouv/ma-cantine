@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError, BadReque
 from django.db.utils import IntegrityError
 from django.core.validators import validate_email
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
-from rest_framework.generics import UpdateAPIView, CreateAPIView
+from rest_framework.generics import UpdateAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound, PermissionDenied
@@ -68,7 +68,7 @@ class UserCanteensView(ListCreateAPIView):
         canteen.managers.add(self.request.user)
 
 
-class UpdateUserCanteenView(UpdateAPIView):
+class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, IsCanteenManager]
     model = Canteen
     serializer_class = FullCanteenSerializer

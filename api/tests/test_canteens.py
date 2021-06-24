@@ -96,3 +96,14 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(created_canteen.city, "Lyon")
         self.assertEqual(created_canteen.siret, "TESTING123")
         self.assertEqual(created_canteen.management_type, "direct")
+
+    @authenticate
+    def test_soft_delete(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
+        response = self.client.delete(reverse("single_canteen", kwargs={"pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Model was only soft-deleted but remains in the DB
+        self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)

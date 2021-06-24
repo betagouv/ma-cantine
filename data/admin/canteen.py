@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 from data.models import Canteen
 from .diagnostic import DiagnosticInline
+from .softdeletionadmin import SoftDeletionAdmin
 
 
 class CanteenForm(forms.ModelForm):
@@ -14,7 +15,7 @@ class CanteenForm(forms.ModelForm):
 
 
 @admin.register(Canteen)
-class CanteenAdmin(admin.ModelAdmin):
+class CanteenAdmin(SoftDeletionAdmin):
 
     form = CanteenForm
     inlines = (DiagnosticInline,)
@@ -29,6 +30,7 @@ class CanteenAdmin(admin.ModelAdmin):
         "managers",
         "siret",
         "management_type",
+        "deletion_date",
     )
     list_display = (
         "name",
@@ -37,6 +39,7 @@ class CanteenAdmin(admin.ModelAdmin):
         "creation_date",
         "modification_date",
         "management_type",
+        "supprimée",
     )
     filter_vertical = (
         "sectors",
@@ -46,3 +49,6 @@ class CanteenAdmin(admin.ModelAdmin):
 
     def published_state(self, obj):
         return "✅ Publié" if obj.data_is_public else "🔒 Non publié"
+
+    def supprimée(self, obj):
+        return "🗑️ Supprimée" if obj.deletion_date else ""
