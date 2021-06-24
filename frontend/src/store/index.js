@@ -14,7 +14,11 @@ const LOCAL_STORAGE_KEY = `diagnostics-local-${LOCAL_STORAGE_VERSION}`
 
 const verifyResponse = function(response) {
   if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
-  return response.json()
+
+  const contentType = response.headers.get("content-type")
+  const hasJSON = contentType && contentType.startsWith("application/json")
+
+  return hasJSON ? response.json() : response.text()
 }
 
 export default new Vuex.Store({
@@ -64,6 +68,13 @@ export default new Vuex.Store({
     UPDATE_USER_CANTEEN(state, userCanteen) {
       const canteenIndex = state.userCanteens.findIndex((x) => x.id === userCanteen.id)
       if (canteenIndex > -1) state.userCanteens.splice(canteenIndex, 1, userCanteen)
+    },
+    DELETE_USER_CANTEEN(state, canteenId) {
+      const userCanteenIndex = state.userCanteens.findIndex((x) => x.id === canteenId)
+      if (userCanteenIndex > -1) state.userCanteens.splice(userCanteenIndex, 1)
+
+      const publishedCanteenIndex = state.publishedCanteens.findIndex((x) => x.id === canteenId)
+      if (publishedCanteenIndex > -1) state.publishedCanteens.splice(publishedCanteenIndex, 1)
     },
     ADD_DIAGNOSTIC(state, { canteenId, diagnostic }) {
       const canteen = state.userCanteens.find((x) => x.id === canteenId)
@@ -203,6 +214,20 @@ export default new Vuex.Store({
         .then(verifyResponse)
         .then((response) => {
           context.commit("UPDATE_USER_CANTEEN", response)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
+    deleteCanteen(context, { id }) {
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/canteens/${id}`, { method: "DELETE", headers })
+        .then(verifyResponse)
+        .then(() => {
+          context.commit("DELETE_USER_CANTEEN", id)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
         })
         .catch((e) => {
