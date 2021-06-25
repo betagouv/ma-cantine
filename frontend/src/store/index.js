@@ -228,7 +228,7 @@ export default new Vuex.Store({
         .then(verifyResponse)
         .then(() => {
           context.commit("DELETE_USER_CANTEEN", id)
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
