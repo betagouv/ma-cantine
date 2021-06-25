@@ -218,7 +218,7 @@
         </v-card-title>
 
         <v-card-text>
-          Cette action est irréversible. Vous perdrez les données de cette cantine ainsi que celles des diagnostics lui
+          Vous perdrez les données de cette cantine ainsi que celles des diagnostics lui
           concernant.
         </v-card-text>
 
