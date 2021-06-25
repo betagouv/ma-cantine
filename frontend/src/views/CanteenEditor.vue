@@ -214,7 +214,7 @@
 
       <v-card class="text-left">
         <v-card-title class="font-weight-bold">
-          Êtes-vous sur de vouloir supprimer cette cantine ?
+          Voulez-vous vraiment supprimer cette cantine ?
         </v-card-title>
 
         <v-card-text>
