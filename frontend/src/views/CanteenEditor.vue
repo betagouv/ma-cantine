@@ -371,7 +371,8 @@ export default {
         .then(() => {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
-            message: "Votre cantine a bien été supprimée",
+            message:
+              "Votre cantine a bien été supprimée. En cas d'erreur vous pouvez nous contacter à l'addresse contact@egalim.beta.gouv.fr",
             status: "success",
           })
           this.$router.push({ name: "ManagementPage" })
