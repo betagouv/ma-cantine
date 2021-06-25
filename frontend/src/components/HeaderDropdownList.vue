@@ -69,6 +69,12 @@ export default {
           type: "divider",
         },
         {
+          text: "Mesures phares",
+          icon: "mdi-playlist-check",
+          authenticationState: true,
+          to: { name: "KeyMeasuresHome" },
+        },
+        {
           text: "Nos cantines",
           icon: "mdi-silverware-fork-knife",
           to: { name: "CanteensHome" },

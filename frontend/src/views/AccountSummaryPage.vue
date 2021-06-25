@@ -24,9 +24,6 @@
       <v-card-text class="mt-4 mb-n2">
         <v-btn large color="primary" :to="{ name: 'ManagementPage' }">Gérer mes cantines</v-btn>
       </v-card-text>
-      <v-card-text>
-        <v-btn large outlined color="primary" :to="{ name: 'KeyMeasuresHome' }">Mesures phares</v-btn>
-      </v-card-text>
       <v-card-text class="mt-14">
         <v-btn color="red" text class="text-decoration-underline" href="/se-deconnecter">
           <v-icon small class="mr-2">mdi-exit-to-app</v-icon>
