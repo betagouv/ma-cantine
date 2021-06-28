@@ -21,11 +21,14 @@
           {{ loggedUser.email }}
         </div>
       </v-card-subtitle>
-      <v-card-text class="mt-2">
-        <v-btn large color="primary" :to="{ name: 'KeyMeasuresHome' }">Mon tableau de bord</v-btn>
+      <v-card-text class="mt-4 mb-n2">
+        <v-btn large color="primary" :to="{ name: 'ManagementPage' }">Gérer mes cantines</v-btn>
       </v-card-text>
       <v-card-text class="mt-14">
-        <v-btn color="red" outlined href="/se-deconnecter">Me déconnecter</v-btn>
+        <v-btn color="red" text class="text-decoration-underline" href="/se-deconnecter">
+          <v-icon small class="mr-2">mdi-exit-to-app</v-icon>
+          Me déconnecter
+        </v-btn>
       </v-card-text>
     </v-card>
   </div>

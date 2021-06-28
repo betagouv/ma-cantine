@@ -60,9 +60,10 @@ export default {
       return validators
     },
     latestDiagnostic() {
-      const diagnostics = this.$store.state.loggedUser
-        ? this.$store.state.userCanteens[0].diagnostics
-        : this.$store.getters.getLocalDiagnostics()
+      const diagnostics =
+        this.$store.state.loggedUser && this.$store.state.userCanteens.length
+          ? this.$store.state.userCanteens[0].diagnostics
+          : this.$store.getters.getLocalDiagnostics()
       return diagnostics.find((x) => x.year === 2020)
     },
   },

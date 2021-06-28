@@ -4,10 +4,6 @@ import store from "@/store/index"
 import LandingPage from "@/views/LandingPage"
 import DiagnosticPage from "@/views/DiagnosticPage"
 import KeyMeasuresPage from "@/views/KeyMeasuresPage"
-import PublishPage from "@/views/PublishPage"
-import CanteenInfo from "@/views/PublishPage/CanteenInfo"
-import PublishMeasurePage from "@/views/PublishPage/PublishMeasurePage"
-import SubmitPublicationPage from "@/views/PublishPage/SubmitPublicationPage"
 import KeyMeasuresHome from "@/views/KeyMeasuresPage/KeyMeasuresHome"
 import KeyMeasurePage from "@/views/KeyMeasuresPage/KeyMeasurePage"
 import GeneratePosterPage from "@/views/GeneratePosterPage"
@@ -57,6 +53,9 @@ const routes = [
     meta: {
       title: "M'auto-évaluer",
     },
+    beforeEnter: (_to, _from, next) => {
+      store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
+    },
   },
   {
     path: "/creation-affiche",
@@ -78,43 +77,21 @@ const routes = [
         path: "",
         name: "KeyMeasuresHome",
         component: KeyMeasuresHome,
+        beforeEnter: (route, _, next) => {
+          store.state.loggedUser
+            ? next({
+                name: "KeyMeasurePage",
+                params: {
+                  id: "qualite-des-produits",
+                },
+              })
+            : next()
+        },
       },
       {
         path: ":id",
         name: "KeyMeasurePage",
         component: KeyMeasurePage,
-        props: true,
-      },
-    ],
-  },
-  {
-    path: "/publication",
-    name: "PublishPage",
-    component: PublishPage,
-    meta: {
-      authenticationRequired: true,
-    },
-    children: [
-      {
-        path: "",
-        name: "CanteenInfo",
-        component: CanteenInfo,
-        meta: {
-          title: "Cantine information - Publication",
-        },
-      },
-      {
-        path: "validation",
-        name: "SubmitPublicationPage",
-        component: SubmitPublicationPage,
-        meta: {
-          title: "Validation - Publication",
-        },
-      },
-      {
-        path: ":id",
-        name: "PublishMeasurePage",
-        component: PublishMeasurePage,
         props: true,
       },
     ],

@@ -158,14 +158,14 @@ export default {
       return validators
     },
     userCanteen() {
-      return this.$store.state.userCanteens.length > 0 ? this.$store.state.userCanteens[0] : null
+      return this.$store.state.userCanteens.length > 0 ? this.$store.state.userCanteens[0] : {}
     },
     initialDiagnostic() {
       let diagnostics = this.isAuthenticated ? this.serverDiagnostics : this.localDiagnostics
       return diagnostics.find((x) => x.year === 2020) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 })
     },
     serverDiagnostics() {
-      return this.userCanteen.diagnostics
+      return this.userCanteen.diagnostics || []
     },
     localDiagnostics() {
       return this.$store.getters.getLocalDiagnostics()
