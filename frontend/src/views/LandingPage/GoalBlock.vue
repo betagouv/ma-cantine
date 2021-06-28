@@ -11,7 +11,7 @@
       notamment chez les plus jeunes.
     </p>
 
-    <v-card elevation="0" color="secondary lighten-4" class="mt-8 pa-10">
+    <v-card elevation="0" color="secondary lighten-1" class="mt-8 pa-10">
       <v-card-text>
         <div style="position:relative;padding-bottom:56.25%;">
           <iframe

@@ -1,6 +1,6 @@
 <template>
   <div class="action">
-    <v-icon small v-if="isDone" color="light-green darken-4" aria-label="Fait" aria-hidden="false">
+    <v-icon small v-if="isDone" color="primary" aria-label="Fait" aria-hidden="false">
       mdi-check-bold
     </v-icon>
     <v-icon small v-else aria-label="Pas encore fait" aria-hidden="false">mdi-close</v-icon>
