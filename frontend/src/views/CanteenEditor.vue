@@ -202,6 +202,41 @@
         </v-col>
       </v-row>
     </div>
+
+    <div v-if="!isNewCanteen">
+      <h2 class="font-weight-black text-h5 mt-10">
+        Les gestionnaires pour cette cantine
+      </h2>
+      <v-list disabled>
+        <v-list-item-group>
+          <v-list-item v-for="(manager, i) in managers" :key="i">
+            <v-list-item-icon>
+              <v-icon v-if="manager.accountExists" color="primary">mdi-account-check-outline</v-icon>
+              <v-icon v-else color="secondary">mdi-account-clock-outline</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="manager.title || manager.email"></v-list-item-title>
+              <v-list-item-subtitle>
+                {{ manager.accountExists ? "Compte créé" : "En attente" }}
+                <span v-if="!!manager.title">- {{ manager.email }}</span>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+      <!-- TODO: sort alphabetical order? -->
+      <v-form ref="managerForm" class="d-flex mt-2" v-model="managerFormIsValid">
+        <v-text-field
+          solo
+          v-model="newManagerEmail"
+          label="Adresse mail"
+          validate-on-blur
+          :rules="[validators.isEmail]"
+        ></v-text-field>
+        <!-- TODO: how to allow submit on tapping enter key? -->
+        <v-btn @click="addManager" outlined color="primary darken-1" class="ml-4 mt-1" large>Ajouter</v-btn>
+      </v-form>
+    </div>
   </div>
 </template>
 
@@ -240,6 +275,18 @@ export default {
           value: "conceded",
         },
       ],
+      managers: [
+        {
+          title: "Camille Dupont",
+          email: "camille.dupont@example.com",
+          accountExists: true,
+        },
+        {
+          email: "john.smith@example.com",
+        },
+      ],
+      managerFormIsValid: true,
+      newManagerEmail: undefined,
     }
   },
   computed: {
@@ -331,6 +378,22 @@ export default {
       } else {
         delete e["returnValue"]
       }
+    },
+    addManager() {
+      this.$refs.managerForm.validate()
+
+      if (!this.managerFormIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
+
+      this.managers.push({ email: this.newManagerEmail })
+      this.$store.dispatch("notify", {
+        title: "Mise à jour prise en compte",
+        message: `${this.newManagerEmail} a bien été ajouté`,
+        status: "success",
+      })
+      this.newManagerEmail = undefined
     },
   },
   beforeRouteLeave(to, from, next) {
