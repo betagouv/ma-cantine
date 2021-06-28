@@ -2,7 +2,7 @@
   <div>
     <DashboardPage v-if="diagnostics" :diagnostics="diagnostics" />
     <EmptyDiagnosticPage v-else />
-    <BetaTesterForm v-if="!isAuthenticated" class="mt-12" />
+    <BetaTesterForm class="mt-12" />
   </div>
 </template>
 
@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     diagnostics() {
-      let diagnostics = this.isAuthenticated ? this.serverDiagnostics : this.localDiagnostics
+      let diagnostics = this.$store.getters.getLocalDiagnostics()
       return {
         previous:
           diagnostics.find((x) => x.year === 2019) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
@@ -31,13 +31,6 @@ export default {
         provisionalYear2:
           diagnostics.find((x) => x.year === 2022) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2022 }),
       }
-    },
-    serverDiagnostics() {
-      const hasCanteen = !!this.$store.state.userCanteens.length
-      return hasCanteen ? this.$store.state.userCanteens[0].diagnostics : []
-    },
-    localDiagnostics() {
-      return this.$store.getters.getLocalDiagnostics()
     },
     isAuthenticated() {
       return !!this.$store.state.loggedUser
