@@ -82,6 +82,26 @@ class UpdateUserCanteenView(UpdateAPIView):
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
+    def perform_update(self, serializer):
+        previous_publication_status = serializer.instance.data_is_public
+        new_publication_status = serializer.validated_data.get('data_is_public', False)
+
+        if (not previous_publication_status and new_publication_status):
+            protocol = "https" if settings.SECURE else "http"
+            cantine = serializer.instance
+            admin_url = "%s://%s/admin/data/canteen/%s/change/" % (protocol, settings.HOSTNAME, cantine.id,)
+            canteens_url = "%s://%s/nos-cantines/" % (protocol, settings.HOSTNAME,)
+
+            send_mail(
+                "Cantine publiée sur ma cantine",
+                "La cantine « %s » vient d'être publiée.\nAdmin : %s\nNos cantines : %s" % (cantine.name, admin_url, canteens_url),
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.CONTACT_EMAIL],
+                fail_silently=True,
+            )
+
+        return super(UpdateUserCanteenView, self).perform_update(serializer)
+
 
 class DiagnosticCreateView(CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -144,7 +164,7 @@ class SubscribeBetaTester(APIView):
                 "measures": key_measures,
             }
             send_mail(
-                "Nouveau Béta-testeur ma canteen",
+                "Nouveau Béta-testeur ma cantine",
                 render_to_string("subscription-beta-tester.txt", context),
                 settings.DEFAULT_FROM_EMAIL,
                 [settings.CONTACT_EMAIL],
