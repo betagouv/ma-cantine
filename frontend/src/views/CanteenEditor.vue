@@ -164,7 +164,6 @@
 
         <v-col cols="12" md="4">
           <p class="body-2 my-2">Mode de gestion</p>
-          <!-- TODO: either make this optional in API or mandatory here -->
           <v-radio-group v-model="canteen.managementType">
             <v-radio
               class="ml-8"
