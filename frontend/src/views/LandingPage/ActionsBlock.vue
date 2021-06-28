@@ -41,13 +41,13 @@
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="pa-4">
-            <v-dialog max-width="700" v-model="calculatorModal">
+            <v-dialog max-width="700" v-model="calculatorModal" @input="stopVideo">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn outlined color="primary darken-1" v-on="on" v-bind="attrs">
                   Télécharger notre tableur
                 </v-btn>
               </template>
-              <CalculatorResourceModal @closeModal="closeCalculatorModal" />
+              <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />
             </v-dialog>
           </v-card-actions>
         </v-card>
@@ -71,7 +71,11 @@ export default {
   },
   methods: {
     closeCalculatorModal() {
+      this.$refs.modalContent.stopVideo()
       this.calculatorModal = false
+    },
+    stopVideo(modalIsOpened) {
+      if (!modalIsOpened) this.$refs.modalContent.stopVideo()
     },
   },
 }
