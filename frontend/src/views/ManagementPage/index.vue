@@ -34,7 +34,7 @@
             <DiagnosticCard :diagnostic="diagnostic" :class="{ 'fill-height': $vuetify.breakpoint.mdAndUp }" />
           </v-col>
         </v-row>
-        <v-divider class="my-8"></v-divider>
+        <v-divider v-if="canteen.diagnostics && canteen.diagnostics.length" class="my-8"></v-divider>
       </div>
     </div>
     <div class="my-8">
