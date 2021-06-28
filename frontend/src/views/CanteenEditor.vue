@@ -187,7 +187,7 @@
       </v-btn>
     </v-sheet>
 
-    <div v-if="!isNewCanteen">
+    <div v-if="originalCanteen && !isNewCanteen">
       <h2 class="font-weight-black text-h5 mt-10">
         Mes diagnostics pour cette cantine
       </h2>
@@ -201,6 +201,38 @@
         </v-col>
       </v-row>
     </div>
+    <v-divider class="my-10" v-if="!isNewCanteen"></v-divider>
+
+    <v-dialog v-model="deletionDialog" width="500" v-if="!isNewCanteen">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn color="red" outlined v-if="!isNewCanteen" v-bind="attrs" v-on="on">
+          <v-icon small class="mr-2">mdi-alert</v-icon>
+          Supprimer cette cantine
+        </v-btn>
+      </template>
+
+      <v-card class="text-left">
+        <v-card-title class="font-weight-bold">
+          Voulez-vous vraiment supprimer cette cantine ?
+        </v-card-title>
+
+        <v-card-text>
+          Vous perdrez les données de cette cantine ainsi que celles des diagnostics lui concernant.
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions class="pa-4">
+          <v-spacer></v-spacer>
+          <v-btn outlined text @click="deletionDialog = false" class="mr-2">
+            Non, revenir en arrière
+          </v-btn>
+          <v-btn outlined color="red" text @click="deleteCanteen">
+            Oui, supprimer ma cantine
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -229,6 +261,7 @@ export default {
       originalCanteenIsPublished: false,
       showPreview: false,
       bypassLeaveWarning: false,
+      deletionDialog: false,
       managementTypes: [
         {
           text: "Directe",
@@ -330,6 +363,22 @@ export default {
       } else {
         delete e["returnValue"]
       }
+    },
+    deleteCanteen() {
+      this.$store
+        .dispatch("deleteCanteen", { id: this.canteen.id })
+        .then(() => {
+          this.bypassLeaveWarning = true
+          this.$store.dispatch("notify", {
+            message:
+              "Votre cantine a bien été supprimée. En cas d'erreur vous pouvez nous contacter à l'adresse contact@egalim.beta.gouv.fr",
+            status: "success",
+          })
+          this.$router.push({ name: "ManagementPage" })
+        })
+        .catch(() => {
+          this.$store.dispatch("notifyServerError")
+        })
     },
   },
   beforeRouteLeave(to, from, next) {
