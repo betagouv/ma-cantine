@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog max-width="700" v-model="calculatorModal">
+    <v-dialog max-width="700" v-model="calculatorModal" @input="stopVideo">
       <template v-slot:activator="{ on, attrs }">
         <v-card class="text-decoration-none text-left mt-4" hover v-on="on" v-bind="attrs">
           <v-alert
@@ -16,7 +16,7 @@
           </v-alert>
         </v-card>
       </template>
-      <CalculatorResourceModal @closeModal="closeCalculatorModal" />
+      <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />
     </v-dialog>
 
     <v-card
@@ -59,7 +59,11 @@ export default {
   },
   methods: {
     closeCalculatorModal() {
+      this.$refs.modalContent.stopVideo()
       this.calculatorModal = false
+    },
+    stopVideo(modalIsOpened) {
+      if (!modalIsOpened) this.$refs.modalContent.stopVideo()
     },
   },
 }
