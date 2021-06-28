@@ -12,6 +12,9 @@ import CanteensHome from "@/views/CanteensPage/CanteensHome"
 import CanteenPage from "@/views/CanteensPage/CanteenPage"
 import LegalNotices from "@/views/LegalNotices"
 import AccountSummaryPage from "@/views/AccountSummaryPage"
+import AccountEditor from "@/views/AccountSummaryPage/AccountEditor"
+import PasswordChangeEditor from "@/views/AccountSummaryPage/PasswordChangeEditor"
+import AccountDeletion from "@/views/AccountSummaryPage/AccountDeletion"
 import BlogsPage from "@/views/BlogsPage"
 import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
@@ -45,6 +48,24 @@ const routes = [
       title: "Mon compte",
       authenticationRequired: true,
     },
+    redirect: { name: "AccountEditor" },
+    children: [
+      {
+        path: "profil",
+        name: "AccountEditor",
+        component: AccountEditor,
+      },
+      {
+        path: "mot-de-passe",
+        name: "PasswordChange",
+        component: PasswordChangeEditor,
+      },
+      {
+        path: "supprimer-mon-compte",
+        name: "AccountDeletion",
+        component: AccountDeletion,
+      },
+    ],
   },
   {
     path: "/diagnostic",
