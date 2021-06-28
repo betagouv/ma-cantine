@@ -215,7 +215,9 @@
               <v-icon v-else color="secondary">mdi-account-clock-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title v-text="manager.title || manager.email"></v-list-item-title>
+              <v-list-item-title
+                v-text="manager.lastName ? `${manager.firstName} ${manager.lastName}` : manager.email"
+              ></v-list-item-title>
               <v-list-item-subtitle>
                 {{ manager.accountExists ? "Compte créé" : "En attente" }}
                 <span v-if="!!manager.title">- {{ manager.email }}</span>
@@ -275,16 +277,7 @@ export default {
           value: "conceded",
         },
       ],
-      managers: [
-        {
-          title: "Camille Dupont",
-          email: "camille.dupont@example.com",
-          accountExists: true,
-        },
-        {
-          email: "john.smith@example.com",
-        },
-      ],
+      managers: [],
       managerFormIsValid: true,
       newManagerEmail: undefined,
     }
@@ -320,6 +313,8 @@ export default {
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
       this.originalCanteenIsPublished = canteen.dataIsPublic
+      canteen.managers.forEach((m) => (m.accountExists = true))
+      this.managers = canteen.managers
     } else this.$router.push({ name: "NewCanteen" })
   },
   created() {
