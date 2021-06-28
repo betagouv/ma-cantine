@@ -51,7 +51,7 @@
           >
             Nos initiatives mises en place :
             <div v-for="initiative in initiativesForCanteen(canteen)" :key="initiative">
-              <v-icon small class="mt-n1" color="secondary">mdi-check</v-icon>
+              <v-icon small class="mt-n1" color="primary">mdi-check-bold</v-icon>
               {{ initiative }}
             </div>
           </v-card-text>
