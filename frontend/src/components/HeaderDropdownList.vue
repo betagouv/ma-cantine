@@ -60,18 +60,19 @@ export default {
           to: { name: "TesterParticipation" },
         },
         {
-          text: "Publier",
-          icon: "mdi-publish",
-          authenticationState: true,
-          to: { name: "CanteenInfo" },
-        },
-        {
           text: "Autodiagnostic",
           icon: "mdi-chart-pie",
+          authenticationState: false,
           to: { name: "DiagnosticPage" },
         },
         {
           type: "divider",
+        },
+        {
+          text: "Mesures phares",
+          icon: "mdi-playlist-check",
+          authenticationState: true,
+          to: { name: "KeyMeasuresHome" },
         },
         {
           text: "Nos cantines",
