@@ -23,6 +23,8 @@ const verifyResponse = function(response) {
 
 export default new Vuex.Store({
   state: {
+    loggedUser: null,
+
     userLoadingStatus: Constants.LoadingStatus.IDLE,
     blogLoadingStatus: Constants.LoadingStatus.IDLE,
     canteensLoadingStatus: Constants.LoadingStatus.IDLE,
@@ -194,13 +196,51 @@ export default new Vuex.Store({
         })
     },
 
+    updateProfile(context, { payload }) {
+      context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/user/${context.state.loggedUser.id}`, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify(payload),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_LOGGED_USER", response)
+          context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
+        .catch((e) => {
+          context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
+    changePassword(context, { payload }) {
+      context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch("/api/v1/passwordChange/", { method: "PUT", headers, body: JSON.stringify(payload) })
+        .then((response) => {
+          if (response.status === 400) {
+            return response.json().then((jsonResponse) => {
+              throw new Error(Object.values(jsonResponse).join(", "))
+            })
+          }
+          return verifyResponse(response)
+        })
+        .then(() => {
+          context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
+        .catch((e) => {
+          context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
     createCanteen(context, { payload }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteens/`, { method: "POST", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
         .then((response) => {
           context.commit("ADD_USER_CANTEEN", response)
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
@@ -214,7 +254,7 @@ export default new Vuex.Store({
         .then(verifyResponse)
         .then((response) => {
           context.commit("UPDATE_USER_CANTEEN", response)
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
@@ -246,7 +286,7 @@ export default new Vuex.Store({
         .then(verifyResponse)
         .then((response) => {
           context.commit("ADD_DIAGNOSTIC", { canteenId, diagnostic: response })
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
@@ -264,7 +304,7 @@ export default new Vuex.Store({
         .then(verifyResponse)
         .then((response) => {
           context.commit("UPDATE_DIAGNOSTIC", { canteenId, diagnostic: response })
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
@@ -293,7 +333,7 @@ export default new Vuex.Store({
         .then(verifyResponse)
         .then((response) => {
           context.commit("UPDATE_USER_CANTEEN", response)
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)

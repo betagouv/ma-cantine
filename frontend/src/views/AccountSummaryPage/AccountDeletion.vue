@@ -1,0 +1,23 @@
+<template>
+  <v-card elevation="0" class="text-left">
+    <v-card-title class="text-h5 font-weight-black">Supprimer mon compte</v-card-title>
+    <v-card-subtitle class="text-body-2 mt-n1">
+      Contactez nous pour supprimer votre compte ou demander les données liées à votre profil
+    </v-card-subtitle>
+    <v-card-actions class="pa-4">
+      <v-btn large outlined color="primary" :href="hrefMail" target="_blank">Contacter l'équipe</v-btn>
+    </v-card-actions>
+  </v-card>
+</template>
+
+<script>
+export default {
+  name: "AccountDeletion",
+  computed: {
+    hrefMail() {
+      const loggedUser = this.$store.state.loggedUser
+      return `mailto:contact@egalim.beta.gouv.fr?subject=Suppression ou données de mon compte : ${loggedUser.email}`
+    },
+  },
+}
+</script>
