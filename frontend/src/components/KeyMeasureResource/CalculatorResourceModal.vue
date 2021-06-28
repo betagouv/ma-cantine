@@ -8,7 +8,12 @@
     </div>
 
     <div>
-      <video style="width: 100%; background: #333;" poster="/static/images/video-poster-tableur.webp" controls>
+      <video
+        ref="video"
+        style="width: 100%; background: #333;"
+        poster="/static/images/video-poster-tableur.webp"
+        controls
+      >
         <source
           type="video/mp4"
           src="https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim/videos/demo-tableur-approvisionnements.mp4"
@@ -35,11 +40,16 @@
 
 <script>
 export default {
-  props: ["closeModal"],
   data() {
     return {
       filepath: "/static/documents/Diagnostic approvisionnement (ma-cantine-alpha) v0.5",
     }
+  },
+  methods: {
+    stopVideo() {
+      this.$refs.video.pause()
+      this.$refs.video.currentTime = 0
+    },
   },
 }
 </script>

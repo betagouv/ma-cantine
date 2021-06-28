@@ -24,18 +24,3 @@
     </v-card>
   </div>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      iframeIsLoaded: false,
-    }
-  },
-  methods: {
-    iframeLoad() {
-      this.iframeIsLoaded = true
-    },
-  },
-}
-</script>
