@@ -24,15 +24,14 @@
         </p>
       </v-col>
 
-      <v-btn
-        text
+      <a
         color="primary"
-        class="mx-auto mt-4 text-decoration-underline"
+        class="text-body-2 font-weight-medium mx-auto mt-4 text-decoration-underline"
         href="/static/documents/Les mesures de la loi EGAlim restauration collective.pdf"
         target="_blank"
       >
         Télécharger le livret de la loi EGAlim concernant la restauration collective
-      </v-btn>
+      </a>
     </v-row>
   </div>
 </template>
