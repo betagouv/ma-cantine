@@ -1,4 +1,4 @@
-# from data.factories.provisionalmanager import ProvisionalManagerFactory
+from data.factories.provisionalmanager import ProvisionalManagerFactory
 from django.urls import reverse
 from django.db import transaction
 from rest_framework.test import APITestCase
@@ -9,41 +9,42 @@ from .utils import authenticate
 
 
 class TestLoggedUserApi(APITestCase):
-    # def test_unauthenticated_get_provisional_managers(self):
-    #     """
-    #     Expect 403 if attempt to get managers for canteen when not logged in
-    #     """
-    #     response = self.client.get(
-    #         reverse("provisional_managers", kwargs={"canteen_pk": 1})
-    #     )
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    def test_unauthenticated_get_provisional_managers(self):
+        """
+        Expect 403 if attempt to get managers for canteen when not logged in
+        """
+        response = self.client.get(
+            reverse("provisional_managers", kwargs={"canteen_pk": 1})
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    # @authenticate
-    # def test_get_provisional_managers(self):
-    #     """
-    #     Return provisional managers for canteen if a manager of the canteen
-    #     """
-    #     pm1 = ProvisionalManagerFactory.create()
-    #     ProvisionalManagerFactory.create()
-    #     response = self.client.get(
-    #         reverse("provisional_managers", kwargs={"canteen_pk": pm1.canteen_id})
-    #     )
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    @authenticate
+    def test_get_provisional_managers(self):
+        """
+        Return provisional managers for canteen if a manager of the canteen
+        """
+        pm1 = ProvisionalManagerFactory.create()
+        pm1.canteen.managers.add(authenticate.user)
+        ProvisionalManagerFactory.create()
+        response = self.client.get(
+            reverse("provisional_managers", kwargs={"canteen_pk": pm1.canteen_id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    #     body = response.json()
-    #     self.assertEqual(len(body), 1)
-    #     self.assertEqual(body[0]["email"], pm1.email)
+        body = response.json()
+        self.assertEqual(len(body), 1)
+        self.assertEqual(body[0]["email"], pm1.email)
 
-    # @authenticate
-    # def test_unauthorised_get_provisional_managers(self):
-    #     """
-    #     Expect 404 if attempt to get managers for canteen not a manager of the canteen
-    #     """
-    #     pm = ProvisionalManagerFactory.create()
-    #     response = self.client.get(
-    #         reverse("provisional_managers", kwargs={"canteen_pk": pm.canteen_id})
-    #     )
-    #     self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    @authenticate
+    def test_unauthorised_get_provisional_managers(self):
+        """
+        Expect 404 if attempt to get managers for canteen not a manager of the canteen
+        """
+        pm = ProvisionalManagerFactory.create()
+        response = self.client.get(
+            reverse("provisional_managers", kwargs={"canteen_pk": pm.canteen_id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_unauthenticated_manager_call(self):
         """
