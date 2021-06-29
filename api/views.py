@@ -18,8 +18,9 @@ from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
     BlogPostSerializer,
+    # ProvisionalManagerSerializer,
 )
-from data.models import Canteen, BlogPost, Sector
+from data.models import Canteen, BlogPost, Sector, ProvisionalManager
 from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
 import sib_api_v3_sdk
 
@@ -84,17 +85,21 @@ class UpdateUserCanteenView(UpdateAPIView):
 
     def perform_update(self, serializer):
         previous_publication_status = serializer.instance.data_is_public
-        new_publication_status = serializer.validated_data.get('data_is_public', False)
+        new_publication_status = serializer.validated_data.get("data_is_public", False)
 
-        if (not previous_publication_status and new_publication_status):
+        if not previous_publication_status and new_publication_status:
             protocol = "https" if settings.SECURE else "http"
             cantine = serializer.instance
-            admin_url = "%s://%s/admin/data/canteen/%s/change/" % (protocol, settings.HOSTNAME, cantine.id,)
-            canteens_url = "%s://%s/nos-cantines/" % (protocol, settings.HOSTNAME,)
+            admin_url = "{}://{}/admin/data/canteen/{}/change/".format(
+                protocol, settings.HOSTNAME, cantine.id
+            )
+            canteens_url = "{}://{}/nos-cantines/".format(protocol, settings.HOSTNAME)
 
             send_mail(
                 "Cantine publiée sur ma cantine",
-                "La cantine « %s » vient d'être publiée.\nAdmin : %s\nNos cantines : %s" % (cantine.name, admin_url, canteens_url),
+                "La cantine « {} » vient d'être publiée.\nAdmin : {}\nNos cantines : {}".format(
+                    cantine.name, admin_url, canteens_url
+                ),
                 settings.DEFAULT_FROM_EMAIL,
                 [settings.CONTACT_EMAIL],
                 fail_silently=True,
@@ -212,3 +217,49 @@ class SubscribeNewsletter(APIView):
             return JsonResponse(
                 {"error": "An error has ocurred"}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class AddManager(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            email = request.data.get("email")
+            validate_email(email)
+            canteen_id = kwargs["canteen_pk"]
+            canteen = request.user.canteens.get(id=canteen_id)
+            try:
+                user = get_user_model().objects.get(email=email)
+                canteen.managers.add(user)
+            except get_user_model().DoesNotExist:
+                # add to provisional managers db
+                pm = ProvisionalManager(canteen_id=canteen.id, email=email)
+                pm.save()
+            # TODO: send notifications
+            return JsonResponse({}, status=status.HTTP_200_OK)
+        except ValidationError:
+            return JsonResponse(
+                {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Canteen.DoesNotExist:
+            return JsonResponse(
+                {"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except IntegrityError:
+            return JsonResponse({}, status=status.HTTP_200_OK)
+        except Exception:
+            return JsonResponse(
+                {"error": "An error has ocurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+# class ProvisionalManagersView(ListAPIView):
+#     permission_classes = [permissions.IsAuthenticated, IsProfileOwner]
+#     model = ProvisionalManager
+#     serializer_class = ProvisionalManagerSerializer
+
+#     def get_queryset(self):
+#         return self.request.user.provisional_managers.all()
+
+# TODO: fix where there should be 500 errors
