@@ -316,6 +316,9 @@ export default {
       let managers = JSON.parse(JSON.stringify(canteen.managers))
       managers.forEach((m) => (m.accountExists = true))
       this.managers = managers
+      fetch(`/api/v1/provisionalManagers/${canteen.id}`)
+        .then((response) => response.json())
+        .then((json) => (this.managers = this.managers.concat(json)))
     } else this.$router.push({ name: "NewCanteen" })
   },
   created() {
@@ -394,7 +397,8 @@ export default {
             message: `${this.newManagerEmail} a bien été ajouté`,
             status: "success",
           })
-          this.managers.push({ email: this.newManagerEmail }) // TODO remove once have GET
+          // avoid calling the GET API again for speed
+          this.managers.push({ email: this.newManagerEmail })
           this.newManagerEmail = undefined
         })
         .catch(() => {

@@ -18,7 +18,7 @@ from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
     BlogPostSerializer,
-    # ProvisionalManagerSerializer,
+    ProvisionalManagerSerializer,
 )
 from data.models import Canteen, BlogPost, Sector, ProvisionalManager
 from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
@@ -254,12 +254,18 @@ class AddManager(APIView):
             )
 
 
-# class ProvisionalManagersView(ListAPIView):
-#     permission_classes = [permissions.IsAuthenticated, IsProfileOwner]
-#     model = ProvisionalManager
-#     serializer_class = ProvisionalManagerSerializer
+class ProvisionalManagersView(ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    model = ProvisionalManager
+    serializer_class = ProvisionalManagerSerializer
 
-#     def get_queryset(self):
-#         return self.request.user.provisional_managers.all()
+    def get_queryset(self):
+        canteen_id = self.request.parser_context.get("kwargs").get("canteen_pk")
+        try:
+            self.request.user.canteens.get(id=canteen_id)
+        except Canteen.DoesNotExist:
+            raise NotFound()
+        return ProvisionalManager.objects.filter(canteen_id=canteen_id)
+
 
 # TODO: fix where there should be 500 errors
