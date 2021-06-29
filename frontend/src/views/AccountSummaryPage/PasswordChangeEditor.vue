@@ -47,7 +47,7 @@
     <v-card-actions class="pa-4">
       <v-spacer></v-spacer>
       <v-btn x-large color="primary" @click="changePassword">
-        Enregistrer
+        Valider
       </v-btn>
     </v-card-actions>
   </v-card>
