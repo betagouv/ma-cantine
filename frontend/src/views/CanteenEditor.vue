@@ -313,8 +313,9 @@ export default {
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
       this.originalCanteenIsPublished = canteen.dataIsPublic
-      canteen.managers.forEach((m) => (m.accountExists = true))
-      this.managers = canteen.managers
+      let managers = JSON.parse(JSON.stringify(canteen.managers))
+      managers.forEach((m) => (m.accountExists = true))
+      this.managers = managers
     } else this.$router.push({ name: "NewCanteen" })
   },
   created() {
