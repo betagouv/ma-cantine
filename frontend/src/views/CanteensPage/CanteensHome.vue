@@ -3,14 +3,14 @@
     <v-card elevation="0" class="text-center text-md-left mb-14 mt-6">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
         <v-col cols="12">
-          <v-img max-height="100px" contain src="/static/images/desktop.svg"></v-img>
+          <v-img max-height="120px" contain src="/static/images/LovingDoodle.png"></v-img>
         </v-col>
       </v-row>
       <v-row>
         <v-spacer></v-spacer>
         <v-col cols="3" v-if="$vuetify.breakpoint.mdAndUp">
           <div class="d-flex fill-height align-center">
-            <v-img max-height="120px" contain src="/static/images/desktop.svg"></v-img>
+            <v-img max-height="140px" contain src="/static/images/LovingDoodle.png"></v-img>
           </div>
         </v-col>
         <v-col cols="12" sm="10" md="7">

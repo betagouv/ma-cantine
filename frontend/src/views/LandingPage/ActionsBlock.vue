@@ -5,10 +5,11 @@
       <v-col cols="12" sm="6">
         <v-card elevation="0" class="fill-height pa-4 d-flex flex-column">
           <v-img
-            src="/static/images/inform-action.svg"
+            src="/static/images/ChartDoodle.png"
             v-if="$vuetify.breakpoint.smAndUp"
-            class="mx-auto"
-            max-width="35%"
+            class="mx-auto rounded-0"
+            contain
+            max-height="130"
           ></v-img>
           <v-card-title class="text-h6 font-weight-bold">
             Vous connaissez déjà la part de bio, durable et produits issus du commerce équitable de votre cantine
@@ -28,10 +29,11 @@
       <v-col cols="12" sm="6">
         <v-card elevation="0" class="fill-height pa-4 d-flex flex-column">
           <v-img
-            src="/static/images/calculator-action.svg"
+            src="/static/images/ReadingDoodle.png"
             v-if="$vuetify.breakpoint.smAndUp"
-            class="mx-auto"
-            max-width="35%"
+            class="mx-auto rounded-0"
+            contain
+            max-height="130"
           ></v-img>
           <v-card-title class="text-h6 font-weight-bold">Vous avez besoin d’aide pour le calcul ?</v-card-title>
           <v-card-text>
