@@ -25,7 +25,7 @@
       class="text-decoration-none text-left mt-4"
       hover
     >
-      <v-alert icon="mdi-sprout" class="text-body-2 mb-0" color="primary" prominent colored-border border="left">
+      <v-alert icon="mdi-sprout" class="text-body-2 mb-0" color="#E2A013" prominent colored-border border="left">
         Trouver des catégories de produits en recherchant par labels, siqo et/ou régions avec le moteur de recherche de
         l'INAO.
       </v-alert>
@@ -37,7 +37,7 @@
       class="text-decoration-none text-left mt-4"
       hover
     >
-      <v-alert icon="mdi-archive" class="text-body-2 mb-0" color="primary" prominent colored-border border="left">
+      <v-alert icon="mdi-archive" class="text-body-2 mb-0" color="#EB5B25" prominent colored-border border="left">
         Télécharger le guide pratique de rédaction des marchés publics pour des appros durables à destination des
         acteurs de la restauration collective en gestion directe.
       </v-alert>
