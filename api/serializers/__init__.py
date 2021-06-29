@@ -3,3 +3,4 @@ from .canteen import PublicCanteenSerializer, FullCanteenSerializer  # noqa: F40
 from .diagnostic import DiagnosticSerializer  # noqa: F401
 from .sector import SectorSerializer  # noqa: F401
 from .blogpost import BlogPostSerializer  # noqa: F401
+from .provisionalmanager import ProvisionalManagerSerializer  # noqa: F401

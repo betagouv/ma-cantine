@@ -383,13 +383,23 @@ export default {
         return
       }
 
-      this.managers.push({ email: this.newManagerEmail })
-      this.$store.dispatch("notify", {
-        title: "Mise à jour prise en compte",
-        message: `${this.newManagerEmail} a bien été ajouté`,
-        status: "success",
-      })
-      this.newManagerEmail = undefined
+      this.$store
+        .dispatch("addManager", {
+          canteenId: this.canteen.id,
+          email: this.newManagerEmail,
+        })
+        .then(() => {
+          this.$store.dispatch("notify", {
+            title: "Mise à jour prise en compte",
+            message: `${this.newManagerEmail} a bien été ajouté`,
+            status: "success",
+          })
+          this.managers.push({ email: this.newManagerEmail }) // TODO remove once have GET
+          this.newManagerEmail = undefined
+        })
+        .catch(() => {
+          this.$store.dispatch("notifyServerError")
+        })
     },
   },
   beforeRouteLeave(to, from, next) {
