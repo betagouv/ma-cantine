@@ -110,29 +110,21 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12" md="4">
-          <p class="body-2 my-2">Ville / commune</p>
-          <v-text-field
+        <v-col cols="12" md="8">
+          <p class="body-2 my-2">Ville</p>
+          <v-autocomplete
             hide-details="auto"
             :rules="[validators.notEmpty]"
-            validate-on-blur
+            :loading="loadingCommunes"
+            :items="communes"
+            :search-input.sync="search"
+            ref="cityAutocomplete"
             solo
-            v-model="canteen.city"
-          ></v-text-field>
-        </v-col>
-
-        <v-col cols="12" md="4">
-          <p class="body-2 my-2">Département</p>
-          <v-select
-            solo
-            v-model="canteen.department"
-            :rules="[validators.notEmpty]"
-            validate-on-blur
-            :items="departments"
-            :item-text="(item) => `${item.departmentCode} - ${item.departmentName}`"
-            item-value="departmentCode"
-            hide-details="auto"
-          ></v-select>
+            auto-select-first
+            cache-items
+            v-model="cityAutocompleteChoice"
+            :placeholder="canteen.city"
+          ></v-autocomplete>
         </v-col>
 
         <v-col cols="12" md="4">
@@ -187,59 +179,19 @@
       </v-btn>
     </v-sheet>
 
-    <div v-if="originalCanteen && !isNewCanteen">
-      <h2 class="font-weight-black text-h5 mt-10">
-        Mes diagnostics pour cette cantine
-      </h2>
-      <v-btn text color="primary" class="mt-2 mb-8 ml-n4" :to="{ name: 'NewDiagnostic' }">
-        <v-icon class="mr-2">mdi-plus</v-icon>
-        Ajouter un diagnostic
-      </v-btn>
-      <v-row>
-        <v-col cols="12" v-for="diagnostic in canteen.diagnostics" :key="`diagnostic-${diagnostic.id}`">
-          <DiagnosticCard :diagnostic="diagnostic" class="fill-height" />
-        </v-col>
-      </v-row>
-    </div>
+    <DiagnosticList :canteen="canteen" v-if="canteen && originalCanteen && !isNewCanteen" />
+
     <v-divider class="my-10" v-if="!isNewCanteen"></v-divider>
 
-    <v-dialog v-model="deletionDialog" width="500" v-if="!isNewCanteen">
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn color="red" outlined v-if="!isNewCanteen" v-bind="attrs" v-on="on">
-          <v-icon small class="mr-2">mdi-alert</v-icon>
-          Supprimer cette cantine
-        </v-btn>
-      </template>
-
-      <v-card class="text-left">
-        <v-card-title class="font-weight-bold">
-          Voulez-vous vraiment supprimer cette cantine ?
-        </v-card-title>
-
-        <v-card-text>
-          Vous perdrez les données de cette cantine ainsi que celles des diagnostics lui concernant.
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions class="pa-4">
-          <v-spacer></v-spacer>
-          <v-btn outlined text @click="deletionDialog = false" class="mr-2">
-            Non, revenir en arrière
-          </v-btn>
-          <v-btn outlined color="red" text @click="deleteCanteen">
-            Oui, supprimer ma cantine
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <DeletionDialog v-if="!isNewCanteen" v-model="deletionDialog" @delete="deleteCanteen" />
   </div>
 </template>
 
 <script>
 import validators from "@/validators"
-import DiagnosticCard from "@/components/DiagnosticCard"
 import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewDialog"
+import DiagnosticList from "./DiagnosticList"
+import DeletionDialog from "./DeletionDialog"
 import departments from "@/departments.json"
 import { toBase64, getObjectDiff } from "@/utils"
 
@@ -247,7 +199,7 @@ const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre can
 
 export default {
   name: "CanteenEditor",
-  components: { DiagnosticCard, PublicationPreviewDialog },
+  components: { PublicationPreviewDialog, DiagnosticList, DeletionDialog },
   props: {
     canteenUrlComponent: {
       type: String,
@@ -262,6 +214,10 @@ export default {
       showPreview: false,
       bypassLeaveWarning: false,
       deletionDialog: false,
+      cityAutocompleteChoice: {},
+      communes: [],
+      loadingCommunes: false,
+      search: null,
       managementTypes: [
         {
           text: "Directe",
@@ -305,6 +261,12 @@ export default {
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
       this.originalCanteenIsPublished = canteen.dataIsPublic
+      const initialCityAutocomplete = {
+        text: canteen.city,
+        value: { label: canteen.city, citycode: canteen.cityInseeCode },
+      }
+      this.communes = [initialCityAutocomplete]
+      this.cityAutocompleteChoice = initialCityAutocomplete.value
     } else this.$router.push({ name: "NewCanteen" })
   },
   created() {
@@ -379,6 +341,33 @@ export default {
         .catch(() => {
           this.$store.dispatch("notifyServerError")
         })
+    },
+    queryCommunes(val) {
+      this.loadingCommunes = true
+      const queryUrl = "https://api-adresse.data.gouv.fr/search/?q=" + val + "&type=municipality&autocomplete=1"
+      return fetch(queryUrl)
+        .then((response) => response.json())
+        .then((response) => {
+          const communes = response.features
+          this.communes = communes.map((commune) => {
+            return { text: `${commune.properties.label} (${commune.properties.context})`, value: commune.properties }
+          })
+          this.loadingCommunes = false
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+  },
+  watch: {
+    search(val) {
+      return val && val != this.canteen.city && this.queryCommunes(val)
+    },
+    cityAutocompleteChoice(val) {
+      this.canteen.city = val.label
+      this.canteen.cityInseeCode = val.citycode
+      this.canteen.postalCode = val.postcode
+      this.search = this.canteen.city
     },
   },
   beforeRouteLeave(to, from, next) {
