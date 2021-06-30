@@ -192,7 +192,6 @@ import validators from "@/validators"
 import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewDialog"
 import DiagnosticList from "./DiagnosticList"
 import DeletionDialog from "./DeletionDialog"
-import departments from "@/departments.json"
 import { toBase64, getObjectDiff } from "@/utils"
 
 const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre cantine n'a pas été sauvegardée."
@@ -237,9 +236,6 @@ export default {
     sectors() {
       return this.$store.state.sectors
     },
-    departments() {
-      return departments
-    },
     originalCanteen() {
       return this.canteenUrlComponent && this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
     },
@@ -263,7 +259,12 @@ export default {
       this.originalCanteenIsPublished = canteen.dataIsPublic
       const initialCityAutocomplete = {
         text: canteen.city,
-        value: { label: canteen.city, citycode: canteen.cityInseeCode },
+        value: {
+          label: canteen.city,
+          citycode: canteen.cityInseeCode,
+          postcode: canteen.postalCode,
+          context: canteen.department,
+        },
       }
       this.communes = [initialCityAutocomplete]
       this.cityAutocompleteChoice = initialCityAutocomplete.value
@@ -367,6 +368,8 @@ export default {
       this.canteen.city = val.label
       this.canteen.cityInseeCode = val.citycode
       this.canteen.postalCode = val.postcode
+      this.canteen.department = val && val.context ? val.context.split(",")[0] : undefined
+
       this.search = this.canteen.city
     },
   },
