@@ -36,7 +36,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:  
         model = get_user_model()
-        fields = "__all__"
+        fields = UserCreationForm.Meta.fields + ('first_name', 'last_name', 'email',)
 
     def left_column_fields(self):
         field_names = [
@@ -83,10 +83,11 @@ class RegisterForm(UserCreationForm):
             {"placeholder": "Confirmez votre mot de passe"}
         )
 
-    def clean_autocomplete(self):
-        if not self.cleaned_data.get('city_insee_code'):
-            raise ValidationError("Veuillez choisir une ville de la liste déroulante")
-        return self.cleaned_data["autocomplete"]
+    def clean(self):
+        cleaned_data = super().clean()
+        if not cleaned_data.get("city_insee_code"):
+            self.add_error("autocomplete", "Veuillez choisir une ville de la liste déroulante")
+        return cleaned_data
 
     def clean_cgu_approved(self):
         if not self.cleaned_data.get("cgu_approved"):
