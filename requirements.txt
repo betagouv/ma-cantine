@@ -29,7 +29,7 @@ Pillow==8.2.0
 pluggy==0.13.1
 psycopg2==2.8.6
 py==1.10.0
-pylint==2.8.3
+pylint==2.9.0
 pylint-django==2.4.4
 pylint-plugin-utils==0.6
 pyparsing==2.4.7
