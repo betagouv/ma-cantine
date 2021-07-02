@@ -1,7 +1,7 @@
 <template>
   <div class="poster-contents">
     <div id="heading">
-      <img src="/static/images/toque.svg" id="hat" alt="" />
+      <img src="/static/images/SittingChef.png" id="hat" alt="" />
       <div>
         <h1>Cantine {{ canteen.name || "_________" }}</h1>
         <p id="commune-poster">{{ canteen.city || "_________" }}</p>
