@@ -8,7 +8,7 @@ from data.models import ProvisionalManager
 from .utils import authenticate
 
 
-class TestLoggedUserApi(APITestCase):
+class TestProvisionalManagerApi(APITestCase):
     def test_unauthenticated_get_provisional_managers(self):
         """
         Expect 403 if attempt to get managers for canteen when not logged in
@@ -169,4 +169,3 @@ class TestLoggedUserApi(APITestCase):
         with self.assertRaises(ProvisionalManager.DoesNotExist):
             ProvisionalManager.objects.get(email=other_user.email)
 
-    # TODO: test that new user with email matching is linked on creation (maybe not here?)
