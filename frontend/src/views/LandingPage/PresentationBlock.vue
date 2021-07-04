@@ -3,7 +3,7 @@
     <v-card elevation="0" class="text-center text-md-right">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
         <v-col cols="12">
-          <v-img max-height="150px" contain src="/static/images/toque.svg"></v-img>
+          <v-img max-height="150px" contain src="/static/images/SittingChef.png"></v-img>
         </v-col>
       </v-row>
       <v-row>
@@ -16,8 +16,10 @@
             La loi EGAlim vise à apporter une alimentation saine, de qualité et plus durable dans nos assiettes.
           </v-card-text>
         </v-col>
-        <v-col cols="12" sm="3" md="3" v-if="$vuetify.breakpoint.mdAndUp">
-          <v-img max-height="200px" contain src="/static/images/toque.svg"></v-img>
+        <v-col cols="12" sm="3" md="3" class="d-flex flex-column" v-if="$vuetify.breakpoint.mdAndUp">
+          <v-spacer></v-spacer>
+          <v-img max-height="200px" contain src="/static/images/SittingChef.png"></v-img>
+          <v-spacer></v-spacer>
         </v-col>
         <v-spacer></v-spacer>
       </v-row>
