@@ -231,11 +231,12 @@ class AddManagerView(APIView):
             try:
                 user = get_user_model().objects.get(email=email)
                 canteen.managers.add(user)
+                # TODO: send notification?
             except get_user_model().DoesNotExist:
                 # add to provisional managers db
                 pm = ProvisionalManager(canteen_id=canteen.id, email=email)
                 pm.save()
-            # TODO: send notifications
+                _send_invitation_email(pm)
             return JsonResponse({}, status=status.HTTP_200_OK)
         except ValidationError:
             return JsonResponse(
@@ -252,6 +253,27 @@ class AddManagerView(APIView):
                 {"error": "An error has ocurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+def _send_invitation_email(provisional_manager):
+    try:
+        template = "manager-invitation"
+        context = {
+            "canteen": provisional_manager.canteen.name,
+            "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
+            "domain": settings.HOSTNAME,
+            # TODO: add link to new sign up page
+        }
+        send_mail(
+            subject="Invitation à gérer une cantine sur ma cantine",
+            message=render_to_string(f"{template}.html", context),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            html_message=render_to_string(f"{template}.txt", context),
+            recipient_list=[provisional_manager.email],
+            fail_silently=False,
+        )
+    except Exception:
+        raise Exception("Error occurred : the mail could not be sent.")
 
 
 class ProvisionalManagersView(ListAPIView):
