@@ -219,7 +219,7 @@ class SubscribeNewsletter(APIView):
             )
 
 
-class AddManager(APIView):
+class AddManagerView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
