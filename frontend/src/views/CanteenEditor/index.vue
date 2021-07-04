@@ -209,24 +209,24 @@
       </h2>
       <v-list disabled>
         <v-list-item-group>
-          <v-list-item v-for="(manager, i) in managers" :key="i">
-            <v-list-item-icon>
-              <v-icon v-if="manager.accountExists" color="primary">mdi-account-check-outline</v-icon>
-              <v-icon v-else color="secondary">mdi-account-clock-outline</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title
-                v-text="manager.lastName ? `${manager.firstName} ${manager.lastName}` : manager.email"
-              ></v-list-item-title>
-              <v-list-item-subtitle>
-                {{ manager.accountExists ? "Compte créé" : "En attente" }}
-                <span v-if="!!manager.title">- {{ manager.email }}</span>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+          <ManagerItem
+            v-for="manager in managers"
+            :key="manager.email"
+            :manager="manager"
+            icon="mdi-account-check-outline"
+            color="primary"
+            status="Compte créé"
+          />
+          <ManagerItem
+            v-for="manager in invitedManagers"
+            :key="manager.email"
+            :manager="manager"
+            icon="mdi-account-clock-outline"
+            color="secondary"
+            status="En attente"
+          />
         </v-list-item-group>
       </v-list>
-      <!-- TODO: sort alphabetical order? -->
       <v-form ref="managerForm" class="d-flex mt-2" v-model="managerFormIsValid">
         <v-text-field
           solo
@@ -248,12 +248,13 @@ import DiagnosticCard from "@/components/DiagnosticCard"
 import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewDialog"
 import departments from "@/departments.json"
 import { toBase64, getObjectDiff } from "@/utils"
+import ManagerItem from "./ManagerItem"
 
 const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "CanteenEditor",
-  components: { DiagnosticCard, PublicationPreviewDialog },
+  components: { DiagnosticCard, PublicationPreviewDialog, ManagerItem },
   props: {
     canteenUrlComponent: {
       type: String,
@@ -277,7 +278,8 @@ export default {
           value: "conceded",
         },
       ],
-      managers: [],
+      // TODO: make this computed
+      invitedManagers: [],
       managerFormIsValid: true,
       newManagerEmail: undefined,
     }
@@ -306,6 +308,9 @@ export default {
         return Object.keys(this.canteen).length > 0
       }
     },
+    managers() {
+      return this.originalCanteen.managers
+    },
   },
   beforeMount() {
     if (this.isNewCanteen) return
@@ -313,12 +318,9 @@ export default {
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
       this.originalCanteenIsPublished = canteen.dataIsPublic
-      let managers = JSON.parse(JSON.stringify(canteen.managers))
-      managers.forEach((m) => (m.accountExists = true))
-      this.managers = managers
       fetch(`/api/v1/provisionalManagers/${canteen.id}`)
         .then((response) => response.json())
-        .then((json) => (this.managers = this.managers.concat(json)))
+        .then((json) => (this.invitedManagers = json))
     } else this.$router.push({ name: "NewCanteen" })
   },
   created() {
@@ -398,7 +400,8 @@ export default {
             status: "success",
           })
           // avoid calling the GET API again for speed
-          this.managers.push({ email: this.newManagerEmail })
+          // TODO: behaviour when manager added with existing account?
+          this.invitedManagers.push({ email: this.newManagerEmail })
           this.newManagerEmail = undefined
         })
         .catch(() => {
