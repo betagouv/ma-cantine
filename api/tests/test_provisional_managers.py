@@ -1,6 +1,8 @@
 from data.factories.provisionalmanager import ProvisionalManagerFactory
+from django.core import mail
 from django.urls import reverse
 from django.db import transaction
+from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, UserFactory
@@ -82,10 +84,12 @@ class TestProvisionalManagerApi(APITestCase):
             ProvisionalManager.objects.get(canteen__id=canteen.id)
 
     @authenticate
+    @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
     def test_authenticated_create_provisional_manager(self):
         """
         When calling this API authenticated we expect to save the
         an unassociated email in the provisional managers table with the canteen id
+        and email an invitation to sign up to the invited manager
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
@@ -99,11 +103,15 @@ class TestProvisionalManagerApi(APITestCase):
         pm = ProvisionalManager.objects.get(canteen__id=canteen.id)
         self.assertEqual(pm.email, "test@example.com")
         self.assertEqual(pm.canteen_id, canteen.id)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to[0], "test@example.com")
+        self.assertEqual(mail.outbox[0].from_email, "test-from@example.com")
 
     @authenticate
     def test_authenticated_create_duplicate_provisional_manager(self):
         """
-        If API called twice with the same data, only save once
+        If API called twice with the same data, only save once,
+        and only send one email
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
@@ -120,6 +128,7 @@ class TestProvisionalManagerApi(APITestCase):
 
         pms = ProvisionalManager.objects.filter(canteen__id=canteen.id)
         self.assertEqual(len(pms), 1)
+        self.assertEqual(len(mail.outbox), 1)
 
     @authenticate
     def test_authenticated_create_multiple_provisional_manager(self):
@@ -155,6 +164,7 @@ class TestProvisionalManagerApi(APITestCase):
         """
         If the email matches an existing user, add the user to the canteen managers
         without going through provisional managers table
+        no email sent for now (TODO: decide email to send)
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
@@ -168,4 +178,5 @@ class TestProvisionalManagerApi(APITestCase):
         self.assertEqual(canteen.managers.all().get(id=other_user.id).id, other_user.id)
         with self.assertRaises(ProvisionalManager.DoesNotExist):
             ProvisionalManager.objects.get(email=other_user.email)
+        self.assertEqual(len(mail.outbox), 0)
 

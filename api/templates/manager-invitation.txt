@@ -1,0 +1,6 @@
+{% load dictionary_extras %}
+{% load diagnostic_extras %}
+
+TODO
+
+Cantine : {{ canteen }}
