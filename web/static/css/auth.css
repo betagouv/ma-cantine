@@ -141,10 +141,6 @@ ul {
 li {
     list-style: none;
 }
-label[for="id_cgu_approved"] {
-    display: inline;
-    font-size: 10px;
-}
 input[type="checkbox"]#id_cgu_approved {
     float: left;
     margin-right: 10px;
