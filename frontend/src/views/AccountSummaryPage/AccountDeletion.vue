@@ -16,7 +16,7 @@ export default {
   computed: {
     hrefMail() {
       const loggedUser = this.$store.state.loggedUser
-      return `mailto:contact@egalim.beta.gouv.fr?subject=Suppression ou données de mon compte : ${loggedUser.email}`
+      return `mailto:contact@egalim.beta.gouv.fr?subject=Suppression de mon compte : ${loggedUser.email}`
     },
   },
 }
