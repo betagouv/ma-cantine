@@ -72,7 +72,7 @@ class RegisterForm(UserCreationForm):
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com"})
         self.fields["canteen_name"].widget.attrs.update({"placeholder": "Ma cantine"})
         self.fields["siret"].widget.attrs.update({"placeholder": "123 456 789 00001"})
-        self.fields["autocomplete"].widget.attrs.update({"placeholder": "Sélectionnez une ville "})
+        self.fields["autocomplete"].widget.attrs.update({"placeholder": "Sélectionnez une ville"})
         self.fields["sectors"].widget.attrs.update({"class": "sector"})
         self.fields["sectors"].choices = Sector.choices()
         self.fields["management_type"].widget.attrs.update({"class": "management-type"})
