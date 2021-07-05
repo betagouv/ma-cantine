@@ -11,6 +11,7 @@ class CanteenForm(forms.ModelForm):
             "name": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "city": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "siret": forms.Textarea(attrs={"cols": 35, "rows": 1}),
+            "city_insee_code": forms.Textarea(attrs={"cols": 35, "rows": 1}),
         }
 
 
@@ -24,6 +25,8 @@ class CanteenAdmin(SoftDeletionAdmin):
         "main_image",
         "city",
         "department",
+        "city_insee_code",
+        "postal_code",
         "daily_meal_count",
         "data_is_public",
         "sectors",

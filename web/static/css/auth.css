@@ -68,7 +68,7 @@ p {
     text-align: left;
     margin-bottom: 20px;
 }
-input[type=text], input[type="password"], input[type="email"], input[type="number"], select {
+input[type=text], input[type="password"], input[type="email"], input[type="number"], select, .control-group .easy-autocomplete input {
     width: 100%;
     height: 42px;
     box-sizing: border-box;
