@@ -19,7 +19,10 @@ class Canteen(SoftDeletionModel):
     modification_date = models.DateTimeField(auto_now=True)
 
     name = models.TextField(verbose_name="nom")
+
     city = models.TextField(null=True, blank=True, verbose_name="ville")
+    city_insee_code = models.TextField(null=True, blank=True, verbose_name="Code INSEE")
+
     department = models.TextField(null=True, blank=True, choices=Department.choices, verbose_name="département")
     postal_code = models.CharField(
         max_length=20, null=True, blank=True, verbose_name="code postal"
