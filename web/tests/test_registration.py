@@ -37,7 +37,7 @@ class TestRegistration(APITestCase):
         response = self.client.post(reverse("register"), payload)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(
-            mail.outbox[0].subject, "Activation de votre compte Ma Cantine"
+            mail.outbox[0].subject, "Confirmation de votre adresse email - ma cantine"
         )
 
         # Upon click of the activation link we go directly to the Vue app

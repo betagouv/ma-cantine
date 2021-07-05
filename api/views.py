@@ -1,13 +1,16 @@
 from data.models.diagnostic import Diagnostic
 import json
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, update_session_auth_hash, tokens
 from django.conf import settings
 from django.http import JsonResponse
 from django.core.mail import send_mail
+from django.template import loader
 from django.template.loader import render_to_string
 from django.core.exceptions import ObjectDoesNotExist, ValidationError, BadRequest
 from django.db.utils import IntegrityError
 from django.core.validators import validate_email
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import UpdateAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
@@ -18,6 +21,7 @@ from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
     BlogPostSerializer,
+    PasswordSerializer,
 )
 from data.models import Canteen, BlogPost, Sector
 from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
@@ -47,6 +51,44 @@ class UpdateUserView(UpdateAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        previous_email = serializer.instance.email
+        new_email = serializer.validated_data.get('email', previous_email)
+
+        update = super().perform_update(serializer)
+
+        if previous_email != new_email:
+            self.unconfirm_email(serializer.instance)
+            self.send_confirmation_email(new_email, serializer.instance)
+
+        return update
+
+
+    def unconfirm_email(self, user):
+        user.email_confirmed = False
+        user.save()
+
+    def send_confirmation_email(self, new_email, user):
+        token = tokens.default_token_generator.make_token(user)
+        html_template = "auth/account_activate_email.html"
+        text_template = "auth/account_activate_email.txt"
+        context = {
+            "token": token,
+            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+            "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
+            "domain": settings.HOSTNAME,
+        }
+        send_mail(
+            subject="Confirmation de votre changement d'adresse email - ma cantine",
+            message=loader.render_to_string(text_template, context),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            html_message=loader.render_to_string(html_template, context),
+            recipient_list=[new_email],
+            fail_silently=False,
+        )
+
+
 
 
 class PublishedCanteensView(ListAPIView):
@@ -212,3 +254,17 @@ class SubscribeNewsletter(APIView):
             return JsonResponse(
                 {"error": "An error has ocurred"}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class ChangePasswordView(UpdateAPIView):
+    serializer_class = PasswordSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        update_session_auth_hash(
+            request, request.user
+        )  # After a password change Django logs the user out
+        return JsonResponse({}, status=status.HTTP_200_OK)
