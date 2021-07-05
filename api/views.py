@@ -215,7 +215,7 @@ class SubscribeNewsletter(APIView):
             )
         except Exception:
             return JsonResponse(
-                {"error": "An error has ocurred"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "An error has ocurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 
@@ -261,7 +261,6 @@ def _send_invitation_email(manager_invitation):
             "canteen": manager_invitation.canteen.name,
             "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
             "domain": settings.HOSTNAME,
-            # TODO: add link to new sign up page
         }
         send_mail(
             subject="Invitation à gérer une cantine sur ma cantine",
@@ -287,6 +286,3 @@ class ManagerInvitationsView(ListAPIView):
         except Canteen.DoesNotExist:
             raise NotFound()
         return ManagerInvitation.objects.filter(canteen_id=canteen_id)
-
-
-# TODO: fix where there should be 500 errors
