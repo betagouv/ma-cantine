@@ -4,7 +4,7 @@ from api.views import LoggedUserView, SubscribeBetaTester, SubscribeNewsletter
 from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView
 from api.views import DiagnosticCreateView, UpdateUserCanteenView, DiagnosticUpdateView
 from api.views import BlogPostsView, SectorListView
-from api.views import AddManagerView, ProvisionalManagersView
+from api.views import AddManagerView, ManagerInvitationsView
 
 
 urlpatterns = {
@@ -38,9 +38,9 @@ urlpatterns = {
         name="subscribe_newsletter",
     ),
     path(
-        "provisionalManagers/<int:canteen_pk>",
-        ProvisionalManagersView.as_view(),
-        name="provisional_managers",
+        "managerInvitations/<int:canteen_pk>",
+        ManagerInvitationsView.as_view(),
+        name="manager_invitations",
     ),
     path(
         "addManager/<int:canteen_pk>",

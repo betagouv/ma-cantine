@@ -318,7 +318,7 @@ export default {
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
       this.originalCanteenIsPublished = canteen.dataIsPublic
-      fetch(`/api/v1/provisionalManagers/${canteen.id}`)
+      fetch(`/api/v1/managerInvitations/${canteen.id}`)
         .then((response) => response.json())
         .then((json) => (this.invitedManagers = json))
     } else this.$router.push({ name: "NewCanteen" })

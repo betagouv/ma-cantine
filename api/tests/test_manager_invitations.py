@@ -1,4 +1,4 @@
-from data.factories.provisionalmanager import ProvisionalManagerFactory
+from data.factories.managerinvitation import ManagerInvitationFactory
 from django.core import mail
 from django.urls import reverse
 from django.db import transaction
@@ -6,30 +6,30 @@ from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, UserFactory
-from data.models import ProvisionalManager
+from data.models import ManagerInvitation
 from .utils import authenticate
 
 
-class TestProvisionalManagerApi(APITestCase):
-    def test_unauthenticated_get_provisional_managers(self):
+class TestManagerInvitationApi(APITestCase):
+    def test_unauthenticated_get_manager_invitations(self):
         """
         Expect 403 if attempt to get managers for canteen when not logged in
         """
         response = self.client.get(
-            reverse("provisional_managers", kwargs={"canteen_pk": 1})
+            reverse("manager_invitations", kwargs={"canteen_pk": 1})
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_get_provisional_managers(self):
+    def test_get_manager_invitations(self):
         """
-        Return provisional managers for canteen if a manager of the canteen
+        Return manager invitations for canteen if a manager of the canteen
         """
-        pm1 = ProvisionalManagerFactory.create()
+        pm1 = ManagerInvitationFactory.create()
         pm1.canteen.managers.add(authenticate.user)
-        ProvisionalManagerFactory.create()
+        ManagerInvitationFactory.create()
         response = self.client.get(
-            reverse("provisional_managers", kwargs={"canteen_pk": pm1.canteen_id})
+            reverse("manager_invitations", kwargs={"canteen_pk": pm1.canteen_id})
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -38,13 +38,13 @@ class TestProvisionalManagerApi(APITestCase):
         self.assertEqual(body[0]["email"], pm1.email)
 
     @authenticate
-    def test_unauthorised_get_provisional_managers(self):
+    def test_unauthorised_get_manager_invitations(self):
         """
         Expect 404 if attempt to get managers for canteen not a manager of the canteen
         """
-        pm = ProvisionalManagerFactory.create()
+        pm = ManagerInvitationFactory.create()
         response = self.client.get(
-            reverse("provisional_managers", kwargs={"canteen_pk": pm.canteen_id})
+            reverse("manager_invitations", kwargs={"canteen_pk": pm.canteen_id})
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -65,8 +65,8 @@ class TestProvisionalManagerApi(APITestCase):
             reverse("add_manager", kwargs={"canteen_pk": 999}), payload
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        with self.assertRaises(ProvisionalManager.DoesNotExist):
-            ProvisionalManager.objects.get(canteen__id=999)
+        with self.assertRaises(ManagerInvitation.DoesNotExist):
+            ManagerInvitation.objects.get(canteen__id=999)
 
     @authenticate
     def test_manager_forbidden_canteen(self):
@@ -80,15 +80,15 @@ class TestProvisionalManagerApi(APITestCase):
             reverse("add_manager", kwargs={"canteen_pk": canteen.id}), payload
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        with self.assertRaises(ProvisionalManager.DoesNotExist):
-            ProvisionalManager.objects.get(canteen__id=canteen.id)
+        with self.assertRaises(ManagerInvitation.DoesNotExist):
+            ManagerInvitation.objects.get(canteen__id=canteen.id)
 
     @authenticate
     @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
-    def test_authenticated_create_provisional_manager(self):
+    def test_authenticated_create_manager_invitation(self):
         """
         When calling this API authenticated we expect to save the
-        an unassociated email in the provisional managers table with the canteen id
+        an unassociated email in the invitations table with the canteen id
         and email an invitation to sign up to the invited manager
         """
         canteen = CanteenFactory.create()
@@ -100,7 +100,7 @@ class TestProvisionalManagerApi(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        pm = ProvisionalManager.objects.get(canteen__id=canteen.id)
+        pm = ManagerInvitation.objects.get(canteen__id=canteen.id)
         self.assertEqual(pm.email, "test@example.com")
         self.assertEqual(pm.canteen_id, canteen.id)
         self.assertEqual(len(mail.outbox), 1)
@@ -108,7 +108,7 @@ class TestProvisionalManagerApi(APITestCase):
         self.assertEqual(mail.outbox[0].from_email, "test-from@example.com")
 
     @authenticate
-    def test_authenticated_create_duplicate_provisional_manager(self):
+    def test_authenticated_create_duplicate_manager_invitation(self):
         """
         If API called twice with the same data, only save once,
         and only send one email
@@ -126,12 +126,12 @@ class TestProvisionalManagerApi(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        pms = ProvisionalManager.objects.filter(canteen__id=canteen.id)
+        pms = ManagerInvitation.objects.filter(canteen__id=canteen.id)
         self.assertEqual(len(pms), 1)
         self.assertEqual(len(mail.outbox), 1)
 
     @authenticate
-    def test_authenticated_create_multiple_provisional_manager(self):
+    def test_authenticated_create_multiple_manager_invitation(self):
         """
         One email can be associated to more than one canteen,
         one canteen can be associated to more than one email
@@ -156,14 +156,14 @@ class TestProvisionalManagerApi(APITestCase):
             reverse("add_manager", kwargs={"canteen_pk": canteen2.id}), payload2
         )
 
-        pms = ProvisionalManager.objects.all()
+        pms = ManagerInvitation.objects.all()
         self.assertEqual(len(pms), 4)
 
     @authenticate
     def test_authenticated_add_manager_existing_user(self):
         """
         If the email matches an existing user, add the user to the canteen managers
-        without going through provisional managers table
+        without going through invitations table
         no email sent for now (TODO: decide email to send)
         """
         canteen = CanteenFactory.create()
@@ -176,7 +176,7 @@ class TestProvisionalManagerApi(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(canteen.managers.all().get(id=other_user.id).id, other_user.id)
-        with self.assertRaises(ProvisionalManager.DoesNotExist):
-            ProvisionalManager.objects.get(email=other_user.email)
+        with self.assertRaises(ManagerInvitation.DoesNotExist):
+            ManagerInvitation.objects.get(email=other_user.email)
         self.assertEqual(len(mail.outbox), 0)
 

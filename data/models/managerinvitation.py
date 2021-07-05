@@ -3,7 +3,7 @@ from django.db import models
 from .canteen import Canteen
 
 
-class ProvisionalManager(models.Model):
+class ManagerInvitation(models.Model):
     class Meta:
         verbose_name = "nouveau gestionnaire"
         verbose_name_plural = "nouveaux gestionnaires"

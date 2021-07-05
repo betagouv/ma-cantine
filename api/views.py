@@ -18,9 +18,9 @@ from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
     BlogPostSerializer,
-    ProvisionalManagerSerializer,
+    ManagerInvitationSerializer,
 )
-from data.models import Canteen, BlogPost, Sector, ProvisionalManager
+from data.models import Canteen, BlogPost, Sector, ManagerInvitation
 from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
 import sib_api_v3_sdk
 
@@ -233,8 +233,7 @@ class AddManagerView(APIView):
                 canteen.managers.add(user)
                 # TODO: send notification?
             except get_user_model().DoesNotExist:
-                # add to provisional managers db
-                pm = ProvisionalManager(canteen_id=canteen.id, email=email)
+                pm = ManagerInvitation(canteen_id=canteen.id, email=email)
                 pm.save()
                 _send_invitation_email(pm)
             return JsonResponse({}, status=status.HTTP_200_OK)
@@ -255,11 +254,11 @@ class AddManagerView(APIView):
             )
 
 
-def _send_invitation_email(provisional_manager):
+def _send_invitation_email(manager_invitation):
     try:
         template = "manager-invitation"
         context = {
-            "canteen": provisional_manager.canteen.name,
+            "canteen": manager_invitation.canteen.name,
             "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
             "domain": settings.HOSTNAME,
             # TODO: add link to new sign up page
@@ -269,17 +268,17 @@ def _send_invitation_email(provisional_manager):
             message=render_to_string(f"{template}.html", context),
             from_email=settings.DEFAULT_FROM_EMAIL,
             html_message=render_to_string(f"{template}.txt", context),
-            recipient_list=[provisional_manager.email],
+            recipient_list=[manager_invitation.email],
             fail_silently=False,
         )
     except Exception:
         raise Exception("Error occurred : the mail could not be sent.")
 
 
-class ProvisionalManagersView(ListAPIView):
+class ManagerInvitationsView(ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    model = ProvisionalManager
-    serializer_class = ProvisionalManagerSerializer
+    model = ManagerInvitation
+    serializer_class = ManagerInvitationSerializer
 
     def get_queryset(self):
         canteen_id = self.request.parser_context.get("kwargs").get("canteen_pk")
@@ -287,7 +286,7 @@ class ProvisionalManagersView(ListAPIView):
             self.request.user.canteens.get(id=canteen_id)
         except Canteen.DoesNotExist:
             raise NotFound()
-        return ProvisionalManager.objects.filter(canteen_id=canteen_id)
+        return ManagerInvitation.objects.filter(canteen_id=canteen_id)
 
 
 # TODO: fix where there should be 500 errors

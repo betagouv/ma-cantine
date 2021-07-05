@@ -1,11 +1,11 @@
 import factory
-from data.models import ProvisionalManager
+from data.models import ManagerInvitation
 from .canteen import CanteenFactory
 
 
-class ProvisionalManagerFactory(factory.django.DjangoModelFactory):
+class ManagerInvitationFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = ProvisionalManager
+        model = ManagerInvitation
 
     canteen = factory.SubFactory(CanteenFactory)
     email = factory.Faker("email")

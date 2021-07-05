@@ -1,14 +1,14 @@
 from rest_framework import serializers
-from data.models import ProvisionalManager
+from data.models import ManagerInvitation
 from .canteen import FullCanteenSerializer
 
 
-class ProvisionalManagerSerializer(serializers.ModelSerializer):
+class ManagerInvitationSerializer(serializers.ModelSerializer):
 
     canteen = FullCanteenSerializer()
 
     class Meta:
-        model = ProvisionalManager
+        model = ManagerInvitation
         fields = (
             "id",
             "email",
