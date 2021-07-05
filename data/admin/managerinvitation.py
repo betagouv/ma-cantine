@@ -1,9 +1,9 @@
 from django.contrib import admin
-from data.models import ProvisionalManager
+from data.models import ManagerInvitation
 
 
-@admin.register(ProvisionalManager)
-class ProvisionalManagerAdmin(admin.ModelAdmin):
+@admin.register(ManagerInvitation)
+class ManagerInvitationAdmin(admin.ModelAdmin):
 
     list_display = (
         "email",
