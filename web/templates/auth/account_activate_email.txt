@@ -1,9 +1,9 @@
 Bonjour,
 
-Merci d'avoir créé un compte Ma Cantine. Pour confirmer votre adresse email, il suffit de copier ce lien sur votre navigateur :
+Pour confirmer l'adresse email de votre compte ma cantine, il suffit de copier ce lien sur votre navigateur :
 
 {{ protocol}}://{{ domain }}{% url 'activate' uidb64=uid token=token %}
 
 Si vous n'êtes pas à l'origine de cette demande vous pouvez ignorer ce message.
 
-L'équipe Ma Cantine
+L'équipe ma cantine
