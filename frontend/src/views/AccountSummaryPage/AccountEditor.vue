@@ -149,7 +149,7 @@ export default {
     handleUnload(e) {
       if (this.hasChanged && !this.bypassLeaveWarning) {
         e.preventDefault()
-        e.returnValue = "Êtes-vous sûr de vouloir quitter cette page ? Votre profil n'a pas été sauvegardé."
+        e.returnValue = "Voulez-vous vraiment quitter cette page ? Votre profil n'a pas été sauvegardé."
       } else {
         delete e["returnValue"]
       }
