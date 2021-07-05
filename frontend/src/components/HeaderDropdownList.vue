@@ -60,18 +60,19 @@ export default {
           to: { name: "TesterParticipation" },
         },
         {
-          text: "Publier",
-          icon: "mdi-publish",
-          authenticationState: true,
-          to: { name: "CanteenInfo" },
-        },
-        {
           text: "Autodiagnostic",
           icon: "mdi-chart-pie",
+          authenticationState: false,
           to: { name: "DiagnosticPage" },
         },
         {
           type: "divider",
+        },
+        {
+          text: "Mesures phares",
+          icon: "mdi-playlist-check",
+          authenticationState: true,
+          to: { name: "KeyMeasuresHome" },
         },
         {
           text: "Nos cantines",
@@ -103,6 +104,16 @@ export default {
           href:
             "https://voxusagers.numerique.gouv.fr/Demarches/2934?&view-mode=formulaire-avis&nd_mode=en-ligne-enti%C3%A8rement&nd_source=button&key=2c212af2116e6bf85d63fee0645f8a10",
           target: "_blank",
+        },
+        {
+          type: "divider",
+          authenticationState: true,
+        },
+        {
+          text: "Me déconnecter",
+          icon: "mdi-exit-to-app",
+          href: "/se-deconnecter",
+          authenticationState: true,
         },
       ],
     }

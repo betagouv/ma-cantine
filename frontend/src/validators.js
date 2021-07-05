@@ -2,7 +2,10 @@ export default {
   notEmpty(input) {
     const errorMessage = "Ce champ ne peut pas être vide"
     if (typeof input === "undefined") return errorMessage
-    if (typeof input === "object" && input === null) return errorMessage
+    if (typeof input === "object") {
+      if (input === null) return errorMessage
+      return Object.keys(input).length > 0 ? true : errorMessage
+    }
     if (typeof input === "boolean") return true
     if (typeof input === "number") return true
     if (typeof input === "string") return input.trim().length > 0 ? true : errorMessage

@@ -11,35 +11,16 @@
       notamment chez les plus jeunes.
     </p>
 
-    <v-card elevation="0" color="secondary lighten-4" class="mt-8 pa-10">
+    <v-card elevation="0" color="secondary lighten-3" class="mt-8 pa-10">
       <v-card-text>
-        <div style="position:relative;padding-bottom:56.25%;">
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/kkQ3ttLFiD8"
-            title="Vidéo présentation d'Egalim"
-            frameborder="0"
-            @load="iframeLoad"
-            style="width:100%;height:100%;position:absolute;left:0px;top:0px;"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
+        <video style="width: 100%; background: #333;" poster="/static/images/video-poster-intro.webp" controls>
+          <source
+            type="video/mp4"
+            src="https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim/videos/presentation-egalim.mp4"
           />
-        </div>
+          Votre navigateur ne peut pas afficher des vidéos.
+        </video>
       </v-card-text>
     </v-card>
   </div>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      iframeIsLoaded: false,
-    }
-  },
-  methods: {
-    iframeLoad() {
-      this.iframeIsLoaded = true
-    },
-  },
-}
-</script>

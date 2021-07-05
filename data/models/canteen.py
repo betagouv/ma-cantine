@@ -3,9 +3,10 @@ from django.contrib.auth import get_user_model
 from data.department_choices import Department
 from data.utils import optimize_image
 from .sector import Sector
+from .softdeletionmodel import SoftDeletionModel
 
 
-class Canteen(models.Model):
+class Canteen(SoftDeletionModel):
     class Meta:
         verbose_name = "cantine"
         verbose_name_plural = "cantines"
@@ -18,7 +19,10 @@ class Canteen(models.Model):
     modification_date = models.DateTimeField(auto_now=True)
 
     name = models.TextField(verbose_name="nom")
+
     city = models.TextField(null=True, blank=True, verbose_name="ville")
+    city_insee_code = models.TextField(null=True, blank=True, verbose_name="Code INSEE")
+
     department = models.TextField(null=True, blank=True, choices=Department.choices, verbose_name="département")
     postal_code = models.CharField(
         max_length=20, null=True, blank=True, verbose_name="code postal"
