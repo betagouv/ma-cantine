@@ -144,7 +144,7 @@ class RegisterUserForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(RegisterUserForm, self).__init__(*args, **kwargs)
         self.label_suffix = ""
-        self.fields["first_name"].widget.attrs.update({"placeholder": "Agnès"})
+        self.fields["first_name"].widget.attrs.update({"placeholder": "Agnès"}, autoFocus=True)
         self.fields["last_name"].widget.attrs.update({"placeholder": "Dufresne"})
         self.fields["username"].widget.attrs.update({"placeholder": "agnes.dufresne"})
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com"})

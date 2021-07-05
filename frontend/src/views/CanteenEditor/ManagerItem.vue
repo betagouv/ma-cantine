@@ -9,7 +9,7 @@
       ></v-list-item-title>
       <v-list-item-subtitle>
         {{ status }}
-        <span v-if="!!manager.title">- {{ manager.email }}</span>
+        <span v-if="!!manager.lastName">- {{ manager.email }}</span>
       </v-list-item-subtitle>
     </v-list-item-content>
   </v-list-item>
