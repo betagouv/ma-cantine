@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="0" class="text-left">
     <v-card-title class="text-h5 font-weight-black">Mon compte</v-card-title>
-    <v-card-subtitle class="mt-n1">Votre nom d'utilisateur : {{ userCopy.username }}.</v-card-subtitle>
+    <v-card-subtitle class="mt-n1">Votre nom d'utilisateur : {{ userCopy.username }}</v-card-subtitle>
     <v-card-text>
       <v-form ref="form" v-model="formIsValid">
         <v-row>
