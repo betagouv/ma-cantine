@@ -3,7 +3,7 @@
     <div class="mt-4">
       <p class="my-2 text-body-1 font-weight-bold">
         Bienvenue {{ loggedUser.firstName }}
-        <v-btn text class="text-decoration-underline text-caption" :to="{ name: 'AccountEditor' }">
+        <v-btn text class="text-decoration-underline text-caption mb-1" :to="{ name: 'AccountEditor' }">
           <v-icon class="mr-1" small>mdi-pencil</v-icon>
           Modifier mon profil
         </v-btn>
