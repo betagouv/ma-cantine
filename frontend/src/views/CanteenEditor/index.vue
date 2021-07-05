@@ -362,7 +362,7 @@ export default {
   },
   watch: {
     search(val) {
-      return val && val != this.canteen.city && this.queryCommunes(val)
+      return val && val !== this.canteen.city && this.queryCommunes(val)
     },
     cityAutocompleteChoice(val) {
       this.canteen.city = val.label
