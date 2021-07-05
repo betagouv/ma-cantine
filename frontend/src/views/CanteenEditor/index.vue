@@ -164,7 +164,6 @@
 
         <v-col cols="12" md="4">
           <p class="body-2 my-2">Mode de gestion</p>
-          <!-- TODO: either make this optional in API or mandatory here -->
           <v-radio-group v-model="canteen.managementType">
             <v-radio
               class="ml-8"
@@ -227,16 +226,11 @@
           />
         </v-list-item-group>
       </v-list>
-      <v-form ref="managerForm" class="d-flex mt-2" v-model="managerFormIsValid">
-        <v-text-field
-          solo
-          v-model="newManagerEmail"
-          label="Adresse mail"
-          validate-on-blur
-          :rules="[validators.isEmail]"
-        ></v-text-field>
-        <!-- TODO: how to allow submit on tapping enter key? -->
-        <v-btn @click="addManager" outlined color="primary darken-1" class="ml-4 mt-1" large>Ajouter</v-btn>
+      <v-form ref="managerForm" class="d-flex mt-2" v-model="managerFormIsValid" v-on:submit.prevent="addManager">
+        <v-text-field solo v-model="newManagerEmail" label="Adresse mail" :rules="[validators.isEmail]"></v-text-field>
+        <v-btn @click="addManager" outlined color="primary darken-1" class="ml-4 mt-1" large>
+          Ajouter
+        </v-btn>
       </v-form>
     </div>
   </div>
