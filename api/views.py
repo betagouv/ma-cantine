@@ -256,7 +256,7 @@ class AddManagerView(APIView):
 
 def _send_invitation_email(manager_invitation):
     try:
-        template = "manager-invitation"
+        template = "auth/manager-invitation"
         context = {
             "canteen": manager_invitation.canteen.name,
             "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",

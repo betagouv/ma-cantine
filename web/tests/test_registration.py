@@ -124,7 +124,7 @@ class TestRegistration(APITestCase):
         }
 
         # activation email must be sent after registration
-        response = self.client.post(reverse("register-user"), payload)
+        response = self.client.post(reverse("register_user"), payload)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(
             mail.outbox[0].subject, "Activation de votre compte Ma Cantine"

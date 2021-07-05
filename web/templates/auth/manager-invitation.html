@@ -1,0 +1,26 @@
+<p>Bonjour,</p>
+
+<p>
+    Quelqu'un vous a invité à gérer la cantine <b> {{ canteen }} </b> sur le plateforme ma cantine.
+    Si vous voulez accepter cette invitation, vous devrez créer un compte :
+</p>
+
+<p style="margin: 30px 0px;">
+    <a
+    href="{{ protocol}}://{{ domain }}{% url 'register_user' %}"
+    style="background: #139f43;padding: 10px 40px; border: none; border-radius: 3px; color: white; box-shadow: 1px 1px 2px 0px #333; cursor: pointer; text-decoration: none;">
+        Créer mon compte
+    </a>
+  </p>
+
+<p>En cas de difficultés, vous pouvez copier ce lien directement dans votre navigateur :</p>
+
+<p>{{ protocol}}://{{ domain }}{% url 'register_user' %}</p>
+
+<p>
+    Si vous avez déjà un compte, vous avez réçu ce message en erreur, ou si vous avez des autres questions,
+    vous pouvez repondre directement à ce message et un membre de notre équipe va vous repondre le plus vite que
+    possible.
+</p>
+
+<p>L'équipe ma cantine</p>
