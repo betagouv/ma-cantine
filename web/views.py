@@ -131,7 +131,7 @@ class AccountActivationView(View):
         if user and user.email_confirmed:
             messages.info(
                 request,
-                "Votre compte est bien active, vous pouvez vous identifier.",
+                "Votre adresse email a bien été validé, vous pouvez vous identifier.",
             )
             return redirect(reverse_lazy("login"))
         if user is not None and tokens.default_token_generator.check_token(user, token):
@@ -160,7 +160,7 @@ def _login_and_send_activation_email(username, request):
             "domain": settings.HOSTNAME,
         }
         send_mail(
-            subject="Activation de votre compte Ma Cantine",
+            subject="Confirmation de votre adresse email - ma cantine",
             message=loader.render_to_string(text_template, context),
             from_email=settings.DEFAULT_FROM_EMAIL,
             html_message=loader.render_to_string(html_template, context),

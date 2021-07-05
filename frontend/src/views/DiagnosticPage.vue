@@ -109,7 +109,7 @@ export default {
   },
   computed: {
     initialDiagnostics() {
-      let diagnostics = this.isAuthenticated ? this.serverDiagnostics : this.localDiagnostics
+      let diagnostics = this.$store.getters.getLocalDiagnostics()
       return {
         previous:
           diagnostics.find((x) => x.year === 2019) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
@@ -120,15 +120,6 @@ export default {
         provisionalYear2:
           diagnostics.find((x) => x.year === 2022) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2022 }),
       }
-    },
-    serverDiagnostics() {
-      return this.$store.state.userCanteens[0].diagnostics
-    },
-    localDiagnostics() {
-      return this.$store.getters.getLocalDiagnostics()
-    },
-    isAuthenticated() {
-      return !!this.$store.state.loggedUser
     },
     showModal: {
       get() {

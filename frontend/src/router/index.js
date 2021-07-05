@@ -4,10 +4,6 @@ import store from "@/store/index"
 import LandingPage from "@/views/LandingPage"
 import DiagnosticPage from "@/views/DiagnosticPage"
 import KeyMeasuresPage from "@/views/KeyMeasuresPage"
-import PublishPage from "@/views/PublishPage"
-import CanteenInfo from "@/views/PublishPage/CanteenInfo"
-import PublishMeasurePage from "@/views/PublishPage/PublishMeasurePage"
-import SubmitPublicationPage from "@/views/PublishPage/SubmitPublicationPage"
 import KeyMeasuresHome from "@/views/KeyMeasuresPage/KeyMeasuresHome"
 import KeyMeasurePage from "@/views/KeyMeasuresPage/KeyMeasurePage"
 import GeneratePosterPage from "@/views/GeneratePosterPage"
@@ -16,6 +12,9 @@ import CanteensHome from "@/views/CanteensPage/CanteensHome"
 import CanteenPage from "@/views/CanteensPage/CanteenPage"
 import LegalNotices from "@/views/LegalNotices"
 import AccountSummaryPage from "@/views/AccountSummaryPage"
+import AccountEditor from "@/views/AccountSummaryPage/AccountEditor"
+import PasswordChangeEditor from "@/views/AccountSummaryPage/PasswordChangeEditor"
+import AccountDeletion from "@/views/AccountSummaryPage/AccountDeletion"
 import BlogsPage from "@/views/BlogsPage"
 import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
@@ -49,6 +48,24 @@ const routes = [
       title: "Mon compte",
       authenticationRequired: true,
     },
+    redirect: { name: "AccountEditor" },
+    children: [
+      {
+        path: "profil",
+        name: "AccountEditor",
+        component: AccountEditor,
+      },
+      {
+        path: "mot-de-passe",
+        name: "PasswordChange",
+        component: PasswordChangeEditor,
+      },
+      {
+        path: "supprimer-mon-compte",
+        name: "AccountDeletion",
+        component: AccountDeletion,
+      },
+    ],
   },
   {
     path: "/diagnostic",
@@ -56,6 +73,9 @@ const routes = [
     component: DiagnosticPage,
     meta: {
       title: "M'auto-évaluer",
+    },
+    beforeEnter: (_to, _from, next) => {
+      store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
     },
   },
   {
@@ -78,43 +98,21 @@ const routes = [
         path: "",
         name: "KeyMeasuresHome",
         component: KeyMeasuresHome,
+        beforeEnter: (route, _, next) => {
+          store.state.loggedUser
+            ? next({
+                name: "KeyMeasurePage",
+                params: {
+                  id: "qualite-des-produits",
+                },
+              })
+            : next()
+        },
       },
       {
         path: ":id",
         name: "KeyMeasurePage",
         component: KeyMeasurePage,
-        props: true,
-      },
-    ],
-  },
-  {
-    path: "/publication",
-    name: "PublishPage",
-    component: PublishPage,
-    meta: {
-      authenticationRequired: true,
-    },
-    children: [
-      {
-        path: "",
-        name: "CanteenInfo",
-        component: CanteenInfo,
-        meta: {
-          title: "Cantine information - Publication",
-        },
-      },
-      {
-        path: "validation",
-        name: "SubmitPublicationPage",
-        component: SubmitPublicationPage,
-        meta: {
-          title: "Validation - Publication",
-        },
-      },
-      {
-        path: ":id",
-        name: "PublishMeasurePage",
-        component: PublishMeasurePage,
         props: true,
       },
     ],

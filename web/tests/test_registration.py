@@ -31,13 +31,16 @@ class TestRegistration(APITestCase):
             "city": "Lyon",
             "sectors": [sector.id,],
             "daily_meal_count": 100,
+            "postal_code": "123123",
+            "city_insee_code": "123123",
+            "autocomplete": "Lyon",
         }
 
         # activation email must be sent after registration
         response = self.client.post(reverse("register"), payload)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(
-            mail.outbox[0].subject, "Activation de votre compte Ma Cantine"
+            mail.outbox[0].subject, "Confirmation de votre adresse email - ma cantine"
         )
 
         # Upon click of the activation link we go directly to the Vue app
@@ -72,6 +75,9 @@ class TestRegistration(APITestCase):
             "city": "Lyon",
             "sectors": [sector.id,],
             "daily_meal_count": 100,
+            "postal_code": "123123",
+            "city_insee_code": "123123",
+            "autocomplete": "Lyon",
         }
 
         self.client.post(reverse("register"), payload)
@@ -98,6 +104,8 @@ class TestRegistration(APITestCase):
             "cgu_approved": True,
             "email": "tester@example.com",
             "username": "tester@example.com",
+            "postal_code": "123123",
+            "city_insee_code": "123123",
         }
         response = self.client.post(reverse("register"), payload)
         self.assertFormError(
@@ -127,7 +135,7 @@ class TestRegistration(APITestCase):
         response = self.client.post(reverse("register_user"), payload)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(
-            mail.outbox[0].subject, "Activation de votre compte Ma Cantine"
+            mail.outbox[0].subject, "Confirmation de votre adresse email - ma cantine"
         )
 
         # Upon click of the activation link we go directly to the Vue app
