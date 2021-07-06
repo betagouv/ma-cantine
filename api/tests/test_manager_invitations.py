@@ -15,7 +15,7 @@ class TestManagerInvitationApi(APITestCase):
         """
         When calling this API unauthenticated we expect a 403
         """
-        response = self.client.post(reverse("add_manager", kwargs={"canteen_pk": 999}))
+        response = self.client.post(reverse("add_manager"), {"canteenId": 999})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -23,10 +23,11 @@ class TestManagerInvitationApi(APITestCase):
         """
         When calling this API on a nonexistent canteen we expect a 404
         """
-        payload = {"email": "test@example.com"}
-        response = self.client.post(
-            reverse("add_manager", kwargs={"canteen_pk": 999}), payload
-        )
+        payload = {
+            "canteenId": 999,
+            "email": "test@example.com"
+        }
+        response = self.client.post(reverse("add_manager"), payload)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         with self.assertRaises(ManagerInvitation.DoesNotExist):
             ManagerInvitation.objects.get(canteen__id=999)
@@ -38,10 +39,11 @@ class TestManagerInvitationApi(APITestCase):
         we expect a 404
         """
         canteen = CanteenFactory.create()
-        payload = {"email": "test@example.com"}
-        response = self.client.post(
-            reverse("add_manager", kwargs={"canteen_pk": canteen.id}), payload
-        )
+        payload = {
+            "canteenId": canteen.id,
+            "email": "test@example.com"
+        }
+        response = self.client.post(reverse("add_manager"), payload)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         with self.assertRaises(ManagerInvitation.DoesNotExist):
             ManagerInvitation.objects.get(canteen__id=canteen.id)
@@ -56,10 +58,11 @@ class TestManagerInvitationApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        payload = {"email": "test@example.com"}
-        response = self.client.post(
-            reverse("add_manager", kwargs={"canteen_pk": canteen.id}), payload
-        )
+        payload = {
+            "canteenId": canteen.id,
+            "email": "test@example.com"
+        }
+        response = self.client.post(reverse("add_manager"), payload)
         body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -82,13 +85,12 @@ class TestManagerInvitationApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        payload = {"email": "test@example.com"}
-        self.client.post(
-            reverse("add_manager", kwargs={"canteen_pk": canteen.id}), payload
-        )
-        response = self.client.post(
-            reverse("add_manager", kwargs={"canteen_pk": canteen.id}), payload
-        )
+        payload = {
+            "canteenId": canteen.id,
+            "email": "test@example.com"
+        }
+        self.client.post(reverse("add_manager"), payload)
+        response = self.client.post(reverse("add_manager"), payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue("managers" in response.json())
@@ -107,21 +109,23 @@ class TestManagerInvitationApi(APITestCase):
         canteen2 = CanteenFactory.create()
         canteen1.managers.add(authenticate.user)
         canteen2.managers.add(authenticate.user)
-        payload1 = {"email": "test1@example.com"}
-        payload2 = {"email": "test2@example.com"}
 
-        self.client.post(
-            reverse("add_manager", kwargs={"canteen_pk": canteen1.id}), payload1
-        )
-        self.client.post(
-            reverse("add_manager", kwargs={"canteen_pk": canteen1.id}), payload2
-        )
-        self.client.post(
-            reverse("add_manager", kwargs={"canteen_pk": canteen2.id}), payload1
-        )
-        self.client.post(
-            reverse("add_manager", kwargs={"canteen_pk": canteen2.id}), payload2
-        )
+        self.client.post(reverse("add_manager"), {
+            "canteenId": canteen1.id,
+            "email": "test1@example.com"
+        })
+        self.client.post(reverse("add_manager"), {
+            "canteenId": canteen1.id,
+            "email": "test2@example.com"
+        })
+        self.client.post(reverse("add_manager"), {
+            "canteenId": canteen2.id,
+            "email": "test1@example.com"
+        })
+        self.client.post(reverse("add_manager"), {
+            "canteenId": canteen2.id,
+            "email": "test2@example.com"
+        })
 
         pms = ManagerInvitation.objects.all()
         self.assertEqual(len(pms), 4)
@@ -136,11 +140,12 @@ class TestManagerInvitationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
         other_user = UserFactory.create()
-        payload = {"email": other_user.email}
+        payload = {
+            "canteenId": canteen.id,
+            "email": other_user.email
+        }
 
-        response = self.client.post(
-            reverse("add_manager", kwargs={"canteen_pk": canteen.id}), payload
-        )
+        response = self.client.post(reverse("add_manager"), payload)
         body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

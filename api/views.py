@@ -284,7 +284,7 @@ class AddManagerView(APIView):
         try:
             email = request.data.get("email")
             validate_email(email)
-            canteen_id = kwargs["canteen_pk"]
+            canteen_id = request.data.get("canteen_id")
             canteen = request.user.canteens.get(id=canteen_id)
             try:
                 user = get_user_model().objects.get(email=email)

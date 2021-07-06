@@ -39,7 +39,7 @@ urlpatterns = {
     ),
     path("passwordChange/", ChangePasswordView.as_view(), name="change_password"),
     path(
-        "addManager/<int:canteen_pk>",
+        "addManager/",
         AddManagerView.as_view(),
         name="add_manager",
     ),
