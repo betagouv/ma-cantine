@@ -24,7 +24,7 @@ class LoggedUserSerializer(serializers.ModelSerializer):
         )
 
 
-class CanteenManager(serializers.ModelSerializer):
+class CanteenManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         read_only_fields = (

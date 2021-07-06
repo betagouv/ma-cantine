@@ -5,8 +5,8 @@ from .canteen import Canteen
 
 class ManagerInvitation(models.Model):
     class Meta:
-        verbose_name = "nouveau gestionnaire"
-        verbose_name_plural = "nouveaux gestionnaires"
+        verbose_name = "invitation de gestion"
+        verbose_name_plural = "invitations de gestion"
         constraints = [
             models.UniqueConstraint(
                 fields=["canteen", "email"], name="deduplicate_manager"

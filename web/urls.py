@@ -79,7 +79,7 @@ urlpatterns = [
     ),
     # Views allowing the creation of an account
     path("creer-mon-compte", RegisterView.as_view(), name="register"),
-    path("compte-creation", RegisterUserView.as_view(), name="register_user"),
+    path("nouvel-utilisateur", RegisterUserView.as_view(), name="register_user"),
     path(
         "email-de-confirmation",
         ActivationTokenView.as_view(),
