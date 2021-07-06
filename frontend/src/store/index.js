@@ -362,10 +362,10 @@ export default new Vuex.Store({
     },
 
     addManager(context, { canteenId, email }) {
-      return fetch(`/api/v1/addManager/${canteenId}`, {
+      return fetch(`/api/v1/addManager/`, {
         method: "POST",
         headers,
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ canteenId, email }),
       })
         .then(verifyResponse)
         .then((response) => {
