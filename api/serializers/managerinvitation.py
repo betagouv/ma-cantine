@@ -6,7 +6,9 @@ class ManagerInvitationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ManagerInvitation
+        read_only_fields = (
+            "email",
+        )
         fields = (
-            "id",
             "email",
         )

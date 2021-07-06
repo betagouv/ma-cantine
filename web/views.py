@@ -49,7 +49,7 @@ class RegisterUserView(FormView):
     """
 
     form_class = RegisterUserForm
-    template_name = "auth/register-user.html"
+    template_name = "auth/register_user.html"
 
     def form_valid(self, form):
         form.save()

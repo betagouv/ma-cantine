@@ -34,8 +34,8 @@ class TestCanteenApi(APITestCase):
             self.assertFalse(any(x["id"] == private_canteen.id for x in body))
 
         for recieved_canteen in body:
-            self.assertFalse("managers" in list(recieved_canteen))
-            self.assertFalse("managerInvitations" in list(recieved_canteen))
+            self.assertFalse("managers" in recieved_canteen)
+            self.assertFalse("managerInvitations" in recieved_canteen)
 
     def test_get_canteens_unauthenticated(self):
         """
@@ -72,7 +72,7 @@ class TestCanteenApi(APITestCase):
 
         for recieved_canteen in body:
             self.assertEqual(recieved_canteen["managers"][0]["email"], user.email)
-            self.assertTrue("email" in list(recieved_canteen["managerInvitations"][0]))
+            self.assertTrue("email" in recieved_canteen["managerInvitations"][0])
 
         for other_canteen in other_canteens:
             self.assertFalse(any(x["id"] == other_canteen.id for x in body))

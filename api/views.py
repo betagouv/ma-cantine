@@ -22,7 +22,7 @@ from api.serializers import (
     FullCanteenSerializer,
     BlogPostSerializer,
     PasswordSerializer,
-    CanteenManagerSerializer
+    ManagingTeamSerializer
 )
 from data.models import Canteen, BlogPost, Sector, ManagerInvitation
 from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
@@ -291,7 +291,7 @@ class AddManagerView(APIView):
                 pm = ManagerInvitation(canteen_id=canteen.id, email=email)
                 pm.save()
                 _send_invitation_email(pm)
-            return JsonResponse(CanteenManagerSerializer(canteen).data, status=status.HTTP_200_OK)
+            return JsonResponse(ManagingTeamSerializer(canteen).data, status=status.HTTP_200_OK)
         except ValidationError:
             return JsonResponse(
                 {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST

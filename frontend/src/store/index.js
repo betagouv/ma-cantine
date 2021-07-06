@@ -77,7 +77,6 @@ export default new Vuex.Store({
         let userCanteen = state.userCanteens[canteenIndex]
         userCanteen.managers = data.managers
         userCanteen.managerInvitations = data.manager_invitations
-        state.userCanteens.splice(canteenIndex, 1, userCanteen)
       }
     },
     DELETE_USER_CANTEEN(state, canteenId) {
