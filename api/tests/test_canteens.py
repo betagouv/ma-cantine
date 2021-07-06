@@ -3,7 +3,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory
+from data.factories import CanteenFactory, ManagerInvitationFactory
 from data.models import Canteen
 from .utils import authenticate
 
@@ -35,6 +35,7 @@ class TestCanteenApi(APITestCase):
 
         for recieved_canteen in body:
             self.assertFalse("managers" in list(recieved_canteen))
+            self.assertFalse("managerInvitations" in list(recieved_canteen))
 
     def test_get_canteens_unauthenticated(self):
         """
@@ -51,8 +52,8 @@ class TestCanteenApi(APITestCase):
         canteens (even if they are not published).
         """
         user_canteens = [
-            CanteenFactory.create(),
-            CanteenFactory.create(),
+            ManagerInvitationFactory.create().canteen,
+            ManagerInvitationFactory.create().canteen,
         ]
         other_canteens = [
             CanteenFactory.create(),
@@ -71,6 +72,7 @@ class TestCanteenApi(APITestCase):
 
         for recieved_canteen in body:
             self.assertEqual(recieved_canteen["managers"][0]["email"], user.email)
+            self.assertTrue("email" in list(recieved_canteen["managerInvitations"][0]))
 
         for other_canteen in other_canteens:
             self.assertFalse(any(x["id"] == other_canteen.id for x in body))

@@ -11,43 +11,6 @@ from .utils import authenticate
 
 
 class TestManagerInvitationApi(APITestCase):
-    def test_unauthenticated_get_manager_invitations(self):
-        """
-        Expect 403 if attempt to get managers for canteen when not logged in
-        """
-        response = self.client.get(
-            reverse("manager_invitations", kwargs={"canteen_pk": 1})
-        )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_get_manager_invitations(self):
-        """
-        Return manager invitations for canteen if a manager of the canteen
-        """
-        pm1 = ManagerInvitationFactory.create()
-        pm1.canteen.managers.add(authenticate.user)
-        ManagerInvitationFactory.create()
-        response = self.client.get(
-            reverse("manager_invitations", kwargs={"canteen_pk": pm1.canteen_id})
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        body = response.json()
-        self.assertEqual(len(body), 1)
-        self.assertEqual(body[0]["email"], pm1.email)
-
-    @authenticate
-    def test_unauthorised_get_manager_invitations(self):
-        """
-        Expect 404 if attempt to get managers for canteen not a manager of the canteen
-        """
-        pm = ManagerInvitationFactory.create()
-        response = self.client.get(
-            reverse("manager_invitations", kwargs={"canteen_pk": pm.canteen_id})
-        )
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
     def test_unauthenticated_manager_call(self):
         """
         When calling this API unauthenticated we expect a 403
@@ -97,6 +60,7 @@ class TestManagerInvitationApi(APITestCase):
         response = self.client.post(
             reverse("add_manager", kwargs={"canteen_pk": canteen.id}), payload
         )
+        body = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -106,6 +70,9 @@ class TestManagerInvitationApi(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], "test@example.com")
         self.assertEqual(mail.outbox[0].from_email, "test-from@example.com")
+
+        self.assertEqual(body["managers"][0]["email"], authenticate.user.email)
+        self.assertEqual(body["manager_invitations"][0]["email"], "test@example.com")
 
     @authenticate
     def test_authenticated_create_duplicate_manager_invitation(self):
@@ -174,9 +141,14 @@ class TestManagerInvitationApi(APITestCase):
         response = self.client.post(
             reverse("add_manager", kwargs={"canteen_pk": canteen.id}), payload
         )
+        body = response.json()
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(canteen.managers.all().get(id=other_user.id).id, other_user.id)
         with self.assertRaises(ManagerInvitation.DoesNotExist):
             ManagerInvitation.objects.get(email=other_user.email)
         self.assertEqual(len(mail.outbox), 0)
+
+        self.assertEqual(len(body["managers"]), canteen.managers.all().count())
+        self.assertEqual(len(body["manager_invitations"]), canteen.managerinvitation_set.all().count())
 

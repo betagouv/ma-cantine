@@ -22,7 +22,7 @@ from api.serializers import (
     FullCanteenSerializer,
     BlogPostSerializer,
     PasswordSerializer,
-    ManagerInvitationSerializer,
+    CanteenManagerSerializer
 )
 from data.models import Canteen, BlogPost, Sector, ManagerInvitation
 from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
@@ -287,12 +287,11 @@ class AddManagerView(APIView):
             try:
                 user = get_user_model().objects.get(email=email)
                 canteen.managers.add(user)
-                # TODO: send notification?
             except get_user_model().DoesNotExist:
                 pm = ManagerInvitation(canteen_id=canteen.id, email=email)
                 pm.save()
                 _send_invitation_email(pm)
-            return JsonResponse({}, status=status.HTTP_200_OK)
+            return JsonResponse(CanteenManagerSerializer(canteen).data, status=status.HTTP_200_OK)
         except ValidationError:
             return JsonResponse(
                 {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
@@ -327,17 +326,3 @@ def _send_invitation_email(manager_invitation):
         )
     except Exception:
         raise Exception("Error occurred : the mail could not be sent.")
-
-
-class ManagerInvitationsView(ListAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    model = ManagerInvitation
-    serializer_class = ManagerInvitationSerializer
-
-    def get_queryset(self):
-        canteen_id = self.request.parser_context.get("kwargs").get("canteen_pk")
-        try:
-            self.request.user.canteens.get(id=canteen_id)
-        except Canteen.DoesNotExist:
-            raise NotFound()
-        return ManagerInvitation.objects.filter(canteen_id=canteen_id)
