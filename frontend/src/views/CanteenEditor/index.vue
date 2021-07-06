@@ -196,7 +196,7 @@
             status="Compte créé"
           />
           <ManagerItem
-            v-for="manager in invitedManagers"
+            v-for="manager in managerInvitations"
             :key="manager.email"
             :manager="manager"
             icon="mdi-account-clock-outline"
@@ -206,8 +206,21 @@
         </v-list-item-group>
       </v-list>
       <v-form ref="managerForm" class="d-flex mt-2" v-model="managerFormIsValid" v-on:submit.prevent="addManager">
-        <v-text-field solo v-model="newManagerEmail" label="Adresse mail" :rules="[validators.isEmail]"></v-text-field>
-        <v-btn @click="addManager" outlined color="primary darken-1" class="ml-4 mt-1" large>
+        <v-text-field
+          solo
+          v-model="newManagerEmail"
+          label="Adresse mail"
+          :rules="[validators.isEmailOrEmpty]"
+          validate-on-blur
+        ></v-text-field>
+        <v-btn
+          @click="addManager"
+          outlined
+          color="primary darken-1"
+          class="ml-4 mt-1"
+          large
+          :disabled="!newManagerEmail"
+        >
           Ajouter
         </v-btn>
       </v-form>
@@ -260,8 +273,6 @@ export default {
           value: "conceded",
         },
       ],
-      // TODO: make this computed
-      invitedManagers: [],
       managerFormIsValid: true,
       newManagerEmail: undefined,
     }
@@ -281,7 +292,7 @@ export default {
     },
     hasChanged() {
       if (this.originalCanteen) {
-        const diff = getObjectDiff(this.originalCanteen, this.canteen)
+        const diff = getObjectDiff(this.originalCanteen, this.canteen, ["managers", "managerInvitations"])
         return Object.keys(diff).length > 0
       } else {
         return Object.keys(this.canteen).length > 0
@@ -290,6 +301,9 @@ export default {
     managers() {
       return this.originalCanteen.managers
     },
+    managerInvitations() {
+      return this.originalCanteen.managerInvitations
+    },
   },
   beforeMount() {
     if (this.isNewCanteen) return
@@ -297,9 +311,6 @@ export default {
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
       this.originalCanteenIsPublished = canteen.dataIsPublic
-      fetch(`/api/v1/managerInvitations/${canteen.id}`)
-        .then((response) => response.json())
-        .then((json) => (this.invitedManagers = json))
       const initialCityAutocomplete = {
         text: canteen.city,
         value: {
@@ -421,13 +432,11 @@ export default {
             message: `${this.newManagerEmail} a bien été ajouté`,
             status: "success",
           })
-          // avoid calling the GET API again for speed
-          // TODO: behaviour when manager added with existing account?
-          this.invitedManagers.push({ email: this.newManagerEmail })
           this.newManagerEmail = undefined
         })
         .catch(() => {
           this.$store.dispatch("notifyServerError")
+          this.newManagerEmail = undefined
         })
     },
   },

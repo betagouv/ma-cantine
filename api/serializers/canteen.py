@@ -3,6 +3,7 @@ from drf_base64.fields import Base64ImageField
 from data.models import Canteen, Sector
 from .diagnostic import DiagnosticSerializer
 from .user import CanteenManager
+from .managerinvitation import ManagerInvitationSerializer
 
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
@@ -38,7 +39,10 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         many=True, read_only=True, source="diagnostic_set"
     )
     main_image = Base64ImageField(required=False, allow_null=True)
-    managers = CanteenManager(many=True)
+    managers = CanteenManager(many=True, read_only=True)
+    manager_invitations = ManagerInvitationSerializer(
+        many=True, read_only=True, source="managerinvitation_set"
+    )
 
     class Meta:
         model = Canteen
@@ -57,4 +61,21 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "department",
             "main_image",
             "managers",
+            "manager_invitations"
+        )
+
+
+class CanteenManagerSerializer(serializers.ModelSerializer):
+
+    managers = CanteenManager(many=True, read_only=True)
+    manager_invitations = ManagerInvitationSerializer(
+        many=True, read_only=True, source="managerinvitation_set"
+    )
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "id",
+            "managers",
+            "manager_invitations"
         )

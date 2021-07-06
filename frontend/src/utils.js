@@ -70,7 +70,7 @@ const arraysMatch = (arr1, arr2) => {
   return true
 }
 
-export const getObjectDiff = (obj1, obj2) => {
+export const getObjectDiff = (obj1, obj2, keysToIgnore) => {
   if (!obj2 || Object.prototype.toString.call(obj2) !== "[object Object]") {
     return obj1
   }
@@ -123,16 +123,21 @@ export const getObjectDiff = (obj1, obj2) => {
     }
   }
 
+  keysToIgnore = keysToIgnore || []
   for (key in obj1) {
-    if (Object.prototype.hasOwnProperty.call(obj1, key)) {
-      compare(obj1[key], obj2[key], key)
+    if (keysToIgnore.indexOf(key) === -1) {
+      if (Object.prototype.hasOwnProperty.call(obj1, key)) {
+        compare(obj1[key], obj2[key], key)
+      }
     }
   }
 
   for (key in obj2) {
-    if (Object.prototype.hasOwnProperty.call(obj2, key)) {
-      if (!obj1[key] && obj1[key] !== obj2[key]) {
-        diffs[key] = obj2[key]
+    if (keysToIgnore.indexOf(key) === -1) {
+      if (Object.prototype.hasOwnProperty.call(obj2, key)) {
+        if (!obj1[key] && obj1[key] !== obj2[key]) {
+          diffs[key] = obj2[key]
+        }
       }
     }
   }
