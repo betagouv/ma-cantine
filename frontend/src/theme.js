@@ -3,7 +3,8 @@ export default {
   themes: {
     light: {
       primary: {
-        base: "#169b62",
+        // TODO: readjust colours according to new base
+        base: "#0c7f46",
         lighten5: "#e3f3ec",
         lighten4: "#b9e1d0",
         lighten3: "#8bcdb1",

@@ -21,7 +21,7 @@
                 validate-on-blur
                 :rules="[validators.isEmail]"
               ></v-text-field>
-              <v-btn @click="subscribe" outlined color="primary darken-1" class="ml-4 mt-1" large>Valider</v-btn>
+              <v-btn @click="subscribe" outlined color="primary" class="ml-4 mt-1" large>Valider</v-btn>
             </v-form>
           </v-card-text>
         </v-card>
