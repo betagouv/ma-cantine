@@ -1,11 +1,13 @@
 Bonjour,
 
-Quelqu'un vous a invité à gérer la cantine "{{ canteen }}" sur le plateforme ma cantine. Si vous voulez accepter cette invitation, vous devrez créer un compte.
+L'équipe de "{{ canteen }}" vous invite à les rejoindre sur la plateforme ma cantine.
 
-Pour créer votre compte, il suffit de copier ce lien sur votre navigateur :
+Pour accepter cette invitation il suffit de créer un compte sur :
 
 {{ protocol}}://{{ domain }}{% url 'register_user' %}
 
-Si vous avez déjà un compte, vous avez réçu ce message en erreur, ou si vous avez des autres questions, vous pouvez repondre directement à ce message et un membre de notre équipe va vous repondre le plus vite que possible.
+Ma cantine vous permet de créer des diagnostiques sur les mesures de la loi EGAlim ainsi que de découvrir des ressources pour les acteurs et actrices de la restauration collective. 
+
+Si vous avez déjà un compte ou que vous pensez avoir reçu ce message par erreur vous pouvez nous contacter en répondant directement à ce message.
 
 L'équipe ma cantine
