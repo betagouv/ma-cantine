@@ -72,7 +72,7 @@ class TestManagerInvitationApi(APITestCase):
         self.assertEqual(mail.outbox[0].from_email, "test-from@example.com")
 
         self.assertEqual(body["managers"][0]["email"], authenticate.user.email)
-        self.assertEqual(body["manager_invitations"][0]["email"], "test@example.com")
+        self.assertEqual(body["managerInvitations"][0]["email"], "test@example.com")
 
     @authenticate
     def test_authenticated_create_duplicate_manager_invitation(self):
@@ -86,12 +86,12 @@ class TestManagerInvitationApi(APITestCase):
         self.client.post(
             reverse("add_manager", kwargs={"canteen_pk": canteen.id}), payload
         )
-        with transaction.atomic():
-            response = self.client.post(
-                reverse("add_manager", kwargs={"canteen_pk": canteen.id}), payload
-            )
+        response = self.client.post(
+            reverse("add_manager", kwargs={"canteen_pk": canteen.id}), payload
+        )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue("managers" in response.json())
 
         pms = ManagerInvitation.objects.filter(canteen__id=canteen.id)
         self.assertEqual(len(pms), 1)
@@ -150,5 +150,5 @@ class TestManagerInvitationApi(APITestCase):
         self.assertEqual(len(mail.outbox), 0)
 
         self.assertEqual(len(body["managers"]), canteen.managers.all().count())
-        self.assertEqual(len(body["manager_invitations"]), canteen.managerinvitation_set.all().count())
+        self.assertEqual(len(body["managerInvitations"]), canteen.managerinvitation_set.all().count())
 

@@ -9,7 +9,7 @@ class ManagerInvitation(models.Model):
         verbose_name_plural = "invitations de gestion"
         constraints = [
             models.UniqueConstraint(
-                fields=["canteen", "email"], name="deduplicate_manager"
+                fields=["canteen", "email"], name="deduplicate_invitation"
             ),
         ]
 

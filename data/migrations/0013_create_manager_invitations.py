@@ -27,6 +27,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='managerinvitation',
-            constraint=models.UniqueConstraint(fields=('canteen', 'email'), name='deduplicate_manager'),
+            constraint=models.UniqueConstraint(fields=('canteen', 'email'), name='deduplicate_invitation'),
         ),
     ]

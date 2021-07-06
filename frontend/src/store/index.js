@@ -76,7 +76,7 @@ export default new Vuex.Store({
       if (canteenIndex > -1) {
         let userCanteen = state.userCanteens[canteenIndex]
         userCanteen.managers = data.managers
-        userCanteen.managerInvitations = data.manager_invitations
+        userCanteen.managerInvitations = data.managerInvitations
       }
     },
     DELETE_USER_CANTEEN(state, canteenId) {
