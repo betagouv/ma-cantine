@@ -2,6 +2,7 @@ from data.models.diagnostic import Diagnostic
 import json
 from django.contrib.auth import get_user_model, update_session_auth_hash, tokens
 from django.conf import settings
+from django.db import transaction
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.template import loader
@@ -27,6 +28,7 @@ from api.serializers import (
 from data.models import Canteen, BlogPost, Sector, ManagerInvitation
 from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
 import sib_api_v3_sdk
+from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 
 
 class LoggedUserView(RetrieveAPIView):
@@ -288,10 +290,11 @@ class AddManagerView(APIView):
                 user = get_user_model().objects.get(email=email)
                 canteen.managers.add(user)
             except get_user_model().DoesNotExist:
-                pm = ManagerInvitation(canteen_id=canteen.id, email=email)
-                pm.save()
+                with transaction.atomic():
+                    pm = ManagerInvitation(canteen_id=canteen.id, email=email)
+                    pm.save()
                 _send_invitation_email(pm)
-            return JsonResponse(ManagingTeamSerializer(canteen).data, status=status.HTTP_200_OK)
+            return _respond_with_team(canteen)
         except ValidationError:
             return JsonResponse(
                 {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
@@ -301,12 +304,18 @@ class AddManagerView(APIView):
                 {"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND
             )
         except IntegrityError:
-            return JsonResponse({}, status=status.HTTP_200_OK)
+            return _respond_with_team(canteen)
         except Exception:
             return JsonResponse(
                 {"error": "An error has ocurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+def _respond_with_team(canteen):
+    data = ManagingTeamSerializer(canteen).data
+    camel_case_bytes = CamelCaseJSONRenderer().render(data)
+    json_data = json.loads(camel_case_bytes.decode('utf-8'))
+    return JsonResponse(json_data, status=status.HTTP_200_OK)
 
 def _send_invitation_email(manager_invitation):
     try:
