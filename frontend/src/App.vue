@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-app>
-      <Header />
+      <AppHeader />
 
       <v-main style="width: 100%">
         <v-container fluid :fill-height="!initialDataLoaded">
@@ -14,23 +14,23 @@
         </v-container>
       </v-main>
 
-      <Footer />
+      <AppFooter />
       <NotificationSnackbar />
     </v-app>
   </div>
 </template>
 
 <script>
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
+import AppHeader from "@/components/AppHeader"
+import AppFooter from "@/components/AppFooter"
 import NotificationSnackbar from "@/components/NotificationSnackbar"
 import { getObjectDiff } from "@/utils"
 import Constants from "@/constants"
 
 export default {
   components: {
-    Header,
-    Footer,
+    AppHeader,
+    AppFooter,
     NotificationSnackbar,
   },
   computed: {

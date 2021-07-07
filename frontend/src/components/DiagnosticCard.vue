@@ -1,23 +1,25 @@
 <template>
   <v-card
-    :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.smAndDown }"
+    :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.xsOnly }"
     :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
   >
     <v-sheet
       color="grey lighten-4"
-      :width="$vuetify.breakpoint.smAndDown ? 'auto' : 150"
+      :width="$vuetify.breakpoint.xsOnly ? 'auto' : 150"
       class="d-flex flex-column justify-center px-4"
     >
       <div class="text-h3 grey--text font-weight-black text-center">{{ diagnostic.year }}</div>
     </v-sheet>
-    <v-col cols="12" md="6" class="py-0">
-      <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
-      <v-card-subtitle class="caption">{{ dataStatus }}</v-card-subtitle>
-    </v-col>
-    <v-spacer></v-spacer>
-    <v-col cols="12" md="4" class="py-0">
-      <v-card-text class="align-self-center">{{ dateText }}</v-card-text>
-    </v-col>
+    <v-row>
+      <v-col cols="7">
+        <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
+        <v-card-subtitle class="caption">{{ dataStatus }}</v-card-subtitle>
+      </v-col>
+      <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
+      <v-col cols="5" class="align-self-center">
+        <v-card-text>{{ dateText }}</v-card-text>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 
