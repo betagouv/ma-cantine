@@ -3,7 +3,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory
+from data.factories import CanteenFactory, ManagerInvitationFactory
 from data.models import Canteen
 from .utils import authenticate
 
@@ -33,6 +33,10 @@ class TestCanteenApi(APITestCase):
         for private_canteen in private_canteens:
             self.assertFalse(any(x["id"] == private_canteen.id for x in body))
 
+        for recieved_canteen in body:
+            self.assertFalse("managers" in recieved_canteen)
+            self.assertFalse("managerInvitations" in recieved_canteen)
+
     def test_get_canteens_unauthenticated(self):
         """
         If the user is not authenticated, they will not be able to
@@ -48,15 +52,16 @@ class TestCanteenApi(APITestCase):
         canteens (even if they are not published).
         """
         user_canteens = [
-            CanteenFactory.create(),
-            CanteenFactory.create(),
+            ManagerInvitationFactory.create().canteen,
+            ManagerInvitationFactory.create().canteen,
         ]
         other_canteens = [
             CanteenFactory.create(),
             CanteenFactory.create(),
         ]
+        user = authenticate.user
         for canteen in user_canteens:
-            canteen.managers.add(authenticate.user)
+            canteen.managers.add(user)
 
         response = self.client.get(reverse("user_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -64,6 +69,10 @@ class TestCanteenApi(APITestCase):
 
         for user_canteen in user_canteens:
             self.assertTrue(any(x["id"] == user_canteen.id for x in body))
+
+        for recieved_canteen in body:
+            self.assertEqual(recieved_canteen["managers"][0]["email"], user.email)
+            self.assertTrue("email" in recieved_canteen["managerInvitations"][0])
 
         for other_canteen in other_canteens:
             self.assertFalse(any(x["id"] == other_canteen.id for x in body))
@@ -115,7 +124,9 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], "contact-test@example.com")
-        self.assertIn("La cantine « %s » vient d'être publiée" % canteen.name, mail.outbox[0].body)
+        self.assertIn(
+            "La cantine « %s » vient d'être publiée" % canteen.name, mail.outbox[0].body
+        )
 
     @authenticate
     def test_soft_delete(self):
@@ -127,4 +138,3 @@ class TestCanteenApi(APITestCase):
 
         # Model was only soft-deleted but remains in the DB
         self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
-

@@ -2,6 +2,7 @@ from data.models.diagnostic import Diagnostic
 import json
 from django.contrib.auth import get_user_model, update_session_auth_hash, tokens
 from django.conf import settings
+from django.db import transaction
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.template import loader
@@ -22,10 +23,12 @@ from api.serializers import (
     FullCanteenSerializer,
     BlogPostSerializer,
     PasswordSerializer,
+    ManagingTeamSerializer
 )
-from data.models import Canteen, BlogPost, Sector
+from data.models import Canteen, BlogPost, Sector, ManagerInvitation
 from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
 import sib_api_v3_sdk
+from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 
 
 class LoggedUserView(RetrieveAPIView):
@@ -126,17 +129,21 @@ class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         previous_publication_status = serializer.instance.data_is_public
-        new_publication_status = serializer.validated_data.get('data_is_public', False)
+        new_publication_status = serializer.validated_data.get("data_is_public", False)
 
-        if (not previous_publication_status and new_publication_status):
+        if not previous_publication_status and new_publication_status:
             protocol = "https" if settings.SECURE else "http"
             cantine = serializer.instance
-            admin_url = "%s://%s/admin/data/canteen/%s/change/" % (protocol, settings.HOSTNAME, cantine.id,)
-            canteens_url = "%s://%s/nos-cantines/" % (protocol, settings.HOSTNAME,)
+            admin_url = "{}://{}/admin/data/canteen/{}/change/".format(
+                protocol, settings.HOSTNAME, cantine.id
+            )
+            canteens_url = "{}://{}/nos-cantines/".format(protocol, settings.HOSTNAME)
 
             send_mail(
                 "Cantine publiée sur ma cantine",
-                "La cantine « %s » vient d'être publiée.\nAdmin : %s\nNos cantines : %s" % (cantine.name, admin_url, canteens_url),
+                "La cantine « {} » vient d'être publiée.\nAdmin : {}\nNos cantines : {}".format(
+                    cantine.name, admin_url, canteens_url
+                ),
                 settings.DEFAULT_FROM_EMAIL,
                 [settings.CONTACT_EMAIL],
                 fail_silently=True,
@@ -252,7 +259,7 @@ class SubscribeNewsletter(APIView):
             )
         except Exception:
             return JsonResponse(
-                {"error": "An error has ocurred"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "An error has ocurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 
@@ -268,3 +275,63 @@ class ChangePasswordView(UpdateAPIView):
             request, request.user
         )  # After a password change Django logs the user out
         return JsonResponse({}, status=status.HTTP_200_OK)
+
+
+class AddManagerView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            email = request.data.get("email")
+            validate_email(email)
+            canteen_id = request.data.get("canteen_id")
+            canteen = request.user.canteens.get(id=canteen_id)
+            try:
+                user = get_user_model().objects.get(email=email)
+                canteen.managers.add(user)
+            except get_user_model().DoesNotExist:
+                with transaction.atomic():
+                    pm = ManagerInvitation(canteen_id=canteen.id, email=email)
+                    pm.save()
+                _send_invitation_email(pm)
+            return _respond_with_team(canteen)
+        except ValidationError:
+            return JsonResponse(
+                {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Canteen.DoesNotExist:
+            return JsonResponse(
+                {"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except IntegrityError:
+            return _respond_with_team(canteen)
+        except Exception:
+            return JsonResponse(
+                {"error": "An error has ocurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+def _respond_with_team(canteen):
+    data = ManagingTeamSerializer(canteen).data
+    camel_case_bytes = CamelCaseJSONRenderer().render(data)
+    json_data = json.loads(camel_case_bytes.decode('utf-8'))
+    return JsonResponse(json_data, status=status.HTTP_200_OK)
+
+def _send_invitation_email(manager_invitation):
+    try:
+        template = "auth/manager-invitation"
+        context = {
+            "canteen": manager_invitation.canteen.name,
+            "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
+            "domain": settings.HOSTNAME,
+        }
+        send_mail(
+            subject="Invitation à gérer une cantine sur ma cantine",
+            message=render_to_string(f"{template}.html", context),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            html_message=render_to_string(f"{template}.txt", context),
+            recipient_list=[manager_invitation.email],
+            fail_silently=False,
+        )
+    except Exception:
+        raise Exception("Error occurred : the mail could not be sent.")
