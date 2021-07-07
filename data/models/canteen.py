@@ -15,6 +15,10 @@ class Canteen(SoftDeletionModel):
         DIRECT = "direct", "Directe"
         CONCEDED = "conceded", "Concédée"
 
+    class ProductionType(models.TextChoices):
+        CENTRAL = "central", "Cuisine centrale"
+        ON_SITE = "site", "Cuisine-site"
+
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
@@ -51,6 +55,13 @@ class Canteen(SoftDeletionModel):
         null=True,
         blank=True,
         verbose_name="mode de gestion",
+    )
+    production_type = models.CharField(
+        max_length=255,
+        choices=ProductionType.choices,
+        null=True,
+        blank=True,
+        verbose_name="mode de production",
     )
 
     main_image = models.ImageField(null=True, blank=True, verbose_name="Image principale")
