@@ -57,6 +57,7 @@
 import GiveFeedbackLink from "@/components/GiveFeedbackLink"
 
 export default {
+  name: "AppFooter",
   data() {
     return {
       bottomLinks: [

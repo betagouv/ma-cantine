@@ -87,7 +87,7 @@
 import HeaderDropdownList from "@/components/HeaderDropdownList"
 
 export default {
-  name: "Header",
+  name: "AppHeader",
   data() {
     return {
       extended: true,
