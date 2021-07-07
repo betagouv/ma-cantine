@@ -4,7 +4,11 @@
 {% load static %}
 
 {% block content %}
-    <h2><img src="{% static 'images/logo_transparent.png' %}" class="auth_logo" /></h2>
+    <h2>
+        <a href="/">
+            <img src="{% static 'images/logo_transparent.png' %}" class="auth_logo" />
+        </a>
+    </h2>
 
     {% if messages %}
     <div class="messages">

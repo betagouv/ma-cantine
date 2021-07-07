@@ -3,7 +3,11 @@
 {% load static %}
 
 {% block content %}
-    <h2><img src="{% static 'images/logo_transparent.png' %}" class="auth_logo" /></h2>
+    <h2>
+        <a href="/">
+            <img src="{% static 'images/logo_transparent.png' %}" class="auth_logo" />
+        </a>
+    </h2>
     <h3>Le lien de confirmation n'est plus valide</h3>
     <div style="text-align: left;">
         <p>Si les problèmes persistent, essayez de copier et coller l'URL contenu dans votre email dans votre navigation sans cliquer sur le bouton.</p>

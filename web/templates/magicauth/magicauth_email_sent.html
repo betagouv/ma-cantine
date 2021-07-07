@@ -4,7 +4,11 @@
 {% load static %}
 
 {% block content %}
-    <h2><img src="{% static 'images/logo_transparent.png' %}" class="auth_logo" /></h2>
+    <h2>
+        <a href="/">
+            <img src="{% static 'images/logo_transparent.png' %}" class="auth_logo" />
+        </a>
+    </h2>
     <h3>Nous avons envoyé un email de connexion à votre adresse</h3>
     <div style="text-align: left;">
         <p>Cliquez sur le lien pour vous connecter à Ma Cantine.</p>
