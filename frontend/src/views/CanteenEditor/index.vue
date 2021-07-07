@@ -205,25 +205,32 @@
           />
         </v-list-item-group>
       </v-list>
-      <v-form ref="managerForm" class="d-flex mt-2" v-model="managerFormIsValid" v-on:submit.prevent="addManager">
-        <v-text-field
-          solo
-          v-model="newManagerEmail"
-          label="Adresse mail"
-          :rules="[validators.isEmailOrEmpty]"
-          validate-on-blur
-        ></v-text-field>
-        <v-btn
-          @click="addManager"
-          outlined
-          color="primary darken-1"
-          class="ml-4 mt-1"
-          large
-          :disabled="!newManagerEmail"
-        >
-          Ajouter
-        </v-btn>
-      </v-form>
+      <v-row>
+        <v-col cols="12" sm="10" md="6">
+          <v-form ref="managerForm" class="mt-3 px-2" v-model="managerFormIsValid" v-on:submit.prevent="addManager">
+            <p class="body-2 mb-2 text-left grey--text text--darken-1">Ajouter un gestionnaire</p>
+            <div class="d-flex">
+              <v-text-field
+                solo
+                v-model="newManagerEmail"
+                label="Adresse email"
+                :rules="[validators.isEmailOrEmpty]"
+                validate-on-blur
+              ></v-text-field>
+              <v-btn
+                @click="addManager"
+                outlined
+                color="primary darken-1"
+                class="ml-4 mt-1"
+                large
+                :disabled="!newManagerEmail"
+              >
+                Ajouter
+              </v-btn>
+            </div>
+          </v-form>
+        </v-col>
+      </v-row>
     </div>
 
     <v-divider class="my-10" v-if="!isNewCanteen"></v-divider>
