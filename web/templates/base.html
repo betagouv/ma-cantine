@@ -26,6 +26,10 @@
     </head>
     <body>
         <div id="wrapper" {% if form.uses_columns %}class="columns"{% endif %}>
+            <a href="/">
+                <img src="{% static 'images/logo_transparent.png' %}" alt="ma cantine" class="auth_logo" />
+            </a>
+
             {% block content %}
             {% endblock %}
         </div>
