@@ -193,7 +193,7 @@
             :manager="manager"
             icon="mdi-account-check-outline"
             color="primary"
-            status="Compte créé"
+            status=""
           />
           <ManagerItem
             v-for="manager in managerInvitations"
@@ -201,7 +201,7 @@
             :manager="manager"
             icon="mdi-account-clock-outline"
             color="secondary"
-            status="En attente"
+            status="Invitation envoyée"
           />
         </v-list-item-group>
       </v-list>
