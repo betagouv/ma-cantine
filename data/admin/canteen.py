@@ -33,6 +33,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "managers",
         "siret",
         "management_type",
+        "production_type",
         "deletion_date",
     )
     list_display = (
@@ -48,7 +49,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "sectors",
         "managers",
     )
-    list_filter = ("sectors", "city", "management_type")
+    list_filter = ("sectors", "city", "management_type", "production_type")
 
     def published_state(self, obj):
         return "✅ Publié" if obj.data_is_public else "🔒 Non publié"
