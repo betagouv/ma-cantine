@@ -57,6 +57,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "siret",
             "management_type",
+            "production_type",
             "diagnostics",
             "department",
             "main_image",

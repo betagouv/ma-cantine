@@ -142,7 +142,7 @@
           <v-divider></v-divider>
         </v-col>
 
-        <v-col cols="12" md="8">
+        <v-col cols="12" md="6">
           <p class="body-2 my-2">Secteurs d'activité</p>
           <v-select
             multiple
@@ -154,12 +154,25 @@
           ></v-select>
         </v-col>
 
-        <v-col cols="12" md="4">
-          <p class="body-2 my-2">Mode de gestion</p>
+        <v-col cols="12" sm="6" md="3">
+          <p class="body-2 ml-4">Mode de gestion</p>
           <v-radio-group v-model="canteen.managementType">
             <v-radio
               class="ml-8"
               v-for="item in managementTypes"
+              :key="item.value"
+              :label="item.text"
+              :value="item.value"
+            ></v-radio>
+          </v-radio-group>
+        </v-col>
+
+        <v-col cols="12" sm="6" md="3">
+          <p class="body-2 ml-4">Mode de production</p>
+          <v-radio-group v-model="canteen.productionType">
+            <v-radio
+              class="ml-8"
+              v-for="item in productionTypes"
               :key="item.value"
               :label="item.text"
               :value="item.value"
@@ -278,6 +291,16 @@ export default {
         {
           text: "Concédée",
           value: "conceded",
+        },
+      ],
+      productionTypes: [
+        {
+          text: "Cuisine centrale",
+          value: "central",
+        },
+        {
+          text: "Cuisine-site",
+          value: "site",
         },
       ],
       managerFormIsValid: true,
