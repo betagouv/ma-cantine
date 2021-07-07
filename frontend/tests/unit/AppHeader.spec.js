@@ -1,14 +1,13 @@
 import Vuex from "vuex"
 import VueRouter from "vue-router"
 import Vuetify from "vuetify"
-import { shallowMount, mount, createLocalVue, RouterLinkStub } from "@vue/test-utils"
-import Header from "@/components/Header.vue"
-import Constants from "@/constants"
+import { shallowMount, createLocalVue, RouterLinkStub } from "@vue/test-utils"
+import AppHeader from "@/components/AppHeader.vue"
 
 const localVue = createLocalVue()
 localVue.use(VueRouter)
 
-describe("Header.vue", () => {
+describe("AppHeader.vue", () => {
   let vuetify
 
   beforeEach(() => {
@@ -26,7 +25,7 @@ describe("Header.vue", () => {
 
   describe("unauthenticated", () => {
     it("Includes login button", () => {
-      const wrapper = shallowMount(Header, {
+      const wrapper = shallowMount(AppHeader, {
         localVue,
         vuetify,
         stubs: {
@@ -46,7 +45,7 @@ describe("Header.vue", () => {
 
   describe("authenticated", () => {
     it("Includes a user menu", () => {
-      const wrapper = shallowMount(Header, {
+      const wrapper = shallowMount(AppHeader, {
         localVue,
         vuetify,
         stubs: {
