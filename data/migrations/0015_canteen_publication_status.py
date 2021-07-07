@@ -20,7 +20,7 @@ def undo_migrate_publication_status(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data', '0013_create_manager_invitations'),
+        ('data', '0014_canteen_production_type'),
     ]
 
     operations = [

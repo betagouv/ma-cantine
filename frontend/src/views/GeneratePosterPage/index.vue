@@ -214,6 +214,10 @@ export default {
       this.saveDiagnostic()
       this.saveCanteen()
 
+      if (this.$matomo) {
+        this.$matomo.trackEvent("form", "submit", "poster-generator")
+      }
+
       const htmlPoster = document.getElementById("canteen-poster")
       const pdfOptions = {
         filename: "Affiche_convives_2020.pdf",

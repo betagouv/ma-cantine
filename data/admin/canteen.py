@@ -34,6 +34,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "managers",
         "siret",
         "management_type",
+        "production_type",
         "publication_status",
         "deletion_date",
     )
@@ -50,8 +51,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "sectors",
         "managers",
     )
-
-    list_filter = ("publication_status", "sectors", "management_type", "city")
+    list_filter = ("publication_status", "sectors", "management_type", "production_type", "city")
 
     def supprimée(self, obj):
         return "🗑️ Supprimée" if obj.deletion_date else ""
