@@ -1,3 +1,9 @@
+function isEmail(input) {
+  const errorMessage = "Ce champ doit contenir un email valide"
+  if (typeof input === "string" && /\S+@\S+\.\S+/.test(input)) return true
+  return errorMessage
+}
+
 export default {
   notEmpty(input) {
     const errorMessage = "Ce champ ne peut pas être vide"
@@ -40,9 +46,10 @@ export default {
     return isValid ? true : errorMessage
   },
   isEmail(input) {
-    const errorMessage = "Ce champ doit contenir un email valide"
-    if (typeof input === "string" && /\S+@\S+\.\S+/.test(input)) return true
-    return errorMessage
+    return isEmail(input)
+  },
+  isEmailOrEmpty(input) {
+    return input ? isEmail(input) : true
   },
   isYear(input) {
     const errorMessage = "Ce champ doit contenir une année (par exemple, 2001)"

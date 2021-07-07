@@ -1,5 +1,6 @@
+
 {% extends 'base.html' %}
-{% block title %}Réinitialiser mon mot de passe{% endblock %}
+{% block title %}Créer mon compte{% endblock %}
 {% load static %}
 
 {% block content %}
@@ -18,9 +19,13 @@
 
         {% for field in form.visible_fields %}
             <div class="control-group">
-                <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
-                {{ field }}
-
+                {% if field.name == 'cgu_approved' %}
+                    {{ field }}
+                    <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
+                {% else %}
+                    <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
+                    {{ field }}
+                {% endif %}
                 {% if field.errors %}
                     {% for error in field.errors %}
                         <div class="inline-error-container">
@@ -29,12 +34,18 @@
                     {% endfor %}
                 {% endif %}
             </div>
+
+            {% if field.name == 'email' or field.name == 'canteen_name' %}
+            <hr />
+            {% endif %}
         {% endfor %}
 
+        <hr />
         <div class="control-group">
             <div class="controls">
-                <button type="submit">Je réinitialise mon mot de passe</button>
+                <button type="submit" style="font-family: Marianne">S'inscrire</button>
             </div>
         </div>
     </form>
+    <a href="{% url 'login' %}"><button>J'ai déjà un compte</button></a>
 {% endblock %}
