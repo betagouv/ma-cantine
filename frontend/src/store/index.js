@@ -71,6 +71,14 @@ export default new Vuex.Store({
       const canteenIndex = state.userCanteens.findIndex((x) => x.id === userCanteen.id)
       if (canteenIndex > -1) state.userCanteens.splice(canteenIndex, 1, userCanteen)
     },
+    UPDATE_USER_CANTEEN_MANAGERS(state, { canteenId, data }) {
+      const canteenIndex = state.userCanteens.findIndex((x) => x.id === canteenId)
+      if (canteenIndex > -1) {
+        let userCanteen = state.userCanteens[canteenIndex]
+        userCanteen.managers = data.managers
+        userCanteen.managerInvitations = data.managerInvitations
+      }
+    },
     DELETE_USER_CANTEEN(state, canteenId) {
       const userCanteenIndex = state.userCanteens.findIndex((x) => x.id === canteenId)
       if (userCanteenIndex > -1) state.userCanteens.splice(userCanteenIndex, 1)
@@ -351,6 +359,23 @@ export default new Vuex.Store({
       return fetch("/api/v1/subscribeNewsletter/", { method: "POST", headers, body: JSON.stringify({ email }) }).then(
         verifyResponse
       )
+    },
+
+    addManager(context, { canteenId, email }) {
+      return fetch(`/api/v1/addManager/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ canteenId, email }),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("UPDATE_USER_CANTEEN_MANAGERS", { canteenId, data: response })
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
     },
 
     notify(context, { title, message, status }) {

@@ -10,7 +10,7 @@ from data.factories import SectorFactory
 
 class TestRegistration(APITestCase):
 
-    def test_user_registration(self):
+    def test_user_with_canteen_registration(self):
         """
         Registering a user sends an email to verify their address
         """
@@ -115,3 +115,34 @@ class TestRegistration(APITestCase):
             "Vous ne pouvez pas utiliser une adresse email comme nom d'utilisateur.",
             msg_prefix="tester@example.com",
         )
+
+    def test_user_only_registration(self):
+        """
+        Registering a user sends an email to verify their address
+        """
+        email = "test-user@example.com"
+        payload = {
+            "first_name": "Test",
+            "last_name": "User",
+            "password1": "testPw1234#!",
+            "password2": "testPw1234#!",
+            "cgu_approved": True,
+            "username": "test-user",
+            "email": email,
+        }
+
+        # activation email must be sent after registration
+        response = self.client.post(reverse("register_user"), payload)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(
+            mail.outbox[0].subject, "Confirmation de votre adresse email - ma cantine"
+        )
+
+        # Upon click of the activation link we go directly to the Vue app
+        uidb64, token = re.findall(
+            r"activation-compte\/(?P<uidb64>.*)\/(?P<token>.*)", mail.outbox[0].body
+        )[0]
+        activation_response = self.client.get(
+            reverse("activate", kwargs={"uidb64": uidb64, "token": token})
+        )
+        self.assertRedirects(activation_response, reverse("app"), status.HTTP_302_FOUND, fetch_redirect_response=False)

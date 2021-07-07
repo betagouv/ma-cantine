@@ -181,6 +181,58 @@
 
     <DiagnosticList :canteen="canteen" v-if="canteen && originalCanteen && !isNewCanteen" />
 
+    <div v-if="!isNewCanteen">
+      <h2 class="font-weight-black text-h5 mt-10">
+        Les gestionnaires pour cette cantine
+      </h2>
+      <v-list disabled>
+        <v-list-item-group>
+          <ManagerItem
+            v-for="manager in managers"
+            :key="manager.email"
+            :manager="manager"
+            icon="mdi-account-check-outline"
+            color="primary"
+            status=""
+          />
+          <ManagerItem
+            v-for="manager in managerInvitations"
+            :key="manager.email"
+            :manager="manager"
+            icon="mdi-account-clock-outline"
+            color="secondary"
+            status="Invitation envoyée"
+          />
+        </v-list-item-group>
+      </v-list>
+      <v-row>
+        <v-col cols="12" sm="10" md="6">
+          <v-form ref="managerForm" class="mt-3 px-2" v-model="managerFormIsValid" v-on:submit.prevent="addManager">
+            <p class="body-2 mb-2 text-left grey--text text--darken-1">Ajouter un gestionnaire</p>
+            <div class="d-flex">
+              <v-text-field
+                solo
+                v-model="newManagerEmail"
+                label="Adresse email"
+                :rules="[validators.isEmailOrEmpty]"
+                validate-on-blur
+              ></v-text-field>
+              <v-btn
+                @click="addManager"
+                outlined
+                color="primary darken-1"
+                class="ml-4 mt-1"
+                large
+                :disabled="!newManagerEmail"
+              >
+                Ajouter
+              </v-btn>
+            </div>
+          </v-form>
+        </v-col>
+      </v-row>
+    </div>
+
     <v-divider class="my-10" v-if="!isNewCanteen"></v-divider>
 
     <DeletionDialog v-if="!isNewCanteen" v-model="deletionDialog" @delete="deleteCanteen" />
@@ -192,13 +244,14 @@ import validators from "@/validators"
 import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewDialog"
 import DiagnosticList from "./DiagnosticList"
 import DeletionDialog from "./DeletionDialog"
+import ManagerItem from "./ManagerItem"
 import { toBase64, getObjectDiff } from "@/utils"
 
 const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "CanteenEditor",
-  components: { PublicationPreviewDialog, DiagnosticList, DeletionDialog },
+  components: { PublicationPreviewDialog, DiagnosticList, DeletionDialog, ManagerItem },
   props: {
     canteenUrlComponent: {
       type: String,
@@ -227,6 +280,8 @@ export default {
           value: "conceded",
         },
       ],
+      managerFormIsValid: true,
+      newManagerEmail: undefined,
     }
   },
   computed: {
@@ -244,11 +299,17 @@ export default {
     },
     hasChanged() {
       if (this.originalCanteen) {
-        const diff = getObjectDiff(this.originalCanteen, this.canteen)
+        const diff = getObjectDiff(this.originalCanteen, this.canteen, ["managers", "managerInvitations"])
         return Object.keys(diff).length > 0
       } else {
         return Object.keys(this.canteen).length > 0
       }
+    },
+    managers() {
+      return this.originalCanteen.managers
+    },
+    managerInvitations() {
+      return this.originalCanteen.managerInvitations
     },
   },
   beforeMount() {
@@ -357,6 +418,32 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+        })
+    },
+    addManager() {
+      this.$refs.managerForm.validate()
+
+      if (!this.managerFormIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
+
+      this.$store
+        .dispatch("addManager", {
+          canteenId: this.canteen.id,
+          email: this.newManagerEmail,
+        })
+        .then(() => {
+          this.$store.dispatch("notify", {
+            title: "Mise à jour prise en compte",
+            message: `${this.newManagerEmail} a bien été ajouté`,
+            status: "success",
+          })
+          this.newManagerEmail = undefined
+        })
+        .catch(() => {
+          this.$store.dispatch("notifyServerError")
+          this.newManagerEmail = undefined
         })
     },
   },

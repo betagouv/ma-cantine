@@ -7,3 +7,4 @@ from .canteen import CanteenFactory  # noqa
 from .diagnostic import DiagnosticFactory  # noqa
 from .sector import SectorFactory  # noqa
 from .blogpost import BlogPostFactory  # noqa
+from .managerinvitation import ManagerInvitationFactory  # noqa

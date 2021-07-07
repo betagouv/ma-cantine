@@ -3,6 +3,7 @@ from django.urls import path
 from web.views import (
     VueAppDisplayView,
     RegisterView,
+    RegisterUserView,
     ActivationTokenView,
     RegisterDoneView,
     RegisterSendMailFailedView,
@@ -78,6 +79,7 @@ urlpatterns = [
     ),
     # Views allowing the creation of an account
     path("creer-mon-compte", RegisterView.as_view(), name="register"),
+    path("nouvel-utilisateur", RegisterUserView.as_view(), name="register_user"),
     path(
         "email-de-confirmation",
         ActivationTokenView.as_view(),
