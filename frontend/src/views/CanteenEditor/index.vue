@@ -14,10 +14,10 @@
     <v-form ref="form" v-model="formIsValid">
       <v-row v-if="!isNewCanteen">
         <v-col cols="12">
-          <p class="body-1 mb-0 mt-4 font-weight-black">Publication</p>
-          <v-checkbox hide-details="auto" class="mt-0" v-model="canteen.dataIsPublic">
+          <p class="body-1 mb-3 mt-4 font-weight-black">Publication</p>
+          <v-checkbox hide-details="auto" class="mt-0" v-model="publicationRequested">
             <template v-slot:label>
-              <p class="text-body-2 grey--text text--darken-4 pt-3 ml-2">
+              <p class="text-body-2 grey--text text--darken-4 pt-1 pb-0 my-0 ml-2">
                 J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles sur
                 <router-link
                   :to="{
@@ -26,41 +26,44 @@
                 >
                   nos cantines
                 </router-link>
-                .
                 <br />
-                <span v-if="originalCanteenIsPublished">Cette cantine est actuellement publié sur</span>
-
-                <v-btn
-                  v-if="originalCanteenIsPublished"
-                  @click.stop
-                  :href="
-                    $router.resolve({
-                      name: 'CanteenPage',
-                      params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                    }).href
-                  "
-                  class="text-body-2 pl-1 text-decoration-underline"
-                  target="_blank"
-                  small
-                  text
-                  plain
-                  :ripple="false"
-                >
-                  nos cantines
-                  <v-icon small color="grey darken-4" class="ml-1">mdi-open-in-new</v-icon>
-                </v-btn>
-
-                <v-btn
-                  @click.stop="showPreview = true"
-                  class="text-body-2 px-0 text-decoration-underline grey--text text--darken-4"
-                  small
-                  text
-                  plain
-                  v-else
-                  :ripple="false"
-                >
-                  Voir un aperçu de la publication
-                </v-btn>
+                <span v-if="originalCanteenIsPublished">
+                  Cette cantine est actuellement publiée sur
+                  <v-btn
+                    @click.stop
+                    :href="
+                      $router.resolve({
+                        name: 'CanteenPage',
+                        params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                      }).href
+                    "
+                    class="text-body-2 pl-0 text-decoration-underline"
+                    id="canteen-page-link"
+                    target="_blank"
+                    small
+                    text
+                    plain
+                    :ripple="false"
+                  >
+                    nos cantines
+                    <v-icon small color="grey darken-4" class="ml-1">mdi-open-in-new</v-icon>
+                  </v-btn>
+                </span>
+                <span v-else>
+                  <span v-if="originalCanteenIsPending">
+                    Cette cantine est en attente de vérification pour être publiée.
+                  </span>
+                  <v-btn
+                    @click.stop="showPreview = true"
+                    class="text-body-2 px-0 text-decoration-underline grey--text text--darken-4"
+                    small
+                    text
+                    plain
+                    :ripple="false"
+                  >
+                    Voir un aperçu de la publication
+                  </v-btn>
+                </span>
               </p>
             </template>
           </v-checkbox>
@@ -263,6 +266,8 @@ export default {
       canteen: {},
       formIsValid: true,
       originalCanteenIsPublished: false,
+      originalCanteenIsPending: false,
+      publicationRequested: false,
       showPreview: false,
       bypassLeaveWarning: false,
       deletionDialog: false,
@@ -317,7 +322,9 @@ export default {
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
-      this.originalCanteenIsPublished = canteen.dataIsPublic
+      this.originalCanteenIsPublished = canteen.publicationStatus === "published"
+      this.originalCanteenIsPending = canteen.publicationStatus === "pending"
+      this.publicationRequested = canteen.publicationStatus !== "draft"
       const initialCityAutocomplete = {
         text: canteen.city,
         value: {
@@ -346,6 +353,11 @@ export default {
         return
       }
 
+      if (!this.publicationRequested) {
+        this.canteen.publicationStatus = "draft"
+      } else if (this.canteen.publicationStatus === "draft") {
+        this.canteen.publicationStatus = "pending"
+      }
       const payload = this.originalCanteen ? getObjectDiff(this.originalCanteen, this.canteen) : this.canteen
       this.$store
         .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", {
@@ -473,5 +485,8 @@ export default {
 <style scoped>
 .v-btn--plain:not(.v-btn--active):not(.v-btn--loading):not(:focus):not(:hover) >>> .v-btn__content {
   opacity: 1;
+}
+#canteen-page-link {
+  vertical-align: inherit;
 }
 </style>
