@@ -51,6 +51,7 @@ h2 {
 }
 .auth_logo {
     max-width: 180px;
+    margin: 20px 0;
 }
 p {
     font-size: 0.85em;
