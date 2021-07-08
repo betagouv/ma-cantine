@@ -12,6 +12,60 @@
     />
 
     <v-form ref="form" v-model="formIsValid">
+      <v-row v-if="!isNewCanteen">
+        <v-col cols="12">
+          <p class="body-1 mb-0 mt-2 font-weight-black">Publication</p>
+          <v-checkbox hide-details="auto" class="mt-0" v-model="canteen.dataIsPublic">
+            <template v-slot:label>
+              <p class="text-body-2 grey--text text--darken-4 pt-3 ml-2">
+                J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles sur
+                <router-link
+                  :to="{
+                    name: 'CanteensHome',
+                  }"
+                >
+                  nos cantines
+                </router-link>
+                .
+                <br />
+                <span v-if="originalCanteenIsPublished">Cette cantine est actuellement publié sur</span>
+
+                <v-btn
+                  v-if="originalCanteenIsPublished"
+                  @click.stop
+                  :href="
+                    $router.resolve({
+                      name: 'CanteenPage',
+                      params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                    }).href
+                  "
+                  class="text-body-2 pl-1 text-decoration-underline"
+                  target="_blank"
+                  small
+                  text
+                  plain
+                  :ripple="false"
+                >
+                  nos cantines
+                  <v-icon small color="grey darken-4" class="ml-1">mdi-open-in-new</v-icon>
+                </v-btn>
+
+                <v-btn
+                  @click.stop="showPreview = true"
+                  class="text-body-2 px-0 text-decoration-underline grey--text text--darken-4"
+                  small
+                  text
+                  plain
+                  v-else
+                  :ripple="false"
+                >
+                  Voir un aperçu de la publication
+                </v-btn>
+              </p>
+            </template>
+          </v-checkbox>
+        </v-col>
+      </v-row>
       <v-row>
         <v-col cols="12" md="8">
           <p class="body-2 my-2">Nom de la cantine</p>
@@ -126,83 +180,9 @@
           </v-radio-group>
         </v-col>
       </v-row>
-
-      <v-row v-if="!isNewCanteen">
-        <v-col cols="12">
-          <v-divider></v-divider>
-        </v-col>
-        <v-col cols="12">
-          <p class="body-1 mb-0 mt-2 font-weight-black">Publication</p>
-          <v-checkbox hide-details="auto" class="mt-0" v-model="canteen.dataIsPublic">
-            <template v-slot:label>
-              <p class="text-body-2 grey--text text--darken-4 pt-3 ml-2">
-                J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles sur
-                <router-link
-                  :to="{
-                    name: 'CanteensHome',
-                  }"
-                >
-                  nos cantines
-                </router-link>
-                .
-                <br />
-                <span v-if="originalCanteenIsPublished">Cette cantine est actuellement publié sur</span>
-
-                <v-btn
-                  v-if="originalCanteenIsPublished"
-                  @click.stop
-                  :href="
-                    $router.resolve({
-                      name: 'CanteenPage',
-                      params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                    }).href
-                  "
-                  class="text-body-2 pl-1 text-decoration-underline"
-                  target="_blank"
-                  small
-                  text
-                  plain
-                  :ripple="false"
-                >
-                  nos cantines
-                  <v-icon small color="grey darken-4" class="ml-1">mdi-open-in-new</v-icon>
-                </v-btn>
-
-                <v-btn
-                  @click.stop="showPreview = true"
-                  class="text-body-2 px-0 text-decoration-underline grey--text text--darken-4"
-                  small
-                  text
-                  plain
-                  v-else
-                  :ripple="false"
-                >
-                  Voir un aperçu de la publication
-                </v-btn>
-              </p>
-            </template>
-          </v-checkbox>
-        </v-col>
-        <v-col cols="12" md="8" class="mt-n4">
-          <p class="body-2 mb-2" id="public-contact">Courriel</p>
-          <p class="caption mb-2" id="public-contact-description">
-            Si vous decidez de publier les données de votre cantine, cet adresse mail sera affiché avec vos données pour
-            que des convives, parents, élus et autres puissent vous contacter.
-          </p>
-          <v-text-field
-            hide-details="auto"
-            :rules="[validators.isEmailOrEmpty]"
-            validate-on-blur
-            solo
-            v-model="canteen.publicContact"
-            aria-labelledby="public-contact"
-            aria-describedby="public-contact-description"
-          ></v-text-field>
-        </v-col>
-      </v-row>
     </v-form>
 
-    <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex mt-6">
+    <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
       <v-spacer></v-spacer>
       <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
         Annuler
