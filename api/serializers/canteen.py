@@ -26,7 +26,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "sectors",
             "daily_meal_count",
             "department",
-            "main_image"
+            "main_image",
         )
 
 

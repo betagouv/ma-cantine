@@ -1,6 +1,6 @@
 <template>
   <div class="text-left pb-10">
-    <h1 class="font-weight-black text-h4 my-6">
+    <h1 class="font-weight-black text-h4 my-4">
       {{ isNewCanteen ? "Nouvelle cantine" : "Modifier ma cantine" }}
     </h1>
 
@@ -14,7 +14,7 @@
     <v-form ref="form" v-model="formIsValid">
       <v-row v-if="!isNewCanteen">
         <v-col cols="12">
-          <p class="body-1 mb-0 mt-2 font-weight-black">Publication</p>
+          <p class="body-1 mb-0 mt-4 font-weight-black">Publication</p>
           <v-checkbox hide-details="auto" class="mt-0" v-model="canteen.dataIsPublic">
             <template v-slot:label>
               <p class="text-body-2 grey--text text--darken-4 pt-3 ml-2">
