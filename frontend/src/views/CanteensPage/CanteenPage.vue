@@ -13,6 +13,10 @@
           <v-icon small>mdi-compass</v-icon>
           {{ canteen.city }}
         </div>
+        <a v-if="canteen.publicContact" :href="`mailto:${canteen.publicContact}`">
+          <v-icon small>mdi-email-outline</v-icon>
+          {{ canteen.publicContact }}
+        </a>
       </v-card-subtitle>
       <v-card-text>
         <v-btn outlined color="primary" exact :to="{ name: 'CanteensHome' }">

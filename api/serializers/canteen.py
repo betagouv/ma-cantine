@@ -27,6 +27,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "department",
             "main_image",
+            "public_contact"
         )
 
 
@@ -62,7 +63,8 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "department",
             "main_image",
             "managers",
-            "manager_invitations"
+            "manager_invitations",
+            "public_contact"
         )
 
 
