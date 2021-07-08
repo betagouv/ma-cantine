@@ -337,7 +337,7 @@ def _send_invitation_email(manager_invitation):
         raise Exception("Error occurred : the mail could not be sent.")
 
 
-class SendCanteenEmail(APIView):
+class SendCanteenEmailView(APIView):
     def post(self, request):
         try:
             email = request.data.get("from")

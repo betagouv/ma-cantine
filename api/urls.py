@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
-from api.views import LoggedUserView, SubscribeBetaTester, SubscribeNewsletter, SendCanteenEmail
+from api.views import LoggedUserView, SubscribeBetaTester, SubscribeNewsletter, SendCanteenEmailView
 from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView
 from api.views import DiagnosticCreateView, UpdateUserCanteenView, DiagnosticUpdateView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView
@@ -43,7 +43,7 @@ urlpatterns = {
         AddManagerView.as_view(),
         name="add_manager",
     ),
-    path("contactCanteen/", SendCanteenEmail.as_view(), name="contact_canteen"),
+    path("contactCanteen/", SendCanteenEmailView.as_view(), name="contact_canteen"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)
