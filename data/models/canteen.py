@@ -66,8 +66,6 @@ class Canteen(SoftDeletionModel):
 
     main_image = models.ImageField(null=True, blank=True, verbose_name="Image principale")
 
-    public_contact = models.EmailField("Contact public", null=True, blank=True)
-
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):

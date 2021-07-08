@@ -335,3 +335,41 @@ def _send_invitation_email(manager_invitation):
         )
     except Exception:
         raise Exception("Error occurred : the mail could not be sent.")
+
+
+class SendCanteenEmail(APIView):
+    def post(self, request):
+        try:
+            email = request.data.get("from")
+            validate_email(email)
+
+            canteen_id = request.data.get("canteen_id")
+            canteen = Canteen.objects.get(pk=canteen_id)
+
+            template = "contact-canteen"
+            context = {
+                "canteen": canteen.name,
+                "from": email,
+                "message": request.data.get("message"),
+            }
+            send_mail(
+                subject=f"Un message pour {canteen.name}",
+                message=render_to_string(f"{template}.html", context),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                html_message=render_to_string(f"{template}.txt", context),
+                recipient_list=[user.email for user in canteen.managers.all()],
+                fail_silently=False,
+            )
+            return JsonResponse({}, status=status.HTTP_200_OK)
+        except ValidationError:
+            return JsonResponse(
+                {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except ObjectDoesNotExist:
+            return JsonResponse(
+                {"error": "Invalid canteen"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception:
+            return JsonResponse(
+                {"error": "An error has ocurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

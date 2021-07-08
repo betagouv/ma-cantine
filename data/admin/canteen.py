@@ -27,7 +27,6 @@ class CanteenAdmin(SoftDeletionAdmin):
         "department",
         "city_insee_code",
         "postal_code",
-        "public_contact",
         "daily_meal_count",
         "data_is_public",
         "sectors",
