@@ -17,7 +17,7 @@
         validate-on-blur
         outlined
       ></v-text-field>
-      <v-textarea v-model="message" label="Message" outlined required></v-textarea>
+      <v-textarea v-model="message" label="Message" outlined :rules="[validators.isRequired]"></v-textarea>
     </v-form>
     <v-btn x-large color="primary" class="mt-6" @click="sendEmail">Envoyer message</v-btn>
   </div>
