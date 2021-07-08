@@ -5,7 +5,6 @@ from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
 from django.core.mail import send_mail
-from django.template import loader
 from django.template.loader import render_to_string
 from django.core.exceptions import ObjectDoesNotExist, ValidationError, BadRequest
 from django.db.utils import IntegrityError
@@ -84,9 +83,9 @@ class UpdateUserView(UpdateAPIView):
         }
         send_mail(
             subject="Confirmation de votre changement d'adresse email - ma cantine",
-            message=loader.render_to_string(text_template, context),
+            message=render_to_string(text_template, context),
             from_email=settings.DEFAULT_FROM_EMAIL,
-            html_message=loader.render_to_string(html_template, context),
+            html_message=render_to_string(html_template, context),
             recipient_list=[new_email],
             fail_silently=False,
         )
@@ -324,9 +323,9 @@ def _send_invitation_email(manager_invitation):
         }
         send_mail(
             subject="Invitation à gérer une cantine sur ma cantine",
-            message=render_to_string(f"{template}.html", context),
+            message=render_to_string(f"{template}.txt", context),
             from_email=settings.DEFAULT_FROM_EMAIL,
-            html_message=render_to_string(f"{template}.txt", context),
+            html_message=render_to_string(f"{template}.html", context),
             recipient_list=[manager_invitation.email],
             fail_silently=False,
         )
