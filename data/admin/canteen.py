@@ -2,6 +2,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import admin
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from data.models import Canteen
 from .diagnostic import DiagnosticInline
 from .softdeletionadmin import SoftDeletionAdmin
@@ -60,16 +61,19 @@ class CanteenAdmin(SoftDeletionAdmin):
         super().save_model(request, obj, form, change)
         if change and "publication_status" in form.changed_data and obj.publication_status == "published":
             protocol = "https" if settings.SECURE else "http"
-            canteens_url = "{}://{}/nos-cantines/".format(protocol, settings.HOSTNAME)
+            context = {
+                "canteen": obj.name,
+                "canteenUrl": f"{protocol}://{settings.HOSTNAME}/nos-cantines/{obj.id}",
+            }
+            template = "canteen-published"
             contact_list = [user.email for user in obj.managers.all()]
             contact_list.append(settings.CONTACT_EMAIL)
             send_mail(
-                f"Votre cantine « {obj.name} » est publiée",
-                # TODO: improve template
-                f"""La cantine « {obj.name} » est publiée.\n
-                La cantine est maintenant visible ici : {canteens_url}""",
-                settings.DEFAULT_FROM_EMAIL,
-                contact_list,
+                subject=f"Votre cantine « {obj.name} » est publiée",
+                message=render_to_string(f"{template}.txt", context),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                html_message=render_to_string(f"{template}.html", context),
+                recipient_list=contact_list,
                 fail_silently=True,
             )
 

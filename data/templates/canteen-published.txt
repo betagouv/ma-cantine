@@ -1,0 +1,11 @@
+Bonjour,
+
+Vous, ou un membre de votre équipe de géstion, avez demandé de publier les données de votre cantine « {{ canteen }} ».
+
+Nous sommes heureux a annoncer que votre cantine est maintenant publiée, et visible sur notre site.
+
+{{ canteenUrl }}
+
+Si vous avez des questions, n'hesitez pas a nous contacter en répondant ce message.
+
+L'équipe ma cantine
