@@ -1,0 +1,13 @@
+Bonjour,
+
+Vous avez reçu un message pour la cantine que vous gerez : {{ canteen }}.
+
+Message :
+
+{{ message }}
+
+Si vous voulez répondre au ce message, envoyez votre réponse à {{ from }}.
+
+Si vous avez des questions pour l'équipe ma cantine, n'hesitez pas a répondre à ce message.
+
+L'équipe ma cantine
