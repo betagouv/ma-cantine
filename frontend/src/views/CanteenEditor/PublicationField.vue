@@ -117,3 +117,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.v-btn--plain:not(.v-btn--active):not(.v-btn--loading):not(:focus):not(:hover) >>> .v-btn__content {
+  opacity: 1;
+}
+#canteen-page-link {
+  vertical-align: inherit;
+}
+</style>
