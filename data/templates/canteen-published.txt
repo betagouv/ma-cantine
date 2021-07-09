@@ -1,11 +1,11 @@
 Bonjour,
 
-Vous, ou un membre de votre équipe de géstion, avez demandé de publier les données de votre cantine « {{ canteen }} ».
+Votre cantine « {{ canteen }} » a bien été publiée sur la plateforme ma cantine.
 
-Nous sommes heureux a annoncer que votre cantine est maintenant publiée, et visible sur notre site.
+La publication se trouve dans le lien ci-dessous. N'hésitez pas à le partager !
 
 {{ canteenUrl }}
 
-Si vous avez des questions, n'hesitez pas a nous contacter en répondant ce message.
+Pour toute question ou renseignement vous pouvez nous contacter en répondant directement à ce message.
 
 L'équipe ma cantine
