@@ -4,71 +4,8 @@
       {{ isNewCanteen ? "Nouvelle cantine" : "Modifier ma cantine" }}
     </h1>
 
-    <PublicationPreviewDialog
-      v-if="!isNewCanteen"
-      :canteen="canteen"
-      :value="showPreview"
-      @close="showPreview = false"
-    />
-
     <v-form ref="form" v-model="formIsValid">
-      <v-row v-if="!isNewCanteen">
-        <v-col cols="12">
-          <p class="body-1 mb-3 mt-4 font-weight-black">Publication</p>
-          <v-checkbox hide-details="auto" class="mt-0" v-model="publicationRequested">
-            <template v-slot:label>
-              <p class="text-body-2 grey--text text--darken-4 pt-1 pb-0 my-0 ml-2">
-                J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles sur
-                <router-link
-                  :to="{
-                    name: 'CanteensHome',
-                  }"
-                >
-                  nos cantines
-                </router-link>
-                <br />
-                <span v-if="originalCanteenIsPublished">
-                  Cette cantine est actuellement publiée sur
-                  <v-btn
-                    @click.stop
-                    :href="
-                      $router.resolve({
-                        name: 'CanteenPage',
-                        params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                      }).href
-                    "
-                    class="text-body-2 pl-0 text-decoration-underline"
-                    id="canteen-page-link"
-                    target="_blank"
-                    small
-                    text
-                    plain
-                    :ripple="false"
-                  >
-                    nos cantines
-                    <v-icon small color="grey darken-4" class="ml-1">mdi-open-in-new</v-icon>
-                  </v-btn>
-                </span>
-                <span v-else>
-                  <span v-if="originalCanteenIsPending">
-                    Cette cantine est en attente de vérification pour être publiée.
-                  </span>
-                  <v-btn
-                    @click.stop="showPreview = true"
-                    class="text-body-2 px-0 text-decoration-underline grey--text text--darken-4"
-                    small
-                    text
-                    plain
-                    :ripple="false"
-                  >
-                    Voir un aperçu de la publication
-                  </v-btn>
-                </span>
-              </p>
-            </template>
-          </v-checkbox>
-        </v-col>
-      </v-row>
+      <PublicationField :canteen="canteen" v-model="publicationRequested" />
       <v-row>
         <v-col cols="12" md="8">
           <p class="body-2 my-2">Nom de la cantine</p>
@@ -257,7 +194,7 @@
 
 <script>
 import validators from "@/validators"
-import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewDialog"
+import PublicationField from "./PublicationField"
 import DiagnosticList from "./DiagnosticList"
 import DeletionDialog from "./DeletionDialog"
 import ManagerItem from "./ManagerItem"
@@ -267,7 +204,7 @@ const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre can
 
 export default {
   name: "CanteenEditor",
-  components: { PublicationPreviewDialog, DiagnosticList, DeletionDialog, ManagerItem },
+  components: { PublicationField, DiagnosticList, DeletionDialog, ManagerItem },
   props: {
     canteenUrlComponent: {
       type: String,
@@ -278,10 +215,7 @@ export default {
     return {
       canteen: {},
       formIsValid: true,
-      originalCanteenIsPublished: false,
-      originalCanteenIsPending: false,
       publicationRequested: false,
-      showPreview: false,
       bypassLeaveWarning: false,
       deletionDialog: false,
       cityAutocompleteChoice: {},
@@ -345,8 +279,6 @@ export default {
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
-      this.originalCanteenIsPublished = canteen.publicationStatus === "published"
-      this.originalCanteenIsPending = canteen.publicationStatus === "pending"
       this.publicationRequested = canteen.publicationStatus !== "draft"
       const initialCityAutocomplete = {
         text: canteen.city,
