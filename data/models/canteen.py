@@ -10,6 +10,7 @@ class Canteen(SoftDeletionModel):
     class Meta:
         verbose_name = "cantine"
         verbose_name_plural = "cantines"
+        ordering = ["-creation_date"]
 
     class ManagementType(models.TextChoices):
         DIRECT = "direct", "Directe"
@@ -27,7 +28,9 @@ class Canteen(SoftDeletionModel):
     city = models.TextField(null=True, blank=True, verbose_name="ville")
     city_insee_code = models.TextField(null=True, blank=True, verbose_name="Code INSEE")
 
-    department = models.TextField(null=True, blank=True, choices=Department.choices, verbose_name="département")
+    department = models.TextField(
+        null=True, blank=True, choices=Department.choices, verbose_name="département"
+    )
     postal_code = models.CharField(
         max_length=20, null=True, blank=True, verbose_name="code postal"
     )
@@ -64,14 +67,18 @@ class Canteen(SoftDeletionModel):
         verbose_name="mode de production",
     )
 
-    main_image = models.ImageField(null=True, blank=True, verbose_name="Image principale")
+    main_image = models.ImageField(
+        null=True, blank=True, verbose_name="Image principale"
+    )
 
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
         max_image_size = 1024
         if self.main_image:
-            self.main_image = optimize_image(self.main_image, self.main_image.name, max_image_size)
+            self.main_image = optimize_image(
+                self.main_image, self.main_image.name, max_image_size
+            )
         super(Canteen, self).save(force_insert, force_update, using, update_fields)
 
     def __str__(self):

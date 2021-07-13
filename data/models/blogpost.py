@@ -8,6 +8,7 @@ class BlogPost(models.Model):
     class Meta:
         verbose_name = "article de blog"
         verbose_name_plural = "articles de blog"
+        ordering = ["-display_date"]
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
