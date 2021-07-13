@@ -3,7 +3,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from api.views import LoggedUserView, SubscribeBetaTester, SubscribeNewsletter
 from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView
 from api.views import DiagnosticCreateView, UpdateUserCanteenView, DiagnosticUpdateView
-from api.views import BlogPostsView, SectorListView, ChangePasswordView
+from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
 from api.views import AddManagerView
 
 
@@ -27,6 +27,7 @@ urlpatterns = {
     ),
     path("sectors/", SectorListView.as_view(), name="sectors_list"),
     path("blogPosts/", BlogPostsView.as_view(), name="blog_posts_list"),
+    path("blogPosts/<int:pk>", BlogPostView.as_view(), name="single_blog_post"),
     path(
         "subscribeBetaTester/",
         SubscribeBetaTester.as_view(),

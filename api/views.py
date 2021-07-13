@@ -13,17 +13,22 @@ from django.core.validators import validate_email
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
-from rest_framework.generics import UpdateAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (
+    UpdateAPIView,
+    CreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
 from rest_framework.views import APIView
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.pagination import LimitOffsetPagination
 from api.serializers import LoggedUserSerializer, DiagnosticSerializer, SectorSerializer
 from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
     BlogPostSerializer,
     PasswordSerializer,
-    ManagingTeamSerializer
+    ManagingTeamSerializer,
 )
 from data.models import Canteen, BlogPost, Sector, ManagerInvitation
 from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
@@ -57,7 +62,7 @@ class UpdateUserView(UpdateAPIView):
 
     def perform_update(self, serializer):
         previous_email = serializer.instance.email
-        new_email = serializer.validated_data.get('email', previous_email)
+        new_email = serializer.validated_data.get("email", previous_email)
 
         update = super().perform_update(serializer)
 
@@ -66,7 +71,6 @@ class UpdateUserView(UpdateAPIView):
             self.send_confirmation_email(new_email, serializer.instance)
 
         return update
-
 
     def unconfirm_email(self, user):
         user.email_confirmed = False
@@ -90,8 +94,6 @@ class UpdateUserView(UpdateAPIView):
             recipient_list=[new_email],
             fail_silently=False,
         )
-
-
 
 
 class PublishedCanteensView(ListAPIView):
@@ -193,10 +195,22 @@ class SectorListView(ListAPIView):
     queryset = Sector.objects.all()
 
 
+class BlogPostsPagination(LimitOffsetPagination):
+    default_limit = 6
+    max_limit = 30
+
+
 class BlogPostsView(ListAPIView):
     model = BlogPost
     serializer_class = BlogPostSerializer
     queryset = BlogPost.objects.filter(published=True)
+    pagination_class = BlogPostsPagination
+
+
+class BlogPostView(RetrieveAPIView):
+    model = BlogPost
+    queryset = BlogPost.objects.filter(published=True)
+    serializer_class = BlogPostSerializer
 
 
 class SubscribeBetaTester(APIView):
@@ -259,7 +273,8 @@ class SubscribeNewsletter(APIView):
             )
         except Exception:
             return JsonResponse(
-                {"error": "An error has ocurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"error": "An error has ocurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 
@@ -311,11 +326,13 @@ class AddManagerView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+
 def _respond_with_team(canteen):
     data = ManagingTeamSerializer(canteen).data
     camel_case_bytes = CamelCaseJSONRenderer().render(data)
-    json_data = json.loads(camel_case_bytes.decode('utf-8'))
+    json_data = json.loads(camel_case_bytes.decode("utf-8"))
     return JsonResponse(json_data, status=status.HTTP_200_OK)
+
 
 def _send_invitation_email(manager_invitation):
     try:
