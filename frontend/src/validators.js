@@ -66,4 +66,7 @@ export default {
       return `Vous pouvez sélectionner jusqu'à ${maxNumer} élements`
     }
   },
+  isRequired(input) {
+    return !input && input !== 0 ? "Ce champ est obligatoire" : true
+  },
 }

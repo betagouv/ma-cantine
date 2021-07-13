@@ -13,6 +13,10 @@
           <v-icon small>mdi-compass</v-icon>
           {{ canteen.city }}
         </div>
+        <router-link :to="{ name: 'ContactPage', params: { canteenUrlComponent } }">
+          <v-icon small>mdi-email-outline</v-icon>
+          Contactez-nous
+        </router-link>
       </v-card-subtitle>
       <v-card-text>
         <v-btn outlined color="primary" exact :to="{ name: 'CanteensHome' }">

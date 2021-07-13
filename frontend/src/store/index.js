@@ -378,6 +378,12 @@ export default new Vuex.Store({
         })
     },
 
+    sendCanteenEmail(context, payload) {
+      return fetch("/api/v1/contactCanteen/", { method: "POST", headers, body: JSON.stringify(payload) }).then(
+        verifyResponse
+      )
+    },
+
     notify(context, { title, message, status }) {
       context.commit("SET_NOTIFICATION", { title, message, status })
       setTimeout(() => context.commit("REMOVE_NOTIFICATION", message), 4000)
