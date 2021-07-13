@@ -30,12 +30,14 @@ export default new Vuex.Store({
     canteensLoadingStatus: Constants.LoadingStatus.IDLE,
 
     sectors: [],
-    publishedCanteens: [],
     userCanteens: [],
     initialDataLoaded: false,
 
     blogPostCount: null,
     blogPosts: [],
+
+    publishedCanteenCount: null,
+    publishedCanteens: [],
 
     notification: {
       message: "",
@@ -60,8 +62,9 @@ export default new Vuex.Store({
     SET_SECTORS(state, sectors) {
       state.sectors = sectors
     },
-    SET_PUBLISHED_CANTEENS(state, publishedCanteens) {
-      state.publishedCanteens = publishedCanteens
+    ADD_PUBLISHED_CANTEENS(state, { response, limit, offset }) {
+      state.publishedCanteens.push({ ...response, limit, offset })
+      state.publishedCanteenCount = response.count
     },
     SET_USER_CANTEENS(state, userCanteens) {
       state.userCanteens = userCanteens
@@ -147,12 +150,12 @@ export default new Vuex.Store({
         })
     },
 
-    fetchPublishedCanteens(context) {
+    fetchPublishedCanteens(context, { limit = 6, offset }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch("/api/v1/publishedCanteens/")
+      return fetch(`/api/v1/publishedCanteens/?limit=${limit}&offset=${offset}`)
         .then(verifyResponse)
         .then((response) => {
-          context.commit("SET_PUBLISHED_CANTEENS", response)
+          context.commit("ADD_PUBLISHED_CANTEENS", { response, limit, offset })
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch(() => {
@@ -191,11 +194,7 @@ export default new Vuex.Store({
     },
 
     fetchInitialData(context) {
-      return Promise.all([
-        context.dispatch("fetchLoggedUser"),
-        context.dispatch("fetchPublishedCanteens"),
-        context.dispatch("fetchSectors"),
-      ])
+      return Promise.all([context.dispatch("fetchLoggedUser"), context.dispatch("fetchSectors")])
         .then(() => {
           if (context.state.loggedUser) return context.dispatch("fetchUserCanteens")
         })

@@ -96,10 +96,16 @@ class UpdateUserView(UpdateAPIView):
         )
 
 
+class PublishedCanteensPagination(LimitOffsetPagination):
+    default_limit = 12
+    max_limit = 30
+
+
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
     queryset = Canteen.objects.filter(data_is_public=True)
+    pagination_class = PublishedCanteensPagination
 
 
 class UserCanteensView(ListCreateAPIView):

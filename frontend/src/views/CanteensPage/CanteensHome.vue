@@ -21,75 +21,67 @@
         <v-spacer></v-spacer>
       </v-row>
     </v-card>
-    <v-row>
-      <v-col v-for="canteen in publishedCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
-        <v-card
-          :to="{ name: 'CanteenPage', params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) } }"
-          hover
-          class="pa-4 text-left fill-height"
-        >
-          <v-card-title class="font-weight-black">
-            {{ canteen.name }}
-          </v-card-title>
-          <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city">
-            <div v-if="canteen.dailyMealCount">
-              <v-icon small>mdi-silverware-fork-knife</v-icon>
-              {{ canteen.dailyMealCount }} repas par jour
-            </div>
-            <div v-if="canteen.city">
-              <v-icon small>mdi-compass</v-icon>
-              {{ canteen.city }}
-            </div>
-            <div v-if="sectorsForCanteen(canteen)">
-              <v-icon small>mdi-office-building</v-icon>
-              {{ sectorsForCanteen(canteen) }}
-            </div>
-          </v-card-subtitle>
-          <v-card-text
-            v-if="initiativesForCanteen(canteen) && initiativesForCanteen(canteen).length > 0"
-            class="grey--text text--darken-4"
-          >
-            Nos initiatives mises en place :
-            <div v-for="initiative in initiativesForCanteen(canteen)" :key="initiative">
-              <v-icon small class="mt-n1" color="primary">mdi-check-bold</v-icon>
-              {{ initiative }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <div v-if="loading">
+      <v-progress-circular indeterminate></v-progress-circular>
+    </div>
+
+    <div v-else>
+      <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
+      <v-progress-circular class="my-10" indeterminate v-if="!visibleCanteens"></v-progress-circular>
+      <v-row v-else>
+        <v-col v-for="canteen in visibleCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
+          <PublishedCanteenCard :canteen="canteen" />
+        </v-col>
+      </v-row>
+    </div>
   </div>
 </template>
 
 <script>
+import PublishedCanteenCard from "./PublishedCanteenCard"
 export default {
-  methods: {
-    sectorsForCanteen(canteen) {
-      const sectors = canteen.sectors.map((x) => this.$store.state.sectors.find((y) => y.id === x)).filter((x) => !!x)
-
-      if (sectors.length === 0) return null
-      return sectors.map((x) => x.name.toLowerCase()).join(", ")
-    },
-    initiativesForCanteen(canteen) {
-      if (!canteen.diagnostics || canteen.diagnostics.length === 0) return null
-
-      const diagnostic = canteen.diagnostics.find((x) => x.year === 2020)
-      if (!diagnostic) return null
-
-      const initiatives = []
-      if (diagnostic.hasDonationAgreement) initiatives.push("Dons faits aux associations")
-      if (diagnostic.hasDiversificationPlan)
-        initiatives.push("Mise en place d'un plan de diversification des protéines")
-      if (diagnostic.cookingPlasticSubstituted || diagnostic.servingPlasticSubstituted)
-        initiatives.push("Contenants en plastique remplacés")
-      if (diagnostic.communicatesOnFoodPlan) initiatives.push("Communique sur le plan alimentaire")
-      return initiatives
-    },
+  data() {
+    return {
+      limit: 6,
+      page: null,
+    }
   },
+  components: { PublishedCanteenCard },
   computed: {
     publishedCanteens() {
       return this.$store.state.publishedCanteens
     },
+    publishedCanteenCount() {
+      return this.$store.state.publishedCanteenCount
+    },
+    visibleCanteens() {
+      const canteenPage = this.$store.state.publishedCanteens.find((x) => x.offset === this.offset)
+      return canteenPage ? canteenPage.results : null
+    },
+    loading() {
+      return this.publishedCanteenCount === null
+    },
+    offset() {
+      return (this.page - 1) * this.limit
+    },
+  },
+  methods: {
+    fetchCurrentPage() {
+      return this.$store.dispatch("fetchPublishedCanteens", { offset: this.offset })
+    },
+  },
+  watch: {
+    page(newPage) {
+      // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
+      this.$router.push({ query: { page: newPage } }).catch(() => {})
+      if (!this.visibleCanteens) this.fetchCurrentPage()
+    },
+    $route: function(newRoute) {
+      this.page = newRoute.query.page ? parseInt(newRoute.query.page) : 1
+    },
+  },
+  mounted() {
+    this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
   },
 }
 </script>
