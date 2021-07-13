@@ -4,68 +4,8 @@
       {{ isNewCanteen ? "Nouvelle cantine" : "Modifier ma cantine" }}
     </h1>
 
-    <PublicationPreviewDialog
-      v-if="!isNewCanteen"
-      :canteen="canteen"
-      :value="showPreview"
-      @close="showPreview = false"
-    />
-
     <v-form ref="form" v-model="formIsValid">
-      <v-row v-if="!isNewCanteen">
-        <v-col cols="12">
-          <p class="body-1 mb-0 mt-4 font-weight-black">Publication</p>
-          <v-checkbox hide-details="auto" class="mt-0" v-model="canteen.dataIsPublic">
-            <template v-slot:label>
-              <p class="text-body-2 grey--text text--darken-4 pt-3 ml-2">
-                J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles sur
-                <router-link
-                  :to="{
-                    name: 'CanteensHome',
-                  }"
-                >
-                  nos cantines
-                </router-link>
-                .
-                <br />
-                <span v-if="originalCanteenIsPublished">Cette cantine est actuellement publié sur</span>
-
-                <v-btn
-                  v-if="originalCanteenIsPublished"
-                  @click.stop
-                  :href="
-                    $router.resolve({
-                      name: 'CanteenPage',
-                      params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                    }).href
-                  "
-                  class="text-body-2 pl-1 text-decoration-underline"
-                  target="_blank"
-                  small
-                  text
-                  plain
-                  :ripple="false"
-                >
-                  nos cantines
-                  <v-icon small color="grey darken-4" class="ml-1">mdi-open-in-new</v-icon>
-                </v-btn>
-
-                <v-btn
-                  @click.stop="showPreview = true"
-                  class="text-body-2 px-0 text-decoration-underline grey--text text--darken-4"
-                  small
-                  text
-                  plain
-                  v-else
-                  :ripple="false"
-                >
-                  Voir un aperçu de la publication
-                </v-btn>
-              </p>
-            </template>
-          </v-checkbox>
-        </v-col>
-      </v-row>
+      <PublicationField :canteen="canteen" v-model="publicationRequested" />
       <v-row>
         <v-col cols="12" md="8">
           <p class="body-2 my-2">Nom de la cantine</p>
@@ -254,7 +194,7 @@
 
 <script>
 import validators from "@/validators"
-import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewDialog"
+import PublicationField from "./PublicationField"
 import DiagnosticList from "./DiagnosticList"
 import DeletionDialog from "./DeletionDialog"
 import ManagerItem from "./ManagerItem"
@@ -264,7 +204,7 @@ const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre can
 
 export default {
   name: "CanteenEditor",
-  components: { PublicationPreviewDialog, DiagnosticList, DeletionDialog, ManagerItem },
+  components: { PublicationField, DiagnosticList, DeletionDialog, ManagerItem },
   props: {
     canteenUrlComponent: {
       type: String,
@@ -275,8 +215,7 @@ export default {
     return {
       canteen: {},
       formIsValid: true,
-      originalCanteenIsPublished: false,
-      showPreview: false,
+      publicationRequested: false,
       bypassLeaveWarning: false,
       deletionDialog: false,
       cityAutocompleteChoice: {},
@@ -340,7 +279,7 @@ export default {
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
-      this.originalCanteenIsPublished = canteen.dataIsPublic
+      this.publicationRequested = canteen.publicationStatus !== "draft"
       const initialCityAutocomplete = {
         text: canteen.city,
         value: {
@@ -369,6 +308,11 @@ export default {
         return
       }
 
+      if (!this.publicationRequested) {
+        this.canteen.publicationStatus = "draft"
+      } else if (this.canteen.publicationStatus === "draft") {
+        this.canteen.publicationStatus = "pending"
+      }
       const payload = this.originalCanteen ? getObjectDiff(this.originalCanteen, this.canteen) : this.canteen
       this.$store
         .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", {
@@ -492,9 +436,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.v-btn--plain:not(.v-btn--active):not(.v-btn--loading):not(:focus):not(:hover) >>> .v-btn__content {
-  opacity: 1;
-}
-</style>

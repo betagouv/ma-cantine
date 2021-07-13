@@ -5,7 +5,6 @@ from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
 from django.core.mail import send_mail
-from django.template import loader
 from django.template.loader import render_to_string
 from django.core.exceptions import ObjectDoesNotExist, ValidationError, BadRequest
 from django.db.utils import IntegrityError
@@ -84,9 +83,9 @@ class UpdateUserView(UpdateAPIView):
         }
         send_mail(
             subject="Confirmation de votre changement d'adresse email - ma cantine",
-            message=loader.render_to_string(text_template, context),
+            message=render_to_string(text_template, context),
             from_email=settings.DEFAULT_FROM_EMAIL,
-            html_message=loader.render_to_string(html_template, context),
+            html_message=render_to_string(html_template, context),
             recipient_list=[new_email],
             fail_silently=False,
         )
@@ -97,7 +96,7 @@ class UpdateUserView(UpdateAPIView):
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects.filter(data_is_public=True)
+    queryset = Canteen.objects.filter(publication_status="published")
 
 
 class UserCanteensView(ListCreateAPIView):
@@ -128,22 +127,19 @@ class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
         return self.partial_update(request, *args, **kwargs)
 
     def perform_update(self, serializer):
-        previous_publication_status = serializer.instance.data_is_public
-        new_publication_status = serializer.validated_data.get("data_is_public", False)
+        is_draft = serializer.instance.publication_status == "draft"
+        publication_requested = serializer.validated_data.get("publication_status") == "pending"
 
-        if not previous_publication_status and new_publication_status:
+        if is_draft and publication_requested:
             protocol = "https" if settings.SECURE else "http"
-            cantine = serializer.instance
+            canteen = serializer.instance
             admin_url = "{}://{}/admin/data/canteen/{}/change/".format(
-                protocol, settings.HOSTNAME, cantine.id
+                protocol, settings.HOSTNAME, canteen.id
             )
-            canteens_url = "{}://{}/nos-cantines/".format(protocol, settings.HOSTNAME)
 
             send_mail(
-                "Cantine publiée sur ma cantine",
-                "La cantine « {} » vient d'être publiée.\nAdmin : {}\nNos cantines : {}".format(
-                    cantine.name, admin_url, canteens_url
-                ),
+                "Demande de publication sur ma cantine",
+                f"La cantine « {canteen.name} » a demandé d'être publiée.\nAdmin : {admin_url}",
                 settings.DEFAULT_FROM_EMAIL,
                 [settings.CONTACT_EMAIL],
                 fail_silently=True,
@@ -327,9 +323,9 @@ def _send_invitation_email(manager_invitation):
         }
         send_mail(
             subject="Invitation à gérer une cantine sur ma cantine",
-            message=render_to_string(f"{template}.html", context),
+            message=render_to_string(f"{template}.txt", context),
             from_email=settings.DEFAULT_FROM_EMAIL,
-            html_message=render_to_string(f"{template}.txt", context),
+            html_message=render_to_string(f"{template}.html", context),
             recipient_list=[manager_invitation.email],
             fail_silently=False,
         )

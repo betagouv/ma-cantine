@@ -19,6 +19,11 @@ class Canteen(SoftDeletionModel):
         CENTRAL = "central", "Cuisine centrale"
         ON_SITE = "site", "Cuisine-site"
 
+    class PublicationStatus(models.TextChoices):
+        DRAFT = "draft", "🔒 Non publié"
+        PENDING = "pending", "❓ En attente de vérification"
+        PUBLISHED = "published", "✅ Publié"
+
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
@@ -34,9 +39,11 @@ class Canteen(SoftDeletionModel):
     sectors = models.ManyToManyField(
         Sector, blank=True, verbose_name="secteurs d'activité"
     )
-    published = models.BooleanField(default=False, verbose_name="publié")
-    data_is_public = models.BooleanField(
-        default=False, verbose_name="données publiques"
+    publication_status = models.CharField(
+        max_length=50,
+        choices=PublicationStatus.choices,
+        default="draft",
+        verbose_name="état de publication",
     )
     managers = models.ManyToManyField(
         get_user_model(),
