@@ -378,6 +378,23 @@ export default new Vuex.Store({
         })
     },
 
+    removeManager(context, { canteenId, email }) {
+      return fetch(`/api/v1/removeManager/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ canteenId, email }),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("UPDATE_USER_CANTEEN_MANAGERS", { canteenId, data: response })
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
     notify(context, { title, message, status }) {
       context.commit("SET_NOTIFICATION", { title, message, status })
       setTimeout(() => context.commit("REMOVE_NOTIFICATION", message), 4000)

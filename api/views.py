@@ -13,7 +13,11 @@ from django.core.validators import validate_email
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
-from rest_framework.generics import UpdateAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (
+    UpdateAPIView,
+    CreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
 from rest_framework.views import APIView
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound, PermissionDenied
@@ -23,7 +27,7 @@ from api.serializers import (
     FullCanteenSerializer,
     BlogPostSerializer,
     PasswordSerializer,
-    ManagingTeamSerializer
+    ManagingTeamSerializer,
 )
 from data.models import Canteen, BlogPost, Sector, ManagerInvitation
 from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
@@ -57,7 +61,7 @@ class UpdateUserView(UpdateAPIView):
 
     def perform_update(self, serializer):
         previous_email = serializer.instance.email
-        new_email = serializer.validated_data.get('email', previous_email)
+        new_email = serializer.validated_data.get("email", previous_email)
 
         update = super().perform_update(serializer)
 
@@ -66,7 +70,6 @@ class UpdateUserView(UpdateAPIView):
             self.send_confirmation_email(new_email, serializer.instance)
 
         return update
-
 
     def unconfirm_email(self, user):
         user.email_confirmed = False
@@ -90,8 +93,6 @@ class UpdateUserView(UpdateAPIView):
             recipient_list=[new_email],
             fail_silently=False,
         )
-
-
 
 
 class PublishedCanteensView(ListAPIView):
@@ -259,7 +260,8 @@ class SubscribeNewsletter(APIView):
             )
         except Exception:
             return JsonResponse(
-                {"error": "An error has ocurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"error": "An error has ocurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 
@@ -311,11 +313,50 @@ class AddManagerView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+
+class RemoveManagerView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            email = request.data.get("email")
+            validate_email(email)
+            canteen_id = request.data.get("canteen_id")
+            canteen = request.user.canteens.get(id=canteen_id)
+
+            try:
+                manager = get_user_model().objects.get(email=email)
+                canteen.managers.remove(manager)
+            except get_user_model().DoesNotExist:
+                try:
+                    invitation = ManagerInvitation.objects.get(
+                        canteen_id=canteen.id, email=email
+                    )
+                    invitation.delete()
+                except ManagerInvitation.DoesNotExist:
+                    pass
+            return _respond_with_team(canteen)
+        except ValidationError:
+            return JsonResponse(
+                {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Canteen.DoesNotExist:
+            return JsonResponse(
+                {"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception:
+            return JsonResponse(
+                {"error": "An error has ocurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
 def _respond_with_team(canteen):
     data = ManagingTeamSerializer(canteen).data
     camel_case_bytes = CamelCaseJSONRenderer().render(data)
-    json_data = json.loads(camel_case_bytes.decode('utf-8'))
+    json_data = json.loads(camel_case_bytes.decode("utf-8"))
     return JsonResponse(json_data, status=status.HTTP_200_OK)
+
 
 def _send_invitation_email(manager_invitation):
     try:
