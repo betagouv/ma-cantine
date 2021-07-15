@@ -4,7 +4,7 @@ from api.views import LoggedUserView, SubscribeBetaTester, SubscribeNewsletter
 from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView
 from api.views import DiagnosticCreateView, UpdateUserCanteenView, DiagnosticUpdateView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView
-from api.views import AddManagerView
+from api.views import AddManagerView, RemoveManagerView
 
 
 urlpatterns = {
@@ -42,6 +42,11 @@ urlpatterns = {
         "addManager/",
         AddManagerView.as_view(),
         name="add_manager",
+    ),
+    path(
+        "removeManager/",
+        RemoveManagerView.as_view(),
+        name="remove_manager",
     ),
 }
 
