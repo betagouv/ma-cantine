@@ -15,8 +15,8 @@ class TestCanteenApi(APITestCase):
         returned from this call
         """
         published_canteens = [
-            CanteenFactory.create(publication_status="published"),
-            CanteenFactory.create(publication_status="published"),
+            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value),
+            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value),
         ]
         private_canteens = [
             CanteenFactory.create(),

@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+import urllib.parse
 from data.models import Canteen
 from .diagnostic import DiagnosticInline
 from .softdeletionadmin import SoftDeletionAdmin
@@ -61,9 +62,10 @@ class CanteenAdmin(SoftDeletionAdmin):
         super().save_model(request, obj, form, change)
         if change and "publication_status" in form.changed_data and obj.publication_status == "published":
             protocol = "https" if settings.SECURE else "http"
+            canteenUrlComponent = urllib.parse.quote(f"{obj.id}--{obj.name}")
             context = {
                 "canteen": obj.name,
-                "canteenUrl": f"{protocol}://{settings.HOSTNAME}/nos-cantines/{obj.id}",
+                "canteenUrl": f"{protocol}://{settings.HOSTNAME}/nos-cantines/{canteenUrlComponent}",
             }
             template = "canteen-published"
             contact_list = [user.email for user in obj.managers.all()]
