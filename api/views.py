@@ -350,6 +350,7 @@ class SendCanteenEmailView(APIView):
             context = {
                 "canteen": canteen.name,
                 "from": email,
+                "name": request.data.get("name") or "Une personne",
                 "message": request.data.get("message"),
             }
             send_mail(

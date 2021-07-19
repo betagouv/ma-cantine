@@ -16,7 +16,8 @@ class TestCanteenContact(APITestCase):
         payload = {
             "canteenId": canteen.id,
             "from": "test@example.com",
-            "message": "Test <b>message</b>"
+            "name": "Camille Dupont",
+            "message": "Test <b>message</b>",
         }
         response = self.client.post(reverse("contact_canteen"), payload)
 
@@ -25,4 +26,21 @@ class TestCanteenContact(APITestCase):
         self.assertEqual(len(mail.outbox[0].to), canteen.managers.all().count())
         self.assertEqual(mail.outbox[0].from_email, "contact@example.com")
         self.assertIn("test@example.com", mail.outbox[0].body)
+        self.assertIn("Camille Dupont", mail.outbox[0].body)
         self.assertIn("Test &lt;b&gt;message&lt;/b&gt;", mail.outbox[0].body)
+
+    @override_settings(DEFAULT_FROM_EMAIL="contact@example.com")
+    def test_contact_canteen(self):
+        """
+        If a name isn't given, gracefully handle email text
+        """
+        canteen = CanteenFactory.create()
+        payload = {
+            "canteenId": canteen.id,
+            "from": "test@example.com",
+            "name": "",
+            "message": "Test",
+        }
+        response = self.client.post(reverse("contact_canteen"), payload)
+
+        self.assertIn("Une personne", mail.outbox[0].body)

@@ -10,7 +10,6 @@ import GeneratePosterPage from "@/views/GeneratePosterPage"
 import CanteensPage from "@/views/CanteensPage"
 import CanteensHome from "@/views/CanteensPage/CanteensHome"
 import CanteenPage from "@/views/CanteensPage/CanteenPage"
-import ContactPage from "@/views/ContactPage"
 import LegalNotices from "@/views/LegalNotices"
 import AccountSummaryPage from "@/views/AccountSummaryPage"
 import AccountEditor from "@/views/AccountSummaryPage/AccountEditor"
@@ -137,12 +136,6 @@ const routes = [
     ],
   },
   {
-    path: "/contact/:canteenUrlComponent",
-    name: "ContactPage",
-    component: ContactPage,
-    props: true,
-  },
-  {
     path: "/mentions-legales",
     name: "LegalNotices",
     component: LegalNotices,
@@ -253,7 +246,8 @@ const routes = [
 const router = new VueRouter({
   mode: "history",
   routes,
-  scrollBehavior() {
+  scrollBehavior(to) {
+    if (to.hash) return { selector: to.hash, offset: { y: 90 } }
     return { x: 0, y: 0 }
   },
 })
