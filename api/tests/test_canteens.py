@@ -39,6 +39,30 @@ class TestCanteenApi(APITestCase):
             self.assertFalse("managers" in recieved_canteen)
             self.assertFalse("managerInvitations" in recieved_canteen)
 
+    def test_get_single_published_canteen(self):
+        """
+        We are able to get a single published canteen.
+        """
+        published_canteen = CanteenFactory.create(data_is_public=True)
+        response = self.client.get(
+            reverse("single_published_canteen", kwargs={"pk": published_canteen.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body.get("id"), published_canteen.id)
+
+    def test_get_single_unpublished_canteen(self):
+        """
+        A 404 is raised if we try to get a sinlge published canteen
+        that has not been published by the manager.
+        """
+        private_canteen = CanteenFactory.create(data_is_public=False)
+        response = self.client.get(
+            reverse("single_published_canteen", kwargs={"pk": private_canteen.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_get_canteens_unauthenticated(self):
         """
         If the user is not authenticated, they will not be able to

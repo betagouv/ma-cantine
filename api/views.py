@@ -108,6 +108,12 @@ class PublishedCanteensView(ListAPIView):
     pagination_class = PublishedCanteensPagination
 
 
+class PublishedCanteenSingleView(RetrieveAPIView):
+    model = Canteen
+    serializer_class = PublicCanteenSerializer
+    queryset = Canteen.objects.filter(data_is_public=True)
+
+
 class UserCanteensView(ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     model = Canteen
