@@ -45,7 +45,7 @@
 
     <p class="text-left mt-6 mb-2">Lien vers le support de communication</p>
     <v-text-field
-      :rules="[validators.isUrlOrEmpty]"
+      :rules="[validators.urlOrEmpty]"
       solo
       v-model="diagnostic.communicationSupportUrl"
       placeholder="https://"

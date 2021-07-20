@@ -11,7 +11,7 @@
           <p class="body-2 my-2">Nom de la cantine</p>
           <v-text-field
             hide-details="auto"
-            :rules="[validators.notEmpty]"
+            :rules="[validators.required]"
             validate-on-blur
             solo
             v-model="canteen.name"
@@ -54,7 +54,7 @@
           <p class="body-2 my-2">Ville</p>
           <v-autocomplete
             hide-details="auto"
-            :rules="[validators.notEmpty]"
+            :rules="[validators.required]"
             :loading="loadingCommunes"
             :items="communes"
             :search-input.sync="search"
@@ -167,7 +167,7 @@
                 solo
                 v-model="newManagerEmail"
                 label="Adresse email"
-                :rules="[validators.isEmailOrEmpty]"
+                :rules="[validators.emailOrEmpty]"
                 validate-on-blur
               ></v-text-field>
               <v-btn

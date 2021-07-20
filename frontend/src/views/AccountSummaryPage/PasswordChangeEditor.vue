@@ -9,7 +9,7 @@
             <p class="body-2 mb-1 mt-2 text-left">Mot de passe actuel</p>
             <v-text-field
               type="password"
-              :rules="[validators.notEmpty]"
+              :rules="[validators.required]"
               hide-details="auto"
               solo
               v-model="oldPassword"
@@ -20,7 +20,7 @@
             <p class="body-2 mb-1 mt-2 text-left">Nouveau mot de passe</p>
             <v-text-field
               type="password"
-              :rules="[validators.notEmpty]"
+              :rules="[validators.required]"
               hide-details="auto"
               solo
               v-model="newPassword"
