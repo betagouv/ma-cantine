@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="my-10 align-center">Envoyer un message à {{ canteen.name }}</h2>
+    <h2 class="my-10 align-center">Contactez « {{ canteen.name }} »</h2>
     <v-form v-model="formIsValid" ref="form" @submit.prevent>
       <v-text-field
         v-model="fromEmail"
