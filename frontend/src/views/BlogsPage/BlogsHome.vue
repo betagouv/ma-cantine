@@ -74,7 +74,7 @@ export default {
       this.$router.push({ query: { page: newPage } }).catch(() => {})
       if (!this.visibleBlogPosts) this.fetchCurrentPage()
     },
-    $route: function(newRoute) {
+    $route(newRoute) {
       this.page = newRoute.query.page ? parseInt(newRoute.query.page) : 1
     },
   },
