@@ -1,0 +1,13 @@
+Bonjour,
+
+{{ name }} veut vous contacter concernant votre cantine : {{ canteen }}.
+
+Message :
+
+{{ message }}
+
+Vous pouvez envoyez votre réponse à l'adresse {{ from }}.
+
+Pour toute question ou renseignement vous pouvez nous contacter en répondant directement à ce message.
+
+L'équipe ma cantine
