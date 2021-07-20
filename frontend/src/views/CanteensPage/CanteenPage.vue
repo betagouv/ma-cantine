@@ -46,7 +46,7 @@ export default {
   computed: {
     canteen() {
       const previousIdVersion = this.canteenUrlComponent.indexOf("--") === -1
-      if (previousIdVersion) return this.$store.state.publishedCanteens.find((x) => x.id == this.id)
+      if (previousIdVersion) return this.$store.state.publishedCanteens.find((x) => x.id == this.canteenUrlComponent)
       return this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
     },
     diagnostics() {
