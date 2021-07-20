@@ -3,16 +3,16 @@ export default {
   themes: {
     light: {
       primary: {
-        base: "#169b62",
-        lighten5: "#e3f3ec",
-        lighten4: "#b9e1d0",
-        lighten3: "#8bcdb1",
-        lighten2: "#5cb991",
-        lighten1: "#39aa7a",
-        darken1: "#13935a",
-        darken2: "#108950",
-        darken3: "#0c7f46",
-        darken4: "#066d34",
+        base: "#0c7f46",
+        lighten5: "#e2f0e9",
+        lighten4: "#b6d9c8",
+        lighten3: "#86bfa3",
+        lighten2: "#55a57e",
+        lighten1: "#309262",
+        darken1: "#0a773f",
+        darken2: "#086c37",
+        darken3: "#06622f",
+        darken4: "#034f20",
       },
       secondary: {
         base: "#ff8d7e",

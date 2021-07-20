@@ -21,7 +21,7 @@
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="pa-4">
-            <v-btn :to="{ name: 'GeneratePosterPage' }" outlined color="primary darken-1">J'informe mes convives</v-btn>
+            <v-btn :to="{ name: 'GeneratePosterPage' }" outlined color="primary">J'informe mes convives</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -45,7 +45,7 @@
           <v-card-actions class="pa-4">
             <v-dialog max-width="700" v-model="calculatorModal" @input="stopVideo">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn outlined color="primary darken-1" v-on="on" v-bind="attrs">
+                <v-btn outlined color="primary" v-on="on" v-bind="attrs">
                   Télécharger notre tableur
                 </v-btn>
               </template>
