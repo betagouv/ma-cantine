@@ -13,7 +13,7 @@
       </v-card-title>
 
       <v-card-text>
-        Vous perdrez les données de cette cantine ainsi que celles des diagnostics associés
+        Vous perdrez les données de cette cantine ainsi que celles des diagnostics associés.
       </v-card-text>
 
       <v-divider></v-divider>
