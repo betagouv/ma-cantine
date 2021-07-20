@@ -138,25 +138,19 @@
       <h2 class="font-weight-black text-h5 mt-10">
         Les gestionnaires pour cette cantine
       </h2>
-      <v-list disabled>
-        <v-list-item-group>
-          <ManagerItem
-            v-for="manager in managers"
-            :key="manager.email"
-            :manager="manager"
-            icon="mdi-account-check-outline"
-            color="primary"
-            status=""
-          />
-          <ManagerItem
-            v-for="manager in managerInvitations"
-            :key="manager.email"
-            :manager="manager"
-            icon="mdi-account-clock-outline"
-            color="secondary"
-            status="Invitation envoyée"
-          />
-        </v-list-item-group>
+      <v-list>
+        <ManagerItem @delete="deleteManager" v-for="manager in managers" :key="manager.email" :manager="manager" />
+      </v-list>
+      <v-list>
+        <p class="text-body-1 font-weight-black" v-if="managerInvitations && managerInvitations.length > 0">
+          Invitations en cours
+        </p>
+        <ManagerItem
+          @delete="deleteManager"
+          v-for="manager in managerInvitations"
+          :key="manager.email"
+          :manager="manager"
+        />
       </v-list>
       <v-row>
         <v-col cols="12" sm="10" md="6">
@@ -268,7 +262,10 @@ export default {
       }
     },
     managers() {
-      return this.originalCanteen.managers
+      const managersCopy = [...this.originalCanteen.managers]
+      const loggedUserIndex = managersCopy.findIndex((x) => x.email === this.$store.state.loggedUser.email)
+      managersCopy.splice(0, 0, managersCopy.splice(loggedUserIndex, 1)[0])
+      return managersCopy
     },
     managerInvitations() {
       return this.originalCanteen.managerInvitations
@@ -411,6 +408,23 @@ export default {
         .catch(() => {
           this.$store.dispatch("notifyServerError")
           this.newManagerEmail = undefined
+        })
+    },
+    deleteManager(manager) {
+      this.$store
+        .dispatch("removeManager", {
+          canteenId: this.canteen.id,
+          email: manager.email,
+        })
+        .then(() => {
+          this.$store.dispatch("notify", {
+            title: "Mise à jour prise en compte",
+            message: `${manager.email} n'est plus gestionnaire de cette cantine`,
+            status: "success",
+          })
+        })
+        .catch(() => {
+          this.$store.dispatch("notifyServerError")
         })
     },
   },
