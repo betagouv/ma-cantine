@@ -35,7 +35,7 @@
               v-model="form.canteen.name"
               placeholder="nom de l'établissement"
               hide-details="auto"
-              :rules="[validators.notEmpty]"
+              :rules="[validators.required]"
               solo
               class="my-4"
             ></v-text-field>
@@ -51,7 +51,7 @@
               auto-select-first
               cache-items
               hide-details="auto"
-              :rules="[validators.notEmpty]"
+              :rules="[validators.required]"
               solo
               class="my-4"
             ></v-autocomplete>
