@@ -15,11 +15,12 @@ class TestCanteenApi(APITestCase):
         returned from this call
         """
         published_canteens = [
-            CanteenFactory.create(data_is_public=True),
-            CanteenFactory.create(data_is_public=True),
+            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value),
+            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value),
         ]
         private_canteens = [
-            CanteenFactory.create(data_is_public=False),
+            CanteenFactory.create(),
+            CanteenFactory.create(publication_status="pending"),
         ]
         response = self.client.get(reverse("published_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -112,11 +113,11 @@ class TestCanteenApi(APITestCase):
     @authenticate
     def test_publish_email(self):
         """
-        An email should be sent to the team when a cantine is published
+        An email should be sent to the team when a manager has requested publication
         """
-        canteen = CanteenFactory.create(data_is_public=False)
+        canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        payload = {"data_is_public": True}
+        payload = {"publication_status": "pending"}
         response = self.client.patch(
             reverse("single_canteen", kwargs={"pk": canteen.id}), payload
         )
@@ -125,7 +126,8 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], "contact-test@example.com")
         self.assertIn(
-            "La cantine « %s » vient d'être publiée" % canteen.name, mail.outbox[0].body
+            "La cantine « %s » a demandé d'être publiée" % canteen.name,
+            mail.outbox[0].body
         )
 
     @authenticate
