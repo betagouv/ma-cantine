@@ -32,9 +32,8 @@
         </v-row>
       </v-card>
       <div id="content" v-html="blogPost.body" class="text-left"></div>
-      <div class="my-10">
-        <router-link :to="{ name: 'BlogsHome' }">← Retour à la liste des articles</router-link>
-      </div>
+
+      <router-link :to="{ name: 'BlogsHome' }" class="my-10 d-block">← Retour à la liste des articles</router-link>
     </div>
   </div>
 </template>
