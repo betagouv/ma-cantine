@@ -4,7 +4,7 @@ from api.views import LoggedUserView, SubscribeBetaTester, SubscribeNewsletter
 from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView
 from api.views import DiagnosticCreateView, UpdateUserCanteenView, DiagnosticUpdateView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
-from api.views import AddManagerView
+from api.views import AddManagerView, PublishedCanteenSingleView
 
 
 urlpatterns = {
@@ -12,6 +12,11 @@ urlpatterns = {
     path("user/<int:pk>", UpdateUserView.as_view(), name="update_user"),
     path(
         "publishedCanteens/", PublishedCanteensView.as_view(), name="published_canteens"
+    ),
+    path(
+        "publishedCanteens/<int:pk>",
+        PublishedCanteenSingleView.as_view(),
+        name="single_published_canteen",
     ),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path("canteens/<int:pk>", UpdateUserCanteenView.as_view(), name="single_canteen"),

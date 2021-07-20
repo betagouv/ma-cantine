@@ -420,7 +420,8 @@ export default new Vuex.Store({
     },
     getCanteenFromUrlComponent: (state) => (canteenUrlComponent) => {
       const canteenId = canteenUrlComponent.split("--")[0]
-      return [...state.userCanteens, ...state.publishedCanteens].find((x) => x.id === parseInt(canteenId))
+      const existingCanteens = state.publishedCanteens.flatMap((x) => x.results)
+      return [...state.userCanteens, ...existingCanteens].find((x) => x.id === parseInt(canteenId))
     },
   },
 })
