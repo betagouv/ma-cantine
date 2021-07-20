@@ -467,8 +467,6 @@ export default {
         })
     },
     deleteManager(manager) {
-      console.log(`should remove manager ${manager.email}`)
-
       this.$store
         .dispatch("removeManager", {
           canteenId: this.canteen.id,
