@@ -11,7 +11,7 @@
             solo
             ref="canteenSelect"
             v-model="selectedCanteenId"
-            :rules="[validators.notEmpty, validators.diagnosticIsUnique]"
+            :rules="[validators.required, validators.diagnosticIsUnique]"
             :items="userCanteens"
             item-text="name"
             item-value="id"
@@ -27,7 +27,7 @@
             solo
             ref="yearSelect"
             v-model="diagnostic.year"
-            :rules="[validators.notEmpty, validators.diagnosticIsUnique]"
+            :rules="[validators.required, validators.diagnosticIsUnique]"
             :items="allowedYears"
             hide-details="auto"
             placeholder="Année du diagnostic"

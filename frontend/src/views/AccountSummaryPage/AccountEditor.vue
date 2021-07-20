@@ -42,7 +42,7 @@
               hide-details="auto"
               solo
               v-model="userCopy.firstName"
-              :rules="[validators.notEmpty]"
+              :rules="[validators.required]"
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="6">
@@ -51,17 +51,12 @@
               hide-details="auto"
               solo
               v-model="userCopy.lastName"
-              :rules="[validators.notEmpty]"
+              :rules="[validators.required]"
             ></v-text-field>
           </v-col>
           <v-col cols="12">
             <p class="body-2 mb-1 mt-2 text-left">Adresse email</p>
-            <v-text-field
-              hide-details="auto"
-              solo
-              v-model="userCopy.email"
-              :rules="[validators.isEmail]"
-            ></v-text-field>
+            <v-text-field hide-details="auto" solo v-model="userCopy.email" :rules="[validators.email]"></v-text-field>
           </v-col>
         </v-row>
       </v-form>

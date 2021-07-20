@@ -12,7 +12,7 @@
       <v-text-field
         validate-on-blur
         hide-details="auto"
-        :rules="[validators.notEmpty]"
+        :rules="[validators.required]"
         solo
         v-model="formData.school"
       ></v-text-field>
@@ -21,7 +21,7 @@
       <v-text-field
         validate-on-blur
         hide-details="auto"
-        :rules="[validators.notEmpty]"
+        :rules="[validators.required]"
         solo
         v-model="formData.city"
       ></v-text-field>
@@ -30,7 +30,7 @@
       <v-text-field
         validate-on-blur
         hide-details="auto"
-        :rules="[validators.isEmail]"
+        :rules="[validators.email]"
         solo
         v-model="formData.email"
       ></v-text-field>
