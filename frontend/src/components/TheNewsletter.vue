@@ -19,7 +19,7 @@
                 ref="email"
                 label="Votre adresse email"
                 validate-on-blur
-                :rules="[validators.isEmail]"
+                :rules="[validators.email]"
               ></v-text-field>
               <v-btn @click="subscribe" outlined color="primary" class="ml-4 mt-1" large>Valider</v-btn>
             </v-form>
