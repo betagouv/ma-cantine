@@ -13,7 +13,10 @@
       <v-text-field v-model="name" label="Prénom et nom (facultatif)" outlined class="my-2"></v-text-field>
       <v-textarea v-model="message" label="Message" outlined :rules="[validators.notEmpty]" class="my-2"></v-textarea>
     </v-form>
-    <v-btn x-large color="primary" class="my-6" @click="sendEmail">Envoyer message</v-btn>
+    <v-btn x-large color="primary" class="mt-0 mb-6" @click="sendEmail">
+      <v-icon class="mr-2">mdi-send</v-icon>
+      Envoyer
+    </v-btn>
   </div>
 </template>
 
