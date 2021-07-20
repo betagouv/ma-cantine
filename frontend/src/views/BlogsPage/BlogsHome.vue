@@ -32,6 +32,12 @@
           <BlogCard :post="post" />
         </v-col>
       </v-row>
+      <v-pagination
+        class="my-6"
+        v-model="page"
+        :length="Math.ceil(blogPostCount / limit)"
+        v-if="$vuetify.breakpoint.smAndDown"
+      ></v-pagination>
     </div>
   </div>
 </template>
