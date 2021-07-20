@@ -191,7 +191,7 @@ class TestManagerInvitationApi(APITestCase):
         self.assertEqual(len(body["managers"]), canteen.managers.all().count())
 
     @authenticate
-    def test_authenticated_remove_unexistent_manager(self):
+    def test_authenticated_remove_nonexistent_manager(self):
         """
         When trying to remove a manager that does not manage a canteen, we will
         respond 200 OK.
