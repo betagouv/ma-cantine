@@ -14,7 +14,7 @@
       <v-card-text>
         <span v-if="manager.firstName || manager.lastName">{{ manager.firstName }} {{ manager.lastName }}</span>
         <span v-else>Cette personne</span>
-        n'aura plus accès a cette cantine et ne sera plus en mesure d'en apporter des modifications ni de créer des
+        n'aura plus accès à cette cantine et ne sera plus en mesure d'en apporter des modifications ni de créer des
         diagnostics.
       </v-card-text>
 
