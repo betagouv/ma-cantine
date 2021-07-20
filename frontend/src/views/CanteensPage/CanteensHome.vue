@@ -33,6 +33,12 @@
           <PublishedCanteenCard :canteen="canteen" />
         </v-col>
       </v-row>
+      <v-pagination
+        class="my-6"
+        v-model="page"
+        :length="Math.ceil(publishedCanteenCount / limit)"
+        v-if="$vuetify.breakpoint.smAndDown"
+      ></v-pagination>
     </div>
   </div>
 </template>
