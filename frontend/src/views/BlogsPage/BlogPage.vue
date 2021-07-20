@@ -55,7 +55,7 @@ export default {
     if (!blogPost) {
       return fetch(`/api/v1/blogPosts/${this.id}`)
         .then((response) => {
-          if (response.status != 200) throw new Error()
+          if (response.status !== 200) throw new Error()
           response.json().then((x) => (this.blogPost = x))
         })
         .catch(() => {
