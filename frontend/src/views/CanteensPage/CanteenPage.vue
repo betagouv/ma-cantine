@@ -13,6 +13,10 @@
           <v-icon small>mdi-compass</v-icon>
           {{ canteen.city }}
         </div>
+        <router-link to="#contact">
+          <v-icon small>mdi-email-outline</v-icon>
+          Contactez-nous
+        </router-link>
       </v-card-subtitle>
       <v-card-text>
         <v-btn outlined color="primary" exact :to="{ name: 'CanteensHome' }">
@@ -23,16 +27,22 @@
     </v-card>
 
     <CanteenDashboard :diagnostics="diagnostics" />
+
+    <v-divider class="my-8"></v-divider>
+
+    <ContactForm id="contact" :canteen="canteen" />
   </div>
 </template>
 
 <script>
 import Constants from "@/constants"
 import CanteenDashboard from "@/components/CanteenDashboard"
+import ContactForm from "./ContactForm"
 
 export default {
   components: {
     CanteenDashboard,
+    ContactForm,
   },
   props: {
     canteenUrlComponent: {
