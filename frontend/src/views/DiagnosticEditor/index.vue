@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-row class="mt-2">
-      <v-col cols="12" sm="4" md="3">
-        <!-- TODO: handle new diagnostic page from both any canteen page and specific -->
+      <v-col cols="12" sm="4" md="3" v-if="canteen">
         <CanteenNavigation :canteen="canteen" />
+        <!-- TODO: add general navigation if no canteen -->
       </v-col>
       <v-col class="text-left pb-10">
         <h1 class="font-weight-black text-h4 my-4">
@@ -23,11 +23,11 @@
                 item-value="id"
                 hide-details="auto"
                 placeholder="Choisissez votre cantine"
-                v-if="isNewDiagnostic"
+                v-if="!canteen"
               ></v-select>
               <div v-else class="text-h6 font-weight-bold">{{ canteen.name }}</div>
             </v-col>
-            <v-col cols="12" md="3">
+            <v-col cols="12" md="4">
               <p class="body-2 my-2">Année</p>
               <v-select
                 solo
@@ -186,11 +186,14 @@ export default {
   },
   computed: {
     isNewDiagnostic() {
-      return !this.canteenUrlComponent && !this.year
+      return !this.year
     },
     canteen() {
-      if (this.isNewDiagnostic) return null
+      if (!this.canteenUrlComponent) return null
       return this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
+    },
+    canteenId() {
+      return this.selectedCanteenId || this.canteen?.id
     },
     userCanteens() {
       return this.$store.state.userCanteens
@@ -202,15 +205,15 @@ export default {
       }
     },
     originalDiagnostic() {
-      if (!this.canteen) return {}
+      if (this.isNewDiagnostic) return {}
       return this.canteen.diagnostics.find((diagnostic) => diagnostic.year === parseInt(this.year))
     },
     diagnosticIsUnique() {
       if (!this.isNewDiagnostic) return true
-      if (!this.selectedCanteenId || !this.diagnostic.year) return true
+      if (!this.canteenId || !this.diagnostic.year) return true
 
       const existingDiagnostic = this.userCanteens
-        .find((x) => x.id === this.selectedCanteenId)
+        .find((x) => x.id === this.canteenId)
         .diagnostics.some((x) => x.year === this.diagnostic.year)
 
       return !existingDiagnostic
@@ -286,7 +289,7 @@ export default {
       this.$store
         .dispatch(this.isNewDiagnostic ? "createDiagnostic" : "updateDiagnostic", {
           id: this.diagnostic.id,
-          canteenId: this.selectedCanteenId || this.canteen.id,
+          canteenId: this.canteenId,
           payload,
         })
         .then(() => {
@@ -296,10 +299,9 @@ export default {
             message: `Votre diagnostic a bien été ${this.isNewDiagnostic ? "créé" : "modifié"}`,
             status: "success",
           })
-          this.$router.push({
-            name: "ManagementPage",
-            // TODO: redirect to canteen page?
-          })
+          const canteenUrlComponent =
+            this.canteenUrlComponent || this.$store.getters.getCanteenUrlComponent(this.canteen)
+          this.$router.push({ name: "DiagnosticList", params: { canteenUrlComponent } })
         })
         .catch(() => {
           this.$store.dispatch("notifyServerError")
@@ -307,7 +309,7 @@ export default {
     },
     goToExistingDiagnostic() {
       this.bypassLeaveWarning = true
-      const existingCanteen = this.userCanteens.find((x) => x.id === this.selectedCanteenId)
+      const existingCanteen = this.userCanteens.find((x) => x.id === this.canteenId)
       const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(existingCanteen)
       const year = this.diagnostic.year
       this.$router.replace({ name: "DiagnosticModification", params: { canteenUrlComponent, year } })

@@ -213,7 +213,6 @@ const routes = [
     component: CanteenEditor,
     props: true,
     meta: {
-      title: "Modifier ma cantine",
       authenticationRequired: true,
     },
     redirect: { name: "CanteenForm" },
@@ -258,6 +257,16 @@ const routes = [
       canteenUrlComponent: null,
       year: null,
     },
+    meta: {
+      title: "Ajouter un nouveau diagnostic",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/nouveau-diagnostic/:canteenUrlComponent",
+    name: "NewDiagnosticForCanteen",
+    component: DiagnosticEditor,
+    props: true,
     meta: {
       title: "Ajouter un nouveau diagnostic",
       authenticationRequired: true,

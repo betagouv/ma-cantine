@@ -1,5 +1,5 @@
 <template>
-  <DeletionDialog v-model="deletionDialog" @delete="deleteCanteen" />
+  <DeletionDialog v-model="deletionDialog" @delete="deleteCanteen" :canteen="originalCanteen" />
 </template>
 
 <script>
@@ -13,6 +13,9 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  created() {
+    document.title = `Supprimer - ${this.originalCanteen.name} - ma-cantine.beta.gouv.fr`
   },
   data() {
     return {

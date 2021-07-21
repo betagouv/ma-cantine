@@ -14,7 +14,7 @@
           <v-icon small class="mr-2">mdi-format-list-checks</v-icon>
           <v-list-item-title class="text-body-2 font-weight-bold">Diagnostics</v-list-item-title>
         </v-list-item>
-        <div v-if="$route.name === 'DiagnosticModification'">
+        <div v-if="$route.name === 'DiagnosticModification' || $route.name.startsWith('NewDiagnostic')">
           <v-list-item
             v-for="diagnostic in canteen.diagnostics"
             :key="`diagnostic-${diagnostic.id}`"
@@ -30,7 +30,7 @@
         </v-list-item>
         <v-list-item :ripple="false" :to="{ name: 'CanteenDeletion' }" class="rounded-lg">
           <v-icon small class="mr-2">mdi-trash-can</v-icon>
-          <v-list-item-title class="text-body-2 font-weight-bold">Supprimer ma cantine</v-list-item-title>
+          <v-list-item-title class="text-body-2 font-weight-bold">Supprimer</v-list-item-title>
         </v-list-item>
       </v-list-item-group>
     </v-list>

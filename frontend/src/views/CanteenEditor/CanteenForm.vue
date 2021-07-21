@@ -223,6 +223,11 @@ export default {
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
+    if (this.originalCanteen) {
+      document.title = `Modifier - ${this.originalCanteen.name} - ma-cantine.beta.gouv.fr`
+    } else {
+      document.title = `Nouvelle cantine - ma-cantine.beta.gouv.fr`
+    }
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.handleUnload)
