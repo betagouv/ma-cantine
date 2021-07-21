@@ -32,5 +32,10 @@
 export default {
   name: "DiagnosticExpansionPanel",
   props: ["iconColour", "icon", "heading", "formIsValid", "summary"],
+  data() {
+    return {
+      open: undefined,
+    }
+  },
 }
 </script>
