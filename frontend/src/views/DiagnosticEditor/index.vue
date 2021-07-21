@@ -299,8 +299,13 @@ export default {
             message: `Votre diagnostic a bien été ${this.isNewDiagnostic ? "créé" : "modifié"}`,
             status: "success",
           })
-          const canteenUrlComponent =
-            this.canteenUrlComponent || this.$store.getters.getCanteenUrlComponent(this.canteen)
+          let canteenUrlComponent = this.canteenUrlComponent
+          if (!canteenUrlComponent && this.canteen) {
+            canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(this.canteen)
+          } else if (!canteenUrlComponent) {
+            let canteen = this.userCanteens.find((x) => x.id === this.canteenId)
+            canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteen)
+          }
           this.$router.push({ name: "DiagnosticList", params: { canteenUrlComponent } })
         })
         .catch(() => {
