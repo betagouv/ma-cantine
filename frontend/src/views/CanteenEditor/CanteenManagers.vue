@@ -59,6 +59,9 @@ export default {
       required: true,
     },
   },
+  created() {
+    document.title = `Gestionnaires - ${this.originalCanteen.name} - ma-cantine.beta.gouv.fr`
+  },
   data() {
     return {
       managerFormIsValid: true,
