@@ -126,6 +126,9 @@ const routes = [
         path: "",
         name: "CanteensHome",
         component: CanteensHome,
+        meta: {
+          title: "Nos cantines",
+        },
       },
       {
         path: ":canteenUrlComponent",
@@ -144,14 +147,14 @@ const routes = [
     path: "/blog",
     name: "BlogsPage",
     component: BlogsPage,
-    meta: {
-      title: "Blog",
-    },
     children: [
       {
         path: "",
         name: "BlogsHome",
         component: BlogsHome,
+        meta: {
+          title: "Blog",
+        },
       },
       {
         path: ":id",
