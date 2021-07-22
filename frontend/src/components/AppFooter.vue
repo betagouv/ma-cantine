@@ -27,9 +27,12 @@
               {{ link.text }}
               <v-icon color="primary" x-small>mdi-open-in-new</v-icon>
             </a>
-            <router-link v-if="link.to" :to="link.to">
+            <router-link v-else-if="link.to" :to="link.to">
               {{ link.text }}
             </router-link>
+            <span v-else-if="link.text">
+              {{ link.text }}
+            </span>
           </p>
         </v-col>
       </v-row>
@@ -68,6 +71,9 @@ export default {
         {
           text: "Conditions générales",
           to: { name: "CGU" },
+        },
+        {
+          text: "Accessibilité : non conforme",
         },
       ],
       columns: [
