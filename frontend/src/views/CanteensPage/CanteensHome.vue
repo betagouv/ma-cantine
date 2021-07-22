@@ -14,8 +14,11 @@
           </div>
         </v-col>
         <v-col cols="12" sm="10" md="7">
-          <v-card-title class="font-weight-black text-h5 text-sm-h4 pr-0">
-            Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus durable.
+          <v-card-title class="pr-0">
+            <h1 class="font-weight-black text-h5 text-sm-h4">
+              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus
+              durable.
+            </h1>
           </v-card-title>
         </v-col>
         <v-spacer></v-spacer>

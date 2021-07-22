@@ -1,15 +1,15 @@
 <template>
   <div class="text-left">
-    <KeyMeasureTitle :measure="measure" class="text-h5 text-sm-h4 font-weight-bold mb-8 mt-4" />
+    <h1 class="text-h5 text-xs-h2 font-weight-bold mb-sm-8 mt-4"><KeyMeasureTitle :measure="measure" /></h1>
 
     <v-row>
       <v-col cols="12" sm="4" md="3">
-        <KeyMeasureInfoCard v-if="measure.tags" :measure="measure" />
+        <KeyMeasureInfoCard v-if="measure.tags" :measure="measure" :forMeasure="true" />
       </v-col>
       <v-col>
         <KeyMeasureDescription :measure="measure" v-if="measure.description" />
         <div v-for="subMeasure in childSubMeasures" :key="subMeasure.id" :id="subMeasure.id">
-          <div class="text-body-1 font-weight-bold mt-6 mb-2">{{ subMeasure.title }}</div>
+          <h2 class="text-body-1 font-weight-bold mt-6 mb-2">{{ subMeasure.title }}</h2>
           <div class="measure-details">
             <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure" />
             <div>
@@ -22,8 +22,8 @@
     </v-row>
 
     <v-row v-for="subMeasure in independentSubMeasures" :key="subMeasure.id">
-      <v-col cols="12" v-if="subMeasure.title" class="text-body-1 font-weight-bold">
-        {{ subMeasure.title }}
+      <v-col cols="12" v-if="subMeasure.title">
+        <h2 class="text-body-1 font-weight-bold">{{ subMeasure.title }}</h2>
       </v-col>
       <v-col cols="12" sm="4" md="3">
         <KeyMeasureInfoCard :measure="subMeasure" />

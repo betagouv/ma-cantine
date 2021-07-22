@@ -3,7 +3,7 @@
     <v-row>
       <v-spacer></v-spacer>
       <v-col cols="12" sm="8">
-        <p class="text-h4 font-weight-black">Les mesures phares de la loi EGAlim en restauration collective</p>
+        <h2 class="text-h4 font-weight-black">Les mesures phares de la loi EGAlim en restauration collective</h2>
       </v-col>
       <v-spacer></v-spacer>
     </v-row>

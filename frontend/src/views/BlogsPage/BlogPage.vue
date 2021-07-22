@@ -14,8 +14,8 @@
             <v-img max-height="90px" contain src="/static/images/lighthouse.svg"></v-img>
           </v-col>
           <v-col cols="12" sm="9">
-            <v-card-title class="font-weight-black text-h5 text-sm-h4">
-              {{ blogPost.title }}
+            <v-card-title>
+              <h1 class="font-weight-black text-h5 text-sm-h4">{{ blogPost.title }}</h1>
             </v-card-title>
             <v-card-subtitle>
               Publié le
