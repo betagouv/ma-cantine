@@ -126,6 +126,9 @@ const routes = [
         path: "",
         name: "CanteensHome",
         component: CanteensHome,
+        meta: {
+          title: "Nos cantines",
+        },
       },
       {
         path: ":canteenUrlComponent",
@@ -144,14 +147,14 @@ const routes = [
     path: "/blog",
     name: "BlogsPage",
     component: BlogsPage,
-    meta: {
-      title: "Blog",
-    },
     children: [
       {
         path: "",
         name: "BlogsHome",
         component: BlogsHome,
+        meta: {
+          title: "Blog",
+        },
       },
       {
         path: ":id",
@@ -246,8 +249,9 @@ const routes = [
 const router = new VueRouter({
   mode: "history",
   routes,
-  scrollBehavior(to) {
+  scrollBehavior(to, from, savedPosition) {
     if (to.hash) return { selector: to.hash, offset: { y: 90 } }
+    if (to.name === from.name) return savedPosition
     return { x: 0, y: 0 }
   },
 })

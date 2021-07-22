@@ -20,6 +20,7 @@ from rest_framework.generics import (
 from rest_framework.views import APIView
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.pagination import LimitOffsetPagination
 from api.serializers import LoggedUserSerializer, DiagnosticSerializer, SectorSerializer
 from api.serializers import (
     PublicCanteenSerializer,
@@ -94,7 +95,19 @@ class UpdateUserView(UpdateAPIView):
         )
 
 
+class PublishedCanteensPagination(LimitOffsetPagination):
+    default_limit = 12
+    max_limit = 30
+
+
 class PublishedCanteensView(ListAPIView):
+    model = Canteen
+    serializer_class = PublicCanteenSerializer
+    queryset = Canteen.objects.filter(publication_status="published")
+    pagination_class = PublishedCanteensPagination
+
+
+class PublishedCanteenSingleView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
     queryset = Canteen.objects.filter(publication_status="published")
@@ -192,10 +205,22 @@ class SectorListView(ListAPIView):
     queryset = Sector.objects.all()
 
 
+class BlogPostsPagination(LimitOffsetPagination):
+    default_limit = 6
+    max_limit = 30
+
+
 class BlogPostsView(ListAPIView):
     model = BlogPost
     serializer_class = BlogPostSerializer
     queryset = BlogPost.objects.filter(published=True)
+    pagination_class = BlogPostsPagination
+
+
+class BlogPostView(RetrieveAPIView):
+    model = BlogPost
+    queryset = BlogPost.objects.filter(published=True)
+    serializer_class = BlogPostSerializer
 
 
 class SubscribeBetaTester(APIView):

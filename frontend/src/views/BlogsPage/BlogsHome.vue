@@ -20,41 +20,72 @@
       </v-row>
     </v-card>
 
-    <v-row>
-      <v-col cols="12" sm="6" md="4" v-for="post in blogPosts" :key="post.id">
-        <v-card
-          class="fill-height text-left d-flex flex-column"
-          hover
-          :to="{ name: 'BlogPage', params: { id: post.id } }"
-        >
-          <v-card-title class="text-h6 font-weight-bold">{{ post.title }}</v-card-title>
-          <v-card-subtitle class="pt-1">
-            {{
-              new Date(post.displayDate).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })
-            }}
-          </v-card-subtitle>
-          <v-card-text>
-            {{ post.tagline }}
-          </v-card-text>
-          <v-spacer></v-spacer>
-          <v-card-actions class="pa-4">
-            <v-spacer></v-spacer>
-            <v-btn outlined color="primary">
-              Lire la suite
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+    <div v-if="loading">
+      <v-progress-circular indeterminate></v-progress-circular>
+    </div>
+
+    <div v-else>
+      <v-pagination class="my-6" v-model="page" :length="Math.ceil(blogPostCount / limit)"></v-pagination>
+      <v-progress-circular class="my-10" indeterminate v-if="!visibleBlogPosts"></v-progress-circular>
+      <v-row v-else>
+        <v-col cols="12" sm="6" md="4" v-for="post in visibleBlogPosts" :key="post.id">
+          <BlogCard :post="post" />
+        </v-col>
+      </v-row>
+      <v-pagination
+        class="my-6"
+        v-model="page"
+        :length="Math.ceil(blogPostCount / limit)"
+        v-if="$vuetify.breakpoint.smAndDown"
+      ></v-pagination>
+    </div>
   </div>
 </template>
 
 <script>
+import BlogCard from "./BlogCard"
+
 export default {
+  name: "BlogsHome",
+  components: { BlogCard },
+  data() {
+    return {
+      limit: 6,
+      page: null,
+    }
+  },
   computed: {
-    blogPosts() {
-      return this.$store.state.blogPosts
+    blogPostCount() {
+      return this.$store.state.blogPostCount
     },
+    visibleBlogPosts() {
+      const blogPostPage = this.$store.state.blogPosts.find((x) => x.offset === this.offset)
+      return blogPostPage ? blogPostPage.results : null
+    },
+    loading() {
+      return this.blogPostCount === null
+    },
+    offset() {
+      return (this.page - 1) * this.limit
+    },
+  },
+  methods: {
+    fetchCurrentPage() {
+      return this.$store.dispatch("fetchBlogPosts", { offset: this.offset })
+    },
+  },
+  watch: {
+    page(newPage) {
+      // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
+      this.$router.push({ query: { page: newPage } }).catch(() => {})
+      if (!this.visibleBlogPosts) this.fetchCurrentPage()
+    },
+    $route(newRoute) {
+      this.page = newRoute.query.page ? parseInt(newRoute.query.page) : 1
+    },
+  },
+  mounted() {
+    this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
   },
 }
 </script>
