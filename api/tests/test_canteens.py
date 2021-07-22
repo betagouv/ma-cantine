@@ -15,8 +15,12 @@ class TestCanteenApi(APITestCase):
         returned from this call
         """
         published_canteens = [
-            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value),
-            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value),
+            CanteenFactory.create(
+                publication_status=Canteen.PublicationStatus.PUBLISHED.value
+            ),
+            CanteenFactory.create(
+                publication_status=Canteen.PublicationStatus.PUBLISHED.value
+            ),
         ]
         private_canteens = [
             CanteenFactory.create(),
@@ -26,17 +30,43 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(len(body), 2)
+        self.assertEqual(body.get("count"), 2)
+
+        results = body.get("results", [])
 
         for published_canteen in published_canteens:
-            self.assertTrue(any(x["id"] == published_canteen.id for x in body))
+            self.assertTrue(any(x["id"] == published_canteen.id for x in results))
 
         for private_canteen in private_canteens:
-            self.assertFalse(any(x["id"] == private_canteen.id for x in body))
+            self.assertFalse(any(x["id"] == private_canteen.id for x in results))
 
-        for recieved_canteen in body:
+        for recieved_canteen in results:
             self.assertFalse("managers" in recieved_canteen)
             self.assertFalse("managerInvitations" in recieved_canteen)
+
+    def test_get_single_published_canteen(self):
+        """
+        We are able to get a single published canteen.
+        """
+        published_canteen = CanteenFactory.create(publication_status="published")
+        response = self.client.get(
+            reverse("single_published_canteen", kwargs={"pk": published_canteen.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body.get("id"), published_canteen.id)
+
+    def test_get_single_unpublished_canteen(self):
+        """
+        A 404 is raised if we try to get a sinlge published canteen
+        that has not been published by the manager.
+        """
+        private_canteen = CanteenFactory.create(publication_status="draft")
+        response = self.client.get(
+            reverse("single_published_canteen", kwargs={"pk": private_canteen.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_canteens_unauthenticated(self):
         """
@@ -127,7 +157,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(mail.outbox[0].to[0], "contact-test@example.com")
         self.assertIn(
             "La cantine « %s » a demandé d'être publiée" % canteen.name,
-            mail.outbox[0].body
+            mail.outbox[0].body,
         )
 
     @authenticate
@@ -135,7 +165,9 @@ class TestCanteenApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
 
-        response = self.client.delete(reverse("single_canteen", kwargs={"pk": canteen.id}))
+        response = self.client.delete(
+            reverse("single_canteen", kwargs={"pk": canteen.id})
+        )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # Model was only soft-deleted but remains in the DB
