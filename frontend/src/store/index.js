@@ -30,10 +30,14 @@ export default new Vuex.Store({
     canteensLoadingStatus: Constants.LoadingStatus.IDLE,
 
     sectors: [],
-    publishedCanteens: [],
     userCanteens: [],
     initialDataLoaded: false,
-    blogPosts: null,
+
+    blogPostCount: null,
+    blogPosts: [],
+
+    publishedCanteenCount: null,
+    publishedCanteens: [],
 
     notification: {
       message: "",
@@ -58,8 +62,9 @@ export default new Vuex.Store({
     SET_SECTORS(state, sectors) {
       state.sectors = sectors
     },
-    SET_PUBLISHED_CANTEENS(state, publishedCanteens) {
-      state.publishedCanteens = publishedCanteens
+    ADD_PUBLISHED_CANTEENS(state, { response, limit, offset }) {
+      state.publishedCanteens.push({ ...response, limit, offset })
+      state.publishedCanteenCount = response.count
     },
     SET_USER_CANTEENS(state, userCanteens) {
       state.userCanteens = userCanteens
@@ -95,8 +100,9 @@ export default new Vuex.Store({
       const diagnosticIndex = canteen.diagnostics.findIndex((x) => x.id === diagnostic.id)
       if (diagnosticIndex > -1) canteen.diagnostics.splice(diagnosticIndex, 1, diagnostic)
     },
-    SET_BLOG_POSTS(state, blogPosts) {
-      state.blogPosts = blogPosts
+    ADD_BLOG_POSTS(state, { response, limit, offset }) {
+      state.blogPosts.push({ ...response, limit, offset })
+      state.blogPostCount = response.count
     },
     SET_INITIAL_DATA_LOADED(state) {
       state.initialDataLoaded = true
@@ -144,12 +150,12 @@ export default new Vuex.Store({
         })
     },
 
-    fetchPublishedCanteens(context) {
+    fetchPublishedCanteens(context, { limit = 6, offset }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch("/api/v1/publishedCanteens/")
+      return fetch(`/api/v1/publishedCanteens/?limit=${limit}&offset=${offset}`)
         .then(verifyResponse)
         .then((response) => {
-          context.commit("SET_PUBLISHED_CANTEENS", response)
+          context.commit("ADD_PUBLISHED_CANTEENS", { response, limit, offset })
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch(() => {
@@ -170,12 +176,12 @@ export default new Vuex.Store({
         })
     },
 
-    fetchBlogPosts(context) {
+    fetchBlogPosts(context, { limit = 6, offset }) {
       context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch("/api/v1/blogPosts/")
+      return fetch(`/api/v1/blogPosts/?limit=${limit}&offset=${offset}`)
         .then(verifyResponse)
         .then((response) => {
-          context.commit("SET_BLOG_POSTS", response)
+          context.commit("ADD_BLOG_POSTS", { response, limit, offset })
           context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch(() => {
@@ -188,11 +194,7 @@ export default new Vuex.Store({
     },
 
     fetchInitialData(context) {
-      return Promise.all([
-        context.dispatch("fetchLoggedUser"),
-        context.dispatch("fetchPublishedCanteens"),
-        context.dispatch("fetchSectors"),
-      ])
+      return Promise.all([context.dispatch("fetchLoggedUser"), context.dispatch("fetchSectors")])
         .then(() => {
           if (context.state.loggedUser) return context.dispatch("fetchUserCanteens")
         })
@@ -441,7 +443,8 @@ export default new Vuex.Store({
     },
     getCanteenFromUrlComponent: (state) => (canteenUrlComponent) => {
       const canteenId = canteenUrlComponent.split("--")[0]
-      return [...state.userCanteens, ...state.publishedCanteens].find((x) => x.id === parseInt(canteenId))
+      const existingCanteens = state.publishedCanteens.flatMap((x) => x.results)
+      return [...state.userCanteens, ...existingCanteens].find((x) => x.id === parseInt(canteenId))
     },
   },
 })
