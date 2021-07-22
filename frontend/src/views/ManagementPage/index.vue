@@ -3,14 +3,14 @@
     <div class="mt-4">
       <p class="my-2 text-body-1 font-weight-bold">
         Bienvenue {{ loggedUser.firstName }}
-        <v-btn text class="text-decoration-underline text-caption mb-1" :to="{ name: 'AccountEditor' }">
+        <v-btn text class="text-decoration-underline text-cah2tion mb-1" :to="{ name: 'AccountEditor' }">
           <v-icon class="mr-1" small>mdi-pencil</v-icon>
           Modifier mon profil
         </v-btn>
       </p>
     </div>
     <div class="mt-4">
-      <p class="my-4 text-h5 font-weight-black">Mes cantines</p>
+      <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
       <v-row>
         <v-col cols="12" sm="6" md="4" height="100%" v-for="canteen in canteens" :key="`canteen-${canteen.id}`">
           <CanteenCard :canteen="canteen" class="fill-height" />
@@ -31,7 +31,7 @@
       </v-row>
     </div>
     <div class="my-12">
-      <p class="mb-0 text-h5 font-weight-black">Mes diagnostics</p>
+      <h2 class="mb-0 text-h5 font-weight-black">Mes diagnostics</h2>
       <v-btn text color="primary" class="mt-2 mb-8 ml-n4" :to="{ name: 'NewDiagnostic' }">
         <v-icon class="mr-2">mdi-plus</v-icon>
         Ajouter un diagnostic
@@ -47,7 +47,7 @@
       </div>
     </div>
     <div class="my-8">
-      <p class="text-h5 font-weight-black">Mes outils</p>
+      <h2 class="text-h5 font-weight-black">Mes outils</h2>
       <UserTools />
     </div>
   </div>
