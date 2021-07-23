@@ -58,6 +58,7 @@ class Canteen(SoftDeletionModel):
     daily_meal_count = models.IntegerField(
         null=True, blank=True, verbose_name="repas par jour"
     )
+    # TODO: index by siret if it exists?
     siret = models.TextField(null=True, blank=True)
     management_type = models.CharField(
         max_length=255,
