@@ -33,6 +33,8 @@ from data.models import Canteen, BlogPost, Sector, ManagerInvitation
 from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
 import sib_api_v3_sdk
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
+import csv
+from .utils import normalise_siret
 
 
 class LoggedUserView(RetrieveAPIView):
@@ -439,3 +441,51 @@ class SendCanteenEmailView(APIView):
                 {"error": "An error has ocurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class ImportDiagnosticsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        filestring = request.data["file"].read().decode("utf-8")
+        csvreader = csv.reader(filestring.splitlines())
+        created = []
+        errors = []
+        for row_number, row in enumerate(csvreader, start=1):
+            try:
+                siret = normalise_siret(row[0])
+                with transaction.atomic():
+                    try:
+                        canteen = Canteen.objects.get(siret=siret)
+                    except ObjectDoesNotExist:
+                        canteen = Canteen.objects.create()
+                        canteen.managers.add(self.request.user)
+                        canteen.siret = siret
+                        # TODO: fetch information from API
+                        # call API from utils
+                        # Fields to fill : name, city, city_insee_code, department, postal_code
+                        # Corresponding fields from API : unite_legal.denomination, libelle_commune, code_commune, departement, code_postal
+                        # Look out for 429 response from API - need to pause to wait for next second if get it
+                        canteen.name = row[1]
+                        # TODO: add canteen field: parent siret row[2]
+                        canteen.meal_count = row[3]
+                        # TODO: sectors row[5]
+                        canteen.production_type = row[6]
+                        canteen.management_type = row[7]
+                        canteen.save()  # diagnostic save might fail, still save canteen?
+
+                    diagnostic = Diagnostic.objects.create(canteen_id=canteen.id)
+                    year = row[7]
+                    diagnostic.year = year
+                    diagnostic.value_total_ht = row[8]
+                    diagnostic.value_bio_ht = row[9]
+                    diagnostic.value_sustainable_ht = row[10]
+                    diagnostic.value_fair_trade_ht = row[11]
+                    diagnostic.save()
+                    created.append({"siret": siret, "year": year})
+            except Exception as e:
+                errors.append({"row": row_number, "status": 400, "message": str(e)})
+        # TODO: response will probably take too long to return depending on sizes of files
+        return JsonResponse(
+            {"created": created, "errors": errors}, status=status.HTTP_200_OK
+        )
