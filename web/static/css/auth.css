@@ -46,8 +46,11 @@ body {
     background: #F8F8FA;
     margin: 0;
 }
+h1#ma-cantine {
+    margin: 0;
+}
 h2 {
-    font-weight: 900;
+    font-size: 1.17em;
 }
 .auth_logo {
     max-width: 180px;
@@ -79,7 +82,7 @@ input[type=text], input[type="password"], input[type="email"], input[type="numbe
     padding: 0 12px;
 }
 input[type=text]:focus, input[type="password"]:focus, input[type="email"]:focus{
-    border: 2px solid #169b62;
+    border: 2px solid #0c7f46;
 }
 label {
     display: block;
@@ -101,7 +104,7 @@ button {
 }
 button[type="submit"] {
     border: none;
-    background: #169b62;
+    background: #0c7f46;
     color: white;
 }
 button[type="submit"]:hover {
