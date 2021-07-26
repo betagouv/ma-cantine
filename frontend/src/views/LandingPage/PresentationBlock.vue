@@ -25,7 +25,7 @@
       </v-row>
     </v-card>
     <v-btn x-large class="primary mx-auto mt-8" href="/creer-mon-compte">
-      Créer mon compte ma cantine
+      Créer mon compte
     </v-btn>
   </div>
 </template>
