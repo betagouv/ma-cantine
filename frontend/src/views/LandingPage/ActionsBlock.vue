@@ -20,13 +20,13 @@
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="pa-4">
-            <v-btn :to="{ name: 'DiagnosticPage' }" outlined color="primary">Je fais une simulation</v-btn>
+            <v-btn :to="{ name: 'DiagnosticPage' }" outlined color="primary">Simuler la situation de ma cantine</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
 
       <v-col cols="12" sm="6">
-        <v-card elevation="0" class="fill-height pa-4 d-flex flex-column">
+        <v-card elevation="0" class="fill-height pa-0 pa-sm-4 d-flex flex-column">
           <v-img
             src="/static/images/ReadingDoodle.png"
             v-if="$vuetify.breakpoint.smAndUp"
@@ -45,7 +45,7 @@
             <v-dialog max-width="700" v-model="calculatorModal" @input="stopVideo">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn outlined color="primary" v-on="on" v-bind="attrs">
-                  Télécharger notre tableur
+                  Télécharger un tableur d’aide au calcul
                 </v-btn>
               </template>
               <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />
