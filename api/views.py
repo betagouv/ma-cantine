@@ -467,14 +467,14 @@ class ImportDiagnosticsView(APIView):
                         canteen.name = row[1]
                         canteen.city_insee_code = row[2]
                         canteen.postal_code = row[3]
-                        # TODO: add canteen field: parent siret row[4]
+                        canteen.central_producer_siret = row[4]
                         canteen.daily_meal_count = row[5]
                         if row[6]:
                             for sector in row[6].split("+"):
                                 canteen.sectors.add(Sector.objects.get(name=sector))
                         canteen.production_type = row[7]
                         canteen.management_type = row[8]
-                        canteen.save()  # diagnostic save might fail, still save canteen?
+                        canteen.save()
 
                     diagnostic = Diagnostic.objects.create(canteen_id=canteen.id)
                     year = row[9]

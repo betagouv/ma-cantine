@@ -42,6 +42,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.daily_meal_count, 700)
         self.assertEqual(canteen.production_type, "site")
         self.assertEqual(canteen.management_type, "conceded")
+        self.assertEqual(canteen.central_producer_siret, "0000009876")
         diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
         self.assertEqual(diagnostic.year, 2020)
         self.assertEqual(diagnostic.value_total_ht, 1000)
@@ -118,5 +119,3 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(
             body["errors"][0]["message"], "Field 'year' expected a number but got ''."
         )
-
-    # TODO: Limit file upload size
