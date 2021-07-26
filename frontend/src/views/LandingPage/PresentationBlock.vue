@@ -24,8 +24,8 @@
         <v-spacer></v-spacer>
       </v-row>
     </v-card>
-    <v-btn x-large class="primary mx-auto mt-8" :to="{ name: 'DiagnosticPage' }">
-      Savoir où j'en suis des mesures
+    <v-btn x-large class="primary mx-auto mt-8" href="/creer-mon-compte">
+      Créer mon compte ma cantine
     </v-btn>
   </div>
 </template>

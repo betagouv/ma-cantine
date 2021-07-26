@@ -1,8 +1,8 @@
 from django.contrib.auth import views as auth_views
+from django.views.generic.base import RedirectView
 from django.urls import path
 from web.views import (
     VueAppDisplayView,
-    RegisterView,
     RegisterUserView,
     ActivationTokenView,
     RegisterDoneView,
@@ -78,8 +78,12 @@ urlpatterns = [
         name="password_reset_complete",
     ),
     # Views allowing the creation of an account
-    path("creer-mon-compte", RegisterView.as_view(), name="register"),
-    path("nouvel-utilisateur", RegisterUserView.as_view(), name="register_user"),
+    path("creer-mon-compte", RegisterUserView.as_view(), name="register"),
+    path(
+        "nouvel-utilisateur",
+        RedirectView.as_view(url="/creer-mon-compte"),
+        name="register_user",
+    ),
     path(
         "email-de-confirmation",
         ActivationTokenView.as_view(),

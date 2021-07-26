@@ -12,16 +12,15 @@
             max-height="130"
           ></v-img>
           <v-card-title class="text-h6 font-weight-bold">
-            Vous connaissez déjà la part de bio, durable et produits issus du commerce équitable de votre cantine
-            scolaire
+            Vous voulez savoir où vous en êtes des mesures Egalim
           </v-card-title>
           <v-card-text>
-            Vous pouvez générer une affiche à poser dans votre cantine ainsi qu’un email-type à destination des convives
-            et parents d'élèves.
+            Vous pouvez faire une simulation sur les différents aspets de la loi Egalim avec les données de votre
+            cantine.
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="pa-4">
-            <v-btn :to="{ name: 'GeneratePosterPage' }" outlined color="primary">J'informe mes convives</v-btn>
+            <v-btn :to="{ name: 'DiagnosticPage' }" outlined color="primary">Je fais une simulation</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
