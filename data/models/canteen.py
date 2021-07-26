@@ -60,6 +60,9 @@ class Canteen(SoftDeletionModel):
     )
     # TODO: index by siret if it exists?
     siret = models.TextField(null=True, blank=True)
+    central_producer_siret = models.TextField(
+        null=True, blank=True, verbose_name="siret de la cuisine centrale"
+    )
     management_type = models.CharField(
         max_length=255,
         choices=ManagementType.choices,
