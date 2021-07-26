@@ -24,18 +24,18 @@
         <v-col cols="12" md="4" height="100%" class="d-flex flex-column">
           <div class="text-right">
             <v-btn
-              class="mr-2 text-decoration-underline"
+              class="text-decoration-underline pa-0"
               text
               color="red"
               small
               v-if="canteen.mainImage"
               @click="changeProfileImage(null)"
             >
-              <v-icon class="mr-1" small>mdi-delete-forever</v-icon>
+              <v-icon class="mr-1" x-small>mdi-delete-forever</v-icon>
               Supprimer
             </v-btn>
             <v-btn text class="text-decoration-underline" color="primary" @click="onProfilePhotoUploadClick" small>
-              <v-icon class="mr-1" small>mdi-image</v-icon>
+              <v-icon class="mr-1" x-small>mdi-image</v-icon>
               Choisir une photo
             </v-btn>
             <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onProfilePhotoChanged" />
