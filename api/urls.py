@@ -62,7 +62,7 @@ urlpatterns = {
         name="remove_manager",
     ),
     path(
-        "import_diagnostics", ImportDiagnosticsView.as_view(), name="import_diagnostics"
+        "importDiagnostics/", ImportDiagnosticsView.as_view(), name="import_diagnostics"
     ),
 }
 

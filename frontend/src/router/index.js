@@ -25,6 +25,7 @@ import CGU from "@/views/CGU.vue"
 import ManagementPage from "@/views/ManagementPage"
 import CanteenEditor from "@/views/CanteenEditor"
 import DiagnosticEditor from "@/views/DiagnosticEditor"
+import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 
 Vue.use(VueRouter)
 
@@ -236,6 +237,15 @@ const routes = [
     },
     meta: {
       title: "Ajouter un nouveau diagnostic",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/importer-diagnostics",
+    name: "DiagnosticsImporter",
+    component: DiagnosticsImporter,
+    meta: {
+      title: "Importer des diagnostics",
       authenticationRequired: true,
     },
   },

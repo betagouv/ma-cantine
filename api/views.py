@@ -34,6 +34,7 @@ from api.permissions import IsProfileOwner, IsCanteenManager, CanEditDiagnostic
 import sib_api_v3_sdk
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 import csv
+import time
 
 
 class LoggedUserView(RetrieveAPIView):
@@ -443,6 +444,7 @@ class SendCanteenEmailView(APIView):
 
 
 def _normalise_siret(siret):
+    # TODO: find official siret format
     return siret.replace(" ", "")
 
 
@@ -450,6 +452,7 @@ class ImportDiagnosticsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
+        start = time.time()
         filestring = request.data["file"].read().decode("utf-8")
         csvreader = csv.reader(filestring.splitlines())
         created = []
@@ -488,5 +491,6 @@ class ImportDiagnosticsView(APIView):
             except Exception as e:
                 errors.append({"row": row_number, "status": 400, "message": str(e)})
         return JsonResponse(
-            {"created": created, "errors": errors}, status=status.HTTP_200_OK
+            {"created": created, "errors": errors, "seconds": time.time() - start},
+            status=status.HTTP_200_OK,
         )
