@@ -36,7 +36,7 @@
             </v-btn>
             <v-btn text class="text-decoration-underline" color="primary" @click="onProfilePhotoUploadClick" small>
               <v-icon class="mr-1" small>mdi-image</v-icon>
-              Choisir
+              Choisir une photo
             </v-btn>
             <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onProfilePhotoChanged" />
           </div>
