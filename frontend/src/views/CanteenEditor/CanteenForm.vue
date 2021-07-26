@@ -36,13 +36,13 @@
             </v-btn>
             <v-btn text class="text-decoration-underline" color="primary" @click="onProfilePhotoUploadClick" small>
               <v-icon class="mr-1" small>mdi-image</v-icon>
-              Choisir une photo
+              Choisir
             </v-btn>
             <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onProfilePhotoChanged" />
           </div>
           <div class="flex-grow-1 mt-2 fill-height">
             <v-sheet rounded color="grey lighten-2" class="fill-height d-flex align-center justify-center">
-              <v-img contain v-if="canteen.mainImage" :src="canteen.mainImage" max-height="150"></v-img>
+              <v-img contain v-if="canteen.mainImage" :src="canteen.mainImage" max-height="140"></v-img>
               <v-icon v-else size="40" color="grey" class="py-4">mdi-image-off-outline</v-icon>
             </v-sheet>
           </div>
@@ -68,7 +68,7 @@
         </v-col>
 
         <v-col cols="12" md="4">
-          <p class="body-2 my-2">Nombre de couverts moyen par jour</p>
+          <p class="body-2 my-2">Couverts moyen par jour</p>
           <v-text-field
             hide-details="auto"
             :rules="[validators.greaterThanZero]"

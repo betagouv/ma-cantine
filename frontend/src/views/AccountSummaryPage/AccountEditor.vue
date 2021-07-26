@@ -20,7 +20,7 @@
                 @click="onProfilePhotoUploadClick"
               >
                 <v-icon class="mr-1" small>mdi-image</v-icon>
-                Choisir une photo
+                Choisir
               </v-btn>
               <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onProfilePhotoChanged" />
               <v-btn

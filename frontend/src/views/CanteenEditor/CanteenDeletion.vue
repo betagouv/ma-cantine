@@ -1,5 +1,14 @@
 <template>
-  <DeletionDialog v-model="deletionDialog" @delete="deleteCanteen" :canteen="originalCanteen" />
+  <div class="text-left pb-10">
+    <h1 class="font-weight-black text-h4 my-4">
+      Supprimer ma cantine
+    </h1>
+    <p class="body-2 mb-10">
+      La suppression d'une cantine entraîne aussi celle des diagnostics associés. Aucun gestionnaire ne sera en mesure
+      d'accéder aux données après la suppression.
+    </p>
+    <DeletionDialog v-model="deletionDialog" @delete="deleteCanteen" :canteen="originalCanteen" />
+  </div>
 </template>
 
 <script>
