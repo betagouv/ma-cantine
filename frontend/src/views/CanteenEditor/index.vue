@@ -4,7 +4,7 @@
       <v-col cols="12" sm="4" md="3">
         <CanteenNavigation :canteen="canteen" />
       </v-col>
-      <v-col>
+      <v-col cols="12" sm="8" md="9">
         <router-view :key="$route.fullPath" :originalCanteen="canteen"></router-view>
       </v-col>
     </v-row>

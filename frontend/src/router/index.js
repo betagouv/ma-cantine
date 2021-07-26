@@ -218,7 +218,7 @@ const routes = [
     redirect: { name: "CanteenForm" },
     children: [
       {
-        path: "cantine",
+        path: "modifier",
         name: "CanteenForm",
         component: CanteenForm,
       },

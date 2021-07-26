@@ -3,6 +3,10 @@
     <h1 class="font-weight-black text-h4 my-4">
       Gestionnaires
     </h1>
+    <p class="body-2">
+      Tous les gestionnaires peuvent modifier et supprimer une cantine, ainsi qu'ajouter et enlever autres
+      gestionnaires.
+    </p>
     <v-list>
       <ManagerItem @delete="deleteManager" v-for="manager in managers" :key="manager.email" :manager="manager" />
     </v-list>
