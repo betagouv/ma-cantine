@@ -70,7 +70,10 @@ export default new Vuex.Store({
       state.userCanteens = userCanteens
     },
     ADD_USER_CANTEEN(state, userCanteen) {
-      state.userCanteens.push(userCanteen)
+      state.userCanteens.prepend(userCanteen)
+    },
+    ADD_USER_CANTEENS(state, userCanteens) {
+      state.userCanteens = userCanteens.concat(state.userCanteens)
     },
     UPDATE_USER_CANTEEN(state, userCanteen) {
       const canteenIndex = state.userCanteens.findIndex((x) => x.id === userCanteen.id)
@@ -404,6 +407,7 @@ export default new Vuex.Store({
     },
 
     importDiagnostics(context, payload) {
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       let form = new FormData()
       form.append("file", payload.file)
       return fetch(`/api/v1/importDiagnostics/`, {
@@ -415,11 +419,12 @@ export default new Vuex.Store({
       })
         .then(verifyResponse)
         .then((response) => {
-          // TODO: update user canteens, set loading status
+          context.commit("ADD_USER_CANTEENS", response.canteens)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           return response
         })
         .catch((e) => {
-          // TODO: set update canteens error status
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
           throw e
         })
     },
