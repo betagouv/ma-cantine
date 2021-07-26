@@ -14,9 +14,9 @@
         <v-btn x-large color="primary" @click="upload" :disabled="!file">Valider</v-btn>
       </v-row>
     </v-form>
-    <div v-if="created || errors">
+    <div v-if="!isNaN(count)">
       <h2 class="my-6">Resultats</h2>
-      <p>{{ created.length }} diagnostics ont été créés en {{ Math.round(seconds) }} secondes.</p>
+      <p>{{ count }} diagnostics ont été créés en {{ Math.round(seconds) }} secondes.</p>
       <div v-if="errors && errors.length">
         <h3 class="my-6">Erreurs</h3>
         <v-simple-table dense class="my-6">
@@ -151,7 +151,8 @@ export default {
   data() {
     return {
       file: undefined,
-      created: undefined,
+      canteens: undefined,
+      count: undefined,
       errors: undefined,
       seconds: undefined,
       documentation,
@@ -159,7 +160,6 @@ export default {
   },
   methods: {
     upload() {
-      console.log(this.file)
       this.$store
         .dispatch("importDiagnostics", { file: this.file })
         .then((json) => {
@@ -167,7 +167,8 @@ export default {
             message: "Vos diagnostics a bien été téléversés",
           })
           this.file = undefined
-          this.created = json.created
+          this.canteens = json.canteens
+          this.count = json.count
           this.errors = json.errors
           this.seconds = json.seconds
         })

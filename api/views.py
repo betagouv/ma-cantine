@@ -378,9 +378,12 @@ class RemoveManagerView(APIView):
 
 def _respond_with_team(canteen):
     data = ManagingTeamSerializer(canteen).data
+    return JsonResponse(_camelize(data), status=status.HTTP_200_OK)
+
+
+def _camelize(data):
     camel_case_bytes = CamelCaseJSONRenderer().render(data)
-    json_data = json.loads(camel_case_bytes.decode("utf-8"))
-    return JsonResponse(json_data, status=status.HTTP_200_OK)
+    return json.loads(camel_case_bytes.decode("utf-8"))
 
 
 def _send_invitation_email(manager_invitation):
@@ -455,7 +458,8 @@ class ImportDiagnosticsView(APIView):
         start = time.time()
         filestring = request.data["file"].read().decode("utf-8")
         csvreader = csv.reader(filestring.splitlines())
-        created = []
+        diagnostics_created = 0
+        canteens = {}
         errors = []
         for row_number, row in enumerate(csvreader, start=1):
             try:
@@ -487,10 +491,20 @@ class ImportDiagnosticsView(APIView):
                     diagnostic.value_sustainable_ht = row[12]
                     diagnostic.value_fair_trade_ht = row[13]
                     diagnostic.save()
-                    created.append({"siret": siret, "year": year})
+                    diagnostics_created += 1
+                    canteens[canteen.siret] = canteen
             except Exception as e:
                 errors.append({"row": row_number, "status": 400, "message": str(e)})
+        serialized_canteens = []
+        for canteen in canteens.values():
+            data = FullCanteenSerializer(canteen).data
+            serialized_canteens.append(_camelize(data))
         return JsonResponse(
-            {"created": created, "errors": errors, "seconds": time.time() - start},
+            {
+                "canteens": serialized_canteens,
+                "count": diagnostics_created,
+                "errors": errors,
+                "seconds": time.time() - start,
+            },
             status=status.HTTP_200_OK,
         )
