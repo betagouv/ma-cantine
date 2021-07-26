@@ -49,6 +49,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(diagnostic.value_bio_ht, 500)
         self.assertEqual(diagnostic.value_sustainable_ht, Decimal("100.1"))
         self.assertEqual(diagnostic.value_fair_trade_ht, Decimal("200.2"))
+        self.assertIn("seconds", body)
 
     @authenticate
     def test_canteen_info_not_overridden(self):
@@ -66,6 +67,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 2)
         canteen = Canteen.objects.get(siret="0000001234")
         canteen.name = "A cantéen"
+
+    # TODO: test that can't create diagnostics for existing canteen if you aren't a manager of it
 
     @authenticate
     def test_valid_sectors_parsed(self):
