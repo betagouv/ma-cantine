@@ -11,7 +11,11 @@
         class="my-2"
       ></v-text-field>
       <v-text-field v-model="name" label="Prénom et nom (facultatif)" outlined class="my-2"></v-text-field>
-      <v-textarea v-model="message" label="Message" outlined :rules="[validators.required]" class="my-2"></v-textarea>
+      <v-textarea v-model="message" label="Message" outlined :rules="[validators.required]" class="mt-2"></v-textarea>
+      <p class="caption text-left grey--text text--darken-1 mt-n3 mb-6">
+        Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc). Ces messages
+        peuvent être lus pour des fins de modération.
+      </p>
     </v-form>
     <v-btn x-large color="primary" class="mt-0 mb-6" @click="sendEmail">
       <v-icon class="mr-2">mdi-send</v-icon>
@@ -63,6 +67,11 @@ export default {
             status: "success",
             message: `Votre message a bien été envoyé à ${this.canteen.name}. Merci de vôtre intérêt.`,
           })
+
+          if (this.$matomo) {
+            this.$matomo.trackEvent("message", "send", "canteen-email-contact")
+          }
+          window.scrollTo(0, 0)
         })
         .catch((error) => {
           console.log(error.message)
