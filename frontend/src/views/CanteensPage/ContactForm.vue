@@ -12,7 +12,7 @@
       ></v-text-field>
       <v-text-field v-model="name" label="Prénom et nom (facultatif)" outlined class="my-2"></v-text-field>
       <v-textarea v-model="message" label="Message" outlined :rules="[validators.required]" class="mt-2"></v-textarea>
-      <p class="caption text-left grey--text mt-n3 mb-6">
+      <p class="caption text-left grey--text text--darken-1 mt-n3 mb-6">
         Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc). Ces messages
         peuvent être lus pour des fins de modération.
       </p>
