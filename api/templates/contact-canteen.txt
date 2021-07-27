@@ -6,8 +6,8 @@ Message :
 
 {{ message }}
 
-Vous pouvez envoyez votre réponse à l'adresse {{ from }}.
+Pour démarrer la conversation vous pouvez répondre directement à cet email.
 
-Pour toute question ou renseignement vous pouvez nous contacter en répondant directement à ce message.
+Pour toute autre question ou renseignement vous pouvez contacter l'équipe ma cantine à {{ us }}.
 
 L'équipe ma cantine

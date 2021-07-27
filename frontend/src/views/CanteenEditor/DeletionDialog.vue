@@ -8,9 +8,7 @@
     </template>
 
     <v-card class="text-left">
-      <v-card-title class="font-weight-bold">
-        Voulez-vous vraiment supprimer cette cantine ?
-      </v-card-title>
+      <v-card-title class="font-weight-bold">Voulez-vous vraiment supprimer « {{ canteen.name }} » ?</v-card-title>
 
       <v-card-text>
         Vous perdrez les données de cette cantine ainsi que celles des diagnostics associés.
@@ -34,7 +32,7 @@
 <script>
 export default {
   name: "DeletionDialog",
-  props: ["value"],
+  props: ["value", "canteen"],
   computed: {
     isOpen: {
       get() {
