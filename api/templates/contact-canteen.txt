@@ -6,7 +6,7 @@ Message :
 
 {{ message }}
 
-Si vous voulez, faisez un suivi de ce message simplement en répondant à cet email.
+Pour démarrer la conversation vous pouvez répondre directement à cet email.
 
 Pour toute autre question ou renseignement vous pouvez contacter l'équipe ma cantine à {{ us }}.
 
