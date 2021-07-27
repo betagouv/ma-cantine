@@ -5,7 +5,9 @@
         <v-list-item-group>
           <v-list-item :ripple="false" :to="{ name: 'ManagementPage' }">
             <v-icon small class="mr-2">mdi-arrow-left</v-icon>
-            <v-list-item-title class="text-body-2 font-weight-bold grey--text">Mes cantines</v-list-item-title>
+            <v-list-item-title class="text-body-2 font-weight-bold grey--text text--darken-1">
+              Mes cantines
+            </v-list-item-title>
           </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'CanteenForm' }">
             <v-icon small class="mr-2">mdi-silverware-fork-knife</v-icon>

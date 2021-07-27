@@ -53,7 +53,9 @@
           </v-row>
         </v-form>
 
-        <p class="caption grey--text">Cliquez sur les catégories ci-dessous pour remplir votre diagnostic</p>
+        <p class="caption grey--text text--darken-1">
+          Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
+        </p>
 
         <v-expansion-panels class="mb-8" :disabled="!diagnosticIsUnique" :value="openedPanel">
           <DiagnosticExpansionPanel
