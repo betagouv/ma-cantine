@@ -24,6 +24,10 @@ import TesterParticipation from "@/views/TesterParticipation"
 import CGU from "@/views/CGU.vue"
 import ManagementPage from "@/views/ManagementPage"
 import CanteenEditor from "@/views/CanteenEditor"
+import CanteenForm from "@/views/CanteenEditor/CanteenForm"
+import DiagnosticList from "@/views/CanteenEditor/DiagnosticList"
+import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
+import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import DiagnosticEditor from "@/views/DiagnosticEditor"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 
@@ -198,7 +202,7 @@ const routes = [
   {
     path: "/nouvelle-cantine",
     name: "NewCanteen",
-    component: CanteenEditor,
+    component: CanteenForm,
     props: {
       canteenUrlComponent: null,
     },
@@ -213,9 +217,31 @@ const routes = [
     component: CanteenEditor,
     props: true,
     meta: {
-      title: "Modifier ma cantine",
       authenticationRequired: true,
     },
+    redirect: { name: "CanteenForm" },
+    children: [
+      {
+        path: "modifier",
+        name: "CanteenForm",
+        component: CanteenForm,
+      },
+      {
+        path: "diagnostics",
+        name: "DiagnosticList",
+        component: DiagnosticList,
+      },
+      {
+        path: "gestionnaires",
+        name: "CanteenManagers",
+        component: CanteenManagers,
+      },
+      {
+        path: "supprimer",
+        name: "CanteenDeletion",
+        component: CanteenDeletion,
+      },
+    ],
   },
   {
     path: "/modifier-mon-diagnostic/:canteenUrlComponent/:year",
@@ -235,6 +261,16 @@ const routes = [
       canteenUrlComponent: null,
       year: null,
     },
+    meta: {
+      title: "Ajouter un nouveau diagnostic",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/nouveau-diagnostic/:canteenUrlComponent",
+    name: "NewDiagnosticForCanteen",
+    component: DiagnosticEditor,
+    props: true,
     meta: {
       title: "Ajouter un nouveau diagnostic",
       authenticationRequired: true,
