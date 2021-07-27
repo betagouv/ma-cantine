@@ -420,14 +420,17 @@ class SendCanteenEmailView(APIView):
             }
             recipients = [user.email for user in canteen.managers.all()]
             recipients.append(settings.DEFAULT_FROM_EMAIL)
-            recipients.append(email)
+
+            reply_to = recipients.copy()
+            reply_to.append(email)
+
             subject = f"Un message pour {canteen.name}"
             from_email = (settings.DEFAULT_FROM_EMAIL,)
             html_content = render_to_string(f"{template}.html", context)
             text_content = render_to_string(f"{template}.txt", context)
 
             message = EmailMultiAlternatives(
-                subject, text_content, from_email, recipients, reply_to=recipients
+                subject, text_content, from_email, recipients, reply_to=reply_to
             )
             message.attach_alternative(html_content, "text/html")
             message.send()
