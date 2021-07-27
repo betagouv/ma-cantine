@@ -69,7 +69,7 @@ export default {
           })
 
           if (this.$matomo) {
-            this.$matomo.trackEvent("message", "send", "cantine-email-contact")
+            this.$matomo.trackEvent("message", "send", "canteen-email-contact")
           }
           window.scrollTo(0, 0)
         })
