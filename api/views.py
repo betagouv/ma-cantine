@@ -467,6 +467,15 @@ class ImportDiagnosticsView(APIView):
                 with transaction.atomic():
                     try:
                         canteen = Canteen.objects.get(siret=siret)
+                        if self.request.user not in canteen.managers.all():
+                            errors.append(
+                                {
+                                    "row": row_number,
+                                    "status": 401,
+                                    "message": f"Vous n'êtes pas un gestionnaire de la cantine avec SIRET {siret}",
+                                }
+                            )
+                            continue
                     except ObjectDoesNotExist:
                         canteen = Canteen.objects.create()
                         canteen.managers.add(self.request.user)
