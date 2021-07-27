@@ -419,6 +419,7 @@ class SendCanteenEmailView(APIView):
             }
             recipients = [user.email for user in canteen.managers.all()]
             recipients.append(settings.DEFAULT_FROM_EMAIL)
+            recipients.append(email)
             subject = f"Un message pour {canteen.name}"
             from_email = (settings.DEFAULT_FROM_EMAIL,)
             html_content = render_to_string(f"{template}.html", context)
