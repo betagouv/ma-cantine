@@ -209,6 +209,11 @@ CONTACT_EMAIL = os.getenv("CONTACT_EMAIL")
 EMAIL_BACKEND = os.getenv(
     "EMAIL_BACKEND"
 )
+
+if DEBUG and EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
+    EMAIL_HOST = 'localhost'
+    EMAIL_PORT = 1025
+
 ANYMAIL = {
     "SENDINBLUE_API_KEY": os.getenv("SENDINBLUE_API_KEY", ""),
 }

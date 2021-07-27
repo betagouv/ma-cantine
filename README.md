@@ -147,3 +147,17 @@ Afin de pouvoir s'identifier dans le backoffice (sous /admin), il est nécessair
 ```
 python manage.py createsuperuser
 ```
+
+## Reception d'emails en local
+
+Il y a deux options pour recevoir les emails envoyés depuis l'application en local:
+
+### 1- Les imprimer dans la console
+
+Django permet d'imprimer en console les emails envoyés avec le 'django.core.mail.backends.console.EmailBackend'. Pour l'utiliser il suffit de mettre la variable d'environnement `EMAIL_BACKEND` à cette valeur. Cette option est rapide à mettre en place et ne nécessite pas d'autres outils.
+
+Il faut néanmoins tenir en compte que la mise en page ne sera pas visible et que certaines configurations qui marchent avec la console ne marchent pas avec d'autres services email. Nous conseillons plutôt d'utiliser la solution suivante :
+
+### 2- Utiliser Maildev
+
+[Maildev](https://maildev.github.io/maildev/) est un outil ouvert qui exécute un serveur SMTP en local et qui permet de visualiser tous les emails traités. En l'installant de façon globale on peut mettre 'django.core.mail.backends.smtp.EmailBackend' comme variable d'environnement `EMAIL_BACKEND` pour l'utiliser.
