@@ -12,7 +12,7 @@
             max-height="130"
           ></v-img>
           <v-card-title class="text-h6 font-weight-bold">
-            Vous voulez savoir où vous en êtes des mesures Egalim
+            Vous voulez savoir où vous en êtes des mesures EGAlim
           </v-card-title>
           <v-card-text>
             Vous pouvez faire une simulation sur les différents aspets de la loi Egalim avec les données de votre
