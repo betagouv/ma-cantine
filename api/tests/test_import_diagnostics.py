@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from .utils import authenticate
 from data.models import Diagnostic, Canteen
-from data.factories import SectorFactory
+from data.factories import SectorFactory, CanteenFactory
 
 
 class TestImportDiagnosticsAPI(APITestCase):
@@ -68,7 +68,31 @@ class TestImportDiagnosticsAPI(APITestCase):
         canteen = Canteen.objects.get(siret="0000001234")
         canteen.name = "A cantéen"
 
-    # TODO: test that can't create diagnostics for existing canteen if you aren't a manager of it
+    @authenticate
+    def test_cannot_modify_existing_canteen_unless_manager(self):
+        """
+        If a canteen exists, then you should have to already be it's manager to add diagnostics
+        """
+        CanteenFactory.create(siret="0000001234")
+        my_canteen = CanteenFactory.create(siret="0000001235")
+        my_canteen.managers.add(authenticate.user)
+
+        with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
+            response = self.client.post(
+                reverse("import_diagnostics"), {"file": diag_file}
+            )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(body["canteens"][0]["siret"], "0000001235")
+        self.assertEqual(len(body["errors"]), 1)
+        error = body["errors"][0]
+        self.assertEqual(error["row"], 1)
+        self.assertEqual(error["status"], 401)
+        self.assertEqual(
+            error["message"],
+            "Vous n'êtes pas un gestionnaire de la cantine avec SIRET 0000001234",
+        )
 
     @authenticate
     def test_valid_sectors_parsed(self):

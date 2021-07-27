@@ -58,7 +58,7 @@ class Canteen(SoftDeletionModel):
     daily_meal_count = models.IntegerField(
         null=True, blank=True, verbose_name="repas par jour"
     )
-    # TODO: index by siret if it exists?
+    # TODO: once have a standardised format (see _normalise_siret), index by siret if given
     siret = models.TextField(null=True, blank=True)
     central_producer_siret = models.TextField(
         null=True, blank=True, verbose_name="siret de la cuisine centrale"
