@@ -15,7 +15,7 @@
             Vous voulez savoir où vous en êtes des mesures EGAlim
           </v-card-title>
           <v-card-text>
-            Vous pouvez faire une simulation sur les différents aspets de la loi Egalim avec les données de votre
+            Vous pouvez faire une simulation sur les différents aspects de la loi EGAlim avec les données de votre
             cantine.
           </v-card-text>
           <v-spacer></v-spacer>
