@@ -1,13 +1,17 @@
+import logging
 from data.models.diagnostic import Diagnostic
 import json
 from django.contrib.auth import get_user_model, update_session_auth_hash, tokens
 from django.conf import settings
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.http import JsonResponse
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.core.exceptions import ObjectDoesNotExist, ValidationError, BadRequest
-from django.db.utils import IntegrityError
+from django.core.exceptions import (
+    ObjectDoesNotExist,
+    ValidationError,
+    BadRequest,
+)
 from django.core.validators import validate_email
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -35,6 +39,8 @@ import sib_api_v3_sdk
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 import csv
 import time
+
+logger = logging.getLogger(__name__)
 
 
 class LoggedUserView(RetrieveAPIView):
@@ -465,65 +471,114 @@ class ImportDiagnosticsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        start = time.time()
-        filestring = request.data["file"].read().decode("utf-8")
-        csvreader = csv.reader(filestring.splitlines())
-        diagnostics_created = 0
-        canteens = {}
-        errors = []
-        for row_number, row in enumerate(csvreader, start=1):
-            try:
-                siret = _normalise_siret(row[0])
-                with transaction.atomic():
-                    try:
-                        canteen = Canteen.objects.get(siret=siret)
-                        if self.request.user not in canteen.managers.all():
-                            errors.append(
-                                {
-                                    "row": row_number,
-                                    "status": 401,
-                                    "message": f"Vous n'êtes pas un gestionnaire de la cantine avec SIRET {siret}",
-                                }
-                            )
-                            continue
-                    except ObjectDoesNotExist:
-                        canteen = Canteen.objects.create()
-                        canteen.managers.add(self.request.user)
-                        canteen.siret = siret
-                        canteen.name = row[1]
-                        canteen.city_insee_code = row[2]
-                        canteen.postal_code = row[3]
-                        canteen.central_producer_siret = row[4]
-                        canteen.daily_meal_count = row[5]
-                        if row[6]:
-                            for sector in row[6].split("+"):
-                                canteen.sectors.add(Sector.objects.get(name=sector))
-                        canteen.production_type = row[7]
-                        canteen.management_type = row[8]
-                        canteen.save()
+        logger.info("Diagnostic bulk import started")
+        try:
+            start = time.time()
+            filestring = request.data["file"].read().decode("utf-8")
+            csvreader = csv.reader(filestring.splitlines())
+            diagnostics_created = 0
+            canteens = {}
+            errors = []
+            for row_number, row in enumerate(csvreader, start=1):
+                try:
+                    siret = _normalise_siret(row[0])
+                    with transaction.atomic():
+                        canteen = self._create_canteen_with_diagnostic(row, siret)
+                        diagnostics_created += 1
+                        canteens[canteen.siret] = canteen
 
-                    diagnostic = Diagnostic.objects.create(canteen_id=canteen.id)
-                    year = row[9]
-                    diagnostic.year = year
-                    diagnostic.value_total_ht = row[10]
-                    diagnostic.value_bio_ht = row[11]
-                    diagnostic.value_sustainable_ht = row[12]
-                    diagnostic.value_fair_trade_ht = row[13]
-                    diagnostic.save()
-                    diagnostics_created += 1
-                    canteens[canteen.siret] = canteen
-            except Exception as e:
-                errors.append({"row": row_number, "status": 400, "message": str(e)})
-        serialized_canteens = []
-        for canteen in canteens.values():
-            data = FullCanteenSerializer(canteen).data
-            serialized_canteens.append(_camelize(data))
+                except IntegrityError as e:
+                    message = (
+                        "Un diagnostic pour cette année et cette cantine existe déjà"
+                    )
+                    errors.append(
+                        ImportDiagnosticsView._get_error(e, message, 400, row_number)
+                    )
+
+                except PermissionDenied as e:
+                    message = f"Vous n'êtes pas un gestionnaire de la cantine avec SIRET {siret}"
+                    errors.append(
+                        ImportDiagnosticsView._get_error(e, message, 401, row_number)
+                    )
+
+                except Sector.DoesNotExist as e:
+                    message = (
+                        "Le secteur spécifié ne fait pas partie des options acceptées"
+                    )
+                    errors.append(
+                        ImportDiagnosticsView._get_error(e, message, 400, row_number)
+                    )
+
+                except Exception as e:
+                    message = "Une erreur s'est produite en créant un diagnostic pour cette ligne"
+                    errors.append(
+                        ImportDiagnosticsView._get_error(e, message, 400, row_number)
+                    )
+
+            serialized_canteens = [
+                _camelize(FullCanteenSerializer(canteen).data)
+                for canteen in canteens.values()
+            ]
+            return ImportDiagnosticsView._get_success_response(
+                serialized_canteens, diagnostics_created, errors, start
+            )
+
+        except Exception as e:
+            logger.exception(e)
+            message = "Échec lors de la lecture du fichier"
+            errors = [{"row": 0, "status": 400, "message": message}]
+            return ImportDiagnosticsView._get_success_response([], 0, errors, start)
+
+    def _create_canteen_with_diagnostic(self, row, siret):
+        (canteen, created) = Canteen.objects.get_or_create(
+            siret=siret,
+            defaults={
+                "siret": siret,
+                "name": row[1],
+                "city_insee_code": row[2],
+                "postal_code": row[3],
+                "central_producer_siret": row[4],
+                "daily_meal_count": row[5],
+                "production_type": row[7],
+                "management_type": row[8],
+            },
+        )
+
+        if not created and self.request.user not in canteen.managers.all():
+            raise PermissionDenied()
+
+        if created:
+            canteen.managers.add(self.request.user)
+            if row[6]:
+                canteen.sectors.add(
+                    *[Sector.objects.get(name=sector) for sector in row[6].split("+")]
+                )
+            canteen.save()
+
+        Diagnostic.objects.create(
+            canteen_id=canteen.id,
+            year=row[9],
+            value_total_ht=row[10],
+            value_bio_ht=row[11],
+            value_sustainable_ht=row[12],
+            value_fair_trade_ht=row[13],
+        )
+        return canteen
+
+    @staticmethod
+    def _get_error(e, message, error_status, row_number):
+        logger.error(f"Error on row {row_number}")
+        logger.exception(e)
+        return {"row": row_number, "status": error_status, "message": message}
+
+    @staticmethod
+    def _get_success_response(canteens, count, errors, start_time):
         return JsonResponse(
             {
-                "canteens": serialized_canteens,
-                "count": diagnostics_created,
+                "canteens": canteens,
+                "count": count,
                 "errors": errors,
-                "seconds": time.time() - start,
+                "seconds": time.time() - start_time,
             },
             status=status.HTTP_200_OK,
         )

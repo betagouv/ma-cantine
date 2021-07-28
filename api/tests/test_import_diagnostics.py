@@ -125,7 +125,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["errors"][0]["status"], 400)
         self.assertEqual(
-            body["errors"][0]["message"], "Sector matching query does not exist."
+            body["errors"][0]["message"],
+            "Le secteur spécifié ne fait pas partie des options acceptées",
         )
 
     @authenticate
@@ -144,5 +145,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["errors"][0]["row"], 1)
         self.assertEqual(body["errors"][0]["status"], 400)
         self.assertEqual(
-            body["errors"][0]["message"], "Field 'year' expected a number but got ''."
+            body["errors"][0]["message"],
+            "Une erreur s'est produite en créant un diagnostic pour cette ligne",
         )
