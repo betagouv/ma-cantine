@@ -3,7 +3,7 @@
     <div id="heading">
       <img src="/static/images/SittingChef.png" id="hat" alt="" />
       <div>
-        <h1>Cantine {{ canteen.name || "_________" }}</h1>
+        <h2 class="">Cantine {{ canteen.name || "_________" }}</h2>
         <p id="commune-poster">{{ canteen.city || "_________" }}</p>
         <p>Nous servons {{ canteen.dailyMealCount || "___" }} repas par jour</p>
         <p>Dans la cantine de votre enfant, sur l'année de 2020, nous déclarons avoir servi en valeur d'achats:</p>
@@ -12,7 +12,7 @@
     <SummaryStatistics :qualityDiagnostic="diagnostic" />
     <LogoList id="logos" />
     <div id="about">
-      <h2>Pourquoi je vois cette affiche ?</h2>
+      <h3 class="">Pourquoi je vois cette affiche ?</h3>
       <p>
         Depuis le 1er janvier 2020, les gestionnaires de restaurant collectif doivent informer les convives une fois par
         an de la part des produits de qualité et durables entrant dans la composition des repas servis ainsi des
@@ -92,7 +92,7 @@ p {
     text-align: left;
   }
 
-  h1 {
+  h2 {
     font-size: 35px;
     line-height: 1.3em;
   }

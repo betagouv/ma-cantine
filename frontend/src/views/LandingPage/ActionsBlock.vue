@@ -11,8 +11,10 @@
             contain
             max-height="130"
           ></v-img>
-          <v-card-title class="text-h6 font-weight-bold">
-            Gérez les informations de votre compte
+          <v-card-title>
+            <h2 class="text-h6 font-weight-bold">
+              Gérez les informations de votre compte
+            </h2>
           </v-card-title>
           <v-card-text>
             Pour modifier vos données personnelles, mettre à jour votre photo de profil ou changer votre mot de passe
@@ -32,8 +34,10 @@
             contain
             max-height="130"
           ></v-img>
-          <v-card-title class="text-h6 font-weight-bold">
-            Vous voulez savoir où vous en êtes des mesures EGAlim
+          <v-card-title>
+            <h2 class="text-h6 font-weight-bold">
+              Vous voulez savoir où vous en êtes des mesures EGAlim
+            </h2>
           </v-card-title>
           <v-card-text>
             Vous pouvez faire une simulation sur les différents aspects de la loi EGAlim avec les données de votre
@@ -55,7 +59,9 @@
             contain
             max-height="130"
           ></v-img>
-          <v-card-title class="text-h6 font-weight-bold">Vous avez besoin d’aide pour le calcul ?</v-card-title>
+          <v-card-title class="text-h6 font-weight-bold">
+            <h2 class="text-h6 font-weight-bold">Vous avez besoin d’aide pour le calcul ?</h2>
+          </v-card-title>
           <v-card-text>
             Si vous ne connaissez pas votre part de bio, produits durables, produits issues du commerce équitable, nous
             vous proposons un outil simple pour les calculer. Sous forme de tableur, remplissez vos achats HT suivant

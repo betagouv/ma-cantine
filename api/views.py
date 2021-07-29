@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model, update_session_auth_hash, tokens
 from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.core.exceptions import ObjectDoesNotExist, ValidationError, BadRequest
 from django.db.utils import IntegrityError
@@ -416,15 +416,25 @@ class SendCanteenEmailView(APIView):
                 "from": email,
                 "name": request.data.get("name") or "Une personne",
                 "message": request.data.get("message"),
+                "us": settings.DEFAULT_FROM_EMAIL,
             }
-            send_mail(
-                subject=f"Un message pour {canteen.name}",
-                message=render_to_string(f"{template}.html", context),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                html_message=render_to_string(f"{template}.txt", context),
-                recipient_list=[user.email for user in canteen.managers.all()],
-                fail_silently=False,
+            recipients = [user.email for user in canteen.managers.all()]
+            recipients.append(settings.DEFAULT_FROM_EMAIL)
+
+            reply_to = recipients.copy()
+            reply_to.append(email)
+
+            subject = f"Un message pour {canteen.name}"
+            from_email = settings.DEFAULT_FROM_EMAIL
+            html_content = render_to_string(f"{template}.html", context)
+            text_content = render_to_string(f"{template}.txt", context)
+
+            message = EmailMultiAlternatives(
+                subject, text_content, from_email, recipients, reply_to=reply_to
             )
+            message.attach_alternative(html_content, "text/html")
+            message.send()
+
             return JsonResponse({}, status=status.HTTP_200_OK)
         except ValidationError:
             return JsonResponse(
