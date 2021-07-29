@@ -1,70 +1,69 @@
 <template>
   <div class="text-left">
-    <h1 class="font-weight-black text-h4 my-4">Importer diagnostics</h1>
+    <h1 class="font-weight-black text-h4 my-4">Import des diagnostics via CSV</h1>
+    <p>
+      Créez plusieurs diagnostics en transferant un fichier CSV suivant les spécifications ci-dessous.
+    </p>
+    <p>
+      Vous pouvez également
+      <a class="text-decoration-underline">
+        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
+        télécharger un fichier exemple
+      </a>
+      .
+    </p>
     <v-form class="ma-8">
       <v-row class="mt-10">
-        <v-file-input
-          v-model="file"
-          outlined
-          show-size
-          label="Fichier des diagnostics"
-          accept=".csv"
-          class="pr-12"
-        ></v-file-input>
-        <v-btn x-large color="primary" @click="upload" :disabled="!file">Valider</v-btn>
+        <v-col rows="12" md="8" class="d-flex pa-0">
+          <v-file-input v-model="file" outlined show-size label="Choisissez un fichier" accept=".csv"></v-file-input>
+          <v-btn x-large color="primary" @click="upload" :disabled="!file" class="ml-6">Valider</v-btn>
+        </v-col>
       </v-row>
     </v-form>
     <div v-if="!isNaN(count)">
-      <h2 class="my-6">Resultats</h2>
-      <p>{{ count }} diagnostics ont été créés en {{ Math.round(seconds) }} secondes.</p>
-      <div v-if="errors && errors.length">
-        <h3 class="my-6">Erreurs</h3>
-        <v-simple-table dense class="my-6">
+      <v-alert type="success" outlined v-if="count > 0">
+        <span class="grey--text text--darken-4 body-2">
+          {{ count }}
+          <span v-if="count === 1">diagnostic a été créé.</span>
+          <span v-else>diagnostics ont été créés.</span>
+        </span>
+      </v-alert>
+      <v-alert type="error" outlined v-if="errors && errors.length">
+        <v-simple-table color="red" dense>
           <template v-slot:default>
             <thead>
               <tr>
                 <th>Ligne</th>
-                <th>Statut</th>
-                <th>Message</th>
+                <th>Erreur</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="error in errors" :key="error.row">
                 <td>{{ error.row }}</td>
-                <td>{{ error.status }}</td>
                 <td>{{ error.message }}</td>
               </tr>
             </tbody>
           </template>
         </v-simple-table>
-      </div>
-      <p v-else>Aucun erreur produit.</p>
+      </v-alert>
       <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retour aux cantines et diagnostics</router-link>
       <v-divider class="my-8"></v-divider>
     </div>
-    <h2 class="my-6">Documentation</h2>
+    <h2 class="my-6">Format du fichier</h2>
     <p>
-      Ceci est un outil pour importer plusieurs diagnostics avec un fichier CSV. Il est construit pour les cuisines
-      centrales pour aider les satellites a télédéclarer et publier ces données.
+      Le fichier CSV doit être encodé avec UTF-8 et contenir un diagnostic par ligne. Chaque ligne doit aussi inclure
+      les informations de la cantine associée. Si un diagnostic pour la même année et la même cantine existe déjà il ne
+      sera pas modifié.
     </p>
-    <p>
-      Quand vous téléversez un fichier ici, les diagnostics et cantines vont être créés dans notre base de données.
-      Votre compte sera le premier gestionnaire pour chaque cantine. Après que les cantines et diagnostics sont créés,
-      vous pouvez les modifier, ajouter d'autres gestionnaires et les publier.
-    </p>
-    <p>
-      Pour importer plusieurs années des diagnostics pour une cantine, on utilise le SIRET pour relier les diagnostics à
-      la même cantine.
-    </p>
-    <h3 class="my-6">Format du fichier</h3>
-    <p>Il faut que le fichier soit en format CSV.</p>
-    <v-simple-table dense class="my-6">
+    <h3 class="my-6">Colonnes</h3>
+    <v-simple-table class="my-6">
       <template v-slot:default>
         <thead>
           <tr>
-            <th>Ordre</th>
+            <th>Colonne</th>
             <th>Champ</th>
             <th>Description</th>
+            <th>Exemple</th>
             <th>Obligatoire</th>
           </tr>
         </thead>
@@ -73,79 +72,26 @@
             <td>{{ idx + 1 }}</td>
             <td>{{ field.name }}</td>
             <td v-html="field.description"></td>
+            <td style="min-width: 160px;">{{ field.example }}</td>
             <td>{{ field.optional ? "✘" : "✔" }}</td>
           </tr>
         </tbody>
       </template>
     </v-simple-table>
+
+    <h3 class="my-6">Fichier exemple</h3>
+    <p>
+      Nous mettons à votre disposition
+      <a class="text-decoration-underline">
+        <v-icon small class="mt-n1" color="primary">mdi-file-document-outline</v-icon>
+        un fichier exemple
+      </a>
+      à remplir avec vos données.
+    </p>
   </div>
 </template>
 
 <script>
-const documentation = [
-  {
-    name: "SIRET",
-    description: "Le SIRET de la cantine satellite (d'éspace blanc vont être ignorer)",
-  },
-  {
-    name: "Nom de la cantine",
-  },
-  {
-    name: "Code INSEE de la ville",
-    optional: true,
-  },
-  {
-    name: "Code postale",
-    description: "Si il n'y a pas un code INSEE, ce champ doit être remplit",
-    optional: true,
-  },
-  {
-    name: "SIRET de la cuisine centrale",
-    description: "Le SIRET de la cuisine centrale qui gére la cantine (d'éspace blanc vont être ignorer)",
-  },
-  {
-    name: "Nombre de repas servis par jour",
-  },
-  {
-    name: "Secteurs",
-    description:
-      "Options acceptées : <code>Entreprise</code>, <code>Loisirs</code>, <code>Crèche</code>, <code>Social et Médico-social (ESMS)</code>," +
-      "<code>Administration</code>, <code>Médical</code>, <code>Universitaire</code>, <code>Scolaire</code>. Pour spécifier plusieurs, " +
-      "les séparer avec '+'. Par exemple, <code>Entreprise+Loisirs</code>.",
-  },
-  {
-    name: "Mode de production",
-    description:
-      "Le façon dont les repas sont produits. Options acceptées : <code>site</code> (cuisine-site) et <code>central</code> (cuisine centrale).",
-  },
-  {
-    name: "Mode de gestion",
-    description:
-      "Comment le service des repas est géré. Options acceptées : <code>direct</code> (directe) et <code>conceded</code> (concédé).",
-  },
-  {
-    name: "Année du diagnostic",
-    description: "En format <code>YYYY</code>.",
-  },
-  {
-    name: "Totale valeur d'achats HT",
-    description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
-  },
-  {
-    name: "Valeur d'achats bio HT",
-    description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
-  },
-  {
-    name: "Valeur d'achats durables et de qualité (hors bio) HT",
-    description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
-  },
-  {
-    name: "Valeur d'achats du commerce équitable HT",
-    description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
-    optional: true,
-  },
-]
-
 export default {
   name: "ImportDiagnostics",
   data() {
@@ -155,7 +101,81 @@ export default {
       count: undefined,
       errors: undefined,
       seconds: undefined,
-      documentation,
+      documentation: [
+        {
+          name: "SIRET",
+          description: "Le SIRET de la cantine (14 chiffres)",
+          example: "362 521 879 00034",
+        },
+        {
+          name: "Nom de la cantine",
+          example: "Ma Cantine",
+        },
+        {
+          name: "Code géographique INSEE de la ville",
+          example: "69123",
+          optional: true,
+        },
+        {
+          name: "Code postale",
+          description: "En cas d'absence de code INSEE, ce champ devient obligatoire",
+          example: "69001",
+          optional: true,
+        },
+        {
+          name: "SIRET de la cuisine centrale",
+          description: "Le SIRET de la cuisine centrale s'il y en a une",
+          example: "362 521 879 00034",
+          optional: true,
+        },
+        {
+          name: "Nombre de repas servis par jour",
+          example: "300",
+        },
+        {
+          name: "Secteurs",
+          description: `Options acceptées : ${this.$store.state.sectors.map((x) => " <code>" + x.name + "</code>")}`,
+          example: `${this.$store.state.sectors[0].name}`,
+        },
+        {
+          name: "Mode de production",
+          description:
+            "Le lieu de production des repas. Options acceptées : <code>site</code> (cuisine-site) et <code>central</code> (cuisine centrale).",
+          example: "central",
+        },
+        {
+          name: "Mode de gestion",
+          description:
+            "Comment le service des repas est géré. Options acceptées : <code>direct</code> (directe) et <code>conceded</code> (concédé).",
+          example: "direct",
+        },
+        {
+          name: "Année du diagnostic",
+          description: "En format <code>YYYY</code>.",
+          example: "2020",
+        },
+        {
+          name: "Valeur totale d'achats HT",
+          description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
+          example: "3290.23",
+        },
+        {
+          name: "Valeur d'achats bio HT",
+          description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
+          example: "1284.70",
+        },
+        {
+          name: "Valeur d'achats durables et de qualité (hors bio) HT",
+          description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
+          example: "681",
+        },
+        {
+          name: "Valeur d'achats du commerce équitable HT",
+          description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
+          example: "1084.2",
+          optional: true,
+        },
+      ],
     }
   },
   methods: {
@@ -163,14 +183,14 @@ export default {
       this.$store
         .dispatch("importDiagnostics", { file: this.file })
         .then((json) => {
-          this.$store.dispatch("notify", {
-            message: "Vos diagnostics a bien été téléversés",
-          })
           this.file = undefined
           this.canteens = json.canteens
           this.count = json.count
           this.errors = json.errors
           this.seconds = json.seconds
+          this.$store.dispatch("notify", {
+            message: `Fichier traité en ${Math.round(this.seconds)} secondes`,
+          })
         })
         .catch(() => {
           this.$store.dispatch("notifyServerError")
