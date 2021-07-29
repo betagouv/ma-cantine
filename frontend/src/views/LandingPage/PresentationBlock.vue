@@ -9,8 +9,8 @@
       <v-row>
         <v-spacer></v-spacer>
         <v-col cols="12" sm="9" md="5">
-          <v-card-title class="font-weight-black text-h4 pl-0">
-            Diagnostiquer ma cantine sur les mesures de la loi EGAlim
+          <v-card-title class="pl-0">
+            <h1 class="font-weight-black text-h4">Diagnostiquer ma cantine sur les mesures de la loi EGAlim</h1>
           </v-card-title>
           <v-card-text>
             La loi EGAlim vise à apporter une alimentation saine, de qualité et plus durable dans nos assiettes.

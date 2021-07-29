@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="text-h4 font-weight-black mb-12">Les objectifs de la loi EGAlim</p>
+    <h2 class="text-h4 font-weight-black mb-12">Les objectifs de la loi EGAlim</h2>
 
     <v-row>
       <v-col cols="12" sm="4">
