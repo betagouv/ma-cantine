@@ -27,5 +27,9 @@ class BlogPost(models.Model):
         related_name="blog_posts",
     )
 
+    @property
+    def url_path(self):
+        return f"/blog/{self.id}"
+
     def __str__(self):
         return f'Blog post "{self.title}"'
