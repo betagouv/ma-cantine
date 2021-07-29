@@ -3,7 +3,9 @@
     <div v-if="canteen" id="canteen-dashboard">
       <v-card elevation="0" class="pa-0 my-8 text-left">
         <v-card-title class="text-h4 font-weight-black">
-          {{ canteen.name }}
+          <h1 class="text-h4 font-weight-black">
+            {{ canteen.name }}
+          </h1>
         </v-card-title>
         <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city">
           <div v-if="canteen.dailyMealCount">

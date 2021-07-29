@@ -3,8 +3,8 @@
     <v-row>
       <v-col cols="12">
         <v-card outlined class="mt-4 pa-4">
-          <v-card-title class="font-weight-bold">
-            Données d'approvisionnement en produits de qualité et durables
+          <v-card-title>
+            <h2 class="font-weight-bold text-h6">Données d'approvisionnement en produits de qualité et durables</h2>
           </v-card-title>
           <v-card-text>
             <v-row>
@@ -32,7 +32,9 @@
 
       <v-col cols="12" md="6">
         <v-card outlined class="mt-4 pa-4">
-          <v-card-title class="font-weight-bold">Initiatives contre le gaspillage alimentaire</v-card-title>
+          <v-card-title class="font-weight-bold">
+            <h2 class="font-weight-bold text-h6">Initiatives contre le gaspillage alimentaire</h2>
+          </v-card-title>
           <v-card-text>
             <div class="actions">
               <KeyMeasureAction
@@ -55,8 +57,8 @@
         </v-card>
 
         <v-card outlined class="mt-4 pa-4">
-          <v-card-title class="font-weight-bold text-left">
-            Dans l'établissement, ont été supprimé l'usage des :
+          <v-card-title class="text-left">
+            <h2 class="font-weight-bold text-h6">Dans l'établissement, ont été supprimé l'usage des :</h2>
           </v-card-title>
           <v-card-text>
             <div class="actions">
@@ -83,7 +85,9 @@
 
       <v-col cols="12" md="6">
         <v-card outlined class="mt-4 pa-4">
-          <v-card-title class="font-weight-bold">{{ diversificationMeasure.shortTitle }}</v-card-title>
+          <v-card-title>
+            <h2 class="font-weight-bold text-h6">{{ diversificationMeasure.shortTitle }}</h2>
+          </v-card-title>
           <v-card-text>
             <div class="actions">
               <KeyMeasureAction
@@ -97,7 +101,9 @@
         </v-card>
 
         <v-card outlined class="mt-4 pa-4">
-          <v-card-title class="font-weight-bold">{{ informationMeasure.shortTitle }}</v-card-title>
+          <v-card-title>
+            <h2 class="font-weight-bold text-h6">{{ informationMeasure.shortTitle }}</h2>
+          </v-card-title>
           <v-card-text>
             <div class="actions">
               <KeyMeasureAction
