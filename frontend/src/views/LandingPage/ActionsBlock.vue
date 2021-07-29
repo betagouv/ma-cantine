@@ -3,7 +3,28 @@
     <v-row class="text-left">
       <v-spacer></v-spacer>
       <v-col cols="12" sm="6">
-        <v-card elevation="0" class="fill-height pa-4 d-flex flex-column">
+        <v-card v-if="loggedUser" elevation="0" class="fill-height pa-4 d-flex flex-column">
+          <v-img
+            src="/static/images/ChartDoodle.png"
+            v-if="$vuetify.breakpoint.smAndUp"
+            class="mx-auto rounded-0"
+            contain
+            max-height="130"
+          ></v-img>
+          <v-card-title class="text-h6 font-weight-bold">
+            Gérez les informations de votre compte
+          </v-card-title>
+          <v-card-text>
+            Pour modifier vos données personnelles, mettre à jour votre photo de profil ou changer votre mot de passe
+            rendez-vous sur votre compte.
+          </v-card-text>
+          <v-spacer></v-spacer>
+          <v-card-actions class="pa-4">
+            <v-btn :to="{ name: 'AccountSummaryPage' }" outlined color="primary">Mon compte</v-btn>
+          </v-card-actions>
+        </v-card>
+
+        <v-card v-else elevation="0" class="fill-height pa-4 d-flex flex-column">
           <v-img
             src="/static/images/ChartDoodle.png"
             v-if="$vuetify.breakpoint.smAndUp"
@@ -69,6 +90,11 @@ export default {
     return {
       calculatorModal: false,
     }
+  },
+  computed: {
+    loggedUser() {
+      return this.$store.state.loggedUser
+    },
   },
   methods: {
     closeCalculatorModal() {
