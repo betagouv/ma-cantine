@@ -28,24 +28,30 @@
           <span v-else>diagnostics ont été créés.</span>
         </span>
       </v-alert>
-      <v-alert type="error" outlined v-if="errors && errors.length">
-        <v-simple-table color="red" dense>
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th>Ligne</th>
-                <th>Erreur</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="error in errors" :key="error.row">
-                <td>{{ error.row }}</td>
-                <td>{{ error.message }}</td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
-      </v-alert>
+      <div v-if="errors && errors.length">
+        <p class="text-body-2 red--text text--darken-4" v-if="count === 0">
+          Nous n'avons pas pu traiter votre fichier. Vous trouverez ci-dessous des informations sur les erreurs
+          rencontrées.
+        </p>
+        <v-alert type="error" outlined>
+          <v-simple-table color="red" dense>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th>Ligne</th>
+                  <th>Erreur</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="error in errors" :key="error.row">
+                  <td>{{ error.row }}</td>
+                  <td>{{ error.message }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-alert>
+      </div>
       <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retour aux cantines et diagnostics</router-link>
       <v-divider class="my-8"></v-divider>
     </div>

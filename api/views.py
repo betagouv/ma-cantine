@@ -467,6 +467,7 @@ def _normalise_siret(siret):
     return siret.replace(" ", "")
 
 
+# flake8: noqa: C901
 class ImportDiagnosticsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -479,41 +480,48 @@ class ImportDiagnosticsView(APIView):
             diagnostics_created = 0
             canteens = {}
             errors = []
-            for row_number, row in enumerate(csvreader, start=1):
-                try:
-                    siret = _normalise_siret(row[0])
-                    with transaction.atomic():
+            with transaction.atomic():
+                for row_number, row in enumerate(csvreader, start=1):
+                    try:
+                        siret = _normalise_siret(row[0])
                         canteen = self._create_canteen_with_diagnostic(row, siret)
                         diagnostics_created += 1
                         canteens[canteen.siret] = canteen
 
-                except IntegrityError as e:
-                    message = (
-                        "Un diagnostic pour cette année et cette cantine existe déjà"
-                    )
-                    errors.append(
-                        ImportDiagnosticsView._get_error(e, message, 400, row_number)
-                    )
+                    except IntegrityError as e:
+                        message = "Un diagnostic pour cette année et cette cantine existe déjà"
+                        errors.append(
+                            ImportDiagnosticsView._get_error(
+                                e, message, 400, row_number
+                            )
+                        )
 
-                except PermissionDenied as e:
-                    message = f"Vous n'êtes pas un gestionnaire de la cantine avec SIRET {siret}"
-                    errors.append(
-                        ImportDiagnosticsView._get_error(e, message, 401, row_number)
-                    )
+                    except PermissionDenied as e:
+                        message = f"Vous n'êtes pas un gestionnaire de la cantine avec SIRET {siret}"
+                        errors.append(
+                            ImportDiagnosticsView._get_error(
+                                e, message, 401, row_number
+                            )
+                        )
 
-                except Sector.DoesNotExist as e:
-                    message = (
-                        "Le secteur spécifié ne fait pas partie des options acceptées"
-                    )
-                    errors.append(
-                        ImportDiagnosticsView._get_error(e, message, 400, row_number)
-                    )
+                    except Sector.DoesNotExist as e:
+                        message = "Le secteur spécifié ne fait pas partie des options acceptées"
+                        errors.append(
+                            ImportDiagnosticsView._get_error(
+                                e, message, 400, row_number
+                            )
+                        )
 
-                except Exception as e:
-                    message = "Une erreur s'est produite en créant un diagnostic pour cette ligne"
-                    errors.append(
-                        ImportDiagnosticsView._get_error(e, message, 400, row_number)
-                    )
+                    except Exception as e:
+                        message = "Une erreur s'est produite en créant un diagnostic pour cette ligne"
+                        errors.append(
+                            ImportDiagnosticsView._get_error(
+                                e, message, 400, row_number
+                            )
+                        )
+
+                if errors:
+                    raise IntegrityError()
 
             serialized_canteens = [
                 _camelize(FullCanteenSerializer(canteen).data)
@@ -523,12 +531,17 @@ class ImportDiagnosticsView(APIView):
                 serialized_canteens, diagnostics_created, errors, start
             )
 
+        except IntegrityError:
+            logger.error("L'import du fichier CSV a échoué")
+            return ImportDiagnosticsView._get_success_response([], 0, errors, start)
+
         except Exception as e:
             logger.exception(e)
             message = "Échec lors de la lecture du fichier"
             errors = [{"row": 0, "status": 400, "message": message}]
             return ImportDiagnosticsView._get_success_response([], 0, errors, start)
 
+    @transaction.atomic
     def _create_canteen_with_diagnostic(self, row, siret):
         (canteen, created) = Canteen.objects.get_or_create(
             siret=siret,
