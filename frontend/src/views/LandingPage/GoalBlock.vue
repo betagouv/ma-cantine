@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="text-h4 font-weight-black">Les enjeux de la restauration collective</p>
+    <h2 class="text-h4 font-weight-black">Les enjeux de la restauration collective</h2>
     <p class="text-left mt-8">
       La restauration collective représente près de
       <b>4 milliards de repas servis par an</b>

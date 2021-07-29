@@ -1,17 +1,29 @@
 <template>
   <v-card outlined>
-    <v-card-title class="font-weight-bold text-body-1">
-      <v-icon small class="mr-2" color="grey darken-4">mdi-calendar-month</v-icon>
-      Entrée en vigueur
+    <v-card-title>
+      <h2 v-if="forMeasure" class="font-weight-bold text-body-1">
+        <v-icon small class="mr-2" color="grey darken-4">mdi-calendar-month</v-icon>
+        Entrée en vigueur
+      </h2>
+      <h3 v-else class="font-weight-bold text-body-1">
+        <v-icon small class="mr-2" color="grey darken-4">mdi-calendar-month</v-icon>
+        Entrée en vigueur
+      </h3>
     </v-card-title>
 
     <v-card-text>
       {{ measure.deadline.display }}
     </v-card-text>
 
-    <v-card-title class="font-weight-bold text-body-1">
-      <v-icon small class="mr-2" color="grey darken-4">mdi-account-group</v-icon>
-      Pour qui ?
+    <v-card-title>
+      <h2 v-if="forMeasure" class="font-weight-bold text-body-1">
+        <v-icon small class="mr-2" color="grey darken-4">mdi-account-group</v-icon>
+        Pour qui ?
+      </h2>
+      <h3 v-else class="font-weight-bold text-body-1">
+        <v-icon small class="mr-2" color="grey darken-4">mdi-account-group</v-icon>
+        Pour qui ?
+      </h3>
     </v-card-title>
 
     <v-card-text>
@@ -32,6 +44,10 @@ export default {
   name: "KeyMeasureInfoCard",
   props: {
     measure: Object,
+    forMeasure: {
+      type: Boolean,
+      required: false,
+    },
   },
   data() {
     return {

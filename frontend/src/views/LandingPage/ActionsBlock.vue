@@ -11,9 +11,11 @@
             contain
             max-height="130"
           ></v-img>
-          <v-card-title class="text-h6 font-weight-bold">
-            Vous connaissez déjà la part de bio, durable et produits issus du commerce équitable de votre cantine
-            scolaire
+          <v-card-title>
+            <h2 class="text-h6 font-weight-bold">
+              Vous connaissez déjà la part de bio, durable et produits issus du commerce équitable de votre cantine
+              scolaire
+            </h2>
           </v-card-title>
           <v-card-text>
             Vous pouvez générer une affiche à poser dans votre cantine ainsi qu’un email-type à destination des convives
@@ -35,7 +37,9 @@
             contain
             max-height="130"
           ></v-img>
-          <v-card-title class="text-h6 font-weight-bold">Vous avez besoin d’aide pour le calcul ?</v-card-title>
+          <v-card-title class="text-h6 font-weight-bold">
+            <h2 class="text-h6 font-weight-bold">Vous avez besoin d’aide pour le calcul ?</h2>
+          </v-card-title>
           <v-card-text>
             Si vous ne connaissez pas votre part de bio, produits durables, produits issues du commerce équitable, nous
             vous proposons un outil simple pour les calculer. Sous forme de tableur, remplissez vos achats HT suivant

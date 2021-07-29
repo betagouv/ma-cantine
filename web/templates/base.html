@@ -1,7 +1,7 @@
 {% load static %}
 {% load analytics %}
 <!doctype html>
-<html>
+<html lang="fr">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}{% endblock %} - ma-cantine.beta.gouv.fr</title>
@@ -25,13 +25,16 @@
 
     </head>
     <body>
-        <div id="wrapper" {% if form.uses_columns %}class="columns"{% endif %}>
-            <a href="/">
-                <img src="{% static 'images/logo_transparent.png' %}" alt="ma cantine" class="auth_logo" />
-            </a>
-
-            {% block content %}
-            {% endblock %}
-        </div>
+        <main>
+            <div id="wrapper" {% if form.uses_columns %}class="columns"{% endif %}>
+                <h1 id="ma-cantine">
+                    <a href="/">
+                        <img src="{% static 'images/logo_transparent.png' %}" alt="ma cantine" class="auth_logo" />
+                    </a>
+                </h1>
+                {% block content %}
+                {% endblock %}
+            </div>
+        </main>
     </boby>
 </html>
