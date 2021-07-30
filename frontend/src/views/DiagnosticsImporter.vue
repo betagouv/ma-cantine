@@ -6,7 +6,7 @@
     </p>
     <p>
       Vous pouvez également
-      <a class="text-decoration-underline">
+      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_ma_cantine.csv" download>
         <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
         télécharger un fichier exemple
       </a>
@@ -88,7 +88,7 @@
     <h3 class="my-6">Fichier exemple</h3>
     <p>
       Nous mettons à votre disposition
-      <a class="text-decoration-underline">
+      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_ma_cantine.csv" download>
         <v-icon small class="mt-n1" color="primary">mdi-file-document-outline</v-icon>
         un fichier exemple
       </a>
