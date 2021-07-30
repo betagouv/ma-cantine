@@ -5,7 +5,7 @@
       <v-col cols="12" sm="6">
         <v-card v-if="loggedUser" elevation="0" class="fill-height pa-4 d-flex flex-column">
           <v-img
-            src="/static/images/ChartDoodle.png"
+            src="/static/images/UnboxingDoodle.png"
             v-if="$vuetify.breakpoint.smAndUp"
             class="mx-auto rounded-0"
             contain
