@@ -3,7 +3,30 @@
     <v-row class="text-left">
       <v-spacer></v-spacer>
       <v-col cols="12" sm="6">
-        <v-card elevation="0" class="fill-height pa-4 d-flex flex-column">
+        <v-card v-if="loggedUser" elevation="0" class="fill-height pa-4 d-flex flex-column">
+          <v-img
+            src="/static/images/UnboxingDoodle.png"
+            v-if="$vuetify.breakpoint.smAndUp"
+            class="mx-auto rounded-0"
+            contain
+            max-height="130"
+          ></v-img>
+          <v-card-title>
+            <h2 class="text-h6 font-weight-bold">
+              Gérez les informations de votre compte
+            </h2>
+          </v-card-title>
+          <v-card-text>
+            Pour modifier vos données personnelles, mettre à jour votre photo de profil ou changer votre mot de passe
+            rendez-vous sur votre compte.
+          </v-card-text>
+          <v-spacer></v-spacer>
+          <v-card-actions class="pa-4">
+            <v-btn :to="{ name: 'AccountSummaryPage' }" outlined color="primary">Mon compte</v-btn>
+          </v-card-actions>
+        </v-card>
+
+        <v-card v-else elevation="0" class="fill-height pa-4 d-flex flex-column">
           <v-img
             src="/static/images/ChartDoodle.png"
             v-if="$vuetify.breakpoint.smAndUp"
@@ -13,23 +36,22 @@
           ></v-img>
           <v-card-title>
             <h2 class="text-h6 font-weight-bold">
-              Vous connaissez déjà la part de bio, durable et produits issus du commerce équitable de votre cantine
-              scolaire
+              Vous voulez savoir où vous en êtes des mesures EGAlim
             </h2>
           </v-card-title>
           <v-card-text>
-            Vous pouvez générer une affiche à poser dans votre cantine ainsi qu’un email-type à destination des convives
-            et parents d'élèves.
+            Vous pouvez faire une simulation sur les différents aspects de la loi EGAlim avec les données de votre
+            cantine.
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="pa-4">
-            <v-btn :to="{ name: 'GeneratePosterPage' }" outlined color="primary">J'informe mes convives</v-btn>
+            <v-btn :to="{ name: 'DiagnosticPage' }" outlined color="primary">Simuler la situation de ma cantine</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
 
       <v-col cols="12" sm="6">
-        <v-card elevation="0" class="fill-height pa-4 d-flex flex-column">
+        <v-card elevation="0" class="fill-height pa-0 pa-sm-4 d-flex flex-column">
           <v-img
             src="/static/images/ReadingDoodle.png"
             v-if="$vuetify.breakpoint.smAndUp"
@@ -50,7 +72,7 @@
             <v-dialog max-width="700" v-model="calculatorModal" @input="stopVideo">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn outlined color="primary" v-on="on" v-bind="attrs">
-                  Télécharger notre tableur
+                  Télécharger un tableur d’aide au calcul
                 </v-btn>
               </template>
               <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />
@@ -74,6 +96,11 @@ export default {
     return {
       calculatorModal: false,
     }
+  },
+  computed: {
+    loggedUser() {
+      return this.$store.state.loggedUser
+    },
   },
   methods: {
     closeCalculatorModal() {

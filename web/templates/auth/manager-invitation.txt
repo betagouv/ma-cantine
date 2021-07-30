@@ -4,9 +4,9 @@ L'équipe de "{{ canteen }}" vous invite à les rejoindre sur la plateforme ma c
 
 Pour accepter cette invitation il suffit de créer un compte sur :
 
-{{ protocol}}://{{ domain }}{% url 'register_user' %}
+{{ protocol}}://{{ domain }}{% url 'register' %}
 
-Ma cantine vous permet de créer des diagnostiques sur les mesures de la loi EGAlim ainsi que de découvrir des ressources pour les acteurs et actrices de la restauration collective. 
+Ma cantine vous permet de créer des diagnostiques sur les mesures de la loi EGAlim ainsi que de découvrir des ressources pour les acteurs et actrices de la restauration collective.
 
 Si vous avez déjà un compte ou que vous pensez avoir reçu ce message par erreur vous pouvez nous contacter en répondant directement à ce message.
 
