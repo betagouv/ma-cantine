@@ -207,7 +207,7 @@ export default {
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
-      this.publicationRequested = canteen.publicationStatus !== "draft"
+      this.publicationRequested = !!canteen.publicationStatus && canteen.publicationStatus !== "draft"
       const initialCityAutocomplete = {
         text: canteen.city,
         value: {
@@ -310,10 +310,12 @@ export default {
       return val && val !== this.canteen.city && this.queryCommunes(val)
     },
     cityAutocompleteChoice(val) {
-      this.canteen.city = val.label
-      this.canteen.cityInseeCode = val.citycode
-      this.canteen.postalCode = val.postcode
-      this.canteen.department = val && val.context ? val.context.split(",")[0] : undefined
+      if (val?.label) {
+        this.canteen.city = val.label
+        this.canteen.cityInseeCode = val.citycode
+        this.canteen.postalCode = val.postcode
+        this.canteen.department = val.context.split(",")[0]
+      }
 
       this.search = this.canteen.city
     },

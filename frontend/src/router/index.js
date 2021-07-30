@@ -29,6 +29,7 @@ import DiagnosticList from "@/views/CanteenEditor/DiagnosticList"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import DiagnosticEditor from "@/views/DiagnosticEditor"
+import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 
 Vue.use(VueRouter)
 
@@ -272,6 +273,15 @@ const routes = [
     props: true,
     meta: {
       title: "Ajouter un nouveau diagnostic",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/importer-diagnostics",
+    name: "DiagnosticsImporter",
+    component: DiagnosticsImporter,
+    meta: {
+      title: "Importer des diagnostics",
       authenticationRequired: true,
     },
   },

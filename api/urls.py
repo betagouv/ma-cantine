@@ -10,6 +10,7 @@ from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView
 from api.views import DiagnosticCreateView, UpdateUserCanteenView, DiagnosticUpdateView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
 from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleView
+from api.views import ImportDiagnosticsView
 
 
 urlpatterns = {
@@ -59,6 +60,9 @@ urlpatterns = {
         "removeManager/",
         RemoveManagerView.as_view(),
         name="remove_manager",
+    ),
+    path(
+        "importDiagnostics/", ImportDiagnosticsView.as_view(), name="import_diagnostics"
     ),
 }
 

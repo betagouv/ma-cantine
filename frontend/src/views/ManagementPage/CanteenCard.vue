@@ -60,7 +60,7 @@ export default {
           color: "green lighten-4",
           text: "Publiée",
         },
-      }[this.canteen.publicationStatus]
+      }[this.canteen.publicationStatus || "draft"]
     },
   },
 }
