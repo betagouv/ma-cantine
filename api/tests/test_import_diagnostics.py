@@ -71,7 +71,8 @@ class TestImportDiagnosticsAPI(APITestCase):
     @authenticate
     def test_cannot_modify_existing_canteen_unless_manager(self):
         """
-        If a canteen exists, then you should have to already be it's manager to add diagnostics
+        If a canteen exists, then you should have to already be it's manager to add diagnostics.
+        No canteens will be created since any error cancels out the entire file
         """
         CanteenFactory.create(siret="0000001234")
         my_canteen = CanteenFactory.create(siret="0000001235")
@@ -83,8 +84,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["count"], 1)
-        self.assertEqual(body["canteens"][0]["siret"], "0000001235")
+        self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
         error = body["errors"][0]
         self.assertEqual(error["row"], 1)
@@ -132,7 +132,7 @@ class TestImportDiagnosticsAPI(APITestCase):
     @authenticate
     def test_error_collection(self):
         """
-        If errors occur, skip line, continuing upload, and return errors with row and message
+        If errors occur, discard the file and return the errors with row and message
         """
         with open("./api/tests/files/diagnostics_bad_file.csv") as diag_file:
             response = self.client.post(
@@ -140,8 +140,8 @@ class TestImportDiagnosticsAPI(APITestCase):
             )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["count"], 1)
-        self.assertEqual(Diagnostic.objects.count(), 1)
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(Diagnostic.objects.count(), 0)
         self.assertEqual(body["errors"][0]["row"], 1)
         self.assertEqual(body["errors"][0]["status"], 400)
         self.assertEqual(
