@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
-from django.contrib.auth import get_user_model, tokens, login, logout
+from django.contrib.auth import get_user_model, tokens, login
 from django.contrib import messages
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.conf import settings
@@ -9,7 +9,7 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, FormView, View
-from web.forms import RegisterForm, RegisterUserForm
+from web.forms import RegisterUserForm
 
 
 class VueAppDisplayView(TemplateView):
@@ -18,29 +18,6 @@ class VueAppDisplayView(TemplateView):
     """
 
     template_name = "vue-app.html"
-
-
-class RegisterView(FormView):
-    """
-    View containing the form to create an account
-    """
-
-    form_class = RegisterForm
-    template_name = "auth/register.html"
-
-    def form_valid(self, form):
-        form.save()
-        username = form.cleaned_data["username"]
-        try:
-            _login_and_send_activation_email(username, self.request)
-        except Exception:
-            self.success_url = reverse_lazy(
-                "registration_email_sent_error", kwargs={"username": username}
-            )
-            return super().form_valid(form)
-        else:
-            self.success_url = reverse_lazy("app")
-            return super().form_valid(form)
 
 
 class RegisterUserView(FormView):
