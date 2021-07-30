@@ -1,5 +1,8 @@
 from django.contrib.auth import views as auth_views
+from django.contrib.sitemaps.views import sitemap
+from django.views.decorators.cache import cache_page
 from django.urls import path
+from web.sitemaps import CanteenSitemap, BlogPostSitemap, WebSitemap
 from web.views import (
     VueAppDisplayView,
     RegisterView,
@@ -10,6 +13,12 @@ from web.views import (
     RegisterInvalidTokenView,
     AccountActivationView,
 )
+
+sitemaps = {
+    "canteens": CanteenSitemap,
+    "blog": BlogPostSitemap,
+    "other": WebSitemap,
+}
 
 urlpatterns = [
     path("", VueAppDisplayView.as_view(), name="app"),
@@ -101,4 +110,10 @@ urlpatterns = [
         name="activate",
     ),
     path("token-invalide", RegisterInvalidTokenView.as_view(), name="invalid_token"),
+    path(
+        "sitemap.xml",
+        cache_page(60 * 60)(sitemap),
+        {"sitemaps": sitemaps},
+        name="sitemap",
+    ),
 ]
