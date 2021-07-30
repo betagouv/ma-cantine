@@ -39,6 +39,7 @@ import sib_api_v3_sdk
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 import csv
 import time
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -467,19 +468,36 @@ def _normalise_siret(siret):
     return siret.replace(" ", "")
 
 
+def _get_verbose_field_name(field_name):
+    try:
+        verbose_field_name = Canteen._meta.get_field(field_name).verbose_name
+    except:
+        try:
+            verbose_field_name = Diagnostic._meta.get_field(field_name).verbose_name
+        except:
+            pass
+    return verbose_field_name
+
+
 # flake8: noqa: C901
 class ImportDiagnosticsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
+    validation_error_regex = re.compile(r"La valeur «\xa0(.+)\xa0»")
+    # TODO? Django adds quotes for choice validation errors so the regex would be:
+    # choice_error_regex = re.compile(
+    #     r"La valeur «\xa0'(.+)'\xa0» n’est pas un choix valide."
+    # )
 
     def post(self, request):
+        start = time.time()
         logger.info("Diagnostic bulk import started")
+        diagnostics_created = 0
+        canteens = {}
+        errors = []
         try:
-            start = time.time()
             filestring = request.data["file"].read().decode("utf-8")
             csvreader = csv.reader(filestring.splitlines())
-            diagnostics_created = 0
-            canteens = {}
-            errors = []
             with transaction.atomic():
                 for row_number, row in enumerate(csvreader, start=1):
                     try:
@@ -487,36 +505,11 @@ class ImportDiagnosticsView(APIView):
                         canteen = self._create_canteen_with_diagnostic(row, siret)
                         diagnostics_created += 1
                         canteens[canteen.siret] = canteen
-
-                    except IntegrityError as e:
-                        message = "Un diagnostic pour cette année et cette cantine existe déjà"
-                        errors.append(
-                            ImportDiagnosticsView._get_error(
-                                e, message, 400, row_number
-                            )
-                        )
-
-                    except PermissionDenied as e:
-                        message = f"Vous n'êtes pas un gestionnaire de la cantine avec SIRET {siret}"
-                        errors.append(
-                            ImportDiagnosticsView._get_error(
-                                e, message, 401, row_number
-                            )
-                        )
-
-                    except Sector.DoesNotExist as e:
-                        message = "Le secteur spécifié ne fait pas partie des options acceptées"
-                        errors.append(
-                            ImportDiagnosticsView._get_error(
-                                e, message, 400, row_number
-                            )
-                        )
-
                     except Exception as e:
-                        message = "Une erreur s'est produite en créant un diagnostic pour cette ligne"
+                        (message, code) = self._parse_error(e)
                         errors.append(
                             ImportDiagnosticsView._get_error(
-                                e, message, 400, row_number
+                                e, message, code, row_number
                             )
                         )
 
@@ -547,7 +540,7 @@ class ImportDiagnosticsView(APIView):
             siret=siret,
             defaults={
                 "siret": siret,
-                "name": row[1],
+                "name": row[1],  # TODO: should this be optional or not?
                 "city_insee_code": row[2],
                 "postal_code": row[3],
                 "central_producer_siret": row[4],
@@ -566,9 +559,10 @@ class ImportDiagnosticsView(APIView):
                 canteen.sectors.add(
                     *[Sector.objects.get(name=sector) for sector in row[6].split("+")]
                 )
+            canteen.full_clean()  # validate choice fields
             canteen.save()
 
-        Diagnostic.objects.create(
+        diagnostic = Diagnostic(
             canteen_id=canteen.id,
             year=row[9],
             value_total_ht=row[10],
@@ -576,6 +570,8 @@ class ImportDiagnosticsView(APIView):
             value_sustainable_ht=row[12],
             value_fair_trade_ht=row[13],
         )
+        diagnostic.full_clean()  # trigger field validators like year min/max
+        diagnostic.save()
         return canteen
 
     @staticmethod
@@ -595,3 +591,44 @@ class ImportDiagnosticsView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+    def _parse_error(self, e):
+        message = "Une erreur s'est produite en créant un diagnostic pour cette ligne"
+        code = 400
+        if isinstance(e, PermissionDenied):
+            message = f"Vous n'êtes pas un gestionnaire de cette cantine."
+            code = 401
+        elif isinstance(e, Sector.DoesNotExist):
+            message = "Le secteur spécifié ne fait pas partie des options acceptées"
+        elif isinstance(e, ValidationError):
+            try:
+                field_name = list(e.message_dict.keys())[0]
+                if (
+                    hasattr(e, "messages")
+                    and e.messages[0]
+                    == "Un objet Diagnostic avec ces champs Canteen et An existe déjà."
+                ):
+                    message = (
+                        "Un diagnostic pour cette année et cette cantine existe déjà"
+                    )
+                elif field_name:
+                    verbose_field_name = _get_verbose_field_name(field_name)
+                    match = self.validation_error_regex.search(e.messages[0])
+                    if match:
+                        value_given = match.group(1) if match else ""
+                        message = f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
+                    elif field_name == "year":
+                        message = (
+                            f"Pour le champ '{verbose_field_name}', {e.messages[0]}"
+                        )
+            except:
+                if hasattr(e, "params"):
+                    message = f"La valeur '{e.params['value']}' n'est pas valide."
+        elif isinstance(e, ValueError):
+            match = self.value_error_regex.search(str(e))
+            field_name = match.group(1) if match else ""
+            value_given = match.group(2) if match else ""
+            if field_name:
+                verbose_field_name = _get_verbose_field_name(field_name)
+                message = f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
+        return (message, code)

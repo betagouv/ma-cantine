@@ -63,6 +63,7 @@ class Diagnostic(models.Model):
         validators=[MinValueValidator(1970), MaxValueValidator(2100)],
         null=True,
         blank=True,
+        verbose_name="an",
     )
 
     # Product origin
@@ -97,10 +98,12 @@ class Diagnostic(models.Model):
 
     # Food waste
     has_waste_diagnostic = models.BooleanField(
-        null=True, verbose_name="diagnostic sur le gaspillage réalisé"
+        blank=True, null=True, verbose_name="diagnostic sur le gaspillage réalisé"
     )
     has_waste_plan = models.BooleanField(
-        null=True, verbose_name="plan d'action contre le gaspillage en place"
+        blank=True,
+        null=True,
+        verbose_name="plan d'action contre le gaspillage en place",
     )
     waste_actions = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=WasteActions.choices),
@@ -115,10 +118,12 @@ class Diagnostic(models.Model):
         verbose_name="autre action contre le gaspillage alimentaire",
     )
     has_donation_agreement = models.BooleanField(
-        null=True, verbose_name="propose des dons alimentaires"
+        blank=True, null=True, verbose_name="propose des dons alimentaires"
     )
     has_waste_measures = models.BooleanField(
-        null=True, verbose_name="réalise des mesures de gaspillage alimentaire"
+        blank=True,
+        null=True,
+        verbose_name="réalise des mesures de gaspillage alimentaire",
     )
     bread_leftovers = models.DecimalField(
         max_digits=20,
@@ -173,7 +178,7 @@ class Diagnostic(models.Model):
 
     # Vegetarian menus
     has_diversification_plan = models.BooleanField(
-        null=True, verbose_name="plan de diversification en place"
+        blank=True, null=True, verbose_name="plan de diversification en place"
     )
     vegetarian_weekly_recurrence = models.CharField(
         max_length=255,
@@ -199,16 +204,20 @@ class Diagnostic(models.Model):
 
     # Plastic replacement
     cooking_plastic_substituted = models.BooleanField(
-        null=True, verbose_name="contenants de cuisson en plastique remplacés"
+        blank=True,
+        null=True,
+        verbose_name="contenants de cuisson en plastique remplacés",
     )
     serving_plastic_substituted = models.BooleanField(
-        null=True, verbose_name="contenants de service en plastique remplacés"
+        blank=True,
+        null=True,
+        verbose_name="contenants de service en plastique remplacés",
     )
     plastic_bottles_substituted = models.BooleanField(
-        null=True, verbose_name="bouteilles en plastique remplacées"
+        blank=True, null=True, verbose_name="bouteilles en plastique remplacées"
     )
     plastic_tableware_substituted = models.BooleanField(
-        null=True, verbose_name="ustensils en plastique remplacés"
+        blank=True, null=True, verbose_name="ustensils en plastique remplacés"
     )
 
     # Information and communication
@@ -228,9 +237,10 @@ class Diagnostic(models.Model):
         blank=True, null=True, verbose_name="Lien de communication"
     )
     communicates_on_food_plan = models.BooleanField(
-        null=True, verbose_name="Communique sur le plan alimentaire"
+        blank=True, null=True, verbose_name="Communique sur le plan alimentaire"
     )
     communicates_on_food_quality = models.BooleanField(
+        blank=True,
         null=True,
         verbose_name="Communique sur les démarches qualité/durables/équitables",
     )

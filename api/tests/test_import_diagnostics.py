@@ -91,7 +91,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(error["status"], 401)
         self.assertEqual(
             error["message"],
-            "Vous n'êtes pas un gestionnaire de la cantine avec SIRET 0000001234",
+            "Vous n'êtes pas un gestionnaire de cette cantine.",
         )
 
     @authenticate
@@ -142,9 +142,35 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        self.assertEqual(body["errors"][0]["row"], 1)
-        self.assertEqual(body["errors"][0]["status"], 400)
+        errors = body["errors"]
+        self.assertEqual(len(errors), 7)
+        self.assertEqual(errors[0]["row"], 1)
+        self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
-            body["errors"][0]["message"],
+            errors[0]["message"],
             "Une erreur s'est produite en créant un diagnostic pour cette ligne",
         )
+        self.assertEqual(
+            errors[1]["message"], "La valeur '.' n'est pas valide pour le champ 'an'."
+        )
+        self.assertEqual(
+            errors[2]["message"],
+            "La valeur 'not a number' n'est pas valide pour le champ 'repas par jour'.",
+        )
+        self.assertEqual(
+            errors[3]["message"],
+            "La valeur ''blah'' n'est pas valide pour le champ 'mode de production'.",
+        )
+        self.assertEqual(
+            errors[4]["message"],
+            "La valeur 'invalid total' n'est pas valide pour le champ 'Valeur totale annuelle HT'.",
+        )
+        self.assertEqual(
+            errors[5]["message"],
+            "Pour le champ 'an', Assurez-vous que cette valeur est supérieure ou égale à 1970.",
+        )
+        self.assertEqual(
+            errors[6]["message"],
+            "Un diagnostic pour cette année et cette cantine existe déjà",
+        )
+        # TODO: test no SIRET
