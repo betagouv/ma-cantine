@@ -208,17 +208,19 @@ export default {
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
       this.publicationRequested = !!canteen.publicationStatus && canteen.publicationStatus !== "draft"
-      const initialCityAutocomplete = {
-        text: canteen.city,
-        value: {
-          label: canteen.city,
-          citycode: canteen.cityInseeCode,
-          postcode: canteen.postalCode,
-          context: canteen.department,
-        },
+      if (canteen.city) {
+        const initialCityAutocomplete = {
+          text: canteen.city,
+          value: {
+            label: canteen.city,
+            citycode: canteen.cityInseeCode,
+            postcode: canteen.postalCode,
+            context: canteen.department,
+          },
+        }
+        this.communes = [initialCityAutocomplete]
+        this.cityAutocompleteChoice = initialCityAutocomplete.value
       }
-      this.communes = [initialCityAutocomplete]
-      this.cityAutocompleteChoice = initialCityAutocomplete.value
     } else this.$router.push({ name: "NewCanteen" })
   },
   created() {
