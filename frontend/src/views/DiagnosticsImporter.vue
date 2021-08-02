@@ -110,7 +110,7 @@ export default {
       documentation: [
         {
           name: "SIRET",
-          description: "Le SIRET de la cantine (14 chiffres)",
+          description: "Le SIRET de la cantine (14 chiffres).",
           example: "362 521 879 00034",
         },
         {
@@ -124,14 +124,14 @@ export default {
         },
         {
           name: "Code postale",
-          description: "En cas d'absence de code INSEE, ce champ devient obligatoire",
+          description: "En cas d'absence de code INSEE, ce champ devient obligatoire.",
           example: "69001",
           optional: true,
         },
         {
           name: "SIRET de la cuisine centrale",
-          description: "Le SIRET de la cuisine centrale s'il y en a une",
-          example: "362 521 879 00034",
+          description: "Le SIRET de la cuisine centrale s'il y en a une.",
+          example: "543 378 989 00011",
           optional: true,
         },
         {
