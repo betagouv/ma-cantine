@@ -10,7 +10,7 @@
             style="position: absolute; left: 50%; top: 50%"
             v-if="!initialDataLoaded"
           ></v-progress-circular>
-          <router-view v-else class="mx-auto constrained" />
+          <router-view v-else class="mx-auto constrained" :key="$route.path" />
         </v-container>
       </v-main>
 
