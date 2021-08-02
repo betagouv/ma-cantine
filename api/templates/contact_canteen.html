@@ -1,13 +1,14 @@
-<p>Bonjour,</p>
+{% extends 'email_base.html' %}
 
-<p>{{ name }} veut vous contacter concernant votre cantine « {{ canteen }} ».</p>
+{% block content %}
+    <p>{{ name }} veut vous contacter concernant votre cantine « {{ canteen }} ».</p>
 
-<p>Message :</p>
+    <p>Message :</p>
 
-<p>{{ message }}</p>
+    <p>{{ message }}</p>
 
-<p>Pour démarrer la conversation vous pouvez répondre directement à cet email.</p>
-
-<p>Pour toute autre question ou renseignement vous pouvez contacter l'équipe ma cantine à <a href="mailto:{{ us }}">{{ us }}</a>.</p>
-
-<p>L'équipe ma cantine</p>
+    <p>Pour démarrer la conversation vous pouvez répondre directement à cet email.</p>
+{% endblock %}
+{% block help_text %}
+    Pour toute autre question ou renseignement vous pouvez contacter l'équipe ma cantine à <a href="mailto:{{ us }}">{{ us }}</a>.
+{% endblock %}

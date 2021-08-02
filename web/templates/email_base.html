@@ -33,5 +33,11 @@
     {% endblock %}
 
     <p>L'équipe ma cantine</p>
-    <p class="help">Pour toute question ou renseignement vous pouvez nous contacter en répondant directement à ce message.</p>
+    <p class="help">
+        {% if overrides.help_text %}
+            {% block help_text %}{% endblock %}
+        {% else %}
+            Pour toute question ou renseignement vous pouvez nous contacter en répondant directement à ce message.
+        {% endif %}
+    </p>
 </body>
