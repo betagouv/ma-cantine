@@ -1,61 +1,55 @@
 <template>
-  <div>
-    <v-row class="text-left">
-      <v-spacer></v-spacer>
-      <v-col cols="12" sm="10" md="8">
-        <h1 class="font-weight-black my-6">
-          Générez votre affiche convives
-        </h1>
-        <p class="text-body-2">
-          En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives.
-          Cette affiche présente vos données d'achats à vos convives comme demandé par une sous-mesure de la loi EGAlim.
-        </p>
-        <router-link
-          :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
-          class="text-decoration-underline primary--text text-body-2"
-        >
-          En savoir plus sur la mesure
-        </router-link>
-      </v-col>
-      <v-spacer></v-spacer>
-    </v-row>
+  <div id="content" class="text-left">
+    <h1 class="font-weight-black my-6">
+      Générez votre affiche convives
+    </h1>
+    <p class="text-body-2">
+      En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives. Cette
+      affiche présente vos données d'achats à vos convives comme demandé par une sous-mesure de la loi EGAlim.
+    </p>
+    <router-link
+      :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
+      class="text-decoration-underline primary--text text-body-2"
+    >
+      En savoir plus sur la mesure
+    </router-link>
 
-    <div id="poster-form-page">
-      <div v-if="isAuthenticated">
-        <v-row class="px-4 mt-2" align="center">
-          <v-spacer></v-spacer>
-          <v-col cols="12" sm="6" md="7" class="my-0 my-sm-4">
-            <v-autocomplete
-              outlined
-              hide-details
-              :items="userCanteens"
-              label="Choissisez la cantine"
-              v-model="selectedCanteenId"
-              item-text="name"
-              item-value="id"
-            ></v-autocomplete>
-          </v-col>
-          <v-col class="my-0 my-sm-4 d-flex justify-space-between">
-            <v-btn x-large color="primary" @click="submit" :disabled="!selectedCanteenId">
-              Générer mon affiche
-            </v-btn>
-          </v-col>
-          <v-spacer></v-spacer>
-        </v-row>
-        <v-row>
-          <v-col cols="12" md="7" class="text-body-2 text-left mb-2">
-            Pour mettre à jour ces données, rendez-vous sur
-            <router-link :to="{ name: 'ManagementPage' }" class="text-decoration-underline primary--text text-body-2">
-              mes cantines
-            </router-link>
-          </v-col>
-        </v-row>
-        <div id="poster-preview" class="mb-8">
-          <CanteenPoster id="canteen-poster" :canteen="selectedCanteen" :diagnostic="currentDiagnostic" />
-        </div>
+    <div v-if="isAuthenticated">
+      <v-row class="px-4 mt-2" align="center">
+        <v-col cols="12" sm="6" md="7" class="my-0 my-sm-4 pl-0">
+          <v-autocomplete
+            outlined
+            hide-details
+            :items="userCanteens"
+            label="Choissisez la cantine"
+            v-model="selectedCanteenId"
+            item-text="name"
+            item-value="id"
+          ></v-autocomplete>
+        </v-col>
+        <v-col class="my-0 my-sm-4 px-0 px-sm-4 d-flex justify-space-between">
+          <v-btn x-large color="primary" @click="submit" :disabled="!selectedCanteenId">
+            Générer mon affiche
+          </v-btn>
+        </v-col>
+        <v-spacer></v-spacer>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="7" class="text-body-2 mb-2">
+          Pour mettre à jour ces données, rendez-vous sur
+          <router-link :to="{ name: 'ManagementPage' }" class="text-decoration-underline primary--text text-body-2">
+            mes cantines
+          </router-link>
+          .
+        </v-col>
+      </v-row>
+      <div id="poster-preview" class="mb-8">
+        <CanteenPoster id="canteen-poster" :canteen="selectedCanteen" :diagnostic="currentDiagnostic" />
       </div>
-      <div id="poster-generation" v-else>
-        <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent class="text-left">
+    </div>
+    <div id="poster-form-page" v-else>
+      <div id="poster-generation">
+        <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent>
           <h2 class="mb-4">À propos de votre cantine</h2>
           <p>
             Je représente
@@ -328,6 +322,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+#content {
+  width: 210mm;
+}
+
 #poster-form-page {
   display: flex;
   flex-direction: column;
@@ -358,6 +356,10 @@ export default {
 }
 
 @media (max-width: 210mm) {
+  #content {
+    width: 100%;
+  }
+
   #poster-preview {
     display: none;
   }
