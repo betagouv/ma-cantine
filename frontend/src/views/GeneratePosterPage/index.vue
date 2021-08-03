@@ -194,7 +194,6 @@ export default {
     validators() {
       return validators
     },
-    // TODO: will this have *all* canteens, not paged?
     userCanteens() {
       const canteens = this.$store.state.userCanteens
       return canteens.sort((a, b) => {
