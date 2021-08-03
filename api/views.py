@@ -429,7 +429,7 @@ class SendCanteenEmailView(APIView):
                 "name": request.data.get("name") or "Une personne",
                 "message": request.data.get("message"),
                 "us": settings.DEFAULT_FROM_EMAIL,
-                "repliesToOthers": True,
+                "repliesToTeam": False,
             }
             recipients = [user.email for user in canteen.managers.all()]
             recipients.append(settings.DEFAULT_FROM_EMAIL)
