@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row>
+    <v-row class="text-left">
       <v-spacer></v-spacer>
       <v-col cols="12" sm="10" md="8">
         <h1 class="font-weight-black my-6">
@@ -10,23 +10,21 @@
           En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives.
           Cette affiche présente vos données d'achats à vos convives comme demandé par une sous-mesure de la loi EGAlim.
         </p>
-        <v-btn
-          color="primary"
-          class="text-decoration-underline"
-          text
+        <router-link
           :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
+          class="text-decoration-underline primary--text text-body-2"
         >
           En savoir plus sur la mesure
-        </v-btn>
+        </router-link>
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
 
     <div id="poster-form-page">
-      <p class="poster-presentation"></p>
-      <div v-if="isAuthenticated" align="center">
-        <v-row class="px-4" align="center">
-          <v-col cols="12" md="6" class="my-8">
+      <div v-if="isAuthenticated">
+        <v-row class="px-4 mt-2" align="center">
+          <v-spacer></v-spacer>
+          <v-col cols="12" sm="6" md="7" class="my-0 my-sm-4">
             <v-autocomplete
               outlined
               hide-details
@@ -37,12 +35,18 @@
               item-value="id"
             ></v-autocomplete>
           </v-col>
-          <v-col cols="12" md="6" class="my-8 d-flex justify-space-between">
-            <v-btn large color="primary" @click="submit" :disabled="!selectedCanteenId">
+          <v-col class="my-0 my-sm-4 d-flex justify-space-between">
+            <v-btn x-large color="primary" @click="submit" :disabled="!selectedCanteenId">
               Générer mon affiche
             </v-btn>
-            <router-link :to="{ name: 'ManagementPage' }">
-              <v-btn large color="primary" outlined class="ml-2">Gérer mes cantines</v-btn>
+          </v-col>
+          <v-spacer></v-spacer>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="7" class="text-body-2 text-left mb-2">
+            Pour mettre à jour ces données, rendez-vous sur
+            <router-link :to="{ name: 'ManagementPage' }" class="text-decoration-underline primary--text text-body-2">
+              mes cantines
             </router-link>
           </v-col>
         </v-row>
