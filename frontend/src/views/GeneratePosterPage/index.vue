@@ -24,7 +24,34 @@
 
     <div id="poster-form-page">
       <p class="poster-presentation"></p>
-      <div id="poster-generation">
+      <div v-if="isAuthenticated" align="center">
+        <v-row class="px-4" align="center">
+          <v-col cols="12" md="6" class="my-8">
+            <!-- or v-autocomplete? / something you can type into -->
+            <v-select
+              outlined
+              hide-details
+              :items="userCanteens"
+              label="Choissisez la cantine"
+              v-model="selectedCanteenId"
+              item-text="name"
+              item-value="id"
+            ></v-select>
+          </v-col>
+          <v-col cols="12" md="6" class="my-8 d-flex justify-space-between">
+            <v-btn large color="primary" @click="submit" :disabled="!selectedCanteenId">
+              Générer mon affiche
+            </v-btn>
+            <router-link :to="{ name: 'ManagementPage' }">
+              <v-btn large color="primary" outlined class="ml-2">Gérer mes cantines</v-btn>
+            </router-link>
+          </v-col>
+        </v-row>
+        <div id="poster-preview" class="mb-8">
+          <CanteenPoster id="canteen-poster" :canteen="selectedCanteen" :diagnostic="currentDiagnostic" />
+        </div>
+      </div>
+      <div id="poster-generation" v-else>
         <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent class="text-left">
           <h2 class="mb-4">À propos de votre cantine</h2>
           <p>
@@ -123,7 +150,7 @@
           </p>
           <v-btn x-large color="primary" @click="submit">Générer mon affiche</v-btn>
         </v-form>
-        <div id="poster-preview">
+        <div id="poster-preview" class="ml-8">
           <CanteenPoster v-bind="form" id="canteen-poster" />
         </div>
       </div>
@@ -136,6 +163,8 @@ import Constants from "@/constants"
 import CanteenPoster from "./CanteenPoster"
 import html2pdf from "html2pdf.js"
 import validators from "@/validators"
+
+const YEAR = 2020
 
 export default {
   components: {
@@ -151,18 +180,24 @@ export default {
       loadingCommunes: false,
       search: null,
       formIsValid: true,
+      selectedCanteenId: undefined,
     }
   },
   computed: {
     validators() {
       return validators
     },
+    // TODO: sort canteens alphabetically
+    // TODO: will this have *all* canteens, not paged?
+    userCanteens() {
+      return this.$store.state.userCanteens
+    },
     userCanteen() {
-      return this.$store.state.userCanteens.length > 0 ? this.$store.state.userCanteens[0] : {}
+      return this.userCanteens.length > 0 ? this.userCanteens[0] : {}
     },
     initialDiagnostic() {
       let diagnostics = this.isAuthenticated ? this.serverDiagnostics : this.localDiagnostics
-      return diagnostics.find((x) => x.year === 2020) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 })
+      return diagnostics.find((x) => x.year === YEAR) || Object.assign({}, Constants.DefaultDiagnostics, { year: YEAR })
     },
     serverDiagnostics() {
       return this.userCanteen.diagnostics || []
@@ -172,6 +207,12 @@ export default {
     },
     isAuthenticated() {
       return !!this.$store.state.loggedUser
+    },
+    selectedCanteen() {
+      return this.userCanteens.find((x) => x.id === this.selectedCanteenId) || {}
+    },
+    currentDiagnostic() {
+      return this.selectedCanteen?.diagnostics?.find((x) => x.year === YEAR) || {}
     },
   },
   beforeMount() {
@@ -203,16 +244,19 @@ export default {
         })
     },
     async submit() {
-      this.$refs.form.validate()
-      if (!this.formIsValid) {
-        this.$store.dispatch("notifyRequiredFieldsError")
-        return
-      }
-      //this fix an issue where the beginning of the pdf is blank depending on the scroll position
-      window.scrollTo({ top: 0 })
+      if (!this.selectedCanteenId) {
+        this.$refs.form.validate()
+        if (!this.formIsValid) {
+          this.$store.dispatch("notifyRequiredFieldsError")
+          return
+        }
 
-      this.saveDiagnostic()
-      this.saveCanteen()
+        this.saveDiagnostic()
+        this.saveCanteen()
+      }
+
+      // this fixes an issue where the beginning of the pdf is blank depending on the scroll position
+      window.scrollTo({ top: 0 })
 
       if (this.$matomo) {
         this.$matomo.trackEvent("form", "submit", "poster-generator")
@@ -220,6 +264,7 @@ export default {
 
       const htmlPoster = document.getElementById("canteen-poster")
       const pdfOptions = {
+        // TODO: add canteen name to filename
         filename: "Affiche_convives_2020.pdf",
         image: { type: "jpeg", quality: 1 },
         html2canvas: { scale: 2, dpi: 300, letterRendering: true },
@@ -290,7 +335,6 @@ export default {
   min-width: 210mm;
   height: 296mm;
   min-height: 296mm;
-  margin-left: 2em;
   border: 1px solid $ma-cantine-grey;
 }
 
