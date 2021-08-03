@@ -27,8 +27,7 @@
       <div v-if="isAuthenticated" align="center">
         <v-row class="px-4" align="center">
           <v-col cols="12" md="6" class="my-8">
-            <!-- or v-autocomplete? / something you can type into -->
-            <v-select
+            <v-autocomplete
               outlined
               hide-details
               :items="userCanteens"
@@ -36,7 +35,7 @@
               v-model="selectedCanteenId"
               item-text="name"
               item-value="id"
-            ></v-select>
+            ></v-autocomplete>
           </v-col>
           <v-col cols="12" md="6" class="my-8 d-flex justify-space-between">
             <v-btn large color="primary" @click="submit" :disabled="!selectedCanteenId">
@@ -166,6 +165,14 @@ import validators from "@/validators"
 
 const YEAR = 2020
 
+// normalise "À fîrst" to "A FIRST"
+function normaliseName(name) {
+  return name
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toUpperCase()
+}
+
 export default {
   components: {
     CanteenPoster,
@@ -187,10 +194,12 @@ export default {
     validators() {
       return validators
     },
-    // TODO: sort canteens alphabetically
     // TODO: will this have *all* canteens, not paged?
     userCanteens() {
-      return this.$store.state.userCanteens
+      const canteens = this.$store.state.userCanteens
+      return canteens.sort((a, b) => {
+        return normaliseName(a.name) > normaliseName(b.name) ? 1 : 0
+      })
     },
     userCanteen() {
       return this.userCanteens.length > 0 ? this.userCanteens[0] : {}
@@ -263,9 +272,9 @@ export default {
       }
 
       const htmlPoster = document.getElementById("canteen-poster")
+      const canteenName = this.selectedCanteen.name || this.form.canteen.name
       const pdfOptions = {
-        // TODO: add canteen name to filename
-        filename: "Affiche_convives_2020.pdf",
+        filename: `Affiche_convives_${canteenName.replaceAll(" ", "_")}_2020.pdf`,
         image: { type: "jpeg", quality: 1 },
         html2canvas: { scale: 2, dpi: 300, letterRendering: true },
         jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
