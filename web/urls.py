@@ -27,6 +27,7 @@ urlpatterns = [
         "s-identifier",
         auth_views.LoginView.as_view(
             template_name="auth/login.html",
+            redirect_authenticated_user=True,
         ),
         name="login",
     ),

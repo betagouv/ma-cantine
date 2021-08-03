@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
 from django.contrib.auth import get_user_model, tokens, login
 from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.conf import settings
 from django.template import loader
@@ -27,6 +28,11 @@ class RegisterUserView(FormView):
 
     form_class = RegisterUserForm
     template_name = "auth/register_user.html"
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect("/")
+        return super(RegisterUserView, self).get(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.save()
