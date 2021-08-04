@@ -43,7 +43,7 @@
       />
       <div v-if="file" class="d-flex flex-column align-center justify-center drop-area">
         <v-card-text class="font-weight-bold mt-3 mb-1 text-center text-body-2">
-          <v-icon small>mdi-file-document-outline</v-icon>
+          <v-icon small class="mt-n1" color="primary">mdi-file-document-outline</v-icon>
           {{ file.name }}
         </v-card-text>
 
