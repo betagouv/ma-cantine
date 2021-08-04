@@ -12,14 +12,48 @@
       </a>
       .
     </p>
-    <v-form class="ma-8">
-      <v-row class="mt-10">
-        <v-col rows="12" md="8" class="d-flex pa-0">
-          <v-file-input v-model="file" outlined show-size label="Choisissez un fichier" accept=".csv"></v-file-input>
-          <v-btn x-large color="primary" @click="upload" :disabled="!file" class="ml-6">Valider</v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
+
+    <v-card color="grey lighten-5" class="fill-height my-10" height="300" width="300" elevation="0">
+      <label
+        class="d-flex flex-column align-center justify-center drop-area"
+        for="csv-file-upload"
+        style="cursor: pointer;"
+        v-if="!file"
+        @dragover="onFileInputDragover"
+        @dragleave="isDragging = false"
+        @drop.prevent="onFileInputDrop"
+      >
+        <v-icon color="primary" size="90" v-if="isDragging">mdi-chevron-triple-down</v-icon>
+        <v-icon color="primary" size="70" v-else>mdi-file-upload-outline</v-icon>
+        <v-card-text class="font-weight-bold mt-2 pb-0 text-center text-body-2">
+          <span v-if="isDragging">Déposez votre fichier</span>
+          <span v-else>Choisissez un fichier ou glissez-le ici</span>
+        </v-card-text>
+        <v-card-subtitle v-if="!isDragging" class="text-center pt-2 text-caption">
+          Format CSV encodé en UTF-8 attendu
+        </v-card-subtitle>
+      </label>
+      <v-file-input
+        :disabled="!!file"
+        v-model="file"
+        id="csv-file-upload"
+        accept=".csv"
+        type="file"
+        style="position: absolute; opacity: 0; width: 0.1px; height: 0.1px; overflow: hidden; z-index: -1;"
+      />
+      <div v-if="file" class="d-flex flex-column align-center justify-center drop-area">
+        <v-card-text class="font-weight-bold mt-3 mb-1 text-center text-body-2">
+          <v-icon small>mdi-file-document-outline</v-icon>
+          {{ file.name }}
+        </v-card-text>
+
+        <v-btn large color="primary" @click.stop="upload">Valider</v-btn>
+        <v-btn large class="text-decoration-underline mt-5" text @click.stop="file = null">
+          Choisir un autre fichier
+        </v-btn>
+      </div>
+    </v-card>
+
     <div v-if="!isNaN(count)">
       <v-alert type="success" outlined v-if="count > 0">
         <span class="grey--text text--darken-4 body-2">
@@ -107,6 +141,7 @@ export default {
       count: undefined,
       errors: undefined,
       seconds: undefined,
+      isDragging: false,
       documentation: [
         {
           name: "SIRET",
@@ -204,6 +239,28 @@ export default {
           this.$store.dispatch("notifyServerError")
         })
     },
+    onFileInputDragover(e) {
+      const isCsv = e.dataTransfer?.items[0].type === "text/csv"
+      if (isCsv) {
+        console.log("prevents")
+        e.preventDefault()
+        this.isDragging = true
+      }
+    },
+    onFileInputDrop(e) {
+      const file = e.dataTransfer?.files[0]
+      this.file = file
+      this.isDragging = false
+    },
   },
 }
 </script>
+
+<style scoped>
+.drop-area {
+  width: 100%;
+  height: 100%;
+  border: 4px dashed #aaa;
+  border-radius: 10px;
+}
+</style>
