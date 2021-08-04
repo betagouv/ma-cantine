@@ -1,20 +1,17 @@
-<p>Bonjour,</p>
+{% extends 'email_base.html' %}
 
-<p>Pour confirmer l'adresse email de votre compte ma cantine, il suffit de cliquer sur ce bouton :</p>
+{% block content %}
+    <p>Pour confirmer l'adresse email de votre compte ma cantine, il suffit de cliquer sur ce bouton :</p>
 
-<p style="margin: 30px 0px;">
-    <a
-    href="{{ protocol}}://{{ domain }}{% url 'activate' uidb64=uid token=token %}"
-    style="background: #139f43;padding: 10px 40px; border: none; border-radius: 3px; color: white; box-shadow: 1px 1px 2px 0px #333; cursor: pointer; text-decoration: none;">
-        Confirmer mon adresse email
-    </a>
-  </p>
+    <div class="cta">
+        <a href="{{ protocol }}://{{ domain }}{% url 'activate' uidb64=uid token=token %}">
+            Confirmer mon adresse email
+        </a>
+    </div>
 
-<p>En cas de difficultés, vous pouvez copier ce lien directement dans votre navigateur :</p>
+    <p>En cas de difficultés, vous pouvez copier ce lien directement dans votre navigateur :</p>
 
-<p>{{ protocol}}://{{ domain }}{% url 'activate' uidb64=uid token=token %}</p>
+    <p>{{ protocol }}://{{ domain }}{% url 'activate' uidb64=uid token=token %}</p>
 
-
-<p>Si vous n'êtes pas à l'origine de cette demande vous pouvez ignorer ce message.</p>
-
-<p>L'équipe ma cantine</p>
+    <p>Si vous n'êtes pas à l'origine de cette demande vous pouvez ignorer ce message.</p>
+{% endblock %}

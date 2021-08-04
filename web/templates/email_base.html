@@ -1,0 +1,45 @@
+<head>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .cta {
+            background: #0c7f46;
+            border: none;
+            border-radius: 3px;
+            box-shadow: 1px 1px 2px 0px #333;
+            cursor: pointer;
+            display: inline-block;
+            margin: 15px 0px;
+            padding: 10px 40px;
+        }
+
+        .cta > a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .help {
+            color: #333;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <p>Bonjour,</p>
+
+    {% block content %}
+    {% endblock %}
+
+    <p>L'équipe ma cantine</p>
+</body>
+<footer>
+    <p class="help">
+        {% if repliesToTeam is False %}
+            Pour toute autre question ou renseignement vous pouvez contacter l'équipe ma cantine à <a href="mailto:{{ us }}">{{ us }}</a>.
+        {% else %}
+            Pour toute question ou renseignement vous pouvez nous contacter en répondant directement à ce message.
+        {% endif %}
+    </p>
+</footer>
