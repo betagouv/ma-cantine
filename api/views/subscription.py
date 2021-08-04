@@ -28,10 +28,10 @@ class SubscribeBetaTester(APIView):
             }
             send_mail(
                 "Nouveau Béta-testeur ma cantine",
-                render_to_string("subscription-beta-tester.txt", context),
+                render_to_string("subscription_beta_tester.txt", context),
                 settings.DEFAULT_FROM_EMAIL,
                 [settings.CONTACT_EMAIL],
-                html_message=render_to_string("subscription-beta-tester.html", context),
+                html_message=render_to_string("subscription_beta_tester.html", context),
             )
             return JsonResponse({}, status=status.HTTP_201_CREATED)
         except Exception as e:

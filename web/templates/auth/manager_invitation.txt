@@ -1,10 +1,10 @@
 Bonjour,
 
-L'équipe de "{{ canteen }}" vous invite à les rejoindre sur la plateforme ma cantine.
+L'équipe de « {{ canteen }} » vous invite à les rejoindre sur la plateforme ma cantine.
 
 Pour accepter cette invitation il suffit de créer un compte sur :
 
-{{ protocol}}://{{ domain }}{% url 'register' %}
+{{ protocol }}://{{ domain }}{% url 'register' %}
 
 Ma cantine vous permet de créer des diagnostiques sur les mesures de la loi EGAlim ainsi que de découvrir des ressources pour les acteurs et actrices de la restauration collective.
 

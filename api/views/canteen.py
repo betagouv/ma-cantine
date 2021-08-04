@@ -147,7 +147,7 @@ class AddManagerView(APIView):
     @staticmethod
     def _send_invitation_email(manager_invitation):
         try:
-            template = "auth/manager-invitation"
+            template = "auth/manager_invitation"
             context = {
                 "canteen": manager_invitation.canteen.name,
                 "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
@@ -221,13 +221,14 @@ class SendCanteenEmailView(APIView):
             canteen_id = request.data.get("canteen_id")
             canteen = Canteen.objects.get(pk=canteen_id)
 
-            template = "contact-canteen"
+            template = "contact_canteen"
             context = {
                 "canteen": canteen.name,
                 "from": email,
                 "name": request.data.get("name") or "Une personne",
                 "message": request.data.get("message"),
                 "us": settings.DEFAULT_FROM_EMAIL,
+                "repliesToTeam": False,
             }
             recipients = [user.email for user in canteen.managers.all()]
             recipients.append(settings.DEFAULT_FROM_EMAIL)
