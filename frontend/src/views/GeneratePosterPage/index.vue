@@ -1,31 +1,55 @@
 <template>
-  <div>
-    <v-row>
-      <v-spacer></v-spacer>
-      <v-col cols="12" sm="10" md="8">
-        <h1 class="font-weight-black my-6">
-          Générez votre affiche convives
-        </h1>
-        <p class="text-body-2">
-          En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives.
-          Cette affiche présente vos données d'achats à vos convives comme demandé par une sous-mesure de la loi EGAlim.
-        </p>
-        <v-btn
-          color="primary"
-          class="text-decoration-underline"
-          text
-          :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
-        >
-          En savoir plus sur la mesure
-        </v-btn>
-      </v-col>
-      <v-spacer></v-spacer>
-    </v-row>
+  <div id="content" class="text-left">
+    <h1 class="font-weight-black my-6">
+      Générez votre affiche convives
+    </h1>
+    <p class="text-body-2">
+      En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives. Cette
+      affiche présente vos données d'achats à vos convives comme demandé par une sous-mesure de la loi EGAlim.
+    </p>
+    <router-link
+      :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
+      class="text-decoration-underline primary--text text-body-2"
+    >
+      En savoir plus sur la mesure
+    </router-link>
 
-    <div id="poster-form-page">
-      <p class="poster-presentation"></p>
+    <div v-if="isAuthenticated">
+      <v-row class="px-4 mt-2" align="center">
+        <v-col cols="12" sm="6" md="7" class="my-0 my-sm-4 pl-0">
+          <v-autocomplete
+            outlined
+            hide-details
+            :items="userCanteens"
+            label="Choissisez la cantine"
+            v-model="selectedCanteenId"
+            item-text="name"
+            item-value="id"
+          ></v-autocomplete>
+        </v-col>
+        <v-col class="my-0 my-sm-4 px-0 px-sm-4 d-flex justify-space-between">
+          <v-btn x-large color="primary" @click="submit" :disabled="!selectedCanteenId">
+            Générer mon affiche
+          </v-btn>
+        </v-col>
+        <v-spacer></v-spacer>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="7" class="text-body-2 mb-2">
+          Pour mettre à jour ces données, rendez-vous sur
+          <router-link :to="{ name: 'ManagementPage' }" class="text-decoration-underline primary--text text-body-2">
+            mes cantines
+          </router-link>
+          .
+        </v-col>
+      </v-row>
+      <div id="poster-preview" class="mb-8">
+        <CanteenPoster id="canteen-poster" :canteen="selectedCanteen" :diagnostic="currentDiagnostic" />
+      </div>
+    </div>
+    <div id="poster-form-page" v-else>
       <div id="poster-generation">
-        <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent class="text-left">
+        <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent>
           <h2 class="mb-4">À propos de votre cantine</h2>
           <p>
             Je représente
@@ -123,7 +147,7 @@
           </p>
           <v-btn x-large color="primary" @click="submit">Générer mon affiche</v-btn>
         </v-form>
-        <div id="poster-preview">
+        <div id="poster-preview" class="ml-8">
           <CanteenPoster v-bind="form" id="canteen-poster" />
         </div>
       </div>
@@ -136,6 +160,16 @@ import Constants from "@/constants"
 import CanteenPoster from "./CanteenPoster"
 import html2pdf from "html2pdf.js"
 import validators from "@/validators"
+
+const YEAR = 2020
+
+// normalise "À fîrst" to "A FIRST"
+function normaliseName(name) {
+  return name
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toUpperCase()
+}
 
 export default {
   components: {
@@ -151,18 +185,25 @@ export default {
       loadingCommunes: false,
       search: null,
       formIsValid: true,
+      selectedCanteenId: undefined,
     }
   },
   computed: {
     validators() {
       return validators
     },
+    userCanteens() {
+      const canteens = this.$store.state.userCanteens
+      return canteens.sort((a, b) => {
+        return normaliseName(a.name) > normaliseName(b.name) ? 1 : 0
+      })
+    },
     userCanteen() {
-      return this.$store.state.userCanteens.length > 0 ? this.$store.state.userCanteens[0] : {}
+      return this.userCanteens.length > 0 ? this.userCanteens[0] : {}
     },
     initialDiagnostic() {
       let diagnostics = this.isAuthenticated ? this.serverDiagnostics : this.localDiagnostics
-      return diagnostics.find((x) => x.year === 2020) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 })
+      return diagnostics.find((x) => x.year === YEAR) || Object.assign({}, Constants.DefaultDiagnostics, { year: YEAR })
     },
     serverDiagnostics() {
       return this.userCanteen.diagnostics || []
@@ -172,6 +213,12 @@ export default {
     },
     isAuthenticated() {
       return !!this.$store.state.loggedUser
+    },
+    selectedCanteen() {
+      return this.userCanteens.find((x) => x.id === this.selectedCanteenId) || {}
+    },
+    currentDiagnostic() {
+      return this.selectedCanteen?.diagnostics?.find((x) => x.year === YEAR) || {}
     },
   },
   beforeMount() {
@@ -203,24 +250,28 @@ export default {
         })
     },
     async submit() {
-      this.$refs.form.validate()
-      if (!this.formIsValid) {
-        this.$store.dispatch("notifyRequiredFieldsError")
-        return
-      }
-      //this fix an issue where the beginning of the pdf is blank depending on the scroll position
-      window.scrollTo({ top: 0 })
+      if (!this.selectedCanteenId) {
+        this.$refs.form.validate()
+        if (!this.formIsValid) {
+          this.$store.dispatch("notifyRequiredFieldsError")
+          return
+        }
 
-      this.saveDiagnostic()
-      this.saveCanteen()
+        this.saveDiagnostic()
+        this.saveCanteen()
+      }
+
+      // this fixes an issue where the beginning of the pdf is blank depending on the scroll position
+      window.scrollTo({ top: 0 })
 
       if (this.$matomo) {
         this.$matomo.trackEvent("form", "submit", "poster-generator")
       }
 
       const htmlPoster = document.getElementById("canteen-poster")
+      const canteenName = this.selectedCanteen.name || this.form.canteen.name
       const pdfOptions = {
-        filename: "Affiche_convives_2020.pdf",
+        filename: `Affiche_convives_${canteenName.replaceAll(" ", "_")}_2020.pdf`,
         image: { type: "jpeg", quality: 1 },
         html2canvas: { scale: 2, dpi: 300, letterRendering: true },
         jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
@@ -271,6 +322,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+#content {
+  width: 210mm;
+}
+
 #poster-form-page {
   display: flex;
   flex-direction: column;
@@ -290,7 +345,6 @@ export default {
   min-width: 210mm;
   height: 296mm;
   min-height: 296mm;
-  margin-left: 2em;
   border: 1px solid $ma-cantine-grey;
 }
 
@@ -302,6 +356,10 @@ export default {
 }
 
 @media (max-width: 210mm) {
+  #content {
+    width: 100%;
+  }
+
   #poster-preview {
     display: none;
   }
