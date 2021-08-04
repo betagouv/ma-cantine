@@ -63,35 +63,15 @@ class DiagnosticUpdateView(UpdateAPIView):
 class ImportDiagnosticsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
-    validation_error_regex = re.compile(r"La valeur «\xa0(.+)\xa0»")
-    # TODO? Django adds quotes for choice validation errors so the regex would be:
-    # choice_error_regex = re.compile(
-    #     r"La valeur «\xa0'(.+)'\xa0» n’est pas un choix valide."
-    # )
 
     def post(self, request):
         start = time.time()
         logger.info("Diagnostic bulk import started")
-        diagnostics_created = 0
-        canteens = {}
-        errors = []
         try:
-            filestring = request.data["file"].read().decode("utf-8")
-            csvreader = csv.reader(filestring.splitlines())
             with transaction.atomic():
-                for row_number, row in enumerate(csvreader, start=1):
-                    try:
-                        siret = ImportDiagnosticsView._normalise_siret(row[0])
-                        canteen = self._create_canteen_with_diagnostic(row, siret)
-                        diagnostics_created += 1
-                        canteens[canteen.siret] = canteen
-                    except Exception as e:
-                        (message, code) = self._parse_error(e)
-                        errors.append(
-                            ImportDiagnosticsView._get_error(
-                                e, message, code, row_number
-                            )
-                        )
+                (canteens, errors, diagnostics_created) = self._treat_csv_file(
+                    request.data["file"]
+                )
 
                 if errors:
                     raise IntegrityError()
@@ -114,13 +94,34 @@ class ImportDiagnosticsView(APIView):
             errors = [{"row": 0, "status": 400, "message": message}]
             return ImportDiagnosticsView._get_success_response([], 0, errors, start)
 
+    def _treat_csv_file(self, file):
+        diagnostics_created = 0
+        canteens = {}
+        errors = []
+        filestring = file.read().decode("utf-8")
+        csvreader = csv.reader(filestring.splitlines())
+        for row_number, row in enumerate(csvreader, start=1):
+            try:
+                siret = ImportDiagnosticsView._normalise_siret(row[0])
+                canteen = self._create_canteen_with_diagnostic(row, siret)
+                diagnostics_created += 1
+                canteens[canteen.siret] = canteen
+            except Exception as e:
+                for error in self._parse_errors(e):
+                    errors.append(
+                        ImportDiagnosticsView._get_error(
+                            e, error["message"], error["code"], row_number
+                        )
+                    )
+        return (canteens, errors, diagnostics_created)
+
     @transaction.atomic
     def _create_canteen_with_diagnostic(self, row, siret):
         (canteen, created) = Canteen.objects.get_or_create(
             siret=siret,
             defaults={
                 "siret": siret,
-                "name": row[1],  # TODO: should this be optional or not?
+                "name": row[1],
                 "city_insee_code": row[2],
                 "postal_code": row[3],
                 "central_producer_siret": row[4],
@@ -139,7 +140,7 @@ class ImportDiagnosticsView(APIView):
                 canteen.sectors.add(
                     *[Sector.objects.get(name=sector) for sector in row[6].split("+")]
                 )
-            canteen.full_clean()  # validate choice fields
+            canteen.full_clean()
             canteen.save()
 
         diagnostic = Diagnostic(
@@ -150,7 +151,7 @@ class ImportDiagnosticsView(APIView):
             value_sustainable_ht=row[12],
             value_fair_trade_ht=row[13],
         )
-        diagnostic.full_clean()  # trigger field validators like year min/max
+        diagnostic.full_clean()
         diagnostic.save()
         return canteen
 
@@ -172,40 +173,60 @@ class ImportDiagnosticsView(APIView):
             status=status.HTTP_200_OK,
         )
 
-    def _parse_error(self, e):
-        message = "Une erreur s'est produite en créant un diagnostic pour cette ligne"
-        code = 400
+    def _parse_errors(self, e):
+        errors = []
         if isinstance(e, PermissionDenied):
-            message = f"Vous n'êtes pas un gestionnaire de cette cantine."
-            code = 401
+            errors.append(
+                {
+                    "message": f"Vous n'êtes pas un gestionnaire de cette cantine.",
+                    "code": 401,
+                }
+            )
         elif isinstance(e, Sector.DoesNotExist):
-            message = "Le secteur spécifié ne fait pas partie des options acceptées"
+            errors.append(
+                {
+                    "message": "Le secteur spécifié ne fait pas partie des options acceptées",
+                    "code": 400,
+                }
+            )
         elif isinstance(e, ValidationError):
-            try:
-                field_name = list(e.message_dict.keys())[0]
-                if (
-                    hasattr(e, "messages")
-                    and e.messages[0]
-                    == "Un objet Diagnostic avec ces champs Canteen et An existe déjà."
-                ):
-                    message = (
-                        "Un diagnostic pour cette année et cette cantine existe déjà"
-                    )
-                elif field_name:
+            if e.message_dict:
+                for field, messages in e.message_dict.items():
                     verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(
-                        field_name
+                        field
                     )
-                    match = self.validation_error_regex.search(e.messages[0])
-                    if match:
-                        value_given = match.group(1) if match else ""
-                        message = f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
-                    elif field_name == "year":
-                        message = (
-                            f"Pour le champ '{verbose_field_name}', {e.messages[0]}"
+                    for message in messages:
+                        user_message = message
+                        if (
+                            user_message
+                            == "Un objet Diagnostic avec ces champs Canteen et Année existe déjà."
+                        ):
+                            user_message = "Un diagnostic pour cette année et cette cantine existe déjà."
+                        if field != "__all__":
+                            user_message = (
+                                f"Champ '{verbose_field_name}' : {user_message}"
+                            )
+                        errors.append(
+                            {
+                                "message": user_message,
+                                "code": 400,
+                            }
                         )
-            except:
-                if hasattr(e, "params"):
-                    message = f"La valeur '{e.params['value']}' n'est pas valide."
+
+            elif hasattr(e, "params"):
+                errors.append(
+                    {
+                        "message": f"La valeur '{e.params['value']}' n'est pas valide.",
+                        "code": 400,
+                    }
+                )
+            else:
+                errors.append(
+                    {
+                        "message": "Une erreur s'est produite en créant un diagnostic pour cette ligne",
+                        "code": 400,
+                    }
+                )
         elif isinstance(e, ValueError):
             match = self.value_error_regex.search(str(e))
             field_name = match.group(1) if match else ""
@@ -214,21 +235,32 @@ class ImportDiagnosticsView(APIView):
                 verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(
                     field_name
                 )
-                message = f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
-        return (message, code)
+                errors.append(
+                    {
+                        "message": f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'.",
+                        "code": 400,
+                    }
+                )
+        if not errors:
+            errors.append(
+                {
+                    "message": "Une erreur s'est produite en créant un diagnostic pour cette ligne",
+                    "code": 400,
+                }
+            )
+        return errors
 
     @staticmethod
     def _normalise_siret(siret):
-        # TODO: find official siret format
         return siret.replace(" ", "")
 
     @staticmethod
     def _get_verbose_field_name(field_name):
         try:
-            verbose_field_name = Canteen._meta.get_field(field_name).verbose_name
+            return Canteen._meta.get_field(field_name).verbose_name
         except:
             try:
-                verbose_field_name = Diagnostic._meta.get_field(field_name).verbose_name
+                return Diagnostic._meta.get_field(field_name).verbose_name
             except:
                 pass
-        return verbose_field_name
+        return field_name
