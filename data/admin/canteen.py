@@ -53,21 +53,31 @@ class CanteenAdmin(SoftDeletionAdmin):
         "sectors",
         "managers",
     )
-    list_filter = ("publication_status", "sectors", "management_type", "production_type", "city")
+    list_filter = (
+        "publication_status",
+        "sectors",
+        "management_type",
+        "production_type",
+        "city",
+    )
 
     def supprimée(self, obj):
         return "🗑️ Supprimée" if obj.deletion_date else ""
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
-        if change and "publication_status" in form.changed_data and obj.publication_status == "published":
+        if (
+            change
+            and "publication_status" in form.changed_data
+            and obj.publication_status == "published"
+        ):
             protocol = "https" if settings.SECURE else "http"
             canteenUrlComponent = urllib.parse.quote(f"{obj.id}--{obj.name}")
             context = {
                 "canteen": obj.name,
                 "canteenUrl": f"{protocol}://{settings.HOSTNAME}/nos-cantines/{canteenUrlComponent}",
             }
-            template = "canteen-published"
+            template = "canteen_published"
             contact_list = [user.email for user in obj.managers.all()]
             contact_list.append(settings.CONTACT_EMAIL)
             send_mail(
@@ -78,4 +88,3 @@ class CanteenAdmin(SoftDeletionAdmin):
                 recipient_list=contact_list,
                 fail_silently=True,
             )
-

@@ -1,6 +1,6 @@
 Bonjour,
 
-{{ name }} veut vous contacter concernant votre cantine : {{ canteen }}.
+{{ name }} veut vous contacter concernant votre cantine « {{ canteen }} ».
 
 Message :
 
