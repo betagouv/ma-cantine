@@ -2,7 +2,7 @@ import logging
 import json
 from django.conf import settings
 from django.http import JsonResponse
-from django.core.mail import send_mail
+from common.utils import send_mail
 from django.template.loader import render_to_string
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email

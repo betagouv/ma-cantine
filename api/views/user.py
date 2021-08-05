@@ -2,7 +2,7 @@ import logging
 from django.contrib.auth import get_user_model, tokens, update_session_auth_hash
 from django.conf import settings
 from django.http import JsonResponse
-from django.core.mail import send_mail
+from common.utils import send_mail
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
