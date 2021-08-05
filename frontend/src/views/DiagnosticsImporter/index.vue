@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import FileDrop from "@/components/FileDrop"
+import FileDrop from "./FileDrop"
 
 export default {
   name: "ImportDiagnostics",
