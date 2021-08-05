@@ -7,7 +7,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.conf import settings
 from django.template import loader
 from django.utils.encoding import force_bytes
-from django.core.mail import send_mail
+from common.utils import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, FormView, View
 from web.forms import RegisterUserForm

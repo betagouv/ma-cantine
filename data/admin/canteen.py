@@ -1,7 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib import admin
-from django.core.mail import send_mail
+from common.utils import send_mail
 from django.template.loader import render_to_string
 import urllib.parse
 from data.models import Canteen
