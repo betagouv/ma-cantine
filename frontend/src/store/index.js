@@ -70,7 +70,7 @@ export default new Vuex.Store({
       state.userCanteens = userCanteens
     },
     ADD_USER_CANTEEN(state, userCanteen) {
-      state.userCanteens.prepend(userCanteen)
+      state.userCanteens.unshift(userCanteen)
     },
     ADD_USER_CANTEENS(state, userCanteens) {
       state.userCanteens = userCanteens.concat(state.userCanteens)
