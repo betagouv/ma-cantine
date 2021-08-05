@@ -12,14 +12,14 @@
       </a>
       .
     </p>
-    <v-form class="ma-8">
-      <v-row class="mt-10">
-        <v-col rows="12" md="8" class="d-flex pa-0">
-          <v-file-input v-model="file" outlined show-size label="Choisissez un fichier" accept=".csv"></v-file-input>
-          <v-btn x-large color="primary" @click="upload" :disabled="!file" class="ml-6">Valider</v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
+
+    <FileDrop
+      v-model="file"
+      subtitle="Format CSV encodé en UTF-8 attendu"
+      :acceptTypes="['.csv', 'text/csv']"
+      @upload="upload"
+    />
+
     <div v-if="!isNaN(count)">
       <v-alert type="success" outlined v-if="count > 0">
         <span class="grey--text text--darken-4 body-2">
@@ -98,8 +98,11 @@
 </template>
 
 <script>
+import FileDrop from "./FileDrop"
+
 export default {
   name: "ImportDiagnostics",
+  components: { FileDrop },
   data() {
     return {
       file: undefined,
@@ -191,7 +194,7 @@ export default {
       this.$store
         .dispatch("importDiagnostics", { file: this.file })
         .then((json) => {
-          this.file = undefined
+          this.file = null
           this.canteens = json.canteens
           this.count = json.count
           this.errors = json.errors
