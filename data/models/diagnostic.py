@@ -259,17 +259,16 @@ class Diagnostic(models.Model):
     def validate_year(self):
         if self.year is None:
             return
-        current_year = datetime.datetime.now().date().year
-        if not isinstance(self.year, int):
+        lower_limit_year = 2019
+        upper_limit_year = datetime.datetime.now().date().year + 1
+        if (
+            not isinstance(self.year, int)
+            or self.year < lower_limit_year
+            or self.year > upper_limit_year
+        ):
             raise ValidationError(
                 {
-                    "year": f"L'année doit être comprise entre 2019 et {current_year + 1}."
-                }
-            )
-        if self.year < 2019 or self.year > (current_year + 1):
-            raise ValidationError(
-                {
-                    "year": f"L'année doit être comprise entre 2019 et {current_year + 1}."
+                    "year": f"L'année doit être comprise entre {lower_limit_year} et {upper_limit_year}."
                 }
             )
 

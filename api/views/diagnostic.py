@@ -55,9 +55,6 @@ class DiagnosticUpdateView(UpdateAPIView):
             {"error": "Only PATCH request supported in this resource"}, status=405
         )
 
-    def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
-
 
 # flake8: noqa: C901
 class ImportDiagnosticsView(APIView):
