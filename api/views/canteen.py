@@ -1,7 +1,7 @@
 import logging
 from django.conf import settings
 from django.http import JsonResponse
-from django.core.mail import send_mail, EmailMultiAlternatives
+from common.utils import send_mail
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
@@ -241,11 +241,14 @@ class SendCanteenEmailView(APIView):
             html_content = render_to_string(f"{template}.html", context)
             text_content = render_to_string(f"{template}.txt", context)
 
-            message = EmailMultiAlternatives(
-                subject, text_content, from_email, recipients, reply_to=reply_to
+            send_mail(
+                subject,
+                text_content,
+                from_email,
+                recipients,
+                reply_to=reply_to,
+                html_content=html_content,
             )
-            message.attach_alternative(html_content, "text/html")
-            message.send()
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except ValidationError:
