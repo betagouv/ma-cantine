@@ -1,5 +1,5 @@
 <template>
-  <nav aria-label="Options de gestion de ma cantine">
+  <nav aria-label="Options de gestion de ma cantine" v-if="canteen">
     <v-card outlined class="mt-4">
       <v-list nav class="text-left">
         <v-list-item-group>
