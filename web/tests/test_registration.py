@@ -52,7 +52,7 @@ class TestRegistration(APITestCase):
 
         # Upon click of the activation link we go directly to the Vue app
         uidb64, token = re.findall(
-            r"activation-compte\/(?P<uidb64>.*)\/(?P<token>.*)", mail.outbox[0].body
+            r"compte\/(?P<uidb64>.*)\/(?P<token>.*)\)", mail.outbox[0].body
         )[0]
         activation_response = self.client.get(
             reverse("activate", kwargs={"uidb64": uidb64, "token": token})

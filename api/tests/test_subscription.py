@@ -72,8 +72,10 @@ class TestSubscription(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
 
         email = mail.outbox[0]
-        self.assertIn("Bio - Valeur annuelle HT : 1000 €", email.body)
-        self.assertIn("Menu végétarien proposé : Un menu végétarien unique", email.body)
+        self.assertIn("Bio - Valeur annuelle HT : _1000 €_", email.body)
+        self.assertIn(
+            "Menu végétarien proposé : _Un menu végétarien unique_", email.body
+        )
 
     @override_settings(NEWSLETTER_SENDINBLUE_LIST_ID="1")
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})

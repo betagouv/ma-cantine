@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.conf import settings
-from django.template import loader
 from django.utils.encoding import force_bytes
 from common.utils import send_mail
 from django.core.exceptions import ObjectDoesNotExist
@@ -134,8 +133,6 @@ def _login_and_send_activation_email(username, request):
         login(request, user)
 
         token = tokens.default_token_generator.make_token(user)
-        html_template = "auth/account_activate_email.html"
-        text_template = "auth/account_activate_email.txt"
         context = {
             "token": token,
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
@@ -144,11 +141,9 @@ def _login_and_send_activation_email(username, request):
         }
         send_mail(
             subject="Confirmation de votre adresse email - ma cantine",
-            message=loader.render_to_string(text_template, context),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            html_message=loader.render_to_string(html_template, context),
-            recipient_list=[user.email],
-            fail_silently=False,
+            template="auth/account_activate_email",
+            context=context,
+            to=[user.email],
         )
         return redirect(reverse_lazy("app"))
     except Exception:

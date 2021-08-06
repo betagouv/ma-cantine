@@ -5,7 +5,6 @@ from common.utils import send_mail
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
-from django.template.loader import render_to_string
 from django.db import transaction, IntegrityError
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -85,11 +84,9 @@ class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
             logger.info(f"Demande de publication de {canteen.name} (ID: {canteen.id})")
 
             send_mail(
-                "Demande de publication sur ma cantine",
-                f"La cantine « {canteen.name} » a demandé d'être publiée.\nAdmin : {admin_url}",
-                settings.DEFAULT_FROM_EMAIL,
-                [settings.CONTACT_EMAIL],
-                fail_silently=True,
+                subject="Demande de publication sur ma cantine",
+                message=f"La cantine « {canteen.name} » a demandé d'être publiée.\nAdmin : {admin_url}",
+                to=[settings.CONTACT_EMAIL],
             )
 
         return super(UpdateUserCanteenView, self).perform_update(serializer)
@@ -147,7 +144,6 @@ class AddManagerView(APIView):
     @staticmethod
     def _send_invitation_email(manager_invitation):
         try:
-            template = "auth/manager_invitation"
             context = {
                 "canteen": manager_invitation.canteen.name,
                 "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
@@ -155,11 +151,9 @@ class AddManagerView(APIView):
             }
             send_mail(
                 subject="Invitation à gérer une cantine sur ma cantine",
-                message=render_to_string(f"{template}.txt", context),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                html_message=render_to_string(f"{template}.html", context),
-                recipient_list=[manager_invitation.email],
-                fail_silently=False,
+                template="auth/manager_invitation",
+                context=context,
+                to=[manager_invitation.email],
             )
         except Exception as e:
             logger.error("The manager invitation email could not be sent:")
@@ -221,33 +215,26 @@ class SendCanteenEmailView(APIView):
             canteen_id = request.data.get("canteen_id")
             canteen = Canteen.objects.get(pk=canteen_id)
 
-            template = "contact_canteen"
-            context = {
-                "canteen": canteen.name,
-                "from": email,
-                "name": request.data.get("name") or "Une personne",
-                "message": request.data.get("message"),
-                "us": settings.DEFAULT_FROM_EMAIL,
-                "repliesToTeam": False,
-            }
             recipients = [user.email for user in canteen.managers.all()]
             recipients.append(settings.DEFAULT_FROM_EMAIL)
 
             reply_to = recipients.copy()
             reply_to.append(email)
 
-            subject = f"Un message pour {canteen.name}"
-            from_email = settings.DEFAULT_FROM_EMAIL
-            html_content = render_to_string(f"{template}.html", context)
-            text_content = render_to_string(f"{template}.txt", context)
+            context = {
+                "canteen": canteen.name,
+                "from": email,
+                "name": request.data.get("name") or "Une personne",
+                "message": request.data.get("message"),
+                "us": settings.DEFAULT_FROM_EMAIL,
+            }
 
             send_mail(
-                subject,
-                text_content,
-                from_email,
-                recipients,
+                subject=f"Un message pour {canteen.name}",
+                to=recipients,
                 reply_to=reply_to,
-                html_content=html_content,
+                template="contact_canteen",
+                context=context,
             )
 
             return JsonResponse({}, status=status.HTTP_200_OK)

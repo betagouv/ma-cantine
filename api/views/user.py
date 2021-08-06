@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model, tokens, update_session_auth_hash
 from django.conf import settings
 from django.http import JsonResponse
 from common.utils import send_mail
-from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.generics import RetrieveAPIView
@@ -58,8 +57,6 @@ class UpdateUserView(UpdateAPIView):
 
     def send_confirmation_email(self, new_email, user):
         token = tokens.default_token_generator.make_token(user)
-        html_template = "auth/account_activate_email.html"
-        text_template = "auth/account_activate_email.txt"
         context = {
             "token": token,
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
@@ -68,11 +65,9 @@ class UpdateUserView(UpdateAPIView):
         }
         send_mail(
             subject="Confirmation de votre changement d'adresse email - ma cantine",
-            message=render_to_string(text_template, context),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            html_message=render_to_string(html_template, context),
-            recipient_list=[new_email],
-            fail_silently=False,
+            template="auth/account_activate_email",
+            context=context,
+            to=[new_email],
         )
 
 
