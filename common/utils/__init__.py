@@ -1,12 +1,28 @@
-from django.core.mail import send_mail as django_send_mail
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+import html2text
 
 
-def send_mail(*args, **kwargs):
-    if kwargs.get("reply_to"):
-        html_content = kwargs.pop("html_content")
-        message = EmailMultiAlternatives(*args, **kwargs)
-        message.attach_alternative(html_content, "text/html")
-        message.send()
+def send_mail(**kwargs):
+    html_content = None
+    if kwargs.get("template"):
+        template = kwargs.pop("template")
+        context = kwargs.pop("context")
+        _add_additional_context(context, **kwargs)
+        html_content = render_to_string(f"{template}.html", context)
+        text_content = html2text.html2text(html_content)
     else:
-        django_send_mail(*args, **kwargs)
+        text_content = kwargs.pop("message")
+    message = EmailMultiAlternatives(**kwargs, body=text_content)
+    if html_content:
+        message.attach_alternative(html_content, "text/html")
+    message.send()
+
+
+def _add_additional_context(context, **kwargs):
+    reply_to = kwargs.get("reply_to") or kwargs.get("from")
+    replies_to_team = True
+    if reply_to and reply_to != [settings.CONTACT_EMAIL]:
+        replies_to_team = False
+    context["repliesToTeam"] = replies_to_team
