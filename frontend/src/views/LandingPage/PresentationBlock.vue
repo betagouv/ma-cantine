@@ -24,8 +24,22 @@
         <v-spacer></v-spacer>
       </v-row>
     </v-card>
-    <v-btn x-large class="primary mx-auto mt-8" :to="{ name: 'DiagnosticPage' }">
-      Savoir où j'en suis des mesures
+    <v-btn v-if="loggedUser" x-large class="primary mx-auto mt-8" :to="{ name: 'ManagementPage' }">
+      Accéder à mes cantines
+    </v-btn>
+    <v-btn v-else x-large class="primary mx-auto mt-8" href="/creer-mon-compte">
+      Créer mon compte
     </v-btn>
   </div>
 </template>
+
+<script>
+export default {
+  name: "PresentationBlock",
+  computed: {
+    loggedUser() {
+      return this.$store.state.loggedUser
+    },
+  },
+}
+</script>

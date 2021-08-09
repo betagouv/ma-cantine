@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
 import dotenv  # noqa
 
@@ -28,7 +29,7 @@ SECRET_KEY = os.getenv("SECRET")
 SECURE_SSL_REDIRECT = os.getenv("FORCE_HTTPS") == "True"
 
 # The site uses http or https?
-SECURE =  os.getenv("SECURE") == "True"
+SECURE = os.getenv("SECURE") == "True"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
@@ -44,7 +45,7 @@ if not DEBUG:
         dsn="https://5bbe469c02b341c7ae1b85e280e28b15@o548798.ingest.sentry.io/5795837",
         integrations=[DjangoIntegration()],
         traces_sample_rate=0,
-        send_default_pii=False
+        send_default_pii=False,
     )
 
 # Application definition
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sitemaps",
     "webpack_loader",
     "rest_framework",
     "ckeditor",
@@ -155,11 +157,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Media and file storage
-AWS_ACCESS_KEY_ID = os.getenv('CELLAR_KEY')
-AWS_SECRET_ACCESS_KEY = os.getenv('CELLAR_SECRET')
-AWS_S3_ENDPOINT_URL = os.getenv('CELLAR_HOST')
-AWS_STORAGE_BUCKET_NAME = os.getenv('CELLAR_BUCKET_NAME')
-AWS_LOCATION = 'media'
+AWS_ACCESS_KEY_ID = os.getenv("CELLAR_KEY")
+AWS_SECRET_ACCESS_KEY = os.getenv("CELLAR_SECRET")
+AWS_S3_ENDPOINT_URL = os.getenv("CELLAR_HOST")
+AWS_STORAGE_BUCKET_NAME = os.getenv("CELLAR_BUCKET_NAME")
+AWS_LOCATION = "media"
 AWS_QUERYSTRING_AUTH = False
 
 DEFAULT_FILE_STORAGE = os.getenv("DEFAULT_FILE_STORAGE")
@@ -206,12 +208,10 @@ WEBPACK_LOADER = {
 # Email
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL")
-EMAIL_BACKEND = os.getenv(
-    "EMAIL_BACKEND"
-)
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
 
 if DEBUG and EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
-    EMAIL_HOST = 'localhost'
+    EMAIL_HOST = "localhost"
     EMAIL_PORT = 1025
 
 ANYMAIL = {
@@ -271,3 +271,30 @@ CKEDITOR_CONFIGS = {
 
 # Analytics
 MATOMO_ID = os.getenv("MATOMO_ID", "")
+
+# Logging
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "stream": sys.stdout,
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}

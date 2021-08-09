@@ -1,124 +1,8 @@
 import re
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django import forms
 from django.utils.safestring import mark_safe
-from data.models import Canteen
-from data.models import Sector
-
-
-class RegisterForm(UserCreationForm):
-    cgu_approved = forms.BooleanField(
-        label=mark_safe(
-            'J\'atteste avoir lu et accepté les <a href="/cgu" target="_blank">CGU</a>'
-        )
-    )
-    email = forms.EmailField()
-    canteen_name = forms.CharField(label="Nom de la cantine")
-    siret = forms.CharField(label="SIRET", required=False)
-
-    autocomplete = forms.CharField(label="Ville / Région")
-    city = forms.CharField(widget=forms.HiddenInput())
-    department = forms.CharField(widget=forms.HiddenInput())
-    city_insee_code = forms.CharField(widget=forms.HiddenInput())
-    postal_code = forms.CharField(widget=forms.HiddenInput())
-
-    sectors = forms.MultipleChoiceField(label="Secteurs d'activité", widget=forms.CheckboxSelectMultiple)
-    daily_meal_count = forms.IntegerField(label="Nombre de repas moyen par jour")
-    management_type = forms.ChoiceField(
-        label="Mode de gestion",
-        choices=(("direct", "Directe"), ("conceded", "Concédée")),
-        widget=forms.RadioSelect,
-    )
-
-    uses_columns = True
-
-    class Meta:  
-        model = get_user_model()
-        fields = UserCreationForm.Meta.fields + ('first_name', 'last_name', 'email',)
-
-    def left_column_fields(self):
-        field_names = [
-            "first_name",
-            "last_name",
-            "email",
-            "username",
-            "password1",
-            "password2",
-        ]
-        return [next(field for field in self if field.name == field_name) for field_name in field_names]
-
-    def right_column_fields(self):
-        field_names = [
-            "canteen_name",
-            "siret",
-            "autocomplete",
-            "daily_meal_count",
-            "sectors",
-            "management_type",
-        ]
-        return [next(field for field in self if field.name == field_name) for field_name in field_names]
-
-    def hidden_fields(self):
-        return [field for field in self if field.is_hidden]
-
-    def __init__(self, *args, **kwargs):
-        super(RegisterForm, self).__init__(*args, **kwargs)
-        self.label_suffix = ""
-        self.fields["first_name"].widget.attrs.update({"placeholder": "Agnès", "required": True, "autofocus": True})
-        self.fields["last_name"].widget.attrs.update({"placeholder": "Dufresne", "required": True})
-        self.fields["username"].widget.attrs.update({"placeholder": "agnes.dufresne", "autofocus": False})
-        self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com"})
-        self.fields["canteen_name"].widget.attrs.update({"placeholder": "Ma cantine"})
-        self.fields["siret"].widget.attrs.update({"placeholder": "123 456 789 00001"})
-        self.fields["autocomplete"].widget.attrs.update({"placeholder": "Sélectionnez une ville"})
-        self.fields["sectors"].widget.attrs.update({"class": "sector"})
-        self.fields["sectors"].choices = Sector.choices()
-        self.fields["management_type"].widget.attrs.update({"class": "management-type"})
-        self.fields["password1"].widget.attrs.update(
-            {"placeholder": "Entrez votre mot de passe"}
-        )
-        self.fields["password2"].widget.attrs.update(
-            {"placeholder": "Confirmez votre mot de passe"}
-        )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        if not cleaned_data.get("city_insee_code"):
-            self.add_error("autocomplete", "Veuillez choisir une ville de la liste déroulante")
-        return cleaned_data
-
-    def clean_cgu_approved(self):
-        return _clean_cgu_approved(self)
-
-    def clean_username(self):
-        return _clean_username(self)
-
-    def save(self, commit=True):
-        user = super(RegisterForm, self).save(commit=False)
-        user.email = get_user_model().objects.normalize_email(
-            self.cleaned_data.get("email")
-        )
-
-        if commit:
-            user.save()
-            canteen = Canteen(
-                name=self.cleaned_data.get("canteen_name"),
-                siret=self.cleaned_data.get("siret"),
-                city=self.cleaned_data.get("city"),
-                department=self.cleaned_data.get("department"),
-                city_insee_code = self.cleaned_data.get("city_insee_code"),
-                postal_code = self.cleaned_data.get("postal_code"),
-                daily_meal_count=self.cleaned_data.get("daily_meal_count"),
-                management_type=self.cleaned_data.get("management_type"),
-            )
-            canteen.save()
-            canteen.managers.add(user)
-            for sector in self.cleaned_data.get("sectors"):
-                canteen.sectors.add(sector)
-
-        return user
 
 
 class RegisterUserForm(UserCreationForm):
@@ -129,7 +13,7 @@ class RegisterUserForm(UserCreationForm):
     )
     email = forms.EmailField()
 
-    class Meta:  
+    class Meta:
         model = get_user_model()
         fields = (
             "first_name",
@@ -144,7 +28,9 @@ class RegisterUserForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(RegisterUserForm, self).__init__(*args, **kwargs)
         self.label_suffix = ""
-        self.fields["first_name"].widget.attrs.update({"placeholder": "Agnès"}, autoFocus=True)
+        self.fields["first_name"].widget.attrs.update(
+            {"placeholder": "Agnès"}, autoFocus=True
+        )
         self.fields["last_name"].widget.attrs.update({"placeholder": "Dufresne"})
         self.fields["username"].widget.attrs.update({"placeholder": "agnes.dufresne"})
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com"})
@@ -172,12 +58,12 @@ class RegisterUserForm(UserCreationForm):
 
         return user
 
+
 def _clean_cgu_approved(form):
     if not form.cleaned_data.get("cgu_approved"):
-        raise forms.ValidationError(
-            "Vous devez accepter les conditions d'utilisation"
-        )
+        raise forms.ValidationError("Vous devez accepter les conditions d'utilisation")
     return form.cleaned_data["cgu_approved"]
+
 
 def _clean_username(form):
     # username can't be an email

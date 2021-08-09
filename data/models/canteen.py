@@ -1,3 +1,4 @@
+from urllib.parse import quote
 from django.db import models
 from django.contrib.auth import get_user_model
 from data.department_choices import Department
@@ -58,7 +59,11 @@ class Canteen(SoftDeletionModel):
     daily_meal_count = models.IntegerField(
         null=True, blank=True, verbose_name="repas par jour"
     )
+    # TODO: once have a standardised format (see _normalise_siret), index by siret if given
     siret = models.TextField(null=True, blank=True)
+    central_producer_siret = models.TextField(
+        null=True, blank=True, verbose_name="siret de la cuisine centrale"
+    )
     management_type = models.CharField(
         max_length=255,
         choices=ManagementType.choices,
@@ -87,6 +92,11 @@ class Canteen(SoftDeletionModel):
                 self.main_image, self.main_image.name, max_image_size
             )
         super(Canteen, self).save(force_insert, force_update, using, update_fields)
+
+    @property
+    def url_path(self):
+        slug = f"{quote(self.name)}--{self.id}"
+        return f"/nos-cantines/{slug}"
 
     def __str__(self):
         return f'Cantine "{self.name}"'

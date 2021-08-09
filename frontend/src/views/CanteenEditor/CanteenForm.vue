@@ -207,18 +207,20 @@ export default {
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
-      this.publicationRequested = canteen.publicationStatus !== "draft"
-      const initialCityAutocomplete = {
-        text: canteen.city,
-        value: {
-          label: canteen.city,
-          citycode: canteen.cityInseeCode,
-          postcode: canteen.postalCode,
-          context: canteen.department,
-        },
+      this.publicationRequested = !!canteen.publicationStatus && canteen.publicationStatus !== "draft"
+      if (canteen.city) {
+        const initialCityAutocomplete = {
+          text: canteen.city,
+          value: {
+            label: canteen.city,
+            citycode: canteen.cityInseeCode,
+            postcode: canteen.postalCode,
+            context: canteen.department,
+          },
+        }
+        this.communes = [initialCityAutocomplete]
+        this.cityAutocompleteChoice = initialCityAutocomplete.value
       }
-      this.communes = [initialCityAutocomplete]
-      this.cityAutocompleteChoice = initialCityAutocomplete.value
     } else this.$router.push({ name: "NewCanteen" })
   },
   created() {
@@ -310,10 +312,12 @@ export default {
       return val && val !== this.canteen.city && this.queryCommunes(val)
     },
     cityAutocompleteChoice(val) {
-      this.canteen.city = val.label
-      this.canteen.cityInseeCode = val.citycode
-      this.canteen.postalCode = val.postcode
-      this.canteen.department = val && val.context ? val.context.split(",")[0] : undefined
+      if (val?.label) {
+        this.canteen.city = val.label
+        this.canteen.cityInseeCode = val.citycode
+        this.canteen.postalCode = val.postcode
+        this.canteen.department = val.context.split(",")[0]
+      }
 
       this.search = this.canteen.city
     },
