@@ -110,7 +110,7 @@ class Canteen(SoftDeletionModel):
         Performs length and Luhn validation
         (https://portal.hardis-group.com/pages/viewpage.action?pageId=120357227)
         """
-        if siret is None:
+        if siret is None or siret == "":
             return
         if len(siret) != 14:
             raise ValidationError(
