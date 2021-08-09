@@ -7,9 +7,10 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
 from django.db import transaction, IntegrityError
+from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework import permissions, status
+from rest_framework import permissions, status, filters
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from api.serializers import (
@@ -29,11 +30,32 @@ class PublishedCanteensPagination(LimitOffsetPagination):
     max_limit = 30
 
 
+class PublishedCanteenFilterSet(django_filters.FilterSet):
+    min_daily_meal_count = django_filters.NumberFilter(
+        field_name="daily_meal_count", lookup_expr="gte"
+    )
+    max_daily_meal_count = django_filters.NumberFilter(
+        field_name="daily_meal_count", lookup_expr="lte"
+    )
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "department",
+            "sectors",
+            "min_daily_meal_count",
+            "max_daily_meal_count",
+        )
+
+
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
     queryset = Canteen.objects.filter(publication_status="published")
     pagination_class = PublishedCanteensPagination
+    filter_backends = [django_filters.DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ["name"]
+    filterset_class = PublishedCanteenFilterSet
 
 
 class PublishedCanteenSingleView(RetrieveAPIView):
