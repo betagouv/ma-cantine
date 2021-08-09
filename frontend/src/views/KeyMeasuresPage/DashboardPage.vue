@@ -4,15 +4,14 @@
 
     <v-card elevation="0" class="text-left">
       <v-card-text>
-        Vous accédez actuellement à la plateforme en tant qu'utilisateur.trice invité.e. Afin de conserver vos données
-        et enregistrer votre tableau de bord, pouvoir le modifier, le partager... Vous pouvez vous connecter ou créér un
-        compte. Les données précédemment remplies seront sauvegardées automatiquement
+        Vous accédez actuellement à la plateforme en tant qu'utilisateur.trice invité.e. Vous pouvez créer un compte et
+        enregistrer votre cantine pour profiter de toutes nos fonctionnalités.
       </v-card-text>
       <v-card-actions class="pa-4">
         <v-spacer></v-spacer>
         <GiveFeedbackLink class="mt-2 mb-n4" />
         <v-btn color="primary" class="ml-8" large href="/creer-mon-compte">
-          Sauvegarder mes données
+          Créer mon compte
         </v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>

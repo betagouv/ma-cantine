@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left pb-10">
+  <div class="text-left pb-10" v-if="originalCanteen">
     <h1 class="font-weight-black text-h4 my-4">
       Supprimer ma cantine
     </h1>
@@ -20,11 +20,10 @@ export default {
   props: {
     originalCanteen: {
       type: Object,
-      required: true,
     },
   },
   created() {
-    document.title = `Supprimer - ${this.originalCanteen.name} - ma-cantine.beta.gouv.fr`
+    document.title = `Supprimer - ${this.originalCanteen?.name || ""} - ma-cantine.beta.gouv.fr`
   },
   data() {
     return {

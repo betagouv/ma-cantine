@@ -12,7 +12,7 @@
     </v-sheet>
     <v-row>
       <v-col cols="7">
-        <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
+        <v-card-title class="font-weight-bold">{{ canteen.name || `SIRET : ${canteen.siret}` }}</v-card-title>
         <v-card-subtitle class="caption">{{ dataStatus }}</v-card-subtitle>
       </v-col>
       <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
