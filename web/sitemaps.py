@@ -72,7 +72,6 @@ class WebSitemap(Sitemap):
             {"location": "/mentions-legales", "changefreq": "yearly", "priority": 0.2},
             {"location": "/cgu", "changefreq": "yearly", "priority": 0.2},
             {"location": "/blog", "changefreq": "monthly", "priority": 0.5},
-            {"location": "/stats", "changefreq": "weekly", "priority": 0.2},
             {"location": "/devenir-testeur", "changefreq": "yearly", "priority": 0.2},
             {"location": "/creer-mon-compte", "changefreq": "yearly", "priority": 0.3},
             {"location": "/s-identifier", "changefreq": "yearly", "priority": 0.3},
