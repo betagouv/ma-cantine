@@ -7,24 +7,7 @@
             <h2 class="font-weight-bold text-h6">Données d'approvisionnement en produits de qualité et durables</h2>
           </v-card-title>
           <v-card-text>
-            <v-row>
-              <v-col cols="12" md="6" class="d-flex flex-column align-center">
-                <h3 class="text-h6">Sur l'année 2019</h3>
-                <SummaryStatistics :qualityDiagnostic="previousDiagnostic" />
-              </v-col>
-              <v-col cols="12" md="6" class="d-flex flex-column align-center">
-                <h3 class="text-h6">Sur l'année 2020</h3>
-                <SummaryStatistics :qualityDiagnostic="latestDiagnostic" />
-              </v-col>
-              <v-col cols="12" md="6" class="d-flex flex-column align-center">
-                <h3 class="text-h6">Prévisionnel 2021</h3>
-                <SummaryStatistics :qualityDiagnostic="this.diagnostics.provisionalYear1" />
-              </v-col>
-              <v-col cols="12" md="6" class="d-flex flex-column align-center">
-                <h3 class="text-h6">Prévisionnel 2022</h3>
-                <SummaryStatistics :qualityDiagnostic="this.diagnostics.provisionalYear2" />
-              </v-col>
-            </v-row>
+            <MultiYearSummaryStatistics :diagnostics="diagnostics" />
             <KeyMeasureResource :baseComponent="qualityMeasure.baseComponent" v-if="showResources" />
           </v-card-text>
         </v-card>
@@ -144,15 +127,15 @@
 import keyMeasures from "@/data/key-measures.json"
 import wasteActions from "@/data/waste-actions.json"
 import communicationSupports from "@/data/communication-supports.json"
-import SummaryStatistics from "@/components/SummaryStatistics"
 import KeyMeasureResource from "@/components/KeyMeasureResource"
 import KeyMeasureAction from "@/components/KeyMeasureAction"
+import MultiYearSummaryStatistics from "./MultiYearSummaryStatistics.vue"
 
 export default {
   components: {
-    SummaryStatistics,
     KeyMeasureResource,
     KeyMeasureAction,
+    MultiYearSummaryStatistics,
   },
   props: {
     diagnostics: Object,
