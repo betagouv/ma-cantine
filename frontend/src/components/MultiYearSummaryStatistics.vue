@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO: tabbable download button -->
   <div>
     <VueApexCharts
       :options="chartOptions"
@@ -31,61 +30,14 @@ export default {
   },
   data() {
     const diagArray = Object.values(this.diagnostics)
-    diagArray.forEach((d) => {
-      if (myIsNaN(d.valueBioHt) || myIsNaN(d.valueSustainableHt) || myIsNaN(d.valueTotalHt)) {
-        d.valuesIncomplete = true
-      }
-    })
-    const seriesData = {
-      bio: diagArray.map((d) => getPercentage(d.valueBioHt, d.valueTotalHt)),
-      sustainable: diagArray.map((d) => getPercentage(d.valueSustainableHt, d.valueTotalHt)),
-      other: diagArray.map((d) => {
-        if (d.valuesIncomplete) {
-          return undefined
-        } else {
-          return 100 - getPercentage(d.valueBioHt, d.valueTotalHt) - getPercentage(d.valueSustainableHt, d.valueTotalHt)
-        }
-      }),
-      incompleteValues: diagArray.map((d) => d.valuesIncomplete),
-    }
-    // TODO: how to do this dynamically? last four years and none for no data?
-    // TODO: note that 2021, 2022 is provisional?
-    const years = [2019, 2020, 2021, 2022]
+    const years = diagArray.map((d) => d.year)
     return {
-      series: [
-        {
-          name: BIO,
-          data: seriesData.bio,
-          color: "#0c7f46",
-        },
-        {
-          name: SUSTAINABLE,
-          data: seriesData.sustainable,
-          color: "#ff8d7e",
-        },
-        {
-          name: OTHER,
-          data: seriesData.other,
-          color: "#7F7FC8",
-        },
-      ],
-      // TODO: explore whether to make this work
-      // noData: {
-      //   text: NO_DATA,
-      //   align: "center",
-      //   verticalAlign: "middle",
-      //   offsetX: 100,
-      //   offsetY: 0,
-      //   style: {
-      //     color: "#333",
-      //     fontSize: "14px",
-      //     fontFamily: "Marianne",
-      //   },
-      // },
+      years,
       chartOptions: {
         chart: {
           type: "bar",
           stacked: true,
+          toolbar: { tools: { download: false } },
         },
         plotOptions: {
           bar: {
@@ -118,7 +70,7 @@ export default {
                   color: "#fff",
                   background: "#333",
                 },
-                text: "Atteint EGAlim 2022",
+                text: "Objectif EGAlim 2022",
               },
             },
           ],
@@ -137,13 +89,52 @@ export default {
           offsetX: 40,
         },
       },
-      seriesData,
-      years,
     }
   },
   computed: {
+    seriesData() {
+      const diagArray = Object.values(this.diagnostics)
+      diagArray.forEach((d) => {
+        if (myIsNaN(d.valueBioHt) || myIsNaN(d.valueSustainableHt) || myIsNaN(d.valueTotalHt)) {
+          d.incompleteValues = true
+        }
+      })
+      return {
+        bio: diagArray.map((d) => getPercentage(d.valueBioHt, d.valueTotalHt)),
+        sustainable: diagArray.map((d) => getPercentage(d.valueSustainableHt, d.valueTotalHt)),
+        other: diagArray.map((d) => {
+          if (d.incompleteValues) {
+            return undefined
+          } else {
+            return (
+              100 - getPercentage(d.valueBioHt, d.valueTotalHt) - getPercentage(d.valueSustainableHt, d.valueTotalHt)
+            )
+          }
+        }),
+        incompleteValues: diagArray.map((d) => d.incompleteValues),
+      }
+    },
+    series() {
+      return [
+        {
+          name: BIO,
+          data: this.seriesData.bio,
+          color: "#0c7f46",
+        },
+        {
+          name: SUSTAINABLE,
+          data: this.seriesData.sustainable,
+          color: "#ff8d7e",
+        },
+        {
+          name: OTHER,
+          data: this.seriesData.other,
+          color: "#7F7FC8",
+        },
+      ]
+    },
     description() {
-      let description = `${VALUE_DESCRIPTION} `
+      let description = `${VALUE_DESCRIPTION}. `
       this.years.forEach((year, idx) => {
         description += `${year} : `
         if (this.seriesData.incompleteValues[idx]) {
