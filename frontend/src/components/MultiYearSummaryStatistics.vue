@@ -1,10 +1,25 @@
 <template>
-  <!-- TODO: better alt text and tabbable download button -->
-  <VueApexCharts :options="chartOptions" :series="series" role="img" />
+  <!-- TODO: tabbable download button -->
+  <div>
+    <VueApexCharts
+      :options="chartOptions"
+      :series="series"
+      role="img"
+      :aria-labelledby="headingId"
+      aria-describedby="text"
+    />
+    <p id="text" class="d-none">{{ description }}</p>
+  </div>
 </template>
 
 <script>
 import VueApexCharts from "vue-apexcharts"
+
+const VALUE_DESCRIPTION = "Pourcentage de valeur total d'achats alimentaires (en HT)"
+const NO_DATA = "Données non renseignées"
+const BIO = "Bio"
+const SUSTAINABLE = "Qualité et durable (hors bio)"
+const OTHER = "Hors EGAlim"
 
 export default {
   components: {
@@ -12,6 +27,7 @@ export default {
   },
   props: {
     diagnostics: Object,
+    headingId: String,
   },
   data() {
     const diagArray = Object.values(this.diagnostics)
@@ -20,35 +36,42 @@ export default {
         d.valuesIncomplete = true
       }
     })
+    const seriesData = {
+      bio: diagArray.map((d) => getPercentage(d.valueBioHt, d.valueTotalHt)),
+      sustainable: diagArray.map((d) => getPercentage(d.valueSustainableHt, d.valueTotalHt)),
+      other: diagArray.map((d) => {
+        if (d.valuesIncomplete) {
+          return undefined
+        } else {
+          return 100 - getPercentage(d.valueBioHt, d.valueTotalHt) - getPercentage(d.valueSustainableHt, d.valueTotalHt)
+        }
+      }),
+      incompleteValues: diagArray.map((d) => d.valuesIncomplete),
+    }
+    // TODO: how to do this dynamically? last four years and none for no data?
+    // TODO: note that 2021, 2022 is provisional?
+    const years = [2019, 2020, 2021, 2022]
     return {
       series: [
         {
-          name: "Bio",
-          data: diagArray.map((d) => getPercentage(d.valueBioHt, d.valueTotalHt)),
+          name: BIO,
+          data: seriesData.bio,
           color: "#0c7f46",
         },
         {
-          name: "Qualité et durable (hors bio)",
-          data: diagArray.map((d) => getPercentage(d.valueSustainableHt, d.valueTotalHt)),
+          name: SUSTAINABLE,
+          data: seriesData.sustainable,
           color: "#ff8d7e",
         },
         {
-          name: "Hors EGAlim",
-          data: diagArray.map((d) => {
-            if (d.valuesIncomplete) {
-              return undefined
-            } else {
-              return (
-                100 - getPercentage(d.valueBioHt, d.valueTotalHt) - getPercentage(d.valueSustainableHt, d.valueTotalHt)
-              )
-            }
-          }),
+          name: OTHER,
+          data: seriesData.other,
           color: "#7F7FC8",
         },
       ],
       // TODO: explore whether to make this work
       // noData: {
-      //   text: "Données pas disponibles",
+      //   text: NO_DATA,
       //   align: "center",
       //   verticalAlign: "middle",
       //   offsetX: 100,
@@ -70,14 +93,12 @@ export default {
           },
         },
         xaxis: {
-          // TODO: how to do this dynamically? last four years and none for no data?
-          // TODO: note that 2021, 2022 is provisional?
-          categories: [2019, 2020, 2021, 2022],
+          categories: years,
           labels: {
             formatter: percentageFormatter,
           },
           title: {
-            text: "Pourcentage de valeur total d'achats alimentaires (en HT)",
+            text: VALUE_DESCRIPTION,
           },
         },
         yaxis: {
@@ -116,7 +137,25 @@ export default {
           offsetX: 40,
         },
       },
+      seriesData,
+      years,
     }
+  },
+  computed: {
+    description() {
+      let description = `${VALUE_DESCRIPTION} `
+      this.years.forEach((year, idx) => {
+        description += `${year} : `
+        if (this.seriesData.incompleteValues[idx]) {
+          description += `${NO_DATA}. `
+        } else {
+          description += `${percentageFormatter(this.seriesData.bio[idx])} ${BIO}, ${percentageFormatter(
+            this.seriesData.sustainable[idx]
+          )} ${SUSTAINABLE}. `
+        }
+      })
+      return description
+    },
   },
 }
 

@@ -4,10 +4,12 @@
       <v-col cols="12">
         <v-card outlined class="mt-4 pa-4">
           <v-card-title>
-            <h2 class="font-weight-bold text-h6">Données d'approvisionnement en produits de qualité et durables</h2>
+            <h2 class="font-weight-bold text-h6" id="appro-heading">
+              Données d'approvisionnement en produits de qualité et durables
+            </h2>
           </v-card-title>
           <v-card-text>
-            <MultiYearSummaryStatistics :diagnostics="diagnostics" />
+            <MultiYearSummaryStatistics :diagnostics="diagnostics" headingId="appro-heading" />
             <KeyMeasureResource :baseComponent="qualityMeasure.baseComponent" v-if="showResources" />
           </v-card-text>
         </v-card>
