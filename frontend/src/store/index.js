@@ -36,9 +36,6 @@ export default new Vuex.Store({
     blogPostCount: null,
     blogPosts: [],
 
-    publishedCanteenCount: null,
-    publishedCanteens: [],
-
     notification: {
       message: "",
       status: null,
@@ -61,10 +58,6 @@ export default new Vuex.Store({
     },
     SET_SECTORS(state, sectors) {
       state.sectors = sectors
-    },
-    ADD_PUBLISHED_CANTEENS(state, { response, limit, offset }) {
-      state.publishedCanteens.push({ ...response, limit, offset })
-      state.publishedCanteenCount = response.count
     },
     SET_USER_CANTEENS(state, userCanteens) {
       state.userCanteens = userCanteens
@@ -152,20 +145,6 @@ export default new Vuex.Store({
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
         })
     },
-
-    fetchPublishedCanteens(context, { limit = 6, offset }) {
-      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/publishedCanteens/?limit=${limit}&offset=${offset}`)
-        .then(verifyResponse)
-        .then((response) => {
-          context.commit("ADD_PUBLISHED_CANTEENS", { response, limit, offset })
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
-        })
-        .catch(() => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
-        })
-    },
-
     fetchUserCanteens(context) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch("/api/v1/canteens/")
