@@ -11,7 +11,11 @@ def send_mail(**kwargs):
         context = kwargs.pop("context")
         _add_additional_context(context, **kwargs)
         html_content = render_to_string(f"{template}.html", context)
-        text_content = html2text.html2text(html_content)
+
+        text_maker = html2text.HTML2Text()
+        text_maker.ignore_links = True
+        text_maker.ignore_emphasis = True
+        text_content = text_maker.handle(html_content)
     else:
         text_content = kwargs.pop("message")
     message = EmailMultiAlternatives(**kwargs, body=text_content)
