@@ -83,9 +83,6 @@ export default new Vuex.Store({
     DELETE_USER_CANTEEN(state, canteenId) {
       const userCanteenIndex = state.userCanteens.findIndex((x) => x.id === canteenId)
       if (userCanteenIndex > -1) state.userCanteens.splice(userCanteenIndex, 1)
-
-      const publishedCanteenIndex = state.publishedCanteens.findIndex((x) => x.id === canteenId)
-      if (publishedCanteenIndex > -1) state.publishedCanteens.splice(publishedCanteenIndex, 1)
     },
     ADD_DIAGNOSTIC(state, { canteenId, diagnostic }) {
       const canteen = state.userCanteens.find((x) => x.id === canteenId)
@@ -448,8 +445,7 @@ export default new Vuex.Store({
     },
     getCanteenFromUrlComponent: (state) => (canteenUrlComponent) => {
       const canteenId = canteenUrlComponent.split("--")[0]
-      const existingCanteens = state.publishedCanteens.flatMap((x) => x.results)
-      return [...state.userCanteens, ...existingCanteens].find((x) => x.id === parseInt(canteenId))
+      return state.userCanteens.find((x) => x.id === parseInt(canteenId))
     },
   },
 })

@@ -84,13 +84,6 @@ export default {
   },
   beforeMount() {
     const previousIdVersion = this.canteenUrlComponent.indexOf("--") === -1
-    const existingCanteens = this.$store.state.publishedCanteens.flatMap((x) => x.results)
-    let canteen = previousIdVersion
-      ? existingCanteens.find((x) => x.id == this.canteenUrlComponent)
-      : this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
-
-    if (canteen) return this.setCanteen(canteen)
-
     const id = previousIdVersion ? this.canteenUrlComponent : this.canteenUrlComponent.split("--")[0]
     return fetch(`/api/v1/publishedCanteens/${id}`)
       .then((response) => {
