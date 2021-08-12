@@ -24,84 +24,90 @@
         <v-spacer></v-spacer>
       </v-row>
     </v-card>
-    <div v-if="loading">
+
+    <v-sheet class="pa-6" rounded outlined>
+      <h2 class="text-left text-body-1 font-weight-black mb-8">Recherche</h2>
+      <v-row>
+        <v-col cols="12" md="7" class="d-flex pt-0">
+          <v-text-field
+            hide-details="auto"
+            ref="search"
+            v-model="searchTerm"
+            outlined
+            placeholder="Recherche par nom de l'établissement"
+            clearable
+            @click:clear="clearSearch"
+            @keyup.enter="search"
+          ></v-text-field>
+          <v-btn outlined color="primary" large class="ml-4 mt-1" height="48px" @click="search">
+            <v-icon>mdi-magnify</v-icon>
+            Chercher
+          </v-btn>
+        </v-col>
+      </v-row>
+
+      <h2 class="text-left text-body-1 font-weight-black mt-6 mb-1">Plus de filtres</h2>
+      <v-row id="filters">
+        <v-col cols="12" sm="6" md="4" class="text-left">
+          <label for="select-department" class="text-body-2">Departement</label>
+          <v-select
+            v-model="appliedFilters.chosenDepartment"
+            :items="departments"
+            clearable
+            hide-details
+            id="select-department"
+            placeholder="Tous les departements"
+            class="mt-1"
+            outlined
+          ></v-select>
+        </v-col>
+        <v-col cols="12" sm="6" md="4" class="text-left">
+          <label for="select-sector" class="text-body-2">Secteur d'activité</label>
+          <v-select
+            v-model="appliedFilters.chosenSectors"
+            multiple
+            :items="sectors"
+            clearable
+            hide-details
+            id="select-sector"
+            placeholder="Tous les secteurs"
+            outlined
+            class="mt-1"
+          ></v-select>
+        </v-col>
+        <v-col cols="12" sm="6" md="4" class="text-left">
+          <label class="text-body-2">Repas par jour</label>
+          <div class="d-flex mt-1">
+            <v-text-field
+              v-model="appliedFilters.minMealCount"
+              type="number"
+              hide-details="auto"
+              outlined
+              label="Min"
+            />
+            <span class="mx-4 align-self-center">-</span>
+            <v-text-field
+              v-model="appliedFilters.maxMealCount"
+              type="number"
+              hide-details="auto"
+              outlined
+              label="Max"
+            />
+          </div>
+        </v-col>
+      </v-row>
+    </v-sheet>
+
+    <v-alert v-if="loadingError" type="error" outlined class="pa-4 my-6">
+      <p class="text-left text-body-2 red--text text--darken-4 ma-0">
+        Une erreur s'est produite en cherchant les cantines. L'équipe ma cantine a été notifiée. En plus, vous pouvez
+        nous contacter à contact@egalim.beta.gouv.fr.
+      </p>
+    </v-alert>
+    <div v-else-if="loading" class="pa-6">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
-
     <div v-else>
-      <v-sheet class="pa-6" rounded outlined>
-        <h2 class="text-left text-body-1 font-weight-black mb-8">Recherche</h2>
-        <v-row>
-          <v-col cols="12" md="7" class="d-flex pt-0">
-            <v-text-field
-              hide-details="auto"
-              ref="search"
-              v-model="searchTerm"
-              outlined
-              placeholder="Recherche par nom de l'établissement"
-              clearable
-              @click:clear="clearSearch"
-              @keyup.enter="search"
-            ></v-text-field>
-            <v-btn outlined color="primary" large class="ml-4 mt-1" height="48px" @click="search">
-              <v-icon>mdi-magnify</v-icon>
-              Chercher
-            </v-btn>
-          </v-col>
-        </v-row>
-
-        <h2 class="text-left text-body-1 font-weight-black mt-6 mb-1">Plus de filtres</h2>
-        <v-row id="filters">
-          <v-col cols="12" sm="6" md="4" class="text-left">
-            <label for="select-department" class="text-body-2">Departement</label>
-            <v-select
-              v-model="appliedFilters.chosenDepartment"
-              :items="departments"
-              clearable
-              hide-details
-              id="select-department"
-              placeholder="Tous les departements"
-              class="mt-1"
-              outlined
-            ></v-select>
-          </v-col>
-          <v-col cols="12" sm="6" md="4" class="text-left">
-            <label for="select-sector" class="text-body-2">Secteur d'activité</label>
-            <v-select
-              v-model="appliedFilters.chosenSectors"
-              multiple
-              :items="sectors"
-              clearable
-              hide-details
-              id="select-sector"
-              placeholder="Tous les secteurs"
-              outlined
-              class="mt-1"
-            ></v-select>
-          </v-col>
-          <v-col cols="12" sm="6" md="4" class="text-left">
-            <label class="text-body-2">Repas par jour</label>
-            <div class="d-flex mt-1">
-              <v-text-field
-                v-model="appliedFilters.minMealCount"
-                type="number"
-                hide-details="auto"
-                outlined
-                label="Min"
-              />
-              <span class="mx-4 align-self-center">-</span>
-              <v-text-field
-                v-model="appliedFilters.maxMealCount"
-                type="number"
-                hide-details="auto"
-                outlined
-                label="Max"
-              />
-            </div>
-          </v-col>
-        </v-row>
-      </v-sheet>
-
       <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
       <v-progress-circular class="my-10" indeterminate v-if="!visibleCanteens"></v-progress-circular>
       <v-row v-else>
@@ -142,6 +148,7 @@ export default {
         minMealCount: null,
         maxMealCount: null,
       },
+      loadingError: null,
     }
   },
   components: { PublishedCanteenCard },
@@ -185,10 +192,10 @@ export default {
           .then((response) => {
             this.publishedCanteenCount = response.count
             this.visibleCanteens = response.results
-            // TODO : loading false
           })
           .catch(() => {
-            // TODO : Handle error
+            // TODO: notify team?
+            this.loadingError = true
           })
       )
     },
