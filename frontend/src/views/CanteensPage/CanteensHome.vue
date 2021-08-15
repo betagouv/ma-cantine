@@ -55,7 +55,7 @@
           <v-col cols="12" sm="6" md="4" class="text-left">
             <label for="select-department" class="text-body-2">Departement</label>
             <v-select
-              v-model="chosenDepartment"
+              v-model="appliedFilters.chosenDepartment"
               :items="departments"
               clearable
               hide-details
@@ -68,7 +68,7 @@
           <v-col cols="12" sm="6" md="4" class="text-left">
             <label for="select-sector" class="text-body-2">Secteur d'activité</label>
             <v-select
-              v-model="chosenSectors"
+              v-model="appliedFilters.chosenSectors"
               multiple
               :items="sectors"
               clearable
@@ -82,9 +82,21 @@
           <v-col cols="12" sm="6" md="4" class="text-left">
             <label class="text-body-2">Repas par jour</label>
             <div class="d-flex mt-1">
-              <v-text-field v-model="minMealCount" type="number" hide-details="auto" outlined label="Min" />
+              <v-text-field
+                v-model="appliedFilters.minMealCount"
+                type="number"
+                hide-details="auto"
+                outlined
+                label="Min"
+              />
               <span class="mx-4 align-self-center">-</span>
-              <v-text-field v-model="maxMealCount" type="number" hide-details="auto" outlined label="Max" />
+              <v-text-field
+                v-model="appliedFilters.maxMealCount"
+                type="number"
+                hide-details="auto"
+                outlined
+                label="Max"
+              />
             </div>
           </v-col>
         </v-row>
@@ -110,23 +122,26 @@
 <script>
 import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
+import { getObjectDiff } from "@/utils"
 
 export default {
   data() {
     return {
       limit: 6,
-      page: null,
       departments: jsonDepartments.map((x) => ({
         text: `${x.departmentCode} - ${x.departmentName}`,
         value: x.departmentCode,
       })),
-      chosenDepartment: null,
-      chosenSectors: [],
-      minMealCount: null,
-      maxMealCount: null,
-      searchTerm: null,
       visibleCanteens: null,
       publishedCanteenCount: null,
+      page: null,
+      searchTerm: null,
+      appliedFilters: {
+        chosenDepartment: null,
+        chosenSectors: [],
+        minMealCount: null,
+        maxMealCount: null,
+      },
     }
   },
   components: { PublishedCanteenCard },
@@ -139,12 +154,13 @@ export default {
     },
     query() {
       let query = {}
-      if (this.page) query.page = this.page
+      if (this.page) query.page = String(this.page)
       if (this.searchTerm) query.recherche = this.searchTerm
-      if (this.chosenDepartment) query.departement = this.chosenDepartment
-      if (this.chosenSectors && this.chosenSectors.length > 0) query.secteurs = this.chosenSectors.join("+")
-      if (this.minMealCount) query.minRepasJour = this.minMealCount
-      if (this.maxMealCount) query.maxRepasJour = this.maxMealCount
+      if (this.appliedFilters.chosenDepartment) query.departement = this.appliedFilters.chosenDepartment
+      if (this.appliedFilters.chosenSectors && this.appliedFilters.chosenSectors.length > 0)
+        query.secteurs = this.appliedFilters.chosenSectors.join("+")
+      if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
+      if (this.appliedFilters.maxMealCount) query.maxRepasJour = String(this.appliedFilters.maxMealCount)
       return query
     },
     sectors() {
@@ -155,11 +171,12 @@ export default {
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
-      if (this.chosenDepartment) queryParam += `&department=${this.chosenDepartment}`
-      if (this.minMealCount) queryParam += `&min_daily_meal_count=${this.minMealCount}`
-      if (this.maxMealCount) queryParam += `&max_daily_meal_count=${this.maxMealCount}`
+      if (this.appliedFilters.chosenDepartment) queryParam += `&department=${this.appliedFilters.chosenDepartment}`
+      if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
+      if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
 
-      for (let i = 0; i < this.chosenSectors.length; i++) queryParam += `&sectors=${this.chosenSectors[i]}`
+      for (let i = 0; i < this.appliedFilters.chosenSectors.length; i++)
+        queryParam += `&sectors=${this.appliedFilters.chosenSectors[i]}`
 
       return (
         fetch(`/api/v1/publishedCanteens/?${queryParam}`)
@@ -183,45 +200,38 @@ export default {
       const override = this.searchTerm ? { page: 1, recherche: this.searchTerm } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
-      this.fetchCurrentPage()
     },
-    applyFilter(filterQueryObject) {
-      // The empty catch is the suggested error management here :
-      // https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
-      // We reset to page 1 after applying a filter unless otherwise specified
-      const pageCorrectedQuery = Object.assign({ page: 1 }, filterQueryObject)
-      const currentQuery = this.$route.query
-      const shouldNavigate = Object.keys(pageCorrectedQuery).some(
-        (key) => String(pageCorrectedQuery[key]) !== currentQuery[key]
-      )
-      if (shouldNavigate) this.$router.push({ query: Object.assign(this.query, pageCorrectedQuery) }).catch(() => {})
+    changePage() {
+      const override = this.page ? { page: this.page } : { page: 1 }
+      const query = Object.assign(this.query, override)
+      this.$router.push({ query }).catch(() => {})
+    },
+    applyFilter() {
+      const changedKeys = Object.keys(getObjectDiff(this.query, this.$route.query))
+      const shouldNavigate = changedKeys.length > 0
+      if (shouldNavigate) this.$router.push({ query: Object.assign(this.query, { page: 1 }) }).catch(() => {})
       else this.fetchCurrentPage()
     },
     populateParameters() {
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
       this.searchTerm = this.$route.query.recherche || null
-      this.chosenDepartment = this.$route.query.departement || null
-      this.chosenSectors = this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || []
-      this.minMealCount = parseInt(this.$route.query.minRepasJour) || null
-      this.maxMealCount = parseInt(this.$route.query.maxRepasJour) || null
+      this.appliedFilters = {
+        chosenDepartment: this.$route.query.departement || null,
+        chosenSectors: this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || [],
+        minMealCount: parseInt(this.$route.query.minRepasJour) || null,
+        maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
+      }
     },
   },
   watch: {
-    page(newPage) {
-      this.applyFilter({ page: newPage })
+    appliedFilters: {
+      handler() {
+        this.applyFilter()
+      },
+      deep: true,
     },
-    chosenSectors(newChosenSectors) {
-      const hasSectors = newChosenSectors && newChosenSectors.length > 0
-      this.applyFilter(hasSectors ? { secteurs: newChosenSectors.join("+") } : {})
-    },
-    chosenDepartment(newDepartment) {
-      this.applyFilter(newDepartment ? { departement: newDepartment } : {})
-    },
-    maxMealCount(newMaxMealCount) {
-      this.applyFilter(newMaxMealCount ? { maxRepasJour: newMaxMealCount } : {})
-    },
-    minMealCount(newMinMealCount) {
-      this.applyFilter(newMinMealCount ? { minRepasJour: newMinMealCount } : {})
+    page() {
+      this.changePage()
     },
     $route() {
       this.populateParameters()
