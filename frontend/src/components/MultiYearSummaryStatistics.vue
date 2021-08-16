@@ -100,6 +100,11 @@ export default {
           horizontalAlign: "left",
           offsetX: 40,
         },
+        dataLabels: {
+          style: {
+            colors: ["#fff", "#222", "#222"],
+          },
+        },
       },
     }
   },
@@ -118,17 +123,18 @@ export default {
         {
           name: BIO,
           data: this.seriesData.bio,
-          color: "#0c7f46",
+          color: "#06622f",
         },
         {
           name: SUSTAINABLE,
           data: this.seriesData.sustainable,
-          color: "#ff8d7e",
+          color: "#86bfa3",
+          foreColor: "#000",
         },
         {
           name: OTHER,
           data: this.seriesData.other,
-          color: "#999",
+          color: "#ccc",
         },
       ]
     },
