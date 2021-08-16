@@ -18,10 +18,11 @@ def send_mail(**kwargs):
         text_content = text_maker.handle(html_content)
     else:
         text_content = kwargs.pop("message")
+    fail_silently = kwargs.pop("fail_silently", False)
     message = EmailMultiAlternatives(**kwargs, body=text_content)
     if html_content:
         message.attach_alternative(html_content, "text/html")
-    message.send()
+    message.send(fail_silently=fail_silently)
 
 
 def _add_additional_context(context, **kwargs):

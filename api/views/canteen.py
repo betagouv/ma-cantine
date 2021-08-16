@@ -87,6 +87,7 @@ class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
                 subject="Demande de publication sur ma cantine",
                 message=f"La cantine « {canteen.name} » a demandé d'être publiée.\nAdmin : {admin_url}",
                 to=[settings.CONTACT_EMAIL],
+                fail_silently=True,
             )
 
         return super(UpdateUserCanteenView, self).perform_update(serializer)
