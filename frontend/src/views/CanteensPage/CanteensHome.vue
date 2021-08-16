@@ -25,8 +25,7 @@
       </v-row>
     </v-card>
 
-    <v-sheet class="pa-6" rounded outlined>
-      <h2 class="text-left text-body-1 font-weight-black mb-8">Recherche</h2>
+    <v-sheet class="px-6" elevation="0">
       <v-row>
         <v-col cols="12" md="7" class="d-flex pt-0">
           <v-text-field
@@ -34,7 +33,7 @@
             ref="search"
             v-model="searchTerm"
             outlined
-            placeholder="Recherche par nom de l'établissement"
+            label="Recherche par nom de l'établissement"
             clearable
             @click:clear="clearSearch"
             @keyup.enter="search"
@@ -45,11 +44,36 @@
           </v-btn>
         </v-col>
       </v-row>
+    </v-sheet>
 
-      <h2 class="text-left text-body-1 font-weight-black mt-6 mb-1">Plus de filtres</h2>
+    <v-sheet class="pa-6 mt-8" rounded outlined>
+      <h2 class="text-left text-body-1 font-weight-black mb-2">
+        Filtres
+        <v-btn
+          color="primary"
+          v-if="hasActiveFilter"
+          plain
+          text
+          @click="clearFilters"
+          :ripple="false"
+          height="30"
+          class="pa-1 mt-n2"
+        >
+          <v-icon small class="mt-1 mr-1">mdi-close</v-icon>
+          <span class="text-decoration-underline">Désactiver tous les filtres</span>
+        </v-btn>
+      </h2>
       <v-row id="filters">
         <v-col cols="12" sm="6" md="4" class="text-left">
-          <label for="select-department" class="text-body-2">Departement</label>
+          <label
+            for="select-department"
+            :class="{
+              'text-body-2': true,
+              'active-filter-label': !!appliedFilters.chosenDepartment,
+            }"
+          >
+            Departement
+          </label>
           <v-select
             v-model="appliedFilters.chosenDepartment"
             :items="departments"
@@ -62,7 +86,12 @@
           ></v-select>
         </v-col>
         <v-col cols="12" sm="6" md="4" class="text-left">
-          <label for="select-sector" class="text-body-2">Secteur d'activité</label>
+          <label
+            for="select-sector"
+            :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.chosenSectors.length }"
+          >
+            Secteur d'activité
+          </label>
           <v-select
             v-model="appliedFilters.chosenSectors"
             multiple
@@ -76,7 +105,14 @@
           ></v-select>
         </v-col>
         <v-col cols="12" sm="6" md="4" class="text-left">
-          <label class="text-body-2">Repas par jour</label>
+          <label
+            :class="{
+              'text-body-2': true,
+              'active-filter-label': !!appliedFilters.minMealCount || !!appliedFilters.maxMealCount,
+            }"
+          >
+            Repas par jour
+          </label>
           <div class="d-flex mt-1">
             <v-text-field
               v-model="appliedFilters.minMealCount"
@@ -97,20 +133,12 @@
         </v-col>
       </v-row>
     </v-sheet>
-
-    <v-alert v-if="loadingError" type="error" outlined class="pa-4 my-6">
-      <p class="text-left text-body-2 red--text text--darken-4 ma-0">
-        Une erreur s'est produite en cherchant les cantines. L'équipe ma cantine a été notifiée. En plus, vous pouvez
-        nous contacter à contact@egalim.beta.gouv.fr.
-      </p>
-    </v-alert>
-    <div v-else-if="loading" class="pa-6">
+    <div v-if="loading" class="pa-6">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
-    <div v-else>
+    <div v-else-if="visibleCanteens && visibleCanteens.length > 0">
       <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
-      <v-progress-circular class="my-10" indeterminate v-if="!visibleCanteens"></v-progress-circular>
-      <v-row v-else>
+      <v-row>
         <v-col v-for="canteen in visibleCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
           <PublishedCanteenCard :canteen="canteen" />
         </v-col>
@@ -121,6 +149,13 @@
         :length="Math.ceil(publishedCanteenCount / limit)"
         v-if="$vuetify.breakpoint.smAndDown"
       ></v-pagination>
+    </div>
+    <div v-else class="d-flex flex-column align-center py-10">
+      <v-icon large>mdi-inbox-remove</v-icon>
+      <p class="text-body-1 grey--text text--darken-1 my-2">Nous n'avons pas trouvé des cantines avec ces paramètres</p>
+      <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
+        Désactiver tous les filtres
+      </v-btn>
     </div>
   </div>
 </template>
@@ -148,7 +183,6 @@ export default {
         minMealCount: null,
         maxMealCount: null,
       },
-      loadingError: null,
     }
   },
   components: { PublishedCanteenCard },
@@ -173,6 +207,14 @@ export default {
     sectors() {
       return this.$store.state.sectors.map((x) => ({ text: x.name, value: x.id }))
     },
+    hasActiveFilter() {
+      return (
+        this.appliedFilters.chosenDepartment !== null ||
+        this.appliedFilters.chosenSectors.length > 0 ||
+        this.appliedFilters.minMealCount !== null ||
+        this.appliedFilters.maxMealCount !== null
+      )
+    },
   },
   methods: {
     fetchCurrentPage() {
@@ -185,19 +227,19 @@ export default {
       for (let i = 0; i < this.appliedFilters.chosenSectors.length; i++)
         queryParam += `&sectors=${this.appliedFilters.chosenSectors[i]}`
 
-      return (
-        fetch(`/api/v1/publishedCanteens/?${queryParam}`)
-          // verifyResponse
-          .then((response) => response.json())
-          .then((response) => {
-            this.publishedCanteenCount = response.count
-            this.visibleCanteens = response.results
-          })
-          .catch(() => {
-            // TODO: notify team?
-            this.loadingError = true
-          })
-      )
+      return fetch(`/api/v1/publishedCanteens/?${queryParam}`)
+        .then((response) => {
+          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          return response.json()
+        })
+        .then((response) => {
+          this.publishedCanteenCount = response.count
+          this.visibleCanteens = response.results
+        })
+        .catch(() => {
+          this.publishedCanteenCount = 0
+          this.$store.dispatch("notifyServerError")
+        })
     },
     clearSearch() {
       this.searchTerm = ""
@@ -207,6 +249,14 @@ export default {
       const override = this.searchTerm ? { page: 1, recherche: this.searchTerm } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
+    },
+    clearFilters() {
+      this.appliedFilters = {
+        chosenDepartment: null,
+        chosenSectors: [],
+        minMealCount: null,
+        maxMealCount: null,
+      }
     },
     changePage() {
       const override = this.page ? { page: this.page } : { page: 1 }
@@ -249,3 +299,15 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.v-btn--plain:not(.v-btn--active):not(.v-btn--loading):not(:focus):not(:hover) >>> .v-btn__content {
+  opacity: 1;
+}
+.active-filter-label {
+  font-weight: bold;
+}
+.active-filter-label::after {
+  content: "*";
+}
+</style>
