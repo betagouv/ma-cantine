@@ -110,6 +110,7 @@
               'text-body-2': true,
               'active-filter-label': !!appliedFilters.minMealCount || !!appliedFilters.maxMealCount,
             }"
+            id="meal-count"
           >
             Repas par jour
           </label>
@@ -122,6 +123,7 @@
               hide-details="auto"
               outlined
               label="Min"
+              aria-describedby="meal-count"
             />
             <span class="mx-4 align-self-center">-</span>
             <v-text-field
@@ -132,6 +134,7 @@
               hide-details="auto"
               outlined
               label="Max"
+              aria-describedby="meal-count"
             />
           </div>
         </v-col>
