@@ -115,16 +115,20 @@
           </label>
           <div class="d-flex mt-1">
             <v-text-field
-              v-model="appliedFilters.minMealCount"
-              type="number"
+              :value="appliedFilters.minMealCount"
+              ref="minMealCount"
+              :rules="[validators.nonNegativeOrEmpty]"
+              @change="onChangeMealCount('minMealCount')"
               hide-details="auto"
               outlined
               label="Min"
             />
             <span class="mx-4 align-self-center">-</span>
             <v-text-field
-              v-model="appliedFilters.maxMealCount"
-              type="number"
+              :value="appliedFilters.maxMealCount"
+              ref="maxMealCount"
+              :rules="[validators.nonNegativeOrEmpty]"
+              @change="onChangeMealCount('maxMealCount')"
               hide-details="auto"
               outlined
               label="Max"
@@ -164,6 +168,7 @@
 import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
 import { getObjectDiff } from "@/utils"
+import validators from "@/validators"
 
 export default {
   data() {
@@ -216,6 +221,9 @@ export default {
         this.appliedFilters.minMealCount !== null ||
         this.appliedFilters.maxMealCount !== null
       )
+    },
+    validators() {
+      return validators
     },
   },
   methods: {
@@ -280,6 +288,9 @@ export default {
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
       }
+    },
+    onChangeMealCount(ref) {
+      if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue)
     },
   },
   watch: {
