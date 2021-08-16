@@ -14,7 +14,7 @@
 <script>
 import VueApexCharts from "vue-apexcharts"
 
-const VALUE_DESCRIPTION = "Pourcentage de valeur total d'achats alimentaires (en HT)"
+const VALUE_DESCRIPTION = "Pourcentage du total d'achats alimentaires (en HT)"
 const NO_DATA = "Données non renseignées"
 const BIO = "Bio"
 const SUSTAINABLE = "Qualité et durable (hors bio)"
