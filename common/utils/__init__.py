@@ -30,3 +30,23 @@ def _add_additional_context(context, **kwargs):
     if reply_to and reply_to != [settings.CONTACT_EMAIL]:
         replies_to_team = False
     context["repliesToTeam"] = replies_to_team
+
+
+def siret_luhn(siret):
+    """
+    Performs length and Luhn validation
+    (https://portal.hardis-group.com/pages/viewpage.action?pageId=120357227)
+    """
+    if siret is None or siret == "":
+        return
+    if len(siret) != 14:
+        return "14 caractères numériques sont attendus"
+    odd_digits = [int(n) for n in siret[-1::-2]]
+    even_digits = [int(n) for n in siret[-2::-2]]
+    checksum = sum(odd_digits)
+    for digit in even_digits:
+        checksum += sum(int(n) for n in str(digit * 2))
+    luhn_checksum_valid = checksum % 10 == 0
+
+    if not luhn_checksum_valid:
+        return "Le numéro SIRET n'est pas valide."

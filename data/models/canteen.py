@@ -1,3 +1,4 @@
+from common.utils import siret_luhn
 from urllib.parse import quote
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -106,25 +107,9 @@ class Canteen(SoftDeletionModel):
 
     @staticmethod
     def validate_siret(siret, field_name):
-        """
-        Performs length and Luhn validation
-        (https://portal.hardis-group.com/pages/viewpage.action?pageId=120357227)
-        """
-        if siret is None or siret == "":
-            return
-        if len(siret) != 14:
-            raise ValidationError(
-                {field_name: "14 caractères numériques sont attendus"}
-            )
-        odd_digits = [int(n) for n in siret[-1::-2]]
-        even_digits = [int(n) for n in siret[-2::-2]]
-        checksum = sum(odd_digits)
-        for digit in even_digits:
-            checksum += sum(int(n) for n in str(digit * 2))
-        luhn_checksum_valid = checksum % 10 == 0
-
-        if not luhn_checksum_valid:
-            raise ValidationError({field_name: "Le numéro SIRET n'est pas valide."})
+        error_message = siret_luhn(siret)
+        if error_message:
+            raise ValidationError({field_name: error_message})
 
     def __str__(self):
         return f'Cantine "{self.name}"'

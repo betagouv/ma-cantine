@@ -128,7 +128,11 @@ class TestCanteenApi(APITestCase):
         """
         canteen = CanteenFactory.create(city="Paris")
         canteen.managers.add(authenticate.user)
-        payload = {"city": "Lyon", "siret": "TESTING123", "management_type": "direct"}
+        payload = {
+            "city": "Lyon",
+            "siret": "21340172201787",
+            "management_type": "direct",
+        }
         response = self.client.patch(
             reverse("single_canteen", kwargs={"pk": canteen.id}), payload
         )
@@ -136,7 +140,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         created_canteen = Canteen.objects.get(pk=canteen.id)
         self.assertEqual(created_canteen.city, "Lyon")
-        self.assertEqual(created_canteen.siret, "TESTING123")
+        self.assertEqual(created_canteen.siret, "21340172201787")
         self.assertEqual(created_canteen.management_type, "direct")
 
     @override_settings(CONTACT_EMAIL="contact-test@example.com")
@@ -172,3 +176,34 @@ class TestCanteenApi(APITestCase):
 
         # Model was only soft-deleted but remains in the DB
         self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
+
+    @authenticate
+    def test_create_canteen(self):
+        payload = {
+            "name": "My canteen",
+            "city": "Lyon",
+            "siret": "21340172201787",
+            "management_type": "direct",
+        }
+
+        response = self.client.post(reverse("user_canteens"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        created_canteen = Canteen.objects.get(pk=body["id"])
+        self.assertIn(authenticate.user, created_canteen.managers.all())
+
+    @authenticate
+    def test_create_canteen_bad_siret(self):
+        payload = {"name": "My canteen", "siret": "0123"}
+
+        response = self.client.post(reverse("user_canteens"), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(body["siret"], ["14 caractères numériques sont attendus"])
+
+        payload = {"name": "My canteen", "siret": "01234567891011"}
+
+        response = self.client.post(reverse("user_canteens"), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(body["siret"], ["Le numéro SIRET n'est pas valide."])
