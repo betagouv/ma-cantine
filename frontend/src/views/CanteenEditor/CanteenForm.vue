@@ -18,7 +18,13 @@
           ></v-text-field>
 
           <p class="body-2 mt-6 mb-2">SIRET</p>
-          <v-text-field hide-details="auto" solo v-model="canteen.siret"></v-text-field>
+          <v-text-field
+            hide-details="auto"
+            solo
+            v-model="canteen.siret"
+            :rules="[validators.required]"
+            :error-messages="errors.siret"
+          ></v-text-field>
         </v-col>
 
         <v-col cols="12" md="4" height="100%" class="d-flex flex-column">
@@ -153,6 +159,7 @@ export default {
   data() {
     return {
       canteen: {},
+      errors: {},
       formIsValid: true,
       publicationRequested: false,
       bypassLeaveWarning: false,
@@ -236,7 +243,8 @@ export default {
   },
   methods: {
     saveCanteen() {
-      this.$refs.form.validate()
+      this.errors = {}
+      this.formIsValid = this.$refs.form.validate()
 
       if (!this.formIsValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
@@ -263,8 +271,15 @@ export default {
           })
           this.$router.push({ name: "ManagementPage" })
         })
-        .catch(() => {
-          this.$store.dispatch("notifyServerError")
+        .catch((error) => {
+          if (error.name === "BadRequestError") {
+            error.response.json().then((data) => {
+              this.errors = data
+              this.$store.dispatch("notifyRequiredFieldsError")
+            })
+          } else {
+            this.$store.dispatch("notifyServerError")
+          }
         })
     },
     onProfilePhotoUploadClick() {
