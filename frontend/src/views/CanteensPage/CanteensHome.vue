@@ -205,7 +205,9 @@ export default {
       return query
     },
     sectors() {
-      return this.$store.state.sectors.map((x) => ({ text: x.name, value: x.id }))
+      return this.$store.state.sectors
+        .map((x) => ({ text: x.name, value: x.id }))
+        .sort((a, b) => (a.text > b.text ? 1 : -1))
     },
     hasActiveFilter() {
       return (
