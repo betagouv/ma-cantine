@@ -1,13 +1,17 @@
 <template>
   <div>
-    <VueApexCharts
-      :options="chartOptions"
-      :series="series"
-      role="img"
-      :aria-labelledby="headingId"
-      aria-describedby="text"
-    />
-    <p id="text" class="d-none">{{ description }}</p>
+    <div v-if="years.length">
+      <VueApexCharts
+        :options="chartOptions"
+        :series="series"
+        role="img"
+        :aria-labelledby="headingId"
+        aria-describedby="text"
+        v-if="years.length"
+      />
+      <p id="text" class="d-none">{{ description }}</p>
+    </div>
+    <p v-else class="my-4">Données non renseignées</p>
   </div>
 </template>
 
@@ -15,7 +19,6 @@
 import VueApexCharts from "vue-apexcharts"
 
 const VALUE_DESCRIPTION = "Pourcentage du total d'achats alimentaires (en HT)"
-const NO_DATA = "Données non renseignées"
 const BIO = "Bio"
 const SUSTAINABLE = "Qualité et durable (hors bio)"
 const OTHER = "Hors EGAlim"
@@ -29,10 +32,18 @@ export default {
     headingId: String,
   },
   data() {
+    let years = []
     const diagArray = Object.values(this.diagnostics)
-    const years = diagArray.map((d) => d.year)
+    const completedDiagnostics = []
+    diagArray.forEach((d) => {
+      if (!strictIsNaN(d.valueBioHt) && !strictIsNaN(d.valueSustainableHt) && !strictIsNaN(d.valueTotalHt)) {
+        completedDiagnostics.push(d)
+        years.push(d.year)
+      }
+    })
     return {
       years,
+      completedDiagnostics,
       chartOptions: {
         chart: {
           type: "bar",
@@ -41,28 +52,29 @@ export default {
         },
         plotOptions: {
           bar: {
-            horizontal: true,
+            columnWidth: years.length < 3 ? "50%" : "70%",
           },
         },
         xaxis: {
           categories: years,
-          labels: {
-            formatter: percentageFormatter,
-          },
           title: {
-            text: VALUE_DESCRIPTION,
+            text: "Année",
           },
         },
         yaxis: {
           title: {
-            text: "Année",
+            text: VALUE_DESCRIPTION,
+          },
+          labels: {
+            formatter: percentageFormatter,
           },
           max: 100,
+          min: 0,
         },
         annotations: {
-          xaxis: [
+          yaxis: [
             {
-              x: 50,
+              y: 50,
               borderColor: "#333",
               label: {
                 borderColor: "#333",
@@ -76,7 +88,7 @@ export default {
           ],
         },
         tooltip: {
-          y: {
+          x: {
             formatter: percentageFormatter,
           },
         },
@@ -93,25 +105,12 @@ export default {
   },
   computed: {
     seriesData() {
-      const diagArray = Object.values(this.diagnostics)
-      diagArray.forEach((d) => {
-        if (myIsNaN(d.valueBioHt) || myIsNaN(d.valueSustainableHt) || myIsNaN(d.valueTotalHt)) {
-          d.incompleteValues = true
-        }
-      })
       return {
-        bio: diagArray.map((d) => getPercentage(d.valueBioHt, d.valueTotalHt)),
-        sustainable: diagArray.map((d) => getPercentage(d.valueSustainableHt, d.valueTotalHt)),
-        other: diagArray.map((d) => {
-          if (d.incompleteValues) {
-            return undefined
-          } else {
-            return (
-              100 - getPercentage(d.valueBioHt, d.valueTotalHt) - getPercentage(d.valueSustainableHt, d.valueTotalHt)
-            )
-          }
+        bio: this.completedDiagnostics.map((d) => getPercentage(d.valueBioHt, d.valueTotalHt)),
+        sustainable: this.completedDiagnostics.map((d) => getPercentage(d.valueSustainableHt, d.valueTotalHt)),
+        other: this.completedDiagnostics.map((d) => {
+          return 100 - getPercentage(d.valueBioHt, d.valueTotalHt) - getPercentage(d.valueSustainableHt, d.valueTotalHt)
         }),
-        incompleteValues: diagArray.map((d) => d.incompleteValues),
       }
     },
     series() {
@@ -129,7 +128,7 @@ export default {
         {
           name: OTHER,
           data: this.seriesData.other,
-          color: "#7F7FC8",
+          color: "#999",
         },
       ]
     },
@@ -137,13 +136,9 @@ export default {
       let description = `${VALUE_DESCRIPTION}. `
       this.years.forEach((year, idx) => {
         description += `${year} : `
-        if (this.seriesData.incompleteValues[idx]) {
-          description += `${NO_DATA}. `
-        } else {
-          description += `${percentageFormatter(this.seriesData.bio[idx])} ${BIO}, ${percentageFormatter(
-            this.seriesData.sustainable[idx]
-          )} ${SUSTAINABLE}. `
-        }
+        description += `${percentageFormatter(this.seriesData.bio[idx])} ${BIO}, ${percentageFormatter(
+          this.seriesData.sustainable[idx]
+        )} ${SUSTAINABLE}. `
       })
       return description
     },
@@ -151,14 +146,14 @@ export default {
 }
 
 function getPercentage(partialValue, totalValue) {
-  if (myIsNaN(partialValue) || myIsNaN(totalValue) || totalValue === 0) {
+  if (strictIsNaN(partialValue) || strictIsNaN(totalValue) || totalValue === 0) {
     return null
   } else {
     return Math.round((100 * partialValue) / totalValue)
   }
 }
 
-function myIsNaN(x) {
+function strictIsNaN(x) {
   return Number(x) !== x
 }
 
