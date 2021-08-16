@@ -4,7 +4,6 @@ from data.models import Canteen, Sector
 from .diagnostic import DiagnosticSerializer
 from .user import CanteenManagerSerializer
 from .managerinvitation import ManagerInvitationSerializer
-from common.utils import siret_luhn
 
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
@@ -57,6 +56,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "publication_status",
             "daily_meal_count",
             "siret",
+            "central_producer_siret",
             "management_type",
             "production_type",
             "diagnostics",
@@ -65,12 +65,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "managers",
             "manager_invitations",
         )
-
-    def validate_siret(self, value):
-        error_message = siret_luhn(value)
-        if error_message:
-            raise serializers.ValidationError(error_message)
-        return value
 
 
 class ManagingTeamSerializer(serializers.ModelSerializer):

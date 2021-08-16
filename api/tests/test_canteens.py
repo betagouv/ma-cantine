@@ -207,3 +207,12 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["Le numéro SIRET n'est pas valide."])
+
+        payload = {"name": "My canteen", "central_producer_siret": "01234567891011"}
+
+        response = self.client.post(reverse("user_canteens"), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(
+            body["centralProducerSiret"], ["Le numéro SIRET n'est pas valide."]
+        )
