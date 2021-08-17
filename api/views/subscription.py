@@ -2,8 +2,7 @@ import logging
 import json
 from django.conf import settings
 from django.http import JsonResponse
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
+from common.utils import send_mail
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from rest_framework.views import APIView
@@ -27,11 +26,10 @@ class SubscribeBetaTester(APIView):
                 "measures": key_measures,
             }
             send_mail(
-                "Nouveau Béta-testeur ma cantine",
-                render_to_string("subscription_beta_tester.txt", context),
-                settings.DEFAULT_FROM_EMAIL,
-                [settings.CONTACT_EMAIL],
-                html_message=render_to_string("subscription_beta_tester.html", context),
+                subject="Nouveau Béta-testeur ma cantine",
+                template="subscription_beta_tester",
+                context=context,
+                to=[settings.CONTACT_EMAIL],
             )
             return JsonResponse({}, status=status.HTTP_201_CREATED)
         except Exception as e:

@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     "web",
     "magicauth",
     "django_filters",
+    "common",
 ]
 
 MIDDLEWARE = [
