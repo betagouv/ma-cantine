@@ -293,7 +293,7 @@ export default {
       }
     },
     onChangeMealCount(ref) {
-      if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue)
+      if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
     },
   },
   watch: {
