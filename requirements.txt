@@ -1,8 +1,8 @@
 asgiref==3.3.4
 astroid==2.5.6
 attrs==21.2.0
-boto3==1.18.16
-botocore==1.21.16
+boto3==1.18.22
+botocore==1.21.22
 certifi==2020.12.5
 chardet==4.0.0
 charset-normalizer==2.0.4
@@ -19,6 +19,7 @@ djangorestframework-camel-case==1.2.0
 drf-base64==2.0
 factory-boy==3.2.0
 Faker==8.8.0
+html2text==2020.1.16
 idna==2.10
 iniconfig==1.1.1
 isort==5.8.0
