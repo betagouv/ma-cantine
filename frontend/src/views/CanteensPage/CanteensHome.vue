@@ -323,7 +323,8 @@ export default {
 .active-filter-label {
   font-weight: bold;
 }
-.active-filter-label::after {
-  content: "*";
+.active-filter-label::before {
+  content: "⚫︎";
+  color: #0c7f46;
 }
 </style>
