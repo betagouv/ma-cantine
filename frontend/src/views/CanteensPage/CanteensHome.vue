@@ -27,21 +27,23 @@
 
     <v-sheet class="px-6" elevation="0">
       <v-row>
-        <v-col cols="12" md="7" class="d-flex pt-0">
-          <v-text-field
-            hide-details="auto"
-            ref="search"
-            v-model="searchTerm"
-            outlined
-            label="Recherche par nom de l'établissement"
-            clearable
-            @click:clear="clearSearch"
-            @keyup.enter="search"
-          ></v-text-field>
-          <v-btn outlined color="primary" large class="ml-4 mt-1" height="48px" @click="search">
-            <v-icon>mdi-magnify</v-icon>
-            Chercher
-          </v-btn>
+        <v-col cols="12" md="7" class="pt-0">
+          <form role="search" class="d-block d-sm-flex">
+            <v-text-field
+              hide-details="auto"
+              ref="search"
+              v-model="searchTerm"
+              outlined
+              label="Recherche par nom de l'établissement"
+              clearable
+              @click:clear="clearSearch"
+              @keyup.enter="search"
+            ></v-text-field>
+            <v-btn outlined color="primary" large class="ml-4 mt-1" height="48px" @click="search">
+              <v-icon>mdi-magnify</v-icon>
+              Chercher
+            </v-btn>
+          </form>
         </v-col>
       </v-row>
     </v-sheet>
