@@ -28,7 +28,7 @@
     <v-sheet class="px-6" elevation="0">
       <v-row>
         <v-col cols="12" md="7" class="pt-0">
-          <form role="search" class="d-block d-sm-flex">
+          <form role="search" class="d-block d-sm-flex" onsubmit="return false">
             <v-text-field
               hide-details="auto"
               ref="search"
