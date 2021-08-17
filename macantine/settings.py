@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     "api",
     "web",
     "magicauth",
+    "common",
 ]
 
 MIDDLEWARE = [
