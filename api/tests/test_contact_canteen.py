@@ -23,14 +23,18 @@ class TestCanteenContact(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(len(mail.outbox[0].to), canteen.managers.all().count())
-        self.assertEqual(mail.outbox[0].from_email, "contact@example.com")
-        self.assertIn("test@example.com", mail.outbox[0].body)
-        self.assertIn("Camille Dupont", mail.outbox[0].body)
-        self.assertIn("Test &lt;b&gt;message&lt;/b&gt;", mail.outbox[0].body)
+        email = mail.outbox[0]
+        # sent to all managers and our team
+        self.assertEqual(len(email.to), canteen.managers.all().count() + 1)
+        self.assertEqual(email.from_email, "contact@example.com")
+        self.assertIn("Camille Dupont", email.body)
+        self.assertIn("Test <b>message</b>", email.body)
+        self.assertIn("contact@example.com", email.body)
+        self.assertEqual(len(email.reply_to), canteen.managers.all().count() + 2)
+        self.assertIn("test@example.com", email.reply_to)
 
     @override_settings(DEFAULT_FROM_EMAIL="contact@example.com")
-    def test_contact_canteen(self):
+    def test_anonymous_contact(self):
         """
         If a name isn't given, gracefully handle email text
         """
@@ -41,6 +45,6 @@ class TestCanteenContact(APITestCase):
             "name": "",
             "message": "Test",
         }
-        response = self.client.post(reverse("contact_canteen"), payload)
+        self.client.post(reverse("contact_canteen"), payload)
 
         self.assertIn("Une personne", mail.outbox[0].body)
