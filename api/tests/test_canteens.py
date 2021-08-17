@@ -190,6 +190,21 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].get("name"), "Mochi")
 
+    def test_search_accented_result(self):
+        CanteenFactory.create(publication_status="published", name="Wakamé")
+        CanteenFactory.create(publication_status="published", name="Shiitaké")
+
+        search_term = "wakame"
+        response = self.client.get(
+            f"{reverse('published_canteens')}?search={search_term}"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].get("name"), "Wakamé")
+
     def test_search_multiple_results(self):
         CanteenFactory.create(publication_status="published", name="Sudachi")
         CanteenFactory.create(publication_status="published", name="Wasabi")
