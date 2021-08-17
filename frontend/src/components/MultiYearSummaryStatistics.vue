@@ -8,17 +8,19 @@
         :aria-labelledby="headingId"
         aria-describedby="text"
         v-if="years.length"
+        :height="this.height || 'auto'"
+        :width="this.width || '100%'"
       />
       <p id="text" class="d-none">{{ description }}</p>
     </div>
-    <p v-else class="my-4">Données non renseignées</p>
+    <p v-else class="my-4 text-left">Données non renseignées</p>
   </div>
 </template>
 
 <script>
 import VueApexCharts from "vue-apexcharts"
 
-const VALUE_DESCRIPTION = "Pourcentage du total d'achats alimentaires (en HT)"
+const VALUE_DESCRIPTION = "Pourcentage d'achats"
 const BIO = "Bio"
 const SUSTAINABLE = "Qualité et durable (hors bio)"
 const OTHER = "Hors EGAlim"
@@ -30,6 +32,8 @@ export default {
   props: {
     diagnostics: Object,
     headingId: String,
+    height: String,
+    width: String,
   },
   data() {
     let years = []
@@ -44,68 +48,6 @@ export default {
     return {
       years,
       completedDiagnostics,
-      chartOptions: {
-        chart: {
-          type: "bar",
-          stacked: true,
-          toolbar: { tools: { download: false } },
-        },
-        plotOptions: {
-          bar: {
-            columnWidth: years.length < 3 ? "50%" : "70%",
-          },
-        },
-        xaxis: {
-          categories: years,
-          title: {
-            text: "Année",
-          },
-        },
-        yaxis: {
-          title: {
-            text: VALUE_DESCRIPTION,
-          },
-          labels: {
-            formatter: percentageFormatter,
-          },
-          max: 100,
-          min: 0,
-        },
-        annotations: {
-          yaxis: [
-            {
-              y: 50,
-              borderColor: "#333",
-              label: {
-                borderColor: "#333",
-                style: {
-                  color: "#fff",
-                  background: "#333",
-                },
-                text: "Objectif EGAlim 2022",
-              },
-            },
-          ],
-        },
-        tooltip: {
-          x: {
-            formatter: percentageFormatter,
-          },
-        },
-        fill: {
-          opacity: 1,
-        },
-        legend: {
-          position: "top",
-          horizontalAlign: "left",
-          offsetX: 40,
-        },
-        dataLabels: {
-          style: {
-            colors: ["#fff", "#222", "#222"],
-          },
-        },
-      },
     }
   },
   computed: {
@@ -128,7 +70,7 @@ export default {
         {
           name: SUSTAINABLE,
           data: this.seriesData.sustainable,
-          color: "#86bfa3",
+          color: "#55a57e",
           foreColor: "#000",
         },
         {
@@ -147,6 +89,61 @@ export default {
         )} ${SUSTAINABLE}. `
       })
       return description
+    },
+    chartOptions() {
+      const legendPosition = this.$vuetify.breakpoint.smAndUp ? "right" : "top"
+      const legendAlign = this.$vuetify.breakpoint.smAndUp ? "left" : "center"
+      return {
+        chart: {
+          type: "bar",
+          stacked: true,
+          toolbar: { tools: { download: false } },
+          animations: {
+            enabled: false,
+          },
+        },
+        states: {
+          hover: {
+            filter: {
+              type: "darken",
+              value: 0.75,
+            },
+          },
+        },
+        xaxis: {
+          categories: this.years,
+        },
+        yaxis: {
+          title: {
+            text: this.$vuetify.breakpoint.xs ? undefined : VALUE_DESCRIPTION,
+          },
+          labels: {
+            formatter: percentageFormatter,
+          },
+          max: 100,
+          min: 0,
+          tickAmount: 4,
+        },
+        annotations: {
+          yaxis: [
+            {
+              y: 50,
+              borderColor: "#333",
+            },
+            {
+              y: 20,
+              borderColor: "#333",
+            },
+          ],
+        },
+        legend: {
+          position: legendPosition,
+          horizontalAlign: legendAlign,
+        },
+        dataLabels: {
+          enabled: false,
+        },
+      }
     },
   },
 }
@@ -167,3 +164,9 @@ function percentageFormatter(val) {
   return val + " %"
 }
 </script>
+
+<style scoped>
+div >>> .apexcharts-legend.apexcharts-align-left {
+  text-align: left;
+}
+</style>

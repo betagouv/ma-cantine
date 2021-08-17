@@ -8,8 +8,18 @@
               Données d'approvisionnement en produits de qualité et durables
             </h2>
           </v-card-title>
-          <v-card-text>
-            <MultiYearSummaryStatistics :diagnostics="diagnostics" headingId="appro-heading" />
+          <v-card-text class="pb-0">
+            <p class="text-left grey--text text--darken-3">
+              La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent
+              comporter, au cours de l'année 2022, 50% de produits de qualité et durables dont 20% issus de
+              l’agriculture biologique ou en conversion.
+            </p>
+            <MultiYearSummaryStatistics
+              :diagnostics="diagnostics"
+              headingId="appro-heading"
+              height="260"
+              :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+            />
             <KeyMeasureResource :baseComponent="qualityMeasure.baseComponent" v-if="showResources" />
           </v-card-text>
         </v-card>
