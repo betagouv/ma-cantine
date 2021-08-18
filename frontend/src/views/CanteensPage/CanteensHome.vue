@@ -74,7 +74,7 @@
               'active-filter-label': !!appliedFilters.chosenDepartment,
             }"
           >
-            Departement
+            Département
           </label>
           <v-select
             v-model="appliedFilters.chosenDepartment"
@@ -82,7 +82,7 @@
             clearable
             hide-details
             id="select-department"
-            placeholder="Tous les departements"
+            placeholder="Tous les départements"
             class="mt-1"
             outlined
           ></v-select>
