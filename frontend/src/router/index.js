@@ -278,7 +278,7 @@ const routes = [
     },
   },
   {
-    path: "/declaration-d-accessibilite",
+    path: "/accessibilite",
     name: "AccessibilityDeclaration",
     component: AccessibilityDeclaration,
     meta: {
