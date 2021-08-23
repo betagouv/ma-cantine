@@ -17,9 +17,9 @@
             <v-icon small class="mr-2">mdi-format-list-checks</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Diagnostics</v-list-item-title>
           </v-list-item>
-          <div v-if="$route.name === 'DiagnosticModification' || $route.name.startsWith('NewDiagnostic')">
+          <div v-if="$vuetify.breakpoint.smAndUp">
             <v-list-item
-              v-for="diagnostic in canteen.diagnostics"
+              v-for="diagnostic in orderedDiagnostics"
               :key="`diagnostic-${diagnostic.id}`"
               :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
               class="mb-0"
@@ -48,6 +48,9 @@ export default {
   computed: {
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
+    },
+    orderedDiagnostics() {
+      return [...this.canteen.diagnostics].sort((a, b) => (a.year > b.year ? -1 : 1))
     },
   },
 }
