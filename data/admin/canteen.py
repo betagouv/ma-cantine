@@ -83,4 +83,5 @@ class CanteenAdmin(SoftDeletionAdmin):
                 template="canteen_published",
                 context=context,
                 to=contact_list,
+                fail_silently=True,
             )
