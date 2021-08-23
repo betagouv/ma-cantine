@@ -32,22 +32,26 @@
     </div>
     <div class="my-12">
       <h2 class="mb-0 text-h5 font-weight-black">Mes diagnostics</h2>
-      <v-btn text color="primary" class="mt-2 mb-8 ml-n4" :to="{ name: 'NewDiagnostic' }">
-        <v-icon class="mr-2">mdi-plus</v-icon>
-        Ajouter un diagnostic
-      </v-btn>
-      <v-btn text color="primary" class="mt-2 mb-8" :to="{ name: 'DiagnosticsImporter' }">
-        <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
-        Importer plusieurs diagnostics
-      </v-btn>
+      <div class="mt-2 mb-8">
+        <v-btn text color="primary" class="ml-n4" :to="{ name: 'NewDiagnostic' }">
+          <v-icon class="mr-2">mdi-plus</v-icon>
+          Ajouter un diagnostic
+        </v-btn>
+        <v-btn text color="primary" :to="{ name: 'DiagnosticsImporter' }">
+          <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
+          Importer plusieurs diagnostics
+        </v-btn>
+      </div>
 
       <div v-for="canteen in $store.state.userCanteens" :key="`diag-${canteen.id}`">
-        <v-row>
-          <v-col cols="12" v-for="diagnostic in sortedDiagnosticsForCanteen(canteen)" :key="diagnostic.id">
-            <DiagnosticCard :diagnostic="diagnostic" :class="{ 'fill-height': $vuetify.breakpoint.mdAndUp }" />
-          </v-col>
-        </v-row>
-        <v-divider v-if="canteen.diagnostics && canteen.diagnostics.length" class="my-8"></v-divider>
+        <div v-if="canteen.diagnostics && canteen.diagnostics.length">
+          <v-row>
+            <v-col cols="12" v-for="diagnostic in sortedDiagnosticsForCanteen(canteen)" :key="diagnostic.id">
+              <DiagnosticCard :diagnostic="diagnostic" :class="{ 'fill-height': $vuetify.breakpoint.mdAndUp }" />
+            </v-col>
+          </v-row>
+          <v-divider class="my-8"></v-divider>
+        </div>
       </div>
     </div>
     <div class="my-8">
