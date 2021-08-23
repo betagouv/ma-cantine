@@ -3,7 +3,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, ManagerInvitationFactory
+from data.factories import CanteenFactory, ManagerInvitationFactory, SectorFactory
 from data.models import Canteen
 from .utils import authenticate
 
@@ -216,3 +216,176 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(
             body["centralProducerSiret"], ["Le numéro SIRET n'est pas valide."]
         )
+
+    def test_search_single_result(self):
+        CanteenFactory.create(publication_status="published", name="Shiso")
+        CanteenFactory.create(publication_status="published", name="Wasabi")
+        CanteenFactory.create(publication_status="published", name="Mochi")
+        CanteenFactory.create(publication_status="published", name="Umami")
+
+        search_term = "mochi"
+        response = self.client.get(
+            f"{reverse('published_canteens')}?search={search_term}"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].get("name"), "Mochi")
+
+    def test_search_accented_result(self):
+        CanteenFactory.create(publication_status="published", name="Wakamé")
+        CanteenFactory.create(publication_status="published", name="Shiitaké")
+
+        search_term = "wakame"
+        response = self.client.get(
+            f"{reverse('published_canteens')}?search={search_term}"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].get("name"), "Wakamé")
+
+    def test_search_multiple_results(self):
+        CanteenFactory.create(publication_status="published", name="Sudachi")
+        CanteenFactory.create(publication_status="published", name="Wasabi")
+        CanteenFactory.create(publication_status="published", name="Mochi")
+        CanteenFactory.create(publication_status="published", name="Umami")
+
+        search_term = "chi"
+        response = self.client.get(
+            f"{reverse('published_canteens')}?search={search_term}"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+
+        self.assertEqual(len(results), 2)
+
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Mochi", result_names)
+        self.assertIn("Sudachi", result_names)
+
+    def test_meal_count_filter(self):
+        CanteenFactory.create(
+            publication_status="published", daily_meal_count=10, name="Shiso"
+        )
+        CanteenFactory.create(
+            publication_status="published", daily_meal_count=15, name="Wasabi"
+        )
+        CanteenFactory.create(
+            publication_status="published", daily_meal_count=20, name="Mochi"
+        )
+        CanteenFactory.create(
+            publication_status="published", daily_meal_count=25, name="Umami"
+        )
+
+        # Only "Shiso" is between 9 and 11 meal count
+        min_meal_count = 9
+        max_meal_count = 11
+        query_params = f"min_daily_meal_count={min_meal_count}&max_daily_meal_count={max_meal_count}"
+        url = f"{reverse('published_canteens')}?{query_params}"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].get("name"), "Shiso")
+
+        # "Shiso" and "Wasabi" are between 9 and 15 meal count
+        min_meal_count = 9
+        max_meal_count = 15
+        query_params = f"min_daily_meal_count={min_meal_count}&max_daily_meal_count={max_meal_count}"
+        url = f"{reverse('published_canteens')}?{query_params}"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Shiso", result_names)
+        self.assertIn("Wasabi", result_names)
+
+        # No canteen has less than 5 meal count
+        max_meal_count = 5
+        query_params = f"max_daily_meal_count={max_meal_count}"
+        url = f"{reverse('published_canteens')}?{query_params}"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 0)
+
+        # Filters are inclusive, so a value of 25 brings "Umami"
+        min_meal_count = 25
+        query_params = f"min_daily_meal_count={min_meal_count}"
+        url = f"{reverse('published_canteens')}?{query_params}"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].get("name"), "Umami")
+
+    def test_department_filter(self):
+        CanteenFactory.create(
+            publication_status="published", department="69", name="Shiso"
+        )
+        CanteenFactory.create(
+            publication_status="published", department="10", name="Wasabi"
+        )
+        CanteenFactory.create(
+            publication_status="published", department="75", name="Mochi"
+        )
+        CanteenFactory.create(
+            publication_status="published", department="31", name="Umami"
+        )
+
+        url = f"{reverse('published_canteens')}?department=69"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].get("name"), "Shiso")
+
+    def test_sectors_filter(self):
+        school = SectorFactory.create(name="School")
+        enterprise = SectorFactory.create(name="Enterprise")
+        social = SectorFactory.create(name="Social")
+        CanteenFactory.create(
+            publication_status="published", sectors=[school], name="Shiso"
+        )
+        CanteenFactory.create(
+            publication_status="published", sectors=[enterprise], name="Wasabi"
+        )
+        CanteenFactory.create(
+            publication_status="published", sectors=[social], name="Mochi"
+        )
+        CanteenFactory.create(
+            publication_status="published", sectors=[school, social], name="Umami"
+        )
+
+        url = f"{reverse('published_canteens')}?sectors={school.id}"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Shiso", result_names)
+        self.assertIn("Umami", result_names)
+
+        url = f"{reverse('published_canteens')}?sectors={enterprise.id}"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].get("name"), "Wasabi")
+
+        url = f"{reverse('published_canteens')}?sectors={enterprise.id}&sectors={social.id}"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 3)
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Wasabi", result_names)
+        self.assertIn("Mochi", result_names)
+        self.assertIn("Umami", result_names)

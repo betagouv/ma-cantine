@@ -16,7 +16,7 @@
       Ajouter un diagnostic
     </v-btn>
     <v-row>
-      <v-col cols="12" v-for="diagnostic in originalCanteen.diagnostics" :key="`diagnostic-${diagnostic.id}`">
+      <v-col cols="12" v-for="diagnostic in orderedDiagnostics" :key="`diagnostic-${diagnostic.id}`">
         <DiagnosticCard :diagnostic="diagnostic" class="fill-height" />
       </v-col>
     </v-row>
@@ -31,6 +31,11 @@ export default {
   components: { DiagnosticCard },
   props: {
     originalCanteen: Object,
+  },
+  computed: {
+    orderedDiagnostics() {
+      return [...this.originalCanteen.diagnostics].sort((a, b) => (a.year > b.year ? -1 : 1))
+    },
   },
   created() {
     document.title = `Diagnostics - ${this.originalCanteen.name} - ma-cantine.beta.gouv.fr`
