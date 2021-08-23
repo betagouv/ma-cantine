@@ -6,9 +6,11 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
+from django.db.models.constants import LOOKUP_SEP
+from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework import permissions, status
+from rest_framework import permissions, status, filters
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from api.serializers import (
@@ -28,11 +30,48 @@ class PublishedCanteensPagination(LimitOffsetPagination):
     max_limit = 30
 
 
+class PublishedCanteenFilterSet(django_filters.FilterSet):
+    min_daily_meal_count = django_filters.NumberFilter(
+        field_name="daily_meal_count", lookup_expr="gte"
+    )
+    max_daily_meal_count = django_filters.NumberFilter(
+        field_name="daily_meal_count", lookup_expr="lte"
+    )
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "department",
+            "sectors",
+            "min_daily_meal_count",
+            "max_daily_meal_count",
+        )
+
+
+class UnaccentSearchFilter(filters.SearchFilter):
+    def construct_search(self, field_name):
+        lookup = self.lookup_prefixes.get(field_name[0])
+        if lookup:
+            field_name = field_name[1:]
+        else:
+            lookup = "icontains"
+        return LOOKUP_SEP.join(
+            [
+                field_name,
+                "unaccent",
+                lookup,
+            ]
+        )
+
+
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
     queryset = Canteen.objects.filter(publication_status="published")
     pagination_class = PublishedCanteensPagination
+    filter_backends = [django_filters.DjangoFilterBackend, UnaccentSearchFilter]
+    search_fields = ["name"]
+    filterset_class = PublishedCanteenFilterSet
 
 
 class PublishedCanteenSingleView(RetrieveAPIView):
