@@ -22,8 +22,7 @@
             hide-details="auto"
             solo
             v-model="canteen.siret"
-            :rules="[validators.required]"
-            :error-messages="errors.siret"
+            :rules="[validators.length(14), validators.luhn]"
           ></v-text-field>
         </v-col>
 
@@ -159,7 +158,6 @@ export default {
   data() {
     return {
       canteen: {},
-      errors: {},
       formIsValid: true,
       publicationRequested: false,
       bypassLeaveWarning: false,
@@ -243,8 +241,7 @@ export default {
   },
   methods: {
     saveCanteen() {
-      this.errors = {}
-      this.formIsValid = this.$refs.form.validate()
+      this.$refs.form.validate()
 
       if (!this.formIsValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
@@ -271,15 +268,8 @@ export default {
           })
           this.$router.push({ name: "ManagementPage" })
         })
-        .catch((error) => {
-          if (error.name === "BadRequestError") {
-            error.response.json().then((data) => {
-              this.errors = data
-              this.$store.dispatch("notifyRequiredFieldsError")
-            })
-          } else {
-            this.$store.dispatch("notifyServerError")
-          }
+        .catch(() => {
+          this.$store.dispatch("notifyServerError")
         })
     },
     onProfilePhotoUploadClick() {
