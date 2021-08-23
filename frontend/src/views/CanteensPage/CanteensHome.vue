@@ -179,6 +179,10 @@ export default {
   data() {
     return {
       limit: 6,
+      departments: jsonDepartments.map((x) => ({
+        text: `${x.departmentCode} - ${x.departmentName}`,
+        value: x.departmentCode,
+      })),
       visibleCanteens: null,
       publishedCanteenCount: null,
       page: null,
@@ -210,22 +214,10 @@ export default {
       if (this.appliedFilters.maxMealCount) query.maxRepasJour = String(this.appliedFilters.maxMealCount)
       return query
     },
-    departments() {
-      if (!this.visibleCanteens) return []
-      const visibleDepartments = this.visibleCanteens.map((x) => x.department).filter((x) => !!x)
-      const allDepartments = jsonDepartments.map((x) => ({
-        text: `${x.departmentCode} - ${x.departmentName}`,
-        value: x.departmentCode,
-      }))
-      return allDepartments.filter((x) => visibleDepartments.indexOf(x.value) > -1)
-    },
     sectors() {
-      if (!this.visibleCanteens) return []
-      const visibleSectors = this.visibleCanteens.flatMap((x) => x.sectors).filter((x) => !!x)
       return this.$store.state.sectors
         .map((x) => ({ text: x.name, value: x.id }))
         .sort((a, b) => (a.text > b.text ? 1 : -1))
-        .filter((x) => visibleSectors.indexOf(x.value) > -1)
     },
     hasActiveFilter() {
       return (
