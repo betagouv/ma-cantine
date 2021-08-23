@@ -12,16 +12,9 @@ const headers = {
 const LOCAL_STORAGE_VERSION = "1"
 const LOCAL_STORAGE_KEY = `diagnostics-local-${LOCAL_STORAGE_VERSION}`
 
-function BadRequestError(response) {
-  this.response = response
-  this.name = "BadRequestError"
-}
-
 const verifyResponse = function(response) {
-  if (response.status < 200 || response.status > 400) {
+  if (response.status < 200 || response.status >= 400) {
     throw new Error(`Error encountered : ${response}`)
-  } else if (response.status === 400) {
-    throw new BadRequestError(response)
   }
 
   const contentType = response.headers.get("content-type")
