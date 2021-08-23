@@ -18,7 +18,6 @@ import AccountDeletion from "@/views/AccountSummaryPage/AccountDeletion"
 import BlogsPage from "@/views/BlogsPage"
 import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
-import StatsPage from "@/views/StatsPage"
 import NotFound from "@/views/NotFound"
 import TesterParticipation from "@/views/TesterParticipation"
 import CGU from "@/views/CGU.vue"
@@ -169,14 +168,6 @@ const routes = [
         props: true,
       },
     ],
-  },
-  {
-    path: "/stats",
-    name: "StatsPage",
-    component: StatsPage,
-    meta: {
-      title: "Statistiques",
-    },
   },
   {
     path: "/devenir-testeur",
