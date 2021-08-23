@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
+    "django.contrib.postgres",
     "webpack_loader",
     "rest_framework",
     "ckeditor",
@@ -67,6 +68,8 @@ INSTALLED_APPS = [
     "api",
     "web",
     "magicauth",
+    "django_filters",
+    "common",
 ]
 
 MIDDLEWARE = [

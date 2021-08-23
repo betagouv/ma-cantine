@@ -1,4 +1,5 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
+import datetime
+from django.core.exceptions import ValidationError
 from django.db import models
 from data.fields import ChoiceArrayField
 from .canteen import Canteen
@@ -60,10 +61,9 @@ class Diagnostic(models.Model):
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
     year = models.IntegerField(
-        validators=[MinValueValidator(1970), MaxValueValidator(2100)],
         null=True,
         blank=True,
-        verbose_name="an",
+        verbose_name="année",
     )
 
     # Product origin
@@ -251,6 +251,26 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="fréquence de communication",
     )
+
+    def clean(self):
+        self.validate_year()
+        return super().clean()
+
+    def validate_year(self):
+        if self.year is None:
+            return
+        lower_limit_year = 2019
+        upper_limit_year = datetime.datetime.now().date().year + 1
+        if (
+            not isinstance(self.year, int)
+            or self.year < lower_limit_year
+            or self.year > upper_limit_year
+        ):
+            raise ValidationError(
+                {
+                    "year": f"L'année doit être comprise entre {lower_limit_year} et {upper_limit_year}."
+                }
+            )
 
     def __str__(self):
         return f"Diagnostic pour {self.canteen.name} ({self.year})"

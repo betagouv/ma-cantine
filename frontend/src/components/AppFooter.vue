@@ -99,7 +99,7 @@ export default {
             },
             {
               text: "Statistiques",
-              to: { name: "StatsPage" },
+              url: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/f65ca7cc-c3bd-4cfb-a3dc-236f81864663",
             },
             {
               text: "Les start-ups d'état",

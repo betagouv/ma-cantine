@@ -29,7 +29,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 2)
-        self.assertEqual(body["canteens"][0]["siret"], "0000001234")
+        self.assertEqual(body["canteens"][0]["siret"], "21340172201787")
         self.assertEqual(body["canteens"][0]["diagnostics"][0]["year"], 2020)
         self.assertEqual(len(body["errors"]), 0)
         self.assertEqual(Canteen.objects.count(), 2)
@@ -37,12 +37,12 @@ class TestImportDiagnosticsAPI(APITestCase):
             Canteen.objects.first().managers.first().id, authenticate.user.id
         )
         self.assertEqual(Diagnostic.objects.count(), 2)
-        canteen = Canteen.objects.get(siret="0000001234")
+        canteen = Canteen.objects.get(siret="21340172201787")
         self.assertEqual(canteen.postal_code, "17000")
         self.assertEqual(canteen.daily_meal_count, 700)
         self.assertEqual(canteen.production_type, "site")
         self.assertEqual(canteen.management_type, "conceded")
-        self.assertEqual(canteen.central_producer_siret, "0000009876")
+        self.assertEqual(canteen.central_producer_siret, "42126486200010")
         diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
         self.assertEqual(diagnostic.year, 2020)
         self.assertEqual(diagnostic.value_total_ht, 1000)
@@ -65,7 +65,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 2)
         self.assertEqual(Canteen.objects.count(), 1)
         self.assertEqual(Diagnostic.objects.count(), 2)
-        canteen = Canteen.objects.get(siret="0000001234")
+        canteen = Canteen.objects.get(siret="21340172201787")
         canteen.name = "A cantéen"
 
     @authenticate
@@ -74,8 +74,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         If a canteen exists, then you should have to already be it's manager to add diagnostics.
         No canteens will be created since any error cancels out the entire file
         """
-        CanteenFactory.create(siret="0000001234")
-        my_canteen = CanteenFactory.create(siret="0000001235")
+        CanteenFactory.create(siret="21340172201787")
+        my_canteen = CanteenFactory.create(siret="73282932000074")
         my_canteen.managers.add(authenticate.user)
 
         with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
@@ -107,7 +107,7 @@ class TestImportDiagnosticsAPI(APITestCase):
                 reverse("import_diagnostics"), {"file": diag_file}
             )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        canteen = Canteen.objects.get(siret="0000001234")
+        canteen = Canteen.objects.get(siret="21340172201787")
         self.assertEqual(canteen.sectors.count(), 3)
 
     @authenticate
@@ -143,34 +143,39 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
         errors = body["errors"]
-        self.assertEqual(len(errors), 7)
+        self.assertEqual(len(errors), 8)
         self.assertEqual(errors[0]["row"], 1)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
             errors[0]["message"],
-            "Une erreur s'est produite en créant un diagnostic pour cette ligne",
+            "Champ 'année' : L'année doit être comprise entre 2019 et 2022.",
         )
         self.assertEqual(
-            errors[1]["message"], "La valeur '.' n'est pas valide pour le champ 'an'."
+            errors[1]["message"],
+            "Champ 'année' : La valeur «\xa0.\xa0» doit être un nombre entier.",
         )
         self.assertEqual(
             errors[2]["message"],
-            "La valeur 'not a number' n'est pas valide pour le champ 'repas par jour'.",
+            "Champ 'année' : L'année doit être comprise entre 2019 et 2022.",
         )
         self.assertEqual(
             errors[3]["message"],
-            "La valeur ''blah'' n'est pas valide pour le champ 'mode de production'.",
+            "La valeur 'not a number' n'est pas valide pour le champ 'repas par jour'.",
         )
         self.assertEqual(
             errors[4]["message"],
-            "La valeur 'invalid total' n'est pas valide pour le champ 'Valeur totale annuelle HT'.",
+            "Champ 'mode de production' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
         )
         self.assertEqual(
             errors[5]["message"],
-            "Pour le champ 'an', Assurez-vous que cette valeur est supérieure ou égale à 1970.",
+            "Champ 'Valeur totale annuelle HT' : La valeur «\xa0invalid total\xa0» doit être un nombre décimal.",
         )
         self.assertEqual(
             errors[6]["message"],
-            "Un diagnostic pour cette année et cette cantine existe déjà",
+            "Champ 'année' : L'année doit être comprise entre 2019 et 2022.",
+        )
+        self.assertEqual(
+            errors[7]["message"],
+            "Un diagnostic pour cette année et cette cantine existe déjà.",
         )
         # TODO: test no SIRET
