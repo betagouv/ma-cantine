@@ -71,7 +71,7 @@
     <ul class="basic-information feedback h-card">
       <li>
         Téléphone :
-        <span>+33 65 963 44 43</span>
+        <span>+33 6 59 63 44 43</span>
       </li>
       <li>
         E-mail :
