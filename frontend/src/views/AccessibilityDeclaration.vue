@@ -77,10 +77,9 @@
         E-mail :
         <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
       </li>
-      <!-- TODO : corriger l'URL -->
       <li>
         Adresse :
-        <span>DINUM, Ségur, Paris</span>
+        <span>20 avenue de Ségur, 75007, Paris</span>
       </li>
       <li>
         Twitter :
