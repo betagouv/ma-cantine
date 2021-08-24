@@ -282,7 +282,7 @@ const routes = [
     name: "AccessibilityDeclaration",
     component: AccessibilityDeclaration,
     meta: {
-      title: "Déclaration d'accessibility",
+      title: "Déclaration d'accessibilité",
     },
   },
   {
