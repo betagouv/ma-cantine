@@ -1,7 +1,7 @@
 <template>
   <div>
     <VueApexCharts
-      :width="$vuetify.breakpoint.smAndDown ? 280 : 350"
+      :width="width || ($vuetify.breakpoint.smAndDown ? 280 : 320)"
       :options="chartOptions"
       :series="series"
       v-if="dataPresent"
@@ -21,16 +21,30 @@ export default {
   },
   props: {
     qualityDiagnostic: Object,
+    width: Number,
+    hideLegend: Boolean,
   },
   data() {
     return {
       chartOptions: {
         chart: {
           type: "pie",
+          animations: {
+            enabled: false,
+          },
         },
-        labels: ["Bio", "Qualité et durable (hors bio)", "Hors EGAlim"],
-        colors: ["#61753f", "#EB5B25", "#E2A013"],
+        states: {
+          hover: {
+            filter: {
+              type: "darken",
+              value: 0.75,
+            },
+          },
+        },
+        labels: ["Bio", "Qualité et durable", "Autre"],
+        colors: ["#06622f", "#55a57e", "#ccc"],
         legend: {
+          show: !this.hideLegend,
           fontSize: "12px",
           position: "top",
         },
@@ -47,10 +61,7 @@ export default {
   },
   computed: {
     dataPresent() {
-      return (
-        !!this.qualityDiagnostic.valueTotalHt &&
-        (!!this.qualityDiagnostic.valueBioHt || !!this.qualityDiagnostic.valueSustainableHt)
-      )
+      return !!this.qualityDiagnostic.valueTotalHt
     },
     bioPercentage() {
       return getPercentage(this.qualityDiagnostic.valueBioHt, this.qualityDiagnostic.valueTotalHt)

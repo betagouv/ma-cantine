@@ -1,13 +1,22 @@
 <template>
   <div id="logos">
-    <img
-      v-for="label in labels"
-      :key="label.title"
-      :src="`/static/images/quality-labels/${label.src}`"
-      :alt="label.title"
-      :title="label.title"
-    />
-    <LogoBio />
+    <div class="flex-column-center">
+      <p class="label-title">Bio</p>
+      <LogoBio />
+    </div>
+    <div class="separator"></div>
+    <div class="flex-column-center">
+      <p class="label-title">Qualité et durable</p>
+      <div class="d-flex">
+        <img
+          v-for="label in labels"
+          :key="label.title"
+          :src="`/static/images/quality-labels/${label.src}`"
+          :alt="label.title"
+          :title="label.title"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -35,8 +44,28 @@ export default {
   flex-wrap: wrap;
 }
 
-#logos > img {
-  max-height: 3em;
-  margin: 0.1em;
+#logos img {
+  max-height: 30px;
+  margin: 0 4px;
+}
+
+.separator {
+  width: 1px;
+  height: 50px;
+  background: #ccc;
+}
+
+.flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.label-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  letter-spacing: 0.0178571429em;
+  margin-bottom: 8px;
 }
 </style>

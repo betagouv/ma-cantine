@@ -8,14 +8,7 @@
           </h1>
         </v-card-title>
         <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city">
-          <div v-if="canteen.dailyMealCount">
-            <v-icon small>mdi-silverware-fork-knife</v-icon>
-            {{ canteen.dailyMealCount }} repas par jour
-          </div>
-          <div v-if="canteen.city">
-            <v-icon small>mdi-compass</v-icon>
-            {{ canteen.city }}
-          </div>
+          <CanteenIndicators :canteen="canteen" />
           <router-link to="#contact">
             <v-icon small>mdi-email-outline</v-icon>
             Contactez-nous
@@ -43,6 +36,7 @@
 import Constants from "@/constants"
 import CanteenDashboard from "@/components/CanteenDashboard"
 import ContactForm from "./ContactForm"
+import CanteenIndicators from "@/components/CanteenIndicators"
 
 export default {
   data() {
@@ -53,6 +47,7 @@ export default {
   components: {
     CanteenDashboard,
     ContactForm,
+    CanteenIndicators,
   },
   props: {
     canteenUrlComponent: {
