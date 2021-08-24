@@ -74,7 +74,7 @@
 
 <script>
 import LogoList from "@/components/LogoList"
-import SummaryStatistics from "@/components/SummaryStatistics"
+import SummaryStatistics from "./SummaryStatistics"
 import CanteenIndicators from "@/components/CanteenIndicators"
 import QrcodeVue from "qrcode.vue"
 
