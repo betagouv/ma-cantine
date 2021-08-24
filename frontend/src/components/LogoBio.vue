@@ -10,6 +10,5 @@
 <style scoped lang="scss">
 #bio-logo {
   height: 2.9em;
-  margin-top: 1em;
 }
 </style>
