@@ -27,17 +27,29 @@ export default {
   data() {
     return {
       chartOptions: {
+        plotOptions: {
+          pie: {
+            expandOnClick: false,
+          },
+        },
         chart: {
           type: "pie",
           animations: {
             enabled: false,
           },
         },
+        tooltip: {
+          enabled: false,
+        },
         states: {
+          active: {
+            filter: {
+              type: "none",
+            },
+          },
           hover: {
             filter: {
-              type: "darken",
-              value: 0.75,
+              type: "none",
             },
           },
         },
