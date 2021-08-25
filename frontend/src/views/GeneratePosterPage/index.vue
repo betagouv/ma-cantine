@@ -44,7 +44,12 @@
         </v-col>
       </v-row>
       <div id="poster-preview" class="mb-8">
-        <CanteenPoster id="canteen-poster" :canteen="selectedCanteen" :diagnostic="currentDiagnostic" />
+        <CanteenPoster
+          id="canteen-poster"
+          :canteen="selectedCanteen"
+          :diagnostic="currentDiagnostic"
+          :previousDiagnostic="previousDiagnostic"
+        />
       </div>
     </div>
     <div id="poster-form-page" v-else>
@@ -161,7 +166,7 @@ import CanteenPoster from "./CanteenPoster"
 import html2pdf from "html2pdf.js"
 import validators from "@/validators"
 
-const YEAR = 2020
+const YEAR = 2020 // TODO: this should be dynamic, not hard-coded
 
 // normalise "À fîrst" to "A FIRST"
 function normaliseName(name) {
@@ -219,6 +224,9 @@ export default {
     },
     currentDiagnostic() {
       return this.selectedCanteen?.diagnostics?.find((x) => x.year === YEAR) || {}
+    },
+    previousDiagnostic() {
+      return this.selectedCanteen?.diagnostics?.find((x) => x.year === YEAR - 1) || {}
     },
   },
   beforeMount() {
