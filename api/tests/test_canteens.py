@@ -1,6 +1,4 @@
 from django.urls import reverse
-from django.core import mail
-from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory, SectorFactory
@@ -142,27 +140,6 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(created_canteen.city, "Lyon")
         self.assertEqual(created_canteen.siret, "21340172201787")
         self.assertEqual(created_canteen.management_type, "direct")
-
-    @override_settings(CONTACT_EMAIL="contact-test@example.com")
-    @authenticate
-    def test_publish_email(self):
-        """
-        An email should be sent to the team when a manager has requested publication
-        """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        payload = {"publication_status": "pending"}
-        response = self.client.patch(
-            reverse("single_canteen", kwargs={"pk": canteen.id}), payload
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to[0], "contact-test@example.com")
-        self.assertIn(
-            "La cantine « %s » a demandé d'être publiée" % canteen.name,
-            mail.outbox[0].body,
-        )
 
     @authenticate
     def test_soft_delete(self):

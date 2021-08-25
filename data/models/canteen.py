@@ -64,12 +64,6 @@ class Canteen(SoftDeletionModel):
     sectors = models.ManyToManyField(
         Sector, blank=True, verbose_name="secteurs d'activité"
     )
-    publication_status = models.CharField(
-        max_length=50,
-        choices=PublicationStatus.choices,
-        default="draft",
-        verbose_name="état de publication",
-    )
     managers = models.ManyToManyField(
         get_user_model(),
         blank=True,
@@ -105,6 +99,50 @@ class Canteen(SoftDeletionModel):
 
     main_image = models.ImageField(
         null=True, blank=True, verbose_name="Image principale"
+    )
+
+    # Publication things
+    publication_status = models.CharField(
+        max_length=50,
+        choices=PublicationStatus.choices,
+        default="draft",
+        verbose_name="état de publication",
+    )
+    publication_comments = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de publication",
+    )
+    quality_comments = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de mesure appro",
+    )
+    waste_comments = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de mesure gaspillage",
+    )
+    diversification_comments = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de mesure diversification",
+    )
+    plastics_comments = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de mesure plastiques",
+    )
+    information_comments = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de mesure information",
     )
 
     def save(

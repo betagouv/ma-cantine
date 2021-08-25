@@ -13,6 +13,10 @@
             <v-icon small class="mr-2">mdi-silverware-fork-knife</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">{{ canteen.name }}</v-list-item-title>
           </v-list-item>
+          <v-list-item :ripple="false" :to="{ name: 'PublicationForm' }">
+            <v-icon small class="mr-2">mdi-bullhorn</v-icon>
+            <v-list-item-title class="text-body-2 font-weight-bold">Publication</v-list-item-title>
+          </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'DiagnosticList' }">
             <v-icon small class="mr-2">mdi-format-list-checks</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Diagnostics</v-list-item-title>

@@ -107,6 +107,21 @@ class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
+
+class PublishCanteenView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated, IsCanteenManager]
+    model = Canteen
+    serializer_class = FullCanteenSerializer
+    queryset = Canteen.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        return JsonResponse(
+            {"error": "Only PATCH request supported in this resource"}, status=405
+        )
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
     def perform_update(self, serializer):
         is_draft = serializer.instance.publication_status == "draft"
         publication_requested = (
@@ -129,7 +144,7 @@ class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
                 fail_silently=True,
             )
 
-        return super(UpdateUserCanteenView, self).perform_update(serializer)
+        return super(PublishCanteenView, self).perform_update(serializer)
 
 
 def _respond_with_team(canteen):
