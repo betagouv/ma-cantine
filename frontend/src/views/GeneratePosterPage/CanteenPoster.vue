@@ -105,10 +105,12 @@ export default {
       return !!this.previousDiagnostic.valueTotalHt
     },
     canteenUrl() {
-      return this.$router.resolve({
+      const baseUrl = window.location.toString().replace(window.location.pathname, "")
+      const fullPath = this.$router.resolve({
         name: "CanteenPage",
         params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
       }).href
+      return baseUrl + fullPath
     },
   },
   methods: {
