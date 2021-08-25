@@ -8,7 +8,15 @@
     <v-img :src="canteen.mainImage || '/static/images/canteen-default-image.jpg'" height="160"></v-img>
     <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
     <v-card-subtitle class="py-1">
-      <v-chip small :color="publicationStatus.color" label>
+      <v-chip
+        small
+        :color="publicationStatus.color"
+        label
+        :to="{
+          name: 'PublicationForm',
+          params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+        }"
+      >
         {{ publicationStatus.text }}
       </v-chip>
     </v-card-subtitle>

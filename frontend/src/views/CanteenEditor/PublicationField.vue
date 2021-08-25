@@ -8,8 +8,6 @@
     />
     <v-row v-if="!isNewCanteen">
       <v-col cols="12">
-        <p class="body-1 mb-3 mt-4 font-weight-black">Publication</p>
-
         <v-alert color="amber darken-3" class="mb-1 body-2" v-if="originalCanteenIsPending" outlined>
           <span class="grey--text text--darken-2">
             <v-icon class="mb-1 mr-2">mdi-information</v-icon>
