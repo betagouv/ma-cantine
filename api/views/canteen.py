@@ -258,8 +258,9 @@ class SendCanteenEmailView(APIView):
             recipients = [user.email for user in canteen.managers.all()]
             recipients.append(settings.DEFAULT_FROM_EMAIL)
 
-            reply_to = recipients.copy()
-            reply_to.append(email)
+            reply_to = [
+                email
+            ]  # SendinBlue does not support multiple reply_to addresses
 
             context = {
                 "canteen": canteen.name,
