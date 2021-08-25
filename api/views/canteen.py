@@ -286,7 +286,9 @@ class SendCanteenEmailView(APIView):
             return JsonResponse(
                 {"error": "Invalid canteen"}, status=status.HTTP_400_BAD_REQUEST
             )
-        except Exception:
+        except Exception as e:
+            logger.error("Exception ocurred while sending email to published canteen")
+            logger.exception(e)
             return JsonResponse(
                 {"error": "An error has ocurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
