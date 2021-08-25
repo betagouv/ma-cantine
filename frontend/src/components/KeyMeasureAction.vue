@@ -1,11 +1,11 @@
 <template>
-  <div class="action">
-    <v-icon small v-if="isDone" color="primary" aria-label="Fait" aria-hidden="false">
+  <p class="action my-0">
+    <v-icon small v-if="isDone" color="primary" aria-label="Fait" role="img" aria-hidden="false">
       mdi-check-bold
     </v-icon>
-    <v-icon small v-else aria-label="Pas encore fait" aria-hidden="false">mdi-close</v-icon>
+    <v-icon small v-else aria-label="Pas encore fait" role="img" aria-hidden="false">mdi-close</v-icon>
     <span>{{ label }}</span>
-  </div>
+  </p>
 </template>
 
 <script>
