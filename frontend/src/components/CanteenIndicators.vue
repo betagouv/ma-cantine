@@ -1,17 +1,17 @@
 <template>
   <div>
-    <div v-if="canteen.dailyMealCount">
+    <p class="my-0" v-if="canteen.dailyMealCount">
       <v-icon small>mdi-silverware-fork-knife</v-icon>
       {{ canteen.dailyMealCount }} repas par jour
-    </div>
-    <div v-if="canteen.city">
-      <v-icon small>mdi-compass</v-icon>
+    </p>
+    <p class="my-0" v-if="canteen.city">
+      <v-icon small aria-hidden="false" role="img" aria-label="Localisation">mdi-compass</v-icon>
       {{ canteen.city }}
-    </div>
-    <div v-if="sectors">
-      <v-icon small>mdi-office-building</v-icon>
+    </p>
+    <p class="my-0" v-if="sectors">
+      <v-icon small aria-hidden="false" role="img" aria-label="Secteurs">mdi-office-building</v-icon>
       {{ sectors }}
-    </div>
+    </p>
   </div>
 </template>
 
