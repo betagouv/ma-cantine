@@ -21,11 +21,12 @@ export default {
   props: {
     canteen: {
       type: Object,
+      required: true,
     },
   },
   computed: {
     sectors() {
-      if (!this.canteen || !this.canteen.sectors) return null
+      if (!this.canteen.sectors) return null
       const sectors = this.$store.state.sectors
       return this.canteen.sectors
         .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
