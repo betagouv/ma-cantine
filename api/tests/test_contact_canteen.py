@@ -30,7 +30,8 @@ class TestCanteenContact(APITestCase):
         self.assertIn("Camille Dupont", email.body)
         self.assertIn("Test <b>message</b>", email.body)
         self.assertIn("contact@example.com", email.body)
-        self.assertEqual(len(email.reply_to), canteen.managers.all().count() + 2)
+        self.assertEqual(len(email.reply_to), 1)
+        self.assertEqual(email.reply_to[0], "test@example.com")
         self.assertIn("test@example.com", email.reply_to)
 
     @override_settings(DEFAULT_FROM_EMAIL="contact@example.com")
