@@ -29,6 +29,7 @@ import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import DiagnosticEditor from "@/views/DiagnosticEditor"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
+import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 
 Vue.use(VueRouter)
 
@@ -274,6 +275,14 @@ const routes = [
     meta: {
       title: "Importer des diagnostics",
       authenticationRequired: true,
+    },
+  },
+  {
+    path: "/accessibilite",
+    name: "AccessibilityDeclaration",
+    component: AccessibilityDeclaration,
+    meta: {
+      title: "Déclaration d'accessibilité",
     },
   },
   {
