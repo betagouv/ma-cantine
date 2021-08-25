@@ -74,6 +74,7 @@ export default {
         },
         {
           text: "Accessibilité : non conforme",
+          to: { name: "AccessibilityDeclaration" },
         },
       ],
       columns: [
