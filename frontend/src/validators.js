@@ -61,4 +61,33 @@ export default {
       return `Vous pouvez sélectionner jusqu'à ${maxNumer} élements`
     }
   },
+  length(exactLength) {
+    return (input) => {
+      if (!input || input.length !== exactLength) {
+        return `${exactLength} caractères attendus`
+      } else return true
+    }
+  },
+  luhn(input) {
+    const reversed = input.split("").reverse()
+    let checksum = 0
+    let error = false
+    reversed.forEach((char, idx) => {
+      const num = parseInt(char, 10)
+      if (isNaN(num)) {
+        error = true
+      } else if (idx % 2) {
+        const double = num * 2
+        if (double < 10) {
+          checksum += double
+        } else {
+          checksum += double - 10 + 1
+        }
+      } else {
+        checksum += num
+      }
+    })
+    error = error || checksum % 10
+    return error ? "Le numéro SIRET n'est pas valide" : true
+  },
 }

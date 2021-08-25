@@ -8,6 +8,26 @@ from .sector import Sector
 from .softdeletionmodel import SoftDeletionModel
 
 
+def validate_siret(siret):
+    """
+    Performs length and Luhn validation
+    (https://portal.hardis-group.com/pages/viewpage.action?pageId=120357227)
+    """
+    if siret is None or siret == "":
+        return
+    if len(siret) != 14:
+        raise ValidationError("14 caractères numériques sont attendus")
+    odd_digits = [int(n) for n in siret[-1::-2]]
+    even_digits = [int(n) for n in siret[-2::-2]]
+    checksum = sum(odd_digits)
+    for digit in even_digits:
+        checksum += sum(int(n) for n in str(digit * 2))
+    luhn_checksum_valid = checksum % 10 == 0
+
+    if not luhn_checksum_valid:
+        raise ValidationError("Le numéro SIRET n'est pas valide.")
+
+
 class Canteen(SoftDeletionModel):
     class Meta:
         verbose_name = "cantine"
@@ -61,9 +81,12 @@ class Canteen(SoftDeletionModel):
         null=True, blank=True, verbose_name="repas par jour"
     )
     # TODO: once have a standardised format (see _normalise_siret), index by siret if given
-    siret = models.TextField(null=True, blank=True)
+    siret = models.TextField(null=True, blank=True, validators=[validate_siret])
     central_producer_siret = models.TextField(
-        null=True, blank=True, verbose_name="siret de la cuisine centrale"
+        null=True,
+        blank=True,
+        verbose_name="siret de la cuisine centrale",
+        validators=[validate_siret],
     )
     management_type = models.CharField(
         max_length=255,
@@ -98,33 +121,6 @@ class Canteen(SoftDeletionModel):
     def url_path(self):
         slug = f"{quote(self.name)}--{self.id}"
         return f"/nos-cantines/{slug}"
-
-    def clean(self):
-        Canteen.validate_siret(self.siret, "siret")
-        Canteen.validate_siret(self.central_producer_siret, "central_producer_siret")
-        return super().clean()
-
-    @staticmethod
-    def validate_siret(siret, field_name):
-        """
-        Performs length and Luhn validation
-        (https://portal.hardis-group.com/pages/viewpage.action?pageId=120357227)
-        """
-        if siret is None or siret == "":
-            return
-        if len(siret) != 14:
-            raise ValidationError(
-                {field_name: "14 caractères numériques sont attendus"}
-            )
-        odd_digits = [int(n) for n in siret[-1::-2]]
-        even_digits = [int(n) for n in siret[-2::-2]]
-        checksum = sum(odd_digits)
-        for digit in even_digits:
-            checksum += sum(int(n) for n in str(digit * 2))
-        luhn_checksum_valid = checksum % 10 == 0
-
-        if not luhn_checksum_valid:
-            raise ValidationError({field_name: "Le numéro SIRET n'est pas valide."})
 
     def __str__(self):
         return f'Cantine "{self.name}"'

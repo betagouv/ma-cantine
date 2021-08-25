@@ -56,13 +56,14 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "publication_status",
             "daily_meal_count",
             "siret",
+            "central_producer_siret",
             "management_type",
             "production_type",
             "diagnostics",
             "department",
             "main_image",
             "managers",
-            "manager_invitations"
+            "manager_invitations",
         )
 
 
@@ -75,8 +76,4 @@ class ManagingTeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-        fields = (
-            "id",
-            "managers",
-            "manager_invitations"
-        )
+        fields = ("id", "managers", "manager_invitations")

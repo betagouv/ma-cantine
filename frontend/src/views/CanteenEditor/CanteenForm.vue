@@ -18,7 +18,12 @@
           ></v-text-field>
 
           <p class="body-2 mt-6 mb-2">SIRET</p>
-          <v-text-field hide-details="auto" solo v-model="canteen.siret"></v-text-field>
+          <v-text-field
+            hide-details="auto"
+            solo
+            v-model="canteen.siret"
+            :rules="[validators.length(14), validators.luhn]"
+          ></v-text-field>
         </v-col>
 
         <v-col cols="12" md="4" height="100%" class="d-flex flex-column">
