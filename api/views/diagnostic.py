@@ -10,7 +10,7 @@ from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.views import APIView
-from api.serializers import DiagnosticSerializer, FullCanteenSerializer
+from api.serializers import PublicDiagnosticSerializer, FullCanteenSerializer
 from data.models import Canteen, Sector
 from api.permissions import IsCanteenManager, CanEditDiagnostic
 from .utils import camelize
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 class DiagnosticCreateView(CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     model = Diagnostic
-    serializer_class = DiagnosticSerializer
+    serializer_class = PublicDiagnosticSerializer
 
     def perform_create(self, serializer):
         try:
@@ -47,7 +47,7 @@ class DiagnosticCreateView(CreateAPIView):
 class DiagnosticUpdateView(UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated, CanEditDiagnostic]
     model = Diagnostic
-    serializer_class = DiagnosticSerializer
+    serializer_class = PublicDiagnosticSerializer
     queryset = Diagnostic.objects.all()
 
     def put(self, request, *args, **kwargs):

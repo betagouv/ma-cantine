@@ -1,10 +1,13 @@
+from datetime import timedelta
 from django.urls import reverse
 from django.core import mail
 from django.test.utils import override_settings
+from django.utils import timezone
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory, SectorFactory
-from data.models import Canteen
+from data.factories import DiagnosticFactory, TeledeclarationFactory
+from data.models import Canteen, Teledeclaration
 from .utils import authenticate
 
 
@@ -389,3 +392,40 @@ class TestCanteenApi(APITestCase):
         self.assertIn("Wasabi", result_names)
         self.assertIn("Mochi", result_names)
         self.assertIn("Umami", result_names)
+
+    @authenticate
+    def test_user_canteen_teledeclaration(self):
+        """
+        The teledeclaration information should only be visible to
+        managers of the canteen
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        TeledeclarationFactory.create(
+            source=diagnostic,
+            canteen=canteen,
+            year=2020,
+            applicant=user,
+            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
+            creation_date=(timezone.now() - timedelta(days=1)),
+        )
+        new_teledeclaration = TeledeclarationFactory.create(
+            source=diagnostic,
+            canteen=canteen,
+            year=2020,
+            applicant=user,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            creation_date=timezone.now(),
+        )
+        response = self.client.get(reverse("user_canteens"))
+        body = response.json()
+        json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
+        json_diagnostic = next(
+            filter(lambda x: x["id"] == diagnostic.id, json_canteen["diagnostics"])
+        )
+
+        self.assertEqual(
+            json_diagnostic["teledeclaration"]["id"], new_teledeclaration.id
+        )
