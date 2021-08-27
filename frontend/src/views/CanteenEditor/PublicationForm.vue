@@ -24,7 +24,7 @@
       <p class="body-2 my-2">Plastiques</p>
       <v-textarea solo rows="3" counter="255" v-model="canteen.plasticsComments"></v-textarea>
       <p class="body-2 my-2">Information</p>
-      <v-textarea solo rows="3" counter="255" v-model="canteen.informComments"></v-textarea>
+      <v-textarea solo rows="3" counter="255" v-model="canteen.informationComments"></v-textarea>
     </v-form>
     <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
       <v-spacer></v-spacer>
