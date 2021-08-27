@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mt-n2">
     <v-row class="mt-2">
       <v-col cols="12" sm="4" md="3" v-if="canteen">
         <CanteenNavigation :canteen="canteen" />
