@@ -142,7 +142,7 @@ import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/Diversific
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
-import { getObjectDiff } from "@/utils"
+import { getObjectDiff, strictIsNaN } from "@/utils"
 
 function percentage(part, total) {
   return Math.round((part / total) * 100)
@@ -258,10 +258,10 @@ export default {
     approSummary() {
       if (this.diagnostic.valueTotalHt > 0) {
         let summary = []
-        if (this.diagnostic.valueBioHt) {
+        if (hasValue(this.diagnostic.valueBioHt)) {
           summary.push(`${percentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
         }
-        if (this.diagnostic.valueSustainableHt) {
+        if (hasValue(this.diagnostic.valueSustainableHt)) {
           summary.push(
             `${percentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
           )
@@ -348,5 +348,13 @@ export default {
     }
     window.confirm(LEAVE_WARNING) ? next() : next(false)
   },
+}
+
+function hasValue(val) {
+  if (typeof val === "string") {
+    return !!val
+  } else {
+    return !strictIsNaN(val)
+  }
 }
 </script>
