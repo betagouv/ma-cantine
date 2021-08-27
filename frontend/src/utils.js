@@ -144,3 +144,7 @@ export const getObjectDiff = (obj1, obj2, keysToIgnore) => {
 
   return diffs
 }
+
+export const strictIsNaN = (x) => {
+  return Number(x) !== x
+}
