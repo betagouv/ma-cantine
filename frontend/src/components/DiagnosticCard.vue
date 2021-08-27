@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { timeAgo } from "@/utils"
+import { timeAgo, isDiagnosticComplete } from "@/utils"
 
 export default {
   name: "DiagnosticCard",
@@ -45,13 +45,10 @@ export default {
     },
     dataStatus() {
       let status = "Données manquantes"
-      if (this.canteen.isPublished) {
+      if (this.canteen.publicationStatus === "published") {
         status = "Données publiées"
       } else {
-        const approComplete = ["valueBioHt", "valueSustainableHt", "valueTotalHt"].every(
-          // sadly null >= 0 is true
-          (key) => this.diagnostic[key] > 0 || this.diagnostic[key] === 0
-        )
+        const approComplete = isDiagnosticComplete(this.diagnostic)
         status = approComplete ? "Données d'approvisionnement complétées" : status
       }
       return status

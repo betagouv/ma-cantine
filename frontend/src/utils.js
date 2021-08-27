@@ -148,3 +148,10 @@ export const getObjectDiff = (obj1, obj2, keysToIgnore) => {
 export const strictIsNaN = (x) => {
   return Number(x) !== x
 }
+
+export const isDiagnosticComplete = (diagnostic) => {
+  return ["valueBioHt", "valueSustainableHt", "valueTotalHt"].every(
+    // sadly null >= 0 is true
+    (key) => diagnostic[key] > 0 || diagnostic[key] === 0
+  )
+}

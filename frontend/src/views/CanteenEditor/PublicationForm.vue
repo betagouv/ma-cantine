@@ -1,6 +1,16 @@
 <template>
   <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
+    <v-alert color="amber darken-3" class="mb-1 body-2" v-if="!canPublish" outlined>
+      <span class="grey--text text--darken-2">
+        <v-icon class="mb-1 mr-2" color="amber darken-3">mdi-alert-circle-outline</v-icon>
+        Nous vous conseillons de remplir des
+        <router-link :to="{ name: 'DiagnosticList', params: { canteenUrlComponent } }">
+          données d'approvisionnement pour l'année {{ this.publicationYear }}
+        </router-link>
+        avant que vous publiiez vos données.
+      </span>
+    </v-alert>
     <v-form ref="form" v-model="formIsValid">
       <PublicationField class="mb-4" :canteen="canteen" v-model="publicationRequested" />
       <p class="body-2 my-2">Commentaires sur votre cantine</p>
@@ -30,7 +40,7 @@
 
 <script>
 import PublicationField from "./PublicationField"
-import { getObjectDiff } from "@/utils"
+import { getObjectDiff, isDiagnosticComplete } from "@/utils"
 
 const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -48,6 +58,7 @@ export default {
       publicationRequested: false,
       canteen: {},
       bypassLeaveWarning: false,
+      publicationYear: 2020,
     }
   },
   beforeMount() {
@@ -128,6 +139,13 @@ export default {
       }
       const diff = getObjectDiff(this.originalCanteen, this.canteen)
       return Object.keys(diff).length > 0
+    },
+    canPublish() {
+      const diagnostic = this.originalCanteen.diagnostics.find((x) => x.year === this.publicationYear)
+      return !!diagnostic && isDiagnosticComplete(diagnostic)
+    },
+    canteenUrlComponent() {
+      return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
   },
 }
