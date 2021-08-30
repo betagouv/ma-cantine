@@ -3,14 +3,14 @@
     "baseComponent": "QualityMeasure",
     "baseMeasureComponent": "QualityMeasure",
     "deadline": {
-      "display": "\u00c0 partir du 1er janvier 2022 et 2025 pour la restauration priv\u00ee",
+      "display": "\u00c0 partir du 1er janvier 2022 et 2025 pour la restauration priv\u00e9e",
       "earliestISO": "2022-01-01"
     },
-    "description": "La loi EGAlim encadre la r\u00e9partition des produits achet\u00e9s pour la conception des repas. Les menus doivent comporter, au cours de l\u2019ann\u00e9e 2022, 50% de produits de qualit\u00e9 et durables dont 20% issus de l\u2019agriculture biologique ou en conversion. Ces seuils (en %) sont calcul\u00e9s \u00e0 partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre \u00e0 des produits bio ou en conversion et au total au moins 50 euros doivent correspondre \u00e0 des produits durables et de qualit\u00e9 (bio inclus). Depuis la promulgation de la loi Climat et R\u00esilience, l ensemble de la restauration collective, publique comme priv\u00e9e, a l’obligation de proposer 50 % de produits de qualit\u00e9 dont 20 % de produits bio \u00c0 compter de 2022 pour le public, et d’ici 2025 pour le priv\u00e9. En 2024, 60% de la viande et des produits de la peche servis devront respecter les crit\u00e9res de qualit\u00e9.",
+    "description": "La loi EGAlim encadre la r\u00e9partition des produits achet\u00e9s pour la conception des repas. Les menus doivent comporter, au cours de l'ann\u00e9e 2022, 50 % de produits de qualit\u00e9 et durables dont 20 % issus de l'agriculture biologique ou en conversion. Ces seuils (en %) sont calcul\u00e9s \u00e0 partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre \u00e0 des produits bio ou en conversion et au total au moins 50 euros doivent correspondre \u00e0 des produits durables et de qualit\u00e9 (bio inclus). Depuis la promulgation de la loi Climat et R\u00e9silience, l'ensemble de la restauration collective, publique comme priv\u00e9e, a l'obligation de proposer 50 % de produits de qualit\u00e9 dont 20 % de produits bio \u00e0 compter de 2022 pour le public, et d'ici 2025 pour le priv\u00e9. En 2024, 60 % de la viande et des produits de la p\u00eache servis devront respecter les crit\u00e9res de qualit\u00e9.",
     "descriptionComponent": "KeyMeasureDescriptionQuality",
+    "id": "qualite-des-produits",
     "mdiIcon": "mdi-food-apple",
     "mdiIconColor": "red",
-    "id": "qualite-des-produits",
     "shortTitle": "Qualit\u00e9 des produits",
     "subMeasures": [
       {
@@ -22,7 +22,7 @@
       },
       {
         "descriptionComponent": "LogoBio",
-        "htmlDescription": "Parmi ces produits de qualit\u00e9, au moins 20 % des produits doivent \u00eatre \u00ab bio \u00bb, c\u2019est \u00e0 dire : \n\n-  des produits issus de l\u2019agriculture biologique.\n-  des produits v\u00e9g\u00e9taux \u00e9tiquet\u00e9s 'en conversion'.",
+        "htmlDescription": "Parmi ces produits de qualit\u00e9, au moins 20 % des produits doivent \u00eatre \u00ab bio \u00bb, c'est \u00e0 dire : \n\n-  des produits issus de l'agriculture biologique.\n-  des produits v\u00e9g\u00e9taux \u00e9tiquet\u00e9s 'en conversion'.",
         "id": "vingt",
         "readMore": false,
         "shortTitle": "20 % bio",
@@ -39,7 +39,7 @@
       "loisirs",
       "entreprises"
     ],
-    "title": "Au moins 50% de produits de qualit\u00e9 et durables dont 20% de bio"
+    "title": "Au moins 50 % de produits de qualit\u00e9 et durables dont 20 % de bio"
   },
   {
     "baseComponent": "WasteMeasure",
@@ -48,23 +48,23 @@
       "display": "Janvier et octobre 2020",
       "earliestISO": "2020-01-01"
     },
+    "id": "gaspillage-alimentaire",
     "mdiIcon": "mdi-offer",
     "mdiIconColor": "orange darken-2",
-    "id": "gaspillage-alimentaire",
     "shortTitle": "Gaspillage alimentaire",
     "subMeasures": [
       {
-        "description": "Obligation de mettre en place une d\u00e9marche de lutte contre le gaspillage alimentaire \u00e9tendu \u00e0 la restauration collective priv\u00e9e et obligation d\u2019effectuer un diagnostic pr\u00e9alable \u00e0 la r\u00e9alisation de cette d\u00e9marche.",
+        "description": "Obligation de mettre en place une d\u00e9marche de lutte contre le gaspillage alimentaire \u00e9tendu \u00e0 la restauration collective priv\u00e9e et obligation d'effectuer un diagnostic pr\u00e9alable \u00e0 la r\u00e9alisation de cette d\u00e9marche.",
         "id": "gaspillage-analyse",
         "readMore": false,
         "shortTitle": "Gaspillage analys\u00e9",
-        "title": "Le gaspillage alimentaire doit \u00eatre analys\u00e9 afin d\u2019\u00eatre r\u00e9duit."
+        "title": "Le gaspillage alimentaire doit \u00eatre analys\u00e9 afin d'\u00eatre r\u00e9duit."
       },
       {
         "deadline": {
           "earliestISO": "2020-01-01"
         },
-        "htmlDescription": "L\u2019infraction \u00e0 cette loi est susceptible d\u2019une amende de 3 750 \u20ac.",
+        "htmlDescription": "L'infraction \u00e0 cette loi est susceptible d'une amende de 3 750 \u20ac.",
         "id": "restes",
         "readMore": false,
         "shortTitle": "Restes prot\u00e9g\u00e9s",
@@ -74,7 +74,7 @@
         "deadline": {
           "earliestISO": "2020-10-22"
         },
-        "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui <b>pr\u00e9parent plus de 3000 repas par jour</b> ont l\u2019obligation de proposer une convention de dons \u00e0 une association habilit\u00e9e.",
+        "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui <b>pr\u00e9parent plus de 3000 repas par jour</b> ont l'obligation de proposer une convention de dons \u00e0 une association habilit\u00e9e.",
         "id": "dons",
         "readMore": false,
         "shortTitle": "Dons aux associations",
@@ -96,9 +96,9 @@
   {
     "baseComponent": "DiversificationMeasure",
     "baseMeasureComponent": "DiversificationMeasure",
+    "id": "diversification-des-menus",
     "mdiIcon": "mdi-leaf",
     "mdiIconColor": "green darken-1",
-    "id": "diversification-des-menus",
     "shortTitle": "Diversification des menus",
     "subMeasures": [
       {
@@ -106,7 +106,7 @@
           "display": "Depuis le 30 octobre 2018",
           "earliestISO": "2018-10-30"
         },
-        "description": "Les gestionnaires des restaurants collectifs sont tenus de pr\u00e9senter \u00e0 leurs structures dirigeantes un plan pluriannuel de diversification de prot\u00e9ines incluant des alternatives \u00e0 base de prot\u00e9ines v\u00e9g\u00e9tales dans les repas qu\u2019ils proposent.",
+        "description": "Les gestionnaires des restaurants collectifs sont tenus de pr\u00e9senter \u00e0 leurs structures dirigeantes un plan pluriannuel de diversification de prot\u00e9ines incluant des alternatives \u00e0 base de prot\u00e9ines v\u00e9g\u00e9tales dans les repas qu'ils proposent.",
         "id": "proteines",
         "readMore": false,
         "shortTitle": "Prot\u00e9ines diversifi\u00e9es",
@@ -127,7 +127,7 @@
           "display": "Exp\u00e9rimentation de 2 ans (du 1er novembre 2019 au 1er novembre 2021)",
           "earliestISO": "2019-11-01"
         },
-        "description": "Tous les restaurants collectifs scolaires (publics ou priv\u00e9s) sont tenus de proposer, au moins une fois par semaine, un menu v\u00e9g\u00e9tarien (extension de la pr\u00e9g\c\u00e9g\dente exp\u00e9g\rimentation). Ce menu v\u00e9g\u00e9tarien peut constituer une alternative \u00e0 d\u2019autres menus dans le cas o\u00f9 plusieurs menus sont propos\u00e9s. Dans le cas o\u00f9 un menu unique est propos\u00e9, il s\u2019agit d\u2019un menu unique v\u00e9g\u00e9tarien. Par ailleurs, le menu v\u00e9g\u00e9tarien doit s\u2019ins\u00e9rer dans un plan alimentaire respectueux des exigences relatives \u00e0 la qualit\u00e9 nutritionnelle.\nQu\u2019est-ce qu\u2019un menu v\u00e9g\u00e9tarien ? Il s\u2019agit d\u2019un menu (toutes les composantes) sans viande, ni poisson, crustac\u00e9s et fruits de mer. Il peut cependant comprendre des prot\u00e9ines animales (\u0153ufs, produits laitiers). Les alternatives prot\u00e9iques utilis\u00e9es peuvent \u00eatre les l\u00e9gumineuses (lentilles, pois chiches, haricots...), les c\u00e9r\u00e9ales (bl\u00e9, riz, boulgour...), les \u0153ufs et/ou les produits laitiers. Les cantines de l’Etat et les universit\u00e9s qui proposent d\u00e9ja plusieurs menus devront obligatoirement proposer une option v\u00e9g\u00e9tarienne.",
+        "description": "Tous les restaurants collectifs scolaires (publics ou priv\u00e9s) sont tenus de proposer, au moins une fois par semaine, un menu v\u00e9g\u00e9tarien (extension de la pr\u00e9c\u00e9dente exp\u00e9rimentation). Ce menu v\u00e9g\u00e9tarien peut constituer une alternative \u00e0 d'autres menus dans le cas o\u00f9 plusieurs menus sont propos\u00e9s. Dans le cas o\u00f9 un menu unique est propos\u00e9, il s'agit d'un menu unique v\u00e9g\u00e9tarien. Par ailleurs, le menu v\u00e9g\u00e9tarien doit s'ins\u00e9rer dans un plan alimentaire respectueux des exigences relatives \u00e0 la qualit\u00e9 nutritionnelle.\nQu'est-ce qu'un menu v\u00e9g\u00e9tarien ? Il s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustac\u00e9s et fruits de mer. Il peut cependant comprendre des prot\u00e9ines animales (\u0153ufs, produits laitiers). Les alternatives prot\u00e9iques utilis\u00e9es peuvent \u00eatre les l\u00e9gumineuses (lentilles, pois chiches, haricots...), les c\u00e9r\u00e9ales (bl\u00e9, riz, boulgour...), les \u0153ufs et/ou les produits laitiers. Les cantines de l'Etat et les universit\u00e9s qui proposent d\u00e9ja plusieurs menus devront obligatoirement proposer une option v\u00e9g\u00e9tarienne.",
         "id": "menu-vege",
         "readMore": false,
         "shortTitle": "Menu v\u00e9g\u00e9 hebdo",
@@ -142,9 +142,9 @@
   {
     "baseComponent": "NoPlasticMeasure",
     "baseMeasureComponent": null,
+    "id": "interdiction-du-plastique",
     "mdiIcon": "mdi-weather-windy",
     "mdiIconColor": "blue darken-1",
-    "id": "interdiction-du-plastique",
     "shortTitle": "Interdiction du plastique",
     "subMeasures": [
       {
@@ -152,21 +152,21 @@
           "display": "Depuis le 1er janvier 2020",
           "earliestISO": "2020-01-01"
         },
-        "description": "L\u2019utilisation de bouteilles d\u2019eau plate en plastique est interdite en restauration scolaire. Cette mesure s\u2019applique aux territoires desservis par un r\u00e9seau d\u2019eau potable et peut \u00eatre suspendue en cas exceptionnel de restriction de l\u2019eau destin\u00e9e \u00e0 la consommation humaine prononc\u00e9e par le Pr\u00e9fet.",
+        "description": "L'utilisation de bouteilles d'eau plate en plastique est interdite en restauration scolaire. Cette mesure s'applique aux territoires desservis par un r\u00e9seau d'eau potable et peut \u00eatre suspendue en cas exceptionnel de restriction de l'eau destin\u00e9e \u00e0 la consommation humaine prononc\u00e9e par le Pr\u00e9fet.",
         "id": "bouteilles",
         "readMore": false,
         "shortTitle": "Bouteilles",
         "tags": [
           "scolaire"
         ],
-        "title": "Les bouteilles d\u2019eau plate en plastique sont interdites."
+        "title": "Les bouteilles d'eau plate en plastique sont interdites."
       },
       {
         "deadline": {
           "display": "Depuis le 1er janvier 2020",
           "earliestISO": "2020-01-01"
         },
-        "description": "La mise \u00e0 disposition des ustensiles \u00e0 usage unique en mati\u00e8re plastique (sauf, jusqu\u2019au 3 juillet 2021, ceux compostables en compostage domestique et constitu\u00e9s, pour tout ou partie, de mati\u00e8res biosourc\u00e9es) suivants est interdite : gobelets, verres, assiettes, pailles, couverts, piques \u00e0 steak, couvercles \u00e0 verre, plateaux-repas, pots \u00e0 glace, saladiers, bo\u00eetes et b\u00e2tonnets m\u00e9langeurs pour boissons.",
+        "description": "La mise \u00e0 disposition des ustensiles \u00e0 usage unique en mati\u00e8re plastique (sauf, jusqu'au 3 juillet 2021, ceux compostables en compostage domestique et constitu\u00e9s, pour tout ou partie, de mati\u00e8res biosourc\u00e9es) suivants est interdite : gobelets, verres, assiettes, pailles, couverts, piques \u00e0 steak, couvercles \u00e0 verre, plateaux-repas, pots \u00e0 glace, saladiers, bo\u00eetes et b\u00e2tonnets m\u00e9langeurs pour boissons.",
         "id": "ustensiles",
         "readMore": false,
         "shortTitle": "Ustensiles",
@@ -187,7 +187,7 @@
           "display": "\u00c0 partir du 1er janvier 2025 (sauf pour les communes de - de 2000 hab : 1er janvier 2028)",
           "earliestISO": "2025-01-01"
         },
-        "description": "L\u2019utilisation de contenants alimentaires de cuisson, de r\u00e9chauffe ou de service en mati\u00e8re plastique est interdite.",
+        "description": "L'utilisation de contenants alimentaires de cuisson, de r\u00e9chauffe ou de service en mati\u00e8re plastique est interdite.",
         "id": "contenants",
         "readMore": false,
         "shortTitle": "Contenants",
@@ -204,9 +204,9 @@
   {
     "baseComponent": "InformationMeasure",
     "baseMeasureComponent": null,
+    "id": "information-des-usagers",
     "mdiIcon": "mdi-bullhorn",
     "mdiIconColor": "amber darken-2",
-    "id": "information-des-usagers",
     "shortTitle": "Information des convives",
     "subMeasures": [
       {
@@ -216,7 +216,7 @@
           "display": "Depuis le 1er janvier 2020",
           "earliestISO": "2020-01-01"
         },
-        "htmlDescription": "Une fois par an, <b>les convives sont inform\u00e9s</b> sur la part des produits de qualit\u00e9 et durables des repas servis et des d\u00e9marches entreprises pour l\u2019acquisition de produits issus du commerce \u00e9quitable. Cette information doit se faire par affichage et par voie \u00e9lectronique (mail aux convives, affichage sur le logiciel de gestion de vie scolaire, envoi d\u2019infolettre\u2026).",
+        "htmlDescription": "Une fois par an, <b>les convives sont inform\u00e9s</b> sur la part des produits de qualit\u00e9 et durables des repas servis et des d\u00e9marches entreprises pour l'acquisition de produits issus du commerce \u00e9quitable. Cette information doit se faire par affichage et par voie \u00e9lectronique (mail aux convives, affichage sur le logiciel de gestion de vie scolaire, envoi d'infolettre\u2026).",
         "id": "convives-informes",
         "readMore": false,
         "shortTitle": "Convives inform\u00e9s",
