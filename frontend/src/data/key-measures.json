@@ -3,10 +3,10 @@
     "baseComponent": "QualityMeasure",
     "baseMeasureComponent": "QualityMeasure",
     "deadline": {
-      "display": "\u00c0 partir du 1er janvier 2022",
+      "display": "\u00c0 partir du 1er janvier 2022 et 2025 pour la restauration privée",
       "earliestISO": "2022-01-01"
     },
-    "description": "La loi EGAlim encadre la r\u00e9partition des produits achet\u00e9s pour la conception des repas. Les menus doivent comporter, au cours de l'ann\u00e9e 2022, 50% de produits de qualit\u00e9 et durables dont 20% issus de l\u2019agriculture biologique ou en conversion. Ces seuils (en %) sont calcul\u00e9s \u00e0 partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre \u00e0 des produits bio ou en conversion et au total au moins 50 euros doivent correspondre \u00e0 des produits durables et de qualit\u00e9 (bio inclus).",
+    "description": "La loi EGAlim encadre la r\u00e9partition des produits achet\u00e9s pour la conception des repas. Les menus doivent comporter, au cours de l'ann\u00e9e 2022, 50% de produits de qualit\u00e9 et durables dont 20% issus de l\u2019agriculture biologique ou en conversion. Ces seuils (en %) sont calcul\u00e9s \u00e0 partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre \u00e0 des produits bio ou en conversion et au total au moins 50 euros doivent correspondre \u00e0 des produits durables et de qualit\u00e9 (bio inclus). Depuis la promulgation de la loi Climat et Résilience, l’ensemble de la restauration collective, publique comme privée, a l’obligation de proposer 50 % de produits de qualité dont 20 % de produits bio à compter de 2022 pour le public, et d’ici 2025 pour le privé.En 2024, 60% de la viande et des produits de la pêche servis devront respecter les critères de qualité.",
     "descriptionComponent": "KeyMeasureDescriptionQuality",
     "mdiIcon": "mdi-food-apple",
     "mdiIconColor": "red",
@@ -36,7 +36,8 @@
       "medical",
       "social",
       "creche",
-      "loisirs"
+      "loisirs",
+      "entreprises"
     ],
     "title": "Au moins 50% de produits de qualit\u00e9 et durables dont 20% de bio"
   },
@@ -126,14 +127,14 @@
           "display": "Exp\u00e9rimentation de 2 ans (du 1er novembre 2019 au 1er novembre 2021)",
           "earliestISO": "2019-11-01"
         },
-        "description": "Tous les restaurants collectifs scolaires (publics ou priv\u00e9s) sont tenus de proposer, au moins une fois par semaine, un menu v\u00e9g\u00e9tarien, sur une dur\u00e9e de 2 ans. Ce menu v\u00e9g\u00e9tarien peut constituer une alternative \u00e0 d\u2019autres menus dans le cas o\u00f9 plusieurs menus sont propos\u00e9s. Dans le cas o\u00f9 un menu unique est propos\u00e9, il s\u2019agit d\u2019un menu unique v\u00e9g\u00e9tarien. Par ailleurs, le menu v\u00e9g\u00e9tarien doit s\u2019ins\u00e9rer dans un plan alimentaire respectueux des exigences relatives \u00e0 la qualit\u00e9 nutritionnelle.\nQu\u2019est-ce qu\u2019un menu v\u00e9g\u00e9tarien ? Il s\u2019agit d\u2019un menu (toutes les composantes) sans viande, ni poisson, crustac\u00e9s et fruits de mer. Il peut cependant comprendre des prot\u00e9ines animales (\u0153ufs, produits laitiers). Les alternatives prot\u00e9iques utilis\u00e9es peuvent \u00eatre les l\u00e9gumineuses (lentilles, pois chiches, haricots...), les c\u00e9r\u00e9ales (bl\u00e9, riz, boulgour...), les \u0153ufs et/ou les produits laitiers.",
+        "description": "Tous les restaurants collectifs scolaires (publics ou priv\u00e9s) sont tenus de proposer, au moins une fois par semaine, un menu v\u00e9g\u00e9tarien (extension de la pr\u00e9g\c\u00e9g\dente exp\u00e9g\rimentation). Ce menu v\u00e9g\u00e9tarien peut constituer une alternative \u00e0 d\u2019autres menus dans le cas o\u00f9 plusieurs menus sont propos\u00e9s. Dans le cas o\u00f9 un menu unique est propos\u00e9, il s\u2019agit d\u2019un menu unique v\u00e9g\u00e9tarien. Par ailleurs, le menu v\u00e9g\u00e9tarien doit s\u2019ins\u00e9rer dans un plan alimentaire respectueux des exigences relatives \u00e0 la qualit\u00e9 nutritionnelle.\nQu\u2019est-ce qu\u2019un menu v\u00e9g\u00e9tarien ? Il s\u2019agit d\u2019un menu (toutes les composantes) sans viande, ni poisson, crustac\u00e9s et fruits de mer. Il peut cependant comprendre des prot\u00e9ines animales (\u0153ufs, produits laitiers). Les alternatives prot\u00e9iques utilis\u00e9es peuvent \u00eatre les l\u00e9gumineuses (lentilles, pois chiches, haricots...), les c\u00e9r\u00e9ales (bl\u00e9, riz, boulgour...), les \u0153ufs et/ou les produits laitiers. Les cantines de l’Etat et les universit\u00e9s qui proposent d\u00e9ja plusieurs menus devront obligatoirement proposer une option v\u00e9g\u00e9tarienne.",
         "id": "menu-vege",
         "readMore": false,
         "shortTitle": "Menu v\u00e9g\u00e9 hebdo",
         "tags": [
           "scolaire"
         ],
-        "title": "Exp\u00e9rimentation d\u2019un menu v\u00e9g\u00e9tarien par semaine"
+        "title": "Menu v\u00e9g\u00e9tarien"
       }
     ],
     "title": "Diversification des sources de prot\u00e9ines et menus v\u00e9g\u00e9tariens"
