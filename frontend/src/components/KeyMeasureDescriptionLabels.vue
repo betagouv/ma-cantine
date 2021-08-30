@@ -23,7 +23,11 @@
       </li>
       <li>
         <v-icon color="green" small>mdi-checkbox-marked</v-icon>
-        Produits issus du Commerce équitable. Pour être déclaré « Commerce équitable », un label devra être reconnu par la plateforme nationale d'actions globales pour la responsabilité sociétale des entreprises, dite « Plateforme RSE », service du Premier ministre au sein de France Stratégie. Elle comprendra grâce à la loi un député et un sénateur en son sein.
+        Produits issus du Commerce équitable. Pour être déclaré « Commerce équitable », un label devra être reconnu par
+        la plateforme nationale d'actions globales pour la responsabilité sociétale des entreprises, dite «{{
+          "\xa0"
+        }}Plateforme RSE », service du Premier ministre au sein de France Stratégie. Elle comprendra grâce à la loi un
+        député et un sénateur en son sein.
       </li>
     </ul>
   </div>
