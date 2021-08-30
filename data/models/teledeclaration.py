@@ -13,24 +13,20 @@ class Teledeclaration(models.Model):
         SUBMITTED = "SUBMITTED", "Télédéclaré"
         CANCELLED = "CANCELLED", "Annulé"
 
+    # Fields that pertain to the teledeclaration. These fields
+    # will not change and should contain all information to be
+    # sent to the system that will treat the teledeclarations.
+
+    fields = models.JSONField(verbose_name="Champs")
+
+    # Structured non-null fields for validation / querying.
+    # These fields cannot be null and will not change if the
+    # canteen or diagnostic objects change.
+
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
-
-    applicant = models.ForeignKey(
-        get_user_model(),
-        verbose_name="demandeur",
-        on_delete=models.PROTECT,
-    )
-
-    year = models.IntegerField(
-        verbose_name="année",
-    )
-
-    canteen = models.ForeignKey(
-        Canteen,
-        verbose_name="cantine",
-        on_delete=models.PROTECT,
-    )
+    year = models.IntegerField(verbose_name="année")
+    canteen_siret = models.TextField(null=True, blank=True)
 
     status = models.CharField(
         max_length=255,
@@ -38,8 +34,32 @@ class Teledeclaration(models.Model):
         verbose_name="status",
     )
 
-    source = models.ForeignKey(
-        Diagnostic, verbose_name="diagnostic source", on_delete=models.PROTECT
+    # Auxiliary relation fields for querying / reporting. May
+    # be null in case of deletion. Additionally, the linked model may have
+    # been modified since. For the actual data see the fields above.
+
+    applicant = models.ForeignKey(
+        get_user_model(),
+        verbose_name="demandeur",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    canteen = models.ForeignKey(
+        Canteen,
+        verbose_name="cantine",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    diagnostic = models.ForeignKey(  # TODO rename to diagnostic
+        Diagnostic,
+        verbose_name="diagnostic",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     def clean(self):
@@ -48,18 +68,50 @@ class Teledeclaration(models.Model):
         at any given time.
         """
         if self.status == self.TeledeclarationStatus.SUBMITTED:
-            if (
-                Teledeclaration.objects.filter(
-                    canteen=self.canteen, year=self.year, status=self.status
-                ).count()
-                > 0
-            ):
-                raise ValidationError(
-                    {
-                        "year": "Il existe déjà une télédéclaration en cours pour cette année"
-                    }
-                )
+            duplicates = Teledeclaration.objects.filter(
+                canteen_siret=self.canteen_siret, year=self.year, status=self.status
+            )
+            message = "Il existe déjà une télédéclaration en cours pour cette année"
+            if duplicates.count() > 0:
+                raise ValidationError({"year": message})
         return super().clean()
+
+    @staticmethod
+    def createFromDiagnostic(diagnostic, applicant, status=None):
+        """
+        Create a teledeclaration object from a diagnostic
+        """
+        from data.factories import TeledeclarationFactory  # Avoids circular import
+
+        status = status or Teledeclaration.TeledeclarationStatus.SUBMITTED
+        canteen = diagnostic.canteen
+        jsonFields = {
+            "year": diagnostic.year,
+            "canteen": {
+                "name": canteen.name,
+                "siret": canteen.siret,
+                "city_insee_code": canteen.city_insee_code,
+            },
+            "applicant": {
+                "name": applicant.get_full_name(),
+                "email": applicant.email,
+            },
+            "teledeclaration": {
+                "value_bio_ht": float(diagnostic.value_bio_ht),
+                "value_fair_trade_ht": float(diagnostic.value_fair_trade_ht),
+                "value_sustainable_ht": float(diagnostic.value_sustainable_ht),
+                "value_total_ht": float(diagnostic.value_total_ht),
+            },
+        }
+        return TeledeclarationFactory.create(
+            applicant=applicant,
+            year=diagnostic.year,
+            canteen=diagnostic.canteen,
+            canteen_siret=canteen.siret,
+            status=status,
+            diagnostic=diagnostic,
+            fields=jsonFields,
+        )
 
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None

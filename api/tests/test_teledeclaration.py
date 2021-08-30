@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, DiagnosticFactory, TeledeclarationFactory
+from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Teledeclaration
 from .utils import authenticate
 
@@ -94,12 +94,34 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(body["teledeclaration"]["id"], teledeclaration.id)
         self.assertEqual(body["teledeclaration"]["status"], "SUBMITTED")
 
-        self.assertEqual(teledeclaration.source, diagnostic)
+        self.assertEqual(teledeclaration.diagnostic, diagnostic)
         self.assertEqual(teledeclaration.canteen, canteen)
         self.assertEqual(teledeclaration.year, 2020)
         self.assertEqual(teledeclaration.applicant, user)
+        self.assertEqual(teledeclaration.canteen_siret, canteen.siret)
         self.assertEqual(
             teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED
+        )
+
+        json_fields = teledeclaration.fields
+        self.assertEqual(json_fields["year"], 2020)
+
+        json_canteen = json_fields["canteen"]
+        self.assertEqual(json_canteen["name"], canteen.name)
+        self.assertEqual(json_canteen["siret"], canteen.siret)
+        self.assertEqual(json_canteen["city_insee_code"], canteen.city_insee_code)
+
+        json_teledeclaration = json_fields["teledeclaration"]
+        self.assertEqual(json_teledeclaration["value_bio_ht"], diagnostic.value_bio_ht)
+        self.assertEqual(
+            json_teledeclaration["value_fair_trade_ht"], diagnostic.value_fair_trade_ht
+        )
+        self.assertEqual(
+            json_teledeclaration["value_sustainable_ht"],
+            diagnostic.value_sustainable_ht,
+        )
+        self.assertEqual(
+            json_teledeclaration["value_total_ht"], diagnostic.value_total_ht
         )
 
     @authenticate
@@ -111,13 +133,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
-        teledeclaration = TeledeclarationFactory.create(
-            source=diagnostic,
-            canteen=canteen,
-            year=2020,
-            applicant=user,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-        )
+        teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
 
         payload = {"teledeclarationId": teledeclaration.id}
         response = self.client.post(reverse("teledeclaration_cancel"), payload)
@@ -140,13 +156,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
-        TeledeclarationFactory.create(
-            source=diagnostic,
-            canteen=canteen,
-            year=2020,
-            applicant=user,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-        )
+        Teledeclaration.createFromDiagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)

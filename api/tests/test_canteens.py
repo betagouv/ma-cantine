@@ -1,12 +1,10 @@
-from datetime import timedelta
 from django.urls import reverse
 from django.core import mail
 from django.test.utils import override_settings
-from django.utils import timezone
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory, SectorFactory
-from data.factories import DiagnosticFactory, TeledeclarationFactory
+from data.factories import DiagnosticFactory
 from data.models import Canteen, Teledeclaration
 from .utils import authenticate
 
@@ -403,22 +401,11 @@ class TestCanteenApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
-        TeledeclarationFactory.create(
-            source=diagnostic,
-            canteen=canteen,
-            year=2020,
-            applicant=user,
-            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
-            creation_date=(timezone.now() - timedelta(days=1)),
+        Teledeclaration.createFromDiagnostic(
+            diagnostic, user, Teledeclaration.TeledeclarationStatus.CANCELLED
         )
-        new_teledeclaration = TeledeclarationFactory.create(
-            source=diagnostic,
-            canteen=canteen,
-            year=2020,
-            applicant=user,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-            creation_date=timezone.now(),
-        )
+
+        new_teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
         response = self.client.get(reverse("user_canteens"))
         body = response.json()
         json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
