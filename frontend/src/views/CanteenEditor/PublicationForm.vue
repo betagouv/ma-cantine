@@ -1,7 +1,7 @@
 <template>
   <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
-    <v-alert color="amber darken-3" class="mb-1 body-2" v-if="!canPublish" outlined>
+    <v-alert color="amber darken-3" class="mb-1 body-2" v-if="!currentDiagnosticComplete" outlined>
       <span class="grey--text text--darken-2">
         <v-icon class="mb-1 mr-2" color="amber darken-3">mdi-alert-circle-outline</v-icon>
         Nous vous conseillons de remplir des
@@ -12,19 +12,56 @@
       </span>
     </v-alert>
     <v-form ref="form" v-model="formIsValid">
-      <PublicationField class="mb-4" :canteen="canteen" v-model="publicationRequested" />
-      <p class="body-2 my-2">Commentaires sur votre cantine</p>
-      <v-textarea solo rows="3" counter="255" v-model="canteen.publicationComments"></v-textarea>
-      <p class="body-2 my-2">Appro</p>
-      <v-textarea solo rows="3" counter="255" v-model="canteen.qualityComments"></v-textarea>
-      <p class="body-2 my-2">Gaspillage</p>
-      <v-textarea solo rows="3" counter="255" v-model="canteen.wasteComments"></v-textarea>
-      <p class="body-2 my-2">Diversification</p>
-      <v-textarea solo rows="3" counter="255" v-model="canteen.diversificationComments"></v-textarea>
-      <p class="body-2 my-2">Plastiques</p>
-      <v-textarea solo rows="3" counter="255" v-model="canteen.plasticsComments"></v-textarea>
+      <PublicationStateNotice :canteen="originalCanteen" />
+      <p class="body-2 my-2">
+        Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
+      </p>
+      <v-textarea
+        solo
+        rows="3"
+        counter="255"
+        v-model="canteen.publicationComments"
+        hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
+      ></v-textarea>
+      <p class="body-2 my-2">
+        Vous avez peut-être des choses et actions à préciser sur la gestion de vos achats et de vos appros...
+      </p>
+      <v-textarea
+        solo
+        rows="3"
+        counter="255"
+        v-model="canteen.qualityComments"
+        hint="Vous pouvez par exemple détailler votre stratégie afin d'accroître la part de bio dans vos repas, évoquer vos succès dans vos démarches pour plus de qualité, ou au contraire les difficultés que vous avez rencontré; témoigner de vos actions..."
+      ></v-textarea>
+      <p class="body-2 my-2">
+        Vous avez peut-être des choses et actions à préciser sur vos initiatives pour réduire le gaspillage...
+      </p>
+      <v-textarea
+        solo
+        rows="3"
+        counter="255"
+        v-model="canteen.wasteComments"
+        hint="Vous avez fait l'acquisition d'une machine de pesée ou imaginé une solution innovante afin de sensibiliser vos convives sur les kg de gaspillage ? C'est le moment de le communiquer ! Vous pouvez également, si vous le souhaitez, donner des chiffres de la réduction de déchets dans votre établissement... Vous pouvez également évoquer les relations établies avec les associations de votre secteur... votre façon de valoriser les repas cuisinés mais non consommés..."
+      ></v-textarea>
+      <p class="body-2 my-2">A propos des protéines et de leur diversification...</p>
+      <v-textarea
+        solo
+        rows="3"
+        counter="255"
+        v-model="canteen.diversificationComments"
+        hint="Ici peut être le lieu pour évoquer quand et comment vous avez choisi de servir des repas végétariens gourmands. Peut-être donner le secret de vos recettes préférées ? Pourquoi pas nous révéler votre ingrédient sans protéines animales qui révolutionne vos menus... ?"
+      ></v-textarea>
+      <p class="body-2 my-2">Sur le plastique...</p>
+      <v-textarea
+        solo
+        rows="3"
+        counter="255"
+        v-model="canteen.plasticsComments"
+        hint="Même chose que pour les champs ci-dessus. Vous commencez à avoir l'habitude... :) C'est l'occasion et le lieu de nous faire rêver d'un monde sans plastique, de nous raconter vos démarches et actions afin de réduire son usage dans votre établissement..."
+      ></v-textarea>
       <p class="body-2 my-2">Information</p>
       <v-textarea solo rows="3" counter="255" v-model="canteen.informationComments"></v-textarea>
+      <PublicationField class="mb-4" :canteen="canteen" v-model="publicationRequested" />
     </v-form>
     <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
       <v-spacer></v-spacer>
@@ -41,6 +78,7 @@
 <script>
 import PublicationField from "./PublicationField"
 import { getObjectDiff, isDiagnosticComplete } from "@/utils"
+import PublicationStateNotice from "./PublicationStateNotice"
 
 const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -51,7 +89,7 @@ export default {
       type: Object,
     },
   },
-  components: { PublicationField },
+  components: { PublicationField, PublicationStateNotice },
   data() {
     return {
       formIsValid: true,
@@ -140,7 +178,7 @@ export default {
       const diff = getObjectDiff(this.originalCanteen, this.canteen)
       return Object.keys(diff).length > 0
     },
-    canPublish() {
+    currentDiagnosticComplete() {
       const diagnostic = this.originalCanteen.diagnostics.find((x) => x.year === this.publicationYear)
       return !!diagnostic && isDiagnosticComplete(diagnostic)
     },

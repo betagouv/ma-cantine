@@ -4,6 +4,8 @@
       {{ isNewCanteen ? "Nouvelle cantine" : "Modifier ma cantine" }}
     </h1>
 
+    <PublicationStateNotice :canteen="originalCanteen" :includeLink="true" v-if="!isNewCanteen" />
+
     <v-form ref="form" v-model="formIsValid">
       <v-row>
         <v-col cols="12" md="8">
@@ -141,11 +143,13 @@
 <script>
 import validators from "@/validators"
 import { toBase64, getObjectDiff } from "@/utils"
+import PublicationStateNotice from "./PublicationStateNotice"
 
 const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "CanteenForm",
+  components: { PublicationStateNotice },
   props: {
     originalCanteen: {
       type: Object,
