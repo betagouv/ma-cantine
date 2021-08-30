@@ -47,14 +47,38 @@
                 Modifier le diagnostic existant.
               </v-btn>
             </v-col>
+
+            <p v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration" class="text-caption ma-0 pl-4">
+              <v-icon small>mdi-alert</v-icon>
+              Remplissez les données d'approvisionnement pour télédéclarer ce diagnostic
+            </p>
+            <p v-else-if="!hasActiveTeledeclaration" class="text-caption ma-0 pl-4">
+              <v-icon small>mdi-information</v-icon>
+              Vous n'avez pas encore télédéclaré ce diagnostic
+            </p>
+            <v-alert
+              type="success"
+              v-else
+              class="text-caption mx-2 my-0 pl-4"
+              style="width: 100%"
+              colored-border
+              border="left"
+              elevation="1"
+            >
+              Ce diagnostic a été télédéclaré {{ timeAgo(this.diagnostic.teledeclaration.creationDate, true) }}
+            </v-alert>
+
             <v-col cols="12" class="mb-8 mt-3">
               <v-divider></v-divider>
             </v-col>
           </v-row>
         </v-form>
 
-        <p class="caption grey--text text--darken-1">
+        <p class="caption grey--text text--darken-1" v-if="!hasActiveTeledeclaration">
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
+        </p>
+        <p class="caption grey--text text--darken-1" v-else>
+          Une fois télédéclaré, vous ne pouvez plus modifier votre diagnostic.
         </p>
 
         <v-expansion-panels class="mb-8" :disabled="!diagnosticIsUnique" :value="openedPanel">
@@ -69,6 +93,7 @@
               <QualityMeasureValuesInput
                 :originalDiagnostic="diagnostic"
                 label="La valeur (en HT) de mes achats alimentaires..."
+                :readonly="hasActiveTeledeclaration"
               />
             </v-form>
           </DiagnosticExpansionPanel>
@@ -80,7 +105,7 @@
             :formIsValid="formIsValid.waste"
           >
             <v-form ref="waste" v-model="formIsValid.waste">
-              <WasteMeasure :diagnostic="diagnostic" />
+              <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />
             </v-form>
           </DiagnosticExpansionPanel>
 
@@ -91,7 +116,7 @@
             :formIsValid="formIsValid.diversification"
           >
             <v-form ref="diversification" v-model="formIsValid.diversification">
-              <DiversificationMeasure :diagnostic="diagnostic" />
+              <DiversificationMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />
             </v-form>
           </DiagnosticExpansionPanel>
 
@@ -103,7 +128,7 @@
             :formIsValid="formIsValid.plastic"
           >
             <v-form ref="plastic" v-model="formIsValid.plastic">
-              <NoPlasticMeasure :diagnostic="diagnostic" />
+              <NoPlasticMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />
             </v-form>
           </DiagnosticExpansionPanel>
 
@@ -114,12 +139,12 @@
             :formIsValid="formIsValid.information"
           >
             <v-form ref="information" v-model="formIsValid.information">
-              <InformationMeasure :diagnostic="diagnostic" />
+              <InformationMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />
             </v-form>
           </DiagnosticExpansionPanel>
         </v-expansion-panels>
 
-        <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
+        <v-sheet rounded color="grey lighten-4 pa-3" v-if="!hasActiveTeledeclaration" class="d-flex">
           <v-spacer></v-spacer>
           <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
             Annuler
@@ -128,6 +153,39 @@
             Valider
           </v-btn>
         </v-sheet>
+
+        <div v-if="!diagnostic.teledeclaration">
+          <v-divider class="mt-8"></v-divider>
+          <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
+          <p>
+            Conformément à l’article 24 de la loi EGAlim, chaque établissement est tenu de renseigner et transmettre à
+            l’administration ses données, notamment en termes d’approvisionnement sur l’année civile passée. Afin de
+            faciliter cette démarche, nous vous proposons d’utiliser les informations de votre autodiagnostic 2020 afin
+            de les envoyer, avec votre accord, à la DGAL qui en fera un bilan statistique global des données des
+            établissements.
+          </p>
+          <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid">
+            <v-checkbox
+              :rules="[validators.checked]"
+              label="Je déclare sur l’honneur la véracité de mes informations"
+              :disabled="!canSubmitTeledeclaration"
+            ></v-checkbox>
+          </v-form>
+          <v-sheet rounded color="white" class="d-flex">
+            <v-spacer></v-spacer>
+            <v-btn x-large color="primary" @click="submitTeledeclaration" :disabled="!canSubmitTeledeclaration">
+              <v-icon class="mr-2">mdi-file-upload</v-icon>
+              Télédéclarer mon diagnostic
+            </v-btn>
+          </v-sheet>
+          <p
+            v-if="!diagnostic.teledeclaration && !canSubmitTeledeclaration"
+            class="text-caption mt-2 mb-0 text-right amber--text text--darken-3"
+          >
+            <v-icon small color="amber darken-3">mdi-alert</v-icon>
+            Données d'approvisionnement manquantes
+          </p>
+        </div>
       </v-col>
     </v-row>
   </div>
@@ -142,7 +200,7 @@ import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/Diversific
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
-import { getObjectDiff } from "@/utils"
+import { getObjectDiff, timeAgo } from "@/utils"
 
 function percentage(part, total) {
   return Math.round((part / total) * 100)
@@ -165,6 +223,7 @@ export default {
         information: true,
         select: true,
       },
+      teledeclarationFormIsValid: true,
       openedPanel: null,
     }
   },
@@ -221,6 +280,7 @@ export default {
       return !existingDiagnostic
     },
     allowedYears() {
+      // TODO : Should be dynamic
       return [
         {
           text: "2019",
@@ -244,6 +304,17 @@ export default {
       const diff = getObjectDiff(this.originalDiagnostic, this.diagnostic)
       return Object.keys(diff).length > 0
     },
+    canSubmitTeledeclaration() {
+      return [
+        this.diagnostic.valueBioHt,
+        this.diagnostic.valueSustainableHt,
+        this.diagnostic.valueFairTradeHt,
+        this.diagnostic.valueTotalHt,
+      ].every((x) => Number(x) === x)
+    },
+    hasActiveTeledeclaration() {
+      return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
+    },
   },
   beforeMount() {
     if (this.isNewDiagnostic) return
@@ -258,10 +329,10 @@ export default {
     approSummary() {
       if (this.diagnostic.valueTotalHt > 0) {
         let summary = []
-        if (this.diagnostic.valueBioHt) {
+        if (Number(this.diagnostic.valueBioHt) === this.diagnostic.valueBioHt) {
           summary.push(`${percentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
         }
-        if (this.diagnostic.valueSustainableHt) {
+        if (Number(this.diagnostic.valueSustainableHt) === this.diagnostic.valueSustainableHt) {
           summary.push(
             `${percentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
           )
@@ -280,9 +351,9 @@ export default {
       return summary.charAt(0).toUpperCase() + summary.slice(1)
     },
     saveDiagnostic() {
-      const allFormsAreValid = this.validateForms()
+      const diagnosticFormsAreValid = this.validateForms()
 
-      if (!allFormsAreValid) {
+      if (!diagnosticFormsAreValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
         this.openedPanel = Object.values(this.formIsValid).findIndex((isValid) => !isValid)
         return
@@ -301,14 +372,7 @@ export default {
             message: `Votre diagnostic a bien été ${this.isNewDiagnostic ? "créé" : "modifié"}`,
             status: "success",
           })
-          let canteenUrlComponent = this.canteenUrlComponent
-          if (!canteenUrlComponent && this.canteen) {
-            canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(this.canteen)
-          } else if (!canteenUrlComponent) {
-            let canteen = this.userCanteens.find((x) => x.id === this.canteenId)
-            canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteen)
-          }
-          this.$router.push({ name: "DiagnosticList", params: { canteenUrlComponent } })
+          this.navigateToDiagnosticList()
         })
         .catch(() => {
           this.$store.dispatch("notifyServerError")
@@ -320,6 +384,16 @@ export default {
       const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(existingCanteen)
       const year = this.diagnostic.year
       this.$router.replace({ name: "DiagnosticModification", params: { canteenUrlComponent, year } })
+    },
+    navigateToDiagnosticList() {
+      let canteenUrlComponent = this.canteenUrlComponent
+      if (!canteenUrlComponent && this.canteen) {
+        canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(this.canteen)
+      } else if (!canteenUrlComponent) {
+        let canteen = this.userCanteens.find((x) => x.id === this.canteenId)
+        canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteen)
+      }
+      this.$router.push({ name: "DiagnosticList", params: { canteenUrlComponent } })
     },
     validateForms() {
       const refs = this.$refs
@@ -334,6 +408,44 @@ export default {
         delete e["returnValue"]
       }
     },
+    submitTeledeclaration() {
+      const diagnosticFormsAreValid = this.validateForms()
+      const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
+      const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
+
+      if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
+
+      if (!teledeclarationFormIsValid) return
+
+      const saveIfChanged = () => {
+        if (!this.hasChanged) return Promise.resolve()
+
+        return this.$store.dispatch(this.isNewDiagnostic ? "createDiagnostic" : "updateDiagnostic", {
+          id: this.diagnostic.id,
+          canteenId: this.canteenId,
+          payload,
+        })
+      }
+
+      saveIfChanged()
+        .then(() =>
+          this.$store.dispatch("submitTeledeclaration", {
+            id: this.diagnostic.id,
+            canteenId: this.canteenId,
+          })
+        )
+        .then(() => {
+          this.bypassLeaveWarning = true
+          this.$store.dispatch("notify", {
+            title: "Télédéclaration prise en compte",
+            message: "Votre diagnostic a bien été télédéclaré",
+            status: "success",
+          })
+          this.navigateToDiagnosticList()
+        })
+        .catch(() => this.$store.dispatch("notifyServerError"))
+    },
+    timeAgo: timeAgo,
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
@@ -350,3 +462,14 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+form >>> .v-input--checkbox .v-label.theme--light {
+  font-size: 16px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.87);
+}
+form >>> .v-input--checkbox .v-label.theme--light.v-label--is-disabled {
+  color: rgba(0, 0, 0, 0.37);
+}
+</style>

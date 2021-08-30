@@ -5,7 +5,6 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from django.core.exceptions import ValidationError as DjangoValidationError
 from data.models import Diagnostic, Teledeclaration
-from data.factories import TeledeclarationFactory
 from api.serializers import FullDiagnosticSerializer
 from .utils import camelize
 
@@ -32,13 +31,7 @@ class TeledeclarationCreateView(APIView):
             if request.user not in diagnostic.canteen.managers.all():
                 raise PermissionDenied()
 
-            TeledeclarationFactory.create(
-                applicant=request.user,
-                year=diagnostic.year,
-                canteen=diagnostic.canteen,
-                status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-                source=diagnostic,
-            )
+            Teledeclaration.createFromDiagnostic(diagnostic, request.user)
 
             data = FullDiagnosticSerializer(diagnostic).data
             return JsonResponse(camelize(data), status=status.HTTP_201_CREATED)
@@ -84,7 +77,7 @@ class TeledeclarationCancelView(APIView):
             teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
             teledeclaration.save()
 
-            data = FullDiagnosticSerializer(teledeclaration.source).data
+            data = FullDiagnosticSerializer(teledeclaration.diagnostic).data
             return JsonResponse(camelize(data), status=status.HTTP_200_OK)
 
         except Teledeclaration.DoesNotExist:

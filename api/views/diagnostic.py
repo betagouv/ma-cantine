@@ -45,7 +45,10 @@ class DiagnosticCreateView(CreateAPIView):
 
 
 class DiagnosticUpdateView(UpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated, CanEditDiagnostic]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        CanEditDiagnostic,
+    ]
     model = Diagnostic
     serializer_class = PublicDiagnosticSerializer
     queryset = Diagnostic.objects.all()

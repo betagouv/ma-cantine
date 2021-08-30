@@ -9,5 +9,5 @@ class TeledeclarationFactory(factory.django.DjangoModelFactory):
 
     year = factory.Faker("year")
     canteen = factory.SubFactory(CanteenFactory)
-    source = factory.SubFactory(DiagnosticFactory)
+    diagnostic = factory.SubFactory(DiagnosticFactory)
     applicant = factory.SubFactory(UserFactory)
