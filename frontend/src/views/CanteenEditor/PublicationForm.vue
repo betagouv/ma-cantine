@@ -100,7 +100,7 @@ import PublicationField from "./PublicationField"
 import { getObjectDiff, isDiagnosticComplete } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 
-const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre cantine n'a pas été sauvegardée."
+const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "PublicationForm",

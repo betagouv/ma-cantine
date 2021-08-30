@@ -145,7 +145,7 @@ import validators from "@/validators"
 import { toBase64, getObjectDiff } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 
-const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre cantine n'a pas été sauvegardée."
+const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "CanteenForm",
