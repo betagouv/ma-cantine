@@ -108,37 +108,37 @@ class Canteen(SoftDeletionModel):
         default="draft",
         verbose_name="état de publication",
     )
-    publication_comments = models.CharField(
+    publication_comments = models.TextField(
         max_length=255,
         null=True,
         blank=True,
         verbose_name="commentaires de publication",
     )
-    quality_comments = models.CharField(
+    quality_comments = models.TextField(
         max_length=255,
         null=True,
         blank=True,
         verbose_name="commentaires de mesure appro",
     )
-    waste_comments = models.CharField(
+    waste_comments = models.TextField(
         max_length=255,
         null=True,
         blank=True,
         verbose_name="commentaires de mesure gaspillage",
     )
-    diversification_comments = models.CharField(
+    diversification_comments = models.TextField(
         max_length=255,
         null=True,
         blank=True,
         verbose_name="commentaires de mesure diversification",
     )
-    plastics_comments = models.CharField(
+    plastics_comments = models.TextField(
         max_length=255,
         null=True,
         blank=True,
         verbose_name="commentaires de mesure plastiques",
     )
-    information_comments = models.CharField(
+    information_comments = models.TextField(
         max_length=255,
         null=True,
         blank=True,
