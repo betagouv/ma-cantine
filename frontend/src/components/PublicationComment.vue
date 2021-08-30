@@ -6,7 +6,7 @@
           Un petit mot du gestionnaire
         </h3>
       </v-card-title>
-      <v-card-text class="pb-0 text-left grey--text text--darken-3">
+      <v-card-text class="pb-0 text-left grey--text text--darken-3 comments">
         {{ comments }}
       </v-card-text>
     </v-alert>
@@ -24,3 +24,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.comments {
+  white-space: pre-line;
+}
+</style>
