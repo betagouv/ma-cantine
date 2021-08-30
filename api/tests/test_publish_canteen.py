@@ -27,7 +27,7 @@ class TestPublishCanteen(APITestCase):
         """
         Users can publish the canteens they manage and add additional notes
         """
-        canteen = CanteenFactory.create(publication_status="draft")
+        canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
         payload = {
             "publication_status": "pending",
@@ -62,7 +62,7 @@ class TestPublishCanteen(APITestCase):
         canteen.managers.add(authenticate.user)
         response = self.client.patch(
             reverse("publish_canteen", kwargs={"pk": canteen.id}),
-            {"publication_status": "pending"},
+            {"publication_status": Canteen.PublicationStatus.PENDING.value},
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

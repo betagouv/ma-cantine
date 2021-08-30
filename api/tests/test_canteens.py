@@ -22,7 +22,9 @@ class TestCanteenApi(APITestCase):
         ]
         private_canteens = [
             CanteenFactory.create(),
-            CanteenFactory.create(publication_status="pending"),
+            CanteenFactory.create(
+                publication_status=Canteen.PublicationStatus.PENDING.value
+            ),
         ]
         response = self.client.get(reverse("published_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -60,7 +62,7 @@ class TestCanteenApi(APITestCase):
         A 404 is raised if we try to get a sinlge published canteen
         that has not been published by the manager.
         """
-        private_canteen = CanteenFactory.create(publication_status="draft")
+        private_canteen = CanteenFactory.create()
         response = self.client.get(
             reverse("single_published_canteen", kwargs={"pk": private_canteen.id})
         )

@@ -123,9 +123,13 @@ class PublishCanteenView(RetrieveUpdateDestroyAPIView):
         return self.partial_update(request, *args, **kwargs)
 
     def perform_update(self, serializer):
-        is_draft = serializer.instance.publication_status == "draft"
+        is_draft = (
+            serializer.instance.publication_status
+            == Canteen.PublicationStatus.DRAFT.value
+        )
         publication_requested = (
-            serializer.validated_data.get("publication_status") == "pending"
+            serializer.validated_data.get("publication_status")
+            == Canteen.PublicationStatus.PENDING.value
         )
 
         if is_draft and publication_requested:
