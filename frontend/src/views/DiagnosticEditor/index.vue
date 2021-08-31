@@ -56,23 +56,22 @@
               <v-icon small>mdi-information</v-icon>
               Vous n'avez pas encore télédéclaré ce diagnostic
             </p>
-            <v-alert
-              type="success"
+            <v-card
               v-else
-              class="text-caption mx-2 my-0 pl-4"
-              style="width: 100%"
-              colored-border
-              border="left"
-              elevation="1"
+              :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
+              class="d-flex px-4 mx-2"
+              style="width: 100%;"
             >
-              <p class="mb-2">
-                Ce diagnostic a été télédéclaré {{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.
-              </p>
-              <a :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`" download>
-                <v-icon small>mdi-download-box-outline</v-icon>
-                Télécharger mon justificatif.
-              </a>
-            </v-alert>
+              <v-icon large color="green">mdi-check-circle</v-icon>
+              <div>
+                <v-card-text class="text-caption">
+                  Ce diagnostic a été télédéclaré {{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.
+                  <br />
+                  Cliquez pour
+                  <span class="font-weight-bold">télécharger votre justificatif.</span>
+                </v-card-text>
+              </div>
+            </v-card>
 
             <v-col cols="12" class="mb-8 mt-3">
               <v-divider></v-divider>
@@ -83,9 +82,14 @@
         <p class="caption grey--text text--darken-1" v-if="!hasActiveTeledeclaration">
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
         </p>
-        <p class="caption grey--text text--darken-1" v-else>
-          Une fois télédéclaré, vous ne pouvez plus modifier votre diagnostic.
-        </p>
+        <div class="caption grey--text text--darken-1" v-else>
+          <p class="mb-0">Une fois télédéclaré, vous ne pouvez plus modifier votre diagnostic.</p>
+          <TeledeclarationCancelDialog
+            v-model="cancelDialog"
+            @cancel="cancelTeledeclaration"
+            :diagnostic="diagnostic"
+          />
+        </div>
 
         <v-expansion-panels class="mb-8" :disabled="!diagnosticIsUnique" :value="openedPanel">
           <DiagnosticExpansionPanel
@@ -160,7 +164,7 @@
           </v-btn>
         </v-sheet>
 
-        <div v-if="!diagnostic.teledeclaration">
+        <div v-if="!hasActiveTeledeclaration">
           <v-divider class="mt-8"></v-divider>
           <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
           <p>
@@ -206,6 +210,7 @@ import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/Diversific
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
+import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import { getObjectDiff, timeAgo } from "@/utils"
 
 function percentage(part, total) {
@@ -231,6 +236,7 @@ export default {
       },
       teledeclarationFormIsValid: true,
       openedPanel: null,
+      cancelDialog: false,
     }
   },
   components: {
@@ -241,6 +247,7 @@ export default {
     NoPlasticMeasure,
     QualityMeasureValuesInput,
     DiagnosticExpansionPanel,
+    TeledeclarationCancelDialog,
   },
   props: {
     canteenUrlComponent: {
@@ -440,6 +447,23 @@ export default {
             canteenId: this.canteenId,
           })
         )
+        .then(() => {
+          this.bypassLeaveWarning = true
+          this.$store.dispatch("notify", {
+            title: "Télédéclaration prise en compte",
+            message: "Votre diagnostic a bien été télédéclaré",
+            status: "success",
+          })
+          this.navigateToDiagnosticList()
+        })
+        .catch(() => this.$store.dispatch("notifyServerError"))
+    },
+    cancelTeledeclaration() {
+      return this.$store
+        .dispatch("cancelTeledeclaration", {
+          canteenId: this.canteenId,
+          id: this.diagnostic.teledeclaration.id,
+        })
         .then(() => {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
