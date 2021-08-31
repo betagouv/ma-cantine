@@ -19,6 +19,7 @@
 
 <script>
 import VueApexCharts from "vue-apexcharts"
+import { strictIsNaN } from "@/utils"
 
 const VALUE_DESCRIPTION = "Pourcentage d'achats"
 const BIO = "Bio"
@@ -154,10 +155,6 @@ function getPercentage(partialValue, totalValue) {
   } else {
     return Math.round((100 * partialValue) / totalValue)
   }
-}
-
-function strictIsNaN(x) {
-  return Number(x) !== x
 }
 
 function percentageFormatter(val) {
