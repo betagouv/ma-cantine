@@ -19,4 +19,5 @@ from .subscription import SubscribeBetaTester, SubscribeNewsletter  # noqa: F401
 from .teledeclaration import (  # noqa: F401
     TeledeclarationCreateView,
     TeledeclarationCancelView,
+    TeledeclarationPdfView,
 )

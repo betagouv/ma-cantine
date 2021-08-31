@@ -65,7 +65,13 @@
               border="left"
               elevation="1"
             >
-              Ce diagnostic a été télédéclaré {{ timeAgo(this.diagnostic.teledeclaration.creationDate, true) }}
+              <p class="mb-2">
+                Ce diagnostic a été télédéclaré {{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.
+              </p>
+              <a :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`" download>
+                <v-icon small>mdi-download-box-outline</v-icon>
+                Télécharger mon justificatif.
+              </a>
             </v-alert>
 
             <v-col cols="12" class="mb-8 mt-3">
