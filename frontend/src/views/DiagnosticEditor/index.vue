@@ -93,7 +93,7 @@
           <DiagnosticExpansionPanel
             iconColour="red"
             icon="mdi-food-apple"
-            heading="Au moins 50% de produits de qualité et durables dont 20% de bio"
+            heading="Au moins 50 % de produits de qualité et durables dont 20 % de bio"
             :summary="approSummary() || 'Incomplet'"
             :formIsValid="formIsValid.quality"
           >
@@ -209,7 +209,7 @@ import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
-import { getObjectDiff, timeAgo } from "@/utils"
+import { getObjectDiff, timeAgo, strictIsNaN } from "@/utils"
 
 function percentage(part, total) {
   return Math.round((part / total) * 100)
@@ -340,10 +340,10 @@ export default {
     approSummary() {
       if (this.diagnostic.valueTotalHt > 0) {
         let summary = []
-        if (Number(this.diagnostic.valueBioHt) === this.diagnostic.valueBioHt) {
+        if (hasValue(this.diagnostic.valueBioHt)) {
           summary.push(`${percentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
         }
-        if (Number(this.diagnostic.valueSustainableHt) === this.diagnostic.valueSustainableHt) {
+        if (hasValue(this.diagnostic.valueSustainableHt)) {
           summary.push(
             `${percentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
           )
@@ -485,6 +485,14 @@ export default {
     }
     window.confirm(LEAVE_WARNING) ? next() : next(false)
   },
+}
+
+function hasValue(val) {
+  if (typeof val === "string") {
+    return !!val
+  } else {
+    return !strictIsNaN(val)
+  }
 }
 </script>
 
