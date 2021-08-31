@@ -1,0 +1,81 @@
+{% load static %}
+<html>
+    <head>
+        <style>
+            @font-face {
+            font-family: 'Marianne';
+            src: url({% static '../../web/static/fonts/Marianne-Regular.ttf' %}) format('truetype');
+            }
+            @font-face {
+                font-family: 'Marianne-Bold';
+                src:  url({% static '../../web/static/fonts/Marianne-Bold.ttf' %}) format('truetype');
+            }
+            @font-face {
+                font-family: 'Marianne-ExtraBold';
+                src: url({% static '../../web/static/fonts/Marianne-ExtraBold.ttf' %}) format('truetype');
+            }
+            body {
+                font-family: 'Marianne', Arial, Helvetica, sans-serif;
+            }
+            h1 {
+                font-family: 'Marianne-ExtraBold';
+                font-size: 24px;
+                margin: 32px 0px 16px 0px;
+            }
+            h2 {
+                font-family: 'Marianne-Bold';
+                font-size: 16px;
+                margin: 16px 0px;
+            }
+            h3 {
+                font-family: 'Marianne-Bold';
+            }
+            li span {
+                font-family: 'Marianne-Bold';
+            }
+            p, li {
+                margin: 16px 0px;
+            }
+            .image-container {
+                background-color:#0c7f46;
+                padding: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="image-container">
+            <img src="{% static '../../web/static/images/logo_transparent_white.png' %}" alt="ma cantine" height="30" width="142" />
+        </div>
+        <h1>Justificatif pour télédéclaration {{ year }}</h1>
+        <h2>Cantine {{ canteen_name }} (SIRET {{ siret }})</h2>
+        <h3>Télédéclaration faite le {{ date|date:"l m F Y" }} par {{ applicant }}</h3>
+
+        <p>
+            Conformément à l’article 24 de la loi EGAlim, chaque établissement est tenu de
+            renseigner et transmettre à l’administration ses données, notamment en termes
+            d’approvisionnement sur l’année civile passée.
+        </p>
+        <p>
+            Pour l'année {{ year }}, les données suivantes ont été télédéclarées le
+            {{ date|date:"l m F Y" }} via la plateforme numérique ma cantine :
+        </p>
+        <ul>
+            <li>
+                <span>Valeur totale en HT des achats alimentaires</span> : {{ value_total_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT des achats alimentaires en Bio</span> : {{ value_bio_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT d'autres produits de qualité et durables</span> : {{ value_sustainable_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT des produits issus du commerce équitable</span> : {{ value_fair_trade_ht|floatformat:2 }} €
+            </li>
+        </ul>
+
+        <hr />
+
+        En savoir plus de la loi EGAlim : https://ma-cantine.beta.gouv.fr/
+    </body>
+</html>

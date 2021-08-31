@@ -11,7 +11,7 @@ from api.views import DiagnosticCreateView, UpdateUserCanteenView, DiagnosticUpd
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
 from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleView
 from api.views import ImportDiagnosticsView, TeledeclarationCreateView
-from api.views import TeledeclarationCancelView
+from api.views import TeledeclarationCancelView, TeledeclarationPdfView
 
 
 urlpatterns = {
@@ -74,6 +74,11 @@ urlpatterns = {
         "cancelTeledeclaration/",
         TeledeclarationCancelView.as_view(),
         name="teledeclaration_cancel",
+    ),
+    path(
+        "teledeclaration/<int:pk>/document.pdf",
+        TeledeclarationPdfView.as_view(),
+        name="teledeclaration_pdf",
     ),
 }
 
