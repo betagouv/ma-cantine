@@ -52,6 +52,18 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
+        read_only_fields = (
+            "id",
+            "managers",
+            "manager_invitations",
+            "publication_status",
+            "publication_comments",
+            "quality_comments",
+            "waste_comments",
+            "diversification_comments",
+            "plastics_comments",
+            "information_comments",
+        )
         fields = (
             "id",
             "name",
@@ -59,7 +71,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "city_insee_code",
             "postal_code",
             "sectors",
-            "publication_status",
             "daily_meal_count",
             "siret",
             "central_producer_siret",
@@ -70,6 +81,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "main_image",
             "managers",
             "manager_invitations",
+            "publication_status",
             "publication_comments",
             "quality_comments",
             "waste_comments",

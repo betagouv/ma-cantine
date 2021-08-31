@@ -16,7 +16,7 @@ class TestPublishCanteen(APITestCase):
         """
         canteen = CanteenFactory.create()
         payload = {"publicationComments": "Hello, world?"}
-        response = self.client.patch(
+        response = self.client.post(
             reverse("publish_canteen", kwargs={"pk": canteen.id}), payload
         )
 
@@ -38,7 +38,7 @@ class TestPublishCanteen(APITestCase):
             "plastics_comments": "Plastics",
             "information_comments": "Information",
         }
-        response = self.client.patch(
+        response = self.client.post(
             reverse("publish_canteen", kwargs={"pk": canteen.id}), payload
         )
 
@@ -51,6 +51,7 @@ class TestPublishCanteen(APITestCase):
         self.assertEqual(persisted_canteen.diversification_comments, "Diversification")
         self.assertEqual(persisted_canteen.plastics_comments, "Plastics")
         self.assertEqual(persisted_canteen.information_comments, "Information")
+        self.assertIn("publicationComments", response.json())
 
     @override_settings(CONTACT_EMAIL="contact-test@example.com")
     @authenticate
@@ -60,7 +61,7 @@ class TestPublishCanteen(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        response = self.client.patch(
+        response = self.client.post(
             reverse("publish_canteen", kwargs={"pk": canteen.id}),
             {"publication_status": Canteen.PublicationStatus.PENDING.value},
         )
@@ -72,3 +73,19 @@ class TestPublishCanteen(APITestCase):
             "La cantine « %s » a demandé d'être publiée" % canteen.name,
             mail.outbox[0].body,
         )
+
+    @authenticate
+    def test_invalid_status(self):
+        """
+        Users can only provide draft, pending, or None as new publication statuses
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        payload = {"publication_status": "published"}
+        response = self.client.post(
+            reverse("publish_canteen", kwargs={"pk": canteen.id}), payload
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        persisted_canteen = Canteen.objects.get(pk=canteen.id)
+        self.assertEqual(persisted_canteen.publication_status, "draft")
