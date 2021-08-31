@@ -48,27 +48,29 @@
               </v-btn>
             </v-col>
 
-            <p v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration" class="text-caption ma-0 pl-4">
-              <v-icon small>mdi-alert</v-icon>
-              Remplissez les données d'approvisionnement pour télédéclarer ce diagnostic
-            </p>
-            <p v-else-if="!hasActiveTeledeclaration" class="text-caption ma-0 pl-4">
-              <v-icon small>mdi-information</v-icon>
-              Vous n'avez pas encore télédéclaré ce diagnostic
-            </p>
-            <div v-else class="px-2 mt-2">
-              <p class="text-caption mb-2">
-                <v-icon small>mdi-check-circle</v-icon>
-                Ce diagnostic a été télédéclaré {{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.
+            <div v-if="isTeledeclarationYear">
+              <p v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration" class="text-caption ma-0 pl-4">
+                <v-icon small>mdi-alert</v-icon>
+                Remplissez les données d'approvisionnement pour télédéclarer ce diagnostic
               </p>
-              <v-btn
-                large
-                color="primary"
-                :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
-              >
-                <v-icon class="mr-2">mdi-file-download</v-icon>
-                Télécharger mon justificatif
-              </v-btn>
+              <p v-else-if="!hasActiveTeledeclaration" class="text-caption ma-0 pl-4">
+                <v-icon small>mdi-information</v-icon>
+                Vous n'avez pas encore télédéclaré ce diagnostic
+              </p>
+              <div v-else class="px-2 mt-2">
+                <p class="text-caption mb-2">
+                  <v-icon small>mdi-check-circle</v-icon>
+                  Ce diagnostic a été télédéclaré {{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.
+                </p>
+                <v-btn
+                  large
+                  color="primary"
+                  :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
+                >
+                  <v-icon class="mr-2">mdi-file-download</v-icon>
+                  Télécharger mon justificatif
+                </v-btn>
+              </div>
             </div>
 
             <v-col cols="12" class="mb-8 mt-3">
@@ -162,7 +164,7 @@
           </v-btn>
         </v-sheet>
 
-        <div v-if="!hasActiveTeledeclaration">
+        <div v-if="!hasActiveTeledeclaration && isTeledeclarationYear">
           <v-divider class="mt-8"></v-divider>
           <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
           <p>
@@ -325,6 +327,10 @@ export default {
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
+    },
+    isTeledeclarationYear() {
+      const currentYear = new Date().getFullYear()
+      return this.diagnostic.year === currentYear - 1
     },
   },
   beforeMount() {
