@@ -3,7 +3,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from common.utils import send_mail
 from django.core.validators import validate_email
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError, ObjectDoesNotExist, BadRequest
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.constants import LOOKUP_SEP
@@ -11,6 +11,7 @@ from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework import permissions, status, filters
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from api.serializers import (
@@ -108,47 +109,56 @@ class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
         return self.partial_update(request, *args, **kwargs)
 
 
-class PublishCanteenView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsCanteenManager]
-    model = Canteen
-    serializer_class = FullCanteenSerializer
-    queryset = Canteen.objects.all()
+class PublishCanteenView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    def put(self, request, *args, **kwargs):
-        return JsonResponse(
-            {"error": "Only PATCH request supported in this resource"}, status=405
-        )
+    def post(self, request, *args, **kwargs):
+        try:
+            data = request.data
+            new_status = data.get("publication_status")
+            if (
+                new_status is not None
+                and new_status != Canteen.PublicationStatus.DRAFT.value
+                and new_status != Canteen.PublicationStatus.PENDING.value
+            ):
+                raise BadRequest("L'état donné n'est pas valid.")
 
-    def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
+            canteen_id = kwargs.get("pk")
+            canteen = Canteen.objects.get(pk=canteen_id)
+            if request.user not in canteen.managers.all():
+                raise PermissionDenied()
 
-    def perform_update(self, serializer):
-        is_draft = (
-            serializer.instance.publication_status
-            == Canteen.PublicationStatus.DRAFT.value
-        )
-        publication_requested = (
-            serializer.validated_data.get("publication_status")
-            == Canteen.PublicationStatus.PENDING.value
-        )
-
-        if is_draft and publication_requested:
-            protocol = "https" if settings.SECURE else "http"
-            canteen = serializer.instance
-            admin_url = "{}://{}/admin/data/canteen/{}/change/".format(
-                protocol, settings.HOSTNAME, canteen.id
+            is_draft = (
+                canteen.publication_status == Canteen.PublicationStatus.DRAFT.value
+            )
+            publication_requested = (
+                new_status == Canteen.PublicationStatus.PENDING.value
             )
 
-            logger.info(f"Demande de publication de {canteen.name} (ID: {canteen.id})")
+            if is_draft and publication_requested:
+                protocol = "https" if settings.SECURE else "http"
+                admin_url = "{}://{}/admin/data/canteen/{}/change/".format(
+                    protocol, settings.HOSTNAME, canteen.id
+                )
 
-            send_mail(
-                subject="Demande de publication sur ma cantine",
-                message=f"La cantine « {canteen.name} » a demandé d'être publiée.\nAdmin : {admin_url}",
-                to=[settings.CONTACT_EMAIL],
-                fail_silently=True,
-            )
+                logger.info(
+                    f"Demande de publication de {canteen.name} (ID: {canteen.id})"
+                )
 
-        return super(PublishCanteenView, self).perform_update(serializer)
+                send_mail(
+                    subject="Demande de publication sur ma cantine",
+                    message=f"La cantine « {canteen.name} » a demandé d'être publiée.\nAdmin : {admin_url}",
+                    to=[settings.CONTACT_EMAIL],
+                    fail_silently=True,
+                )
+
+            Canteen.objects.filter(pk=canteen_id).update(**data)
+            canteen.refresh_from_db()
+            serialized_canteen = FullCanteenSerializer(canteen).data
+            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+
+        except Canteen.DoesNotExist:
+            raise ValidationError("Le cantine specifié n'existe pas")
 
 
 def _respond_with_team(canteen):

@@ -255,7 +255,7 @@ export default new Vuex.Store({
 
     publishCanteen(context, { id, payload }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/publishCanteens/${id}`, { method: "PATCH", headers, body: JSON.stringify(payload) })
+      return fetch(`/api/v1/publishCanteens/${id}`, { method: "POST", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
         .then((response) => {
           context.commit("UPDATE_USER_CANTEEN", response)
