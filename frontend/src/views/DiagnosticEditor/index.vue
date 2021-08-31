@@ -317,10 +317,10 @@ export default {
     },
     canSubmitTeledeclaration() {
       return [
-        this.diagnostic.valueBioHt,
-        this.diagnostic.valueSustainableHt,
-        this.diagnostic.valueFairTradeHt,
-        this.diagnostic.valueTotalHt,
+        parseFloat(this.diagnostic.valueBioHt),
+        parseFloat(this.diagnostic.valueSustainableHt),
+        parseFloat(this.diagnostic.valueFairTradeHt),
+        parseFloat(this.diagnostic.valueTotalHt),
       ].every((x) => Number(x) === x)
     },
     hasActiveTeledeclaration() {
