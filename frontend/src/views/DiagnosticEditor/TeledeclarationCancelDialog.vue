@@ -14,7 +14,7 @@
 
     <v-card class="text-left">
       <v-card-title class="font-weight-bold">
-        Voulez-vous vraiment annuler votre télédéclaration pour l'année « {{ diagnostic.year }} » ?
+        Voulez-vous vraiment annuler votre télédéclaration pour l'année {{ diagnostic.year }} ?
       </v-card-title>
 
       <v-card-text>
