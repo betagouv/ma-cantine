@@ -123,3 +123,9 @@ class Teledeclaration(models.Model):
             using=using,
             update_fields=update_fields,
         )
+
+    def __str__(self):
+        canteen_name = (
+            self.fields["canteen"]["name"] if self.fields.get("canteen") else ""
+        )
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
