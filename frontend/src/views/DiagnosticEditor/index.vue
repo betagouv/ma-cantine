@@ -56,22 +56,20 @@
               <v-icon small>mdi-information</v-icon>
               Vous n'avez pas encore télédéclaré ce diagnostic
             </p>
-            <v-card
-              v-else
-              :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
-              class="d-flex px-4 mx-2"
-              style="width: 100%;"
-            >
-              <v-icon large color="green">mdi-check-circle</v-icon>
-              <div>
-                <v-card-text class="text-caption">
-                  Ce diagnostic a été télédéclaré {{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.
-                  <br />
-                  Cliquez pour
-                  <span class="font-weight-bold">télécharger votre justificatif.</span>
-                </v-card-text>
-              </div>
-            </v-card>
+            <div v-else class="px-2 mt-2">
+              <p class="text-caption mb-2">
+                <v-icon small>mdi-check-circle</v-icon>
+                Ce diagnostic a été télédéclaré {{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.
+              </p>
+              <v-btn
+                large
+                color="primary"
+                :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
+              >
+                <v-icon class="mr-2">mdi-file-download</v-icon>
+                Télécharger mon justificatif
+              </v-btn>
+            </div>
 
             <v-col cols="12" class="mb-8 mt-3">
               <v-divider></v-divider>
@@ -184,7 +182,7 @@
           <v-sheet rounded color="white" class="d-flex">
             <v-spacer></v-spacer>
             <v-btn x-large color="primary" @click="submitTeledeclaration" :disabled="!canSubmitTeledeclaration">
-              <v-icon class="mr-2">mdi-file-upload</v-icon>
+              <v-icon class="mr-2">mdi-cloud-upload</v-icon>
               Télédéclarer mon diagnostic
             </v-btn>
           </v-sheet>
@@ -451,7 +449,6 @@ export default {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
             title: "Télédéclaration prise en compte",
-            message: "Votre diagnostic a bien été télédéclaré",
             status: "success",
           })
           this.navigateToDiagnosticList()
@@ -467,9 +464,7 @@ export default {
         .then(() => {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
-            title: "Télédéclaration prise en compte",
-            message: "Votre diagnostic a bien été télédéclaré",
-            status: "success",
+            title: "Votre télédéclaration a bien été annulée",
           })
           this.navigateToDiagnosticList()
         })

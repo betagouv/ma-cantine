@@ -54,7 +54,7 @@ class Teledeclaration(models.Model):
         blank=True,
     )
 
-    diagnostic = models.ForeignKey(  # TODO rename to diagnostic
+    diagnostic = models.ForeignKey(
         Diagnostic,
         verbose_name="diagnostic",
         on_delete=models.SET_NULL,
