@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Teledeclaration
 from .utils import authenticate
 
@@ -21,6 +21,10 @@ class TestTeledeclarationApi(APITestCase):
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_generate_pdf_unauthenticated(self):
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     @authenticate
     def test_create_unexistent_diagnostic(self):
         """
@@ -38,6 +42,59 @@ class TestTeledeclarationApi(APITestCase):
         payload = {"teledeclarationId": 1}
         response = self.client.post(reverse("teledeclaration_cancel"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_generate_pdf_unexistent_teledeclaration(self):
+        """
+        A validation error is returned if the teledeclaration does not exist
+        """
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_create_unauthorized(self):
+        """
+        Only managers of the canteen can create teledeclarations
+        """
+        manager = UserFactory.create()
+        canteen = CanteenFactory.create()
+        canteen.managers.add(manager)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        payload = {"diagnosticId": diagnostic.id}
+
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cancel_unauthorized(self):
+        """
+        Only managers of the canteen can cancel teledeclarations
+        """
+        manager = UserFactory.create()
+        canteen = CanteenFactory.create()
+        canteen.managers.add(manager)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, manager)
+
+        payload = {"teledeclarationId": teledeclaration.id}
+        response = self.client.post(reverse("teledeclaration_cancel"), payload)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_generate_pdf_unauthorized(self):
+        """
+        Only managers of the canteen can get PDF documents
+        """
+        manager = UserFactory.create()
+        canteen = CanteenFactory.create()
+        canteen.managers.add(manager)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, manager)
+
+        response = self.client.get(
+            reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_create_missing_diagnostic_id(self):
@@ -146,6 +203,23 @@ class TestTeledeclarationApi(APITestCase):
 
         body = response.json()
         self.assertEqual(body["teledeclaration"]["status"], "CANCELLED")
+
+    @authenticate
+    def test_generate_pdf(self):
+        """
+        The user can get a justificatif in PDF for a teledeclaration
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        teledeclaration = Teledeclaration.createFromDiagnostic(
+            diagnostic, authenticate.user
+        )
+
+        response = self.client.get(
+            reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate
     def test_create_duplicate(self):
