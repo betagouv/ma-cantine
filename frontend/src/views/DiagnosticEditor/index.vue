@@ -321,7 +321,7 @@ export default {
         parseFloat(this.diagnostic.valueSustainableHt),
         parseFloat(this.diagnostic.valueFairTradeHt),
         parseFloat(this.diagnostic.valueTotalHt),
-      ].every((x) => Number(x) === x)
+      ].every((x) => !strictIsNaN(x))
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
