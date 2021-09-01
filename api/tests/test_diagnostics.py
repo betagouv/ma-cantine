@@ -4,7 +4,7 @@ from django.core.exceptions import BadRequest
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, DiagnosticFactory
-from data.models import Diagnostic
+from data.models import Diagnostic, Teledeclaration
 from .utils import authenticate
 import decimal
 
@@ -165,6 +165,60 @@ class TestDiagnosticsApi(APITestCase):
             ),
             payload,
         )
+        diagnostic.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(diagnostic.year, 2020)
+
+    @authenticate
+    def test_edit_submitted_diagnostic(self):
+        """
+        A diagnostic cannot be edited if a submitted teledeclaration
+        object linked to it exists
+        """
+        diagnostic = DiagnosticFactory.create(year=2019)
+        diagnostic.canteen.managers.add(authenticate.user)
+        Teledeclaration.createFromDiagnostic(diagnostic, authenticate.user)
+
+        payload = {"year": 2020}
+
+        response = self.client.patch(
+            reverse(
+                "diagnostic_edition",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            ),
+            payload,
+        )
+
+        diagnostic.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(diagnostic.year, 2019)
+
+    @authenticate
+    def test_edit_cancelled_diagnostic(self):
+        """
+        A diagnostic can be edited if a cancelled teledeclaration
+        object linked to it exists
+        """
+        diagnostic = DiagnosticFactory.create(year=2019)
+        diagnostic.canteen.managers.add(authenticate.user)
+        Teledeclaration.createFromDiagnostic(
+            diagnostic,
+            authenticate.user,
+            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
+        )
+
+        payload = {"year": 2020}
+
+        response = self.client.patch(
+            reverse(
+                "diagnostic_edition",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            ),
+            payload,
+        )
+
         diagnostic.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

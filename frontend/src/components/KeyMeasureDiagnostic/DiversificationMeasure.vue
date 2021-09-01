@@ -4,6 +4,8 @@
       hide-details="auto"
       v-model="diagnostic.hasDiversificationPlan"
       label="Si ma cantine fabrique plus de 200 repas par jour en moyenne, j'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales"
+      :readonly="readonly"
+      :disabled="readonly"
     />
 
     <p class="text-left mt-6 mb-2">J'ai mis en place un menu végétarien dans ma cantine :</p>
@@ -14,6 +16,8 @@
         :key="item.value"
         :label="item.label"
         :value="item.value"
+        :readonly="readonly"
+        :disabled="readonly"
       ></v-radio>
     </v-radio-group>
 
@@ -25,6 +29,8 @@
         :key="item.value"
         :label="item.label"
         :value="item.value"
+        :readonly="readonly"
+        :disabled="readonly"
       ></v-radio>
     </v-radio-group>
 
@@ -38,6 +44,8 @@
       :key="item.value"
       :value="item.value"
       :label="item.label"
+      :readonly="readonly"
+      :disabled="readonly"
     />
   </div>
 </template>
@@ -88,6 +96,10 @@ export default {
   },
   props: {
     diagnostic: Object,
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
 }
 </script>

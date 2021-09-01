@@ -18,6 +18,11 @@ export default {
     if (!input) return errorMessage
     return input.length && input.length > 0 ? true : errorMessage
   },
+  checked(input) {
+    const errorMessage = "Ce champ doit être accepté"
+    const isChecked = typeof input === "boolean" && input === true
+    return isChecked ? true : errorMessage
+  },
   greaterThanZero(input) {
     const errorMessage = "Ce champ doit contenir une chiffre supérieure à zéro"
     if (parseFloat(input) > 0) return true

@@ -427,6 +427,48 @@ export default new Vuex.Store({
     removeNotification(context) {
       context.commit("REMOVE_NOTIFICATION")
     },
+
+    submitTeledeclaration(context, { canteenId, id }) {
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      const payload = {
+        diagnosticId: id,
+      }
+      return fetch("/api/v1/createTeledeclaration/", {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("UPDATE_DIAGNOSTIC", { canteenId, diagnostic: response })
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
+    cancelTeledeclaration(context, { canteenId, id }) {
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      const payload = {
+        teledeclarationId: id,
+      }
+      return fetch("/api/v1/cancelTeledeclaration/", {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("UPDATE_DIAGNOSTIC", { canteenId, diagnostic: response })
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
   },
 
   getters: {
