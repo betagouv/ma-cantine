@@ -4,7 +4,8 @@ from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory, SectorFactory
-from data.models import Canteen
+from data.factories import DiagnosticFactory
+from data.models import Canteen, Teledeclaration
 from .utils import authenticate
 
 
@@ -389,3 +390,29 @@ class TestCanteenApi(APITestCase):
         self.assertIn("Wasabi", result_names)
         self.assertIn("Mochi", result_names)
         self.assertIn("Umami", result_names)
+
+    @authenticate
+    def test_user_canteen_teledeclaration(self):
+        """
+        The teledeclaration information should only be visible to
+        managers of the canteen
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        Teledeclaration.createFromDiagnostic(
+            diagnostic, user, Teledeclaration.TeledeclarationStatus.CANCELLED
+        )
+
+        new_teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
+        response = self.client.get(reverse("user_canteens"))
+        body = response.json()
+        json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
+        json_diagnostic = next(
+            filter(lambda x: x["id"] == diagnostic.id, json_canteen["diagnostics"])
+        )
+
+        self.assertEqual(
+            json_diagnostic["teledeclaration"]["id"], new_teledeclaration.id
+        )
