@@ -17,7 +17,7 @@ class Teledeclaration(models.Model):
     # will not change and should contain all information to be
     # sent to the system that will treat the teledeclarations.
 
-    fields = models.JSONField(verbose_name="Champs")
+    declared_data = models.JSONField(verbose_name="Champs")
 
     # Structured non-null fields for validation / querying.
     # These fields cannot be null and will not change if the
@@ -40,7 +40,7 @@ class Teledeclaration(models.Model):
 
     applicant = models.ForeignKey(
         get_user_model(),
-        verbose_name="demandeur",
+        verbose_name="déclarant",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -121,7 +121,7 @@ class Teledeclaration(models.Model):
             canteen_siret=canteen.siret,
             status=status,
             diagnostic=diagnostic,
-            fields=jsonFields,
+            declared_data=jsonFields,
         )
 
     def save(
@@ -137,6 +137,8 @@ class Teledeclaration(models.Model):
 
     def __str__(self):
         canteen_name = (
-            self.fields["canteen"]["name"] if self.fields.get("canteen") else ""
+            self.declared_data["canteen"]["name"]
+            if self.declared_data.get("canteen")
+            else ""
         )
         return f"Télédéclaration pour {self.year} '{canteen_name}'"
