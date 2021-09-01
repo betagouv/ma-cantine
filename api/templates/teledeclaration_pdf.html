@@ -40,6 +40,15 @@
                 background-color:#0c7f46;
                 padding: 16px;
             }
+            .other-measures > div {
+                margin-bottom: 10px;
+            }
+            .other-measures > div > span {
+                margin-right: 4px;
+            }
+            hr {
+                margin-top: 24px;
+            }
         </style>
     </head>
     <body>
@@ -73,6 +82,141 @@
                 <span>Valeur en HT des produits issus du commerce équitable</span> : {{ value_fair_trade_ht|floatformat:2 }} €
             </li>
         </ul>
+
+        <div class="other-measures">
+            <div>
+            {% if has_waste_diagnostic %}
+            <span>
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% else %}
+            <span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% endif %}
+            Diagnostic sur le gaspillage réalisé
+            </div>
+            <div>
+            {% if has_waste_plan %}
+            <span>
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% else %}
+            <span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% endif %}
+            Plan d'action contre le gaspillage en place
+            </div>
+            <div>
+            {% if has_donation_agreement %}
+            <span>
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% else %}
+            <span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% endif %}
+            Propose des dons alimentaires
+            </div>
+            <div>
+            {% if has_waste_measures %}
+            <span>
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% else %}
+            <span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% endif %}
+            Réalise des mesures contre le gaspillage alimentaire
+            </div>
+            <div>
+            {% if has_diversification_plan %}
+            <span>
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% else %}
+            <span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% endif %}
+            Plan de diversification en place
+            </div>
+            <div>
+            {% if cooking_plastic_substituted %}
+            <span>
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% else %}
+            <span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% endif %}
+            Contenants de cuisson en plastique remplacés
+            </div>
+            <div>
+            {% if serving_plastic_substituted %}
+            <span>
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% else %}
+            <span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% endif %}
+            Contenants de service en plastique remplacés
+            </div>
+            <div>
+            {% if plastic_bottles_substituted %}
+            <span>
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% else %}
+            <span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% endif %}
+            Bouteilles en plastique remplacées
+            </div>
+            <div>
+            {% if plastic_tableware_substituted %}
+            <span>
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% else %}
+            <span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% endif %}
+            Ustensils en plastique remplacés
+            </div>
+            <div>
+            {% if communicates_on_food_plan %}
+            <span>
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% else %}
+            <span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% endif %}
+            Communique sur le plan alimentaire
+            </div>
+            <div>
+            {% if communicates_on_food_quality %}
+            <span>
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% else %}
+            <span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+            </span>
+            {% endif %}
+            Communique sur les démarches qualité/durables/équitables
+            </div>
+        </div>
 
         <hr />
 

@@ -180,6 +180,48 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(
             json_teledeclaration["value_total_ht"], diagnostic.value_total_ht
         )
+        self.assertEqual(
+            json_teledeclaration["has_waste_diagnostic"],
+            diagnostic.has_waste_diagnostic,
+        )
+        self.assertEqual(
+            json_teledeclaration["has_waste_plan"], diagnostic.has_waste_plan
+        )
+        self.assertEqual(
+            json_teledeclaration["has_donation_agreement"],
+            diagnostic.has_donation_agreement,
+        )
+        self.assertEqual(
+            json_teledeclaration["has_waste_measures"], diagnostic.has_waste_measures
+        )
+        self.assertEqual(
+            json_teledeclaration["has_diversification_plan"],
+            diagnostic.has_diversification_plan,
+        )
+        self.assertEqual(
+            json_teledeclaration["cooking_plastic_substituted"],
+            diagnostic.cooking_plastic_substituted,
+        )
+        self.assertEqual(
+            json_teledeclaration["serving_plastic_substituted"],
+            diagnostic.serving_plastic_substituted,
+        )
+        self.assertEqual(
+            json_teledeclaration["plastic_bottles_substituted"],
+            diagnostic.plastic_bottles_substituted,
+        )
+        self.assertEqual(
+            json_teledeclaration["plastic_tableware_substituted"],
+            diagnostic.plastic_tableware_substituted,
+        )
+        self.assertEqual(
+            json_teledeclaration["communicates_on_food_plan"],
+            diagnostic.communicates_on_food_plan,
+        )
+        self.assertEqual(
+            json_teledeclaration["communicates_on_food_quality"],
+            diagnostic.communicates_on_food_quality,
+        )
 
     @authenticate
     def test_cancel(self):
