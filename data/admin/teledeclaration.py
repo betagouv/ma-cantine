@@ -17,7 +17,7 @@ class ReadOnlyAdminMixin:
 class TeledeclarationForm(forms.ModelForm):
     class Meta:
         widgets = {
-            "fields": forms.Textarea(attrs={"cols": 60, "rows": 5}),
+            "declared_data": forms.Textarea(attrs={"cols": 60, "rows": 5}),
         }
 
 
@@ -45,8 +45,8 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "year",
         "creation_date",
         "status",
-        "fields",
+        "declared_data",
     )
 
     def canteen_name(self, obj):
-        return obj.fields["canteen"]["name"]
+        return obj.declared_data["canteen"]["name"]

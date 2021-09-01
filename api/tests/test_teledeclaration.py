@@ -160,15 +160,15 @@ class TestTeledeclarationApi(APITestCase):
             teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED
         )
 
-        json_fields = teledeclaration.fields
-        self.assertEqual(json_fields["year"], 2020)
+        declared_data = teledeclaration.declared_data
+        self.assertEqual(declared_data["year"], 2020)
 
-        json_canteen = json_fields["canteen"]
+        json_canteen = declared_data["canteen"]
         self.assertEqual(json_canteen["name"], canteen.name)
         self.assertEqual(json_canteen["siret"], canteen.siret)
         self.assertEqual(json_canteen["city_insee_code"], canteen.city_insee_code)
 
-        json_teledeclaration = json_fields["teledeclaration"]
+        json_teledeclaration = declared_data["teledeclaration"]
         self.assertEqual(json_teledeclaration["value_bio_ht"], diagnostic.value_bio_ht)
         self.assertEqual(
             json_teledeclaration["value_fair_trade_ht"], diagnostic.value_fair_trade_ht

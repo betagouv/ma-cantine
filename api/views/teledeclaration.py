@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.template.loader import get_template
 from django.contrib.staticfiles import finders
 from django.conf import settings
+from django.utils.text import slugify
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError, PermissionDenied
@@ -30,12 +31,12 @@ class TeledeclarationCreateView(APIView):
             diagnostic_id = data.get("diagnostic_id")
             if not diagnostic_id:
                 raise ValidationError("diagnosticId manquant")
-            diagnostic = Diagnostic.objects.get(pk=diagnostic_id)
-            TeledeclarationCreateView.validateDiagnostic(diagnostic)
 
+            diagnostic = Diagnostic.objects.get(pk=diagnostic_id)
             if request.user not in diagnostic.canteen.managers.all():
                 raise PermissionDenied()
 
+            TeledeclarationCreateView.validateDiagnostic(diagnostic)
             Teledeclaration.createFromDiagnostic(diagnostic, request.user)
 
             data = FullDiagnosticSerializer(diagnostic).data
@@ -117,18 +118,18 @@ class TeledeclarationPdfView(APIView):
                 )
 
             response = HttpResponse(content_type="application/pdf")
-            filename = f"teledeclaration-{teledeclaration.year}.pdf"
+            filename = TeledeclarationPdfView.get_filename(teledeclaration)
             response["Content-Disposition"] = f'attachment; filename="{filename}"'
             template = get_template("teledeclaration_pdf.html")
-            fields = teledeclaration.fields
+            declared_data = teledeclaration.declared_data
             context = {
-                **fields["teledeclaration"],
+                **declared_data["teledeclaration"],
                 **{
                     "year": teledeclaration.year,
-                    "canteen_name": fields["canteen"]["name"],
-                    "siret": fields["canteen"]["siret"],
+                    "canteen_name": declared_data["canteen"]["name"],
+                    "siret": declared_data["canteen"]["siret"],
                     "date": teledeclaration.creation_date,
-                    "applicant": fields["applicant"]["name"],
+                    "applicant": declared_data["applicant"]["name"],
                 },
             }
             html = template.render(context)
@@ -147,6 +148,13 @@ class TeledeclarationPdfView(APIView):
 
         except Teledeclaration.DoesNotExist:
             raise ValidationError("La télédéclaration specifiée n'existe pas")
+
+    @staticmethod
+    def get_filename(teledeclaration):
+        year = teledeclaration.year
+        canteenName = slugify(teledeclaration.declared_data["canteen"]["name"])
+        creation_date = teledeclaration.creation_date.strftime("%Y-%m-%d")
+        return f"teledeclaration-{year}--{canteenName}--{creation_date}.pdf"
 
     @staticmethod
     def link_callback(uri, rel):
