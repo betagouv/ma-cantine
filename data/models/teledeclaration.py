@@ -101,6 +101,17 @@ class Teledeclaration(models.Model):
                 "value_fair_trade_ht": float(diagnostic.value_fair_trade_ht),
                 "value_sustainable_ht": float(diagnostic.value_sustainable_ht),
                 "value_total_ht": float(diagnostic.value_total_ht),
+                "has_waste_diagnostic": diagnostic.has_waste_diagnostic,
+                "has_waste_plan": diagnostic.has_waste_plan,
+                "has_donation_agreement": diagnostic.has_donation_agreement,
+                "has_waste_measures": diagnostic.has_waste_measures,
+                "has_diversification_plan": diagnostic.has_diversification_plan,
+                "cooking_plastic_substituted": diagnostic.cooking_plastic_substituted,
+                "serving_plastic_substituted": diagnostic.serving_plastic_substituted,
+                "plastic_bottles_substituted": diagnostic.plastic_bottles_substituted,
+                "plastic_tableware_substituted": diagnostic.plastic_tableware_substituted,
+                "communicates_on_food_plan": diagnostic.communicates_on_food_plan,
+                "communicates_on_food_quality": diagnostic.communicates_on_food_quality,
             },
         }
         return TeledeclarationFactory.create(

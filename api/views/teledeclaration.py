@@ -120,24 +120,16 @@ class TeledeclarationPdfView(APIView):
             filename = f"teledeclaration-{teledeclaration.year}.pdf"
             response["Content-Disposition"] = f'attachment; filename="{filename}"'
             template = get_template("teledeclaration_pdf.html")
+            fields = teledeclaration.fields
             context = {
-                "year": teledeclaration.year,
-                "canteen_name": teledeclaration.fields["canteen"]["name"],
-                "siret": teledeclaration.fields["canteen"]["siret"],
-                "date": teledeclaration.creation_date,
-                "applicant": teledeclaration.fields["applicant"]["name"],
-                "value_total_ht": teledeclaration.fields["teledeclaration"][
-                    "value_total_ht"
-                ],
-                "value_bio_ht": teledeclaration.fields["teledeclaration"][
-                    "value_bio_ht"
-                ],
-                "value_sustainable_ht": teledeclaration.fields["teledeclaration"][
-                    "value_sustainable_ht"
-                ],
-                "value_fair_trade_ht": teledeclaration.fields["teledeclaration"][
-                    "value_fair_trade_ht"
-                ],
+                **fields["teledeclaration"],
+                **{
+                    "year": teledeclaration.year,
+                    "canteen_name": fields["canteen"]["name"],
+                    "siret": fields["canteen"]["siret"],
+                    "date": teledeclaration.creation_date,
+                    "applicant": fields["applicant"]["name"],
+                },
             }
             html = template.render(context)
             pisa_status = pisa.CreatePDF(
