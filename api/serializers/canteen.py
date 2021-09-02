@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from drf_base64.fields import Base64ImageField
 from data.models import Canteen, Sector
-from .diagnostic import DiagnosticSerializer
+from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer
 from .user import CanteenManagerSerializer
 from .managerinvitation import ManagerInvitationSerializer
 
@@ -9,7 +9,7 @@ from .managerinvitation import ManagerInvitationSerializer
 class PublicCanteenSerializer(serializers.ModelSerializer):
 
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    diagnostics = DiagnosticSerializer(
+    diagnostics = PublicDiagnosticSerializer(
         many=True, read_only=True, source="diagnostic_set"
     )
     main_image = Base64ImageField(required=False, allow_null=True)
@@ -41,7 +41,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Sector.objects.all(), required=False
     )
-    diagnostics = DiagnosticSerializer(
+    diagnostics = FullDiagnosticSerializer(
         many=True, read_only=True, source="diagnostic_set"
     )
     main_image = Base64ImageField(required=False, allow_null=True)

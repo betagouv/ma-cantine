@@ -252,6 +252,12 @@ class Diagnostic(models.Model):
         verbose_name="fréquence de communication",
     )
 
+    @property
+    def latest_teledeclaration(self):
+        if self.teledeclaration_set.count() == 0:
+            return None
+        return self.teledeclaration_set.order_by("-creation_date").first()
+
     def clean(self):
         self.validate_year()
         return super().clean()

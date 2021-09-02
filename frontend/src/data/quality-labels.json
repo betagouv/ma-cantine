@@ -1,37 +1,37 @@
 [
   {
     "src": "label-rouge.png",
-    "text": "Label rouge - Signe national qui atteste qu\u2019un produit poss\u00e8de un ensemble de caract\u00e9ristiques sp\u00e9cifiques \u00e9tablissant un niveau de qualit\u00e9 sup\u00e9rieur \u00e0 celui d\u2019un produit similaire.",
+    "text": "Label rouge - Signe national qui atteste qu'un produit possède un ensemble de caractéristiques spécifiques établissant un niveau de qualité supérieur à celui d'un produit similaire.",
     "title": "Logo Label Rouge"
   },
   {
     "src": "Logo-AOC-AOP.png",
-    "text": "Appellation d\u2019origine (AOC/AOP) - L\u2019Appellation d\u2019origine prot\u00e9g\u00e9e (AOP) d\u00e9signe un produit dont toutes les \u00e9tapes de production sont r\u00e9alis\u00e9es selon un savoir-faire reconnu dans une m\u00eame aire g\u00e9ographique, qui donne ses caract\u00e9ristiques au produit.",
-    "title": "Logo Appellation d\u2019origine (AOC/AOP)"
+    "text": "Appellation d'origine (AOC/AOP) - L'Appellation d'origine protégée (AOP) désigne un produit dont toutes les étapes de production sont réalisées selon un savoir-faire reconnu dans une même aire géographique, qui donne ses caractéristiques au produit.",
+    "title": "Logo Appellation d'origine (AOC/AOP)"
   },
   {
     "src": "IGP.png",
-    "text": "Indication g\u00e9ographique (IGP) - L\u2019Indication ge\u0301ographique prote\u0301ge\u0301e (IGP) identifie un produit agricole, brut ou transforme\u0301, dont la qualite\u0301, la re\u0301putation ou d\u2019autres caracte\u0301ristiques sont lie\u0301es a\u0300 son origine ge\u0301ographique.",
-    "title": "Logo indication g\u00e9ographique"
+    "text": "Indication géographique (IGP) - L'Indication géographique protégée (IGP) identifie un produit agricole, brut ou transformé, dont la qualité, la réputation ou d'autres caractéristiques sont liées à son origine géographique.",
+    "title": "Logo indication géographique"
   },
   {
     "src": "STG.png",
-    "text": "Sp\u00e9cialit\u00e9 traditionnelle garantie (STG) - Un produit dont les qualite\u0301s spe\u0301cifiques sont lie\u0301es a\u0300 une composition, des me\u0301thodes de fabrication ou de transformation fonde\u0301es sur une tradition.",
-    "title": "Logo Sp\u00e9cialit\u00e9 traditionnelle garantie"
+    "text": "Spécialité traditionnelle garantie (STG) - Un produit dont les qualités spécifiques sont liées à une composition, des méthodes de fabrication ou de transformation fondées sur une tradition.",
+    "title": "Logo Spécialité traditionnelle garantie"
   },
   {
     "src": "hve.png",
-    "text": "Mention \u00ab issu d\u2019une exploitation \u00e0 Haute Valeur Environnementale \u00bb (HVE + niveau 2 accept\u00e9 jusqu\u2019au 31/12/2029)",
+    "text": "Mention « issu d'une exploitation à Haute Valeur Environnementale » (HVE + niveau 2 accepté jusqu'au 31/12/2029)",
     "title": "Logo Haute Valeur Environnementale"
   },
   {
     "src": "logo_label-peche-durable.png",
-    "text": "\u00c9colabel p\u00eache durable",
-    "title": "\u00c9colabel p\u00eache durable"
+    "text": "Écolabel pêche durable",
+    "title": "Écolabel pêche durable"
   },
   {
     "src": "rup.png",
-    "text": "Logo \u00ab R\u00e9gion ultrap\u00e9riph\u00e9rique \u00bb (RUP) - Produits issus de 9 r\u00e9gions ultra-ph\u00e9riques \u00e0 l\u2019UE (Azores, Maderes, Canaries, Guadeloupe, Guyane, Martinique, \u00e0 la R\u00e9union, \u00e0 Mayotte, Saint-Martin)",
-    "title": "Logo R\u00e9gion Ultrap\u00e9riph\u00e9rique"
+    "text": "Logo « Région ultrapériphérique » (RUP) - Produits issus de 9 régions ultra-phériques à l'UE (Azores, Maderes, Canaries, Guadeloupe, Guyane, Martinique, à la Réunion, à Mayotte, Saint-Martin)",
+    "title": "Logo Région Ultrapériphérique"
   }
 ]
