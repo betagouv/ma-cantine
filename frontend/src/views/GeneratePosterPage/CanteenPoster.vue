@@ -62,7 +62,10 @@
       <div class="footer-text">
         <p style="margin-bottom: 0px;">En savoir plus de la loi EGAlim :</p>
         <p><a href="https://ma-cantine.beta.gouv.fr/">https://ma-cantine.beta.gouv.fr/</a></p>
-        <qrcode-vue value="https://ma-cantine.beta.gouv.fr"></qrcode-vue>
+        <qrcode-vue
+          v-if="canteen.publicationStatus !== 'published'"
+          value="https://ma-cantine.beta.gouv.fr"
+        ></qrcode-vue>
       </div>
       <div class="footer-text" style="text-align: right;" v-if="canteen.publicationStatus === 'published'">
         <p style="width: 210px;">En savoir plus sur les pratiques mises en oeuvre par l'établissement</p>

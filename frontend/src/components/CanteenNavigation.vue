@@ -24,7 +24,12 @@
               :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
               class="mb-0"
             >
-              <v-list-item-title class="text-body-2 font-weight-bold pl-6">{{ diagnostic.year }}</v-list-item-title>
+              <v-list-item-title class="text-body-2 font-weight-bold pl-6">
+                {{ diagnostic.year }}
+                <v-icon v-if="hasActiveTeledeclaration(diagnostic)" color="grey" small class="mt-n1 ml-1">
+                  mdi-check-circle
+                </v-icon>
+              </v-list-item-title>
             </v-list-item>
           </div>
           <v-list-item :ripple="false" :to="{ name: 'PublicationForm' }">
@@ -64,6 +69,11 @@ export default {
     readyToPublish() {
       const diagnostic = this.canteen.diagnostics.find((x) => x.year === 2020)
       return this.canteen.publicationStatus === "draft" && !!diagnostic && isDiagnosticComplete(diagnostic)
+    },
+  },
+  methods: {
+    hasActiveTeledeclaration(diagnostic) {
+      return diagnostic.teledeclaration && diagnostic.teledeclaration.status === "SUBMITTED"
     },
   },
 }
