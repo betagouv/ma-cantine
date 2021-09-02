@@ -4,8 +4,9 @@
       {{ isNewCanteen ? "Nouvelle cantine" : "Modifier ma cantine" }}
     </h1>
 
+    <PublicationStateNotice :canteen="originalCanteen" :includeLink="true" v-if="!isNewCanteen" />
+
     <v-form ref="form" v-model="formIsValid">
-      <PublicationField :canteen="canteen" v-model="publicationRequested" />
       <v-row>
         <v-col cols="12" md="8">
           <p class="body-2 my-2">Nom de la cantine</p>
@@ -141,14 +142,14 @@
 
 <script>
 import validators from "@/validators"
-import PublicationField from "./PublicationField"
 import { toBase64, getObjectDiff } from "@/utils"
+import PublicationStateNotice from "./PublicationStateNotice"
 
-const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Votre cantine n'a pas été sauvegardée."
+const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "CanteenForm",
-  components: { PublicationField },
+  components: { PublicationStateNotice },
   props: {
     originalCanteen: {
       type: Object,
@@ -159,7 +160,6 @@ export default {
     return {
       canteen: {},
       formIsValid: true,
-      publicationRequested: false,
       bypassLeaveWarning: false,
       deletionDialog: false,
       cityAutocompleteChoice: {},
@@ -200,7 +200,7 @@ export default {
     },
     hasChanged() {
       if (this.originalCanteen) {
-        const diff = getObjectDiff(this.originalCanteen, this.canteen, ["managers", "managerInvitations"])
+        const diff = getObjectDiff(this.originalCanteen, this.canteen)
         return Object.keys(diff).length > 0
       } else {
         return Object.keys(this.canteen).length > 0
@@ -212,7 +212,6 @@ export default {
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
-      this.publicationRequested = !!canteen.publicationStatus && canteen.publicationStatus !== "draft"
       if (canteen.city) {
         const initialCityAutocomplete = {
           text: canteen.city,
@@ -248,11 +247,6 @@ export default {
         return
       }
 
-      if (!this.publicationRequested) {
-        this.canteen.publicationStatus = "draft"
-      } else if (this.canteen.publicationStatus === "draft") {
-        this.canteen.publicationStatus = "pending"
-      }
       const payload = this.originalCanteen ? getObjectDiff(this.originalCanteen, this.canteen) : this.canteen
       this.$store
         .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", {

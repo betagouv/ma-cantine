@@ -27,6 +27,7 @@ import CanteenForm from "@/views/CanteenEditor/CanteenForm"
 import DiagnosticList from "@/views/CanteenEditor/DiagnosticList"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
+import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticEditor from "@/views/DiagnosticEditor"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
@@ -232,6 +233,11 @@ const routes = [
         path: "supprimer",
         name: "CanteenDeletion",
         component: CanteenDeletion,
+      },
+      {
+        path: "publier",
+        name: "PublicationForm",
+        component: PublicationForm,
       },
     ],
   },

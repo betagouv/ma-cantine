@@ -12,6 +12,7 @@ from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPos
 from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleView
 from api.views import ImportDiagnosticsView, TeledeclarationCreateView
 from api.views import TeledeclarationCancelView, TeledeclarationPdfView
+from api.views import PublishCanteenView, UnpublishCanteenView
 
 
 urlpatterns = {
@@ -27,6 +28,16 @@ urlpatterns = {
     ),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path("canteens/<int:pk>", UpdateUserCanteenView.as_view(), name="single_canteen"),
+    path(
+        "canteens/<int:pk>/publish",
+        PublishCanteenView.as_view(),
+        name="publish_canteen",
+    ),
+    path(
+        "canteens/<int:pk>/unpublish",
+        UnpublishCanteenView.as_view(),
+        name="unpublish_canteen",
+    ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/",
         DiagnosticCreateView.as_view(),

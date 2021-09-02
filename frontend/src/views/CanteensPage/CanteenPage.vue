@@ -22,7 +22,7 @@
         </v-card-text>
       </v-card>
 
-      <CanteenDashboard :diagnostics="diagnostics" />
+      <CanteenDashboard :diagnostics="diagnostics" :canteen="canteen" />
 
       <v-divider class="my-8"></v-divider>
 

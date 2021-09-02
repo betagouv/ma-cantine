@@ -8,7 +8,7 @@
         </v-btn>
       </div>
       <v-card-text>
-        <CanteenDashboard :diagnostics="diagnostics" />
+        <CanteenDashboard :diagnostics="diagnostics" :canteen="canteen" />
       </v-card-text>
     </v-card>
   </v-dialog>

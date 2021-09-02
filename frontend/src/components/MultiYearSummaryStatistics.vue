@@ -19,7 +19,7 @@
 
 <script>
 import VueApexCharts from "vue-apexcharts"
-import { strictIsNaN } from "@/utils"
+import { strictIsNaN, isDiagnosticComplete } from "@/utils"
 
 const VALUE_DESCRIPTION = "Pourcentage d'achats"
 const BIO = "Bio"
@@ -41,7 +41,7 @@ export default {
     const diagArray = Object.values(this.diagnostics)
     const completedDiagnostics = []
     diagArray.forEach((d) => {
-      if (!strictIsNaN(d.valueBioHt) && !strictIsNaN(d.valueSustainableHt) && !strictIsNaN(d.valueTotalHt)) {
+      if (isDiagnosticComplete(d)) {
         completedDiagnostics.push(d)
         years.push(d.year)
       }
