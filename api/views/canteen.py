@@ -3,7 +3,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from common.utils import send_mail
 from django.core.validators import validate_email
-from django.core.exceptions import ValidationError, ObjectDoesNotExist, BadRequest
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.constants import LOOKUP_SEP
@@ -115,27 +115,15 @@ class PublishCanteenView(APIView):
     def post(self, request, *args, **kwargs):
         try:
             data = request.data
-            new_status = data.get("publication_status")
-            if (
-                new_status is not None
-                and new_status != Canteen.PublicationStatus.DRAFT.value
-                and new_status != Canteen.PublicationStatus.PENDING.value
-            ):
-                raise BadRequest("L'état donné n'est pas valid.")
-
             canteen_id = kwargs.get("pk")
             canteen = Canteen.objects.get(pk=canteen_id)
             if request.user not in canteen.managers.all():
                 raise PermissionDenied()
 
-            is_draft = (
-                canteen.publication_status == Canteen.PublicationStatus.DRAFT.value
-            )
-            publication_requested = (
-                new_status == Canteen.PublicationStatus.PENDING.value
-            )
+            is_draft = canteen.publication_status == Canteen.PublicationStatus.DRAFT
 
-            if is_draft and publication_requested:
+            if is_draft:
+                canteen.publication_status = Canteen.PublicationStatus.PENDING
                 protocol = "https" if settings.SECURE else "http"
                 admin_url = "{}://{}/admin/data/canteen/{}/change/".format(
                     protocol, settings.HOSTNAME, canteen.id
@@ -152,8 +140,33 @@ class PublishCanteenView(APIView):
                     fail_silently=True,
                 )
 
-            Canteen.objects.filter(pk=canteen_id).update(**data)
-            canteen.refresh_from_db()
+            canteen.update_publication_comments(data)
+            canteen.save()
+            serialized_canteen = FullCanteenSerializer(canteen).data
+            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+
+        except Canteen.DoesNotExist:
+            raise ValidationError("Le cantine specifié n'existe pas")
+
+
+class UnpublishCanteenView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = request.data
+            canteen_id = kwargs.get("pk")
+            canteen = Canteen.objects.get(pk=canteen_id)
+            if request.user not in canteen.managers.all():
+                raise PermissionDenied()
+
+            is_not_draft = canteen.publication_status != Canteen.PublicationStatus.DRAFT
+
+            if is_not_draft:
+                canteen.publication_status = Canteen.PublicationStatus.DRAFT
+
+            canteen.update_publication_comments(data)
+            canteen.save()
             serialized_canteen = FullCanteenSerializer(canteen).data
             return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
 
