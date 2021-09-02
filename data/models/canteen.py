@@ -64,12 +64,6 @@ class Canteen(SoftDeletionModel):
     sectors = models.ManyToManyField(
         Sector, blank=True, verbose_name="secteurs d'activité"
     )
-    publication_status = models.CharField(
-        max_length=50,
-        choices=PublicationStatus.choices,
-        default="draft",
-        verbose_name="état de publication",
-    )
     managers = models.ManyToManyField(
         get_user_model(),
         blank=True,
@@ -107,6 +101,50 @@ class Canteen(SoftDeletionModel):
         null=True, blank=True, verbose_name="Image principale"
     )
 
+    # Publication things
+    publication_status = models.CharField(
+        max_length=50,
+        choices=PublicationStatus.choices,
+        default="draft",
+        verbose_name="état de publication",
+    )
+    publication_comments = models.TextField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de publication",
+    )
+    quality_comments = models.TextField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de mesure appro",
+    )
+    waste_comments = models.TextField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de mesure gaspillage",
+    )
+    diversification_comments = models.TextField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de mesure diversification",
+    )
+    plastics_comments = models.TextField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de mesure plastiques",
+    )
+    information_comments = models.TextField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="commentaires de mesure information",
+    )
+
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
@@ -124,3 +162,11 @@ class Canteen(SoftDeletionModel):
 
     def __str__(self):
         return f'Cantine "{self.name}"'
+
+    def update_publication_comments(self, data):
+        self.publication_comments = data.get("publication_comments")
+        self.quality_comments = data.get("quality_comments")
+        self.waste_comments = data.get("waste_comments")
+        self.diversification_comments = data.get("diversification_comments")
+        self.plastics_comments = data.get("plastics_comments")
+        self.information_comments = data.get("information_comments")

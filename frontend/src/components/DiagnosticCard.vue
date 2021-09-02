@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { timeAgo } from "@/utils"
+import { timeAgo, isDiagnosticComplete } from "@/utils"
 
 export default {
   name: "DiagnosticCard",
@@ -51,10 +51,7 @@ export default {
       if (this.hasActiveTeledeclaration) {
         status = "Données télédéclarées"
       } else {
-        const approComplete = ["valueBioHt", "valueSustainableHt", "valueTotalHt"].every(
-          // sadly null >= 0 is true
-          (key) => this.diagnostic[key] > 0 || this.diagnostic[key] === 0
-        )
+        const approComplete = isDiagnosticComplete(this.diagnostic)
         status = approComplete ? "Données d'approvisionnement complétées" : status
       }
       return status

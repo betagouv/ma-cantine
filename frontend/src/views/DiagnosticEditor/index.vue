@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mt-n2">
     <v-row class="mt-2">
       <v-col cols="12" sm="4" md="3" v-if="canteen">
         <CanteenNavigation :canteen="canteen" />
@@ -217,7 +217,7 @@ function percentage(part, total) {
   return Math.round((part / total) * 100)
 }
 
-const LEAVE_WARNING = "Êtes-vous sûr de vouloir quitter cette page ? Le diagnostic n'a pas été sauvegardé."
+const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
 export default {
   name: "DiagnosticEditor",

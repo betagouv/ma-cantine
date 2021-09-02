@@ -253,6 +253,34 @@ export default new Vuex.Store({
         })
     },
 
+    publishCanteen(context, { id, payload }) {
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/canteens/${id}/publish`, { method: "POST", headers, body: JSON.stringify(payload) })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("UPDATE_USER_CANTEEN", response)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
+    unpublishCanteen(context, { id, payload }) {
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/canteens/${id}/unpublish`, { method: "POST", headers, body: JSON.stringify(payload) })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("UPDATE_USER_CANTEEN", response)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
     deleteCanteen(context, { id }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteens/${id}`, { method: "DELETE", headers })
@@ -311,25 +339,6 @@ export default new Vuex.Store({
 
     removeLocalStorageDiagnostics() {
       return localStorage.removeItem(LOCAL_STORAGE_KEY)
-    },
-
-    publishCanteen(context, canteenId) {
-      const payload = {
-        dataIsPublic: true,
-        public: true,
-      }
-
-      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/canteens/${canteenId}`, { method: "PATCH", headers, body: JSON.stringify(payload) })
-        .then(verifyResponse)
-        .then((response) => {
-          context.commit("UPDATE_USER_CANTEEN", response)
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
-        })
-        .catch((e) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
-          throw e
-        })
     },
 
     subscribeBetaTester(context, payload) {

@@ -32,6 +32,13 @@
               </v-list-item-title>
             </v-list-item>
           </div>
+          <v-list-item :ripple="false" :to="{ name: 'PublicationForm' }">
+            <v-icon small class="mr-2">mdi-bullhorn</v-icon>
+            <v-list-item-title class="text-body-2 font-weight-bold">
+              Publication
+            </v-list-item-title>
+            <v-badge dot inline v-if="readyToPublish"></v-badge>
+          </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'CanteenManagers' }">
             <v-icon small class="mr-2">mdi-account-group</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Gestionnaires</v-list-item-title>
@@ -47,6 +54,8 @@
 </template>
 
 <script>
+import { isDiagnosticComplete } from "@/utils"
+
 export default {
   name: "CanteenNavigation",
   props: ["canteen"],
@@ -56,6 +65,10 @@ export default {
     },
     orderedDiagnostics() {
       return [...this.canteen.diagnostics].sort((a, b) => (a.year > b.year ? -1 : 1))
+    },
+    readyToPublish() {
+      const diagnostic = this.canteen.diagnostics.find((x) => x.year === 2020)
+      return this.canteen.publicationStatus === "draft" && !!diagnostic && isDiagnosticComplete(diagnostic)
     },
   },
   methods: {

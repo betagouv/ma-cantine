@@ -11,6 +11,7 @@ from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework import permissions, status, filters
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from api.serializers import (
@@ -107,29 +108,70 @@ class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
-    def perform_update(self, serializer):
-        is_draft = serializer.instance.publication_status == "draft"
-        publication_requested = (
-            serializer.validated_data.get("publication_status") == "pending"
-        )
 
-        if is_draft and publication_requested:
-            protocol = "https" if settings.SECURE else "http"
-            canteen = serializer.instance
-            admin_url = "{}://{}/admin/data/canteen/{}/change/".format(
-                protocol, settings.HOSTNAME, canteen.id
-            )
+class PublishCanteenView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-            logger.info(f"Demande de publication de {canteen.name} (ID: {canteen.id})")
+    def post(self, request, *args, **kwargs):
+        try:
+            data = request.data
+            canteen_id = kwargs.get("pk")
+            canteen = Canteen.objects.get(pk=canteen_id)
+            if request.user not in canteen.managers.all():
+                raise PermissionDenied()
 
-            send_mail(
-                subject="Demande de publication sur ma cantine",
-                message=f"La cantine « {canteen.name} » a demandé d'être publiée.\nAdmin : {admin_url}",
-                to=[settings.CONTACT_EMAIL],
-                fail_silently=True,
-            )
+            is_draft = canteen.publication_status == Canteen.PublicationStatus.DRAFT
 
-        return super(UpdateUserCanteenView, self).perform_update(serializer)
+            if is_draft:
+                canteen.publication_status = Canteen.PublicationStatus.PENDING
+                protocol = "https" if settings.SECURE else "http"
+                admin_url = "{}://{}/admin/data/canteen/{}/change/".format(
+                    protocol, settings.HOSTNAME, canteen.id
+                )
+
+                logger.info(
+                    f"Demande de publication de {canteen.name} (ID: {canteen.id})"
+                )
+
+                send_mail(
+                    subject="Demande de publication sur ma cantine",
+                    message=f"La cantine « {canteen.name} » a demandé d'être publiée.\nAdmin : {admin_url}",
+                    to=[settings.CONTACT_EMAIL],
+                    fail_silently=True,
+                )
+
+            canteen.update_publication_comments(data)
+            canteen.save()
+            serialized_canteen = FullCanteenSerializer(canteen).data
+            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+
+        except Canteen.DoesNotExist:
+            raise ValidationError("Le cantine specifié n'existe pas")
+
+
+class UnpublishCanteenView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = request.data
+            canteen_id = kwargs.get("pk")
+            canteen = Canteen.objects.get(pk=canteen_id)
+            if request.user not in canteen.managers.all():
+                raise PermissionDenied()
+
+            is_not_draft = canteen.publication_status != Canteen.PublicationStatus.DRAFT
+
+            if is_not_draft:
+                canteen.publication_status = Canteen.PublicationStatus.DRAFT
+
+            canteen.update_publication_comments(data)
+            canteen.save()
+            serialized_canteen = FullCanteenSerializer(canteen).data
+            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+
+        except Canteen.DoesNotExist:
+            raise ValidationError("Le cantine specifié n'existe pas")
 
 
 def _respond_with_team(canteen):

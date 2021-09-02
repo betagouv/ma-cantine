@@ -7,6 +7,8 @@ from .canteen import (  # noqa: F401
     AddManagerView,
     RemoveManagerView,
     SendCanteenEmailView,
+    PublishCanteenView,
+    UnpublishCanteenView,
 )
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
