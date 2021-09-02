@@ -135,16 +135,10 @@ export default {
         return
       }
 
-      if (!this.publicationRequested) {
-        this.canteen.publicationStatus = "draft"
-      } else if (this.canteen.publicationStatus === "draft") {
-        this.canteen.publicationStatus = "pending"
-      }
-      const payload = this.originalCanteen ? getObjectDiff(this.originalCanteen, this.canteen) : this.canteen
       this.$store
-        .dispatch("publishCanteen", {
+        .dispatch(this.publicationRequested ? "publishCanteen" : "unpublishCanteen", {
           id: this.canteen.id,
-          payload,
+          payload: this.canteen,
         })
         .then(() => {
           this.$store.dispatch("notify", {
@@ -192,7 +186,6 @@ export default {
         !!this.originalCanteen.publicationRequested &&
         this.originalCanteen.publicationRequested !== "draft"
       if (publicationRequested || unpublicationRequested) {
-        console.log("publication change")
         return true
       }
       const diff = getObjectDiff(this.originalCanteen, this.canteen)

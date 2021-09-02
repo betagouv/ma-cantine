@@ -162,3 +162,11 @@ class Canteen(SoftDeletionModel):
 
     def __str__(self):
         return f'Cantine "{self.name}"'
+
+    def update_publication_comments(self, data):
+        self.publication_comments = data.get("publication_comments")
+        self.quality_comments = data.get("quality_comments")
+        self.waste_comments = data.get("waste_comments")
+        self.diversification_comments = data.get("diversification_comments")
+        self.plastics_comments = data.get("plastics_comments")
+        self.information_comments = data.get("information_comments")

@@ -14,13 +14,15 @@ class TestPublishCanteen(APITestCase):
         """
         Users can only publish the canteens they manage
         """
-        canteen = CanteenFactory.create()
-        payload = {"publicationComments": "Hello, world?"}
+        canteen = CanteenFactory.create(publication_comments="test")
+        payload = {"publication_comments": "Hello, world?"}
         response = self.client.post(
             reverse("publish_canteen", kwargs={"pk": canteen.id}), payload
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        persisted_canteen = Canteen.objects.get(pk=canteen.id)
+        self.assertEqual(persisted_canteen.publication_comments, "test")
 
     @authenticate
     def test_publish_canteen(self):
@@ -30,7 +32,6 @@ class TestPublishCanteen(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
         payload = {
-            "publication_status": "pending",
             "publication_comments": "Hello, world!",
             "quality_comments": "Quality",
             "waste_comments": "Something about waste",
@@ -51,7 +52,7 @@ class TestPublishCanteen(APITestCase):
         self.assertEqual(persisted_canteen.diversification_comments, "Diversification")
         self.assertEqual(persisted_canteen.plastics_comments, "Plastics")
         self.assertEqual(persisted_canteen.information_comments, "Information")
-        self.assertIn("publicationComments", response.json())
+        self.assertEqual(response.json()["publicationComments"], "Hello, world!")
 
     @override_settings(CONTACT_EMAIL="contact-test@example.com")
     @authenticate
@@ -62,8 +63,7 @@ class TestPublishCanteen(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
         response = self.client.post(
-            reverse("publish_canteen", kwargs={"pk": canteen.id}),
-            {"publication_status": Canteen.PublicationStatus.PENDING.value},
+            reverse("publish_canteen", kwargs={"pk": canteen.id})
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -74,18 +74,60 @@ class TestPublishCanteen(APITestCase):
             mail.outbox[0].body,
         )
 
+    @override_settings(CONTACT_EMAIL="contact-test@example.com")
     @authenticate
-    def test_invalid_status(self):
+    def test_publish_canteen_twice(self):
         """
-        Users can only provide draft, pending, or None as new publication statuses
+        Calling the publish endpoint twice will only send one email but allows
+        edits to comments
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        payload = {"publication_status": "published"}
+        self.client.post(
+            reverse("publish_canteen", kwargs={"pk": canteen.id}),
+            {
+                "publication_comments": "First version",
+            },
+        )
         response = self.client.post(
-            reverse("publish_canteen", kwargs={"pk": canteen.id}), payload
+            reverse("publish_canteen", kwargs={"pk": canteen.id}),
+            {"publication_comments": "Hello, world!"},
         )
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        persisted_canteen = Canteen.objects.get(pk=canteen.id)
+        self.assertEqual(persisted_canteen.publication_status, "pending")
+        self.assertEqual(persisted_canteen.publication_comments, "Hello, world!")
+        self.assertEqual(response.json()["publicationComments"], "Hello, world!")
+
+    @authenticate
+    def test_unpublish_canteen(self):
+        """
+        Calling the unpublish endpoint moves canteens from published or pending
+        to draft, optionally updating comments
+        """
+        canteen = CanteenFactory.create(publication_status="published")
+        canteen.managers.add(authenticate.user)
+        response = self.client.post(
+            reverse("unpublish_canteen", kwargs={"pk": canteen.id}),
+            {"publication_comments": "Hello, world!"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         persisted_canteen = Canteen.objects.get(pk=canteen.id)
         self.assertEqual(persisted_canteen.publication_status, "draft")
+        self.assertEqual(persisted_canteen.publication_comments, "Hello, world!")
+
+        canteen = CanteenFactory.create(publication_status="pending")
+        canteen.managers.add(authenticate.user)
+        response = self.client.post(
+            reverse("unpublish_canteen", kwargs={"pk": canteen.id}),
+            {"publication_comments": "Hello, world!"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        persisted_canteen = Canteen.objects.get(pk=canteen.id)
+        self.assertEqual(persisted_canteen.publication_status, "draft")
+        self.assertEqual(persisted_canteen.publication_comments, "Hello, world!")
+        self.assertEqual(response.json()["publicationComments"], "Hello, world!")
