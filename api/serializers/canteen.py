@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from drf_base64.fields import Base64ImageField
 from data.models import Canteen, Sector
-from .diagnostic import DiagnosticSerializer
+from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer
 from .user import CanteenManagerSerializer
 from .managerinvitation import ManagerInvitationSerializer
 
@@ -9,7 +9,7 @@ from .managerinvitation import ManagerInvitationSerializer
 class PublicCanteenSerializer(serializers.ModelSerializer):
 
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    diagnostics = DiagnosticSerializer(
+    diagnostics = PublicDiagnosticSerializer(
         many=True, read_only=True, source="diagnostic_set"
     )
     main_image = Base64ImageField(required=False, allow_null=True)
@@ -27,6 +27,12 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "department",
             "main_image",
+            "publication_comments",
+            "quality_comments",
+            "waste_comments",
+            "diversification_comments",
+            "plastics_comments",
+            "information_comments",
         )
 
 
@@ -35,7 +41,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Sector.objects.all(), required=False
     )
-    diagnostics = DiagnosticSerializer(
+    diagnostics = FullDiagnosticSerializer(
         many=True, read_only=True, source="diagnostic_set"
     )
     main_image = Base64ImageField(required=False, allow_null=True)
@@ -46,6 +52,18 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
+        read_only_fields = (
+            "id",
+            "managers",
+            "manager_invitations",
+            "publication_status",
+            "publication_comments",
+            "quality_comments",
+            "waste_comments",
+            "diversification_comments",
+            "plastics_comments",
+            "information_comments",
+        )
         fields = (
             "id",
             "name",
@@ -53,7 +71,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "city_insee_code",
             "postal_code",
             "sectors",
-            "publication_status",
             "daily_meal_count",
             "siret",
             "central_producer_siret",
@@ -64,6 +81,13 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "main_image",
             "managers",
             "manager_invitations",
+            "publication_status",
+            "publication_comments",
+            "quality_comments",
+            "waste_comments",
+            "diversification_comments",
+            "plastics_comments",
+            "information_comments",
         )
 
 

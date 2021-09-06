@@ -13,6 +13,8 @@
       solo
       placeholder="Je ne sais pas"
       v-model="diagnostic.valueTotalHt"
+      :readonly="readonly"
+      :disabled="readonly"
     ></v-text-field>
 
     <p class="body-2 mb-1 mt-4">...en produits bio</p>
@@ -24,6 +26,8 @@
       solo
       placeholder="Je ne sais pas"
       v-model="diagnostic.valueBioHt"
+      :readonly="readonly"
+      :disabled="readonly"
     ></v-text-field>
 
     <p class="body-2 mb-1 mt-4">...en autres produits de qualité et durables (hors bio)</p>
@@ -35,6 +39,8 @@
       solo
       placeholder="Je ne sais pas"
       v-model="diagnostic.valueSustainableHt"
+      :readonly="readonly"
+      :disabled="readonly"
     ></v-text-field>
 
     <p class="body-2 mb-1 mt-4">...en produits issus du commerce équitable</p>
@@ -46,6 +52,8 @@
       solo
       placeholder="Je ne sais pas"
       v-model="diagnostic.valueFairTradeHt"
+      :readonly="readonly"
+      :disabled="readonly"
     ></v-text-field>
   </div>
 </template>
@@ -57,6 +65,10 @@ export default {
   props: {
     label: String,
     originalDiagnostic: Object,
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

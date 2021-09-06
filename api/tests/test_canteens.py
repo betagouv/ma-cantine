@@ -1,10 +1,9 @@
 from django.urls import reverse
-from django.core import mail
-from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory, SectorFactory
-from data.models import Canteen
+from data.factories import DiagnosticFactory
+from data.models import Canteen, Teledeclaration
 from .utils import authenticate
 
 
@@ -24,7 +23,9 @@ class TestCanteenApi(APITestCase):
         ]
         private_canteens = [
             CanteenFactory.create(),
-            CanteenFactory.create(publication_status="pending"),
+            CanteenFactory.create(
+                publication_status=Canteen.PublicationStatus.PENDING.value
+            ),
         ]
         response = self.client.get(reverse("published_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -62,7 +63,7 @@ class TestCanteenApi(APITestCase):
         A 404 is raised if we try to get a sinlge published canteen
         that has not been published by the manager.
         """
-        private_canteen = CanteenFactory.create(publication_status="draft")
+        private_canteen = CanteenFactory.create()
         response = self.client.get(
             reverse("single_published_canteen", kwargs={"pk": private_canteen.id})
         )
@@ -142,27 +143,6 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(created_canteen.city, "Lyon")
         self.assertEqual(created_canteen.siret, "21340172201787")
         self.assertEqual(created_canteen.management_type, "direct")
-
-    @override_settings(CONTACT_EMAIL="contact-test@example.com")
-    @authenticate
-    def test_publish_email(self):
-        """
-        An email should be sent to the team when a manager has requested publication
-        """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        payload = {"publication_status": "pending"}
-        response = self.client.patch(
-            reverse("single_canteen", kwargs={"pk": canteen.id}), payload
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to[0], "contact-test@example.com")
-        self.assertIn(
-            "La cantine « %s » a demandé d'être publiée" % canteen.name,
-            mail.outbox[0].body,
-        )
 
     @authenticate
     def test_soft_delete(self):
@@ -389,3 +369,51 @@ class TestCanteenApi(APITestCase):
         self.assertIn("Wasabi", result_names)
         self.assertIn("Mochi", result_names)
         self.assertIn("Umami", result_names)
+
+    @authenticate
+    def test_canteen_publication_fields_read_only(self):
+        """
+        Users cannot modify canteen publication fields with this endpoint
+        """
+        canteen = CanteenFactory.create(city="Paris")
+        canteen.managers.add(authenticate.user)
+        payload = {
+            "publication_status": "pending",
+            "publication_comments": "Some comments",
+        }
+        response = self.client.patch(
+            reverse("single_canteen", kwargs={"pk": canteen.id}), payload
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        persisted_canteen = Canteen.objects.get(pk=canteen.id)
+        self.assertEqual(
+            persisted_canteen.publication_status, Canteen.PublicationStatus.DRAFT.value
+        )
+        self.assertEqual(persisted_canteen.publication_comments, None)
+
+    @authenticate
+    def test_user_canteen_teledeclaration(self):
+        """
+        The teledeclaration information should only be visible to
+        managers of the canteen
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        Teledeclaration.createFromDiagnostic(
+            diagnostic, user, Teledeclaration.TeledeclarationStatus.CANCELLED
+        )
+
+        new_teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
+        response = self.client.get(reverse("user_canteens"))
+        body = response.json()
+        json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
+        json_diagnostic = next(
+            filter(lambda x: x["id"] == diagnostic.id, json_canteen["diagnostics"])
+        )
+
+        self.assertEqual(
+            json_diagnostic["teledeclaration"]["id"], new_teledeclaration.id
+        )
