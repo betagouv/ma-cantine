@@ -13,7 +13,10 @@
     <v-row>
       <v-col cols="7">
         <v-card-title class="font-weight-bold">{{ canteen.name || `SIRET : ${canteen.siret}` }}</v-card-title>
-        <v-card-subtitle class="caption">{{ dataStatus }}</v-card-subtitle>
+        <v-card-subtitle class="caption">
+          <v-icon v-if="hasActiveTeledeclaration" color="green" small class="mt-0">mdi-check-circle</v-icon>
+          {{ dataStatus }}
+        </v-card-subtitle>
       </v-col>
       <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
       <v-col cols="5" class="align-self-center">
@@ -24,7 +27,7 @@
 </template>
 
 <script>
-import { timeAgo } from "@/utils"
+import { timeAgo, isDiagnosticComplete } from "@/utils"
 
 export default {
   name: "DiagnosticCard",
@@ -45,13 +48,10 @@ export default {
     },
     dataStatus() {
       let status = "Données manquantes"
-      if (this.canteen.isPublished) {
-        status = "Données publiées"
+      if (this.hasActiveTeledeclaration) {
+        status = "Données télédéclarées"
       } else {
-        const approComplete = ["valueBioHt", "valueSustainableHt", "valueTotalHt"].every(
-          // sadly null >= 0 is true
-          (key) => this.diagnostic[key] > 0 || this.diagnostic[key] === 0
-        )
+        const approComplete = isDiagnosticComplete(this.diagnostic)
         status = approComplete ? "Données d'approvisionnement complétées" : status
       }
       return status
@@ -62,6 +62,9 @@ export default {
       const showModificationDate = dateDifference > 1000 * 60 // one minute difference
       if (showModificationDate) return `${baseText}, modifié ${timeAgo(this.diagnostic.modificationDate, true)}`
       return baseText
+    },
+    hasActiveTeledeclaration() {
+      return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
     },
   },
   methods: {

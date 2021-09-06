@@ -8,17 +8,7 @@
     />
     <v-row v-if="!isNewCanteen">
       <v-col cols="12">
-        <p class="body-1 mb-3 mt-4 font-weight-black">Publication</p>
-
-        <v-alert color="amber darken-3" class="mb-1 body-2" v-if="originalCanteenIsPending" outlined>
-          <span class="grey--text text--darken-2">
-            <v-icon class="mb-1 mr-2">mdi-information</v-icon>
-            Cette cantine est en attente de validation. Une fois validé par notre équipe, vous recevrez un email
-            confirmant sa publication.
-          </span>
-        </v-alert>
-
-        <v-checkbox hide-details="auto" class="mt-0" :color="checkboxColor" :input-value="value" @change="updateValue">
+        <v-checkbox hide-details="auto" class="mt-0" color="primary" :input-value="value" @change="updateValue">
           <template v-slot:label>
             <p class="text-body-2 grey--text text--darken-4 pt-1 pb-0 my-0 ml-2">
               J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles sur
@@ -102,12 +92,6 @@ export default {
     },
     originalCanteenIsPublished() {
       return this.originalCanteen ? this.originalCanteen.publicationStatus === "published" : false
-    },
-    originalCanteenIsPending() {
-      return this.originalCanteen ? this.originalCanteen.publicationStatus === "pending" : false
-    },
-    checkboxColor() {
-      return this.originalCanteenIsPending ? "amber darken-2" : "primary"
     },
   },
   methods: {

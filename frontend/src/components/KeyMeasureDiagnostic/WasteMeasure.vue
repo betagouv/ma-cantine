@@ -4,12 +4,16 @@
       hide-details="auto"
       v-model="diagnostic.hasWasteDiagnostic"
       label="J'ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire"
+      :readonly="readonly"
+      :disabled="readonly"
     />
 
     <v-checkbox
       hide-details="auto"
       v-model="diagnostic.hasWastePlan"
       label="J'ai mis en place un plan d’actions adapté au diagnostic réalisé"
+      :readonly="readonly"
+      :disabled="readonly"
     />
 
     <!-- TODO: a11y label and checkboxes -->
@@ -24,13 +28,22 @@
       :key="action.value"
       :value="action.value"
       :label="action.label"
+      :readonly="readonly"
+      :disabled="readonly"
     />
     <v-row align="center" class="ml-8 mt-2 mr-2">
-      <v-checkbox v-model="otherActionEnabled" hide-details class="shrink mt-0"></v-checkbox>
+      <v-checkbox
+        v-model="otherActionEnabled"
+        hide-details
+        class="shrink mt-0"
+        :readonly="readonly"
+        :disabled="readonly"
+      ></v-checkbox>
       <v-text-field
-        :disabled="!otherActionEnabled"
+        :disabled="!otherActionEnabled || readonly"
         v-model="diagnostic.otherWasteAction"
         label="Autre : donnez plus d'informations"
+        :readonly="readonly"
       ></v-text-field>
     </v-row>
 
@@ -38,6 +51,8 @@
       hide-details="auto"
       v-model="diagnostic.hasWasteMeasures"
       label="J'ai réalisé des mesures de mon gaspillage alimentaire"
+      :readonly="readonly"
+      :disabled="readonly"
     />
     <v-expand-transition>
       <div v-if="diagnostic.hasWasteMeasures" class="mt-4">
@@ -49,6 +64,8 @@
           class="mx-8"
           label="Reste de pain"
           suffix="kg/an"
+          :readonly="readonly"
+          :disabled="readonly"
         ></v-text-field>
         <v-text-field
           v-model="diagnostic.servedLeftovers"
@@ -58,6 +75,8 @@
           class="mx-8"
           label="Reste plateau"
           suffix="kg/an"
+          :readonly="readonly"
+          :disabled="readonly"
         ></v-text-field>
         <v-text-field
           v-model="diagnostic.unservedLeftovers"
@@ -67,6 +86,8 @@
           class="mx-8"
           label="Reste en production (non servi)"
           suffix="kg/an"
+          :readonly="readonly"
+          :disabled="readonly"
         ></v-text-field>
         <v-text-field
           v-model="diagnostic.sideLeftovers"
@@ -76,6 +97,8 @@
           class="mx-8"
           label="Reste de composantes (entrée, plat dessert...)"
           suffix="kg/an"
+          :readonly="readonly"
+          :disabled="readonly"
         ></v-text-field>
       </div>
     </v-expand-transition>
@@ -84,6 +107,8 @@
       hide-details="auto"
       v-model="diagnostic.hasDonationAgreement"
       label="Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire"
+      :readonly="readonly"
+      :disabled="readonly"
     />
     <p class="text-left mx-8 mt-2 explanation">
       Seulement les cantines qui fabriquent plus de 3 000 repas par jour en moyenne doivent proposer des conventions.
@@ -99,6 +124,8 @@
           class="mx-8"
           label="Fréquence de dons"
           suffix="dons/an"
+          :readonly="readonly"
+          :disabled="readonly"
         ></v-text-field>
         <v-text-field
           v-model="diagnostic.donationQuantity"
@@ -108,12 +135,27 @@
           class="mx-8"
           label="Quantité des denrées données"
           suffix="kg/an"
+          :readonly="readonly"
+          :disabled="readonly"
         ></v-text-field>
-        <v-text-field v-model="diagnostic.donationFoodType" class="mx-8" label="Type de denrées données"></v-text-field>
+        <v-text-field
+          v-model="diagnostic.donationFoodType"
+          class="mx-8"
+          label="Type de denrées données"
+          :readonly="readonly"
+          :disabled="readonly"
+        ></v-text-field>
       </div>
     </v-expand-transition>
 
-    <v-textarea v-model="diagnostic.otherWasteComments" label="Autres commentaires" outlined rows="3"></v-textarea>
+    <v-textarea
+      v-model="diagnostic.otherWasteComments"
+      label="Autres commentaires"
+      outlined
+      rows="3"
+      :readonly="readonly"
+      :disabled="readonly"
+    ></v-textarea>
   </div>
 </template>
 
@@ -123,6 +165,10 @@ import validators from "@/validators"
 export default {
   props: {
     diagnostic: Object,
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

@@ -17,7 +17,7 @@
       </v-card-actions>
     </v-card>
 
-    <CanteenDashboard :diagnostics="diagnostics" :showResources="true" />
+    <CanteenDashboard :diagnostics="diagnostics" :showResources="true" :canteen="canteen" />
   </div>
 </template>
 
@@ -30,6 +30,6 @@ export default {
     CanteenDashboard,
     GiveFeedbackLink,
   },
-  props: ["diagnostics"],
+  props: ["diagnostics", "canteen"],
 }
 </script>

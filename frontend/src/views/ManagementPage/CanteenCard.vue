@@ -13,23 +13,14 @@
       </v-chip>
     </v-card-subtitle>
     <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city || canteen.sectors" class="mt-0">
-      <div v-if="canteen.dailyMealCount">
-        <v-icon small>mdi-silverware-fork-knife</v-icon>
-        {{ canteen.dailyMealCount }} repas par jour
-      </div>
-      <div v-if="canteen.city">
-        <v-icon small>mdi-compass</v-icon>
-        {{ canteen.city }}
-      </div>
-      <div v-if="canteen.sectors.length">
-        <v-icon small>mdi-office-building</v-icon>
-        {{ sectors }}
-      </div>
+      <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
   </v-card>
 </template>
 
 <script>
+import CanteenIndicators from "@/components/CanteenIndicators"
+
 export default {
   name: "CanteenCard",
   props: {
@@ -38,13 +29,10 @@ export default {
       required: true,
     },
   },
+  components: {
+    CanteenIndicators,
+  },
   computed: {
-    sectors() {
-      const sectors = this.$store.state.sectors
-      return this.canteen.sectors
-        .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
-        .join(", ")
-    },
     publicationStatus() {
       return {
         draft: {

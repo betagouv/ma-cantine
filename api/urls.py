@@ -10,7 +10,9 @@ from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView
 from api.views import DiagnosticCreateView, UpdateUserCanteenView, DiagnosticUpdateView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
 from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleView
-from api.views import ImportDiagnosticsView
+from api.views import ImportDiagnosticsView, TeledeclarationCreateView
+from api.views import TeledeclarationCancelView, TeledeclarationPdfView
+from api.views import PublishCanteenView, UnpublishCanteenView
 
 
 urlpatterns = {
@@ -26,6 +28,16 @@ urlpatterns = {
     ),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path("canteens/<int:pk>", UpdateUserCanteenView.as_view(), name="single_canteen"),
+    path(
+        "canteens/<int:pk>/publish",
+        PublishCanteenView.as_view(),
+        name="publish_canteen",
+    ),
+    path(
+        "canteens/<int:pk>/unpublish",
+        UnpublishCanteenView.as_view(),
+        name="unpublish_canteen",
+    ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/",
         DiagnosticCreateView.as_view(),
@@ -63,6 +75,21 @@ urlpatterns = {
     ),
     path(
         "importDiagnostics/", ImportDiagnosticsView.as_view(), name="import_diagnostics"
+    ),
+    path(
+        "createTeledeclaration/",
+        TeledeclarationCreateView.as_view(),
+        name="teledeclaration_create",
+    ),
+    path(
+        "cancelTeledeclaration/",
+        TeledeclarationCancelView.as_view(),
+        name="teledeclaration_cancel",
+    ),
+    path(
+        "teledeclaration/<int:pk>/document.pdf",
+        TeledeclarationPdfView.as_view(),
+        name="teledeclaration_pdf",
     ),
 }
 
