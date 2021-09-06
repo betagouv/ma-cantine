@@ -2,7 +2,7 @@
   <div class="poster-contents">
     <div id="heading">
       <div>
-        <h2 class="">Quelques infos sur l'établissement {{ canteen.name || "_________" }}</h2>
+        <h2 class="">Qualité des approvisionnements dans l’établissement {{ canteen.name || "_________" }}</h2>
         <div id="indicators">
           <!-- Can't use <img> because the object-fit is not respected in the PDF generation -->
           <div
@@ -21,8 +21,9 @@
 
     <div>
       <p style="font-size: 14px;">
-        Sur les {{ canteen.dailyMealCount }} repas servis aux convives, pour l’année 2020, voici la répartition des
-        produits bio et de qualité (voir liste de labels ci-dessous)
+        Sur les {{ canteen.dailyMealCount }} repas servis aux convives, pour l’année 2020, voici la répartition, en
+        valeur d’achat, des produits bio, de qualité et durables (liste de labels ci-dessous) utilisés dans la
+        confection des repas
       </p>
     </div>
     <div class="spacer"></div>
@@ -50,11 +51,10 @@
     <div id="about">
       <h3 style="margin-bottom: 8px;">Pourquoi je vois cette affiche ?</h3>
       <p>
-        Avec pour objectif d’aller vers du mieux manger et d’accompagner la transition alimentaire pour un respect de la
-        santé des convives et des pratiques plus vertueuses en termes de protection de l’environnement, la loi EGAlim
-        encourage les établissements de restauration collective à communiquer sur leurs menus et leur composition. En
-        partenariat avec ma-cantine.beta.gouv.fr; outil gouvernemental en expérimentation, cet établissement a renseigné
-        les pratiques mises en oeuvre.
+        L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des produits composant les
+        menus et de soutenir l’objectif d’une alimentation plus saine et plus durable dans les restaurants. En
+        partenariat avec ma-cantine.beta.gouv.fr; plateforme gouvernementale en expérimentation, cet établissement a
+        rempli ses obligations d’information des convives.
       </p>
     </div>
     <div class="spacer"></div>
