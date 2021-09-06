@@ -30,8 +30,8 @@
 
     <div id="graphs">
       <div>
-        <p class="graph-title">Approvisionnement 2020</p>
-        <SummaryStatistics :width="340" :qualityDiagnostic="diagnostic" class="summary-statistics" />
+        <p class="graph-title">Approvisionnement produits 2020</p>
+        <SummaryStatistics :width="350" :qualityDiagnostic="diagnostic" class="summary-statistics" />
       </div>
       <div v-if="showPreviousDiagnostic">
         <p class="graph-title">Rappel 2019</p>
