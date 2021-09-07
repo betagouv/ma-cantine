@@ -194,11 +194,13 @@ export default {
 
 function getVegetarianMenuActionLabel(hasVegetarianMenu, vegetarianFrequency) {
   if (!hasVegetarianMenu) {
-    return "Pas de menu végétarien"
+    return "Pas de menu végétarien hébdomadaire"
   } else if (vegetarianFrequency === "MID") {
-    return "Mise en place d'un menu végétarien"
+    return "Mise en place d'un menu végétarien par semaine"
   } else if (vegetarianFrequency === "HIGH") {
-    return "Plusieurs menus végétariens"
+    return "Mise en place d'un menu végétarien plusieurs fois par semaine"
+  } else if (vegetarianFrequency === "DAILY") {
+    return "Mise en place d'un menu végétarien de façon quotidienne"
   }
 }
 </script>
