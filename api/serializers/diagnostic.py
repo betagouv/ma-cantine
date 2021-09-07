@@ -24,6 +24,7 @@ FIELDS = (
     "donation_food_type",
     "other_waste_comments",
     "has_diversification_plan",
+    "diversification_plan_actions",
     "vegetarian_weekly_recurrence",
     "vegetarian_menu_type",
     "vegetarian_menu_bases",
