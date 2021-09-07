@@ -174,7 +174,7 @@
             de les envoyer, avec votre accord, à la DGAL qui en fera un bilan statistique global des données des
             établissements.
           </p>
-          <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid">
+          <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form">
             <v-checkbox
               :rules="[validators.checked]"
               label="Je déclare sur l’honneur la véracité de mes informations"
@@ -503,12 +503,12 @@ function hasValue(val) {
 </script>
 
 <style scoped>
-form >>> .v-input--checkbox .v-label.theme--light {
+#teledeclaration-form >>> .v-input--checkbox .v-label.theme--light {
   font-size: 16px;
   font-weight: bold;
   color: rgba(0, 0, 0, 0.87);
 }
-form >>> .v-input--checkbox .v-label.theme--light.v-label--is-disabled {
+#teledeclaration-form >>> .v-input--checkbox .v-label.theme--light.v-label--is-disabled {
   color: rgba(0, 0, 0, 0.37);
 }
 </style>
