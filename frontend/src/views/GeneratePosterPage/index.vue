@@ -156,6 +156,10 @@
             .
           </p>
           <v-btn x-large color="primary" @click="submit">Générer mon affiche</v-btn>
+          <p class="mt-4 caption">
+            Pour ajouter une photo à l'affiche et accéder à d'autres fonctionnalités,
+            <a href="/creer-mon-compte">créez un compte</a>
+          </p>
         </v-form>
         <div id="poster-preview" class="ml-8">
           <CanteenPoster v-bind="form" id="canteen-poster" />
