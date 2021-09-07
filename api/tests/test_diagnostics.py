@@ -72,9 +72,10 @@ class TestDiagnosticsApi(APITestCase):
             "donation_food_type": "We donate bread and cheese",
             "other_waste_comments": "We do our best",
             "has_diversification_plan": True,
-            "vegetarian_weekly_recurrence": "LOW",
+            "diversification_plan_actions": ["PRODUCTS", "TRAINING"],
+            "vegetarian_weekly_recurrence": "DAILY",
             "vegetarian_menu_type": "UNIQUE",
-            "vegetarian_menu_bases": ["GRAIN", "READYMADE"],
+            "vegetarian_menu_bases": ["GRAIN", "READYMADE", "CHEESE"],
             "cooking_plastic_substituted": True,
             "serving_plastic_substituted": False,
             "plastic_bottles_substituted": True,
@@ -97,7 +98,10 @@ class TestDiagnosticsApi(APITestCase):
         self.assertTrue(diagnostic.cooking_plastic_substituted)
         self.assertFalse(diagnostic.has_donation_agreement)
         self.assertIn("AWARENESS", diagnostic.waste_actions)
+        self.assertIn("TRAINING", diagnostic.diversification_plan_actions)
+        self.assertEqual("DAILY", diagnostic.vegetarian_weekly_recurrence)
         self.assertIn("GRAIN", diagnostic.vegetarian_menu_bases)
+        self.assertIn("CHEESE", diagnostic.vegetarian_menu_bases)
         self.assertEqual(diagnostic.donation_quantity, decimal.Decimal("60.6"))
         self.assertEqual(diagnostic.communication_frequency, "YEARLY")
         self.assertTrue(diagnostic.communicates_on_food_quality)
