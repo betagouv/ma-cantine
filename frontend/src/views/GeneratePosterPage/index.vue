@@ -7,10 +7,10 @@
     </h1>
     <p class="text-body-2">
       En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives pour les
-      informer sur la part de produits de qualités et durables et de la part des produits issus de projets alimentaires
+      informer sur la part de produits de qualité et durables et de la part des produits issus de projets alimentaires
       territoriaux entrant dans la composition des repas servis dans votre restaurant. Cette information est obtenue à
-      partir de vos données annuelles d’achat. Si ces données ne sont pas disponibles vous pouvez les informer à partir
-      d’autres critères (nombre de composantes, volume des denrées…).
+      partir de vos données annuelles d’achat. Si ces données ne sont pas disponibles vous pouvez utiliser d’autres
+      critères (nombre de composantes, volume des denrées…).
     </p>
     <router-link
       :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"

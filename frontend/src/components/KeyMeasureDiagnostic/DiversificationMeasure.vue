@@ -8,7 +8,7 @@
       :disabled="readonly"
     />
 
-    <p class="text-left mt-6 mb-2">Ce plan comporte, par exemple, les actions suivants (voir guide du CNRC) :</p>
+    <p class="text-left mt-6 mb-2">Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :</p>
     <v-checkbox
       hide-details="auto"
       class="ml-8"
@@ -79,7 +79,7 @@ export default {
           value: "PRESENTATION",
         },
         {
-          label: "Agir sur la manière dont les menus sont conçus ces plats en soulignant leurs attributs positifs",
+          label: "Agir sur la manière dont les menus sont conçus en soulignant attributs positifs des plats",
           value: "MENU",
         },
         {
