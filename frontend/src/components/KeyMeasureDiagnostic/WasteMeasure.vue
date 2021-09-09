@@ -16,36 +16,39 @@
       :disabled="readonly"
     />
 
-    <!-- TODO: a11y label and checkboxes -->
-    <p class="text-left mt-6 mb-2">J'ai réalisé des actions de lutte contre le gaspillage alimentaire :</p>
+    <fieldset class="mt-3 mb-4">
+      <legend class="text-left my-3">J'ai réalisé des actions de lutte contre le gaspillage alimentaire :</legend>
 
-    <v-checkbox
-      hide-details="auto"
-      class="ml-8"
-      v-model="diagnostic.wasteActions"
-      :multiple="true"
-      v-for="action in wasteActions"
-      :key="action.value"
-      :value="action.value"
-      :label="action.label"
-      :readonly="readonly"
-      :disabled="readonly"
-    />
-    <v-row align="center" class="ml-8 mt-2 mr-2">
       <v-checkbox
-        v-model="otherActionEnabled"
-        hide-details
-        class="shrink mt-0"
+        hide-details="auto"
+        class="ml-8 mb-3 mt-0"
+        v-model="diagnostic.wasteActions"
+        :multiple="true"
+        v-for="action in wasteActions"
+        :key="action.value"
+        :value="action.value"
+        :label="action.label"
         :readonly="readonly"
         :disabled="readonly"
-      ></v-checkbox>
-      <v-text-field
-        :disabled="!otherActionEnabled || readonly"
-        v-model="diagnostic.otherWasteAction"
-        label="Autre : donnez plus d'informations"
-        :readonly="readonly"
-      ></v-text-field>
-    </v-row>
+      />
+      <v-row align="center" class="ml-8 mb-3 mt-0 mr-2">
+        <v-checkbox
+          v-model="otherActionEnabled"
+          hide-details
+          class="shrink mt-0"
+          :readonly="readonly"
+          :disabled="readonly"
+        ></v-checkbox>
+        <v-text-field
+          class="my-0 py-0"
+          hide-details
+          :disabled="!otherActionEnabled || readonly"
+          v-model="diagnostic.otherWasteAction"
+          label="Autre : donnez plus d'informations"
+          :readonly="readonly"
+        ></v-text-field>
+      </v-row>
+    </fieldset>
 
     <v-checkbox
       hide-details="auto"
@@ -220,5 +223,9 @@ export default {
 .explanation {
   color: grey;
   font-size: 0.8em;
+}
+
+fieldset {
+  border: none;
 }
 </style>

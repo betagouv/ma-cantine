@@ -8,9 +8,9 @@
       :disabled="readonly"
     />
 
-    <fieldset>
-      <legend class="text-left mt-6 mb-2">Je fais cette information :</legend>
-      <v-radio-group v-model="diagnostic.communicationFrequency">
+    <fieldset class="mt-3 mb-4">
+      <legend class="text-left my-3">Je fais cette information :</legend>
+      <v-radio-group class="my-0" v-model="diagnostic.communicationFrequency" hide-details>
         <v-radio
           class="ml-8"
           v-for="item in communicationFrequencies"
@@ -23,11 +23,11 @@
       </v-radio-group>
     </fieldset>
 
-    <fieldset>
-      <legend class="text-left my-2">J'informe sur la qualité des approvisionnements :</legend>
+    <fieldset class="mt-3 mb-4">
+      <legend class="text-left my-3">J'informe sur la qualité des approvisionnements :</legend>
       <v-checkbox
         hide-details="auto"
-        class="ml-8"
+        class="ml-8 mb-3 mt-0"
         v-model="diagnostic.communicationSupports"
         :multiple="true"
         v-for="support in communicationSupports"
@@ -37,7 +37,7 @@
         :readonly="readonly"
         :disabled="readonly"
       />
-      <v-row align="center" class="ml-8 mt-2 mr-2">
+      <v-row align="center" class="ml-8 mb-3 mt-0 mr-2">
         <v-checkbox
           v-model="otherSupportEnabled"
           hide-details
@@ -46,6 +46,8 @@
           :disabled="readonly"
         ></v-checkbox>
         <v-text-field
+          class="my-0 py-0"
+          hide-details
           :disabled="!otherSupportEnabled || readonly"
           v-model="diagnostic.otherCommunicationSupport"
           label="Autre : donnez plus d'informations"

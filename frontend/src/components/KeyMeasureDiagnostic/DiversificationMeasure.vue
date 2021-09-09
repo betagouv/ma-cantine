@@ -29,7 +29,7 @@
 
     <fieldset class="mt-3">
       <legend class="text-left my-3">J'ai mis en place un menu végétarien dans ma cantine :</legend>
-      <v-radio-group class="my-0" v-model="diagnostic.vegetarianWeeklyRecurrence" :hide-details="true">
+      <v-radio-group class="my-0" v-model="diagnostic.vegetarianWeeklyRecurrence" hide-details>
         <v-radio
           class="ml-8"
           v-for="item in frequency"
@@ -44,7 +44,7 @@
 
     <fieldset class="mt-3">
       <legend class="text-left my-3">Le menu végétarien proposé est :</legend>
-      <v-radio-group class="my-0" v-model="diagnostic.vegetarianMenuType" :hide-details="true">
+      <v-radio-group class="my-0" v-model="diagnostic.vegetarianMenuType" hide-details>
         <v-radio
           class="ml-8"
           v-for="item in menuTypes"
