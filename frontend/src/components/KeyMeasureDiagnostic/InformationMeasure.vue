@@ -8,47 +8,51 @@
       :disabled="readonly"
     />
 
-    <p class="text-left mt-6 mb-2">Je fais cette information :</p>
-    <v-radio-group v-model="diagnostic.communicationFrequency">
-      <v-radio
-        class="ml-8"
-        v-for="item in communicationFrequencies"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-        :readonly="readonly"
-        :disabled="readonly"
-      ></v-radio>
-    </v-radio-group>
+    <fieldset>
+      <legend class="text-left mt-6 mb-2">Je fais cette information :</legend>
+      <v-radio-group v-model="diagnostic.communicationFrequency">
+        <v-radio
+          class="ml-8"
+          v-for="item in communicationFrequencies"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :readonly="readonly"
+          :disabled="readonly"
+        ></v-radio>
+      </v-radio-group>
+    </fieldset>
 
-    <p class="text-left my-2">J'informe sur la qualité des approvisionnements :</p>
-    <v-checkbox
-      hide-details="auto"
-      class="ml-8"
-      v-model="diagnostic.communicationSupports"
-      :multiple="true"
-      v-for="support in communicationSupports"
-      :key="support.value"
-      :value="support.value"
-      :label="support.label"
-      :readonly="readonly"
-      :disabled="readonly"
-    />
-    <v-row align="center" class="ml-8 mt-2 mr-2">
+    <fieldset>
+      <legend class="text-left my-2">J'informe sur la qualité des approvisionnements :</legend>
       <v-checkbox
-        v-model="otherSupportEnabled"
-        hide-details
-        class="shrink mt-0"
+        hide-details="auto"
+        class="ml-8"
+        v-model="diagnostic.communicationSupports"
+        :multiple="true"
+        v-for="support in communicationSupports"
+        :key="support.value"
+        :value="support.value"
+        :label="support.label"
         :readonly="readonly"
         :disabled="readonly"
-      ></v-checkbox>
-      <v-text-field
-        :disabled="!otherSupportEnabled || readonly"
-        v-model="diagnostic.otherCommunicationSupport"
-        label="Autre : donnez plus d'informations"
-        :readonly="readonly"
-      ></v-text-field>
-    </v-row>
+      />
+      <v-row align="center" class="ml-8 mt-2 mr-2">
+        <v-checkbox
+          v-model="otherSupportEnabled"
+          hide-details
+          class="shrink mt-0"
+          :readonly="readonly"
+          :disabled="readonly"
+        ></v-checkbox>
+        <v-text-field
+          :disabled="!otherSupportEnabled || readonly"
+          v-model="diagnostic.otherCommunicationSupport"
+          label="Autre : donnez plus d'informations"
+          :readonly="readonly"
+        ></v-text-field>
+      </v-row>
+    </fieldset>
 
     <v-checkbox
       hide-details="auto"
@@ -125,3 +129,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+fieldset {
+  border: none;
+}
+</style>
