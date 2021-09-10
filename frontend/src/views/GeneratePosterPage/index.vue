@@ -1,11 +1,16 @@
 <template>
   <div id="content" class="text-left">
     <h1 class="font-weight-black my-6">
-      Générez votre affiche convives
+      Générez votre affiche
+      <br />
+      «&nbsp;information des convives&nbsp;»
     </h1>
     <p class="text-body-2">
-      En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives. Cette
-      affiche présente vos données d'achats à vos convives comme demandé par une sous-mesure de la loi EGAlim.
+      En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives pour les
+      informer sur la part de produits de qualité et durables et de la part des produits issus de projets alimentaires
+      territoriaux entrant dans la composition des repas servis dans votre restaurant. Cette information est obtenue à
+      partir de vos données annuelles d’achat. Si ces données ne sont pas disponibles vous pouvez utiliser d’autres
+      critères (nombre de composantes, volume des denrées…).
     </p>
     <router-link
       :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
@@ -151,6 +156,10 @@
             .
           </p>
           <v-btn x-large color="primary" @click="submit">Générer mon affiche</v-btn>
+          <p class="mt-4 caption">
+            Pour ajouter une photo à l'affiche et accéder à d'autres fonctionnalités,
+            <a href="/creer-mon-compte">créez un compte</a>
+          </p>
         </v-form>
         <div id="poster-preview" class="ml-8">
           <CanteenPoster v-bind="form" id="canteen-poster" />
