@@ -13,8 +13,8 @@
     <v-alert v-else-if="readyToPublish" color="primary" class="mb-1 body-2" outlined>
       <span class="grey--text text--darken-2">
         <v-icon class="mb-1 mr-2" color="primary">mdi-information-outline</v-icon>
-        Vos données d'approvisionnement pour l'année 2020 sont completées, alors nous vous encourageons de publier votre
-        cantine.
+        Vos données d'approvisionnement pour l'année {{ publicationYear }} sont completées, alors nous vous encourageons
+        de publier votre cantine.
         <router-link v-if="includeLink" :to="{ name: 'PublicationForm', params: { canteenUrlComponent } }">
           Publier cette cantine.
         </router-link>
@@ -32,6 +32,11 @@ export default {
     canteen: Object,
     includeLink: Boolean,
   },
+  data() {
+    return {
+      publicationYear: lastCompleteYear(),
+    }
+  },
   computed: {
     publicationPending() {
       return this.canteen.publicationStatus === "pending"
@@ -40,7 +45,7 @@ export default {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
     readyToPublish() {
-      const diagnostic = this.canteen.diagnostics.find((x) => x.year === lastCompleteYear())
+      const diagnostic = this.canteen.diagnostics.find((x) => x.year === this.publicationYear)
       return this.canteen.publicationStatus === "draft" && !!diagnostic && isDiagnosticComplete(diagnostic)
     },
   },
