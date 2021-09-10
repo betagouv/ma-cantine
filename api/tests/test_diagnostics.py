@@ -136,6 +136,26 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.value_bio_ht, 10)
 
     @authenticate
+    def test_create_diagnostic_bad_total(self):
+        """
+        Do not create a diagnostic where the sum of the values is > total
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
+        payload = {
+            "year": 2020,
+            "value_bio_ht": 1000,
+            "value_fair_trade_ht": 2000,
+            "value_sustainable_ht": 3000,
+            "value_total_ht": 1000,
+        }
+        response = self.client.post(
+            reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
     def test_edit_diagnostic_unauthorized(self):
         """
         The user can only edit diagnostics of canteens they
@@ -173,6 +193,29 @@ class TestDiagnosticsApi(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(diagnostic.year, 2020)
+
+    @authenticate
+    def test_edit_diagnostic_bad_total(self):
+        """
+        Do not save edits to a diagnostic which make the sum of the values > total
+        """
+        diagnostic = DiagnosticFactory.create(
+            year=2019, value_total_ht=10, value_bio_ht=5, value_sustainable_ht=2
+        )
+        diagnostic.canteen.managers.add(authenticate.user)
+        payload = {"value_sustainable_ht": 999}
+
+        response = self.client.patch(
+            reverse(
+                "diagnostic_edition",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            ),
+            payload,
+        )
+        diagnostic.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(diagnostic.value_sustainable_ht, 2)
 
     @authenticate
     def test_edit_submitted_diagnostic(self):

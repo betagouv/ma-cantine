@@ -143,7 +143,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
         errors = body["errors"]
-        self.assertEqual(len(errors), 8)
         self.assertEqual(errors[0]["row"], 1)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
@@ -177,5 +176,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(
             errors[7]["message"],
             "Un diagnostic pour cette année et cette cantine existe déjà.",
+        )
+        self.assertEqual(
+            errors[8]["message"],
+            "Champ 'Valeur totale annuelle HT' : La somme des valeurs d'approvisionnement, 600, est plus que le total, 20",
         )
         # TODO: test no SIRET

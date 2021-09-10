@@ -12,10 +12,10 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     canteen = factory.SubFactory(CanteenFactory)
     year = factory.Faker("year")
 
-    value_bio_ht = factory.Faker("random_int", min=0, max=10000)
+    value_bio_ht = factory.Faker("random_int", min=0, max=2000)
     value_fair_trade_ht = factory.Faker("random_int", min=0, max=2000)
     value_sustainable_ht = factory.Faker("random_int", min=0, max=2000)
-    value_total_ht = factory.Faker("random_int", min=0, max=2000)
+    value_total_ht = factory.Faker("random_int", min=6000, max=10000)
 
     has_waste_diagnostic = factory.Faker("boolean")
     has_waste_plan = factory.Faker("boolean")
