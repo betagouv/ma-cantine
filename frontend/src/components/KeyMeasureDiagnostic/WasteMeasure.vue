@@ -58,52 +58,50 @@
       :disabled="readonly"
     />
     <v-expand-transition>
-      <div v-if="diagnostic.hasWasteMeasures" class="mt-4">
-        <v-text-field
-          v-model="diagnostic.breadLeftovers"
-          type="number"
-          :rules="[validators.nonNegativeOrEmpty]"
-          validate-on-blur
-          class="mx-8"
-          label="Reste de pain"
-          suffix="kg/an"
-          :readonly="readonly"
-          :disabled="readonly"
-        ></v-text-field>
-        <v-text-field
-          v-model="diagnostic.servedLeftovers"
-          type="number"
-          :rules="[validators.nonNegativeOrEmpty]"
-          validate-on-blur
-          class="mx-8"
-          label="Reste plateau"
-          suffix="kg/an"
-          :readonly="readonly"
-          :disabled="readonly"
-        ></v-text-field>
-        <v-text-field
-          v-model="diagnostic.unservedLeftovers"
-          type="number"
-          :rules="[validators.nonNegativeOrEmpty]"
-          validate-on-blur
-          class="mx-8"
-          label="Reste en production (non servi)"
-          suffix="kg/an"
-          :readonly="readonly"
-          :disabled="readonly"
-        ></v-text-field>
-        <v-text-field
-          v-model="diagnostic.sideLeftovers"
-          type="number"
-          :rules="[validators.nonNegativeOrEmpty]"
-          validate-on-blur
-          class="mx-8"
-          label="Reste de composantes (entrée, plat dessert...)"
-          suffix="kg/an"
-          :readonly="readonly"
-          :disabled="readonly"
-        ></v-text-field>
-      </div>
+      <v-row v-if="diagnostic.hasWasteMeasures" class="mt-4 ml-8">
+        <v-col cols="12" md="8" class="pa-0">
+          <v-text-field
+            v-model="diagnostic.breadLeftovers"
+            type="number"
+            :rules="[validators.nonNegativeOrEmpty]"
+            validate-on-blur
+            label="Reste de pain"
+            suffix="kg/an"
+            :readonly="readonly"
+            :disabled="readonly"
+          ></v-text-field>
+          <v-text-field
+            v-model="diagnostic.servedLeftovers"
+            type="number"
+            :rules="[validators.nonNegativeOrEmpty]"
+            validate-on-blur
+            label="Reste plateau"
+            suffix="kg/an"
+            :readonly="readonly"
+            :disabled="readonly"
+          ></v-text-field>
+          <v-text-field
+            v-model="diagnostic.unservedLeftovers"
+            type="number"
+            :rules="[validators.nonNegativeOrEmpty]"
+            validate-on-blur
+            label="Reste en production (non servi)"
+            suffix="kg/an"
+            :readonly="readonly"
+            :disabled="readonly"
+          ></v-text-field>
+          <v-text-field
+            v-model="diagnostic.sideLeftovers"
+            type="number"
+            :rules="[validators.nonNegativeOrEmpty]"
+            validate-on-blur
+            label="Reste de composantes (entrée, plat dessert...)"
+            suffix="kg/an"
+            :readonly="readonly"
+            :disabled="readonly"
+          ></v-text-field>
+        </v-col>
+      </v-row>
     </v-expand-transition>
 
     <v-checkbox
@@ -118,37 +116,38 @@
     </p>
 
     <v-expand-transition>
-      <div v-if="diagnostic.hasDonationAgreement" class="my-4">
-        <v-text-field
-          v-model="diagnostic.donationFrequency"
-          type="number"
-          :rules="[validators.nonNegativeOrEmpty]"
-          validate-on-blur
-          class="mx-8"
-          label="Fréquence de dons"
-          suffix="dons/an"
-          :readonly="readonly"
-          :disabled="readonly"
-        ></v-text-field>
-        <v-text-field
-          v-model="diagnostic.donationQuantity"
-          type="number"
-          :rules="[validators.nonNegativeOrEmpty]"
-          validate-on-blur
-          class="mx-8"
-          label="Quantité des denrées données"
-          suffix="kg/an"
-          :readonly="readonly"
-          :disabled="readonly"
-        ></v-text-field>
-        <v-text-field
-          v-model="diagnostic.donationFoodType"
-          class="mx-8"
-          label="Type de denrées données"
-          :readonly="readonly"
-          :disabled="readonly"
-        ></v-text-field>
-      </div>
+      <v-row v-if="diagnostic.hasDonationAgreement" class="my-4 ml-8">
+        <v-col cols="12" md="8" class="pa-0">
+          <v-text-field
+            v-model="diagnostic.donationFrequency"
+            type="number"
+            :rules="[validators.nonNegativeOrEmpty]"
+            validate-on-blur
+            label="Fréquence de dons"
+            suffix="dons/an"
+            :readonly="readonly"
+            :disabled="readonly"
+          ></v-text-field>
+          <v-text-field
+            v-model="diagnostic.donationQuantity"
+            type="number"
+            :rules="[validators.nonNegativeOrEmpty]"
+            validate-on-blur
+            label="Quantité des denrées données"
+            suffix="kg/an"
+            :readonly="readonly"
+            :disabled="readonly"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="11" class="pa-0">
+          <v-text-field
+            v-model="diagnostic.donationFoodType"
+            label="Type de denrées données"
+            :readonly="readonly"
+            :disabled="readonly"
+          ></v-text-field>
+        </v-col>
+      </v-row>
     </v-expand-transition>
 
     <v-textarea
