@@ -1,3 +1,5 @@
+import Constants from "@/constants"
+
 export const timeAgo = (date, displayPrefix = false) => {
   if (typeof date === "string") {
     date = new Date(date)
@@ -154,4 +156,23 @@ export const isDiagnosticComplete = (diagnostic) => {
     // sadly null >= 0 is true
     (key) => diagnostic[key] > 0 || diagnostic[key] === 0
   )
+}
+
+export const lastCompleteYear = () => new Date().getFullYear() - 1
+
+export const fourYears = () => {
+  const thisYear = new Date().getFullYear()
+  return [thisYear - 2, thisYear - 1, thisYear, thisYear + 1]
+}
+
+export const diagnosticsMap = (diagnostics) => {
+  const fourYearWithDefault = fourYears().map(
+    (year) => diagnostics.find((x) => x.year === year) || Object.assign({}, Constants.DefaultDiagnostics, { year })
+  )
+  return {
+    previous: fourYearWithDefault[0],
+    latest: fourYearWithDefault[1],
+    provisionalYear1: fourYearWithDefault[2],
+    provisionalYear2: fourYearWithDefault[3],
+  }
 }

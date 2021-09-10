@@ -97,7 +97,7 @@
 
 <script>
 import PublicationField from "./PublicationField"
-import { getObjectDiff, isDiagnosticComplete } from "@/utils"
+import { getObjectDiff, isDiagnosticComplete, lastCompleteYear } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
@@ -116,7 +116,7 @@ export default {
       publicationRequested: false,
       canteen: {},
       bypassLeaveWarning: false,
-      publicationYear: 2020,
+      publicationYear: lastCompleteYear(),
     }
   },
   beforeMount() {

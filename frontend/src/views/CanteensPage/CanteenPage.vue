@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import Constants from "@/constants"
+import { diagnosticsMap } from "@/utils"
 import CanteenDashboard from "@/components/CanteenDashboard"
 import ContactForm from "./ContactForm"
 import CanteenIndicators from "@/components/CanteenIndicators"
@@ -59,16 +59,7 @@ export default {
     diagnostics() {
       if (!this.canteen) return
       const diagnostics = this.canteen.diagnostics
-      return {
-        previous:
-          diagnostics.find((x) => x.year === 2019) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
-        latest:
-          diagnostics.find((x) => x.year === 2020) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 }),
-        provisionalYear1:
-          diagnostics.find((x) => x.year === 2021) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2021 }),
-        provisionalYear2:
-          diagnostics.find((x) => x.year === 2022) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2022 }),
-      }
+      return diagnosticsMap(diagnostics)
     },
   },
   methods: {

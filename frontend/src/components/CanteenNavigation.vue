@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { isDiagnosticComplete } from "@/utils"
+import { isDiagnosticComplete, lastCompleteYear } from "@/utils"
 
 export default {
   name: "CanteenNavigation",
@@ -67,7 +67,7 @@ export default {
       return [...this.canteen.diagnostics].sort((a, b) => (a.year > b.year ? -1 : 1))
     },
     readyToPublish() {
-      const diagnostic = this.canteen.diagnostics.find((x) => x.year === 2020)
+      const diagnostic = this.canteen.diagnostics.find((x) => x.year === lastCompleteYear())
       return this.canteen.publicationStatus === "draft" && !!diagnostic && isDiagnosticComplete(diagnostic)
     },
   },
