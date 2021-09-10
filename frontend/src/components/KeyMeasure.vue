@@ -10,11 +10,11 @@
         <KeyMeasureDescription :measure="measure" v-if="measure.description" />
         <div v-for="subMeasure in childSubMeasures" :key="subMeasure.id" :id="subMeasure.id">
           <h2 class="text-body-1 font-weight-bold mt-6 mb-2">{{ subMeasure.title }}</h2>
-          <div class="measure-details">
+          <div>
             <KeyMeasureInfoCard v-if="subMeasure.tags" :measure="subMeasure" />
             <div>
               <KeyMeasureDescription :measure="subMeasure" />
-              <KeyMeasureResource :baseComponent="subMeasure.baseMeasureComponent" class="resource-block" />
+              <KeyMeasureResource :baseComponent="subMeasure.baseMeasureComponent" />
             </div>
           </div>
         </div>
@@ -30,12 +30,12 @@
       </v-col>
       <v-col>
         <KeyMeasureDescription :measure="subMeasure" />
-        <KeyMeasureResource :baseComponent="subMeasure.baseMeasureComponent" class="resource-block" />
+        <KeyMeasureResource :baseComponent="subMeasure.baseMeasureComponent" />
       </v-col>
     </v-row>
 
-    <v-row>
-      <KeyMeasureResource :baseComponent="measure.baseMeasureComponent" class="resource-block" />
+    <v-row class="px-3">
+      <KeyMeasureResource :baseComponent="measure.baseMeasureComponent" />
     </v-row>
   </div>
 </template>

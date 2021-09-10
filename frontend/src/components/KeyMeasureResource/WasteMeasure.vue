@@ -1,6 +1,6 @@
 <template>
   <v-card
-    href="/static/documents/Convention de dons type - restauration collective.pdf"
+    href="/static/documents/Convention de dons type - restauration collective.docx"
     target="_blank"
     class="text-decoration-none text-left mt-4"
     hover

@@ -19,13 +19,14 @@ class Diagnostic(models.Model):
         LOW = "LOW", "Moins d'une fois par semaine"
         MID = "MID", "Une fois par semaine"
         HIGH = "HIGH", "Plus d'une fois par semaine"
+        DAILY = "DAILY", "De façon quotidienne"
 
     class MenuType(models.TextChoices):
-        UNIQUE = "UNIQUE", "Un menu végétarien unique"
-        SEVERAL = "SEVERAL", "Plusieurs menus végétariens alternatifs"
+        UNIQUE = "UNIQUE", "Un menu végétarien en plat unique"
+        SEVERAL = "SEVERAL", "Un menu végétarien composé de plusieurs plats végétariens"
         ALTERNATIVES = (
             "ALTERNATIVES",
-            "Un menu végétarien alternatif à d'autres menus non-végétariens",
+            "Un menu végétarien en plus d’autres menus non végétariens",
         )
 
     class CommunicationType(models.TextChoices):
@@ -51,8 +52,33 @@ class Diagnostic(models.Model):
         PORTIONS = "PORTIONS", "Choix des portions (grande faim, petite faim)"
         REUSE = "REUSE", "Réutilisation des restes de préparation / surplus"
 
+    class DiversificationPlanActions(models.TextChoices):
+        PRODUCTS = (
+            "PRODUCTS",
+            "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
+        )
+        PRESENTATION = (
+            "PRESENTATION",
+            "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
+        )
+        MENU = (
+            "MENU",
+            "Agir sur la manière dont les menus sont conçus ces plats en soulignant leurs attributs positifs",
+        )
+        PROMOTION = (
+            "PROMOTION",
+            "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
+        )
+        TRAINING = (
+            "TRAINING",
+            "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
+        )
+
     class VegetarianMenuBase(models.TextChoices):
-        GRAIN = "GRAIN", "Légumes secs et céréales"
+        GRAIN = "GRAIN", "De céréales et/ou les légumes secs (hors soja)"
+        SOY = "SOY", "De soja"
+        CHEESE = "CHEESE", "De fromage"
+        EGG = "EGG", "D’œufs"
         READYMADE = "READYMADE", "Plats prêts à l'emploi"
 
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -179,6 +205,15 @@ class Diagnostic(models.Model):
     # Vegetarian menus
     has_diversification_plan = models.BooleanField(
         blank=True, null=True, verbose_name="plan de diversification en place"
+    )
+    diversification_plan_actions = ChoiceArrayField(
+        base_field=models.CharField(
+            max_length=255, choices=DiversificationPlanActions.choices
+        ),
+        blank=True,
+        null=True,
+        size=None,
+        verbose_name="actions inclus dans le plan de diversification des protéines",
     )
     vegetarian_weekly_recurrence = models.CharField(
         max_length=255,

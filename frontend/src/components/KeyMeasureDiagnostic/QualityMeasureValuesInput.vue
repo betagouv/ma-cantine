@@ -18,7 +18,7 @@
       validate-on-blur
       solo
       placeholder="Je ne sais pas"
-      v-model="diagnostic.valueTotalHt"
+      v-model.number="diagnostic.valueTotalHt"
       :readonly="readonly"
       :disabled="readonly"
       :messages="totalError ? [totalErrorMessage] : undefined"
@@ -34,7 +34,7 @@
       validate-on-blur
       solo
       placeholder="Je ne sais pas"
-      v-model="diagnostic.valueBioHt"
+      v-model.number="diagnostic.valueBioHt"
       :readonly="readonly"
       :disabled="readonly"
       @blur="checkTotal"
@@ -48,7 +48,7 @@
       validate-on-blur
       solo
       placeholder="Je ne sais pas"
-      v-model="diagnostic.valueSustainableHt"
+      v-model.number="diagnostic.valueSustainableHt"
       :readonly="readonly"
       :disabled="readonly"
       @blur="checkTotal"
@@ -62,7 +62,7 @@
       validate-on-blur
       solo
       placeholder="Je ne sais pas"
-      v-model="diagnostic.valueFairTradeHt"
+      v-model.number="diagnostic.valueFairTradeHt"
       :readonly="readonly"
       :disabled="readonly"
       @blur="checkTotal"
