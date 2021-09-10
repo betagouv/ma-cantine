@@ -47,6 +47,7 @@
 
 <script>
 import validators from "@/validators"
+import { lastCompleteYear } from "@/utils"
 
 export default {
   data() {
@@ -64,7 +65,7 @@ export default {
         this.$store.state.loggedUser && this.$store.state.userCanteens.length
           ? this.$store.state.userCanteens[0].diagnostics
           : this.$store.getters.getLocalDiagnostics()
-      return diagnostics.find((x) => x.year === 2020)
+      return diagnostics.find((x) => x.year === lastCompleteYear())
     },
   },
   methods: {

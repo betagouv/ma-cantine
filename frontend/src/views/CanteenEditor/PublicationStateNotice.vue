@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { isDiagnosticComplete } from "@/utils"
+import { isDiagnosticComplete, lastCompleteYear } from "@/utils"
 
 export default {
   name: "PublicationStateNotice",
@@ -40,7 +40,7 @@ export default {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
     readyToPublish() {
-      const diagnostic = this.canteen.diagnostics.find((x) => x.year === 2020)
+      const diagnostic = this.canteen.diagnostics.find((x) => x.year === lastCompleteYear())
       return this.canteen.publicationStatus === "draft" && !!diagnostic && isDiagnosticComplete(diagnostic)
     },
   },

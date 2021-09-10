@@ -107,7 +107,8 @@
           <h2 class="mb-4">À propos de vos achats</h2>
           <p>
             <label for="total">
-              Sur l'année de 2020, les achats alimentaires (repas, collations et boissons) répresentent
+              Sur l'année de {{ form.diagnostic.year }}, les achats alimentaires (repas, collations et boissons)
+              répresentent
             </label>
             <v-text-field
               id="total"
@@ -174,8 +175,7 @@ import Constants from "@/constants"
 import CanteenPoster from "./CanteenPoster"
 import html2pdf from "html2pdf.js"
 import validators from "@/validators"
-
-const YEAR = 2020 // TODO: this should be dynamic, not hard-coded
+import { lastCompleteYear } from "@/utils"
 
 // normalise "À fîrst" to "A FIRST"
 function normaliseName(name) {
@@ -200,6 +200,7 @@ export default {
       search: null,
       formIsValid: true,
       selectedCanteenId: undefined,
+      publicationYear: lastCompleteYear(),
     }
   },
   computed: {
@@ -217,7 +218,10 @@ export default {
     },
     initialDiagnostic() {
       let diagnostics = this.isAuthenticated ? this.serverDiagnostics : this.localDiagnostics
-      return diagnostics.find((x) => x.year === YEAR) || Object.assign({}, Constants.DefaultDiagnostics, { year: YEAR })
+      return (
+        diagnostics.find((x) => x.year === this.publicationYear) ||
+        Object.assign({}, Constants.DefaultDiagnostics, { year: this.publicationYear })
+      )
     },
     serverDiagnostics() {
       return this.userCanteen.diagnostics || []
@@ -232,10 +236,10 @@ export default {
       return this.userCanteens.find((x) => x.id === this.selectedCanteenId) || {}
     },
     currentDiagnostic() {
-      return this.selectedCanteen?.diagnostics?.find((x) => x.year === YEAR) || {}
+      return this.selectedCanteen?.diagnostics?.find((x) => x.year === this.publicationYear) || {}
     },
     previousDiagnostic() {
-      return this.selectedCanteen?.diagnostics?.find((x) => x.year === YEAR - 1) || {}
+      return this.selectedCanteen?.diagnostics?.find((x) => x.year === this.publicationYear - 1) || {}
     },
   },
   beforeMount() {
@@ -288,7 +292,7 @@ export default {
       const htmlPoster = document.getElementById("canteen-poster")
       const canteenName = this.selectedCanteen.name || this.form.canteen.name
       const pdfOptions = {
-        filename: `Affiche_convives_${canteenName.replaceAll(" ", "_")}_2020.pdf`,
+        filename: `Affiche_convives_${canteenName.replaceAll(" ", "_")}_${this.form.diagnostic.year}.pdf`,
         image: { type: "jpeg", quality: 1 },
         html2canvas: { scale: 2, dpi: 300, letterRendering: true },
         jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
