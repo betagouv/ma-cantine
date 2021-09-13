@@ -124,7 +124,9 @@ class ImportDiagnosticsView(APIView):
                 "name": row[1],
                 "city_insee_code": row[2],
                 "postal_code": row[3],
-                "central_producer_siret": row[4],
+                "central_producer_siret": ImportDiagnosticsView._normalise_siret(
+                    row[4]
+                ),
                 "daily_meal_count": row[5],
                 "production_type": row[7],
                 "management_type": row[8],

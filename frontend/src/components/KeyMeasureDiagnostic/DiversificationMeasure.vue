@@ -2,65 +2,78 @@
   <div>
     <v-checkbox
       hide-details="auto"
+      class="mb-4"
       v-model="diagnostic.hasDiversificationPlan"
       label="Si ma cantine fabrique plus de 200 repas par jour en moyenne, j'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales"
       :readonly="readonly"
       :disabled="readonly"
     />
 
-    <p class="text-left mt-6 mb-2">Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :</p>
-    <v-checkbox
-      hide-details="auto"
-      class="ml-8"
-      v-model="diagnostic.diversificationPlanActions"
-      :multiple="true"
-      v-for="item in diversificationPlanActions"
-      :key="item.value"
-      :value="item.value"
-      :label="item.label"
-      :readonly="readonly"
-      :disabled="readonly"
-    />
-
-    <p class="text-left mt-6 mb-2">J'ai mis en place un menu végétarien dans ma cantine :</p>
-    <v-radio-group v-model="diagnostic.vegetarianWeeklyRecurrence">
-      <v-radio
-        class="ml-8"
-        v-for="item in frequency"
+    <fieldset class="mt-3">
+      <legend class="text-left mb-2 mt-3" :class="{ 'grey--text': !diagnostic.hasDiversificationPlan }">
+        Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :
+      </legend>
+      <v-checkbox
+        hide-details="auto"
+        class="ml-8 mt-2"
+        v-model="diagnostic.diversificationPlanActions"
+        :multiple="true"
+        v-for="item in diversificationPlanActions"
         :key="item.value"
-        :label="item.label"
         :value="item.value"
+        :label="item.label"
+        :readonly="readonly || !diagnostic.hasDiversificationPlan"
+        :disabled="readonly || !diagnostic.hasDiversificationPlan"
+      />
+    </fieldset>
+
+    <fieldset class="mt-3">
+      <legend class="text-left my-3">J'ai mis en place un menu végétarien dans ma cantine :</legend>
+      <v-radio-group class="my-0" v-model="diagnostic.vegetarianWeeklyRecurrence" hide-details>
+        <v-radio
+          class="ml-8"
+          v-for="item in frequency"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :readonly="readonly"
+          :disabled="readonly"
+        ></v-radio>
+      </v-radio-group>
+    </fieldset>
+
+    <fieldset class="mt-3">
+      <legend class="text-left my-3">Le menu végétarien proposé est :</legend>
+      <v-radio-group class="my-0" v-model="diagnostic.vegetarianMenuType" hide-details>
+        <v-radio
+          class="ml-8"
+          v-for="item in menuTypes"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :readonly="readonly"
+          :disabled="readonly"
+        ></v-radio>
+      </v-radio-group>
+    </fieldset>
+
+    <fieldset class="mt-3">
+      <legend class="text-left mb-2 mt-3">
+        Le plat principal de mon menu végétarien est majoritairement à base de :
+      </legend>
+      <v-checkbox
+        hide-details="auto"
+        class="ml-8 mt-2"
+        v-model="diagnostic.vegetarianMenuBases"
+        :multiple="true"
+        v-for="item in menuBases"
+        :key="item.value"
+        :value="item.value"
+        :label="item.label"
         :readonly="readonly"
         :disabled="readonly"
-      ></v-radio>
-    </v-radio-group>
-
-    <p class="text-left mt-6 mb-2">Le menu végétarien proposé est :</p>
-    <v-radio-group v-model="diagnostic.vegetarianMenuType">
-      <v-radio
-        class="ml-8"
-        v-for="item in menuTypes"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-        :readonly="readonly"
-        :disabled="readonly"
-      ></v-radio>
-    </v-radio-group>
-
-    <p class="text-left mt-6 mb-2">Le plat principal de mon menu végétarien est majoritairement à base de :</p>
-    <v-checkbox
-      hide-details="auto"
-      class="ml-8"
-      v-model="diagnostic.vegetarianMenuBases"
-      :multiple="true"
-      v-for="item in menuBases"
-      :key="item.value"
-      :value="item.value"
-      :label="item.label"
-      :readonly="readonly"
-      :disabled="readonly"
-    />
+      />
+    </fieldset>
   </div>
 </template>
 
@@ -157,3 +170,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+fieldset {
+  border: none;
+}
+</style>
