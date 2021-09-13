@@ -276,13 +276,15 @@ export default {
     changePage() {
       const override = this.page ? { page: this.page } : { page: 1 }
       const query = Object.assign(this.query, override)
-      this.$router.push({ query }).catch(() => {})
+      this.updateRouter(query)
     },
     applyFilter() {
       const changedKeys = Object.keys(getObjectDiff(this.query, this.$route.query))
       const shouldNavigate = changedKeys.length > 0
-      if (shouldNavigate) this.$router.push({ query: Object.assign(this.query, { page: 1 }) }).catch(() => {})
-      else this.fetchCurrentPage()
+      if (shouldNavigate) {
+        this.page = 1
+        this.updateRouter(Object.assign(this.query, { page: 1 }))
+      } else this.fetchCurrentPage()
     },
     populateParameters() {
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
@@ -296,6 +298,13 @@ export default {
     },
     onChangeMealCount(ref) {
       if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
+    },
+    updateRouter(query) {
+      if (!this.$route.query.page) {
+        this.$router.replace({ query }).catch(() => {})
+      } else {
+        this.$router.push({ query }).catch(() => {})
+      }
     },
   },
   watch: {
