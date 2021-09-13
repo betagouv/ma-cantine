@@ -114,6 +114,13 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="Produits durables (hors bio) - Valeur annuelle HT",
     )
+    value_pat_ht = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits dans le cadre de Projects Alimentaires Territoriaux - Valeur annuelle HT",
+    )
     value_total_ht = models.DecimalField(
         max_digits=20,
         decimal_places=2,
