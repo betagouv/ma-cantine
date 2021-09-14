@@ -63,9 +63,12 @@
       :disabled="readonly"
     ></v-text-field>
 
-    <div v-if="includePat">
-      <p class="body-2 mb-1 mt-4">...en produits dans le cadre de Projects Alimentaires Territoriaux</p>
+    <div v-if="includePat" class="mb-1 mt-4">
+      <label :for="'pat-' + diagnostic.year" class="body-2">
+        ...en produits dans le cadre de Projects Alimentaires Territoriaux
+      </label>
       <v-text-field
+        :id="'pat-' + diagnostic.year"
         hide-details="auto"
         type="number"
         :rules="[validators.nonNegativeOrEmpty]"
