@@ -113,8 +113,8 @@ export default {
       documentation: [
         {
           name: "SIRET",
-          description: "Le SIRET de la cantine (14 chiffres).",
-          example: "362 521 879 00034",
+          description: "Le SIRET de la cantine (14 chiffres et conforme à la formule de Luhn).",
+          example: "771 888 718 49858",
         },
         {
           name: "Nom de la cantine",
@@ -133,8 +133,8 @@ export default {
         },
         {
           name: "SIRET de la cuisine centrale",
-          description: "Le SIRET de la cuisine centrale s'il y en a une.",
-          example: "543 378 989 00011",
+          description: "Le SIRET de la cuisine centrale (14 chiffres et conforme à la formule de Luhn).",
+          example: "482 335 110 09376",
           optional: true,
         },
         {
