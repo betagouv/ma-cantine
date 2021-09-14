@@ -47,6 +47,11 @@
                   {{ wasteActions[action] }}
                 </li>
               </ul>
+              <ul class="specifics-actions text-left ml-4" v-if="latestDiagnostic.otherWasteAction">
+                <li class="my-1">
+                  {{ latestDiagnostic.otherWasteAction }}
+                </li>
+              </ul>
               <KeyMeasureAction :isDone="latestDiagnostic.hasDonationAgreement" label="Dons aux associations" />
             </div>
             <PublicationComment :comments="canteen && canteen.wasteComments" />
@@ -117,6 +122,11 @@
               <ul class="specifics-actions text-left ml-4">
                 <li v-for="action in latestDiagnostic.communicationSupports" :key="action" class="my-1">
                   {{ communicationSupports[action] }}
+                </li>
+              </ul>
+              <ul class="specifics-actions text-left ml-4" v-if="latestDiagnostic.otherCommunicationSupport">
+                <li class="my-1">
+                  {{ latestDiagnostic.otherCommunicationSupport }}
                 </li>
               </ul>
 
