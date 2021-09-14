@@ -31,6 +31,7 @@ class DiagnosticCreateView(CreateAPIView):
                 self.request, self, canteen
             ):
                 raise PermissionDenied()
+            serializer.is_valid(raise_exception=True)
             serializer.save(canteen=canteen)
         except ObjectDoesNotExist:
             logger.error(
@@ -57,6 +58,10 @@ class DiagnosticUpdateView(UpdateAPIView):
         return JsonResponse(
             {"error": "Only PATCH request supported in this resource"}, status=405
         )
+
+    def perform_update(self, serializer):
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
 
 # flake8: noqa: C901
