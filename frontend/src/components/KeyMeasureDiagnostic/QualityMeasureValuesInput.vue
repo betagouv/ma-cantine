@@ -103,8 +103,5 @@ export default {
       this.totalError = result !== true
     },
   },
-  mounted() {
-    this.checkTotal()
-  },
 }
 </script>
