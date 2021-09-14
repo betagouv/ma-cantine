@@ -56,6 +56,7 @@ class TestDiagnosticsApi(APITestCase):
             "value_bio_ht": 1000,
             "value_fair_trade_ht": 2000,
             "value_sustainable_ht": 3000,
+            "value_pat_ht": 200,
             "value_total_ht": 10000,
             "has_waste_diagnostic": True,
             "has_waste_plan": False,
@@ -105,6 +106,7 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.donation_quantity, decimal.Decimal("60.6"))
         self.assertEqual(diagnostic.communication_frequency, "YEARLY")
         self.assertTrue(diagnostic.communicates_on_food_quality)
+        self.assertEqual(diagnostic.value_pat_ht, 200)
 
     @authenticate
     def test_create_duplicate_diagnostic(self):
