@@ -74,6 +74,24 @@
       :disabled="readonly"
       @blur="checkTotal"
     ></v-text-field>
+
+    <div v-if="includePat" class="mb-1 mt-4">
+      <label :for="'pat-' + diagnostic.year" class="body-2">
+        ...en produits dans le cadre de Projects Alimentaires Territoriaux
+      </label>
+      <v-text-field
+        :id="'pat-' + diagnostic.year"
+        hide-details="auto"
+        type="number"
+        :rules="[validators.nonNegativeOrEmpty]"
+        validate-on-blur
+        solo
+        placeholder="Je ne sais pas"
+        v-model.number="diagnostic.valuePatHt"
+        :readonly="readonly"
+        :disabled="readonly"
+      ></v-text-field>
+    </div>
   </fieldset>
 </template>
 
@@ -85,6 +103,10 @@ export default {
     label: String,
     originalDiagnostic: Object,
     readonly: {
+      type: Boolean,
+      default: false,
+    },
+    includePat: {
       type: Boolean,
       default: false,
     },

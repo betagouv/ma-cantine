@@ -2,7 +2,7 @@
   <div class="poster-contents">
     <div id="heading">
       <div>
-        <h2 class="">Qualité des approvisionnements dans l’établissement {{ canteen.name || "_________" }}</h2>
+        <h2>Qualité des approvisionnements dans l’établissement {{ canteen.name || "_________" }}</h2>
         <div id="indicators">
           <!-- Can't use <img> because the object-fit is not respected in the PDF generation -->
           <div
@@ -19,13 +19,11 @@
       <img src="/static/images/CoffeeDoodle.png" id="hat" alt="" />
     </div>
 
-    <div>
-      <p style="font-size: 14px;">
-        Sur les {{ canteen.dailyMealCount }} repas servis aux convives, pour l’année 2020, voici la répartition, en
-        valeur d’achat, des produits bio, de qualité et durables (liste de labels ci-dessous) utilisés dans la
-        confection des repas
-      </p>
-    </div>
+    <p id="introduction">
+      Sur les {{ canteen.dailyMealCount }} repas servis aux convives, pour l’année 2020, voici la répartition, en valeur
+      d’achat, des produits bio, de qualité et durables (liste de labels ci-dessous) utilisés dans la confection des
+      repas
+    </p>
     <div class="spacer"></div>
 
     <div id="graphs">
@@ -47,9 +45,13 @@
 
     <LogoList id="logos" />
 
+    <p v-if="patPercent" id="pat-percent">
+      En plus, {{ patPercent }} % de produits dans le cadre de Projects Alimentaires Territoriaux
+    </p>
+
     <div class="spacer"></div>
     <div id="about">
-      <h3 style="margin-bottom: 8px;">Pourquoi je vois cette affiche ?</h3>
+      <h3>Pourquoi je vois cette affiche ?</h3>
       <p>
         L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des produits composant les
         menus et de soutenir l’objectif d’une alimentation plus saine et plus durable dans les restaurants. En
@@ -94,14 +96,10 @@ export default {
     previousDiagnostic: Object,
   },
   computed: {
-    bioPercent() {
-      return this.percentageString(this.diagnostic.valueBio)
-    },
-    sustainablePercent() {
-      return this.percentageString(this.diagnostic.valueSustainable)
-    },
-    fairTradePercent() {
-      return this.percentageString(this.diagnostic.valueFairTrade)
+    patPercent() {
+      const number = this.diagnostic.valuePatHt
+      const total = this.diagnostic.valueTotalHt
+      return !!number && !!total ? Math.round((100 * number) / total) : 0
     },
     showPreviousDiagnostic() {
       if (!this.previousDiagnostic) return false
@@ -114,15 +112,6 @@ export default {
         params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
       }).href
       return baseUrl + fullPath
-    },
-  },
-  methods: {
-    percentageString(number) {
-      if (!isNaN(number) && this.diagnostic.valueTotal) {
-        const value = Math.floor((number / this.diagnostic.valueTotal) * 1000) / 10
-        return value.toLocaleString("fr-FR")
-      }
-      return "__"
     },
   },
 }
@@ -189,9 +178,13 @@ i {
   margin-left: 1em;
 }
 
+#introduction {
+  font-size: 14px;
+}
+
 #logos {
   width: 440px;
-  margin-bottom: 1em;
+  margin-bottom: 1.5em;
   margin-left: auto;
   margin-right: auto;
   align-self: center;
@@ -209,9 +202,19 @@ i {
   margin-bottom: 8px;
 }
 
+#pat-percent {
+  text-align: center;
+  font-size: 13px;
+}
+
 #about {
   width: 100%;
   text-align: left;
+
+  h3 {
+    margin-bottom: 8px;
+  }
+
   p {
     font-size: 14px;
   }

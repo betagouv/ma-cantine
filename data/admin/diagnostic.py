@@ -54,6 +54,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
                     "value_bio_ht",
                     "value_fair_trade_ht",
                     "value_sustainable_ht",
+                    "value_pat_ht",
                     "value_total_ht",
                 )
             },
@@ -83,6 +84,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "has_diversification_plan",
+                    "diversification_plan_actions",
                     "vegetarian_weekly_recurrence",
                     "vegetarian_menu_type",
                     "vegetarian_menu_bases",
