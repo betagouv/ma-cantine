@@ -8,13 +8,22 @@
       :id="'total-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[
+        validators.nonNegativeOrEmpty,
+        validators.gteSum(
+          [diagnostic.valueBioHt, diagnostic.valueSustainableHt, diagnostic.valueFairTradeHt],
+          totalErrorMessage
+        ),
+      ]"
       validate-on-blur
       solo
       placeholder="Je ne sais pas"
       v-model.number="diagnostic.valueTotalHt"
       :readonly="readonly"
       :disabled="readonly"
+      :messages="totalError ? [totalErrorMessage] : undefined"
+      :error="totalError"
+      @blur="totalError = false"
     ></v-text-field>
 
     <label :for="'bio-' + diagnostic.year" class="body-2 mb-1 mt-4">...en produits bio</label>
@@ -29,6 +38,7 @@
       v-model.number="diagnostic.valueBioHt"
       :readonly="readonly"
       :disabled="readonly"
+      @blur="checkTotal"
     ></v-text-field>
 
     <label :for="'sustainable-' + diagnostic.year" class="body-2 mb-1 mt-4">
@@ -45,6 +55,7 @@
       v-model.number="diagnostic.valueSustainableHt"
       :readonly="readonly"
       :disabled="readonly"
+      @blur="checkTotal"
     ></v-text-field>
 
     <label :for="'fairtrade-' + diagnostic.year" class="body-2 mb-1 mt-4">
@@ -61,6 +72,7 @@
       v-model.number="diagnostic.valueFairTradeHt"
       :readonly="readonly"
       :disabled="readonly"
+      @blur="checkTotal"
     ></v-text-field>
   </fieldset>
 </template>
@@ -80,11 +92,22 @@ export default {
   data() {
     return {
       diagnostic: this.originalDiagnostic,
+      totalError: false,
+      totalErrorMessage: "Le totale ne peut pas être moins que le somme des valeurs suivantes",
     }
   },
   computed: {
     validators() {
       return validators
+    },
+  },
+  methods: {
+    checkTotal() {
+      const result = validators.gteSum(
+        [this.diagnostic.valueBioHt, this.diagnostic.valueSustainableHt, this.diagnostic.valueFairTradeHt],
+        this.totalErrorMessage
+      )(this.diagnostic.valueTotalHt)
+      this.totalError = result !== true
     },
   },
 }
