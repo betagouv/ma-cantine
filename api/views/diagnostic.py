@@ -107,6 +107,10 @@ class ImportDiagnosticsView(APIView):
         csvreader = csv.reader(filestring.splitlines())
         for row_number, row in enumerate(csvreader, start=1):
             try:
+                if row[0] == "":
+                    raise ValidationError(
+                        {"siret": "Le siret de la cantine ne peut pas être vide"}
+                    )
                 siret = ImportDiagnosticsView._normalise_siret(row[0])
                 canteen = self._create_canteen_with_diagnostic(row, siret)
                 diagnostics_created += 1

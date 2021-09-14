@@ -181,4 +181,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors[8]["message"],
             "Champ 'Valeur totale annuelle HT' : La somme des valeurs d'approvisionnement, 600, est plus que le total, 20",
         )
-        # TODO: test no SIRET
+        self.assertEqual(
+            errors[9]["message"],
+            "Champ 'siret' : Le siret de la cantine ne peut pas être vide",
+        )
