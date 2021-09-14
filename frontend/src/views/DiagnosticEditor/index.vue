@@ -417,6 +417,15 @@ export default {
       Object.keys(this.formIsValid).forEach((ref) => refs[ref] && refs[ref].validate())
       return Object.values(this.formIsValid).every((isValid) => isValid)
     },
+    validateApproTotal() {
+      const isValid =
+        validators.gteSum([
+          this.diagnostic.valueBioHt,
+          this.diagnostic.valueSustainableHt,
+          this.diagnostic.valueFairTradeHt,
+        ])(this.diagnostic.valueTotalHt) === true
+      this.formIsValid.quality = isValid
+    },
     handleUnload(e) {
       if (this.hasChanged && !this.bypassLeaveWarning) {
         e.preventDefault()
@@ -490,6 +499,14 @@ export default {
       return
     }
     window.confirm(LEAVE_WARNING) ? next() : next(false)
+  },
+  watch: {
+    diagnostic: {
+      handler() {
+        this.validateApproTotal()
+      },
+      deep: true,
+    },
   },
 }
 
