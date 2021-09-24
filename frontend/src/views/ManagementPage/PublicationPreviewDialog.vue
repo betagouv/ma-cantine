@@ -8,19 +8,19 @@
         </v-btn>
       </div>
       <v-card-text>
-        <CanteenDashboard :diagnostics="diagnostics" :canteen="canteen" />
+        <CanteenPublication />
       </v-card-text>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import CanteenDashboard from "@/components/CanteenDashboard"
+import CanteenPublication from "@/components/CanteenPublication"
 import Constants from "@/constants"
 
 export default {
   name: "PublicationPreview",
-  components: { CanteenDashboard },
+  components: { CanteenPublication },
   props: {
     canteen: {
       type: Object,
