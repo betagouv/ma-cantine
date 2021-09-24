@@ -95,4 +95,14 @@ export default {
     error = error || checksum % 10
     return error ? "Le numéro SIRET n'est pas valide" : true
   },
+  gteSum(values, message) {
+    return (input) => {
+      let sum = 0
+      values.forEach((v) => {
+        if (v) sum += Number(v)
+      })
+      message = message || "Cette valeur doit être plus haute ou égale au somme"
+      return input < sum ? message : true
+    }
+  },
 }

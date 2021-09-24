@@ -31,6 +31,7 @@ class DiagnosticCreateView(CreateAPIView):
                 self.request, self, canteen
             ):
                 raise PermissionDenied()
+            serializer.is_valid(raise_exception=True)
             serializer.save(canteen=canteen)
         except ObjectDoesNotExist:
             logger.error(
@@ -57,6 +58,10 @@ class DiagnosticUpdateView(UpdateAPIView):
         return JsonResponse(
             {"error": "Only PATCH request supported in this resource"}, status=405
         )
+
+    def perform_update(self, serializer):
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
 
 # flake8: noqa: C901
@@ -102,6 +107,10 @@ class ImportDiagnosticsView(APIView):
         csvreader = csv.reader(filestring.splitlines())
         for row_number, row in enumerate(csvreader, start=1):
             try:
+                if row[0] == "":
+                    raise ValidationError(
+                        {"siret": "Le siret de la cantine ne peut pas être vide"}
+                    )
                 siret = ImportDiagnosticsView._normalise_siret(row[0])
                 canteen = self._create_canteen_with_diagnostic(row, siret)
                 diagnostics_created += 1
@@ -124,7 +133,9 @@ class ImportDiagnosticsView(APIView):
                 "name": row[1],
                 "city_insee_code": row[2],
                 "postal_code": row[3],
-                "central_producer_siret": row[4],
+                "central_producer_siret": ImportDiagnosticsView._normalise_siret(
+                    row[4]
+                ),
                 "daily_meal_count": row[5],
                 "production_type": row[7],
                 "management_type": row[8],

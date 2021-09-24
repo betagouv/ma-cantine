@@ -3,7 +3,6 @@
     <v-row class="mt-2">
       <v-col cols="12" sm="4" md="3" v-if="canteen">
         <CanteenNavigation :canteen="canteen" />
-        <!-- TODO: add general navigation if no canteen -->
       </v-col>
       <v-col class="text-left pb-10">
         <h1 class="font-weight-black text-h4 my-4">
@@ -104,6 +103,7 @@
                 :originalDiagnostic="diagnostic"
                 label="La valeur (en HT) de mes achats alimentaires..."
                 :readonly="hasActiveTeledeclaration"
+                :includePat="true"
               />
             </v-form>
           </DiagnosticExpansionPanel>
