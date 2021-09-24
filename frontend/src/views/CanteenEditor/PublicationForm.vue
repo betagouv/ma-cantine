@@ -25,6 +25,7 @@
         v-model="canteen.publicationComments"
         hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
       ></v-textarea>
+      <!-- TODO: remove the following fields which aren't on publication anymore? -->
       <label class="body-2" for="quality">
         Vous avez peut-être des choses et actions à préciser sur la gestion de vos achats et de vos appros...
       </label>
