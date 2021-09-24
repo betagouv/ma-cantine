@@ -28,27 +28,72 @@
         </v-row>
       </v-card>
 
-      <p class="grey--text text--darken-2">
-        Pour l'année 2020, on a achété
-        <span class="text-h2 font-weight-black primary--text mx-2">25 %</span>
-        de produits bios, et
-        <span class="text-h2 font-weight-black primary--text mx-2">31 %</span>
-        de produits durables et de qualité en plus.
+      <p class="px-0 font-weight-black text-h6 grey--text text--darken-4 mt-4">
+        Que mange-t-on dans les assiettes ?
       </p>
-      <v-list two-line class="my-4">
-        <v-subheader>Nos démarches</v-subheader>
-        <v-list-item v-for="(badge, key) in badges" :key="key" class="px-0">
-          <v-list-item-avatar>
-            <v-img :src="`/static/images/badge-${key}.png`"></v-img>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title v-text="badge.title" class="mb-2"></v-list-item-title>
-            <v-list-item-subtitle v-text="badge.subtitle"></v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+      <v-row>
+        <v-col cols="12" sm="6" md="4">
+          <v-card class="fill-height text-center pa-4 d-flex flex-column justify-center" outlined>
+            <div class="grey--text text-h5 font-weight-black text--darken-2">
+              25%
+            </div>
+            <div class="caption grey--text text--darken-2">
+              Bio (2020)
+            </div>
+            <div class="mt-2">
+              <v-img
+                contain
+                src="/static/images/quality-labels/logo_bio_eurofeuille.png"
+                alt="Logo Agriculture Biologique"
+                title="Logo Agriculture Biologique"
+                max-height="35"
+              />
+            </div>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6" md="4">
+          <v-card class="fill-height text-center d-flex flex-column justify-center" outlined>
+            <div class="grey--text text-h5 font-weight-black text--darken-2">
+              31%
+            </div>
+            <div class="caption grey--text text--darken-2">
+              Durables et de qualité (2020)
+            </div>
+            <div class="d-flex mt-2 justify-center">
+              <v-img
+                contain
+                v-for="label in labels"
+                :key="label.title"
+                :src="`/static/images/quality-labels/${label.src}`"
+                :alt="label.title"
+                :title="label.title"
+                class="px-1"
+                max-height="40"
+                max-width="40"
+              />
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
 
-      <CanteenDashboard :diagnostics="diagnostics" :canteen="canteen" />
+      <p class="px-0 font-weight-black text-h6 grey--text text--darken-4 mb-n4 mt-8">
+        Nos démarches
+      </p>
+      <v-row class="mt-6">
+        <v-col cols="12" v-for="(badge, key) in badges" :key="key">
+          <v-card class="fill-height" elevation="0">
+            <div class="d-flex align-start">
+              <v-img width="30" max-width="35" contain :src="`/static/images/badge-${key}-2.png`"></v-img>
+              <div>
+                <v-card-title class="py-0 text-body-2 font-weight-bold">{{ badge.title }}</v-card-title>
+                <v-card-subtitle class="pt-4" v-text="badge.subtitle"></v-card-subtitle>
+              </div>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <!-- <CanteenDashboard :diagnostics="diagnostics" :canteen="canteen" /> -->
 
       <v-divider class="my-8"></v-divider>
 
@@ -60,14 +105,16 @@
 
 <script>
 import Constants from "@/constants"
-import CanteenDashboard from "@/components/CanteenDashboard"
+// import CanteenDashboard from "@/components/CanteenDashboard"
 import ContactForm from "./ContactForm"
 import CanteenIndicators from "@/components/CanteenIndicators"
+import labels from "@/data/quality-labels.json"
 
 export default {
   data() {
     return {
       canteen: undefined,
+      labels,
       badges: {
         appro: {
           title: "Des produits durables et de qualité",
@@ -95,7 +142,7 @@ export default {
     }
   },
   components: {
-    CanteenDashboard,
+    // CanteenDashboard,
     ContactForm,
     CanteenIndicators,
   },
