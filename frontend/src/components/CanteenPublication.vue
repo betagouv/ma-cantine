@@ -7,10 +7,12 @@
       <v-row>
         <v-col cols="12" sm="6" md="4" v-if="diagnostic.valueBioHt">
           <v-card class="fill-height text-center pa-4 d-flex flex-column justify-center" outlined>
-            <div class="grey--text text-h5 font-weight-black text--darken-2">{{ bioPercent }} %</div>
-            <div class="caption grey--text text--darken-2">
-              Bio
-            </div>
+            <p class="ma-0">
+              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
+              <span class="caption grey--text text--darken-2">
+                bio
+              </span>
+            </p>
             <div class="mt-2">
               <v-img
                 contain
@@ -24,10 +26,12 @@
         </v-col>
         <v-col cols="12" sm="6" md="4" v-if="diagnostic.valueSustainableHt">
           <v-card class="fill-height text-center pa-4 d-flex flex-column justify-center" outlined>
-            <div class="grey--text text-h5 font-weight-black text--darken-2">{{ sustainablePercent }} %</div>
-            <div class="caption grey--text text--darken-2">
-              Durables et de qualité
-            </div>
+            <p class="ma-0">
+              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
+              <span class="caption grey--text text--darken-2">
+                durables et de qualité
+              </span>
+            </p>
             <div class="d-flex mt-2 justify-center">
               <v-img
                 contain
