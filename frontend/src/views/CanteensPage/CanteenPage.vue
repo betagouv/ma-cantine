@@ -11,13 +11,13 @@
             <v-img class="rounded" :src="canteen.mainImage"></v-img>
           </v-col>
           <v-col>
-            <v-card-title class="text-h4 font-weight-black">
+            <v-card-title class="text-h4 font-weight-black pa-0">
               <h1 class="text-h4 font-weight-black">
                 {{ canteen.name }}
               </h1>
             </v-card-title>
             <v-spacer></v-spacer>
-            <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city">
+            <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pa-0 pt-4">
               <CanteenIndicators :canteen="canteen" class="grey--text text--darken-3" />
               <router-link to="#contact">
                 <v-icon small>mdi-email-outline</v-icon>
@@ -28,7 +28,7 @@
         </v-row>
       </v-card>
 
-      <CanteenPublication />
+      <CanteenPublication :canteen="canteen" />
 
       <v-divider class="my-8"></v-divider>
 
