@@ -85,7 +85,6 @@ export default {
   },
   data() {
     return {
-      badges,
       labels,
       publicationYear: 2020,
     }
@@ -99,6 +98,33 @@ export default {
     },
     sustainablePercent() {
       return percentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)
+    },
+    badges() {
+      let applicable = {}
+      const d = this.diagnostic
+      if (this.bioPercent >= 20 && this.bioPercent + this.sustainablePercent >= 50) {
+        applicable.appro = badges.appro
+      }
+      if (
+        d.hasWasteDiagnostic &&
+        d.wasteActions?.length > 0 &&
+        (this.canteen.dailyMealCount <= 3000 || d.hasDonationAgreement)
+      ) {
+        applicable.waste = badges.waste
+      }
+      if (
+        d.cookingPlasticSubstituted &&
+        d.servingPlasticSubstituted &&
+        d.plasticBottlesSubstituted &&
+        d.plasticTablewareSubstituted
+      ) {
+        applicable.plastic = badges.plastic
+      }
+      // TODO: add vegetarian logic which depends on sector
+      if (d.communicatesOnFoodQuality) {
+        applicable.info = badges.info
+      }
+      return applicable
     },
   },
 }
