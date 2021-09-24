@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from data.models import Diagnostic
+from decimal import Decimal
 from .teledeclaration import ShortTeledeclarationSerializer
 
 FIELDS = (
@@ -8,6 +9,7 @@ FIELDS = (
     "value_bio_ht",
     "value_fair_trade_ht",
     "value_sustainable_ht",
+    "value_pat_ht",
     "value_total_ht",
     "has_waste_diagnostic",
     "has_waste_plan",
@@ -49,11 +51,31 @@ class PublicDiagnosticSerializer(serializers.ModelSerializer):
         read_only_fields = ("id",)
         fields = FIELDS
 
+    def validate(self, data):
+        total = self.return_value(self, data, "value_total_ht")
+        if total is not None and isinstance(total, Decimal):
+            bio = self.return_value(self, data, "value_bio_ht")
+            sustainable = self.return_value(self, data, "value_sustainable_ht")
+            fair_trade = self.return_value(self, data, "value_fair_trade_ht")
+            value_sum = bio + sustainable + fair_trade
+            if value_sum > total:
+                raise serializers.ValidationError(
+                    f"La somme des valeurs d'approvisionnement, {value_sum}, est plus que le total, {total}"
+                )
+        return data
+
+    @staticmethod
+    def return_value(serializer, data, field_name):
+        if data.get(field_name):
+            return data.get(field_name)
+        elif serializer.instance and getattr(serializer.instance, field_name):
+            return getattr(serializer.instance, field_name)
+
 
 class FullDiagnosticSerializer(serializers.ModelSerializer):
     teledeclaration = ShortTeledeclarationSerializer(source="latest_teledeclaration")
 
     class Meta:
         model = Diagnostic
-        read_only_fields = ("id",)
         fields = FIELDS + ("teledeclaration",)
+        read_only_fields = fields

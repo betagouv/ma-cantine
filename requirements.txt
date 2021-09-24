@@ -2,8 +2,8 @@ arabic-reshaper==2.1.3
 asgiref==3.3.4
 astroid==2.5.6
 attrs==21.2.0
-boto3==1.18.32
-botocore==1.21.32
+boto3==1.18.45
+botocore==1.21.45
 certifi==2020.12.5
 chardet==4.0.0
 charset-normalizer==2.0.4
@@ -13,7 +13,7 @@ django-ckeditor==6.1.0
 django-filter==2.4.0
 django-js-asset==1.2.2
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@00dde137e67b4f0cc9c58e6c8df6896d145089bf
-django-otp==1.0.6
+django-otp==1.1.1
 django-storages==1.11.1
 django-webpack-loader==1.3.0
 djangorestframework==3.12.4
