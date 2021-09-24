@@ -80,7 +80,7 @@ import LogoList from "@/components/LogoList"
 import SummaryStatistics from "./SummaryStatistics"
 import CanteenIndicators from "@/components/CanteenIndicators"
 import QrcodeVue from "qrcode.vue"
-import { lastCompleteYear } from "@/utils"
+import { lastYear } from "@/utils"
 
 export default {
   components: {
@@ -117,7 +117,7 @@ export default {
       return baseUrl + fullPath
     },
     infoYear() {
-      return this.diagnostic.year || lastCompleteYear()
+      return this.diagnostic.year || lastYear()
     },
   },
   methods: {

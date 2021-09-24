@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { isDiagnosticComplete, lastCompleteYear } from "@/utils"
+import { isDiagnosticComplete, lastYear } from "@/utils"
 
 export default {
   name: "PublicationStateNotice",
@@ -34,7 +34,7 @@ export default {
   },
   data() {
     return {
-      publicationYear: lastCompleteYear(),
+      publicationYear: lastYear(),
     }
   },
   computed: {

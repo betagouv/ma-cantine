@@ -1,7 +1,7 @@
 import Vue from "vue"
 import Vuex from "vuex"
 import Constants from "@/constants"
-import { fourYears } from "../utils"
+import { diagnosticYears } from "../utils"
 
 Vue.use(Vuex)
 
@@ -485,7 +485,7 @@ export default new Vuex.Store({
     getLocalDiagnostics: () => () => {
       const savedDiagnostics = localStorage.getItem(LOCAL_STORAGE_KEY)
       if (!savedDiagnostics) {
-        return fourYears().map((year) => Object.assign({}, Constants.DefaultDiagnostics, { year }))
+        return diagnosticYears().map((year) => Object.assign({}, Constants.DefaultDiagnostics, { year }))
       }
       return Object.values(JSON.parse(savedDiagnostics))
     },

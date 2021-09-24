@@ -175,7 +175,7 @@ import Constants from "@/constants"
 import CanteenPoster from "./CanteenPoster"
 import html2pdf from "html2pdf.js"
 import validators from "@/validators"
-import { lastCompleteYear } from "@/utils"
+import { lastYear } from "@/utils"
 
 // normalise "À fîrst" to "A FIRST"
 function normaliseName(name) {
@@ -200,7 +200,7 @@ export default {
       search: null,
       formIsValid: true,
       selectedCanteenId: undefined,
-      publicationYear: lastCompleteYear(),
+      publicationYear: lastYear(),
     }
   },
   computed: {

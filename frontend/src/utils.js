@@ -158,21 +158,21 @@ export const isDiagnosticComplete = (diagnostic) => {
   )
 }
 
-export const lastCompleteYear = () => new Date().getFullYear() - 1
+export const lastYear = () => new Date().getFullYear() - 1
 
-export const fourYears = () => {
+export const diagnosticYears = () => {
   const thisYear = new Date().getFullYear()
   return [thisYear - 2, thisYear - 1, thisYear, thisYear + 1]
 }
 
 export const diagnosticsMap = (diagnostics) => {
-  const fourYearWithDefault = fourYears().map(
+  const diagnosticsWithDefault = diagnosticYears().map(
     (year) => diagnostics.find((x) => x.year === year) || Object.assign({}, Constants.DefaultDiagnostics, { year })
   )
   return {
-    previous: fourYearWithDefault[0],
-    latest: fourYearWithDefault[1],
-    provisionalYear1: fourYearWithDefault[2],
-    provisionalYear2: fourYearWithDefault[3],
+    previous: diagnosticsWithDefault[0],
+    latest: diagnosticsWithDefault[1],
+    provisionalYear1: diagnosticsWithDefault[2],
+    provisionalYear2: diagnosticsWithDefault[3],
   }
 }

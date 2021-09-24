@@ -25,7 +25,7 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
-import { lastCompleteYear } from "@/utils"
+import { lastYear } from "@/utils"
 
 export default {
   name: "PublishedCanteenCard",
@@ -42,7 +42,7 @@ export default {
     initiativesForCanteen(canteen) {
       if (!canteen.diagnostics || canteen.diagnostics.length === 0) return null
 
-      const diagnostic = canteen.diagnostics.find((x) => x.year === lastCompleteYear())
+      const diagnostic = canteen.diagnostics.find((x) => x.year === lastYear())
       if (!diagnostic) return null
 
       const initiatives = []
