@@ -211,7 +211,7 @@ import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
-import { getObjectDiff, timeAgo, strictIsNaN, lastCompleteYear } from "@/utils"
+import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears } from "@/utils"
 
 function percentage(part, total) {
   return Math.round((part / total) * 100)
@@ -237,7 +237,7 @@ export default {
       teledeclarationFormIsValid: true,
       openedPanel: null,
       cancelDialog: false,
-      teledeclarationYear: lastCompleteYear(),
+      teledeclarationYear: lastYear(),
     }
   },
   components: {
@@ -295,8 +295,7 @@ export default {
     },
     allowedYears() {
       const thisYear = new Date().getFullYear()
-      const years = [thisYear - 2, thisYear - 1, thisYear, thisYear + 1]
-      return years.map((year) => {
+      return diagnosticYears().map((year) => {
         return {
           text: year + (year >= thisYear ? " (prévisionnel)" : ""),
           value: year,
