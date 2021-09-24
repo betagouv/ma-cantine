@@ -8,7 +8,7 @@
         </v-btn>
       </div>
       <v-card-text>
-        <CanteenPublication />
+        <CanteenPublication :canteen="canteen" />
       </v-card-text>
     </v-card>
   </v-dialog>
