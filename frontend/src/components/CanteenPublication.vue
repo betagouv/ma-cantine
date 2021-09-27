@@ -1,9 +1,9 @@
 <template>
   <div class="text-left">
     <div v-if="diagnostic.valueTotalHt && (diagnostic.valueBioHt || diagnostic.valueSustainableHt)">
-      <p class="px-0 font-weight-black text-h6 grey--text text--darken-4 mt-4">
+      <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
-      </p>
+      </h2>
       <v-row>
         <v-col cols="12" sm="6" md="4" v-if="diagnostic.valueBioHt">
           <v-card class="fill-height text-center pa-4 d-flex flex-column justify-center" outlined>
@@ -50,11 +50,11 @@
       </v-row>
     </div>
 
-    <p class="px-0 font-weight-black text-h6 grey--text text--darken-4 mb-n4 mt-8">
+    <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-n4" v-if="Object.keys(earnedBadges).length">
       Nos démarches
-    </p>
+    </h2>
     <v-row class="my-6">
-      <v-col cols="12" v-for="(badge, key) in badges" :key="key">
+      <v-col cols="12" v-for="(badge, key) in earnedBadges" :key="key">
         <v-card class="fill-height" elevation="0">
           <div class="d-flex align-start">
             <v-img width="30" max-width="35" contain :src="`/static/images/badge-${key}-2.png`"></v-img>
@@ -103,7 +103,7 @@ export default {
     sustainablePercent() {
       return percentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)
     },
-    badges() {
+    earnedBadges() {
       let applicable = {}
       const d = this.diagnostic
       if (this.bioPercent >= 20 && this.bioPercent + this.sustainablePercent >= 50) {
