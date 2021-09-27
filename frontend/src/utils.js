@@ -1,3 +1,5 @@
+import badges from "@/badges.json"
+
 export const timeAgo = (date, displayPrefix = false) => {
   if (typeof date === "string") {
     date = new Date(date)
@@ -154,4 +156,45 @@ export const isDiagnosticComplete = (diagnostic) => {
     // sadly null >= 0 is true
     (key) => diagnostic[key] > 0 || diagnostic[key] === 0
   )
+}
+
+function percentage(part, total) {
+  return Math.round((part / total) * 100)
+}
+
+export const earnedBadges = (canteen, diagnostic, sectors) => {
+  let applicable = {}
+  const d = diagnostic
+  const bioPercent = percentage(d.valueBioHt, d.valueTotalHt)
+  const sustainablePercent = percentage(d.valueSustainableHt, d.valueTotalHt)
+  if (bioPercent >= 20 && bioPercent + sustainablePercent >= 50) {
+    applicable.appro = badges.appro
+  }
+  if (
+    d.hasWasteDiagnostic &&
+    d.wasteActions?.length > 0 &&
+    (canteen.dailyMealCount <= 3000 || d.hasDonationAgreement)
+  ) {
+    applicable.waste = badges.waste
+  }
+  if (
+    d.cookingPlasticSubstituted &&
+    d.servingPlasticSubstituted &&
+    d.plasticBottlesSubstituted &&
+    d.plasticTablewareSubstituted
+  ) {
+    applicable.plastic = badges.plastic
+  }
+  const schoolSectorId = sectors.find((x) => x.name === "Scolaire").id
+  if (d.vegetarianWeeklyRecurrence === "DAILY") {
+    applicable.diversification = badges.diversification
+  } else if (canteen.sectors.indexOf(schoolSectorId) > -1) {
+    if (d.vegetarianWeeklyRecurrence === "MID" || d.vegetarianWeeklyRecurrence === "HIGH") {
+      applicable.diversification = badges.diversification
+    }
+  }
+  if (d.communicatesOnFoodQuality) {
+    applicable.info = badges.info
+  }
+  return applicable
 }

@@ -10,21 +10,25 @@
     <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city">
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
-    <v-card-text
-      v-if="initiativesForCanteen(canteen) && initiativesForCanteen(canteen).length > 0"
-      class="grey--text text--darken-4"
-    >
-      Nos initiatives mises en place :
-      <div v-for="initiative in initiativesForCanteen(canteen)" :key="initiative">
-        <v-icon small class="mt-n1" color="primary">mdi-check-bold</v-icon>
-        {{ initiative }}
-      </div>
+    <v-card-text v-if="Object.keys(earnedBadges).length" class="grey--text text--darken-4 mx-1 mt-2">
+      <v-row>
+        <v-img
+          max-width="30"
+          contain
+          :src="`/static/images/badge-${key}-2.png`"
+          v-for="(badge, key) in earnedBadges"
+          :key="key"
+          class="mx-1"
+          :alt="badge.title"
+        ></v-img>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
+import { earnedBadges } from "@/utils"
 
 export default {
   name: "PublishedCanteenCard",
@@ -37,21 +41,21 @@ export default {
   components: {
     CanteenIndicators,
   },
-  methods: {
-    initiativesForCanteen(canteen) {
-      if (!canteen.diagnostics || canteen.diagnostics.length === 0) return null
-
-      const diagnostic = canteen.diagnostics.find((x) => x.year === 2020)
-      if (!diagnostic) return null
-
-      const initiatives = []
-      if (diagnostic.hasDonationAgreement) initiatives.push("Dons faits aux associations")
-      if (diagnostic.hasDiversificationPlan)
-        initiatives.push("Mise en place d'un plan de diversification des protéines")
-      if (diagnostic.cookingPlasticSubstituted || diagnostic.servingPlasticSubstituted)
-        initiatives.push("Contenants en plastique remplacés")
-      if (diagnostic.communicatesOnFoodPlan) initiatives.push("Communique sur le plan alimentaire")
-      return initiatives
+  data() {
+    return {
+      publicationYear: 2020,
+    }
+  },
+  computed: {
+    diagnostic() {
+      return this.canteen.diagnostics.find((d) => d.year === this.publicationYear)
+    },
+    earnedBadges() {
+      if (this.diagnostic) {
+        return earnedBadges(this.canteen, this.diagnostic, this.$store.state.sectors)
+      } else {
+        return {}
+      }
     },
   },
 }
