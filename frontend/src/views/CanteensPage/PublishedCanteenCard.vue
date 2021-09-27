@@ -15,7 +15,7 @@
         <v-img
           max-width="30"
           contain
-          :src="`/static/images/badge-${key}-2.png`"
+          :src="`/static/images/badge-${key}.svg`"
           v-for="(badge, key) in earnedBadges"
           :key="key"
           class="mx-1"
