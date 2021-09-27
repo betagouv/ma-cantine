@@ -20,19 +20,20 @@
     </div>
 
     <p id="introduction">
-      Sur les {{ canteen.dailyMealCount }} repas servis aux convives, pour l’année 2020, voici la répartition, en valeur
-      d’achat, des produits bio, de qualité et durables (liste de labels ci-dessous) utilisés dans la confection des
-      repas
+      Sur les {{ canteen.dailyMealCount }} repas servis aux convives, pour l’année {{ infoYear }}, voici la répartition,
+      en valeur d’achat, des produits bio, de qualité et durables (liste de labels ci-dessous) utilisés dans la
+      confection des repas
     </p>
+
     <div class="spacer"></div>
 
     <div id="graphs">
       <div>
-        <p class="graph-title">Approvisionnement 2020</p>
+        <p class="graph-title">Approvisionnement {{ infoYear }}</p>
         <SummaryStatistics :width="350" :qualityDiagnostic="diagnostic" class="summary-statistics" />
       </div>
       <div v-if="showPreviousDiagnostic">
-        <p class="graph-title">Rappel 2019</p>
+        <p class="graph-title">Rappel {{ infoYear - 1 }}</p>
 
         <SummaryStatistics
           :hideLegend="true"
@@ -82,6 +83,7 @@ import LogoList from "@/components/LogoList"
 import SummaryStatistics from "./SummaryStatistics"
 import CanteenIndicators from "@/components/CanteenIndicators"
 import QrcodeVue from "qrcode.vue"
+import { lastYear } from "@/utils"
 
 export default {
   components: {
@@ -112,6 +114,9 @@ export default {
         params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
       }).href
       return baseUrl + fullPath
+    },
+    infoYear() {
+      return this.diagnostic.year || lastYear()
     },
   },
 }
