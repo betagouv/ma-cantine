@@ -74,7 +74,7 @@
 <script>
 import PublicationComment from "./PublicationComment.vue"
 import labels from "@/data/quality-labels.json"
-import { earnedBadges } from "@/utils"
+import { lastYear, earnedBadges } from "@/utils"
 
 function percentage(part, total) {
   return Math.round((part / total) * 100)
@@ -90,12 +90,12 @@ export default {
   data() {
     return {
       labels,
-      publicationYear: 2020,
+      publicationYear: lastYear(),
     }
   },
   computed: {
     diagnostic() {
-      return this.canteen.diagnostics.find((d) => d.year === this.publicationYear)
+      return this.canteen.diagnostics.find((d) => d.year === this.publicationYear) || {}
     },
     bioPercent() {
       return percentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
