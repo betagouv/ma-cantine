@@ -28,7 +28,7 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
-import { earnedBadges } from "@/utils"
+import { lastYear, earnedBadges } from "@/utils"
 
 export default {
   name: "PublishedCanteenCard",
@@ -43,7 +43,7 @@ export default {
   },
   data() {
     return {
-      publicationYear: 2020,
+      publicationYear: lastYear(),
     }
   },
   computed: {
