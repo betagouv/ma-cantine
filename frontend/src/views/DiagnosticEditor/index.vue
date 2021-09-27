@@ -170,9 +170,9 @@
           <p>
             Conformément à l’article 24 de la loi EGAlim, chaque établissement est tenu de renseigner et transmettre à
             l’administration ses données, notamment en termes d’approvisionnement sur l’année civile passée. Afin de
-            faciliter cette démarche, nous vous proposons d’utiliser les informations de votre autodiagnostic 2020 afin
-            de les envoyer, avec votre accord, à la DGAL qui en fera un bilan statistique global des données des
-            établissements.
+            faciliter cette démarche, nous vous proposons d’utiliser les informations de votre autodiagnostic
+            {{ teledeclarationYear }} afin de les envoyer, avec votre accord, à la DGAL qui en fera un bilan statistique
+            global des données des établissements.
           </p>
           <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form">
             <v-checkbox
@@ -211,7 +211,7 @@ import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
-import { getObjectDiff, timeAgo, strictIsNaN } from "@/utils"
+import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears } from "@/utils"
 
 function percentage(part, total) {
   return Math.round((part / total) * 100)
@@ -237,6 +237,7 @@ export default {
       teledeclarationFormIsValid: true,
       openedPanel: null,
       cancelDialog: false,
+      teledeclarationYear: lastYear(),
     }
   },
   components: {
@@ -293,25 +294,13 @@ export default {
       return !existingDiagnostic
     },
     allowedYears() {
-      // TODO : Should be dynamic
-      return [
-        {
-          text: "2019",
-          value: 2019,
-        },
-        {
-          text: "2020",
-          value: 2020,
-        },
-        {
-          text: "2021 (prévisionnel)",
-          value: 2021,
-        },
-        {
-          text: "2022 (prévisionnel)",
-          value: 2022,
-        },
-      ]
+      const thisYear = new Date().getFullYear()
+      return diagnosticYears().map((year) => {
+        return {
+          text: year + (year >= thisYear ? " (prévisionnel)" : ""),
+          value: year,
+        }
+      })
     },
     hasChanged() {
       const diff = getObjectDiff(this.originalDiagnostic, this.diagnostic)
@@ -329,8 +318,7 @@ export default {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
     },
     isTeledeclarationYear() {
-      const currentYear = new Date().getFullYear()
-      return this.diagnostic.year === currentYear - 1
+      return this.diagnostic.year === this.teledeclarationYear
     },
   },
   beforeMount() {
