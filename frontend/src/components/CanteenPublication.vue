@@ -124,7 +124,15 @@ export default {
       ) {
         applicable.plastic = badges.plastic
       }
-      // TODO: add vegetarian logic which depends on sector
+      const sectors = this.$store.state.sectors
+      const schoolSectorId = sectors.find((x) => x.name === "Scolaire").id
+      if (d.vegetarianWeeklyRecurrence === "DAILY") {
+        applicable.diversification = badges.diversification
+      } else if (this.canteen.sectors.indexOf(schoolSectorId) > -1) {
+        if (d.vegetarianWeeklyRecurrence === "MID" || d.vegetarianWeeklyRecurrence === "HIGH") {
+          applicable.diversification = badges.diversification
+        }
+      }
       if (d.communicatesOnFoodQuality) {
         applicable.info = badges.info
       }
