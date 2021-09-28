@@ -20,6 +20,7 @@
           :key="key"
           class="mx-1"
           :alt="badge.title"
+          :title="badge.title"
         ></v-img>
       </v-row>
     </v-card-text>
