@@ -31,5 +31,5 @@ L’hébergement est fait chez [Clever Cloud](https://www.clever-cloud.com/). Ce
 - [Sentry](https://sentry.io) pour le reporting des erreurs
 - [SendInBlue](https://fr.sendinblue.com/) pour l'envoi d'emails
 - [AlwaysData](https://www.alwaysdata.com/fr/) pour la gestion des DNS
-- [Metabase](https://www.metabase.com/) pour l'analyse et la visualisation des données
+- [Metabase](https://ma-cantine-metabase.cleverapps.io/) pour l'analyse et la visualisation des données
 - [Matomo](https://fr.matomo.org/) pour l'analyse du traffic web
