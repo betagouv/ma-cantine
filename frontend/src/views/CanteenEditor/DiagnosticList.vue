@@ -24,7 +24,7 @@
     </div>
     <div v-else>
       <p class="body-2">
-        Vous pouvez creer des diagnostics par année pour decouvrir les atouts ainsi que les points d'amelioration de
+        Vous pouvez créer des diagnostics par année pour decouvrir les atouts ainsi que les points d'amélioration de
         votre cantine en relation des mesures de la loi EGAlim. Après creation, vos diagnostics vous permettront à
         publier vos données en repondant
         <router-link
