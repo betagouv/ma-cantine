@@ -184,36 +184,35 @@ function percentage(part, total) {
 
 export const earnedBadges = (canteen, diagnostic, sectors) => {
   let applicable = {}
-  const d = diagnostic
-  const bioPercent = percentage(d.valueBioHt, d.valueTotalHt)
-  const sustainablePercent = percentage(d.valueSustainableHt, d.valueTotalHt)
+  const bioPercent = percentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
+  const sustainablePercent = percentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
   if (bioPercent >= 20 && bioPercent + sustainablePercent >= 50) {
     applicable.appro = badges.appro
   }
   if (
-    d.hasWasteDiagnostic &&
-    d.wasteActions?.length > 0 &&
-    (canteen.dailyMealCount <= 3000 || d.hasDonationAgreement)
+    diagnostic.hasWasteDiagnostic &&
+    diagnostic.wasteActions?.length > 0 &&
+    (canteen.dailyMealCount <= 3000 || diagnostic.hasDonationAgreement)
   ) {
     applicable.waste = badges.waste
   }
   if (
-    d.cookingPlasticSubstituted &&
-    d.servingPlasticSubstituted &&
-    d.plasticBottlesSubstituted &&
-    d.plasticTablewareSubstituted
+    diagnostic.cookingPlasticSubstituted &&
+    diagnostic.servingPlasticSubstituted &&
+    diagnostic.plasticBottlesSubstituted &&
+    diagnostic.plasticTablewareSubstituted
   ) {
     applicable.plastic = badges.plastic
   }
   const schoolSectorId = sectors.find((x) => x.name === "Scolaire").id
-  if (d.vegetarianWeeklyRecurrence === "DAILY") {
+  if (diagnostic.vegetarianWeeklyRecurrence === "DAILY") {
     applicable.diversification = badges.diversification
   } else if (canteen.sectors.indexOf(schoolSectorId) > -1) {
-    if (d.vegetarianWeeklyRecurrence === "MID" || d.vegetarianWeeklyRecurrence === "HIGH") {
+    if (diagnostic.vegetarianWeeklyRecurrence === "MID" || diagnostic.vegetarianWeeklyRecurrence === "HIGH") {
       applicable.diversification = badges.diversification
     }
   }
-  if (d.communicatesOnFoodQuality) {
+  if (diagnostic.communicatesOnFoodQuality) {
     applicable.info = badges.info
   }
   return applicable
