@@ -23,7 +23,7 @@ Le produit est découpé en applications. Les applications les plus modifiées :
 
 ### Infrastructure
 
-L'application et fichiers statiques sont hébergés chez [Clever Cloud](https://www.clever-cloud.com/)
+L’hébergement est fait chez [Clever Cloud](https://www.clever-cloud.com/). Ceci concerne l'application, la base de données, les fichiers statiques, et l'instance Metabase.
 
 ### Outillage
 
