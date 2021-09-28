@@ -10,19 +10,17 @@
     <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city">
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
-    <v-card-text v-if="Object.keys(earnedBadges).length" class="grey--text text--darken-4 mx-1 mt-2">
-      <v-row>
-        <v-img
-          max-width="30"
-          contain
-          :src="`/static/images/badge-${key}.svg`"
-          v-for="(badge, key) in earnedBadges"
-          :key="key"
-          class="mx-1"
-          :alt="badge.title"
-          :title="badge.title"
-        ></v-img>
-      </v-row>
+    <v-card-text v-if="Object.keys(earnedBadges).length" class="grey--text text--darken-4 d-flex">
+      <v-img
+        max-width="25"
+        contain
+        :src="`/static/images/badge-${key}.svg`"
+        v-for="(badge, key) in earnedBadges"
+        :key="key"
+        class="mr-2"
+        :alt="badge.title"
+        :title="badge.title"
+      ></v-img>
     </v-card-text>
   </v-card>
 </template>
