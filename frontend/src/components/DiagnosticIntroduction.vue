@@ -1,14 +1,10 @@
 <template>
   <p>
-    Vous pouvez créer des diagnostics par année pour decouvrir les atouts ainsi que les points d'amélioration de votre
-    cantine en relation avec les mesures de la loi EGAlim. Après creation, vos diagnostics vous permettront à publier
-    vos données en répondant
-    <router-link
-      :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
-      class="text-decoration-underline primary--text"
-    >
-      la mesure d'information
+    Créez un diagnostic pour découvrir où vous en êtes des mesures EGAlim. Si vous le souhaitez, la création d'un
+    diagnostic vous permettra également de mettre en avant votre cantine en la publiant sur
+    <router-link :to="{ name: 'CanteensHome' }" class="text-decoration-underline primary--text">
+      nos cantines
     </router-link>
-    .
+    . Vous pouvez créer un diagnostic par année.
   </p>
 </template>
