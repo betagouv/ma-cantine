@@ -8,7 +8,7 @@
         <router-link :to="{ name: 'DiagnosticList', params: { canteenUrlComponent } }">
           données d'approvisionnement pour l'année {{ this.publicationYear }}
         </router-link>
-        avant que vous publiiez vos données.
+        avant de publier vos données.
       </span>
     </v-alert>
     <v-form ref="form" v-model="formIsValid">
