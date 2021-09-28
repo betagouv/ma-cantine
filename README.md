@@ -32,4 +32,4 @@ L’hébergement est fait chez [Clever Cloud](https://www.clever-cloud.com/). Ce
 - [SendInBlue](https://fr.sendinblue.com/) pour l'envoi d'emails
 - [AlwaysData](https://www.alwaysdata.com/fr/) pour la gestion des DNS
 - [Metabase](https://ma-cantine-metabase.cleverapps.io/) pour l'analyse et la visualisation des données
-- [Matomo](https://fr.matomo.org/) pour l'analyse du traffic web
+- [Matomo](https://stats.data.gouv.fr/index.php?module=CoreHome&action=index&idSite=162) pour l'analyse du traffic web
