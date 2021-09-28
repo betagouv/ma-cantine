@@ -10,6 +10,17 @@ Accompagner au mieux les acteurs de la restauration collective dans leur offre a
 
 Si vous voulez installer l'environnement en local : [ONBOARDING.md](./ONBOARDING.md)
 
+### Architecture
+
+On utilise [Django](https://www.djangoproject.com/) au back-end et [Vue.js V3](https://v3.vuejs.org/) au front.
+
+Le produit est découpé en applications. Les applications les plus modifiées :
+
+- `frontend` : le côté visible aux utilisateur.ice.s
+- `data` : contenant la plupart de notre modèles et vue admin
+- `api` : fournit l'API du backend
+- `web` : l'application d'authentification du site et le source de quelques fichiers statiques
+
 ### Infrastructure
 
 L'application et fichiers statiques sont hébergés chez [Clever Cloud](https://www.clever-cloud.com/)
