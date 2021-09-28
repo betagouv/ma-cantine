@@ -21,6 +21,7 @@
           <p class="body-2 mt-6 mb-2">SIRET</p>
           <v-text-field
             hide-details="auto"
+            validate-on-blur
             solo
             v-model="canteen.siret"
             :rules="[validators.length(14), validators.luhn]"
