@@ -11,7 +11,7 @@
       :rules="[
         validators.nonNegativeOrEmpty,
         validators.gteSum(
-          [diagnostic.valueBioHt, diagnostic.valueSustainableHt, diagnostic.valueFairTradeHt],
+          [diagnostic.valueBioHt, diagnostic.valueSustainableHt, diagnostic.valueFairTradeHt, diagnostic.valuePatHt],
           totalErrorMessage
         ),
       ]"
@@ -90,6 +90,7 @@
         v-model.number="diagnostic.valuePatHt"
         :readonly="readonly"
         :disabled="readonly"
+        @blur="checkTotal"
       ></v-text-field>
     </div>
   </fieldset>
@@ -126,7 +127,12 @@ export default {
   methods: {
     checkTotal() {
       const result = validators.gteSum(
-        [this.diagnostic.valueBioHt, this.diagnostic.valueSustainableHt, this.diagnostic.valueFairTradeHt],
+        [
+          this.diagnostic.valueBioHt,
+          this.diagnostic.valueSustainableHt,
+          this.diagnostic.valueFairTradeHt,
+          this.diagnostic.valuePatHt,
+        ],
         this.totalErrorMessage
       )(this.diagnostic.valueTotalHt)
       this.totalError = result !== true
