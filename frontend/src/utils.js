@@ -178,14 +178,18 @@ export const diagnosticsMap = (diagnostics) => {
   }
 }
 
-function percentage(part, total) {
-  return Math.round((part / total) * 100)
+export const getPercentage = (partialValue, totalValue) => {
+  if (strictIsNaN(partialValue) || strictIsNaN(totalValue) || totalValue === 0) {
+    return null
+  } else {
+    return Math.round((100 * partialValue) / totalValue)
+  }
 }
 
 export const earnedBadges = (canteen, diagnostic, sectors) => {
   let applicable = {}
-  const bioPercent = percentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
-  const sustainablePercent = percentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
+  const bioPercent = getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
+  const sustainablePercent = getPercentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
   if (bioPercent >= 20 && bioPercent + sustainablePercent >= 50) {
     applicable.appro = badges.appro
   }

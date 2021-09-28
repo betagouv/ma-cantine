@@ -67,23 +67,22 @@
       </v-col>
     </v-row>
 
-    <PublicationComment :comments="canteen && canteen.publicationComments" />
+    <div v-if="canteen && canteen.publicationComments">
+      <h2 class="font-weight-black text-h6 grey--text text--darken-4 mb-2">
+        Un petit mot du gestionnaire
+      </h2>
+      <p class="body-2">
+        {{ canteen.publicationComments }}
+      </p>
+    </div>
   </div>
 </template>
 
 <script>
-import PublicationComment from "./PublicationComment.vue"
 import labels from "@/data/quality-labels.json"
-import { lastYear, earnedBadges } from "@/utils"
-
-function percentage(part, total) {
-  return Math.round((part / total) * 100)
-}
+import { lastYear, earnedBadges, getPercentage } from "@/utils"
 
 export default {
-  components: {
-    PublicationComment,
-  },
   props: {
     canteen: Object,
   },
@@ -98,10 +97,10 @@ export default {
       return this.canteen.diagnostics.find((d) => d.year === this.publicationYear) || {}
     },
     bioPercent() {
-      return percentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
+      return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
     },
     sustainablePercent() {
-      return percentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)
+      return getPercentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)
     },
     earnedBadges() {
       return earnedBadges(this.canteen, this.diagnostic, this.$store.state.sectors)

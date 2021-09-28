@@ -21,7 +21,7 @@
         solo
         class="my-2"
         rows="3"
-        counter="255"
+        counter="500"
         v-model="canteen.publicationComments"
         hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
       ></v-textarea>
