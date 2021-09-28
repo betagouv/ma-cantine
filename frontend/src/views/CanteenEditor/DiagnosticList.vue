@@ -23,18 +23,7 @@
       </v-row>
     </div>
     <div v-else>
-      <p class="body-2">
-        Vous pouvez créer des diagnostics par année pour decouvrir les atouts ainsi que les points d'amélioration de
-        votre cantine en relation des mesures de la loi EGAlim. Après creation, vos diagnostics vous permettront à
-        publier vos données en repondant
-        <router-link
-          :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
-          class="text-decoration-underline primary--text"
-        >
-          la mesure d'information
-        </router-link>
-        .
-      </p>
+      <DiagnosticIntroduction class="body-2"></DiagnosticIntroduction>
       <v-btn
         color="primary"
         class="mt-4"
@@ -52,10 +41,11 @@
 
 <script>
 import DiagnosticCard from "@/components/DiagnosticCard"
+import DiagnosticIntroduction from "@/components/DiagnosticIntroduction"
 
 export default {
   name: "DiagnosticList",
-  components: { DiagnosticCard },
+  components: { DiagnosticCard, DiagnosticIntroduction },
   props: {
     originalCanteen: Object,
   },
