@@ -166,6 +166,59 @@
         Désactiver tous les filtres
       </v-btn>
     </div>
+
+    <v-divider class="mb-8 mt-12"></v-divider>
+
+    <v-row class="mb-6" style="position: relative">
+      <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp">
+        <div class="fill-height d-flex flex-column align-center">
+          <v-spacer></v-spacer>
+          <v-img src="/static/images/SittingDoodle.png" contain></v-img>
+          <v-spacer></v-spacer>
+        </div>
+      </v-col>
+      <v-col>
+        <div class="text-h6 font-weight-black text-left">
+          Vous n'avez pas trouvé un ou plusieurs établissements qui vous intéressent ?
+        </div>
+        <div class="body-2 text-left">
+          Dites-nous tout, nous ferons en sorte de leur communiquer votre intérêt pour leurs initiatives en place.
+        </div>
+        <v-form v-model="formIsValid" ref="form" @submit.prevent>
+          <v-text-field
+            v-model="fromEmail"
+            label="Votre email"
+            :rules="[validators.email]"
+            validate-on-blur
+            outlined
+            hide-details="auto"
+            class="my-2"
+          ></v-text-field>
+          <v-text-field
+            hide-details="auto"
+            v-model="name"
+            label="Prénom et nom (facultatif)"
+            outlined
+            class="my-2"
+          ></v-text-field>
+          <v-textarea
+            hide-details="auto"
+            v-model="message"
+            label="Message"
+            outlined
+            :rules="[validators.required]"
+            class="mt-2"
+          ></v-textarea>
+        </v-form>
+        <div class="d-flex mt-2">
+          <v-spacer></v-spacer>
+          <v-btn x-large color="primary" class="mt-2" @click="sendEmail">
+            <v-icon class="mr-2">mdi-send</v-icon>
+            Envoyer
+          </v-btn>
+        </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -193,6 +246,10 @@ export default {
         minMealCount: null,
         maxMealCount: null,
       },
+      fromEmail: "",
+      name: "",
+      message: "",
+      formIsValid: true,
     }
   },
   components: { PublishedCanteenCard },
@@ -305,6 +362,38 @@ export default {
       } else {
         this.$router.push({ query }).catch(() => {})
       }
+    },
+    sendEmail() {
+      this.$refs.form.validate()
+      if (!this.formIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
+
+      const payload = {
+        from: this.fromEmail,
+        name: this.name,
+        message: this.message,
+      }
+
+      this.$store
+        .dispatch("sendCanteenNotFoundEmail", payload)
+        .then(() => {
+          this.$refs.form.reset()
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: `Votre message a bien été envoyé.`,
+          })
+
+          if (this.$matomo) {
+            this.$matomo.trackEvent("message", "send", "canteen-not-found-email")
+          }
+          window.scrollTo(0, 0)
+        })
+        .catch((error) => {
+          console.log(error.message)
+          this.$store.dispatch("notifyServerError")
+        })
     },
   },
   watch: {
