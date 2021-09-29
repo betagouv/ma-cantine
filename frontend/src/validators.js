@@ -74,6 +74,7 @@ export default {
     }
   },
   luhn(input) {
+    if (!input) return true
     const reversed = input.split("").reverse()
     let checksum = 0
     let error = false
