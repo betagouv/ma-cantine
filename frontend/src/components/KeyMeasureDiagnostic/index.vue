@@ -44,7 +44,7 @@ export default {
       this.$refs.form.validate()
 
       if (!this.formIsValid) {
-        window.alert("Merci de vérifier les champs en rouge et réessayer")
+        this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
       if (this.isAuthenticated) {

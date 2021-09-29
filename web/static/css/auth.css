@@ -46,11 +46,15 @@ body {
     background: #F8F8FA;
     margin: 0;
 }
+h1#ma-cantine {
+    margin: 0;
+}
 h2 {
-    font-weight: 900;
+    font-size: 1.17em;
 }
 .auth_logo {
     max-width: 180px;
+    margin: 20px 0;
 }
 p {
     font-size: 0.85em;
@@ -68,7 +72,7 @@ p {
     text-align: left;
     margin-bottom: 20px;
 }
-input[type=text], input[type="password"], input[type="email"], input[type="number"], select {
+input[type=text], input[type="password"], input[type="email"], input[type="number"], select, .control-group .easy-autocomplete input {
     width: 100%;
     height: 42px;
     box-sizing: border-box;
@@ -78,7 +82,7 @@ input[type=text], input[type="password"], input[type="email"], input[type="numbe
     padding: 0 12px;
 }
 input[type=text]:focus, input[type="password"]:focus, input[type="email"]:focus{
-    border: 2px solid #EB5B25;
+    border: 2px solid #0c7f46;
 }
 label {
     display: block;
@@ -92,15 +96,20 @@ button {
     border-radius: 12px;
     border: solid 1px #DDD;
     cursor: pointer;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    display: inline-block;
+    font-family: Marianne;
 }
 button[type="submit"] {
     border: none;
-    background: #EB5B25;
+    background: #0c7f46;
     color: white;
 }
 button[type="submit"]:hover {
     border: none;
-    background: #CA3A04;
+    background: #0c7f46;
 }
 .messages, .error-container {
     text-align: left;
@@ -136,10 +145,6 @@ ul {
 li {
     list-style: none;
 }
-label[for="id_cgu_approved"] {
-    display: inline;
-    font-size: 10px;
-}
 input[type="checkbox"]#id_cgu_approved {
     float: left;
     margin-right: 10px;
@@ -171,11 +176,11 @@ input[type="checkbox"]#id_cgu_approved {
     #wrapper.columns {
         width: 300px;
     }
-    
+
     .column-wrapper {
         display: block;
     }
-    
+
     .left-column, .right-column {
         width: auto;
     }

@@ -1,30 +1,27 @@
 <template>
   <div>
+    <PublicationComment :comments="canteen && canteen.publicationComments" />
     <v-row>
       <v-col cols="12">
         <v-card outlined class="mt-4 pa-4">
-          <v-card-title class="font-weight-bold">
-            Données d'approvisionnement en produits de qualité et durables
+          <v-card-title>
+            <h2 class="font-weight-bold text-h6" id="appro-heading">
+              Données d'approvisionnement en produits de qualité et durables
+            </h2>
           </v-card-title>
-          <v-card-text>
-            <v-row>
-              <v-col cols="12" md="6" class="d-flex flex-column align-center">
-                <h3 class="text-h6">Sur l'année 2019</h3>
-                <SummaryStatistics :qualityDiagnostic="previousDiagnostic" />
-              </v-col>
-              <v-col cols="12" md="6" class="d-flex flex-column align-center">
-                <h3 class="text-h6">Sur l'année 2020</h3>
-                <SummaryStatistics :qualityDiagnostic="latestDiagnostic" />
-              </v-col>
-              <v-col cols="12" md="6" class="d-flex flex-column align-center">
-                <h3 class="text-h6">Prévisionnel 2021</h3>
-                <SummaryStatistics :qualityDiagnostic="this.diagnostics.provisionalYear1" />
-              </v-col>
-              <v-col cols="12" md="6" class="d-flex flex-column align-center">
-                <h3 class="text-h6">Prévisionnel 2022</h3>
-                <SummaryStatistics :qualityDiagnostic="this.diagnostics.provisionalYear2" />
-              </v-col>
-            </v-row>
+          <v-card-text class="pb-0">
+            <p class="text-left grey--text text--darken-3">
+              La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent
+              comporter, au cours de l'année 2022, 50% de produits de qualité et durables dont 20% issus de
+              l’agriculture biologique ou en conversion.
+            </p>
+            <MultiYearSummaryStatistics
+              :diagnostics="diagnostics"
+              headingId="appro-heading"
+              height="260"
+              :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+            />
+            <PublicationComment :comments="canteen && canteen.qualityComments" />
             <KeyMeasureResource :baseComponent="qualityMeasure.baseComponent" v-if="showResources" />
           </v-card-text>
         </v-card>
@@ -32,7 +29,9 @@
 
       <v-col cols="12" md="6">
         <v-card outlined class="mt-4 pa-4">
-          <v-card-title class="font-weight-bold">Initiatives contre le gaspillage alimentaire</v-card-title>
+          <v-card-title class="font-weight-bold">
+            <h2 class="font-weight-bold text-h6">Initiatives contre le gaspillage alimentaire</h2>
+          </v-card-title>
           <v-card-text>
             <div class="actions">
               <KeyMeasureAction
@@ -48,15 +47,21 @@
                   {{ wasteActions[action] }}
                 </li>
               </ul>
+              <ul class="specifics-actions text-left ml-4" v-if="latestDiagnostic.otherWasteAction">
+                <li class="my-1">
+                  {{ latestDiagnostic.otherWasteAction }}
+                </li>
+              </ul>
               <KeyMeasureAction :isDone="latestDiagnostic.hasDonationAgreement" label="Dons aux associations" />
             </div>
+            <PublicationComment :comments="canteen && canteen.wasteComments" />
             <KeyMeasureResource :baseComponent="wasteMeasure.baseComponent" v-if="showResources" />
           </v-card-text>
         </v-card>
 
         <v-card outlined class="mt-4 pa-4">
-          <v-card-title class="font-weight-bold text-left">
-            Dans l'établissement, ont été supprimé l'usage des :
+          <v-card-title class="text-left">
+            <h2 class="font-weight-bold text-h6">Dans l'établissement, ont été supprimé l'usage des :</h2>
           </v-card-title>
           <v-card-text>
             <div class="actions">
@@ -77,13 +82,16 @@
                 label="Ustensiles à usage unique en plastique"
               />
             </div>
+            <PublicationComment :comments="canteen && canteen.plasticsComments" />
           </v-card-text>
         </v-card>
       </v-col>
 
       <v-col cols="12" md="6">
         <v-card outlined class="mt-4 pa-4">
-          <v-card-title class="font-weight-bold">{{ diversificationMeasure.shortTitle }}</v-card-title>
+          <v-card-title>
+            <h2 class="font-weight-bold text-h6">{{ diversificationMeasure.shortTitle }}</h2>
+          </v-card-title>
           <v-card-text>
             <div class="actions">
               <KeyMeasureAction
@@ -92,12 +100,15 @@
               />
               <KeyMeasureAction :isDone="hasVegetarianMenu" :label="vegetarianMenuActionLabel" />
             </div>
+            <PublicationComment :comments="canteen && canteen.diversificationComments" />
             <KeyMeasureResource :baseComponent="diversificationMeasure.baseComponent" v-if="showResources" />
           </v-card-text>
         </v-card>
 
         <v-card outlined class="mt-4 pa-4">
-          <v-card-title class="font-weight-bold">{{ informationMeasure.shortTitle }}</v-card-title>
+          <v-card-title>
+            <h2 class="font-weight-bold text-h6">{{ informationMeasure.shortTitle }}</h2>
+          </v-card-title>
           <v-card-text>
             <div class="actions">
               <KeyMeasureAction
@@ -105,12 +116,17 @@
                 label="Communication sur le plan alimentaire"
               />
               <KeyMeasureAction
-                :isDone="latestDiagnostic.communicationSupports.length > 0"
+                :isDone="latestDiagnostic.communicationSupports && latestDiagnostic.communicationSupports.length > 0"
                 label="Communication à disposition des convives sur la qualité des approvisionnements"
               />
               <ul class="specifics-actions text-left ml-4">
                 <li v-for="action in latestDiagnostic.communicationSupports" :key="action" class="my-1">
                   {{ communicationSupports[action] }}
+                </li>
+              </ul>
+              <ul class="specifics-actions text-left ml-4" v-if="latestDiagnostic.otherCommunicationSupport">
+                <li class="my-1">
+                  {{ latestDiagnostic.otherCommunicationSupport }}
                 </li>
               </ul>
 
@@ -126,6 +142,7 @@
                 <v-icon small class="ml-2">mdi-open-in-new</v-icon>
               </v-btn>
             </div>
+            <PublicationComment :comments="canteen && canteen.informationComments" />
             <KeyMeasureResource baseComponent="InformDiners" v-if="showResources" />
           </v-card-text>
         </v-card>
@@ -138,19 +155,25 @@
 import keyMeasures from "@/data/key-measures.json"
 import wasteActions from "@/data/waste-actions.json"
 import communicationSupports from "@/data/communication-supports.json"
-import SummaryStatistics from "@/components/SummaryStatistics"
 import KeyMeasureResource from "@/components/KeyMeasureResource"
 import KeyMeasureAction from "@/components/KeyMeasureAction"
+import MultiYearSummaryStatistics from "./MultiYearSummaryStatistics.vue"
+import PublicationComment from "./PublicationComment.vue"
 
 export default {
   components: {
-    SummaryStatistics,
     KeyMeasureResource,
     KeyMeasureAction,
+    MultiYearSummaryStatistics,
+    PublicationComment,
   },
   props: {
     diagnostics: Object,
     showResources: Boolean,
+    canteen: {
+      type: Object,
+      required: false,
+    },
   },
   data() {
     const latestDiagnostic = this.diagnostics.latest
@@ -181,11 +204,13 @@ export default {
 
 function getVegetarianMenuActionLabel(hasVegetarianMenu, vegetarianFrequency) {
   if (!hasVegetarianMenu) {
-    return "Pas de menu végétarien"
+    return "Pas de menu végétarien hébdomadaire"
   } else if (vegetarianFrequency === "MID") {
-    return "Mise en place d'un menu végétarien"
+    return "Mise en place d'un menu végétarien par semaine"
   } else if (vegetarianFrequency === "HIGH") {
-    return "Plusieurs menus végétariens"
+    return "Mise en place d'un menu végétarien plusieurs fois par semaine"
+  } else if (vegetarianFrequency === "DAILY") {
+    return "Mise en place d'un menu végétarien de façon quotidienne"
   }
 }
 </script>

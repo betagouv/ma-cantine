@@ -156,3 +156,5 @@ celerybeat-schedule.db
 
 # Hosting
 .clever.json
+
+.vscode/*.code-snippets

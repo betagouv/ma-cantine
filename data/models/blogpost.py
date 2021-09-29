@@ -8,6 +8,7 @@ class BlogPost(models.Model):
     class Meta:
         verbose_name = "article de blog"
         verbose_name_plural = "articles de blog"
+        ordering = ["-display_date"]
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
@@ -25,6 +26,10 @@ class BlogPost(models.Model):
         verbose_name="auteur",
         related_name="blog_posts",
     )
+
+    @property
+    def url_path(self):
+        return f"/blog/{self.id}"
 
     def __str__(self):
         return f'Blog post "{self.title}"'

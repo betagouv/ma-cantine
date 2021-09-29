@@ -2,7 +2,7 @@
   <div>
     <v-card outlined tile>
       <v-row class="pa-3 justify-center">
-        <v-col cols="12" sm="4" md="auto">
+        <v-col cols="12" sm="4" md="auto" v-if="!$store.state.loggedUser">
           <v-btn exact :to="{ name: 'KeyMeasuresHome' }" text small>
             Toutes les mesures
           </v-btn>

@@ -1,11 +1,19 @@
 from django import forms
 from django.contrib import admin
 from data.models import Diagnostic
+from .teledeclaration import TeledeclarationInline
 
 
 class DiagnosticForm(forms.ModelForm):
     class Meta:
-        widgets = {}
+        widgets = {
+            "other_waste_action": forms.Textarea(attrs={"cols": 60, "rows": 2}),
+            "other_waste_comments": forms.Textarea(attrs={"cols": 60, "rows": 2}),
+            "donation_food_type": forms.Textarea(attrs={"cols": 60, "rows": 2}),
+            "other_communication_support": forms.Textarea(
+                attrs={"cols": 60, "rows": 2}
+            ),
+        }
 
 
 class DiagnosticInline(admin.TabularInline):
@@ -20,6 +28,7 @@ class DiagnosticInline(admin.TabularInline):
 class DiagnosticAdmin(admin.ModelAdmin):
 
     form = DiagnosticForm
+    inlines = (TeledeclarationInline,)
     list_display = (
         "canteen_name",
         "year",
@@ -45,6 +54,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
                     "value_bio_ht",
                     "value_fair_trade_ht",
                     "value_sustainable_ht",
+                    "value_pat_ht",
                     "value_total_ht",
                 )
             },
@@ -56,7 +66,16 @@ class DiagnosticAdmin(admin.ModelAdmin):
                     "has_waste_diagnostic",
                     "has_waste_plan",
                     "waste_actions",
+                    "other_waste_action",
                     "has_donation_agreement",
+                    "bread_leftovers",
+                    "served_leftovers",
+                    "unserved_leftovers",
+                    "side_leftovers",
+                    "donation_frequency",
+                    "donation_quantity",
+                    "donation_food_type",
+                    "other_waste_comments",
                 )
             },
         ),
@@ -65,8 +84,10 @@ class DiagnosticAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "has_diversification_plan",
+                    "diversification_plan_actions",
                     "vegetarian_weekly_recurrence",
                     "vegetarian_menu_type",
+                    "vegetarian_menu_bases",
                 )
             },
         ),
@@ -86,8 +107,11 @@ class DiagnosticAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "communication_supports",
+                    "other_communication_support",
                     "communication_support_url",
                     "communicates_on_food_plan",
+                    "communicates_on_food_quality",
+                    "communication_frequency",
                 )
             },
         ),

@@ -4,10 +4,6 @@ import store from "@/store/index"
 import LandingPage from "@/views/LandingPage"
 import DiagnosticPage from "@/views/DiagnosticPage"
 import KeyMeasuresPage from "@/views/KeyMeasuresPage"
-import PublishPage from "@/views/PublishPage"
-import CanteenInfo from "@/views/PublishPage/CanteenInfo"
-import PublishMeasurePage from "@/views/PublishPage/PublishMeasurePage"
-import SubmitPublicationPage from "@/views/PublishPage/SubmitPublicationPage"
 import KeyMeasuresHome from "@/views/KeyMeasuresPage/KeyMeasuresHome"
 import KeyMeasurePage from "@/views/KeyMeasuresPage/KeyMeasurePage"
 import GeneratePosterPage from "@/views/GeneratePosterPage"
@@ -16,19 +12,37 @@ import CanteensHome from "@/views/CanteensPage/CanteensHome"
 import CanteenPage from "@/views/CanteensPage/CanteenPage"
 import LegalNotices from "@/views/LegalNotices"
 import AccountSummaryPage from "@/views/AccountSummaryPage"
+import AccountEditor from "@/views/AccountSummaryPage/AccountEditor"
+import PasswordChangeEditor from "@/views/AccountSummaryPage/PasswordChangeEditor"
+import AccountDeletion from "@/views/AccountSummaryPage/AccountDeletion"
 import BlogsPage from "@/views/BlogsPage"
 import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
-import StatsPage from "@/views/StatsPage"
 import NotFound from "@/views/NotFound"
 import TesterParticipation from "@/views/TesterParticipation"
 import CGU from "@/views/CGU.vue"
+import ManagementPage from "@/views/ManagementPage"
+import CanteenEditor from "@/views/CanteenEditor"
+import CanteenForm from "@/views/CanteenEditor/CanteenForm"
+import DiagnosticList from "@/views/CanteenEditor/DiagnosticList"
+import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
+import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
+import PublicationForm from "@/views/CanteenEditor/PublicationForm"
+import DiagnosticEditor from "@/views/DiagnosticEditor"
+import DiagnosticsImporter from "@/views/DiagnosticsImporter"
+import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: "/",
+    meta: {
+      home: true,
+    },
+  },
+  {
+    path: "/accueil",
     name: "LandingPage",
     component: LandingPage,
   },
@@ -38,7 +52,26 @@ const routes = [
     component: AccountSummaryPage,
     meta: {
       title: "Mon compte",
+      authenticationRequired: true,
     },
+    redirect: { name: "AccountEditor" },
+    children: [
+      {
+        path: "profil",
+        name: "AccountEditor",
+        component: AccountEditor,
+      },
+      {
+        path: "mot-de-passe",
+        name: "PasswordChange",
+        component: PasswordChangeEditor,
+      },
+      {
+        path: "supprimer-mon-compte",
+        name: "AccountDeletion",
+        component: AccountDeletion,
+      },
+    ],
   },
   {
     path: "/diagnostic",
@@ -46,6 +79,9 @@ const routes = [
     component: DiagnosticPage,
     meta: {
       title: "M'auto-évaluer",
+    },
+    beforeEnter: (_to, _from, next) => {
+      store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
     },
   },
   {
@@ -68,43 +104,21 @@ const routes = [
         path: "",
         name: "KeyMeasuresHome",
         component: KeyMeasuresHome,
+        beforeEnter: (route, _, next) => {
+          store.state.loggedUser
+            ? next({
+                name: "KeyMeasurePage",
+                params: {
+                  id: "qualite-des-produits",
+                },
+              })
+            : next()
+        },
       },
       {
         path: ":id",
         name: "KeyMeasurePage",
         component: KeyMeasurePage,
-        props: true,
-      },
-    ],
-  },
-  {
-    path: "/publication",
-    name: "PublishPage",
-    component: PublishPage,
-    beforeEnter: (route, _, next) => {
-      store.state.loggedUser ? next() : next({ name: "LandingPage" })
-    },
-    children: [
-      {
-        path: "",
-        name: "CanteenInfo",
-        component: CanteenInfo,
-        meta: {
-          title: "Cantine information - Publication",
-        },
-      },
-      {
-        path: "validation",
-        name: "SubmitPublicationPage",
-        component: SubmitPublicationPage,
-        meta: {
-          title: "Validation - Publication",
-        },
-      },
-      {
-        path: ":id",
-        name: "PublishMeasurePage",
-        component: PublishMeasurePage,
         props: true,
       },
     ],
@@ -118,9 +132,12 @@ const routes = [
         path: "",
         name: "CanteensHome",
         component: CanteensHome,
+        meta: {
+          title: "Nos cantines",
+        },
       },
       {
-        path: ":id",
+        path: ":canteenUrlComponent",
         name: "CanteenPage",
         component: CanteenPage,
         props: true,
@@ -136,14 +153,14 @@ const routes = [
     path: "/blog",
     name: "BlogsPage",
     component: BlogsPage,
-    meta: {
-      title: "Blog",
-    },
     children: [
       {
         path: "",
         name: "BlogsHome",
         component: BlogsHome,
+        meta: {
+          title: "Blog",
+        },
       },
       {
         path: ":id",
@@ -152,14 +169,6 @@ const routes = [
         props: true,
       },
     ],
-  },
-  {
-    path: "/stats",
-    name: "StatsPage",
-    component: StatsPage,
-    meta: {
-      title: "Statistiques",
-    },
   },
   {
     path: "/devenir-testeur",
@@ -175,6 +184,114 @@ const routes = [
     component: CGU,
   },
   {
+    path: "/gestion",
+    name: "ManagementPage",
+    component: ManagementPage,
+    meta: {
+      title: "Gérer mes cantines",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/nouvelle-cantine",
+    name: "NewCanteen",
+    component: CanteenForm,
+    props: {
+      canteenUrlComponent: null,
+    },
+    meta: {
+      title: "Ajouter une nouvelle cantine",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/modifier-ma-cantine/:canteenUrlComponent",
+    name: "CanteenModification",
+    component: CanteenEditor,
+    props: true,
+    meta: {
+      authenticationRequired: true,
+    },
+    redirect: { name: "CanteenForm" },
+    children: [
+      {
+        path: "modifier",
+        name: "CanteenForm",
+        component: CanteenForm,
+      },
+      {
+        path: "diagnostics",
+        name: "DiagnosticList",
+        component: DiagnosticList,
+      },
+      {
+        path: "gestionnaires",
+        name: "CanteenManagers",
+        component: CanteenManagers,
+      },
+      {
+        path: "supprimer",
+        name: "CanteenDeletion",
+        component: CanteenDeletion,
+      },
+      {
+        path: "publier",
+        name: "PublicationForm",
+        component: PublicationForm,
+      },
+    ],
+  },
+  {
+    path: "/modifier-mon-diagnostic/:canteenUrlComponent/:year",
+    name: "DiagnosticModification",
+    component: DiagnosticEditor,
+    props: true,
+    meta: {
+      title: "Modifier mon diagnostic",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/nouveau-diagnostic",
+    name: "NewDiagnostic",
+    component: DiagnosticEditor,
+    props: {
+      canteenUrlComponent: null,
+      year: null,
+    },
+    meta: {
+      title: "Ajouter un nouveau diagnostic",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/nouveau-diagnostic/:canteenUrlComponent",
+    name: "NewDiagnosticForCanteen",
+    component: DiagnosticEditor,
+    props: true,
+    meta: {
+      title: "Ajouter un nouveau diagnostic",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/importer-diagnostics",
+    name: "DiagnosticsImporter",
+    component: DiagnosticsImporter,
+    meta: {
+      title: "Importer des diagnostics",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/accessibilite",
+    name: "AccessibilityDeclaration",
+    component: AccessibilityDeclaration,
+    meta: {
+      title: "Déclaration d'accessibilité",
+    },
+  },
+  {
     path: "/:catchAll(.*)",
     component: NotFound,
     name: "NotFound",
@@ -184,24 +301,32 @@ const routes = [
 const router = new VueRouter({
   mode: "history",
   routes,
-  scrollBehavior() {
+  scrollBehavior(to, from, savedPosition) {
+    if (to.hash) return { selector: to.hash, offset: { y: 90 } }
+    if (to.name === from.name && this.app.$vuetify.breakpoint.mdAndUp) return savedPosition
     return { x: 0, y: 0 }
   },
 })
 
-router.beforeEach((to, from, next) => {
-  if (store.state.initialDataLoaded) {
-    next()
-    return
+function chooseAuthorisedRoute(to, from, next) {
+  if (!store.state.initialDataLoaded) {
+    store
+      .dispatch("fetchInitialData")
+      .then(() => chooseAuthorisedRoute(to, from, next))
+      .catch((e) => {
+        console.error(`An error occurred: ${e}`)
+        next({ name: "LandingPage" })
+      })
+  } else {
+    if (to.meta.home && store.state.loggedUser) next({ name: "ManagementPage" })
+    else if (to.meta.home) next({ name: "LandingPage" })
+    else if (!to.meta.authenticationRequired || store.state.loggedUser) next()
+    else next({ name: "NotFound" })
   }
+}
 
-  store
-    .dispatch("fetchInitialData")
-    .then(next)
-    .catch((e) => {
-      console.error(`An error ocurred: ${e}`)
-      next(e)
-    })
+router.beforeEach((to, from, next) => {
+  chooseAuthorisedRoute(to, from, next)
 })
 
 export default router
