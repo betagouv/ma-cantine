@@ -23,9 +23,7 @@
             :to="{ name: 'NewCanteen' }"
           >
             <v-icon size="100">mdi-plus</v-icon>
-            <v-card-text class="font-weight-bold pt-0 text-center">
-              Ajouter une cantine
-            </v-card-text>
+            <v-card-text class="font-weight-bold pt-0 text-center">Ajouter une cantine</v-card-text>
           </v-card>
         </v-col>
       </v-row>

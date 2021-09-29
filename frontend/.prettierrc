@@ -12,5 +12,6 @@
   "trailingComma": "es5",
   "vueIndentScriptAndStyle": false,
   "proseWrap": "preserve",
-  "quoteProps": "as-needed"
+  "quoteProps": "as-needed",
+  "html-whitespace-sensitivity": "ignore"
 }
