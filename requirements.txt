@@ -33,7 +33,7 @@ mccabe==0.6.1
 packaging==21.0
 Pillow==8.3.2
 pipdeptree==2.1.0
-pluggy==0.13.1
+pluggy==1.0.0
 psycopg2==2.9.1
 py==1.10.0
 pylint==2.11.1
