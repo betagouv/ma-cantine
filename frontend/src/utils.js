@@ -208,10 +208,15 @@ export const earnedBadges = (canteen, diagnostic, sectors) => {
   ) {
     applicable.plastic = badges.plastic
   }
-  const schoolSectorId = sectors.find((x) => x.name === "Scolaire").id
+
+  // We need to rethink the way a school sector is defined. Temporarily
+  // using the name.
+  const schoolSector = sectors.find((x) => x.name === "Scolaire")
+  if (!schoolSector) console.error("No sector `Scolaire` is present in this configuration")
+
   if (diagnostic.vegetarianWeeklyRecurrence === "DAILY") {
     applicable.diversification = badges.diversification
-  } else if (canteen.sectors.indexOf(schoolSectorId) > -1) {
+  } else if (schoolSector && canteen.sectors.indexOf(schoolSector.id) > -1) {
     if (diagnostic.vegetarianWeeklyRecurrence === "MID" || diagnostic.vegetarianWeeklyRecurrence === "HIGH") {
       applicable.diversification = badges.diversification
     }
