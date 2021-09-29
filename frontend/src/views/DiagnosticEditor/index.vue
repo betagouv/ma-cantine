@@ -49,8 +49,8 @@
 
             <div v-if="isTeledeclarationYear">
               <p v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration" class="text-caption ma-0 pl-4">
-                <v-icon small>mdi-alert</v-icon>
-                Remplissez les données d'approvisionnement pour télédéclarer ce diagnostic
+                <v-icon small>mdi-information-outline</v-icon>
+                Vous pourrez télédéclarer ce diagnostic après avoir remplir les données d'approvisionnement
               </p>
               <p v-else-if="!hasActiveTeledeclaration" class="text-caption ma-0 pl-4">
                 <v-icon small>mdi-information</v-icon>
@@ -322,6 +322,9 @@ export default {
     },
   },
   beforeMount() {
+    if (this.userCanteens.length === 1) {
+      this.selectedCanteenId = this.userCanteens[0].id
+    }
     if (this.isNewDiagnostic) return
 
     if (!this.canteen) this.$router.replace({ name: "NotFound" })
