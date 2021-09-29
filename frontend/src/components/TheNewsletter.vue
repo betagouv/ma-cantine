@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col class="pa-0" cols="12" sm="8" md="7">
+      <v-col class="pa-0" cols="10" sm="8" md="7">
         <v-card elevation="0" class="pa-0">
           <v-card-title class="font-weight-bold">
             Suivre les actualités du site ma cantine
@@ -19,17 +19,16 @@
                 ref="email"
                 label="Votre adresse email"
                 validate-on-blur
-                :rules="[validators.isEmail]"
+                :rules="[validators.email]"
               ></v-text-field>
-              <v-btn @click="subscribe" outlined color="primary darken-1" class="ml-4 mt-1" large>Valider</v-btn>
+              <v-btn @click="subscribe" outlined color="primary" class="ml-4 mt-1" large>Valider</v-btn>
             </v-form>
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col v-if="$vuetify.breakpoint.smAndUp" class="d-flex align-center">
-        <v-img src="/static/images/appli-food.svg" contain max-height="100px"></v-img>
+      <v-col v-if="$vuetify.breakpoint.smAndUp" class="d-flex align-center" cols="2">
+        <v-img src="/static/images/LayingDoodle.png" contain max-height="100px"></v-img>
       </v-col>
-      <v-spacer></v-spacer>
     </v-row>
   </div>
 </template>
@@ -58,10 +57,13 @@ export default {
         .dispatch("subscribeNewsletter", this.email)
         .then(() => {
           this.email = null
-          alert("Vous êtes bien inscrit.e à la newsletter de ma cantine.")
+          this.$store.dispatch("notify", {
+            message: "Vous êtes bien inscrit.e à la newsletter de ma cantine.",
+            status: "success",
+          })
         })
         .catch((error) => {
-          alert("Une erreur est survenue, merci d'essayer plus tard")
+          this.$store.dispatch("notifyServerError")
           console.log(error)
         })
     },

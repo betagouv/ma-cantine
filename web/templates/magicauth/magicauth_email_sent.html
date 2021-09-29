@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}email de connexion envoyé{% endblock %}
+{% block title %}Email de connexion envoyé{% endblock %}
 
 {% load static %}
 
 {% block content %}
-    <h2><img src="{% static 'images/logo_transparent.png' %}" class="auth_logo" /></h2>
     <h3>Nous avons envoyé un email de connexion à votre adresse</h3>
     <div style="text-align: left;">
         <p>Cliquez sur le lien pour vous connecter à Ma Cantine.</p>
-        <p>Vérifiez votre dossier spam, vos courriers indésirables, ou tout autre dossier pour voir si le message a été filtré par votre fournisseur de messagerie. </p>
+        <p>Vérifiez votre dossier spam, vos courriers indésirables, ou tout autre dossier pour voir si le message a été filtré par votre fournisseur de messagerie.</p>
+        <p>En cas d'absence de message, veuillez vérifier que l'adresse email saisie est bien celle utilisée dans votre compte ma cantine.</p>
     </div>
     <hr />
     <div class="text-center">

@@ -90,3 +90,4 @@ def optimize_image(image, name, max_size=1600):
             return image
     except Exception:
         return image
+

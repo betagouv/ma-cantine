@@ -1,13 +1,27 @@
+function email(input) {
+  const errorMessage = "Ce champ doit contenir un email valide"
+  if (typeof input === "string" && /\S+@\S+\.\S+/.test(input)) return true
+  return errorMessage
+}
+
 export default {
-  notEmpty(input) {
+  required(input) {
     const errorMessage = "Ce champ ne peut pas être vide"
     if (typeof input === "undefined") return errorMessage
-    if (typeof input === "object" && input === null) return errorMessage
+    if (typeof input === "object") {
+      if (input === null) return errorMessage
+      return Object.keys(input).length > 0 ? true : errorMessage
+    }
     if (typeof input === "boolean") return true
     if (typeof input === "number") return true
     if (typeof input === "string") return input.trim().length > 0 ? true : errorMessage
     if (!input) return errorMessage
     return input.length && input.length > 0 ? true : errorMessage
+  },
+  checked(input) {
+    const errorMessage = "Ce champ doit être accepté"
+    const isChecked = typeof input === "boolean" && input === true
+    return isChecked ? true : errorMessage
   },
   greaterThanZero(input) {
     const errorMessage = "Ce champ doit contenir une chiffre supérieure à zéro"
@@ -24,7 +38,7 @@ export default {
     const errorMessage = "Ce champ doit contenir un nombre positif ou rester vide"
     return errorMessage
   },
-  isUrlOrEmpty(input) {
+  urlOrEmpty(input) {
     if (!input || input.length === 0) return true
     let url
     const errorMessage = 'Le lien doit être une URL valide (par ex. "https://exemple.com")'
@@ -36,15 +50,11 @@ export default {
     const isValid = url.protocol === "http:" || url.protocol === "https:"
     return isValid ? true : errorMessage
   },
-  isEmail(input) {
-    const errorMessage = "Ce champ doit contenir un email valide"
-    if (typeof input === "string" && /\S+@\S+\.\S+/.test(input)) return true
-    return errorMessage
+  email(input) {
+    return email(input)
   },
-  isYear(input) {
-    const errorMessage = "Ce champ doit contenir une année (par exemple, 2001)"
-    if (typeof input === "string" && /^[12][0-9]{3}$/.test(input.trim())) return true
-    return errorMessage
+  emailOrEmpty(input) {
+    return input ? email(input) : true
   },
   maxCharsXPName(input) {
     if (!input) return true
@@ -54,6 +64,46 @@ export default {
     return (input) => {
       if (!input || input.length <= maxNumer) return true
       return `Vous pouvez sélectionner jusqu'à ${maxNumer} élements`
+    }
+  },
+  length(exactLength) {
+    return (input) => {
+      if (!input || input.length !== exactLength) {
+        return `${exactLength} caractères attendus`
+      } else return true
+    }
+  },
+  luhn(input) {
+    if (!input) return true
+    const reversed = input.split("").reverse()
+    let checksum = 0
+    let error = false
+    reversed.forEach((char, idx) => {
+      const num = parseInt(char, 10)
+      if (isNaN(num)) {
+        error = true
+      } else if (idx % 2) {
+        const double = num * 2
+        if (double < 10) {
+          checksum += double
+        } else {
+          checksum += double - 10 + 1
+        }
+      } else {
+        checksum += num
+      }
+    })
+    error = error || checksum % 10
+    return error ? "Le numéro SIRET n'est pas valide" : true
+  },
+  gteSum(values, message) {
+    return (input) => {
+      let sum = 0
+      values.forEach((v) => {
+        if (v) sum += Number(v)
+      })
+      message = message || "Cette valeur doit être plus haute ou égale au somme"
+      return input < sum ? message : true
     }
   },
 }

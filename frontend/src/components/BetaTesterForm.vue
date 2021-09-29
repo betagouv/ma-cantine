@@ -1,52 +1,69 @@
 <template>
-  <div>
+  <div class="text-left">
     <v-form v-model="formIsValid" ref="form" @submit.prevent>
       <h2 class="text-h4 font-weight-black mb-8">Devenir béta-testeur</h2>
-      <p class="text-body-2 text-left">
+      <p class="text-body-2">
         Nous sommes en version de test et cherchons continuellement à améliorer la plateforme. Pour cela nous cherchons
         des cantines prêtes à nous accompagner en devenant béta-testeur. Si vous souhaitez y participer merci de nous
         communiquer vos informations ci-dessous.
       </p>
 
-      <p class="body-2 mb-1 mt-2 text-left">Nom de votre cantine</p>
+      <label for="school" class="body-2">Nom de votre cantine</label>
       <v-text-field
+        id="school"
         validate-on-blur
         hide-details="auto"
-        :rules="[validators.notEmpty]"
+        :rules="[validators.required]"
         solo
         v-model="formData.school"
+        class="mt-2 mb-4"
       ></v-text-field>
 
-      <p class="body-2 mb-1 mt-2 text-left">Ville / commune</p>
+      <label for="city" class="body-2">Ville / commune</label>
       <v-text-field
+        id="city"
         validate-on-blur
         hide-details="auto"
-        :rules="[validators.notEmpty]"
+        :rules="[validators.required]"
         solo
         v-model="formData.city"
+        class="mt-2 mb-4"
       ></v-text-field>
 
-      <p class="body-2 mb-1 mt-2 text-left">Votre email</p>
+      <label for="email" class="body-2">Votre email</label>
       <v-text-field
+        id="email"
         validate-on-blur
         hide-details="auto"
-        :rules="[validators.isEmail]"
+        :rules="[validators.email]"
         solo
         v-model="formData.email"
+        class="mt-2 mb-4"
       ></v-text-field>
 
-      <p class="body-2 mb-1 mt-2 text-left">Numéro de téléphone (optionnel)</p>
-      <v-text-field hide-details="auto" solo v-model="formData.phone"></v-text-field>
+      <label for="phone" class="body-2">Numéro de téléphone (optionnel)</label>
+      <v-text-field id="phone" hide-details="auto" v-model="formData.phone" solo class="mt-2 mb-4"></v-text-field>
 
-      <p class="body-2 mb-1 mt-2 text-left">Message (optionnel)</p>
-      <v-textarea hide-details="auto" rows="3" solo v-model="formData.message"></v-textarea>
+      <label for="message" class="body-2">Message (optionnel)</label>
+      <v-textarea
+        id="message"
+        hide-details="auto"
+        rows="3"
+        v-model="formData.message"
+        solo
+        class="mt-2 mb-4"
+      ></v-textarea>
     </v-form>
-    <v-btn x-large color="primary" class="mt-8" @click="subscribeBetaTester">Je participe</v-btn>
+    <v-row class="my-8">
+      <v-spacer></v-spacer>
+      <v-btn x-large color="primary" class="mr-2" @click="subscribeBetaTester">Je participe</v-btn>
+    </v-row>
   </div>
 </template>
 
 <script>
 import validators from "@/validators"
+import { lastYear } from "@/utils"
 
 export default {
   data() {
@@ -60,16 +77,20 @@ export default {
       return validators
     },
     latestDiagnostic() {
-      const diagnostics = this.$store.state.loggedUser
-        ? this.$store.state.userCanteens[0].diagnostics
-        : this.$store.getters.getLocalDiagnostics()
-      return diagnostics.find((x) => x.year === 2020)
+      const diagnostics =
+        this.$store.state.loggedUser && this.$store.state.userCanteens.length
+          ? this.$store.state.userCanteens[0].diagnostics
+          : this.$store.getters.getLocalDiagnostics()
+      return diagnostics.find((x) => x.year === lastYear())
     },
   },
   methods: {
     subscribeBetaTester() {
       this.$refs.form.validate()
-      if (!this.formIsValid) return
+      if (!this.formIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
 
       const payload = Object.assign({ measures: this.latestDiagnostic }, this.formData)
 
@@ -77,11 +98,13 @@ export default {
         .dispatch("subscribeBetaTester", payload)
         .then(() => {
           this.formData = {}
-          alert("Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.")
+          this.$store.dispatch("notify", {
+            message: "Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.",
+          })
         })
         .catch((error) => {
           console.log(error.message)
-          alert("Une erreur est survenue, vous pouvez nous contacter directement à contact@egalim.beta.gouv.fr")
+          this.$store.dispatch("notifyServerError")
         })
     },
   },

@@ -1,125 +1,183 @@
 <template>
-  <div>
-    <v-row>
-      <v-spacer></v-spacer>
-      <v-col cols="12" sm="10" md="8">
-        <h1 class="font-weight-black my-6">
-          Générez votre affiche convives
-        </h1>
-        <p class="text-body-2">
-          En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives.
-          Cette affiche présente vos données d'achats à vos convives comme demandé par une sous-mesure de la loi EGAlim.
-        </p>
-        <v-btn
-          color="primary"
-          class="text-decoration-underline"
-          text
-          :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
-        >
-          En savoir plus sur la mesure
-        </v-btn>
-      </v-col>
-      <v-spacer></v-spacer>
-    </v-row>
+  <div id="content" class="text-left">
+    <h1 class="font-weight-black my-6">
+      Générez votre affiche
+      <br />
+      «&nbsp;information des convives&nbsp;»
+    </h1>
+    <p class="text-body-2">
+      En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives pour les
+      informer sur la part de produits de qualité et durables et de la part des produits issus de projets alimentaires
+      territoriaux entrant dans la composition des repas servis dans votre restaurant. Cette information est obtenue à
+      partir de vos données annuelles d’achat. Si ces données ne sont pas disponibles vous pouvez utiliser d’autres
+      critères (nombre de composantes, volume des denrées…).
+    </p>
+    <router-link
+      :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
+      class="text-decoration-underline primary--text text-body-2"
+    >
+      En savoir plus sur la mesure
+    </router-link>
 
-    <div id="poster-form-page">
-      <p class="poster-presentation"></p>
+    <div v-if="isAuthenticated">
+      <v-row class="px-4 mt-2" align="center">
+        <v-col cols="12" sm="6" md="7" class="my-0 my-sm-4 pl-0">
+          <v-autocomplete
+            outlined
+            hide-details
+            :items="userCanteens"
+            label="Choissisez la cantine"
+            v-model="selectedCanteenId"
+            item-text="name"
+            item-value="id"
+          ></v-autocomplete>
+        </v-col>
+        <v-col class="my-0 my-sm-4 px-0 px-sm-4 d-flex justify-space-between">
+          <v-btn x-large color="primary" @click="submit" :disabled="!selectedCanteenId">
+            Générer mon affiche
+          </v-btn>
+        </v-col>
+        <v-spacer></v-spacer>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="7" class="text-body-2 mb-2">
+          Pour mettre à jour ces données, rendez-vous sur
+          <router-link :to="{ name: 'ManagementPage' }" class="text-decoration-underline primary--text text-body-2">
+            mes cantines
+          </router-link>
+          .
+        </v-col>
+      </v-row>
+      <div id="poster-preview" class="mb-8">
+        <CanteenPoster
+          id="canteen-poster"
+          :canteen="selectedCanteen"
+          :diagnostic="currentDiagnostic"
+          :previousDiagnostic="previousDiagnostic"
+        />
+      </div>
+    </div>
+    <div id="poster-form-page" v-else>
       <div id="poster-generation">
-        <form id="poster-form" @submit.prevent="submit">
-          <h2>À propos de votre cantine</h2>
+        <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent>
+          <h2 class="mb-4">À propos de votre cantine</h2>
           <p>
             Je représente
             <label for="canteen-name">la cantine</label>
-            <input
+            <v-text-field
               id="canteen-name"
               v-model="form.canteen.name"
-              class="field"
               placeholder="nom de l'établissement"
-              required
-            />
+              hide-details="auto"
+              :rules="[validators.required]"
+              solo
+              class="my-4"
+            ></v-text-field>
             dans
             <label for="commune">la commune de</label>
-            <input
+            <v-autocomplete
               id="commune"
               v-model="form.canteen.city"
-              class="field"
               placeholder="nom de la commune"
-              required
-              type="search"
-              @input="search"
-              list="communes"
-            />
-            <datalist id="communes">
-              <option v-for="commune in communes" :value="commune.properties.label" :key="commune.properties.id">
-                {{ commune.properties.label }} ({{ commune.properties.context }})
-              </option>
-            </datalist>
-            .
+              :loading="loadingCommunes"
+              :items="communes"
+              :search-input.sync="search"
+              auto-select-first
+              cache-items
+              hide-details="auto"
+              :rules="[validators.required]"
+              solo
+              class="my-4"
+            ></v-autocomplete>
           </p>
           <p>
             <label for="servings">Nous servons</label>
-            <input
+            <v-text-field
               id="servings"
-              aria-describedby="repas"
               v-model.number="form.canteen.dailyMealCount"
               type="number"
-              min="0"
+              :rules="[validators.greaterThanZero]"
               placeholder="200"
-              required
+              solo
+              class="my-4"
+              suffix="repas par jour"
+              hide-details="auto"
             />
-            <span id="repas">repas par jour</span>
-            .
           </p>
-          <h2>À propos de vos achats</h2>
+          <h2 class="mb-4">À propos de vos achats</h2>
           <p>
             <label for="total">
-              Sur l'année de 2020, les achats alimentaires (repas, collations et boissons) répresentent
+              Sur l'année de {{ form.diagnostic.year }}, les achats alimentaires (repas, collations et boissons)
+              répresentent
             </label>
-            <input
+            <v-text-field
               id="total"
               v-model.number="form.diagnostic.valueTotalHt"
-              class="currency-field"
               type="number"
-              min="0"
+              :rules="[validators.greaterThanZero]"
               placeholder="15000"
-              aria-describedby="euros"
-              required
+              suffix="euros HT"
+              solo
+              class="my-4"
+              hide-details="auto"
+              validate-on-blur
             />
-            <span id="euros">euros HT</span>
-            .
           </p>
           <p>
             Sur ce total,
-            <input
+            <v-text-field
               id="bio"
               v-model.number="form.diagnostic.valueBioHt"
-              class="currency-field"
               type="number"
-              min="0"
+              :rules="[validators.greaterThanZero]"
               placeholder="3000"
-              aria-describedby="euros"
-              required
+              suffix="euros HT"
+              solo
+              class="my-4"
+              hide-details="auto"
+              validate-on-blur
             />
-            euros HT correspondaient à des
+            correspondaient à des
             <label for="bio">produits bio</label>
-            et
-            <input
+            ,
+            <v-text-field
               id="sustainable"
               v-model.number="form.diagnostic.valueSustainableHt"
-              class="currency-field"
               type="number"
-              min="0"
+              :rules="[validators.greaterThanZero]"
               placeholder="2000"
-              aria-describedby="euros"
-              required
+              suffix="euros HT"
+              solo
+              class="my-4"
+              hide-details="auto"
+              validate-on-blur
             />
-            euros HT correspondaient à des
+            correspondaient à des
             <label for="sustainable">produits de qualité et durables (hors bio)</label>
+            et
+            <v-text-field
+              id="pat"
+              v-model.number="form.diagnostic.valuePatHt"
+              type="number"
+              :rules="[validators.nonNegativeOrEmpty]"
+              placeholder="1000"
+              suffix="euros HT"
+              solo
+              class="my-4"
+              hide-details="auto"
+              validate-on-blur
+            />
+            correspondaient à des
+            <label for="pat">produits dans le cadre de Projects Alimentaires Territoriaux</label>
             .
           </p>
-          <input type="submit" id="submit" value="Générer mon affiche" />
-        </form>
-        <div id="poster-preview">
+          <v-btn x-large color="primary" @click="submit">Générer mon affiche</v-btn>
+          <p class="mt-4 caption">
+            Pour ajouter une photo à l'affiche et accéder à d'autres fonctionnalités,
+            <a href="/creer-mon-compte">créez un compte</a>
+          </p>
+        </v-form>
+        <div id="poster-preview" class="ml-8">
           <CanteenPoster v-bind="form" id="canteen-poster" />
         </div>
       </div>
@@ -131,6 +189,16 @@
 import Constants from "@/constants"
 import CanteenPoster from "./CanteenPoster"
 import html2pdf from "html2pdf.js"
+import validators from "@/validators"
+import { lastYear } from "@/utils"
+
+// normalise "À fîrst" to "A FIRST"
+function normaliseName(name) {
+  return name
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toUpperCase()
+}
 
 export default {
   components: {
@@ -143,18 +211,35 @@ export default {
         canteen: {},
       },
       communes: [],
+      loadingCommunes: false,
+      search: null,
+      formIsValid: true,
+      selectedCanteenId: undefined,
+      publicationYear: lastYear(),
     }
   },
   computed: {
+    validators() {
+      return validators
+    },
+    userCanteens() {
+      const canteens = this.$store.state.userCanteens
+      return canteens.sort((a, b) => {
+        return normaliseName(a.name) > normaliseName(b.name) ? 1 : 0
+      })
+    },
     userCanteen() {
-      return this.$store.state.userCanteens.length > 0 ? this.$store.state.userCanteens[0] : null
+      return this.userCanteens.length > 0 ? this.userCanteens[0] : {}
     },
     initialDiagnostic() {
       let diagnostics = this.isAuthenticated ? this.serverDiagnostics : this.localDiagnostics
-      return diagnostics.find((x) => x.year === 2020) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 })
+      return (
+        diagnostics.find((x) => x.year === this.publicationYear) ||
+        Object.assign({}, Constants.DefaultDiagnostics, { year: this.publicationYear })
+      )
     },
     serverDiagnostics() {
-      return this.userCanteen.diagnostics
+      return this.userCanteen.diagnostics || []
     },
     localDiagnostics() {
       return this.$store.getters.getLocalDiagnostics()
@@ -162,32 +247,67 @@ export default {
     isAuthenticated() {
       return !!this.$store.state.loggedUser
     },
+    selectedCanteen() {
+      return this.userCanteens.find((x) => x.id === this.selectedCanteenId) || {}
+    },
+    currentDiagnostic() {
+      return this.selectedCanteen?.diagnostics?.find((x) => x.year === this.publicationYear) || {}
+    },
+    previousDiagnostic() {
+      return this.selectedCanteen?.diagnostics?.find((x) => x.year === this.publicationYear - 1) || {}
+    },
   },
-  async mounted() {
+  beforeMount() {
     this.form.diagnostic = JSON.parse(JSON.stringify(this.initialDiagnostic))
     this.form.canteen = JSON.parse(JSON.stringify(this.userCanteen)) || {}
+    // initialise autocomplete options so existing city is seen as valid input and displayed
+    if (this.form.canteen.city) {
+      this.communes = [this.form.canteen.city]
+    }
+  },
+  watch: {
+    search(val) {
+      return val && val !== this.form.canteen.city && this.queryCommunes(val)
+    },
   },
   methods: {
-    async search() {
-      if (!this.form.commune) {
-        this.communes = []
-        return
-      }
-      const queryUrl =
-        "https://api-adresse.data.gouv.fr/search/?q=" + this.form.commune + "&type=municipality&autocomplete=1"
-      const response = await fetch(queryUrl)
-      this.communes = (await response.json()).features
+    queryCommunes(val) {
+      this.loadingCommunes = true
+      const queryUrl = "https://api-adresse.data.gouv.fr/search/?q=" + val + "&type=municipality&autocomplete=1"
+      return fetch(queryUrl)
+        .then((response) => response.json())
+        .then((response) => {
+          const communes = response.features
+          this.communes = communes.map((commune) => `${commune.properties.label}`)
+          this.loadingCommunes = false
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     async submit() {
-      //this fix an issue where the beginning of the pdf is blank depending on the scroll position
+      if (!this.selectedCanteenId) {
+        this.$refs.form.validate()
+        if (!this.formIsValid) {
+          this.$store.dispatch("notifyRequiredFieldsError")
+          return
+        }
+
+        this.saveDiagnostic()
+        this.saveCanteen()
+      }
+
+      // this fixes an issue where the beginning of the pdf is blank depending on the scroll position
       window.scrollTo({ top: 0 })
 
-      this.saveDiagnostic()
-      this.saveCanteen()
+      if (this.$matomo) {
+        this.$matomo.trackEvent("form", "submit", "poster-generator")
+      }
 
       const htmlPoster = document.getElementById("canteen-poster")
+      const canteenName = this.selectedCanteen.name || this.form.canteen.name
       const pdfOptions = {
-        filename: "Affiche_convives_2020.pdf",
+        filename: `Affiche_convives_${canteenName.replaceAll(" ", "_")}_${this.form.diagnostic.year}.pdf`,
         image: { type: "jpeg", quality: 1 },
         html2canvas: { scale: 2, dpi: 300, letterRendering: true },
         jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
@@ -238,6 +358,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+#content {
+  width: 210mm;
+}
+
 #poster-form-page {
   display: flex;
   flex-direction: column;
@@ -252,65 +376,11 @@ export default {
   width: 1200px;
 }
 
-#poster-form {
-  text-align: left;
-
-  p {
-    line-height: 50px;
-    margin: 0;
-  }
-
-  input,
-  select {
-    border: none;
-    border-bottom: 6px solid $ma-cantine-light-orange;
-    margin: 0.5em;
-    font-size: 1.2em;
-  }
-
-  input:required {
-    border-bottom-color: $ma-cantine-orange;
-  }
-
-  input:required:invalid {
-    outline: none;
-    box-shadow: none;
-  }
-
-  input:required:valid {
-    border-bottom-color: $ma-cantine-light-orange;
-  }
-
-  #servings {
-    width: 3em;
-  }
-
-  #total {
-    width: 6.5em;
-  }
-
-  .currency-field {
-    width: 5em;
-  }
-
-  #submit {
-    border: none;
-    background: $ma-cantine-orange;
-    border-radius: 1em;
-    padding: 0.5em;
-    color: $ma-cantine-white;
-    float: right;
-    font-weight: bold;
-    cursor: pointer;
-  }
-}
-
 #poster-preview {
   width: 210mm;
   min-width: 210mm;
   height: 296mm;
   min-height: 296mm;
-  margin-left: 2em;
   border: 1px solid $ma-cantine-grey;
 }
 
@@ -322,6 +392,10 @@ export default {
 }
 
 @media (max-width: 210mm) {
+  #content {
+    width: 100%;
+  }
+
   #poster-preview {
     display: none;
   }

@@ -1,66 +1,122 @@
 <template>
   <div class="poster-contents">
     <div id="heading">
-      <img src="/static/images/toque.svg" id="hat" alt="" />
       <div>
-        <h1>Cantine {{ canteen.name || "_________" }}</h1>
-        <p id="commune">{{ canteen.city || "_________" }}</p>
-        <p>Nous servons {{ canteen.dailyMealCount || "___" }} repas par jour</p>
-        <p>Dans la cantine de votre enfant, sur l'année de 2020, nous déclarons avoir servi en valeur d'achats:</p>
+        <h2>Qualité des approvisionnements dans l’établissement {{ canteen.name || "_________" }}</h2>
+        <div id="indicators">
+          <!-- Can't use <img> because the object-fit is not respected in the PDF generation -->
+          <div
+            :style="`background-image: url('${canteen.mainImage}')`"
+            v-if="canteen.mainImage"
+            class="cantine-image"
+            alt=""
+          />
+
+          <CanteenIndicators :canteen="canteen" />
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <img src="/static/images/CoffeeDoodle.png" id="hat" alt="" />
+    </div>
+
+    <p id="introduction">
+      Sur les {{ canteen.dailyMealCount }} repas servis aux convives, pour l’année {{ infoYear }}, voici la répartition,
+      en valeur d’achat, des produits bio, de qualité et durables (liste de labels ci-dessous) utilisés dans la
+      confection des repas
+    </p>
+
+    <div class="spacer"></div>
+
+    <div id="graphs">
+      <div>
+        <p class="graph-title">Approvisionnement {{ infoYear }}</p>
+        <SummaryStatistics :width="350" :qualityDiagnostic="diagnostic" class="summary-statistics" />
+      </div>
+      <div v-if="showPreviousDiagnostic">
+        <p class="graph-title">Rappel {{ infoYear - 1 }}</p>
+
+        <SummaryStatistics
+          :hideLegend="true"
+          :width="190"
+          :qualityDiagnostic="previousDiagnostic"
+          class="summary-statistics"
+        />
       </div>
     </div>
-    <SummaryStatistics :qualityDiagnostic="diagnostic" />
+
     <LogoList id="logos" />
+
+    <p v-if="patPercent" id="pat-percent">
+      En plus, {{ patPercent }} % de produits dans le cadre de Projects Alimentaires Territoriaux
+    </p>
+
+    <div class="spacer"></div>
     <div id="about">
-      <h2>Pourquoi je vois cette affiche ?</h2>
+      <h3>Pourquoi je vois cette affiche ?</h3>
       <p>
-        Depuis le 1er janvier 2020, les gestionnaires de restaurant collectif doivent informer les convives une fois par
-        an de la part des produits de qualité et durables entrant dans la composition des repas servis ainsi des
-        démarches entreprises pour développer des produits issus du commerce équitable. Ces informations sont fonction
-        de la valeur totale des achats réalisés sur l'année.
+        L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des produits composant les
+        menus et de soutenir l’objectif d’une alimentation plus saine et plus durable dans les restaurants. En
+        partenariat avec ma-cantine.beta.gouv.fr; plateforme gouvernementale en expérimentation, cet établissement a
+        rempli ses obligations d’information des convives.
       </p>
     </div>
+    <div class="spacer"></div>
     <div id="more-information">
-      <p class="url">
-        <span>En savoir plus de la loi EGAlim :</span>
-        <a href="https://ma-cantine.beta.gouv.fr">https://ma-cantine.beta.gouv.fr</a>
-      </p>
-      <img src="/static/images/qr-code.svg" id="qr" alt="QR code vers https://ma-cantine.beta.gouv.fr" />
+      <div class="footer-text">
+        <p style="margin-bottom: 0px;">En savoir plus de la loi EGAlim :</p>
+        <p><a href="https://ma-cantine.beta.gouv.fr/">https://ma-cantine.beta.gouv.fr/</a></p>
+        <qrcode-vue
+          v-if="canteen.publicationStatus !== 'published'"
+          value="https://ma-cantine.beta.gouv.fr"
+        ></qrcode-vue>
+      </div>
+      <div class="footer-text" style="text-align: right;" v-if="canteen.publicationStatus === 'published'">
+        <p style="width: 210px;">En savoir plus sur les pratiques mises en oeuvre par l'établissement</p>
+        <qrcode-vue :value="canteenUrl"></qrcode-vue>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import LogoList from "@/components/LogoList"
-import SummaryStatistics from "@/components/SummaryStatistics"
+import SummaryStatistics from "./SummaryStatistics"
+import CanteenIndicators from "@/components/CanteenIndicators"
+import QrcodeVue from "qrcode.vue"
+import { lastYear } from "@/utils"
 
 export default {
   components: {
     LogoList,
     SummaryStatistics,
+    CanteenIndicators,
+    QrcodeVue,
   },
   props: {
     canteen: Object,
     diagnostic: Object,
+    previousDiagnostic: Object,
   },
   computed: {
-    bioPercent() {
-      return this.percentageString(this.diagnostic.valueBio)
+    patPercent() {
+      const number = this.diagnostic.valuePatHt
+      const total = this.diagnostic.valueTotalHt
+      return !!number && !!total ? Math.round((100 * number) / total) : 0
     },
-    sustainablePercent() {
-      return this.percentageString(this.diagnostic.valueSustainable)
+    showPreviousDiagnostic() {
+      if (!this.previousDiagnostic) return false
+      return !!this.previousDiagnostic.valueTotalHt
     },
-    fairTradePercent() {
-      return this.percentageString(this.diagnostic.valueFairTrade)
+    canteenUrl() {
+      const baseUrl = window.location.toString().replace(window.location.pathname, "")
+      const fullPath = this.$router.resolve({
+        name: "CanteenPage",
+        params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
+      }).href
+      return baseUrl + fullPath
     },
-  },
-  methods: {
-    percentageString(number) {
-      if (!isNaN(number) && this.diagnostic.valueTotal) {
-        const value = Math.floor((number / this.diagnostic.valueTotal) * 1000) / 10
-        return value.toLocaleString("fr-FR")
-      }
-      return "__"
+    infoYear() {
+      return this.diagnostic.year || lastYear()
     },
   },
 }
@@ -70,59 +126,98 @@ export default {
 .poster-contents {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   height: 296mm;
   overflow: hidden; // to show how it will be on paper
-  padding: 15mm;
+  padding: 14mm;
   // Need to repeat some styling directly here for PDF generation
   font-family: "Marianne";
-  align-items: center;
 }
 
 // copy vuetify styling to have on generated PDF
 p {
   margin-bottom: 16px;
 }
+i {
+  background: white;
+}
+
+.spacer {
+  flex-grow: 1;
+}
 
 #heading {
   display: flex;
-  align-items: center;
+  align-items: top;
 
   div {
     text-align: left;
   }
 
-  h1 {
-    font-size: 35px;
-    line-height: 1.3em;
-  }
-
-  #commune {
+  h2 {
     font-size: 25px;
   }
 }
 
+.cantine-image {
+  width: 150px;
+  height: 75px;
+  border-radius: 4px;
+  margin-right: 8px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#indicators {
+  margin: 8px 0 12px 0;
+  font-size: 12px;
+  line-height: 20px;
+  color: rgba(0, 0, 0, 0.54);
+  display: flex;
+  align-items: center;
+}
+
 #hat {
-  width: 200px;
-  margin-right: 1em;
+  width: 150px;
+  height: 112px;
+  margin-left: 1em;
+}
+
+#introduction {
+  font-size: 14px;
 }
 
 #logos {
-  width: 100%;
-  margin-bottom: 1em;
+  width: 440px;
+  margin-bottom: 1.5em;
+  margin-left: auto;
+  margin-right: auto;
+  align-self: center;
+}
+
+#graphs {
+  align-self: center;
+  display: flex;
+  align-items: center;
+}
+
+.graph-title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+#pat-percent {
+  text-align: center;
+  font-size: 13px;
 }
 
 #about {
   width: 100%;
-  margin: 0.5em 0;
-  padding: 0.5em 2em;
-  background: $ma-cantine-light-orange;
-  border-radius: 43px;
   text-align: left;
 
-  h2 {
-    font-size: 18px;
-    margin-top: 16px;
+  h3 {
+    margin-bottom: 8px;
   }
 
   p {
@@ -133,28 +228,16 @@ p {
 #more-information {
   width: 100%;
   display: flex;
-  justify-content: space-around;
-  max-height: 30mm;
+  justify-content: space-between;
 
-  .url {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-
-    span {
-      font-weight: bold;
-    }
-
-    a {
-      color: $ma-cantine-grey;
-      text-decoration: none;
-    }
+  a {
+    color: $ma-cantine-grey;
+    text-decoration: none;
+    font-weight: bold;
   }
 
-  #qr {
-    margin: 0.5em;
-    width: 30mm;
-    height: 30mmm;
+  .footer-text {
+    font-size: 12px;
   }
 }
 </style>

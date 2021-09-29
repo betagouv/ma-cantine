@@ -12,8 +12,6 @@ class CanteenFactory(factory.django.DjangoModelFactory):
     name = factory.Faker("text", max_nb_chars=20)
     city = factory.Faker("city")
     postal_code = factory.Faker("postcode")
-    published = factory.Faker("boolean")
-    data_is_public = factory.Faker("boolean")
     daily_meal_count = factory.Faker("pyint")
 
     @factory.post_generation

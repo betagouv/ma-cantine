@@ -2,31 +2,78 @@
   <div>
     <v-checkbox
       hide-details="auto"
+      class="mb-4"
       v-model="diagnostic.hasDiversificationPlan"
       label="Si ma cantine fabrique plus de 200 repas par jour en moyenne, j'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales"
+      :readonly="readonly"
+      :disabled="readonly"
     />
 
-    <p class="text-left mt-6 mb-2">J'ai mis en place un menu végétarien dans ma cantine :</p>
-    <v-radio-group v-model="diagnostic.vegetarianWeeklyRecurrence">
-      <v-radio
-        class="ml-8"
-        v-for="item in frequency"
+    <fieldset class="mt-3">
+      <legend class="text-left mb-2 mt-3" :class="{ 'grey--text': !diagnostic.hasDiversificationPlan }">
+        Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :
+      </legend>
+      <v-checkbox
+        hide-details="auto"
+        class="ml-8 mt-2"
+        v-model="diagnostic.diversificationPlanActions"
+        :multiple="true"
+        v-for="item in diversificationPlanActions"
         :key="item.value"
-        :label="item.label"
         :value="item.value"
-      ></v-radio>
-    </v-radio-group>
+        :label="item.label"
+        :readonly="readonly || !diagnostic.hasDiversificationPlan"
+        :disabled="readonly || !diagnostic.hasDiversificationPlan"
+      />
+    </fieldset>
 
-    <p class="text-left mt-6 mb-2">Le menu végétarien proposé est :</p>
-    <v-radio-group v-model="diagnostic.vegetarianMenuType">
-      <v-radio
-        class="ml-8"
-        v-for="item in menuTypes"
+    <fieldset class="mt-3">
+      <legend class="text-left my-3">J'ai mis en place un menu végétarien dans ma cantine :</legend>
+      <v-radio-group class="my-0" v-model="diagnostic.vegetarianWeeklyRecurrence" hide-details>
+        <v-radio
+          class="ml-8"
+          v-for="item in frequency"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :readonly="readonly"
+          :disabled="readonly"
+        ></v-radio>
+      </v-radio-group>
+    </fieldset>
+
+    <fieldset class="mt-3">
+      <legend class="text-left my-3">Le menu végétarien proposé est :</legend>
+      <v-radio-group class="my-0" v-model="diagnostic.vegetarianMenuType" hide-details>
+        <v-radio
+          class="ml-8"
+          v-for="item in menuTypes"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :readonly="readonly"
+          :disabled="readonly"
+        ></v-radio>
+      </v-radio-group>
+    </fieldset>
+
+    <fieldset class="mt-3">
+      <legend class="text-left mb-2 mt-3">
+        Le plat principal de mon menu végétarien est majoritairement à base de :
+      </legend>
+      <v-checkbox
+        hide-details="auto"
+        class="ml-8 mt-2"
+        v-model="diagnostic.vegetarianMenuBases"
+        :multiple="true"
+        v-for="item in menuBases"
         :key="item.value"
-        :label="item.label"
         :value="item.value"
-      ></v-radio>
-    </v-radio-group>
+        :label="item.label"
+        :readonly="readonly"
+        :disabled="readonly"
+      />
+    </fieldset>
   </div>
 </template>
 
@@ -34,6 +81,30 @@
 export default {
   data() {
     return {
+      diversificationPlanActions: [
+        {
+          label:
+            "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
+          value: "PRODUCTS",
+        },
+        {
+          label: "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
+          value: "PRESENTATION",
+        },
+        {
+          label: "Agir sur la manière dont les menus sont conçus en soulignant attributs positifs des plats",
+          value: "MENU",
+        },
+        {
+          label: "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
+          value: "PROMOTION",
+        },
+        {
+          label:
+            "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
+          value: "TRAINING",
+        },
+      ],
       frequency: [
         {
           label: "Moins d'une fois par semaine",
@@ -47,25 +118,61 @@ export default {
           label: "Plus d'une fois par semaine",
           value: "HIGH",
         },
+        {
+          label: "De façon quotidienne",
+          value: "DAILY",
+        },
       ],
       menuTypes: [
         {
-          label: "Un menu végétarien unique",
+          label: "Un menu végétarien en plat unique",
           value: "UNIQUE",
         },
         {
-          label: "Plusieurs menus végétariens alternatifs",
+          label: "Un menu végétarien composé de plusieurs plats végétariens",
           value: "SEVERAL",
         },
         {
-          label: "Un menu végétarien alternatif à d'autres menus non-végétariens",
+          label: "Un menu végétarien en plus d’autres menus non végétariens",
           value: "ALTERNATIVES",
+        },
+      ],
+      menuBases: [
+        {
+          label: "De céréales et/ou les légumes secs (hors soja)",
+          value: "GRAIN",
+        },
+        {
+          label: "De soja",
+          value: "SOY",
+        },
+        {
+          label: "De fromage",
+          value: "CHEESE",
+        },
+        {
+          label: "D’œufs",
+          value: "EGG",
+        },
+        {
+          label: "De plats transformés prêts à l'emploi",
+          value: "READYMADE",
         },
       ],
     }
   },
   props: {
     diagnostic: Object,
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
 }
 </script>
+
+<style scoped>
+fieldset {
+  border: none;
+}
+</style>

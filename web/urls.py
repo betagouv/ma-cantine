@@ -1,14 +1,24 @@
 from django.contrib.auth import views as auth_views
+from django.contrib.sitemaps.views import sitemap
+from django.views.decorators.cache import cache_page
+from django.views.generic.base import RedirectView
 from django.urls import path
+from web.sitemaps import CanteenSitemap, BlogPostSitemap, WebSitemap
 from web.views import (
     VueAppDisplayView,
-    RegisterView,
+    RegisterUserView,
     ActivationTokenView,
     RegisterDoneView,
     RegisterSendMailFailedView,
     RegisterInvalidTokenView,
     AccountActivationView,
 )
+
+sitemaps = {
+    "canteens": CanteenSitemap,
+    "blog": BlogPostSitemap,
+    "other": WebSitemap,
+}
 
 urlpatterns = [
     path("", VueAppDisplayView.as_view(), name="app"),
@@ -17,6 +27,7 @@ urlpatterns = [
         "s-identifier",
         auth_views.LoginView.as_view(
             template_name="auth/login.html",
+            redirect_authenticated_user=True,
         ),
         name="login",
     ),
@@ -77,7 +88,12 @@ urlpatterns = [
         name="password_reset_complete",
     ),
     # Views allowing the creation of an account
-    path("creer-mon-compte", RegisterView.as_view(), name="register"),
+    path("creer-mon-compte", RegisterUserView.as_view(), name="register"),
+    path(
+        "nouvel-utilisateur",
+        RedirectView.as_view(url="/creer-mon-compte"),
+        name="register_user",
+    ),
     path(
         "email-de-confirmation",
         ActivationTokenView.as_view(),
@@ -99,4 +115,10 @@ urlpatterns = [
         name="activate",
     ),
     path("token-invalide", RegisterInvalidTokenView.as_view(), name="invalid_token"),
+    path(
+        "sitemap.xml",
+        cache_page(60 * 60)(sitemap),
+        {"sitemaps": sitemaps},
+        name="sitemap",
+    ),
 ]

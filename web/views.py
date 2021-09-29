@@ -1,15 +1,15 @@
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
-from django.contrib.auth import get_user_model, tokens, login, logout
+from django.contrib.auth import get_user_model, tokens, login
 from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.conf import settings
-from django.template import loader
 from django.utils.encoding import force_bytes
-from django.core.mail import send_mail
+from common.utils import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, FormView, View
-from web.forms import RegisterForm
+from web.forms import RegisterUserForm
 
 
 class VueAppDisplayView(TemplateView):
@@ -20,13 +20,18 @@ class VueAppDisplayView(TemplateView):
     template_name = "vue-app.html"
 
 
-class RegisterView(FormView):
+class RegisterUserView(FormView):
     """
-    View containing the form to create an account
+    View containing the user-only form to create an account
     """
 
-    form_class = RegisterForm
-    template_name = "auth/register.html"
+    form_class = RegisterUserForm
+    template_name = "auth/register_user.html"
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect("/")
+        return super(RegisterUserView, self).get(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.save()
@@ -108,7 +113,7 @@ class AccountActivationView(View):
         if user and user.email_confirmed:
             messages.info(
                 request,
-                "Votre compte est bien active, vous pouvez vous identifier.",
+                "Votre adresse email a bien été validé, vous pouvez vous identifier.",
             )
             return redirect(reverse_lazy("login"))
         if user is not None and tokens.default_token_generator.check_token(user, token):
@@ -128,8 +133,6 @@ def _login_and_send_activation_email(username, request):
         login(request, user)
 
         token = tokens.default_token_generator.make_token(user)
-        html_template = "auth/account_activate_email.html"
-        text_template = "auth/account_activate_email.txt"
         context = {
             "token": token,
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
@@ -137,12 +140,10 @@ def _login_and_send_activation_email(username, request):
             "domain": settings.HOSTNAME,
         }
         send_mail(
-            subject="Activation de votre compte Ma Cantine",
-            message=loader.render_to_string(text_template, context),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            html_message=loader.render_to_string(html_template, context),
-            recipient_list=[user.email],
-            fail_silently=False,
+            subject="Confirmation de votre adresse email - ma cantine",
+            template="auth/account_activate_email",
+            context=context,
+            to=[user.email],
         )
         return redirect(reverse_lazy("app"))
     except Exception:

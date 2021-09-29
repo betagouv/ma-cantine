@@ -19,6 +19,7 @@
               :target="resource.url ? '_blank' : null"
             >
               {{ resource.ctaText }}
+              <v-icon v-if="resource.url" small class="ml-2">mdi-open-in-new</v-icon>
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -30,34 +31,45 @@
 <script>
 export default {
   data() {
-    return {
-      resources: [
-        {
-          title: "Blog",
-          icon: "mdi-post",
-          description: "Découvrez notre espace blog et témoignages",
-          url: null,
-          to: { name: "BlogsHome" },
-          ctaText: "Visiter",
-        },
-        {
-          title: "Documentation",
-          icon: "mdi-file-document-multiple",
-          description: "Ressources pour les acteurs et actrices de la restauration collective",
-          url: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-          to: null,
-          ctaText: "Visiter",
-        },
-        {
-          title: "Devenir testeur",
-          icon: "mdi-tools",
-          description: "Ce site est en expérimentation, devenez testeur !",
-          url: null,
-          to: { name: "TesterParticipation" },
-          ctaText: "Participer",
-        },
-      ],
+    const resources = [
+      {
+        title: "Blog",
+        icon: "mdi-post",
+        description: "Découvrez notre espace blog et témoignages",
+        url: null,
+        to: { name: "BlogsHome" },
+        ctaText: "Visiter",
+      },
+      {
+        title: "Documentation",
+        icon: "mdi-file-document-multiple",
+        description: "Ressources pour les acteurs et actrices de la restauration collective",
+        url: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+        to: null,
+        ctaText: "Consulter",
+      },
+    ]
+    if (this.$store.state.loggedUser) {
+      resources.push({
+        title: "Générer mon affiche",
+        icon: "mdi-cloud-print-outline",
+        description: "Obtenez un PDF à afficher ou à envoyer par mail à vos convives",
+        url: null,
+        to: { name: "GeneratePosterPage" },
+        ctaText: "Générer",
+      })
+    } else {
+      resources.push({
+        title: "Devenir testeur",
+        icon: "mdi-tools",
+        description: "Ce site est en expérimentation, devenez testeur !",
+        url: null,
+        to: { name: "TesterParticipation" },
+        ctaText: "Participer",
+      })
     }
+
+    return { resources }
   },
 }
 </script>

@@ -1,6 +1,7 @@
 {
+  "DIGITAL": "Par voie électronique",
   "DISPLAY": "Par affichage sur le lieu de restauration",
-  "EMAIL": "Envoi d'e-mail aux convives ou \u00e0 leurs repr\u00e9sentants",
-  "OTHER": "Autres moyens d'affichage et de communication \u00e9lectronique",
+  "EMAIL": "Envoi d'e-mail aux convives ou à leurs représentants",
+  "OTHER": "Autres moyens d'affichage et de communication électronique",
   "WEBSITE": "Sur site internet ou intranet (mairie, cantine)"
 }

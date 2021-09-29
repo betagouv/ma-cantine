@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-app>
-      <Header />
+      <AppHeader />
 
       <v-main style="width: 100%">
         <v-container fluid :fill-height="!initialDataLoaded">
@@ -10,23 +10,26 @@
             style="position: absolute; left: 50%; top: 50%"
             v-if="!initialDataLoaded"
           ></v-progress-circular>
-          <router-view v-else class="mx-auto constrained" />
+          <router-view v-else class="mx-auto constrained" :key="$route.path" />
         </v-container>
       </v-main>
 
-      <Footer />
+      <AppFooter />
+      <NotificationSnackbar />
     </v-app>
   </div>
 </template>
 
 <script>
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
+import AppHeader from "@/components/AppHeader"
+import AppFooter from "@/components/AppFooter"
+import NotificationSnackbar from "@/components/NotificationSnackbar"
 
 export default {
   components: {
-    Header,
-    Footer,
+    AppHeader,
+    AppFooter,
+    NotificationSnackbar,
   },
   computed: {
     initialDataLoaded() {
@@ -40,20 +43,7 @@ export default {
     },
     initialDataLoaded() {
       if (!this.$store.state.loggedUser) return
-
-      const hasDiagnostics = this.$store.state.userCanteens.some((x) => x.diagnostics && x.diagnostics.length > 0)
-      if (hasDiagnostics) {
-        this.$store.dispatch("removeLocalStorageDiagnostics")
-        return
-      }
-
-      const localStorageDiagnostics = this.$store.getters.getLocalDiagnostics()
-      const canteenId = this.$store.state.userCanteens[0].id
-      Promise.all(
-        localStorageDiagnostics.map((payload) => this.$store.dispatch("createDiagnostic", { canteenId, payload }))
-      )
-        .then(() => this.$store.dispatch("removeLocalStorageDiagnostics"))
-        .catch((error) => console.error(error.message))
+      this.$store.dispatch("removeLocalStorageDiagnostics")
     },
   },
 }
