@@ -26,7 +26,7 @@ html2text==2020.1.16
 html5lib==1.1
 idna==3.2
 iniconfig==1.1.1
-isort==5.8.0
+isort==5.9.3
 jmespath==0.10.0
 lazy-object-proxy==1.6.0
 mccabe==0.6.1
