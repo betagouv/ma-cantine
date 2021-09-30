@@ -146,18 +146,17 @@
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-else-if="visibleCanteens && visibleCanteens.length > 0">
+      <div class="mt-3 mb-n4 text-body-2 grey--text" v-if="hasActiveFilter || !!searchTerm">
+        {{ resultsCountText }}
+      </div>
+
       <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
       <v-row>
         <v-col v-for="canteen in visibleCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
           <PublishedCanteenCard :canteen="canteen" />
         </v-col>
       </v-row>
-      <v-pagination
-        class="my-6"
-        v-model="page"
-        :length="Math.ceil(publishedCanteenCount / limit)"
-        v-if="$vuetify.breakpoint.smAndDown"
-      ></v-pagination>
+      <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
     </div>
     <div v-else class="d-flex flex-column align-center py-10">
       <v-icon large>mdi-inbox-remove</v-icon>
@@ -229,6 +228,15 @@ export default {
     },
     validators() {
       return validators
+    },
+    resultsCountText() {
+      if (this.hasActiveFilter || this.searchTerm) {
+        if (!this.publishedCanteenCount) return "Aucun établissement ne corréspond à votre recherche"
+        else if (this.publishedCanteenCount === 1) return "Un établissement correspond à votre recherche"
+        else `${this.publishedCanteenCount} établissements correspondent à votre recherche`
+      }
+      if (this.publishedCanteenCount === 1) return "Un établissement"
+      else return `${this.publishedCanteenCount} établissements`
     },
   },
   methods: {
