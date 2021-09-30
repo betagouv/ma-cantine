@@ -1,4 +1,5 @@
 import logging
+from collections import OrderedDict
 from django.conf import settings
 from django.http import JsonResponse
 from common.utils import send_mail
@@ -14,6 +15,7 @@ from rest_framework import permissions, status, filters
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
+from rest_framework.response import Response
 from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
@@ -29,6 +31,32 @@ logger = logging.getLogger(__name__)
 class PublishedCanteensPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
+    departments = []
+    sectors = []
+
+    def paginate_queryset(self, queryset, request, view=None):
+        # Performance improvements possible
+        self.departments = set(
+            filter(lambda x: x, queryset.values_list("department", flat=True))
+        )
+        self.sectors = set(
+            filter(lambda x: x, queryset.values_list("sectors", flat=True))
+        )
+        return super().paginate_queryset(queryset, request, view)
+
+    def get_paginated_response(self, data):
+        return Response(
+            OrderedDict(
+                [
+                    ("count", self.count),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                    ("departments", self.departments),
+                    ("sectors", self.sectors),
+                ]
+            )
+        )
 
 
 class PublishedCanteenFilterSet(django_filters.FilterSet):
