@@ -179,10 +179,8 @@ export default {
   data() {
     return {
       limit: 6,
-      departments: jsonDepartments.map((x) => ({
-        text: `${x.departmentCode} - ${x.departmentName}`,
-        value: x.departmentCode,
-      })),
+      departments: [],
+      sectors: [],
       visibleCanteens: null,
       publishedCanteenCount: null,
       page: null,
@@ -213,11 +211,6 @@ export default {
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
       if (this.appliedFilters.maxMealCount) query.maxRepasJour = String(this.appliedFilters.maxMealCount)
       return query
-    },
-    sectors() {
-      return this.$store.state.sectors
-        .map((x) => ({ text: x.name, value: x.id }))
-        .sort((a, b) => (a.text > b.text ? 1 : -1))
     },
     hasActiveFilter() {
       return (
@@ -250,6 +243,8 @@ export default {
         .then((response) => {
           this.publishedCanteenCount = response.count
           this.visibleCanteens = response.results
+          this.setDepartments(response.departments)
+          this.setSectors(response.sectors)
         })
         .catch(() => {
           this.publishedCanteenCount = 0
@@ -305,6 +300,40 @@ export default {
       } else {
         this.$router.push({ query }).catch(() => {})
       }
+    },
+    setDepartments(enabledDepartmentIds) {
+      const enabledDepartments = jsonDepartments
+        .filter((x) => enabledDepartmentIds.indexOf(x.departmentCode) > -1)
+        .map((x) => ({
+          text: `${x.departmentCode} - ${x.departmentName}`,
+          value: x.departmentCode,
+        }))
+      const headerText =
+        this.hasActiveFilter || this.searchTerm
+          ? "Ces départements ne contiennent pas d'établissements correspondant à votre recherche :"
+          : "Nous n'avons pas encore d'établissements dans ces départements :"
+      const header = { header: headerText }
+
+      const divider = { divider: true }
+
+      const disabledDepartments = jsonDepartments
+        .filter((x) => enabledDepartmentIds.indexOf(x.departmentCode) === -1)
+        .map((x) => ({
+          text: `${x.departmentCode} - ${x.departmentName}`,
+          value: x.departmentCode,
+          disabled: true,
+        }))
+
+      this.departments = [...enabledDepartments, divider, header, ...disabledDepartments]
+    },
+    setSectors(enabledSectorIds) {
+      this.sectors = this.$store.state.sectors
+        .map((x) => ({
+          text: x.name,
+          value: x.id,
+          disabled: enabledSectorIds.indexOf(x.id) === -1,
+        }))
+        .sort((a, b) => (a.text > b.text ? 1 : -1))
     },
   },
   watch: {
