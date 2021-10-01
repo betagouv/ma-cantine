@@ -21,65 +21,9 @@
         solo
         class="my-2"
         rows="3"
-        counter="255"
+        counter="500"
         v-model="canteen.publicationComments"
         hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
-      ></v-textarea>
-      <label class="body-2" for="quality">
-        Vous avez peut-être des choses et actions à préciser sur la gestion de vos achats et de vos appros...
-      </label>
-      <v-textarea
-        id="quality"
-        solo
-        class="my-2"
-        rows="3"
-        counter="255"
-        v-model="canteen.qualityComments"
-        hint="Vous pouvez par exemple détailler votre stratégie afin d'accroître la part de bio dans vos repas, évoquer vos succès dans vos démarches pour plus de qualité, ou au contraire les difficultés que vous avez rencontré; témoigner de vos actions..."
-      ></v-textarea>
-      <label class="body-2" for="waste">
-        Vous avez peut-être des choses et actions à préciser sur vos initiatives pour réduire le gaspillage...
-      </label>
-      <v-textarea
-        id="waste"
-        solo
-        class="my-2"
-        rows="3"
-        counter="255"
-        v-model="canteen.wasteComments"
-        hint="Vous avez fait l'acquisition d'une machine de pesée ou imaginé une solution innovante afin de sensibiliser vos convives sur les kg de gaspillage ? C'est le moment de le communiquer ! Vous pouvez également, si vous le souhaitez, donner des chiffres de la réduction de déchets dans votre établissement... Vous pouvez également évoquer les relations établies avec les associations de votre secteur... votre façon de valoriser les repas cuisinés mais non consommés..."
-      ></v-textarea>
-      <label class="body-2" for="diversification">A propos des protéines et de leur diversification...</label>
-      <v-textarea
-        id="diversification"
-        solo
-        class="my-2"
-        rows="3"
-        counter="255"
-        v-model="canteen.diversificationComments"
-        hint="Ici peut être le lieu pour évoquer quand et comment vous avez choisi de servir des repas végétariens gourmands. Peut-être donner le secret de vos recettes préférées ? Pourquoi pas nous révéler votre ingrédient sans protéines animales qui révolutionne vos menus... ?"
-      ></v-textarea>
-      <label class="body-2" for="plastics">Sur le plastique...</label>
-      <v-textarea
-        id="plastics"
-        solo
-        class="my-2"
-        rows="3"
-        counter="255"
-        v-model="canteen.plasticsComments"
-        hint="Même chose que pour les champs ci-dessus. Vous commencez à avoir l'habitude... :) C'est l'occasion et le lieu de nous faire rêver d'un monde sans plastique, de nous raconter vos démarches et actions afin de réduire son usage dans votre établissement..."
-      ></v-textarea>
-      <label class="body-2" for="information">
-        Vous communiquez avec vos convives ? par quels moyens ? quelles infos ?
-      </label>
-      <v-textarea
-        id="information"
-        solo
-        class="my-2"
-        rows="3"
-        counter="255"
-        v-model="canteen.informationComments"
-        hint="Réfléchir à faire de bonnes assiettes de qualité, c'est tout un art. Est-ce que vos convives ont connaissance des actions que vous menez ? Comment les sensibilisez-vous à vos part de bio, produits durables... ? Par quel biais ? Avez-vous un site internet de référence, une infolettre, des affiches sur les lieux de restauration ?"
       ></v-textarea>
       <PublicationField class="mb-4" :canteen="canteen" v-model="publicationRequested" />
     </v-form>
