@@ -8,19 +8,18 @@
         </v-btn>
       </div>
       <v-card-text>
-        <CanteenDashboard :diagnostics="diagnostics" :canteen="canteen" />
+        <CanteenPublication :canteen="canteen" />
       </v-card-text>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import CanteenDashboard from "@/components/CanteenDashboard"
-import { diagnosticsMap } from "@/utils"
+import CanteenPublication from "@/components/CanteenPublication"
 
 export default {
   name: "PublicationPreview",
-  components: { CanteenDashboard },
+  components: { CanteenPublication },
   props: {
     canteen: {
       type: Object,
@@ -29,11 +28,6 @@ export default {
     value: {
       type: Boolean,
       required: true,
-    },
-  },
-  computed: {
-    diagnostics() {
-      return diagnosticsMap(this.canteen.diagnostics)
     },
   },
 }
