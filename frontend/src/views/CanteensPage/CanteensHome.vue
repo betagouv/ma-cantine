@@ -146,9 +146,9 @@
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-else-if="visibleCanteens && visibleCanteens.length > 0">
-      <div class="mt-3 mb-n4 text-body-2 grey--text" v-if="hasActiveFilter || !!searchTerm">
+      <p class="mt-3 mb-n4 text-body-2 grey--text" v-if="resultsCountText">
         {{ resultsCountText }}
-      </div>
+      </p>
 
       <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
       <v-row>
@@ -230,13 +230,19 @@ export default {
       return validators
     },
     resultsCountText() {
-      if (this.hasActiveFilter || this.searchTerm) {
-        if (!this.publishedCanteenCount) return "Aucun établissement ne corréspond à votre recherche"
-        else if (this.publishedCanteenCount === 1) return "Un établissement correspond à votre recherche"
-        else return `${this.publishedCanteenCount} établissements correspondent à votre recherche`
-      }
-      if (this.publishedCanteenCount === 1) return "Un établissement"
-      else return `${this.publishedCanteenCount} établissements`
+      const filterQueries = [
+        this.$route.query.recherche,
+        this.$route.query.departement,
+        this.$route.query.secteurs,
+        this.$route.query.minRepasJour,
+        this.$route.query.maxRepasJour,
+      ]
+      const hasFilter = filterQueries.some((x) => x !== 0 && !!x)
+
+      if (!hasFilter || !this.publishedCanteenCount) return null
+
+      if (this.publishedCanteenCount === 1) return "Un établissement correspond à votre recherche"
+      else return `${this.publishedCanteenCount} établissements correspondent à votre recherche`
     },
   },
   methods: {
