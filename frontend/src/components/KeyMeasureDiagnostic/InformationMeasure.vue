@@ -56,6 +56,7 @@
       </v-row>
     </fieldset>
 
+    <!-- TODO: is this question that different from the first? -->
     <v-checkbox
       hide-details="auto"
       v-model="diagnostic.communicatesOnFoodPlan"
