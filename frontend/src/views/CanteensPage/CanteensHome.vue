@@ -367,4 +367,7 @@ export default {
   content: "⚫︎";
   color: #0c7f46;
 }
+div >>> .v-list-item--disabled .theme--light.v-icon {
+  color: rgba(0, 0, 0, 0.22);
+}
 </style>
