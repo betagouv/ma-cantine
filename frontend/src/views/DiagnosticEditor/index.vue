@@ -211,11 +211,7 @@ import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
-import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears } from "@/utils"
-
-function percentage(part, total) {
-  return Math.round((part / total) * 100)
-}
+import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage } from "@/utils"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
@@ -338,11 +334,11 @@ export default {
       if (this.diagnostic.valueTotalHt > 0) {
         let summary = []
         if (hasValue(this.diagnostic.valueBioHt)) {
-          summary.push(`${percentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
+          summary.push(`${getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
         }
         if (hasValue(this.diagnostic.valueSustainableHt)) {
           summary.push(
-            `${percentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
+            `${getPercentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
           )
         }
         return summary.join(", ")

@@ -29,6 +29,8 @@ pip install -r requirements.txt
 
 ### Installer les dépendances du frontend
 
+On utilise `node` version 14.
+
 L'application frontend se trouve sous `/frontend`. Pour installer les dépendances :
 
 ```
