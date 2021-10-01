@@ -233,7 +233,7 @@ export default {
       if (this.hasActiveFilter || this.searchTerm) {
         if (!this.publishedCanteenCount) return "Aucun établissement ne corréspond à votre recherche"
         else if (this.publishedCanteenCount === 1) return "Un établissement correspond à votre recherche"
-        else `${this.publishedCanteenCount} établissements correspondent à votre recherche`
+        else return `${this.publishedCanteenCount} établissements correspondent à votre recherche`
       }
       if (this.publishedCanteenCount === 1) return "Un établissement"
       else return `${this.publishedCanteenCount} établissements`
