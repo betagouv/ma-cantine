@@ -7,12 +7,6 @@
         "plaintext",
         "markdown"
     ],
-    "python.linting.pylintEnabled": true,
-    "python.linting.pylintArgs": [
-        "--load-plugins=pylint_django",
-        "--rcfile",
-        "${workspaceRoot}/.pylintrc"
-    ],
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.wrappingIndent": "indent",
@@ -27,5 +21,16 @@
     "prettier.prettierPath": "./frontend/node_modules/prettier",
     "prettier.configPath": "./frontend/.prettierrc",
     "files.eol": "\n",
-    "python.linting.enabled": true
+    "[python]": {
+        "editor.defaultFormatter": null
+    },
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+        "--load-plugins=pylint_django",
+        "--rcfile",
+        "${workspaceRoot}/.pylintrc"
+    ],
+    "python.formatting.provider": "black",
+    "python.formatting.blackPath": "${workspaceRoot}/venv/bin/black"
 }
