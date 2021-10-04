@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="my-0" v-if="includeProductOrigin && latestDiagnostic">
+    <p class="my-0" v-if="includeProductOrigin && productOriginDiagnostic">
       <v-icon small>mdi-food-apple</v-icon>
       {{ productOriginText }}
     </p>
@@ -42,14 +42,19 @@ export default {
         .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
         .join(", ")
     },
-    latestDiagnostic() {
-      return this.canteen.diagnostics.find((x) => x.year === lastYear())
+    productOriginDiagnostic() {
+      const latestDiagnostic = this.canteen.diagnostics.find((x) => x.year === lastYear())
+      if (!latestDiagnostic || !latestDiagnostic.valueBioHt || !latestDiagnostic.valueSustainableHt) return null
+      return latestDiagnostic
     },
     productOriginText() {
-      const bioPercent = getPercentage(this.latestDiagnostic.valueBioHt, this.latestDiagnostic.valueTotalHt)
+      const bioPercent = getPercentage(
+        this.productOriginDiagnostic.valueBioHt,
+        this.productOriginDiagnostic.valueTotalHt
+      )
       const sustainablePercent = getPercentage(
-        this.latestDiagnostic.valueSustainableHt,
-        this.latestDiagnostic.valueTotalHt
+        this.productOriginDiagnostic.valueSustainableHt,
+        this.productOriginDiagnostic.valueTotalHt
       )
       return `${bioPercent} % bio, ${sustainablePercent} % qualité et durables`
     },
