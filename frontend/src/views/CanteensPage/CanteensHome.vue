@@ -163,11 +163,13 @@
         {{ resultsCountText }}
       </p>
       <v-row class="my-2">
+        <v-col cols="3"></v-col>
         <v-spacer></v-spacer>
         <v-col>
           <v-pagination v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
         </v-col>
-        <v-col cols="4">
+        <v-spacer></v-spacer>
+        <v-col id="ordering" cols="3">
           <v-select v-model="orderBy" :items="orderOptions" hide-details label="Trier par" outlined dense></v-select>
         </v-col>
       </v-row>
@@ -534,5 +536,8 @@ export default {
 }
 div >>> .v-list-item--disabled .theme--light.v-icon {
   color: rgba(0, 0, 0, 0.22);
+}
+#ordering >>> .v-select__selection {
+  font-size: 12px;
 }
 </style>
