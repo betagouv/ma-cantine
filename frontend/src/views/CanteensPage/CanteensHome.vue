@@ -163,13 +163,17 @@
         {{ resultsCountText }}
       </p>
       <v-row class="my-2">
-        <v-col cols="3"></v-col>
-        <v-spacer></v-spacer>
-        <v-col>
-          <v-pagination v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
+        <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp"></v-col>
+        <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
+        <v-col cols="12" sm="6">
+          <v-pagination
+            v-model="page"
+            :length="Math.ceil(publishedCanteenCount / limit)"
+            :total-visible="5"
+          ></v-pagination>
         </v-col>
         <v-spacer></v-spacer>
-        <v-col id="ordering" cols="3">
+        <v-col id="ordering" cols="12" sm="3">
           <v-select v-model="orderBy" :items="orderOptions" hide-details label="Trier par" outlined dense></v-select>
         </v-col>
       </v-row>
@@ -178,7 +182,12 @@
           <PublishedCanteenCard :canteen="canteen" />
         </v-col>
       </v-row>
-      <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
+      <v-pagination
+        class="my-6"
+        v-model="page"
+        :length="Math.ceil(publishedCanteenCount / limit)"
+        :total-visible="5"
+      ></v-pagination>
     </div>
     <div v-else class="d-flex flex-column align-center py-10">
       <v-icon large>mdi-inbox-remove</v-icon>
