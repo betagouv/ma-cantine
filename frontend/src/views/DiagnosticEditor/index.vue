@@ -49,8 +49,8 @@
 
             <div v-if="isTeledeclarationYear">
               <p v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration" class="text-caption ma-0 pl-4">
-                <v-icon small>mdi-alert</v-icon>
-                Remplissez les données d'approvisionnement pour télédéclarer ce diagnostic
+                <v-icon small>mdi-information-outline</v-icon>
+                Vous pourrez télédéclarer ce diagnostic après avoir remplir les données d'approvisionnement
               </p>
               <p v-else-if="!hasActiveTeledeclaration" class="text-caption ma-0 pl-4">
                 <v-icon small>mdi-information</v-icon>
@@ -211,11 +211,7 @@ import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
-import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears } from "@/utils"
-
-function percentage(part, total) {
-  return Math.round((part / total) * 100)
-}
+import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage } from "@/utils"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
@@ -322,6 +318,9 @@ export default {
     },
   },
   beforeMount() {
+    if (this.userCanteens.length === 1) {
+      this.selectedCanteenId = this.userCanteens[0].id
+    }
     if (this.isNewDiagnostic) return
 
     if (!this.canteen) this.$router.replace({ name: "NotFound" })
@@ -335,11 +334,11 @@ export default {
       if (this.diagnostic.valueTotalHt > 0) {
         let summary = []
         if (hasValue(this.diagnostic.valueBioHt)) {
-          summary.push(`${percentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
+          summary.push(`${getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
         }
         if (hasValue(this.diagnostic.valueSustainableHt)) {
           summary.push(
-            `${percentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
+            `${getPercentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
           )
         }
         return summary.join(", ")
