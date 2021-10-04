@@ -46,10 +46,6 @@
 
     <LogoList id="logos" />
 
-    <p v-if="patPercent" id="pat-percent">
-      En plus, {{ patPercent }} % de produits dans le cadre de Projects Alimentaires Territoriaux
-    </p>
-
     <div class="spacer"></div>
     <div id="about">
       <h3>Pourquoi je vois cette affiche ?</h3>
@@ -98,11 +94,6 @@ export default {
     previousDiagnostic: Object,
   },
   computed: {
-    patPercent() {
-      const number = this.diagnostic.valuePatHt
-      const total = this.diagnostic.valueTotalHt
-      return !!number && !!total ? Math.round((100 * number) / total) : 0
-    },
     showPreviousDiagnostic() {
       if (!this.previousDiagnostic) return false
       return !!this.previousDiagnostic.valueTotalHt
@@ -205,11 +196,6 @@ i {
   text-align: center;
   font-weight: bold;
   margin-bottom: 8px;
-}
-
-#pat-percent {
-  text-align: center;
-  font-size: 13px;
 }
 
 #about {

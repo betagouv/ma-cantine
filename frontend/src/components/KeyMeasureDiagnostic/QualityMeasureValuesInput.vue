@@ -11,7 +11,7 @@
       :rules="[
         validators.nonNegativeOrEmpty,
         validators.gteSum(
-          [diagnostic.valueBioHt, diagnostic.valueSustainableHt, diagnostic.valueFairTradeHt, diagnostic.valuePatHt],
+          [diagnostic.valueBioHt, diagnostic.valueSustainableHt, diagnostic.valueFairTradeHt],
           totalErrorMessage
         ),
       ]"
@@ -74,25 +74,6 @@
       :disabled="readonly"
       @blur="checkTotal"
     ></v-text-field>
-
-    <div v-if="includePat" class="mb-1 mt-4">
-      <label :for="'pat-' + diagnostic.year" class="body-2">
-        ...en produits dans le cadre de Projects Alimentaires Territoriaux
-      </label>
-      <v-text-field
-        :id="'pat-' + diagnostic.year"
-        hide-details="auto"
-        type="number"
-        :rules="[validators.nonNegativeOrEmpty]"
-        validate-on-blur
-        solo
-        placeholder="Je ne sais pas"
-        v-model.number="diagnostic.valuePatHt"
-        :readonly="readonly"
-        :disabled="readonly"
-        @blur="checkTotal"
-      ></v-text-field>
-    </div>
   </fieldset>
 </template>
 
@@ -104,10 +85,6 @@ export default {
     label: String,
     originalDiagnostic: Object,
     readonly: {
-      type: Boolean,
-      default: false,
-    },
-    includePat: {
       type: Boolean,
       default: false,
     },
@@ -127,12 +104,7 @@ export default {
   methods: {
     checkTotal() {
       const result = validators.gteSum(
-        [
-          this.diagnostic.valueBioHt,
-          this.diagnostic.valueSustainableHt,
-          this.diagnostic.valueFairTradeHt,
-          this.diagnostic.valuePatHt,
-        ],
+        [this.diagnostic.valueBioHt, this.diagnostic.valueSustainableHt, this.diagnostic.valueFairTradeHt],
         this.totalErrorMessage
       )(this.diagnostic.valueTotalHt)
       this.totalError = result !== true

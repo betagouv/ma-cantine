@@ -154,21 +154,6 @@
             />
             correspondaient à des
             <label for="sustainable">produits de qualité et durables (hors bio)</label>
-            et
-            <v-text-field
-              id="pat"
-              v-model.number="form.diagnostic.valuePatHt"
-              type="number"
-              :rules="[validators.nonNegativeOrEmpty]"
-              placeholder="1000"
-              suffix="euros HT"
-              solo
-              class="my-4"
-              hide-details="auto"
-              validate-on-blur
-            />
-            correspondaient à des
-            <label for="pat">produits dans le cadre de Projects Alimentaires Territoriaux</label>
             .
           </p>
           <v-btn x-large color="primary" @click="submit">Générer mon affiche</v-btn>
