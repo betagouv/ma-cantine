@@ -12,7 +12,7 @@ from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPos
 from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleView
 from api.views import ImportDiagnosticsView, TeledeclarationCreateView
 from api.views import TeledeclarationCancelView, TeledeclarationPdfView
-from api.views import PublishCanteenView, UnpublishCanteenView
+from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
 
 
 urlpatterns = {
@@ -68,6 +68,11 @@ urlpatterns = {
         name="add_manager",
     ),
     path("contactCanteen/", SendCanteenEmailView.as_view(), name="contact_canteen"),
+    path(
+        "canteenNotFoundMessage/",
+        SendCanteenNotFoundEmail.as_view(),
+        name="canteen_not_found",
+    ),
     path(
         "removeManager/",
         RemoveManagerView.as_view(),
