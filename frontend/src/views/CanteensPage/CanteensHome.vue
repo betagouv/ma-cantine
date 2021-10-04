@@ -159,7 +159,15 @@
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-else-if="visibleCanteens && visibleCanteens.length > 0">
-      <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
+      <v-row class="my-2">
+        <v-spacer></v-spacer>
+        <v-col>
+          <v-pagination v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
+        </v-col>
+        <v-col cols="4">
+          <v-select v-model="orderBy" :items="orderOptions" hide-details label="Trier par" outlined dense></v-select>
+        </v-col>
+      </v-row>
       <v-row>
         <v-col v-for="canteen in visibleCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
           <PublishedCanteenCard :canteen="canteen" />
@@ -206,6 +214,34 @@ export default {
         minMealCount: null,
         maxMealCount: null,
       },
+      orderBy: null,
+      orderOptions: [
+        {
+          text: "Date de création",
+          value: "creation",
+          query: "-creation_date",
+        },
+        {
+          text: "Date de modification",
+          value: "modification",
+          query: "-modification_date",
+        },
+        {
+          text: "Repas par jour - croissant",
+          value: "repas",
+          query: "daily_meal_count",
+        },
+        {
+          text: "Repas par jour - décroissant",
+          value: "repasDecroissant",
+          query: "-daily_meal_count",
+        },
+        {
+          text: "Nom de la cantine",
+          value: "nom",
+          query: "name",
+        },
+      ],
     }
   },
   components: { PublishedCanteenCard },
@@ -225,6 +261,7 @@ export default {
         query.secteurs = this.appliedFilters.chosenSectors.join("+")
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
       if (this.appliedFilters.maxMealCount) query.maxRepasJour = String(this.appliedFilters.maxMealCount)
+      if (this.orderBy) query.trier = this.orderBy
       return query
     },
     sectors() {
@@ -251,6 +288,10 @@ export default {
       if (this.appliedFilters.chosenDepartment) queryParam += `&department=${this.appliedFilters.chosenDepartment}`
       if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
       if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
+      if (this.orderBy) {
+        let chosenOption = this.orderOptions.find((opt) => opt.value === this.orderBy)
+        if (chosenOption) queryParam += `&order_by=${chosenOption.query}`
+      }
 
       for (let i = 0; i < this.appliedFilters.chosenSectors.length; i++)
         queryParam += `&sectors=${this.appliedFilters.chosenSectors[i]}`
@@ -275,6 +316,11 @@ export default {
     },
     search() {
       const override = this.searchTerm ? { page: 1, recherche: this.searchTerm } : { page: 1 }
+      const query = Object.assign(this.query, override)
+      this.$router.push({ query }).catch(() => {})
+    },
+    updateOrder() {
+      const override = this.orderBy ? { page: 1, trier: this.orderBy } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
     },
@@ -308,6 +354,7 @@ export default {
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
       }
+      this.orderBy = this.$route.query.trier || "creation"
     },
     onChangeMealCount(ref) {
       if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
@@ -329,6 +376,9 @@ export default {
     },
     page() {
       this.changePage()
+    },
+    orderBy() {
+      this.updateOrder()
     },
     $route() {
       this.populateParameters()

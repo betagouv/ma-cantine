@@ -370,6 +370,70 @@ class TestCanteenApi(APITestCase):
         self.assertIn("Mochi", result_names)
         self.assertIn("Umami", result_names)
 
+    def test_order_search(self):
+        """
+        By default, list canteens by creation date descending
+        Optionally sort by name, modification date, number of meals
+        """
+        CanteenFactory.create(
+            publication_status="published",
+            daily_meal_count=200,
+            name="Shiso",
+        )
+        CanteenFactory.create(
+            publication_status="published",
+            daily_meal_count=100,
+            name="Wasabi",
+        )
+        last_modified = CanteenFactory.create(
+            publication_status="published",
+            daily_meal_count=300,
+            name="Mochi",
+        )
+        CanteenFactory.create(
+            publication_status="published",
+            daily_meal_count=100,
+            name="Umami",
+        )
+        last_modified.daily_meal_count = 900
+        last_modified.save()
+
+        url = f"{reverse('published_canteens')}"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 4)
+        self.assertEqual(results[0]["name"], "Umami")
+        self.assertEqual(results[1]["name"], "Mochi")
+        self.assertEqual(results[2]["name"], "Wasabi")
+        self.assertEqual(results[3]["name"], "Shiso")
+
+        url = f"{reverse('published_canteens')}?order_by=name"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 4)
+        self.assertEqual(results[0]["name"], "Mochi")
+        self.assertEqual(results[1]["name"], "Shiso")
+        self.assertEqual(results[2]["name"], "Umami")
+        self.assertEqual(results[3]["name"], "Wasabi")
+
+        url = f"{reverse('published_canteens')}?order_by=-modification_date"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 4)
+        self.assertEqual(results[0]["name"], "Mochi")
+        self.assertEqual(results[1]["name"], "Umami")
+        self.assertEqual(results[2]["name"], "Wasabi")
+        self.assertEqual(results[3]["name"], "Shiso")
+
+        url = f"{reverse('published_canteens')}?order_by=daily_meal_count"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 4)
+        self.assertEqual(results[0]["name"], "Wasabi")
+        self.assertEqual(results[1]["name"], "Umami")
+        self.assertEqual(results[2]["name"], "Shiso")
+        self.assertEqual(results[3]["name"], "Mochi")
+
     @authenticate
     def test_canteen_publication_fields_read_only(self):
         """
