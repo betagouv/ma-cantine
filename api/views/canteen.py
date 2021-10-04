@@ -1,6 +1,7 @@
 import logging
 from django.conf import settings
 from django.http import JsonResponse
+from django.http.response import HttpResponse
 from common.utils import send_mail
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
@@ -73,6 +74,21 @@ class PublishedCanteensView(ListAPIView):
     filter_backends = [django_filters.DjangoFilterBackend, UnaccentSearchFilter]
     search_fields = ["name"]
     filterset_class = PublishedCanteenFilterSet
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        order = request.query_params.get("order_by")
+        if order:
+            queryset = queryset.order_by(order)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return HttpResponse(serializer.data)
 
 
 class PublishedCanteenSingleView(RetrieveAPIView):
