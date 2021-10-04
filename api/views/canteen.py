@@ -21,7 +21,7 @@ from api.serializers import (
     FullCanteenSerializer,
     ManagingTeamSerializer,
 )
-from data.models import Canteen, ManagerInvitation
+from data.models import Canteen, ManagerInvitation, Sector
 from api.permissions import IsCanteenManager
 from .utils import camelize
 
@@ -39,8 +39,29 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         self.departments = set(
             filter(lambda x: x, queryset.values_list("department", flat=True))
         )
-        self.sectors = set(
-            filter(lambda x: x, queryset.values_list("sectors", flat=True))
+
+        sector_queryset = Canteen.objects.filter(publication_status="published")
+        query_params = request.query_params
+
+        if query_params.get("department"):
+            sector_queryset = sector_queryset.filter(
+                department=query_params.get("department")
+            )
+
+        if query_params.get("min_daily_meal_count"):
+            sector_queryset = sector_queryset.filter(
+                daily_meal_count__gte=query_params.get("min_daily_meal_count")
+            )
+
+        if query_params.get("max_daily_meal_count"):
+            sector_queryset = sector_queryset.filter(
+                daily_meal_count__lte=query_params.get("max_daily_meal_count")
+            )
+
+        self.sectors = (
+            Sector.objects.filter(canteen__in=list(sector_queryset))
+            .values_list("id", flat=True)
+            .distinct()
         )
         return super().paginate_queryset(queryset, request, view)
 
