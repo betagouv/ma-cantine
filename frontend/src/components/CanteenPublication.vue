@@ -76,7 +76,7 @@
       </p>
     </div>
 
-    <div v-if="canteen && graphDiagnostics">
+    <div v-if="canteen && shouldDisplayGraph">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-12 mb-2">
         L'évolution de l'approvisionnement
       </h2>
@@ -120,6 +120,15 @@ export default {
     },
     earnedBadges() {
       return earnedBadges(this.canteen, this.diagnostic, this.$store.state.sectors)
+    },
+    shouldDisplayGraph() {
+      if (!this.canteen.diagnostics || this.canteen.diagnostics.length === 0) return false
+      const completedDiagnostics = this.canteen.diagnostics.filter(
+        (x) => !!x.valueBioHt && !!x.valueSustainableHt && !!x.valueTotalHt
+      )
+      if (completedDiagnostics.length === 0) return false
+      else if (completedDiagnostics.length === 1) return completedDiagnostics[0].year !== lastYear()
+      else return true
     },
     graphDiagnostics() {
       if (!this.canteen.diagnostics || this.canteen.diagnostics.length === 0) return null
