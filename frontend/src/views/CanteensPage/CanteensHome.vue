@@ -146,18 +146,17 @@
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-else-if="visibleCanteens && visibleCanteens.length > 0">
+      <p class="mt-3 mb-n4 text-body-2 grey--text" v-if="resultsCountText">
+        {{ resultsCountText }}
+      </p>
+
       <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
       <v-row>
         <v-col v-for="canteen in visibleCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
           <PublishedCanteenCard :canteen="canteen" />
         </v-col>
       </v-row>
-      <v-pagination
-        class="my-6"
-        v-model="page"
-        :length="Math.ceil(publishedCanteenCount / limit)"
-        v-if="$vuetify.breakpoint.smAndDown"
-      ></v-pagination>
+      <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
     </div>
     <div v-else class="d-flex flex-column align-center py-10">
       <v-icon large>mdi-inbox-remove</v-icon>
@@ -232,10 +231,8 @@ export default {
   data() {
     return {
       limit: 6,
-      departments: jsonDepartments.map((x) => ({
-        text: `${x.departmentCode} - ${x.departmentName}`,
-        value: x.departmentCode,
-      })),
+      departments: [],
+      sectors: [],
       visibleCanteens: null,
       publishedCanteenCount: null,
       page: null,
@@ -271,11 +268,6 @@ export default {
       if (this.appliedFilters.maxMealCount) query.maxRepasJour = String(this.appliedFilters.maxMealCount)
       return query
     },
-    sectors() {
-      return this.$store.state.sectors
-        .map((x) => ({ text: x.name, value: x.id }))
-        .sort((a, b) => (a.text > b.text ? 1 : -1))
-    },
     hasActiveFilter() {
       return (
         this.appliedFilters.chosenDepartment !== null ||
@@ -286,6 +278,21 @@ export default {
     },
     validators() {
       return validators
+    },
+    resultsCountText() {
+      const filterQueries = [
+        this.$route.query.recherche,
+        this.$route.query.departement,
+        this.$route.query.secteurs,
+        this.$route.query.minRepasJour,
+        this.$route.query.maxRepasJour,
+      ]
+      const hasFilter = filterQueries.some((x) => x !== 0 && !!x)
+
+      if (!hasFilter || !this.publishedCanteenCount) return null
+
+      if (this.publishedCanteenCount === 1) return "Un établissement correspond à votre recherche"
+      else return `${this.publishedCanteenCount} établissements correspondent à votre recherche`
     },
   },
   methods: {
@@ -307,6 +314,8 @@ export default {
         .then((response) => {
           this.publishedCanteenCount = response.count
           this.visibleCanteens = response.results
+          this.setDepartments(response.departments)
+          this.setSectors(response.sectors)
         })
         .catch(() => {
           this.publishedCanteenCount = 0
@@ -395,6 +404,40 @@ export default {
           this.$store.dispatch("notifyServerError")
         })
     },
+    setDepartments(enabledDepartmentIds) {
+      const enabledDepartments = jsonDepartments
+        .filter((x) => enabledDepartmentIds.indexOf(x.departmentCode) > -1)
+        .map((x) => ({
+          text: `${x.departmentCode} - ${x.departmentName}`,
+          value: x.departmentCode,
+        }))
+      const headerText =
+        this.hasActiveFilter || this.searchTerm
+          ? "Ces départements ne contiennent pas d'établissements correspondant à votre recherche :"
+          : "Nous n'avons pas encore d'établissements dans ces départements :"
+      const header = { header: headerText }
+
+      const divider = { divider: true }
+
+      const disabledDepartments = jsonDepartments
+        .filter((x) => enabledDepartmentIds.indexOf(x.departmentCode) === -1)
+        .map((x) => ({
+          text: `${x.departmentCode} - ${x.departmentName}`,
+          value: x.departmentCode,
+          disabled: true,
+        }))
+
+      this.departments = [...enabledDepartments, divider, header, ...disabledDepartments]
+    },
+    setSectors(enabledSectorIds) {
+      this.sectors = this.$store.state.sectors
+        .map((x) => ({
+          text: x.name,
+          value: x.id,
+          disabled: enabledSectorIds.indexOf(x.id) === -1,
+        }))
+        .sort((a, b) => (a.text > b.text ? 1 : -1))
+    },
   },
   watch: {
     appliedFilters: {
@@ -426,5 +469,8 @@ export default {
 .active-filter-label::before {
   content: "⚫︎";
   color: #0c7f46;
+}
+div >>> .v-list-item--disabled .theme--light.v-icon {
+  color: rgba(0, 0, 0, 0.22);
 }
 </style>
