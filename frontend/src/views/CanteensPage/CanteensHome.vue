@@ -1,27 +1,31 @@
 <template>
   <div>
-    <v-card elevation="0" class="text-center text-md-left mb-8 mt-6">
+    <v-card elevation="0" class="text-center text-md-left mb-6 mt-3">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
         <v-col cols="12">
-          <v-img max-height="120px" contain src="/static/images/LovingDoodle.png"></v-img>
+          <v-img max-height="90px" contain src="/static/images/LovingDoodle.png"></v-img>
         </v-col>
       </v-row>
       <v-row>
-        <v-spacer></v-spacer>
-        <v-col cols="3" v-if="$vuetify.breakpoint.mdAndUp">
+        <v-col cols="2" v-if="$vuetify.breakpoint.mdAndUp">
           <div class="d-flex fill-height align-center">
-            <v-img max-height="140px" contain src="/static/images/LovingDoodle.png"></v-img>
+            <v-img contain src="/static/images/LovingDoodle.png"></v-img>
           </div>
         </v-col>
-        <v-col cols="12" sm="10" md="7">
+        <v-col cols="12" sm="10">
+          <v-spacer></v-spacer>
           <v-card-title class="pr-0">
-            <h1 class="font-weight-black text-h5 text-sm-h4">
-              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus
-              durable.
+            <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
+              Nos cantines
             </h1>
           </v-card-title>
+          <v-card-subtitle>
+            <p>
+              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus durable
+            </p>
+          </v-card-subtitle>
+          <v-spacer></v-spacer>
         </v-col>
-        <v-spacer></v-spacer>
       </v-row>
     </v-card>
 
@@ -38,8 +42,10 @@
               clearable
               @click:clear="clearSearch"
               @keyup.enter="search"
+              class="mb-2"
+              dense
             ></v-text-field>
-            <v-btn outlined color="primary" large class="ml-4 mt-1" height="48px" @click="search">
+            <v-btn outlined color="primary" class="ml-4 mb-2" height="40px" @click="search">
               <v-icon>mdi-magnify</v-icon>
               Chercher
             </v-btn>
@@ -49,7 +55,10 @@
     </v-sheet>
 
     <v-sheet class="pa-6 mt-8" rounded outlined>
-      <h2 class="text-left text-body-1 font-weight-black mb-2">
+      <h2
+        class="text-left text-body-1 font-weight-black mb-2 mt-n9 px-1"
+        style="background-color: #fff; width: max-content"
+      >
         Filtres
         <v-btn
           color="primary"
@@ -58,8 +67,8 @@
           text
           @click="clearFilters"
           :ripple="false"
-          height="30"
-          class="pa-1 mt-n2"
+          class="pa-0 ml-1 mt-n2"
+          style="font-size: 13px;"
         >
           <v-icon small class="mt-1 mr-1">mdi-close</v-icon>
           <span class="text-decoration-underline">Désactiver tous les filtres</span>
@@ -85,6 +94,7 @@
             placeholder="Tous les départements"
             class="mt-1"
             outlined
+            dense
           ></v-select>
         </v-col>
         <v-col cols="12" sm="6" md="4" class="text-left">
@@ -104,6 +114,7 @@
             placeholder="Tous les secteurs"
             outlined
             class="mt-1"
+            dense
           ></v-select>
         </v-col>
         <v-col cols="12" sm="6" md="4" class="text-left">
@@ -126,6 +137,7 @@
               outlined
               label="Min"
               aria-describedby="meal-count"
+              dense
             />
             <span class="mx-4 align-self-center">-</span>
             <v-text-field
@@ -137,6 +149,7 @@
               outlined
               label="Max"
               aria-describedby="meal-count"
+              dense
             />
           </div>
         </v-col>
