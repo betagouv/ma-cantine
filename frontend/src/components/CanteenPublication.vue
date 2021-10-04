@@ -80,14 +80,14 @@
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-12 mb-2">
         L'évolution de l'approvisionnement
       </h2>
-      <p class="body-2">
+      <div>
         <MultiYearSummaryStatistics
           :diagnostics="graphDiagnostics"
           headingId="appro-heading"
           height="260"
           :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
         />
-      </p>
+      </div>
     </div>
   </div>
 </template>
