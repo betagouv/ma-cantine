@@ -23,11 +23,12 @@
       </li>
       <li>
         <v-icon color="green" small>mdi-checkbox-marked</v-icon>
-        Produits issus du commerce équitable 
+        Produits issus du commerce équitable
       </li>
       <li>
         <v-icon color="green" small>mdi-checkbox-marked</v-icon>
-        Produits acquis principalement sur la base de leurs performances en matière environnementale et d’approvisionnements directs (précisions à venir)
+        Produits acquis principalement sur la base de leurs performances en matière environnementale et
+        d’approvisionnements directs (précisions à venir)
       </li>
     </ul>
   </div>
