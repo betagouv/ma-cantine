@@ -57,7 +57,7 @@ class PublicDiagnosticSerializer(serializers.ModelSerializer):
             bio = self.return_value(self, data, "value_bio_ht")
             sustainable = self.return_value(self, data, "value_sustainable_ht")
             fair_trade = self.return_value(self, data, "value_fair_trade_ht")
-            value_sum = bio + sustainable + fair_trade
+            value_sum = (bio or 0) + (sustainable or 0) + (fair_trade or 0)
             if value_sum > total:
                 raise serializers.ValidationError(
                     f"La somme des valeurs d'approvisionnement, {value_sum}, est plus que le total, {total}"
@@ -66,7 +66,7 @@ class PublicDiagnosticSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def return_value(serializer, data, field_name):
-        if data.get(field_name):
+        if field_name in data:
             return data.get(field_name)
         elif serializer.instance and getattr(serializer.instance, field_name):
             return getattr(serializer.instance, field_name)
