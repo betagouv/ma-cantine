@@ -1,4 +1,5 @@
 import logging
+from collections import OrderedDict
 from django.conf import settings
 from django.http import JsonResponse
 from django.http.response import HttpResponse
@@ -15,12 +16,13 @@ from rest_framework import permissions, status, filters
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
+from rest_framework.response import Response
 from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
     ManagingTeamSerializer,
 )
-from data.models import Canteen, ManagerInvitation
+from data.models import Canteen, ManagerInvitation, Sector
 from api.permissions import IsCanteenManager
 from .utils import camelize
 
@@ -30,6 +32,53 @@ logger = logging.getLogger(__name__)
 class PublishedCanteensPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
+    departments = []
+    sectors = []
+
+    def paginate_queryset(self, queryset, request, view=None):
+        # Performance improvements possible
+        self.departments = set(
+            filter(lambda x: x, queryset.values_list("department", flat=True))
+        )
+
+        sector_queryset = Canteen.objects.filter(publication_status="published")
+        query_params = request.query_params
+
+        if query_params.get("department"):
+            sector_queryset = sector_queryset.filter(
+                department=query_params.get("department")
+            )
+
+        if query_params.get("min_daily_meal_count"):
+            sector_queryset = sector_queryset.filter(
+                daily_meal_count__gte=query_params.get("min_daily_meal_count")
+            )
+
+        if query_params.get("max_daily_meal_count"):
+            sector_queryset = sector_queryset.filter(
+                daily_meal_count__lte=query_params.get("max_daily_meal_count")
+            )
+
+        self.sectors = (
+            Sector.objects.filter(canteen__in=list(sector_queryset))
+            .values_list("id", flat=True)
+            .distinct()
+        )
+        return super().paginate_queryset(queryset, request, view)
+
+    def get_paginated_response(self, data):
+        return Response(
+            OrderedDict(
+                [
+                    ("count", self.count),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                    ("departments", self.departments),
+                    ("sectors", self.sectors),
+                ]
+            )
+        )
 
 
 class PublishedCanteenFilterSet(django_filters.FilterSet):
@@ -347,6 +396,47 @@ class SendCanteenEmailView(APIView):
             )
         except Exception as e:
             logger.error("Exception ocurred while sending email to published canteen")
+            logger.exception(e)
+            return JsonResponse(
+                {"error": "An error has ocurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class SendCanteenNotFoundEmail(APIView):
+    def post(self, request):
+        try:
+            email = request.data.get("from")
+            validate_email(email)
+            name = request.data.get("name") or "Un·e utilisateur·rice"
+            message = request.data.get("message")
+
+            context = {
+                "from": email,
+                "name": name,
+                "message": message,
+                "us": settings.DEFAULT_FROM_EMAIL,
+            }
+
+            send_mail(
+                subject=f"{name} n'a pas trouvé une cantine publiée",
+                to=[
+                    settings.CONTACT_EMAIL,
+                ],
+                reply_to=[
+                    email,
+                ],
+                template="canteen_not_found",
+                context=context,
+            )
+
+            return JsonResponse({}, status=status.HTTP_200_OK)
+        except ValidationError:
+            return JsonResponse(
+                {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            logger.error("Exception ocurred while sending email")
             logger.exception(e)
             return JsonResponse(
                 {"error": "An error has ocurred"},

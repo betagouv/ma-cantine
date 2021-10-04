@@ -434,6 +434,54 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(results[2]["name"], "Shiso")
         self.assertEqual(results[3]["name"], "Mochi")
 
+    def test_pagination_departments(self):
+        CanteenFactory.create(
+            publication_status="published", department="75", name="Shiso"
+        )
+        CanteenFactory.create(
+            publication_status="published", department="75", name="Wasabi"
+        )
+        CanteenFactory.create(
+            publication_status="published", department="69", name="Mochi"
+        )
+        CanteenFactory.create(
+            publication_status="published", department=None, name="Umami"
+        )
+
+        url = f"{reverse('published_canteens')}"
+        response = self.client.get(url)
+        body = response.json()
+
+        # There are two unique departments : 75 and 69
+        self.assertEqual(len(body.get("departments")), 2)
+        self.assertIn("75", body.get("departments"))
+        self.assertIn("69", body.get("departments"))
+
+    def test_pagination_sectors(self):
+        school = SectorFactory.create(name="School")
+        enterprise = SectorFactory.create(name="Enterprise")
+        CanteenFactory.create(
+            publication_status="published", sectors=[school, enterprise], name="Shiso"
+        )
+        CanteenFactory.create(
+            publication_status="published", sectors=[school], name="Wasabi"
+        )
+        CanteenFactory.create(
+            publication_status="published", sectors=[school], name="Mochi"
+        )
+        CanteenFactory.create(
+            publication_status="published", sectors=[school], name="Umami"
+        )
+
+        url = f"{reverse('published_canteens')}"
+        response = self.client.get(url)
+        body = response.json()
+
+        # There are two unique sectors : school and enterprise
+        self.assertEqual(len(body.get("sectors")), 2)
+        self.assertIn(school.id, body.get("sectors"))
+        self.assertIn(enterprise.id, body.get("sectors"))
+
     @authenticate
     def test_canteen_publication_fields_read_only(self):
         """
