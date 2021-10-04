@@ -178,9 +178,9 @@
         </div>
       </v-col>
       <v-col>
-        <p class="text-h6 font-weight-black text-left">
+        <h2 class="text-h6 font-weight-black text-left">
           Vous n'avez pas trouvé un ou plusieurs établissements qui vous intéressent ?
-        </p>
+        </h2>
         <p class="body-2 text-left">
           Dites-nous tout, nous ferons en sorte de leur communiquer votre intérêt pour leurs initiatives en place.
         </p>
