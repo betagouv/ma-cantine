@@ -377,6 +377,12 @@ export default new Vuex.Store({
       )
     },
 
+    sendCanteenNotFoundEmail(context, payload) {
+      return fetch("/api/v1/canteenNotFoundMessage/", { method: "POST", headers, body: JSON.stringify(payload) }).then(
+        verifyResponse
+      )
+    },
+
     removeManager(context, { canteenId, email }) {
       return fetch(`/api/v1/removeManager/`, {
         method: "POST",
