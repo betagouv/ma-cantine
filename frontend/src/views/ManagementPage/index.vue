@@ -31,9 +31,10 @@
       </v-row>
     </div>
     <div class="my-12">
-      <h2 class="mb-0 text-h5 font-weight-black">Mes diagnostics</h2>
-      <div class="mt-2 mb-8">
-        <v-btn text color="primary" class="ml-n4" :to="{ name: 'NewDiagnostic' }">
+      <h2 class="mb-4 text-h5 font-weight-black">Mes diagnostics</h2>
+      <DiagnosticIntroduction v-if="!hasDiagnostics" class="body-2"></DiagnosticIntroduction>
+      <div class="mb-8 ml-n4">
+        <v-btn text color="primary" :to="{ name: 'NewDiagnostic' }" v-if="canteens.length">
           <v-icon class="mr-2">mdi-plus</v-icon>
           Ajouter un diagnostic
         </v-btn>
@@ -55,7 +56,7 @@
       </div>
     </div>
     <div class="my-8">
-      <h2 class="text-h5 font-weight-black">Mes outils</h2>
+      <h2 class="text-h5 font-weight-black mb-4">Mes outils</h2>
       <UserTools />
     </div>
   </div>
@@ -64,16 +65,20 @@
 <script>
 import CanteenCard from "./CanteenCard"
 import DiagnosticCard from "@/components/DiagnosticCard"
+import DiagnosticIntroduction from "@/components/DiagnosticIntroduction"
 import UserTools from "./UserTools"
 
 export default {
-  components: { CanteenCard, DiagnosticCard, UserTools },
+  components: { CanteenCard, DiagnosticCard, DiagnosticIntroduction, UserTools },
   computed: {
     loggedUser() {
       return this.$store.state.loggedUser
     },
     canteens() {
       return this.$store.state.userCanteens
+    },
+    hasDiagnostics() {
+      return this.canteens.length && this.canteens.some((c) => !!c.diagnostics.length)
     },
   },
   methods: {

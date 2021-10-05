@@ -1,0 +1,13 @@
+{% extends 'email_base.html' %}
+
+{% block content %}
+    <p>{{ name }} ({{ from }}) n'a pas trouvé une cantine parmi les établissements publiés.</p>
+
+    <p>Voici son message :</p>
+
+    <p>-------------------------------------</p>
+    <p>{{ message|linebreaks }}</p>
+    <p>-------------------------------------</p>
+
+    <p>Pour démarrer la conversation vous pouvez répondre directement à cet email.</p>
+{% endblock %}

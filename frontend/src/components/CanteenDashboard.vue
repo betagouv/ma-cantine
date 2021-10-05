@@ -1,6 +1,5 @@
 <template>
   <div>
-    <PublicationComment :comments="canteen && canteen.publicationComments" />
     <v-row>
       <v-col cols="12">
         <v-card outlined class="mt-4 pa-4">
@@ -21,7 +20,6 @@
               height="260"
               :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
             />
-            <PublicationComment :comments="canteen && canteen.qualityComments" />
             <KeyMeasureResource :baseComponent="qualityMeasure.baseComponent" v-if="showResources" />
           </v-card-text>
         </v-card>
@@ -47,9 +45,13 @@
                   {{ wasteActions[action] }}
                 </li>
               </ul>
+              <ul class="specifics-actions text-left ml-4" v-if="latestDiagnostic.otherWasteAction">
+                <li class="my-1">
+                  {{ latestDiagnostic.otherWasteAction }}
+                </li>
+              </ul>
               <KeyMeasureAction :isDone="latestDiagnostic.hasDonationAgreement" label="Dons aux associations" />
             </div>
-            <PublicationComment :comments="canteen && canteen.wasteComments" />
             <KeyMeasureResource :baseComponent="wasteMeasure.baseComponent" v-if="showResources" />
           </v-card-text>
         </v-card>
@@ -77,7 +79,6 @@
                 label="Ustensiles à usage unique en plastique"
               />
             </div>
-            <PublicationComment :comments="canteen && canteen.plasticsComments" />
           </v-card-text>
         </v-card>
       </v-col>
@@ -95,7 +96,6 @@
               />
               <KeyMeasureAction :isDone="hasVegetarianMenu" :label="vegetarianMenuActionLabel" />
             </div>
-            <PublicationComment :comments="canteen && canteen.diversificationComments" />
             <KeyMeasureResource :baseComponent="diversificationMeasure.baseComponent" v-if="showResources" />
           </v-card-text>
         </v-card>
@@ -119,6 +119,11 @@
                   {{ communicationSupports[action] }}
                 </li>
               </ul>
+              <ul class="specifics-actions text-left ml-4" v-if="latestDiagnostic.otherCommunicationSupport">
+                <li class="my-1">
+                  {{ latestDiagnostic.otherCommunicationSupport }}
+                </li>
+              </ul>
 
               <v-btn
                 v-if="latestDiagnostic.communicationSupportUrl"
@@ -132,7 +137,6 @@
                 <v-icon small class="ml-2">mdi-open-in-new</v-icon>
               </v-btn>
             </div>
-            <PublicationComment :comments="canteen && canteen.informationComments" />
             <KeyMeasureResource baseComponent="InformDiners" v-if="showResources" />
           </v-card-text>
         </v-card>
@@ -147,15 +151,13 @@ import wasteActions from "@/data/waste-actions.json"
 import communicationSupports from "@/data/communication-supports.json"
 import KeyMeasureResource from "@/components/KeyMeasureResource"
 import KeyMeasureAction from "@/components/KeyMeasureAction"
-import MultiYearSummaryStatistics from "./MultiYearSummaryStatistics.vue"
-import PublicationComment from "./PublicationComment.vue"
+import MultiYearSummaryStatistics from "./MultiYearSummaryStatistics"
 
 export default {
   components: {
     KeyMeasureResource,
     KeyMeasureAction,
     MultiYearSummaryStatistics,
-    PublicationComment,
   },
   props: {
     diagnostics: Object,

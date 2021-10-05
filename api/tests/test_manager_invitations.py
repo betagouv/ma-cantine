@@ -148,8 +148,7 @@ class TestManagerInvitationApi(APITestCase):
     def test_authenticated_add_manager_existing_user(self):
         """
         If the email matches an existing user, add the user to the canteen managers
-        without going through invitations table
-        no email sent for now (TODO: decide email to send)
+        without going through invitations table. No email sent for now
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)

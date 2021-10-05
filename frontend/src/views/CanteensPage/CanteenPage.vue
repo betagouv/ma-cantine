@@ -1,28 +1,34 @@
 <template>
-  <div>
+  <div class="text-left">
+    <router-link :to="{ name: 'CanteensHome' }" class="mt-2 grey--text text--darken-1 caption">
+      <v-icon small class="mr-2">mdi-arrow-left</v-icon>
+      Voir la liste des cantines
+    </router-link>
     <div v-if="canteen" id="canteen-dashboard">
-      <v-card elevation="0" class="pa-0 my-8 text-left">
-        <v-card-title class="text-h4 font-weight-black">
-          <h1 class="text-h4 font-weight-black">
-            {{ canteen.name }}
-          </h1>
-        </v-card-title>
-        <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city">
-          <CanteenIndicators :canteen="canteen" />
-          <router-link to="#contact">
-            <v-icon small>mdi-email-outline</v-icon>
-            Contactez-nous
-          </router-link>
-        </v-card-subtitle>
-        <v-card-text>
-          <v-btn outlined color="primary" exact :to="{ name: 'CanteensHome' }">
-            <v-icon small class="mr-2">mdi-arrow-left</v-icon>
-            Voir la liste des cantines
-          </v-btn>
-        </v-card-text>
+      <v-card elevation="0" class="pa-0 mt-4 mb-8 text-left">
+        <v-row class="align-center">
+          <v-col v-if="canteen.mainImage" cols="12" sm="3">
+            <v-img class="rounded" :src="canteen.mainImage"></v-img>
+          </v-col>
+          <v-col>
+            <v-card-title class="text-h4 font-weight-black pa-0">
+              <h1 class="text-h4 font-weight-black">
+                {{ canteen.name }}
+              </h1>
+            </v-card-title>
+            <v-spacer></v-spacer>
+            <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pa-0 pt-4">
+              <CanteenIndicators :canteen="canteen" class="grey--text text--darken-3" />
+              <router-link to="#contact">
+                <v-icon small>mdi-email-outline</v-icon>
+                Contactez-nous
+              </router-link>
+            </v-card-subtitle>
+          </v-col>
+        </v-row>
       </v-card>
 
-      <CanteenDashboard :diagnostics="diagnostics" :canteen="canteen" />
+      <CanteenPublication :canteen="canteen" />
 
       <v-divider class="my-8"></v-divider>
 
@@ -33,19 +39,21 @@
 </template>
 
 <script>
-import Constants from "@/constants"
-import CanteenDashboard from "@/components/CanteenDashboard"
+import { diagnosticsMap } from "@/utils"
+import CanteenPublication from "@/components/CanteenPublication"
 import ContactForm from "./ContactForm"
 import CanteenIndicators from "@/components/CanteenIndicators"
+import labels from "@/data/quality-labels.json"
 
 export default {
   data() {
     return {
       canteen: undefined,
+      labels,
     }
   },
   components: {
-    CanteenDashboard,
+    CanteenPublication,
     ContactForm,
     CanteenIndicators,
   },
@@ -59,16 +67,7 @@ export default {
     diagnostics() {
       if (!this.canteen) return
       const diagnostics = this.canteen.diagnostics
-      return {
-        previous:
-          diagnostics.find((x) => x.year === 2019) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
-        latest:
-          diagnostics.find((x) => x.year === 2020) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 }),
-        provisionalYear1:
-          diagnostics.find((x) => x.year === 2021) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2021 }),
-        provisionalYear2:
-          diagnostics.find((x) => x.year === 2022) || Object.assign({}, Constants.DefaultDiagnostics, { year: 2022 }),
-      }
+      return diagnosticsMap(diagnostics)
     },
   },
   methods: {

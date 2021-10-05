@@ -3,7 +3,6 @@
     <v-row class="mt-2">
       <v-col cols="12" sm="4" md="3" v-if="canteen">
         <CanteenNavigation :canteen="canteen" />
-        <!-- TODO: add general navigation if no canteen -->
       </v-col>
       <v-col class="text-left pb-10">
         <h1 class="font-weight-black text-h4 my-4">
@@ -50,8 +49,8 @@
 
             <div v-if="isTeledeclarationYear">
               <p v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration" class="text-caption ma-0 pl-4">
-                <v-icon small>mdi-alert</v-icon>
-                Remplissez les données d'approvisionnement pour télédéclarer ce diagnostic
+                <v-icon small>mdi-information-outline</v-icon>
+                Vous pourrez télédéclarer ce diagnostic après avoir remplir les données d'approvisionnement
               </p>
               <p v-else-if="!hasActiveTeledeclaration" class="text-caption ma-0 pl-4">
                 <v-icon small>mdi-information</v-icon>
@@ -170,9 +169,9 @@
           <p>
             Conformément à l’article 24 de la loi EGAlim, chaque établissement est tenu de renseigner et transmettre à
             l’administration ses données, notamment en termes d’approvisionnement sur l’année civile passée. Afin de
-            faciliter cette démarche, nous vous proposons d’utiliser les informations de votre autodiagnostic 2020 afin
-            de les envoyer, avec votre accord, à la DGAL qui en fera un bilan statistique global des données des
-            établissements.
+            faciliter cette démarche, nous vous proposons d’utiliser les informations de votre autodiagnostic
+            {{ teledeclarationYear }} afin de les envoyer, avec votre accord, à la DGAL qui en fera un bilan statistique
+            global des données des établissements.
           </p>
           <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form">
             <v-checkbox
@@ -211,11 +210,7 @@ import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
-import { getObjectDiff, timeAgo, strictIsNaN } from "@/utils"
-
-function percentage(part, total) {
-  return Math.round((part / total) * 100)
-}
+import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage } from "@/utils"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
@@ -237,6 +232,7 @@ export default {
       teledeclarationFormIsValid: true,
       openedPanel: null,
       cancelDialog: false,
+      teledeclarationYear: lastYear(),
     }
   },
   components: {
@@ -293,25 +289,13 @@ export default {
       return !existingDiagnostic
     },
     allowedYears() {
-      // TODO : Should be dynamic
-      return [
-        {
-          text: "2019",
-          value: 2019,
-        },
-        {
-          text: "2020",
-          value: 2020,
-        },
-        {
-          text: "2021 (prévisionnel)",
-          value: 2021,
-        },
-        {
-          text: "2022 (prévisionnel)",
-          value: 2022,
-        },
-      ]
+      const thisYear = new Date().getFullYear()
+      return diagnosticYears().map((year) => {
+        return {
+          text: year + (year >= thisYear ? " (prévisionnel)" : ""),
+          value: year,
+        }
+      })
     },
     hasChanged() {
       const diff = getObjectDiff(this.originalDiagnostic, this.diagnostic)
@@ -329,11 +313,13 @@ export default {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
     },
     isTeledeclarationYear() {
-      const currentYear = new Date().getFullYear()
-      return this.diagnostic.year === currentYear - 1
+      return this.diagnostic.year === this.teledeclarationYear
     },
   },
   beforeMount() {
+    if (this.userCanteens.length === 1) {
+      this.selectedCanteenId = this.userCanteens[0].id
+    }
     if (this.isNewDiagnostic) return
 
     if (!this.canteen) this.$router.replace({ name: "NotFound" })
@@ -347,11 +333,11 @@ export default {
       if (this.diagnostic.valueTotalHt > 0) {
         let summary = []
         if (hasValue(this.diagnostic.valueBioHt)) {
-          summary.push(`${percentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
+          summary.push(`${getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
         }
         if (hasValue(this.diagnostic.valueSustainableHt)) {
           summary.push(
-            `${percentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
+            `${getPercentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
           )
         }
         return summary.join(", ")

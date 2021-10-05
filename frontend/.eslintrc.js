@@ -11,7 +11,9 @@ module.exports = {
     parser: "babel-eslint",
   },
 
-  rules: {},
+  rules: {
+    "vue/no-mutating-props": "off",
+  },
   plugins: ["prettier"],
 
   overrides: [
