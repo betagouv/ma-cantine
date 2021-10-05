@@ -407,7 +407,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(results[2]["name"], "Wasabi")
         self.assertEqual(results[3]["name"], "Shiso")
 
-        url = f"{reverse('published_canteens')}?order_by=name"
+        url = f"{reverse('published_canteens')}?ordering=name"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 4)
@@ -416,7 +416,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(results[2]["name"], "Umami")
         self.assertEqual(results[3]["name"], "Wasabi")
 
-        url = f"{reverse('published_canteens')}?order_by=-modification_date"
+        url = f"{reverse('published_canteens')}?ordering=-modification_date"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 4)
@@ -425,7 +425,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(results[2]["name"], "Wasabi")
         self.assertEqual(results[3]["name"], "Shiso")
 
-        url = f"{reverse('published_canteens')}?order_by=daily_meal_count"
+        url = f"{reverse('published_canteens')}?ordering=daily_meal_count"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 4)

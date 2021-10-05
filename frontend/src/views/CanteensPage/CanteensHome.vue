@@ -364,7 +364,7 @@ export default {
       if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
       if (this.orderBy) {
         let chosenOption = this.orderOptions.find((opt) => opt.value === this.orderBy)
-        if (chosenOption) queryParam += `&order_by=${chosenOption.query}`
+        if (chosenOption) queryParam += `&ordering=${chosenOption.query}`
       }
 
       for (let i = 0; i < this.appliedFilters.chosenSectors.length; i++)
