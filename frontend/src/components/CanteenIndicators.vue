@@ -1,5 +1,9 @@
 <template>
   <div>
+    <p class="my-0" v-if="includeProductOrigin && productOriginDiagnostic">
+      <v-icon small>mdi-food-apple</v-icon>
+      {{ productOriginText }}
+    </p>
     <p class="my-0" v-if="canteen.dailyMealCount">
       <v-icon small>mdi-silverware-fork-knife</v-icon>
       {{ canteen.dailyMealCount }} repas par jour
@@ -16,12 +20,18 @@
 </template>
 
 <script>
+import { lastYear, getPercentage, isDiagnosticComplete } from "@/utils"
+
 export default {
   name: "CanteenIndicators",
   props: {
     canteen: {
       type: Object,
       required: true,
+    },
+    includeProductOrigin: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -31,6 +41,22 @@ export default {
       return this.canteen.sectors
         .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
         .join(", ")
+    },
+    productOriginDiagnostic() {
+      const latestDiagnostic = this.canteen.diagnostics.find((x) => x.year === lastYear())
+      if (!latestDiagnostic || !isDiagnosticComplete(latestDiagnostic)) return null
+      return latestDiagnostic
+    },
+    productOriginText() {
+      const bioPercent = getPercentage(
+        this.productOriginDiagnostic.valueBioHt,
+        this.productOriginDiagnostic.valueTotalHt
+      )
+      const sustainablePercent = getPercentage(
+        this.productOriginDiagnostic.valueSustainableHt,
+        this.productOriginDiagnostic.valueTotalHt
+      )
+      return `${bioPercent} % bio, ${sustainablePercent} % qualité et durables`
     },
   },
 }

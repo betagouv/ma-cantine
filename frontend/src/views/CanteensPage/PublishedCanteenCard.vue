@@ -8,7 +8,7 @@
       {{ canteen.name }}
     </v-card-title>
     <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city">
-      <CanteenIndicators :canteen="canteen" />
+      <CanteenIndicators :canteen="canteen" :includeProductOrigin="true" />
     </v-card-subtitle>
     <v-card-text v-if="Object.keys(earnedBadges).length" class="grey--text text--darken-4 d-flex">
       <v-img
