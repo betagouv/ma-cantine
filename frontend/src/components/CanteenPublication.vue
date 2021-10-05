@@ -75,12 +75,27 @@
         {{ canteen.publicationComments }}
       </p>
     </div>
+
+    <div v-if="canteen && shouldDisplayGraph">
+      <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-12 mb-2">
+        L'évolution de l'approvisionnement
+      </h2>
+      <div>
+        <MultiYearSummaryStatistics
+          :diagnostics="graphDiagnostics"
+          headingId="appro-heading"
+          height="260"
+          :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import labels from "@/data/quality-labels.json"
-import { lastYear, earnedBadges, getPercentage } from "@/utils"
+import { lastYear, earnedBadges, getPercentage, isDiagnosticComplete } from "@/utils"
+import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 
 export default {
   props: {
@@ -92,6 +107,7 @@ export default {
       publicationYear: lastYear(),
     }
   },
+  components: { MultiYearSummaryStatistics },
   computed: {
     diagnostic() {
       return this.canteen.diagnostics.find((d) => d.year === this.publicationYear) || {}
@@ -104,6 +120,22 @@ export default {
     },
     earnedBadges() {
       return earnedBadges(this.canteen, this.diagnostic, this.$store.state.sectors)
+    },
+    shouldDisplayGraph() {
+      if (!this.canteen.diagnostics || this.canteen.diagnostics.length === 0) return false
+      const completedDiagnostics = this.canteen.diagnostics.filter(isDiagnosticComplete)
+      if (completedDiagnostics.length === 0) return false
+      else if (completedDiagnostics.length === 1) return completedDiagnostics[0].year !== lastYear()
+      else return true
+    },
+    graphDiagnostics() {
+      if (!this.canteen.diagnostics || this.canteen.diagnostics.length === 0) return null
+      const diagnostics = {}
+      for (let i = 0; i < this.canteen.diagnostics.length; i++) {
+        const diagnostic = this.canteen.diagnostics[i]
+        diagnostics[diagnostic.year] = diagnostic
+      }
+      return diagnostics
     },
   },
 }

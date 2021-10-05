@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="my-10 align-center">Contactez « {{ canteen.name }} »</h2>
+    <h2 class="font-weight-black text-h6 grey--text text--darken-4 mb-6">Contactez « {{ canteen.name }} »</h2>
     <v-form v-model="formIsValid" ref="form" @submit.prevent>
       <v-text-field
         v-model="fromEmail"
