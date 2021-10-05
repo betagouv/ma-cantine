@@ -103,7 +103,6 @@
                 :originalDiagnostic="diagnostic"
                 label="La valeur (en HT) de mes achats alimentaires..."
                 :readonly="hasActiveTeledeclaration"
-                :includePat="true"
               />
             </v-form>
           </DiagnosticExpansionPanel>
