@@ -38,6 +38,12 @@ export default {
     const errorMessage = "Ce champ doit contenir un nombre positif ou rester vide"
     return errorMessage
   },
+  lteOrEmpty(max) {
+    return (input) => {
+      if (!input || input <= max) return true
+      return `Le nombre saisi ne peut pas dépasser ${max}`
+    }
+  },
   urlOrEmpty(input) {
     if (!input || input.length === 0) return true
     let url
