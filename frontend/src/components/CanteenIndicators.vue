@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { lastYear, getPercentage } from "@/utils"
+import { lastYear, getPercentage, isDiagnosticComplete } from "@/utils"
 
 export default {
   name: "CanteenIndicators",
@@ -44,7 +44,7 @@ export default {
     },
     productOriginDiagnostic() {
       const latestDiagnostic = this.canteen.diagnostics.find((x) => x.year === lastYear())
-      if (!latestDiagnostic || !latestDiagnostic.valueBioHt || !latestDiagnostic.valueSustainableHt) return null
+      if (!latestDiagnostic || !isDiagnosticComplete(latestDiagnostic)) return null
       return latestDiagnostic
     },
     productOriginText() {
