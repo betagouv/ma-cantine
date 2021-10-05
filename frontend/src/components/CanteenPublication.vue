@@ -94,7 +94,7 @@
 
 <script>
 import labels from "@/data/quality-labels.json"
-import { lastYear, earnedBadges, getPercentage } from "@/utils"
+import { lastYear, earnedBadges, getPercentage, isDiagnosticComplete } from "@/utils"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 
 export default {
@@ -123,9 +123,7 @@ export default {
     },
     shouldDisplayGraph() {
       if (!this.canteen.diagnostics || this.canteen.diagnostics.length === 0) return false
-      const completedDiagnostics = this.canteen.diagnostics.filter(
-        (x) => !!x.valueBioHt && !!x.valueSustainableHt && !!x.valueTotalHt
-      )
+      const completedDiagnostics = this.canteen.diagnostics.filter(isDiagnosticComplete)
       if (completedDiagnostics.length === 0) return false
       else if (completedDiagnostics.length === 1) return completedDiagnostics[0].year !== lastYear()
       else return true
