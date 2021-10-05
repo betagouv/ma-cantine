@@ -132,7 +132,7 @@
               :value="appliedFilters.minMealCount"
               ref="minMealCount"
               :rules="[validators.nonNegativeOrEmpty]"
-              @change="onChangeMealCount('minMealCount')"
+              @change="onChangeIntegerFilter('minMealCount')"
               hide-details="auto"
               outlined
               label="Min"
@@ -144,7 +144,7 @@
               :value="appliedFilters.maxMealCount"
               ref="maxMealCount"
               :rules="[validators.nonNegativeOrEmpty]"
-              @change="onChangeMealCount('maxMealCount')"
+              @change="onChangeIntegerFilter('maxMealCount')"
               hide-details="auto"
               outlined
               label="Max"
@@ -152,6 +152,47 @@
               dense
             />
           </div>
+        </v-col>
+      </v-row>
+      <v-row class="mt-0">
+        <v-col cols="12" sm="6" class="text-left">
+          <label
+            :class="{
+              'text-body-2': true,
+              'active-filter-label': !!appliedFilters.minBio || !!appliedFilters.minCombined,
+            }"
+            id="value-percentages"
+          >
+            Minimum pourcentage des produits
+          </label>
+          <v-row class="mt-1">
+            <v-col class="py-0">
+              <v-text-field
+                :value="appliedFilters.minBio"
+                ref="minBio"
+                :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                @change="onChangeIntegerFilter('minBio')"
+                hide-details="auto"
+                outlined
+                label="Bio"
+                aria-describedby="value-percentages"
+                dense
+              />
+            </v-col>
+            <v-col class="py-0">
+              <v-text-field
+                :value="appliedFilters.minCombined"
+                ref="minCombined"
+                :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                @change="onChangeIntegerFilter('minCombined')"
+                hide-details="auto"
+                outlined
+                label="Qualité et durables (bio inclus)"
+                aria-describedby="value-percentages"
+                dense
+              />
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-sheet>
@@ -273,6 +314,8 @@ export default {
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
+        minBio: null,
+        minCombined: null,
       },
       orderBy: null,
       orderOptions: [
@@ -325,6 +368,8 @@ export default {
         query.secteurs = this.appliedFilters.chosenSectors.join("+")
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
       if (this.appliedFilters.maxMealCount) query.maxRepasJour = String(this.appliedFilters.maxMealCount)
+      if (this.appliedFilters.minBio) query.minBio = String(this.appliedFilters.minBio)
+      if (this.appliedFilters.minCombined) query.minQualite = String(this.appliedFilters.minCombined)
       if (this.orderBy) query.trier = this.orderBy
       return query
     },
@@ -333,7 +378,9 @@ export default {
         this.appliedFilters.chosenDepartment !== null ||
         this.appliedFilters.chosenSectors.length > 0 ||
         this.appliedFilters.minMealCount !== null ||
-        this.appliedFilters.maxMealCount !== null
+        this.appliedFilters.maxMealCount !== null ||
+        this.appliedFilters.minBio !== null ||
+        this.appliedFilters.minCombined !== null
       )
     },
     validators() {
@@ -346,6 +393,8 @@ export default {
         this.$route.query.secteurs,
         this.$route.query.minRepasJour,
         this.$route.query.maxRepasJour,
+        this.$route.query.minBio,
+        this.$route.query.minQualite,
       ]
       const hasFilter = filterQueries.some((x) => x !== 0 && !!x)
 
@@ -362,6 +411,9 @@ export default {
       if (this.appliedFilters.chosenDepartment) queryParam += `&department=${this.appliedFilters.chosenDepartment}`
       if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
       if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
+      if (this.appliedFilters.minBio) queryParam += `&min_portion_bio=${this.appliedFilters.minBio / 100}`
+      if (this.appliedFilters.minCombined)
+        queryParam += `&min_portion_combined=${this.appliedFilters.minCombined / 100}`
       if (this.orderBy) {
         let chosenOption = this.orderOptions.find((opt) => opt.value === this.orderBy)
         if (chosenOption) queryParam += `&ordering=${chosenOption.query}`
@@ -406,6 +458,8 @@ export default {
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
+        minBio: null,
+        minCombined: null,
       }
     },
     changePage() {
@@ -429,10 +483,12 @@ export default {
         chosenSectors: this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || [],
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
+        minBio: parseInt(this.$route.query.minBio) || null,
+        minCombined: parseInt(this.$route.query.minQualite) || null,
       }
       this.orderBy = this.$route.query.trier || "creation"
     },
-    onChangeMealCount(ref) {
+    onChangeIntegerFilter(ref) {
       if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
     },
     updateRouter(query) {
