@@ -1,3 +1,6 @@
+import Constants from "@/constants"
+import badges from "@/badges"
+
 export const timeAgo = (date, displayPrefix = false) => {
   if (typeof date === "string") {
     date = new Date(date)
@@ -154,4 +157,72 @@ export const isDiagnosticComplete = (diagnostic) => {
     // sadly null >= 0 is true
     (key) => diagnostic[key] > 0 || diagnostic[key] === 0
   )
+}
+
+export const lastYear = () => new Date().getFullYear() - 1
+
+export const diagnosticYears = () => {
+  const thisYear = new Date().getFullYear()
+  return [thisYear - 2, thisYear - 1, thisYear, thisYear + 1]
+}
+
+export const diagnosticsMap = (diagnostics) => {
+  const diagnosticsWithDefault = diagnosticYears().map(
+    (year) => diagnostics.find((x) => x.year === year) || Object.assign({}, Constants.DefaultDiagnostics, { year })
+  )
+  return {
+    previous: diagnosticsWithDefault[0],
+    latest: diagnosticsWithDefault[1],
+    provisionalYear1: diagnosticsWithDefault[2],
+    provisionalYear2: diagnosticsWithDefault[3],
+  }
+}
+
+export const getPercentage = (partialValue, totalValue) => {
+  if (strictIsNaN(partialValue) || strictIsNaN(totalValue) || totalValue === 0) {
+    return null
+  } else {
+    return Math.round((100 * partialValue) / totalValue)
+  }
+}
+
+export const earnedBadges = (canteen, diagnostic, sectors) => {
+  let applicable = {}
+  const bioPercent = getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
+  const sustainablePercent = getPercentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
+  if (bioPercent >= 20 && bioPercent + sustainablePercent >= 50) {
+    applicable.appro = badges.appro
+  }
+  if (
+    diagnostic.hasWasteDiagnostic &&
+    diagnostic.wasteActions?.length > 0 &&
+    (canteen.dailyMealCount <= 3000 || diagnostic.hasDonationAgreement)
+  ) {
+    applicable.waste = badges.waste
+  }
+  if (
+    diagnostic.cookingPlasticSubstituted &&
+    diagnostic.servingPlasticSubstituted &&
+    diagnostic.plasticBottlesSubstituted &&
+    diagnostic.plasticTablewareSubstituted
+  ) {
+    applicable.plastic = badges.plastic
+  }
+
+  // We need to rethink the way a school sector is defined. Temporarily
+  // using the name.
+  const schoolSector = sectors.find((x) => x.name === "Scolaire")
+  if (!schoolSector) console.error("No sector `Scolaire` is present in this configuration")
+
+  if (diagnostic.vegetarianWeeklyRecurrence === "DAILY") {
+    applicable.diversification = badges.diversification
+  } else if (schoolSector && canteen.sectors.indexOf(schoolSector.id) > -1) {
+    if (diagnostic.vegetarianWeeklyRecurrence === "MID" || diagnostic.vegetarianWeeklyRecurrence === "HIGH") {
+      applicable.diversification = badges.diversification
+    }
+  }
+  if (diagnostic.communicatesOnFoodQuality) {
+    applicable.info = badges.info
+  }
+  return applicable
 }

@@ -21,6 +21,15 @@
         <v-icon color="green" small>mdi-checkbox-marked</v-icon>
         Produits équivalents aux produits bénéficiant de ces mentions ou labels
       </li>
+      <li>
+        <v-icon color="green" small>mdi-checkbox-marked</v-icon>
+        Produits issus du commerce équitable
+      </li>
+      <li>
+        <v-icon color="green" small>mdi-checkbox-marked</v-icon>
+        Produits acquis principalement sur la base de leurs performances en matière environnementale et
+        d’approvisionnements directs (précisions à venir)
+      </li>
     </ul>
   </div>
 </template>

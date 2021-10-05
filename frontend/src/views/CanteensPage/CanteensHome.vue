@@ -146,18 +146,17 @@
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-else-if="visibleCanteens && visibleCanteens.length > 0">
+      <p class="mt-3 mb-n4 text-body-2 grey--text" v-if="resultsCountText">
+        {{ resultsCountText }}
+      </p>
+
       <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
       <v-row>
         <v-col v-for="canteen in visibleCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
           <PublishedCanteenCard :canteen="canteen" />
         </v-col>
       </v-row>
-      <v-pagination
-        class="my-6"
-        v-model="page"
-        :length="Math.ceil(publishedCanteenCount / limit)"
-        v-if="$vuetify.breakpoint.smAndDown"
-      ></v-pagination>
+      <v-pagination class="my-6" v-model="page" :length="Math.ceil(publishedCanteenCount / limit)"></v-pagination>
     </div>
     <div v-else class="d-flex flex-column align-center py-10">
       <v-icon large>mdi-inbox-remove</v-icon>
@@ -166,6 +165,59 @@
         Désactiver tous les filtres
       </v-btn>
     </div>
+
+    <v-divider class="mb-8 mt-12"></v-divider>
+
+    <v-row class="mb-6" style="position: relative">
+      <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp">
+        <div class="fill-height d-flex flex-column align-center">
+          <v-spacer></v-spacer>
+          <v-img src="/static/images/SittingDoodle.png" contain></v-img>
+          <v-spacer></v-spacer>
+        </div>
+      </v-col>
+      <v-col>
+        <h2 class="text-h6 font-weight-black text-left">
+          Vous n'avez pas trouvé un ou plusieurs établissements qui vous intéressent ?
+        </h2>
+        <p class="body-2 text-left">
+          Dites-nous tout, nous ferons en sorte de leur communiquer votre intérêt pour leurs initiatives en place.
+        </p>
+        <v-form v-model="formIsValid" ref="form" @submit.prevent>
+          <v-text-field
+            v-model="fromEmail"
+            label="Votre email"
+            :rules="[validators.email]"
+            validate-on-blur
+            outlined
+            hide-details="auto"
+            class="my-2"
+          ></v-text-field>
+          <v-text-field
+            hide-details="auto"
+            v-model="name"
+            label="Prénom et nom (facultatif)"
+            outlined
+            class="my-2"
+          ></v-text-field>
+          <v-textarea
+            hide-details="auto"
+            v-model="message"
+            label="Message"
+            outlined
+            :rules="[validators.required]"
+            class="mt-2"
+          ></v-textarea>
+        </v-form>
+        <div class="d-flex mt-2">
+          <v-spacer></v-spacer>
+          <v-btn x-large color="primary" class="mt-2" @click="sendEmail">
+            <v-icon class="mr-2">mdi-send</v-icon>
+            Envoyer
+          </v-btn>
+        </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -179,10 +231,8 @@ export default {
   data() {
     return {
       limit: 6,
-      departments: jsonDepartments.map((x) => ({
-        text: `${x.departmentCode} - ${x.departmentName}`,
-        value: x.departmentCode,
-      })),
+      departments: [],
+      sectors: [],
       visibleCanteens: null,
       publishedCanteenCount: null,
       page: null,
@@ -193,6 +243,10 @@ export default {
         minMealCount: null,
         maxMealCount: null,
       },
+      fromEmail: "",
+      name: "",
+      message: "",
+      formIsValid: true,
     }
   },
   components: { PublishedCanteenCard },
@@ -214,11 +268,6 @@ export default {
       if (this.appliedFilters.maxMealCount) query.maxRepasJour = String(this.appliedFilters.maxMealCount)
       return query
     },
-    sectors() {
-      return this.$store.state.sectors
-        .map((x) => ({ text: x.name, value: x.id }))
-        .sort((a, b) => (a.text > b.text ? 1 : -1))
-    },
     hasActiveFilter() {
       return (
         this.appliedFilters.chosenDepartment !== null ||
@@ -229,6 +278,21 @@ export default {
     },
     validators() {
       return validators
+    },
+    resultsCountText() {
+      const filterQueries = [
+        this.$route.query.recherche,
+        this.$route.query.departement,
+        this.$route.query.secteurs,
+        this.$route.query.minRepasJour,
+        this.$route.query.maxRepasJour,
+      ]
+      const hasFilter = filterQueries.some((x) => x !== 0 && !!x)
+
+      if (!hasFilter || !this.publishedCanteenCount) return null
+
+      if (this.publishedCanteenCount === 1) return "Un établissement correspond à votre recherche"
+      else return `${this.publishedCanteenCount} établissements correspondent à votre recherche`
     },
   },
   methods: {
@@ -250,6 +314,8 @@ export default {
         .then((response) => {
           this.publishedCanteenCount = response.count
           this.visibleCanteens = response.results
+          this.setDepartments(response.departments)
+          this.setSectors(response.sectors)
         })
         .catch(() => {
           this.publishedCanteenCount = 0
@@ -276,13 +342,15 @@ export default {
     changePage() {
       const override = this.page ? { page: this.page } : { page: 1 }
       const query = Object.assign(this.query, override)
-      this.$router.push({ query }).catch(() => {})
+      this.updateRouter(query)
     },
     applyFilter() {
       const changedKeys = Object.keys(getObjectDiff(this.query, this.$route.query))
       const shouldNavigate = changedKeys.length > 0
-      if (shouldNavigate) this.$router.push({ query: Object.assign(this.query, { page: 1 }) }).catch(() => {})
-      else this.fetchCurrentPage()
+      if (shouldNavigate) {
+        this.page = 1
+        this.updateRouter(Object.assign(this.query, { page: 1 }))
+      } else this.fetchCurrentPage()
     },
     populateParameters() {
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
@@ -296,6 +364,79 @@ export default {
     },
     onChangeMealCount(ref) {
       if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
+    },
+    updateRouter(query) {
+      if (!this.$route.query.page) {
+        this.$router.replace({ query }).catch(() => {})
+      } else {
+        this.$router.push({ query }).catch(() => {})
+      }
+    },
+    sendEmail() {
+      this.$refs.form.validate()
+      if (!this.formIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
+
+      const payload = {
+        from: this.fromEmail,
+        name: this.name,
+        message: this.message,
+      }
+
+      this.$store
+        .dispatch("sendCanteenNotFoundEmail", payload)
+        .then(() => {
+          this.$refs.form.reset()
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: `Votre message a bien été envoyé.`,
+          })
+
+          if (this.$matomo) {
+            this.$matomo.trackEvent("message", "send", "canteen-not-found-email")
+          }
+          window.scrollTo(0, 0)
+        })
+        .catch((error) => {
+          console.log(error.message)
+          this.$store.dispatch("notifyServerError")
+        })
+    },
+    setDepartments(enabledDepartmentIds) {
+      const enabledDepartments = jsonDepartments
+        .filter((x) => enabledDepartmentIds.indexOf(x.departmentCode) > -1)
+        .map((x) => ({
+          text: `${x.departmentCode} - ${x.departmentName}`,
+          value: x.departmentCode,
+        }))
+      const headerText =
+        this.hasActiveFilter || this.searchTerm
+          ? "Ces départements ne contiennent pas d'établissements correspondant à votre recherche :"
+          : "Nous n'avons pas encore d'établissements dans ces départements :"
+      const header = { header: headerText }
+
+      const divider = { divider: true }
+
+      const disabledDepartments = jsonDepartments
+        .filter((x) => enabledDepartmentIds.indexOf(x.departmentCode) === -1)
+        .map((x) => ({
+          text: `${x.departmentCode} - ${x.departmentName}`,
+          value: x.departmentCode,
+          disabled: true,
+        }))
+
+      this.departments = [...enabledDepartments, divider, header, ...disabledDepartments]
+    },
+    setSectors(enabledSectorIds) {
+      this.sectors = this.$store.state.sectors
+        .map((x) => ({
+          text: x.name,
+          value: x.id,
+          disabled: enabledSectorIds.indexOf(x.id) === -1,
+        }))
+        .sort((a, b) => (a.text > b.text ? 1 : -1))
     },
   },
   watch: {
@@ -328,5 +469,8 @@ export default {
 .active-filter-label::before {
   content: "⚫︎";
   color: #0c7f46;
+}
+div >>> .v-list-item--disabled .theme--light.v-icon {
+  color: rgba(0, 0, 0, 0.22);
 }
 </style>

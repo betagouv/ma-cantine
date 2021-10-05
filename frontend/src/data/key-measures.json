@@ -6,7 +6,7 @@
       "display": "À partir du 1er janvier 2022 et 2025 pour la restauration privée",
       "earliestISO": "2022-01-01"
     },
-    "description": "La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent comporter, au cours de l'année 2022, 50 % de produits de qualité et durables dont 20 % issus de l'agriculture biologique ou en conversion. Ces seuils (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre à des produits bio ou en conversion et au total au moins 50 euros doivent correspondre à des produits durables et de qualité (bio inclus). Depuis la promulgation de la loi Climat et Résilience, l'ensemble de la restauration collective, publique comme privée, a l'obligation de proposer 50 % de produits de qualité dont 20 % de produits bio à compter de 2022 pour le public, et d'ici 2025 pour le privé. En 2024, 60 % de la viande et des produits de la pêche servis devront respecter les critéres de qualité.",
+    "description": "La loi EGAlim et la loi Climat et Résilience encadrent la qualité des produits achetés entrant dans la composition des repas servis en restauration collective du secteur public et des établissements du secteur privé (article L. 230-5 du Code Rural et de la Pêche Maritime). Les repas doivent comporter, à partir de l'année 2022, au moins 50 % de produits de qualité et durables dont au moins 20 % issus de l'agriculture biologique ou en conversion. Ces taux (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre à des produits bio ou en conversion et au total au moins 50 euros doivent correspondre à des produits durables et de qualité (bio inclus). Depuis la promulgation de la loi Climat et Résilience, l'ensemble de la restauration collective, publique comme privée, a l'obligation de proposer 50 % de produits de qualité dont 20 % de produits bio à compter de 2022 pour le public, et d'ici le 1er janvier 2024 pour la restauration collective du secteur privé. Depuis la promulgation de la loi Climat et Résilience, à partir du 1er janvier 2024, au moins 60% du total achat de la famille de denrées « viandes et poissons » est composé des produits de qualité et durables, ce taux étant fixé à 100% pour la restauration de l’Etat, ses établissements publics et les entreprises publiques nationales. La viande de synthèse est interdite en restauration collective. Le 1er janvier 2024, ces dispositions s’appliquent à tous les restaurants collectifs, y compris tous les restaurants collectifs du secteur privé.",
     "descriptionComponent": "KeyMeasureDescriptionQuality",
     "id": "qualite-des-produits",
     "mdiIcon": "mdi-food-apple",
@@ -54,7 +54,7 @@
     "shortTitle": "Gaspillage alimentaire",
     "subMeasures": [
       {
-        "description": "Obligation de mettre en place une démarche de lutte contre le gaspillage alimentaire étendu à la restauration collective privée et obligation d'effectuer un diagnostic préalable à la réalisation de cette démarche.",
+        "description": "Obligation de mettre en place une démarche de lutte contre le gaspillage alimentaire étendu à la restauration collective privée et obligation d'effectuer un diagnostic préalable à la réalisation de cette démarche. Lancement d’une expérimentation consistant à mettre en place une solution de réservation de repas pour adapter le nombre de repas nécessaires pour les gestionnaires volontaires de services de restauration collective dont les personnes morales de droit public ont la charge est lancée dès la promulgation de la loi et pour une durée de 3 ans. Les modalités d’application doivent être définies par décret.",
         "id": "gaspillage-analyse",
         "readMore": false,
         "shortTitle": "Gaspillage analysé",
@@ -117,7 +117,8 @@
           "social",
           "medical",
           "loisirs",
-          "creche"
+          "creche",
+          "entreprises"
         ],
         "title": "Les sources de protéines doivent être diversifiées.",
         "who": "Pour les restaurants collectifs servant plus de 200 couverts par jour."
@@ -127,7 +128,7 @@
           "display": "Expérimentation de 2 ans (du 1er novembre 2019 au 1er novembre 2021)",
           "earliestISO": "2019-11-01"
         },
-        "description": "Tous les restaurants collectifs scolaires (publics ou privés) sont tenus de proposer, au moins une fois par semaine, un menu végétarien (extension de la précédente expérimentation). Ce menu végétarien peut constituer une alternative à d'autres menus dans le cas où plusieurs menus sont proposés. Dans le cas où un menu unique est proposé, il s'agit d'un menu unique végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\nQu'est-ce qu'un menu végétarien ? Il s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers. Les cantines de l'Etat et les universités qui proposent déja plusieurs menus devront obligatoirement proposer une option végétarienne.",
+        "description": "Actuellement en vigueur pour le secteur public et à partir du 1er janvier 2024 pour le privé. Tous les restaurants collectifs scolaires (publics ou privés), de la maternelle au lycée, sont tenus de proposer, au moins une fois par semaine, un menu végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n Les restaurants de l’Etat et ses établissements publics proposent une option végétarienne quotidienne à partir du 1er janvier 2023. \n Pour les collectivités territoriales volontaires, possibilité d’expérimenter, dès maintenant, une option végétarienne quotidienne pour une durée de 2 ans. Dans ce cas, elles font connaître au représentant de l’État dans la région leur engagement dans l’expérimentation. \n Qu'est-ce qu'un menu végétarien ? Il s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers.",
         "id": "menu-vege",
         "readMore": false,
         "shortTitle": "Menu végé hebdo",

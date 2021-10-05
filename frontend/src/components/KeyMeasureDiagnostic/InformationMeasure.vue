@@ -8,48 +8,55 @@
       :disabled="readonly"
     />
 
-    <p class="text-left mt-6 mb-2">Je fais cette information :</p>
-    <v-radio-group v-model="diagnostic.communicationFrequency">
-      <v-radio
-        class="ml-8"
-        v-for="item in communicationFrequencies"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-        :readonly="readonly"
-        :disabled="readonly"
-      ></v-radio>
-    </v-radio-group>
+    <fieldset class="mt-3 mb-4">
+      <legend class="text-left my-3">Je fais cette information :</legend>
+      <v-radio-group class="my-0" v-model="diagnostic.communicationFrequency" hide-details>
+        <v-radio
+          class="ml-8"
+          v-for="item in communicationFrequencies"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :readonly="readonly"
+          :disabled="readonly"
+        ></v-radio>
+      </v-radio-group>
+    </fieldset>
 
-    <p class="text-left my-2">J'informe sur la qualité des approvisionnements :</p>
-    <v-checkbox
-      hide-details="auto"
-      class="ml-8"
-      v-model="diagnostic.communicationSupports"
-      :multiple="true"
-      v-for="support in communicationSupports"
-      :key="support.value"
-      :value="support.value"
-      :label="support.label"
-      :readonly="readonly"
-      :disabled="readonly"
-    />
-    <v-row align="center" class="ml-8 mt-2 mr-2">
+    <fieldset class="mt-3 mb-4">
+      <legend class="text-left my-3">J'informe sur la qualité des approvisionnements :</legend>
       <v-checkbox
-        v-model="otherSupportEnabled"
-        hide-details
-        class="shrink mt-0"
+        hide-details="auto"
+        class="ml-8 mb-3 mt-0"
+        v-model="diagnostic.communicationSupports"
+        :multiple="true"
+        v-for="support in communicationSupports"
+        :key="support.value"
+        :value="support.value"
+        :label="support.label"
         :readonly="readonly"
         :disabled="readonly"
-      ></v-checkbox>
-      <v-text-field
-        :disabled="!otherSupportEnabled || readonly"
-        v-model="diagnostic.otherCommunicationSupport"
-        label="Autre : donnez plus d'informations"
-        :readonly="readonly"
-      ></v-text-field>
-    </v-row>
+      />
+      <v-row align="center" class="ml-8 mb-3 mt-0 mr-2">
+        <v-checkbox
+          v-model="otherSupportEnabled"
+          hide-details
+          class="shrink mt-0"
+          :readonly="readonly"
+          :disabled="readonly"
+        ></v-checkbox>
+        <v-text-field
+          class="my-0 py-0"
+          hide-details
+          :disabled="!otherSupportEnabled || readonly"
+          v-model="diagnostic.otherCommunicationSupport"
+          label="Autre : donnez plus d'informations"
+          :readonly="readonly"
+        ></v-text-field>
+      </v-row>
+    </fieldset>
 
+    <!-- TODO: is this question that different from the first? -->
     <v-checkbox
       hide-details="auto"
       v-model="diagnostic.communicatesOnFoodPlan"
@@ -125,3 +132,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+fieldset {
+  border: none;
+}
+</style>

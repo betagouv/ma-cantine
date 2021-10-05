@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import models
 from data.fields import ChoiceArrayField
@@ -113,6 +114,13 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Produits durables (hors bio) - Valeur annuelle HT",
+    )
+    value_pat_ht = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits dans le cadre de Projects Alimentaires Territoriaux - Valeur annuelle HT",
     )
     value_total_ht = models.DecimalField(
         max_digits=20,
@@ -295,6 +303,7 @@ class Diagnostic(models.Model):
 
     def clean(self):
         self.validate_year()
+        self.validate_approvisionment_total()
         return super().clean()
 
     def validate_year(self):
@@ -310,6 +319,19 @@ class Diagnostic(models.Model):
             raise ValidationError(
                 {
                     "year": f"L'année doit être comprise entre {lower_limit_year} et {upper_limit_year}."
+                }
+            )
+
+    def validate_approvisionment_total(self):
+        if self.value_total_ht is None or not isinstance(self.value_total_ht, Decimal):
+            return
+        value_sum = (
+            self.value_bio_ht + self.value_sustainable_ht + self.value_fair_trade_ht
+        )
+        if value_sum > self.value_total_ht:
+            raise ValidationError(
+                {
+                    "value_total_ht": f"La somme des valeurs d'approvisionnement, {value_sum}, est plus que le total, {self.value_total_ht}"
                 }
             )
 

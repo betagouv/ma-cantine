@@ -2,7 +2,7 @@
   <div class="poster-contents">
     <div id="heading">
       <div>
-        <h2 class="">Qualité des approvisionnements dans l’établissement {{ canteen.name || "_________" }}</h2>
+        <h2>Qualité des approvisionnements dans l’établissement {{ canteen.name || "_________" }}</h2>
         <div id="indicators">
           <!-- Can't use <img> because the object-fit is not respected in the PDF generation -->
           <div
@@ -19,22 +19,21 @@
       <img src="/static/images/CoffeeDoodle.png" id="hat" alt="" />
     </div>
 
-    <div>
-      <p style="font-size: 14px;">
-        Sur les {{ canteen.dailyMealCount }} repas servis aux convives, pour l’année 2020, voici la répartition, en
-        valeur d’achat, des produits bio, de qualité et durables (liste de labels ci-dessous) utilisés dans la
-        confection des repas
-      </p>
-    </div>
+    <p id="introduction">
+      Sur les {{ canteen.dailyMealCount }} repas servis aux convives, pour l’année {{ infoYear }}, voici la répartition,
+      en valeur d’achat, des produits bio, de qualité et durables (liste de labels ci-dessous) utilisés dans la
+      confection des repas
+    </p>
+
     <div class="spacer"></div>
 
     <div id="graphs">
       <div>
-        <p class="graph-title">Approvisionnement 2020</p>
+        <p class="graph-title">Approvisionnement {{ infoYear }}</p>
         <SummaryStatistics :width="350" :qualityDiagnostic="diagnostic" class="summary-statistics" />
       </div>
       <div v-if="showPreviousDiagnostic">
-        <p class="graph-title">Rappel 2019</p>
+        <p class="graph-title">Rappel {{ infoYear - 1 }}</p>
 
         <SummaryStatistics
           :hideLegend="true"
@@ -49,7 +48,7 @@
 
     <div class="spacer"></div>
     <div id="about">
-      <h3 style="margin-bottom: 8px;">Pourquoi je vois cette affiche ?</h3>
+      <h3>Pourquoi je vois cette affiche ?</h3>
       <p>
         L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des produits composant les
         menus et de soutenir l’objectif d’une alimentation plus saine et plus durable dans les restaurants. En
@@ -80,6 +79,7 @@ import LogoList from "@/components/LogoList"
 import SummaryStatistics from "./SummaryStatistics"
 import CanteenIndicators from "@/components/CanteenIndicators"
 import QrcodeVue from "qrcode.vue"
+import { lastYear } from "@/utils"
 
 export default {
   components: {
@@ -94,15 +94,6 @@ export default {
     previousDiagnostic: Object,
   },
   computed: {
-    bioPercent() {
-      return this.percentageString(this.diagnostic.valueBio)
-    },
-    sustainablePercent() {
-      return this.percentageString(this.diagnostic.valueSustainable)
-    },
-    fairTradePercent() {
-      return this.percentageString(this.diagnostic.valueFairTrade)
-    },
     showPreviousDiagnostic() {
       if (!this.previousDiagnostic) return false
       return !!this.previousDiagnostic.valueTotalHt
@@ -115,14 +106,8 @@ export default {
       }).href
       return baseUrl + fullPath
     },
-  },
-  methods: {
-    percentageString(number) {
-      if (!isNaN(number) && this.diagnostic.valueTotal) {
-        const value = Math.floor((number / this.diagnostic.valueTotal) * 1000) / 10
-        return value.toLocaleString("fr-FR")
-      }
-      return "__"
+    infoYear() {
+      return this.diagnostic.year || lastYear()
     },
   },
 }
@@ -189,9 +174,13 @@ i {
   margin-left: 1em;
 }
 
+#introduction {
+  font-size: 14px;
+}
+
 #logos {
   width: 440px;
-  margin-bottom: 1em;
+  margin-bottom: 1.5em;
   margin-left: auto;
   margin-right: auto;
   align-self: center;
@@ -212,6 +201,11 @@ i {
 #about {
   width: 100%;
   text-align: left;
+
+  h3 {
+    margin-bottom: 8px;
+  }
+
   p {
     font-size: 14px;
   }

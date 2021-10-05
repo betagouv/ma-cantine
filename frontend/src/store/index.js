@@ -1,6 +1,7 @@
 import Vue from "vue"
 import Vuex from "vuex"
 import Constants from "@/constants"
+import { diagnosticYears } from "../utils"
 
 Vue.use(Vuex)
 
@@ -376,6 +377,12 @@ export default new Vuex.Store({
       )
     },
 
+    sendCanteenNotFoundEmail(context, payload) {
+      return fetch("/api/v1/canteenNotFoundMessage/", { method: "POST", headers, body: JSON.stringify(payload) }).then(
+        verifyResponse
+      )
+    },
+
     removeManager(context, { canteenId, email }) {
       return fetch(`/api/v1/removeManager/`, {
         method: "POST",
@@ -484,12 +491,7 @@ export default new Vuex.Store({
     getLocalDiagnostics: () => () => {
       const savedDiagnostics = localStorage.getItem(LOCAL_STORAGE_KEY)
       if (!savedDiagnostics) {
-        return [
-          Object.assign({}, Constants.DefaultDiagnostics, { year: 2019 }),
-          Object.assign({}, Constants.DefaultDiagnostics, { year: 2020 }),
-          Object.assign({}, Constants.DefaultDiagnostics, { year: 2021 }),
-          Object.assign({}, Constants.DefaultDiagnostics, { year: 2022 }),
-        ]
+        return diagnosticYears().map((year) => Object.assign({}, Constants.DefaultDiagnostics, { year }))
       }
       return Object.values(JSON.parse(savedDiagnostics))
     },

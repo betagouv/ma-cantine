@@ -69,6 +69,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "sectors",
         "management_type",
         "production_type",
+        "deletion_date",
         "city",
     )
 

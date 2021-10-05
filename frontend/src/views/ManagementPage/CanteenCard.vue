@@ -41,7 +41,6 @@ export default {
         },
         pending: {
           color: "amber lighten-4",
-          // TODO: make it clear that the task is with our team, not theirs
           text: "En attente de validation",
         },
         published: {
