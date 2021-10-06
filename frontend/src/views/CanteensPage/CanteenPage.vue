@@ -7,8 +7,8 @@
     <div v-if="canteen" id="canteen-dashboard">
       <v-card elevation="0" class="pa-0 mt-4 mb-8 text-left">
         <v-row class="align-center">
-          <v-col v-if="canteen.mainImage" cols="12" sm="3">
-            <v-img class="rounded" :src="canteen.mainImage"></v-img>
+          <v-col v-if="canteen.images && canteen.images.length > 0" cols="12" sm="3">
+            <v-img class="rounded" :src="canteen.images[0].image"></v-img>
           </v-col>
           <v-col>
             <v-card-title class="text-h4 font-weight-black pa-0">

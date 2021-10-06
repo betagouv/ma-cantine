@@ -5,7 +5,7 @@
       params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
     }"
   >
-    <v-img :src="canteen.mainImage || '/static/images/canteen-default-image.jpg'" height="160"></v-img>
+    <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160"></v-img>
     <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
     <v-card-subtitle class="py-1">
       <v-chip small :color="publicationStatus.color" label>
@@ -48,6 +48,10 @@ export default {
           text: "Publiée",
         },
       }[this.canteen.publicationStatus || "draft"]
+    },
+    canteenImage() {
+      if (!this.canteen.images || this.canteen.images.length === 0) return null
+      return this.canteen.images[0].image
     },
   },
 }
