@@ -97,9 +97,7 @@ class Canteen(SoftDeletionModel):
         verbose_name="mode de production",
     )
 
-    main_image = models.ImageField(
-        null=True, blank=True, verbose_name="Image principale"
-    )
+    logo = models.ImageField(null=True, blank=True, verbose_name="Logo")
 
     # Publication things
     publication_status = models.CharField(
@@ -149,10 +147,8 @@ class Canteen(SoftDeletionModel):
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
         max_image_size = 1024
-        if self.main_image:
-            self.main_image = optimize_image(
-                self.main_image, self.main_image.name, max_image_size
-            )
+        if self.logo:
+            self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
         super(Canteen, self).save(force_insert, force_update, using, update_fields)
 
     @property
@@ -170,3 +166,16 @@ class Canteen(SoftDeletionModel):
         self.diversification_comments = data.get("diversification_comments")
         self.plastics_comments = data.get("plastics_comments")
         self.information_comments = data.get("information_comments")
+
+
+class CanteenImage(models.Model):
+    canteen = models.ForeignKey(
+        Canteen, related_name="images", on_delete=models.CASCADE, null=True
+    )
+    image = models.ImageField()
+
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        self.image = optimize_image(self.image, self.image.name)
+        super(CanteenImage, self).save(force_insert, force_update, using, update_fields)

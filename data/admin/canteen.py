@@ -31,7 +31,7 @@ class CanteenAdmin(SoftDeletionAdmin):
     inlines = (DiagnosticInline,)
     fields = (
         "name",
-        "main_image",
+        "logo",
         "city",
         "department",
         "city_insee_code",
