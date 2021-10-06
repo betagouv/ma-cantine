@@ -92,7 +92,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     manager_invitations = ManagerInvitationSerializer(
         many=True, read_only=True, source="managerinvitation_set"
     )
-    images = MediaListSerializer(child=CanteenImageSerializer())
+    images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
 
     class Meta:
         model = Canteen
