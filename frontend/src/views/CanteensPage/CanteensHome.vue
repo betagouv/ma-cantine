@@ -406,6 +406,7 @@ export default {
           this.visibleCanteens = response.results
           this.setDepartments(response.departments)
           this.setSectors(response.sectors)
+          this.setManagementTypes(response.managementTypes)
         })
         .catch(() => {
           this.publishedCanteenCount = 0
@@ -535,6 +536,13 @@ export default {
           disabled: enabledSectorIds.indexOf(x.id) === -1,
         }))
         .sort((a, b) => (a.text > b.text ? 1 : -1))
+    },
+    setManagementTypes(enabledManagementTypes) {
+      this.managementTypes = Constants.ManagementTypes.map((x) =>
+        Object.assign(x, {
+          disabled: enabledManagementTypes.indexOf(x.value) === -1,
+        })
+      )
     },
   },
   watch: {
