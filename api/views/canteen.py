@@ -119,8 +119,13 @@ class PublishedCanteensView(ListAPIView):
     serializer_class = PublicCanteenSerializer
     queryset = Canteen.objects.filter(publication_status="published")
     pagination_class = PublishedCanteensPagination
-    filter_backends = [django_filters.DjangoFilterBackend, UnaccentSearchFilter]
+    filter_backends = [
+        django_filters.DjangoFilterBackend,
+        UnaccentSearchFilter,
+        filters.OrderingFilter,
+    ]
     search_fields = ["name"]
+    ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
 
 
