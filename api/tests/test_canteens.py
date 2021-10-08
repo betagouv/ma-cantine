@@ -482,6 +482,21 @@ class TestCanteenApi(APITestCase):
         self.assertIn(school.id, body.get("sectors"))
         self.assertIn(enterprise.id, body.get("sectors"))
 
+    def test_pagination_management_types(self):
+        CanteenFactory.create(
+            publication_status="published", management_type="conceded", name="Shiso"
+        )
+        CanteenFactory.create(
+            publication_status="published", management_type=None, name="Wasabi"
+        )
+
+        url = f"{reverse('published_canteens')}"
+        response = self.client.get(url)
+        body = response.json()
+
+        self.assertEqual(len(body.get("managementTypes")), 1)
+        self.assertIn("conceded", body.get("managementTypes"))
+
     @authenticate
     def test_canteen_publication_fields_read_only(self):
         """
