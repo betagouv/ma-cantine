@@ -1,6 +1,6 @@
 arabic-reshaper==2.1.3
 asgiref==3.4.1
-astroid==2.8.0
+astroid==2.8.2
 attrs==21.2.0
 black==21.9b0
 boto3==1.18.55
