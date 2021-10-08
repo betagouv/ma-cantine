@@ -95,6 +95,7 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
             "sectors",
             "min_daily_meal_count",
             "max_daily_meal_count",
+            "management_type",
         )
 
 

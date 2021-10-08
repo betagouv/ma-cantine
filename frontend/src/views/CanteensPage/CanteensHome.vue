@@ -74,7 +74,7 @@
           <span class="text-decoration-underline">Désactiver tous les filtres</span>
         </v-btn>
       </h2>
-      <v-row id="filters">
+      <v-row>
         <v-col cols="12" sm="6" md="4" class="text-left">
           <label
             for="select-department"
@@ -152,6 +152,26 @@
               dense
             />
           </div>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" sm="4" md="3" class="text-left">
+          <label
+            for="select-management-type"
+            :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.managementType }"
+          >
+            Mode de gestion
+          </label>
+          <v-select
+            v-model="appliedFilters.managementType"
+            :items="managementTypes"
+            clearable
+            hide-details
+            id="select-management-type"
+            outlined
+            class="mt-1"
+            dense
+          ></v-select>
         </v-col>
       </v-row>
     </v-sheet>
@@ -257,6 +277,7 @@ import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
 import { getObjectDiff } from "@/utils"
 import validators from "@/validators"
+import Constants from "@/constants"
 
 export default {
   data() {
@@ -270,6 +291,7 @@ export default {
       searchTerm: null,
       appliedFilters: {
         chosenDepartment: null,
+        managementType: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -306,6 +328,7 @@ export default {
       name: "",
       message: "",
       formIsValid: true,
+      managementTypes: Constants.ManagementTypes,
     }
   },
   components: { PublishedCanteenCard },
@@ -321,6 +344,7 @@ export default {
       if (this.page) query.page = String(this.page)
       if (this.searchTerm) query.recherche = this.searchTerm
       if (this.appliedFilters.chosenDepartment) query.departement = this.appliedFilters.chosenDepartment
+      if (this.appliedFilters.managementType) query.modeDeGestion = this.appliedFilters.managementType
       if (this.appliedFilters.chosenSectors && this.appliedFilters.chosenSectors.length > 0)
         query.secteurs = this.appliedFilters.chosenSectors.join("+")
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
@@ -331,6 +355,7 @@ export default {
     hasActiveFilter() {
       return (
         this.appliedFilters.chosenDepartment !== null ||
+        this.appliedFilters.managementType !== null ||
         this.appliedFilters.chosenSectors.length > 0 ||
         this.appliedFilters.minMealCount !== null ||
         this.appliedFilters.maxMealCount !== null
@@ -360,6 +385,7 @@ export default {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
       if (this.appliedFilters.chosenDepartment) queryParam += `&department=${this.appliedFilters.chosenDepartment}`
+      if (this.appliedFilters.managementType) queryParam += `&management_type=${this.appliedFilters.managementType}`
       if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
       if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
       if (this.orderBy) {
@@ -403,6 +429,7 @@ export default {
     clearFilters() {
       this.appliedFilters = {
         chosenDepartment: null,
+        managementType: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -426,6 +453,7 @@ export default {
       this.searchTerm = this.$route.query.recherche || null
       this.appliedFilters = {
         chosenDepartment: this.$route.query.departement || null,
+        managementType: this.$route.query.modeDeGestion || null,
         chosenSectors: this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || [],
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
