@@ -85,7 +85,7 @@
           >
             Département
           </label>
-          <v-select
+          <v-autocomplete
             v-model="appliedFilters.chosenDepartment"
             :items="departments"
             clearable
@@ -95,7 +95,9 @@
             class="mt-1"
             outlined
             dense
-          ></v-select>
+            auto-select-first
+            :filter="departmentFilter"
+          ></v-autocomplete>
         </v-col>
         <v-col cols="12" sm="6" md="4" class="text-left">
           <label
@@ -255,7 +257,7 @@
 <script>
 import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
-import { getObjectDiff } from "@/utils"
+import { getObjectDiff, normaliseText } from "@/utils"
 import validators from "@/validators"
 
 export default {
@@ -498,6 +500,13 @@ export default {
         }))
 
       this.departments = [...enabledDepartments, divider, header, ...disabledDepartments]
+    },
+    departmentFilter(item, queryText, itemText) {
+      return (
+        Object.prototype.hasOwnProperty.call(item, "divider") ||
+        Object.prototype.hasOwnProperty.call(item, "header") ||
+        normaliseText(itemText).indexOf(normaliseText(queryText)) > -1
+      )
     },
     setSectors(enabledSectorIds) {
       this.sectors = this.$store.state.sectors
