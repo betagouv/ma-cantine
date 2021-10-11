@@ -1,10 +1,15 @@
+import os
+import base64
 from django.urls import reverse
+from django.core.files import File
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory, SectorFactory
 from data.factories import DiagnosticFactory
-from data.models import Canteen, Teledeclaration
+from data.models import Canteen, Teledeclaration, CanteenImage
 from .utils import authenticate
+
+CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestCanteenApi(APITestCase):
@@ -465,3 +470,98 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(
             json_diagnostic["teledeclaration"]["id"], new_teledeclaration.id
         )
+
+    @authenticate
+    def test_canteen_image_serialization(self):
+        """
+        A canteen with images should serialize those images
+        """
+        canteen = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED.value
+        )
+        image_names = [
+            "test-image-1.jpg",
+            "test-image-2.jpg",
+            "test-image-3.png",
+        ]
+        for image_name in image_names:
+            path = os.path.join(CURRENT_DIR, f"files/{image_name}")
+            with open(path, "rb") as image:
+                file = File(image)
+                file.name = image_name
+                canteen_image = CanteenImage(image=file)
+                canteen_image.canteen = canteen
+                canteen_image.save()
+
+        response = self.client.get(reverse("published_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        results = body.get("results", [])
+
+        self.assertEqual(body.get("count"), 1)
+        self.assertEqual(len(results[0].get("images")), 3)
+
+    @authenticate
+    def test_canteen_image_edition(self):
+        """
+        The API should allow image addition and deletion for canteen managers
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        self.assertEqual(canteen.images.count(), 0)
+
+        image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
+        image_base_64 = None
+        with open(image_path, "rb") as image:
+            image_base_64 = base64.b64encode(image.read()).decode("utf-8")
+
+        # Create image
+        payload = {
+            "images": [
+                {
+                    "image": "data:image/jpeg;base64," + image_base_64,
+                }
+            ]
+        }
+        self.client.patch(
+            reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json"
+        )
+
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.images.count(), 1)
+
+        # Delete image
+        payload = {"images": []}
+        self.client.patch(
+            reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json"
+        )
+
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.images.count(), 0)
+
+    @authenticate
+    def test_canteen_image_edition_unauthorized(self):
+        """
+        The API should not allow image modification for non-managers
+        """
+        canteen = CanteenFactory.create()
+        image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
+        image_base_64 = None
+        with open(image_path, "rb") as image:
+            image_base_64 = base64.b64encode(image.read()).decode("utf-8")
+
+        # Create image
+        payload = {
+            "images": [
+                {
+                    "image": "data:image/jpeg;base64," + image_base_64,
+                }
+            ]
+        }
+        response = self.client.patch(
+            reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.images.count(), 0)
