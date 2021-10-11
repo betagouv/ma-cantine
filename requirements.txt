@@ -52,7 +52,7 @@ python-bidi==0.4.2
 python-dateutil==2.8.2
 python-dotenv==0.19.0
 pytz==2021.3
-regex==2021.9.30
+regex==2021.10.8
 reportlab==3.6.1
 requests==2.26.0
 s3transfer==0.5.0
