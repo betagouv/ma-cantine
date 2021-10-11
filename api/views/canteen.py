@@ -43,8 +43,28 @@ class PublishedCanteensPagination(LimitOffsetPagination):
             filter(lambda x: x, queryset.values_list("department", flat=True))
         )
 
+        sector_queryset = Canteen.objects.filter(publication_status="published")
+        query_params = request.query_params
+
+        if query_params.get("department"):
+            sector_queryset = sector_queryset.filter(
+                department=query_params.get("department")
+            )
+
+        if query_params.get("min_daily_meal_count"):
+            sector_queryset = sector_queryset.filter(
+                daily_meal_count__gte=query_params.get("min_daily_meal_count")
+            )
+
+        if query_params.get("max_daily_meal_count"):
+            sector_queryset = sector_queryset.filter(
+                daily_meal_count__lte=query_params.get("max_daily_meal_count")
+            )
+
+        sector_queryset = filter_by_diagnostic_params(sector_queryset, query_params)
+
         self.sectors = (
-            Sector.objects.filter(canteen__in=list(queryset))
+            Sector.objects.filter(canteen__in=list(sector_queryset))
             .values_list("id", flat=True)
             .distinct()
         )
@@ -99,6 +119,39 @@ class UnaccentSearchFilter(filters.SearchFilter):
         )
 
 
+def filter_by_diagnostic_params(queryset, query_params):
+    bio = query_params.get("min_portion_bio")
+    sustainable = query_params.get("min_portion_sustainable")
+    combined = query_params.get("min_portion_combined")
+    if bio or sustainable or combined:
+        publication_year = date.today().year - 1
+        qs_diag = Diagnostic.objects.filter(year=publication_year, value_total_ht__gt=0)
+        if bio:
+            qs_diag = qs_diag.annotate(
+                bio_share=Cast(
+                    Sum("value_bio_ht") / Sum("value_total_ht"), FloatField()
+                )
+            ).filter(bio_share__gte=bio)
+        if sustainable:
+            qs_diag = qs_diag.annotate(
+                sustainable_share=Cast(
+                    Sum("value_sustainable_ht") / Sum("value_total_ht"),
+                    FloatField(),
+                )
+            ).filter(sustainable_share__gte=sustainable)
+        if combined:
+            qs_diag = qs_diag.annotate(
+                combined_share=Cast(
+                    (Sum("value_bio_ht") + Sum("value_sustainable_ht"))
+                    / Sum("value_total_ht"),
+                    FloatField(),
+                )
+            ).filter(combined_share__gte=combined)
+        canteen_ids = qs_diag.values_list("canteen", flat=True)
+        return queryset.filter(id__in=canteen_ids)
+    return queryset
+
+
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
@@ -116,38 +169,8 @@ class PublishedCanteensView(ListAPIView):
     filterset_class = PublishedCanteenFilterSet
 
     def filter_queryset(self, queryset):
-        bio = self.request.query_params.get("min_portion_bio")
-        sustainable = self.request.query_params.get("min_portion_sustainable")
-        combined = self.request.query_params.get("min_portion_combined")
-        if bio or sustainable or combined:
-            publication_year = date.today().year - 1
-            qs_diag = Diagnostic.objects.filter(
-                year=publication_year, value_total_ht__gt=0
-            )
-            if bio:
-                qs_diag = qs_diag.annotate(
-                    bio_share=Cast(
-                        Sum("value_bio_ht") / Sum("value_total_ht"), FloatField()
-                    )
-                ).filter(bio_share__gte=bio)
-            if sustainable:
-                qs_diag = qs_diag.annotate(
-                    sustainable_share=Cast(
-                        Sum("value_sustainable_ht") / Sum("value_total_ht"),
-                        FloatField(),
-                    )
-                ).filter(sustainable_share__gte=sustainable)
-            if combined:
-                qs_diag = qs_diag.annotate(
-                    combined_share=Cast(
-                        (Sum("value_bio_ht") + Sum("value_sustainable_ht"))
-                        / Sum("value_total_ht"),
-                        FloatField(),
-                    )
-                ).filter(combined_share__gte=combined)
-            canteen_ids = qs_diag.values_list("canteen", flat=True)
-            queryset = queryset.filter(id__in=canteen_ids)
-        return super().filter_queryset(queryset)
+        new_queryset = filter_by_diagnostic_params(queryset, self.request.query_params)
+        return super().filter_queryset(new_queryset)
 
 
 class PublishedCanteenSingleView(RetrieveAPIView):
