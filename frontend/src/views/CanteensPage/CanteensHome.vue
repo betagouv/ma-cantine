@@ -443,7 +443,7 @@ export default {
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
       }
-      this.orderBy = this.$route.query.trier.slice(0, -3) || DEFAULT_ORDER
+      this.orderBy = this.$route.query.trier?.slice(0, -3) || DEFAULT_ORDER
     },
     onChangeMealCount(ref) {
       if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
