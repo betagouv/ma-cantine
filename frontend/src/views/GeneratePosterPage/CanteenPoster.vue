@@ -149,7 +149,7 @@ i {
   height: 75px;
   border-radius: 4px;
   margin-right: 8px;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
 }
