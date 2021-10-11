@@ -39,27 +39,12 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         self.departments = set(
             filter(lambda x: x, queryset.values_list("department", flat=True))
         )
-
-        sector_queryset = Canteen.objects.filter(publication_status="published")
-        query_params = request.query_params
-
-        if query_params.get("department"):
-            sector_queryset = sector_queryset.filter(
-                department=query_params.get("department")
-            )
-
-        if query_params.get("min_daily_meal_count"):
-            sector_queryset = sector_queryset.filter(
-                daily_meal_count__gte=query_params.get("min_daily_meal_count")
-            )
-
-        if query_params.get("max_daily_meal_count"):
-            sector_queryset = sector_queryset.filter(
-                daily_meal_count__lte=query_params.get("max_daily_meal_count")
-            )
+        self.regions = set(
+            filter(lambda x: x, queryset.values_list("region", flat=True))
+        )
 
         self.sectors = (
-            Sector.objects.filter(canteen__in=list(sector_queryset))
+            Sector.objects.filter(canteen__in=list(queryset))
             .values_list("id", flat=True)
             .distinct()
         )
@@ -73,6 +58,7 @@ class PublishedCanteensPagination(LimitOffsetPagination):
                     ("next", self.get_next_link()),
                     ("previous", self.get_previous_link()),
                     ("results", data),
+                    ("regions", self.regions),
                     ("departments", self.departments),
                     ("sectors", self.sectors),
                 ]
@@ -92,6 +78,7 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
         model = Canteen
         fields = (
             "department",
+            "region",
             "sectors",
             "min_daily_meal_count",
             "max_daily_meal_count",

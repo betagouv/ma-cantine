@@ -3,7 +3,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from data.department_choices import Department
-from data.utils import optimize_image
+from data.region_choices import Region
+from data.utils import get_region, optimize_image
 from .sector import Sector
 from .softdeletionmodel import SoftDeletionModel
 
@@ -57,6 +58,9 @@ class Canteen(SoftDeletionModel):
 
     department = models.TextField(
         null=True, blank=True, choices=Department.choices, verbose_name="département"
+    )
+    region = models.TextField(
+        null=True, blank=True, choices=Region.choices, verbose_name="région"
     )
     postal_code = models.CharField(
         max_length=20, null=True, blank=True, verbose_name="code postal"
@@ -153,6 +157,8 @@ class Canteen(SoftDeletionModel):
             self.main_image = optimize_image(
                 self.main_image, self.main_image.name, max_image_size
             )
+        if self.department:
+            self.region = self._get_region()
         super(Canteen, self).save(force_insert, force_update, using, update_fields)
 
     @property
@@ -170,3 +176,6 @@ class Canteen(SoftDeletionModel):
         self.diversification_comments = data.get("diversification_comments")
         self.plastics_comments = data.get("plastics_comments")
         self.information_comments = data.get("information_comments")
+
+    def _get_region(self):
+        return get_region(self.department)
