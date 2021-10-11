@@ -70,7 +70,8 @@ class CanteenAdmin(SoftDeletionAdmin):
         "management_type",
         "production_type",
         "deletion_date",
-        "city",
+        "region",
+        "department",
     )
 
     def supprimée(self, obj):
