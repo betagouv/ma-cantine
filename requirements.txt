@@ -22,7 +22,7 @@ djangorestframework==3.12.4
 djangorestframework-camel-case==1.2.0
 drf-base64==2.0
 factory-boy==3.2.0
-Faker==9.2.0
+Faker==9.3.0
 future==0.18.2
 html2text==2020.1.16
 html5lib==1.1
