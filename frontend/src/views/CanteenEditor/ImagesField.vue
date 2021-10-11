@@ -5,21 +5,21 @@
         <v-img :src="image.image" contain aspect-ratio="1.4" style="overflow: hidden;" class="grey lighten-2"></v-img>
         <div style="position: absolute; top: 10px; left: 10px;">
           <v-btn fab small @click="deleteImage(image.image)">
-            <v-icon color="red">mdi-trash-can-outline</v-icon>
+            <v-icon aria-label="Supprimer" color="red">mdi-trash-can-outline</v-icon>
           </v-btn>
         </div>
       </v-card>
     </v-col>
 
     <v-col cols="12" sm="6" md="4">
-      <v-card class="fill-height" color="primary lighten-5">
+      <v-card class="fill-height" color="grey lighten-5" min-height="170">
         <label
           class="d-flex flex-column align-center justify-center"
           :for="uniqueId + '_image-input'"
           style="width: 100%; height: 100%; cursor: pointer;"
         >
           <v-icon class="align-center mb-2" lg>mdi-camera</v-icon>
-          <div class="body-2 text-center grey--text text--darken-2">Ajoutez une image</div>
+          <div class="body-2 text-center font-weight-bold grey--text text--darken-2">Ajoutez une image</div>
         </label>
         <input
           :id="uniqueId + '_image-input'"

@@ -32,26 +32,33 @@
           <div class="body-2">
             Logo
           </div>
+          <div v-if="canteen.logo" class="body-2 grey--text grey--lighten-2">
+            Cliquez sur le logo pour changer
+          </div>
           <div>
-            <v-btn
-              class="text-decoration-underline pa-2"
-              text
-              color="red"
-              small
-              v-if="canteen.logo"
-              @click="changeLogo(null)"
-            >
-              <v-icon class="mr-1" x-small>mdi-delete-forever</v-icon>
-              Supprimer
-            </v-btn>
             <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" />
           </div>
           <div class="flex-grow-1 mt-2 fill-height">
-            <v-card @click="onLogoUploadClick" rounded color="primary lighten-5" class="fill-height">
-              <v-img contain v-if="canteen.logo" :src="canteen.logo" max-height="140"></v-img>
+            <v-card
+              @click="onLogoUploadClick"
+              rounded
+              color="grey lighten-5"
+              class="fill-height"
+              style="overflow: hidden;"
+            >
+              <div v-if="canteen.logo" class="d-flex flex-column fill-height">
+                <v-spacer></v-spacer>
+                <v-img contain :src="canteen.logo" max-height="135"></v-img>
+                <v-spacer></v-spacer>
+              </div>
               <div v-else class="d-flex flex-column align-center justify-center fill-height">
                 <v-icon class="pb-2">mdi-shape</v-icon>
-                <p class="ma-0 text-center body-2 grey--text text--darken-2">Ajoutez un logo</p>
+                <p class="ma-0 text-center font-weight-bold body-2 grey--text text--darken-2">Ajoutez un logo</p>
+              </div>
+              <div v-if="canteen.logo" style="position: absolute; top: 10px; left: 10px;">
+                <v-btn fab small @click.stop.prevent="changeLogo(null)">
+                  <v-icon aria-label="Supprimer" color="red">mdi-trash-can-outline</v-icon>
+                </v-btn>
               </div>
             </v-card>
           </div>
