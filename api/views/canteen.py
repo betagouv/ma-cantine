@@ -33,6 +33,7 @@ class PublishedCanteensPagination(LimitOffsetPagination):
     max_limit = 30
     departments = []
     sectors = []
+    management_types = []
 
     def paginate_queryset(self, queryset, request, view=None):
         # Performance improvements possible
@@ -41,6 +42,9 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         )
         self.regions = set(
             filter(lambda x: x, queryset.values_list("region", flat=True))
+        )
+        self.management_types = set(
+            filter(lambda x: x, queryset.values_list("management_type", flat=True))
         )
 
         sector_queryset = Canteen.objects.filter(publication_status="published")
@@ -64,6 +68,11 @@ class PublishedCanteensPagination(LimitOffsetPagination):
                 daily_meal_count__lte=query_params.get("max_daily_meal_count")
             )
 
+        if query_params.get("management_type"):
+            sector_queryset = sector_queryset.filter(
+                management_type=query_params.get("management_type")
+            )
+
         self.sectors = (
             Sector.objects.filter(canteen__in=list(sector_queryset))
             .values_list("id", flat=True)
@@ -82,6 +91,7 @@ class PublishedCanteensPagination(LimitOffsetPagination):
                     ("regions", self.regions),
                     ("departments", self.departments),
                     ("sectors", self.sectors),
+                    ("management_types", self.management_types),
                 ]
             )
         )
@@ -103,6 +113,7 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
             "sectors",
             "min_daily_meal_count",
             "max_daily_meal_count",
+            "management_type",
         )
 
 

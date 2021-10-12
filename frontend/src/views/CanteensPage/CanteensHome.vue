@@ -74,7 +74,7 @@
           <span class="text-decoration-underline">Désactiver tous les filtres</span>
         </v-btn>
       </h2>
-      <v-row id="filters">
+      <v-row>
         <v-col cols="12" sm="6" md="4" class="text-left">
           <label
             for="select-region"
@@ -141,7 +141,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12" sm="6" md="4" class="text-left">
+        <v-col cols="12" sm="4" md="3" class="text-left">
           <label
             :class="{
               'text-body-2': true,
@@ -163,7 +163,7 @@
               aria-describedby="meal-count"
               dense
             />
-            <span class="mx-4 align-self-center">-</span>
+            <span class="mx-2 align-self-center">-</span>
             <v-text-field
               :value="appliedFilters.maxMealCount"
               ref="maxMealCount"
@@ -176,6 +176,25 @@
               dense
             />
           </div>
+        </v-col>
+        <v-col cols="12" sm="4" md="3" class="text-left">
+          <label
+            for="select-management-type"
+            :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.managementType }"
+          >
+            Mode de gestion
+          </label>
+          <v-select
+            v-model="appliedFilters.managementType"
+            :items="managementTypes"
+            clearable
+            hide-details
+            id="select-management-type"
+            outlined
+            class="mt-1"
+            dense
+            placeholder="Tous les modes"
+          ></v-select>
         </v-col>
       </v-row>
     </v-sheet>
@@ -294,6 +313,7 @@ import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 import { getObjectDiff } from "@/utils"
 import validators from "@/validators"
+import Constants from "@/constants"
 
 const DEFAULT_ORDER = "creation"
 
@@ -311,6 +331,7 @@ export default {
       appliedFilters: {
         chosenDepartment: null,
         chosenRegion: null,
+        managementType: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -343,6 +364,7 @@ export default {
       name: "",
       message: "",
       formIsValid: true,
+      managementTypes: Constants.ManagementTypes,
     }
   },
   components: { PublishedCanteenCard },
@@ -359,6 +381,7 @@ export default {
       if (this.searchTerm) query.recherche = this.searchTerm
       if (this.appliedFilters.chosenDepartment) query.departement = this.appliedFilters.chosenDepartment
       if (this.appliedFilters.chosenRegion) query.region = this.appliedFilters.chosenRegion
+      if (this.appliedFilters.managementType) query.modeDeGestion = this.appliedFilters.managementType
       if (this.appliedFilters.chosenSectors && this.appliedFilters.chosenSectors.length > 0)
         query.secteurs = this.appliedFilters.chosenSectors.join("+")
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
@@ -370,6 +393,7 @@ export default {
       return (
         this.appliedFilters.chosenDepartment !== null ||
         this.appliedFilters.chosenRegion !== null ||
+        this.appliedFilters.managementType !== null ||
         this.appliedFilters.chosenSectors.length > 0 ||
         this.appliedFilters.minMealCount !== null ||
         this.appliedFilters.maxMealCount !== null
@@ -409,6 +433,7 @@ export default {
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
       if (this.appliedFilters.chosenDepartment) queryParam += `&department=${this.appliedFilters.chosenDepartment}`
       if (this.appliedFilters.chosenRegion) queryParam += `&region=${this.appliedFilters.chosenRegion}`
+      if (this.appliedFilters.managementType) queryParam += `&management_type=${this.appliedFilters.managementType}`
       if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
       if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
       if (this.order) queryParam += `&ordering=${this.order.query}`
@@ -427,6 +452,7 @@ export default {
           this.setDepartments(response.departments)
           this.setRegions(response.regions)
           this.setSectors(response.sectors)
+          this.setManagementTypes(response.managementTypes)
         })
         .catch(() => {
           this.publishedCanteenCount = 0
@@ -451,6 +477,7 @@ export default {
       this.appliedFilters = {
         chosenDepartment: null,
         chosenRegion: null,
+        managementType: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -475,6 +502,7 @@ export default {
       this.appliedFilters = {
         chosenDepartment: this.$route.query.departement || null,
         chosenRegion: this.$route.query.region || null,
+        managementType: this.$route.query.modeDeGestion || null,
         chosenSectors: this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || [],
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
@@ -562,6 +590,13 @@ export default {
           disabled: enabledSectorIds.indexOf(x.id) === -1,
         }))
         .sort((a, b) => (a.text > b.text ? 1 : -1))
+    },
+    setManagementTypes(enabledManagementTypes) {
+      this.managementTypes = Constants.ManagementTypes.map((x) =>
+        Object.assign(x, {
+          disabled: enabledManagementTypes.indexOf(x.value) === -1,
+        })
+      )
     },
     toggleOrderDirection() {
       this.orderDescending = !this.orderDescending

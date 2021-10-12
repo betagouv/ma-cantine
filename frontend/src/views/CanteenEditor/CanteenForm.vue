@@ -145,6 +145,7 @@
 import validators from "@/validators"
 import { toBase64, getObjectDiff } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
+import Constants from "@/constants"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -167,16 +168,7 @@ export default {
       communes: [],
       loadingCommunes: false,
       search: null,
-      managementTypes: [
-        {
-          text: "Directe",
-          value: "direct",
-        },
-        {
-          text: "Concédée",
-          value: "conceded",
-        },
-      ],
+      managementTypes: Constants.ManagementTypes,
       productionTypes: [
         {
           text: "Cuisine centrale",
