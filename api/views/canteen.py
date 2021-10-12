@@ -1,5 +1,6 @@
 import logging
 from collections import OrderedDict
+from datetime import date
 from django.conf import settings
 from django.http import JsonResponse
 from common.utils import send_mail
@@ -8,6 +9,8 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.constants import LOOKUP_SEP
+from django.db.models.functions import Cast
+from django.db.models import Sum, FloatField
 from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -21,7 +24,7 @@ from api.serializers import (
     FullCanteenSerializer,
     ManagingTeamSerializer,
 )
-from data.models import Canteen, ManagerInvitation, Sector
+from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
 from api.permissions import IsCanteenManager
 from .utils import camelize
 
@@ -72,6 +75,8 @@ class PublishedCanteensPagination(LimitOffsetPagination):
             sector_queryset = sector_queryset.filter(
                 management_type=query_params.get("management_type")
             )
+
+        sector_queryset = filter_by_diagnostic_params(sector_queryset, query_params)
 
         self.sectors = (
             Sector.objects.filter(canteen__in=list(sector_queryset))
@@ -133,10 +138,45 @@ class UnaccentSearchFilter(filters.SearchFilter):
         )
 
 
+def filter_by_diagnostic_params(queryset, query_params):
+    bio = query_params.get("min_portion_bio")
+    sustainable = query_params.get("min_portion_sustainable")
+    combined = query_params.get("min_portion_combined")
+    if bio or sustainable or combined:
+        publication_year = date.today().year - 1
+        qs_diag = Diagnostic.objects.filter(year=publication_year, value_total_ht__gt=0)
+        if bio:
+            qs_diag = qs_diag.annotate(
+                bio_share=Cast(
+                    Sum("value_bio_ht") / Sum("value_total_ht"), FloatField()
+                )
+            ).filter(bio_share__gte=bio)
+        if sustainable:
+            qs_diag = qs_diag.annotate(
+                sustainable_share=Cast(
+                    Sum("value_sustainable_ht") / Sum("value_total_ht"),
+                    FloatField(),
+                )
+            ).filter(sustainable_share__gte=sustainable)
+        if combined:
+            qs_diag = qs_diag.annotate(
+                combined_share=Cast(
+                    (Sum("value_bio_ht") + Sum("value_sustainable_ht"))
+                    / Sum("value_total_ht"),
+                    FloatField(),
+                )
+            ).filter(combined_share__gte=combined)
+        canteen_ids = qs_diag.values_list("canteen", flat=True)
+        return queryset.filter(id__in=canteen_ids)
+    return queryset
+
+
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects.filter(publication_status="published")
+    queryset = Canteen.objects.filter(
+        publication_status=Canteen.PublicationStatus.PUBLISHED
+    )
     pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -146,6 +186,10 @@ class PublishedCanteensView(ListAPIView):
     search_fields = ["name"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
+
+    def filter_queryset(self, queryset):
+        new_queryset = filter_by_diagnostic_params(queryset, self.request.query_params)
+        return super().filter_queryset(new_queryset)
 
 
 class PublishedCanteenSingleView(RetrieveAPIView):

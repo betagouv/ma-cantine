@@ -54,11 +54,8 @@
       </v-row>
     </v-sheet>
 
-    <v-sheet class="pa-6 mt-8" rounded outlined>
-      <h2
-        class="text-left text-body-1 font-weight-black mb-2 mt-n9 px-1"
-        style="background-color: #fff; width: max-content"
-      >
+    <v-sheet class="pa-6 mt-8 text-left" rounded outlined>
+      <h2 class="text-body-1 font-weight-black mb-2 mt-n9 px-1" style="background-color: #fff; width: max-content">
         Filtres
         <v-btn
           color="primary"
@@ -75,7 +72,7 @@
         </v-btn>
       </h2>
       <v-row>
-        <v-col cols="12" sm="6" md="4" class="text-left">
+        <v-col cols="12" sm="6" md="4">
           <label
             for="select-region"
             :class="{
@@ -97,7 +94,7 @@
             dense
           ></v-select>
         </v-col>
-        <v-col cols="12" sm="6" md="4" class="text-left">
+        <v-col cols="12" sm="6" md="4">
           <label
             for="select-department"
             :class="{
@@ -119,7 +116,7 @@
             dense
           ></v-select>
         </v-col>
-        <v-col cols="12" sm="6" md="4" class="text-left">
+        <v-col cols="12" sm="6" md="4">
           <label
             for="select-sector"
             :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.chosenSectors.length }"
@@ -140,8 +137,61 @@
           ></v-select>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="12" sm="4" md="3" class="text-left">
+      <v-row class="align-end mt-0">
+        <v-col cols="12" sm="8" md="5">
+          <label class="text-body-2">
+            Approvisionnement minimum
+          </label>
+          <div class="d-flex mt-n1">
+            <v-col class="pa-0 pr-2">
+              <label
+                :class="{
+                  'text-body-2': true,
+                  'active-filter-label': !!appliedFilters.minBio,
+                }"
+                id="value-percentages-bio"
+              >
+                Bio
+              </label>
+              <v-text-field
+                :value="appliedFilters.minBio"
+                ref="minBio"
+                :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                @change="onChangeIntegerFilter('minBio')"
+                hide-details="auto"
+                append-icon="mdi-percent"
+                outlined
+                placeholder="0"
+                aria-describedby="value-percentages-bio"
+                dense
+              />
+            </v-col>
+            <v-col class="pa-0 pl-2">
+              <label
+                :class="{
+                  'text-body-2': true,
+                  'active-filter-label': !!appliedFilters.minCombined,
+                }"
+                id="value-percentages-bio-qualite"
+              >
+                Bio, qualité et durables
+              </label>
+              <v-text-field
+                :value="appliedFilters.minCombined"
+                ref="minCombined"
+                :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                @change="onChangeIntegerFilter('minCombined')"
+                hide-details="auto"
+                outlined
+                placeholder="0"
+                append-icon="mdi-percent"
+                aria-describedby="value-percentages-bio-qualite"
+                dense
+              />
+            </v-col>
+          </div>
+        </v-col>
+        <v-col cols="12" sm="4" md="3">
           <label
             :class="{
               'text-body-2': true,
@@ -156,7 +206,7 @@
               :value="appliedFilters.minMealCount"
               ref="minMealCount"
               :rules="[validators.nonNegativeOrEmpty]"
-              @change="onChangeMealCount('minMealCount')"
+              @change="onChangeIntegerFilter('minMealCount')"
               hide-details="auto"
               outlined
               label="Min"
@@ -168,7 +218,7 @@
               :value="appliedFilters.maxMealCount"
               ref="maxMealCount"
               :rules="[validators.nonNegativeOrEmpty]"
-              @change="onChangeMealCount('maxMealCount')"
+              @change="onChangeIntegerFilter('maxMealCount')"
               hide-details="auto"
               outlined
               label="Max"
@@ -177,7 +227,7 @@
             />
           </div>
         </v-col>
-        <v-col cols="12" sm="4" md="3" class="text-left">
+        <v-col cols="12" sm="4" md="3">
           <label
             for="select-management-type"
             :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.managementType }"
@@ -335,6 +385,8 @@ export default {
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
+        minBio: null,
+        minCombined: null,
       },
       orderBy: null,
       orderOptions: [
@@ -386,6 +438,8 @@ export default {
         query.secteurs = this.appliedFilters.chosenSectors.join("+")
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
       if (this.appliedFilters.maxMealCount) query.maxRepasJour = String(this.appliedFilters.maxMealCount)
+      if (this.appliedFilters.minBio) query.minBio = String(this.appliedFilters.minBio)
+      if (this.appliedFilters.minCombined) query.minQualite = String(this.appliedFilters.minCombined)
       if (this.order) query.trier = this.order.display
       return query
     },
@@ -396,7 +450,9 @@ export default {
         this.appliedFilters.managementType !== null ||
         this.appliedFilters.chosenSectors.length > 0 ||
         this.appliedFilters.minMealCount !== null ||
-        this.appliedFilters.maxMealCount !== null
+        this.appliedFilters.maxMealCount !== null ||
+        this.appliedFilters.minBio !== null ||
+        this.appliedFilters.minCombined !== null
       )
     },
     validators() {
@@ -410,6 +466,8 @@ export default {
         this.$route.query.secteurs,
         this.$route.query.minRepasJour,
         this.$route.query.maxRepasJour,
+        this.$route.query.minBio,
+        this.$route.query.minQualite,
       ]
       const hasFilter = filterQueries.some((x) => x !== 0 && !!x)
 
@@ -436,6 +494,9 @@ export default {
       if (this.appliedFilters.managementType) queryParam += `&management_type=${this.appliedFilters.managementType}`
       if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
       if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
+      if (this.appliedFilters.minBio) queryParam += `&min_portion_bio=${this.appliedFilters.minBio / 100}`
+      if (this.appliedFilters.minCombined)
+        queryParam += `&min_portion_combined=${this.appliedFilters.minCombined / 100}`
       if (this.order) queryParam += `&ordering=${this.order.query}`
 
       for (let i = 0; i < this.appliedFilters.chosenSectors.length; i++)
@@ -481,6 +542,8 @@ export default {
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
+        minBio: null,
+        minCombined: null,
       }
     },
     changePage() {
@@ -506,10 +569,12 @@ export default {
         chosenSectors: this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || [],
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
+        minBio: parseInt(this.$route.query.minBio) || null,
+        minCombined: parseInt(this.$route.query.minQualite) || null,
       }
       this.orderBy = this.$route.query.trier?.slice(0, -3) || DEFAULT_ORDER
     },
-    onChangeMealCount(ref) {
+    onChangeIntegerFilter(ref) {
       if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
     },
     updateRouter(query) {
