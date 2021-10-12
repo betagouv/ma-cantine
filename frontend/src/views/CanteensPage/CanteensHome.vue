@@ -54,11 +54,8 @@
       </v-row>
     </v-sheet>
 
-    <v-sheet class="pa-6 mt-8" rounded outlined>
-      <h2
-        class="text-left text-body-1 font-weight-black mb-2 mt-n9 px-1"
-        style="background-color: #fff; width: max-content"
-      >
+    <v-sheet class="pa-6 mt-8 text-left" rounded outlined>
+      <h2 class="text-body-1 font-weight-black mb-2 mt-n9 px-1" style="background-color: #fff; width: max-content">
         Filtres
         <v-btn
           color="primary"
@@ -75,7 +72,7 @@
         </v-btn>
       </h2>
       <v-row>
-        <v-col cols="12" sm="6" md="4" class="text-left">
+        <v-col cols="12" sm="6" md="4">
           <label
             for="select-region"
             :class="{
@@ -97,7 +94,7 @@
             dense
           ></v-select>
         </v-col>
-        <v-col cols="12" sm="6" md="4" class="text-left">
+        <v-col cols="12" sm="6" md="4">
           <label
             for="select-department"
             :class="{
@@ -119,7 +116,7 @@
             dense
           ></v-select>
         </v-col>
-        <v-col cols="12" sm="6" md="4" class="text-left">
+        <v-col cols="12" sm="6" md="4">
           <label
             for="select-sector"
             :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.chosenSectors.length }"
@@ -140,8 +137,61 @@
           ></v-select>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="12" sm="4" md="3" class="text-left">
+      <v-row class="align-end mt-0">
+        <v-col cols="12" sm="8" md="5">
+          <label class="text-body-2">
+            Approvisionnement minimum
+          </label>
+          <div class="d-flex mt-n1">
+            <v-col class="pa-0 pr-2">
+              <label
+                :class="{
+                  'text-body-2': true,
+                  'active-filter-label': !!appliedFilters.minBio,
+                }"
+                id="value-percentages-bio"
+              >
+                Bio
+              </label>
+              <v-text-field
+                :value="appliedFilters.minBio"
+                ref="minBio"
+                :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                @change="onChangeIntegerFilter('minBio')"
+                hide-details="auto"
+                append-icon="mdi-percent"
+                outlined
+                placeholder="0"
+                aria-describedby="value-percentages-bio"
+                dense
+              />
+            </v-col>
+            <v-col class="pa-0 pl-2">
+              <label
+                :class="{
+                  'text-body-2': true,
+                  'active-filter-label': !!appliedFilters.minCombined,
+                }"
+                id="value-percentages-bio-qualite"
+              >
+                Bio, qualité et durables
+              </label>
+              <v-text-field
+                :value="appliedFilters.minCombined"
+                ref="minCombined"
+                :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                @change="onChangeIntegerFilter('minCombined')"
+                hide-details="auto"
+                outlined
+                placeholder="0"
+                append-icon="mdi-percent"
+                aria-describedby="value-percentages-bio-qualite"
+                dense
+              />
+            </v-col>
+          </div>
+        </v-col>
+        <v-col cols="12" sm="4" md="3">
           <label
             :class="{
               'text-body-2': true,
@@ -177,7 +227,7 @@
             />
           </div>
         </v-col>
-        <v-col cols="12" sm="4" md="3" class="text-left">
+        <v-col cols="12" sm="4" md="3">
           <label
             for="select-management-type"
             :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.managementType }"
@@ -195,61 +245,6 @@
             dense
             placeholder="Tous les modes"
           ></v-select>
-        </v-col>
-      </v-row>
-      <v-row class="mt-0">
-        <v-col cols="12" sm="8" md="5" class="text-left">
-          <label class="text-body-2">
-            Approvisionnement minimum
-          </label>
-          <v-row class="mt-n1">
-            <v-col class="py-0">
-              <label
-                :class="{
-                  'text-body-2': true,
-                  'active-filter-label': !!appliedFilters.minBio,
-                }"
-                id="value-percentages-bio"
-              >
-                Bio
-              </label>
-              <v-text-field
-                :value="appliedFilters.minBio"
-                ref="minBio"
-                :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                @change="onChangeIntegerFilter('minBio')"
-                hide-details="auto"
-                append-icon="mdi-percent"
-                outlined
-                placeholder="0"
-                aria-describedby="value-percentages-bio"
-                dense
-              />
-            </v-col>
-            <v-col class="py-0">
-              <label
-                :class="{
-                  'text-body-2': true,
-                  'active-filter-label': !!appliedFilters.minCombined,
-                }"
-                id="value-percentages-bio-qualite"
-              >
-                Bio, qualité et durables
-              </label>
-              <v-text-field
-                :value="appliedFilters.minCombined"
-                ref="minCombined"
-                :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                @change="onChangeIntegerFilter('minCombined')"
-                hide-details="auto"
-                outlined
-                placeholder="0"
-                append-icon="mdi-percent"
-                aria-describedby="value-percentages-bio-qualite"
-                dense
-              />
-            </v-col>
-          </v-row>
         </v-col>
       </v-row>
     </v-sheet>
