@@ -7,7 +7,14 @@
     <div v-if="canteen" id="canteen-dashboard">
       <v-card elevation="0" class="pa-0 mt-4 mb-8 text-left">
         <v-row class="align-center">
-          <v-col v-if="canteen.logo" class="mr-4" cols="4" sm="3" md="2" style="border-right: solid 1px #dfdfdf;">
+          <v-col
+            v-if="canteen.logo"
+            class="mr-4 d-none d-sm-block"
+            cols="4"
+            sm="3"
+            md="2"
+            style="border-right: solid 1px #dfdfdf;"
+          >
             <v-img class="rounded" :src="canteen.logo" contain></v-img>
           </v-col>
           <v-col>
@@ -17,12 +24,22 @@
               </h1>
             </v-card-title>
             <v-spacer></v-spacer>
-            <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pa-0 pt-4">
-              <CanteenIndicators :canteen="canteen" class="grey--text text--darken-3" />
-              <router-link to="#contact">
-                <v-icon small>mdi-email-outline</v-icon>
-                Contactez-nous
-              </router-link>
+            <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pa-0 pt-4 d-flex">
+              <v-img
+                v-if="canteen.logo"
+                max-width="100px"
+                max-height="80px"
+                class="rounded d-sm-none"
+                :src="canteen.logo"
+                contain
+              ></v-img>
+              <div>
+                <CanteenIndicators :canteen="canteen" class="grey--text text--darken-3" />
+                <router-link to="#contact">
+                  <v-icon small>mdi-email-outline</v-icon>
+                  Contactez-nous
+                </router-link>
+              </div>
             </v-card-subtitle>
           </v-col>
         </v-row>
