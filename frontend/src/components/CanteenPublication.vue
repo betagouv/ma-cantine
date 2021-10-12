@@ -54,17 +54,19 @@
       Nos démarches
     </h2>
     <v-row class="my-6">
-      <v-col cols="12" v-for="(badge, key) in earnedBadges" :key="key">
-        <v-card class="fill-height" elevation="0">
-          <div class="d-flex align-start">
-            <v-img width="30" max-width="35" contain :src="`/static/images/badge-${key}.svg`" alt=""></v-img>
-            <div>
-              <v-card-title class="py-0 text-body-2 font-weight-bold">{{ badge.title }}</v-card-title>
-              <v-card-subtitle class="pt-4" v-text="badge.subtitle"></v-card-subtitle>
+      <div cols="12" v-for="(badge, key) in earnedBadges" :key="key">
+        <v-col cols="12" v-if="badge.earned">
+          <v-card class="fill-height" elevation="0">
+            <div class="d-flex align-start">
+              <v-img width="30" max-width="35" contain :src="`/static/images/badges/${key}.svg`" alt=""></v-img>
+              <div>
+                <v-card-title class="py-0 text-body-2 font-weight-bold">{{ badge.title }}</v-card-title>
+                <v-card-subtitle class="pt-4" v-text="badge.subtitle"></v-card-subtitle>
+              </div>
             </div>
-          </div>
-        </v-card>
-      </v-col>
+          </v-card>
+        </v-col>
+      </div>
     </v-row>
 
     <div v-if="canteen && canteen.publicationComments">
@@ -94,7 +96,7 @@
 
 <script>
 import labels from "@/data/quality-labels.json"
-import { lastYear, earnedBadges, getPercentage, isDiagnosticComplete } from "@/utils"
+import { lastYear, badges, getPercentage, isDiagnosticComplete } from "@/utils"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 
 export default {
@@ -119,7 +121,12 @@ export default {
       return getPercentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)
     },
     earnedBadges() {
-      return earnedBadges(this.canteen, this.diagnostic, this.$store.state.sectors)
+      const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
+      let earnedBadges = {}
+      Object.keys(canteenBadges).forEach((key) => {
+        if (canteenBadges[key].earned) earnedBadges[key] = canteenBadges[key]
+      })
+      return earnedBadges
     },
     shouldDisplayGraph() {
       if (!this.canteen.diagnostics || this.canteen.diagnostics.length === 0) return false

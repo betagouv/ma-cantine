@@ -1,5 +1,5 @@
 import Constants from "@/constants"
-import badges from "@/badges"
+import jsonBadges from "@/badges"
 
 export const timeAgo = (date, displayPrefix = false) => {
   if (typeof date === "string") {
@@ -186,19 +186,20 @@ export const getPercentage = (partialValue, totalValue) => {
   }
 }
 
-export const earnedBadges = (canteen, diagnostic, sectors) => {
-  let applicable = {}
+export const badges = (canteen, diagnostic, sectors) => {
+  let applicable = JSON.parse(JSON.stringify(jsonBadges))
+  if (!diagnostic) return applicable
   const bioPercent = getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
   const sustainablePercent = getPercentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
   if (bioPercent >= 20 && bioPercent + sustainablePercent >= 50) {
-    applicable.appro = badges.appro
+    applicable.appro.earned = true
   }
   if (
     diagnostic.hasWasteDiagnostic &&
     diagnostic.wasteActions?.length > 0 &&
     (canteen.dailyMealCount <= 3000 || diagnostic.hasDonationAgreement)
   ) {
-    applicable.waste = badges.waste
+    applicable.waste.earned = true
   }
   if (
     diagnostic.cookingPlasticSubstituted &&
@@ -206,7 +207,7 @@ export const earnedBadges = (canteen, diagnostic, sectors) => {
     diagnostic.plasticBottlesSubstituted &&
     diagnostic.plasticTablewareSubstituted
   ) {
-    applicable.plastic = badges.plastic
+    applicable.plastic.earned = true
   }
 
   // We need to rethink the way a school sector is defined. Temporarily
@@ -215,14 +216,14 @@ export const earnedBadges = (canteen, diagnostic, sectors) => {
   if (!schoolSector) console.error("No sector `Scolaire` is present in this configuration")
 
   if (diagnostic.vegetarianWeeklyRecurrence === "DAILY") {
-    applicable.diversification = badges.diversification
+    applicable.diversification.earned = true
   } else if (schoolSector && canteen.sectors.indexOf(schoolSector.id) > -1) {
     if (diagnostic.vegetarianWeeklyRecurrence === "MID" || diagnostic.vegetarianWeeklyRecurrence === "HIGH") {
-      applicable.diversification = badges.diversification
+      applicable.diversification.earned = true
     }
   }
   if (diagnostic.communicatesOnFoodQuality) {
-    applicable.info = badges.info
+    applicable.info.earned = true
   }
   return applicable
 }
