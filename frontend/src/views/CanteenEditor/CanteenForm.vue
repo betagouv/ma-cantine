@@ -137,7 +137,7 @@
         </v-col>
       </v-row>
       <div>
-        <div class="body-2">Images</div>
+        <label class="body-2" for="images">Images</label>
         <ImagesField class="mt-0 mb-4" :imageArray.sync="canteen.images" />
       </div>
     </v-form>
