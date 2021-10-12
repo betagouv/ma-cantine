@@ -77,6 +77,28 @@
       <v-row id="filters">
         <v-col cols="12" sm="6" md="4" class="text-left">
           <label
+            for="select-region"
+            :class="{
+              'text-body-2': true,
+              'active-filter-label': !!appliedFilters.chosenRegion,
+            }"
+          >
+            Région
+          </label>
+          <v-select
+            v-model="appliedFilters.chosenRegion"
+            :items="regions"
+            clearable
+            hide-details
+            id="select-region"
+            placeholder="Toutes les régions"
+            class="mt-1"
+            outlined
+            dense
+          ></v-select>
+        </v-col>
+        <v-col cols="12" sm="6" md="4" class="text-left">
+          <label
             for="select-department"
             :class="{
               'text-body-2': true,
@@ -117,6 +139,8 @@
             dense
           ></v-select>
         </v-col>
+      </v-row>
+      <v-row>
         <v-col cols="12" sm="6" md="4" class="text-left">
           <label
             :class="{
@@ -255,6 +279,7 @@
 <script>
 import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
+import jsonRegions from "@/regions.json"
 import { getObjectDiff } from "@/utils"
 import validators from "@/validators"
 
@@ -263,6 +288,7 @@ export default {
     return {
       limit: 6,
       departments: [],
+      regions: [],
       sectors: [],
       visibleCanteens: null,
       publishedCanteenCount: null,
@@ -270,6 +296,7 @@ export default {
       searchTerm: null,
       appliedFilters: {
         chosenDepartment: null,
+        chosenRegion: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -321,6 +348,7 @@ export default {
       if (this.page) query.page = String(this.page)
       if (this.searchTerm) query.recherche = this.searchTerm
       if (this.appliedFilters.chosenDepartment) query.departement = this.appliedFilters.chosenDepartment
+      if (this.appliedFilters.chosenRegion) query.region = this.appliedFilters.chosenRegion
       if (this.appliedFilters.chosenSectors && this.appliedFilters.chosenSectors.length > 0)
         query.secteurs = this.appliedFilters.chosenSectors.join("+")
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
@@ -331,6 +359,7 @@ export default {
     hasActiveFilter() {
       return (
         this.appliedFilters.chosenDepartment !== null ||
+        this.appliedFilters.chosenRegion !== null ||
         this.appliedFilters.chosenSectors.length > 0 ||
         this.appliedFilters.minMealCount !== null ||
         this.appliedFilters.maxMealCount !== null
@@ -343,6 +372,7 @@ export default {
       const filterQueries = [
         this.$route.query.recherche,
         this.$route.query.departement,
+        this.$route.query.region,
         this.$route.query.secteurs,
         this.$route.query.minRepasJour,
         this.$route.query.maxRepasJour,
@@ -360,6 +390,7 @@ export default {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
       if (this.appliedFilters.chosenDepartment) queryParam += `&department=${this.appliedFilters.chosenDepartment}`
+      if (this.appliedFilters.chosenRegion) queryParam += `&region=${this.appliedFilters.chosenRegion}`
       if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
       if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
       if (this.orderBy) {
@@ -379,6 +410,7 @@ export default {
           this.publishedCanteenCount = response.count
           this.visibleCanteens = response.results
           this.setDepartments(response.departments)
+          this.setRegions(response.regions)
           this.setSectors(response.sectors)
         })
         .catch(() => {
@@ -403,6 +435,7 @@ export default {
     clearFilters() {
       this.appliedFilters = {
         chosenDepartment: null,
+        chosenRegion: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -426,6 +459,7 @@ export default {
       this.searchTerm = this.$route.query.recherche || null
       this.appliedFilters = {
         chosenDepartment: this.$route.query.departement || null,
+        chosenRegion: this.$route.query.region || null,
         chosenSectors: this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || [],
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
@@ -474,30 +508,36 @@ export default {
           this.$store.dispatch("notifyServerError")
         })
     },
-    setDepartments(enabledDepartmentIds) {
-      const enabledDepartments = jsonDepartments
-        .filter((x) => enabledDepartmentIds.indexOf(x.departmentCode) > -1)
+    setLocations(enabledLocationIds, jsonLocations, locationKeyWord, locationsWord) {
+      const enabledLocations = jsonLocations
+        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) > -1)
         .map((x) => ({
-          text: `${x.departmentCode} - ${x.departmentName}`,
-          value: x.departmentCode,
+          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
+          value: x[`${locationKeyWord}Code`],
         }))
       const headerText =
         this.hasActiveFilter || this.searchTerm
-          ? "Ces départements ne contiennent pas d'établissements correspondant à votre recherche :"
-          : "Nous n'avons pas encore d'établissements dans ces départements :"
+          ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
+          : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
       const header = { header: headerText }
 
       const divider = { divider: true }
 
-      const disabledDepartments = jsonDepartments
-        .filter((x) => enabledDepartmentIds.indexOf(x.departmentCode) === -1)
+      const disabledLocations = jsonLocations
+        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) === -1)
         .map((x) => ({
-          text: `${x.departmentCode} - ${x.departmentName}`,
-          value: x.departmentCode,
+          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
+          value: x[`${locationKeyWord}Code`],
           disabled: true,
         }))
 
-      this.departments = [...enabledDepartments, divider, header, ...disabledDepartments]
+      return [...enabledLocations, divider, header, ...disabledLocations]
+    },
+    setDepartments(enabledDepartmentIds) {
+      this.departments = this.setLocations(enabledDepartmentIds, jsonDepartments, "department", "départements")
+    },
+    setRegions(enabledRegionIds) {
+      this.regions = this.setLocations(enabledRegionIds, jsonRegions, "region", "régions")
     },
     setSectors(enabledSectorIds) {
       this.sectors = this.$store.state.sectors
