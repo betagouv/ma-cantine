@@ -155,31 +155,44 @@
         </v-col>
       </v-row>
       <v-row class="mt-0">
-        <v-col cols="12" sm="6" class="text-left">
-          <label
-            :class="{
-              'text-body-2': true,
-              'active-filter-label': !!appliedFilters.minBio || !!appliedFilters.minCombined,
-            }"
-            id="value-percentages"
-          >
-            Minimum pourcentage des produits
+        <v-col cols="12" sm="8" md="5" class="text-left">
+          <label class="text-body-2">
+            Approvisionnement minimum
           </label>
-          <v-row class="mt-1">
+          <v-row class="mt-n1">
             <v-col class="py-0">
+              <label
+                :class="{
+                  'text-body-2': true,
+                  'active-filter-label': !!appliedFilters.minBio,
+                }"
+                id="value-percentages-bio"
+              >
+                Bio
+              </label>
               <v-text-field
                 :value="appliedFilters.minBio"
                 ref="minBio"
                 :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
                 @change="onChangeIntegerFilter('minBio')"
                 hide-details="auto"
+                append-icon="mdi-percent"
                 outlined
-                label="Bio"
-                aria-describedby="value-percentages"
+                placeholder="0"
+                aria-describedby="value-percentages-bio"
                 dense
               />
             </v-col>
             <v-col class="py-0">
+              <label
+                :class="{
+                  'text-body-2': true,
+                  'active-filter-label': !!appliedFilters.minCombined,
+                }"
+                id="value-percentages-bio-qualite"
+              >
+                Bio, qualité et durables
+              </label>
               <v-text-field
                 :value="appliedFilters.minCombined"
                 ref="minCombined"
@@ -187,8 +200,9 @@
                 @change="onChangeIntegerFilter('minCombined')"
                 hide-details="auto"
                 outlined
-                label="Qualité et durables (bio inclus)"
-                aria-describedby="value-percentages"
+                placeholder="0"
+                append-icon="mdi-percent"
+                aria-describedby="value-percentages-bio-qualite"
                 dense
               />
             </v-col>
