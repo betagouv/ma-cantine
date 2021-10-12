@@ -28,4 +28,14 @@ export default Object.freeze({
     communicationSupportUrl: null,
     communicatesOnFoodPlan: null,
   },
+  ManagementTypes: [
+    {
+      text: "Directe",
+      value: "direct",
+    },
+    {
+      text: "Concédée",
+      value: "conceded",
+    },
+  ],
 })

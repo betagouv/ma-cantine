@@ -1,3 +1,4 @@
+from datetime import date
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -434,6 +435,101 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(results[2]["name"], "Shiso")
         self.assertEqual(results[3]["name"], "Mochi")
 
+    def test_filter_appro_values(self):
+        """
+        Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic
+        """
+        good_canteen = CanteenFactory.create(
+            publication_status="published", name="Shiso"
+        )
+        medium_canteen = CanteenFactory.create(
+            publication_status="published", name="Wasabi"
+        )
+        sustainable_canteen = CanteenFactory.create(
+            publication_status="published", name="Umami"
+        )
+        bad_canteen = CanteenFactory.create(
+            publication_status="published", name="Mochi"
+        )
+        secretly_good_canteen = CanteenFactory.create(
+            publication_status="draft", name="Secret"
+        )
+
+        publication_year = date.today().year - 1
+        DiagnosticFactory.create(
+            canteen=good_canteen,
+            year=publication_year,
+            value_total_ht=100,
+            value_bio_ht=30,
+            value_sustainable_ht=30,
+        )
+        DiagnosticFactory.create(
+            canteen=secretly_good_canteen,
+            year=publication_year,
+            value_total_ht=100,
+            value_bio_ht=30,
+            value_sustainable_ht=30,
+        )
+        DiagnosticFactory.create(
+            canteen=medium_canteen,
+            year=publication_year,
+            value_total_ht=1000,
+            value_bio_ht=150,
+            value_sustainable_ht=350,
+        )
+        DiagnosticFactory.create(
+            canteen=sustainable_canteen,
+            year=publication_year,
+            value_total_ht=100,
+            value_bio_ht=0,
+            value_sustainable_ht=60,
+        )
+        DiagnosticFactory.create(
+            canteen=bad_canteen,
+            year=2019,
+            value_total_ht=100,
+            value_bio_ht=30,
+            value_sustainable_ht=30,
+        )
+        DiagnosticFactory.create(
+            canteen=bad_canteen,
+            year=publication_year,
+            value_total_ht=10,
+            value_bio_ht=0,
+            value_sustainable_ht=0,
+        )
+        url = f"{reverse('published_canteens')}?min_portion_bio={0.2}"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 1)
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Shiso", result_names)
+
+        url = f"{reverse('published_canteens')}?min_portion_sustainable={0.35}"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Wasabi", result_names)
+        self.assertIn("Umami", result_names)
+
+        url = f"{reverse('published_canteens')}?min_portion_combined={0.5}"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 3)
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Shiso", result_names)
+        self.assertIn("Wasabi", result_names)
+        self.assertIn("Umami", result_names)
+
+        url = f"{reverse('published_canteens')}?min_portion_bio={0.1}&min_portion_combined={0.5}"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Shiso", result_names)
+        self.assertIn("Wasabi", result_names)
+
     def test_pagination_departments(self):
         CanteenFactory.create(
             publication_status="published", department="75", name="Shiso"
@@ -458,8 +554,14 @@ class TestCanteenApi(APITestCase):
         self.assertIn("69", body.get("departments"))
 
     def test_pagination_sectors(self):
+        """
+        The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
+        """
         school = SectorFactory.create(name="School")
         enterprise = SectorFactory.create(name="Enterprise")
+        administration = SectorFactory.create(name="Administration")
+        # unused sectors shouldn't show up as an option
+        SectorFactory.create(name="Unused")
         CanteenFactory.create(
             publication_status="published", sectors=[school, enterprise], name="Shiso"
         )
@@ -470,17 +572,41 @@ class TestCanteenApi(APITestCase):
             publication_status="published", sectors=[school], name="Mochi"
         )
         CanteenFactory.create(
-            publication_status="published", sectors=[school], name="Umami"
+            publication_status="published", sectors=[administration], name="Umami"
         )
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
         body = response.json()
 
-        # There are two unique sectors : school and enterprise
-        self.assertEqual(len(body.get("sectors")), 2)
+        self.assertEqual(len(body.get("sectors")), 3)
         self.assertIn(school.id, body.get("sectors"))
         self.assertIn(enterprise.id, body.get("sectors"))
+        self.assertIn(administration.id, body.get("sectors"))
+
+        url = f"{reverse('published_canteens')}?sectors={enterprise.id}"
+        response = self.client.get(url)
+        body = response.json()
+
+        self.assertEqual(len(body.get("sectors")), 3)
+        self.assertIn(school.id, body.get("sectors"))
+        self.assertIn(enterprise.id, body.get("sectors"))
+        self.assertIn(administration.id, body.get("sectors"))
+
+    def test_pagination_management_types(self):
+        CanteenFactory.create(
+            publication_status="published", management_type="conceded", name="Shiso"
+        )
+        CanteenFactory.create(
+            publication_status="published", management_type=None, name="Wasabi"
+        )
+
+        url = f"{reverse('published_canteens')}"
+        response = self.client.get(url)
+        body = response.json()
+
+        self.assertEqual(len(body.get("managementTypes")), 1)
+        self.assertIn("conceded", body.get("managementTypes"))
 
     @authenticate
     def test_canteen_publication_fields_read_only(self):
