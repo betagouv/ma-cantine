@@ -29,7 +29,7 @@
                 v-if="canteen.logo"
                 max-width="100px"
                 max-height="80px"
-                class="rounded d-sm-none"
+                class="mr-4 rounded d-sm-none"
                 :src="canteen.logo"
                 contain
               ></v-img>
