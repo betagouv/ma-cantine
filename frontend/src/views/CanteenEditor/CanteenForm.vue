@@ -29,9 +29,9 @@
         </v-col>
 
         <v-col cols="12" md="4" height="100%" class="d-flex flex-column">
-          <div class="body-2">
+          <label class="body-2" for="logo">
             Logo
-          </div>
+          </label>
           <div v-if="canteen.logo" class="body-2 grey--text grey--lighten-2">
             Cliquez sur le logo pour changer
           </div>
