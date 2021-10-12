@@ -197,8 +197,20 @@
           ></v-pagination>
         </v-col>
         <v-spacer></v-spacer>
-        <v-col id="ordering" cols="12" sm="3">
+        <v-col id="ordering" cols="12" sm="3" class="d-flex align-center">
           <v-select v-model="orderBy" :items="orderOptions" hide-details label="Trier par" outlined dense></v-select>
+          <v-btn
+            icon
+            @click="toggleOrderDirection"
+            :title="`Resultats affichés en ordre ${orderDescending ? 'décroissant' : 'croissant'}`"
+            plain
+            :ripple="false"
+          >
+            <v-icon v-if="orderDescending">mdi-arrow-down</v-icon>
+            <v-icon v-else>
+              mdi-arrow-up
+            </v-icon>
+          </v-btn>
         </v-col>
       </v-row>
       <v-row>
@@ -283,6 +295,8 @@ import jsonRegions from "@/regions.json"
 import { getObjectDiff } from "@/utils"
 import validators from "@/validators"
 
+const DEFAULT_ORDER = "creation"
+
 export default {
   data() {
     return {
@@ -306,22 +320,17 @@ export default {
         {
           text: "Date de création",
           value: "creation",
-          query: "-creation_date",
+          query: "creation_date",
         },
         {
           text: "Date de modification",
           value: "modification",
-          query: "-modification_date",
+          query: "modification_date",
         },
         {
-          text: "Repas par jour - croissant",
+          text: "Repas par jour",
           value: "repas",
           query: "daily_meal_count",
-        },
-        {
-          text: "Repas par jour - décroissant",
-          value: "repasDecroissant",
-          query: "-daily_meal_count",
         },
         {
           text: "Nom de la cantine",
@@ -329,6 +338,7 @@ export default {
           query: "name",
         },
       ],
+      orderDescending: true,
       fromEmail: "",
       name: "",
       message: "",
@@ -353,7 +363,7 @@ export default {
         query.secteurs = this.appliedFilters.chosenSectors.join("+")
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
       if (this.appliedFilters.maxMealCount) query.maxRepasJour = String(this.appliedFilters.maxMealCount)
-      if (this.orderBy) query.trier = this.orderBy
+      if (this.order) query.trier = this.order.display
       return query
     },
     hasActiveFilter() {
@@ -384,6 +394,14 @@ export default {
       if (this.publishedCanteenCount === 1) return "Un établissement correspond à votre recherche"
       else return `${this.publishedCanteenCount} établissements correspondent à votre recherche`
     },
+    order() {
+      if (!this.orderBy) return null
+      const chosenOption = this.orderOptions.find((opt) => opt.value === this.orderBy)
+      return {
+        query: `${this.orderDescending ? "-" : ""}${chosenOption?.query || DEFAULT_ORDER}`,
+        display: `${chosenOption?.value || DEFAULT_ORDER}${this.orderDescending ? "Dec" : "Cro"}`,
+      }
+    },
   },
   methods: {
     fetchCurrentPage() {
@@ -393,10 +411,7 @@ export default {
       if (this.appliedFilters.chosenRegion) queryParam += `&region=${this.appliedFilters.chosenRegion}`
       if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
       if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
-      if (this.orderBy) {
-        let chosenOption = this.orderOptions.find((opt) => opt.value === this.orderBy)
-        if (chosenOption) queryParam += `&ordering=${chosenOption.query}`
-      }
+      if (this.order) queryParam += `&ordering=${this.order.query}`
 
       for (let i = 0; i < this.appliedFilters.chosenSectors.length; i++)
         queryParam += `&sectors=${this.appliedFilters.chosenSectors[i]}`
@@ -428,7 +443,7 @@ export default {
       this.$router.push({ query }).catch(() => {})
     },
     updateOrder() {
-      const override = this.orderBy ? { page: 1, trier: this.orderBy } : { page: 1 }
+      const override = this.order ? { page: 1, trier: this.order.display } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
     },
@@ -464,7 +479,7 @@ export default {
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
       }
-      this.orderBy = this.$route.query.trier || "creation"
+      this.orderBy = this.$route.query.trier?.slice(0, -3) || DEFAULT_ORDER
     },
     onChangeMealCount(ref) {
       if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
@@ -548,6 +563,9 @@ export default {
         }))
         .sort((a, b) => (a.text > b.text ? 1 : -1))
     },
+    toggleOrderDirection() {
+      this.orderDescending = !this.orderDescending
+    },
   },
   watch: {
     appliedFilters: {
@@ -560,6 +578,9 @@ export default {
       this.changePage()
     },
     orderBy() {
+      this.updateOrder()
+    },
+    orderDescending() {
       this.updateOrder()
     },
     $route() {
