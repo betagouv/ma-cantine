@@ -36,11 +36,18 @@ class PublishedCanteensPagination(LimitOffsetPagination):
     max_limit = 30
     departments = []
     sectors = []
+    management_types = []
 
     def paginate_queryset(self, queryset, request, view=None):
         # Performance improvements possible
         self.departments = set(
             filter(lambda x: x, queryset.values_list("department", flat=True))
+        )
+        self.regions = set(
+            filter(lambda x: x, queryset.values_list("region", flat=True))
+        )
+        self.management_types = set(
+            filter(lambda x: x, queryset.values_list("management_type", flat=True))
         )
 
         sector_queryset = Canteen.objects.filter(publication_status="published")
@@ -51,6 +58,9 @@ class PublishedCanteensPagination(LimitOffsetPagination):
                 department=query_params.get("department")
             )
 
+        if query_params.get("region"):
+            sector_queryset = sector_queryset.filter(region=query_params.get("region"))
+
         if query_params.get("min_daily_meal_count"):
             sector_queryset = sector_queryset.filter(
                 daily_meal_count__gte=query_params.get("min_daily_meal_count")
@@ -59,6 +69,11 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         if query_params.get("max_daily_meal_count"):
             sector_queryset = sector_queryset.filter(
                 daily_meal_count__lte=query_params.get("max_daily_meal_count")
+            )
+
+        if query_params.get("management_type"):
+            sector_queryset = sector_queryset.filter(
+                management_type=query_params.get("management_type")
             )
 
         sector_queryset = filter_by_diagnostic_params(sector_queryset, query_params)
@@ -78,8 +93,10 @@ class PublishedCanteensPagination(LimitOffsetPagination):
                     ("next", self.get_next_link()),
                     ("previous", self.get_previous_link()),
                     ("results", data),
+                    ("regions", self.regions),
                     ("departments", self.departments),
                     ("sectors", self.sectors),
+                    ("management_types", self.management_types),
                 ]
             )
         )
@@ -97,9 +114,11 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
         model = Canteen
         fields = (
             "department",
+            "region",
             "sectors",
             "min_daily_meal_count",
             "max_daily_meal_count",
+            "management_type",
         )
 
 
