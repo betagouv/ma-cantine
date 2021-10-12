@@ -36,7 +36,7 @@
             Cliquez sur le logo pour changer
           </div>
           <div>
-            <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" />
+            <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" id="logo" />
           </div>
           <div class="flex-grow-1 mt-2 fill-height">
             <v-card
