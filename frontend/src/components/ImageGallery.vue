@@ -9,16 +9,13 @@
     <v-row>
       <v-col v-for="(image, index) in images" :key="index" cols="6" sm="4" md="3">
         <v-hover v-slot:default="{ hover }">
-          <v-card flat style="cursor: pointer;overflow: hidden;">
-            <v-img
-              v-on:click="
-                imageCarouselVisible = true
-                carouselIndex = index
-              "
-              :src="image.image"
-              aspect-ratio="1.2"
-              class="grey lighten-2"
-            >
+          <v-card
+            flat
+            style="cursor: pointer;overflow: hidden;"
+            v-on:click="openImage(index)"
+            @keydown.enter="openImage(index)"
+          >
+            <v-img :src="image.image" aspect-ratio="1.2" class="grey lighten-2">
               <div v-if="hover" class="d-flex display-3 white--text" style="height: 100%; background: #42424260;">
                 <v-icon color="white" size="30" style="margin-left: auto; margin-right: auto;">
                   mdi-magnify-plus-outline
@@ -50,5 +47,16 @@ export default {
       required: true,
     },
   },
+  methods: {
+    openImage(index) {
+      this.imageCarouselVisible = true
+      this.carouselIndex = index
+    },
+  },
 }
 </script>
+<style scoped>
+.v-card:focus {
+  border: dotted 2px #0c7f46;
+}
+</style>
