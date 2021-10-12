@@ -7,10 +7,10 @@
     <div v-if="canteen" id="canteen-dashboard">
       <v-card elevation="0" class="pa-0 mt-4 mb-8 text-left">
         <v-row class="align-center">
-          <v-col v-if="canteen.logo" cols="4" sm="3" md="2" style="border-right: solid 1px #dfdfdf;">
+          <v-col v-if="canteen.logo" class="mr-4" cols="4" sm="3" md="2" style="border-right: solid 1px #dfdfdf;">
             <v-img class="rounded" :src="canteen.logo" contain></v-img>
           </v-col>
-          <v-col class="pl-6">
+          <v-col>
             <v-card-title class="text-h4 font-weight-black pa-0">
               <h1 class="text-h4 font-weight-black">
                 {{ canteen.name }}
