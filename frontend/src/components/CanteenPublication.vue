@@ -92,7 +92,7 @@
 
     <div v-if="canteen && canteen.images && canteen.images.length > 0">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-0">
-        Images
+        Galerie
       </h2>
       <p class="body-2">
         Cliquez sur une image pour l'agrandir
