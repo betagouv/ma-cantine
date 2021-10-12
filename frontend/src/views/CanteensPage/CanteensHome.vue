@@ -141,7 +141,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12" sm="6" md="4" class="text-left">
+        <v-col cols="12" sm="4" md="3" class="text-left">
           <label
             :class="{
               'text-body-2': true,
@@ -163,7 +163,7 @@
               aria-describedby="meal-count"
               dense
             />
-            <span class="mx-4 align-self-center">-</span>
+            <span class="mx-2 align-self-center">-</span>
             <v-text-field
               :value="appliedFilters.maxMealCount"
               ref="maxMealCount"
@@ -177,8 +177,6 @@
             />
           </div>
         </v-col>
-      </v-row>
-      <v-row>
         <v-col cols="12" sm="4" md="3" class="text-left">
           <label
             for="select-management-type"
