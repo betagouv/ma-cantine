@@ -82,7 +82,7 @@
           >
             Région
           </label>
-          <v-select
+          <v-autocomplete
             v-model="appliedFilters.chosenRegion"
             :items="regions"
             clearable
@@ -92,7 +92,9 @@
             class="mt-1"
             outlined
             dense
-          ></v-select>
+            auto-select-first
+            :filter="locationFilter"
+          ></v-autocomplete>
         </v-col>
         <v-col cols="12" sm="6" md="4">
           <label
@@ -115,7 +117,7 @@
             outlined
             dense
             auto-select-first
-            :filter="departmentFilter"
+            :filter="locationFilter"
           ></v-autocomplete>
         </v-col>
         <v-col cols="12" sm="6" md="4">
@@ -649,7 +651,7 @@ export default {
     setRegions(enabledRegionIds) {
       this.regions = this.setLocations(enabledRegionIds, jsonRegions, "region", "régions")
     },
-    departmentFilter(item, queryText, itemText) {
+    locationFilter(item, queryText, itemText) {
       return (
         Object.prototype.hasOwnProperty.call(item, "divider") ||
         Object.prototype.hasOwnProperty.call(item, "header") ||
