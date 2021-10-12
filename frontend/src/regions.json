@@ -1,0 +1,74 @@
+[
+  {
+    "regionCode": "01",
+    "regionName": "Guadeloupe"
+  },
+  {
+    "regionCode": "02",
+    "regionName": "Martinique"
+  },
+  {
+    "regionCode": "03",
+    "regionName": "Guyane"
+  },
+  {
+    "regionCode": "04",
+    "regionName": "La Réunion"
+  },
+  {
+    "regionCode": "06",
+    "regionName": "Mayotte"
+  },
+  {
+    "regionCode": "11",
+    "regionName": "Île-de-France"
+  },
+  {
+    "regionCode": "24",
+    "regionName": "Centre-Val de Loire"
+  },
+  {
+    "regionCode": "27",
+    "regionName": "Bourgogne-Franche-Comté"
+  },
+  {
+    "regionCode": "28",
+    "regionName": "Normandie"
+  },
+  {
+    "regionCode": "32",
+    "regionName": "Hauts-de-France"
+  },
+  {
+    "regionCode": "44",
+    "regionName": "Grand Est"
+  },
+  {
+    "regionCode": "52",
+    "regionName": "Pays de la Loire"
+  },
+  {
+    "regionCode": "53",
+    "regionName": "Bretagne"
+  },
+  {
+    "regionCode": "75",
+    "regionName": "Nouvelle-Aquitaine"
+  },
+  {
+    "regionCode": "76",
+    "regionName": "Occitanie"
+  },
+  {
+    "regionCode": "84",
+    "regionName": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "regionCode": "93",
+    "regionName": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "regionCode": "94",
+    "regionName": "Corse"
+  }
+]
