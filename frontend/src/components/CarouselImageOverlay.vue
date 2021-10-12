@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible">
+  <div v-if="visible" v-resize="onResize">
     <v-overlay :value="visible" :dark="false">
       <v-btn @click="close" class="close-overlay" fab dark small color="grey lighten-5">
         <v-icon color="red darken-3" aria-label="Fermer" aria-hidden="false">mdi-close</v-icon>
@@ -44,23 +44,10 @@ export default {
     },
   },
   data() {
-    return {}
-  },
-  computed: {
-    carouselWidth() {
-      switch (this.$vuetify.breakpoint.name) {
-        case "xs":
-        case "sm":
-          return `${window.innerWidth - 30}px`
-        case "md":
-          return `${window.innerWidth - 60}px`
-        default:
-          return `${Math.min(window.innerWidth - 80, 1000)}px`
-      }
-    },
-    carouselHeight() {
-      return `${Math.min(window.innerHeight - 100, 800)}px`
-    },
+    return {
+      carouselWidth: "0",
+      carouselHeight: "0",
+    }
   },
   methods: {
     move(e) {
@@ -78,6 +65,23 @@ export default {
     },
     close() {
       this.$emit("done")
+    },
+    setCarouselDimensions() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+        case "sm":
+          this.carouselWidth = `${window.innerWidth - 30}px`
+          break
+        case "md":
+          this.carouselWidth = `${window.innerWidth - 60}px`
+          break
+        default:
+          this.carouselWidth = `${Math.min(window.innerWidth - 80, 1000)}px`
+      }
+      this.carouselHeight = `${Math.min(window.innerHeight - 100, 800)}px`
+    },
+    onResize() {
+      this.setCarouselDimensions()
     },
   },
   mounted() {
