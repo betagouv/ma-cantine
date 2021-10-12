@@ -503,7 +503,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(len(results[0].get("images")), 3)
 
     @authenticate
-    def test_canteen_image_edition(self):
+    def test_canteen_image_modification(self):
         """
         The API should allow image addition and deletion for canteen managers
         """
