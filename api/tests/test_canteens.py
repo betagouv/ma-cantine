@@ -554,8 +554,14 @@ class TestCanteenApi(APITestCase):
         self.assertIn("69", body.get("departments"))
 
     def test_pagination_sectors(self):
+        """
+        The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
+        """
         school = SectorFactory.create(name="School")
         enterprise = SectorFactory.create(name="Enterprise")
+        administration = SectorFactory.create(name="Administration")
+        # unused sectors shouldn't show up as an option
+        SectorFactory.create(name="Unused")
         CanteenFactory.create(
             publication_status="published", sectors=[school, enterprise], name="Shiso"
         )
@@ -566,17 +572,41 @@ class TestCanteenApi(APITestCase):
             publication_status="published", sectors=[school], name="Mochi"
         )
         CanteenFactory.create(
-            publication_status="published", sectors=[school], name="Umami"
+            publication_status="published", sectors=[administration], name="Umami"
         )
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
         body = response.json()
 
-        # There are two unique sectors : school and enterprise
-        self.assertEqual(len(body.get("sectors")), 2)
+        self.assertEqual(len(body.get("sectors")), 3)
         self.assertIn(school.id, body.get("sectors"))
         self.assertIn(enterprise.id, body.get("sectors"))
+        self.assertIn(administration.id, body.get("sectors"))
+
+        url = f"{reverse('published_canteens')}?sectors={enterprise.id}"
+        response = self.client.get(url)
+        body = response.json()
+
+        self.assertEqual(len(body.get("sectors")), 3)
+        self.assertIn(school.id, body.get("sectors"))
+        self.assertIn(enterprise.id, body.get("sectors"))
+        self.assertIn(administration.id, body.get("sectors"))
+
+    def test_pagination_management_types(self):
+        CanteenFactory.create(
+            publication_status="published", management_type="conceded", name="Shiso"
+        )
+        CanteenFactory.create(
+            publication_status="published", management_type=None, name="Wasabi"
+        )
+
+        url = f"{reverse('published_canteens')}"
+        response = self.client.get(url)
+        body = response.json()
+
+        self.assertEqual(len(body.get("managementTypes")), 1)
+        self.assertIn("conceded", body.get("managementTypes"))
 
     @authenticate
     def test_canteen_publication_fields_read_only(self):

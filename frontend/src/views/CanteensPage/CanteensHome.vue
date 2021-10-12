@@ -74,7 +74,29 @@
           <span class="text-decoration-underline">Désactiver tous les filtres</span>
         </v-btn>
       </h2>
-      <v-row id="filters">
+      <v-row>
+        <v-col cols="12" sm="6" md="4" class="text-left">
+          <label
+            for="select-region"
+            :class="{
+              'text-body-2': true,
+              'active-filter-label': !!appliedFilters.chosenRegion,
+            }"
+          >
+            Région
+          </label>
+          <v-select
+            v-model="appliedFilters.chosenRegion"
+            :items="regions"
+            clearable
+            hide-details
+            id="select-region"
+            placeholder="Toutes les régions"
+            class="mt-1"
+            outlined
+            dense
+          ></v-select>
+        </v-col>
         <v-col cols="12" sm="6" md="4" class="text-left">
           <label
             for="select-department"
@@ -117,7 +139,9 @@
             dense
           ></v-select>
         </v-col>
-        <v-col cols="12" sm="6" md="4" class="text-left">
+      </v-row>
+      <v-row>
+        <v-col cols="12" sm="4" md="3" class="text-left">
           <label
             :class="{
               'text-body-2': true,
@@ -139,7 +163,7 @@
               aria-describedby="meal-count"
               dense
             />
-            <span class="mx-4 align-self-center">-</span>
+            <span class="mx-2 align-self-center">-</span>
             <v-text-field
               :value="appliedFilters.maxMealCount"
               ref="maxMealCount"
@@ -152,6 +176,25 @@
               dense
             />
           </div>
+        </v-col>
+        <v-col cols="12" sm="4" md="3" class="text-left">
+          <label
+            for="select-management-type"
+            :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.managementType }"
+          >
+            Mode de gestion
+          </label>
+          <v-select
+            v-model="appliedFilters.managementType"
+            :items="managementTypes"
+            clearable
+            hide-details
+            id="select-management-type"
+            outlined
+            class="mt-1"
+            dense
+            placeholder="Tous les modes"
+          ></v-select>
         </v-col>
       </v-row>
       <v-row class="mt-0">
@@ -228,8 +271,20 @@
           ></v-pagination>
         </v-col>
         <v-spacer></v-spacer>
-        <v-col id="ordering" cols="12" sm="3">
+        <v-col id="ordering" cols="12" sm="3" class="d-flex align-center">
           <v-select v-model="orderBy" :items="orderOptions" hide-details label="Trier par" outlined dense></v-select>
+          <v-btn
+            icon
+            @click="toggleOrderDirection"
+            :title="`Resultats affichés en ordre ${orderDescending ? 'décroissant' : 'croissant'}`"
+            plain
+            :ripple="false"
+          >
+            <v-icon v-if="orderDescending">mdi-arrow-down</v-icon>
+            <v-icon v-else>
+              mdi-arrow-up
+            </v-icon>
+          </v-btn>
         </v-col>
       </v-row>
       <v-row>
@@ -310,14 +365,19 @@
 <script>
 import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
+import jsonRegions from "@/regions.json"
 import { getObjectDiff } from "@/utils"
 import validators from "@/validators"
+import Constants from "@/constants"
+
+const DEFAULT_ORDER = "creation"
 
 export default {
   data() {
     return {
       limit: 6,
       departments: [],
+      regions: [],
       sectors: [],
       visibleCanteens: null,
       publishedCanteenCount: null,
@@ -325,6 +385,8 @@ export default {
       searchTerm: null,
       appliedFilters: {
         chosenDepartment: null,
+        chosenRegion: null,
+        managementType: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -336,22 +398,17 @@ export default {
         {
           text: "Date de création",
           value: "creation",
-          query: "-creation_date",
+          query: "creation_date",
         },
         {
           text: "Date de modification",
           value: "modification",
-          query: "-modification_date",
+          query: "modification_date",
         },
         {
-          text: "Repas par jour - croissant",
+          text: "Repas par jour",
           value: "repas",
           query: "daily_meal_count",
-        },
-        {
-          text: "Repas par jour - décroissant",
-          value: "repasDecroissant",
-          query: "-daily_meal_count",
         },
         {
           text: "Nom de la cantine",
@@ -359,10 +416,12 @@ export default {
           query: "name",
         },
       ],
+      orderDescending: true,
       fromEmail: "",
       name: "",
       message: "",
       formIsValid: true,
+      managementTypes: Constants.ManagementTypes,
     }
   },
   components: { PublishedCanteenCard },
@@ -378,18 +437,22 @@ export default {
       if (this.page) query.page = String(this.page)
       if (this.searchTerm) query.recherche = this.searchTerm
       if (this.appliedFilters.chosenDepartment) query.departement = this.appliedFilters.chosenDepartment
+      if (this.appliedFilters.chosenRegion) query.region = this.appliedFilters.chosenRegion
+      if (this.appliedFilters.managementType) query.modeDeGestion = this.appliedFilters.managementType
       if (this.appliedFilters.chosenSectors && this.appliedFilters.chosenSectors.length > 0)
         query.secteurs = this.appliedFilters.chosenSectors.join("+")
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
       if (this.appliedFilters.maxMealCount) query.maxRepasJour = String(this.appliedFilters.maxMealCount)
       if (this.appliedFilters.minBio) query.minBio = String(this.appliedFilters.minBio)
       if (this.appliedFilters.minCombined) query.minQualite = String(this.appliedFilters.minCombined)
-      if (this.orderBy) query.trier = this.orderBy
+      if (this.order) query.trier = this.order.display
       return query
     },
     hasActiveFilter() {
       return (
         this.appliedFilters.chosenDepartment !== null ||
+        this.appliedFilters.chosenRegion !== null ||
+        this.appliedFilters.managementType !== null ||
         this.appliedFilters.chosenSectors.length > 0 ||
         this.appliedFilters.minMealCount !== null ||
         this.appliedFilters.maxMealCount !== null ||
@@ -404,6 +467,7 @@ export default {
       const filterQueries = [
         this.$route.query.recherche,
         this.$route.query.departement,
+        this.$route.query.region,
         this.$route.query.secteurs,
         this.$route.query.minRepasJour,
         this.$route.query.maxRepasJour,
@@ -417,21 +481,28 @@ export default {
       if (this.publishedCanteenCount === 1) return "Un établissement correspond à votre recherche"
       else return `${this.publishedCanteenCount} établissements correspondent à votre recherche`
     },
+    order() {
+      if (!this.orderBy) return null
+      const chosenOption = this.orderOptions.find((opt) => opt.value === this.orderBy)
+      return {
+        query: `${this.orderDescending ? "-" : ""}${chosenOption?.query || DEFAULT_ORDER}`,
+        display: `${chosenOption?.value || DEFAULT_ORDER}${this.orderDescending ? "Dec" : "Cro"}`,
+      }
+    },
   },
   methods: {
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
       if (this.appliedFilters.chosenDepartment) queryParam += `&department=${this.appliedFilters.chosenDepartment}`
+      if (this.appliedFilters.chosenRegion) queryParam += `&region=${this.appliedFilters.chosenRegion}`
+      if (this.appliedFilters.managementType) queryParam += `&management_type=${this.appliedFilters.managementType}`
       if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
       if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
       if (this.appliedFilters.minBio) queryParam += `&min_portion_bio=${this.appliedFilters.minBio / 100}`
       if (this.appliedFilters.minCombined)
         queryParam += `&min_portion_combined=${this.appliedFilters.minCombined / 100}`
-      if (this.orderBy) {
-        let chosenOption = this.orderOptions.find((opt) => opt.value === this.orderBy)
-        if (chosenOption) queryParam += `&ordering=${chosenOption.query}`
-      }
+      if (this.order) queryParam += `&ordering=${this.order.query}`
 
       for (let i = 0; i < this.appliedFilters.chosenSectors.length; i++)
         queryParam += `&sectors=${this.appliedFilters.chosenSectors[i]}`
@@ -445,7 +516,9 @@ export default {
           this.publishedCanteenCount = response.count
           this.visibleCanteens = response.results
           this.setDepartments(response.departments)
+          this.setRegions(response.regions)
           this.setSectors(response.sectors)
+          this.setManagementTypes(response.managementTypes)
         })
         .catch(() => {
           this.publishedCanteenCount = 0
@@ -462,13 +535,15 @@ export default {
       this.$router.push({ query }).catch(() => {})
     },
     updateOrder() {
-      const override = this.orderBy ? { page: 1, trier: this.orderBy } : { page: 1 }
+      const override = this.order ? { page: 1, trier: this.order.display } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
     },
     clearFilters() {
       this.appliedFilters = {
         chosenDepartment: null,
+        chosenRegion: null,
+        managementType: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -494,13 +569,15 @@ export default {
       this.searchTerm = this.$route.query.recherche || null
       this.appliedFilters = {
         chosenDepartment: this.$route.query.departement || null,
+        chosenRegion: this.$route.query.region || null,
+        managementType: this.$route.query.modeDeGestion || null,
         chosenSectors: this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || [],
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
         minBio: parseInt(this.$route.query.minBio) || null,
         minCombined: parseInt(this.$route.query.minQualite) || null,
       }
-      this.orderBy = this.$route.query.trier || "creation"
+      this.orderBy = this.$route.query.trier?.slice(0, -3) || DEFAULT_ORDER
     },
     onChangeIntegerFilter(ref) {
       if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
@@ -544,30 +621,36 @@ export default {
           this.$store.dispatch("notifyServerError")
         })
     },
-    setDepartments(enabledDepartmentIds) {
-      const enabledDepartments = jsonDepartments
-        .filter((x) => enabledDepartmentIds.indexOf(x.departmentCode) > -1)
+    setLocations(enabledLocationIds, jsonLocations, locationKeyWord, locationsWord) {
+      const enabledLocations = jsonLocations
+        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) > -1)
         .map((x) => ({
-          text: `${x.departmentCode} - ${x.departmentName}`,
-          value: x.departmentCode,
+          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
+          value: x[`${locationKeyWord}Code`],
         }))
       const headerText =
         this.hasActiveFilter || this.searchTerm
-          ? "Ces départements ne contiennent pas d'établissements correspondant à votre recherche :"
-          : "Nous n'avons pas encore d'établissements dans ces départements :"
+          ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
+          : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
       const header = { header: headerText }
 
       const divider = { divider: true }
 
-      const disabledDepartments = jsonDepartments
-        .filter((x) => enabledDepartmentIds.indexOf(x.departmentCode) === -1)
+      const disabledLocations = jsonLocations
+        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) === -1)
         .map((x) => ({
-          text: `${x.departmentCode} - ${x.departmentName}`,
-          value: x.departmentCode,
+          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
+          value: x[`${locationKeyWord}Code`],
           disabled: true,
         }))
 
-      this.departments = [...enabledDepartments, divider, header, ...disabledDepartments]
+      return [...enabledLocations, divider, header, ...disabledLocations]
+    },
+    setDepartments(enabledDepartmentIds) {
+      this.departments = this.setLocations(enabledDepartmentIds, jsonDepartments, "department", "départements")
+    },
+    setRegions(enabledRegionIds) {
+      this.regions = this.setLocations(enabledRegionIds, jsonRegions, "region", "régions")
     },
     setSectors(enabledSectorIds) {
       this.sectors = this.$store.state.sectors
@@ -577,6 +660,16 @@ export default {
           disabled: enabledSectorIds.indexOf(x.id) === -1,
         }))
         .sort((a, b) => (a.text > b.text ? 1 : -1))
+    },
+    setManagementTypes(enabledManagementTypes) {
+      this.managementTypes = Constants.ManagementTypes.map((x) =>
+        Object.assign(x, {
+          disabled: enabledManagementTypes.indexOf(x.value) === -1,
+        })
+      )
+    },
+    toggleOrderDirection() {
+      this.orderDescending = !this.orderDescending
     },
   },
   watch: {
@@ -590,6 +683,9 @@ export default {
       this.changePage()
     },
     orderBy() {
+      this.updateOrder()
+    },
+    orderDescending() {
       this.updateOrder()
     },
     $route() {
