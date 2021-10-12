@@ -25,6 +25,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "postal_code",
             "sectors",
             "daily_meal_count",
+            "region",
             "department",
             "main_image",
             "publication_comments",
