@@ -171,6 +171,7 @@
             outlined
             class="mt-1"
             dense
+            placeholder="Tous les modes"
           ></v-select>
         </v-col>
       </v-row>
