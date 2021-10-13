@@ -78,7 +78,7 @@
 
     <div v-if="canteen && shouldDisplayGraph">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-12 mb-2">
-        L'évolution de l'approvisionnement
+        Évolution des produits dans nos assiettes sur les années
       </h2>
       <div>
         <MultiYearSummaryStatistics
