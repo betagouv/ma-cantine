@@ -140,18 +140,19 @@
       <v-row class="align-end mt-0">
         <v-col cols="12" sm="8" md="5">
           <label class="text-body-2">
-            Approvisionnement minimum
+            Dans les assiettes, part de...
           </label>
           <div class="d-flex mt-n1">
-            <v-col class="pa-0 pr-2">
+            <v-col class="pa-0 pr-1">
               <label
                 :class="{
-                  'text-body-2': true,
+                  caption: true,
+                  'pl-1': true,
                   'active-filter-label': !!appliedFilters.minBio,
                 }"
                 id="value-percentages-bio"
               >
-                Bio
+                bio minimum
               </label>
               <v-text-field
                 :value="appliedFilters.minBio"
@@ -166,15 +167,16 @@
                 dense
               />
             </v-col>
-            <v-col class="pa-0 pl-2">
+            <v-col class="pa-0 pl-1">
               <label
                 :class="{
-                  'text-body-2': true,
+                  caption: true,
+                  'pl-1': true,
                   'active-filter-label': !!appliedFilters.minCombined,
                 }"
                 id="value-percentages-bio-qualite"
               >
-                Bio, qualité et durables
+                bio, qualité et durables min
               </label>
               <v-text-field
                 :value="appliedFilters.minCombined"
