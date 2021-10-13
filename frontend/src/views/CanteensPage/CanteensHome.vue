@@ -82,7 +82,7 @@
           >
             Région
           </label>
-          <v-select
+          <v-autocomplete
             v-model="appliedFilters.chosenRegion"
             :items="regions"
             clearable
@@ -92,7 +92,9 @@
             class="mt-1"
             outlined
             dense
-          ></v-select>
+            auto-select-first
+            :filter="locationFilter"
+          ></v-autocomplete>
         </v-col>
         <v-col cols="12" sm="6" md="4">
           <label
@@ -104,7 +106,7 @@
           >
             Département
           </label>
-          <v-select
+          <v-autocomplete
             v-model="appliedFilters.chosenDepartment"
             :items="departments"
             clearable
@@ -114,7 +116,9 @@
             class="mt-1"
             outlined
             dense
-          ></v-select>
+            auto-select-first
+            :filter="locationFilter"
+          ></v-autocomplete>
         </v-col>
         <v-col cols="12" sm="6" md="4">
           <label
@@ -363,7 +367,7 @@
 import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
-import { getObjectDiff } from "@/utils"
+import { getObjectDiff, normaliseText } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 
@@ -648,6 +652,13 @@ export default {
     },
     setRegions(enabledRegionIds) {
       this.regions = this.setLocations(enabledRegionIds, jsonRegions, "region", "régions")
+    },
+    locationFilter(item, queryText, itemText) {
+      return (
+        Object.prototype.hasOwnProperty.call(item, "divider") ||
+        Object.prototype.hasOwnProperty.call(item, "header") ||
+        normaliseText(itemText).indexOf(normaliseText(queryText)) > -1
+      )
     },
     setSectors(enabledSectorIds) {
       this.sectors = this.$store.state.sectors
