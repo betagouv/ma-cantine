@@ -29,29 +29,38 @@
         </v-col>
 
         <v-col cols="12" md="4" height="100%" class="d-flex flex-column">
-          <div class="text-right">
-            <v-btn
-              class="text-decoration-underline pa-2"
-              text
-              color="red"
-              small
-              v-if="canteen.mainImage"
-              @click="changeProfileImage(null)"
-            >
-              <v-icon class="mr-1" x-small>mdi-delete-forever</v-icon>
-              Supprimer
-            </v-btn>
-            <v-btn text class="text-decoration-underline pa-2" color="primary" @click="onProfilePhotoUploadClick" small>
-              <v-icon class="mr-1" x-small>mdi-image</v-icon>
-              Choisir une photo
-            </v-btn>
-            <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onProfilePhotoChanged" />
+          <label class="body-2" for="logo">
+            Logo
+          </label>
+          <div v-if="canteen.logo" class="body-2 grey--text grey--lighten-2">
+            Cliquez sur le logo pour changer
+          </div>
+          <div>
+            <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" id="logo" />
           </div>
           <div class="flex-grow-1 mt-2 fill-height">
-            <v-sheet rounded color="grey lighten-2" class="fill-height d-flex align-center justify-center">
-              <v-img contain v-if="canteen.mainImage" :src="canteen.mainImage" max-height="140"></v-img>
-              <v-icon v-else size="40" color="grey" class="py-4">mdi-image-off-outline</v-icon>
-            </v-sheet>
+            <v-card
+              @click="onLogoUploadClick"
+              rounded
+              color="grey lighten-5"
+              class="fill-height"
+              style="overflow: hidden;"
+            >
+              <div v-if="canteen.logo" class="d-flex flex-column fill-height">
+                <v-spacer></v-spacer>
+                <v-img contain :src="canteen.logo" max-height="135"></v-img>
+                <v-spacer></v-spacer>
+              </div>
+              <div v-else class="d-flex flex-column align-center justify-center fill-height">
+                <v-icon class="pb-2">mdi-shape</v-icon>
+                <p class="ma-0 text-center font-weight-bold body-2 grey--text text--darken-2">Ajoutez un logo</p>
+              </div>
+              <div v-if="canteen.logo" style="position: absolute; top: 10px; left: 10px;">
+                <v-btn fab small @click.stop.prevent="changeLogo(null)">
+                  <v-icon aria-label="Supprimer logo" aria-hidden="false" color="red">mdi-trash-can-outline</v-icon>
+                </v-btn>
+              </div>
+            </v-card>
           </div>
         </v-col>
       </v-row>
@@ -127,6 +136,10 @@
           </v-radio-group>
         </v-col>
       </v-row>
+      <div>
+        <label class="body-2" for="images">Images</label>
+        <ImagesField class="mt-0 mb-4" :imageArray.sync="canteen.images" id="images" />
+      </div>
     </v-form>
 
     <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
@@ -145,13 +158,14 @@
 import validators from "@/validators"
 import { toBase64, getObjectDiff } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
+import ImagesField from "./ImagesField"
 import Constants from "@/constants"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "CanteenForm",
-  components: { PublicationStateNotice },
+  components: { PublicationStateNotice, ImagesField },
   props: {
     originalCanteen: {
       type: Object,
@@ -218,6 +232,7 @@ export default {
         this.communes = [initialCityAutocomplete]
         this.cityAutocompleteChoice = initialCityAutocomplete.value
       }
+      if (!this.canteen.images) this.canteen.images = []
     } else this.$router.push({ name: "NewCanteen" })
   },
   created() {
@@ -259,19 +274,19 @@ export default {
           this.$store.dispatch("notifyServerError")
         })
     },
-    onProfilePhotoUploadClick() {
+    onLogoUploadClick() {
       this.$refs.uploader.click()
     },
-    onProfilePhotoChanged(e) {
-      this.changeProfileImage(e.target.files[0])
+    onLogoChanged(e) {
+      this.changeLogo(e.target.files[0])
     },
-    changeProfileImage(file) {
+    changeLogo(file) {
       if (!file) {
-        this.canteen.mainImage = null
+        this.canteen.logo = null
         return
       }
       toBase64(file, (base64) => {
-        this.$set(this.canteen, "mainImage", base64)
+        this.$set(this.canteen, "logo", base64)
       })
     },
     handleUnload(e) {

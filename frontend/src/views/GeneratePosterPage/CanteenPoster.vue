@@ -5,12 +5,7 @@
         <h2>Qualité des approvisionnements dans l’établissement {{ canteen.name || "_________" }}</h2>
         <div id="indicators">
           <!-- Can't use <img> because the object-fit is not respected in the PDF generation -->
-          <div
-            :style="`background-image: url('${canteen.mainImage}')`"
-            v-if="canteen.mainImage"
-            class="cantine-image"
-            alt=""
-          />
+          <div :style="`background-image: url('${canteen.logo}')`" v-if="canteen.logo" class="cantine-image" alt="" />
 
           <CanteenIndicators :canteen="canteen" />
         </div>
@@ -154,7 +149,7 @@ i {
   height: 75px;
   border-radius: 4px;
   margin-right: 8px;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
 }

@@ -89,6 +89,18 @@
         />
       </div>
     </div>
+
+    <div v-if="canteen && canteen.images && canteen.images.length > 0">
+      <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-0">
+        Galerie
+      </h2>
+      <p class="body-2">
+        Cliquez sur une image pour l'agrandir
+      </p>
+      <div>
+        <ImageGallery :images="canteen.images" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -96,6 +108,7 @@
 import labels from "@/data/quality-labels.json"
 import { lastYear, earnedBadges, getPercentage, isDiagnosticComplete } from "@/utils"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
+import ImageGallery from "@/components/ImageGallery"
 
 export default {
   props: {
@@ -107,7 +120,7 @@ export default {
       publicationYear: lastYear(),
     }
   },
-  components: { MultiYearSummaryStatistics },
+  components: { MultiYearSummaryStatistics, ImageGallery },
   computed: {
     diagnostic() {
       return this.canteen.diagnostics.find((d) => d.year === this.publicationYear) || {}
