@@ -40,10 +40,11 @@ export default {
     let years = []
     const diagArray = Object.values(this.diagnostics)
     const completedDiagnostics = []
+    const thisYear = new Date().getFullYear()
     diagArray.forEach((d) => {
       if (isDiagnosticComplete(d)) {
         completedDiagnostics.push(d)
-        years.push(d.year)
+        years.push(`${d.year}${d.year >= thisYear ? " (objectif)" : ""}`)
       }
     })
     return {
