@@ -2,7 +2,7 @@
   <v-card
     :to="{ name: 'CanteenPage', params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) } }"
     hover
-    class="pa-4 text-left fill-height"
+    class="pa-4 text-left fill-height d-flex flex-column"
   >
     <v-card-title class="font-weight-black">
       {{ canteen.name }}
@@ -10,15 +10,16 @@
     <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pb-2">
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
-    <v-card-text class="grey--text text--darken-4">
+    <v-spacer></v-spacer>
+    <v-card-text class="grey--text text--darken-4 pt-1">
       <v-row class="ma-0" v-if="hasPercentages">
         <v-img
           max-width="25"
           contain
           :src="`/static/images/badges/appro${approBadge.earned ? '' : '-disabled'}.svg`"
           class="mr-3"
-          :alt="approBadge.title"
-          :title="approBadge.title"
+          :alt="badgeTitle(approBadge)"
+          :title="badgeTitle(approBadge)"
         ></v-img>
         <p class="ma-0 mr-3" v-if="bioPercent">
           <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
@@ -39,8 +40,8 @@
           contain
           :src="`/static/images/badges/appro${approBadge.earned ? '' : '-disabled'}.svg`"
           class="mr-2"
-          :alt="approBadge.title"
-          :title="approBadge.title"
+          :alt="badgeTitle(approBadge)"
+          :title="badgeTitle(approBadge)"
           v-if="!hasPercentages"
         ></v-img>
         <v-img
@@ -50,8 +51,8 @@
           v-for="(badge, key) in otherBadges"
           :key="key"
           class="mr-2"
-          :alt="badge.title"
-          :title="badge.title"
+          :alt="badgeTitle(badge)"
+          :title="badgeTitle(badge)"
         ></v-img>
       </v-row>
     </v-card-text>
@@ -107,6 +108,9 @@ export default {
     diagValuePercent(valueKey) {
       if (!this.diagnostic || !isDiagnosticComplete(this.diagnostic)) return null
       return getPercentage(this.diagnostic[valueKey], this.diagnostic.valueTotalHt)
+    },
+    badgeTitle(badge) {
+      return `${badge.title}${badge.earned ? "" : " (à faire)"}`
     },
   },
 }
