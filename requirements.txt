@@ -26,7 +26,7 @@ Faker==9.3.1
 future==0.18.2
 html2text==2020.1.16
 html5lib==1.1
-idna==3.2
+idna==3.3
 iniconfig==1.1.1
 isort==5.9.3
 jmespath==0.10.0
