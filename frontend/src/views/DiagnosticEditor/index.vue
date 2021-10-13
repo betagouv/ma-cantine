@@ -167,11 +167,14 @@
           <v-divider class="mt-8"></v-divider>
           <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
           <p>
-            Conformément à l’article 24 de la loi EGAlim, chaque établissement est tenu de renseigner et transmettre à
-            l’administration ses données, notamment en termes d’approvisionnement sur l’année civile passée. Afin de
-            faciliter cette démarche, nous vous proposons d’utiliser les informations de votre autodiagnostic
-            {{ teledeclarationYear }} afin de les envoyer, avec votre accord, à la DGAL qui en fera un bilan statistique
-            global des données des établissements.
+            Un bilan annuel relatif à la mise en œuvre des dispositions de la loi EGAlim, et notamment des objectifs
+            d'approvisionnement en produits de qualité et durables dont bio dans les repas servis dans les restaurants
+            collectifs, est prévu par le décret du 23 avril 2019.
+          </p>
+          <p>
+            Nous vous proposons d’utiliser les informations de votre autodiagnostic {{ teledeclarationYear }} et de les
+            transmettre, avec votre accord, à la DGAL, direction du Ministère de l'agriculture en charge de
+            l'élaboration de ce bilan.
           </p>
           <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form">
             <v-checkbox
