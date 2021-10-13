@@ -11,7 +11,7 @@
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
     <v-spacer></v-spacer>
-    <v-card-text class="grey--text text--darken-4 pt-1">
+    <v-card-text class="grey--text text--darken-4 py-1">
       <v-row class="ma-0" v-if="hasPercentages">
         <v-img
           max-width="25"
