@@ -54,7 +54,7 @@
       Nos démarches
     </h2>
     <v-row class="my-6">
-      <div cols="12" v-for="(badge, key) in earnedBadges" :key="key">
+      <div v-for="(badge, key) in earnedBadges" :key="key">
         <v-col cols="12" v-if="badge.earned">
           <v-card class="fill-height" elevation="0">
             <div class="d-flex align-start">
