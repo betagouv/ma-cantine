@@ -226,3 +226,11 @@ export const earnedBadges = (canteen, diagnostic, sectors) => {
   }
   return applicable
 }
+
+// normalise "À fîrst" to "A FIRST"
+export const normaliseText = (name) => {
+  return name
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toUpperCase()
+}

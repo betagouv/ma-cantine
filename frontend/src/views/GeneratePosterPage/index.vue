@@ -175,15 +175,7 @@ import Constants from "@/constants"
 import CanteenPoster from "./CanteenPoster"
 import html2pdf from "html2pdf.js"
 import validators from "@/validators"
-import { lastYear } from "@/utils"
-
-// normalise "À fîrst" to "A FIRST"
-function normaliseName(name) {
-  return name
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .toUpperCase()
-}
+import { lastYear, normaliseText } from "@/utils"
 
 export default {
   components: {
@@ -210,7 +202,7 @@ export default {
     userCanteens() {
       const canteens = this.$store.state.userCanteens
       return canteens.sort((a, b) => {
-        return normaliseName(a.name) > normaliseName(b.name) ? 1 : 0
+        return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
       })
     },
     userCanteen() {
