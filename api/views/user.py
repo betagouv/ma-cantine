@@ -31,9 +31,7 @@ class UpdateUserView(UpdateAPIView):
     queryset = get_user_model().objects.all()
 
     def put(self, request, *args, **kwargs):
-        return JsonResponse(
-            {"error": "Only PATCH request supported in this resource"}, status=405
-        )
+        return JsonResponse({"error": "Only PATCH request supported in this resource"}, status=405)
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
@@ -79,7 +77,5 @@ class ChangePasswordView(UpdateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        update_session_auth_hash(
-            request, request.user
-        )  # After a password change Django logs the user out
+        update_session_auth_hash(request, request.user)  # After a password change Django logs the user out
         return JsonResponse({}, status=status.HTTP_200_OK)

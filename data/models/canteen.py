@@ -56,18 +56,10 @@ class Canteen(SoftDeletionModel):
     city = models.TextField(null=True, blank=True, verbose_name="ville")
     city_insee_code = models.TextField(null=True, blank=True, verbose_name="Code INSEE")
 
-    department = models.TextField(
-        null=True, blank=True, choices=Department.choices, verbose_name="département"
-    )
-    region = models.TextField(
-        null=True, blank=True, choices=Region.choices, verbose_name="région"
-    )
-    postal_code = models.CharField(
-        max_length=20, null=True, blank=True, verbose_name="code postal"
-    )
-    sectors = models.ManyToManyField(
-        Sector, blank=True, verbose_name="secteurs d'activité"
-    )
+    department = models.TextField(null=True, blank=True, choices=Department.choices, verbose_name="département")
+    region = models.TextField(null=True, blank=True, choices=Region.choices, verbose_name="région")
+    postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name="code postal")
+    sectors = models.ManyToManyField(Sector, blank=True, verbose_name="secteurs d'activité")
     managers = models.ManyToManyField(
         get_user_model(),
         blank=True,
@@ -75,9 +67,7 @@ class Canteen(SoftDeletionModel):
         verbose_name="gestionnaires",
     )
 
-    daily_meal_count = models.IntegerField(
-        null=True, blank=True, verbose_name="repas par jour"
-    )
+    daily_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par jour")
     # TODO: once have a standardised format (see _normalise_siret), index by siret if given
     siret = models.TextField(null=True, blank=True, validators=[validate_siret])
     central_producer_siret = models.TextField(
@@ -147,9 +137,7 @@ class Canteen(SoftDeletionModel):
         verbose_name="commentaires de mesure information",
     )
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         max_image_size = 1024
         if self.logo:
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
@@ -178,13 +166,9 @@ class Canteen(SoftDeletionModel):
 
 
 class CanteenImage(models.Model):
-    canteen = models.ForeignKey(
-        Canteen, related_name="images", on_delete=models.CASCADE, null=True
-    )
+    canteen = models.ForeignKey(Canteen, related_name="images", on_delete=models.CASCADE, null=True)
     image = models.ImageField()
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.image = optimize_image(self.image, self.image.name)
         super(CanteenImage, self).save(force_insert, force_update, using, update_fields)

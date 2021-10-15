@@ -40,49 +40,31 @@ class PublishedCanteensPagination(LimitOffsetPagination):
 
     def paginate_queryset(self, queryset, request, view=None):
         # Performance improvements possible
-        self.departments = set(
-            filter(lambda x: x, queryset.values_list("department", flat=True))
-        )
-        self.regions = set(
-            filter(lambda x: x, queryset.values_list("region", flat=True))
-        )
-        self.management_types = set(
-            filter(lambda x: x, queryset.values_list("management_type", flat=True))
-        )
+        self.departments = set(filter(lambda x: x, queryset.values_list("department", flat=True)))
+        self.regions = set(filter(lambda x: x, queryset.values_list("region", flat=True)))
+        self.management_types = set(filter(lambda x: x, queryset.values_list("management_type", flat=True)))
 
         sector_queryset = Canteen.objects.filter(publication_status="published")
         query_params = request.query_params
 
         if query_params.get("department"):
-            sector_queryset = sector_queryset.filter(
-                department=query_params.get("department")
-            )
+            sector_queryset = sector_queryset.filter(department=query_params.get("department"))
 
         if query_params.get("region"):
             sector_queryset = sector_queryset.filter(region=query_params.get("region"))
 
         if query_params.get("min_daily_meal_count"):
-            sector_queryset = sector_queryset.filter(
-                daily_meal_count__gte=query_params.get("min_daily_meal_count")
-            )
+            sector_queryset = sector_queryset.filter(daily_meal_count__gte=query_params.get("min_daily_meal_count"))
 
         if query_params.get("max_daily_meal_count"):
-            sector_queryset = sector_queryset.filter(
-                daily_meal_count__lte=query_params.get("max_daily_meal_count")
-            )
+            sector_queryset = sector_queryset.filter(daily_meal_count__lte=query_params.get("max_daily_meal_count"))
 
         if query_params.get("management_type"):
-            sector_queryset = sector_queryset.filter(
-                management_type=query_params.get("management_type")
-            )
+            sector_queryset = sector_queryset.filter(management_type=query_params.get("management_type"))
 
         sector_queryset = filter_by_diagnostic_params(sector_queryset, query_params)
 
-        self.sectors = (
-            Sector.objects.filter(canteen__in=list(sector_queryset))
-            .values_list("id", flat=True)
-            .distinct()
-        )
+        self.sectors = Sector.objects.filter(canteen__in=list(sector_queryset)).values_list("id", flat=True).distinct()
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
@@ -103,12 +85,8 @@ class PublishedCanteensPagination(LimitOffsetPagination):
 
 
 class PublishedCanteenFilterSet(django_filters.FilterSet):
-    min_daily_meal_count = django_filters.NumberFilter(
-        field_name="daily_meal_count", lookup_expr="gte"
-    )
-    max_daily_meal_count = django_filters.NumberFilter(
-        field_name="daily_meal_count", lookup_expr="lte"
-    )
+    min_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="gte")
+    max_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="lte")
 
     class Meta:
         model = Canteen
@@ -147,9 +125,7 @@ def filter_by_diagnostic_params(queryset, query_params):
         qs_diag = Diagnostic.objects.filter(year=publication_year, value_total_ht__gt=0)
         if bio:
             qs_diag = qs_diag.annotate(
-                bio_share=Cast(
-                    Sum("value_bio_ht") / Sum("value_total_ht"), FloatField()
-                )
+                bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField())
             ).filter(bio_share__gte=bio)
         if sustainable:
             qs_diag = qs_diag.annotate(
@@ -161,8 +137,7 @@ def filter_by_diagnostic_params(queryset, query_params):
         if combined:
             qs_diag = qs_diag.annotate(
                 combined_share=Cast(
-                    (Sum("value_bio_ht") + Sum("value_sustainable_ht"))
-                    / Sum("value_total_ht"),
+                    (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
                     FloatField(),
                 )
             ).filter(combined_share__gte=combined)
@@ -174,9 +149,7 @@ def filter_by_diagnostic_params(queryset, query_params):
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects.filter(
-        publication_status=Canteen.PublicationStatus.PUBLISHED
-    )
+    queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
     pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -218,9 +191,7 @@ class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
     queryset = Canteen.objects.all()
 
     def put(self, request, *args, **kwargs):
-        return JsonResponse(
-            {"error": "Only PATCH request supported in this resource"}, status=405
-        )
+        return JsonResponse({"error": "Only PATCH request supported in this resource"}, status=405)
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
@@ -242,13 +213,9 @@ class PublishCanteenView(APIView):
             if is_draft:
                 canteen.publication_status = Canteen.PublicationStatus.PENDING
                 protocol = "https" if settings.SECURE else "http"
-                admin_url = "{}://{}/admin/data/canteen/{}/change/".format(
-                    protocol, settings.HOSTNAME, canteen.id
-                )
+                admin_url = "{}://{}/admin/data/canteen/{}/change/".format(protocol, settings.HOSTNAME, canteen.id)
 
-                logger.info(
-                    f"Demande de publication de {canteen.name} (ID: {canteen.id})"
-                )
+                logger.info(f"Demande de publication de {canteen.name} (ID: {canteen.id})")
 
                 send_mail(
                     subject="Demande de publication sur ma cantine",
@@ -317,19 +284,13 @@ class AddManagerView(APIView):
         except ValidationError as e:
             logger.error(f"Attempt to add manager with invalid email {email}")
             logger.exception(e)
-            return JsonResponse(
-                {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Canteen.DoesNotExist as e:
             logger.error(f"Attempt to add manager to unexistent canteen {canteen_id}")
             logger.exception(e)
-            return JsonResponse(
-                {"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
         except IntegrityError as e:
-            logger.error(
-                f"Attempt to add existing manager with email {email} to canteen {canteen_id}"
-            )
+            logger.error(f"Attempt to add existing manager with email {email} to canteen {canteen_id}")
             logger.exception(e)
             return _respond_with_team(canteen)
         except Exception as e:
@@ -375,9 +336,7 @@ class RemoveManagerView(APIView):
                 canteen.managers.remove(manager)
             except get_user_model().DoesNotExist:
                 try:
-                    invitation = ManagerInvitation.objects.get(
-                        canteen_id=canteen.id, email=email
-                    )
+                    invitation = ManagerInvitation.objects.get(canteen_id=canteen.id, email=email)
                     invitation.delete()
                 except ManagerInvitation.DoesNotExist:
                     pass
@@ -385,17 +344,11 @@ class RemoveManagerView(APIView):
         except ValidationError as e:
             logger.error(f"Attempt to remove manager with invalid email {email}")
             logger.exception(e)
-            return JsonResponse(
-                {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Canteen.DoesNotExist as e:
-            logger.error(
-                f"Attempt to remove manager from unexistent canteen {canteen_id}"
-            )
+            logger.error(f"Attempt to remove manager from unexistent canteen {canteen_id}")
             logger.exception(e)
-            return JsonResponse(
-                {"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             logger.error("Exception ocurred while removing a manager from a canteen")
             logger.exception(e)
@@ -417,9 +370,7 @@ class SendCanteenEmailView(APIView):
             recipients = [user.email for user in canteen.managers.all()]
             recipients.append(settings.DEFAULT_FROM_EMAIL)
 
-            reply_to = [
-                email
-            ]  # SendinBlue does not support multiple reply_to addresses
+            reply_to = [email]  # SendinBlue does not support multiple reply_to addresses
 
             context = {
                 "canteen": canteen.name,
@@ -439,13 +390,9 @@ class SendCanteenEmailView(APIView):
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except ValidationError:
-            return JsonResponse(
-                {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except ObjectDoesNotExist:
-            return JsonResponse(
-                {"error": "Invalid canteen"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return JsonResponse({"error": "Invalid canteen"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error("Exception ocurred while sending email to published canteen")
             logger.exception(e)
@@ -484,9 +431,7 @@ class SendCanteenNotFoundEmail(APIView):
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except ValidationError:
-            return JsonResponse(
-                {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error("Exception ocurred while sending email")
             logger.exception(e)

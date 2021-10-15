@@ -46,19 +46,13 @@ class TestRegistration(APITestCase):
         # activation email must be sent after registration
         self.client.post(reverse("register"), payload)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(
-            mail.outbox[0].subject, "Confirmation de votre adresse email - ma cantine"
-        )
+        self.assertEqual(mail.outbox[0].subject, "Confirmation de votre adresse email - ma cantine")
 
         # Upon click of the activation link we go directly to the Vue app
-        matches = re.findall(
-            r"compte\/(?P<uidb64>.*)\/(?P<token>.*)", mail.outbox[0].body
-        )
+        matches = re.findall(r"compte\/(?P<uidb64>.*)\/(?P<token>.*)", mail.outbox[0].body)
         self.assertEqual(len(matches), 1)
         uidb64, token = matches[0]
-        activation_response = self.client.get(
-            reverse("activate", kwargs={"uidb64": uidb64, "token": token})
-        )
+        activation_response = self.client.get(reverse("activate", kwargs={"uidb64": uidb64, "token": token}))
         self.assertRedirects(
             activation_response,
             reverse("app"),

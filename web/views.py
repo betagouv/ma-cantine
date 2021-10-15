@@ -39,9 +39,7 @@ class RegisterUserView(FormView):
         try:
             _login_and_send_activation_email(username, self.request)
         except Exception:
-            self.success_url = reverse_lazy(
-                "registration_email_sent_error", kwargs={"username": username}
-            )
+            self.success_url = reverse_lazy("registration_email_sent_error", kwargs={"username": username})
             return super().form_valid(form)
         else:
             self.success_url = reverse_lazy("app")
@@ -61,11 +59,7 @@ class ActivationTokenView(View):
         try:
             return _login_and_send_activation_email(username, self.request)
         except Exception:
-            return redirect(
-                reverse_lazy(
-                    "registration_email_sent_error", kwargs={"username": username}
-                )
-            )
+            return redirect(reverse_lazy("registration_email_sent_error", kwargs={"username": username}))
 
 
 class RegisterDoneView(TemplateView):

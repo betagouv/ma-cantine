@@ -165,9 +165,7 @@ class TestManagerInvitationApi(APITestCase):
         self.assertEqual(len(mail.outbox), 0)
 
         self.assertEqual(len(body["managers"]), canteen.managers.all().count())
-        self.assertEqual(
-            len(body["managerInvitations"]), canteen.managerinvitation_set.all().count()
-        )
+        self.assertEqual(len(body["managerInvitations"]), canteen.managerinvitation_set.all().count())
 
     @authenticate
     def test_authenticated_remove_manager(self):
@@ -217,9 +215,7 @@ class TestManagerInvitationApi(APITestCase):
         invitedManagerEmail = "invited-manager@example.com"
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        invitation = ManagerInvitationFactory.create(
-            canteen=canteen, email=invitedManagerEmail
-        )
+        invitation = ManagerInvitationFactory.create(canteen=canteen, email=invitedManagerEmail)
 
         payload = {"canteenId": canteen.id, "email": invitedManagerEmail}
         self.client.post(reverse("remove_manager"), payload)
