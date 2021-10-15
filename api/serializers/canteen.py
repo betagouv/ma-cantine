@@ -50,9 +50,7 @@ class MediaListSerializer(serializers.ListSerializer):
 class PublicCanteenSerializer(serializers.ModelSerializer):
 
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    diagnostics = PublicDiagnosticSerializer(
-        many=True, read_only=True, source="diagnostic_set"
-    )
+    diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
 
@@ -82,17 +80,11 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
 
 class FullCanteenSerializer(serializers.ModelSerializer):
 
-    sectors = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Sector.objects.all(), required=False
-    )
-    diagnostics = FullDiagnosticSerializer(
-        many=True, read_only=True, source="diagnostic_set"
-    )
+    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
+    diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     logo = Base64ImageField(required=False, allow_null=True)
     managers = CanteenManagerSerializer(many=True, read_only=True)
-    manager_invitations = ManagerInvitationSerializer(
-        many=True, read_only=True, source="managerinvitation_set"
-    )
+    manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
 
     class Meta:
@@ -155,9 +147,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 class ManagingTeamSerializer(serializers.ModelSerializer):
 
     managers = CanteenManagerSerializer(many=True, read_only=True)
-    manager_invitations = ManagerInvitationSerializer(
-        many=True, read_only=True, source="managerinvitation_set"
-    )
+    manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
 
     class Meta:
         model = Canteen

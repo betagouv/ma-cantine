@@ -23,9 +23,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         and a summary of the results is returned
         """
         with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
-            response = self.client.post(
-                reverse("import_diagnostics"), {"file": diag_file}
-            )
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 2)
@@ -33,9 +31,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["canteens"][0]["diagnostics"][0]["year"], 2020)
         self.assertEqual(len(body["errors"]), 0)
         self.assertEqual(Canteen.objects.count(), 2)
-        self.assertEqual(
-            Canteen.objects.first().managers.first().id, authenticate.user.id
-        )
+        self.assertEqual(Canteen.objects.first().managers.first().id, authenticate.user.id)
         self.assertEqual(Diagnostic.objects.count(), 2)
         canteen = Canteen.objects.get(siret="21340172201787")
         self.assertEqual(canteen.postal_code, "17000")
@@ -57,9 +53,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         If a canteen is present on multiple lines, keep data from first line
         """
         with open("./api/tests/files/diagnostics_same_canteen.csv") as diag_file:
-            response = self.client.post(
-                reverse("import_diagnostics"), {"file": diag_file}
-            )
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 2)
@@ -79,9 +73,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         my_canteen.managers.add(authenticate.user)
 
         with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
-            response = self.client.post(
-                reverse("import_diagnostics"), {"file": diag_file}
-            )
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 0)
@@ -103,9 +95,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         SectorFactory.create(name="Crèche")
         SectorFactory.create(name="Scolaire")
         with open("./api/tests/files/diagnostics_sectors.csv") as diag_file:
-            response = self.client.post(
-                reverse("import_diagnostics"), {"file": diag_file}
-            )
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         canteen = Canteen.objects.get(siret="21340172201787")
         self.assertEqual(canteen.sectors.count(), 3)
@@ -117,9 +107,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         SectorFactory.create(name="Social et Médico-social (ESMS)")
         with open("./api/tests/files/diagnostics_sectors.csv") as diag_file:
-            response = self.client.post(
-                reverse("import_diagnostics"), {"file": diag_file}
-            )
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
         body = response.json()
@@ -135,9 +123,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         If errors occur, discard the file and return the errors with row and message
         """
         with open("./api/tests/files/diagnostics_bad_file.csv") as diag_file:
-            response = self.client.post(
-                reverse("import_diagnostics"), {"file": diag_file}
-            )
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 0)

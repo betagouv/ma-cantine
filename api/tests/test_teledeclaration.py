@@ -91,9 +91,7 @@ class TestTeledeclarationApi(APITestCase):
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
         teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, manager)
 
-        response = self.client.get(
-            reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id})
-        )
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -123,9 +121,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2020, value_bio_ht=None
-        )
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, value_bio_ht=None)
         payload = {"diagnosticId": diagnostic.id}
 
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -156,9 +152,7 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(teledeclaration.year, 2020)
         self.assertEqual(teledeclaration.applicant, user)
         self.assertEqual(teledeclaration.canteen_siret, canteen.siret)
-        self.assertEqual(
-            teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED
-        )
+        self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
         declared_data = teledeclaration.declared_data
         self.assertEqual(declared_data["year"], 2020)
@@ -170,30 +164,22 @@ class TestTeledeclarationApi(APITestCase):
 
         json_teledeclaration = declared_data["teledeclaration"]
         self.assertEqual(json_teledeclaration["value_bio_ht"], diagnostic.value_bio_ht)
-        self.assertEqual(
-            json_teledeclaration["value_fair_trade_ht"], diagnostic.value_fair_trade_ht
-        )
+        self.assertEqual(json_teledeclaration["value_fair_trade_ht"], diagnostic.value_fair_trade_ht)
         self.assertEqual(
             json_teledeclaration["value_sustainable_ht"],
             diagnostic.value_sustainable_ht,
         )
-        self.assertEqual(
-            json_teledeclaration["value_total_ht"], diagnostic.value_total_ht
-        )
+        self.assertEqual(json_teledeclaration["value_total_ht"], diagnostic.value_total_ht)
         self.assertEqual(
             json_teledeclaration["has_waste_diagnostic"],
             diagnostic.has_waste_diagnostic,
         )
-        self.assertEqual(
-            json_teledeclaration["has_waste_plan"], diagnostic.has_waste_plan
-        )
+        self.assertEqual(json_teledeclaration["has_waste_plan"], diagnostic.has_waste_plan)
         self.assertEqual(
             json_teledeclaration["has_donation_agreement"],
             diagnostic.has_donation_agreement,
         )
-        self.assertEqual(
-            json_teledeclaration["has_waste_measures"], diagnostic.has_waste_measures
-        )
+        self.assertEqual(json_teledeclaration["has_waste_measures"], diagnostic.has_waste_measures)
         self.assertEqual(
             json_teledeclaration["has_diversification_plan"],
             diagnostic.has_diversification_plan,
@@ -239,9 +225,7 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
-        self.assertEqual(
-            db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.CANCELLED
-        )
+        self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.CANCELLED)
 
         body = response.json()
         self.assertEqual(body["teledeclaration"]["status"], "CANCELLED")
@@ -254,13 +238,9 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
-        teledeclaration = Teledeclaration.createFromDiagnostic(
-            diagnostic, authenticate.user
-        )
+        teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, authenticate.user)
 
-        response = self.client.get(
-            reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id})
-        )
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate

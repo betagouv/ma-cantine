@@ -24,9 +24,7 @@ class TestSubscription(APITestCase):
             "message": "Hello world",
         }
 
-        response = self.client.post(
-            reverse("subscribe_beta_tester"), payload, format="json"
-        )
+        response = self.client.post(reverse("subscribe_beta_tester"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], "contact-test@example.com")
@@ -44,9 +42,7 @@ class TestSubscription(APITestCase):
             "phone": "099330033",
             "message": "Hello world",
         }
-        response = self.client.post(
-            reverse("subscribe_beta_tester"), payload, format="json"
-        )
+        response = self.client.post(reverse("subscribe_beta_tester"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_beta_tester_diagnostic_data(self):
@@ -65,17 +61,13 @@ class TestSubscription(APITestCase):
             "phone": "099330033",
             "message": "Hello world",
         }
-        response = self.client.post(
-            reverse("subscribe_beta_tester"), payload, format="json"
-        )
+        response = self.client.post(reverse("subscribe_beta_tester"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(len(mail.outbox), 1)
 
         email = mail.outbox[0]
         self.assertIn("Bio - Valeur annuelle HT : 1000 €", email.body)
-        self.assertIn(
-            "Menu végétarien proposé : Un menu végétarien en plat unique", email.body
-        )
+        self.assertIn("Menu végétarien proposé : Un menu végétarien en plat unique", email.body)
 
     @override_settings(NEWSLETTER_SENDINBLUE_LIST_ID="1")
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})

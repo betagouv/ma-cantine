@@ -1,12 +1,12 @@
 {
   "build": {
-      "cache_dependancies": true
+    "cache_dependancies": true
   },
   "deploy": {
-      "managetasks": [
-          "migrate --noinput",
-          "buildnpm",
-          "collectstatic --noinput"
-      ]
+    "managetasks": [
+      "migrate --noinput",
+      "buildnpm",
+      "collectstatic --noinput"
+    ]
   }
 }

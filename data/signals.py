@@ -10,4 +10,3 @@ def update_canteen_managers(sender, instance, created, **kwargs):
         for link in canteen_links:
             link.canteen.managers.add(instance)
             link.delete()
-

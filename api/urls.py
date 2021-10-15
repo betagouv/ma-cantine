@@ -18,9 +18,7 @@ from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFo
 urlpatterns = {
     path("loggedUser/", LoggedUserView.as_view(), name="logged_user"),
     path("user/<int:pk>", UpdateUserView.as_view(), name="update_user"),
-    path(
-        "publishedCanteens/", PublishedCanteensView.as_view(), name="published_canteens"
-    ),
+    path("publishedCanteens/", PublishedCanteensView.as_view(), name="published_canteens"),
     path(
         "publishedCanteens/<int:pk>",
         PublishedCanteenSingleView.as_view(),
@@ -78,9 +76,7 @@ urlpatterns = {
         RemoveManagerView.as_view(),
         name="remove_manager",
     ),
-    path(
-        "importDiagnostics/", ImportDiagnosticsView.as_view(), name="import_diagnostics"
-    ),
+    path("importDiagnostics/", ImportDiagnosticsView.as_view(), name="import_diagnostics"),
     path(
         "createTeledeclaration/",
         TeledeclarationCreateView.as_view(),
