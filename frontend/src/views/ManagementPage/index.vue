@@ -44,7 +44,7 @@
         </v-btn>
       </div>
 
-      <div v-for="canteen in $store.state.userCanteens" :key="`diag-${canteen.id}`">
+      <div v-for="canteen in canteens" :key="`diag-${canteen.id}`">
         <div v-if="canteen.diagnostics && canteen.diagnostics.length">
           <v-row>
             <v-col cols="12" v-for="diagnostic in sortedDiagnosticsForCanteen(canteen)" :key="diagnostic.id">
@@ -75,7 +75,7 @@ export default {
       return this.$store.state.loggedUser
     },
     canteens() {
-      return this.$store.state.userCanteens
+      return [...this.$store.state.userCanteens].sort((a, b) => (a.name > b.name ? 1 : -1))
     },
     hasDiagnostics() {
       return this.canteens.length && this.canteens.some((c) => !!c.diagnostics.length)
