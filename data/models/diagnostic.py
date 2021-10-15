@@ -11,9 +11,7 @@ class Diagnostic(models.Model):
         verbose_name = "diagnostic"
         verbose_name_plural = "diagnostics"
         constraints = [
-            models.UniqueConstraint(
-                fields=["canteen", "year"], name="annual_diagnostic"
-            ),
+            models.UniqueConstraint(fields=["canteen", "year"], name="annual_diagnostic"),
         ]
 
     class MenuFrequency(models.TextChoices):
@@ -151,9 +149,7 @@ class Diagnostic(models.Model):
         blank=True,
         verbose_name="autre action contre le gaspillage alimentaire",
     )
-    has_donation_agreement = models.BooleanField(
-        blank=True, null=True, verbose_name="propose des dons alimentaires"
-    )
+    has_donation_agreement = models.BooleanField(blank=True, null=True, verbose_name="propose des dons alimentaires")
     has_waste_measures = models.BooleanField(
         blank=True,
         null=True,
@@ -215,9 +211,7 @@ class Diagnostic(models.Model):
         blank=True, null=True, verbose_name="plan de diversification en place"
     )
     diversification_plan_actions = ChoiceArrayField(
-        base_field=models.CharField(
-            max_length=255, choices=DiversificationPlanActions.choices
-        ),
+        base_field=models.CharField(max_length=255, choices=DiversificationPlanActions.choices),
         blank=True,
         null=True,
         size=None,
@@ -276,9 +270,7 @@ class Diagnostic(models.Model):
         blank=True,
         verbose_name="autre communication utilisée",
     )
-    communication_support_url = models.URLField(
-        blank=True, null=True, verbose_name="Lien de communication"
-    )
+    communication_support_url = models.URLField(blank=True, null=True, verbose_name="Lien de communication")
     communicates_on_food_plan = models.BooleanField(
         blank=True, null=True, verbose_name="Communique sur le plan alimentaire"
     )
@@ -311,23 +303,15 @@ class Diagnostic(models.Model):
             return
         lower_limit_year = 2019
         upper_limit_year = datetime.datetime.now().date().year + 1
-        if (
-            not isinstance(self.year, int)
-            or self.year < lower_limit_year
-            or self.year > upper_limit_year
-        ):
+        if not isinstance(self.year, int) or self.year < lower_limit_year or self.year > upper_limit_year:
             raise ValidationError(
-                {
-                    "year": f"L'année doit être comprise entre {lower_limit_year} et {upper_limit_year}."
-                }
+                {"year": f"L'année doit être comprise entre {lower_limit_year} et {upper_limit_year}."}
             )
 
     def validate_approvisionment_total(self):
         if self.value_total_ht is None or not isinstance(self.value_total_ht, Decimal):
             return
-        value_sum = (
-            self.value_bio_ht + self.value_sustainable_ht + self.value_fair_trade_ht
-        )
+        value_sum = self.value_bio_ht + self.value_sustainable_ht + self.value_fair_trade_ht
         if value_sum > self.value_total_ht:
             raise ValidationError(
                 {

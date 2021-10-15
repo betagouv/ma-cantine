@@ -10,9 +10,7 @@ class DiagnosticForm(forms.ModelForm):
             "other_waste_action": forms.Textarea(attrs={"cols": 60, "rows": 2}),
             "other_waste_comments": forms.Textarea(attrs={"cols": 60, "rows": 2}),
             "donation_food_type": forms.Textarea(attrs={"cols": 60, "rows": 2}),
-            "other_communication_support": forms.Textarea(
-                attrs={"cols": 60, "rows": 2}
-            ),
+            "other_communication_support": forms.Textarea(attrs={"cols": 60, "rows": 2}),
         }
 
 

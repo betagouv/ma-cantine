@@ -9,9 +9,7 @@ class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     email_confirmed = models.BooleanField(default="False", verbose_name="adresse email confirmée")
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         max_avatar_size = 640
         if self.avatar:
             self.avatar = optimize_image(self.avatar, self.avatar.name, max_avatar_size)

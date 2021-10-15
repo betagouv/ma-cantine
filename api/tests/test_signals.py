@@ -7,12 +7,12 @@ from rest_framework.test import APITestCase
 class TestSignals(APITestCase):
     def test_new_user_linked_successfully(self):
         """
-        A new user with an email matching the email in the manager invitations table, 
+        A new user with an email matching the email in the manager invitations table,
         should be added to the list of canteen managers
         """
         pms = [
             ManagerInvitationFactory.create(email="smith@example.com"),
-            ManagerInvitationFactory.create(email="smith@example.com")
+            ManagerInvitationFactory.create(email="smith@example.com"),
         ]
         canteens = [pms[0].canteen, pms[1].canteen]
 

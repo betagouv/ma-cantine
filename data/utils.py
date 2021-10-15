@@ -5,9 +5,7 @@ from django.core.files.base import ContentFile
 
 
 def _needs_rotation(pillow_image):
-    orientation_tag = next(
-        filter(lambda x: ExifTags.TAGS[x] == "Orientation", ExifTags.TAGS), None
-    )
+    orientation_tag = next(filter(lambda x: ExifTags.TAGS[x] == "Orientation", ExifTags.TAGS), None)
     exif_data = pillow_image._getexif()
 
     return exif_data and orientation_tag
@@ -18,9 +16,7 @@ def _rotate_image(pillow_image):
     if not needs_rotation:
         return pillow_image
 
-    orientation_tag = next(
-        filter(lambda x: ExifTags.TAGS[x] == "Orientation", ExifTags.TAGS), None
-    )
+    orientation_tag = next(filter(lambda x: ExifTags.TAGS[x] == "Orientation", ExifTags.TAGS), None)
     exif_data = pillow_image._getexif()
     orientation = dict(exif_data.items()).get(orientation_tag)
 

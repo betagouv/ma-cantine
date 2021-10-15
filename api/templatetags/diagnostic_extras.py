@@ -1,6 +1,7 @@
 from django.template.defaulttags import register
 from data.models import Diagnostic
 
+
 @register.filter
 def menu_frequency(key):
     if not key:
@@ -9,6 +10,7 @@ def menu_frequency(key):
         return Diagnostic.MenuFrequency[key].label
     except Exception:
         return None
+
 
 @register.filter
 def menu_type(key):

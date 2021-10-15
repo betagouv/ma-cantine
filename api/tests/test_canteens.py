@@ -20,18 +20,12 @@ class TestCanteenApi(APITestCase):
         returned from this call
         """
         published_canteens = [
-            CanteenFactory.create(
-                publication_status=Canteen.PublicationStatus.PUBLISHED.value
-            ),
-            CanteenFactory.create(
-                publication_status=Canteen.PublicationStatus.PUBLISHED.value
-            ),
+            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value),
+            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value),
         ]
         private_canteens = [
             CanteenFactory.create(),
-            CanteenFactory.create(
-                publication_status=Canteen.PublicationStatus.PENDING.value
-            ),
+            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PENDING.value),
         ]
         response = self.client.get(reverse("published_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -56,9 +50,7 @@ class TestCanteenApi(APITestCase):
         We are able to get a single published canteen.
         """
         published_canteen = CanteenFactory.create(publication_status="published")
-        response = self.client.get(
-            reverse("single_published_canteen", kwargs={"pk": published_canteen.id})
-        )
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": published_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
@@ -70,9 +62,7 @@ class TestCanteenApi(APITestCase):
         that has not been published by the manager.
         """
         private_canteen = CanteenFactory.create()
-        response = self.client.get(
-            reverse("single_published_canteen", kwargs={"pk": private_canteen.id})
-        )
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": private_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_canteens_unauthenticated(self):
@@ -122,9 +112,7 @@ class TestCanteenApi(APITestCase):
         """
         canteen = CanteenFactory.create(city="Paris")
         payload = {"city": "Lyon"}
-        response = self.client.patch(
-            reverse("single_canteen", kwargs={"pk": canteen.id}), payload
-        )
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -140,9 +128,7 @@ class TestCanteenApi(APITestCase):
             "siret": "21340172201787",
             "management_type": "direct",
         }
-        response = self.client.patch(
-            reverse("single_canteen", kwargs={"pk": canteen.id}), payload
-        )
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         created_canteen = Canteen.objects.get(pk=canteen.id)
@@ -155,9 +141,7 @@ class TestCanteenApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
 
-        response = self.client.delete(
-            reverse("single_canteen", kwargs={"pk": canteen.id})
-        )
+        response = self.client.delete(reverse("single_canteen", kwargs={"pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # Model was only soft-deleted but remains in the DB
@@ -199,9 +183,7 @@ class TestCanteenApi(APITestCase):
         response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
-        self.assertEqual(
-            body["centralProducerSiret"], ["Le numéro SIRET n'est pas valide."]
-        )
+        self.assertEqual(body["centralProducerSiret"], ["Le numéro SIRET n'est pas valide."])
 
     def test_search_single_result(self):
         CanteenFactory.create(publication_status="published", name="Shiso")
@@ -210,9 +192,7 @@ class TestCanteenApi(APITestCase):
         CanteenFactory.create(publication_status="published", name="Umami")
 
         search_term = "mochi"
-        response = self.client.get(
-            f"{reverse('published_canteens')}?search={search_term}"
-        )
+        response = self.client.get(f"{reverse('published_canteens')}?search={search_term}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.json().get("results", [])
@@ -225,9 +205,7 @@ class TestCanteenApi(APITestCase):
         CanteenFactory.create(publication_status="published", name="Shiitaké")
 
         search_term = "wakame"
-        response = self.client.get(
-            f"{reverse('published_canteens')}?search={search_term}"
-        )
+        response = self.client.get(f"{reverse('published_canteens')}?search={search_term}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.json().get("results", [])
@@ -242,9 +220,7 @@ class TestCanteenApi(APITestCase):
         CanteenFactory.create(publication_status="published", name="Umami")
 
         search_term = "chi"
-        response = self.client.get(
-            f"{reverse('published_canteens')}?search={search_term}"
-        )
+        response = self.client.get(f"{reverse('published_canteens')}?search={search_term}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.json().get("results", [])
@@ -256,18 +232,10 @@ class TestCanteenApi(APITestCase):
         self.assertIn("Sudachi", result_names)
 
     def test_meal_count_filter(self):
-        CanteenFactory.create(
-            publication_status="published", daily_meal_count=10, name="Shiso"
-        )
-        CanteenFactory.create(
-            publication_status="published", daily_meal_count=15, name="Wasabi"
-        )
-        CanteenFactory.create(
-            publication_status="published", daily_meal_count=20, name="Mochi"
-        )
-        CanteenFactory.create(
-            publication_status="published", daily_meal_count=25, name="Umami"
-        )
+        CanteenFactory.create(publication_status="published", daily_meal_count=10, name="Shiso")
+        CanteenFactory.create(publication_status="published", daily_meal_count=15, name="Wasabi")
+        CanteenFactory.create(publication_status="published", daily_meal_count=20, name="Mochi")
+        CanteenFactory.create(publication_status="published", daily_meal_count=25, name="Umami")
 
         # Only "Shiso" is between 9 and 11 meal count
         min_meal_count = 9
@@ -317,18 +285,10 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(results[0].get("name"), "Umami")
 
     def test_department_filter(self):
-        CanteenFactory.create(
-            publication_status="published", department="69", name="Shiso"
-        )
-        CanteenFactory.create(
-            publication_status="published", department="10", name="Wasabi"
-        )
-        CanteenFactory.create(
-            publication_status="published", department="75", name="Mochi"
-        )
-        CanteenFactory.create(
-            publication_status="published", department="31", name="Umami"
-        )
+        CanteenFactory.create(publication_status="published", department="69", name="Shiso")
+        CanteenFactory.create(publication_status="published", department="10", name="Wasabi")
+        CanteenFactory.create(publication_status="published", department="75", name="Mochi")
+        CanteenFactory.create(publication_status="published", department="31", name="Umami")
 
         url = f"{reverse('published_canteens')}?department=69"
         response = self.client.get(url)
@@ -340,18 +300,10 @@ class TestCanteenApi(APITestCase):
         school = SectorFactory.create(name="School")
         enterprise = SectorFactory.create(name="Enterprise")
         social = SectorFactory.create(name="Social")
-        CanteenFactory.create(
-            publication_status="published", sectors=[school], name="Shiso"
-        )
-        CanteenFactory.create(
-            publication_status="published", sectors=[enterprise], name="Wasabi"
-        )
-        CanteenFactory.create(
-            publication_status="published", sectors=[social], name="Mochi"
-        )
-        CanteenFactory.create(
-            publication_status="published", sectors=[school, social], name="Umami"
-        )
+        CanteenFactory.create(publication_status="published", sectors=[school], name="Shiso")
+        CanteenFactory.create(publication_status="published", sectors=[enterprise], name="Wasabi")
+        CanteenFactory.create(publication_status="published", sectors=[social], name="Mochi")
+        CanteenFactory.create(publication_status="published", sectors=[school, social], name="Umami")
 
         url = f"{reverse('published_canteens')}?sectors={school.id}"
         response = self.client.get(url)
@@ -444,21 +396,11 @@ class TestCanteenApi(APITestCase):
         """
         Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic
         """
-        good_canteen = CanteenFactory.create(
-            publication_status="published", name="Shiso"
-        )
-        medium_canteen = CanteenFactory.create(
-            publication_status="published", name="Wasabi"
-        )
-        sustainable_canteen = CanteenFactory.create(
-            publication_status="published", name="Umami"
-        )
-        bad_canteen = CanteenFactory.create(
-            publication_status="published", name="Mochi"
-        )
-        secretly_good_canteen = CanteenFactory.create(
-            publication_status="draft", name="Secret"
-        )
+        good_canteen = CanteenFactory.create(publication_status="published", name="Shiso")
+        medium_canteen = CanteenFactory.create(publication_status="published", name="Wasabi")
+        sustainable_canteen = CanteenFactory.create(publication_status="published", name="Umami")
+        bad_canteen = CanteenFactory.create(publication_status="published", name="Mochi")
+        secretly_good_canteen = CanteenFactory.create(publication_status="draft", name="Secret")
 
         publication_year = date.today().year - 1
         DiagnosticFactory.create(
@@ -536,18 +478,10 @@ class TestCanteenApi(APITestCase):
         self.assertIn("Wasabi", result_names)
 
     def test_pagination_departments(self):
-        CanteenFactory.create(
-            publication_status="published", department="75", name="Shiso"
-        )
-        CanteenFactory.create(
-            publication_status="published", department="75", name="Wasabi"
-        )
-        CanteenFactory.create(
-            publication_status="published", department="69", name="Mochi"
-        )
-        CanteenFactory.create(
-            publication_status="published", department=None, name="Umami"
-        )
+        CanteenFactory.create(publication_status="published", department="75", name="Shiso")
+        CanteenFactory.create(publication_status="published", department="75", name="Wasabi")
+        CanteenFactory.create(publication_status="published", department="69", name="Mochi")
+        CanteenFactory.create(publication_status="published", department=None, name="Umami")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -567,18 +501,10 @@ class TestCanteenApi(APITestCase):
         administration = SectorFactory.create(name="Administration")
         # unused sectors shouldn't show up as an option
         SectorFactory.create(name="Unused")
-        CanteenFactory.create(
-            publication_status="published", sectors=[school, enterprise], name="Shiso"
-        )
-        CanteenFactory.create(
-            publication_status="published", sectors=[school], name="Wasabi"
-        )
-        CanteenFactory.create(
-            publication_status="published", sectors=[school], name="Mochi"
-        )
-        CanteenFactory.create(
-            publication_status="published", sectors=[administration], name="Umami"
-        )
+        CanteenFactory.create(publication_status="published", sectors=[school, enterprise], name="Shiso")
+        CanteenFactory.create(publication_status="published", sectors=[school], name="Wasabi")
+        CanteenFactory.create(publication_status="published", sectors=[school], name="Mochi")
+        CanteenFactory.create(publication_status="published", sectors=[administration], name="Umami")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -599,12 +525,8 @@ class TestCanteenApi(APITestCase):
         self.assertIn(administration.id, body.get("sectors"))
 
     def test_pagination_management_types(self):
-        CanteenFactory.create(
-            publication_status="published", management_type="conceded", name="Shiso"
-        )
-        CanteenFactory.create(
-            publication_status="published", management_type=None, name="Wasabi"
-        )
+        CanteenFactory.create(publication_status="published", management_type="conceded", name="Shiso")
+        CanteenFactory.create(publication_status="published", management_type=None, name="Wasabi")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -624,15 +546,11 @@ class TestCanteenApi(APITestCase):
             "publication_status": "pending",
             "publication_comments": "Some comments",
         }
-        response = self.client.patch(
-            reverse("single_canteen", kwargs={"pk": canteen.id}), payload
-        )
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         persisted_canteen = Canteen.objects.get(pk=canteen.id)
-        self.assertEqual(
-            persisted_canteen.publication_status, Canteen.PublicationStatus.DRAFT.value
-        )
+        self.assertEqual(persisted_canteen.publication_status, Canteen.PublicationStatus.DRAFT.value)
         self.assertEqual(persisted_canteen.publication_comments, None)
 
     @authenticate
@@ -645,30 +563,22 @@ class TestCanteenApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
-        Teledeclaration.createFromDiagnostic(
-            diagnostic, user, Teledeclaration.TeledeclarationStatus.CANCELLED
-        )
+        Teledeclaration.createFromDiagnostic(diagnostic, user, Teledeclaration.TeledeclarationStatus.CANCELLED)
 
         new_teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
         response = self.client.get(reverse("user_canteens"))
         body = response.json()
         json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
-        json_diagnostic = next(
-            filter(lambda x: x["id"] == diagnostic.id, json_canteen["diagnostics"])
-        )
+        json_diagnostic = next(filter(lambda x: x["id"] == diagnostic.id, json_canteen["diagnostics"]))
 
-        self.assertEqual(
-            json_diagnostic["teledeclaration"]["id"], new_teledeclaration.id
-        )
+        self.assertEqual(json_diagnostic["teledeclaration"]["id"], new_teledeclaration.id)
 
     @authenticate
     def test_canteen_image_serialization(self):
         """
         A canteen with images should serialize those images
         """
-        canteen = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.PUBLISHED.value
-        )
+        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
         image_names = [
             "test-image-1.jpg",
             "test-image-2.jpg",
@@ -714,18 +624,14 @@ class TestCanteenApi(APITestCase):
                 }
             ]
         }
-        self.client.patch(
-            reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json"
-        )
+        self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
 
         canteen.refresh_from_db()
         self.assertEqual(canteen.images.count(), 1)
 
         # Delete image
         payload = {"images": []}
-        self.client.patch(
-            reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json"
-        )
+        self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
 
         canteen.refresh_from_db()
         self.assertEqual(canteen.images.count(), 0)
@@ -749,9 +655,7 @@ class TestCanteenApi(APITestCase):
                 }
             ]
         }
-        response = self.client.patch(
-            reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json"
-        )
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         canteen.refresh_from_db()
         self.assertEqual(canteen.images.count(), 0)

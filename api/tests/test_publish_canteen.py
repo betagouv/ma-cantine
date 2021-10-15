@@ -16,9 +16,7 @@ class TestPublishCanteen(APITestCase):
         """
         canteen = CanteenFactory.create(publication_comments="test")
         payload = {"publication_comments": "Hello, world?"}
-        response = self.client.post(
-            reverse("publish_canteen", kwargs={"pk": canteen.id}), payload
-        )
+        response = self.client.post(reverse("publish_canteen", kwargs={"pk": canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         persisted_canteen = Canteen.objects.get(pk=canteen.id)
@@ -39,9 +37,7 @@ class TestPublishCanteen(APITestCase):
             "plastics_comments": "Plastics",
             "information_comments": "Information",
         }
-        response = self.client.post(
-            reverse("publish_canteen", kwargs={"pk": canteen.id}), payload
-        )
+        response = self.client.post(reverse("publish_canteen", kwargs={"pk": canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         persisted_canteen = Canteen.objects.get(pk=canteen.id)
@@ -62,9 +58,7 @@ class TestPublishCanteen(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        response = self.client.post(
-            reverse("publish_canteen", kwargs={"pk": canteen.id})
-        )
+        response = self.client.post(reverse("publish_canteen", kwargs={"pk": canteen.id}))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 1)

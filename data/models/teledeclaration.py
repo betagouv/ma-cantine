@@ -124,9 +124,7 @@ class Teledeclaration(models.Model):
             declared_data=jsonFields,
         )
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.full_clean()
         return super().save(
             force_insert=force_insert,
@@ -136,9 +134,5 @@ class Teledeclaration(models.Model):
         )
 
     def __str__(self):
-        canteen_name = (
-            self.declared_data["canteen"]["name"]
-            if self.declared_data.get("canteen")
-            else ""
-        )
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
         return f"Télédéclaration pour {self.year} '{canteen_name}'"
