@@ -1,5 +1,5 @@
 <template>
-  <v-footer :height="showSmallFooter ? 50 : 170" color="white" app :absolute="!showSmallFooter">
+  <v-footer color="white" app :absolute="!showSmallFooter">
     <v-divider style="position: absolute; top: 0; left: 0; width: 100%"></v-divider>
     <v-container class="constrained pb-0 pt-0">
       <v-row v-if="!showSmallFooter" class="pt-12">
