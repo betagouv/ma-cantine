@@ -109,13 +109,8 @@ class TeledeclarationPdfView(APIView):
             if request.user not in teledeclaration.canteen.managers.all():
                 raise PermissionDenied()
 
-            if (
-                teledeclaration.status
-                != Teledeclaration.TeledeclarationStatus.SUBMITTED
-            ):
-                raise ValidationError(
-                    "La télédéclaration n'est pas validée par l'utilisateur"
-                )
+            if teledeclaration.status != Teledeclaration.TeledeclarationStatus.SUBMITTED:
+                raise ValidationError("La télédéclaration n'est pas validée par l'utilisateur")
 
             response = HttpResponse(content_type="application/pdf")
             filename = TeledeclarationPdfView.get_filename(teledeclaration)
@@ -133,14 +128,10 @@ class TeledeclarationPdfView(APIView):
                 },
             }
             html = template.render(context)
-            pisa_status = pisa.CreatePDF(
-                html, dest=response, link_callback=TeledeclarationPdfView.link_callback
-            )
+            pisa_status = pisa.CreatePDF(html, dest=response, link_callback=TeledeclarationPdfView.link_callback)
 
             if pisa_status.err:
-                logger.error(
-                    f"Error while generating PDF for teledeclaration {teledeclaration.id}"
-                )
+                logger.error(f"Error while generating PDF for teledeclaration {teledeclaration.id}")
                 logger.error(pisa_status.err)
                 return HttpResponse("An error ocurred", status=500)
 

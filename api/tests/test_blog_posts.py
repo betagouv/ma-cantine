@@ -39,12 +39,8 @@ class TestBlogApi(APITestCase):
         published_blog_post = BlogPostFactory.create(published=True)
         draft_blog_post = BlogPostFactory.create(published=False)
 
-        response = self.client.get(
-            reverse("single_blog_post", kwargs={"pk": published_blog_post.id})
-        )
+        response = self.client.get(reverse("single_blog_post", kwargs={"pk": published_blog_post.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        response = self.client.get(
-            reverse("single_blog_post", kwargs={"pk": draft_blog_post.id})
-        )
+        response = self.client.get(reverse("single_blog_post", kwargs={"pk": draft_blog_post.id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

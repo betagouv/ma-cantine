@@ -38,10 +38,7 @@ class CanEditDiagnostic(permissions.BasePermission):
             return False
         is_manager = request.user in obj.canteen.managers.all()
         has_submitted_teledeclaration = (
-            obj.teledeclaration_set.filter(
-                status=Teledeclaration.TeledeclarationStatus.SUBMITTED
-            ).count()
-            > 0
+            obj.teledeclaration_set.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED).count() > 0
         )
 
         return is_manager and not has_submitted_teledeclaration

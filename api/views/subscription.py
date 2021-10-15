@@ -46,21 +46,15 @@ class SubscribeNewsletter(APIView):
 
             list_id = settings.NEWSLETTER_SENDINBLUE_LIST_ID
             configuration = sib_api_v3_sdk.Configuration()
-            configuration.api_key["api-key"] = settings.ANYMAIL.get(
-                "SENDINBLUE_API_KEY"
-            )
-            api_instance = sib_api_v3_sdk.ContactsApi(
-                sib_api_v3_sdk.ApiClient(configuration)
-            )
+            configuration.api_key["api-key"] = settings.ANYMAIL.get("SENDINBLUE_API_KEY")
+            api_instance = sib_api_v3_sdk.ContactsApi(sib_api_v3_sdk.ApiClient(configuration))
             create_contact = sib_api_v3_sdk.CreateContact(email=email)
             create_contact.list_ids = [int(list_id)]
             create_contact.update_enabled = True
             api_instance.create_contact(create_contact)
             return JsonResponse({}, status=status.HTTP_200_OK)
         except sib_api_v3_sdk.rest.ApiException as e:
-            contact_exists = (
-                json.loads(e.body).get("message") == "Contact already exist"
-            )
+            contact_exists = json.loads(e.body).get("message") == "Contact already exist"
             if contact_exists:
                 logger.error(f"Beta-tester already exists: {email}")
                 return JsonResponse({}, status=status.HTTP_200_OK)
@@ -73,9 +67,7 @@ class SubscribeNewsletter(APIView):
         except ValidationError as e:
             logger.error(f"Invalid email on beta-tester subscription: {email}")
             logger.exception(e)
-            return JsonResponse(
-                {"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error("Error on newsletter subscription")
             logger.exception(e)

@@ -32,5 +32,6 @@
         "${workspaceRoot}/.pylintrc"
     ],
     "python.formatting.provider": "black",
-    "python.formatting.blackPath": "${workspaceRoot}/venv/bin/black"
+    "python.formatting.blackPath": "${workspaceRoot}/venv/bin/black",
+    "python.formatting.blackArgs": ["--line-length=119"]
 }

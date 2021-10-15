@@ -15,9 +15,7 @@ class TestDiagnosticsApi(APITestCase):
         When calling this API unathenticated we expect a 403
         """
         canteen = CanteenFactory.create()
-        response = self.client.post(
-            reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), {}
-        )
+        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -25,9 +23,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         When calling this API on an unexistent canteen we expect a 404
         """
-        response = self.client.post(
-            reverse("diagnostic_creation", kwargs={"canteen_pk": 999}), {}
-        )
+        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": 999}), {})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
@@ -37,9 +33,7 @@ class TestDiagnosticsApi(APITestCase):
         we expect a 403
         """
         canteen = CanteenFactory.create()
-        response = self.client.post(
-            reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), {}
-        )
+        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -88,9 +82,7 @@ class TestDiagnosticsApi(APITestCase):
             "communicates_on_food_quality": True,
             "communication_frequency": "YEARLY",
         }
-        response = self.client.post(
-            reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload
-        )
+        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
@@ -152,9 +144,7 @@ class TestDiagnosticsApi(APITestCase):
             "value_sustainable_ht": 3000,
             "value_total_ht": 1000,
         }
-        response = self.client.post(
-            reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload
-        )
+        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
@@ -201,9 +191,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         Do not save edits to a diagnostic which make the sum of the values > total
         """
-        diagnostic = DiagnosticFactory.create(
-            year=2019, value_total_ht=10, value_bio_ht=5, value_sustainable_ht=2
-        )
+        diagnostic = DiagnosticFactory.create(year=2019, value_total_ht=10, value_bio_ht=5, value_sustainable_ht=2)
         diagnostic.canteen.managers.add(authenticate.user)
         payload = {"value_sustainable_ht": 999}
 

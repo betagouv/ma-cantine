@@ -19,9 +19,7 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
 
     has_waste_diagnostic = factory.Faker("boolean")
     has_waste_plan = factory.Faker("boolean")
-    waste_actions = factory.List(
-        random.sample(list(Diagnostic.WasteActions), random.randint(0, 2))
-    )
+    waste_actions = factory.List(random.sample(list(Diagnostic.WasteActions), random.randint(0, 2)))
     has_donation_agreement = factory.Faker("boolean")
 
     has_diversification_plan = factory.Faker("boolean")
@@ -33,8 +31,6 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     plastic_bottles_substituted = factory.Faker("boolean")
     plastic_tableware_substituted = factory.Faker("boolean")
 
-    communication_supports = factory.List(
-        random.sample(list(Diagnostic.CommunicationType), random.randint(0, 2))
-    )
+    communication_supports = factory.List(random.sample(list(Diagnostic.CommunicationType), random.randint(0, 2)))
     communication_support_url = factory.Faker("uri")
     communicates_on_food_plan = factory.Faker("boolean")
