@@ -118,22 +118,14 @@ class UnaccentSearchFilter(filters.SearchFilter):
 
 def filter_by_diagnostic_params(queryset, query_params):
     bio = query_params.get("min_portion_bio")
-    sustainable = query_params.get("min_portion_sustainable")
     combined = query_params.get("min_portion_combined")
-    if bio or sustainable or combined:
+    if bio or combined:
         publication_year = date.today().year - 1
         qs_diag = Diagnostic.objects.filter(year=publication_year, value_total_ht__gt=0)
         if bio:
             qs_diag = qs_diag.annotate(
                 bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField())
             ).filter(bio_share__gte=bio)
-        if sustainable:
-            qs_diag = qs_diag.annotate(
-                sustainable_share=Cast(
-                    Sum("value_sustainable_ht") / Sum("value_total_ht"),
-                    FloatField(),
-                )
-            ).filter(sustainable_share__gte=sustainable)
         if combined:
             qs_diag = qs_diag.annotate(
                 combined_share=Cast(
