@@ -37,6 +37,8 @@ AUTH_USER_MODEL = "data.User"
 AUTHENTICATION_BACKENDS = ["macantine.backends.EmailUsernameBackend"]
 ALLOWED_HOSTS = [x.strip() for x in os.getenv("ALLOWED_HOSTS").split(",")]
 
+DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANCE") == "True"
+
 
 # Sentry
 # No need making this one secret: https://forum.sentry.io/t/dsn-private-public/6297/3
@@ -48,6 +50,8 @@ if not DEBUG:
         send_default_pii=False,
         send_client_reports=False,
     )
+
+INTERNAL_IPS = []
 
 # Application definition
 
@@ -302,3 +306,9 @@ LOGGING = {
         },
     },
 }
+
+# Performance debug with Django debug console
+if DEBUG_PERFORMANCE:
+    INTERNAL_IPS.append("127.0.0.1")
+    INSTALLED_APPS.append("debug_toolbar")
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
