@@ -452,14 +452,6 @@ class TestCanteenApi(APITestCase):
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
 
-        url = f"{reverse('published_canteens')}?min_portion_sustainable={0.35}"
-        response = self.client.get(url)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
-        result_names = list(map(lambda x: x.get("name"), results))
-        self.assertIn("Wasabi", result_names)
-        self.assertIn("Umami", result_names)
-
         url = f"{reverse('published_canteens')}?min_portion_combined={0.5}"
         response = self.client.get(url)
         results = response.json().get("results", [])
