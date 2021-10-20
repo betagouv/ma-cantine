@@ -311,7 +311,7 @@ class Diagnostic(models.Model):
     def validate_approvisionment_total(self):
         if self.value_total_ht is None or not isinstance(self.value_total_ht, Decimal):
             return
-        value_sum = self.value_bio_ht + self.value_sustainable_ht + self.value_fair_trade_ht
+        value_sum = (self.value_bio_ht or 0) + (self.value_sustainable_ht or 0) + (self.value_fair_trade_ht or 0)
         if value_sum > self.value_total_ht:
             raise ValidationError(
                 {
