@@ -10,11 +10,11 @@
     <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pb-2">
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
-    <v-spacer></v-spacer>
-    <v-card-text class="grey--text text--darken-4 py-1">
+    <v-spacer v-if="diagnostic"></v-spacer>
+    <v-card-text class="grey--text text--darken-4 py-1" v-if="diagnostic">
       <v-row class="ma-0" v-if="hasPercentages">
         <v-img
-          max-width="25"
+          max-width="30"
           contain
           :src="`/static/images/badges/appro${approBadge.earned ? '' : '-disabled'}.svg`"
           class="mr-3"
@@ -34,9 +34,9 @@
           </span>
         </p>
       </v-row>
-      <v-row class="ma-0 pt-2">
+      <v-row class="ma-0 pt-3">
         <v-img
-          max-width="25"
+          max-width="30"
           contain
           :src="`/static/images/badges/appro${approBadge.earned ? '' : '-disabled'}.svg`"
           class="mr-2"
@@ -45,7 +45,7 @@
           v-if="!hasPercentages"
         ></v-img>
         <v-img
-          max-width="25"
+          max-width="30"
           contain
           :src="`/static/images/badges/${key}${badge.earned ? '' : '-disabled'}.svg`"
           v-for="(badge, key) in otherBadges"
@@ -56,6 +56,8 @@
         ></v-img>
       </v-row>
     </v-card-text>
+
+    <v-card-text class="py-1" v-else>Pas de données renseignées pour {{ publicationYear }}</v-card-text>
   </v-card>
 </template>
 

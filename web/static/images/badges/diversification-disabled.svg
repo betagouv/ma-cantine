@@ -2,17 +2,32 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 210 297"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="207.3026mm"
+   height="207.30208mm"
+   viewBox="0 0 207.3026 207.30208"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
-   sodipodi:docname="diversification-badge.svg"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   sodipodi:docname="diversification-disabled.svg">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
   <sodipodi:namedview
      id="namedview7"
      pagecolor="#505050"
@@ -23,15 +38,19 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="0.50670507"
-     inkscape:cx="298.9905"
-     inkscape:cy="359.1833"
+     inkscape:zoom="0.3582946"
+     inkscape:cx="-552.41606"
+     inkscape:cy="592.14025"
      inkscape:window-width="1712"
-     inkscape:window-height="1110"
-     inkscape:window-x="510"
-     inkscape:window-y="174"
+     inkscape:window-height="1016"
+     inkscape:window-x="208"
+     inkscape:window-y="27"
      inkscape:window-maximized="0"
-     inkscape:current-layer="layer1" />
+     inkscape:current-layer="g15"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
   <defs
      id="defs2">
     <style
@@ -45,7 +64,8 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(-2.078943,-4.5645794)">
     <g
        style="clip-rule:evenodd;fill-rule:evenodd;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision"
        id="g30"
@@ -56,10 +76,11 @@
          transform="matrix(1.6022599,0,0,1.6022599,-270.25732,-187.67419)">
         <path
            id="path13"
-           style="fill:#949494;fill-opacity:1;stroke-width:1.60226"
-           class="fil0"
-           d="M 398.80859 17.251953 L 352.34375 73.330078 L 283.44727 34.876953 L 253.00391 108.58008 L 169.68555 90.955078 L 164.87891 164.66016 L 86.369141 174.27344 L 103.99414 251.18164 L 27.085938 288.0332 L 67.140625 350.52148 L 7.8574219 403.39648 L 68.744141 454.66797 L 27.085938 529.97461 L 95.982422 557.21289 L 79.958984 634.12109 L 158.4707 640.53125 L 169.68555 725.45117 L 240.18555 706.22266 L 272.23047 778.32422 L 341.12891 736.66602 L 398.80859 800.75586 L 446.87695 743.07617 L 514.17188 783.13281 L 546.2168 709.42773 L 629.53516 725.45117 L 634.3418 651.74609 L 712.85156 643.73633 L 693.625 565.22461 L 772.13672 529.97461 L 732.08008 467.48633 L 791.36328 414.61133 L 730.47656 361.73828 L 772.13672 288.0332 L 703.23828 260.79492 L 719.26172 182.28516 L 639.14844 175.875 L 629.53516 90.955078 L 557.43359 110.18359 L 525.38867 38.082031 L 458.09375 79.740234 L 398.80859 17.251953 z M 600.29688 237.19141 C 600.29687 237.19141 543.38675 559.67578 334.7207 559.67578 C 327.89163 559.67578 318.40818 557.20874 309.30273 553.98242 L 291.28125 597.61328 L 255.42773 585.09375 C 294.88385 487.02306 334.71952 369.98291 505.4375 332.04102 C 505.38162 332.04102 315.74185 332.06621 254.09961 507.50977 C 254.09961 507.50977 220.9043 474.31259 220.9043 436.37305 C 220.9043 398.43354 258.84319 317.81314 353.69141 298.84375 C 448.53959 279.87435 581.32743 275.13092 600.29688 237.19141 z M 240.18555 730.25781 L 222.56055 735.06445 L 200.12891 1101.9824 L 405.21875 925.73242 L 621.52344 1101.9824 L 579.86523 738.26953 L 546.2168 731.85938 L 514.17188 805.56445 L 446.87695 765.50781 L 398.80859 823.1875 L 341.12891 760.70117 L 272.23047 802.35938 L 240.18555 730.25781 z "
-           transform="matrix(0.62411848,0,0,0.62411848,174.09485,74.232387)" />
+           transform="matrix(0.62411848,0,0,0.62411848,178.99881,84.99965)"
+           style="fill:none;fill-opacity:1;stroke:#8c8c8c;stroke-width:44.27338409;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 390.99609,22.416016 -43.80468,52.86914 -64.95508,-36.251953 -28.70117,69.484377 -78.55078,-16.615236 -4.53126,69.486326 -74.017573,9.06445 16.615233,72.50782 -72.505858,34.74218 37.761719,58.91211 -55.890625,49.84961 57.402343,48.33789 -39.273437,70.99805 64.953128,25.67969 -15.105472,72.50781 74.019532,6.04297 10.57227,80.06055 66.46679,-18.12696 30.21094,67.97461 64.95508,-39.27343 54.3789,60.42187 45.31836,-54.37891 63.44532,37.76368 30.21093,-69.48633 78.55078,15.10547 4.53125,-69.48633 74.01758,-7.55274 -18.12695,-74.01953 74.01953,-33.23242 -37.76367,-58.91211 55.89062,-49.84961 -57.40234,-49.84765 39.27539,-69.48829 -64.95508,-25.67968 15.10547,-74.01758 -75.5293,-6.04297 -9.0625,-80.060546 L 540.54492,110.0293 510.33398,42.054688 446.89062,81.328125 Z M 580.95703,229.76953 c -1.7e-4,0 -53.65457,304.0332 -250.38086,304.0332 -6.43833,0 -15.37844,-2.32547 -23.96289,-5.36718 l -16.99023,41.13281 -33.80274,-11.80274 c 37.19845,-92.45914 37.07699,-167.9139 198.02659,-203.68477 -0.0527,0 -122.90825,-22.03662 -181.02335,143.36821 0,0 -49.55207,-44.12572 -49.55207,-79.89437 0,-35.76863 35.76841,-111.77618 125.18946,-129.66016 89.42102,-17.88397 214.61189,-22.35637 232.49609,-58.125 z"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccccccccccscccccssc" />
       </g>
     </g>
   </g>
