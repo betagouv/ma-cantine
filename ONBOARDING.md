@@ -73,6 +73,7 @@ L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), 
 - *CELLAR_KEY* -- **Optionnel** - la clé du service S3
 - *CELLAR_SECRET* -- **Optionnel** - le secret du service S3
 - *CELLAR_BUCKET_NAME* -- **Optionnel** - le nom du bucket S3 à utiliser
+- *DEBUG_PERFORMANCE* -- **Optionnel** - à utiliser avec "DEBUG" pour montrer la [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/)
 
 
 ### Création des tables / Migration de la base de données
