@@ -112,7 +112,7 @@
             ></v-select>
           </div>
           <div>
-            <p class="body-2 mt-4 mb-2">Public ou privé ?</p>
+            <p class="body-2 mt-4 mb-2">Type d'établissement</p>
             <v-select
               :items="economicModels"
               solo
