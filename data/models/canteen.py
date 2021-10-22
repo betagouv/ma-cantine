@@ -48,6 +48,10 @@ class Canteen(SoftDeletionModel):
         PENDING = "pending", "❓ En attente de vérification"
         PUBLISHED = "published", "✅ Publié"
 
+    class EconomicModel(models.TextChoices):
+        PUBLIC = "public", "Public"
+        PRIVATE = "private", "Privé"
+
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
@@ -92,6 +96,14 @@ class Canteen(SoftDeletionModel):
     )
 
     logo = models.ImageField(null=True, blank=True, verbose_name="Logo")
+
+    economic_model = models.CharField(
+        max_length=50,
+        choices=EconomicModel.choices,
+        null=True,
+        blank=True,
+        verbose_name="Secteur économique",
+    )
 
     # Publication things
     publication_status = models.CharField(
