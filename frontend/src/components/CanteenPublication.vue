@@ -58,7 +58,7 @@
         <v-col cols="12" v-if="badge.earned">
           <v-card class="fill-height" elevation="0">
             <div class="d-flex align-start">
-              <v-img width="30" max-width="35" contain :src="`/static/images/badges/${key}.svg`" alt=""></v-img>
+              <v-img width="40" max-width="40" contain :src="`/static/images/badges/${key}.svg`" alt=""></v-img>
               <div>
                 <v-card-title class="py-0 text-body-2 font-weight-bold">{{ badge.title }}</v-card-title>
                 <v-card-subtitle class="pt-4" v-text="badge.subtitle"></v-card-subtitle>
