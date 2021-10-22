@@ -180,7 +180,7 @@ input[type="checkbox"]#id_cgu_approved {
   float: left;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1000px) {
   #wrapper.columns {
     width: 300px;
   }
