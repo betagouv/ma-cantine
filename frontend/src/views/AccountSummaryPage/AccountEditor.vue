@@ -104,28 +104,45 @@ export default {
       bypassLeaveWarning: false,
       lawAwarenessChoices: [
         {
-          value: "LAW_AWARENESS_1_CHOICE",
-          label: "LAW_AWARENESS_1_TEXT",
+          value: "NONE",
+          label: "Je n’ai pas une connaissance détaillée de l’article 24 de la loi EGAlim",
         },
         {
-          value: "LAW_AWARENESS_2_CHOICE",
-          label: "LAW_AWARENESS_2_TEXT",
+          value: "AIMS_DEADLINES",
+          label: "Je connais les objectifs et les échéances",
         },
         {
-          value: "LAW_AWARENESS_3_CHOICE",
-          label: "LAW_AWARENESS_3_TEXT",
+          value: "ELIGIBLE_LABELS",
+          label: "Je connais la liste des labels éligibles et mentions valorisantes",
         },
         {
-          value: "LAW_AWARENESS_4_CHOICE",
-          label: "LAW_AWARENESS_4_TEXT",
+          value: "MY_LABELS",
+          label:
+            "J’ai accès aux informations ou mon prestataire me fournit les informations sur les labels éligibles et mentions valorisantes concernant mes achats",
         },
         {
-          value: "LAW_AWARENESS_5_CHOICE",
-          label: "LAW_AWARENESS_5_TEXT",
+          value: "SYSTEM",
+          label:
+            "J’ai un système de saisie formalisé (SI, Excel, papier) permettant de calculer et reporter le montant annuel de mes achats répondants aux exigences de l’article 24 de la loi EGALIM (N/A en gestion concédée)",
         },
         {
-          value: "LAW_AWARENESS_6_CHOICE",
-          label: "LAW_AWARENESS_6_TEXT",
+          value: "TAKEN_STOCK",
+          label: "J’ai réalisé un état des lieux précis de mes approvisionnements",
+        },
+        {
+          value: "OPTION_DIAGNOSTIC",
+          label:
+            "J’ai réalisé un diagnostic de l’offre (disponibilité et caractéristiques de l’offre des différents fournisseurs sur l’ensemble des catégories d’achats)",
+        },
+        {
+          value: "ACTION_PLAN",
+          label:
+            "J’ai établi un plan d’actions pour tendre vers les objectifs de la loi EGALim, définissant notamment : le niveau d’ambition global et par catégories d’achats; les échéances de renouvellement de contrat avec clauses EGALim; le phasage de la progression des indicateurs EGAlim",
+        },
+        {
+          value: "QUALITY_ACHIEVED",
+          label:
+            "J'ai atteint les objectifs de l’article 24 de la loi EGAlim de porter la part de produits de qualité et durables à 50% dont au moins 20% de produits issus de l'agriculture biologique",
         },
       ],
     }
