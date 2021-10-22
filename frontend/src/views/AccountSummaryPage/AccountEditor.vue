@@ -59,6 +59,25 @@
             <v-text-field hide-details="auto" solo v-model="userCopy.email" :rules="[validators.email]"></v-text-field>
           </v-col>
         </v-row>
+
+        <v-row>
+          <fieldset class="mt-3 mb-4">
+            <legend class="body-2 ma-3 text-left">LAW_AWARENESS_DESCRIPTION</legend>
+
+            <v-checkbox
+              hide-details="auto"
+              class="ml-8 mb-3 mt-0"
+              v-model="userCopy.lawAwareness"
+              :multiple="true"
+              v-for="choice in lawAwarenessChoices"
+              :key="choice.value"
+              :value="choice.value"
+              :label="choice.label"
+              :readonly="readonly"
+              :disabled="readonly"
+            />
+          </fieldset>
+        </v-row>
       </v-form>
     </v-card-text>
     <v-card-actions class="pa-4">
@@ -83,6 +102,32 @@ export default {
       formIsValid: true,
       avatarChanged: false,
       bypassLeaveWarning: false,
+      lawAwarenessChoices: [
+        {
+          value: "LAW_AWARENESS_1_CHOICE",
+          label: "LAW_AWARENESS_1_TEXT",
+        },
+        {
+          value: "LAW_AWARENESS_2_CHOICE",
+          label: "LAW_AWARENESS_2_TEXT",
+        },
+        {
+          value: "LAW_AWARENESS_3_CHOICE",
+          label: "LAW_AWARENESS_3_TEXT",
+        },
+        {
+          value: "LAW_AWARENESS_4_CHOICE",
+          label: "LAW_AWARENESS_4_TEXT",
+        },
+        {
+          value: "LAW_AWARENESS_5_CHOICE",
+          label: "LAW_AWARENESS_5_TEXT",
+        },
+        {
+          value: "LAW_AWARENESS_6_CHOICE",
+          label: "LAW_AWARENESS_6_TEXT",
+        },
+      ],
     }
   },
   computed: {
@@ -162,3 +207,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+fieldset {
+  border: none;
+}
+</style>

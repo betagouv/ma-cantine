@@ -11,6 +11,8 @@ class RegisterUserForm(UserCreationForm):
     )
     email = forms.EmailField()
 
+    uses_columns = True
+
     class Meta:
         model = get_user_model()
         fields = (
@@ -21,7 +23,25 @@ class RegisterUserForm(UserCreationForm):
             "password1",
             "password2",
             "cgu_approved",
+            "law_awareness",
         )
+
+    def left_column_fields(self):
+        field_names = [
+            "first_name",
+            "last_name",
+            "email",
+            "username",
+            "password1",
+            "password2",
+        ]
+        return [field for field in self if not field.is_hidden and field.name in field_names]
+
+    def right_column_fields(self):
+        field_names = [
+            "law_awareness",
+        ]
+        return [field for field in self if not field.is_hidden and field.name in field_names]
 
     def __init__(self, *args, **kwargs):
         super(RegisterUserForm, self).__init__(*args, **kwargs)
@@ -32,6 +52,7 @@ class RegisterUserForm(UserCreationForm):
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com"})
         self.fields["password1"].widget.attrs.update({"placeholder": "Entrez votre mot de passe"})
         self.fields["password2"].widget.attrs.update({"placeholder": "Confirmez votre mot de passe"})
+        self.fields["law_awareness"].widget.attrs.update()
 
     def clean_cgu_approved(self):
         return _clean_cgu_approved(self)

@@ -21,6 +21,7 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "last_name",
             "avatar",
             "is_staff",
+            "law_awareness",
         )
 
 
