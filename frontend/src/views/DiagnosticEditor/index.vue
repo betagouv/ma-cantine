@@ -165,7 +165,7 @@
                         validate-on-blur
                         solo
                         dense
-                        v-model.number="diagnostic.valueLabelHVE"
+                        v-model.number="diagnostic.valueLabelHve"
                         :readonly="readonly"
                         :disabled="readonly"
                       ></v-text-field>

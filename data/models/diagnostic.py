@@ -128,6 +128,29 @@ class Diagnostic(models.Model):
         verbose_name="Valeur totale annuelle HT",
     )
 
+    # Labels : used for temporary campaign
+    value_label_rouge = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Valeur label rouge",
+    )
+    value_label_aoc_igp = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Valeur label AOC/AOP/IGP",
+    )
+    value_label_hve = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Valeur label HVE",
+    )
+
     # Food waste
     has_waste_diagnostic = models.BooleanField(
         blank=True, null=True, verbose_name="diagnostic sur le gaspillage réalisé"
