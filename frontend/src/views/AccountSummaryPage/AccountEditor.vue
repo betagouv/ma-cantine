@@ -62,7 +62,9 @@
 
         <v-row>
           <fieldset class="mt-3 mb-4">
-            <legend class="body-2 ma-3 text-left">LAW_AWARENESS_DESCRIPTION</legend>
+            <legend class="body-2 ma-3 text-left">
+              Parmi ces affirmations, lesquelles correspondent le plus à votre situation :
+            </legend>
 
             <v-checkbox
               hide-details="auto"

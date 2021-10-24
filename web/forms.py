@@ -52,7 +52,6 @@ class RegisterUserForm(UserCreationForm):
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com"})
         self.fields["password1"].widget.attrs.update({"placeholder": "Entrez votre mot de passe"})
         self.fields["password2"].widget.attrs.update({"placeholder": "Confirmez votre mot de passe"})
-        self.fields["law_awareness"].widget.attrs.update()
 
     def clean_cgu_approved(self):
         return _clean_cgu_approved(self)

@@ -47,7 +47,7 @@ class User(AbstractUser):
         blank=True,
         null=True,
         size=None,
-        verbose_name="LAW_AWARENESS_DESCRIPTION",
+        verbose_name="Parmi ces affirmations, lesquelles correspondent le plus à votre situation :",
     )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
