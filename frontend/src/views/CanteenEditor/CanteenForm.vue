@@ -94,20 +94,32 @@
           ></v-text-field>
         </v-col>
 
-        <v-col cols="12">
+        <v-col cols="12" class="mt-2">
           <v-divider></v-divider>
         </v-col>
 
         <v-col cols="12" md="6">
-          <p class="body-2 my-2">Secteurs d'activité</p>
-          <v-select
-            multiple
-            :items="sectors"
-            solo
-            v-model="canteen.sectors"
-            item-text="name"
-            item-value="id"
-          ></v-select>
+          <div>
+            <p class="body-2 my-2">Secteurs d'activité</p>
+            <v-select
+              multiple
+              :items="sectors"
+              solo
+              v-model="canteen.sectors"
+              item-text="name"
+              item-value="id"
+              hide-details
+            ></v-select>
+          </div>
+          <div>
+            <p class="body-2 mt-4 mb-2">Type d'établissement</p>
+            <v-select
+              :items="economicModels"
+              solo
+              v-model="canteen.economicModel"
+              placeholder="Sélectionnez..."
+            ></v-select>
+          </div>
         </v-col>
 
         <v-col cols="12" sm="6" md="3">
@@ -192,6 +204,10 @@ export default {
           text: "Cuisine-site",
           value: "site",
         },
+      ],
+      economicModels: [
+        { text: "Public", value: "public" },
+        { text: "Privé", value: "private" },
       ],
     }
   },
