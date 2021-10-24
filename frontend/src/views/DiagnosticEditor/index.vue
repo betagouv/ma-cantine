@@ -104,6 +104,75 @@
                 label="La valeur (en HT) de mes achats alimentaires..."
                 :readonly="hasActiveTeledeclaration"
               />
+              <fieldset class="d-flex flex-column mt-4">
+                <legend class="body-2 mb-2">
+                  Si je les connais, je renseigne les totaux produits qualité de durable par label :
+                </legend>
+                <v-row>
+                  <v-col cols="12" md="4">
+                    <label class="caption mb-1 mt-2 ml-2">Label Rouge</label>
+                    <v-container class="d-flex pa-0 align-center">
+                      <img
+                        src="/static/images/quality-labels/label-rouge.png"
+                        alt=""
+                        style="height: 2em;"
+                        class="mr-2"
+                      />
+                      <v-text-field
+                        hide-details="auto"
+                        type="number"
+                        :rules="[validators.nonNegativeOrEmpty]"
+                        validate-on-blur
+                        solo
+                        dense
+                        v-model.number="diagnostic.valueLabelRouge"
+                        :readonly="readonly"
+                        :disabled="readonly"
+                      ></v-text-field>
+                    </v-container>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <label class="caption mb-1 mt-2 ml-2">AOC / AOP / IGP</label>
+                    <v-container class="d-flex pa-0 align-center">
+                      <img
+                        src="/static/images/quality-labels/Logo-AOC-AOP.png"
+                        alt=""
+                        style="height: 2em;"
+                        class="mr-2"
+                      />
+                      <img src="/static/images/quality-labels/IGP.png" alt="" style="height: 2em;" class="mr-2" />
+                      <v-text-field
+                        hide-details="auto"
+                        type="number"
+                        :rules="[validators.nonNegativeOrEmpty]"
+                        validate-on-blur
+                        solo
+                        dense
+                        v-model.number="diagnostic.valueLabelAocIgp"
+                        :readonly="readonly"
+                        :disabled="readonly"
+                      ></v-text-field>
+                    </v-container>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <label class="caption mb-1 mt-2 ml-2">Haute Valeur Environnementale</label>
+                    <v-container class="d-flex pa-0 align-center">
+                      <img src="/static/images/quality-labels/hve.png" alt="" style="height: 2em;" class="mr-2" />
+                      <v-text-field
+                        hide-details="auto"
+                        type="number"
+                        :rules="[validators.nonNegativeOrEmpty]"
+                        validate-on-blur
+                        solo
+                        dense
+                        v-model.number="diagnostic.valueLabelHVE"
+                        :readonly="readonly"
+                        :disabled="readonly"
+                      ></v-text-field>
+                    </v-container>
+                  </v-col>
+                </v-row>
+              </fieldset>
             </v-form>
           </DiagnosticExpansionPanel>
 
@@ -499,5 +568,8 @@ function hasValue(val) {
 }
 #teledeclaration-form >>> .v-input--checkbox .v-label.theme--light.v-label--is-disabled {
   color: rgba(0, 0, 0, 0.37);
+}
+fieldset {
+  border: none;
 }
 </style>
