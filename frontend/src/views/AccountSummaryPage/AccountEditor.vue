@@ -74,10 +74,11 @@
               v-for="choice in lawAwarenessChoices"
               :key="choice.value"
               :value="choice.value"
-              :label="choice.label"
-              :readonly="readonly"
-              :disabled="readonly"
-            />
+            >
+              <template v-slot:label>
+                <span class="body-2">{{ choice.label }}</span>
+              </template>
+            </v-checkbox>
           </fieldset>
         </v-row>
       </v-form>
