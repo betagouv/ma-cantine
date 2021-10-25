@@ -126,8 +126,8 @@
                         solo
                         dense
                         v-model.number="diagnostic.valueLabelRouge"
-                        :readonly="readonly"
-                        :disabled="readonly"
+                        :readonly="hasActiveTeledeclaration"
+                        :disabled="hasActiveTeledeclaration"
                       ></v-text-field>
                     </v-container>
                   </v-col>
@@ -149,8 +149,8 @@
                         solo
                         dense
                         v-model.number="diagnostic.valueLabelAocIgp"
-                        :readonly="readonly"
-                        :disabled="readonly"
+                        :readonly="hasActiveTeledeclaration"
+                        :disabled="hasActiveTeledeclaration"
                       ></v-text-field>
                     </v-container>
                   </v-col>
@@ -166,8 +166,8 @@
                         solo
                         dense
                         v-model.number="diagnostic.valueLabelHve"
-                        :readonly="readonly"
-                        :disabled="readonly"
+                        :readonly="hasActiveTeledeclaration"
+                        :disabled="hasActiveTeledeclaration"
                       ></v-text-field>
                     </v-container>
                   </v-col>
