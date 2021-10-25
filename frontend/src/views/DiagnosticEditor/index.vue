@@ -109,9 +109,9 @@
                   Si je les connais, je renseigne les totaux des produits de qualité et durables (hors bio) par label :
                 </legend>
                 <v-row>
-                  <v-col cols="12" md="4">
-                    <label class="caption mb-1 mt-2 ml-2">Label Rouge</label>
-                    <v-container class="d-flex pa-0 align-center">
+                  <v-col cols="12" md="4" class="pr-0">
+                    <label class="caption mb-1 mt-2">Label Rouge</label>
+                    <v-container class="d-flex pa-0 pr-3 align-center right-border">
                       <img
                         src="/static/images/quality-labels/label-rouge.png"
                         alt=""
@@ -131,9 +131,9 @@
                       ></v-text-field>
                     </v-container>
                   </v-col>
-                  <v-col cols="12" md="4">
-                    <label class="caption mb-1 mt-2 ml-2">AOC / AOP / IGP</label>
-                    <v-container class="d-flex pa-0 align-center">
+                  <v-col cols="12" md="4" class="pr-0">
+                    <label class="caption mb-1 mt-2">AOC / AOP / IGP</label>
+                    <v-container class="d-flex pa-0 pr-3 align-center right-border">
                       <img
                         src="/static/images/quality-labels/Logo-AOC-AOP.png"
                         alt=""
@@ -155,7 +155,7 @@
                     </v-container>
                   </v-col>
                   <v-col cols="12" md="4">
-                    <label class="caption mb-1 mt-2 ml-2">Haute Valeur Environnementale</label>
+                    <label class="caption mb-1 mt-2">Haute Valeur Environnementale</label>
                     <v-container class="d-flex pa-0 align-center">
                       <img src="/static/images/quality-labels/hve.png" alt="" style="height: 2em;" class="mr-2" />
                       <v-text-field
@@ -571,5 +571,14 @@ function hasValue(val) {
 }
 fieldset {
   border: none;
+}
+.right-border {
+  border-right: solid 1px #ccc;
+}
+
+@media (max-width: 960px) {
+  .right-border {
+    border-right: none;
+  }
 }
 </style>
