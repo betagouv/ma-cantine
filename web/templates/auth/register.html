@@ -6,6 +6,11 @@
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery.easy-autocomplete.min.js' %}"></script>
 <style type="text/css"> @import url("{% static 'css/easy-autocomplete.min.css' %}"); </style>
+<style>
+    #id_law_awareness li {
+       margin-bottom: 10px;
+    }
+</style>
     <form role="form" method="post">
 
         {% csrf_token %}
