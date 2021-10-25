@@ -31,11 +31,11 @@ class User(AbstractUser):
         )
         ACTION_PLAN = (
             "ACTION_PLAN",
-            "J’ai établi un plan d’actions pour tendre vers les objectifs de la loi EGALim, définissant notamment : le niveau d’ambition global et par catégories d’achats; les échéances de renouvellement de contrat avec clauses EGALim; le phasage de la progression des indicateurs EGAlim",
+            "J’ai établi un plan d’actions pour tendre vers les objectifs de la loi EGALim, définissant notamment : le niveau d’ambition global et par catégories d’achats ; les échéances de renouvellement de contrat avec clauses EGALim ; le phasage de la progression des indicateurs EGAlim",
         )
         QUALITY_ACHIEVED = (
             "QUALITY_ACHIEVED",
-            "J'ai atteint les objectifs de l’article 24 de la loi EGAlim de porter la part de produits de qualité et durables à 50% dont au moins 20% de produits issus de l'agriculture biologique",
+            "J'ai atteint les objectifs de l’article 24 de la loi EGAlim de porter la part de produits de qualité et durables à 50 % dont au moins 20 % de produits issus de l'agriculture biologique",
         )
 
     avatar = models.ImageField("Photo de profil", null=True, blank=True)
