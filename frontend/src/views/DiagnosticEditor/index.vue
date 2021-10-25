@@ -106,7 +106,7 @@
               />
               <fieldset class="d-flex flex-column mt-4">
                 <legend class="body-2 mb-2">
-                  Si je les connais, je renseigne les totaux produits qualité de durable par label :
+                  Si je les connais, je renseigne les totaux des produits de qualité et durables (hors bio) par label :
                 </legend>
                 <v-row>
                   <v-col cols="12" md="4">
