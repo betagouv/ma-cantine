@@ -52,6 +52,9 @@ class TestDiagnosticsApi(APITestCase):
             "value_sustainable_ht": 3000,
             "value_pat_ht": 200,
             "value_total_ht": 10000,
+            "value_label_rouge": 10,
+            "value_label_aoc_igp": 20,
+            "value_label_hve": 30,
             "has_waste_diagnostic": True,
             "has_waste_plan": False,
             "waste_actions": ["INSCRIPTION", "AWARENESS"],
@@ -99,6 +102,9 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.communication_frequency, "YEARLY")
         self.assertTrue(diagnostic.communicates_on_food_quality)
         self.assertEqual(diagnostic.value_pat_ht, 200)
+        self.assertEqual(diagnostic.value_label_rouge, 10)
+        self.assertEqual(diagnostic.value_label_aoc_igp, 20)
+        self.assertEqual(diagnostic.value_label_hve, 30)
 
     @authenticate
     def test_create_duplicate_diagnostic(self):
