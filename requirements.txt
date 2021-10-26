@@ -58,7 +58,7 @@ py==1.10.0
 pylint==2.11.1
 pylint-django==2.4.4
 pylint-plugin-utils==0.6
-pyparsing==2.4.7
+pyparsing==3.0.1
 PyPDF2==1.26.0
 pytest==6.2.5
 pytest-django==4.4.0
