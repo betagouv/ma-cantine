@@ -26,7 +26,7 @@ class RegisterUserView(FormView):
     """
 
     form_class = RegisterUserForm
-    template_name = "auth/register_user.html"
+    template_name = "auth/register.html"
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:

@@ -40,6 +40,12 @@ class MaCanteenUserAdmin(UserAdmin):
                 ),
             },
         ),
+        (
+            _("EY - Connaissance de la loi EGALIM"),
+            {
+                "fields": ("law_awareness",),
+            },
+        ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
     add_fieldsets = (

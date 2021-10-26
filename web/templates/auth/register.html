@@ -6,6 +6,11 @@
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery.easy-autocomplete.min.js' %}"></script>
 <style type="text/css"> @import url("{% static 'css/easy-autocomplete.min.css' %}"); </style>
+<style>
+    #id_law_awareness li {
+       margin-bottom: 10px;
+    }
+</style>
     <form role="form" method="post">
 
         {% csrf_token %}
@@ -74,28 +79,5 @@
             </div>
         </div>
     </form>
-
-    <!-- City autocomplete field initialization -->
-    <script>
-        $("#id_autocomplete").easyAutocomplete({
-            url: function(query) {
-                return "https://api-adresse.data.gouv.fr/search/?q=" + query + "&type=municipality&autocomplete=1"
-            },
-            listLocation: "features",
-            requestDelay: 100,
-            getValue: function(element) {
-                return element.properties.label + " - " + element.properties.context
-            },
-            list: {
-                onChooseEvent: function() {
-                    var chosenItem = $("#id_autocomplete").getSelectedItemData()
-                    $("#id_city").val(chosenItem.properties.label)
-                    $("#id_department").val(chosenItem.properties.context.split(',')[0])
-                    $("#id_city_insee_code").val(chosenItem.properties.citycode)
-                    $("#id_postal_code").val(chosenItem.properties.postcode)
-                }
-            }
-        })
-    </script>
     <a href="{% url 'login' %}"><button>J'ai déjà un compte</button></a>
 {% endblock %}

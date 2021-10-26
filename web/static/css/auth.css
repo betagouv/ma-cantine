@@ -1,187 +1,196 @@
 @font-face {
-    font-family: 'Marianne';
-    src: url('../fonts/Marianne-Regular.woff2') format('woff2'),
-            url('../fonts/Marianne-Regular.woff') format('woff'),
-            url('../fonts/Marianne-Regular.ttf') format('truetype');
-    font-weight: 400;
+  font-family: "Marianne";
+  src: url("../fonts/Marianne-Regular.woff2") format("woff2"), url("../fonts/Marianne-Regular.woff") format("woff"),
+    url("../fonts/Marianne-Regular.ttf") format("truetype");
+  font-weight: 400;
 }
 @font-face {
-    font-family: 'Marianne';
-    src: url('../fonts/Marianne-Medium.woff2') format('woff2'),
-            url('../fonts/Marianne-Medium.woff') format('woff');
-    font-weight: 500;
+  font-family: "Marianne";
+  src: url("../fonts/Marianne-Medium.woff2") format("woff2"), url("../fonts/Marianne-Medium.woff") format("woff");
+  font-weight: 500;
 }
 @font-face {
-    font-family: 'Marianne';
-    src: url('../fonts/Marianne-Light.woff2') format('woff2'),
-        url('../fonts/Marianne-Light.woff') format('woff'),
-        url('../fonts/Marianne-Light.ttf') format('truetype');
-    font-weight: 100 300;
+  font-family: "Marianne";
+  src: url("../fonts/Marianne-Light.woff2") format("woff2"), url("../fonts/Marianne-Light.woff") format("woff"),
+    url("../fonts/Marianne-Light.ttf") format("truetype");
+  font-weight: 100 300;
 }
 @font-face {
-    font-family: 'Marianne';
-    src: url('../fonts/Marianne-Bold.woff2') format('woff2'),
-        url('../fonts/Marianne-Bold.woff') format('woff'),
-        url('../fonts/Marianne-Bold.ttf') format('truetype');
-    font-weight: 600 700;
+  font-family: "Marianne";
+  src: url("../fonts/Marianne-Bold.woff2") format("woff2"), url("../fonts/Marianne-Bold.woff") format("woff"),
+    url("../fonts/Marianne-Bold.ttf") format("truetype");
+  font-weight: 600 700;
 }
 @font-face {
-    font-family: 'Marianne';
-    src: url('../fonts/Marianne-ExtraBold.woff2') format('woff2'),
-        url('../fonts/Marianne-ExtraBold.woff') format('woff'),
-        url('../fonts/Marianne-ExtraBold.ttf') format('truetype');
-    font-weight: 800 900;
+  font-family: "Marianne";
+  src: url("../fonts/Marianne-ExtraBold.woff2") format("woff2"), url("../fonts/Marianne-ExtraBold.woff") format("woff"),
+    url("../fonts/Marianne-ExtraBold.ttf") format("truetype");
+  font-weight: 800 900;
 }
 html {
-    height: 100%;
+  height: 100%;
 }
 body {
-    font-family: 'Marianne', Arial, Helvetica, sans-serif;
-    display: flex;
-    min-height: 100%;
-    flex-direction: column;
-    align-items: center;
-    align-content: center;
-    justify-content: center;
-    background: #F8F8FA;
-    margin: 0;
+  font-family: "Marianne", Arial, Helvetica, sans-serif;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  background: #f8f8fa;
+  margin: 0;
 }
 h1#ma-cantine {
-    margin: 0;
+  margin: 0;
 }
 h2 {
-    font-size: 1.17em;
+  font-size: 1.17em;
 }
 .auth_logo {
-    max-width: 180px;
-    margin: 20px 0;
+  max-width: 180px;
+  margin: 20px 0;
 }
 p {
-    font-size: 0.85em;
+  font-size: 0.85em;
 }
 #wrapper {
-    text-align: center;
-    margin: 40px 0;
-    padding: 20px;
-    background: #ffffff;
-    width: 300px;
-    box-shadow: 0px 0px 1px rgba(24, 25, 38, 0.76), 0px 16px 24px rgba(24, 25, 38, 0.12), inset 0px 2px 1px #FFFFFF, inset 0px -2px 1px rgba(0, 0, 0, 0.08);
-    border-radius: 16px;
+  text-align: center;
+  margin: 40px 0;
+  padding: 20px;
+  background: #ffffff;
+  width: 300px;
+  box-shadow: 0px 0px 1px rgba(24, 25, 38, 0.76), 0px 16px 24px rgba(24, 25, 38, 0.12), inset 0px 2px 1px #ffffff,
+    inset 0px -2px 1px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
 }
 .control-group {
-    text-align: left;
-    margin-bottom: 20px;
+  text-align: left;
+  margin-bottom: 20px;
 }
-input[type=text], input[type="password"], input[type="email"], input[type="number"], select, .control-group .easy-autocomplete input {
-    width: 100%;
-    height: 42px;
-    box-sizing: border-box;
-    border: 1px solid #B2B5C2;
-    border-radius: 12px;
-    outline: none;
-    padding: 0 12px;
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+select,
+.control-group .easy-autocomplete input {
+  width: 100%;
+  height: 42px;
+  box-sizing: border-box;
+  border: 1px solid #b2b5c2;
+  border-radius: 12px;
+  outline: none;
+  padding: 0 12px;
 }
-input[type=text]:focus, input[type="password"]:focus, input[type="email"]:focus{
-    border: 2px solid #0c7f46;
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+  border: 2px solid #0c7f46;
 }
 label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 0.85em;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.85em;
 }
 button {
-    width: 100%;
-    padding: 10px;
-    box-shadow: 0px 0.5px 1px rgba(24, 25, 38, 0.21), inset 0px 1px 0.5px rgba(255, 255, 255, 0.32), inset 0px -1px 0.5px rgba(24, 25, 38, 0.32);
-    border-radius: 12px;
-    border: solid 1px #DDD;
-    cursor: pointer;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-    display: inline-block;
-    font-family: Marianne;
+  width: 100%;
+  padding: 10px;
+  box-shadow: 0px 0.5px 1px rgba(24, 25, 38, 0.21), inset 0px 1px 0.5px rgba(255, 255, 255, 0.32),
+    inset 0px -1px 0.5px rgba(24, 25, 38, 0.32);
+  border-radius: 12px;
+  border: solid 1px #ddd;
+  cursor: pointer;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  display: inline-block;
+  font-family: Marianne;
 }
 button[type="submit"] {
-    border: none;
-    background: #0c7f46;
-    color: white;
+  border: none;
+  background: #0c7f46;
+  color: white;
 }
 button[type="submit"]:hover {
-    border: none;
-    background: #0c7f46;
+  border: none;
+  background: #0c7f46;
 }
-.messages, .error-container {
-    text-align: left;
-    font-size: 0.85em;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 20px;
+.messages,
+.error-container {
+  text-align: left;
+  font-size: 0.85em;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
 }
 .messages {
-    background: #d5ffde;
+  background: #d5ffde;
 }
 .error-container {
-    background: #ffe3e3;
+  background: #ffe3e3;
 }
 .error-container p {
-    margin: 0;
-    color: #751818;
+  margin: 0;
+  color: #751818;
 }
 .inline-error-container {
-    color: #DB2929;
-    font-size: 10px;
-    margin-top: 5px;
+  color: #db2929;
+  font-size: 10px;
+  margin-top: 5px;
 }
 hr {
-    height: 1px;
-    background: #DDD;
-    border: none;
-    margin: 10px 0 18px 0;
+  height: 1px;
+  background: #ddd;
+  border: none;
+  margin: 10px 0 18px 0;
 }
 ul {
-    padding-left: 0.5em;
+  padding-left: 0.5em;
 }
 li {
-    list-style: none;
+  list-style: none;
 }
 input[type="checkbox"]#id_cgu_approved {
-    float: left;
-    margin-right: 10px;
+  float: left;
+  margin-right: 10px;
 }
 
 #wrapper.columns {
-    width: 600px;
+  width: 1005px;
 }
 
 .column-wrapper {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
-.left-column, .right-column {
-    width: 48%;
+.left-column,
+.right-column {
+  width: 48%;
 }
 
-.sector, .management-type {
-    overflow: auto;
+.sector,
+.management-type {
+  overflow: auto;
 }
 
-.sector > li, .management-type > li {
-    width: 45%;
-    float: left;
+.sector > li,
+.management-type > li {
+  width: 45%;
+  float: left;
 }
 
-@media (max-width: 600px) {
-    #wrapper.columns {
-        width: 300px;
-    }
+@media (max-width: 1005px) {
+  #wrapper.columns {
+    width: 300px;
+  }
 
-    .column-wrapper {
-        display: block;
-    }
+  .column-wrapper {
+    display: block;
+  }
 
-    .left-column, .right-column {
-        width: auto;
-    }
+  .left-column,
+  .right-column {
+    width: auto;
+  }
 }
