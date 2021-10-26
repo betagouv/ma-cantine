@@ -4,12 +4,13 @@
       hide-details="auto"
       class="mb-4"
       v-model="diagnostic.hasDiversificationPlan"
-      label="Si ma cantine fabrique plus de 200 repas par jour en moyenne, j'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales"
+      label="J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales"
       :readonly="readonly"
       :disabled="readonly"
+      v-if="applicableRules.hasDiversificationPlan"
     />
 
-    <fieldset class="mt-3">
+    <fieldset class="mt-3" v-if="applicableRules.hasDiversificationPlan">
       <legend class="text-left mb-2 mt-3" :class="{ 'grey--text': !diagnostic.hasDiversificationPlan }">
         Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :
       </legend>
@@ -78,6 +79,8 @@
 </template>
 
 <script>
+import { applicableDiagnosticRules } from "@/utils"
+
 export default {
   data() {
     return {
@@ -166,6 +169,12 @@ export default {
     readonly: {
       type: Boolean,
       default: false,
+    },
+    canteen: Object,
+  },
+  computed: {
+    applicableRules() {
+      return applicableDiagnosticRules(this.canteen)
     },
   },
 }

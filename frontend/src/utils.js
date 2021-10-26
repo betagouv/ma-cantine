@@ -191,13 +191,14 @@ export const badges = (canteen, diagnostic, sectors) => {
   if (!diagnostic) return applicable
   const bioPercent = getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
   const sustainablePercent = getPercentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
+  const applicableRules = applicableDiagnosticRules(canteen)
   if (bioPercent >= 20 && bioPercent + sustainablePercent >= 50) {
     applicable.appro.earned = true
   }
   if (
     diagnostic.hasWasteDiagnostic &&
     diagnostic.wasteActions?.length > 0 &&
-    (canteen.dailyMealCount <= 3000 || diagnostic.hasDonationAgreement)
+    (!applicableRules.hasDiversificationPlan || diagnostic.hasDonationAgreement)
   ) {
     applicable.waste.earned = true
   }
@@ -234,4 +235,12 @@ export const normaliseText = (name) => {
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
     .toUpperCase()
+}
+
+export const applicableDiagnosticRules = (canteen) => {
+  let applicable = {
+    hasDonationAgreement: canteen.dailyMealCount >= 3000,
+    hasDiversificationPlan: canteen.dailyMealCount >= 200,
+  }
+  return applicable
 }
