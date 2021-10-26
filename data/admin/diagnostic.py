@@ -52,6 +52,9 @@ class DiagnosticAdmin(admin.ModelAdmin):
                     "value_bio_ht",
                     "value_fair_trade_ht",
                     "value_sustainable_ht",
+                    "value_label_rouge",
+                    "value_label_aoc_igp",
+                    "value_label_hve",
                     "value_pat_ht",
                     "value_total_ht",
                 )
