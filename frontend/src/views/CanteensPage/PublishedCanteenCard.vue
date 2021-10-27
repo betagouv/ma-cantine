@@ -4,60 +4,41 @@
     hover
     class="pa-4 text-left fill-height d-flex flex-column"
   >
-    <v-card-title class="font-weight-black">
+    <v-card-title class="font-weight-black pt-1">
       {{ canteen.name }}
     </v-card-title>
-    <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pb-2">
-      <CanteenIndicators :canteen="canteen" />
+    <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pb-4">
+      <CanteenIndicators :canteen="canteen" :singleLine="true" />
     </v-card-subtitle>
-    <v-spacer v-if="diagnostic"></v-spacer>
-    <v-card-text class="grey--text text--darken-4 py-1" v-if="diagnostic">
-      <v-row class="ma-0" v-if="hasPercentages">
-        <v-img
-          max-width="30"
-          contain
-          :src="`/static/images/badges/appro${approBadge.earned ? '' : '-disabled'}.svg`"
-          class="mr-3"
-          :alt="badgeTitle(approBadge)"
-          :title="badgeTitle(approBadge)"
-        ></v-img>
-        <p class="ma-0 mr-3" v-if="bioPercent">
-          <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
-          <span class="caption grey--text text--darken-2">
-            bio
-          </span>
-        </p>
-        <p class="ma-0" v-if="sustainablePercent">
-          <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
-          <span class="caption grey--text text--darken-2">
-            durables et de qualité
-          </span>
-        </p>
-      </v-row>
-      <v-row class="ma-0 pt-3">
-        <v-img
-          max-width="30"
-          contain
-          :src="`/static/images/badges/appro${approBadge.earned ? '' : '-disabled'}.svg`"
-          class="mr-2"
-          :alt="badgeTitle(approBadge)"
-          :title="badgeTitle(approBadge)"
-          v-if="!hasPercentages"
-        ></v-img>
-        <v-img
-          max-width="30"
-          contain
-          :src="`/static/images/badges/${key}${badge.earned ? '' : '-disabled'}.svg`"
-          v-for="(badge, key) in otherBadges"
-          :key="key"
-          class="mr-2"
-          :alt="badgeTitle(badge)"
-          :title="badgeTitle(badge)"
-        ></v-img>
-      </v-row>
-    </v-card-text>
-
-    <v-card-text class="py-1" v-else>Pas de données renseignées pour {{ publicationYear }}</v-card-text>
+    <v-spacer></v-spacer>
+    <div class="grey--text text--darken-2">
+      <v-divider class="pb-2"></v-divider>
+      <v-card-text class="py-1" v-if="diagnostic">
+        <v-row class="ma-0" v-if="hasPercentages">
+          <p class="ma-0 mr-3" v-if="bioPercent">
+            <span class="font-weight-black mr-1">{{ bioPercent }} %</span>
+            <span>bio</span>
+          </p>
+          <p class="ma-0" v-if="sustainablePercent">
+            <span class="font-weight-black mr-1">{{ sustainablePercent }} %</span>
+            <span>de qualité et durables</span>
+          </p>
+        </v-row>
+        <v-row class="ma-0 pt-3">
+          <v-img
+            max-width="30"
+            contain
+            :src="`/static/images/badges/${badge.key}${badge.earned ? '' : '-disabled'}.svg`"
+            v-for="badge in orderedBadges"
+            :key="badge.key"
+            class="mr-2"
+            :alt="badgeTitle(badge)"
+            :title="badgeTitle(badge)"
+          ></v-img>
+        </v-row>
+      </v-card-text>
+      <v-card-text class="py-1" v-else>Pas de données renseignées pour {{ publicationYear }}</v-card-text>
+    </div>
   </v-card>
 </template>
 
@@ -91,10 +72,15 @@ export default {
     approBadge() {
       return this.canteenBadges.appro
     },
-    otherBadges() {
-      let other = Object.assign({}, this.canteenBadges)
-      delete other.appro
-      return other
+    orderedBadges() {
+      return Object.keys(this.canteenBadges)
+        .map((key) => {
+          return { ...{ key }, ...this.canteenBadges[key] }
+        })
+        .sort((a, b) => {
+          if (a.earned === b.earned) return 0
+          return a.earned && !b.earned ? -1 : 1
+        })
     },
     bioPercent() {
       return this.diagValuePercent("valueBioHt")
