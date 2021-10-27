@@ -106,7 +106,7 @@
               />
               <fieldset class="d-flex flex-column mt-4">
                 <legend class="body-2 mb-2">
-                  Si je les connais, je renseigne les totaux des produits de qualité et durables (hors bio) par label :
+                  Les totaux par label des produits de qualité et durables (hors bio) :
                 </legend>
                 <v-row>
                   <v-col cols="12" md="4" class="pr-0">
@@ -121,6 +121,8 @@
                       <v-text-field
                         hide-details="auto"
                         type="number"
+                        suffix="€ HT"
+                        placeholder="Je ne sais pas"
                         :rules="[validators.nonNegativeOrEmpty]"
                         validate-on-blur
                         solo
@@ -138,12 +140,14 @@
                         src="/static/images/quality-labels/Logo-AOC-AOP.png"
                         alt=""
                         style="height: 2em;"
-                        class="mr-2"
+                        class="mr-1"
                       />
-                      <img src="/static/images/quality-labels/IGP.png" alt="" style="height: 2em;" class="mr-2" />
+                      <img src="/static/images/quality-labels/IGP.png" alt="" style="height: 2em;" class="mr-1" />
                       <v-text-field
                         hide-details="auto"
                         type="number"
+                        suffix="€ HT"
+                        placeholder="Je ne sais pas"
                         :rules="[validators.nonNegativeOrEmpty]"
                         validate-on-blur
                         solo
@@ -161,6 +165,8 @@
                       <v-text-field
                         hide-details="auto"
                         type="number"
+                        suffix="€ HT"
+                        placeholder="Je ne sais pas"
                         :rules="[validators.nonNegativeOrEmpty]"
                         validate-on-blur
                         solo

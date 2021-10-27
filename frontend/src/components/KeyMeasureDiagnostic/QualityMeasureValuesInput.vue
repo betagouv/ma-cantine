@@ -1,6 +1,5 @@
 <template>
   <fieldset class="d-flex flex-column">
-    <!-- TODO: Use text field suffix (euros HT) instead of (en HT) here? -->
     <legend class="my-2">{{ label }}</legend>
 
     <label :for="'total-' + diagnostic.year" class="body-2 mb-1 mt-2">...totale</label>
@@ -15,6 +14,7 @@
       validate-on-blur
       solo
       placeholder="Je ne sais pas"
+      suffix="€ HT"
       v-model.number="diagnostic.valueTotalHt"
       :readonly="readonly"
       :disabled="readonly"
@@ -32,6 +32,7 @@
       validate-on-blur
       solo
       placeholder="Je ne sais pas"
+      suffix="€ HT"
       v-model.number="diagnostic.valueBioHt"
       :readonly="readonly"
       :disabled="readonly"
@@ -49,6 +50,7 @@
       validate-on-blur
       solo
       placeholder="Je ne sais pas"
+      suffix="€ HT"
       v-model.number="diagnostic.valueSustainableHt"
       :readonly="readonly"
       :disabled="readonly"
