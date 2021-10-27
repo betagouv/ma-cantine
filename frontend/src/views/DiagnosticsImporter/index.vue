@@ -180,12 +180,6 @@ export default {
           description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
           example: "681",
         },
-        {
-          name: "Valeur d'achats du commerce équitable HT",
-          description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
-          example: "1084.2",
-          optional: true,
-        },
       ],
     }
   },

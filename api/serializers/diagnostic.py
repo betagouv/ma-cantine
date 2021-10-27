@@ -7,7 +7,6 @@ FIELDS = (
     "id",
     "year",
     "value_bio_ht",
-    "value_fair_trade_ht",
     "value_sustainable_ht",
     "value_pat_ht",
     "value_total_ht",
