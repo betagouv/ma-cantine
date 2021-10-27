@@ -10,10 +10,7 @@
       type="number"
       :rules="[
         validators.nonNegativeOrEmpty,
-        validators.gteSum(
-          [diagnostic.valueBioHt, diagnostic.valueSustainableHt, diagnostic.valueFairTradeHt],
-          totalErrorMessage
-        ),
+        validators.gteSum([diagnostic.valueBioHt, diagnostic.valueSustainableHt], totalErrorMessage),
       ]"
       validate-on-blur
       solo
@@ -57,23 +54,6 @@
       :disabled="readonly"
       @blur="checkTotal"
     ></v-text-field>
-
-    <label :for="'fairtrade-' + diagnostic.year" class="body-2 mb-1 mt-4">
-      ...en produits issus du commerce équitable
-    </label>
-    <v-text-field
-      :id="'fairtrade-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
-      validate-on-blur
-      solo
-      placeholder="Je ne sais pas"
-      v-model.number="diagnostic.valueFairTradeHt"
-      :readonly="readonly"
-      :disabled="readonly"
-      @blur="checkTotal"
-    ></v-text-field>
   </fieldset>
 </template>
 
@@ -104,7 +84,7 @@ export default {
   methods: {
     checkTotal() {
       const result = validators.gteSum(
-        [this.diagnostic.valueBioHt, this.diagnostic.valueSustainableHt, this.diagnostic.valueFairTradeHt],
+        [this.diagnostic.valueBioHt, this.diagnostic.valueSustainableHt],
         this.totalErrorMessage
       )(this.diagnostic.valueTotalHt)
       this.totalError = result !== true
