@@ -53,7 +53,6 @@ class TeledeclarationCreateView(APIView):
     def validateDiagnostic(diagnostic):
         total_ht = diagnostic.value_total_ht
         breakdown = [
-            diagnostic.value_fair_trade_ht,
             diagnostic.value_sustainable_ht,
             diagnostic.value_bio_ht,
         ]

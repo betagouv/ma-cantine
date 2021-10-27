@@ -383,7 +383,6 @@ export default {
       return [
         parseFloat(this.diagnostic.valueBioHt),
         parseFloat(this.diagnostic.valueSustainableHt),
-        parseFloat(this.diagnostic.valueFairTradeHt),
         parseFloat(this.diagnostic.valueTotalHt),
       ].every((x) => !strictIsNaN(x))
     },
