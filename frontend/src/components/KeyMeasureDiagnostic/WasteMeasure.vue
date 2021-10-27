@@ -110,12 +110,10 @@
       label="Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire"
       :readonly="readonly"
       :disabled="readonly"
+      v-if="applicableRules.hasDonationAgreement"
     />
-    <p class="text-left mx-8 mt-2 explanation">
-      Seulement les cantines qui fabriquent plus de 3 000 repas par jour en moyenne doivent proposer des conventions.
-    </p>
 
-    <v-expand-transition>
+    <v-expand-transition v-if="applicableRules.hasDonationAgreement">
       <v-row v-if="diagnostic.hasDonationAgreement" class="my-4 ml-8">
         <v-col cols="12" md="8" class="pa-0">
           <v-text-field
@@ -157,12 +155,14 @@
       rows="3"
       :readonly="readonly"
       :disabled="readonly"
+      class="mt-6"
     ></v-textarea>
   </div>
 </template>
 
 <script>
 import validators from "@/validators"
+import { applicableDiagnosticRules } from "@/utils"
 
 export default {
   props: {
@@ -171,6 +171,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    canteen: Object,
   },
   data() {
     return {
@@ -206,6 +207,9 @@ export default {
   computed: {
     validators() {
       return validators
+    },
+    applicableRules() {
+      return applicableDiagnosticRules(this.canteen)
     },
   },
   watch: {

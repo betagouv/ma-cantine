@@ -6,6 +6,7 @@
       <QualityMeasureDiagnostic
         v-if="measureDiagnosticComponentName === 'QualityMeasureDiagnostic'"
         :diagnostics="diagnosticsCopy"
+        :canteen="canteen"
       />
       <component v-else :is="measureDiagnosticComponentName" :diagnostic="diagnosticsCopy.latest" />
       <v-row class="mt-2 pa-4">
@@ -33,7 +34,7 @@ export default {
     QualityMeasureDiagnostic,
     WasteMeasureDiagnostic,
   },
-  props: ["measure", "afterSave", "diagnosticsCopy"],
+  props: ["measure", "afterSave", "diagnosticsCopy", "canteen"],
   data() {
     return {
       formIsValid: true,

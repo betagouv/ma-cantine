@@ -183,7 +183,7 @@
             :formIsValid="formIsValid.waste"
           >
             <v-form ref="waste" v-model="formIsValid.waste">
-              <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />
+              <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen="canteen" />
             </v-form>
           </DiagnosticExpansionPanel>
 
@@ -194,7 +194,11 @@
             :formIsValid="formIsValid.diversification"
           >
             <v-form ref="diversification" v-model="formIsValid.diversification">
-              <DiversificationMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />
+              <DiversificationMeasure
+                :diagnostic="diagnostic"
+                :readonly="hasActiveTeledeclaration"
+                :canteen="canteen"
+              />
             </v-form>
           </DiagnosticExpansionPanel>
 
