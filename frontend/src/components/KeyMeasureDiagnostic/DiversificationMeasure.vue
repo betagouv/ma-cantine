@@ -10,7 +10,7 @@
       v-if="applicableRules.hasDiversificationPlan"
     />
 
-    <fieldset class="mt-3" v-if="applicableRules.hasDiversificationPlan">
+    <fieldset class="my-3" v-if="applicableRules.hasDiversificationPlan">
       <legend class="text-left mb-2 mt-3" :class="{ 'grey--text': !diagnostic.hasDiversificationPlan }">
         Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :
       </legend>
@@ -28,7 +28,7 @@
       />
     </fieldset>
 
-    <fieldset class="mt-3">
+    <fieldset>
       <legend class="text-left my-3">J'ai mis en place un menu végétarien dans ma cantine :</legend>
       <v-radio-group class="my-0" v-model="diagnostic.vegetarianWeeklyRecurrence" hide-details>
         <v-radio

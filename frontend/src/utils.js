@@ -238,9 +238,8 @@ export const normaliseText = (name) => {
 }
 
 export const applicableDiagnosticRules = (canteen) => {
-  let applicable = {
+  return {
     hasDonationAgreement: canteen.dailyMealCount >= 3000,
     hasDiversificationPlan: canteen.dailyMealCount >= 200,
   }
-  return applicable
 }
