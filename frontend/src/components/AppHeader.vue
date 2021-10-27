@@ -17,6 +17,9 @@
           <v-img :src="`/static/images/${imageFilename}`" :width="imageWidth" alt="Page d'accueil ma cantine"></v-img>
         </router-link>
       </v-toolbar-title>
+      <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
+        {{ chipInfo.text }}
+      </v-chip>
 
       <div class="mx-4 fill-height d-flex flex-column" v-if="$vuetify.breakpoint.smAndUp && !this.loggedUser">
         <v-spacer></v-spacer>
@@ -116,6 +119,13 @@ export default {
     },
     elevateOnScroll() {
       return this.dynamicSizingEnabled
+    },
+    chipInfo() {
+      const env = window.ENVIRONMENT
+      if (env === "dev") return { text: "Dev", color: "pink" }
+      if (env === "staging") return { text: "Staging", color: "purple" }
+      if (env === "demo") return { text: "Démo", color: "green darken-2" }
+      return null
     },
   },
   methods: {

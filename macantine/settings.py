@@ -39,6 +39,9 @@ ALLOWED_HOSTS = [x.strip() for x in os.getenv("ALLOWED_HOSTS").split(",")]
 
 DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANCE") == "True"
 
+# Environment
+
+ENVIRONMENT = os.getenv("ENVIRONMENT")
 
 # Sentry
 # No need making this one secret: https://forum.sentry.io/t/dsn-private-public/6297/3
