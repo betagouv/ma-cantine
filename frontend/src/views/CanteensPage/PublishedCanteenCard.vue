@@ -11,8 +11,9 @@
       <CanteenIndicators :canteen="canteen" :singleLine="true" />
     </v-card-subtitle>
     <v-spacer></v-spacer>
+    <v-divider class="pb-2"></v-divider>
+    <v-spacer></v-spacer>
     <div class="grey--text text--darken-2">
-      <v-divider class="pb-2"></v-divider>
       <v-card-text class="py-1" v-if="diagnostic">
         <v-row class="ma-0" v-if="hasPercentages">
           <p class="ma-0 mr-3" v-if="bioPercent">
