@@ -106,7 +106,7 @@
               />
               <fieldset class="d-flex flex-column mt-4">
                 <legend class="body-2 mb-2">
-                  Les totaux par label des produits de qualité et durables (hors bio) :
+                  Les valeurs par label des produits de qualité et durables hors bio (facultatif)
                 </legend>
                 <v-row>
                   <v-col cols="12" md="4" class="pr-0">
