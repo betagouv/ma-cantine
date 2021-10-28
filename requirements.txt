@@ -25,7 +25,7 @@ djangorestframework==3.12.4
 djangorestframework-camel-case==1.2.0
 drf-base64==2.0
 factory-boy==3.2.1
-Faker==9.6.0
+Faker==9.7.1
 Flask==2.0.2
 Flask-BasicAuth==0.2.0
 Flask-Cors==3.0.10
