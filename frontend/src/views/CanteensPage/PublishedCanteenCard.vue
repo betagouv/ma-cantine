@@ -12,9 +12,8 @@
     </v-card-subtitle>
     <v-spacer></v-spacer>
     <v-divider class="pb-2"></v-divider>
-    <v-spacer></v-spacer>
-    <div class="grey--text text--darken-2">
-      <v-card-text class="py-1" v-if="diagnostic">
+    <div class="grey--text text--darken-2" :style="$vuetify.breakpoint.smAndDown ? '' : 'height: 73px;'">
+      <v-card-text class="py-1 fill-height d-flex flex-column" v-if="diagnostic">
         <v-row class="ma-0" v-if="hasPercentages">
           <p class="ma-0 mr-3" v-if="bioPercent">
             <span class="font-weight-black mr-1">{{ bioPercent }} %</span>
@@ -25,6 +24,7 @@
             <span>de qualité et durables</span>
           </p>
         </v-row>
+        <v-spacer v-else></v-spacer>
         <v-row class="ma-0 pt-3">
           <v-img
             max-width="30"
@@ -38,7 +38,11 @@
           ></v-img>
         </v-row>
       </v-card-text>
-      <v-card-text class="py-1" v-else>Pas de données renseignées pour {{ publicationYear }}</v-card-text>
+      <div v-else class="d-flex flex-column fill-height">
+        <v-spacer></v-spacer>
+        <v-card-text class="py-1">Pas de données renseignées pour {{ publicationYear }}</v-card-text>
+        <v-spacer></v-spacer>
+      </div>
     </div>
   </v-card>
 </template>
