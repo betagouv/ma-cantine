@@ -122,7 +122,6 @@
                         hide-details="auto"
                         type="number"
                         suffix="€ HT"
-                        placeholder="Je ne sais pas"
                         :rules="[validators.nonNegativeOrEmpty]"
                         validate-on-blur
                         solo
@@ -147,7 +146,6 @@
                         hide-details="auto"
                         type="number"
                         suffix="€ HT"
-                        placeholder="Je ne sais pas"
                         :rules="[validators.nonNegativeOrEmpty]"
                         validate-on-blur
                         solo
@@ -166,7 +164,6 @@
                         hide-details="auto"
                         type="number"
                         suffix="€ HT"
-                        placeholder="Je ne sais pas"
                         :rules="[validators.nonNegativeOrEmpty]"
                         validate-on-blur
                         solo
