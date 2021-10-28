@@ -19,7 +19,7 @@ class User(AbstractUser):
         )
         SYSTEM = (
             "SYSTEM",
-            "J’ai un système de saisie formalisé (SI, Excel, papier) permettant de calculer et reporter le montant annuel de mes achats répondants aux exigences de l’article 24 de la loi EGALIM (N/A en gestion concédée)",
+            "J’ai un système de saisie formalisé (SI, Excel, papier) permettant de calculer et reporter le montant annuel de mes achats répondants aux exigences de l’article 24 de la loi EGAlim (Non applicable en gestion concédée)",
         )
         TAKEN_STOCK = (
             "TAKEN_STOCK",
@@ -27,11 +27,11 @@ class User(AbstractUser):
         )
         OPTION_DIAGNOSTIC = (
             "OPTION_DIAGNOSTIC",
-            "J’ai réalisé un diagnostic de l’offre (disponibilité et caractéristiques de l’offre des différents fournisseurs sur l’ensemble des catégories d’achats)",
+            "J'ai atteint les objectifs - 50% et 20%, de l’article 24 de la loi EGAlim",
         )
         ACTION_PLAN = (
             "ACTION_PLAN",
-            "J’ai établi un plan d’actions pour tendre vers les objectifs de la loi EGALim, définissant notamment : le niveau d’ambition global et par catégories d’achats ; les échéances de renouvellement de contrat avec clauses EGALim ; le phasage de la progression des indicateurs EGAlim",
+            "J’ai établi un plan d’actions pour tendre vers les objectifs de la loi EGAlim, définissant notamment : le niveau d’ambition global et par catégories d’achats ; les échéances de renouvellement de contrat avec clauses EGAlim ; le phasage de la progression des indicateurs EGAlim",
         )
         QUALITY_ACHIEVED = (
             "QUALITY_ACHIEVED",
@@ -47,7 +47,7 @@ class User(AbstractUser):
         blank=True,
         null=True,
         size=None,
-        verbose_name="Parmi ces affirmations, lesquelles correspondent le plus à votre situation :",
+        verbose_name="Les affirmations suivantes concernent l'article 24 de la loi EGAlim, encadrant les objectifs d'approvisionnements (50% de produits durables et de qualité dont 20% de bio). Parmi ces affirmations, plusieurs choix sont possibles. Choisissez celles qui correspondent à votre situation :",
     )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
