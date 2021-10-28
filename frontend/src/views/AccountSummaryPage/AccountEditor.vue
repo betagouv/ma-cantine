@@ -63,7 +63,8 @@
         <v-row>
           <fieldset class="mt-3 mb-4">
             <legend class="body-2 ma-3 text-left">
-              Parmi ces affirmations, lesquelles correspondent le plus à votre situation :
+              Les affirmations suivantes concernent l'article 24 de la loi EGAlim, encadrant les objectifs d'approvisionnements (50% de produits durables et de qualité dont 20% de bio).
+              Parmi ces affirmations, plusieurs choix sont possibles. Choisissez celles qui correspondent à votre situation :
             </legend>
 
             <v-checkbox
@@ -126,7 +127,7 @@ export default {
         {
           value: "SYSTEM",
           label:
-            "J’ai un système de saisie formalisé (SI, Excel, papier) permettant de calculer et reporter le montant annuel de mes achats répondants aux exigences de l’article 24 de la loi EGALIM (N/A en gestion concédée)",
+            "J’ai un système de saisie formalisé (SI, Excel, papier) permettant de calculer et reporter le montant annuel de mes achats répondants aux exigences de l’article 24 de la loi EGALIM (Non applicable en gestion concédée)",
         },
         {
           value: "TAKEN_STOCK",
@@ -145,7 +146,7 @@ export default {
         {
           value: "QUALITY_ACHIEVED",
           label:
-            "J'ai atteint les objectifs de l’article 24 de la loi EGAlim de porter la part de produits de qualité et durables à 50 % dont au moins 20 % de produits issus de l'agriculture biologique",
+            "J'ai atteint les objectifs - 50% et 20%, de l’article 24 de la loi EGAlim",
         },
       ],
     }
