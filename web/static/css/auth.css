@@ -169,6 +169,10 @@ input[type="checkbox"]#id_cgu_approved {
   width: 48%;
 }
 
+.left-column {
+  padding-top: 20px;
+}
+
 .sector,
 .management-type {
   overflow: auto;
@@ -192,5 +196,9 @@ input[type="checkbox"]#id_cgu_approved {
   .left-column,
   .right-column {
     width: auto;
+  }
+
+  .left-column {
+    padding-top: 0;
   }
 }
