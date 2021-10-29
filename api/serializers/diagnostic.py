@@ -7,7 +7,6 @@ FIELDS = (
     "id",
     "year",
     "value_bio_ht",
-    "value_fair_trade_ht",
     "value_sustainable_ht",
     "value_pat_ht",
     "value_total_ht",
@@ -59,8 +58,7 @@ class PublicDiagnosticSerializer(serializers.ModelSerializer):
         if total is not None and isinstance(total, Decimal):
             bio = self.return_value(self, data, "value_bio_ht")
             sustainable = self.return_value(self, data, "value_sustainable_ht")
-            fair_trade = self.return_value(self, data, "value_fair_trade_ht")
-            value_sum = (bio or 0) + (sustainable or 0) + (fair_trade or 0)
+            value_sum = (bio or 0) + (sustainable or 0)
             if value_sum > total:
                 raise serializers.ValidationError(
                     f"La somme des valeurs d'approvisionnement, {value_sum}, est plus que le total, {total}"

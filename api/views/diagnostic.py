@@ -135,7 +135,6 @@ class ImportDiagnosticsView(APIView):
             value_total_ht=row[10],
             value_bio_ht=row[11],
             value_sustainable_ht=row[12],
-            value_fair_trade_ht=row[13],
         )
         diagnostic.full_clean()
         diagnostic.save()

@@ -44,7 +44,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(diagnostic.value_total_ht, 1000)
         self.assertEqual(diagnostic.value_bio_ht, 500)
         self.assertEqual(diagnostic.value_sustainable_ht, Decimal("100.1"))
-        self.assertEqual(diagnostic.value_fair_trade_ht, Decimal("200.2"))
         self.assertIn("seconds", body)
 
     @authenticate
@@ -165,7 +164,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors[8]["message"],
-            "Champ 'Valeur totale annuelle HT' : La somme des valeurs d'approvisionnement, 600, est plus que le total, 20",
+            "Champ 'Valeur totale annuelle HT' : La somme des valeurs d'approvisionnement, 300, est plus que le total, 20",
         )
         self.assertEqual(
             errors[9]["message"],

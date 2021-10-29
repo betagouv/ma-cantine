@@ -48,7 +48,6 @@ class TestDiagnosticsApi(APITestCase):
         payload = {
             "year": 2020,
             "value_bio_ht": 1000,
-            "value_fair_trade_ht": 2000,
             "value_sustainable_ht": 3000,
             "value_pat_ht": 200,
             "value_total_ht": 10000,
@@ -146,7 +145,6 @@ class TestDiagnosticsApi(APITestCase):
         payload = {
             "year": 2020,
             "value_bio_ht": 1000,
-            "value_fair_trade_ht": 2000,
             "value_sustainable_ht": 3000,
             "value_total_ht": 1000,
         }

@@ -13,7 +13,6 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     year = factory.Faker("year")
 
     value_bio_ht = factory.Faker("random_int", min=0, max=2000)
-    value_fair_trade_ht = factory.Faker("random_int", min=0, max=2000)
     value_sustainable_ht = factory.Faker("random_int", min=0, max=2000)
     value_total_ht = factory.Faker("random_int", min=6000, max=10000)
 
