@@ -1,5 +1,6 @@
 {% load static %}
 {% load analytics %}
+{% load environment %}
 {% load render_bundle from webpack_loader %}
 <!DOCTYPE html>
 <html lang="en">
@@ -18,6 +19,7 @@
     <script type="text/javascript">
         window.CSRF_TOKEN = "{{ csrf_token }}";
         window.MATOMO_ID = "{% matomo_id %}";
+        window.ENVIRONMENT = "{% environment %}"
     </script>
     <style>
         @font-face {

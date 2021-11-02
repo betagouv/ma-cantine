@@ -28,3 +28,7 @@ urlpatterns.extend(magicauth_urls)
 # In order for vue-history to work in HTML5 mode, we need to add a catch-all
 # route returning the app (https://router.vuejs.org/guide/essentials/history-mode.html#html5-history-mode)
 urlpatterns.append(re_path(r"^.*/$", VueAppDisplayView.as_view()))
+
+admin.site.site_header = f"Ma Cantine EGALIM - {getattr(settings, 'ENVIRONMENT', '')}"
+admin.site.index_title = ""
+admin.site.site_title = f"Ma Cantine EGALIM - {getattr(settings, 'ENVIRONMENT', '')}"
