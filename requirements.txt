@@ -37,7 +37,7 @@ html2text==2020.1.16
 html5lib==1.1
 idna==3.3
 iniconfig==1.1.1
-isort==5.9.3
+isort==5.10.0
 itsdangerous==2.0.1
 Jinja2==3.0.2
 jmespath==0.10.0
