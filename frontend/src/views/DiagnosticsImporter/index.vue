@@ -170,6 +170,13 @@ export default {
           example: "direct",
         },
         {
+          name: "Secteur économique",
+          description:
+            "Le type d'établissement. Options acceptées : <code>public</code> et <code>private</code> (privé).",
+          type: "Texte controlé",
+          example: "public",
+        },
+        {
           name: "Année du diagnostic",
           description: "En format <code>YYYY</code>.",
           type: "Chiffre",

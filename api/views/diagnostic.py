@@ -116,6 +116,7 @@ class ImportDiagnosticsView(APIView):
                 "daily_meal_count": row[5],
                 "production_type": row[7],
                 "management_type": row[8],
+                "economic_model": row[9],
             },
         )
 
@@ -131,10 +132,10 @@ class ImportDiagnosticsView(APIView):
 
         diagnostic = Diagnostic(
             canteen_id=canteen.id,
-            year=row[9],
-            value_total_ht=row[10],
-            value_bio_ht=row[11],
-            value_sustainable_ht=row[12],
+            year=row[10],
+            value_total_ht=row[11],
+            value_bio_ht=row[12],
+            value_sustainable_ht=row[13],
         )
         diagnostic.full_clean()
         diagnostic.save()
