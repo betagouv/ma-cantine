@@ -15,11 +15,12 @@
         <v-col cols="12" sm="6" md="4" height="100%" v-for="canteen in canteens" :key="`canteen-${canteen.id}`">
           <CanteenCard :canteen="canteen" class="fill-height" />
         </v-col>
-        <v-col cols="12" sm="6" md="4" height="100%">
+        <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
           <v-card
             color="grey lighten-5"
-            class="fill-height d-flex flex-column align-center justify-center"
-            min-height="280"
+            class="d-flex flex-column align-center justify-center"
+            min-height="220"
+            height="80%"
             :to="{ name: 'NewCanteen' }"
           >
             <v-icon size="100">mdi-plus</v-icon>
@@ -27,6 +28,17 @@
               Ajouter une cantine
             </v-card-text>
           </v-card>
+          <v-spacer></v-spacer>
+          <div class="d-flex mt-4 mb-2 align-center px-2">
+            <v-divider></v-divider>
+            <p class="mx-2 my-0 caption">ou</p>
+            <v-divider></v-divider>
+          </div>
+          <v-spacer></v-spacer>
+          <v-btn text color="primary" :to="{ name: 'DiagnosticsImporter' }">
+            <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
+            Créer plusieurs cantines depuis un fichier
+          </v-btn>
         </v-col>
       </v-row>
     </div>
@@ -37,10 +49,6 @@
         <v-btn text color="primary" :to="{ name: 'NewDiagnostic' }" v-if="canteens.length">
           <v-icon class="mr-2">mdi-plus</v-icon>
           Ajouter un diagnostic
-        </v-btn>
-        <v-btn text color="primary" :to="{ name: 'DiagnosticsImporter' }">
-          <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
-          Importer plusieurs diagnostics
         </v-btn>
       </div>
 

@@ -1,8 +1,8 @@
 <template>
   <div class="text-left">
-    <h1 class="font-weight-black text-h4 my-4">Import des diagnostics via CSV</h1>
+    <h1 class="font-weight-black text-h4 my-4">Créer des cantines via CSV</h1>
     <p>
-      Créez plusieurs diagnostics en transferant un fichier CSV suivant les spécifications ci-dessous.
+      Créez plusieurs cantines et leur diagnostics en transferant un fichier CSV suivant les spécifications ci-dessous.
     </p>
     <p>
       Vous pouvez également
