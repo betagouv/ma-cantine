@@ -91,6 +91,8 @@ class ImportDiagnosticsView(APIView):
         filestring = file.read().decode("utf-8")
         csvreader = csv.reader(filestring.splitlines())
         for row_number, row in enumerate(csvreader, start=1):
+            if row_number == 1 and row[0].lower() == "siret":
+                continue
             try:
                 if row[0] == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})

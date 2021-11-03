@@ -175,3 +175,15 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors[10]["message"],
             "Champ 'Secteur économique' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
         )
+
+    @authenticate
+    def test_diagnostic_header_allowed(self):
+        """
+        Optionally allow a header that starts with SIRET in the file
+        """
+        with open("./api/tests/files/diagnostics_header.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)
