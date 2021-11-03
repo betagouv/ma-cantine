@@ -130,7 +130,7 @@ export default {
           optional: true,
         },
         {
-          name: "Code postale",
+          name: "Code postal",
           description: "En cas d'absence de code INSEE, ce champ devient obligatoire.",
           example: "69001",
           optional: true,
