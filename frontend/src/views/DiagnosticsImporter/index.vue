@@ -69,17 +69,19 @@
             <th>Colonne</th>
             <th>Champ</th>
             <th>Description</th>
+            <th>Type</th>
             <th>Exemple</th>
             <th>Obligatoire</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(field, idx) in documentation" :key="idx">
-            <td>{{ idx + 1 }}</td>
+            <td class="text-center">{{ idx + 1 }}</td>
             <td>{{ field.name }}</td>
             <td v-html="field.description"></td>
+            <td>{{ field.type }}</td>
             <td style="min-width: 160px;">{{ field.example }}</td>
-            <td>{{ field.optional ? "✘" : "✔" }}</td>
+            <td class="text-center">{{ field.optional ? "✘" : "✔" }}</td>
           </tr>
         </tbody>
       </template>
@@ -113,12 +115,14 @@ export default {
       documentation: [
         {
           name: "SIRET",
-          description: "Le SIRET de la cantine (14 chiffres et conforme à la formule de Luhn).",
-          example: "771 888 718 49858",
+          description: "Le SIRET de la cantine.",
+          type: "14 chiffres, avec ou sans espaces",
+          example: "000 000 000 00000",
         },
         {
           name: "Nom de la cantine",
           example: "Ma Cantine",
+          type: "Texte libre",
         },
         {
           name: "Code géographique INSEE de la ville",
@@ -133,12 +137,14 @@ export default {
         },
         {
           name: "SIRET de la cuisine centrale",
-          description: "Le SIRET de la cuisine centrale (14 chiffres et conforme à la formule de Luhn).",
-          example: "482 335 110 09376",
+          description: "Le SIRET de la cuisine centrale.",
+          type: "14 chiffres, avec ou sans espaces",
+          example: "999 999 999 99999",
           optional: true,
         },
         {
           name: "Nombre de repas servis par jour",
+          type: "Chiffre",
           example: "300",
         },
         {
@@ -146,38 +152,45 @@ export default {
           description: `Options acceptées : ${this.$store.state.sectors.map(
             (x) => " <code>" + x.name + "</code>"
           )}. Spécifiez plusieurs en séparant avec un <code>+</code>.`,
+          type: "Texte controlé",
           example: `${this.$store.state.sectors[0].name}+${this.$store.state.sectors[1].name}`,
         },
         {
           name: "Mode de production",
           description:
             "Le lieu de production des repas. Options acceptées : <code>site</code> (cuisine-site) et <code>central</code> (cuisine centrale).",
+          type: "Texte controlé",
           example: "central",
         },
         {
           name: "Mode de gestion",
           description:
             "Comment le service des repas est géré. Options acceptées : <code>direct</code> (directe) et <code>conceded</code> (concédé).",
+          type: "Texte controlé",
           example: "direct",
         },
         {
           name: "Année du diagnostic",
           description: "En format <code>YYYY</code>.",
+          type: "Chiffre",
           example: "2020",
         },
         {
           name: "Valeur totale d'achats HT",
           description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
+          type: "Chiffre",
           example: "3290.23",
         },
         {
           name: "Valeur d'achats bio HT",
           description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
+          type: "Chiffre",
           example: "1284.70",
         },
         {
           name: "Valeur d'achats durables et de qualité (hors bio) HT",
           description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
+          type: "Chiffre",
           example: "681",
         },
       ],
