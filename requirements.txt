@@ -3,8 +3,8 @@ asgiref==3.4.1
 astroid==2.8.4
 attrs==21.2.0
 black==21.10b0
-boto3==1.19.8
-botocore==1.22.8
+boto3==1.19.9
+botocore==1.22.9
 Brotli==1.0.9
 certifi==2021.10.8
 chardet==4.0.0
