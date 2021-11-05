@@ -54,7 +54,7 @@ platformdirs==2.4.0
 pluggy==1.0.0
 psutil==5.8.0
 psycopg2==2.9.1
-py==1.10.0
+py==1.11.0
 pylint==2.11.1
 pylint-django==2.4.4
 pylint-plugin-utils==0.6
