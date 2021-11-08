@@ -160,28 +160,28 @@ export default {
           description: `Options acceptées : ${this.$store.state.sectors.map(
             (x) => " <code>" + x.name + "</code>"
           )}. Spécifiez plusieurs en séparant avec un <code>+</code>.`,
-          type: "Texte controlé",
+          type: "Texte controlé, avec ou sans accents et capitalisation",
           example: `${this.$store.state.sectors[0].name}+${this.$store.state.sectors[1].name}`,
         },
         {
           name: "Mode de production",
           description:
             "Le lieu de production des repas. Options acceptées : <code>site</code> (cuisine-site) et <code>central</code> (cuisine centrale).",
-          type: "Texte controlé",
+          type: "Texte controlé, n'importe quel capitalisation",
           example: "central",
         },
         {
           name: "Mode de gestion",
           description:
             "Comment le service des repas est géré. Options acceptées : <code>direct</code> (directe) et <code>conceded</code> (concédé).",
-          type: "Texte controlé",
+          type: "Texte controlé, n'importe quel capitalisation",
           example: "direct",
         },
         {
           name: "Secteur économique",
           description:
             "Le type d'établissement. Options acceptées : <code>public</code> et <code>private</code> (privé).",
-          type: "Texte controlé",
+          type: "Texte controlé, n'importe quel capitalisation",
           example: "public",
         },
         {

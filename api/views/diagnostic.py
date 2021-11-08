@@ -4,6 +4,7 @@ import re
 import logging
 from data.models.diagnostic import Diagnostic
 from django.db import IntegrityError, transaction
+from django.db.models.functions import Lower
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist, BadRequest, ValidationError
 from rest_framework.generics import UpdateAPIView, CreateAPIView
@@ -60,6 +61,7 @@ class DiagnosticUpdateView(UpdateAPIView):
 class ImportDiagnosticsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
+    annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
 
     def post(self, request):
         start = time.time()
@@ -116,9 +118,9 @@ class ImportDiagnosticsView(APIView):
                 "postal_code": row[3],
                 "central_producer_siret": ImportDiagnosticsView._normalise_siret(row[4]),
                 "daily_meal_count": row[5],
-                "production_type": row[7],
-                "management_type": row[8],
-                "economic_model": row[9],
+                "production_type": row[7].lower(),
+                "management_type": row[8].lower(),
+                "economic_model": row[9].lower(),
             },
         )
 
@@ -128,7 +130,9 @@ class ImportDiagnosticsView(APIView):
         if created:
             canteen.managers.add(self.request.user)
             if row[6]:
-                canteen.sectors.add(*[Sector.objects.get(name=sector) for sector in row[6].split("+")])
+                canteen.sectors.add(
+                    *[self.annotated_sectors.get(name_lower__unaccent=sector.lower()) for sector in row[6].split("+")]
+                )
             canteen.full_clean()
             canteen.save()
 
