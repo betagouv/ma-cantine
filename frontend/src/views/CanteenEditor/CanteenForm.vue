@@ -186,7 +186,7 @@ export default {
   },
   data() {
     return {
-      canteen: {},
+      canteen: { images: [] },
       formIsValid: true,
       bypassLeaveWarning: false,
       deletionDialog: false,
