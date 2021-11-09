@@ -16,7 +16,7 @@
       </a>
       <a class="text-decoration-underline" href="/static/documents/fichier_exemple_ma_cantine.ods" download>
         <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        ods
+        OpenDocument (.ods)
       </a>
       .
     </p>
