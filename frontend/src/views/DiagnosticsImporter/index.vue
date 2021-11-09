@@ -2,7 +2,7 @@
   <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">Créer des cantines via CSV</h1>
     <p>
-      Créez plusieurs cantines et leur diagnostics en transferant un fichier CSV suivant les spécifications ci-dessous.
+      Créez plusieurs cantines et diagnostics en transférant un fichier CSV suivant les spécifications ci-dessous.
     </p>
     <p>
       Vous pouvez également télécharger un fichier exemple en format de choix :
