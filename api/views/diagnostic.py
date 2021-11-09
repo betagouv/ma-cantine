@@ -113,7 +113,9 @@ class ImportDiagnosticsView(APIView):
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
         elif not row[2] and not row[3]:
-            raise ValidationError({"postal_code": "Ce champ ne peut pas être vide si le code INSEE est vide."})
+            raise ValidationError(
+                {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
+            )
 
         (canteen, created) = Canteen.objects.get_or_create(
             siret=siret,
