@@ -38,6 +38,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.daily_meal_count, 700)
         self.assertEqual(canteen.production_type, "site")
         self.assertEqual(canteen.management_type, "conceded")
+        self.assertEqual(canteen.economic_model, "public")
         self.assertEqual(canteen.central_producer_siret, "42126486200010")
         diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
         self.assertEqual(diagnostic.year, 2020)
@@ -170,3 +171,35 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors[9]["message"],
             "Champ 'siret' : Le siret de la cantine ne peut pas être vide",
         )
+        self.assertEqual(
+            errors[10]["message"],
+            "Champ 'Secteur économique' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
+        )
+        self.assertEqual(
+            errors[11]["message"],
+            "Données manquantes : 14 colonnes attendus, 13 trouvés.",
+        )
+        self.assertEqual(
+            errors[12]["message"],
+            "Champ 'repas par jour' : Ce champ ne peut pas être vide.",
+        )
+        self.assertEqual(
+            errors[13]["message"],
+            "Champ 'nom' : Ce champ ne peut pas être vide.",
+        )
+        self.assertEqual(
+            errors[14]["message"],
+            "Champ 'code postal' : Ce champ ne peut pas être vide si le code INSEE de la ville est vide.",
+        )
+
+    @authenticate
+    def test_diagnostic_header_allowed(self):
+        """
+        Optionally allow a header that starts with SIRET in the file
+        """
+        with open("./api/tests/files/diagnostics_header.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)

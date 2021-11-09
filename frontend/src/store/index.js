@@ -401,7 +401,6 @@ export default new Vuex.Store({
     },
 
     importDiagnostics(context, payload) {
-      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       let form = new FormData()
       form.append("file", payload.file)
       return fetch(`/api/v1/importDiagnostics/`, {
@@ -412,14 +411,8 @@ export default new Vuex.Store({
         body: form,
       })
         .then(verifyResponse)
-        .then((response) => {
-          context.commit("ADD_USER_CANTEENS", response.canteens)
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
-          return response
-        })
-        .catch((e) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
-          throw e
+        .then(() => {
+          context.dispatch("fetchUserCanteens")
         })
     },
 
