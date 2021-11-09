@@ -179,6 +179,18 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors[11]["message"],
             "Données manquantes : 14 colonnes attendus, 13 trouvés.",
         )
+        self.assertEqual(
+            errors[12]["message"],
+            "Champ 'repas par jour' : Ce champ ne peut pas être vide.",
+        )
+        self.assertEqual(
+            errors[13]["message"],
+            "Champ 'nom' : Ce champ ne peut pas être vide.",
+        )
+        self.assertEqual(
+            errors[14]["message"],
+            "Champ 'code postal' : Ce champ ne peut pas être vide si le code INSEE de la ville est vide.",
+        )
 
     @authenticate
     def test_diagnostic_header_allowed(self):
