@@ -5,7 +5,7 @@
         <v-card outlined class="d-flex flex-column fill-height pa-2">
           <v-card-title class="font-weight-bold">Tableur d'aide pour le calcul</v-card-title>
           <v-card-text>
-            Si vous ne connaissez pas votre part de bio, produits durables, produits issues du commerce équitable, nous
+            Si vous ne connaissez pas votre part de bio, produits durables, produits issus du commerce équitable, nous
             vous proposons un outil simple pour les calculer. Sous forme de tableur, remplissez vos achats HT suivant
             leurs labels et/ou sigles de qualité.
           </v-card-text>
