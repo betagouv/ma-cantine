@@ -21,10 +21,6 @@
           <v-icon class="mr-2">mdi-plus</v-icon>
           Ajouter un diagnostic
         </v-btn>
-        <v-btn text color="primary" :to="{ name: 'DiagnosticsImporter' }">
-          <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
-          Importer plusieurs diagnostics
-        </v-btn>
       </div>
 
       <DiagnosticsPagination :canteens="canteens" />

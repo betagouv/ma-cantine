@@ -4,6 +4,7 @@ import re
 import logging
 from data.models.diagnostic import Diagnostic
 from django.db import IntegrityError, transaction
+from django.db.models.functions import Lower
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist, BadRequest, ValidationError
 from rest_framework.generics import UpdateAPIView, CreateAPIView
@@ -60,6 +61,7 @@ class DiagnosticUpdateView(UpdateAPIView):
 class ImportDiagnosticsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
+    annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
 
     def post(self, request):
         start = time.time()
@@ -91,6 +93,8 @@ class ImportDiagnosticsView(APIView):
         filestring = file.read().decode("utf-8")
         csvreader = csv.reader(filestring.splitlines())
         for row_number, row in enumerate(csvreader, start=1):
+            if row_number == 1 and row[0].lower() == "siret":
+                continue
             try:
                 if row[0] == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
@@ -99,12 +103,20 @@ class ImportDiagnosticsView(APIView):
                 diagnostics_created += 1
                 canteens[canteen.siret] = canteen
             except Exception as e:
-                for error in self._parse_errors(e):
+                for error in self._parse_errors(e, row):
                     errors.append(ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number))
         return (canteens, errors, diagnostics_created)
 
     @transaction.atomic
     def _create_canteen_with_diagnostic(self, row, siret):
+        row[13]  # accessing last column to throw error if badly formatted early on
+        if not row[5]:
+            raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
+        elif not row[2] and not row[3]:
+            raise ValidationError(
+                {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
+            )
+
         (canteen, created) = Canteen.objects.get_or_create(
             siret=siret,
             defaults={
@@ -114,8 +126,9 @@ class ImportDiagnosticsView(APIView):
                 "postal_code": row[3],
                 "central_producer_siret": ImportDiagnosticsView._normalise_siret(row[4]),
                 "daily_meal_count": row[5],
-                "production_type": row[7],
-                "management_type": row[8],
+                "production_type": row[7].lower(),
+                "management_type": row[8].lower(),
+                "economic_model": row[9].lower(),
             },
         )
 
@@ -125,16 +138,18 @@ class ImportDiagnosticsView(APIView):
         if created:
             canteen.managers.add(self.request.user)
             if row[6]:
-                canteen.sectors.add(*[Sector.objects.get(name=sector) for sector in row[6].split("+")])
+                canteen.sectors.add(
+                    *[self.annotated_sectors.get(name_lower__unaccent=sector.lower()) for sector in row[6].split("+")]
+                )
             canteen.full_clean()
             canteen.save()
 
         diagnostic = Diagnostic(
             canteen_id=canteen.id,
-            year=row[9],
-            value_total_ht=row[10],
-            value_bio_ht=row[11],
-            value_sustainable_ht=row[12],
+            year=row[10],
+            value_total_ht=row[11],
+            value_bio_ht=row[12],
+            value_sustainable_ht=row[13],
         )
         diagnostic.full_clean()
         diagnostic.save()
@@ -158,7 +173,7 @@ class ImportDiagnosticsView(APIView):
             status=status.HTTP_200_OK,
         )
 
-    def _parse_errors(self, e):
+    def _parse_errors(self, e, row):
         errors = []
         if isinstance(e, PermissionDenied):
             errors.append(
@@ -217,6 +232,13 @@ class ImportDiagnosticsView(APIView):
                         "code": 400,
                     }
                 )
+        elif isinstance(e, IndexError):
+            errors.append(
+                {
+                    "message": f"Données manquantes : 14 colonnes attendus, {len(row)} trouvés.",
+                    "code": 400,
+                }
+            )
         if not errors:
             errors.append(
                 {

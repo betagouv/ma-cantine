@@ -3,8 +3,8 @@ asgiref==3.4.1
 astroid==2.8.4
 attrs==21.2.0
 black==21.10b0
-boto3==1.19.9
-botocore==1.22.9
+boto3==1.20.0
+botocore==1.23.0
 Brotli==1.0.9
 certifi==2021.10.8
 chardet==4.0.0
@@ -37,7 +37,7 @@ html2text==2020.1.16
 html5lib==1.1
 idna==3.3
 iniconfig==1.1.1
-isort==5.9.3
+isort==5.10.1
 itsdangerous==2.0.1
 Jinja2==3.0.2
 jmespath==0.10.0
@@ -58,7 +58,7 @@ py==1.11.0
 pylint==2.11.1
 pylint-django==2.4.4
 pylint-plugin-utils==0.6
-pyparsing==3.0.4
+pyparsing==3.0.5
 PyPDF2==1.26.0
 pytest==6.2.5
 pytest-django==4.4.0

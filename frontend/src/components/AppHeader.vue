@@ -17,9 +17,13 @@
           <v-img :src="`/static/images/${imageFilename}`" :width="imageWidth" alt="Page d'accueil ma cantine"></v-img>
         </router-link>
       </v-toolbar-title>
-      <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
-        {{ chipInfo.text }}
-      </v-chip>
+      <div style="height: 100%" class="d-flex flex-column">
+        <v-spacer></v-spacer>
+        <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
+          {{ chipInfo.text }}
+        </v-chip>
+        <v-spacer></v-spacer>
+      </div>
 
       <div class="mx-4 fill-height d-flex flex-column" v-if="$vuetify.breakpoint.smAndUp && !this.loggedUser">
         <v-spacer></v-spacer>
