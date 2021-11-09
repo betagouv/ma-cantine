@@ -103,12 +103,13 @@ class ImportDiagnosticsView(APIView):
                 diagnostics_created += 1
                 canteens[canteen.siret] = canteen
             except Exception as e:
-                for error in self._parse_errors(e):
+                for error in self._parse_errors(e, row):
                     errors.append(ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number))
         return (canteens, errors, diagnostics_created)
 
     @transaction.atomic
     def _create_canteen_with_diagnostic(self, row, siret):
+        row[13]  # accessing last column to throw error if badly formatted early on
         (canteen, created) = Canteen.objects.get_or_create(
             siret=siret,
             defaults={
@@ -165,7 +166,7 @@ class ImportDiagnosticsView(APIView):
             status=status.HTTP_200_OK,
         )
 
-    def _parse_errors(self, e):
+    def _parse_errors(self, e, row):
         errors = []
         if isinstance(e, PermissionDenied):
             errors.append(
@@ -224,6 +225,13 @@ class ImportDiagnosticsView(APIView):
                         "code": 400,
                     }
                 )
+        elif isinstance(e, IndexError):
+            errors.append(
+                {
+                    "message": f"Données manquantes : 14 colonnes attendus, {len(row)} trouvés.",
+                    "code": 400,
+                }
+            )
         if not errors:
             errors.append(
                 {

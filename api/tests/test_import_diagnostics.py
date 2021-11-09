@@ -175,6 +175,10 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors[10]["message"],
             "Champ 'Secteur économique' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
         )
+        self.assertEqual(
+            errors[11]["message"],
+            "Données manquantes : 14 colonnes attendus, 13 trouvés.",
+        )
 
     @authenticate
     def test_diagnostic_header_allowed(self):
