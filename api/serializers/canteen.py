@@ -144,6 +144,21 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
         return canteen
 
+    def create(self, validated_data):
+        if "images" not in validated_data:
+            return super().create(validated_data)
+
+        image_validated_data = validated_data.pop("images", None)
+        canteen = super().create(validated_data)
+
+        if image_validated_data is not None:
+            canteen_image_serializer = self.fields["images"]
+            for item in image_validated_data:
+                item["canteen"] = canteen
+            canteen_image_serializer.update(canteen.images.all(), image_validated_data)
+
+        return canteen
+
 
 class ManagingTeamSerializer(serializers.ModelSerializer):
 
