@@ -651,3 +651,30 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         canteen.refresh_from_db()
         self.assertEqual(canteen.images.count(), 0)
+
+    @authenticate
+    def test_create_cantine_with_images(self):
+        """
+        The app should create the necessary image models upon the creation of a cantine
+        """
+        image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
+        image_base_64 = None
+        with open(image_path, "rb") as image:
+            image_base_64 = base64.b64encode(image.read()).decode("utf-8")
+
+        payload = {
+            "name": "My canteen",
+            "city": "Lyon",
+            "siret": "21340172201787",
+            "management_type": "direct",
+            "images": [
+                {
+                    "image": "data:image/jpeg;base64," + image_base_64,
+                }
+            ],
+        }
+        response = self.client.post(reverse("user_canteens"), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        created_canteen = Canteen.objects.get(pk=body["id"])
+        self.assertEqual(created_canteen.images.count(), 1)
