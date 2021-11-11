@@ -90,8 +90,9 @@ class ImportDiagnosticsView(APIView):
         diagnostics_created = 0
         canteens = {}
         errors = []
+        # TODO: make sure won't overflow memory with a big file
         filestring = file.read().decode("utf-8-sig")
-        csvreader = csv.reader(filestring.splitlines())
+        csvreader = csv.reader(filestring.splitlines(), delimiter=self._get_delimiter(filestring))
         for row_number, row in enumerate(csvreader, start=1):
             if row_number == 1 and row[0].lower() == "siret":
                 continue
@@ -262,3 +263,16 @@ class ImportDiagnosticsView(APIView):
             except:
                 pass
         return field_name
+
+    @staticmethod
+    def _get_delimiter(filestring):
+        accepted_delimiters = [",", ";", "\t"]
+        delimiter = ","
+        first_delim_idx = 20
+        for delim in accepted_delimiters:
+            # for efficiency, start by only looking at the first 20 characters of file
+            idx = filestring[:first_delim_idx].find(delim)
+            if idx != -1 and idx < first_delim_idx:
+                delimiter = delim
+                first_delim_idx = idx
+        return delimiter
