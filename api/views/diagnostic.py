@@ -90,7 +90,7 @@ class ImportDiagnosticsView(APIView):
         diagnostics_created = 0
         canteens = {}
         errors = []
-        filestring = file.read().decode("utf-8")
+        filestring = file.read().decode("utf-8-sig")
         csvreader = csv.reader(filestring.splitlines())
         for row_number, row in enumerate(csvreader, start=1):
             if row_number == 1 and row[0].lower() == "siret":
