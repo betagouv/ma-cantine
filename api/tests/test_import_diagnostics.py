@@ -53,7 +53,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         Test that remaining location information is filled in from import
         """
-        with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
+        with open("./api/tests/files/diagnostics_locations.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -63,6 +63,12 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.department, Department.meurthe_et_moselle)
         # TODO: region?
         canteen = Canteen.objects.get(siret="73282932000074")
+        self.assertEqual(canteen.postal_code, "07130")
+        self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
+        self.assertEqual(canteen.department, Department.ardeche)
+        # Given both a city code and postcode, use citycode only to find location
+        canteen = Canteen.objects.get(siret="32441387130915")
+        self.assertEqual(canteen.city_insee_code, "07293")
         self.assertEqual(canteen.postal_code, "07130")
         self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
         self.assertEqual(canteen.department, Department.ardeche)

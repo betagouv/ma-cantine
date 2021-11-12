@@ -109,8 +109,12 @@ class ImportDiagnosticsView(APIView):
                 canteen = self._create_canteen_with_diagnostic(row, siret)
                 diagnostics_created += 1
                 canteens[canteen.siret] = canteen
-                if not canteen.city:
-                    locations_csv_str += f"{canteen.siret},{canteen.city_insee_code},{canteen.postal_code}\n"
+                if not canteen.city and (canteen.city_insee_code or canteen.postal_code):
+                    # if both city code and postcode are given, use city code and avoid having no location due to mismatch
+                    if canteen.city_insee_code:
+                        locations_csv_str += f"{canteen.siret},{canteen.city_insee_code},\n"
+                    else:
+                        locations_csv_str += f"{canteen.siret},,{canteen.postal_code}\n"
                     hasLocationsToFind = True
             except Exception as e:
                 for error in self._parse_errors(e, row):
@@ -278,6 +282,7 @@ class ImportDiagnosticsView(APIView):
     @staticmethod
     def _update_location_data(canteens, locations_csv_str):
         try:
+            # NB: max size of a csv file is 50 MB
             response = requests.post(
                 "https://api-adresse.data.gouv.fr/search/csv/",
                 files={
@@ -288,7 +293,7 @@ class ImportDiagnosticsView(APIView):
                     "citycode": "citycode",
                     "result_columns": ["result_postcode", "result_citycode", "result_city", "result_context"],
                 },
-                timeout=1,
+                timeout=3,
             )
             response.raise_for_status()  # Raise an exception if the request failed
             for row in csv.reader(response.text.splitlines()):
