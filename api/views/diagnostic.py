@@ -2,6 +2,7 @@ import csv
 import time
 import re
 import logging
+from decimal import Decimal
 from data.models.diagnostic import Diagnostic
 from django.db import IntegrityError, transaction
 from django.db.models.functions import Lower
@@ -121,6 +122,29 @@ class ImportDiagnosticsView(APIView):
                 {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
             )
 
+        # TODO: This should take into account more number formats and be factored out to utils
+        number_error_message = "Ce champ doit être un nombre décimal."
+        try:
+            if not row[11]:
+                raise Exception
+            value_total_ht = Decimal(row[11].replace(",", "."))
+        except Exception as e:
+            raise ValidationError({"value_total_ht": number_error_message})
+
+        try:
+            if not row[12]:
+                raise Exception
+            value_bio_ht = Decimal(row[12].replace(",", "."))
+        except Exception as e:
+            raise ValidationError({"value_bio_ht": number_error_message})
+
+        try:
+            if not row[13]:
+                raise Exception
+            value_sustainable_ht = Decimal(row[13].replace(",", "."))
+        except Exception as e:
+            raise ValidationError({"value_sustainable_ht": number_error_message})
+
         (canteen, created) = Canteen.objects.get_or_create(
             siret=siret,
             defaults={
@@ -151,9 +175,9 @@ class ImportDiagnosticsView(APIView):
         diagnostic = Diagnostic(
             canteen_id=canteen.id,
             year=row[10],
-            value_total_ht=row[11],
-            value_bio_ht=row[12],
-            value_sustainable_ht=row[13],
+            value_total_ht=value_total_ht,
+            value_bio_ht=value_bio_ht,
+            value_sustainable_ht=value_sustainable_ht,
         )
         diagnostic.full_clean()
         diagnostic.save()

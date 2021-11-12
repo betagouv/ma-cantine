@@ -153,7 +153,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors[5]["message"],
-            "Champ 'Valeur totale annuelle HT' : La valeur «\xa0invalid total\xa0» doit être un nombre décimal.",
+            "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal.",
         )
         self.assertEqual(
             errors[6]["message"],
@@ -221,4 +221,13 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)
+
+    @authenticate
+    def test_decimal_comma_format(self):
+        with open("./api/tests/files/diagnostics_decimal_number.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 2)
         self.assertEqual(len(body["errors"]), 0)
