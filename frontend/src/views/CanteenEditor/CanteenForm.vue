@@ -28,7 +28,7 @@
           ></v-text-field>
         </v-col>
 
-        <v-col cols="12" md="4" height="100%" class="d-flex flex-column">
+        <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
           <label class="body-2" for="logo">
             Logo
           </label>
@@ -45,6 +45,7 @@
               color="grey lighten-5"
               class="fill-height"
               style="overflow: hidden;"
+              min-height="170"
             >
               <div v-if="canteen.logo" class="d-flex flex-column fill-height">
                 <v-spacer></v-spacer>
