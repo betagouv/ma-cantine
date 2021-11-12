@@ -411,8 +411,9 @@ export default new Vuex.Store({
         body: form,
       })
         .then(verifyResponse)
-        .then(() => {
+        .then((json) => {
           context.dispatch("fetchUserCanteens")
+          return json // return response for displaying specific messages
         })
     },
 

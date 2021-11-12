@@ -24,7 +24,7 @@
     <FileDrop
       v-model="file"
       subtitle="Format CSV encodé en UTF-8 attendu"
-      :acceptTypes="['.csv', 'text/csv']"
+      :acceptTypes="['.csv', 'text/csv', '.tsv', 'text/tsv']"
       @upload="upload"
     />
 
