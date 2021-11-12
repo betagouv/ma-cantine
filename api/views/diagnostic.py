@@ -277,25 +277,29 @@ class ImportDiagnosticsView(APIView):
 
     @staticmethod
     def _update_location_data(canteens, locations_csv_str):
-        response = requests.post(
-            "https://api-adresse.data.gouv.fr/search/csv/",
-            files={
-                "data": ("locations.csv", locations_csv_str),
-            },
-            data={
-                "postcode": "postcode",
-                "citycode": "citycode",
-                "result_columns": ["result_postcode", "result_citycode", "result_city", "result_context"],
-            },
-        )
-        if response.status_code == 200:
+        try:
+            response = requests.post(
+                "https://api-adresse.data.gouv.fr/search/csv/",
+                files={
+                    "data": ("locations.csv", locations_csv_str),
+                },
+                data={
+                    "postcode": "postcode",
+                    "citycode": "citycode",
+                    "result_columns": ["result_postcode", "result_citycode", "result_city", "result_context"],
+                },
+                timeout=1,
+            )
+            response.raise_for_status()  # Raise an exception if the request failed
             for row in csv.reader(response.text.splitlines()):
                 if row[0] == "siret":
                     continue  # skip header
-                canteen = canteens[row[0]]
-                canteen.postal_code = row[3]
-                canteen.city_insee_code = row[4]
-                canteen.city = row[5]
-                canteen.department = row[6].split(",")[0]
-                canteen.save()
-        # TODO: quietly(?) log error
+                if row[5] != "":  # city found, so rest of data is found
+                    canteen = canteens[row[0]]
+                    canteen.postal_code = row[3]
+                    canteen.city_insee_code = row[4]
+                    canteen.city = row[5]
+                    canteen.department = row[6].split(",")[0]
+                    canteen.save()
+        except Exception as e:
+            logger.error(f"Error while updating location data : {e}")

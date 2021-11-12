@@ -67,10 +67,19 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
         self.assertEqual(canteen.department, Department.ardeche)
 
-    # TODO: what if conflicting city and postcodes
-    # TODO: what if no location data given
+    @authenticate
+    def test_location_not_found(self):
+        with open("./api/tests/files/diagnostics_bad_location.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        canteen = Canteen.objects.get(siret="21340172201787")
+        self.assertEqual(canteen.postal_code, "10")
+        self.assertEqual(canteen.city_insee_code, "")
+        self.assertIsNone(canteen.city)
+        self.assertIsNone(canteen.department)
+
     # TODO: what if data already exists
-    # TODO: what if API doesn't find location data for a canteen
     # TODO: what if API is non responsive
 
     @authenticate
