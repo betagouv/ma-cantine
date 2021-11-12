@@ -15,6 +15,7 @@ from api.serializers import PublicDiagnosticSerializer, FullCanteenSerializer
 from data.models import Canteen, Sector
 from api.permissions import IsCanteenManager, CanEditDiagnostic
 from .utils import camelize
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -90,12 +91,14 @@ class ImportDiagnosticsView(APIView):
         diagnostics_created = 0
         canteens = {}
         errors = []
-        # TODO: make sure won't overflow memory with a big file
+        locations_csv_str = "siret,citycode,postcode\n"
+        hasLocationsToFind = False
 
+        # TODO: make sure won't overflow memory with a big file
         filestring = file.read().decode("utf-8-sig")
         dialect = csv.Sniffer().sniff(filestring[:1024])
-
         csvreader = csv.reader(filestring.splitlines(), dialect=dialect)
+
         for row_number, row in enumerate(csvreader, start=1):
             if row_number == 1 and row[0].lower() == "siret":
                 continue
@@ -106,9 +109,14 @@ class ImportDiagnosticsView(APIView):
                 canteen = self._create_canteen_with_diagnostic(row, siret)
                 diagnostics_created += 1
                 canteens[canteen.siret] = canteen
+                if not canteen.city:
+                    locations_csv_str += f"{canteen.siret},{canteen.city_insee_code},{canteen.postal_code}\n"
+                    hasLocationsToFind = True
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     errors.append(ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number))
+        if hasLocationsToFind:
+            self._update_location_data(canteens, locations_csv_str)
         return (canteens, errors, diagnostics_created)
 
     @transaction.atomic
@@ -266,3 +274,28 @@ class ImportDiagnosticsView(APIView):
             except:
                 pass
         return field_name
+
+    @staticmethod
+    def _update_location_data(canteens, locations_csv_str):
+        response = requests.post(
+            "https://api-adresse.data.gouv.fr/search/csv/",
+            files={
+                "data": ("locations.csv", locations_csv_str),
+            },
+            data={
+                "postcode": "postcode",
+                "citycode": "citycode",
+                "result_columns": ["result_postcode", "result_citycode", "result_city", "result_context"],
+            },
+        )
+        if response.status_code == 200:
+            for row in csv.reader(response.text.splitlines()):
+                if row[0] == "siret":
+                    continue  # skip header
+                canteen = canteens[row[0]]
+                canteen.postal_code = row[3]
+                canteen.city_insee_code = row[4]
+                canteen.city = row[5]
+                canteen.department = row[6].split(",")[0]
+                canteen.save()
+        # TODO: quietly(?) log error

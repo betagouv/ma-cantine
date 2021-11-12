@@ -5,6 +5,7 @@ from rest_framework import status
 from .utils import authenticate
 from data.models import Diagnostic, Canteen
 from data.factories import SectorFactory, CanteenFactory
+from data.department_choices import Department
 
 
 class TestImportDiagnosticsAPI(APITestCase):
@@ -34,7 +35,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Canteen.objects.first().managers.first().id, authenticate.user.id)
         self.assertEqual(Diagnostic.objects.count(), 2)
         canteen = Canteen.objects.get(siret="21340172201787")
-        self.assertEqual(canteen.postal_code, "17000")
+        self.assertEqual(canteen.postal_code, "54460")
         self.assertEqual(canteen.daily_meal_count, 700)
         self.assertEqual(canteen.production_type, "site")
         self.assertEqual(canteen.management_type, "conceded")
@@ -46,6 +47,31 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(diagnostic.value_bio_ht, 500)
         self.assertEqual(diagnostic.value_sustainable_ht, Decimal("100.1"))
         self.assertIn("seconds", body)
+
+    @authenticate
+    def test_location_found(self):
+        """
+        Test that remaining location information is filled in from import
+        """
+        with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        canteen = Canteen.objects.get(siret="21340172201787")
+        self.assertEqual(canteen.city_insee_code, "54318")
+        self.assertEqual(canteen.city, "Liverdun")
+        self.assertEqual(canteen.department, Department.meurthe_et_moselle)
+        # TODO: region?
+        canteen = Canteen.objects.get(siret="73282932000074")
+        self.assertEqual(canteen.postal_code, "07130")
+        self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
+        self.assertEqual(canteen.department, Department.ardeche)
+
+    # TODO: what if conflicting city and postcodes
+    # TODO: what if no location data given
+    # TODO: what if data already exists
+    # TODO: what if API doesn't find location data for a canteen
+    # TODO: what if API is non responsive
 
     @authenticate
     def test_canteen_info_not_overridden(self):
