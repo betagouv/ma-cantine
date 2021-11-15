@@ -455,8 +455,8 @@ export default {
           })
           this.navigateToDiagnosticList()
         })
-        .catch(() => {
-          this.$store.dispatch("notifyServerError")
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
         })
     },
     goToExistingDiagnostic() {
@@ -523,7 +523,7 @@ export default {
           })
           this.navigateToDiagnosticList()
         })
-        .catch(() => this.$store.dispatch("notifyServerError"))
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
     cancelTeledeclaration() {
       return this.$store
@@ -538,7 +538,7 @@ export default {
           })
           this.navigateToDiagnosticList()
         })
-        .catch(() => this.$store.dispatch("notifyServerError"))
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
     timeAgo: timeAgo,
   },

@@ -239,8 +239,8 @@ export default {
             message: `Fichier traité en ${Math.round(this.seconds)} secondes`,
           })
         })
-        .catch(() => {
-          this.$store.dispatch("notifyServerError")
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
         })
     },
   },
