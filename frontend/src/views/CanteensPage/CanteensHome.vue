@@ -579,6 +579,7 @@ export default {
         minCombined: parseInt(this.$route.query.minQualite) || null,
       }
       this.orderBy = this.$route.query.trier?.slice(0, -3) || DEFAULT_ORDER
+      this.orderDescending = this.$route.query.trier?.slice(-3) === "Dec"
     },
     onChangeIntegerFilter(ref) {
       if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
