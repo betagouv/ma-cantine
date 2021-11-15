@@ -3,9 +3,7 @@ name: Ma Cantine CI
 on: [push]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -51,6 +49,7 @@ jobs:
           EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
           DEFAULT_FROM_EMAIL: contact@example.com
           CONTACT_EMAIL: contact@example.com
+          ENVIRONMENT: prod
         run: |
           python3 manage.py test
 
