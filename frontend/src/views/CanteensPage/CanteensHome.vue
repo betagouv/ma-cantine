@@ -268,7 +268,7 @@
           <v-pagination
             v-model="page"
             :length="Math.ceil(publishedCanteenCount / limit)"
-            :total-visible="5"
+            :total-visible="7"
           ></v-pagination>
         </v-col>
         <v-spacer></v-spacer>
@@ -297,7 +297,7 @@
         class="my-6"
         v-model="page"
         :length="Math.ceil(publishedCanteenCount / limit)"
-        :total-visible="5"
+        :total-visible="7"
       ></v-pagination>
     </div>
     <div v-else class="d-flex flex-column align-center py-10">
