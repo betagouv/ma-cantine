@@ -3,6 +3,7 @@
 ## Mise en place de l'environnement dev
 
 ### À installer localement
+
 - [Python3](https://www.python.org/downloads/) (de préference 3.8)
 - [pip](https://pip.pypa.io/en/stable/installing/) (souvent installé avec Python)
 - [vitrualenv](https://virtualenv.pypa.io/en/stable/installation.html)
@@ -21,7 +22,7 @@ source ./venv/bin/activate
 
 ### Installer les dépendances du backend
 
-Les dépendances du backend se trouvent dans ```requirements.txt```. Pour les installer :
+Les dépendances du backend se trouvent dans `requirements.txt`. Pour les installer :
 
 ```
 pip install -r requirements.txt
@@ -29,7 +30,7 @@ pip install -r requirements.txt
 
 ### Installer les dépendances du frontend
 
-On utilise `node` version 14.
+On utilise `node` version 14 et npm version 6.
 
 L'application frontend se trouve sous `/frontend`. Pour installer les dépendances :
 
@@ -40,7 +41,7 @@ npm install
 
 ### Créer la base de données
 
-Par exemple, pour utiliser une base de données nommée *macantine_egalim* :
+Par exemple, pour utiliser une base de données nommée _macantine_egalim_ :
 
 ```
 createdb macantine-egalim
@@ -50,32 +51,33 @@ createdb macantine-egalim
 
 L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), vous pouvez donc créer un fichier `.env` à la racine du projet avec ces variables définies :
 
-- *SECRET*  --  Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
-- *DEBUG*  --  `True` pour le développement local ou `False` autrement
-- *DB_USER*  --  L'utilisateur de la base de données
-- *DB_PASSWORD*  --  Le mot de passe pour accéder à la base de données
-- *DB_HOST*  --  Le host de la base de données (par ex. '127.0.0.1')
-- *DB_PORT*  --  Le port de la base de données (par ex. '3306')
-- *DB_NAME*  --  Le nom de la base de données (par ex. 'macantine-egalim'
-- *HOSTNAME*  --  Le hostname dans lequel l'application se trouve (par ex. 127.0.0.1:8000)
-- *ALLOWED_HOSTS*  --  Des noms de domaine/d’hôte que ce site peut servir (par ex. 'localhost, *')
-- *STATICFILES_STORAGE*  --  Le système utilisé pour les fichiers statiques (par ex. 'django.contrib.staticfiles.storage.StaticFilesStorage')
-- *DEFAULT_FILE_STORAGE*  --  Le système de stockage de fichiers (par ex 'django.core.files.storage.FileSystemStorage')
-- *FORCE_HTTPS*  --  'False' si on développe en local, 'True' autrement
-- *SECURE*  --  'False' si on développe en local, 'True' autrement
-- *EMAIL_BACKEND*  --  par ex. 'django.core.mail.backends.console.EmailBackend'. Pour utiliser SendInBlue : 'anymail.backends.sendinblue.EmailBackend'
-- *DEFAULT_FROM_EMAIL*  --  par ex. 'ma-cantine@example.com'
-- *CONTACT_EMAIL*  --  par ex. 'contact@example.com'
-- *SENDINBLUE_API_KEY*  --  La clé API de SendInBlue
-- *NEWSLETTER_SENDINBLUE_LIST_ID*  --  L'ID de la newsletter de SendInBlue
-- *MATOMO_ID* -- 162 pour la prod (peut-être laissé vide)
-- *CELLAR_HOST* -- **Optionnel** - le host du service S3
-- *CELLAR_KEY* -- **Optionnel** - la clé du service S3
-- *CELLAR_SECRET* -- **Optionnel** - le secret du service S3
-- *CELLAR_BUCKET_NAME* -- **Optionnel** - le nom du bucket S3 à utiliser
-- *DEBUG_PERFORMANCE* -- **Optionnel** - à utiliser avec "DEBUG" pour montrer la [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/)
-- *ENVIRONMENT* -- **Optionnel** - si cette variable est remplie un badge sera visible dans l'application et l'admin changera. Les options sont : `dev` | `staging` | `demo` | `prod`
-
+```
+SECRET= Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
+DEBUG= `True` pour le développement local ou `False` autrement
+DB_USER= L'utilisateur de la base de données
+DB_PASSWORD= Le mot de passe pour accéder à la base de données
+DB_HOST= Le host de la base de données (par ex. '127.0.0.1')
+DB_PORT= Le port de la base de données (par ex. '3306')
+DB_NAME= Le nom de la base de données (par ex. 'macantine-egalim'
+HOSTNAME= Le hostname dans lequel l'application se trouve (par ex. 127.0.0.1:8000)
+ALLOWED_HOSTS= Des noms de domaine/d’hôte que ce site peut servir (par ex. 'localhost, \*')
+STATICFILES_STORAGE= Le système utilisé pour les fichiers statiques (par ex. 'django.contrib.staticfiles.storage.StaticFilesStorage')
+DEFAULT_FILE_STORAGE= Le système de stockage de fichiers (par ex 'django.core.files.storage.FileSystemStorage')
+FORCE_HTTPS= 'False' si on développe en local, 'True' autrement
+SECURE= 'False' si on développe en local, 'True' autrement
+EMAIL_BACKEND= par ex. 'django.core.mail.backends.console.EmailBackend'. Pour utiliser SendInBlue : 'anymail.backends.sendinblue.EmailBackend'
+DEFAULT_FROM_EMAIL= par ex. 'ma-cantine@example.com'
+CONTACT_EMAIL= par ex. 'contact@example.com'
+SENDINBLUE_API_KEY= La clé API de SendInBlue
+NEWSLETTER_SENDINBLUE_LIST_ID= L'ID de la newsletter de SendInBlue
+MATOMO_ID= 162 pour la prod (peut-être laissé vide)
+CELLAR_HOST= Optionnel - le host du service S3
+CELLAR_KEY= Optionnel - la clé du service S3
+CELLAR_SECRET= Optionnel - le secret du service S3
+CELLAR_BUCKET_NAME= Optionnel - le nom du bucket S3 à utiliser
+DEBUG_PERFORMANCE= Optionnel - à utiliser avec "DEBUG" pour montrer la [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/)
+ENVIRONMENT= Optionnel - si cette variable est remplie un badge sera visible dans l'application et l'admin changera. Les options sont : `dev` | `staging` | `demo` | `prod`
+```
 
 ### Création des tables / Migration de la base de données
 
