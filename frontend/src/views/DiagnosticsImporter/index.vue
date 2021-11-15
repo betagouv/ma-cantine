@@ -26,6 +26,7 @@
       subtitle="Format CSV encodé en UTF-8 attendu"
       :acceptTypes="['.csv', 'text/csv', '.tsv', 'text/tsv']"
       @upload="upload"
+      :disabled="importInProgress"
     />
 
     <p>
@@ -34,7 +35,11 @@
       .
     </p>
 
-    <div v-if="!isNaN(count)">
+    <v-card outlined class="pa-4" v-if="importInProgress">
+      <v-progress-circular indeterminate color="primary" size="28" class="mr-4"></v-progress-circular>
+      <span class="mt-1">Traitement en cours...</span>
+    </v-card>
+    <div v-if="!isNaN(count) && !importInProgress">
       <v-alert type="success" outlined v-if="count > 0">
         <span class="grey--text text--darken-4 body-2">
           {{ count }}
@@ -134,6 +139,7 @@ export default {
       count: undefined,
       errors: undefined,
       seconds: undefined,
+      importInProgress: false,
       documentation: [
         {
           name: "SIRET",
@@ -227,9 +233,11 @@ export default {
   },
   methods: {
     upload() {
+      this.importInProgress = true
       this.$store
         .dispatch("importDiagnostics", { file: this.file })
         .then((json) => {
+          this.importInProgress = false
           this.file = null
           this.canteens = json.canteens
           this.count = json.count
@@ -240,6 +248,7 @@ export default {
           })
         })
         .catch((e) => {
+          this.importInProgress = false
           this.$store.dispatch("notifyServerError", e)
         })
     },
