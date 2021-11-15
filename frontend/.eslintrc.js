@@ -13,6 +13,7 @@ module.exports = {
 
   rules: {
     "vue/no-mutating-props": "off",
+    "vue/multi-word-component-names": "off",
   },
   plugins: ["prettier"],
 
