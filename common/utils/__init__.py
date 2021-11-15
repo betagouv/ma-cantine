@@ -21,7 +21,7 @@ def send_mail(**kwargs):
     fail_silently = kwargs.pop("fail_silently", False)
     subject = kwargs.pop("subject")
     env = getattr(settings, "ENVIRONMENT", "")
-    if env != "prod" and env != "dev":
+    if env == "demo" or env == "staging":
         subject = f"({env.upper()}) {subject}"
     message = EmailMultiAlternatives(**kwargs, subject=subject, body=text_content)
     if html_content:
