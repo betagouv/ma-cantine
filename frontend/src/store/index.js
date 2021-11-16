@@ -1,7 +1,7 @@
 import Vue from "vue"
 import Vuex from "vuex"
 import Constants from "@/constants"
-import { diagnosticYears } from "../utils"
+import { diagnosticYears, AuthenticationError } from "../utils"
 
 Vue.use(Vuex)
 
@@ -15,7 +15,8 @@ const LOCAL_STORAGE_KEY = `diagnostics-local-${LOCAL_STORAGE_VERSION}`
 
 const verifyResponse = function(response) {
   if (response.status < 200 || response.status >= 400) {
-    throw new Error(`Error encountered : ${response}`)
+    if (response.status === 403) throw new AuthenticationError()
+    else throw new Error(`API responded with status of ${response.status}`)
   }
 
   const contentType = response.headers.get("content-type")
@@ -427,10 +428,12 @@ export default new Vuex.Store({
       const status = "error"
       context.dispatch("notify", { title, message, status })
     },
-    notifyServerError(context) {
+    notifyServerError(context, error) {
       const title = "Oops !"
       const message =
-        "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à contact@egalim.beta.gouv.fr"
+        error instanceof AuthenticationError
+          ? "Votre session a expiré. Rechargez la page et reconnectez-vous pour continuer."
+          : "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à contact@egalim.beta.gouv.fr"
       const status = "error"
       context.dispatch("notify", { title, message, status })
     },

@@ -243,3 +243,15 @@ export const applicableDiagnosticRules = (canteen) => {
     hasDiversificationPlan: canteen.dailyMealCount >= 200,
   }
 }
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error#custom_error_types
+export class AuthenticationError extends Error {
+  constructor(...params) {
+    super(...params)
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, AuthenticationError)
+    }
+    this.name = "AuthenticationError"
+  }
+}

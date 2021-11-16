@@ -247,9 +247,9 @@ export default {
             message: `Fichier traité en ${Math.round(this.seconds)} secondes`,
           })
         })
-        .catch(() => {
+        .catch((e) => {
           this.importInProgress = false
-          this.$store.dispatch("notifyServerError")
+          this.$store.dispatch("notifyServerError", e)
         })
     },
   },

@@ -188,8 +188,8 @@ export default {
           })
           this.$router.push({ name: "ManagementPage" })
         })
-        .catch(() => {
-          this.$store.dispatch("notifyServerError")
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
         })
     },
     onProfilePhotoUploadClick() {
