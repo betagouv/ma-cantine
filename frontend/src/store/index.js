@@ -234,6 +234,7 @@ export default new Vuex.Store({
         .then((response) => {
           context.commit("ADD_USER_CANTEEN", response)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response.id
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
