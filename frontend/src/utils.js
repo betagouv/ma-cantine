@@ -198,7 +198,6 @@ export const badges = (canteen, diagnostic, sectors) => {
   if (
     diagnostic.hasWasteDiagnostic &&
     diagnostic.wasteActions?.length > 0 &&
-    (!applicableRules.hasDiversificationPlan || diagnostic.hasDiversificationPlan) &&
     (!applicableRules.hasDonationAgreement || diagnostic.hasDonationAgreement)
   ) {
     applicable.waste.earned = true
