@@ -8,6 +8,7 @@ from django.db import IntegrityError, transaction
 from django.db.models.functions import Lower
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist, BadRequest, ValidationError
+from django.conf import settings
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound, PermissionDenied
@@ -69,7 +70,9 @@ class ImportDiagnosticsView(APIView):
         logger.info("Diagnostic bulk import started")
         try:
             with transaction.atomic():
-                (canteens, errors, diagnostics_created) = self._treat_csv_file(request.data["file"])
+                file = request.data["file"]
+                ImportDiagnosticsView._verify_file_size(file)
+                (canteens, errors, diagnostics_created) = self._treat_csv_file(file)
 
                 if errors:
                     raise IntegrityError()
@@ -81,11 +84,23 @@ class ImportDiagnosticsView(APIView):
             logger.error("L'import du fichier CSV a échoué")
             return ImportDiagnosticsView._get_success_response([], 0, errors, start)
 
+        except ValidationError as e:
+            message = e.message
+            logger.error(message)
+            message = message
+            errors = [{"row": 0, "status": 400, "message": message}]
+            return ImportDiagnosticsView._get_success_response([], 0, errors, start)
+
         except Exception as e:
             logger.exception(e)
             message = "Échec lors de la lecture du fichier"
             errors = [{"row": 0, "status": 400, "message": message}]
             return ImportDiagnosticsView._get_success_response([], 0, errors, start)
+
+    @staticmethod
+    def _verify_file_size(file):
+        if file.size > settings.CSV_IMPORT_MAX_SIZE:
+            raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
     def _treat_csv_file(self, file):
         diagnostics_created = 0

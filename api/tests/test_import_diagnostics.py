@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.urls import reverse
+from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from .utils import authenticate
@@ -231,3 +232,16 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["count"], 2)
         self.assertEqual(len(body["errors"]), 0)
+
+    @override_settings(CSV_IMPORT_MAX_SIZE=1)
+    @authenticate
+    def test_max_size(self):
+        with open("./api/tests/files/diagnostics_decimal_number.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        errors = body["errors"]
+        self.assertEqual(
+            errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
+        )
