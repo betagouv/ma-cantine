@@ -52,7 +52,6 @@ const routes = [
     component: AccountSummaryPage,
     meta: {
       title: "Mon compte",
-      authenticationRequired: true,
     },
     redirect: { name: "AccountEditor" },
     children: [
@@ -60,16 +59,25 @@ const routes = [
         path: "profil",
         name: "AccountEditor",
         component: AccountEditor,
+        meta: {
+          authenticationRequired: true,
+        },
       },
       {
         path: "mot-de-passe",
         name: "PasswordChange",
         component: PasswordChangeEditor,
+        meta: {
+          authenticationRequired: true,
+        },
       },
       {
         path: "supprimer-mon-compte",
         name: "AccountDeletion",
         component: AccountDeletion,
+        meta: {
+          authenticationRequired: true,
+        },
       },
     ],
   },
@@ -209,35 +217,47 @@ const routes = [
     name: "CanteenModification",
     component: CanteenEditor,
     props: true,
-    meta: {
-      authenticationRequired: true,
-    },
     redirect: { name: "CanteenForm" },
     children: [
       {
         path: "modifier",
         name: "CanteenForm",
         component: CanteenForm,
+        meta: {
+          authenticationRequired: true,
+        },
       },
       {
         path: "diagnostics",
         name: "DiagnosticList",
         component: DiagnosticList,
+        meta: {
+          authenticationRequired: true,
+        },
       },
       {
         path: "gestionnaires",
         name: "CanteenManagers",
         component: CanteenManagers,
+        meta: {
+          authenticationRequired: true,
+        },
       },
       {
         path: "supprimer",
         name: "CanteenDeletion",
         component: CanteenDeletion,
+        meta: {
+          authenticationRequired: true,
+        },
       },
       {
         path: "publier",
         name: "PublicationForm",
         component: PublicationForm,
+        meta: {
+          authenticationRequired: true,
+        },
       },
     ],
   },
