@@ -239,8 +239,8 @@ export const normaliseText = (name) => {
 
 export const applicableDiagnosticRules = (canteen) => {
   return {
-    hasDonationAgreement: canteen.dailyMealCount >= 3000,
-    hasDiversificationPlan: canteen.dailyMealCount >= 200,
+    hasDonationAgreement: canteen ? canteen.dailyMealCount >= 3000 : true,
+    hasDiversificationPlan: canteen ? canteen.dailyMealCount >= 200 : true,
   }
 }
 
