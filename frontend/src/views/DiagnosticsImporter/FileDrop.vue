@@ -66,6 +66,9 @@ export default {
       required: true,
       type: String,
     },
+    maxSize: {
+      required: false,
+    },
     value: {
       type: File,
     },
@@ -89,12 +92,14 @@ export default {
       if (this.disabled) return
       const file = e.dataTransfer?.files[0]
       this.isDragging = false
-      this.$emit("input", file)
+      if (this.sizeIsValid(file)) this.$emit("input", file)
+      else this.clearFile()
     },
     onFileInputChange(e) {
       if (this.disabled) return
       const file = e.target.files[0]
-      this.$emit("input", file)
+      if (this.sizeIsValid(file)) this.$emit("input", file)
+      else this.clearFile()
     },
     clearFile() {
       if (this.disabled) return
@@ -107,6 +112,12 @@ export default {
     openFileChooser() {
       if (this.disabled) return
       if (!this.hasFile) this.$refs["csv-file-upload"].click()
+    },
+    sizeIsValid(file) {
+      if (!this.maxSize) return true
+      const sizeIsValid = parseInt(file.size) < this.maxSize
+      if (!sizeIsValid) window.alert("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
+      return sizeIsValid
     },
   },
 }

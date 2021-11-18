@@ -25,6 +25,7 @@
       v-model="file"
       subtitle="Format CSV encodé en UTF-8 attendu"
       :acceptTypes="['.csv', 'text/csv', '.tsv', 'text/tsv']"
+      maxSize="10485760"
       @upload="upload"
       :disabled="importInProgress"
     />
