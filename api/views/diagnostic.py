@@ -106,7 +106,6 @@ class ImportDiagnosticsView(APIView):
         diagnostics_created = 0
         canteens = {}
         errors = []
-        # TODO: make sure won't overflow memory with a big file
 
         filestring = file.read().decode("utf-8-sig")
         dialect = csv.Sniffer().sniff(filestring[:1024])
