@@ -9,9 +9,9 @@ updates:
     target-branch: "staging"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
   - package-ecosystem: "npm"
     target-branch: "staging"
     directory: "/frontend"
     schedule:
-      interval: "daily"
+      interval: "weekly"
