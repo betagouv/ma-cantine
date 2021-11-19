@@ -203,7 +203,8 @@ const routes = [
   {
     path: "/nouvelle-cantine",
     name: "NewCanteen",
-    component: CanteenForm,
+    component: CanteenEditor,
+    redirect: { name: "NewCanteenForm" },
     props: {
       canteenUrlComponent: null,
     },
@@ -211,17 +212,29 @@ const routes = [
       title: "Ajouter une nouvelle cantine",
       authenticationRequired: true,
     },
+    children: [
+      {
+        path: "",
+        name: "NewCanteenForm",
+        props: true,
+        component: CanteenForm,
+        meta: {
+          authenticationRequired: true,
+        },
+      },
+    ],
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent",
     name: "CanteenModification",
-    component: CanteenEditor,
     props: true,
+    component: CanteenEditor,
     redirect: { name: "CanteenForm" },
     children: [
       {
         path: "modifier",
         name: "CanteenForm",
+        props: true,
         component: CanteenForm,
         meta: {
           authenticationRequired: true,
@@ -268,19 +281,6 @@ const routes = [
     props: true,
     meta: {
       title: "Modifier mon diagnostic",
-      authenticationRequired: true,
-    },
-  },
-  {
-    path: "/nouveau-diagnostic",
-    name: "NewDiagnostic",
-    component: DiagnosticEditor,
-    props: {
-      canteenUrlComponent: null,
-      year: null,
-    },
-    meta: {
-      title: "Ajouter un nouveau diagnostic",
       authenticationRequired: true,
     },
   },

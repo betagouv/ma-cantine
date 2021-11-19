@@ -13,6 +13,7 @@ from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleV
 from api.views import ImportDiagnosticsView, TeledeclarationCreateView
 from api.views import TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
+from api.views import UserCanteenPreviews
 
 
 urlpatterns = {
@@ -24,6 +25,7 @@ urlpatterns = {
         PublishedCanteenSingleView.as_view(),
         name="single_published_canteen",
     ),
+    path("canteenPreviews/", UserCanteenPreviews.as_view(), name="user_canteen_previews"),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path("canteens/<int:pk>", UpdateUserCanteenView.as_view(), name="single_canteen"),
     path(

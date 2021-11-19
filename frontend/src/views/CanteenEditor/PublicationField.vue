@@ -87,11 +87,8 @@ export default {
     isNewCanteen() {
       return !this.canteen.id
     },
-    originalCanteen() {
-      return this.$store.state.userCanteens.find((x) => x.id === this.canteen.id)
-    },
     originalCanteenIsPublished() {
-      return this.originalCanteen ? this.originalCanteen.publicationStatus === "published" : false
+      return this.canteen.publicationStatus === "published"
     },
   },
   methods: {

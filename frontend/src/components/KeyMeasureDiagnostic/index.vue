@@ -25,6 +25,7 @@ import NoPlasticMeasureDiagnostic from "@/components/KeyMeasureDiagnostic/NoPlas
 import QualityMeasureDiagnostic from "@/components/KeyMeasureDiagnostic/QualityMeasure"
 import WasteMeasureDiagnostic from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 
+// TODO : Should we still save in server here?
 export default {
   components: {
     KeyMeasureTitle,

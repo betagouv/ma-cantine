@@ -28,6 +28,7 @@
             :items="userCanteens"
             label="Choissisez la cantine"
             v-model="selectedCanteenId"
+            @change="onCanteenAutocompleteChange"
             item-text="name"
             item-value="id"
           ></v-autocomplete>
@@ -48,7 +49,10 @@
           .
         </v-col>
       </v-row>
-      <div id="poster-preview" class="mb-8">
+      <div id="poster-preview" class="poster-sizing mb-8">
+        <div class="loading-overlay poster-sizing" v-if="loadingCanteenData">
+          <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 15%"></v-progress-circular>
+        </div>
         <CanteenPoster
           id="canteen-poster"
           :canteen="selectedCanteen"
@@ -156,13 +160,16 @@
             <label for="sustainable">produits de qualité et durables (hors bio)</label>
             .
           </p>
-          <v-btn x-large color="primary" @click="submit">Générer mon affiche</v-btn>
+          <v-btn x-large color="primary" @click="submit" :disabled="loadingCanteenData">Générer mon affiche</v-btn>
           <p class="mt-4 caption">
             Pour ajouter une photo à l'affiche et accéder à d'autres fonctionnalités,
             <a href="/creer-mon-compte">créez un compte</a>
           </p>
         </v-form>
-        <div id="poster-preview" class="ml-8">
+        <div id="poster-preview" class="ml-8 poster-sizing">
+          <div class="loading-overlay poster-sizing" v-if="loadingCanteenData">
+            <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 15%"></v-progress-circular>
+          </div>
           <CanteenPoster v-bind="form" id="canteen-poster" />
         </div>
       </div>
@@ -193,6 +200,9 @@ export default {
       formIsValid: true,
       selectedCanteenId: undefined,
       publicationYear: lastYear(),
+      loadingCanteenData: false,
+      fetchedCanteens: {},
+      selectedCanteen: {},
     }
   },
   computed: {
@@ -200,7 +210,7 @@ export default {
       return validators
     },
     userCanteens() {
-      const canteens = this.$store.state.userCanteens
+      const canteens = this.$store.state.userCanteenPreviews
       return canteens.sort((a, b) => {
         return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
       })
@@ -223,9 +233,6 @@ export default {
     },
     isAuthenticated() {
       return !!this.$store.state.loggedUser
-    },
-    selectedCanteen() {
-      return this.userCanteens.find((x) => x.id === this.selectedCanteenId) || {}
     },
     currentDiagnostic() {
       return this.selectedCanteen?.diagnostics?.find((x) => x.year === this.publicationYear) || {}
@@ -330,6 +337,26 @@ export default {
         })
       }
     },
+    onCanteenAutocompleteChange() {
+      if (this.fetchedCanteens[this.selectedCanteenId]) {
+        this.selectedCanteen = this.fetchedCanteens[this.selectedCanteenId]
+        return
+      }
+      this.loadingCanteenData = true
+      this.$store
+        .dispatch("fetchCanteen", { id: this.selectedCanteenId })
+        .then((response) => {
+          this.fetchedCanteens[response.id] = response
+          this.selectedCanteen = response
+        })
+        .catch(() => {
+          this.$store.dispatch("notify", {
+            message: "Nous n'avons pas trouvé cette cantine",
+            status: "error",
+          })
+        })
+        .finally(() => (this.loadingCanteenData = false))
+    },
   },
 }
 </script>
@@ -353,12 +380,21 @@ export default {
   width: 1200px;
 }
 
-#poster-preview {
+.poster-sizing {
   width: 210mm;
   min-width: 210mm;
   height: 296mm;
   min-height: 296mm;
+}
+
+#poster-preview {
   border: 1px solid $ma-cantine-grey;
+  position: relative;
+}
+
+.loading-overlay {
+  background: #b0aeae4f;
+  position: absolute;
 }
 
 @media (max-width: 1200px) {

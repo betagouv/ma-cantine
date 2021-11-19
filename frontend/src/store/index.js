@@ -34,7 +34,7 @@ export default new Vuex.Store({
     canteensLoadingStatus: Constants.LoadingStatus.IDLE,
 
     sectors: [],
-    userCanteens: [],
+    userCanteenPreviews: [],
     initialDataLoaded: false,
 
     blogPostCount: null,
@@ -63,39 +63,8 @@ export default new Vuex.Store({
     SET_SECTORS(state, sectors) {
       state.sectors = sectors
     },
-    SET_USER_CANTEENS(state, userCanteens) {
-      state.userCanteens = userCanteens
-    },
-    ADD_USER_CANTEEN(state, userCanteen) {
-      state.userCanteens.unshift(userCanteen)
-    },
-    ADD_USER_CANTEENS(state, userCanteens) {
-      state.userCanteens = userCanteens.concat(state.userCanteens)
-    },
-    UPDATE_USER_CANTEEN(state, userCanteen) {
-      const canteenIndex = state.userCanteens.findIndex((x) => x.id === userCanteen.id)
-      if (canteenIndex > -1) state.userCanteens.splice(canteenIndex, 1, userCanteen)
-    },
-    UPDATE_USER_CANTEEN_MANAGERS(state, { canteenId, data }) {
-      const canteenIndex = state.userCanteens.findIndex((x) => x.id === canteenId)
-      if (canteenIndex > -1) {
-        let userCanteen = state.userCanteens[canteenIndex]
-        userCanteen.managers = data.managers
-        userCanteen.managerInvitations = data.managerInvitations
-      }
-    },
-    DELETE_USER_CANTEEN(state, canteenId) {
-      const userCanteenIndex = state.userCanteens.findIndex((x) => x.id === canteenId)
-      if (userCanteenIndex > -1) state.userCanteens.splice(userCanteenIndex, 1)
-    },
-    ADD_DIAGNOSTIC(state, { canteenId, diagnostic }) {
-      const canteen = state.userCanteens.find((x) => x.id === canteenId)
-      canteen.diagnostics.push(diagnostic)
-    },
-    UPDATE_DIAGNOSTIC(state, { canteenId, diagnostic }) {
-      const canteen = state.userCanteens.find((x) => x.id === canteenId)
-      const diagnosticIndex = canteen.diagnostics.findIndex((x) => x.id === diagnostic.id)
-      if (diagnosticIndex > -1) canteen.diagnostics.splice(diagnosticIndex, 1, diagnostic)
+    SET_USER_CANTEEN_PREVIEWS(state, userCanteenPreviews) {
+      state.userCanteenPreviews = userCanteenPreviews
     },
     ADD_BLOG_POSTS(state, { response, limit, offset }) {
       state.blogPosts.push({ ...response, limit, offset })
@@ -134,6 +103,14 @@ export default new Vuex.Store({
         })
     },
 
+    // It is possible to implement a cache at this level
+    fetchCanteen(context, { id }) {
+      return fetch(`/api/v1/canteens/${id}`).then((response) => {
+        if (response.status != 200) throw new Error()
+        return response.json()
+      })
+    },
+
     fetchSectors(context) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch("/api/v1/sectors/")
@@ -146,12 +123,13 @@ export default new Vuex.Store({
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
         })
     },
-    fetchUserCanteens(context) {
+
+    fetchUserCanteenPreviews(context) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch("/api/v1/canteens/")
+      return fetch("/api/v1/canteenPreviews/")
         .then(verifyResponse)
         .then((response) => {
-          context.commit("SET_USER_CANTEENS", response)
+          context.commit("SET_USER_CANTEEN_PREVIEWS", response)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch(() => {
@@ -172,14 +150,10 @@ export default new Vuex.Store({
         })
     },
 
-    setInitialDataLoaded(context) {
-      return context.commit("SET_INITIAL_DATA_LOADED")
-    },
-
     fetchInitialData(context) {
       return Promise.all([context.dispatch("fetchLoggedUser"), context.dispatch("fetchSectors")])
         .then(() => {
-          if (context.state.loggedUser) return context.dispatch("fetchUserCanteens")
+          if (context.state.loggedUser) return context.dispatch("fetchUserCanteenPreviews")
         })
         .then(() => {
           const criticalLoadingStatuses = ["canteensLoadingStatus"]
@@ -232,9 +206,8 @@ export default new Vuex.Store({
       return fetch(`/api/v1/canteens/`, { method: "POST", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
         .then((response) => {
-          context.commit("ADD_USER_CANTEEN", response)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
-          return response.id
+          return response
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
@@ -246,8 +219,7 @@ export default new Vuex.Store({
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteens/${id}`, { method: "PATCH", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
-        .then((response) => {
-          context.commit("UPDATE_USER_CANTEEN", response)
+        .then(() => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
@@ -260,8 +232,7 @@ export default new Vuex.Store({
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteens/${id}/publish`, { method: "POST", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
-        .then((response) => {
-          context.commit("UPDATE_USER_CANTEEN", response)
+        .then(() => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
@@ -274,8 +245,7 @@ export default new Vuex.Store({
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteens/${id}/unpublish`, { method: "POST", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
-        .then((response) => {
-          context.commit("UPDATE_USER_CANTEEN", response)
+        .then(() => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
@@ -289,7 +259,6 @@ export default new Vuex.Store({
       return fetch(`/api/v1/canteens/${id}`, { method: "DELETE", headers })
         .then(verifyResponse)
         .then(() => {
-          context.commit("DELETE_USER_CANTEEN", id)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
@@ -306,8 +275,7 @@ export default new Vuex.Store({
         body: JSON.stringify(payload),
       })
         .then(verifyResponse)
-        .then((response) => {
-          context.commit("ADD_DIAGNOSTIC", { canteenId, diagnostic: response })
+        .then(() => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
@@ -363,8 +331,7 @@ export default new Vuex.Store({
         body: JSON.stringify({ canteenId, email }),
       })
         .then(verifyResponse)
-        .then((response) => {
-          context.commit("UPDATE_USER_CANTEEN_MANAGERS", { canteenId, data: response })
+        .then(() => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
@@ -392,8 +359,7 @@ export default new Vuex.Store({
         body: JSON.stringify({ canteenId, email }),
       })
         .then(verifyResponse)
-        .then((response) => {
-          context.commit("UPDATE_USER_CANTEEN_MANAGERS", { canteenId, data: response })
+        .then(() => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
@@ -414,7 +380,6 @@ export default new Vuex.Store({
       })
         .then(verifyResponse)
         .then((json) => {
-          context.dispatch("fetchUserCanteens")
           return json // return response for displaying specific messages
         })
     },
@@ -442,7 +407,7 @@ export default new Vuex.Store({
       context.commit("REMOVE_NOTIFICATION")
     },
 
-    submitTeledeclaration(context, { canteenId, id }) {
+    submitTeledeclaration(context, { id }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       const payload = {
         diagnosticId: id,
@@ -453,8 +418,7 @@ export default new Vuex.Store({
         body: JSON.stringify(payload),
       })
         .then(verifyResponse)
-        .then((response) => {
-          context.commit("UPDATE_DIAGNOSTIC", { canteenId, diagnostic: response })
+        .then(() => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
@@ -495,10 +459,6 @@ export default new Vuex.Store({
     },
     getCanteenUrlComponent: () => (canteen) => {
       return `${canteen.id}--${canteen.name}`
-    },
-    getCanteenFromUrlComponent: (state) => (canteenUrlComponent) => {
-      const canteenId = canteenUrlComponent.split("--")[0]
-      return state.userCanteens.find((x) => x.id === parseInt(canteenId))
     },
   },
 })

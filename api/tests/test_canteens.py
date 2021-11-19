@@ -93,7 +93,7 @@ class TestCanteenApi(APITestCase):
 
         response = self.client.get(reverse("user_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
+        body = response.json().get("results")
 
         for user_canteen in user_canteens:
             self.assertTrue(any(x["id"] == user_canteen.id for x in body))
@@ -559,7 +559,7 @@ class TestCanteenApi(APITestCase):
 
         new_teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
         response = self.client.get(reverse("user_canteens"))
-        body = response.json()
+        body = response.json().get("results")
         json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
         json_diagnostic = next(filter(lambda x: x["id"] == diagnostic.id, json_canteen["diagnostics"]))
 

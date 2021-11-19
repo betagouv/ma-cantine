@@ -18,7 +18,7 @@
       </v-btn>
       <v-row>
         <v-col cols="12" v-for="diagnostic in orderedDiagnostics" :key="`diagnostic-${diagnostic.id}`">
-          <DiagnosticCard :diagnostic="diagnostic" class="fill-height" />
+          <DiagnosticCard :diagnostic="diagnostic" :canteen="originalCanteen" class="fill-height" />
         </v-col>
       </v-row>
     </div>

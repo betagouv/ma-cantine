@@ -22,6 +22,7 @@ from rest_framework.response import Response
 from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
+    CanteenPreviewSerializer,
     ManagingTeamSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
@@ -167,6 +168,14 @@ class UserCanteensView(ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     model = Canteen
     serializer_class = FullCanteenSerializer
+    pagination_class = PublishedCanteensPagination
+    filter_backends = [
+        django_filters.DjangoFilterBackend,
+        UnaccentSearchFilter,
+        filters.OrderingFilter,
+    ]
+    search_fields = ["name"]
+    ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
 
     def get_queryset(self):
         return self.request.user.canteens.all()
@@ -174,6 +183,15 @@ class UserCanteensView(ListCreateAPIView):
     def perform_create(self, serializer):
         canteen = serializer.save()
         canteen.managers.add(self.request.user)
+
+
+class UserCanteenPreviews(ListAPIView):
+    model = Canteen
+    serializer_class = CanteenPreviewSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return self.request.user.canteens.all()
 
 
 class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):

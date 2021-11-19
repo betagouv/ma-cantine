@@ -160,6 +160,19 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         return canteen
 
 
+class CanteenPreviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Canteen
+        read_only_fields = (
+            "id",
+            "name",
+        )
+        fields = (
+            "id",
+            "name",
+        )
+
+
 class ManagingTeamSerializer(serializers.ModelSerializer):
 
     managers = CanteenManagerSerializer(many=True, read_only=True)

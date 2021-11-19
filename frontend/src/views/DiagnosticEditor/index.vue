@@ -1,7 +1,7 @@
 <template>
   <div class="mt-n2">
-    <v-row class="mt-2">
-      <v-col cols="12" sm="4" md="3" v-if="canteen">
+    <v-row class="mt-2" v-if="canteen">
+      <v-col cols="12" sm="4" md="3">
         <CanteenNavigation :canteen="canteen" />
       </v-col>
       <v-col class="text-left pb-10">
@@ -12,19 +12,7 @@
           <v-row>
             <v-col cols="12" md="5">
               <p class="body-2 my-2">Cantine</p>
-              <v-select
-                solo
-                ref="canteenSelect"
-                v-model="selectedCanteenId"
-                :rules="[validators.required, validators.diagnosticIsUnique]"
-                :items="userCanteens"
-                item-text="name"
-                item-value="id"
-                hide-details="auto"
-                placeholder="Choisissez votre cantine"
-                v-if="!canteen"
-              ></v-select>
-              <div v-else class="text-h6 font-weight-bold">{{ canteen.name }}</div>
+              <div class="text-h6 font-weight-bold">{{ canteen.name }}</div>
             </v-col>
             <v-col cols="12" md="4">
               <p class="body-2 my-2">Année</p>
@@ -297,6 +285,7 @@ export default {
   name: "DiagnosticEditor",
   data() {
     return {
+      canteen: null,
       diagnostic: {},
       selectedCanteenId: undefined,
       bypassLeaveWarning: false,
@@ -327,7 +316,7 @@ export default {
   props: {
     canteenUrlComponent: {
       type: String,
-      required: false,
+      required: true,
     },
     year: {
       required: false,
@@ -336,10 +325,6 @@ export default {
   computed: {
     isNewDiagnostic() {
       return !this.year
-    },
-    canteen() {
-      if (!this.canteenUrlComponent) return null
-      return this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
     },
     canteenId() {
       return this.selectedCanteenId || this.canteen?.id
@@ -353,7 +338,7 @@ export default {
       return null
     },
     userCanteens() {
-      return this.$store.state.userCanteens
+      return this.$store.state.userCanteenPreviews
     },
     validators() {
       return {
@@ -362,7 +347,7 @@ export default {
       }
     },
     originalDiagnostic() {
-      if (this.isNewDiagnostic) return {}
+      if (this.isNewDiagnostic || !this.canteen) return {}
       return this.canteen.diagnostics.find((diagnostic) => diagnostic.year === parseInt(this.year))
     },
     diagnosticIsUnique() {
@@ -401,16 +386,7 @@ export default {
     },
   },
   beforeMount() {
-    if (this.userCanteens.length === 1) {
-      this.selectedCanteenId = this.userCanteens[0].id
-    }
-    if (this.isNewDiagnostic) return
-
-    if (!this.canteen) this.$router.replace({ name: "NotFound" })
-
-    const diagnostic = this.originalDiagnostic
-    if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
-    else this.$router.replace({ name: "NotFound" })
+    this.fetchDataIfNeeded()
   },
   methods: {
     approSummary() {
@@ -467,8 +443,7 @@ export default {
     },
     goToExistingDiagnostic() {
       this.bypassLeaveWarning = true
-      const existingCanteen = this.userCanteens.find((x) => x.id === this.canteenId)
-      const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(existingCanteen)
+      const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(this.canteen)
       const year = this.diagnostic.year
       this.$router.replace({ name: "DiagnosticModification", params: { canteenUrlComponent, year } })
     },
@@ -547,6 +522,29 @@ export default {
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
     timeAgo: timeAgo,
+    fetchDataIfNeeded() {
+      if (!this.canteenUrlComponent) {
+        this.canteen = null
+        return
+      }
+
+      const canteenId = this.canteenUrlComponent.split("--")[0]
+      return this.$store
+        .dispatch("fetchCanteen", { id: canteenId })
+        .then((canteen) => {
+          this.canteen = canteen
+          const diagnostic = this.originalDiagnostic
+          if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
+          else this.$router.replace({ name: "NotFound" })
+        })
+        .catch(() => {
+          this.$store.dispatch("notify", {
+            message: "Nous n'avons pas trouvé cette cantine",
+            status: "error",
+          })
+          this.$router.push({ name: "ManagementPage" })
+        })
+    },
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
@@ -560,6 +558,16 @@ export default {
       return
     }
     window.confirm(LEAVE_WARNING) ? next() : next(false)
+  },
+  watch: {
+    year() {
+      const diagnostic = this.originalDiagnostic
+      if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
+      else this.$router.replace({ name: "NotFound" })
+    },
+    canteenUrlComponent() {
+      this.fetchDataIfNeeded()
+    },
   },
 }
 
