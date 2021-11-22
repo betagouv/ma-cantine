@@ -194,7 +194,7 @@ class UserCanteenPreviews(ListAPIView):
         return self.request.user.canteens.all()
 
 
-class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
+class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, IsCanteenManager]
     model = Canteen
     serializer_class = FullCanteenSerializer

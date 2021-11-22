@@ -7,7 +7,7 @@ from api.views import (
     SendCanteenEmailView,
 )
 from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView
-from api.views import DiagnosticCreateView, UpdateUserCanteenView, DiagnosticUpdateView
+from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, DiagnosticUpdateView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
 from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleView
 from api.views import ImportDiagnosticsView, TeledeclarationCreateView
@@ -27,7 +27,7 @@ urlpatterns = {
     ),
     path("canteenPreviews/", UserCanteenPreviews.as_view(), name="user_canteen_previews"),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
-    path("canteens/<int:pk>", UpdateUserCanteenView.as_view(), name="single_canteen"),
+    path("canteens/<int:pk>", RetrieveUpdateUserCanteenView.as_view(), name="single_canteen"),
     path(
         "canteens/<int:pk>/publish",
         PublishCanteenView.as_view(),

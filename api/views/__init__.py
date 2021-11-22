@@ -3,7 +3,7 @@ from .canteen import (  # noqa: F401
     PublishedCanteensView,
     PublishedCanteenSingleView,
     UserCanteensView,
-    UpdateUserCanteenView,
+    RetrieveUpdateUserCanteenView,
     AddManagerView,
     RemoveManagerView,
     SendCanteenEmailView,
