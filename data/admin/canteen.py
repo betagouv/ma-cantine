@@ -84,6 +84,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "region",
         "department",
     )
+    search_fields = ("name",)
     if getattr(settings, "ENVIRONMENT", "") != "prod":
         actions = [publish, unpublish]
 
