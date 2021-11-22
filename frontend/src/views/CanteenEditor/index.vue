@@ -5,7 +5,7 @@
         <CanteenNavigation :canteen="canteen" />
       </v-col>
       <v-col cols="12" :sm="isNewCanteen ? 12 : 8" :md="isNewCanteen ? 12 : 9">
-        <router-view :originalCanteen="canteen"></router-view>
+        <router-view :originalCanteen="canteen" :year="year"></router-view>
       </v-col>
     </v-row>
     <v-container fluid fill-height v-else>
@@ -29,6 +29,9 @@ export default {
   props: {
     canteenUrlComponent: {
       type: String,
+      required: false,
+    },
+    year: {
       required: false,
     },
   },

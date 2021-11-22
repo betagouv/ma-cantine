@@ -275,8 +275,9 @@ export default new Vuex.Store({
         body: JSON.stringify(payload),
       })
         .then(verifyResponse)
-        .then(() => {
+        .then((response) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
@@ -293,8 +294,8 @@ export default new Vuex.Store({
       })
         .then(verifyResponse)
         .then((response) => {
-          context.commit("UPDATE_DIAGNOSTIC", { canteenId, diagnostic: response })
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
@@ -418,8 +419,9 @@ export default new Vuex.Store({
         body: JSON.stringify(payload),
       })
         .then(verifyResponse)
-        .then(() => {
+        .then((diagnostic) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return diagnostic
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
@@ -427,7 +429,7 @@ export default new Vuex.Store({
         })
     },
 
-    cancelTeledeclaration(context, { canteenId, id }) {
+    cancelTeledeclaration(context, { id }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       const payload = {
         teledeclarationId: id,
@@ -438,9 +440,9 @@ export default new Vuex.Store({
         body: JSON.stringify(payload),
       })
         .then(verifyResponse)
-        .then((response) => {
-          context.commit("UPDATE_DIAGNOSTIC", { canteenId, diagnostic: response })
+        .then((diagnostic) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return diagnostic
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)

@@ -272,27 +272,37 @@ const routes = [
           authenticationRequired: true,
         },
       },
+      {
+        path: "modifier-mon-diagnostic/:year",
+        name: "DiagnosticModification",
+        component: DiagnosticEditor,
+        props: true,
+        meta: {
+          title: "Modifier mon diagnostic",
+          authenticationRequired: true,
+        },
+      },
+      {
+        path: "nouveau-diagnostic",
+        name: "NewDiagnosticForCanteen",
+        component: DiagnosticEditor,
+        props: true,
+        meta: {
+          title: "Ajouter un nouveau diagnostic",
+          authenticationRequired: true,
+        },
+      },
     ],
   },
   {
     path: "/modifier-mon-diagnostic/:canteenUrlComponent/:year",
-    name: "DiagnosticModification",
-    component: DiagnosticEditor,
     props: true,
-    meta: {
-      title: "Modifier mon diagnostic",
-      authenticationRequired: true,
-    },
+    redirect: { name: "DiagnosticModification" },
   },
   {
     path: "/nouveau-diagnostic/:canteenUrlComponent",
-    name: "NewDiagnosticForCanteen",
-    component: DiagnosticEditor,
     props: true,
-    meta: {
-      title: "Ajouter un nouveau diagnostic",
-      authenticationRequired: true,
-    },
+    redirect: { name: "NewDiagnosticForCanteen" },
   },
   {
     path: "/importer-diagnostics",
