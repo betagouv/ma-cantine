@@ -2,11 +2,13 @@ import csv
 import time
 import re
 import logging
+from decimal import Decimal
 from data.models.diagnostic import Diagnostic
 from django.db import IntegrityError, transaction
 from django.db.models.functions import Lower
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist, BadRequest, ValidationError
+from django.conf import settings
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound, PermissionDenied
@@ -69,7 +71,9 @@ class ImportDiagnosticsView(APIView):
         logger.info("Diagnostic bulk import started")
         try:
             with transaction.atomic():
-                (canteens, errors, diagnostics_created) = self._treat_csv_file(request.data["file"])
+                file = request.data["file"]
+                ImportDiagnosticsView._verify_file_size(file)
+                (canteens, errors, diagnostics_created) = self._treat_csv_file(file)
 
                 if errors:
                     raise IntegrityError()
@@ -81,11 +85,23 @@ class ImportDiagnosticsView(APIView):
             logger.error("L'import du fichier CSV a échoué")
             return ImportDiagnosticsView._get_success_response([], 0, errors, start)
 
+        except ValidationError as e:
+            message = e.message
+            logger.error(message)
+            message = message
+            errors = [{"row": 0, "status": 400, "message": message}]
+            return ImportDiagnosticsView._get_success_response([], 0, errors, start)
+
         except Exception as e:
             logger.exception(e)
             message = "Échec lors de la lecture du fichier"
             errors = [{"row": 0, "status": 400, "message": message}]
             return ImportDiagnosticsView._get_success_response([], 0, errors, start)
+
+    @staticmethod
+    def _verify_file_size(file):
+        if file.size > settings.CSV_IMPORT_MAX_SIZE:
+            raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
     def _treat_csv_file(self, file):
         diagnostics_created = 0
@@ -94,11 +110,10 @@ class ImportDiagnosticsView(APIView):
         locations_csv_str = "siret,citycode,postcode\n"
         hasLocationsToFind = False
 
-        # TODO: make sure won't overflow memory with a big file
         filestring = file.read().decode("utf-8-sig")
         dialect = csv.Sniffer().sniff(filestring[:1024])
-        csvreader = csv.reader(filestring.splitlines(), dialect=dialect)
 
+        csvreader = csv.reader(filestring.splitlines(), dialect=dialect)
         for row_number, row in enumerate(csvreader, start=1):
             if row_number == 1 and row[0].lower() == "siret":
                 continue
@@ -133,6 +148,29 @@ class ImportDiagnosticsView(APIView):
                 {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
             )
 
+        # TODO: This should take into account more number formats and be factored out to utils
+        number_error_message = "Ce champ doit être un nombre décimal."
+        try:
+            if not row[11]:
+                raise Exception
+            value_total_ht = Decimal(row[11].replace(",", "."))
+        except Exception as e:
+            raise ValidationError({"value_total_ht": number_error_message})
+
+        try:
+            if not row[12]:
+                raise Exception
+            value_bio_ht = Decimal(row[12].replace(",", "."))
+        except Exception as e:
+            raise ValidationError({"value_bio_ht": number_error_message})
+
+        try:
+            if not row[13]:
+                raise Exception
+            value_sustainable_ht = Decimal(row[13].replace(",", "."))
+        except Exception as e:
+            raise ValidationError({"value_sustainable_ht": number_error_message})
+
         (canteen, created) = Canteen.objects.get_or_create(
             siret=siret,
             defaults={
@@ -163,9 +201,9 @@ class ImportDiagnosticsView(APIView):
         diagnostic = Diagnostic(
             canteen_id=canteen.id,
             year=row[10],
-            value_total_ht=row[11],
-            value_bio_ht=row[12],
-            value_sustainable_ht=row[13],
+            value_total_ht=value_total_ht,
+            value_bio_ht=value_bio_ht,
+            value_sustainable_ht=value_sustainable_ht,
         )
         diagnostic.full_clean()
         diagnostic.save()

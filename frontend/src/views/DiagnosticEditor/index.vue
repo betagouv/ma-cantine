@@ -186,7 +186,7 @@
             :formIsValid="formIsValid.waste"
           >
             <v-form ref="waste" v-model="formIsValid.waste">
-              <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen="canteen" />
+              <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen="selectedCanteen" />
             </v-form>
           </DiagnosticExpansionPanel>
 
@@ -200,7 +200,7 @@
               <DiversificationMeasure
                 :diagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
-                :canteen="canteen"
+                :canteen="selectedCanteen"
               />
             </v-form>
           </DiagnosticExpansionPanel>
@@ -344,6 +344,14 @@ export default {
     canteenId() {
       return this.selectedCanteenId || this.canteen?.id
     },
+    selectedCanteen() {
+      if (this.canteen) {
+        return this.canteen
+      } else if (this.selectedCanteenId) {
+        return this.userCanteens.find((canteen) => canteen.id === this.selectedCanteenId)
+      }
+      return null
+    },
     userCanteens() {
       return this.$store.state.userCanteens
     },
@@ -361,9 +369,7 @@ export default {
       if (!this.isNewDiagnostic) return true
       if (!this.canteenId || !this.diagnostic.year) return true
 
-      const existingDiagnostic = this.userCanteens
-        .find((x) => x.id === this.canteenId)
-        .diagnostics.some((x) => x.year === this.diagnostic.year)
+      const existingDiagnostic = this.selectedCanteen.diagnostics.some((x) => x.year === this.diagnostic.year)
 
       return !existingDiagnostic
     },
@@ -455,8 +461,8 @@ export default {
           })
           this.navigateToDiagnosticList()
         })
-        .catch(() => {
-          this.$store.dispatch("notifyServerError")
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
         })
     },
     goToExistingDiagnostic() {
@@ -523,7 +529,7 @@ export default {
           })
           this.navigateToDiagnosticList()
         })
-        .catch(() => this.$store.dispatch("notifyServerError"))
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
     cancelTeledeclaration() {
       return this.$store
@@ -538,7 +544,7 @@ export default {
           })
           this.navigateToDiagnosticList()
         })
-        .catch(() => this.$store.dispatch("notifyServerError"))
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
     timeAgo: timeAgo,
   },

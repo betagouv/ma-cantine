@@ -24,6 +24,16 @@ class CanteenForm(forms.ModelForm):
         }
 
 
+@admin.action(description="Publier cantines")
+def publish(modeladmin, request, queryset):
+    queryset.update(publication_status=Canteen.PublicationStatus.PUBLISHED)
+
+
+@admin.action(description="Marquer cantines non publiées")
+def unpublish(modeladmin, request, queryset):
+    queryset.update(publication_status=Canteen.PublicationStatus.DRAFT)
+
+
 @admin.register(Canteen)
 class CanteenAdmin(SoftDeletionAdmin):
 
@@ -74,6 +84,8 @@ class CanteenAdmin(SoftDeletionAdmin):
         "region",
         "department",
     )
+    if getattr(settings, "ENVIRONMENT", "") != "prod":
+        actions = [publish, unpublish]
 
     def supprimée(self, obj):
         return "🗑️ Supprimée" if obj.deletion_date else ""

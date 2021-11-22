@@ -198,7 +198,7 @@ export const badges = (canteen, diagnostic, sectors) => {
   if (
     diagnostic.hasWasteDiagnostic &&
     diagnostic.wasteActions?.length > 0 &&
-    (!applicableRules.hasDiversificationPlan || diagnostic.hasDonationAgreement)
+    (!applicableRules.hasDonationAgreement || diagnostic.hasDonationAgreement)
   ) {
     applicable.waste.earned = true
   }
@@ -239,7 +239,19 @@ export const normaliseText = (name) => {
 
 export const applicableDiagnosticRules = (canteen) => {
   return {
-    hasDonationAgreement: canteen.dailyMealCount >= 3000,
-    hasDiversificationPlan: canteen.dailyMealCount >= 200,
+    hasDonationAgreement: canteen ? canteen.dailyMealCount >= 3000 : true,
+    hasDiversificationPlan: canteen ? canteen.dailyMealCount >= 200 : true,
+  }
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error#custom_error_types
+export class AuthenticationError extends Error {
+  constructor(...params) {
+    super(...params)
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, AuthenticationError)
+    }
+    this.name = "AuthenticationError"
   }
 }

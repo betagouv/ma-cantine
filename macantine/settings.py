@@ -315,3 +315,6 @@ if DEBUG_PERFORMANCE:
     INTERNAL_IPS.append("127.0.0.1")
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+
+# Maximum CSV import file size: 10Mo
+CSV_IMPORT_MAX_SIZE = 10485760

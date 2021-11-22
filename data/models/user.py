@@ -27,7 +27,7 @@ class User(AbstractUser):
         )
         OPTION_DIAGNOSTIC = (
             "OPTION_DIAGNOSTIC",
-            "J'ai atteint les objectifs - 50% et 20%, de l’article 24 de la loi EGAlim",
+            "J’ai réalisé un diagnostic de l’offre (disponibilité et caractéristiques de l’offre des différents fournisseurs sur l’ensemble des catégories d’achats)",
         )
         ACTION_PLAN = (
             "ACTION_PLAN",
@@ -35,7 +35,7 @@ class User(AbstractUser):
         )
         QUALITY_ACHIEVED = (
             "QUALITY_ACHIEVED",
-            "J'ai atteint les objectifs de l’article 24 de la loi EGAlim de porter la part de produits de qualité et durables à 50 % dont au moins 20 % de produits issus de l'agriculture biologique",
+            "J'ai atteint les objectifs - 50% et 20%, de l’article 24 de la loi EGAlim",
         )
 
     avatar = models.ImageField("Photo de profil", null=True, blank=True)

@@ -108,8 +108,8 @@ export default {
           })
           this.newManagerEmail = undefined
         })
-        .catch(() => {
-          this.$store.dispatch("notifyServerError")
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
           this.newManagerEmail = undefined
         })
     },
@@ -126,8 +126,8 @@ export default {
             status: "success",
           })
         })
-        .catch(() => {
-          this.$store.dispatch("notifyServerError")
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
         })
     },
   },

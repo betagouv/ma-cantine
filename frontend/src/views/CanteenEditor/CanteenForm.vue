@@ -278,17 +278,28 @@ export default {
           id: this.canteen.id,
           payload,
         })
-        .then(() => {
+        .then((canteenId) => {
           this.bypassLeaveWarning = true
+          const message = this.isNewCanteen
+            ? "Votre cantine a bien été créée. Vous pouvez maintenant ajouter des diagnostics."
+            : "Votre cantine a bien été modifiée"
           this.$store.dispatch("notify", {
             title: "Mise à jour prise en compte",
-            message: `Votre cantine a bien été ${this.isNewCanteen ? "créée" : "modifiée"}`,
+            message,
             status: "success",
           })
-          this.$router.push({ name: "ManagementPage" })
+          if (this.isNewCanteen) {
+            const canteen = this.$store.state.userCanteens.find((x) => x.id === canteenId)
+            this.$router.push({
+              name: "DiagnosticList",
+              params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+            })
+          } else {
+            this.$router.push({ name: "ManagementPage" })
+          }
         })
-        .catch(() => {
-          this.$store.dispatch("notifyServerError")
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
         })
     },
     onLogoUploadClick() {

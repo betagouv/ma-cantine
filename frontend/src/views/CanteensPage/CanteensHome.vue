@@ -268,7 +268,7 @@
           <v-pagination
             v-model="page"
             :length="Math.ceil(publishedCanteenCount / limit)"
-            :total-visible="5"
+            :total-visible="7"
           ></v-pagination>
         </v-col>
         <v-spacer></v-spacer>
@@ -297,7 +297,7 @@
         class="my-6"
         v-model="page"
         :length="Math.ceil(publishedCanteenCount / limit)"
-        :total-visible="5"
+        :total-visible="7"
       ></v-pagination>
     </div>
     <div v-else class="d-flex flex-column align-center py-10">
@@ -536,7 +536,7 @@ export default {
       this.$router.push({ query }).catch(() => {})
     },
     updateOrder() {
-      const override = this.order ? { page: 1, trier: this.order.display } : { page: 1 }
+      const override = this.order ? { page: this.page, trier: this.order.display } : { page: this.page }
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
     },
@@ -579,15 +579,16 @@ export default {
         minCombined: parseInt(this.$route.query.minQualite) || null,
       }
       this.orderBy = this.$route.query.trier?.slice(0, -3) || DEFAULT_ORDER
+      this.orderDescending = this.$route.query.trier?.slice(-3) === "Dec"
     },
     onChangeIntegerFilter(ref) {
       if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
     },
     updateRouter(query) {
-      if (!this.$route.query.page) {
-        this.$router.replace({ query }).catch(() => {})
-      } else {
+      if (this.$route.query.page) {
         this.$router.push({ query }).catch(() => {})
+      } else {
+        this.$router.replace({ query }).catch(() => {})
       }
     },
     sendEmail() {
@@ -678,6 +679,7 @@ export default {
     },
     toggleOrderDirection() {
       this.orderDescending = !this.orderDescending
+      this.page = 1 // reset page to 1 when changing order direction
     },
   },
   watch: {

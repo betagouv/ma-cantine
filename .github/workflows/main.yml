@@ -3,9 +3,7 @@ name: Ma Cantine CI
 on: [push]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:

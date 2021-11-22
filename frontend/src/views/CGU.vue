@@ -119,6 +119,11 @@
       Seules sont conservées les informations permettant de répondre à d'éventuelles contestations et aux besoins
       statistiques du service.
     </p>
+    <p>
+      La validation des CGU implique l’inscription automatique à l’infolettre ma cantine. Conforment à la
+      réglementation, cette inscription est révocable à tout moment, soit en vous désabonnant à réception du courriel,
+      ou en nous notifiant votre refus à l’adresse suivante : contact@egalim.beta.gouv.fr
+    </p>
     <h2 class="my-6">
       6 - Engagements et responsabilité
     </h2>

@@ -42,8 +42,8 @@
         {{ value.name }}
       </v-card-text>
 
-      <v-btn large color="primary" @click.stop="upload">Valider</v-btn>
-      <v-btn large class="text-decoration-underline mt-5" text @click.stop="clearFile">
+      <v-btn large color="primary" @click.stop="upload" :disabled="disabled">Valider</v-btn>
+      <v-btn large class="text-decoration-underline mt-5" text @click.stop="clearFile" :disabled="disabled">
         Choisir un autre fichier
       </v-btn>
     </div>
@@ -66,9 +66,13 @@ export default {
       required: true,
       type: String,
     },
+    maxSize: {
+      required: false,
+    },
     value: {
       type: File,
     },
+    disabled: Boolean,
   },
   computed: {
     hasFile() {
@@ -77,6 +81,7 @@ export default {
   },
   methods: {
     onFileInputDragover(e) {
+      if (this.disabled) return
       const isCsv = this.acceptTypes.includes(e.dataTransfer?.items[0].type)
       if (isCsv) {
         e.preventDefault()
@@ -84,22 +89,35 @@ export default {
       }
     },
     onFileInputDrop(e) {
+      if (this.disabled) return
       const file = e.dataTransfer?.files[0]
       this.isDragging = false
-      this.$emit("input", file)
+      if (this.sizeIsValid(file)) this.$emit("input", file)
+      else this.clearFile()
     },
     onFileInputChange(e) {
+      if (this.disabled) return
       const file = e.target.files[0]
-      this.$emit("input", file)
+      if (this.sizeIsValid(file)) this.$emit("input", file)
+      else this.clearFile()
     },
     clearFile() {
+      if (this.disabled) return
       this.$emit("input", null)
     },
     upload() {
+      if (this.disabled) return
       this.$emit("upload")
     },
     openFileChooser() {
+      if (this.disabled) return
       if (!this.hasFile) this.$refs["csv-file-upload"].click()
+    },
+    sizeIsValid(file) {
+      if (!this.maxSize) return true
+      const sizeIsValid = parseInt(file.size) < this.maxSize
+      if (!sizeIsValid) window.alert("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
+      return sizeIsValid
     },
   },
 }
