@@ -8,7 +8,10 @@
         <router-view :originalCanteen="canteen"></router-view>
       </v-col>
     </v-row>
-    <!-- TODO : Add spinner on v-else -->
+    <v-container fluid fill-height v-else>
+      <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
+      >
+    </v-container>
   </div>
 </template>
 
