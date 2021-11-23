@@ -6,7 +6,7 @@
       </h2>
       <v-row>
         <v-col cols="12" sm="6" md="4" v-if="diagnostic.valueBioHt">
-          <v-card class="fill-height text-center pa-4 d-flex flex-column justify-center" outlined>
+          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
               <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
               <span class="caption grey--text text--darken-2">
@@ -25,14 +25,14 @@
           </v-card>
         </v-col>
         <v-col cols="12" sm="6" md="4" v-if="diagnostic.valueSustainableHt">
-          <v-card class="fill-height text-center pa-4 d-flex flex-column justify-center" outlined>
+          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
               <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
               <span class="caption grey--text text--darken-2">
                 durables et de qualité
               </span>
             </p>
-            <div class="d-flex mt-2 justify-center">
+            <div class="d-flex mt-2 justify-center flex-wrap">
               <v-img
                 contain
                 v-for="label in labels"
