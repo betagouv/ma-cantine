@@ -13,7 +13,7 @@
       <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
       <CanteensPagination />
     </div>
-    <div class="my-8">
+    <div class="mt-12 mb-8">
       <h2 class="text-h5 font-weight-black mb-4">Mes outils</h2>
       <UserTools />
     </div>

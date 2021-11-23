@@ -25,7 +25,6 @@ import NoPlasticMeasureDiagnostic from "@/components/KeyMeasureDiagnostic/NoPlas
 import QualityMeasureDiagnostic from "@/components/KeyMeasureDiagnostic/QualityMeasure"
 import WasteMeasureDiagnostic from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 
-// TODO : Should we still save in server here?
 export default {
   components: {
     KeyMeasureTitle,
@@ -49,38 +48,8 @@ export default {
         this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
-      if (this.isAuthenticated) {
-        this.saveInServer().then(() => this.$emit("afterSave"))
-      } else {
-        this.saveInLocalStorage()
-        this.$emit("afterSave")
-      }
-    },
-    saveInServer() {
-      const saveOperations = []
-
-      for (let i = 0; i < Object.values(this.diagnosticsCopy).length; i++) {
-        const diagnostic = Object.values(this.diagnosticsCopy)[i]
-
-        if (diagnostic.id) {
-          saveOperations.push(
-            this.$store.dispatch("updateDiagnostic", {
-              canteenId: this.userCanteen.id,
-              id: diagnostic.id,
-              payload: diagnostic,
-            })
-          )
-        } else {
-          saveOperations.push(
-            this.$store.dispatch("createDiagnostic", {
-              canteenId: this.userCanteen.id,
-              payload: diagnostic,
-            })
-          )
-        }
-      }
-
-      return Promise.all([saveOperations])
+      this.saveInLocalStorage()
+      this.$emit("afterSave")
     },
     saveInLocalStorage() {
       this.$store.dispatch("saveLocalStorageDiagnostic", this.diagnosticsCopy.latest)
@@ -92,12 +61,6 @@ export default {
   computed: {
     measureDiagnosticComponentName() {
       return this.measure ? this.measure.baseComponent + "Diagnostic" : null
-    },
-    isAuthenticated() {
-      return !!this.$store.state.loggedUser
-    },
-    userCanteen() {
-      return this.$store.state.userCanteens.length > 0 ? this.$store.state.userCanteens[0] : null
     },
   },
 }

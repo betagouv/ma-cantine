@@ -30,7 +30,10 @@
       v-model="page"
       :length="Math.ceil(canteenCount / limit)"
     ></v-pagination>
-    <v-row>
+    <v-sheet fluid height="200" v-if="inProgress">
+      <v-progress-circular indeterminate style="left: 50%; top: 50%"></v-progress-circular>
+    </v-sheet>
+    <v-row v-else>
       <v-col cols="12" sm="6" md="4" height="100%" v-for="canteen in visibleCanteens" :key="`canteen-${canteen.id}`">
         <CanteenCard :canteen="canteen" class="fill-height" />
       </v-col>
@@ -76,6 +79,7 @@ export default {
       canteenCount: null,
       visibleCanteens: null,
       searchTerm: null,
+      inProgress: false,
     }
   },
   computed: {
@@ -100,6 +104,7 @@ export default {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
       this.searchTerm = this.$route.query.recherche || null
+      this.inProgress = true
 
       return fetch(`/api/v1/canteens/?${queryParam}`)
         .then((response) => {
@@ -113,6 +118,9 @@ export default {
         .catch(() => {
           this.publishedCanteenCount = 0
           this.$store.dispatch("notifyServerError")
+        })
+        .finally(() => {
+          this.inProgress = false
         })
     },
     clearSearch() {
