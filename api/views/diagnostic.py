@@ -174,7 +174,6 @@ class ImportDiagnosticsView(APIView):
         (canteen, created) = Canteen.objects.get_or_create(
             siret=siret,
             defaults={
-                "siret": siret,
                 "name": row[1],
                 "city_insee_code": row[2],
                 "postal_code": row[3],

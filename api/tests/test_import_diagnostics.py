@@ -104,7 +104,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertIsNone(canteen.city)
         self.assertIsNone(canteen.department)
 
-    # TODO: what if data already exists
     @authenticate
     def test_address_api_timeout(self, mock):
         """
@@ -140,6 +139,34 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 2)
         canteen = Canteen.objects.get(siret="21340172201787")
         canteen.name = "A cantéen"
+
+    @authenticate
+    def test_location_not_overridden(self, mock):
+        """
+        If the canteen already has city/department data, do not override on import
+        to be consistent with handling of name, meal count, etc
+        """
+        canteen = CanteenFactory.create(
+            siret="32441387130915",
+            city_insee_code="55555",
+            city="Ma ville",
+            postal_code="66666",
+            department=Department.ain,
+        )
+        canteen.managers.add(authenticate.user)
+
+        with open("./api/tests/files/diagnostics_locations.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+        # the API should never be called to fetch location info for this canteen
+        self.assertNotRegex(mock.last_request.text, "32441387130915")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        canteen = Canteen.objects.get(siret="32441387130915")
+        self.assertEqual(canteen.city_insee_code, "55555")
+        self.assertEqual(canteen.postal_code, "66666")
+        self.assertEqual(canteen.city, "Ma ville")
+        self.assertEqual(canteen.department, Department.ain)
 
     @authenticate
     def test_cannot_modify_existing_canteen_unless_manager(self, mock):
