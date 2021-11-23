@@ -329,7 +329,7 @@ class ImportDiagnosticsView(APIView):
                 data={
                     "postcode": "postcode",
                     "citycode": "citycode",
-                    "result_columns": ["result_postcode", "result_citycode", "result_city", "result_context"],
+                    "result_columns": ["result_citycode", "result_postcode", "result_city", "result_context"],
                 },
                 timeout=3,
             )
@@ -339,10 +339,10 @@ class ImportDiagnosticsView(APIView):
                     continue  # skip header
                 if row[5] != "":  # city found, so rest of data is found
                     canteen = canteens[row[0]]
-                    canteen.postal_code = row[3]
-                    canteen.city_insee_code = row[4]
+                    canteen.city_insee_code = row[3]
+                    canteen.postal_code = row[4]
                     canteen.city = row[5]
                     canteen.department = row[6].split(",")[0]
                     canteen.save()
         except Exception as e:
-            logger.error(f"Error while updating location data : {e}")
+            logger.error(f"Error while updating location data : {repr(e)} - {e}")
