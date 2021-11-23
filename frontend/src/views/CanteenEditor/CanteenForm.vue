@@ -346,19 +346,6 @@ export default {
           console.log(error)
         })
     },
-    fetchCantine() {
-      const id = this.canteenUrlComponent.split("--")[0]
-      return this.$store
-        .dispatch("fetchCanteen", { id })
-        .then((canteen) => (this.originalCanteen = canteen))
-        .catch(() => {
-          this.$store.dispatch("notify", {
-            message: "Nous n'avons pas trouvé cette cantine",
-            status: "error",
-          })
-          this.$router.push({ name: "ManagementPage" })
-        })
-    },
   },
   watch: {
     search(val) {

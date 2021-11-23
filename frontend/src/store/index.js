@@ -380,11 +380,7 @@ export default new Vuex.Store({
           "X-CSRFToken": window.CSRF_TOKEN || "",
         },
         body: form,
-      })
-        .then(verifyResponse)
-        .then((json) => {
-          return json // return response for displaying specific messages
-        })
+      }).then(verifyResponse)
     },
 
     notify(context, { title, message, status }) {
