@@ -100,13 +100,15 @@ export default {
           canteenId: this.originalCanteen.id,
           email: this.newManagerEmail,
         })
-        .then(() => {
+        .then((managementTeam) => {
           this.$store.dispatch("notify", {
             title: "Mise à jour prise en compte",
             message: `${this.newManagerEmail} a bien été ajouté`,
             status: "success",
           })
           this.newManagerEmail = undefined
+          this.originalCanteen.managers = managementTeam["managers"]
+          this.originalCanteen.managerInvitations = managementTeam["managerInvitations"]
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
@@ -119,12 +121,14 @@ export default {
           canteenId: this.originalCanteen.id,
           email: manager.email,
         })
-        .then(() => {
+        .then((managementTeam) => {
           this.$store.dispatch("notify", {
             title: "Mise à jour prise en compte",
             message: `${manager.email} n'est plus gestionnaire de cette cantine`,
             status: "success",
           })
+          this.originalCanteen.managers = managementTeam["managers"]
+          this.originalCanteen.managerInvitations = managementTeam["managerInvitations"]
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)

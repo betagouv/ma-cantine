@@ -332,8 +332,9 @@ export default new Vuex.Store({
         body: JSON.stringify({ canteenId, email }),
       })
         .then(verifyResponse)
-        .then(() => {
+        .then((response) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
@@ -360,8 +361,9 @@ export default new Vuex.Store({
         body: JSON.stringify({ canteenId, email }),
       })
         .then(verifyResponse)
-        .then(() => {
+        .then((response) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)

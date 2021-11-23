@@ -372,11 +372,14 @@ export default {
     },
   },
   beforeMount() {
-    const diagnostic = this.originalDiagnostic
-    if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
-    else this.$router.replace({ name: "NotFound" })
+    this.refreshDiagnostic()
   },
   methods: {
+    refreshDiagnostic() {
+      const diagnostic = this.originalDiagnostic
+      if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
+      else this.$router.replace({ name: "NotFound" })
+    },
     approSummary() {
       if (this.diagnostic.valueTotalHt > 0) {
         let summary = []
@@ -535,9 +538,7 @@ export default {
   },
   watch: {
     year() {
-      const diagnostic = this.originalDiagnostic
-      if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
-      else this.$router.replace({ name: "NotFound" })
+      this.refreshDiagnostic()
     },
   },
 }
