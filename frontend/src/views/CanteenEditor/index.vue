@@ -8,9 +8,8 @@
         <router-view :originalCanteen="canteen" :year="year"></router-view>
       </v-col>
     </v-row>
-    <v-container fluid fill-height v-else>
+    <v-container v-else>
       <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
-      >
     </v-container>
   </div>
 </template>
