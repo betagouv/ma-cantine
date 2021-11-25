@@ -8,6 +8,7 @@ from .utils import authenticate
 from data.models import Diagnostic, Canteen
 from data.factories import SectorFactory, CanteenFactory
 from data.department_choices import Department
+from data.region_choices import Region
 import requests
 import requests_mock
 import os
@@ -15,7 +16,7 @@ import os
 
 @requests_mock.Mocker()
 class TestImportDiagnosticsAPI(APITestCase):
-    def test_unauthenticated_import_call(self, mock):
+    def test_unauthenticated_import_call(self, _):
         """
         Expect 403 if unauthenticated
         """
@@ -23,7 +24,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_diagnostics_created(self, mock):
+    def test_diagnostics_created(self, _):
         """
         Given valid data, multiple diagnostics are created for multiple canteens,
         the authenticated user is added as the manager,
@@ -76,7 +77,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.city_insee_code, "00000")
         self.assertEqual(canteen.city, "Ma ville")
         self.assertEqual(canteen.department, Department.ain)
-        # TODO: region?
+        self.assertEqual(canteen.region, Region.auvergne_rhone_alpes)
         canteen = Canteen.objects.get(siret="73282932000074")
         self.assertEqual(canteen.postal_code, "11111")
         # Given both a city code and postcode, use citycode only to find location
@@ -125,7 +126,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertIsNone(canteen.department)
 
     @authenticate
-    def test_canteen_info_not_overridden(self, mock):
+    def test_canteen_info_not_overridden(self, _):
         """
         If a canteen is present on multiple lines, keep data from first line
         """
@@ -169,7 +170,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.department, Department.ain)
 
     @authenticate
-    def test_cannot_modify_existing_canteen_unless_manager(self, mock):
+    def test_cannot_modify_existing_canteen_unless_manager(self, _):
         """
         If a canteen exists, then you should have to already be it's manager to add diagnostics.
         No canteens will be created since any error cancels out the entire file
@@ -193,7 +194,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_valid_sectors_parsed(self, mock):
+    def test_valid_sectors_parsed(self, _):
         """
         File can specify 0+ sectors to add to the canteen
         """
@@ -207,7 +208,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.sectors.count(), 3)
 
     @authenticate
-    def test_invalid_sectors_raise_error(self, mock):
+    def test_invalid_sectors_raise_error(self, _):
         """
         If file specifies invalid sector, error is raised for that line
         """
@@ -224,7 +225,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_error_collection(self, mock):
+    def test_error_collection(self, _):
         """
         If errors occur, discard the file and return the errors with row and message
         """
@@ -299,7 +300,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_diagnostic_header_allowed(self, mock):
+    def test_diagnostic_header_allowed(self, _):
         """
         Optionally allow a header that starts with SIRET in the file
         """
@@ -311,7 +312,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(len(body["errors"]), 0)
 
     @authenticate
-    def test_diagnostic_delimiter_options(self, mock):
+    def test_diagnostic_delimiter_options(self, _):
         """
         Optionally allow using a semicolon or tab as the delimiter
         """
@@ -330,7 +331,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(len(body["errors"]), 0)
 
     @authenticate
-    def test_decimal_comma_format(self, mock):
+    def test_decimal_comma_format(self, _):
         with open("./api/tests/files/diagnostics_decimal_number.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -340,7 +341,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     @authenticate
-    def test_max_size(self, mock):
+    def test_max_size(self, _):
         with open("./api/tests/files/diagnostics_decimal_number.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
