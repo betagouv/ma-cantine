@@ -224,6 +224,31 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
 
+    # @authenticate
+    # def test_diagnostic_sniffer_on_large_file_with_header(self):
+    #     """
+    #     Had bug where sniffer was not working on large files
+    #     """
+    #     with open("./api/tests/files/diagnostics_many_header.csv") as diag_file:
+    #         response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     body = response.json()
+    #     self.assertEqual(body["count"], 12)
+    #     self.assertEqual(len(body["errors"]), 0)
+
+    # @authenticate
+    # def test_diagnostic_sniffer_on_large_file_with_sector(self):
+    #     """
+    #     Had bug where sniffer was not working on large files
+    #     """
+    #     SectorFactory.create(name="Scolaire")
+    #     with open("./api/tests/files/diagnostics_many_sector.csv") as diag_file:
+    #         response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     body = response.json()
+    #     self.assertEqual(body["count"], 12)
+    #     self.assertEqual(len(body["errors"]), 0)
+
     @authenticate
     def test_decimal_comma_format(self):
         with open("./api/tests/files/diagnostics_decimal_number.csv") as diag_file:

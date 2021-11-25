@@ -108,9 +108,10 @@ class ImportDiagnosticsView(APIView):
         errors = []
 
         filestring = file.read().decode("utf-8-sig")
-        dialect = csv.Sniffer().sniff(filestring[:1024])
+        filelines = filestring.splitlines()
+        dialect = csv.Sniffer().sniff(filelines[0])
 
-        csvreader = csv.reader(filestring.splitlines(), dialect=dialect)
+        csvreader = csv.reader(filelines, dialect=dialect)
         for row_number, row in enumerate(csvreader, start=1):
             if row_number == 1 and row[0].lower() == "siret":
                 continue
