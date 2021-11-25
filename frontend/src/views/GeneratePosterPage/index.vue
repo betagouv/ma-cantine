@@ -34,7 +34,7 @@
           ></v-autocomplete>
         </v-col>
         <v-col class="my-0 my-sm-4 px-0 px-sm-4 d-flex justify-space-between">
-          <v-btn x-large color="primary" @click="submit" :disabled="!selectedCanteenId">
+          <v-btn x-large color="primary" @click="submit" :disabled="!selectedCanteenId || loadingCanteenData">
             Générer mon affiche
           </v-btn>
         </v-col>
@@ -160,16 +160,13 @@
             <label for="sustainable">produits de qualité et durables (hors bio)</label>
             .
           </p>
-          <v-btn x-large color="primary" @click="submit" :disabled="loadingCanteenData">Générer mon affiche</v-btn>
+          <v-btn x-large color="primary" @click="submit">Générer mon affiche</v-btn>
           <p class="mt-4 caption">
             Pour ajouter une photo à l'affiche et accéder à d'autres fonctionnalités,
             <a href="/creer-mon-compte">créez un compte</a>
           </p>
         </v-form>
         <div id="poster-preview" class="ml-8 poster-sizing">
-          <div class="loading-overlay poster-sizing" v-if="loadingCanteenData">
-            <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 15%"></v-progress-circular>
-          </div>
           <CanteenPoster v-bind="form" id="canteen-poster" />
         </div>
       </div>
