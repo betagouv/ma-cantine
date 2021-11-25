@@ -80,10 +80,10 @@ class TestCanteenApi(APITestCase):
         canteens (even if they are not published).
         """
         user_canteens = [
-            ManagerInvitationFactory.create().canteen,
-            ManagerInvitationFactory.create().canteen,
+            CanteenFactory.create(),
+            CanteenFactory.create(),
         ]
-        other_canteens = [
+        _ = [
             CanteenFactory.create(),
             CanteenFactory.create(),
         ]
@@ -95,11 +95,9 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
-        for user_canteen in user_canteens:
-            self.assertTrue(any(x["id"] == user_canteen.id for x in body))
-
-        for other_canteen in other_canteens:
-            self.assertFalse(any(x["id"] == other_canteen.id for x in body))
+        self.assertEqual(len(body), 2)
+        self.assertEqual(body[0].get("id"), user_canteens[1].id)
+        self.assertEqual(body[1].get("id"), user_canteens[0].id)
 
     @authenticate
     def test_get_user_canteens(self):
