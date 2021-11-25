@@ -32,7 +32,7 @@ from .utils import camelize
 logger = logging.getLogger(__name__)
 
 
-class PublishedCanteensPagination(LimitOffsetPagination):
+class CanteensPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
     departments = []
@@ -143,7 +143,7 @@ class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
     queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
-    pagination_class = PublishedCanteensPagination
+    pagination_class = CanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
@@ -168,7 +168,7 @@ class UserCanteensView(ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     model = Canteen
     serializer_class = FullCanteenSerializer
-    pagination_class = PublishedCanteensPagination
+    pagination_class = CanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
