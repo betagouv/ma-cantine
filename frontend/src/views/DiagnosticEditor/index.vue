@@ -1,6 +1,6 @@
 <template>
   <div class="mt-n2">
-    <v-row class="mt-2" v-if="originalCanteen">
+    <v-row class="mt-2">
       <v-col class="text-left pb-10">
         <h1 class="font-weight-black text-h4 my-4">
           {{ isNewDiagnostic ? "Nouveau diagnostic" : "Modifier mon diagnostic" }}
@@ -333,15 +333,12 @@ export default {
       }
     },
     originalDiagnostic() {
-      if (this.isNewDiagnostic || !this.originalCanteen) return {}
+      if (this.isNewDiagnostic) return {}
       return this.originalCanteen.diagnostics.find((diagnostic) => diagnostic.year === parseInt(this.year))
     },
     diagnosticIsUnique() {
-      if (!this.isNewDiagnostic) return true
-      if (!this.canteenId || !this.diagnostic.year) return true
-
+      if (!this.isNewDiagnostic || !this.diagnostic.year) return true
       const existingDiagnostic = this.originalCanteen.diagnostics.some((x) => x.year === this.diagnostic.year)
-
       return !existingDiagnostic
     },
     allowedYears() {
