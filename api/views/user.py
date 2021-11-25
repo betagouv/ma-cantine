@@ -7,6 +7,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.generics import UpdateAPIView
+from rest_framework.response import Response
 from rest_framework import permissions, status
 from api.serializers import LoggedUserSerializer, PasswordSerializer
 from api.permissions import IsProfileOwner
@@ -17,8 +18,12 @@ logger = logging.getLogger(__name__)
 class LoggedUserView(RetrieveAPIView):
     model = get_user_model()
     serializer_class = LoggedUserSerializer
-    permission_classes = [permissions.IsAuthenticated]
     queryset = get_user_model().objects.all()
+
+    def get(self, request, *args, **kwargs):
+        if permissions.IsAuthenticated().has_permission(self.request, self):
+            return super().get(request, *args, **kwargs)
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
 
     def get_object(self):
         return self.request.user

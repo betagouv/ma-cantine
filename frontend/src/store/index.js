@@ -126,7 +126,7 @@ export default new Vuex.Store({
       return fetch("/api/v1/loggedUser/")
         .then(verifyResponse)
         .then((response) => {
-          context.commit("SET_LOGGED_USER", response)
+          context.commit("SET_LOGGED_USER", response || null)
           context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch(() => {

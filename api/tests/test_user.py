@@ -11,7 +11,7 @@ class TestLoggedUserApi(APITestCase):
         When calling this API unathenticated we expect a 403
         """
         response = self.client.get(reverse("logged_user"))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     @authenticate
     def test_authenticated_logged_user_call(self):
