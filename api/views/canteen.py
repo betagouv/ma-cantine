@@ -282,14 +282,7 @@ class AddManagerView(APIView):
             validate_email(email)
             canteen_id = request.data.get("canteen_id")
             canteen = request.user.canteens.get(id=canteen_id)
-            try:
-                user = get_user_model().objects.get(email=email)
-                canteen.managers.add(user)
-            except get_user_model().DoesNotExist:
-                with transaction.atomic():
-                    pm = ManagerInvitation(canteen_id=canteen.id, email=email)
-                    pm.save()
-                AddManagerView._send_invitation_email(pm)
+            AddManagerView.add_manager_to_canteen(email, canteen)
             return _respond_with_team(canteen)
         except ValidationError as e:
             logger.error(f"Attempt to add manager with invalid email {email}")
@@ -310,6 +303,17 @@ class AddManagerView(APIView):
                 {"error": "An error has ocurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+    @staticmethod
+    def add_manager_to_canteen(email, canteen):
+        try:
+            user = get_user_model().objects.get(email=email)
+            canteen.managers.add(user)
+        except get_user_model().DoesNotExist:
+            with transaction.atomic():
+                pm = ManagerInvitation(canteen_id=canteen.id, email=email)
+                pm.save()
+            AddManagerView._send_invitation_email(pm)
 
     @staticmethod
     def _send_invitation_email(manager_invitation):

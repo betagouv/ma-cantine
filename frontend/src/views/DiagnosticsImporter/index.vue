@@ -229,6 +229,14 @@ export default {
           type: "Chiffre",
           example: "681",
         },
+        {
+          name: "Adresse email du gestionnaire additionnel",
+          description:
+            "La personne avec cette adresse sera considérée comme gestionnaire de la cantine et pourra modifier toutes ses données.",
+          type: "Texte (adresse email valide)",
+          example: "gestionnaire@example.com",
+          optional: true,
+        },
       ],
     }
   },

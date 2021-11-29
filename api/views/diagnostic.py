@@ -8,7 +8,9 @@ from django.db import IntegrityError, transaction
 from django.db.models.functions import Lower
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist, BadRequest, ValidationError
+from django.core.validators import validate_email
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound, PermissionDenied
@@ -17,6 +19,7 @@ from api.serializers import PublicDiagnosticSerializer, FullCanteenSerializer
 from data.models import Canteen, Sector
 from api.permissions import IsCanteenManager, CanEditDiagnostic
 from .utils import camelize
+from .canteen import AddManagerView
 import requests
 
 logger = logging.getLogger(__name__)
@@ -81,7 +84,8 @@ class ImportDiagnosticsView(APIView):
             serialized_canteens = [camelize(FullCanteenSerializer(canteen).data) for canteen in canteens.values()]
             return ImportDiagnosticsView._get_success_response(serialized_canteens, diagnostics_created, errors, start)
 
-        except IntegrityError:
+        except IntegrityError as e:
+            logger.exception(e)
             logger.error("L'import du fichier CSV a échoué")
             return ImportDiagnosticsView._get_success_response([], 0, errors, start)
 
@@ -172,6 +176,12 @@ class ImportDiagnosticsView(APIView):
         except Exception as e:
             raise ValidationError({"value_sustainable_ht": number_error_message})
 
+        try:
+            has_email_column = len(row) > 14 and row[14]
+            manager_emails = ImportDiagnosticsView._get_manager_emails(row[14]) if has_email_column else []
+        except Exception as e:
+            raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
+
         (canteen, created) = Canteen.objects.get_or_create(
             siret=siret,
             defaults={
@@ -191,6 +201,8 @@ class ImportDiagnosticsView(APIView):
 
         if created:
             canteen.managers.add(self.request.user)
+            if manager_emails:
+                ImportDiagnosticsView._add_managers_to_canteen(manager_emails, canteen)
             if row[6]:
                 canteen.sectors.add(
                     *[self.annotated_sectors.get(name_lower__unaccent=sector.lower()) for sector in row[6].split("+")]
@@ -346,3 +358,22 @@ class ImportDiagnosticsView(APIView):
                     canteen.save()
         except Exception as e:
             logger.error(f"Error while updating location data : {repr(e)} - {e}")
+
+    @staticmethod
+    def _get_manager_emails(row):
+        manager_emails = row.split(",")
+        normalized_emails = list(map(lambda x: get_user_model().objects.normalize_email(x.strip()), manager_emails))
+        for email in normalized_emails:
+            validate_email(email)
+        return normalized_emails
+
+    @staticmethod
+    def _add_managers_to_canteen(emails, canteen):
+        for email in emails:
+            try:
+                AddManagerView.add_manager_to_canteen(email, canteen)
+            except IntegrityError as e:
+                logger.error(
+                    f"Attempt to add existing manager with email {email} to canteen {canteen.id} from a CSV import"
+                )
+                logger.exception(e)
