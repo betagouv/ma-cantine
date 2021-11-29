@@ -1,7 +1,7 @@
 <template>
   <div class="text-left">
     <h1 class="font-weight-black my-6">
-      Conditions générales d'utilisation de Ma Cantine
+      Conditions générales d'utilisation de ma cantine
     </h1>
     <p>
       Les présentes conditions d’utilisation (CGU) sont mises en œuvre conformément à l’article L. 112-9 du code des
@@ -11,11 +11,11 @@
       1 - Présentation
     </h2>
     <p>
-      Ma Cantine (ci-après dénommé « le Service ») est mis en œuvre par le ministère de l’Agriculture qui s’appuie sur
+      ma cantine (ci-après dénommé « le Service ») est mis en œuvre par le ministère de l’Agriculture qui s’appuie sur
       l’expertise de la Direction interministérielle du numérique dans le cadre d’une délégation de gestion.
     </p>
     <p>
-      Le Service est destiné à accompagner au mieux les acteurs de la restauration collective(ci-après abrégé « RC »)
+      Le Service est destiné à accompagner au mieux les acteurs de la restauration collective (ci-après abrégé « RC »)
       dans leur offre aux consommateurs pour une alimentation de qualité, saine et durable.
     </p>
     <h2 class="my-6">
@@ -86,7 +86,7 @@
       Finalités
     </h3>
     <p>
-      La plateforme numérique Macantine est destinée à accompagner au mieux les acteurs de la restauration collective
+      La plateforme numérique ma cantine est destinée à accompagner au mieux les acteurs de la restauration collective
       dans leur offre aux consommateurs pour une alimentation de qualité, saine et durable.
     </p>
     <p>
@@ -144,7 +144,7 @@
     </p>
     <p>
       La mission d’intérêt public est portée par la loi du 30 octobre 2018 portant sur l’agriculture et l’alimentation,
-      dite «EGAlim ».
+      dite « EGAlim ».
     </p>
     <h3>b) Données de contact</h3>
     <p>
@@ -246,7 +246,7 @@
     </ul>
     <p>
       Pour les exercer, faites-nous parvenir une demande en précisant la date et l’heure précise de la requête – ces
-      éléments sont indispensables pour nous permettre de retrouver votre recherche –à l’adresse suivante :
+      éléments sont indispensables pour nous permettre de retrouver votre recherche - à l’adresse suivante :
     </p>
     <p>
       Par voie numérique :
@@ -263,20 +263,23 @@
     <p>
       En raison de l’obligation de sécurité et de confidentialité dans le traitement des données à caractère personnel
       qui incombe au responsable de traitement, votre demande ne sera traitée que si vous apportez la preuve de votre
-      identité. Pour vous aider dans votre démarche, vous trouverez
-      <a href="https://www.cnil.fr/fr/modele/courrier/exercer-son-droit-dacces" target="_blank">ici</a>
-      un modèle de courrier élaboré par la Cnil.
+      identité. Pour vous aider dans votre démarche,
+      <a href="https://www.cnil.fr/fr/modele/courrier/exercer-son-droit-dacces" target="_blank" rel="noopener">
+        un modèle de courrier
+      </a>
+      est élaboré par la CNIL.
     </p>
     <p>
       Vous avez la possibilité de vous opposer à un traitement de vos données personnelles. Pour vous aider dans votre
-      démarche, vous trouverez
+      démarche,
       <a
         href="https://www.cnil.fr/fr/modele/courrier/rectifier-des-donnees-inexactes-obsoletes-ou-perimees"
         target="_blank"
+        rel="noopener"
       >
-        ici
+        un modèle de courrier
       </a>
-      un modèle de courrier élaboré par la Cnil.
+      est élaboré par la CNIL.
     </p>
     <p>
       Le responsable de traitement s’engage à répondre dans un délai raisonnable qui ne saurait dépasser 1 mois à
@@ -316,7 +319,7 @@
             <td>France</td>
             <td>Hébergement</td>
             <td>
-              <a href="https://www.clever-cloud.com/fr/privacy-policy" target="_blank">
+              <a href="https://www.clever-cloud.com/fr/privacy-policy" target="_blank" rel="noopener">
                 https://www.clever-cloud.com/fr/privacy-policy
               </a>
             </td>
@@ -357,12 +360,12 @@
     </p>
     <ul class="my-4">
       <li>
-        <a href="https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi" target="_blank">
+        <a href="https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi" target="_blank" rel="noopener">
           Cookies & traceurs : que dit la loi ?
         </a>
       </li>
       <li>
-        <a href="https://www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser" target="_blank">
+        <a href="https://www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser" target="_blank" rel="noopener">
           Cookies : les outils pour les maîtriser
         </a>
       </li>
@@ -376,7 +379,9 @@
     </p>
     <p>
       Le Service a été développé sous licence MIT , le code est disponible à l’adresse suivante :
-      <a href="https://github.com/betagouv/ma-cantine/" target="_blank">https://github.com/betagouv/ma-cantine/</a>
+      <a href="https://github.com/betagouv/ma-cantine/" target="_blank" rel="noopener">
+        https://github.com/betagouv/ma-cantine/
+      </a>
     </p>
     <p>
       Le Service est mis à disposition sans autres garanties expresses ou tacites que celles qui sont prévues par les

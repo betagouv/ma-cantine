@@ -190,6 +190,9 @@ const routes = [
     path: "/cgu",
     name: "CGU",
     component: CGU,
+    meta: {
+      title: "Conditions générales d'utilisation",
+    },
   },
   {
     path: "/gestion",

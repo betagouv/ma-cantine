@@ -23,7 +23,7 @@
         <v-col cols="12" sm="3" v-for="(column, index) in columns" :key="index" class="caption">
           <p class="text-left font-weight-bold">{{ column.title }}</p>
           <p v-for="(link, index) in column.links" :key="index" class="text-left">
-            <a v-if="link.url" :href="link.url" target="_blank">
+            <a v-if="link.url" :href="link.url" target="_blank" rel="noopener">
               {{ link.text }}
               <v-icon color="primary" x-small>mdi-open-in-new</v-icon>
             </a>
