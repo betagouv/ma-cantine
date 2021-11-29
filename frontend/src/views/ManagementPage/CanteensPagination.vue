@@ -1,12 +1,39 @@
 <template>
   <div>
+    <v-sheet class="px-3 mt-6 mb-6" elevation="0">
+      <v-row>
+        <v-col cols="12" md="7" class="pa-0">
+          <form role="search" class="d-block d-sm-flex" onsubmit="return false">
+            <v-text-field
+              hide-details="auto"
+              ref="search"
+              v-model="searchTerm"
+              outlined
+              label="Recherche par nom de l'établissement"
+              clearable
+              @click:clear="clearSearch"
+              @keyup.enter="search"
+              class="mb-2"
+              dense
+            ></v-text-field>
+            <v-btn outlined color="primary" class="ml-4 mb-2" height="40px" @click="search">
+              <v-icon>mdi-magnify</v-icon>
+              Chercher
+            </v-btn>
+          </form>
+        </v-col>
+      </v-row>
+    </v-sheet>
     <v-pagination
       v-if="showPagination"
-      class="my-6"
+      class="mb-6"
       v-model="page"
-      :length="Math.ceil(canteens.length / limit)"
+      :length="Math.ceil(canteenCount / limit)"
     ></v-pagination>
-    <v-row>
+    <v-sheet fluid height="200" v-if="inProgress">
+      <v-progress-circular indeterminate style="left: 50%; top: 50%"></v-progress-circular>
+    </v-sheet>
+    <v-row v-else>
       <v-col cols="12" sm="6" md="4" height="100%" v-for="canteen in visibleCanteens" :key="`canteen-${canteen.id}`">
         <CanteenCard :canteen="canteen" class="fill-height" />
       </v-col>
@@ -45,26 +72,65 @@ import CanteenCard from "./CanteenCard"
 export default {
   name: "CanteensPagination",
   components: { CanteenCard },
-  props: {
-    canteens: {
-      type: Array,
-      required: true,
-    },
-  },
   data() {
     return {
       limit: 5,
       page: null,
+      canteenCount: null,
+      visibleCanteens: null,
+      searchTerm: null,
+      inProgress: false,
     }
   },
   computed: {
     showPagination() {
-      return this.canteens.length > this.limit
+      return this.canteenCount && this.canteenCount > this.limit
     },
-    visibleCanteens() {
-      const start = (this.page - 1) * this.limit
-      const end = start + this.limit
-      return this.canteens.slice(start, end)
+    offset() {
+      return (this.page - 1) * this.limit
+    },
+    query() {
+      let query = {}
+      if (this.page) query.page = String(this.page)
+      if (this.searchTerm) query.recherche = this.searchTerm
+      return query
+    },
+  },
+  methods: {
+    populateInitialParameters() {
+      this.page = this.$route.query.cantinePage ? parseInt(this.$route.query.cantinePage) : 1
+    },
+    fetchCurrentPage() {
+      let queryParam = `limit=${this.limit}&offset=${this.offset}`
+      if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
+      this.searchTerm = this.$route.query.recherche || null
+      this.inProgress = true
+
+      return fetch(`/api/v1/canteens/?${queryParam}`)
+        .then((response) => {
+          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          return response.json()
+        })
+        .then((response) => {
+          this.canteenCount = response.count
+          this.visibleCanteens = response.results
+        })
+        .catch(() => {
+          this.publishedCanteenCount = 0
+          this.$store.dispatch("notifyServerError")
+        })
+        .finally(() => {
+          this.inProgress = false
+        })
+    },
+    clearSearch() {
+      this.searchTerm = ""
+      this.search()
+    },
+    search() {
+      const override = this.searchTerm ? { page: 1, recherche: this.searchTerm } : { page: 1 }
+      const query = Object.assign(this.query, override)
+      this.$router.push({ query }).catch(() => {})
     },
   },
   watch: {
@@ -72,12 +138,14 @@ export default {
       // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
       this.$router.push({ query: { ...this.$route.query, ...{ cantinePage: newPage } } }).catch(() => {})
     },
-    $route(newRoute) {
-      this.page = newRoute.query.cantinePage ? parseInt(newRoute.query.cantinePage) : 1
+    $route() {
+      this.populateInitialParameters()
+      this.fetchCurrentPage()
     },
   },
   mounted() {
-    this.page = this.$route.query.cantinePage ? parseInt(this.$route.query.cantinePage) : 1
+    this.populateInitialParameters()
+    if (Object.keys(this.$route.query).length > 0) this.fetchCurrentPage()
   },
 }
 </script>

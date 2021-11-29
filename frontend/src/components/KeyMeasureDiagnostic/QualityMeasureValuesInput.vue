@@ -73,7 +73,6 @@ export default {
   },
   data() {
     return {
-      diagnostic: this.originalDiagnostic,
       totalError: false,
       totalErrorMessage: "Le totale ne peut pas être moins que le somme des valeurs suivantes",
     }
@@ -81,6 +80,9 @@ export default {
   computed: {
     validators() {
       return validators
+    },
+    diagnostic() {
+      return this.originalDiagnostic
     },
   },
   methods: {

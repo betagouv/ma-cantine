@@ -1,9 +1,6 @@
 <template>
   <div class="mt-n2">
     <v-row class="mt-2">
-      <v-col cols="12" sm="4" md="3" v-if="canteen">
-        <CanteenNavigation :canteen="canteen" />
-      </v-col>
       <v-col class="text-left pb-10">
         <h1 class="font-weight-black text-h4 my-4">
           {{ isNewDiagnostic ? "Nouveau diagnostic" : "Modifier mon diagnostic" }}
@@ -12,19 +9,7 @@
           <v-row>
             <v-col cols="12" md="5">
               <p class="body-2 my-2">Cantine</p>
-              <v-select
-                solo
-                ref="canteenSelect"
-                v-model="selectedCanteenId"
-                :rules="[validators.required, validators.diagnosticIsUnique]"
-                :items="userCanteens"
-                item-text="name"
-                item-value="id"
-                hide-details="auto"
-                placeholder="Choisissez votre cantine"
-                v-if="!canteen"
-              ></v-select>
-              <div v-else class="text-h6 font-weight-bold">{{ canteen.name }}</div>
+              <div class="text-h6 font-weight-bold">{{ originalCanteen.name }}</div>
             </v-col>
             <v-col cols="12" md="4">
               <p class="body-2 my-2">Année</p>
@@ -186,7 +171,7 @@
             :formIsValid="formIsValid.waste"
           >
             <v-form ref="waste" v-model="formIsValid.waste">
-              <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen="selectedCanteen" />
+              <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen="originalCanteen" />
             </v-form>
           </DiagnosticExpansionPanel>
 
@@ -200,7 +185,7 @@
               <DiversificationMeasure
                 :diagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
-                :canteen="selectedCanteen"
+                :canteen="originalCanteen"
               />
             </v-form>
           </DiagnosticExpansionPanel>
@@ -281,7 +266,6 @@
 
 <script>
 import validators from "@/validators"
-import CanteenNavigation from "@/components/CanteenNavigation"
 import InformationMeasure from "@/components/KeyMeasureDiagnostic/InformationMeasure"
 import WasteMeasure from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/DiversificationMeasure"
@@ -298,7 +282,6 @@ export default {
   data() {
     return {
       diagnostic: {},
-      selectedCanteenId: undefined,
       bypassLeaveWarning: false,
       formIsValid: {
         quality: true,
@@ -315,7 +298,6 @@ export default {
     }
   },
   components: {
-    CanteenNavigation,
     InformationMeasure,
     WasteMeasure,
     DiversificationMeasure,
@@ -327,7 +309,11 @@ export default {
   props: {
     canteenUrlComponent: {
       type: String,
-      required: false,
+      required: true,
+    },
+    originalCanteen: {
+      type: Object,
+      required: true,
     },
     year: {
       required: false,
@@ -337,23 +323,8 @@ export default {
     isNewDiagnostic() {
       return !this.year
     },
-    canteen() {
-      if (!this.canteenUrlComponent) return null
-      return this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
-    },
     canteenId() {
-      return this.selectedCanteenId || this.canteen?.id
-    },
-    selectedCanteen() {
-      if (this.canteen) {
-        return this.canteen
-      } else if (this.selectedCanteenId) {
-        return this.userCanteens.find((canteen) => canteen.id === this.selectedCanteenId)
-      }
-      return null
-    },
-    userCanteens() {
-      return this.$store.state.userCanteens
+      return this.originalCanteen.id
     },
     validators() {
       return {
@@ -363,14 +334,11 @@ export default {
     },
     originalDiagnostic() {
       if (this.isNewDiagnostic) return {}
-      return this.canteen.diagnostics.find((diagnostic) => diagnostic.year === parseInt(this.year))
+      return this.originalCanteen.diagnostics.find((diagnostic) => diagnostic.year === parseInt(this.year))
     },
     diagnosticIsUnique() {
-      if (!this.isNewDiagnostic) return true
-      if (!this.canteenId || !this.diagnostic.year) return true
-
-      const existingDiagnostic = this.selectedCanteen.diagnostics.some((x) => x.year === this.diagnostic.year)
-
+      if (!this.isNewDiagnostic || !this.diagnostic.year) return true
+      const existingDiagnostic = this.originalCanteen.diagnostics.some((x) => x.year === this.diagnostic.year)
       return !existingDiagnostic
     },
     allowedYears() {
@@ -401,18 +369,14 @@ export default {
     },
   },
   beforeMount() {
-    if (this.userCanteens.length === 1) {
-      this.selectedCanteenId = this.userCanteens[0].id
-    }
-    if (this.isNewDiagnostic) return
-
-    if (!this.canteen) this.$router.replace({ name: "NotFound" })
-
-    const diagnostic = this.originalDiagnostic
-    if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
-    else this.$router.replace({ name: "NotFound" })
+    this.refreshDiagnostic()
   },
   methods: {
+    refreshDiagnostic() {
+      const diagnostic = this.originalDiagnostic
+      if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
+      else this.$router.replace({ name: "NotFound" })
+    },
     approSummary() {
       if (this.diagnostic.valueTotalHt > 0) {
         let summary = []
@@ -452,13 +416,14 @@ export default {
           canteenId: this.canteenId,
           payload,
         })
-        .then(() => {
+        .then((diagnostic) => {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
             title: "Mise à jour prise en compte",
             message: `Votre diagnostic a bien été ${this.isNewDiagnostic ? "créé" : "modifié"}`,
             status: "success",
           })
+          this.updateFromServer(diagnostic)
           this.navigateToDiagnosticList()
         })
         .catch((e) => {
@@ -467,20 +432,12 @@ export default {
     },
     goToExistingDiagnostic() {
       this.bypassLeaveWarning = true
-      const existingCanteen = this.userCanteens.find((x) => x.id === this.canteenId)
-      const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(existingCanteen)
+      const canteenUrlComponent = this.canteenUrlComponent
       const year = this.diagnostic.year
       this.$router.replace({ name: "DiagnosticModification", params: { canteenUrlComponent, year } })
     },
     navigateToDiagnosticList() {
-      let canteenUrlComponent = this.canteenUrlComponent
-      if (!canteenUrlComponent && this.canteen) {
-        canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(this.canteen)
-      } else if (!canteenUrlComponent) {
-        let canteen = this.userCanteens.find((x) => x.id === this.canteenId)
-        canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteen)
-      }
-      this.$router.push({ name: "DiagnosticList", params: { canteenUrlComponent } })
+      this.$router.push({ name: "DiagnosticList", params: { canteenUrlComponent: this.canteenUrlComponent } })
     },
     validateForms() {
       const refs = this.$refs
@@ -507,11 +464,16 @@ export default {
       const saveIfChanged = () => {
         if (!this.hasChanged) return Promise.resolve()
 
-        return this.$store.dispatch(this.isNewDiagnostic ? "createDiagnostic" : "updateDiagnostic", {
-          id: this.diagnostic.id,
-          canteenId: this.canteenId,
-          payload,
-        })
+        return this.$store
+          .dispatch(this.isNewDiagnostic ? "createDiagnostic" : "updateDiagnostic", {
+            id: this.diagnostic.id,
+            canteenId: this.canteenId,
+            payload,
+          })
+          .then((diagnostic) => {
+            this.updateFromServer(diagnostic)
+            this.$router.push({ name: "DiagnosticList", params: { canteenUrlComponent: this.canteenUrlComponent } })
+          })
       }
 
       saveIfChanged()
@@ -521,12 +483,13 @@ export default {
             canteenId: this.canteenId,
           })
         )
-        .then(() => {
+        .then((diagnostic) => {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
+          this.updateFromServer(diagnostic)
           this.navigateToDiagnosticList()
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
@@ -537,14 +500,23 @@ export default {
           canteenId: this.canteenId,
           id: this.diagnostic.teledeclaration.id,
         })
-        .then(() => {
+        .then((diagnostic) => {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
             title: "Votre télédéclaration a bien été annulée",
           })
+          this.updateFromServer(diagnostic)
           this.navigateToDiagnosticList()
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    updateFromServer(diagnostic) {
+      if (this.isNewDiagnostic) {
+        this.originalCanteen.diagnostics.push(diagnostic)
+      } else {
+        const diagnosticIndex = this.originalCanteen.diagnostics.findIndex((x) => x.id === diagnostic.id)
+        if (diagnosticIndex > -1) this.originalCanteen.diagnostics.splice(diagnosticIndex, 1, diagnostic)
+      }
     },
     timeAgo: timeAgo,
   },
@@ -560,6 +532,11 @@ export default {
       return
     }
     window.confirm(LEAVE_WARNING) ? next() : next(false)
+  },
+  watch: {
+    year() {
+      this.refreshDiagnostic()
+    },
   },
 }
 

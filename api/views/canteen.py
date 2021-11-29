@@ -22,6 +22,7 @@ from rest_framework.response import Response
 from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
+    CanteenPreviewSerializer,
     ManagingTeamSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
@@ -31,7 +32,7 @@ from .utils import camelize
 logger = logging.getLogger(__name__)
 
 
-class PublishedCanteensPagination(LimitOffsetPagination):
+class CanteensPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
     departments = []
@@ -142,7 +143,7 @@ class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
     queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
-    pagination_class = PublishedCanteensPagination
+    pagination_class = CanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
@@ -167,6 +168,14 @@ class UserCanteensView(ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     model = Canteen
     serializer_class = FullCanteenSerializer
+    pagination_class = CanteensPagination
+    filter_backends = [
+        django_filters.DjangoFilterBackend,
+        UnaccentSearchFilter,
+        filters.OrderingFilter,
+    ]
+    search_fields = ["name"]
+    ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
 
     def get_queryset(self):
         return self.request.user.canteens.all()
@@ -176,7 +185,16 @@ class UserCanteensView(ListCreateAPIView):
         canteen.managers.add(self.request.user)
 
 
-class UpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
+class UserCanteenPreviews(ListAPIView):
+    model = Canteen
+    serializer_class = CanteenPreviewSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return self.request.user.canteens.all()
+
+
+class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, IsCanteenManager]
     model = Canteen
     serializer_class = FullCanteenSerializer

@@ -1,13 +1,16 @@
 <template>
   <div class="mt-n2">
-    <v-row class="mt-2">
-      <v-col cols="12" sm="4" md="3">
+    <v-row class="mt-2" v-if="isNewCanteen || canteen">
+      <v-col cols="12" sm="4" md="3" v-if="!isNewCanteen">
         <CanteenNavigation :canteen="canteen" />
       </v-col>
-      <v-col cols="12" sm="8" md="9">
-        <router-view :key="$route.fullPath" :originalCanteen="canteen"></router-view>
+      <v-col cols="12" :sm="isNewCanteen ? 12 : 8" :md="isNewCanteen ? 12 : 9">
+        <router-view :originalCanteen="canteen" :year="year"></router-view>
       </v-col>
     </v-row>
+    <v-container v-else>
+      <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
+    </v-container>
   </div>
 </template>
 
@@ -17,16 +20,47 @@ import CanteenNavigation from "@/components/CanteenNavigation"
 export default {
   name: "CanteenEditor",
   components: { CanteenNavigation },
+  data() {
+    return {
+      canteen: null,
+    }
+  },
   props: {
     canteenUrlComponent: {
       type: String,
       required: false,
     },
+    year: {
+      required: false,
+    },
   },
   computed: {
-    canteen() {
-      return this.canteenUrlComponent && this.$store.getters.getCanteenFromUrlComponent(this.canteenUrlComponent)
+    isNewCanteen() {
+      return !this.canteenUrlComponent
     },
+  },
+  methods: {
+    fetchCanteenIfNeeded() {
+      if (this.isNewCanteen || this.canteen) return
+
+      const id = this.canteenUrlComponent.split("--")[0]
+      return this.$store
+        .dispatch("fetchCanteen", { id })
+        .then((canteen) => (this.canteen = canteen))
+        .catch(() => {
+          this.$store.dispatch("notify", {
+            message: "Nous n'avons pas trouvé cette cantine",
+            status: "error",
+          })
+          this.$router.push({ name: "ManagementPage" })
+        })
+    },
+  },
+  beforeUpdate() {
+    this.fetchCanteenIfNeeded()
+  },
+  beforeMount() {
+    this.fetchCanteenIfNeeded()
   },
 }
 </script>

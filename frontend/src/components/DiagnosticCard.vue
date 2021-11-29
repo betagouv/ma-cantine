@@ -32,17 +32,16 @@ import { timeAgo, isDiagnosticComplete } from "@/utils"
 export default {
   name: "DiagnosticCard",
   props: {
+    canteen: {
+      type: Object,
+      required: true,
+    },
     diagnostic: {
       type: Object,
       required: true,
     },
   },
   computed: {
-    canteen() {
-      return this.$store.state.userCanteens.find((canteen) =>
-        canteen.diagnostics.some((diagnostic) => diagnostic.id === this.diagnostic.id)
-      )
-    },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },

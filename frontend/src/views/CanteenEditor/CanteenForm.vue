@@ -6,7 +6,7 @@
 
     <PublicationStateNotice :canteen="originalCanteen" :includeLink="true" v-if="!isNewCanteen" />
 
-    <v-form ref="form" v-model="formIsValid">
+    <v-form ref="form" v-model="formIsValid" lazy-validation>
       <v-row>
         <v-col cols="12" md="8">
           <p class="body-2 my-2">Nom de la cantine</p>
@@ -180,6 +180,10 @@ export default {
   name: "CanteenForm",
   components: { PublicationStateNotice, ImagesField },
   props: {
+    canteenUrlComponent: {
+      type: String,
+      required: false,
+    },
     originalCanteen: {
       type: Object,
       required: false,
@@ -220,7 +224,7 @@ export default {
       return this.$store.state.sectors
     },
     isNewCanteen() {
-      return !this.originalCanteen
+      return !this.canteenUrlComponent
     },
     hasChanged() {
       if (this.originalCanteen) {
@@ -233,6 +237,7 @@ export default {
   },
   beforeMount() {
     if (this.isNewCanteen) return
+
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
@@ -278,7 +283,7 @@ export default {
           id: this.canteen.id,
           payload,
         })
-        .then((canteenId) => {
+        .then((canteenJson) => {
           this.bypassLeaveWarning = true
           const message = this.isNewCanteen
             ? "Votre cantine a bien été créée. Vous pouvez maintenant ajouter des diagnostics."
@@ -289,10 +294,10 @@ export default {
             status: "success",
           })
           if (this.isNewCanteen) {
-            const canteen = this.$store.state.userCanteens.find((x) => x.id === canteenId)
+            const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteenJson)
             this.$router.push({
               name: "DiagnosticList",
-              params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+              params: { canteenUrlComponent },
             })
           } else {
             this.$router.push({ name: "ManagementPage" })

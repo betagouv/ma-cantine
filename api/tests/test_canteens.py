@@ -74,10 +74,37 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
+    def test_get_canteens_preview(self):
+        """
+        Users can have access to the preview of their
+        canteens (even if they are not published).
+        """
+        user_canteens = [
+            CanteenFactory.create(),
+            CanteenFactory.create(),
+        ]
+        _ = [
+            CanteenFactory.create(),
+            CanteenFactory.create(),
+        ]
+        user = authenticate.user
+        for canteen in user_canteens:
+            canteen.managers.add(user)
+
+        response = self.client.get(reverse("user_canteen_previews"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(len(body), 2)
+        self.assertEqual(body[0].get("id"), user_canteens[1].id)
+        self.assertEqual(body[1].get("id"), user_canteens[0].id)
+
+    @authenticate
     def test_get_user_canteens(self):
         """
         Users can have access to the full representation of their
-        canteens (even if they are not published).
+        canteens (even if they are not published). This endpoint
+        is paginated
         """
         user_canteens = [
             ManagerInvitationFactory.create().canteen,
@@ -93,7 +120,7 @@ class TestCanteenApi(APITestCase):
 
         response = self.client.get(reverse("user_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
+        body = response.json().get("results")
 
         for user_canteen in user_canteens:
             self.assertTrue(any(x["id"] == user_canteen.id for x in body))
@@ -104,6 +131,33 @@ class TestCanteenApi(APITestCase):
 
         for other_canteen in other_canteens:
             self.assertFalse(any(x["id"] == other_canteen.id for x in body))
+
+    @authenticate
+    def test_get_single_user_canteen(self):
+        """
+        Users can access to the full representation of a single
+        canteen as long as they manage it.
+        """
+        user_canteen = CanteenFactory.create()
+        user_canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["id"], user_canteen.id)
+        self.assertEqual(body["managers"][0]["email"], authenticate.user.email)
+
+    @authenticate
+    def test_get_single_user_canteen_unauthorized(self):
+        """
+        Users cannot access to the full representation of a single
+        canteen if they are not managers.
+        """
+        canteen = CanteenFactory.create()
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_modify_canteen_unauthorized(self):
@@ -559,7 +613,7 @@ class TestCanteenApi(APITestCase):
 
         new_teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
         response = self.client.get(reverse("user_canteens"))
-        body = response.json()
+        body = response.json().get("results")
         json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
         json_diagnostic = next(filter(lambda x: x["id"] == diagnostic.id, json_canteen["diagnostics"]))
 
