@@ -118,5 +118,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
         ),
     )
 
+    search_fields = ("canteen__name",)
+
     def canteen_name(self, obj):
         return obj.canteen.name
