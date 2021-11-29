@@ -78,18 +78,19 @@ export default {
         this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
-
+      const title = this.publicationRequested
+        ? "Votre demande de publication est prise en compte"
+        : "Votre cantine n'est plus publiée"
+      const message = this.publicationRequested
+        ? "Votre demande est partie pour validation par l'équipe ma cantine. Nous reviendrons vers vous au plus vite !"
+        : ""
       this.$store
         .dispatch(this.publicationRequested ? "publishCanteen" : "unpublishCanteen", {
           id: this.canteen.id,
           payload: this.canteen,
         })
         .then(() => {
-          this.$store.dispatch("notify", {
-            title: "Mise à jour prise en compte",
-            message: `Votre cantine a bien été modifiée`,
-            status: "success",
-          })
+          this.$store.dispatch("notify", { title, message, status: "success" })
           this.bypassLeaveWarning = true
           this.$router.push({ name: "ManagementPage" })
         })
