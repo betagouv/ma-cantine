@@ -6,7 +6,7 @@ from django.test.utils import override_settings
 from django.core import mail
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.models import Diagnostic, Canteen
+from data.models import Diagnostic, Canteen, ManagerInvitation
 from data.factories import SectorFactory, CanteenFactory, UserFactory
 from data.department_choices import Department
 from data.region_choices import Region
@@ -371,8 +371,12 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 1)
         canteen = Canteen.objects.get(siret="21340172201787")
 
+        self.assertIn(authenticate.user, canteen.managers.all())
         self.assertIn(gestionnaire_1, canteen.managers.all())
         self.assertIn(gestionnaire_2, canteen.managers.all())
+
+        self.assertTrue(ManagerInvitation.objects.count(), 1)
+        self.assertEqual(ManagerInvitation.objects.first().email, "gestionnaire3@example.com")
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], "gestionnaire3@example.com")
