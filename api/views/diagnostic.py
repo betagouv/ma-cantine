@@ -145,7 +145,7 @@ class ImportDiagnosticsView(APIView):
 
     @transaction.atomic
     def _create_canteen_with_diagnostic(self, row, siret):
-        row[13]  # accessing last column to throw error if badly formatted early on
+        row[14]  # accessing last column to throw error if badly formatted early on
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
         elif not row[2] and not row[3]:
@@ -155,32 +155,32 @@ class ImportDiagnosticsView(APIView):
 
         # TODO: This should take into account more number formats and be factored out to utils
         number_error_message = "Ce champ doit être un nombre décimal."
+
         try:
-            if not row[11]:
-                raise Exception
-            value_total_ht = Decimal(row[11].replace(",", "."))
+            manager_emails = ImportDiagnosticsView._get_manager_emails(row[10]) if row[10] else []
         except Exception as e:
-            raise ValidationError({"value_total_ht": number_error_message})
+            raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
 
         try:
             if not row[12]:
                 raise Exception
-            value_bio_ht = Decimal(row[12].replace(",", "."))
+            value_total_ht = Decimal(row[12].replace(",", "."))
         except Exception as e:
-            raise ValidationError({"value_bio_ht": number_error_message})
+            raise ValidationError({"value_total_ht": number_error_message})
 
         try:
             if not row[13]:
                 raise Exception
-            value_sustainable_ht = Decimal(row[13].replace(",", "."))
+            value_bio_ht = Decimal(row[13].replace(",", "."))
         except Exception as e:
-            raise ValidationError({"value_sustainable_ht": number_error_message})
+            raise ValidationError({"value_bio_ht": number_error_message})
 
         try:
-            has_email_column = len(row) > 14 and row[14]
-            manager_emails = ImportDiagnosticsView._get_manager_emails(row[14]) if has_email_column else []
+            if not row[14]:
+                raise Exception
+            value_sustainable_ht = Decimal(row[14].replace(",", "."))
         except Exception as e:
-            raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
+            raise ValidationError({"value_sustainable_ht": number_error_message})
 
         (canteen, created) = Canteen.objects.get_or_create(
             siret=siret,
@@ -212,7 +212,7 @@ class ImportDiagnosticsView(APIView):
 
         diagnostic = Diagnostic(
             canteen_id=canteen.id,
-            year=row[10],
+            year=row[11],
             value_total_ht=value_total_ht,
             value_bio_ht=value_bio_ht,
             value_sustainable_ht=value_sustainable_ht,
@@ -301,7 +301,7 @@ class ImportDiagnosticsView(APIView):
         elif isinstance(e, IndexError):
             errors.append(
                 {
-                    "message": f"Données manquantes : 14 colonnes attendus, {len(row)} trouvés.",
+                    "message": f"Données manquantes : 15 colonnes attendus, {len(row)} trouvés.",
                     "code": 400,
                 }
             )
