@@ -395,6 +395,17 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         self.assertEqual(len(mail.outbox), 0)
 
+    @authenticate
+    def test_add_managers_empty_column(self, _):
+        with open("./api/tests/files/diagnostics_managers_empty_column.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(mail.outbox), 0)
+
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
     @unittest.skipUnless(os.environ.get("ENVIRONMENT") == "dev", "Not in dev environment")
