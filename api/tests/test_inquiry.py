@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 class TestInquiry(APITestCase):
     @patch("common.utils.create_trello_card")
-    def test_functionality_inquiry(self, mock_create_trello_card):
+    def test_inquiry(self, mock_create_trello_card):
         """
         Test that an inquiry about functionality hits trello endpoint
         """

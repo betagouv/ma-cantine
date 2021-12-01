@@ -37,7 +37,13 @@ logger = logging.getLogger(__name__)
 
 
 class InquiryView(APIView):
-    inquiry_types = {"functionalityQuestion": "fonctionnalité"}
+    inquiry_types = {
+        "functionalityQuestion": "fonctionnalité",
+        "egalim": "loi",
+        "bug": "bug",
+        "other": "autre",
+    }
+    # Auto assign members based on question type?
 
     def post(self, request):
         try:
