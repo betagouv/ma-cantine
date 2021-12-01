@@ -31,6 +31,7 @@ import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticEditor from "@/views/DiagnosticEditor"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
+import ContactPage from "@/views/ContactPage"
 
 Vue.use(VueRouter)
 
@@ -319,6 +320,14 @@ const routes = [
     component: AccessibilityDeclaration,
     meta: {
       title: "Déclaration d'accessibilité",
+    },
+  },
+  {
+    path: "/contact",
+    name: "ContactPage",
+    component: ContactPage,
+    meta: {
+      title: "Contactez-nous",
     },
   },
   {

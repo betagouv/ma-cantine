@@ -107,7 +107,7 @@ export default {
             },
             {
               text: "Contactez-nous !",
-              url: "mailto:contact@egalim.beta.gouv.fr",
+              to: { name: "ContactPage" },
             },
           ],
         },
