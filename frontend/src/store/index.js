@@ -447,6 +447,10 @@ export default new Vuex.Store({
           throw e
         })
     },
+
+    sendInquiryEmail(_, payload) {
+      return fetch("/api/v1/inquiry/", { method: "POST", headers, body: JSON.stringify(payload) }).then(verifyResponse)
+    },
   },
 
   getters: {

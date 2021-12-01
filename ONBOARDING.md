@@ -77,7 +77,18 @@ CELLAR_SECRET= Optionnel - le secret du service S3
 CELLAR_BUCKET_NAME= Optionnel - le nom du bucket S3 à utiliser
 DEBUG_PERFORMANCE= Optionnel - à utiliser avec "DEBUG" pour montrer la [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/)
 ENVIRONMENT= Optionnel - si cette variable est remplie un badge sera visible dans l'application et l'admin changera. Les options sont : `dev` | `staging` | `demo` | `prod`
+TRELLO_API_KEY=
+TRELLO_API_TOKEN=
+TRELLO_LIST_ID=
 ```
+
+#### Trello
+
+Si vous ne connaissez pas les variables trello, suivez [ce guide](https://developer.atlassian.com/cloud/trello/guides/rest-api/api-introduction/) pour identifier votre clé et token.
+
+Après, pour trouver l'ID de la liste dont lequelle vous voulez ajouter des cartes :
+
+`curl 'https://api.trello.com/1/boards/{idBoard}/lists?key={yourKey}&token={yourToken}'`
 
 ### Création des tables / Migration de la base de données
 

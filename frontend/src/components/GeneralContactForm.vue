@@ -84,7 +84,6 @@ export default {
       let meta = this.meta || {}
       meta.userId = this.$store.state.loggedUser?.id
       meta.userAgent = navigator.userAgent
-      console.log("meta", meta)
 
       const payload = {
         from: this.fromEmail,
