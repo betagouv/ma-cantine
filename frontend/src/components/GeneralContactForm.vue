@@ -99,7 +99,7 @@ export default {
           this.$refs.form.reset()
           this.$store.dispatch("notify", {
             status: "success",
-            message: `Votre message a bien été envoyé. Merci de vôtre intérêt.`,
+            message: `Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.`,
           })
 
           if (this.$matomo) {
