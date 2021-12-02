@@ -55,7 +55,7 @@ class InquiryView(APIView):
 
             title = f"{email} - {self.inquiry_types[inquiry_type]}"
             body = f"Message\n---\n{request.data.get('message')}"
-            body += "\nDétailles\n---"
+            body += "\nDétails\n---"
             body += f"\nAdresse : {email}"
             for key, value in request.data.get("meta").items():
                 body += f"\n{key} : {value}"
