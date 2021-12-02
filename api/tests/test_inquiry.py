@@ -15,6 +15,7 @@ class TestInquiry(APITestCase):
             "from": "test@example.com",
             "inquiryType": "functionalityQuestion",
             "message": "I need help with the functionality of the app\nHow do I do something?",
+            "name": "Tester",
             "meta": {
                 "userId": "123456789",
                 "userAgent": "Mozilla",
@@ -23,7 +24,7 @@ class TestInquiry(APITestCase):
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         card_title = "test@example.com - fonctionnalité"
-        card_body = "Message\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
+        card_body = "Nom/Prénom\n---\nTester\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
         mock_create_trello_card.assert_called_with(card_title, card_body)
 
@@ -45,6 +46,6 @@ class TestInquiry(APITestCase):
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         card_title = "(DEMO) test@example.com - fonctionnalité"
-        card_body = "Message\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
+        card_body = "Nom/Prénom\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
         mock_create_trello_card.assert_called_with(card_title, card_body)

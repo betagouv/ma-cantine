@@ -25,6 +25,7 @@ class InquiryView(APIView):
                 inquiry_type = "other"
 
             email = request.data.get("from")
+            name = request.data.get("name")
 
             title = f"{email} - {self.inquiry_types[inquiry_type]}"
 
@@ -32,7 +33,8 @@ class InquiryView(APIView):
             if env == "demo" or env == "staging":
                 title = f"({env.upper()}) {title}"
 
-            body = f"Message\n---\n{request.data.get('message')}"
+            body = f"Nom/Prénom\n---\n{name or 'Non renseigné'}"
+            body += f"\nMessage\n---\n{request.data.get('message')}"
             body += "\nDétails\n---"
             body += f"\nAdresse : {email}"
             for key, value in request.data.get("meta").items():
