@@ -77,9 +77,9 @@ CELLAR_SECRET= Optionnel - le secret du service S3
 CELLAR_BUCKET_NAME= Optionnel - le nom du bucket S3 à utiliser
 DEBUG_PERFORMANCE= Optionnel - à utiliser avec "DEBUG" pour montrer la [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/)
 ENVIRONMENT= Optionnel - si cette variable est remplie un badge sera visible dans l'application et l'admin changera. Les options sont : `dev` | `staging` | `demo` | `prod`
-TRELLO_API_KEY=
-TRELLO_API_TOKEN=
-TRELLO_LIST_ID=
+TRELLO_API_KEY= Conseils en-dessous pour l'obtenir.
+TRELLO_API_TOKEN= Conseils en-dessous pour l'obtenir.
+TRELLO_LIST_ID= Conseils en-dessous pour l'obtenir.
 ```
 
 #### Trello

@@ -42,6 +42,8 @@ def create_trello_card(title, description):
     trello_api_key = settings.TRELLO_API_KEY
     trello_token = settings.TRELLO_API_TOKEN
     trello_list_id = settings.TRELLO_LIST_ID
+    if not trello_api_key or not trello_token or not trello_list_id:
+        raise Exception("Trello API key, token, or list ID not set.")
 
     url = f"https://api.trello.com/1/cards?key={trello_api_key}&token={trello_token}&idList={trello_list_id}"
     url += f"&name={title}&desc={description}"  # card content
