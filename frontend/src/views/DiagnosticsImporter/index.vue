@@ -206,6 +206,14 @@ export default {
           example: "public",
         },
         {
+          name: "Gestionnaires additionnels (adresses emails)",
+          description:
+            "Les personnes avec ces adresses seront considérées comme gestionnaires de la cantine et pourront modifier toutes ses données.",
+          type: "Texte (adresses email séparées par une virgule)",
+          example: "gestionnaire1@example.com, gestionnaire2@example.com",
+          optional: true,
+        },
+        {
           name: "Année du diagnostic",
           description: "En format <code>YYYY</code>.",
           type: "Chiffre",

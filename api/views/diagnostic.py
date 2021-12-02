@@ -8,7 +8,9 @@ from django.db import IntegrityError, transaction
 from django.db.models.functions import Lower
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist, BadRequest, ValidationError
+from django.core.validators import validate_email
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound, PermissionDenied
@@ -17,6 +19,7 @@ from api.serializers import PublicDiagnosticSerializer, FullCanteenSerializer
 from data.models import Canteen, Sector
 from api.permissions import IsCanteenManager, CanEditDiagnostic
 from .utils import camelize
+from .canteen import AddManagerView
 import requests
 
 logger = logging.getLogger(__name__)
@@ -81,7 +84,8 @@ class ImportDiagnosticsView(APIView):
             serialized_canteens = [camelize(FullCanteenSerializer(canteen).data) for canteen in canteens.values()]
             return ImportDiagnosticsView._get_success_response(serialized_canteens, diagnostics_created, errors, start)
 
-        except IntegrityError:
+        except IntegrityError as e:
+            logger.exception(e)
             logger.error("L'import du fichier CSV a échoué")
             return ImportDiagnosticsView._get_success_response([], 0, errors, start)
 
@@ -141,7 +145,7 @@ class ImportDiagnosticsView(APIView):
 
     @transaction.atomic
     def _create_canteen_with_diagnostic(self, row, siret):
-        row[13]  # accessing last column to throw error if badly formatted early on
+        row[14]  # accessing last column to throw error if badly formatted early on
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
         elif not row[2] and not row[3]:
@@ -151,24 +155,30 @@ class ImportDiagnosticsView(APIView):
 
         # TODO: This should take into account more number formats and be factored out to utils
         number_error_message = "Ce champ doit être un nombre décimal."
+
         try:
-            if not row[11]:
-                raise Exception
-            value_total_ht = Decimal(row[11].replace(",", "."))
+            manager_emails = ImportDiagnosticsView._get_manager_emails(row[10]) if row[10] else []
         except Exception as e:
-            raise ValidationError({"value_total_ht": number_error_message})
+            raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
 
         try:
             if not row[12]:
                 raise Exception
-            value_bio_ht = Decimal(row[12].replace(",", "."))
+            value_total_ht = Decimal(row[12].replace(",", "."))
         except Exception as e:
-            raise ValidationError({"value_bio_ht": number_error_message})
+            raise ValidationError({"value_total_ht": number_error_message})
 
         try:
             if not row[13]:
                 raise Exception
-            value_sustainable_ht = Decimal(row[13].replace(",", "."))
+            value_bio_ht = Decimal(row[13].replace(",", "."))
+        except Exception as e:
+            raise ValidationError({"value_bio_ht": number_error_message})
+
+        try:
+            if not row[14]:
+                raise Exception
+            value_sustainable_ht = Decimal(row[14].replace(",", "."))
         except Exception as e:
             raise ValidationError({"value_sustainable_ht": number_error_message})
 
@@ -191,6 +201,8 @@ class ImportDiagnosticsView(APIView):
 
         if created:
             canteen.managers.add(self.request.user)
+            if manager_emails:
+                ImportDiagnosticsView._add_managers_to_canteen(manager_emails, canteen)
             if row[6]:
                 canteen.sectors.add(
                     *[self.annotated_sectors.get(name_lower__unaccent=sector.lower()) for sector in row[6].split("+")]
@@ -200,7 +212,7 @@ class ImportDiagnosticsView(APIView):
 
         diagnostic = Diagnostic(
             canteen_id=canteen.id,
-            year=row[10],
+            year=row[11],
             value_total_ht=value_total_ht,
             value_bio_ht=value_bio_ht,
             value_sustainable_ht=value_sustainable_ht,
@@ -289,7 +301,7 @@ class ImportDiagnosticsView(APIView):
         elif isinstance(e, IndexError):
             errors.append(
                 {
-                    "message": f"Données manquantes : 14 colonnes attendus, {len(row)} trouvés.",
+                    "message": f"Données manquantes : 15 colonnes attendus, {len(row)} trouvés.",
                     "code": 400,
                 }
             )
@@ -346,3 +358,22 @@ class ImportDiagnosticsView(APIView):
                     canteen.save()
         except Exception as e:
             logger.error(f"Error while updating location data : {repr(e)} - {e}")
+
+    @staticmethod
+    def _get_manager_emails(row):
+        manager_emails = row.split(",")
+        normalized_emails = list(map(lambda x: get_user_model().objects.normalize_email(x.strip()), manager_emails))
+        for email in normalized_emails:
+            validate_email(email)
+        return normalized_emails
+
+    @staticmethod
+    def _add_managers_to_canteen(emails, canteen):
+        for email in emails:
+            try:
+                AddManagerView.add_manager_to_canteen(email, canteen)
+            except IntegrityError as e:
+                logger.error(
+                    f"Attempt to add existing manager with email {email} to canteen {canteen.id} from a CSV import"
+                )
+                logger.exception(e)

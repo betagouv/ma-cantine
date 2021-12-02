@@ -1,17 +1,18 @@
+import os
 from decimal import Decimal
 import unittest
 from django.urls import reverse
 from django.test.utils import override_settings
+from django.core import mail
 from rest_framework.test import APITestCase
 from rest_framework import status
-from .utils import authenticate
-from data.models import Diagnostic, Canteen
-from data.factories import SectorFactory, CanteenFactory
+from data.models import Diagnostic, Canteen, ManagerInvitation
+from data.factories import SectorFactory, CanteenFactory, UserFactory
 from data.department_choices import Department
 from data.region_choices import Region
 import requests
 import requests_mock
-import os
+from .utils import authenticate
 
 
 @requests_mock.Mocker()
@@ -284,7 +285,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors[11]["message"],
-            "Données manquantes : 14 colonnes attendus, 13 trouvés.",
+            "Données manquantes : 15 colonnes attendus, 14 trouvés.",
         )
         self.assertEqual(
             errors[12]["message"],
@@ -351,6 +352,63 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(
             errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
+
+    @authenticate
+    @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
+    def test_add_managers(self, _):
+        """
+        This file contains one diagnostic with three emails for managers. The first two
+        already have an account with ma cantine, so they should be added. The third one
+        has no account, so an invitation should be sent.
+        """
+        gestionnaire_1 = UserFactory(email="gestionnaire1@example.com")
+        gestionnaire_2 = UserFactory(email="gestionnaire2@example.com")
+
+        with open("./api/tests/files/diagnostics_managers.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        canteen = Canteen.objects.get(siret="21340172201787")
+
+        self.assertIn(authenticate.user, canteen.managers.all())
+        self.assertIn(gestionnaire_1, canteen.managers.all())
+        self.assertIn(gestionnaire_2, canteen.managers.all())
+
+        self.assertTrue(ManagerInvitation.objects.count(), 1)
+        self.assertEqual(ManagerInvitation.objects.first().email, "gestionnaire3@example.com")
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to[0], "gestionnaire3@example.com")
+        self.assertEqual(mail.outbox[0].from_email, "test-from@example.com")
+
+    @authenticate
+    def test_add_managers_invalid_email(self, _):
+        with open("./api/tests/files/diagnostics_managers_invalid_email.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+
+        errors = body["errors"]
+        self.assertEqual(errors[0]["row"], 2)
+        self.assertEqual(errors[0]["status"], 400)
+        self.assertEqual(errors[0]["message"], "Champ 'email' : Un adresse email des gestionnaires n'est pas valide.")
+
+        self.assertEqual(len(mail.outbox), 0)
+
+    @authenticate
+    def test_add_managers_empty_column(self, _):
+        with open("./api/tests/files/diagnostics_managers_empty_column.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(mail.outbox), 0)
 
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
