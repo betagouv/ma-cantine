@@ -331,12 +331,12 @@ class AddManagerView(APIView):
             )
         except ConnectionRefusedError as e:
             logger.error(
-                "The manager invitation email could not be sent: Connection Refused. The manager has been added anyway."
+                f"The manager invitation email could not be sent to {manager_invitation.email} : Connection Refused. The manager has been added anyway."
             )
             logger.exception(e)
             return
         except Exception as e:
-            logger.error("The manager invitation email could not be sent:")
+            logger.error(f"The manager invitation email could not be sent to {manager_invitation.email}")
             logger.exception(e)
             raise Exception("Error occurred : the mail could not be sent.") from e
 
