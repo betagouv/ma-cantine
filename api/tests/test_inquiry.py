@@ -22,7 +22,7 @@ class TestInquiry(APITestCase):
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         card_title = "test@example.com - fonctionnalité"
-        card_body = "Message\n---\nI need help with the functionality of the app\nHow do I do something?\nDétailles\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
+        card_body = "Message\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
         mock_create_trello_card.assert_called_with(card_title, card_body)
         # TODO: do we want to give the user a reciept? For peace of mind.
