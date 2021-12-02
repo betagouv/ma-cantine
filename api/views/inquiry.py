@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.conf import settings
 from rest_framework import status
 from rest_framework.views import APIView
 import logging
@@ -16,7 +17,6 @@ class InquiryView(APIView):
         "bug": "bug",
         "other": "autre",
     }
-    # Auto assign members based on question type?
 
     def post(self, request):
         try:
@@ -27,6 +27,11 @@ class InquiryView(APIView):
             email = request.data.get("from")
 
             title = f"{email} - {self.inquiry_types[inquiry_type]}"
+
+            env = getattr(settings, "ENVIRONMENT", "")
+            if env == "demo" or env == "staging":
+                title = f"({env.upper()}) {title}"
+
             body = f"Message\n---\n{request.data.get('message')}"
             body += "\nDétails\n---"
             body += f"\nAdresse : {email}"
