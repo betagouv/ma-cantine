@@ -73,6 +73,10 @@ export default {
           to: { name: "CGU" },
         },
         {
+          text: "Politique de confidentialité",
+          to: { name: "PrivacyPolicy" },
+        },
+        {
           text: "Accessibilité : non conforme",
           to: { name: "AccessibilityDeclaration" },
         },
