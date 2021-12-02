@@ -48,5 +48,4 @@ def create_trello_card(title, description):
     url = f"https://api.trello.com/1/cards?key={trello_api_key}&token={trello_token}&idList={trello_list_id}"
     url += f"&name={title}&desc={description}"  # card content
     url += "&pos=top"  # card meta data
-    # TODO: members?
     requests.post(url)
