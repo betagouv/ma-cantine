@@ -115,13 +115,14 @@
     <p>
       Pour plus d’informations sur le traitement des données à caractère personnel l’utilisateur est invité à se référer
       à la
-      <router-link :to="{ name: 'CGU' }">politique de confidentialité</router-link>
+      <router-link :to="{ name: 'PrivacyPolicy' }">politique de confidentialité</router-link>
       .
     </p>
     <p>
       La validation des CGU implique l’inscription automatique à l’infolettre « ma cantine ». Conforment à la
       réglementation, cette inscription est révocable à tout moment, soit en vous désabonnant à réception du courriel,
-      ou en nous notifiant votre refus à l’adresse suivante : contact@egalim.beta.gouv.fr
+      ou en nous notifiant votre refus à l’adresse suivante :
+      <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
     </p>
 
     <h2 class="my-6">
