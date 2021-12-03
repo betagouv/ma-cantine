@@ -1,7 +1,7 @@
 <template>
   <div class="text-left">
     <h1 class="font-weight-black my-6">
-      Conditions générales d'utilisation de Ma Cantine
+      Conditions générales d'utilisation de « ma cantine »
     </h1>
     <p>
       Les présentes conditions d’utilisation (CGU) sont mises en œuvre conformément à l’article L. 112-9 du code des
@@ -11,11 +11,11 @@
       1 - Présentation
     </h2>
     <p>
-      Ma Cantine (ci-après dénommé « le Service ») est mis en œuvre par le ministère de l’Agriculture qui s’appuie sur
-      l’expertise de la Direction interministérielle du numérique dans le cadre d’une délégation de gestion.
+      « ma cantine » (ci-après dénommé « le Service ») est mis en œuvre par le ministère de l’Agriculture qui s’appuie
+      sur l’expertise de la Direction interministérielle du numérique dans le cadre d’une délégation de gestion.
     </p>
     <p>
-      Le Service est destiné à accompagner au mieux les acteurs de la restauration collective(ci-après abrégé « RC »)
+      Le Service est destiné à accompagner au mieux les acteurs de la restauration collective (ci-après abrégé « RC »)
       dans leur offre aux consommateurs pour une alimentation de qualité, saine et durable.
     </p>
     <h2 class="my-6">
@@ -78,26 +78,29 @@
     <h2 class="my-6">
       5 - Traitement des données
     </h2>
+
     <p>
-      Le Service ne collecte que les données strictement nécessaires à sa mise en œuvre.
+      Le Service ne collecte que les données strictement nécessaires à sa mise en œuvre. Les données collectées incluent
+      également des données à caractère personnel.
     </p>
-    <p>
-      Les catégories de données traitées sont les suivantes :
-    </p>
-    <ul class="mb-4">
+    <p>Les données traitées sont les suivantes :</p>
+
+    <ul class="my-4">
       <li>
-        les données obligatoires pour la création du compte : nom, prénom, nom d'utilisateur, adresse e-mail. L’équipe
-        chargé du Service est destinataire de ces données,
+        les données obligatoires pour la création du compte : nom, prénom, nom d'utilisateur, adresse e-mail.
+        L’utilisateur doit également fournir les données de l’établissement concerné (SIRET, nombre de repas,..), qui ne
+        sont pas considérées comme des données à caractère personnel.
       </li>
       <li>
         les données facultatives : l’ensemble des champs composant les diagnostics des établissements de restauration
         collective. L’équipe chargée du Service se réserve néanmoins le droit de supprimer ou de proposer une
-        modification lorsque le contenu proposé ne répond à des critères minimaux de qualité. L’équipe chargée du
-        Service et les usagers sont destinataires de ces données.
+        modification lorsque le contenu proposé ne répond à des critères minimaux de qualité.
       </li>
     </ul>
+
     <p>
-      Les données sont conservées jusqu’à la fin de fonctionnement du Service.
+      Les données relatives à l’établissement ainsi que les données facultatives relatives aux diagnostics sont
+      conservées jusqu’à la fin de fonctionnement du Service, notamment pour répondre aux besoins statistiques.
     </p>
     <p>
       Le ministère de l’Agriculture s'engage à prendre toutes précautions utiles pour préserver la sécurité des données
@@ -106,26 +109,38 @@
     </p>
     <p>
       Le ministère de l’agriculture garantit aux usagers du Service les droits d'accès, de rectification et d'opposition
-      prévus par la loi n° 78-17 du 6 janvier 1978 relative à l'informatique aux fichiers et aux libertés.
+      sur leurs données à caractère personnel, prévus par la loi n° 78-17 du 6 janvier 1978 relative à l'informatique
+      aux fichiers et aux libertés.
     </p>
     <p>
-      Ces droits s’exercent auprès de l’équipe du Service. (
-      <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
-      )
+      Pour plus d’informations sur le traitement des données à caractère personnel l’utilisateur est invité à se référer
+      à la
+      <router-link :to="{ name: 'PrivacyPolicy' }">politique de confidentialité</router-link>
+      .
     </p>
     <p>
-      Les informations transmises par l'usager/utilisateur restent sous son contrôle. Il peut à tout moment les modifier
-      ou les supprimer. Il peut choisir de supprimer toutes les informations de son compte en supprimant son compte.
-      Seules sont conservées les informations permettant de répondre à d'éventuelles contestations et aux besoins
-      statistiques du service.
-    </p>
-    <p>
-      La validation des CGU implique l’inscription automatique à l’infolettre ma cantine. Conforment à la
+      La validation des CGU implique l’inscription automatique à l’infolettre « ma cantine ». Conforment à la
       réglementation, cette inscription est révocable à tout moment, soit en vous désabonnant à réception du courriel,
-      ou en nous notifiant votre refus à l’adresse suivante : contact@egalim.beta.gouv.fr
+      ou en nous notifiant votre refus à l’adresse suivante :
+      <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+    </p>
+
+    <h2 class="my-6">
+      6 - Statistiques
+    </h2>
+    <p>Les données récoltées dans le cadre du téléservice servent au pilotage de la politique publique.</p>
+    <p>
+      Conformément aux dispositions des articles L. 230-5-1 et R. 230-30-4 du Code rural, les données recueillies par
+      l’intermédiaire de la plateforme permettent de réaliser un bilan de la mise en œuvre du dispositif qui est adressé
+      notamment au Parlement.
+    </p>
+    <p>
+      En outre, conformément aux dispositions du Livre III du Code des relations entre le public et l’administration, la
+      plateforme diffuse des informations publiques relatives aux données collectées et au suivi de l’usage de la
+      plateforme.
     </p>
     <h2 class="my-6">
-      6 - Engagements et responsabilité
+      7 - Engagements et responsabilité
     </h2>
     <p>
       Le présent Service est mis en œuvre selon les dispositions du code des relations entre le public et
@@ -133,7 +148,9 @@
     </p>
     <p>
       Le Service a été développé sous licence MIT , le code est disponible à l’adresse suivante :
-      <a href="https://github.com/betagouv/ma-cantine/" target="_blank">https://github.com/betagouv/ma-cantine/</a>
+      <a href="https://github.com/betagouv/ma-cantine/" target="_blank" rel="noopener">
+        https://github.com/betagouv/ma-cantine/
+      </a>
     </p>
     <p>
       Le Service est mis à disposition sans autres garanties expresses ou tacites que celles qui sont prévues par les
@@ -156,7 +173,7 @@
       pénale et civile qui pourraient être engagées à son encontre.
     </p>
     <h2 class="my-6">
-      7 - Modification et évolution du Service
+      8 - Modification et évolution du Service
     </h2>
     <p>
       Les termes des présentes conditions d’utilisation peuvent être modifiés ou complétés à tout moment, sans préavis,
@@ -165,7 +182,7 @@
       régulièrement à cette rubrique pour vérifier les conditions générales en vigueur.
     </p>
     <h2 class="my-6">
-      8 - Nous contacter
+      9 - Nous contacter
     </h2>
     <ul class="mb-4">
       <li>

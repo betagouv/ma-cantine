@@ -21,6 +21,7 @@ import BlogPage from "@/views/BlogsPage/BlogPage"
 import NotFound from "@/views/NotFound"
 import TesterParticipation from "@/views/TesterParticipation"
 import CGU from "@/views/CGU.vue"
+import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
 import ManagementPage from "@/views/ManagementPage"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenForm from "@/views/CanteenEditor/CanteenForm"
@@ -191,6 +192,17 @@ const routes = [
     path: "/cgu",
     name: "CGU",
     component: CGU,
+    meta: {
+      title: "Conditions générales d'utilisation",
+    },
+  },
+  {
+    path: "/politique-de-confidentialite",
+    name: "PrivacyPolicy",
+    component: PrivacyPolicy,
+    meta: {
+      title: "Politique de confidentialité",
+    },
   },
   {
     path: "/gestion",
