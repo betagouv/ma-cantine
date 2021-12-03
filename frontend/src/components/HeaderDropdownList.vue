@@ -99,6 +99,11 @@ export default {
           type: "divider",
         },
         {
+          text: "Contactez-nous",
+          icon: "mdi-help-circle-outline",
+          to: { name: "ContactPage" },
+        },
+        {
           text: "Donner son avis",
           icon: "mdi-check",
           href:

@@ -1,6 +1,7 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from api.views import (
+    InquiryView,
     LoggedUserView,
     SubscribeBetaTester,
     SubscribeNewsletter,
@@ -94,6 +95,7 @@ urlpatterns = {
         TeledeclarationPdfView.as_view(),
         name="teledeclaration_pdf",
     ),
+    path("inquiry/", InquiryView.as_view(), name="inquiry"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

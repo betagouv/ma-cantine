@@ -25,3 +25,4 @@ from .teledeclaration import (  # noqa: F401
     TeledeclarationCancelView,
     TeledeclarationPdfView,
 )
+from .inquiry import InquiryView  # noqa: F401
