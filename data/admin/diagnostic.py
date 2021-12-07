@@ -46,7 +46,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Au moins 50% de produits de qualité et durables dont 20% de bio",
+            "Plus de produits de qualité et durables dans nos assiettes",
             {
                 "fields": (
                     "value_bio_ht",

@@ -79,7 +79,7 @@
           <DiagnosticExpansionPanel
             iconColour="red"
             icon="mdi-food-apple"
-            heading="Au moins 50 % de produits de qualité et durables dont 20 % de bio"
+            heading="Plus de produits de qualité et durables dans nos assiettes"
             :summary="approSummary() || 'Incomplet'"
             :formIsValid="formIsValid.quality"
           >

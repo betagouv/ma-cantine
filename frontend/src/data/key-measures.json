@@ -6,7 +6,6 @@
       "display": "À partir du 1er janvier 2022 et 2025 pour la restauration privée",
       "earliestISO": "2022-01-01"
     },
-    "description": "La loi EGAlim et la loi Climat et Résilience encadrent la qualité des produits achetés entrant dans la composition des repas servis en restauration collective du secteur public et des établissements du secteur privé (article L. 230-5 du Code Rural et de la Pêche Maritime). Les repas doivent comporter, à partir de l'année 2022, au moins 50 % de produits de qualité et durables dont au moins 20 % issus de l'agriculture biologique ou en conversion. Ces taux (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent correspondre à des produits bio ou en conversion et au total au moins 50 euros doivent correspondre à des produits durables et de qualité (bio inclus). Depuis la promulgation de la loi Climat et Résilience, l'ensemble de la restauration collective, publique comme privée, a l'obligation de proposer 50 % de produits de qualité dont 20 % de produits bio à compter de 2022 pour le public, et d'ici le 1er janvier 2024 pour la restauration collective du secteur privé. Depuis la promulgation de la loi Climat et Résilience, à partir du 1er janvier 2024, au moins 60% du total achat de la famille de denrées « viandes et poissons » est composé des produits de qualité et durables, ce taux étant fixé à 100% pour la restauration de l’Etat, ses établissements publics et les entreprises publiques nationales. La viande de synthèse est interdite en restauration collective. Le 1er janvier 2024, ces dispositions s’appliquent à tous les restaurants collectifs, y compris tous les restaurants collectifs du secteur privé.",
     "descriptionComponent": "KeyMeasureDescriptionQuality",
     "id": "qualite-des-produits",
     "mdiIcon": "mdi-food-apple",
@@ -18,15 +17,15 @@
         "id": "cinquante",
         "readMore": false,
         "shortTitle": "50 % de qualité et durables",
-        "title": "Au moins 50 % de produits de qualité et durables..."
+        "title": "Produits de qualité et durables"
       },
       {
         "descriptionComponent": "LogoBio",
-        "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio », c'est à dire : \n\n-  des produits issus de l'agriculture biologique.\n-  des produits végétaux étiquetés 'en conversion'.",
+        "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio » pour les cantines en France continentale (consulter <a href='https://ma-cantine.beta.gouv.fr/blog/16'>notre blog</a> pour le seuil des autres régions). C'est à dire : \n\n-  des produits issus de l'agriculture biologique.\n-  des produits végétaux étiquetés 'en conversion'.",
         "id": "vingt",
         "readMore": false,
         "shortTitle": "20 % bio",
-        "title": ".... dont au moins 20 % de produits biologiques"
+        "title": "Produits biologiques"
       }
     ],
     "tags": [
@@ -39,7 +38,7 @@
       "loisirs",
       "entreprises"
     ],
-    "title": "Au moins 50 % de produits de qualité et durables dont 20 % de bio"
+    "title": "Plus de produits de qualité et durables dans nos assiettes"
   },
   {
     "baseComponent": "WasteMeasure",
