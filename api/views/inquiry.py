@@ -44,7 +44,7 @@ class InquiryView(APIView):
             body += f"\nAdresse : {email}"
             for key, value in meta.items():
                 body += f"\n{key} : {value}"
-            utils.create_trello_card(title, body)
+            utils.create_trello_card(settings.TRELLO_LIST_ID_CONTACT, title, body)
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except ValidationError as e:

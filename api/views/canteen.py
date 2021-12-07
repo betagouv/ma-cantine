@@ -28,6 +28,7 @@ from api.serializers import (
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
 from api.permissions import IsCanteenManager
 from .utils import camelize
+from common import utils
 
 logger = logging.getLogger(__name__)
 
@@ -227,12 +228,19 @@ class PublishCanteenView(APIView):
 
                 logger.info(f"Demande de publication de {canteen.name} (ID: {canteen.id})")
 
-                send_mail(
-                    subject="Demande de publication sur ma cantine",
-                    message=f"La cantine « {canteen.name} » a demandé d'être publiée.\nAdmin : {admin_url}",
-                    to=[settings.CONTACT_EMAIL],
-                    fail_silently=True,
-                )
+                title = canteen.name
+                env = getattr(settings, "ENVIRONMENT", "")
+                if env == "demo" or env == "staging":
+                    title = f"({env.upper()}) {title}"
+
+                description = f"[admin]({admin_url})"
+                if canteen.sectors.count():
+                    description += "\n\nSecteurs\n"
+                    for sector in canteen.sectors.all().order_by("name"):
+                        description += f"\n* {sector.name}"
+                else:
+                    description += "\n\nAucun secteur"
+                utils.create_trello_card(settings.TRELLO_LIST_ID_PUBLICATION, title, description)
 
             canteen.update_publication_comments(data)
             canteen.save()
