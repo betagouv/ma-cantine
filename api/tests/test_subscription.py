@@ -24,19 +24,19 @@ class TestSubscription(APITestCase):
 
         # Search person API response
         search_person_matcher = mocker.get(
-            re.compile("companydomain.pipedrive.com/api/v1/persons/search"),
+            re.compile(r"companydomain\.pipedrive\.com/api/v1/persons/search"),
             json={"success": True, "data": {"items": [{"item": {"id": "1"}}]}},
         )
 
         # Create person API response
         create_person_matcher = mocker.post(
-            re.compile("companydomain.pipedrive.com/api/v1/persons"),
+            re.compile(r"companydomain\.pipedrive\.com/api/v1/persons"),
             json={"success": True, "data": {"id": 1}},
         )
 
         # Create card API response
         create_card_matcher = mocker.post(
-            re.compile("companydomain.pipedrive.com/api/v1/deals"),
+            re.compile(r"companydomain\.pipedrive\.com/api/v1/deals"),
             json={"success": True},
         )
 
@@ -59,19 +59,19 @@ class TestSubscription(APITestCase):
 
         # Search person API response
         search_person_matcher = mocker.get(
-            re.compile("companydomain.pipedrive.com/api/v1/persons/search"),
+            re.compile(r"companydomain\.pipedrive\.com/api/v1/persons/search"),
             json={"success": True, "data": {"items": []}},
         )
 
         # Create person API response
         create_person_matcher = mocker.post(
-            re.compile("companydomain.pipedrive.com/api/v1/persons"),
+            re.compile(r"companydomain\.pipedrive\.com/api/v1/persons"),
             json={"success": True, "data": {"id": 1}},
         )
 
         # Create card API response
         create_card_matcher = mocker.post(
-            re.compile("companydomain.pipedrive.com/api/v1/deals"),
+            re.compile(r"companydomain\.pipedrive\.com/api/v1/deals"),
             json={"success": True},
         )
 
@@ -95,25 +95,25 @@ class TestSubscription(APITestCase):
 
         # Search person API response
         search_person_matcher = mocker.get(
-            re.compile("companydomain.pipedrive.com/api/v1/persons/search"),
+            re.compile(r"companydomain\.pipedrive\.com/api/v1/persons/search"),
             json={"success": True, "data": {"items": []}},
         )
 
         # Create person API response
         create_person_matcher = mocker.post(
-            re.compile("companydomain.pipedrive.com/api/v1/persons"),
+            re.compile(r"companydomain\.pipedrive\.com/api/v1/persons"),
             json={"success": True, "data": {"id": 1}},
         )
 
         # Create card API response
         create_card_matcher = mocker.post(
-            re.compile("companydomain.pipedrive.com/api/v1/deals"),
+            re.compile(r"companydomain\.pipedrive\.com/api/v1/deals"),
             json={"success": True, "data": {"id": 1}},
         )
 
         # Create note matcher
         create_note_matcher = mocker.post(
-            re.compile("companydomain.pipedrive.com/api/v1/notes"),
+            re.compile(r"companydomain\.pipedrive\.com/api/v1/notes"),
             json={"success": True, "data": {"id": 1}},
         )
 
@@ -151,7 +151,7 @@ class TestSubscription(APITestCase):
 
         # Search person API response
         search_person_matcher = mocker.get(
-            re.compile("companydomain.pipedrive.com/api/v1/persons/search"),
+            re.compile(r"companydomain\.pipedrive\.com/api/v1/persons/search"),
             json={"success": False},
         )
 
