@@ -89,6 +89,7 @@ class SubscribeBetaTester(APIView):
             return JsonResponse({}, status=status.HTTP_201_CREATED)
 
         except PipedriveException as e:
+            logger.error(f"Pipedrive API error on request by {name or ''} {email}: {message} ")
             logger.exception(e)
             return JsonResponse({}, status=status.HTTP_502_BAD_GATEWAY)
 
