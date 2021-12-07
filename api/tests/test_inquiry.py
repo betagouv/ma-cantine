@@ -5,8 +5,9 @@ from rest_framework import status
 from unittest.mock import patch
 
 
+@override_settings(TRELLO_LIST_ID_CONTACT="listId")
+@patch("common.utils.create_trello_card")
 class TestInquiry(APITestCase):
-    @patch("common.utils.create_trello_card")
     def test_inquiry(self, mock_create_trello_card):
         """
         Test that an inquiry about functionality hits trello endpoint
@@ -26,10 +27,9 @@ class TestInquiry(APITestCase):
         card_title = "test@example.com - fonctionnalité"
         card_body = "Nom/Prénom\n---\nTester\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
-        mock_create_trello_card.assert_called_with(card_title, card_body)
+        mock_create_trello_card.assert_called_with("listId", card_title, card_body)
 
     @override_settings(ENVIRONMENT="demo")
-    @patch("common.utils.create_trello_card")
     def test_inquiry_environment_prepend(self, mock_create_trello_card):
         """
         Test that the environment is prepended when we are in "demo" or "staging" mode
@@ -48,9 +48,8 @@ class TestInquiry(APITestCase):
         card_title = "(DEMO) test@example.com - fonctionnalité"
         card_body = "Nom/Prénom\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
-        mock_create_trello_card.assert_called_with(card_title, card_body)
+        mock_create_trello_card.assert_called_with("listId", card_title, card_body)
 
-    @patch("common.utils.create_trello_card")
     def test_missing_fields(self, mock_create_trello_card):
         """
         Test that a 400 error response with details is returned when the requests is missing fields
