@@ -8,7 +8,7 @@ botocore==1.23.21
 Brotli==1.0.9
 certifi==2021.10.8
 chardet==4.0.0
-charset-normalizer==2.0.8
+charset-normalizer==2.0.9
 click==8.0.3
 ConfigArgParse==1.5.3
 Django==3.2.9
