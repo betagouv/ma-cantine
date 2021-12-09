@@ -1,6 +1,9 @@
 <template>
   <div class="text-left">
     <v-form v-model="formIsValid" ref="form" @submit.prevent>
+      <div class="spinner" v-if="loading">
+        <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
+      </div>
       <h2 class="text-h4 font-weight-black mb-8">Devenir béta-testeur</h2>
       <p class="text-body-2">
         Nous sommes en version de test et cherchons continuellement à améliorer la plateforme. Pour cela nous cherchons
@@ -8,14 +11,14 @@
         communiquer vos informations ci-dessous.
       </p>
 
-      <label for="school" class="body-2">Nom de votre cantine</label>
+      <label for="name" class="body-2">Votre nom et prénom</label>
       <v-text-field
-        id="school"
+        id="name"
         validate-on-blur
         hide-details="auto"
         :rules="[validators.required]"
         solo
-        v-model="formData.school"
+        v-model="formData.name"
         class="mt-2 mb-4"
       ></v-text-field>
 
@@ -56,7 +59,7 @@
     </v-form>
     <v-row class="my-8">
       <v-spacer></v-spacer>
-      <v-btn x-large color="primary" class="mr-2" @click="subscribeBetaTester">Je participe</v-btn>
+      <v-btn x-large color="primary" :disabled="loading" class="mr-2" @click="subscribeBetaTester">Je participe</v-btn>
     </v-row>
   </div>
 </template>
@@ -70,6 +73,7 @@ export default {
     return {
       formData: {},
       formIsValid: true,
+      loading: false,
     }
   },
   computed: {
@@ -90,7 +94,7 @@ export default {
       }
 
       const payload = Object.assign({ measures: this.latestDiagnostic }, this.formData)
-
+      this.loading = true
       this.$store
         .dispatch("subscribeBetaTester", payload)
         .then(() => {
@@ -103,7 +107,19 @@ export default {
           console.log(error.message)
           this.$store.dispatch("notifyServerError")
         })
+        .finally(() => {
+          this.loading = false
+        })
     },
   },
 }
 </script>
+
+<style scoped>
+.spinner {
+  background: #d5d5d53b none repeat scroll 0% 0%;
+  position: absolute;
+  inset: 0px;
+  z-index: 1;
+}
+</style>
