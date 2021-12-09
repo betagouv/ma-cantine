@@ -7,7 +7,7 @@
         <KeyMeasureInfoCard v-if="measure.tags" :measure="measure" :forMeasure="true" />
       </v-col>
       <v-col>
-        <KeyMeasureDescription :measure="measure" v-if="measure.description" />
+        <KeyMeasureDescription :measure="measure" v-if="measure.description || measure.descriptionComponent" />
         <div v-for="subMeasure in childSubMeasures" :key="subMeasure.id" :id="subMeasure.id">
           <h2 class="text-body-1 font-weight-bold mt-6 mb-2">{{ subMeasure.title }}</h2>
           <div>
