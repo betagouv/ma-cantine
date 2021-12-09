@@ -1,37 +1,54 @@
 <template>
   <div>
-    <v-form v-model="formIsValid" ref="form" @submit.prevent>
-      <v-text-field
-        v-model="fromEmail"
-        label="Votre email"
-        :rules="[validators.email]"
-        validate-on-blur
-        outlined
-        class="my-2"
-      ></v-text-field>
-      <v-text-field v-model="name" label="Prénom et nom (facultatif)" outlined class="my-2"></v-text-field>
-      <v-select
-        v-model="inquiryType"
-        :items="inquiryOptions"
-        label="Type de demande"
-        outlined
-        class="my-2"
-        :rules="[validators.required]"
-      ></v-select>
-      <v-textarea v-model="message" label="Message" outlined :rules="[validators.required]" class="mt-2"></v-textarea>
-      <p class="caption grey--text text--darken-1 mt-n1 mb-6">
-        Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
-      </p>
-    </v-form>
-    <v-btn x-large color="primary" class="mt-0 mb-6" @click="sendEmail">
-      <v-icon class="mr-2">mdi-send</v-icon>
-      Envoyer
-    </v-btn>
-    <p class="grey--text text--darken-1">
-      Si vous n'arrivez pas à utiliser le formulaire ci-dessus, vous pouvez nous contacter directement par email à
-      l'adresse suivante:
-      <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
-    </p>
+    <v-row>
+      <v-col>
+        <v-form v-model="formIsValid" ref="form" @submit.prevent>
+          <v-text-field
+            v-model="fromEmail"
+            label="Votre email"
+            :rules="[validators.email]"
+            validate-on-blur
+            outlined
+            class="my-2"
+          ></v-text-field>
+          <v-text-field v-model="name" label="Prénom et nom (facultatif)" outlined class="my-2"></v-text-field>
+          <v-select
+            v-model="inquiryType"
+            :items="inquiryOptions"
+            label="Type de demande"
+            outlined
+            class="my-2"
+            :rules="[validators.required]"
+          ></v-select>
+          <v-textarea
+            v-model="message"
+            label="Message"
+            outlined
+            :rules="[validators.required]"
+            class="mt-2"
+          ></v-textarea>
+          <p class="caption grey--text text--darken-1 mt-n1 mb-6">
+            Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
+          </p>
+        </v-form>
+        <v-btn x-large color="primary" class="mt-0 mb-6" @click="sendEmail">
+          <v-icon class="mr-2">mdi-send</v-icon>
+          Envoyer
+        </v-btn>
+        <p class="grey--text text--darken-1">
+          Si vous n'arrivez pas à utiliser le formulaire ci-dessus, vous pouvez nous contacter directement par email à
+          l'adresse suivante:
+          <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+        </p>
+      </v-col>
+      <v-col cols="4" v-if="$vuetify.breakpoint.smAndUp">
+        <div class="fill-height d-flex flex-column align-center">
+          <v-spacer></v-spacer>
+          <v-img src="/static/images/SittingDoodle.png" contain style="transform: scaleX(-1);"></v-img>
+          <v-spacer></v-spacer>
+        </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -61,8 +78,8 @@ export default {
       message: "",
       inquiryType: "",
       inquiryOptions: [
-        { text: "Comment utiliser une fonctionnalité", value: "functionalityQuestion" },
-        { text: "Bug", value: "bug" },
+        { text: "Poser une question sur une fonctionnalité de ma cantine ?", value: "functionalityQuestion" },
+        { text: "Signaler un bug", value: "bug" },
         { text: "Question sur la loi EGAlim", value: "egalim" },
         { text: "Autre", value: "other" },
       ],
