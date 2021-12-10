@@ -33,3 +33,4 @@ L’hébergement est fait chez [Clever Cloud](https://www.clever-cloud.com/). Ce
 - [AlwaysData](https://www.alwaysdata.com/fr/) pour la gestion des DNS
 - [Metabase](https://ma-cantine-metabase.cleverapps.io/public/dashboard/f65ca7cc-c3bd-4cfb-a3dc-236f81864663) pour l'analyse et la visualisation des données
 - [Matomo](https://stats.data.gouv.fr/index.php?module=CoreHome&action=index&idSite=162&period=range&date=previous30&updated=1) pour l'analyse du traffic web
+- [ELK](ana-bxrbvv38clpvd6tvzpkz-elasticsearch.services.clever-cloud.com/) afin de gérer les logs nous utilisons une base de données ElasticSearch avec un frontend Kibana. Les logs applicatifs sont gardés pendant trois mois.
