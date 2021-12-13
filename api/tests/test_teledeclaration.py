@@ -248,7 +248,7 @@ class TestTeledeclarationApi(APITestCase):
         We can only have one submitted teledeclaration per canteen/year
         """
         user = authenticate.user
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory.create(siret="12345678912345")
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
         Teledeclaration.createFromDiagnostic(diagnostic, user)
@@ -256,3 +256,27 @@ class TestTeledeclarationApi(APITestCase):
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_no_siret(self):
+        """
+        A few canteens don't have SIRETs - make sure teledeclarations for
+        different canteens with no SIRET aren't flagged as duplicates
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create(siret="")
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        Teledeclaration.createFromDiagnostic(diagnostic, user)
+
+        payload = {"diagnosticId": diagnostic.id}
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        canteen2 = CanteenFactory.create(siret="")
+        canteen2.managers.add(user)
+        diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=2020)
+
+        payload = {"diagnosticId": diagnostic2.id}
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
