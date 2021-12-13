@@ -17,7 +17,7 @@ class TestCanteenContact(APITestCase):
             "canteenId": canteen.id,
             "from": "test@example.com",
             "name": "Camille Dupont",
-            "message": "Test <b>message</b>",
+            "message": "Test <b>message</b>\n\nline 2",
         }
         response = self.client.post(reverse("contact_canteen"), payload)
 
@@ -28,7 +28,7 @@ class TestCanteenContact(APITestCase):
         self.assertEqual(len(email.to), canteen.managers.all().count() + 1)
         self.assertEqual(email.from_email, "contact@example.com")
         self.assertIn("Camille Dupont", email.body)
-        self.assertIn("Test <b>message</b>", email.body)
+        self.assertIn("Test <b>message</b>\n\nline 2", email.body)
         self.assertIn("contact@example.com", email.body)
         self.assertEqual(len(email.reply_to), 1)
         self.assertEqual(email.reply_to[0], "test@example.com")
