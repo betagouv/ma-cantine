@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib import admin
 from common.utils import send_mail
 import urllib.parse
-from data.models import Canteen
+from data.models import Canteen, Teledeclaration
 from .diagnostic import DiagnosticInline
 from .softdeletionadmin import SoftDeletionAdmin
 
@@ -66,6 +66,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "name",
         "city",
         "publication_status",
+        "télédéclarée",
         "creation_date",
         "modification_date",
         "management_type",
@@ -87,6 +88,10 @@ class CanteenAdmin(SoftDeletionAdmin):
     search_fields = ("name",)
     if getattr(settings, "ENVIRONMENT", "") != "prod":
         actions = [publish, unpublish]
+
+    def télédéclarée(self, obj):
+        declaration = Teledeclaration.objects.filter(canteen=obj).order_by("-creation_date").first()
+        return f"📩 Télédéclarée {declaration.year}" if declaration else ""
 
     def supprimée(self, obj):
         return "🗑️ Supprimée" if obj.deletion_date else ""
