@@ -89,6 +89,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
+    "csp.middleware.CSPMiddleware",
 ]
 CSRF_COOKIE_NAME = "csrftoken"
 ROOT_URLCONF = "macantine.urls"
@@ -328,3 +329,68 @@ if DEBUG_PERFORMANCE:
 CSV_IMPORT_MAX_SIZE = 10485760
 
 PIPEDRIVE_API_TOKEN = os.getenv("PIPEDRIVE_API_TOKEN", None)
+
+CSP_DEBUG_DOMAINS = (
+    "'unsafe-eval'",
+    "localhost:*",
+    "0.0.0.0:*",
+    "127.0.0.1:*",
+)
+
+CSP_DEFAULT_SRC = ("'self'",)
+if DEBUG:
+    CSP_DEFAULT_SRC += CSP_DEBUG_DOMAINS
+
+CSP_STYLE_SRC = (
+    "'self'",
+    "'unsafe-inline'",
+)
+if DEBUG:
+    CSP_STYLE_SRC += CSP_DEBUG_DOMAINS
+
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "stats.data.gouv.fr",
+    "'unsafe-inline'",
+)
+if DEBUG:
+    CSP_SCRIPT_SRC += CSP_DEBUG_DOMAINS
+
+CSP_IMG_SRC = (
+    "'self'",
+    "cellar-c2.services.clever-cloud.com",
+    "voxusagers.numerique.gouv.fr",
+    "'unsafe-inline'",
+)
+if DEBUG:
+    CSP_IMG_SRC += CSP_DEBUG_DOMAINS
+
+CSP_FONT_SRC = ("'self'",)
+if DEBUG:
+    CSP_IMG_SRC += CSP_FONT_SRC
+
+CSP_CONNECT_SRC = (
+    "'self'",
+    "stats.data.gouv.fr",
+    "ws:",
+)
+if DEBUG:
+    CSP_CONNECT_SRC += CSP_DEBUG_DOMAINS
+
+CSP_OBJECT_SRC = (
+    "'self'",
+    "cellar-c2.services.clever-cloud.com",
+)
+if DEBUG:
+    CSP_OBJECT_SRC += CSP_DEBUG_DOMAINS
+
+CSP_MEDIA_SRC = (
+    "'self'",
+    "cellar-c2.services.clever-cloud.com",
+)
+if DEBUG:
+    CSP_MEDIA_SRC += CSP_DEBUG_DOMAINS
+
+CSP_FRAME_SRC = ("'self'",)
+if DEBUG:
+    CSP_FRAME_SRC += CSP_DEBUG_DOMAINS
