@@ -33,6 +33,8 @@ import DiagnosticEditor from "@/views/DiagnosticEditor"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import ContactPage from "@/views/ContactPage"
+import InvoicesHome from "@/views/InvoicesHome"
+import InvoicePage from "@/views/InvoicePage"
 
 Vue.use(VueRouter)
 
@@ -340,6 +342,24 @@ const routes = [
     component: ContactPage,
     meta: {
       title: "Contactez-nous",
+    },
+  },
+  {
+    path: "/mes-achats",
+    name: "InvoicesHome",
+    component: InvoicesHome,
+    meta: {
+      title: "Mes achats",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/mon-achat",
+    name: "InvoicePage",
+    component: InvoicePage,
+    meta: {
+      title: "Mon achat",
+      authenticationRequired: true,
     },
   },
   {
