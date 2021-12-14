@@ -67,7 +67,7 @@ export default {
     return {
       canteen: undefined,
       labels,
-      canteensHomeBacklink: null,
+      canteensHomeBacklink: { name: "CanteensHome" },
     }
   },
   components: {
@@ -112,7 +112,10 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.canteensHomeBacklink = from
+      if (from.name == "CanteensHome") {
+        // keep filter settings in URL params
+        vm.canteensHomeBacklink = from
+      }
     })
   },
 }
