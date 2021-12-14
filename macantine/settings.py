@@ -330,6 +330,9 @@ CSV_IMPORT_MAX_SIZE = 10485760
 
 PIPEDRIVE_API_TOKEN = os.getenv("PIPEDRIVE_API_TOKEN", None)
 
+# CSP headers (https://content-security-policy.com/)
+
+# CSP Debug domains -  unsfae-eval needed in DEBUG for hot-reload of the frontend server
 CSP_DEBUG_DOMAINS = (
     "'unsafe-eval'",
     "localhost:*",
@@ -337,10 +340,12 @@ CSP_DEBUG_DOMAINS = (
     "127.0.0.1:*",
 )
 
+# CSP Default policy for resources such as JS, CSS, AJAX, etc. Note that not all directives fallback to this.
 CSP_DEFAULT_SRC = ("'self'",)
 if DEBUG:
     CSP_DEFAULT_SRC += CSP_DEBUG_DOMAINS
 
+# CSP valid sources of stylesheets or CSS
 CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
@@ -348,6 +353,7 @@ CSP_STYLE_SRC = (
 if DEBUG:
     CSP_STYLE_SRC += CSP_DEBUG_DOMAINS
 
+# CSP valid sources of Javascript
 CSP_SCRIPT_SRC = (
     "'self'",
     "stats.data.gouv.fr",
@@ -356,6 +362,7 @@ CSP_SCRIPT_SRC = (
 if DEBUG:
     CSP_SCRIPT_SRC += CSP_DEBUG_DOMAINS
 
+# CSP valid sources of images
 CSP_IMG_SRC = (
     "'self'",
     "cellar-c2.services.clever-cloud.com",
@@ -365,10 +372,12 @@ CSP_IMG_SRC = (
 if DEBUG:
     CSP_IMG_SRC += CSP_DEBUG_DOMAINS
 
+# CSP valid sources of fonts
 CSP_FONT_SRC = ("'self'",)
 if DEBUG:
     CSP_IMG_SRC += CSP_FONT_SRC
 
+# CSP valid sources of AJAX, WebSockets, EventSources, etc
 CSP_CONNECT_SRC = (
     "'self'",
     "stats.data.gouv.fr",
@@ -377,6 +386,7 @@ CSP_CONNECT_SRC = (
 if DEBUG:
     CSP_CONNECT_SRC += CSP_DEBUG_DOMAINS
 
+# CSP valid sources of plugins
 CSP_OBJECT_SRC = (
     "'self'",
     "cellar-c2.services.clever-cloud.com",
@@ -384,6 +394,7 @@ CSP_OBJECT_SRC = (
 if DEBUG:
     CSP_OBJECT_SRC += CSP_DEBUG_DOMAINS
 
+# CSP valid sources of media (audio and video)
 CSP_MEDIA_SRC = (
     "'self'",
     "cellar-c2.services.clever-cloud.com",
@@ -391,6 +402,7 @@ CSP_MEDIA_SRC = (
 if DEBUG:
     CSP_MEDIA_SRC += CSP_DEBUG_DOMAINS
 
+# CSP valid sources for loading frames
 CSP_FRAME_SRC = ("'self'",)
 if DEBUG:
     CSP_FRAME_SRC += CSP_DEBUG_DOMAINS
