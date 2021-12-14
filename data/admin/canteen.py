@@ -1,6 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib import admin
+from django.utils import timezone
 from common.utils import send_mail
 import urllib.parse
 from data.models import Canteen, Teledeclaration
@@ -90,8 +91,11 @@ class CanteenAdmin(SoftDeletionAdmin):
         actions = [publish, unpublish]
 
     def télédéclarée(self, obj):
-        declaration = Teledeclaration.objects.filter(canteen=obj).order_by("-creation_date").first()
-        return f"📩 Télédéclarée {declaration.year}" if declaration else ""
+        if Teledeclaration.objects.filter(
+            canteen=obj, year=(timezone.now().year - 1), status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        ).exists():
+            return "📩 Télédéclarée"
+        return ""
 
     def supprimée(self, obj):
         return "🗑️ Supprimée" if obj.deletion_date else ""
