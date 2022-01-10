@@ -8,6 +8,7 @@
             Si vous ne connaissez pas votre part de bio, produits durables, produits issus du commerce équitable, nous
             vous proposons un outil simple pour les calculer. Sous forme de tableur, remplissez vos achats HT suivant
             leurs labels et/ou sigles de qualité.
+            Merci à nos beta-testeurs et notamment au PETR Pays d’Armagnac qui nous ont inspiré ce tableur.
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="px-4">
@@ -15,7 +16,7 @@
             <v-dialog max-width="700" v-model="calculatorModal">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn outlined color="primary" v-on="on" v-bind="attrs">
-                  Télécharger notre tableur
+                  Télécharger le tableur
                 </v-btn>
               </template>
               <CalculatorResourceModal @closeModal="closeCalculatorModal" />
