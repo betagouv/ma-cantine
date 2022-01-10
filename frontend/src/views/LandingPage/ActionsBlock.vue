@@ -67,7 +67,7 @@
             vous proposons un outil simple pour les calculer. Sous forme de tableur, remplissez vos achats HT suivant
             leurs labels et/ou sigles de qualité.
             <br />
-            Merci à nos beta-testeurs et notamment au PETR Pays d’Armagnac, qui nous largement inspiré ce tableur.
+            Merci à nos beta-testeurs et notamment au PETR Pays d’Armagnac, qui nous ont largement inspiré ce tableur.
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="pa-4">
