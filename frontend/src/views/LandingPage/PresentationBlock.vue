@@ -24,12 +24,19 @@
         <v-spacer></v-spacer>
       </v-row>
     </v-card>
-    <v-btn v-if="loggedUser" x-large class="primary mx-auto mt-8" :to="{ name: 'ManagementPage' }">
-      Accéder à mes cantines
-    </v-btn>
-    <v-btn v-else x-large class="primary mx-auto mt-8" href="/creer-mon-compte">
-      Créer mon compte
-    </v-btn>
+    <v-row>
+      <v-spacer></v-spacer>
+      <v-btn x-large outlined color="primary" class="mt-8 mx-8" :to="{ name: 'CanteensHome' }">
+        Découvrir nos cantines
+      </v-btn>
+      <v-btn v-if="loggedUser" x-large class="primary mt-8 mx-8" :to="{ name: 'ManagementPage' }">
+        Accéder à mes cantines
+      </v-btn>
+      <v-btn v-else x-large class="primary mt-8 mx-8" href="/creer-mon-compte">
+        Créer mon compte
+      </v-btn>
+      <v-spacer></v-spacer>
+    </v-row>
   </div>
 </template>
 
