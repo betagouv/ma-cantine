@@ -1,6 +1,6 @@
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
-from data.models import Canteen, Diagnostic, Teledeclaration
+from data.models import Canteen, Diagnostic, Teledeclaration, Purchase
 
 
 class IsProfileOwner(permissions.BasePermission):
@@ -42,3 +42,15 @@ class CanEditDiagnostic(permissions.BasePermission):
         )
 
         return is_manager and not has_submitted_teledeclaration
+
+
+class IsPurchaseCanteenManager(permissions.BasePermission):
+    """
+    This is for actions only permitted by managers of
+    the purchase's canteen
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if not isinstance(obj, Purchase):
+            return False
+        return obj.canteen in request.user.canteens.all()

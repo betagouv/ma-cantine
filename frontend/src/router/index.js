@@ -354,11 +354,21 @@ const routes = [
     },
   },
   {
-    path: "/mon-achat",
+    path: "/mes-achats/:id",
     name: "InvoicePage",
     component: InvoicePage,
+    props: true,
     meta: {
       title: "Mon achat",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/nouvel-achat/",
+    name: "NewPurchase",
+    component: InvoicePage,
+    meta: {
+      title: "Nouvel achat",
       authenticationRequired: true,
     },
   },

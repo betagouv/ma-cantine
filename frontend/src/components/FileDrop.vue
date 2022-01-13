@@ -42,7 +42,7 @@
         {{ value.name }}
       </v-card-text>
 
-      <v-btn large color="primary" @click.stop="upload" :disabled="disabled">Valider</v-btn>
+      <v-btn large color="primary" @click.stop="upload" :disabled="disabled" v-if="showUploadButton">Valider</v-btn>
       <v-btn large class="text-decoration-underline mt-5" text @click.stop="clearFile" :disabled="disabled">
         Choisir un autre fichier
       </v-btn>
@@ -71,6 +71,9 @@ export default {
     },
     value: {
       type: File,
+    },
+    showUploadButton: {
+      default: true,
     },
     disabled: Boolean,
   },

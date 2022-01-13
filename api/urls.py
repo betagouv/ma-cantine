@@ -6,6 +6,8 @@ from api.views import (
     SubscribeBetaTester,
     SubscribeNewsletter,
     SendCanteenEmailView,
+    PurchaseListCreateView,
+    PurchaseRetrieveUpdateView,
 )
 from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView
 from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, DiagnosticUpdateView
@@ -96,6 +98,16 @@ urlpatterns = {
         name="teledeclaration_pdf",
     ),
     path("inquiry/", InquiryView.as_view(), name="inquiry"),
+    path(
+        "purchases/",
+        PurchaseListCreateView.as_view(),
+        name="purchase_list_create",
+    ),
+    path(
+        "purchases/<int:pk>",
+        PurchaseRetrieveUpdateView.as_view(),
+        name="purchase_retrieve_update",
+    ),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)
