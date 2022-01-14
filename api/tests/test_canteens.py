@@ -7,7 +7,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory, SectorFactory
 from data.factories import DiagnosticFactory
-from data.models import Canteen, Teledeclaration, CanteenImage
+from data.models import Canteen, Teledeclaration, CanteenImage, Diagnostic
 from .utils import authenticate
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -758,6 +758,11 @@ class TestCanteenApi(APITestCase):
             value_total_ht=100,
             value_bio_ht=20,
             value_sustainable_ht=30,
+            has_waste_diagnostic=False,
+            waste_actions=[],
+            vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY,
+            plastic_tableware_substituted=False,
+            communicates_on_food_quality=False,
         )
         DiagnosticFactory.create(
             canteen=unpublished,
@@ -765,6 +770,14 @@ class TestCanteenApi(APITestCase):
             value_total_ht=1000,
             value_bio_ht=400,
             value_sustainable_ht=500,
+            has_waste_diagnostic=True,
+            waste_actions=["action1", "action2"],
+            vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW,
+            cooking_plastic_substituted=True,
+            serving_plastic_substituted=True,
+            plastic_bottles_substituted=True,
+            plastic_tableware_substituted=True,
+            communicates_on_food_quality=True,
         )
         # irrelevant diagnostics
         DiagnosticFactory.create(
@@ -773,6 +786,7 @@ class TestCanteenApi(APITestCase):
             value_total_ht=100,
             value_bio_ht=100,
             value_sustainable_ht=0,
+            vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY,
         )
         DiagnosticFactory.create(
             canteen=other_region,
@@ -780,6 +794,11 @@ class TestCanteenApi(APITestCase):
             value_total_ht=100,
             value_bio_ht=100,
             value_sustainable_ht=0,
+            cooking_plastic_substituted=True,
+            serving_plastic_substituted=True,
+            plastic_bottles_substituted=True,
+            plastic_tableware_substituted=True,
+            communicates_on_food_quality=True,
         )
 
         response = self.client.get(reverse("canteen_statistics"), {"region": region, "year": year})
@@ -792,11 +811,11 @@ class TestCanteenApi(APITestCase):
         # TODO: sector breakdown
         self.assertEqual(body["bioPercent"], 30)
         self.assertEqual(body["sustainablePercent"], 40)
-        # self.assertEqual(body["approPercent"], 50)
-        # self.assertEqual(body["wastePercent"], 0)
-        # self.assertEqual(body["diversificationPercent"], 100)
-        # self.assertEqual(body["plasticPercent"], 50)
-        # self.assertEqual(body["infoPercent"], 50)
+        self.assertEqual(body["approPercent"], 100)
+        self.assertEqual(body["wastePercent"], 50)
+        self.assertEqual(body["diversificationPercent"], 50)
+        self.assertEqual(body["plasticPercent"], 50)
+        self.assertEqual(body["infoPercent"], 50)
 
     def test_canteen_stats_by_department(self):
         department = "01"

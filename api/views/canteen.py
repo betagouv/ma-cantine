@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.functions import Cast
-from django.db.models import Sum, FloatField, Avg
+from django.db.models import Sum, FloatField, Avg, Func, F
 from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -494,13 +494,79 @@ class CanteenStatisticsView(APIView):
             diagnostics = diagnostics.filter(canteen__region=region)
         elif department:
             diagnostics = diagnostics.filter(canteen__department=department)
-        qs_diag = diagnostics.filter(value_total_ht__gt=0)
-        qs_diag = qs_diag.annotate(bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField()))
-        qs_diag = qs_diag.annotate(
+        appro_share_query = diagnostics.filter(value_total_ht__gt=0)
+        appro_share_query = appro_share_query.annotate(
+            bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField())
+        )
+        appro_share_query = appro_share_query.annotate(
             sustainable_share=Cast(Sum("value_sustainable_ht") / Sum("value_total_ht"), FloatField())
         )
-        agg = qs_diag.aggregate(Avg("bio_share"), Avg("sustainable_share"))
+        agg = appro_share_query.aggregate(Avg("bio_share"), Avg("sustainable_share"))
         # no need for particularly fancy rounding
         data["bio_percent"] = int((agg["bio_share__avg"] or 0) * 100)
         data["sustainable_percent"] = int((agg["sustainable_share__avg"] or 0) * 100)
+
+        # --- badges ---
+        appro_percent = 0
+        waste_percent = 0
+        diversification_percent = 0
+        plastic_percent = 0
+        info_percent = 0
+
+        # appro
+        appro_total = appro_share_query.count()
+        if appro_total:
+            appro_share_query = appro_share_query.annotate(
+                combined_share=Cast(
+                    (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
+                    FloatField(),
+                )
+            )
+            appro_badge_earned = appro_share_query.filter(combined_share__gte=0.5).count()
+
+            appro_percent = int(appro_badge_earned / appro_total * 100)
+
+        total_diag = diagnostics
+        total_diag = total_diag.count()
+        if total_diag:  # maybe we shouldn't be able to get to 0 diags this point with the endpoint?
+            # waste
+            waste_badge_query = diagnostics.filter(has_waste_diagnostic=True)
+            waste_badge_query = waste_badge_query.annotate(
+                waste_actions_len=Func(F("waste_actions"), function="CARDINALITY")
+            )
+            waste_badge_query = waste_badge_query.filter(waste_actions_len__gt=0)
+            # TODO: donation agreement
+            waste_badge_earned = waste_badge_query.count()
+            waste_percent = int(waste_badge_earned / total_diag * 100)
+
+            # diversification
+            diversification_badge_query = diagnostics.exclude(vegetarian_weekly_recurrence__isnull=True)
+            diversification_badge_query = diagnostics.exclude(vegetarian_weekly_recurrence="")
+            diversification_badge_query = diversification_badge_query.exclude(
+                vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW
+            )
+            # TODO: scolaire vs everyone else
+            diversification_badge_earned = diversification_badge_query.count()
+            diversification_percent = int(diversification_badge_earned / total_diag * 100)
+
+            # plastic
+            plastic_badge_query = diagnostics.filter(
+                cooking_plastic_substituted=True,
+                serving_plastic_substituted=True,
+                plastic_bottles_substituted=True,
+                plastic_tableware_substituted=True,
+            )
+            plastic_badge_earned = plastic_badge_query.count()
+            plastic_percent = int(plastic_badge_earned / total_diag * 100)
+
+            # info
+            info_badge_query = diagnostics.filter(communicates_on_food_quality=True)
+            info_badge_earned = info_badge_query.count()
+            info_percent = int(info_badge_earned / total_diag * 100)
+
+        data["approPercent"] = appro_percent
+        data["wastePercent"] = waste_percent
+        data["diversificationPercent"] = diversification_percent
+        data["plasticPercent"] = plastic_percent
+        data["infoPercent"] = info_percent
         return JsonResponse(camelize(data), status=status.HTTP_200_OK)

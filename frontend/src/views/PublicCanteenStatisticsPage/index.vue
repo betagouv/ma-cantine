@@ -72,7 +72,7 @@
       <h3 class="text-h5 mt-10 mb-8 text--darken-5">Qualité de produits en {{ year }}</h3>
       <v-row>
         <v-col cols="12" sm="6" md="5" class="pl-0">
-          <v-card class="fill-height text-center pt-4 pb-2 px-4 d-flex flex-column" outlined>
+          <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
             <v-img max-width="30" contain src="/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
             <v-card-text class="grey--text text--darken-2">
               <v-row class="align-end">
