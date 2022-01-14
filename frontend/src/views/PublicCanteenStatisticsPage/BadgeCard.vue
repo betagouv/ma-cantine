@@ -3,7 +3,9 @@
     <v-img max-width="30" contain :src="`/static/images/badges/${measure.badgeId}.svg`" class="mx-auto" alt=""></v-img>
     <v-card-text class="mx-auto">
       <v-row class="align-end">
-        <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ percentageAchieved }} %</span>
+        <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1" style="line-height: inherit;">
+          {{ percentageAchieved }} %
+        </span>
         <span class="text-body-2 grey--text text--darken-2">
           {{ measure.shortTitle.toLowerCase() }}
         </span>

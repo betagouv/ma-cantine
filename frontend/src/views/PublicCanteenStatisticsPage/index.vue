@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left grey--text text--darken-2">
+  <div class="text-left grey--text text--darken-4">
     <h1 class="text-h4 font-weight-black black--text mt-3 mb-6">Découvrir les démarches chez vous</h1>
     <!-- Add image? -->
     <!-- Add some introductory text? -->
@@ -49,16 +49,16 @@
       </v-row>
     </v-form>
     <div v-if="locationText" class="py-8">
-      <h2 class="text--darken-3 text-h4 mb-2">Les statistiques pour {{ locationText }}</h2>
+      <h2 class="text--darken-5 text-h4 mb-2">Les statistiques pour {{ locationText }}</h2>
       <v-row>
         <v-col cols="7">
           <p class="pt-6">
             Aujourd'hui, il y a
-            <span class="text-h5 font-weight-black">{{ statistics.canteensRegistered }}</span>
+            <span class="text-h5 font-weight-bold">{{ statistics.canteensRegistered }}</span>
             cantines dans {{ locationText }} sur ce site.
           </p>
           <p>
-            <span class="text-h5 font-weight-black">{{ statistics.canteensPublished }}</span>
+            <span class="text-h5 font-weight-bold">{{ statistics.canteensPublished }}</span>
             cantines ont publié leurs données, accessible par
             <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
             .
@@ -69,20 +69,22 @@
           <VueApexCharts :options="chartOptions" :series="chartSeries" type="pie" height="auto" width="100%" />
         </v-col>
       </v-row>
-      <h3 class="text-h5 mt-10 mb-8 text--darken-3">Qualité de produits en {{ year }}</h3>
+      <h3 class="text-h5 mt-10 mb-8 text--darken-5">Qualité de produits en {{ year }}</h3>
       <v-row>
         <v-col cols="12" sm="6" md="5" class="pl-0">
           <v-card class="fill-height text-center pt-4 pb-2 px-4 d-flex flex-column" outlined>
             <v-img max-width="30" contain src="/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
-            <v-card-title class="grey--text text--darken-2">
+            <v-card-text class="grey--text text--darken-2">
               <v-row class="align-end">
-                <span class="text-h5 font-weight-black mr-1">{{ statistics.approPercent }} %</span>
+                <span class="text-h5 font-weight-black mr-1" style="line-height: inherit;">
+                  {{ statistics.approPercent }} %
+                </span>
                 <span class="text-body-2">
                   ont réalisé la mesure
                   <span class="font-weight-black">« {{ approMeasure.shortTitle.toLowerCase() }} »</span>
                 </span>
               </v-row>
-            </v-card-title>
+            </v-card-text>
             <v-card-actions class="px-1">
               <router-link :to="{ name: 'KeyMeasurePage', params: { id: approMeasure.id } }" class="text-body-2">
                 La mesure
@@ -134,9 +136,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <h3 class="text-h5 mt-10 mb-8 text--darken-3">
-        Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}
-      </h3>
+      <h3 class="text-h5 mt-10 mb-8">Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}</h3>
       <v-row class="justify-space-between mb-8">
         <BadgeCard
           v-for="measure in otherMeasures"
