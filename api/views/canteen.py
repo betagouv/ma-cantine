@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.functions import Cast
-from django.db.models import Sum, FloatField
+from django.db.models import Sum, FloatField, Avg
 from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -467,3 +467,40 @@ class SendCanteenNotFoundEmail(APIView):
                 {"error": "An error has ocurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class CanteenStatisticsView(APIView):
+    def get(self, request):
+        region = request.query_params.get("region")
+        department = request.query_params.get("department")
+        year = request.query_params.get("year")
+        if not year or (not region and not department):
+            return JsonResponse(
+                {"error": "Expected both year and one of region or department"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        data = {}
+        canteens = None
+        if region:
+            canteens = Canteen.objects.filter(region=region)
+        elif department:
+            canteens = Canteen.objects.filter(department=department)
+        data["canteen_count"] = canteens.count()
+        data["published_canteen_count"] = canteens.filter(
+            publication_status=Canteen.PublicationStatus.PUBLISHED
+        ).count()
+
+        diagnostics = Diagnostic.objects.filter(year=year)
+        if region:
+            diagnostics = diagnostics.filter(canteen__region=region)
+        elif department:
+            diagnostics = diagnostics.filter(canteen__department=department)
+        qs_diag = diagnostics.filter(value_total_ht__gt=0)
+        qs_diag = qs_diag.annotate(bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField()))
+        qs_diag = qs_diag.annotate(
+            sustainable_share=Cast(Sum("value_sustainable_ht") / Sum("value_total_ht"), FloatField())
+        )
+        agg = qs_diag.aggregate(Avg("bio_share"), Avg("sustainable_share"))
+        # no need for particularly fancy rounding
+        data["bio_percent"] = int((agg["bio_share__avg"] or 0) * 100)
+        data["sustainable_percent"] = int((agg["sustainable_share__avg"] or 0) * 100)
+        return JsonResponse(camelize(data), status=status.HTTP_200_OK)

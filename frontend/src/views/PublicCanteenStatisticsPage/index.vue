@@ -54,11 +54,11 @@
         <v-col cols="7">
           <p class="pt-6">
             Aujourd'hui, il y a
-            <span class="text-h5 font-weight-bold">{{ statistics.canteensRegistered }}</span>
+            <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
             cantines dans {{ locationText }} sur ce site.
           </p>
           <p>
-            <span class="text-h5 font-weight-bold">{{ statistics.canteensPublished }}</span>
+            <span class="text-h5 font-weight-bold">{{ statistics.publishedCanteenCount }}</span>
             cantines ont publié leurs données, accessible par
             <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
             .
@@ -175,20 +175,7 @@ export default {
       chosenDepartment: null,
       chosenRegion: null,
       locationText: null,
-      statistics: {
-        canteensRegistered: 341,
-        canteensPublished: 240,
-        // appro values
-        bioPercent: 14,
-        sustainablePercent: 35,
-        // % canteens achieved each badge
-        // Should canteens have to be published for the count?
-        approPercent: 67,
-        wastePercent: 12,
-        diversificationPercent: 26,
-        plasticPercent: 89,
-        infoPercent: 34,
-      },
+      statistics: {},
       chartOptions: {
         labels: ["Publiée", "Non publiée"],
         colors: ["#55a57e", "#ccc"],
@@ -205,6 +192,7 @@ export default {
   },
   computed: {
     departments() {
+      // TODO: get regions and departments from back for the ones that we have and dont have
       let departments = jsonDepartments
       if (this.chosenRegion) {
         departments = departments.filter((department) => department.regionCode === this.chosenRegion)
@@ -212,7 +200,10 @@ export default {
       return this.formatLocations(departments, "department")
     },
     chartSeries() {
-      return [this.statistics.canteensPublished, this.statistics.canteensRegistered - this.statistics.canteensPublished]
+      return [
+        this.statistics.publishedCanteenCount,
+        this.statistics.canteenCount - this.statistics.publishedCanteenCount,
+      ]
     },
   },
   methods: {
@@ -223,17 +214,34 @@ export default {
       }))
     },
     submit() {
+      let query = `?year=${this.year}`
       this.locationText = ""
+      let newLocationText
       if (this.chosenDepartment) {
-        this.locationText = jsonDepartments.find(
-          (department) => department.departmentCode === this.chosenDepartment
-        ).departmentName
+        newLocationText = jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment)
+          .departmentName
+        query += `&department=${this.chosenDepartment}`
       } else if (this.chosenRegion) {
-        this.locationText = jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName
+        newLocationText = jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName
+        query += `&region=${this.chosenRegion}`
       } else {
-        this.locationText = null
+        newLocationText = null
+        // TODO: what to do in this case?
       }
-      // return stats by region/department and year from backend
+      let dummyData = {
+        approPercent: 67,
+        wastePercent: 12,
+        diversificationPercent: 26,
+        plasticPercent: 89,
+        infoPercent: 34,
+        // TODO: sector breakdown and bar chart
+      }
+      fetch(`/api/v1/canteenStatistics/${query}`)
+        .then((response) => response.json())
+        .then((data) => {
+          this.statistics = Object.assign(dummyData, data)
+          this.locationText = newLocationText
+        })
       // should probably move badge into a canteen attribute rather than calculating it on front
     },
   },

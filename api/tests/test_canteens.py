@@ -732,3 +732,87 @@ class TestCanteenApi(APITestCase):
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
         self.assertEqual(created_canteen.images.count(), 1)
+
+    # TODO: badge calculation tests
+
+    def test_canteen_statistics(self):
+        """
+        This public endpoint returns some summary statistics for a region and a location
+        """
+        # TODO: more nuance when choosing canteens to get stats for?
+        # How do we know that the canteen diagnostic is done?
+        # Could check for total value ht
+
+        # create 5 canteens (3 in region of interest), 1 unpublished
+        region = "01"
+        year = 2020
+
+        published = CanteenFactory.create(region=region, publication_status=Canteen.PublicationStatus.PUBLISHED.value)
+        unpublished = CanteenFactory.create(region=region, publication_status=Canteen.PublicationStatus.DRAFT.value)
+        other_region = CanteenFactory.create(region="03")
+
+        # relevant diagnostics
+        DiagnosticFactory.create(
+            canteen=published,
+            year=year,
+            value_total_ht=100,
+            value_bio_ht=20,
+            value_sustainable_ht=30,
+        )
+        DiagnosticFactory.create(
+            canteen=unpublished,
+            year=year,
+            value_total_ht=1000,
+            value_bio_ht=400,
+            value_sustainable_ht=500,
+        )
+        # irrelevant diagnostics
+        DiagnosticFactory.create(
+            canteen=published,
+            year=2019,
+            value_total_ht=100,
+            value_bio_ht=100,
+            value_sustainable_ht=0,
+        )
+        DiagnosticFactory.create(
+            canteen=other_region,
+            year=year,
+            value_total_ht=100,
+            value_bio_ht=100,
+            value_sustainable_ht=0,
+        )
+
+        response = self.client.get(reverse("canteen_statistics"), {"region": region, "year": year})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["publishedCanteenCount"], 1)
+        # TODO: maybe a diagnostic count?
+        # TODO: sector breakdown
+        self.assertEqual(body["bioPercent"], 30)
+        self.assertEqual(body["sustainablePercent"], 40)
+        # self.assertEqual(body["approPercent"], 50)
+        # self.assertEqual(body["wastePercent"], 0)
+        # self.assertEqual(body["diversificationPercent"], 100)
+        # self.assertEqual(body["plasticPercent"], 50)
+        # self.assertEqual(body["infoPercent"], 50)
+
+    def test_canteen_stats_by_department(self):
+        department = "01"
+        year = 2020
+        CanteenFactory.create(department=department, publication_status=Canteen.PublicationStatus.PUBLISHED.value)
+
+        response = self.client.get(reverse("canteen_statistics"), {"department": department, "year": year})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 1)
+
+    def test_canteen_stats_missing_data(self):
+        response = self.client.get(reverse("canteen_statistics"), {"region": "01"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.get(reverse("canteen_statistics"), {"department": "01"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
