@@ -24,18 +24,23 @@
         <v-spacer></v-spacer>
       </v-row>
     </v-card>
-    <v-row>
-      <v-spacer></v-spacer>
-      <v-btn x-large outlined color="primary" class="mt-8 mx-8" :to="{ name: 'CanteensHome' }">
+    <v-row :class="{ 'flex-column': $vuetify.breakpoint.xsAndDown }" justify="center">
+      <v-btn
+        x-large
+        outlined
+        color="primary"
+        :class="{ 'mr-8': $vuetify.breakpoint.smAndUp, 'mt-8': true }"
+        :to="{ name: 'CanteensHome' }"
+        width="fit-content"
+      >
         Découvrir nos cantines
       </v-btn>
-      <v-btn v-if="loggedUser" x-large class="primary mt-8 mx-8" :to="{ name: 'ManagementPage' }">
+      <v-btn v-if="loggedUser" x-large class="primary mt-8" :to="{ name: 'ManagementPage' }" width="fit-content">
         Accéder à mes cantines
       </v-btn>
-      <v-btn v-else x-large class="primary mt-8 mx-8" href="/creer-mon-compte">
+      <v-btn v-else x-large class="primary mt-8" href="/creer-mon-compte" width="fit-content">
         Créer mon compte
       </v-btn>
-      <v-spacer></v-spacer>
     </v-row>
   </div>
 </template>
