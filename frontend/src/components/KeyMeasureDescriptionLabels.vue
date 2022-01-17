@@ -1,6 +1,9 @@
 <template>
   <div>
-    <p>Un produit de qualité et durable doit bénéficier d’un des labels suivants :</p>
+    <p>
+      Un produit de qualité et durable au sens de l'objectif fixé par la loi EGAlim doit bénéficier d’un des labels
+      suivants :
+    </p>
     <ul id="about-labels">
       <li v-for="label in labels" class="label" :key="label.src">
         <img :src="`/static/images/quality-labels/${label.src}`" :alt="label.title" :title="label.title" />
@@ -9,6 +12,10 @@
       <li>
         <v-icon color="green" small>mdi-checkbox-marked</v-icon>
         Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »
+      </li>
+      <li>
+        <v-icon color="green" small>mdi-checkbox-marked</v-icon>
+        Produits issus du commerce équitable
       </li>
       <li>
         <v-icon color="green" small>mdi-checkbox-marked</v-icon>
@@ -21,16 +28,12 @@
       </li>
       <li>
         <v-icon color="green" small>mdi-checkbox-marked</v-icon>
-        Produits équivalents aux produits bénéficiant de ces mentions ou labels
-      </li>
-      <li>
-        <v-icon color="green" small>mdi-checkbox-marked</v-icon>
-        Produits issus du commerce équitable
-      </li>
-      <li>
-        <v-icon color="green" small>mdi-checkbox-marked</v-icon>
         Produits acquis principalement sur la base de leurs performances en matière environnementale et
         d’approvisionnements directs (précisions à venir)
+      </li>
+      <li>
+        <v-icon color="green" small>mdi-checkbox-marked</v-icon>
+        Produits équivalents aux produits bénéficiant de ces signes, mentions ou labels
       </li>
     </ul>
   </div>

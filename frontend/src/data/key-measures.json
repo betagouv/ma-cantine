@@ -63,17 +63,17 @@
         "deadline": {
           "earliestISO": "2020-01-01"
         },
-        "htmlDescription": "L'infraction à cette loi est susceptible d'une amende de 3 750 €.",
+        "htmlDescription": "L'infraction à cette disposition est susceptible d'une amende de 3 750 €.",
         "id": "restes",
         "readMore": false,
         "shortTitle": "Restes protégés",
-        "title": "Interdiction de rendre impropre à la consommation les excédents alimentaires encore consommables."
+        "title": "Interdiction de rendre impropre à la consommation les denrées alimentaires encore consommables."
       },
       {
         "deadline": {
           "earliestISO": "2020-10-22"
         },
-        "htmlDescription": "Depuis le 22 octobre 2020, les restaurations collectives qui <b>préparent plus de 3000 repas par jour</b> ont l'obligation de proposer une convention de dons à une association habilitée.",
+        "htmlDescription": "Depuis le 22 octobre 2020, les cuisines centrales ou sur place qui <b>préparent plus de 3000 repas par jour</b> ont l'obligation de proposer une convention de dons à une association habilitée.",
         "id": "dons",
         "readMore": false,
         "shortTitle": "Dons aux associations",
@@ -127,7 +127,7 @@
           "display": "Expérimentation de 2 ans (du 1er novembre 2019 au 1er novembre 2021)",
           "earliestISO": "2019-11-01"
         },
-        "description": "Actuellement en vigueur pour le secteur public et à partir du 1er janvier 2024 pour le privé. Tous les restaurants collectifs scolaires (publics ou privés), de la maternelle au lycée, sont tenus de proposer, au moins une fois par semaine, un menu végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n Les restaurants de l’Etat et ses établissements publics proposent une option végétarienne quotidienne à partir du 1er janvier 2023. \n Pour les collectivités territoriales volontaires, possibilité d’expérimenter, dès maintenant, une option végétarienne quotidienne pour une durée de 2 ans. Dans ce cas, elles font connaître au représentant de l’État dans la région leur engagement dans l’expérimentation. \n Qu'est-ce qu'un menu végétarien ? Il s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers.",
+        "description": "Tous les restaurants collectifs scolaires (publics ou privés), de la maternelle au lycée, sont tenus de proposer, au moins une fois par semaine, un menu végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n Les restaurants de l’Etat et ses établissements publics proposent une option végétarienne quotidienne à partir du 1er janvier 2023. \n Pour les collectivités territoriales volontaires, possibilité d’expérimenter, dès maintenant, une option végétarienne quotidienne pour une durée de 2 ans. Dans ce cas, elles font connaître au représentant de l’État dans la région leur engagement dans l’expérimentation. \n Qu'est-ce qu'un menu végétarien ? Il s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers.",
         "id": "menu-vege",
         "readMore": false,
         "shortTitle": "Menu végé hebdo",
@@ -152,7 +152,7 @@
           "display": "Depuis le 1er janvier 2020",
           "earliestISO": "2020-01-01"
         },
-        "description": "L'utilisation de bouteilles d'eau plate en plastique est interdite en restauration scolaire. Cette mesure s'applique aux territoires desservis par un réseau d'eau potable et peut être suspendue en cas exceptionnel de restriction de l'eau destinée à la consommation humaine prononcée par le Préfet.",
+        "description": "L'utilisation de bouteilles d'eau plate en plastique est interdite en restauration scolaire depuis le 1er janvier 2020. Cette mesure s'applique aux territoires desservis par un réseau d'eau potable et peut être suspendue en cas exceptionnel de restriction de l'eau destinée à la consommation humaine prononcée par le Préfet.",
         "id": "bouteilles",
         "readMore": false,
         "shortTitle": "Bouteilles",
@@ -216,7 +216,7 @@
           "display": "Depuis le 1er janvier 2020",
           "earliestISO": "2020-01-01"
         },
-        "htmlDescription": "Une fois par an, <b>les convives sont informés</b> sur la part des produits de qualité et durables des repas servis et des démarches entreprises pour l'acquisition de produits issus du commerce équitable. Cette information doit se faire par affichage et par voie électronique (mail aux convives, affichage sur le logiciel de gestion de vie scolaire, envoi d'infolettre...).",
+        "htmlDescription": "Les personnes morales ayant la charge d'un restaurant collectif informent à l'entrée du restaurant, par un affichage permanent, actualisé au moins une fois par an, lisible par tous les usagers, et au moins une fois par an par communication électronique, les usagers des restaurants collectifs de la part des produits définis au I de l'article L. 230-5-1 et de la part des produits issus de projets alimentaires territoriaux entrant dans la composition des repas servis.",
         "id": "convives-informes",
         "readMore": false,
         "shortTitle": "Convives informés",
