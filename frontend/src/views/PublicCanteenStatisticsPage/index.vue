@@ -2,7 +2,7 @@
   <div class="text-left grey--text text--darken-4">
     <h1 class="text-h4 font-weight-black black--text mt-3 mb-6">Découvrir les démarches chez vous</h1>
     <!-- Add some introductory text? -->
-    <v-form class="my-4">
+    <v-form class="my-4 pb-8">
       <v-row>
         <v-col cols="12" sm="6" md="4">
           <label for="select-region" class="text-body-2">
@@ -49,8 +49,8 @@
     </v-form>
     <div v-if="locationText" class="py-8">
       <h2 class="text--darken-5 text-h4 mb-2">Les statistiques pour {{ locationText }}</h2>
-      <v-row align="center">
-        <v-col cols="6">
+      <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'align-center': $vuetify.breakpoint.mdAndUp }">
+        <v-col cols="12" md="6">
           <p class="pt-6">
             Aujourd'hui, il y a
             <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
@@ -66,17 +66,18 @@
             :series="publishedSeries"
             type="pie"
             height="auto"
+            v-if="$vuetify.breakpoint.mdAndUp"
             width="60%"
           />
         </v-col>
         <v-spacer></v-spacer>
-        <v-col cols="6">
+        <v-col cols="12" sm="8" md="6">
           <VueApexCharts :options="sectorChartOptions" :series="sectorSeries" type="bar" height="auto" width="100%" />
         </v-col>
       </v-row>
       <h3 class="text-h5 mt-10 mb-8 text--darken-5">Qualité de produits en {{ year }}</h3>
       <v-row>
-        <v-col cols="12" sm="6" md="5" class="pl-0">
+        <v-col cols="12" sm="6" md="5">
           <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
             <v-img max-width="30" contain src="/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
             <v-card-text class="grey--text text--darken-2">
@@ -142,12 +143,13 @@
         </v-col>
       </v-row>
       <h3 class="text-h5 mt-10 mb-8">Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}</h3>
-      <v-row class="justify-space-between mb-8">
+      <v-row class="justify-space-between mb-8 px-4">
         <BadgeCard
           v-for="measure in otherMeasures"
           :key="measure.id"
           :measure="measure"
           :percentageAchieved="statistics[measure.badgeId + 'Percent']"
+          class="mb-4"
         />
       </v-row>
     </div>
@@ -273,18 +275,10 @@ export default {
         newLocationText = null
         // TODO: what to do in this case?
       }
-      let dummyData = {
-        sectors: {
-          "1": 45,
-          "2": 293,
-          "3": 32,
-        },
-        // TODO: sector breakdown and bar chart
-      }
       fetch(`/api/v1/canteenStatistics/${query}`)
         .then((response) => response.json())
         .then((data) => {
-          this.statistics = Object.assign(dummyData, data)
+          this.statistics = data
           this.locationText = newLocationText
         })
       // should probably move badge into a canteen attribute rather than calculating it on front
