@@ -51,16 +51,18 @@
       <h2 class="text--darken-5 text-h4 mb-2">Les statistiques pour {{ locationText }}</h2>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'align-center': $vuetify.breakpoint.mdAndUp }">
         <v-col cols="12" md="6">
-          <p class="pt-6">
-            Aujourd'hui, il y a
-            <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
-            cantines dans {{ locationText }} sur ce site.
-          </p>
-          <p>
-            <span class="text-h5 font-weight-bold">{{ statistics.publishedCanteenCount }}</span>
-            cantines ont publié leurs données, accessible par
-            <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
-          </p>
+          <div id="published-canteen-text">
+            <p class="pt-6">
+              Aujourd'hui, il y a
+              <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
+              cantines dans {{ locationText }} sur ce site.
+            </p>
+            <p>
+              <span class="text-h5 font-weight-bold">{{ statistics.publishedCanteenCount }}</span>
+              cantines ont publié leurs données, accessible par
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
+            </p>
+          </div>
           <VueApexCharts
             :options="publishedChartOptions"
             :series="publishedSeries"
@@ -68,11 +70,23 @@
             height="auto"
             v-if="$vuetify.breakpoint.mdAndUp"
             width="60%"
+            role="img"
+            aria-describedby="published-canteen-text"
           />
         </v-col>
         <v-spacer></v-spacer>
         <v-col cols="12" sm="8" md="6">
-          <VueApexCharts :options="sectorChartOptions" :series="sectorSeries" type="bar" height="auto" width="100%" />
+          <VueApexCharts
+            :options="sectorChartOptions"
+            :series="sectorSeries"
+            type="bar"
+            height="auto"
+            width="100%"
+            role="img"
+            aria-label="Cantines par secteur"
+            aria-describedby="sector-chart-description"
+          />
+          <p id="sector-chart-description" class="d-none">{{ sectorChartDescription }}</p>
         </v-col>
       </v-row>
       <h3 class="text-h5 mt-10 mb-8 text--darken-5">Qualité de produits en {{ year }}</h3>
@@ -93,6 +107,7 @@
             </v-card-text>
             <v-card-actions class="px-1">
               <router-link :to="{ name: 'KeyMeasurePage', params: { id: approMeasure.id } }" class="text-body-2">
+                <!-- TODO: more specific link text? -->
                 La mesure
               </router-link>
             </v-card-actions>
@@ -251,6 +266,13 @@ export default {
           show: false,
         },
       }
+    },
+    sectorChartDescription() {
+      let desc = ""
+      Object.keys(this.statistics.sectors).forEach((key) => {
+        desc += `${this.statistics.sectors[key]} ${this.sectors.find((sector) => sector.id.toString() === key).name}; `
+      })
+      return desc
     },
   },
   methods: {
