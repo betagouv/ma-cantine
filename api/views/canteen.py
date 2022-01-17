@@ -569,4 +569,10 @@ class CanteenStatisticsView(APIView):
         data["diversificationPercent"] = diversification_percent
         data["plasticPercent"] = plastic_percent
         data["infoPercent"] = info_percent
+
+        # count breakdown by sector
+        sectors = {}
+        for sector in Sector.objects.all():
+            sectors[sector.id] = canteens.filter(sectors=sector).count()
+        data["sectors"] = sectors
         return JsonResponse(camelize(data), status=status.HTTP_200_OK)

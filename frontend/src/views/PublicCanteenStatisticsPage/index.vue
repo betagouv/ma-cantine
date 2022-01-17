@@ -1,7 +1,6 @@
 <template>
   <div class="text-left grey--text text--darken-4">
     <h1 class="text-h4 font-weight-black black--text mt-3 mb-6">Découvrir les démarches chez vous</h1>
-    <!-- Add image? -->
     <!-- Add some introductory text? -->
     <v-form class="my-4">
       <v-row>
@@ -50,8 +49,8 @@
     </v-form>
     <div v-if="locationText" class="py-8">
       <h2 class="text--darken-5 text-h4 mb-2">Les statistiques pour {{ locationText }}</h2>
-      <v-row>
-        <v-col cols="7">
+      <v-row align="center">
+        <v-col cols="6">
           <p class="pt-6">
             Aujourd'hui, il y a
             <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
@@ -61,12 +60,18 @@
             <span class="text-h5 font-weight-bold">{{ statistics.publishedCanteenCount }}</span>
             cantines ont publié leurs données, accessible par
             <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
-            .
           </p>
+          <VueApexCharts
+            :options="publishedChartOptions"
+            :series="publishedSeries"
+            type="pie"
+            height="auto"
+            width="60%"
+          />
         </v-col>
         <v-spacer></v-spacer>
-        <v-col cols="4">
-          <VueApexCharts :options="chartOptions" :series="chartSeries" type="pie" height="auto" width="100%" />
+        <v-col cols="6">
+          <VueApexCharts :options="sectorChartOptions" :series="sectorSeries" type="bar" height="auto" width="100%" />
         </v-col>
       </v-row>
       <h3 class="text-h5 mt-10 mb-8 text--darken-5">Qualité de produits en {{ year }}</h3>
@@ -176,7 +181,7 @@ export default {
       chosenRegion: null,
       locationText: null,
       statistics: {},
-      chartOptions: {
+      publishedChartOptions: {
         labels: ["Publiée", "Non publiée"],
         colors: ["#55a57e", "#ccc"],
         dataLabels: {
@@ -199,11 +204,51 @@ export default {
       }
       return this.formatLocations(departments, "department")
     },
-    chartSeries() {
+    publishedSeries() {
       return [
         this.statistics.publishedCanteenCount,
         this.statistics.canteenCount - this.statistics.publishedCanteenCount,
       ]
+    },
+    sectors() {
+      return this.$store.state.sectors
+    },
+    sectorLabels() {
+      return this.sectors.map((sector) => sector.name)
+    },
+    sectorSeries() {
+      return [
+        {
+          data: this.sectors.map((sector) => this.statistics.sectors[sector.id.toString()]),
+          color: "#55a57e",
+        },
+      ]
+    },
+    sectorChartOptions() {
+      return {
+        chart: {
+          type: "bar",
+          toolbar: { tools: { download: false } },
+          animations: { enabled: false },
+        },
+        xaxis: {
+          categories: this.sectorLabels,
+          labels: {
+            trim: true,
+          },
+          title: {
+            text: "Nombre de cantines",
+          },
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+          },
+        },
+        legend: {
+          show: false,
+        },
+      }
     },
   },
   methods: {
@@ -229,11 +274,11 @@ export default {
         // TODO: what to do in this case?
       }
       let dummyData = {
-        approPercent: 67,
-        wastePercent: 12,
-        diversificationPercent: 26,
-        plasticPercent: 89,
-        infoPercent: 34,
+        sectors: {
+          "1": 45,
+          "2": 293,
+          "3": 32,
+        },
         // TODO: sector breakdown and bar chart
       }
       fetch(`/api/v1/canteenStatistics/${query}`)

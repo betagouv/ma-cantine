@@ -746,10 +746,19 @@ class TestCanteenApi(APITestCase):
         # create 5 canteens (3 in region of interest), 1 unpublished
         region = "01"
         year = 2020
+        school = SectorFactory.create(name="School")
+        enterprise = SectorFactory.create(name="Enterprise")
+        social = SectorFactory.create(name="Social")
 
-        published = CanteenFactory.create(region=region, publication_status=Canteen.PublicationStatus.PUBLISHED.value)
-        unpublished = CanteenFactory.create(region=region, publication_status=Canteen.PublicationStatus.DRAFT.value)
-        other_region = CanteenFactory.create(region="03")
+        published = CanteenFactory.create(
+            region=region,
+            publication_status=Canteen.PublicationStatus.PUBLISHED.value,
+            sectors=[school, enterprise],
+        )
+        unpublished = CanteenFactory.create(
+            region=region, publication_status=Canteen.PublicationStatus.DRAFT.value, sectors=[school]
+        )
+        other_region = CanteenFactory.create(region="03", sectors=[social])
 
         # relevant diagnostics
         DiagnosticFactory.create(
@@ -816,6 +825,11 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(body["diversificationPercent"], 50)
         self.assertEqual(body["plasticPercent"], 50)
         self.assertEqual(body["infoPercent"], 50)
+        expected_sectors = {}
+        expected_sectors[str(school.id)] = 2
+        expected_sectors[str(enterprise.id)] = 1
+        expected_sectors[str(social.id)] = 0
+        self.assertEqual(body["sectors"], expected_sectors)
 
     def test_canteen_stats_by_department(self):
         department = "01"
