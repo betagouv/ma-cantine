@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.functions import Cast
-from django.db.models import Sum, FloatField, Avg, Func, F
+from django.db.models import Sum, FloatField, Avg, Func, F, Q
 from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -26,6 +26,7 @@ from api.serializers import (
     ManagingTeamSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
+from data.region_choices import Region
 from api.permissions import IsCanteenManager
 from .utils import camelize
 from common import utils
@@ -469,6 +470,77 @@ class SendCanteenNotFoundEmail(APIView):
             )
 
 
+def badges_for_queryset(diagnostic_year_queryset):
+    badge_querysets = {}
+    appro_total = diagnostic_year_queryset
+    appro_total = diagnostic_year_queryset.count()
+    if appro_total:
+        appro_share_query = diagnostic_year_queryset.filter(value_total_ht__gt=0)
+        appro_share_query = appro_share_query.annotate(
+            bio_share=Cast(
+                Sum("value_bio_ht") / Sum("value_total_ht"),
+                FloatField(),
+            )
+        )
+        appro_share_query = appro_share_query.annotate(
+            combined_share=Cast(
+                (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
+                FloatField(),
+            )
+        )
+        # Saint-Martin should be in group 1
+        group_1 = [Region.guadeloupe, Region.martinique, Region.guyane, Region.la_reunion]
+        group_2 = [Region.mayotte]
+        # should have a group 3 with Saint-Pierre-et-Miquelon
+        badge_querysets["appro"] = appro_share_query.filter(
+            Q(combined_share__gte=0.5, bio_share__gte=0.2)
+            | Q(canteen__region__in=group_1, combined_share__gte=0.2, bio_share__gte=0.05)
+            | Q(canteen__region__in=group_2, combined_share__gte=0.05, bio_share__gte=0.02)
+        ).distinct()
+
+    # waste
+    waste_badge_query = diagnostic_year_queryset.filter(has_waste_diagnostic=True)
+    waste_badge_query = waste_badge_query.annotate(waste_actions_len=Func(F("waste_actions"), function="CARDINALITY"))
+    waste_badge_query = waste_badge_query.filter(waste_actions_len__gt=0)
+    waste_badge_query = waste_badge_query.filter(
+        Q(canteen__daily_meal_count__lt=3000) | Q(has_donation_agreement=True)
+    )
+    badge_querysets["waste"] = waste_badge_query
+
+    # diversification
+    diversification_badge_query = diagnostic_year_queryset.exclude(vegetarian_weekly_recurrence__isnull=True)
+    diversification_badge_query = diversification_badge_query.exclude(vegetarian_weekly_recurrence="")
+    diversification_badge_query = diversification_badge_query.exclude(
+        vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW
+    )
+    scolaire_sector = Sector.objects.filter(name="Scolaire")
+    if scolaire_sector.count():
+        scolaire_sector = scolaire_sector[0]
+        diversification_badge_query = diversification_badge_query.filter(
+            Q(
+                canteen__sectors__in=[scolaire_sector],
+                vegetarian_weekly_recurrence__in=[
+                    Diagnostic.MenuFrequency.MID,
+                    Diagnostic.MenuFrequency.HIGH,
+                ],
+            )
+            | Q(vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY)
+        ).distinct()
+    badge_querysets["diversification"] = diversification_badge_query
+
+    # plastic
+    badge_querysets["plastic"] = diagnostic_year_queryset.filter(
+        cooking_plastic_substituted=True,
+        serving_plastic_substituted=True,
+        plastic_bottles_substituted=True,
+        plastic_tableware_substituted=True,
+    )
+
+    # info
+    badge_querysets["info"] = diagnostic_year_queryset.filter(communicates_on_food_quality=True)
+    return badge_querysets
+
+
 class CanteenStatisticsView(APIView):
     def get(self, request):
         region = request.query_params.get("region")
@@ -507,68 +579,21 @@ class CanteenStatisticsView(APIView):
         data["sustainable_percent"] = int((agg["sustainable_share__avg"] or 0) * 100)
 
         # --- badges ---
-        appro_percent = 0
-        waste_percent = 0
-        diversification_percent = 0
-        plastic_percent = 0
-        info_percent = 0
-
-        # appro
-        appro_total = appro_share_query.count()
-        if appro_total:
-            appro_share_query = appro_share_query.annotate(
-                combined_share=Cast(
-                    (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
-                    FloatField(),
-                )
-            )
-            appro_badge_earned = appro_share_query.filter(combined_share__gte=0.5).count()
-
-            appro_percent = int(appro_badge_earned / appro_total * 100)
-
         total_diag = diagnostics
         total_diag = total_diag.count()
+        data["approPercent"] = 0
+        data["wastePercent"] = 0
+        data["diversificationPercent"] = 0
+        data["plasticPercent"] = 0
+        data["infoPercent"] = 0
+
         if total_diag:  # maybe we shouldn't be able to get to 0 diags this point with the endpoint?
-            # waste
-            waste_badge_query = diagnostics.filter(has_waste_diagnostic=True)
-            waste_badge_query = waste_badge_query.annotate(
-                waste_actions_len=Func(F("waste_actions"), function="CARDINALITY")
-            )
-            waste_badge_query = waste_badge_query.filter(waste_actions_len__gt=0)
-            # TODO: donation agreement
-            waste_badge_earned = waste_badge_query.count()
-            waste_percent = int(waste_badge_earned / total_diag * 100)
-
-            # diversification
-            diversification_badge_query = diagnostics.exclude(vegetarian_weekly_recurrence__isnull=True)
-            diversification_badge_query = diagnostics.exclude(vegetarian_weekly_recurrence="")
-            diversification_badge_query = diversification_badge_query.exclude(
-                vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW
-            )
-            # TODO: scolaire vs everyone else
-            diversification_badge_earned = diversification_badge_query.count()
-            diversification_percent = int(diversification_badge_earned / total_diag * 100)
-
-            # plastic
-            plastic_badge_query = diagnostics.filter(
-                cooking_plastic_substituted=True,
-                serving_plastic_substituted=True,
-                plastic_bottles_substituted=True,
-                plastic_tableware_substituted=True,
-            )
-            plastic_badge_earned = plastic_badge_query.count()
-            plastic_percent = int(plastic_badge_earned / total_diag * 100)
-
-            # info
-            info_badge_query = diagnostics.filter(communicates_on_food_quality=True)
-            info_badge_earned = info_badge_query.count()
-            info_percent = int(info_badge_earned / total_diag * 100)
-
-        data["approPercent"] = appro_percent
-        data["wastePercent"] = waste_percent
-        data["diversificationPercent"] = diversification_percent
-        data["plasticPercent"] = plastic_percent
-        data["infoPercent"] = info_percent
+            badge_querysets = badges_for_queryset(diagnostics)
+            data["approPercent"] = int(badge_querysets["appro"].count() / total_diag * 100)
+            data["wastePercent"] = int(badge_querysets["waste"].count() / total_diag * 100)
+            data["diversificationPercent"] = int(badge_querysets["diversification"].count() / total_diag * 100)
+            data["plasticPercent"] = int(badge_querysets["plastic"].count() / total_diag * 100)
+            data["infoPercent"] = int(badge_querysets["info"].count() / total_diag * 100)
 
         # count breakdown by sector
         sectors = {}

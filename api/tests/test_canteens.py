@@ -9,6 +9,8 @@ from data.factories import CanteenFactory, ManagerInvitationFactory, SectorFacto
 from data.factories import DiagnosticFactory
 from data.models import Canteen, Teledeclaration, CanteenImage, Diagnostic
 from .utils import authenticate
+from api.views.canteen import badges_for_queryset
+from data.region_choices import Region
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -733,8 +735,6 @@ class TestCanteenApi(APITestCase):
         created_canteen = Canteen.objects.get(pk=body["id"])
         self.assertEqual(created_canteen.images.count(), 1)
 
-    # TODO: badge calculation tests
-
     def test_canteen_statistics(self):
         """
         This public endpoint returns some summary statistics for a region and a location
@@ -754,11 +754,15 @@ class TestCanteenApi(APITestCase):
             region=region,
             publication_status=Canteen.PublicationStatus.PUBLISHED.value,
             sectors=[school, enterprise],
+            daily_meal_count=50,
         )
         unpublished = CanteenFactory.create(
-            region=region, publication_status=Canteen.PublicationStatus.DRAFT.value, sectors=[school]
+            region=region,
+            publication_status=Canteen.PublicationStatus.DRAFT.value,
+            sectors=[school],
+            daily_meal_count=50,
         )
-        other_region = CanteenFactory.create(region="03", sectors=[social])
+        other_region = CanteenFactory.create(region="03", sectors=[social], daily_meal_count=50)
 
         # relevant diagnostics
         DiagnosticFactory.create(
@@ -816,8 +820,6 @@ class TestCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
         self.assertEqual(body["publishedCanteenCount"], 1)
-        # TODO: maybe a diagnostic count?
-        # TODO: sector breakdown
         self.assertEqual(body["bioPercent"], 30)
         self.assertEqual(body["sustainablePercent"], 40)
         self.assertEqual(body["approPercent"], 100)
@@ -849,3 +851,150 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_appro_badge_earned(self):
+        """
+        Test that the right canteens are identified in appro badge queryset
+        """
+        # --- Canteens which don't earn appro badge:
+        zero_total = CanteenFactory.create()
+        DiagnosticFactory.create(canteen=zero_total, value_total_ht=0)
+        null_total = CanteenFactory.create()
+        DiagnosticFactory.create(canteen=null_total, value_total_ht=None)
+        bio_lacking = CanteenFactory.create()
+        DiagnosticFactory.create(canteen=bio_lacking, value_total_ht=100, value_bio_ht=19, value_sustainable_ht=31)
+        # not convinced the following shouldn't get a badge but not sure how to make the Sum function work
+        null_sustainable = CanteenFactory.create(region=Region.ile_de_france.value)
+        DiagnosticFactory.create(
+            canteen=null_sustainable, value_total_ht=100, value_bio_ht=50, value_sustainable_ht=None
+        )
+
+        # --- Canteens which earn appro badge:
+        earned = CanteenFactory.create()
+        DiagnosticFactory.create(canteen=earned, value_total_ht=100, value_bio_ht=20, value_sustainable_ht=30)
+        # rules per outre mer territories
+        guadeloupe = CanteenFactory.create(region=Region.guadeloupe.value)
+        DiagnosticFactory.create(canteen=guadeloupe, value_total_ht=100, value_bio_ht=5, value_sustainable_ht=15)
+        mayotte = CanteenFactory.create(region=Region.mayotte.value)
+        DiagnosticFactory.create(canteen=mayotte, value_total_ht=100, value_bio_ht=2, value_sustainable_ht=3)
+        # TODO: rules per outre mer territories: Saint-Pierre-et-Miquelon
+        # st_pierre_et_miquelon = CanteenFactory.create(region=Region.st_pierre_et_miquelon.value)
+        # DiagnosticFactory.create(canteen=st_pierre_et_miquelon, value_total_ht=100, value_bio_ht=10, value_sustainable_ht=20)
+
+        badges = badges_for_queryset(Diagnostic.objects.all())
+
+        appro_badge_qs = badges["appro"]
+        self.assertTrue(appro_badge_qs.filter(canteen=earned).exists())
+        self.assertTrue(appro_badge_qs.filter(canteen=guadeloupe).exists())
+        self.assertTrue(appro_badge_qs.filter(canteen=mayotte).exists())
+        self.assertEqual(appro_badge_qs.count(), 3)
+
+    def test_waste_badge_earned(self):
+        """
+        Test that the right canteens are identifies in waste badge qs
+        """
+        # --- Canteens which don't earn waste badge:
+        waste_actions_only = CanteenFactory.create(daily_meal_count=2999)
+        DiagnosticFactory.create(canteen=waste_actions_only, has_waste_diagnostic=False, waste_actions=["action1"])
+        waste_diagnostic_only = CanteenFactory.create(daily_meal_count=2999)
+        DiagnosticFactory.create(canteen=waste_diagnostic_only, has_waste_diagnostic=True, waste_actions=[])
+        large_canteen_no_badge = CanteenFactory.create(daily_meal_count=3000)
+        DiagnosticFactory.create(
+            canteen=large_canteen_no_badge,
+            has_waste_diagnostic=True,
+            waste_actions=["action1"],
+            has_donation_agreement=False,
+        )
+        # --- Canteens which earn waste badge:
+        small_canteen = CanteenFactory.create(daily_meal_count=2999)
+        DiagnosticFactory.create(canteen=small_canteen, has_waste_diagnostic=True, waste_actions=["action1"])
+        large_canteen = CanteenFactory.create(daily_meal_count=3000)
+        DiagnosticFactory.create(
+            canteen=large_canteen, has_waste_diagnostic=True, waste_actions=["action1"], has_donation_agreement=True
+        )
+
+        badges = badges_for_queryset(Diagnostic.objects.all())
+
+        waste_badge_qs = badges["waste"]
+        self.assertEqual(waste_badge_qs.count(), 2)
+        self.assertTrue(waste_badge_qs.filter(canteen=small_canteen).exists())
+        self.assertTrue(waste_badge_qs.filter(canteen=large_canteen).exists())
+
+    def test_diversification_badge_earned(self):
+        """
+        Test that the right canteens are identifies in diversification badge qs
+        """
+        scolaire_sector = SectorFactory(name="Scolaire")
+
+        # --- canteens which don't earn diversification badge:
+        high_canteen = CanteenFactory.create()
+        high_canteen.sectors.remove(scolaire_sector)
+        DiagnosticFactory.create(
+            canteen=high_canteen, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.HIGH.value
+        )
+
+        low_canteen = CanteenFactory.create()
+        low_canteen.sectors.add(scolaire_sector)
+        DiagnosticFactory.create(canteen=low_canteen, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW.value)
+
+        # --- canteens which earn diversification badge:
+        daily_vege = CanteenFactory.create()
+        daily_vege.sectors.remove(scolaire_sector)
+        DiagnosticFactory.create(canteen=daily_vege, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY.value)
+
+        scolaire_mid_vege = CanteenFactory.create()
+        scolaire_mid_vege.sectors.add(scolaire_sector)
+        DiagnosticFactory.create(
+            canteen=scolaire_mid_vege, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.MID.value
+        )
+
+        badges = badges_for_queryset(Diagnostic.objects.all())
+
+        diversification_badge_qs = badges["diversification"]
+        self.assertEqual(diversification_badge_qs.count(), 2)
+        self.assertTrue(diversification_badge_qs.filter(canteen=daily_vege).exists())
+        self.assertTrue(diversification_badge_qs.filter(canteen=scolaire_mid_vege).exists())
+
+    def test_plastic_badge_earned(self):
+        """
+        Test that the right canteens are identifies in plastic badge qs
+        """
+        # --- canteens which don't earn
+        no_cooking = CanteenFactory.create()
+        DiagnosticFactory.create(canteen=no_cooking, cooking_plastic_substituted=False)
+        no_serving = CanteenFactory.create()
+        DiagnosticFactory.create(canteen=no_serving, serving_plastic_substituted=False)
+        no_bottles = CanteenFactory.create()
+        DiagnosticFactory.create(canteen=no_bottles, plastic_bottles_substituted=False)
+        no_tableware = CanteenFactory.create()
+        DiagnosticFactory.create(canteen=no_tableware, plastic_tableware_substituted=False)
+        # --- canteens which earn plastic badge:
+        earned = CanteenFactory.create()
+        DiagnosticFactory.create(
+            canteen=earned,
+            cooking_plastic_substituted=True,
+            serving_plastic_substituted=True,
+            plastic_bottles_substituted=True,
+            plastic_tableware_substituted=True,
+        )
+
+        badges = badges_for_queryset(Diagnostic.objects.all())
+
+        plastic_badge_qs = badges["plastic"]
+        self.assertEqual(plastic_badge_qs.count(), 1)
+        self.assertTrue(plastic_badge_qs.filter(canteen=earned).exists())
+
+    def test_info_badge_earned(self):
+        """
+        Test that the right canteens are identified in info badge qs
+        """
+        no_communicated = CanteenFactory.create()
+        DiagnosticFactory.create(canteen=no_communicated, communicates_on_food_quality=False)
+        earned = CanteenFactory.create()
+        DiagnosticFactory.create(canteen=earned, communicates_on_food_quality=True)
+
+        badges = badges_for_queryset(Diagnostic.objects.all())
+
+        info_badge_qs = badges["info"]
+        self.assertEqual(info_badge_qs.count(), 1)
+        self.assertTrue(info_badge_qs.filter(canteen=earned).exists())
