@@ -217,6 +217,7 @@ export default {
   },
   mounted() {
     this.loadLocations()
+    this.loadStatistics("ma cantine", `year=${this.year}`)
   },
   computed: {
     departments() {
@@ -293,6 +294,14 @@ export default {
           this.loadedDepartmentIds = data.departments
         })
     },
+    loadStatistics(newLocationText, query) {
+      fetch(`/api/v1/canteenStatistics/?${query}`)
+        .then((response) => response.json())
+        .then((data) => {
+          this.statistics = data
+          this.locationText = newLocationText
+        })
+    },
     // this was derived from 'setLocations' in the CanteensHome page, if used again consider a util
     formatLocations(enabledLocationIds, jsonLocations, locationKeyWord, locationsWord) {
       const enabledLocations = jsonLocations
@@ -325,7 +334,7 @@ export default {
       )
     },
     submit() {
-      let query = `?year=${this.year}`
+      let query = `year=${this.year}`
       this.locationText = ""
       let newLocationText
       if (this.chosenDepartment) {
@@ -340,12 +349,7 @@ export default {
         this.statistics = {}
       }
       if (newLocationText) {
-        fetch(`/api/v1/canteenStatistics/${query}`)
-          .then((response) => response.json())
-          .then((data) => {
-            this.statistics = data
-            this.locationText = newLocationText
-          })
+        this.loadStatistics(newLocationText, query)
         // should probably move badge into a canteen attribute rather than calculating it on front
       }
     },

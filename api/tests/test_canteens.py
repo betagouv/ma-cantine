@@ -834,6 +834,10 @@ class TestCanteenApi(APITestCase):
         expected_sectors[str(social.id)] = 0
         self.assertEqual(body["sectors"], expected_sectors)
 
+        # can also call without location info
+        response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def test_canteen_stats_by_department(self):
         department = "01"
         year = 2020
@@ -849,8 +853,6 @@ class TestCanteenApi(APITestCase):
         response = self.client.get(reverse("canteen_statistics"), {"region": "01"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         response = self.client.get(reverse("canteen_statistics"), {"department": "01"})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_appro_badge_earned(self):

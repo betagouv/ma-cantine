@@ -546,16 +546,14 @@ class CanteenStatisticsView(APIView):
         region = request.query_params.get("region")
         department = request.query_params.get("department")
         year = request.query_params.get("year")
-        if not year or (not region and not department):
-            return JsonResponse(
-                {"error": "Expected both year and one of region or department"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        if not year:
+            return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
         data = {}
-        canteens = None
+        canteens = Canteen.objects
         if region:
-            canteens = Canteen.objects.filter(region=region)
+            canteens = canteens.filter(region=region)
         elif department:
-            canteens = Canteen.objects.filter(department=department)
+            canteens = canteens.filter(department=department)
         data["canteen_count"] = canteens.count()
         data["published_canteen_count"] = canteens.filter(
             publication_status=Canteen.PublicationStatus.PUBLISHED
