@@ -56,11 +56,12 @@
             <p class="pt-6">
               Aujourd'hui, il y a
               <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
-              cantines dans {{ locationText }} sur ce site.
+              cantine{{ statistics.canteenCount == 1 ? "" : "s" }} dans {{ locationText }} sur ce site.
             </p>
             <p>
               <span class="text-h5 font-weight-bold">{{ statistics.publishedCanteenCount }}</span>
-              cantines ont publié leurs données, accessible par
+              cantine{{ statistics.publishedCanteenCount == 1 ? " a publié ses" : "s ont publié leurs" }} données,
+              accessible par
               <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
             </p>
           </div>
@@ -95,16 +96,14 @@
         <v-col cols="12" sm="6" md="5">
           <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
             <v-img max-width="30" contain src="/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
-            <v-card-text class="grey--text text--darken-2">
-              <v-row class="align-end">
-                <span class="text-h5 font-weight-black mr-1" style="line-height: inherit;">
-                  {{ statistics.approPercent }} %
-                </span>
-                <span class="text-body-2">
-                  ont réalisé la mesure
-                  <span class="font-weight-black">« {{ approMeasure.shortTitle.toLowerCase() }} »</span>
-                </span>
-              </v-row>
+            <v-card-text class="grey--text text--darken-2 px-1">
+              <span class="text-h5 font-weight-black" style="line-height: inherit;">
+                {{ statistics.approPercent }} %
+              </span>
+              <span class="text-body-2">
+                ont réalisé la mesure
+                <span class="font-weight-black">« {{ approMeasure.shortTitle.toLowerCase() }} »</span>
+              </span>
             </v-card-text>
             <v-card-actions class="px-1">
               <router-link :to="{ name: 'KeyMeasurePage', params: { id: approMeasure.id } }" class="text-body-2">
@@ -118,7 +117,7 @@
         <v-col cols="12" sm="6" md="3">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <v-card-text>
-              <span class="text-h5 font-weight-black mr-1">{{ statistics.bioPercent }} %</span>
+              <span class="text-h5 font-weight-black">{{ statistics.bioPercent }} %</span>
               <span class="text-body-2">
                 bio moyen
               </span>
@@ -137,7 +136,7 @@
         <v-col cols="12" sm="6" md="4">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <v-card-text>
-              <span class="text-h5 font-weight-black mr-1">{{ statistics.sustainablePercent }} %</span>
+              <span class="text-h5 font-weight-black">{{ statistics.sustainablePercent }} %</span>
               <span class="text-body-2">
                 durables et de qualité moyen
               </span>
