@@ -167,6 +167,9 @@
         />
       </v-row>
     </div>
+    <v-row v-else justify="center" class="py-15">
+      <v-progress-circular indeterminate></v-progress-circular>
+    </v-row>
   </div>
 </template>
 
