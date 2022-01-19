@@ -68,7 +68,7 @@ python-dotenv==0.19.2
 pytz==2021.3
 pyzmq==22.3.0
 regex==2021.11.10
-reportlab==3.6.3
+reportlab==3.6.5
 requests==2.27.1
 requests-mock==1.9.3
 roundrobin==0.0.2
