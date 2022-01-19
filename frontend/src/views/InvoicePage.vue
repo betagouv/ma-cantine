@@ -32,17 +32,18 @@
           <v-form ref="form" @submit.prevent v-model="formIsValid">
             <v-row>
               <v-col cols="12" sm="8">
-                <label class="body-2">Fournisseur</label>
+                <label class="body-2" for="provider">Fournisseur</label>
                 <v-text-field
                   validate-on-blur
                   hide-details="auto"
                   solo
                   v-model="purchase.provider"
                   class="mt-2"
+                  id="provider"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="4">
-                <label class="body-2">Prix HT</label>
+                <label class="body-2" for="price">Prix HT</label>
                 <v-text-field
                   validate-on-blur
                   hide-details="auto"
@@ -51,54 +52,60 @@
                   class="mt-2"
                   append-icon="mdi-currency-eur"
                   :rules="[validators.required]"
+                  id="price"
                 ></v-text-field>
               </v-col>
 
               <v-col cols="12" sm="8" class="mb-6">
-                <label class="body-2">Cantine</label>
+                <label class="body-2" for="canteen">Cantine</label>
                 <v-autocomplete
                   hide-details
                   solo
                   :items="userCanteens"
-                  label="Choissisez la cantine"
+                  placeholder="Choissisez la cantine"
                   v-model="purchase.canteen"
                   :rules="[validators.required]"
                   item-text="name"
                   item-value="id"
+                  id="canteen"
                 ></v-autocomplete>
               </v-col>
             </v-row>
-            <label class="body-2">Catégorie</label>
-            <v-radio-group v-model="purchase.category">
-              <v-radio class="ml-8" v-for="item in categories" :key="item" :label="item" :value="item">
-                <template v-slot:label>
-                  <v-chip small :color="getCategoryDisplayValue(item).color" dark>
-                    {{ getCategoryDisplayValue(item).text }}
-                  </v-chip>
-                </template>
-              </v-radio>
-            </v-radio-group>
+            <fieldset>
+              <legend class="body-2 my-3">Catégorie</legend>
+              <v-radio-group v-model="purchase.category" class="my-0">
+                <v-radio class="ml-8" v-for="item in categories" :key="item" :label="item" :value="item">
+                  <template v-slot:label>
+                    <v-chip small :color="getCategoryDisplayValue(item).color" dark>
+                      {{ getCategoryDisplayValue(item).text }}
+                    </v-chip>
+                  </template>
+                </v-radio>
+              </v-radio-group>
+            </fieldset>
 
-            <label class="body-2">Caractéristique</label>
-            <v-row class="mb-4">
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-                class="py-0"
-                v-for="characteristic in characteristics"
-                :key="characteristic"
-              >
-                <v-checkbox
-                  hide-details="auto"
-                  v-model="purchase.characteristics"
-                  :multiple="true"
+            <fieldset>
+              <legend class="body-2 my-3">Caractéristique</legend>
+              <v-row class="mb-4">
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4"
+                  class="py-0"
+                  v-for="characteristic in characteristics"
                   :key="characteristic"
-                  :value="characteristic"
-                  :label="getCharacteristicDisplayValue(characteristic).text"
-                />
-              </v-col>
-            </v-row>
+                >
+                  <v-checkbox
+                    hide-details="auto"
+                    v-model="purchase.characteristics"
+                    :multiple="true"
+                    :key="characteristic"
+                    :value="characteristic"
+                    :label="getCharacteristicDisplayValue(characteristic).text"
+                  />
+                </v-col>
+              </v-row>
+            </fieldset>
           </v-form>
         </v-col>
         <v-col cols="12" md="4">
@@ -153,7 +160,7 @@ export default {
       purchase: null,
       formIsValid: true,
       invoiceFileChanged: false,
-      categories: ["VIANDES_VOLAILLES", "FRUITS_ET_LEGUMES", "PRODUITS_DE_LA_MER", "PRODUITS_LAITIERS", "BOISSONS"],
+      categories: ["VIANDES_VOLAILLES", "FRUITS_ET_LEGUMES", "PECHE", "PRODUITS_LAITIERS", "PRODUITS_TRANSFORMES"],
       characteristics: ["BIO", "AOCAOP", "RUP", "LABEL_ROUGE", "PECHE_DURABLE", "LOCAL", "HVE", "COMMERCE_EQUITABLE"],
     }
   },
@@ -305,3 +312,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+fieldset {
+  border: none;
+}
+</style>

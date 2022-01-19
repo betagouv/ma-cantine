@@ -99,11 +99,11 @@ export default {
           return { text: "Viandes / volailles", color: "deep-orange darken-1" }
         case "FRUITS_ET_LEGUMES":
           return { text: "Fruits et légumes", color: "green darken-1" }
-        case "PRODUITS_DE_LA_MER":
+        case "PECHE":
           return { text: "Pêche", color: "light-blue darken-1" }
         case "PRODUITS_LAITIERS":
           return { text: "Produits laitiers", color: "lime darken-2" }
-        case "PRODUITS_CEREALIERS":
+        case "PRODUITS_TRANSFORMES":
           return { text: "Produits transformés", color: "deep-purple darken-1" }
         default:
           return { text: "Autre", color: "blue-grey darken-1" }
