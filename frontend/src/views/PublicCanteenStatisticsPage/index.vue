@@ -337,15 +337,27 @@ export default {
         query += `&region=${this.chosenRegion}`
       } else {
         newLocationText = null
-        // TODO: reset
+        this.statistics = {}
       }
-      fetch(`/api/v1/canteenStatistics/${query}`)
-        .then((response) => response.json())
-        .then((data) => {
-          this.statistics = data
-          this.locationText = newLocationText
-        })
-      // should probably move badge into a canteen attribute rather than calculating it on front
+      if (newLocationText) {
+        fetch(`/api/v1/canteenStatistics/${query}`)
+          .then((response) => response.json())
+          .then((data) => {
+            this.statistics = data
+            this.locationText = newLocationText
+          })
+        // should probably move badge into a canteen attribute rather than calculating it on front
+      }
+    },
+  },
+  watch: {
+    chosenRegion(newRegion) {
+      if (this.chosenDepartment) {
+        let depInfo = jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment)
+        if (depInfo.regionCode !== newRegion) {
+          this.chosenDepartment = null
+        }
+      }
     },
   },
 }
