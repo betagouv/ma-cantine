@@ -49,14 +49,14 @@ mypy-extensions==0.4.3
 packaging==21.3
 pathspec==0.9.0
 Pillow==8.4.0
-pipdeptree==2.2.0
+pipdeptree==2.2.1
 platformdirs==2.4.1
 pluggy==1.0.0
 psutil==5.8.0
 psycopg2==2.9.2
 py==1.11.0
 pylint==2.12.2
-pylint-django==2.4.4
+pylint-django==2.5.0
 pylint-plugin-utils==0.7
 pyparsing==3.0.6
 PyPDF2==1.26.0
