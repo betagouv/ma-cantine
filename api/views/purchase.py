@@ -38,7 +38,7 @@ class PurchaseListCreateView(ListCreateAPIView):
                 raise PermissionDenied()
             serializer.save(canteen=canteen)
         except ObjectDoesNotExist as e:
-            logger.error("Attempt to create a purchase in an inexistent canteen")
+            logger.error("Attempt to create a purchase in an nonexistent canteen")
             raise NotFound() from e
 
 
@@ -64,5 +64,5 @@ class PurchaseRetrieveUpdateView(RetrieveUpdateAPIView):
                 raise PermissionDenied()
             serializer.save(canteen=canteen)
         except ObjectDoesNotExist as e:
-            logger.error("Attempt to update a purchase to an inexistent canteen")
+            logger.error("Attempt to update a purchase to an nonexistent canteen")
             raise NotFound() from e

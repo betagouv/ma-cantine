@@ -99,9 +99,9 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     @authenticate
-    def test_create_purchase_inexistent_canteen(self):
+    def test_create_purchase_nonexistent_canteen(self):
         """
-        A user cannot create a purchase for an inexistent canteen
+        A user cannot create a purchase for an nonexistent canteen
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
@@ -116,7 +116,7 @@ class TestPurchaseApi(APITestCase):
         response = self.client.post(reverse("purchase_list_create"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_update_purchases_unauthentified(self):
+    def test_update_purchases_unauthenticated(self):
         """
         The purchase update is only available when logged in
         """

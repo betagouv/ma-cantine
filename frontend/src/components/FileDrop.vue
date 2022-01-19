@@ -27,15 +27,6 @@
         {{ subtitle }}
       </v-card-subtitle>
     </label>
-    <input
-      class="visually-hidden"
-      :disabled="hasFile"
-      ref="csv-file-upload"
-      @change="onFileInputChange"
-      id="csv-file-upload"
-      :accept="acceptTypes.join(', ')"
-      type="file"
-    />
     <div v-if="hasFile" class="d-flex flex-column align-center justify-center drop-area">
       <v-card-text class="font-weight-bold mt-3 mb-1 text-center text-body-2">
         <v-icon small class="mt-n1" color="primary">mdi-file-document-outline</v-icon>
@@ -47,6 +38,15 @@
         Choisir un autre fichier
       </v-btn>
     </div>
+    <input
+      class="visually-hidden"
+      :disabled="hasFile"
+      ref="csv-file-upload"
+      @change="onFileInputChange"
+      id="csv-file-upload"
+      :accept="acceptTypes.join(', ')"
+      type="file"
+    />
   </v-card>
 </template>
 
