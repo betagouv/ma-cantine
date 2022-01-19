@@ -16,7 +16,7 @@ from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleV
 from api.views import ImportDiagnosticsView, TeledeclarationCreateView
 from api.views import TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
-from api.views import UserCanteenPreviews
+from api.views import UserCanteenPreviews, CanteenLocationsView
 
 
 urlpatterns = {
@@ -109,6 +109,7 @@ urlpatterns = {
         PurchaseRetrieveUpdateView.as_view(),
         name="purchase_retrieve_update",
     ),
+    path("canteenLocations/", CanteenLocationsView.as_view(), name="canteen_locations"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

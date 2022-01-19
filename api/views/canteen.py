@@ -601,3 +601,24 @@ class CanteenStatisticsView(APIView):
             sectors[sector.id] = canteens.filter(sectors=sector).count()
         data["sectors"] = sectors
         return JsonResponse(camelize(data), status=status.HTTP_200_OK)
+
+
+class CanteenLocationsView(APIView):
+    def get(self, _):
+        canteens = Canteen.objects
+        data = {}
+        data["regions"] = (
+            canteens.filter(region__isnull=False)
+            .exclude(region="")
+            .order_by("region")
+            .distinct("region")
+            .values_list("region", flat=True)
+        )
+        data["departments"] = (
+            canteens.filter(department__isnull=False)
+            .exclude(department="")
+            .order_by("department")
+            .distinct("department")
+            .values_list("department", flat=True)
+        )
+        return JsonResponse(camelize(data), status=status.HTTP_200_OK)

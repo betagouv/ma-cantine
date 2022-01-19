@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.core.files import File
 from rest_framework.test import APITestCase
 from rest_framework import status
+from data.department_choices import Department
 from data.factories import CanteenFactory, ManagerInvitationFactory, SectorFactory
 from data.factories import DiagnosticFactory
 from data.models import Canteen, Teledeclaration, CanteenImage, Diagnostic
@@ -998,3 +999,29 @@ class TestCanteenApi(APITestCase):
         info_badge_qs = badges["info"]
         self.assertEqual(info_badge_qs.count(), 1)
         self.assertTrue(info_badge_qs.filter(canteen=earned).exists())
+
+    def test_canteen_locations(self):
+        """
+        Test that the right subset of regions and departments 'in use' by canteens are returned
+        """
+        CanteenFactory.create(department=Department.aisne)
+        CanteenFactory.create(department=Department.ain)
+        # set region directly
+        CanteenFactory.create(region=Region.guadeloupe, department=None)
+        # create extra to check that list returned doesn't contain duplicates
+        CanteenFactory.create(department=Department.aisne)
+        CanteenFactory.create(department="999")  # not a department, checking None on region
+        CanteenFactory.create(region="", department="")  # checking exlusion of blank strings
+
+        response = self.client.get(reverse("canteen_locations"))
+
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(len(body["regions"]), 3)
+        self.assertEqual(Region.guadeloupe, body["regions"][0])
+        self.assertEqual(Region.hauts_de_france, body["regions"][1])
+        self.assertEqual(Region.auvergne_rhone_alpes, body["regions"][2])
+        self.assertEqual(len(body["departments"]), 3)
+        self.assertIn(Department.ain, body["departments"][0])
+        self.assertIn(Department.aisne, body["departments"][1])
+        self.assertIn("999", body["departments"])

@@ -12,6 +12,7 @@ from .canteen import (  # noqa: F401
     SendCanteenNotFoundEmail,
     UserCanteenPreviews,
     CanteenStatisticsView,
+    CanteenLocationsView,
 )
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,

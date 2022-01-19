@@ -8,7 +8,6 @@
           <label for="select-region" class="text-body-2">
             Région
           </label>
-          <!-- required? -->
           <v-autocomplete
             v-model="chosenRegion"
             :items="regions"
@@ -20,6 +19,7 @@
             outlined
             dense
             auto-select-first
+            :filter="locationFilter"
           ></v-autocomplete>
         </v-col>
         <v-col cols="12" sm="6" md="4">
@@ -37,6 +37,7 @@
             outlined
             dense
             auto-select-first
+            :filter="locationFilter"
           ></v-autocomplete>
         </v-col>
         <v-col cols="12" sm="6" md="4" class="d-flex align-end">
@@ -178,6 +179,7 @@ import labels from "@/data/quality-labels.json"
 import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
+import { normaliseText } from "@/utils"
 
 export default {
   name: "PublicCanteenStatisticsPage",
@@ -193,7 +195,6 @@ export default {
       labels,
       approMeasure: keyMeasures.find((measure) => measure.badgeId === "appro"),
       otherMeasures: keyMeasures.filter((measure) => measure.badgeId !== "appro"),
-      regions: this.formatLocations(jsonRegions, "region"),
       chosenDepartment: null,
       chosenRegion: null,
       locationText: null,
@@ -210,16 +211,24 @@ export default {
           offsetX: 30,
         },
       },
+      loadedDepartmentIds: [],
+      loadedRegionIds: [],
     }
+  },
+  mounted() {
+    this.loadLocations()
   },
   computed: {
     departments() {
-      // TODO: get regions and departments from back for the ones that we have and dont have
-      let departments = jsonDepartments
+      let enabledDepartments = this.loadedDepartmentIds
+      let departmentsForRegion = jsonDepartments
       if (this.chosenRegion) {
-        departments = departments.filter((department) => department.regionCode === this.chosenRegion)
+        departmentsForRegion = jsonDepartments.filter((department) => department.regionCode === this.chosenRegion)
       }
-      return this.formatLocations(departments, "department")
+      return this.formatLocations(enabledDepartments, departmentsForRegion, "department", "départements")
+    },
+    regions() {
+      return this.formatLocations(this.loadedRegionIds, jsonRegions, "region", "régions")
     },
     publishedSeries() {
       return [
@@ -276,11 +285,44 @@ export default {
     },
   },
   methods: {
-    formatLocations(locations, locationKeyWord) {
-      return locations.map((x) => ({
-        text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
-        value: x[`${locationKeyWord}Code`],
-      }))
+    loadLocations() {
+      fetch(`/api/v1/canteenLocations/`)
+        .then((response) => response.json())
+        .then((data) => {
+          this.loadedRegionIds = data.regions
+          this.loadedDepartmentIds = data.departments
+        })
+    },
+    // this was derived from 'setLocations' in the CanteensHome page, if used again consider a util
+    formatLocations(enabledLocationIds, jsonLocations, locationKeyWord, locationsWord) {
+      const enabledLocations = jsonLocations
+        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) > -1)
+        .map((x) => ({
+          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
+          value: x[`${locationKeyWord}Code`],
+        }))
+      const headerText = `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
+      const header = { header: headerText }
+
+      const divider = { divider: true }
+
+      const disabledLocations = jsonLocations
+        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) === -1)
+        .map((x) => ({
+          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
+          value: x[`${locationKeyWord}Code`],
+          disabled: true,
+        }))
+
+      return disabledLocations.length ? [...enabledLocations, divider, header, ...disabledLocations] : enabledLocations
+    },
+    // taken from the CanteensHome page, if used again consider a util
+    locationFilter(item, queryText, itemText) {
+      return (
+        Object.prototype.hasOwnProperty.call(item, "divider") ||
+        Object.prototype.hasOwnProperty.call(item, "header") ||
+        normaliseText(itemText).indexOf(normaliseText(queryText)) > -1
+      )
     },
     submit() {
       let query = `?year=${this.year}`
@@ -295,7 +337,7 @@ export default {
         query += `&region=${this.chosenRegion}`
       } else {
         newLocationText = null
-        // TODO: what to do in this case?
+        // TODO: reset
       }
       fetch(`/api/v1/canteenStatistics/${query}`)
         .then((response) => response.json())
