@@ -49,11 +49,11 @@
       </v-row>
     </v-form>
     <div v-if="locationText" class="py-8">
-      <h2 class="text--darken-5 text-h4 mb-2">Les statistiques pour {{ locationText }}</h2>
-      <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'align-center': $vuetify.breakpoint.mdAndUp }">
-        <v-col cols="12" md="6">
-          <div id="published-canteen-text">
-            <p class="pt-6">
+      <h2 class="text--darken-5 text-h4 mb-8">Les statistiques pour {{ locationText }}</h2>
+      <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown }">
+        <v-col cols="12" md="6" class="pr-0">
+          <div id="published-canteen-text" class="mb-5">
+            <p>
               Aujourd'hui, il y a
               <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
               cantine{{ statistics.canteenCount == 1 ? "" : "s" }} dans {{ locationText }} sur ce site.
@@ -71,13 +71,12 @@
             type="pie"
             height="auto"
             v-if="$vuetify.breakpoint.mdAndUp"
-            width="60%"
+            width="62%"
             role="img"
             aria-describedby="published-canteen-text"
           />
         </v-col>
-        <v-spacer></v-spacer>
-        <v-col cols="12" sm="8" md="6">
+        <v-col cols="12" sm="8" md="6" class="pl-0">
           <VueApexCharts
             :options="sectorChartOptions"
             :series="sectorSeries"
@@ -85,7 +84,7 @@
             height="auto"
             width="100%"
             role="img"
-            aria-label="Cantines par secteur"
+            :aria-label="sectorChartTitle"
             aria-describedby="sector-chart-description"
           />
           <p id="sector-chart-description" class="d-none">{{ sectorChartDescription }}</p>
@@ -212,6 +211,7 @@ export default {
       },
       loadedDepartmentIds: [],
       loadedRegionIds: [],
+      sectorChartTitle: "Nombre de cantines par secteur",
     }
   },
   mounted() {
@@ -252,6 +252,18 @@ export default {
     },
     sectorChartOptions() {
       return {
+        title: {
+          text: this.sectorChartTitle,
+          style: {
+            fontSize: "14px",
+            fontWeight: "normal",
+            fontFamily: "Marianne",
+            color: "#333",
+          },
+          offsetX: this.$vuetify.breakpoint.mdAndUp ? 162 : 10,
+          offsetY: -5,
+          floating: true,
+        },
         chart: {
           type: "bar",
           toolbar: { tools: { download: false } },
@@ -261,9 +273,6 @@ export default {
           categories: this.sectorLabels,
           labels: {
             trim: true,
-          },
-          title: {
-            text: "Nombre de cantines",
           },
         },
         plotOptions: {
@@ -279,7 +288,7 @@ export default {
     sectorChartDescription() {
       let desc = ""
       Object.keys(this.statistics.sectors).forEach((key) => {
-        desc += `${this.statistics.sectors[key]} ${this.sectors.find((sector) => sector.id.toString() === key).name}; `
+        desc += `${this.sectors.find((sector) => sector.id.toString() === key).name}, ${this.statistics.sectors[key]}; `
       })
       return desc
     },
