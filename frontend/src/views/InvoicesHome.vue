@@ -3,7 +3,7 @@
     <div class="d-flex">
       <div>
         <h1 class="font-weight-black text-h5 text-sm-h4 my-4" style="width: 100%">
-          Mes Achats
+          Mes achats
         </h1>
         <p>
           Une alimentation saine et durable commence par un suivi comptable de vos achats
