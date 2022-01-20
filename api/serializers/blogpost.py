@@ -19,4 +19,5 @@ class BlogPostSerializer(serializers.ModelSerializer):
             "published",
             "display_date",
             "author",
+            "tags",
         )

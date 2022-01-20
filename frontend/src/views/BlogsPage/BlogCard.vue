@@ -15,6 +15,7 @@
     </v-card-text>
     <v-spacer></v-spacer>
     <v-card-actions class="pa-4">
+      <v-chip v-if="tag" small :color="tag.colour">{{ tag.name }}</v-chip>
       <v-spacer></v-spacer>
       <v-btn outlined color="primary">
         Lire la suite
@@ -30,6 +31,31 @@ export default {
     post: {
       type: Object,
       required: true,
+    },
+  },
+  data() {
+    return {
+      colours: [
+        "pink lighten-4",
+        "blue lighten-4",
+        "teal lighten-4",
+        "purple lighten-4",
+        "green lighten-4",
+        "yellow lighten-4",
+      ],
+    }
+  },
+  computed: {
+    tags() {
+      let tags = this.$store.state.blogTags
+      tags.forEach((tag, idx) => (tag.colour = idx >= this.colours.length ? "" : this.colours[idx]))
+      return tags
+    },
+    tag() {
+      if (this.post.tags.length > 0) {
+        return this.tags.find((x) => x.id == this.post.tags[0])
+      }
+      return undefined
     },
   },
 }
