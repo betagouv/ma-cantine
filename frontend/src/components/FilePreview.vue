@@ -13,7 +13,7 @@
 
       <v-btn text @click="$emit('delete')">
         <v-icon size="16" class="mr-2">mdi-delete-outline</v-icon>
-        Enlever
+        Supprimer
       </v-btn>
     </div>
     <v-spacer></v-spacer>
