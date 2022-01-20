@@ -235,14 +235,6 @@ export default {
     validators() {
       return validators
     },
-    hasChanged() {
-      if (this.originalPurchase) {
-        const diff = getObjectDiff(this.originalPurchase, this.purchase)
-        return Object.keys(diff).length > 0
-      } else {
-        return Object.keys(this.purchase).length > 0
-      }
-    },
     loading() {
       return this.$store.state.purchasesLoadingStatus === Constants.LoadingStatus.LOADING
     },
@@ -344,8 +336,16 @@ export default {
           this.$store.dispatch("notifyServerError", e)
         })
     },
+    hasChanged() {
+      if (this.originalPurchase) {
+        const diff = getObjectDiff(this.originalPurchase, this.purchase)
+        return Object.keys(diff).length > 0
+      } else {
+        return Object.keys(this.purchase).length > 0
+      }
+    },
     handleUnload(e) {
-      if (this.hasChanged && !this.bypassLeaveWarning) {
+      if (this.hasChanged() && !this.bypassLeaveWarning) {
         e.preventDefault()
         e.returnValue = "Quitter cette page ? Vos changements n'ont pas encore été sauvegardés"
       } else {
