@@ -53,7 +53,7 @@ class TestPurchaseApi(APITestCase):
             "date": "2022-01-13",
             "canteen_id": 1,
             "provider": "Test provider",
-            "category": "PECHE",
+            "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
             "price_ht": 15.23,
         }
@@ -73,7 +73,7 @@ class TestPurchaseApi(APITestCase):
             "date": "2022-01-13",
             "canteen": other_user_canteen.id,
             "provider": "Test provider",
-            "category": "PECHE",
+            "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
             "price_ht": 15.23,
         }
@@ -91,7 +91,7 @@ class TestPurchaseApi(APITestCase):
             "date": "2022-01-13",
             "canteen": canteen.id,
             "provider": "Test provider",
-            "category": "PECHE",
+            "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
             "price_ht": 15.23,
         }
@@ -109,7 +109,7 @@ class TestPurchaseApi(APITestCase):
             "date": "2022-01-13",
             "canteen": "999",
             "provider": "Test provider",
-            "category": "PECHE",
+            "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
             "price_ht": 15.23,
         }
