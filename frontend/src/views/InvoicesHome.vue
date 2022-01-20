@@ -24,7 +24,6 @@
       ></v-img>
     </div>
     <v-card outlined class="my-4" v-if="visiblePurchases">
-      <!-- eslint-disable-next-line -->
       <v-data-table hide-default-footer :headers="headers" :items="processedVisiblePurchases" @click:row="onRowClick">
         <template v-slot:[`item.category`]="{ item }">
           <v-chip outlined small :color="getDisplayValue(item.category).color" dark class="font-weight-bold">
