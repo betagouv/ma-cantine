@@ -51,7 +51,7 @@
                   v-model="purchase.priceHt"
                   class="mt-2"
                   append-icon="mdi-currency-eur"
-                  :rules="[validators.required]"
+                  :rules="[validators.required, validators.greaterThanZero]"
                   id="price"
                 ></v-text-field>
               </v-col>
