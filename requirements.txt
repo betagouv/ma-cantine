@@ -49,7 +49,7 @@ mypy-extensions==0.4.3
 packaging==21.3
 pathspec==0.9.0
 Pillow==8.4.0
-pipdeptree==2.2.0
+pipdeptree==2.2.1
 platformdirs==2.4.1
 pluggy==1.0.0
 psutil==5.8.0
