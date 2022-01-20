@@ -25,7 +25,7 @@ djangorestframework==3.13.1
 djangorestframework-camel-case==1.2.0
 drf-base64==2.0
 factory-boy==3.2.1
-Faker==10.0.0
+Faker==11.3.0
 Flask==2.0.2
 Flask-BasicAuth==0.2.0
 Flask-Cors==3.0.10
@@ -67,7 +67,7 @@ python-dateutil==2.8.2
 python-dotenv==0.19.2
 pytz==2021.3
 pyzmq==22.3.0
-regex==2021.11.10
+regex==2022.1.18
 reportlab==3.6.5
 requests==2.27.1
 requests-mock==1.9.3
