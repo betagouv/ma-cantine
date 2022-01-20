@@ -66,6 +66,35 @@
                   id="canteen"
                 ></v-autocomplete>
               </v-col>
+
+              <v-col cols="12" sm="4">
+                <label class="body-2" for="price">Date d'achat</label>
+
+                <v-menu
+                  v-model="menu"
+                  :close-on-content-click="true"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      :value="humanReadableDate"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      :rules="[validators.required]"
+                      v-on="on"
+                      hide-details="auto"
+                      solo
+                      id="date"
+                      class="mt-2"
+                    ></v-text-field>
+                  </template>
+
+                  <v-date-picker v-model="purchase.date" :max="today" locale="fr-FR"></v-date-picker>
+                </v-menu>
+              </v-col>
             </v-row>
             <fieldset>
               <legend class="body-2 my-3">Catégorie</legend>
@@ -145,7 +174,7 @@
 <script>
 import FileDrop from "@/components/FileDrop"
 import FilePreview from "@/components/FilePreview"
-import { toBase64, getObjectDiff, normaliseText } from "@/utils"
+import { toBase64, getObjectDiff, normaliseText, formatDate } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 
@@ -159,6 +188,8 @@ export default {
       purchase: null,
       formIsValid: true,
       invoiceFileChanged: false,
+      menu: false,
+      modal: false,
       categories: [
         "VIANDES_VOLAILLES",
         "PRODUITS_DE_LA_MER",
@@ -221,6 +252,13 @@ export default {
         return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
       })
     },
+    humanReadableDate() {
+      return this.purchase.date ? formatDate(this.purchase.date) : ""
+    },
+    today() {
+      const today = new Date()
+      return today.toISOString().split("T")[0]
+    },
   },
   methods: {
     getCategoryDisplayValue(category) {
@@ -251,7 +289,7 @@ export default {
         AOCAOP: { text: "Appellation d'origine (AOC/AOP)" },
         ICP: { text: "Indication géographique protégée (IGP)" },
         STG: { text: "Spécialité traditionnelle garantie (STG)" },
-        HVE: { text: "Haute valeur environnementale (HVE)" },
+        HVE: { text: "HVE ou certification environnementale de niveau 2" },
         PECHE_DURABLE: { text: "Pêche durable" },
         RUP: { text: "Région ultrapériphérique (RUP)" },
         FERMIER: { text: "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »" },

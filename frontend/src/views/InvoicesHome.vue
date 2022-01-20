@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import { formatDate } from "@/utils"
+
 export default {
   name: "InvoicesHome",
   data() {
@@ -90,7 +92,7 @@ export default {
       const canteens = this.$store.state.userCanteenPreviews
       return this.visiblePurchases.map((x) => {
         const canteen = canteens.find((y) => y.id === x.canteen)
-        const date = x.date ? this.getReadableDate(x.date) : null
+        const date = x.date ? formatDate(x.date) : null
         return Object.assign(x, { canteen, date })
       })
     },
@@ -134,16 +136,6 @@ export default {
           this.publishedCanteenCount = 0
           this.$store.dispatch("notifyServerError")
         })
-    },
-    getReadableDate(dateString) {
-      const options = {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }
-      const dateSegments = dateString.split("-")
-      const date = new Date(parseInt(dateSegments[0]), parseInt(dateSegments[1]) - 1, parseInt(dateSegments[2]))
-      return date.toLocaleString("fr", options)
     },
   },
   watch: {
