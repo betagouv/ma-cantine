@@ -9,4 +9,4 @@ logger = logging.getLogger(__name__)
 class BlogTagListView(ListAPIView):
     model = BlogTag
     serializer_class = BlogTagSerializer
-    queryset = BlogTag.objects.all()
+    queryset = BlogTag.objects.order_by("id").all()

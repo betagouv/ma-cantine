@@ -9,14 +9,16 @@ class TestBlogTagApi(APITestCase):
         """
         The API should return all sectors
         """
-        BlogTagFactory.create()
-        BlogTagFactory.create()
-        BlogTagFactory.create()
+        tag1 = BlogTagFactory.create(name="Tag 1")
+        BlogTagFactory.create(name="Tag 2")
+        BlogTagFactory.create(name="Tag 3")
+        tag1.name = "Tag 1 updated"
+        tag1.save()
 
         response = self.client.get(reverse("blog_tags_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
         self.assertEqual(len(body), 3)
-        self.assertIn("id", body[0])
-        self.assertIn("name", body[0])
+        # test whether the return order is consistent despite updates
+        self.assertEqual(body[0]["name"], "Tag 1 updated")
