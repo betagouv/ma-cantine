@@ -39,7 +39,7 @@ export default {
           to: { name: "ManagementPage" },
         },
         {
-          text: "Mon outil de suivi",
+          text: "Mes achats",
           icon: "mdi-food-apple",
           authenticationState: true,
           to: { name: "InvoicesHome" },

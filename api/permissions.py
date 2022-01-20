@@ -24,7 +24,7 @@ class IsCanteenManager(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if not isinstance(obj, Canteen):
             return False
-        return obj in request.user.canteens.all()
+        return obj.managers.filter(id=request.user.id).exists()
 
 
 class CanEditDiagnostic(permissions.BasePermission):
@@ -36,7 +36,7 @@ class CanEditDiagnostic(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if not isinstance(obj, Diagnostic):
             return False
-        is_manager = request.user in obj.canteen.managers.all()
+        is_manager = obj.canteen.managers.filter(id=request.user.id).exists()
         has_submitted_teledeclaration = (
             obj.teledeclaration_set.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED).count() > 0
         )
@@ -53,4 +53,4 @@ class IsPurchaseCanteenManager(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if not isinstance(obj, Purchase):
             return False
-        return obj.canteen in request.user.canteens.all()
+        return obj.canteen.managers.filter(id=request.user.id).exists()

@@ -48,8 +48,6 @@ class Purchase(models.Model):
     price_ht = models.DecimalField(
         max_digits=20,
         decimal_places=2,
-        blank=True,
-        null=True,
         verbose_name="Prix HT",
     )
     invoice_file = models.FileField(null=True, blank=True, upload_to="invoices/%Y/")

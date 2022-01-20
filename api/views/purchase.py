@@ -30,15 +30,19 @@ class PurchaseListCreateView(ListCreateAPIView):
         canteen_id = self.request.data.get("canteen")
         if not canteen_id:
             logger.error("Canteen ID missing in purchase creation request")
-            raise BadRequest()
+            raise BadRequest("Canteen ID missing in purchase creation request")
         try:
             canteen = Canteen.objects.get(pk=canteen_id)
             if not canteen.managers.filter(pk=self.request.user.pk).exists():
-                logger.error("Attempt to create a purchase in someone else's canteen")
+                logger.error(
+                    f"User {self.request.user.id} attempted to create a purchase in someone else's canteen: {canteen_id}"
+                )
                 raise PermissionDenied()
             serializer.save(canteen=canteen)
         except ObjectDoesNotExist as e:
-            logger.error("Attempt to create a purchase in an nonexistent canteen")
+            logger.error(
+                f"User {self.request.user.id} attempted to create a purchase in nonexistent canteen {canteen_id}"
+            )
             raise NotFound() from e
 
 
@@ -60,9 +64,13 @@ class PurchaseRetrieveUpdateView(RetrieveUpdateAPIView):
         try:
             canteen = Canteen.objects.get(pk=canteen_id)
             if not canteen.managers.filter(pk=self.request.user.pk).exists():
-                logger.error("Attempt to update a purchase to someone else's canteen")
+                logger.error(
+                    f"User {self.request.user.id} attempted to update a purchase to someone else's canteen : {canteen_id}"
+                )
                 raise PermissionDenied()
             serializer.save(canteen=canteen)
         except ObjectDoesNotExist as e:
-            logger.error("Attempt to update a purchase to an nonexistent canteen")
+            logger.error(
+                f"User {self.request.user.id} attempted to update a purchase to an nonexistent canteen {canteen_id}"
+            )
             raise NotFound() from e

@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="spinner" v-if="loading">
+    <div v-if="loading">
       <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
     </div>
 
     <div class="text-left">
-      <v-btn text color="primary" class="ml-n4" :to="{ name: 'InvoicesHome' }" exact>
-        <v-icon class="mr-2">mdi-arrow-left</v-icon>
+      <router-link :to="{ name: 'InvoicesHome' }" exact class="mt-2 grey--text text--darken-1 caption">
+        <v-icon small class="mr-2">mdi-arrow-left</v-icon>
         Revenir aux achats
-      </v-btn>
+      </router-link>
     </div>
 
     <div class="text-left" v-if="purchase">
@@ -21,10 +21,6 @@
         <h1 class="font-weight-black text-h5 text-sm-h4 my-4" style="width: 100%">
           Modifier mon achat
         </h1>
-        <p>
-          Vous pouvez modifier les données de cet achat dans le formulaire. Ces modifications seront visibles dans le
-          diagnostic de la cantine choisie.
-        </p>
       </div>
 
       <v-row v-if="purchase">
@@ -59,7 +55,7 @@
               <v-col cols="12" sm="8" class="mb-6">
                 <label class="body-2" for="canteen">Cantine</label>
                 <v-autocomplete
-                  hide-details
+                  hide-details="auto"
                   solo
                   :items="userCanteens"
                   placeholder="Choissisez la cantine"
@@ -198,13 +194,13 @@ export default {
     getCategoryDisplayValue(category) {
       switch (category) {
         case "VIANDES_VOLAILLES":
-          return { text: "Viandes / volailles", color: "deep-orange darken-1" }
+          return { text: "Viandes / volailles", color: "deep-orange darken-2" }
         case "FRUITS_ET_LEGUMES":
-          return { text: "Fruits et légumes", color: "green darken-1" }
+          return { text: "Fruits et légumes", color: "green darken-2" }
         case "PECHE":
-          return { text: "Pêche", color: "light-blue darken-1" }
+          return { text: "Pêche", color: "light-blue darken-3" }
         case "PRODUITS_LAITIERS":
-          return { text: "Produits laitiers", color: "lime darken-2" }
+          return { text: "Produits laitiers", color: "lime darken-3" }
         case "PRODUITS_TRANSFORMES":
           return { text: "Produits transformés", color: "deep-purple darken-1" }
         default:

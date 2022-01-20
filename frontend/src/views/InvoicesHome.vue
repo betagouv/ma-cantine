@@ -27,7 +27,7 @@
       <!-- eslint-disable-next-line -->
       <v-data-table hide-default-footer :headers="headers" :items="processedVisiblePurchases" @click:row="onRowClick">
         <template v-slot:[`item.category`]="{ item }">
-          <v-chip small :color="getDisplayValue(item.category).color" dark>
+          <v-chip outlined small :color="getDisplayValue(item.category).color" dark class="font-weight-bold">
             {{ getDisplayValue(item.category).text }}
           </v-chip>
         </template>
@@ -89,20 +89,24 @@ export default {
     },
     processedVisiblePurchases() {
       const canteens = this.$store.state.userCanteenPreviews
-      return this.visiblePurchases.map((x) => Object.assign(x, { canteen: canteens.find((y) => y.id === x.canteen) }))
+      return this.visiblePurchases.map((x) => {
+        const canteen = canteens.find((y) => y.id === x.canteen)
+        const date = x.date ? this.getReadableDate(x.date) : null
+        return Object.assign(x, { canteen, date })
+      })
     },
   },
   methods: {
     getDisplayValue(category) {
       switch (category) {
         case "VIANDES_VOLAILLES":
-          return { text: "Viandes / volailles", color: "deep-orange darken-1" }
+          return { text: "Viandes / volailles", color: "deep-orange darken-2" }
         case "FRUITS_ET_LEGUMES":
-          return { text: "Fruits et légumes", color: "green darken-1" }
+          return { text: "Fruits et légumes", color: "green darken-3" }
         case "PECHE":
-          return { text: "Pêche", color: "light-blue darken-1" }
+          return { text: "Pêche", color: "light-blue darken-3" }
         case "PRODUITS_LAITIERS":
-          return { text: "Produits laitiers", color: "lime darken-2" }
+          return { text: "Produits laitiers", color: "lime darken-4" }
         case "PRODUITS_TRANSFORMES":
           return { text: "Produits transformés", color: "deep-purple darken-1" }
         default:
@@ -128,6 +132,16 @@ export default {
           this.$store.dispatch("notifyServerError")
         })
     },
+    getReadableDate(dateString) {
+      const options = {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }
+      const dateSegments = dateString.split("-")
+      const date = new Date(parseInt(dateSegments[0]), parseInt(dateSegments[1]) - 1, parseInt(dateSegments[2]))
+      return date.toLocaleString("fr", options)
+    },
   },
   watch: {
     page(newPage) {
@@ -147,7 +161,8 @@ export default {
 </script>
 
 <style scoped>
-.v-data-table >>> tbody tr:not(.v-data-table__empty-wrapper) {
+.v-data-table >>> tbody tr:not(.v-data-table__empty-wrapper),
+.v-data-table >>> .v-chip {
   cursor: pointer;
 }
 </style>

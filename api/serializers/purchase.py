@@ -29,5 +29,4 @@ class PurchaseSerializer(serializers.ModelSerializer):
             return super().create(validated_data)
 
         validated_data["canteen_id"] = validated_data.pop("canteen").id
-        purchase = super().create(validated_data)
-        return purchase
+        return super().create(validated_data)
