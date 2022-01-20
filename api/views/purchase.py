@@ -59,7 +59,7 @@ class PurchaseRetrieveUpdateView(RetrieveUpdateAPIView):
             return serializer.save()
         try:
             canteen = Canteen.objects.get(pk=canteen_id)
-            if self.request.user not in canteen.managers.all():
+            if not canteen.managers.filter(pk=self.request.user.pk).exists():
                 logger.error("Attempt to update a purchase to someone else's canteen")
                 raise PermissionDenied()
             serializer.save(canteen=canteen)
