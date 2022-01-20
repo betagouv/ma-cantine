@@ -97,20 +97,24 @@ export default {
   },
   methods: {
     getDisplayValue(category) {
-      switch (category) {
-        case "VIANDES_VOLAILLES":
-          return { text: "Viandes / volailles", color: "deep-orange darken-2" }
-        case "FRUITS_ET_LEGUMES":
-          return { text: "Fruits et légumes", color: "green darken-3" }
-        case "PECHE":
-          return { text: "Pêche", color: "light-blue darken-3" }
-        case "PRODUITS_LAITIERS":
-          return { text: "Produits laitiers", color: "lime darken-4" }
-        case "PRODUITS_TRANSFORMES":
-          return { text: "Produits transformés", color: "deep-purple darken-1" }
-        default:
-          return { text: "Autre", color: "blue-grey darken-1" }
+      const categoryHash = {
+        VIANDES_VOLAILLES: { text: "Viandes, volailles", color: "red darken-4" },
+        PRODUITS_DE_LA_MER: { text: "Produits de la mer", color: "pink darken-4" },
+        FRUITS_ET_LEGUMES: { text: "Fruits, légumes, légumineuses et oléagineux", color: "purple darken-4" },
+        PRODUITS_CEREALIERS: { text: "Produits céréaliers", color: "deep-purple darken-4" },
+        ENTREES: { text: "Entrées et plats composés", color: "indigo darken-4" },
+        PRODUITS_LAITIERS: { text: "Lait et produits laitiers", color: "blue darken-4" },
+        BOISSONS: { text: "Boissons", color: "light-blue darken-4" },
+        AIDES: { text: "Aides culinaires et ingrédients divers", color: "cyan darken-4" },
+        BEURRE_OEUF_FROMAGE: { text: "Beurre, oeuf, fromage", color: "teal darken-4" },
+        PRODUITS_SUCRES: { text: "Produits sucrés", color: "green darken-4" },
+        ALIMENTS_INFANTILES: { text: "Aliments infantiles", color: "light-green darken-4" },
+        GLACES_SORBETS: { text: "Glaces et sorbets", color: "blue-grey darken-4" },
+        AUTRES: { text: "Autres", color: "brown darken-4" },
       }
+
+      if (Object.prototype.hasOwnProperty.call(categoryHash, category)) return categoryHash[category]
+      return { text: "", color: "" }
     },
     onRowClick(purchase) {
       this.$router.push({ name: "InvoicePage", params: { id: purchase.id } })

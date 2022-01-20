@@ -11,21 +11,38 @@ class Purchase(models.Model):
         ordering = ["-date", "-creation_date"]
 
     class Category(models.TextChoices):
-        VIANDES_VOLAILLES = "VIANDES_VOLAILLES", "Viandes / volailles"
-        FRUITS_ET_LEGUMES = "FRUITS_ET_LEGUMES", "Fruits, légumes"
-        PECHE = "PECHE", "Pêche"
-        PRODUITS_LAITIERS = "PRODUITS_LAITIERS", "Produits laitiers"
-        PRODUITS_TRANSFORMES = "PRODUITS_TRANSFORMES", "Produits transformés"
+        VIANDES_VOLAILLES = "VIANDES_VOLAILLES", "Viandes, volailles"
+        PRODUITS_DE_LA_MER = "PRODUITS_DE_LA_MER", "Produits de la mer"
+        FRUITS_ET_LEGUMES = "FRUITS_ET_LEGUMES", "Fruits, légumes, légumineuses et oléagineux"
+        PRODUITS_CEREALIERS = "PRODUITS_CEREALIERS", "Produits céréaliers"
+        ENTREES = "ENTREES", "Entrées et plats composés"
+        PRODUITS_LAITIERS = "PRODUITS_LAITIERS", "Lait et produits laitiers"
+        BOISSONS = "BOISSONS", "Boissons"
+        AIDES = "AIDES", "Aides culinaires et ingrédients divers"
+        BEURRE_OEUF_FROMAGE = "BEURRE_OEUF_FROMAGE", "Beurre, oeuf, fromage"
+        PRODUITS_SUCRES = "PRODUITS_SUCRES", "Produits sucrés"
+        ALIMENTS_INFANTILES = "ALIMENTS_INFANTILES", "Aliments infantiles"
+        GLACES_SORBETS = "GLACES_SORBETS", "Glaces et sorbets"
+        AUTRES = "AUTRES", "Autres"
 
     class Characteristic(models.TextChoices):
         BIO = "BIO", "Bio"
-        AOCAOP = "AOCAOP", "AOC / AOP"
-        RUP = "RUP", "RUP"
+        CONVERSION_BIO = "CONVERSION_BIO", "En conversion bio"
         LABEL_ROUGE = "LABEL_ROUGE", "Label rouge"
+        AOCAOP = "AOCAOP", "AOC / AOP"
+        ICP = "ICP", "Indication géographique protégée"
+        STG = "STG", "Spécialité traditionnelle garantie"
+        HVE = "HVE", "Haute valeur environnementale"
         PECHE_DURABLE = "PECHE_DURABLE", "Pêche durable"
-        LOCAL = "LOCAL", "Local"
-        HVE = "HVE", "HVE"
+        RUP = "RUP", "Région ultrapériphérique"
+        FERMIER = "FERMIER", "Fermier"
+        EXTERNALITES = (
+            "EXTERNALITES",
+            "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+        )
         COMMERCE_EQUITABLE = "COMMERCE_EQUITABLE", "Commerce équitable"
+        PERFORMANCE = "PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"
+        EQUIVALENTS = "EQUIVALENTS", "Produits équivalents"
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)

@@ -70,27 +70,24 @@
             <fieldset>
               <legend class="body-2 my-3">Catégorie</legend>
               <v-radio-group v-model="purchase.category" class="my-0">
-                <v-radio class="ml-8" v-for="item in categories" :key="item" :label="item" :value="item">
+                <v-radio
+                  class="ml-8"
+                  v-for="item in categories"
+                  :key="item"
+                  :label="getCategoryDisplayValue(item).text"
+                  :value="item"
+                >
                   <template v-slot:label>
-                    <v-chip small :color="getCategoryDisplayValue(item).color" dark>
-                      {{ getCategoryDisplayValue(item).text }}
-                    </v-chip>
+                    <span class="body-2 grey--text text--darken-3">{{ getCategoryDisplayValue(item).text }}</span>
                   </template>
                 </v-radio>
               </v-radio-group>
             </fieldset>
 
             <fieldset>
-              <legend class="body-2 my-3">Caractéristique</legend>
+              <legend class="body-2 my-3">Caractéristiques</legend>
               <v-row class="mb-4">
-                <v-col
-                  cols="12"
-                  sm="6"
-                  md="4"
-                  class="py-0"
-                  v-for="characteristic in characteristics"
-                  :key="characteristic"
-                >
+                <v-col cols="12" sm="6" class="py-0" v-for="characteristic in characteristics" :key="characteristic">
                   <v-checkbox
                     hide-details="auto"
                     v-model="purchase.characteristics"
@@ -98,7 +95,13 @@
                     :key="characteristic"
                     :value="characteristic"
                     :label="getCharacteristicDisplayValue(characteristic).text"
-                  />
+                  >
+                    <template v-slot:label>
+                      <span class="body-2 grey--text text--darken-3">
+                        {{ getCharacteristicDisplayValue(characteristic).text }}
+                      </span>
+                    </template>
+                  </v-checkbox>
                 </v-col>
               </v-row>
             </fieldset>
@@ -156,8 +159,37 @@ export default {
       purchase: null,
       formIsValid: true,
       invoiceFileChanged: false,
-      categories: ["VIANDES_VOLAILLES", "FRUITS_ET_LEGUMES", "PECHE", "PRODUITS_LAITIERS", "PRODUITS_TRANSFORMES"],
-      characteristics: ["BIO", "AOCAOP", "RUP", "LABEL_ROUGE", "PECHE_DURABLE", "LOCAL", "HVE", "COMMERCE_EQUITABLE"],
+      categories: [
+        "VIANDES_VOLAILLES",
+        "PRODUITS_DE_LA_MER",
+        "FRUITS_ET_LEGUMES",
+        "PRODUITS_CEREALIERS",
+        "ENTREES",
+        "PRODUITS_LAITIERS",
+        "BOISSONS",
+        "AIDES",
+        "BEURRE_OEUF_FROMAGE",
+        "PRODUITS_SUCRES",
+        "ALIMENTS_INFANTILES",
+        "GLACES_SORBETS",
+        "AUTRES",
+      ],
+      characteristics: [
+        "BIO",
+        "CONVERSION_BIO",
+        "LABEL_ROUGE",
+        "AOCAOP",
+        "ICP",
+        "STG",
+        "HVE",
+        "PECHE_DURABLE",
+        "RUP",
+        "FERMIER",
+        "EQUIVALENTS",
+        "COMMERCE_EQUITABLE",
+        "EXTERNALITES",
+        "PERFORMANCE",
+      ],
     }
   },
   props: {
@@ -192,42 +224,49 @@ export default {
   },
   methods: {
     getCategoryDisplayValue(category) {
-      switch (category) {
-        case "VIANDES_VOLAILLES":
-          return { text: "Viandes / volailles", color: "deep-orange darken-2" }
-        case "FRUITS_ET_LEGUMES":
-          return { text: "Fruits et légumes", color: "green darken-2" }
-        case "PECHE":
-          return { text: "Pêche", color: "light-blue darken-3" }
-        case "PRODUITS_LAITIERS":
-          return { text: "Produits laitiers", color: "lime darken-3" }
-        case "PRODUITS_TRANSFORMES":
-          return { text: "Produits transformés", color: "deep-purple darken-1" }
-        default:
-          return { text: "Autre", color: "blue-grey darken-1" }
+      const categoryHash = {
+        VIANDES_VOLAILLES: { text: "Viandes, volailles", color: "red darken-4" },
+        PRODUITS_DE_LA_MER: { text: "Produits de la mer", color: "pink darken-4" },
+        FRUITS_ET_LEGUMES: { text: "Fruits, légumes, légumineuses et oléagineux", color: "purple darken-4" },
+        PRODUITS_CEREALIERS: { text: "Produits céréaliers", color: "deep-purple darken-4" },
+        ENTREES: { text: "Entrées et plats composés", color: "indigo darken-4" },
+        PRODUITS_LAITIERS: { text: "Lait et produits laitiers", color: "blue darken-4" },
+        BOISSONS: { text: "Boissons", color: "light-blue darken-4" },
+        AIDES: { text: "Aides culinaires et ingrédients divers", color: "cyan darken-4" },
+        BEURRE_OEUF_FROMAGE: { text: "Beurre, oeuf, fromage", color: "teal darken-4" },
+        PRODUITS_SUCRES: { text: "Produits sucrés", color: "green darken-4" },
+        ALIMENTS_INFANTILES: { text: "Aliments infantiles", color: "light-green darken-4" },
+        GLACES_SORBETS: { text: "Glaces et sorbets", color: "blue-grey darken-4" },
+        AUTRES: { text: "Autres", color: "brown darken-4" },
       }
+
+      if (Object.prototype.hasOwnProperty.call(categoryHash, category)) return categoryHash[category]
+      return { text: "", color: "" }
     },
     getCharacteristicDisplayValue(characteristic) {
-      switch (characteristic) {
-        case "BIO":
-          return { text: "Bio" }
-        case "AOCAOP":
-          return { text: "AOC / AOP" }
-        case "RUP":
-          return { text: "RUP" }
-        case "LABEL_ROUGE":
-          return { text: "Label Rouge" }
-        case "PECHE_DURABLE":
-          return { text: "Pêche Durable" }
-        case "LOCAL":
-          return { text: "Local" }
-        case "HVE":
-          return { text: "HVE" }
-        case "COMMERCE_EQUITABLE":
-          return { text: "Commerce Équitable" }
-        default:
-          return { text: "Autre" }
+      const characteristicHash = {
+        BIO: { text: "Bio" },
+        CONVERSION_BIO: { text: "En conversion bio" },
+        LABEL_ROUGE: { text: "Label rouge" },
+        AOCAOP: { text: "Appellation d'origine (AOC/AOP)" },
+        ICP: { text: "Indication géographique protégée (IGP)" },
+        STG: { text: "Spécialité traditionnelle garantie (STG)" },
+        HVE: { text: "Haute valeur environnementale (HVE)" },
+        PECHE_DURABLE: { text: "Pêche durable" },
+        RUP: { text: "Région ultrapériphérique (RUP)" },
+        FERMIER: { text: "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »" },
+        EXTERNALITES: {
+          text:
+            "Produits acquis prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+        },
+        COMMERCE_EQUITABLE: { text: "Commerce équitable" },
+        PERFORMANCE: { text: "Produits acquis sur la base de leurs performances en matière environnementale" },
+        EQUIVALENTS: { text: "Produits équivalents aux produits bénéficiant de ces mentions ou labels" },
       }
+
+      if (Object.prototype.hasOwnProperty.call(characteristicHash, characteristic))
+        return characteristicHash[characteristic]
+      return { text: "", color: "" }
     },
     async savePurchase() {
       this.$refs.form.validate()
