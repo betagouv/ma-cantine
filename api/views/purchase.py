@@ -33,7 +33,7 @@ class PurchaseListCreateView(ListCreateAPIView):
             raise BadRequest()
         try:
             canteen = Canteen.objects.get(pk=canteen_id)
-            if self.request.user not in canteen.managers.all():
+            if not canteen.managers.filter(pk=self.request.user.pk).exists():
                 logger.error("Attempt to create a purchase in someone else's canteen")
                 raise PermissionDenied()
             serializer.save(canteen=canteen)
