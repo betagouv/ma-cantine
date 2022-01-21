@@ -24,9 +24,9 @@
               Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus durable
             </p>
             <p>
-              Pour consulter les statistiques de votre collectivités (régions et départements),
+              Consulter
               <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
-                cliquez ici
+                les statistiques de votre collectivités (régions et départements)
               </router-link>
             </p>
           </v-card-subtitle>

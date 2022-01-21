@@ -48,20 +48,24 @@
       </v-row>
     </v-form>
     <div v-if="locationText" class="py-8">
-      <h2 class="text-h5 font-weight-bold mb-8">Les statistiques pour {{ locationText }}</h2>
+      <h2 class="text-h5 font-weight-bold mb-8">Les statistiques pour « {{ locationText }} »</h2>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown }">
         <v-col cols="12" md="6" class="pr-0">
           <div id="published-canteen-text" class="mb-5">
             <p class="mb-0">
-              Aujourd'hui, il y a
+              Au total, nous avons
               <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
-              cantine{{ statistics.canteenCount == 1 ? "" : "s" }} dans {{ locationText }} sur ce site.
+              cantine{{ statistics.canteenCount == 1 ? "" : "s" }} sur {{ statsLevelDisplay }}.
             </p>
             <p>
               <span class="text-h5 font-weight-bold">{{ statistics.publishedCanteenCount }}</span>
-              cantine{{ statistics.publishedCanteenCount == 1 ? " a publié ses" : "s ont publié leurs" }} données,
-              accessible par
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
+              cantine{{
+                statistics.publishedCanteenCount == 1
+                  ? " a publié ses données (répertoriée dans"
+                  : "s ont publié leurs données (répertoriées dans"
+              }}
+              <!-- eslint-disable-next-line prettier/prettier-->
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
             </p>
           </div>
           <VueApexCharts
@@ -213,6 +217,7 @@ export default {
       loadedRegionIds: [],
       sectorChartTitle: "Nombre de cantines par secteur",
       defaultLocationText: "ma cantine",
+      statsLevel: "site",
     }
   },
   mounted() {
@@ -294,6 +299,9 @@ export default {
       })
       return desc
     },
+    statsLevelDisplay() {
+      return { department: "ce département", region: "cette région", site: "ce site" }[this.statsLevel]
+    },
   },
   methods: {
     loadLocations() {
@@ -351,11 +359,14 @@ export default {
         newLocationText = jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment)
           .departmentName
         query += `&department=${this.chosenDepartment}`
+        this.statsLevel = "department"
       } else if (this.chosenRegion) {
         newLocationText = jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName
         query += `&region=${this.chosenRegion}`
+        this.statsLevel = "region"
       } else {
         newLocationText = this.defaultLocationText
+        this.statsLevel = "site"
       }
       if (newLocationText) {
         this.loadStatistics(newLocationText, query)
