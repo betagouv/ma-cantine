@@ -91,8 +91,8 @@
         </v-col>
       </v-row>
       <h3 class="text-h6 font-weight-black mt-10 mb-8">Qualité de produits en {{ year }}</h3>
-      <v-row>
-        <v-col cols="12" sm="6" md="5">
+      <v-row class="px-4">
+        <v-col class="pl-0 pr-1" cols="12" sm="6" md="5">
           <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
             <v-img max-width="30" contain src="/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
             <v-card-text class="grey--text text--darken-2 px-1">
@@ -106,14 +106,12 @@
             </v-card-text>
             <v-card-actions class="px-1">
               <router-link :to="{ name: 'KeyMeasurePage', params: { id: approMeasure.id } }" class="text-body-2">
-                <!-- TODO: more specific link text? -->
                 La mesure
               </router-link>
             </v-card-actions>
           </v-card>
         </v-col>
-        <!-- TODO: this was copied from CanteenPublication. Consider making a component -->
-        <v-col cols="12" sm="6" md="3">
+        <v-col class="px-1" cols="12" sm="6" md="3">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <v-card-text>
               <span class="text-h5 font-weight-black">{{ statistics.bioPercent }} %</span>
@@ -132,7 +130,7 @@
             </div>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="6" md="4">
+        <v-col class="pl-1 pr-0" cols="12" sm="6" md="4">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <v-card-text>
               <span class="text-h5 font-weight-black">{{ statistics.sustainablePercent }} %</span>
