@@ -156,7 +156,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <h3 class="text-h5 mt-10 mb-8">Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}</h3>
+      <h3 class="text-h6 font-weight-black mt-10 mb-8">Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}</h3>
       <v-row class="justify-space-between mb-8 px-4">
         <BadgeCard
           v-for="measure in otherMeasures"
