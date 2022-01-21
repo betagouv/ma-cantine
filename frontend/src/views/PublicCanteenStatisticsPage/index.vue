@@ -156,7 +156,9 @@
           </v-card>
         </v-col>
       </v-row>
-      <h3 class="text-h6 font-weight-black mt-10 mb-8">Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}</h3>
+      <h3 class="text-h6 font-weight-black mt-10 mb-8">
+        Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}
+      </h3>
       <v-row class="justify-space-between mb-8 px-4">
         <BadgeCard
           v-for="measure in otherMeasures"
@@ -180,7 +182,7 @@ import labels from "@/data/quality-labels.json"
 import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
-import { normaliseText } from "@/utils"
+import { lastYear, normaliseText } from "@/utils"
 
 export default {
   name: "PublicCanteenStatisticsPage",
@@ -190,7 +192,7 @@ export default {
   },
   data() {
     return {
-      year: 2021,
+      year: lastYear(),
       region: undefined,
       department: undefined,
       labels,
@@ -215,11 +217,12 @@ export default {
       loadedDepartmentIds: [],
       loadedRegionIds: [],
       sectorChartTitle: "Nombre de cantines par secteur",
+      defaultLocationText: "ma cantine",
     }
   },
   mounted() {
     this.loadLocations()
-    this.loadStatistics("ma cantine", `year=${this.year}`)
+    this.loadStatistics(this.defaultLocationText, `year=${this.year}`)
   },
   computed: {
     departments() {
@@ -250,6 +253,7 @@ export default {
         {
           data: this.sectors.map((sector) => this.statistics.sectors[sector.id.toString()]),
           color: "#55a57e",
+          name: "Nombre de cantines",
         },
       ]
     },
@@ -356,8 +360,7 @@ export default {
         newLocationText = jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName
         query += `&region=${this.chosenRegion}`
       } else {
-        newLocationText = null
-        this.statistics = {}
+        newLocationText = this.defaultLocationText
       }
       if (newLocationText) {
         this.loadStatistics(newLocationText, query)

@@ -23,16 +23,19 @@
             <p>
               Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus durable
             </p>
+            <p>
+              Vous aimeriez un sommaire de cantines dans votre région ? Decouvrez des
+              <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
+                statistiques chez vous
+              </router-link>
+              !
+            </p>
           </v-card-subtitle>
+
           <v-spacer></v-spacer>
         </v-col>
       </v-row>
     </v-card>
-    <!-- TODO: this page feels very busy, with a link to regional stats it will be even more so -->
-    <!-- How can we improve it? -->
-    <!-- Ideas: pagination should outline the number, not make the entire button green. Too attention grabbing -->
-    <!-- Move filter to side/initially collapsed (and shown if filters have been used if going back and forth) -->
-    <!-- Have a call to action - I find people don't tend to know what to do on the page (granted these are people without context) -->
     <v-sheet class="px-6" elevation="0">
       <v-row>
         <v-col cols="12" md="7" class="pt-0">
