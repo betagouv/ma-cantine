@@ -49,7 +49,7 @@
       </v-row>
     </v-form>
     <div v-if="locationText" class="py-8">
-      <h2 class="text--darken-5 text-h4 mb-8">Les statistiques pour {{ locationText }}</h2>
+      <h2 class="text-h5 font-weight-black mb-8">Les statistiques pour {{ locationText }}</h2>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown }">
         <v-col cols="12" md="6" class="pr-0">
           <div id="published-canteen-text" class="mb-5">
