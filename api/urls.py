@@ -14,7 +14,7 @@ from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleV
 from api.views import ImportDiagnosticsView, TeledeclarationCreateView
 from api.views import TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
-from api.views import UserCanteenPreviews, BlogTagListView
+from api.views import UserCanteenPreviews
 
 
 urlpatterns = {
@@ -52,7 +52,6 @@ urlpatterns = {
     path("sectors/", SectorListView.as_view(), name="sectors_list"),
     path("blogPosts/", BlogPostsView.as_view(), name="blog_posts_list"),
     path("blogPosts/<int:pk>", BlogPostView.as_view(), name="single_blog_post"),
-    path("blogTags/", BlogTagListView.as_view(), name="blog_tags_list"),
     path(
         "subscribeBetaTester/",
         SubscribeBetaTester.as_view(),

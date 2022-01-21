@@ -36,14 +36,14 @@ class TestBlogApi(APITestCase):
         """
         The API should return single blog posts if they are published
         """
-        tag = BlogTagFactory.create()
+        tag = BlogTagFactory.create(name="Test tag")
         published_blog_post = BlogPostFactory.create(published=True)
         published_blog_post.tags.add(tag)
         draft_blog_post = BlogPostFactory.create(published=False)
 
         response = self.client.get(reverse("single_blog_post", kwargs={"pk": published_blog_post.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn(tag.id, response.json()["tags"])
+        self.assertIn("Test tag", response.json()["tags"])
 
         response = self.client.get(reverse("single_blog_post", kwargs={"pk": draft_blog_post.id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

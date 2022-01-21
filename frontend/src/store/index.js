@@ -34,7 +34,6 @@ export default new Vuex.Store({
     canteensLoadingStatus: Constants.LoadingStatus.IDLE,
 
     sectors: [],
-    blogTags: [],
     userCanteenPreviews: [],
     initialDataLoaded: false,
 
@@ -70,9 +69,6 @@ export default new Vuex.Store({
     ADD_BLOG_POSTS(state, { response, limit, offset }) {
       state.blogPosts.push({ ...response, limit, offset })
       state.blogPostCount = response.count
-    },
-    SET_BLOG_TAGS(state, blogTags) {
-      state.blogTags = blogTags
     },
     SET_INITIAL_DATA_LOADED(state) {
       state.initialDataLoaded = true
@@ -154,21 +150,7 @@ export default new Vuex.Store({
         })
     },
 
-    fetchBlogTags(context) {
-      context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch("/api/v1/blogTags/")
-        .then(verifyResponse)
-        .then((response) => {
-          context.commit("SET_BLOG_TAGS", response)
-          context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
-        })
-        .catch(() => {
-          context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.ERROR)
-        })
-    },
-
     fetchInitialData(context) {
-      context.dispatch("fetchBlogTags")
       return Promise.all([context.dispatch("fetchLoggedUser"), context.dispatch("fetchSectors")])
         .then(() => {
           if (context.state.loggedUser) return context.dispatch("fetchUserCanteenPreviews")
