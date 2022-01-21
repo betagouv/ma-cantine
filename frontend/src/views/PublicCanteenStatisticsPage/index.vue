@@ -42,7 +42,7 @@
         </v-col>
         <v-col cols="12" sm="6" md="4" class="d-flex align-end">
           <v-btn x-large color="primary" @click="submit">
-            Rechercher
+            Afficher les statistiques
           </v-btn>
         </v-col>
       </v-row>
