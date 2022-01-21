@@ -53,7 +53,7 @@
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown }">
         <v-col cols="12" md="6" class="pr-0">
           <div id="published-canteen-text" class="mb-5">
-            <p>
+            <p class="mb-0">
               Aujourd'hui, il y a
               <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
               cantine{{ statistics.canteenCount == 1 ? "" : "s" }} dans {{ locationText }} sur ce site.
