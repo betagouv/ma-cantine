@@ -101,6 +101,7 @@ export default {
               text: "Documentation",
               url: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
             },
+            // TODO: propose stats column with this, matomo, and regional stats
             {
               text: "Statistiques",
               url: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/f65ca7cc-c3bd-4cfb-a3dc-236f81864663",

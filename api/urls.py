@@ -9,14 +9,14 @@ from api.views import (
     PurchaseListCreateView,
     PurchaseRetrieveUpdateView,
 )
-from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView
+from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView, CanteenStatisticsView
 from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, DiagnosticUpdateView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
 from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleView
 from api.views import ImportDiagnosticsView, TeledeclarationCreateView
 from api.views import TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
-from api.views import UserCanteenPreviews
+from api.views import UserCanteenPreviews, CanteenLocationsView
 
 
 urlpatterns = {
@@ -51,6 +51,7 @@ urlpatterns = {
         DiagnosticUpdateView.as_view(),
         name="diagnostic_edition",
     ),
+    path("canteenStatistics/", CanteenStatisticsView.as_view(), name="canteen_statistics"),
     path("sectors/", SectorListView.as_view(), name="sectors_list"),
     path("blogPosts/", BlogPostsView.as_view(), name="blog_posts_list"),
     path("blogPosts/<int:pk>", BlogPostView.as_view(), name="single_blog_post"),
@@ -108,6 +109,7 @@ urlpatterns = {
         PurchaseRetrieveUpdateView.as_view(),
         name="purchase_retrieve_update",
     ),
+    path("canteenLocations/", CanteenLocationsView.as_view(), name="canteen_locations"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

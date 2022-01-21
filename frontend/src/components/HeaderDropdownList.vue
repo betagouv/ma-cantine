@@ -77,7 +77,6 @@ export default {
         {
           text: "Mesures phares",
           icon: "mdi-playlist-check",
-          authenticationState: true,
           to: { name: "KeyMeasuresHome" },
         },
         {

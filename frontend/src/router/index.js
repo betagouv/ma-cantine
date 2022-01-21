@@ -31,6 +31,7 @@ import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticEditor from "@/views/DiagnosticEditor"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
+import PublicCanteenStatisticsPage from "@/views/PublicCanteenStatisticsPage"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import ContactPage from "@/views/ContactPage"
 import InvoicesHome from "@/views/InvoicesHome"
@@ -326,6 +327,14 @@ const routes = [
     meta: {
       title: "Importer des diagnostics",
       authenticationRequired: true,
+    },
+  },
+  {
+    path: "/statistiques-regionales",
+    name: "PublicCanteenStatisticsPage",
+    component: PublicCanteenStatisticsPage,
+    meta: {
+      title: "Les statistics dans ma région",
     },
   },
   {

@@ -1,5 +1,6 @@
 [
   {
+    "badgeId": "appro",
     "baseComponent": "QualityMeasure",
     "baseMeasureComponent": "QualityMeasure",
     "deadline": {
@@ -41,6 +42,7 @@
     "title": "Plus de produits de qualité et durables dans nos assiettes"
   },
   {
+    "badgeId": "waste",
     "baseComponent": "WasteMeasure",
     "baseMeasureComponent": "WasteMeasure",
     "deadline": {
@@ -93,6 +95,7 @@
     "title": "Lutte contre le gaspillage alimentaire et dons alimentaires"
   },
   {
+    "badgeId": "diversification",
     "baseComponent": "DiversificationMeasure",
     "baseMeasureComponent": "DiversificationMeasure",
     "id": "diversification-des-menus",
@@ -140,6 +143,7 @@
     "title": "Diversification des sources de protéines et menus végétariens"
   },
   {
+    "badgeId": "plastic",
     "baseComponent": "NoPlasticMeasure",
     "baseMeasureComponent": null,
     "id": "interdiction-du-plastique",
@@ -202,6 +206,7 @@
     "title": "Substitution des plastiques"
   },
   {
+    "badgeId": "info",
     "baseComponent": "InformationMeasure",
     "baseMeasureComponent": null,
     "id": "information-des-usagers",
