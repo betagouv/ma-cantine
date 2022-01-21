@@ -102,7 +102,12 @@ export default {
       const categoryHash = {
         VIANDES_VOLAILLES: { text: "Viandes, volailles", color: "red darken-4" },
         PRODUITS_DE_LA_MER: { text: "Produits de la mer", color: "pink darken-4" },
-        FRUITS_ET_LEGUMES: { text: "Fruits, légumes, légumineuses et oléagineux", color: "purple darken-4" },
+        FRUITS_ET_LEGUMES: {
+          text: this.$vuetify.breakpoint.smAndUp
+            ? "Fruits, légumes, légumineuses et oléagineux"
+            : "Fruits, légumes, ...",
+          color: "purple darken-4",
+        },
         PRODUITS_CEREALIERS: { text: "Produits céréaliers", color: "deep-purple darken-4" },
         ENTREES: { text: "Entrées et plats composés", color: "indigo darken-4" },
         PRODUITS_LAITIERS: { text: "Lait et produits laitiers", color: "blue darken-4" },
