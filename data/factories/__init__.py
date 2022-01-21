@@ -9,3 +9,4 @@ from .sector import SectorFactory  # noqa
 from .blogpost import BlogPostFactory  # noqa
 from .managerinvitation import ManagerInvitationFactory  # noqa
 from .teledeclaration import TeledeclarationFactory  # noqa
+from .purchase import PurchaseFactory  # noqa

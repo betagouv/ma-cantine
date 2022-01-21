@@ -27,6 +27,17 @@
         {{ subtitle }}
       </v-card-subtitle>
     </label>
+    <div v-if="hasFile" class="d-flex flex-column align-center justify-center drop-area">
+      <v-card-text class="font-weight-bold mt-3 mb-1 text-center text-body-2">
+        <v-icon small class="mt-n1" color="primary">mdi-file-document-outline</v-icon>
+        {{ value.name }}
+      </v-card-text>
+
+      <v-btn large color="primary" @click.stop="upload" :disabled="disabled" v-if="showUploadButton">Valider</v-btn>
+      <v-btn large class="text-decoration-underline mt-5" text @click.stop="clearFile" :disabled="disabled">
+        Choisir un autre fichier
+      </v-btn>
+    </div>
     <input
       class="visually-hidden"
       :disabled="hasFile"
@@ -36,17 +47,6 @@
       :accept="acceptTypes.join(', ')"
       type="file"
     />
-    <div v-if="hasFile" class="d-flex flex-column align-center justify-center drop-area">
-      <v-card-text class="font-weight-bold mt-3 mb-1 text-center text-body-2">
-        <v-icon small class="mt-n1" color="primary">mdi-file-document-outline</v-icon>
-        {{ value.name }}
-      </v-card-text>
-
-      <v-btn large color="primary" @click.stop="upload" :disabled="disabled">Valider</v-btn>
-      <v-btn large class="text-decoration-underline mt-5" text @click.stop="clearFile" :disabled="disabled">
-        Choisir un autre fichier
-      </v-btn>
-    </div>
   </v-card>
 </template>
 
@@ -71,6 +71,9 @@ export default {
     },
     value: {
       type: File,
+    },
+    showUploadButton: {
+      default: true,
     },
     disabled: Boolean,
   },

@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import FileDrop from "./FileDrop"
+import FileDrop from "@/components/FileDrop"
 
 export default {
   name: "ImportDiagnostics",

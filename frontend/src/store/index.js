@@ -32,6 +32,7 @@ export default new Vuex.Store({
     userLoadingStatus: Constants.LoadingStatus.IDLE,
     blogLoadingStatus: Constants.LoadingStatus.IDLE,
     canteensLoadingStatus: Constants.LoadingStatus.IDLE,
+    purchasesLoadingStatus: Constants.LoadingStatus.IDLE,
 
     sectors: [],
     userCanteenPreviews: [],
@@ -56,6 +57,9 @@ export default new Vuex.Store({
     },
     SET_CANTEENS_LOADING_STATUS(state, status) {
       state.canteensLoadingStatus = status
+    },
+    SET_PURCHASES_LOADING_STATUS(state, status) {
+      state.purchasesLoadingStatus = status
     },
     SET_LOGGED_USER(state, loggedUser) {
       state.loggedUser = loggedUser
@@ -450,6 +454,42 @@ export default new Vuex.Store({
 
     sendInquiryEmail(_, payload) {
       return fetch("/api/v1/inquiry/", { method: "POST", headers, body: JSON.stringify(payload) }).then(verifyResponse)
+    },
+
+    createPurchase(context, { payload }) {
+      context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/purchases/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
+        })
+        .catch((e) => {
+          context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
+    updatePurchase(context, { id, payload }) {
+      context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/purchases/${id}`, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify(payload),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
+        })
+        .catch((e) => {
+          context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
     },
   },
 

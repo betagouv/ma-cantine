@@ -39,6 +39,12 @@ export default {
           to: { name: "ManagementPage" },
         },
         {
+          text: "Mes achats",
+          icon: "mdi-food-apple",
+          authenticationState: true,
+          to: { name: "InvoicesHome" },
+        },
+        {
           text: "S'identifier",
           icon: "mdi-key",
           breakpoint: "smAndDown",
