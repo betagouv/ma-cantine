@@ -90,7 +90,7 @@
           <p id="sector-chart-description" class="d-none">{{ sectorChartDescription }}</p>
         </v-col>
       </v-row>
-      <h3 class="text-h5 mt-10 mb-8 text--darken-5">Qualité de produits en {{ year }}</h3>
+      <h3 class="text-h6 font-weight-black mt-10 mb-8">Qualité de produits en {{ year }}</h3>
       <v-row>
         <v-col cols="12" sm="6" md="5">
           <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
