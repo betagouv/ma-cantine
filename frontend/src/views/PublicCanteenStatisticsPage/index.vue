@@ -42,7 +42,6 @@
         </v-col>
         <v-col cols="12" sm="6" md="4" class="d-flex align-end">
           <v-btn x-large color="primary" @click="submit">
-            <!-- More descriptive text? -->
             Rechercher
           </v-btn>
         </v-col>
@@ -191,8 +190,6 @@ export default {
   data() {
     return {
       year: lastYear(),
-      region: undefined,
-      department: undefined,
       labels,
       approMeasure: keyMeasures.find((measure) => measure.badgeId === "appro"),
       otherMeasures: keyMeasures.filter((measure) => measure.badgeId !== "appro"),
