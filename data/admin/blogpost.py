@@ -22,7 +22,9 @@ class BlogPostAdmin(admin.ModelAdmin):
         "published",
         "author",
         "body",
+        "tags",
     )
+    filter_vertical = ("tags",)
     list_display = (
         "title",
         "display_date",
