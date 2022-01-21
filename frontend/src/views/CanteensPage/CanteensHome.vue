@@ -20,15 +20,14 @@
             </h1>
           </v-card-title>
           <v-card-subtitle>
-            <p>
+            <p class="mb-1">
               Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus durable
             </p>
             <p>
-              Vous aimeriez un sommaire de cantines dans votre région ? Decouvrez des
+              Pour consulter les statistiques de votre collectivités (régions et départements),
               <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
-                statistiques chez vous
+                cliquez ici
               </router-link>
-              !
             </p>
           </v-card-subtitle>
 
