@@ -48,7 +48,7 @@
       </v-row>
     </v-form>
     <div v-if="locationText" class="py-8">
-      <h2 class="text-h5 font-weight-black mb-8">Les statistiques pour {{ locationText }}</h2>
+      <h2 class="text-h5 font-weight-bold mb-8">Les statistiques pour {{ locationText }}</h2>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown }">
         <v-col cols="12" md="6" class="pr-0">
           <div id="published-canteen-text" class="mb-5">
@@ -89,8 +89,8 @@
           <p id="sector-chart-description" class="d-none">{{ sectorChartDescription }}</p>
         </v-col>
       </v-row>
-      <h3 class="text-h6 font-weight-black mt-10 mb-8">Qualité de produits en {{ year }}</h3>
-      <v-row class="px-4">
+      <h3 class="text-h6 font-weight-bold mt-10 mb-8">Qualité de produits en {{ year }}</h3>
+      <v-row class="px-2">
         <v-col class="pl-0 pr-1" cols="12" sm="6" md="5">
           <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
             <v-img max-width="30" contain src="/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
@@ -153,10 +153,10 @@
           </v-card>
         </v-col>
       </v-row>
-      <h3 class="text-h6 font-weight-black mt-10 mb-8">
+      <h3 class="text-h6 font-weight-bold mt-10 mb-8">
         Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}
       </h3>
-      <v-row class="justify-space-between mb-8 px-4">
+      <v-row class="justify-space-between mt-8 mb-8 px-2">
         <BadgeCard
           v-for="measure in otherMeasures"
           :key="measure.id"
