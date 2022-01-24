@@ -127,7 +127,7 @@
       },
       {
         "deadline": {
-          "display": "Expérimentation de 2 ans (du 1er novembre 2019 au 1er novembre 2021)",
+          "display": "1er novembre 2021",
           "earliestISO": "2019-11-01"
         },
         "description": "Tous les restaurants collectifs scolaires (publics ou privés), de la maternelle au lycée, sont tenus de proposer, au moins une fois par semaine, un menu végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n Les restaurants de l’Etat et ses établissements publics proposent une option végétarienne quotidienne à partir du 1er janvier 2023. \n Pour les collectivités territoriales volontaires, possibilité d’expérimenter, dès maintenant, une option végétarienne quotidienne pour une durée de 2 ans. Dans ce cas, elles font connaître au représentant de l’État dans la région leur engagement dans l’expérimentation. \n Qu'est-ce qu'un menu végétarien ? Il s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers.",
@@ -135,7 +135,14 @@
         "readMore": false,
         "shortTitle": "Menu végé hebdo",
         "tags": [
-          "scolaire"
+          "scolaire",
+          "administration",
+          "universitaire",
+          "social",
+          "medical",
+          "loisirs",
+          "creche",
+          "entreprises"
         ],
         "title": "Menu végétarien"
       }
