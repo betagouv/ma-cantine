@@ -26,7 +26,7 @@
             <p>
               Consulter
               <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
-                les statistiques de votre collectivités (régions et départements)
+                les statistiques de votre collectivité (régions et départements)
               </router-link>
             </p>
           </v-card-subtitle>
