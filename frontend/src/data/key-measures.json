@@ -155,32 +155,32 @@
           "entreprises"
         ],
         "title": "Menu végétarien"
-      },
+      }
     ],
     "title": "Diversification des sources de protéines et menus végétariens"
   },
   {
-     "deadline": {
-     "display": "Depuis la loi Climat",
+    "deadline": {
+      "display": "Depuis la loi Climat",
       "earliestISO": "2021-08-06"
-        },
-        "description": "Pour les collectivités territoriales volontaires, une expérimentation suite à la loi Climat propose d’expérimenter, une option végétarienne quotidienne pour une durée de 2 ans. ma-cantine implémentera bientôt un moyen de se déclarer volontaire dans l'auto-diagnostic et ainsi mesurer l'impact de ce test.",
-        "id": "expevege",
-        "readMore": false,
-        "shortTitle": "Expérimentation végé",
-        "tags": [
-          "scolaire",
-          "administration",
-          "universitaire",
-          "social",
-          "medical",
-          "loisirs",
-          "creche",
-          "entreprises"
-        ],
-        "title": "Expérimentation du menu végétarien dans les collectivités volontaires",
-        "who": "Pour les volontaires."
- },
+    },
+    "description": "Pour les collectivités territoriales volontaires, une expérimentation suite à la loi Climat propose d’expérimenter, une option végétarienne quotidienne pour une durée de 2 ans. ma-cantine implémentera bientôt un moyen de se déclarer volontaire dans l'auto-diagnostic et ainsi mesurer l'impact de ce test.",
+    "id": "expevege",
+    "readMore": false,
+    "shortTitle": "Expérimentation végé",
+    "tags": [
+      "scolaire",
+      "administration",
+      "universitaire",
+      "social",
+      "medical",
+      "loisirs",
+      "creche",
+      "entreprises"
+    ],
+    "title": "Expérimentation du menu végétarien dans les collectivités volontaires",
+    "who": "Pour les volontaires."
+  },
   {
     "badgeId": "plastic",
     "baseComponent": "NoPlasticMeasure",
