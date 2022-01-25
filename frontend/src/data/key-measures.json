@@ -80,6 +80,16 @@
         "readMore": false,
         "shortTitle": "Dons aux associations",
         "title": "Dons aux associations."
+      },
+      {
+        "deadline": {
+          "earliestISO": "2020-10-22"
+        },
+        "htmlDescription": "Pour évaluer ses effets sur le gaspillage alimentaire, la satisfaction de vos convives et le taux de fréquentation de votre établissement, nous vous proposons de participer à une expérimentation prévue par la loi Climat et résilience.",
+        "id": "expe",
+        "readMore": false,
+        "shortTitle": "Expérimentation d'une solution de réservation de repas",
+        "title": "Expérimentation d'une solution de réservation de repas."
       }
     ],
     "tags": [
