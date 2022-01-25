@@ -157,12 +157,38 @@
       :disabled="readonly"
       class="mt-6"
     ></v-textarea>
+
+    <v-divider v-if="showExpeSegment" class="mb-8"></v-divider>
+    <div v-if="showExpeSegment">
+      <p class="text-h6 font-weight-bold">
+        Expérimentation réservation de repas
+      </p>
+      <p class="body-2">
+        Vous souhaitez réduire le gaspillage alimentaire dans votre établissement et générer des économies : la
+        réservation de repas peut être une solution !
+      </p>
+      <v-checkbox v-model="participatesInExpe" @change="onExpeCheckboxChange">
+        <template v-slot:label>
+          <span class="body-2 grey--text text--darken-3">
+            Je suis volontaire pour participer à l’expérimentation.
+          </span>
+          <v-btn color="primary" class="body-2" v-if="participatesInExpe" text @click="() => (showExpeModal = true)">
+            Mettre à jour mes données
+          </v-btn>
+        </template>
+      </v-checkbox>
+
+      <v-dialog v-model="showExpeModal" :width="$vuetify.breakpoint.mdAndUp ? 900 : undefined">
+        <ExpeReservation @close="() => (showExpeModal = false)" :canteen="canteen" />
+      </v-dialog>
+    </div>
   </div>
 </template>
 
 <script>
 import validators from "@/validators"
 import { applicableDiagnosticRules } from "@/utils"
+import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
 
 export default {
   props: {
@@ -173,8 +199,11 @@ export default {
     },
     canteen: Object,
   },
+  components: { ExpeReservation },
   data() {
     return {
+      showExpeModal: false,
+      participatesInExpe: false, // TODO: Initialize to "this.canteen.participatesInExpeReservation" once it exists
       wasteActions: [
         {
           label: "Pré-inscription des convives obligatoire",
@@ -210,6 +239,14 @@ export default {
     },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
+    },
+    showExpeSegment() {
+      return !!this.canteen
+    },
+  },
+  methods: {
+    onExpeCheckboxChange(checked) {
+      if (checked) this.showExpeModal = true
     },
   },
   watch: {
