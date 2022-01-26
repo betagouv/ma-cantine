@@ -6,7 +6,8 @@
           Mes achats
         </h1>
         <p>
-          Une alimentation saine et durable commence par un suivi comptable de vos achats
+          Une alimentation saine et durable commence par un suivi comptable de vos achats. Des nouvelles fonctionnalités
+          arrivent bientôt dans cet espace !
         </p>
         <v-btn class="primary" :to="{ name: 'NewPurchase' }" large>
           <v-icon>mdi-plus</v-icon>
@@ -31,6 +32,11 @@
           </v-chip>
         </template>
         <template v-slot:[`item.priceHt`]="{ item }">{{ item.priceHt }} €</template>
+        <template v-slot:[`item.hasAttachment`]="{ item }">
+          <v-icon small color="grey" v-if="item.hasAttachment" aria-label="Has invoice file" :aria-hidden="false">
+            mdi-paperclip
+          </v-icon>
+        </template>
 
         <template v-slot:[`no-data`]>
           <div class="mx-10 my-10">
@@ -78,6 +84,7 @@ export default {
         { text: "Catégorie", value: "category", sortable: false },
         { text: "Cantine", value: "canteen.name", sortable: false },
         { text: "Prix HT", value: "priceHt", sortable: false },
+        { text: "", value: "hasAttachment", sortable: false },
       ],
     }
   },
@@ -93,7 +100,8 @@ export default {
       return this.visiblePurchases.map((x) => {
         const canteen = canteens.find((y) => y.id === x.canteen)
         const date = x.date ? formatDate(x.date) : null
-        return Object.assign(x, { canteen, date })
+        const hasAttachment = !!x.invoiceFile
+        return Object.assign(x, { canteen, date, hasAttachment })
       })
     },
   },
