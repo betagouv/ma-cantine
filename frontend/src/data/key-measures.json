@@ -65,7 +65,7 @@
         "deadline": {
           "earliestISO": "2020-01-01"
         },
-        "htmlDescription": "L'infraction à cette disposition est susceptible d'une amende de 3 750 €.",
+        "description": "L'infraction à cette disposition est susceptible d'une amende de 3 750 €.",
         "id": "restes",
         "readMore": false,
         "shortTitle": "Restes protégés",
@@ -85,7 +85,7 @@
         "deadline": {
           "earliestISO": "2020-10-22"
         },
-        "htmlDescription": "Pour évaluer ses effets sur le gaspillage alimentaire, la satisfaction de vos convives et le taux de fréquentation de votre établissement, nous vous proposons de participer à une expérimentation prévue par la loi Climat et résilience.",
+        "description": "Pour évaluer ses effets sur le gaspillage alimentaire, la satisfaction de vos convives et le taux de fréquentation de votre établissement, nous vous proposons de participer à une expérimentation prévue par la loi Climat et résilience.",
         "id": "expe",
         "readMore": false,
         "shortTitle": "Expérimentation d'une solution de réservation de repas",
@@ -140,7 +140,7 @@
           "display": "1er novembre 2021",
           "earliestISO": "2019-11-01"
         },
-        "description": "Tous les restaurants collectifs scolaires (publics ou privés), de la maternelle au lycée, sont tenus de proposer, au moins une fois par semaine, un menu végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n Les restaurants de l’Etat et ses établissements publics proposent une option végétarienne quotidienne à partir du 1er janvier 2023. \n \n \n <b>Qu'est-ce qu'un menu végétarien ?<b> \n Il s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers.",
+        "htmlDescription": "Tous les restaurants collectifs scolaires (publics ou privés), de la maternelle au lycée, sont tenus de proposer, au moins une fois par semaine, un menu végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n\nLes restaurants de l’Etat et ses établissements publics proposent une option végétarienne quotidienne à partir du 1er janvier 2023.\n\n\n<b>Qu'est-ce qu'un menu végétarien ?</b>\n\nIl s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers.",
         "id": "menu-vege",
         "readMore": false,
         "shortTitle": "Menu végé hebdo",
@@ -155,31 +155,31 @@
           "entreprises"
         ],
         "title": "Menu végétarien"
+      },
+      {
+        "deadline": {
+          "display": "Depuis la loi Climat",
+          "earliestISO": "2021-08-06"
+        },
+        "description": "Pour les collectivités territoriales volontaires, une expérimentation suite à la loi Climat propose d’expérimenter, une option végétarienne quotidienne pour une durée de 2 ans. ma cantine implémentera bientôt un moyen de se déclarer volontaire dans l'auto-diagnostic et ainsi mesurer l'impact de ce test.",
+        "id": "expevege",
+        "readMore": false,
+        "shortTitle": "Expérimentation végé",
+        "tags": [
+          "scolaire",
+          "administration",
+          "universitaire",
+          "social",
+          "medical",
+          "loisirs",
+          "creche",
+          "entreprises"
+        ],
+        "title": "Expérimentation du menu végétarien dans les collectivités volontaires",
+        "who": "Pour les volontaires."
       }
     ],
     "title": "Diversification des sources de protéines et menus végétariens"
-  },
-  {
-    "deadline": {
-      "display": "Depuis la loi Climat",
-      "earliestISO": "2021-08-06"
-    },
-    "description": "Pour les collectivités territoriales volontaires, une expérimentation suite à la loi Climat propose d’expérimenter, une option végétarienne quotidienne pour une durée de 2 ans. ma-cantine implémentera bientôt un moyen de se déclarer volontaire dans l'auto-diagnostic et ainsi mesurer l'impact de ce test.",
-    "id": "expevege",
-    "readMore": false,
-    "shortTitle": "Expérimentation végé",
-    "tags": [
-      "scolaire",
-      "administration",
-      "universitaire",
-      "social",
-      "medical",
-      "loisirs",
-      "creche",
-      "entreprises"
-    ],
-    "title": "Expérimentation du menu végétarien dans les collectivités volontaires",
-    "who": "Pour les volontaires."
   },
   {
     "badgeId": "plastic",
