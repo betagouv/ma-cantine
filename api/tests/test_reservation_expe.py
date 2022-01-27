@@ -22,6 +22,11 @@ class TestReservationExpeApi(APITestCase):
 
         response = self.client.post(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        body = response.json()
+        self.assertEqual(body["leaderEmail"], "test@example.com")
+        self.assertEqual(body["satisfactionT0"], 5)
+
         self.assertEqual(ReservationExpe.objects.get(canteen=canteen).leader_email, "test@example.com")
         self.assertEqual(ReservationExpe.objects.get(canteen=canteen).satisfaction_t0, 5)
 
@@ -124,8 +129,7 @@ class TestReservationExpeApi(APITestCase):
         canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}))
-        # TODO: 204?
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     @authenticate
     def test_update_reservation_expe(self):

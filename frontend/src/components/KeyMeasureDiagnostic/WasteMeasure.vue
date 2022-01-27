@@ -167,12 +167,18 @@
         Vous souhaitez réduire le gaspillage alimentaire dans votre établissement et générer des économies : la
         réservation de repas peut être une solution !
       </p>
-      <v-checkbox v-model="participatesInExpe" @change="onExpeCheckboxChange">
+      <v-checkbox v-model="participationExpeCheckboxValue" @change="onExpeCheckboxChange">
         <template v-slot:label>
           <span class="body-2 grey--text text--darken-3">
             Je suis volontaire pour participer à l’expérimentation.
           </span>
-          <v-btn color="primary" class="body-2" v-if="participatesInExpe" text @click="() => (showExpeModal = true)">
+          <v-btn
+            color="primary"
+            class="body-2"
+            v-if="participationExpeCheckboxValue"
+            text
+            @click="() => (showExpeModal = true)"
+          >
             Mettre à jour mes données
           </v-btn>
         </template>
@@ -203,7 +209,7 @@ export default {
   data() {
     return {
       showExpeModal: false,
-      participatesInExpe: false, // TODO: Initialize to "this.canteen.participatesInExpeReservation" once it exists
+      participationExpeCheckboxValue: this.canteen && this.canteen.reservationExpeParticipant,
       wasteActions: [
         {
           label: "Pré-inscription des convives obligatoire",
@@ -246,6 +252,14 @@ export default {
   },
   methods: {
     onExpeCheckboxChange(checked) {
+      this.$store
+        .dispatch("updateCanteen", {
+          id: this.canteen.id,
+          payload: { reservationExpeParticipant: checked },
+        })
+        .then((x) => (this.canteen.reservationExpeParticipant = x.onExpeCheckboxChange))
+      // TODO handle error
+
       if (checked) this.showExpeModal = true
     },
   },
