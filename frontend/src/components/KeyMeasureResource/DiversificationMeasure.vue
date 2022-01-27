@@ -10,6 +10,8 @@
       ressources.
     </v-alert>
   </v-card>
+</template>
+<template>
   <v-card
     href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/diversification-des-sources-de-proteines-et-menus-vegetariens/untitled"
     class="text-decoration-none text-left mt-4"
