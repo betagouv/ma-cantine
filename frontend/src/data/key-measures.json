@@ -4,7 +4,7 @@
     "baseComponent": "QualityMeasure",
     "baseMeasureComponent": "QualityMeasure",
     "deadline": {
-      "display": "À partir du 1er janvier 2022 et 2025 pour la restauration privée",
+      "display": "À partir du 1er janvier 2022 et 2024 pour la restauration privée",
       "earliestISO": "2022-01-01"
     },
     "descriptionComponent": "KeyMeasureDescriptionQuality",
