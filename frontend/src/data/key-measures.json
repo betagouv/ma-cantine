@@ -277,8 +277,8 @@
       },
       {
         "deadline": {
-          "display": "Depuis le 30 octobre 2018",
-          "earliestISO": "2018-10-30"
+          "display": "Depuis l'arrêté de 2011",
+          "earliestISO": "2011-01-01"
         },
         "description": "Les gestionnaires de restauration collective doivent communiquer, informer et consulter les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis (arrêté du 30 septembre 2011 relatif à la qualité nutritionnelle des repas servis dans la restauration scolaire).",
         "id": "informations-nutritionnelles",
