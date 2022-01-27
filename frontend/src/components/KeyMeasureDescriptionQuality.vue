@@ -73,7 +73,7 @@
       viandes et poissons » est composé des produits de qualité et durables, ce taux étant fixé à 100% pour la
       restauration de l’Etat, ses établissements publics et les entreprises publiques nationales. La viande de synthèse
       est interdite en restauration collective. Le 1er janvier 2024, ces dispositions s’appliquent à tous les
-      restaurants collectifs, y compris tous les restaurants collectifs du secteur privé.
+      restaurants collectifs, y compris tous les restaurants d'entreprise (RE et RIE).
     </p>
   </div>
 </template>
