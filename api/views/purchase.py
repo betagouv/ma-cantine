@@ -4,7 +4,7 @@ from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from django.http import JsonResponse
-from api.permissions import IsPurchaseCanteenManager
+from api.permissions import IsLinkedCanteenManager
 from api.serializers import PurchaseSerializer
 from data.models import Purchase, Canteen
 import logging
@@ -18,7 +18,7 @@ class PurchasesPagination(LimitOffsetPagination):
 
 
 class PurchaseListCreateView(ListCreateAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsPurchaseCanteenManager]
+    permission_classes = [permissions.IsAuthenticated, IsLinkedCanteenManager]
     model = Purchase
     serializer_class = PurchaseSerializer
     pagination_class = PurchasesPagination
@@ -47,7 +47,7 @@ class PurchaseListCreateView(ListCreateAPIView):
 
 
 class PurchaseRetrieveUpdateView(RetrieveUpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsPurchaseCanteenManager]
+    permission_classes = [permissions.IsAuthenticated, IsLinkedCanteenManager]
     model = Purchase
     serializer_class = PurchaseSerializer
 

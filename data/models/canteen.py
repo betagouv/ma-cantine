@@ -143,6 +143,11 @@ class Canteen(SoftDeletionModel):
         verbose_name="commentaires de mesure information",
     )
 
+    # experiments
+    reservation_expe_participant = models.BooleanField(
+        null=True, blank=True, verbose_name="participnte à l'expérimentation réservation"
+    )
+
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         max_image_size = 1024
         if self.logo:

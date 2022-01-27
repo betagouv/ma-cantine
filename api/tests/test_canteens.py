@@ -128,6 +128,7 @@ class TestCanteenApi(APITestCase):
             "city": "Lyon",
             "siret": "21340172201787",
             "management_type": "direct",
+            "reservation_expe_participant": True,
         }
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
 
@@ -136,6 +137,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(created_canteen.city, "Lyon")
         self.assertEqual(created_canteen.siret, "21340172201787")
         self.assertEqual(created_canteen.management_type, "direct")
+        self.assertEqual(created_canteen.reservation_expe_participant, True)
 
     @authenticate
     def test_soft_delete(self):

@@ -15,3 +15,4 @@ from .password import PasswordSerializer  # noqa: F401
 from .managerinvitation import ManagerInvitationSerializer  # noqa: F401
 from .teledeclaration import ShortTeledeclarationSerializer  # noqa: F401
 from .purchase import PurchaseSerializer  # noqa: F401
+from .reservationexpe import ReservationExpeSerializer  # noqa: F401
