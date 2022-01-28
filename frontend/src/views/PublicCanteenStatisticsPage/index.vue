@@ -273,6 +273,11 @@ export default {
           offsetY: -5,
           floating: true,
         },
+        dataLabels: {
+          style: {
+            colors: ["#000"],
+          },
+        },
         chart: {
           type: "bar",
           toolbar: { tools: { download: false } },
