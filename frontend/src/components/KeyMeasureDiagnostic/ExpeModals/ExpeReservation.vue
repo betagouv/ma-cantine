@@ -19,9 +19,9 @@
       </v-card-text>
       <v-divider></v-divider>
       <v-card-text>
-        <v-form>
+        <v-form ref="form" v-model="formIsValid">
           <!-- reservation system in place? -->
-          <v-checkbox v-model="expe.reservationInPlace">
+          <v-checkbox v-model="expe.hasReservationSystem">
             <template v-slot:label>
               <span class="body-2 grey--text text--darken-2">
                 J'ai déjà mis en place une solution de réservation de repas
@@ -30,12 +30,12 @@
           </v-checkbox>
 
           <!-- reservation system date -->
-          <label v-if="expe.reservationInPlace" class="body-2" for="date">
+          <label v-if="expe.hasReservationSystem" class="body-2" for="date">
             Date de mise en place de la solution de réservation
           </label>
           <v-menu
-            v-if="expe.reservationInPlace"
-            v-model="reservationSystemDateMenu"
+            v-if="expe.hasReservationSystem"
+            v-model="reservationSystemStartDateMenu"
             :close-on-content-click="true"
             transition="scale-transition"
             offset-y
@@ -43,7 +43,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                :value="humanReadableDate(expe.reservationSystemDate)"
+                :value="humanReadableDate(expe.reservationSystemStartDate)"
                 prepend-icon="mdi-calendar"
                 readonly
                 v-bind="attrs"
@@ -59,8 +59,8 @@
             </template>
 
             <v-date-picker
-              v-if="expe.reservationInPlace"
-              v-model="expe.reservationSystemDate"
+              v-if="expe.hasReservationSystem"
+              v-model="expe.reservationSystemStartDate"
               :max="today"
               locale="fr-FR"
             ></v-date-picker>
@@ -79,7 +79,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                :value="humanReadableDate(expe.launchDate)"
+                :value="humanReadableDate(expe.experimentationStartDate)"
                 prepend-icon="mdi-calendar"
                 readonly
                 v-bind="attrs"
@@ -95,8 +95,8 @@
             </template>
 
             <v-date-picker
-              v-if="expe.reservationInPlace"
-              v-model="expe.launchDate"
+              v-if="expe.hasReservationSystem"
+              v-model="expe.experimentationStartDate"
               :max="today"
               locale="fr-FR"
             ></v-date-picker>
@@ -127,7 +127,7 @@
             hide-details="auto"
             rows="2"
             solo
-            v-model="expe.communication"
+            v-model="expe.publiciseMethod"
             placeholder="Affichage sur lieu de restaurant, communication mail, courrier,... "
             class="mt-2 mb-4 body-2"
             id="communication"
@@ -221,7 +221,7 @@
                 <v-card flat>
                   <v-card-text>
                     <!-- average weight surplus -->
-                    <label class="body-2" :for="`avg-weight-surplus-${item.value}`">
+                    <label class="body-2" :for="`avg-weight-not-served-${item.value}`">
                       Moyenne des pesées des excédents présentés aux convives et non servis (g/ convive) à
                       <span class="font-italic">{{ item.label }}</span>
                       sur 20 déjeuners successifs
@@ -229,16 +229,17 @@
                     <v-text-field
                       validate-on-blur
                       hide-details="auto"
+                      :rules="[validators.nonNegativeOrEmpty]"
                       solo
                       dense
-                      v-model="expe[`avgWeightSurplus${item.value}`]"
+                      v-model.number="expe[`avgWeightNotServed${item.value}`]"
                       style="max-width: 300px"
                       class="mt-2 mb-4 body-2"
-                      :id="`avg-weight-surplus-${item.value}`"
+                      :id="`avg-weight-not-served-${item.value}`"
                     ></v-text-field>
 
                     <!-- average weight food scraps -->
-                    <label class="body-2" :for="`avg-weight-food-scraps-${item.value}`">
+                    <label class="body-2" :for="`avg-weight-leftover-${item.value}`">
                       Moyenne des pesées des restes des assiettes exprimées (g/convive) à
                       <span class="font-italic">{{ item.label }}</span>
                       sur 20 déjeuners successifs
@@ -246,12 +247,13 @@
                     <v-text-field
                       validate-on-blur
                       hide-details="auto"
+                      :rules="[validators.nonNegativeOrEmpty]"
                       solo
                       dense
-                      v-model="expe[`avgWeightFoodScraps${item.value}`]"
+                      v-model.number="expe[`avgWeightLeftover${item.value}`]"
                       style="max-width: 300px"
                       class="mt-2 mb-4 body-2"
-                      :id="`avg-weight-food-scraps-${item.value}`"
+                      :id="`avg-weight-leftover-${item.value}`"
                     ></v-text-field>
 
                     <!-- ratio edible vs non-edible -->
@@ -261,73 +263,80 @@
                     <v-text-field
                       validate-on-blur
                       hide-details="auto"
+                      suffix="%"
+                      :rules="[validators.isPercentageOrEmpty]"
                       solo
                       dense
-                      v-model="expe[`ratioEdible${item.value}`]"
+                      v-model.number="expe[`ratioEdibleNonEdible${item.value}`]"
                       style="max-width: 300px"
                       class="mt-2 mb-4 body-2"
                       :id="`ratio-edible-${item.value}`"
                     ></v-text-field>
 
-                    <!-- average weight food scraps -->
-                    <label class="body-2" :for="`avg-weight-surplus-preparation-${item.value}`">
+                    <!-- average weight preparation leftovers -->
+                    <label class="body-2" :for="`avg-weight-preparation-leftover-${item.value}`">
                       Moyenne des pesées des excédents de préparation (g/convive) - Si vous préparez les repas sur place
                     </label>
                     <v-text-field
                       validate-on-blur
                       hide-details="auto"
+                      :rules="[validators.nonNegativeOrEmpty]"
                       solo
                       dense
-                      v-model="expe[`avgWeightSurplusPreparation${item.value}`]"
+                      v-model.number="expe[`avgWeightPreparationLeftover${item.value}`]"
                       style="max-width: 300px"
                       class="mt-2 mb-4 body-2"
-                      :id="`avg-weight-surplus-preparation-${item.value}`"
+                      :id="`avg-weight-preparation-leftover-${item.value}`"
                     ></v-text-field>
 
-                    <!-- average discarded bread -->
-                    <label class="body-2" :for="`avg-discarded-bread-${item.value}`">
+                    <!-- average bread leftover -->
+                    <label class="body-2" :for="`avg-bread-leftover-${item.value}`">
                       Moyenne des pesées des pains jetés sur 20 déjeuners successifs (g/convive)
                     </label>
                     <v-text-field
                       validate-on-blur
                       hide-details="auto"
+                      :rules="[validators.nonNegativeOrEmpty]"
                       solo
                       dense
-                      v-model="expe[`avgDiscardedBread${item.value}`]"
+                      v-model.number="expe[`avgWeightBreadLeftover${item.value}`]"
                       style="max-width: 300px"
                       class="mt-2 mb-4 body-2"
-                      :id="`avg-discarded-bread-${item.value}`"
+                      :id="`avg-bread-leftover-${item.value}`"
                     ></v-text-field>
 
                     <!-- attendance rate -->
-                    <label class="body-2" :for="`attendance-rate-${item.value}`">
-                      Taux de fréquentation moyen à
+                    <label class="body-2" :for="`avg-attendance-from-evaluation-${item.value}`">
+                      Nombre moyen d'usagers par déjeuner calculé à partir de l'évaluation du nombre d'usagers sur 20
+                      déjeuners successifs de la période d'évaluation à
                       <span class="font-italic">{{ item.label }}</span>
                     </label>
                     <v-text-field
                       validate-on-blur
                       hide-details="auto"
+                      :rules="[validators.nonNegativeOrEmpty]"
                       solo
                       dense
-                      v-model="expe[`attendanceRate${item.value}`]"
+                      v-model.number="expe[`avgAttendanceFromEvaluation${item.value}`]"
                       style="max-width: 300px"
                       class="mt-2 mb-4 body-2"
-                      :id="`attendance-rate-${item.value}`"
+                      :id="`avg-attendance-from-evaluation-${item.value}`"
                     ></v-text-field>
 
                     <!-- reservation system usage rate -->
-                    <label class="body-2" :for="`reservation-system-usage-rate-${item.value}`">
+                    <label class="body-2" :for="`solution-use-rate-${item.value}`">
                       Taux d’utilisation de la solution de réservation
                     </label>
                     <v-text-field
                       validate-on-blur
                       hide-details="auto"
+                      :rules="[validators.isPercentageOrEmpty]"
                       solo
                       dense
-                      v-model="expe[`reservationSystemUsage${item.value}`]"
+                      v-model.number="expe[`solutionUseRate${item.value}`]"
                       style="max-width: 300px"
                       class="mt-2 mb-4 body-2"
-                      :id="`reservation-system-usage-rate-${item.value}`"
+                      :id="`solution-use-rate-${item.value}`"
                     ></v-text-field>
 
                     <!-- satisfaction -->
@@ -335,7 +344,7 @@
                       Satisfaction moyenne convive (par questionnaire)
                     </label>
                     <v-rating
-                      v-model="expe[`satisfaction${item.value}`]"
+                      v-model.number="expe[`satisfaction${item.value}`]"
                       color="primary"
                       empty-icon="mdi-star-outline"
                       full-icon="mdi-star"
@@ -345,6 +354,87 @@
                       length="5"
                       hover
                     ></v-rating>
+
+                    <!-- comments -->
+                    <label class="body-2" :for="`comments-${item.value}`">
+                      Commentaire
+                    </label>
+                    <v-textarea
+                      validate-on-blur
+                      hide-details="auto"
+                      rows="2"
+                      solo
+                      v-model="expe[`comments${item.value}`]"
+                      class="mt-2 mb-4 body-2"
+                      :id="`comments-${item.value}`"
+                    ></v-textarea>
+
+                    <div v-if="item.value === 'T2'">
+                      <!-- system cost -->
+                      <label class="body-2" for="system-cost">
+                        Coût de la solution de réservation sur 3 ans
+                      </label>
+                      <v-text-field
+                        validate-on-blur
+                        hide-details="auto"
+                        :rules="[validators.nonNegativeOrEmpty]"
+                        suffix="€"
+                        solo
+                        dense
+                        v-model.number="expe.systemCost"
+                        style="max-width: 300px"
+                        class="mt-2 mb-4 body-2"
+                        id="system-cost"
+                      ></v-text-field>
+
+                      <!-- participation cost -->
+                      <label class="body-2" for="participation-cost">
+                        Coûts liés à la participation à l'expérimentation sur 3 ans
+                      </label>
+                      <v-text-field
+                        validate-on-blur
+                        hide-details="auto"
+                        :rules="[validators.nonNegativeOrEmpty]"
+                        suffix="€"
+                        solo
+                        dense
+                        v-model.number="expe.participationCost"
+                        style="max-width: 300px"
+                        class="mt-2 mb-4 body-2"
+                        id="participation-cost"
+                      ></v-text-field>
+
+                      <!-- participation cost -->
+                      <label class="body-2" for="participation-cost-details">
+                        Détails des coûts liés à la participation à l'expérimentation
+                      </label>
+                      <v-textarea
+                        validate-on-blur
+                        hide-details="auto"
+                        solo
+                        rows="2"
+                        v-model="expe.participationCostDetails"
+                        class="mt-2 mb-4 body-2"
+                        id="participation-cost-details"
+                      ></v-textarea>
+
+                      <!-- money saved -->
+                      <label class="body-2" for="money-saved">
+                        Gains générés par l'évitement du gaspillage laimentaire en euros sur 3 ans
+                      </label>
+                      <v-text-field
+                        validate-on-blur
+                        hide-details="auto"
+                        :rules="[validators.nonNegativeOrEmpty]"
+                        suffix="€"
+                        solo
+                        dense
+                        v-model.number="expe.participationCost"
+                        style="max-width: 300px"
+                        class="mt-2 mb-4 body-2"
+                        id="money-saved"
+                      ></v-text-field>
+                    </div>
                   </v-card-text>
                 </v-card>
               </v-tab-item>
@@ -364,7 +454,7 @@
 </template>
 
 <script>
-import { formatDate } from "@/utils"
+import { formatDate, getObjectDiff } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 
@@ -375,8 +465,10 @@ export default {
   },
   data() {
     return {
+      formIsValid: true,
       expe: null,
-      reservationSystemDateMenu: false,
+      originalExpe: null,
+      reservationSystemStartDateMenu: false,
       launchDateMenu: false,
       tab: null,
       tabs: [
@@ -391,13 +483,19 @@ export default {
       return date ? formatDate(date) : ""
     },
     save() {
-      // TODO: PATCH is sending all the payload. Should do the object diff
+      this.$refs.form.validate()
+      if (!this.formIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
+
       const method = this.isNewExpe ? "createReservationExpe" : "updateReservationExpe"
+      const payload = this.fixPercentageValues(this.isNewExpe ? this.expe : getObjectDiff(this.originalExpe, this.expe))
       const successMessage = this.isNewExpe
         ? "Votre inscription a bien été prise en compte"
         : "Vos données de l'expérimentation ont bien été sauvegardés"
       this.$store
-        .dispatch(method, { canteen: this.canteen, payload: this.expe })
+        .dispatch(method, { canteen: this.canteen, payload })
         .then(() => {
           this.$store.dispatch("notify", {
             status: "success",
@@ -406,6 +504,21 @@ export default {
           this.$emit("close")
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    fixPercentageValues(payload) {
+      const percentageFields = [
+        "ratioEdibleNonEdibleT0",
+        "solutionUseRateT0",
+        "ratioEdibleNonEdibleT1",
+        "solutionUseRateT1",
+        "ratioEdibleNonEdibleT2",
+        "solutionUseRateT2",
+      ]
+      for (let i = 0; i < percentageFields.length; i++) {
+        if (Object.prototype.hasOwnProperty.call(payload, percentageFields[i]))
+          payload[percentageFields[i]] = payload[percentageFields[i]] / 100
+      }
+      return payload
     },
   },
   computed: {
@@ -427,10 +540,12 @@ export default {
     },
   },
   mounted() {
-    // TODO: Fetching here is not enough. Re-opening the modal does not refetch.
     this.$store
       .dispatch("fetchReservationExpe", { canteen: this.canteen })
-      .then((response) => (this.expe = response || {}))
+      .then((response) => {
+        this.expe = response || {}
+        this.originalExpe = JSON.parse(JSON.stringify(this.expe))
+      })
       .catch((e) => this.$store.dispatch("notifyServerError", e))
   },
 }

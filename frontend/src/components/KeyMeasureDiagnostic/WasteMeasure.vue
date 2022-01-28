@@ -167,25 +167,26 @@
         Vous souhaitez réduire le gaspillage alimentaire dans votre établissement et générer des économies : la
         réservation de repas peut être une solution !
       </p>
-      <v-checkbox v-model="participationExpeCheckboxValue" @change="onExpeCheckboxChange">
+      <v-checkbox v-if="canteen" v-model="canteen.reservationExpeParticipant" @change="onExpeCheckboxChange">
         <template v-slot:label>
           <span class="body-2 grey--text text--darken-3">
             Je suis volontaire pour participer à l’expérimentation.
           </span>
-          <v-btn
-            color="primary"
-            class="body-2"
-            v-if="participationExpeCheckboxValue"
-            text
-            @click="() => (showExpeModal = true)"
-          >
-            Mettre à jour mes données
-          </v-btn>
         </template>
       </v-checkbox>
+      <v-btn
+        color="primary"
+        class="body-2 mt-n2 mb-2"
+        v-if="canteen.reservationExpeParticipant"
+        outlined
+        small
+        @click="() => (showExpeModal = true)"
+      >
+        Mettre à jour mes données
+      </v-btn>
 
       <v-dialog v-model="showExpeModal" :width="$vuetify.breakpoint.mdAndUp ? 900 : undefined">
-        <ExpeReservation @close="() => (showExpeModal = false)" :canteen="canteen" />
+        <ExpeReservation v-if="showExpeModal" @close="() => (showExpeModal = false)" :canteen="canteen" />
       </v-dialog>
     </div>
   </div>
@@ -209,7 +210,7 @@ export default {
   data() {
     return {
       showExpeModal: false,
-      participationExpeCheckboxValue: this.canteen && this.canteen.reservationExpeParticipant,
+      participationExpeCheckboxValue: this.canteen.reservationExpeParticipant,
       wasteActions: [
         {
           label: "Pré-inscription des convives obligatoire",
@@ -257,8 +258,7 @@ export default {
           id: this.canteen.id,
           payload: { reservationExpeParticipant: checked },
         })
-        .then((x) => (this.canteen.reservationExpeParticipant = x.onExpeCheckboxChange))
-      // TODO handle error
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
 
       if (checked) this.showExpeModal = true
     },

@@ -13,18 +13,26 @@ class ReservationExpe(models.Model):
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE, verbose_name="cantine")
 
-    experimentation_start_date = models.DateField(
-        null=True, blank=True, verbose_name="date de début d'expérimentation"
+    has_reservation_system = models.BooleanField(
+        default=False, verbose_name="a déjà mis en place une solution de réservation de repas"
     )
     reservation_system_start_date = models.DateField(
         null=True, blank=True, verbose_name="date de début du système de réservation"
+    )
+    experimentation_start_date = models.DateField(
+        null=True, blank=True, verbose_name="date de début d'expérimentation"
     )
     reservation_system_description = models.TextField(
         null=True, blank=True, verbose_name="description du système de réservation"
     )
     publicise_method = models.TextField(null=True, blank=True, verbose_name="méthode de communication aux convives")
-    leader_first_name = models.CharField(null=True, blank=True, max_length=100, verbose_name="prénom du chef d'expé")
-    leader_last_name = models.CharField(null=True, blank=True, max_length=100, verbose_name="nom du chef d'expé")
+    has_leader = models.BooleanField(default=False, verbose_name="Un responsable chargé du pilotage a été désigné")
+    leader_first_name = models.CharField(
+        null=True, blank=True, max_length=100, verbose_name="prénom du responsable d'expé"
+    )
+    leader_last_name = models.CharField(
+        null=True, blank=True, max_length=100, verbose_name="nom du responsable d'expé"
+    )
     leader_email = models.EmailField(null=True, blank=True, verbose_name="Email du responsable")
     has_regulations = models.BooleanField(
         default=False, verbose_name="Un réglement à destination des convives a été rédigé"
@@ -71,20 +79,20 @@ class ReservationExpe(models.Model):
         validators=[MinValueValidator(0)],
         verbose_name="Moyenne des pesées des pains jetés sur 20 déjeuners successifs (g/convive)",
     )
-    avg_attendance_count_t0 = models.DecimalField(
+    avg_attendance_from_evaluation_t0 = models.DecimalField(
         null=True,
         blank=True,
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Taux de fréquentation moyen",
+        verbose_name="Nombre moyen d'usagers à partir de l'évaluation",
     )
     solution_use_rate_t0 = models.DecimalField(
         null=True,
         blank=True,
-        max_digits=20,
+        max_digits=3,
         decimal_places=2,
-        validators=[MinValueValidator(0)],
+        validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Taux d’utilisation de la solution de réservation",
     )
     satisfaction_t0 = models.IntegerField(
@@ -133,13 +141,13 @@ class ReservationExpe(models.Model):
         validators=[MinValueValidator(0)],
         verbose_name="Moyenne des pesées des pains jetés sur 20 déjeuners successifs (g/convive)",
     )
-    avg_attendance_count_t1 = models.DecimalField(
+    avg_attendance_from_evaluation_t1 = models.DecimalField(
         null=True,
         blank=True,
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Taux de fréquentation moyen",
+        verbose_name="Nombre moyen d'usagers à partir de l'évaluation",
     )
     solution_use_rate_t1 = models.DecimalField(
         null=True,
@@ -195,13 +203,13 @@ class ReservationExpe(models.Model):
         validators=[MinValueValidator(0)],
         verbose_name="Moyenne des pesées des pains jetés sur 20 déjeuners successifs (g/convive)",
     )
-    avg_attendance_count_t2 = models.DecimalField(
+    avg_attendance_from_evaluation_t2 = models.DecimalField(
         null=True,
         blank=True,
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Taux de fréquentation moyen",
+        verbose_name="Nombre moyen d'usagers à partir de l'évaluation",
     )
     solution_use_rate_t2 = models.DecimalField(
         null=True,
