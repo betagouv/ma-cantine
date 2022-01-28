@@ -78,9 +78,10 @@
     <h2 class="my-6">Format du fichier</h2>
     <p>
       Le fichier CSV doit être encodé avec UTF-8 et contenir un diagnostic par ligne. Chaque ligne doit aussi inclure
-      les informations de la cantine associée. Si un diagnostic pour la même année et la même cantine existe déjà il ne
-      sera pas modifié.
+      les informations de la cantine associée.
     </p>
+    <p>Il faut que les données soient listées dans l'ordre indiqué en dessous.</p>
+    <p>Si un diagnostic pour la même année et la même cantine existe déjà il ne sera pas modifié.</p>
     <h3 class="my-6">Colonnes</h3>
     <v-simple-table class="my-6">
       <template v-slot:default>
@@ -143,8 +144,8 @@ export default {
       importInProgress: false,
       documentation: [
         {
-          name: "SIRET",
-          description: "Le SIRET de la cantine.",
+          name: "SIRET de la cuisine-site",
+          description: "Ce SIRET doit être unique car il correspond à un lieu physique.",
           type: "14 chiffres, avec ou sans espaces",
           example: "000 000 000 00000",
         },
@@ -165,8 +166,9 @@ export default {
           optional: true,
         },
         {
-          name: "SIRET de la cuisine centrale",
-          description: "Le SIRET de la cuisine centrale.",
+          name: "SIRET de la cantine distributrice ou SRC",
+          description:
+            "Ce SIRET peut être vide ou utilisé pour plusieurs lignes, dans le cas où c'est le gestionnaire de la SRC ou de la cuisine centrale qui remplit les lignes pour chaque cuisine-site/satellite.",
           type: "14 chiffres, avec ou sans espaces",
           example: "999 999 999 99999",
           optional: true,
