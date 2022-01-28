@@ -80,7 +80,7 @@
       Le fichier CSV doit être encodé avec UTF-8 et contenir un diagnostic par ligne. Chaque ligne doit aussi inclure
       les informations de la cantine associée.
     </p>
-    <p>Il faut que les données soient listées dans l'ordre indiqué en dessous.</p>
+    <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
     <p>Si un diagnostic pour la même année et la même cantine existe déjà il ne sera pas modifié.</p>
     <h3 class="my-6">Colonnes</h3>
     <v-simple-table class="my-6">
