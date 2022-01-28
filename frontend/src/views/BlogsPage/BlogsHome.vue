@@ -70,7 +70,7 @@ export default {
       limit: 6,
       page: null,
       tag: null,
-      filteredPosts: null,
+      postsForTag: null,
     }
   },
   computed: {
@@ -78,19 +78,19 @@ export default {
       return this.posts && this.posts[0] ? this.posts[0].count : null
     },
     posts() {
-      return this.filteredPosts || this.$store.state.blogPosts
+      return this.tag ? this.postsForTag : this.$store.state.blogPosts
     },
     visibleBlogPosts() {
-      const blogPostPage = this.posts.find((x) => x.offset === this.offset)
-      return blogPostPage ? blogPostPage.results : null
+      if (this.posts) {
+        const blogPostPage = this.posts.find((x) => x.offset === this.offset)
+        return blogPostPage ? blogPostPage.results : null
+      }
+      return null
     },
     tags() {
       return this.$store.state.blogTags.map((x) => x.name)
     },
     loading() {
-      if (this.tag && !this.filteredPosts) {
-        return true
-      }
       return this.blogPostCount === null
     },
     offset() {
@@ -101,12 +101,11 @@ export default {
     fetchCurrentPage() {
       if (!this.tag) {
         this.$store.dispatch("fetchBlogPosts", { offset: this.offset })
-        this.filteredPosts = null
       } else {
         fetch(`/api/v1/blogPosts/?tag=${this.tag}&offset=${this.offset}&limit=6`)
           .then((response) => response.json())
           .then((data) => {
-            this.filteredPosts = [{ ...data, limit: this.limit, offset: this.offset }]
+            this.postsForTag = [{ ...data, limit: this.limit, offset: this.offset }]
           })
       }
     },
@@ -115,19 +114,23 @@ export default {
       if (this.tag) {
         query.etiquette = this.tag
       }
+
       // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
       this.$router.push({ query }).catch(() => {})
+    },
+    updatePage() {
+      if (!this.visibleBlogPosts) this.fetchCurrentPage()
+      this.updateRoute()
     },
   },
   watch: {
     page() {
-      if (!this.visibleBlogPosts) this.fetchCurrentPage()
-      this.updateRoute()
+      this.updatePage()
     },
     tag() {
-      this.page = 1
-      this.fetchCurrentPage()
-      this.updateRoute()
+      this.postsForTag = null
+      if (this.page == 1) this.updatePage()
+      else this.page = 1 // page watcher causes updatePage
     },
     $route(newRoute) {
       this.page = newRoute.query.page ? parseInt(newRoute.query.page) : 1
