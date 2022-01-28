@@ -20,22 +20,23 @@
       </v-row>
     </v-card>
 
-    <v-col cols="12" sm="4">
-      <label for="select-tag" class="text-body-2">
-        Type d'article
-      </label>
-      <v-select
-        v-model="tag"
-        :items="tags"
-        clearable
-        hide-details
-        id="select-tag"
-        outlined
-        class="mt-1"
-        dense
-        width="fit-content"
-      ></v-select>
-    </v-col>
+    <v-row>
+      <v-spacer></v-spacer>
+      <v-col cols="12" sm="4">
+        <v-select
+          v-model="tag"
+          :items="tags"
+          clearable
+          hide-details
+          id="select-tag"
+          outlined
+          class="mt-1"
+          dense
+          width="fit-content"
+          label="Filtrer par type d'article"
+        ></v-select>
+      </v-col>
+    </v-row>
     <div v-if="loading">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
