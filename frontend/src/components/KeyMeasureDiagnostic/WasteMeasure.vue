@@ -163,10 +163,35 @@
       <p class="text-h6 font-weight-bold">
         Expérimentation réservation de repas
       </p>
+
       <p class="body-2">
-        Vous souhaitez réduire le gaspillage alimentaire dans votre établissement et générer des économies : la
-        réservation de repas peut être une solution !
+        Vous souhaitez réduire le gaspillage alimentaire dans votre établissement et générer des économies :
+        <span class="font-weight-bold">la réservation de repas peut être une solution !</span>
       </p>
+      <p class="body-2">
+        Pour évaluer ses effets sur le gaspillage alimentaire, la satisfaction de vos convives et le taux de
+        fréquentation de votre établissement, nous vous proposons de participer à une expérimentation prévue par la loi
+        Climat et résilience.
+      </p>
+      <p class="body-2">
+        Votre candidature à cette expérimentation vous permettra de mettre en place une démarche d’évaluation dont les
+        résultats permettront de saisir le potentiel de la solution de réservation de repas.
+      </p>
+      <p class="body-2 font-weight-bold">
+        Vous avez déjà mis en place une solution de réservation de repas ou souhaitez en adopter une ? Vous pouvez vous
+        inscrire dès maintenant !
+      </p>
+      <p class="body-2">
+        Vous serez amenés à répondre à des questions sur votre structure et la solution de réservation que vous aurez
+        mise en place, ainsi qu’à transmettre des données relatives aux évaluations du gaspillage alimentaire, du taux
+        de fréquentation et de la satisfaction des usagers sur une période de six mois.
+      </p>
+      <p class="body-2">Les inscriptions sont ouvertes jusqu’au 1er juillet 2023.</p>
+      <p class="body-2">
+        Les informations relatives aux conditions de mise en œuvre de l’expérimentation sont précisées dans le guide
+        pratique.
+      </p>
+
       <v-checkbox v-if="canteen" v-model="canteen.reservationExpeParticipant" @change="onExpeCheckboxChange">
         <template v-slot:label>
           <span class="body-2 grey--text text--darken-3">
