@@ -47,7 +47,6 @@
                 prepend-icon="mdi-calendar"
                 readonly
                 v-bind="attrs"
-                :rules="[validators.required]"
                 v-on="on"
                 hide-details="auto"
                 solo
@@ -83,7 +82,6 @@
                 prepend-icon="mdi-calendar"
                 readonly
                 v-bind="attrs"
-                :rules="[validators.required]"
                 v-on="on"
                 hide-details="auto"
                 dense
