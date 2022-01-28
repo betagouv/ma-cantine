@@ -122,9 +122,12 @@ class CanteenAdmin(SoftDeletionAdmin):
 
 class CanteenInline(admin.TabularInline):
     model = Canteen.managers.through
-    readonly_fields = ("canteen",)
+    readonly_fields = ("canteen", "active")
     extra = 0
     verbose_name_plural = "Cantines gérées"
 
     def has_add_permission(self, request, obj):
         return False
+
+    def active(self, obj):
+        return "🗑️ Supprimée par l'utilisateur" if obj.canteen.deletion_date else "✔️"
