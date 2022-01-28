@@ -40,6 +40,7 @@ export default new Vuex.Store({
 
     blogPostCount: null,
     blogPosts: [],
+    blogPostsByTag: [],
     blogTags: [],
 
     notification: {
@@ -71,9 +72,15 @@ export default new Vuex.Store({
     SET_USER_CANTEEN_PREVIEWS(state, userCanteenPreviews) {
       state.userCanteenPreviews = userCanteenPreviews
     },
-    ADD_BLOG_POSTS(state, { response, limit, offset }) {
-      state.blogPosts.push({ ...response, limit, offset })
-      state.blogPostCount = response.count
+    ADD_BLOG_POSTS(state, { response, limit, offset, tag }) {
+      let paginatedResults = { ...response, limit, offset }
+      if (tag) {
+        paginatedResults.tag = tag
+        state.blogPostsByTag.push(paginatedResults)
+      } else {
+        state.blogPosts.push(paginatedResults)
+        state.blogPostCount = response.count
+      }
     },
     SET_BLOG_TAGS(state, tags) {
       state.blogTags = tags
@@ -145,12 +152,14 @@ export default new Vuex.Store({
         })
     },
 
-    fetchBlogPosts(context, { limit = 6, offset }) {
+    fetchBlogPosts(context, { limit = 6, offset, tag }) {
       context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/blogPosts/?limit=${limit}&offset=${offset}`)
+      let url = `/api/v1/blogPosts/?limit=${limit}&offset=${offset}`
+      if (tag) url += `&tag=${tag}`
+      return fetch(url)
         .then(verifyResponse)
         .then((response) => {
-          context.commit("ADD_BLOG_POSTS", { response, limit, offset })
+          context.commit("ADD_BLOG_POSTS", { response, limit, offset, tag })
           context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch(() => {

@@ -70,12 +70,14 @@ export default {
       limit: 6,
       page: null,
       tag: null,
-      postsForTag: null,
     }
   },
   computed: {
     blogPostCount() {
       return this.posts && this.posts[0] ? this.posts[0].count : null
+    },
+    postsForTag() {
+      return this.$store.state.blogPostsByTag.filter((x) => x.tag === this.tag)
     },
     posts() {
       return this.tag ? this.postsForTag : this.$store.state.blogPosts
@@ -99,22 +101,13 @@ export default {
   },
   methods: {
     fetchCurrentPage() {
-      if (!this.tag) {
-        this.$store.dispatch("fetchBlogPosts", { offset: this.offset })
-      } else {
-        fetch(`/api/v1/blogPosts/?tag=${this.tag}&offset=${this.offset}&limit=6`)
-          .then((response) => response.json())
-          .then((data) => {
-            this.postsForTag = [{ ...data, limit: this.limit, offset: this.offset }]
-          })
-      }
+      this.$store.dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag })
     },
     updateRoute() {
       let query = { page: this.page }
       if (this.tag) {
         query.etiquette = this.tag
       }
-
       // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
       this.$router.push({ query }).catch(() => {})
     },
@@ -128,7 +121,6 @@ export default {
       this.updatePage()
     },
     tag() {
-      this.postsForTag = null
       if (this.page == 1) this.updatePage()
       else this.page = 1 // page watcher causes updatePage
     },
