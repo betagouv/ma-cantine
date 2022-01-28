@@ -6,7 +6,7 @@ from common.utils import send_mail
 import urllib.parse
 from data.models import Canteen, Teledeclaration
 from .diagnostic import DiagnosticInline
-from .softdeletionadmin import SoftDeletionAdmin
+from .softdeletionadmin import SoftDeletionAdmin, SoftDeletionStatusFilter
 
 
 class CanteenForm(forms.ModelForm):
@@ -82,7 +82,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "sectors",
         "management_type",
         "production_type",
-        "deletion_date",
+        SoftDeletionStatusFilter,
         "region",
         "department",
     )
