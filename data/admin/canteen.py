@@ -118,3 +118,13 @@ class CanteenAdmin(SoftDeletionAdmin):
                 to=contact_list,
                 fail_silently=True,
             )
+
+
+class CanteenInline(admin.TabularInline):
+    model = Canteen.managers.through
+    readonly_fields = ("canteen",)
+    extra = 0
+    verbose_name_plural = "Cantines gérées"
+
+    def has_add_permission(self, request, obj):
+        return False
