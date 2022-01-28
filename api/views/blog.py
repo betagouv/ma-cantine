@@ -18,6 +18,13 @@ class BlogPostsView(ListAPIView):
     queryset = BlogPost.objects.filter(published=True)
     pagination_class = BlogPostsPagination
 
+    def get_queryset(self):
+        queryset = self.queryset
+        tag = self.request.query_params.get("tag", None)
+        if tag is not None:
+            queryset = queryset.filter(tags__name=tag)
+        return queryset
+
 
 class BlogPostView(RetrieveAPIView):
     model = BlogPost

@@ -20,6 +20,22 @@
       </v-row>
     </v-card>
 
+    <v-col cols="12" sm="4">
+      <label for="select-tag" class="text-body-2">
+        Type d'article
+      </label>
+      <v-select
+        v-model="tag"
+        :items="tags"
+        clearable
+        hide-details
+        id="select-tag"
+        outlined
+        class="mt-1"
+        dense
+        width="fit-content"
+      ></v-select>
+    </v-col>
     <div v-if="loading">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
@@ -52,17 +68,28 @@ export default {
     return {
       limit: 6,
       page: null,
+      tag: null,
+      filteredPosts: null,
     }
   },
   computed: {
     blogPostCount() {
-      return this.$store.state.blogPostCount
+      return this.posts && this.posts[0] ? this.posts[0].count : null
+    },
+    posts() {
+      return this.filteredPosts || this.$store.state.blogPosts
     },
     visibleBlogPosts() {
-      const blogPostPage = this.$store.state.blogPosts.find((x) => x.offset === this.offset)
+      const blogPostPage = this.posts.find((x) => x.offset === this.offset)
       return blogPostPage ? blogPostPage.results : null
     },
+    tags() {
+      return this.$store.state.blogTags.map((x) => x.name)
+    },
     loading() {
+      if (this.tag && !this.filteredPosts) {
+        return true
+      }
       return this.blogPostCount === null
     },
     offset() {
@@ -71,20 +98,43 @@ export default {
   },
   methods: {
     fetchCurrentPage() {
-      return this.$store.dispatch("fetchBlogPosts", { offset: this.offset })
+      if (!this.tag) {
+        this.$store.dispatch("fetchBlogPosts", { offset: this.offset })
+        this.filteredPosts = null
+      } else {
+        fetch(`/api/v1/blogPosts/?tag=${this.tag}&offset=${this.offset}&limit=6`)
+          .then((response) => response.json())
+          .then((data) => {
+            this.filteredPosts = [{ ...data, limit: this.limit, offset: this.offset }]
+          })
+      }
+    },
+    updateRoute() {
+      let query = { page: this.page }
+      if (this.tag) {
+        query.etiquette = this.tag
+      }
+      // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
+      this.$router.push({ query }).catch(() => {})
     },
   },
   watch: {
-    page(newPage) {
-      // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
-      this.$router.push({ query: { page: newPage } }).catch(() => {})
+    page() {
       if (!this.visibleBlogPosts) this.fetchCurrentPage()
+      this.updateRoute()
+    },
+    tag() {
+      this.page = 1
+      this.fetchCurrentPage()
+      this.updateRoute()
     },
     $route(newRoute) {
       this.page = newRoute.query.page ? parseInt(newRoute.query.page) : 1
     },
   },
   mounted() {
+    this.$store.dispatch("fetchBlogTags")
+    this.tag = this.$route.query.etiquette
     this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
   },
 }

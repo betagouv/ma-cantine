@@ -40,6 +40,7 @@ export default new Vuex.Store({
 
     blogPostCount: null,
     blogPosts: [],
+    blogTags: [],
 
     notification: {
       message: "",
@@ -73,6 +74,9 @@ export default new Vuex.Store({
     ADD_BLOG_POSTS(state, { response, limit, offset }) {
       state.blogPosts.push({ ...response, limit, offset })
       state.blogPostCount = response.count
+    },
+    SET_BLOG_TAGS(state, tags) {
+      state.blogTags = tags
     },
     SET_INITIAL_DATA_LOADED(state) {
       state.initialDataLoaded = true
@@ -147,6 +151,19 @@ export default new Vuex.Store({
         .then(verifyResponse)
         .then((response) => {
           context.commit("ADD_BLOG_POSTS", { response, limit, offset })
+          context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
+        .catch(() => {
+          context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+        })
+    },
+
+    fetchBlogTags(context) {
+      context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch("/api/v1/blogTags/")
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_BLOG_TAGS", response)
           context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch(() => {
