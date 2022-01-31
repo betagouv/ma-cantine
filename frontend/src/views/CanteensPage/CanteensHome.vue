@@ -20,15 +20,21 @@
             </h1>
           </v-card-title>
           <v-card-subtitle>
-            <p>
+            <p class="mb-1">
               Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus durable
             </p>
+            <p>
+              Consulter
+              <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
+                les statistiques de votre collectivité (régions et départements)
+              </router-link>
+            </p>
           </v-card-subtitle>
+
           <v-spacer></v-spacer>
         </v-col>
       </v-row>
     </v-card>
-
     <v-sheet class="px-6" elevation="0">
       <v-row>
         <v-col cols="12" md="7" class="pt-0">

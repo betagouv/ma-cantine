@@ -1,11 +1,12 @@
 from django import forms
 from django.conf import settings
 from django.contrib import admin
+from django.utils import timezone
 from common.utils import send_mail
 import urllib.parse
-from data.models import Canteen
+from data.models import Canteen, Teledeclaration
 from .diagnostic import DiagnosticInline
-from .softdeletionadmin import SoftDeletionAdmin
+from .softdeletionadmin import SoftDeletionAdmin, SoftDeletionStatusFilter
 
 
 class CanteenForm(forms.ModelForm):
@@ -66,6 +67,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "name",
         "city",
         "publication_status",
+        "télédéclarée",
         "creation_date",
         "modification_date",
         "management_type",
@@ -80,13 +82,20 @@ class CanteenAdmin(SoftDeletionAdmin):
         "sectors",
         "management_type",
         "production_type",
-        "deletion_date",
+        SoftDeletionStatusFilter,
         "region",
         "department",
     )
     search_fields = ("name",)
     if getattr(settings, "ENVIRONMENT", "") != "prod":
         actions = [publish, unpublish]
+
+    def télédéclarée(self, obj):
+        if Teledeclaration.objects.filter(
+            canteen=obj, year=(timezone.now().year - 1), status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        ).exists():
+            return "📩 Télédéclarée"
+        return ""
 
     def supprimée(self, obj):
         return "🗑️ Supprimée" if obj.deletion_date else ""
@@ -109,3 +118,16 @@ class CanteenAdmin(SoftDeletionAdmin):
                 to=contact_list,
                 fail_silently=True,
             )
+
+
+class CanteenInline(admin.TabularInline):
+    model = Canteen.managers.through
+    readonly_fields = ("canteen", "active")
+    extra = 0
+    verbose_name_plural = "Cantines gérées"
+
+    def has_add_permission(self, request, obj):
+        return False
+
+    def active(self, obj):
+        return "🗑️ Supprimée par l'utilisateur" if obj.canteen.deletion_date else "✔️"

@@ -3,7 +3,7 @@
     <v-checkbox
       hide-details="auto"
       v-model="diagnostic.communicatesOnFoodQuality"
-      label="J’informe mes convives sur la part de produits de qualité et durables, entrant dans la composition des repas servis, et sur les démarches d’acquisition de produits issus du commerce équitable"
+      label="J’informe mes convives sur la part de produits de qualité et durables, entrant dans la composition des repas servis, et sur les démarches d’acquisition de produits issus d'un PAT"
       :readonly="readonly"
       :disabled="readonly"
     />

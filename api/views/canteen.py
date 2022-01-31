@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.functions import Cast
-from django.db.models import Sum, FloatField
+from django.db.models import Sum, FloatField, Avg, Func, F, Q
 from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -26,6 +26,7 @@ from api.serializers import (
     ManagingTeamSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
+from data.region_choices import Region
 from api.permissions import IsCanteenManager
 from .utils import camelize
 from common import utils
@@ -467,3 +468,155 @@ class SendCanteenNotFoundEmail(APIView):
                 {"error": "An error has ocurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+def badges_for_queryset(diagnostic_year_queryset):
+    badge_querysets = {}
+    appro_total = diagnostic_year_queryset
+    appro_total = diagnostic_year_queryset.count()
+    if appro_total:
+        appro_share_query = diagnostic_year_queryset.filter(value_total_ht__gt=0)
+        appro_share_query = appro_share_query.annotate(
+            bio_share=Cast(
+                Sum("value_bio_ht") / Sum("value_total_ht"),
+                FloatField(),
+            )
+        )
+        appro_share_query = appro_share_query.annotate(
+            combined_share=Cast(
+                (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
+                FloatField(),
+            )
+        )
+        # Saint-Martin should be in group 1
+        group_1 = [Region.guadeloupe, Region.martinique, Region.guyane, Region.la_reunion]
+        group_2 = [Region.mayotte]
+        # should have a group 3 with Saint-Pierre-et-Miquelon
+        badge_querysets["appro"] = appro_share_query.filter(
+            Q(combined_share__gte=0.5, bio_share__gte=0.2)
+            | Q(canteen__region__in=group_1, combined_share__gte=0.2, bio_share__gte=0.05)
+            | Q(canteen__region__in=group_2, combined_share__gte=0.05, bio_share__gte=0.02)
+        ).distinct()
+
+    # waste
+    waste_badge_query = diagnostic_year_queryset.filter(has_waste_diagnostic=True)
+    waste_badge_query = waste_badge_query.annotate(waste_actions_len=Func(F("waste_actions"), function="CARDINALITY"))
+    waste_badge_query = waste_badge_query.filter(waste_actions_len__gt=0)
+    waste_badge_query = waste_badge_query.filter(
+        Q(canteen__daily_meal_count__lt=3000) | Q(has_donation_agreement=True)
+    )
+    badge_querysets["waste"] = waste_badge_query
+
+    # diversification
+    diversification_badge_query = diagnostic_year_queryset.exclude(vegetarian_weekly_recurrence__isnull=True)
+    diversification_badge_query = diversification_badge_query.exclude(vegetarian_weekly_recurrence="")
+    diversification_badge_query = diversification_badge_query.exclude(
+        vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW
+    )
+    scolaire_sector = Sector.objects.filter(name="Scolaire")
+    if scolaire_sector.count():
+        scolaire_sector = scolaire_sector[0]
+        diversification_badge_query = diversification_badge_query.filter(
+            Q(
+                canteen__sectors__in=[scolaire_sector],
+                vegetarian_weekly_recurrence__in=[
+                    Diagnostic.MenuFrequency.MID,
+                    Diagnostic.MenuFrequency.HIGH,
+                ],
+            )
+            | Q(vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY)
+        ).distinct()
+    badge_querysets["diversification"] = diversification_badge_query
+
+    # plastic
+    badge_querysets["plastic"] = diagnostic_year_queryset.filter(
+        cooking_plastic_substituted=True,
+        serving_plastic_substituted=True,
+        plastic_bottles_substituted=True,
+        plastic_tableware_substituted=True,
+    )
+
+    # info
+    badge_querysets["info"] = diagnostic_year_queryset.filter(communicates_on_food_quality=True)
+    return badge_querysets
+
+
+class CanteenStatisticsView(APIView):
+    def get(self, request):
+        region = request.query_params.get("region")
+        department = request.query_params.get("department")
+        year = request.query_params.get("year")
+        if not year:
+            return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
+        data = {}
+        canteens = Canteen.objects
+        if region:
+            canteens = canteens.filter(region=region)
+        elif department:
+            canteens = canteens.filter(department=department)
+        data["canteen_count"] = canteens.count()
+        data["published_canteen_count"] = canteens.filter(
+            publication_status=Canteen.PublicationStatus.PUBLISHED
+        ).count()
+
+        diagnostics = Diagnostic.objects.filter(year=year)
+        if region:
+            diagnostics = diagnostics.filter(canteen__region=region)
+        elif department:
+            diagnostics = diagnostics.filter(canteen__department=department)
+        appro_share_query = diagnostics.filter(value_total_ht__gt=0)
+        appro_share_query = appro_share_query.annotate(
+            bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField())
+        )
+        appro_share_query = appro_share_query.annotate(
+            sustainable_share=Cast(Sum("value_sustainable_ht") / Sum("value_total_ht"), FloatField())
+        )
+        agg = appro_share_query.aggregate(Avg("bio_share"), Avg("sustainable_share"))
+        # no need for particularly fancy rounding
+        data["bio_percent"] = int((agg["bio_share__avg"] or 0) * 100)
+        data["sustainable_percent"] = int((agg["sustainable_share__avg"] or 0) * 100)
+
+        # --- badges ---
+        total_diag = diagnostics
+        total_diag = total_diag.count()
+        data["approPercent"] = 0
+        data["wastePercent"] = 0
+        data["diversificationPercent"] = 0
+        data["plasticPercent"] = 0
+        data["infoPercent"] = 0
+
+        if total_diag:  # maybe we shouldn't be able to get to 0 diags this point with the endpoint?
+            badge_querysets = badges_for_queryset(diagnostics)
+            data["approPercent"] = int(badge_querysets["appro"].count() / total_diag * 100)
+            data["wastePercent"] = int(badge_querysets["waste"].count() / total_diag * 100)
+            data["diversificationPercent"] = int(badge_querysets["diversification"].count() / total_diag * 100)
+            data["plasticPercent"] = int(badge_querysets["plastic"].count() / total_diag * 100)
+            data["infoPercent"] = int(badge_querysets["info"].count() / total_diag * 100)
+
+        # count breakdown by sector
+        sectors = {}
+        for sector in Sector.objects.all():
+            sectors[sector.id] = canteens.filter(sectors=sector).count()
+        data["sectors"] = sectors
+        return JsonResponse(camelize(data), status=status.HTTP_200_OK)
+
+
+class CanteenLocationsView(APIView):
+    def get(self, _):
+        canteens = Canteen.objects
+        data = {}
+        data["regions"] = (
+            canteens.filter(region__isnull=False)
+            .exclude(region="")
+            .order_by("region")
+            .distinct("region")
+            .values_list("region", flat=True)
+        )
+        data["departments"] = (
+            canteens.filter(department__isnull=False)
+            .exclude(department="")
+            .order_by("department")
+            .distinct("department")
+            .values_list("department", flat=True)
+        )
+        return JsonResponse(camelize(data), status=status.HTTP_200_OK)

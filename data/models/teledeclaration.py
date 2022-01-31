@@ -68,9 +68,7 @@ class Teledeclaration(models.Model):
         at any given time.
         """
         if self.status == self.TeledeclarationStatus.SUBMITTED:
-            duplicates = Teledeclaration.objects.filter(
-                canteen_siret=self.canteen_siret, year=self.year, status=self.status
-            )
+            duplicates = Teledeclaration.objects.filter(canteen=self.canteen, year=self.year, status=self.status)
             message = "Il existe déjà une télédéclaration en cours pour cette année"
             if duplicates.count() > 0:
                 raise ValidationError({"year": message})

@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
 from data.models import User
+from .canteen import CanteenInline
 
 
 @admin.register(User)
@@ -57,3 +58,4 @@ class MaCanteenUserAdmin(UserAdmin):
             },
         ),
     )
+    inlines = (CanteenInline,)

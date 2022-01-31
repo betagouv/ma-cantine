@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <router-link :to="{ name: 'CanteensHome' }" class="mt-2 grey--text text--darken-1 caption">
+    <router-link :to="canteensHomeBacklink" class="mt-2 grey--text text--darken-1 caption">
       <v-icon small class="mr-2">mdi-arrow-left</v-icon>
       Voir la liste des cantines
     </router-link>
@@ -67,6 +67,7 @@ export default {
     return {
       canteen: undefined,
       labels,
+      canteensHomeBacklink: { name: "CanteensHome" },
     }
   },
   components: {
@@ -108,6 +109,14 @@ export default {
         })
         this.$router.push({ name: "CanteensHome" })
       })
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (from.name == "CanteensHome") {
+        // keep filter settings in URL params
+        vm.canteensHomeBacklink = from
+      }
+    })
   },
 }
 </script>

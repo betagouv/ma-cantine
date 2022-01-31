@@ -31,8 +31,11 @@ import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticEditor from "@/views/DiagnosticEditor"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
+import PublicCanteenStatisticsPage from "@/views/PublicCanteenStatisticsPage"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import ContactPage from "@/views/ContactPage"
+import InvoicesHome from "@/views/InvoicesHome"
+import InvoicePage from "@/views/InvoicePage"
 
 Vue.use(VueRouter)
 
@@ -327,6 +330,14 @@ const routes = [
     },
   },
   {
+    path: "/statistiques-regionales",
+    name: "PublicCanteenStatisticsPage",
+    component: PublicCanteenStatisticsPage,
+    meta: {
+      title: "Les statistics dans ma région",
+    },
+  },
+  {
     path: "/accessibilite",
     name: "AccessibilityDeclaration",
     component: AccessibilityDeclaration,
@@ -340,6 +351,34 @@ const routes = [
     component: ContactPage,
     meta: {
       title: "Contactez-nous",
+    },
+  },
+  {
+    path: "/mes-achats",
+    name: "InvoicesHome",
+    component: InvoicesHome,
+    meta: {
+      title: "Mes achats",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/mes-achats/:id",
+    name: "InvoicePage",
+    component: InvoicePage,
+    props: true,
+    meta: {
+      title: "Mon achat",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/nouvel-achat/",
+    name: "NewPurchase",
+    component: InvoicePage,
+    meta: {
+      title: "Nouvel achat",
+      authenticationRequired: true,
     },
   },
   {

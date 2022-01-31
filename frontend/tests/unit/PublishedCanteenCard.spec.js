@@ -12,7 +12,7 @@ describe("PublishedCanteenCard.vue", () => {
   let testDiagnostics = [
     {
       id: 1,
-      year: 2020,
+      year: 2021,
       valueBioHt: 5000,
       valueSustainableHt: 2000,
       valuePatHt: 1000,

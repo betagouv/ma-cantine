@@ -192,6 +192,7 @@ export const badges = (canteen, diagnostic, sectors) => {
   const bioPercent = getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
   const sustainablePercent = getPercentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
   const applicableRules = applicableDiagnosticRules(canteen)
+  // TODO: add in rules for outre mer territories
   if (bioPercent >= 20 && bioPercent + sustainablePercent >= 50) {
     applicable.appro.earned = true
   }
@@ -254,4 +255,16 @@ export class AuthenticationError extends Error {
     }
     this.name = "AuthenticationError"
   }
+}
+
+// Formats ISO 8601 date strings (not datetime). Expects YYYY-MM-DD format.
+export const formatDate = (dateString) => {
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }
+  const dateSegments = dateString.split("-")
+  const date = new Date(parseInt(dateSegments[0]), parseInt(dateSegments[1]) - 1, parseInt(dateSegments[2]))
+  return date.toLocaleString("fr", options)
 }

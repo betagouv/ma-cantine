@@ -63,9 +63,11 @@
             <h2 class="text-h6 font-weight-bold">Vous avez besoin d’aide pour le calcul ?</h2>
           </v-card-title>
           <v-card-text>
-            Si vous ne connaissez pas votre part de bio, produits durables, produits issues du commerce équitable, nous
-            vous proposons un outil simple pour les calculer. Sous forme de tableur, remplissez vos achats HT suivant
-            leurs labels et/ou sigles de qualité.
+            Si vous ne connaissez pas votre part de produits bio, durables et issus du commerce équitable, nous vous
+            proposons un outil simple pour les calculer. Sous forme de tableur, renseignez vos achats HT suivant signes
+            de qualité, mentions, écolabel et/ou certification.
+            <br />
+            Merci à nos beta-testeurs et notamment au PETR Pays d’Armagnac, qui nous ont largement inspiré ce tableur.
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="pa-4">

@@ -1,13 +1,15 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="12" sm="6" md="8" height="100%">
+      <v-col cols="12" sm="6" height="100%">
         <v-card outlined class="d-flex flex-column fill-height pa-2">
           <v-card-title class="font-weight-bold">Tableur d'aide pour le calcul</v-card-title>
           <v-card-text>
             Si vous ne connaissez pas votre part de bio, produits durables, produits issus du commerce équitable, nous
             vous proposons un outil simple pour les calculer. Sous forme de tableur, remplissez vos achats HT suivant
             leurs labels et/ou sigles de qualité.
+            <br />
+            Merci à nos beta-testeurs et notamment au PETR Pays d’Armagnac qui nous ont inspiré ce tableur.
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="px-4">
@@ -15,7 +17,7 @@
             <v-dialog max-width="700" v-model="calculatorModal">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn outlined color="primary" v-on="on" v-bind="attrs">
-                  Télécharger notre tableur
+                  Télécharger le tableur
                 </v-btn>
               </template>
               <CalculatorResourceModal @closeModal="closeCalculatorModal" />
@@ -23,24 +25,18 @@
           </v-card-actions>
         </v-card>
       </v-col>
-      <v-col cols="12" sm="6" md="4" height="100%">
+      <v-col cols="12" sm="6" height="100%">
         <v-card outlined class="d-flex flex-column fill-height pa-2">
-          <v-card-title class="font-weight-bold">Documentation</v-card-title>
+          <v-card-title class="font-weight-bold">Suivi d'achats</v-card-title>
           <v-card-text>
-            Ressources pour les acteurs et actrices de la restauration collective
+            Une alimentation saine et durable commence par un suivi comptable de vos achats. Rentrez et suivez vos
+            achats pour faciliter la télédéclaration annuelle.
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="px-4">
             <v-spacer></v-spacer>
-            <v-btn
-              href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/"
-              target="_blank"
-              outlined
-              color="primary"
-              rel="noopener"
-            >
-              Visiter
-              <v-icon small class="ml-2">mdi-open-in-new</v-icon>
+            <v-btn :to="{ name: 'InvoicesHome' }" outlined color="primary">
+              Gérer mes achats
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -71,6 +67,30 @@
           <v-card-actions class="px-4">
             <v-spacer></v-spacer>
             <v-btn :to="{ name: 'BlogsHome' }" outlined color="primary">Visiter</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" sm="6" height="100%">
+        <v-card outlined class="d-flex flex-column fill-height pa-2">
+          <v-card-title class="font-weight-bold">Documentation</v-card-title>
+          <v-card-text>
+            Ressources pour les acteurs et actrices de la restauration collective
+          </v-card-text>
+          <v-spacer></v-spacer>
+          <v-card-actions class="px-4">
+            <v-spacer></v-spacer>
+            <v-btn
+              href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/"
+              target="_blank"
+              outlined
+              color="primary"
+              rel="noopener"
+            >
+              Visiter
+              <v-icon small class="ml-2">mdi-open-in-new</v-icon>
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>

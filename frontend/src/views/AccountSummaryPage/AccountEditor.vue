@@ -63,9 +63,10 @@
         <v-row>
           <fieldset class="mt-3 mb-4">
             <legend class="body-2 ma-3 text-left">
-              Les affirmations suivantes concernent l'article 24 de la loi EGAlim, encadrant les objectifs
-              d'approvisionnements (50% de produits durables et de qualité dont 20% de bio). Parmi ces affirmations,
-              plusieurs choix sont possibles. Choisissez celles qui correspondent à votre situation :
+              Les affirmations suivantes concernent l'article L. 230-5-1 du code rural et de la pêche maritime introduit
+              par la loi EGAlim, encadrant les objectifs d'approvisionnements (50% de produits durables et de qualité
+              dont 20% de bio). Parmi ces affirmations, plusieurs choix sont possibles. Choisissez celles qui
+              correspondent à votre situation :
             </legend>
 
             <v-checkbox
