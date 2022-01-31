@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 
 
 class SoftDeletionAdmin(admin.ModelAdmin):
@@ -18,15 +17,15 @@ class SoftDeletionAdmin(admin.ModelAdmin):
 
 
 class SoftDeletionStatusFilter(admin.SimpleListFilter):
-    title = _("Status de suppression par l'utilisateur")
+    title = "status de suppression par l'utilisateur"
 
     parameter_name = "deletion_status"
 
     def lookups(self, request, model_admin):
         return (
-            (None, _("Active")),
-            ("deleted", _("🗑️ Supprimée")),
-            ("all", _("All")),
+            (None, "✔️ Active"),
+            ("deleted", "🗑️ Supprimée"),
+            ("all", "All"),
         )
 
     # need to override choices otherwise django adds 'all' as the
