@@ -2,6 +2,39 @@ from django.contrib import admin
 from data.models import ReservationExpe
 
 
+class ReservationExpeParticipantFilter(admin.SimpleListFilter):
+    title = "Participant à l'experimentation"
+    parameter_name = "canteen.reservation_expe_participant"
+
+    def lookups(self, request, model_admin):
+        return (
+            (None, "Participants"),
+            ("non-participants", "Ne participent pas"),
+            ("all", "Tous"),
+        )
+
+    def choices(self, cl):
+        for lookup, title in self.lookup_choices:
+            yield {
+                "selected": self.value() == lookup,
+                "query_string": cl.get_query_string(
+                    {
+                        self.parameter_name: lookup,
+                    },
+                    [],
+                ),
+                "display": title,
+            }
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset.filter(canteen__reservation_expe_participant=True)
+        elif self.value() in ("all"):
+            return queryset
+        elif self.value() in ("non-participants"):
+            return queryset.filter(canteen__reservation_expe_participant=False)
+
+
 @admin.register(ReservationExpe)
 class ReservationExpeAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -83,6 +116,8 @@ class ReservationExpeAdmin(admin.ModelAdmin):
         "creation_date",
         "has_reservation_system",
     )
+
+    list_filter = (ReservationExpeParticipantFilter,)
 
     def canteen_name(self, obj):
         return obj.canteen.name
