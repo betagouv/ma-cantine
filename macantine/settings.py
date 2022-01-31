@@ -368,6 +368,7 @@ CSP_IMG_SRC = (
     "cellar-c2.services.clever-cloud.com",
     "voxusagers.numerique.gouv.fr",
     "'unsafe-inline'",
+    "stats.data.gouv.fr",
 )
 if DEBUG:
     CSP_IMG_SRC += CSP_DEBUG_DOMAINS
