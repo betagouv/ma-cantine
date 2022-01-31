@@ -329,6 +329,7 @@
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.isPercentageOrEmpty]"
+                      suffix="%"
                       solo
                       dense
                       v-model.number="expe[`solutionUseRate${item.value}`]"

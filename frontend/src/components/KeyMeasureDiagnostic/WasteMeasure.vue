@@ -188,8 +188,9 @@
       </p>
       <p class="body-2">Les inscriptions sont ouvertes jusqu’au 1er juillet 2023.</p>
       <p class="body-2">
-        Les informations relatives aux conditions de mise en œuvre de l’expérimentation sont précisées dans le guide
-        pratique.
+        Les informations relatives aux conditions de mise en œuvre de l’expérimentation sont précisées dans
+        <a href="">le guide pratique</a>
+        .
       </p>
 
       <v-checkbox v-if="canteen" v-model="canteen.reservationExpeParticipant" @change="onExpeCheckboxChange">
