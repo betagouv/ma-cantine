@@ -16,9 +16,9 @@
           </v-list-item-title>
         </v-list-item>
       </div>
-      <v-divider class="my-2"></v-divider>
+      <v-divider v-if="loggedUser" class="my-2"></v-divider>
       <!-- logout button with warning -->
-      <v-dialog v-model="logoutWarningDialog" width="500">
+      <v-dialog v-if="loggedUser" v-model="logoutWarningDialog" max-width="500">
         <template v-slot:activator="{ on, attrs }">
           <v-list-item :ripple="false" v-bind="attrs" v-on="on">
             <v-list-item-title class="body-2">
