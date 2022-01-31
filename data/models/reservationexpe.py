@@ -58,8 +58,8 @@ class ReservationExpe(models.Model):
     ratio_edible_non_edible_t0 = models.DecimalField(
         null=True,
         blank=True,
-        max_digits=3,
-        decimal_places=2,
+        max_digits=5,
+        decimal_places=4,
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Ratio de la part non comestible (g) rapportée à la part comestible (g)",
     )
@@ -90,8 +90,8 @@ class ReservationExpe(models.Model):
     solution_use_rate_t0 = models.DecimalField(
         null=True,
         blank=True,
-        max_digits=3,
-        decimal_places=2,
+        max_digits=5,
+        decimal_places=4,
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Taux d’utilisation de la solution de réservation",
     )
@@ -120,8 +120,8 @@ class ReservationExpe(models.Model):
     ratio_edible_non_edible_t1 = models.DecimalField(
         null=True,
         blank=True,
-        max_digits=3,
-        decimal_places=2,
+        max_digits=5,
+        decimal_places=4,
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Ratio de la part non comestible (g) rapportée à la part comestible (g)",
     )
@@ -182,8 +182,8 @@ class ReservationExpe(models.Model):
     ratio_edible_non_edible_t2 = models.DecimalField(
         null=True,
         blank=True,
-        max_digits=3,
-        decimal_places=2,
+        max_digits=5,
+        decimal_places=4,
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Ratio de la part non comestible (g) rapportée à la part comestible (g)",
     )

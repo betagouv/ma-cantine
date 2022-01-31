@@ -517,14 +517,14 @@ export default {
     treatOutboundPercentageValues(payload) {
       for (let i = 0; i < this.percentageFields.length; i++) {
         if (Object.prototype.hasOwnProperty.call(payload, this.percentageFields[i]))
-          payload[this.percentageFields[i]] = payload[this.percentageFields[i]] / 100
+          payload[this.percentageFields[i]] = parseFloat((payload[this.percentageFields[i]] / 100).toPrecision(3))
       }
       return payload
     },
     treatInboundPercentageValues(expe) {
       for (let i = 0; i < this.percentageFields.length; i++) {
         if (Object.prototype.hasOwnProperty.call(expe, this.percentageFields[i]))
-          expe[this.percentageFields[i]] = expe[this.percentageFields[i]] * 100
+          expe[this.percentageFields[i]] = parseFloat((expe[this.percentageFields[i]] * 100).toPrecision(4))
       }
       return expe
     },
