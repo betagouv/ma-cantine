@@ -30,7 +30,7 @@
 
         <v-card>
           <v-card-text class="pa-8 text-left">
-            Voulez-vous vraiment vous déconnecter ?
+            Voulez-vous vous déconnecter de votre compte ma cantine ?
           </v-card-text>
 
           <v-divider></v-divider>
@@ -38,10 +38,10 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
-              Non, rester sur site
+              Non, revenir en arrière
             </v-btn>
-            <v-btn color="orange" text href="/se-deconnecter">
-              Oui, me déconnecter
+            <v-btn color="red" text href="/se-deconnecter">
+              Oui, je confirme
             </v-btn>
           </v-card-actions>
         </v-card>
