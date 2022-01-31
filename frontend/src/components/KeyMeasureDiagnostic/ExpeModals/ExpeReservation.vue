@@ -428,7 +428,7 @@
                         suffix="€"
                         solo
                         dense
-                        v-model.number="expe.participationCost"
+                        v-model.number="expe.moneySaved"
                         style="max-width: 300px"
                         class="mt-2 mb-4 body-2"
                         id="money-saved"
@@ -475,6 +475,14 @@ export default {
         { label: "T0 + 3 mois", value: "T1" },
         { label: "T0 + 5 mois", value: "T2" },
       ],
+      percentageFields: [
+        "ratioEdibleNonEdibleT0",
+        "solutionUseRateT0",
+        "ratioEdibleNonEdibleT1",
+        "solutionUseRateT1",
+        "ratioEdibleNonEdibleT2",
+        "solutionUseRateT2",
+      ],
     }
   },
   methods: {
@@ -489,7 +497,9 @@ export default {
       }
 
       const method = this.isNewExpe ? "createReservationExpe" : "updateReservationExpe"
-      const payload = this.fixPercentageValues(this.isNewExpe ? this.expe : getObjectDiff(this.originalExpe, this.expe))
+      const payload = this.treatOutboundPercentageValues(
+        this.isNewExpe ? this.expe : getObjectDiff(this.originalExpe, this.expe)
+      )
       const successMessage = this.isNewExpe
         ? "Votre inscription a bien été prise en compte"
         : "Vos données de l'expérimentation ont bien été sauvegardés"
@@ -504,20 +514,19 @@ export default {
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
-    fixPercentageValues(payload) {
-      const percentageFields = [
-        "ratioEdibleNonEdibleT0",
-        "solutionUseRateT0",
-        "ratioEdibleNonEdibleT1",
-        "solutionUseRateT1",
-        "ratioEdibleNonEdibleT2",
-        "solutionUseRateT2",
-      ]
-      for (let i = 0; i < percentageFields.length; i++) {
-        if (Object.prototype.hasOwnProperty.call(payload, percentageFields[i]))
-          payload[percentageFields[i]] = payload[percentageFields[i]] / 100
+    treatOutboundPercentageValues(payload) {
+      for (let i = 0; i < this.percentageFields.length; i++) {
+        if (Object.prototype.hasOwnProperty.call(payload, this.percentageFields[i]))
+          payload[this.percentageFields[i]] = payload[this.percentageFields[i]] / 100
       }
       return payload
+    },
+    treatInboundPercentageValues(expe) {
+      for (let i = 0; i < this.percentageFields.length; i++) {
+        if (Object.prototype.hasOwnProperty.call(expe, this.percentageFields[i]))
+          expe[this.percentageFields[i]] = expe[this.percentageFields[i]] * 100
+      }
+      return expe
     },
   },
   computed: {
@@ -542,8 +551,8 @@ export default {
     this.$store
       .dispatch("fetchReservationExpe", { canteen: this.canteen })
       .then((response) => {
-        this.expe = response || {}
-        this.originalExpe = JSON.parse(JSON.stringify(this.expe))
+        this.originalExpe = this.treatInboundPercentageValues(response || {})
+        this.expe = JSON.parse(JSON.stringify(this.originalExpe))
       })
       .catch((e) => this.$store.dispatch("notifyServerError", e))
   },
