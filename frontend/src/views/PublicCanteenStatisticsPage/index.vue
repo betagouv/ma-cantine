@@ -41,7 +41,7 @@
           ></v-autocomplete>
         </v-col>
         <v-col cols="12" sm="6" md="4" class="d-flex align-end">
-          <v-btn x-large color="primary" @click="updateStatistics">
+          <v-btn x-large color="primary" @click="updateRoute">
             Afficher les statistiques
           </v-btn>
         </v-col>
@@ -65,7 +65,8 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
+              ).
             </p>
           </div>
           <VueApexCharts
@@ -221,8 +222,7 @@ export default {
     }
   },
   mounted() {
-    this.chosenDepartment = this.$route.query.department
-    this.chosenRegion = this.$route.query.region
+    this.populateInitialParameters()
     this.loadLocations()
     this.updateStatistics()
   },
@@ -403,6 +403,10 @@ export default {
         })
         .catch(() => {})
     },
+    populateInitialParameters() {
+      this.chosenDepartment = this.$route.query.department
+      this.chosenRegion = this.$route.query.region
+    },
   },
   watch: {
     chosenRegion(newRegion) {
@@ -412,6 +416,10 @@ export default {
           this.chosenDepartment = null
         }
       }
+    },
+    $route() {
+      this.populateInitialParameters()
+      this.updateStatistics()
     },
   },
 }
