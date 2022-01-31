@@ -42,7 +42,7 @@
 export default {
   data() {
     return {
-      filepath: "/static/documents/Diagnostic approvisionnement (ma-cantine-alpha) v0.5",
+      filepath: "/static/documents/Diagnostic approvisionnement (ma-cantine-alpha) v0.6VM.xlsx",
     }
   },
   methods: {
