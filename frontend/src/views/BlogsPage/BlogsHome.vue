@@ -126,6 +126,7 @@ export default {
     },
     $route(newRoute) {
       this.page = newRoute.query.page ? parseInt(newRoute.query.page) : 1
+      this.tag = newRoute.query.etiquette
     },
   },
   mounted() {
