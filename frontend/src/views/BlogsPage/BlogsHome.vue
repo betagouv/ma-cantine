@@ -70,6 +70,7 @@ export default {
       limit: 6,
       page: null,
       tag: null,
+      tags: [],
     }
   },
   computed: {
@@ -89,9 +90,6 @@ export default {
       }
       return null
     },
-    tags() {
-      return this.$store.state.blogTags.map((x) => x.name)
-    },
     loading() {
       return this.blogPostCount === null
     },
@@ -101,7 +99,9 @@ export default {
   },
   methods: {
     fetchCurrentPage() {
-      this.$store.dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag })
+      this.$store
+        .dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag })
+        .then((response) => (this.tags = response.tags))
     },
     updateRoute() {
       let query = { page: this.page }
@@ -130,7 +130,6 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("fetchBlogTags")
     this.tag = this.$route.query.etiquette
     this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
   },

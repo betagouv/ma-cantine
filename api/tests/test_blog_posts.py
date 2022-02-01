@@ -64,3 +64,25 @@ class TestBlogApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], good_post.id)
+
+    def test_get_blog_tags_in_use(self):
+        """
+        The API should also return names of tags that are used by published blog posts
+        """
+        used_tag = BlogTagFactory.create(name="Used")
+        draft_tag = BlogTagFactory.create(name="Draft")
+        BlogTagFactory.create(name="Unused")
+
+        published_blog_post = BlogPostFactory.create(published=True)
+        published_blog_post.tags.add(used_tag)
+        draft_blog_post = BlogPostFactory.create(published=False)
+        draft_blog_post.tags.add(draft_tag)
+
+        response = self.client.get(reverse("blog_posts_list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        tags = body.get("tags", [])
+        self.assertIn("Used", tags)
+        self.assertNotIn("Unused", tags)
+        self.assertNotIn("Draft", tags)
