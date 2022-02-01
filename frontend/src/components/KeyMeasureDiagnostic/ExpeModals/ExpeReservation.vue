@@ -92,12 +92,7 @@
               ></v-text-field>
             </template>
 
-            <v-date-picker
-              v-if="expe.hasReservationSystem"
-              v-model="expe.experimentationStartDate"
-              :max="today"
-              locale="fr-FR"
-            ></v-date-picker>
+            <v-date-picker v-model="expe.experimentationStartDate" :max="today" locale="fr-FR"></v-date-picker>
           </v-menu>
 
           <!-- description -->
@@ -208,7 +203,15 @@
             Tous les 3 mois, revenez sur cette page afin de renseigner les taux de fréquentation de l’établissement.
           </p>
           <div class="mt-4 tabs-container">
-            <v-tabs v-model="tab" align-with-title color="primary" background-color="primary lighten-5">
+            <v-tabs
+              next-icon="mdi-chevron-right"
+              prev-icon="mdi-chevron-left"
+              :show-arrows="$vuetify.breakpoint.xs"
+              v-model="tab"
+              align-with-title
+              color="primary"
+              background-color="primary lighten-5"
+            >
               <v-tab v-for="item in tabs" :key="item.key">
                 {{ item.label }}
               </v-tab>
