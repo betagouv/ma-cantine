@@ -11,3 +11,4 @@ from .blogtag import BlogTagFactory  # noqa
 from .managerinvitation import ManagerInvitationFactory  # noqa
 from .teledeclaration import TeledeclarationFactory  # noqa
 from .purchase import PurchaseFactory  # noqa
+from .reservationexpe import ReservationExpeFactory  # noqa

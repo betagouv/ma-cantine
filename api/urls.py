@@ -17,6 +17,7 @@ from api.views import ImportDiagnosticsView, TeledeclarationCreateView
 from api.views import TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
 from api.views import UserCanteenPreviews, CanteenLocationsView
+from api.views import ReservationExpeView
 
 
 urlpatterns = {
@@ -110,6 +111,7 @@ urlpatterns = {
         name="purchase_retrieve_update",
     ),
     path("canteenLocations/", CanteenLocationsView.as_view(), name="canteen_locations"),
+    path("canteen/<int:canteen_pk>/reservationExpe/", ReservationExpeView.as_view(), name="canteen_reservation_expe"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

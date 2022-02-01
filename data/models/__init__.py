@@ -7,3 +7,4 @@ from .blogtag import BlogTag  # noqa: F401
 from .managerinvitation import ManagerInvitation  # noqa: F401
 from .teledeclaration import Teledeclaration  # noqa: F401
 from .purchase import Purchase  # noqa: F401
+from .reservationexpe import ReservationExpe  # noqa: F401

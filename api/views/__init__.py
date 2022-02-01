@@ -29,3 +29,4 @@ from .teledeclaration import (  # noqa: F401
 )
 from .inquiry import InquiryView  # noqa: F401
 from .purchase import PurchaseListCreateView, PurchaseRetrieveUpdateView  # noqa: F401
+from .reservationexpe import ReservationExpeView  # noqa: F401

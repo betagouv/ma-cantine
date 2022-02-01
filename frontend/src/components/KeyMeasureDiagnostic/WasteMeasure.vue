@@ -157,12 +157,71 @@
       :disabled="readonly"
       class="mt-6"
     ></v-textarea>
+
+    <v-divider v-if="showExpeSegment" class="mb-8"></v-divider>
+    <div v-if="showExpeSegment">
+      <p class="text-h6 font-weight-bold">
+        Expérimentation réservation de repas
+      </p>
+
+      <p class="body-2">
+        Vous souhaitez réduire le gaspillage alimentaire dans votre établissement et générer des économies :
+        <span class="font-weight-bold">la réservation de repas peut être une solution !</span>
+      </p>
+      <p class="body-2">
+        Pour évaluer ses effets sur le gaspillage alimentaire, la satisfaction de vos convives et le taux de
+        fréquentation de votre établissement, nous vous proposons de participer à une expérimentation prévue par la loi
+        climat et résilience.
+      </p>
+      <p class="body-2">
+        Votre candidature à cette expérimentation vous permettra de mettre en place une démarche d’évaluation dont les
+        résultats permettront de saisir le potentiel de la solution de réservation de repas.
+      </p>
+      <p class="body-2 font-weight-bold">
+        Vous avez déjà mis en place une solution de réservation de repas ou souhaitez en adopter une ? Vous pouvez vous
+        inscrire dès maintenant !
+      </p>
+      <p class="body-2">
+        Vous serez amenés à répondre à des questions sur votre structure et la solution de réservation que vous aurez
+        mise en place, ainsi qu’à transmettre des données relatives aux évaluations du gaspillage alimentaire, du taux
+        de fréquentation et de la satisfaction des usagers sur une période de six mois.
+      </p>
+      <p class="body-2">Les inscriptions sont ouvertes jusqu’au 1er juillet 2023.</p>
+      <p class="body-2">
+        Les informations relatives aux conditions de mise en œuvre de l’expérimentation sont précisées dans
+        <a href="">le guide pratique</a>
+        .
+      </p>
+
+      <v-checkbox v-if="canteen" v-model="canteen.reservationExpeParticipant" @change="onExpeCheckboxChange">
+        <template v-slot:label>
+          <span class="body-2 grey--text text--darken-3">
+            Je suis volontaire pour participer à l’expérimentation.
+          </span>
+        </template>
+      </v-checkbox>
+      <v-btn
+        color="primary"
+        class="body-2 mt-n2 mb-2"
+        v-if="canteen.reservationExpeParticipant"
+        outlined
+        small
+        @click="() => (showExpeModal = true)"
+      >
+        Mettre à jour mes données
+      </v-btn>
+
+      <v-dialog v-model="showExpeModal" :width="$vuetify.breakpoint.mdAndUp ? 900 : undefined">
+        <ExpeReservation v-if="showExpeModal" @close="() => (showExpeModal = false)" :canteen="canteen" />
+      </v-dialog>
+    </div>
   </div>
 </template>
 
 <script>
 import validators from "@/validators"
 import { applicableDiagnosticRules } from "@/utils"
+import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
 
 export default {
   props: {
@@ -173,8 +232,11 @@ export default {
     },
     canteen: Object,
   },
+  components: { ExpeReservation },
   data() {
     return {
+      showExpeModal: false,
+      participationExpeCheckboxValue: this.canteen.reservationExpeParticipant,
       wasteActions: [
         {
           label: "Pré-inscription des convives obligatoire",
@@ -210,6 +272,21 @@ export default {
     },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
+    },
+    showExpeSegment() {
+      return !!this.canteen
+    },
+  },
+  methods: {
+    onExpeCheckboxChange(checked) {
+      this.$store
+        .dispatch("updateCanteen", {
+          id: this.canteen.id,
+          payload: { reservationExpeParticipant: checked },
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+
+      if (checked) this.showExpeModal = true
     },
   },
   watch: {
