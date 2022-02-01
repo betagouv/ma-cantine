@@ -171,7 +171,7 @@
       <p class="body-2">
         Pour évaluer ses effets sur le gaspillage alimentaire, la satisfaction de vos convives et le taux de
         fréquentation de votre établissement, nous vous proposons de participer à une expérimentation prévue par la loi
-        Climat et résilience.
+        climat et résilience.
       </p>
       <p class="body-2">
         Votre candidature à cette expérimentation vous permettra de mettre en place une démarche d’évaluation dont les
