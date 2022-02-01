@@ -381,6 +381,7 @@ const DEFAULT_ORDER = "creation"
 
 export default {
   data() {
+    const user = this.$store.state.loggedUser
     return {
       limit: 6,
       departments: [],
@@ -424,8 +425,8 @@ export default {
         },
       ],
       orderDescending: true,
-      fromEmail: "",
-      name: "",
+      fromEmail: user ? user.email : "",
+      name: user ? `${user.firstName} ${user.lastName}` : "",
       message: "",
       formIsValid: true,
       managementTypes: Constants.ManagementTypes,
