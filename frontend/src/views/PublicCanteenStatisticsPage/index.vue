@@ -65,8 +65,7 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
-              ).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
             </p>
           </div>
           <VueApexCharts
@@ -396,16 +395,17 @@ export default {
       // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
       this.$router
         .push({ query })
-        .then(() => {
-          let title = "Les statistiques dans ma collectivité - ma-cantine.beta.gouv.fr"
-          if (this.chosenRegion || this.chosenDepartment) title = `${this.createLocationText()} - ${title}`
-          document.title = title
-        })
+        .then(() => this.updateDocumentTitle())
         .catch(() => {})
     },
     populateInitialParameters() {
       this.chosenDepartment = this.$route.query.department
       this.chosenRegion = this.$route.query.region
+    },
+    updateDocumentTitle() {
+      let title = "Les statistiques dans ma collectivité - ma-cantine.beta.gouv.fr"
+      if (this.chosenRegion || this.chosenDepartment) title = `${this.createLocationText()} - ${title}`
+      document.title = title
     },
   },
   watch: {
@@ -420,6 +420,7 @@ export default {
     $route() {
       this.populateInitialParameters()
       this.updateStatistics()
+      this.updateDocumentTitle()
     },
   },
 }
