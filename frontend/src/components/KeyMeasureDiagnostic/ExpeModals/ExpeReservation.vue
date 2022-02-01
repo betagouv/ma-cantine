@@ -570,3 +570,9 @@ export default {
   border-radius: 4px;
 }
 </style>
+
+<style scoped>
+.v-form >>> textarea::placeholder {
+  color: #444;
+}
+</style>
