@@ -16,6 +16,36 @@
           </v-list-item-title>
         </v-list-item>
       </div>
+      <v-divider v-if="loggedUser" class="my-2"></v-divider>
+      <!-- logout button with warning -->
+      <v-dialog v-if="loggedUser" v-model="logoutWarningDialog" max-width="500">
+        <template v-slot:activator="{ on, attrs }">
+          <v-list-item :input-value="logoutWarningDialog" :ripple="false" v-bind="attrs" v-on="on">
+            <v-list-item-title class="body-2">
+              <v-icon small color="grey darken-2" class="mt-n1 mr-2">mdi-exit-to-app</v-icon>
+              Me déconnecter
+            </v-list-item-title>
+          </v-list-item>
+        </template>
+
+        <v-card>
+          <v-card-text class="pa-8 text-left">
+            Voulez-vous vous déconnecter de votre compte ma cantine ?
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
+              Non, revenir en arrière
+            </v-btn>
+            <v-btn color="red" text href="/se-deconnecter">
+              Oui, je confirme
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-list-item-group>
   </v-list>
 </template>
@@ -25,6 +55,7 @@ export default {
   name: "HeaderDropdownList",
   data() {
     return {
+      logoutWarningDialog: false,
       items: [
         {
           text: "Mon compte",
@@ -114,16 +145,6 @@ export default {
           href:
             "https://voxusagers.numerique.gouv.fr/Demarches/2934?&view-mode=formulaire-avis&nd_mode=en-ligne-enti%C3%A8rement&nd_source=button&key=2c212af2116e6bf85d63fee0645f8a10",
           target: "_blank",
-        },
-        {
-          type: "divider",
-          authenticationState: true,
-        },
-        {
-          text: "Me déconnecter",
-          icon: "mdi-exit-to-app",
-          href: "/se-deconnecter",
-          authenticationState: true,
         },
       ],
     }
