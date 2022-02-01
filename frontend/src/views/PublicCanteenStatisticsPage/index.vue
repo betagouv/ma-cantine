@@ -41,7 +41,7 @@
           ></v-autocomplete>
         </v-col>
         <v-col cols="12" sm="6" md="4" class="d-flex align-end">
-          <v-btn x-large color="primary" @click="submit">
+          <v-btn x-large color="primary" @click="updateRoute">
             Afficher les statistiques
           </v-btn>
         </v-col>
@@ -221,8 +221,9 @@ export default {
     }
   },
   mounted() {
+    this.populateInitialParameters()
     this.loadLocations()
-    this.loadStatistics(this.defaultLocationText, `year=${this.year}`)
+    this.updateStatistics()
   },
   computed: {
     departments() {
@@ -270,6 +271,11 @@ export default {
           offsetX: this.$vuetify.breakpoint.mdAndUp ? 162 : 10,
           offsetY: -5,
           floating: true,
+        },
+        dataLabels: {
+          style: {
+            colors: ["#000"],
+          },
         },
         chart: {
           type: "bar",
@@ -351,37 +357,70 @@ export default {
         normaliseText(itemText).indexOf(normaliseText(queryText)) > -1
       )
     },
-    submit() {
+    createLocationText() {
+      let locationText
+      if (this.chosenDepartment) {
+        locationText = jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment)
+          .departmentName
+      } else if (this.chosenRegion) {
+        locationText = jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName
+      } else {
+        locationText = this.defaultLocationText
+      }
+      return locationText
+    },
+    updateStatistics() {
       let query = `year=${this.year}`
       this.locationText = ""
-      let newLocationText
       if (this.chosenDepartment) {
-        newLocationText = jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment)
-          .departmentName
         query += `&department=${this.chosenDepartment}`
         this.statsLevel = "department"
       } else if (this.chosenRegion) {
-        newLocationText = jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName
         query += `&region=${this.chosenRegion}`
         this.statsLevel = "region"
       } else {
-        newLocationText = this.defaultLocationText
         this.statsLevel = "site"
       }
-      if (newLocationText) {
-        this.loadStatistics(newLocationText, query)
-        // should probably move badge into a canteen attribute rather than calculating it on front
+      let newLocationText = this.createLocationText()
+      this.loadStatistics(newLocationText, query)
+      this.updateRoute()
+    },
+    updateRoute() {
+      let query = {}
+      if (this.chosenDepartment) {
+        query.department = this.chosenDepartment
+      } else if (this.chosenRegion) {
+        query.region = this.chosenRegion
       }
+      // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
+      this.$router
+        .push({ query })
+        .then(() => this.updateDocumentTitle())
+        .catch(() => {})
+    },
+    populateInitialParameters() {
+      this.chosenDepartment = this.$route.query.department
+      this.chosenRegion = this.$route.query.region
+    },
+    updateDocumentTitle() {
+      let title = "Les statistiques dans ma collectivité - ma-cantine.beta.gouv.fr"
+      if (this.chosenRegion || this.chosenDepartment) title = `${this.createLocationText()} - ${title}`
+      document.title = title
     },
   },
   watch: {
     chosenRegion(newRegion) {
-      if (this.chosenDepartment) {
+      if (newRegion && this.chosenDepartment) {
         let depInfo = jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment)
         if (depInfo.regionCode !== newRegion) {
           this.chosenDepartment = null
         }
       }
+    },
+    $route() {
+      this.populateInitialParameters()
+      this.updateStatistics()
+      this.updateDocumentTitle()
     },
   },
 }

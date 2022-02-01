@@ -334,7 +334,7 @@ const routes = [
     name: "PublicCanteenStatisticsPage",
     component: PublicCanteenStatisticsPage,
     meta: {
-      title: "Les statistics dans ma région",
+      title: "Les statistiques dans ma collectivité",
     },
   },
   {
