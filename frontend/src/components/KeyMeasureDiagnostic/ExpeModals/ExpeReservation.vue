@@ -23,14 +23,14 @@
           <!-- reservation system in place? -->
           <v-checkbox v-model="expe.hasReservationSystem">
             <template v-slot:label>
-              <span class="body-2 grey--text text--darken-2">
+              <span class="body-2 grey--text text--darken-3">
                 J'ai déjà mis en place une solution de réservation de repas
               </span>
             </template>
           </v-checkbox>
 
           <!-- reservation system date -->
-          <label v-if="expe.hasReservationSystem" class="body-2" for="date">
+          <label v-if="expe.hasReservationSystem" class="body-2 grey--text text--darken-3" for="date">
             Date de mise en place de la solution de réservation
           </label>
           <v-menu
@@ -66,7 +66,7 @@
           </v-menu>
 
           <!-- launch date -->
-          <label class="body-2" for="launch-date">
+          <label class="body-2 grey--text text--darken-3" for="launch-date">
             Date de lancement de l’expérimentation (à partir de février – mars 2022 jusqu’au 1er juillet 2023) T0 :
           </label>
           <v-menu
@@ -101,7 +101,7 @@
           </v-menu>
 
           <!-- description -->
-          <label class="body-2" for="reservation-system-description">
+          <label class="body-2 grey--text text--darken-3" for="reservation-system-description">
             Quel type de réservation de repas allez-vous mettre en place ? Décrivez-en le fonctionnement.
           </label>
           <v-textarea
@@ -116,7 +116,7 @@
           ></v-textarea>
 
           <!-- communication -->
-          <label class="body-2" for="communication">
+          <label class="body-2 grey--text text--darken-3" for="communication">
             Comment comptez-vous communiquer sur la mise en place de la solution de réservation de repas dans votre
             établissement auprès de vos usagers ?
           </label>
@@ -135,7 +135,7 @@
 
           <v-checkbox hide-details="auto" class="mt-2" v-model="expe.hasLeader">
             <template v-slot:label>
-              <span class="body-2 grey--text text--darken-2">
+              <span class="body-2 grey--text text--darken-3">
                 Un responsable chargé du pilotage du projet a été désigné
               </span>
             </template>
@@ -143,7 +143,7 @@
 
           <!-- leader personal info -->
           <div v-if="expe.hasLeader" class="mt-2">
-            <label class="body-2" for="leader-first-name">
+            <label class="body-2 grey--text text--darken-3" for="leader-first-name">
               Prénom du responsable
             </label>
             <v-text-field
@@ -155,7 +155,7 @@
               class="mt-2 mb-2 body-2"
               id="leader-first-name"
             ></v-text-field>
-            <label class="body-2" for="leader-last-name">
+            <label class="body-2 grey--text text--darken-3" for="leader-last-name">
               Nom du responsable
             </label>
             <v-text-field
@@ -167,7 +167,7 @@
               class="mt-2 mb-4 body-2"
               id="leader-last-name"
             ></v-text-field>
-            <label class="body-2" for="leader-email">
+            <label class="body-2 grey--text text--darken-3" for="leader-email">
               Adresse email du responsable
             </label>
             <v-text-field
@@ -184,7 +184,7 @@
           <!-- has regulations -->
           <v-checkbox hide-details="auto" class="mt-2" v-model="expe.hasRegulations">
             <template v-slot:label>
-              <span class="body-2 grey--text text--darken-2">
+              <span class="body-2 grey--text text--darken-3">
                 Un réglement à destination des convives a été rédigé
               </span>
             </template>
@@ -193,7 +193,7 @@
           <!-- has committee -->
           <v-checkbox hide-details="auto" class="mt-2" v-model="expe.hasCommittee">
             <template v-slot:label>
-              <span class="body-2 grey--text text--darken-2">
+              <span class="body-2 grey--text text--darken-3">
                 Un comité de pilotage du projet a été défini
               </span>
             </template>
@@ -219,8 +219,8 @@
                 <v-card flat>
                   <v-card-text>
                     <!-- average weight surplus -->
-                    <label class="body-2" :for="`avg-weight-not-served-${item.value}`">
-                      Moyenne des pesées des excédents présentés aux convives et non servis (g/ convive) à
+                    <label class="body-2 grey--text text--darken-3" :for="`avg-weight-not-served-${item.value}`">
+                      Moyenne des pesées des excédents présentés aux convives et non servis (g/convive) à
                       <span class="font-italic">{{ item.label }}</span>
                       sur 20 déjeuners successifs
                     </label>
@@ -237,7 +237,7 @@
                     ></v-text-field>
 
                     <!-- average weight food scraps -->
-                    <label class="body-2" :for="`avg-weight-leftover-${item.value}`">
+                    <label class="body-2 grey--text text--darken-3" :for="`avg-weight-leftover-${item.value}`">
                       Moyenne des pesées des restes des assiettes exprimées (g/convive) à
                       <span class="font-italic">{{ item.label }}</span>
                       sur 20 déjeuners successifs
@@ -255,7 +255,7 @@
                     ></v-text-field>
 
                     <!-- ratio edible vs non-edible -->
-                    <label class="body-2" :for="`ratio-edible-${item.value}`">
+                    <label class="body-2 grey--text text--darken-3" :for="`ratio-edible-${item.value}`">
                       Ratio de la part non comestible (g) rapportée à la part comestible (g)
                     </label>
                     <v-text-field
@@ -272,8 +272,11 @@
                     ></v-text-field>
 
                     <!-- average weight preparation leftovers -->
-                    <label class="body-2" :for="`avg-weight-preparation-leftover-${item.value}`">
-                      Moyenne des pesées des excédents de préparation (g/convive) - Si vous préparez les repas sur place
+                    <label
+                      class="body-2 grey--text text--darken-3"
+                      :for="`avg-weight-preparation-leftover-${item.value}`"
+                    >
+                      Si vous préparez les repas sur place : moyenne des pesées des excédents de préparation (g/convive)
                     </label>
                     <v-text-field
                       validate-on-blur
@@ -288,7 +291,7 @@
                     ></v-text-field>
 
                     <!-- average bread leftover -->
-                    <label class="body-2" :for="`avg-bread-leftover-${item.value}`">
+                    <label class="body-2 grey--text text--darken-3" :for="`avg-bread-leftover-${item.value}`">
                       Moyenne des pesées des pains jetés sur 20 déjeuners successifs (g/convive)
                     </label>
                     <v-text-field
@@ -304,7 +307,10 @@
                     ></v-text-field>
 
                     <!-- attendance rate -->
-                    <label class="body-2" :for="`avg-attendance-from-evaluation-${item.value}`">
+                    <label
+                      class="body-2 grey--text text--darken-3"
+                      :for="`avg-attendance-from-evaluation-${item.value}`"
+                    >
                       Nombre moyen d'usagers par déjeuner calculé à partir de l'évaluation du nombre d'usagers sur 20
                       déjeuners successifs de la période d'évaluation à
                       <span class="font-italic">{{ item.label }}</span>
@@ -322,7 +328,7 @@
                     ></v-text-field>
 
                     <!-- reservation system usage rate -->
-                    <label class="body-2" :for="`solution-use-rate-${item.value}`">
+                    <label class="body-2 grey--text text--darken-3" :for="`solution-use-rate-${item.value}`">
                       Taux d’utilisation de la solution de réservation
                     </label>
                     <v-text-field
@@ -339,7 +345,7 @@
                     ></v-text-field>
 
                     <!-- satisfaction -->
-                    <label class="body-2" :for="`satisfaction-${item.value}`">
+                    <label class="body-2 grey--text text--darken-3" :for="`satisfaction-${item.value}`">
                       Satisfaction moyenne convive (par questionnaire)
                     </label>
                     <v-rating
@@ -355,7 +361,7 @@
                     ></v-rating>
 
                     <!-- comments -->
-                    <label class="body-2" :for="`comments-${item.value}`">
+                    <label class="body-2 grey--text text--darken-3" :for="`comments-${item.value}`">
                       Commentaire
                     </label>
                     <v-textarea
@@ -370,7 +376,7 @@
 
                     <div v-if="item.value === 'T2'">
                       <!-- system cost -->
-                      <label class="body-2" for="system-cost">
+                      <label class="body-2 grey--text text--darken-3" for="system-cost">
                         Coût de la solution de réservation sur 3 ans
                       </label>
                       <v-text-field
@@ -387,7 +393,7 @@
                       ></v-text-field>
 
                       <!-- participation cost -->
-                      <label class="body-2" for="participation-cost">
+                      <label class="body-2 grey--text text--darken-3" for="participation-cost">
                         Coûts liés à la participation à l'expérimentation sur 3 ans
                       </label>
                       <v-text-field
@@ -404,7 +410,7 @@
                       ></v-text-field>
 
                       <!-- participation cost -->
-                      <label class="body-2" for="participation-cost-details">
+                      <label class="body-2 grey--text text--darken-3" for="participation-cost-details">
                         Détails des coûts liés à la participation à l'expérimentation
                       </label>
                       <v-textarea
@@ -418,7 +424,7 @@
                       ></v-textarea>
 
                       <!-- money saved -->
-                      <label class="body-2" for="money-saved">
+                      <label class="body-2 grey--text text--darken-3" for="money-saved">
                         Gains générés par l'évitement du gaspillage laimentaire en euros sur 3 ans
                       </label>
                       <v-text-field

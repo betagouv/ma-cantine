@@ -115,7 +115,7 @@ export default {
   isPercentageOrEmpty(input) {
     if (!input || input.length === 0) return true
     const errorMessage = "Ce champ doit contenir une chiffre entre 0 et 100"
-    if (parseFloat(input) > 0 && parseFloat(input) <= 100) return true
+    if (parseFloat(input) >= 0 && parseFloat(input) <= 100) return true
     return errorMessage
   },
 }
