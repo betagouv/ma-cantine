@@ -26,7 +26,7 @@
       <v-row v-if="purchase">
         <v-col cols="12" md="8">
           <v-form ref="form" @submit.prevent v-model="formIsValid">
-            <v-row>
+            <v-row class="mb-4">
               <v-col cols="12" sm="8">
                 <label class="body-2" for="provider">Fournisseur</label>
                 <v-text-field
@@ -52,7 +52,7 @@
                 ></v-text-field>
               </v-col>
 
-              <v-col cols="12" sm="8" class="mb-6">
+              <v-col cols="12" sm="8">
                 <label class="body-2" for="canteen">Cantine</label>
                 <v-autocomplete
                   hide-details="auto"
@@ -64,6 +64,7 @@
                   item-text="name"
                   item-value="id"
                   id="canteen"
+                  class="mt-2"
                 ></v-autocomplete>
               </v-col>
 
@@ -151,6 +152,7 @@
             :showUploadButton="false"
             @input="invoiceFileChanged = true"
             v-model="purchase.invoiceFile"
+            class="mt-2"
           />
         </v-col>
         <v-col cols="12">
