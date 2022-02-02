@@ -99,41 +99,9 @@
             <fieldset>
               <legend class="body-2 my-3">Catégorie</legend>
               <v-radio-group v-model="purchase.category" class="my-0">
-                <div v-if="$vuetify.breakpoint.xs">
-                  <v-radio
-                    class="ml-8"
-                    v-for="item in categories"
-                    :key="item"
-                    :label="getCategoryDisplayValue(item).text"
-                    :value="item"
-                  >
-                    <template v-slot:label>
-                      <span class="body-2 grey--text text--darken-3">{{ getCategoryDisplayValue(item).text }}</span>
-                    </template>
-                  </v-radio>
-                </div>
-                <v-row v-else>
-                  <v-col>
-                    <v-radio
-                      class="ml-8"
-                      v-for="item in [...categories.slice(0, Math.ceil(categories.length / 2))]"
-                      :key="item"
-                      :label="getCategoryDisplayValue(item).text"
-                      :value="item"
-                    >
-                      <template v-slot:label>
-                        <span class="body-2 grey--text text--darken-3">{{ getCategoryDisplayValue(item).text }}</span>
-                      </template>
-                    </v-radio>
-                  </v-col>
-                  <v-col>
-                    <v-radio
-                      class="ml-8"
-                      v-for="item in [...categories.slice(Math.ceil(categories.length / 2))]"
-                      :key="item"
-                      :label="getCategoryDisplayValue(item).text"
-                      :value="item"
-                    >
+                <v-row>
+                  <v-col cols="12" sm="6" class="py-1" v-for="item in categories" :key="item">
+                    <v-radio :label="getCategoryDisplayValue(item).text" :value="item" class="mt-2">
                       <template v-slot:label>
                         <span class="body-2 grey--text text--darken-3">{{ getCategoryDisplayValue(item).text }}</span>
                       </template>
