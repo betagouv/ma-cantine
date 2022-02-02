@@ -159,8 +159,11 @@
           <v-btn x-large outlined color="primary" class="mr-4 align-self-center" exact :to="{ name: 'InvoicesHome' }">
             Annuler
           </v-btn>
-          <v-btn x-large color="primary" @click="savePurchase">
+          <v-btn x-large color="primary" @click="savePurchase()">
             Valider
+          </v-btn>
+          <v-btn x-large color="primary" @click="savePurchase(true)" v-if="isNewPurchase" class="ml-4">
+            Valider et ajouter un nouveau
           </v-btn>
         </v-sheet>
       </v-form>
@@ -295,7 +298,7 @@ export default {
         return characteristicHash[characteristic]
       return { text: "", color: "" }
     },
-    async savePurchase() {
+    async savePurchase(stayOnPage) {
       this.$refs.form.validate()
 
       if (!this.formIsValid) {
@@ -327,7 +330,13 @@ export default {
             message,
             status: "success",
           })
-          this.$router.push({ name: "InvoicesHome" })
+          if (!stayOnPage) this.$router.push({ name: "InvoicesHome" })
+          else {
+            this.purchase = {
+              characteristics: [],
+            }
+            this.$refs.form.resetValidation()
+          }
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
