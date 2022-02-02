@@ -23,9 +23,9 @@
         </h1>
       </div>
 
-      <v-row v-if="purchase">
-        <v-col cols="12" md="8">
-          <v-form ref="form" @submit.prevent v-model="formIsValid">
+      <v-form ref="form" @submit.prevent v-model="formIsValid" v-if="purchase">
+        <v-row>
+          <v-col cols="12" md="8">
             <v-row class="mb-4">
               <v-col cols="12" sm="8">
                 <label class="body-2" for="provider">Fournisseur</label>
@@ -69,7 +69,7 @@
               </v-col>
 
               <v-col cols="12" sm="4">
-                <label class="body-2" for="price">Date d'achat</label>
+                <label class="body-2" for="date">Date d'achat</label>
 
                 <v-menu
                   v-model="menu"
@@ -111,62 +111,59 @@
                 </v-row>
               </v-radio-group>
             </fieldset>
+          </v-col>
+          <v-col cols="12" md="4">
+            <label class="body-2">Facture</label>
 
-            <fieldset>
-              <legend class="body-2 my-3">Caractéristiques</legend>
-              <v-row class="mb-4">
-                <v-col cols="12" sm="6" class="py-0" v-for="characteristic in characteristics" :key="characteristic">
-                  <v-checkbox
-                    hide-details="auto"
-                    v-model="purchase.characteristics"
-                    :multiple="true"
-                    :key="characteristic"
-                    :value="characteristic"
-                    :label="getCharacteristicDisplayValue(characteristic).text"
-                  >
-                    <template v-slot:label>
-                      <span class="body-2 grey--text text--darken-3">
-                        {{ getCharacteristicDisplayValue(characteristic).text }}
-                      </span>
-                    </template>
-                  </v-checkbox>
-                </v-col>
-              </v-row>
-            </fieldset>
-          </v-form>
-        </v-col>
-        <v-col cols="12" md="4">
-          <label class="body-2">Facture</label>
+            <FilePreview
+              v-model="purchase.invoiceFile"
+              v-if="purchase.invoiceFile && typeof purchase.invoiceFile === 'string'"
+              @delete="purchase.invoiceFile = null"
+            ></FilePreview>
 
-          <FilePreview
-            v-model="purchase.invoiceFile"
-            v-if="purchase.invoiceFile && typeof purchase.invoiceFile === 'string'"
-            @delete="purchase.invoiceFile = null"
-          ></FilePreview>
-
-          <FileDrop
-            v-else
-            subtitle="Facture en PDF ou image acceptée"
-            :acceptTypes="['image/jpeg, image/gif, image/png, application/pdf']"
-            maxSize="10485760"
-            :showUploadButton="false"
-            @input="invoiceFileChanged = true"
-            v-model="purchase.invoiceFile"
-            class="mt-2"
-          />
-        </v-col>
-        <v-col cols="12">
-          <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
-            <v-spacer></v-spacer>
-            <v-btn x-large outlined color="primary" class="mr-4 align-self-center" exact :to="{ name: 'InvoicesHome' }">
-              Annuler
-            </v-btn>
-            <v-btn x-large color="primary" @click="savePurchase">
-              Valider
-            </v-btn>
-          </v-sheet>
-        </v-col>
-      </v-row>
+            <FileDrop
+              v-else
+              subtitle="Facture en PDF ou image acceptée"
+              :acceptTypes="['image/jpeg, image/gif, image/png, application/pdf']"
+              maxSize="10485760"
+              :showUploadButton="false"
+              @input="invoiceFileChanged = true"
+              v-model="purchase.invoiceFile"
+              class="mt-2"
+            />
+          </v-col>
+          <fieldset class="mx-4">
+            <legend class="body-2 my-3">Caractéristiques</legend>
+            <v-row class="mb-4">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in characteristics" :key="characteristic">
+                <v-checkbox
+                  hide-details="auto"
+                  v-model="purchase.characteristics"
+                  :multiple="true"
+                  :key="characteristic"
+                  :value="characteristic"
+                  :label="getCharacteristicDisplayValue(characteristic).text"
+                >
+                  <template v-slot:label>
+                    <span class="body-2 grey--text text--darken-3">
+                      {{ getCharacteristicDisplayValue(characteristic).text }}
+                    </span>
+                  </template>
+                </v-checkbox>
+              </v-col>
+            </v-row>
+          </fieldset>
+        </v-row>
+        <v-sheet rounded color="grey lighten-4 pa-3 mt-8" class="d-flex">
+          <v-spacer></v-spacer>
+          <v-btn x-large outlined color="primary" class="mr-4 align-self-center" exact :to="{ name: 'InvoicesHome' }">
+            Annuler
+          </v-btn>
+          <v-btn x-large color="primary" @click="savePurchase">
+            Valider
+          </v-btn>
+        </v-sheet>
+      </v-form>
     </div>
   </div>
 </template>
