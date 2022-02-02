@@ -125,6 +125,25 @@
       </a>
       à remplir avec vos données.
     </p>
+
+    <h3 class="my-6">Vous avez besoin d'aide ?</h3>
+    <p>
+      Si votre fichier comptable agrégé ne ressemble pas du tout à ça, vous pouvez nous envoyer votre fichier en
+      transférant un fichier en dessous ou en contactant nous directement à
+      <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+      et nous vous aiderons à le traiter.
+    </p>
+    <form>
+      <FileDrop
+        v-model="unusualFile"
+        :acceptTypes="[]"
+        maxSize="10485760"
+        @upload="emailUnusualFile"
+        :disabled="importInProgress"
+        uploadId="unusual-file"
+        submitText="Envoyer"
+      />
+    </form>
   </div>
 </template>
 
@@ -240,6 +259,7 @@ export default {
           example: "681",
         },
       ],
+      unusualFile: null,
     }
   },
   methods: {
@@ -257,9 +277,36 @@ export default {
           this.$store.dispatch("notify", {
             message: `Fichier traité en ${Math.round(this.seconds)} secondes`,
           })
+          // TODO: matomo stats
         })
         .catch((e) => {
           this.importInProgress = false
+          this.$store.dispatch("notifyServerError", e)
+        })
+    },
+    emailUnusualFile() {
+      let form = new FormData()
+      form.append("file", this.unusualFile)
+      fetch("/api/v1/emailDiagnosticImportFile/", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": window.CSRF_TOKEN || "",
+        },
+        body: form,
+      })
+        .then((response) => {
+          if (response.ok) {
+            this.$store.dispatch("notify", {
+              status: "success",
+              title: "Fichier envoyé",
+              message: "Merci, nous vous contacterons dans les plus brefs délais.",
+            })
+            this.unusualFile = null
+          } else {
+            this.$store.dispatch("notifyServerError", response)
+          }
+        })
+        .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
     },

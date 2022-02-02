@@ -10,7 +10,7 @@
   >
     <label
       class="d-flex flex-column align-center justify-center drop-area"
-      for="csv-file-upload"
+      :for="uploadId"
       style="cursor: pointer;"
       v-if="!hasFile"
       @dragover="onFileInputDragover"
@@ -23,7 +23,7 @@
         <span v-if="isDragging">Déposez votre fichier</span>
         <span v-else>Choisissez un fichier ou glissez-le ici</span>
       </v-card-text>
-      <v-card-subtitle v-if="!isDragging" class="text-center pt-2 text-caption">
+      <v-card-subtitle v-if="!isDragging && subtitle" class="text-center pt-2 text-caption">
         {{ subtitle }}
       </v-card-subtitle>
     </label>
@@ -33,7 +33,9 @@
         {{ value.name }}
       </v-card-text>
 
-      <v-btn large color="primary" @click.stop="upload" :disabled="disabled" v-if="showUploadButton">Valider</v-btn>
+      <v-btn large color="primary" @click.stop="upload" :disabled="disabled" v-if="showUploadButton">
+        {{ submitText }}
+      </v-btn>
       <v-btn large class="text-decoration-underline mt-5" text @click.stop="clearFile" :disabled="disabled">
         Choisir un autre fichier
       </v-btn>
@@ -41,9 +43,9 @@
     <input
       class="visually-hidden"
       :disabled="hasFile"
-      ref="csv-file-upload"
+      :ref="uploadId"
       @change="onFileInputChange"
-      id="csv-file-upload"
+      :id="uploadId"
       :accept="acceptTypes.join(', ')"
       type="file"
     />
@@ -63,7 +65,6 @@ export default {
       type: Array,
     },
     subtitle: {
-      required: true,
       type: String,
     },
     maxSize: {
@@ -76,6 +77,12 @@ export default {
       default: true,
     },
     disabled: Boolean,
+    uploadId: {
+      default: "csv-file-upload",
+    },
+    submitText: {
+      default: "Valider",
+    },
   },
   computed: {
     hasFile() {

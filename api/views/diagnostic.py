@@ -2,11 +2,12 @@ import csv
 import time
 import re
 import logging
+from common.utils import send_mail
 from decimal import Decimal
 from data.models.diagnostic import Diagnostic
 from django.db import IntegrityError, transaction
 from django.db.models.functions import Lower
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.core.exceptions import ObjectDoesNotExist, BadRequest, ValidationError
 from django.core.validators import validate_email
 from django.conf import settings
@@ -377,3 +378,41 @@ class ImportDiagnosticsView(APIView):
                     f"Attempt to add existing manager with email {email} to canteen {canteen.id} from a CSV import"
                 )
                 logger.exception(e)
+
+
+class EmailDiagnosticImportFileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            file = request.data["file"]
+            self._verify_file_size(file)
+            email = request.user.email
+            context = {
+                "from": email,
+                "name": f"{request.user.first_name} {request.user.last_name}",
+            }
+            send_mail(
+                subject="Fichier pour l'import de diagnostics massif",
+                to=[settings.CONTACT_EMAIL],
+                reply_to=[email],
+                template="unusual_diagnostic_import_file",
+                attachments=[(file.name, file.read(), file.content_type)],
+                context=context,
+            )
+        except ValidationError:
+            logger.error(
+                f"{request.user.id} tried to upload a file that is too large (over {settings.CSV_IMPORT_MAX_SIZE})"
+            )
+            return HttpResponseBadRequest()
+        except Exception as e:
+            logger.error(f"User {request.user.id} encountered an error when trying to email a diagnostic import file")
+            logger.exception(e)
+            return HttpResponseServerError()
+
+        return HttpResponse()
+
+    @staticmethod
+    def _verify_file_size(file):
+        if file.size > settings.CSV_IMPORT_MAX_SIZE:
+            raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
