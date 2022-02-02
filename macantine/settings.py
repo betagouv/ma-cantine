@@ -341,6 +341,8 @@ CSP_DEBUG_DOMAINS = (
     "localhost:*",
     "0.0.0.0:*",
     "127.0.0.1:*",
+    "www.ssa.gov",  # for a11y testing with ANDI
+    "ajax.googleapis.com",  # for a11y testing with ANDI
 )
 
 # CSP Default policy for resources such as JS, CSS, AJAX, etc. Note that not all directives fallback to this.
