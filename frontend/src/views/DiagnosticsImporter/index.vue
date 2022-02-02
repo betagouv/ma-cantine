@@ -277,7 +277,9 @@ export default {
           this.$store.dispatch("notify", {
             message: `Fichier traité en ${Math.round(this.seconds)} secondes`,
           })
-          // TODO: matomo stats
+          if (this.$matomo) {
+            this.$matomo.trackEvent("inquiry", "send", "import-diagnostics-success")
+          }
         })
         .catch((e) => {
           this.importInProgress = false
