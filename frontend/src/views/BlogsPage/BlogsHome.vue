@@ -71,25 +71,11 @@ export default {
       page: null,
       tag: null,
       tags: [],
+      visibleBlogPosts: null,
+      blogPostCount: null,
     }
   },
   computed: {
-    blogPostCount() {
-      return this.posts && this.posts[0] ? this.posts[0].count : null
-    },
-    postsForTag() {
-      return this.$store.state.blogPostsByTag.filter((x) => x.tag === this.tag)
-    },
-    posts() {
-      return this.tag ? this.postsForTag : this.$store.state.blogPosts
-    },
-    visibleBlogPosts() {
-      if (this.posts) {
-        const blogPostPage = this.posts.find((x) => x.offset === this.offset)
-        return blogPostPage ? blogPostPage.results : null
-      }
-      return null
-    },
     loading() {
       return this.blogPostCount === null
     },
@@ -101,37 +87,43 @@ export default {
     fetchCurrentPage() {
       this.$store
         .dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag })
-        .then((response) => (this.tags = response.tags))
+        .then((response) => {
+          this.tags = response.tags
+          this.visibleBlogPosts = response.results
+          this.blogPostCount = response.count
+        })
+        .catch(() => {
+          this.$store.dispatch("notifyServerError")
+        })
     },
-    updateRoute() {
-      let query = { page: this.page }
+    updateRoute(resetPagination) {
+      let query = { page: resetPagination ? 1 : this.page }
       if (this.tag) {
         query.etiquette = this.tag
       }
       // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
       this.$router.push({ query }).catch(() => {})
     },
-    updatePage() {
-      if (!this.visibleBlogPosts) this.fetchCurrentPage()
-      this.updateRoute()
+    populateParameters() {
+      this.tag = this.$route.query.etiquette
+      this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
     },
   },
   watch: {
     page() {
-      this.updatePage()
+      this.updateRoute(false)
     },
     tag() {
-      if (this.page == 1) this.updatePage()
-      else this.page = 1 // page watcher causes updatePage
+      this.updateRoute(true)
     },
-    $route(newRoute) {
-      this.page = newRoute.query.page ? parseInt(newRoute.query.page) : 1
-      this.tag = newRoute.query.etiquette
+    $route() {
+      this.populateParameters()
+      this.fetchCurrentPage()
     },
   },
   mounted() {
-    this.tag = this.$route.query.etiquette
-    this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
+    this.populateParameters()
+    if (Object.keys(this.$route.query).length > 0) this.fetchCurrentPage()
   },
 }
 </script>

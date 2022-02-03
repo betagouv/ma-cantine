@@ -30,17 +30,12 @@ export default new Vuex.Store({
     loggedUser: null,
 
     userLoadingStatus: Constants.LoadingStatus.IDLE,
-    blogLoadingStatus: Constants.LoadingStatus.IDLE,
     canteensLoadingStatus: Constants.LoadingStatus.IDLE,
     purchasesLoadingStatus: Constants.LoadingStatus.IDLE,
 
     sectors: [],
     userCanteenPreviews: [],
     initialDataLoaded: false,
-
-    blogPostCount: null,
-    blogPosts: [],
-    blogPostsByTag: [],
 
     notification: {
       message: "",
@@ -52,9 +47,6 @@ export default new Vuex.Store({
   mutations: {
     SET_USER_LOADING_STATUS(state, status) {
       state.userLoadingStatus = status
-    },
-    SET_BLOG_LOADING_STATUS(state, status) {
-      state.blogLoadingStatus = status
     },
     SET_CANTEENS_LOADING_STATUS(state, status) {
       state.canteensLoadingStatus = status
@@ -70,16 +62,6 @@ export default new Vuex.Store({
     },
     SET_USER_CANTEEN_PREVIEWS(state, userCanteenPreviews) {
       state.userCanteenPreviews = userCanteenPreviews
-    },
-    ADD_BLOG_POSTS(state, { response, limit, offset, tag }) {
-      let paginatedResults = { ...response, limit, offset }
-      if (tag) {
-        paginatedResults.tag = tag
-        state.blogPostsByTag.push(paginatedResults)
-      } else {
-        state.blogPosts.push(paginatedResults)
-        state.blogPostCount = response.count
-      }
     },
     SET_INITIAL_DATA_LOADED(state) {
       state.initialDataLoaded = true
@@ -149,18 +131,12 @@ export default new Vuex.Store({
     },
 
     fetchBlogPosts(context, { limit = 6, offset, tag }) {
-      context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       let url = `/api/v1/blogPosts/?limit=${limit}&offset=${offset}`
       if (tag) url += `&tag=${tag}`
       return fetch(url)
         .then(verifyResponse)
         .then((response) => {
-          context.commit("ADD_BLOG_POSTS", { response, limit, offset, tag })
-          context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           return response
-        })
-        .catch(() => {
-          context.commit("SET_BLOG_LOADING_STATUS", Constants.LoadingStatus.ERROR)
         })
     },
 
