@@ -154,15 +154,19 @@
             </v-row>
           </fieldset>
         </v-row>
-        <v-sheet rounded color="grey lighten-4 pa-3 mt-8" class="d-flex">
-          <v-spacer></v-spacer>
-          <v-btn x-large outlined color="primary" class="mr-4 align-self-center" exact :to="{ name: 'InvoicesHome' }">
+        <v-sheet
+          rounded
+          color="grey lighten-4 pa-3 mt-8"
+          class="d-flex flex-column flex-sm-row align-start align-sm-center"
+        >
+          <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
+          <v-btn x-large outlined color="primary" class="ma-1" exact :to="{ name: 'InvoicesHome' }">
             Annuler
           </v-btn>
-          <v-btn x-large color="primary" @click="savePurchase()">
+          <v-btn class="ma-1" x-large color="primary" @click="savePurchase()">
             Valider
           </v-btn>
-          <v-btn x-large color="primary" @click="savePurchase(true)" v-if="isNewPurchase" class="ml-4">
+          <v-btn x-large color="primary" @click="savePurchase(true)" v-if="isNewPurchase" class="ma-1">
             Valider et ajouter un nouveau
           </v-btn>
         </v-sheet>
