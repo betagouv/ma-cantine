@@ -71,7 +71,8 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
+              ).
             </p>
           </div>
           <VueApexCharts
@@ -314,6 +315,11 @@ export default {
     statsLevelDisplay() {
       return { department: "ce département", region: "cette région", site: "ce site" }[this.statsLevel]
     },
+    chosenRegionName() {
+      return this.chosenRegion
+        ? jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName || this.chosenRegion
+        : null
+    },
   },
   methods: {
     loadLocations() {
@@ -341,10 +347,8 @@ export default {
           value: x[`${locationKeyWord}Code`],
         }))
 
-      const includeDisabledDepartments = !this.chosenRegion || locationKeyWord === "region"
-      if (!includeDisabledDepartments) return enabledLocations
-
-      const headerText = `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
+      let headerText = this.chosenRegion ? `Pour la région « ${this.chosenRegionName} », nous ` : "Nous "
+      headerText += `n'avons pas encore d'établissements dans ces ${locationsWord} :`
       const header = { header: headerText }
       const divider = { divider: true }
 
@@ -373,7 +377,7 @@ export default {
           jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment).departmentName
         } »`
       } else if (this.chosenRegion) {
-        locationText = `« ${jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName} »`
+        locationText = `« ${this.chosenRegionName} »`
       } else {
         locationText = this.defaultLocationText
       }
@@ -410,7 +414,9 @@ export default {
     },
     populateInitialParameters() {
       this.chosenDepartment = this.$route.query.department
-      this.chosenRegion = this.$route.query.region
+      this.chosenRegion = this.chosenDepartment
+        ? jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment).regionCode
+        : this.$route.query.region
     },
     updateDocumentTitle() {
       let title = "Les statistiques dans ma collectivité - ma-cantine.beta.gouv.fr"
