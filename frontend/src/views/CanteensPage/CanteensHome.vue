@@ -325,10 +325,10 @@
         </div>
       </v-col>
       <v-col>
-        <h2 class="text-h6 font-weight-black text-left">
+        <h2 class="text-h6 font-weight-black text-left mb-4">
           Vous n'avez pas trouvé un ou plusieurs établissements qui vous intéressent ?
         </h2>
-        <p class="body-2 text-left">
+        <p class="body-2 text-left mb-6">
           Dites-nous tout, nous ferons en sorte de leur communiquer votre intérêt pour leurs initiatives en place.
         </p>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
@@ -338,32 +338,17 @@
             :rules="[validators.email]"
             validate-on-blur
             outlined
-            hide-details="auto"
-            class="my-2"
           ></v-text-field>
-          <v-text-field
-            hide-details="auto"
-            v-model="name"
-            label="Prénom et nom (facultatif)"
-            outlined
-            class="my-2"
-          ></v-text-field>
-          <v-textarea
-            hide-details="auto"
-            v-model="message"
-            label="Message"
-            outlined
-            :rules="[validators.required]"
-            class="mt-2"
-          ></v-textarea>
+          <v-text-field v-model="name" label="Prénom et nom (facultatif)" outlined></v-text-field>
+          <v-textarea v-model="message" label="Message" outlined :rules="[validators.required]"></v-textarea>
         </v-form>
-        <div class="d-flex mt-2">
+        <v-row class="pa-2">
           <v-spacer></v-spacer>
-          <v-btn x-large color="primary" class="mt-2" @click="sendEmail">
+          <v-btn x-large color="primary" @click="sendEmail">
             <v-icon class="mr-2">mdi-send</v-icon>
             Envoyer
           </v-btn>
-        </div>
+        </v-row>
       </v-col>
     </v-row>
   </div>
