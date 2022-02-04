@@ -3,5 +3,13 @@
 {% block content %}
     <p>{{ name }} ({{ from }}) voudrait importer des diagnostics avec le fichier en pièce jointe.</p>
 
+    {% if message %}
+        <p>Voici son message :</p>
+
+        <p>-------------------------------------</p>
+        <p>{{ message|linebreaks }}</p>
+        <p>-------------------------------------</p>
+    {% endif %}
+
     <p>Pour démarrer la conversation vous pouvez répondre directement à cet email.</p>
 {% endblock %}

@@ -387,10 +387,11 @@ class EmailDiagnosticImportFileView(APIView):
         try:
             file = request.data["file"]
             self._verify_file_size(file)
-            email = request.user.email
+            email = request.data.get("email", request.user.email)
             context = {
                 "from": email,
-                "name": f"{request.user.first_name} {request.user.last_name}",
+                "name": request.data.get("name", request.user.get_full_name()),
+                "message": request.data.get("message", ""),
             }
             send_mail(
                 subject="Fichier pour l'import de diagnostics massif",

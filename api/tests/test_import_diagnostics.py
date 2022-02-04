@@ -427,15 +427,20 @@ class TestImportDiagnosticsAPI(APITestCase):
         Check that this endpoint sends an email with the file attached and relevant info
         """
         with open("./api/tests/files/diagnostics_bad_file.csv") as diag_file:
-            response = self.client.post(reverse("email_diagnostic_file"), {"file": diag_file})
+            response = self.client.post(
+                reverse("email_diagnostic_file"),
+                {"file": diag_file, "message": "Help me", "name": "Camille Dupont", "email": "dupont@example.com"},
+            )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 1)
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "team@example.com")
-        self.assertIsNotNone(authenticate.user.email)
-        self.assertIn(authenticate.user.email, email.body)
+        self.assertEqual("dupont@example.com", email.reply_to[0])
         self.assertEqual(email.attachments[0][0], "diagnostics_bad_file.csv")
+        self.assertIn("dupont@example.com", email.body)
+        self.assertIn("Camille Dupont", email.body)
+        self.assertIn("Help me", email.body)
 
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):

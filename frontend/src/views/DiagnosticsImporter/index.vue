@@ -126,34 +126,47 @@
       à remplir avec vos données.
     </p>
 
-    <h3 class="my-6">Vous avez besoin d'aide ?</h3>
+    <h2 class="my-6">Vous avez besoin d'aide ?</h2>
     <p>
       Si votre fichier comptable agrégé ne ressemble pas du tout à ça, vous pouvez nous envoyer votre fichier en
       transférant un fichier en dessous ou en contactant nous directement à
       <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
       et nous vous aiderons à le traiter.
     </p>
-    <form>
-      <FileDrop
-        v-model="unusualFile"
-        :acceptTypes="[]"
-        maxSize="10485760"
-        @upload="emailUnusualFile"
-        :disabled="importInProgress"
-        uploadId="unusual-file"
-        submitText="Envoyer"
-      />
-    </form>
+    <v-form v-model="helpFormIsValid" ref="helpForm" @submit.prevent class="my-12">
+      <v-row class="mb-1">
+        <v-col cols="12" md="6" class="py-0">
+          <v-text-field
+            v-model="fromEmail"
+            label="Votre email"
+            :rules="[validators.email]"
+            validate-on-blur
+            outlined
+          ></v-text-field>
+        </v-col>
+        <v-col class="py-0">
+          <v-text-field v-model="name" label="Prénom et nom" outlined></v-text-field>
+        </v-col>
+      </v-row>
+      <v-textarea v-model="message" label="Message (facultatif)" outlined></v-textarea>
+      <v-file-input v-model="unusualFile" label="Fichier" outlined :rules="[validators.required]" validate-on-blur />
+      <v-btn x-large color="primary" @click="emailUnusualFile">
+        <v-icon class="mr-2">mdi-send</v-icon>
+        Envoyer
+      </v-btn>
+    </v-form>
   </div>
 </template>
 
 <script>
 import FileDrop from "@/components/FileDrop"
+import validators from "@/validators"
 
 export default {
   name: "ImportDiagnostics",
   components: { FileDrop },
   data() {
+    const user = this.$store.state.loggedUser
     return {
       file: undefined,
       canteens: undefined,
@@ -259,6 +272,11 @@ export default {
           example: "681",
         },
       ],
+      validators,
+      helpFormIsValid: true,
+      fromEmail: user ? user.email : "",
+      name: user ? `${user.firstName} ${user.lastName}` : "",
+      message: "",
       unusualFile: null,
     }
   },
@@ -287,8 +305,16 @@ export default {
         })
     },
     emailUnusualFile() {
+      this.$refs.helpForm.validate()
+      if (!this.helpFormIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
       let form = new FormData()
       form.append("file", this.unusualFile)
+      form.append("name", this.name)
+      form.append("email", this.fromEmail)
+      form.append("message", this.message)
       fetch("/api/v1/emailDiagnosticImportFile/", {
         method: "POST",
         headers: {
@@ -304,6 +330,7 @@ export default {
               message: "Merci, nous vous contacterons dans les plus brefs délais.",
             })
             this.unusualFile = null
+            this.message = ""
           } else {
             this.$store.dispatch("notifyServerError", response)
           }

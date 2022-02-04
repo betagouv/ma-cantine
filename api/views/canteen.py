@@ -406,7 +406,6 @@ class SendCanteenEmailView(APIView):
                 "from": email,
                 "name": request.data.get("name") or "Une personne",
                 "message": request.data.get("message"),
-                "us": settings.DEFAULT_FROM_EMAIL,
             }
 
             send_mail(
@@ -443,7 +442,6 @@ class SendCanteenNotFoundEmail(APIView):
                 "from": email,
                 "name": name,
                 "message": message,
-                "us": settings.DEFAULT_FROM_EMAIL,
             }
 
             send_mail(
