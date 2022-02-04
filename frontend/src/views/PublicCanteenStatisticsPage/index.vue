@@ -405,7 +405,8 @@ export default {
       let query = {}
       if (this.chosenDepartment) {
         query.department = this.chosenDepartment
-      } else if (this.chosenRegion) {
+      }
+      if (this.chosenRegion) {
         query.region = this.chosenRegion
       }
       // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
@@ -416,9 +417,7 @@ export default {
     },
     populateInitialParameters() {
       this.chosenDepartment = this.$route.query.department
-      this.chosenRegion = this.chosenDepartment
-        ? jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment).regionCode
-        : this.$route.query.region
+      this.chosenRegion = this.$route.query.region
     },
     updateDocumentTitle() {
       let title = "Les statistiques dans ma collectivité - ma-cantine.beta.gouv.fr"
