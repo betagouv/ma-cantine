@@ -374,6 +374,7 @@ CSP_IMG_SRC = (
     "voxusagers.numerique.gouv.fr",
     "'unsafe-inline'",
     "stats.data.gouv.fr",
+    "www.w3.org",
 )
 if DEBUG:
     CSP_IMG_SRC += CSP_DEBUG_DOMAINS
