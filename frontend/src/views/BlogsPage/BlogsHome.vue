@@ -34,6 +34,7 @@
           dense
           width="fit-content"
           label="Filtrer par type d'article"
+          @change="page = 1"
         ></v-select>
       </v-col>
     </v-row>
@@ -96,8 +97,8 @@ export default {
           this.$store.dispatch("notifyServerError")
         })
     },
-    updateRoute(resetPagination) {
-      let query = { page: resetPagination ? 1 : this.page }
+    updateRoute() {
+      let query = { page: this.page }
       if (this.tag) {
         query.etiquette = this.tag
       }
@@ -111,10 +112,10 @@ export default {
   },
   watch: {
     page() {
-      this.updateRoute(false)
+      this.updateRoute()
     },
     tag() {
-      this.updateRoute(true)
+      this.updateRoute()
     },
     $route(newRoute, oldRoute) {
       this.visibleBlogPosts = null
