@@ -51,22 +51,18 @@ export default {
     },
   },
   mounted() {
-    const blogPost = this.$store.state.blogPosts.flatMap((x) => x.results).find((x) => x.id === parseInt(this.id))
-    if (!blogPost) {
-      return fetch(`/api/v1/blogPosts/${this.id}`)
-        .then((response) => {
-          if (response.status !== 200) throw new Error()
-          response.json().then((x) => (this.blogPost = x))
+    return fetch(`/api/v1/blogPosts/${this.id}`)
+      .then((response) => {
+        if (response.status !== 200) throw new Error()
+        response.json().then((x) => (this.blogPost = x))
+      })
+      .catch(() => {
+        this.$store.dispatch("notify", {
+          message: "Nous n'avons pas trouvé cet article",
+          status: "error",
         })
-        .catch(() => {
-          this.$store.dispatch("notify", {
-            message: "Nous n'avons pas trouvé cet article",
-            status: "error",
-          })
-          this.$router.push({ name: "BlogsHome" })
-        })
-    }
-    this.blogPost = blogPost
+        this.$router.push({ name: "BlogsHome" })
+      })
   },
   computed: {
     author() {
