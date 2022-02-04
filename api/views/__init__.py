@@ -18,6 +18,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
     DiagnosticUpdateView,
     ImportDiagnosticsView,
+    EmailDiagnosticImportFileView,
 )
 from .sector import SectorListView  # noqa: F401
 from .blog import BlogPostsView, BlogPostView  # noqa: F401

@@ -36,6 +36,8 @@ def _add_additional_context(context, **kwargs):
     if reply_to and reply_to != [settings.CONTACT_EMAIL]:
         replies_to_team = False
     context["repliesToTeam"] = replies_to_team
+    if "us" not in context:
+        context["us"] = settings.DEFAULT_FROM_EMAIL
 
 
 def create_trello_card(trello_list_id, title, description):
