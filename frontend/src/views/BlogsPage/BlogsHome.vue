@@ -73,6 +73,7 @@ export default {
       tags: [],
       visibleBlogPosts: null,
       blogPostCount: null,
+      firstPageLoadFinished: false,
     }
   },
   computed: {
@@ -91,6 +92,7 @@ export default {
           this.tags = response.tags
           this.visibleBlogPosts = response.results
           this.blogPostCount = response.count
+          this.firstPageLoadFinished = true // this is used to stop watchers from changing the route on first load
         })
         .catch(() => {
           this.$store.dispatch("notifyServerError")
@@ -111,18 +113,24 @@ export default {
   },
   watch: {
     page() {
-      this.updateRoute(false)
+      if (this.firstPageLoadFinished) {
+        this.updateRoute(false)
+      }
     },
     tag() {
-      this.updateRoute(true)
+      if (this.firstPageLoadFinished) {
+        this.updateRoute(true)
+      }
     },
     $route(newRoute, oldRoute) {
-      this.visibleBlogPosts = null
-      if (newRoute.query.etiquette !== oldRoute.query.etiquette) {
-        this.blogPostCount = null
+      if (this.firstPageLoadFinished) {
+        this.visibleBlogPosts = null
+        if (newRoute.query.etiquette !== oldRoute.query.etiquette) {
+          this.blogPostCount = null
+        }
+        this.populateParameters()
+        this.fetchCurrentPage()
       }
-      this.populateParameters()
-      this.fetchCurrentPage()
     },
   },
   mounted() {
