@@ -346,7 +346,10 @@ export default {
           value: x[`${locationKeyWord}Code`],
         }))
 
-      let headerText = this.chosenRegion ? `Pour la région « ${this.chosenRegionName} », nous ` : "Nous "
+      let headerText =
+        this.chosenRegion && locationKeyWord == "department"
+          ? `Pour la région « ${this.chosenRegionName} », nous `
+          : "Nous "
       headerText += `n'avons pas encore d'établissements dans ces ${locationsWord} :`
       const header = { header: headerText }
       const divider = { divider: true }
