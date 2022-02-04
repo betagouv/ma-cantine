@@ -37,7 +37,7 @@
         ></v-select>
       </v-col>
     </v-row>
-    <div v-if="loading">
+    <div v-if="loading" class="mt-8">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
 
@@ -116,7 +116,11 @@ export default {
     tag() {
       this.updateRoute(true)
     },
-    $route() {
+    $route(newRoute, oldRoute) {
+      this.visibleBlogPosts = null
+      if (newRoute.query.etiquette !== oldRoute.query.etiquette) {
+        this.blogPostCount = null
+      }
       this.populateParameters()
       this.fetchCurrentPage()
     },
