@@ -128,10 +128,10 @@
 
     <h2 class="my-6">Vous avez besoin d'aide ?</h2>
     <p>
-      Si votre fichier comptable agrégé ne ressemble pas du tout à ça, vous pouvez nous envoyer votre fichier en
-      transférant un fichier en dessous ou en contactant nous directement à
+      Si votre fichier comptable agrégé ne ressemble pas du tout à ça, vous pouvez nous l'envoyer en remplissant les
+      champs ci-dessous ou nous contacter directement à l'adresse
       <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
-      et nous vous aiderons à le traiter.
+      .
     </p>
     <v-form v-model="helpFormIsValid" ref="helpForm" @submit.prevent class="my-12">
       <v-row class="mb-1">
@@ -149,7 +149,14 @@
         </v-col>
       </v-row>
       <v-textarea v-model="message" label="Message (facultatif)" outlined></v-textarea>
-      <v-file-input v-model="unusualFile" label="Fichier" outlined :rules="[validators.required]" validate-on-blur />
+      <v-file-input
+        v-model="unusualFile"
+        label="Fichier"
+        outlined
+        :rules="[validators.required, validators.maxFileSize(10485760, '10 Mo')]"
+        validate-on-blur
+        show-size
+      />
       <v-btn x-large color="primary" @click="emailUnusualFile">
         <v-icon class="mr-2">mdi-send</v-icon>
         Envoyer

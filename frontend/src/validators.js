@@ -122,4 +122,10 @@ export default {
     if (parseFloat(input) >= 0 && parseFloat(input) <= 100) return true
     return errorMessage
   },
+  maxFileSize(maxSize, maxSizeDisplay) {
+    return (input) => {
+      if (!input || input.size <= maxSize) return true
+      return `Le fichier ne doit pas dépasser ${maxSizeDisplay}`
+    }
+  },
 }
