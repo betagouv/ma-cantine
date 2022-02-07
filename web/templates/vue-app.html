@@ -1,6 +1,7 @@
 {% load static %}
 {% load analytics %}
 {% load environment %}
+{% load featureflags %}
 {% load render_bundle from webpack_loader %}
 <!DOCTYPE html>
 <html lang="en">
@@ -19,6 +20,7 @@
         window.CSRF_TOKEN = "{{ csrf_token }}";
         window.MATOMO_ID = "{% matomo_id %}";
         window.ENVIRONMENT = "{% environment %}"
+        window.ENABLE_XP_RESERVATION = "{% enable_xp_reservation %}" === "True"
     </script>
     <style>
         @font-face {

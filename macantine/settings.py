@@ -412,3 +412,6 @@ if DEBUG:
 CSP_FRAME_SRC = ("'self'",)
 if DEBUG:
     CSP_FRAME_SRC += CSP_DEBUG_DOMAINS
+
+# Feature flags
+ENABLE_XP_RESERVATION = os.getenv("ENABLE_XP_RESERVATION") == "True"
