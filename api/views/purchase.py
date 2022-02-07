@@ -3,11 +3,12 @@ from rest_framework import permissions
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
+from rest_framework.response import Response
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from django.db.models import Sum, Q, Func, F
 from django.http import JsonResponse
-from api.permissions import IsLinkedCanteenManager
-from api.serializers import PurchaseSerializer
+from api.permissions import IsLinkedCanteenManager, IsCanteenManager
+from api.serializers import PurchaseSerializer, PurchaseSummarySerializer
 from data.models import Purchase, Canteen
 import logging
 
@@ -82,9 +83,12 @@ class CanteenPurchasesSummaryView(APIView):
     def get(self, request, *args, **kwargs):
         canteen_id = kwargs.get("canteen_pk")
         year = request.query_params.get("year")
-        canteen = Canteen.objects.get(pk=canteen_id)
-        purchases = Purchase.objects.filter(canteen=canteen)
-        purchases = purchases.filter(date__year=year)
+        if not year:
+            raise BadRequest("Missing year in request's query parameters")
+
+        canteen = self._get_canteen(canteen_id, request)
+        purchases = Purchase.objects.filter(canteen=canteen, date__year=year)
+
         data = {}
         data["total"] = purchases.aggregate(total=Sum("price_ht"))["total"]
         bio_purchases = purchases.filter(
@@ -97,16 +101,28 @@ class CanteenPurchasesSummaryView(APIView):
             Q(characteristics__contains=[Purchase.Characteristic.BIO])
             | Q(characteristics__contains=[Purchase.Characteristic.CONVERSION_BIO])
         )
-        durable_purchases = purchases.annotate(characteristics_len=Func(F("characteristics"), function="CARDINALITY"))
-        durable_purchases = durable_purchases.filter(characteristics_len__gt=0)
-        data["durable"] = durable_purchases.aggregate(total=Sum("price_ht"))["total"]
+        sustainable_purchases = purchases.annotate(
+            characteristics_len=Func(F("characteristics"), function="CARDINALITY")
+        )
+        sustainable_purchases = sustainable_purchases.filter(characteristics_len__gt=0)
+        data["sustainable"] = sustainable_purchases.aggregate(total=Sum("price_ht"))["total"]
         hve_purchases = purchases.filter(characteristics__contains=[Purchase.Characteristic.HVE])
         data["hve"] = hve_purchases.aggregate(total=Sum("price_ht"))["total"]
         aoc_aop_igp_purchases = purchases.filter(
             Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
             | Q(characteristics__contains=[Purchase.Characteristic.IGP])
         ).distinct()
-        data["aocAopIgp"] = aoc_aop_igp_purchases.aggregate(total=Sum("price_ht"))["total"]
+        data["aoc_aop_igp"] = aoc_aop_igp_purchases.aggregate(total=Sum("price_ht"))["total"]
         rouge_purchases = purchases.filter(characteristics__contains=[Purchase.Characteristic.LABEL_ROUGE])
         data["rouge"] = rouge_purchases.aggregate(total=Sum("price_ht"))["total"]
-        return JsonResponse(data, status=200)
+
+        return Response(PurchaseSummarySerializer(data).data)
+
+    def _get_canteen(self, canteen_id, request):
+        try:
+            canteen = Canteen.objects.get(pk=canteen_id)
+            if not IsCanteenManager().has_object_permission(request, self, canteen):
+                raise PermissionDenied()
+            return canteen
+        except Canteen.DoesNotExist as e:
+            raise NotFound() from e

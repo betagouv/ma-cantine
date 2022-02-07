@@ -22,6 +22,12 @@
       :error="totalError"
       @blur="totalError = false"
     ></v-text-field>
+    <PurchaseHint
+      v-if="purchasesSummary && purchasesSummary.total && !readonly"
+      v-model="diagnostic.valueTotalHt"
+      label="Remplir le total avec"
+      :amount="purchasesSummary.total"
+    />
 
     <label :for="'bio-' + diagnostic.year" class="body-2 mb-1 mt-4">...en produits bio</label>
     <v-text-field
@@ -38,6 +44,13 @@
       :disabled="readonly"
       @blur="checkTotal"
     ></v-text-field>
+
+    <PurchaseHint
+      v-if="purchasesSummary && purchasesSummary.bio && !readonly"
+      v-model="diagnostic.valueBioHt"
+      label="Remplir les achats bio avec"
+      :amount="purchasesSummary.bio"
+    />
 
     <label :for="'sustainable-' + diagnostic.year" class="body-2 mb-1 mt-4">
       ...en autres produits de qualité et durables (hors bio)
@@ -56,21 +69,30 @@
       :disabled="readonly"
       @blur="checkTotal"
     ></v-text-field>
+    <PurchaseHint
+      v-if="purchasesSummary && purchasesSummary.sustainable && !readonly"
+      v-model="diagnostic.valueSustainableHt"
+      label="Remplir les achats qualité et durable avec"
+      :amount="purchasesSummary.sustainable"
+    />
   </fieldset>
 </template>
 
 <script>
 import validators from "@/validators"
+import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 
 export default {
   props: {
     label: String,
     originalDiagnostic: Object,
+    purchasesSummary: Object,
     readonly: {
       type: Boolean,
       default: false,
     },
   },
+  components: { PurchaseHint },
   data() {
     return {
       totalError: false,

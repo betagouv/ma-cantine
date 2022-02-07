@@ -262,14 +262,38 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["total"], "1000.00")
-        self.assertEqual(body["bio"], "200.00")
-        self.assertEqual(body["durable"], "300.00")
-        self.assertEqual(body["hve"], "10.00")
-        self.assertEqual(body["rouge"], "20.00")
-        self.assertEqual(body["aocAopIgp"], "30.00")
+        self.assertEqual(body["total"], 1000.0)
+        self.assertEqual(body["bio"], 200.0)
+        self.assertEqual(body["sustainable"], 300.0)
+        self.assertEqual(body["hve"], 10.0)
+        self.assertEqual(body["rouge"], 20.0)
+        self.assertEqual(body["aocAopIgp"], 30.0)
 
-    # TODO: test cannot get summary non-authed
-    # TODO: test cannot get summary for non-manager
-    # TODO: test for non-existent canteen
-    # TODO: test for missing year
+    def test_purchase_summary_unauthenticated(self):
+        canteen = CanteenFactory.create()
+        response = self.client.get(
+            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_purchase_not_authorized(self):
+        canteen = CanteenFactory.create()
+        response = self.client.get(
+            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_purchase_missing_year(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        response = self.client.get(
+            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}),
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_purchase_inexistent_canteen(self):
+        response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": 999999}), {"year": 2020})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
