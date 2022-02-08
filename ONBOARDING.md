@@ -84,6 +84,11 @@ TRELLO_LIST_ID_PUBLICATION= Optionnel - ID de la liste où l'application mettra 
 PIPEDRIVE_API_TOKEN= Optionnel - Token Pipedrive pour créer des cartes contact.
 ```
 
+### Activer les feature flags
+```
+ENABLE_XP_RESERVATION= Optionnel - `True` pour activer la feature de l'expérimentation des systèmes de réservation.
+```
+
 #### Trello
 
 Si vous ne connaissez pas les variables trello, suivez [ce guide](https://developer.atlassian.com/cloud/trello/guides/rest-api/api-introduction/) pour identifier votre clé et token.
