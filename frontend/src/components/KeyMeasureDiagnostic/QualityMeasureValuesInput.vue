@@ -23,9 +23,9 @@
       @blur="totalError = false"
     ></v-text-field>
     <PurchaseHint
-      v-if="purchasesSummary && purchasesSummary.total && !readonly"
+      v-if="displayPurchaseHints"
       v-model="diagnostic.valueTotalHt"
-      label="Remplir le total avec"
+      purchaseType="totaux"
       :amount="purchasesSummary.total"
     />
 
@@ -46,9 +46,9 @@
     ></v-text-field>
 
     <PurchaseHint
-      v-if="purchasesSummary && purchasesSummary.bio && !readonly"
+      v-if="displayPurchaseHints"
       v-model="diagnostic.valueBioHt"
-      label="Remplir les achats bio avec"
+      purchaseType="bio"
       :amount="purchasesSummary.bio"
     />
 
@@ -70,9 +70,9 @@
       @blur="checkTotal"
     ></v-text-field>
     <PurchaseHint
-      v-if="purchasesSummary && purchasesSummary.sustainable && !readonly"
+      v-if="displayPurchaseHints"
       v-model="diagnostic.valueSustainableHt"
-      label="Remplir les achats qualité et durable avec"
+      purchaseType="qualité et durable"
       :amount="purchasesSummary.sustainable"
     />
   </fieldset>
@@ -105,6 +105,9 @@ export default {
     },
     diagnostic() {
       return this.originalDiagnostic
+    },
+    displayPurchaseHints() {
+      return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x) && !this.readonly
     },
   },
   methods: {

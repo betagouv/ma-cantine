@@ -115,9 +115,9 @@
                           :disabled="hasActiveTeledeclaration"
                         ></v-text-field>
                         <PurchaseHint
-                          v-if="purchasesSummary && purchasesSummary.rouge && !hasActiveTeledeclaration"
+                          v-if="displayPurchaseHints"
                           v-model="diagnostic.valueLabelRouge"
-                          label="Remplir les achats Label Rouge avec"
+                          purchaseType="Label Rouge"
                           :amount="purchasesSummary.rouge"
                         />
                       </div>
@@ -144,9 +144,9 @@
                           :disabled="hasActiveTeledeclaration"
                         ></v-text-field>
                         <PurchaseHint
-                          v-if="purchasesSummary && purchasesSummary.aocAopIgp && !hasActiveTeledeclaration"
+                          v-if="displayPurchaseHints"
                           v-model="diagnostic.valueLabelAocIgp"
-                          label="Remplir les achats AOC / AOP / IGP avec"
+                          purchaseType="AOC / AOP / IGP"
                           :amount="purchasesSummary.aocAopIgp"
                         />
                       </div>
@@ -172,9 +172,9 @@
                           :disabled="hasActiveTeledeclaration"
                         ></v-text-field>
                         <PurchaseHint
-                          v-if="purchasesSummary && purchasesSummary.hve && !hasActiveTeledeclaration"
+                          v-if="displayPurchaseHints"
                           v-model="diagnostic.valueLabelHve"
-                          label="Remplir les achats HVE avec"
+                          purchaseType="HVE"
                           :amount="purchasesSummary.hve"
                         />
                       </div>
@@ -390,6 +390,11 @@ export default {
     },
     isTeledeclarationYear() {
       return this.diagnostic.year === this.teledeclarationYear
+    },
+    displayPurchaseHints() {
+      return (
+        this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x) && !this.hasActiveTeledeclaration
+      )
     },
   },
   beforeMount() {
