@@ -10,9 +10,7 @@
     <div v-else class="d-flex">
       <div>
         {{ visibleLabel }}
-        <a color="primary" tabindex="0" @click="$emit('input', amount)" class="text-decoration-underline" text>
-          {{ amount }} €
-        </a>
+        <a color="primary" tabindex="0" @click="onFill" class="text-decoration-underline" text>{{ amount }} €</a>
       </div>
       <v-spacer></v-spacer>
       <v-tooltip bottom>
@@ -45,6 +43,12 @@ export default {
     },
     value: {
       required: true,
+    },
+  },
+  methods: {
+    onFill() {
+      this.$emit("input", this.amount)
+      this.$emit("autofill")
     },
   },
   computed: {

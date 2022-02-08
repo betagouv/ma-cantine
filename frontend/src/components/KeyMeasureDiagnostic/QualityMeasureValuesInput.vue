@@ -25,6 +25,7 @@
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueTotalHt"
+      @autofill="checkTotal"
       purchaseType="totaux"
       :amount="purchasesSummary.total"
     />
@@ -48,6 +49,7 @@
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueBioHt"
+      @autofill="checkTotal"
       purchaseType="bio"
       :amount="purchasesSummary.bio"
     />
@@ -72,6 +74,7 @@
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueSustainableHt"
+      @autofill="checkTotal"
       purchaseType="qualité et durable"
       :amount="purchasesSummary.sustainable"
     />
