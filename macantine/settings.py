@@ -389,6 +389,7 @@ CSP_CONNECT_SRC = (
     "'self'",
     "stats.data.gouv.fr",
     "ws:",
+    "api-adresse.data.gouv.fr",
 )
 if DEBUG:
     CSP_CONNECT_SRC += CSP_DEBUG_DOMAINS
