@@ -54,6 +54,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(diagnostic.value_total_ht, 1000)
         self.assertEqual(diagnostic.value_bio_ht, 500)
         self.assertEqual(diagnostic.value_sustainable_ht, Decimal("100.1"))
+        self.assertEqual(diagnostic.value_label_rouge, 10)
+        self.assertEqual(diagnostic.value_label_aoc_igp, 20)
+        self.assertEqual(diagnostic.value_label_hve, 30)
         self.assertIn("seconds", body)
 
     @authenticate
@@ -285,7 +288,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors[11]["message"],
-            "Données manquantes : 15 colonnes attendus, 14 trouvés.",
+            "Données manquantes : 18 colonnes attendus, 14 trouvés.",
         )
         self.assertEqual(
             errors[12]["message"],
