@@ -20,7 +20,25 @@
       </v-row>
     </v-card>
 
-    <div v-if="loading">
+    <v-row>
+      <v-spacer></v-spacer>
+      <v-col cols="12" sm="4">
+        <v-select
+          v-model="tag"
+          :items="tags"
+          clearable
+          hide-details
+          id="select-tag"
+          outlined
+          class="mt-1"
+          dense
+          width="fit-content"
+          label="Filtrer par type d'article"
+          @change="page = 1"
+        ></v-select>
+      </v-col>
+    </v-row>
+    <div v-if="loading" class="mt-8">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
 
@@ -52,16 +70,13 @@ export default {
     return {
       limit: 6,
       page: null,
+      tag: null,
+      tags: [],
+      visibleBlogPosts: null,
+      blogPostCount: null,
     }
   },
   computed: {
-    blogPostCount() {
-      return this.$store.state.blogPostCount
-    },
-    visibleBlogPosts() {
-      const blogPostPage = this.$store.state.blogPosts.find((x) => x.offset === this.offset)
-      return blogPostPage ? blogPostPage.results : null
-    },
     loading() {
       return this.blogPostCount === null
     },
@@ -71,21 +86,49 @@ export default {
   },
   methods: {
     fetchCurrentPage() {
-      return this.$store.dispatch("fetchBlogPosts", { offset: this.offset })
+      this.$store
+        .dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag })
+        .then((response) => {
+          this.tags = response.tags
+          this.visibleBlogPosts = response.results
+          this.blogPostCount = response.count
+        })
+        .catch(() => {
+          this.$store.dispatch("notifyServerError")
+        })
+    },
+    updateRoute() {
+      let query = { page: this.page }
+      if (this.tag) {
+        query.etiquette = this.tag
+      }
+      // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
+      this.$router.push({ query }).catch(() => {})
+    },
+    populateParameters() {
+      this.tag = this.$route.query.etiquette
+      this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
     },
   },
   watch: {
-    page(newPage) {
-      // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
-      this.$router.push({ query: { page: newPage } }).catch(() => {})
-      if (!this.visibleBlogPosts) this.fetchCurrentPage()
+    page() {
+      this.updateRoute()
     },
-    $route(newRoute) {
-      this.page = newRoute.query.page ? parseInt(newRoute.query.page) : 1
+    tag() {
+      this.updateRoute()
+    },
+    $route(newRoute, oldRoute) {
+      this.visibleBlogPosts = null
+      if (newRoute.query.etiquette !== oldRoute.query.etiquette) {
+        this.blogPostCount = null
+      }
+      this.populateParameters()
+      this.fetchCurrentPage()
     },
   },
   mounted() {
-    this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
+    this.populateParameters()
+    if (Object.keys(this.$route.query).length > 0) this.fetchCurrentPage()
   },
 }
 </script>

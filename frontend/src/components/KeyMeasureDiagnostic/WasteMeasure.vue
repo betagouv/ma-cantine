@@ -274,7 +274,7 @@ export default {
       return applicableDiagnosticRules(this.canteen)
     },
     showExpeSegment() {
-      return !!this.canteen
+      return !!this.canteen && window.ENABLE_XP_RESERVATION
     },
   },
   methods: {

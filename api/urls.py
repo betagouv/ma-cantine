@@ -12,6 +12,7 @@ from api.views import (
 )
 from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView, CanteenStatisticsView
 from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, DiagnosticUpdateView
+from api.views import EmailDiagnosticImportFileView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
 from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleView
 from api.views import ImportDiagnosticsView, TeledeclarationCreateView
@@ -85,6 +86,7 @@ urlpatterns = {
         name="remove_manager",
     ),
     path("importDiagnostics/", ImportDiagnosticsView.as_view(), name="import_diagnostics"),
+    path("emailDiagnosticImportFile/", EmailDiagnosticImportFileView.as_view(), name="email_diagnostic_file"),
     path(
         "createTeledeclaration/",
         TeledeclarationCreateView.as_view(),

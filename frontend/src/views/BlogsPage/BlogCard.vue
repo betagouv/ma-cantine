@@ -40,10 +40,10 @@ export default {
       const colours = [
         "pink lighten-4",
         "blue lighten-4",
-        "teal lighten-4",
-        "purple lighten-4",
         "green lighten-4",
+        "purple lighten-4",
         "yellow lighten-4",
+        "teal lighten-4",
       ]
       const colourIndex = Array.from(tag, (x) => x.charCodeAt(0)).reduce((a, b) => a + b) % (colours.length - 1)
       return colours[colourIndex]

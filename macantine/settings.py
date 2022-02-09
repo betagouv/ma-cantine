@@ -341,6 +341,8 @@ CSP_DEBUG_DOMAINS = (
     "localhost:*",
     "0.0.0.0:*",
     "127.0.0.1:*",
+    "www.ssa.gov",  # for a11y testing with ANDI
+    "ajax.googleapis.com",  # for a11y testing with ANDI
 )
 
 # CSP Default policy for resources such as JS, CSS, AJAX, etc. Note that not all directives fallback to this.
@@ -372,6 +374,7 @@ CSP_IMG_SRC = (
     "voxusagers.numerique.gouv.fr",
     "'unsafe-inline'",
     "stats.data.gouv.fr",
+    "www.w3.org",
 )
 if DEBUG:
     CSP_IMG_SRC += CSP_DEBUG_DOMAINS
@@ -386,6 +389,7 @@ CSP_CONNECT_SRC = (
     "'self'",
     "stats.data.gouv.fr",
     "ws:",
+    "api-adresse.data.gouv.fr",
 )
 if DEBUG:
     CSP_CONNECT_SRC += CSP_DEBUG_DOMAINS
@@ -410,3 +414,6 @@ if DEBUG:
 CSP_FRAME_SRC = ("'self'",)
 if DEBUG:
     CSP_FRAME_SRC += CSP_DEBUG_DOMAINS
+
+# Feature flags
+ENABLE_XP_RESERVATION = os.getenv("ENABLE_XP_RESERVATION") == "True"

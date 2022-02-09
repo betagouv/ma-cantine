@@ -33,6 +33,9 @@
             <span v-else-if="link.text">
               {{ link.text }}
             </span>
+            <span v-else-if="link.heading" class="font-weight-bold d-block d-sm-inline pt-8">
+              {{ link.heading }}
+            </span>
           </p>
         </v-col>
       </v-row>
@@ -101,11 +104,6 @@ export default {
               text: "Documentation",
               url: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
             },
-            // TODO: propose stats column with this, matomo, and regional stats
-            {
-              text: "Statistiques",
-              url: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/f65ca7cc-c3bd-4cfb-a3dc-236f81864663",
-            },
             {
               text: "Les start-ups d'état",
               url: "https://beta.gouv.fr/approche/",
@@ -117,8 +115,23 @@ export default {
           ],
         },
         {
-          title: "Aidez-nous à améliorer cet outil",
+          title: "Statistiques",
           links: [
+            {
+              text: "Nos données",
+              url: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/f65ca7cc-c3bd-4cfb-a3dc-236f81864663",
+            },
+            {
+              text: "Dans votre collectivité",
+              to: { name: "PublicCanteenStatisticsPage" },
+            },
+            {
+              text: "stats.data.gouv.fr",
+              url: "https://stats.data.gouv.fr/index.php?idSite=162",
+            },
+            {
+              heading: "Aidez-nous à améliorer cet outil",
+            },
             {
               text: "Contribuer sur Github",
               url: "https://github.com/betagouv/ma-cantine",

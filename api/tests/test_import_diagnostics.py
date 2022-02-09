@@ -410,6 +410,38 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(mail.outbox), 0)
 
+    def test_cannot_email_file_not_authenticated(self, _):
+        """
+        If user is not authenticated, cannot send file using this API
+        """
+        with open("./api/tests/files/diagnostics_bad_file.csv") as diag_file:
+            response = self.client.post(reverse("email_diagnostic_file"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(len(mail.outbox), 0)
+
+    @override_settings(CONTACT_EMAIL="team@example.com")
+    @authenticate
+    def test_email_diagnostics_file(self, _):
+        """
+        Check that this endpoint sends an email with the file attached and relevant info
+        """
+        with open("./api/tests/files/diagnostics_bad_file.csv") as diag_file:
+            response = self.client.post(
+                reverse("email_diagnostic_file"),
+                {"file": diag_file, "message": "Help me", "name": "Camille Dupont", "email": "dupont@example.com"},
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], "team@example.com")
+        self.assertEqual("dupont@example.com", email.reply_to[0])
+        self.assertEqual(email.attachments[0][0], "diagnostics_bad_file.csv")
+        self.assertIn("dupont@example.com", email.body)
+        self.assertIn("Camille Dupont", email.body)
+        self.assertIn("Help me", email.body)
+
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
     @unittest.skipUnless(os.environ.get("ENVIRONMENT") == "dev", "Not in dev environment")

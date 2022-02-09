@@ -1,15 +1,5 @@
 <template>
   <div id="blogs-page">
-    <router-view v-if="blogPosts" />
+    <router-view />
   </div>
 </template>
-
-<script>
-export default {
-  computed: {
-    blogPosts() {
-      return this.$store.state.blogPosts
-    },
-  },
-}
-</script>

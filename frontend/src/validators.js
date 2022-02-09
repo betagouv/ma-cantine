@@ -8,6 +8,10 @@ export default {
   required(input) {
     const errorMessage = "Ce champ ne peut pas être vide"
     if (typeof input === "undefined") return errorMessage
+    if (input instanceof File) {
+      if (input.name === "") return errorMessage
+      return true
+    }
     if (typeof input === "object") {
       if (input === null) return errorMessage
       return Object.keys(input).length > 0 ? true : errorMessage
@@ -117,5 +121,11 @@ export default {
     const errorMessage = "Ce champ doit contenir une chiffre entre 0 et 100"
     if (parseFloat(input) >= 0 && parseFloat(input) <= 100) return true
     return errorMessage
+  },
+  maxFileSize(maxSize, maxSizeDisplay) {
+    return (input) => {
+      if (!input || input.size <= maxSize) return true
+      return `Le fichier ne doit pas dépasser ${maxSizeDisplay}`
+    }
   },
 }

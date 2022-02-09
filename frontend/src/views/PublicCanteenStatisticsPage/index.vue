@@ -1,54 +1,60 @@
 <template>
   <div class="text-left grey--text text--darken-4">
     <h1 class="text-h4 font-weight-black black--text mt-3 mb-6">Découvrir les démarches chez vous</h1>
-    <!-- Add some introductory text? -->
-    <v-form class="my-4 pb-8">
-      <v-row>
-        <v-col cols="12" sm="6" md="4">
-          <label for="select-region" class="text-body-2">
-            Région
-          </label>
-          <v-autocomplete
-            v-model="chosenRegion"
-            :items="regions"
-            clearable
-            hide-details
-            id="select-region"
-            placeholder="Toutes les régions"
-            class="mt-1"
-            outlined
-            dense
-            auto-select-first
-            :filter="locationFilter"
-          ></v-autocomplete>
-        </v-col>
-        <v-col cols="12" sm="6" md="4">
-          <label for="select-department" class="text-body-2">
-            Département
-          </label>
-          <v-autocomplete
-            v-model="chosenDepartment"
-            :items="departments"
-            clearable
-            hide-details
-            id="select-department"
-            placeholder="Tous les départements"
-            class="mt-1"
-            outlined
-            dense
-            auto-select-first
-            :filter="locationFilter"
-          ></v-autocomplete>
-        </v-col>
-        <v-col cols="12" sm="6" md="4" class="d-flex align-end">
-          <v-btn x-large color="primary" @click="updateRoute">
-            Afficher les statistiques
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
+
+    <v-card outlined>
+      <v-card-text>
+        <v-form class="my-4">
+          <v-row>
+            <v-col class="py-0" cols="12" sm="6" md="4">
+              <label for="select-region" class="text-body-2">
+                Région
+              </label>
+              <v-autocomplete
+                v-model="chosenRegion"
+                :items="regions"
+                clearable
+                hide-details
+                id="select-region"
+                placeholder="Toutes les régions"
+                class="mt-1"
+                outlined
+                dense
+                auto-select-first
+                :filter="locationFilter"
+              ></v-autocomplete>
+            </v-col>
+            <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
+              <label for="select-department" class="text-body-2">
+                Département
+              </label>
+              <v-autocomplete
+                v-model="chosenDepartment"
+                :items="departments"
+                clearable
+                hide-details
+                id="select-department"
+                placeholder="Tous les départements"
+                class="mt-1"
+                outlined
+                dense
+                auto-select-first
+                :filter="locationFilter"
+              ></v-autocomplete>
+            </v-col>
+          </v-row>
+          <v-row class="mt-8">
+            <v-col cols="12" sm="6" md="4">
+              <v-btn x-large color="primary" @click="updateRoute">
+                Afficher les statistiques
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-text>
+    </v-card>
     <div v-if="locationText" class="py-8">
-      <h2 class="text-h5 font-weight-bold mb-8">Les statistiques pour « {{ locationText }} »</h2>
+      <h2 class="text-h5 font-weight-bold mb-8">Les statistiques pour {{ locationText }}</h2>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown }">
         <v-col cols="12" md="6" class="pr-0">
           <div id="published-canteen-text" class="mb-5">
@@ -216,7 +222,7 @@ export default {
       loadedDepartmentIds: [],
       loadedRegionIds: [],
       sectorChartTitle: "Nombre de cantines par secteur",
-      defaultLocationText: "ma cantine",
+      defaultLocationText: "l'ensemble de la plateforme",
       statsLevel: "site",
     }
   },
@@ -308,6 +314,11 @@ export default {
     statsLevelDisplay() {
       return { department: "ce département", region: "cette région", site: "ce site" }[this.statsLevel]
     },
+    chosenRegionName() {
+      return this.chosenRegion
+        ? jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName || this.chosenRegion
+        : null
+    },
   },
   methods: {
     loadLocations() {
@@ -334,9 +345,13 @@ export default {
           text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
           value: x[`${locationKeyWord}Code`],
         }))
-      const headerText = `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
-      const header = { header: headerText }
 
+      let headerText =
+        this.chosenRegion && locationKeyWord == "department"
+          ? `Pour la région « ${this.chosenRegionName} », nous `
+          : "Nous "
+      headerText += `n'avons pas encore d'établissements dans ces ${locationsWord} :`
+      const header = { header: headerText }
       const divider = { divider: true }
 
       const disabledLocations = jsonLocations
@@ -360,10 +375,11 @@ export default {
     createLocationText() {
       let locationText
       if (this.chosenDepartment) {
-        locationText = jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment)
-          .departmentName
+        locationText = `« ${
+          jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment).departmentName
+        } »`
       } else if (this.chosenRegion) {
-        locationText = jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName
+        locationText = `« ${this.chosenRegionName} »`
       } else {
         locationText = this.defaultLocationText
       }
@@ -389,7 +405,8 @@ export default {
       let query = {}
       if (this.chosenDepartment) {
         query.department = this.chosenDepartment
-      } else if (this.chosenRegion) {
+      }
+      if (this.chosenRegion) {
         query.region = this.chosenRegion
       }
       // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998

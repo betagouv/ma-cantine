@@ -47,3 +47,42 @@ class TestBlogApi(APITestCase):
 
         response = self.client.get(reverse("single_blog_post", kwargs={"pk": draft_blog_post.id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_filter_blog_post(self):
+        """
+        The API should return filtered blog posts
+        """
+        tag = BlogTagFactory.create(name="Test")
+        other = BlogTagFactory.create()
+        good_post = BlogPostFactory.create(published=True)
+        good_post.tags.add(tag)
+        good_post.tags.add(other)
+        post = BlogPostFactory.create(published=True)
+        post.tags.add(other)
+
+        response = self.client.get(reverse("blog_posts_list"), {"tag": "Test"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], good_post.id)
+
+    def test_get_blog_tags_in_use(self):
+        """
+        The API should also return names of tags that are used by published blog posts
+        """
+        used_tag = BlogTagFactory.create(name="Used")
+        draft_tag = BlogTagFactory.create(name="Draft")
+        BlogTagFactory.create(name="Unused")
+
+        published_blog_post = BlogPostFactory.create(published=True)
+        published_blog_post.tags.add(used_tag)
+        draft_blog_post = BlogPostFactory.create(published=False)
+        draft_blog_post.tags.add(draft_tag)
+
+        response = self.client.get(reverse("blog_posts_list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        tags = body.get("tags", [])
+        self.assertIn("Used", tags)
+        self.assertNotIn("Unused", tags)
+        self.assertNotIn("Draft", tags)
