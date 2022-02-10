@@ -26,6 +26,7 @@ export default {
         darken3: "#ff7061",
         darken4: "#ff5d4e",
       },
+      error: "#df3232",
     },
   },
 }

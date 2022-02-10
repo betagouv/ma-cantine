@@ -30,3 +30,12 @@ class PurchaseSerializer(serializers.ModelSerializer):
 
         validated_data["canteen_id"] = validated_data.pop("canteen").id
         return super().create(validated_data)
+
+
+class PurchaseSummarySerializer(serializers.Serializer):
+    total = serializers.DecimalField(max_digits=20, decimal_places=2, required=False)
+    bio = serializers.DecimalField(max_digits=20, decimal_places=2, required=False)
+    sustainable = serializers.DecimalField(max_digits=20, decimal_places=2, required=False)
+    hve = serializers.DecimalField(max_digits=20, decimal_places=2, required=False)
+    aoc_aop_igp = serializers.DecimalField(max_digits=20, decimal_places=2, required=False)
+    rouge = serializers.DecimalField(max_digits=20, decimal_places=2, required=False)
