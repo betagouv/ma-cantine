@@ -551,7 +551,7 @@ export default {
     fetchPurchasesSummary() {
       if (this.canteenId && this.diagnostic && this.diagnostic.year)
         fetch(`/api/v1/canteenPurchasesSummary/${this.canteenId}?year=${this.diagnostic.year}`)
-          .then((response) => (response.ok ? response.json() : {})) // Best effort? Need error msg?
+          .then((response) => (response.ok ? response.json() : {}))
           .then((response) => (this.purchasesSummary = response))
     },
   },
