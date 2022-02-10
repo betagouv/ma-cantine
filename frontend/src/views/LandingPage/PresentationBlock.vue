@@ -8,12 +8,14 @@
       </v-row>
       <v-row>
         <v-spacer></v-spacer>
-        <v-col cols="12" sm="9" md="5">
-          <v-card-title class="pl-0">
-            <h1 class="font-weight-black text-h4">Diagnostiquer ma cantine sur les mesures de la loi EGAlim</h1>
+        <v-col cols="12" sm="9" md="6">
+          <v-card-title class="pl-0 pl-md-10">
+            <h1 class="font-weight-black text-h4">Mieux manger de la crêche à l’EHPAD</h1>
           </v-card-title>
           <v-card-text>
-            La loi EGAlim vise à apporter une alimentation saine, de qualité et plus durable dans nos assiettes.
+            ma-cantine accompagne la transition alimentaire de la restauration collective en outillant les gestionnaires
+            afin de fomenter les bonnes pratiques tant en matière de santé que de respect de l’environnement et en
+            informant les convives sur le contenu de leur assiette !
           </v-card-text>
         </v-col>
         <v-col cols="12" sm="3" md="3" class="d-flex flex-column" v-if="$vuetify.breakpoint.mdAndUp">
@@ -33,13 +35,13 @@
         :to="{ name: 'CanteensHome' }"
         width="fit-content"
       >
-        Découvrir nos cantines
+        Découvrir le réseau de cantines
       </v-btn>
       <v-btn v-if="loggedUser" x-large class="primary mt-8" :to="{ name: 'ManagementPage' }" width="fit-content">
         Accéder à mes cantines
       </v-btn>
       <v-btn v-else x-large class="primary mt-8" href="/creer-mon-compte" width="fit-content">
-        Créer mon compte
+        Créer un compte gestionnaire
       </v-btn>
     </v-row>
   </div>

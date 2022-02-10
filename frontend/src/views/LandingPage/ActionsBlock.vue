@@ -2,8 +2,8 @@
   <div>
     <v-row class="text-left">
       <v-spacer></v-spacer>
-      <v-col cols="12" sm="6">
-        <v-card v-if="loggedUser" elevation="0" class="fill-height pa-4 d-flex flex-column">
+      <v-col cols="12" md="4">
+        <v-card elevation="0" class="fill-height pa-4 d-flex flex-column">
           <v-img
             src="/static/images/UnboxingDoodle.png"
             v-if="$vuetify.breakpoint.smAndUp"
@@ -13,20 +13,24 @@
           ></v-img>
           <v-card-title>
             <h2 class="text-h6 font-weight-bold">
-              Gérez les informations de votre compte
+              Je suis élu ou élue d'une collectivité
             </h2>
           </v-card-title>
           <v-card-text>
-            Pour modifier vos données personnelles, mettre à jour votre photo de profil ou changer votre mot de passe
-            rendez-vous sur votre compte.
+            Je veux savoir où en sont les établissements de ma région ou département sur leurs achats de produits bio,
+            de qualité; comprendre leurs enjeux, leurs succès et difficultés.
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="pa-4">
-            <v-btn :to="{ name: 'AccountSummaryPage' }" outlined color="primary">Mon compte</v-btn>
+            <v-btn :to="{ name: 'PublicCanteenStatisticsPage' }" outlined color="primary">
+              Accéder au tableau de bord
+            </v-btn>
           </v-card-actions>
         </v-card>
+      </v-col>
 
-        <v-card v-else elevation="0" class="fill-height pa-4 d-flex flex-column">
+      <v-col cols="12" md="4">
+        <v-card elevation="0" class="fill-height pa-4 d-flex flex-column">
           <v-img
             src="/static/images/ChartDoodle.png"
             v-if="$vuetify.breakpoint.smAndUp"
@@ -36,21 +40,26 @@
           ></v-img>
           <v-card-title>
             <h2 class="text-h6 font-weight-bold">
-              Vous voulez savoir où vous en êtes des mesures EGAlim
+              Je suis gestionnaire d’un restaurant collectif
             </h2>
           </v-card-title>
           <v-card-text>
-            Vous pouvez faire une simulation sur les différents aspects de la loi EGAlim avec les données de votre
-            cantine.
+            Je veux être outillé sur les mesures à prendre en termes d’approvisionnement, savoir où je me situe par
+            rapport aux objectifs des lois EGAlim et Climat, valoriser les initiatives mises en place.
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="pa-4">
-            <v-btn :to="{ name: 'DiagnosticPage' }" outlined color="primary">Simuler la situation de ma cantine</v-btn>
+            <v-btn v-if="loggedUser" :to="{ name: 'ManagementPage' }" outlined color="primary">
+              Gérer mes cantines
+            </v-btn>
+            <v-btn v-else href="/s-identifier" outlined color="primary">
+              Me créer un compte / Me connecter
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
 
-      <v-col cols="12" sm="6">
+      <v-col cols="12" md="4">
         <v-card elevation="0" class="fill-height pa-0 pa-sm-4 d-flex flex-column">
           <v-img
             src="/static/images/ReadingDoodle.png"
@@ -60,25 +69,17 @@
             max-height="130"
           ></v-img>
           <v-card-title class="text-h6 font-weight-bold">
-            <h2 class="text-h6 font-weight-bold">Vous avez besoin d’aide pour le calcul ?</h2>
+            <h2 class="text-h6 font-weight-bold">Je suis convive et parent de convive</h2>
           </v-card-title>
           <v-card-text>
-            Si vous ne connaissez pas votre part de produits bio, durables et issus du commerce équitable, nous vous
-            proposons un outil simple pour les calculer. Sous forme de tableur, renseignez vos achats HT suivant signes
-            de qualité, mentions, écolabel et/ou certification.
-            <br />
-            Merci à nos beta-testeurs et notamment au PETR Pays d’Armagnac, qui nous ont largement inspiré ce tableur.
+            Je veux savoir ce qu’il y a dans mon assiette dans mon restaurant d’entreprise; mais aussi ce que mange mon
+            fils au collège et pouvoir interargir avec les gérant.e.s de l’EHPAD où sont logés mes parents.
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="pa-4">
-            <v-dialog max-width="700" v-model="calculatorModal" @input="stopVideo">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn outlined color="primary" v-on="on" v-bind="attrs">
-                  Télécharger un tableur d’aide au calcul
-                </v-btn>
-              </template>
-              <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />
-            </v-dialog>
+            <v-btn :to="{ name: 'CanteensHome' }" outlined color="primary">
+              Rechercher parmi le réseau ma-cantine
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -88,12 +89,7 @@
 </template>
 
 <script>
-import CalculatorResourceModal from "@/components/KeyMeasureResource/CalculatorResourceModal"
-
 export default {
-  components: {
-    CalculatorResourceModal,
-  },
   data() {
     return {
       calculatorModal: false,
