@@ -58,7 +58,7 @@ export default {
         legend: {
           show: !this.hideLegend,
           fontSize: "12px",
-          position: "top",
+          position: "right",
         },
         dataLabels: {
           formatter: function(value) {
