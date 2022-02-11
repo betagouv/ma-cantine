@@ -7,7 +7,7 @@ from api.views import (
     SubscribeNewsletter,
     SendCanteenEmailView,
     PurchaseListCreateView,
-    PurchaseRetrieveUpdateView,
+    PurchaseRetrieveUpdateDestroyView,
     CanteenPurchasesSummaryView,
 )
 from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView, CanteenStatisticsView
@@ -110,8 +110,8 @@ urlpatterns = {
     ),
     path(
         "purchases/<int:pk>",
-        PurchaseRetrieveUpdateView.as_view(),
-        name="purchase_retrieve_update",
+        PurchaseRetrieveUpdateDestroyView.as_view(),
+        name="purchase_retrieve_update_destroy",
     ),
     path(
         "canteenPurchasesSummary/<int:canteen_pk>",

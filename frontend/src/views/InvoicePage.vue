@@ -159,14 +159,45 @@
           color="grey lighten-4 pa-3 mt-8"
           class="d-flex flex-column flex-sm-row align-start align-sm-center"
         >
+          <v-dialog v-model="showDeleteDialog" v-if="!isNewPurchase" width="500">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn :disabled="loading" large v-bind="attrs" v-on="on" outlined color="error" class="ma-1">
+                <v-icon class="mr-1">mdi-trash-can</v-icon>
+                Supprimer
+              </v-btn>
+            </template>
+
+            <v-card class="text-left">
+              <v-card-title class="font-weight-bold">Voulez-vous vraiment supprimer cet achat ?</v-card-title>
+
+              <v-divider></v-divider>
+
+              <v-card-actions class="pa-4">
+                <v-spacer></v-spacer>
+                <v-btn outlined text @click="showDeleteDialog = false" class="mr-2">
+                  Non, revenir en arrière
+                </v-btn>
+                <v-btn outlined color="red" text @click="deletePurchase">
+                  Oui, supprimer cet achat
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
           <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
-          <v-btn x-large outlined color="primary" class="ma-1" exact :to="{ name: 'InvoicesHome' }">
+          <v-btn :disabled="loading" x-large outlined color="primary" class="ma-1" exact :to="{ name: 'InvoicesHome' }">
             Annuler
           </v-btn>
-          <v-btn class="ma-1" x-large color="primary" @click="savePurchase()">
+          <v-btn :disabled="loading" class="ma-1" x-large color="primary" @click="savePurchase()">
             Valider
           </v-btn>
-          <v-btn x-large color="primary" @click="savePurchase(true)" v-if="isNewPurchase" class="ma-1">
+          <v-btn
+            :disabled="loading"
+            x-large
+            color="primary"
+            @click="savePurchase(true)"
+            v-if="isNewPurchase"
+            class="ma-1"
+          >
             Valider et ajouter un nouveau
           </v-btn>
         </v-sheet>
@@ -194,6 +225,7 @@ export default {
       invoiceFileChanged: false,
       menu: false,
       modal: false,
+      showDeleteDialog: false,
       categories: [
         "VIANDES_VOLAILLES",
         "PRODUITS_DE_LA_MER",
@@ -361,6 +393,20 @@ export default {
       } else {
         delete e["returnValue"]
       }
+    },
+    deletePurchase() {
+      this.$store
+        .dispatch("deletePurchase", { id: this.purchase.id })
+        .then(() => {
+          this.$store.dispatch("notify", {
+            title: "Votre achat a bien été supprimé",
+            status: "success",
+          })
+          this.$router.push({ name: "InvoicesHome" })
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
     },
   },
   mounted() {

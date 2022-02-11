@@ -1,4 +1,4 @@
-from rest_framework.generics import RetrieveUpdateAPIView, ListCreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework import permissions
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
@@ -49,7 +49,7 @@ class PurchaseListCreateView(ListCreateAPIView):
             raise NotFound() from e
 
 
-class PurchaseRetrieveUpdateView(RetrieveUpdateAPIView):
+class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, IsLinkedCanteenManager]
     model = Purchase
     serializer_class = PurchaseSerializer

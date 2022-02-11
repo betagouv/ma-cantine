@@ -29,5 +29,9 @@ from .teledeclaration import (  # noqa: F401
     TeledeclarationPdfView,
 )
 from .inquiry import InquiryView  # noqa: F401
-from .purchase import PurchaseListCreateView, PurchaseRetrieveUpdateView, CanteenPurchasesSummaryView  # noqa: F401
+from .purchase import (  # noqa: F401
+    PurchaseListCreateView,
+    PurchaseRetrieveUpdateDestroyView,
+    CanteenPurchasesSummaryView,
+)
 from .reservationexpe import ReservationExpeView  # noqa: F401
