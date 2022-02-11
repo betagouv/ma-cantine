@@ -375,6 +375,7 @@ CSP_IMG_SRC = (
     "'unsafe-inline'",
     "stats.data.gouv.fr",
     "www.w3.org",
+    "data:",
 )
 if DEBUG:
     CSP_IMG_SRC += CSP_DEBUG_DOMAINS
