@@ -8,7 +8,7 @@
       hover
     >
       <v-alert icon="mdi-carrot" class="text-body-2 mb-0" color="#61753f" prominent colored-border border="left">
-        Vous pouvez accéder à un guide menu végétarien ou notre livret de recettes pour menus végétariens dans nos
+        Vous pouvez accéder à un guide sur le menu végétarien hebdomadaire en restauration scolaire ou notre livret de recettes pour menus végétariens dans nos
         ressources.
       </v-alert>
     </v-card>
@@ -20,7 +20,7 @@
       hover
     >
       <v-alert icon="mdi-carrot" class="text-body-2 mb-0" color="#61753f" prominent colored-border border="left">
-        Télécharger le guide de plan de diversification des protéines.
+        Télécharger le cadre général du plan pluriannuel de diversification des sources de protéines.
       </v-alert>
     </v-card>
   </div>
