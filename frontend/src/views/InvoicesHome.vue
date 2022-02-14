@@ -25,7 +25,14 @@
       ></v-img>
     </div>
     <v-card outlined class="my-4" v-if="visiblePurchases">
-      <v-data-table hide-default-footer :headers="headers" :items="processedVisiblePurchases" @click:row="onRowClick">
+      <v-data-table
+        :options.sync="options"
+        :loading="loading"
+        :server-items-length="purchaseCount || 0"
+        :headers="headers"
+        :items="processedVisiblePurchases"
+        @click:row="onRowClick"
+      >
         <template v-slot:[`item.category`]="{ item }">
           <v-chip outlined small :color="getDisplayValue(item.category).color" dark class="font-weight-bold">
             {{ getDisplayValue(item.category).text }}
@@ -45,18 +52,6 @@
         </template>
       </v-data-table>
     </v-card>
-    <v-row>
-      <v-spacer></v-spacer>
-      <v-col cols="12" sm="6">
-        <v-pagination
-          v-if="page && purchaseCount"
-          v-model="page"
-          :length="Math.ceil(purchaseCount / limit)"
-          :total-visible="7"
-        ></v-pagination>
-      </v-col>
-      <v-spacer></v-spacer>
-    </v-row>
   </div>
 </template>
 
@@ -68,32 +63,34 @@ export default {
   data() {
     return {
       search: "",
+      loading: false,
       visiblePurchases: null,
       purchaseCount: null,
-      page: null,
       limit: 10,
+      options: {
+        sortBy: [],
+        sortDesc: [],
+        page: null,
+      },
       headers: [
         {
           text: "Date",
           align: "start",
           filterable: false,
           value: "date",
-          sortable: false,
+          sortable: true,
         },
-        { text: "Fournisseur", value: "provider", sortable: false },
+        { text: "Fournisseur", value: "provider", sortable: true },
         { text: "Catégorie", value: "category", sortable: false },
-        { text: "Cantine", value: "canteen.name", sortable: false },
-        { text: "Prix HT", value: "priceHt", sortable: false },
+        { text: "Cantine", value: "canteen__name", sortable: true },
+        { text: "Prix HT", value: "priceHt", sortable: true },
         { text: "", value: "hasAttachment", sortable: false },
       ],
     }
   },
   computed: {
-    loading() {
-      return this.purchaseCount === null
-    },
     offset() {
-      return (this.page - 1) * this.limit
+      return (this.options.page - 1) * this.limit
     },
     processedVisiblePurchases() {
       const canteens = this.$store.state.userCanteenPreviews
@@ -101,7 +98,7 @@ export default {
         const canteen = canteens.find((y) => y.id === x.canteen)
         const date = x.date ? formatDate(x.date) : null
         const hasAttachment = !!x.invoiceFile
-        return Object.assign(x, { canteen, date, hasAttachment })
+        return Object.assign(x, { canteen__name: canteen?.name, date, hasAttachment })
       })
     },
   },
@@ -135,8 +132,8 @@ export default {
       this.$router.push({ name: "InvoicePage", params: { id: purchase.id } })
     },
     fetchCurrentPage() {
-      let queryParam = `limit=${this.limit}&offset=${this.offset}`
-      return fetch(`/api/v1/purchases/?${queryParam}`)
+      this.loading = true
+      return fetch(`/api/v1/purchases/?${this.getApiQueryParams()}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
           return response.json()
@@ -149,21 +146,57 @@ export default {
           this.publishedCanteenCount = 0
           this.$store.dispatch("notifyServerError")
         })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    getApiQueryParams() {
+      let apiQueryParams = `limit=${this.limit}&offset=${this.offset}`
+      const orderingItems = this.getOrderingItems()
+      if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
+      return apiQueryParams
+    },
+    getUrlQueryParams() {
+      let urlQueryParams = { page: this.options.page }
+      const orderingItems = this.getOrderingItems()
+      if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
+      return urlQueryParams
+    },
+    getOrderingItems() {
+      let orderParams = []
+      if (this.options.sortBy && this.options.sortBy.length > 0)
+        for (let i = 0; i < this.options.sortBy.length; i++)
+          orderParams.push(this.options.sortDesc[i] ? `-${this.options.sortBy[i]}` : this.options.sortBy[i])
+      return orderParams
+    },
+    populateParametersFromRoute() {
+      const page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
+      if (!this.$route.query["trier-par"]) {
+        this.$set(this, "options", { page })
+        return
+      }
+      let sortBy = []
+      let sortDesc = []
+      this.$route.query["trier-par"].split(",").forEach((element) => {
+        const isDesc = element[0] === "-"
+        sortBy.push(isDesc ? element.slice(1) : element)
+        sortDesc.push(isDesc)
+      })
+      this.$set(this, "options", { sortBy, sortDesc, page })
     },
   },
   watch: {
-    page(newPage) {
-      // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
-      this.$router.push({ query: { page: newPage } }).catch(() => {})
-      if (!this.visiblePurchases) this.fetchCurrentPage()
+    options() {
+      this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
+      if (!this.visiblePurchases && !this.loading) this.fetchCurrentPage()
     },
-    $route(newRoute) {
-      this.page = newRoute.query.page ? parseInt(newRoute.query.page) : 1
+    $route() {
+      this.populateParametersFromRoute()
       this.fetchCurrentPage()
     },
   },
   mounted() {
-    this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
+    this.populateParametersFromRoute()
   },
 }
 </script>
@@ -172,5 +205,10 @@ export default {
 .v-data-table >>> tbody tr:not(.v-data-table__empty-wrapper),
 .v-data-table >>> .v-chip {
   cursor: pointer;
+}
+
+/* Hides items-per-row */
+.v-data-table >>> .v-data-footer__select {
+  visibility: hidden;
 }
 </style>
