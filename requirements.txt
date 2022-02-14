@@ -10,7 +10,7 @@ botocore==1.23.54
 celery==5.2.3
 certifi==2021.10.8
 chardet==4.0.0
-charset-normalizer==2.0.11
+charset-normalizer==2.0.12
 click==8.0.3
 click-didyoumean==0.3.0
 click-plugins==1.1.1
