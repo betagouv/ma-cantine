@@ -5,7 +5,7 @@
       <v-col cols="12" md="4">
         <v-card elevation="0" class="fill-height pa-4 d-flex flex-column">
           <v-img
-            src="/static/images/UnboxingDoodle.png"
+            src="/static/images/elue.png"
             v-if="$vuetify.breakpoint.smAndUp"
             class="mx-auto rounded-0"
             contain
@@ -62,7 +62,7 @@
       <v-col cols="12" md="4">
         <v-card elevation="0" class="fill-height pa-0 pa-sm-4 d-flex flex-column">
           <v-img
-            src="/static/images/ReadingDoodle.png"
+            src="/static/images/parent.png"
             v-if="$vuetify.breakpoint.smAndUp"
             class="mx-auto rounded-0"
             contain

@@ -2,7 +2,7 @@
   <div>
     <PresentationBlock />
 
-    <ActionsBlock class="mt-16" />
+    <ActionsBlock class="mt-10" />
 
     <v-divider class="mt-8"></v-divider>
 
