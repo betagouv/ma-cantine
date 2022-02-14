@@ -8,7 +8,8 @@
       hover
     >
       <v-alert icon="mdi-carrot" class="text-body-2 mb-0" color="#61753f" prominent colored-border border="left">
-        Vous pouvez accéder à un guide sur le menu végétarien hebdomadaire en restauration scolaire ou notre livret de recettes pour menus végétariens dans nos
+        Vous pouvez accéder à un guide sur le menu végétarien hebdomadaire en restauration scolaire 
+        ou notre livret de recettes pour menus végétariens dans nos
         ressources.
       </v-alert>
     </v-card>
