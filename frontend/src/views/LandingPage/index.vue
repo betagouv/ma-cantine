@@ -16,6 +16,8 @@
 
     <Resources class="my-16" />
 
+    <StartupPartners class="mt-16 mb-8" />
+
     <v-divider class="mt-8"></v-divider>
 
     <TheNewsletter class="mt-12 mb-8" />
@@ -30,6 +32,7 @@ import GoalBlock from "@/views/LandingPage/GoalBlock"
 import DiscoverMeasuresBlock from "@/views/LandingPage/DiscoverMeasuresBlock"
 import Resources from "@/views/LandingPage/Resources"
 import TheNewsletter from "@/components/TheNewsletter"
+import StartupPartners from "@/views/LandingPage/StartupPartners"
 
 export default {
   components: {
@@ -40,6 +43,7 @@ export default {
     DiscoverMeasuresBlock,
     TheNewsletter,
     Resources,
+    StartupPartners,
   },
 }
 </script>

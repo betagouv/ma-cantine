@@ -88,75 +88,96 @@
                 :originalDiagnostic="diagnostic"
                 label="La valeur (en HT) de mes achats alimentaires..."
                 :readonly="hasActiveTeledeclaration"
+                :purchasesSummary="purchasesSummary"
               />
               <fieldset class="d-flex flex-column mt-4">
                 <legend class="body-2 mb-2">
                   Les valeurs par label des produits de qualité et durables hors bio (facultatif)
                 </legend>
                 <v-row>
-                  <v-col cols="12" md="4" class="pr-0">
+                  <v-col cols="12" md="9" class="pr-3">
                     <label class="caption mb-1 mt-2">Label Rouge</label>
-                    <v-container class="d-flex pa-0 pr-3 align-center right-border">
-                      <img
-                        src="/static/images/quality-labels/label-rouge.png"
-                        alt=""
-                        style="height: 2em;"
-                        class="mr-2"
-                      />
-                      <v-text-field
-                        hide-details="auto"
-                        type="number"
-                        suffix="€ HT"
-                        :rules="[validators.nonNegativeOrEmpty]"
-                        validate-on-blur
-                        solo
-                        dense
-                        v-model.number="diagnostic.valueLabelRouge"
-                        :readonly="hasActiveTeledeclaration"
-                        :disabled="hasActiveTeledeclaration"
-                      ></v-text-field>
+                    <v-container class="d-flex pa-0 align-center">
+                      <div style="min-width: 100px; width: 100px;">
+                        <img src="/static/images/quality-labels/label-rouge.png" alt="" style="height: 2em;" />
+                      </div>
+                      <div class="flex-grow-1">
+                        <v-text-field
+                          hide-details="auto"
+                          type="number"
+                          suffix="€ HT"
+                          :rules="[validators.nonNegativeOrEmpty]"
+                          validate-on-blur
+                          solo
+                          dense
+                          v-model.number="diagnostic.valueLabelRouge"
+                          :readonly="hasActiveTeledeclaration"
+                          :disabled="hasActiveTeledeclaration"
+                        ></v-text-field>
+                        <PurchaseHint
+                          v-if="displayPurchaseHints"
+                          v-model="diagnostic.valueLabelRouge"
+                          purchaseType="Label Rouge"
+                          :amount="purchasesSummary.rouge"
+                        />
+                      </div>
                     </v-container>
                   </v-col>
-                  <v-col cols="12" md="4" class="pr-0">
+                  <v-col cols="12" md="9" class="pr-3">
                     <label class="caption mb-1 mt-2">AOC / AOP / IGP</label>
-                    <v-container class="d-flex pa-0 pr-3 align-center right-border">
-                      <img
-                        src="/static/images/quality-labels/Logo-AOC-AOP.png"
-                        alt=""
-                        style="height: 2em;"
-                        class="mr-1"
-                      />
-                      <img src="/static/images/quality-labels/IGP.png" alt="" style="height: 2em;" class="mr-1" />
-                      <v-text-field
-                        hide-details="auto"
-                        type="number"
-                        suffix="€ HT"
-                        :rules="[validators.nonNegativeOrEmpty]"
-                        validate-on-blur
-                        solo
-                        dense
-                        v-model.number="diagnostic.valueLabelAocIgp"
-                        :readonly="hasActiveTeledeclaration"
-                        :disabled="hasActiveTeledeclaration"
-                      ></v-text-field>
+                    <v-container class="d-flex pa-0 align-center">
+                      <div style="min-width: 100px;">
+                        <img src="/static/images/quality-labels/Logo-AOC-AOP.png" alt="" style="height: 2em;" />
+                        <img src="/static/images/quality-labels/IGP.png" alt="" style="height: 2em;" class="mr-1" />
+                      </div>
+                      <div class="flex-grow-1">
+                        <v-text-field
+                          hide-details="auto"
+                          type="number"
+                          suffix="€ HT"
+                          :rules="[validators.nonNegativeOrEmpty]"
+                          validate-on-blur
+                          solo
+                          dense
+                          v-model.number="diagnostic.valueLabelAocIgp"
+                          :readonly="hasActiveTeledeclaration"
+                          :disabled="hasActiveTeledeclaration"
+                        ></v-text-field>
+                        <PurchaseHint
+                          v-if="displayPurchaseHints"
+                          v-model="diagnostic.valueLabelAocIgp"
+                          purchaseType="AOC / AOP / IGP"
+                          :amount="purchasesSummary.aocAopIgp"
+                        />
+                      </div>
                     </v-container>
                   </v-col>
-                  <v-col cols="12" md="4">
+                  <v-col cols="12" md="9" class="pr-3">
                     <label class="caption mb-1 mt-2">Haute Valeur Environnementale</label>
                     <v-container class="d-flex pa-0 align-center">
-                      <img src="/static/images/quality-labels/hve.png" alt="" style="height: 2em;" class="mr-2" />
-                      <v-text-field
-                        hide-details="auto"
-                        type="number"
-                        suffix="€ HT"
-                        :rules="[validators.nonNegativeOrEmpty]"
-                        validate-on-blur
-                        solo
-                        dense
-                        v-model.number="diagnostic.valueLabelHve"
-                        :readonly="hasActiveTeledeclaration"
-                        :disabled="hasActiveTeledeclaration"
-                      ></v-text-field>
+                      <div style="min-width: 100px;">
+                        <img src="/static/images/quality-labels/hve.png" alt="" style="height: 2em;" />
+                      </div>
+                      <div class="flex-grow-1">
+                        <v-text-field
+                          hide-details="auto"
+                          type="number"
+                          suffix="€ HT"
+                          :rules="[validators.nonNegativeOrEmpty]"
+                          validate-on-blur
+                          solo
+                          dense
+                          v-model.number="diagnostic.valueLabelHve"
+                          :readonly="hasActiveTeledeclaration"
+                          :disabled="hasActiveTeledeclaration"
+                        ></v-text-field>
+                        <PurchaseHint
+                          v-if="displayPurchaseHints"
+                          v-model="diagnostic.valueLabelHve"
+                          purchaseType="HVE"
+                          :amount="purchasesSummary.hve"
+                        />
+                      </div>
                     </v-container>
                   </v-col>
                 </v-row>
@@ -273,6 +294,7 @@ import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure
 import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
+import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage } from "@/utils"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
@@ -295,6 +317,7 @@ export default {
       openedPanel: null,
       cancelDialog: false,
       teledeclarationYear: lastYear(),
+      purchasesSummary: null,
     }
   },
   components: {
@@ -305,6 +328,7 @@ export default {
     QualityMeasureValuesInput,
     DiagnosticExpansionPanel,
     TeledeclarationCancelDialog,
+    PurchaseHint,
   },
   props: {
     canteenUrlComponent: {
@@ -366,6 +390,11 @@ export default {
     },
     isTeledeclarationYear() {
       return this.diagnostic.year === this.teledeclarationYear
+    },
+    displayPurchaseHints() {
+      return (
+        this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x) && !this.hasActiveTeledeclaration
+      )
     },
   },
   beforeMount() {
@@ -519,6 +548,12 @@ export default {
       }
     },
     timeAgo: timeAgo,
+    fetchPurchasesSummary() {
+      if (this.canteenId && this.diagnostic && this.diagnostic.year)
+        fetch(`/api/v1/canteenPurchasesSummary/${this.canteenId}?year=${this.diagnostic.year}`)
+          .then((response) => (response.ok ? response.json() : {}))
+          .then((response) => (this.purchasesSummary = response))
+    },
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
@@ -536,6 +571,9 @@ export default {
   watch: {
     year() {
       this.refreshDiagnostic()
+    },
+    "diagnostic.year": function() {
+      this.fetchPurchasesSummary()
     },
   },
 }
@@ -560,14 +598,5 @@ function hasValue(val) {
 }
 fieldset {
   border: none;
-}
-.right-border {
-  border-right: solid 1px #ccc;
-}
-
-@media (max-width: 960px) {
-  .right-border {
-    border-right: none;
-  }
 }
 </style>

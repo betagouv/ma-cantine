@@ -82,6 +82,7 @@ TRELLO_API_TOKEN= Optionnel - Permet la création de cartes Trello suite à une 
 TRELLO_LIST_ID_CONTACT= Optionnel - ID de la liste où l'application mettra des cartes suite à une demande de contact de la part de l'utilistauer. Conseils en-dessous pour l'obtenir.
 TRELLO_LIST_ID_PUBLICATION= Optionnel - ID de la liste où l'application mettra des cartes suite à une demande de publication de la part de l'utilistauer. Conseils en-dessous pour l'obtenir.
 PIPEDRIVE_API_TOKEN= Optionnel - Token Pipedrive pour créer des cartes contact.
+REDIS_URL= Optionnel - L'instance redis à utiliser pour les tâches asynchrones. Cette fonctionnalité n'est pas encore utilisée. Par exemple : 'redis://localhost:6379/0'
 ```
 
 ### Activer les feature flags
@@ -185,3 +186,9 @@ Il faut néanmoins tenir en compte que la mise en page ne sera pas visible et qu
 ### 2- Utiliser Maildev
 
 [Maildev](https://maildev.github.io/maildev/) est un outil ouvert qui exécute un serveur SMTP en local et qui permet de visualiser tous les emails traités. En l'installant de façon globale on peut mettre 'django.core.mail.backends.smtp.EmailBackend' comme variable d'environnement `EMAIL_BACKEND` pour l'utiliser.
+
+### Celery
+
+Celery est un gestionnaire de tâches asynchrone. À l'heure actuelle il n'est pas utilisé, mais le roadmap prévoit la mise en place de tâches récurrentes. Pour l'utiliser, un serveur redis est nécessaire.
+
+Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable `CC_PYTHON_CELERY_MODULE=macantine.celery`. La fonctionnalité Celery Beat doit aussi être activée : `CC_PYTHON_CELERY_USE_BEAT=true`, ainsi que le timezone souhaité : `CELERY_TIMEZONE:'Europe/Paris'`
