@@ -115,7 +115,7 @@
     "subMeasures": [
       {
         "deadline": {
-          "display": "Depuis le 30 octobre 2018",
+          "display": "Depuis le 30 octobre 2018 et 1er janvier 2024 (pour la restauration d'entreprises)",
           "earliestISO": "2018-10-30"
         },
         "description": "Les gestionnaires des restaurants collectifs sont tenus de présenter à leurs structures dirigeantes un plan pluriannuel de diversification de protéines incluant des alternatives à base de protéines végétales dans les repas qu'ils proposent.",
@@ -137,7 +137,7 @@
       },
       {
         "deadline": {
-          "display": "1er novembre 2021",
+          "display": "depuis le 1er novembre 2019",
           "earliestISO": "2019-11-01"
         },
         "htmlDescription": "Tous les restaurants collectifs scolaires (publics ou privés), de la maternelle au lycée, sont tenus de proposer, au moins une fois par semaine, un menu végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n\nLes restaurants de l’Etat et ses établissements publics proposent une option végétarienne quotidienne à partir du 1er janvier 2023.\n\n\n<b>Qu'est-ce qu'un menu végétarien ?</b>\n\nIl s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers.",
@@ -145,35 +145,36 @@
         "readMore": false,
         "shortTitle": "Menu végé hebdo",
         "tags": [
-          "scolaire",
-          "administration",
-          "universitaire",
-          "social",
-          "medical",
-          "loisirs",
-          "creche",
-          "entreprises"
+          "scolaire"
         ],
-        "title": "Menu végétarien"
+        "title": "Menu végétarien hebdomadaire"
       },
       {
         "deadline": {
-          "display": "Depuis la loi Climat",
-          "earliestISO": "2021-08-06"
+          "display": "1er janvier 2023",
+          "earliestISO": "2023-01-01"
         },
-        "description": "Pour les collectivités territoriales volontaires, une expérimentation suite à la loi Climat propose d’expérimenter, une option végétarienne quotidienne pour une durée de 2 ans. ma cantine implémentera bientôt un moyen de se déclarer volontaire dans l'auto-diagnostic et ainsi mesurer l'impact de ce test.",
+        "htmlDescription": "Les restaurants de l’Etat, ses établissements publics, et les entreprises publiques nationales proposent une option végétarienne quotidienne, dès lors qu'ils proposent habituellement un choix multiple de menus, à partir du 1er janvier 2023.",
+        "id": "menu-vege",
+        "readMore": false,
+        "shortTitle": "Menu végé quoti",
+        "tags": [
+          "administration",
+          "restaurants d'Etat (définition à venir)"
+        ],
+        "title": "Option végétarienne quotidienne"
+      },
+      {
+        "deadline": {
+          "display": "du 24 août 2022 au 24 août 2024",
+          "earliestISO": "2022-08-24"
+        },
+        "description": "Pour les collectivités territoriales volontaires, une expérimentation suite à la loi Climat propose d’expérimenter, une option végétarienne quotidienne pour une durée de 2 ans, sous réserve des conditions fixées par voie réglementaire destinées à garantir l'équilibre nutritionnel des repas servis et du respect d'exigences adaptées aux besoins des usagers.",
         "id": "expevege",
         "readMore": false,
         "shortTitle": "Expérimentation végé",
         "tags": [
-          "scolaire",
-          "administration",
-          "universitaire",
-          "social",
-          "medical",
-          "loisirs",
-          "creche",
-          "entreprises"
+          "Collectivités volontaires"
         ],
         "title": "Expérimentation du menu végétarien dans les collectivités volontaires",
         "who": "Pour les volontaires."
