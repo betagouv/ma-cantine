@@ -128,7 +128,6 @@ class Diagnostic(models.Model):
         verbose_name="Valeur totale annuelle HT",
     )
 
-    # Labels : used for temporary campaign
     value_label_rouge = models.DecimalField(
         max_digits=20,
         decimal_places=2,

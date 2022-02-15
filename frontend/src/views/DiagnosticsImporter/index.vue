@@ -174,6 +174,7 @@ export default {
   components: { FileDrop },
   data() {
     const user = this.$store.state.loggedUser
+    const numberFormatExample = "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>."
     return {
       file: undefined,
       canteens: undefined,
@@ -262,21 +263,42 @@ export default {
         },
         {
           name: "Valeur totale d'achats HT",
-          description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
+          description: numberFormatExample,
           type: "Chiffre",
           example: "3290.23",
         },
         {
           name: "Valeur d'achats bio HT",
-          description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
+          description: numberFormatExample,
           type: "Chiffre",
           example: "1284.70",
         },
         {
           name: "Valeur d'achats durables et de qualité (hors bio) HT",
-          description: "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>.",
+          description: numberFormatExample,
           type: "Chiffre",
           example: "681",
+        },
+        {
+          name: "Valeur d'achats Label Rouge HT",
+          description: numberFormatExample,
+          type: "Chiffre",
+          example: "681",
+          optional: true,
+        },
+        {
+          name: "Valeur d'achats Label AOC / AOP / IGP HT",
+          description: numberFormatExample,
+          type: "Chiffre",
+          example: "681",
+          optional: true,
+        },
+        {
+          name: "Valeur d'achats HVE HT",
+          description: numberFormatExample,
+          type: "Chiffre",
+          example: "681",
+          optional: true,
         },
       ],
       validators,
