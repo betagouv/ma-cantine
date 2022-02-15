@@ -288,7 +288,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors[11]["message"],
-            "Données manquantes : 18 colonnes attendus, 14 trouvés.",
+            "Données manquantes : 15 colonnes attendus, 14 trouvés.",
         )
         self.assertEqual(
             errors[12]["message"],

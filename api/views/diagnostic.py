@@ -146,7 +146,7 @@ class ImportDiagnosticsView(APIView):
 
     @transaction.atomic
     def _create_canteen_with_diagnostic(self, row, siret):
-        row[17]  # accessing last column to throw error if badly formatted early on
+        row[14]  # accessing last required column to throw error if badly formatted early on
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
         elif not row[2] and not row[3]:
@@ -185,21 +185,21 @@ class ImportDiagnosticsView(APIView):
 
         value_label_rouge = None
         try:
-            if row[15]:
+            if len(row) >= 16 and row[15]:
                 value_label_rouge = Decimal(row[15].replace(",", "."))
         except Exception as e:
             raise ValidationError({"value_label_rouge": number_error_message})
 
         value_label_aoc_igp = None
         try:
-            if row[16]:
+            if len(row) >= 17 and row[16]:
                 value_label_aoc_igp = Decimal(row[16].replace(",", "."))
         except Exception as e:
             raise ValidationError({"value_label_aoc_igp": number_error_message})
 
         value_label_hve = None
         try:
-            if row[17]:
+            if len(row) >= 18 and row[17]:
                 value_label_hve = Decimal(row[17].replace(",", "."))
         except Exception as e:
             raise ValidationError({"value_label_hve": number_error_message})
@@ -326,7 +326,7 @@ class ImportDiagnosticsView(APIView):
         elif isinstance(e, IndexError):
             errors.append(
                 {
-                    "message": f"Données manquantes : 18 colonnes attendus, {len(row)} trouvés.",
+                    "message": f"Données manquantes : 15 colonnes attendus, {len(row)} trouvés.",
                     "code": 400,
                 }
             )
