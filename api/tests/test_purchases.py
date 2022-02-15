@@ -325,7 +325,7 @@ class TestPurchaseApi(APITestCase):
 
     def test_delete_unauthenticated(self):
         """
-        A user cannot delete a purchase object of a canteen they don't manage
+        A user cannot delete a purchase object of a canteen if they're not authenticated
         """
         purchase = PurchaseFactory.create()
 
