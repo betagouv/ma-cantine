@@ -187,7 +187,9 @@ export default {
   },
   watch: {
     options() {
-      this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
+      const replace = Object.keys(this.$route.query).length === 0
+      if (replace) this.$router.replace({ query: this.getUrlQueryParams() }).catch(() => {})
+      else this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
       if (!this.visiblePurchases && !this.loading) this.fetchCurrentPage()
     },
     $route() {
