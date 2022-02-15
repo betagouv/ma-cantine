@@ -206,6 +206,8 @@ i {
 
 #custom-text {
   font-size: 14px;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 #about {
