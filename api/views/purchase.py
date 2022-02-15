@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager
 from api.serializers import PurchaseSerializer, PurchaseSummarySerializer
 from data.models import Purchase, Canteen
+from .utils import CamelCaseOrderingFilter
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,15 @@ class PurchaseListCreateView(ListCreateAPIView):
     model = Purchase
     serializer_class = PurchaseSerializer
     pagination_class = PurchasesPagination
+    filter_backends = [
+        CamelCaseOrderingFilter,
+    ]
+    ordering_fields = [
+        "date",
+        "provider",
+        "price_ht",
+        "canteen__name",
+    ]
 
     def get_queryset(self):
         return Purchase.objects.filter(canteen__in=self.request.user.canteens.all())
