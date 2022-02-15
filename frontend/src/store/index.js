@@ -483,6 +483,23 @@ export default new Vuex.Store({
         })
     },
 
+    deletePurchase(context, { id }) {
+      context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/purchases/${id}`, {
+        method: "DELETE",
+        headers,
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
+        })
+        .catch((e) => {
+          context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
     fetchReservationExpe(context, { canteen }) {
       context.commit("SET_RESERVATION_EXPE_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteen/${canteen.id}/reservationExpe/`)
