@@ -9,4 +9,4 @@ class ReservationExpeFactory(factory.django.DjangoModelFactory):
 
     canteen = factory.SubFactory(CanteenFactory)
     leader_email = factory.Faker("email")
-    satisfaction_t0 = factory.Faker("random_int", min=0, max=5)
+    satisfaction = factory.Faker("random_int", min=0, max=5)

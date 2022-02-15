@@ -68,7 +68,6 @@ class ReservationExpeAdmin(admin.ModelAdmin):
                     "avg_weight_bread_leftover_t0",
                     "avg_attendance_from_evaluation_t0",
                     "solution_use_rate_t0",
-                    "satisfaction_t0",
                     "comments_t0",
                 )
             },
@@ -84,7 +83,6 @@ class ReservationExpeAdmin(admin.ModelAdmin):
                     "avg_weight_bread_leftover_t1",
                     "avg_attendance_from_evaluation_t1",
                     "solution_use_rate_t1",
-                    "satisfaction_t1",
                     "comments_t1",
                 )
             },
@@ -100,8 +98,8 @@ class ReservationExpeAdmin(admin.ModelAdmin):
                     "avg_weight_bread_leftover_t2",
                     "avg_attendance_from_evaluation_t2",
                     "solution_use_rate_t2",
-                    "satisfaction_t2",
                     "comments_t2",
+                    "satisfaction",
                     "system_cost",
                     "participation_cost",
                     "participation_cost_details",

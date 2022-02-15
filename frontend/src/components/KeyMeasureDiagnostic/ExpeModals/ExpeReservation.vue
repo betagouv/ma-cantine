@@ -347,22 +347,6 @@
                       :id="`solution-use-rate-${item.value}`"
                     ></v-text-field>
 
-                    <!-- satisfaction -->
-                    <label class="body-2 grey--text text--darken-3" :for="`satisfaction-${item.value}`">
-                      Satisfaction moyenne convive (par questionnaire)
-                    </label>
-                    <v-rating
-                      v-model.number="expe[`satisfaction${item.value}`]"
-                      color="primary"
-                      empty-icon="mdi-star-outline"
-                      full-icon="mdi-star"
-                      class="mt-2 mb-4 body-2"
-                      :id="`satisfaction-${item.value}`"
-                      background-color="grey"
-                      length="5"
-                      hover
-                    ></v-rating>
-
                     <!-- comments -->
                     <label class="body-2 grey--text text--darken-3" :for="`comments-${item.value}`">
                       Commentaire
@@ -378,6 +362,22 @@
                     ></v-textarea>
 
                     <div v-if="item.value === 'T2'">
+                      <!-- satisfaction -->
+                      <label class="body-2 grey--text text--darken-3" :for="`satisfaction`">
+                        Satisfaction moyenne convive (par questionnaire)
+                      </label>
+                      <v-rating
+                        v-model.number="expe.satisfaction"
+                        color="primary"
+                        empty-icon="mdi-star-outline"
+                        full-icon="mdi-star"
+                        class="mt-2 mb-4 body-2"
+                        :id="`satisfaction`"
+                        background-color="grey"
+                        length="5"
+                        hover
+                      ></v-rating>
+
                       <!-- system cost -->
                       <label class="body-2 grey--text text--darken-3" for="system-cost">
                         Coût de la solution de réservation sur 3 ans
