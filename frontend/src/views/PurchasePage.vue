@@ -5,7 +5,7 @@
     </div>
 
     <div class="text-left">
-      <router-link :to="{ name: 'InvoicesHome' }" exact class="mt-2 grey--text text--darken-1 caption">
+      <router-link :to="{ name: 'PurchasesHome' }" exact class="mt-2 grey--text text--darken-1 caption">
         <v-icon small class="mr-2">mdi-arrow-left</v-icon>
         Revenir aux achats
       </router-link>
@@ -184,7 +184,15 @@
             </v-card>
           </v-dialog>
           <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
-          <v-btn :disabled="loading" x-large outlined color="primary" class="ma-1" exact :to="{ name: 'InvoicesHome' }">
+          <v-btn
+            :disabled="loading"
+            x-large
+            outlined
+            color="primary"
+            class="ma-1"
+            exact
+            :to="{ name: 'PurchasesHome' }"
+          >
             Annuler
           </v-btn>
           <v-btn :disabled="loading" class="ma-1" x-large color="primary" @click="savePurchase()">
@@ -214,7 +222,7 @@ import validators from "@/validators"
 import Constants from "@/constants"
 
 export default {
-  name: "InvoicePage",
+  name: "PurchasePage",
   components: { FileDrop, FilePreview },
   data() {
     return {
@@ -366,7 +374,7 @@ export default {
             message,
             status: "success",
           })
-          if (!stayOnPage) this.$router.push({ name: "InvoicesHome" })
+          if (!stayOnPage) this.$router.push({ name: "PurchasesHome" })
           else {
             this.purchase = {
               characteristics: [],
@@ -402,7 +410,7 @@ export default {
             title: "Votre achat a bien été supprimé",
             status: "success",
           })
-          this.$router.push({ name: "InvoicesHome" })
+          this.$router.push({ name: "PurchasesHome" })
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
@@ -430,7 +438,7 @@ export default {
           message: "Nous n'avons pas trouvé cet achat",
           status: "error",
         })
-        this.$router.push({ name: "InvoicesHome" })
+        this.$router.push({ name: "PurchasesHome" })
       })
   },
   created() {

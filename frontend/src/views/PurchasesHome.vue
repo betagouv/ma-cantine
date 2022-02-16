@@ -59,7 +59,7 @@
 import { formatDate } from "@/utils"
 
 export default {
-  name: "InvoicesHome",
+  name: "PurchasesHome",
   data() {
     return {
       search: "",
@@ -129,7 +129,7 @@ export default {
       return { text: "", color: "" }
     },
     onRowClick(purchase) {
-      this.$router.push({ name: "InvoicePage", params: { id: purchase.id } })
+      this.$router.push({ name: "PurchasePage", params: { id: purchase.id } })
     },
     fetchCurrentPage() {
       this.loading = true

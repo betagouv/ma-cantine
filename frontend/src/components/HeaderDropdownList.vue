@@ -73,7 +73,7 @@ export default {
           text: "Mes achats",
           icon: "mdi-food-apple",
           authenticationState: true,
-          to: { name: "InvoicesHome" },
+          to: { name: "PurchasesHome" },
         },
         {
           text: "S'identifier",
