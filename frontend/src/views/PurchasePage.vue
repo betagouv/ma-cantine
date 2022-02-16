@@ -27,6 +27,17 @@
         <v-row>
           <v-col cols="12" md="8">
             <v-row class="mb-4">
+              <v-col cols="12">
+                <label class="body-2" for="description">Description du produit</label>
+                <v-text-field
+                  validate-on-blur
+                  hide-details="auto"
+                  solo
+                  v-model="purchase.description"
+                  class="mt-2"
+                  id="description"
+                ></v-text-field>
+              </v-col>
               <v-col cols="12" sm="8">
                 <label class="body-2" for="provider">Fournisseur</label>
                 <v-text-field
