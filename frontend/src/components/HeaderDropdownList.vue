@@ -58,12 +58,6 @@ export default {
       logoutWarningDialog: false,
       items: [
         {
-          text: "Mon compte",
-          icon: "mdi-account",
-          authenticationState: true,
-          to: { name: "AccountSummaryPage" },
-        },
-        {
           text: "Mes cantines",
           icon: "mdi-chart-bubble",
           authenticationState: true,
@@ -103,6 +97,17 @@ export default {
           to: { name: "DiagnosticPage" },
         },
         {
+          text: "Générer mon affiche",
+          icon: "mdi-cloud-print-outline",
+          to: { name: "GeneratePosterPage" },
+        },
+        {
+          text: "Mon compte",
+          icon: "mdi-account",
+          authenticationState: true,
+          to: { name: "AccountSummaryPage" },
+        },
+        {
           type: "divider",
         },
         {
@@ -127,24 +132,12 @@ export default {
           target: "_blank",
         },
         {
-          text: "Générer mon affiche",
-          icon: "mdi-cloud-print-outline",
-          to: { name: "GeneratePosterPage" },
-        },
-        {
           type: "divider",
         },
         {
           text: "Contactez-nous",
           icon: "mdi-help-circle-outline",
           to: { name: "ContactPage" },
-        },
-        {
-          text: "Donner son avis",
-          icon: "mdi-check",
-          href:
-            "https://voxusagers.numerique.gouv.fr/Demarches/2934?&view-mode=formulaire-avis&nd_mode=en-ligne-enti%C3%A8rement&nd_source=button&key=2c212af2116e6bf85d63fee0645f8a10",
-          target: "_blank",
         },
       ],
     }
