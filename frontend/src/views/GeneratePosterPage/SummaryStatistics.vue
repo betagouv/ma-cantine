@@ -24,9 +24,21 @@ export default {
     width: Number,
     hideLegend: Boolean,
   },
-  data() {
-    return {
-      chartOptions: {
+  computed: {
+    dataPresent() {
+      return !!this.qualityDiagnostic.valueTotalHt
+    },
+    bioPercentage() {
+      return getPercentage(this.qualityDiagnostic.valueBioHt, this.qualityDiagnostic.valueTotalHt)
+    },
+    sustainablePercentage() {
+      return getPercentage(this.qualityDiagnostic.valueSustainableHt, this.qualityDiagnostic.valueTotalHt)
+    },
+    series() {
+      return [this.bioPercentage, this.sustainablePercentage, 100 - this.bioPercentage - this.sustainablePercentage]
+    },
+    chartOptions() {
+      return {
         plotOptions: {
           pie: {
             expandOnClick: false,
@@ -58,31 +70,17 @@ export default {
         legend: {
           show: !this.hideLegend,
           fontSize: "12px",
-          position: "top",
+          position: "right",
         },
         dataLabels: {
-          formatter: function(value) {
+          formatter(value) {
             return value + "%"
           },
           dropShadow: {
             enabled: false,
           },
         },
-      },
-    }
-  },
-  computed: {
-    dataPresent() {
-      return !!this.qualityDiagnostic.valueTotalHt
-    },
-    bioPercentage() {
-      return getPercentage(this.qualityDiagnostic.valueBioHt, this.qualityDiagnostic.valueTotalHt)
-    },
-    sustainablePercentage() {
-      return getPercentage(this.qualityDiagnostic.valueSustainableHt, this.qualityDiagnostic.valueTotalHt)
-    },
-    series() {
-      return [this.bioPercentage, this.sustainablePercentage, 100 - this.bioPercentage - this.sustainablePercentage]
+      }
     },
   },
 }

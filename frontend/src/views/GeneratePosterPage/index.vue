@@ -39,6 +39,13 @@
           </v-btn>
         </v-col>
         <v-spacer></v-spacer>
+        <v-textarea
+          outlined
+          v-model="customText"
+          label="Plus de détail (facultatif)"
+          counter
+          :rules="[(v) => !v || v.length <= 915 || '915 caractères maximum']"
+        ></v-textarea>
       </v-row>
       <v-row>
         <v-col cols="12" md="7" class="text-body-2 mb-2">
@@ -58,6 +65,7 @@
           :canteen="selectedCanteen"
           :diagnostic="currentDiagnostic"
           :previousDiagnostic="previousDiagnostic"
+          :customText="customText"
         />
       </div>
     </div>
@@ -200,6 +208,7 @@ export default {
       loadingCanteenData: false,
       fetchedCanteens: {},
       selectedCanteen: {},
+      customText: null,
     }
   },
   computed: {
