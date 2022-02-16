@@ -1,9 +1,6 @@
 <template>
   <div class="text-left">
-    <router-link :to="canteensHomeBacklink" class="mt-2 grey--text text--darken-1 caption">
-      <v-icon small class="mr-2">mdi-arrow-left</v-icon>
-      Voir la liste des cantines
-    </router-link>
+    <BackLink :to="canteensHomeBacklink" text="Voir la liste des cantines" />
     <div v-if="canteen" id="canteen-dashboard">
       <v-card elevation="0" class="pa-0 mt-4 mb-8 text-left">
         <v-row class="align-center">
@@ -60,6 +57,7 @@ import { diagnosticsMap } from "@/utils"
 import CanteenPublication from "@/components/CanteenPublication"
 import ContactForm from "./ContactForm"
 import CanteenIndicators from "@/components/CanteenIndicators"
+import BackLink from "@/components/BackLink"
 import labels from "@/data/quality-labels.json"
 
 export default {
@@ -75,6 +73,7 @@ export default {
     CanteenPublication,
     ContactForm,
     CanteenIndicators,
+    BackLink,
   },
   props: {
     canteenUrlComponent: {

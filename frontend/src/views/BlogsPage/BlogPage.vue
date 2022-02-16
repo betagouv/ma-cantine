@@ -1,5 +1,8 @@
 <template>
   <div id="blog-page">
+    <div class="text-left">
+      <BackLink :to="backLink" text="Retour à la liste des articles" />
+    </div>
     <div v-if="blogPost">
       <v-card elevation="0" class="text-center text-md-left my-10">
         <v-row v-if="$vuetify.breakpoint.smAndDown">
@@ -33,16 +36,21 @@
       </v-card>
       <div id="content" v-html="blogPost.body" class="text-left"></div>
 
-      <router-link :to="{ name: 'BlogsHome' }" class="my-10 d-block">← Retour à la liste des articles</router-link>
+      <BackLink :to="backLink" text="Retour à la liste des articles" :primary="true" class="my-10 d-block" />
     </div>
   </div>
 </template>
 
 <script>
+import BackLink from "@/components/BackLink"
 export default {
+  components: {
+    BackLink,
+  },
   data() {
     return {
       blogPost: null,
+      backLink: { name: "BlogsHome" },
     }
   },
   props: {
@@ -74,6 +82,14 @@ export default {
     blogPost() {
       if (this.blogPost) document.title = `${this.blogPost.title} - ma-cantine.beta.gouv.fr`
     },
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (from.name == "BlogsHome") {
+        // keep filter settings in URL params
+        vm.backLink = from
+      }
+    })
   },
 }
 </script>

@@ -5,10 +5,7 @@
     </div>
 
     <div class="text-left">
-      <router-link :to="{ name: 'InvoicesHome' }" exact class="mt-2 grey--text text--darken-1 caption">
-        <v-icon small class="mr-2">mdi-arrow-left</v-icon>
-        Revenir aux achats
-      </router-link>
+      <BackLink :to="backLink" text="Revenir aux achats" />
     </div>
 
     <div class="text-left" v-if="purchase">
@@ -209,13 +206,14 @@
 <script>
 import FileDrop from "@/components/FileDrop"
 import FilePreview from "@/components/FilePreview"
+import BackLink from "@/components/BackLink"
 import { toBase64, getObjectDiff, normaliseText, formatDate } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 
 export default {
-  name: "InvoicePage",
-  components: { FileDrop, FilePreview },
+  name: "PurchasePage",
+  components: { FileDrop, FilePreview, BackLink },
   data() {
     return {
       originalPurchase: null,
@@ -257,6 +255,7 @@ export default {
         "EXTERNALITES",
         "PERFORMANCE",
       ],
+      backLink: { name: "InvoicesHome" },
     }
   },
   props: {
@@ -438,6 +437,14 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.handleUnload)
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (from.name == "InvoicesHome") {
+        // keep filter settings in URL params
+        vm.backLink = from
+      }
+    })
   },
 }
 </script>
