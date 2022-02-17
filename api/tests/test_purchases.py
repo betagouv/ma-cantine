@@ -53,6 +53,7 @@ class TestPurchaseApi(APITestCase):
         payload = {
             "date": "2022-01-13",
             "canteen_id": 1,
+            "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
@@ -73,6 +74,7 @@ class TestPurchaseApi(APITestCase):
         payload = {
             "date": "2022-01-13",
             "canteen": other_user_canteen.id,
+            "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
@@ -91,6 +93,7 @@ class TestPurchaseApi(APITestCase):
         payload = {
             "date": "2022-01-13",
             "canteen": canteen.id,
+            "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
@@ -109,6 +112,7 @@ class TestPurchaseApi(APITestCase):
         payload = {
             "date": "2022-01-13",
             "canteen": "999",
+            "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
@@ -127,7 +131,7 @@ class TestPurchaseApi(APITestCase):
             "price_ht": 15.23,
         }
         response = self.client.patch(
-            reverse("purchase_retrieve_update", kwargs={"pk": purchase.id}), payload, format="json"
+            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -144,17 +148,19 @@ class TestPurchaseApi(APITestCase):
         payload = {
             "id": purchase.id,
             "canteen": new_canteen.id,
+            "description": "Saumon",
             "provider": "Test provider",
             "price_ht": 15.23,
         }
 
         response = self.client.patch(
-            reverse("purchase_retrieve_update", kwargs={"pk": purchase.id}), payload, format="json"
+            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         purchase.refresh_from_db()
         self.assertEqual(purchase.canteen, new_canteen)
+        self.assertEqual(purchase.description, "Saumon")
         self.assertEqual(purchase.provider, "Test provider")
         self.assertEqual(float(purchase.price_ht), 15.23)
 
@@ -167,12 +173,13 @@ class TestPurchaseApi(APITestCase):
 
         payload = {
             "id": purchase.id,
+            "description": "Saumon",
             "provider": "Test provider",
             "price_ht": 15.23,
         }
 
         response = self.client.patch(
-            reverse("purchase_retrieve_update", kwargs={"pk": purchase.id}), payload, format="json"
+            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -191,7 +198,7 @@ class TestPurchaseApi(APITestCase):
         }
 
         response = self.client.patch(
-            reverse("purchase_retrieve_update", kwargs={"pk": purchase.id}), payload, format="json"
+            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -297,3 +304,39 @@ class TestPurchaseApi(APITestCase):
     def test_purchase_inexistent_canteen(self):
         response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": 999999}), {"year": 2020})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_delete_purchase(self):
+        """
+        A user can delete a purchase object
+        """
+        purchase = PurchaseFactory.create()
+        purchase.canteen.managers.add(authenticate.user)
+
+        response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 0)
+
+    @authenticate
+    def test_delete_unauthorized(self):
+        """
+        A user cannot delete a purchase object of a canteen they don't manage
+        """
+        purchase = PurchaseFactory.create()
+
+        response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)
+
+    def test_delete_unauthenticated(self):
+        """
+        A user cannot delete a purchase object of a canteen if they're not authenticated
+        """
+        purchase = PurchaseFactory.create()
+
+        response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)

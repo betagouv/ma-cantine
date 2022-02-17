@@ -95,9 +95,6 @@ class ReservationExpe(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Taux d’utilisation de la solution de réservation",
     )
-    satisfaction_t0 = models.IntegerField(
-        null=True, blank=True, verbose_name="Satisfaction", validators=[MinValueValidator(0), MaxValueValidator(5)]
-    )
     comments_t0 = models.TextField(null=True, blank=True, verbose_name="Commentaires")
 
     # T1
@@ -156,9 +153,6 @@ class ReservationExpe(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(0)],
         verbose_name="Taux d’utilisation de la solution de réservation",
-    )
-    satisfaction_t1 = models.IntegerField(
-        null=True, blank=True, verbose_name="Satisfaction", validators=[MinValueValidator(0), MaxValueValidator(5)]
     )
     comments_t1 = models.TextField(null=True, blank=True, verbose_name="Commentaires")
 
@@ -219,12 +213,12 @@ class ReservationExpe(models.Model):
         validators=[MinValueValidator(0)],
         verbose_name="Taux d’utilisation de la solution de réservation",
     )
-    satisfaction_t2 = models.IntegerField(
-        null=True, blank=True, verbose_name="Satisfaction", validators=[MinValueValidator(0), MaxValueValidator(5)]
-    )
     comments_t2 = models.TextField(null=True, blank=True, verbose_name="Commentaires")
 
     # T2 only questions
+    satisfaction = models.IntegerField(
+        null=True, blank=True, verbose_name="Satisfaction", validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
     system_cost = models.DecimalField(
         null=True,
         blank=True,

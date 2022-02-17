@@ -16,6 +16,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "modification_date",
             "canteen",
             "date",
+            "description",
             "provider",
             "category",
             "characteristics",

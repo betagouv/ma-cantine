@@ -3,6 +3,7 @@ arabic-reshaper==2.1.3
 asgiref==3.5.0
 astroid==2.9.3
 attrs==21.4.0
+backports.zoneinfo==0.2.1
 billiard==3.6.4.0
 black==22.1.0
 boto3==1.20.54
@@ -16,14 +17,14 @@ click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.2.0
 Deprecated==1.2.13
-Django==3.2.11
+Django==4.0.2
 django-anymail==8.5
 django-ckeditor==6.2.0
 django-csp==3.7
 django-debug-toolbar==3.2.4
 django-filter==21.1
 django-js-asset==2.0.0
-django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@00dde137e67b4f0cc9c58e6c8df6896d145089bf
+django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
 django-otp==1.1.3
 django-storages==1.12.3
 django-webpack-loader==1.4.1

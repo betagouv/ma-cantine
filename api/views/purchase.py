@@ -1,4 +1,4 @@
-from rest_framework.generics import RetrieveUpdateAPIView, ListCreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework import permissions
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager
 from api.serializers import PurchaseSerializer, PurchaseSummarySerializer
 from data.models import Purchase, Canteen
+from .utils import CamelCaseOrderingFilter
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,16 @@ class PurchaseListCreateView(ListCreateAPIView):
     model = Purchase
     serializer_class = PurchaseSerializer
     pagination_class = PurchasesPagination
+    filter_backends = [
+        CamelCaseOrderingFilter,
+    ]
+    ordering_fields = [
+        "date",
+        "provider",
+        "price_ht",
+        "canteen__name",
+        "description",
+    ]
 
     def get_queryset(self):
         return Purchase.objects.filter(canteen__in=self.request.user.canteens.all())
@@ -49,7 +60,7 @@ class PurchaseListCreateView(ListCreateAPIView):
             raise NotFound() from e
 
 
-class PurchaseRetrieveUpdateView(RetrieveUpdateAPIView):
+class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, IsLinkedCanteenManager]
     model = Purchase
     serializer_class = PurchaseSerializer

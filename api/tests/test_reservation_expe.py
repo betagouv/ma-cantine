@@ -17,7 +17,7 @@ class TestReservationExpeApi(APITestCase):
 
         payload = {
             "leader_email": "test@example.com",
-            "satisfaction_t0": 5,
+            "satisfaction": 5,
         }
 
         response = self.client.post(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
@@ -25,10 +25,10 @@ class TestReservationExpeApi(APITestCase):
 
         body = response.json()
         self.assertEqual(body["leaderEmail"], "test@example.com")
-        self.assertEqual(body["satisfactionT0"], 5)
+        self.assertEqual(body["satisfaction"], 5)
 
         self.assertEqual(ReservationExpe.objects.get(canteen=canteen).leader_email, "test@example.com")
-        self.assertEqual(ReservationExpe.objects.get(canteen=canteen).satisfaction_t0, 5)
+        self.assertEqual(ReservationExpe.objects.get(canteen=canteen).satisfaction, 5)
 
     def test_cannot_create_reservation_expe_not_authenticated(self):
         """
@@ -37,7 +37,7 @@ class TestReservationExpeApi(APITestCase):
         canteen = CanteenFactory.create()
 
         payload = {
-            "satisfaction_t0": 5,
+            "satisfaction": 5,
         }
 
         response = self.client.post(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
@@ -51,7 +51,7 @@ class TestReservationExpeApi(APITestCase):
         canteen = CanteenFactory.create()
 
         payload = {
-            "satisfaction_t0": 5,
+            "satisfaction": 5,
         }
 
         response = self.client.post(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
@@ -63,7 +63,7 @@ class TestReservationExpeApi(APITestCase):
         Shouldn't be able to create a reservation expe if not the canteen doesn't exist
         """
         payload = {
-            "satisfaction_t0": 5,
+            "satisfaction": 5,
         }
 
         response = self.client.post(reverse("canteen_reservation_expe", kwargs={"canteen_pk": 99}), payload)
@@ -76,14 +76,14 @@ class TestReservationExpeApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        reservation_expe = ReservationExpeFactory.create(canteen=canteen, satisfaction_t0=5)
+        reservation_expe = ReservationExpeFactory.create(canteen=canteen, satisfaction=5)
 
         response = self.client.post(
-            reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), {"satisfaction_t0": 0}
+            reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), {"satisfaction": 0}
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         reservation_expe.refresh_from_db()
-        self.assertEqual(reservation_expe.satisfaction_t0, 5)
+        self.assertEqual(reservation_expe.satisfaction, 5)
         self.assertEqual(ReservationExpe.objects.count(), 1)
 
     @authenticate
@@ -139,14 +139,14 @@ class TestReservationExpeApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
         reservation_expe = ReservationExpeFactory.create(
-            canteen=canteen, leader_email="bad@example.com", satisfaction_t0=1
+            canteen=canteen, leader_email="bad@example.com", satisfaction=1
         )
-        payload = {"leader_email": "good@example.com", "satisfaction_t0": 3}
+        payload = {"leader_email": "good@example.com", "satisfaction": 3}
         response = self.client.put(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         reservation_expe.refresh_from_db()
         self.assertEqual(reservation_expe.leader_email, "good@example.com")
-        self.assertEqual(reservation_expe.satisfaction_t0, 3)
+        self.assertEqual(reservation_expe.satisfaction, 3)
 
     def test_cannot_update_reservation_expe_unauthenticated(self):
         """
@@ -206,17 +206,15 @@ class TestReservationExpeApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        reservation_expe = ReservationExpeFactory.create(
-            canteen=canteen, satisfaction_t0=3, avg_weight_not_served_t2=70
-        )
+        reservation_expe = ReservationExpeFactory.create(canteen=canteen, satisfaction=3, avg_weight_not_served_t2=70)
 
         response = self.client.put(
             reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}),
-            {"satisfaction_t0": 6},
+            {"satisfaction": 6},
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         reservation_expe.refresh_from_db()
-        self.assertEqual(reservation_expe.satisfaction_t0, 3)
+        self.assertEqual(reservation_expe.satisfaction, 3)
 
         response = self.client.put(
             reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}),

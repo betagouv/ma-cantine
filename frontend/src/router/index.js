@@ -34,8 +34,8 @@ import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import PublicCanteenStatisticsPage from "@/views/PublicCanteenStatisticsPage"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import ContactPage from "@/views/ContactPage"
-import InvoicesHome from "@/views/InvoicesHome"
-import InvoicePage from "@/views/InvoicePage"
+import PurchasesHome from "@/views/PurchasesHome"
+import PurchasePage from "@/views/PurchasePage"
 
 Vue.use(VueRouter)
 
@@ -355,8 +355,8 @@ const routes = [
   },
   {
     path: "/mes-achats",
-    name: "InvoicesHome",
-    component: InvoicesHome,
+    name: "PurchasesHome",
+    component: PurchasesHome,
     meta: {
       title: "Mes achats",
       authenticationRequired: true,
@@ -364,8 +364,8 @@ const routes = [
   },
   {
     path: "/mes-achats/:id",
-    name: "InvoicePage",
-    component: InvoicePage,
+    name: "PurchasePage",
+    component: PurchasePage,
     props: true,
     meta: {
       title: "Mon achat",
@@ -375,7 +375,7 @@ const routes = [
   {
     path: "/nouvel-achat/",
     name: "NewPurchase",
-    component: InvoicePage,
+    component: PurchasePage,
     meta: {
       title: "Nouvel achat",
       authenticationRequired: true,

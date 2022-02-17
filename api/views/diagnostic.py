@@ -146,7 +146,7 @@ class ImportDiagnosticsView(APIView):
 
     @transaction.atomic
     def _create_canteen_with_diagnostic(self, row, siret):
-        row[14]  # accessing last column to throw error if badly formatted early on
+        row[14]  # accessing last required column to throw error if badly formatted early on
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
         elif not row[2] and not row[3]:
@@ -183,6 +183,27 @@ class ImportDiagnosticsView(APIView):
         except Exception as e:
             raise ValidationError({"value_sustainable_ht": number_error_message})
 
+        value_label_rouge = None
+        try:
+            if len(row) >= 16 and row[15]:
+                value_label_rouge = Decimal(row[15].replace(",", "."))
+        except Exception as e:
+            raise ValidationError({"value_label_rouge": number_error_message})
+
+        value_label_aoc_igp = None
+        try:
+            if len(row) >= 17 and row[16]:
+                value_label_aoc_igp = Decimal(row[16].replace(",", "."))
+        except Exception as e:
+            raise ValidationError({"value_label_aoc_igp": number_error_message})
+
+        value_label_hve = None
+        try:
+            if len(row) >= 18 and row[17]:
+                value_label_hve = Decimal(row[17].replace(",", "."))
+        except Exception as e:
+            raise ValidationError({"value_label_hve": number_error_message})
+
         (canteen, created) = Canteen.objects.get_or_create(
             siret=siret,
             defaults={
@@ -217,6 +238,9 @@ class ImportDiagnosticsView(APIView):
             value_total_ht=value_total_ht,
             value_bio_ht=value_bio_ht,
             value_sustainable_ht=value_sustainable_ht,
+            value_label_rouge=value_label_rouge,
+            value_label_aoc_igp=value_label_aoc_igp,
+            value_label_hve=value_label_hve,
         )
         diagnostic.full_clean()
         diagnostic.save()
