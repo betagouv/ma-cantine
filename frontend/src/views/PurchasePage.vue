@@ -24,6 +24,17 @@
         <v-row>
           <v-col cols="12" md="8">
             <v-row class="mb-4">
+              <v-col cols="12">
+                <label class="body-2" for="description">Description du produit</label>
+                <v-text-field
+                  validate-on-blur
+                  hide-details="auto"
+                  solo
+                  v-model="purchase.description"
+                  class="mt-2"
+                  id="description"
+                ></v-text-field>
+              </v-col>
               <v-col cols="12" sm="8">
                 <label class="body-2" for="provider">Fournisseur</label>
                 <v-text-field
@@ -181,7 +192,15 @@
             </v-card>
           </v-dialog>
           <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
-          <v-btn :disabled="loading" x-large outlined color="primary" class="ma-1" exact :to="{ name: 'InvoicesHome' }">
+          <v-btn
+            :disabled="loading"
+            x-large
+            outlined
+            color="primary"
+            class="ma-1"
+            exact
+            :to="{ name: 'PurchasesHome' }"
+          >
             Annuler
           </v-btn>
           <v-btn :disabled="loading" class="ma-1" x-large color="primary" @click="savePurchase()">
@@ -255,7 +274,7 @@ export default {
         "EXTERNALITES",
         "PERFORMANCE",
       ],
-      backLink: { name: "InvoicesHome" },
+      backLink: { name: "PurchasesHome" },
     }
   },
   props: {
@@ -365,7 +384,7 @@ export default {
             message,
             status: "success",
           })
-          if (!stayOnPage) this.$router.push({ name: "InvoicesHome" })
+          if (!stayOnPage) this.$router.push({ name: "PurchasesHome" })
           else {
             this.purchase = {
               characteristics: [],
@@ -401,7 +420,7 @@ export default {
             title: "Votre achat a bien été supprimé",
             status: "success",
           })
-          this.$router.push({ name: "InvoicesHome" })
+          this.$router.push({ name: "PurchasesHome" })
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
@@ -429,7 +448,7 @@ export default {
           message: "Nous n'avons pas trouvé cet achat",
           status: "error",
         })
-        this.$router.push({ name: "InvoicesHome" })
+        this.$router.push({ name: "PurchasesHome" })
       })
   },
   created() {

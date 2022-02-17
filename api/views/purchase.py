@@ -34,6 +34,7 @@ class PurchaseListCreateView(ListCreateAPIView):
         "provider",
         "price_ht",
         "canteen__name",
+        "description",
     ]
 
     def get_queryset(self):

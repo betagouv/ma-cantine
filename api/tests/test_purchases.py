@@ -53,6 +53,7 @@ class TestPurchaseApi(APITestCase):
         payload = {
             "date": "2022-01-13",
             "canteen_id": 1,
+            "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
@@ -73,6 +74,7 @@ class TestPurchaseApi(APITestCase):
         payload = {
             "date": "2022-01-13",
             "canteen": other_user_canteen.id,
+            "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
@@ -91,6 +93,7 @@ class TestPurchaseApi(APITestCase):
         payload = {
             "date": "2022-01-13",
             "canteen": canteen.id,
+            "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
@@ -109,6 +112,7 @@ class TestPurchaseApi(APITestCase):
         payload = {
             "date": "2022-01-13",
             "canteen": "999",
+            "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
             "characteristic": ["BIO"],
@@ -144,6 +148,7 @@ class TestPurchaseApi(APITestCase):
         payload = {
             "id": purchase.id,
             "canteen": new_canteen.id,
+            "description": "Saumon",
             "provider": "Test provider",
             "price_ht": 15.23,
         }
@@ -155,6 +160,7 @@ class TestPurchaseApi(APITestCase):
 
         purchase.refresh_from_db()
         self.assertEqual(purchase.canteen, new_canteen)
+        self.assertEqual(purchase.description, "Saumon")
         self.assertEqual(purchase.provider, "Test provider")
         self.assertEqual(float(purchase.price_ht), 15.23)
 
@@ -167,6 +173,7 @@ class TestPurchaseApi(APITestCase):
 
         payload = {
             "id": purchase.id,
+            "description": "Saumon",
             "provider": "Test provider",
             "price_ht": 15.23,
         }
