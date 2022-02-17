@@ -11,7 +11,7 @@
         </p>
         <v-btn class="primary" :to="{ name: 'NewPurchase' }" large>
           <v-icon>mdi-plus</v-icon>
-          Ajouter une ligne
+          Ajouter un produit
         </v-btn>
       </div>
       <v-spacer></v-spacer>
@@ -59,7 +59,7 @@
 import { formatDate } from "@/utils"
 
 export default {
-  name: "InvoicesHome",
+  name: "PurchasesHome",
   data() {
     return {
       search: "",
@@ -80,7 +80,7 @@ export default {
           value: "date",
           sortable: true,
         },
-        { text: "Fournisseur", value: "provider", sortable: true },
+        { text: "Produit", value: "description", sortable: true },
         { text: "Catégorie", value: "category", sortable: false },
         { text: "Cantine", value: "canteen__name", sortable: true },
         { text: "Prix HT", value: "priceHt", sortable: true },
@@ -129,7 +129,7 @@ export default {
       return { text: "", color: "" }
     },
     onRowClick(purchase) {
-      this.$router.push({ name: "InvoicePage", params: { id: purchase.id } })
+      this.$router.push({ name: "PurchasePage", params: { id: purchase.id } })
     },
     fetchCurrentPage() {
       this.loading = true

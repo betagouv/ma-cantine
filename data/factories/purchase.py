@@ -11,6 +11,7 @@ class PurchaseFactory(factory.django.DjangoModelFactory):
 
     canteen = factory.SubFactory(CanteenFactory)
     date = factory.Faker("date")
+    description = factory.Faker("word")
     provider = factory.Faker("company")
     category = FuzzyChoice(Purchase.Category.values)
     characteristics = factory.List(random.sample(list(Purchase.Characteristic.values), random.randint(0, 3)))

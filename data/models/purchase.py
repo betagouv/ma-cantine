@@ -50,6 +50,7 @@ class Purchase(models.Model):
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
     date = models.DateField(default=date.today)
+    description = models.TextField(null=True, blank=True, verbose_name="Description du produit")
     provider = models.TextField(null=True, blank=True, verbose_name="Fournisseur")
     category = models.CharField(
         max_length=255, choices=Category.choices, null=True, blank=True, verbose_name="Catégorie"
