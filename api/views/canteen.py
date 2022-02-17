@@ -8,7 +8,6 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
-from django.db.models.constants import LOOKUP_SEP
 from django.db.models.functions import Cast
 from django.db.models import Sum, FloatField, Avg, Func, F, Q
 from django_filters import rest_framework as django_filters
@@ -28,7 +27,7 @@ from api.serializers import (
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
 from data.region_choices import Region
 from api.permissions import IsCanteenManager
-from .utils import camelize
+from .utils import camelize, UnaccentSearchFilter
 from common import utils
 
 logger = logging.getLogger(__name__)
@@ -100,22 +99,6 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
             "min_daily_meal_count",
             "max_daily_meal_count",
             "management_type",
-        )
-
-
-class UnaccentSearchFilter(filters.SearchFilter):
-    def construct_search(self, field_name):
-        lookup = self.lookup_prefixes.get(field_name[0])
-        if lookup:
-            field_name = field_name[1:]
-        else:
-            lookup = "icontains"
-        return LOOKUP_SEP.join(
-            [
-                field_name,
-                "unaccent",
-                lookup,
-            ]
         )
 
 

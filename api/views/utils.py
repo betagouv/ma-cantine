@@ -1,5 +1,6 @@
 import json
-from rest_framework.filters import OrderingFilter
+from django.db.models.constants import LOOKUP_SEP
+from rest_framework import filters
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 from djangorestframework_camel_case.util import camel_to_underscore
 from djangorestframework_camel_case.settings import api_settings
@@ -10,7 +11,7 @@ def camelize(data):
     return json.loads(camel_case_bytes.decode("utf-8"))
 
 
-class CamelCaseOrderingFilter(OrderingFilter):
+class CamelCaseOrderingFilter(filters.OrderingFilter):
     """
     Needed for filtering with camel case parameters. More info :
     https://github.com/vbabiy/djangorestframework-camel-case/issues/87
@@ -32,3 +33,19 @@ class CamelCaseOrderingFilter(OrderingFilter):
                 return ordering
 
         return self.get_default_ordering(view)
+
+
+class UnaccentSearchFilter(filters.SearchFilter):
+    def construct_search(self, field_name):
+        lookup = self.lookup_prefixes.get(field_name[0])
+        if lookup:
+            field_name = field_name[1:]
+        else:
+            lookup = "icontains"
+        return LOOKUP_SEP.join(
+            [
+                field_name,
+                "unaccent",
+                lookup,
+            ]
+        )
