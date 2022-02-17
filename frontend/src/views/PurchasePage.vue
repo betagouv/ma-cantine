@@ -459,7 +459,7 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      if (from.name == "InvoicesHome") {
+      if (from.name == "PurchasesHome") {
         // keep filter settings in URL params
         vm.backLink = from
       }
