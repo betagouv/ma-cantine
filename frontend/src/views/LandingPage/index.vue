@@ -1,10 +1,10 @@
 <template>
   <div>
-    <PresentationBlock />
+    <PresentationBlock class="mb-6" />
 
-    <ActionsBlock class="mt-10" />
+    <ActionsBlock class="ma-0 ma-md-n4 pa-6" style="background-color: #b6d9c8; border-radius: 16px;" />
 
-    <v-divider class="mt-8"></v-divider>
+    <v-divider class="mt-16"></v-divider>
 
     <KeyGoalsBlock class="mt-14 py-2" />
 

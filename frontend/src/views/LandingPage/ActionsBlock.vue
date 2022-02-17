@@ -3,83 +3,79 @@
     <v-row class="text-left">
       <v-spacer></v-spacer>
       <v-col cols="12" md="4">
-        <v-card elevation="0" class="fill-height pa-4 d-flex flex-column">
+        <v-card hover :to="{ name: 'PublicCanteenStatisticsPage' }" class="fill-height pa-4 d-flex flex-column">
           <v-img
             src="/static/images/elue.png"
             v-if="$vuetify.breakpoint.smAndUp"
             class="mx-auto rounded-0"
             contain
-            max-height="130"
+            max-height="100"
           ></v-img>
           <v-card-title>
             <h2 class="text-h6 font-weight-bold">
-              Je suis élu ou élue d'une collectivité
+              Étudier l'évolution de mon territoire
             </h2>
           </v-card-title>
           <v-card-text>
-            Je veux savoir où en sont les établissements de ma région ou département sur leurs achats de produits bio,
-            de qualité; comprendre leurs enjeux, leurs succès et difficultés.
+            Savoir où en sont les établissements de ma région ou département
           </v-card-text>
           <v-spacer></v-spacer>
-          <v-card-actions class="pa-4">
-            <v-btn :to="{ name: 'PublicCanteenStatisticsPage' }" outlined color="primary">
-              Accéder au tableau de bord
-            </v-btn>
+          <v-card-actions class="px-4 pt-0">
+            <v-spacer></v-spacer>
+            <v-icon color="primary">mdi-arrow-right</v-icon>
           </v-card-actions>
         </v-card>
       </v-col>
 
       <v-col cols="12" md="4">
-        <v-card elevation="0" class="fill-height pa-4 d-flex flex-column">
+        <v-card
+          hover
+          :to="loggedUser ? { name: 'ManagementPage' } : undefined"
+          :href="!loggedUser ? '/s-identifier' : undefined"
+          class="fill-height pa-4 d-flex flex-column"
+        >
           <v-img
             src="/static/images/ChartDoodle.png"
             v-if="$vuetify.breakpoint.smAndUp"
             class="mx-auto rounded-0"
             contain
-            max-height="130"
+            max-height="100"
           ></v-img>
           <v-card-title>
             <h2 class="text-h6 font-weight-bold">
-              Je suis gestionnaire d’un restaurant collectif
+              Gérer ma cantine et mes objectifs
             </h2>
           </v-card-title>
           <v-card-text>
-            Je veux être outillé sur les mesures à prendre en termes d’approvisionnement, savoir où je me situe par
-            rapport aux objectifs des lois EGAlim et Climat, valoriser les initiatives mises en place.
+            Être outillé pour attendre les objectifs des lois EGAlim et Climat
           </v-card-text>
           <v-spacer></v-spacer>
-          <v-card-actions class="pa-4">
-            <v-btn v-if="loggedUser" :to="{ name: 'ManagementPage' }" outlined color="primary">
-              Gérer mes cantines
-            </v-btn>
-            <v-btn v-else href="/s-identifier" outlined color="primary">
-              Me créer un compte / Me connecter
-            </v-btn>
+          <v-card-actions class="px-4 pt-0">
+            <v-spacer></v-spacer>
+            <v-icon color="primary">mdi-arrow-right</v-icon>
           </v-card-actions>
         </v-card>
       </v-col>
 
       <v-col cols="12" md="4">
-        <v-card elevation="0" class="fill-height pa-0 pa-sm-4 d-flex flex-column">
+        <v-card hover :to="{ name: 'CanteensHome' }" class="fill-height pa-0 pa-sm-4 d-flex flex-column">
           <v-img
             src="/static/images/parent.png"
             v-if="$vuetify.breakpoint.smAndUp"
             class="mx-auto rounded-0"
             contain
-            max-height="130"
+            max-height="100"
           ></v-img>
           <v-card-title class="text-h6 font-weight-bold">
-            <h2 class="text-h6 font-weight-bold">Je suis convive et parent de convive</h2>
+            <h2 class="text-h6 font-weight-bold">En savoir plus sur la cantine que je fréquente</h2>
           </v-card-title>
           <v-card-text>
-            Je veux savoir ce qu’il y a dans mon assiette dans mon restaurant d’entreprise; mais aussi ce que mange mon
-            fils au collège et pouvoir interargir avec les gérant.e.s de l’EHPAD où sont logés mes parents.
+            Connaître les initiatives de mon restaurant ou celui de mes enfants
           </v-card-text>
           <v-spacer></v-spacer>
-          <v-card-actions class="pa-4">
-            <v-btn :to="{ name: 'CanteensHome' }" outlined color="primary">
-              Rechercher parmi le réseau ma-cantine
-            </v-btn>
+          <v-card-actions class="px-4 pt-0">
+            <v-spacer></v-spacer>
+            <v-icon color="primary">mdi-arrow-right</v-icon>
           </v-card-actions>
         </v-card>
       </v-col>
