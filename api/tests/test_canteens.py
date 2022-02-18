@@ -172,7 +172,7 @@ class TestCanteenApi(APITestCase):
         response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
-        self.assertEqual(body["siret"], ["14 caractères numériques sont attendus"])
+        self.assertEqual(body["siret"], ["14 caractères attendus. 4 trouvés dans « 0123 »."])
 
         payload = {"name": "My canteen", "siret": "01234567891011"}
 
