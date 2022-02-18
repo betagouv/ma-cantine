@@ -340,3 +340,33 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)
+
+    @authenticate
+    def test_search_purchases(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen)
+        PurchaseFactory.create(description="tomates", canteen=canteen)
+        PurchaseFactory.create(description="pommes", canteen=canteen)
+
+        search_term = "avoine"
+        response = self.client.get(f"{reverse('purchase_list_create')}?search={search_term}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].get("description"), "avoine")
+
+    @authenticate
+    def test_search_only_user_purchases(self):
+        PurchaseFactory.create(description="avoine")
+        PurchaseFactory.create(description="tomates")
+        PurchaseFactory.create(description="pommes")
+
+        search_term = "avoine"
+        response = self.client.get(f"{reverse('purchase_list_create')}?search={search_term}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 0)

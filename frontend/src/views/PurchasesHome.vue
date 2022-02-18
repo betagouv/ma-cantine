@@ -25,6 +25,25 @@
       ></v-img>
     </div>
     <v-card outlined class="my-4" v-if="visiblePurchases">
+      <div class="d-flex pa-2">
+        <v-text-field
+          v-model="searchTerm"
+          append-icon="mdi-magnify"
+          label="Chercher par produit ou fournisseur"
+          style="max-width: 450px;"
+          outlined
+          dense
+          hide-details
+          clearable
+          @click:clear="clearSearch"
+          @keyup.enter="search"
+        ></v-text-field>
+        <v-btn outlined color="primary" class="mx-4" height="40px" @click="search">
+          <v-icon>mdi-magnify</v-icon>
+          Chercher
+        </v-btn>
+      </div>
+      <v-divider></v-divider>
       <v-data-table
         :options.sync="options"
         :loading="loading"
@@ -62,7 +81,7 @@ export default {
   name: "PurchasesHome",
   data() {
     return {
-      search: "",
+      searchTerm: null,
       loading: false,
       visiblePurchases: null,
       purchaseCount: null,
@@ -154,12 +173,14 @@ export default {
       let apiQueryParams = `limit=${this.limit}&offset=${this.offset}`
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
+      if (this.searchTerm) apiQueryParams += `&search=${this.searchTerm}`
       return apiQueryParams
     },
     getUrlQueryParams() {
       let urlQueryParams = { page: this.options.page }
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
+      if (this.searchTerm) urlQueryParams["recherche"] = this.searchTerm
       return urlQueryParams
     },
     getOrderingItems() {
@@ -171,6 +192,8 @@ export default {
     },
     populateParametersFromRoute() {
       const page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
+      this.searchTerm = this.$route.query.recherche || null
+
       if (!this.$route.query["trier-par"]) {
         this.$set(this, "options", { page })
         return
@@ -183,6 +206,14 @@ export default {
         sortDesc.push(isDesc)
       })
       this.$set(this, "options", { sortBy, sortDesc, page })
+    },
+    clearSearch() {
+      this.searchTerm = ""
+      this.search()
+    },
+    search() {
+      if (this.searchTerm && this.options.page !== 1) this.options.page = 1
+      else this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
     },
   },
   watch: {
