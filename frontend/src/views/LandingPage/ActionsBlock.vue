@@ -9,7 +9,7 @@
               :elevation="hover ? 10 : 2"
               :to="loggedUser ? { name: 'ManagementPage' } : undefined"
               :href="!loggedUser ? '/s-identifier' : undefined"
-              class="fill-height pa-4 d-flex flex-column"
+              class="fill-height pa-4 d-flex flex-column hover-transition"
             >
               <v-img
                 src="/static/images/doodles/secondary/SprintingDoodle.png"
@@ -41,7 +41,7 @@
             <v-card
               :elevation="hover ? 10 : 2"
               :to="{ name: 'CanteensHome' }"
-              class="fill-height pa-4 d-flex flex-column"
+              class="fill-height pa-4 d-flex flex-column hover-transition"
             >
               <v-img
                 src="/static/images/doodles/secondary/DogDoodle.png"
@@ -71,7 +71,7 @@
             <v-card
               :elevation="hover ? 10 : 2"
               :to="{ name: 'PublicCanteenStatisticsPage' }"
-              class="fill-height pa-4 d-flex flex-column"
+              class="fill-height pa-4 d-flex flex-column hover-transition"
             >
               <v-img
                 src="/static/images/doodles/secondary/SitReadingDoodle.png"
@@ -125,3 +125,13 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+/* a copy of the transition applied by vuetify to v-cards */
+.hover-transition {
+  transition-delay: 0s;
+  transition-duration: 0.4s;
+  transition-property: box-shadow;
+  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+</style>
