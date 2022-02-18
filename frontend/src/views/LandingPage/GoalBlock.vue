@@ -11,7 +11,7 @@
       alimentaires notamment chez les plus jeunes.
     </p>
 
-    <v-card elevation="0" color="secondary lighten-3" class="mt-8 pa-10">
+    <v-card elevation="0" color="secondary lighten-3" class="mt-8 pa-md-10">
       <v-card-text>
         <video style="width: 100%; background: #333;" poster="/static/images/video-poster-intro.webp" controls>
           <source
