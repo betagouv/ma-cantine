@@ -86,8 +86,10 @@ REDIS_URL= Optionnel - L'instance redis à utiliser pour les tâches asynchrones
 ```
 
 ### Activer les feature flags
+
 ```
 ENABLE_XP_RESERVATION= Optionnel - `True` pour activer la feature de l'expérimentation des systèmes de réservation.
+ENABLE_PARTNERS= Optionnel - `True` pour afficher nos partenaires sur la page d'accueil.
 ```
 
 #### Trello

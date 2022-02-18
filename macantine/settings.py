@@ -418,3 +418,4 @@ if DEBUG:
 
 # Feature flags
 ENABLE_XP_RESERVATION = os.getenv("ENABLE_XP_RESERVATION") == "True"
+ENABLE_PARTNERS = os.getenv("ENABLE_PARTNERS") == "True"
