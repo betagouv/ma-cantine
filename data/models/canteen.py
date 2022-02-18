@@ -17,7 +17,7 @@ def validate_siret(siret):
     if siret is None or siret == "":
         return
     if len(siret) != 14:
-        raise ValidationError("14 caractères numériques sont attendus")
+        raise ValidationError(f"14 caractères attendus. {len(siret)} trouvés dans « {siret} ».")
     odd_digits = [int(n) for n in siret[-1::-2]]
     even_digits = [int(n) for n in siret[-2::-2]]
     checksum = sum(odd_digits)

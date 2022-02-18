@@ -302,6 +302,14 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors[14]["message"],
             "Champ 'code postal' : Ce champ ne peut pas être vide si le code INSEE de la ville est vide.",
         )
+        self.assertEqual(
+            errors[15]["message"],
+            "Champ 'siret' : 14 caractères attendus. 4 trouvés dans « 2345 ».",
+        )
+        self.assertEqual(
+            errors[16]["message"],
+            "Champ 'siret de la cuisine centrale' : 14 caractères attendus. 6 trouvés dans « 789012 ».",
+        )
 
     @authenticate
     def test_diagnostic_header_allowed(self, _):
