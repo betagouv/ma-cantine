@@ -20,15 +20,15 @@
           </v-card-title>
           <v-card-text class="body-1">
             <p class="my-2">
-              <span class="font-weight-bold">Accompagner la transition</span>
+              <span class="font-weight-bold">Accompagner la transition alimentaire</span>
               de la restauration collective
             </p>
             <p class="my-2">
-              <span class="font-weight-bold">Connaître les initiatives</span>
+              <span class="font-weight-bold">Découvrir les initiatives</span>
               prises par nos cantines
             </p>
             <p class="my-2">
-              <span class="font-weight-bold">Suivre l'implémentation</span>
+              <span class="font-weight-bold">Suivre le mis en oeuvre</span>
               de la loi EGAlim
             </p>
           </v-card-text>

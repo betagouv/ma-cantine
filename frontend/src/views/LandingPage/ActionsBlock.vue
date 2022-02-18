@@ -20,11 +20,11 @@
               ></v-img>
               <v-card-title>
                 <h2 class="text-h6 font-weight-bold">
-                  Gérer ma cantine et mes objectifs
+                  Gérer ma cantine pour atteindre mes objectifs
                 </h2>
               </v-card-title>
               <v-card-text>
-                Être outillé pour attendre les objectifs des lois EGAlim et Climat
+                Être outillé pour atteindre les objectifs des lois EGAlim et Climat
               </v-card-text>
               <v-spacer></v-spacer>
               <v-card-actions class="px-4 pt-0">
@@ -86,7 +86,7 @@
                 </h2>
               </v-card-title>
               <v-card-text>
-                Savoir où en sont les établissements de ma région ou département
+                Savoir où en sont les établissements de ma région ou mon département
               </v-card-text>
               <v-spacer></v-spacer>
               <v-card-actions class="px-4 pt-0">
