@@ -29,7 +29,7 @@
         <v-text-field
           v-model="searchTerm"
           append-icon="mdi-magnify"
-          label="Chercher"
+          label="Chercher par produit ou fournisseur"
           style="max-width: 450px;"
           outlined
           dense
