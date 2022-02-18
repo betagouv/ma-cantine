@@ -2,85 +2,100 @@
   <div>
     <v-row class="text-left">
       <v-spacer></v-spacer>
-      <v-col cols="12" sm="6">
-        <v-card v-if="loggedUser" elevation="0" class="fill-height pa-4 d-flex flex-column">
-          <v-img
-            src="/static/images/UnboxingDoodle.png"
-            v-if="$vuetify.breakpoint.smAndUp"
-            class="mx-auto rounded-0"
-            contain
-            max-height="130"
-          ></v-img>
-          <v-card-title>
-            <h2 class="text-h6 font-weight-bold">
-              Gérez les informations de votre compte
-            </h2>
-          </v-card-title>
-          <v-card-text>
-            Pour modifier vos données personnelles, mettre à jour votre photo de profil ou changer votre mot de passe
-            rendez-vous sur votre compte.
-          </v-card-text>
-          <v-spacer></v-spacer>
-          <v-card-actions class="pa-4">
-            <v-btn :to="{ name: 'AccountSummaryPage' }" outlined color="primary">Mon compte</v-btn>
-          </v-card-actions>
-        </v-card>
-
-        <v-card v-else elevation="0" class="fill-height pa-4 d-flex flex-column">
-          <v-img
-            src="/static/images/ChartDoodle.png"
-            v-if="$vuetify.breakpoint.smAndUp"
-            class="mx-auto rounded-0"
-            contain
-            max-height="130"
-          ></v-img>
-          <v-card-title>
-            <h2 class="text-h6 font-weight-bold">
-              Vous voulez savoir où vous en êtes des mesures EGAlim
-            </h2>
-          </v-card-title>
-          <v-card-text>
-            Vous pouvez faire une simulation sur les différents aspects de la loi EGAlim avec les données de votre
-            cantine.
-          </v-card-text>
-          <v-spacer></v-spacer>
-          <v-card-actions class="pa-4">
-            <v-btn :to="{ name: 'DiagnosticPage' }" outlined color="primary">Simuler la situation de ma cantine</v-btn>
-          </v-card-actions>
-        </v-card>
+      <v-col cols="12" md="4">
+        <v-hover>
+          <template v-slot:default="{ hover }">
+            <v-card
+              :elevation="hover ? 10 : 2"
+              :to="loggedUser ? { name: 'ManagementPage' } : undefined"
+              :href="!loggedUser ? '/s-identifier' : undefined"
+              class="fill-height pa-4 d-flex flex-column"
+            >
+              <v-img
+                src="/static/images/doodles/secondary/SprintingDoodle.png"
+                v-if="$vuetify.breakpoint.smAndUp"
+                class="mx-auto rounded-0"
+                contain
+                max-height="100"
+              ></v-img>
+              <v-card-title>
+                <h2 class="text-h6 font-weight-bold">
+                  Gérer ma cantine et mes objectifs
+                </h2>
+              </v-card-title>
+              <v-card-text>
+                Être outillé pour attendre les objectifs des lois EGAlim et Climat
+              </v-card-text>
+              <v-spacer></v-spacer>
+              <v-card-actions class="px-4 pt-0">
+                <v-spacer></v-spacer>
+                <v-icon color="secondary">mdi-arrow-right</v-icon>
+              </v-card-actions>
+            </v-card>
+          </template>
+        </v-hover>
       </v-col>
-
-      <v-col cols="12" sm="6">
-        <v-card elevation="0" class="fill-height pa-0 pa-sm-4 d-flex flex-column">
-          <v-img
-            src="/static/images/ReadingDoodle.png"
-            v-if="$vuetify.breakpoint.smAndUp"
-            class="mx-auto rounded-0"
-            contain
-            max-height="130"
-          ></v-img>
-          <v-card-title class="text-h6 font-weight-bold">
-            <h2 class="text-h6 font-weight-bold">Vous avez besoin d’aide pour le calcul ?</h2>
-          </v-card-title>
-          <v-card-text>
-            Si vous ne connaissez pas votre part de produits bio, durables et issus du commerce équitable, nous vous
-            proposons un outil simple pour les calculer. Sous forme de tableur, renseignez vos achats HT suivant signes
-            de qualité, mentions, écolabel et/ou certification.
-            <br />
-            Merci à nos beta-testeurs et notamment au PETR Pays d’Armagnac, qui nous ont largement inspiré ce tableur.
-          </v-card-text>
-          <v-spacer></v-spacer>
-          <v-card-actions class="pa-4">
-            <v-dialog max-width="700" v-model="calculatorModal" @input="stopVideo">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn outlined color="primary" v-on="on" v-bind="attrs">
-                  Télécharger un tableur d’aide au calcul
-                </v-btn>
-              </template>
-              <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />
-            </v-dialog>
-          </v-card-actions>
-        </v-card>
+      <v-col cols="12" md="4">
+        <v-hover>
+          <template v-slot:default="{ hover }">
+            <v-card
+              :elevation="hover ? 10 : 2"
+              :to="{ name: 'CanteensHome' }"
+              class="fill-height pa-4 d-flex flex-column"
+            >
+              <v-img
+                src="/static/images/doodles/secondary/DogDoodle.png"
+                v-if="$vuetify.breakpoint.smAndUp"
+                class="mx-auto rounded-0"
+                contain
+                max-height="100"
+              ></v-img>
+              <v-card-title class="text-h6 font-weight-bold">
+                <h2 class="text-h6 font-weight-bold">En savoir plus sur la cantine que je fréquente</h2>
+              </v-card-title>
+              <v-card-text>
+                Connaître les initiatives de mon restaurant ou celui de mes enfants
+              </v-card-text>
+              <v-spacer></v-spacer>
+              <v-card-actions class="px-4 pt-0">
+                <v-spacer></v-spacer>
+                <v-icon color="secondary">mdi-arrow-right</v-icon>
+              </v-card-actions>
+            </v-card>
+          </template>
+        </v-hover>
+      </v-col>
+      <v-col cols="12" md="4">
+        <v-hover>
+          <template v-slot:default="{ hover }">
+            <v-card
+              :elevation="hover ? 10 : 2"
+              :to="{ name: 'PublicCanteenStatisticsPage' }"
+              class="fill-height pa-4 d-flex flex-column"
+            >
+              <v-img
+                src="/static/images/doodles/secondary/SitReadingDoodle.png"
+                v-if="$vuetify.breakpoint.smAndUp"
+                class="mx-auto rounded-0"
+                contain
+                max-height="100"
+              ></v-img>
+              <v-card-title>
+                <h2 class="text-h6 font-weight-bold">
+                  Étudier l'évolution de mon territoire
+                </h2>
+              </v-card-title>
+              <v-card-text>
+                Savoir où en sont les établissements de ma région ou département
+              </v-card-text>
+              <v-spacer></v-spacer>
+              <v-card-actions class="px-4 pt-0">
+                <v-spacer></v-spacer>
+                <v-icon color="secondary">mdi-arrow-right</v-icon>
+              </v-card-actions>
+            </v-card>
+          </template>
+        </v-hover>
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
@@ -88,12 +103,7 @@
 </template>
 
 <script>
-import CalculatorResourceModal from "@/components/KeyMeasureResource/CalculatorResourceModal"
-
 export default {
-  components: {
-    CalculatorResourceModal,
-  },
   data() {
     return {
       calculatorModal: false,
