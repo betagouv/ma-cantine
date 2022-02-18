@@ -58,7 +58,7 @@
       </v-col>
 
       <v-col cols="12" md="4">
-        <v-card hover :to="{ name: 'CanteensHome' }" class="fill-height pa-0 pa-sm-4 d-flex flex-column">
+        <v-card hover :to="{ name: 'CanteensHome' }" class="fill-height pa-4 d-flex flex-column">
           <v-img
             src="/static/images/parent.png"
             v-if="$vuetify.breakpoint.smAndUp"
