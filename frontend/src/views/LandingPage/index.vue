@@ -16,7 +16,7 @@
 
     <Resources class="my-16" />
 
-    <v-divider class="mt-16"  v-if="showPartners"></v-divider>
+    <v-divider class="mt-16" v-if="showPartners"></v-divider>
 
     <StartupPartners class="mt-16 mb-8" v-if="showPartners" />
 
