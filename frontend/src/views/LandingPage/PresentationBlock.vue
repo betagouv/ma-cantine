@@ -28,7 +28,7 @@
               prises par nos cantines
             </p>
             <p class="my-2">
-              <span class="font-weight-bold">Suivre le mis en oeuvre</span>
+              <span class="font-weight-bold">Suivre la mise en œuvre</span>
               de la loi EGAlim
             </p>
           </v-card-text>
