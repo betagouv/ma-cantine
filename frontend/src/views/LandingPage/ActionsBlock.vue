@@ -29,7 +29,7 @@
               <v-spacer></v-spacer>
               <v-card-actions class="px-4 pt-0">
                 <v-spacer></v-spacer>
-                <v-icon color="secondary">mdi-arrow-right</v-icon>
+                <v-icon color="primary">mdi-arrow-right</v-icon>
               </v-card-actions>
             </v-card>
           </template>
@@ -59,7 +59,7 @@
               <v-spacer></v-spacer>
               <v-card-actions class="px-4 pt-0">
                 <v-spacer></v-spacer>
-                <v-icon color="secondary">mdi-arrow-right</v-icon>
+                <v-icon color="primary">mdi-arrow-right</v-icon>
               </v-card-actions>
             </v-card>
           </template>
@@ -91,7 +91,7 @@
               <v-spacer></v-spacer>
               <v-card-actions class="px-4 pt-0">
                 <v-spacer></v-spacer>
-                <v-icon color="secondary">mdi-arrow-right</v-icon>
+                <v-icon color="primary">mdi-arrow-right</v-icon>
               </v-card-actions>
             </v-card>
           </template>
