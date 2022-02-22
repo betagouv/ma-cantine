@@ -6,7 +6,7 @@
         <v-hover>
           <template v-slot:default="{ hover }">
             <v-card
-              :elevation="hover ? 10 : 2"
+              :elevation="hover ? 6 : 2"
               :to="loggedUser ? { name: 'ManagementPage' } : undefined"
               :href="!loggedUser ? '/s-identifier' : undefined"
               class="fill-height pa-4 d-flex flex-column hover-transition"
@@ -39,7 +39,7 @@
         <v-hover>
           <template v-slot:default="{ hover }">
             <v-card
-              :elevation="hover ? 10 : 2"
+              :elevation="hover ? 6 : 2"
               :to="{ name: 'CanteensHome' }"
               class="fill-height pa-4 d-flex flex-column hover-transition"
             >
@@ -69,7 +69,7 @@
         <v-hover>
           <template v-slot:default="{ hover }">
             <v-card
-              :elevation="hover ? 10 : 2"
+              :elevation="hover ? 6 : 2"
               :to="{ name: 'PublicCanteenStatisticsPage' }"
               class="fill-height pa-4 d-flex flex-column hover-transition"
             >
