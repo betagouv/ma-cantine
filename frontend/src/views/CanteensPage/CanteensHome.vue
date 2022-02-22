@@ -12,7 +12,7 @@
             <v-img contain src="/static/images/doodles/primary/LovingDoodle.png"></v-img>
           </div>
         </v-col>
-        <v-col cols="12" sm="10">
+        <v-col cols="12" md="10">
           <v-spacer></v-spacer>
           <v-card-title class="pr-0">
             <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">

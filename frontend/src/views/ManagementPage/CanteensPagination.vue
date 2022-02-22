@@ -135,8 +135,11 @@ export default {
   },
   watch: {
     page(newPage) {
+      const replace = Object.keys(this.$route.query).length === 0
+      const page = { query: { ...this.$route.query, ...{ cantinePage: newPage } } }
       // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
-      this.$router.push({ query: { ...this.$route.query, ...{ cantinePage: newPage } } }).catch(() => {})
+      if (replace) this.$router.replace(page).catch(() => {})
+      else this.$router.push(page).catch(() => {})
     },
     $route() {
       this.populateInitialParameters()
