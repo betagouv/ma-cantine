@@ -43,6 +43,45 @@
           Chercher
         </v-btn>
       </div>
+      <div>
+        <v-select
+          v-model="category"
+          :items="categories"
+          label="Catégorie"
+          hide-details
+          dense
+          outlined
+          clearable
+          class="mt-2"
+          style="max-width: 450px;"
+          @change="search"
+        ></v-select>
+        <v-select
+          v-model="selectedCharacteristics"
+          :items="characteristics"
+          label="Caractéristiques"
+          hide-details
+          dense
+          outlined
+          clearable
+          multiple
+          class="mt-2"
+          style="max-width: 450px;"
+          @change="search"
+        ></v-select>
+        <v-select
+          v-model="selectedCanteen"
+          :items="canteens"
+          label="Cantine"
+          hide-details
+          dense
+          outlined
+          clearable
+          class="mt-2"
+          style="max-width: 450px;"
+          @change="search"
+        ></v-select>
+      </div>
       <v-divider></v-divider>
       <v-data-table
         :options.sync="options"
@@ -105,6 +144,12 @@ export default {
         { text: "Prix HT", value: "priceHt", sortable: true },
         { text: "", value: "hasAttachment", sortable: false },
       ],
+      category: null,
+      categories: [],
+      selectedCharacteristics: [],
+      characteristics: [],
+      selectedCanteen: null,
+      canteens: [],
     }
   },
   computed: {
@@ -160,6 +205,15 @@ export default {
         .then((response) => {
           this.purchaseCount = response.count
           this.visiblePurchases = response.results
+          this.categories = response.categories.map((c) => {
+            return { text: this.getDisplayValue(c).text, value: c }
+          }) // TODO: sort alphabetically
+          this.characteristics = response.characteristics.map((c) => {
+            return { text: c, value: c }
+          })
+          this.canteens = response.canteens.map((c) => {
+            return { text: c, value: c }
+          })
         })
         .catch(() => {
           this.publishedCanteenCount = 0
@@ -174,6 +228,12 @@ export default {
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
       if (this.searchTerm) apiQueryParams += `&search=${this.searchTerm}`
+      if (this.category) apiQueryParams += `&category=${this.category}`
+      if (this.selectedCanteen) apiQueryParams += `&canteen__id=${this.selectedCanteen}`
+      if (this.selectedCharacteristics.length > 0) {
+        apiQueryParams += "&characteristics="
+        apiQueryParams += this.selectedCharacteristics.join("&characteristics=")
+      }
       return apiQueryParams
     },
     getUrlQueryParams() {
@@ -181,6 +241,10 @@ export default {
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
       if (this.searchTerm) urlQueryParams["recherche"] = this.searchTerm
+      if (this.category) urlQueryParams["categorie"] = this.getDisplayValue(this.category).text
+      if (this.selectedCanteen) urlQueryParams["cantine"] = this.selectedCanteen
+      if (this.selectedCharacteristics.length > 0)
+        urlQueryParams["caracteristiques"] = this.selectedCharacteristics.join(",")
       return urlQueryParams
     },
     getOrderingItems() {

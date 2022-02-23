@@ -46,27 +46,33 @@ class CanteensPagination(LimitOffsetPagination):
         self.regions = set(filter(lambda x: x, queryset.values_list("region", flat=True)))
         self.management_types = set(filter(lambda x: x, queryset.values_list("management_type", flat=True)))
 
-        sector_queryset = Canteen.objects.filter(publication_status="published")
+        published_canteens = Canteen.objects.filter(publication_status="published")
         query_params = request.query_params
 
         if query_params.get("department"):
-            sector_queryset = sector_queryset.filter(department=query_params.get("department"))
+            published_canteens = published_canteens.filter(department=query_params.get("department"))
 
         if query_params.get("region"):
-            sector_queryset = sector_queryset.filter(region=query_params.get("region"))
+            published_canteens = published_canteens.filter(region=query_params.get("region"))
 
         if query_params.get("min_daily_meal_count"):
-            sector_queryset = sector_queryset.filter(daily_meal_count__gte=query_params.get("min_daily_meal_count"))
+            published_canteens = published_canteens.filter(
+                daily_meal_count__gte=query_params.get("min_daily_meal_count")
+            )
 
         if query_params.get("max_daily_meal_count"):
-            sector_queryset = sector_queryset.filter(daily_meal_count__lte=query_params.get("max_daily_meal_count"))
+            published_canteens = published_canteens.filter(
+                daily_meal_count__lte=query_params.get("max_daily_meal_count")
+            )
 
         if query_params.get("management_type"):
-            sector_queryset = sector_queryset.filter(management_type=query_params.get("management_type"))
+            published_canteens = published_canteens.filter(management_type=query_params.get("management_type"))
 
-        sector_queryset = filter_by_diagnostic_params(sector_queryset, query_params)
+        published_canteens = filter_by_diagnostic_params(published_canteens, query_params)
 
-        self.sectors = Sector.objects.filter(canteen__in=list(sector_queryset)).values_list("id", flat=True).distinct()
+        self.sectors = (
+            Sector.objects.filter(canteen__in=list(published_canteens)).values_list("id", flat=True).distinct()
+        )
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):

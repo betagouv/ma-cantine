@@ -370,3 +370,133 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 0)
+
+    @authenticate
+    def test_filter_by_canteen(self):
+        canteen = CanteenFactory.create()
+        other_canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        other_canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen)
+        PurchaseFactory.create(description="tomates", canteen=other_canteen)
+        PurchaseFactory.create(description="pommes", canteen=canteen)
+
+        canteen_id = canteen.id
+        response = self.client.get(f"{reverse('purchase_list_create')}?canteen__id={canteen_id}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+
+        self.assertEqual(len(results), 2)
+
+    @authenticate
+    def test_filter_by_characteristic(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen, characteristics=[Purchase.Characteristic.BIO])
+        PurchaseFactory.create(
+            description="tomates",
+            canteen=canteen,
+            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.PECHE_DURABLE],
+        )
+        PurchaseFactory.create(
+            description="pommes", canteen=canteen, characteristics=[Purchase.Characteristic.PECHE_DURABLE]
+        )
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+
+        response = self.client.get(
+            f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}&characteristics={Purchase.Characteristic.PECHE_DURABLE}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 1)
+
+    @authenticate
+    def test_filter_by_category(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen, category=Purchase.Category.PRODUITS_DE_LA_MER)
+        PurchaseFactory.create(description="tomates", canteen=canteen, category=Purchase.Category.PRODUITS_DE_LA_MER)
+        PurchaseFactory.create(description="pommes", canteen=canteen, category=Purchase.Category.FRUITS_ET_LEGUMES)
+
+        response = self.client.get(
+            f"{reverse('purchase_list_create')}?category={Purchase.Category.PRODUITS_DE_LA_MER}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+
+    @authenticate
+    def test_filter_by_date(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen, date="2020-01-01")
+        PurchaseFactory.create(description="tomates", canteen=canteen, date="2020-01-02")
+        PurchaseFactory.create(description="pommes", canteen=canteen, date="2020-02-01")
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?date_after=2020-01-02")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?date_before=2020-01-01")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 1)
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?date_after=2020-01-02&date_before=2020-02-01")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+
+    @authenticate
+    def test_available_filter_options(self):
+        """
+        Test that filter options with data are included in purchases list response
+        """
+        first_canteen = CanteenFactory.create()
+        first_canteen.managers.add(authenticate.user)
+        second_canteen = CanteenFactory.create()
+        second_canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(
+            description="avoine",
+            canteen=first_canteen,
+            category=Purchase.Category.PRODUITS_DE_LA_MER,
+            characteristics=[Purchase.Characteristic.BIO],
+        )
+        PurchaseFactory.create(
+            description="tomates",
+            canteen=first_canteen,
+            category=Purchase.Category.FRUITS_ET_LEGUMES,
+            characteristics=[],
+        )
+        PurchaseFactory.create(
+            description="pommes",
+            canteen=second_canteen,
+            category=Purchase.Category.PRODUITS_LAITIERS,
+            characteristics=[],
+        )
+
+        not_my_canteen = CanteenFactory.create()
+        PurchaseFactory.create(
+            description="secret",
+            canteen=not_my_canteen,
+            category=Purchase.Category.ALIMENTS_INFANTILES,
+            characteristics=[Purchase.Characteristic.COMMERCE_EQUITABLE],
+        )
+
+        response = self.client.get(f"{reverse('purchase_list_create')}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        categories = body.get("categories", [])
+        self.assertEqual(len(categories), 3)
+        self.assertIn(Purchase.Category.PRODUITS_DE_LA_MER, categories)
+        self.assertNotIn(Purchase.Category.ALIMENTS_INFANTILES, categories)
+        self.assertEqual(len(body.get("characteristics", [])), 1)
+        canteens = body.get("canteens", [])
+        self.assertEqual(len(canteens), 2)
+        self.assertNotIn(not_my_canteen.id, canteens)
