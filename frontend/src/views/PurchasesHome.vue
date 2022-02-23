@@ -42,46 +42,100 @@
           <v-icon>mdi-magnify</v-icon>
           Chercher
         </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn text color="primary" @click="showFilters = !showFilters" class="align-self-end">
+          Peaufiner cette liste...
+        </v-btn>
       </div>
-      <div>
-        <v-select
-          v-model="category"
-          :items="categories"
-          label="Catégorie"
-          hide-details
-          dense
-          outlined
-          clearable
-          class="mt-2"
-          style="max-width: 450px;"
-          @change="search"
-        ></v-select>
-        <v-select
-          v-model="selectedCharacteristics"
-          :items="characteristics"
-          label="Caractéristiques"
-          hide-details
-          dense
-          outlined
-          clearable
-          multiple
-          class="mt-2"
-          style="max-width: 450px;"
-          @change="search"
-        ></v-select>
-        <v-select
-          v-model="selectedCanteen"
-          :items="canteens"
-          label="Cantine"
-          hide-details
-          dense
-          outlined
-          clearable
-          class="mt-2"
-          style="max-width: 450px;"
-          @change="search"
-        ></v-select>
-      </div>
+      <v-expand-transition>
+        <div v-show="showFilters" class="pa-2">
+          <v-row>
+            <v-col cols="12" sm="6" md="4">
+              <v-select
+                v-model="category"
+                :items="categories"
+                label="Catégorie"
+                hide-details
+                dense
+                outlined
+                clearable
+                class="mt-2"
+                style="max-width: 450px;"
+                @change="search"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" sm="6" md="4">
+              <v-select
+                v-model="selectedCharacteristics"
+                :items="characteristics"
+                label="Caractéristiques"
+                hide-details
+                dense
+                outlined
+                clearable
+                multiple
+                class="mt-2"
+                style="max-width: 450px;"
+                @change="search"
+              ></v-select>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-menu
+              v-model="afterDateMenu"
+              :close-on-content-click="true"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-col cols="12" sm="6" md="3">
+                  <v-text-field
+                    :value="afterDate"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    hide-details
+                    outlined
+                    dense
+                    clearable
+                    label="Après"
+                  ></v-text-field>
+                </v-col>
+              </template>
+
+              <v-date-picker v-model="afterDate" locale="fr-FR" @change="search"></v-date-picker>
+            </v-menu>
+            <v-menu
+              v-model="beforeDateMenu"
+              :close-on-content-click="true"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-col cols="12" sm="6" md="3">
+                  <v-text-field
+                    :value="beforeDate"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    hide-details
+                    outlined
+                    dense
+                    clearable
+                    label="Avant"
+                  ></v-text-field>
+                </v-col>
+              </template>
+
+              <v-date-picker v-model="beforeDate" locale="fr-FR" @change="search"></v-date-picker>
+            </v-menu>
+          </v-row>
+        </div>
+      </v-expand-transition>
       <v-divider></v-divider>
       <v-data-table
         :options.sync="options"
@@ -92,8 +146,8 @@
         @click:row="onRowClick"
       >
         <template v-slot:[`item.category`]="{ item }">
-          <v-chip outlined small :color="getDisplayValue(item.category).color" dark class="font-weight-bold">
-            {{ getDisplayValue(item.category).text }}
+          <v-chip outlined small :color="getCategoryDisplayValue(item.category).color" dark class="font-weight-bold">
+            {{ getCategoryDisplayValue(item.category).text }}
           </v-chip>
         </template>
         <template v-slot:[`item.priceHt`]="{ item }">{{ item.priceHt }} €</template>
@@ -144,12 +198,15 @@ export default {
         { text: "Prix HT", value: "priceHt", sortable: true },
         { text: "", value: "hasAttachment", sortable: false },
       ],
+      showFilters: false,
       category: null,
       categories: [],
       selectedCharacteristics: [],
       characteristics: [],
-      selectedCanteen: null,
-      canteens: [],
+      afterDate: null,
+      afterDateMenu: false,
+      beforeDate: null,
+      beforeDateMenu: false,
     }
   },
   computed: {
@@ -165,9 +222,10 @@ export default {
         return Object.assign(x, { canteen__name: canteen?.name, date, hasAttachment })
       })
     },
+    // TODO: format choice lists to have explanation of inactive choices
   },
   methods: {
-    getDisplayValue(category) {
+    getCategoryDisplayValue(category) {
       const categoryHash = {
         VIANDES_VOLAILLES: { text: "Viandes, volailles", color: "red darken-4" },
         PRODUITS_DE_LA_MER: { text: "Produits de la mer", color: "pink darken-4" },
@@ -192,6 +250,29 @@ export default {
       if (Object.prototype.hasOwnProperty.call(categoryHash, category)) return categoryHash[category]
       return { text: "", color: "" }
     },
+    getCharacteristicDisplayValue(characteristic) {
+      // TODO: share the hashes across here and purchase page
+      const characteristicHash = {
+        BIO: { text: "Bio" },
+        CONVERSION_BIO: { text: "En conversion bio" },
+        LABEL_ROUGE: { text: "Label rouge" },
+        AOCAOP: { text: "AOC / AOP" },
+        ICP: { text: "IGP" },
+        STG: { text: "STG" },
+        HVE: { text: "HVE" },
+        PECHE_DURABLE: { text: "Pêche durable" },
+        RUP: { text: "RUP" },
+        FERMIER: { text: "Fermier" },
+        EXTERNALITES: { text: "Externalités environnementales" },
+        COMMERCE_EQUITABLE: { text: "Commerce équitable" },
+        PERFORMANCE: { text: "Performance environnementale" },
+        EQUIVALENTS: { text: "Produits équivalents" },
+      }
+
+      if (Object.prototype.hasOwnProperty.call(characteristicHash, characteristic))
+        return characteristicHash[characteristic]
+      return { text: "" }
+    },
     onRowClick(purchase) {
       this.$router.push({ name: "PurchasePage", params: { id: purchase.id } })
     },
@@ -206,10 +287,10 @@ export default {
           this.purchaseCount = response.count
           this.visiblePurchases = response.results
           this.categories = response.categories.map((c) => {
-            return { text: this.getDisplayValue(c).text, value: c }
+            return { text: this.getCategoryDisplayValue(c).text, value: c }
           }) // TODO: sort alphabetically
           this.characteristics = response.characteristics.map((c) => {
-            return { text: c, value: c }
+            return { text: this.getCharacteristicDisplayValue(c).text, value: c }
           })
           this.canteens = response.canteens.map((c) => {
             return { text: c, value: c }
@@ -230,6 +311,8 @@ export default {
       if (this.searchTerm) apiQueryParams += `&search=${this.searchTerm}`
       if (this.category) apiQueryParams += `&category=${this.category}`
       if (this.selectedCanteen) apiQueryParams += `&canteen__id=${this.selectedCanteen}`
+      if (this.afterDate) apiQueryParams += `&date_after=${this.afterDate}`
+      if (this.beforeDate) apiQueryParams += `&date_before=${this.beforeDate}`
       if (this.selectedCharacteristics.length > 0) {
         apiQueryParams += "&characteristics="
         apiQueryParams += this.selectedCharacteristics.join("&characteristics=")
@@ -241,10 +324,14 @@ export default {
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
       if (this.searchTerm) urlQueryParams["recherche"] = this.searchTerm
-      if (this.category) urlQueryParams["categorie"] = this.getDisplayValue(this.category).text
+      if (this.category) urlQueryParams["categorie"] = this.getCategoryDisplayValue(this.category).text
       if (this.selectedCanteen) urlQueryParams["cantine"] = this.selectedCanteen
+      if (this.afterDate) urlQueryParams["après"] = this.afterDate
+      if (this.beforeDate) urlQueryParams["avant"] = this.beforeDate
       if (this.selectedCharacteristics.length > 0)
-        urlQueryParams["caracteristiques"] = this.selectedCharacteristics.join(",")
+        urlQueryParams["caracteristiques"] = this.selectedCharacteristics
+          .map((c) => this.getCharacteristicDisplayValue(c).text)
+          .join(",")
       return urlQueryParams
     },
     getOrderingItems() {
@@ -270,7 +357,12 @@ export default {
         sortDesc.push(isDesc)
       })
       this.$set(this, "options", { sortBy, sortDesc, page })
+      this.afterDate = this.$route.query.après || null
+      this.beforeDate = this.$route.query.avant || null
+      // TODO: populate characteristics, transforming human-readable text to API-friendly text
+      // TODO: populate category
     },
+    // TODO: clear functions for new filters
     clearSearch() {
       this.searchTerm = ""
       this.search()

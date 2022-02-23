@@ -25,6 +25,8 @@ class PurchasesPagination(LimitOffsetPagination):
     characteristics = []
     canteens = []
 
+    # TODO: update filter options when filters are chosen
+    # TODO: min and max date ?
     def paginate_queryset(self, queryset, request, view=None):
         # Performance improvements possible
         self.categories = set(filter(lambda x: x, queryset.values_list("category", flat=True)))

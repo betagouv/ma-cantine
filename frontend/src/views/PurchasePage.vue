@@ -350,7 +350,7 @@ export default {
 
       if (Object.prototype.hasOwnProperty.call(characteristicHash, characteristic))
         return characteristicHash[characteristic]
-      return { text: "", color: "" }
+      return { text: "" }
     },
     async savePurchase(stayOnPage) {
       this.$refs.form.validate()
