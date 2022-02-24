@@ -12,7 +12,7 @@ Si vous voulez installer l'environnement en local : [ONBOARDING.md](./ONBOARDING
 
 ### Architecture
 
-On utilise [Django](https://www.djangoproject.com/) au back-end et [Vue.js V3](https://v3.vuejs.org/) au front.
+On utilise [Django](https://www.djangoproject.com/) au back-end et [Vue.js (V2)](https://v2.vuejs.org/) au front.
 
 Le produit est découpé en applications. Les applications les plus modifiées :
 
