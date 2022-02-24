@@ -18,7 +18,7 @@
             v-model="canteen.name"
           ></v-text-field>
 
-          <p class="body-2 mt-6 mb-2">SIRET</p>
+          <p class="body-2 mt-4 mb-2">SIRET</p>
           <v-text-field
             hide-details="auto"
             validate-on-blur
@@ -26,6 +26,21 @@
             v-model="canteen.siret"
             :rules="[validators.length(14), validators.luhn]"
           ></v-text-field>
+
+          <p class="body-2 mt-4 mb-2">Ville</p>
+          <v-autocomplete
+            hide-details="auto"
+            :rules="[validators.required]"
+            :loading="loadingCommunes"
+            :items="communes"
+            :search-input.sync="search"
+            ref="cityAutocomplete"
+            solo
+            auto-select-first
+            cache-items
+            v-model="cityAutocompleteChoice"
+            :placeholder="canteen.city"
+          ></v-autocomplete>
         </v-col>
 
         <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -67,41 +82,56 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12" md="8">
-          <p class="body-2 my-2">Ville</p>
-          <v-autocomplete
-            hide-details="auto"
-            :rules="[validators.required]"
-            :loading="loadingCommunes"
-            :items="communes"
-            :search-input.sync="search"
-            ref="cityAutocomplete"
-            solo
-            auto-select-first
-            cache-items
-            v-model="cityAutocompleteChoice"
-            :placeholder="canteen.city"
-          ></v-autocomplete>
+        <v-col cols="12" class="mt-2">
+          <v-divider></v-divider>
         </v-col>
 
-        <v-col cols="12" md="4">
-          <p class="body-2 my-2">Couverts moyen par jour</p>
+        <v-col cols="12">
+          <p class="body-1 ml-1 mb-0">Je suis...</p>
+          <v-radio-group class="mt-2" v-model="canteen.productionType" hide-details="auto">
+            <v-radio class="ml-0" v-for="item in productionTypes" :key="item.value" :value="item.value">
+              <template v-slot:label>
+                <div class="d-block">
+                  <div class="body-1 grey--text text--darken-4" v-html="item.title"></div>
+                </div>
+              </template>
+            </v-radio>
+          </v-radio-group>
+        </v-col>
+
+        <v-col cols="12" md="6" v-if="showDailyMealCount">
+          <p class="body-2 my-2">
+            Couverts moyen par jour (convives sur place)
+          </p>
           <v-text-field
             hide-details="auto"
             :rules="[validators.greaterThanZero]"
             validate-on-blur
             solo
             v-model="canteen.dailyMealCount"
+            prepend-icon="mdi-silverware-fork-knife"
           ></v-text-field>
         </v-col>
 
-        <v-col cols="12" class="mt-2">
+        <v-col cols="12" md="6" v-if="showSatelliteCanteensCount">
+          <p class="body-2 my-2">Nombre de cantines à qui je fournis des repas</p>
+          <v-text-field
+            hide-details="auto"
+            :rules="[validators.greaterThanZero]"
+            validate-on-blur
+            solo
+            v-model="canteen.satelliteCanteensCount"
+            prepend-icon="mdi-home-city"
+          ></v-text-field>
+        </v-col>
+
+        <v-col cols="12" class="mt-4">
           <v-divider></v-divider>
         </v-col>
 
         <v-col cols="12" md="6">
           <div>
-            <p class="body-2 my-2">Secteurs d'activité</p>
+            <p class="body-2">Secteurs d'activité</p>
             <v-select
               multiple
               :items="sectors"
@@ -112,13 +142,16 @@
               hide-details
             ></v-select>
           </div>
+        </v-col>
+        <v-col cols="12" md="6">
           <div>
-            <p class="body-2 mt-4 mb-2">Type d'établissement</p>
+            <p class="body-2">Type d'établissement</p>
             <v-select
               :items="economicModels"
               solo
               v-model="canteen.economicModel"
               placeholder="Sélectionnez..."
+              hide-details="auto"
             ></v-select>
           </div>
         </v-col>
@@ -129,19 +162,6 @@
             <v-radio
               class="ml-8"
               v-for="item in managementTypes"
-              :key="item.value"
-              :label="item.text"
-              :value="item.value"
-            ></v-radio>
-          </v-radio-group>
-        </v-col>
-
-        <v-col cols="12" sm="6" md="3">
-          <p class="body-2 ml-4">Mode de production</p>
-          <v-radio-group v-model="canteen.productionType">
-            <v-radio
-              class="ml-8"
-              v-for="item in productionTypes"
               :key="item.value"
               :label="item.text"
               :value="item.value"
@@ -202,12 +222,24 @@ export default {
       managementTypes: Constants.ManagementTypes,
       productionTypes: [
         {
-          text: "Cuisine centrale",
+          title: "une <b>cantine</b> qui produit sur place les repas que je sers à mes convives",
+          body: "Je prépare ce que je sers à mes convives",
+          value: "site",
+        },
+        {
+          title: "une <b>cantine</b> qui sert des repas preparés par une cuisine centrale",
+          body: "Les repas que je sers à mes convives sont cuisinés ailleurs",
+          value: "site_cooked_elsewhere",
+        },
+        {
+          title: "une <b>cuisine centrale</b> qui livre des satellites mais n'a pas de lieu de service en propre",
+          body: "Je prépare des produits pour des cantines satellites et je ne reçois pas de convives sur place",
           value: "central",
         },
         {
-          text: "Cuisine-site",
-          value: "site",
+          title: "une <b>cuisine centrale</b> qui accueille aussi des convives sur place",
+          body: "Je prépare des produits pour des cantines satellites et j'ai aussi de la restauration sur place",
+          value: "central_serving",
         },
       ],
       economicModels: [
@@ -233,6 +265,12 @@ export default {
       } else {
         return Object.keys(this.canteen).length > 0
       }
+    },
+    showSatelliteCanteensCount() {
+      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
+    },
+    showDailyMealCount() {
+      return this.canteen.productionType !== "central"
     },
   },
   beforeMount() {

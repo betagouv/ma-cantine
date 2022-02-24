@@ -2,10 +2,12 @@
   <div class="mt-n2">
     <v-row class="mt-2">
       <v-col class="text-left pb-10">
-        <h1 class="font-weight-black text-h4 my-4">
+        <h1 class="font-weight-black text-h4 mb-4 mt-1">
           {{ isNewDiagnostic ? "Nouveau diagnostic" : "Modifier mon diagnostic" }}
         </h1>
-        <v-form ref="select" v-model="formIsValid.select">
+        <DiagnosticNotAllowed :canteen="originalCanteen" v-if="!canCreateDiagnostics" />
+
+        <v-form ref="select" v-model="formIsValid.select" v-if="canCreateDiagnostics">
           <v-row>
             <v-col cols="12" md="5">
               <p class="body-2 my-2">Cantine</p>
@@ -63,10 +65,10 @@
           </v-row>
         </v-form>
 
-        <p class="caption grey--text text--darken-1" v-if="!hasActiveTeledeclaration">
+        <p class="caption grey--text text--darken-1" v-if="!hasActiveTeledeclaration && canCreateDiagnostics">
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
         </p>
-        <div class="caption grey--text text--darken-1" v-else>
+        <div class="caption grey--text text--darken-1" v-if="hasActiveTeledeclaration">
           <p class="mb-0">Une fois télédéclaré, vous ne pouvez plus modifier votre diagnostic.</p>
           <TeledeclarationCancelDialog
             v-model="cancelDialog"
@@ -75,7 +77,14 @@
           />
         </div>
 
-        <v-expansion-panels class="mb-8" :disabled="!diagnosticIsUnique" :value="openedPanel">
+        <div class="caption grey--text text--darken-1" v-if="!canCreateDiagnostics">
+          <p class="mb-0">
+            Vous aviez rempli ce diagnostic précédemment. En tant que cuisine centrale sans lieu de consommation vous ne
+            pouvez pas le modifier.
+          </p>
+        </div>
+
+        <v-expansion-panels class="mb-8" :disabled="!diagnosticIsUnique || !canCreateDiagnostics" :value="openedPanel">
           <DiagnosticExpansionPanel
             iconColour="red"
             icon="mdi-food-apple"
@@ -235,7 +244,12 @@
           </DiagnosticExpansionPanel>
         </v-expansion-panels>
 
-        <v-sheet rounded color="grey lighten-4 pa-3" v-if="!hasActiveTeledeclaration" class="d-flex">
+        <v-sheet
+          rounded
+          color="grey lighten-4 pa-3"
+          v-if="!hasActiveTeledeclaration && canCreateDiagnostics"
+          class="d-flex"
+        >
           <v-spacer></v-spacer>
           <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
             Annuler
@@ -295,6 +309,7 @@ import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/Quality
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
+import DiagnosticNotAllowed from "@/components/DiagnosticNotAllowed"
 import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage } from "@/utils"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
@@ -329,6 +344,7 @@ export default {
     DiagnosticExpansionPanel,
     TeledeclarationCancelDialog,
     PurchaseHint,
+    DiagnosticNotAllowed,
   },
   props: {
     canteenUrlComponent: {
@@ -364,6 +380,9 @@ export default {
       if (!this.isNewDiagnostic || !this.diagnostic.year) return true
       const existingDiagnostic = this.originalCanteen.diagnostics.some((x) => x.year === this.diagnostic.year)
       return !existingDiagnostic
+    },
+    canCreateDiagnostics() {
+      return this.originalCanteen.productionType && this.originalCanteen.productionType !== "central"
     },
     allowedYears() {
       const thisYear = new Date().getFullYear()

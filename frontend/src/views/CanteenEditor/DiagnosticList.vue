@@ -3,7 +3,8 @@
     <h1 class="font-weight-black text-h4 my-4">
       Diagnostics
     </h1>
-    <div v-if="orderedDiagnostics.length">
+    <DiagnosticNotAllowed :canteen="originalCanteen" v-if="!canCreateDiagnostics" />
+    <div v-else-if="orderedDiagnostics.length">
       <v-btn
         text
         color="primary"
@@ -42,16 +43,20 @@
 <script>
 import DiagnosticCard from "@/components/DiagnosticCard"
 import DiagnosticIntroduction from "@/components/DiagnosticIntroduction"
+import DiagnosticNotAllowed from "@/components/DiagnosticNotAllowed"
 
 export default {
   name: "DiagnosticList",
-  components: { DiagnosticCard, DiagnosticIntroduction },
+  components: { DiagnosticCard, DiagnosticIntroduction, DiagnosticNotAllowed },
   props: {
     originalCanteen: Object,
   },
   computed: {
     orderedDiagnostics() {
       return [...this.originalCanteen.diagnostics].sort((a, b) => (a.year > b.year ? -1 : 1))
+    },
+    canCreateDiagnostics() {
+      return this.originalCanteen.productionType && this.originalCanteen.productionType !== "central"
     },
   },
   created() {
