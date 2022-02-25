@@ -382,7 +382,7 @@ export default {
       return !existingDiagnostic
     },
     canCreateDiagnostics() {
-      return this.originalCanteen.productionType && this.originalCanteen.productionType !== "central"
+      return this.originalCanteen.productionType !== "central"
     },
     allowedYears() {
       const thisYear = new Date().getFullYear()

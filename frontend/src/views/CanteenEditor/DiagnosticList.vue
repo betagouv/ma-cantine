@@ -56,7 +56,7 @@ export default {
       return [...this.originalCanteen.diagnostics].sort((a, b) => (a.year > b.year ? -1 : 1))
     },
     canCreateDiagnostics() {
-      return this.originalCanteen.productionType && this.originalCanteen.productionType !== "central"
+      return this.originalCanteen.productionType !== "central"
     },
   },
   created() {
