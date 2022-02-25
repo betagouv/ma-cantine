@@ -19,7 +19,7 @@ from api.views import ImportDiagnosticsView, TeledeclarationCreateView
 from api.views import TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
 from api.views import UserCanteenPreviews, CanteenLocationsView
-from api.views import ReservationExpeView
+from api.views import ReservationExpeView, PurchaseListExportView
 
 
 urlpatterns = {
@@ -107,6 +107,11 @@ urlpatterns = {
         "purchases/",
         PurchaseListCreateView.as_view(),
         name="purchase_list_create",
+    ),
+    path(
+        "purchasesExport.xlsx",
+        PurchaseListExportView.as_view(),
+        name="purchase_list_export",
     ),
     path(
         "purchases/<int:pk>",

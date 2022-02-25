@@ -40,3 +40,23 @@ class PurchaseSummarySerializer(serializers.Serializer):
     hve = serializers.DecimalField(max_digits=20, decimal_places=2, required=False)
     aoc_aop_igp = serializers.DecimalField(max_digits=20, decimal_places=2, required=False)
     rouge = serializers.DecimalField(max_digits=20, decimal_places=2, required=False)
+
+
+class PurchaseExportSerializer(serializers.ModelSerializer):
+    canteen = serializers.SlugRelatedField(read_only=True, slug_field="name")
+
+    class Meta:
+        model = Purchase
+        fields = (
+            "date",
+            "canteen",
+            "description",
+            "provider",
+            "readable_category",
+            "readable_characteristics",
+            "price_ht",
+        )
+        read_only_fields = fields
+
+    def get_category():
+        return

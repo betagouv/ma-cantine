@@ -25,7 +25,7 @@
       ></v-img>
     </div>
     <v-card outlined class="my-4" v-if="visiblePurchases">
-      <div class="d-flex pa-2">
+      <div class="d-flex flex-column flex-sm-row align-center pa-2">
         <v-text-field
           v-model="searchTerm"
           append-icon="mdi-magnify"
@@ -38,10 +38,15 @@
           @click:clear="clearSearch"
           @keyup.enter="search"
         ></v-text-field>
-        <v-btn outlined color="primary" class="mx-4" height="40px" @click="search">
+        <v-btn outlined color="primary" class="mx-4 my-4 my-sm-0" height="40px" @click="search">
           <v-icon>mdi-magnify</v-icon>
           Chercher
         </v-btn>
+        <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
+        <a :href="exportUrl" class="primary--text body-2 mr-sm-4" download>
+          <v-icon class="mr-1" color="primary">mdi-microsoft-excel</v-icon>
+          Télécharger
+        </a>
       </div>
       <v-divider></v-divider>
       <v-data-table
@@ -119,6 +124,13 @@ export default {
         const hasAttachment = !!x.invoiceFile
         return Object.assign(x, { canteen__name: canteen?.name, date, hasAttachment })
       })
+    },
+    exportUrl() {
+      const orderingItems = this.getOrderingItems()
+      let exportUrl = `/api/v1/purchasesExport.xlsx?`
+      if (orderingItems.length > 0) exportUrl += `&ordering=${orderingItems.join(",")}`
+      if (this.searchTerm) exportUrl += `&search=${this.searchTerm}`
+      return exportUrl
     },
   },
   methods: {
