@@ -161,9 +161,9 @@ export default {
           this.purchaseCount = response.count
           this.visiblePurchases = response.results
         })
-        .catch(() => {
+        .catch((e) => {
           this.publishedCanteenCount = 0
-          this.$store.dispatch("notifyServerError")
+          this.$store.dispatch("notifyServerError", e)
         })
         .finally(() => {
           this.loading = false
