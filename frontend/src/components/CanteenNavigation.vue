@@ -68,7 +68,12 @@ export default {
     },
     readyToPublish() {
       const diagnostic = this.canteen.diagnostics.find((x) => x.year === lastYear())
-      return this.canteen.publicationStatus === "draft" && !!diagnostic && isDiagnosticComplete(diagnostic)
+      return (
+        this.canteen.productionType !== "central" &&
+        this.canteen.publicationStatus === "draft" &&
+        !!diagnostic &&
+        isDiagnosticComplete(diagnostic)
+      )
     },
   },
   methods: {
