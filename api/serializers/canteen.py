@@ -109,6 +109,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "postal_code",
             "sectors",
             "daily_meal_count",
+            "satellite_canteens_count",
             "siret",
             "central_producer_siret",
             "management_type",
