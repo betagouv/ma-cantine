@@ -4,7 +4,11 @@
       {{ isNewCanteen ? "Nouvelle cantine" : "Modifier ma cantine" }}
     </h1>
 
-    <PublicationStateNotice :canteen="originalCanteen" :includeLink="true" v-if="!isNewCanteen" />
+    <PublicationStateNotice
+      :canteen="originalCanteen"
+      :includeLink="true"
+      v-if="!isNewCanteen && originalCanteen.productionType !== 'central'"
+    />
 
     <v-form ref="form" v-model="formIsValid" lazy-validation>
       <v-row>
@@ -152,6 +156,7 @@
               v-model="canteen.economicModel"
               placeholder="Sélectionnez..."
               hide-details="auto"
+              clearable
             ></v-select>
           </div>
         </v-col>
