@@ -259,7 +259,7 @@
           </v-btn>
         </v-sheet>
 
-        <div v-if="!hasActiveTeledeclaration && isTeledeclarationYear">
+        <div v-if="!hasActiveTeledeclaration && isTeledeclarationYear && originalCanteen.productionType !== 'central'">
           <v-divider class="mt-8"></v-divider>
           <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
           <p>
