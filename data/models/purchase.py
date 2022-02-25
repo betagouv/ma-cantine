@@ -80,5 +80,5 @@ class Purchase(models.Model):
     )
     invoice_file = models.FileField(null=True, blank=True, upload_to="invoices/%Y/")
     local_definition = models.CharField(
-        max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="Comment définir local"
+        max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="définition de local"
     )
