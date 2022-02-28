@@ -42,10 +42,16 @@
           <v-icon>mdi-magnify</v-icon>
           Chercher
         </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="showFilters = !showFilters" class="align-self-end">
-          Peaufiner cette liste...
+      </div>
+
+      <div class="d-flex align-center mb-2">
+        <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1">
+          <v-icon small>mdi-filter-outline</v-icon>
+          <span v-if="showFilters">Cacher les &nbsp;</span>
+          <span v-else>Afficher les &nbsp;</span>
+          filtres
         </v-btn>
+        <v-divider></v-divider>
       </div>
       <v-expand-transition>
         <div v-show="showFilters" class="pa-2">
@@ -167,6 +173,7 @@
 
 <script>
 import { formatDate } from "@/utils"
+import Constants from "@/constants"
 
 export default {
   name: "PurchasesHome",
@@ -224,51 +231,12 @@ export default {
   },
   methods: {
     getCategoryDisplayValue(category) {
-      const categoryHash = {
-        VIANDES_VOLAILLES: { text: "Viandes, volailles", color: "red darken-4" },
-        PRODUITS_DE_LA_MER: { text: "Produits de la mer", color: "pink darken-4" },
-        FRUITS_ET_LEGUMES: {
-          text: this.$vuetify.breakpoint.smAndUp
-            ? "Fruits, légumes, légumineuses et oléagineux"
-            : "Fruits, légumes, ...",
-          color: "purple darken-4",
-        },
-        PRODUITS_CEREALIERS: { text: "Produits céréaliers", color: "deep-purple darken-4" },
-        ENTREES: { text: "Entrées et plats composés", color: "indigo darken-4" },
-        PRODUITS_LAITIERS: { text: "Lait et produits laitiers", color: "blue darken-4" },
-        BOISSONS: { text: "Boissons", color: "light-blue darken-4" },
-        AIDES: { text: "Aides culinaires et ingrédients divers", color: "cyan darken-4" },
-        BEURRE_OEUF_FROMAGE: { text: "Beurre, oeuf, fromage", color: "teal darken-4" },
-        PRODUITS_SUCRES: { text: "Produits sucrés", color: "green darken-4" },
-        ALIMENTS_INFANTILES: { text: "Aliments infantiles", color: "light-green darken-4" },
-        GLACES_SORBETS: { text: "Glaces et sorbets", color: "blue-grey darken-4" },
-        AUTRES: { text: "Autres", color: "brown darken-4" },
-      }
-
-      if (Object.prototype.hasOwnProperty.call(categoryHash, category)) return categoryHash[category]
+      if (Object.prototype.hasOwnProperty.call(Constants.Categories, category)) return Constants.Categories[category]
       return { text: "", color: "" }
     },
     getCharacteristicDisplayValue(characteristic) {
-      // TODO: share the hashes across here and purchase page
-      const characteristicHash = {
-        BIO: { text: "Bio" },
-        CONVERSION_BIO: { text: "En conversion bio" },
-        LABEL_ROUGE: { text: "Label rouge" },
-        AOCAOP: { text: "AOC / AOP" },
-        ICP: { text: "IGP" },
-        STG: { text: "STG" },
-        HVE: { text: "HVE" },
-        PECHE_DURABLE: { text: "Pêche durable" },
-        RUP: { text: "RUP" },
-        FERMIER: { text: "Fermier" },
-        EXTERNALITES: { text: "Externalités environnementales" },
-        COMMERCE_EQUITABLE: { text: "Commerce équitable" },
-        PERFORMANCE: { text: "Performance environnementale" },
-        EQUIVALENTS: { text: "Produits équivalents" },
-      }
-
-      if (Object.prototype.hasOwnProperty.call(characteristicHash, characteristic))
-        return characteristicHash[characteristic]
+      if (Object.prototype.hasOwnProperty.call(Constants.Characteristics, characteristic))
+        return Constants.Characteristics[characteristic]
       return { text: "" }
     },
     onRowClick(purchase) {
@@ -284,15 +252,19 @@ export default {
         .then((response) => {
           this.purchaseCount = response.count
           this.visiblePurchases = response.results
-          this.categories = response.categories.map((c) => {
-            return { text: this.getCategoryDisplayValue(c).text, value: c }
-          }) // TODO: sort alphabetically
-          this.characteristics = response.characteristics.map((c) => {
-            return { text: this.getCharacteristicDisplayValue(c).text, value: c }
-          })
-          this.canteens = response.canteens.map((c) => {
-            return { text: c, value: c }
-          })
+          this.categories = response.categories
+            .map((c) => {
+              const displayValue = this.getCategoryDisplayValue(c)
+              return displayValue.text ? { text: displayValue.text, value: c } : null
+            })
+            .filter((x) => !!x)
+          this.characteristics = response.characteristics
+            .map((c) => {
+              const displayValue = this.getCategoryDisplayValue(c)
+              return displayValue.text ? { text: displayValue.text, value: c } : null
+            })
+            .filter((x) => !!x)
+          this.canteens = response.canteens.map((c) => ({ text: c, value: c }))
         })
         .catch(() => {
           this.publishedCanteenCount = 0
