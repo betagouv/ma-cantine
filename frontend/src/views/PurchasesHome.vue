@@ -60,11 +60,10 @@
                 outlined
                 clearable
                 class="mt-2"
-                style="max-width: 450px;"
                 @change="search"
               ></v-select>
             </v-col>
-            <v-col cols="12" sm="6" md="4">
+            <v-col cols="12" sm="6">
               <v-select
                 v-model="selectedCharacteristics"
                 :items="characteristics"
@@ -75,7 +74,6 @@
                 clearable
                 multiple
                 class="mt-2"
-                style="max-width: 450px;"
                 @change="search"
               ></v-select>
             </v-col>

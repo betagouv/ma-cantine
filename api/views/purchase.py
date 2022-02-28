@@ -118,7 +118,7 @@ class PurchaseListCreateView(ListCreateAPIView):
         # handle characteristics filtering manually because ChoiceArrayField is not a Django field
         characteristics = self.request.query_params.getlist("characteristics")
         if characteristics:
-            queryset = queryset.filter(characteristics__contains=characteristics)
+            queryset = queryset.filter(characteristics__overlap=characteristics)
         return super().filter_queryset(queryset)
 
 
