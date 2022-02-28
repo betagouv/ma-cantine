@@ -413,7 +413,7 @@ class TestPurchaseApi(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 1)
+        self.assertEqual(len(results), 3)
 
     @authenticate
     def test_filter_by_category(self):
