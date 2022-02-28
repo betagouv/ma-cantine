@@ -162,6 +162,20 @@
             </v-row>
           </fieldset>
         </v-row>
+        <v-expand-transition>
+          <v-col cols="12" sm="6" v-show="purchase.characteristics.indexOf('LOCAL') > -1" class="my-4">
+            <label class="body-2" for="local-definition">C'est quoi votre définition de local ?</label>
+            <v-autocomplete
+              hide-details="auto"
+              solo
+              :items="localDefinitions"
+              v-model="purchase.localDefinition"
+              :rules="[validators.required]"
+              id="local-definition"
+              class="mt-2"
+            ></v-autocomplete>
+          </v-col>
+        </v-expand-transition>
         <v-sheet
           rounded
           color="grey lighten-4 pa-3 mt-8"
@@ -273,8 +287,17 @@ export default {
         "COMMERCE_EQUITABLE",
         "EXTERNALITES",
         "PERFORMANCE",
+        "FRANCE",
+        "SHORT_DISTRIBUTION",
+        "LOCAL",
       ],
       backLink: { name: "PurchasesHome" },
+      localDefinitions: [
+        { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },
+        { text: "Provenant du même département", value: "DEPARTMENT" },
+        { text: "Provenant de la même région", value: "REGION" },
+        { text: "Autre", value: "AUTRE" },
+      ],
     }
   },
   props: {
@@ -346,6 +369,9 @@ export default {
         COMMERCE_EQUITABLE: { text: "Commerce équitable" },
         PERFORMANCE: { text: "Produits acquis sur la base de leurs performances en matière environnementale" },
         EQUIVALENTS: { text: "Produits équivalents aux produits bénéficiant de ces mentions ou labels" },
+        FRANCE: { text: "Provenance France" },
+        SHORT_DISTRIBUTION: { text: "Circuit-court" },
+        LOCAL: { text: "Local" },
       }
 
       if (Object.prototype.hasOwnProperty.call(characteristicHash, characteristic))

@@ -22,6 +22,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "characteristics",
             "price_ht",
             "invoice_file",
+            "local_definition",
         )
         read_only_fields = ("id",)
 
