@@ -513,9 +513,9 @@ export default {
           this.setSectors(response.sectors)
           this.setManagementTypes(response.managementTypes)
         })
-        .catch(() => {
+        .catch((e) => {
           this.publishedCanteenCount = 0
-          this.$store.dispatch("notifyServerError")
+          this.$store.dispatch("notifyServerError", e)
         })
     },
     clearSearch() {
@@ -610,10 +610,7 @@ export default {
           }
           window.scrollTo(0, 0)
         })
-        .catch((error) => {
-          console.log(error.message)
-          this.$store.dispatch("notifyServerError")
-        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
     setLocations(enabledLocationIds, jsonLocations, locationKeyWord, locationsWord) {
       const enabledLocations = jsonLocations

@@ -62,10 +62,7 @@ export default {
             status: "success",
           })
         })
-        .catch((error) => {
-          this.$store.dispatch("notifyServerError")
-          console.log(error)
-        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
 }

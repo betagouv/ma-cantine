@@ -103,10 +103,7 @@ export default {
             message: "Merci de vôtre intérêt pour ma cantine, nous reviendrons vers vous dans les plus brefs délais.",
           })
         })
-        .catch((error) => {
-          console.log(error.message)
-          this.$store.dispatch("notifyServerError")
-        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
         .finally(() => {
           this.loading = false
         })
