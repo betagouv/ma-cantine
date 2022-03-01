@@ -85,7 +85,7 @@ class Canteen(SoftDeletionModel):
     central_producer_siret = models.TextField(
         null=True,
         blank=True,
-        verbose_name="siret de la cuisine centrale",
+        verbose_name="siret de la cuisine centrale (si cuisine satellite)",
         validators=[validate_siret],
     )
     management_type = models.CharField(
