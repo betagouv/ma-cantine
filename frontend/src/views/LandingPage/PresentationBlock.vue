@@ -14,7 +14,7 @@
             <h1 class="font-weight-black text-h3">
               Mieux manger
               <br v-if="$vuetify.breakpoint.mdAndUp" />
-              de la crêche à l’EHPAD
+              de la crèche à l’EHPAD
             </h1>
             <v-spacer v-if="$vuetify.breakpoint.smAndDown"></v-spacer>
           </v-card-title>
