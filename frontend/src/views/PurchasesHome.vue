@@ -45,7 +45,7 @@
       </div>
 
       <div class="d-flex align-center mb-2">
-        <v-badge :value="hasActiveFilter" color="secondary" dot overlap>
+        <v-badge :value="hasActiveFilter" color="primary" dot overlap>
           <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1">
             <v-icon small>mdi-filter-outline</v-icon>
             <span v-if="showFilters">Cacher les &nbsp;</span>
@@ -65,10 +65,16 @@
         <div v-show="showFilters" class="pa-2">
           <v-row>
             <v-col cols="12" sm="6" md="4">
+              <label
+                for="filter-category"
+                :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.category }"
+              >
+                Catégorie
+              </label>
               <v-select
                 v-model="appliedFilters.category"
+                id="filter-category"
                 :items="categories"
-                label="Catégorie"
                 hide-details
                 dense
                 outlined
@@ -77,10 +83,16 @@
               ></v-select>
             </v-col>
             <v-col cols="12" sm="6">
+              <label
+                for="filter-characteristics"
+                :class="{ 'text-body-2': true, 'active-filter-label': appliedFilters.characteristics.length > 0 }"
+              >
+                Caractéristiques
+              </label>
               <v-select
+                id="filter-characteristics"
                 v-model="appliedFilters.characteristics"
                 :items="characteristics"
-                label="Caractéristiques"
                 hide-details
                 dense
                 outlined
@@ -100,6 +112,12 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-col cols="12" sm="6" md="3">
+                  <label
+                    for="filter-startdate"
+                    :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.startDate }"
+                  >
+                    Après
+                  </label>
                   <v-text-field
                     :value="appliedFilters.startDate"
                     prepend-icon="mdi-calendar"
@@ -110,7 +128,7 @@
                     outlined
                     dense
                     clearable
-                    label="Après"
+                    id="filter-startdate"
                     @click:clear="appliedFilters.startDate = null"
                   ></v-text-field>
                 </v-col>
@@ -127,6 +145,12 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-col cols="12" sm="6" md="3">
+                  <label
+                    for="filter-enddate"
+                    :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.endDate }"
+                  >
+                    Avant
+                  </label>
                   <v-text-field
                     :value="appliedFilters.endDate"
                     prepend-icon="mdi-calendar"
@@ -137,7 +161,7 @@
                     outlined
                     dense
                     clearable
-                    label="Avant"
+                    id="filter-enddate"
                     @click:clear="appliedFilters.endDate = null"
                   ></v-text-field>
                 </v-col>
@@ -195,7 +219,7 @@ export default {
       options: {
         sortBy: [],
         sortDesc: [],
-        page: null,
+        page: 1,
       },
       headers: [
         {
@@ -278,7 +302,7 @@ export default {
             .filter((x) => !!x)
           this.characteristics = response.characteristics
             .map((c) => {
-              const displayValue = this.getCategoryDisplayValue(c)
+              const displayValue = this.getCharacteristicDisplayValue(c)
               return displayValue.text ? { text: displayValue.text, value: c } : null
             })
             .filter((x) => !!x)
@@ -342,8 +366,8 @@ export default {
       this.$set(this, "appliedFilters", {
         startDate: this.$route.query.après || null,
         endDate: this.$route.query.avant || null,
-        characteristics: [],
-        category: null,
+        characteristics: this.appliedFilters.characteristics,
+        category: this.appliedFilters.category,
       })
       // TODO: populate characteristics, transforming human-readable text to API-friendly text
       // TODO: populate category
@@ -356,10 +380,6 @@ export default {
       if (this.searchTerm && this.options.page !== 1) this.options.page = 1
       else this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
     },
-    applyFilters() {
-      if (this.options.page !== 1) this.options.page = 1
-      else this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
-    },
     clearFilters() {
       this.$set(this, "appliedFilters", {
         startDate: null,
@@ -368,28 +388,29 @@ export default {
         category: null,
       })
     },
-  },
-  watch: {
-    appliedFilters: {
-      handler() {
-        this.applyFilters()
-      },
-      deep: true,
+    onAppliedFiltersChange() {
+      if (this.options.page !== 1) this.options.page = 1
+      else {
+        this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
+        this.fetchCurrentPage()
+      }
     },
-    options() {
-      const replace = Object.keys(this.$route.query).length === 0
-      if (replace) this.$router.replace({ query: this.getUrlQueryParams() }).catch(() => {})
-      else this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
-      if (!this.visiblePurchases && !this.loading) this.fetchCurrentPage()
-    },
-    $route() {
-      this.populateParametersFromRoute()
+    onOptionsChange() {
+      this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
       this.fetchCurrentPage()
     },
+    addWatchers() {
+      this.$watch("appliedFilters", this.onAppliedFiltersChange, { deep: true })
+      this.$watch("options", this.onOptionsChange, { deep: true })
+    },
+  },
+  beforeMount() {
+    if (!this.$route.query["page"]) this.$router.replace({ query: { page: 1 } })
   },
   mounted() {
     this.populateParametersFromRoute()
     if (this.hasActiveFilter) this.showFilters = true
+    return this.fetchCurrentPage().then(this.addWatchers)
   },
 }
 </script>
@@ -403,5 +424,12 @@ export default {
 /* Hides items-per-row */
 .v-data-table >>> .v-data-footer__select {
   visibility: hidden;
+}
+.active-filter-label {
+  font-weight: bold;
+}
+.active-filter-label::before {
+  content: "⚫︎";
+  color: #0c7f46;
 }
 </style>
