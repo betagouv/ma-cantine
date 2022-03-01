@@ -45,12 +45,20 @@
       </div>
 
       <div class="d-flex align-center mb-2">
-        <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1">
-          <v-icon small>mdi-filter-outline</v-icon>
-          <span v-if="showFilters">Cacher les &nbsp;</span>
-          <span v-else>Afficher les &nbsp;</span>
-          filtres
+        <v-badge :value="hasActiveFilter" color="secondary" dot overlap>
+          <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1">
+            <v-icon small>mdi-filter-outline</v-icon>
+            <span v-if="showFilters">Cacher les &nbsp;</span>
+            <span v-else>Afficher les &nbsp;</span>
+            filtres
+          </v-btn>
+        </v-badge>
+        <v-divider v-if="hasActiveFilter" style="max-width: 20px;"></v-divider>
+        <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter">
+          <v-icon small>mdi-filter-off-outline</v-icon>
+          Enlever tous les filtres
         </v-btn>
+
         <v-divider></v-divider>
       </div>
       <v-expand-transition>
@@ -58,7 +66,7 @@
           <v-row>
             <v-col cols="12" sm="6" md="4">
               <v-select
-                v-model="category"
+                v-model="appliedFilters.category"
                 :items="categories"
                 label="Catégorie"
                 hide-details
@@ -66,12 +74,11 @@
                 outlined
                 clearable
                 class="mt-2"
-                @change="search"
               ></v-select>
             </v-col>
             <v-col cols="12" sm="6">
               <v-select
-                v-model="selectedCharacteristics"
+                v-model="appliedFilters.characteristics"
                 :items="characteristics"
                 label="Caractéristiques"
                 hide-details
@@ -80,13 +87,12 @@
                 clearable
                 multiple
                 class="mt-2"
-                @change="search"
               ></v-select>
             </v-col>
           </v-row>
           <v-row>
             <v-menu
-              v-model="afterDateMenu"
+              v-model="startDateMenu"
               :close-on-content-click="true"
               transition="scale-transition"
               offset-y
@@ -95,7 +101,7 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-col cols="12" sm="6" md="3">
                   <v-text-field
-                    :value="afterDate"
+                    :value="appliedFilters.startDate"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
@@ -105,14 +111,15 @@
                     dense
                     clearable
                     label="Après"
+                    @click:clear="appliedFilters.startDate = null"
                   ></v-text-field>
                 </v-col>
               </template>
 
-              <v-date-picker v-model="afterDate" locale="fr-FR" @change="search"></v-date-picker>
+              <v-date-picker v-model="appliedFilters.startDate" locale="fr-FR"></v-date-picker>
             </v-menu>
             <v-menu
-              v-model="beforeDateMenu"
+              v-model="endDateMenu"
               :close-on-content-click="true"
               transition="scale-transition"
               offset-y
@@ -121,7 +128,7 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-col cols="12" sm="6" md="3">
                   <v-text-field
-                    :value="beforeDate"
+                    :value="appliedFilters.endDate"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
@@ -131,11 +138,12 @@
                     dense
                     clearable
                     label="Avant"
+                    @click:clear="appliedFilters.endDate = null"
                   ></v-text-field>
                 </v-col>
               </template>
 
-              <v-date-picker v-model="beforeDate" locale="fr-FR" @change="search"></v-date-picker>
+              <v-date-picker v-model="appliedFilters.endDate" locale="fr-FR"></v-date-picker>
             </v-menu>
           </v-row>
         </div>
@@ -203,15 +211,17 @@ export default {
         { text: "Prix HT", value: "priceHt", sortable: true },
         { text: "", value: "hasAttachment", sortable: false },
       ],
-      showFilters: false,
-      category: null,
       categories: [],
-      selectedCharacteristics: [],
       characteristics: [],
-      afterDate: null,
-      afterDateMenu: false,
-      beforeDate: null,
-      beforeDateMenu: false,
+      showFilters: false,
+      startDateMenu: false,
+      endDateMenu: false,
+      appliedFilters: {
+        category: null,
+        characteristics: [],
+        startDate: null,
+        endDate: null,
+      },
     }
   },
   computed: {
@@ -226,6 +236,14 @@ export default {
         const hasAttachment = !!x.invoiceFile
         return Object.assign(x, { canteen__name: canteen?.name, date, hasAttachment })
       })
+    },
+    hasActiveFilter() {
+      return (
+        this.appliedFilters.category !== null ||
+        this.appliedFilters.characteristics.length !== 0 ||
+        this.appliedFilters.startDate !== null ||
+        this.appliedFilters.endDate !== null
+      )
     },
     // TODO: format choice lists to have explanation of inactive choices
   },
@@ -279,14 +297,11 @@ export default {
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
       if (this.searchTerm) apiQueryParams += `&search=${this.searchTerm}`
-      if (this.category) apiQueryParams += `&category=${this.category}`
-      if (this.selectedCanteen) apiQueryParams += `&canteen__id=${this.selectedCanteen}`
-      if (this.afterDate) apiQueryParams += `&date_after=${this.afterDate}`
-      if (this.beforeDate) apiQueryParams += `&date_before=${this.beforeDate}`
-      if (this.selectedCharacteristics.length > 0) {
-        apiQueryParams += "&characteristics="
-        apiQueryParams += this.selectedCharacteristics.join("&characteristics=")
-      }
+      if (this.appliedFilters.category) apiQueryParams += `&category=${this.appliedFilters.category}`
+      if (this.appliedFilters.startDate) apiQueryParams += `&date_after=${this.appliedFilters.startDate}`
+      if (this.appliedFilters.endDate) apiQueryParams += `&date_before=${this.appliedFilters.endDate}`
+      if (this.appliedFilters.characteristics.length > 0)
+        apiQueryParams += `&characteristics=${this.appliedFilters.characteristics.join(",")}`
       return apiQueryParams
     },
     getUrlQueryParams() {
@@ -294,12 +309,12 @@ export default {
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
       if (this.searchTerm) urlQueryParams["recherche"] = this.searchTerm
-      if (this.category) urlQueryParams["categorie"] = this.getCategoryDisplayValue(this.category).text
-      if (this.selectedCanteen) urlQueryParams["cantine"] = this.selectedCanteen
-      if (this.afterDate) urlQueryParams["après"] = this.afterDate
-      if (this.beforeDate) urlQueryParams["avant"] = this.beforeDate
-      if (this.selectedCharacteristics.length > 0)
-        urlQueryParams["caracteristiques"] = this.selectedCharacteristics
+      if (this.appliedFilters.category)
+        urlQueryParams["categorie"] = this.getCategoryDisplayValue(this.appliedFilters.category).text
+      if (this.appliedFilters.startDate) urlQueryParams["après"] = this.appliedFilters.startDate
+      if (this.appliedFilters.endDate) urlQueryParams["avant"] = this.appliedFilters.endDate
+      if (this.appliedFilters.characteristics.length > 0)
+        urlQueryParams["caracteristiques"] = this.appliedFilters.characteristics
           .map((c) => this.getCharacteristicDisplayValue(c).text)
           .join(",")
       return urlQueryParams
@@ -314,25 +329,25 @@ export default {
     populateParametersFromRoute() {
       const page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
       this.searchTerm = this.$route.query.recherche || null
-
-      if (!this.$route.query["trier-par"]) {
-        this.$set(this, "options", { page })
-        return
-      }
       let sortBy = []
       let sortDesc = []
-      this.$route.query["trier-par"].split(",").forEach((element) => {
-        const isDesc = element[0] === "-"
-        sortBy.push(isDesc ? element.slice(1) : element)
-        sortDesc.push(isDesc)
-      })
+
+      this.$route.query["trier-par"] &&
+        this.$route.query["trier-par"].split(",").forEach((element) => {
+          const isDesc = element[0] === "-"
+          sortBy.push(isDesc ? element.slice(1) : element)
+          sortDesc.push(isDesc)
+        })
       this.$set(this, "options", { sortBy, sortDesc, page })
-      this.afterDate = this.$route.query.après || null
-      this.beforeDate = this.$route.query.avant || null
+      this.$set(this, "appliedFilters", {
+        startDate: this.$route.query.après || null,
+        endDate: this.$route.query.avant || null,
+        characteristics: [],
+        category: null,
+      })
       // TODO: populate characteristics, transforming human-readable text to API-friendly text
       // TODO: populate category
     },
-    // TODO: clear functions for new filters
     clearSearch() {
       this.searchTerm = ""
       this.search()
@@ -341,8 +356,26 @@ export default {
       if (this.searchTerm && this.options.page !== 1) this.options.page = 1
       else this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
     },
+    applyFilters() {
+      if (this.options.page !== 1) this.options.page = 1
+      else this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
+    },
+    clearFilters() {
+      this.$set(this, "appliedFilters", {
+        startDate: null,
+        endDate: null,
+        characteristics: [],
+        category: null,
+      })
+    },
   },
   watch: {
+    appliedFilters: {
+      handler() {
+        this.applyFilters()
+      },
+      deep: true,
+    },
     options() {
       const replace = Object.keys(this.$route.query).length === 0
       if (replace) this.$router.replace({ query: this.getUrlQueryParams() }).catch(() => {})
@@ -356,6 +389,7 @@ export default {
   },
   mounted() {
     this.populateParametersFromRoute()
+    if (this.hasActiveFilter) this.showFilters = true
   },
 }
 </script>
