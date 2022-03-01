@@ -161,7 +161,21 @@ class PurchaseListExportView(PurchaseListCreateView, XLSXFileMixin):
             "Caractéristiques",
             "Prix HT",
         ],
-        "column_width": [18, 25, 25, 20, 25, 25, 10],
+        "column_width": [18, 25, 25, 20, 35, 35, 10],
+        "style": {
+            "font": {
+                "bold": True,
+            },
+        },
+    }
+    body = {
+        "style": {
+            "alignment": {
+                "horizontal": "left",
+                "vertical": "center",
+            },
+        },
+        "height": 20,
     }
 
     def post(self, request, *args, **kwargs):

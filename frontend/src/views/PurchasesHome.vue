@@ -127,7 +127,7 @@ export default {
     },
     exportUrl() {
       const orderingItems = this.getOrderingItems()
-      let exportUrl = `/api/v1/purchasesExport.xlsx?`
+      let exportUrl = `/api/v1/export-achats.xlsx?`
       if (orderingItems.length > 0) exportUrl += `&ordering=${orderingItems.join(",")}`
       if (this.searchTerm) exportUrl += `&search=${this.searchTerm}`
       return exportUrl

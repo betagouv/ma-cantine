@@ -109,7 +109,7 @@ urlpatterns = {
         name="purchase_list_create",
     ),
     path(
-        "purchasesExport.xlsx",
+        "export-achats.xlsx",  # breaking from URL conventions for nicer filename
         PurchaseListExportView.as_view(),
         name="purchase_list_export",
     ),
