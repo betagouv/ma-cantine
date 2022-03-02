@@ -1,6 +1,9 @@
 <template>
   <div>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="canteen.dailyMealCount">
+    <p
+      :class="{ 'my-0': true, inline: singleLine }"
+      v-if="canteen.dailyMealCount && canteen.productionType !== 'central'"
+    >
       <v-icon small>mdi-silverware-fork-knife</v-icon>
       {{ canteen.dailyMealCount }} par jour
     </p>

@@ -56,7 +56,7 @@ class TestPurchaseApi(APITestCase):
             "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
-            "characteristic": ["BIO"],
+            "characteristics": ["BIO"],
             "price_ht": 15.23,
         }
         response = self.client.post(reverse("purchase_list_create"), payload, format="json")
@@ -77,7 +77,7 @@ class TestPurchaseApi(APITestCase):
             "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
-            "characteristic": ["BIO"],
+            "characteristics": ["BIO"],
             "price_ht": 15.23,
         }
         response = self.client.post(reverse("purchase_list_create"), payload, format="json")
@@ -96,11 +96,15 @@ class TestPurchaseApi(APITestCase):
             "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
-            "characteristic": ["BIO"],
+            "characteristics": ["BIO", "LOCAL"],
             "price_ht": 15.23,
+            "local_definition": "AUTOUR_SERVICE",
         }
         response = self.client.post(reverse("purchase_list_create"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.local_definition, Purchase.Local.AUTOUR_SERVICE)
+        self.assertEqual(len(purchase.characteristics), 2)
 
     @authenticate
     def test_create_purchase_nonexistent_canteen(self):
@@ -115,7 +119,7 @@ class TestPurchaseApi(APITestCase):
             "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
-            "characteristic": ["BIO"],
+            "characteristics": ["BIO"],
             "price_ht": 15.23,
         }
         response = self.client.post(reverse("purchase_list_create"), payload, format="json")
@@ -500,3 +504,33 @@ class TestPurchaseApi(APITestCase):
         canteens = body.get("canteens", [])
         self.assertEqual(len(canteens), 2)
         self.assertNotIn(not_my_canteen.id, canteens)
+
+    def test_excel_export_unauthenticated(self):
+        response = self.client.get(reverse("purchase_list_export"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_excel_export(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen)
+        PurchaseFactory.create(description="tomates", canteen=canteen)
+        PurchaseFactory.create(description="pommes", canteen=canteen)
+
+        response = self.client.get(reverse("purchase_list_export"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+
+    @authenticate
+    def test_excel_export_search(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen)
+        PurchaseFactory.create(description="tomates", canteen=canteen)
+        PurchaseFactory.create(description="pommes", canteen=canteen)
+
+        search_term = "avoine"
+        response = self.client.get(f"{reverse('purchase_list_export')}?search={search_term}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)

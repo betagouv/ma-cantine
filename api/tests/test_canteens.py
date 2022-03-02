@@ -127,8 +127,10 @@ class TestCanteenApi(APITestCase):
         payload = {
             "city": "Lyon",
             "siret": "21340172201787",
-            "management_type": "direct",
-            "reservation_expe_participant": True,
+            "managementType": "direct",
+            "reservationExpeParticipant": True,
+            "satelliteCanteensCount": 130,
+            "productionType": "central",
         }
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
 
@@ -137,6 +139,8 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(created_canteen.city, "Lyon")
         self.assertEqual(created_canteen.siret, "21340172201787")
         self.assertEqual(created_canteen.management_type, "direct")
+        self.assertEqual(created_canteen.satellite_canteens_count, 130)
+        self.assertEqual(created_canteen.production_type, "central")
         self.assertEqual(created_canteen.reservation_expe_participant, True)
 
     @authenticate
@@ -156,7 +160,6 @@ class TestCanteenApi(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
-            "management_type": "direct",
         }
 
         response = self.client.post(reverse("user_canteens"), payload)
@@ -181,7 +184,7 @@ class TestCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(body["siret"], ["Le numéro SIRET n'est pas valide."])
 
-        payload = {"name": "My canteen", "central_producer_siret": "01234567891011"}
+        payload = {"name": "My canteen", "centralProducerSiret": "01234567891011"}
 
         response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -280,7 +283,7 @@ class TestCanteenApi(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
-            "management_type": "direct",
+            "managementType": "direct",
             "images": [
                 {
                     "image": "data:image/jpeg;base64," + image_base_64,

@@ -70,5 +70,8 @@ export default Object.freeze({
     COMMERCE_EQUITABLE: { text: "Commerce équitable" },
     PERFORMANCE: { text: "Performance environnementale" },
     EQUIVALENTS: { text: "Produits équivalents" },
+    FRANCE: { text: "Provenance France" },
+    SHORT_DISTRIBUTION: { text: "Circuit-court" },
+    LOCAL: { text: "Local" },
   },
 })

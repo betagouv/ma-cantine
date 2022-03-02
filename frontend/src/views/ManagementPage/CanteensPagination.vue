@@ -115,9 +115,9 @@ export default {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
         })
-        .catch(() => {
+        .catch((e) => {
           this.publishedCanteenCount = 0
-          this.$store.dispatch("notifyServerError")
+          this.$store.dispatch("notifyServerError", e)
         })
         .finally(() => {
           this.inProgress = false

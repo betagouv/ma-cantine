@@ -124,10 +124,7 @@ export default {
           }
           window.scrollTo(0, 0)
         })
-        .catch((error) => {
-          console.log(error.message)
-          this.$store.dispatch("notifyServerError")
-        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
 }
