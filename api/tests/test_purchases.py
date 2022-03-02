@@ -56,7 +56,7 @@ class TestPurchaseApi(APITestCase):
             "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
-            "characteristic": ["BIO"],
+            "characteristics": ["BIO"],
             "price_ht": 15.23,
         }
         response = self.client.post(reverse("purchase_list_create"), payload, format="json")
@@ -77,7 +77,7 @@ class TestPurchaseApi(APITestCase):
             "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
-            "characteristic": ["BIO"],
+            "characteristics": ["BIO"],
             "price_ht": 15.23,
         }
         response = self.client.post(reverse("purchase_list_create"), payload, format="json")
@@ -96,11 +96,15 @@ class TestPurchaseApi(APITestCase):
             "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
-            "characteristic": ["BIO"],
+            "characteristics": ["BIO", "LOCAL"],
             "price_ht": 15.23,
+            "local_definition": "AUTOUR_SERVICE",
         }
         response = self.client.post(reverse("purchase_list_create"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.local_definition, Purchase.Local.AUTOUR_SERVICE)
+        self.assertEqual(len(purchase.characteristics), 2)
 
     @authenticate
     def test_create_purchase_nonexistent_canteen(self):
@@ -115,7 +119,7 @@ class TestPurchaseApi(APITestCase):
             "description": "Saumon",
             "provider": "Test provider",
             "category": "PRODUITS_DE_LA_MER",
-            "characteristic": ["BIO"],
+            "characteristics": ["BIO"],
             "price_ht": 15.23,
         }
         response = self.client.post(reverse("purchase_list_create"), payload, format="json")

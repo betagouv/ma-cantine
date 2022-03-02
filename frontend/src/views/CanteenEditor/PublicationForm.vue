@@ -1,41 +1,72 @@
 <template>
   <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
-    <v-alert color="amber darken-3" class="mb-1 body-2" v-if="!currentDiagnosticComplete" outlined>
-      <span class="grey--text text--darken-2">
-        <v-icon class="mb-1 mr-2" color="amber darken-3">mdi-alert-circle-outline</v-icon>
-        Nous vous conseillons de remplir des
-        <router-link :to="{ name: 'DiagnosticList', params: { canteenUrlComponent } }">
-          données d'approvisionnement pour l'année {{ this.publicationYear }}
+    <div v-if="!canPublish">
+      <p>
+        « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
+        <b>uniquement les lieux de restauration recevant des convives.</b>
+      </p>
+      <p>
+        Vous pouvez
+        <router-link :to="{ name: 'NewCanteen' }">ajouter une cantine satellite</router-link>
+        ou indiquer que
+        <router-link
+          :to="{
+            name: 'CanteenModification',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
+          }"
+        >
+          votre cantine reçoit des convives sur place.
         </router-link>
-        avant que vous publiiez vos données.
-      </span>
-    </v-alert>
-    <v-form ref="form" v-model="formIsValid">
-      <PublicationStateNotice :canteen="originalCanteen" class="my-4" />
-      <label class="body-2" for="general">
-        Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
-      </label>
-      <v-textarea
-        id="general"
-        solo
-        class="my-2"
-        rows="3"
-        counter="500"
-        v-model="canteen.publicationComments"
-        hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
-      ></v-textarea>
-      <PublicationField class="mb-4" :canteen="canteen" v-model="publicationRequested" />
-    </v-form>
-    <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
-      <v-spacer></v-spacer>
-      <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
-        Annuler
-      </v-btn>
-      <v-btn x-large color="primary" @click="saveCanteen">
-        Valider
-      </v-btn>
-    </v-sheet>
+      </p>
+      <p v-if="publicationRequested">
+        Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
+        retirer cette publication.
+      </p>
+      <v-sheet v-if="publicationRequested" rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
+        <v-spacer></v-spacer>
+        <v-btn x-large color="primary" @click="removeCanteenPublication">
+          Retirer la publication
+        </v-btn>
+      </v-sheet>
+    </div>
+    <div v-else>
+      <v-alert color="amber darken-3" class="mb-1 body-2" v-if="!currentDiagnosticComplete" outlined>
+        <span class="grey--text text--darken-2">
+          <v-icon class="mb-1 mr-2" color="amber darken-3">mdi-alert-circle-outline</v-icon>
+          Nous vous conseillons de remplir des
+          <router-link :to="{ name: 'DiagnosticList', params: { canteenUrlComponent } }">
+            données d'approvisionnement pour l'année {{ this.publicationYear }}
+          </router-link>
+          avant que vous publiiez vos données.
+        </span>
+      </v-alert>
+      <v-form ref="form" v-model="formIsValid">
+        <PublicationStateNotice :canteen="originalCanteen" class="my-4" />
+        <label class="body-2" for="general">
+          Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
+        </label>
+        <v-textarea
+          id="general"
+          solo
+          class="my-2"
+          rows="3"
+          counter="500"
+          v-model="canteen.publicationComments"
+          hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
+        ></v-textarea>
+        <PublicationField class="mb-4" :canteen="canteen" v-model="publicationRequested" />
+      </v-form>
+      <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
+        <v-spacer></v-spacer>
+        <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
+          Annuler
+        </v-btn>
+        <v-btn x-large color="primary" @click="saveCanteen">
+          Valider
+        </v-btn>
+      </v-sheet>
+    </div>
   </div>
 </template>
 
@@ -72,11 +103,13 @@ export default {
   },
   methods: {
     saveCanteen() {
-      this.$refs.form.validate()
+      if (this.$refs.form) {
+        this.$refs.form.validate()
 
-      if (!this.formIsValid) {
-        this.$store.dispatch("notifyRequiredFieldsError")
-        return
+        if (!this.formIsValid) {
+          this.$store.dispatch("notifyRequiredFieldsError")
+          return
+        }
       }
       const title = this.publicationRequested
         ? "Votre demande de publication est prise en compte"
@@ -105,6 +138,10 @@ export default {
       } else {
         delete e["returnValue"]
       }
+    },
+    removeCanteenPublication() {
+      this.publicationRequested = false
+      this.saveCanteen()
     },
   },
   created() {
@@ -142,6 +179,9 @@ export default {
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
+    },
+    canPublish() {
+      return this.originalCanteen.productionType !== "central"
     },
   },
 }

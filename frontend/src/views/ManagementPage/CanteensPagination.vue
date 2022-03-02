@@ -39,14 +39,14 @@
       </v-col>
       <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
         <v-card
-          color="grey lighten-5"
           class="d-flex flex-column align-center justify-center"
+          hover
           min-height="220"
           height="80%"
           :to="{ name: 'NewCanteen' }"
         >
-          <v-icon size="100">mdi-plus</v-icon>
-          <v-card-text class="font-weight-bold pt-0 text-center">
+          <v-icon size="100" class="primary--text">mdi-plus</v-icon>
+          <v-card-text class="font-weight-bold pt-0 text-center primary--text">
             Ajouter une cantine
           </v-card-text>
         </v-card>
@@ -115,9 +115,9 @@ export default {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
         })
-        .catch(() => {
+        .catch((e) => {
           this.publishedCanteenCount = 0
-          this.$store.dispatch("notifyServerError")
+          this.$store.dispatch("notifyServerError", e)
         })
         .finally(() => {
           this.inProgress = false

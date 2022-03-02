@@ -40,8 +40,10 @@ class Canteen(SoftDeletionModel):
         CONCEDED = "conceded", "Concédée"
 
     class ProductionType(models.TextChoices):
-        CENTRAL = "central", "Cuisine centrale"
-        ON_SITE = "site", "Cuisine-site"
+        CENTRAL = "central", "Cuisine centrale sans lieu de consommation"
+        CENTRAL_SERVING = "central_serving", "Cuisine centrale qui accueille aussi des convives sur place"
+        ON_SITE = "site", "Cantine qui produit les repas sur place"
+        ON_SITE_CENTRAL = "site_cooked_elsewhere", "Cantine qui sert des repas preparés par une cuisine centrale"
 
     class PublicationStatus(models.TextChoices):
         DRAFT = "draft", "🔒 Non publié"
@@ -72,12 +74,18 @@ class Canteen(SoftDeletionModel):
     )
 
     daily_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par jour")
+    satellite_canteens_count = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="nombre de cantines satellites dépendantes (si cuisine centrale)",
+    )
+
     # TODO: once have a standardised format (see _normalise_siret), index by siret if given
     siret = models.TextField(null=True, blank=True, validators=[validate_siret])
     central_producer_siret = models.TextField(
         null=True,
         blank=True,
-        verbose_name="siret de la cuisine centrale",
+        verbose_name="siret de la cuisine centrale (si cuisine satellite)",
         validators=[validate_siret],
     )
     management_type = models.CharField(

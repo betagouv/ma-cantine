@@ -44,6 +44,15 @@ class Purchase(models.Model):
         COMMERCE_EQUITABLE = "COMMERCE_EQUITABLE", "Commerce équitable"
         PERFORMANCE = "PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"
         EQUIVALENTS = "EQUIVALENTS", "Produits équivalents"
+        FRANCE = "FRANCE", "Provenance France"
+        SHORT_DISTRIBUTION = "SHORT_DISTRIBUTION", "Circuit-court"
+        LOCAL = "LOCAL", "Produit local"
+
+    class Local(models.TextChoices):
+        REGION = "REGION", "Région"
+        DEPARTMENT = "DEPARTMENT", "Département"
+        AUTOUR_SERVICE = "AUTOUR_SERVICE", "200 km autour du lieu de service"
+        AUTRE = "AUTRE", "Autre"
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
@@ -70,6 +79,9 @@ class Purchase(models.Model):
         verbose_name="Prix HT",
     )
     invoice_file = models.FileField(null=True, blank=True, upload_to="invoices/%Y/")
+    local_definition = models.CharField(
+        max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="définition de local"
+    )
 
     @property
     def readable_category(self):
