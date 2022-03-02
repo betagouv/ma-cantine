@@ -482,7 +482,7 @@ class TestPurchaseApi(APITestCase):
             description="pommes",
             canteen=second_canteen,
             category=Purchase.Category.PRODUITS_LAITIERS,
-            characteristics=[],
+            characteristics=[Purchase.Characteristic.LABEL_ROUGE],
         )
 
         not_my_canteen = CanteenFactory.create()
@@ -500,10 +500,18 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(len(categories), 3)
         self.assertIn(Purchase.Category.PRODUITS_DE_LA_MER, categories)
         self.assertNotIn(Purchase.Category.ALIMENTS_INFANTILES, categories)
-        self.assertEqual(len(body.get("characteristics", [])), 1)
+        self.assertEqual(len(body.get("characteristics", [])), 2)
         canteens = body.get("canteens", [])
         self.assertEqual(len(canteens), 2)
         self.assertNotIn(not_my_canteen.id, canteens)
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}")
+        body = response.json()
+        self.assertEqual(len(body["categories"]), 1)
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?category={Purchase.Category.PRODUITS_LAITIERS}")
+        body = response.json()
+        self.assertEqual(len(body["characteristics"]), 1)
 
     def test_excel_export_unauthenticated(self):
         response = self.client.get(reverse("purchase_list_export"))

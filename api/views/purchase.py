@@ -27,17 +27,31 @@ class PurchasesPagination(LimitOffsetPagination):
     characteristics = []
     canteens = []
 
-    # TODO: update filter options when filters are chosen
     def paginate_queryset(self, queryset, request, view=None):
         # Performance improvements possible
-        self.categories = set(filter(lambda x: x, queryset.values_list("category", flat=True)))
+        user_purchases = Purchase.objects.filter(canteen__in=request.user.canteens.all())
+        category_param = request.query_params.get("category")
+        if category_param:
+            category_qs = user_purchases
+            characteristic_param = request.query_params.getlist("characteristics")
+            if characteristic_param:
+                category_qs = category_qs.filter(characteristics__overlap=characteristic_param)
+                self.categories = set(filter(lambda x: x, category_qs.values_list("category", flat=True)))
+            else:
+                self.categories = list(Purchase.Category)
+        else:
+            self.categories = set(filter(lambda x: x, queryset.values_list("category", flat=True)))
         self.canteens = list(
             queryset.order_by("canteen__id").distinct("canteen__id").values_list("canteen__id", flat=True)
         )
 
+        self.characteristics = []
         all_characteristics = list(Purchase.Characteristic)
+        characteristic_qs = user_purchases
+        if category_param:
+            characteristic_qs = characteristic_qs.filter(category=category_param)
         for c in all_characteristics:
-            if queryset.filter(characteristics__contains=[c]).exists():
+            if characteristic_qs.filter(characteristics__contains=[c]).exists():
                 self.characteristics.append(c)
 
         return super().paginate_queryset(queryset, request, view)
