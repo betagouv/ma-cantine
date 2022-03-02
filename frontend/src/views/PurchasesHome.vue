@@ -296,6 +296,10 @@ export default {
         return Constants.Characteristics[characteristic]
       return { text: "" }
     },
+    getChoiceValueFromText(choices, displayText) {
+      const entry = Object.entries(choices).find((c) => c[1].text == displayText)
+      return entry ? entry[0] : null
+    },
     onRowClick(purchase) {
       this.$router.push({ name: "PurchasePage", params: { id: purchase.id } })
     },
@@ -340,7 +344,7 @@ export default {
       if (this.appliedFilters.startDate) apiQueryParams += `&date_after=${this.appliedFilters.startDate}`
       if (this.appliedFilters.endDate) apiQueryParams += `&date_before=${this.appliedFilters.endDate}`
       if (this.appliedFilters.characteristics.length > 0)
-        apiQueryParams += `&characteristics=${this.appliedFilters.characteristics.join(",")}`
+        apiQueryParams += `&characteristics=${this.appliedFilters.characteristics.join("&characteristics=")}`
       return apiQueryParams
     },
     getUrlQueryParams() {
@@ -378,14 +382,18 @@ export default {
           sortDesc.push(isDesc)
         })
       this.$set(this, "options", { sortBy, sortDesc, page })
+      let characteristics = []
+      const queryCharacteristics = (this.$route.query.caracteristiques || "").split(",")
+      queryCharacteristics.forEach((displayCharacteristic) => {
+        const value = this.getChoiceValueFromText(Constants.Characteristics, displayCharacteristic)
+        if (value) characteristics.push(value)
+      })
       this.$set(this, "appliedFilters", {
         startDate: this.$route.query.après || null,
         endDate: this.$route.query.avant || null,
-        characteristics: this.appliedFilters.characteristics,
-        category: this.appliedFilters.category,
+        characteristics,
+        category: this.getChoiceValueFromText(Constants.Categories, this.$route.query.categorie),
       })
-      // TODO: populate characteristics, transforming human-readable text to API-friendly text
-      // TODO: populate category
     },
     clearSearch() {
       this.searchTerm = ""
@@ -417,6 +425,7 @@ export default {
     addWatchers() {
       this.$watch("appliedFilters", this.onAppliedFiltersChange, { deep: true })
       this.$watch("options", this.onOptionsChange, { deep: true })
+      this.$watch("$route", this.populateParametersFromRoute)
     },
   },
   beforeMount() {
