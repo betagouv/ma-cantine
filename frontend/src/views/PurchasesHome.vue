@@ -25,37 +25,40 @@
       ></v-img>
     </div>
     <v-card outlined class="my-4" v-if="visiblePurchases">
-      <div class="d-flex flex-column flex-sm-row align-center pa-2">
-        <v-text-field
-          v-model="searchTerm"
-          append-icon="mdi-magnify"
-          label="Chercher par produit ou fournisseur"
-          style="max-width: 450px;"
-          outlined
-          dense
-          hide-details
-          clearable
-          @click:clear="clearSearch"
-          @keyup.enter="search"
-        ></v-text-field>
-        <v-btn outlined color="primary" class="mx-4 my-4 my-sm-0" height="40px" @click="search">
-          <v-icon>mdi-magnify</v-icon>
-          Chercher
-        </v-btn>
+      <v-row class="px-4 mt-2" align="center">
+        <v-col cols="9" sm="6" class="pb-0">
+          <v-text-field
+            v-model="searchTerm"
+            label="Chercher par produit ou fournisseur"
+            outlined
+            dense
+            hide-details
+            clearable
+            @click:clear="clearSearch"
+            @keyup.enter="search"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2" class="px-0 pb-0">
+          <v-btn outlined color="primary" height="40px" @click="search">
+            <v-icon>mdi-magnify</v-icon>
+            <span v-if="$vuetify.breakpoint.smAndUp">Chercher</span>
+          </v-btn>
+        </v-col>
         <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
-        <a :href="exportUrl" class="primary--text body-2 mr-sm-4" download>
-          <v-icon class="mr-1" color="primary">mdi-microsoft-excel</v-icon>
-          Télécharger
-        </a>
-      </div>
+        <v-col class="pb-sm-0">
+          <a :href="exportUrl" class="primary--text body-2 mr-sm-4 text-no-wrap" download>
+            <v-icon class="mr-1" color="primary">mdi-microsoft-excel</v-icon>
+            Télécharger
+          </a>
+        </v-col>
+      </v-row>
 
-      <div class="d-flex align-center mb-2">
+      <div class="d-flex align-center mt-2 mt-sm-6 mb-2">
         <v-badge :value="hasActiveFilter" color="primary" dot overlap>
-          <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1">
+          <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1 py-4 py-sm-0">
             <v-icon small>mdi-filter-outline</v-icon>
-            <span v-if="showFilters">Cacher les &nbsp;</span>
-            <span v-else>Afficher les &nbsp;</span>
-            filtres
+            <span v-if="showFilters">Cacher les filtres</span>
+            <span v-else>Afficher les filtres</span>
           </v-btn>
         </v-badge>
         <v-divider v-if="hasActiveFilter" style="max-width: 20px;"></v-divider>
@@ -67,7 +70,7 @@
         <v-divider></v-divider>
       </div>
       <v-expand-transition>
-        <div v-show="showFilters" class="pa-2">
+        <div v-show="showFilters" class="px-4 pb-6 pt-0">
           <v-row>
             <v-col cols="12" sm="6" md="4">
               <label
@@ -107,7 +110,7 @@
               ></v-select>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row class="mt-0">
             <v-menu
               v-model="startDateMenu"
               :close-on-content-click="true"
