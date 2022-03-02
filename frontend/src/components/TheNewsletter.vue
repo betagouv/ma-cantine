@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col class="pa-0" cols="10" sm="8" md="7">
+      <v-col class="pa-4 pa-md-0" cols="12" sm="8" md="7">
         <v-card elevation="0" class="pa-0">
           <v-card-title class="font-weight-bold">
             Suivre les actualités du site ma cantine
@@ -26,7 +26,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col v-if="$vuetify.breakpoint.smAndUp" class="d-flex align-center" cols="2">
+      <v-col v-if="$vuetify.breakpoint.smAndUp" class="d-flex align-center" cols="4" md="2">
         <v-img src="/static/images/doodles/primary/LayingDoodle.png" contain max-height="100px"></v-img>
       </v-col>
     </v-row>
