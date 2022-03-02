@@ -33,7 +33,7 @@
             <span v-else-if="link.text">
               {{ link.text }}
             </span>
-            <span v-else-if="link.heading" class="font-weight-bold d-block d-sm-inline pt-8">
+            <span v-else-if="link.heading" class="font-weight-bold d-block d-sm-inline pt-6 pt-sm-0">
               {{ link.heading }}
             </span>
           </p>
