@@ -110,9 +110,9 @@
               <v-radio-group v-model="purchase.category" class="my-0">
                 <v-row>
                   <v-col cols="12" sm="6" class="py-1" v-for="item in categories" :key="item">
-                    <v-radio :label="getCategoryDisplayValue(item).text" :value="item" class="mt-2">
+                    <v-radio :value="item" class="mt-2">
                       <template v-slot:label>
-                        <span class="body-2 grey--text text--darken-3">{{ getCategoryDisplayValue(item).text }}</span>
+                        <span class="body-2 grey--text text--darken-3">{{ getCategoryDisplayText(item) }}</span>
                       </template>
                     </v-radio>
                   </v-col>
@@ -150,11 +150,10 @@
                   :multiple="true"
                   :key="characteristic"
                   :value="characteristic"
-                  :label="getCharacteristicDisplayValue(characteristic).text"
                 >
                   <template v-slot:label>
                     <span class="body-2 grey--text text--darken-3">
-                      {{ getCharacteristicDisplayValue(characteristic).text }}
+                      {{ getCharacteristicDisplayText(characteristic) }}
                     </span>
                   </template>
                 </v-checkbox>
@@ -257,40 +256,8 @@ export default {
       menu: false,
       modal: false,
       showDeleteDialog: false,
-      categories: [
-        "VIANDES_VOLAILLES",
-        "PRODUITS_DE_LA_MER",
-        "FRUITS_ET_LEGUMES",
-        "PRODUITS_CEREALIERS",
-        "ENTREES",
-        "PRODUITS_LAITIERS",
-        "BOISSONS",
-        "AIDES",
-        "BEURRE_OEUF_FROMAGE",
-        "PRODUITS_SUCRES",
-        "ALIMENTS_INFANTILES",
-        "GLACES_SORBETS",
-        "AUTRES",
-      ],
-      characteristics: [
-        "BIO",
-        "CONVERSION_BIO",
-        "LABEL_ROUGE",
-        "AOCAOP",
-        "ICP",
-        "STG",
-        "HVE",
-        "PECHE_DURABLE",
-        "RUP",
-        "FERMIER",
-        "EQUIVALENTS",
-        "COMMERCE_EQUITABLE",
-        "EXTERNALITES",
-        "PERFORMANCE",
-        "FRANCE",
-        "SHORT_DISTRIBUTION",
-        "LOCAL",
-      ],
+      categories: Object.keys(Constants.Categories),
+      characteristics: Object.keys(Constants.Characteristics),
       backLink: { name: "PurchasesHome" },
       localDefinitions: [
         { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },
@@ -330,14 +297,15 @@ export default {
     },
   },
   methods: {
-    getCategoryDisplayValue(category) {
-      if (Object.prototype.hasOwnProperty.call(Constants.Categories, category)) return Constants.Categories[category]
-      return { text: "", color: "" }
+    getCategoryDisplayText(category) {
+      if (Object.prototype.hasOwnProperty.call(Constants.Categories, category))
+        return Constants.Categories[category].text
+      return ""
     },
-    getCharacteristicDisplayValue(characteristic) {
+    getCharacteristicDisplayText(characteristic) {
       if (Object.prototype.hasOwnProperty.call(Constants.Characteristics, characteristic))
-        return Constants.Characteristics[characteristic]
-      return { text: "" }
+        return Constants.Characteristics[characteristic].longText || Constants.Characteristics[characteristic].text
+      return ""
     },
     async savePurchase(stayOnPage) {
       this.$refs.form.validate()
