@@ -82,3 +82,24 @@ class Purchase(models.Model):
     local_definition = models.CharField(
         max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="définition de local"
     )
+
+    @property
+    def readable_category(self):
+        if not self.category:
+            return None
+        try:
+            return Purchase.Category(self.category).label
+        except Exception:
+            return None
+
+    @property
+    def readable_characteristics(self):
+        if not self.characteristics:
+            return None
+        valid_characteristics = []
+        for characteristic in self.characteristics:
+            try:
+                valid_characteristics.append(Purchase.Characteristic(characteristic).label)
+            except Exception:
+                pass
+        return ", ".join(valid_characteristics) if valid_characteristics else None

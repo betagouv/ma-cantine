@@ -33,5 +33,6 @@ from .purchase import (  # noqa: F401
     PurchaseListCreateView,
     PurchaseRetrieveUpdateDestroyView,
     CanteenPurchasesSummaryView,
+    PurchaseListExportView,
 )
 from .reservationexpe import ReservationExpeView  # noqa: F401

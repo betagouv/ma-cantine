@@ -1,14 +1,16 @@
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework import permissions
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound, PermissionDenied, MethodNotAllowed
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from drf_excel.renderers import XLSXRenderer
+from drf_excel.mixins import XLSXFileMixin
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from django.db.models import Sum, Q, Func, F
 from django.http import JsonResponse
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager
-from api.serializers import PurchaseSerializer, PurchaseSummarySerializer
+from api.serializers import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer
 from data.models import Purchase, Canteen
 from .utils import CamelCaseOrderingFilter, UnaccentSearchFilter
 import logging
@@ -142,3 +144,39 @@ class CanteenPurchasesSummaryView(APIView):
             return canteen
         except Canteen.DoesNotExist as e:
             raise NotFound() from e
+
+
+class PurchaseListExportView(PurchaseListCreateView, XLSXFileMixin):
+    renderer_classes = (XLSXRenderer,)
+    pagination_class = None
+    serializer_class = PurchaseExportSerializer
+
+    column_header = {
+        "titles": [
+            "Date",
+            "Cantine",
+            "Description",
+            "Fournisseur",
+            "Catégorie",
+            "Caractéristiques",
+            "Prix HT",
+        ],
+        "column_width": [18, 25, 25, 20, 35, 35, 10],
+        "style": {
+            "font": {
+                "bold": True,
+            },
+        },
+    }
+    body = {
+        "style": {
+            "alignment": {
+                "horizontal": "left",
+                "vertical": "center",
+            },
+        },
+        "height": 20,
+    }
+
+    def post(self, request, *args, **kwargs):
+        raise MethodNotAllowed()

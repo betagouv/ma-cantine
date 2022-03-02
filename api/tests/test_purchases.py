@@ -374,3 +374,33 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 0)
+
+    def test_excel_export_unauthenticated(self):
+        response = self.client.get(reverse("purchase_list_export"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_excel_export(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen)
+        PurchaseFactory.create(description="tomates", canteen=canteen)
+        PurchaseFactory.create(description="pommes", canteen=canteen)
+
+        response = self.client.get(reverse("purchase_list_export"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+
+    @authenticate
+    def test_excel_export_search(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen)
+        PurchaseFactory.create(description="tomates", canteen=canteen)
+        PurchaseFactory.create(description="pommes", canteen=canteen)
+
+        search_term = "avoine"
+        response = self.client.get(f"{reverse('purchase_list_export')}?search={search_term}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
