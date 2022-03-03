@@ -3,7 +3,7 @@
     <v-app>
       <AppHeader />
 
-      <v-main style="width: 100%">
+      <v-main style="width: 100%" class="mb-10">
         <v-container fluid :fill-height="!initialDataLoaded">
           <v-progress-circular
             indeterminate
