@@ -163,14 +163,14 @@
           </fieldset>
         </v-row>
         <v-expand-transition>
-          <v-col cols="12" sm="6" v-show="purchase.characteristics.indexOf('LOCAL') > -1" class="my-4">
+          <v-col cols="12" sm="6" v-show="showLocalDefinition" class="my-4">
             <label class="body-2" for="local-definition">C'est quoi votre définition de local ?</label>
             <v-autocomplete
               hide-details="auto"
               solo
               :items="localDefinitions"
               v-model="purchase.localDefinition"
-              :rules="[validators.required]"
+              :rules="showLocalDefinition ? [validators.required] : []"
               id="local-definition"
               class="mt-2"
             ></v-autocomplete>
@@ -327,6 +327,9 @@ export default {
     today() {
       const today = new Date()
       return today.toISOString().split("T")[0]
+    },
+    showLocalDefinition() {
+      return this.purchase.characteristics.indexOf("LOCAL") > -1
     },
   },
   methods: {
