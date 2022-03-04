@@ -25,29 +25,161 @@
       ></v-img>
     </div>
     <v-card outlined class="my-4" v-if="visiblePurchases">
-      <div class="d-flex flex-column flex-sm-row align-center pa-2">
-        <v-text-field
-          v-model="searchTerm"
-          append-icon="mdi-magnify"
-          label="Chercher par produit ou fournisseur"
-          style="max-width: 450px;"
-          outlined
-          dense
-          hide-details
-          clearable
-          @click:clear="clearSearch"
-          @keyup.enter="search"
-        ></v-text-field>
-        <v-btn outlined color="primary" class="mx-4 my-4 my-sm-0" height="40px" @click="search">
-          <v-icon>mdi-magnify</v-icon>
-          Chercher
-        </v-btn>
+      <v-row class="px-4 mt-2" align="center">
+        <v-col cols="9" sm="6" class="pb-0">
+          <v-text-field
+            v-model="searchTerm"
+            label="Chercher par produit ou fournisseur"
+            outlined
+            dense
+            hide-details
+            clearable
+            @click:clear="clearSearch"
+            @keyup.enter="search"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2" class="px-0 pb-0">
+          <v-btn outlined color="primary" height="40px" @click="search">
+            <v-icon>mdi-magnify</v-icon>
+            <span v-if="$vuetify.breakpoint.smAndUp">Chercher</span>
+          </v-btn>
+        </v-col>
         <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
-        <a :href="exportUrl" class="primary--text body-2 mr-sm-4" download>
-          <v-icon class="mr-1" color="primary">mdi-microsoft-excel</v-icon>
-          Télécharger
-        </a>
+        <v-col class="pb-sm-0">
+          <a :href="exportUrl" class="primary--text body-2 mr-sm-4 text-no-wrap" download>
+            <v-icon class="mr-1" color="primary">mdi-microsoft-excel</v-icon>
+            Télécharger
+          </a>
+        </v-col>
+      </v-row>
+
+      <div class="d-flex align-center mt-2 mt-sm-6 mb-2">
+        <v-badge :value="hasActiveFilter" color="primary" dot overlap>
+          <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1 py-4 py-sm-0">
+            <v-icon small>mdi-filter-outline</v-icon>
+            <span v-if="showFilters">Cacher les filtres</span>
+            <span v-else>Afficher les filtres</span>
+          </v-btn>
+        </v-badge>
+        <v-divider v-if="hasActiveFilter" style="max-width: 20px;"></v-divider>
+        <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter">
+          <v-icon small>mdi-filter-off-outline</v-icon>
+          Enlever tous les filtres
+        </v-btn>
+
+        <v-divider></v-divider>
       </div>
+      <v-expand-transition>
+        <div v-show="showFilters" class="px-4 pb-6 pt-0">
+          <v-row>
+            <v-col cols="12" sm="6" md="4">
+              <label
+                for="filter-category"
+                :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.category }"
+              >
+                Catégorie
+              </label>
+              <v-select
+                v-model="appliedFilters.category"
+                id="filter-category"
+                :items="categories"
+                hide-details
+                dense
+                outlined
+                clearable
+                class="mt-2"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <label
+                for="filter-characteristics"
+                :class="{ 'text-body-2': true, 'active-filter-label': appliedFilters.characteristics.length > 0 }"
+              >
+                Caractéristiques
+              </label>
+              <v-select
+                id="filter-characteristics"
+                v-model="appliedFilters.characteristics"
+                :items="characteristics"
+                hide-details
+                dense
+                outlined
+                clearable
+                multiple
+                class="mt-2"
+              ></v-select>
+            </v-col>
+          </v-row>
+          <v-row class="mt-0">
+            <v-menu
+              v-model="startDateMenu"
+              :close-on-content-click="true"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-col cols="12" sm="6" md="3">
+                  <label
+                    for="filter-startdate"
+                    :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.startDate }"
+                  >
+                    Après
+                  </label>
+                  <v-text-field
+                    :value="appliedFilters.startDate"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    hide-details
+                    outlined
+                    dense
+                    clearable
+                    id="filter-startdate"
+                    @click:clear="appliedFilters.startDate = null"
+                  ></v-text-field>
+                </v-col>
+              </template>
+
+              <v-date-picker v-model="appliedFilters.startDate" locale="fr-FR"></v-date-picker>
+            </v-menu>
+            <v-menu
+              v-model="endDateMenu"
+              :close-on-content-click="true"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-col cols="12" sm="6" md="3">
+                  <label
+                    for="filter-enddate"
+                    :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.endDate }"
+                  >
+                    Avant
+                  </label>
+                  <v-text-field
+                    :value="appliedFilters.endDate"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    hide-details
+                    outlined
+                    dense
+                    clearable
+                    id="filter-enddate"
+                    @click:clear="appliedFilters.endDate = null"
+                  ></v-text-field>
+                </v-col>
+              </template>
+
+              <v-date-picker v-model="appliedFilters.endDate" locale="fr-FR"></v-date-picker>
+            </v-menu>
+          </v-row>
+        </div>
+      </v-expand-transition>
       <v-divider></v-divider>
       <v-data-table
         :options.sync="options"
@@ -58,8 +190,8 @@
         @click:row="onRowClick"
       >
         <template v-slot:[`item.category`]="{ item }">
-          <v-chip outlined small :color="getDisplayValue(item.category).color" dark class="font-weight-bold">
-            {{ getDisplayValue(item.category).text }}
+          <v-chip outlined small :color="getCategoryDisplayValue(item.category).color" dark class="font-weight-bold">
+            {{ getCategoryDisplayValue(item.category).text }}
           </v-chip>
         </template>
         <template v-slot:[`item.priceHt`]="{ item }">{{ item.priceHt }} €</template>
@@ -81,6 +213,7 @@
 
 <script>
 import { formatDate } from "@/utils"
+import Constants from "@/constants"
 
 export default {
   name: "PurchasesHome",
@@ -94,7 +227,7 @@ export default {
       options: {
         sortBy: [],
         sortDesc: [],
-        page: null,
+        page: 1,
       },
       headers: [
         {
@@ -110,6 +243,17 @@ export default {
         { text: "Prix HT", value: "priceHt", sortable: true },
         { text: "", value: "hasAttachment", sortable: false },
       ],
+      categories: [],
+      characteristics: [],
+      showFilters: false,
+      startDateMenu: false,
+      endDateMenu: false,
+      appliedFilters: {
+        category: null,
+        characteristics: [],
+        startDate: null,
+        endDate: null,
+      },
     }
   },
   computed: {
@@ -132,32 +276,29 @@ export default {
       if (this.searchTerm) exportUrl += `&search=${this.searchTerm}`
       return exportUrl
     },
+    hasActiveFilter() {
+      return (
+        this.appliedFilters.category !== null ||
+        this.appliedFilters.characteristics.length !== 0 ||
+        this.appliedFilters.startDate !== null ||
+        this.appliedFilters.endDate !== null
+      )
+    },
+    // TODO: format choice lists to have explanation of inactive choices
   },
   methods: {
-    getDisplayValue(category) {
-      const categoryHash = {
-        VIANDES_VOLAILLES: { text: "Viandes, volailles", color: "red darken-4" },
-        PRODUITS_DE_LA_MER: { text: "Produits de la mer", color: "pink darken-4" },
-        FRUITS_ET_LEGUMES: {
-          text: this.$vuetify.breakpoint.smAndUp
-            ? "Fruits, légumes, légumineuses et oléagineux"
-            : "Fruits, légumes, ...",
-          color: "purple darken-4",
-        },
-        PRODUITS_CEREALIERS: { text: "Produits céréaliers", color: "deep-purple darken-4" },
-        ENTREES: { text: "Entrées et plats composés", color: "indigo darken-4" },
-        PRODUITS_LAITIERS: { text: "Lait et produits laitiers", color: "blue darken-4" },
-        BOISSONS: { text: "Boissons", color: "light-blue darken-4" },
-        AIDES: { text: "Aides culinaires et ingrédients divers", color: "cyan darken-4" },
-        BEURRE_OEUF_FROMAGE: { text: "Beurre, oeuf, fromage", color: "teal darken-4" },
-        PRODUITS_SUCRES: { text: "Produits sucrés", color: "green darken-4" },
-        ALIMENTS_INFANTILES: { text: "Aliments infantiles", color: "light-green darken-4" },
-        GLACES_SORBETS: { text: "Glaces et sorbets", color: "blue-grey darken-4" },
-        AUTRES: { text: "Autres", color: "brown darken-4" },
-      }
-
-      if (Object.prototype.hasOwnProperty.call(categoryHash, category)) return categoryHash[category]
+    getCategoryDisplayValue(category) {
+      if (Object.prototype.hasOwnProperty.call(Constants.Categories, category)) return Constants.Categories[category]
       return { text: "", color: "" }
+    },
+    getCharacteristicDisplayValue(characteristic) {
+      if (Object.prototype.hasOwnProperty.call(Constants.Characteristics, characteristic))
+        return Constants.Characteristics[characteristic]
+      return { text: "" }
+    },
+    getChoiceValueFromText(choices, displayText) {
+      const entry = Object.entries(choices).find((c) => c[1].text == displayText)
+      return entry ? entry[0] : null
     },
     onRowClick(purchase) {
       this.$router.push({ name: "PurchasePage", params: { id: purchase.id } })
@@ -172,6 +313,19 @@ export default {
         .then((response) => {
           this.purchaseCount = response.count
           this.visiblePurchases = response.results
+          this.categories = response.categories
+            .map((c) => {
+              const displayValue = this.getCategoryDisplayValue(c)
+              return displayValue.text ? { text: displayValue.text, value: c } : null
+            })
+            .filter((x) => !!x)
+          this.characteristics = response.characteristics
+            .map((c) => {
+              const displayValue = this.getCharacteristicDisplayValue(c)
+              return displayValue.text ? { text: displayValue.text, value: c } : null
+            })
+            .filter((x) => !!x)
+          this.canteens = response.canteens.map((c) => ({ text: c, value: c }))
         })
         .catch((e) => {
           this.publishedCanteenCount = 0
@@ -186,6 +340,11 @@ export default {
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
       if (this.searchTerm) apiQueryParams += `&search=${this.searchTerm}`
+      if (this.appliedFilters.category) apiQueryParams += `&category=${this.appliedFilters.category}`
+      if (this.appliedFilters.startDate) apiQueryParams += `&date_after=${this.appliedFilters.startDate}`
+      if (this.appliedFilters.endDate) apiQueryParams += `&date_before=${this.appliedFilters.endDate}`
+      if (this.appliedFilters.characteristics.length > 0)
+        apiQueryParams += `&characteristics=${this.appliedFilters.characteristics.join("&characteristics=")}`
       return apiQueryParams
     },
     getUrlQueryParams() {
@@ -193,6 +352,14 @@ export default {
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
       if (this.searchTerm) urlQueryParams["recherche"] = this.searchTerm
+      if (this.appliedFilters.category)
+        urlQueryParams["categorie"] = this.getCategoryDisplayValue(this.appliedFilters.category).text
+      if (this.appliedFilters.startDate) urlQueryParams["après"] = this.appliedFilters.startDate
+      if (this.appliedFilters.endDate) urlQueryParams["avant"] = this.appliedFilters.endDate
+      if (this.appliedFilters.characteristics.length > 0)
+        urlQueryParams["caracteristiques"] = this.appliedFilters.characteristics
+          .map((c) => this.getCharacteristicDisplayValue(c).text)
+          .join(",")
       return urlQueryParams
     },
     getOrderingItems() {
@@ -205,19 +372,28 @@ export default {
     populateParametersFromRoute() {
       const page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
       this.searchTerm = this.$route.query.recherche || null
-
-      if (!this.$route.query["trier-par"]) {
-        this.$set(this, "options", { page })
-        return
-      }
       let sortBy = []
       let sortDesc = []
-      this.$route.query["trier-par"].split(",").forEach((element) => {
-        const isDesc = element[0] === "-"
-        sortBy.push(isDesc ? element.slice(1) : element)
-        sortDesc.push(isDesc)
-      })
+
+      this.$route.query["trier-par"] &&
+        this.$route.query["trier-par"].split(",").forEach((element) => {
+          const isDesc = element[0] === "-"
+          sortBy.push(isDesc ? element.slice(1) : element)
+          sortDesc.push(isDesc)
+        })
       this.$set(this, "options", { sortBy, sortDesc, page })
+      let characteristics = []
+      const queryCharacteristics = (this.$route.query.caracteristiques || "").split(",")
+      queryCharacteristics.forEach((displayCharacteristic) => {
+        const value = this.getChoiceValueFromText(Constants.Characteristics, displayCharacteristic)
+        if (value) characteristics.push(value)
+      })
+      this.$set(this, "appliedFilters", {
+        startDate: this.$route.query.après || null,
+        endDate: this.$route.query.avant || null,
+        characteristics,
+        category: this.getChoiceValueFromText(Constants.Categories, this.$route.query.categorie),
+      })
     },
     clearSearch() {
       this.searchTerm = ""
@@ -227,21 +403,38 @@ export default {
       if (this.searchTerm && this.options.page !== 1) this.options.page = 1
       else this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
     },
-  },
-  watch: {
-    options() {
-      const replace = Object.keys(this.$route.query).length === 0
-      if (replace) this.$router.replace({ query: this.getUrlQueryParams() }).catch(() => {})
-      else this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
-      if (!this.visiblePurchases && !this.loading) this.fetchCurrentPage()
+    clearFilters() {
+      this.$set(this, "appliedFilters", {
+        startDate: null,
+        endDate: null,
+        characteristics: [],
+        category: null,
+      })
     },
-    $route() {
-      this.populateParametersFromRoute()
+    onAppliedFiltersChange() {
+      if (this.options.page !== 1) this.options.page = 1
+      else {
+        this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
+        this.fetchCurrentPage()
+      }
+    },
+    onOptionsChange() {
+      this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
       this.fetchCurrentPage()
     },
+    addWatchers() {
+      this.$watch("appliedFilters", this.onAppliedFiltersChange, { deep: true })
+      this.$watch("options", this.onOptionsChange, { deep: true })
+      this.$watch("$route", this.populateParametersFromRoute)
+    },
+  },
+  beforeMount() {
+    if (!this.$route.query["page"]) this.$router.replace({ query: { page: 1 } })
   },
   mounted() {
     this.populateParametersFromRoute()
+    if (this.hasActiveFilter) this.showFilters = true
+    return this.fetchCurrentPage().then(this.addWatchers)
   },
 }
 </script>
@@ -255,5 +448,12 @@ export default {
 /* Hides items-per-row */
 .v-data-table >>> .v-data-footer__select {
   visibility: hidden;
+}
+.active-filter-label {
+  font-weight: bold;
+}
+.active-filter-label::before {
+  content: "⚫︎";
+  color: #0c7f46;
 }
 </style>

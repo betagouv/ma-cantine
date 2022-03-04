@@ -110,9 +110,9 @@
               <v-radio-group v-model="purchase.category" class="my-0">
                 <v-row>
                   <v-col cols="12" sm="6" class="py-1" v-for="item in categories" :key="item">
-                    <v-radio :label="getCategoryDisplayValue(item).text" :value="item" class="mt-2">
+                    <v-radio :value="item" class="mt-2">
                       <template v-slot:label>
-                        <span class="body-2 grey--text text--darken-3">{{ getCategoryDisplayValue(item).text }}</span>
+                        <span class="body-2 grey--text text--darken-3">{{ getCategoryDisplayText(item) }}</span>
                       </template>
                     </v-radio>
                   </v-col>
@@ -150,11 +150,10 @@
                   :multiple="true"
                   :key="characteristic"
                   :value="characteristic"
-                  :label="getCharacteristicDisplayValue(characteristic).text"
                 >
                   <template v-slot:label>
                     <span class="body-2 grey--text text--darken-3">
-                      {{ getCharacteristicDisplayValue(characteristic).text }}
+                      {{ getCharacteristicDisplayText(characteristic) }}
                     </span>
                   </template>
                 </v-checkbox>
@@ -257,40 +256,8 @@ export default {
       menu: false,
       modal: false,
       showDeleteDialog: false,
-      categories: [
-        "VIANDES_VOLAILLES",
-        "PRODUITS_DE_LA_MER",
-        "FRUITS_ET_LEGUMES",
-        "PRODUITS_CEREALIERS",
-        "ENTREES",
-        "PRODUITS_LAITIERS",
-        "BOISSONS",
-        "AIDES",
-        "BEURRE_OEUF_FROMAGE",
-        "PRODUITS_SUCRES",
-        "ALIMENTS_INFANTILES",
-        "GLACES_SORBETS",
-        "AUTRES",
-      ],
-      characteristics: [
-        "BIO",
-        "CONVERSION_BIO",
-        "LABEL_ROUGE",
-        "AOCAOP",
-        "ICP",
-        "STG",
-        "HVE",
-        "PECHE_DURABLE",
-        "RUP",
-        "FERMIER",
-        "EQUIVALENTS",
-        "COMMERCE_EQUITABLE",
-        "EXTERNALITES",
-        "PERFORMANCE",
-        "FRANCE",
-        "SHORT_DISTRIBUTION",
-        "LOCAL",
-      ],
+      categories: Object.keys(Constants.Categories),
+      characteristics: Object.keys(Constants.Characteristics),
       backLink: { name: "PurchasesHome" },
       localDefinitions: [
         { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },
@@ -333,53 +300,15 @@ export default {
     },
   },
   methods: {
-    getCategoryDisplayValue(category) {
-      const categoryHash = {
-        VIANDES_VOLAILLES: { text: "Viandes, volailles", color: "red darken-4" },
-        PRODUITS_DE_LA_MER: { text: "Produits de la mer", color: "pink darken-4" },
-        FRUITS_ET_LEGUMES: { text: "Fruits, légumes, légumineuses et oléagineux", color: "purple darken-4" },
-        PRODUITS_CEREALIERS: { text: "Produits céréaliers", color: "deep-purple darken-4" },
-        ENTREES: { text: "Entrées et plats composés", color: "indigo darken-4" },
-        PRODUITS_LAITIERS: { text: "Lait et produits laitiers", color: "blue darken-4" },
-        BOISSONS: { text: "Boissons", color: "light-blue darken-4" },
-        AIDES: { text: "Aides culinaires et ingrédients divers", color: "cyan darken-4" },
-        BEURRE_OEUF_FROMAGE: { text: "Beurre, oeuf, fromage", color: "teal darken-4" },
-        PRODUITS_SUCRES: { text: "Produits sucrés", color: "green darken-4" },
-        ALIMENTS_INFANTILES: { text: "Aliments infantiles", color: "light-green darken-4" },
-        GLACES_SORBETS: { text: "Glaces et sorbets", color: "blue-grey darken-4" },
-        AUTRES: { text: "Autres", color: "brown darken-4" },
-      }
-
-      if (Object.prototype.hasOwnProperty.call(categoryHash, category)) return categoryHash[category]
-      return { text: "", color: "" }
+    getCategoryDisplayText(category) {
+      if (Object.prototype.hasOwnProperty.call(Constants.Categories, category))
+        return Constants.Categories[category].text
+      return ""
     },
-    getCharacteristicDisplayValue(characteristic) {
-      const characteristicHash = {
-        BIO: { text: "Bio" },
-        CONVERSION_BIO: { text: "En conversion bio" },
-        LABEL_ROUGE: { text: "Label rouge" },
-        AOCAOP: { text: "Appellation d'origine (AOC/AOP)" },
-        ICP: { text: "Indication géographique protégée (IGP)" },
-        STG: { text: "Spécialité traditionnelle garantie (STG)" },
-        HVE: { text: "HVE ou certification environnementale de niveau 2" },
-        PECHE_DURABLE: { text: "Pêche durable" },
-        RUP: { text: "Région ultrapériphérique (RUP)" },
-        FERMIER: { text: "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »" },
-        EXTERNALITES: {
-          text:
-            "Produits acquis prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
-        },
-        COMMERCE_EQUITABLE: { text: "Commerce équitable" },
-        PERFORMANCE: { text: "Produits acquis sur la base de leurs performances en matière environnementale" },
-        EQUIVALENTS: { text: "Produits équivalents aux produits bénéficiant de ces mentions ou labels" },
-        FRANCE: { text: "Provenance France" },
-        SHORT_DISTRIBUTION: { text: "Circuit-court" },
-        LOCAL: { text: "Local" },
-      }
-
-      if (Object.prototype.hasOwnProperty.call(characteristicHash, characteristic))
-        return characteristicHash[characteristic]
-      return { text: "", color: "" }
+    getCharacteristicDisplayText(characteristic) {
+      if (Object.prototype.hasOwnProperty.call(Constants.Characteristics, characteristic))
+        return Constants.Characteristics[characteristic].longText || Constants.Characteristics[characteristic].text
+      return ""
     },
     async savePurchase(stayOnPage) {
       this.$refs.form.validate()

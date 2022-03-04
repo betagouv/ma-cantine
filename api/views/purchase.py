@@ -9,10 +9,12 @@ from drf_excel.mixins import XLSXFileMixin
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from django.db.models import Sum, Q, Func, F
 from django.http import JsonResponse
+from django_filters import rest_framework as django_filters
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager
 from api.serializers import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer
 from data.models import Purchase, Canteen
 from .utils import CamelCaseOrderingFilter, UnaccentSearchFilter
+from collections import OrderedDict
 import logging
 
 logger = logging.getLogger(__name__)
@@ -21,6 +23,65 @@ logger = logging.getLogger(__name__)
 class PurchasesPagination(LimitOffsetPagination):
     default_limit = 10
     max_limit = 50
+    categories = []
+    characteristics = []
+    canteens = []
+
+    def paginate_queryset(self, queryset, request, view=None):
+        # Performance improvements possible
+        user_purchases = Purchase.objects.filter(canteen__in=request.user.canteens.all())
+        category_param = request.query_params.get("category")
+        if category_param:
+            category_qs = user_purchases
+            characteristic_param = request.query_params.getlist("characteristics")
+            if characteristic_param:
+                category_qs = category_qs.filter(characteristics__overlap=characteristic_param)
+                self.categories = set(filter(lambda x: x, category_qs.values_list("category", flat=True)))
+            else:
+                self.categories = list(Purchase.Category)
+        else:
+            self.categories = set(filter(lambda x: x, queryset.values_list("category", flat=True)))
+        self.canteens = list(
+            queryset.order_by("canteen__id").distinct("canteen__id").values_list("canteen__id", flat=True)
+        )
+
+        self.characteristics = []
+        all_characteristics = list(Purchase.Characteristic)
+        characteristic_qs = user_purchases
+        if category_param:
+            characteristic_qs = characteristic_qs.filter(category=category_param)
+        for c in all_characteristics:
+            if characteristic_qs.filter(characteristics__contains=[c]).exists():
+                self.characteristics.append(c)
+
+        return super().paginate_queryset(queryset, request, view)
+
+    def get_paginated_response(self, data):
+        return Response(
+            OrderedDict(
+                [
+                    ("count", self.count),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                    ("categories", self.categories),
+                    ("characteristics", self.characteristics),
+                    ("canteens", self.canteens),
+                ]
+            )
+        )
+
+
+class PurchaseFilterSet(django_filters.FilterSet):
+    date = django_filters.DateFromToRangeFilter()
+
+    class Meta:
+        model = Purchase
+        fields = (
+            "canteen__id",
+            "category",
+            "date",
+        )
 
 
 class PurchaseListCreateView(ListCreateAPIView):
@@ -31,6 +92,7 @@ class PurchaseListCreateView(ListCreateAPIView):
     filter_backends = [
         CamelCaseOrderingFilter,
         UnaccentSearchFilter,
+        django_filters.DjangoFilterBackend,
     ]
     ordering_fields = [
         "date",
@@ -43,6 +105,7 @@ class PurchaseListCreateView(ListCreateAPIView):
         "description",
         "provider",
     ]
+    filterset_class = PurchaseFilterSet
 
     def get_queryset(self):
         return Purchase.objects.filter(canteen__in=self.request.user.canteens.all())
@@ -65,6 +128,13 @@ class PurchaseListCreateView(ListCreateAPIView):
                 f"User {self.request.user.id} attempted to create a purchase in nonexistent canteen {canteen_id}"
             )
             raise NotFound() from e
+
+    def filter_queryset(self, queryset):
+        # handle characteristics filtering manually because ChoiceArrayField is not a Django field
+        characteristics = self.request.query_params.getlist("characteristics")
+        if characteristics:
+            queryset = queryset.filter(characteristics__overlap=characteristics)
+        return super().filter_queryset(queryset)
 
 
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
