@@ -35,7 +35,7 @@
           </template>
         </v-hover>
       </v-col>
-      <v-col cols="12" md="4" style="border-right: dotted 4px #e5fbf0;">
+      <v-col cols="12" md="4" :style="{ 'border-right': $vuetify.breakpoint.mdAndUp ? 'dotted 4px #e5fbf0' : 'none' }">
         <v-hover>
           <template v-slot:default="{ hover }">
             <v-card
