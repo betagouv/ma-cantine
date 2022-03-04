@@ -19,7 +19,7 @@
       En savoir plus sur la mesure
     </router-link>
 
-    <div v-if="isAuthenticated">
+    <div v-if="isAuthenticated && hasCanteens">
       <v-row class="px-4 mt-2" align="center">
         <v-col cols="12" sm="6" md="7" class="my-0 my-sm-4 pl-0">
           <v-autocomplete
@@ -168,8 +168,8 @@
             <label for="sustainable">produits de qualité et durables (hors bio)</label>
             .
           </p>
-          <v-btn x-large color="primary" @click="submit">Générer mon affiche</v-btn>
-          <p class="mt-4 caption">
+          <v-btn x-large class="mb-4" color="primary" @click="submit">Générer mon affiche</v-btn>
+          <p class="caption" v-if="!isAuthenticated">
             Pour ajouter une photo à l'affiche et accéder à d'autres fonctionnalités,
             <a href="/creer-mon-compte">créez un compte</a>
           </p>
@@ -245,6 +245,9 @@ export default {
     },
     previousDiagnostic() {
       return this.selectedCanteen?.diagnostics?.find((x) => x.year === this.publicationYear - 1) || {}
+    },
+    hasCanteens() {
+      return !!this.$store.state.userCanteenPreviews && this.$store.state.userCanteenPreviews.length > 0
     },
   },
   beforeMount() {
