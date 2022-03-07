@@ -270,11 +270,7 @@ export default {
       })
     },
     exportUrl() {
-      const orderingItems = this.getOrderingItems()
-      let exportUrl = `/api/v1/export-achats.xlsx?`
-      if (orderingItems.length > 0) exportUrl += `&ordering=${orderingItems.join(",")}`
-      if (this.searchTerm) exportUrl += `&search=${this.searchTerm}`
-      return exportUrl
+      return `/api/v1/export-achats.xlsx?${this.getApiQueryParams(false)}`
     },
     hasActiveFilter() {
       return (
@@ -335,8 +331,8 @@ export default {
           this.loading = false
         })
     },
-    getApiQueryParams() {
-      let apiQueryParams = `limit=${this.limit}&offset=${this.offset}`
+    getApiQueryParams(includePagination = true) {
+      let apiQueryParams = includePagination ? `limit=${this.limit}&offset=${this.offset}` : ""
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
       if (this.searchTerm) apiQueryParams += `&search=${this.searchTerm}`
@@ -425,7 +421,6 @@ export default {
     addWatchers() {
       this.$watch("appliedFilters", this.onAppliedFiltersChange, { deep: true })
       this.$watch("options", this.onOptionsChange, { deep: true })
-      this.$watch("$route", this.populateParametersFromRoute)
     },
   },
   beforeMount() {
