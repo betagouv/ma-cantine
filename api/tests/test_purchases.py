@@ -542,3 +542,16 @@ class TestPurchaseApi(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+    @authenticate
+    def test_excel_export_filter(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(category=Purchase.Category.PRODUITS_DE_LA_MER, description="avoine", canteen=canteen)
+        PurchaseFactory.create(category=Purchase.Category.PRODUITS_DE_LA_MER, description="tomates", canteen=canteen)
+        PurchaseFactory.create(category=Purchase.Category.ENTREES, description="pommes", canteen=canteen)
+
+        response = self.client.get(f"{reverse('purchase_list_export')}?category=PRODUITS_DE_LA_MER")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
