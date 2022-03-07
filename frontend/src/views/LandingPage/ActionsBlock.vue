@@ -1,5 +1,6 @@
 <template>
   <div>
+    <AuthDialog v-model="showAuthDialog" />
     <v-row class="text-left">
       <v-spacer></v-spacer>
       <v-col cols="12" md="4">
@@ -8,7 +9,7 @@
             <v-card
               :elevation="hover ? 6 : 2"
               :to="loggedUser ? { name: 'ManagementPage' } : undefined"
-              :href="!loggedUser ? '/s-identifier' : undefined"
+              @click="loggedUser ? undefined : openAuthDialog()"
               class="fill-height pa-4 d-flex flex-column hover-transition"
             >
               <v-img
@@ -103,10 +104,13 @@
 </template>
 
 <script>
+import AuthDialog from "@/views/LandingPage/AuthDialog"
+
 export default {
+  components: { AuthDialog },
   data() {
     return {
-      calculatorModal: false,
+      showAuthDialog: false,
     }
   },
   computed: {
@@ -115,12 +119,8 @@ export default {
     },
   },
   methods: {
-    closeCalculatorModal() {
-      this.$refs.modalContent.stopVideo()
-      this.calculatorModal = false
-    },
-    stopVideo(modalIsOpened) {
-      if (!modalIsOpened) this.$refs.modalContent.stopVideo()
+    openAuthDialog() {
+      this.showAuthDialog = true
     },
   },
 }

@@ -65,7 +65,7 @@
         href="/creer-mon-compte"
         class="d-none d-sm-flex align-self-center header-signup-button"
       >
-        <span>Créer un compte</span>
+        <span>Créer mon compte</span>
       </v-btn>
 
       <v-menu v-if="userDataReady" left bottom offset-y>
