@@ -212,7 +212,7 @@
 </template>
 
 <script>
-import { formatDate } from "@/utils"
+import { formatDate, getObjectDiff } from "@/utils"
 import Constants from "@/constants"
 
 export default {
@@ -377,19 +377,26 @@ export default {
           sortBy.push(isDesc ? element.slice(1) : element)
           sortDesc.push(isDesc)
         })
-      this.$set(this, "options", { sortBy, sortDesc, page })
+
+      const newOptions = { sortBy, sortDesc, page }
+      const optionChanges = this.options ? getObjectDiff(this.options, newOptions) : newOptions
+      if (Object.keys(optionChanges).length > 0) this.$set(this, "options", newOptions)
+
       let characteristics = []
       const queryCharacteristics = (this.$route.query.caracteristiques || "").split(",")
       queryCharacteristics.forEach((displayCharacteristic) => {
         const value = this.getChoiceValueFromText(Constants.Characteristics, displayCharacteristic)
         if (value) characteristics.push(value)
       })
-      this.$set(this, "appliedFilters", {
+
+      const filters = {
         startDate: this.$route.query.après || null,
         endDate: this.$route.query.avant || null,
         characteristics,
         category: this.getChoiceValueFromText(Constants.Categories, this.$route.query.categorie),
-      })
+      }
+      const filterChanges = this.filters ? getObjectDiff(this.filters, filters) : filters
+      if (Object.keys(filterChanges).length > 0) this.$set(this, "appliedFilters", filterChanges)
     },
     clearSearch() {
       this.searchTerm = ""
@@ -408,19 +415,23 @@ export default {
       })
     },
     onAppliedFiltersChange() {
-      if (this.options.page !== 1) this.options.page = 1
-      else {
+      if (this.options.page !== 1) {
+        this.options.page = 1
+      } else {
         this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
-        this.fetchCurrentPage()
       }
     },
     onOptionsChange() {
       this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
+    },
+    onRouteChange() {
+      this.populateParametersFromRoute()
       this.fetchCurrentPage()
     },
     addWatchers() {
       this.$watch("appliedFilters", this.onAppliedFiltersChange, { deep: true })
       this.$watch("options", this.onOptionsChange, { deep: true })
+      this.$watch("$route", this.onRouteChange)
     },
   },
   beforeMount() {
