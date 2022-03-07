@@ -42,7 +42,7 @@ idna==3.3
 iniconfig==1.1.1
 isort==5.10.1
 jmespath==0.10.0
-kombu==5.2.3
+kombu==5.2.4
 lazy-object-proxy==1.7.1
 mccabe==0.6.1
 mypy-extensions==0.4.3
