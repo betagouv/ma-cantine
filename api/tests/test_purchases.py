@@ -566,6 +566,7 @@ class TestPurchaseApi(APITestCase):
         PurchaseFactory.create(description="avoine", canteen=canteen, provider="provider1")
         PurchaseFactory.create(description="pommes", canteen=canteen, provider="provider2")
         PurchaseFactory.create(description="pommes", canteen=canteen, provider="provider1")
+        PurchaseFactory.create(description=None, canteen=canteen, provider=None)
 
         PurchaseFactory.create(description="secret product", provider="secret provider")
 

@@ -258,7 +258,15 @@ class PurchaseOptionsView(APIView):
     def get(self, request, *args, **kwargs):
         purchases = Purchase.objects.filter(canteen__in=self.request.user.canteens.all())
         products = list(
-            purchases.order_by("description").distinct("description").values_list("description", flat=True)
+            purchases.filter(description__isnull=False)
+            .order_by("description")
+            .distinct("description")
+            .values_list("description", flat=True)
         )
-        providers = list(purchases.order_by("provider").distinct("provider").values_list("provider", flat=True))
+        providers = list(
+            purchases.filter(provider__isnull=False)
+            .order_by("provider")
+            .distinct("provider")
+            .values_list("provider", flat=True)
+        )
         return JsonResponse({"products": products, "providers": providers}, status=200)
