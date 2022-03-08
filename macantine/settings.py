@@ -419,3 +419,8 @@ if DEBUG:
 # Feature flags
 ENABLE_XP_RESERVATION = os.getenv("ENABLE_XP_RESERVATION") == "True"
 ENABLE_PARTNERS = os.getenv("ENABLE_PARTNERS") == "True"
+
+# Custom testing
+
+TEST_RUNNER = "macantine.testrunner.MaCantineTestRunner"
+OVERRIDE_TEST_SEED = os.getenv("OVERRIDE_TEST_SEED", None)
