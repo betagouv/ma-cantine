@@ -14,6 +14,10 @@
 
     <v-divider class="mt-16"></v-divider>
 
+    <BlogBlock class="my-16" />
+
+    <v-divider class="mt-16"></v-divider>
+
     <Resources class="my-16" />
 
     <v-divider class="mt-16" v-if="showPartners"></v-divider>
@@ -35,6 +39,7 @@ import DiscoverMeasuresBlock from "@/views/LandingPage/DiscoverMeasuresBlock"
 import Resources from "@/views/LandingPage/Resources"
 import TheNewsletter from "@/components/TheNewsletter"
 import StartupPartners from "@/views/LandingPage/StartupPartners"
+import BlogBlock from "@/views/LandingPage/BlogBlock"
 
 export default {
   components: {
@@ -46,6 +51,7 @@ export default {
     TheNewsletter,
     Resources,
     StartupPartners,
+    BlogBlock,
   },
   computed: {
     showPartners() {
