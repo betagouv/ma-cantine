@@ -5,9 +5,9 @@
         Découvrez les fonctionnalités de ma cantine
       </v-card-title>
       <div class="my-6 d-none d-sm-flex justify-space-around features">
-        <v-img max-width="30%" src="/static/images/features/fonctionnalite-gestion.png"></v-img>
-        <v-img max-width="30%" src="/static/images/features/fonctionnalite-achats.png"></v-img>
-        <v-img max-width="30%" src="/static/images/features/fonctionnalite-gestionnaires.png"></v-img>
+        <v-img max-width="30%" src="/static/images/features/achats.png"></v-img>
+        <v-img max-width="30%" src="/static/images/features/diagnostic.png"></v-img>
+        <v-img max-width="30%" src="/static/images/features/publier.png"></v-img>
       </div>
       <div>
         <v-card-text class="body-1 px-6">
