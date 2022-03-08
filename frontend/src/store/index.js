@@ -200,7 +200,7 @@ export default new Vuex.Store({
       return fetch(`/api/v1/canteens/`, { method: "POST", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
         .then((response) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.dispatch("fetchUserCanteenPreviews") // loading status will be handled by this
           return response
         })
         .catch((e) => {
@@ -214,7 +214,7 @@ export default new Vuex.Store({
       return fetch(`/api/v1/canteens/${id}`, { method: "PATCH", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
         .then((response) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.dispatch("fetchUserCanteenPreviews") // loading status will be handled by this
           return response
         })
         .catch((e) => {
@@ -254,7 +254,7 @@ export default new Vuex.Store({
       return fetch(`/api/v1/canteens/${id}`, { method: "DELETE", headers })
         .then(verifyResponse)
         .then(() => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.dispatch("fetchUserCanteenPreviews") // loading status will be handled by this
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
