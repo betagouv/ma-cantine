@@ -12,9 +12,9 @@
         <BlogCard :post="post" />
       </v-col>
       <v-col cols="12">
-        <v-btn large outlined color="primary" :to="{ name: 'BlogsHome' }">
+        <v-btn large outlined color="primary" class="mt-2" :to="{ name: 'BlogsHome' }">
           <v-icon small class="mr-1">mdi-newspaper-variant-outline</v-icon>
-          Voir plus
+          Visiter notre blog
         </v-btn>
       </v-col>
     </v-row>
