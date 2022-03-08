@@ -1,14 +1,14 @@
 <template>
-  <div>
+  <div class="text-left">
     <div v-if="loading">
       <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
     </div>
 
-    <div class="text-left">
+    <div>
       <BackLink :to="backLink" text="Revenir aux achats" />
     </div>
 
-    <div class="text-left" v-if="purchase">
+    <div v-if="purchase">
       <div v-if="isNewPurchase">
         <h1 class="font-weight-black text-h5 text-sm-h4 my-4" style="width: 100%">
           Nouvel achat
@@ -195,7 +195,7 @@
               </v-btn>
             </template>
 
-            <v-card class="text-left">
+            <v-card>
               <v-card-title class="font-weight-bold">Voulez-vous vraiment supprimer cet achat ?</v-card-title>
 
               <v-divider></v-divider>
