@@ -542,3 +542,30 @@ class TestPurchaseApi(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+    @authenticate
+    def test_get_purchase_options(self):
+        """
+        A manager should be able to retrieve a list of products and providers that they've already entered on their own purchases
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen, provider="provider1")
+        PurchaseFactory.create(description="pommes", canteen=canteen, provider="provider2")
+        PurchaseFactory.create(description="pommes", canteen=canteen, provider="provider1")
+
+        PurchaseFactory.create(description="secret product", provider="secret provider")
+
+        response = self.client.get(f"{reverse('purchase_options')}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["products"]), 2)
+        self.assertEqual(len(body["providers"]), 2)
+        self.assertIn("avoine", body["products"])
+        self.assertIn("provider2", body["providers"])
+        self.assertNotIn("secret product", body["products"])
+        self.assertNotIn("secret provider", body["providers"])
+
+    def test_get_purchase_options_unauthenticated(self):
+        response = self.client.get(reverse("purchase_options"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

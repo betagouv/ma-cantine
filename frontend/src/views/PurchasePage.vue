@@ -26,25 +26,31 @@
             <v-row class="mb-4">
               <v-col cols="12">
                 <label class="body-2" for="description">Description du produit</label>
-                <v-text-field
+                <v-combobox
                   validate-on-blur
                   hide-details="auto"
                   solo
                   v-model="purchase.description"
                   class="mt-2"
                   id="description"
-                ></v-text-field>
+                  hide-no-data
+                  :items="productDescriptions"
+                  auto-select-first
+                ></v-combobox>
               </v-col>
               <v-col cols="12" sm="8">
                 <label class="body-2" for="provider">Fournisseur</label>
-                <v-text-field
+                <v-combobox
                   validate-on-blur
                   hide-details="auto"
                   solo
                   v-model="purchase.provider"
                   class="mt-2"
                   id="provider"
-                ></v-text-field>
+                  hide-no-data
+                  :items="providers"
+                  auto-select-first
+                ></v-combobox>
               </v-col>
               <v-col cols="12" sm="4">
                 <label class="body-2" for="price">Prix HT</label>
@@ -73,6 +79,7 @@
                   item-value="id"
                   id="canteen"
                   class="mt-2"
+                  auto-select-first
                 ></v-autocomplete>
               </v-col>
 
@@ -265,6 +272,8 @@ export default {
         { text: "Provenant de la même région", value: "REGION" },
         { text: "Autre", value: "AUTRE" },
       ],
+      productDescriptions: [],
+      providers: [],
     }
   },
   props: {
@@ -348,6 +357,7 @@ export default {
               characteristics: [],
             }
             this.$refs.form.resetValidation()
+            this.fetchOptions() // if the user added a new product or provider, we need to refresh the options
           }
         })
         .catch((e) => {
@@ -379,13 +389,24 @@ export default {
             status: "success",
           })
           this.$router.push({ name: "PurchasesHome" })
+          this.fetchOptions()
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
     },
+    fetchOptions() {
+      fetch("/api/v1/purchaseOptions/").then((response) => {
+        if (response.status !== 200) throw new Error()
+        response.json().then((options) => {
+          this.productDescriptions = options.products
+          this.providers = options.providers
+        })
+      }) // these lists are optional so don't bother with error messages if they fail to load
+    },
   },
   mounted() {
+    this.fetchOptions()
     if (this.purchase) return
     if (this.isNewPurchase) {
       this.purchase = {
