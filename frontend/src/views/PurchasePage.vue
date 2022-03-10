@@ -9,36 +9,21 @@
     </div>
 
     <div v-if="purchase">
-      <div v-if="isNewPurchase">
-        <h1 class="font-weight-black text-h5 text-sm-h4 my-4" style="width: 100%">
-          Nouvel achat
-        </h1>
-      </div>
-      <div v-else>
-        <h1 class="font-weight-black text-h5 text-sm-h4 my-4" style="width: 100%">
-          Modifier mon achat
-        </h1>
-      </div>
-
       <v-form ref="form" @submit.prevent v-model="formIsValid" v-if="purchase">
         <v-row>
           <v-col cols="12" md="8">
+            <div v-if="isNewPurchase">
+              <h1 class="font-weight-black text-h5 text-sm-h4 my-4" style="width: 100%">
+                Nouvelle facture
+              </h1>
+            </div>
+            <div v-else>
+              <h1 class="font-weight-black text-h5 text-sm-h4 my-4" style="width: 100%">
+                Modifier mon achat
+              </h1>
+            </div>
             <v-row class="mb-4">
               <v-col cols="12">
-                <label class="body-2" for="description">Description du produit</label>
-                <v-combobox
-                  validate-on-blur
-                  hide-details="auto"
-                  solo
-                  v-model="purchase.description"
-                  class="mt-2"
-                  id="description"
-                  hide-no-data
-                  :items="productDescriptions"
-                  auto-select-first
-                ></v-combobox>
-              </v-col>
-              <v-col cols="12" sm="8">
                 <label class="body-2" for="provider">Fournisseur</label>
                 <v-combobox
                   validate-on-blur
@@ -51,19 +36,6 @@
                   :items="providers"
                   auto-select-first
                 ></v-combobox>
-              </v-col>
-              <v-col cols="12" sm="4">
-                <label class="body-2" for="price">Prix HT</label>
-                <v-text-field
-                  validate-on-blur
-                  hide-details="auto"
-                  solo
-                  v-model="purchase.priceHt"
-                  class="mt-2"
-                  append-icon="mdi-currency-eur"
-                  :rules="[validators.required, validators.greaterThanZero]"
-                  id="price"
-                ></v-text-field>
               </v-col>
 
               <v-col cols="12" sm="8">
@@ -112,20 +84,6 @@
                 </v-menu>
               </v-col>
             </v-row>
-            <fieldset>
-              <legend class="body-2 my-3">Catégorie</legend>
-              <v-radio-group v-model="purchase.category" class="my-0">
-                <v-row>
-                  <v-col cols="12" sm="6" class="py-1" v-for="item in categories" :key="item">
-                    <v-radio :value="item" class="mt-2">
-                      <template v-slot:label>
-                        <span class="body-2 grey--text text--darken-3">{{ getCategoryDisplayText(item) }}</span>
-                      </template>
-                    </v-radio>
-                  </v-col>
-                </v-row>
-              </v-radio-group>
-            </fieldset>
           </v-col>
           <v-col cols="12" md="4">
             <label class="body-2">Facture</label>
@@ -147,26 +105,79 @@
               class="mt-2"
             />
           </v-col>
-          <fieldset class="mx-4">
-            <legend class="body-2 my-3">Caractéristiques</legend>
-            <v-row class="mb-4">
-              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in characteristics" :key="characteristic">
-                <v-checkbox
-                  hide-details="auto"
-                  v-model="purchase.characteristics"
-                  :multiple="true"
-                  :key="characteristic"
-                  :value="characteristic"
-                >
-                  <template v-slot:label>
-                    <span class="body-2 grey--text text--darken-3">
-                      {{ getCharacteristicDisplayText(characteristic) }}
-                    </span>
-                  </template>
-                </v-checkbox>
-              </v-col>
-            </v-row>
-          </fieldset>
+        </v-row>
+        <h2 class="mb-4">Ajouter un produit</h2>
+        <!-- TODO: data table with options for editing in dialog ? (but persistent form below for new ones) -->
+        <v-row>
+          <v-col cols="12" sm="8">
+            <label class="body-2" for="description">Description</label>
+            <v-combobox
+              validate-on-blur
+              hide-details="auto"
+              solo
+              v-model="purchase.description"
+              class="mt-2"
+              id="description"
+              hide-no-data
+              :items="productDescriptions"
+              auto-select-first
+            ></v-combobox>
+          </v-col>
+          <v-col cols="12" sm="4">
+            <label class="body-2" for="price">Prix HT</label>
+            <v-text-field
+              validate-on-blur
+              hide-details="auto"
+              solo
+              v-model="purchase.priceHt"
+              class="mt-2"
+              append-icon="mdi-currency-eur"
+              :rules="[validators.required, validators.greaterThanZero]"
+              id="price"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <label class="body-2" for="category">Categorie</label>
+            <v-autocomplete
+              validate-on-blur
+              hide-details="auto"
+              solo
+              v-model="purchase.category"
+              class="mt-2"
+              id="category"
+              hide-no-data
+              :items="categories"
+              auto-select-first
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <label class="body-2" for="characteristic">Caractéristiques</label>
+            <v-autocomplete
+              validate-on-blur
+              hide-details="auto"
+              solo
+              v-model="purchase.characteristics"
+              class="mt-2"
+              id="characteristic"
+              hide-no-data
+              :items="characteristics"
+              auto-select-first
+              multiple
+            ></v-autocomplete>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-spacer></v-spacer>
+          <v-btn
+            :disabled="loading"
+            x-large
+            color="primary"
+            @click="savePurchaseDemo(true)"
+            v-if="isNewPurchase"
+            class="ma-3 mt-6"
+          >
+            Valider
+          </v-btn>
         </v-row>
         <v-expand-transition>
           <v-col cols="12" sm="6" v-show="showLocalDefinition" class="my-4">
@@ -182,7 +193,23 @@
             ></v-autocomplete>
           </v-col>
         </v-expand-transition>
-        <v-sheet
+        <h2 class="my-4">Produits</h2>
+        <v-data-table :headers="headers" :items="desserts" sort-by="calories">
+          <template v-slot:[`item.actions`]>
+            <v-icon small class="mr-2" @click="() => {}">
+              mdi-pencil
+            </v-icon>
+            <v-icon small @click="() => {}">
+              mdi-delete
+            </v-icon>
+          </template>
+          <template v-slot:no-data>
+            <v-btn color="primary" @click="() => {}">
+              Reset
+            </v-btn>
+          </template>
+        </v-data-table>
+        <!-- <v-sheet
           rounded
           color="grey lighten-4 pa-3 mt-8"
           class="d-flex flex-column flex-sm-row align-start align-sm-center"
@@ -224,19 +251,9 @@
             Annuler
           </v-btn>
           <v-btn :disabled="loading" class="ma-1" x-large color="primary" @click="savePurchase()">
-            Valider
+            Valider facture
           </v-btn>
-          <v-btn
-            :disabled="loading"
-            x-large
-            color="primary"
-            @click="savePurchase(true)"
-            v-if="isNewPurchase"
-            class="ma-1"
-          >
-            Valider et ajouter un nouveau
-          </v-btn>
-        </v-sheet>
+        </v-sheet> -->
       </v-form>
     </div>
   </div>
@@ -263,8 +280,8 @@ export default {
       menu: false,
       modal: false,
       showDeleteDialog: false,
-      categories: Object.keys(Constants.Categories),
-      characteristics: Object.keys(Constants.Characteristics),
+      categories: Object.values(Constants.Categories),
+      characteristics: Object.values(Constants.Characteristics),
       backLink: { name: "PurchasesHome" },
       localDefinitions: [
         { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },
@@ -274,6 +291,49 @@ export default {
       ],
       productDescriptions: [],
       providers: [],
+      desserts: [
+        {
+          name: "Frozen Yogurt",
+          calories: 159,
+          fat: "Lait et produits laitiers",
+          carbs: "Bio, HVE",
+        },
+        {
+          name: "Ice cream sandwich",
+          calories: 237,
+          fat: "Produits sucrés",
+          carbs: "Local, Performance environnement...",
+        },
+      ],
+      dialog: false,
+      dialogDelete: false,
+      headers: [
+        {
+          text: "Produit",
+          align: "start",
+          sortable: false,
+          value: "name",
+        },
+        { text: "Prix HT", value: "calories" },
+        { text: "Catégorie", value: "fat" },
+        { text: "Caractéristiques", value: "carbs" },
+        { text: "Actions", value: "actions", sortable: false },
+      ],
+      editedIndex: -1,
+      editedItem: {
+        name: "",
+        calories: 0,
+        fat: 0,
+        carbs: 0,
+        protein: 0,
+      },
+      defaultItem: {
+        name: "",
+        calories: 0,
+        fat: 0,
+        carbs: 0,
+        protein: 0,
+      },
     }
   },
   props: {
@@ -363,6 +423,18 @@ export default {
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
+    },
+    savePurchaseDemo() {
+      this.desserts.push({
+        name: this.purchase.description,
+        calories: this.purchase.priceHt,
+        fat: this.purchase.category,
+        carbs: this.purchase.characteristics?.join(", "),
+      })
+      this.purchase.description = ""
+      this.purchase.priceHt = null
+      this.purchase.category = null
+      this.purchase.characteristics = []
     },
     hasChanged() {
       if (this.originalPurchase) {
