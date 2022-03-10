@@ -53,7 +53,7 @@
               ></v-img>
               <v-card-title>
                 <h2 class="text-h6 font-weight-bold">
-                  Étudier l'évolution de mon territoire
+                  Suivre l'évolution de mon territoire
                 </h2>
               </v-card-title>
               <v-card-text>
