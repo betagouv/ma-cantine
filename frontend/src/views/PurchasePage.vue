@@ -288,9 +288,33 @@
                   </v-col>
                 </v-row>
               </v-expand-transition>
-              <v-row>
+              <v-row class="d-flex flex-column flex-sm-row align-start align-sm-center">
                 <v-spacer></v-spacer>
-                <v-btn :disabled="loading" x-large color="primary" @click="savePurchaseDemo(true)" class="ma-3 mt-6">
+                <v-dialog v-model="showDeleteDialog" width="500">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn :disabled="loading" large v-bind="attrs" v-on="on" outlined color="error" class="ma-1">
+                      <v-icon class="mr-1">mdi-trash-can</v-icon>
+                      Supprimer
+                    </v-btn>
+                  </template>
+
+                  <v-card>
+                    <v-card-title class="font-weight-bold">Voulez-vous vraiment supprimer cet achat ?</v-card-title>
+
+                    <v-divider></v-divider>
+
+                    <v-card-actions class="pa-4">
+                      <v-spacer></v-spacer>
+                      <v-btn outlined text @click="showDeleteDialog = false" class="mr-2">
+                        Non, revenir en arrière
+                      </v-btn>
+                      <v-btn outlined color="red" text @click="deletePurchase">
+                        Oui, supprimer cet achat
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+                <v-btn :disabled="loading" x-large color="primary" @click="savePurchaseDemo(true)" class="ma-3">
                   Valider
                 </v-btn>
               </v-row>
