@@ -11,7 +11,7 @@
         </p>
         <v-btn class="primary" :to="{ name: 'NewPurchase' }" large>
           <v-icon>mdi-plus</v-icon>
-          Ajouter un produit
+          Ajouter un achat
         </v-btn>
       </div>
       <v-spacer></v-spacer>
@@ -203,7 +203,7 @@
 
         <template v-slot:[`no-data`]>
           <div class="mx-10 my-10">
-            Cliquer sur le bouton "Ajouter une ligne" pour rentrer vos achats.
+            Cliquer sur le bouton "Ajouter un achat" pour rentrer vos achats.
           </div>
         </template>
       </v-data-table>

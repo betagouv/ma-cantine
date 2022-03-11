@@ -1,7 +1,7 @@
 <template>
   <v-card
     color="grey lighten-5"
-    class="fill-height my-10"
+    class="fill-height"
     height="300"
     width="300"
     elevation="0"

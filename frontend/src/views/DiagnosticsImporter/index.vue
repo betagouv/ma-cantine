@@ -28,6 +28,7 @@
       maxSize="10485760"
       @upload="upload"
       :disabled="importInProgress"
+      class="my-10"
     />
 
     <p>

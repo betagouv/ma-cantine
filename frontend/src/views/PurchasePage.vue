@@ -4,9 +4,9 @@
       <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
     </div>
 
-    <div>
+    <p>
       <BackLink :to="backLink" text="Revenir aux achats" />
-    </div>
+    </p>
 
     <div v-if="purchase">
       <v-form ref="form" @submit.prevent v-model="formIsValid" v-if="purchase">
@@ -14,7 +14,7 @@
           <v-col cols="12" md="8">
             <div v-if="isNewPurchase">
               <h1 class="font-weight-black text-h5 text-sm-h4 my-4" style="width: 100%">
-                Nouvelle facture
+                Nouvel achat
               </h1>
             </div>
             <div v-else>
@@ -86,7 +86,7 @@
             </v-row>
           </v-col>
           <v-col cols="12" md="4">
-            <label class="body-2">Facture</label>
+            <label class="body-2">Facture (facultatif)</label>
 
             <FilePreview
               v-model="purchase.invoiceFile"
@@ -106,96 +106,197 @@
             />
           </v-col>
         </v-row>
-        <h2 class="mb-4">Ajouter un produit</h2>
+        <h2 class="mb-4 mt-8">
+          Produits
+          <v-btn text color="primary" @click="showNewProduct = !showNewProduct">Ajouter un produit</v-btn>
+        </h2>
         <!-- TODO: data table with options for editing in dialog ? (but persistent form below for new ones) -->
-        <v-row>
-          <v-col cols="12" sm="8">
-            <label class="body-2" for="description">Description</label>
-            <v-combobox
-              validate-on-blur
-              hide-details="auto"
-              solo
-              v-model="purchase.description"
-              class="mt-2"
-              id="description"
-              hide-no-data
-              :items="productDescriptions"
-              auto-select-first
-            ></v-combobox>
-          </v-col>
-          <v-col cols="12" sm="4">
-            <label class="body-2" for="price">Prix HT</label>
-            <v-text-field
-              validate-on-blur
-              hide-details="auto"
-              solo
-              v-model="purchase.priceHt"
-              class="mt-2"
-              append-icon="mdi-currency-eur"
-              :rules="[validators.required, validators.greaterThanZero]"
-              id="price"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" sm="6">
-            <label class="body-2" for="category">Categorie</label>
-            <v-autocomplete
-              validate-on-blur
-              hide-details="auto"
-              solo
-              v-model="purchase.category"
-              class="mt-2"
-              id="category"
-              hide-no-data
-              :items="categories"
-              auto-select-first
-            ></v-autocomplete>
-          </v-col>
-          <v-col cols="12" sm="6">
-            <label class="body-2" for="characteristic">Caractéristiques</label>
-            <v-autocomplete
-              validate-on-blur
-              hide-details="auto"
-              solo
-              v-model="purchase.characteristics"
-              class="mt-2"
-              id="characteristic"
-              hide-no-data
-              :items="characteristics"
-              auto-select-first
-              multiple
-            ></v-autocomplete>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-spacer></v-spacer>
-          <v-btn
-            :disabled="loading"
-            x-large
-            color="primary"
-            @click="savePurchaseDemo(true)"
-            v-if="isNewPurchase"
-            class="ma-3 mt-6"
-          >
-            Valider
-          </v-btn>
-        </v-row>
         <v-expand-transition>
-          <v-col cols="12" sm="6" v-show="showLocalDefinition" class="my-4">
-            <label class="body-2" for="local-definition">C'est quoi votre définition de local ?</label>
-            <v-autocomplete
-              hide-details="auto"
-              solo
-              :items="localDefinitions"
-              v-model="purchase.localDefinition"
-              :rules="showLocalDefinition ? [validators.required] : []"
-              id="local-definition"
-              class="mt-2"
-            ></v-autocomplete>
-          </v-col>
+          <v-sheet v-show="showNewProduct">
+            <v-row>
+              <v-col cols="12" sm="8">
+                <label class="body-2" for="description">Description</label>
+                <v-combobox
+                  validate-on-blur
+                  hide-details="auto"
+                  solo
+                  v-model="purchase.description"
+                  class="mt-2"
+                  id="description"
+                  hide-no-data
+                  :items="productDescriptions"
+                  auto-select-first
+                ></v-combobox>
+              </v-col>
+              <v-col cols="12" sm="4">
+                <label class="body-2" for="price">Prix HT</label>
+                <v-text-field
+                  validate-on-blur
+                  hide-details="auto"
+                  solo
+                  v-model="purchase.priceHt"
+                  class="mt-2"
+                  append-icon="mdi-currency-eur"
+                  :rules="[validators.required, validators.greaterThanZero]"
+                  id="price"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <label class="body-2" for="category">Categorie (facultatif)</label>
+                <v-autocomplete
+                  validate-on-blur
+                  hide-details="auto"
+                  solo
+                  v-model="purchase.category"
+                  class="mt-2"
+                  id="category"
+                  hide-no-data
+                  :items="categories"
+                  auto-select-first
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <label class="body-2" for="characteristic">Caractéristiques (facultatif)</label>
+                <v-autocomplete
+                  validate-on-blur
+                  hide-details="auto"
+                  solo
+                  v-model="purchase.characteristics"
+                  class="mt-2"
+                  id="characteristic"
+                  hide-no-data
+                  :items="characteristics"
+                  auto-select-first
+                  multiple
+                ></v-autocomplete>
+              </v-col>
+            </v-row>
+            <v-expand-transition>
+              <v-row v-show="showLocalDefinition" class="my-4">
+                <v-spacer></v-spacer>
+                <v-col cols="12" sm="6">
+                  <label class="body-2" for="local-definition">C'est quoi votre définition de local ?</label>
+                  <v-autocomplete
+                    hide-details="auto"
+                    solo
+                    :items="localDefinitions"
+                    v-model="purchase.localDefinition"
+                    :rules="showLocalDefinition ? [validators.required] : []"
+                    id="local-definition"
+                    class="mt-2"
+                  ></v-autocomplete>
+                </v-col>
+              </v-row>
+            </v-expand-transition>
+            <v-row>
+              <v-spacer></v-spacer>
+              <v-btn :disabled="loading" x-large color="primary" @click="savePurchaseDemo(true)" class="ma-3 mt-6">
+                Valider
+              </v-btn>
+              <v-btn :disabled="loading" x-large color="primary" @click="savePurchaseDemo(true)" class="ma-3 mt-6">
+                Valider et ajouter un nouveau produit
+              </v-btn>
+            </v-row>
+          </v-sheet>
         </v-expand-transition>
-        <h2 class="my-4">Produits</h2>
-        <v-data-table :headers="headers" :items="desserts" sort-by="calories">
-          <template v-slot:[`item.actions`]>
+        <v-data-table
+          :headers="headers"
+          :items="desserts"
+          sort-by="description"
+          show-expand
+          single-expand
+          :expanded.sync="expanded"
+          item-key="id"
+          @click:row="expandRow"
+          id="product-table"
+        >
+          <template v-slot:expanded-item="{ headers, item }">
+            <!-- TODO: add transition, except it is messy :: https://github.com/vuetifyjs/vuetify/issues/8197 -->
+            <td :colspan="headers.length" class="pa-5">
+              <v-row>
+                <v-col cols="12" sm="8">
+                  <label class="body-2" for="description">Description</label>
+                  <v-combobox
+                    validate-on-blur
+                    hide-details="auto"
+                    solo
+                    v-model="item.description"
+                    class="mt-2"
+                    id="description"
+                    hide-no-data
+                    :items="productDescriptions"
+                    auto-select-first
+                  ></v-combobox>
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <label class="body-2" for="price">Prix HT</label>
+                  <v-text-field
+                    validate-on-blur
+                    hide-details="auto"
+                    solo
+                    v-model="item.priceHt"
+                    class="mt-2"
+                    append-icon="mdi-currency-eur"
+                    :rules="[validators.required, validators.greaterThanZero]"
+                    id="price"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <label class="body-2" for="category">Categorie (facultatif)</label>
+                  <v-autocomplete
+                    validate-on-blur
+                    hide-details="auto"
+                    solo
+                    v-model="item.category"
+                    class="mt-2"
+                    id="category"
+                    hide-no-data
+                    :items="categories"
+                    auto-select-first
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <label class="body-2" for="characteristic">Caractéristiques (facultatif)</label>
+                  <v-autocomplete
+                    validate-on-blur
+                    hide-details="auto"
+                    solo
+                    v-model="item.characteristics"
+                    class="mt-2"
+                    id="characteristic"
+                    hide-no-data
+                    :items="characteristics"
+                    auto-select-first
+                    multiple
+                  ></v-autocomplete>
+                </v-col>
+              </v-row>
+              <v-expand-transition>
+                <v-row v-show="showLocalDefinition" class="my-4">
+                  <v-spacer></v-spacer>
+                  <v-col cols="12" sm="6">
+                    <label class="body-2" for="local-definition">C'est quoi votre définition de local ?</label>
+                    <v-autocomplete
+                      hide-details="auto"
+                      solo
+                      :items="localDefinitions"
+                      v-model="purchase.localDefinition"
+                      :rules="showLocalDefinition ? [validators.required] : []"
+                      id="local-definition"
+                      class="mt-2"
+                    ></v-autocomplete>
+                  </v-col>
+                </v-row>
+              </v-expand-transition>
+              <v-row>
+                <v-spacer></v-spacer>
+                <v-btn :disabled="loading" x-large color="primary" @click="savePurchaseDemo(true)" class="ma-3 mt-6">
+                  Valider
+                </v-btn>
+              </v-row>
+            </td>
+          </template>
+          <!-- <template v-slot:[`item.actions`]>
             <v-icon small class="mr-2" @click="() => {}">
               mdi-pencil
             </v-icon>
@@ -207,7 +308,7 @@
             <v-btn color="primary" @click="() => {}">
               Reset
             </v-btn>
-          </template>
+          </template> -->
         </v-data-table>
         <!-- <v-sheet
           rounded
@@ -293,16 +394,18 @@ export default {
       providers: [],
       desserts: [
         {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: "Lait et produits laitiers",
-          carbs: "Bio, HVE",
+          description: "Frozen Yogurt",
+          priceHt: 159,
+          category: "Lait et produits laitiers",
+          characteristics: "Bio, HVE",
+          id: 1,
         },
         {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: "Produits sucrés",
-          carbs: "Local, Performance environnement...",
+          description: "Ice cream sandwich",
+          priceHt: 237,
+          category: "Produits sucrés",
+          characteristics: "Local, Performance environnement...",
+          id: 2,
         },
       ],
       dialog: false,
@@ -312,28 +415,15 @@ export default {
           text: "Produit",
           align: "start",
           sortable: false,
-          value: "name",
+          value: "description",
         },
-        { text: "Prix HT", value: "calories" },
-        { text: "Catégorie", value: "fat" },
-        { text: "Caractéristiques", value: "carbs" },
-        { text: "Actions", value: "actions", sortable: false },
+        { text: "Prix HT", value: "priceHt" },
+        { text: "Catégorie", value: "category" },
+        { text: "Caractéristiques", value: "characteristics" },
+        { value: "data-table-expand" },
       ],
-      editedIndex: -1,
-      editedItem: {
-        name: "",
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-      defaultItem: {
-        name: "",
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
+      expanded: [],
+      showNewProduct: !this.id,
     }
   },
   props: {
@@ -365,7 +455,7 @@ export default {
       return today.toISOString().split("T")[0]
     },
     showLocalDefinition() {
-      return this.purchase.characteristics.indexOf("LOCAL") > -1
+      return this.purchase.characteristics.indexOf("Local") > -1
     },
   },
   methods: {
@@ -426,10 +516,10 @@ export default {
     },
     savePurchaseDemo() {
       this.desserts.push({
-        name: this.purchase.description,
-        calories: this.purchase.priceHt,
-        fat: this.purchase.category,
-        carbs: this.purchase.characteristics?.join(", "),
+        description: this.purchase.description,
+        priceHt: this.purchase.priceHt,
+        category: this.purchase.category,
+        characteristics: this.purchase.characteristics?.join(", "),
       })
       this.purchase.description = ""
       this.purchase.priceHt = null
@@ -476,6 +566,10 @@ export default {
         })
       }) // these lists are optional so don't bother with error messages if they fail to load
     },
+    expandRow(item, data) {
+      data.expand(!data.isExpanded)
+      // this.purchase = item
+    },
   },
   mounted() {
     this.fetchOptions()
@@ -492,6 +586,8 @@ export default {
         response.json().then((jsonPurchase) => {
           this.originalPurchase = jsonPurchase
           this.purchase = JSON.parse(JSON.stringify(jsonPurchase))
+          this.desserts.push(this.purchase)
+          this.expanded.push(this.purchase)
         })
       })
       .catch(() => {
@@ -522,5 +618,18 @@ export default {
 <style scoped>
 fieldset {
   border: none;
+}
+</style>
+
+<style>
+#product-table.v-data-table > .v-data-table__wrapper tbody tr.v-data-table__expanded__row {
+  background: #fff1f0;
+  transition: background-color 0.3s ease;
+}
+
+.v-data-table > .v-data-table__wrapper tbody tr.v-data-table__expanded__content {
+  background: rgb(255, 241, 240, 0.3);
+  box-shadow: none;
+  transition: all 0.3s ease;
 }
 </style>
