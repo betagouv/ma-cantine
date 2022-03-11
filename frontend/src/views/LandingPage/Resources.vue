@@ -31,24 +31,34 @@
 <script>
 export default {
   data() {
-    const resources = [
-      {
+    const resources = []
+    if (this.$store.state.loggedUser) {
+      resources.push({
         title: "Blog",
         icon: "mdi-post",
         description: "Découvrez notre espace blog et témoignages",
         url: null,
         to: { name: "BlogsHome" },
         ctaText: "Visiter",
-      },
-      {
-        title: "Documentation",
-        icon: "mdi-file-document-multiple",
-        description: "Ressources pour les acteurs et actrices de la restauration collective",
-        url: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-        to: null,
-        ctaText: "Consulter",
-      },
-    ]
+      })
+    } else {
+      resources.push({
+        title: "Autodiagnostic",
+        icon: "mdi-chart-pie",
+        description: "Simulez un diagnostic avec les données de votre établissement",
+        url: null,
+        to: { name: "DiagnosticPage" },
+        ctaText: "Rentrer mes données",
+      })
+    }
+    resources.push({
+      title: "Documentation",
+      icon: "mdi-file-document-multiple",
+      description: "Ressources pour les acteurs et actrices de la restauration collective",
+      url: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+      to: null,
+      ctaText: "Consulter",
+    })
     if (this.$store.state.loggedUser) {
       resources.push({
         title: "Générer mon affiche",

@@ -59,4 +59,8 @@ export default {
 .constrained {
   max-width: 1024px !important;
 }
+
+.v-menu__content {
+  text-align: left;
+}
 </style>

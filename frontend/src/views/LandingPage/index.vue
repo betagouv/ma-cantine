@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PresentationBlock class="mb-6" />
+    <PresentationBlock class="mb-12" />
 
     <ActionsBlock class="ma-0 ma-md-n4 pa-6" style="background-color: #b6d9c8; border-radius: 16px;" />
 
@@ -11,6 +11,10 @@
     <GoalBlock class="mt-16 py-2" />
 
     <DiscoverMeasuresBlock class="mt-16 py-2" />
+
+    <v-divider class="mt-16"></v-divider>
+
+    <BlogBlock class="my-16" />
 
     <v-divider class="mt-16"></v-divider>
 
@@ -35,6 +39,7 @@ import DiscoverMeasuresBlock from "@/views/LandingPage/DiscoverMeasuresBlock"
 import Resources from "@/views/LandingPage/Resources"
 import TheNewsletter from "@/components/TheNewsletter"
 import StartupPartners from "@/views/LandingPage/StartupPartners"
+import BlogBlock from "@/views/LandingPage/BlogBlock"
 
 export default {
   components: {
@@ -46,6 +51,7 @@ export default {
     TheNewsletter,
     Resources,
     StartupPartners,
+    BlogBlock,
   },
   computed: {
     showPartners() {
