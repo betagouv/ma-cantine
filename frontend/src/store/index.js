@@ -75,6 +75,20 @@ export default new Vuex.Store({
       state.notification.title = title
       state.notification.status = status
     },
+    ADD_CANTEEN(state, canteen) {
+      state.userCanteenPreviews.push({
+        id: canteen.id,
+        name: canteen.name,
+      })
+    },
+    UPDATE_CANTEEN(state, canteen) {
+      const storedCanteen = state.userCanteenPreviews.find((x) => x.id === canteen.id)
+      if (storedCanteen) storedCanteen.name = canteen.name
+    },
+    REMOVE_CANTEEN(state, id) {
+      const index = state.userCanteenPreviews.findIndex((x) => x.id === id)
+      state.userCanteenPreviews.splice(index, 1)
+    },
     REMOVE_NOTIFICATION(state, message) {
       if (message && state.notification.message !== message) {
         // in case there was another notification in between, do not remove it
@@ -200,7 +214,8 @@ export default new Vuex.Store({
       return fetch(`/api/v1/canteens/`, { method: "POST", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
         .then((response) => {
-          context.dispatch("fetchUserCanteenPreviews") // loading status will be handled by this
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("ADD_CANTEEN", response)
           return response
         })
         .catch((e) => {
@@ -214,7 +229,8 @@ export default new Vuex.Store({
       return fetch(`/api/v1/canteens/${id}`, { method: "PATCH", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
         .then((response) => {
-          context.dispatch("fetchUserCanteenPreviews") // loading status will be handled by this
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("UPDATE_CANTEEN", response)
           return response
         })
         .catch((e) => {
@@ -254,7 +270,8 @@ export default new Vuex.Store({
       return fetch(`/api/v1/canteens/${id}`, { method: "DELETE", headers })
         .then(verifyResponse)
         .then(() => {
-          context.dispatch("fetchUserCanteenPreviews") // loading status will be handled by this
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("REMOVE_CANTEEN", id)
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)

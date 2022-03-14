@@ -9,10 +9,13 @@
           Une alimentation saine et durable commence par un suivi comptable de vos achats. Des nouvelles fonctionnalités
           arrivent bientôt dans cet espace !
         </p>
-        <v-btn class="primary" :to="{ name: 'NewPurchase' }" large>
+        <v-btn class="primary" v-if="hasCanteens" :to="{ name: 'NewPurchase' }" large>
           <v-icon>mdi-plus</v-icon>
           Ajouter un produit
         </v-btn>
+        <p class="font-weight-bold" v-else>
+          Pour commencer à suivre vos achats, veuillez ajouter une cantine.
+        </p>
       </div>
       <v-spacer></v-spacer>
 
@@ -24,7 +27,7 @@
         max-width="150"
       ></v-img>
     </div>
-    <v-card outlined class="my-4" v-if="visiblePurchases">
+    <v-card outlined class="my-4" v-if="hasCanteens && visiblePurchases">
       <v-row class="px-4 mt-2" align="center">
         <v-col cols="9" sm="6" class="pb-0">
           <v-text-field
@@ -208,6 +211,33 @@
         </template>
       </v-data-table>
     </v-card>
+    <v-row v-else-if="visiblePurchases" class="mt-4">
+      <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
+        <v-card
+          class="d-flex flex-column align-center justify-center"
+          hover
+          min-height="220"
+          height="80%"
+          :to="{ name: 'NewCanteen' }"
+        >
+          <v-icon size="100" class="primary--text">mdi-plus</v-icon>
+          <v-card-text class="font-weight-bold pt-0 text-center primary--text">
+            Ajouter une cantine
+          </v-card-text>
+        </v-card>
+        <v-spacer></v-spacer>
+        <div class="d-flex mt-4 mb-2 align-center px-2">
+          <v-divider></v-divider>
+          <p class="mx-2 my-0 caption">ou</p>
+          <v-divider></v-divider>
+        </div>
+        <v-spacer></v-spacer>
+        <v-btn text color="primary" :to="{ name: 'DiagnosticsImporter' }">
+          <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
+          Créer plusieurs cantines depuis un fichier
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -279,6 +309,9 @@ export default {
         this.appliedFilters.startDate !== null ||
         this.appliedFilters.endDate !== null
       )
+    },
+    hasCanteens() {
+      return !!this.$store.state.userCanteenPreviews && this.$store.state.userCanteenPreviews.length > 0
     },
     // TODO: format choice lists to have explanation of inactive choices
   },
