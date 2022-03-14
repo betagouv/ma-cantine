@@ -34,7 +34,7 @@ drf-base64==2.0
 drf-excel==2.0.1
 et-xmlfile==1.1.0
 factory-boy==3.2.1
-Faker==13.3.0
+Faker==13.3.1
 future==0.18.2
 html2text==2020.1.16
 html5lib==1.1
@@ -61,7 +61,7 @@ pylint-django==2.5.2
 pylint-plugin-utils==0.7
 pyparsing==3.0.7
 PyPDF2==1.26.0
-pytest==7.0.1
+pytest==7.1.0
 pytest-django==4.5.2
 python-bidi==0.4.2
 python-dateutil==2.8.2
@@ -86,4 +86,4 @@ vine==5.0.0
 wcwidth==0.2.5
 webencodings==0.5.1
 wrapt==1.13.3
-xhtml2pdf==0.2.5
+xhtml2pdf==0.2.6
