@@ -113,7 +113,7 @@ class ImportDiagnosticsView(APIView):
         canteens = {}
         errors = []
         locations_csv_str = "siret,citycode,postcode\n"
-        hasLocationsToFind = False
+        has_locations_to_find = False
 
         filestring = file.read().decode("utf-8-sig")
         filelines = filestring.splitlines()
@@ -127,25 +127,25 @@ class ImportDiagnosticsView(APIView):
                 if row[0] == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = ImportDiagnosticsView._normalise_siret(row[0])
-                canteen = self._create_canteen_with_diagnostic(row, siret)
+                canteen, should_update_geolocation = self._update_or_create_canteen_with_diagnostic(row, siret)
                 diagnostics_created += 1
                 canteens[canteen.siret] = canteen
-                if not canteen.city and (canteen.city_insee_code or canteen.postal_code):
-                    # if both city code and postcode are given, use city code and avoid having no location due to mismatch
+                if should_update_geolocation:
+                    has_locations_to_find = True
                     if canteen.city_insee_code:
                         locations_csv_str += f"{canteen.siret},{canteen.city_insee_code},\n"
                     else:
                         locations_csv_str += f"{canteen.siret},,{canteen.postal_code}\n"
-                    hasLocationsToFind = True
+
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     errors.append(ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number))
-        if hasLocationsToFind:
+        if has_locations_to_find:
             self._update_location_data(canteens, locations_csv_str)
         return (canteens, errors, diagnostics_created)
 
     @transaction.atomic
-    def _create_canteen_with_diagnostic(self, row, siret):
+    def _update_or_create_canteen_with_diagnostic(self, row, siret):
         row[14]  # accessing last required column to throw error if badly formatted early on
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
@@ -204,33 +204,38 @@ class ImportDiagnosticsView(APIView):
         except Exception as e:
             raise ValidationError({"value_label_hve": number_error_message})
 
-        (canteen, created) = Canteen.objects.get_or_create(
-            siret=siret,
-            defaults={
-                "name": row[1],
-                "city_insee_code": row[2],
-                "postal_code": row[3],
-                "central_producer_siret": ImportDiagnosticsView._normalise_siret(row[4]),
-                "daily_meal_count": row[5],
-                "production_type": row[7].lower(),
-                "management_type": row[8].lower(),
-                "economic_model": row[9].lower(),
-            },
-        )
+        canteen_exists = Canteen.objects.filter(siret=siret).exists()
+        canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
 
-        if not created and self.request.user not in canteen.managers.all():
+        if canteen_exists and self.request.user not in canteen.managers.all():
             raise PermissionDenied()
 
-        if created:
-            canteen.managers.add(self.request.user)
-            if manager_emails:
-                ImportDiagnosticsView._add_managers_to_canteen(manager_emails, canteen)
-            if row[6]:
-                canteen.sectors.add(
-                    *[self.annotated_sectors.get(name_lower__unaccent=sector.lower()) for sector in row[6].split("+")]
-                )
-            canteen.full_clean()
-            canteen.save()
+        should_update_geolocation = (
+            ImportDiagnosticsView._should_update_geolocation(canteen, row) if canteen_exists else True
+        )
+
+        canteen.name = row[1]
+        canteen.city_insee_code = row[2]
+        canteen.postal_code = row[3]
+        canteen.central_producer_siret = ImportDiagnosticsView._normalise_siret(row[4])
+        canteen.daily_meal_count = row[5]
+        canteen.production_type = row[7].lower()
+        canteen.management_type = row[8].lower()
+        canteen.economic_model = row[9].lower()
+
+        # full_clean must be before the relation-model updates bc they don't require a save().
+        # If an exception is launched by full_clean, it must be here.
+        canteen.full_clean()
+
+        canteen.managers.add(self.request.user)
+        if manager_emails:
+            ImportDiagnosticsView._add_managers_to_canteen(manager_emails, canteen)
+        if row[6]:
+            canteen.sectors.set(
+                [self.annotated_sectors.get(name_lower__unaccent=sector.lower()) for sector in row[6].split("+")]
+            )
+
+        canteen.save()
 
         diagnostic = Diagnostic(
             canteen_id=canteen.id,
@@ -244,7 +249,17 @@ class ImportDiagnosticsView(APIView):
         )
         diagnostic.full_clean()
         diagnostic.save()
-        return canteen
+        return (canteen, should_update_geolocation)
+
+    @staticmethod
+    def _should_update_geolocation(canteen, row):
+        if canteen.city:
+            city_code_changed = row[2] and canteen.city_insee_code != row[2]
+            postal_code_changed = row[3] and canteen.postal_code != row[3]
+            return city_code_changed or postal_code_changed
+        else:
+            has_geo_data = canteen.city_insee_code or canteen.postal_code
+            return has_geo_data
 
     @staticmethod
     def _get_error(e, message, error_status, row_number):

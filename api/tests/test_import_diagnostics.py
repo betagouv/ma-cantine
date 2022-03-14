@@ -143,12 +143,12 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Canteen.objects.count(), 1)
         self.assertEqual(Diagnostic.objects.count(), 2)
         canteen = Canteen.objects.get(siret="21340172201787")
-        canteen.name = "A cantéen"
+        self.assertEqual(canteen.name, "Updated name")
 
     @authenticate
-    def test_location_not_overridden(self, mock):
+    def test_location_overridden(self, mock):
         """
-        If the canteen already has city/department data, do not override on import
+        If the canteen already has city/department data, update it on import
         to be consistent with handling of name, meal count, etc
         """
         canteen = CanteenFactory.create(
@@ -156,21 +156,27 @@ class TestImportDiagnosticsAPI(APITestCase):
             city_insee_code="55555",
             city="Ma ville",
             postal_code="66666",
-            department=Department.ain,
+            department=Department.ardeche,
         )
         canteen.managers.add(authenticate.user)
 
+        address_api_text = "siret,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
+        address_api_text += '21340172201787,,11111,00000,11111,Ma ville,"01,Something,Other"\n'
+        address_api_text += '73282932000074,00000,,00000,11111,Ma ville,"01,Something,Other"\n'
+        address_api_text += '32441387130915,07293,11111,00000,22222,Saint-Romain-de-Lerps,"01,Something,Other"\n'
+
+        mock.post(
+            "https://api-adresse.data.gouv.fr/search/csv/",
+            text=address_api_text,
+        )
         with open("./api/tests/files/diagnostics_locations.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
-        # the API should never be called to fetch location info for this canteen
-        self.assertNotRegex(mock.last_request.text, "32441387130915")
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         canteen = Canteen.objects.get(siret="32441387130915")
-        self.assertEqual(canteen.city_insee_code, "55555")
-        self.assertEqual(canteen.postal_code, "66666")
-        self.assertEqual(canteen.city, "Ma ville")
+        self.assertEqual(canteen.city_insee_code, "00000")
+        self.assertEqual(canteen.postal_code, "22222")
+        self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
         self.assertEqual(canteen.department, Department.ain)
 
     @authenticate
@@ -256,7 +262,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors[3]["message"],
-            "La valeur 'not a number' n'est pas valide pour le champ 'repas par jour'.",
+            "Champ 'repas par jour' : La valeur «\xa0not a number\xa0» doit être un nombre entier.",
         )
         self.assertEqual(
             errors[4]["message"],
