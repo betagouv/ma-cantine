@@ -5,7 +5,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from common.utils import send_mail
 from django.core.validators import validate_email
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.functions import Cast
@@ -369,49 +369,6 @@ class RemoveManagerView(APIView):
             return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             logger.error("Exception ocurred while removing a manager from a canteen")
-            logger.exception(e)
-            return JsonResponse(
-                {"error": "An error has ocurred"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
-
-class SendCanteenEmailView(APIView):
-    def post(self, request):
-        try:
-            email = request.data.get("from")
-            validate_email(email)
-
-            canteen_id = request.data.get("canteen_id")
-            canteen = Canteen.objects.get(pk=canteen_id)
-
-            recipients = [user.email for user in canteen.managers.all()]
-            recipients.append(settings.DEFAULT_FROM_EMAIL)
-
-            reply_to = [email]  # SendinBlue does not support multiple reply_to addresses
-
-            context = {
-                "canteen": canteen.name,
-                "from": email,
-                "name": request.data.get("name") or "Une personne",
-                "message": request.data.get("message"),
-            }
-
-            send_mail(
-                subject=f"Un message pour {canteen.name}",
-                to=recipients,
-                reply_to=reply_to,
-                template="contact_canteen",
-                context=context,
-            )
-
-            return JsonResponse({}, status=status.HTTP_200_OK)
-        except ValidationError:
-            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
-        except ObjectDoesNotExist:
-            return JsonResponse({"error": "Invalid canteen"}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            logger.error("Exception ocurred while sending email to published canteen")
             logger.exception(e)
             return JsonResponse(
                 {"error": "An error has ocurred"},

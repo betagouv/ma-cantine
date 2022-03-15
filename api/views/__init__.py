@@ -6,7 +6,6 @@ from .canteen import (  # noqa: F401
     RetrieveUpdateUserCanteenView,
     AddManagerView,
     RemoveManagerView,
-    SendCanteenEmailView,
     PublishCanteenView,
     UnpublishCanteenView,
     SendCanteenNotFoundEmail,
@@ -37,3 +36,4 @@ from .purchase import (  # noqa: F401
     PurchaseOptionsView,
 )
 from .reservationexpe import ReservationExpeView  # noqa: F401
+from .message import MessageCreateView  # noqa: F401

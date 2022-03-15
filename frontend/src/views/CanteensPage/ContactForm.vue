@@ -52,10 +52,10 @@ export default {
       }
 
       const payload = {
-        canteenId: this.canteen.id,
-        from: this.fromEmail,
-        name: this.name,
-        message: this.message,
+        destinationCanteen: this.canteen.id,
+        senderEmail: this.fromEmail,
+        senderName: this.name,
+        body: this.message,
       }
 
       this.$store

@@ -12,3 +12,4 @@ from .managerinvitation import ManagerInvitationFactory  # noqa
 from .teledeclaration import TeledeclarationFactory  # noqa
 from .purchase import PurchaseFactory  # noqa
 from .reservationexpe import ReservationExpeFactory  # noqa
+from .message import MessageFactory  # noqa
