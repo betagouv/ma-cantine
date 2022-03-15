@@ -355,9 +355,7 @@ export default new Vuex.Store({
     },
 
     sendCanteenEmail(context, payload) {
-      return fetch("/api/v1/contactCanteen/", { method: "POST", headers, body: JSON.stringify(payload) }).then(
-        verifyResponse
-      )
+      return fetch("/api/v1/message/", { method: "POST", headers, body: JSON.stringify(payload) }).then(verifyResponse)
     },
 
     sendCanteenNotFoundEmail(context, payload) {

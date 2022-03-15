@@ -1,0 +1,18 @@
+{% extends 'email_base.html' %}
+
+{% block content %}
+    <p>Un nouveau message à destination d'une cantine est en attente de validation.</p>
+
+    <p>-----------------------</p>
+    <p><strong>Expediteur ou expéditrice</strong></p>
+    <p>Email : {{ sender_email }}</p>
+    <p>Nom : {{ sender_name }}</p>
+
+    <p><strong>Cantine destinatrice</strong></p>
+    <p>Nom : {{ canteen_name }}</p>
+
+    <p><strong>Message</strong></p>
+    <p>{{ body|linebreaks }}</p>
+    <p>-----------------------</p>
+
+{% endblock %}

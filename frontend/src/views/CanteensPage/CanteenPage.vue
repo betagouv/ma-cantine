@@ -46,7 +46,7 @@
 
       <v-divider class="my-8"></v-divider>
 
-      <ContactForm id="contact" v-if="showContactForm" :canteen="canteen" />
+      <ContactForm id="contact" :canteen="canteen" />
     </div>
     <v-progress-circular indeterminate v-else style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
   </div>
@@ -65,7 +65,6 @@ export default {
     return {
       canteen: undefined,
       labels,
-      showContactForm: this.$store.state.loggedUser,
       canteensHomeBacklink: { name: "CanteensHome" },
     }
   },

@@ -5,7 +5,6 @@ from api.views import (
     LoggedUserView,
     SubscribeBetaTester,
     SubscribeNewsletter,
-    SendCanteenEmailView,
     PurchaseListCreateView,
     PurchaseRetrieveUpdateDestroyView,
     CanteenPurchasesSummaryView,
@@ -20,6 +19,7 @@ from api.views import TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
 from api.views import UserCanteenPreviews, CanteenLocationsView
 from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView
+from api.views import MessageCreateView
 
 
 urlpatterns = {
@@ -74,7 +74,6 @@ urlpatterns = {
         AddManagerView.as_view(),
         name="add_manager",
     ),
-    path("contactCanteen/", SendCanteenEmailView.as_view(), name="contact_canteen"),
     path(
         "canteenNotFoundMessage/",
         SendCanteenNotFoundEmail.as_view(),
@@ -126,6 +125,7 @@ urlpatterns = {
     path("purchaseOptions/", PurchaseOptionsView.as_view(), name="purchase_options"),
     path("canteenLocations/", CanteenLocationsView.as_view(), name="canteen_locations"),
     path("canteen/<int:canteen_pk>/reservationExpe/", ReservationExpeView.as_view(), name="canteen_reservation_expe"),
+    path("message/", MessageCreateView.as_view(), name="message_create"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)
