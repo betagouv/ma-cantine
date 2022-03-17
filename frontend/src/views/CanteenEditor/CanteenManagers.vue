@@ -3,7 +3,7 @@
     <h1 class="font-weight-black text-h4 my-4">
       Gestionnaires
     </h1>
-    <p class="body-2">
+    <p class="body-1">
       Tous les gestionnaires peuvent modifier et supprimer une cantine, ainsi qu'ajouter et enlever autres
       gestionnaires.
     </p>
