@@ -1,7 +1,7 @@
 <template>
   <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
-    <div v-if="!canPublish">
+    <div v-if="isCentralCuisine">
       <p>
         « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
         <b>uniquement les lieux de restauration recevant des convives.</b>
@@ -29,6 +29,23 @@
           Retirer la publication
         </v-btn>
       </v-sheet>
+    </div>
+    <div v-else-if="isDraft && !hasDiagnostics">
+      <p>
+        Vous n'avez pas encore rempli des diagnostics pour « {{ originalCanteen.name }} ». Les diagnostics sont un
+        prérequis pour la publication
+      </p>
+      <v-btn
+        x-large
+        color="primary"
+        class="mt-4"
+        :to="{
+          name: 'NewDiagnosticForCanteen',
+          params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
+        }"
+      >
+        Ajouter un diagnostic
+      </v-btn>
     </div>
     <div v-else>
       <v-alert color="amber darken-3" class="mb-1 body-2" v-if="!currentDiagnosticComplete" outlined>
@@ -180,8 +197,14 @@ export default {
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
-    canPublish() {
-      return this.originalCanteen.productionType !== "central"
+    isCentralCuisine() {
+      return this.originalCanteen.productionType === "central"
+    },
+    hasDiagnostics() {
+      return this.originalCanteen.diagnostics && this.originalCanteen.diagnostics.length > 0
+    },
+    isDraft() {
+      return this.canteen.publicationStatus === "draft"
     },
   },
 }
