@@ -229,7 +229,7 @@ export default {
         {
           name: "Mode de production",
           description:
-            "Le lieu de production des repas. Options acceptées : <code>site</code> (cuisine-site) et <code>central</code> (cuisine centrale).",
+            "Le mode de production de votre cantine. Les options :<br />- <code>central</code> si vous êtes une cuisine centrale sans lieu de consommation<br/>- <code>central_serving</code> si vous êtes une cuisine centrale qui accueille aussi des convives sur place,<br/>- <code>site</code> si vous êtes une cantine qui produit les repas sur place, et<br/>- <code>site_cooked_elsewhere</code> si vous êtes une cantine qui sert des repas preparés par une cuisine centrale,<br/>",
           type: "Texte (choix unique)",
           example: "central",
         },
