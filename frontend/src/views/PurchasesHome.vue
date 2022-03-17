@@ -428,7 +428,7 @@ export default {
         characteristics,
         category: this.getChoiceValueFromText(Constants.Categories, this.$route.query.categorie),
       }
-      const filterChanges = this.filters ? getObjectDiff(this.filters, filters) : filters
+      const filterChanges = this.appliedFilters ? getObjectDiff(this.appliedFilters, filters) : filters
       if (Object.keys(filterChanges).length > 0) this.$set(this, "appliedFilters", filterChanges)
     },
     clearSearch() {
