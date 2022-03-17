@@ -178,6 +178,17 @@ export const diagnosticsMap = (diagnostics) => {
   }
 }
 
+export const latestCreatedDiagnostic = (canteen) => {
+  const minYear = 2016
+  const maxYear = lastYear()
+  let diagnostic = undefined
+  for (let year = maxYear; year >= minYear; year--) {
+    diagnostic = canteen.diagnostics.find((d) => d.year === year)
+    if (diagnostic) break
+  }
+  return diagnostic
+}
+
 export const getPercentage = (partialValue, totalValue) => {
   if (strictIsNaN(partialValue) || strictIsNaN(totalValue) || totalValue === 0) {
     return null

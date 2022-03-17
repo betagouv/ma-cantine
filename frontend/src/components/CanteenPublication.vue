@@ -108,7 +108,7 @@
 
 <script>
 import labels from "@/data/quality-labels.json"
-import { lastYear, badges, getPercentage, isDiagnosticComplete } from "@/utils"
+import { lastYear, badges, getPercentage, isDiagnosticComplete, latestCreatedDiagnostic } from "@/utils"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import ImageGallery from "@/components/ImageGallery"
 
@@ -119,13 +119,20 @@ export default {
   data() {
     return {
       labels,
-      publicationYear: lastYear(),
     }
   },
   components: { MultiYearSummaryStatistics, ImageGallery },
   computed: {
     diagnostic() {
-      return this.canteen.diagnostics.find((d) => d.year === this.publicationYear) || {}
+      if (this.canteen) return latestCreatedDiagnostic(this.canteen)
+      return undefined
+    },
+    publicationYear() {
+      if (this.canteen) {
+        const diagnostic = latestCreatedDiagnostic(this.canteen)
+        return diagnostic?.year
+      }
+      return undefined
     },
     bioPercent() {
       return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
