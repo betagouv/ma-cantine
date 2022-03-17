@@ -11,9 +11,10 @@
       <CanteenIndicators :canteen="canteen" :singleLine="true" />
     </v-card-subtitle>
     <v-spacer></v-spacer>
-    <v-divider class="pb-2"></v-divider>
-    <div class="grey--text text--darken-2" :style="$vuetify.breakpoint.smAndDown ? '' : 'height: 73px;'">
+    <v-divider class="py-1"></v-divider>
+    <div class="grey--text text--darken-2" :style="$vuetify.breakpoint.smAndDown ? '' : 'height: 95px;'">
       <v-card-text class="py-1 fill-height d-flex flex-column" v-if="diagnostic">
+        <span>En {{ year }} :</span>
         <v-row class="ma-0" v-if="hasPercentages">
           <p class="ma-0 mr-3" v-if="bioPercent">
             <span class="font-weight-black mr-1">{{ bioPercent }} %</span>
@@ -40,7 +41,7 @@
       </v-card-text>
       <div v-else class="d-flex flex-column fill-height">
         <v-spacer></v-spacer>
-        <v-card-text class="py-1">Pas de données renseignées pour {{ publicationYear }}</v-card-text>
+        <v-card-text class="py-1">Pas de données renseignées</v-card-text>
         <v-spacer></v-spacer>
       </div>
     </div>
@@ -49,7 +50,7 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
-import { lastYear, getPercentage, isDiagnosticComplete, badges } from "@/utils"
+import { getPercentage, isDiagnosticComplete, badges, latestCreatedDiagnostic } from "@/utils"
 
 export default {
   name: "PublishedCanteenCard",
@@ -63,14 +64,13 @@ export default {
     CanteenIndicators,
   },
   data() {
+    const diagnostic = latestCreatedDiagnostic(this.canteen)
     return {
-      publicationYear: lastYear(),
+      diagnostic,
+      year: diagnostic?.year,
     }
   },
   computed: {
-    diagnostic() {
-      return this.canteen.diagnostics.find((d) => d.year === this.publicationYear)
-    },
     canteenBadges() {
       return badges(this.canteen, this.diagnostic, this.$store.state.sectors)
     },
