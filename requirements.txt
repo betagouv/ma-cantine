@@ -61,7 +61,7 @@ pylint-django==2.5.2
 pylint-plugin-utils==0.7
 pyparsing==3.0.7
 PyPDF2==1.26.0
-pytest==7.1.0
+pytest==7.1.1
 pytest-django==4.5.2
 python-bidi==0.4.2
 python-dateutil==2.8.2
@@ -73,7 +73,7 @@ reportlab==3.6.6
 requests==2.27.1
 requests-mock==1.9.3
 s3transfer==0.5.2
-sentry-sdk==1.5.7
+sentry-sdk==1.5.8
 sib-api-v3-sdk==7.4.0
 six==1.16.0
 sqlparse==0.4.2
