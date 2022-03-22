@@ -41,7 +41,7 @@ html5lib==1.1
 idna==3.3
 iniconfig==1.1.1
 isort==5.10.1
-jmespath==0.10.0
+jmespath==1.0.0
 kombu==5.2.4
 lazy-object-proxy==1.7.1
 mccabe==0.6.1
