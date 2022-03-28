@@ -31,6 +31,44 @@
             :rules="[validators.length(14), validators.luhn]"
           ></v-text-field>
 
+          <v-card outlined class="mt-2" v-if="duplicateSiretCanteen">
+            <v-card-text class="red--text">
+              <span v-if="duplicateSiretCanteen.id">
+                Vous gérez déjà une cantine, « {{ duplicateSiretCanteen.name }} », avec ce SIRET et vous ne pouvez pas
+                ajouter une autre cantine avec le même SIRET.
+              </span>
+              <span v-else>
+                Une autre cantine, « {{ duplicateSiretCanteen.name }} », avec ce SIRET existe déjà dans notre système et
+                vous ne pouvez pas ajouter une autre cantine avec le même SIRET.
+                <br />
+                <span class="grey--text">
+                  Vouz pourriez contacter le gestionnaire de cette cantine pour demander à lui de vous ajouter dans
+                  l'équipe de gestion.
+                </span>
+              </span>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                color="primary"
+                text
+                :to="{
+                  name: 'CanteenModification',
+                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(duplicateSiretCanteen) },
+                }"
+                v-if="duplicateSiretCanteen.id"
+              >
+                Aller à la cantine
+              </v-btn>
+              <v-btn color="primary" text @click="testfn" v-else>
+                Envoyez le demande
+              </v-btn>
+              <!-- TODO: make this open a contact dialog with some stuff prefilled -->
+              <v-btn text @click="testfn">
+                Contactez-nous
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+
           <p class="body-2 mt-4 mb-2">Ville</p>
           <v-autocomplete
             hide-details="auto"
@@ -251,6 +289,7 @@ export default {
         { text: "Public", value: "public" },
         { text: "Privé", value: "private" },
       ],
+      duplicateSiretCanteen: null,
     }
   },
   computed: {
@@ -347,7 +386,14 @@ export default {
           }
         })
         .catch((e) => {
-          this.$store.dispatch("notifyServerError", e)
+          if (e.jsonPromise) {
+            e.jsonPromise.then((json) => {
+              this.duplicateSiretCanteen = json
+            })
+            this.$store.dispatch("notifyRequiredFieldsError")
+          } else {
+            this.$store.dispatch("notifyServerError", e)
+          }
         })
     },
     onLogoUploadClick() {
@@ -388,6 +434,9 @@ export default {
         .catch((error) => {
           console.log(error)
         })
+    },
+    testfn() {
+      console.log("test")
     },
   },
   watch: {

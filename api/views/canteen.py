@@ -175,6 +175,12 @@ class UserCanteensView(ListCreateAPIView):
         canteen = serializer.save()
         canteen.managers.add(self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        error_response = check_siret_response(request)
+        if error_response:
+            return error_response
+        return super().create(request, *args, **kwargs)
+
 
 class UserCanteenPreviews(ListAPIView):
     model = Canteen
@@ -196,6 +202,24 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        error_response = check_siret_response(request)
+        if error_response:
+            return error_response
+        return super().partial_update(request, *args, **kwargs)
+
+
+def check_siret_response(request):
+    canteen_siret = request.data.get("siret")
+    if canteen_siret:
+        canteens = Canteen.objects.filter(siret=canteen_siret)
+        if canteens.exists():
+            canteen = canteens.first()
+            body = {"name": canteen.name}
+            if request.user in canteen.managers.all():
+                body["id"] = canteen.id
+            return JsonResponse(body, status=400)
 
 
 class PublishCanteenView(APIView):

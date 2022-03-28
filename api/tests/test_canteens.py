@@ -192,6 +192,82 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(body["centralProducerSiret"], ["Le numéro SIRET n'est pas valide."])
 
     @authenticate
+    def test_create_canteen_duplicate_siret_managed(self):
+        """
+        If attempt to create a canteen with the same SIRET as one that I manage already, give
+        me 400 with canteen name and id
+        """
+        siret = "26566234910966"
+        canteen = CanteenFactory.create(siret=siret)
+        canteen.managers.add(authenticate.user)
+
+        payload = {"name": "New canteen", "siret": siret}
+        response = self.client.post(reverse("user_canteens"), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(body["name"], canteen.name)
+        self.assertEqual(body["id"], canteen.id)
+        self.assertEqual(Canteen.objects.count(), 1)
+
+    @authenticate
+    def test_create_canteen_duplicate_siret_unmanaged(self):
+        """
+        If attempt to create a canteen with the same SIRET as one that I don't manage, give
+        me 400 with canteen name
+        """
+        siret = "26566234910966"
+        canteen = CanteenFactory.create(siret=siret)
+
+        payload = {"name": "New canteen", "siret": siret}
+        response = self.client.post(reverse("user_canteens"), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(body["name"], canteen.name)
+        self.assertNotIn("id", body)
+        self.assertEqual(Canteen.objects.count(), 1)
+
+    @authenticate
+    def test_update_canteen_duplicate_siret_managed(self):
+        """
+        If attempt to update a canteen with the same SIRET as one that I manage already, give
+        me 400 with canteen name and id
+        """
+        siret = "26566234910966"
+        canteen = CanteenFactory.create(siret=siret)
+        canteen.managers.add(authenticate.user)
+        canteen_to_test = CanteenFactory.create()
+        canteen_to_test.managers.add(authenticate.user)
+
+        payload = {"siret": siret}
+        response = self.client.patch(
+            reverse("single_canteen", kwargs={"pk": canteen_to_test.id}), payload, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(body["name"], canteen.name)
+        self.assertEqual(body["id"], canteen.id)
+
+    @authenticate
+    def test_update_canteen_duplicate_siret_unmanaged(self):
+        """
+        If attempt to update a canteen with the same SIRET as one that I don't manage, give
+        me 400 with canteen name
+        """
+        siret = "26566234910966"
+        canteen = CanteenFactory.create(siret=siret)
+        canteen_to_test = CanteenFactory.create()
+        canteen_to_test.managers.add(authenticate.user)
+
+        payload = {"siret": siret}
+        response = self.client.patch(
+            reverse("single_canteen", kwargs={"pk": canteen_to_test.id}), payload, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(body["name"], canteen.name)
+        self.assertNotIn("id", body)
+
+    @authenticate
     def test_user_canteen_teledeclaration(self):
         """
         The teledeclaration information should only be visible to
