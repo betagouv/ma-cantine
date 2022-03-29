@@ -165,9 +165,12 @@ class Canteen(SoftDeletionModel):
         super(Canteen, self).save(force_insert, force_update, using, update_fields)
 
     @property
+    def url_slug(self):
+        return f"{self.id}--{quote(self.name)}"
+
+    @property
     def url_path(self):
-        slug = f"{quote(self.name)}--{self.id}"
-        return f"/nos-cantines/{slug}"
+        return f"/nos-cantines/{self.url_slug}"
 
     def __str__(self):
         return f'Cantine "{self.name}"'
