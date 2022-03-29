@@ -651,13 +651,15 @@ export default {
       )
     },
     setSectors(enabledSectorIds) {
-      this.sectors = this.$store.state.sectors
-        .map((x) => ({
-          text: x.name,
-          value: x.id,
-          disabled: enabledSectorIds.indexOf(x.id) === -1,
-        }))
-        .sort((a, b) => (a.text > b.text ? 1 : -1))
+      this.sectors = this.$store.state.sectors.map((x) => {
+        return x.header
+          ? { header: x.header }
+          : {
+              text: x.name,
+              value: x.id,
+              disabled: enabledSectorIds.indexOf(x.id) === -1,
+            }
+      })
     },
     setManagementTypes(enabledManagementTypes) {
       this.managementTypes = Constants.ManagementTypes.map((x) =>

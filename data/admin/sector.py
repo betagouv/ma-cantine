@@ -14,7 +14,7 @@ class SectorForm(forms.ModelForm):
 class SectorAdmin(admin.ModelAdmin):
 
     form = SectorForm
-    fields = ("name",)
+    fields = ("name", "category")
     list_display = (
         "name",
         "creation_date",
