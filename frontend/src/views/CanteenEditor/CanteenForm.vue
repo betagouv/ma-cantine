@@ -55,6 +55,8 @@
                   name: 'CanteenModification',
                   params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(duplicateSiretCanteen) },
                 }"
+                target="_blank"
+                rel="noopener"
                 v-if="duplicateSiretCanteen.id"
               >
                 Aller à la cantine
@@ -532,7 +534,6 @@ export default {
     },
   },
   beforeRouteLeave(to, from, next) {
-    // TODO: how to get this to be called when switching canteens from SIRET duplication warning link
     if (!this.hasChanged || this.bypassLeaveWarning) {
       next()
       return
