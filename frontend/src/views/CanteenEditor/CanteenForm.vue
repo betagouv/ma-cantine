@@ -62,10 +62,49 @@
               <v-btn color="primary" text @click="testfn" v-else>
                 Envoyez le demande
               </v-btn>
-              <!-- TODO: make this open a contact dialog with some stuff prefilled -->
-              <v-btn text @click="testfn">
-                Contactez-nous
-              </v-btn>
+              <v-dialog v-model="siretDialog" width="500">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn text v-bind="attrs" v-on="on">
+                    Contactez-nous
+                  </v-btn>
+                </template>
+
+                <v-card>
+                  <v-card-title class="text-h5 grey lighten-2">
+                    Contactez-nous
+                  </v-card-title>
+                  <v-form v-model="siretFormIsValid" ref="siretHelp" @submit.prevent class="pa-1 pa-md-4">
+                    <v-text-field
+                      v-model="siretHelpFromEmail"
+                      label="Votre email"
+                      :rules="[validators.email]"
+                      validate-on-blur
+                      outlined
+                      class="my-2"
+                    ></v-text-field>
+                    <v-textarea
+                      v-model="siretHelpMessage"
+                      label="Message"
+                      outlined
+                      :rules="[validators.required]"
+                      class="mt-2"
+                    ></v-textarea>
+                  </v-form>
+
+                  <v-divider></v-divider>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn x-large outlined color="primary" @click="siretDialog = false" class="mr-2">
+                      Annuler
+                    </v-btn>
+                    <v-btn x-large color="primary" @click="sendSiretHelp">
+                      <v-icon class="mr-2">mdi-send</v-icon>
+                      Envoyer
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
             </v-card-actions>
           </v-card>
 
@@ -253,6 +292,7 @@ export default {
     },
   },
   data() {
+    const user = this.$store.state.loggedUser
     return {
       canteen: { images: [] },
       formIsValid: true,
@@ -289,7 +329,12 @@ export default {
         { text: "Public", value: "public" },
         { text: "Privé", value: "private" },
       ],
+      // siret help
+      siretFormIsValid: true,
       duplicateSiretCanteen: null,
+      siretDialog: false,
+      siretHelpFromEmail: user.email,
+      siretHelpMessage: "",
     }
   },
   computed: {
@@ -389,6 +434,7 @@ export default {
           if (e.jsonPromise) {
             e.jsonPromise.then((json) => {
               this.duplicateSiretCanteen = json
+              this.siretHelpMessage = `Je veux ajouter une deuxième cantine avec le même SIRET : ${payload.siret}. (Ajoutez plus de détail)`
             })
             this.$store.dispatch("notifyRequiredFieldsError")
           } else {
@@ -435,8 +481,39 @@ export default {
           console.log(error)
         })
     },
-    testfn() {
-      console.log("test")
+    sendSiretHelp() {
+      this.$refs.siretHelp.validate()
+      if (!this.siretFormIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
+
+      let meta = this.meta || {}
+      meta.userId = this.$store.state.loggedUser?.id
+      meta.userAgent = navigator.userAgent
+
+      const payload = {
+        from: this.siretHelpFromEmail,
+        // add in user name?
+        message: this.siretHelpMessage,
+        // TODO: if staying with trello, consider putting misc inquiry types in the title directly
+        inquiryType: "cantine SIRET",
+        meta,
+      }
+
+      this.$store
+        .dispatch("sendInquiryEmail", payload)
+        .then(() => {
+          this.siretHelpFromMessage = ""
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: `Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.`,
+          })
+          this.siretDialog = false
+
+          window.scrollTo(0, 0)
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
   watch: {
@@ -455,6 +532,7 @@ export default {
     },
   },
   beforeRouteLeave(to, from, next) {
+    // TODO: how to get this to be called when switching canteens from SIRET duplication warning link
     if (!this.hasChanged || this.bypassLeaveWarning) {
       next()
       return
