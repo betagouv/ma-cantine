@@ -489,6 +489,7 @@ class CanteenStatisticsView(APIView):
     def get(self, request):
         region = request.query_params.get("region")
         department = request.query_params.get("department")
+        sectors = request.query_params.getlist("sectors")
         year = request.query_params.get("year")
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
@@ -498,6 +499,8 @@ class CanteenStatisticsView(APIView):
             canteens = canteens.filter(region=region)
         elif department:
             canteens = canteens.filter(department=department)
+        if len(sectors):
+            canteens = canteens.filter(sectors__in=sectors)
         data["canteen_count"] = canteens.count()
         data["published_canteen_count"] = canteens.filter(
             publication_status=Canteen.PublicationStatus.PUBLISHED
@@ -508,6 +511,8 @@ class CanteenStatisticsView(APIView):
             diagnostics = diagnostics.filter(canteen__region=region)
         elif department:
             diagnostics = diagnostics.filter(canteen__department=department)
+        if len(sectors):
+            diagnostics = diagnostics.filter(canteen__sectors__in=sectors)
         appro_share_query = diagnostics.filter(value_total_ht__gt=0)
         appro_share_query = appro_share_query.annotate(
             bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField())

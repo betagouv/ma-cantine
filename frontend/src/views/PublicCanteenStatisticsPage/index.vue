@@ -42,6 +42,23 @@
                 :filter="locationFilter"
               ></v-autocomplete>
             </v-col>
+            <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
+              <label for="select-sector" class="text-body-2">
+                Secteur d'activité
+              </label>
+              <v-select
+                v-model="chosenSectors"
+                multiple
+                :items="sectorsList"
+                clearable
+                hide-details
+                id="select-sector"
+                placeholder="Tous les secteurs"
+                outlined
+                class="mt-1"
+                dense
+              ></v-select>
+            </v-col>
           </v-row>
           <v-row class="mt-8">
             <v-col cols="12" sm="6" md="4">
@@ -54,8 +71,12 @@
       </v-card-text>
     </v-card>
     <div v-if="locationText" class="py-8">
-      <h2 class="text-h5 font-weight-bold mb-8">Les statistiques pour {{ locationText }}</h2>
-      <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown }">
+      <h2 class="text-h5 font-weight-bold">Les statistiques pour {{ locationText }}</h2>
+      <p v-if="sectorsText" class="text-body-2 mt-4 grey--text text--darken-2">
+        <v-icon aria-hidden="false" role="img" aria-label="Secteurs">mdi-office-building</v-icon>
+        {{ sectorsText }}
+      </p>
+      <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'mt-8': true }">
         <v-col cols="12" md="6" class="pr-0">
           <div id="published-canteen-text" class="mb-5">
             <p class="mb-0">
@@ -205,6 +226,7 @@ export default {
       otherMeasures: keyMeasures.filter((measure) => measure.badgeId !== "appro"),
       chosenDepartment: null,
       chosenRegion: null,
+      chosenSectors: [],
       locationText: null,
       statistics: {},
       publishedChartOptions: {
@@ -251,6 +273,12 @@ export default {
     },
     sectors() {
       return this.$store.state.sectors
+    },
+    sectorsList() {
+      return this.sectors.map((x) => ({
+        text: x.name,
+        value: x.id,
+      }))
     },
     sectorLabels() {
       return this.sectors.map((sector) => sector.name)
@@ -318,6 +346,16 @@ export default {
       return this.chosenRegion
         ? jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName || this.chosenRegion
         : null
+    },
+    sectorsText() {
+      let sectorsText = ""
+      if (this.$route.query.sectors) {
+        const sectors = this.$route.query.sectors.split(",").map((sectorId) => {
+          return this.sectors.find((x) => x.id === parseInt(sectorId, 10)).name
+        })
+        sectorsText += sectors.join(", ")
+      }
+      return sectorsText
     },
   },
   methods: {
@@ -397,6 +435,9 @@ export default {
       } else {
         this.statsLevel = "site"
       }
+      if (this.chosenSectors.length) {
+        query += `&sectors=${this.chosenSectors.join("&sectors=")}`
+      }
       let newLocationText = this.createLocationText()
       this.loadStatistics(newLocationText, query)
       this.updateRoute()
@@ -409,6 +450,9 @@ export default {
       if (this.chosenRegion) {
         query.region = this.chosenRegion
       }
+      if (this.chosenSectors.length) {
+        query.sectors = this.chosenSectors.join(",")
+      }
       // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
       this.$router
         .push({ query })
@@ -418,6 +462,7 @@ export default {
     populateInitialParameters() {
       this.chosenDepartment = this.$route.query.department
       this.chosenRegion = this.$route.query.region
+      this.chosenSectors = this.$route.query.sectors?.split(",").map((s) => parseInt(s, 10)) || []
     },
     updateDocumentTitle() {
       let title = "Les statistiques dans ma collectivité - ma-cantine.beta.gouv.fr"
