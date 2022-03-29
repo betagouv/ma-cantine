@@ -128,7 +128,7 @@ class TestEmail(APITestCase):
         self.assertIn("Please add me to the team", email.body)
         self.assertIn("76494221950672", email.body)
         self.assertIn("Hugo", email.body)
-        self.assertIn("https://mysite.com/team/1/", email.body)
+        self.assertIn(f"https://mysite.com/team/{canteen.id}/", email.body)
         self.assertEqual(len(email.reply_to), 1)
         self.assertEqual(email.reply_to[0], "test@example.com")
         self.assertEqual(email.from_email, "from@example.com")
