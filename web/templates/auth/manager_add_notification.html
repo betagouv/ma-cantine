@@ -1,0 +1,32 @@
+{% extends 'email_base.html' %}
+
+{% block content %}
+    <p>
+        Vous faites maintenant partie de l'équipe de gestion de « {{ canteen }} ».
+    </p>
+    <p>
+        Vous pouvez lire les données de cette cantine, ainsi que créer des
+        diagnostics et suivre les achats pour elle.
+    </p>
+
+    <div class="cta">
+        <a href="{{ canteen_url }}">
+            Accèder à la cantine
+        </a>
+    </div>
+
+    <p>
+        En cas de difficultés, vous pouvez copier ce lien directement dans votre
+        navigateur :
+    </p>
+
+    <p>{{ canteen_url }}</p>
+
+    <p>
+      Si vous avez des questions pour les autres gestionnaires de cette cantine,
+      vous pouvez trouver leur adresse mails ici :
+      <a href="{{ canteen_url }}/gestionnaires">
+        {{ canteen_url }}/gestionnaires
+      </a>.
+    </p>
+{% endblock %}

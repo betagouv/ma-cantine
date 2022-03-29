@@ -331,6 +331,7 @@ class AddManagerView(APIView):
         try:
             user = get_user_model().objects.get(email=email)
             canteen.managers.add(user)
+            AddManagerView._send_add_email(email, canteen)
         except get_user_model().DoesNotExist:
             with transaction.atomic():
                 pm = ManagerInvitation(canteen_id=canteen.id, email=email)
@@ -359,6 +360,33 @@ class AddManagerView(APIView):
             return
         except Exception as e:
             logger.error(f"The manager invitation email could not be sent to {manager_invitation.email}")
+            logger.exception(e)
+            raise Exception("Error occurred : the mail could not be sent.") from e
+
+    @staticmethod
+    def _send_add_email(email, canteen):
+        try:
+            protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
+            domain = settings.HOSTNAME
+            canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
+            context = {
+                "canteen": canteen.name,
+                "canteen_url": f"{protocol}://{domain}{canteen_path}",
+            }
+            send_mail(
+                subject=f"Vous pouvez gérer la cantine « {canteen.name} »",
+                template="auth/manager_add_notification",
+                context=context,
+                to=[email],
+            )
+        except ConnectionRefusedError as e:
+            logger.error(
+                f"The manager add notification email could not be sent to {email} : Connection Refused. The manager has been added anyway."
+            )
+            logger.exception(e)
+            return
+        except Exception as e:
+            logger.error(f"The manager add notification email could not be sent to {email}")
             logger.exception(e)
             raise Exception("Error occurred : the mail could not be sent.") from e
 
