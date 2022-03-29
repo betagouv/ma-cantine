@@ -62,19 +62,6 @@ export default new Vuex.Store({
       state.loggedUser = loggedUser
     },
     SET_SECTORS(state, sectors) {
-      const categories = sectors.map((s) => s.category)
-      // unique filter : https://stackoverflow.com/a/14438954/3845770
-      const uniqueCategories = categories.filter((c, idx, self) => c && self.indexOf(c) === idx)
-      const categoryDisplay = {
-        education: "Scolaire",
-        health: "Medical et médico-social",
-      }
-      uniqueCategories.forEach((c) => sectors.push({ header: categoryDisplay[c], category: c }))
-      let sortFn = (key) => {
-        return (a, b) => ((a[key] || "") > (b[key] || "") ? 1 : -1)
-      }
-      sectors.sort(sortFn("name")) // added benefit of getting the headers to the top of the lists
-      sectors.sort(sortFn("category")) // added benefit of moving sectors without parent to top
       state.sectors = sectors
     },
     SET_USER_CANTEEN_PREVIEWS(state, userCanteenPreviews) {

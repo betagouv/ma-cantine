@@ -358,7 +358,7 @@
 import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
-import { getObjectDiff, normaliseText } from "@/utils"
+import { getObjectDiff, normaliseText, sectorsSelectList } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 
@@ -651,7 +651,7 @@ export default {
       )
     },
     setSectors(enabledSectorIds) {
-      this.sectors = this.$store.state.sectors.map((x) => {
+      this.sectors = sectorsSelectList(this.$store.state.sectors).map((x) => {
         return x.header
           ? { header: x.header }
           : {
