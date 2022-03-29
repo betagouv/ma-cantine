@@ -102,11 +102,19 @@ export default {
       meta.userId = this.$store.state.loggedUser?.id
       meta.userAgent = navigator.userAgent
 
+      // this text is visible to the team when the inquiry is sent
+      const inquiryTypeDisplay = {
+        functionalityQuestion: "fonctionnalité",
+        bug: "bug",
+        egalim: "loi",
+        other: "autre",
+      }
+
       const payload = {
         from: this.fromEmail,
         name: this.name,
         message: this.message,
-        inquiryType: this.inquiryType,
+        inquiryType: inquiryTypeDisplay[this.inquiryType],
         meta,
       }
 

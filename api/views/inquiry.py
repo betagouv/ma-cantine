@@ -12,27 +12,17 @@ logger = logging.getLogger(__name__)
 
 
 class InquiryView(APIView):
-    inquiry_types = {
-        "functionalityQuestion": "fonctionnalité",
-        "egalim": "loi",
-        "bug": "bug",
-        "other": "autre",
-    }
-
     def post(self, request):
         try:
-            inquiry_type = request.data.get("inquiry_type")
-            if inquiry_type not in self.inquiry_types:
-                inquiry_type = "other"
-
             email = request.data.get("from")
             name = request.data.get("name")
             message = request.data.get("message")
+            inquiry_type = request.data.get("inquiry_type", "autre")
             meta = request.data.get("meta") or {}
 
             InquiryView._raise_for_mandatory_fields(email, message)
 
-            title = f"{email} - {self.inquiry_types[inquiry_type]}"
+            title = f"{email} - {inquiry_type}"
 
             env = getattr(settings, "ENVIRONMENT", "")
             if env == "demo" or env == "staging":
