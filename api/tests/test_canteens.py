@@ -207,6 +207,7 @@ class TestCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
         self.assertEqual(body["id"], canteen.id)
+        self.assertTrue(body["isManagedByUser"])
         self.assertEqual(Canteen.objects.count(), 1)
 
     @authenticate
@@ -223,7 +224,8 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
-        self.assertNotIn("id", body)
+        self.assertEqual(body["id"], canteen.id)
+        self.assertNotIn("isManagedByUser", body)
         self.assertEqual(Canteen.objects.count(), 1)
 
     @authenticate
@@ -246,6 +248,7 @@ class TestCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
         self.assertEqual(body["id"], canteen.id)
+        self.assertTrue(body["isManagedByUser"])
 
     @authenticate
     def test_update_canteen_duplicate_siret_unmanaged(self):
@@ -265,7 +268,8 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
-        self.assertNotIn("id", body)
+        self.assertEqual(body["id"], canteen.id)
+        self.assertNotIn("isManagedByUser", body)
 
     @authenticate
     def test_user_canteen_teledeclaration(self):

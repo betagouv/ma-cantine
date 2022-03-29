@@ -33,7 +33,7 @@
 
           <v-card outlined class="mt-2" v-if="duplicateSiretCanteen">
             <v-card-text class="red--text">
-              <span v-if="duplicateSiretCanteen.id">
+              <span v-if="duplicateSiretCanteen.isManagedByUser">
                 Vous gérez déjà une cantine, « {{ duplicateSiretCanteen.name }} », avec ce SIRET et vous ne pouvez pas
                 ajouter une autre cantine avec le même SIRET.
               </span>
@@ -57,13 +57,56 @@
                 }"
                 target="_blank"
                 rel="noopener"
-                v-if="duplicateSiretCanteen.id"
+                v-if="duplicateSiretCanteen.isManagedByUser"
               >
                 Aller à la cantine
               </v-btn>
-              <v-btn color="primary" text @click="testfn" v-else>
-                Envoyez le demande
-              </v-btn>
+              <v-dialog v-model="mgmtDialog" width="500" v-else>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn color="primary" text v-bind="attrs" v-on="on">
+                    Contactez la cantine
+                  </v-btn>
+                </template>
+
+                <v-card class="text-left">
+                  <v-card-title class="text-h5 grey lighten-2">
+                    Contactez l'équipe de gestion de «&nbsp;{{ duplicateSiretCanteen.name }}&nbsp;»
+                  </v-card-title>
+                  <v-form v-model="mgmtRequestFormIsValid" ref="mgmtRequestForm" @submit.prevent class="pa-1 pa-md-4">
+                    <v-text-field
+                      v-model="fromName"
+                      label="Prénom et nom"
+                      :rules="[validators.required]"
+                      outlined
+                      class="my-2"
+                    ></v-text-field>
+                    <v-textarea
+                      v-model="message"
+                      label="Message"
+                      outlined
+                      :rules="[validators.required]"
+                      class="mt-2"
+                    ></v-textarea>
+                    <p class="caption grey--text text--darken-2">
+                      Votre adresse mail, {{ user.email }}, sera partagé avec l'équipe de gestion de cette cantine quand
+                      vous envoyez le demande pour qu'ils puissent ajouter votre compte à l'équipe.
+                    </p>
+                  </v-form>
+
+                  <v-divider></v-divider>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn x-large outlined color="primary" @click="mgmtDialog = false" class="mr-2">
+                      Annuler
+                    </v-btn>
+                    <v-btn x-large color="primary" @click="sendMgmtRequest">
+                      <v-icon class="mr-2">mdi-send</v-icon>
+                      Envoyer
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
               <v-dialog v-model="siretDialog" width="500">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn text v-bind="attrs" v-on="on">
@@ -71,13 +114,13 @@
                   </v-btn>
                 </template>
 
-                <v-card>
+                <v-card class="text-left">
                   <v-card-title class="text-h5 grey lighten-2">
                     Contactez-nous
                   </v-card-title>
                   <v-form v-model="siretFormIsValid" ref="siretHelp" @submit.prevent class="pa-1 pa-md-4">
                     <v-text-field
-                      v-model="siretHelpFromEmail"
+                      v-model="fromEmail"
                       label="Votre email"
                       :rules="[validators.email]"
                       validate-on-blur
@@ -85,7 +128,7 @@
                       class="my-2"
                     ></v-text-field>
                     <v-textarea
-                      v-model="siretHelpMessage"
+                      v-model="message"
                       label="Message"
                       outlined
                       :rules="[validators.required]"
@@ -331,12 +374,16 @@ export default {
         { text: "Public", value: "public" },
         { text: "Privé", value: "private" },
       ],
-      // siret help
+      user,
+      // contact forms
+      fromEmail: user.email,
+      fromName: `${user.firstName} ${user.lastName}`,
+      message: "",
       siretFormIsValid: true,
       duplicateSiretCanteen: null,
       siretDialog: false,
-      siretHelpFromEmail: user.email,
-      siretHelpMessage: "",
+      mgmtRequestFormIsValid: true,
+      mgmtDialog: false,
     }
   },
   computed: {
@@ -403,6 +450,7 @@ export default {
 
       if (!this.formIsValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
+        window.scrollTo(0, 0)
         return
       }
 
@@ -442,6 +490,7 @@ export default {
           } else {
             this.$store.dispatch("notifyServerError", e)
           }
+          window.scrollTo(0, 0)
         })
     },
     onLogoUploadClick() {
@@ -495,10 +544,9 @@ export default {
       meta.userAgent = navigator.userAgent
 
       const payload = {
-        from: this.siretHelpFromEmail,
-        // add in user name?
+        from: this.fromEmail,
         message: this.siretHelpMessage,
-        // TODO: if staying with trello, consider putting misc inquiry types in the title directly
+        // TODO: put misc inquiry types in the title of trello card directly
         inquiryType: "cantine SIRET",
         meta,
       }
@@ -506,13 +554,43 @@ export default {
       this.$store
         .dispatch("sendInquiryEmail", payload)
         .then(() => {
-          this.siretHelpFromMessage = ""
+          this.message = ""
           this.$store.dispatch("notify", {
             status: "success",
             message: `Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.`,
           })
           this.siretDialog = false
 
+          window.scrollTo(0, 0)
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    sendMgmtRequest() {
+      this.$refs.mgmtRequestForm.validate()
+      if (!this.mgmtRequestFormIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
+
+      const payload = {
+        email: this.user.email,
+        name: this.fromName,
+        message: this.message,
+        url: this.$router.resolve({
+          name: "CanteenManagers",
+          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.duplicateSiretCanteen) },
+        }).href,
+      }
+
+      this.$store
+        .dispatch("sendCanteenTeamRequest", { canteenId: this.duplicateSiretCanteen.id, payload })
+        .then(() => {
+          this.mgmtDialog = false
+          this.message = ""
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: `Votre message a bien été envoyé.`,
+          })
           window.scrollTo(0, 0)
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))

@@ -370,6 +370,14 @@ export default new Vuex.Store({
       )
     },
 
+    sendCanteenTeamRequest(context, { canteenId, payload }) {
+      return fetch(`/api/v1/teamJoinRequest/${canteenId}/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      }).then(verifyResponse)
+    },
+
     removeManager(context, { canteenId, email }) {
       return fetch(`/api/v1/removeManager/`, {
         method: "POST",

@@ -216,9 +216,9 @@ def check_siret_response(request):
         canteens = Canteen.objects.filter(siret=canteen_siret)
         if canteens.exists():
             canteen = canteens.first()
-            body = {"name": canteen.name}
+            body = {"name": canteen.name, "id": canteen.id}
             if request.user in canteen.managers.all():
-                body["id"] = canteen.id
+                body["isManagedByUser"] = True
             return JsonResponse(body, status=400)
 
 
@@ -423,6 +423,51 @@ class SendCanteenNotFoundEmail(APIView):
                     email,
                 ],
                 template="canteen_not_found",
+                context=context,
+            )
+
+            return JsonResponse({}, status=status.HTTP_200_OK)
+        except ValidationError:
+            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error("Exception ocurred while sending email")
+            logger.exception(e)
+            return JsonResponse(
+                {"error": "An error has ocurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class TeamJoinRequestView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            email = request.data.get("email")
+            validate_email(email)
+            name = request.data.get("name")
+            message = request.data.get("message")
+            canteen_id = kwargs.get("pk")
+            canteen = Canteen.objects.get(pk=canteen_id)
+            url = f"{'https' if settings.SECURE else 'http'}://{settings.HOSTNAME}{request.data.get('url')}"
+
+            context = {
+                "email": email,
+                "name": name,
+                "message": message,
+                "url": url,
+                "canteen": canteen.name,
+                "siret": canteen.siret,
+            }
+
+            send_mail(
+                subject=f"{name} voudrait rejoindre l'équipe de gestion de la cantine {canteen.name}",
+                to=canteen.managers.values_list("email", flat=True),
+                cc=[settings.CONTACT_EMAIL],
+                reply_to=[
+                    email,
+                ],
+                template="canteen_join_request",
                 context=context,
             )
 
