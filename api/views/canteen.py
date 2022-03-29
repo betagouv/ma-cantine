@@ -457,12 +457,11 @@ def badges_for_queryset(diagnostic_year_queryset):
     diversification_badge_query = diversification_badge_query.exclude(
         vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW
     )
-    scolaire_sector = Sector.objects.filter(name="Scolaire")
-    if scolaire_sector.count():
-        scolaire_sector = scolaire_sector[0]
+    scolaire_sectors = Sector.objects.filter(category="education")
+    if scolaire_sectors.count():
         diversification_badge_query = diversification_badge_query.filter(
             Q(
-                canteen__sectors__in=[scolaire_sector],
+                canteen__sectors__in=scolaire_sectors,
                 vegetarian_weekly_recurrence__in=[
                     Diagnostic.MenuFrequency.MID,
                     Diagnostic.MenuFrequency.HIGH,

@@ -2,7 +2,7 @@ import { badges } from "@/utils"
 
 describe("PublishedCanteenCard.vue", () => {
   let sectors = [
-    { id: 1, name: "Scolaire" },
+    { id: 1, name: "Scolaire", category: "education" },
     { id: 2, name: "Admin" },
     { id: 3, name: "Autre" },
   ]

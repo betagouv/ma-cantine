@@ -223,14 +223,11 @@ export const badges = (canteen, diagnostic, sectors) => {
     applicable.plastic.earned = true
   }
 
-  // We need to rethink the way a school sector is defined. Temporarily
-  // using the name.
-  const schoolSector = sectors.find((x) => x.name === "Scolaire")
-  if (!schoolSector) console.error("No sector `Scolaire` is present in this configuration")
-
+  const educationSectors = sectors.filter((s) => s.category === "education" && !s.header).map((s) => s.id)
+  const inEducation = canteen.sectors.some((s) => educationSectors.indexOf(s) > -1)
   if (diagnostic.vegetarianWeeklyRecurrence === "DAILY") {
     applicable.diversification.earned = true
-  } else if (schoolSector && canteen.sectors.indexOf(schoolSector.id) > -1) {
+  } else if (inEducation) {
     if (diagnostic.vegetarianWeeklyRecurrence === "MID" || diagnostic.vegetarianWeeklyRecurrence === "HIGH") {
       applicable.diversification.earned = true
     }
