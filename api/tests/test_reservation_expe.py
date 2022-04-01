@@ -97,7 +97,8 @@ class TestReservationExpeApi(APITestCase):
 
         response = self.client.get(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["leader_email"], "test@example.com")
+        body = response.json()
+        self.assertEqual(body["leaderEmail"], "test@example.com")
 
     def test_cannot_get_reservation_expe_unauthenticated(self):
         """
@@ -218,7 +219,7 @@ class TestReservationExpeApi(APITestCase):
 
         response = self.client.put(
             reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}),
-            {"avg_weight_not_served_t2": -90},
+            {"avgWeightNotServedT2": -90},
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         reservation_expe.refresh_from_db()
