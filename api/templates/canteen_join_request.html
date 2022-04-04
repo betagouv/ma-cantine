@@ -1,7 +1,7 @@
 {% extends 'email_base.html' %}
 
 {% block content %}
-    <p>{{ name }} ({{ email }}) voudrait rejoindre l'équipe de gestion de la cantine que vous gérez, « {{ canteen }} », avec le SIRET {{ siret }}.</p>
+    <p>{{ name }} ({{ email }}) veut rejoindre l'équipe de gestion de la cantine « {{ canteen }} » (SIRET {{ siret }}).</p>
 
     <p>Voici son message :</p>
 
@@ -9,11 +9,11 @@
     <p>{{ message|linebreaks }}</p>
     <p>-------------------------------------</p>
 
-    <p>Si vous voulez rajouter {{ name }} à votre équipe, vous pourriez le faire en cliquant en-dessous et en rentrant l'adresse {{ email }} dans le champ sur la page :</p>
+    <p>Pour ajouter {{ name }} dans votre équipe, il suffit de renseigner son email ({{email}}) dans la page ci-dessous :</p>
 
     <div class="cta">
         <a href="{{ url }}">
-            Gérer l'équipe de gestion de la cantine « {{ canteen }} »
+            Gérer l'équipe de la cantine « {{ canteen }} »
         </a>
     </div>
 
