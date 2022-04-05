@@ -264,6 +264,7 @@
                             dense
                             v-model.number="expe[`${wasteItem.fieldName}${item.value}`]"
                             :id="`${wasteItem.htmlId}-${item.value}`"
+                            suffix="g"
                           ></v-text-field>
                         </div>
                         <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
