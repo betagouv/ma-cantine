@@ -53,7 +53,7 @@ Pillow==9.0.1
 pipdeptree==2.2.1
 platformdirs==2.5.1
 pluggy==1.0.0
-prompt-toolkit==3.0.28
+prompt-toolkit==3.0.29
 psycopg2==2.9.3
 py==1.11.0
 pylint==2.13.4
