@@ -507,10 +507,10 @@ export default {
       }
 
       const method = this.isNewExpe ? "createReservationExpe" : "updateReservationExpe"
-      const payload = treatOutboundPercentageValues(
-        this.isNewExpe ? this.expe : getObjectDiff(this.originalExpe, this.expe),
-        this.percentageFields
-      )
+      const sentExpe = this.isNewExpe
+        ? JSON.parse(JSON.stringify(this.expe))
+        : getObjectDiff(this.originalExpe, this.expe)
+      const payload = treatOutboundPercentageValues(sentExpe, this.percentageFields)
       const successMessage = this.isNewExpe
         ? "Votre inscription a bien été prise en compte"
         : "Vos données de l'expérimentation ont bien été sauvegardés"
