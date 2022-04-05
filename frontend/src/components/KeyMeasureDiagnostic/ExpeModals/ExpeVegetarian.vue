@@ -110,7 +110,7 @@
               ></v-text-field>
             </template>
 
-            <v-date-picker v-model="expe.experimentationStartDate" :max="today" locale="fr-FR"></v-date-picker>
+            <v-date-picker v-model="expe.experimentationStartDate" locale="fr-FR"></v-date-picker>
           </v-menu>
 
           <div class="mt-4 tabs-container">
