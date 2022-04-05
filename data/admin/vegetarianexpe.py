@@ -28,11 +28,11 @@ class VegetarianExpeParticipantFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() is None:
-            return queryset.filter(canteen__reservation_expe_participant=True)
+            return queryset.filter(canteen__vegetarian_expe_participant=True)
         elif self.value() in ("all"):
             return queryset
         elif self.value() in ("non-participants"):
-            return queryset.filter(canteen__reservation_expe_participant=False)
+            return queryset.filter(canteen__vegetarian_expe_participant=False)
 
 
 @admin.register(VegetarianExpe)
