@@ -105,7 +105,7 @@
                 dense
                 solo
                 style="max-width: 200px"
-                id="date"
+                id="launch-date"
                 class="mt-2 mb-4"
               ></v-text-field>
             </template>
