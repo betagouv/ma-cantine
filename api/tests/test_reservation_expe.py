@@ -143,7 +143,7 @@ class TestReservationExpeApi(APITestCase):
             canteen=canteen, leader_email="bad@example.com", satisfaction=1
         )
         payload = {"leader_email": "good@example.com", "satisfaction": 3}
-        response = self.client.put(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.patch(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         reservation_expe.refresh_from_db()
         self.assertEqual(reservation_expe.leader_email, "good@example.com")
@@ -156,7 +156,7 @@ class TestReservationExpeApi(APITestCase):
         canteen = CanteenFactory.create()
         reservation_expe = ReservationExpeFactory.create(canteen=canteen, leader_email="good@example.com")
         payload = {"leader_email": "bad@example.com"}
-        response = self.client.put(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.patch(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         reservation_expe.refresh_from_db()
         self.assertEqual(reservation_expe.leader_email, "good@example.com")
@@ -169,7 +169,7 @@ class TestReservationExpeApi(APITestCase):
         canteen = CanteenFactory.create()
         reservation_expe = ReservationExpeFactory.create(canteen=canteen, leader_email="good@example.com")
         payload = {"leader_email": "bad@example.com"}
-        response = self.client.put(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.patch(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         reservation_expe.refresh_from_db()
         self.assertEqual(reservation_expe.leader_email, "good@example.com")
@@ -182,7 +182,7 @@ class TestReservationExpeApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
         payload = {"leader_email": "bad@example.com"}
-        response = self.client.put(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.patch(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(ReservationExpe.objects.count(), 0)
 
@@ -195,7 +195,7 @@ class TestReservationExpeApi(APITestCase):
         canteen.managers.add(authenticate.user)
         reservation_expe = ReservationExpeFactory.create(canteen=canteen)
         payload = {"canteen": CanteenFactory.create().id}
-        response = self.client.put(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.patch(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         reservation_expe.refresh_from_db()
         self.assertEqual(reservation_expe.canteen, canteen)
@@ -209,7 +209,7 @@ class TestReservationExpeApi(APITestCase):
         canteen.managers.add(authenticate.user)
         reservation_expe = ReservationExpeFactory.create(canteen=canteen, satisfaction=3, avg_weight_not_served_t2=70)
 
-        response = self.client.put(
+        response = self.client.patch(
             reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}),
             {"satisfaction": 6},
         )
@@ -217,7 +217,7 @@ class TestReservationExpeApi(APITestCase):
         reservation_expe.refresh_from_db()
         self.assertEqual(reservation_expe.satisfaction, 3)
 
-        response = self.client.put(
+        response = self.client.patch(
             reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}),
             {"avgWeightNotServedT2": -90},
         )

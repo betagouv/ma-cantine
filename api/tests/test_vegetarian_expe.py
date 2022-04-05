@@ -141,7 +141,7 @@ class TestVegetarianExpeApi(APITestCase):
         canteen.managers.add(authenticate.user)
         vegetarian_expe = VegetarianExpeFactory.create(canteen=canteen, satisfaction_guests_t0=1)
         payload = {"satisfactionGuestsT0": 3}
-        response = self.client.put(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.patch(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         vegetarian_expe.refresh_from_db()
         self.assertEqual(vegetarian_expe.satisfaction_guests_t0, 3)
@@ -153,7 +153,7 @@ class TestVegetarianExpeApi(APITestCase):
         canteen = CanteenFactory.create()
         vegetarian_expe = VegetarianExpeFactory.create(canteen=canteen, satisfaction_guests_t0=1)
         payload = {"satisfactionGuestsT0": 2}
-        response = self.client.put(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.patch(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         vegetarian_expe.refresh_from_db()
         self.assertEqual(vegetarian_expe.satisfaction_guests_t0, 1)
@@ -166,7 +166,7 @@ class TestVegetarianExpeApi(APITestCase):
         canteen = CanteenFactory.create()
         vegetarian_expe = VegetarianExpeFactory.create(canteen=canteen, satisfaction_guests_t0=1)
         payload = {"satisfactionGuestsT0": 2}
-        response = self.client.put(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.patch(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         vegetarian_expe.refresh_from_db()
         self.assertEqual(vegetarian_expe.satisfaction_guests_t0, 1)
@@ -179,7 +179,7 @@ class TestVegetarianExpeApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
         payload = {"satisfactionGuestsT0": 2}
-        response = self.client.put(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.patch(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(VegetarianExpe.objects.count(), 0)
 
@@ -192,7 +192,7 @@ class TestVegetarianExpeApi(APITestCase):
         canteen.managers.add(authenticate.user)
         vegetarian_expe = VegetarianExpeFactory.create(canteen=canteen)
         payload = {"canteen": CanteenFactory.create().id}
-        response = self.client.put(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.patch(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         vegetarian_expe.refresh_from_db()
         self.assertEqual(vegetarian_expe.canteen, canteen)
@@ -208,7 +208,7 @@ class TestVegetarianExpeApi(APITestCase):
             canteen=canteen, satisfaction_guests_t0=3, waste_vegetarian_not_served_t0=70
         )
 
-        response = self.client.put(
+        response = self.client.patch(
             reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}),
             {"satisfactionGuestsT0": 6},
         )
@@ -216,7 +216,7 @@ class TestVegetarianExpeApi(APITestCase):
         vegetarian_expe.refresh_from_db()
         self.assertEqual(vegetarian_expe.satisfaction_guests_t0, 3)
 
-        response = self.client.put(
+        response = self.client.patch(
             reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}),
             {"wasteVegetarianNotServedT0": -90},
         )
