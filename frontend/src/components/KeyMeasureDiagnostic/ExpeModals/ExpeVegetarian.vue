@@ -137,7 +137,7 @@
                     <v-text-field
                       validate-on-blur
                       hide-details="auto"
-                      :rules="[validators.nonNegativeOrEmpty]"
+                      :rules="[validators.lteOrEmpty(100)]"
                       solo
                       dense
                       v-model.number="expe[`vegetarianMenuPercentage${item.value}`]"
@@ -223,7 +223,7 @@
                     <v-text-field
                       validate-on-blur
                       hide-details="auto"
-                      :rules="[validators.nonNegativeOrEmpty]"
+                      :rules="[validators.lteOrEmpty(100)]"
                       solo
                       dense
                       v-model.number="expe[`wasteEvolutionPercentage${item.value}`]"
@@ -304,7 +304,7 @@
                     <v-text-field
                       validate-on-blur
                       hide-details="auto"
-                      :rules="[validators.nonNegativeOrEmpty]"
+                      :rules="[validators.lteOrEmpty(100)]"
                       solo
                       dense
                       v-model.number="expe[`attendanceEvolutionPercentage${item.value}`]"
@@ -389,7 +389,7 @@
                     <v-text-field
                       validate-on-blur
                       hide-details="auto"
-                      :rules="[validators.nonNegativeOrEmpty]"
+                      :rules="[validators.lteOrEmpty(100)]"
                       solo
                       dense
                       v-model.number="expe[`costEvolutionPercentage${item.value}`]"
