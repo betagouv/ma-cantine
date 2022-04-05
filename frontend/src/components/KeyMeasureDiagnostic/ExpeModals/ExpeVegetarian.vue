@@ -484,8 +484,8 @@
                     </v-checkbox>
 
                     <v-divider class="mt-6"></v-divider>
-                    <!-- Recipees -->
-                    <v-checkbox hide-details="auto" class="my-4" v-model="expe[`hasUsedRecipeeDocuments${item.value}`]">
+                    <!-- Recipes -->
+                    <v-checkbox hide-details="auto" class="my-4" v-model="expe[`hasUsedRecipeDocuments${item.value}`]">
                       <template v-slot:label>
                         <span class="body-2 grey--text text--darken-3 font-weight-medium">
                           Avez-vous utilisé le livret de recettes végétariennes publié par le CNRC ou par d’autres

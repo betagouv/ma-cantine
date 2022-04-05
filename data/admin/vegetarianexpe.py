@@ -77,7 +77,7 @@ class VegetarianExpeAdmin(admin.ModelAdmin):
                     "satisfaction_guests_reasons_t0",
                     "satisfaction_staff_t0",
                     "satisfaction_staff_reasons_t0",
-                    "has_used_recipee_documents_t0",
+                    "has_used_recipe_documents_t0",
                     "training_t0",
                 )
             },
@@ -110,7 +110,7 @@ class VegetarianExpeAdmin(admin.ModelAdmin):
                     "satisfaction_guests_reasons_t1",
                     "satisfaction_staff_t1",
                     "satisfaction_staff_reasons_t1",
-                    "has_used_recipee_documents_t1",
+                    "has_used_recipe_documents_t1",
                     "training_t1",
                 )
             },

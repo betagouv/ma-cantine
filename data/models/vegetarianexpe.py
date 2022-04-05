@@ -235,9 +235,9 @@ class VegetarianExpe(models.Model):
         verbose_name="Principales raisons évoquées par le personnel",
     )
 
-    # Recipee support
+    # Recipe support
 
-    has_used_recipee_documents_t0 = models.BooleanField(
+    has_used_recipe_documents_t0 = models.BooleanField(
         null=True, blank=True, verbose_name="A utilisé un livret de recettes végétariennes (CNRC ou autres organismes)"
     )
 
@@ -425,9 +425,9 @@ class VegetarianExpe(models.Model):
         verbose_name="Principales raisons évoquées par le personnel",
     )
 
-    # Recipee support
+    # Recipe support
 
-    has_used_recipee_documents_t1 = models.BooleanField(
+    has_used_recipe_documents_t1 = models.BooleanField(
         null=True, blank=True, verbose_name="A utilisé un livret de recettes végétariennes (CNRC ou autres organismes)"
     )
 
