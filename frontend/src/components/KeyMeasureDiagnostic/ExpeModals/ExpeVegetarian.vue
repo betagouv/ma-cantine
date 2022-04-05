@@ -18,15 +18,19 @@
           <a
             href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/diversification-des-sources-de-proteines-et-menus-vegetariens/guide-pour-la-mise-en-place-du-menu-vegetarien-en-milieu-scolaire"
             target="_blank"
+            rel="noopener"
           >
             livret de recettes végétariennes du CNRC
+            <v-icon small color="primary">mdi-open-in-new</v-icon>
           </a>
           et le
           <a
             href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/diversification-des-sources-de-proteines-et-menus-vegetariens/untitled"
             target="_blank"
+            rel="noopener"
           >
             le cadre pour la mise en oeuvre du plan pluriannuel de diversification des sources de protéines
+            <v-icon small color="primary">mdi-open-in-new</v-icon>
           </a>
         </p>
       </v-card-text>
