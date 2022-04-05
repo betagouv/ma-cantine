@@ -186,8 +186,8 @@
                               ),
                             ]"
                             :id="`${category.htmlId}-${item.value}`"
+                            suffix="/20"
                           ></v-text-field>
-                          <div class="my-auto ml-2">/20</div>
                         </div>
                         <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
                       </div>
