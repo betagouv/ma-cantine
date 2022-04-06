@@ -3,11 +3,13 @@
 {% block content %}
     <p>{{ name }} ({{ email }}) veut rejoindre l'équipe de gestion de la cantine « {{ canteen }} » (SIRET {{ siret }}).</p>
 
-    <p>Voici son message :</p>
+    {% if message %}
+        <p>Voici son message :</p>
 
-    <p>-------------------------------------</p>
-    <p>{{ message|linebreaks }}</p>
-    <p>-------------------------------------</p>
+        <p>-------------------------------------</p>
+        <p>{{ message|linebreaks }}</p>
+        <p>-------------------------------------</p>
+    {% endif %}
 
     <p>Pour ajouter {{ name }} dans votre équipe, il suffit de renseigner son email ({{email}}) dans la page ci-dessous :</p>
 
