@@ -112,8 +112,19 @@ export default {
       values.forEach((v) => {
         if (v) sum += Number(v)
       })
-      message = message || "Cette valeur doit être plus haute ou égale au somme"
+      message = message || "Cette valeur doit être égale ou supérieure à la somme"
       return input < sum ? message : true
+    }
+  },
+  lteSumValue(values, limit, message) {
+    return () => {
+      let sum = 0
+      values.forEach((v) => {
+        if (v && Number(v)) sum += Number(v)
+      })
+      let error = message || `La somme doit être égale ou inférieure à ${limit}`
+      error = `${error} (somme actuelle : ${sum})`
+      return sum <= limit ? true : error
     }
   },
   isPercentageOrEmpty(input) {

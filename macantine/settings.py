@@ -418,6 +418,7 @@ if DEBUG:
 
 # Feature flags
 ENABLE_XP_RESERVATION = os.getenv("ENABLE_XP_RESERVATION") == "True"
+ENABLE_XP_VEGE = os.getenv("ENABLE_XP_VEGE") == "True"
 ENABLE_PARTNERS = os.getenv("ENABLE_PARTNERS") == "True"
 
 # Custom testing
