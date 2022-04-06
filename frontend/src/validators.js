@@ -120,10 +120,11 @@ export default {
     return () => {
       let sum = 0
       values.forEach((v) => {
-        if (v) sum += Number(v)
+        if (v && Number(v)) sum += Number(v)
       })
-      message = message || `La somme doit être égale ou inférieure à ${limit}`
-      return sum <= limit ? true : message
+      let error = message || `La somme doit être égale ou inférieure à ${limit}`
+      error = `${error} (somme actuelle : ${sum})`
+      return sum <= limit ? true : error
     }
   },
   isPercentageOrEmpty(input) {

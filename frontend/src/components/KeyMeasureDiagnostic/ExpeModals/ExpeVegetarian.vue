@@ -173,20 +173,16 @@
                         <div class="d-flex">
                           <v-text-field
                             validate-on-blur
+                            @blur="validateCompositionFields()"
                             hide-details="auto"
                             solo
                             dense
                             v-model.number="expe[`${category.fieldName}${item.value}`]"
-                            :rules="[
-                              validators.nonNegativeOrEmpty,
-                              validators.lteSumValue(
-                                self[`compositionValidationFields${item.value}`],
-                                20,
-                                compositionSumErrorMessage
-                              ),
-                            ]"
+                            :rules="compositionRules(category.fieldName, item.value)"
                             :id="`${category.htmlId}-${item.value}`"
                             suffix="/20"
+                            :hint="compositionHint(category.fieldName, item.value)"
+                            :persistent-hint="!!compositionHint(category.fieldName, item.value)"
                           ></v-text-field>
                         </div>
                         <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
@@ -720,6 +716,9 @@ export default {
       // https://forum.vuejs.org/t/dynamically-modelling-a-computed-property/73723/4
       return this
     },
+    lastCategoryName() {
+      return this.categories[this.categories.length - 1].fieldName
+    },
   },
   methods: {
     humanReadableDate(date) {
@@ -752,13 +751,37 @@ export default {
     },
     getCompositionValidationFields(time) {
       return [
+        this.expe[`eggsComposition${time}`],
         this.expe[`cheeseComposition${time}`],
         this.expe[`soyCompositionHomeMade${time}`],
         this.expe[`soyCompositionReady${time}`],
-        this.expe[`soylessComposition${time}`],
+        this.expe[`soylessCompositionHomeMade${time}`],
         this.expe[`soylessCompositionReady${time}`],
         this.expe[`cerealLegumeComposition${time}`],
       ]
+    },
+    validateCompositionFields() {
+      // this hack only works because the other fields are all optional
+      this.$refs.form.validate()
+    },
+    compositionRules(name, time) {
+      let rules = [validators.nonNegativeOrEmpty]
+      if (name === this.lastCategoryName) {
+        rules.push(
+          validators.lteSumValue(this[`compositionValidationFields${time}`], 20, this.compositionSumErrorMessage)
+        )
+      }
+      return rules
+    },
+    compositionHint(name, time) {
+      if (name === this.lastCategoryName) {
+        let sum = 0
+        this[`compositionValidationFields${time}`].forEach((v) => {
+          if (v && Number(v)) sum += Number(v)
+        })
+        return `${sum} repas renseigné${sum === 1 ? "" : "s"}`
+      }
+      return null
     },
   },
   mounted() {
