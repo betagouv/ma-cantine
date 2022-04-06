@@ -135,6 +135,11 @@ export default {
           type: "divider",
         },
         {
+          text: "Statistiques régionales",
+          icon: "mdi-chart-bar",
+          to: { name: "PublicCanteenStatisticsPage" },
+        },
+        {
           text: "Contactez-nous",
           icon: "mdi-help-circle-outline",
           to: { name: "ContactPage" },

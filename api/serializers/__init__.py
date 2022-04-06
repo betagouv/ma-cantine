@@ -16,4 +16,5 @@ from .managerinvitation import ManagerInvitationSerializer  # noqa: F401
 from .teledeclaration import ShortTeledeclarationSerializer  # noqa: F401
 from .purchase import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer  # noqa: F401
 from .reservationexpe import ReservationExpeSerializer  # noqa: F401
+from .vegetarianexpe import VegetarianExpeSerializer  # noqa: F401
 from .message import MessageSerializer  # noqa: F401

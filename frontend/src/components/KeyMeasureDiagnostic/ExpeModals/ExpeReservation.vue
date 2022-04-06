@@ -463,6 +463,7 @@
 
 <script>
 import { formatDate, getObjectDiff } from "@/utils"
+import { treatInboundPercentageValues, treatOutboundPercentageValues } from "./utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 
@@ -506,9 +507,10 @@ export default {
       }
 
       const method = this.isNewExpe ? "createReservationExpe" : "updateReservationExpe"
-      const payload = this.treatOutboundPercentageValues(
-        this.isNewExpe ? this.expe : getObjectDiff(this.originalExpe, this.expe)
-      )
+      const sentExpe = this.isNewExpe
+        ? JSON.parse(JSON.stringify(this.expe))
+        : getObjectDiff(this.originalExpe, this.expe)
+      const payload = treatOutboundPercentageValues(sentExpe, this.percentageFields)
       const successMessage = this.isNewExpe
         ? "Votre inscription a bien été prise en compte"
         : "Vos données de l'expérimentation ont bien été sauvegardés"
@@ -523,20 +525,6 @@ export default {
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
-    treatOutboundPercentageValues(payload) {
-      for (let i = 0; i < this.percentageFields.length; i++) {
-        if (Object.prototype.hasOwnProperty.call(payload, this.percentageFields[i]))
-          payload[this.percentageFields[i]] = parseFloat((payload[this.percentageFields[i]] / 100).toPrecision(3))
-      }
-      return payload
-    },
-    treatInboundPercentageValues(expe) {
-      for (let i = 0; i < this.percentageFields.length; i++) {
-        if (Object.prototype.hasOwnProperty.call(expe, this.percentageFields[i]))
-          expe[this.percentageFields[i]] = parseFloat((expe[this.percentageFields[i]] * 100).toPrecision(4))
-      }
-      return expe
-    },
   },
   computed: {
     validators() {
@@ -546,12 +534,15 @@ export default {
       const today = new Date()
       return today.toISOString().split("T")[0]
     },
+
     isLoading() {
-      return this.loadingStatus === Constants.LoadingStatus.LOADING
+      return this.$store.state.expeLoadingStatus === Constants.LoadingStatus.LOADING
     },
+
     showSpinner() {
       return this.isLoading && !this.expe
     },
+
     isNewExpe() {
       return this.expe && !this.expe.id
     },
@@ -560,7 +551,7 @@ export default {
     this.$store
       .dispatch("fetchReservationExpe", { canteen: this.canteen })
       .then((response) => {
-        this.originalExpe = this.treatInboundPercentageValues(response || {})
+        this.originalExpe = treatInboundPercentageValues(response || {}, this.percentageFields)
         this.expe = JSON.parse(JSON.stringify(this.originalExpe))
       })
       .catch((e) => this.$store.dispatch("notifyServerError", e))
