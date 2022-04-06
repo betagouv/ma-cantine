@@ -735,6 +735,12 @@ export default {
         ? JSON.parse(JSON.stringify(this.expe))
         : getObjectDiff(this.originalExpe, this.expe)
       const payload = treatOutboundPercentageValues(sentExpe, this.percentageFields)
+      // this handles the DRF throwing an error at an empty string but not a null value
+      Object.keys(payload).forEach((key) => {
+        if ((key.endsWith("T0") || key.endsWith("T1")) && payload[key] === "") {
+          payload[key] = null
+        }
+      })
       const successMessage = this.isNewExpe
         ? "Votre inscription a bien été prise en compte"
         : "Vos données de l'expérimentation ont bien été sauvegardés"
