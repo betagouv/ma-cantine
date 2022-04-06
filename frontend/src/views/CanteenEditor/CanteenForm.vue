@@ -528,10 +528,6 @@ export default {
         email: this.user.email,
         name: this.fromName,
         message: this.messageJoinCanteen,
-        url: this.$router.resolve({
-          name: "CanteenManagers",
-          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.duplicateSiretCanteen) },
-        }).href,
       }
 
       this.$store

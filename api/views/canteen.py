@@ -477,7 +477,8 @@ class TeamJoinRequestView(APIView):
             message = request.data.get("message")
             canteen_id = kwargs.get("pk")
             canteen = Canteen.objects.get(pk=canteen_id)
-            url = f"{'https' if settings.SECURE else 'http'}://{settings.HOSTNAME}{request.data.get('url')}"
+            canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
+            url = f"{'https' if settings.SECURE else 'http'}://{settings.HOSTNAME}{canteen_path}/gestionnaires"
 
             context = {
                 "email": email,
