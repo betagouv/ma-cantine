@@ -10,7 +10,7 @@
       v-if="!isNewCanteen && originalCanteen.productionType !== 'central'"
     />
 
-    <v-form ref="form" v-model="formIsValid" lazy-validation>
+    <v-form ref="form" v-model="formIsValid">
       <v-row>
         <v-col cols="12" md="8">
           <p class="body-2 my-2">Nom de la cantine</p>
