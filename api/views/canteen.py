@@ -27,6 +27,7 @@ from api.serializers import (
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
 from data.region_choices import Region
 from api.permissions import IsCanteenManager
+from api.exceptions import DuplicateException
 from .utils import camelize, UnaccentSearchFilter
 from common import utils
 
@@ -216,10 +217,10 @@ def check_siret_response(request):
         canteens = Canteen.objects.filter(siret=canteen_siret)
         if canteens.exists():
             canteen = canteens.first()
-            body = {"name": canteen.name, "id": canteen.id}
-            if request.user in canteen.managers.all():
-                body["isManagedByUser"] = True
-            return JsonResponse(body, status=400)
+            managed_by_user = request.user in canteen.managers.all()
+            raise DuplicateException(
+                additional_data={"name": canteen.name, "id": canteen.id, "isManagedByUser": managed_by_user}
+            )
 
 
 class PublishCanteenView(APIView):

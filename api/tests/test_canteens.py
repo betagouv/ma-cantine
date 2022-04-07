@@ -225,7 +225,7 @@ class TestCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
         self.assertEqual(body["id"], canteen.id)
-        self.assertNotIn("isManagedByUser", body)
+        self.assertFalse(body["isManagedByUser"])
         self.assertEqual(Canteen.objects.count(), 1)
 
     @authenticate
@@ -269,7 +269,8 @@ class TestCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
         self.assertEqual(body["id"], canteen.id)
-        self.assertNotIn("isManagedByUser", body)
+        self.assertEqual(body["detail"], "La resource que vous souhaitez créer existe déjà")
+        self.assertFalse(body["isManagedByUser"])
 
     @authenticate
     def test_user_canteen_teledeclaration(self):
