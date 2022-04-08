@@ -1,7 +1,7 @@
 import Vue from "vue"
 import Vuex from "vuex"
 import Constants from "@/constants"
-import { diagnosticYears, AuthenticationError } from "../utils"
+import { diagnosticYears, AuthenticationError, BadRequestError } from "../utils"
 
 Vue.use(Vuex)
 
@@ -14,13 +14,19 @@ const LOCAL_STORAGE_VERSION = "1"
 const LOCAL_STORAGE_KEY = `diagnostics-local-${LOCAL_STORAGE_VERSION}`
 
 const verifyResponse = function(response) {
-  if (response.status < 200 || response.status >= 400) {
-    if (response.status === 403) throw new AuthenticationError()
-    else throw new Error(`API responded with status of ${response.status}`)
-  }
-
   const contentType = response.headers.get("content-type")
   const hasJSON = contentType && contentType.startsWith("application/json")
+
+  if (response.status < 200 || response.status >= 400) {
+    if (response.status === 403) throw new AuthenticationError()
+    else if (response.status === 400) {
+      if (hasJSON) {
+        throw new BadRequestError(response.json())
+      } else {
+        throw new BadRequestError()
+      }
+    } else throw new Error(`API responded with status of ${response.status}`)
+  }
 
   return hasJSON ? response.json() : response.text()
 }
@@ -32,7 +38,7 @@ export default new Vuex.Store({
     userLoadingStatus: Constants.LoadingStatus.IDLE,
     canteensLoadingStatus: Constants.LoadingStatus.IDLE,
     purchasesLoadingStatus: Constants.LoadingStatus.IDLE,
-    reservationExpeLoadingStatus: Constants.LoadingStatus.IDLE,
+    expeLoadingStatus: Constants.LoadingStatus.IDLE,
 
     sectors: [],
     userCanteenPreviews: [],
@@ -55,8 +61,8 @@ export default new Vuex.Store({
     SET_PURCHASES_LOADING_STATUS(state, status) {
       state.purchasesLoadingStatus = status
     },
-    SET_RESERVATION_EXPE_LOADING_STATUS(state, status) {
-      state.reservationExpeLoadingStatus = status
+    SET_EXPE_LOADING_STATUS(state, status) {
+      state.expeLoadingStatus = status
     },
     SET_LOGGED_USER(state, loggedUser) {
       state.loggedUser = loggedUser
@@ -364,6 +370,14 @@ export default new Vuex.Store({
       )
     },
 
+    sendCanteenTeamRequest(context, { canteenId, payload }) {
+      return fetch(`/api/v1/teamJoinRequest/${canteenId}/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      }).then(verifyResponse)
+    },
+
     removeManager(context, { canteenId, email }) {
       return fetch(`/api/v1/removeManager/`, {
         method: "POST",
@@ -516,21 +530,21 @@ export default new Vuex.Store({
     },
 
     fetchReservationExpe(context, { canteen }) {
-      context.commit("SET_RESERVATION_EXPE_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteen/${canteen.id}/reservationExpe/`)
         .then(verifyResponse)
         .then((response) => {
-          context.commit("SET_RESERVATION_EXPE_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           return response
         })
         .catch((e) => {
-          context.commit("SET_RESERVATION_EXPE_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.ERROR)
           throw e
         })
     },
 
     createReservationExpe(context, { canteen, payload }) {
-      context.commit("SET_RESERVATION_EXPE_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteen/${canteen.id}/reservationExpe/`, {
         method: "POST",
         headers,
@@ -538,17 +552,17 @@ export default new Vuex.Store({
       })
         .then(verifyResponse)
         .then((response) => {
-          context.commit("SET_RESERVATION_EXPE_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           return response
         })
         .catch((e) => {
-          context.commit("SET_RESERVATION_EXPE_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.ERROR)
           throw e
         })
     },
 
     updateReservationExpe(context, { canteen, payload }) {
-      context.commit("SET_RESERVATION_EXPE_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteen/${canteen.id}/reservationExpe/`, {
         method: "PATCH",
         headers,
@@ -556,11 +570,61 @@ export default new Vuex.Store({
       })
         .then(verifyResponse)
         .then((response) => {
-          context.commit("SET_RESERVATION_EXPE_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           return response
         })
         .catch((e) => {
-          context.commit("SET_RESERVATION_EXPE_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
+    fetchVegetarianExpe(context, { canteen }) {
+      context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/canteen/${canteen.id}/vegetarianExpe/`)
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
+        })
+        .catch((e) => {
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
+    createVegetarianExpe(context, { canteen, payload }) {
+      context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/canteen/${canteen.id}/vegetarianExpe/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
+        })
+        .catch((e) => {
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
+    updateVegetarianExpe(context, { canteen, payload }) {
+      context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/canteen/${canteen.id}/vegetarianExpe/`, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify(payload),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
+        })
+        .catch((e) => {
+          context.commit("SET_EXPE_LOADING_STATUS", Constants.LoadingStatus.ERROR)
           throw e
         })
     },

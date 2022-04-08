@@ -129,6 +129,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "information_comments",
             "economic_model",
             "reservation_expe_participant",
+            "vegetarian_expe_participant",
         )
 
     def update(self, instance, validated_data):

@@ -11,7 +11,7 @@ class RegisterUserForm(UserCreationForm):
     )
     email = forms.EmailField()
 
-    uses_columns = True
+    uses_columns = False
 
     class Meta:
         model = get_user_model()
@@ -23,25 +23,7 @@ class RegisterUserForm(UserCreationForm):
             "password1",
             "password2",
             "cgu_approved",
-            "law_awareness",
         )
-
-    def left_column_fields(self):
-        field_names = [
-            "first_name",
-            "last_name",
-            "email",
-            "username",
-            "password1",
-            "password2",
-        ]
-        return [field for field in self if not field.is_hidden and field.name in field_names]
-
-    def right_column_fields(self):
-        field_names = [
-            "law_awareness",
-        ]
-        return [field for field in self if not field.is_hidden and field.name in field_names]
 
     def __init__(self, *args, **kwargs):
         super(RegisterUserForm, self).__init__(*args, **kwargs)

@@ -203,8 +203,10 @@ export const badges = (canteen, diagnostic, sectors) => {
   const bioPercent = getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
   const sustainablePercent = getPercentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
   const applicableRules = applicableDiagnosticRules(canteen)
-  // TODO: add in rules for outre mer territories
-  if (bioPercent >= 20 && bioPercent + sustainablePercent >= 50) {
+  if (
+    bioPercent >= applicableRules.bioThreshold &&
+    bioPercent + sustainablePercent >= applicableRules.qualityThreshold
+  ) {
     applicable.appro.earned = true
   }
   if (
@@ -223,14 +225,11 @@ export const badges = (canteen, diagnostic, sectors) => {
     applicable.plastic.earned = true
   }
 
-  // We need to rethink the way a school sector is defined. Temporarily
-  // using the name.
-  const schoolSector = sectors.find((x) => x.name === "Scolaire")
-  if (!schoolSector) console.error("No sector `Scolaire` is present in this configuration")
-
+  const educationSectors = sectors.filter((s) => s.category === "education").map((s) => s.id)
+  const inEducation = canteen.sectors.some((s) => educationSectors.indexOf(s) > -1)
   if (diagnostic.vegetarianWeeklyRecurrence === "DAILY") {
     applicable.diversification.earned = true
-  } else if (schoolSector && canteen.sectors.indexOf(schoolSector.id) > -1) {
+  } else if (inEducation) {
     if (diagnostic.vegetarianWeeklyRecurrence === "MID" || diagnostic.vegetarianWeeklyRecurrence === "HIGH") {
       applicable.diversification.earned = true
     }
@@ -250,9 +249,23 @@ export const normaliseText = (name) => {
 }
 
 export const applicableDiagnosticRules = (canteen) => {
+  let bioThreshold = 20
+  let qualityThreshold = 50
+  // group1 : guadeloupe, martinique, guyane, la_reunion, TODO saint_martin
+  const group1 = ["01", "02", "03", "04"]
+  if (group1.indexOf(canteen.region) > -1) {
+    bioThreshold = 5
+    qualityThreshold = 20
+  } else if (canteen.region === "06") {
+    // group2 : mayotte
+    bioThreshold = 2
+    qualityThreshold = 5
+  } // TODO: group3 : saint_pierre_et_miquelon
   return {
     hasDonationAgreement: canteen ? canteen.dailyMealCount >= 3000 : true,
     hasDiversificationPlan: canteen ? canteen.dailyMealCount >= 200 : true,
+    bioThreshold,
+    qualityThreshold,
   }
 }
 
@@ -268,6 +281,18 @@ export class AuthenticationError extends Error {
   }
 }
 
+export class BadRequestError extends Error {
+  constructor(jsonPromise, ...params) {
+    super(...params)
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, BadRequestError)
+    }
+    this.name = "BadRequestError"
+    this.jsonPromise = jsonPromise
+  }
+}
+
 // Formats ISO 8601 date strings (not datetime). Expects YYYY-MM-DD format.
 export const formatDate = (dateString) => {
   const options = {
@@ -278,4 +303,21 @@ export const formatDate = (dateString) => {
   const dateSegments = dateString.split("-")
   const date = new Date(parseInt(dateSegments[0]), parseInt(dateSegments[1]) - 1, parseInt(dateSegments[2]))
   return date.toLocaleString("fr", options)
+}
+
+export const sectorsSelectList = (sectors) => {
+  const categories = sectors.map((s) => s.category)
+  // unique filter : https://stackoverflow.com/a/14438954/3845770
+  const uniqueCategories = categories.filter((c, idx, self) => c && self.indexOf(c) === idx)
+  const categoryDisplay = {
+    education: "Scolaire",
+    health: "Medical et médico-social",
+  }
+  uniqueCategories.forEach((c) => sectors.push({ header: categoryDisplay[c], category: c }))
+  let sortFn = (key) => {
+    return (a, b) => ((a[key] || "") > (b[key] || "") ? 1 : -1)
+  }
+  sectors.sort(sortFn("name")) // added benefit of getting the headers to the top of the lists
+  sectors.sort(sortFn("category")) // added benefit of moving sectors without parent to top
+  return sectors
 }

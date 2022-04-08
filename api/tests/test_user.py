@@ -28,4 +28,3 @@ class TestLoggedUserApi(APITestCase):
         self.assertEqual(body.get("firstName"), authenticate.user.first_name)
         self.assertEqual(body.get("lastName"), authenticate.user.last_name)
         self.assertIn("id", body)
-        self.assertIn("lawAwareness", body)

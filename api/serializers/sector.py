@@ -8,4 +8,5 @@ class SectorSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
+            "category",
         )

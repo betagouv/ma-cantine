@@ -6,11 +6,6 @@
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery.easy-autocomplete.min.js' %}"></script>
 <style type="text/css"> @import url("{% static 'css/easy-autocomplete.min.css' %}"); </style>
-<style>
-    #id_law_awareness li {
-       margin-bottom: 10px;
-    }
-</style>
     <form role="form" method="post">
 
         {% csrf_token %}
@@ -27,49 +22,28 @@
             {{ field }}
         {% endfor %}
 
-        <div class="column-wrapper">
-            <div class="left-column">
-                {% for field in form.left_column_fields %}
-                <div class="control-group">
-                    <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
-                    {{ field }}
-
-                    {% for error in field.errors %}
-                        <div class="inline-error-container">
-                            {{ error | safe }}
-                        </div>
-                    {% endfor %}
-                </div>
-                {% endfor %}
-            </div>
-
-            <div class="right-column">
-                {% for field in form.right_column_fields %}
-                <div class="control-group">
-                    <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
-                    {{ field }}
-
-                    {% for error in field.errors %}
-                        <div class="inline-error-container">
-                            {{ error | safe }}
-                        </div>
-                    {% endfor %}
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <div class="bottom-section">
+        <div>
+            {% for field in form.visible_fields %}
             <div class="control-group">
-                {{ form.cgu_approved }}
-                <label class="control-label" for="{{field.id_for_label}}">{{ form.cgu_approved.label }}</label>
-
-                {% for error in form.cgu_approved.errors %}
-                    <div class="inline-error-container">
-                        {{ error | safe }}
-                    </div>
-                {% endfor %}
+                {% if field.name == 'cgu_approved' %}
+                    {{ field }}
+                    <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
+                {% else %}
+                    <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
+                    {{ field }}
+                {% endif %}
+                {% if field.errors %}
+                {% for error in field.errors %}
+                        <div class="inline-error-container">
+                            {{ error | safe }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
             </div>
+            {% if field.name == 'email' or field.name == 'management_type' %}
+            <hr />
+            {% endif %}
+            {% endfor %}
         </div>
 
         <hr />

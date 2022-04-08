@@ -59,31 +59,6 @@
             <v-text-field hide-details="auto" solo v-model="userCopy.email" :rules="[validators.email]"></v-text-field>
           </v-col>
         </v-row>
-
-        <v-row>
-          <fieldset class="mt-3 mb-4">
-            <legend class="body-2 ma-3 text-left">
-              Les affirmations suivantes concernent l'article L. 230-5-1 du code rural et de la pêche maritime introduit
-              par la loi EGAlim, encadrant les objectifs d'approvisionnements (50% de produits durables et de qualité
-              dont 20% de bio). Parmi ces affirmations, plusieurs choix sont possibles. Choisissez celles qui
-              correspondent à votre situation :
-            </legend>
-
-            <v-checkbox
-              hide-details="auto"
-              class="ml-8 mb-3 mt-0"
-              v-model="userCopy.lawAwareness"
-              :multiple="true"
-              v-for="choice in lawAwarenessChoices"
-              :key="choice.value"
-              :value="choice.value"
-            >
-              <template v-slot:label>
-                <span class="body-2">{{ choice.label }}</span>
-              </template>
-            </v-checkbox>
-          </fieldset>
-        </v-row>
       </v-form>
     </v-card-text>
     <v-card-actions class="pa-4">
@@ -108,48 +83,6 @@ export default {
       formIsValid: true,
       avatarChanged: false,
       bypassLeaveWarning: false,
-      lawAwarenessChoices: [
-        {
-          value: "NONE",
-          label: "Je n’ai pas une connaissance détaillée de l’article 24 de la loi EGAlim",
-        },
-        {
-          value: "AIMS_DEADLINES",
-          label: "Je connais les objectifs et les échéances",
-        },
-        {
-          value: "ELIGIBLE_LABELS",
-          label: "Je connais la liste des labels éligibles et mentions valorisantes",
-        },
-        {
-          value: "MY_LABELS",
-          label:
-            "J’ai accès aux informations ou mon prestataire me fournit les informations sur les labels éligibles et mentions valorisantes concernant mes achats",
-        },
-        {
-          value: "SYSTEM",
-          label:
-            "J’ai un système de saisie formalisé (SI, Excel, papier) permettant de calculer et reporter le montant annuel de mes achats répondants aux exigences de l’article 24 de la loi EGAlim (Non applicable en gestion concédée)",
-        },
-        {
-          value: "TAKEN_STOCK",
-          label: "J’ai réalisé un état des lieux précis de mes approvisionnements",
-        },
-        {
-          value: "OPTION_DIAGNOSTIC",
-          label:
-            "J’ai réalisé un diagnostic de l’offre (disponibilité et caractéristiques de l’offre des différents fournisseurs sur l’ensemble des catégories d’achats)",
-        },
-        {
-          value: "ACTION_PLAN",
-          label:
-            "J’ai établi un plan d’actions pour tendre vers les objectifs de la loi EGAlim, définissant notamment : le niveau d’ambition global et par catégories d’achats ; les échéances de renouvellement de contrat avec clauses EGAlim ; le phasage de la progression des indicateurs EGAlim",
-        },
-        {
-          value: "QUALITY_ACHIEVED",
-          label: "J'ai atteint les objectifs - 50% et 20%, de l’article 24 de la loi EGAlim",
-        },
-      ],
     }
   },
   computed: {

@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from api.permissions import IsLinkedCanteenManager
-from api.serializers import ReservationExpeSerializer
+from api.serializers import VegetarianExpeSerializer
 from api.exceptions import DuplicateException
-from data.models import ReservationExpe, Canteen
+from data.models import VegetarianExpe, Canteen
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import Http404
 import logging
@@ -16,10 +16,10 @@ from rest_framework.mixins import CreateModelMixin
 logger = logging.getLogger(__name__)
 
 
-class ReservationExpeView(CreateModelMixin, RetrieveUpdateAPIView):
-    model = ReservationExpe
-    serializer_class = ReservationExpeSerializer
-    queryset = ReservationExpe.objects.all()
+class VegetarianExpeView(CreateModelMixin, RetrieveUpdateAPIView):
+    model = VegetarianExpe
+    serializer_class = VegetarianExpeSerializer
+    queryset = VegetarianExpe.objects.all()
     permission_classes = [permissions.IsAuthenticated, IsLinkedCanteenManager]
 
     def get_object(self):
@@ -45,19 +45,19 @@ class ReservationExpeView(CreateModelMixin, RetrieveUpdateAPIView):
             canteen = Canteen.objects.get(pk=canteen_id)
             if not canteen.managers.filter(pk=self.request.user.pk).exists():
                 logger.error(
-                    f"User {self.request.user.id} attempted to create a reservation expe in someone else's canteen: {canteen_id}"
+                    f"User {self.request.user.id} attempted to create a vegetarian expe in someone else's canteen: {canteen_id}"
                 )
                 raise PermissionDenied()
             if self.get_queryset().filter(canteen=canteen).exists():
                 logger.error(
-                    f"User {self.request.user.id} attempted to create a duplicate reservation expe in canteen {canteen_id}"
+                    f"User {self.request.user.id} attempted to create a duplicate vegetarian expe in canteen {canteen_id}"
                 )
-                raise DuplicateException("Canteen already has a reservation expe")
+                raise DuplicateException("Canteen already has a vegetarian expe")
             serializer.is_valid(raise_exception=True)
             serializer.save(canteen=canteen)
         except ObjectDoesNotExist as e:
             logger.error(
-                f"User {self.request.user.id} attempted to create a reservation expe in nonexistent canteen {canteen_id}"
+                f"User {self.request.user.id} attempted to create a vegetarian expe in nonexistent canteen {canteen_id}"
             )
             raise NotFound() from e
 

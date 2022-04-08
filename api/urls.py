@@ -19,7 +19,7 @@ from api.views import TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
 from api.views import UserCanteenPreviews, CanteenLocationsView
 from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView
-from api.views import MessageCreateView
+from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
 
 
 urlpatterns = {
@@ -125,7 +125,9 @@ urlpatterns = {
     path("purchaseOptions/", PurchaseOptionsView.as_view(), name="purchase_options"),
     path("canteenLocations/", CanteenLocationsView.as_view(), name="canteen_locations"),
     path("canteen/<int:canteen_pk>/reservationExpe/", ReservationExpeView.as_view(), name="canteen_reservation_expe"),
+    path("canteen/<int:canteen_pk>/vegetarianExpe/", VegetarianExpeView.as_view(), name="canteen_vegetarian_expe"),
     path("message/", MessageCreateView.as_view(), name="message_create"),
+    path("teamJoinRequest/<int:pk>/", TeamJoinRequestView.as_view(), name="canteen_team_request"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

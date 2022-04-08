@@ -236,7 +236,6 @@ export default {
   data() {
     return {
       showExpeModal: false,
-      participationExpeCheckboxValue: this.canteen.reservationExpeParticipant,
       wasteActions: [
         {
           label: "Pré-inscription des convives obligatoire",

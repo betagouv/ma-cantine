@@ -10,7 +10,7 @@
       v-if="!isNewCanteen && originalCanteen.productionType !== 'central'"
     />
 
-    <v-form ref="form" v-model="formIsValid" lazy-validation>
+    <v-form ref="form" v-model="formIsValid">
       <v-row>
         <v-col cols="12" md="8">
           <p class="body-2 my-2">Nom de la cantine</p>
@@ -30,6 +30,87 @@
             v-model="canteen.siret"
             :rules="[validators.length(14), validators.luhn]"
           ></v-text-field>
+
+          <v-card outlined class="mt-4" v-if="duplicateSiretCanteen" color="red lighten-5">
+            <v-card-title class="pt-2 pb-1 font-weight-medium">
+              Une cantine avec ce SIRET existe déjà
+            </v-card-title>
+            <v-card-text v-if="duplicateSiretCanteen.isManagedByUser">
+              <p>« {{ duplicateSiretCanteen.name }} » a le même SIRET et fait déjà partie de vos cantines.</p>
+              <v-btn
+                color="primary"
+                :to="{
+                  name: 'CanteenModification',
+                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(duplicateSiretCanteen) },
+                }"
+                target="_blank"
+                rel="noopener"
+              >
+                Voir les informations de « {{ duplicateSiretCanteen.name }} »
+              </v-btn>
+            </v-card-text>
+            <v-card-text v-else>
+              <p>Demandez accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »</p>
+              <v-textarea
+                v-model="messageJoinCanteen"
+                label="Message (optionnel)"
+                solo
+                hide-details="auto"
+                rows="2"
+                class="mt-2 body-2"
+              ></v-textarea>
+              <v-btn color="primary" class="mt-4" @click="sendMgmtRequest">
+                <v-icon class="mr-2">mdi-key</v-icon>
+                Demander l'accès
+              </v-btn>
+            </v-card-text>
+
+            <v-card-text class="pt-0">
+              <v-divider class="mt-4"></v-divider>
+
+              <p class="mb-0 mt-2">
+                Il s'agit d'une erreur ?
+                <v-dialog v-model="siretDialog" width="500">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn text v-bind="attrs" v-on="on" color="primary">Contactez l'équipe ma cantine</v-btn>
+                  </template>
+
+                  <v-card class="text-left">
+                    <v-card-title class="font-weight-bold">Contactez l'équipe ma cantine</v-card-title>
+                    <v-card-text class="pb-0">
+                      <p>
+                        Vous recontrez des problèmes concernant le SIRET de votre cantine ? Envoyez nous un message et
+                        notre équipe reviendra vers vous dans les plus brefs délais
+                      </p>
+                      <v-form v-model="siretFormIsValid" ref="siretHelp" @submit.prevent>
+                        <v-textarea
+                          v-model="messageTroubleshooting"
+                          label="Message"
+                          outlined
+                          rows="3"
+                          :rules="[validators.required]"
+                          class="body-2"
+                        ></v-textarea>
+                      </v-form>
+                    </v-card-text>
+
+                    <v-divider></v-divider>
+
+                    <v-card-actions class="pa-4 pr-6">
+                      <v-spacer></v-spacer>
+                      <v-btn x-large outlined color="primary" @click="siretDialog = false" class="mr-2">
+                        Annuler
+                      </v-btn>
+                      <v-btn x-large color="primary" @click="sendSiretHelp">
+                        <v-icon class="mr-2">mdi-send</v-icon>
+                        Envoyer
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </p>
+            </v-card-text>
+          </v-card>
 
           <p class="body-2 mt-4 mb-2">Ville</p>
           <v-autocomplete
@@ -194,7 +275,7 @@
 
 <script>
 import validators from "@/validators"
-import { toBase64, getObjectDiff } from "@/utils"
+import { toBase64, getObjectDiff, sectorsSelectList } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 import ImagesField from "./ImagesField"
 import Constants from "@/constants"
@@ -215,6 +296,7 @@ export default {
     },
   },
   data() {
+    const user = this.$store.state.loggedUser
     return {
       canteen: { images: [] },
       formIsValid: true,
@@ -251,6 +333,15 @@ export default {
         { text: "Public", value: "public" },
         { text: "Privé", value: "private" },
       ],
+      user,
+      // contact forms
+      fromEmail: user.email,
+      fromName: `${user.firstName} ${user.lastName}`,
+      messageJoinCanteen: null,
+      messageTroubleshooting: null,
+      siretFormIsValid: true,
+      duplicateSiretCanteen: null,
+      siretDialog: false,
     }
   },
   computed: {
@@ -258,7 +349,7 @@ export default {
       return validators
     },
     sectors() {
-      return this.$store.state.sectors
+      return sectorsSelectList(this.$store.state.sectors)
     },
     isNewCanteen() {
       return !this.canteenUrlComponent
@@ -317,6 +408,7 @@ export default {
 
       if (!this.formIsValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
+        window.scrollTo(0, 0)
         return
       }
 
@@ -347,7 +439,16 @@ export default {
           }
         })
         .catch((e) => {
-          this.$store.dispatch("notifyServerError", e)
+          if (e.jsonPromise) {
+            e.jsonPromise.then((json) => {
+              this.duplicateSiretCanteen = json
+              this.messageTroubleshooting = `Je veux ajouter une deuxième cantine avec le même SIRET : ${payload.siret}...`
+            })
+            this.$store.dispatch("notifyRequiredFieldsError")
+          } else {
+            this.$store.dispatch("notifyServerError", e)
+          }
+          window.scrollTo(0, 0)
         })
     },
     onLogoUploadClick() {
@@ -388,6 +489,58 @@ export default {
         .catch((error) => {
           console.log(error)
         })
+    },
+    sendSiretHelp() {
+      this.$refs.siretHelp.validate()
+      if (!this.siretFormIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
+
+      let meta = this.meta || {}
+      meta.userId = this.$store.state.loggedUser?.id
+      meta.userAgent = navigator.userAgent
+
+      const payload = {
+        from: this.fromEmail,
+        message: this.messageTroubleshooting,
+        // TODO: put misc inquiry types in the title of trello card directly
+        inquiryType: "cantine SIRET",
+        meta,
+      }
+
+      this.$store
+        .dispatch("sendInquiryEmail", payload)
+        .then(() => {
+          this.message = null
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: `Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.`,
+          })
+          this.siretDialog = false
+
+          window.scrollTo(0, 0)
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    sendMgmtRequest() {
+      const payload = {
+        email: this.user.email,
+        name: this.fromName,
+        message: this.messageJoinCanteen,
+      }
+
+      this.$store
+        .dispatch("sendCanteenTeamRequest", { canteenId: this.duplicateSiretCanteen.id, payload })
+        .then(() => {
+          this.message = null
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: `Votre message a bien été envoyé.`,
+          })
+          window.scrollTo(0, 0)
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
   watch: {

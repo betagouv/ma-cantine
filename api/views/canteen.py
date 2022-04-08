@@ -27,6 +27,7 @@ from api.serializers import (
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
 from data.region_choices import Region
 from api.permissions import IsCanteenManager
+from api.exceptions import DuplicateException
 from .utils import camelize, UnaccentSearchFilter
 from common import utils
 
@@ -175,6 +176,12 @@ class UserCanteensView(ListCreateAPIView):
         canteen = serializer.save()
         canteen.managers.add(self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        error_response = check_siret_response(request)
+        if error_response:
+            return error_response
+        return super().create(request, *args, **kwargs)
+
 
 class UserCanteenPreviews(ListAPIView):
     model = Canteen
@@ -196,6 +203,24 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        error_response = check_siret_response(request)
+        if error_response:
+            return error_response
+        return super().partial_update(request, *args, **kwargs)
+
+
+def check_siret_response(request):
+    canteen_siret = request.data.get("siret")
+    if canteen_siret:
+        canteens = Canteen.objects.filter(siret=canteen_siret)
+        if canteens.exists():
+            canteen = canteens.first()
+            managed_by_user = request.user in canteen.managers.all()
+            raise DuplicateException(
+                additional_data={"name": canteen.name, "id": canteen.id, "isManagedByUser": managed_by_user}
+            )
 
 
 class PublishCanteenView(APIView):
@@ -307,6 +332,7 @@ class AddManagerView(APIView):
         try:
             user = get_user_model().objects.get(email=email)
             canteen.managers.add(user)
+            AddManagerView._send_add_email(email, canteen)
         except get_user_model().DoesNotExist:
             with transaction.atomic():
                 pm = ManagerInvitation(canteen_id=canteen.id, email=email)
@@ -335,6 +361,33 @@ class AddManagerView(APIView):
             return
         except Exception as e:
             logger.error(f"The manager invitation email could not be sent to {manager_invitation.email}")
+            logger.exception(e)
+            raise Exception("Error occurred : the mail could not be sent.") from e
+
+    @staticmethod
+    def _send_add_email(email, canteen):
+        try:
+            protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
+            domain = settings.HOSTNAME
+            canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
+            context = {
+                "canteen": canteen.name,
+                "canteen_url": f"{protocol}://{domain}{canteen_path}",
+            }
+            send_mail(
+                subject=f"Vous pouvez gérer la cantine « {canteen.name} »",
+                template="auth/manager_add_notification",
+                context=context,
+                to=[email],
+            )
+        except ConnectionRefusedError as e:
+            logger.error(
+                f"The manager add notification email could not be sent to {email} : Connection Refused. The manager has been added anyway."
+            )
+            logger.exception(e)
+            return
+        except Exception as e:
+            logger.error(f"The manager add notification email could not be sent to {email}")
             logger.exception(e)
             raise Exception("Error occurred : the mail could not be sent.") from e
 
@@ -414,6 +467,52 @@ class SendCanteenNotFoundEmail(APIView):
             )
 
 
+class TeamJoinRequestView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            email = request.data.get("email")
+            validate_email(email)
+            name = request.data.get("name")
+            message = request.data.get("message")
+            canteen_id = kwargs.get("pk")
+            canteen = Canteen.objects.get(pk=canteen_id)
+            canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
+            url = f"{'https' if settings.SECURE else 'http'}://{settings.HOSTNAME}{canteen_path}/gestionnaires"
+
+            context = {
+                "email": email,
+                "name": name,
+                "message": message,
+                "url": url,
+                "canteen": canteen.name,
+                "siret": canteen.siret,
+            }
+
+            send_mail(
+                subject=f"{name} voudrait rejoindre l'équipe de gestion de la cantine {canteen.name}",
+                to=canteen.managers.values_list("email", flat=True),
+                cc=[settings.CONTACT_EMAIL],
+                reply_to=[
+                    email,
+                ],
+                template="canteen_join_request",
+                context=context,
+            )
+
+            return JsonResponse({}, status=status.HTTP_200_OK)
+        except ValidationError:
+            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error("Exception ocurred while sending email")
+            logger.exception(e)
+            return JsonResponse(
+                {"error": "An error has ocurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
 def badges_for_queryset(diagnostic_year_queryset):
     badge_querysets = {}
     appro_total = diagnostic_year_queryset
@@ -457,12 +556,11 @@ def badges_for_queryset(diagnostic_year_queryset):
     diversification_badge_query = diversification_badge_query.exclude(
         vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW
     )
-    scolaire_sector = Sector.objects.filter(name="Scolaire")
-    if scolaire_sector.count():
-        scolaire_sector = scolaire_sector[0]
+    scolaire_sectors = Sector.objects.filter(category="education")
+    if scolaire_sectors.count():
         diversification_badge_query = diversification_badge_query.filter(
             Q(
-                canteen__sectors__in=[scolaire_sector],
+                canteen__sectors__in=scolaire_sectors,
                 vegetarian_weekly_recurrence__in=[
                     Diagnostic.MenuFrequency.MID,
                     Diagnostic.MenuFrequency.HIGH,

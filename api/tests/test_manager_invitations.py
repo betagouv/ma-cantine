@@ -145,6 +145,7 @@ class TestManagerInvitationApi(APITestCase):
         self.assertEqual(len(pms), 4)
 
     @authenticate
+    @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
     def test_authenticated_add_manager_existing_user(self):
         """
         If the email matches an existing user, add the user to the canteen managers
@@ -152,7 +153,7 @@ class TestManagerInvitationApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        other_user = UserFactory.create()
+        other_user = UserFactory.create(email="test@example.com")
         payload = {"canteenId": canteen.id, "email": other_user.email}
 
         response = self.client.post(reverse("add_manager"), payload)
@@ -162,7 +163,10 @@ class TestManagerInvitationApi(APITestCase):
         self.assertEqual(canteen.managers.all().get(id=other_user.id).id, other_user.id)
         with self.assertRaises(ManagerInvitation.DoesNotExist):
             ManagerInvitation.objects.get(email=other_user.email)
-        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to[0], "test@example.com")
+        self.assertEqual(mail.outbox[0].from_email, "test-from@example.com")
+        self.assertIn("Accèder à la cantine", mail.outbox[0].body)
 
         self.assertEqual(len(body["managers"]), canteen.managers.all().count())
         self.assertEqual(len(body["managerInvitations"]), canteen.managerinvitation_set.all().count())

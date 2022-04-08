@@ -9,7 +9,22 @@ class Sector(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
+    class Categories(models.TextChoices):
+        ADMINISTRATION = "administration", "Administration"
+        EDUCATION = "education", "Enseignement"
+        HEALTH = "health", "Santé"
+        SOCIAL = "social", "Social / Médico-social"
+        LEISURE = "leisure", "Loisirs"
+        AUTRES = "autres", "Autres"
+
     name = models.TextField()
+    category = models.CharField(
+        max_length=50,
+        choices=Categories.choices,
+        null=True,
+        blank=True,
+        verbose_name="catégorie",
+    )
 
     @classmethod
     def choices(self):
