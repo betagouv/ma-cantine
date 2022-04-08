@@ -597,7 +597,8 @@ class CanteenStatisticsView(APIView):
             canteens = canteens.filter(region=region)
         elif department:
             canteens = canteens.filter(department=department)
-        if len(sectors):
+        if sectors:
+            sectors = [s for s in sectors if s.isdigit()]
             canteens = canteens.filter(sectors__in=sectors)
         data["canteen_count"] = canteens.count()
         data["published_canteen_count"] = canteens.filter(
@@ -609,7 +610,7 @@ class CanteenStatisticsView(APIView):
             diagnostics = diagnostics.filter(canteen__region=region)
         elif department:
             diagnostics = diagnostics.filter(canteen__department=department)
-        if len(sectors):
+        if sectors:
             diagnostics = diagnostics.filter(canteen__sectors__in=sectors)
         appro_share_query = diagnostics.filter(value_total_ht__gt=0)
         appro_share_query = appro_share_query.annotate(

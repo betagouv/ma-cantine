@@ -349,9 +349,12 @@ export default {
     sectorsText() {
       let sectorsText = ""
       if (this.$route.query.sectors) {
-        const sectors = this.$route.query.sectors.split(",").map((sectorId) => {
-          return this.sectors.find((x) => x.id === parseInt(sectorId, 10)).name
-        })
+        const sectors = this.$route.query.sectors
+          .split(",")
+          .map((sectorId) => {
+            return this.sectors.find((x) => x.id === parseInt(sectorId, 10))?.name
+          })
+          .filter((name) => !!name)
         sectorsText += sectors.join(", ")
       }
       return sectorsText
