@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 from api.serializers import PublicDiagnosticSerializer, FullCanteenSerializer
 from data.models import Canteen, Sector
 from api.permissions import IsCanteenManager, CanEditDiagnostic
+from api.exceptions import DuplicateException
 from .utils import camelize
 from .canteen import AddManagerView
 import requests
@@ -44,7 +45,7 @@ class DiagnosticCreateView(CreateAPIView):
             raise NotFound()
         except IntegrityError:
             logger.error(f"Attempt to create an existing diagnostic for canteen ID {canteen_id}")
-            raise BadRequest()
+            raise DuplicateException()
 
 
 class DiagnosticUpdateView(UpdateAPIView):

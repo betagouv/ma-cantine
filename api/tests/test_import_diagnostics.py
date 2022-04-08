@@ -369,6 +369,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         This file contains one diagnostic with three emails for managers. The first two
         already have an account with ma cantine, so they should be added. The third one
         has no account, so an invitation should be sent.
+        All the managers would recieve an email, either a notification or an invitation.
         """
         gestionnaire_1 = UserFactory(email="gestionnaire1@example.com")
         gestionnaire_2 = UserFactory(email="gestionnaire2@example.com")
@@ -387,9 +388,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertTrue(ManagerInvitation.objects.count(), 1)
         self.assertEqual(ManagerInvitation.objects.first().email, "gestionnaire3@example.com")
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to[0], "gestionnaire3@example.com")
-        self.assertEqual(mail.outbox[0].from_email, "test-from@example.com")
+        self.assertEqual(len(mail.outbox), 3)
 
     @authenticate
     def test_add_managers_invalid_email(self, _):

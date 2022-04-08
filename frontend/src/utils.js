@@ -284,6 +284,18 @@ export class AuthenticationError extends Error {
   }
 }
 
+export class BadRequestError extends Error {
+  constructor(jsonPromise, ...params) {
+    super(...params)
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, BadRequestError)
+    }
+    this.name = "BadRequestError"
+    this.jsonPromise = jsonPromise
+  }
+}
+
 // Formats ISO 8601 date strings (not datetime). Expects YYYY-MM-DD format.
 export const formatDate = (dateString) => {
   const options = {

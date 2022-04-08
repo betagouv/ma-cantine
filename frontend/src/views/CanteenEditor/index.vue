@@ -56,6 +56,12 @@ export default {
         })
     },
   },
+  watch: {
+    canteenUrlComponent() {
+      this.canteen = null
+      this.fetchCanteenIfNeeded()
+    },
+  },
   beforeUpdate() {
     this.fetchCanteenIfNeeded()
   },

@@ -1,8 +1,9 @@
 from django.http import HttpResponse
 from api.permissions import IsLinkedCanteenManager
 from api.serializers import VegetarianExpeSerializer
+from api.exceptions import DuplicateException
 from data.models import VegetarianExpe, Canteen
-from django.core.exceptions import ObjectDoesNotExist, BadRequest
+from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import Http404
 import logging
 from rest_framework import permissions
@@ -51,7 +52,7 @@ class VegetarianExpeView(CreateModelMixin, RetrieveUpdateAPIView):
                 logger.error(
                     f"User {self.request.user.id} attempted to create a duplicate vegetarian expe in canteen {canteen_id}"
                 )
-                raise BadRequest("Canteen already has a vegetarian expe")
+                raise DuplicateException("Canteen already has a vegetarian expe")
             serializer.is_valid(raise_exception=True)
             serializer.save(canteen=canteen)
         except ObjectDoesNotExist as e:
