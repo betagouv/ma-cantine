@@ -203,8 +203,10 @@ export const badges = (canteen, diagnostic, sectors) => {
   const bioPercent = getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
   const sustainablePercent = getPercentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
   const applicableRules = applicableDiagnosticRules(canteen)
-  // TODO: add in rules for outre mer territories
-  if (bioPercent >= 20 && bioPercent + sustainablePercent >= 50) {
+  if (
+    bioPercent >= applicableRules.bioThreshold &&
+    bioPercent + sustainablePercent >= applicableRules.qualityThreshold
+  ) {
     applicable.appro.earned = true
   }
   if (
@@ -250,9 +252,23 @@ export const normaliseText = (name) => {
 }
 
 export const applicableDiagnosticRules = (canteen) => {
+  let bioThreshold = 20
+  let qualityThreshold = 50
+  // group1 : guadeloupe, martinique, guyane, la_reunion, TODO saint_martin
+  const group1 = ["01", "02", "03", "04"]
+  if (group1.indexOf(canteen.region) > -1) {
+    bioThreshold = 5
+    qualityThreshold = 20
+  } else if (canteen.region === "06") {
+    // group2 : mayotte
+    bioThreshold = 2
+    qualityThreshold = 5
+  } // TODO: group3 : saint_pierre_et_miquelon
   return {
     hasDonationAgreement: canteen ? canteen.dailyMealCount >= 3000 : true,
     hasDiversificationPlan: canteen ? canteen.dailyMealCount >= 200 : true,
+    bioThreshold,
+    qualityThreshold,
   }
 }
 
