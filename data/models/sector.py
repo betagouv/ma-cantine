@@ -10,8 +10,12 @@ class Sector(models.Model):
     modification_date = models.DateTimeField(auto_now=True)
 
     class Categories(models.TextChoices):
-        EDUCATION = "education", "Scolaire"
-        HEALTH = "health", "Medical et médico-social"
+        ADMINISTRATION = "administration", "Administration"
+        EDUCATION = "education", "Enseignement"
+        HEALTH = "health", "Santé"
+        SOCIAL = "social", "Social / Médico-social"
+        LEISURE = "leisure", "Loisirs"
+        AUTRES = "autres", "Autres"
 
     name = models.TextField()
     category = models.CharField(
