@@ -225,14 +225,11 @@ export const badges = (canteen, diagnostic, sectors) => {
     applicable.plastic.earned = true
   }
 
-  // We need to rethink the way a school sector is defined. Temporarily
-  // using the name.
-  const schoolSector = sectors.find((x) => x.name === "Scolaire")
-  if (!schoolSector) console.error("No sector `Scolaire` is present in this configuration")
-
+  const educationSectors = sectors.filter((s) => s.category === "education").map((s) => s.id)
+  const inEducation = canteen.sectors.some((s) => educationSectors.indexOf(s) > -1)
   if (diagnostic.vegetarianWeeklyRecurrence === "DAILY") {
     applicable.diversification.earned = true
-  } else if (schoolSector && canteen.sectors.indexOf(schoolSector.id) > -1) {
+  } else if (inEducation) {
     if (diagnostic.vegetarianWeeklyRecurrence === "MID" || diagnostic.vegetarianWeeklyRecurrence === "HIGH") {
       applicable.diversification.earned = true
     }
@@ -306,4 +303,21 @@ export const formatDate = (dateString) => {
   const dateSegments = dateString.split("-")
   const date = new Date(parseInt(dateSegments[0]), parseInt(dateSegments[1]) - 1, parseInt(dateSegments[2]))
   return date.toLocaleString("fr", options)
+}
+
+export const sectorsSelectList = (sectors) => {
+  const categories = sectors.map((s) => s.category)
+  // unique filter : https://stackoverflow.com/a/14438954/3845770
+  const uniqueCategories = categories.filter((c, idx, self) => c && self.indexOf(c) === idx)
+  const categoryDisplay = {
+    education: "Scolaire",
+    health: "Medical et médico-social",
+  }
+  uniqueCategories.forEach((c) => sectors.push({ header: categoryDisplay[c], category: c }))
+  let sortFn = (key) => {
+    return (a, b) => ((a[key] || "") > (b[key] || "") ? 1 : -1)
+  }
+  sectors.sort(sortFn("name")) // added benefit of getting the headers to the top of the lists
+  sectors.sort(sortFn("category")) // added benefit of moving sectors without parent to top
+  return sectors
 }

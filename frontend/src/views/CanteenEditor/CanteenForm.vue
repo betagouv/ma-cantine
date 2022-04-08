@@ -275,7 +275,7 @@
 
 <script>
 import validators from "@/validators"
-import { toBase64, getObjectDiff } from "@/utils"
+import { toBase64, getObjectDiff, sectorsSelectList } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 import ImagesField from "./ImagesField"
 import Constants from "@/constants"
@@ -349,7 +349,7 @@ export default {
       return validators
     },
     sectors() {
-      return this.$store.state.sectors
+      return sectorsSelectList(this.$store.state.sectors)
     },
     isNewCanteen() {
       return !this.canteenUrlComponent
