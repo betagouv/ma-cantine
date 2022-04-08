@@ -33,5 +33,9 @@
     ],
     "python.formatting.provider": "black",
     "python.formatting.blackPath": "${workspaceRoot}/venv/bin/black",
-    "python.formatting.blackArgs": ["--line-length=119"]
+    "python.formatting.blackArgs": [
+        "--line-length=119"
+    ],
+    "eslint.format.enable": true,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
 }
