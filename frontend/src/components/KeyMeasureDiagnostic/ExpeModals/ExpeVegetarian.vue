@@ -9,9 +9,15 @@
       </v-card-title>
       <v-card-text>
         <p>
-          Afin d'évaluer les effets de la mise en place du menu végétarien quotidien sur la satisfaction des usagers et
-          le taux de fréquentation, nous vous demandons de suivre et renseigner différents indicateurs ci-dessous à deux
-          étapes de l’expérimentation.
+          Pour participer à l'expérimentation d'une option végétarienne quotidienne, telle que prévue par la loi Climat
+          et résilience, nous vous proposons de répondre à quelques questions sur la mise en œuvre de l'option
+          végétarienne quotidienne dans votre établissement. En particulier, les questions portent sur les catégories de
+          plats végétariens servis, l'impact sur les pesées de gaspillage alimentaire, la fréquentation, la satisfaction
+          des convives et le coût des repas.
+        </p>
+        <p>
+          Il est également possible de participer si une option végétarienne quotidienne est déjà mise en place dans
+          votre établissement.
         </p>
         <p>
           Pour plus d'informations, consultez le
