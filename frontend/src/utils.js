@@ -259,7 +259,7 @@ export const applicableDiagnosticRules = (canteen) => {
   if (group1.indexOf(canteen.region) > -1) {
     bioThreshold = 5
     qualityThreshold = 20
-  } else if (canteen.region == "06") {
+  } else if (canteen.region === "06") {
     // group2 : mayotte
     bioThreshold = 2
     qualityThreshold = 5
