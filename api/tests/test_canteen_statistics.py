@@ -123,6 +123,24 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 1)
 
+    def test_canteen_stats_by_sectors(self):
+        year = 2020
+        school = SectorFactory.create(name="School")
+        enterprise = SectorFactory.create(name="Enterprise")
+        social = SectorFactory.create(name="Social")
+        CanteenFactory.create(sectors=[school])
+        CanteenFactory.create(sectors=[enterprise])
+        CanteenFactory.create(sectors=[enterprise, social])
+        CanteenFactory.create(sectors=[social])
+
+        response = self.client.get(
+            reverse("canteen_statistics"), {"sectors": [school.id, enterprise.id], "year": year}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 3)
+
     def test_canteen_stats_missing_data(self):
         response = self.client.get(reverse("canteen_statistics"), {"region": "01"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
