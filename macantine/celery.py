@@ -1,16 +1,27 @@
 import os
 import dotenv
 from celery import Celery
-
-# from celery.schedules import crontab
+from celery.schedules import crontab
 
 dotenv.load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "macantine.settings")
 
 app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend=os.getenv("REDIS_URL"), include=["macantine.tasks"])
 
-# Exemple task configuration
-# app.conf.beat_schedule = {"hello_world": {"task": "macantine.tasks.hello_world", "schedule": crontab(minute="*/1")}}
+# At 10:00 on every day from Monday through Friday.
+daily_week = crontab(hour=10, minute=0, day_of_week="1-5")
+every_minute = crontab(minute="*/1")
+
+app.conf.beat_schedule = {
+    "no_canteen_first_reminder": {
+        "task": "macantine.tasks.no_canteen_first_reminder",
+        "schedule": daily_week,
+    },
+    "no_canteen_second_reminder": {
+        "task": "macantine.tasks.no_canteen_second_reminder",
+        "schedule": daily_week,
+    },
+}
 
 app.conf.beat_schedule = {}
 app.conf.timezone = "Europe/Paris"
