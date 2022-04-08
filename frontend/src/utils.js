@@ -306,12 +306,17 @@ export const formatDate = (dateString) => {
 }
 
 export const sectorsSelectList = (sectors) => {
+  sectors = JSON.parse(JSON.stringify(sectors))
   const categories = sectors.map((s) => s.category)
   // unique filter : https://stackoverflow.com/a/14438954/3845770
   const uniqueCategories = categories.filter((c, idx, self) => c && self.indexOf(c) === idx)
   const categoryDisplay = {
-    education: "Scolaire",
-    health: "Medical et médico-social",
+    education: "Enseignement",
+    health: "Santé",
+    autres: "Autre",
+    social: "Social et Médico-Social",
+    administration: "Administration",
+    leisure: "Loisirs",
   }
   uniqueCategories.forEach((c) => sectors.push({ header: categoryDisplay[c], category: c }))
   let sortFn = (key) => {

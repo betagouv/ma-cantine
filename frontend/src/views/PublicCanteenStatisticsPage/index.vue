@@ -50,6 +50,8 @@
                 v-model="chosenSectors"
                 multiple
                 :items="sectorsList"
+                item-text="name"
+                item-value="id"
                 clearable
                 hide-details
                 id="select-sector"
@@ -210,7 +212,7 @@ import labels from "@/data/quality-labels.json"
 import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
-import { lastYear, normaliseText } from "@/utils"
+import { lastYear, normaliseText, sectorsSelectList } from "@/utils"
 
 export default {
   name: "PublicCanteenStatisticsPage",
@@ -275,10 +277,7 @@ export default {
       return this.$store.state.sectors
     },
     sectorsList() {
-      return this.sectors.map((x) => ({
-        text: x.name,
-        value: x.id,
-      }))
+      return sectorsSelectList(this.sectors)
     },
     sectorLabels() {
       return this.sectors.map((sector) => sector.name)
