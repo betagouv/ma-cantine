@@ -241,6 +241,16 @@
             ></v-select>
           </div>
         </v-col>
+        <v-col v-if="showMinistryField" cols="12">
+          <v-select
+            :items="ministries"
+            solo
+            v-model="canteen.lineMinistry"
+            placeholder="Sélectionnez le Ministère de tutelle"
+            hide-details="auto"
+            clearable
+          ></v-select>
+        </v-col>
 
         <v-col cols="12" sm="6" md="3">
           <p class="body-2 ml-4">Mode de gestion</p>
@@ -298,7 +308,7 @@ export default {
   data() {
     const user = this.$store.state.loggedUser
     return {
-      canteen: { images: [] },
+      canteen: { images: [], sectors: [] },
       formIsValid: true,
       bypassLeaveWarning: false,
       deletionDialog: false,
@@ -342,6 +352,32 @@ export default {
       siretFormIsValid: true,
       duplicateSiretCanteen: null,
       siretDialog: false,
+      ministries: [
+        { value: "premier_ministre", text: "Service du premier ministre" },
+        { value: "affaires_etrangeres", text: "Ministère de l’Europe et des Affaires étrangères" },
+        { value: "ecologie", text: "Ministère de la Transition écologique" },
+        { value: "jeunese", text: "Ministère de l’Education nationale et de la Jeunesse et des Sports" },
+        { value: "economie", text: "Ministère de l’Economie, de la Finance et de la Relance" },
+        { value: "armee", text: "Ministère de l’Armée" },
+        { value: "interieur", text: "Ministère de l’Intérieur" },
+        { value: "travail", text: "Ministère Travail, de l’Emploi et de l’Insertion" },
+        { value: "outre_mer", text: "Ministère des Outre-mer" },
+        {
+          value: "territoires",
+          text: "Ministère de la Cohésion des territoires et des relations avec les collectivités territoriales",
+        },
+        { value: "justice", text: "Ministère de la Justice" },
+        { value: "culture", text: "Ministère de la Culture" },
+        { value: "sante", text: "Ministère des Solidarités et de la Santé" },
+        { value: "mer", text: "Ministère de la Mer" },
+        {
+          value: "enseignement_superieur",
+          text: "Ministère de l’Enseignement supérieur et de la Recherche et de l’Innovation",
+        },
+        { value: "agriculture", text: "Ministère de l’Agriculture et de l’Alimentation" },
+        { value: "transformation", text: "Ministère de la Transformation et de la Fonction publiques" },
+        { value: "autre", text: "Autre" },
+      ],
     }
   },
   computed: {
@@ -367,6 +403,11 @@ export default {
     },
     showDailyMealCount() {
       return this.canteen.productionType !== "central"
+    },
+    showMinistryField() {
+      const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
+      if (concernedSectors.length === 0) return false
+      return this.canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
     },
   },
   beforeMount() {
