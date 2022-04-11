@@ -56,7 +56,7 @@ pluggy==1.0.0
 prompt-toolkit==3.0.29
 psycopg2==2.9.3
 py==1.11.0
-pylint==2.13.4
+pylint==2.13.5
 pylint-django==2.5.3
 pylint-plugin-utils==0.7
 pyparsing==3.0.8
