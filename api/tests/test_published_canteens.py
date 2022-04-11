@@ -252,7 +252,7 @@ class TestPublishedCanteenApi(APITestCase):
         )
         CanteenFactory.create(
             publication_status="published",
-            daily_meal_count=100,
+            daily_meal_count=150,
             name="Umami",
             creation_date=(timezone.now() - datetime.timedelta(days=4)),
         )
