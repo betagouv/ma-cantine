@@ -8,7 +8,7 @@ billiard==3.6.4.0
 black==22.3.0
 boto3==1.21.33
 botocore==1.24.33
-celery==5.2.5
+celery==5.2.6
 certifi==2021.10.8
 chardet==4.0.0
 charset-normalizer==2.0.12
