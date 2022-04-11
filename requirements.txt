@@ -17,9 +17,9 @@ click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.2.0
 Deprecated==1.2.13
-Django==4.0.3
+Django==4.0.4
 django-anymail==8.5
-django-ckeditor==6.2.0
+django-ckeditor==6.3.2
 django-csp==3.7
 django-debug-toolbar==3.2.4
 django-filter==21.1
@@ -27,7 +27,7 @@ django-js-asset==2.0.0
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
 django-otp==1.1.3
 django-storages==1.12.3
-django-webpack-loader==1.4.1
+django-webpack-loader==1.5.0
 djangorestframework==3.13.1
 djangorestframework-camel-case==1.3.0
 drf-base64==2.0
