@@ -1,6 +1,8 @@
 import os
+import datetime
 from datetime import date
 from django.urls import reverse
+from django.utils import timezone
 from django.core.files import File
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -234,24 +236,26 @@ class TestPublishedCanteenApi(APITestCase):
             publication_status="published",
             daily_meal_count=200,
             name="Shiso",
+            creation_date=(timezone.now() - datetime.timedelta(days=10)),
         )
         CanteenFactory.create(
             publication_status="published",
             daily_meal_count=100,
             name="Wasabi",
+            creation_date=(timezone.now() - datetime.timedelta(days=8)),
         )
         last_modified = CanteenFactory.create(
             publication_status="published",
             daily_meal_count=300,
             name="Mochi",
+            creation_date=(timezone.now() - datetime.timedelta(days=6)),
         )
         CanteenFactory.create(
             publication_status="published",
             daily_meal_count=100,
             name="Umami",
+            creation_date=(timezone.now() - datetime.timedelta(days=4)),
         )
-        last_modified.daily_meal_count = 900
-        last_modified.save()
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -270,6 +274,9 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(results[1]["name"], "Shiso")
         self.assertEqual(results[2]["name"], "Umami")
         self.assertEqual(results[3]["name"], "Wasabi")
+
+        last_modified.daily_meal_count = 900
+        last_modified.save()
 
         url = f"{reverse('published_canteens')}?ordering=-modification_date"
         response = self.client.get(url)
