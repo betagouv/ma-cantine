@@ -242,6 +242,7 @@
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12">
+          <p class="body-2">Ministère de tutelle</p>
           <v-select
             :items="ministries"
             solo
