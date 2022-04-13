@@ -425,3 +425,11 @@ ENABLE_PARTNERS = os.getenv("ENABLE_PARTNERS") == "True"
 
 TEST_RUNNER = "macantine.testrunner.MaCantineTestRunner"
 OVERRIDE_TEST_SEED = os.getenv("OVERRIDE_TEST_SEED", None)
+
+# Automatic emails
+TEMPLATE_ID_NO_CANTEEN_FIRST = (
+    int(os.getenv("TEMPLATE_ID_NO_CANTEEN_FIRST")) if os.getenv("TEMPLATE_ID_NO_CANTEEN_FIRST", None) else None
+)
+TEMPLATE_ID_NO_CANTEEN_SECOND = (
+    int(os.getenv("TEMPLATE_ID_NO_CANTEEN_SECOND")) if os.getenv("TEMPLATE_ID_NO_CANTEEN_SECOND", None) else None
+)

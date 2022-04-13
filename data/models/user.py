@@ -52,10 +52,10 @@ class User(AbstractUser):
 
     # Email campaigns
     email_no_canteen_first_reminder = models.DateTimeField(
-        null=True, blank=True, verbose_name="Date d'envoi de la première relance pour manque de cantines"
+        null=True, blank=True, verbose_name="Date d'envoi du premier email pour manque de cantines"
     )
     email_no_canteen_second_reminder = models.DateTimeField(
-        null=True, blank=True, verbose_name="Date d'envoi de la première relance pour manque de cantines"
+        null=True, blank=True, verbose_name="Date d'envoi du second email pour manque de cantines"
     )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

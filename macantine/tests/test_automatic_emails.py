@@ -1,12 +1,17 @@
+from unittest import mock
 from datetime import timedelta
 from django.utils import timezone
 from django.test import TestCase
+from django.test.utils import override_settings
 from data.factories import CanteenFactory, UserFactory
 from macantine import tasks
 
 
 class TestAutomaticEmails(TestCase):
-    def test_no_canteen_first_reminder(self):
+    @mock.patch("macantine.tasks._send_sib_template")
+    @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=1)
+    @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
+    def test_no_canteen_first_reminder(self, _):
         """
         The email should be sent to users who have joined more
         than a week ago but have not created any canteens nor have they
@@ -20,6 +25,7 @@ class TestAutomaticEmails(TestCase):
             email_no_canteen_first_reminder=None,
             first_name="Jean",
             last_name="Sérien",
+            email="jean.serien@example.com",
         )
 
         # Should not send email because user already has a canteen
@@ -48,8 +54,13 @@ class TestAutomaticEmails(TestCase):
             last_name="Ulcorant",
         )
         tasks.no_canteen_first_reminder()
-        # TODO: Mock SIB API to ensure the endpoint is hit only once with the right info
 
+        # Email is only sent once to Jean
+        tasks._send_sib_template.assert_called_once_with(
+            1, {"PRENOM": "Jean"}, "jean.serien@example.com", "Jean Sérien"
+        )
+
+        # DB objects are updated
         jean.refresh_from_db()
         anna.refresh_from_db()
         sophie.refresh_from_db()
@@ -59,7 +70,10 @@ class TestAutomaticEmails(TestCase):
         self.assertIsNone(anna.email_no_canteen_first_reminder)
         self.assertIsNone(sophie.email_no_canteen_first_reminder)
 
-    def test_no_canteen_second_reminder(self):
+    @mock.patch("macantine.tasks._send_sib_template")
+    @override_settings(TEMPLATE_ID_NO_CANTEEN_SECOND=2)
+    @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
+    def test_no_canteen_second_reminder(self, _):
         """
         The second reminder email should be sent to users who have joined more
         than two weeks ago, have not created any canteens, and have already
@@ -112,9 +126,14 @@ class TestAutomaticEmails(TestCase):
             email_no_canteen_second_reminder=None,
             first_name="Marie",
             last_name="Olait",
+            email="marie.olait@example.com",
         )
         tasks.no_canteen_second_reminder()
-        # TODO: Mock SIB API to ensure the endpoint is hit only once with the right info
+
+        # Email is only sent once to Jean
+        tasks._send_sib_template.assert_called_once_with(
+            2, {"PRENOM": "Marie"}, "marie.olait@example.com", "Marie Olait"
+        )
 
         jean.refresh_from_db()
         anna.refresh_from_db()
@@ -126,3 +145,75 @@ class TestAutomaticEmails(TestCase):
         self.assertIsNone(jean.email_no_canteen_second_reminder)
         self.assertIsNone(anna.email_no_canteen_second_reminder)
         self.assertIsNone(sophie.email_no_canteen_second_reminder)
+
+    @mock.patch("macantine.tasks._send_sib_template")
+    @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=None)
+    @override_settings(TEMPLATE_ID_NO_CANTEEN_SECOND=None)
+    @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
+    def test_no_template_settings(self, _):
+        today = timezone.now()
+        # Should send first email if template was entered
+        UserFactory.create(
+            date_joined=(today - timedelta(weeks=1)),
+            email_no_canteen_first_reminder=None,
+            first_name="Jean",
+            last_name="Sérien",
+            email="jean.serien@example.com",
+        )
+
+        # Should send second email if template was entered
+        UserFactory.create(
+            date_joined=(today - timedelta(weeks=2)),
+            email_no_canteen_first_reminder=(today - timedelta(weeks=1)),
+            email_no_canteen_second_reminder=None,
+            first_name="Marie",
+            last_name="Olait",
+            email="marie.olait@example.com",
+        )
+        tasks.no_canteen_first_reminder()
+        tasks.no_canteen_second_reminder()
+
+        tasks._send_sib_template.assert_not_called()
+
+    @mock.patch("macantine.tasks._send_sib_template")
+    @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=1)
+    @override_settings(TEMPLATE_ID_NO_CANTEEN_SECOND=2)
+    @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
+    def test_emails_should_only_be_sent_once(self, _):
+        today = timezone.now()
+        # Should send first email
+        UserFactory.create(
+            date_joined=(today - timedelta(weeks=1)),
+            email_no_canteen_first_reminder=None,
+            first_name="Jean",
+            last_name="Sérien",
+            email="jean.serien@example.com",
+        )
+
+        # Should send second email
+        UserFactory.create(
+            date_joined=(today - timedelta(weeks=2)),
+            email_no_canteen_first_reminder=(today - timedelta(weeks=1)),
+            email_no_canteen_second_reminder=None,
+            first_name="Marie",
+            last_name="Olait",
+            email="marie.olait@example.com",
+        )
+
+        # Even if we triggered the functions several times, only one email
+        # should be sent per person
+        tasks.no_canteen_first_reminder()
+        tasks.no_canteen_first_reminder()
+        tasks.no_canteen_first_reminder()
+        tasks._send_sib_template.assert_called_once_with(
+            1, {"PRENOM": "Jean"}, "jean.serien@example.com", "Jean Sérien"
+        )
+
+        tasks._send_sib_template.reset_mock()
+
+        tasks.no_canteen_second_reminder()
+        tasks.no_canteen_second_reminder()
+        tasks.no_canteen_second_reminder()
+        tasks._send_sib_template.assert_called_once_with(
+            2, {"PRENOM": "Marie"}, "marie.olait@example.com", "Marie Olait"
+        )

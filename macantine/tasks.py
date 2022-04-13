@@ -1,14 +1,34 @@
 import logging
 import datetime
 from django.utils import timezone
+from django.conf import settings
 from data.models import User
 from .celery import app
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
 
 logger = logging.getLogger(__name__)
+configuration = sib_api_v3_sdk.Configuration()
+configuration.api_key["api-key"] = settings.ANYMAIL.get("SENDINBLUE_API_KEY")
+api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+
+
+def _send_sib_template(template_id, parameters, to_email, to_name):
+    send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+        to=[{"email": to_email, "name": to_name}],
+        params=parameters,
+        sender={"email": settings.CONTACT_EMAIL, "name": "Ma Cantine"},
+        reply_to={"email": settings.CONTACT_EMAIL, "name": "Ma Cantine"},
+        template_id=template_id,
+    )
+    api_instance.send_transac_email(send_smtp_email)
 
 
 @app.task()
 def no_canteen_first_reminder():
+    if not settings.TEMPLATE_ID_NO_CANTEEN_FIRST:
+        logger.error("Environment variable TEMPLATE_ID_NO_CANTEEN_FIRST not set")
+        return
     today = timezone.now()
     threshold = today - datetime.timedelta(weeks=1)
     users = User.objects.filter(
@@ -23,9 +43,16 @@ def no_canteen_first_reminder():
     logger.info(f"no_canteen_first_reminder: {len(users)} users to notify.")
     for user in users:
         try:
-            print(f"First email sent to {user.get_full_name()}")  # Send SIB template
+            parameters = {"PRENOM": user.first_name}
+            _send_sib_template(
+                settings.TEMPLATE_ID_NO_CANTEEN_FIRST, parameters, user.email, f"{user.first_name} {user.last_name}"
+            )
+            logger.info(f"First email sent to {user.get_full_name()} ({user.email})")
             user.email_no_canteen_first_reminder = today
             user.save()
+        except ApiException as e:
+            logger.error(f"SIB error when sending first no-cantine email to {user.username}")
+            logger.exception(e)
         except Exception as e:
             logger.error(f"Unable to send first no-cantine reminder email to {user.username}")
             logger.exception(e)
@@ -33,6 +60,9 @@ def no_canteen_first_reminder():
 
 @app.task()
 def no_canteen_second_reminder():
+    if not settings.TEMPLATE_ID_NO_CANTEEN_SECOND:
+        logger.error("Environment variable TEMPLATE_ID_NO_CANTEEN_SECOND not set")
+        return
     today = timezone.now()
     threshold = today - datetime.timedelta(weeks=2)
     first_reminder_threshold = today - datetime.timedelta(weeks=1)
@@ -49,9 +79,16 @@ def no_canteen_second_reminder():
     logger.info(f"no_canteen_second_reminder: {len(users)} users to notify.")
     for user in users:
         try:
-            print(f"Second email sent to {user.get_full_name()}")  # Send SIB template
+            parameters = {"PRENOM": user.first_name}
+            _send_sib_template(
+                settings.TEMPLATE_ID_NO_CANTEEN_SECOND, parameters, user.email, f"{user.first_name} {user.last_name}"
+            )
+            logger.info(f"Second email sent to {user.get_full_name()} ({user.email})")
             user.email_no_canteen_second_reminder = today
             user.save()
+        except ApiException as e:
+            logger.error(f"SIB error when sending second no-cantine reminder email to {user.username}")
+            logger.exception(e)
         except Exception as e:
             logger.error(f"Unable to send second no-cantine reminder email to {user.username}")
             logger.exception(e)

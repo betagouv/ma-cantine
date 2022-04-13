@@ -10,7 +10,7 @@ app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend=os.getenv("REDI
 
 # At 10:00 on every day from Monday through Friday.
 daily_week = crontab(hour=10, minute=0, day_of_week="1-5")
-every_minute = crontab(minute="*/1")
+every_minute = crontab(minute="*/1")  # For testing purposes
 
 app.conf.beat_schedule = {
     "no_canteen_first_reminder": {
@@ -23,7 +23,6 @@ app.conf.beat_schedule = {
     },
 }
 
-app.conf.beat_schedule = {}
 app.conf.timezone = "Europe/Paris"
 
 if __name__ == "__main__":
