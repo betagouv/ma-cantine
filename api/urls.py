@@ -23,6 +23,7 @@ from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
 
 
 urlpatterns = {
+    # TODO: delete loggedUser path and view
     path("loggedUser/", LoggedUserView.as_view(), name="logged_user"),
     path("user/<int:pk>", UpdateUserView.as_view(), name="update_user"),
     path("publishedCanteens/", PublishedCanteensView.as_view(), name="published_canteens"),
@@ -68,6 +69,7 @@ urlpatterns = {
         SubscribeNewsletter.as_view(),
         name="subscribe_newsletter",
     ),
+    # TODO: replace when doing REST registration view replacement?
     path("passwordChange/", ChangePasswordView.as_view(), name="change_password"),
     path(
         "addManager/",

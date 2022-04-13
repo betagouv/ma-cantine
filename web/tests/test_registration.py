@@ -4,6 +4,10 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+# TODO : do we want any tests for rest_registration?
+# TODO : check registration not broken for users in real site like these test are
+# if it is might have to create a URL with name="login"
+
 
 class TestRegistration(APITestCase):
     def test_register_email_username(self):

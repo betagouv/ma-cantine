@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "ckeditor",
     "ckeditor_uploader",
+    "rest_registration",
     "macantine",
     "data",
     "api",
@@ -425,3 +426,13 @@ ENABLE_PARTNERS = os.getenv("ENABLE_PARTNERS") == "True"
 
 TEST_RUNNER = "macantine.testrunner.MaCantineTestRunner"
 OVERRIDE_TEST_SEED = os.getenv("OVERRIDE_TEST_SEED", None)
+
+REST_REGISTRATION = {
+    # "REGISTER_VERIFICATION_URL": f"https://{HOSTNAME}/s-inscrire/",
+    # "RESET_PASSWORD_VERIFICATION_URL": f"https://{HOSTNAME}/reinitialisation-mot-de-passe/",
+    # "REGISTER_EMAIL_VERIFICATION_URL": f"https://{HOSTNAME}/activation-compte/",
+    # "VERIFICATION_FROM_EMAIL": DEFAULT_FROM_EMAIL,
+    "REGISTER_VERIFICATION_ENABLED": False,
+    "REGISTER_EMAIL_VERIFICATION_ENABLED": False,
+    "RESET_PASSWORD_VERIFICATION_ENABLED": False,
+}

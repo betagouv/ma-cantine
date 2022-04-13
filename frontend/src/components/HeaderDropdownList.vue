@@ -40,7 +40,8 @@
             <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
               Non, revenir en arrière
             </v-btn>
-            <v-btn color="red" text href="/se-deconnecter">
+            <!-- TODO: connect to new logout -->
+            <v-btn color="red" text @click="logout">
               Oui, je confirme
             </v-btn>
           </v-card-actions>
@@ -158,6 +159,21 @@ export default {
       if (item.authenticationState === false && this.loggedUser) return false
       if (item.breakpoint && !this.$vuetify.breakpoint[item.breakpoint]) return false
       return true
+    },
+    logout() {
+      this.$store
+        .dispatch("logoutUser")
+        .then(() => {
+          this.$store.dispatch("notify", {
+            message: "Vous êtes bien déconnecté.e.",
+            status: "success",
+          })
+          this.logoutWarningDialog = false
+        })
+        .catch((e) => {
+          console.log(e)
+          this.$store.dispatch("notifyServerError", e)
+        })
     },
   },
 }

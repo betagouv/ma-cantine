@@ -36,6 +36,7 @@ import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import ContactPage from "@/views/ContactPage"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
+import LoginPage from "@/views/auth/LoginPage"
 
 Vue.use(VueRouter)
 
@@ -379,6 +380,14 @@ const routes = [
     meta: {
       title: "Nouvel achat",
       authenticationRequired: true,
+    },
+  },
+  {
+    path: "/s-identifier",
+    name: "LoginPage",
+    component: LoginPage,
+    meta: {
+      title: "S'identifier",
     },
   },
   {

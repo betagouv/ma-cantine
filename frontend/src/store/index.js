@@ -109,7 +109,7 @@ export default new Vuex.Store({
   actions: {
     fetchLoggedUser(context) {
       context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch("/api/v1/loggedUser/")
+      return fetch("/rest-registration/profile/")
         .then(verifyResponse)
         .then((response) => {
           context.commit("SET_LOGGED_USER", response || null)
@@ -117,6 +117,44 @@ export default new Vuex.Store({
         })
         .catch(() => {
           context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+        })
+    },
+
+    loginUser(context, { payload }) {
+      return fetch("/rest-registration/login/", {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      })
+        .then(verifyResponse)
+        .then(() => {
+          return context.dispatch("fetchLoggedUser")
+        })
+        .catch((e) => {
+          throw e
+        })
+    },
+
+    logoutUser(context) {
+      context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch("/rest-registration/logout/", {
+        method: "POST",
+        headers,
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_LOGGED_USER", null)
+          context.commit("SET_USER_CANTEEN_PREVIEWS", [])
+          context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
+        })
+        .catch((e) => {
+          // TODO: why getting regular CSRF errors ?
+          context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
         })
     },
 

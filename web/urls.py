@@ -1,5 +1,6 @@
 from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
+from django.conf.urls import include
 from django.views.decorators.cache import cache_page
 from django.views.generic.base import RedirectView
 from django.urls import path
@@ -22,23 +23,6 @@ sitemaps = {
 
 urlpatterns = [
     path("", VueAppDisplayView.as_view(), name="app"),
-    # https://docs.djangoproject.com/en/3.1/topics/auth/default/#django.contrib.auth.views.LoginView
-    path(
-        "s-identifier",
-        auth_views.LoginView.as_view(
-            template_name="auth/login.html",
-            redirect_authenticated_user=True,
-        ),
-        name="login",
-    ),
-    # https://docs.djangoproject.com/en/3.1/topics/auth/default/#django.contrib.auth.views.LogoutView
-    path(
-        "se-deconnecter",
-        auth_views.LogoutView.as_view(
-            template_name="auth/logged_out.html",
-        ),
-        name="logout",
-    ),
     # https://docs.djangoproject.com/en/3.1/topics/auth/default/#django.contrib.auth.views.PasswordChangeView
     path(
         "modification-mot-de-passe",
@@ -121,4 +105,5 @@ urlpatterns = [
         {"sitemaps": sitemaps},
         name="sitemap",
     ),
+    path("rest-registration/", include("rest_registration.api.urls")),
 ]
