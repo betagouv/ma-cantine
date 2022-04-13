@@ -11,6 +11,7 @@ class Sector(models.Model):
 
     class Categories(models.TextChoices):
         ADMINISTRATION = "administration", "Administration"
+        ENTERPRISE = "enterprise", "Entreprise"
         EDUCATION = "education", "Enseignement"
         HEALTH = "health", "Santé"
         SOCIAL = "social", "Social / Médico-social"
