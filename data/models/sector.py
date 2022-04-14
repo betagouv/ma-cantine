@@ -11,6 +11,7 @@ class Sector(models.Model):
 
     class Categories(models.TextChoices):
         ADMINISTRATION = "administration", "Administration"
+        ENTERPRISE = "enterprise", "Entreprise"
         EDUCATION = "education", "Enseignement"
         HEALTH = "health", "Santé"
         SOCIAL = "social", "Social / Médico-social"
@@ -25,6 +26,7 @@ class Sector(models.Model):
         blank=True,
         verbose_name="catégorie",
     )
+    has_line_ministry = models.BooleanField(default=False, verbose_name="Afficher le champ « Ministère de tutelle »")
 
     @classmethod
     def choices(self):

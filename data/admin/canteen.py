@@ -52,6 +52,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "satellite_canteens_count",
         "economic_model",
         "sectors",
+        "line_ministry",
         "managers",
         "siret",
         "management_type",
