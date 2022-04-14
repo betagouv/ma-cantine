@@ -55,10 +55,10 @@ class Canteen(SoftDeletionModel):
         PRIVATE = "private", "Privé"
 
     class Ministries(models.TextChoices):
-        PREMIER_MINISTRE = "premier_ministre", "Service du premier ministre"
+        PREMIER_MINISTRE = "premier_ministre", "Service du Premier Ministre"
         AFFAIRES_ETRANGERES = "affaires_etrangeres", "Ministère de l’Europe et des Affaires étrangères"
         ECOLOGIE = "ecologie", "Ministère de la Transition écologique"
-        JEUNESE = "jeunese", "Ministère de l’Education nationale et de la Jeunesse et des Sports"
+        JEUNESSE = "jeunesse", "Ministère de l’Education Nationale et de la Jeunesse et des Sports"
         ECONOMIE = "economie", "Ministère de l’Economie, de la Finance et de la Relance"
         ARMEE = "armee", "Ministère de l’Armée"
         INTERIEUR = "interieur", "Ministère de l’Intérieur"
@@ -66,7 +66,7 @@ class Canteen(SoftDeletionModel):
         OUTRE_MER = "outre_mer", "Ministère des Outre-mer"
         TERRITOIRES = (
             "territoires",
-            "Ministère de la Cohésion des territoires et des relations avec les collectivités territoriales",
+            "Ministère de la Cohésion des Territoires et des Relations avec les Collectivités Territoriales",
         )
         JUSTICE = "justice", "Ministère de la Justice"
         CULTURE = "culture", "Ministère de la Culture"
@@ -74,10 +74,10 @@ class Canteen(SoftDeletionModel):
         MER = "mer", "Ministère de la Mer"
         ENSEIGNEMENT_SUPERIEUR = (
             "enseignement_superieur",
-            "Ministère de l’Enseignement supérieur et de la Recherche et de l’Innovation",
+            "Ministère de l’Enseignement Supérieur et de la Recherche et de l’Innovation",
         )
         AGRICULTURE = "agriculture", "Ministère de l’Agriculture et de l’Alimentation"
-        TRANSFORMATION = "transformation", "Ministère de la Transformation et de la Fonction publiques"
+        TRANSFORMATION = "transformation", "Ministère de la Transformation et de la Fonction Publiques"
         AUTRE = "autre", "Autre"
 
     creation_date = models.DateTimeField(auto_now_add=True)
