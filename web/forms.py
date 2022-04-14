@@ -19,6 +19,7 @@ class RegisterUserForm(UserCreationForm):
             "first_name",
             "last_name",
             "email",
+            "phone_number",
             "username",
             "password1",
             "password2",
