@@ -317,12 +317,14 @@ export const sectorsSelectList = (sectors) => {
     social: "Social et Médico-Social",
     administration: "Administration",
     leisure: "Loisirs",
+    enterprise: "Entreprise",
   }
   uniqueCategories.forEach((c) => sectors.push({ header: categoryDisplay[c], category: c }))
+  sectors.forEach((s) => (s.sortCategoryValue = s.category ? categoryDisplay[s.category] : ""))
   let sortFn = (key) => {
     return (a, b) => ((a[key] || "") > (b[key] || "") ? 1 : -1)
   }
   sectors.sort(sortFn("name")) // added benefit of getting the headers to the top of the lists
-  sectors.sort(sortFn("category")) // added benefit of moving sectors without parent to top
+  sectors.sort(sortFn("sortCategoryValue")) // added benefit of moving sectors without parent to top
   return sectors
 }
