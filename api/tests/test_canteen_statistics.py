@@ -123,6 +123,24 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 1)
 
+    def test_canteen_stats_by_sectors(self):
+        year = 2020
+        school = SectorFactory.create(name="School")
+        enterprise = SectorFactory.create(name="Enterprise")
+        social = SectorFactory.create(name="Social")
+        CanteenFactory.create(sectors=[school])
+        CanteenFactory.create(sectors=[enterprise])
+        CanteenFactory.create(sectors=[enterprise, social])
+        CanteenFactory.create(sectors=[social])
+
+        response = self.client.get(
+            reverse("canteen_statistics"), {"sectors": [school.id, enterprise.id], "year": year}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 3)
+
     def test_canteen_stats_missing_data(self):
         response = self.client.get(reverse("canteen_statistics"), {"region": "01"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -201,26 +219,29 @@ class TestCanteenStatsApi(APITestCase):
         """
         Test that the right canteens are identifies in diversification badge qs
         """
-        scolaire_sector = SectorFactory(name="Scolaire")
+        primaire = SectorFactory(name="Scolaire primaire", category="education")
+        secondaire = SectorFactory(name="Scolaire secondaire", category="education")
 
         # --- canteens which don't earn diversification badge:
         high_canteen = CanteenFactory.create()
-        high_canteen.sectors.remove(scolaire_sector)
+        high_canteen.sectors.remove(primaire)
+        high_canteen.sectors.remove(secondaire)
         DiagnosticFactory.create(
             canteen=high_canteen, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.HIGH.value
         )
 
         low_canteen = CanteenFactory.create()
-        low_canteen.sectors.add(scolaire_sector)
+        low_canteen.sectors.add(primaire)
         DiagnosticFactory.create(canteen=low_canteen, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW.value)
 
         # --- canteens which earn diversification badge:
         daily_vege = CanteenFactory.create()
-        daily_vege.sectors.remove(scolaire_sector)
+        daily_vege.sectors.remove(primaire)
+        daily_vege.sectors.remove(secondaire)
         DiagnosticFactory.create(canteen=daily_vege, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY.value)
 
         scolaire_mid_vege = CanteenFactory.create()
-        scolaire_mid_vege.sectors.add(scolaire_sector)
+        scolaire_mid_vege.sectors.add(secondaire)
         DiagnosticFactory.create(
             canteen=scolaire_mid_vege, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.MID.value
         )

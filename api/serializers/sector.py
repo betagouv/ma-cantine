@@ -8,4 +8,6 @@ class SectorSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
+            "category",
+            "has_line_ministry",
         )

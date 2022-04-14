@@ -47,7 +47,7 @@ ENVIRONMENT = os.getenv("ENVIRONMENT")
 # No need making this one secret: https://forum.sentry.io/t/dsn-private-public/6297/3
 if not DEBUG:
     sentry_sdk.init(
-        dsn="https://5bbe469c02b341c7ae1b85e280e28b15@o548798.ingest.sentry.io/5795837",
+        dsn="https://db78f7d440094c498a02135e8abefa27@sentry.incubateur.net/2",
         integrations=[DjangoIntegration()],
         traces_sample_rate=0,
         send_default_pii=False,

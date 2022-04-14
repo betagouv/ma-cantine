@@ -30,14 +30,14 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^3.4.1",
-    "eslint-plugin-vue": "^8.5.0",
+    "eslint-plugin-vue": "^8.6.0",
     "prettier": "^1.19.1",
-    "sass": "^1.49.11",
+    "sass": "^1.50.0",
     "sass-loader": "^10.0.0",
     "vue-cli-plugin-vuetify": "~2.4.8",
     "vue-template-compiler": "^2.6.14",
     "vuetify-loader": "^1.7.3",
-    "webpack-bundle-tracker": "^1.4.0"
+    "webpack-bundle-tracker": "^1.5.0"
   },
   "browserslist": [
     "> 1%",
