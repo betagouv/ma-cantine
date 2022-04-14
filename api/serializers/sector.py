@@ -9,4 +9,5 @@ class SectorSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "category",
+            "has_line_ministry",
         )
