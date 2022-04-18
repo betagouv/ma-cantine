@@ -19,7 +19,7 @@ click-repl==0.2.0
 Deprecated==1.2.13
 Django==4.0.4
 django-anymail==8.5
-django-ckeditor==6.3.2
+django-ckeditor==6.4.0
 django-csp==3.7
 django-debug-toolbar==3.2.4
 django-filter==21.1
