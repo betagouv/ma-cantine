@@ -17,6 +17,7 @@
         Login
       </v-btn>
     </v-form>
+    <!-- TODO: links to magic link login (/envoyer-email-conexion), reset password (/reinitialisation-mot-de-passe), register (/creer-mon-compte) -->
   </div>
 </template>
 
