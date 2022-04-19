@@ -50,6 +50,8 @@ class User(AbstractUser):
         verbose_name="Les affirmations suivantes concernent l'article 24 de la loi EGAlim, encadrant les objectifs d'approvisionnements (50% de produits durables et de qualité dont 20% de bio). Parmi ces affirmations, plusieurs choix sont possibles. Choisissez celles qui correspondent à votre situation :",
     )
 
+    phone_number = models.CharField("Numéro téléphone", max_length=50, null=True, blank=True)
+
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         max_avatar_size = 640
         if self.avatar:

@@ -16,6 +16,7 @@ class LoggedUserSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "email",
+            "phone_number",
             "username",
             "first_name",
             "last_name",
