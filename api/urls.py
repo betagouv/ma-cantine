@@ -8,6 +8,7 @@ from api.views import (
     PurchaseListCreateView,
     PurchaseRetrieveUpdateDestroyView,
     CanteenPurchasesSummaryView,
+    UsernameSuggestionView,
 )
 from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView, CanteenStatisticsView
 from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, DiagnosticUpdateView
@@ -130,6 +131,7 @@ urlpatterns = {
     path("canteen/<int:canteen_pk>/vegetarianExpe/", VegetarianExpeView.as_view(), name="canteen_vegetarian_expe"),
     path("message/", MessageCreateView.as_view(), name="message_create"),
     path("teamJoinRequest/<int:pk>/", TeamJoinRequestView.as_view(), name="canteen_team_request"),
+    path("usernameSuggestion/", UsernameSuggestionView.as_view(), name="username_suggestion"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

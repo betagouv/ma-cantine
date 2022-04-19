@@ -26,6 +26,7 @@ class Sector(models.Model):
         blank=True,
         verbose_name="catégorie",
     )
+    has_line_ministry = models.BooleanField(default=False, verbose_name="Afficher le champ « Ministère de tutelle »")
 
     @classmethod
     def choices(self):

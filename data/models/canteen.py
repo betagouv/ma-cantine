@@ -54,6 +54,32 @@ class Canteen(SoftDeletionModel):
         PUBLIC = "public", "Public"
         PRIVATE = "private", "Privé"
 
+    class Ministries(models.TextChoices):
+        PREMIER_MINISTRE = "premier_ministre", "Service du Premier Ministre"
+        AFFAIRES_ETRANGERES = "affaires_etrangeres", "Ministère de l’Europe et des Affaires étrangères"
+        ECOLOGIE = "ecologie", "Ministère de la Transition écologique"
+        JEUNESSE = "jeunesse", "Ministère de l’Education Nationale et de la Jeunesse et des Sports"
+        ECONOMIE = "economie", "Ministère de l’Economie, de la Finance et de la Relance"
+        ARMEE = "armee", "Ministère de l’Armée"
+        INTERIEUR = "interieur", "Ministère de l’Intérieur"
+        TRAVAIL = "travail", "Ministère Travail, de l’Emploi et de l’Insertion"
+        OUTRE_MER = "outre_mer", "Ministère des Outre-mer"
+        TERRITOIRES = (
+            "territoires",
+            "Ministère de la Cohésion des Territoires et des Relations avec les Collectivités Territoriales",
+        )
+        JUSTICE = "justice", "Ministère de la Justice"
+        CULTURE = "culture", "Ministère de la Culture"
+        SANTE = "sante", "Ministère des Solidarités et de la Santé"
+        MER = "mer", "Ministère de la Mer"
+        ENSEIGNEMENT_SUPERIEUR = (
+            "enseignement_superieur",
+            "Ministère de l’Enseignement Supérieur et de la Recherche et de l’Innovation",
+        )
+        AGRICULTURE = "agriculture", "Ministère de l’Agriculture et de l’Alimentation"
+        TRANSFORMATION = "transformation", "Ministère de la Transformation et de la Fonction Publiques"
+        AUTRE = "autre", "Autre"
+
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
@@ -66,6 +92,9 @@ class Canteen(SoftDeletionModel):
     region = models.TextField(null=True, blank=True, choices=Region.choices, verbose_name="région")
     postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name="code postal")
     sectors = models.ManyToManyField(Sector, blank=True, verbose_name="secteurs d'activité")
+    line_ministry = models.TextField(
+        null=True, blank=True, choices=Ministries.choices, verbose_name="Ministère de tutelle"
+    )
     managers = models.ManyToManyField(
         get_user_model(),
         blank=True,

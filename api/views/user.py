@@ -1,4 +1,5 @@
 import logging
+import random
 from django.contrib.auth import get_user_model, tokens, update_session_auth_hash
 from django.conf import settings
 from django.http import JsonResponse
@@ -8,6 +9,7 @@ from django.utils.http import urlsafe_base64_encode
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.generics import UpdateAPIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import permissions, status
 from api.serializers import LoggedUserSerializer, PasswordSerializer
 from api.permissions import IsProfileOwner
@@ -84,3 +86,50 @@ class ChangePasswordView(UpdateAPIView):
         serializer.save()
         update_session_auth_hash(request, request.user)  # After a password change Django logs the user out
         return JsonResponse({}, status=status.HTTP_200_OK)
+
+
+class UsernameSuggestionView(APIView):
+    class RetryLimitException(Exception):
+        pass
+
+    def post(self, request):
+        try:
+            email = request.data.get("email")
+            first_name = request.data.get("first_name")
+            last_name = request.data.get("last_name")
+            if first_name and last_name:
+                full_name = f"{first_name.strip()}_{last_name.strip()}".lower().replace(" ", "-")
+                suggested = UsernameSuggestionView._generate_username_with_base(full_name)
+            elif email:
+                email_username = email.split("@")[0].strip().lower().replace(" ", "-")
+                suggested = UsernameSuggestionView._generate_username_with_base(email_username)
+            else:
+                return JsonResponse({"detail": "Missing info"}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"suggestion": suggested}, status=status.HTTP_200_OK)
+        except UsernameSuggestionView.RetryLimitException as e:
+            logger.error(
+                f"Unable to generate a username suggestion for first name: {first_name}, last name: {last_name}, email: {email}. Retry limit exceeded."
+            )
+            logger.exception(e)
+        except Exception as e:
+            logger.error("Unable to generate username suggestion. Unexpected error.")
+            logger.exception(e)
+
+    @staticmethod
+    def _generate_username_with_base(username_suggestion, attempt=0):
+        limit_retries = 10
+        if attempt >= limit_retries:
+            raise UsernameSuggestionView.RetryLimitException("Retry limit reached")
+
+        if UsernameSuggestionView._is_unique(username_suggestion):
+            return username_suggestion
+        new_suggestion = f"{username_suggestion}_{str(random.sample(range(999), 1)[0])}"
+        return UsernameSuggestionView._generate_username_with_base(new_suggestion, attempt + 1)
+
+    @staticmethod
+    def _is_unique(username):
+        try:
+            get_user_model().objects.get(username=username)
+            return False
+        except get_user_model().DoesNotExist:
+            return True
