@@ -1,21 +1,31 @@
 <template>
-  <div>
+  <div class="text-left">
     <!-- TODO: make this page nicer -->
-    <h1>Login</h1>
+    <h1>S'identifier</h1>
     <v-form ref="form" v-model="formIsValid">
-      <v-row>
-        <v-col cols="12">
-          <p class="body-2 mb-1 mt-2 text-left">Username</p>
+      <v-row class="flex-column">
+        <v-col cols="6">
+          <p class="body-2 mb-1 mt-2">
+            Nom d'utilisateur
+            <!-- ou adresse email -->
+          </p>
           <v-text-field hide-details="auto" solo v-model="username" :rules="[validators.required]"></v-text-field>
         </v-col>
-        <v-col cols="12">
-          <p class="body-2 mb-1 mt-2 text-left">Mot de passe</p>
+        <v-col cols="6">
+          <p class="body-2 mb-1 mt-2">Mot de passe</p>
           <v-text-field hide-details="auto" solo v-model="password" :rules="[validators.required]"></v-text-field>
         </v-col>
       </v-row>
-      <v-btn x-large color="primary" @click="login">
-        Login
-      </v-btn>
+      <v-row>
+        <v-col cols="6">
+          <v-btn x-large color="primary" @click="login">
+            S'identifier
+          </v-btn>
+          <v-btn x-large href="/creer-mon-compte">
+            Créer mon compte
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-form>
     <!-- TODO: links to magic link login (/envoyer-email-conexion), reset password (/reinitialisation-mot-de-passe), register (/creer-mon-compte) -->
   </div>
