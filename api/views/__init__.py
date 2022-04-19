@@ -1,4 +1,4 @@
-from .user import LoggedUserView, UpdateUserView, ChangePasswordView  # noqa: F401
+from .user import LoggedUserView, UpdateUserView, ChangePasswordView, UsernameSuggestionView  # noqa: F401
 from .canteen import (  # noqa: F401
     PublishedCanteensView,
     PublishedCanteenSingleView,
