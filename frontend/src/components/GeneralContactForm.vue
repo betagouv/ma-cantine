@@ -79,6 +79,7 @@ export default {
       inquiryType: "",
       inquiryOptions: [
         { text: "Poser une question sur une fonctionnalité de ma cantine ?", value: "functionalityQuestion" },
+        { text: "Demander une démo", value: "demo" },
         { text: "Signaler un bug", value: "bug" },
         { text: "Question sur la loi EGAlim", value: "egalim" },
         { text: "Autre", value: "other" },
@@ -107,6 +108,7 @@ export default {
         functionalityQuestion: "fonctionnalité",
         bug: "bug",
         egalim: "loi",
+        demo: "requête de démo",
         other: "autre",
       }
 
@@ -121,7 +123,6 @@ export default {
       this.$store
         .dispatch("sendInquiryEmail", payload)
         .then(() => {
-          this.$refs.form.reset()
           this.$store.dispatch("notify", {
             status: "success",
             message: `Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.`,
@@ -130,6 +131,7 @@ export default {
           if (this.$matomo) {
             this.$matomo.trackEvent("inquiry", "send", this.inquiryType)
           }
+          this.$refs.form.reset()
           window.scrollTo(0, 0)
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))

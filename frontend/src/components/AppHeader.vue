@@ -25,35 +25,40 @@
         <v-spacer></v-spacer>
       </div>
 
-      <div class="mx-4 fill-height d-flex flex-column" v-if="$vuetify.breakpoint.smAndUp && !this.loggedUser">
+      <div class="mx-4 fill-height d-flex flex-column" v-if="$vuetify.breakpoint.mdAndUp && !this.loggedUser">
         <v-spacer></v-spacer>
         <div class="divider"></div>
         <v-spacer></v-spacer>
       </div>
 
-      <div class="fill-height d-flex flex-column text-left" v-if="$vuetify.breakpoint.smAndUp && !this.loggedUser">
+      <div class="fill-height d-flex flex-column text-left" v-if="$vuetify.breakpoint.mdAndUp && !this.loggedUser">
         <v-spacer></v-spacer>
-        <div class="caption grey--text mt-n1" v-if="extended && dynamicSizingEnabled">
+        <div class="caption grey--text mt-n1">
           Site en expérimentation
         </div>
-        <router-link
-          :to="{ name: 'TesterParticipation' }"
-          class="text-caption grey--text text--darken-4 text-decoration-underline"
-        >
-          Devenir testeur
-        </router-link>
         <v-spacer></v-spacer>
       </div>
 
       <v-spacer></v-spacer>
 
       <v-btn
+        outlined
+        color="primary"
+        class="align-self-center ml-4"
+        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.smAndUp"
+        href="https://calendly.com/jennifer-stephan-betagouv/ma-cantine-aide-info-a-la-connexion-l-inscription-la-creation-de-cantine"
+        target="_blank"
+        rel="noopener"
+      >
+        <span>Demander une démo</span>
+      </v-btn>
+
+      <v-btn
         text
         elevation="0"
-        class="align-self-center header-login-button"
+        class="align-self-center header-login-button ml-2"
         v-if="!loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
         href="/s-identifier"
-        active-class="header-nav-active"
       >
         <span>S'identifier</span>
       </v-btn>
