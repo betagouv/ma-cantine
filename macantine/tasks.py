@@ -17,8 +17,8 @@ def _send_sib_template(template_id, parameters, to_email, to_name):
     send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
         to=[{"email": to_email, "name": to_name}],
         params=parameters,
-        sender={"email": settings.CONTACT_EMAIL, "name": "Ma Cantine"},
-        reply_to={"email": settings.CONTACT_EMAIL, "name": "Ma Cantine"},
+        sender={"email": settings.CONTACT_EMAIL, "name": "ma cantine"},
+        reply_to={"email": settings.CONTACT_EMAIL, "name": "ma cantine"},
         template_id=template_id,
     )
     api_instance.send_transac_email(send_smtp_email)
