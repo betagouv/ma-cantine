@@ -13,15 +13,6 @@
     <v-form ref="form" v-model="formIsValid">
       <v-row>
         <v-col cols="12" md="8">
-          <p class="body-2 my-2">Nom de la cantine</p>
-          <v-text-field
-            hide-details="auto"
-            :rules="[validators.required]"
-            validate-on-blur
-            solo
-            v-model="canteen.name"
-          ></v-text-field>
-
           <p class="body-2 mt-4 mb-2">SIRET</p>
           <v-text-field
             hide-details="auto"
@@ -29,6 +20,7 @@
             solo
             v-model="canteen.siret"
             :rules="[validators.length(14), validators.luhn]"
+            @blur="getCanteenBySiret"
           ></v-text-field>
           <p class="caption mt-1 ml-2">
             Vous ne le connaissez pas ? Utilisez cet
@@ -37,6 +29,15 @@
             </a>
             de votre cantine.
           </p>
+
+          <p class="body-2 my-2">Nom de la cantine</p>
+          <v-text-field
+            hide-details="auto"
+            :rules="[validators.required]"
+            validate-on-blur
+            solo
+            v-model="canteen.name"
+          ></v-text-field>
 
           <v-card outlined class="mt-4" v-if="duplicateSiretCanteen" color="red lighten-5">
             <v-card-title class="pt-2 pb-1 font-weight-medium">
@@ -279,6 +280,16 @@
       </div>
     </v-form>
 
+    <v-dialog v-model="siretQueryInProgress" false width="300">
+      <v-card class="py-4">
+        <v-card-text>
+          À la recherche pour la cantine du SIRET...
+          <br />
+          <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
       <v-spacer></v-spacer>
       <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
@@ -352,6 +363,7 @@ export default {
         { text: "Privé", value: "private" },
       ],
       user,
+      siretQueryInProgress: false,
       // contact forms
       fromEmail: user.email,
       fromName: `${user.firstName} ${user.lastName}`,
@@ -452,6 +464,34 @@ export default {
     window.removeEventListener("beforeunload", this.handleUnload)
   },
   methods: {
+    getCanteenBySiret() {
+      if (this.canteen.name) {
+        return // do not override user-entered data
+      }
+      this.siretQueryInProgress = true
+      fetch(`https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/${this.canteen.siret}`)
+        .then((response) => response.json())
+        .then((body) => {
+          this.siretQueryInProgress = false
+          if (body.etablissement) {
+            this.canteen.name = body.etablissement.enseigne_1
+
+            // TODO: improve compatibility between the two APIs with location info
+            this.cityAutocompleteChoice = {
+              label: body.etablissement.libelle_commune,
+              citycode: body.etablissement.code_commune,
+              postcode: body.etablissement.code_postal,
+              context: "N/A,",
+            }
+            // TODO: maybe we should be saving location ID which is given by sirene API and adresse API
+
+            // TODO: possible to deduce sectors, public/private ... ?
+          }
+        })
+        .catch(() => {
+          this.siretQueryInProgress = false
+        })
+    },
     saveCanteen() {
       this.$refs.form.validate()
 
