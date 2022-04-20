@@ -30,6 +30,13 @@
             v-model="canteen.siret"
             :rules="[validators.length(14), validators.luhn]"
           ></v-text-field>
+          <p class="caption mt-1 ml-2">
+            Vous ne le connaissez pas ? Utilisez cet
+            <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
+              outil de recherche pour trouver le SIRET
+            </a>
+            de votre cantine.
+          </p>
 
           <v-card outlined class="mt-4" v-if="duplicateSiretCanteen" color="red lighten-5">
             <v-card-title class="pt-2 pb-1 font-weight-medium">
