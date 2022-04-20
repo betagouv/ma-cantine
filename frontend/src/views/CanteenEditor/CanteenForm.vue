@@ -184,7 +184,7 @@
           </v-radio-group>
         </v-col>
 
-        <v-col cols="12" md="6" v-if="showDailyMealCount">
+        <v-col cols="12" md="6" :class="showDailyMealCount ? '' : 'grey--text'">
           <p class="body-2 my-2">
             Couverts moyen par jour (convives sur place)
           </p>
@@ -195,10 +195,12 @@
             solo
             v-model="canteen.dailyMealCount"
             prepend-icon="mdi-silverware-fork-knife"
+            v-if="showDailyMealCount"
           ></v-text-field>
+          <p v-else><i>Pas disponible pour les cuisines qui ne servent pas de repas</i></p>
         </v-col>
 
-        <v-col cols="12" md="6" v-if="showSatelliteCanteensCount">
+        <v-col cols="12" md="6" :class="showSatelliteCanteensCount ? '' : 'grey--text'">
           <p class="body-2 my-2">Nombre de cantines à qui je fournis des repas</p>
           <v-text-field
             hide-details="auto"
@@ -207,7 +209,9 @@
             solo
             v-model="canteen.satelliteCanteensCount"
             prepend-icon="mdi-home-city"
+            v-if="showSatelliteCanteensCount"
           ></v-text-field>
+          <p v-else><i>Pas disponible pour les cantines qui n'ont pas de satellites</i></p>
         </v-col>
 
         <v-col cols="12" class="mt-4">
@@ -403,7 +407,7 @@ export default {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
     },
     showDailyMealCount() {
-      return this.canteen.productionType !== "central"
+      return this.canteen.productionType && this.canteen.productionType !== "central"
     },
     showMinistryField() {
       const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
