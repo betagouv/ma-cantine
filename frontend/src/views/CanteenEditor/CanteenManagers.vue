@@ -98,7 +98,7 @@ export default {
       this.$store
         .dispatch("addManager", {
           canteenId: this.originalCanteen.id,
-          email: this.newManagerEmail,
+          email: this.newManagerEmail.trim(),
         })
         .then((managementTeam) => {
           this.$store.dispatch("notify", {
@@ -119,7 +119,7 @@ export default {
       this.$store
         .dispatch("removeManager", {
           canteenId: this.originalCanteen.id,
-          email: manager.email,
+          email: manager.email.trim(),
         })
         .then((managementTeam) => {
           this.$store.dispatch("notify", {
