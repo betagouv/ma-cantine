@@ -8,7 +8,7 @@
             "name": "Python: Django",
             "type": "python",
             "request": "launch",
-            "pythonPath": "${workspaceFolder}/venv/bin/python",
+            "python": "${workspaceFolder}/venv/bin/python",
             "program": "${workspaceFolder}/manage.py",
             "args": [
                 "runserver"
@@ -21,7 +21,7 @@
             "type": "python",
             "request": "launch",
             "stopOnEntry": false,
-            "pythonPath": "${workspaceFolder}/venv/bin/python",
+            "python": "${workspaceFolder}/venv/bin/python",
             "program": "${workspaceFolder}/manage.py",
             "args": [
                 "test",

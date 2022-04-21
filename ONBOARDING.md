@@ -94,6 +94,14 @@ ENABLE_XP_VEGE= Optionnel - `True` pour activer la feature de l'expérimentation
 ENABLE_PARTNERS= Optionnel - `True` pour afficher nos partenaires sur la page d'accueil.
 ```
 
+### Relances automatiques par email
+
+```
+TEMPLATE_ID_NO_CANTEEN_FIRST= Optionnel - ID du template SendInBlue pour le premier email envoyé aux utilisateurs n'ayant pas encore créé une cantine. En cas d'absence la relance n'aura pas lieu.
+TEMPLATE_ID_NO_CANTEEN_SECOND= Optionnel - ID du template SendInBlue pour le deuzième email envoyé aux utilisateurs n'ayant pas encore créé une cantine. En cas d'absence la relance n'aura pas lieu.
+```
+
+
 #### Trello
 
 Si vous ne connaissez pas les variables trello, suivez [ce guide](https://developer.atlassian.com/cloud/trello/guides/rest-api/api-introduction/) pour identifier votre clé et token.

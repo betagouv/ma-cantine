@@ -42,6 +42,15 @@ class MaCanteenUserAdmin(UserAdmin):
             },
         ),
         (
+            _("Emails automatiques"),
+            {
+                "fields": (
+                    "email_no_canteen_first_reminder",
+                    "email_no_canteen_second_reminder",
+                ),
+            },
+        ),
+        (
             _("EY - Connaissance de la loi EGALIM"),
             {
                 "fields": ("law_awareness",),
