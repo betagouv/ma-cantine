@@ -190,28 +190,30 @@
           </p>
           <v-text-field
             hide-details="auto"
-            :rules="[validators.greaterThanZero]"
+            :rules="showDailyMealCount ? [validators.greaterThanZero] : []"
+            :disabled="!showDailyMealCount"
+            :messages="showDailyMealCount ? [] : 'Concerne uniquement les cantines recevant des convives'"
             validate-on-blur
             solo
             v-model="canteen.dailyMealCount"
             prepend-icon="mdi-silverware-fork-knife"
-            v-if="showDailyMealCount"
           ></v-text-field>
-          <p v-else><i>Pas disponible pour les cuisines qui ne servent pas de repas</i></p>
         </v-col>
 
         <v-col cols="12" md="6" :class="showSatelliteCanteensCount ? '' : 'grey--text'">
           <p class="body-2 my-2">Nombre de cantines à qui je fournis des repas</p>
           <v-text-field
             hide-details="auto"
-            :rules="[validators.greaterThanZero]"
+            :rules="showSatelliteCanteensCount ? [validators.greaterThanZero] : []"
+            :disabled="!showSatelliteCanteensCount"
+            :messages="
+              showSatelliteCanteensCount ? [] : 'Concerne uniquement les cuisines qui livrent à des satellites'
+            "
             validate-on-blur
             solo
             v-model="canteen.satelliteCanteensCount"
             prepend-icon="mdi-home-city"
-            v-if="showSatelliteCanteensCount"
           ></v-text-field>
-          <p v-else><i>Pas disponible pour les cantines qui n'ont pas de satellites</i></p>
         </v-col>
 
         <v-col cols="12" class="mt-4">
@@ -459,6 +461,11 @@ export default {
       }
 
       const payload = this.originalCanteen ? getObjectDiff(this.originalCanteen, this.canteen) : this.canteen
+      const fieldsToClean = ["dailyMealCount", "satelliteCanteensCount"]
+      fieldsToClean.forEach((x) => {
+        if (Object.prototype.hasOwnProperty.call(payload, x) && payload[x] === "") payload[x] = null
+      })
+
       this.$store
         .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", {
           id: this.canteen.id,
