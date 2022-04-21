@@ -25,33 +25,33 @@
         <v-spacer></v-spacer>
       </div>
 
-      <div class="mx-4 fill-height d-flex flex-column" v-if="$vuetify.breakpoint.mdAndUp && !this.loggedUser">
+      <div class="ml-6 mr-4 fill-height d-flex flex-column" v-if="$vuetify.breakpoint.mdAndUp && !this.loggedUser">
         <v-spacer></v-spacer>
         <div class="divider"></div>
         <v-spacer></v-spacer>
       </div>
 
-      <div class="fill-height d-flex flex-column text-left" v-if="$vuetify.breakpoint.mdAndUp && !this.loggedUser">
+      <div
+        class="fill-height d-flex flex-column text-left"
+        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.smAndUp"
+      >
         <v-spacer></v-spacer>
-        <div class="caption grey--text mt-n1">
-          Site en expérimentation
+        <div class="caption grey--text ml-0 ml-md-n2">
+          <v-btn
+            text
+            class="align-self-center mt-n1"
+            v-if="!loggedUser && userDataReady && $vuetify.breakpoint.smAndUp"
+            href="https://calendly.com/jennifer-stephan-betagouv/ma-cantine-aide-info-a-la-connexion-l-inscription-la-creation-de-cantine"
+            target="_blank"
+            rel="noopener"
+          >
+            <span>Demander une démo</span>
+          </v-btn>
         </div>
         <v-spacer></v-spacer>
       </div>
 
       <v-spacer></v-spacer>
-
-      <v-btn
-        outlined
-        color="primary"
-        class="align-self-center ml-4"
-        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.smAndUp"
-        href="https://calendly.com/jennifer-stephan-betagouv/ma-cantine-aide-info-a-la-connexion-l-inscription-la-creation-de-cantine"
-        target="_blank"
-        rel="noopener"
-      >
-        <span>Demander une démo</span>
-      </v-btn>
 
       <v-btn
         text
