@@ -28,7 +28,7 @@ class MaCanteenUserAdmin(UserAdmin):
         (None, {"fields": ("username", "password")}),
         (
             _("Personal info"),
-            {"fields": ("first_name", "last_name", "email", "avatar")},
+            {"fields": ("first_name", "last_name", "email", "avatar", "phone_number")},
         ),
         (
             _("Permissions"),

@@ -57,6 +57,7 @@ class User(AbstractUser):
     email_no_canteen_second_reminder = models.DateTimeField(
         null=True, blank=True, verbose_name="Date d'envoi du second email pour manque de cantines"
     )
+    phone_number = models.CharField("Numéro téléphone", max_length=50, null=True, blank=True)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         max_avatar_size = 640
