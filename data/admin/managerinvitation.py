@@ -6,8 +6,12 @@ from data.models import ManagerInvitation
 class ManagerInvitationAdmin(admin.ModelAdmin):
 
     list_display = (
+        "creation_date",
         "email",
         "canteen",
-        "creation_date",
+        "siret",
     )
     list_filter = ("canteen",)
+
+    def siret(self, obj):
+        return obj.canteen.siret
