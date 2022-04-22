@@ -9,6 +9,7 @@
           :href="item.href"
           :ripple="false"
           :target="item.target"
+          :rel="item.rel"
         >
           <v-list-item-title class="body-2">
             <v-icon small color="grey darken-2" class="mt-n1 mr-2">{{ item.icon }}</v-icon>
@@ -84,11 +85,14 @@ export default {
           href: "/creer-mon-compte",
         },
         {
-          text: "Devenir testeur",
-          icon: "mdi-hammer-wrench",
+          text: "Demander une démo",
+          icon: "mdi-presentation-play",
           breakpoint: "xs",
           authenticationState: false,
-          to: { name: "TesterParticipation" },
+          href:
+            "https://calendly.com/jennifer-stephan-betagouv/ma-cantine-aide-info-a-la-connexion-l-inscription-la-creation-de-cantine",
+          target: "_blank",
+          rel: "noopener",
         },
         {
           text: "Autodiagnostic",
@@ -130,6 +134,7 @@ export default {
           icon: "mdi-file-document-outline",
           href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
           target: "_blank",
+          rel: "noopener",
         },
         {
           type: "divider",
