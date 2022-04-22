@@ -320,7 +320,8 @@ export const sectorsSelectList = (sectors) => {
     enterprise: "Entreprise",
   }
   uniqueCategories.forEach((c) => sectors.push({ header: categoryDisplay[c], category: c }))
-  sectors.forEach((s) => (s.sortCategoryValue = s.category ? categoryDisplay[s.category] : ""))
+  const categoryOrder = ["administration", "education", "health", "social", "leisure", "enterprise", "autres"]
+  sectors.forEach((s) => (s.sortCategoryValue = s.category ? categoryOrder.indexOf(s.category) : -1))
 
   // Need to specify every case because browsers handle them differently
   let sortFn = (key) => {
@@ -329,6 +330,14 @@ export const sectorsSelectList = (sectors) => {
       if (a[key] && !b[key]) return 1
       if (b[key] && !a[key]) return -1
       if (a[key] == b[key]) return 0
+      // push any 'other' sector to the bottom of their category
+      if (typeof a[key] === "string" && typeof b[key] === "string") {
+        const aIsOther = a[key].toLowerCase().startsWith("autre")
+        const bIsOther = b[key].toLowerCase().startsWith("autre")
+        if (aIsOther && !bIsOther) return 1
+        else if (bIsOther && !aIsOther) return -1
+        // otherwise let it be sorted below
+      }
       return a[key] > b[key] ? 1 : -1
     }
   }
