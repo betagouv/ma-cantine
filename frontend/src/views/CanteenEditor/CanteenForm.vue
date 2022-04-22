@@ -483,8 +483,11 @@ export default {
         .catch((e) => {
           if (e.jsonPromise) {
             e.jsonPromise.then((json) => {
-              this.duplicateSiretCanteen = json
-              this.messageTroubleshooting = `Je veux ajouter une deuxième cantine avec le même SIRET : ${payload.siret}...`
+              const isDuplicateSiret = json.detail === "La resource que vous souhaitez créer existe déjà"
+              if (isDuplicateSiret) {
+                this.duplicateSiretCanteen = json
+                this.messageTroubleshooting = `Je veux ajouter une deuxième cantine avec le même SIRET : ${payload.siret}...`
+              }
             })
             this.$store.dispatch("notifyRequiredFieldsError")
           } else {
