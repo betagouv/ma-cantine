@@ -108,7 +108,7 @@ export default {
         functionalityQuestion: "fonctionnalité",
         bug: "bug",
         egalim: "loi",
-        demo: "requête de démo",
+        demo: "demande de démo",
         other: "autre",
       }
 
