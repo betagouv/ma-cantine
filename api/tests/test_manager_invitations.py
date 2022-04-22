@@ -78,7 +78,7 @@ class TestManagerInvitationApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        payload = {"canteenId": canteen.id, "email": "test@example.com"}
+        payload = {"canteenId": canteen.id, "email": "  test@example.com"}
         response = self.client.post(reverse("add_manager"), payload)
         body = response.json()
 
