@@ -60,7 +60,7 @@ pylint==2.13.5
 pylint-django==2.5.3
 pylint-plugin-utils==0.7
 pyparsing==3.0.8
-pytest==7.1.1
+pytest==7.1.2
 pytest-django==4.5.2
 python-bidi==0.4.2
 python-dateutil==2.8.2
