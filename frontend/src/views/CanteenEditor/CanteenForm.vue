@@ -4,6 +4,12 @@
       {{ isNewCanteen ? "Nouvelle cantine" : "Modifier ma cantine" }}
     </h1>
 
+    <TechnicalControlDialog
+      :bodyText="technicalControlText"
+      v-model="showTechnicalControlDialog"
+      @save="(e) => saveCanteen(e, true)"
+    />
+
     <PublicationStateNotice
       :canteen="originalCanteen"
       :includeLink="true"
@@ -301,6 +307,7 @@
 import validators from "@/validators"
 import { toBase64, getObjectDiff, sectorsSelectList } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
+import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
 import Constants from "@/constants"
 
@@ -308,7 +315,7 @@ const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n
 
 export default {
   name: "CanteenForm",
-  components: { PublicationStateNotice, ImagesField },
+  components: { PublicationStateNotice, ImagesField, TechnicalControlDialog },
   props: {
     canteenUrlComponent: {
       type: String,
@@ -323,6 +330,8 @@ export default {
     const user = this.$store.state.loggedUser
     return {
       canteen: { images: [], sectors: [] },
+      technicalControlText: null,
+      showTechnicalControlDialog: false,
       formIsValid: true,
       bypassLeaveWarning: false,
       deletionDialog: false,
@@ -458,7 +467,7 @@ export default {
     window.removeEventListener("beforeunload", this.handleUnload)
   },
   methods: {
-    saveCanteen() {
+    saveCanteen(e, bypassTechnicalControl = false) {
       this.$refs.form.validate()
 
       if (!this.formIsValid) {
@@ -472,6 +481,23 @@ export default {
       fieldsToClean.forEach((x) => {
         if (Object.prototype.hasOwnProperty.call(payload, x) && payload[x] === "") payload[x] = null
       })
+
+      if (!bypassTechnicalControl) {
+        if (this.canteen.productionType === "central_serving" && this.canteen.satelliteCanteensCount == 1) {
+          this.displayTechnicalControlDialog("Etes-vous sûr de ne livrer qu'un seul autre site de service ?")
+          return
+        }
+        const isCentralCanteen =
+          this.canteen.productionType === "central_serving" || this.canteen.productionType === "central"
+        if (isCentralCanteen && parseInt(this.canteen.satelliteCanteensCount) >= 250) {
+          this.displayTechnicalControlDialog(
+            `Vous êtes sur le point de déclarer une livraison depuis votre cuisine centrale à ${parseInt(
+              this.canteen.satelliteCanteensCount
+            )} établissements de service. Êtes-vous sûr de vouloir continuer ?`
+          )
+          return
+        }
+      }
 
       this.$store
         .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", {
@@ -604,6 +630,10 @@ export default {
           window.scrollTo(0, 0)
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    displayTechnicalControlDialog(bodyText) {
+      this.technicalControlText = bodyText
+      this.showTechnicalControlDialog = true
     },
   },
   watch: {
