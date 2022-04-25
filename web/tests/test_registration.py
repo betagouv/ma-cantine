@@ -38,6 +38,7 @@ class TestRegistration(APITestCase):
             "last_name": "User",
             "password1": "testPw1234#!",
             "password2": "testPw1234#!",
+            "phone_number": "00-11-22 33 44",
             "cgu_approved": True,
             "username": "test-user",
             "email": email,
@@ -58,4 +59,29 @@ class TestRegistration(APITestCase):
             reverse("app"),
             status.HTTP_302_FOUND,
             fetch_redirect_response=False,
+        )
+
+    def test_phone_number_validation(self):
+        """
+        Phone number should be a ten-digit numeric string when ignoring spaces and dashes
+        """
+        email = "test-phone@example.com"
+        payload = {
+            "first_name": "Test",
+            "last_name": "User Phone",
+            "password1": "testPw1234#!",
+            "password2": "testPw1234#!",
+            "cgu_approved": True,
+            "username": "test-user",
+            "phone_number": "123",
+            "email": email,
+        }
+
+        response = self.client.post(reverse("register"), payload)
+        self.assertFormError(
+            response,
+            "form",
+            "phone_number",
+            "Veuillez renseigner un numéro téléphone à dix chiffres numériques",
+            msg_prefix="test-phone",
         )

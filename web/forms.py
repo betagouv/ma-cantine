@@ -33,6 +33,7 @@ class RegisterUserForm(UserCreationForm):
         self.fields["last_name"].widget.attrs.update({"placeholder": "Dufresne"})
         self.fields["username"].widget.attrs.update({"placeholder": "agnes.dufresne"})
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com"})
+        self.fields["phone_number"].widget.attrs.update({"placeholder": "0* ** ** ** **"})
         self.fields["password1"].widget.attrs.update({"placeholder": "Entrez votre mot de passe"})
         self.fields["password2"].widget.attrs.update({"placeholder": "Confirmez votre mot de passe"})
 
@@ -41,6 +42,15 @@ class RegisterUserForm(UserCreationForm):
 
     def clean_username(self):
         return _clean_username(self)
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get("phone_number")
+        if not phone_number:
+            return phone_number
+        number = phone_number.replace(" ", "").replace("-", "")
+        if len(number) != 10 or not number.isdigit():
+            raise forms.ValidationError("Veuillez renseigner un numéro téléphone à dix chiffres numériques")
+        return phone_number
 
     def save(self, commit=True):
         user = super(RegisterUserForm, self).save(commit=False)

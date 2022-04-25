@@ -56,7 +56,12 @@
           </v-col>
           <v-col cols="12" md="6">
             <p class="body-2 mb-1 mt-2 text-left">Numéro téléphone</p>
-            <v-text-field hide-details="auto" solo v-model="userCopy.phoneNumber"></v-text-field>
+            <v-text-field
+              hide-details="auto"
+              solo
+              v-model="userCopy.phoneNumber"
+              :rules="[validators.isEmptyOrPhoneNumber]"
+            ></v-text-field>
           </v-col>
           <v-col cols="12">
             <p class="body-2 mb-1 mt-2 text-left">Adresse email</p>
