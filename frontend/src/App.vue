@@ -40,6 +40,7 @@ export default {
     $route(to) {
       const suffix = "ma-cantine.beta.gouv.fr"
       document.title = to.meta.title ? to.meta.title + " - " + suffix : suffix
+      document.querySelector('meta[property="og:url"]').setAttribute("content", window.location)
     },
     initialDataLoaded() {
       if (!this.$store.state.loggedUser) return
