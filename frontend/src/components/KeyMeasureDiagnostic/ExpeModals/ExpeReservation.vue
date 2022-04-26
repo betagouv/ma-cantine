@@ -13,9 +13,10 @@
         vous demandons de suivre et renseigner différents indicateurs nécessaires à l’évaluation du gaspillage
         alimentaire, du taux de fréquentation et de la satisfaction des usagers à 3 étapes de l’expérimentation.
       </v-card-text>
-      <v-card-text class="text-center">
-        <v-btn class="mr-4" color="primary" outlined>Télécharger le guide</v-btn>
-        <v-btn color="primary" text>Lire le décret de l'expérimentation</v-btn>
+      <v-card-text class="text-center pt-0">
+        <v-btn href="/static/documents/Guide_pratique_XP_RESERVATION.pdf" target="_blank" color="primary" outlined>
+          Télécharger le guide
+        </v-btn>
       </v-card-text>
       <v-divider></v-divider>
       <v-card-text>

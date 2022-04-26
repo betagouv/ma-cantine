@@ -189,7 +189,7 @@
       <p class="body-2">Les inscriptions sont ouvertes jusqu’au 1er juillet 2023.</p>
       <p class="body-2">
         Les informations relatives aux conditions de mise en œuvre de l’expérimentation sont précisées dans
-        <a href="">le guide pratique</a>
+        <a href="/static/documents/Guide_pratique_XP_RESERVATION.pdf" target="_blank">le guide pratique</a>
         .
       </p>
 
