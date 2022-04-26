@@ -129,6 +129,7 @@ class ImportDiagnosticsView(APIView):
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = ImportDiagnosticsView._normalise_siret(row[0])
                 canteen, should_update_geolocation = self._update_or_create_canteen_with_diagnostic(row, siret)
+                # TODO: rename variable/only count if diagnostic created and not if only canteen created?
                 diagnostics_created += 1
                 canteens[canteen.siret] = canteen
                 if should_update_geolocation:
@@ -147,7 +148,22 @@ class ImportDiagnosticsView(APIView):
 
     @transaction.atomic
     def _update_or_create_canteen_with_diagnostic(self, row, siret):
-        row[14]  # accessing last required column to throw error if badly formatted early on
+        # first check that the number of columns is good
+        #   to throw error if badly formatted early on.
+        # NB: if year is given, appro data is required, else only canteen data required
+        diagnostic_year = None
+        try:
+            diagnostic_year = row[11]
+            if not diagnostic_year and any(row[12:]):
+                raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
+        except IndexError:
+            pass
+        manager_column_idx = 10
+        if diagnostic_year:
+            row[14]  # check all required diagnostic fields are given
+        else:
+            row[manager_column_idx - 1]  # managers are optional, so could be missing too
+
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
         elif not row[2] and not row[3]:
@@ -159,51 +175,54 @@ class ImportDiagnosticsView(APIView):
         number_error_message = "Ce champ doit être un nombre décimal."
 
         try:
-            manager_emails = ImportDiagnosticsView._get_manager_emails(row[10]) if row[10] else []
+            manager_emails = []
+            if len(row) > manager_column_idx + 1 and row[manager_column_idx]:
+                manager_emails = ImportDiagnosticsView._get_manager_emails(row[manager_column_idx])
         except Exception as e:
             raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
 
-        try:
-            if not row[12]:
-                raise Exception
-            value_total_ht = Decimal(row[12].replace(",", "."))
-        except Exception as e:
-            raise ValidationError({"value_total_ht": number_error_message})
+        if diagnostic_year:
+            try:
+                if not row[12]:
+                    raise Exception
+                value_total_ht = Decimal(row[12].replace(",", "."))
+            except Exception as e:
+                raise ValidationError({"value_total_ht": number_error_message})
 
-        try:
-            if not row[13]:
-                raise Exception
-            value_bio_ht = Decimal(row[13].replace(",", "."))
-        except Exception as e:
-            raise ValidationError({"value_bio_ht": number_error_message})
+            try:
+                if not row[13]:
+                    raise Exception
+                value_bio_ht = Decimal(row[13].replace(",", "."))
+            except Exception as e:
+                raise ValidationError({"value_bio_ht": number_error_message})
 
-        try:
-            if not row[14]:
-                raise Exception
-            value_sustainable_ht = Decimal(row[14].replace(",", "."))
-        except Exception as e:
-            raise ValidationError({"value_sustainable_ht": number_error_message})
+            try:
+                if not row[14]:
+                    raise Exception
+                value_sustainable_ht = Decimal(row[14].replace(",", "."))
+            except Exception as e:
+                raise ValidationError({"value_sustainable_ht": number_error_message})
 
-        value_label_rouge = None
-        try:
-            if len(row) >= 16 and row[15]:
-                value_label_rouge = Decimal(row[15].replace(",", "."))
-        except Exception as e:
-            raise ValidationError({"value_label_rouge": number_error_message})
+            value_label_rouge = None
+            try:
+                if len(row) >= 16 and row[15]:
+                    value_label_rouge = Decimal(row[15].replace(",", "."))
+            except Exception as e:
+                raise ValidationError({"value_label_rouge": number_error_message})
 
-        value_label_aoc_igp = None
-        try:
-            if len(row) >= 17 and row[16]:
-                value_label_aoc_igp = Decimal(row[16].replace(",", "."))
-        except Exception as e:
-            raise ValidationError({"value_label_aoc_igp": number_error_message})
+            value_label_aoc_igp = None
+            try:
+                if len(row) >= 17 and row[16]:
+                    value_label_aoc_igp = Decimal(row[16].replace(",", "."))
+            except Exception as e:
+                raise ValidationError({"value_label_aoc_igp": number_error_message})
 
-        value_label_hve = None
-        try:
-            if len(row) >= 18 and row[17]:
-                value_label_hve = Decimal(row[17].replace(",", "."))
-        except Exception as e:
-            raise ValidationError({"value_label_hve": number_error_message})
+            value_label_hve = None
+            try:
+                if len(row) >= 18 and row[17]:
+                    value_label_hve = Decimal(row[17].replace(",", "."))
+            except Exception as e:
+                raise ValidationError({"value_label_hve": number_error_message})
 
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
@@ -238,18 +257,19 @@ class ImportDiagnosticsView(APIView):
 
         canteen.save()
 
-        diagnostic = Diagnostic(
-            canteen_id=canteen.id,
-            year=row[11],
-            value_total_ht=value_total_ht,
-            value_bio_ht=value_bio_ht,
-            value_sustainable_ht=value_sustainable_ht,
-            value_label_rouge=value_label_rouge,
-            value_label_aoc_igp=value_label_aoc_igp,
-            value_label_hve=value_label_hve,
-        )
-        diagnostic.full_clean()
-        diagnostic.save()
+        if diagnostic_year:
+            diagnostic = Diagnostic(
+                canteen_id=canteen.id,
+                year=diagnostic_year,
+                value_total_ht=value_total_ht,
+                value_bio_ht=value_bio_ht,
+                value_sustainable_ht=value_sustainable_ht,
+                value_label_rouge=value_label_rouge,
+                value_label_aoc_igp=value_label_aoc_igp,
+                value_label_hve=value_label_hve,
+            )
+            diagnostic.full_clean()
+            diagnostic.save()
         return (canteen, should_update_geolocation)
 
     @staticmethod

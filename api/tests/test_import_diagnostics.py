@@ -235,6 +235,37 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
+    def test_import_some_without_diagnostic(self, _):
+        """
+        Should be able to import canteens without creating diagnostics if only canteen columns
+        are present
+        """
+        with open("./api/tests/files/mix_diag_canteen_import.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 2)
+        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(Diagnostic.objects.count(), 1)
+        diagnostic = Diagnostic.objects.first()
+        self.assertEqual(diagnostic.canteen.siret, "73282932000074")
+        self.assertEqual(Diagnostic.objects.filter(canteen=Canteen.objects.get(siret="21340172201787")).count(), 0)
+
+    @authenticate
+    def test_import_only_canteens(self, _):
+        """
+        Should be able to import canteens from a file that doesn't have commas for the optional fields
+        """
+        with open("./api/tests/files/canteen_import.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        self.assertEqual(Canteen.objects.count(), 1)
+
+    @authenticate
     def test_error_collection(self, _):
         """
         If errors occur, discard the file and return the errors with row and message
@@ -251,7 +282,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(first_error["status"], 400)
         self.assertEqual(
             first_error["message"],
-            "Champ 'année' : L'année doit être comprise entre 2019 et 2023.",
+            "Champ 'année' : L'année est obligatoire pour créer un diagnostic.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
