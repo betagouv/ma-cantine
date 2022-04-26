@@ -52,6 +52,33 @@
           :rules="[(v) => !v || v.length <= 915 || '915 caractères maximum']"
         ></v-textarea>
       </v-row>
+
+      <v-row class="px-4">
+        <v-checkbox v-model="showPatData">
+          <template v-slot:label>
+            <span class="body-2 grey--text text--darken-3">
+              Certains de mes produit proviennent d'un PAT en 2021
+            </span>
+          </template>
+        </v-checkbox>
+      </v-row>
+
+      <v-row v-if="showPatData" class="d-block px-4 mt-2 mb-4">
+        <p class="body-2 my-2 grey--text text--darken-3">Part de produits provenant d'un PAT</p>
+        <v-text-field
+          style="max-width: 300px;"
+          append-icon="mdi-percent"
+          type="number"
+          outlined
+          hide-details="auto"
+          validate-on-blur
+          v-model="patPercentage"
+        ></v-text-field>
+
+        <p class="body-2 my-2 grey--text text--darken-3">Nom du PAT</p>
+        <v-text-field outlined hide-details="auto" validate-on-blur v-model="patName"></v-text-field>
+      </v-row>
+
       <v-row>
         <v-col cols="12" md="7" class="text-body-2 mb-2">
           Pour mettre à jour ces données, rendez-vous sur
@@ -71,6 +98,8 @@
           :diagnostic="currentDiagnostic"
           :previousDiagnostic="previousDiagnostic"
           :customText="customText"
+          :patPercentage="showPatData ? patPercentage : null"
+          :patName="showPatData ? patName : null"
         />
       </div>
     </div>
@@ -214,6 +243,9 @@ export default {
       fetchedCanteens: {},
       selectedCanteen: {},
       customText: null,
+      showPatData: false,
+      patPercentage: null,
+      patName: null,
     }
   },
   computed: {

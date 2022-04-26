@@ -22,6 +22,13 @@
       confection des repas
     </p>
 
+    <p class="pat pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
+    <p class="pat" v-if="patPercentage && patName">
+      {{ patPercentage }} % de nos produits proviennent du PAT « {{ patName }} »
+    </p>
+    <p class="pat" v-else-if="patPercentage">{{ patPercentage }} % de nos produits proviennent d'un PAT</p>
+    <p class="pat" v-else-if="patName">Certains de nos produits proviennent du PAT « {{ patName }} »</p>
+
     <div class="spacer"></div>
     <div id="graphs">
       <div>
@@ -89,6 +96,8 @@ export default {
     diagnostic: Object,
     previousDiagnostic: Object,
     customText: String,
+    patPercentage: String,
+    patName: String,
   },
   computed: {
     showPreviousDiagnostic() {
@@ -171,8 +180,14 @@ i {
   margin-left: 1em;
 }
 
-#introduction {
+#introduction,
+.pat {
   font-size: 14px;
+}
+
+.pat-heading {
+  margin-bottom: 0;
+  font-weight: bold;
 }
 
 #logos {
