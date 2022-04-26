@@ -71,6 +71,10 @@ class ImportDiagnosticsView(APIView):
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
 
+    def __init__(self, **kwargs):
+        self.diagnostics_created = 0
+        super().__init__(**kwargs)
+
     def post(self, request):
         start = time.time()
         logger.info("Diagnostic bulk import started")
@@ -78,13 +82,15 @@ class ImportDiagnosticsView(APIView):
             with transaction.atomic():
                 file = request.data["file"]
                 ImportDiagnosticsView._verify_file_size(file)
-                (canteens, errors, diagnostics_created) = self._treat_csv_file(file)
+                (canteens, errors) = self._treat_csv_file(file)
 
                 if errors:
                     raise IntegrityError()
 
             serialized_canteens = [camelize(FullCanteenSerializer(canteen).data) for canteen in canteens.values()]
-            return ImportDiagnosticsView._get_success_response(serialized_canteens, diagnostics_created, errors, start)
+            return ImportDiagnosticsView._get_success_response(
+                serialized_canteens, self.diagnostics_created, errors, start
+            )
 
         except IntegrityError as e:
             logger.exception(e)
@@ -110,7 +116,6 @@ class ImportDiagnosticsView(APIView):
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
     def _treat_csv_file(self, file):
-        diagnostics_created = 0
         canteens = {}
         errors = []
         locations_csv_str = "siret,citycode,postcode\n"
@@ -129,8 +134,6 @@ class ImportDiagnosticsView(APIView):
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = ImportDiagnosticsView._normalise_siret(row[0])
                 canteen, should_update_geolocation = self._update_or_create_canteen_with_diagnostic(row, siret)
-                # TODO: rename variable/only count if diagnostic created and not if only canteen created?
-                diagnostics_created += 1
                 canteens[canteen.siret] = canteen
                 if should_update_geolocation:
                     has_locations_to_find = True
@@ -144,7 +147,7 @@ class ImportDiagnosticsView(APIView):
                     errors.append(ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number))
         if has_locations_to_find:
             self._update_location_data(canteens, locations_csv_str)
-        return (canteens, errors, diagnostics_created)
+        return (canteens, errors)
 
     @transaction.atomic
     def _update_or_create_canteen_with_diagnostic(self, row, siret):
@@ -270,6 +273,7 @@ class ImportDiagnosticsView(APIView):
             )
             diagnostic.full_clean()
             diagnostic.save()
+            self.diagnostics_created += 1
         return (canteen, should_update_geolocation)
 
     @staticmethod

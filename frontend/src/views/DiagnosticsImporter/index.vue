@@ -40,12 +40,21 @@
       <v-progress-circular indeterminate color="primary" size="28" class="mr-4"></v-progress-circular>
       <span class="mt-1">Traitement en cours...</span>
     </v-card>
-    <div v-if="!isNaN(count) && !importInProgress">
-      <v-alert type="success" outlined v-if="count > 0">
+    <div v-if="!isNaN(canteenCount) && !importInProgress">
+      <v-alert type="success" outlined v-if="canteenCount > 0">
         <span class="grey--text text--darken-4 body-2">
-          {{ count }}
-          <span v-if="count === 1">diagnostic a été créé.</span>
-          <span v-else>diagnostics ont été créés.</span>
+          {{ canteenCount }}
+          <span v-if="canteenCount === 1">cantine</span>
+          <span v-else>cantines</span>
+          <span v-if="diagnosticCount">
+            et {{ diagnosticCount }}
+            <span v-if="diagnosticCount === 1">diagnostic</span>
+            <span v-else>diagnostics</span>
+          </span>
+          <!-- NB: canteen count isn't technically created only, could be updated,
+               deciding not to handle this edge case for now -->
+          <span v-if="canteenCount + (diagnosticCount || 0) === 1">&nbsp;a été créé.</span>
+          <span v-else>&nbsp;ont été créés.</span>
         </span>
       </v-alert>
       <div v-if="errors && errors.length">
@@ -72,7 +81,7 @@
           </v-simple-table>
         </v-alert>
       </div>
-      <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retour aux cantines et diagnostics</router-link>
+      <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retour à mes cantines</router-link>
       <v-divider class="my-8"></v-divider>
     </div>
     <h2 class="my-6">Format du fichier</h2>
@@ -178,7 +187,8 @@ export default {
     return {
       file: undefined,
       canteens: undefined,
-      count: undefined,
+      canteenCount: undefined,
+      diagnosticCount: undefined,
       errors: undefined,
       seconds: undefined,
       importInProgress: false,
@@ -318,7 +328,8 @@ export default {
           this.importInProgress = false
           this.file = null
           this.canteens = json.canteens
-          this.count = json.count
+          this.canteenCount = json.canteens.length
+          this.diagnosticCount = json.count
           this.errors = json.errors
           this.seconds = json.seconds
           this.$store.dispatch("notify", {
