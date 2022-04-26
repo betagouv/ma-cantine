@@ -202,7 +202,30 @@
             <label for="sustainable">produits de qualité et durables (hors bio)</label>
             .
           </p>
-          <v-btn x-large class="mb-4" color="primary" @click="submit">Générer mon affiche</v-btn>
+          <p>
+            Part de produits provenant d'un PAT
+            <v-text-field
+              append-icon="mdi-percent"
+              type="number"
+              placeholder="30"
+              solo
+              hide-details="auto"
+              class="my-4"
+              validate-on-blur
+              v-model="form.patPercentage"
+            ></v-text-field>
+
+            Nom du PAT
+            <v-text-field
+              solo
+              class="my-4"
+              placeholder="Mon PAT"
+              hide-details="auto"
+              validate-on-blur
+              v-model="form.patName"
+            ></v-text-field>
+          </p>
+          <v-btn x-large class="my-4" color="primary" @click="submit">Générer mon affiche</v-btn>
           <p class="caption" v-if="!isAuthenticated">
             Pour ajouter une photo à l'affiche et accéder à d'autres fonctionnalités,
             <a href="/creer-mon-compte">créez un compte</a>
