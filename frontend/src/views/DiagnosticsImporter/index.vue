@@ -58,7 +58,7 @@
         </span>
       </v-alert>
       <div v-if="errors && errors.length">
-        <p class="text-body-2 red--text text--darken-4" v-if="count === 0">
+        <p class="text-body-2 red--text text--darken-4" v-if="canteenCount === 0">
           Nous n'avons pas pu traiter votre fichier. Vous trouverez ci-dessous des informations sur les erreurs
           rencontrées.
         </p>
