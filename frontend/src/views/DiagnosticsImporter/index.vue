@@ -43,18 +43,9 @@
     <div v-if="!isNaN(canteenCount) && !importInProgress">
       <v-alert type="success" outlined v-if="canteenCount > 0">
         <span class="grey--text text--darken-4 body-2">
-          {{ canteenCount }}
-          <span v-if="canteenCount === 1">cantine</span>
-          <span v-else>cantines</span>
-          <span v-if="diagnosticCount">
-            et {{ diagnosticCount }}
-            <span v-if="diagnosticCount === 1">diagnostic</span>
-            <span v-else>diagnostics</span>
-          </span>
-          <!-- NB: canteen count isn't technically created only, could be updated,
-               deciding not to handle this edge case for now -->
-          <span v-if="canteenCount + (diagnosticCount || 0) === 1">&nbsp;a été créé.</span>
-          <span v-else>&nbsp;ont été créés.</span>
+          {{ canteenCount }} cantines
+          <span v-if="diagnosticCount">et {{ diagnosticCount }} diagnostics&nbsp;</span>
+          <span>ont été {{ diagnosticCount ? "traités" : "traitées" }}.</span>
         </span>
       </v-alert>
       <div v-if="errors && errors.length">
@@ -81,7 +72,7 @@
           </v-simple-table>
         </v-alert>
       </div>
-      <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retour à mes cantines</router-link>
+      <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retourner à mes cantines</router-link>
       <v-divider class="my-8"></v-divider>
     </div>
     <h2 class="my-6">Format du fichier</h2>
