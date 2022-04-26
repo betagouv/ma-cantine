@@ -246,66 +246,67 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
         errors = body["errors"]
-        self.assertEqual(errors[0]["row"], 1)
-        self.assertEqual(errors[0]["status"], 400)
+        first_error = errors.pop(0)
+        self.assertEqual(first_error["row"], 1)
+        self.assertEqual(first_error["status"], 400)
         self.assertEqual(
-            errors[0]["message"],
+            first_error["message"],
             "Champ 'année' : L'année doit être comprise entre 2019 et 2023.",
         )
         self.assertEqual(
-            errors[1]["message"],
+            errors.pop(0)["message"],
             "Champ 'année' : La valeur «\xa0.\xa0» doit être un nombre entier.",
         )
         self.assertEqual(
-            errors[2]["message"],
+            errors.pop(0)["message"],
             "Champ 'année' : L'année doit être comprise entre 2019 et 2023.",
         )
         self.assertEqual(
-            errors[3]["message"],
+            errors.pop(0)["message"],
             "Champ 'repas par jour' : La valeur «\xa0not a number\xa0» doit être un nombre entier.",
         )
         self.assertEqual(
-            errors[4]["message"],
+            errors.pop(0)["message"],
             "Champ 'mode de production' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
         )
         self.assertEqual(
-            errors[5]["message"],
+            errors.pop(0)["message"],
             "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal.",
         )
         self.assertEqual(
-            errors[6]["message"],
+            errors.pop(0)["message"],
             "Champ 'année' : L'année doit être comprise entre 2019 et 2023.",
         )
         self.assertEqual(
-            errors[7]["message"],
+            errors.pop(0)["message"],
             "Un diagnostic pour cette année et cette cantine existe déjà.",
         )
         self.assertEqual(
-            errors[8]["message"],
+            errors.pop(0)["message"],
             "Champ 'Valeur totale annuelle HT' : La somme des valeurs d'approvisionnement, 300, est plus que le total, 20",
         )
         self.assertEqual(
-            errors[9]["message"],
+            errors.pop(0)["message"],
             "Champ 'siret' : Le siret de la cantine ne peut pas être vide",
         )
         self.assertEqual(
-            errors[10]["message"],
+            errors.pop(0)["message"],
             "Champ 'Secteur économique' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
         )
         self.assertEqual(
-            errors[11]["message"],
+            errors.pop(0)["message"],
             "Données manquantes : 15 colonnes attendus, 14 trouvés.",
         )
         self.assertEqual(
-            errors[12]["message"],
+            errors.pop(0)["message"],
             "Champ 'repas par jour' : Ce champ ne peut pas être vide.",
         )
         self.assertEqual(
-            errors[13]["message"],
+            errors.pop(0)["message"],
             "Champ 'nom' : Ce champ ne peut pas être vide.",
         )
         self.assertEqual(
-            errors[14]["message"],
+            errors.pop(0)["message"],
             "Champ 'code postal' : Ce champ ne peut pas être vide si le code INSEE de la ville est vide.",
         )
 
