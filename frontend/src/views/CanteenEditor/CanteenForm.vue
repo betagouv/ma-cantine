@@ -484,7 +484,7 @@ export default {
 
       if (!bypassTechnicalControl) {
         if (this.canteen.productionType === "central_serving" && this.canteen.satelliteCanteensCount == 1) {
-          this.displayTechnicalControlDialog("Etes-vous sûr de ne livrer qu'un seul autre site de service ?")
+          this.displayTechnicalControlDialog("Est-ce que vous ne livrez vraiment qu'un seul autre site de service ?")
           return
         }
         const isCentralCanteen =
@@ -493,7 +493,7 @@ export default {
           this.displayTechnicalControlDialog(
             `Vous êtes sur le point de déclarer une livraison depuis votre cuisine centrale à ${parseInt(
               this.canteen.satelliteCanteensCount
-            )} établissements de service. Êtes-vous sûr de vouloir continuer ?`
+            )} établissements de service. Voulez-vous vraiment continuer ?`
           )
           return
         }

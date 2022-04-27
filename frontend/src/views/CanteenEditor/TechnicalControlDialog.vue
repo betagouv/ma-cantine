@@ -1,11 +1,11 @@
 <template>
   <v-dialog v-model="dialogOpen" max-width="500">
-    <v-card class="text-left">
+    <v-card class="text-left pa-1">
       <v-card-title class="font-weight-bold">Vérification</v-card-title>
       <v-card-text class="grey--text text--darken-3">{{ bodyText }}</v-card-text>
       <v-divider></v-divider>
 
-      <v-card-actions class="pa-4">
+      <v-card-actions class="pa-3">
         <v-spacer></v-spacer>
         <v-btn outlined text @click="onCancel" class="mr-2">
           Non, revenir en arrière
