@@ -20,15 +20,19 @@
 
 <script>
 export default {
-  name: "TecnicalControlDialog",
+  name: "TechnicalControlDialog",
   props: ["bodyText", "value"],
   methods: {
     onCancel() {
-      this.$matomo.trackEvent("canteen", "edition", "technical-control-cancel")
+      if (this.$matomo) {
+        this.$matomo.trackEvent("canteen", "modification", "technical-control-cancel")
+      }
       this.$emit("input", false)
     },
     onConfirm() {
-      this.$matomo.trackEvent("canteen", "edition", "technical-control-save")
+      if (this.$matomo) {
+        this.$matomo.trackEvent("canteen", "modification", "technical-control-save")
+      }
       this.$emit("save")
     },
   },
