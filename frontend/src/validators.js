@@ -143,6 +143,6 @@ export default {
     if (!input) return true
     const phoneNumber = input.replaceAll(" ", "").replaceAll("-", "")
     if (phoneNumber.length == 10 && /^[0-9]+$/g.test(phoneNumber)) return true
-    return "Veuillez renseigner un numéro téléphone à dix chiffres numériques"
+    return "Dix chiffres numériques attendus"
   },
 }

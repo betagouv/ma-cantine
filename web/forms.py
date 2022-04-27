@@ -49,7 +49,7 @@ class RegisterUserForm(UserCreationForm):
             return phone_number
         number = phone_number.replace(" ", "").replace("-", "")
         if len(number) != 10 or not number.isdigit():
-            raise forms.ValidationError("Veuillez renseigner un numéro téléphone à dix chiffres numériques")
+            raise forms.ValidationError("Dix chiffres numériques attendus")
         return phone_number
 
     def save(self, commit=True):

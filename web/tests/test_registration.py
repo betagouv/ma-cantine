@@ -82,6 +82,6 @@ class TestRegistration(APITestCase):
             response,
             "form",
             "phone_number",
-            "Veuillez renseigner un numéro téléphone à dix chiffres numériques",
+            "Dix chiffres numériques attendus",
             msg_prefix="test-phone",
         )
