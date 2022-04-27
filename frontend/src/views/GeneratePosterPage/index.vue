@@ -15,8 +15,7 @@
       En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives pour les
       informer sur la part de produits de qualité et durables et de la part des produits issus de projets alimentaires
       territoriaux entrant dans la composition des repas servis dans votre restaurant. Cette information est obtenue à
-      partir de vos données annuelles d’achat. Si ces données ne sont pas disponibles vous pouvez utiliser d’autres
-      critères (nombre de composantes, volume des denrées…).
+      partir de vos données annuelles d’achat.
     </p>
     <router-link
       :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
@@ -26,33 +25,70 @@
     </router-link>
 
     <div v-if="isAuthenticated && hasCanteens">
-      <v-row class="px-4 mt-2" align="center">
-        <v-col cols="12" sm="6" md="7" class="my-0 my-sm-4 pl-0">
-          <v-autocomplete
+      <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent class="mb-4">
+        <v-row class="px-4 mt-2" align="center">
+          <v-col cols="12" sm="6" md="7" class="my-0 my-sm-4 pl-0">
+            <v-autocomplete
+              outlined
+              hide-details
+              :items="userCanteens"
+              label="Choissisez la cantine"
+              v-model="selectedCanteenId"
+              @change="onCanteenAutocompleteChange"
+              item-text="name"
+              item-value="id"
+            ></v-autocomplete>
+          </v-col>
+          <v-col class="my-0 my-sm-4 px-0 px-sm-4 d-flex justify-space-between">
+            <v-btn x-large color="primary" @click="submit" :disabled="!selectedCanteenId || loadingCanteenData">
+              Générer mon affiche
+            </v-btn>
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-textarea
             outlined
-            hide-details
-            :items="userCanteens"
-            label="Choissisez la cantine"
-            v-model="selectedCanteenId"
-            @change="onCanteenAutocompleteChange"
-            item-text="name"
-            item-value="id"
-          ></v-autocomplete>
-        </v-col>
-        <v-col class="my-0 my-sm-4 px-0 px-sm-4 d-flex justify-space-between">
-          <v-btn x-large color="primary" @click="submit" :disabled="!selectedCanteenId || loadingCanteenData">
+            v-model="customText"
+            label="Plus de détail (facultatif)"
+            counter
+            :rules="[(v) => !v || v.length <= 915 || '915 caractères maximum']"
+          ></v-textarea>
+        </v-row>
+
+        <v-row class="px-4">
+          <v-checkbox v-model="showPatData">
+            <template v-slot:label>
+              <span class="body-2 grey--text text--darken-3">
+                Certains de mes produit proviennent d'un PAT en {{ publicationYear }}
+              </span>
+            </template>
+          </v-checkbox>
+        </v-row>
+
+        <v-row v-if="showPatData" class="d-block px-4 mt-2">
+          <v-text-field
+            label="Part de produits provenant d'un PAT"
+            style="max-width: 400px;"
+            append-icon="mdi-percent"
+            type="number"
+            outlined
+            validate-on-blur
+            v-model="patPercentage"
+            :rules="[validators.isPercentageOrEmpty]"
+          ></v-text-field>
+
+          <v-text-field label="Nom du PAT" outlined v-model="patName" hide-details></v-text-field>
+          <v-btn
+            x-large
+            color="primary"
+            @click="submit"
+            :disabled="!selectedCanteenId || loadingCanteenData"
+            class="my-8"
+          >
             Générer mon affiche
           </v-btn>
-        </v-col>
-        <v-spacer></v-spacer>
-        <v-textarea
-          outlined
-          v-model="customText"
-          label="Plus de détail (facultatif)"
-          counter
-          :rules="[(v) => !v || v.length <= 915 || '915 caractères maximum']"
-        ></v-textarea>
-      </v-row>
+        </v-row>
+      </v-form>
+
       <v-row>
         <v-col cols="12" md="7" class="text-body-2 mb-2">
           Pour mettre à jour ces données, rendez-vous sur
@@ -72,6 +108,8 @@
           :diagnostic="currentDiagnostic"
           :previousDiagnostic="previousDiagnostic"
           :customText="customText"
+          :patPercentage="showPatData ? patPercentage : null"
+          :patName="showPatData ? patName : null"
         />
       </div>
     </div>
@@ -174,7 +212,31 @@
             <label for="sustainable">produits de qualité et durables (hors bio)</label>
             .
           </p>
-          <v-btn x-large class="mb-4" color="primary" @click="submit">Générer mon affiche</v-btn>
+          <label for="pat-percent">Part de produits provenant d'un PAT</label>
+          <v-text-field
+            id="pat-percent"
+            append-icon="mdi-percent"
+            type="number"
+            placeholder="30"
+            solo
+            hide-details="auto"
+            class="my-4"
+            validate-on-blur
+            v-model="form.patPercentage"
+            :rules="[validators.isPercentageOrEmpty]"
+          ></v-text-field>
+
+          <label for="pat-name">Nom du PAT</label>
+          <v-text-field
+            id="pat-name"
+            solo
+            class="my-4"
+            placeholder="Mon PAT"
+            hide-details="auto"
+            validate-on-blur
+            v-model="form.patName"
+          ></v-text-field>
+          <v-btn x-large class="my-4" color="primary" @click="submit">Générer mon affiche</v-btn>
           <p class="caption" v-if="!isAuthenticated">
             Pour ajouter une photo à l'affiche et accéder à d'autres fonctionnalités,
             <a href="/creer-mon-compte">créez un compte</a>
@@ -215,6 +277,9 @@ export default {
       fetchedCanteens: {},
       selectedCanteen: {},
       customText: null,
+      showPatData: false,
+      patPercentage: null,
+      patName: null,
     }
   },
   computed: {
@@ -285,13 +350,13 @@ export default {
         })
     },
     async submit() {
-      if (!this.selectedCanteenId) {
-        this.$refs.form.validate()
-        if (!this.formIsValid) {
-          this.$store.dispatch("notifyRequiredFieldsError")
-          return
-        }
+      this.$refs.form.validate()
+      if (!this.formIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
 
+      if (!this.selectedCanteenId) {
         this.saveDiagnostic()
         this.saveCanteen()
       }
