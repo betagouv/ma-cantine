@@ -15,6 +15,7 @@ class CanteenForm(forms.ModelForm):
             "name": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "city": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "siret": forms.Textarea(attrs={"cols": 35, "rows": 1}),
+            "creation_campaign": forms.Textarea(attrs={"cols": 55, "rows": 1}),
             "central_producer_siret": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "city_insee_code": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "publication_comments": forms.Textarea(attrs={"cols": 70, "rows": 3}),
@@ -43,6 +44,9 @@ class CanteenAdmin(SoftDeletionAdmin):
     inlines = (DiagnosticInline,)
     fields = (
         "name",
+        "siret",
+        "creation_date",
+        "creation_campaign",
         "logo",
         "city",
         "department",
@@ -54,7 +58,6 @@ class CanteenAdmin(SoftDeletionAdmin):
         "sectors",
         "line_ministry",
         "managers",
-        "siret",
         "management_type",
         "production_type",
         "central_producer_siret",
@@ -67,6 +70,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "information_comments",
         "deletion_date",
     )
+    readonly_fields = ("creation_date",)
     list_display = (
         "name",
         "city",

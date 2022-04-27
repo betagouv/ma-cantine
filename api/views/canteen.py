@@ -301,7 +301,7 @@ class AddManagerView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            email = request.data.get("email")
+            email = request.data.get("email").strip() if request.data.get("email") else None
             validate_email(email)
             canteen_id = request.data.get("canteen_id")
             canteen = request.user.canteens.get(id=canteen_id)

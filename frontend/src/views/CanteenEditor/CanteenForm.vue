@@ -191,13 +191,15 @@
           </v-radio-group>
         </v-col>
 
-        <v-col cols="12" md="6" v-if="showDailyMealCount">
+        <v-col cols="12" md="6" :class="showDailyMealCount ? '' : 'grey--text'">
           <p class="body-2 my-2">
             Couverts moyen par jour (convives sur place)
           </p>
           <v-text-field
             hide-details="auto"
-            :rules="[validators.greaterThanZero]"
+            :rules="showDailyMealCount ? [validators.greaterThanZero] : []"
+            :disabled="!showDailyMealCount"
+            :messages="showDailyMealCount ? [] : 'Concerne uniquement les cantines recevant des convives'"
             validate-on-blur
             solo
             v-model="canteen.dailyMealCount"
@@ -205,11 +207,15 @@
           ></v-text-field>
         </v-col>
 
-        <v-col cols="12" md="6" v-if="showSatelliteCanteensCount">
+        <v-col cols="12" md="6" :class="showSatelliteCanteensCount ? '' : 'grey--text'">
           <p class="body-2 my-2">Nombre de cantines à qui je fournis des repas</p>
           <v-text-field
             hide-details="auto"
-            :rules="[validators.greaterThanZero]"
+            :rules="showSatelliteCanteensCount ? [validators.greaterThanZero] : []"
+            :disabled="!showSatelliteCanteensCount"
+            :messages="
+              showSatelliteCanteensCount ? [] : 'Concerne uniquement les cuisines qui livrent à des satellites'
+            "
             validate-on-blur
             solo
             v-model="canteen.satelliteCanteensCount"
@@ -421,7 +427,7 @@ export default {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
     },
     showDailyMealCount() {
-      return this.canteen.productionType !== "central"
+      return this.canteen.productionType && this.canteen.productionType !== "central"
     },
     showMinistryField() {
       const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
@@ -503,6 +509,11 @@ export default {
       }
 
       const payload = this.originalCanteen ? getObjectDiff(this.originalCanteen, this.canteen) : this.canteen
+      const fieldsToClean = ["dailyMealCount", "satelliteCanteensCount"]
+      fieldsToClean.forEach((x) => {
+        if (Object.prototype.hasOwnProperty.call(payload, x) && payload[x] === "") payload[x] = null
+      })
+
       this.$store
         .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", {
           id: this.canteen.id,
@@ -531,8 +542,11 @@ export default {
         .catch((e) => {
           if (e.jsonPromise) {
             e.jsonPromise.then((json) => {
-              this.duplicateSiretCanteen = json
-              this.messageTroubleshooting = `Je veux ajouter une deuxième cantine avec le même SIRET : ${payload.siret}...`
+              const isDuplicateSiret = json.detail === "La resource que vous souhaitez créer existe déjà"
+              if (isDuplicateSiret) {
+                this.duplicateSiretCanteen = json
+                this.messageTroubleshooting = `Je veux ajouter une deuxième cantine avec le même SIRET : ${payload.siret}...`
+              }
             })
             this.$store.dispatch("notifyRequiredFieldsError")
           } else {
