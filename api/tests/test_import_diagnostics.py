@@ -235,6 +235,37 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
+    def test_import_some_without_diagnostic(self, _):
+        """
+        Should be able to import canteens without creating diagnostics if only canteen columns
+        are present
+        """
+        with open("./api/tests/files/mix_diag_canteen_import.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(Diagnostic.objects.count(), 1)
+        diagnostic = Diagnostic.objects.first()
+        self.assertEqual(diagnostic.canteen.siret, "73282932000074")
+        self.assertEqual(Diagnostic.objects.filter(canteen=Canteen.objects.get(siret="21340172201787")).count(), 0)
+
+    @authenticate
+    def test_import_only_canteens(self, _):
+        """
+        Should be able to import canteens from a file that doesn't have commas for the optional fields
+        """
+        with open("./api/tests/files/canteen_import.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        self.assertEqual(Canteen.objects.count(), 1)
+
+    @authenticate
     def test_error_collection(self, _):
         """
         If errors occur, discard the file and return the errors with row and message
@@ -246,66 +277,67 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
         errors = body["errors"]
-        self.assertEqual(errors[0]["row"], 1)
-        self.assertEqual(errors[0]["status"], 400)
+        first_error = errors.pop(0)
+        self.assertEqual(first_error["row"], 1)
+        self.assertEqual(first_error["status"], 400)
         self.assertEqual(
-            errors[0]["message"],
-            "Champ 'année' : L'année doit être comprise entre 2019 et 2023.",
+            first_error["message"],
+            "Champ 'année' : L'année est obligatoire pour créer un diagnostic.",
         )
         self.assertEqual(
-            errors[1]["message"],
+            errors.pop(0)["message"],
             "Champ 'année' : La valeur «\xa0.\xa0» doit être un nombre entier.",
         )
         self.assertEqual(
-            errors[2]["message"],
+            errors.pop(0)["message"],
             "Champ 'année' : L'année doit être comprise entre 2019 et 2023.",
         )
         self.assertEqual(
-            errors[3]["message"],
+            errors.pop(0)["message"],
             "Champ 'repas par jour' : La valeur «\xa0not a number\xa0» doit être un nombre entier.",
         )
         self.assertEqual(
-            errors[4]["message"],
+            errors.pop(0)["message"],
             "Champ 'mode de production' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
         )
         self.assertEqual(
-            errors[5]["message"],
+            errors.pop(0)["message"],
             "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal.",
         )
         self.assertEqual(
-            errors[6]["message"],
+            errors.pop(0)["message"],
             "Champ 'année' : L'année doit être comprise entre 2019 et 2023.",
         )
         self.assertEqual(
-            errors[7]["message"],
+            errors.pop(0)["message"],
             "Un diagnostic pour cette année et cette cantine existe déjà.",
         )
         self.assertEqual(
-            errors[8]["message"],
+            errors.pop(0)["message"],
             "Champ 'Valeur totale annuelle HT' : La somme des valeurs d'approvisionnement, 300, est plus que le total, 20",
         )
         self.assertEqual(
-            errors[9]["message"],
+            errors.pop(0)["message"],
             "Champ 'siret' : Le siret de la cantine ne peut pas être vide",
         )
         self.assertEqual(
-            errors[10]["message"],
+            errors.pop(0)["message"],
             "Champ 'Secteur économique' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
         )
         self.assertEqual(
-            errors[11]["message"],
+            errors.pop(0)["message"],
             "Données manquantes : 15 colonnes attendus, 14 trouvés.",
         )
         self.assertEqual(
-            errors[12]["message"],
+            errors.pop(0)["message"],
             "Champ 'repas par jour' : Ce champ ne peut pas être vide.",
         )
         self.assertEqual(
-            errors[13]["message"],
+            errors.pop(0)["message"],
             "Champ 'nom' : Ce champ ne peut pas être vide.",
         )
         self.assertEqual(
-            errors[14]["message"],
+            errors.pop(0)["message"],
             "Champ 'code postal' : Ce champ ne peut pas être vide si le code INSEE de la ville est vide.",
         )
 
