@@ -376,6 +376,7 @@ CSP_IMG_SRC = (
     "stats.data.gouv.fr",
     "www.w3.org",
     "data:",
+    "jedonnemonavis.numerique.gouv.fr",
 )
 if DEBUG:
     CSP_IMG_SRC += CSP_DEBUG_DOMAINS
@@ -386,7 +387,14 @@ if DEBUG:
     CSP_IMG_SRC += CSP_FONT_SRC
 
 # CSP valid sources of AJAX, WebSockets, EventSources, etc
-CSP_CONNECT_SRC = ("'self'", "stats.data.gouv.fr", "ws:", "api-adresse.data.gouv.fr", "entreprise.data.gouv.fr")
+CSP_CONNECT_SRC = (
+    "'self'",
+    "stats.data.gouv.fr",
+    "ws:",
+    "api-adresse.data.gouv.fr",
+    "entreprise.data.gouv.fr",
+    "plateforme.adresse.data.gouv.fr",
+)
 if DEBUG:
     CSP_CONNECT_SRC += CSP_DEBUG_DOMAINS
 

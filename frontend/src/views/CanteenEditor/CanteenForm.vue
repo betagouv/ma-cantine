@@ -132,7 +132,6 @@
             auto-select-first
             cache-items
             v-model="cityAutocompleteChoice"
-            :placeholder="canteen.city"
           ></v-autocomplete>
         </v-col>
 
@@ -437,17 +436,7 @@ export default {
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
       if (canteen.city) {
-        const initialCityAutocomplete = {
-          text: canteen.city,
-          value: {
-            label: canteen.city,
-            citycode: canteen.cityInseeCode,
-            postcode: canteen.postalCode,
-            context: canteen.department,
-          },
-        }
-        this.communes = [initialCityAutocomplete]
-        this.cityAutocompleteChoice = initialCityAutocomplete.value
+        this.populateCityAutocomplete()
       }
       if (!this.canteen.images) this.canteen.images = []
     } else this.$router.push({ name: "NewCanteen" })
@@ -465,28 +454,40 @@ export default {
   },
   methods: {
     getCanteenBySiret() {
-      if (this.canteen.name) {
+      if (!this.canteen.siret) {
+        return
+      } else if (validators.length(14)(this.canteen.siret) !== true || validators.luhn(this.canteen.siret) !== true) {
+        return
+      }
+      if (this.canteen.name && this.cityAutocompleteChoice) {
         return // do not override user-entered data
       }
       this.siretQueryInProgress = true
       fetch(`https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/${this.canteen.siret}`)
         .then((response) => response.json())
+        // TODO: have a control technique if the entreprise api returns a 404?
         .then((body) => {
-          this.siretQueryInProgress = false
           if (body.etablissement) {
-            this.canteen.name = body.etablissement.enseigne_1
-
-            // TODO: improve compatibility between the two APIs with location info
-            this.cityAutocompleteChoice = {
-              label: body.etablissement.libelle_commune,
-              citycode: body.etablissement.code_commune,
-              postcode: body.etablissement.code_postal,
-              context: "N/A,",
+            if (!this.canteen.name) {
+              this.canteen.name = body.etablissement.enseigne_1
             }
-            // TODO: maybe we should be saving location ID which is given by sirene API and adresse API
 
-            // TODO: possible to deduce sectors, public/private ... ?
+            if (!this.cityAutocompleteChoice && body.etablissement.geo_id) {
+              this.canteen.postalCode = body.etablissement.code_postal
+              this.canteen.cityInseeCode = body.etablissement.code_commune
+              return fetch(`https://plateforme.adresse.data.gouv.fr/lookup/${body.etablissement.geo_id}`)
+            }
           }
+          // TODO: slow down spinner?
+        })
+        .then((response) => response.json())
+        .then((body) => {
+          this.canteen.city = body.commune.nom
+          this.canteen.department = body.commune.departement.code
+          // if this lookup fails, the choice will not be populated, making the user pick themselves
+          // this is the desired behaviour, since not all location data will be given otherwise
+          this.populateCityAutocomplete()
+          this.siretQueryInProgress = false
         })
         .catch(() => {
           this.siretQueryInProgress = false
@@ -630,6 +631,19 @@ export default {
           window.scrollTo(0, 0)
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    populateCityAutocomplete() {
+      const initialCityAutocomplete = {
+        text: this.canteen.city,
+        value: {
+          label: this.canteen.city,
+          citycode: this.canteen.cityInseeCode,
+          postcode: this.canteen.postalCode,
+          context: this.canteen.department,
+        },
+      }
+      this.communes.push(initialCityAutocomplete)
+      this.cityAutocompleteChoice = initialCityAutocomplete.value
     },
   },
   watch: {
