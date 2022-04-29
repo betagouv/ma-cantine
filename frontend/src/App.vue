@@ -47,6 +47,11 @@ export default {
       this.$store.dispatch("removeLocalStorageDiagnostics")
     },
   },
+  mounted() {
+    if (this.$store.state.loggedUser) {
+      window.$crisp.push(["set", "user:email", [this.$store.state.loggedUser.email]])
+    }
+  },
 }
 </script>
 
