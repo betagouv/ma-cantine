@@ -517,9 +517,7 @@ export default {
       setTimeout(getInfo, 800)
     },
     saveCanteen(e, bypassTechnicalControl = false) {
-      this.$refs.form.validate()
-
-      if (!this.formIsValid) {
+      if (!this.$refs.form.validate()) {
         this.$store.dispatch("notifyRequiredFieldsError")
         window.scrollTo(0, 0)
         return
