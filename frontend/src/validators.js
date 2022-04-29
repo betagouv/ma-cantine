@@ -139,4 +139,10 @@ export default {
       return `Le fichier ne doit pas dépasser ${maxSizeDisplay}`
     }
   },
+  isEmptyOrPhoneNumber(input) {
+    if (!input) return true
+    const phoneNumber = input.replaceAll(" ", "").replaceAll("-", "")
+    if (phoneNumber.length == 10 && /^[0-9]+$/g.test(phoneNumber)) return true
+    return "Dix chiffres numériques attendus"
+  },
 }

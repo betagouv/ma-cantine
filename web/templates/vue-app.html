@@ -11,6 +11,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
+    <!-- Open graph (Facebook, Whatsapp...) meta tags -->
+    <meta property="og:title" content="ma cantine" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{% hostname %}{{ request.get_full_path }}" />
+    <meta property="og:description" content=" Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim"> />
+    <meta property="og:image" content="{% hostname %}{% static 'images/card-social-media.png' %}" />
+
+    <!-- Twitter meta tags -->
+    <meta name="twitter:title" content="ma cantine">
+    <meta name="twitter:description" content=" Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim">
+    <meta name="twitter:image" content="{% hostname %}{% static 'images/card-social-media.png' %}">
+    <meta name="twitter:card" content="summary_large_image">
+
     <link rel="icon" type="image/png" href="{% static 'images/favicon-macantine.png' %}">
 
     <title>ma-cantine.beta.gouv.fr</title>

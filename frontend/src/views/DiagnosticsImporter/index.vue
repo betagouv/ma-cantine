@@ -40,16 +40,16 @@
       <v-progress-circular indeterminate color="primary" size="28" class="mr-4"></v-progress-circular>
       <span class="mt-1">Traitement en cours...</span>
     </v-card>
-    <div v-if="!isNaN(count) && !importInProgress">
-      <v-alert type="success" outlined v-if="count > 0">
+    <div v-if="!isNaN(canteenCount) && !importInProgress">
+      <v-alert type="success" outlined v-if="canteenCount > 0">
         <span class="grey--text text--darken-4 body-2">
-          {{ count }}
-          <span v-if="count === 1">diagnostic a été créé.</span>
-          <span v-else>diagnostics ont été créés.</span>
+          {{ canteenCount }} cantines
+          <span v-if="diagnosticCount">et {{ diagnosticCount }} diagnostics&nbsp;</span>
+          <span>ont été {{ diagnosticCount ? "traités" : "traitées" }}.</span>
         </span>
       </v-alert>
       <div v-if="errors && errors.length">
-        <p class="text-body-2 red--text text--darken-4" v-if="count === 0">
+        <p class="text-body-2 red--text text--darken-4" v-if="canteenCount === 0">
           Nous n'avons pas pu traiter votre fichier. Vous trouverez ci-dessous des informations sur les erreurs
           rencontrées.
         </p>
@@ -72,7 +72,7 @@
           </v-simple-table>
         </v-alert>
       </div>
-      <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retour aux cantines et diagnostics</router-link>
+      <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retourner à mes cantines</router-link>
       <v-divider class="my-8"></v-divider>
     </div>
     <h2 class="my-6">Format du fichier</h2>
@@ -178,7 +178,8 @@ export default {
     return {
       file: undefined,
       canteens: undefined,
-      count: undefined,
+      canteenCount: undefined,
+      diagnosticCount: undefined,
       errors: undefined,
       seconds: undefined,
       importInProgress: false,
@@ -318,7 +319,8 @@ export default {
           this.importInProgress = false
           this.file = null
           this.canteens = json.canteens
-          this.count = json.count
+          this.canteenCount = json.canteens.length
+          this.diagnosticCount = json.count
           this.errors = json.errors
           this.seconds = json.seconds
           this.$store.dispatch("notify", {

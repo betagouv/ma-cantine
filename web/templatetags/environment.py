@@ -19,3 +19,9 @@ def admin_css_override():
     if env == "demo":
         return "css/admin_color_demo.css"
     return None
+
+
+@register.simple_tag
+def hostname():
+    protocol = "https://" if getattr(settings, "SECURE") else "http://"
+    return f"{protocol}{getattr(settings, 'HOSTNAME', '')}"

@@ -28,6 +28,11 @@ class RegisterUserView(FormView):
     form_class = RegisterUserForm
     template_name = "auth/register.html"
 
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["email"] = self.request.GET.get("email") if self.request.GET else None
+        return initial
+
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return HttpResponseRedirect("/")
