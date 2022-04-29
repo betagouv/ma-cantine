@@ -36,15 +36,6 @@
             de votre cantine.
           </p>
 
-          <p class="body-2 my-2">Nom de la cantine</p>
-          <v-text-field
-            hide-details="auto"
-            :rules="[validators.required]"
-            validate-on-blur
-            solo
-            v-model="canteen.name"
-          ></v-text-field>
-
           <v-card outlined class="mt-4" v-if="duplicateSiretCanteen" color="red lighten-5">
             <v-card-title class="pt-2 pb-1 font-weight-medium">
               Une cantine avec ce SIRET existe déjà
@@ -125,6 +116,15 @@
               </p>
             </v-card-text>
           </v-card>
+
+          <p class="body-2 my-2">Nom de la cantine</p>
+          <v-text-field
+            hide-details="auto"
+            :rules="[validators.required]"
+            validate-on-blur
+            solo
+            v-model="canteen.name"
+          ></v-text-field>
 
           <p class="body-2 mt-4 mb-2">Ville</p>
           <v-autocomplete
