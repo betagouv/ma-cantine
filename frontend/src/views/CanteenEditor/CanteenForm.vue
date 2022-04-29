@@ -345,7 +345,7 @@ export default {
       formIsValid: true,
       bypassLeaveWarning: false,
       deletionDialog: false,
-      cityAutocompleteChoice: {},
+      cityAutocompleteChoice: null,
       communes: [],
       loadingCommunes: false,
       search: null,
@@ -478,35 +478,43 @@ export default {
         return // do not override user-entered data
       }
       this.siretQueryInProgress = true
-      fetch(`https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/${this.canteen.siret}`)
-        .then((response) => response.json())
-        // TODO: have a control technique if the entreprise api returns a 404?
-        .then((body) => {
-          if (body.etablissement) {
-            if (!this.canteen.name) {
-              this.canteen.name = body.etablissement.enseigne_1
-            }
+      const getInfo = function() {
+        fetch(`https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/${this.canteen.siret}`)
+          .then((response) => response.json())
+          .then((body) => {
+            if (body.etablissement) {
+              if (!this.canteen.name) {
+                let name
+                if (body.etablissement.enseigne_1) {
+                  name = body.etablissement.enseigne_1
+                } else if (body.etablissement.unite_legale?.denomination) {
+                  name = body.etablissement.unite_legale.denomination
+                }
+                this.canteen.name = name
+              }
 
-            if (!this.cityAutocompleteChoice && body.etablissement.geo_id) {
-              this.canteen.postalCode = body.etablissement.code_postal
-              this.canteen.cityInseeCode = body.etablissement.code_commune
-              return fetch(`https://plateforme.adresse.data.gouv.fr/lookup/${body.etablissement.geo_id}`)
+              if (!this.cityAutocompleteChoice && body.etablissement.geo_id) {
+                this.canteen.postalCode = body.etablissement.code_postal
+                this.canteen.cityInseeCode = body.etablissement.code_commune
+                return fetch(`https://plateforme.adresse.data.gouv.fr/lookup/${body.etablissement.geo_id}`)
+              }
             }
-          }
-          // TODO: slow down spinner?
-        })
-        .then((response) => response.json())
-        .then((body) => {
-          this.canteen.city = body.commune.nom
-          this.canteen.department = body.commune.departement.code
-          // if this lookup fails, the choice will not be populated, making the user pick themselves
-          // this is the desired behaviour, since not all location data will be given otherwise
-          this.populateCityAutocomplete()
-          this.siretQueryInProgress = false
-        })
-        .catch(() => {
-          this.siretQueryInProgress = false
-        })
+          })
+          .then((response) => response.json())
+          .then((body) => {
+            this.canteen.city = body.commune.nom
+            this.canteen.department = body.commune.departement.code
+            // if this lookup fails, the choice will not be populated, making the user pick themselves
+            // this is the desired behaviour, since not all location data will be given otherwise
+            this.populateCityAutocomplete()
+            this.siretQueryInProgress = false
+          })
+          .catch(() => {
+            this.siretQueryInProgress = false
+            // do we want to display a message in the case of 404 or other errors ?
+          })
+      }.bind(this)
+      setTimeout(getInfo, 800)
     },
     saveCanteen(e, bypassTechnicalControl = false) {
       this.$refs.form.validate()
