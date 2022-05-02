@@ -80,7 +80,7 @@ class Canteen(SoftDeletionModel):
         TRANSFORMATION = "transformation", "Ministère de la Transformation et de la Fonction Publiques"
         AUTRE = "autre", "Autre"
 
-    creation_campaign = models.TextField(null=True, blank=True, verbose_name="Campagne à la source de la création")
+    import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
