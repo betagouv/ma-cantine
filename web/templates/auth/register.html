@@ -5,6 +5,17 @@
 {% block content %}
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery.easy-autocomplete.min.js' %}"></script>
+<script>
+    if (window.URLSearchParams) {
+        const trackingParams = ["mtm_source", "mtm_campaign", "mtm_medium"]
+        const urlParams = new URLSearchParams(window.location.search)
+        for (let i = 0; i < trackingParams.length; i++) {
+            const trackingParam = trackingParams[i]
+            const value = urlParams.get(trackingParam)
+            if (value) document.cookie = `${trackingParam}=${value};max-age=86400;`
+        }
+    }
+</script>
 <style type="text/css"> @import url("{% static 'css/easy-autocomplete.min.css' %}"); </style>
     <form role="form" method="post">
 
@@ -52,6 +63,26 @@
                 <button type="submit" style="display: block;">S'inscrire</button>
             </div>
         </div>
+
+        <script>
+            function readCookie(name) {
+                const nameEQ = name + "="
+                const cookieArr = document.cookie.split(";")
+                for (let i = 0; i < cookieArr.length; i++) {
+                    var cookie = cookieArr[i]
+                    while (cookie.charAt(0) == " ") cookie = cookie.substring(1, cookie.length)
+                    if (cookie.indexOf(nameEQ) == 0) return cookie.substring(nameEQ.length, cookie.length)
+                }
+                return null
+            }
+            if (readCookie("mtm_source"))
+                document.getElementById("id_creation_mtm_source").setAttribute("value", readCookie("mtm_source"))
+            if (readCookie("mtm_campaign"))
+                document.getElementById("id_creation_mtm_campaign").setAttribute("value", readCookie("mtm_campaign"))
+            if (readCookie("mtm_medium"))
+                document.getElementById("id_creation_mtm_medium").setAttribute("value", readCookie("mtm_medium"))
+        </script>
+
     </form>
     <a href="{% url 'login' %}"><button>J'ai déjà un compte</button></a>
 {% endblock %}

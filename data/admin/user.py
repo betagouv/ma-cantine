@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django import forms
+from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
@@ -6,8 +8,18 @@ from data.models import User
 from .canteen import CanteenInline
 
 
+class UserForm(UserChangeForm):
+    class Meta:
+        widgets = {
+            "creation_mtm_source": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "creation_mtm_campaign": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "creation_mtm_medium": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+        }
+
+
 @admin.register(User)
 class MaCanteenUserAdmin(UserAdmin):
+    form = UserForm
     list_display = (
         "username",
         "first_name",
@@ -22,7 +34,7 @@ class MaCanteenUserAdmin(UserAdmin):
         "last_name",
         "email",
     )
-    readonly_fields = ("date_joined",)
+    readonly_fields = ("date_joined", "creation_mtm_source", "creation_mtm_campaign", "creation_mtm_medium")
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),
@@ -57,6 +69,16 @@ class MaCanteenUserAdmin(UserAdmin):
             },
         ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+        (
+            "Lien tracké lors de la création",
+            {
+                "fields": (
+                    "creation_mtm_source",
+                    "creation_mtm_campaign",
+                    "creation_mtm_medium",
+                )
+            },
+        ),
     )
     add_fieldsets = (
         (

@@ -198,6 +198,17 @@ class Canteen(SoftDeletionModel):
             self.region = self._get_region()
         super(Canteen, self).save(force_insert, force_update, using, update_fields)
 
+    # Campaign tracking
+    creation_mtm_source = models.TextField(
+        null=True, blank=True, verbose_name="mtm_source du lien tracké lors de la création"
+    )
+    creation_mtm_campaign = models.TextField(
+        null=True, blank=True, verbose_name="mtm_campaign du lien tracké lors de la création"
+    )
+    creation_mtm_medium = models.TextField(
+        null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
+    )
+
     @property
     def url_slug(self):
         return f"{self.id}--{quote(self.name)}"

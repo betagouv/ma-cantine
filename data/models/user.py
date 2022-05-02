@@ -59,6 +59,17 @@ class User(AbstractUser):
     )
     phone_number = models.CharField("Numéro téléphone", max_length=50, null=True, blank=True)
 
+    # Campaign tracking
+    creation_mtm_source = models.TextField(
+        null=True, blank=True, verbose_name="mtm_source du lien tracké lors de la création"
+    )
+    creation_mtm_campaign = models.TextField(
+        null=True, blank=True, verbose_name="mtm_campaign du lien tracké lors de la création"
+    )
+    creation_mtm_medium = models.TextField(
+        null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
+    )
+
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         max_avatar_size = 640
         if self.avatar:

@@ -24,6 +24,9 @@ class CanteenForm(forms.ModelForm):
             "diversification_comments": forms.Textarea(attrs={"cols": 70, "rows": 3}),
             "plastics_comments": forms.Textarea(attrs={"cols": 70, "rows": 3}),
             "information_comments": forms.Textarea(attrs={"cols": 70, "rows": 3}),
+            "creation_mtm_source": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "creation_mtm_campaign": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "creation_mtm_medium": forms.Textarea(attrs={"cols": 55, "rows": 1}),
         }
 
 
@@ -68,9 +71,17 @@ class CanteenAdmin(SoftDeletionAdmin):
         "diversification_comments",
         "plastics_comments",
         "information_comments",
+        "creation_mtm_source",
+        "creation_mtm_campaign",
+        "creation_mtm_medium",
         "deletion_date",
     )
-    readonly_fields = ("creation_date",)
+    readonly_fields = (
+        "creation_date",
+        "creation_mtm_source",
+        "creation_mtm_campaign",
+        "creation_mtm_medium",
+    )
     list_display = (
         "name",
         "city",

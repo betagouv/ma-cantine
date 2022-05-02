@@ -85,4 +85,5 @@ export default Object.freeze({
     SHORT_DISTRIBUTION: { text: "Circuit-court" },
     LOCAL: { text: "Local" },
   },
+  TrackingParams: ["mtm_source", "mtm_campaign", "mtm_medium"],
 })
