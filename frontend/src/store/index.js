@@ -114,6 +114,9 @@ export default new Vuex.Store({
         .then((response) => {
           context.commit("SET_LOGGED_USER", response || null)
           context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          if (context.state.loggedUser && window.$crisp) {
+            window.$crisp.push(["set", "user:email", [context.state.loggedUser.email]])
+          }
         })
         .catch(() => {
           context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.ERROR)

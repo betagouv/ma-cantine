@@ -379,6 +379,7 @@ CSP_IMG_SRC = (
     "www.w3.org",
     "data:",
     "image.crisp.chat",
+    "jedonnemonavis.numerique.gouv.fr",
 )
 if DEBUG:
     CSP_IMG_SRC += CSP_DEBUG_DOMAINS
