@@ -23,5 +23,4 @@ def admin_css_override():
 
 @register.simple_tag
 def hostname():
-    protocol = "https://" if getattr(settings, "SECURE") else "http://"
-    return f"{protocol}{getattr(settings, 'HOSTNAME', '')}"
+    return f"{getattr(settings, 'PROTOCOL')}://{getattr(settings, 'HOSTNAME', '')}"

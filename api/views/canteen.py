@@ -238,7 +238,7 @@ class PublishCanteenView(APIView):
 
             if is_draft:
                 canteen.publication_status = Canteen.PublicationStatus.PENDING
-                protocol = "https" if settings.SECURE else "http"
+                protocol = settings.PROTOCOL
                 admin_url = "{}://{}/admin/data/canteen/{}/change/".format(protocol, settings.HOSTNAME, canteen.id)
 
                 logger.info(f"Demande de publication de {canteen.name} (ID: {canteen.id})")
