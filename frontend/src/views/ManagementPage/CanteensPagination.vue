@@ -114,6 +114,7 @@ export default {
         .then((response) => {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
+          this.$emit("canteen-count", this.canteenCount)
         })
         .catch((e) => {
           this.publishedCanteenCount = 0

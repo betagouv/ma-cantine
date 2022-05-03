@@ -38,6 +38,14 @@ class User(AbstractUser):
             "J'ai atteint les objectifs - 50% et 20%, de l’article 24 de la loi EGAlim",
         )
 
+    class JobRoles(models.TextChoices):
+        ESTABLISHMENT_MANAGER = "ESTABLISHMENT_MANAGER", "Gestionnaire d'établissement"
+        CATERING_PURCHASES_MANAGER = "CATERING_PURCHASES_MANAGER", "Direction Achat Société de restauration"
+        DIRECT_PURCHASES_MANAGER = "DIRECT_PURCHASES_MANAGER", "Responsable d'achats en gestion directe"
+        CENTRAL_MANAGER = "CENTRAL_MANAGER", "Responsable de plusieurs établissements (type cuisine centrale)"
+        MANY_ESTABLISHMENTS_MANAGER = "MANY_ESTABLISHMENTS_MANAGER", "Responsable de plusieurs établissements (SRC)"
+        OTHER = "OTHER", "Autre"
+
     avatar = models.ImageField("Photo de profil", null=True, blank=True)
     email = models.EmailField(_("email address"), unique=True)
     email_confirmed = models.BooleanField(default="False", verbose_name="adresse email confirmée")
@@ -58,6 +66,19 @@ class User(AbstractUser):
         null=True, blank=True, verbose_name="Date d'envoi du second email pour manque de cantines"
     )
     phone_number = models.CharField("Numéro téléphone", max_length=50, null=True, blank=True)
+
+    job = models.CharField(
+        max_length=255,
+        choices=JobRoles.choices,
+        blank=True,
+        null=True,
+        verbose_name="Fonction",
+    )
+    other_job_description = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="autre fonction détail",
+    )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         max_avatar_size = 640

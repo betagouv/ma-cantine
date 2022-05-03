@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
@@ -6,8 +7,17 @@ from data.models import User
 from .canteen import CanteenInline
 
 
+class UserForm(forms.ModelForm):
+    class Meta:
+        widgets = {
+            "other_job_description": forms.Textarea(attrs={"cols": 60, "rows": 2}),
+        }
+
+
 @admin.register(User)
 class MaCanteenUserAdmin(UserAdmin):
+
+    form = UserForm
     list_display = (
         "username",
         "first_name",
@@ -28,7 +38,17 @@ class MaCanteenUserAdmin(UserAdmin):
         (None, {"fields": ("username", "password")}),
         (
             _("Personal info"),
-            {"fields": ("first_name", "last_name", "email", "avatar", "phone_number")},
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "avatar",
+                    "phone_number",
+                    "job",
+                    "other_job_description",
+                )
+            },
         ),
         (
             _("Permissions"),

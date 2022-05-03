@@ -10,7 +10,7 @@
       </p>
     </div>
     <v-sheet v-if="askForRole" class="mt-4 mb-8">
-      <v-form v-model="roleFormIsValid" ref="roleForm" @submit.prevent>
+      <v-form v-model="jobFormIsValid" ref="jobForm" @submit.prevent>
         <fieldset class="pa-4" style="border-radius: 10px;">
           <legend class="d-flex pr-2">
             <v-badge dot inline></v-badge>
@@ -20,8 +20,8 @@
             <v-col cols="7">
               <v-select
                 label="Choisir votre fonction"
-                v-model="role"
-                :items="roleOptions"
+                v-model="job"
+                :items="jobOptions"
                 :rules="[validators.required]"
                 solo
                 hide-details="auto"
@@ -32,7 +32,7 @@
                 label="Ma fonction"
                 :rules="[validators.required]"
                 solo
-                v-model="otherRoleDetail"
+                v-model="otherJobDescription"
                 hide-details="auto"
               ></v-text-field>
             </v-col>
@@ -45,7 +45,7 @@
     </v-sheet>
     <div class="mt-4">
       <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
-      <CanteensPagination />
+      <CanteensPagination v-on:canteen-count="canteenCount = $event" />
     </div>
     <div class="mt-12 mb-8">
       <h2 class="text-h5 font-weight-black mb-4">Mes outils</h2>
@@ -58,41 +58,18 @@
 import CanteensPagination from "./CanteensPagination.vue"
 import UserTools from "./UserTools"
 import validators from "@/validators"
+import Constants from "@/constants"
 
 export default {
   components: { CanteensPagination, UserTools },
   data() {
     return {
       validators,
-      role: undefined,
-      otherRoleDetail: undefined,
-      roleOptions: [
-        {
-          text: "Gestionnaire d'établissement",
-          value: "managerEstablishment",
-        },
-        {
-          text: "Direction Achat Société de restauration",
-          value: "purchasesManager",
-        },
-        {
-          text: "Responsable d'achats en gestion directe",
-          value: "purchasesManager",
-        },
-        {
-          text: "Responsable de plusieurs établissements (type cuisine centrale)",
-          value: "managerCentral",
-        },
-        {
-          text: "Responsable de plusieurs établissements (SRC)",
-          value: "managerSociety",
-        },
-        {
-          text: "Autre (spécifiez)",
-          value: "other",
-        },
-      ],
-      roleFormIsValid: true,
+      job: undefined,
+      otherJobDescription: undefined,
+      jobOptions: Constants.Jobs,
+      jobFormIsValid: true,
+      canteenCount: undefined,
     }
   },
   computed: {
@@ -100,31 +77,30 @@ export default {
       return this.$store.state.loggedUser
     },
     askForRole() {
-      // TODO: check if user has any canteens as well
-      return !this.loggedUser.role
+      return !this.loggedUser.job && this.canteenCount === 0
     },
     showOtherField() {
-      return this.role === "other"
+      return this.job === "OTHER"
     },
   },
   methods: {
     updateRole() {
-      this.$refs.roleForm.validate()
-      if (!this.roleFormIsValid) {
+      this.$refs.jobForm.validate()
+      if (!this.jobFormIsValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
-      let payload = { role: this.role }
+      let payload = { job: this.job }
       if (this.showOtherField) {
-        payload.otherRoleDetail = this.otherRoleDetail
+        payload.otherJobDescription = this.otherJobDescription
       }
       this.$store
         .dispatch("updateProfile", { payload })
         .then(() => {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
-            title: "Merci, votre poste a été sauvegardé",
-            message: "Vous pourrez le modifier depuis votre profil",
+            title: "Merci, votre fonction a été sauvegardé",
+            message: "Vous pourrez la modifier depuis votre profil",
             status: "success",
           })
           this.$router.push({ name: "ManagementPage" })
