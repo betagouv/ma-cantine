@@ -9,10 +9,14 @@
     if (window.URLSearchParams) {
         const trackingParams = ["mtm_source", "mtm_campaign", "mtm_medium"]
         const urlParams = new URLSearchParams(window.location.search)
+        const clearCookies = trackingParams.some((x) => !!urlParams.get(x))
+
         for (let i = 0; i < trackingParams.length; i++) {
             const trackingParam = trackingParams[i]
             const value = urlParams.get(trackingParam)
-            if (value) document.cookie = `${trackingParam}=${value};max-age=86400;`
+
+            if (clearCookies) document.cookie = `${trackingParam}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`
+            if (value) document.cookie = `${trackingParam}=${value};max-age=86400;path=/`
         }
     }
 </script>

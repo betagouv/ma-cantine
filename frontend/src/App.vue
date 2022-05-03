@@ -39,9 +39,13 @@ export default {
   },
   mounted() {
     const urlParams = new URLSearchParams(window.location.search)
+    const clearCookies = Constants.TrackingParams.some((x) => !!urlParams.get(x))
+
     for (let i = 0; i < Constants.TrackingParams.length; i++) {
       const trackingParam = Constants.TrackingParams[i]
       const value = urlParams.get(trackingParam)
+
+      if (clearCookies) document.cookie = `${trackingParam}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`
       if (value) document.cookie = `${trackingParam}=${value};max-age=86400;path=/`
     }
   },
