@@ -199,7 +199,7 @@ class TestDiagnosticsApi(APITestCase):
     @authenticate
     def test_edit_diagnostic_tracking_info(self):
         """
-        The user can edit a diagnostic of a canteen they manage
+        Diagnostic creation campaign info cannot be updated
         """
         diagnostic = DiagnosticFactory.create(
             year=2019,
