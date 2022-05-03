@@ -355,6 +355,7 @@ if DEBUG:
 CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
+    "client.crisp.chat",
 )
 if DEBUG:
     CSP_STYLE_SRC += CSP_DEBUG_DOMAINS
@@ -364,6 +365,7 @@ CSP_SCRIPT_SRC = (
     "'self'",
     "stats.data.gouv.fr",
     "'unsafe-inline'",
+    "client.crisp.chat",
 )
 if DEBUG:
     CSP_SCRIPT_SRC += CSP_DEBUG_DOMAINS
@@ -377,12 +379,17 @@ CSP_IMG_SRC = (
     "stats.data.gouv.fr",
     "www.w3.org",
     "data:",
+    "image.crisp.chat",
+    "jedonnemonavis.numerique.gouv.fr",
 )
 if DEBUG:
     CSP_IMG_SRC += CSP_DEBUG_DOMAINS
 
 # CSP valid sources of fonts
-CSP_FONT_SRC = ("'self'",)
+CSP_FONT_SRC = (
+    "'self'",
+    "client.crisp.chat",
+)
 if DEBUG:
     CSP_IMG_SRC += CSP_FONT_SRC
 
@@ -392,6 +399,7 @@ CSP_CONNECT_SRC = (
     "stats.data.gouv.fr",
     "ws:",
     "api-adresse.data.gouv.fr",
+    "client.crisp.chat",
 )
 if DEBUG:
     CSP_CONNECT_SRC += CSP_DEBUG_DOMAINS
