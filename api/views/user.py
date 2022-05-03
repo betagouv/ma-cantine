@@ -65,7 +65,7 @@ class UpdateUserView(UpdateAPIView):
         context = {
             "token": token,
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-            "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
+            "protocol": settings.PROTOCOL,
             "domain": settings.HOSTNAME,
         }
         send_mail(
