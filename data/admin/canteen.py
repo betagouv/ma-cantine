@@ -111,7 +111,7 @@ class CanteenAdmin(SoftDeletionAdmin):
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if change and "publication_status" in form.changed_data and obj.publication_status == "published":
-            protocol = "https" if settings.SECURE else "http"
+            protocol = settings.PROTOCOL
             canteenUrlComponent = urllib.parse.quote(f"{obj.id}--{obj.name}")
             context = {
                 "canteen": obj.name,

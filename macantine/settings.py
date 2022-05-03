@@ -30,6 +30,7 @@ SECURE_SSL_REDIRECT = os.getenv("FORCE_HTTPS") == "True"
 
 # The site uses http or https?
 SECURE = os.getenv("SECURE") == "True"
+PROTOCOL = "https" if SECURE else "http"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
