@@ -100,7 +100,7 @@ class TestInquiry(APITestCase):
 
 class TestEmail(APITestCase):
     @authenticate
-    @override_settings(DEFAULT_FROM_EMAIL="from@example.com")
+    @override_settings(DEFAULT_FROM_EMAIL="no-reply@example.com")
     @override_settings(CONTACT_EMAIL="contact@example.com")
     @override_settings(HOSTNAME="mysite.com")
     @override_settings(SECURE="True")
@@ -123,11 +123,11 @@ class TestEmail(APITestCase):
         self.assertGreaterEqual(len(email.to), 2)
         self.assertIn("mgmt1@example.com", email.to)
         self.assertIn("mgmt2@example.com", email.to)
-        self.assertEqual(email.cc[0], "contact@example.com")
+        self.assertIn("contact@example.com", email.to)
         self.assertIn("Please add me to the team", email.body)
         self.assertIn("76494221950672", email.body)
         self.assertIn("Hugo", email.body)
         self.assertIn(f"https://mysite.com/modifier-ma-cantine/{canteen.id}--Hugo/gestionnaires", email.body)
         self.assertEqual(len(email.reply_to), 1)
         self.assertEqual(email.reply_to[0], "test@example.com")
-        self.assertEqual(email.from_email, "from@example.com")
+        self.assertEqual(email.from_email, "no-reply@example.com")

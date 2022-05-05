@@ -490,10 +490,12 @@ class TeamJoinRequestView(APIView):
                 "siret": canteen.siret,
             }
 
+            recipients = list(canteen.managers.values_list("email", flat=True))
+            recipients.append(settings.CONTACT_EMAIL)
+
             send_mail(
                 subject=f"{name} voudrait rejoindre l'équipe de gestion de la cantine {canteen.name}",
-                to=canteen.managers.values_list("email", flat=True),
-                cc=[settings.CONTACT_EMAIL],
+                to=recipients,
                 reply_to=[
                     email,
                 ],
