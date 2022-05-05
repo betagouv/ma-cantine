@@ -76,7 +76,7 @@
               validate-on-blur
             ></v-text-field>
           </v-col>
-          <v-col cols="9">
+          <v-col cols="12" md="9">
             <p class="body-2 mb-1 mt-2 text-left">Fonction</p>
             <v-select
               v-model="userCopy.job"
