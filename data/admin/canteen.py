@@ -68,6 +68,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "diversification_comments",
         "plastics_comments",
         "information_comments",
+        "email_no_diagnostic_first_reminder",
         "deletion_date",
     )
     readonly_fields = ("creation_date",)

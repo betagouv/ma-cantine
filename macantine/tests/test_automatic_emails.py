@@ -3,7 +3,8 @@ from datetime import timedelta
 from django.utils import timezone
 from django.test import TestCase
 from django.test.utils import override_settings
-from data.factories import CanteenFactory, UserFactory
+from data.factories import CanteenFactory, UserFactory, DiagnosticFactory
+from data.models import Canteen
 from macantine import tasks
 
 
@@ -217,3 +218,100 @@ class TestAutomaticEmails(TestCase):
         tasks._send_sib_template.assert_called_once_with(
             2, {"PRENOM": "Marie"}, "marie.olait@example.com", "Marie Olait"
         )
+
+    @mock.patch("macantine.tasks._send_sib_template")
+    @override_settings(TEMPLATE_ID_NO_DIAGNOSTIC_FIRST=1)
+    @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
+    def test_no_diagnostic_first_reminder(self, _):
+        """
+        The email should be sent to managers of a canteen created more than
+        a week ago, and without any diagnostics.
+        """
+        today = timezone.now()
+
+        # We create a canteen with no diagnostics managed by
+        # Jean and Anna. Both should receive the email since
+        # the canteen was created more than a week ago.
+        jean = UserFactory.create(
+            date_joined=(today - timedelta(weeks=1)),
+            first_name="Jean",
+            last_name="Sérien",
+            email="jean.serien@example.com",
+        )
+        anna = UserFactory.create(
+            date_joined=(today - timedelta(weeks=1)),
+            first_name="Anna",
+            last_name="Logue",
+            email="anna.logue@example.com",
+        )
+        canteen_no_diagnostics = CanteenFactory.create(
+            managers=[
+                anna,
+                jean,
+            ]
+        )
+        Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
+
+        # We create another canteen with no diagnostics managed by
+        # Sophie, but this time no email should be sent since the
+        # canteen was only created three days ago.
+        sophie = UserFactory.create(
+            date_joined=(today - timedelta(days=1)),
+            first_name="Sophie",
+            last_name="Stiqué",
+        )
+        canteen_no_diagnostics_recent = CanteenFactory.create(
+            managers=[
+                sophie,
+            ]
+        )
+        Canteen.objects.filter(pk=canteen_no_diagnostics_recent.id).update(creation_date=(today - timedelta(days=3)))
+
+        # We create a canteen with diagnostics. Because of this,
+        # managers should not be notified.
+        fred = UserFactory.create(
+            date_joined=(today - timedelta(weeks=2)),
+            first_name="Fred",
+            last_name="Ulcorant",
+        )
+
+        canteen_with_diagnostics = CanteenFactory.create(
+            managers=[
+                fred,
+            ]
+        )
+        Canteen.objects.filter(pk=canteen_with_diagnostics.id).update(creation_date=(today - timedelta(weeks=3)))
+        DiagnosticFactory.create(canteen=canteen_with_diagnostics)
+
+        # Finally, we create a canteen with no diagnostics for which
+        # an email has already been sent, so the managers should not
+        # be notified again.
+        lena = UserFactory.create(
+            date_joined=(today - timedelta(weeks=1)),
+            first_name="Lena",
+            last_name="Godard",
+            email="lena.godard@example.com",
+        )
+        canteen_no_diagnostics_contacted = CanteenFactory.create(
+            email_no_diagnostic_first_reminder=(today - timedelta(weeks=1)),
+            managers=[
+                lena,
+            ],
+        )
+        Canteen.objects.filter(pk=canteen_no_diagnostics_contacted.id).update(
+            creation_date=(today - timedelta(weeks=2))
+        )
+
+        # From all of these managers, only jean and anna should be notified.
+        tasks.no_diagnostic_first_reminder()
+
+        # Email is only sent once to Jean
+        tasks._send_sib_template.assert_called
+        self.assertEqual(tasks._send_sib_template.call_count, 2)
+        call_args_list = tasks._send_sib_template.call_args_list
+        self.assertEqual(call_args_list[0][0][2], "jean.serien@example.com")
+        self.assertEqual(call_args_list[1][0][2], "anna.logue@example.com")
+
+        # DB objects are updated
+        canteen_no_diagnostics.refresh_from_db()
+        self.assertIsNotNone(canteen_no_diagnostics.email_no_diagnostic_first_reminder)

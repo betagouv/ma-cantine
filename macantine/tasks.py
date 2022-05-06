@@ -2,7 +2,7 @@ import logging
 import datetime
 from django.utils import timezone
 from django.conf import settings
-from data.models import User
+from data.models import User, Canteen
 from .celery import app
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
@@ -92,3 +92,49 @@ def no_canteen_second_reminder():
         except Exception as e:
             logger.error(f"Unable to send second no-cantine reminder email to {user.username}")
             logger.exception(e)
+
+
+@app.task()
+def no_diagnostic_first_reminder():
+    if not settings.TEMPLATE_ID_NO_DIAGNOSTIC_FIRST:
+        logger.error("Environment variable TEMPLATE_ID_NO_DIAGNOSTIC_FIRST not set")
+        return
+    today = timezone.now()
+    threshold = today - datetime.timedelta(weeks=1)
+    canteens = Canteen.objects.filter(
+        diagnostic__isnull=True,
+        creation_date__lte=threshold,
+        email_no_diagnostic_first_reminder__isnull=True,
+    ).all()
+    if not canteens:
+        logger.info("no_diagnostic_first_reminder: No canteens to notify.")
+        return
+
+    logger.info(f"no_diagnostic_first_reminder: {len(canteens)} canteens to notify.")
+
+    for canteen in canteens:
+        for manager in canteen.managers.all():
+
+            try:
+                parameters = {"PRENOM": manager.first_name, "NOM_CANTINE": canteen.name}
+                _send_sib_template(
+                    settings.TEMPLATE_ID_NO_DIAGNOSTIC_FIRST,
+                    parameters,
+                    manager.email,
+                    f"{manager.first_name} {manager.last_name}",
+                )
+                logger.info(
+                    f"First no-diagnostic email sent to {manager.get_full_name()} ({manager.email}) for canteen '{canteen.name}'."
+                )
+                canteen.email_no_diagnostic_first_reminder = today
+                canteen.save()
+            except ApiException as e:
+                logger.error(
+                    f"SIB error when sending first no-diagnostic email to {manager.username} concerning canteen {canteen.name}"
+                )
+                logger.exception(e)
+            except Exception as e:
+                logger.error(
+                    f"Unable to send first no-diagnostic reminder email to {manager.username} concerning canteen {canteen.name}"
+                )
+                logger.exception(e)
