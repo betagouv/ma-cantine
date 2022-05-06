@@ -1,5 +1,5 @@
-from django.contrib import admin
 from django import forms
+from django.contrib import admin
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
@@ -14,6 +14,7 @@ class UserForm(UserChangeForm):
             "creation_mtm_source": forms.Textarea(attrs={"cols": 55, "rows": 1}),
             "creation_mtm_campaign": forms.Textarea(attrs={"cols": 55, "rows": 1}),
             "creation_mtm_medium": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "other_job_description": forms.Textarea(attrs={"cols": 60, "rows": 2}),
         }
 
 
@@ -40,7 +41,17 @@ class MaCanteenUserAdmin(UserAdmin):
         (None, {"fields": ("username", "password")}),
         (
             _("Personal info"),
-            {"fields": ("first_name", "last_name", "email", "avatar", "phone_number")},
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "avatar",
+                    "phone_number",
+                    "job",
+                    "other_job_description",
+                )
+            },
         ),
         (
             _("Permissions"),

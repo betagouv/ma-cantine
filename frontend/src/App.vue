@@ -60,6 +60,9 @@ export default {
       this.$store.dispatch("removeLocalStorageDiagnostics")
     },
   },
+  beforeMount() {
+    window.$crisp.push(["do", "chat:hide"])
+  },
 }
 </script>
 

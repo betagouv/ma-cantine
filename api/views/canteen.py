@@ -244,7 +244,7 @@ class PublishCanteenView(APIView):
 
             if is_draft:
                 canteen.publication_status = Canteen.PublicationStatus.PENDING
-                protocol = "https" if settings.SECURE else "http"
+                protocol = settings.PROTOCOL
                 admin_url = "{}://{}/admin/data/canteen/{}/change/".format(protocol, settings.HOSTNAME, canteen.id)
 
                 logger.info(f"Demande de publication de {canteen.name} (ID: {canteen.id})")
@@ -350,7 +350,7 @@ class AddManagerView(APIView):
         try:
             context = {
                 "canteen": manager_invitation.canteen.name,
-                "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
+                "protocol": settings.PROTOCOL,
                 "domain": settings.HOSTNAME,
             }
             send_mail(
@@ -373,7 +373,7 @@ class AddManagerView(APIView):
     @staticmethod
     def _send_add_email(email, canteen):
         try:
-            protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
+            protocol = settings.PROTOCOL
             domain = settings.HOSTNAME
             canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
             context = {
