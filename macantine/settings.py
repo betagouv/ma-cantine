@@ -400,6 +400,8 @@ CSP_CONNECT_SRC = (
     "ws:",
     "api-adresse.data.gouv.fr",
     "client.crisp.chat",
+    "entreprise.data.gouv.fr",
+    "plateforme.adresse.data.gouv.fr",
 )
 if DEBUG:
     CSP_CONNECT_SRC += CSP_DEBUG_DOMAINS

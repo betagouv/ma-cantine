@@ -11,6 +11,9 @@ class DiagnosticForm(forms.ModelForm):
             "other_waste_comments": forms.Textarea(attrs={"cols": 60, "rows": 2}),
             "donation_food_type": forms.Textarea(attrs={"cols": 60, "rows": 2}),
             "other_communication_support": forms.Textarea(attrs={"cols": 60, "rows": 2}),
+            "creation_mtm_source": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "creation_mtm_campaign": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "creation_mtm_medium": forms.Textarea(attrs={"cols": 55, "rows": 1}),
         }
 
 
@@ -34,6 +37,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
         "modification_date",
     )
     list_filter = ("year",)
+    readonly_fields = ("creation_mtm_source", "creation_mtm_campaign", "creation_mtm_medium")
 
     fieldsets = (
         (
@@ -113,6 +117,16 @@ class DiagnosticAdmin(admin.ModelAdmin):
                     "communicates_on_food_plan",
                     "communicates_on_food_quality",
                     "communication_frequency",
+                )
+            },
+        ),
+        (
+            "Lien tracké lors de la création",
+            {
+                "fields": (
+                    "creation_mtm_source",
+                    "creation_mtm_campaign",
+                    "creation_mtm_medium",
                 )
             },
         ),

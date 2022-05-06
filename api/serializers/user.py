@@ -22,6 +22,8 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "last_name",
             "avatar",
             "is_staff",
+            "job",
+            "other_job_description",
         )
 
 

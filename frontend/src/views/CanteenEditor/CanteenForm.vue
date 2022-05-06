@@ -19,15 +19,6 @@
     <v-form ref="form" v-model="formIsValid">
       <v-row>
         <v-col cols="12" md="8">
-          <p class="body-2 my-2">Nom de la cantine</p>
-          <v-text-field
-            hide-details="auto"
-            :rules="[validators.required]"
-            validate-on-blur
-            solo
-            v-model="canteen.name"
-          ></v-text-field>
-
           <p class="body-2 mt-4 mb-2">SIRET</p>
           <v-text-field
             hide-details="auto"
@@ -35,6 +26,7 @@
             solo
             v-model="canteen.siret"
             :rules="[validators.length(14), validators.luhn]"
+            @blur="getCanteenBySiret"
           ></v-text-field>
           <p class="caption mt-1 ml-2">
             Vous ne le connaissez pas ? Utilisez cet
@@ -125,6 +117,15 @@
             </v-card-text>
           </v-card>
 
+          <p class="body-2 my-2">Nom de la cantine</p>
+          <v-text-field
+            hide-details="auto"
+            :rules="[validators.required]"
+            validate-on-blur
+            solo
+            v-model="canteen.name"
+          ></v-text-field>
+
           <p class="body-2 mt-4 mb-2">Ville</p>
           <v-autocomplete
             hide-details="auto"
@@ -137,7 +138,6 @@
             auto-select-first
             cache-items
             v-model="cityAutocompleteChoice"
-            :placeholder="canteen.city"
           ></v-autocomplete>
         </v-col>
 
@@ -291,6 +291,16 @@
       </div>
     </v-form>
 
+    <v-dialog v-model="siretQueryInProgress" false width="300">
+      <v-card class="py-4">
+        <v-card-text>
+          Recherche des données en cours...
+          <br />
+          <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
       <v-spacer></v-spacer>
       <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
@@ -305,7 +315,7 @@
 
 <script>
 import validators from "@/validators"
-import { toBase64, getObjectDiff, sectorsSelectList } from "@/utils"
+import { toBase64, getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
@@ -335,7 +345,7 @@ export default {
       formIsValid: true,
       bypassLeaveWarning: false,
       deletionDialog: false,
-      cityAutocompleteChoice: {},
+      cityAutocompleteChoice: null,
       communes: [],
       loadingCommunes: false,
       search: null,
@@ -367,6 +377,7 @@ export default {
         { text: "Privé", value: "private" },
       ],
       user,
+      siretQueryInProgress: false,
       // contact forms
       fromEmail: user.email,
       fromName: `${user.firstName} ${user.lastName}`,
@@ -440,17 +451,7 @@ export default {
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
       if (canteen.city) {
-        const initialCityAutocomplete = {
-          text: canteen.city,
-          value: {
-            label: canteen.city,
-            citycode: canteen.cityInseeCode,
-            postcode: canteen.postalCode,
-            context: canteen.department,
-          },
-        }
-        this.communes = [initialCityAutocomplete]
-        this.cityAutocompleteChoice = initialCityAutocomplete.value
+        this.populateCityAutocomplete()
       }
       if (!this.canteen.images) this.canteen.images = []
     } else this.$router.push({ name: "NewCanteen" })
@@ -471,10 +472,55 @@ export default {
     window.removeEventListener("beforeunload", this.handleUnload)
   },
   methods: {
-    saveCanteen(e, bypassTechnicalControl = false) {
-      this.$refs.form.validate()
+    getCanteenBySiret() {
+      if (!this.canteen.siret) {
+        return
+      } else if (validators.length(14)(this.canteen.siret) !== true || validators.luhn(this.canteen.siret) !== true) {
+        return
+      }
+      if (this.canteen.name && this.cityAutocompleteChoice) {
+        return // do not override user-entered data
+      }
+      this.siretQueryInProgress = true
+      const getInfo = function() {
+        fetch(`https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/${this.canteen.siret}`)
+          .then((response) => response.json())
+          .then((body) => {
+            if (body.etablissement) {
+              if (!this.canteen.name) {
+                let name
+                if (body.etablissement.enseigne_1) {
+                  name = body.etablissement.enseigne_1
+                } else if (body.etablissement.unite_legale?.denomination) {
+                  name = body.etablissement.unite_legale.denomination
+                }
+                this.canteen.name = name
+              }
 
-      if (!this.formIsValid) {
+              if (!this.cityAutocompleteChoice && body.etablissement.geo_id) {
+                this.canteen.postalCode = body.etablissement.code_postal
+                this.canteen.cityInseeCode = body.etablissement.code_commune
+                return fetch(`https://plateforme.adresse.data.gouv.fr/lookup/${body.etablissement.geo_id}`)
+              }
+            }
+          })
+          .then((response) => response.json())
+          .then((body) => {
+            this.canteen.city = body.commune.nom
+            this.canteen.department = body.commune.departement.code
+            // if this lookup fails, the choice will not be populated, making the user pick themselves
+            // this is the desired behaviour, since not all location data will be given otherwise
+            this.populateCityAutocomplete()
+            this.siretQueryInProgress = false
+          })
+          .catch(() => {
+            this.siretQueryInProgress = false
+          })
+      }.bind(this)
+      setTimeout(getInfo, 800)
+    },
+    saveCanteen(e, bypassTechnicalControl = false) {
+      if (!this.$refs.form.validate()) {
         this.$store.dispatch("notifyRequiredFieldsError")
         window.scrollTo(0, 0)
         return
@@ -500,6 +546,13 @@ export default {
             )} établissements de service. Voulez-vous vraiment continuer ?`
           )
           return
+        }
+      }
+
+      if (this.isNewCanteen) {
+        for (let i = 0; i < Constants.TrackingParams.length; i++) {
+          const cookieValue = readCookie(Constants.TrackingParams[i])
+          if (cookieValue) payload[`creation_${Constants.TrackingParams[i]}`] = cookieValue
         }
       }
 
@@ -634,6 +687,19 @@ export default {
           window.scrollTo(0, 0)
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    populateCityAutocomplete() {
+      const initialCityAutocomplete = {
+        text: this.canteen.city,
+        value: {
+          label: this.canteen.city,
+          citycode: this.canteen.cityInseeCode,
+          postcode: this.canteen.postalCode,
+          context: this.canteen.department,
+        },
+      }
+      this.communes.push(initialCityAutocomplete)
+      this.cityAutocompleteChoice = initialCityAutocomplete.value
     },
     displayTechnicalControlDialog(bodyText) {
       this.technicalControlText = bodyText
