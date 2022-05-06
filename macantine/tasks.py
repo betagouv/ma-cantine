@@ -126,8 +126,9 @@ def no_diagnostic_first_reminder():
                 logger.info(
                     f"First no-diagnostic email sent to {manager.get_full_name()} ({manager.email}) for canteen '{canteen.name}'."
                 )
-                canteen.email_no_diagnostic_first_reminder = today
-                canteen.save()
+                if not canteen.email_no_diagnostic_first_reminder:
+                    canteen.email_no_diagnostic_first_reminder = today
+                    canteen.save()
             except ApiException as e:
                 logger.error(
                     f"SIB error when sending first no-diagnostic email to {manager.username} concerning canteen {canteen.name}"
