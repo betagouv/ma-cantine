@@ -35,7 +35,7 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-btn :href="actionUrl" color="primary" x-large class="mx-4 px-sm-8">Commencer</v-btn>
+          <v-btn :href="actionUrl" color="primary" x-large class="mx-4 px-8">Commencer</v-btn>
         </v-col>
       </v-row>
     </v-card>
@@ -55,7 +55,7 @@
       <v-card-actions class="py-4 px-6">
         <v-spacer></v-spacer>
         <!-- <v-btn href="/s-identifier" color="secondary" large outlined>M'identifier</v-btn> -->
-        <v-btn :href="actionUrl" color="primary" x-large class="mx-4 px-sm-8">Commencer</v-btn>
+        <v-btn :href="actionUrl" color="primary" x-large class="mx-4 px-8">Commencer</v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
     </v-card>
