@@ -73,8 +73,7 @@
                 const nameEQ = name + "="
                 const cookieArr = document.cookie.split(";")
                 for (let i = 0; i < cookieArr.length; i++) {
-                    var cookie = cookieArr[i]
-                    while (cookie.charAt(0) == " ") cookie = cookie.substring(1, cookie.length)
+                    var cookie = cookieArr[i].trimStart()
                     if (cookie.indexOf(nameEQ) == 0) return cookie.substring(nameEQ.length, cookie.length)
                 }
                 return null
