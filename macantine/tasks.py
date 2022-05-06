@@ -121,7 +121,7 @@ def no_diagnostic_first_reminder():
                     settings.TEMPLATE_ID_NO_DIAGNOSTIC_FIRST,
                     parameters,
                     manager.email,
-                    f"{manager.first_name} {manager.last_name}",
+                    f"{manager.get_full_name()}",
                 )
                 logger.info(
                     f"First no-diagnostic email sent to {manager.get_full_name()} ({manager.email}) for canteen '{canteen.name}'."
