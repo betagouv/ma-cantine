@@ -35,7 +35,12 @@ class MaCanteenUserAdmin(UserAdmin):
         "last_name",
         "email",
     )
-    readonly_fields = ("date_joined", "creation_mtm_source", "creation_mtm_campaign", "creation_mtm_medium")
+    readonly_fields = (
+        "date_joined",
+        "creation_mtm_source",
+        "creation_mtm_campaign",
+        "creation_mtm_medium",
+    )
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),

@@ -21,6 +21,10 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.no_canteen_second_reminder",
         "schedule": daily_week,
     },
+    "no_diagnostic_first_reminder": {
+        "task": "macantine.tasks.no_diagnostic_first_reminder",
+        "schedule": daily_week,
+    },
 }
 
 app.conf.timezone = "Europe/Paris"

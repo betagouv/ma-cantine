@@ -190,6 +190,11 @@ class Canteen(SoftDeletionModel):
         null=True, blank=True, verbose_name="participnte à l'expérimentation repas végétariens"
     )
 
+    # Email campaigns
+    email_no_diagnostic_first_reminder = models.DateTimeField(
+        null=True, blank=True, verbose_name="Date d'envoi du premier email pour manque de diagnostics"
+    )
+
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         max_image_size = 1024
         if self.logo:
