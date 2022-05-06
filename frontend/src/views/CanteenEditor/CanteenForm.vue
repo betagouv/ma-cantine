@@ -511,7 +511,6 @@ export default {
           })
           .catch(() => {
             this.siretQueryInProgress = false
-            // do we want to display a message in the case of 404 or other errors ?
           })
       }.bind(this)
       setTimeout(getInfo, 800)
