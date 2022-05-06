@@ -91,7 +91,7 @@ export default Object.freeze({
       value: "ESTABLISHMENT_MANAGER",
     },
     {
-      text: "Direction Achat Société de restauration",
+      text: "Direction achat société de restauration",
       value: "CATERING_PURCHASES_MANAGER",
     },
     {
