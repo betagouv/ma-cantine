@@ -15,7 +15,7 @@ class CanteenForm(forms.ModelForm):
             "name": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "city": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "siret": forms.Textarea(attrs={"cols": 35, "rows": 1}),
-            "creation_campaign": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "import_source": forms.Textarea(attrs={"cols": 55, "rows": 1}),
             "central_producer_siret": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "city_insee_code": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "publication_comments": forms.Textarea(attrs={"cols": 70, "rows": 3}),
@@ -24,6 +24,9 @@ class CanteenForm(forms.ModelForm):
             "diversification_comments": forms.Textarea(attrs={"cols": 70, "rows": 3}),
             "plastics_comments": forms.Textarea(attrs={"cols": 70, "rows": 3}),
             "information_comments": forms.Textarea(attrs={"cols": 70, "rows": 3}),
+            "creation_mtm_source": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "creation_mtm_campaign": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "creation_mtm_medium": forms.Textarea(attrs={"cols": 55, "rows": 1}),
         }
 
 
@@ -46,7 +49,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "name",
         "siret",
         "creation_date",
-        "creation_campaign",
+        "import_source",
         "logo",
         "city",
         "department",
@@ -68,11 +71,17 @@ class CanteenAdmin(SoftDeletionAdmin):
         "diversification_comments",
         "plastics_comments",
         "information_comments",
+        "creation_mtm_source",
+        "creation_mtm_campaign",
+        "creation_mtm_medium",
         "email_no_diagnostic_first_reminder",
         "deletion_date",
     )
     readonly_fields = (
         "creation_date",
+        "creation_mtm_source",
+        "creation_mtm_campaign",
+        "creation_mtm_medium",
         "email_no_diagnostic_first_reminder",
     )
     list_display = (

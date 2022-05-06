@@ -10,6 +10,9 @@ class RegisterUserForm(UserCreationForm):
         label=mark_safe('J\'atteste avoir lu et accepté les <a href="/cgu" target="_blank">CGU</a>')
     )
     email = forms.EmailField()
+    creation_mtm_source = forms.CharField(widget=forms.HiddenInput(), required=False)
+    creation_mtm_campaign = forms.CharField(widget=forms.HiddenInput(), required=False)
+    creation_mtm_medium = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     uses_columns = False
 
@@ -24,6 +27,9 @@ class RegisterUserForm(UserCreationForm):
             "password1",
             "password2",
             "cgu_approved",
+            "creation_mtm_source",
+            "creation_mtm_campaign",
+            "creation_mtm_medium",
         )
 
     def __init__(self, *args, **kwargs):

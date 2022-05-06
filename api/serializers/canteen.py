@@ -131,7 +131,18 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "economic_model",
             "reservation_expe_participant",
             "vegetarian_expe_participant",
+            "creation_mtm_source",
+            "creation_mtm_campaign",
+            "creation_mtm_medium",
         )
+
+    def __init__(self, *args, **kwargs):
+        action = kwargs.pop("action", None)
+        super().__init__(*args, **kwargs)
+        if action != "create":
+            self.fields.pop("creation_mtm_source")
+            self.fields.pop("creation_mtm_campaign")
+            self.fields.pop("creation_mtm_medium")
 
     def update(self, instance, validated_data):
         if "images" not in validated_data:

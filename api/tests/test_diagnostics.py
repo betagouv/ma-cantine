@@ -83,6 +83,9 @@ class TestDiagnosticsApi(APITestCase):
             "communicates_on_food_plan": True,
             "communicates_on_food_quality": True,
             "communication_frequency": "YEARLY",
+            "creation_mtm_source": "mtm_source_value",
+            "creation_mtm_campaign": "mtm_campaign_value",
+            "creation_mtm_medium": "mtm_medium_value",
         }
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -104,6 +107,9 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.value_label_rouge, 10)
         self.assertEqual(diagnostic.value_label_aoc_igp, 20)
         self.assertEqual(diagnostic.value_label_hve, 30)
+        self.assertEqual(diagnostic.creation_mtm_source, "mtm_source_value")
+        self.assertEqual(diagnostic.creation_mtm_campaign, "mtm_campaign_value")
+        self.assertEqual(diagnostic.creation_mtm_medium, "mtm_medium_value")
 
     @authenticate
     def test_create_duplicate_diagnostic(self):
@@ -189,6 +195,40 @@ class TestDiagnosticsApi(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(diagnostic.year, 2020)
+
+    @authenticate
+    def test_edit_diagnostic_tracking_info(self):
+        """
+        Diagnostic creation campaign info cannot be updated
+        """
+        diagnostic = DiagnosticFactory.create(
+            year=2019,
+            creation_mtm_source=None,
+            creation_mtm_campaign=None,
+            creation_mtm_medium=None,
+        )
+        diagnostic.canteen.managers.add(authenticate.user)
+        payload = {
+            "year": 2020,
+            "creation_mtm_source": "mtm_source_value",
+            "creation_mtm_campaign": "mtm_campaign_value",
+            "creation_mtm_medium": "mtm_medium_value",
+        }
+
+        response = self.client.patch(
+            reverse(
+                "diagnostic_edition",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            ),
+            payload,
+        )
+        diagnostic.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(diagnostic.year, 2020)
+        self.assertIsNone(diagnostic.creation_mtm_source)
+        self.assertIsNone(diagnostic.creation_mtm_campaign)
+        self.assertIsNone(diagnostic.creation_mtm_medium)
 
     @authenticate
     def test_edit_diagnostic_bad_total(self):

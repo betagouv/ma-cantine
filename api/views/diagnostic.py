@@ -32,6 +32,11 @@ class DiagnosticCreateView(CreateAPIView):
     model = Diagnostic
     serializer_class = PublicDiagnosticSerializer
 
+    def get_serializer(self, *args, **kwargs):
+        kwargs.setdefault("context", self.get_serializer_context())
+        kwargs.setdefault("action", "create")
+        return PublicDiagnosticSerializer(*args, **kwargs)
+
     def perform_create(self, serializer):
         try:
             canteen_id = self.request.parser_context.get("kwargs").get("canteen_pk")

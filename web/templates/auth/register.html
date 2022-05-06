@@ -6,6 +6,21 @@
 <script type="text/javascript"> window.$crisp=[];window.CRISP_WEBSITE_ID="071cca61-bd5f-4950-a5ed-c02238666a5c";(function(){ d=document;s=d.createElement("script"); s.src="https://client.crisp.chat/l.js"; s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})(); </script>
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery.easy-autocomplete.min.js' %}"></script>
+<script>
+    if (window.URLSearchParams) {
+        const trackingParams = ["mtm_source", "mtm_campaign", "mtm_medium"]
+        const urlParams = new URLSearchParams(window.location.search)
+        const clearCookies = trackingParams.some((x) => !!urlParams.get(x))
+
+        for (let i = 0; i < trackingParams.length; i++) {
+            const trackingParam = trackingParams[i]
+            const value = urlParams.get(trackingParam)
+
+            if (clearCookies) document.cookie = `${trackingParam}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`
+            if (value) document.cookie = `${trackingParam}=${value};max-age=86400;path=/`
+        }
+    }
+</script>
 <style type="text/css"> @import url("{% static 'css/easy-autocomplete.min.css' %}"); </style>
     <form role="form" method="post">
 
@@ -53,6 +68,25 @@
                 <button type="submit" style="display: block;">S'inscrire</button>
             </div>
         </div>
+
+        <script>
+            function readCookie(name) {
+                const nameEQ = name + "="
+                const cookieArr = document.cookie.split(";")
+                for (let i = 0; i < cookieArr.length; i++) {
+                    var cookie = cookieArr[i].trimStart()
+                    if (cookie.indexOf(nameEQ) == 0) return cookie.substring(nameEQ.length, cookie.length)
+                }
+                return null
+            }
+            if (readCookie("mtm_source"))
+                document.getElementById("id_creation_mtm_source").setAttribute("value", readCookie("mtm_source"))
+            if (readCookie("mtm_campaign"))
+                document.getElementById("id_creation_mtm_campaign").setAttribute("value", readCookie("mtm_campaign"))
+            if (readCookie("mtm_medium"))
+                document.getElementById("id_creation_mtm_medium").setAttribute("value", readCookie("mtm_medium"))
+        </script>
+
     </form>
     <a href="{% url 'login' %}"><button>J'ai déjà un compte</button></a>
 {% endblock %}

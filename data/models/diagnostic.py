@@ -309,6 +309,17 @@ class Diagnostic(models.Model):
         verbose_name="fréquence de communication",
     )
 
+    # Campaign tracking
+    creation_mtm_source = models.TextField(
+        null=True, blank=True, verbose_name="mtm_source du lien tracké lors de la création"
+    )
+    creation_mtm_campaign = models.TextField(
+        null=True, blank=True, verbose_name="mtm_campaign du lien tracké lors de la création"
+    )
+    creation_mtm_medium = models.TextField(
+        null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
+    )
+
     @property
     def latest_teledeclaration(self):
         if self.teledeclaration_set.count() == 0:
