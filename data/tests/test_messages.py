@@ -6,7 +6,8 @@ from data.models import Message
 from data.factories import MessageFactory, CanteenFactory, UserFactory
 
 
-@override_settings(DEFAULT_FROM_EMAIL="contact@example.com")
+@override_settings(DEFAULT_FROM_EMAIL="no-reply@example.com")
+@override_settings(CONTACT_EMAIL="contact@example.com")
 class TestMessageModel(TestCase):
     def test_send_message(self):
         canteen = CanteenFactory.create()
@@ -23,7 +24,7 @@ class TestMessageModel(TestCase):
         self.assertIn(managers[0].email, email.to)
         self.assertIn(managers[1].email, email.to)
         self.assertIn("contact@example.com", email.to)
-        self.assertEqual(email.from_email, "contact@example.com")
+        self.assertEqual(email.from_email, "no-reply@example.com")
         self.assertEqual(len(email.reply_to), 1)
         self.assertEqual(email.reply_to[0], "test@example.com")
 

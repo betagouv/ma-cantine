@@ -34,7 +34,7 @@ class Message(models.Model):
             logger.exception(f"Attempt to send an already sent message: {self.id}")
             raise Exception(f"Message already sent on {self.sent_date}")
         recipients = [user.email for user in self.destination_canteen.managers.all()]
-        recipients.append(settings.DEFAULT_FROM_EMAIL)
+        recipients.append(settings.CONTACT_EMAIL)
         reply_to = [self.sender_email]
 
         context = {

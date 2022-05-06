@@ -100,14 +100,19 @@ class TestInquiry(APITestCase):
 
 class TestEmail(APITestCase):
     @authenticate
-    @override_settings(DEFAULT_FROM_EMAIL="from@example.com")
+    @override_settings(DEFAULT_FROM_EMAIL="no-reply@example.com")
     @override_settings(CONTACT_EMAIL="contact@example.com")
     @override_settings(HOSTNAME="mysite.com")
     @override_settings(SECURE="True")
     def test_send_message(self):
-        canteen = CanteenFactory.create(siret="76494221950672", name="Hugo")
-        canteen.managers.add(UserFactory.create(email="mgmt1@example.com"))
-        canteen.managers.add(UserFactory.create(email="mgmt2@example.com"))
+        canteen = CanteenFactory.create(
+            siret="76494221950672",
+            name="Hugo",
+            managers=[
+                UserFactory.create(email="mgmt1@example.com"),
+                UserFactory.create(email="mgmt2@example.com"),
+            ],
+        )
 
         payload = {
             "email": "test@example.com",
@@ -119,15 +124,45 @@ class TestEmail(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 1)
         email = mail.outbox[0]
-        # this canteen has min 2 managers (the factory may have added a random amount more)
-        self.assertGreaterEqual(len(email.to), 2)
+
+        self.assertEqual(len(email.to), 2)
         self.assertIn("mgmt1@example.com", email.to)
         self.assertIn("mgmt2@example.com", email.to)
-        self.assertEqual(email.cc[0], "contact@example.com")
+        self.assertIn("contact@example.com", email.cc)
         self.assertIn("Please add me to the team", email.body)
         self.assertIn("76494221950672", email.body)
         self.assertIn("Hugo", email.body)
         self.assertIn(f"https://mysite.com/modifier-ma-cantine/{canteen.id}--Hugo/gestionnaires", email.body)
         self.assertEqual(len(email.reply_to), 1)
         self.assertEqual(email.reply_to[0], "test@example.com")
-        self.assertEqual(email.from_email, "from@example.com")
+        self.assertEqual(email.from_email, "no-reply@example.com")
+
+    @authenticate
+    @override_settings(DEFAULT_FROM_EMAIL="no-reply@example.com")
+    @override_settings(CONTACT_EMAIL="contact@example.com")
+    @override_settings(HOSTNAME="mysite.com")
+    @override_settings(SECURE="True")
+    def test_send_message_no_managers(self):
+        canteen = CanteenFactory.create(siret="76494221950672", name="Hugo")
+        canteen.managers.clear()
+
+        payload = {
+            "email": "test@example.com",
+            "name": "My name",
+            "message": "Please add me to the team",
+        }
+        response = self.client.post(reverse("canteen_team_request", kwargs={"pk": canteen.id}), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+
+        self.assertEqual(len(email.to), 1)
+        self.assertIn("contact@example.com", email.to)
+        self.assertIn("Please add me to the team", email.body)
+        self.assertIn("76494221950672", email.body)
+        self.assertIn("Hugo", email.body)
+        self.assertIn(f"https://mysite.com/modifier-ma-cantine/{canteen.id}--Hugo/gestionnaires", email.body)
+        self.assertEqual(len(email.reply_to), 1)
+        self.assertEqual(email.reply_to[0], "test@example.com")
+        self.assertEqual(email.from_email, "no-reply@example.com")
