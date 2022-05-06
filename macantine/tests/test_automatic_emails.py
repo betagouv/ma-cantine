@@ -233,13 +233,11 @@ class TestAutomaticEmails(TestCase):
         # Jean and Anna. Both should receive the email since
         # the canteen was created more than a week ago.
         jean = UserFactory.create(
-            date_joined=(today - timedelta(weeks=1)),
             first_name="Jean",
             last_name="Sérien",
             email="jean.serien@example.com",
         )
         anna = UserFactory.create(
-            date_joined=(today - timedelta(weeks=1)),
             first_name="Anna",
             last_name="Logue",
             email="anna.logue@example.com",
@@ -256,7 +254,6 @@ class TestAutomaticEmails(TestCase):
         # Sophie, but this time no email should be sent since the
         # canteen was only created three days ago.
         sophie = UserFactory.create(
-            date_joined=(today - timedelta(days=1)),
             first_name="Sophie",
             last_name="Stiqué",
         )
@@ -270,7 +267,6 @@ class TestAutomaticEmails(TestCase):
         # We create a canteen with diagnostics. Because of this,
         # managers should not be notified.
         fred = UserFactory.create(
-            date_joined=(today - timedelta(weeks=2)),
             first_name="Fred",
             last_name="Ulcorant",
         )
@@ -287,7 +283,6 @@ class TestAutomaticEmails(TestCase):
         # an email has already been sent, so the managers should not
         # be notified again.
         lena = UserFactory.create(
-            date_joined=(today - timedelta(weeks=1)),
             first_name="Lena",
             last_name="Godard",
             email="lena.godard@example.com",
