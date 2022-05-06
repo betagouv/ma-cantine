@@ -10,7 +10,7 @@
         <v-col cols="12" md="9">
           <v-card-title>
             <v-spacer></v-spacer>
-            <h1 class="font-weight-black text-h3 mt-0 mt-sm-4">
+            <h1 class="font-weight-black text-h5 text-sm-h4 text-md-h3 mt-0 mt-sm-4">
               Référencez votre cantine sur la plateforme nationale de la restauration collective
             </h1>
             <v-spacer v-if="$vuetify.breakpoint.smAndDown"></v-spacer>
@@ -35,29 +35,30 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-btn :href="actionUrl" color="primary" x-large class="mx-4 px-8">Commencer</v-btn>
+          <v-btn href="/creer-mon-compte" color="primary" x-large class="mx-4 px-8">Commencer</v-btn>
         </v-col>
       </v-row>
     </v-card>
-    <v-card class="text-left mt-16 pa-4" elevation="0" color="primary lighten-5">
-      <v-card-title class="text-h5 font-weight-black py-6">
-        Atteindre vos objectives en 3 étapes
-      </v-card-title>
-      <v-card-text>
-        <v-row>
-          <v-col v-for="(step, idx) in steps" :key="idx" cols="12" md="4" class="d-flex flex-column align-center">
-            <p class="text-center number">{{ idx + 1 }}</p>
-            <p class="black--text">{{ step.text }}</p>
-            <v-img :src="step.image"></v-img>
-          </v-col>
-        </v-row>
-      </v-card-text>
-      <v-card-actions class="py-4 px-6">
-        <v-spacer></v-spacer>
-        <!-- <v-btn href="/s-identifier" color="secondary" large outlined>M'identifier</v-btn> -->
-        <v-btn :href="actionUrl" color="primary" x-large class="mx-4 px-8">Commencer</v-btn>
-        <v-spacer></v-spacer>
-      </v-card-actions>
+    <v-card class="text-left mt-16 py-4" elevation="0" color="primary lighten-5">
+      <v-col cols="12" sm="8" md="12" class="mx-auto">
+        <v-card-title class="text-h5 font-weight-black py-6">
+          Atteindre vos objectives en 3 étapes
+        </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col v-for="(step, idx) in steps" :key="idx" cols="12" md="4" class="d-flex flex-column align-center">
+              <p class="text-center number">{{ idx + 1 }}</p>
+              <p class="black--text">{{ step.text }}</p>
+              <v-img :src="step.image"></v-img>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions class="py-4 px-6">
+          <v-spacer></v-spacer>
+          <v-btn href="/creer-mon-compte" color="primary" x-large class="mx-4 px-8">Commencer</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-col>
     </v-card>
 
     <div v-if="recentlyModifiedCanteens">
@@ -111,16 +112,12 @@ export default {
       recentlyModifiedCanteens: null,
     }
   },
-  computed: {
-    actionUrl() {
-      return this.$store.state.loggedUser ? "/gestion" : "/creer-mon-compte"
-    },
-  },
   mounted() {
     return fetch("/api/v1/publishedCanteens?limit=4&ordering=modification_date")
       .then((response) => {
-        if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
-        return response.json()
+        if (response.status >= 200 && response.status < 300) {
+          return response.json()
+        }
       })
       .then((response) => {
         this.recentlyModifiedCanteens = response.results
@@ -131,7 +128,6 @@ export default {
 
 <style lang="scss" scoped>
 .number {
-  // font-size: 2.5rem;
   font-weight: bold;
   color: #0c7f46;
   background-color: #fff;

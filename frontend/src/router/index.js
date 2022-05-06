@@ -56,6 +56,9 @@ const routes = [
     path: "/accueil-gestionnaire",
     name: "ManagerLanding",
     component: ManagerLanding,
+    beforeEnter: (_to, _from, next) => {
+      store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
+    },
   },
   {
     path: "/mon-compte",
