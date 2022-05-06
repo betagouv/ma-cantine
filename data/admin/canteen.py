@@ -82,7 +82,6 @@ class CanteenAdmin(SoftDeletionAdmin):
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
-        "email_no_diagnostic_first_reminder",
     )
     list_display = (
         "name",

@@ -37,8 +37,6 @@ class MaCanteenUserAdmin(UserAdmin):
     )
     readonly_fields = (
         "date_joined",
-        "email_no_canteen_first_reminder",
-        "email_no_canteen_second_reminder",
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
