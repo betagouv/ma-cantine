@@ -376,7 +376,6 @@ CSP_IMG_SRC = (
     "stats.data.gouv.fr",
     "www.w3.org",
     "data:",
-    "jedonnemonavis.numerique.gouv.fr",
 )
 if DEBUG:
     CSP_IMG_SRC += CSP_DEBUG_DOMAINS
