@@ -315,7 +315,7 @@
 
 <script>
 import validators from "@/validators"
-import { toBase64, getObjectDiff, sectorsSelectList } from "@/utils"
+import { toBase64, getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
@@ -546,6 +546,13 @@ export default {
             )} établissements de service. Voulez-vous vraiment continuer ?`
           )
           return
+        }
+      }
+
+      if (this.isNewCanteen) {
+        for (let i = 0; i < Constants.TrackingParams.length; i++) {
+          const cookieValue = readCookie(Constants.TrackingParams[i])
+          if (cookieValue) payload[`creation_${Constants.TrackingParams[i]}`] = cookieValue
         }
       }
 

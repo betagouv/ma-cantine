@@ -93,7 +93,7 @@ class Command(BaseCommand):
                         production_type=production_type,
                         management_type=management_type,
                         daily_meal_count=daily_meal_count,
-                        creation_campaign="Plan de soutien aux cantines scolaires des petites communes (CSV file)",
+                        import_source="Plan de soutien aux cantines scolaires des petites communes (CSV file)",
                     )
                     canteen.save()
                     diagnostic = None

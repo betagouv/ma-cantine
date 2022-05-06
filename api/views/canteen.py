@@ -169,6 +169,12 @@ class UserCanteensView(ListCreateAPIView):
     search_fields = ["name"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
 
+    def get_serializer(self, *args, **kwargs):
+        kwargs.setdefault("context", self.get_serializer_context())
+        action = "create" if self.request.method == "POST" else None
+        kwargs.setdefault("action", action)
+        return FullCanteenSerializer(*args, **kwargs)
+
     def get_queryset(self):
         return self.request.user.canteens.all()
 

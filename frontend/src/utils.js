@@ -346,3 +346,13 @@ export const sectorsSelectList = (sectors) => {
   sectors.sort(sortFn("sortCategoryValue")) // added benefit of moving sectors without parent to top
   return sectors
 }
+
+export const readCookie = (name) => {
+  const nameEQ = name + "="
+  const cookieArr = document.cookie.split(";")
+  for (let i = 0; i < cookieArr.length; i++) {
+    var cookie = cookieArr[i].trimStart()
+    if (cookie.indexOf(nameEQ) == 0) return cookie.substring(nameEQ.length, cookie.length)
+  }
+  return null
+}

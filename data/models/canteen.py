@@ -80,7 +80,7 @@ class Canteen(SoftDeletionModel):
         TRANSFORMATION = "transformation", "Ministère de la Transformation et de la Fonction Publiques"
         AUTRE = "autre", "Autre"
 
-    creation_campaign = models.TextField(null=True, blank=True, verbose_name="Campagne à la source de la création")
+    import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
@@ -197,6 +197,17 @@ class Canteen(SoftDeletionModel):
         if self.department:
             self.region = self._get_region()
         super(Canteen, self).save(force_insert, force_update, using, update_fields)
+
+    # Campaign tracking
+    creation_mtm_source = models.TextField(
+        null=True, blank=True, verbose_name="mtm_source du lien tracké lors de la création"
+    )
+    creation_mtm_campaign = models.TextField(
+        null=True, blank=True, verbose_name="mtm_campaign du lien tracké lors de la création"
+    )
+    creation_mtm_medium = models.TextField(
+        null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
+    )
 
     @property
     def url_slug(self):

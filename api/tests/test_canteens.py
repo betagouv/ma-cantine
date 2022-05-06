@@ -376,3 +376,90 @@ class TestCanteenApi(APITestCase):
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
         self.assertEqual(created_canteen.images.count(), 1)
+
+    @authenticate
+    def test_create_cantine_with_tracking_info(self):
+        """
+        The app should store the mtm paramteres on creation
+        """
+        payload = {
+            "name": "My canteen",
+            "city": "Lyon",
+            "siret": "21340172201787",
+            "managementType": "direct",
+            "creation_mtm_source": "mtm_source_value",
+            "creation_mtm_campaign": "mtm_campaign_value",
+            "creation_mtm_medium": "mtm_medium_value",
+        }
+        response = self.client.post(reverse("user_canteens"), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        created_canteen = Canteen.objects.get(pk=body["id"])
+        self.assertEqual(created_canteen.creation_mtm_source, "mtm_source_value")
+        self.assertEqual(created_canteen.creation_mtm_campaign, "mtm_campaign_value")
+        self.assertEqual(created_canteen.creation_mtm_medium, "mtm_medium_value")
+
+    @authenticate
+    def test_update_cantines_tracking_info(self):
+        """
+        The app should not allow the tracking info to be updated
+        """
+        canteen = CanteenFactory.create(
+            creation_mtm_source=None,
+            creation_mtm_campaign=None,
+            creation_mtm_medium=None,
+        )
+        canteen.managers.add(authenticate.user)
+        payload = {
+            "name": "My canteen",
+            "city": "Lyon",
+            "managementType": "direct",
+            "creation_mtm_source": "mtm_source_value",
+            "creation_mtm_campaign": "mtm_campaign_value",
+            "creation_mtm_medium": "mtm_medium_value",
+        }
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        canteen.refresh_from_db()
+        self.assertIsNone(canteen.creation_mtm_source)
+        self.assertIsNone(canteen.creation_mtm_campaign)
+        self.assertIsNone(canteen.creation_mtm_medium)
+
+    @authenticate
+    def test_get_canteens_without_tracking_info(self):
+        """
+        Full representation should not contain the tracking info
+        """
+        canteen = CanteenFactory.create(
+            creation_mtm_source="mtm_source_value",
+            creation_mtm_campaign="mtm_campaign_value",
+            creation_mtm_medium="mtm_medium_value",
+        )
+        canteen.managers.add(authenticate.user)
+        response = self.client.get(reverse("user_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json().get("results")[0]
+
+        self.assertNotIn("mtm_source_value", body)
+        self.assertNotIn("mtm_campaign_value", body)
+        self.assertNotIn("mtm_medium_value", body)
+
+    @authenticate
+    def test_get_canteen_without_tracking(self):
+        """
+        Full representation should not contain the tracking info
+        """
+        user_canteen = CanteenFactory.create(
+            creation_mtm_source="mtm_source_value",
+            creation_mtm_campaign="mtm_campaign_value",
+            creation_mtm_medium="mtm_medium_value",
+        )
+        user_canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertNotIn("mtm_source_value", body)
+        self.assertNotIn("mtm_campaign_value", body)
+        self.assertNotIn("mtm_medium_value", body)

@@ -24,6 +24,7 @@
 import AppHeader from "@/components/AppHeader"
 import AppFooter from "@/components/AppFooter"
 import NotificationSnackbar from "@/components/NotificationSnackbar"
+import Constants from "@/constants"
 
 export default {
   components: {
@@ -35,6 +36,18 @@ export default {
     initialDataLoaded() {
       return this.$store.state.initialDataLoaded
     },
+  },
+  mounted() {
+    const urlParams = new URLSearchParams(window.location.search)
+    const clearCookies = Constants.TrackingParams.some((x) => !!urlParams.get(x))
+
+    for (let i = 0; i < Constants.TrackingParams.length; i++) {
+      const trackingParam = Constants.TrackingParams[i]
+      const value = urlParams.get(trackingParam)
+
+      if (clearCookies) document.cookie = `${trackingParam}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`
+      if (value) document.cookie = `${trackingParam}=${value};max-age=86400;path=/`
+    }
   },
   watch: {
     $route(to) {
