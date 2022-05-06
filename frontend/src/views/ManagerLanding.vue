@@ -47,7 +47,7 @@
         <v-row>
           <v-col v-for="(step, idx) in steps" :key="idx" cols="12" md="4" class="d-flex flex-column align-center">
             <p class="text-center number">{{ idx + 1 }}</p>
-            <p>{{ step.text }}</p>
+            <p class="black--text">{{ step.text }}</p>
             <v-img :src="step.image"></v-img>
           </v-col>
         </v-row>
@@ -95,7 +95,7 @@ export default {
         {
           text:
             "Créez-vous un compte utilisateur puis ajoutez votre ou vos établissements s'ils ne sont pas encore référencés.",
-          image: "/static/images/features/achats.png", // TODO: replace this image with cantine creation page
+          image: "/static/images/features/creer-cantine.png",
         },
         {
           text:
