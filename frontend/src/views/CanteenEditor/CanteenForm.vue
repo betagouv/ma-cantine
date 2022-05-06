@@ -294,7 +294,7 @@
     <v-dialog v-model="siretQueryInProgress" false width="300">
       <v-card class="py-4">
         <v-card-text>
-          À la recherche pour la cantine du SIRET...
+          Recherche des données en cours...
           <br />
           <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
         </v-card-text>
