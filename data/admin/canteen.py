@@ -71,7 +71,10 @@ class CanteenAdmin(SoftDeletionAdmin):
         "email_no_diagnostic_first_reminder",
         "deletion_date",
     )
-    readonly_fields = ("creation_date",)
+    readonly_fields = (
+        "creation_date",
+        "email_no_diagnostic_first_reminder",
+    )
     list_display = (
         "name",
         "city",

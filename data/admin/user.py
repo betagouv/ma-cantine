@@ -22,7 +22,11 @@ class MaCanteenUserAdmin(UserAdmin):
         "last_name",
         "email",
     )
-    readonly_fields = ("date_joined",)
+    readonly_fields = (
+        "date_joined",
+        "email_no_canteen_first_reminder",
+        "email_no_canteen_second_reminder",
+    )
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),
