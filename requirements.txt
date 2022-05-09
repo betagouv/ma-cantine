@@ -21,7 +21,7 @@ Django==4.0.4
 django-anymail==8.5
 django-ckeditor==6.4.0
 django-csp==3.7
-django-debug-toolbar==3.3.0
+django-debug-toolbar==3.4.0
 django-filter==21.1
 django-js-asset==2.0.0
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
@@ -66,7 +66,7 @@ python-bidi==0.4.2
 python-dateutil==2.8.2
 python-dotenv==0.20.0
 pytz==2022.1
-redis==4.2.2
+redis==4.3.0
 regex==2022.4.24
 reportlab==3.6.9
 requests==2.27.1
