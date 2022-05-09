@@ -87,6 +87,44 @@
                 document.getElementById("id_creation_mtm_medium").setAttribute("value", readCookie("mtm_medium"))
         </script>
 
+        <script>
+            const firstNameField = document.getElementById("id_first_name")
+            const lastNameField = document.getElementById("id_last_name")
+            const usernameField = document.getElementById("id_username")
+            const emailField = document.getElementById("id_email")
+
+            function populateUsername() {
+                firstName = firstNameField.value
+                lastName = lastNameField.value
+                email = emailField.value
+
+                if (!(firstName && lastName) && !email)
+                    return
+                httpRequest = new XMLHttpRequest()
+                httpRequest.open('POST', '/api/v1/usernameSuggestion/', true)
+                httpRequest.setRequestHeader('Content-Type', 'application/json')
+                httpRequest.setRequestHeader('X-CSRFToken', '{{ csrf_token }}')
+                httpRequest.onreadystatechange = function() {
+                    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                        const response = JSON.parse(httpRequest.responseText)
+                        usernameField.value = usernameField.value || response.suggestion
+                    }
+                }
+                httpRequest.send(JSON.stringify({
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                }))
+            }
+
+            if (firstNameField && lastNameField && emailField && usernameField) {
+                firstNameField.addEventListener("blur", populateUsername)
+                lastNameField.addEventListener("blur", populateUsername)
+                emailField.addEventListener("blur", populateUsername)
+            }
+
+        </script>
+
     </form>
     <a href="{% url 'login' %}"><button>J'ai déjà un compte</button></a>
 {% endblock %}
