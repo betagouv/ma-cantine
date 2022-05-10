@@ -94,6 +94,9 @@
             const emailField = document.getElementById("id_email")
 
             function populateUsername() {
+                if (!!usernameField.value)
+                    return
+
                 firstName = firstNameField.value
                 lastName = lastNameField.value
                 email = emailField.value
