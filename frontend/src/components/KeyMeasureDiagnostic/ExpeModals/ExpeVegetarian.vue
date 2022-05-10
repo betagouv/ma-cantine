@@ -119,6 +119,30 @@
             <v-date-picker v-model="expe.experimentationStartDate" locale="fr-FR"></v-date-picker>
           </v-menu>
 
+          <!-- Menu Type before the XP -->
+          <label class="body-2 grey--text text--darken-3" for="menu-type-before-xp">
+            Avant la mise en place de l’expérimentation, mon établissement propose chaque jour :
+          </label>
+          <v-radio-group id="menu-type-before-xp" v-model="expe.menuTypeBeforeXp" class="mt-1">
+            <v-radio v-for="option in menuOptions" :value="option.value" :key="option.value">
+              <template v-slot:label>
+                <span class="body-2 grey--text text--darken-3">{{ option.label }}</span>
+              </template>
+            </v-radio>
+          </v-radio-group>
+
+          <!-- Reservation needed? -->
+          <label class="body-2 grey--text text--darken-3" for="vege-menu-reservation">
+            L’option végétarienne quotidienne :
+          </label>
+          <v-radio-group id="vege-menu-reservation" v-model="expe.vegeMenuReservation" class="mt-1">
+            <v-radio v-for="option in reservationOptions" :value="option.value" :key="option.value">
+              <template v-slot:label>
+                <span class="body-2 grey--text text--darken-3">{{ option.label }}</span>
+              </template>
+            </v-radio>
+          </v-radio-group>
+
           <div class="mt-4 tabs-container">
             <v-tabs
               next-icon="mdi-chevron-right"
@@ -142,7 +166,8 @@
                       class="body-2 grey--text text--darken-3 font-weight-medium"
                       :for="`vegetarian-menu-percentage-${item.value}`"
                     >
-                      Pourcentage de menus végétariens servis par rapport aux autres menus
+                      Quel est le taux de prise des menus végétariens par rapport aux menus non-végétariens en cas de
+                      choix multiple ?
                     </label>
                     <v-text-field
                       validate-on-blur
@@ -159,8 +184,11 @@
 
                     <!-- Menu composition -->
                     <label class="body-2 grey--text text--darken-3 font-weight-medium">
-                      Dans votre plan alimentaire de 20 repas successifs, les options végétariennes servies dans votre
-                      établissement sont des plats à base de :
+                      Les plans alimentaires sont établis sur 20 repas successifs, soit 4 semaines de 5 jours. Par
+                      exemple, une fréquence de 4/20 correspond à une fois par semaine, 8/20 à deux fois par semaine.
+                      <br />
+                      Dans votre plan alimentaire, les 20 options végétariennes servies sur 20 repas successifs sont à
+                      base de :
                     </label>
                     <div class="mt-4 mb-8" style="border-bottom: solid 1px #EEE;">
                       <div
@@ -195,6 +223,49 @@
                       </div>
                     </div>
 
+                    <!-- Wholegrain percentage -->
+                    <label
+                      class="body-2 grey--text text--darken-3 font-weight-medium"
+                      :for="`wholegrain-cereal-percentage-${item.value}`"
+                    >
+                      Parmi les plats à base de céréales, quelle part représentent les céréales complètes et
+                      semi-complètes ?
+                    </label>
+                    <v-text-field
+                      validate-on-blur
+                      hide-details="auto"
+                      :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                      solo
+                      dense
+                      v-model.number="expe[`wholegrainCerealPercentage${item.value}`]"
+                      append-icon="mdi-percent"
+                      style="max-width: 150px"
+                      class="mt-2 mb-8 body-2"
+                      :id="`wholegrain-cereal-percentage-${item.value}`"
+                    ></v-text-field>
+
+                    <!-- Waste evolution from start to date, T0 only -->
+                    <label
+                      class="body-2 grey--text text--darken-3 font-weight-medium"
+                      for="waste_evolution_start_to_date_t0"
+                      v-if="expe.hasDailyVegetarianOffer && item.value === 'T0'"
+                    >
+                      Avez-vous constaté une évolution du gaspillage avec l'option végétarienne entre le moment de sa
+                      mise en place et aujourd'hui ?
+                    </label>
+                    <v-radio-group
+                      id="waste_evolution_start_to_date_t0"
+                      v-model="expe.wasteEvolutionStartToDateT0"
+                      class="mt-1"
+                      v-if="expe.hasDailyVegetarianOffer && item.value === 'T0'"
+                    >
+                      <v-radio v-for="option in wasteEvolutionToDate" :value="option.value" :key="option.value">
+                        <template v-slot:label>
+                          <span class="body-2 grey--text text--darken-3">{{ option.label }}</span>
+                        </template>
+                      </v-radio>
+                    </v-radio-group>
+
                     <!-- Gaspillage évolution -->
                     <label
                       class="body-2 grey--text text--darken-3 font-weight-medium"
@@ -224,7 +295,8 @@
                       :for="`waste-evolution-percentage-${item.value}`"
                       v-if="!!expe[`wasteEvolution${item.value}`] && expe[`wasteEvolution${item.value}`] !== 'same'"
                     >
-                      Écart du gaspillage en pourcentage
+                      Ecart du gaspillage en pourcentage (ex : 30% de gaspillage en plus/en moins avec l'option
+                      végétarienne)
                     </label>
                     <v-text-field
                       validate-on-blur
@@ -266,7 +338,7 @@
                             dense
                             v-model.number="expe[`${wasteItem.fieldName}${item.value}`]"
                             :id="`${wasteItem.htmlId}-${item.value}`"
-                            suffix="g"
+                            :suffix="$vuetify.breakpoint.xs ? 'g' : 'g/convive'"
                           ></v-text-field>
                         </div>
                         <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
@@ -325,10 +397,42 @@
                       "
                     ></v-text-field>
 
-                    <!-- Coût moyen / assiette végétarien -->
                     <label class="body-2 grey--text text--darken-3 font-weight-medium d-block mb-4">
                       Le coût matière moyen des menus végétariens est-il supérieur aux autres menus ?
                     </label>
+
+                    <!-- Qualitative coût végétarien -->
+                    <label class="body-2 grey--text text--darken-3" :for="`vegetarian-cost-qualitative-${item.value}`">
+                      En moyenne, le coût matière des plats végétariens est :
+                    </label>
+                    <v-radio-group
+                      :id="`vegetarian-cost-qualitative-${item.value}`"
+                      v-model="expe[`vegetarianCostQualitative${item.value}`]"
+                      class="mt-1 mb-4"
+                      hide-details="auto"
+                    >
+                      <v-radio v-for="option in vegetarianCost" :value="option.value" :key="option.value">
+                        <template v-slot:label>
+                          <span class="body-2 grey--text text--darken-3">{{ option.label }}</span>
+                        </template>
+                      </v-radio>
+                    </v-radio-group>
+
+                    <!-- Costs savings reinvested -->
+                    <v-checkbox
+                      :id="`cost-savings-reinvested-${item.value}`"
+                      v-model="expe[`costSavingsReinvested${item.value}`]"
+                      v-if="expe[`vegetarianCostQualitative${item.value}`] === 'lower'"
+                    >
+                      <template v-slot:label>
+                        <span class="body-2 grey--text text--darken-3">
+                          Les économies réalisées ont été réinvesties pour augmenter la part de produits durables et de
+                          qualité (Bio, SIQO…)
+                        </span>
+                      </template>
+                    </v-checkbox>
+
+                    <!-- Coût moyen / assiette végétarien -->
                     <label class="body-2 grey--text text--darken-3" :for="`vegetarian-cost-${item.value}`">
                       Coût moyen du repas végétarien (en € / assiette)
                     </label>
@@ -367,7 +471,8 @@
                       class="body-2 grey--text text--darken-3 font-weight-medium"
                       :for="`cost-evolution-${item.value}`"
                     >
-                      Comment le coût facturé aux familles a-t-il évolué depuis la mise en place du menu quotidien ?
+                      Y a-t-il eu une évolution du tarif par repas facturé aux familles depuis la mise en place de
+                      l’option végétarienne quotidienne ?
                     </label>
                     <v-radio-group
                       :id="`cost-evolution-${item.value}`"
@@ -407,6 +512,14 @@
                       v-if="!!expe[`costEvolution${item.value}`] && expe[`costEvolution${item.value}`] !== 'same'"
                     ></v-text-field>
 
+                    <v-checkbox v-model="expe[`costPerMealVg${item.value}`]" :id="`cost-per-meal-${item.value}`">
+                      <template v-slot:label>
+                        <span class="body-2 grey--text text--darken-3">
+                          Le tarif par repas est moins cher pour l’option végétarienne
+                        </span>
+                      </template>
+                    </v-checkbox>
+
                     <!-- Satisfaction convive -->
                     <label
                       class="body-2 grey--text text--darken-3 font-weight-medium"
@@ -437,7 +550,7 @@
                       class="my-2 mt-0"
                       v-model="expe[`satisfactionGuestsReasons${item.value}`]"
                       :multiple="true"
-                      v-for="reason in satisfactionReasons"
+                      v-for="reason in satisfactionReasonsGuests"
                       :value="reason.value"
                       :key="`guests-${reason.value}`"
                     >
@@ -451,7 +564,7 @@
                       class="body-2 grey--text text--darken-3 mt-8 d-block font-weight-medium"
                       :for="`satisfaction-staff-${item.value}`"
                     >
-                      Satisfaction moyenne du personnel
+                      Satisfaction moyenne du personnel (en cuisine et personnel encadrant)
                     </label>
                     <v-rating
                       v-model.number="expe[`satisfactionStaff${item.value}`]"
@@ -476,7 +589,7 @@
                       class="my-2 mt-0"
                       v-model="expe[`satisfactionStaffReasons${item.value}`]"
                       :multiple="true"
-                      v-for="reason in satisfactionReasons"
+                      v-for="reason in satisfactionReasonsStaff"
                       :value="reason.value"
                       :key="`staff-${reason.value}`"
                     >
@@ -490,22 +603,89 @@
                     <v-checkbox hide-details="auto" class="my-4" v-model="expe[`hasUsedRecipeDocuments${item.value}`]">
                       <template v-slot:label>
                         <span class="body-2 grey--text text--darken-3 font-weight-medium">
-                          Avez-vous utilisé le livret de recettes végétariennes publié par le CNRC ou par d’autres
-                          organismes ?
+                          Mon établissement a utilisé un livret de recettes végétariennes (CNRC ou autres organismes)
                         </span>
                       </template>
                     </v-checkbox>
+
+                    <label
+                      class="body-2 grey--text text--darken-3 font-weight-medium d-block mb-4"
+                      :for="`recipe-document-${item.value}`"
+                      v-if="expe[`hasUsedRecipeDocuments${item.value}`]"
+                    >
+                      Précisez, quel livret de recette avez vous utilisé ?
+                    </label>
+                    <v-textarea
+                      v-if="expe[`hasUsedRecipeDocuments${item.value}`]"
+                      solo
+                      :id="`recipe-document-${item.value}`"
+                      v-model="expe[`recipeDocument${item.value}`]"
+                      rows="2"
+                      hide-details="auto"
+                    ></v-textarea>
 
                     <v-divider class="mt-6"></v-divider>
                     <!-- Formation -->
                     <v-checkbox hide-details="auto" class="my-4" v-model="expe[`training${item.value}`]">
                       <template v-slot:label>
                         <span class="body-2 grey--text text--darken-3 font-weight-medium">
-                          Votre établissement a-t-il mis en place une formation spécifique des cuisiniers ou
-                          gestionnaires sur les menus végétariens ?
+                          Mon établissement a mis en place une formation spécifique des cuisiniers ou gestionnaires sur
+                          les menus végétariens
                         </span>
                       </template>
                     </v-checkbox>
+
+                    <label
+                      class="body-2 grey--text text--darken-3 font-weight-medium d-block mb-4"
+                      :for="`training-type-${item.value}`"
+                      v-if="expe[`training${item.value}`]"
+                    >
+                      Précisez, quel type de formation ?
+                    </label>
+                    <v-textarea
+                      v-if="expe[`training${item.value}`]"
+                      solo
+                      :id="`training-type-${item.value}`"
+                      v-model="expe[`trainingType${item.value}`]"
+                      rows="2"
+                      hide-details="auto"
+                    ></v-textarea>
+
+                    <v-divider class="my-6"></v-divider>
+                    <!-- Difficulties -->
+                    <label
+                      class="body-2 grey--text text--darken-3 font-weight-medium"
+                      :for="`difficulties-daily-option-${item.value}`"
+                    >
+                      Quels sont les principaux freins rencontrés à la mise en place de l’option végétarienne
+                      quotidienne ?
+                    </label>
+                    <v-radio-group
+                      :id="`difficulties-daily-option-${item.value}`"
+                      v-model="expe[`difficultiesDailyOption${item.value}`]"
+                      class="mb-2"
+                    >
+                      <v-radio v-for="option in difficultiesOptions" :value="option.value" :key="option.value">
+                        <template v-slot:label>
+                          <span class="body-2 grey--text text--darken-3">{{ option.label }}</span>
+                        </template>
+                      </v-radio>
+                    </v-radio-group>
+
+                    <label
+                      class="body-2 grey--text text--darken-3 font-weight-medium d-block mb-4"
+                      :for="`difficulties-daily-option-details-${item.value}`"
+                      v-if="expe[`difficultiesDailyOption${item.value}`] === 'other'"
+                    >
+                      Précisez
+                    </label>
+                    <v-textarea
+                      v-if="expe[`difficultiesDailyOption${item.value}`] === 'other'"
+                      solo
+                      :id="`difficulties-daily-option-details-${item.value}`"
+                      v-model="expe[`difficultiesDailyOptionDetails${item.value}`]"
+                      rows="2"
+                    ></v-textarea>
                   </v-card-text>
                 </v-card>
               </v-tab-item>
@@ -544,6 +724,14 @@ export default {
       launchDateMenu: false,
       tab: null,
       compositionSumErrorMessage: "La somme ne doit pas dépasser 20 repas",
+      menuOptions: [
+        { label: "Une offre à choix multiples", value: "multiple" },
+        { label: "Un menu unique pour tous les convives", value: "unique" },
+      ],
+      reservationOptions: [
+        { label: "Est proposée chaque jour aux convives librement", value: "open" },
+        { label: "Fait l'objet d'une préinscription en amont", value: "reservation_needed" },
+      ],
       tabs: [
         { label: "À date", value: "T0" },
         { label: "En décembre 2022", value: "T1" },
@@ -557,11 +745,13 @@ export default {
         "wasteEvolutionPercentageT1",
         "costEvolutionPercentageT0",
         "costEvolutionPercentageT1",
+        "wholegrainCerealPercentageT0",
+        "wholegrainCerealPercentageT1",
       ],
       categories: [
         { label: "Œufs (omelette, œuf dur...)", htmlId: "eggs_composition", fieldName: "eggsComposition" },
         {
-          label: "Fromage (pané fromager, tartiflette sans lardons...)",
+          label: "Fromage (pané fromager, tartiflette sans lardons, ravioles au fromage...)",
           htmlId: "cheese-composition",
           fieldName: "cheeseComposition",
         },
@@ -590,25 +780,31 @@ export default {
           htmlId: "cereal-legume-composition",
           fieldName: "cerealLegumeComposition",
         },
+        {
+          label: "Féculents, légumes et sauces (pâtes sauce tomate, lasagnes végétariennes, riz ratatouille...)",
+          htmlId: "starch-legume-composition",
+          fieldName: "starchLegumeComposition",
+        },
       ],
       waste: [
         {
-          label: "Menus végétariens : Moyenne des pesées des excédents présentés aux convives et non servis",
+          label: "Plat principal végétarien : Moyenne des pesées des excédents présentés aux convives et non servis",
           htmlId: "waste-vegetarian-not-served",
           fieldName: "wasteVegetarianNotServed",
         },
         {
-          label: "Menus végétariens : Moyenne des pesées des restes des assiettes",
+          label: "Plat principal végétarien : Moyenne des pesées des restes des assiettes",
           htmlId: "waste-vegetarian-components",
           fieldName: "wasteVegetarianComponents",
         },
         {
-          label: "Menus non-végétariens : Moyenne des pesées des excédents présentés aux convives et non servis",
+          label:
+            "Plat principal non-végétarien : Moyenne des pesées des excédents présentés aux convives et non servis",
           htmlId: "waste-non-vegetarian-not-served",
           fieldName: "wasteNonVegetarianNotServed",
         },
         {
-          label: "Menus non-végétariens : Moyenne des pesées des restes des assiettes",
+          label: "Plat principal non-végétarien : Moyenne des pesées des restes des assiettes",
           htmlId: "waste-non-vegetarian-components",
           fieldName: "wasteNonVegetarianComponents",
         },
@@ -627,17 +823,31 @@ export default {
           value: "same",
         },
       ],
-      costEvolution: [
+      wasteEvolutionToDate: [
         {
-          label: "Le coût a augmenté",
+          label: "Oui, le gaspillage des plats végétariens a augmenté depuis la mise en place",
           value: "higher",
         },
         {
-          label: "Le coût a diminué",
+          label: "Oui, le gaspillage des plats végétariens a diminué depuis la mise en place",
           value: "lower",
         },
         {
-          label: "Pas de différence notable",
+          label: "Non, le gaspillage des plats végétariens n'a pas évolué",
+          value: "same",
+        },
+      ],
+      costEvolution: [
+        {
+          label: "Le tarif par repas a augmenté",
+          value: "higher",
+        },
+        {
+          label: "Le tarif par repas a diminué",
+          value: "lower",
+        },
+        {
+          label: "Le tarif par repas n’a pas changé",
           value: "same",
         },
       ],
@@ -655,7 +865,21 @@ export default {
           value: "same",
         },
       ],
-      satisfactionReasons: [
+      vegetarianCost: [
+        {
+          label: "Plus que cher que les plats non-végétariens",
+          value: "higher",
+        },
+        {
+          label: "Moins cher que les plats non-végétariens",
+          value: "lower",
+        },
+        {
+          label: "Equivalent aux plats non-végétariens",
+          value: "same",
+        },
+      ],
+      satisfactionReasonsStaff: [
         {
           label: "Liberté de choix (régime, culte...)",
           value: "choice",
@@ -673,7 +897,7 @@ export default {
           value: "variety",
         },
         {
-          label: "Méconnaissance",
+          label: "Méconnaissance (recettes, méthodes de préparation, utilisation du matériel)",
           value: "ignorance",
         },
         {
@@ -687,6 +911,78 @@ export default {
         {
           label: "Impact sur l'environnement",
           value: "environment",
+        },
+        {
+          label: "Manque de matériel adapté",
+          value: "no_equipment",
+        },
+      ],
+      satisfactionReasonsGuests: [
+        {
+          label: "Liberté de choix (régime, culte...)",
+          value: "choice",
+        },
+        {
+          label: "Goût et texture",
+          value: "taste",
+        },
+        {
+          label: "Nouveauté",
+          value: "novelty",
+        },
+        {
+          label: "Variété des recettes",
+          value: "variety",
+        },
+        {
+          label: "Méconnaissance (recettes, méthodes de préparation, utilisation du matériel)",
+          value: "ignorance",
+        },
+        {
+          label: "Opposition de principe",
+          value: "reject",
+        },
+        {
+          label: "Impact sur la santé",
+          value: "health",
+        },
+        {
+          label: "Impact sur l'environnement",
+          value: "environment",
+        },
+        {
+          label: "Problèmes de digestion",
+          value: "digestion",
+        },
+      ],
+      difficultiesOptions: [
+        {
+          label: "Difficultés d'accès à la formation",
+          value: "formation",
+        },
+        {
+          label: "Difficultés d'approvisionnement",
+          value: "appro",
+        },
+        {
+          label: "Manque de recettes",
+          value: "recipes",
+        },
+        {
+          label: "Surcoût des produits",
+          value: "cost",
+        },
+        {
+          label: "Réaction des convives",
+          value: "clients",
+        },
+        {
+          label: "Surcharge de travail pour le personnel",
+          value: "overwork",
+        },
+        {
+          label: "Autre",
+          value: "other",
         },
       ],
     }
@@ -770,6 +1066,7 @@ export default {
         this.expe[`soylessCompositionHomeMade${time}`],
         this.expe[`soylessCompositionReady${time}`],
         this.expe[`cerealLegumeComposition${time}`],
+        this.expe[`starchLegumeComposition${time}`],
       ]
     },
     validateCompositionFields() {
@@ -797,6 +1094,8 @@ export default {
     },
   },
   mounted() {
+    this.originalExpe = treatInboundPercentageValues({}, this.percentageFields)
+    this.expe = JSON.parse(JSON.stringify(this.originalExpe))
     this.$store
       .dispatch("fetchVegetarianExpe", { canteen: this.canteen })
       .then((response) => {
