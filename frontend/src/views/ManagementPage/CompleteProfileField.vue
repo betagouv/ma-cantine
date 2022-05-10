@@ -41,7 +41,7 @@
               hide-details="auto"
             ></v-select>
           </v-col>
-          <v-col cols="12" sm="7" v-if="showOtherSourceField" class="my-0">
+          <!-- <v-col cols="12" sm="7" v-if="showOtherSourceField" class="my-0">
             <v-text-field
               label="Autre endroit"
               :rules="[validators.required]"
@@ -49,7 +49,7 @@
               v-model="otherSourceOptions"
               hide-details="auto"
             ></v-text-field>
-          </v-col>
+          </v-col> -->
           <v-col>
             <v-btn color="primary" height="3.5em" @click="updateProfile">Valider</v-btn>
           </v-col>
@@ -94,9 +94,9 @@ export default {
         this.loggedUser.source
       )
     },
-    showOtherSourceField() {
-      return this.source === "OTHER"
-    },
+    // showOtherSourceField() {
+    //   return this.source === "OTHER"
+    // },
     showForm() {
       return this.askForRole || this.askForSource
     },

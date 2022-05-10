@@ -134,7 +134,7 @@ export default Object.freeze({
       value: "SOCIAL_MEDIA",
     },
     {
-      text: "Autre (spécifiez)",
+      text: "Autre",
       value: "OTHER",
     },
   ],
