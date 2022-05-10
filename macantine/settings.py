@@ -423,7 +423,10 @@ if DEBUG:
     CSP_MEDIA_SRC += CSP_DEBUG_DOMAINS
 
 # CSP valid sources for loading frames
-CSP_FRAME_SRC = ("'self'",)
+CSP_FRAME_SRC = (
+    "'self'",
+    "ma-cantine.crisp.help",
+)
 if DEBUG:
     CSP_FRAME_SRC += CSP_DEBUG_DOMAINS
 
