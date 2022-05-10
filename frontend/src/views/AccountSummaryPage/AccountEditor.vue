@@ -96,6 +96,26 @@
               hide-details="auto"
             ></v-text-field>
           </v-col>
+          <v-col cols="12" md="9" v-if="showSourceField">
+            <p class="body-2 mb-1 mt-2 text-left">Comment avez-vous connu ma-cantine ?</p>
+            <v-select
+              v-model="userCopy.source"
+              :items="sourceOptions"
+              :rules="[validators.required]"
+              solo
+              hide-details="auto"
+              placeholder="Choisir une option"
+            ></v-select>
+          </v-col>
+          <!-- <v-col cols="12" v-if="showOtherJobField" class="my-0">
+            <v-text-field
+              label="Ma fonction"
+              :rules="[validators.required]"
+              solo
+              v-model="userCopy.otherJobDescription"
+              hide-details="auto"
+            ></v-text-field>
+          </v-col> -->
         </v-row>
       </v-form>
     </v-card-text>
@@ -122,6 +142,7 @@ export default {
       avatarChanged: false,
       bypassLeaveWarning: false,
       jobOptions: Constants.Jobs,
+      sourceOptions: Constants.UserSources,
     }
   },
   computed: {
@@ -137,6 +158,9 @@ export default {
     },
     showOtherJobField() {
       return this.userCopy.job === "OTHER"
+    },
+    showSourceField() {
+      return !(this.userCopy.mtm_source || this.userCopy.mtm_campaign || this.userCopy.mtm_medium)
     },
   },
   methods: {
