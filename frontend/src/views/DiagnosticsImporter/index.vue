@@ -21,6 +21,19 @@
       .
     </p>
 
+    <v-alert v-if="isStaff" outlined type="info">
+      Vous êtes connecté.e en tant que membre d'équipe ma cantine. Ça veut dire qu'il y a les differences suivants avec
+      l'import&nbsp;:
+      <br />
+      Vous devez utiliser 20 colonnes. Les derniers deux sont pour la liste d'adresse mails de gestionnaires que vous ne
+      voulez pas recevoir une notification, et l'identifiant du source de données.
+      <br />
+      En plus, vous ne serez pas ajouté.e à l'équipe de gestion sauf si vous ajoutez votre mail dans une des colonnes de
+      listes de gestionnaires.
+      <br />
+      Bon courage ! 👾 🚀
+    </v-alert>
+
     <FileDrop
       v-model="file"
       subtitle="Format CSV encodé en UTF-8 attendu"
@@ -308,6 +321,7 @@ export default {
       name: user ? `${user.firstName} ${user.lastName}` : "",
       message: "",
       unusualFile: null,
+      isStaff: user.isStaff,
     }
   },
   methods: {
