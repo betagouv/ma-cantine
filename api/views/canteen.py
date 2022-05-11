@@ -169,6 +169,12 @@ class UserCanteensView(ListCreateAPIView):
     search_fields = ["name"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
 
+    def get_serializer(self, *args, **kwargs):
+        kwargs.setdefault("context", self.get_serializer_context())
+        action = "create" if self.request.method == "POST" else None
+        kwargs.setdefault("action", action)
+        return FullCanteenSerializer(*args, **kwargs)
+
     def get_queryset(self):
         return self.request.user.canteens.all()
 
@@ -238,7 +244,7 @@ class PublishCanteenView(APIView):
 
             if is_draft:
                 canteen.publication_status = Canteen.PublicationStatus.PENDING
-                protocol = "https" if settings.SECURE else "http"
+                protocol = settings.PROTOCOL
                 admin_url = "{}://{}/admin/data/canteen/{}/change/".format(protocol, settings.HOSTNAME, canteen.id)
 
                 logger.info(f"Demande de publication de {canteen.name} (ID: {canteen.id})")
@@ -344,7 +350,7 @@ class AddManagerView(APIView):
         try:
             context = {
                 "canteen": manager_invitation.canteen.name,
-                "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
+                "protocol": settings.PROTOCOL,
                 "domain": settings.HOSTNAME,
             }
             send_mail(
@@ -367,7 +373,7 @@ class AddManagerView(APIView):
     @staticmethod
     def _send_add_email(email, canteen):
         try:
-            protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
+            protocol = settings.PROTOCOL
             domain = settings.HOSTNAME
             canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
             context = {
@@ -490,10 +496,18 @@ class TeamJoinRequestView(APIView):
                 "siret": canteen.siret,
             }
 
+            recipients = list(canteen.managers.values_list("email", flat=True))
+            cc = None
+
+            if recipients:
+                cc = [settings.CONTACT_EMAIL]
+            else:
+                recipients.append(settings.CONTACT_EMAIL)
+
             send_mail(
                 subject=f"{name} voudrait rejoindre l'équipe de gestion de la cantine {canteen.name}",
-                to=canteen.managers.values_list("email", flat=True),
-                cc=[settings.CONTACT_EMAIL],
+                to=recipients,
+                cc=cc,
                 reply_to=[
                     email,
                 ],

@@ -85,4 +85,31 @@ export default Object.freeze({
     SHORT_DISTRIBUTION: { text: "Circuit-court" },
     LOCAL: { text: "Local" },
   },
+  TrackingParams: ["mtm_source", "mtm_campaign", "mtm_medium"],
+  Jobs: [
+    {
+      text: "Gestionnaire d'établissement",
+      value: "ESTABLISHMENT_MANAGER",
+    },
+    {
+      text: "Direction achat société de restauration",
+      value: "CATERING_PURCHASES_MANAGER",
+    },
+    {
+      text: "Responsable d'achats en gestion directe",
+      value: "DIRECT_PURCHASES_MANAGER",
+    },
+    {
+      text: "Responsable de plusieurs établissements (type cuisine centrale)",
+      value: "CENTRAL_MANAGER",
+    },
+    {
+      text: "Responsable de plusieurs établissements (SRC)",
+      value: "MANY_ESTABLISHMENTS_MANAGER",
+    },
+    {
+      text: "Autre (spécifiez)",
+      value: "OTHER",
+    },
+  ],
 })

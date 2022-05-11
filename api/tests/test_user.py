@@ -60,3 +60,21 @@ class TestLoggedUserApi(APITestCase):
         body = json.loads(response.content.decode())
         self.assertIn("suggestion", body)
         self.assertTrue(body["suggestion"].startswith("anne_iversaire_"))
+
+    @authenticate
+    def test_user_update(self):
+        """
+        User can update their details if logged in
+        """
+        user = authenticate.user
+        self.assertNotEqual(user.job, "OTHER")
+        self.assertNotEqual(user.other_job_description, "Magician")
+        payload = {
+            "job": "OTHER",
+            "otherJobDescription": "Magician",
+        }
+        response = self.client.patch(reverse("update_user", kwargs={"pk": user.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["job"], "OTHER")
+        self.assertEqual(body["otherJobDescription"], "Magician")

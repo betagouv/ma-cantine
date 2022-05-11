@@ -76,6 +76,26 @@
               validate-on-blur
             ></v-text-field>
           </v-col>
+          <v-col cols="12" md="9">
+            <p class="body-2 mb-1 mt-2 text-left">Fonction</p>
+            <v-select
+              v-model="userCopy.job"
+              :items="jobOptions"
+              :rules="[validators.required]"
+              solo
+              hide-details="auto"
+              placeholder="Choisir une fonction"
+            ></v-select>
+          </v-col>
+          <v-col cols="12" v-if="showOtherJobField" class="my-0">
+            <v-text-field
+              label="Ma fonction"
+              :rules="[validators.required]"
+              solo
+              v-model="userCopy.otherJobDescription"
+              hide-details="auto"
+            ></v-text-field>
+          </v-col>
         </v-row>
       </v-form>
     </v-card-text>
@@ -101,6 +121,7 @@ export default {
       formIsValid: true,
       avatarChanged: false,
       bypassLeaveWarning: false,
+      jobOptions: Constants.Jobs,
     }
   },
   computed: {
@@ -113,6 +134,9 @@ export default {
     },
     loading() {
       return this.$store.state.userLoadingStatus === Constants.LoadingStatus.LOADING
+    },
+    showOtherJobField() {
+      return this.userCopy.job === "OTHER"
     },
   },
   methods: {

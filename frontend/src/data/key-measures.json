@@ -291,6 +291,26 @@
           "creche"
         ],
         "title": "Les gestionnaires en restauration collective communiquent sur les informations nutritionnelles des repas servis."
+      },
+      {
+        "deadline": {
+          "display": "Depuis le 1er mars 2022",
+          "earliestISO": "2022-03-01"
+        },
+        "description": "A compter du 1er mars 2022, l’origine de la viande de porc, volaille, agneau et mouton servie dans tous les restaurants hors domicile (cantines, restaurants commerciaux, restaurants d’entreprises) devra être indiquée, comme cela est le cas pour les viandes bovines depuis 2002. L’étiquetage de l’origine des viandes porcines, ovines et de volaille devra mentionner le pays d’élevage et le pays d’abattage. Cette obligation s’appliquera aux viandes achetées crues par les restaurateurs, qu’il s’agisse de viandes fraîches, réfrigérées, congelées ou surgelées, mais pas aux viandes achetées déjà préparées ou cuisinées (décret n° 2022-65 du 26 janvier 2022 modifiant le décret n° 2002-1465 du 17 décembre 2002 relatif à l’étiquetage des viandes bovines dans les établissements de restauration).",
+        "id": "informations-etiquet-viande",
+        "readMore": false,
+        "shortTitle": "Etiquettage des viandes",
+        "tags": [
+          "scolaire",
+          "universitaire",
+          "creche",
+          "administration",
+          "medical",
+          "social",
+          "loisirs"
+        ],
+        "title": "Etiquettage détaillé pour toutes les viandes"
       }
     ],
     "title": "Information des usagers et convives"

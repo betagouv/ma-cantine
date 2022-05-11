@@ -52,7 +52,7 @@ class TestPublishCanteen(APITestCase):
         self.assertEqual(persisted_canteen.information_comments, "Information")
         self.assertEqual(response.json()["publicationComments"], "Hello, world!")
 
-    @override_settings(SECURE="True")
+    @override_settings(PROTOCOL="https")
     @override_settings(HOSTNAME="ma-cantine.fr")
     @authenticate
     def test_publish_email(self, mock_create_trello_card):
@@ -72,7 +72,7 @@ class TestPublishCanteen(APITestCase):
             f"[admin](https://ma-cantine.fr/admin/data/canteen/{canteen.id}/change/)\n\nSecteurs\n\n* Entreprise\n* Scolaire",
         )
 
-    @override_settings(SECURE="True")
+    @override_settings(PROTOCOL="https")
     @override_settings(HOSTNAME="ma-cantine.fr")
     @override_settings(ENVIRONMENT="demo")
     @authenticate

@@ -30,6 +30,7 @@ SECURE_SSL_REDIRECT = os.getenv("FORCE_HTTPS") == "True"
 
 # The site uses http or https?
 SECURE = os.getenv("SECURE") == "True"
+PROTOCOL = "https" if SECURE else "http"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
@@ -399,6 +400,8 @@ CSP_CONNECT_SRC = (
     "ws:",
     "api-adresse.data.gouv.fr",
     "client.crisp.chat",
+    "entreprise.data.gouv.fr",
+    "plateforme.adresse.data.gouv.fr",
 )
 if DEBUG:
     CSP_CONNECT_SRC += CSP_DEBUG_DOMAINS
@@ -443,4 +446,7 @@ TEMPLATE_ID_NO_CANTEEN_FIRST = (
 )
 TEMPLATE_ID_NO_CANTEEN_SECOND = (
     int(os.getenv("TEMPLATE_ID_NO_CANTEEN_SECOND")) if os.getenv("TEMPLATE_ID_NO_CANTEEN_SECOND", None) else None
+)
+TEMPLATE_ID_NO_DIAGNOSTIC_FIRST = (
+    int(os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST")) if os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST", None) else None
 )

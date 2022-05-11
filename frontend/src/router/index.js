@@ -2,6 +2,7 @@ import Vue from "vue"
 import VueRouter from "vue-router"
 import store from "@/store/index"
 import LandingPage from "@/views/LandingPage"
+import ManagerLanding from "@/views/ManagerLanding"
 import DiagnosticPage from "@/views/DiagnosticPage"
 import KeyMeasuresPage from "@/views/KeyMeasuresPage"
 import KeyMeasuresHome from "@/views/KeyMeasuresPage/KeyMeasuresHome"
@@ -50,6 +51,14 @@ const routes = [
     path: "/accueil",
     name: "LandingPage",
     component: LandingPage,
+  },
+  {
+    path: "/accueil-gestionnaire",
+    name: "ManagerLanding",
+    component: ManagerLanding,
+    beforeEnter: (_to, _from, next) => {
+      store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
+    },
   },
   {
     path: "/mon-compte",

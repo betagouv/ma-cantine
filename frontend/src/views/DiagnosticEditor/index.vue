@@ -310,7 +310,8 @@ import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import DiagnosticNotAllowed from "@/components/DiagnosticNotAllowed"
-import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage } from "@/utils"
+import Constants from "@/constants"
+import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage, readCookie } from "@/utils"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
@@ -458,6 +459,14 @@ export default {
         return
       }
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
+
+      if (this.isNewDiagnostic) {
+        for (let i = 0; i < Constants.TrackingParams.length; i++) {
+          const cookieValue = readCookie(Constants.TrackingParams[i])
+          if (cookieValue) payload[`creation_${Constants.TrackingParams[i]}`] = cookieValue
+        }
+      }
+
       this.$store
         .dispatch(this.isNewDiagnostic ? "createDiagnostic" : "updateDiagnostic", {
           id: this.diagnostic.id,
