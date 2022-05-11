@@ -162,7 +162,7 @@ class ImportDiagnosticsView(APIView):
         diagnostic_year = None
         try:
             diagnostic_year = row[11]
-            if not diagnostic_year and any(row[12:]):
+            if not diagnostic_year and any(row[12:18]):
                 raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
         except IndexError:
             pass
@@ -232,11 +232,27 @@ class ImportDiagnosticsView(APIView):
             except Exception as e:
                 raise ValidationError({"value_label_hve": number_error_message})
 
+        silently_added_manager_emails = []
+        import_source = "Import massif"
+        if len(row) > 18:
+            if not self.request.user.is_staff:
+                raise PermissionDenied(detail=f"Format fichier : 15-18 ou 11 colonnes attendues, {len(row)} trouvés.")
+            try:
+                if row[18]:
+                    silently_added_manager_emails = ImportDiagnosticsView._get_manager_emails(row[18])
+            except Exception as e:
+                raise ValidationError({"email": "Un adresse email des gestionnaires (pas notifiés) n'est pas valide."})
+
+            try:
+                import_source = row[19]
+            except Exception as e:
+                raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
+
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
 
         if canteen_exists and self.request.user not in canteen.managers.all():
-            raise PermissionDenied()
+            raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
         should_update_geolocation = (
             ImportDiagnosticsView._should_update_geolocation(canteen, row) if canteen_exists else True
@@ -250,20 +266,26 @@ class ImportDiagnosticsView(APIView):
         canteen.production_type = row[7].lower()
         canteen.management_type = row[8].lower()
         canteen.economic_model = row[9].lower()
+        canteen.import_source = import_source
 
         # full_clean must be before the relation-model updates bc they don't require a save().
         # If an exception is launched by full_clean, it must be here.
         canteen.full_clean()
-
-        canteen.managers.add(self.request.user)
-        if manager_emails:
-            ImportDiagnosticsView._add_managers_to_canteen(manager_emails, canteen)
         if row[6]:
             canteen.sectors.set(
                 [self.annotated_sectors.get(name_lower__unaccent=sector.lower()) for sector in row[6].split("+")]
             )
 
         canteen.save()
+
+        if not self.request.user.is_staff:
+            canteen.managers.add(self.request.user)
+        if manager_emails:
+            ImportDiagnosticsView._add_managers_to_canteen(manager_emails, canteen)
+        if silently_added_manager_emails:
+            ImportDiagnosticsView._add_managers_to_canteen(
+                silently_added_manager_emails, canteen, send_invitation_mail=False
+            )
 
         if diagnostic_year:
             diagnostic = Diagnostic(
@@ -314,7 +336,7 @@ class ImportDiagnosticsView(APIView):
         if isinstance(e, PermissionDenied):
             errors.append(
                 {
-                    "message": f"Vous n'êtes pas un gestionnaire de cette cantine.",
+                    "message": e.detail,
                     "code": 401,
                 }
             )
@@ -438,10 +460,10 @@ class ImportDiagnosticsView(APIView):
         return normalized_emails
 
     @staticmethod
-    def _add_managers_to_canteen(emails, canteen):
+    def _add_managers_to_canteen(emails, canteen, send_invitation_mail=True):
         for email in emails:
             try:
-                AddManagerView.add_manager_to_canteen(email, canteen)
+                AddManagerView.add_manager_to_canteen(email, canteen, send_invitation_mail=send_invitation_mail)
             except IntegrityError as e:
                 logger.error(
                     f"Attempt to add existing manager with email {email} to canteen {canteen.id} from a CSV import"
