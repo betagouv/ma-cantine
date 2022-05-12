@@ -21,15 +21,17 @@
       .
     </p>
 
-    <v-alert v-if="isStaff" outlined type="info">
-      Vous êtes connecté.e en tant que membre d'équipe ma cantine. Ça veut dire qu'il y a les differences suivants avec
-      l'import&nbsp;:
+    <v-alert v-if="isStaff" outlined type="info" class="body-2 blue--text text--darken-2">
+      En tant que membre de l'équipe ma cantine, vous pouvez ajoter deux colonnes additionnelles à la fin du fichier CSV
+      :
       <br />
-      Vous devez utiliser 20 colonnes. Les derniers deux sont pour la liste d'adresse mails de gestionnaires que vous ne
-      voulez pas recevoir une notification, et l'identifiant du source de données.
+      <ul>
+        <li>Une liste d'adresses email de gestionnaires qui seront ajoutés sans être notifiés par email, et</li>
+        <li>Un identifiant décrivant la source de données</li>
+      </ul>
       <br />
-      En plus, vous ne serez pas ajouté.e à l'équipe de gestion sauf si vous ajoutez votre mail dans une des colonnes de
-      listes de gestionnaires.
+      À noter que vous ne serez pas ajouté.e.s automatiquement à l'équipe de gestion sauf si votre mail se trouve dans
+      une des colonnes de listes de gestionnaires.
       <br />
       Bon courage ! 👾 🚀
     </v-alert>
