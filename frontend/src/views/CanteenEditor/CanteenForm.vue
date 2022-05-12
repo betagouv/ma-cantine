@@ -30,7 +30,7 @@
           ></v-text-field>
           <p class="caption mt-1 ml-2">
             Vous ne le connaissez pas ? Utilisez cet
-            <a href="https://www.sirene.fr/" target="_blank" rel="noopener">
+            <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
               outil de recherche pour trouver le SIRET
             </a>
             de votre cantine.

@@ -1,5 +1,8 @@
 import logging
+import string
+import re
 import random
+import unicodedata
 from django.contrib.auth import get_user_model, tokens, update_session_auth_hash
 from django.conf import settings
 from django.http import JsonResponse
@@ -98,10 +101,10 @@ class UsernameSuggestionView(APIView):
             first_name = request.data.get("first_name")
             last_name = request.data.get("last_name")
             if first_name and last_name:
-                full_name = f"{first_name.strip()}_{last_name.strip()}".lower().replace(" ", "-")
+                full_name = UsernameSuggestionView._clean_special_chars(f"{first_name.strip()}_{last_name.strip()}")
                 suggested = UsernameSuggestionView._generate_username_with_base(full_name)
             elif email:
-                email_username = email.split("@")[0].strip().lower().replace(" ", "-")
+                email_username = UsernameSuggestionView._clean_special_chars(email.split("@")[0])
                 suggested = UsernameSuggestionView._generate_username_with_base(email_username)
             else:
                 return JsonResponse({"detail": "Missing info"}, status=status.HTTP_400_BAD_REQUEST)
@@ -133,3 +136,10 @@ class UsernameSuggestionView(APIView):
             return False
         except get_user_model().DoesNotExist:
             return True
+
+    @staticmethod
+    def _clean_special_chars(username):
+        chars = re.escape(string.punctuation).replace("_", "").replace("-", "")
+        normalized_username = unicodedata.normalize("NFKD", username)
+        unaccented_username = normalized_username.encode("ASCII", "ignore").decode("utf-8")
+        return re.sub(r"[" + chars + "]", "", unaccented_username.strip().lower().replace(" ", "-"))

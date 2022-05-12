@@ -14,7 +14,7 @@
         <fieldset class="pa-4" style="border-radius: 10px;">
           <legend class="d-flex pr-2">
             <v-badge dot inline class="px-1"></v-badge>
-            <p class="body-2 mb-0">Veuillez completer votre profil</p>
+            <p class="body-2 mb-0">Veuillez compléter votre profil</p>
           </legend>
           <v-row>
             <v-col cols="12" sm="7">
