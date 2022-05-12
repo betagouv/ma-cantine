@@ -660,27 +660,38 @@
                       Quels sont les principaux freins rencontrés à la mise en place de l’option végétarienne
                       quotidienne ?
                     </label>
-                    <v-radio-group
-                      :id="`difficulties-daily-option-${item.value}`"
+
+                    <v-checkbox
+                      hide-details="auto"
+                      class="my-2 mt-0"
                       v-model="expe[`difficultiesDailyOption${item.value}`]"
-                      class="mb-2"
+                      :multiple="true"
+                      v-for="option in difficultiesOptions"
+                      :value="option.value"
+                      :key="option.value"
                     >
-                      <v-radio v-for="option in difficultiesOptions" :value="option.value" :key="option.value">
-                        <template v-slot:label>
-                          <span class="body-2 grey--text text--darken-3">{{ option.label }}</span>
-                        </template>
-                      </v-radio>
-                    </v-radio-group>
+                      <template v-slot:label>
+                        <span class="body-2 grey--text text--darken-3">{{ option.label }}</span>
+                      </template>
+                    </v-checkbox>
 
                     <label
                       class="body-2 grey--text text--darken-3 font-weight-medium d-block mb-4"
                       :for="`difficulties-daily-option-details-${item.value}`"
-                      v-if="expe[`difficultiesDailyOption${item.value}`] === 'other'"
+                      v-if="
+                        expe[`difficultiesDailyOption${item.value}`] &&
+                          expe[`difficultiesDailyOption${item.value}`].indexOf &&
+                          expe[`difficultiesDailyOption${item.value}`].indexOf('other') > -1
+                      "
                     >
                       Précisez
                     </label>
                     <v-textarea
-                      v-if="expe[`difficultiesDailyOption${item.value}`] === 'other'"
+                      v-if="
+                        expe[`difficultiesDailyOption${item.value}`] &&
+                          expe[`difficultiesDailyOption${item.value}`].indexOf &&
+                          expe[`difficultiesDailyOption${item.value}`].indexOf('other') > -1
+                      "
                       solo
                       :id="`difficulties-daily-option-details-${item.value}`"
                       v-model="expe[`difficultiesDailyOptionDetails${item.value}`]"

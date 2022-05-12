@@ -348,11 +348,11 @@ class VegetarianExpe(models.Model):
 
     # Difficulties
 
-    difficulties_daily_option_t0 = models.CharField(
-        max_length=255,
-        choices=DifficultiesOptions.choices,
+    difficulties_daily_option_t0 = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=DifficultiesOptions.choices),
         null=True,
         blank=True,
+        default=list,
         verbose_name="Principaux freins rencontrés à la mise en place de l’option végétarienne quotidienne",
     )
 
@@ -586,11 +586,11 @@ class VegetarianExpe(models.Model):
 
     # Difficulties
 
-    difficulties_daily_option_t1 = models.CharField(
-        max_length=255,
-        choices=DifficultiesOptions.choices,
+    difficulties_daily_option_t1 = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=DifficultiesOptions.choices),
         null=True,
         blank=True,
+        default=list,
         verbose_name="Principaux freins rencontrés à la mise en place de l’option végétarienne quotidienne",
     )
 
