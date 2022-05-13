@@ -266,6 +266,68 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Canteen.objects.count(), 1)
 
     @authenticate
+    def test_staff_import(self, _):
+        """
+        Staff get to specify extra columns and have fewer requirements on what data is required.
+        Test that a mixed import of canteens/diagnostics works.
+        Test that can add some managers without sending emails to them.
+        Check that the importer isn't added to the canteen unless specified.
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.email = "authenticate@example.com"
+        user.save()
+        authenticate.user.refresh_from_db()
+
+        with open("./api/tests/files/mix_diag_canteen_staff_import.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["count"], 1)  # 1 bc only diagnostics returned not canteens
+        self.assertEqual(len(body["canteens"]), 2)
+        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(Diagnostic.objects.count(), 1)
+        self.assertEqual(ManagerInvitation.objects.count(), 4)
+        self.assertEqual(len(mail.outbox), 1)
+
+        canteen1 = Canteen.objects.get(siret="21340172201787")
+        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen1, email="user1@example.com"))
+        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen1, email="user2@example.com"))
+        self.assertEqual(canteen1.managers.count(), 0)
+        self.assertEqual(canteen1.import_source, "Automated test")
+
+        canteen2 = Canteen.objects.get(siret="73282932000074")
+        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user1@example.com"))
+        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user2@example.com"))
+        self.assertIsNotNone(Diagnostic.objects.get(canteen=canteen2))
+        self.assertEqual(canteen2.managers.count(), 1)
+        self.assertEqual(canteen2.managers.first(), user)
+        self.assertEqual(canteen2.import_source, "Automated test")
+
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], "user1@example.com")
+        self.assertNotIn("Canteen for two", email.body)
+        self.assertIn("Staff canteen", email.body)
+
+    @authenticate
+    def test_staff_import_non_staff(self, _):
+        """
+        Non-staff users shouldn't have staff import capabilities
+        """
+        with open("./api/tests/files/mix_diag_canteen_staff_import.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(body["errors"]), 2)
+        self.assertEqual(body["errors"][0]["message"], "Format fichier : 15-18 ou 11 colonnes attendues, 20 trouvés.")
+        self.assertEqual(body["errors"][0]["status"], 401)
+
+    @authenticate
     def test_error_collection(self, _):
         """
         If errors occur, discard the file and return the errors with row and message
