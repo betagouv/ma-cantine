@@ -1,6 +1,6 @@
 Bonjour,
 
-Vous avez demandé vous connecter avec le site ma cantine. Pour completer votre demande, vous pouvez copier ce lien directement dans votre navigateur :
+Vous avez demandé vous connecter avec le site ma cantine. Pour compléter votre demande, vous pouvez copier ce lien directement dans votre navigateur :
 
 https://{{ site.domain }}{% url 'magicauth-wait' token.key %}?next={{ next_url|urlencode }}
 

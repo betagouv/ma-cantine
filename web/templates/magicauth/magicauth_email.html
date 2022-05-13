@@ -1,7 +1,7 @@
 {% extends 'email_base.html' %}
 
 {% block content %}
-    <p>Vous avez demandé vous connecter avec le site ma cantine. Pour completer votre demande, cliquez sur ce bouton :</p>
+    <p>Vous avez demandé vous connecter avec le site ma cantine. Pour compléter votre demande, cliquez sur ce bouton :</p>
 
     <div class="cta">
         <a href="https://{{ site.domain }}{% url 'magicauth-wait' token.key %}?next={{ next_url|urlencode }}">

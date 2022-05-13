@@ -334,16 +334,18 @@ class AddManagerView(APIView):
             )
 
     @staticmethod
-    def add_manager_to_canteen(email, canteen):
+    def add_manager_to_canteen(email, canteen, send_invitation_mail=True):
         try:
             user = get_user_model().objects.get(email=email)
             canteen.managers.add(user)
-            AddManagerView._send_add_email(email, canteen)
+            if send_invitation_mail:
+                AddManagerView._send_add_email(email, canteen)
         except get_user_model().DoesNotExist:
             with transaction.atomic():
                 pm = ManagerInvitation(canteen_id=canteen.id, email=email)
                 pm.save()
-            AddManagerView._send_invitation_email(pm)
+            if send_invitation_mail:
+                AddManagerView._send_invitation_email(pm)
 
     @staticmethod
     def _send_invitation_email(manager_invitation):
