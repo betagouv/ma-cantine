@@ -80,6 +80,7 @@
                   id="canteen"
                   class="mt-2"
                   auto-select-first
+                  no-data-text="Pas de résultats"
                 ></v-autocomplete>
               </v-col>
 
@@ -179,6 +180,7 @@
               :rules="showLocalDefinition ? [validators.required] : []"
               id="local-definition"
               class="mt-2"
+              no-data-text="Pas de résultats"
             ></v-autocomplete>
           </v-col>
         </v-expand-transition>
