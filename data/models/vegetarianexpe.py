@@ -9,22 +9,35 @@ class VegetarianExpe(models.Model):
         verbose_name = "expérimentation repas végétariens quotidiens"
         verbose_name_plural = "expérimentations repas végétariens quotidiens"
 
+    class MenuOptions(models.TextChoices):
+        UNIQUE = "unique", "Un menu unique pour tous les convives"
+        MULTIPLE = "multiple", "Une offre à choix multiples"
+
+    class ReservationOptions(models.TextChoices):
+        OPEN = "open", "Est proposée chaque jour aux convives librement"
+        RESERVATION_NEEDED = "reservation_needed", "Fait l'objet d'une préinscription en amont"
+
+    class WasteEvolutionToDate(models.TextChoices):
+        HIGHER = "higher", "Oui, le gaspillage des plats végétariens a augmenté depuis la mise en place"
+        LOWER = "lower", "Oui, le gaspillage des plats végétariens a diminué depuis la mise en place"
+        SAME = "same", "Non, le gaspillage des plats végétariens n'a pas évolué"
+
     class WasteEvolution(models.TextChoices):
         HIGHER = "higher", "Oui, il y a plus de gaspillage"
         LOWER = "lower", "Non, il y a moins de gaspillage"
         SAME = "same", "Pas de différence notable"
 
     class CostEvolution(models.TextChoices):
-        HIGHER = "higher", "Le coût a augmenté"
-        LOWER = "lower", "Le coût a diminué"
-        SAME = "same", "Pas de différence notable"
+        HIGHER = "higher", "Le tarif par repas a augmenté"
+        LOWER = "lower", "Le tarif par repas a diminué"
+        SAME = "same", "Le tarif par repas n’a pas changé"
 
     class AttendanceEvolution(models.TextChoices):
         HIGHER = "higher", "La fréquentation a augmenté"
         LOWER = "lower", "La fréquentation a diminué"
         SAME = "same", "Pas de différence notable"
 
-    class SatisfactionReasons(models.TextChoices):
+    class SatisfactionReasonsStaff(models.TextChoices):
         CHOICE = "choice", "Liberté de choix (régime, culte...)"
         TASTE = "taste", "Goût et texture"
         NOVELTY = "novelty", "Nouveauté"
@@ -33,6 +46,32 @@ class VegetarianExpe(models.Model):
         REJECT = "reject", "Opposition de principe"
         HEALTH = "health", "Impact sur la santé"
         ENVIRONMENT = "environment", "Impact sur l'environnement"
+        NO_EQUIPMENT = "no_equipment", "Manque de matériel adapté"
+
+    class SatisfactionReasonsGuests(models.TextChoices):
+        CHOICE = "choice", "Liberté de choix (régime, culte...)"
+        TASTE = "taste", "Goût et texture"
+        NOVELTY = "novelty", "Nouveauté"
+        VARIETY = "variety", "Variété des recettes"
+        IGNORANCE = "ignorance", "Méconnaissance"
+        REJECT = "reject", "Opposition de principe"
+        HEALTH = "health", "Impact sur la santé"
+        ENVIRONMENT = "environment", "Impact sur l'environnement"
+        DIGESTION = "digestion", "Problèmes de digestion"
+
+    class VegetarianCost(models.TextChoices):
+        HIGHER = "higher", "Plus que cher que les plats non-végétariens"
+        LOWER = "lower", "Moins cher que les plats non-végétariens"
+        SAME = "same", "Equivalent aux plats non-végétariens"
+
+    class DifficultiesOptions(models.TextChoices):
+        FORMATION = "formation", "Difficultés d'accès à la formation"
+        APPRO = "appro", "Difficultés d'approvisionnement"
+        RECIPES = "recipes", "Manque de recettes"
+        COST = "cost", "Surcoût des produits"
+        CLIENTS = "clients", "Réaction des convives"
+        OVERWORK = "overwork", "Surcharge de travail pour le personnel"
+        OTHER = "other", "Autre"
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
@@ -49,6 +88,22 @@ class VegetarianExpe(models.Model):
     )
     experimentation_start_date = models.DateField(
         null=True, blank=True, verbose_name="date de début d'expérimentation"
+    )
+
+    menu_type_before_xp = models.CharField(
+        max_length=255,
+        choices=MenuOptions.choices,
+        null=True,
+        blank=True,
+        verbose_name="Avant la mise en place de l’expérimentation, mon établissement propose chaque jour :",
+    )
+
+    vege_menu_reservation = models.CharField(
+        max_length=255,
+        choices=ReservationOptions.choices,
+        null=True,
+        blank=True,
+        verbose_name="Concernant l'inscription, l’option végétarienne quotidienne :",
     )
 
     # ------------- T0
@@ -105,6 +160,21 @@ class VegetarianExpe(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(20)],
         verbose_name="Repas à base de céréales, légumineuses et légumes (sur 20 repas)",
     )
+    starch_legume_composition_t0 = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(20)],
+        verbose_name="Repas à base de féculents, légumes et sauces (sur 20 repas)",
+    )
+
+    wholegrain_cereal_percentage_t0 = models.DecimalField(
+        null=True,
+        blank=True,
+        max_digits=5,
+        decimal_places=4,
+        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        verbose_name="Parmi les plats à base de céréales, pourcentage des céréales complètes et semi-complètes",
+    )
 
     # Waste
     waste_evolution_t0 = models.CharField(
@@ -156,6 +226,15 @@ class VegetarianExpe(models.Model):
         verbose_name="Menus non-végétariens : Moyenne des pesées des restes des assiettes",
     )
 
+    # Waste evolution from start to date, T0 only
+    waste_evolution_start_to_date_t0 = models.CharField(
+        max_length=255,
+        choices=WasteEvolutionToDate.choices,
+        null=True,
+        blank=True,
+        verbose_name="Évolution du gaspillage avec l'option végétarienne entre le moment de sa mise en place et aujourd'hui",
+    )
+
     # Attendance
     attendance_evolution_t0 = models.CharField(
         max_length=255,
@@ -174,6 +253,20 @@ class VegetarianExpe(models.Model):
     )
 
     # Cost
+    vegetarian_cost_qualitative_t0 = models.CharField(
+        max_length=255,
+        choices=VegetarianCost.choices,
+        null=True,
+        blank=True,
+        verbose_name="En moyenne, ressenti qualitative du coût matière des plats végétariens",
+    )
+
+    cost_savings_reinvested_t0 = models.BooleanField(
+        null=True,
+        blank=True,
+        verbose_name="Les économies réalisées ont été réinvesties pour augmenter la part de produits durables et de qualité",
+    )
+
     vegetarian_cost_t0 = models.DecimalField(
         null=True,
         blank=True,
@@ -182,6 +275,7 @@ class VegetarianExpe(models.Model):
         validators=[MinValueValidator(0)],
         verbose_name="Coût moyen du repas végétarien (€ / assiette)",
     )
+
     non_vegetarian_cost_t0 = models.DecimalField(
         null=True,
         blank=True,
@@ -196,6 +290,9 @@ class VegetarianExpe(models.Model):
         null=True,
         blank=True,
         verbose_name="Évolution ressentie du coût",
+    )
+    cost_per_meal_vg_t0 = models.BooleanField(
+        null=True, blank=True, verbose_name="Le tarif par repas est moins cher pour l’option végétarienne"
     )
     cost_evolution_percentage_t0 = models.DecimalField(
         null=True,
@@ -215,7 +312,7 @@ class VegetarianExpe(models.Model):
     )
 
     satisfaction_guests_reasons_t0 = ChoiceArrayField(
-        base_field=models.CharField(max_length=255, choices=SatisfactionReasons.choices),
+        base_field=models.CharField(max_length=255, choices=SatisfactionReasonsGuests.choices),
         null=True,
         blank=True,
         verbose_name="Principales raisons évoquées par les convives",
@@ -229,7 +326,7 @@ class VegetarianExpe(models.Model):
     )
 
     satisfaction_staff_reasons_t0 = ChoiceArrayField(
-        base_field=models.CharField(max_length=255, choices=SatisfactionReasons.choices),
+        base_field=models.CharField(max_length=255, choices=SatisfactionReasonsStaff.choices),
         null=True,
         blank=True,
         verbose_name="Principales raisons évoquées par le personnel",
@@ -240,11 +337,29 @@ class VegetarianExpe(models.Model):
     has_used_recipe_documents_t0 = models.BooleanField(
         null=True, blank=True, verbose_name="A utilisé un livret de recettes végétariennes (CNRC ou autres organismes)"
     )
+    recipe_document_t0 = models.TextField(null=True, blank=True, verbose_name="Livret de recette utilisé")
 
     # Training
 
     training_t0 = models.BooleanField(
         null=True, blank=True, verbose_name="Formation spécifique des cuisiniers ou gestionnaires"
+    )
+    training_type_t0 = models.TextField(null=True, blank=True, verbose_name="Type de formation")
+
+    # Difficulties
+
+    difficulties_daily_option_t0 = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=DifficultiesOptions.choices),
+        null=True,
+        blank=True,
+        default=list,
+        verbose_name="Principaux freins rencontrés à la mise en place de l’option végétarienne quotidienne",
+    )
+
+    difficulties_daily_option_details_t0 = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="Precision sur les freins rencontrés à la mise en place de l’option végétarienne quotidienne",
     )
 
     # ------------- T1
@@ -300,6 +415,21 @@ class VegetarianExpe(models.Model):
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(20)],
         verbose_name="Repas à base de céréales, légumineuses et légumes (sur 20 repas)",
+    )
+    starch_legume_composition_t1 = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(20)],
+        verbose_name="Repas à base de féculents, légumes et sauces (sur 20 repas)",
+    )
+
+    wholegrain_cereal_percentage_t1 = models.DecimalField(
+        null=True,
+        blank=True,
+        max_digits=5,
+        decimal_places=4,
+        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        verbose_name="Parmi les plats à base de céréales, pourcentage des céréales complètes et semi-complètes",
     )
 
     # Waste
@@ -370,6 +500,18 @@ class VegetarianExpe(models.Model):
     )
 
     # Cost
+    vegetarian_cost_qualitative_t1 = models.CharField(
+        max_length=255,
+        choices=VegetarianCost.choices,
+        null=True,
+        blank=True,
+        verbose_name="En moyenne, ressenti qualitative du coût matière des plats végétariens",
+    )
+    cost_savings_reinvested_t1 = models.BooleanField(
+        null=True,
+        blank=True,
+        verbose_name="Les économies réalisées ont été réinvesties pour augmenter la part de produits durables et de qualité",
+    )
     vegetarian_cost_t1 = models.DecimalField(
         null=True,
         blank=True,
@@ -393,6 +535,9 @@ class VegetarianExpe(models.Model):
         blank=True,
         verbose_name="Évolution ressentie du coût",
     )
+    cost_per_meal_vg_t1 = models.BooleanField(
+        null=True, blank=True, verbose_name="Le tarif par repas est moins cher pour l’option végétarienne"
+    )
     cost_evolution_percentage_t1 = models.DecimalField(
         null=True,
         blank=True,
@@ -408,7 +553,7 @@ class VegetarianExpe(models.Model):
     )
 
     satisfaction_guests_reasons_t1 = ChoiceArrayField(
-        base_field=models.CharField(max_length=255, choices=SatisfactionReasons.choices),
+        base_field=models.CharField(max_length=255, choices=SatisfactionReasonsGuests.choices),
         null=True,
         blank=True,
         verbose_name="Principales raisons évoquées par les convives",
@@ -419,7 +564,7 @@ class VegetarianExpe(models.Model):
     )
 
     satisfaction_staff_reasons_t1 = ChoiceArrayField(
-        base_field=models.CharField(max_length=255, choices=SatisfactionReasons.choices),
+        base_field=models.CharField(max_length=255, choices=SatisfactionReasonsStaff.choices),
         null=True,
         blank=True,
         verbose_name="Principales raisons évoquées par le personnel",
@@ -430,9 +575,27 @@ class VegetarianExpe(models.Model):
     has_used_recipe_documents_t1 = models.BooleanField(
         null=True, blank=True, verbose_name="A utilisé un livret de recettes végétariennes (CNRC ou autres organismes)"
     )
+    recipe_document_t1 = models.TextField(null=True, blank=True, verbose_name="Livret de recette utilisé")
 
     # Training
 
     training_t1 = models.BooleanField(
         null=True, blank=True, verbose_name="Formation spécifique des cuisiniers ou gestionnaires"
+    )
+    training_type_t1 = models.TextField(null=True, blank=True, verbose_name="Type de formation")
+
+    # Difficulties
+
+    difficulties_daily_option_t1 = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=DifficultiesOptions.choices),
+        null=True,
+        blank=True,
+        default=list,
+        verbose_name="Principaux freins rencontrés à la mise en place de l’option végétarienne quotidienne",
+    )
+
+    difficulties_daily_option_details_t1 = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="Precision sur les freins rencontrés à la mise en place de l’option végétarienne quotidienne",
     )

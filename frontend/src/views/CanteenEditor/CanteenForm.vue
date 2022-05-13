@@ -138,6 +138,7 @@
             auto-select-first
             cache-items
             v-model="cityAutocompleteChoice"
+            no-data-text="Pas de résultats. Veuillez renseigner votre ville"
           ></v-autocomplete>
         </v-col>
 

@@ -22,6 +22,7 @@
                 dense
                 auto-select-first
                 :filter="locationFilter"
+                no-data-text="Pas de résultats"
               ></v-autocomplete>
             </v-col>
             <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
@@ -40,6 +41,7 @@
                 dense
                 auto-select-first
                 :filter="locationFilter"
+                no-data-text="Pas de résultats"
               ></v-autocomplete>
             </v-col>
             <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
