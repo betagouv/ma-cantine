@@ -159,6 +159,8 @@ class ImportDiagnosticsView(APIView):
         # first check that the number of columns is good
         #   to throw error if badly formatted early on.
         # NB: if year is given, appro data is required, else only canteen data required
+        if len(row) > 18 and not self.request.user.is_staff:
+            raise PermissionDenied(detail=f"Format fichier : 15-18 ou 11 colonnes attendues, {len(row)} trouvés.")
         diagnostic_year = None
         try:
             diagnostic_year = row[11]
@@ -234,9 +236,7 @@ class ImportDiagnosticsView(APIView):
 
         silently_added_manager_emails = []
         import_source = "Import massif"
-        if len(row) > 18:
-            if not self.request.user.is_staff:
-                raise PermissionDenied(detail=f"Format fichier : 15-18 ou 11 colonnes attendues, {len(row)} trouvés.")
+        if len(row) > 18:  # already checked earlier that it's a staff user
             try:
                 if row[18]:
                     silently_added_manager_emails = ImportDiagnosticsView._get_manager_emails(row[18])
