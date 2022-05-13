@@ -162,3 +162,5 @@ celerybeat-schedule.db
 # Celery
 celerybeat-schedule
 celerybeat-schedule.db
+
+notes/

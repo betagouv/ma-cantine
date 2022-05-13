@@ -46,6 +46,14 @@ class User(AbstractUser):
         MANY_ESTABLISHMENTS_MANAGER = "MANY_ESTABLISHMENTS_MANAGER", "Responsable de plusieurs établissements (SRC)"
         OTHER = "OTHER", "Autre"
 
+    class Sources(models.TextChoices):
+        WEBINAIRE = "WEBINAIRE", "Webinaire"
+        WEB_SEARCH = "WEB_SEARCH", "Recherche web"
+        INSTITUTION = "INSTITUTION", "Communication institutionnelle (DRAAF, association régionale)"
+        WORD_OF_MOUTH = "WORD_OF_MOUTH", "Bouche à oreille"
+        SOCIAL_MEDIA = "SOCIAL_MEDIA", "Réseaux sociaux"
+        OTHER = "OTHER", "Autre (spécifiez)"
+
     avatar = models.ImageField("Photo de profil", null=True, blank=True)
     email = models.EmailField(_("email address"), unique=True)
     email_confirmed = models.BooleanField(default="False", verbose_name="adresse email confirmée")
@@ -80,6 +88,19 @@ class User(AbstractUser):
         verbose_name="autre fonction détail",
     )
 
+    source = models.CharField(
+        max_length=255,
+        choices=Sources.choices,
+        blank=True,
+        null=True,
+        verbose_name="Comment est-ce que la personne a connu ma cantine ?",
+    )
+    other_source_description = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="autre source détail",
+    )
+
     # Campaign tracking
     creation_mtm_source = models.TextField(
         null=True, blank=True, verbose_name="mtm_source du lien tracké lors de la création"
@@ -99,3 +120,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.username})"
+
+    @property
+    def has_mtm_data(self):
+        return self.creation_mtm_source or self.creation_mtm_campaign or self.creation_mtm_medium

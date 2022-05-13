@@ -12,6 +12,7 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "is_staff",
+            "has_mtm_data",
         )
         fields = (
             "id",
@@ -24,6 +25,9 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "is_staff",
             "job",
             "other_job_description",
+            "source",
+            "other_source_description",
+            "has_mtm_data",
         )
 
 
