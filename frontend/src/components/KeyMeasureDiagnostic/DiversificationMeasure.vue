@@ -177,15 +177,15 @@ export default {
       ],
       menuTypes: [
         {
-          label: "Un menu végétarien en plat unique",
+          label: "Un menu végétarien en plat unique, sans choix",
           value: "UNIQUE",
         },
         {
-          label: "Un menu végétarien composé de plusieurs plats végétariens",
+          label: "Un menu végétarien composé de plusieurs choix de plats végétariens",
           value: "SEVERAL",
         },
         {
-          label: "Un menu végétarien en plus d’autres menus non végétariens",
+          label: "Un menu végétarien au choix, en plus d'autres plats non végétariens",
           value: "ALTERNATIVES",
         },
       ],

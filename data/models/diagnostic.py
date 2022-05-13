@@ -21,11 +21,11 @@ class Diagnostic(models.Model):
         DAILY = "DAILY", "De façon quotidienne"
 
     class MenuType(models.TextChoices):
-        UNIQUE = "UNIQUE", "Un menu végétarien en plat unique"
-        SEVERAL = "SEVERAL", "Un menu végétarien composé de plusieurs plats végétariens"
+        UNIQUE = "UNIQUE", "Un menu végétarien en plat unique, sans choix"
+        SEVERAL = "SEVERAL", "Un menu végétarien composé de plusieurs choix de plats végétariens"
         ALTERNATIVES = (
             "ALTERNATIVES",
-            "Un menu végétarien en plus d’autres menus non végétariens",
+            "Un menu végétarien au choix, en plus d'autres plats non végétariens",
         )
 
     class CommunicationType(models.TextChoices):

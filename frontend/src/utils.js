@@ -253,14 +253,16 @@ export const applicableDiagnosticRules = (canteen) => {
   let qualityThreshold = 50
   // group1 : guadeloupe, martinique, guyane, la_reunion, TODO saint_martin
   const group1 = ["01", "02", "03", "04"]
-  if (group1.indexOf(canteen.region) > -1) {
-    bioThreshold = 5
-    qualityThreshold = 20
-  } else if (canteen.region === "06") {
-    // group2 : mayotte
-    bioThreshold = 2
-    qualityThreshold = 5
-  } // TODO: group3 : saint_pierre_et_miquelon
+  if (canteen) {
+    if (group1.indexOf(canteen.region) > -1) {
+      bioThreshold = 5
+      qualityThreshold = 20
+    } else if (canteen.region === "06") {
+      // group2 : mayotte
+      bioThreshold = 2
+      qualityThreshold = 5
+    } // TODO: group3 : saint_pierre_et_miquelon
+  }
   return {
     hasDonationAgreement: canteen ? canteen.dailyMealCount >= 3000 : true,
     hasDiversificationPlan: canteen ? canteen.dailyMealCount >= 200 : true,

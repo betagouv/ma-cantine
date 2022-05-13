@@ -21,6 +21,21 @@
       .
     </p>
 
+    <v-alert v-if="isStaff" outlined type="info" class="body-2 blue--text text--darken-2">
+      En tant que membre de l'équipe ma cantine, vous pouvez ajoter deux colonnes additionnelles à la fin du fichier CSV
+      :
+      <br />
+      <ul>
+        <li>Une liste d'adresses email de gestionnaires qui seront ajoutés sans être notifiés par email, et</li>
+        <li>Un identifiant décrivant la source de données</li>
+      </ul>
+      <br />
+      À noter que vous ne serez pas ajouté.e.s automatiquement à l'équipe de gestion sauf si votre mail se trouve dans
+      une des colonnes de listes de gestionnaires.
+      <br />
+      Bon courage ! 👾 🚀
+    </v-alert>
+
     <FileDrop
       v-model="file"
       subtitle="Format CSV encodé en UTF-8 attendu"
@@ -308,6 +323,7 @@ export default {
       name: user ? `${user.firstName} ${user.lastName}` : "",
       message: "",
       unusualFile: null,
+      isStaff: user.isStaff,
     }
   },
   methods: {

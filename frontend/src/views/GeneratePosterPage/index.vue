@@ -37,6 +37,7 @@
               @change="onCanteenAutocompleteChange"
               item-text="name"
               item-value="id"
+              no-data-text="Pas de résultats"
             ></v-autocomplete>
           </v-col>
           <v-col class="my-0 my-sm-4 px-0 px-sm-4 d-flex justify-space-between">
@@ -144,6 +145,7 @@
               :rules="[validators.required]"
               solo
               class="my-4"
+              no-data-text="Pas de résultats"
             ></v-autocomplete>
           </p>
           <p>

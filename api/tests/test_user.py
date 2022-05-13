@@ -46,6 +46,13 @@ class TestLoggedUserApi(APITestCase):
         self.assertIn("suggestion", body)
         self.assertEqual(body["suggestion"], "omar-khe_ting")
 
+    def test_username_generation_with_accents(self):
+        response = self.client.post(reverse("username_suggestion"), {"first_name": "Oscar", "last_name": "Abé"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = json.loads(response.content.decode())
+        self.assertIn("suggestion", body)
+        self.assertEqual(body["suggestion"], "oscar_abe")
+
     def test_with_email(self):
         response = self.client.post(reverse("username_suggestion"), {"email": "tester_12@example.com"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
