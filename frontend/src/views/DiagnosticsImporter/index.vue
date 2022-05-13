@@ -29,6 +29,18 @@
         <li>Une liste d'adresses email de gestionnaires qui seront ajoutés sans être notifiés par email, et</li>
         <li>Un identifiant décrivant la source de données</li>
       </ul>
+      Téléchargez l'en-tête en format :
+      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.xlsx" download>
+        Excel (.xlsx)
+      </a>
+      ,
+      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.csv" download>
+        CSV
+      </a>
+      ,
+      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.ods" download>
+        OpenDocument (.ods)
+      </a>
       <br />
       À noter que vous ne serez pas ajouté.e.s automatiquement à l'équipe de gestion sauf si votre mail se trouve dans
       une des colonnes de listes de gestionnaires.
@@ -46,7 +58,14 @@
     />
 
     <p>
-      Si vous avez des questions ou des problèmes, n'hésitez pas à nous contacter à
+      Régardez notre
+      <a href="https://www.loom.com/share/96cb8cf836fa476ca3e497b92768b8e4" target="_blank" rel="noopener">
+        vidéo tutorial
+      </a>
+      pour repondre aux questions les plus fréquentes.
+    </p>
+    <p>
+      Si vous avez toujours des questions ou des problèmes, n'hésitez pas à nous contacter à
       <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
       .
     </p>
@@ -142,6 +161,13 @@
     </p>
 
     <h2 class="my-6">Vous avez besoin d'aide ?</h2>
+    <p>
+      Régardez notre
+      <a href="https://www.loom.com/share/96cb8cf836fa476ca3e497b92768b8e4" target="_blank" rel="noopener">
+        vidéo tutorial
+      </a>
+      pour repondre aux questions les plus fréquentes.
+    </p>
     <p>
       Si votre fichier comptable agrégé ne ressemble pas du tout à ça, vous pouvez nous l'envoyer en remplissant les
       champs ci-dessous ou nous contacter directement à l'adresse
