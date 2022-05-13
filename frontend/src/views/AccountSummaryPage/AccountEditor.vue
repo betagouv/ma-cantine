@@ -107,15 +107,15 @@
               placeholder="Choisir une option"
             ></v-select>
           </v-col>
-          <!-- <v-col cols="12" v-if="showOtherJobField" class="my-0">
+          <v-col cols="12" v-if="showOtherSourceField" class="my-0">
             <v-text-field
-              label="Ma fonction"
+              label="Autre endroit"
               :rules="[validators.required]"
               solo
-              v-model="userCopy.otherJobDescription"
+              v-model="userCopy.otherSourceDescription"
               hide-details="auto"
             ></v-text-field>
-          </v-col> -->
+          </v-col>
         </v-row>
       </v-form>
     </v-card-text>
@@ -161,6 +161,9 @@ export default {
     },
     showSourceField() {
       return !(this.userCopy.mtm_source || this.userCopy.mtm_campaign || this.userCopy.mtm_medium)
+    },
+    showOtherSourceField() {
+      return this.userCopy.source === "OTHER"
     },
   },
   methods: {

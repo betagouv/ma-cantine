@@ -25,7 +25,7 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "job",
             "other_job_description",
             "source",
-            # "other_source_description",
+            "other_source_description",
             "creation_mtm_source",
             "creation_mtm_campaign",
             "creation_mtm_medium",

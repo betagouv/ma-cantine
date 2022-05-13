@@ -15,7 +15,7 @@ class UserForm(UserChangeForm):
             "creation_mtm_campaign": forms.Textarea(attrs={"cols": 55, "rows": 1}),
             "creation_mtm_medium": forms.Textarea(attrs={"cols": 55, "rows": 1}),
             "other_job_description": forms.Textarea(attrs={"cols": 60, "rows": 2}),
-            # "other_source_description": forms.Textarea(attrs={"cols": 60, "rows": 2}),
+            "other_source_description": forms.Textarea(attrs={"cols": 60, "rows": 2}),
         }
 
 
@@ -94,7 +94,7 @@ class MaCanteenUserAdmin(UserAdmin):
                     "creation_mtm_campaign",
                     "creation_mtm_medium",
                     "source",
-                    # "other_source_description",
+                    "other_source_description",
                 )
             },
         ),

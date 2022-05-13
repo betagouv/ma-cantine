@@ -95,11 +95,11 @@ class User(AbstractUser):
         null=True,
         verbose_name="Comment est-ce que la personne a connu ma cantine ?",
     )
-    # other_source_description = models.TextField(
-    #     null=True,
-    #     blank=True,
-    #     verbose_name="autre source détail",
-    # )
+    other_source_description = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="autre source détail",
+    )
 
     # Campaign tracking
     creation_mtm_source = models.TextField(

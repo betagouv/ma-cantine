@@ -41,15 +41,15 @@
               hide-details="auto"
             ></v-select>
           </v-col>
-          <!-- <v-col cols="12" sm="7" v-if="showOtherSourceField" class="my-0">
+          <v-col cols="12" sm="7" v-if="showOtherSourceField" class="my-0">
             <v-text-field
               label="Autre endroit"
               :rules="[validators.required]"
               solo
-              v-model="otherSourceOptions"
+              v-model="otherSourceDescription"
               hide-details="auto"
             ></v-text-field>
-          </v-col> -->
+          </v-col>
           <v-col>
             <v-btn color="primary" height="3.5em" @click="updateProfile">Valider</v-btn>
           </v-col>
@@ -74,6 +74,7 @@ export default {
       source: undefined,
       otherSourceField: undefined,
       sourceOptions: Constants.UserSources,
+      otherSourceDescription: undefined,
     }
   },
   computed: {
@@ -94,9 +95,9 @@ export default {
         this.loggedUser.source
       )
     },
-    // showOtherSourceField() {
-    //   return this.source === "OTHER"
-    // },
+    showOtherSourceField() {
+      return this.source === "OTHER"
+    },
     showForm() {
       return this.askForRole || this.askForSource
     },
@@ -110,9 +111,10 @@ export default {
       }
       const updateJob = !!this.job
       let payload = updateJob ? { job: this.job } : { source: this.source }
-      // TODO: add other source ?
       if (this.showOtherField) {
         payload.otherJobDescription = this.otherJobDescription
+      } else if (this.showOtherSourceField) {
+        payload.otherSourceDescription = this.otherSourceDescription
       }
       this.$store
         .dispatch("updateProfile", { payload })
