@@ -120,3 +120,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.username})"
+
+    @property
+    def has_mtm_data(self):
+        return self.creation_mtm_source or self.creation_mtm_campaign or self.creation_mtm_medium

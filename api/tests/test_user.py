@@ -93,13 +93,13 @@ class TestLoggedUserApi(APITestCase):
         """
         user = authenticate.user
         self.assertNotEqual(user.source, "OTHER")
-        # self.assertNotEqual(user.other_job_description, "Magician")
+        self.assertNotEqual(user.other_source_description, "Narnia")
         payload = {
             "source": "OTHER",
-            # "otherJobDescription": "Magician",
+            "otherSourceDescription": "Narnia",
         }
         response = self.client.patch(reverse("update_user", kwargs={"pk": user.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["source"], "OTHER")
-        # self.assertEqual(body["otherJobDescription"], "Magician")
+        self.assertEqual(body["otherSourceDescription"], "Narnia")

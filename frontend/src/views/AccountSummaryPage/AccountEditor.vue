@@ -96,7 +96,7 @@
               hide-details="auto"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" md="9" v-if="showSourceField">
+          <v-col cols="12" md="9" v-if="!userCopy.hasMtmData">
             <p class="body-2 mb-1 mt-2 text-left">Comment avez-vous connu ma-cantine ?</p>
             <v-select
               v-model="userCopy.source"
@@ -158,9 +158,6 @@ export default {
     },
     showOtherJobField() {
       return this.userCopy.job === "OTHER"
-    },
-    showSourceField() {
-      return !(this.userCopy.mtm_source || this.userCopy.mtm_campaign || this.userCopy.mtm_medium)
     },
     showOtherSourceField() {
       return this.userCopy.source === "OTHER"

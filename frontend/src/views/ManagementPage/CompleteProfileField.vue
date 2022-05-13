@@ -88,12 +88,7 @@ export default {
       return this.job === "OTHER"
     },
     askForSource() {
-      return !(
-        this.loggedUser.mtm_source ||
-        this.loggedUser.mtm_campaign ||
-        this.loggedUser.mtm_medium ||
-        this.loggedUser.source
-      )
+      return !(this.loggedUser.hasMtmData || this.loggedUser.source)
     },
     showOtherSourceField() {
       return this.source === "OTHER"
