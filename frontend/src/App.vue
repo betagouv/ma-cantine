@@ -4,20 +4,7 @@
       <AppHeader />
 
       <v-main style="width: 100%" class="mb-10">
-        <v-banner two-line color="primary lighten-5 mb-2" mobile-breakpoint="xs">
-          <div class="mx-auto constrained text-left pt-1 d-flex d-sm-block">
-            <v-btn icon class="mr-1 mt-n1">
-              <v-icon icon="mdi-close-circle-outline" color="primary">
-                mdi-close-circle-outline
-              </v-icon>
-            </v-btn>
-
-            <span class="text-caption text-sm-subtitle-1">
-              Inscrivez-vous au webinaire « Création et gestion de compte » du vendredi 20 mai 12h-13h
-            </span>
-            <v-btn outlined class="ml-4 mt-n1" color="primary">M'inscrire</v-btn>
-          </div>
-        </v-banner>
+        <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner" />
         <v-container fluid :fill-height="!initialDataLoaded">
           <v-progress-circular
             indeterminate
@@ -37,14 +24,24 @@
 <script>
 import AppHeader from "@/components/AppHeader"
 import AppFooter from "@/components/AppFooter"
+import WebinaireBanner from "@/components/WebinaireBanner"
 import NotificationSnackbar from "@/components/NotificationSnackbar"
 import Constants from "@/constants"
+import { readCookie } from "@/utils"
 
 export default {
   components: {
     AppHeader,
     AppFooter,
     NotificationSnackbar,
+    WebinaireBanner,
+  },
+  data() {
+    const bannerCookieName = "webinaireBannerHide"
+    return {
+      bannerCookieName,
+      showWebinaireBanner: !readCookie(bannerCookieName),
+    }
   },
   computed: {
     initialDataLoaded() {
@@ -76,6 +73,14 @@ export default {
   },
   beforeMount() {
     window.$crisp.push(["do", "chat:hide"])
+  },
+  methods: {
+    hideBanner() {
+      const expirationDate = new Date()
+      expirationDate.setFullYear(expirationDate.getFullYear() + 1)
+      document.cookie = `${this.bannerCookieName}=True;max-age=31536000;path=/;expires=${expirationDate.toUTCString()}`
+      this.showWebinaireBanner = false
+    },
   },
 }
 </script>
