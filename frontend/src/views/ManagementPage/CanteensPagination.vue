@@ -2,7 +2,7 @@
   <div>
     <v-sheet class="px-3 mt-6 mb-6" elevation="0">
       <v-row>
-        <v-col cols="12" md="7" class="pa-0">
+        <v-col cols="12" md="7" class="pa-0" v-if="showPagination">
           <form role="search" class="d-block d-sm-flex" onsubmit="return false">
             <v-text-field
               hide-details="auto"
