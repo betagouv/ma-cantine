@@ -59,7 +59,7 @@ py==1.11.0
 pylint==2.13.8
 pylint-django==2.5.3
 pylint-plugin-utils==0.7
-pyparsing==3.0.8
+pyparsing==3.0.9
 pytest==7.1.2
 pytest-django==4.5.2
 python-bidi==0.4.2
