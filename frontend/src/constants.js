@@ -112,4 +112,30 @@ export default Object.freeze({
       value: "OTHER",
     },
   ],
+  UserSources: [
+    {
+      text: "Webinaire",
+      value: "WEBINAIRE",
+    },
+    {
+      text: "Recherche web",
+      value: "WEB_SEARCH",
+    },
+    {
+      text: "Communication institutionnelle (DRAAF, association régionale)",
+      value: "INSTITUTION",
+    },
+    {
+      text: "Bouche à oreille",
+      value: "WORD_OF_MOUTH",
+    },
+    {
+      text: "Réseaux sociaux",
+      value: "SOCIAL_MEDIA",
+    },
+    {
+      text: "Autre (spécifiez)",
+      value: "OTHER",
+    },
+  ],
 })
