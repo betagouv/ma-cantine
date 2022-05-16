@@ -9,6 +9,7 @@ from web.views import VueAppDisplayView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("ckeditor/", include("ckeditor_uploader.urls")),
+    path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),
 ]
 urlpatterns.append(re_path(r"", include("web.urls")))
 urlpatterns.append(re_path(r"^api/v1/", include("api.urls")))

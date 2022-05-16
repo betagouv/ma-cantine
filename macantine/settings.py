@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "webpack_loader",
     "rest_framework",
+    "oauth2_provider",
     "ckeditor",
     "ckeditor_uploader",
     "macantine",
@@ -356,6 +357,7 @@ CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
     "client.crisp.chat",
+    "netdna.bootstrapcdn.com",
 )
 if DEBUG:
     CSP_STYLE_SRC += CSP_DEBUG_DOMAINS
