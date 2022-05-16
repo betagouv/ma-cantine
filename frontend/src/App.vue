@@ -4,15 +4,17 @@
       <AppHeader />
 
       <v-main style="width: 100%" class="mb-10">
-        <v-banner two-line color="primary lighten-5 mb-2">
-          <div class="mx-auto constrained text-left pt-1">
+        <v-banner two-line color="primary lighten-5 mb-2" mobile-breakpoint="xs">
+          <div class="mx-auto constrained text-left pt-1 d-flex d-sm-block">
             <v-btn icon class="mr-1 mt-n1">
               <v-icon icon="mdi-close-circle-outline" color="primary">
                 mdi-close-circle-outline
               </v-icon>
             </v-btn>
 
-            <span>Inscrivez-vous au webinaire « Création et gestion de compte » du vendredi 20 mai 12h-13h</span>
+            <span class="text-caption text-sm-subtitle-1">
+              Inscrivez-vous au webinaire « Création et gestion de compte » du vendredi 20 mai 12h-13h
+            </span>
             <v-btn outlined class="ml-4 mt-n1" color="primary">M'inscrire</v-btn>
           </div>
         </v-banner>
