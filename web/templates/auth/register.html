@@ -22,18 +22,19 @@
     }
 </script>
 <style type="text/css"> @import url("{% static 'css/easy-autocomplete.min.css' %}"); </style>
-
-    <div class="register-top-text">
-        <p>
-            Bienvenue ! Renseignez les champs ci-dessous pour créer un compte gestionnaire de cantine.
-            Munissez-vous de votre <strong>numéro SIRET</strong> pour la prochaine étape : la création de votre ou vos cantines.
-        </p>
-        <p>
-            Combien d'établissements gérez-vous ? <input class="cantine-number-input" type="text" />
-        </p>
-    </div>
-    <hr />
     <form role="form" method="post">
+        <div class="register-top-text">
+            <p>
+                Bienvenue ! Renseignez les champs ci-dessous pour créer un compte gestionnaire de cantine.
+                Munissez-vous de votre <strong>numéro SIRET</strong> pour la prochaine étape : la création de votre ou vos cantines.
+            </p>
+            <p>
+                <label for="{{form.number_of_managed_cantines.id_for_label}}">Combien d'établissements gérez-vous ?</label>
+                {{ form.number_of_managed_cantines }}
+            </p>
+        </div>
+        <hr />
+
 
         {% csrf_token %}
 
