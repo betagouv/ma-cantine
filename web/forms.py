@@ -14,7 +14,7 @@ class RegisterUserForm(UserCreationForm):
     creation_mtm_campaign = forms.CharField(widget=forms.HiddenInput(), required=False)
     creation_mtm_medium = forms.CharField(widget=forms.HiddenInput(), required=False)
 
-    uses_columns = False
+    uses_columns = True
 
     class Meta:
         model = get_user_model()
@@ -42,6 +42,23 @@ class RegisterUserForm(UserCreationForm):
         self.fields["phone_number"].widget.attrs.update({"placeholder": "0* ** ** ** **"})
         self.fields["password1"].widget.attrs.update({"placeholder": "Entrez votre mot de passe"})
         self.fields["password2"].widget.attrs.update({"placeholder": "Confirmez votre mot de passe"})
+
+    def left_column_fields(self):
+        field_names = [
+            "first_name",
+            "last_name",
+            "email",
+            "phone_number",
+        ]
+        return [field for field in self if not field.is_hidden and field.name in field_names]
+
+    def right_column_fields(self):
+        field_names = [
+            "username",
+            "password1",
+            "password2",
+        ]
+        return [field for field in self if not field.is_hidden and field.name in field_names]
 
     def clean_cgu_approved(self):
         return _clean_cgu_approved(self)
