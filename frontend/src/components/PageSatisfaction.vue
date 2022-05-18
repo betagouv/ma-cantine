@@ -110,6 +110,7 @@ export default {
         suggestion: this.suggestion,
       }
       this.sendPayload(payload)
+      this.dialog = false
     },
     sendPayload(payload) {
       payload.page = this.$route.name
@@ -118,7 +119,6 @@ export default {
       } else {
         payload.email = this.email
       }
-      this.dialog = false
       // TODO: success message
     },
     cancel() {
