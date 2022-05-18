@@ -1,6 +1,5 @@
 <template>
-  <v-footer color="white" app :absolute="!showSmallFooter" :height="$vuetify.breakpoint.xs ? 960 : 500">
-    <v-divider style="position: absolute; top: 0; left: 0; width: 100%"></v-divider>
+  <v-footer color="white" app :absolute="!showSmallFooter" :height="$vuetify.breakpoint.xs ? 960 : 400">
     <v-container class="constrained pb-0 pt-0">
       <v-row v-if="!showSmallFooter" class="pt-12 pt-sm-0">
         <v-col cols="12" sm="2" :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.name != 'xs' }">
@@ -39,11 +38,6 @@
           </p>
         </v-col>
       </v-row>
-      <v-row v-if="!showSmallFooter">
-        <v-col cols="12" class="d-flex">
-          <GiveFeedbackLink />
-        </v-col>
-      </v-row>
       <v-divider v-if="!showSmallFooter" class="mt-6"></v-divider>
       <div class="d-flex flex-wrap justify-space-between">
         <div class="d-flex justify-space-between" v-for="(link, index) in bottomLinks" :key="link.text">
@@ -60,8 +54,6 @@
 </template>
 
 <script>
-import GiveFeedbackLink from "@/components/GiveFeedbackLink"
-
 export default {
   name: "AppFooter",
   data() {
@@ -157,9 +149,6 @@ export default {
         },
       ],
     }
-  },
-  components: {
-    GiveFeedbackLink,
   },
   computed: {
     footerButtonClasses() {
