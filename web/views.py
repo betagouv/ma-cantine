@@ -47,7 +47,7 @@ class RegisterUserView(FormView):
             self.success_url = reverse_lazy("registration_email_sent_error", kwargs={"username": username})
             return super().form_valid(form)
         else:
-            self.success_url = reverse_lazy("app")
+            self.success_url = "/nouvelle-cantine"
             return super().form_valid(form)
 
 
