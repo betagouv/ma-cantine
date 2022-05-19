@@ -83,7 +83,6 @@ class RegisterSendMailFailedView(TemplateView):
     sending mail
     """
 
-    # TODO : calculate
     template_name = "auth/register_send_mail_failed.html"
 
     def get_context_data(self, **kwargs):
