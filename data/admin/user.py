@@ -56,6 +56,7 @@ class MaCanteenUserAdmin(UserAdmin):
                     "phone_number",
                     "job",
                     "other_job_description",
+                    "number_of_managed_cantines",
                 )
             },
         ),

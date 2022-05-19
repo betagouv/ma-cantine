@@ -400,6 +400,7 @@ CSP_CONNECT_SRC = (
     "ws:",
     "api-adresse.data.gouv.fr",
     "client.crisp.chat",
+    "wss://client.relay.crisp.chat",
     "entreprise.data.gouv.fr",
     "plateforme.adresse.data.gouv.fr",
 )

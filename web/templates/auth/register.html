@@ -23,6 +23,18 @@
 </script>
 <style type="text/css"> @import url("{% static 'css/easy-autocomplete.min.css' %}"); </style>
     <form role="form" method="post">
+        <div class="register-top-text">
+            <p>
+                Bienvenue ! Renseignez les champs ci-dessous pour créer un compte gestionnaire de cantine.
+                Munissez-vous de votre <strong>numéro SIRET</strong> pour la prochaine étape : la création de votre ou vos cantines.
+            </p>
+            <p>
+                <label for="{{form.number_of_managed_cantines.id_for_label}}">Combien d'établissements gérez-vous ?</label>
+                {{ form.number_of_managed_cantines }}
+            </p>
+        </div>
+        <hr />
+
 
         {% csrf_token %}
 
@@ -38,31 +50,49 @@
             {{ field }}
         {% endfor %}
 
-        <div>
-            {% for field in form.visible_fields %}
-            <div class="control-group">
-                {% if field.name == 'cgu_approved' %}
-                    {{ field }}
+        <div class="column-wrapper">
+            <div class="left-column">
+                {% for field in form.left_column_fields %}
+                <div class="control-group">
                     <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
-                {% else %}
-                    <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
-                    {{ field }}
-                {% endif %}
-                {% if field.errors %}
-                {% for error in field.errors %}
+                        {{ field }}
+                        {% for error in field.errors %}
                         <div class="inline-error-container">
                             {{ error | safe }}
                         </div>
-                    {% endfor %}
-                {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
             </div>
-            {% if field.name == 'phone_number' or field.name == 'management_type' %}
-            <hr />
-            {% endif %}
-            {% endfor %}
-        </div>
 
+            <div class="right-column">
+                {% for field in form.right_column_fields %}
+                <div class="control-group">
+                    <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}
+                        <div class="inline-error-container">
+                            {{ error | safe }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <div class="control-group cgu-right-column">
+                    <div>
+                        {{ form.cgu_approved }}
+                        <label class="control-label" for="{{form.cgu_approved.id_for_label}}">{{ form.cgu_approved.label }}</label>
+                        {% for error in form.cgu_approved.errors %}
+                            <div class="inline-error-container">
+                                {{ error | safe }}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+            </div>
+        </div>
         <hr />
+
         <div class="control-group">
             <div class="controls">
                 <button type="submit" style="display: block;">S'inscrire</button>
