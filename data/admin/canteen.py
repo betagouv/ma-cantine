@@ -130,7 +130,6 @@ class CanteenAdmin(SoftDeletionAdmin):
                 "canteenUrl": f"{protocol}://{settings.HOSTNAME}/nos-cantines/{canteenUrlComponent}",
             }
             contact_list = [user.email for user in obj.managers.all()]
-            contact_list.append(settings.CONTACT_EMAIL)
             send_mail(
                 subject=f"Votre cantine « {obj.name} » est publiée",
                 template="canteen_published",
