@@ -47,7 +47,8 @@ class RegisterUserView(FormView):
             self.success_url = reverse_lazy("registration_email_sent_error", kwargs={"username": username})
             return super().form_valid(form)
         else:
-            self.success_url = "/nouvelle-cantine"
+            has_canteens = not self.request.user.is_anonymous and self.request.user.canteens.count() > 0
+            self.success_url = reverse_lazy("app") if has_canteens else "/nouvelle-cantine"
             return super().form_valid(form)
 
 
@@ -82,7 +83,14 @@ class RegisterSendMailFailedView(TemplateView):
     sending mail
     """
 
+    # TODO : calculate
     template_name = "auth/register_send_mail_failed.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        has_canteens = not self.request.user.is_anonymous and self.request.user.canteens.count() > 0
+        context["redirection_url"] = reverse_lazy("app") if has_canteens else "/nouvelle-cantine"
+        return context
 
 
 class RegisterInvalidTokenView(TemplateView):
