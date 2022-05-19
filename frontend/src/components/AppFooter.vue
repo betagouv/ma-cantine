@@ -1,5 +1,6 @@
 <template>
   <v-footer color="white" app :absolute="!showSmallFooter" :height="$vuetify.breakpoint.xs ? 960 : 400">
+    <v-divider style="position: absolute; top: 0; left: 0; width: 100%"></v-divider>
     <v-container class="constrained pb-0 pt-0">
       <v-row v-if="!showSmallFooter" class="pt-12 pt-sm-0">
         <v-col cols="12" sm="2" :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.name != 'xs' }">

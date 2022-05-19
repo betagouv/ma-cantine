@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #ffddd8;" class="py-6 px-16 mx-auto">
+  <v-card class="py-6 px-16 mx-auto my-6 box text-center" elevation="0" color="secondary lighten-4">
     <label class="body-2 grey--text text--darken-4" for="page-satisfaction">
       Êtes-vous satisfait de cette page ?
     </label>
@@ -8,7 +8,7 @@
       color="primary"
       empty-icon="mdi-star-outline"
       full-icon="mdi-star"
-      class="mt-2 mb-4 body-2"
+      class="mt-2 body-2"
       id="page-satisfaction"
       background-color="grey"
       length="5"
@@ -16,9 +16,9 @@
     ></v-rating>
 
     <v-dialog v-model="dialog" width="500">
-      <template v-slot:activator="{ on, attrs }">
+      <!-- <template v-slot:activator="{ on, attrs }">
         <v-btn color="primary" v-bind="attrs" v-on="on">Faire une suggestion</v-btn>
-      </template>
+      </template> -->
 
       <v-card class="text-left pa-4">
         <v-card-title class="font-weight-black">
@@ -27,6 +27,20 @@
 
         <v-card-text>
           <v-form ref="form" v-model="formIsValid">
+            <label class="body-2 grey--text text--darken-4" for="dialog-satisfaction">
+              Êtes-vous satisfait de cette page ?
+            </label>
+            <v-rating
+              v-model.number="satisfaction"
+              color="primary"
+              empty-icon="mdi-star-outline"
+              full-icon="mdi-star"
+              class="mt-2 mb-4 body-2"
+              id="dialog-satisfaction"
+              background-color="grey"
+              length="5"
+              hover
+            ></v-rating>
             <label class="body-2 grey--text text--darken-3" for="suggestion">
               Que pouvons-nous améliorer afin de mieux répondre à vos attentes ?
             </label>
@@ -40,20 +54,6 @@
               class="mt-2 mb-4 body-2"
               rows="5"
             ></v-textarea>
-            <div v-if="!hasLoggedUser">
-              <label class="body-2 grey--text text--darken-3" for="email">
-                Votre adresse mail
-              </label>
-              <v-text-field
-                v-model="email"
-                solo
-                id="email"
-                :rules="[validators.emailOrEmpty]"
-                validate-on-blur
-                hide-details="auto"
-                class="mt-2 mb-4 body-2"
-              ></v-text-field>
-            </div>
             <p class="caption mb-0">
               On pourrait vous contacter si on aurait besoin de plus des informations ou si on pense qu'on pourrait vous
               aider en vos démarches.
@@ -74,7 +74,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-card>
 </template>
 
 <script>
@@ -92,11 +92,6 @@ export default {
       email: null,
     }
   },
-  computed: {
-    hasLoggedUser() {
-      return this.$store.state.loggedUser
-    },
-  },
   methods: {
     submitSuggestion() {
       this.$refs.form.validate()
@@ -108,18 +103,13 @@ export default {
       const payload = {
         satisfaction: this.satisfaction,
         suggestion: this.suggestion,
+        page: this.$route.name,
+        userId: this.$store.state.loggedUser.id,
       }
-      this.sendPayload(payload)
-      this.dialog = false
-    },
-    sendPayload(payload) {
-      payload.page = this.$route.name
-      if (this.hasLoggedUser) {
-        payload.userId = this.$store.state.loggedUser.id
-      } else {
-        payload.email = this.email
-      }
+      console.log("payload", payload)
+      // TODO: POST payload
       // TODO: success message
+      this.dialog = false
     },
     cancel() {
       this.$refs.form.reset()
@@ -127,16 +117,22 @@ export default {
     },
   },
   watch: {
-    // TODO: is there a way of associating the rating (submitted the moment it changes)
-    // with the suggestion (optionally submitted later) ?
-    // and to allow user to change their mind on the rating.
-    // for logged in users this is easy (userId + page - is it though?)
     satisfaction(newValue) {
-      if (newValue && newValue < 3) {
+      if (newValue) {
         this.dialog = true
       }
-      this.sendPayload({ satisfaction: newValue })
+    },
+    dialog(newValue) {
+      if (newValue === false) {
+        this.satisfaction = null
+      }
     },
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.box {
+  width: fit-content;
+}
+</style>

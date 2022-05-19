@@ -13,7 +13,6 @@
           ></v-progress-circular>
           <router-view v-else class="mx-auto constrained" />
         </v-container>
-        <PageSatisfaction />
       </v-main>
 
       <AppFooter />
@@ -29,7 +28,6 @@ import WebinaireBanner from "@/components/WebinaireBanner"
 import NotificationSnackbar from "@/components/NotificationSnackbar"
 import Constants from "@/constants"
 import { readCookie } from "@/utils"
-import PageSatisfaction from "@/components/PageSatisfaction.vue"
 
 export default {
   components: {
@@ -37,7 +35,6 @@ export default {
     AppFooter,
     NotificationSnackbar,
     WebinaireBanner,
-    PageSatisfaction,
   },
   data() {
     const bannerCookieName = "webinaireBannerHide"

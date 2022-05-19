@@ -22,6 +22,7 @@
           <DiagnosticCard :diagnostic="diagnostic" :canteen="originalCanteen" class="fill-height" />
         </v-col>
       </v-row>
+      <PageSatisfaction class="mt-16" />
     </div>
     <div v-else>
       <DiagnosticIntroduction class="body-2"></DiagnosticIntroduction>
@@ -42,12 +43,13 @@
 
 <script>
 import DiagnosticCard from "@/components/DiagnosticCard"
+import PageSatisfaction from "@/components/PageSatisfaction"
 import DiagnosticIntroduction from "@/components/DiagnosticIntroduction"
 import DiagnosticNotAllowed from "@/components/DiagnosticNotAllowed"
 
 export default {
   name: "DiagnosticList",
-  components: { DiagnosticCard, DiagnosticIntroduction, DiagnosticNotAllowed },
+  components: { DiagnosticCard, DiagnosticIntroduction, DiagnosticNotAllowed, PageSatisfaction },
   props: {
     originalCanteen: Object,
   },
