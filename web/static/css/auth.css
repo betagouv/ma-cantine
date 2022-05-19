@@ -48,7 +48,7 @@ h2 {
   font-size: 1.17em;
 }
 .auth_logo {
-  max-width: 180px;
+  max-height: 70px;
   margin: 20px 0;
 }
 p {
@@ -156,7 +156,7 @@ input[type="checkbox"]#id_cgu_approved {
 }
 
 #wrapper.columns {
-  width: 1005px;
+  width: 805px;
 }
 
 .column-wrapper {
@@ -170,7 +170,7 @@ input[type="checkbox"]#id_cgu_approved {
 }
 
 .left-column {
-  padding-top: 20px;
+  padding-top: 0px;
 }
 
 .sector,
@@ -182,6 +182,38 @@ input[type="checkbox"]#id_cgu_approved {
 .management-type > li {
   width: 45%;
   float: left;
+}
+
+.register-top-text {
+  margin-bottom: 30px;
+  margin-top: 0;
+  text-align: left;
+  line-height: 24px;
+}
+
+.register-top-text > p {
+  font-size: 15px;
+}
+
+label[for="id_number_of_managed_cantines"] {
+  display: inline-block;
+  font-size: 15px;
+  margin: 0;
+}
+
+input.cantine-number-input {
+  display: inline-block;
+  width: 100px;
+  border-top: solid 1px #ecececba;
+  border-left: solid 1px #ecececba;
+  border-right: solid 1px #ecececba;
+  border-bottom: solid 2px #737373;
+  border-radius: 10px 10px 3px 3px;
+  margin-left: 15px;
+}
+
+.cgu-right-column > div {
+  margin-top: 40px;
 }
 
 @media (max-width: 1005px) {
