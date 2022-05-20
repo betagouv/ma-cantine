@@ -85,16 +85,6 @@ export default {
           href: "/creer-mon-compte",
         },
         {
-          text: "Demander une démo",
-          icon: "mdi-presentation-play",
-          breakpoint: "xs",
-          authenticationState: false,
-          href:
-            "https://calendly.com/jennifer-stephan-betagouv/ma-cantine-aide-info-a-la-connexion-l-inscription-la-creation-de-cantine",
-          target: "_blank",
-          rel: "noopener",
-        },
-        {
           text: "Autodiagnostic",
           icon: "mdi-chart-pie",
           authenticationState: false,
