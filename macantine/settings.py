@@ -210,6 +210,10 @@ REST_FRAMEWORK = {
     "JSON_UNDERSCOREIZE": {
         "no_underscore_before_number": True,
     },
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+        "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
+    ),
 }
 
 # Frontend - VueJS application
@@ -453,3 +457,7 @@ TEMPLATE_ID_NO_CANTEEN_SECOND = (
 TEMPLATE_ID_NO_DIAGNOSTIC_FIRST = (
     int(os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST")) if os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST", None) else None
 )
+
+OAUTH2_PROVIDER = {
+    "PKCE_REQUIRED": False,
+}
