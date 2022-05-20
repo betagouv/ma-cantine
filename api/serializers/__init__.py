@@ -18,3 +18,4 @@ from .purchase import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExp
 from .reservationexpe import ReservationExpeSerializer  # noqa: F401
 from .vegetarianexpe import VegetarianExpeSerializer  # noqa: F401
 from .message import MessageSerializer  # noqa: F401
+from .review import ReviewSerializer  # noqa: F401

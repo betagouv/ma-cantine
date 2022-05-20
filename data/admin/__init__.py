@@ -10,6 +10,7 @@ from .reservationexpe import ReservationExpeAdmin  # noqa
 from .vegetarianexpe import VegetarianExpeAdmin  # noqa
 from .message import MessageAdmin  # noqa
 from .purchase import PurchaseAdmin  # noqa
+from .review import ReviewAdmin  # noqa
 
 from django.contrib import admin
 from django.contrib.auth.models import Group

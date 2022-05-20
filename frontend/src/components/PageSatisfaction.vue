@@ -1,25 +1,21 @@
 <template>
-  <v-card class="py-6 px-16 mx-auto my-6 box text-center" elevation="0" color="secondary lighten-4">
-    <label class="body-2 grey--text text--darken-4" for="page-satisfaction">
+  <v-card class="py-6 px-16 mx-auto my-6 box text-center" elevation="0" color="secondary lighten-4" v-if="!hasRating">
+    <label class="body-2 grey--text text--darken-4" for="page-rating">
       Êtes-vous satisfait de cette page ?
     </label>
     <v-rating
-      v-model.number="satisfaction"
+      v-model.number="rating"
       color="primary"
       empty-icon="mdi-star-outline"
       full-icon="mdi-star"
       class="mt-2 body-2"
-      id="page-satisfaction"
+      id="page-rating"
       background-color="grey"
       length="5"
       hover
     ></v-rating>
 
     <v-dialog v-model="dialog" width="500">
-      <!-- <template v-slot:activator="{ on, attrs }">
-        <v-btn color="primary" v-bind="attrs" v-on="on">Faire une suggestion</v-btn>
-      </template> -->
-
       <v-card class="text-left pa-4">
         <v-card-title class="font-weight-black">
           Faire une suggestion
@@ -27,16 +23,16 @@
 
         <v-card-text>
           <v-form ref="form" v-model="formIsValid">
-            <label class="body-2 grey--text text--darken-4" for="dialog-satisfaction">
+            <label class="body-2 grey--text text--darken-4" for="dialog-rating">
               Êtes-vous satisfait de cette page ?
             </label>
             <v-rating
-              v-model.number="satisfaction"
+              v-model.number="rating"
               color="primary"
               empty-icon="mdi-star-outline"
               full-icon="mdi-star"
               class="mt-2 mb-4 body-2"
-              id="dialog-satisfaction"
+              id="dialog-rating"
               background-color="grey"
               length="5"
               hover
@@ -87,9 +83,11 @@ export default {
       dialog: false,
       validators,
       formIsValid: true,
-      satisfaction: null,
+      rating: null,
       suggestion: null,
       email: null,
+      hasRating: true, // default to not showing it to avoid it appearing and disappearing on load
+      page: this.$route.name,
     }
   },
   methods: {
@@ -101,30 +99,48 @@ export default {
       }
 
       const payload = {
-        satisfaction: this.satisfaction,
+        rating: this.rating,
         suggestion: this.suggestion,
-        page: this.$route.name,
-        userId: this.$store.state.loggedUser.id,
+        page: this.page,
       }
-      console.log("payload", payload)
-      // TODO: POST payload
-      // TODO: success message
-      this.dialog = false
+      this.$store
+        .dispatch("createReview", { payload })
+        .then(() => {
+          this.$store.dispatch("notify", {
+            title: "Merci, votre évaluation a bien été prise en compte",
+            status: "success",
+          })
+          this.dialog = false
+          this.hasRating = true
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
     },
     cancel() {
       this.$refs.form.reset()
       this.dialog = false
     },
+    getRating() {
+      return fetch(`/api/v1/reviews/${this.page}`).then((response) => {
+        if (response.status === 404) {
+          this.hasRating = false
+        }
+      })
+    },
+  },
+  mounted() {
+    this.getRating()
   },
   watch: {
-    satisfaction(newValue) {
+    rating(newValue) {
       if (newValue) {
         this.dialog = true
       }
     },
     dialog(newValue) {
       if (newValue === false) {
-        this.satisfaction = null
+        this.rating = null
       }
     },
   },

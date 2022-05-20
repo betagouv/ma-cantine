@@ -631,6 +631,15 @@ export default new Vuex.Store({
           throw e
         })
     },
+
+    createReview(context, { payload }) {
+      return fetch("/api/v1/reviews/", { method: "POST", headers, body: JSON.stringify(payload) })
+        .then(verifyResponse)
+        .then((response) => response)
+        .catch((e) => {
+          throw e
+        })
+    },
   },
 
   getters: {
