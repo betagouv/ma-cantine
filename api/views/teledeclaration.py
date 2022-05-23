@@ -6,12 +6,13 @@ from django.template.loader import get_template
 from django.contrib.staticfiles import finders
 from django.conf import settings
 from django.utils.text import slugify
-from rest_framework import status, permissions
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from xhtml2pdf import pisa
 from data.models import Diagnostic, Teledeclaration
 from api.serializers import FullDiagnosticSerializer
+from api.permissions import IsAuthenticated
 from .utils import camelize
 
 logger = logging.getLogger(__name__)
@@ -23,7 +24,7 @@ class TeledeclarationCreateView(APIView):
     existing diagnostic.
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
@@ -65,7 +66,7 @@ class TeledeclarationCancelView(APIView):
     This view cancels a submitted teledeclaration
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
@@ -94,7 +95,7 @@ class TeledeclarationPdfView(APIView):
     This view returns a PDF for proof of teledeclaration
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
 

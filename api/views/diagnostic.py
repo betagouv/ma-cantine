@@ -18,7 +18,7 @@ from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.views import APIView
 from api.serializers import PublicDiagnosticSerializer, FullCanteenSerializer
 from data.models import Canteen, Sector
-from api.permissions import IsCanteenManager, CanEditDiagnostic
+from api.permissions import IsCanteenManager, CanEditDiagnostic, IsAuthenticated
 from api.exceptions import DuplicateException
 from .utils import camelize
 from .canteen import AddManagerView
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 class DiagnosticCreateView(CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     model = Diagnostic
     serializer_class = PublicDiagnosticSerializer
 
@@ -55,7 +55,7 @@ class DiagnosticCreateView(CreateAPIView):
 
 class DiagnosticUpdateView(UpdateAPIView):
     permission_classes = [
-        permissions.IsAuthenticated,
+        IsAuthenticated,
         CanEditDiagnostic,
     ]
     model = Diagnostic
@@ -72,7 +72,7 @@ class DiagnosticUpdateView(UpdateAPIView):
 
 # flake8: noqa: C901
 class ImportDiagnosticsView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
 
@@ -472,7 +472,7 @@ class ImportDiagnosticsView(APIView):
 
 
 class EmailDiagnosticImportFileView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:

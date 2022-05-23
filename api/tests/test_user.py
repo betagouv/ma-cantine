@@ -3,7 +3,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import UserFactory
-from .utils import authenticate
+from .utils import authenticate, get_oauth2_token
 
 
 class TestLoggedUserApi(APITestCase):
@@ -13,6 +13,18 @@ class TestLoggedUserApi(APITestCase):
         """
         response = self.client.get(reverse("logged_user"))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_wrong_scope_logged_user_call(self):
+        _, token = get_oauth2_token("canteen:read")
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(reverse("logged_user"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_correct_scope_logged_user_call(self):
+        _, token = get_oauth2_token("user:read")
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(reverse("logged_user"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate
     def test_authenticated_logged_user_call(self):
@@ -103,3 +115,23 @@ class TestLoggedUserApi(APITestCase):
         body = response.json()
         self.assertEqual(body["source"], "OTHER")
         self.assertEqual(body["otherSourceDescription"], "Narnia")
+
+    def test_user_update_wrong_token(self):
+        user, token = get_oauth2_token("user:read")
+        self.client.credentials(Authorization=f"Bearer {token}")
+        payload = {
+            "source": "OTHER",
+            "otherSourceDescription": "Narnia",
+        }
+        response = self.client.patch(reverse("update_user", kwargs={"pk": user.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_update_correct_token(self):
+        user, token = get_oauth2_token("user:write")
+        self.client.credentials(Authorization=f"Bearer {token}")
+        payload = {
+            "source": "OTHER",
+            "otherSourceDescription": "Narnia",
+        }
+        response = self.client.patch(reverse("update_user", kwargs={"pk": user.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

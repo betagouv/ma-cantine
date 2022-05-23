@@ -1,5 +1,4 @@
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
-from rest_framework import permissions
 from rest_framework.exceptions import NotFound, PermissionDenied, MethodNotAllowed
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
@@ -10,7 +9,7 @@ from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from django.db.models import Sum, Q, Func, F
 from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
-from api.permissions import IsLinkedCanteenManager, IsCanteenManager
+from api.permissions import IsLinkedCanteenManager, IsCanteenManager, IsAuthenticated
 from api.serializers import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer
 from data.models import Purchase, Canteen
 from .utils import CamelCaseOrderingFilter, UnaccentSearchFilter
@@ -85,7 +84,7 @@ class PurchaseFilterSet(django_filters.FilterSet):
 
 
 class PurchaseListCreateView(ListCreateAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
     model = Purchase
     serializer_class = PurchaseSerializer
     pagination_class = PurchasesPagination
@@ -138,7 +137,7 @@ class PurchaseListCreateView(ListCreateAPIView):
 
 
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
     model = Purchase
     serializer_class = PurchaseSerializer
 
@@ -253,7 +252,7 @@ class PurchaseListExportView(PurchaseListCreateView, XLSXFileMixin):
 
 
 class PurchaseOptionsView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         purchases = Purchase.objects.filter(canteen__in=self.request.user.canteens.all())

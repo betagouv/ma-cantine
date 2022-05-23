@@ -35,7 +35,9 @@ PROTOCOL = "https" if SECURE else "http"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
 AUTH_USER_MODEL = "data.User"
-AUTHENTICATION_BACKENDS = ["macantine.backends.EmailUsernameBackend"]
+AUTHENTICATION_BACKENDS = [
+    "macantine.backends.EmailUsernameBackend",
+]
 ALLOWED_HOSTS = [x.strip() for x in os.getenv("ALLOWED_HOSTS").split(",")]
 
 DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANCE") == "True"
@@ -460,4 +462,10 @@ TEMPLATE_ID_NO_DIAGNOSTIC_FIRST = (
 
 OAUTH2_PROVIDER = {
     "PKCE_REQUIRED": False,
+    "SCOPES": {
+        "user:read": "Lire votre profil utilisateur",
+        "user:write": "Modifier vos données utilisateur",
+        "canteen:read": "Lire les données de votre cantine",
+        "canteen:write": "Modifier les données de votre cantine",
+    },
 }
