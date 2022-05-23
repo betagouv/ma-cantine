@@ -25,32 +25,6 @@
         <v-spacer></v-spacer>
       </div>
 
-      <div class="ml-6 mr-2 fill-height d-flex flex-column" v-if="$vuetify.breakpoint.smAndUp && !this.loggedUser">
-        <v-spacer></v-spacer>
-        <div class="divider"></div>
-        <v-spacer></v-spacer>
-      </div>
-
-      <div
-        class="fill-height d-flex flex-column text-left"
-        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.smAndUp"
-      >
-        <v-spacer></v-spacer>
-        <div class="caption grey--text ml-0">
-          <v-btn
-            text
-            class="align-self-center mt-n1"
-            v-if="!loggedUser && userDataReady && $vuetify.breakpoint.smAndUp"
-            href="https://calendly.com/jennifer-stephan-betagouv/ma-cantine-aide-info-a-la-connexion-l-inscription-la-creation-de-cantine"
-            target="_blank"
-            rel="noopener"
-          >
-            <span>Demander une démo</span>
-          </v-btn>
-        </div>
-        <v-spacer></v-spacer>
-      </div>
-
       <v-spacer></v-spacer>
 
       <v-btn
