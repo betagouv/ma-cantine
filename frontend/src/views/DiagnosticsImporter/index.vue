@@ -57,18 +57,35 @@
       :disabled="importInProgress"
     />
 
-    <p>
-      Régardez notre
-      <a href="https://www.loom.com/share/96cb8cf836fa476ca3e497b92768b8e4" target="_blank" rel="noopener">
-        vidéo tutorial
-      </a>
-      pour repondre aux questions les plus fréquentes.
-    </p>
-    <p>
-      Si vous avez toujours des questions ou des problèmes, n'hésitez pas à nous contacter à
-      <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
-      .
-    </p>
+    <v-card
+      :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.xs, 'align-center': $vuetify.breakpoint.xs }"
+      outlined
+    >
+      <video
+        ref="video"
+        class="ma-4"
+        :style="`max-width: ${$vuetify.breakpoint.xs ? '70%' : '30%'}; background: #333; border-radius: 10px`"
+        poster="/static/images/video-poster-import-masse.webp"
+        controls
+      >
+        <source
+          type="video/mp4"
+          src="https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim/videos/Tutoriel-import-de-masse.m4v"
+        />
+        Votre navigateur ne peut pas afficher des vidéos.
+      </video>
+
+      <div>
+        <p class="ma-4">
+          Régardez notre vidéo tutorial pour repondre aux questions les plus fréquentes.
+          <br />
+          <br />
+          Si vous avez toujours des questions ou des problèmes, n'hésitez pas à nous contacter à
+          <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+          .
+        </p>
+      </div>
+    </v-card>
 
     <v-card outlined class="pa-4" v-if="importInProgress">
       <v-progress-circular indeterminate color="primary" size="28" class="mr-4"></v-progress-circular>
@@ -142,7 +159,7 @@
       </template>
     </v-simple-table>
 
-    <h3 class="my-6">Fichier exemple</h3>
+    <h3 class="my-6">Fichiers exemple</h3>
     <p>
       Nous mettons à votre disposition un fichier exemple en format de choix :
       <a class="text-decoration-underline" href="/static/documents/fichier_exemple_ma_cantine.csv" download>
@@ -161,13 +178,6 @@
     </p>
 
     <h2 class="my-6">Vous avez besoin d'aide ?</h2>
-    <p>
-      Régardez notre
-      <a href="https://www.loom.com/share/96cb8cf836fa476ca3e497b92768b8e4" target="_blank" rel="noopener">
-        vidéo tutorial
-      </a>
-      pour repondre aux questions les plus fréquentes.
-    </p>
     <p>
       Si votre fichier comptable agrégé ne ressemble pas du tout à ça, vous pouvez nous l'envoyer en remplissant les
       champs ci-dessous ou nous contacter directement à l'adresse
