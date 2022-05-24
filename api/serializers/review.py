@@ -12,3 +12,9 @@ class ReviewSerializer(serializers.ModelSerializer):
             "hasCanteen",
             "hasDiagnostic",
         )
+
+
+class MiniReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ("hasCanteen", "hasDiagnostic")

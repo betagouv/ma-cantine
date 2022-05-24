@@ -1,7 +1,7 @@
 <template>
-  <v-card class="py-6 px-16 mx-auto my-6 box text-center" elevation="0" color="secondary lighten-4" v-if="!hasRating">
+  <v-card class="py-6 px-16 mx-auto my-6 box text-center" elevation="0" color="secondary lighten-4" v-if="askForRating">
     <label class="body-2 grey--text text--darken-4" for="page-rating">
-      Êtes-vous satisfait de cette page ?
+      Êtes-vous satisfait de « ma cantine » ?
     </label>
     <v-rating
       v-model.number="rating"
@@ -24,7 +24,7 @@
         <v-card-text>
           <v-form ref="form" v-model="formIsValid">
             <label class="body-2 grey--text text--darken-4" for="dialog-rating">
-              Êtes-vous satisfait de cette page ?
+              Êtes-vous satisfait de « ma cantine » ?
             </label>
             <v-rating
               v-model.number="rating"
@@ -44,8 +44,6 @@
               v-model="suggestion"
               solo
               id="suggestion"
-              :rules="[validators.required]"
-              validate-on-blur
               hide-details="auto"
               class="mt-2 mb-4 body-2"
               rows="5"
@@ -86,9 +84,16 @@ export default {
       rating: null,
       suggestion: null,
       email: null,
-      hasRating: true, // default to not showing it to avoid it appearing and disappearing on load
       page: this.$route.name,
     }
+  },
+  computed: {
+    askForRating() {
+      const user = this.$store.state.loggedUser
+      const hasCanteen = user.reviews.some((review) => review.hasCanteen)
+      const hasDiagnostic = user.reviews.some((review) => review.hasDiagnostic)
+      return this.page === "DiagnosticList" ? !hasDiagnostic : !hasCanteen || !hasDiagnostic
+    },
   },
   methods: {
     submitSuggestion() {
@@ -111,7 +116,6 @@ export default {
             status: "success",
           })
           this.dialog = false
-          this.hasRating = true
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
@@ -121,16 +125,6 @@ export default {
       this.$refs.form.reset()
       this.dialog = false
     },
-    getRating() {
-      return fetch(`/api/v1/reviews/${this.page}`).then((response) => {
-        if (response.status === 404) {
-          this.hasRating = false
-        }
-      })
-    },
-  },
-  mounted() {
-    this.getRating()
   },
   watch: {
     rating(newValue) {

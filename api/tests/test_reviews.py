@@ -77,26 +77,15 @@ class TestReviews(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    def test_fail_duplicate_review(self):
-        """
-        Test that user cannot submit two reviews for the same page
-        """
-        ReviewFactory.create(user=authenticate.user, page="CanteensHome")
-        payload = {
-            "page": "CanteensHome",
-            "rating": 3,
-            "suggestion": "Make it read my mind",
-        }
-        response = self.client.post(reverse("create_review"), payload)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    @authenticate
-    def test_get_review_for_page(self):
+    def test_reviews_in_user_fetch(self):
         """
         Test that user can get the review they've submitted for a page
         """
-        ReviewFactory.create(user=authenticate.user, page="CanteensHome", rating=3)
-        ReviewFactory.create(page="CanteensHome", rating=5)  # should not be fetched
-        response = self.client.get(reverse("get_review", kwargs={"page_pk": "CanteensHome"}))
+        ReviewFactory.create(user=authenticate.user, hasCanteen=True, hasDiagnostic=False)
+        ReviewFactory.create(hasCanteen=False, hasDiagnostic=True)  # should not be fetched
+        response = self.client.get(reverse("logged_user"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["rating"], 3)
+        body = response.json()
+        self.assertEqual(len(body["reviews"]), 1)
+        self.assertEqual(body["reviews"][0]["hasCanteen"], True)
+        self.assertEqual(body["reviews"][0]["hasDiagnostic"], False)

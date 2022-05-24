@@ -1,20 +1,23 @@
 from django.contrib import admin
 from data.models import Review
-from .utils import ReadOnlyAdminMixin
 
 
 @admin.register(Review)
-class ReviewAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
+class ReviewAdmin(admin.ModelAdmin):
     fields = (
         "rating",
         "suggestion",
         "page",
+        "hasCanteen",
+        "hasDiagnostic",
         "creation_date",
         "user",
     )
-    read_only_fields = fields
+    readonly_fields = fields
     list_display = (
         "page",
+        "hasCanteen",
+        "hasDiagnostic",
         "rating",
         "creation_date",
         "suggestion",

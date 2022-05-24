@@ -6,9 +6,6 @@ class Review(models.Model):
     class Meta:
         verbose_name = "évaluation du site"
         verbose_name_plural = "évaluations du site"
-        constraints = [
-            models.UniqueConstraint(fields=["user", "page"], name="one_review_per_page"),
-        ]
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)

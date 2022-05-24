@@ -635,7 +635,10 @@ export default new Vuex.Store({
     createReview(context, { payload }) {
       return fetch("/api/v1/reviews/", { method: "POST", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
-        .then((response) => response)
+        .then((response) => {
+          context.dispatch("fetchLoggedUser") // refresh reviews for user
+          return response
+        })
         .catch((e) => {
           throw e
         })
