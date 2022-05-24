@@ -6,7 +6,7 @@ from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory
 from data.factories import DiagnosticFactory
 from data.models import Canteen, Teledeclaration
-from .utils import authenticate
+from .utils import authenticate, get_oauth2_token
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -19,6 +19,24 @@ class TestCanteenApi(APITestCase):
         """
         response = self.client.get(reverse("user_canteens"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_canteens_wrong_token(self):
+        _, token = get_oauth2_token("user:read")
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(reverse("user_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_canteens_correct_token(self):
+        user, token = get_oauth2_token("canteen:read")
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(reverse("user_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(body["results"][0]["id"], canteen.id)
 
     @authenticate
     def test_get_canteens_preview(self):
@@ -45,6 +63,27 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(len(body), 2)
         self.assertEqual(body[0].get("id"), user_canteens[1].id)
         self.assertEqual(body[1].get("id"), user_canteens[0].id)
+
+    def test_canteen_preview_wrong_token(self):
+        user, token = get_oauth2_token("user:read")
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(reverse("user_canteen_previews"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_canteen_preview_correct_token(self):
+        user, token = get_oauth2_token("canteen:read")
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(reverse("user_canteen_previews"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)
+        self.assertEqual(body[0]["id"], canteen.id)
 
     @authenticate
     def test_get_user_canteens(self):

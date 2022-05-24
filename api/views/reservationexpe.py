@@ -1,12 +1,11 @@
 from django.http import HttpResponse
-from api.permissions import IsLinkedCanteenManager
+from api.permissions import IsLinkedCanteenManager, IsAuthenticated
 from api.serializers import ReservationExpeSerializer
 from api.exceptions import DuplicateException
 from data.models import ReservationExpe, Canteen
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import Http404
 import logging
-from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import NotFound, PermissionDenied
@@ -20,7 +19,7 @@ class ReservationExpeView(CreateModelMixin, RetrieveUpdateAPIView):
     model = ReservationExpe
     serializer_class = ReservationExpeSerializer
     queryset = ReservationExpe.objects.all()
-    permission_classes = [permissions.IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
 
     def get_object(self):
         queryset = self.get_queryset()

@@ -35,7 +35,9 @@ PROTOCOL = "https" if SECURE else "http"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
 AUTH_USER_MODEL = "data.User"
-AUTHENTICATION_BACKENDS = ["macantine.backends.EmailUsernameBackend"]
+AUTHENTICATION_BACKENDS = [
+    "macantine.backends.EmailUsernameBackend",
+]
 ALLOWED_HOSTS = [x.strip() for x in os.getenv("ALLOWED_HOSTS").split(",")]
 
 DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANCE") == "True"
@@ -70,6 +72,7 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "webpack_loader",
     "rest_framework",
+    "oauth2_provider",
     "ckeditor",
     "ckeditor_uploader",
     "macantine",
@@ -209,6 +212,10 @@ REST_FRAMEWORK = {
     "JSON_UNDERSCOREIZE": {
         "no_underscore_before_number": True,
     },
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+        "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
+    ),
 }
 
 # Frontend - VueJS application
@@ -356,6 +363,7 @@ CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
     "client.crisp.chat",
+    "netdna.bootstrapcdn.com",
 )
 if DEBUG:
     CSP_STYLE_SRC += CSP_DEBUG_DOMAINS
@@ -451,3 +459,13 @@ TEMPLATE_ID_NO_CANTEEN_SECOND = (
 TEMPLATE_ID_NO_DIAGNOSTIC_FIRST = (
     int(os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST")) if os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST", None) else None
 )
+
+OAUTH2_PROVIDER = {
+    "PKCE_REQUIRED": False,
+    "SCOPES": {
+        "user:read": "Lire votre profil utilisateur",
+        "user:write": "Modifier vos données utilisateur",
+        "canteen:read": "Lire les données de votre cantine",
+        "canteen:write": "Modifier les données de votre cantine",
+    },
+}

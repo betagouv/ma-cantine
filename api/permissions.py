@@ -1,6 +1,24 @@
 from rest_framework import permissions
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication
+from oauth2_provider.contrib.rest_framework.permissions import TokenHasResourceScope
 from django.contrib.auth import get_user_model
 from data.models import Canteen, Diagnostic, Teledeclaration
+
+
+class IsAuthenticated(permissions.IsAuthenticated):
+    """
+    Verifies that the user is authenticated without OAuth
+    """
+
+    def has_permission(self, request, view):
+        is_authenticated = super().has_permission(request, view)
+        return is_authenticated and not isinstance(request.successful_authenticator, OAuth2Authentication)
+
+
+class IsAuthenticatedOrTokenHasResourceScope(TokenHasResourceScope):
+    def has_permission(self, request, view):
+        is_authenticated = IsAuthenticated().has_permission(request, view)
+        return is_authenticated or super().has_permission(request, view)
 
 
 class IsProfileOwner(permissions.BasePermission):

@@ -1,8 +1,8 @@
 import functools
+from datetime import timedelta
+from django.utils import timezone
 
-from data.factories import (
-    UserFactory,
-)
+from data.factories import UserFactory
 
 
 def authenticate(func):
@@ -13,3 +13,11 @@ def authenticate(func):
         return func(*args, **kwargs)
 
     return authenticate_and_func
+
+
+def get_oauth2_token(scope):
+    today = timezone.now()
+    expiration = today + timedelta(hours=1)
+    user = UserFactory.create()
+    token = user.oauth2_provider_accesstoken.create(expires=expiration, token="token", scope=scope)
+    return (user, token)

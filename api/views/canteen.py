@@ -13,7 +13,7 @@ from django.db.models import Sum, FloatField, Avg, Func, F, Q
 from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework import permissions, status, filters
+from rest_framework import status, filters
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
@@ -26,7 +26,7 @@ from api.serializers import (
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
 from data.region_choices import Region
-from api.permissions import IsCanteenManager
+from api.permissions import IsCanteenManager, IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
 from api.exceptions import DuplicateException
 from .utils import camelize, UnaccentSearchFilter
 from common import utils
@@ -157,7 +157,7 @@ class PublishedCanteenSingleView(RetrieveAPIView):
 
 
 class UserCanteensView(ListCreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     model = Canteen
     serializer_class = FullCanteenSerializer
     pagination_class = CanteensPagination
@@ -166,6 +166,7 @@ class UserCanteensView(ListCreateAPIView):
         UnaccentSearchFilter,
         filters.OrderingFilter,
     ]
+    required_scopes = ["canteen"]
     search_fields = ["name"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
 
@@ -192,17 +193,19 @@ class UserCanteensView(ListCreateAPIView):
 class UserCanteenPreviews(ListAPIView):
     model = Canteen
     serializer_class = CanteenPreviewSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def get_queryset(self):
         return self.request.user.canteens.all()
 
 
 class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsCanteenManager]
+    permission_classes = [IsAuthenticated, IsCanteenManager]
     model = Canteen
     serializer_class = FullCanteenSerializer
     queryset = Canteen.objects.all()
+    required_scopes = ["canteen"]
 
     def put(self, request, *args, **kwargs):
         return JsonResponse({"error": "Only PATCH request supported in this resource"}, status=405)
@@ -230,7 +233,7 @@ def check_siret_response(request):
 
 
 class PublishCanteenView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -273,7 +276,7 @@ class PublishCanteenView(APIView):
 
 
 class UnpublishCanteenView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -303,7 +306,7 @@ def _respond_with_team(canteen):
 
 
 class AddManagerView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -401,7 +404,7 @@ class AddManagerView(APIView):
 
 
 class RemoveManagerView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -476,7 +479,7 @@ class SendCanteenNotFoundEmail(APIView):
 
 
 class TeamJoinRequestView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         try:

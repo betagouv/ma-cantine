@@ -9,13 +9,14 @@ from django.http import JsonResponse
 from common.utils import send_mail
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from rest_framework.generics import RetrieveAPIView
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import RetrieveAPIView, UpdateAPIView
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import permissions, status
+from rest_framework import status
+from oauth2_provider.contrib.rest_framework import TokenHasResourceScope
 from api.serializers import LoggedUserSerializer, PasswordSerializer
-from api.permissions import IsProfileOwner
+from api.permissions import IsProfileOwner, IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +25,15 @@ class LoggedUserView(RetrieveAPIView):
     model = get_user_model()
     serializer_class = LoggedUserSerializer
     queryset = get_user_model().objects.all()
+    required_scopes = ["user"]
 
     def get(self, request, *args, **kwargs):
-        if permissions.IsAuthenticated().has_permission(self.request, self):
+        if request.auth:
+            if TokenHasResourceScope().has_permission(self.request, self):
+                return super().get(request, *args, **kwargs)
+            raise PermissionDenied()
+
+        elif IsAuthenticated().has_permission(self.request, self):
             return super().get(request, *args, **kwargs)
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
@@ -37,7 +44,8 @@ class LoggedUserView(RetrieveAPIView):
 class UpdateUserView(UpdateAPIView):
     model = get_user_model()
     serializer_class = LoggedUserSerializer
-    permission_classes = [permissions.IsAuthenticated, IsProfileOwner]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsProfileOwner]
+    required_scopes = ["user"]
     queryset = get_user_model().objects.all()
 
     def put(self, request, *args, **kwargs):
@@ -81,7 +89,7 @@ class UpdateUserView(UpdateAPIView):
 
 class ChangePasswordView(UpdateAPIView):
     serializer_class = PasswordSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
