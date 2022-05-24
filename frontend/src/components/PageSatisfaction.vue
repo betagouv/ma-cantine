@@ -1,5 +1,5 @@
 <template>
-  <v-card class="py-6 px-16 mx-auto my-6 box text-center" elevation="0" color="secondary lighten-4" v-if="askForRating">
+  <v-card class="py-6 px-16 mx-auto box text-center" elevation="0" color="secondary lighten-4" v-if="askForRating">
     <label class="body-2 grey--text text--darken-4" for="page-rating">
       Êtes-vous satisfait de « ma cantine » ?
     </label>
@@ -49,8 +49,8 @@
               rows="5"
             ></v-textarea>
             <p class="caption mb-0">
-              On pourrait vous contacter si on aurait besoin de plus des informations ou si on pense qu'on pourrait vous
-              aider en vos démarches.
+              Notre équipe pourrait être emmenée à prendre contact avec vous afin de vous accompagner dans vos
+              démarches.
             </p>
           </v-form>
         </v-card-text>

@@ -14,7 +14,7 @@
       <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
       <CanteensPagination v-on:canteen-count="canteenCount = $event" />
     </div>
-    <PageSatisfaction v-if="canteenCount" />
+    <PageSatisfaction v-if="canteenCount" class="my-12" />
     <div class="mt-12 mb-8">
       <h2 class="text-h5 font-weight-black mb-4">Mes outils</h2>
       <UserTools />

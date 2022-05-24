@@ -4,27 +4,15 @@ from api.serializers import ReviewSerializer
 from data.models import Review, Canteen, Diagnostic
 from django.db import IntegrityError
 from rest_framework import permissions
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, get_object_or_404
+from rest_framework.generics import CreateAPIView
 
 logger = logging.getLogger(__name__)
 
 
-# TODO: consider returning a list of reviews for better extensibility in the future?
-class ReviewView(CreateAPIView, RetrieveAPIView):
+class ReviewView(CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     model = Review
     serializer_class = ReviewSerializer
-    queryset = Review.objects.all()
-
-    def get_object(self):
-        queryset = self.get_queryset()
-        filter = {
-            "user": self.request.user,
-            "page": self.kwargs["page_pk"],
-        }
-        obj = get_object_or_404(queryset, **filter)
-        self.check_object_permissions(self.request, obj)
-        return obj
 
     def perform_create(self, serializer):
         try:

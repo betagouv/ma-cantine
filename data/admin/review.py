@@ -15,13 +15,13 @@ class ReviewAdmin(admin.ModelAdmin):
     )
     readonly_fields = fields
     list_display = (
+        "user",
         "page",
         "hasCanteen",
         "hasDiagnostic",
         "rating",
         "creation_date",
         "suggestion",
-        "user",
     )
     list_filter = (
         "rating",
