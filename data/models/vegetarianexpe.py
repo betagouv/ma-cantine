@@ -106,6 +106,10 @@ class VegetarianExpe(models.Model):
         verbose_name="Concernant l'inscription, l’option végétarienne quotidienne :",
     )
 
+    share_results = models.BooleanField(
+        default=False, verbose_name="l'utilisateur souhaite être informé des résultats"
+    )
+
     # ------------- T0
 
     vegetarian_menu_percentage_t0 = models.DecimalField(
