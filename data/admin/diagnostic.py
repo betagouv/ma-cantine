@@ -23,6 +23,13 @@ class DiagnosticInline(admin.TabularInline):
     fields = ("year", "creation_date")
     readonly_fields = fields
     extra = 0
+    can_delete = False
+
+    def has_add_permission(self, request, obj):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(Diagnostic)
