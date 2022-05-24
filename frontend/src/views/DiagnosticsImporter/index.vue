@@ -159,7 +159,7 @@
       </template>
     </v-simple-table>
 
-    <h3 class="my-6">Fichiers exemple</h3>
+    <h3 class="my-6">Fichiers d'exemple</h3>
     <p>
       Nous mettons à votre disposition un fichier exemple en format de choix :
       <a class="text-decoration-underline" href="/static/documents/fichier_exemple_ma_cantine.csv" download>
