@@ -268,12 +268,7 @@ export default {
       categories: Object.keys(Constants.Categories),
       characteristics: Object.keys(Constants.Characteristics),
       backLink: { name: "PurchasesHome" },
-      localDefinitions: [
-        { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },
-        { text: "Provenant du même département", value: "DEPARTMENT" },
-        { text: "Provenant de la même région", value: "REGION" },
-        { text: "Autre", value: "AUTRE" },
-      ],
+      localDefinitions: Object.values(Constants.LocalDefinitions),
       productDescriptions: [],
       providers: [],
     }

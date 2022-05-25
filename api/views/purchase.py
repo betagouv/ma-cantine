@@ -355,6 +355,8 @@ class ImportPurchasesView(APIView):
 
     @transaction.atomic
     def _create_purchase_for_canteen(self, siret, row):
+        if not Canteen.objects.filter(siret=siret).exists():
+            raise ObjectDoesNotExist()
         canteen = Canteen.objects.get(siret=siret)
         if self.request.user not in canteen.managers.all():
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
@@ -436,6 +438,13 @@ class ImportPurchasesView(APIView):
                 {
                     "message": e.detail,
                     "code": 401,
+                }
+            )
+        elif isinstance(e, ObjectDoesNotExist):
+            errors.append(
+                {
+                    "message": "Cantine non trouvée.",
+                    "code": 404,
                 }
             )
         elif isinstance(e, ValidationError):

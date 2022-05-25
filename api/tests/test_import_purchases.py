@@ -37,7 +37,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTMENT)
         self.assertEqual(purchase.import_source, "Import du fichier CSV")
 
-    # check semi colon and tab separators
+    # TODO: check semi colon and tab separators
 
     # Errors to test
     @authenticate
@@ -53,6 +53,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
         self.assertEqual(errors.pop(0)["message"], "Champ 'siret' : Le siret de la cantine ne peut pas être vide")
+        self.assertEqual(errors.pop(0)["message"], "Cantine non trouvée.")
         self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
         self.assertEqual(
             errors.pop(0)["message"], "Champ 'description du produit' : La description ne peut pas être vide"

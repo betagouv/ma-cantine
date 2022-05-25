@@ -1,5 +1,6 @@
 canteen_siret,description,provider,date,price_ht,category,characteristics,local_definition
 ,Empty siret,Le bon traiteur,2022-05-02,90.11,FRUITS_ET_LEGUMES,"BIO,LOCAL",DEPARTMENT
+86180597100897,Non-existent canteen,Le bon traiteur,2022-05-02,90.11,FRUITS_ET_LEGUMES,"BIO,LOCAL",DEPARTMENT
 36462492895701,Don't manage canteen,Le bon traiteur,2022-05-02,90.11,FRUITS_ET_LEGUMES,"BIO,LOCAL",DEPARTMENT
 82399356058716,,Missing description,2022-05-02,90.11,FRUITS_ET_LEGUMES,"BIO,LOCAL",DEPARTMENT
 82399356058716,Missing provider,,2022-05-02,90.11,FRUITS_ET_LEGUMES,"BIO,LOCAL",DEPARTMENT
