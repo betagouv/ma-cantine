@@ -16,7 +16,7 @@ class TestReviews(APITestCase):
         CanteenFactory.create(managers=[authenticate.user])
         payload = {
             "page": "CanteensHome",
-            "rating": 3,
+            "rating": 5,
             "suggestion": "Make it read my mind",
         }
         response = self.client.post(reverse("create_review"), payload)
@@ -39,7 +39,7 @@ class TestReviews(APITestCase):
 
         payload = {
             "page": "DiagnosticsHome",
-            "rating": 3,
+            "rating": 1,
             "suggestion": "Make it read my mind",
         }
         response = self.client.post(reverse("create_review"), payload)
@@ -73,6 +73,19 @@ class TestReviews(APITestCase):
         response = self.client.post(reverse("create_review"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         payload = {"rating": 5}  # no page
+        response = self.client.post(reverse("create_review"), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_fail_too_high_rating(self):
+        """
+        Test that user cannot submit a review without the required fields
+        """
+        payload = {
+            "page": "CanteensHome",
+            "rating": 6,
+            "suggestion": "Make it read my mind",
+        }
         response = self.client.post(reverse("create_review"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 

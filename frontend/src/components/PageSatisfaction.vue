@@ -1,7 +1,7 @@
 <template>
-  <v-card class="py-6 px-16 mx-auto box text-center" elevation="0" color="secondary lighten-4" v-if="askForRating">
+  <v-card class="py-6 px-8 mx-auto box text-center" elevation="0" color="primary lighten-4" v-if="askForRating">
     <label class="body-2 grey--text text--darken-4" for="page-rating">
-      Êtes-vous satisfait de « ma cantine » ?
+      Êtes-vous satisfait de la plateforme « ma cantine » ?
     </label>
     <v-rating
       v-model.number="rating"
@@ -10,7 +10,7 @@
       full-icon="mdi-star"
       class="mt-2 body-2"
       id="page-rating"
-      background-color="grey"
+      background-color="grey darken-1"
       length="5"
       hover
     ></v-rating>
@@ -24,7 +24,7 @@
         <v-card-text>
           <v-form ref="form" v-model="formIsValid">
             <label class="body-2 grey--text text--darken-4" for="dialog-rating">
-              Êtes-vous satisfait de « ma cantine » ?
+              Êtes-vous satisfait de la plateforme « ma cantine » ?
             </label>
             <v-rating
               v-model.number="rating"
@@ -49,8 +49,7 @@
               rows="5"
             ></v-textarea>
             <p class="caption mb-0">
-              Notre équipe pourrait être emmenée à prendre contact avec vous afin de vous accompagner dans vos
-              démarches.
+              Notre équipe pourrait être amenée à prendre contact avec vous afin d'échanger sur vos besoins.
             </p>
           </v-form>
         </v-card-text>
