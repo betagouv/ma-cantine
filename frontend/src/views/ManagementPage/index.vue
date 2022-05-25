@@ -14,6 +14,7 @@
       <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
       <CanteensPagination v-on:canteen-count="canteenCount = $event" />
     </div>
+    <PageSatisfaction v-if="canteenCount" class="my-12" />
     <div class="mt-12 mb-8">
       <h2 class="text-h5 font-weight-black mb-4">Mes outils</h2>
       <UserTools />
@@ -23,12 +24,13 @@
 
 <script>
 import CanteensPagination from "./CanteensPagination.vue"
+import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import UserTools from "./UserTools"
 import CompleteProfileField from "./CompleteProfileField"
 import validators from "@/validators"
 
 export default {
-  components: { CanteensPagination, UserTools, CompleteProfileField },
+  components: { CanteensPagination, UserTools, CompleteProfileField, PageSatisfaction },
   data() {
     return {
       validators,

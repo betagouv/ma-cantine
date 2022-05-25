@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from drf_base64.fields import Base64ImageField
+from .review import MiniReviewSerializer
 
 
 class LoggedUserSerializer(serializers.ModelSerializer):
     avatar = Base64ImageField(required=False, allow_null=True)
+    reviews = MiniReviewSerializer(many=True, read_only=True, source="review_set")
 
     class Meta:
         model = get_user_model()
@@ -28,6 +30,7 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "source",
             "other_source_description",
             "has_mtm_data",
+            "reviews",
         )
 
 

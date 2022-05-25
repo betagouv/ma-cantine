@@ -14,3 +14,4 @@ from .purchase import PurchaseFactory  # noqa
 from .reservationexpe import ReservationExpeFactory  # noqa
 from .vegetarianexpe import VegetarianExpeFactory  # noqa
 from .message import MessageFactory  # noqa
+from .review import ReviewFactory  # noqa
