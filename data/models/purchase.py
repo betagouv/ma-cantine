@@ -59,29 +59,30 @@ class Purchase(models.Model):
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
     date = models.DateField(default=date.today)
-    description = models.TextField(null=True, blank=True, verbose_name="Description du produit")
-    provider = models.TextField(null=True, blank=True, verbose_name="Fournisseur")
+    description = models.TextField(null=True, blank=True, verbose_name="description du produit")
+    provider = models.TextField(null=True, blank=True, verbose_name="fournisseur")
     category = models.CharField(
-        max_length=255, choices=Category.choices, null=True, blank=True, verbose_name="Catégorie"
+        max_length=255, choices=Category.choices, null=True, blank=True, verbose_name="catégorie"
     )
     characteristics = ChoiceArrayField(
         base_field=models.CharField(
-            max_length=255, choices=Characteristic.choices, null=True, blank=True, verbose_name="Caractéristique"
+            max_length=255, choices=Characteristic.choices, null=True, blank=True, verbose_name="caractéristique"
         ),
         blank=True,
         null=True,
         size=None,
-        verbose_name="Caractéristiques",
+        verbose_name="caractéristiques",
     )
     price_ht = models.DecimalField(
         max_digits=20,
         decimal_places=2,
-        verbose_name="Prix HT",
+        verbose_name="prix HT",
     )
     invoice_file = models.FileField(null=True, blank=True, upload_to="invoices/%Y/")
     local_definition = models.CharField(
         max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="définition de local"
     )
+    import_source = models.TextField(null=True, blank=True, verbose_name="source de l'import du produit")
 
     @property
     def readable_category(self):
