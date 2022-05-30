@@ -167,7 +167,7 @@
                       :for="`vegetarian-menu-percentage-${item.value}`"
                     >
                       Quel est le taux de prise des menus végétariens par rapport aux menus non-végétariens en cas de
-                      choix multiple ?
+                      choix multiple, en moyenne sur 20 repas successifs ?
                     </label>
                     <v-text-field
                       validate-on-blur
@@ -702,6 +702,15 @@
               </v-tab-item>
             </v-tabs-items>
           </div>
+
+          <!-- Keep me informed -->
+          <v-checkbox v-model="expe.shareResults">
+            <template v-slot:label>
+              <span class="body-2 grey--text text--darken-3">
+                Je souhaite être informé des conclusions de l'évaluation de l'expérimentation
+              </span>
+            </template>
+          </v-checkbox>
         </v-form>
         <v-card-actions class="mt-4">
           <v-spacer></v-spacer>

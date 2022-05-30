@@ -12,6 +12,7 @@ class VegetarianExpeSerializer(serializers.ModelSerializer):
             "experimentation_start_date",
             "menu_type_before_xp",
             "vege_menu_reservation",
+            "share_results",
             "vegetarian_menu_percentage_t0",
             "eggs_composition_t0",
             "cheese_composition_t0",
