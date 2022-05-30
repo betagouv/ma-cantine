@@ -81,7 +81,7 @@ class TestPurchaseImport(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'définition de local' : La définition de local ne peut pas être vide quand une des caractéristiques est local",
+            "Champ 'définition de local' : La définition de local est obligatoire pour les produits locaux",
         )
         self.assertEqual(
             errors.pop(0)["message"],

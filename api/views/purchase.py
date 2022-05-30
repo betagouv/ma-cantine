@@ -379,9 +379,7 @@ class ImportPurchasesView(APIView):
         local_definition = row.pop(0)
         if "LOCAL" in characteristics and not local_definition:
             raise ValidationError(
-                {
-                    "local_definition": "La définition de local ne peut pas être vide quand une des caractéristiques est local"
-                }
+                {"local_definition": "La définition de local est obligatoire pour les produits locaux"}
             )
 
         purchase = Purchase(
