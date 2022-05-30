@@ -15,7 +15,7 @@ from django_filters import rest_framework as django_filters
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager, IsAuthenticated
 from api.serializers import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer
 from data.models import Purchase, Canteen
-from .utils import CamelCaseOrderingFilter, UnaccentSearchFilter
+from .utils import CamelCaseOrderingFilter, UnaccentSearchFilter, normalise_siret
 from collections import OrderedDict
 import logging
 import csv
@@ -344,7 +344,7 @@ class ImportPurchasesView(APIView):
                 siret = row.pop(0)
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
-                siret = ImportPurchasesView._normalise_siret(siret)
+                siret = normalise_siret(siret)
                 purchase = self._create_purchase_for_canteen(siret, row)
                 purchases.append(purchase)
 
@@ -410,11 +410,6 @@ class ImportPurchasesView(APIView):
             },
             status=status.HTTP_200_OK,
         )
-
-    # TODO: to be a util
-    @staticmethod
-    def _normalise_siret(siret):
-        return siret.replace(" ", "")
 
     @staticmethod
     def _get_verbose_field_name(field_name):
