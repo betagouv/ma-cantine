@@ -183,7 +183,7 @@ export default {
       importInProgress: false,
       documentation: [
         {
-          name: "SIRET de la cuisine-site",
+          name: "SIRET de la cantine ayant réalisé l'achat",
           description: "La cantine avec ce SIRET doit être déjà enregistrée sur notre plateforme.",
           type: "14 chiffres, avec ou sans espaces",
           example: "000 000 000 00000",
