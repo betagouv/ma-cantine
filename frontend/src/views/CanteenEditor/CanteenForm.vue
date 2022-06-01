@@ -460,9 +460,9 @@ export default {
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
     if (this.originalCanteen) {
-      document.title = `Modifier - ${this.originalCanteen.name} - ma-cantine.beta.gouv.fr`
+      document.title = `Modifier - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
     } else {
-      document.title = `Nouvelle cantine - ma-cantine.beta.gouv.fr`
+      document.title = `Nouvelle cantine - ${this.$store.state.pageTitleSuffix}`
     }
   },
   mounted() {

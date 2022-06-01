@@ -64,7 +64,7 @@ export default {
     },
   },
   created() {
-    document.title = `Gestionnaires - ${this.originalCanteen.name} - ma-cantine.beta.gouv.fr`
+    document.title = `Gestionnaires - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
   },
   data() {
     return {

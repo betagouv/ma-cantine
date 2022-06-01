@@ -80,7 +80,7 @@ export default {
   },
   watch: {
     blogPost() {
-      if (this.blogPost) document.title = `${this.blogPost.title} - ma-cantine.beta.gouv.fr`
+      if (this.blogPost) document.title = `${this.blogPost.title} - ${this.$store.state.pageTitleSuffix}`
     },
   },
   beforeRouteEnter(to, from, next) {
