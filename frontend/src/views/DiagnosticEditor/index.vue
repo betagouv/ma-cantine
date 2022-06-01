@@ -105,13 +105,14 @@
                 </legend>
                 <v-row>
                   <v-col cols="12" md="9" class="pr-3">
-                    <label class="caption mb-1 mt-2">Label Rouge</label>
+                    <label class="caption mb-1 mt-2" for="label-rouge">Label Rouge</label>
                     <v-container class="d-flex pa-0 align-center">
                       <div style="min-width: 100px; width: 100px;">
                         <img src="/static/images/quality-labels/label-rouge.png" alt="" style="height: 2em;" />
                       </div>
                       <div class="flex-grow-1">
                         <v-text-field
+                          id="label-rouge"
                           hide-details="auto"
                           type="number"
                           suffix="€ HT"
@@ -133,7 +134,7 @@
                     </v-container>
                   </v-col>
                   <v-col cols="12" md="9" class="pr-3">
-                    <label class="caption mb-1 mt-2">AOC / AOP / IGP</label>
+                    <label class="caption mb-1 mt-2" for="aoc-aop-igp">AOC / AOP / IGP</label>
                     <v-container class="d-flex pa-0 align-center">
                       <div style="min-width: 100px;">
                         <img src="/static/images/quality-labels/Logo-AOC-AOP.png" alt="" style="height: 2em;" />
@@ -141,6 +142,7 @@
                       </div>
                       <div class="flex-grow-1">
                         <v-text-field
+                          id="aoc-aop-igp"
                           hide-details="auto"
                           type="number"
                           suffix="€ HT"
@@ -162,13 +164,14 @@
                     </v-container>
                   </v-col>
                   <v-col cols="12" md="9" class="pr-3">
-                    <label class="caption mb-1 mt-2">Haute Valeur Environnementale</label>
+                    <label class="caption mb-1 mt-2" for="hve">Haute Valeur Environnementale</label>
                     <v-container class="d-flex pa-0 align-center">
                       <div style="min-width: 100px;">
                         <img src="/static/images/quality-labels/hve.png" alt="" style="height: 2em;" />
                       </div>
                       <div class="flex-grow-1">
                         <v-text-field
+                          id="hve"
                           hide-details="auto"
                           type="number"
                           suffix="€ HT"

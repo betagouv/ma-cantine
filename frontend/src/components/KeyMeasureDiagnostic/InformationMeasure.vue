@@ -63,10 +63,12 @@
       label="J'informe sur la qualité nutritionnelle des repas"
       :readonly="readonly"
       :disabled="readonly"
+      class="mb-6"
     />
 
-    <p class="text-left mt-6 mb-2">Lien vers le support de communication</p>
+    <label class="text-left" for="support-link">Lien vers le support de communication</label>
     <v-text-field
+      id="support-link"
       :rules="[validators.urlOrEmpty]"
       solo
       v-model="diagnostic.communicationSupportUrl"
@@ -74,6 +76,7 @@
       validate-on-blur
       :readonly="readonly"
       :disabled="readonly"
+      class="mt-2"
     ></v-text-field>
   </div>
 </template>
