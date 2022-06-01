@@ -61,6 +61,7 @@
 
           <v-btn v-else icon class="mr-2 ml-2 align-self-center" v-on="on">
             <v-icon>mdi-menu</v-icon>
+            <span class="d-sr-only">Menu</span>
           </v-btn>
         </template>
 
