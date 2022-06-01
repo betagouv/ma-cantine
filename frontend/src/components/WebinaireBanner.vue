@@ -17,6 +17,7 @@
         color="primary darken-1"
         href="https://app.livestorm.co/maa-4/webinaire-egalim-creation-dun-compte-ma-cantine"
         target="_blank"
+        rel="noopener noreferrer"
       >
         M'inscrire
       </v-btn>
