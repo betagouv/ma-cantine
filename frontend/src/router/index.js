@@ -37,6 +37,7 @@ import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import ContactPage from "@/views/ContactPage"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
+import CommunityPage from "@/views/CommunityPage"
 
 Vue.use(VueRouter)
 
@@ -388,6 +389,14 @@ const routes = [
     meta: {
       title: "Nouvel achat",
       authenticationRequired: true,
+    },
+  },
+  {
+    path: "/communaute/",
+    name: "CommunityPage",
+    component: CommunityPage,
+    meta: {
+      title: "Communauté",
     },
   },
   {

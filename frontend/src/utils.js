@@ -296,8 +296,8 @@ export class BadRequestError extends Error {
 }
 
 // Formats ISO 8601 date strings (not datetime). Expects YYYY-MM-DD format.
-export const formatDate = (dateString) => {
-  const options = {
+export const formatDate = (dateString, formatOptions = null) => {
+  const options = formatOptions || {
     year: "numeric",
     month: "short",
     day: "numeric",
