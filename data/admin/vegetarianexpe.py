@@ -48,6 +48,7 @@ class VegetarianExpeAdmin(admin.ModelAdmin):
                     "experimentation_start_date",
                     "menu_type_before_xp",
                     "vege_menu_reservation",
+                    "share_results",
                 )
             },
         ),
