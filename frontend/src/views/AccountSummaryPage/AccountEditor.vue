@@ -27,7 +27,7 @@
                 v-if="userCopy.avatar"
                 text
                 class="text-decoration-underline"
-                color="red"
+                color="red darken-2"
                 small
                 @click="changeProfileImage(undefined)"
               >

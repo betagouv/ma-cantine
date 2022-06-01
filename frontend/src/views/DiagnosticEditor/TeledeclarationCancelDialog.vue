@@ -24,7 +24,7 @@
         <v-btn outlined text @click="$emit('input', false)" class="mr-2">
           Non, revenir en arrière
         </v-btn>
-        <v-btn outlined color="red" text @click="$emit('cancel')">
+        <v-btn outlined color="red darken-2" text @click="$emit('cancel')">
           Oui, annuler ma télédéclaration
         </v-btn>
       </v-card-actions>

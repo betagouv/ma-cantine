@@ -77,7 +77,7 @@
                 Il s'agit d'une erreur ?
                 <v-dialog v-model="siretDialog" width="500">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn text v-bind="attrs" v-on="on" color="primary">Contactez l'équipe ma cantine</v-btn>
+                    <v-btn text v-bind="attrs" v-on="on" color="primary darken-1">Contactez l'équipe ma cantine</v-btn>
                   </template>
 
                   <v-card class="text-left">
@@ -146,7 +146,7 @@
           <label class="body-2" for="logo">
             Logo
           </label>
-          <div v-if="canteen.logo" class="body-2 grey--text grey--lighten-2">
+          <div v-if="canteen.logo" class="body-2 grey--text text--darken-1">
             Cliquez sur le logo pour changer
           </div>
           <div>
@@ -198,7 +198,7 @@
           </v-radio-group>
         </v-col>
 
-        <v-col cols="12" md="6" :class="showDailyMealCount ? '' : 'grey--text'">
+        <v-col cols="12" md="6" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
           <p class="body-2 my-2">
             Couverts moyen par jour (convives sur place)
           </p>
@@ -214,7 +214,7 @@
           ></v-text-field>
         </v-col>
 
-        <v-col cols="12" md="6" :class="showSatelliteCanteensCount ? '' : 'grey--text'">
+        <v-col cols="12" md="6" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
           <p class="body-2 my-2">Nombre de cantines à qui je fournis des repas</p>
           <v-text-field
             hide-details="auto"
