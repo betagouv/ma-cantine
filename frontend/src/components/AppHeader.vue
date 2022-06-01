@@ -2,11 +2,9 @@
   <div v-if="!!this.$route.name">
     <v-app-bar
       v-mutate.attr="updateExtended"
-      :shrink-on-scroll="dynamicSizingEnabled"
-      :prominent="dynamicSizingEnabled"
-      :short="dynamicSizingEnabled"
-      :elevate-on-scroll="elevateOnScroll"
-      :elevation="elevateOnScroll ? undefined : 0"
+      prominent
+      elevate-on-scroll
+      :elevation="showScrollShadow ? undefined : 0"
       app
       clipped-right
       color="white"
@@ -14,14 +12,17 @@
     >
       <v-toolbar-title class="align-self-center">
         <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex">
-          <v-img :src="`/static/images/${imageFilename}`" :width="imageWidth" alt="Page d'accueil ma cantine"></v-img>
+          <v-img src="/static/images/Marianne.png" height="90" contain alt="Page d'accueil ma cantine"></v-img>
         </router-link>
       </v-toolbar-title>
       <div style="height: 100%" class="d-flex flex-column">
         <v-spacer></v-spacer>
-        <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
-          {{ chipInfo.text }}
-        </v-chip>
+        <div>
+          <span v-if="$vuetify.breakpoint.smAndUp" id="ma-cantine-header">ma cantine</span>
+          <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
+            {{ chipInfo.text }}
+          </v-chip>
+        </div>
         <v-spacer></v-spacer>
       </div>
 
@@ -87,21 +88,9 @@ export default {
     userDataReady() {
       return !!this.$store.state.initialDataLoaded
     },
-    useLargeImage() {
-      return !this.$vuetify.breakpoint.xs && this.extended && this.dynamicSizingEnabled
-    },
-    imageFilename() {
-      return this.useLargeImage ? "header-logos-extended.png" : "header-logos-compact.svg"
-    },
-    imageWidth() {
-      return this.useLargeImage ? "300" : "210"
-    },
-    dynamicSizingEnabled() {
+    showScrollShadow() {
       const viewNames = ["LandingPage", "BlogsHome"]
       return this.$vuetify.breakpoint.name !== "xs" && viewNames.includes(this.$route.name)
-    },
-    elevateOnScroll() {
-      return this.dynamicSizingEnabled
     },
     chipInfo() {
       const env = window.ENVIRONMENT
@@ -130,5 +119,10 @@ export default {
   height: 60%;
   max-height: 30px;
   border-left: solid 1px #ccc;
+}
+#ma-cantine-header {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 700;
 }
 </style>
