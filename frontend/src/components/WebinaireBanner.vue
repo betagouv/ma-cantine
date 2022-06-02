@@ -8,7 +8,7 @@
       </v-btn>
 
       <span class="text-caption text-sm-subtitle-1">
-        Inscrivez-vous au webinaire « Création et gestion de compte » du mercredi 01 juin 11h-12h
+        Inscrivez-vous au webinaire « Création et gestion de compte » du mercredi 08 juin 14h-15h
       </span>
       <v-btn
         outlined
