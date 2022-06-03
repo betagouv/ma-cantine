@@ -337,7 +337,7 @@ class ImportPurchasesView(APIView):
                 # first check that the number of columns is good
                 #   to throw error if badly formatted early on.
                 if len(row) < 7:
-                    raise BadRequest(detail=f"Format fichier : 7-8 colonnes attendues, {len(row)} trouvés.")
+                    raise BadRequest()
                 siret = row.pop(0)
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
@@ -428,6 +428,13 @@ class ImportPurchasesView(APIView):
                 {
                     "message": e.detail,
                     "code": 401,
+                }
+            )
+        elif isinstance(e, BadRequest):
+            errors.append(
+                {
+                    "message": f"Format fichier : 7-8 colonnes attendues, {len(row)} trouvés.",
+                    "code": 400,
                 }
             )
         elif isinstance(e, ObjectDoesNotExist):
