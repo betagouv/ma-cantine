@@ -1,13 +1,16 @@
 <template>
   <v-card elevation="0" class="text-left">
-    <v-card-title class="text-h5 font-weight-black">Changer mon mot de passe</v-card-title>
+    <v-card-title>
+      <h1 class="font-weight-black text-h4 mb-4 mt-1">Changer mon mot de passe</h1>
+    </v-card-title>
 
     <v-card-text>
       <v-form ref="form" v-model="formIsValid">
         <v-row>
           <v-col cols="12">
-            <p class="body-2 mb-1 mt-2 text-left">Mot de passe actuel</p>
+            <label for="actual" class="body-2 mb-1 mt-2 text-left">Mot de passe actuel</label>
             <v-text-field
+              id="actual"
               type="password"
               :rules="[validators.required]"
               hide-details="auto"
@@ -17,8 +20,9 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12">
-            <p class="body-2 mb-1 mt-2 text-left">Nouveau mot de passe</p>
+            <label for="new" class="body-2 mb-1 mt-2 text-left">Nouveau mot de passe</label>
             <v-text-field
+              id="new"
               type="password"
               :rules="[validators.required]"
               hide-details="auto"
@@ -28,10 +32,11 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12">
-            <p class="body-2 mb-1 mt-2 text-left">
+            <label for="confirm" class="body-2 mb-1 mt-2 text-left">
               Confirmation de nouveau mot de passe
-            </p>
+            </label>
             <v-text-field
+              id="confirm"
               type="password"
               hide-details="auto"
               solo

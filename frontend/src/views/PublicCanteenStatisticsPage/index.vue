@@ -469,7 +469,7 @@ export default {
       this.chosenSectors = this.$route.query.sectors?.split(",").map((s) => parseInt(s, 10)) || []
     },
     updateDocumentTitle() {
-      let title = "Les statistiques dans ma collectivité - ma-cantine.beta.gouv.fr"
+      let title = `Les statistiques dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
       if (this.chosenRegion || this.chosenDepartment) title = `${this.createLocationText()} - ${title}`
       document.title = title
     },

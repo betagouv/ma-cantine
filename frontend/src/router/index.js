@@ -65,9 +65,6 @@ const routes = [
     path: "/mon-compte",
     name: "AccountSummaryPage",
     component: AccountSummaryPage,
-    meta: {
-      title: "Mon compte",
-    },
     redirect: { name: "AccountEditor" },
     children: [
       {
@@ -76,6 +73,7 @@ const routes = [
         component: AccountEditor,
         meta: {
           authenticationRequired: true,
+          title: "Mon compte",
         },
       },
       {
@@ -84,6 +82,7 @@ const routes = [
         component: PasswordChangeEditor,
         meta: {
           authenticationRequired: true,
+          title: "Changer mon mot de passe",
         },
       },
       {
@@ -92,6 +91,7 @@ const routes = [
         component: AccountDeletion,
         meta: {
           authenticationRequired: true,
+          title: "Supprimer mon compte",
         },
       },
     ],

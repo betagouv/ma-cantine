@@ -23,7 +23,7 @@ export default {
     },
   },
   created() {
-    document.title = `Supprimer - ${this.originalCanteen?.name || ""} - ma-cantine.beta.gouv.fr`
+    document.title = `Supprimer - ${this.originalCanteen?.name || ""} - ${this.$store.state.pageTitleSuffix}`
   },
   data() {
     return {

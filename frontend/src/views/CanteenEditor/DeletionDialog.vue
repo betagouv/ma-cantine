@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="isOpen" width="500">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn color="red" outlined v-bind="attrs" v-on="on">
+      <v-btn color="red darken-2" outlined v-bind="attrs" v-on="on">
         <v-icon small class="mr-2">mdi-alert</v-icon>
         Supprimer cette cantine
       </v-btn>
@@ -21,7 +21,7 @@
         <v-btn outlined text @click="$emit('input', false)" class="mr-2">
           Non, revenir en arrière
         </v-btn>
-        <v-btn outlined color="red" text @click="$emit('delete')">
+        <v-btn outlined color="red darken-2" text @click="$emit('delete')">
           Oui, supprimer ma cantine
         </v-btn>
       </v-card-actions>

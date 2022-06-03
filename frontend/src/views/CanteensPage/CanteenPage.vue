@@ -90,7 +90,7 @@ export default {
   methods: {
     setCanteen(canteen) {
       this.canteen = canteen
-      if (canteen) document.title = `${this.canteen.name} - ma-cantine.beta.gouv.fr`
+      if (canteen) document.title = `${this.canteen.name} - ${this.$store.state.pageTitleSuffix}`
     },
   },
   beforeMount() {

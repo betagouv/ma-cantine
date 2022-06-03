@@ -191,7 +191,7 @@
         >
           <v-dialog v-model="showDeleteDialog" v-if="!isNewPurchase" width="500">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn :disabled="loading" large v-bind="attrs" v-on="on" outlined color="error" class="ma-1">
+              <v-btn :disabled="loading" large v-bind="attrs" v-on="on" outlined color="red darken-2" class="ma-1">
                 <v-icon class="mr-1">mdi-trash-can</v-icon>
                 Supprimer
               </v-btn>
@@ -207,7 +207,7 @@
                 <v-btn outlined text @click="showDeleteDialog = false" class="mr-2">
                   Non, revenir en arrière
                 </v-btn>
-                <v-btn outlined color="red" text @click="deletePurchase">
+                <v-btn outlined color="red darken-2" text @click="deletePurchase">
                   Oui, supprimer cet achat
                 </v-btn>
               </v-card-actions>

@@ -34,6 +34,7 @@ const verifyResponse = function(response) {
 export default new Vuex.Store({
   state: {
     loggedUser: null,
+    pageTitleSuffix: "ma cantine",
 
     userLoadingStatus: Constants.LoadingStatus.IDLE,
     canteensLoadingStatus: Constants.LoadingStatus.IDLE,

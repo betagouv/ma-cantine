@@ -19,8 +19,15 @@
         md="3"
         class="d-flex align-content-center justify-center"
       >
-        <a class="d-flex" :style="`max-width: ${partner.maxWidth};`" :href="partner.href" target="_blank">
+        <a
+          class="d-flex"
+          :style="`max-width: ${partner.maxWidth};`"
+          :href="partner.href"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <v-img :src="partner.imagePath" :alt="partner.alt" contain></v-img>
+          <span class="d-sr-only">{{ partner.alt }}</span>
         </a>
       </v-col>
     </v-row>
