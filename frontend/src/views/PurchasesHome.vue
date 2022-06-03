@@ -9,20 +9,15 @@
           Une alimentation saine et durable commence par un suivi comptable de vos achats. Des nouvelles fonctionnalités
           arrivent bientôt dans cet espace !
         </p>
-        <v-row v-if="hasCanteens" align="center">
-          <v-col cols="3">
-            <v-btn class="primary" :to="{ name: 'NewPurchase' }" large>
-              <v-icon>mdi-plus</v-icon>
-              Ajouter un produit
-            </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn text color="primary" :to="{ name: 'PurchasesImporter' }">
-              <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
-              Créer plusieurs achats depuis un fichier
-            </v-btn>
-          </v-col>
-          <v-spacer></v-spacer>
+        <v-row v-if="hasCanteens" align="center" class="px-3">
+          <v-btn color="primary" :to="{ name: 'NewPurchase' }" large class="mr-2 my-3">
+            <v-icon>mdi-plus</v-icon>
+            Ajouter un produit
+          </v-btn>
+          <v-btn text color="primary" :to="{ name: 'PurchasesImporter' }" class="px-0 px-md-2 my-3">
+            <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
+            Créer plusieurs achats depuis un fichier
+          </v-btn>
         </v-row>
         <p class="font-weight-bold" v-else>
           Pour commencer à suivre vos achats, veuillez ajouter une cantine.

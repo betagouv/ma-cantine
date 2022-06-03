@@ -296,7 +296,6 @@ class ImportPurchasesView(APIView):
                 if errors:
                     raise IntegrityError()
 
-            # serialized_purchases = [camelize(PurchaseExportSerializer(purchase).data) for purchase in purchases]
             return ImportPurchasesView._get_success_response([], self.purchases_created, errors, start)
 
         except IntegrityError as e:
@@ -337,10 +336,8 @@ class ImportPurchasesView(APIView):
             try:
                 # first check that the number of columns is good
                 #   to throw error if badly formatted early on.
-                #   NB: popped siret before this so columns are 1 less
                 if len(row) < 7:
-                    # TODO: why permission denied ?
-                    raise PermissionDenied(detail=f"Format fichier : 7-8 colonnes attendues, {len(row)} trouvés.")
+                    raise BadRequest(detail=f"Format fichier : 7-8 colonnes attendues, {len(row)} trouvés.")
                 siret = row.pop(0)
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
