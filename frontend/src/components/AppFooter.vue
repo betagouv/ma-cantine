@@ -4,19 +4,7 @@
     <v-container class="constrained pb-0 pt-0">
       <v-row v-if="!showSmallFooter" class="pt-12 pt-sm-0">
         <v-col cols="12" sm="2" :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.name != 'xs' }">
-          <v-spacer />
-          <v-img
-            src="/static/images/Marianne.png"
-            contain
-            class="mb-4"
-            :max-width="$vuetify.breakpoint.smAndDown ? 90 : 140"
-          ></v-img>
-          <v-spacer />
-          <v-img
-            src="/static/images/beta-gouv-logo.png"
-            contain
-            :max-width="$vuetify.breakpoint.smAndDown ? 80 : 100"
-          ></v-img>
+          <v-img src="/static/images/Marianne.png" contain class="mb-4" max-width="140"></v-img>
           <v-spacer />
         </v-col>
         <v-spacer></v-spacer>

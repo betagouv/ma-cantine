@@ -8,7 +8,7 @@
       :width="$vuetify.breakpoint.xsOnly ? 'auto' : 150"
       class="d-flex flex-column justify-center px-4"
     >
-      <div class="text-h3 grey--text font-weight-black text-center">{{ diagnostic.year }}</div>
+      <div class="text-h3 grey--text text--darken-1 font-weight-black text-center">{{ diagnostic.year }}</div>
     </v-sheet>
     <v-row>
       <v-col cols="7">

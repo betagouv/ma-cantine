@@ -160,9 +160,9 @@
 
     <v-divider v-if="showExpeSegment" class="mb-8"></v-divider>
     <div v-if="showExpeSegment">
-      <p class="text-h6 font-weight-bold">
+      <h3 class="text-h6 font-weight-bold mb-4">
         Expérimentation réservation de repas
-      </p>
+      </h3>
 
       <p class="body-2">
         Vous souhaitez réduire le gaspillage alimentaire dans votre établissement et générer des économies :

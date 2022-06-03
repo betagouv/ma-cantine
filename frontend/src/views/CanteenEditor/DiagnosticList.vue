@@ -62,7 +62,7 @@ export default {
     },
   },
   created() {
-    document.title = `Diagnostics - ${this.originalCanteen.name} - ma-cantine.beta.gouv.fr`
+    document.title = `Diagnostics - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
   },
 }
 </script>

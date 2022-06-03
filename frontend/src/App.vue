@@ -62,7 +62,7 @@ export default {
   },
   watch: {
     $route(to) {
-      const suffix = "ma-cantine.beta.gouv.fr"
+      const suffix = "ma cantine"
       document.title = to.meta.title ? to.meta.title + " - " + suffix : suffix
       document.querySelector('meta[property="og:url"]').setAttribute("content", window.location)
     },

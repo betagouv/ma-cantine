@@ -78,9 +78,9 @@
 
     <v-divider v-if="showExpeSegment" class="my-4"></v-divider>
     <div v-if="showExpeSegment">
-      <p class="text-h6 font-weight-bold">
+      <h3 class="text-h6 font-weight-bold mb-4">
         Expérimentation de l'option végétarienne quotidienne pour les collectivités volontaires
-      </p>
+      </h3>
       <p class="body-2">
         Pour participer à l'expérimentation d'une option végétarienne quotidienne, telle que prévue par la loi Climat et
         résilience, nous vous proposons de répondre à quelques questions sur la mise en œuvre de l'option végétarienne
