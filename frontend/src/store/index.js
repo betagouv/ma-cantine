@@ -411,6 +411,18 @@ export default new Vuex.Store({
       }).then(verifyResponse)
     },
 
+    importPurchases(context, payload) {
+      let form = new FormData()
+      form.append("file", payload.file)
+      return fetch(`/api/v1/importPurchases/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": window.CSRF_TOKEN || "",
+        },
+        body: form,
+      }).then(verifyResponse)
+    },
+
     notify(context, { title, message, status }) {
       context.commit("SET_NOTIFICATION", { title, message, status })
       setTimeout(() => context.commit("REMOVE_NOTIFICATION", message), 4000)

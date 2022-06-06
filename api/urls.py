@@ -19,7 +19,7 @@ from api.views import ImportDiagnosticsView, TeledeclarationCreateView
 from api.views import TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
 from api.views import UserCanteenPreviews, CanteenLocationsView
-from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView
+from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView, ImportPurchasesView
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
 from api.views import ReviewView
 
@@ -125,6 +125,7 @@ urlpatterns = {
         name="canteen_purchases_summary",
     ),
     path("purchaseOptions/", PurchaseOptionsView.as_view(), name="purchase_options"),
+    path("importPurchases/", ImportPurchasesView.as_view(), name="import_purchases"),
     path("canteenLocations/", CanteenLocationsView.as_view(), name="canteen_locations"),
     path("canteen/<int:canteen_pk>/reservationExpe/", ReservationExpeView.as_view(), name="canteen_reservation_expe"),
     path("canteen/<int:canteen_pk>/vegetarianExpe/", VegetarianExpeView.as_view(), name="canteen_vegetarian_expe"),

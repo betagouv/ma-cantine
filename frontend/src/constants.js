@@ -85,6 +85,12 @@ export default Object.freeze({
     SHORT_DISTRIBUTION: { text: "Circuit-court" },
     LOCAL: { text: "Local" },
   },
+  LocalDefinitions: {
+    AUTOUR_SERVICE: { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },
+    DEPARTMENT: { text: "Provenant du même département", value: "DEPARTMENT" },
+    REGION: { text: "Provenant de la même région", value: "REGION" },
+    AUTRE: { text: "Autre", value: "AUTRE" },
+  },
   TrackingParams: ["mtm_source", "mtm_campaign", "mtm_medium"],
   Jobs: [
     {

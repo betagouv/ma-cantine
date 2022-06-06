@@ -37,6 +37,7 @@ import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import ContactPage from "@/views/ContactPage"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
+import PurchasesImporter from "@/views/PurchasesImporter"
 
 Vue.use(VueRouter)
 
@@ -387,6 +388,15 @@ const routes = [
     component: PurchasePage,
     meta: {
       title: "Nouvel achat",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/importer-achats",
+    name: "PurchasesImporter",
+    component: PurchasesImporter,
+    meta: {
+      title: "Importer des achats",
       authenticationRequired: true,
     },
   },
