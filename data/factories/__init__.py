@@ -15,3 +15,4 @@ from .reservationexpe import ReservationExpeFactory  # noqa
 from .vegetarianexpe import VegetarianExpeFactory  # noqa
 from .message import MessageFactory  # noqa
 from .review import ReviewFactory  # noqa
+from .communityevent import CommunityEventFactory  # noqa

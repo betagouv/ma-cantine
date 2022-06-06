@@ -40,3 +40,4 @@ from .reservationexpe import ReservationExpeView  # noqa: F401
 from .vegetarianexpe import VegetarianExpeView  # noqa: F401
 from .message import MessageCreateView  # noqa: F401
 from .review import ReviewView  # noqa: F401
+from .communityevent import CommunityEventsView  # noqa: F401
