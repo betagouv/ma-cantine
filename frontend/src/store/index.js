@@ -40,10 +40,12 @@ export default new Vuex.Store({
     canteensLoadingStatus: Constants.LoadingStatus.IDLE,
     purchasesLoadingStatus: Constants.LoadingStatus.IDLE,
     expeLoadingStatus: Constants.LoadingStatus.IDLE,
+    communityEventsLoadingStatus: Constants.LoadingStatus.IDLE,
 
     sectors: [],
     userCanteenPreviews: [],
     initialDataLoaded: false,
+    upcomingCommunityEvents: [],
 
     notification: {
       message: "",
@@ -64,6 +66,9 @@ export default new Vuex.Store({
     },
     SET_EXPE_LOADING_STATUS(state, status) {
       state.expeLoadingStatus = status
+    },
+    SET_COMMUNITY_EVENTS_LOADING_STATUS(state, status) {
+      state.communityEventsLoadingStatus = status
     },
     SET_LOGGED_USER(state, loggedUser) {
       state.loggedUser = loggedUser
@@ -104,6 +109,9 @@ export default new Vuex.Store({
       state.notification.message = null
       state.notification.status = null
       state.notification.title = null
+    },
+    SET_UPCOMING_COMMUNITY_EVENTS(state, events) {
+      state.upcomingCommunityEvents = events
     },
   },
 
@@ -169,7 +177,11 @@ export default new Vuex.Store({
     },
 
     fetchInitialData(context) {
-      return Promise.all([context.dispatch("fetchLoggedUser"), context.dispatch("fetchSectors")])
+      return Promise.all([
+        context.dispatch("fetchLoggedUser"),
+        context.dispatch("fetchSectors"),
+        context.dispatch("fetchUpcomingCommunityEvents"),
+      ])
         .then(() => {
           if (context.state.loggedUser) return context.dispatch("fetchUserCanteenPreviews")
         })
@@ -653,6 +665,20 @@ export default new Vuex.Store({
           return response
         })
         .catch((e) => {
+          throw e
+        })
+    },
+
+    fetchUpcomingCommunityEvents(context) {
+      context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch("/api/v1/communityEvents")
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_UPCOMING_COMMUNITY_EVENTS", response)
+          context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
+        .catch((e) => {
+          context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
           throw e
         })
     },

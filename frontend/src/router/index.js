@@ -38,6 +38,7 @@ import ContactPage from "@/views/ContactPage"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
 import PurchasesImporter from "@/views/PurchasesImporter"
+import CommunityPage from "@/views/CommunityPage"
 
 Vue.use(VueRouter)
 
@@ -398,6 +399,14 @@ const routes = [
     meta: {
       title: "Importer des achats",
       authenticationRequired: true,
+    },
+  },
+  {
+    path: "/communaute/",
+    name: "CommunityPage",
+    component: CommunityPage,
+    meta: {
+      title: "Communauté",
     },
   },
   {

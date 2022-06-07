@@ -27,7 +27,7 @@ import AppFooter from "@/components/AppFooter"
 import WebinaireBanner from "@/components/WebinaireBanner"
 import NotificationSnackbar from "@/components/NotificationSnackbar"
 import Constants from "@/constants"
-import { readCookie } from "@/utils"
+import { readCookie, sortIdDescending, bannerCookieName, hideCommunityEventsBanner } from "@/utils"
 
 export default {
   components: {
@@ -36,16 +36,22 @@ export default {
     NotificationSnackbar,
     WebinaireBanner,
   },
-  data() {
-    const bannerCookieName = "webinaireBannerHide2"
-    return {
-      bannerCookieName,
-      showWebinaireBanner: !readCookie(bannerCookieName),
-    }
-  },
   computed: {
     initialDataLoaded() {
       return this.$store.state.initialDataLoaded
+    },
+    showWebinaireBanner() {
+      const upcomingCommunityEvents = this.$store.state.upcomingCommunityEvents
+      if (upcomingCommunityEvents.length === 0) {
+        return false
+      }
+      const lastHiddenEventId = readCookie(bannerCookieName)
+      if (lastHiddenEventId) {
+        const lastEventId = sortIdDescending(upcomingCommunityEvents)[0].id
+        return lastEventId > parseInt(lastHiddenEventId, 10)
+      } else {
+        return true
+      }
     },
   },
   mounted() {
@@ -76,10 +82,8 @@ export default {
   },
   methods: {
     hideBanner() {
-      const expirationDate = new Date()
-      expirationDate.setFullYear(expirationDate.getFullYear() + 1)
-      document.cookie = `${this.bannerCookieName}=True;max-age=31536000;path=/;expires=${expirationDate.toUTCString()}`
-      this.showWebinaireBanner = false
+      const upcomingCommunityEvents = this.$store.state.upcomingCommunityEvents
+      hideCommunityEventsBanner(upcomingCommunityEvents)
     },
   },
 }
