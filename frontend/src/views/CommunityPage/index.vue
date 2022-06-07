@@ -37,6 +37,9 @@
       <v-col cols="12" v-for="webinaire in webinaires" :key="webinaire.id">
         <WebinaireCard :webinaire="webinaire" />
       </v-col>
+      <v-col cols="12" v-if="webinaires.length === 0">
+        <p><i>Aucun webinaire à venir, à bientôt !</i></p>
+      </v-col>
     </v-row>
 
     <h3 class="font-weight-black body-1 mt-8">Précedents webinaires à revoir</h3>
@@ -61,46 +64,10 @@ import TheNewsletter from "@/components/TheNewsletter"
 export default {
   name: "CommunityPage",
   components: { WebinaireCard, TheNewsletter },
-  data() {
-    return {
-      webinaires: [
-        {
-          id: 1,
-          title: "Candidater et comprendre les commandes publiques",
-          authorName: "Cristina Machi",
-          authorTitle: "Responsable 1% artistique",
-          description:
-            "In general, ISO 8601 applies to these representations and formats: dates, in the Gregorian calendar (including the proleptic Gregorian calendar).",
-          date: "2022-05-31T08:27:26Z",
-          type: "VISIO",
-          link: "https://en.wikipedia.org/wiki/ISO_8601",
-          address: null,
-        },
-        {
-          id: 2,
-          title: "Character (computing)",
-          authorName: "Anne Iversaire",
-          authorTitle: "Enseignante",
-          description:
-            "Examples of characters include letters, numerical digits, common punctuation marks (such as '.' or '-'), and whitespace.",
-          date: "2022-06-31T08:27:26Z",
-          type: "VISIO",
-          link: "https://en.wikipedia.org/wiki/Character_(computing)",
-          address: null,
-        },
-        {
-          id: 3,
-          title: "Quantum entanglement",
-          authorName: "Stuart Freedman",
-          authorTitle: "Chercheur",
-          description: null,
-          date: "2022-07-31T08:27:26Z",
-          type: "IN_PERSON",
-          link: "https://en.wikipedia.org/wiki/Character_(computing)",
-          address: "52 rue Childebert, Lyon",
-        },
-      ],
-    }
+  computed: {
+    webinaires() {
+      return this.$store.state.upcomingCommunityEvents
+    },
   },
 }
 </script>

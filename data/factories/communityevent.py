@@ -1,5 +1,6 @@
 import factory
 from data.models import CommunityEvent
+import pytz
 
 
 class CommunityEventFactory(factory.django.DjangoModelFactory):
@@ -7,6 +8,7 @@ class CommunityEventFactory(factory.django.DjangoModelFactory):
         model = CommunityEvent
 
     title = factory.Faker("catch_phrase")
-    description = factory.Faker("paragraph")
-    date = factory.Faker("future_date")
+    tagline = factory.Faker("paragraph")
+    start_date = factory.Faker("future_datetime", tzinfo=pytz.timezone("Europe/Paris"))
+    end_date = factory.Faker("future_datetime", tzinfo=pytz.timezone("Europe/Paris"))
     link = factory.Faker("uri")

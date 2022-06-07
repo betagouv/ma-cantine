@@ -7,4 +7,4 @@ from rest_framework.generics import ListAPIView
 class CommunityEventsView(ListAPIView):
     model = CommunityEvent
     serializer_class = CommunityEventSerializer
-    queryset = CommunityEvent.objects.filter(date__gte=timezone.now())
+    queryset = CommunityEvent.objects.filter(end_date__gt=timezone.now())

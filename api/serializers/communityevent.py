@@ -8,7 +8,8 @@ class CommunityEventSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "title",
-            "description",
-            "date",
+            "tagline",
+            "start_date",
+            "end_date",
             "link",
         )

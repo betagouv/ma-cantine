@@ -6,11 +6,11 @@
           <v-icon :aria-label="ariaLabel" aria-hidden="false">{{ icon }}</v-icon>
         </v-avatar>
       </v-col>
-      <v-col cols="12" sm="4" class="align-center d-flex">
+      <v-col cols="12" sm="3" class="align-center d-flex">
         <div class="font-weight-bold">{{ webinaire.title }}</div>
       </v-col>
-      <v-col cols="12" sm="4" class="align-center d-flex body-2">
-        {{ webinaire.description }}
+      <v-col cols="12" sm="5" class="align-center d-flex body-2">
+        {{ webinaire.tagline }}
       </v-col>
       <v-col cols="12" sm="3" class="align-center d-flex">
         <div class="d-flex flex-column">
@@ -19,7 +19,7 @@
             <v-icon small color="primary">mdi-map-marker</v-icon>
             {{ webinaire.address || "Visio - conférence" }}
           </div>
-          <v-btn outlined color="primary" width="120">Je m'inscris</v-btn>
+          <v-btn outlined color="primary" width="120" :href="webinaire.link">Je m'inscris</v-btn>
         </div>
       </v-col>
     </v-row>
@@ -27,8 +27,6 @@
 </template>
 
 <script>
-import { formatDate } from "@/utils"
-
 export default {
   name: "WebinaireCard",
   props: {
@@ -39,15 +37,15 @@ export default {
   },
   computed: {
     icon() {
-      if (this.webinaire.type === "VISIO") return "mdi-television-play"
-      return "mdi-account-supervisor"
+      if (this.webinaire.type === "IN_PERSON") return "mdi-account-supervisor"
+      return "mdi-television-play"
     },
     ariaLabel() {
-      if (this.webinaire.type === "VISIO") return "Webinaire en visio-conférence"
-      return "Webinaire présentiel"
+      if (this.webinaire.type === "IN_PERSON") return "Événement en présentiel"
+      return "Webinaire en visio-conférence"
     },
     date() {
-      return formatDate(this.webinaire.date, {
+      return new Date(this.webinaire.startDate).toLocaleString("fr", {
         month: "long",
         day: "numeric",
         timeZone: "Europe/Paris",

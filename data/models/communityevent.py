@@ -1,17 +1,27 @@
-from django.utils import timezone
 from django.db import models
-from ckeditor_uploader.fields import RichTextUploadingField
+from django.core.exceptions import ValidationError
 
 
 class CommunityEvent(models.Model):
     class Meta:
         verbose_name = "événement"
-        ordering = ["date"]
+        ordering = ["start_date"]
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
     title = models.TextField(verbose_name="titre")
-    date = models.DateField(default=timezone.now, verbose_name="date de l'événement")
-    description = RichTextUploadingField(null=True, blank=True, verbose_name="description")
-    link = models.TextField(null=True, blank=True, verbose_name="lien")
+    start_date = models.DateTimeField(verbose_name="date de début")
+    end_date = models.DateTimeField(verbose_name="date de fin")
+    tagline = models.TextField(null=True, blank=True, verbose_name="description courte")
+    link = models.TextField(verbose_name="lien pour s'inscrire")
+
+    def clean(self):
+        self.validate_dates()
+        return super().clean()
+
+    def validate_dates(self):
+        if self.start_date is None or self.end_date is None:
+            return
+        if self.end_date <= self.start_date:
+            raise ValidationError({"end_date": "La date de fin doit être superieure à la date de début"})
