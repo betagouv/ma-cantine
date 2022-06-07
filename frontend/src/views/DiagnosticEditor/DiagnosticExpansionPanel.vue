@@ -4,10 +4,12 @@
       <template v-slot:default="{ open }">
         <v-row no-gutters>
           <v-col cols="7" class="font-weight-bold">
-            <v-icon class="mr-2" :color="iconColour">
-              {{ icon }}
-            </v-icon>
-            {{ heading }}
+            <span class="d-flex">
+              <v-icon class="mr-2" :color="iconColour">
+                {{ icon }}
+              </v-icon>
+              <h2 class="text-body-1 font-weight-bold">{{ heading }}</h2>
+            </span>
           </v-col>
           <v-col cols="5" class="text--secondary text-right pr-2 align-self-center align-self-center">
             <v-fade-transition leave-absolute>

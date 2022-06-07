@@ -1,12 +1,14 @@
 <template>
   <v-card elevation="0" class="text-left">
-    <v-card-title class="text-h5 font-weight-black">Mon compte</v-card-title>
+    <v-card-title>
+      <h1 class="font-weight-black text-h4 mb-4 mt-1">Mon compte</h1>
+    </v-card-title>
     <v-card-subtitle class="mt-n1">Votre nom d'utilisateur : {{ userCopy.username }}</v-card-subtitle>
     <v-card-text>
       <v-form ref="form" v-model="formIsValid">
         <v-row>
           <v-col cols="12">
-            <p class="body-2 mb-1 mt-2 text-left">Photo</p>
+            <label for="photo" class="body-2 mt-2 text-left">Photo</label>
             <div>
               <v-avatar color="grey lighten-2" size="70" class="mr-4">
                 <v-img :src="userCopy.avatar" v-if="userCopy.avatar"></v-img>
@@ -22,12 +24,19 @@
                 <v-icon class="mr-1" small>mdi-image</v-icon>
                 Choisir une photo
               </v-btn>
-              <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onProfilePhotoChanged" />
+              <input
+                ref="uploader"
+                class="d-none"
+                type="file"
+                accept="image/*"
+                @change="onProfilePhotoChanged"
+                id="photo"
+              />
               <v-btn
                 v-if="userCopy.avatar"
                 text
                 class="text-decoration-underline"
-                color="red"
+                color="red darken-2"
                 small
                 @click="changeProfileImage(undefined)"
               >
@@ -37,8 +46,10 @@
             </div>
           </v-col>
           <v-col cols="12" md="6">
-            <p class="body-2 mb-1 mt-2 text-left">Prénom</p>
+            <label for="first-name" class="body-2 mt-2 text-left">Prénom</label>
             <v-text-field
+              id="first-name"
+              class="mt-1"
               hide-details="auto"
               solo
               v-model="userCopy.firstName"
@@ -47,8 +58,10 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="6">
-            <p class="body-2 mb-1 mt-2 text-left">Nom</p>
+            <label for="last-name" class="body-2 mt-2 text-left">Nom</label>
             <v-text-field
+              id="last-name"
+              class="mt-1"
               hide-details="auto"
               solo
               v-model="userCopy.lastName"
@@ -57,8 +70,10 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="6">
-            <p class="body-2 mb-1 mt-2 text-left">Numéro téléphone</p>
+            <label for="phone" class="body-2 mt-2 text-left">Numéro téléphone</label>
             <v-text-field
+              id="phone"
+              class="mt-1"
               hide-details="auto"
               solo
               v-model="userCopy.phoneNumber"
@@ -67,8 +82,10 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12">
-            <p class="body-2 mb-1 mt-2 text-left">Adresse email</p>
+            <label for="email" class="body-2 mt-2 text-left">Adresse email</label>
             <v-text-field
+              id="email"
+              class="mt-1"
               hide-details="auto"
               solo
               v-model="userCopy.email"
@@ -77,8 +94,10 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="9">
-            <p class="body-2 mb-1 mt-2 text-left">Fonction</p>
+            <label for="job" class="body-2 mt-2 text-left">Fonction</label>
             <v-select
+              id="job"
+              class="mt-1"
               v-model="userCopy.job"
               :items="jobOptions"
               :rules="[validators.required]"
@@ -97,8 +116,10 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="9" v-if="!userCopy.hasMtmData">
-            <p class="body-2 mb-1 mt-2 text-left">Comment avez-vous connu ma-cantine ?</p>
+            <label for="source" class="body-2 mt-2 text-left">Comment avez-vous connu ma-cantine ?</label>
             <v-select
+              id="source"
+              class="mt-1"
               v-model="userCopy.source"
               :items="sourceOptions"
               :rules="[validators.required]"

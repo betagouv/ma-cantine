@@ -105,7 +105,7 @@
           rencontrées.
         </p>
         <v-alert type="error" outlined>
-          <v-simple-table color="red" dense>
+          <v-simple-table color="red darken-2" dense>
             <template v-slot:default>
               <thead>
                 <tr>

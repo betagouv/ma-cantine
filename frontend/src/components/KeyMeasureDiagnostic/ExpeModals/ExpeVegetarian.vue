@@ -150,7 +150,7 @@
               :show-arrows="$vuetify.breakpoint.xs"
               v-model="tab"
               align-with-title
-              color="primary"
+              color="primary darken-1"
               background-color="primary lighten-5"
             >
               <v-tab v-for="item in tabs" :key="item.key">

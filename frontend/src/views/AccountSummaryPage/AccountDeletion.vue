@@ -1,6 +1,8 @@
 <template>
   <v-card elevation="0" class="text-left">
-    <v-card-title class="text-h5 font-weight-black">Supprimer mon compte</v-card-title>
+    <v-card-title>
+      <h1 class="font-weight-black text-h4 mb-4 mt-1">Supprimer mon compte</h1>
+    </v-card-title>
     <v-card-subtitle class="text-body-2 mt-n1">
       Contactez nous pour supprimer votre compte ou demander les données liées à votre profil
     </v-card-subtitle>

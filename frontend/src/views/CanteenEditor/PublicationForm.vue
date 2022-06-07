@@ -163,7 +163,7 @@ export default {
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
-    document.title = `Publier - ${this.originalCanteen.name} - ma-cantine.beta.gouv.fr`
+    document.title = `Publier - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.handleUnload)

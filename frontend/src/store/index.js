@@ -34,6 +34,7 @@ const verifyResponse = function(response) {
 export default new Vuex.Store({
   state: {
     loggedUser: null,
+    pageTitleSuffix: "ma cantine",
 
     userLoadingStatus: Constants.LoadingStatus.IDLE,
     canteensLoadingStatus: Constants.LoadingStatus.IDLE,
@@ -414,6 +415,18 @@ export default new Vuex.Store({
       let form = new FormData()
       form.append("file", payload.file)
       return fetch(`/api/v1/importDiagnostics/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": window.CSRF_TOKEN || "",
+        },
+        body: form,
+      }).then(verifyResponse)
+    },
+
+    importPurchases(context, payload) {
+      let form = new FormData()
+      form.append("file", payload.file)
+      return fetch(`/api/v1/importPurchases/`, {
         method: "POST",
         headers: {
           "X-CSRFToken": window.CSRF_TOKEN || "",

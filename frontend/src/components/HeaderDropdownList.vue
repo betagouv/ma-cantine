@@ -41,7 +41,7 @@
             <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
               Non, revenir en arrière
             </v-btn>
-            <v-btn color="red" text href="/se-deconnecter">
+            <v-btn color="red darken-2" text href="/se-deconnecter">
               Oui, je confirme
             </v-btn>
           </v-card-actions>
