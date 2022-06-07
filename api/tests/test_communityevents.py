@@ -6,8 +6,11 @@ from rest_framework import status
 from data.factories import CommunityEventFactory
 
 
-class TestBlogApi(APITestCase):
+class TestCommunityEventAPI(APITestCase):
     def test_community_event_format(self):
+        """
+        Test correct data returned by API
+        """
         today = timezone.now()
         CommunityEventFactory.create(end_date=today)
 
@@ -16,6 +19,7 @@ class TestBlogApi(APITestCase):
         body = response.json()
 
         community_event = body[0]
+        self.assertIn("id", community_event)
         self.assertIn("title", community_event)
         self.assertIn("tagline", community_event)
         self.assertIn("startDate", community_event)
@@ -29,6 +33,7 @@ class TestBlogApi(APITestCase):
         today = timezone.now()
         # past community event
         CommunityEventFactory.create(end_date=(today - timedelta(days=1)))
+
         upcoming_community_events = [
             CommunityEventFactory.create(
                 start_date=(today + timedelta(days=9)), end_date=(today + timedelta(days=10))

@@ -47,9 +47,14 @@
       Nos webinaires sont interactifs et permettent de poser vos questions aux intervenants. Vous pouvez toutefois
       regarder les replays !
     </p>
-    <v-btn outlined color="primary" large>
+    <v-btn
+      outlined
+      color="primary"
+      large
+      href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/webinaires-les-defis-de-ma-cantine"
+    >
       <v-icon class="mr-2">mdi-play-circle</v-icon>
-      Replay webinaires
+      Revoir les webinaires
     </v-btn>
 
     <v-divider class="mt-6 mb-10"></v-divider>

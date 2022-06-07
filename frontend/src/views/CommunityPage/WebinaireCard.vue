@@ -1,9 +1,9 @@
 <template>
-  <v-card class="pa-4">
+  <v-card class="pa-4" :href="webinaire.link">
     <v-row>
       <v-col cols="1" v-if="$vuetify.breakpoint.smAndUp" class="justify-center align-center d-flex">
         <v-avatar color="secondary lighten-1" size="40">
-          <v-icon :aria-label="ariaLabel" aria-hidden="false">{{ icon }}</v-icon>
+          <v-icon>{{ icon }}</v-icon>
         </v-avatar>
       </v-col>
       <v-col cols="12" sm="3" class="align-center d-flex">
@@ -19,7 +19,10 @@
             <v-icon small color="primary">mdi-map-marker</v-icon>
             {{ webinaire.address || "Visio - conférence" }}
           </div>
-          <v-btn outlined color="primary" width="120" :href="webinaire.link">Je m'inscris</v-btn>
+          <v-btn outlined color="primary" width="120">
+            Je m'inscris
+            <span class="d-sr-only">à {{ webinaire.title }}</span>
+          </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -39,10 +42,6 @@ export default {
     icon() {
       if (this.webinaire.type === "IN_PERSON") return "mdi-account-supervisor"
       return "mdi-television-play"
-    },
-    ariaLabel() {
-      if (this.webinaire.type === "IN_PERSON") return "Événement en présentiel"
-      return "Webinaire en visio-conférence"
     },
     date() {
       return new Date(this.webinaire.startDate).toLocaleString("fr", {
