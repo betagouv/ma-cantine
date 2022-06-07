@@ -60,6 +60,7 @@
 <script>
 import WebinaireCard from "./WebinaireCard"
 import TheNewsletter from "@/components/TheNewsletter"
+import { hideCommunityEventsBanner } from "@/utils"
 
 export default {
   name: "CommunityPage",
@@ -68,6 +69,9 @@ export default {
     webinaires() {
       return this.$store.state.upcomingCommunityEvents
     },
+  },
+  mounted() {
+    hideCommunityEventsBanner(this.webinaires)
   },
 }
 </script>

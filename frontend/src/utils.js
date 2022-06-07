@@ -358,3 +358,17 @@ export const readCookie = (name) => {
   }
   return null
 }
+
+export const sortIdDescending = (objects) => {
+  return objects.sort((a, b) => b.id - a.id)
+}
+
+export const bannerCookieName = "lastHiddenCommunityEventId"
+
+export const hideCommunityEventsBanner = (events) => {
+  if (events.length === 0) return
+  const expirationDate = new Date()
+  expirationDate.setFullYear(expirationDate.getFullYear() + 1)
+  const lastEventId = sortIdDescending(events)[0].id
+  document.cookie = `${bannerCookieName}=${lastEventId};max-age=31536000;path=/;expires=${expirationDate.toUTCString()};SameSite=Strict;`
+}
