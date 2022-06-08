@@ -19,7 +19,7 @@
             <v-icon small color="primary">mdi-map-marker</v-icon>
             {{ webinaire.address || "Visio - conférence" }}
           </div>
-          <v-btn outlined color="primary" width="120">
+          <v-btn color="primary" width="120">
             Je m'inscris
             <span class="d-sr-only">à {{ webinaire.title }}</span>
           </v-btn>

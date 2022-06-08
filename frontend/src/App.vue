@@ -103,4 +103,9 @@ export default {
 .v-menu__content {
   text-align: left;
 }
+
+.cta-group {
+  background-color: #b6d9c8;
+  border-radius: 16px;
+}
 </style>
