@@ -4,36 +4,20 @@
       <v-col cols="12" sm="2" class="pl-2 pr-2 pl-md-8 pr-md-0">
         <v-img src="/static/images/doodles/primary/Hi.png" max-height="180" contain></v-img>
       </v-col>
-      <v-col cols="12" sm="5" class="px-2 px-md-10 py-4">
-        <h1 class="text-h5 font-weight-black">
+      <v-col cols="12" sm="9" class="px-2 px-md-10 py-4">
+        <h1 class="text-h4 font-weight-black">
           Par ici, on propose un espace d'entraide et rencontre, participez !
         </h1>
       </v-col>
-      <v-col cols="12" sm="5" class="px-2 px-md-16 py-4">
-        <div>
-          <v-icon>mdi-chevron-right</v-icon>
-          Webinaires
-        </div>
-        <div>
-          <v-icon>mdi-chevron-right</v-icon>
-          Contact
-        </div>
-        <div>
-          <v-icon>mdi-chevron-right</v-icon>
-          Être informé des événements
-        </div>
-      </v-col>
     </v-row>
 
-    <v-divider class="mt-6 mb-10"></v-divider>
-
-    <h2 class="font-weight-black text-h6">Webinaires à venir</h2>
-    <p class="mt-4">
-      Expertes et experts de la communauté partagent expériences et conseils pour développer votre carrière,
-      inscrivez-vous pour y assister !
+    <h2 class="font-weight-black text-h5">Webinaires à venir</h2>
+    <p class="my-4">
+      Membres de la communauté partagent expériences et conseils pour utiliser notre plateforme et améliorer votre
+      offre, inscrivez-vous pour y assister !
     </p>
 
-    <v-row class="my-4">
+    <v-row class="mx-0 my-6 pa-6 cta-group">
       <v-col cols="12" v-for="webinaire in webinaires" :key="webinaire.id">
         <WebinaireCard :webinaire="webinaire" />
       </v-col>
@@ -42,7 +26,7 @@
       </v-col>
     </v-row>
 
-    <h3 class="font-weight-black body-1 mt-8">Précedents webinaires à revoir</h3>
+    <h3 class="font-weight-black text-h6 mt-8">Précedents webinaires à revoir</h3>
     <p class="my-4">
       Nos webinaires sont interactifs et permettent de poser vos questions aux intervenants. Vous pouvez toutefois
       regarder les replays !
