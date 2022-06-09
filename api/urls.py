@@ -19,9 +19,10 @@ from api.views import ImportDiagnosticsView, TeledeclarationCreateView
 from api.views import TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
 from api.views import UserCanteenPreviews, CanteenLocationsView
-from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView
+from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView, ImportPurchasesView
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
 from api.views import ReviewView
+from api.views import CommunityEventsView
 
 
 urlpatterns = {
@@ -125,6 +126,7 @@ urlpatterns = {
         name="canteen_purchases_summary",
     ),
     path("purchaseOptions/", PurchaseOptionsView.as_view(), name="purchase_options"),
+    path("importPurchases/", ImportPurchasesView.as_view(), name="import_purchases"),
     path("canteenLocations/", CanteenLocationsView.as_view(), name="canteen_locations"),
     path("canteen/<int:canteen_pk>/reservationExpe/", ReservationExpeView.as_view(), name="canteen_reservation_expe"),
     path("canteen/<int:canteen_pk>/vegetarianExpe/", VegetarianExpeView.as_view(), name="canteen_vegetarian_expe"),
@@ -132,6 +134,7 @@ urlpatterns = {
     path("teamJoinRequest/<int:pk>/", TeamJoinRequestView.as_view(), name="canteen_team_request"),
     path("usernameSuggestion/", UsernameSuggestionView.as_view(), name="username_suggestion"),
     path("reviews/", ReviewView.as_view(), name="create_review"),
+    path("communityEvents/", CommunityEventsView.as_view(), name="community_event_list"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

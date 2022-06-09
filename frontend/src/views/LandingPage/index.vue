@@ -2,7 +2,7 @@
   <div>
     <PresentationBlock class="mb-12" />
 
-    <ActionsBlock class="ma-0 ma-md-n4 pa-6" style="background-color: #b6d9c8; border-radius: 16px;" />
+    <ActionsBlock class="ma-0 ma-md-n4 pa-6 cta-group" />
 
     <v-divider class="mt-16"></v-divider>
 

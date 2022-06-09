@@ -115,6 +115,11 @@ export default {
           to: { name: "CanteensHome" },
         },
         {
+          text: "Notre communauté",
+          icon: "mdi-account-group",
+          to: { name: "CommunityPage" },
+        },
+        {
           text: "Blog",
           icon: "mdi-newspaper-variant-outline",
           to: { name: "BlogsHome" },

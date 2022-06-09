@@ -20,7 +20,7 @@ from api.serializers import PublicDiagnosticSerializer, FullCanteenSerializer
 from data.models import Canteen, Sector
 from api.permissions import IsCanteenManager, CanEditDiagnostic, IsAuthenticated
 from api.exceptions import DuplicateException
-from .utils import camelize
+from .utils import camelize, normalise_siret
 from .canteen import AddManagerView
 import requests
 
@@ -137,7 +137,7 @@ class ImportDiagnosticsView(APIView):
             try:
                 if row[0] == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
-                siret = ImportDiagnosticsView._normalise_siret(row[0])
+                siret = normalise_siret(row[0])
                 canteen, should_update_geolocation = self._update_or_create_canteen_with_diagnostic(row, siret)
                 canteens[canteen.siret] = canteen
                 if should_update_geolocation:
@@ -261,7 +261,7 @@ class ImportDiagnosticsView(APIView):
         canteen.name = row[1]
         canteen.city_insee_code = row[2]
         canteen.postal_code = row[3]
-        canteen.central_producer_siret = ImportDiagnosticsView._normalise_siret(row[4])
+        canteen.central_producer_siret = normalise_siret(row[4])
         canteen.daily_meal_count = row[5]
         canteen.production_type = row[7].lower()
         canteen.management_type = row[8].lower()
@@ -405,10 +405,6 @@ class ImportDiagnosticsView(APIView):
                 }
             )
         return errors
-
-    @staticmethod
-    def _normalise_siret(siret):
-        return siret.replace(" ", "")
 
     @staticmethod
     def _get_verbose_field_name(field_name):

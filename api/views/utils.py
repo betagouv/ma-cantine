@@ -11,6 +11,10 @@ def camelize(data):
     return json.loads(camel_case_bytes.decode("utf-8"))
 
 
+def normalise_siret(siret):
+    return siret.replace(" ", "")
+
+
 class CamelCaseOrderingFilter(filters.OrderingFilter):
     """
     Needed for filtering with camel case parameters. More info :
