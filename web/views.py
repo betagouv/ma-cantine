@@ -47,8 +47,11 @@ class RegisterUserView(FormView):
             self.success_url = reverse_lazy("registration_email_sent_error", kwargs={"username": username})
             return super().form_valid(form)
         else:
-            has_canteens = not self.request.user.is_anonymous and self.request.user.canteens.count() > 0
-            self.success_url = reverse_lazy("app") if has_canteens else "/nouvelle-cantine"
+            if self.request.GET.get("next"):
+                self.success_url = self.request.GET.get("next")
+            else:
+                has_canteens = not self.request.user.is_anonymous and self.request.user.canteens.count() > 0
+                self.success_url = reverse_lazy("app") if has_canteens else "/nouvelle-cantine"
             return super().form_valid(form)
 
 

@@ -42,6 +42,25 @@
         </v-row>
       </v-card>
 
+      <div v-if="showClaimCanteen">
+        <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-if="claimSucceeded">
+          Votre demande a bien été prise en compte. Nous reviendrons vers vous au plus vite.
+        </v-alert>
+
+        <v-alert colored-border color="primary" elevation="2" border="left" type="info" v-else>
+          <div>Cet établissement n'a pas de gestionnaire associé. C'est votre établissement ?</div>
+          <div v-if="loggedUser" class="mt-2">
+            <v-btn @click="claimCanteen" outlined color="primary">Revendiquer cet établissement</v-btn>
+          </div>
+          <div v-else>
+            <a :href="`/creer-mon-compte?next=${currentPage}`">Créez votre compte</a>
+            ou
+            <a :href="`/s-identifier?next=${currentPage}`">connectez-vous</a>
+            pour le revendiquer.
+          </div>
+        </v-alert>
+      </div>
+
       <CanteenPublication :canteen="canteen" />
 
       <v-divider class="my-8"></v-divider>
@@ -66,6 +85,7 @@ export default {
       canteen: undefined,
       labels,
       canteensHomeBacklink: { name: "CanteensHome" },
+      claimSucceeded: false,
     }
   },
   components: {
@@ -86,11 +106,33 @@ export default {
       const diagnostics = this.canteen.diagnostics
       return diagnosticsMap(diagnostics)
     },
+    loggedUser() {
+      return this.$store.state.loggedUser
+    },
+    showClaimCanteen() {
+      return this.canteen && this.canteen.canBeClaimed
+    },
+    currentPage() {
+      return window.location.pathname
+    },
   },
   methods: {
     setCanteen(canteen) {
       this.canteen = canteen
       if (canteen) document.title = `${this.canteen.name} - ${this.$store.state.pageTitleSuffix}`
+    },
+    claimCanteen() {
+      const payload = {
+        email: this.loggedUser.email,
+        name: `${this.loggedUser.firstName} ${this.loggedUser.lastName}`,
+        username: this.loggedUser.username,
+        canteen: { name: this.canteen.name, id: this.canteen.id },
+      }
+
+      return this.$store
+        .dispatch("claimCanteen", { payload })
+        .then(() => (this.claimSucceeded = true))
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
   beforeMount() {
