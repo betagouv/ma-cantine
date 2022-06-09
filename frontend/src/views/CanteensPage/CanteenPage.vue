@@ -122,15 +122,9 @@ export default {
       if (canteen) document.title = `${this.canteen.name} - ${this.$store.state.pageTitleSuffix}`
     },
     claimCanteen() {
-      const payload = {
-        email: this.loggedUser.email,
-        name: `${this.loggedUser.firstName} ${this.loggedUser.lastName}`,
-        username: this.loggedUser.username,
-        canteen: { name: this.canteen.name, id: this.canteen.id },
-      }
-
+      const canteenId = this.canteen.id
       return this.$store
-        .dispatch("claimCanteen", { payload })
+        .dispatch("claimCanteen", { canteenId })
         .then(() => (this.claimSucceeded = true))
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },

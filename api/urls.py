@@ -134,7 +134,7 @@ urlpatterns = {
     path("usernameSuggestion/", UsernameSuggestionView.as_view(), name="username_suggestion"),
     path("reviews/", ReviewView.as_view(), name="create_review"),
     path("communityEvents/", CommunityEventsView.as_view(), name="community_event_list"),
-    path("claimCanteen/", ClaimCanteenView.as_view(), name="claim_canteen"),
+    path("canteens/<int:canteen_pk>/claim/", ClaimCanteenView.as_view(), name="claim_canteen"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

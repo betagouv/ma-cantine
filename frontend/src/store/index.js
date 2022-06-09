@@ -683,10 +683,8 @@ export default new Vuex.Store({
         })
     },
 
-    claimCanteen(context, { payload }) {
-      return fetch("/api/v1/claimCanteen/", { method: "POST", headers, body: JSON.stringify(payload) }).then(
-        verifyResponse
-      )
+    claimCanteen(context, { canteenId }) {
+      return fetch(`/api/v1/canteens/${canteenId}/claim/`, { method: "POST", headers }).then(verifyResponse)
     },
   },
 

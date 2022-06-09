@@ -690,26 +690,24 @@ class CanteenLocationsView(APIView):
 
 
 class ClaimCanteenView(APIView):
-    def post(self, request):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, canteen_pk):
         try:
-            email = request.data.get("email")
-            validate_email(email)
-            name = request.data.get("name")
-            username = request.data.get("username")
-            canteen = request.data.get("canteen")
+            canteen_name = Canteen.objects.only("name").get(pk=canteen_pk).name
 
             context = {
-                "email": email,
-                "name": name,
-                "username": username,
-                "canteen_name": canteen["name"],
-                "canteen_id": canteen["id"],
+                "email": self.request.user.email,
+                "name": self.request.user.get_full_name(),
+                "username": self.request.user.username,
+                "canteen_name": canteen_name,
+                "canteen_id": canteen_pk,
                 "protocol": settings.PROTOCOL,
                 "domain": settings.HOSTNAME,
             }
 
             send_mail(
-                subject=f"{name} voudrait revendiquer la canteen {canteen['name']}",
+                subject=f"{self.request.user.get_full_name()} voudrait revendiquer la canteen {canteen_name}",
                 to=[
                     settings.CONTACT_EMAIL,
                 ],
@@ -718,8 +716,6 @@ class ClaimCanteenView(APIView):
             )
 
             return JsonResponse({}, status=status.HTTP_200_OK)
-        except ValidationError:
-            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error("Exception ocurred while sending email")
             logger.exception(e)
