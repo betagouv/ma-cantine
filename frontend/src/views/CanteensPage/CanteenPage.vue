@@ -50,13 +50,13 @@
         <v-alert colored-border color="primary" elevation="2" border="left" type="info" v-else>
           <div>Cet établissement n'a pas de gestionnaire associé. C'est votre établissement ?</div>
           <div v-if="loggedUser" class="mt-2">
-            <v-btn @click="claimCanteen" outlined color="primary">Revendiquer cet établissement</v-btn>
+            <v-btn @click="claimCanteen" outlined color="primary">Rejoindre cet établissement</v-btn>
           </div>
           <div v-else>
             <a :href="`/creer-mon-compte?next=${currentPage}`">Créez votre compte</a>
             ou
             <a :href="`/s-identifier?next=${currentPage}`">connectez-vous</a>
-            pour le revendiquer.
+            pour le rejoindre.
           </div>
         </v-alert>
       </div>
