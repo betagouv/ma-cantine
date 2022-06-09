@@ -407,6 +407,31 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
+    def test_staff_error_collection(self, _):
+        """
+        If errors occur, discard the file and return the errors with row and message
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.save()
+        authenticate.user.refresh_from_db()
+
+        with open("./api/tests/files/diagnostics_bad_staff_file.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(Canteen.objects.count(), 0)
+        errors = body["errors"]
+        first_error = errors.pop(0)
+        self.assertEqual(first_error["status"], 400)
+        self.assertEqual(
+            first_error["message"],
+            "Champ 'état de publication' : La valeur «\xa0'publish'\xa0» n’est pas un choix valide.",
+        )
+
+    @authenticate
     def test_diagnostic_header_allowed(self, _):
         """
         Optionally allow a header that starts with SIRET in the file
