@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-app>
-      <AppHeader />
+      <AppHeader class="mx-auto constrained" />
 
       <v-main style="width: 100%" class="mb-10">
         <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner" />
