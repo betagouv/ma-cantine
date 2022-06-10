@@ -15,7 +15,7 @@
         </v-btn>
       </v-col>
       <v-col cols="4" v-if="$vuetify.breakpoint.mdAndUp">
-        <v-card rel="noopener" href="https://www.facebook.com/groups/719336016153227/" target="_blank">
+        <v-card href="https://www.facebook.com/groups/719336016153227/">
           <v-img contain src="/static/images/facebook-cover.jpg" alt="Groupe Facebook ma cantine"></v-img>
         </v-card>
       </v-col>
