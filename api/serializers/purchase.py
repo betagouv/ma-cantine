@@ -59,6 +59,3 @@ class PurchaseExportSerializer(serializers.ModelSerializer):
             "price_ht",
         )
         read_only_fields = fields
-
-    def get_category():
-        return
