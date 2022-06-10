@@ -488,7 +488,8 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 1)
         email = mail.outbox[0]
+        body = email.body.replace("\n", " ")
         self.assertEqual(email.to[0], "contact@example.com")
-        self.assertIn(f"{user.get_full_name()} (nom d'utilisateur : {user.username})", email.body)
-        self.assertIn("veut revendiquer la cantine", email.body)
-        self.assertIn(f"{canteen.name} (ID : {canteen.id}).", email.body)
+        self.assertIn(f"{user.get_full_name()} (nom d'utilisateur : {user.username})", body)
+        self.assertIn("veut revendiquer la cantine", body)
+        self.assertIn(f"{canteen.name} (ID : {canteen.id}).", body)
