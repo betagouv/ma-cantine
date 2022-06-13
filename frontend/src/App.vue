@@ -27,7 +27,7 @@ import AppFooter from "@/components/AppFooter"
 import WebinaireBanner from "@/components/WebinaireBanner"
 import NotificationSnackbar from "@/components/NotificationSnackbar"
 import Constants from "@/constants"
-import { readCookie, sortIdDescending, bannerCookieName, hideCommunityEventsBanner } from "@/utils"
+import { readCookie, largestId, bannerCookieName, hideCommunityEventsBanner } from "@/utils"
 
 export default {
   components: {
@@ -47,7 +47,7 @@ export default {
       }
       const lastHiddenEventId = readCookie(bannerCookieName)
       if (lastHiddenEventId) {
-        const lastEventId = sortIdDescending(upcomingCommunityEvents)[0].id
+        const lastEventId = largestId(upcomingCommunityEvents)
         return lastEventId > parseInt(lastHiddenEventId, 10)
       } else {
         return true
