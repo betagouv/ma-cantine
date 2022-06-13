@@ -9,7 +9,7 @@ backports.zoneinfo==0.2.1
 billiard==3.6.4.0
 black==22.3.0
 boto3==1.24.3
-botocore==1.27.3
+botocore==1.27.7
 celery==5.2.7
 certifi==2022.5.18.1
 cffi==1.15.0
@@ -70,7 +70,7 @@ py==1.11.0
 pycparser==2.21
 pyHanko==0.13.1
 pyhanko-certvalidator==0.19.5
-pylint==2.14.0
+pylint==2.14.1
 pylint-django==2.5.3
 pylint-plugin-utils==0.7
 pyparsing==3.0.9
