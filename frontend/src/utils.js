@@ -360,7 +360,7 @@ export const readCookie = (name) => {
 }
 
 export const largestId = (objects) => {
-  return Math.max(objects.map((x) => x.id))
+  return Math.max(...objects.map((x) => x.id))
 }
 
 export const bannerCookieName = "lastHiddenCommunityEventId"
