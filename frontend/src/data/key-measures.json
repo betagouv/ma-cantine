@@ -176,7 +176,7 @@
         "tags": [
           "Collectivités volontaires"
         ],
-        "title": "Expérimentation du menu végétarien dans les collectivités volontaires",
+        "title": "Expérimentation de l'option végétarienne quotidienne pour les collectivités volontaires",
         "who": "Pour les collectivités volontaires."
       }
     ],
@@ -231,7 +231,7 @@
           "display": "À partir du 1er janvier 2025 (sauf pour les communes de - de 2000 hab : 1er janvier 2028)",
           "earliestISO": "2025-01-01"
         },
-        "description": "L'utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite.",
+        "description": "L'utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite.\nObligation de proposer un contenant ré utilisable ou composé de matière recyclable pour la vente à emporter",
         "id": "contenants",
         "readMore": false,
         "shortTitle": "Contenants",
