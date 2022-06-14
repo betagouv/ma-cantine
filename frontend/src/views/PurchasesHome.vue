@@ -14,7 +14,7 @@
             <v-icon>mdi-plus</v-icon>
             Ajouter un produit
           </v-btn>
-          <v-btn text color="primary" :to="{ name: 'PurchasesImporter' }" class="px-0 px-md-2 my-3">
+          <v-btn text color="primary" :to="{ name: 'PurchasesImporter' }" class="px-0 px-md-2 my-3" v-if="false">
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
             Créer plusieurs achats depuis un fichier
           </v-btn>

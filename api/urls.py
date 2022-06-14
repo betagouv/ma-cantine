@@ -21,8 +21,7 @@ from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFo
 from api.views import UserCanteenPreviews, CanteenLocationsView
 from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView, ImportPurchasesView
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
-from api.views import ReviewView
-from api.views import CommunityEventsView
+from api.views import ReviewView, CommunityEventsView, ClaimCanteenView
 
 
 urlpatterns = {
@@ -135,6 +134,7 @@ urlpatterns = {
     path("usernameSuggestion/", UsernameSuggestionView.as_view(), name="username_suggestion"),
     path("reviews/", ReviewView.as_view(), name="create_review"),
     path("communityEvents/", CommunityEventsView.as_view(), name="community_event_list"),
+    path("canteens/<int:canteen_pk>/claim/", ClaimCanteenView.as_view(), name="claim_canteen"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

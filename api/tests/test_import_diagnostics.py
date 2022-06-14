@@ -49,6 +49,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.management_type, "conceded")
         self.assertEqual(canteen.economic_model, "public")
         self.assertEqual(canteen.central_producer_siret, "42126486200010")
+        self.assertEqual(canteen.publication_status, Canteen.PublicationStatus.DRAFT)
         diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
         self.assertEqual(diagnostic.year, 2020)
         self.assertEqual(diagnostic.value_total_ht, 1000)
@@ -297,6 +298,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen1, email="user2@example.com"))
         self.assertEqual(canteen1.managers.count(), 0)
         self.assertEqual(canteen1.import_source, "Automated test")
+        self.assertEqual(canteen1.publication_status, Canteen.PublicationStatus.PUBLISHED)
 
         canteen2 = Canteen.objects.get(siret="73282932000074")
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user1@example.com"))
@@ -305,6 +307,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen2.managers.count(), 1)
         self.assertEqual(canteen2.managers.first(), user)
         self.assertEqual(canteen2.import_source, "Automated test")
+        self.assertEqual(canteen2.publication_status, Canteen.PublicationStatus.DRAFT)
 
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "user1@example.com")
@@ -324,7 +327,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(body["errors"]), 2)
-        self.assertEqual(body["errors"][0]["message"], "Format fichier : 15-18 ou 11 colonnes attendues, 20 trouvés.")
+        self.assertEqual(body["errors"][0]["message"], "Format fichier : 15-18 ou 11 colonnes attendues, 21 trouvés.")
         self.assertEqual(body["errors"][0]["status"], 401)
 
     @authenticate
@@ -401,6 +404,31 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'code postal' : Ce champ ne peut pas être vide si le code INSEE de la ville est vide.",
+        )
+
+    @authenticate
+    def test_staff_error_collection(self, _):
+        """
+        If errors occur, discard the file and return the errors with row and message
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.save()
+        authenticate.user.refresh_from_db()
+
+        with open("./api/tests/files/diagnostics_bad_staff_file.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(Canteen.objects.count(), 0)
+        errors = body["errors"]
+        first_error = errors.pop(0)
+        self.assertEqual(first_error["status"], 400)
+        self.assertEqual(
+            first_error["message"],
+            "Champ 'état de publication' : La valeur «\xa0'publish'\xa0» n’est pas un choix valide.",
         )
 
     @authenticate

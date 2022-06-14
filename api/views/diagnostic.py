@@ -236,6 +236,7 @@ class ImportDiagnosticsView(APIView):
 
         silently_added_manager_emails = []
         import_source = "Import massif"
+        publication_status = Canteen.PublicationStatus.DRAFT
         if len(row) > 18:  # already checked earlier that it's a staff user
             try:
                 if row[18]:
@@ -247,6 +248,9 @@ class ImportDiagnosticsView(APIView):
                 import_source = row[19]
             except Exception as e:
                 raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
+
+            if len(row) > 20 and row[20]:
+                publication_status = row[20]
 
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
@@ -267,6 +271,7 @@ class ImportDiagnosticsView(APIView):
         canteen.management_type = row[8].lower()
         canteen.economic_model = row[9].lower()
         canteen.import_source = import_source
+        canteen.publication_status = publication_status
 
         # full_clean must be before the relation-model updates bc they don't require a save().
         # If an exception is launched by full_clean, it must be here.

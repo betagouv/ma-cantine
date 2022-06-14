@@ -22,12 +22,21 @@
     </p>
 
     <v-alert v-if="isStaff" outlined type="info" class="body-2 blue--text text--darken-2">
-      En tant que membre de l'équipe ma cantine, vous pouvez ajoter deux colonnes additionnelles à la fin du fichier CSV
-      :
+      En tant que membre de l'équipe ma cantine, vous pouvez ajoter trois colonnes additionnelles à la fin du fichier
+      CSV :
       <br />
       <ul>
         <li>Une liste d'adresses email de gestionnaires qui seront ajoutés sans être notifiés par email, et</li>
         <li>Un identifiant décrivant la source de données</li>
+        <li>
+          Optionnel : Un état de publication (les options sont
+          <code>published</code>
+          ,
+          <code>pending</code>
+          , ou
+          <code>draft</code>
+          )
+        </li>
       </ul>
       Téléchargez l'en-tête en format :
       <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.xlsx" download>

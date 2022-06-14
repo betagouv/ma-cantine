@@ -687,3 +687,39 @@ class CanteenLocationsView(APIView):
             .values_list("department", flat=True)
         )
         return JsonResponse(camelize(data), status=status.HTTP_200_OK)
+
+
+class ClaimCanteenView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, canteen_pk):
+        try:
+            canteen_name = Canteen.objects.only("name").get(pk=canteen_pk).name
+
+            context = {
+                "email": self.request.user.email,
+                "name": self.request.user.get_full_name(),
+                "username": self.request.user.username,
+                "canteen_name": canteen_name,
+                "canteen_id": canteen_pk,
+                "protocol": settings.PROTOCOL,
+                "domain": settings.HOSTNAME,
+            }
+
+            send_mail(
+                subject=f"{self.request.user.get_full_name()} voudrait revendiquer la canteen {canteen_name}",
+                to=[
+                    settings.CONTACT_EMAIL,
+                ],
+                template="canteen_claim",
+                context=context,
+            )
+
+            return JsonResponse({}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error("Exception ocurred while sending email")
+            logger.exception(e)
+            return JsonResponse(
+                {"error": "An error has ocurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

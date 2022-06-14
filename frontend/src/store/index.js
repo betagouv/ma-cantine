@@ -682,6 +682,10 @@ export default new Vuex.Store({
           throw e
         })
     },
+
+    claimCanteen(context, { canteenId }) {
+      return fetch(`/api/v1/canteens/${canteenId}/claim/`, { method: "POST", headers }).then(verifyResponse)
+    },
   },
 
   getters: {

@@ -3,7 +3,9 @@ import datetime
 from datetime import date
 from django.urls import reverse
 from django.utils import timezone
+from django.core import mail
 from django.core.files import File
+from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, SectorFactory
@@ -459,3 +461,35 @@ class TestPublishedCanteenApi(APITestCase):
 
         self.assertEqual(body.get("count"), 1)
         self.assertEqual(len(results[0].get("images")), 3)
+
+    def test_canteen_claim_value(self):
+        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
+
+        # The factory creates canteens with managers
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+        self.assertFalse(body.get("canBeClaimed"))
+
+        # Now we will remove the manager to change the claim API value
+        canteen.managers.clear()
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+        self.assertTrue(body.get("canBeClaimed"))
+
+    @override_settings(DEFAULT_FROM_EMAIL="from@example.com")
+    @override_settings(CONTACT_EMAIL="contact@example.com")
+    @authenticate
+    def test_canteen_claim_request(self):
+        user = authenticate.user
+        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
+        canteen.managers.clear()
+
+        response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        body = email.body.replace("\n", " ")
+        self.assertEqual(email.to[0], "contact@example.com")
+        self.assertIn(f"{user.get_full_name()} (nom d'utilisateur : {user.username})", body)
+        self.assertIn("veut revendiquer la cantine", body)
+        self.assertIn(f"{canteen.name} (ID : {canteen.id}).", body)

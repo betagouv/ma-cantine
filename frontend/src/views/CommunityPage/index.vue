@@ -22,11 +22,11 @@
         <WebinaireCard :webinaire="webinaire" />
       </v-col>
       <v-col cols="12" v-if="webinaires.length === 0">
-        <p><i>Aucun webinaire à venir, à bientôt !</i></p>
+        <p class="mb-0">Aucun webinaire à venir, à bientôt !</p>
       </v-col>
     </v-row>
 
-    <h3 class="font-weight-black text-h6 mt-8">Précedents webinaires à revoir</h3>
+    <h3 class="font-weight-black text-h5 mt-8">Précedents webinaires à revoir</h3>
     <p class="my-4">
       Nos webinaires sont interactifs et permettent de poser vos questions aux intervenants. Vous pouvez toutefois
       regarder les replays !
@@ -41,7 +41,10 @@
       Revoir les webinaires
     </v-btn>
 
-    <v-divider class="mt-6 mb-10"></v-divider>
+    <v-divider class="my-10"></v-divider>
+    <FacebookSection />
+
+    <v-divider class="my-10"></v-divider>
     <TheNewsletter />
   </div>
 </template>
@@ -49,11 +52,12 @@
 <script>
 import WebinaireCard from "./WebinaireCard"
 import TheNewsletter from "@/components/TheNewsletter"
+import FacebookSection from "./FacebookSection"
 import { hideCommunityEventsBanner } from "@/utils"
 
 export default {
   name: "CommunityPage",
-  components: { WebinaireCard, TheNewsletter },
+  components: { WebinaireCard, TheNewsletter, FacebookSection },
   computed: {
     webinaires() {
       return this.$store.state.upcomingCommunityEvents

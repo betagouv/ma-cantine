@@ -117,7 +117,7 @@ repos:
       types:
         - vue
   repo: https://github.com/pre-commit/mirrors-eslint
-  rev: v7.8.1
+  rev: v7.32.0
 - hooks:
     - additional_dependencies:
         - eslint@latest
@@ -136,4 +136,4 @@ repos:
       id: eslint
       name: js-eslint
   repo: https://github.com/pre-commit/mirrors-eslint
-  rev: v7.8.1
+  rev: v7.32.0
