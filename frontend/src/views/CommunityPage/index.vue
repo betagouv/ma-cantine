@@ -45,6 +45,9 @@
     <FacebookSection />
 
     <v-divider class="my-10"></v-divider>
+    <FaqPanels />
+
+    <v-divider class="my-10"></v-divider>
     <TheNewsletter />
   </div>
 </template>
@@ -53,11 +56,12 @@
 import WebinaireCard from "./WebinaireCard"
 import TheNewsletter from "@/components/TheNewsletter"
 import FacebookSection from "./FacebookSection"
+import FaqPanels from "./FaqPanels"
 import { hideCommunityEventsBanner } from "@/utils"
 
 export default {
   name: "CommunityPage",
-  components: { WebinaireCard, TheNewsletter, FacebookSection },
+  components: { WebinaireCard, TheNewsletter, FacebookSection, FaqPanels },
   computed: {
     webinaires() {
       return this.$store.state.upcomingCommunityEvents
