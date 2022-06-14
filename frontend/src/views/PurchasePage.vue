@@ -114,13 +114,13 @@
               </v-col>
             </v-row>
             <fieldset>
-              <legend class="body-2 my-3">Catégorie</legend>
-              <v-radio-group v-model="purchase.category" class="my-0">
+              <legend class="body-2 my-3">Famille de produit</legend>
+              <v-radio-group v-model="purchase.family" class="my-0">
                 <v-row>
-                  <v-col cols="12" sm="6" class="py-1" v-for="item in categories" :key="item">
+                  <v-col cols="12" sm="6" class="py-1" v-for="item in productFamilies" :key="item">
                     <v-radio :value="item" class="mt-2">
                       <template v-slot:label>
-                        <span class="body-2 grey--text text--darken-3">{{ getCategoryDisplayText(item) }}</span>
+                        <span class="body-2 grey--text text--darken-3">{{ getProductFamilyDisplayText(item) }}</span>
                       </template>
                     </v-radio>
                   </v-col>
@@ -265,7 +265,7 @@ export default {
       menu: false,
       modal: false,
       showDeleteDialog: false,
-      categories: Object.keys(Constants.Categories),
+      productFamilies: Object.keys(Constants.ProductFamilies),
       characteristics: Object.keys(Constants.Characteristics),
       backLink: { name: "PurchasesHome" },
       localDefinitions: Object.values(Constants.LocalDefinitions),
@@ -306,9 +306,9 @@ export default {
     },
   },
   methods: {
-    getCategoryDisplayText(category) {
-      if (Object.prototype.hasOwnProperty.call(Constants.Categories, category))
-        return Constants.Categories[category].text
+    getProductFamilyDisplayText(family) {
+      if (Object.prototype.hasOwnProperty.call(Constants.ProductFamilies, family))
+        return Constants.ProductFamilies[family].text
       return ""
     },
     getCharacteristicDisplayText(characteristic) {

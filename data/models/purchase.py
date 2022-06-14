@@ -25,6 +25,14 @@ class Purchase(models.Model):
         GLACES_SORBETS = "GLACES_SORBETS", "Glaces et sorbets"
         AUTRES = "AUTRES", "Autres"
 
+    class Family(models.TextChoices):
+        VIANDES_VOLAILLES = "VIANDES_VOLAILLES", "Viandes et volailles fraîches et surgelées"
+        PRODUITS_DE_LA_MER = "PRODUITS_DE_LA_MER", "Produits aquatiques frais et surgelés"
+        PRODUITS_LAITIERS = "PRODUITS_LAITIERS", "BOF (Produits laitiers, beurre et œufs)"
+        BOULANGERIE = "BOULANGERIE", "Boulangerie/Pâtisserie fraîches"
+        BOISSONS = "BOISSONS", "Boissons"
+        AUTRES = "AUTRES", "Autres produits frais, surgelés et d’épicerie"
+
     class Characteristic(models.TextChoices):
         BIO = "BIO", "Bio"
         CONVERSION_BIO = "CONVERSION_BIO", "En conversion bio"
@@ -64,6 +72,9 @@ class Purchase(models.Model):
     category = models.CharField(
         max_length=255, choices=Category.choices, null=True, blank=True, verbose_name="catégorie"
     )
+    family = models.CharField(
+        max_length=255, choices=Family.choices, null=True, blank=True, verbose_name="famille de produits"
+    )
     characteristics = ChoiceArrayField(
         base_field=models.CharField(
             max_length=255, choices=Characteristic.choices, null=True, blank=True, verbose_name="caractéristique"
@@ -85,11 +96,11 @@ class Purchase(models.Model):
     import_source = models.TextField(null=True, blank=True, verbose_name="source de l'import du produit")
 
     @property
-    def readable_category(self):
-        if not self.category:
+    def readable_family(self):
+        if not self.family:
             return None
         try:
-            return Purchase.Category(self.category).label
+            return Purchase.Family(self.family).label
         except Exception:
             return None
 

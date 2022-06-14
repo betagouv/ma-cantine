@@ -37,23 +37,13 @@ export default Object.freeze({
       value: "conceded",
     },
   ],
-  Categories: {
-    VIANDES_VOLAILLES: { text: "Viandes, volailles", color: "red darken-4" },
-    PRODUITS_DE_LA_MER: { text: "Produits de la mer", color: "pink darken-4" },
-    FRUITS_ET_LEGUMES: {
-      text: "Fruits, légumes, légumineuses et oléagineux",
-      color: "purple darken-4",
-    },
-    PRODUITS_CEREALIERS: { text: "Produits céréaliers", color: "deep-purple darken-4" },
-    ENTREES: { text: "Entrées et plats composés", color: "indigo darken-4" },
-    PRODUITS_LAITIERS: { text: "Lait et produits laitiers", color: "blue darken-4" },
-    BOISSONS: { text: "Boissons", color: "light-blue darken-4" },
-    AIDES: { text: "Aides culinaires et ingrédients divers", color: "cyan darken-4" },
-    BEURRE_OEUF_FROMAGE: { text: "Beurre, oeuf, fromage", color: "teal darken-4" },
-    PRODUITS_SUCRES: { text: "Produits sucrés", color: "green darken-4" },
-    ALIMENTS_INFANTILES: { text: "Aliments infantiles", color: "light-green darken-4" },
-    GLACES_SORBETS: { text: "Glaces et sorbets", color: "blue-grey darken-4" },
-    AUTRES: { text: "Autres", color: "brown darken-4" },
+  ProductFamilies: {
+    VIANDES_VOLAILLES: { text: "Viandes et volailles fraîches et surgelées", color: "pink darken-4" },
+    PRODUITS_DE_LA_MER: { text: "Produits aquatiques frais et surgelés", color: "blue darken-3" },
+    PRODUITS_LAITIERS: { text: "BOF (Produits laitiers, beurre et œufs)", color: "deep-orange darken-4" },
+    BOULANGERIE: { text: "Boulangerie/Pâtisserie fraîches", color: "deep-purple darken-3" },
+    BOISSONS: { text: "Boissons", color: "green darken-4" },
+    AUTRES: { text: "Autres produits frais, surgelés et d’épicerie", color: "grey darken-3" },
   },
   Characteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
