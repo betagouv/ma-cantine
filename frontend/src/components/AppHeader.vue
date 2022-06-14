@@ -2,7 +2,6 @@
   <div v-if="!!this.$route.name">
     <v-app-bar
       v-mutate.attr="updateExtended"
-      prominent
       app
       clipped-right
       color="white"
@@ -11,6 +10,7 @@
       height="116px"
       extension-height="56px"
       id="header"
+      hide-on-scroll
     >
       <v-toolbar-title class="align-self-center">
         <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex pl-4">
@@ -36,10 +36,10 @@
 
       <v-spacer></v-spacer>
 
-      <!-- <v-btn
+      <v-btn
         text
         elevation="0"
-        class="align-self-center header-login-button ml-2"
+        class="align-self-center header-login-button ml-2 primary--text"
         v-if="!loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
         href="/s-identifier"
       >
@@ -51,12 +51,12 @@
         elevation="0"
         v-if="!loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
         href="/creer-mon-compte"
-        class="d-none d-sm-flex align-self-center header-signup-button"
+        class="d-none d-sm-flex align-self-center header-signup-button primary--text"
       >
         <span>Créer mon compte</span>
       </v-btn>
 
-      <v-menu v-if="userDataReady" left bottom offset-y>
+      <!-- <v-menu v-if="userDataReady" left bottom offset-y>
         <template v-slot:activator="{ on }">
           <v-btn v-if="loggedUser" class="mr-2 ml-2 align-self-center" id="profile" plain v-on="on">
             <v-avatar size="36" class="mr-2 pt-1" v-if="loggedUser && loggedUser.avatar">
@@ -78,17 +78,17 @@
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
         <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
         <v-tabs align-with-title active-class="stealth-active-tab" hide-slider>
-          <div v-for="(item, index) in items" :key="index">
-            <v-menu v-if="item.items" rounded="0" offset-y>
+          <div v-for="(navLink, index) in displayNavLinks" :key="index">
+            <v-menu v-if="navLink.children" rounded="0" offset-y>
               <template v-slot:activator="{ on, attrs, value }">
                 <v-tab v-bind="attrs" v-on="on" class="mc-tab body-2">
-                  {{ item.text }}
+                  {{ navLink.text }}
                   <v-icon>{{ value ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
                 </v-tab>
               </template>
               <v-list>
                 <v-list-item
-                  v-for="(subItem, subIndex) in item.items"
+                  v-for="(subItem, subIndex) in navLink.children"
                   :key="subIndex"
                   :to="subItem.to"
                   :href="subItem.href"
@@ -100,8 +100,8 @@
                 </v-list-item>
               </v-list>
             </v-menu>
-            <v-tab v-else :to="item.to" class="mc-tab body-2">
-              {{ item.text }}
+            <v-tab v-else :to="navLink.to" class="mc-tab body-2">
+              {{ navLink.text }}
             </v-tab>
           </div>
         </v-tabs>
@@ -138,11 +138,11 @@ export default {
   data() {
     return {
       extended: true,
-      items: [
+      navLinks: [
         {
           text: "Gérer mes cantines",
           authenticationState: true,
-          items: [
+          children: [
             {
               text: "Mes cantines",
               to: { name: "ManagementPage" },
@@ -159,7 +159,7 @@ export default {
         },
         {
           text: "À propos la loi EGAlim",
-          items: [
+          children: [
             {
               text: "Mesures phares",
               to: { name: "KeyMeasuresHome" },
@@ -176,7 +176,7 @@ export default {
         },
         {
           text: "Communauté",
-          items: [
+          children: [
             {
               text: "Notre communauté",
               to: { name: "CommunityPage" },
@@ -189,7 +189,7 @@ export default {
         },
         {
           text: "Statistiques",
-          items: [
+          children: [
             {
               text: "Statistiques régionales",
               to: { name: "PublicCanteenStatisticsPage" },
@@ -218,9 +218,12 @@ export default {
     userDataReady() {
       return !!this.$store.state.initialDataLoaded
     },
-    showScrollShadow() {
-      const viewNames = ["LandingPage", "BlogsHome"]
-      return this.$vuetify.breakpoint.name !== "xs" && viewNames.includes(this.$route.name)
+    displayNavLinks() {
+      if (!this.loggedUser) {
+        return this.navLinks.filter((link) => !link.authenticationState)
+      } else {
+        return this.navLinks
+      }
     },
     chipInfo() {
       const env = window.ENVIRONMENT
@@ -254,6 +257,7 @@ export default {
   font-size: 1.25rem;
   line-height: 1.75rem;
   font-weight: 700;
+  color: rgb(22, 22, 22);
 }
 .mc-tab {
   height: 100%;
