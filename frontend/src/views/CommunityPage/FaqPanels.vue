@@ -35,7 +35,7 @@ export default {
         {
           title: "L'inscription sur Ma Cantine est-elle obligatoire ?",
           answer:
-            "L'inscription est fortement recommandée dès maintenant pour bénéficier d'un accompagnement à la mise en place des mesures réglementaires des lois Egalim et Climat et résilience. Elle est aussi un moyen de répondre à vos obligations d'information de vos convives et de faire remonter les informations nécessaires pour le suivi de l'application de la loi (bilan statistique annuel).",
+            "L'inscription est fortement recommandée dès maintenant pour bénéficier d'un accompagnement à la mise en place des mesures réglementaires des lois EGAlim et Climat et résilience. Elle est aussi un moyen de répondre à vos obligations d'information de vos convives et de faire remonter les informations nécessaires pour le suivi de l'application de la loi (bilan statistique annuel).",
         },
         {
           title: "Qui est le responsable restauration, qui doit etre désigné sous ma cantine ?",
