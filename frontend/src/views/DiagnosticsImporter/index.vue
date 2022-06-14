@@ -66,36 +66,6 @@
       :disabled="importInProgress"
     />
 
-    <v-card
-      :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.xs, 'align-center': $vuetify.breakpoint.xs }"
-      outlined
-    >
-      <video
-        ref="video"
-        class="ma-4"
-        :style="`max-width: ${$vuetify.breakpoint.xs ? '70%' : '30%'}; background: #333; border-radius: 10px`"
-        poster="/static/images/video-poster-import-masse.webp"
-        controls
-      >
-        <source
-          type="video/mp4"
-          src="https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim/videos/Tutoriel-import-de-masse.m4v"
-        />
-        Votre navigateur ne peut pas afficher des vidéos.
-      </video>
-
-      <div>
-        <p class="ma-4">
-          Régardez notre vidéo tutorial pour repondre aux questions les plus fréquentes.
-          <br />
-          <br />
-          Si vous avez toujours des questions ou des problèmes, n'hésitez pas à nous contacter à
-          <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
-          .
-        </p>
-      </div>
-    </v-card>
-
     <v-card outlined class="pa-4" v-if="importInProgress">
       <v-progress-circular indeterminate color="primary" size="28" class="mr-4"></v-progress-circular>
       <span class="mt-1">Traitement en cours...</span>
@@ -135,6 +105,36 @@
       <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retourner à mes cantines</router-link>
       <v-divider class="my-8"></v-divider>
     </div>
+
+    <v-card
+      :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.xs, 'align-center': $vuetify.breakpoint.xs }"
+      outlined
+    >
+      <video
+        ref="video"
+        class="ma-4"
+        :style="`max-width: ${$vuetify.breakpoint.xs ? '70%' : '30%'}; background: #333; border-radius: 10px`"
+        poster="/static/images/video-poster-import-masse.webp"
+        controls
+      >
+        <source
+          type="video/mp4"
+          src="https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim/videos/Tutoriel-import-de-masse.m4v"
+        />
+        Votre navigateur ne peut pas afficher des vidéos.
+      </video>
+
+      <div>
+        <p class="ma-4">
+          Régardez notre vidéo tutorial pour repondre aux questions les plus fréquentes.
+          <br />
+          <br />
+          Si vous avez toujours des questions ou des problèmes, n'hésitez pas à nous contacter à
+          <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+          .
+        </p>
+      </div>
+    </v-card>
     <h2 class="my-6">Format du fichier</h2>
     <p>
       Le fichier CSV doit être encodé avec UTF-8 et contenir un diagnostic par ligne. Chaque ligne doit aussi inclure
