@@ -7,11 +7,13 @@
       clipped-right
       color="white"
       ref="appbar"
-      style="padding: 0 calc((100vw - 1024px)/2);"
+      style="padding: 0 calc((100vw - 78rem)/2);"
+      height="116px"
+      extension-height="56px"
       id="header"
     >
       <v-toolbar-title class="align-self-center">
-        <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex">
+        <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex pl-4">
           <v-img
             src="/static/images/Marianne.png"
             height="90"
@@ -75,7 +77,7 @@
       </v-menu> -->
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
         <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
-        <v-tabs align-with-title>
+        <v-tabs align-with-title active-class="stealth-active-tab" hide-slider>
           <div v-for="(item, index) in items" :key="index">
             <v-menu v-if="item.items" rounded="0" offset-y>
               <template v-slot:activator="{ on, attrs, value }">
@@ -85,8 +87,16 @@
                 </v-tab>
               </template>
               <v-list>
-                <v-list-item v-for="(subItem, subIndex) in item.items" :key="subIndex" :to="subItem.to">
-                  <v-list-item-title>{{ subItem.text }}</v-list-item-title>
+                <v-list-item
+                  v-for="(subItem, subIndex) in item.items"
+                  :key="subIndex"
+                  :to="subItem.to"
+                  :href="subItem.href"
+                >
+                  <v-list-item-title>
+                    {{ subItem.text }}
+                    <v-icon v-if="subItem.href" small color="rgb(22,22,22)">mdi-open-in-new</v-icon>
+                  </v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -130,107 +140,72 @@ export default {
       extended: true,
       items: [
         {
-          text: "Accueil",
-          to: { name: "LandingPage" },
-        },
-        {
           text: "Gérer mes cantines",
           authenticationState: true,
           items: [
             {
               text: "Mes cantines",
-              icon: "mdi-chart-bubble",
               to: { name: "ManagementPage" },
             },
             {
               text: "Mes achats",
-              icon: "mdi-food-apple",
               to: { name: "PurchasesHome" },
             },
             {
               text: "Générer mon affiche",
-              icon: "mdi-cloud-print-outline",
               to: { name: "GeneratePosterPage" },
             },
           ],
         },
         {
-          text: "Mesures phares",
-          icon: "mdi-playlist-check",
-          to: { name: "KeyMeasuresHome" },
+          text: "À propos la loi EGAlim",
+          items: [
+            {
+              text: "Mesures phares",
+              to: { name: "KeyMeasuresHome" },
+            },
+            {
+              text: "Documentation",
+              href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+            },
+          ],
+        },
+        {
+          text: "Nos cantines",
+          to: { name: "CanteensHome" },
         },
         {
           text: "Communauté",
           items: [
             {
-              text: "Nos cantines",
-              icon: "mdi-silverware-fork-knife",
-              to: { name: "CanteensHome" },
-            },
-            {
               text: "Notre communauté",
-              icon: "mdi-account-group",
               to: { name: "CommunityPage" },
             },
             {
               text: "Blog",
-              icon: "mdi-newspaper-variant-outline",
               to: { name: "BlogsHome" },
-            },
-            {
-              text: "Statistiques régionales",
-              icon: "mdi-chart-bar",
-              to: { name: "PublicCanteenStatisticsPage" },
             },
           ],
         },
-        // {
-        //   text: "S'identifier",
-        //   icon: "mdi-key",
-        //   breakpoint: "smAndDown",
-        //   authenticationState: false,
-        //   href: "/s-identifier",
-        // },
-        // {
-        //   text: "Créer un compte",
-        //   icon: "mdi-account",
-        //   breakpoint: "smAndDown",
-        //   authenticationState: false,
-        //   href: "/creer-mon-compte",
-        // },
-        // {
-        //   text: "Autodiagnostic",
-        //   icon: "mdi-chart-pie",
-        //   authenticationState: false,
-        //   to: { name: "DiagnosticPage" },
-        // },
-        // {
-        //   text: "Générer mon affiche",
-        //   icon: "mdi-cloud-print-outline",
-        //   to: { name: "GeneratePosterPage" },
-        // },
-        // {
-        //   text: "Mon compte",
-        //   icon: "mdi-account",
-        //   authenticationState: true,
-        //   to: { name: "AccountSummaryPage" },
-        // },
-        // {
-        //   type: "divider",
-        // },
-        // {
-        //   text: "Documentation",
-        //   icon: "mdi-file-document-outline",
-        //   href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-        //   target: "_blank",
-        //   rel: "noopener",
-        // },
-        // {
-        //   type: "divider",
-        // },
         {
-          text: "Contactez-nous",
-          icon: "mdi-help-circle-outline",
+          text: "Statistiques",
+          items: [
+            {
+              text: "Statistiques régionales",
+              to: { name: "PublicCanteenStatisticsPage" },
+            },
+            {
+              text: "Nos données",
+              href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/f65ca7cc-c3bd-4cfb-a3dc-236f81864663",
+            },
+            {
+              text: "Usage du site",
+              href: "https://stats.data.gouv.fr/index.php?idSite=162",
+            },
+          ],
+        },
+        {
+          text: "Contact",
           to: { name: "ContactPage" },
         },
       ],
@@ -264,8 +239,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.v-application header.elevation-0 {
-  box-shadow: inset 0px -1px 0px rgba(178, 181, 194, 0.48) !important;
+#header {
+  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.1), 0 8px 16px -16px rgba(0, 0, 0, 0.32) !important;
 }
 #profile::v-deep .v-btn__content {
   opacity: 1;
@@ -282,6 +257,14 @@ export default {
 }
 .mc-tab {
   height: 100%;
+  line-height: 24px;
   text-transform: none;
+  color: rgb(22, 22, 22) !important;
+}
+.stealth-active-tab {
+  color: rgb(22, 22, 22) !important;
+  caret-color: rgb(22, 22, 22);
+  outline-color: #fff;
+  text-decoration-color: #fff;
 }
 </style>

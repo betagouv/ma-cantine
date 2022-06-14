@@ -97,7 +97,7 @@ export default {
 }
 
 .constrained {
-  max-width: 1024px !important;
+  max-width: 73rem !important;
 }
 
 .v-menu__content {
