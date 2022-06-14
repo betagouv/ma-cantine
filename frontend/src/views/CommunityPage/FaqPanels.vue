@@ -11,7 +11,7 @@
         <v-expansion-panel-header class="font-weight-medium">
           {{ question.title }}
         </v-expansion-panel-header>
-        <v-expansion-panel-content>
+        <v-expansion-panel-content class="faq-answer">
           {{ question.answer }}
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -40,7 +40,7 @@ export default {
         {
           title: "Qui est le responsable restauration, qui doit etre désigné sous ma cantine ?",
           answer:
-            "La structure/personne responsable légal du service de restauration : élu, responsable administratif de la collectivité D'autres personnes peuvent être associées à votre compte cantine : personne qui fait les commandes, celle qui reçoit les repas et met en chauffe, le prestataire peut aussi participer au renseignement des informations concernant votre cantine si vous lui donnez un accès à votre compte « cantine ». Il suffit d'indiquer son mail dans la partie « gestionnaire additionnel » de votre profil. Exemple : si la gestion des repas est assurée par un SIVU par le biais d'une cuisine centrale. Le SIVU doit créer un compte dans « ma cantine » pour inscrire sa cantine et déclarer le nombre de cantines sites (satellites) desservis et vous pouvez aussi créer votre cantine le satellite desservis par cette cuisine centrale.",
+            "La structure/personne responsable légal du service de restauration : élue ou élu, responsable administratif de la collectivité D'autres personnes peuvent être associées à votre compte cantine : personne qui fait les commandes, celle qui reçoit les repas et met en chauffe, le prestataire peut aussi participer au renseignement des informations concernant votre cantine si vous lui donnez un accès à votre compte « cantine ». Il suffit d'indiquer son mail dans la partie « gestionnaire additionnel » de votre profil.\n\nExemple : si la gestion des repas est assurée par un SIVU par le biais d'une cuisine centrale. Le SIVU doit créer un compte dans « ma cantine » pour inscrire sa cantine et déclarer le nombre de cantines sites (satellites) desservis et vous pouvez aussi créer votre cantine le satellite desservis par cette cuisine centrale.",
         },
         {
           title: "Nous sommes satellites, faut-il se référencer dans « ma cantine » ?",
@@ -71,3 +71,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.faq-answer {
+  white-space: pre-line;
+}
+</style>
