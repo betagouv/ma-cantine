@@ -12,9 +12,9 @@
       l'environnement tout en influançant positivement les filières d'agriculture biologique et de qualité.
     </p>
     <p class="text-left">
-      Le cadre réglementaire et les deux lois EGAlim (2018) et la loi Climat et Résilience (2021) ont fixé des objectifs
-      en termes de produits, de substitution du plastique, de diversification des protéines, de réduction du
-      gaspillage...
+      Le cadre réglementaire et les lois EGAlim (2018) et Climat et Résilience (2021) ont fixé des objectifs en termes
+      de qualité de produits, de substitution du plastique, de diversification des protéines, de réduction du
+      gaspillage, et d'information des convives.
     </p>
     <router-link
       color="primary"
