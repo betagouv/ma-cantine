@@ -56,25 +56,6 @@
         <span>Créer mon compte</span>
       </v-btn>
 
-      <!-- <v-menu v-if="userDataReady" left bottom offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn v-if="loggedUser" class="mr-2 ml-2 align-self-center" id="profile" plain v-on="on">
-            <v-avatar size="36" class="mr-2 pt-1" v-if="loggedUser && loggedUser.avatar">
-              <v-img :src="loggedUser.avatar"></v-img>
-            </v-avatar>
-            <v-icon v-else>mdi-account</v-icon>
-            <span class="font-subtitle-3 mx-2 d-none d-sm-inline">Profil</span>
-            <v-icon class="ml-1 pt-1" small>mdi-menu-down</v-icon>
-          </v-btn>
-
-          <v-btn v-else icon class="mr-2 ml-2 align-self-center" v-on="on">
-            <v-icon>mdi-menu</v-icon>
-            <span class="d-sr-only">Menu</span>
-          </v-btn>
-        </template>
-
-        <HeaderDropdownList />
-      </v-menu> -->
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
         <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
         <v-tabs align-with-title active-class="stealth-active-tab" hide-slider>
