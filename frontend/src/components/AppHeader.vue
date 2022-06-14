@@ -106,7 +106,7 @@
           </div>
         </v-tabs>
       </template>
-      <v-menu v-else-if="userDataReady" left bottom offset-y>
+      <v-menu v-if="$vuetify.breakpoint.smAndDown && userDataReady" left bottom offset-y>
         <template v-slot:activator="{ on }">
           <v-btn v-if="loggedUser" class="mr-2 ml-2 align-self-center" id="profile" plain v-on="on">
             <v-avatar size="36" class="mr-2 pt-1" v-if="loggedUser && loggedUser.avatar">
