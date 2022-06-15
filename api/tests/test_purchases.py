@@ -494,10 +494,10 @@ class TestPurchaseApi(APITestCase):
         response = self.client.get(f"{reverse('purchase_list_create')}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        categories = body.get("categories", [])
-        self.assertEqual(len(categories), 3)
-        self.assertIn(Purchase.Family.PRODUITS_DE_LA_MER, categories)
-        self.assertNotIn(Purchase.Family.AUTRES, categories)
+        families = body.get("families", [])
+        self.assertEqual(len(families), 3)
+        self.assertIn(Purchase.Family.PRODUITS_DE_LA_MER, families)
+        self.assertNotIn(Purchase.Family.AUTRES, families)
         self.assertEqual(len(body.get("characteristics", [])), 2)
         canteens = body.get("canteens", [])
         self.assertEqual(len(canteens), 2)
@@ -505,7 +505,7 @@ class TestPurchaseApi(APITestCase):
 
         response = self.client.get(f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}")
         body = response.json()
-        self.assertEqual(len(body["categories"]), 1)
+        self.assertEqual(len(body["families"]), 1)
 
         response = self.client.get(f"{reverse('purchase_list_create')}?family={Purchase.Family.PRODUITS_LAITIERS}")
         body = response.json()
