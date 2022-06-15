@@ -22,14 +22,13 @@ print("\n# properties")
 print("\n# TODO: define label_sum and family_sum methods")
 for label in labels:
     print("@property")
-    print(f"def total_{label}(self):")
+    print(f"def total_label_{label}(self):")
     print(f'    return label_sum(self, "{label}")')
 for family in families:
     print("@property")
-    print(f"def total_{family}(self):")
+    print(f"def total_family_{family}(self):")
     print(f'    return family_sum(self, "{family}")')
 
-# calculated fields?
 # factory
 print("\n# factory")
 for f in fields:
@@ -39,17 +38,36 @@ for f in fields:
 print("\n# serializer, admin")
 for f in fields:
     print(f"\"{f['fieldname']}\",")
+print("\n# properties")
 labels_and_families = [*labels, *families]
 for t in labels_and_families:
     print(f'"{t}",')
 
+# lists
 print("\n# misc")
 print("[", end="")
 for f in fields:
     print(f"\"{f['fieldname']}\"", end=", ")
-for f in labels_and_families:
+for t in labels_and_families:
     print(f'"{t}"', end=", ")
 print("]")
+
+# importer
+print("\n# CSV")
+for f in fields:
+    print(f"\"{f['description'].replace(',', '')}\"", end=",")
+print("")
+for f in fields:
+    print("10", end=",")
+print("")
+# TODO: code for importer view
+# TODO: can make nicer column names
+
 # test
-# admin
-# importer?
+print("\n# diagnostic api test")
+for f in fields:
+    print(f"\"{f['fieldname']}\": 10,")
+for label in labels:
+    print(f"self.assertEqual(diagnostic.total_label_{label}, {10 * len(families)})")
+for family in families:
+    print(f"self.assertEqual(diagnostic.total_family_{family}, {10 * len(labels)})")
