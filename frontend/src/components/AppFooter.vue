@@ -10,8 +10,12 @@
         <v-spacer></v-spacer>
         <v-col cols="12" sm="8" md="6" class="text-body-2">
           <p>
-            « ma cantine » est un outil pour accompagner les acteurs de la restauration collective pour proposer une
+            « ma cantine » est un outil pour accompagner les acteurs de la restauration collective à proposer une
             alimentation de qualité, saine et durable.
+            <a href="https://beta.gouv.fr/startups/ma-cantine-egalim.html">
+              Découvrez notre page produit
+              <v-icon small color="primary" class="ml-1">mdi-open-in-new</v-icon>
+            </a>
           </p>
           <p>
             Le code source est ouvert et les contributions sont bienvenues.
@@ -46,8 +50,8 @@
       </ul>
       <p class="caption mt-2 mb-0 grey--text text--darken-2">
         Sauf mention contraire, tous les contenus de ce site sont sous
-        <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" class="grey--text text--darken-2">
-          licence etalab-2.0
+        <a href="https://github.com/betagouv/ma-cantine/blob/staging/LICENSE" class="grey--text text--darken-2">
+          licence MIT
           <v-icon small color="grey-darken-2" class="ml-1">mdi-open-in-new</v-icon>
         </a>
       </p>
