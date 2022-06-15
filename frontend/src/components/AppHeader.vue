@@ -56,6 +56,16 @@
         <span>Créer mon compte</span>
       </v-btn>
 
+      <v-btn
+        text
+        elevation="0"
+        v-if="loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
+        :to="{ name: 'ManagementPage' }"
+        class="d-none d-sm-flex align-self-center header-signup-button primary--text"
+      >
+        <span>Mes cantines</span>
+      </v-btn>
+
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
         <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
         <v-tabs align-with-title active-class="stealth-active-tab" hide-slider>
@@ -135,6 +145,10 @@ export default {
             {
               text: "Générer mon affiche",
               to: { name: "GeneratePosterPage" },
+            },
+            {
+              text: "Mon compte",
+              to: { name: "AccountSummaryPage" },
             },
           ],
         },
