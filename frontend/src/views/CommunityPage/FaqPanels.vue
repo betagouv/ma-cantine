@@ -8,7 +8,7 @@
     </p>
     <v-expansion-panels>
       <v-expansion-panel v-for="question in questions" :key="question.title">
-        <v-expansion-panel-header class="font-weight-medium">
+        <v-expansion-panel-header class="font-weight-bold">
           {{ question.title }}
         </v-expansion-panel-header>
         <v-expansion-panel-content class="faq-answer">
