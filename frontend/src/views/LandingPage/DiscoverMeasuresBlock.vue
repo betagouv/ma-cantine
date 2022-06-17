@@ -12,7 +12,7 @@
       objectifs.
     </p>
 
-    <v-row class="justify-center mt-8">
+    <v-row class="justify-center mt-8 cta-group pa-4">
       <v-col cols="12" sm="4" v-for="measure in keyMeasures" :key="measure.id">
         <v-card
           hover

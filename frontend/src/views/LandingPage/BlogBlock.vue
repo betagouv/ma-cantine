@@ -1,23 +1,23 @@
 <template>
-  <div>
-    <v-row v-if="visibleBlogPosts">
+  <div v-if="visibleBlogPosts">
+    <v-row>
       <v-spacer></v-spacer>
       <v-col cols="12" sm="8">
         <h2 class="text-h4 font-weight-black">Les dernières actualités et partage d'expériences</h2>
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
-    <v-row v-if="visibleBlogPosts">
-      <v-col cols="12" sm="6" md="4" v-for="post in visibleBlogPosts" :key="post.id">
-        <BlogCard :post="post" />
-      </v-col>
-      <v-col cols="12">
-        <v-btn large outlined color="primary" class="mt-2" :to="{ name: 'BlogsHome' }">
-          <v-icon small class="mr-1">mdi-newspaper-variant-outline</v-icon>
-          Visiter notre blog
-        </v-btn>
-      </v-col>
-    </v-row>
+    <div class="pa-6 my-6 cta-group">
+      <v-row>
+        <v-col cols="12" sm="6" md="4" v-for="post in visibleBlogPosts" :key="post.id">
+          <BlogCard :post="post" />
+        </v-col>
+      </v-row>
+    </div>
+    <v-btn large outlined color="primary" class="mt-2 mx-auto" :to="{ name: 'BlogsHome' }">
+      <v-icon small class="mr-1">mdi-newspaper-variant-outline</v-icon>
+      Visiter notre blog
+    </v-btn>
   </div>
 </template>
 
