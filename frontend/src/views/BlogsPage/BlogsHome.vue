@@ -1,5 +1,5 @@
 <template>
-  <div id="blogs-home">
+  <div id="blogs-home" class="mt-10">
     <v-card elevation="0" class="text-center text-md-left mb-10">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
         <v-col cols="12">
