@@ -153,6 +153,11 @@ export default {
           ],
         },
         {
+          text: "M'auto-évaluer",
+          to: { name: "DiagnosticPage" },
+          authenticationState: false,
+        },
+        {
           text: "À propos la loi EGAlim",
           children: [
             {
@@ -217,7 +222,7 @@ export default {
       if (!this.loggedUser) {
         return this.navLinks.filter((link) => !link.authenticationState)
       } else {
-        return this.navLinks
+        return this.navLinks.filter((link) => link.authenticationState !== false)
       }
     },
     chipInfo() {
