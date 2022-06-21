@@ -88,6 +88,7 @@
           headingId="appro-heading"
           height="260"
           :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+          :applicableRules="applicableRules"
         />
       </div>
     </div>
@@ -108,7 +109,14 @@
 
 <script>
 import labels from "@/data/quality-labels.json"
-import { lastYear, badges, getPercentage, isDiagnosticComplete, latestCreatedDiagnostic } from "@/utils"
+import {
+  lastYear,
+  badges,
+  getPercentage,
+  isDiagnosticComplete,
+  latestCreatedDiagnostic,
+  applicableDiagnosticRules,
+} from "@/utils"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import ImageGallery from "@/components/ImageGallery"
 
@@ -163,6 +171,9 @@ export default {
         diagnostics[diagnostic.year] = diagnostic
       }
       return diagnostics
+    },
+    applicableRules() {
+      return applicableDiagnosticRules(this.canteen)
     },
   },
 }

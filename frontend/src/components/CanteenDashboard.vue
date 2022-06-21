@@ -1,7 +1,7 @@
 <template>
   <div class="text-left">
     <v-row>
-      <v-col cols="12">
+      <v-col cols="12" :class="columnClasses">
         <v-card outlined class="mt-4 pa-4">
           <v-card-title>
             <h2 class="font-weight-bold text-h6">
@@ -11,21 +11,24 @@
           <v-card-text class="pb-0">
             <p class="grey--text text--darken-3">
               La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent
-              comporter, au cours de l'année 2022, 50% de produits de qualité et durables dont 20% issus de
-              l’agriculture biologique ou en conversion.
+              comporter, au cours de l'année 2022, {{ applicableRules.qualityThreshold }} % de produits de qualité et
+              durables dont {{ applicableRules.bioThreshold }} % issus de l’agriculture biologique ou en conversion,
+              pour les cantines
+              {{ regionDisplayName ? `dans la région de ${regionDisplayName}` : "en France métropolitaine" }}.
             </p>
             <MultiYearSummaryStatistics
               :diagnostics="dashboardDiagnostics"
               headingId="appro-heading"
               height="260"
               :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+              :applicableRules="applicableRules"
             />
             <KeyMeasureResource :baseComponent="qualityMeasure.baseComponent" v-if="showResources" />
           </v-card-text>
         </v-card>
       </v-col>
 
-      <v-col cols="12" :md="singleColumn ? '12' : '6'">
+      <v-col cols="12" :md="singleColumn ? '12' : '6'" :class="columnClasses">
         <v-card outlined class="mt-4 pa-4">
           <v-card-title class="font-weight-bold">
             <h2 class="font-weight-bold text-h6">
@@ -34,6 +37,7 @@
           </v-card-title>
           <v-card-text>
             <div class="actions">
+              <!-- TODO: what about second sub measure "Interdiction de rendre impropre à la consommation les denrées alimentaires encore consommables." ? -->
               <KeyMeasureAction
                 :isDone="latestDiagnostic.hasWasteDiagnostic"
                 label="Réalisation d'un diagnostic sur le gaspillage alimentaire"
@@ -52,7 +56,11 @@
                   {{ latestDiagnostic.otherWasteAction }}
                 </li>
               </ul>
-              <KeyMeasureAction :isDone="latestDiagnostic.hasDonationAgreement" label="Dons aux associations" />
+              <KeyMeasureAction
+                :isDone="latestDiagnostic.hasDonationAgreement"
+                label="Dons aux associations"
+                v-if="applicableRules.hasDonationAgreement"
+              />
             </div>
             <KeyMeasureResource :baseComponent="wasteMeasure.baseComponent" v-if="showResources" />
           </v-card-text>
@@ -88,7 +96,7 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" :md="singleColumn ? '12' : '6'">
+      <v-col cols="12" :md="singleColumn ? '12' : '6'" :class="columnClasses">
         <v-card outlined class="mt-4 pa-4">
           <v-card-title>
             <h2 class="font-weight-bold text-h6">
@@ -100,6 +108,7 @@
               <KeyMeasureAction
                 :isDone="latestDiagnostic.hasDiversificationPlan"
                 label="Mise en place d'un plan pluriannuel de diversification des protéines"
+                v-if="applicableRules.hasDiversificationPlan"
               />
               <KeyMeasureAction :isDone="hasVegetarianMenu" :label="vegetarianMenuActionLabel" />
             </div>
@@ -115,6 +124,10 @@
           </v-card-title>
           <v-card-text>
             <div class="actions">
+              <KeyMeasureAction
+                :isDone="latestDiagnostic.communicatesOnFoodQuality"
+                label="Communication sur la part de produits de qualité et durables entrant dans la composition des repas servis"
+              />
               <KeyMeasureAction
                 :isDone="latestDiagnostic.communicatesOnFoodPlan"
                 label="Communication sur le plan alimentaire"
@@ -146,6 +159,7 @@
                 <v-icon small class="ml-2">mdi-open-in-new</v-icon>
               </v-btn>
             </div>
+            <!-- TODO: what about the third sub-measure, etiquettage détaillé pour toutes les viandes ? -->
             <KeyMeasureResource baseComponent="InformDiners" v-if="showResources" />
           </v-card-text>
         </v-card>
@@ -162,7 +176,8 @@ import KeyMeasureResource from "@/components/KeyMeasureResource"
 import KeyMeasureAction from "@/components/KeyMeasureAction"
 import KeyMeasureTitle from "@/components/KeyMeasureTitle"
 import MultiYearSummaryStatistics from "./MultiYearSummaryStatistics"
-import { lastYear } from "@/utils"
+import { lastYear, applicableDiagnosticRules } from "@/utils"
+import regions from "@/regions.json"
 
 export default {
   components: {
@@ -229,6 +244,17 @@ export default {
         return "Mise en place d'un menu végétarien de façon quotidienne"
       }
       return "Pas de menu végétarien hébdomadaire"
+    },
+    applicableRules() {
+      return applicableDiagnosticRules(this.canteen)
+    },
+    regionDisplayName() {
+      return this.applicableRules.hasQualityException
+        ? regions.find((r) => r.regionCode === this.canteen.region).regionName
+        : ""
+    },
+    columnClasses() {
+      return this.singleColumn ? "pa-0" : ""
     },
   },
   methods: {

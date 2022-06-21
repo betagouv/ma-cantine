@@ -35,6 +35,7 @@ export default {
     headingId: String,
     height: String,
     width: String,
+    applicableRules: Object,
   },
   data() {
     let years = []
@@ -129,11 +130,11 @@ export default {
         annotations: {
           yaxis: [
             {
-              y: 50,
+              y: this.applicableRules.qualityThreshold,
               borderColor: "#333",
             },
             {
-              y: 20,
+              y: this.applicableRules.bioThreshold,
               borderColor: "#333",
             },
           ],
