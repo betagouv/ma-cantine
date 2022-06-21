@@ -32,6 +32,12 @@
               </v-list-item-title>
             </v-list-item>
           </div>
+          <v-list-item :ripple="false" :to="{ name: 'DashboardPage' }" v-if="orderedDiagnostics.length">
+            <v-icon small class="mr-2">mdi-star-shooting</v-icon>
+            <v-list-item-title class="text-body-2 font-weight-bold">
+              Améliorer ma cantine
+            </v-list-item-title>
+          </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'PublicationForm' }">
             <v-icon small class="mr-2">mdi-bullhorn</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">
