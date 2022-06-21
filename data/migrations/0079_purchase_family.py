@@ -21,12 +21,12 @@ def migrate_product_family(apps, schema_editor):
         "AUTRES": "AUTRES",
     }
     for purchase in Purchase.objects.all():
-        if purchase.category and mapping[purchase.category]:
+        if purchase.category and purchase.category in mapping:
             purchase.family = mapping[purchase.category]
             purchase.save()
 
 
-def undo_migrate(apps, schema_editor):
+def undo_migrate_product_family(apps, schema_editor):
     pass
 
 
@@ -55,5 +55,5 @@ class Migration(migrations.Migration):
                 verbose_name="famille de produits",
             ),
         ),
-        migrations.RunPython(migrate_product_family, undo_migrate),
+        migrations.RunPython(migrate_product_family, undo_migrate_product_family),
     ]
