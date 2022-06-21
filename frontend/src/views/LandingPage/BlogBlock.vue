@@ -7,13 +7,11 @@
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
-    <div class="pa-6 my-6 cta-group">
-      <v-row>
-        <v-col cols="12" sm="6" md="4" v-for="post in visibleBlogPosts" :key="post.id">
-          <BlogCard :post="post" />
-        </v-col>
-      </v-row>
-    </div>
+    <v-row class="pa-4 mx-0 mx-md-n4 my-6 cta-group">
+      <v-col cols="12" sm="6" md="4" v-for="post in visibleBlogPosts" :key="post.id">
+        <BlogCard :post="post" />
+      </v-col>
+    </v-row>
     <v-btn large outlined color="primary" class="mt-2 mx-auto" :to="{ name: 'BlogsHome' }">
       <v-icon small class="mr-1">mdi-newspaper-variant-outline</v-icon>
       Visiter notre blog
