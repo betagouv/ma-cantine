@@ -335,6 +335,20 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Bio",
     )
+    fruits_et_legumes_bio = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Bio",
+    )
+    charcuterie_bio = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Bio",
+    )
     produits_laitiers_bio = models.DecimalField(
         max_digits=20,
         decimal_places=2,
@@ -376,6 +390,20 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Label rouge",
+    )
+    fruits_et_legumes_label_rouge = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Label rouge",
+    )
+    charcuterie_label_rouge = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Label rouge",
     )
     produits_laitiers_label_rouge = models.DecimalField(
         max_digits=20,
@@ -419,6 +447,20 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, AOC / AOP / IGP / STG",
     )
+    fruits_et_legumes_aocaop_igp_stg = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG",
+    )
+    charcuterie_aocaop_igp_stg = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, AOC / AOP / IGP / STG",
+    )
     produits_laitiers_aocaop_igp_stg = models.DecimalField(
         max_digits=20,
         decimal_places=2,
@@ -460,6 +502,20 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Haute valeur environnementale",
+    )
+    fruits_et_legumes_hve = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Haute valeur environnementale",
+    )
+    charcuterie_hve = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Haute valeur environnementale",
     )
     produits_laitiers_hve = models.DecimalField(
         max_digits=20,
@@ -503,6 +559,20 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Pêche durable",
     )
+    fruits_et_legumes_peche_durable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Pêche durable",
+    )
+    charcuterie_peche_durable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Pêche durable",
+    )
     produits_laitiers_peche_durable = models.DecimalField(
         max_digits=20,
         decimal_places=2,
@@ -544,6 +614,20 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Région ultrapériphérique",
+    )
+    fruits_et_legumes_rup = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Région ultrapériphérique",
+    )
+    charcuterie_rup = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Région ultrapériphérique",
     )
     produits_laitiers_rup = models.DecimalField(
         max_digits=20,
@@ -587,6 +671,20 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Fermier",
     )
+    fruits_et_legumes_fermier = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Fermier",
+    )
+    charcuterie_fermier = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Fermier",
+    )
     produits_laitiers_fermier = models.DecimalField(
         max_digits=20,
         decimal_places=2,
@@ -628,6 +726,20 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    )
+    fruits_et_legumes_externalites = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    )
+    charcuterie_externalites = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
     produits_laitiers_externalites = models.DecimalField(
         max_digits=20,
@@ -671,6 +783,20 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Commerce équitable",
     )
+    fruits_et_legumes_commerce_equitable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Commerce équitable",
+    )
+    charcuterie_commerce_equitable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Commerce équitable",
+    )
     produits_laitiers_commerce_equitable = models.DecimalField(
         max_digits=20,
         decimal_places=2,
@@ -712,6 +838,20 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
+    )
+    fruits_et_legumes_performance = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
+    )
+    charcuterie_performance = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Produits acquis sur la base de leurs performances en matière environnementale",
     )
     produits_laitiers_performance = models.DecimalField(
         max_digits=20,
@@ -755,6 +895,20 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Produits équivalents",
     )
+    fruits_et_legumes_equivalents = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Produits équivalents",
+    )
+    charcuterie_equivalents = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Produits équivalents",
+    )
     produits_laitiers_equivalents = models.DecimalField(
         max_digits=20,
         decimal_places=2,
@@ -796,6 +950,20 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Provenance France",
+    )
+    fruits_et_legumes_france = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Provenance France",
+    )
+    charcuterie_france = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Provenance France",
     )
     produits_laitiers_france = models.DecimalField(
         max_digits=20,
@@ -839,6 +1007,20 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Circuit-court",
     )
+    fruits_et_legumes_short_distribution = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Circuit-court",
+    )
+    charcuterie_short_distribution = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Circuit-court",
+    )
     produits_laitiers_short_distribution = models.DecimalField(
         max_digits=20,
         decimal_places=2,
@@ -880,6 +1062,20 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Produits aquatiques frais et surgelés, Produit local",
+    )
+    fruits_et_legumes_local = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Produit local",
+    )
+    charcuterie_local = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Produit local",
     )
     produits_laitiers_local = models.DecimalField(
         max_digits=20,
@@ -949,6 +1145,8 @@ class Diagnostic(models.Model):
         families = [
             "viandes_volailles",
             "produits_de_la_mer",
+            "fruits_et_legumes",
+            "charcuterie",
             "produits_laitiers",
             "boulangerie",
             "boissons",
@@ -1048,6 +1246,14 @@ class Diagnostic(models.Model):
     @property
     def total_family_produits_de_la_mer(self):
         return self.family_sum("produits_de_la_mer")
+
+    @property
+    def total_family_fruits_et_legumes(self):
+        return self.family_sum("fruits_et_legumes")
+
+    @property
+    def total_family_charcuterie(self):
+        return self.family_sum("charcuterie")
 
     @property
     def total_family_produits_laitiers(self):

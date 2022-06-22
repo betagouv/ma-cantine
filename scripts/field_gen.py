@@ -1,4 +1,5 @@
 # run this with python field_gen.py > ../notes/whatever.py
+# in response to https://github.com/betagouv/ma-cantine/issues/1509
 
 # model
 labels = [
@@ -23,6 +24,8 @@ labels = [
 families = [
     ("VIANDES_VOLAILLES", "Viandes et volailles fraîches et surgelées"),
     ("PRODUITS_DE_LA_MER", "Produits aquatiques frais et surgelés"),
+    ("FRUITS_ET_LEGUMES", "Fruits et légumes frais et surgelés"),
+    ("CHARCUTERIE", "Charcuterie"),
     ("PRODUITS_LAITIERS", "BOF (Produits laitiers, beurre et œufs)"),
     ("BOULANGERIE", "Boulangerie/Pâtisserie fraîches"),
     ("BOISSONS", "Boissons"),
