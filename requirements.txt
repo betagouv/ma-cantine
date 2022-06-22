@@ -2,16 +2,16 @@ amqp==5.1.1
 arabic-reshaper==2.1.3
 asgiref==3.5.2
 asn1crypto==1.5.1
-astroid==2.11.5
+astroid==2.11.6
 async-timeout==4.0.2
 attrs==21.4.0
 backports.zoneinfo==0.2.1
 billiard==3.6.4.0
 black==22.3.0
-boto3==1.24.7
-botocore==1.27.7
+boto3==1.24.13
+botocore==1.27.13
 celery==5.2.7
-certifi==2022.5.18.1
+certifi==2022.6.15
 cffi==1.15.0
 chardet==4.0.0
 charset-normalizer==2.0.12
@@ -28,13 +28,13 @@ django-anymail==8.6
 django-ckeditor==6.4.2
 django-csp==3.7
 django-debug-toolbar==3.4.0
-django-filter==21.1
+django-filter==22.1
 django-js-asset==2.0.0
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
 django-oauth-toolkit==2.0.0
 django-otp==1.1.3
 django-storages==1.12.3
-django-webpack-loader==1.5.0
+django-webpack-loader==1.6.0
 djangorestframework==3.13.1
 djangorestframework-camel-case==1.3.0
 drf-base64==2.0
@@ -48,7 +48,7 @@ html5lib==1.1
 idna==3.3
 iniconfig==1.1.1
 isort==5.10.1
-jmespath==1.0.0
+jmespath==1.0.1
 jwcrypto==1.3.1
 kombu==5.2.4
 lazy-object-proxy==1.7.1
@@ -70,7 +70,7 @@ py==1.11.0
 pycparser==2.21
 pyHanko==0.13.1
 pyhanko-certvalidator==0.19.5
-pylint==2.14.1
+pylint==2.14.3
 pylint-django==2.5.3
 pylint-plugin-utils==0.7
 pyparsing==3.0.9
@@ -109,4 +109,4 @@ vine==5.0.0
 wcwidth==0.2.5
 webencodings==0.5.1
 wrapt==1.14.1
-xhtml2pdf==0.2.7
+xhtml2pdf==0.2.8

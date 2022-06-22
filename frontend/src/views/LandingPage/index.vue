@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PresentationBlock class="mb-12" />
+    <PresentationBlock class="my-12" />
 
     <ActionsBlock class="ma-0 ma-md-n4 pa-6 cta-group" />
 

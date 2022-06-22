@@ -55,7 +55,7 @@ class TestPurchaseApi(APITestCase):
             "canteen_id": 1,
             "description": "Saumon",
             "provider": "Test provider",
-            "category": "PRODUITS_DE_LA_MER",
+            "family": "PRODUITS_DE_LA_MER",
             "characteristics": ["BIO"],
             "price_ht": 15.23,
         }
@@ -76,7 +76,7 @@ class TestPurchaseApi(APITestCase):
             "canteen": other_user_canteen.id,
             "description": "Saumon",
             "provider": "Test provider",
-            "category": "PRODUITS_DE_LA_MER",
+            "family": "PRODUITS_DE_LA_MER",
             "characteristics": ["BIO"],
             "price_ht": 15.23,
         }
@@ -95,7 +95,7 @@ class TestPurchaseApi(APITestCase):
             "canteen": canteen.id,
             "description": "Saumon",
             "provider": "Test provider",
-            "category": "PRODUITS_DE_LA_MER",
+            "family": "PRODUITS_DE_LA_MER",
             "characteristics": ["BIO", "LOCAL"],
             "price_ht": 15.23,
             "local_definition": "AUTOUR_SERVICE",
@@ -118,7 +118,7 @@ class TestPurchaseApi(APITestCase):
             "canteen": "999",
             "description": "Saumon",
             "provider": "Test provider",
-            "category": "PRODUITS_DE_LA_MER",
+            "family": "PRODUITS_DE_LA_MER",
             "characteristics": ["BIO"],
             "price_ht": 15.23,
         }
@@ -420,16 +420,14 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(len(results), 3)
 
     @authenticate
-    def test_filter_by_category(self):
+    def test_filter_by_family(self):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        PurchaseFactory.create(description="avoine", canteen=canteen, category=Purchase.Category.PRODUITS_DE_LA_MER)
-        PurchaseFactory.create(description="tomates", canteen=canteen, category=Purchase.Category.PRODUITS_DE_LA_MER)
-        PurchaseFactory.create(description="pommes", canteen=canteen, category=Purchase.Category.FRUITS_ET_LEGUMES)
+        PurchaseFactory.create(description="avoine", canteen=canteen, family=Purchase.Family.PRODUITS_DE_LA_MER)
+        PurchaseFactory.create(description="tomates", canteen=canteen, family=Purchase.Family.PRODUITS_DE_LA_MER)
+        PurchaseFactory.create(description="pommes", canteen=canteen, family=Purchase.Family.AUTRES)
 
-        response = self.client.get(
-            f"{reverse('purchase_list_create')}?category={Purchase.Category.PRODUITS_DE_LA_MER}"
-        )
+        response = self.client.get(f"{reverse('purchase_list_create')}?family={Purchase.Family.PRODUITS_DE_LA_MER}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 2)
@@ -469,19 +467,19 @@ class TestPurchaseApi(APITestCase):
         PurchaseFactory.create(
             description="avoine",
             canteen=first_canteen,
-            category=Purchase.Category.PRODUITS_DE_LA_MER,
+            family=Purchase.Family.PRODUITS_DE_LA_MER,
             characteristics=[Purchase.Characteristic.BIO],
         )
         PurchaseFactory.create(
             description="tomates",
             canteen=first_canteen,
-            category=Purchase.Category.FRUITS_ET_LEGUMES,
+            family=Purchase.Family.VIANDES_VOLAILLES,
             characteristics=[],
         )
         PurchaseFactory.create(
             description="pommes",
             canteen=second_canteen,
-            category=Purchase.Category.PRODUITS_LAITIERS,
+            family=Purchase.Family.PRODUITS_LAITIERS,
             characteristics=[Purchase.Characteristic.LABEL_ROUGE],
         )
 
@@ -489,17 +487,17 @@ class TestPurchaseApi(APITestCase):
         PurchaseFactory.create(
             description="secret",
             canteen=not_my_canteen,
-            category=Purchase.Category.ALIMENTS_INFANTILES,
+            family=Purchase.Family.AUTRES,
             characteristics=[Purchase.Characteristic.COMMERCE_EQUITABLE],
         )
 
         response = self.client.get(f"{reverse('purchase_list_create')}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        categories = body.get("categories", [])
-        self.assertEqual(len(categories), 3)
-        self.assertIn(Purchase.Category.PRODUITS_DE_LA_MER, categories)
-        self.assertNotIn(Purchase.Category.ALIMENTS_INFANTILES, categories)
+        families = body.get("families", [])
+        self.assertEqual(len(families), 3)
+        self.assertIn(Purchase.Family.PRODUITS_DE_LA_MER, families)
+        self.assertNotIn(Purchase.Family.AUTRES, families)
         self.assertEqual(len(body.get("characteristics", [])), 2)
         canteens = body.get("canteens", [])
         self.assertEqual(len(canteens), 2)
@@ -507,9 +505,9 @@ class TestPurchaseApi(APITestCase):
 
         response = self.client.get(f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}")
         body = response.json()
-        self.assertEqual(len(body["categories"]), 1)
+        self.assertEqual(len(body["families"]), 1)
 
-        response = self.client.get(f"{reverse('purchase_list_create')}?category={Purchase.Category.PRODUITS_LAITIERS}")
+        response = self.client.get(f"{reverse('purchase_list_create')}?family={Purchase.Family.PRODUITS_LAITIERS}")
         body = response.json()
         self.assertEqual(len(body["characteristics"]), 1)
 
@@ -547,11 +545,11 @@ class TestPurchaseApi(APITestCase):
     def test_excel_export_filter(self):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        PurchaseFactory.create(category=Purchase.Category.PRODUITS_DE_LA_MER, description="avoine", canteen=canteen)
-        PurchaseFactory.create(category=Purchase.Category.PRODUITS_DE_LA_MER, description="tomates", canteen=canteen)
-        PurchaseFactory.create(category=Purchase.Category.ENTREES, description="pommes", canteen=canteen)
+        PurchaseFactory.create(family=Purchase.Family.PRODUITS_DE_LA_MER, description="avoine", canteen=canteen)
+        PurchaseFactory.create(family=Purchase.Family.PRODUITS_DE_LA_MER, description="tomates", canteen=canteen)
+        PurchaseFactory.create(family=Purchase.Family.AUTRES, description="pommes", canteen=canteen)
 
-        response = self.client.get(f"{reverse('purchase_list_export')}?category=PRODUITS_DE_LA_MER")
+        response = self.client.get(f"{reverse('purchase_list_export')}?family=PRODUITS_DE_LA_MER")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)

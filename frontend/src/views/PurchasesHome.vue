@@ -14,7 +14,7 @@
             <v-icon>mdi-plus</v-icon>
             Ajouter un produit
           </v-btn>
-          <v-btn text color="primary" :to="{ name: 'PurchasesImporter' }" class="px-0 px-md-2 my-3" v-if="false">
+          <v-btn text color="primary" :to="{ name: 'PurchasesImporter' }" class="px-0 px-md-2 my-3">
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
             Créer plusieurs achats depuis un fichier
           </v-btn>
@@ -83,15 +83,15 @@
           <v-row>
             <v-col cols="12" sm="6" md="4">
               <label
-                for="filter-category"
-                :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.category }"
+                for="filter-family"
+                :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.family }"
               >
-                Catégorie
+                Famille de produit
               </label>
               <v-select
-                v-model="appliedFilters.category"
-                id="filter-category"
-                :items="categories"
+                v-model="appliedFilters.family"
+                id="filter-family"
+                :items="productFamilies"
                 hide-details
                 dense
                 outlined
@@ -198,9 +198,9 @@
         :items="processedVisiblePurchases"
         @click:row="onRowClick"
       >
-        <template v-slot:[`item.category`]="{ item }">
-          <v-chip outlined small :color="getCategoryDisplayValue(item.category).color" dark class="font-weight-bold">
-            {{ getCategoryDisplayValue(item.category).text }}
+        <template v-slot:[`item.family`]="{ item }">
+          <v-chip outlined small :color="getProductFamilyDisplayValue(item.family).color" dark class="font-weight-bold">
+            {{ getProductFamilyDisplayValue(item.family).text }}
           </v-chip>
         </template>
         <template v-slot:[`item.priceHt`]="{ item }">{{ item.priceHt }} €</template>
@@ -274,18 +274,18 @@ export default {
           sortable: true,
         },
         { text: "Produit", value: "description", sortable: true },
-        { text: "Catégorie", value: "category", sortable: false },
+        { text: "Famille", value: "family", sortable: false },
         { text: "Cantine", value: "canteen__name", sortable: true },
         { text: "Prix HT", value: "priceHt", sortable: true },
         { text: "", value: "hasAttachment", sortable: false },
       ],
-      categories: [],
+      productFamilies: [],
       characteristics: [],
       showFilters: false,
       startDateMenu: false,
       endDateMenu: false,
       appliedFilters: {
-        category: null,
+        family: null,
         characteristics: [],
         startDate: null,
         endDate: null,
@@ -310,7 +310,7 @@ export default {
     },
     hasActiveFilter() {
       return (
-        this.appliedFilters.category !== null ||
+        this.appliedFilters.family !== null ||
         this.appliedFilters.characteristics.length !== 0 ||
         this.appliedFilters.startDate !== null ||
         this.appliedFilters.endDate !== null
@@ -322,8 +322,9 @@ export default {
     // TODO: format choice lists to have explanation of inactive choices
   },
   methods: {
-    getCategoryDisplayValue(category) {
-      if (Object.prototype.hasOwnProperty.call(Constants.Categories, category)) return Constants.Categories[category]
+    getProductFamilyDisplayValue(family) {
+      if (Object.prototype.hasOwnProperty.call(Constants.ProductFamilies, family))
+        return Constants.ProductFamilies[family]
       return { text: "", color: "" }
     },
     getCharacteristicDisplayValue(characteristic) {
@@ -348,9 +349,9 @@ export default {
         .then((response) => {
           this.purchaseCount = response.count
           this.visiblePurchases = response.results
-          this.categories = response.categories
+          this.productFamilies = response.families
             .map((c) => {
-              const displayValue = this.getCategoryDisplayValue(c)
+              const displayValue = this.getProductFamilyDisplayValue(c)
               return displayValue.text ? { text: displayValue.text, value: c } : null
             })
             .filter((x) => !!x)
@@ -375,7 +376,7 @@ export default {
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
       if (this.searchTerm) apiQueryParams += `&search=${this.searchTerm}`
-      if (this.appliedFilters.category) apiQueryParams += `&category=${this.appliedFilters.category}`
+      if (this.appliedFilters.family) apiQueryParams += `&family=${this.appliedFilters.family}`
       if (this.appliedFilters.startDate) apiQueryParams += `&date_after=${this.appliedFilters.startDate}`
       if (this.appliedFilters.endDate) apiQueryParams += `&date_before=${this.appliedFilters.endDate}`
       if (this.appliedFilters.characteristics.length > 0)
@@ -387,8 +388,8 @@ export default {
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
       if (this.searchTerm) urlQueryParams["recherche"] = this.searchTerm
-      if (this.appliedFilters.category)
-        urlQueryParams["categorie"] = this.getCategoryDisplayValue(this.appliedFilters.category).text
+      if (this.appliedFilters.family)
+        urlQueryParams["famille"] = this.getProductFamilyDisplayValue(this.appliedFilters.family).text
       if (this.appliedFilters.startDate) urlQueryParams["après"] = this.appliedFilters.startDate
       if (this.appliedFilters.endDate) urlQueryParams["avant"] = this.appliedFilters.endDate
       if (this.appliedFilters.characteristics.length > 0)
@@ -432,7 +433,7 @@ export default {
         startDate: this.$route.query.après || null,
         endDate: this.$route.query.avant || null,
         characteristics,
-        category: this.getChoiceValueFromText(Constants.Categories, this.$route.query.categorie),
+        family: this.getChoiceValueFromText(Constants.ProductFamilies, this.$route.query.famille),
       }
       const filterChanges = this.appliedFilters ? getObjectDiff(this.appliedFilters, filters) : filters
       if (Object.keys(filterChanges).length > 0) this.$set(this, "appliedFilters", filterChanges)
@@ -450,7 +451,7 @@ export default {
         startDate: null,
         endDate: null,
         characteristics: [],
-        category: null,
+        family: null,
       })
     },
     onAppliedFiltersChange() {

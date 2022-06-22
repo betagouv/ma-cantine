@@ -45,6 +45,13 @@ describe("AppHeader.vue", () => {
 
   describe("authenticated", () => {
     it("Includes a user menu", () => {
+      // mocking breakpoint with thanks to https://github.com/vuetifyjs/vuetify/issues/11388#issuecomment-701410577
+      const breakpoint = {
+        init: jest.fn(),
+        framework: {},
+        smAndDown: true,
+      }
+      vuetify.framework.breakpoint = breakpoint
       const wrapper = shallowMount(AppHeader, {
         localVue,
         vuetify,

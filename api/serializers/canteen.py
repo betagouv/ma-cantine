@@ -96,6 +96,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         model = Canteen
         read_only_fields = (
             "id",
+            "region",
             "managers",
             "manager_invitations",
             "publication_status",
@@ -122,6 +123,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "production_type",
             "diagnostics",
             "department",
+            "region",
             "logo",
             "images",
             "managers",

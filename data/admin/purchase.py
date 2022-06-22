@@ -10,6 +10,7 @@ class PurchaseAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "date",
         "description",
         "provider",
+        "family",
         "category",
         "characteristics",
         "price_ht",
@@ -20,9 +21,9 @@ class PurchaseAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = (
         "date",
         "description",
-        "category",
+        "family",
         "characteristics",
         "canteen",
         "price_ht",
     )
-    list_filter = ("category", get_arrayfield_list_filter("characteristics", "Caractéristique"))
+    list_filter = ("family", get_arrayfield_list_filter("characteristics", "Caractéristique"))
