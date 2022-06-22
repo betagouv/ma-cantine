@@ -1,2 +1,2 @@
-canteen siret,description,fournisseur,date,prix HT,catégorie,caractéristiques,definition de local
-82399356058716,"Pommes, rouges",Le bon traiteur,2022-05-02,90.11,FRUITS_ET_LEGUMES,"BIO,LOCAL",DEPARTMENT
+canteen siret,description,fournisseur,date,prix HT,famille,caractéristiques,definition de local
+82399356058716,"Pommes, rouges",Le bon traiteur,2022-05-02,90.11,AUTRES,"BIO,LOCAL",DEPARTMENT

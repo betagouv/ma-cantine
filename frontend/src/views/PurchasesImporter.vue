@@ -179,10 +179,12 @@ export default {
           example: "3290.23",
         },
         {
-          name: "Catégorie",
-          description: `Options acceptées : ${Object.keys(Constants.Categories).map((x) => " <code>" + x + "</code>")}`,
+          name: "Famille de produits",
+          description: `Options acceptées : ${Object.keys(Constants.ProductFamilies).map(
+            (x) => " <code>" + x + "</code>"
+          )}`,
           type: "Texte (choix unique)",
-          example: `${Object.keys(Constants.Categories)[0]}`,
+          example: `${Object.keys(Constants.ProductFamilies)[0]}`,
         },
         {
           name: "Caractéristiques",

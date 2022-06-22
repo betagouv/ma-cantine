@@ -28,24 +28,24 @@ logger = logging.getLogger(__name__)
 class PurchasesPagination(LimitOffsetPagination):
     default_limit = 10
     max_limit = 50
-    categories = []
+    families = []
     characteristics = []
     canteens = []
 
     def paginate_queryset(self, queryset, request, view=None):
         # Performance improvements possible
         user_purchases = Purchase.objects.filter(canteen__in=request.user.canteens.all())
-        category_param = request.query_params.get("category")
-        if category_param:
-            category_qs = user_purchases
+        family_param = request.query_params.get("family")
+        if family_param:
+            family_qs = user_purchases
             characteristic_param = request.query_params.getlist("characteristics")
             if characteristic_param:
-                category_qs = category_qs.filter(characteristics__overlap=characteristic_param)
-                self.categories = set(filter(lambda x: x, category_qs.values_list("category", flat=True)))
+                family_qs = family_qs.filter(characteristics__overlap=characteristic_param)
+                self.families = set(filter(lambda x: x, family_qs.values_list("family", flat=True)))
             else:
-                self.categories = list(Purchase.Category)
+                self.families = list(Purchase.Family)
         else:
-            self.categories = set(filter(lambda x: x, queryset.values_list("category", flat=True)))
+            self.families = set(filter(lambda x: x, queryset.values_list("family", flat=True)))
         self.canteens = list(
             queryset.order_by("canteen__id").distinct("canteen__id").values_list("canteen__id", flat=True)
         )
@@ -53,8 +53,8 @@ class PurchasesPagination(LimitOffsetPagination):
         self.characteristics = []
         all_characteristics = list(Purchase.Characteristic)
         characteristic_qs = user_purchases
-        if category_param:
-            characteristic_qs = characteristic_qs.filter(category=category_param)
+        if family_param:
+            characteristic_qs = characteristic_qs.filter(family=family_param)
         for c in all_characteristics:
             if characteristic_qs.filter(characteristics__contains=[c]).exists():
                 self.characteristics.append(c)
@@ -69,7 +69,7 @@ class PurchasesPagination(LimitOffsetPagination):
                     ("next", self.get_next_link()),
                     ("previous", self.get_previous_link()),
                     ("results", data),
-                    ("categories", self.categories),
+                    ("families", self.families),
                     ("characteristics", self.characteristics),
                     ("canteens", self.canteens),
                 ]
@@ -84,7 +84,7 @@ class PurchaseFilterSet(django_filters.FilterSet):
         model = Purchase
         fields = (
             "canteen__id",
-            "category",
+            "family",
             "date",
         )
 
@@ -232,7 +232,7 @@ class PurchaseListExportView(PurchaseListCreateView, XLSXFileMixin):
             "Cantine",
             "Description",
             "Fournisseur",
-            "Catégorie",
+            "Famille de produit",
             "Caractéristiques",
             "Prix HT",
         ],
@@ -370,7 +370,7 @@ class ImportPurchasesView(APIView):
         price = row.pop(0)
         if price == "":
             raise ValidationError({"price_ht": "Le prix ne peut pas être vide"})
-        category = row.pop(0)
+        family = row.pop(0)
         characteristics = row.pop(0)
         characteristics = characteristics.split(",")
         local_definition = row.pop(0)
@@ -385,7 +385,7 @@ class ImportPurchasesView(APIView):
             provider=provider,
             date=date,
             price_ht=price,
-            category=category,
+            family=family,
             characteristics=characteristics,
             local_definition=local_definition,
             import_source="Import du fichier CSV",

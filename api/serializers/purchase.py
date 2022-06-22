@@ -19,7 +19,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "date",
             "description",
             "provider",
-            "category",
+            "family",
             "characteristics",
             "price_ht",
             "invoice_file",
@@ -54,7 +54,7 @@ class PurchaseExportSerializer(serializers.ModelSerializer):
             "canteen",
             "description",
             "provider",
-            "readable_category",
+            "readable_family",
             "readable_characteristics",
             "price_ht",
         )
