@@ -331,6 +331,7 @@ export default {
     },
     approSummary() {
       // TODO: handle case when full teledeclaration is completed
+      if (this.showExtendedDiagnostic) return " "
       if (this.diagnostic.valueTotalHt > 0) {
         let summary = []
         if (hasValue(this.diagnostic.valueBioHt)) {
