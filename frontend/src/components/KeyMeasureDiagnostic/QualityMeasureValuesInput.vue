@@ -2,7 +2,7 @@
   <fieldset class="d-flex flex-column">
     <legend class="my-2">{{ label }}</legend>
 
-    <label :for="'total-' + diagnostic.year" class="body-2 mb-1 mt-2">...totale</label>
+    <label :for="'total-' + diagnostic.year" class="body-2 mb-1 mt-2">...total</label>
     <v-text-field
       :id="'total-' + diagnostic.year"
       hide-details="auto"
