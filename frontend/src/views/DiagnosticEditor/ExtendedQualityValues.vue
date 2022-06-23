@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label :for="'total-' + diagnostic.year" class="body-2 mb-1 mt-2">
+    <label :for="'total-' + diagnostic.year" class="body-2">
       La valeur (en HT) de mes achats alimentaires total
     </label>
 
@@ -22,10 +22,10 @@
       :messages="totalError ? [totalErrorMessage] : undefined"
       :error="totalError"
       @blur="totalError = false"
-      dense
+      class="mt-2"
     ></v-text-field>
 
-    <table>
+    <table class="my-4">
       <thead>
         <tr>
           <td></td>
@@ -45,9 +45,11 @@
               :rules="[validators.nonNegativeOrEmpty]"
               validate-on-blur
               solo
-              v-model.number="diagnostic[`${fId}_${cId}`.toLowerCase()]"
+              v-model.number="diagnostic[camelize(`${fId}_${cId}`)]"
               :readonly="readonly"
               :disabled="readonly"
+              dense
+              class="caption"
             ></v-text-field>
             <!-- TODO: label referencing, send values input, validation, styling -->
           </th>
@@ -107,6 +109,14 @@ export default {
         this.totalErrorMessage
       )(this.diagnostic.valueTotalHt)
       this.totalError = result !== true
+    },
+    camelize(underscoredString) {
+      const stringArray = underscoredString.split("_")
+      let string = stringArray[0].toLowerCase()
+      for (let index = 1; index < stringArray.length; index++) {
+        string += stringArray[index].slice(0, 1).toUpperCase() + stringArray[index].slice(1).toLowerCase()
+      }
+      return string
     },
   },
 }

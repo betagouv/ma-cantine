@@ -236,7 +236,7 @@ export default {
       cancelDialog: false,
       teledeclarationYear: lastYear(),
       purchasesSummary: null,
-      extendedDiagnostic: false, // true if some extended values completed?
+      extendedDiagnostic: false,
     }
   },
   components: {
@@ -321,6 +321,7 @@ export default {
   },
   beforeMount() {
     this.refreshDiagnostic()
+    this.extendedDiagnostic = this.showExtendedDiagnostic()
   },
   methods: {
     refreshDiagnostic() {
@@ -484,6 +485,9 @@ export default {
         fetch(`/api/v1/canteenPurchasesSummary/${this.canteenId}?year=${this.diagnostic.year}`)
           .then((response) => (response.ok ? response.json() : {}))
           .then((response) => (this.purchasesSummary = response))
+    },
+    showExtendedDiagnostic() {
+      return Constants.TeledeclarationValuesKeys.some((key) => !!this.originalDiagnostic[key])
     },
   },
   created() {
