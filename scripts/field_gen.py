@@ -1,7 +1,7 @@
 # run this with python field_gen.py > ../notes/whatever.py
 # in response to https://github.com/betagouv/ma-cantine/issues/1509
 
-# model
+
 labels = [
     ("BIO", "Bio"),
     ("LABEL_ROUGE", "Label rouge"),
@@ -88,6 +88,15 @@ print("]")
 print("[", end="")
 for t in families:
     print(f'"{t[0]}"', end=", ")
+print("]")
+print("[", end="")
+for field in fields:
+    fieldnameArray = field["fieldname"].split("_")
+    fieldnameArray = [word.capitalize() for word in fieldnameArray]
+    camelized = fieldnameArray[0].lower()
+    for word in fieldnameArray[1:]:
+        camelized = camelized + word
+    print(f'"{camelized}"', end=", ")
 print("]")
 
 # importer
