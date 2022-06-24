@@ -85,14 +85,13 @@
             :formIsValid="formIsValid.quality"
           >
             <v-form ref="quality" v-model="formIsValid.quality">
-              <v-switch v-model="extendedDiagnostic" :label="extendedDiagnosticLabel" v-if="isTeledeclarationYear" />
+              <v-switch v-model="extendedDiagnostic" :label="extendedDiagnosticLabel" />
               <SimplifiedQualityValues
                 :originalDiagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
                 :purchasesSummary="purchasesSummary"
-                v-if="!extendedDiagnostic || !isTeledeclarationYear"
+                v-if="!extendedDiagnostic"
               />
-              <!-- TODO: handle case when teledelared in previous years -->
               <ExtendedQualityValues
                 :originalDiagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
@@ -316,7 +315,7 @@ export default {
       )
     },
     extendedDiagnosticLabel() {
-      return this.extendedDiagnostic ? "Télédéclaration complête" : "Télédéclaration simplifiée"
+      return this.extendedDiagnostic ? "Déclaration complête" : "Déclaration simplifiée"
     },
   },
   beforeMount() {

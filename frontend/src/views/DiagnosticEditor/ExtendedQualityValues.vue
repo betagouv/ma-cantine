@@ -83,7 +83,6 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-    <!-- TODO: label referencing, validation, styling -->
   </div>
 </template>
 
