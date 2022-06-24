@@ -25,46 +25,73 @@
       class="mt-2"
     ></v-text-field>
 
-    <table class="my-4">
-      <thead>
-        <tr>
-          <td></td>
-          <th v-for="(family, fId) in families" :key="fId" class="caption" :style="'width: 12%'">
-            {{ family.shortText || family.text }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(characteristic, cId) in characteristics" :key="cId">
-          <td class="caption">{{ characteristic.text }}</td>
-          <th v-for="(family, fId) in families" :key="fId" class="caption">
-            <v-text-field
-              :id="`${fId}-${cId}-${diagnostic.year}`"
-              hide-details="auto"
-              type="number"
-              :rules="[validators.nonNegativeOrEmpty]"
-              validate-on-blur
-              solo
-              placeholder="0"
-              v-model.number="diagnostic[camelize(`${fId}_${cId}`)]"
-              :readonly="readonly"
-              :disabled="readonly"
-              dense
-              class="caption"
-            ></v-text-field>
-            <!-- TODO: label referencing, send values input, validation, styling -->
-          </th>
-        </tr>
-      </tbody>
-    </table>
+    <!-- TODO: a11y -->
+    <p class="body-2 mt-6">Les valeurs de mes achats par label :</p>
+    <v-expansion-panels class="mb-4 mt-2">
+      <v-expansion-panel v-for="(characteristic, cId) in characteristics" :key="cId">
+        <v-expansion-panel-header>
+          <v-row align="center">
+            <v-col
+              cols="2"
+              class="py-0 my-1 pr-0 d-flex align-center justify-center"
+              style="display: block; height: 30px;"
+            >
+              <LogoBio v-if="cId === 'BIO'" style="max-width: 100%; max-height: 100%;" />
+              <img
+                v-for="label in qualityLabels(cId)"
+                :key="label.title"
+                :src="`/static/images/quality-labels/${label.src}`"
+                :alt="label.title"
+                :title="label.title"
+                :style="label.style || 'max-width: 100%; height: inherit;'"
+              />
+            </v-col>
+            <v-col>
+              {{ characteristic.text }}
+            </v-col>
+          </v-row>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-row class="mb-2">
+            <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6">
+              <label :for="'total-' + diagnostic.year" class="body-2">
+                {{ family.text }}
+              </label>
+
+              <v-text-field
+                :id="`${fId}-${cId}-${diagnostic.year}`"
+                hide-details="auto"
+                type="number"
+                :rules="[validators.nonNegativeOrEmpty]"
+                validate-on-blur
+                solo
+                placeholder="Je ne sais pas"
+                suffix="€ HT"
+                v-model.number="diagnostic[camelize(`${fId}_${cId}`)]"
+                :readonly="readonly"
+                :disabled="readonly"
+                class="mt-2"
+              ></v-text-field>
+              <!--
+                  :messages="totalError ? [totalErrorMessage] : undefined"
+                  :error="totalError"
+                  @blur="totalError = false"
+                -->
+            </v-col>
+          </v-row>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+    <!-- TODO: label referencing, validation, styling -->
   </div>
 </template>
 
 <script>
-// import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 // import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import validators from "@/validators"
 import Constants from "@/constants"
+import LogoBio from "@/components/LogoBio"
+import labels from "@/data/quality-labels.json"
 
 export default {
   name: "ExtendedQualityValues",
@@ -76,10 +103,10 @@ export default {
       default: false,
     },
   },
-  // components: {
-  //   QualityMeasureValuesInput,
-  //   PurchaseHint,
-  // },
+  components: {
+    // PurchaseHint,
+    LogoBio,
+  },
   data() {
     return {
       totalError: false,
@@ -118,6 +145,40 @@ export default {
         string += stringArray[index].slice(0, 1).toUpperCase() + stringArray[index].slice(1).toLowerCase()
       }
       return string
+    },
+    qualityLabels(characteristicId) {
+      let singleLabel
+      let labelGroup
+      switch (characteristicId) {
+        case "LABEL_ROUGE":
+          singleLabel = labels.find((l) => l.src.startsWith("label-rouge"))
+          break
+        case "AOCAOP_IGP_STG":
+          labelGroup = [
+            labels.find((l) => l.src.startsWith("Logo-AOC")),
+            labels.find((l) => l.src.startsWith("IGP")),
+            labels.find((l) => l.src.startsWith("STG")),
+          ]
+          labelGroup.forEach((l) => {
+            l.style = "max-width: 30%; height: 'fit-content';"
+          })
+          return labelGroup
+        case "HVE":
+          singleLabel = labels.find((l) => l.src.startsWith("hve"))
+          break
+        case "PECHE_DURABLE":
+          singleLabel = labels.find((l) => l.src.endsWith("peche-durable.png"))
+          break
+        case "RUP":
+          singleLabel = labels.find((l) => l.src.startsWith("rup"))
+          break
+        case "COMMERCE_EQUITABLE":
+          singleLabel = labels.find((l) => l.src.startsWith("commerce-equitable"))
+          break
+      }
+      if (singleLabel) {
+        return [singleLabel]
+      }
     },
   },
 }
