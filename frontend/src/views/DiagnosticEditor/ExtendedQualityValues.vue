@@ -189,7 +189,7 @@ export default {
         case "FERMIER":
           singleLabel = {
             icon: "mdi-cow",
-            color: "blue",
+            color: "brown",
           }
           break
         case "EQUIVALENTS":
@@ -213,19 +213,19 @@ export default {
         case "FRANCE":
           singleLabel = {
             icon: "mdi-hexagon-outline",
-            color: "brown",
-          }
-          break
-        case "LOCAL":
-          singleLabel = {
-            icon: "mdi-map-marker-outline",
-            color: "pink",
+            color: "indigo",
           }
           break
         case "SHORT_DISTRIBUTION":
           singleLabel = {
             icon: "mdi-chart-timeline-variant",
-            color: "indigo",
+            color: "pink",
+          }
+          break
+        case "LOCAL":
+          singleLabel = {
+            icon: "mdi-map-marker-outline",
+            color: "blue",
           }
           break
       }
