@@ -8,10 +8,7 @@
       :id="'total-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[
-        validators.nonNegativeOrEmpty,
-        validators.gteSum([diagnostic.valueBioHt, diagnostic.valueSustainableHt], totalErrorMessage),
-      ]"
+      :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
       solo
       placeholder="Je ne sais pas"
@@ -19,9 +16,9 @@
       v-model.number="diagnostic.valueTotalHt"
       :readonly="readonly"
       :disabled="readonly"
-      :messages="totalError ? [totalErrorMessage] : undefined"
       :error="totalError"
-      @blur="totalError = false"
+      :messages="totalError ? [totalErrorMessage] : undefined"
+      @blur="checkTotal"
       class="mt-2"
     ></v-text-field>
 
@@ -79,12 +76,8 @@
                 :readonly="readonly"
                 :disabled="readonly"
                 class="mt-2"
+                @blur="checkTotal"
               ></v-text-field>
-              <!--
-                  :messages="totalError ? [totalErrorMessage] : undefined"
-                  :error="totalError"
-                  @blur="totalError = false"
-                -->
             </v-col>
           </v-row>
         </v-expansion-panel-content>
@@ -100,6 +93,8 @@ import validators from "@/validators"
 import Constants from "@/constants"
 import LogoBio from "@/components/LogoBio"
 import labels from "@/data/quality-labels.json"
+
+const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que le somme des valeurs par label"
 
 export default {
   name: "ExtendedQualityValues",
@@ -118,7 +113,7 @@ export default {
   data() {
     return {
       totalError: false,
-      totalErrorMessage: "Le totale ne peut pas être moins que le somme des valeurs suivantes",
+      totalErrorMessage: DEFAULT_TOTAL_ERROR,
       families: Constants.ProductFamilies,
       characteristics: Constants.TeledeclarationCharacteristics,
     }
@@ -139,12 +134,13 @@ export default {
   },
   methods: {
     checkTotal() {
-      // TODO: update
-      const result = validators.gteSum(
-        [this.diagnostic.valueBioHt, this.diagnostic.valueSustainableHt],
-        this.totalErrorMessage
-      )(this.diagnostic.valueTotalHt)
-      this.totalError = result !== true
+      const totalInputs = this.sumAll()
+      if (totalInputs > this.diagnostic.valueTotalHt) {
+        this.totalError = true
+        this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumAll()} €`
+      } else {
+        this.totalError = false
+      }
     },
     camelize(underscoredString) {
       const stringArray = underscoredString.split("_")
@@ -188,14 +184,25 @@ export default {
         return [singleLabel]
       }
     },
-    percentage(characteristicId) {
-      const total = this.diagnostic.valueTotalHt
-      if (!total) return
+    labelSum(characteristicId) {
       let labelTotal = 0
       Object.keys(this.families).forEach((family) => {
         const key = this.camelize(`${family}_${characteristicId}`)
         labelTotal += this.diagnostic[key] || 0
       })
+      return labelTotal
+    },
+    sumAll() {
+      let totalInputs = 0
+      Object.keys(this.characteristics).forEach((characteristicId) => {
+        totalInputs += this.labelSum(characteristicId)
+      })
+      return totalInputs
+    },
+    percentage(characteristicId) {
+      const total = this.diagnostic.valueTotalHt
+      if (!total) return
+      const labelTotal = this.labelSum(characteristicId)
       const percentage = Math.round((labelTotal / total) * 100)
       if (percentage) {
         return `${percentage} %`
