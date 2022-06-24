@@ -30,26 +30,34 @@
     <v-expansion-panels class="mb-4 mt-2">
       <v-expansion-panel v-for="(characteristic, cId) in characteristics" :key="cId">
         <v-expansion-panel-header>
-          <v-row align="center">
-            <v-col
-              cols="2"
-              class="py-0 my-1 pr-0 d-flex align-center justify-center"
-              style="display: block; height: 30px;"
-            >
-              <LogoBio v-if="cId === 'BIO'" style="max-width: 100%; max-height: 100%;" />
-              <img
-                v-for="label in qualityLabels(cId)"
-                :key="label.title"
-                :src="`/static/images/quality-labels/${label.src}`"
-                :alt="label.title"
-                :title="label.title"
-                :style="label.style || 'max-width: 100%; height: inherit;'"
-              />
-            </v-col>
-            <v-col>
-              {{ characteristic.text }}
-            </v-col>
-          </v-row>
+          <template v-slot:default="{ open }">
+            <v-row align="center">
+              <v-col
+                cols="2"
+                class="py-0 my-1 pr-0 d-flex align-center justify-center"
+                style="display: block; height: 30px;"
+                v-if="$vuetify.breakpoint.smAndUp"
+              >
+                <LogoBio v-if="cId === 'BIO'" style="max-width: 100%; max-height: 100%;" />
+                <img
+                  v-for="label in qualityLabels(cId)"
+                  :key="label.title"
+                  :src="`/static/images/quality-labels/${label.src}`"
+                  :alt="label.title"
+                  :title="label.title"
+                  :style="label.style || 'max-width: 100%; height: inherit;'"
+                />
+              </v-col>
+              <v-col>{{ characteristic.text }}</v-col>
+              <v-col cols="3" class="text--secondary text-right pr-4">
+                <v-fade-transition leave-absolute>
+                  <span v-if="!open" key="0">
+                    {{ percentage(cId) }}
+                  </span>
+                </v-fade-transition>
+              </v-col>
+            </v-row>
+          </template>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-row class="mb-2">
@@ -178,6 +186,21 @@ export default {
       }
       if (singleLabel) {
         return [singleLabel]
+      }
+    },
+    percentage(characteristicId) {
+      const total = this.diagnostic.valueTotalHt
+      if (!total) return
+      let labelTotal = 0
+      Object.keys(this.families).forEach((family) => {
+        const key = this.camelize(`${family}_${characteristicId}`)
+        labelTotal += this.diagnostic[key] || 0
+      })
+      const percentage = Math.round((labelTotal / total) * 100)
+      if (percentage) {
+        return `${percentage} %`
+      } else if (labelTotal) {
+        return "< 1 %"
       }
     },
   },
