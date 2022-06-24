@@ -36,14 +36,22 @@
                 v-if="$vuetify.breakpoint.smAndUp"
               >
                 <LogoBio v-if="cId === 'BIO'" style="max-width: 100%; max-height: 100%;" />
-                <img
+                <div
                   v-for="label in qualityLabels(cId)"
-                  :key="label.title"
-                  :src="`/static/images/quality-labels/${label.src}`"
-                  :alt="label.title"
-                  :title="label.title"
+                  :key="label.title || label.icon"
                   :style="label.style || 'max-width: 100%; height: inherit;'"
-                />
+                >
+                  <img
+                    v-if="label.src"
+                    :src="`/static/images/quality-labels/${label.src}`"
+                    :alt="label.title"
+                    :title="label.title"
+                    style="max-width: 100%; height: 100%;"
+                  />
+                  <v-icon class="mt-1" :color="label.color" v-else-if="label.icon">
+                    {{ label.icon }}
+                  </v-icon>
+                </div>
               </v-col>
               <v-col>{{ characteristic.text }}</v-col>
               <v-col cols="3" class="text--secondary text-right pr-4">
@@ -177,6 +185,48 @@ export default {
           break
         case "COMMERCE_EQUITABLE":
           singleLabel = labels.find((l) => l.src.startsWith("commerce-equitable"))
+          break
+        case "FERMIER":
+          singleLabel = {
+            icon: "mdi-cow",
+            color: "blue",
+          }
+          break
+        case "EQUIVALENTS":
+          singleLabel = {
+            icon: "mdi-reflect-horizontal",
+            color: "orange",
+          }
+          break
+        case "EXTERNALITES":
+          singleLabel = {
+            icon: "mdi-flower-tulip-outline",
+            color: "purple",
+          }
+          break
+        case "PERFORMANCE":
+          singleLabel = {
+            icon: "mdi-chart-line",
+            color: "green",
+          }
+          break
+        case "FRANCE":
+          singleLabel = {
+            icon: "mdi-hexagon-outline",
+            color: "brown",
+          }
+          break
+        case "LOCAL":
+          singleLabel = {
+            icon: "mdi-map-marker-outline",
+            color: "pink",
+          }
+          break
+        case "SHORT_DISTRIBUTION":
+          singleLabel = {
+            icon: "mdi-chart-timeline-variant",
+            color: "indigo",
+          }
           break
       }
       if (singleLabel) {
