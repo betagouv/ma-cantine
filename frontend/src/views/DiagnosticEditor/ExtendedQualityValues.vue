@@ -45,6 +45,7 @@
               :rules="[validators.nonNegativeOrEmpty]"
               validate-on-blur
               solo
+              placeholder="0"
               v-model.number="diagnostic[camelize(`${fId}_${cId}`)]"
               :readonly="readonly"
               :disabled="readonly"
