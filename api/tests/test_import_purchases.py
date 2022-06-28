@@ -32,7 +32,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchase.provider, "Le bon traiteur")
         self.assertEqual(purchase.price_ht, Decimal("90.11"))
         self.assertEqual(purchase.date, date(2022, 5, 2))
-        self.assertEqual(purchase.category, Purchase.Category.FRUITS_ET_LEGUMES)
+        self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL])
         self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTMENT)
         self.assertEqual(purchase.import_source, "Import du fichier CSV")
@@ -73,7 +73,8 @@ class TestPurchaseImport(APITestCase):
             errors.pop(0)["message"], "Champ 'prix HT' : La valeur «\xa0A price\xa0» doit être un nombre décimal."
         )
         self.assertEqual(
-            errors.pop(0)["message"], "Champ 'catégorie' : La valeur «\xa0'NOPE'\xa0» n’est pas un choix valide."
+            errors.pop(0)["message"],
+            "Champ 'famille de produits' : La valeur «\xa0'NOPE'\xa0» n’est pas un choix valide.",
         )
         self.assertEqual(
             errors.pop(0)["message"],

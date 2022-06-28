@@ -13,6 +13,6 @@ class PurchaseFactory(factory.django.DjangoModelFactory):
     date = factory.Faker("date")
     description = factory.Faker("word")
     provider = factory.Faker("company")
-    category = FuzzyChoice(Purchase.Category.values)
+    family = FuzzyChoice(Purchase.Family.values)
     characteristics = factory.List(random.sample(list(Purchase.Characteristic.values), random.randint(0, 3)))
     price_ht = factory.Faker("random_int", min=0, max=2000)
