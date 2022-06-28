@@ -24,7 +24,7 @@
 
     <!-- TODO: a11y -->
     <p class="body-2 mt-6">Les valeurs de mes achats par label :</p>
-    <v-expansion-panels class="mb-4 mt-2">
+    <v-expansion-panels class="mt-2 mb-4">
       <v-expansion-panel v-for="(characteristic, cId) in characteristics" :key="cId">
         <v-expansion-panel-header>
           <template v-slot:default="{ open }">
@@ -91,6 +91,14 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
+    <v-row align="center" class="px-2">
+      <v-col class="text-center">
+        <p class="caption my-0">{{ fieldsCompleted }} / {{ totalFieldCount }} champs remplis</p>
+      </v-col>
+      <v-col cols="12" sm="9">
+        <v-progress-linear :value="percentageCompletion" rounded height="6"></v-progress-linear>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -118,11 +126,127 @@ export default {
     LogoBio,
   },
   data() {
+    const teledeclarationFields = [
+      "viandesVolaillesBio",
+      "produitsDeLaMerBio",
+      "fruitsEtLegumesBio",
+      "charcuterieBio",
+      "produitsLaitiersBio",
+      "boulangerieBio",
+      "boissonsBio",
+      "autresBio",
+      "viandesVolaillesLabelRouge",
+      "produitsDeLaMerLabelRouge",
+      "fruitsEtLegumesLabelRouge",
+      "charcuterieLabelRouge",
+      "produitsLaitiersLabelRouge",
+      "boulangerieLabelRouge",
+      "boissonsLabelRouge",
+      "autresLabelRouge",
+      "viandesVolaillesAocaopIgpStg",
+      "produitsDeLaMerAocaopIgpStg",
+      "fruitsEtLegumesAocaopIgpStg",
+      "charcuterieAocaopIgpStg",
+      "produitsLaitiersAocaopIgpStg",
+      "boulangerieAocaopIgpStg",
+      "boissonsAocaopIgpStg",
+      "autresAocaopIgpStg",
+      "viandesVolaillesHve",
+      "produitsDeLaMerHve",
+      "fruitsEtLegumesHve",
+      "charcuterieHve",
+      "produitsLaitiersHve",
+      "boulangerieHve",
+      "boissonsHve",
+      "autresHve",
+      "viandesVolaillesPecheDurable",
+      "produitsDeLaMerPecheDurable",
+      "fruitsEtLegumesPecheDurable",
+      "charcuteriePecheDurable",
+      "produitsLaitiersPecheDurable",
+      "boulangeriePecheDurable",
+      "boissonsPecheDurable",
+      "autresPecheDurable",
+      "viandesVolaillesRup",
+      "produitsDeLaMerRup",
+      "fruitsEtLegumesRup",
+      "charcuterieRup",
+      "produitsLaitiersRup",
+      "boulangerieRup",
+      "boissonsRup",
+      "autresRup",
+      "viandesVolaillesFermier",
+      "produitsDeLaMerFermier",
+      "fruitsEtLegumesFermier",
+      "charcuterieFermier",
+      "produitsLaitiersFermier",
+      "boulangerieFermier",
+      "boissonsFermier",
+      "autresFermier",
+      "viandesVolaillesExternalites",
+      "produitsDeLaMerExternalites",
+      "fruitsEtLegumesExternalites",
+      "charcuterieExternalites",
+      "produitsLaitiersExternalites",
+      "boulangerieExternalites",
+      "boissonsExternalites",
+      "autresExternalites",
+      "viandesVolaillesCommerceEquitable",
+      "produitsDeLaMerCommerceEquitable",
+      "fruitsEtLegumesCommerceEquitable",
+      "charcuterieCommerceEquitable",
+      "produitsLaitiersCommerceEquitable",
+      "boulangerieCommerceEquitable",
+      "boissonsCommerceEquitable",
+      "autresCommerceEquitable",
+      "viandesVolaillesPerformance",
+      "produitsDeLaMerPerformance",
+      "fruitsEtLegumesPerformance",
+      "charcuteriePerformance",
+      "produitsLaitiersPerformance",
+      "boulangeriePerformance",
+      "boissonsPerformance",
+      "autresPerformance",
+      "viandesVolaillesEquivalents",
+      "produitsDeLaMerEquivalents",
+      "fruitsEtLegumesEquivalents",
+      "charcuterieEquivalents",
+      "produitsLaitiersEquivalents",
+      "boulangerieEquivalents",
+      "boissonsEquivalents",
+      "autresEquivalents",
+      "viandesVolaillesFrance",
+      "produitsDeLaMerFrance",
+      "fruitsEtLegumesFrance",
+      "charcuterieFrance",
+      "produitsLaitiersFrance",
+      "boulangerieFrance",
+      "boissonsFrance",
+      "autresFrance",
+      "viandesVolaillesShortDistribution",
+      "produitsDeLaMerShortDistribution",
+      "fruitsEtLegumesShortDistribution",
+      "charcuterieShortDistribution",
+      "produitsLaitiersShortDistribution",
+      "boulangerieShortDistribution",
+      "boissonsShortDistribution",
+      "autresShortDistribution",
+      "viandesVolaillesLocal",
+      "produitsDeLaMerLocal",
+      "fruitsEtLegumesLocal",
+      "charcuterieLocal",
+      "produitsLaitiersLocal",
+      "boulangerieLocal",
+      "boissonsLocal",
+      "autresLocal",
+    ]
     return {
       totalError: false,
       totalErrorMessage: DEFAULT_TOTAL_ERROR,
       families: Constants.ProductFamilies,
       characteristics: Constants.TeledeclarationCharacteristics,
+      teledeclarationFields,
+      totalFieldCount: teledeclarationFields.length,
     }
   },
   computed: {
@@ -137,6 +261,18 @@ export default {
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
+    },
+    fieldsCompleted() {
+      let completed = 0
+      Object.entries(this.diagnostic).forEach(([field, value]) => {
+        if (this.teledeclarationFields.indexOf(field) > -1) {
+          completed += parseFloat(value, 10) >= 0 ? 1 : 0
+        }
+      })
+      return completed
+    },
+    percentageCompletion() {
+      return Math.round((this.fieldsCompleted / this.totalFieldCount) * 100)
     },
   },
   methods: {

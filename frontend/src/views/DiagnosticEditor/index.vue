@@ -97,6 +97,7 @@
                 :readonly="hasActiveTeledeclaration"
                 :purchasesSummary="purchasesSummary"
                 v-else
+                class="mb-4"
               />
             </v-form>
           </DiagnosticExpansionPanel>
@@ -315,7 +316,7 @@ export default {
       )
     },
     extendedDiagnosticLabel() {
-      return this.extendedDiagnostic ? "Déclaration complête" : "Déclaration simplifiée"
+      return this.extendedDiagnostic ? "Passer en déclaration simplifiée" : "Passer en déclaration complête"
     },
   },
   beforeMount() {
