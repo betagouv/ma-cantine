@@ -79,7 +79,7 @@
                 solo
                 placeholder="Je ne sais pas"
                 suffix="€ HT"
-                v-model.number="diagnostic[camelize(`${fId}_${cId}`)]"
+                v-model.number="diagnostic[diagnosticKey(fId, cId)]"
                 :readonly="readonly"
                 :disabled="readonly"
                 class="mt-2"
@@ -203,6 +203,9 @@ export default {
         this.totalError = false
       }
     },
+    diagnosticKey(family, characteristic) {
+      return this.camelize(`value_${family}_${characteristic}`)
+    },
     camelize(underscoredString) {
       const stringArray = underscoredString.split("_")
       let string = stringArray[0].toLowerCase()
@@ -249,7 +252,7 @@ export default {
     labelSum(characteristicId) {
       let labelTotal = 0
       Object.keys(this.families).forEach((family) => {
-        const key = this.camelize(`${family}_${characteristicId}`)
+        const key = this.diagnosticKey(family, characteristicId)
         labelTotal += this.diagnostic[key] || 0
       })
       return labelTotal

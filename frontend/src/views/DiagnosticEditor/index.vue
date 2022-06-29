@@ -330,17 +330,31 @@ export default {
       else this.$router.replace({ name: "NotFound" })
     },
     approSummary() {
-      // TODO: handle case when full teledeclaration is completed
-      if (this.showExtendedDiagnostic) return " "
       if (this.diagnostic.valueTotalHt > 0) {
-        let summary = []
-        if (hasValue(this.diagnostic.valueBioHt)) {
-          summary.push(`${getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
+        let bioTotal = this.diagnostic.valueBioHt
+        let qualityTotal = this.diagnostic.valueSustainableHt
+        if (this.showExtendedDiagnostic) {
+          bioTotal = 0
+          qualityTotal = 0
+          Object.keys(this.diagnostic).forEach((key) => {
+            if (key.startsWith("value")) {
+              const value = parseFloat(this.diagnostic[key])
+              if (value) {
+                if (key.endsWith("Bio")) {
+                  bioTotal += value
+                } else if (!key.startsWith("valueLabel") && !key.endsWith("Ht")) {
+                  qualityTotal += value
+                }
+              }
+            }
+          })
         }
-        if (hasValue(this.diagnostic.valueSustainableHt)) {
-          summary.push(
-            `${getPercentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
-          )
+        let summary = []
+        if (hasValue(bioTotal)) {
+          summary.push(`${getPercentage(bioTotal, this.diagnostic.valueTotalHt)} % bio`)
+        }
+        if (hasValue(qualityTotal)) {
+          summary.push(`${getPercentage(qualityTotal, this.diagnostic.valueTotalHt)} % de qualité et durable`)
         }
         return summary.join(", ")
       }
