@@ -38,3 +38,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+/* for pages with left hand navigation we can make the width bigger */
+.constrained {
+  max-width: 1200px !important;
+}
+</style>

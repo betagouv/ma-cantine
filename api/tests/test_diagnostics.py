@@ -86,6 +86,120 @@ class TestDiagnosticsApi(APITestCase):
             "creation_mtm_source": "mtm_source_value",
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
+            # detailed value fields
+            "value_viandes_volailles_bio": 10,
+            "value_produits_de_la_mer_bio": 10,
+            "value_fruits_et_legumes_bio": 10,
+            "value_charcuterie_bio": 10,
+            "value_produits_laitiers_bio": 10,
+            "value_boulangerie_bio": 10,
+            "value_boissons_bio": 10,
+            "value_autres_bio": 10,
+            "value_viandes_volailles_label_rouge": 10,
+            "value_produits_de_la_mer_label_rouge": 10,
+            "value_fruits_et_legumes_label_rouge": 10,
+            "value_charcuterie_label_rouge": 10,
+            "value_produits_laitiers_label_rouge": 10,
+            "value_boulangerie_label_rouge": 10,
+            "value_boissons_label_rouge": 10,
+            "value_autres_label_rouge": 10,
+            "value_viandes_volailles_aocaop_igp_stg": 10,
+            "value_produits_de_la_mer_aocaop_igp_stg": 10,
+            "value_fruits_et_legumes_aocaop_igp_stg": 10,
+            "value_charcuterie_aocaop_igp_stg": 10,
+            "value_produits_laitiers_aocaop_igp_stg": 10,
+            "value_boulangerie_aocaop_igp_stg": 10,
+            "value_boissons_aocaop_igp_stg": 10,
+            "value_autres_aocaop_igp_stg": 10,
+            "value_viandes_volailles_hve": 10,
+            "value_produits_de_la_mer_hve": 10,
+            "value_fruits_et_legumes_hve": 10,
+            "value_charcuterie_hve": 10,
+            "value_produits_laitiers_hve": 10,
+            "value_boulangerie_hve": 10,
+            "value_boissons_hve": 10,
+            "value_autres_hve": 10,
+            "value_viandes_volailles_peche_durable": 10,
+            "value_produits_de_la_mer_peche_durable": 10,
+            "value_fruits_et_legumes_peche_durable": 10,
+            "value_charcuterie_peche_durable": 10,
+            "value_produits_laitiers_peche_durable": 10,
+            "value_boulangerie_peche_durable": 10,
+            "value_boissons_peche_durable": 10,
+            "value_autres_peche_durable": 10,
+            "value_viandes_volailles_rup": 10,
+            "value_produits_de_la_mer_rup": 10,
+            "value_fruits_et_legumes_rup": 10,
+            "value_charcuterie_rup": 10,
+            "value_produits_laitiers_rup": 10,
+            "value_boulangerie_rup": 10,
+            "value_boissons_rup": 10,
+            "value_autres_rup": 10,
+            "value_viandes_volailles_fermier": 10,
+            "value_produits_de_la_mer_fermier": 10,
+            "value_fruits_et_legumes_fermier": 10,
+            "value_charcuterie_fermier": 10,
+            "value_produits_laitiers_fermier": 10,
+            "value_boulangerie_fermier": 10,
+            "value_boissons_fermier": 10,
+            "value_autres_fermier": 10,
+            "value_viandes_volailles_externalites": 10,
+            "value_produits_de_la_mer_externalites": 10,
+            "value_fruits_et_legumes_externalites": 10,
+            "value_charcuterie_externalites": 10,
+            "value_produits_laitiers_externalites": 10,
+            "value_boulangerie_externalites": 10,
+            "value_boissons_externalites": 10,
+            "value_autres_externalites": 10,
+            "value_viandes_volailles_commerce_equitable": 10,
+            "value_produits_de_la_mer_commerce_equitable": 10,
+            "value_fruits_et_legumes_commerce_equitable": 10,
+            "value_charcuterie_commerce_equitable": 10,
+            "value_produits_laitiers_commerce_equitable": 10,
+            "value_boulangerie_commerce_equitable": 10,
+            "value_boissons_commerce_equitable": 10,
+            "value_autres_commerce_equitable": 10,
+            "value_viandes_volailles_performance": 10,
+            "value_produits_de_la_mer_performance": 10,
+            "value_fruits_et_legumes_performance": 10,
+            "value_charcuterie_performance": 10,
+            "value_produits_laitiers_performance": 10,
+            "value_boulangerie_performance": 10,
+            "value_boissons_performance": 10,
+            "value_autres_performance": 10,
+            "value_viandes_volailles_equivalents": 10,
+            "value_produits_de_la_mer_equivalents": 10,
+            "value_fruits_et_legumes_equivalents": 10,
+            "value_charcuterie_equivalents": 10,
+            "value_produits_laitiers_equivalents": 10,
+            "value_boulangerie_equivalents": 10,
+            "value_boissons_equivalents": 10,
+            "value_autres_equivalents": 10,
+            "value_viandes_volailles_france": 10,
+            "value_produits_de_la_mer_france": 10,
+            "value_fruits_et_legumes_france": 10,
+            "value_charcuterie_france": 10,
+            "value_produits_laitiers_france": 10,
+            "value_boulangerie_france": 10,
+            "value_boissons_france": 10,
+            "value_autres_france": 10,
+            "value_viandes_volailles_short_distribution": 10,
+            "value_produits_de_la_mer_short_distribution": 10,
+            "value_fruits_et_legumes_short_distribution": 10,
+            "value_charcuterie_short_distribution": 10,
+            "value_produits_laitiers_short_distribution": 10,
+            "value_boulangerie_short_distribution": 10,
+            "value_boissons_short_distribution": 10,
+            "value_autres_short_distribution": 10,
+            "value_viandes_volailles_local": 10,
+            "value_produits_de_la_mer_local": 10,
+            "value_fruits_et_legumes_local": 10,
+            "value_charcuterie_local": 10,
+            "value_produits_laitiers_local": 10,
+            "value_boulangerie_local": 10,
+            "value_boissons_local": 10,
+            "value_autres_local": 10,
+            # end of detailed value fields
         }
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -110,6 +224,28 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.creation_mtm_source, "mtm_source_value")
         self.assertEqual(diagnostic.creation_mtm_campaign, "mtm_campaign_value")
         self.assertEqual(diagnostic.creation_mtm_medium, "mtm_medium_value")
+        self.assertEqual(diagnostic.total_label_bio, 80)
+        self.assertEqual(diagnostic.total_label_label_rouge, 80)
+        self.assertEqual(diagnostic.total_label_aocaop_igp_stg, 80)
+        self.assertEqual(diagnostic.total_label_hve, 80)
+        self.assertEqual(diagnostic.total_label_peche_durable, 80)
+        self.assertEqual(diagnostic.total_label_rup, 80)
+        self.assertEqual(diagnostic.total_label_fermier, 80)
+        self.assertEqual(diagnostic.total_label_externalites, 80)
+        self.assertEqual(diagnostic.total_label_commerce_equitable, 80)
+        self.assertEqual(diagnostic.total_label_performance, 80)
+        self.assertEqual(diagnostic.total_label_equivalents, 80)
+        self.assertEqual(diagnostic.total_label_france, 80)
+        self.assertEqual(diagnostic.total_label_short_distribution, 80)
+        self.assertEqual(diagnostic.total_label_local, 80)
+        self.assertEqual(diagnostic.total_family_viandes_volailles, 140)
+        self.assertEqual(diagnostic.total_family_produits_de_la_mer, 140)
+        self.assertEqual(diagnostic.total_family_fruits_et_legumes, 140)
+        self.assertEqual(diagnostic.total_family_charcuterie, 140)
+        self.assertEqual(diagnostic.total_family_produits_laitiers, 140)
+        self.assertEqual(diagnostic.total_family_boulangerie, 140)
+        self.assertEqual(diagnostic.total_family_boissons, 140)
+        self.assertEqual(diagnostic.total_family_autres, 140)
 
     @authenticate
     def test_create_duplicate_diagnostic(self):
