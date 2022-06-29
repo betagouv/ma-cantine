@@ -40,16 +40,10 @@ export default Object.freeze({
   ProductFamilies: {
     VIANDES_VOLAILLES: { text: "Viandes et volailles fraîches et surgelées", color: "pink darken-4" },
     CHARCUTERIE: { text: "Charcuterie", color: "pink darken-4" },
-    PRODUITS_DE_LA_MER: {
-      text: "Produits aquatiques frais et surgelés",
-      color: "blue darken-3",
-    },
+    PRODUITS_DE_LA_MER: { text: "Produits aquatiques frais et surgelés", color: "blue darken-3" },
     FRUITS_ET_LEGUMES: { text: "Fruits et légumes frais et surgelés", color: "green darken-3" },
     PRODUITS_LAITIERS: { text: "BOF (Produits laitiers, beurre et œufs)", color: "deep-orange darken-4" },
-    BOULANGERIE: {
-      text: "Boulangerie / Pâtisserie fraîches",
-      color: "deep-purple darken-3",
-    },
+    BOULANGERIE: { text: "Boulangerie / Pâtisserie fraîches", color: "deep-purple darken-3" },
     BOISSONS: { text: "Boissons", color: "green darken-4" },
     AUTRES: { text: "Autres produits frais, surgelés et d’épicerie", color: "grey darken-3" },
   },

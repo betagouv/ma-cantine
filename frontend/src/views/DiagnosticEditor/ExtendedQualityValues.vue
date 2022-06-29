@@ -22,7 +22,6 @@
       class="mt-2"
     ></v-text-field>
 
-    <!-- TODO: a11y -->
     <p class="body-2 mt-6">Les valeurs de mes achats par label :</p>
     <v-expansion-panels class="mt-2 mb-4">
       <v-expansion-panel v-for="(characteristic, cId) in characteristics" :key="cId">
@@ -67,12 +66,12 @@
         <v-expansion-panel-content>
           <v-row class="mb-2">
             <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6">
-              <label :for="'total-' + diagnostic.year" class="body-2">
+              <label :for="inputHtmlId(fId, cId)" class="body-2">
                 {{ family.text }}
               </label>
 
               <v-text-field
-                :id="`${fId}-${cId}-${diagnostic.year}`"
+                :id="inputHtmlId(fId, cId)"
                 hide-details="auto"
                 type="number"
                 :rules="[validators.nonNegativeOrEmpty]"
@@ -103,13 +102,43 @@
 </template>
 
 <script>
-// import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import validators from "@/validators"
 import Constants from "@/constants"
 import LogoBio from "@/components/LogoBio"
 import labels from "@/data/quality-labels.json"
 
 const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que le somme des valeurs par label"
+
+const MISC_LABELS = {
+  FERMIER: {
+    icon: "mdi-cow",
+    color: "brown",
+  },
+  EQUIVALENTS: {
+    icon: "mdi-reflect-horizontal",
+    color: "orange",
+  },
+  EXTERNALITES: {
+    icon: "mdi-flower-tulip-outline",
+    color: "purple",
+  },
+  PERFORMANCE: {
+    icon: "mdi-chart-line",
+    color: "green",
+  },
+  FRANCE: {
+    icon: "mdi-hexagon-outline",
+    color: "indigo",
+  },
+  SHORT_DISTRIBUTION: {
+    icon: "mdi-chart-timeline-variant",
+    color: "pink",
+  },
+  LOCAL: {
+    icon: "mdi-map-marker-outline",
+    color: "blue",
+  },
+}
 
 export default {
   name: "ExtendedQualityValues",
@@ -122,124 +151,10 @@ export default {
     },
   },
   components: {
-    // PurchaseHint,
     LogoBio,
   },
   data() {
-    const teledeclarationFields = [
-      "viandesVolaillesBio",
-      "produitsDeLaMerBio",
-      "fruitsEtLegumesBio",
-      "charcuterieBio",
-      "produitsLaitiersBio",
-      "boulangerieBio",
-      "boissonsBio",
-      "autresBio",
-      "viandesVolaillesLabelRouge",
-      "produitsDeLaMerLabelRouge",
-      "fruitsEtLegumesLabelRouge",
-      "charcuterieLabelRouge",
-      "produitsLaitiersLabelRouge",
-      "boulangerieLabelRouge",
-      "boissonsLabelRouge",
-      "autresLabelRouge",
-      "viandesVolaillesAocaopIgpStg",
-      "produitsDeLaMerAocaopIgpStg",
-      "fruitsEtLegumesAocaopIgpStg",
-      "charcuterieAocaopIgpStg",
-      "produitsLaitiersAocaopIgpStg",
-      "boulangerieAocaopIgpStg",
-      "boissonsAocaopIgpStg",
-      "autresAocaopIgpStg",
-      "viandesVolaillesHve",
-      "produitsDeLaMerHve",
-      "fruitsEtLegumesHve",
-      "charcuterieHve",
-      "produitsLaitiersHve",
-      "boulangerieHve",
-      "boissonsHve",
-      "autresHve",
-      "viandesVolaillesPecheDurable",
-      "produitsDeLaMerPecheDurable",
-      "fruitsEtLegumesPecheDurable",
-      "charcuteriePecheDurable",
-      "produitsLaitiersPecheDurable",
-      "boulangeriePecheDurable",
-      "boissonsPecheDurable",
-      "autresPecheDurable",
-      "viandesVolaillesRup",
-      "produitsDeLaMerRup",
-      "fruitsEtLegumesRup",
-      "charcuterieRup",
-      "produitsLaitiersRup",
-      "boulangerieRup",
-      "boissonsRup",
-      "autresRup",
-      "viandesVolaillesFermier",
-      "produitsDeLaMerFermier",
-      "fruitsEtLegumesFermier",
-      "charcuterieFermier",
-      "produitsLaitiersFermier",
-      "boulangerieFermier",
-      "boissonsFermier",
-      "autresFermier",
-      "viandesVolaillesExternalites",
-      "produitsDeLaMerExternalites",
-      "fruitsEtLegumesExternalites",
-      "charcuterieExternalites",
-      "produitsLaitiersExternalites",
-      "boulangerieExternalites",
-      "boissonsExternalites",
-      "autresExternalites",
-      "viandesVolaillesCommerceEquitable",
-      "produitsDeLaMerCommerceEquitable",
-      "fruitsEtLegumesCommerceEquitable",
-      "charcuterieCommerceEquitable",
-      "produitsLaitiersCommerceEquitable",
-      "boulangerieCommerceEquitable",
-      "boissonsCommerceEquitable",
-      "autresCommerceEquitable",
-      "viandesVolaillesPerformance",
-      "produitsDeLaMerPerformance",
-      "fruitsEtLegumesPerformance",
-      "charcuteriePerformance",
-      "produitsLaitiersPerformance",
-      "boulangeriePerformance",
-      "boissonsPerformance",
-      "autresPerformance",
-      "viandesVolaillesEquivalents",
-      "produitsDeLaMerEquivalents",
-      "fruitsEtLegumesEquivalents",
-      "charcuterieEquivalents",
-      "produitsLaitiersEquivalents",
-      "boulangerieEquivalents",
-      "boissonsEquivalents",
-      "autresEquivalents",
-      "viandesVolaillesFrance",
-      "produitsDeLaMerFrance",
-      "fruitsEtLegumesFrance",
-      "charcuterieFrance",
-      "produitsLaitiersFrance",
-      "boulangerieFrance",
-      "boissonsFrance",
-      "autresFrance",
-      "viandesVolaillesShortDistribution",
-      "produitsDeLaMerShortDistribution",
-      "fruitsEtLegumesShortDistribution",
-      "charcuterieShortDistribution",
-      "produitsLaitiersShortDistribution",
-      "boulangerieShortDistribution",
-      "boissonsShortDistribution",
-      "autresShortDistribution",
-      "viandesVolaillesLocal",
-      "produitsDeLaMerLocal",
-      "fruitsEtLegumesLocal",
-      "charcuterieLocal",
-      "produitsLaitiersLocal",
-      "boulangerieLocal",
-      "boissonsLocal",
-      "autresLocal",
-    ]
+    const teledeclarationFields = Constants.TeledeclarationValuesKeys
     return {
       totalError: false,
       totalErrorMessage: DEFAULT_TOTAL_ERROR,
@@ -276,6 +191,9 @@ export default {
     },
   },
   methods: {
+    inputHtmlId(fId, cId) {
+      return `${fId}-${cId}-${this.diagnostic.year}`
+    },
     checkTotal() {
       const totalInputs = this.sumAll()
       if (totalInputs > this.diagnostic.valueTotalHt) {
@@ -322,49 +240,8 @@ export default {
         case "COMMERCE_EQUITABLE":
           singleLabel = labels.find((l) => l.src.startsWith("commerce-equitable"))
           break
-        case "FERMIER":
-          singleLabel = {
-            icon: "mdi-cow",
-            color: "brown",
-          }
-          break
-        case "EQUIVALENTS":
-          singleLabel = {
-            icon: "mdi-reflect-horizontal",
-            color: "orange",
-          }
-          break
-        case "EXTERNALITES":
-          singleLabel = {
-            icon: "mdi-flower-tulip-outline",
-            color: "purple",
-          }
-          break
-        case "PERFORMANCE":
-          singleLabel = {
-            icon: "mdi-chart-line",
-            color: "green",
-          }
-          break
-        case "FRANCE":
-          singleLabel = {
-            icon: "mdi-hexagon-outline",
-            color: "indigo",
-          }
-          break
-        case "SHORT_DISTRIBUTION":
-          singleLabel = {
-            icon: "mdi-chart-timeline-variant",
-            color: "pink",
-          }
-          break
-        case "LOCAL":
-          singleLabel = {
-            icon: "mdi-map-marker-outline",
-            color: "blue",
-          }
-          break
       }
+      singleLabel = singleLabel || MISC_LABELS[characteristicId]
       if (singleLabel) {
         return [singleLabel]
       }

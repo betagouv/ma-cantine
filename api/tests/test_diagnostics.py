@@ -86,8 +86,8 @@ class TestDiagnosticsApi(APITestCase):
             "creation_mtm_source": "mtm_source_value",
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
-            "viandes_volailles_bio": 10,
             # detailed value fields
+            "viandes_volailles_bio": 10,
             "produits_de_la_mer_bio": 10,
             "fruits_et_legumes_bio": 10,
             "charcuterie_bio": 10,
