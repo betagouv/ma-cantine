@@ -114,10 +114,6 @@ const MISC_LABELS = {
     icon: "mdi-cow",
     color: "brown",
   },
-  EQUIVALENTS: {
-    icon: "mdi-reflect-horizontal",
-    color: "orange",
-  },
   EXTERNALITES: {
     icon: "mdi-flower-tulip-outline",
     color: "purple",
