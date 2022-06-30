@@ -298,11 +298,10 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return [
-        parseFloat(this.diagnostic.valueBioHt),
-        parseFloat(this.diagnostic.valueSustainableHt),
-        parseFloat(this.diagnostic.valueTotalHt),
-      ].every((x) => !strictIsNaN(x))
+      const { bioTotal, qualityTotal } = this.approTotals()
+      return [parseFloat(bioTotal), parseFloat(qualityTotal), parseFloat(this.diagnostic.valueTotalHt)].every(
+        (x) => !strictIsNaN(x)
+      )
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
@@ -329,26 +328,33 @@ export default {
       if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
       else this.$router.replace({ name: "NotFound" })
     },
-    approSummary() {
-      if (this.diagnostic.valueTotalHt > 0) {
-        let bioTotal = this.diagnostic.valueBioHt
-        let qualityTotal = this.diagnostic.valueSustainableHt
-        if (this.showExtendedDiagnostic) {
-          bioTotal = 0
-          qualityTotal = 0
-          Object.keys(this.diagnostic).forEach((key) => {
-            if (key.startsWith("value")) {
-              const value = parseFloat(this.diagnostic[key])
-              if (value) {
-                if (key.endsWith("Bio")) {
-                  bioTotal += value
-                } else if (!key.startsWith("valueLabel") && !key.endsWith("Ht")) {
-                  qualityTotal += value
-                }
+    approTotals() {
+      let bioTotal = this.diagnostic.valueBioHt
+      let qualityTotal = this.diagnostic.valueSustainableHt
+      if (this.extendedDiagnostic) {
+        bioTotal = 0
+        qualityTotal = 0
+        Object.keys(this.diagnostic).forEach((key) => {
+          if (key.startsWith("value")) {
+            const value = parseFloat(this.diagnostic[key])
+            if (value) {
+              if (key.endsWith("Bio")) {
+                bioTotal += value
+              } else if (!key.startsWith("valueLabel") && !key.endsWith("Ht")) {
+                qualityTotal += value
               }
             }
-          })
-        }
+          }
+        })
+      }
+      return {
+        bioTotal,
+        qualityTotal,
+      }
+    },
+    approSummary() {
+      if (this.diagnostic.valueTotalHt > 0) {
+        const { bioTotal, qualityTotal } = this.approTotals()
         let summary = []
         if (hasValue(bioTotal)) {
           summary.push(`${getPercentage(bioTotal, this.diagnostic.valueTotalHt)} % bio`)
@@ -377,6 +383,11 @@ export default {
         this.openedPanel = Object.values(this.formIsValid).findIndex((isValid) => !isValid)
         return
       }
+      // save to the diagnostic the aggregations of bio and quality if extended diagnostic used
+      const { bioTotal, qualityTotal } = this.approTotals()
+      this.diagnostic.valueBioHt = bioTotal
+      this.diagnostic.valueSustainableHt = qualityTotal
+
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
 
       if (this.isNewDiagnostic) {
