@@ -22,8 +22,16 @@
       class="mt-2"
     ></v-text-field>
 
-    <p class="body-2 mt-6">Les valeurs de mes achats par label :</p>
-    <v-expansion-panels class="mt-2 mb-4">
+    <p class="body-2 mt-6 mb-1">Les valeurs de mes achats par label :</p>
+    <v-row align="center" class="px-2">
+      <v-col cols="6" sm="8" md="9" class="pl-1 pb-1">
+        <v-progress-linear :value="percentageCompletion" rounded height="6"></v-progress-linear>
+      </v-col>
+      <v-col class="text-right pb-1">
+        <p class="caption my-0">{{ fieldsCompleted }} / {{ totalFieldCount }} champs remplis</p>
+      </v-col>
+    </v-row>
+    <v-expansion-panels class="mt-4 mb-4">
       <v-expansion-panel v-for="(characteristic, cId) in characteristics" :key="cId">
         <v-expansion-panel-header>
           <template v-slot:default="{ open }">
@@ -90,14 +98,6 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-row align="center" class="px-2">
-      <v-col class="text-center">
-        <p class="caption my-0">{{ fieldsCompleted }} / {{ totalFieldCount }} champs remplis</p>
-      </v-col>
-      <v-col cols="12" sm="9">
-        <v-progress-linear :value="percentageCompletion" rounded height="6"></v-progress-linear>
-      </v-col>
-    </v-row>
   </div>
 </template>
 
