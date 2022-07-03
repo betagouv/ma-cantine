@@ -230,120 +230,124 @@
           ></v-text-field>
         </v-col>
 
-        <v-col cols="12" md="8" v-if="usesCentralProducer" class="py-0">
-          <label class="body-2 mt-4" for="central-siret">SIRET de la cuisine centrale</label>
-          <v-text-field
-            id="central-siret"
-            class="mt-2"
-            hide-details="auto"
-            validate-on-blur
-            solo
-            v-model="canteen.centralProducerSiret"
-            :rules="[validators.length(14), validators.luhn]"
-          ></v-text-field>
-          <p class="caption mt-1 ml-2">
-            Vous ne le connaissez pas ? Utilisez cet
-            <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
-              outil de recherche pour trouver le SIRET
-            </a>
-            de la cuisine centrale.
-          </p>
-        </v-col>
+        <v-expand-transition>
+          <v-col cols="12" md="8" v-if="usesCentralProducer" class="py-0">
+            <label class="body-2 mt-4" for="central-siret">SIRET de la cuisine centrale</label>
+            <v-text-field
+              id="central-siret"
+              class="mt-2"
+              hide-details="auto"
+              validate-on-blur
+              solo
+              v-model="canteen.centralProducerSiret"
+              :rules="[validators.length(14), validators.luhn]"
+            ></v-text-field>
+            <p class="caption mt-1 ml-2">
+              Vous ne le connaissez pas ? Utilisez cet
+              <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
+                outil de recherche pour trouver le SIRET
+              </a>
+              de la cuisine centrale.
+            </p>
+          </v-col>
+        </v-expand-transition>
       </v-row>
 
-      <div v-if="showSatelliteCanteensCount">
-        <p class="text-h6 font-weight-bold mt-8">
-          Les cantines satellites
-        </p>
-        <div v-if="existingSatellites.length">
-          <p class="mt-4 text-body-2">Les cantines suivantes sont déjà reliées à cette cuisine centrale.</p>
-          <ol>
-            <v-row v-for="satellite in existingSatellites" :key="satellite.id">
-              <v-col cols="12" md="9" class="pb-1 pb-md-3">
-                <!-- TODO: show daily meal count and sectors too? -->
-                <li>{{ satellite.name }} (SIRET : {{ satellite.siret }})</li>
-              </v-col>
-              <v-col class="pt-0 pt-md-3">
-                <router-link
-                  color="primary"
-                  :to="{
-                    name: 'CanteenModification',
-                    params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(satellite) },
-                  }"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Mettez-la à jour
-                  <v-icon small color="primary">mdi-open-in-new</v-icon>
-                </router-link>
-              </v-col>
-            </v-row>
-          </ol>
+      <v-expand-transition>
+        <div v-if="showSatelliteCanteensCount && satelliteCanteensCount > 0">
+          <p class="text-h6 font-weight-bold mt-8">
+            Les cantines satellites
+          </p>
+          <div v-if="existingSatellites.length">
+            <p class="mt-4 text-body-2">Les cantines suivantes sont déjà reliées à cette cuisine centrale.</p>
+            <ol>
+              <v-row v-for="satellite in existingSatellites" :key="satellite.id">
+                <v-col cols="12" md="9" class="pb-1 pb-md-3">
+                  <!-- TODO: show daily meal count and sectors too? -->
+                  <li>{{ satellite.name }} (SIRET : {{ satellite.siret }})</li>
+                </v-col>
+                <v-col class="pt-0 pt-md-3">
+                  <router-link
+                    color="primary"
+                    :to="{
+                      name: 'CanteenModification',
+                      params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(satellite) },
+                    }"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Mettez-la à jour
+                    <v-icon small color="primary">mdi-open-in-new</v-icon>
+                  </router-link>
+                </v-col>
+              </v-row>
+            </ol>
+          </div>
+          <div v-if="satellites.length">
+            <p class="mt-6 text-body-2">Renseignez les données pour les cuisines satellites restantes.</p>
+            <fieldset v-for="satelliteNb in satellites.length" :key="'satellite-' + satelliteNb" class="my-4 pa-4 pb-6">
+              <!-- NB: v-for with range is 1-indexed https://vuejs.org/guide/essentials/list.html#v-for-with-a-range -->
+              <legend class="ml-4 px-2 text-body-2">Cantine {{ satelliteNb + existingSatellites.length }}</legend>
+              <v-row>
+                <v-col cols="12" md="3">
+                  <!-- TODO: make siret only required if some other field filled in? -->
+                  <label class="body-2" :for="'satellite-siret-' + satelliteNb">SIRET</label>
+                  <v-text-field
+                    :id="'satellite-siret-' + satelliteNb"
+                    class="mt-2"
+                    hide-details="auto"
+                    validate-on-blur
+                    solo
+                    v-model="satellites[satelliteNb - 1].siret"
+                    :rules="[validators.length(14), validators.luhn]"
+                  ></v-text-field>
+                  <!-- TODO: validator to check if two sirets in the array are the same -->
+                </v-col>
+                <v-col cols="12" md="3">
+                  <label class="body-2" :for="'meal-count-' + satelliteNb">Couverts par jour</label>
+                  <v-text-field
+                    :id="'meal-count-' + satelliteNb"
+                    class="mt-2"
+                    hide-details="auto"
+                    validate-on-blur
+                    solo
+                    v-model="satellites[satelliteNb - 1].dailyMealCount"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <label class="body-2" :for="'sectors-' + satelliteNb">Secteurs d'activité</label>
+                  <v-select
+                    :id="'sectors-' + satelliteNb"
+                    class="mt-2"
+                    multiple
+                    :items="sectors"
+                    solo
+                    v-model="satellites[satelliteNb - 1].sectors"
+                    item-text="name"
+                    item-value="id"
+                    hide-details
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" md="6" class="pt-0">
+                  <label class="body-2" :for="'satellite-name-' + satelliteNb">Nom</label>
+                  <v-text-field
+                    :id="'satellite-name-' + satelliteNb"
+                    class="mt-2"
+                    hide-details="auto"
+                    validate-on-blur
+                    solo
+                    v-model="satellites[satelliteNb - 1].name"
+                    :rules="!!satellites[satelliteNb - 1].siret ? [validators.required] : []"
+                  ></v-text-field>
+                </v-col>
+                <!-- TODO: location? -->
+              </v-row>
+            </fieldset>
+          </div>
         </div>
-        <div v-if="satellites.length">
-          <p class="mt-6 text-body-2">Renseignez les données pour les cuisines satellites restantes.</p>
-          <fieldset v-for="satelliteNb in satellites.length" :key="'satellite-' + satelliteNb" class="my-4 pa-4 pb-6">
-            <!-- NB: v-for with range is 1-indexed https://vuejs.org/guide/essentials/list.html#v-for-with-a-range -->
-            <legend class="ml-4 px-2 text-body-2">Cantine {{ satelliteNb + existingSatellites.length }}</legend>
-            <v-row>
-              <v-col cols="12" md="3">
-                <!-- TODO: make siret only required if some other field filled in? -->
-                <label class="body-2" :for="'satellite-siret-' + satelliteNb">SIRET</label>
-                <v-text-field
-                  :id="'satellite-siret-' + satelliteNb"
-                  class="mt-2"
-                  hide-details="auto"
-                  validate-on-blur
-                  solo
-                  v-model="satellites[satelliteNb - 1].siret"
-                  :rules="[validators.length(14), validators.luhn]"
-                ></v-text-field>
-                <!-- TODO: validator to check if two sirets in the array are the same -->
-              </v-col>
-              <v-col cols="12" md="3">
-                <label class="body-2" :for="'meal-count-' + satelliteNb">Couverts par jour</label>
-                <v-text-field
-                  :id="'meal-count-' + satelliteNb"
-                  class="mt-2"
-                  hide-details="auto"
-                  validate-on-blur
-                  solo
-                  v-model="satellites[satelliteNb - 1].dailyMealCount"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6">
-                <label class="body-2" :for="'sectors-' + satelliteNb">Secteurs d'activité</label>
-                <v-select
-                  :id="'sectors-' + satelliteNb"
-                  class="mt-2"
-                  multiple
-                  :items="sectors"
-                  solo
-                  v-model="satellites[satelliteNb - 1].sectors"
-                  item-text="name"
-                  item-value="id"
-                  hide-details
-                ></v-select>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" md="6" class="pt-0">
-                <label class="body-2" :for="'satellite-name-' + satelliteNb">Nom</label>
-                <v-text-field
-                  :id="'satellite-name-' + satelliteNb"
-                  class="mt-2"
-                  hide-details="auto"
-                  validate-on-blur
-                  solo
-                  v-model="satellites[satelliteNb - 1].name"
-                  :rules="!!satellites[satelliteNb - 1].siret ? [validators.required] : []"
-                ></v-text-field>
-              </v-col>
-              <!-- TODO: location? -->
-            </v-row>
-          </fieldset>
-        </div>
-      </div>
+      </v-expand-transition>
 
       <v-row>
         <v-col cols="12" class="mt-4">
@@ -530,8 +534,8 @@ export default {
         { value: "autre", text: "Autre" },
       ],
       satellites: [],
-      satelliteCanteensCount: this.originalCanteen.satelliteCanteensCount,
-      existingSatellites: this.originalCanteen.satellites,
+      satelliteCanteensCount: this.originalCanteen?.satelliteCanteensCount,
+      existingSatellites: this.originalCanteen?.satellites || [],
     }
   },
   computed: {
