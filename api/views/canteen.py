@@ -1,3 +1,4 @@
+import ast
 import logging
 from collections import OrderedDict
 from datetime import date
@@ -5,7 +6,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from common.utils import send_mail
 from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, BadRequest
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.functions import Cast
@@ -329,10 +330,10 @@ class AddManagerView(APIView):
             logger.exception(e)
             return _respond_with_team(canteen)
         except Exception as e:
-            logger.error("Exception ocurred while inviting a manager to canteen")
+            logger.error("Exception occurred while inviting a manager to canteen")
             logger.exception(e)
             return JsonResponse(
-                {"error": "An error has ocurred"},
+                {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -432,10 +433,10 @@ class RemoveManagerView(APIView):
             logger.exception(e)
             return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            logger.error("Exception ocurred while removing a manager from a canteen")
+            logger.error("Exception occurred while removing a manager from a canteen")
             logger.exception(e)
             return JsonResponse(
-                {"error": "An error has ocurred"},
+                {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -470,10 +471,10 @@ class SendCanteenNotFoundEmail(APIView):
         except ValidationError:
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error("Exception ocurred while sending email")
+            logger.error("Exception occurred while sending email")
             logger.exception(e)
             return JsonResponse(
-                {"error": "An error has ocurred"},
+                {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -524,10 +525,10 @@ class TeamJoinRequestView(APIView):
         except ValidationError:
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error("Exception ocurred while sending email")
+            logger.error("Exception occurred while sending email")
             logger.exception(e)
             return JsonResponse(
-                {"error": "An error has ocurred"},
+                {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -717,9 +718,44 @@ class ClaimCanteenView(APIView):
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.error("Exception ocurred while sending email")
+            logger.error("Exception occurred while sending email")
             logger.exception(e)
             return JsonResponse(
-                {"error": "An error has ocurred"},
+                {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class SatelliteCreateUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, canteen_pk):
+        canteen = Canteen.objects.only("siret").get(pk=canteen_pk)
+        if request.user not in canteen.managers.all():
+            raise PermissionDenied()
+
+        r_status = status.HTTP_200_OK
+        satellites = request.data.getlist("satellites")
+        for satellite in satellites:
+            # TODO: bad request - missing data
+            try:
+                satellite = ast.literal_eval(satellite)
+                new_satellite = Canteen.objects.create(
+                    siret=satellite.get("siret"),
+                    name=satellite.get("name"),
+                    daily_meal_count=satellite.get("dailyMealCount"),
+                    # location?
+                    central_producer_siret=canteen.siret,
+                    publication_status=Canteen.PublicationStatus.PUBLISHED,
+                    import_source=f"Cuisine centrale : {canteen.siret}",
+                )
+                new_satellite.sectors.set([Sector.objects.get(id=sector) for sector in satellite.get("sectors")])
+                new_satellite.full_clean()
+                new_satellite.save()
+                for manager in canteen.managers.all():
+                    new_satellite.managers.add(manager)
+                r_status = status.HTTP_201_CREATED
+            except Sector.DoesNotExist:
+                raise BadRequest()
+
+        return JsonResponse({}, status=r_status)

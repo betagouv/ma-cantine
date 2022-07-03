@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, SectorFactory
+from data.factories import CanteenFactory, SectorFactory, UserFactory
 from data.models import Canteen
 from .utils import authenticate
 
@@ -45,3 +45,71 @@ class TestRelationCentralSatellite(APITestCase):
         # just checking if satellite 2 is in there too
         satellite_2_result = next(canteen for canteen in satellites if canteen["id"] == satellite_2.id)
         self.assertEqual(satellite_2_result["siret"], satellite_2.siret)
+
+    def test_create_satellites_unauthenticated(self):
+        """
+        Shouldn't be able to create satellites if not logged in
+        """
+        canteen = CanteenFactory.create()
+        response = self.client.post(reverse("create_update_satellites", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_create_satellites_not_manager(self):
+        canteen = CanteenFactory.create()
+        response = self.client.post(reverse("create_update_satellites", kwargs={"canteen_pk": canteen.id}), {})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_create_satellites(self):
+        """
+        When the endpoint is called, create new canteens, adding in some additional helpful information
+        """
+        central_siret = "08376514425566"
+        canteen = CanteenFactory.create(siret=central_siret)
+        canteen.managers.add(authenticate.user)
+        second_manager = UserFactory.create()
+        canteen.managers.add(second_manager)
+        # all the mgmt team of the cuisine centrale should be added to the satellite team
+
+        satellite_siret = "38782537682311"
+        school = SectorFactory.create(name="School")
+        enterprise = SectorFactory.create(name="Enterprise")
+        request = {
+            "satellites": [
+                {
+                    "name": "Wanderer",
+                    "siret": satellite_siret,
+                    "dailyMealCount": 30,
+                    "sectors": [school.id, enterprise.id],
+                }
+            ]
+        }
+        response = self.client.post(reverse("create_update_satellites", kwargs={"canteen_pk": canteen.id}), request)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        satellite = Canteen.objects.get(siret=satellite_siret)
+        self.assertEqual(satellite.name, "Wanderer")
+        self.assertEqual(satellite.sectors.count(), 2)
+        self.assertIn(school, satellite.sectors.all())
+        self.assertIn(enterprise, satellite.sectors.all())
+        self.assertEqual(satellite.publication_status, Canteen.PublicationStatus.PUBLISHED)
+        self.assertEqual(satellite.import_source, "Cuisine centrale : 08376514425566")
+        self.assertEqual(satellite.central_producer_siret, central_siret)
+        self.assertIn(authenticate.user, satellite.managers.all())
+        self.assertIn(second_manager, satellite.managers.all())
+
+    @authenticate
+    def test_add_existing_satellite(self):
+        """
+        Ability to create a link between a central and a satellite that already exists,
+        sending off a request to join the mgmt team if necessary (200)
+        """
+        pass
+
+    @authenticate
+    def test_add_existing_satellite_already_linked(self):
+        """
+        If the satellite targeted already has a central siret listed, don't change anything (404)
+        """
+        pass
