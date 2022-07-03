@@ -101,6 +101,29 @@ export default Object.freeze({
     REGION: { text: "Provenant de la même région", value: "REGION" },
     AUTRE: { text: "Autre", value: "AUTRE" },
   },
+  TeledeclarationCharacteristicGroups: {
+    egalim: {
+      text:
+        "Pour la saisie, vous ne devez affecter le produit qu'une dans une seule catégorie. Par exemple, un produit à la fois biologique et label rouge sera comptabilisé que dans la catégorie 'bio'.",
+      characteristics: [
+        "BIO",
+        "LABEL_ROUGE",
+        "AOCAOP_IGP_STG",
+        "EXTERNALITES",
+        "PERFORMANCE",
+        "FERMIER",
+        "HVE",
+        "PECHE_DURABLE",
+        "RUP",
+        "COMMERCE_EQUITABLE",
+      ],
+    },
+    outsideLaw: {
+      text:
+        "Ici, vous pouvez affecter le produit dans plusieurs caractéristiques. Par exemple, un produit à la fois biologique et local pourra être comptabilisé dans les deux champs 'bio' et 'local'.",
+      characteristics: ["FRANCE", "SHORT_DISTRIBUTION", "LOCAL"],
+    },
+  },
   TeledeclarationValuesKeys: [
     "valueViandesVolaillesBio",
     "valueProduitsDeLaMerBio",
