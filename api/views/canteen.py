@@ -1,4 +1,4 @@
-import ast
+# import ast
 import logging
 from collections import OrderedDict
 from datetime import date
@@ -735,11 +735,13 @@ class SatelliteCreateUpdateView(APIView):
             raise PermissionDenied()
 
         r_status = status.HTTP_200_OK
-        satellites = request.data.getlist("satellites")
+        satellites = request.data.get("satellites")
+        # satellites = request.data.getlist("satellites") # TODO: why test and real request not same object type?
         for satellite in satellites:
             # TODO: bad request - missing data
             try:
-                satellite = ast.literal_eval(satellite)
+                # satellite = ast.literal_eval(satellite) # required when testing, not with real requests
+                # TODO: maybe better to use a serializer ?
                 new_satellite = Canteen.objects.create(
                     siret=satellite.get("siret"),
                     name=satellite.get("name"),
@@ -748,6 +750,7 @@ class SatelliteCreateUpdateView(APIView):
                     central_producer_siret=canteen.siret,
                     publication_status=Canteen.PublicationStatus.PUBLISHED,
                     import_source=f"Cuisine centrale : {canteen.siret}",
+                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 )
                 new_satellite.sectors.set([Sector.objects.get(id=sector) for sector in satellite.get("sectors")])
                 new_satellite.full_clean()

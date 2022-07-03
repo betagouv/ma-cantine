@@ -96,6 +96,7 @@ class TestRelationCentralSatellite(APITestCase):
         self.assertEqual(satellite.publication_status, Canteen.PublicationStatus.PUBLISHED)
         self.assertEqual(satellite.import_source, "Cuisine centrale : 08376514425566")
         self.assertEqual(satellite.central_producer_siret, central_siret)
+        self.assertEqual(satellite.production_type, Canteen.ProductionType.ON_SITE_CENTRAL)
         self.assertIn(authenticate.user, satellite.managers.all())
         self.assertIn(second_manager, satellite.managers.all())
 

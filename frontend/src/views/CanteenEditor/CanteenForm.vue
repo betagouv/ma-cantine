@@ -726,6 +726,10 @@ export default {
           }
           window.scrollTo(0, 0)
         })
+
+      if (this.satellites.length) {
+        this.$store.dispatch("addSatellites", { id: this.canteen.id, payload: { satellites: this.satellites } })
+      }
     },
     onLogoUploadClick() {
       this.$refs.uploader.click()
