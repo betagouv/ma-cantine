@@ -222,6 +222,11 @@ class Canteen(SoftDeletionModel):
     def url_path(self):
         return f"/nos-cantines/{self.url_slug}"
 
+    @property
+    def satellites(self):
+        if self.siret:
+            return Canteen.objects.filter(central_producer_siret=self.siret)
+
     def __str__(self):
         return f'Cantine "{self.name}"'
 
