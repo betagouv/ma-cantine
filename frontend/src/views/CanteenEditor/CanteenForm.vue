@@ -225,7 +225,7 @@
             "
             validate-on-blur
             solo
-            v-model="canteen.satelliteCanteensCount"
+            v-model="satelliteCanteensCount"
             prepend-icon="mdi-home-city"
           ></v-text-field>
         </v-col>
@@ -249,7 +249,71 @@
             de la cuisine centrale.
           </p>
         </v-col>
+      </v-row>
 
+      <div v-if="showSatelliteCanteensCount">
+        <fieldset v-for="satelliteNb in satellites.length" :key="'satellite-' + satelliteNb" class="my-4 pa-4 pb-6">
+          <!-- NB: v-for with range is 1-indexed https://vuejs.org/guide/essentials/list.html#v-for-with-a-range -->
+          <legend class="ml-4 px-2">Cantine {{ satelliteNb }}</legend>
+          <v-row>
+            <v-col cols="12" md="3">
+              <!-- TODO: make siret only required if some other field filled in? -->
+              <label class="body-2" :for="'satellite-siret-' + satelliteNb">SIRET</label>
+              <v-text-field
+                :id="'satellite-siret-' + satelliteNb"
+                class="mt-2"
+                hide-details="auto"
+                validate-on-blur
+                solo
+                v-model="satellites[satelliteNb - 1].siret"
+                :rules="[validators.length(14), validators.luhn]"
+              ></v-text-field>
+              <!-- TODO: validator to check if two sirets in the array are the same -->
+            </v-col>
+            <v-col cols="12" md="3">
+              <label class="body-2" :for="'meal-count-' + satelliteNb">Couverts par jour</label>
+              <v-text-field
+                :id="'meal-count-' + satelliteNb"
+                class="mt-2"
+                hide-details="auto"
+                validate-on-blur
+                solo
+                v-model="satellites[satelliteNb - 1].dailyMealCount"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <label class="body-2" :for="'sectors-' + satelliteNb">Secteurs d'activité</label>
+              <v-select
+                :id="'sectors-' + satelliteNb"
+                class="mt-2"
+                multiple
+                :items="sectors"
+                solo
+                v-model="satellites[satelliteNb - 1].sectors"
+                item-text="name"
+                item-value="id"
+                hide-details
+              ></v-select>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" md="6" class="pt-0">
+              <label class="body-2" :for="'satellite-name-' + satelliteNb">Nom</label>
+              <v-text-field
+                :id="'satellite-name-' + satelliteNb"
+                class="mt-2"
+                hide-details="auto"
+                validate-on-blur
+                solo
+                v-model="satellites[satelliteNb - 1].name"
+                :rules="!!satellites[satelliteNb - 1].siret ? [validators.required] : []"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </fieldset>
+      </div>
+
+      <v-row>
         <v-col cols="12" class="mt-4">
           <v-divider></v-divider>
         </v-col>
@@ -433,6 +497,8 @@ export default {
         { value: "transformation", text: "Ministère de la Transformation et de la Fonction Publiques" },
         { value: "autre", text: "Autre" },
       ],
+      satellites: [],
+      satelliteCanteensCount: this.originalCanteen.satelliteCanteensCount,
     }
   },
   computed: {
@@ -478,6 +544,9 @@ export default {
         this.populateCityAutocomplete()
       }
       if (!this.canteen.images) this.canteen.images = []
+      if (canteen.satelliteCanteensCount) {
+        this.updateSatellitesArray(canteen.satelliteCanteensCount)
+      }
     } else this.$router.push({ name: "NewCanteen" })
   },
   created() {
@@ -729,6 +798,13 @@ export default {
       this.technicalControlText = bodyText
       this.showTechnicalControlDialog = true
     },
+    updateSatellitesArray(satelliteCount) {
+      // TODO: improve to not lose existing satellites filled in
+      this.satellites = new Array(satelliteCount)
+      for (let i = 0; i < satelliteCount; i++) {
+        this.satellites[i] = {}
+      }
+    },
   },
   watch: {
     search(val) {
@@ -744,6 +820,10 @@ export default {
 
       this.search = this.canteen.city
     },
+    satelliteCanteensCount(val) {
+      this.canteen.satelliteCanteensCount = val
+      this.updateSatellitesArray(val)
+    },
   },
   beforeRouteLeave(to, from, next) {
     if (!this.hasChanged || this.bypassLeaveWarning) {
@@ -754,3 +834,9 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+fieldset {
+  border-radius: 10px;
+}
+</style>
