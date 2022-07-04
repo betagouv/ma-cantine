@@ -13,6 +13,10 @@
             <v-icon small class="mr-2">mdi-silverware-fork-knife</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">{{ canteen.name }}</v-list-item-title>
           </v-list-item>
+          <v-list-item :ripple="false" :to="{ name: 'SatelliteManagement' }" v-if="showSatellitePage">
+            <v-icon small class="mr-2">mdi-home-city</v-icon>
+            <v-list-item-title class="text-body-2 font-weight-bold">Satellites</v-list-item-title>
+          </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'DiagnosticList' }">
             <v-icon small class="mr-2">mdi-format-list-checks</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Diagnostics</v-list-item-title>
@@ -80,6 +84,9 @@ export default {
         !!diagnostic &&
         isDiagnosticComplete(diagnostic)
       )
+    },
+    showSatellitePage() {
+      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
     },
   },
   methods: {

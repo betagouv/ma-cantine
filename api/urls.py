@@ -59,7 +59,7 @@ urlpatterns = {
     path(
         "canteens/<int:canteen_pk>/satellites/",
         SatelliteCreateUpdateView.as_view(),
-        name="create_update_satellites",
+        name="create_update_satellite",
     ),
     path("canteenStatistics/", CanteenStatisticsView.as_view(), name="canteen_statistics"),
     path("sectors/", SectorListView.as_view(), name="sectors_list"),

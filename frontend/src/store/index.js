@@ -687,7 +687,7 @@ export default new Vuex.Store({
       return fetch(`/api/v1/canteens/${canteenId}/claim/`, { method: "POST", headers }).then(verifyResponse)
     },
 
-    addSatellites(context, { id, payload }) {
+    addSatellite(context, { id, payload }) {
       return fetch(`/api/v1/canteens/${id}/satellites/`, {
         method: "POST",
         headers,
