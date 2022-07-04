@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left pb-10">
+  <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">
       Les cantines satellites
     </h1>
@@ -30,11 +30,11 @@
       </ol>
     </div>
     <h2 class="mt-10 mb-4">
-      Renseignez les données pour les cuisines satellites restantes
+      Reliér vos cuisines satellites
     </h2>
     <v-form ref="form" v-model="formIsValid">
       <v-row>
-        <v-col cols="12" md="3">
+        <v-col cols="12" md="8">
           <label class="body-2" for="satellite-siret">SIRET</label>
           <v-text-field
             id="satellite-siret"
@@ -45,8 +45,16 @@
             v-model="satellite.siret"
             :rules="[validators.length(14), validators.luhn]"
           ></v-text-field>
+          <p class="caption mt-1 ml-2">
+            Utilisez cet
+            <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
+              outil de recherche pour trouver le SIRET
+              <v-icon color="primary" small>mdi-open-in-new</v-icon>
+            </a>
+            de votre cantine.
+          </p>
         </v-col>
-        <v-col cols="12" md="3">
+        <v-col cols="12" md="4">
           <label class="body-2" for="meal-count">Couverts par jour</label>
           <v-text-field
             id="meal-count"
@@ -55,9 +63,24 @@
             validate-on-blur
             solo
             v-model="satellite.dailyMealCount"
+            prepend-icon="mdi-silverware-fork-knife"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" md="6">
+      </v-row>
+      <v-row class="mt-n4">
+        <v-col cols="12" md="5">
+          <label class="body-2" for="satellite-name">Nom</label>
+          <v-text-field
+            id="satellite-name"
+            class="mt-2"
+            hide-details="auto"
+            validate-on-blur
+            solo
+            v-model="satellite.name"
+            :rules="[validators.required]"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" md="5">
           <label class="body-2" for="sectors">Secteurs d'activité</label>
           <v-select
             id="sectors"
@@ -71,27 +94,13 @@
             hide-details
           ></v-select>
         </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12" md="6" class="pt-0">
-          <label class="body-2" for="satellite-name">Nom</label>
-          <v-text-field
-            id="satellite-name"
-            class="mt-2"
-            hide-details="auto"
-            validate-on-blur
-            solo
-            v-model="satellite.name"
-            :rules="[validators.required]"
-          ></v-text-field>
+        <v-spacer></v-spacer>
+        <v-col class="align-self-end">
+          <v-btn @click="saveSatellite" color="primary darken-1" class="ml-4 mt-1" x-large>
+            Valider
+          </v-btn>
         </v-col>
         <!-- TODO: location -->
-      </v-row>
-      <v-row>
-        <v-spacer></v-spacer>
-        <v-btn @click="saveSatellite" color="primary darken-1" class="ml-4 mt-1" large>
-          Ajouter
-        </v-btn>
       </v-row>
     </v-form>
   </div>

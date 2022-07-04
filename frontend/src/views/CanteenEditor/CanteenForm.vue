@@ -32,6 +32,7 @@
             Vous ne le connaissez pas ? Utilisez cet
             <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
               outil de recherche pour trouver le SIRET
+              <v-icon color="primary" small>mdi-open-in-new</v-icon>
             </a>
             de votre cantine.
           </p>
