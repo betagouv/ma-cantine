@@ -600,10 +600,10 @@ export default {
             status: "success",
           })
           if (this.isNewCanteen) {
-            // TODO: if satelliteCanteensCount > 0 send to SatelliteManagement page
             const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteenJson)
             this.$router.push({
-              name: "DiagnosticList",
+              // form validation ensures that the count will be > 0
+              name: this.showSatelliteCanteensCount ? "SatelliteManagement" : "DiagnosticList",
               params: { canteenUrlComponent },
             })
           } else {
