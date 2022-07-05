@@ -21,7 +21,7 @@ from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFo
 from api.views import UserCanteenPreviews, CanteenLocationsView
 from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView, ImportPurchasesView
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
-from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, SatelliteCreateUpdateView
+from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, SatelliteListCreateUpdateView
 
 
 urlpatterns = {
@@ -58,8 +58,8 @@ urlpatterns = {
     ),
     path(
         "canteens/<int:canteen_pk>/satellites/",
-        SatelliteCreateUpdateView.as_view(),
-        name="create_update_satellite",
+        SatelliteListCreateUpdateView.as_view(),
+        name="list_create_update_satellite",
     ),
     path("canteenStatistics/", CanteenStatisticsView.as_view(), name="canteen_statistics"),
     path("sectors/", SectorListView.as_view(), name="sectors_list"),

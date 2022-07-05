@@ -112,7 +112,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     managers = CanteenManagerSerializer(many=True, read_only=True)
     manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
-    satellites = SatelliteCanteenSerializer(many=True, read_only=True)
 
     class Meta:
         model = Canteen
@@ -128,7 +127,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "diversification_comments",
             "plastics_comments",
             "information_comments",
-            "satellites",
         )
         fields = (
             "id",
@@ -140,7 +138,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "line_ministry",
             "daily_meal_count",
             "satellite_canteens_count",
-            "satellites",
             "siret",
             "central_producer_siret",
             "management_type",

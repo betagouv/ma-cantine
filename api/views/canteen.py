@@ -23,6 +23,7 @@ from api.serializers import (
     FullCanteenSerializer,
     CanteenPreviewSerializer,
     ManagingTeamSerializer,
+    SatelliteCanteenSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
 from data.region_choices import Region
@@ -725,8 +726,13 @@ class ClaimCanteenView(APIView):
             )
 
 
-class SatelliteCreateUpdateView(APIView):
+class SatelliteListCreateUpdateView(APIView):
     permission_classes = [IsAuthenticated]
+
+    def get(self, request, canteen_pk):
+        satellites = Canteen.objects.only("siret").get(pk=canteen_pk).satellites
+        serialized_satellites = SatelliteCanteenSerializer(satellites, many=True).data
+        return JsonResponse(camelize(serialized_satellites), safe=False, status=status.HTTP_200_OK)
 
     def post(self, request, canteen_pk):
         canteen = Canteen.objects.only("siret").get(pk=canteen_pk)

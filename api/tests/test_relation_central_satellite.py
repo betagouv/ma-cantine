@@ -29,21 +29,18 @@ class TestRelationCentralSatellite(APITestCase):
         for canteen in [central, satellite_1]:
             canteen.managers.add(user)
 
-        response = self.client.get(reverse("user_canteens"))
+        response = self.client.get(reverse("list_create_update_satellite", kwargs={"canteen_pk": central.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json().get("results")
+        body = response.json()
 
         self.assertEqual(len(body), 2)
-        central_result = next(canteen for canteen in body if canteen["siret"] == central_siret)
-        satellites = central_result["satellites"]
-        self.assertEqual(len(satellites), 2)
-        satellite_1_result = next(canteen for canteen in satellites if canteen["id"] == satellite_1.id)
+        satellite_1_result = next(canteen for canteen in body if canteen["id"] == satellite_1.id)
         self.assertEqual(satellite_1_result["siret"], satellite_1.siret)
         self.assertEqual(satellite_1_result["name"], satellite_1.name)
         self.assertEqual(satellite_1_result["dailyMealCount"], satellite_1.daily_meal_count)
         self.assertEqual(satellite_1_result["sectors"], [school.id, enterprise.id])
         # just checking if satellite 2 is in there too
-        satellite_2_result = next(canteen for canteen in satellites if canteen["id"] == satellite_2.id)
+        satellite_2_result = next(canteen for canteen in body if canteen["id"] == satellite_2.id)
         self.assertEqual(satellite_2_result["siret"], satellite_2.siret)
 
     def test_create_satellite_unauthenticated(self):
@@ -51,13 +48,13 @@ class TestRelationCentralSatellite(APITestCase):
         Shouldn't be able to create satellites if not logged in
         """
         canteen = CanteenFactory.create()
-        response = self.client.post(reverse("create_update_satellite", kwargs={"canteen_pk": canteen.id}))
+        response = self.client.post(reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_create_satellite_not_manager(self):
         canteen = CanteenFactory.create()
-        response = self.client.post(reverse("create_update_satellite", kwargs={"canteen_pk": canteen.id}), {})
+        response = self.client.post(reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}), {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -81,7 +78,9 @@ class TestRelationCentralSatellite(APITestCase):
             "dailyMealCount": 30,
             "sectors": [school.id, enterprise.id],
         }
-        response = self.client.post(reverse("create_update_satellite", kwargs={"canteen_pk": canteen.id}), request)
+        response = self.client.post(
+            reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}), request
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         satellite = Canteen.objects.get(siret=satellite_siret)
