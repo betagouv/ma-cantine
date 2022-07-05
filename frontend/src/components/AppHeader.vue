@@ -66,6 +66,16 @@
         <span>Mes cantines</span>
       </v-btn>
 
+      <v-btn
+        text
+        elevation="0"
+        v-if="loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
+        href="/se-deconnecter"
+        class="d-none d-sm-flex align-self-center header-signup-button primary--text"
+      >
+        <span>Me déconnecter</span>
+      </v-btn>
+
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
         <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
         <v-tabs align-with-title active-class="stealth-active-tab" hide-slider>
@@ -270,5 +280,8 @@ export default {
   caret-color: rgb(22, 22, 22);
   outline-color: #fff;
   text-decoration-color: #fff;
+}
+div::v-deep .v-btn--active::before {
+  opacity: 0 !important;
 }
 </style>
