@@ -281,7 +281,10 @@ export default {
   outline-color: #fff;
   text-decoration-color: #fff;
 }
-div::v-deep .v-btn--active::before {
-  opacity: 0 !important;
+.header-signup-button.v-btn--active::before {
+  opacity: 0;
+}
+.header-signup-button.v-btn--active:hover::before {
+  opacity: 0.08;
 }
 </style>
