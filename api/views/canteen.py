@@ -734,15 +734,21 @@ class SatelliteCreateUpdateView(APIView):
             raise PermissionDenied()
 
         try:
-            # TODO: siret duplicates validation
-            new_satellite = FullCanteenSerializer(data=request.data)
-            new_satellite.is_valid(raise_exception=True)
-            satellite = new_satellite.save(
-                central_producer_siret=canteen.siret,
-                publication_status=Canteen.PublicationStatus.PUBLISHED,
-                import_source=f"Cuisine centrale : {canteen.siret}",
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            )
+            siret = request.data.get("siret")
+            if siret and Canteen.objects.filter(siret=siret).exists():
+                satellite = Canteen.objects.filter(siret=siret).first()
+                satellite.central_producer_siret = canteen.siret
+                satellite.save()
+            else:
+                new_satellite = FullCanteenSerializer(data=request.data)
+                new_satellite.is_valid(raise_exception=True)
+
+                satellite = new_satellite.save(
+                    central_producer_siret=canteen.siret,
+                    publication_status=Canteen.PublicationStatus.PUBLISHED,
+                    import_source=f"Cuisine centrale : {canteen.siret}",
+                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                )
             for manager in canteen.managers.all():
                 satellite.managers.add(manager)
             serialized_canteen = FullCanteenSerializer(satellite).data
