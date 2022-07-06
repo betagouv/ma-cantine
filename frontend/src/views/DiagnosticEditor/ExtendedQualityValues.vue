@@ -22,7 +22,6 @@
       class="mt-2"
     ></v-text-field>
 
-    <!-- TODO: some leading explanation of what these fields are -->
     <br />
     <div v-for="(group, groupId) in characteristicGroups" :key="groupId">
       <p v-if="group.text" class="caption mb-0 ml-2">{{ group.text }}</p>
