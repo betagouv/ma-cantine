@@ -37,7 +37,6 @@ class Purchase(models.Model):
 
     class Characteristic(models.TextChoices):
         BIO = "BIO", "Bio"
-        CONVERSION_BIO = "CONVERSION_BIO", "En conversion bio"  # not used anymore
         LABEL_ROUGE = "LABEL_ROUGE", "Label rouge"
         AOCAOP = "AOCAOP", "AOC / AOP"
         # ICP here is a typo
@@ -53,7 +52,6 @@ class Purchase(models.Model):
         )
         COMMERCE_EQUITABLE = "COMMERCE_EQUITABLE", "Commerce équitable"
         PERFORMANCE = "PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"
-        EQUIVALENTS = "EQUIVALENTS", "Produits équivalents"  # not used anymore
         FRANCE = "FRANCE", "Provenance France"
         SHORT_DISTRIBUTION = "SHORT_DISTRIBUTION", "Circuit-court"
         LOCAL = "LOCAL", "Produit local"
