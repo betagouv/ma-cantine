@@ -6,10 +6,12 @@ from data.models import Canteen
 from .utils import authenticate
 
 
-# This test case examines the relationship between
-# central/central_serving canteen production types with
-# their satellites
 class TestRelationCentralSatellite(APITestCase):
+    """
+    This test case examines the relationship between central/central_serving canteen production types with
+    their satellites
+    """
+
     @authenticate
     def test_get_satellites(self):
         """
@@ -63,7 +65,7 @@ class TestRelationCentralSatellite(APITestCase):
         When the endpoint is called, create new canteens, adding in some additional helpful information
         """
         central_siret = "08376514425566"
-        canteen = CanteenFactory.create(siret=central_siret)
+        canteen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
         canteen.managers.add(authenticate.user)
         second_manager = UserFactory.create()
         canteen.managers.add(second_manager)
@@ -102,11 +104,98 @@ class TestRelationCentralSatellite(APITestCase):
         Ability to create a link between a central and a satellite that already exists,
         sending off a request to join the mgmt team if necessary (200)
         """
-        pass
+        satellite_siret = "89834106501485"
+        existing_canteen = CanteenFactory.create(siret=satellite_siret, production_type=Canteen.ProductionType.ON_SITE)
+        central_siret = "08376514425566"
+        canteen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        canteen.managers.add(authenticate.user)
+        request = {
+            "name": existing_canteen.name,
+            "siret": existing_canteen.siret,
+            "dailyMealCount": existing_canteen.daily_meal_count,
+        }
+        response = self.client.post(
+            reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}), request
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        existing_canteen.refresh_from_db()
+        self.assertEqual(existing_canteen.central_producer_siret, canteen.siret)
 
     @authenticate
     def test_add_existing_satellite_already_linked(self):
         """
-        If the satellite targeted already has a central siret listed, don't change anything (404)
+        If the satellite targeted already has a central siret listed, don't change anything
         """
-        pass
+        existing_central_cuisine_siret = "21822171376603"
+        satellite_siret = "89834106501485"
+        linked_canteen = CanteenFactory.create(
+            siret=satellite_siret,
+            production_type=Canteen.ProductionType.ON_SITE,
+            central_producer_siret=existing_central_cuisine_siret,
+        )
+        central_siret = "08376514425566"
+        canteen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        canteen.managers.add(authenticate.user)
+        request = {
+            "name": linked_canteen.name,
+            "siret": linked_canteen.siret,
+            "dailyMealCount": linked_canteen.daily_meal_count,
+        }
+        response = self.client.post(
+            reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}), request
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.json()["detail"], "Cette cantine est déjà fourni par une autre cuisine centrale")
+        linked_canteen.refresh_from_db()
+        self.assertEqual(linked_canteen.central_producer_siret, existing_central_cuisine_siret)
+
+    @authenticate
+    def test_add_central_cuisine_as_satellite(self):
+        """
+        It should not be possible to add a central cuisine as a satellite of another central cuisine
+        """
+        satellite_siret = "89834106501485"
+        central_satellite_canteen = CanteenFactory.create(
+            siret=satellite_siret, production_type=Canteen.ProductionType.CENTRAL
+        )
+        central_siret = "08376514425566"
+        canteen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        canteen.managers.add(authenticate.user)
+        request = {
+            "name": central_satellite_canteen.name,
+            "siret": central_satellite_canteen.siret,
+            "dailyMealCount": central_satellite_canteen.daily_meal_count,
+        }
+        response = self.client.post(
+            reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}), request
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.json()["detail"], "La cantine renseignée est une cuisine centrale")
+        central_satellite_canteen.refresh_from_db()
+        self.assertIsNone(central_satellite_canteen.central_producer_siret)
+
+    @authenticate
+    def test_add_satellites_to_non_central(self):
+        """
+        It should not be possible to add a satellites to canteens that are not central cuisines
+        """
+        satellite_siret = "89834106501485"
+        satellite_canteen = CanteenFactory.create(
+            siret=satellite_siret, production_type=Canteen.ProductionType.ON_SITE
+        )
+        central_siret = "08376514425566"
+        canteen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.ON_SITE)
+        canteen.managers.add(authenticate.user)
+        request = {
+            "name": satellite_canteen.name,
+            "siret": satellite_canteen.siret,
+            "dailyMealCount": satellite_canteen.daily_meal_count,
+        }
+        response = self.client.post(
+            reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}), request
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        satellite_canteen.refresh_from_db()
+        self.assertIsNone(satellite_canteen.central_producer_siret)

@@ -26,6 +26,9 @@
             Mettre à jour
           </a>
         </template>
+        <template v-slot:[`no-data`]>
+          Vous n'avez pas renseigné des satellites
+        </template>
       </v-data-table>
 
       <v-divider class="my-8"></v-divider>
@@ -124,7 +127,7 @@ export default {
       satellite: {},
       formIsValid: true,
       satelliteCanteensCount: this.originalCanteen.satelliteCanteensCount,
-      existingSatellites: null, // TODO: fetch satellites on this view
+      existingSatellites: null,
       options: {
         sortBy: [],
         sortDesc: [],
@@ -169,9 +172,15 @@ export default {
           })
           this.satellite = {}
         })
-        .catch((e) => {
-          console.log(e)
-          this.$store.dispatch("notifyServerError", e)
+        .catch((error) => {
+          if (error.message) {
+            this.$store.dispatch("notify", {
+              title: error.message,
+              status: "error",
+            })
+          } else {
+            this.$store.dispatch("notifyServerError", error)
+          }
         })
     },
     onRowClick(satellite) {

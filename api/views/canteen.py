@@ -726,7 +726,7 @@ class ClaimCanteenView(APIView):
             )
 
 
-class SatelliteListCreateUpdateView(APIView):
+class SatelliteListCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, canteen_pk):
@@ -735,19 +735,32 @@ class SatelliteListCreateUpdateView(APIView):
         return JsonResponse(camelize(serialized_satellites), safe=False, status=status.HTTP_200_OK)
 
     def post(self, request, canteen_pk):
-        canteen = Canteen.objects.only("siret").get(pk=canteen_pk)
+        canteen = Canteen.objects.only("siret", "central_producer_siret").get(pk=canteen_pk)
+        siret_satellite = request.data.get("siret")
+        created = False
+
+        if not canteen.is_central_cuisine:
+            raise PermissionDenied("Votre cantine n'est pas une cuisine centrale")
+
         if request.user not in canteen.managers.all():
-            raise PermissionDenied()
+            raise PermissionDenied("Vous n'êtes pas gestionnaire de cette cantine")
 
         try:
-            siret = request.data.get("siret")
-            if siret and Canteen.objects.filter(siret=siret).exists():
-                satellite = Canteen.objects.filter(siret=siret).first()
+            if siret_satellite and Canteen.objects.filter(siret=siret_satellite).exists():
+                satellite = Canteen.objects.filter(siret=siret_satellite).first()
+
+                if satellite.is_central_cuisine:
+                    raise PermissionDenied("La cantine renseignée est une cuisine centrale")
+
+                if satellite.central_producer_siret and satellite.central_producer_siret != canteen.siret:
+                    raise PermissionDenied("Cette cantine est déjà fourni par une autre cuisine centrale")
+
                 satellite.central_producer_siret = canteen.siret
                 satellite.save()
             else:
                 new_satellite = FullCanteenSerializer(data=request.data)
                 new_satellite.is_valid(raise_exception=True)
+                created = True
 
                 satellite = new_satellite.save(
                     central_producer_siret=canteen.siret,
@@ -758,6 +771,7 @@ class SatelliteListCreateUpdateView(APIView):
             for manager in canteen.managers.all():
                 satellite.managers.add(manager)
             serialized_canteen = FullCanteenSerializer(satellite).data
-            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_201_CREATED)
+            return_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+            return JsonResponse(camelize(serialized_canteen), status=return_status)
         except Sector.DoesNotExist:
             raise BadRequest()

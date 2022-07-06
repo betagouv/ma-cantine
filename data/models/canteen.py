@@ -227,6 +227,13 @@ class Canteen(SoftDeletionModel):
         if self.siret:
             return Canteen.objects.filter(central_producer_siret=self.siret)
 
+    @property
+    def is_central_cuisine(self):
+        return self.production_type and self.production_type in [
+            Canteen.ProductionType.CENTRAL,
+            Canteen.ProductionType.CENTRAL_SERVING,
+        ]
+
     def __str__(self):
         return f'Cantine "{self.name}"'
 

@@ -692,7 +692,12 @@ export default new Vuex.Store({
         method: "POST",
         headers,
         body: JSON.stringify(payload),
-      }).then(verifyResponse)
+      }).then((response) => {
+        return response.json().then((jsonResponse) => {
+          if (response.status < 200 || response.status >= 400) throw new Error(jsonResponse.detail)
+          return jsonResponse
+        })
+      })
     },
   },
 
