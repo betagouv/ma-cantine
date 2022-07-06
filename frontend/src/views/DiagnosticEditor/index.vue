@@ -315,7 +315,7 @@ export default {
       )
     },
     extendedDiagnosticLabel() {
-      return this.extendedDiagnostic ? "Passer en déclaration simplifiée" : "Passer en déclaration complête"
+      return this.extendedDiagnostic ? "Passer en déclaration simplifiée" : "Passer en déclaration complète"
     },
   },
   beforeMount() {
