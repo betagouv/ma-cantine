@@ -54,15 +54,11 @@ export default Object.freeze({
     AOCAOP: { text: "AOC / AOP", longText: "Appellation d'origine (AOC / AOP)" },
     ICP: { text: "IGP", longText: "Indication géographique protégée (IGP)" },
     STG: { text: "STG", longText: "Spécialité traditionnelle garantie (STG)" },
-    PECHE_DURABLE: { text: "Pêche durable" },
+    PECHE_DURABLE: { text: "Écolabel pêche durable" },
     RUP: { text: "RUP", longText: "Région ultrapériphérique (RUP)" },
     COMMERCE_EQUITABLE: { text: "Commerce équitable" },
     HVE: { text: "HVE", longText: "HVE ou certification environnementale de niveau 2" },
     FERMIER: { text: "Fermier", longText: "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »" },
-    EQUIVALENTS: {
-      text: "Produits équivalents",
-      longText: "Produits équivalents aux produits bénéficiant de ces mentions ou labels",
-    },
     EXTERNALITES: {
       text: "Externalités environnementales",
       longText:
@@ -81,15 +77,11 @@ export default Object.freeze({
     BIO: { text: "Bio" },
     LABEL_ROUGE: { text: "Label rouge" },
     AOCAOP_IGP_STG: { text: "AOC / AOP / IGP / STG", longText: "AOC / AOP / IGP / STG" },
-    PECHE_DURABLE: { text: "Pêche durable" },
+    PECHE_DURABLE: { text: "Écolabel pêche durable" },
     RUP: { text: "RUP", longText: "Région ultrapériphérique (RUP)" },
     COMMERCE_EQUITABLE: { text: "Commerce équitable" },
     HVE: { text: "HVE", longText: "HVE ou certification environnementale de niveau 2" },
     FERMIER: { text: "Fermier", longText: "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »" },
-    EQUIVALENTS: {
-      text: "Produits équivalents",
-      longText: "Produits équivalents aux produits bénéficiant de ces mentions ou labels",
-    },
     EXTERNALITES: {
       text: "Externalités environnementales",
       longText:
@@ -108,6 +100,29 @@ export default Object.freeze({
     DEPARTMENT: { text: "Provenant du même département", value: "DEPARTMENT" },
     REGION: { text: "Provenant de la même région", value: "REGION" },
     AUTRE: { text: "Autre", value: "AUTRE" },
+  },
+  TeledeclarationCharacteristicGroups: {
+    egalim: {
+      text:
+        "Pour la saisie, vous ne devez affecter le produit qu'une dans une seule catégorie. Par exemple, un produit à la fois biologique et label rouge sera comptabilisé que dans la catégorie 'bio'.",
+      characteristics: [
+        "BIO",
+        "LABEL_ROUGE",
+        "AOCAOP_IGP_STG",
+        "EXTERNALITES",
+        "PERFORMANCE",
+        "FERMIER",
+        "HVE",
+        "PECHE_DURABLE",
+        "RUP",
+        "COMMERCE_EQUITABLE",
+      ],
+    },
+    outsideLaw: {
+      text:
+        "Ici, vous pouvez affecter le produit dans plusieurs caractéristiques. Par exemple, un produit à la fois biologique et local pourra être comptabilisé dans les deux champs 'bio' et 'local'.",
+      characteristics: ["FRANCE", "SHORT_DISTRIBUTION", "LOCAL"],
+    },
   },
   TeledeclarationValuesKeys: [
     "valueViandesVolaillesBio",
@@ -190,14 +205,6 @@ export default Object.freeze({
     "valueBoulangeriePerformance",
     "valueBoissonsPerformance",
     "valueAutresPerformance",
-    "valueViandesVolaillesEquivalents",
-    "valueProduitsDeLaMerEquivalents",
-    "valueFruitsEtLegumesEquivalents",
-    "valueCharcuterieEquivalents",
-    "valueProduitsLaitiersEquivalents",
-    "valueBoulangerieEquivalents",
-    "valueBoissonsEquivalents",
-    "valueAutresEquivalents",
     "valueViandesVolaillesFrance",
     "valueProduitsDeLaMerFrance",
     "valueFruitsEtLegumesFrance",

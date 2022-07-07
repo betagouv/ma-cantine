@@ -16,7 +16,6 @@ labels = [
     ),
     ("COMMERCE_EQUITABLE", "Commerce équitable"),
     ("PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"),
-    ("EQUIVALENTS", "Produits équivalents"),
     ("FRANCE", "Provenance France"),
     ("SHORT_DISTRIBUTION", "Circuit-court"),
     ("LOCAL", "Produit local"),

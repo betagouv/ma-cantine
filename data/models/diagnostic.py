@@ -881,62 +881,6 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
     )
-    value_viandes_volailles_equivalents = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name="Viandes et volailles fraîches et surgelées, Produits équivalents",
-    )
-    value_produits_de_la_mer_equivalents = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name="Produits aquatiques frais et surgelés, Produits équivalents",
-    )
-    value_fruits_et_legumes_equivalents = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name="Fruits et légumes frais et surgelés, Produits équivalents",
-    )
-    value_charcuterie_equivalents = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name="Charcuterie, Produits équivalents",
-    )
-    value_produits_laitiers_equivalents = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name="BOF (Produits laitiers, beurre et œufs), Produits équivalents",
-    )
-    value_boulangerie_equivalents = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name="Boulangerie/Pâtisserie fraîches, Produits équivalents",
-    )
-    value_boissons_equivalents = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name="Boissons, Produits équivalents",
-    )
-    value_autres_equivalents = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Produits équivalents",
-    )
     value_viandes_volailles_france = models.DecimalField(
         max_digits=20,
         decimal_places=2,
@@ -1171,7 +1115,7 @@ class Diagnostic(models.Model):
             "externalites",
             "commerce_equitable",
             "performance",
-            "equivalents",
+            # TODO: should the following three be included if they're not EGAlim?
             "france",
             "short_distribution",
             "local",
@@ -1222,10 +1166,6 @@ class Diagnostic(models.Model):
     @property
     def total_label_performance(self):
         return self.label_sum("performance")
-
-    @property
-    def total_label_equivalents(self):
-        return self.label_sum("equivalents")
 
     @property
     def total_label_france(self):
