@@ -84,7 +84,7 @@
               <template v-slot:activator="{ on, attrs, value }">
                 <v-tab v-bind="attrs" v-on="on" class="mc-tab body-2">
                   {{ navLink.text }}
-                  <v-icon>{{ value ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
+                  <v-icon small class="ml-2 chevron">{{ value ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
                 </v-tab>
               </template>
               <v-list class="py-0">
@@ -271,6 +271,9 @@ export default {
   height: 100%;
   line-height: 24px;
   text-transform: none;
+  color: rgb(22, 22, 22) !important;
+}
+.chevron {
   color: rgb(22, 22, 22) !important;
 }
 .stealth-active-tab {
