@@ -61,7 +61,18 @@
               <v-img width="40" max-width="40" contain :src="`/static/images/badges/${key}.svg`" alt=""></v-img>
               <div>
                 <v-card-title class="py-0 text-body-2 font-weight-bold">{{ badge.title }}</v-card-title>
-                <v-card-subtitle class="pt-4" v-text="badge.subtitle"></v-card-subtitle>
+                <v-card-subtitle
+                  class="pt-4"
+                  v-text="badge.subtitle"
+                  v-if="key !== 'appro' || applicableRules.qualityThreshold === 50"
+                ></v-card-subtitle>
+                <div v-else>
+                  <v-card-subtitle class="pt-0">
+                    Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
+                    produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
+                    <a href="https://ma-cantine.beta.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+                  </v-card-subtitle>
+                </div>
               </div>
             </div>
           </v-card>
