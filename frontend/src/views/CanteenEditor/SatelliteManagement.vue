@@ -163,8 +163,7 @@ export default {
       }
       this.$store
         .dispatch("addSatellite", { id: this.canteen.id, payload: this.satellite })
-        .then((satellite) => {
-          this.existingSatellites.unshift(satellite)
+        .then(() => {
           this.$store.dispatch("notify", {
             title: "Cantine satellite ajoutée",
             message: "Votre cantine satellite a bien été créée.",
@@ -172,6 +171,7 @@ export default {
           })
           this.satellite = {}
         })
+        .then(this.fetchSatellites)
         .catch((error) => {
           if (error.message) {
             this.$store.dispatch("notify", {
@@ -181,6 +181,18 @@ export default {
           } else {
             this.$store.dispatch("notifyServerError", error)
           }
+        })
+    },
+    fetchSatellites() {
+      return fetch(`/api/v1/canteens/${this.originalCanteen.id}/satellites/`)
+        .then((response) => {
+          if (response.status != 200) throw new Error()
+          response.json().then((existingSatellites) => {
+            this.existingSatellites = existingSatellites
+          })
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
         })
     },
     onRowClick(satellite) {
@@ -194,16 +206,7 @@ export default {
     document.title = `Satellites - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
   },
   beforeMount() {
-    return fetch(`/api/v1/canteens/${this.originalCanteen.id}/satellites/`)
-      .then((response) => {
-        if (response.status != 200) throw new Error()
-        response.json().then((existingSatellites) => {
-          this.existingSatellites = existingSatellites
-        })
-      })
-      .catch((e) => {
-        this.$store.dispatch("notifyServerError", e)
-      })
+    return this.fetchSatellites()
   },
 }
 </script>
