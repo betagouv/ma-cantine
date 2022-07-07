@@ -78,13 +78,13 @@
 
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
         <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
-        <v-tabs align-with-title active-class="stealth-active-tab" hide-slider>
+        <v-tabs align-with-title id="header-tabs" active-class="stealth-active-tab" hide-slider>
           <div
             v-for="(navLink, index) in displayNavLinks"
             :key="index"
             :class="navLink.isActive ? 'mc-active-tab' : ''"
           >
-            <v-menu v-if="navLink.children" rounded="0" offset-y>
+            <v-menu v-if="navLink.children" rounded="0" offset-y attach="#header-tabs" nudge-right="16">
               <template v-slot:activator="{ on, attrs, value }">
                 <v-tab
                   v-bind="attrs"
