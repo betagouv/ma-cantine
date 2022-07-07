@@ -26,6 +26,7 @@ import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
 import ManagementPage from "@/views/ManagementPage"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenForm from "@/views/CanteenEditor/CanteenForm"
+import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
 import DiagnosticList from "@/views/CanteenEditor/DiagnosticList"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
@@ -264,6 +265,14 @@ const routes = [
         name: "CanteenForm",
         props: true,
         component: CanteenForm,
+        meta: {
+          authenticationRequired: true,
+        },
+      },
+      {
+        path: "satellites",
+        name: "SatelliteManagement",
+        component: SatelliteManagement,
         meta: {
           authenticationRequired: true,
         },

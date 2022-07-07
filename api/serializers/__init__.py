@@ -4,6 +4,7 @@ from .canteen import (  # noqa: F401
     FullCanteenSerializer,
     ManagingTeamSerializer,
     CanteenPreviewSerializer,
+    SatelliteCanteenSerializer,
 )
 from .diagnostic import (  # noqa: F401
     PublicDiagnosticSerializer,

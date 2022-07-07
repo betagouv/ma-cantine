@@ -32,6 +32,7 @@
             Vous ne le connaissez pas ? Utilisez cet
             <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
               outil de recherche pour trouver le SIRET
+              <v-icon color="primary" small>mdi-open-in-new</v-icon>
             </a>
             de votre cantine.
           </p>
@@ -230,6 +231,30 @@
           ></v-text-field>
         </v-col>
 
+        <v-expand-transition>
+          <v-col cols="12" md="8" v-if="usesCentralProducer" class="py-0">
+            <label class="body-2 mt-4" for="central-siret">SIRET de la cuisine centrale</label>
+            <v-text-field
+              id="central-siret"
+              class="mt-2"
+              hide-details="auto"
+              validate-on-blur
+              solo
+              v-model="canteen.centralProducerSiret"
+              :rules="[validators.length(14), validators.luhn]"
+            ></v-text-field>
+            <p class="caption mt-1 ml-2">
+              Vous ne le connaissez pas ? Utilisez cet
+              <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
+                outil de recherche pour trouver le SIRET
+              </a>
+              de la cuisine centrale.
+            </p>
+          </v-col>
+        </v-expand-transition>
+      </v-row>
+
+      <v-row>
         <v-col cols="12" class="mt-4">
           <v-divider></v-divider>
         </v-col>
@@ -444,6 +469,9 @@ export default {
       if (concernedSectors.length === 0) return false
       return this.canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
     },
+    usesCentralProducer() {
+      return this.canteen.productionType === "site_cooked_elsewhere"
+    },
   },
   beforeMount() {
     if (this.isNewCanteen) return
@@ -575,7 +603,8 @@ export default {
           if (this.isNewCanteen) {
             const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteenJson)
             this.$router.push({
-              name: "DiagnosticList",
+              // form validation ensures that the count will be > 0
+              name: this.showSatelliteCanteensCount ? "SatelliteManagement" : "DiagnosticList",
               params: { canteenUrlComponent },
             })
           } else {

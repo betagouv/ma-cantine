@@ -83,6 +83,27 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
         return not obj.managers.exists()
 
 
+class SatelliteCanteenSerializer(serializers.ModelSerializer):
+    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
+
+    class Meta:
+        model = Canteen
+        read_only_fields = (
+            "id",
+            "name",
+            "siret",
+            "daily_meal_count",
+            "sectors",
+        )
+        fields = (
+            "id",
+            "name",
+            "siret",
+            "daily_meal_count",
+            "sectors",
+        )
+
+
 class FullCanteenSerializer(serializers.ModelSerializer):
 
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
