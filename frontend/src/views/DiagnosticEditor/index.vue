@@ -85,7 +85,8 @@
             :formIsValid="formIsValid.quality"
           >
             <v-form ref="quality" v-model="formIsValid.quality">
-              <v-switch v-model="extendedDiagnostic" :label="extendedDiagnosticLabel" />
+              <v-switch v-model="extendedDiagnostic" label="Activer la déclaration complète" />
+              <div class="font-weight-bold mb-4">{{ diagnosticType }}</div>
               <SimplifiedQualityValues
                 :originalDiagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
@@ -314,8 +315,8 @@ export default {
         this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x) && !this.hasActiveTeledeclaration
       )
     },
-    extendedDiagnosticLabel() {
-      return this.extendedDiagnostic ? "Passer en déclaration simplifiée" : "Passer en déclaration complète"
+    diagnosticType() {
+      return this.extendedDiagnostic ? "Déclaration complète" : "Déclaration simplifiée"
     },
   },
   beforeMount() {
