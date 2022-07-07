@@ -11,7 +11,12 @@ class ManagerInvitationAdmin(admin.ModelAdmin):
         "canteen",
         "siret",
     )
-    list_filter = ("canteen",)
+    list_filter = ("creation_date",)
+    search_fields = (
+        "email",
+        "canteen__siret",
+        "canteen__name",
+    )
 
     def siret(self, obj):
         return obj.canteen.siret

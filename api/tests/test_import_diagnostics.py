@@ -335,6 +335,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         If errors occur, discard the file and return the errors with row and message
         """
+        CanteenFactory.create(siret="42111303053388")
+        CanteenFactory.create(siret="42111303053388")
         with open("./api/tests/files/diagnostics_bad_file.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -404,6 +406,10 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'code postal' : Ce champ ne peut pas être vide si le code INSEE de la ville est vide.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Plusieurs cantines correspondent au SIRET 42111303053388. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
         )
 
     @authenticate
