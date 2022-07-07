@@ -41,17 +41,7 @@ export default {
       return this.$store.state.initialDataLoaded
     },
     showWebinaireBanner() {
-      const upcomingCommunityEvents = this.$store.state.upcomingCommunityEvents
-      if (upcomingCommunityEvents.length === 0) {
-        return false
-      }
-      const lastHiddenEventId = readCookie(bannerCookieName)
-      if (lastHiddenEventId) {
-        const lastEventId = largestId(upcomingCommunityEvents)
-        return lastEventId > parseInt(lastHiddenEventId, 10)
-      } else {
-        return true
-      }
+      return this.$store.state.showWebinaireBanner
     },
   },
   mounted() {
@@ -75,6 +65,7 @@ export default {
     initialDataLoaded() {
       if (!this.$store.state.loggedUser) return
       this.$store.dispatch("removeLocalStorageDiagnostics")
+      this.$store.dispatch("setShowWebinaireBanner", this.webinaireCookieIsOutdated())
     },
   },
   beforeMount() {
@@ -83,7 +74,20 @@ export default {
   methods: {
     hideBanner() {
       const upcomingCommunityEvents = this.$store.state.upcomingCommunityEvents
-      hideCommunityEventsBanner(upcomingCommunityEvents)
+      hideCommunityEventsBanner(upcomingCommunityEvents, this.$store)
+    },
+    webinaireCookieIsOutdated() {
+      const upcomingCommunityEvents = this.$store.state.upcomingCommunityEvents
+      if (upcomingCommunityEvents.length === 0) {
+        return false
+      }
+      const lastHiddenEventId = readCookie(bannerCookieName)
+      if (lastHiddenEventId) {
+        const lastEventId = largestId(upcomingCommunityEvents)
+        return lastEventId > parseInt(lastHiddenEventId, 10)
+      } else {
+        return true
+      }
     },
   },
 }

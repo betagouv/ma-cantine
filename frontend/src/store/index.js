@@ -52,6 +52,8 @@ export default new Vuex.Store({
       status: null,
       title: "",
     },
+
+    showWebinaireBanner: false,
   },
 
   mutations: {
@@ -112,6 +114,9 @@ export default new Vuex.Store({
     },
     SET_UPCOMING_COMMUNITY_EVENTS(state, events) {
       state.upcomingCommunityEvents = events
+    },
+    SET_SHOW_WEBINAIRE_BANNER(state, showWebinaireBanner) {
+      state.showWebinaireBanner = showWebinaireBanner
     },
   },
 
@@ -698,6 +703,10 @@ export default new Vuex.Store({
           return jsonResponse
         })
       })
+    },
+
+    setShowWebinaireBanner(context, showWebinaireBanner) {
+      context.commit("SET_SHOW_WEBINAIRE_BANNER", showWebinaireBanner)
     },
   },
 

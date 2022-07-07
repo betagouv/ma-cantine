@@ -371,10 +371,11 @@ export const largestId = (objects) => {
 
 export const bannerCookieName = "lastHiddenCommunityEventId"
 
-export const hideCommunityEventsBanner = (events) => {
+export const hideCommunityEventsBanner = (events, store) => {
   if (events.length === 0) return
   const expirationDate = new Date()
   expirationDate.setFullYear(expirationDate.getFullYear() + 1)
   const lastEventId = largestId(events)
   document.cookie = `${bannerCookieName}=${lastEventId};max-age=31536000;path=/;expires=${expirationDate.toUTCString()};SameSite=Strict;`
+  store.dispatch("setShowWebinaireBanner", false)
 }
