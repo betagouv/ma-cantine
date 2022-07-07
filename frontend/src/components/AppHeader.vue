@@ -86,9 +86,16 @@
           >
             <v-menu v-if="navLink.children" rounded="0" offset-y>
               <template v-slot:activator="{ on, attrs, value }">
-                <v-tab v-bind="attrs" v-on="on" class="mc-tab body-2">
+                <v-tab
+                  v-bind="attrs"
+                  v-on="on"
+                  class="mc-tab body-2 text--darken-2"
+                  :class="navLink.isActive ? 'primary--text' : 'black--text'"
+                >
                   {{ navLink.text }}
-                  <v-icon small class="ml-2 chevron">{{ value ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
+                  <v-icon small class="ml-2" :color="navLink.isActive ? 'primary' : 'black'">
+                    {{ value ? "mdi-chevron-up" : "mdi-chevron-down" }}
+                  </v-icon>
                 </v-tab>
               </template>
               <v-list class="py-0">
@@ -103,7 +110,12 @@
                 </div>
               </v-list>
             </v-menu>
-            <v-tab v-else :to="navLink.to" class="mc-tab body-2">
+            <v-tab
+              v-else
+              :to="navLink.to"
+              class="mc-tab body-2"
+              :class="navLink.isActive ? 'primary--text' : 'black--text'"
+            >
               {{ navLink.text }}
             </v-tab>
           </div>
@@ -290,13 +302,9 @@ export default {
   height: 100%;
   line-height: 24px;
   text-transform: none;
-  color: rgb(22, 22, 22) !important;
 }
 .mc-active-tab {
   border-bottom: 2px solid;
-}
-.chevron {
-  color: rgb(22, 22, 22) !important;
 }
 .stealth-active-tab {
   color: rgb(22, 22, 22) !important;
