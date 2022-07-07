@@ -79,7 +79,11 @@
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
         <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
         <v-tabs align-with-title active-class="stealth-active-tab" hide-slider>
-          <div v-for="(navLink, index) in displayNavLinks" :key="index">
+          <div
+            v-for="(navLink, index) in displayNavLinks"
+            :key="index"
+            :class="navLink.isActive ? 'mc-active-tab' : ''"
+          >
             <v-menu v-if="navLink.children" rounded="0" offset-y>
               <template v-slot:activator="{ on, attrs, value }">
                 <v-tab v-bind="attrs" v-on="on" class="mc-tab body-2">
@@ -170,7 +174,12 @@ export default {
           children: [
             {
               text: "Mesures phares",
-              to: { name: "KeyMeasuresHome" },
+              to: {
+                name: "KeyMeasurePage",
+                params: {
+                  id: "qualite-des-produits",
+                },
+              },
             },
             {
               text: "Documentation",
@@ -227,6 +236,16 @@ export default {
       return !!this.$store.state.initialDataLoaded
     },
     displayNavLinks() {
+      const currentRoute = this.$route.name
+      this.navLinks.forEach((menuItem) => {
+        if (menuItem.to && menuItem.to.name === currentRoute) {
+          menuItem.isActive = true
+        } else if (menuItem.children && menuItem.children.some((child) => child.to?.name === currentRoute)) {
+          menuItem.isActive = true
+        } else {
+          menuItem.isActive = false
+        }
+      })
       if (!this.loggedUser) {
         return this.navLinks.filter((link) => !link.authenticationState)
       } else {
@@ -272,6 +291,9 @@ export default {
   line-height: 24px;
   text-transform: none;
   color: rgb(22, 22, 22) !important;
+}
+.mc-active-tab {
+  border-bottom: 2px solid;
 }
 .chevron {
   color: rgb(22, 22, 22) !important;
