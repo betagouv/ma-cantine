@@ -375,7 +375,7 @@ export default {
       const pdfOptions = {
         filename: `Affiche_convives_${canteenName.replaceAll(" ", "_")}_${this.form.diagnostic.year}.pdf`,
         image: { type: "jpeg", quality: 1 },
-        html2canvas: { scale: 2, dpi: 300, letterRendering: true },
+        html2canvas: { scale: 2, dpi: 300, letterRendering: true, useCORS: true },
         jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
       }
       return html2pdf()
