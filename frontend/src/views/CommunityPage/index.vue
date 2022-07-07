@@ -68,7 +68,7 @@ export default {
     },
   },
   mounted() {
-    hideCommunityEventsBanner(this.webinaires)
+    hideCommunityEventsBanner(this.webinaires, this.$store)
   },
 }
 </script>
