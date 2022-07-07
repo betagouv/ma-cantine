@@ -335,15 +335,14 @@ export default {
       if (this.extendedDiagnostic) {
         bioTotal = 0
         qualityTotal = 0
-        Object.keys(this.diagnostic).forEach((key) => {
-          if (key.startsWith("value")) {
-            const value = parseFloat(this.diagnostic[key])
-            if (value) {
-              if (key.endsWith("Bio")) {
-                bioTotal += value
-              } else if (!key.startsWith("valueLabel") && !key.endsWith("Ht")) {
-                qualityTotal += value
-              }
+        const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+        egalimFields.forEach((field) => {
+          const value = parseFloat(this.diagnostic[field])
+          if (value) {
+            if (field.endsWith("Bio")) {
+              bioTotal += value
+            } else if (!field.startsWith("valueLabel") && !field.endsWith("Ht")) {
+              qualityTotal += value
             }
           }
         })
@@ -514,7 +513,11 @@ export default {
           .then((response) => (this.purchasesSummary = response))
     },
     showExtendedDiagnostic() {
-      return Constants.TeledeclarationValuesKeys.some((key) => !!this.originalDiagnostic[key])
+      const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
+      return (
+        characteristicGroups.egalim.fields.some((key) => !!this.originalDiagnostic[key]) ||
+        characteristicGroups.outsideLaw.fields.some((key) => !!this.originalDiagnostic[key])
+      )
     },
   },
   created() {

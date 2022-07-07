@@ -27,10 +27,10 @@
       <p v-if="group.text" class="caption mb-0 ml-2">{{ group.text }}</p>
       <v-row align="center" class="pr-2 mb-2 ml-1">
         <v-col cols="6" sm="8" md="9" class="pl-0 pb-1">
-          <v-progress-linear :value="percentageCompletion" rounded height="6"></v-progress-linear>
+          <v-progress-linear :value="percentageCompletion[groupId]" rounded height="6"></v-progress-linear>
         </v-col>
         <v-col class="text-right pb-1">
-          <p class="caption my-0">{{ fieldsCompleted }} / {{ totalFieldCount }} champs remplis</p>
+          <p class="caption my-0">{{ fieldsCompleted[groupId] }} / {{ fieldCount[groupId] }} champs remplis</p>
         </v-col>
       </v-row>
       <v-expansion-panels class="mt-1 mb-4">
@@ -84,7 +84,7 @@
                   :id="inputHtmlId(fId, cId)"
                   hide-details="auto"
                   type="number"
-                  :rules="[validators.nonNegativeOrEmpty]"
+                  :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(diagnostic.valueTotalHt)]"
                   validate-on-blur
                   solo
                   placeholder="Je ne sais pas"
@@ -153,15 +153,17 @@ export default {
     LogoBio,
   },
   data() {
-    const teledeclarationFields = Constants.TeledeclarationValuesKeys
+    const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
     return {
       totalError: false,
       totalErrorMessage: DEFAULT_TOTAL_ERROR,
       families: Constants.ProductFamilies,
       characteristics: Constants.TeledeclarationCharacteristics,
-      characteristicGroups: Constants.TeledeclarationCharacteristicGroups,
-      teledeclarationFields,
-      totalFieldCount: teledeclarationFields.length,
+      characteristicGroups,
+      fieldCount: {
+        egalim: characteristicGroups.egalim.fields.length,
+        outsideLaw: characteristicGroups.outsideLaw.fields.length,
+      },
     }
   },
   computed: {
@@ -178,16 +180,24 @@ export default {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
     },
     fieldsCompleted() {
-      let completed = 0
+      let completed = {
+        egalim: 0,
+        outsideLaw: 0,
+      }
       Object.entries(this.diagnostic).forEach(([field, value]) => {
-        if (this.teledeclarationFields.indexOf(field) > -1) {
-          completed += parseFloat(value, 10) >= 0 ? 1 : 0
+        if (this.characteristicGroups.egalim.fields.indexOf(field) > -1) {
+          completed.egalim += parseFloat(value, 10) >= 0 ? 1 : 0
+        } else if (this.characteristicGroups.outsideLaw.fields.indexOf(field) > -1) {
+          completed.outsideLaw += parseFloat(value, 10) >= 0 ? 1 : 0
         }
       })
       return completed
     },
     percentageCompletion() {
-      return Math.round((this.fieldsCompleted / this.totalFieldCount) * 100)
+      return {
+        egalim: Math.round((this.fieldsCompleted.egalim / this.fieldCount.egalim) * 100),
+        outsideLaw: Math.round((this.fieldsCompleted.outsideLaw / this.fieldCount.outsideLaw) * 100),
+      }
     },
   },
   methods: {
@@ -195,10 +205,12 @@ export default {
       return `${fId}-${cId}-${this.diagnostic.year}`
     },
     checkTotal() {
-      const totalInputs = this.sumAll()
+      // we're only checking the total against the egalim fields. Each label group of the outsideLaw fields can get up to
+      // 100% but ideally wouldn't go over that. We currently don't check this however because of UX constraints.
+      const totalInputs = this.sumAllEgalim()
       if (totalInputs > this.diagnostic.valueTotalHt) {
         this.totalError = true
-        this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumAll()} €`
+        this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumAllEgalim()} €`
       } else {
         this.totalError = false
       }
@@ -253,14 +265,14 @@ export default {
       let labelTotal = 0
       Object.keys(this.families).forEach((family) => {
         const key = this.diagnosticKey(family, characteristicId)
-        labelTotal += this.diagnostic[key] || 0
+        labelTotal += parseFloat(this.diagnostic[key]) || 0
       })
       return labelTotal
     },
-    sumAll() {
+    sumAllEgalim() {
       let totalInputs = 0
-      Object.keys(this.characteristicGroups.egalim).forEach((characteristicId) => {
-        totalInputs += this.labelSum(characteristicId)
+      this.characteristicGroups.egalim.fields.forEach((field) => {
+        totalInputs += parseFloat(this.diagnostic[field]) || 0
       })
       return totalInputs
     },
