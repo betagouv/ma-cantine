@@ -79,29 +79,43 @@
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
         <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
         <v-tabs align-with-title id="header-tabs" active-class="stealth-active-tab" hide-slider>
-          <div v-for="(navLink, index) in displayNavLinks" :key="index">
+          <div
+            v-for="(navLink, index) in displayNavLinks"
+            :key="index"
+            :class="navLink.isActive ? 'mc-active-tab' : ''"
+          >
             <v-menu v-if="navLink.children" rounded="0" offset-y attach="#header-tabs" nudge-right="16">
               <template v-slot:activator="{ on, attrs, value }">
-                <v-tab v-bind="attrs" v-on="on" class="mc-tab body-2">
+                <v-tab
+                  v-bind="attrs"
+                  v-on="on"
+                  class="mc-tab body-2 text--darken-2"
+                  :class="navLink.isActive ? 'primary--text' : 'black--text'"
+                >
                   {{ navLink.text }}
-                  <v-icon>{{ value ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
+                  <v-icon small class="ml-2" :color="navLink.isActive ? 'primary' : 'black'">
+                    {{ value ? "mdi-chevron-up" : "mdi-chevron-down" }}
+                  </v-icon>
                 </v-tab>
               </template>
-              <v-list>
-                <v-list-item
-                  v-for="(subItem, subIndex) in navLink.children"
-                  :key="subIndex"
-                  :to="subItem.to"
-                  :href="subItem.href"
-                >
-                  <v-list-item-title>
-                    {{ subItem.text }}
-                    <v-icon v-if="subItem.href" small color="rgb(22,22,22)">mdi-open-in-new</v-icon>
-                  </v-list-item-title>
-                </v-list-item>
+              <v-list class="py-0">
+                <div v-for="(subItem, subIndex) in navLink.children" :key="subIndex">
+                  <v-list-item :to="subItem.to" :href="subItem.href">
+                    <v-list-item-title class="text-body-2">
+                      {{ subItem.text }}
+                      <v-icon v-if="subItem.href" small color="rgb(22,22,22)">mdi-open-in-new</v-icon>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-divider v-if="subIndex !== navLink.children.length - 1" class="mx-4"></v-divider>
+                </div>
               </v-list>
             </v-menu>
-            <v-tab v-else :to="navLink.to" class="mc-tab body-2">
+            <v-tab
+              v-else
+              :to="navLink.to"
+              class="mc-tab body-2"
+              :class="navLink.isActive ? 'primary--text' : 'black--text'"
+            >
               {{ navLink.text }}
             </v-tab>
           </div>
@@ -172,7 +186,12 @@ export default {
           children: [
             {
               text: "Mesures phares",
-              to: { name: "KeyMeasuresHome" },
+              to: {
+                name: "KeyMeasurePage",
+                params: {
+                  id: "qualite-des-produits",
+                },
+              },
             },
             {
               text: "Documentation",
@@ -229,6 +248,16 @@ export default {
       return !!this.$store.state.initialDataLoaded
     },
     displayNavLinks() {
+      const currentRoute = this.$route.name
+      this.navLinks.forEach((menuItem) => {
+        if (menuItem.to && menuItem.to.name === currentRoute) {
+          menuItem.isActive = true
+        } else if (menuItem.children && menuItem.children.some((child) => child.to?.name === currentRoute)) {
+          menuItem.isActive = true
+        } else {
+          menuItem.isActive = false
+        }
+      })
       if (!this.loggedUser) {
         return this.navLinks.filter((link) => !link.authenticationState)
       } else {
@@ -273,7 +302,9 @@ export default {
   height: 100%;
   line-height: 24px;
   text-transform: none;
-  color: rgb(22, 22, 22) !important;
+}
+.mc-active-tab {
+  border-bottom: 2px solid;
 }
 .stealth-active-tab {
   color: rgb(22, 22, 22) !important;
