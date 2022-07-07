@@ -87,18 +87,16 @@
                   <v-icon>{{ value ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
                 </v-tab>
               </template>
-              <v-list>
-                <v-list-item
-                  v-for="(subItem, subIndex) in navLink.children"
-                  :key="subIndex"
-                  :to="subItem.to"
-                  :href="subItem.href"
-                >
-                  <v-list-item-title>
-                    {{ subItem.text }}
-                    <v-icon v-if="subItem.href" small color="rgb(22,22,22)">mdi-open-in-new</v-icon>
-                  </v-list-item-title>
-                </v-list-item>
+              <v-list class="py-0">
+                <div v-for="(subItem, subIndex) in navLink.children" :key="subIndex">
+                  <v-list-item :to="subItem.to" :href="subItem.href">
+                    <v-list-item-title class="text-body-2">
+                      {{ subItem.text }}
+                      <v-icon v-if="subItem.href" small color="rgb(22,22,22)">mdi-open-in-new</v-icon>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-divider v-if="subIndex !== navLink.children.length - 1" class="mx-4"></v-divider>
+                </div>
               </v-list>
             </v-menu>
             <v-tab v-else :to="navLink.to" class="mc-tab body-2">
