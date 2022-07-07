@@ -8,7 +8,7 @@ from data.models.diagnostic import Diagnostic
 from django.db import IntegrityError, transaction
 from django.db.models.functions import Lower
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
-from django.core.exceptions import ObjectDoesNotExist, BadRequest, ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import validate_email
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -402,6 +402,13 @@ class ImportDiagnosticsView(APIView):
             errors.append(
                 {
                     "message": f"Données manquantes : 15 colonnes attendus, {len(row)} trouvés.",
+                    "code": 400,
+                }
+            )
+        elif isinstance(e, Canteen.MultipleObjectsReturned):
+            errors.append(
+                {
+                    "message": f"Plusieurs cantines correspondent au SIRET {row[0]}. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
                     "code": 400,
                 }
             )
