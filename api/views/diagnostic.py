@@ -195,42 +195,42 @@ class ImportDiagnosticsView(APIView):
             try:
                 if not row[12]:
                     raise Exception
-                value_total_ht = Decimal(row[12].replace(",", "."))
+                value_total_ht = Decimal(row[12].strip().replace(",", "."))
             except Exception as e:
                 raise ValidationError({"value_total_ht": number_error_message})
 
             try:
                 if not row[13]:
                     raise Exception
-                value_bio_ht = Decimal(row[13].replace(",", "."))
+                value_bio_ht = Decimal(row[13].strip().replace(",", "."))
             except Exception as e:
                 raise ValidationError({"value_bio_ht": number_error_message})
 
             try:
                 if not row[14]:
                     raise Exception
-                value_sustainable_ht = Decimal(row[14].replace(",", "."))
+                value_sustainable_ht = Decimal(row[14].strip().replace(",", "."))
             except Exception as e:
                 raise ValidationError({"value_sustainable_ht": number_error_message})
 
             value_label_rouge = None
             try:
                 if len(row) >= 16 and row[15]:
-                    value_label_rouge = Decimal(row[15].replace(",", "."))
+                    value_label_rouge = Decimal(row[15].strip().replace(",", "."))
             except Exception as e:
                 raise ValidationError({"value_label_rouge": number_error_message})
 
             value_label_aoc_igp = None
             try:
                 if len(row) >= 17 and row[16]:
-                    value_label_aoc_igp = Decimal(row[16].replace(",", "."))
+                    value_label_aoc_igp = Decimal(row[16].strip().replace(",", "."))
             except Exception as e:
                 raise ValidationError({"value_label_aoc_igp": number_error_message})
 
             value_label_hve = None
             try:
                 if len(row) >= 18 and row[17]:
-                    value_label_hve = Decimal(row[17].replace(",", "."))
+                    value_label_hve = Decimal(row[17].strip().replace(",", "."))
             except Exception as e:
                 raise ValidationError({"value_label_hve": number_error_message})
 
@@ -245,12 +245,12 @@ class ImportDiagnosticsView(APIView):
                 raise ValidationError({"email": "Un adresse email des gestionnaires (pas notifiés) n'est pas valide."})
 
             try:
-                import_source = row[19]
+                import_source = row[19].strip()
             except Exception as e:
                 raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
 
             if len(row) > 20 and row[20]:
-                publication_status = row[20]
+                publication_status = row[20].strip()
 
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
@@ -262,14 +262,14 @@ class ImportDiagnosticsView(APIView):
             ImportDiagnosticsView._should_update_geolocation(canteen, row) if canteen_exists else True
         )
 
-        canteen.name = row[1]
-        canteen.city_insee_code = row[2]
-        canteen.postal_code = row[3]
+        canteen.name = row[1].strip()
+        canteen.city_insee_code = row[2].strip()
+        canteen.postal_code = row[3].strip()
         canteen.central_producer_siret = normalise_siret(row[4])
-        canteen.daily_meal_count = row[5]
-        canteen.production_type = row[7].lower()
-        canteen.management_type = row[8].lower()
-        canteen.economic_model = row[9].lower()
+        canteen.daily_meal_count = row[5].strip()
+        canteen.production_type = row[7].strip().lower()
+        canteen.management_type = row[8].strip().lower()
+        canteen.economic_model = row[9].strip().lower()
         canteen.import_source = import_source
         canteen.publication_status = publication_status
 
@@ -278,7 +278,10 @@ class ImportDiagnosticsView(APIView):
         canteen.full_clean()
         if row[6]:
             canteen.sectors.set(
-                [self.annotated_sectors.get(name_lower__unaccent=sector.lower()) for sector in row[6].split("+")]
+                [
+                    self.annotated_sectors.get(name_lower__unaccent=sector.strip().lower())
+                    for sector in row[6].split("+")
+                ]
             )
 
         canteen.save()
@@ -311,8 +314,8 @@ class ImportDiagnosticsView(APIView):
     @staticmethod
     def _should_update_geolocation(canteen, row):
         if canteen.city:
-            city_code_changed = row[2] and canteen.city_insee_code != row[2]
-            postal_code_changed = row[3] and canteen.postal_code != row[3]
+            city_code_changed = row[2] and canteen.city_insee_code != row[2].strip()
+            postal_code_changed = row[3] and canteen.postal_code != row[3].strip()
             return city_code_changed or postal_code_changed
         else:
             has_geo_data = canteen.city_insee_code or canteen.postal_code
