@@ -514,7 +514,11 @@ export default {
           .then((response) => (this.purchasesSummary = response))
     },
     showExtendedDiagnostic() {
-      return Constants.TeledeclarationValuesKeys.some((key) => !!this.originalDiagnostic[key])
+      const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
+      return (
+        characteristicGroups.egalim.fields.some((key) => !!this.originalDiagnostic[key]) ||
+        characteristicGroups.egalim.fields.some((key) => !!this.originalDiagnostic[key])
+      )
     },
   },
   created() {
