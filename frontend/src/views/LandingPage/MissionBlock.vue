@@ -1,10 +1,12 @@
 <template>
   <v-row class="text-left">
     <v-col cols="12" sm="6" md="5" class="d-flex align-center">
-      <div class="font-weight-bold text-h6">
-        Notre mission :
-        <br />
-        Accompagner la transition alimentaire dans les assiettes et les filières agricoles
+      <div>
+        <div>Notre mission :</div>
+
+        <div class="font-weight-bold text-h6 mt-2">
+          Accompagner la transition alimentaire dans les assiettes et les filières agricoles
+        </div>
       </div>
     </v-col>
     <v-col cols="12" sm="6" md="7" class="pl-md-8">
