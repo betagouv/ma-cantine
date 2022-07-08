@@ -17,7 +17,7 @@
       <div class="mt-3">
         <v-icon color="grey darken-3" class="mr-2">mdi-pasta</v-icon>
         <strong>Acroître la transparence</strong>
-        de ce que nous mangeons dans nos refectoires, hôpitaux...
+        de ce que nous mangeons dans nos réfectoires, hôpitaux...
       </div>
       <div class="mt-3">
         <v-icon color="grey darken-3" class="mr-2">mdi-handshake</v-icon>
