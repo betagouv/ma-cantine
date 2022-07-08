@@ -11,8 +11,8 @@
           <v-card-text class="pb-0">
             <p class="grey--text text--darken-3">
               La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent
-              comporter, au cours de l'année {{ year }}, {{ applicableRules.qualityThreshold }} % de produits de qualité
-              et durables dont {{ applicableRules.bioThreshold }} % issus de l’agriculture biologique ou en conversion,
+              comporter, au cours de l'année 2022, {{ applicableRules.qualityThreshold }} % de produits de qualité et
+              durables dont {{ applicableRules.bioThreshold }} % issus de l’agriculture biologique ou en conversion,
               pour les cantines
               {{ regionDisplayName ? `dans la région de ${regionDisplayName}` : "en France métropolitaine" }}.
             </p>
@@ -207,7 +207,6 @@ export default {
       diversificationMeasure: keyMeasures.find((measure) => measure.id === "diversification-des-menus"),
       noPlasticMeasure: keyMeasures.find((measure) => measure.id === "interdiction-du-plastique"),
       informationMeasure: keyMeasures.find((measure) => measure.id === "information-des-usagers"),
-      year: lastYear(),
     }
   },
   computed: {
@@ -219,7 +218,7 @@ export default {
       if (!diagCount) {
         return {} // TODO: what to do?
       }
-      const lastYearDiag = this.canteen.diagnostics.find((d) => d.year === this.year)
+      const lastYearDiag = this.canteen.diagnostics.find((d) => d.year === lastYear())
       return {
         latest: lastYearDiag || this.canteen.diagnostics[diagCount - 1],
       }
