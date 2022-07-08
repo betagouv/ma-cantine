@@ -732,7 +732,7 @@ class ClaimCanteenView(APIView):
 
 
 class SatellitesPagination(LimitOffsetPagination):
-    default_limit = 20
+    default_limit = 10
     max_limit = 40
 
 
