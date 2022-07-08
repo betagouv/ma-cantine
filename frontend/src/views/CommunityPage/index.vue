@@ -55,9 +55,6 @@
     <FacebookSection id="facebook" />
 
     <v-divider class="my-10"></v-divider>
-    <FaqPanels id="faq" />
-
-    <v-divider class="my-10"></v-divider>
     <TheNewsletter id="suivre" />
   </div>
 </template>
@@ -66,12 +63,11 @@
 import WebinaireCard from "./WebinaireCard"
 import TheNewsletter from "@/components/TheNewsletter"
 import FacebookSection from "./FacebookSection"
-import FaqPanels from "./FaqPanels"
 import { hideCommunityEventsBanner } from "@/utils"
 
 export default {
   name: "CommunityPage",
-  components: { WebinaireCard, TheNewsletter, FacebookSection, FaqPanels },
+  components: { WebinaireCard, TheNewsletter, FacebookSection },
   data() {
     return {
       links: [
@@ -86,10 +82,6 @@ export default {
         {
           id: "facebook",
           title: "Rejoindre la communauté sur Facebook",
-        },
-        {
-          id: "faq",
-          title: "Foire aux questions",
         },
         {
           id: "suivre",

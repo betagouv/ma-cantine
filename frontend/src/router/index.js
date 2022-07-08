@@ -41,6 +41,7 @@ import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
 import PurchasesImporter from "@/views/PurchasesImporter"
 import CommunityPage from "@/views/CommunityPage"
+import FaqPage from "@/views/FaqPage"
 
 Vue.use(VueRouter)
 
@@ -425,6 +426,14 @@ const routes = [
     component: CommunityPage,
     meta: {
       title: "Communauté",
+    },
+  },
+  {
+    path: "/faq/",
+    name: "FaqPage",
+    component: FaqPage,
+    meta: {
+      title: "Foire aux questions",
     },
   },
   {
