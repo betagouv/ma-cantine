@@ -748,6 +748,7 @@ class SatelliteListCreateView(ListCreateAPIView):
     ordering_fields = [
         "name",
         "siret",
+        "daily_meal_count",
     ]
 
     def get_queryset(self):
