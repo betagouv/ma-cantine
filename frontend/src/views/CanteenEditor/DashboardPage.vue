@@ -19,5 +19,8 @@ export default {
     CanteenDashboard,
   },
   props: ["diagnostics", "originalCanteen"],
+  created() {
+    document.title = `Améliorer - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
+  },
 }
 </script>

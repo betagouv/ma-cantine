@@ -122,14 +122,14 @@ const routes = [
     path: "/mesures-phares",
     name: "KeyMeasuresPage",
     component: KeyMeasuresPage,
-    meta: {
-      title: "Les 5 mesures phares de la loi EGAlim",
-    },
     children: [
       {
         path: "",
         name: "KeyMeasuresHome",
         component: KeyMeasuresHome,
+        meta: {
+          title: "Tableau de bord",
+        },
         beforeEnter: (route, _, next) => {
           store.state.loggedUser
             ? next({
