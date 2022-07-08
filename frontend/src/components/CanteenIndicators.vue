@@ -1,18 +1,14 @@
 <template>
   <div>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="hasSatelliteCanteens">
-      <span v-if="hasSatelliteCanteens" class="mr-1">
-        <v-icon small>mdi-home-city</v-icon>
-        {{ canteen.satelliteCanteensCount }} satellites
-      </span>
+      <v-icon small>mdi-home-city</v-icon>
+      {{ canteen.satelliteCanteensCount }} satellites
     </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="hasDailyMealCount">
       <span class="mx-1" v-if="singleLine && hasSatelliteCanteens">/</span>
-      <span>
-        <v-icon small>mdi-silverware-fork-knife</v-icon>
-        <!-- eslint-disable-next-line prettier/prettier-->
-        {{ canteen.dailyMealCount }} par jour<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
-      </span>
+      <v-icon small>mdi-silverware-fork-knife</v-icon>
+      <!-- eslint-disable-next-line prettier/prettier-->
+      {{ canteen.dailyMealCount }} par jour<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
     </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="canteen.city">
       <span class="mx-1" v-if="singleLine && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
