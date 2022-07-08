@@ -48,7 +48,7 @@
                   <div
                     v-for="label in qualityLabels(cId)"
                     :key="label.title || label.icon"
-                    :style="label.style || 'max-width: 100%; height: inherit;'"
+                    style="max-width: 100%; height: inherit;"
                   >
                     <img
                       v-if="label.src"
@@ -239,9 +239,6 @@ export default {
             labels.find((l) => l.src.startsWith("IGP")),
             labels.find((l) => l.src.startsWith("STG")),
           ]
-          labelGroup.forEach((l) => {
-            l.style = "max-width: 30%; height: 'fit-content';"
-          })
           return labelGroup
         case "HVE":
           singleLabel = labels.find((l) => l.src.startsWith("hve"))
