@@ -226,6 +226,7 @@ class Canteen(SoftDeletionModel):
     def satellites(self):
         if self.siret:
             return Canteen.objects.filter(central_producer_siret=self.siret)
+        return Canteen.objects.none()
 
     @property
     def is_central_cuisine(self):

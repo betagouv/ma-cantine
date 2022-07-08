@@ -45,6 +45,23 @@ class IsCanteenManager(permissions.BasePermission):
         return obj.managers.filter(id=request.user.id).exists()
 
 
+class IsCanteenManagerUrlParam(permissions.BasePermission):
+    """
+    Looks for the url_param `canteen_pk` and checks the user is
+    manager of the cantine
+    """
+
+    def has_permission(self, request, view):
+        canteen_pk = view.kwargs.get("canteen_pk", None)
+        if not canteen_pk:
+            return False
+        try:
+            canteen = Canteen.objects.only("managers").get(pk=canteen_pk)
+            return canteen.managers.filter(id=request.user.id).exists()
+        except Canteen.DoesNotExist:
+            return False
+
+
 class CanEditDiagnostic(permissions.BasePermission):
     """
     This is for actions only permitted by managers of
