@@ -105,6 +105,10 @@ export default {
 .link-group {
   list-style-type: none;
 }
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
+.link-group li::before {
+  content: "\200B";
+}
 .link-group > li > a {
   text-decoration: none;
 }

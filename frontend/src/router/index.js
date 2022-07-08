@@ -438,7 +438,7 @@ const router = new VueRouter({
   mode: "history",
   routes,
   scrollBehavior(to, from, savedPosition) {
-    if (to.hash) return { selector: to.hash, offset: { y: 90 } }
+    if (to.hash) return { selector: to.hash, offset: { y: 200 } }
     if (to.name === from.name && this.app.$vuetify.breakpoint.mdAndUp) return savedPosition
     return { x: 0, y: 0 }
   },
