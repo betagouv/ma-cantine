@@ -207,7 +207,7 @@ export default {
     },
     fetchCurrentPage() {
       this.loading = true
-      const url = `/api/v1/canteens/${this.originalCanteen.id}/satellites/?limit=${this.limit}&offset=${this.offset}`
+      const url = `/api/v1/canteens/${this.originalCanteen.id}/satellites/?${this.getApiQueryParams()}`
       return fetch(url)
         .then((response) => {
           if (response.status != 200) throw new Error()
@@ -224,6 +224,12 @@ export default {
           this.loading = false
         })
     },
+    getApiQueryParams() {
+      let apiQueryParams = `limit=${this.limit}&offset=${this.offset}`
+      const orderingItems = this.getOrderingItems()
+      if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
+      return apiQueryParams
+    },
     onRouteChange() {
       this.fetchCurrentPage()
     },
@@ -231,7 +237,17 @@ export default {
       this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
     },
     getUrlQueryParams() {
-      return { page: this.options.page }
+      let urlQueryParams = { page: this.options.page }
+      const orderingItems = this.getOrderingItems()
+      if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
+      return urlQueryParams
+    },
+    getOrderingItems() {
+      let orderParams = []
+      if (this.options.sortBy && this.options.sortBy.length > 0)
+        for (let i = 0; i < this.options.sortBy.length; i++)
+          orderParams.push(this.options.sortDesc[i] ? `-${this.options.sortBy[i]}` : this.options.sortBy[i])
+      return orderParams
     },
     addWatchers() {
       this.$watch("options", this.onOptionsChange, { deep: true })

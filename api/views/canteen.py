@@ -34,7 +34,7 @@ from api.permissions import (
     IsCanteenManagerUrlParam,
 )
 from api.exceptions import DuplicateException
-from .utils import camelize, UnaccentSearchFilter
+from .utils import camelize, UnaccentSearchFilter, CamelCaseOrderingFilter
 from common import utils
 
 logger = logging.getLogger(__name__)
@@ -741,6 +741,14 @@ class SatelliteListCreateView(ListCreateAPIView):
     model = Canteen
     serializer_class = SatelliteCanteenSerializer
     pagination_class = SatellitesPagination
+    filter_backends = [
+        CamelCaseOrderingFilter,
+    ]
+
+    ordering_fields = [
+        "name",
+        "siret",
+    ]
 
     def get_queryset(self):
         canteen_pk = self.kwargs["canteen_pk"]
