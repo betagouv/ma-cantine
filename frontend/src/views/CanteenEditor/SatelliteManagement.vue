@@ -139,7 +139,7 @@ export default {
       headers: [
         { text: "Nom", value: "name" },
         { text: "SIRET", value: "siret" },
-        { text: "Couverts", value: "dailyMealCount" },
+        { text: "Couverts par jour", value: "dailyMealCount" },
         { text: "", value: "edit" },
       ],
     }
