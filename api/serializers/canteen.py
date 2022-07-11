@@ -66,6 +66,8 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "postal_code",
             "sectors",
             "daily_meal_count",
+            "production_type",
+            "satellite_canteens_count",
             "region",
             "department",
             "logo",
@@ -81,6 +83,21 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
 
     def get_can_be_claimed(self, obj):
         return not obj.managers.exists()
+
+
+class SatelliteCanteenSerializer(serializers.ModelSerializer):
+    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
+
+    class Meta:
+        model = Canteen
+        read_only_fields = ("id",)
+        fields = (
+            "id",
+            "name",
+            "siret",
+            "daily_meal_count",
+            "sectors",
+        )
 
 
 class FullCanteenSerializer(serializers.ModelSerializer):

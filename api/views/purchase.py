@@ -372,7 +372,7 @@ class ImportPurchasesView(APIView):
             raise ValidationError({"price_ht": "Le prix ne peut pas être vide"})
         family = row.pop(0)
         characteristics = row.pop(0)
-        characteristics = characteristics.split(",")
+        characteristics = [c.strip() for c in characteristics.split(",")]
         local_definition = row.pop(0)
         if "LOCAL" in characteristics and not local_definition:
             raise ValidationError(
@@ -381,13 +381,13 @@ class ImportPurchasesView(APIView):
 
         purchase = Purchase(
             canteen=canteen,
-            description=description,
-            provider=provider,
-            date=date,
-            price_ht=price,
-            family=family,
+            description=description.strip(),
+            provider=provider.strip(),
+            date=date.strip(),
+            price_ht=price.strip(),
+            family=family.strip(),
             characteristics=characteristics,
-            local_definition=local_definition,
+            local_definition=local_definition.strip(),
             import_source="Import du fichier CSV",
         )
         purchase.full_clean()

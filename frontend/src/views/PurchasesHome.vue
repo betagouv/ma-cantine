@@ -333,7 +333,7 @@ export default {
       return { text: "" }
     },
     getChoiceValueFromText(choices, displayText) {
-      const entry = Object.entries(choices).find((c) => c[1].text == displayText)
+      const entry = Object.entries(choices).find((c) => c[1].text === displayText)
       return entry ? entry[0] : null
     },
     onRowClick(purchase) {

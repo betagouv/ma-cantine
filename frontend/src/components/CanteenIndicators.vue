@@ -1,14 +1,17 @@
 <template>
   <div>
-    <p
-      :class="{ 'my-0': true, inline: singleLine }"
-      v-if="canteen.dailyMealCount && canteen.productionType !== 'central'"
-    >
+    <p :class="{ 'my-0': true, inline: singleLine }" v-if="hasSatelliteCanteens">
+      <v-icon small>mdi-home-city</v-icon>
+      {{ canteen.satelliteCanteensCount }} satellites
+    </p>
+    <p :class="{ 'my-0': true, inline: singleLine }" v-if="hasDailyMealCount">
+      <span class="mx-1" v-if="singleLine && hasSatelliteCanteens">/</span>
       <v-icon small>mdi-silverware-fork-knife</v-icon>
-      {{ canteen.dailyMealCount }} par jour
+      <!-- eslint-disable-next-line prettier/prettier-->
+      {{ canteen.dailyMealCount }} par jour<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
     </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="canteen.city">
-      <span class="mx-1" v-if="singleLine && canteen.dailyMealCount">/</span>
+      <span class="mx-1" v-if="singleLine && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
       <v-icon small aria-hidden="false" role="img" aria-label="Localisation">mdi-compass</v-icon>
       {{ canteen.city }}
     </p>
@@ -41,6 +44,15 @@ export default {
         .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
         .join(", ")
       return sectorDisplay.charAt(0).toUpperCase() + sectorDisplay.slice(1)
+    },
+    hasSatelliteCanteens() {
+      return (
+        this.canteen.satelliteCanteensCount &&
+        (this.canteen.productionType === "central" || this.canteen.productionType === "central_serving")
+      )
+    },
+    hasDailyMealCount() {
+      return this.canteen.dailyMealCount && this.canteen.productionType !== "central"
     },
   },
 }

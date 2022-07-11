@@ -85,107 +85,21 @@
             :formIsValid="formIsValid.quality"
           >
             <v-form ref="quality" v-model="formIsValid.quality">
-              <QualityMeasureValuesInput
+              <v-switch v-model="extendedDiagnostic" label="Activer la déclaration complète" />
+              <div class="font-weight-bold mb-4">{{ diagnosticType }}</div>
+              <SimplifiedQualityValues
                 :originalDiagnostic="diagnostic"
-                label="La valeur (en HT) de mes achats alimentaires..."
                 :readonly="hasActiveTeledeclaration"
                 :purchasesSummary="purchasesSummary"
+                v-if="!extendedDiagnostic"
               />
-              <fieldset class="d-flex flex-column mt-4">
-                <legend class="body-2 mb-2">
-                  Les valeurs par label des produits de qualité et durables hors bio (facultatif)
-                </legend>
-                <v-row>
-                  <v-col cols="12" md="9" class="pr-3">
-                    <label class="caption mb-1 mt-2" for="label-rouge">Label Rouge</label>
-                    <v-container class="d-flex pa-0 align-center">
-                      <div style="min-width: 100px; width: 100px;">
-                        <img src="/static/images/quality-labels/label-rouge.png" alt="" style="height: 2em;" />
-                      </div>
-                      <div class="flex-grow-1">
-                        <v-text-field
-                          id="label-rouge"
-                          hide-details="auto"
-                          type="number"
-                          suffix="€ HT"
-                          :rules="[validators.nonNegativeOrEmpty]"
-                          validate-on-blur
-                          solo
-                          dense
-                          v-model.number="diagnostic.valueLabelRouge"
-                          :readonly="hasActiveTeledeclaration"
-                          :disabled="hasActiveTeledeclaration"
-                        ></v-text-field>
-                        <PurchaseHint
-                          v-if="displayPurchaseHints"
-                          v-model="diagnostic.valueLabelRouge"
-                          purchaseType="Label Rouge"
-                          :amount="purchasesSummary.rouge"
-                        />
-                      </div>
-                    </v-container>
-                  </v-col>
-                  <v-col cols="12" md="9" class="pr-3">
-                    <label class="caption mb-1 mt-2" for="aoc-aop-igp">AOC / AOP / IGP</label>
-                    <v-container class="d-flex pa-0 align-center">
-                      <div style="min-width: 100px;">
-                        <img src="/static/images/quality-labels/Logo-AOC-AOP.png" alt="" style="height: 2em;" />
-                        <img src="/static/images/quality-labels/IGP.png" alt="" style="height: 2em;" class="mr-1" />
-                      </div>
-                      <div class="flex-grow-1">
-                        <v-text-field
-                          id="aoc-aop-igp"
-                          hide-details="auto"
-                          type="number"
-                          suffix="€ HT"
-                          :rules="[validators.nonNegativeOrEmpty]"
-                          validate-on-blur
-                          solo
-                          dense
-                          v-model.number="diagnostic.valueLabelAocIgp"
-                          :readonly="hasActiveTeledeclaration"
-                          :disabled="hasActiveTeledeclaration"
-                        ></v-text-field>
-                        <PurchaseHint
-                          v-if="displayPurchaseHints"
-                          v-model="diagnostic.valueLabelAocIgp"
-                          purchaseType="AOC / AOP / IGP"
-                          :amount="purchasesSummary.aocAopIgp"
-                        />
-                      </div>
-                    </v-container>
-                  </v-col>
-                  <v-col cols="12" md="9" class="pr-3">
-                    <label class="caption mb-1 mt-2" for="hve">Haute Valeur Environnementale</label>
-                    <v-container class="d-flex pa-0 align-center">
-                      <div style="min-width: 100px;">
-                        <img src="/static/images/quality-labels/hve.png" alt="" style="height: 2em;" />
-                      </div>
-                      <div class="flex-grow-1">
-                        <v-text-field
-                          id="hve"
-                          hide-details="auto"
-                          type="number"
-                          suffix="€ HT"
-                          :rules="[validators.nonNegativeOrEmpty]"
-                          validate-on-blur
-                          solo
-                          dense
-                          v-model.number="diagnostic.valueLabelHve"
-                          :readonly="hasActiveTeledeclaration"
-                          :disabled="hasActiveTeledeclaration"
-                        ></v-text-field>
-                        <PurchaseHint
-                          v-if="displayPurchaseHints"
-                          v-model="diagnostic.valueLabelHve"
-                          purchaseType="HVE"
-                          :amount="purchasesSummary.hve"
-                        />
-                      </div>
-                    </v-container>
-                  </v-col>
-                </v-row>
-              </fieldset>
+              <ExtendedQualityValues
+                :originalDiagnostic="diagnostic"
+                :readonly="hasActiveTeledeclaration"
+                :purchasesSummary="purchasesSummary"
+                v-else
+                class="mb-4"
+              />
             </v-form>
           </DiagnosticExpansionPanel>
 
@@ -249,7 +163,7 @@
           </v-btn>
         </v-sheet>
 
-        <div v-if="!hasActiveTeledeclaration && isTeledeclarationYear && originalCanteen.productionType !== 'central'">
+        <div v-if="!hasActiveTeledeclaration && isTeledeclarationYear">
           <v-divider class="mt-8"></v-divider>
           <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
           <p>
@@ -295,10 +209,10 @@ import InformationMeasure from "@/components/KeyMeasureDiagnostic/InformationMea
 import WasteMeasure from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/DiversificationMeasure"
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
-import QualityMeasureValuesInput from "@/components/KeyMeasureDiagnostic/QualityMeasureValuesInput"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
-import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
+import SimplifiedQualityValues from "./SimplifiedQualityValues"
+import ExtendedQualityValues from "./ExtendedQualityValues"
 import Constants from "@/constants"
 import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage, readCookie } from "@/utils"
 
@@ -323,6 +237,7 @@ export default {
       cancelDialog: false,
       teledeclarationYear: lastYear(),
       purchasesSummary: null,
+      extendedDiagnostic: false,
     }
   },
   components: {
@@ -330,10 +245,10 @@ export default {
     WasteMeasure,
     DiversificationMeasure,
     NoPlasticMeasure,
-    QualityMeasureValuesInput,
     DiagnosticExpansionPanel,
     TeledeclarationCancelDialog,
-    PurchaseHint,
+    SimplifiedQualityValues,
+    ExtendedQualityValues,
   },
   props: {
     canteenUrlComponent: {
@@ -384,11 +299,10 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return [
-        parseFloat(this.diagnostic.valueBioHt),
-        parseFloat(this.diagnostic.valueSustainableHt),
-        parseFloat(this.diagnostic.valueTotalHt),
-      ].every((x) => !strictIsNaN(x))
+      const { bioTotal, qualityTotal } = this.approTotals()
+      return [parseFloat(bioTotal), parseFloat(qualityTotal), parseFloat(this.diagnostic.valueTotalHt)].every(
+        (x) => !strictIsNaN(x)
+      )
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
@@ -401,9 +315,13 @@ export default {
         this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x) && !this.hasActiveTeledeclaration
       )
     },
+    diagnosticType() {
+      return this.extendedDiagnostic ? "Déclaration complète" : "Déclaration simplifiée"
+    },
   },
   beforeMount() {
     this.refreshDiagnostic()
+    this.extendedDiagnostic = this.showExtendedDiagnostic()
   },
   methods: {
     refreshDiagnostic() {
@@ -411,16 +329,38 @@ export default {
       if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
       else this.$router.replace({ name: "NotFound" })
     },
+    approTotals() {
+      let bioTotal = this.diagnostic.valueBioHt
+      let qualityTotal = this.diagnostic.valueSustainableHt
+      if (this.extendedDiagnostic) {
+        bioTotal = 0
+        qualityTotal = 0
+        const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+        egalimFields.forEach((field) => {
+          const value = parseFloat(this.diagnostic[field])
+          if (value) {
+            if (field.endsWith("Bio")) {
+              bioTotal += value
+            } else if (!field.startsWith("valueLabel") && !field.endsWith("Ht")) {
+              qualityTotal += value
+            }
+          }
+        })
+      }
+      return {
+        bioTotal,
+        qualityTotal,
+      }
+    },
     approSummary() {
       if (this.diagnostic.valueTotalHt > 0) {
+        const { bioTotal, qualityTotal } = this.approTotals()
         let summary = []
-        if (hasValue(this.diagnostic.valueBioHt)) {
-          summary.push(`${getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)} % bio`)
+        if (hasValue(bioTotal)) {
+          summary.push(`${getPercentage(bioTotal, this.diagnostic.valueTotalHt)} % bio`)
         }
-        if (hasValue(this.diagnostic.valueSustainableHt)) {
-          summary.push(
-            `${getPercentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)} % de qualité et durable`
-          )
+        if (hasValue(qualityTotal)) {
+          summary.push(`${getPercentage(qualityTotal, this.diagnostic.valueTotalHt)} % de qualité et durable`)
         }
         return summary.join(", ")
       }
@@ -443,6 +383,11 @@ export default {
         this.openedPanel = Object.values(this.formIsValid).findIndex((isValid) => !isValid)
         return
       }
+      // save to the diagnostic the aggregations of bio and quality if extended diagnostic used
+      const { bioTotal, qualityTotal } = this.approTotals()
+      this.diagnostic.valueBioHt = bioTotal
+      this.diagnostic.valueSustainableHt = qualityTotal
+
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
 
       if (this.isNewDiagnostic) {
@@ -567,6 +512,13 @@ export default {
           .then((response) => (response.ok ? response.json() : {}))
           .then((response) => (this.purchasesSummary = response))
     },
+    showExtendedDiagnostic() {
+      const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
+      return (
+        characteristicGroups.egalim.fields.some((key) => !!this.originalDiagnostic[key]) ||
+        characteristicGroups.outsideLaw.fields.some((key) => !!this.originalDiagnostic[key])
+      )
+    },
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
@@ -608,8 +560,5 @@ function hasValue(val) {
 }
 #teledeclaration-form >>> .v-input--checkbox .v-label.theme--light.v-label--is-disabled {
   color: rgba(0, 0, 0, 0.37);
-}
-fieldset {
-  border: none;
 }
 </style>

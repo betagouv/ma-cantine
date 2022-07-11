@@ -320,6 +320,736 @@ class Diagnostic(models.Model):
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
     )
 
+    # detailed values
+    value_viandes_volailles_bio = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Bio",
+    )
+    value_produits_de_la_mer_bio = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Bio",
+    )
+    value_fruits_et_legumes_bio = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Bio",
+    )
+    value_charcuterie_bio = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Bio",
+    )
+    value_produits_laitiers_bio = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Bio",
+    )
+    value_boulangerie_bio = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Bio",
+    )
+    value_boissons_bio = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Bio",
+    )
+    value_autres_bio = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Bio",
+    )
+    value_viandes_volailles_label_rouge = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Label rouge",
+    )
+    value_produits_de_la_mer_label_rouge = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Label rouge",
+    )
+    value_fruits_et_legumes_label_rouge = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Label rouge",
+    )
+    value_charcuterie_label_rouge = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Label rouge",
+    )
+    value_produits_laitiers_label_rouge = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Label rouge",
+    )
+    value_boulangerie_label_rouge = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Label rouge",
+    )
+    value_boissons_label_rouge = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Label rouge",
+    )
+    value_autres_label_rouge = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Label rouge",
+    )
+    value_viandes_volailles_aocaop_igp_stg = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG",
+    )
+    value_produits_de_la_mer_aocaop_igp_stg = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, AOC / AOP / IGP / STG",
+    )
+    value_fruits_et_legumes_aocaop_igp_stg = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG",
+    )
+    value_charcuterie_aocaop_igp_stg = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, AOC / AOP / IGP / STG",
+    )
+    value_produits_laitiers_aocaop_igp_stg = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), AOC / AOP / IGP / STG",
+    )
+    value_boulangerie_aocaop_igp_stg = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, AOC / AOP / IGP / STG",
+    )
+    value_boissons_aocaop_igp_stg = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, AOC / AOP / IGP / STG",
+    )
+    value_autres_aocaop_igp_stg = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, AOC / AOP / IGP / STG",
+    )
+    value_viandes_volailles_hve = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Haute valeur environnementale",
+    )
+    value_produits_de_la_mer_hve = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Haute valeur environnementale",
+    )
+    value_fruits_et_legumes_hve = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Haute valeur environnementale",
+    )
+    value_charcuterie_hve = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Haute valeur environnementale",
+    )
+    value_produits_laitiers_hve = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Haute valeur environnementale",
+    )
+    value_boulangerie_hve = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Haute valeur environnementale",
+    )
+    value_boissons_hve = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Haute valeur environnementale",
+    )
+    value_autres_hve = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Haute valeur environnementale",
+    )
+    value_viandes_volailles_peche_durable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Pêche durable",
+    )
+    value_produits_de_la_mer_peche_durable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Pêche durable",
+    )
+    value_fruits_et_legumes_peche_durable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Pêche durable",
+    )
+    value_charcuterie_peche_durable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Pêche durable",
+    )
+    value_produits_laitiers_peche_durable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Pêche durable",
+    )
+    value_boulangerie_peche_durable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Pêche durable",
+    )
+    value_boissons_peche_durable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Pêche durable",
+    )
+    value_autres_peche_durable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Pêche durable",
+    )
+    value_viandes_volailles_rup = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Région ultrapériphérique",
+    )
+    value_produits_de_la_mer_rup = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Région ultrapériphérique",
+    )
+    value_fruits_et_legumes_rup = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Région ultrapériphérique",
+    )
+    value_charcuterie_rup = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Région ultrapériphérique",
+    )
+    value_produits_laitiers_rup = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Région ultrapériphérique",
+    )
+    value_boulangerie_rup = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Région ultrapériphérique",
+    )
+    value_boissons_rup = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Région ultrapériphérique",
+    )
+    value_autres_rup = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Région ultrapériphérique",
+    )
+    value_viandes_volailles_fermier = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Fermier",
+    )
+    value_produits_de_la_mer_fermier = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Fermier",
+    )
+    value_fruits_et_legumes_fermier = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Fermier",
+    )
+    value_charcuterie_fermier = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Fermier",
+    )
+    value_produits_laitiers_fermier = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Fermier",
+    )
+    value_boulangerie_fermier = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Fermier",
+    )
+    value_boissons_fermier = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Fermier",
+    )
+    value_autres_fermier = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Fermier",
+    )
+    value_viandes_volailles_externalites = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    )
+    value_produits_de_la_mer_externalites = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    )
+    value_fruits_et_legumes_externalites = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    )
+    value_charcuterie_externalites = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    )
+    value_produits_laitiers_externalites = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    )
+    value_boulangerie_externalites = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    )
+    value_boissons_externalites = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    )
+    value_autres_externalites = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    )
+    value_viandes_volailles_commerce_equitable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Commerce équitable",
+    )
+    value_produits_de_la_mer_commerce_equitable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Commerce équitable",
+    )
+    value_fruits_et_legumes_commerce_equitable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Commerce équitable",
+    )
+    value_charcuterie_commerce_equitable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Commerce équitable",
+    )
+    value_produits_laitiers_commerce_equitable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Commerce équitable",
+    )
+    value_boulangerie_commerce_equitable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Commerce équitable",
+    )
+    value_boissons_commerce_equitable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Commerce équitable",
+    )
+    value_autres_commerce_equitable = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Commerce équitable",
+    )
+    value_viandes_volailles_performance = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",
+    )
+    value_produits_de_la_mer_performance = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
+    )
+    value_fruits_et_legumes_performance = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
+    )
+    value_charcuterie_performance = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Produits acquis sur la base de leurs performances en matière environnementale",
+    )
+    value_produits_laitiers_performance = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Produits acquis sur la base de leurs performances en matière environnementale",
+    )
+    value_boulangerie_performance = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Produits acquis sur la base de leurs performances en matière environnementale",
+    )
+    value_boissons_performance = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Produits acquis sur la base de leurs performances en matière environnementale",
+    )
+    value_autres_performance = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
+    )
+    value_viandes_volailles_france = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Provenance France",
+    )
+    value_produits_de_la_mer_france = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Provenance France",
+    )
+    value_fruits_et_legumes_france = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Provenance France",
+    )
+    value_charcuterie_france = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Provenance France",
+    )
+    value_produits_laitiers_france = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Provenance France",
+    )
+    value_boulangerie_france = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Provenance France",
+    )
+    value_boissons_france = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Provenance France",
+    )
+    value_autres_france = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Provenance France",
+    )
+    value_viandes_volailles_short_distribution = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Circuit-court",
+    )
+    value_produits_de_la_mer_short_distribution = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Circuit-court",
+    )
+    value_fruits_et_legumes_short_distribution = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Circuit-court",
+    )
+    value_charcuterie_short_distribution = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Circuit-court",
+    )
+    value_produits_laitiers_short_distribution = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Circuit-court",
+    )
+    value_boulangerie_short_distribution = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Circuit-court",
+    )
+    value_boissons_short_distribution = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Circuit-court",
+    )
+    value_autres_short_distribution = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Circuit-court",
+    )
+    value_viandes_volailles_local = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, Produit local",
+    )
+    value_produits_de_la_mer_local = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, Produit local",
+    )
+    value_fruits_et_legumes_local = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, Produit local",
+    )
+    value_charcuterie_local = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, Produit local",
+    )
+    value_produits_laitiers_local = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Produit local",
+    )
+    value_boulangerie_local = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, Produit local",
+    )
+    value_boissons_local = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, Produit local",
+    )
+    value_autres_local = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Produit local",
+    )
+
     @property
     def latest_teledeclaration(self):
         if self.teledeclaration_set.count() == 0:
@@ -354,3 +1084,129 @@ class Diagnostic(models.Model):
 
     def __str__(self):
         return f"Diagnostic pour {self.canteen.name} ({self.year})"
+
+    def label_sum(self, label):
+        families = [
+            "viandes_volailles",
+            "produits_de_la_mer",
+            "fruits_et_legumes",
+            "charcuterie",
+            "produits_laitiers",
+            "boulangerie",
+            "boissons",
+            "autres",
+        ]
+        sum = 0
+        for family in families:
+            value = getattr(self, f"value_{family}_{label}")
+            if value:
+                sum = sum + value
+        return sum
+
+    def family_sum(self, family):
+        labels = [
+            "bio",
+            "label_rouge",
+            "aocaop_igp_stg",
+            "hve",
+            "peche_durable",
+            "rup",
+            "fermier",
+            "externalites",
+            "commerce_equitable",
+            "performance",
+            # TODO: should the following three be included if they're not EGAlim?
+            "france",
+            "short_distribution",
+            "local",
+        ]
+        sum = 0
+        for label in labels:
+            value = getattr(self, f"value_{family}_{label}")
+            if value:
+                sum = sum + value
+        return sum
+
+    @property
+    def total_label_bio(self):
+        return self.label_sum("bio")
+
+    @property
+    def total_label_label_rouge(self):
+        return self.label_sum("label_rouge")
+
+    @property
+    def total_label_aocaop_igp_stg(self):
+        return self.label_sum("aocaop_igp_stg")
+
+    @property
+    def total_label_hve(self):
+        return self.label_sum("hve")
+
+    @property
+    def total_label_peche_durable(self):
+        return self.label_sum("peche_durable")
+
+    @property
+    def total_label_rup(self):
+        return self.label_sum("rup")
+
+    @property
+    def total_label_fermier(self):
+        return self.label_sum("fermier")
+
+    @property
+    def total_label_externalites(self):
+        return self.label_sum("externalites")
+
+    @property
+    def total_label_commerce_equitable(self):
+        return self.label_sum("commerce_equitable")
+
+    @property
+    def total_label_performance(self):
+        return self.label_sum("performance")
+
+    @property
+    def total_label_france(self):
+        return self.label_sum("france")
+
+    @property
+    def total_label_short_distribution(self):
+        return self.label_sum("short_distribution")
+
+    @property
+    def total_label_local(self):
+        return self.label_sum("local")
+
+    @property
+    def total_family_viandes_volailles(self):
+        return self.family_sum("viandes_volailles")
+
+    @property
+    def total_family_produits_de_la_mer(self):
+        return self.family_sum("produits_de_la_mer")
+
+    @property
+    def total_family_fruits_et_legumes(self):
+        return self.family_sum("fruits_et_legumes")
+
+    @property
+    def total_family_charcuterie(self):
+        return self.family_sum("charcuterie")
+
+    @property
+    def total_family_produits_laitiers(self):
+        return self.family_sum("produits_laitiers")
+
+    @property
+    def total_family_boulangerie(self):
+        return self.family_sum("boulangerie")
+
+    @property
+    def total_family_boissons(self):
+        return self.family_sum("boissons")
+
+    @property
+    def total_family_autres(self):
+        return self.family_sum("autres")

@@ -6,6 +6,10 @@
 
     <v-divider class="mt-16"></v-divider>
 
+    <MissionBlock class="mt-14" />
+
+    <v-divider class="mt-16"></v-divider>
+
     <KeyGoalsBlock class="mt-14 py-2" />
 
     <GoalBlock class="mt-16 py-2" />
@@ -40,6 +44,7 @@ import Resources from "@/views/LandingPage/Resources"
 import TheNewsletter from "@/components/TheNewsletter"
 import StartupPartners from "@/views/LandingPage/StartupPartners"
 import BlogBlock from "@/views/LandingPage/BlogBlock"
+import MissionBlock from "@/views/LandingPage/MissionBlock"
 
 export default {
   components: {
@@ -52,6 +57,7 @@ export default {
     Resources,
     StartupPartners,
     BlogBlock,
+    MissionBlock,
   },
   computed: {
     showPartners() {

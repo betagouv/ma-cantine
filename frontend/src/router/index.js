@@ -26,6 +26,7 @@ import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
 import ManagementPage from "@/views/ManagementPage"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenForm from "@/views/CanteenEditor/CanteenForm"
+import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
 import DiagnosticList from "@/views/CanteenEditor/DiagnosticList"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
@@ -121,14 +122,14 @@ const routes = [
     path: "/mesures-phares",
     name: "KeyMeasuresPage",
     component: KeyMeasuresPage,
-    meta: {
-      title: "Les 5 mesures phares de la loi EGAlim",
-    },
     children: [
       {
         path: "",
         name: "KeyMeasuresHome",
         component: KeyMeasuresHome,
+        meta: {
+          title: "Tableau de bord",
+        },
         beforeEnter: (route, _, next) => {
           store.state.loggedUser
             ? next({
@@ -264,6 +265,14 @@ const routes = [
         name: "CanteenForm",
         props: true,
         component: CanteenForm,
+        meta: {
+          authenticationRequired: true,
+        },
+      },
+      {
+        path: "satellites",
+        name: "SatelliteManagement",
+        component: SatelliteManagement,
         meta: {
           authenticationRequired: true,
         },

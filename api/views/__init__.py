@@ -14,6 +14,7 @@ from .canteen import (  # noqa: F401
     CanteenLocationsView,
     TeamJoinRequestView,
     ClaimCanteenView,
+    SatelliteListCreateView,
 )
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,

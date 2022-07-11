@@ -5,7 +5,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from common.utils import send_mail
 from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, BadRequest
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.functions import Cast
@@ -23,12 +23,18 @@ from api.serializers import (
     FullCanteenSerializer,
     CanteenPreviewSerializer,
     ManagingTeamSerializer,
+    SatelliteCanteenSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
 from data.region_choices import Region
-from api.permissions import IsCanteenManager, IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
+from api.permissions import (
+    IsCanteenManager,
+    IsAuthenticated,
+    IsAuthenticatedOrTokenHasResourceScope,
+    IsCanteenManagerUrlParam,
+)
 from api.exceptions import DuplicateException
-from .utils import camelize, UnaccentSearchFilter
+from .utils import camelize, UnaccentSearchFilter, CamelCaseOrderingFilter
 from common import utils
 
 logger = logging.getLogger(__name__)
@@ -329,10 +335,10 @@ class AddManagerView(APIView):
             logger.exception(e)
             return _respond_with_team(canteen)
         except Exception as e:
-            logger.error("Exception ocurred while inviting a manager to canteen")
+            logger.error("Exception occurred while inviting a manager to canteen")
             logger.exception(e)
             return JsonResponse(
-                {"error": "An error has ocurred"},
+                {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -432,10 +438,10 @@ class RemoveManagerView(APIView):
             logger.exception(e)
             return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            logger.error("Exception ocurred while removing a manager from a canteen")
+            logger.error("Exception occurred while removing a manager from a canteen")
             logger.exception(e)
             return JsonResponse(
-                {"error": "An error has ocurred"},
+                {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -470,10 +476,10 @@ class SendCanteenNotFoundEmail(APIView):
         except ValidationError:
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error("Exception ocurred while sending email")
+            logger.error("Exception occurred while sending email")
             logger.exception(e)
             return JsonResponse(
-                {"error": "An error has ocurred"},
+                {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -524,10 +530,10 @@ class TeamJoinRequestView(APIView):
         except ValidationError:
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error("Exception ocurred while sending email")
+            logger.error("Exception occurred while sending email")
             logger.exception(e)
             return JsonResponse(
-                {"error": "An error has ocurred"},
+                {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -717,9 +723,76 @@ class ClaimCanteenView(APIView):
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.error("Exception ocurred while sending email")
+            logger.error("Exception occurred while sending email")
             logger.exception(e)
             return JsonResponse(
-                {"error": "An error has ocurred"},
+                {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class SatellitesPagination(LimitOffsetPagination):
+    default_limit = 10
+    max_limit = 40
+
+
+class SatelliteListCreateView(ListCreateAPIView):
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+    model = Canteen
+    serializer_class = SatelliteCanteenSerializer
+    pagination_class = SatellitesPagination
+    filter_backends = [
+        CamelCaseOrderingFilter,
+    ]
+
+    ordering_fields = [
+        "name",
+        "siret",
+        "daily_meal_count",
+    ]
+
+    def get_queryset(self):
+        canteen_pk = self.kwargs["canteen_pk"]
+        return Canteen.objects.only("siret").get(pk=canteen_pk).satellites
+
+    def post(self, request, canteen_pk):
+        canteen = Canteen.objects.only("siret", "central_producer_siret").get(pk=canteen_pk)
+        siret_satellite = request.data.get("siret")
+        created = False
+
+        if not canteen.is_central_cuisine:
+            raise PermissionDenied("Votre cantine n'est pas une cuisine centrale")
+
+        if request.user not in canteen.managers.all():
+            raise PermissionDenied("Vous n'êtes pas gestionnaire de cette cantine")
+
+        try:
+            if siret_satellite and Canteen.objects.filter(siret=siret_satellite).exists():
+                satellite = Canteen.objects.filter(siret=siret_satellite).first()
+
+                if satellite.is_central_cuisine:
+                    raise PermissionDenied("La cantine renseignée est une cuisine centrale")
+
+                if satellite.central_producer_siret and satellite.central_producer_siret != canteen.siret:
+                    raise PermissionDenied("Cette cantine est déjà fourni par une autre cuisine centrale")
+
+                satellite.central_producer_siret = canteen.siret
+                satellite.save()
+            else:
+                new_satellite = FullCanteenSerializer(data=request.data)
+                new_satellite.is_valid(raise_exception=True)
+                created = True
+
+                satellite = new_satellite.save(
+                    central_producer_siret=canteen.siret,
+                    publication_status=Canteen.PublicationStatus.PUBLISHED,
+                    import_source=f"Cuisine centrale : {canteen.siret}",
+                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                )
+            for manager in canteen.managers.all():
+                satellite.managers.add(manager)
+            serialized_canteen = FullCanteenSerializer(satellite).data
+            return_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+            return JsonResponse(camelize(serialized_canteen), status=return_status)
+        except Sector.DoesNotExist:
+            raise BadRequest()
