@@ -1,25 +1,25 @@
 <template>
   <div>
-    <div class="text-left" v-if="existingSatellites">
+    <div class="text-left" v-if="visibleSatellites">
       <h1 class="font-weight-black text-h4 my-4">
         Vos cantines satellites
       </h1>
       <p>
         Cette cuisine centrale fournit des repas
         {{ satelliteCanteensCount > 1 ? `à ${satelliteCanteensCount} cantines` : "à une cantine" }}.
-        <span v-if="!existingSatellites || existingSatellites.length === 0">
+        <span v-if="!visibleSatellites || visibleSatellites.length === 0">
           Vous n'avez ajouté aucune cantine satellite.
         </span>
-        <span v-else-if="satelliteCanteensCount !== existingSatellites.length">
-          Vous en avez renseigné {{ existingSatellites.length }}.
+        <span v-else-if="satelliteCanteensCount !== visibleSatellites.length">
+          Vous en avez renseigné {{ visibleSatellites.length }}.
         </span>
       </p>
       <v-data-table
         :options.sync="options"
-        :items="existingSatellites"
+        :server-items-length="satelliteCount || 0"
+        :items="visibleSatellites"
         @click:row="onRowClick"
         :headers="headers"
-        hide-default-footer
       >
         <template v-slot:[`item.edit`]="{}">
           <a>
@@ -115,7 +115,7 @@
 
 <script>
 import validators from "@/validators"
-import { sectorsSelectList } from "@/utils"
+import { sectorsSelectList, getObjectDiff } from "@/utils"
 
 export default {
   name: "SatelliteManagement",
@@ -124,10 +124,13 @@ export default {
   },
   data() {
     return {
+      ĺoading: false,
       satellite: {},
       formIsValid: true,
+      limit: 10,
+      visibleSatellites: null,
+      satelliteCount: null,
       satelliteCanteensCount: this.originalCanteen.satelliteCanteensCount,
-      existingSatellites: null,
       options: {
         sortBy: [],
         sortDesc: [],
@@ -136,11 +139,15 @@ export default {
       headers: [
         { text: "Nom", value: "name" },
         { text: "SIRET", value: "siret" },
+        { text: "Couverts par jour", value: "dailyMealCount" },
         { text: "", value: "edit" },
       ],
     }
   },
   computed: {
+    offset() {
+      return (this.options.page - 1) * this.limit
+    },
     validators() {
       return validators
     },
@@ -171,7 +178,7 @@ export default {
           })
           this.satellite = {}
         })
-        .then(this.fetchSatellites)
+        .then(this.fetchCurrentPage)
         .catch((error) => {
           if (error.message) {
             this.$store.dispatch("notify", {
@@ -183,17 +190,69 @@ export default {
           }
         })
     },
-    fetchSatellites() {
-      return fetch(`/api/v1/canteens/${this.originalCanteen.id}/satellites/`)
+    populateParametersFromRoute() {
+      const page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
+      let sortBy = []
+      let sortDesc = []
+
+      this.$route.query["trier-par"] &&
+        this.$route.query["trier-par"].split(",").forEach((element) => {
+          const isDesc = element[0] === "-"
+          sortBy.push(isDesc ? element.slice(1) : element)
+          sortDesc.push(isDesc)
+        })
+
+      const newOptions = { sortBy, sortDesc, page }
+      const optionChanges = this.options ? getObjectDiff(this.options, newOptions) : newOptions
+      if (Object.keys(optionChanges).length > 0) this.$set(this, "options", newOptions)
+    },
+    fetchCurrentPage() {
+      this.loading = true
+      const url = `/api/v1/canteens/${this.originalCanteen.id}/satellites/?${this.getApiQueryParams()}`
+      return fetch(url)
         .then((response) => {
           if (response.status != 200) throw new Error()
-          response.json().then((existingSatellites) => {
-            this.existingSatellites = existingSatellites
-          })
+          return response.json()
+        })
+        .then((response) => {
+          this.satelliteCount = response.count
+          this.visibleSatellites = response.results
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    getApiQueryParams() {
+      let apiQueryParams = `limit=${this.limit}&offset=${this.offset}`
+      const orderingItems = this.getOrderingItems()
+      if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
+      return apiQueryParams
+    },
+    onRouteChange() {
+      this.fetchCurrentPage()
+    },
+    onOptionsChange() {
+      this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
+    },
+    getUrlQueryParams() {
+      let urlQueryParams = { page: this.options.page }
+      const orderingItems = this.getOrderingItems()
+      if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
+      return urlQueryParams
+    },
+    getOrderingItems() {
+      let orderParams = []
+      if (this.options.sortBy && this.options.sortBy.length > 0)
+        for (let i = 0; i < this.options.sortBy.length; i++)
+          orderParams.push(this.options.sortDesc[i] ? `-${this.options.sortBy[i]}` : this.options.sortBy[i])
+      return orderParams
+    },
+    addWatchers() {
+      this.$watch("options", this.onOptionsChange, { deep: true })
+      this.$watch("$route", this.onRouteChange)
     },
     onRowClick(satellite) {
       this.$router.push({
@@ -206,7 +265,12 @@ export default {
     document.title = `Satellites - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
   },
   beforeMount() {
-    return this.fetchSatellites()
+    if (!this.$route.query["page"]) this.$router.replace({ query: { page: 1 } })
+  },
+  mounted() {
+    this.populateParametersFromRoute()
+    if (this.hasActiveFilter) this.showFilters = true
+    return this.fetchCurrentPage().then(this.addWatchers)
   },
 }
 </script>
@@ -217,5 +281,10 @@ export default {
 }
 .v-data-table >>> tr {
   cursor: pointer;
+}
+
+/* Hides items-per-row */
+.v-data-table >>> .v-data-footer__select {
+  visibility: hidden;
 }
 </style>

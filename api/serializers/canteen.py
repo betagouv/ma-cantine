@@ -90,13 +90,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-        read_only_fields = (
-            "id",
-            "name",
-            "siret",
-            "daily_meal_count",
-            "sectors",
-        )
+        read_only_fields = ("id",)
         fields = (
             "id",
             "name",

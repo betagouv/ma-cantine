@@ -27,9 +27,14 @@ from api.serializers import (
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
 from data.region_choices import Region
-from api.permissions import IsCanteenManager, IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
+from api.permissions import (
+    IsCanteenManager,
+    IsAuthenticated,
+    IsAuthenticatedOrTokenHasResourceScope,
+    IsCanteenManagerUrlParam,
+)
 from api.exceptions import DuplicateException
-from .utils import camelize, UnaccentSearchFilter
+from .utils import camelize, UnaccentSearchFilter, CamelCaseOrderingFilter
 from common import utils
 
 logger = logging.getLogger(__name__)
@@ -726,13 +731,29 @@ class ClaimCanteenView(APIView):
             )
 
 
-class SatelliteListCreateView(APIView):
-    permission_classes = [IsAuthenticated]
+class SatellitesPagination(LimitOffsetPagination):
+    default_limit = 10
+    max_limit = 40
 
-    def get(self, request, canteen_pk):
-        satellites = Canteen.objects.only("siret").get(pk=canteen_pk).satellites
-        serialized_satellites = SatelliteCanteenSerializer(satellites, many=True).data
-        return JsonResponse(camelize(serialized_satellites), safe=False, status=status.HTTP_200_OK)
+
+class SatelliteListCreateView(ListCreateAPIView):
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+    model = Canteen
+    serializer_class = SatelliteCanteenSerializer
+    pagination_class = SatellitesPagination
+    filter_backends = [
+        CamelCaseOrderingFilter,
+    ]
+
+    ordering_fields = [
+        "name",
+        "siret",
+        "daily_meal_count",
+    ]
+
+    def get_queryset(self):
+        canteen_pk = self.kwargs["canteen_pk"]
+        return Canteen.objects.only("siret").get(pk=canteen_pk).satellites
 
     def post(self, request, canteen_pk):
         canteen = Canteen.objects.only("siret", "central_producer_siret").get(pk=canteen_pk)
