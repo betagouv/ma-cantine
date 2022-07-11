@@ -182,7 +182,7 @@ export default {
           authenticationState: false,
         },
         {
-          text: "À propos la loi EGAlim",
+          text: "À propos de la loi EGAlim",
           children: [
             {
               text: "Mesures phares",
