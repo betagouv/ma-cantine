@@ -1,12 +1,6 @@
 <template>
   <div>
-    <h2 class="font-weight-black text-h5 mb-4">Foire aux questions</h2>
-    <p>
-      Vous n'êtes pas familier avec les obligations réglementaires ? Vous vous posez des questions sur votre
-      responsabilité ? Vous avez besoin d'aide sur plusieurs aspects techniques ou légaux ? Rassurez-vous ! Vous n'êtes
-      pas les seuls à vous poser ces questions.
-    </p>
-    <v-expansion-panels>
+    <v-expansion-panels class="cta-group pa-4">
       <v-expansion-panel v-for="question in questions" :key="question.title">
         <v-expansion-panel-header class="font-weight-bold" style="line-height: 20px;">
           {{ question.title }}
