@@ -1,17 +1,19 @@
 <template>
-  <v-sheet color="grey lighten-4" class="body-2 px-3 pt-8 pb-1 mt-n7">
-    <div v-if="!amount">
+  <v-sheet :color="backgroundColor" class="body-2 px-3 pt-8 pb-1 mt-n7">
+    <p class="mb-0 caption" v-if="!amount">
       {{ emptyLabel }}
-    </div>
-    <div v-else-if="compliant" class="d-flex">
+    </p>
+    <p class="mb-0 caption d-flex" v-else-if="compliant">
       <v-icon small class="mr-1">mdi-check</v-icon>
       <span>Correspond aux achats réalisés</span>
-    </div>
+    </p>
     <div v-else class="d-flex">
-      <div>
+      <p class="mb-0">
         {{ visibleLabel }}
-        <a color="primary" tabindex="0" @click="onFill" class="text-decoration-underline" text>{{ amount }} €</a>
-      </div>
+        <a color="primary" tabindex="0" @click="onFill" class="text-decoration-underline font-weight-bold" text>
+          {{ amount }} €
+        </a>
+      </p>
       <v-spacer></v-spacer>
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
@@ -57,6 +59,9 @@ export default {
     },
     compliant() {
       return this.value === this.amount
+    },
+    backgroundColor() {
+      return !this.amount || this.compliant ? "grey lighten-4" : "primary lighten-5"
     },
   },
 }
