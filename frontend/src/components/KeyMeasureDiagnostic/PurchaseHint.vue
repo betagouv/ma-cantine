@@ -1,19 +1,17 @@
 <template>
-  <v-sheet :color="backgroundColor" class="body-2 px-3 pt-8 pb-1 mt-n7">
-    <p class="mb-0 caption" v-if="!amount">
+  <v-sheet :color="backgroundColor" class="body-2 pr-3 pt-8 pb-1 mt-n7">
+    <p class="mb-0 caption pl-3" v-if="!amount">
       {{ emptyLabel }}
     </p>
-    <p class="mb-0 caption d-flex" v-else-if="compliant">
+    <p class="mb-0 caption d-flex pl-3" v-else-if="compliant">
       <v-icon small class="mr-1">mdi-check</v-icon>
       <span>Correspond aux achats réalisés</span>
     </p>
     <div v-else class="d-flex">
-      <p class="mb-0">
-        {{ visibleLabel }}
-        <a color="primary" tabindex="0" @click="onFill" class="text-decoration-underline font-weight-bold" text>
-          {{ amount }} €
-        </a>
-      </p>
+      <v-btn tabindex="0" @click="onFill" class="py-0" text>
+        <span class="font-weight-medium grey--text text--darken-3">{{ visibleLabel }}&nbsp;</span>
+        <span class="text-decoration-underline primary--text text--darken-1 ">{{ amount }} €</span>
+      </v-btn>
       <v-spacer></v-spacer>
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
@@ -55,6 +53,7 @@ export default {
   },
   computed: {
     visibleLabel() {
+      // TODO: for screen readers only don't shorten label ever?
       return this.$vuetify.breakpoint.smAndDown ? this.shortLabel : this.label
     },
     compliant() {
