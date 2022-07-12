@@ -180,7 +180,9 @@ class CanteenPurchasesSummaryView(APIView):
             raise BadRequest("Missing year in request's query parameters")
 
         canteen = self._get_canteen(canteen_id, request)
-        purchases = Purchase.objects.filter(canteen=canteen, date__year=year)
+        purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
+            canteen=canteen, date__year=year
+        )
 
         data = {}
         data["total"] = purchases.aggregate(total=Sum("price_ht"))["total"]
@@ -198,7 +200,9 @@ class CanteenPurchasesSummaryView(APIView):
             characteristics_len=Func(F("characteristics"), function="CARDINALITY")
         )
         sustainable_purchases = sustainable_purchases.filter(characteristics_len__gt=0)
+        # TODO: fix this aggregation to not count non-EGAlim characteristics
         data["sustainable"] = sustainable_purchases.aggregate(total=Sum("price_ht"))["total"]
+        # NB: the following totals are not mutually exclusive unlike the detailed totals further on
         hve_purchases = purchases.filter(characteristics__contains=[Purchase.Characteristic.HVE])
         data["hve"] = hve_purchases.aggregate(total=Sum("price_ht"))["total"]
         aoc_aop_igp_purchases = purchases.filter(
@@ -208,6 +212,65 @@ class CanteenPurchasesSummaryView(APIView):
         data["aoc_aop_igp"] = aoc_aop_igp_purchases.aggregate(total=Sum("price_ht"))["total"]
         rouge_purchases = purchases.filter(characteristics__contains=[Purchase.Characteristic.LABEL_ROUGE])
         data["rouge"] = rouge_purchases.aggregate(total=Sum("price_ht"))["total"]
+
+        # summary for detailed teledeclaration totals, by family and label
+        families = [
+            "VIANDES_VOLAILLES",
+            "PRODUITS_DE_LA_MER",
+            "FRUITS_ET_LEGUMES",
+            "CHARCUTERIE",
+            "PRODUITS_LAITIERS",
+            "BOULANGERIE",
+            "BOISSONS",
+            "AUTRES",
+        ]
+        # the order of egalim_labels is significant - determines which labels trump others when aggregating purchases
+        egalim_labels = [
+            "BIO",
+            "LABEL_ROUGE",
+            "AOCAOP_IGP_STG",
+            "EXTERNALITES",
+            "PERFORMANCE",
+            "FERMIER",
+            "HVE",
+            "PECHE_DURABLE",
+            "RUP",
+            "COMMERCE_EQUITABLE",
+        ]
+        other_labels = ["FRANCE", "SHORT_DISTRIBUTION", "LOCAL"]
+        # reset filter to 0 exclusions
+        purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
+            canteen=canteen, date__year=year
+        )
+        for family in families:
+            purchase_family = purchases.filter(family=family)
+            for label in egalim_labels:
+                if label == "AOCAOP_IGP_STG":
+                    fam_label = purchase_family.filter(
+                        Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
+                        | Q(characteristics__contains=[Purchase.Characteristic.IGP])
+                        | Q(characteristics__contains=[Purchase.Characteristic.STG])
+                    ).distinct()
+                    # the remaining stats should ignore already counted labels
+                    purchase_family = purchase_family.exclude(
+                        Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
+                        | Q(characteristics__contains=[Purchase.Characteristic.IGP])
+                        | Q(characteristics__contains=[Purchase.Characteristic.STG])
+                    )
+                else:
+                    fam_label = purchase_family.filter(Q(characteristics__contains=[Purchase.Characteristic[label]]))
+                    # the remaining stats should ignore already counted labels
+                    purchase_family = purchase_family.exclude(
+                        Q(characteristics__contains=[Purchase.Characteristic[label]])
+                    )
+                key = family.lower() + "_" + label.lower()
+                data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"]
+            # outside of EGAlim, products can be counted twice across characteristics
+            purchase_family = purchases.filter(family=family)
+            for label in other_labels:
+                fam_label = purchase_family.filter(Q(characteristics__contains=[Purchase.Characteristic[label]]))
+                key = family.lower() + "_" + label.lower()
+                data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"]
 
         return Response(PurchaseSummarySerializer(data).data)
 
