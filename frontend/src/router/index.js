@@ -41,6 +41,7 @@ import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
 import PurchasesImporter from "@/views/PurchasesImporter"
 import CommunityPage from "@/views/CommunityPage"
+import FaqPage from "@/views/FaqPage"
 
 Vue.use(VueRouter)
 
@@ -428,6 +429,14 @@ const routes = [
     },
   },
   {
+    path: "/faq/",
+    name: "FaqPage",
+    component: FaqPage,
+    meta: {
+      title: "Foire aux questions",
+    },
+  },
+  {
     path: "/:catchAll(.*)",
     component: NotFound,
     name: "NotFound",
@@ -438,7 +447,7 @@ const router = new VueRouter({
   mode: "history",
   routes,
   scrollBehavior(to, from, savedPosition) {
-    if (to.hash) return { selector: to.hash, offset: { y: 90 } }
+    if (to.hash) return { selector: to.hash, offset: { y: 200 } }
     if (to.name === from.name && this.app.$vuetify.breakpoint.mdAndUp) return savedPosition
     return { x: 0, y: 0 }
   },

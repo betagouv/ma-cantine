@@ -65,6 +65,10 @@ export default {
   li {
     margin: 1em 0;
   }
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
+  li::before {
+    content: "\200B";
+  }
 }
 
 .label {

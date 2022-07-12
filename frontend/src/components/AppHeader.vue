@@ -235,7 +235,16 @@ export default {
         },
         {
           text: "Contact",
-          to: { name: "ContactPage" },
+          children: [
+            {
+              text: "Contactez-nous",
+              to: { name: "ContactPage" },
+            },
+            {
+              text: "FAQ",
+              to: { name: "FaqPage" },
+            },
+          ],
         },
       ],
     }
