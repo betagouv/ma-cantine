@@ -66,15 +66,41 @@
         <span>Mes cantines</span>
       </v-btn>
 
-      <v-btn
-        text
-        elevation="0"
+      <v-dialog
         v-if="loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
-        href="/se-deconnecter"
-        class="d-none d-sm-flex align-self-center header-signup-button primary--text"
+        v-model="logoutWarningDialog"
+        max-width="500"
       >
-        <span>Me déconnecter</span>
-      </v-btn>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            v-bind="attrs"
+            v-on="on"
+            text
+            elevation="0"
+            class="d-none d-sm-flex align-self-center header-signup-button primary--text"
+          >
+            <span>Me déconnecter</span>
+          </v-btn>
+        </template>
+
+        <v-card>
+          <v-card-text class="pa-8 text-left">
+            Voulez-vous vous déconnecter de votre compte ma cantine ?
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
+              Non, revenir en arrière
+            </v-btn>
+            <v-btn color="red darken-2" text href="/se-deconnecter">
+              Oui, je confirme
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
         <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
@@ -100,7 +126,7 @@
               </template>
               <v-list class="py-0">
                 <div v-for="(subItem, subIndex) in navLink.children" :key="subIndex">
-                  <v-list-item :to="subItem.to" :href="subItem.href">
+                  <v-list-item :to="subItem.to" :href="subItem.href" :target="subItem.target" :rel="subItem.rel">
                     <v-list-item-title class="text-body-2">
                       {{ subItem.text }}
                       <v-icon v-if="subItem.href" small color="rgb(22,22,22)">mdi-open-in-new</v-icon>
@@ -153,6 +179,7 @@ export default {
   data() {
     return {
       extended: true,
+      logoutWarningDialog: false,
       navLinks: [
         {
           text: "Gérer mes cantines",
@@ -182,7 +209,7 @@ export default {
           authenticationState: false,
         },
         {
-          text: "À propos la loi EGAlim",
+          text: "À propos de la loi EGAlim",
           children: [
             {
               text: "Mesures phares",
@@ -196,6 +223,8 @@ export default {
             {
               text: "Documentation",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+              target: "_blank",
+              rel: "noopener",
             },
           ],
         },
