@@ -126,7 +126,7 @@
               </template>
               <v-list class="py-0">
                 <div v-for="(subItem, subIndex) in navLink.children" :key="subIndex">
-                  <v-list-item :to="subItem.to" :href="subItem.href">
+                  <v-list-item :to="subItem.to" :href="subItem.href" :target="subItem.target" :rel="subItem.rel">
                     <v-list-item-title class="text-body-2">
                       {{ subItem.text }}
                       <v-icon v-if="subItem.href" small color="rgb(22,22,22)">mdi-open-in-new</v-icon>
