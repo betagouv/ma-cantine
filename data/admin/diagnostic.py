@@ -63,9 +63,6 @@ class DiagnosticAdmin(admin.ModelAdmin):
                     "value_bio_ht",
                     "value_fair_trade_ht",
                     "value_sustainable_ht",
-                    "value_label_rouge_ht",
-                    "value_aocaop_igp_stg_ht",
-                    "value_hve_ht",
                     "value_pat_ht",
                     "value_total_ht",
                 )
@@ -137,22 +134,25 @@ class DiagnosticAdmin(admin.ModelAdmin):
                 )
             },
         ),
-        # (
-        #     "Valeurs intermediaires",
-        #     {
-        #         "fields": (
-        #             "value_peche_durable_ht",
-        #             "value_rup_ht",
-        # "value_fermier_ht",
-        # "value_externalites_ht",
-        # "value_commerce_equitable_ht",
-        # "value_performance_ht",
-        # "value_france_ht",
-        # "value_short_distribution_ht",
-        # "value_local_ht",
-        #         )
-        #     },
-        # ),
+        (
+            "Valeurs intermediaires",
+            {
+                "fields": (
+                    "value_label_rouge_ht",
+                    "value_aocaop_igp_stg_ht",
+                    "value_hve_ht",
+                    "value_peche_durable_ht",
+                    "value_rup_ht",
+                    "value_fermier_ht",
+                    "value_externalites_ht",
+                    "value_commerce_equitable_ht",
+                    "value_performance_ht",
+                    "value_france_ht",
+                    "value_short_distribution_ht",
+                    "value_local_ht",
+                )
+            },
+        ),
         (
             "Valeurs détaillés",
             {
