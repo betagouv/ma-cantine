@@ -7,19 +7,24 @@
       <v-icon small class="mr-1">mdi-check</v-icon>
       <span>Correspond aux achats réalisés</span>
     </p>
-    <div v-else class="d-flex">
-      <v-btn tabindex="0" @click="onFill" class="py-0" text>
-        <span class="font-weight-medium grey--text text--darken-3">{{ visibleLabel }}&nbsp;</span>
-        <span class="text-decoration-underline primary--text text--darken-1 ">{{ amount }} €</span>
-      </v-btn>
-      <v-spacer></v-spacer>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon tabindex="0" v-bind="attrs" v-on="on" small>mdi-help-circle-outline</v-icon>
-        </template>
-        <span>{{ helpLabel }}</span>
-      </v-tooltip>
-    </div>
+    <v-row v-else align="center">
+      <v-col cols="11" class="mx-0">
+        <v-btn tabindex="0" @click="onFill" class="hint py-1" text>
+          <span>
+            <span class="font-weight-medium grey--text text--darken-3">{{ visibleLabel }}&nbsp;</span>
+            <span class="text-decoration-underline primary--text text--darken-1">{{ amount }} €</span>
+          </span>
+        </v-btn>
+      </v-col>
+      <v-col cols="1" class="text-right mx-0">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon tabindex="0" v-bind="attrs" v-on="on" small>mdi-help-circle-outline</v-icon>
+          </template>
+          <span>{{ helpLabel }}</span>
+        </v-tooltip>
+      </v-col>
+    </v-row>
   </v-sheet>
 </template>
 
@@ -69,5 +74,16 @@ export default {
 <style scoped>
 .v-sheet {
   border-radius: 12px !important;
+}
+.hint {
+  max-width: 100%;
+  height: auto !important;
+  display: block;
+  text-align: left;
+  white-space: normal;
+  word-wrap: break-word;
+}
+.hint > span {
+  max-width: 100%;
 }
 </style>
