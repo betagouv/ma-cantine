@@ -27,13 +27,13 @@
                 validate-on-blur
                 solo
                 dense
-                v-model.number="diagnostic.valueLabelRouge"
+                v-model.number="diagnostic.valueLabelRougeHt"
                 :readonly="hasActiveTeledeclaration"
                 :disabled="hasActiveTeledeclaration"
               ></v-text-field>
               <PurchaseHint
                 v-if="displayPurchaseHints"
-                v-model="diagnostic.valueLabelRouge"
+                v-model="diagnostic.valueLabelRougeHt"
                 purchaseType="Label Rouge"
                 :amount="purchasesSummary.rouge"
               />
@@ -57,13 +57,13 @@
                 validate-on-blur
                 solo
                 dense
-                v-model.number="diagnostic.valueLabelAocIgp"
+                v-model.number="diagnostic.valueAocaopIgpStgHt"
                 :readonly="hasActiveTeledeclaration"
                 :disabled="hasActiveTeledeclaration"
               ></v-text-field>
               <PurchaseHint
                 v-if="displayPurchaseHints"
-                v-model="diagnostic.valueLabelAocIgp"
+                v-model="diagnostic.valueAocaopIgpStgHt"
                 purchaseType="AOC / AOP / IGP"
                 :amount="purchasesSummary.aocAopIgp"
               />
@@ -86,13 +86,13 @@
                 validate-on-blur
                 solo
                 dense
-                v-model.number="diagnostic.valueLabelHve"
+                v-model.number="diagnostic.valueHveHt"
                 :readonly="hasActiveTeledeclaration"
                 :disabled="hasActiveTeledeclaration"
               ></v-text-field>
               <PurchaseHint
                 v-if="displayPurchaseHints"
-                v-model="diagnostic.valueLabelHve"
+                v-model="diagnostic.valueHveHt"
                 purchaseType="HVE"
                 :amount="purchasesSummary.hve"
               />

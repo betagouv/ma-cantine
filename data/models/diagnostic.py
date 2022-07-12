@@ -14,6 +14,11 @@ class Diagnostic(models.Model):
             models.UniqueConstraint(fields=["canteen", "year"], name="annual_diagnostic"),
         ]
 
+    class DiagnosticType(models.TextChoices):
+        SIMPLE = "SIMPLE", "Télédeclaration simple"
+        INTERMEDIATE = "INTERMEDIATE", "Télédeclaration intermédiaire"
+        COMPLETE = "COMPLETE", "Télédeclaration complète"
+
     class MenuFrequency(models.TextChoices):
         LOW = "LOW", "Moins d'une fois par semaine"
         MID = "MID", "Une fois par semaine"
@@ -128,21 +133,21 @@ class Diagnostic(models.Model):
         verbose_name="Valeur totale annuelle HT",
     )
 
-    value_label_rouge = models.DecimalField(
+    value_label_rouge_ht = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         blank=True,
         null=True,
         verbose_name="Valeur label rouge",
     )
-    value_label_aoc_igp = models.DecimalField(
+    value_aocaop_igp_stg_ht = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         blank=True,
         null=True,
         verbose_name="Valeur label AOC/AOP/IGP",
     )
-    value_label_hve = models.DecimalField(
+    value_hve_ht = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         blank=True,
@@ -319,6 +324,73 @@ class Diagnostic(models.Model):
     creation_mtm_medium = models.TextField(
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
     )
+
+    # intermediate values
+    # Note that value_bio_ht, value_label_rouge_ht, value_aocaop_igp_stg_ht and value_hve_ht
+    # are also part of an intermediate teledeclaration
+    # value_peche_durable_ht = models.DecimalField(
+    #     max_digits=20,
+    #     decimal_places=2,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="Pêche durable",
+    # )
+    # value_rup_ht = models.DecimalField(
+    #     max_digits=20,
+    #     decimal_places=2,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="Région ultrapériphérique",
+    # )
+    # value_fermier_ht = models.DecimalField(
+    #     max_digits=20,
+    #     decimal_places=2,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="Fermier",
+    # )
+    # value_externalites_ht = models.DecimalField(
+    #     max_digits=20,
+    #     decimal_places=2,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    # )
+    # value_commerce_equitable_ht = models.DecimalField(
+    #     max_digits=20,
+    #     decimal_places=2,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="Commerce équitable",
+    # )
+    # value_performance_ht = models.DecimalField(
+    #     max_digits=20,
+    #     decimal_places=2,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="Produits acquis sur la base de leurs performances en matière environnementale",
+    # )
+    # value_france_ht = models.DecimalField(
+    #     max_digits=20,
+    #     decimal_places=2,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="Provenance France",
+    # )
+    # value_short_distribution_ht = models.DecimalField(
+    #     max_digits=20,
+    #     decimal_places=2,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="Circuit-court",
+    # )
+    # value_local_ht = models.DecimalField(
+    #     max_digits=20,
+    #     decimal_places=2,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="Produit local",
+    # )
 
     # detailed values
     value_viandes_volailles_bio = models.DecimalField(

@@ -213,26 +213,26 @@ class ImportDiagnosticsView(APIView):
             except Exception as e:
                 raise ValidationError({"value_sustainable_ht": number_error_message})
 
-            value_label_rouge = None
+            value_label_rouge_ht = None
             try:
                 if len(row) >= 16 and row[15]:
-                    value_label_rouge = Decimal(row[15].strip().replace(",", "."))
+                    value_label_rouge_ht = Decimal(row[15].strip().replace(",", "."))
             except Exception as e:
-                raise ValidationError({"value_label_rouge": number_error_message})
+                raise ValidationError({"value_label_rouge_ht": number_error_message})
 
-            value_label_aoc_igp = None
+            value_aocaop_igp_stg_ht = None
             try:
                 if len(row) >= 17 and row[16]:
-                    value_label_aoc_igp = Decimal(row[16].strip().replace(",", "."))
+                    value_aocaop_igp_stg_ht = Decimal(row[16].strip().replace(",", "."))
             except Exception as e:
-                raise ValidationError({"value_label_aoc_igp": number_error_message})
+                raise ValidationError({"value_aocaop_igp_stg_ht": number_error_message})
 
-            value_label_hve = None
+            value_hve_ht = None
             try:
                 if len(row) >= 18 and row[17]:
-                    value_label_hve = Decimal(row[17].strip().replace(",", "."))
+                    value_hve_ht = Decimal(row[17].strip().replace(",", "."))
             except Exception as e:
-                raise ValidationError({"value_label_hve": number_error_message})
+                raise ValidationError({"value_hve_ht": number_error_message})
 
         silently_added_manager_emails = []
         import_source = "Import massif"
@@ -302,9 +302,9 @@ class ImportDiagnosticsView(APIView):
                 value_total_ht=value_total_ht,
                 value_bio_ht=value_bio_ht,
                 value_sustainable_ht=value_sustainable_ht,
-                value_label_rouge=value_label_rouge,
-                value_label_aoc_igp=value_label_aoc_igp,
-                value_label_hve=value_label_hve,
+                value_label_rouge_ht=value_label_rouge_ht,
+                value_aocaop_igp_stg_ht=value_aocaop_igp_stg_ht,
+                value_hve_ht=value_hve_ht,
             )
             diagnostic.full_clean()
             diagnostic.save()
