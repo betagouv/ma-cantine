@@ -30,6 +30,17 @@
         </div>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="12" class="d-flex">
+        <v-spacer></v-spacer>
+        <v-btn v-if="!loggedUser" href="/s-identifier" color="primary" large outlined class="mr-2">M'identifier</v-btn>
+        <v-btn v-if="!loggedUser" href="/creer-mon-compte" color="primary" large>Créer mon compte</v-btn>
+        <v-btn v-if="loggedUser" :to="{ name: 'ManagementPage' }" color="primary" large outlined>
+          Gérer mes cantines
+        </v-btn>
+        <v-spacer></v-spacer>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -40,6 +51,11 @@ export default {
     return {
       filepath: "/static/documents/Diagnostic approvisionnement (ma-cantine-alpha) v0.6VM",
     }
+  },
+  computed: {
+    loggedUser() {
+      return this.$store.state.loggedUser
+    },
   },
 }
 </script>
