@@ -89,6 +89,13 @@ class Diagnostic(models.Model):
     modification_date = models.DateTimeField(auto_now=True)
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
+    diagnostic_type = models.CharField(
+        max_length=255,
+        choices=DiagnosticType.choices,
+        blank=True,
+        null=True,
+        verbose_name="Type de diagnostic (simplifié, intermediaire, complet)",
+    )
 
     year = models.IntegerField(
         null=True,

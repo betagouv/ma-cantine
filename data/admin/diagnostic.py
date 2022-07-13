@@ -53,6 +53,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
                 "fields": (
                     "canteen",
                     "year",
+                    "diagnostic_type",
                 )
             },
         ),

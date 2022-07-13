@@ -11,6 +11,7 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
 
     canteen = factory.SubFactory(CanteenFactory)
     year = factory.Faker("year")
+    diagnostic_type = fuzzy.FuzzyChoice(list(Diagnostic.DiagnosticType))
 
     value_bio_ht = factory.Faker("random_int", min=0, max=2000)
     value_sustainable_ht = factory.Faker("random_int", min=0, max=2000)
