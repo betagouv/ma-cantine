@@ -85,19 +85,37 @@
             :formIsValid="formIsValid.quality"
           >
             <v-form ref="quality" v-model="formIsValid.quality">
-              <v-switch v-model="extendedDiagnostic" label="Activer la déclaration complète" />
-              <div class="font-weight-bold mb-4">{{ diagnosticType }}</div>
+              <p>
+                Suivant le niveau d'information disponible, vous pouvez choisir entre ces trois types de délaration. À
+                terme, seule la télédéclaration complète sera acceptée.
+              </p>
+              <v-radio-group v-model="diagnosticType">
+                <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
+                  <template v-slot:label>
+                    <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
+                    <span class="body-2 ml-3">{{ type.help }}</span>
+                  </template>
+                </v-radio>
+              </v-radio-group>
+
+              <div class="font-weight-bold mb-4">{{ diagnosticTypeLabel }}</div>
               <SimplifiedQualityValues
                 :originalDiagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
                 :purchasesSummary="purchasesSummary"
-                v-if="!extendedDiagnostic"
+                v-if="diagnosticType === 'SIMPLE'"
+              />
+              <IntermediateQualityValues
+                v-else-if="diagnosticType === 'INTERMEDIATE'"
+                :originalDiagnostic="diagnostic"
+                :readonly="hasActiveTeledeclaration"
+                :purchasesSummary="purchasesSummary"
               />
               <ExtendedQualityValues
                 :originalDiagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
                 :purchasesSummary="purchasesSummary"
-                v-else
+                v-else-if="diagnosticType === 'COMPLETE'"
                 class="mb-4"
               />
             </v-form>
@@ -212,6 +230,7 @@ import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import SimplifiedQualityValues from "./SimplifiedQualityValues"
+import IntermediateQualityValues from "./IntermediateQualityValues"
 import ExtendedQualityValues from "./ExtendedQualityValues"
 import Constants from "@/constants"
 import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage, readCookie } from "@/utils"
@@ -237,7 +256,24 @@ export default {
       cancelDialog: false,
       teledeclarationYear: lastYear(),
       purchasesSummary: null,
-      extendedDiagnostic: false,
+      diagnosticTypes: [
+        {
+          key: "SIMPLE",
+          label: "Télédeclaration simple",
+          help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
+        },
+        {
+          key: "INTERMEDIATE",
+          label: "Télédeclaration intermédiaire",
+          help: "Vous connaissez l'information de vos achats par label",
+        },
+        {
+          key: "COMPLETE",
+          label: "Télédeclaration complète",
+          help: "Vous connaissez les labels et les familles de produits de vos achats",
+        },
+      ],
+      diagnosticType: "SIMPLE",
     }
   },
   components: {
@@ -248,6 +284,7 @@ export default {
     DiagnosticExpansionPanel,
     TeledeclarationCancelDialog,
     SimplifiedQualityValues,
+    IntermediateQualityValues,
     ExtendedQualityValues,
   },
   props: {
@@ -315,13 +352,13 @@ export default {
         this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x) && !this.hasActiveTeledeclaration
       )
     },
-    diagnosticType() {
-      return this.extendedDiagnostic ? "Déclaration complète" : "Déclaration simplifiée"
+    diagnosticTypeLabel() {
+      return this.diagnosticTypes.find((x) => x.key === this.diagnosticType).label
     },
   },
   beforeMount() {
     this.refreshDiagnostic()
-    this.extendedDiagnostic = this.showExtendedDiagnostic()
+    this.diagnosticType = this.diagnostic.diagnosticType || "SIMPLE"
   },
   methods: {
     refreshDiagnostic() {
@@ -389,6 +426,7 @@ export default {
       this.diagnostic.valueSustainableHt = qualityTotal
 
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
+      payload.diagnosticType = this.diagnosticType
 
       if (this.isNewDiagnostic) {
         for (let i = 0; i < Constants.TrackingParams.length; i++) {
@@ -511,13 +549,6 @@ export default {
         fetch(`/api/v1/canteenPurchasesSummary/${this.canteenId}?year=${this.diagnostic.year}`)
           .then((response) => (response.ok ? response.json() : {}))
           .then((response) => (this.purchasesSummary = response))
-    },
-    showExtendedDiagnostic() {
-      const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
-      return (
-        characteristicGroups.egalim.fields.some((key) => !!this.originalDiagnostic[key]) ||
-        characteristicGroups.outsideLaw.fields.some((key) => !!this.originalDiagnostic[key])
-      )
     },
   },
   created() {

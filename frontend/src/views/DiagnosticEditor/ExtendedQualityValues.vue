@@ -112,33 +112,6 @@ import labels from "@/data/quality-labels.json"
 
 const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que le somme des valeurs par label"
 
-const MISC_LABELS = {
-  FERMIER: {
-    icon: "mdi-cow",
-    color: "brown",
-  },
-  EXTERNALITES: {
-    icon: "mdi-flower-tulip-outline",
-    color: "purple",
-  },
-  PERFORMANCE: {
-    icon: "mdi-chart-line",
-    color: "green",
-  },
-  FRANCE: {
-    icon: "mdi-hexagon-outline",
-    color: "indigo",
-  },
-  SHORT_DISTRIBUTION: {
-    icon: "mdi-chart-timeline-variant",
-    color: "pink",
-  },
-  LOCAL: {
-    icon: "mdi-map-marker-outline",
-    color: "blue",
-  },
-}
-
 export default {
   name: "ExtendedQualityValues",
   props: {
@@ -253,7 +226,7 @@ export default {
           singleLabel = labels.find((l) => l.src.startsWith("commerce-equitable"))
           break
       }
-      singleLabel = singleLabel || MISC_LABELS[characteristicId]
+      singleLabel = singleLabel || Constants.LabelIcons[characteristicId]
       if (singleLabel) {
         return [singleLabel]
       }
