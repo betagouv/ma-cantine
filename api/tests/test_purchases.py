@@ -280,6 +280,73 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(body["rouge"], 20.0)
         self.assertEqual(body["aocAopIgp"], 30.0)
 
+    @authenticate
+    def test_complex_purchase_total_summary(self):
+        """
+        Given a year, return spending by category
+        Bio category is the sum of all products with bio label
+        Every category apart from bio should exlude bio (so bio + label rouge gets counted in bio but not label rouge)
+        Categories should respect the heirarchy (if something is label rouge + AOC only count in rouge; if AOC and fermier count in AOC only)
+        The three categories outside of EGAlim should get the totals regardless of what other labels they have
+        The category of AOC/AOP/IGP/STG should count items with two or more labels once (applicable to extended declaration)
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        d = "2020-03-01"
+        # some egalim characteristics
+        bio = Purchase.Characteristic.BIO
+        aoc = Purchase.Characteristic.AOCAOP
+        stg = Purchase.Characteristic.STG
+        fairtrade = Purchase.Characteristic.COMMERCE_EQUITABLE
+        farm = Purchase.Characteristic.FERMIER
+        # some non-egalim characteristics
+        short_dist = Purchase.Characteristic.SHORT_DISTRIBUTION
+        local = Purchase.Characteristic.LOCAL
+        # some families
+        fruit = Purchase.Family.FRUITS_ET_LEGUMES
+        meat = Purchase.Family.VIANDES_VOLAILLES
+        other = Purchase.Family.AUTRES
+
+        # test that bio trumps other labels, but doesn't stop non-EGAlim labels
+        PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[bio, aoc], price_ht=120)
+        PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[bio, fairtrade], price_ht=80)
+
+        # check that sums are separate between families
+        PurchaseFactory.create(
+            canteen=canteen, date=d, family=meat, characteristics=[bio, short_dist, local], price_ht=10
+        )
+
+        # check that AOC and STG are regrouped and do not count bio totals and trump some other labels
+        PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[aoc], price_ht=20)
+        PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[stg, fairtrade], price_ht=60)
+
+        # check that can have a family with only non-EGAlim labels
+        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[farm], price_ht=50)
+        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[farm], price_ht=50)
+
+        # check that this will added to the bio value before
+        PurchaseFactory.create(canteen=canteen, date=d, family=meat, characteristics=[short_dist], price_ht=90)
+
+        # check that items with no label are included in total
+        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[], price_ht=100)
+
+        # Not in the year 2020 - smoke test for year filtering
+        PurchaseFactory.create(canteen=canteen, date="2019-01-01", characteristics=[bio], price_ht=666)
+
+        response = self.client.get(
+            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["total"], 580.0)
+        self.assertEqual(body["fruitsEtLegumesBio"], 200.0)
+        self.assertEqual(body["viandesVolaillesBio"], 10.0)
+        self.assertEqual(body["fruitsEtLegumesAocaopIgpStg"], 80.0)
+        self.assertEqual(body["fruitsEtLegumesCommerceEquitable"], None)
+        self.assertEqual(body["autresFermier"], 100.0)
+        self.assertEqual(body["viandesVolaillesShortDistribution"], 100.0)
+        self.assertEqual(body["viandesVolaillesLocal"], 10.0)
+
     def test_purchase_summary_unauthenticated(self):
         canteen = CanteenFactory.create()
         response = self.client.get(

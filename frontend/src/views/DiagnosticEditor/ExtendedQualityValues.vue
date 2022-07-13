@@ -21,6 +21,13 @@
       @blur="checkTotal"
       class="mt-2"
     ></v-text-field>
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueTotalHt"
+      @autofill="checkTotal"
+      purchaseType="totaux"
+      :amount="purchasesSummary.total"
+    />
 
     <br />
     <div v-for="(group, groupId) in characteristicGroups" :key="groupId">
@@ -95,6 +102,12 @@
                   class="mt-2"
                   @blur="checkTotal"
                 ></v-text-field>
+                <PurchaseHint
+                  v-if="displayPurchaseHints"
+                  v-model="diagnostic[diagnosticKey(fId, cId)]"
+                  :purchaseType="family.shortText + ' pour ce caractéristique'"
+                  :amount="purchasesSummary[summaryKey(fId, cId)]"
+                />
               </v-col>
             </v-row>
           </v-expansion-panel-content>
@@ -109,6 +122,7 @@ import validators from "@/validators"
 import Constants from "@/constants"
 import LogoBio from "@/components/LogoBio"
 import labels from "@/data/quality-labels.json"
+import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 
 const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que le somme des valeurs par label"
 
@@ -151,6 +165,7 @@ export default {
   },
   components: {
     LogoBio,
+    PurchaseHint,
   },
   data() {
     const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
@@ -217,6 +232,9 @@ export default {
     },
     diagnosticKey(family, characteristic) {
       return this.camelize(`value_${family}_${characteristic}`)
+    },
+    summaryKey(family, characteristic) {
+      return this.camelize(`${family}_${characteristic}`)
     },
     camelize(underscoredString) {
       const stringArray = underscoredString.split("_")

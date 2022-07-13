@@ -118,3 +118,11 @@ for label in labels:
     print(f"self.assertEqual(diagnostic.total_label_{label[0]}, {10 * len(families)})")
 for family in families:
     print(f"self.assertEqual(diagnostic.total_family_{family[0]}, {10 * len(labels)})")
+
+# fields for purchase summary serializer
+fields = []
+for label in labels:
+    for family in families:
+        f = {"fieldname": f"{family[0]}_{label[0]}"}
+        fields.append(f)
+        print(f"{f['fieldname']} = dec_field()")
