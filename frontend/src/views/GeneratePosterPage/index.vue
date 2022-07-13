@@ -200,7 +200,7 @@
             ,
             <v-text-field
               id="sustainable"
-              v-model.number="form.diagnostic.valueSustainableHt"
+              v-model.number="form.diagnostic.valuSiqoHt"
               type="number"
               :rules="[validators.greaterThanZero]"
               placeholder="2000"

@@ -96,7 +96,7 @@ class Teledeclaration(models.Model):
             },
             "teledeclaration": {
                 "value_bio_ht": float(diagnostic.value_bio_ht),
-                "value_sustainable_ht": float(diagnostic.value_sustainable_ht),
+                "value_siqo_ht": float(diagnostic.value_siqo_ht),
                 "value_total_ht": float(diagnostic.value_total_ht),
                 "has_waste_diagnostic": diagnostic.has_waste_diagnostic,
                 "has_waste_plan": diagnostic.has_waste_plan,

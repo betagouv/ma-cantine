@@ -7,7 +7,7 @@ FIELDS = (
     "id",
     "year",
     "value_bio_ht",
-    "value_sustainable_ht",
+    "value_siqo_ht",
     "value_pat_ht",
     "value_total_ht",
     "value_label_rouge",
@@ -174,7 +174,7 @@ class PublicDiagnosticSerializer(serializers.ModelSerializer):
         total = self.return_value(self, data, "value_total_ht")
         if total is not None and isinstance(total, Decimal):
             bio = self.return_value(self, data, "value_bio_ht")
-            sustainable = self.return_value(self, data, "value_sustainable_ht")
+            sustainable = self.return_value(self, data, "value_siqo_ht")
             value_sum = (bio or 0) + (sustainable or 0)
             if value_sum > total:
                 raise serializers.ValidationError(
