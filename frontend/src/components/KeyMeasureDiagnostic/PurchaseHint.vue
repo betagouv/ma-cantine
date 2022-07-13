@@ -58,7 +58,6 @@ export default {
   },
   computed: {
     visibleLabel() {
-      // TODO: for screen readers only don't shorten label ever?
       return this.$vuetify.breakpoint.smAndDown ? this.shortLabel : this.label
     },
     compliant() {

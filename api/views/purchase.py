@@ -200,7 +200,6 @@ class CanteenPurchasesSummaryView(APIView):
             characteristics_len=Func(F("characteristics"), function="CARDINALITY")
         )
         sustainable_purchases = sustainable_purchases.filter(characteristics_len__gt=0)
-        # TODO: fix this aggregation to not count non-EGAlim characteristics
         data["sustainable"] = sustainable_purchases.aggregate(total=Sum("price_ht"))["total"]
         # NB: the following totals are not mutually exclusive unlike the detailed totals further on
         hve_purchases = purchases.filter(characteristics__contains=[Purchase.Characteristic.HVE])
