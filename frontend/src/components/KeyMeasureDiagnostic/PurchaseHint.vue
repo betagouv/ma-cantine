@@ -1,25 +1,30 @@
 <template>
-  <v-sheet color="grey lighten-4" class="body-2 px-3 pt-8 pb-1 mt-n7">
-    <div v-if="!amount">
+  <v-sheet :color="backgroundColor" class="body-2 pr-3 pt-8 pb-1 mt-n7">
+    <p class="mb-0 caption pl-3" v-if="!amount">
       {{ emptyLabel }}
-    </div>
-    <div v-else-if="compliant" class="d-flex">
+    </p>
+    <p class="mb-0 caption d-flex pl-3" v-else-if="compliant">
       <v-icon small class="mr-1">mdi-check</v-icon>
       <span>Correspond aux achats réalisés</span>
-    </div>
-    <div v-else class="d-flex">
-      <div>
-        {{ visibleLabel }}
-        <a color="primary" tabindex="0" @click="onFill" class="text-decoration-underline" text>{{ amount }} €</a>
-      </div>
-      <v-spacer></v-spacer>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon tabindex="0" v-bind="attrs" v-on="on" small>mdi-help-circle-outline</v-icon>
-        </template>
-        <span>{{ helpLabel }}</span>
-      </v-tooltip>
-    </div>
+    </p>
+    <v-row v-else align="center">
+      <v-col cols="11" class="mx-0">
+        <v-btn tabindex="0" @click="onFill" class="hint py-1" text>
+          <span>
+            <span class="font-weight-medium grey--text text--darken-3">{{ visibleLabel }}&nbsp;</span>
+            <span class="text-decoration-underline primary--text text--darken-1">{{ amount }} €</span>
+          </span>
+        </v-btn>
+      </v-col>
+      <v-col cols="1" class="text-right mx-0">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon tabindex="0" v-bind="attrs" v-on="on" small>mdi-help-circle-outline</v-icon>
+          </template>
+          <span>{{ helpLabel }}</span>
+        </v-tooltip>
+      </v-col>
+    </v-row>
   </v-sheet>
 </template>
 
@@ -53,10 +58,14 @@ export default {
   },
   computed: {
     visibleLabel() {
+      // TODO: for screen readers only don't shorten label ever?
       return this.$vuetify.breakpoint.smAndDown ? this.shortLabel : this.label
     },
     compliant() {
       return this.value === this.amount
+    },
+    backgroundColor() {
+      return !this.amount || this.compliant ? "grey lighten-4" : "primary lighten-5"
     },
   },
 }
@@ -65,5 +74,16 @@ export default {
 <style scoped>
 .v-sheet {
   border-radius: 12px !important;
+}
+.hint {
+  max-width: 100%;
+  height: auto !important;
+  display: block;
+  text-align: left;
+  white-space: normal;
+  word-wrap: break-word;
+}
+.hint > span {
+  max-width: 100%;
 }
 </style>

@@ -10,6 +10,10 @@
 
     <v-divider class="mt-16"></v-divider>
 
+    <ToolsBlock class="mt-14" />
+
+    <v-divider class="mt-16"></v-divider>
+
     <KeyGoalsBlock class="mt-14 py-2" />
 
     <GoalBlock class="mt-16 py-2" />
@@ -37,6 +41,7 @@
 <script>
 import PresentationBlock from "@/views/LandingPage/PresentationBlock"
 import ActionsBlock from "@/views/LandingPage/ActionsBlock"
+import ToolsBlock from "@/views/LandingPage/ToolsBlock"
 import KeyGoalsBlock from "@/views/LandingPage/KeyGoalsBlock"
 import GoalBlock from "@/views/LandingPage/GoalBlock"
 import DiscoverMeasuresBlock from "@/views/LandingPage/DiscoverMeasuresBlock"
@@ -58,6 +63,7 @@ export default {
     StartupPartners,
     BlogBlock,
     MissionBlock,
+    ToolsBlock,
   },
   computed: {
     showPartners() {
