@@ -16,6 +16,14 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     value_sustainable_ht = factory.Faker("random_int", min=0, max=2000)
     value_total_ht = factory.Faker("random_int", min=6000, max=10000)
 
+    value_externality_performance_ht = factory.Faker("random_int", min=0, max=20)
+    value_egalim_others_ht = factory.Faker("random_int", min=0, max=20)
+    value_meat_poultry_ht = factory.Faker("random_int", min=0, max=20)
+    value_meat_poultry_egalim_ht = factory.Faker("random_int", min=0, max=20)
+    value_meat_poultry_france_ht = factory.Faker("random_int", min=0, max=20)
+    value_fish_ht = factory.Faker("random_int", min=0, max=20)
+    value_fish_egalim_ht = factory.Faker("random_int", min=0, max=20)
+
     has_waste_diagnostic = factory.Faker("boolean")
     has_waste_plan = factory.Faker("boolean")
     waste_actions = factory.List(random.sample(list(Diagnostic.WasteActions), random.randint(0, 2)))
