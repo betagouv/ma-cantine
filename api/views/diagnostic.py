@@ -209,9 +209,9 @@ class ImportDiagnosticsView(APIView):
             try:
                 if not row[14]:
                     raise Exception
-                value_siqo_ht = Decimal(row[14].strip().replace(",", "."))
+                value_sustainable_ht = Decimal(row[14].strip().replace(",", "."))
             except Exception as e:
-                raise ValidationError({"value_siqo_ht": number_error_message})
+                raise ValidationError({"value_sustainable_ht": number_error_message})
 
             value_label_rouge = None
             try:
@@ -301,7 +301,7 @@ class ImportDiagnosticsView(APIView):
                 year=diagnostic_year,
                 value_total_ht=value_total_ht,
                 value_bio_ht=value_bio_ht,
-                value_siqo_ht=value_siqo_ht,
+                value_sustainable_ht=value_sustainable_ht,
                 value_label_rouge=value_label_rouge,
                 value_label_aoc_igp=value_label_aoc_igp,
                 value_label_hve=value_label_hve,

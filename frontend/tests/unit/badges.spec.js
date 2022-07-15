@@ -14,7 +14,7 @@ describe("PublishedCanteenCard.vue", () => {
     let testDiagnostic = {
       id: 1,
       valueBioHt: 5000,
-      valuSiqoHt: 2000,
+      valueSustainableHt: 2000,
       valueTotalHt: 10000,
     }
     let canteenBadges = badges(testCanteen, testDiagnostic, sectors)
@@ -28,7 +28,7 @@ describe("PublishedCanteenCard.vue", () => {
     let testDiagnostic = {
       id: 1,
       valueBioHt: 0,
-      valuSiqoHt: 0,
+      valueSustainableHt: 0,
       valueTotalHt: 10000,
     }
     let canteenBadges = badges(testCanteen, testDiagnostic, sectors)

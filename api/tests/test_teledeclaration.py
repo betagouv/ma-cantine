@@ -165,8 +165,8 @@ class TestTeledeclarationApi(APITestCase):
         json_teledeclaration = declared_data["teledeclaration"]
         self.assertEqual(json_teledeclaration["value_bio_ht"], diagnostic.value_bio_ht)
         self.assertEqual(
-            json_teledeclaration["value_siqo_ht"],
-            diagnostic.value_siqo_ht,
+            json_teledeclaration["value_sustainable_ht"],
+            diagnostic.value_sustainable_ht,
         )
         self.assertEqual(json_teledeclaration["value_total_ht"], diagnostic.value_total_ht)
         self.assertEqual(

@@ -62,7 +62,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
                 "fields": (
                     "value_bio_ht",
                     "value_fair_trade_ht",
-                    "value_siqo_ht",
+                    "value_sustainable_ht",
                     "value_label_rouge",
                     "value_label_aoc_igp",
                     "value_label_hve",

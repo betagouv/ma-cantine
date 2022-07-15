@@ -314,42 +314,42 @@ class TestPublishedCanteenApi(APITestCase):
             year=publication_year,
             value_total_ht=100,
             value_bio_ht=30,
-            value_siqo_ht=30,
+            value_sustainable_ht=30,
         )
         DiagnosticFactory.create(
             canteen=secretly_good_canteen,
             year=publication_year,
             value_total_ht=100,
             value_bio_ht=30,
-            value_siqo_ht=30,
+            value_sustainable_ht=30,
         )
         DiagnosticFactory.create(
             canteen=medium_canteen,
             year=publication_year,
             value_total_ht=1000,
             value_bio_ht=150,
-            value_siqo_ht=350,
+            value_sustainable_ht=350,
         )
         DiagnosticFactory.create(
             canteen=sustainable_canteen,
             year=publication_year,
             value_total_ht=100,
             value_bio_ht=0,
-            value_siqo_ht=60,
+            value_sustainable_ht=60,
         )
         DiagnosticFactory.create(
             canteen=bad_canteen,
             year=2019,
             value_total_ht=100,
             value_bio_ht=30,
-            value_siqo_ht=30,
+            value_sustainable_ht=30,
         )
         DiagnosticFactory.create(
             canteen=bad_canteen,
             year=publication_year,
             value_total_ht=10,
             value_bio_ht=0,
-            value_siqo_ht=0,
+            value_sustainable_ht=0,
         )
         url = f"{reverse('published_canteens')}?min_portion_bio={0.2}"
         response = self.client.get(url)

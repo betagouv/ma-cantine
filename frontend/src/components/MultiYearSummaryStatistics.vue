@@ -57,9 +57,9 @@ export default {
     seriesData() {
       return {
         bio: this.completedDiagnostics.map((d) => getPercentage(d.valueBioHt, d.valueTotalHt)),
-        sustainable: this.completedDiagnostics.map((d) => getPercentage(d.valuSiqoHt, d.valueTotalHt)),
+        sustainable: this.completedDiagnostics.map((d) => getPercentage(d.valueSustainableHt, d.valueTotalHt)),
         other: this.completedDiagnostics.map((d) => {
-          return 100 - getPercentage(d.valueBioHt, d.valueTotalHt) - getPercentage(d.valuSiqoHt, d.valueTotalHt)
+          return 100 - getPercentage(d.valueBioHt, d.valueTotalHt) - getPercentage(d.valueSustainableHt, d.valueTotalHt)
         }),
       }
     },

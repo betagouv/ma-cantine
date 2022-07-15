@@ -128,7 +128,7 @@ def filter_by_diagnostic_params(queryset, query_params):
         if combined:
             qs_diag = qs_diag.annotate(
                 combined_share=Cast(
-                    (Sum("value_bio_ht") + Sum("value_siqo_ht")) / Sum("value_total_ht"),
+                    (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
                     FloatField(),
                 )
             ).filter(combined_share__gte=combined)
@@ -552,7 +552,7 @@ def badges_for_queryset(diagnostic_year_queryset):
         )
         appro_share_query = appro_share_query.annotate(
             combined_share=Cast(
-                (Sum("value_bio_ht") + Sum("value_siqo_ht")) / Sum("value_total_ht"),
+                (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
                 FloatField(),
             )
         )
@@ -642,7 +642,7 @@ class CanteenStatisticsView(APIView):
             bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField())
         )
         appro_share_query = appro_share_query.annotate(
-            sustainable_share=Cast(Sum("value_siqo_ht") / Sum("value_total_ht"), FloatField())
+            sustainable_share=Cast(Sum("value_sustainable_ht") / Sum("value_total_ht"), FloatField())
         )
         agg = appro_share_query.aggregate(Avg("bio_share"), Avg("sustainable_share"))
         # no need for particularly fancy rounding

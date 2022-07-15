@@ -100,7 +100,7 @@ class Command(BaseCommand):
                     if bio_percentage or sustainable_percentage:
                         diagnostic = Diagnostic(
                             value_bio_ht=bio_percentage,
-                            value_siqo_ht=sustainable_percentage,
+                            value_sustainable_ht=sustainable_percentage,
                             canteen=canteen,
                             year=2021,
                         )

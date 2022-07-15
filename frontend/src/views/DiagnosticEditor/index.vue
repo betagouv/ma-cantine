@@ -331,7 +331,7 @@ export default {
     },
     approTotals() {
       let bioTotal = this.diagnostic.valueBioHt
-      let qualityTotal = this.diagnostic.valuSiqoHt
+      let qualityTotal = this.diagnostic.valueSustainableHt
       if (this.extendedDiagnostic) {
         bioTotal = 0
         qualityTotal = 0
@@ -386,7 +386,7 @@ export default {
       // save to the diagnostic the aggregations of bio and quality if extended diagnostic used
       const { bioTotal, qualityTotal } = this.approTotals()
       this.diagnostic.valueBioHt = bioTotal
-      this.diagnostic.valuSiqoHt = qualityTotal
+      this.diagnostic.valueSustainableHt = qualityTotal
 
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
 

@@ -9,7 +9,7 @@ export default Object.freeze({
     id: null,
     year: null,
     valueBioHt: null,
-    valuSiqoHt: null,
+    valueSustainableHt: null,
     valueTotalHt: null,
     hasWasteDiagnostic: null,
     hasWastePlan: null,

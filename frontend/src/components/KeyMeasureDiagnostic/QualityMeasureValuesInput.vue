@@ -9,7 +9,7 @@
       type="number"
       :rules="[
         validators.nonNegativeOrEmpty,
-        validators.gteSum([diagnostic.valueBioHt, diagnostic.valuSiqoHt], totalErrorMessage),
+        validators.gteSum([diagnostic.valueBioHt, diagnostic.valueSustainableHt], totalErrorMessage),
       ]"
       validate-on-blur
       solo
@@ -66,14 +66,14 @@
       solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
-      v-model.number="diagnostic.valuSiqoHt"
+      v-model.number="diagnostic.valueSustainableHt"
       :readonly="readonly"
       :disabled="readonly"
       @blur="checkTotal"
     ></v-text-field>
     <PurchaseHint
       v-if="displayPurchaseHints"
-      v-model="diagnostic.valuSiqoHt"
+      v-model="diagnostic.valueSustainableHt"
       @autofill="checkTotal"
       purchaseType="qualité et durable"
       :amount="purchasesSummary.sustainable"
@@ -116,7 +116,7 @@ export default {
   methods: {
     checkTotal() {
       const result = validators.gteSum(
-        [this.diagnostic.valueBioHt, this.diagnostic.valuSiqoHt],
+        [this.diagnostic.valueBioHt, this.diagnostic.valueSustainableHt],
         this.totalErrorMessage
       )(this.diagnostic.valueTotalHt)
       this.totalError = result !== true

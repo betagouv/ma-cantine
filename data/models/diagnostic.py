@@ -106,12 +106,12 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="Commerce équitable - Valeur annuelle HT",
     )
-    value_siqo_ht = models.DecimalField(
+    value_sustainable_ht = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT",
+        verbose_name="Produits durables (hors bio) - Valeur annuelle HT",
     )
     value_pat_ht = models.DecimalField(
         max_digits=20,
@@ -1074,7 +1074,7 @@ class Diagnostic(models.Model):
     def validate_approvisionment_total(self):
         if self.value_total_ht is None or not isinstance(self.value_total_ht, Decimal):
             return
-        value_sum = (self.value_bio_ht or 0) + (self.value_siqo_ht or 0)
+        value_sum = (self.value_bio_ht or 0) + (self.value_sustainable_ht or 0)
         if value_sum > self.value_total_ht:
             raise ValidationError(
                 {

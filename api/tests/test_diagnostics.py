@@ -48,7 +48,7 @@ class TestDiagnosticsApi(APITestCase):
         payload = {
             "year": 2020,
             "value_bio_ht": 1000,
-            "value_siqo_ht": 3000,
+            "value_sustainable_ht": 3000,
             "value_pat_ht": 200,
             "value_total_ht": 10000,
             "value_label_rouge": 10,
@@ -278,7 +278,7 @@ class TestDiagnosticsApi(APITestCase):
         payload = {
             "year": 2020,
             "value_bio_ht": 1000,
-            "value_siqo_ht": 3000,
+            "value_sustainable_ht": 3000,
             "value_total_ht": 1000,
         }
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
@@ -362,9 +362,9 @@ class TestDiagnosticsApi(APITestCase):
         """
         Do not save edits to a diagnostic which make the sum of the values > total
         """
-        diagnostic = DiagnosticFactory.create(year=2019, value_total_ht=10, value_bio_ht=5, value_siqo_ht=2)
+        diagnostic = DiagnosticFactory.create(year=2019, value_total_ht=10, value_bio_ht=5, value_sustainable_ht=2)
         diagnostic.canteen.managers.add(authenticate.user)
-        payload = {"value_siqo_ht": 999}
+        payload = {"value_sustainable_ht": 999}
 
         response = self.client.patch(
             reverse(
@@ -376,7 +376,7 @@ class TestDiagnosticsApi(APITestCase):
         diagnostic.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(diagnostic.value_siqo_ht, 2)
+        self.assertEqual(diagnostic.value_sustainable_ht, 2)
 
     @authenticate
     def test_edit_submitted_diagnostic(self):

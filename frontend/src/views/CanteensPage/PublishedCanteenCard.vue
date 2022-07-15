@@ -91,7 +91,7 @@ export default {
       return this.diagValuePercent("valueBioHt")
     },
     sustainablePercent() {
-      return this.diagValuePercent("valuSiqoHt")
+      return this.diagValuePercent("valueSustainableHt")
     },
     hasPercentages() {
       return this.bioPercent || this.sustainablePercent

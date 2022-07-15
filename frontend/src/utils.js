@@ -153,7 +153,7 @@ export const strictIsNaN = (x) => {
 }
 
 export const isDiagnosticComplete = (diagnostic) => {
-  return ["valueBioHt", "valuSiqoHt", "valueTotalHt"].every(
+  return ["valueBioHt", "valueSustainableHt", "valueTotalHt"].every(
     // sadly null >= 0 is true
     (key) => diagnostic[key] > 0 || diagnostic[key] === 0
   )
@@ -201,7 +201,7 @@ export const badges = (canteen, diagnostic, sectors) => {
   let applicable = JSON.parse(JSON.stringify(jsonBadges))
   if (!diagnostic) return applicable
   const bioPercent = getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
-  const sustainablePercent = getPercentage(diagnostic.valuSiqoHt, diagnostic.valueTotalHt)
+  const sustainablePercent = getPercentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
   const applicableRules = applicableDiagnosticRules(canteen)
   if (
     bioPercent >= applicableRules.bioThreshold &&

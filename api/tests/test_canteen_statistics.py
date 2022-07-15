@@ -45,7 +45,7 @@ class TestCanteenStatsApi(APITestCase):
             year=year,
             value_total_ht=100,
             value_bio_ht=20,
-            value_siqo_ht=30,
+            value_sustainable_ht=30,
             has_waste_diagnostic=False,
             waste_actions=[],
             vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY,
@@ -57,7 +57,7 @@ class TestCanteenStatsApi(APITestCase):
             year=year,
             value_total_ht=1000,
             value_bio_ht=400,
-            value_siqo_ht=500,
+            value_sustainable_ht=500,
             has_waste_diagnostic=True,
             waste_actions=["action1", "action2"],
             vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW,
@@ -73,7 +73,7 @@ class TestCanteenStatsApi(APITestCase):
             year=2019,
             value_total_ht=100,
             value_bio_ht=100,
-            value_siqo_ht=0,
+            value_sustainable_ht=0,
             vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY,
         )
         DiagnosticFactory.create(
@@ -81,7 +81,7 @@ class TestCanteenStatsApi(APITestCase):
             year=year,
             value_total_ht=100,
             value_bio_ht=100,
-            value_siqo_ht=0,
+            value_sustainable_ht=0,
             cooking_plastic_substituted=True,
             serving_plastic_substituted=True,
             plastic_bottles_substituted=True,
@@ -157,22 +157,24 @@ class TestCanteenStatsApi(APITestCase):
         null_total = CanteenFactory.create()
         DiagnosticFactory.create(canteen=null_total, value_total_ht=None)
         bio_lacking = CanteenFactory.create()
-        DiagnosticFactory.create(canteen=bio_lacking, value_total_ht=100, value_bio_ht=19, value_siqo_ht=31)
+        DiagnosticFactory.create(canteen=bio_lacking, value_total_ht=100, value_bio_ht=19, value_sustainable_ht=31)
         # not convinced the following shouldn't get a badge but not sure how to make the Sum function work
         null_sustainable = CanteenFactory.create(region=Region.ile_de_france.value)
-        DiagnosticFactory.create(canteen=null_sustainable, value_total_ht=100, value_bio_ht=50, value_siqo_ht=None)
+        DiagnosticFactory.create(
+            canteen=null_sustainable, value_total_ht=100, value_bio_ht=50, value_sustainable_ht=None
+        )
 
         # --- Canteens which earn appro badge:
         earned = CanteenFactory.create()
-        DiagnosticFactory.create(canteen=earned, value_total_ht=100, value_bio_ht=20, value_siqo_ht=30)
+        DiagnosticFactory.create(canteen=earned, value_total_ht=100, value_bio_ht=20, value_sustainable_ht=30)
         # rules per outre mer territories
         guadeloupe = CanteenFactory.create(region=Region.guadeloupe.value)
-        DiagnosticFactory.create(canteen=guadeloupe, value_total_ht=100, value_bio_ht=5, value_siqo_ht=15)
+        DiagnosticFactory.create(canteen=guadeloupe, value_total_ht=100, value_bio_ht=5, value_sustainable_ht=15)
         mayotte = CanteenFactory.create(region=Region.mayotte.value)
-        DiagnosticFactory.create(canteen=mayotte, value_total_ht=100, value_bio_ht=2, value_siqo_ht=3)
+        DiagnosticFactory.create(canteen=mayotte, value_total_ht=100, value_bio_ht=2, value_sustainable_ht=3)
         # TODO: rules per outre mer territories: Saint-Pierre-et-Miquelon
         # st_pierre_et_miquelon = CanteenFactory.create(region=Region.st_pierre_et_miquelon.value)
-        # DiagnosticFactory.create(canteen=st_pierre_et_miquelon, value_total_ht=100, value_bio_ht=10, value_siqo_ht=20)
+        # DiagnosticFactory.create(canteen=st_pierre_et_miquelon, value_total_ht=100, value_bio_ht=10, value_sustainable_ht=20)
 
         badges = badges_for_queryset(Diagnostic.objects.all())
 

@@ -32,7 +32,7 @@ export default {
       return getPercentage(this.qualityDiagnostic.valueBioHt, this.qualityDiagnostic.valueTotalHt)
     },
     sustainablePercentage() {
-      return getPercentage(this.qualityDiagnostic.valuSiqoHt, this.qualityDiagnostic.valueTotalHt)
+      return getPercentage(this.qualityDiagnostic.valueSustainableHt, this.qualityDiagnostic.valueTotalHt)
     },
     series() {
       return [this.bioPercentage, this.sustainablePercentage, 100 - this.bioPercentage - this.sustainablePercentage]
