@@ -15,10 +15,6 @@
       </li>
       <li>
         <v-icon color="green" small>mdi-checkbox-marked</v-icon>
-        Produits issus du commerce équitable
-      </li>
-      <li>
-        <v-icon color="green" small>mdi-checkbox-marked</v-icon>
         Produit acquis suivant des modalités prenant en compte les coûts imputés aux externalités environnementales
         liées au produit pendant son cycle de vie (production, transformation, conditionnement, transport, stockage,
         utilisation) - L'article 2152-10 du code de la commande publique dispose que, pour l'évaluation du coût du cycle
