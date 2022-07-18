@@ -162,8 +162,26 @@
       class="mt-2"
     ></v-text-field>
 
-    <!-- Viande et volailles -->
     <v-divider class="my-4"></v-divider>
+
+    <div>
+      <div class="text-h6 font-weight-bold mb-2">
+        Zoom sur les familles « viandes et volailles » et « Produits de la mer »
+      </div>
+      <div>
+        Depuis la loi Climat et Résilience, un nouvel objectif pour une alimentation saine a été ajoutée : des produits
+        carnés et issus de la mer plus durables, ainsi que davantage de viandes provenant de France.
+      </div>
+    </div>
+
+    <v-divider class="my-4"></v-divider>
+
+    <div>
+      60% - 100% pour les restaurants d'Etat de « viandes et volailles » EGAlim
+    </div>
+
+    <!-- Viande et volailles -->
+
     <div class="d-block d-sm-flex align-center mt-8">
       <div class="d-flex">
         <v-icon size="30" color="brown">
@@ -264,7 +282,11 @@
     ></v-text-field>
 
     <!-- Poissons -->
-    <v-divider class="my-4"></v-divider>
+    <v-divider class="mb-4 mt-8"></v-divider>
+
+    <div>
+      60% - 100% pour les restaurants d'Etat de « poissons et produits aquatiques » EGAlim
+    </div>
     <div class="d-block d-sm-flex align-center mt-8">
       <div class="d-flex">
         <v-icon size="30" color="blue">
