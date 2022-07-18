@@ -170,6 +170,15 @@ class TestTeledeclarationApi(APITestCase):
         )
         self.assertEqual(json_teledeclaration["value_total_ht"], diagnostic.value_total_ht)
         self.assertEqual(
+            json_teledeclaration["value_externality_performance_ht"], diagnostic.value_externality_performance_ht
+        )
+        self.assertEqual(json_teledeclaration["value_egalim_others_ht"], diagnostic.value_egalim_others_ht)
+        self.assertEqual(json_teledeclaration["value_meat_poultry_ht"], diagnostic.value_meat_poultry_ht)
+        self.assertEqual(json_teledeclaration["value_meat_poultry_egalim_ht"], diagnostic.value_meat_poultry_egalim_ht)
+        self.assertEqual(json_teledeclaration["value_meat_poultry_france_ht"], diagnostic.value_meat_poultry_france_ht)
+        self.assertEqual(json_teledeclaration["value_fish_ht"], diagnostic.value_fish_ht)
+        self.assertEqual(json_teledeclaration["value_fish_egalim_ht"], diagnostic.value_fish_egalim_ht)
+        self.assertEqual(
             json_teledeclaration["has_waste_diagnostic"],
             diagnostic.has_waste_diagnostic,
         )

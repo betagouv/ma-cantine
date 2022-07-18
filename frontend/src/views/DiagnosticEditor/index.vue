@@ -191,7 +191,7 @@
             </v-btn>
           </v-sheet>
           <p
-            v-if="!diagnostic.teledeclaration && !canSubmitTeledeclaration"
+            v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration"
             class="text-caption mt-2 mb-0 text-right amber--text text--darken-3"
           >
             <v-icon small color="amber darken-3">mdi-alert</v-icon>
@@ -214,7 +214,16 @@ import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import SimplifiedQualityValues from "./SimplifiedQualityValues"
 import ExtendedQualityValues from "./ExtendedQualityValues"
 import Constants from "@/constants"
-import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage, readCookie } from "@/utils"
+import {
+  getObjectDiff,
+  timeAgo,
+  strictIsNaN,
+  lastYear,
+  diagnosticYears,
+  getPercentage,
+  readCookie,
+  isDiagnosticComplete,
+} from "@/utils"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
@@ -299,10 +308,7 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      const { bioTotal, qualityTotal } = this.approTotals()
-      return [parseFloat(bioTotal), parseFloat(qualityTotal), parseFloat(this.diagnostic.valueTotalHt)].every(
-        (x) => !strictIsNaN(x)
-      )
+      return isDiagnosticComplete(this.diagnostic)
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"

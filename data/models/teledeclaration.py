@@ -81,9 +81,11 @@ class Teledeclaration(models.Model):
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
+        version = "2"  # Helps identify which data will be present. Use incremental int values
         status = status or Teledeclaration.TeledeclarationStatus.SUBMITTED
         canteen = diagnostic.canteen
         jsonFields = {
+            "version": version,
             "year": diagnostic.year,
             "canteen": {
                 "name": canteen.name,
@@ -95,9 +97,16 @@ class Teledeclaration(models.Model):
                 "email": applicant.email,
             },
             "teledeclaration": {
+                "value_total_ht": float(diagnostic.value_total_ht),
                 "value_bio_ht": float(diagnostic.value_bio_ht),
                 "value_sustainable_ht": float(diagnostic.value_sustainable_ht),
-                "value_total_ht": float(diagnostic.value_total_ht),
+                "value_externality_performance_ht": float(diagnostic.value_externality_performance_ht),
+                "value_egalim_others_ht": float(diagnostic.value_egalim_others_ht),
+                "value_meat_poultry_ht": float(diagnostic.value_meat_poultry_ht),
+                "value_meat_poultry_egalim_ht": float(diagnostic.value_meat_poultry_egalim_ht),
+                "value_meat_poultry_france_ht": float(diagnostic.value_meat_poultry_france_ht),
+                "value_fish_ht": float(diagnostic.value_fish_ht),
+                "value_fish_egalim_ht": float(diagnostic.value_fish_egalim_ht),
                 "has_waste_diagnostic": diagnostic.has_waste_diagnostic,
                 "has_waste_plan": diagnostic.has_waste_plan,
                 "has_donation_agreement": diagnostic.has_donation_agreement,
