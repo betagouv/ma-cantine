@@ -99,7 +99,7 @@ export default {
   data() {
     return {
       totalError: false,
-      totalErrorMessage: "Le totale ne peut pas être moins que le somme des valeurs suivantes",
+      totalErrorMessage: "Le totale ne peut pas être moins que la somme des valeurs suivantes",
     }
   },
   computed: {

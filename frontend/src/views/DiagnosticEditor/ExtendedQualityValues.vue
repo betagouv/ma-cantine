@@ -124,7 +124,7 @@ import LogoBio from "@/components/LogoBio"
 import labels from "@/data/quality-labels.json"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 
-const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que le somme des valeurs par label"
+const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que la somme des valeurs par label"
 
 const MISC_LABELS = {
   FERMIER: {

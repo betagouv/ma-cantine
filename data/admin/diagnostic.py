@@ -60,6 +60,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
             "Plus de produits de qualité et durables dans nos assiettes",
             {
                 "fields": (
+                    "value_total_ht",
                     "value_bio_ht",
                     "value_sustainable_ht",
                     "value_externality_performance_ht",
@@ -69,7 +70,6 @@ class DiagnosticAdmin(admin.ModelAdmin):
                     "value_meat_poultry_france_ht",
                     "value_fish_ht",
                     "value_fish_egalim_ht",
-                    "value_total_ht",
                 )
             },
         ),
