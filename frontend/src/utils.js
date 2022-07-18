@@ -153,7 +153,19 @@ export const strictIsNaN = (x) => {
 }
 
 export const isDiagnosticComplete = (diagnostic) => {
-  return ["valueBioHt", "valueSustainableHt", "valueTotalHt"].every(
+  const approFields = [
+    "valueBioHt",
+    "valueSustainableHt",
+    "valueTotalHt",
+    "valueExternalityPerformanceHt",
+    "valueEgalimOthersHt",
+    "valueMeatPoultryHt",
+    "valueMeatPoultryEgalimHt",
+    "valueMeatPoultryFranceHt",
+    "valueFishHt",
+    "valueFishEgalimHt",
+  ]
+  return approFields.every(
     // sadly null >= 0 is true
     (key) => diagnostic[key] > 0 || diagnostic[key] === 0
   )

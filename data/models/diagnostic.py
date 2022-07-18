@@ -14,6 +14,10 @@ class Diagnostic(models.Model):
             models.UniqueConstraint(fields=["canteen", "year"], name="annual_diagnostic"),
         ]
 
+    class DiagnosticType(models.TextChoices):
+        SIMPLE = "SIMPLE", "Télédeclaration simple"
+        COMPLETE = "COMPLETE", "Télédeclaration complète"
+
     class MenuFrequency(models.TextChoices):
         LOW = "LOW", "Moins d'une fois par semaine"
         MID = "MID", "Une fois par semaine"
@@ -82,6 +86,13 @@ class Diagnostic(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
+    diagnostic_type = models.CharField(
+        max_length=255,
+        choices=DiagnosticType.choices,
+        blank=True,
+        null=True,
+        verbose_name="Type de diagnostic (simplifié, complet)",
+    )
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
@@ -111,7 +122,7 @@ class Diagnostic(models.Model):
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="Produits durables (hors bio) - Valeur annuelle HT",
+        verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT",
     )
     value_pat_ht = models.DecimalField(
         max_digits=20,
@@ -126,6 +137,55 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Valeur totale annuelle HT",
+    )
+    value_externality_performance_ht = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
+    )
+    value_egalim_others_ht = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Valeur totale (HT) des autres achats EGAlim",
+    )
+    value_meat_poultry_ht = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées",
+    )
+    value_meat_poultry_egalim_ht = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées EGAlim",
+    )
+    value_meat_poultry_france_ht = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France",
+    )
+    value_fish_ht = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Valeur totale (HT) poissons et produits aquatiques",
+    )
+    value_fish_egalim_ht = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Valeur totale (HT) poissons et produits aquatiques EGAlim",
     )
 
     value_label_rouge = models.DecimalField(

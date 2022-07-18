@@ -85,8 +85,19 @@
             :formIsValid="formIsValid.quality"
           >
             <v-form ref="quality" v-model="formIsValid.quality">
-              <v-switch v-model="extendedDiagnostic" label="Activer la déclaration complète" />
-              <div class="font-weight-bold mb-4">{{ diagnosticType }}</div>
+              <p>
+                Suivant le niveau d'information disponible, vous pouvez choisir entre ces trois types de délaration. À
+                terme, seule la télédéclaration complète sera acceptée.
+              </p>
+              <v-radio-group v-model="diagnostic.diagnosticType">
+                <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
+                  <template v-slot:label>
+                    <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
+                    <span class="body-2 ml-3">{{ type.help }}</span>
+                  </template>
+                </v-radio>
+              </v-radio-group>
+              <div class="font-weight-bold mb-4">{{ diagnosticTypeLabel }}</div>
               <SimplifiedQualityValues
                 :originalDiagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
@@ -191,7 +202,7 @@
             </v-btn>
           </v-sheet>
           <p
-            v-if="!diagnostic.teledeclaration && !canSubmitTeledeclaration"
+            v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration"
             class="text-caption mt-2 mb-0 text-right amber--text text--darken-3"
           >
             <v-icon small color="amber darken-3">mdi-alert</v-icon>
@@ -214,7 +225,16 @@ import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import SimplifiedQualityValues from "./SimplifiedQualityValues"
 import ExtendedQualityValues from "./ExtendedQualityValues"
 import Constants from "@/constants"
-import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage, readCookie } from "@/utils"
+import {
+  getObjectDiff,
+  timeAgo,
+  strictIsNaN,
+  lastYear,
+  diagnosticYears,
+  getPercentage,
+  readCookie,
+  isDiagnosticComplete,
+} from "@/utils"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
@@ -237,7 +257,18 @@ export default {
       cancelDialog: false,
       teledeclarationYear: lastYear(),
       purchasesSummary: null,
-      extendedDiagnostic: false,
+      diagnosticTypes: [
+        {
+          key: "SIMPLE",
+          label: "Télédeclaration simple",
+          help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
+        },
+        {
+          key: "COMPLETE",
+          label: "Télédeclaration complète",
+          help: "Vous connaissez les labels et les familles de produits de vos achats",
+        },
+      ],
     }
   },
   components: {
@@ -299,10 +330,7 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      const { bioTotal, qualityTotal } = this.approTotals()
-      return [parseFloat(bioTotal), parseFloat(qualityTotal), parseFloat(this.diagnostic.valueTotalHt)].every(
-        (x) => !strictIsNaN(x)
-      )
+      return isDiagnosticComplete(this.diagnostic)
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
@@ -315,26 +343,34 @@ export default {
         this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x) && !this.hasActiveTeledeclaration
       )
     },
-    diagnosticType() {
-      return this.extendedDiagnostic ? "Déclaration complète" : "Déclaration simplifiée"
+    diagnosticTypeLabel() {
+      return this.diagnosticTypes.find((x) => x.key === this.diagnostic.diagnosticType).label
+    },
+    extendedDiagnostic() {
+      return this.diagnostic.diagnosticType === "COMPLETE"
     },
   },
   beforeMount() {
     this.refreshDiagnostic()
-    this.extendedDiagnostic = this.showExtendedDiagnostic()
   },
   methods: {
     refreshDiagnostic() {
       const diagnostic = this.originalDiagnostic
       if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
       else this.$router.replace({ name: "NotFound" })
+      const defaultDiagnosticType = this.showExtendedDiagnostic() ? "COMPLETE" : "SIMPLE"
+      this.diagnostic.diagnosticType = this.diagnostic.diagnosticType || defaultDiagnosticType
     },
     approTotals() {
       let bioTotal = this.diagnostic.valueBioHt
-      let qualityTotal = this.diagnostic.valueSustainableHt
+      let siqoTotal = this.diagnostic.valueSustainableHt
+      let perfExtTotal = this.diagnostic.ValueExternalityPerformanceHt
+      let egalimOthersTotal = this.diagnostic.valueEgalimOthersHt
       if (this.extendedDiagnostic) {
         bioTotal = 0
-        qualityTotal = 0
+        siqoTotal = 0
+        perfExtTotal = 0
+        egalimOthersTotal = 0
         const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
         egalimFields.forEach((field) => {
           const value = parseFloat(this.diagnostic[field])
@@ -342,19 +378,69 @@ export default {
             if (field.endsWith("Bio")) {
               bioTotal += value
             } else if (!field.startsWith("valueLabel") && !field.endsWith("Ht")) {
-              qualityTotal += value
+              if (field.endsWith("LabelRouge") || field.endsWith("AocaopIgpStg")) {
+                siqoTotal += value
+              } else if (field.endsWith("Performance") || field.endsWith("Externalites")) {
+                perfExtTotal += value
+              } else {
+                egalimOthersTotal += value
+              }
             }
           }
         })
       }
       return {
         bioTotal,
-        qualityTotal,
+        siqoTotal,
+        perfExtTotal,
+        egalimOthersTotal,
       }
+    },
+    meatPoultryTotals() {
+      let meatPoultryEgalim = this.diagnostic.valueSustainableHt
+      let meatPoultryFrance = this.diagnostic.ValueExternalityPerformanceHt
+      if (this.extendedDiagnostic) {
+        meatPoultryEgalim = 0
+        meatPoultryFrance = 0
+        const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+        const nonEgalimFields = Constants.TeledeclarationCharacteristicGroups.outsideLaw.fields
+        const allFields = egalimFields.concat(nonEgalimFields)
+
+        allFields.forEach((field) => {
+          const isMeatPoultry = field.includes("ViandesVolailles")
+          const value = parseFloat(this.diagnostic[field])
+          if (!isMeatPoultry || !value) return
+          const isEgalim = egalimFields.includes(field)
+          const isFrance = field.startsWith("value") && field.endsWith("France")
+
+          // Note that it can be both egalim and provenance France
+          if (isEgalim) meatPoultryEgalim += value
+          if (isFrance) meatPoultryFrance += value
+        })
+      }
+      return { meatPoultryEgalim, meatPoultryFrance }
+    },
+    fishTotals() {
+      let fishEgalim = this.diagnostic.valueSustainableHt
+
+      if (this.extendedDiagnostic) {
+        fishEgalim = 0
+
+        const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+
+        egalimFields.forEach((field) => {
+          const isFish = field.includes("ProduitsDeLaMer")
+          const value = parseFloat(this.diagnostic[field])
+          if (!isFish || !value) return
+          fishEgalim += value
+        })
+      }
+      return { fishEgalim }
     },
     approSummary() {
       if (this.diagnostic.valueTotalHt > 0) {
-        const { bioTotal, qualityTotal } = this.approTotals()
+        const { bioTotal, siqoTotal, perfExtTotal, egalimOthersTotal } = this.approTotals()
+        const qualityTotal = (siqoTotal || 0) + (perfExtTotal || 0) + (egalimOthersTotal || 0)
         let summary = []
         if (hasValue(bioTotal)) {
           summary.push(`${getPercentage(bioTotal, this.diagnostic.valueTotalHt)} % bio`)
@@ -383,10 +469,9 @@ export default {
         this.openedPanel = Object.values(this.formIsValid).findIndex((isValid) => !isValid)
         return
       }
-      // save to the diagnostic the aggregations of bio and quality if extended diagnostic used
-      const { bioTotal, qualityTotal } = this.approTotals()
-      this.diagnostic.valueBioHt = bioTotal
-      this.diagnostic.valueSustainableHt = qualityTotal
+
+      // save to the diagnostic the simplified values if extended diagnostic used
+      this.populateSimplifiedDiagnostic()
 
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
 
@@ -416,6 +501,21 @@ export default {
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
+    },
+    populateSimplifiedDiagnostic() {
+      if (!this.extendedDiagnostic) return
+      const { bioTotal, siqoTotal, perfExtTotal, egalimOthersTotal } = this.approTotals()
+      this.diagnostic.valueBioHt = bioTotal
+      this.diagnostic.valueSustainableHt = siqoTotal
+      this.diagnostic.valueExternalityPerformanceHt = perfExtTotal
+      this.diagnostic.valueEgalimOthersHt = egalimOthersTotal
+
+      const { meatPoultryEgalim, meatPoultryFrance } = this.meatPoultryTotals()
+      this.diagnostic.valueMeatPoultryEgalimHt = meatPoultryEgalim
+      this.diagnostic.valueMeatPoultryFranceHt = meatPoultryFrance
+
+      const { fishEgalim } = this.fishTotals()
+      this.diagnostic.valueFishEgalimHt = fishEgalim
     },
     goToExistingDiagnostic() {
       this.bypassLeaveWarning = true

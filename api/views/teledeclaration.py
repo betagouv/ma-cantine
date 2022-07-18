@@ -56,6 +56,13 @@ class TeledeclarationCreateView(APIView):
         breakdown = [
             diagnostic.value_sustainable_ht,
             diagnostic.value_bio_ht,
+            diagnostic.value_externality_performance_ht,
+            diagnostic.value_egalim_others_ht,
+            diagnostic.value_meat_poultry_ht,
+            diagnostic.value_meat_poultry_egalim_ht,
+            diagnostic.value_meat_poultry_france_ht,
+            diagnostic.value_fish_ht,
+            diagnostic.value_fish_egalim_ht,
         ]
         if not total_ht or None in breakdown:
             raise ValidationError("Données d'approvisionnement manquantes")
