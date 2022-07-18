@@ -29,6 +29,57 @@
       :amount="purchasesSummary.total"
     />
 
+    <label :for="'meat-poultry-' + diagnostic.year" class="body-2 mt-4 d-block">
+      <div class="d-inline-flex mr-2">
+        <v-icon size="30" color="brown">
+          mdi-food-steak
+        </v-icon>
+        <v-icon size="30" color="brown">
+          mdi-food-drumstick
+        </v-icon>
+      </div>
+      La valeur (en HT) de mes achats des mes achats en viandes et volailles fraiches ou surgelées total
+    </label>
+
+    <v-text-field
+      :id="'meat-poultry-' + diagnostic.year"
+      hide-details="auto"
+      type="number"
+      :rules="[validators.nonNegativeOrEmpty]"
+      validate-on-blur
+      solo
+      placeholder="Je ne sais pas"
+      suffix="€ HT"
+      v-model.number="diagnostic.valueMeatPoultryHt"
+      :readonly="readonly"
+      :disabled="readonly"
+      class="mt-2"
+    ></v-text-field>
+
+    <label :for="'fish-' + diagnostic.year" class="body-2 mt-4 d-block">
+      <div class="d-inline-flex mr-2">
+        <v-icon size="30" color="blue">
+          mdi-fish
+        </v-icon>
+      </div>
+      La valeur (en HT) des mes achats en poissons et produits aquatiques total
+    </label>
+
+    <v-text-field
+      :id="'fish-' + diagnostic.year"
+      hide-details="auto"
+      type="number"
+      :rules="[validators.nonNegativeOrEmpty]"
+      validate-on-blur
+      solo
+      placeholder="Je ne sais pas"
+      suffix="€ HT"
+      v-model.number="diagnostic.valueFishHt"
+      :readonly="readonly"
+      :disabled="readonly"
+      class="mt-2"
+    ></v-text-field>
+
     <br />
     <div v-for="(group, groupId) in characteristicGroups" :key="groupId">
       <p v-if="group.text" class="caption mb-0 ml-2">{{ group.text }}</p>

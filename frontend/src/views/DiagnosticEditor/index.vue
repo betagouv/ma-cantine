@@ -337,10 +337,14 @@ export default {
     },
     approTotals() {
       let bioTotal = this.diagnostic.valueBioHt
-      let qualityTotal = this.diagnostic.valueSustainableHt
+      let siqoTotal = this.diagnostic.valueSustainableHt
+      let perfExtTotal = this.diagnostic.ValueExternalityPerformanceHt
+      let egalimOthersTotal = this.diagnostic.valueEgalimOthersHt
       if (this.extendedDiagnostic) {
         bioTotal = 0
-        qualityTotal = 0
+        siqoTotal = 0
+        perfExtTotal = 0
+        egalimOthersTotal = 0
         const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
         egalimFields.forEach((field) => {
           const value = parseFloat(this.diagnostic[field])
@@ -348,19 +352,69 @@ export default {
             if (field.endsWith("Bio")) {
               bioTotal += value
             } else if (!field.startsWith("valueLabel") && !field.endsWith("Ht")) {
-              qualityTotal += value
+              if (field.endsWith("LabelRouge") || field.endsWith("AocaopIgpStg")) {
+                siqoTotal += value
+              } else if (field.endsWith("Performance") || field.endsWith("Externalites")) {
+                perfExtTotal += value
+              } else {
+                egalimOthersTotal += value
+              }
             }
           }
         })
       }
       return {
         bioTotal,
-        qualityTotal,
+        siqoTotal,
+        perfExtTotal,
+        egalimOthersTotal,
       }
+    },
+    meatPoultryTotals() {
+      let meatPoultryEgalim = this.diagnostic.valueSustainableHt
+      let meatPoultryFrance = this.diagnostic.ValueExternalityPerformanceHt
+      if (this.extendedDiagnostic) {
+        meatPoultryEgalim = 0
+        meatPoultryFrance = 0
+        const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+        const nonEgalimFields = Constants.TeledeclarationCharacteristicGroups.outsideLaw.fields
+        const allFields = egalimFields.concat(nonEgalimFields)
+
+        allFields.forEach((field) => {
+          const isMeatPoultry = field.includes("ViandesVolailles")
+          const value = parseFloat(this.diagnostic[field])
+          if (!isMeatPoultry || !value) return
+          const isEgalim = egalimFields.includes(field)
+          const isFrance = field.startsWith("value") && field.endsWith("France")
+
+          // Note that it can be both egalim and provenance France
+          if (isEgalim) meatPoultryEgalim += value
+          if (isFrance) meatPoultryFrance += value
+        })
+      }
+      return { meatPoultryEgalim, meatPoultryFrance }
+    },
+    fishTotals() {
+      let fishEgalim = this.diagnostic.valueSustainableHt
+
+      if (this.extendedDiagnostic) {
+        fishEgalim = 0
+
+        const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+
+        egalimFields.forEach((field) => {
+          const isFish = field.includes("ProduitsDeLaMer")
+          const value = parseFloat(this.diagnostic[field])
+          if (!isFish || !value) return
+          fishEgalim += value
+        })
+      }
+      return { fishEgalim }
     },
     approSummary() {
       if (this.diagnostic.valueTotalHt > 0) {
-        const { bioTotal, qualityTotal } = this.approTotals()
+        const { bioTotal, siqoTotal, perfExtTotal, egalimOthersTotal } = this.approTotals()
+        const qualityTotal = (siqoTotal || 0) + (perfExtTotal || 0) + (egalimOthersTotal || 0)
         let summary = []
         if (hasValue(bioTotal)) {
           summary.push(`${getPercentage(bioTotal, this.diagnostic.valueTotalHt)} % bio`)
@@ -389,10 +443,9 @@ export default {
         this.openedPanel = Object.values(this.formIsValid).findIndex((isValid) => !isValid)
         return
       }
-      // save to the diagnostic the aggregations of bio and quality if extended diagnostic used
-      const { bioTotal, qualityTotal } = this.approTotals()
-      this.diagnostic.valueBioHt = bioTotal
-      this.diagnostic.valueSustainableHt = qualityTotal
+
+      // save to the diagnostic the simplified values if extended diagnostic used
+      this.populateSimplifiedDiagnostic()
 
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
 
@@ -422,6 +475,21 @@ export default {
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
+    },
+    populateSimplifiedDiagnostic() {
+      if (!this.extendedDiagnostic) return
+      const { bioTotal, siqoTotal, perfExtTotal, egalimOthersTotal } = this.approTotals()
+      this.diagnostic.valueBioHt = bioTotal
+      this.diagnostic.valueSustainableHt = siqoTotal
+      this.diagnostic.valueExternalityPerformanceHt = perfExtTotal
+      this.diagnostic.valueEgalimOthersHt = egalimOthersTotal
+
+      const { meatPoultryEgalim, meatPoultryFrance } = this.meatPoultryTotals()
+      this.diagnostic.valueMeatPoultryEgalimHt = meatPoultryEgalim
+      this.diagnostic.valueMeatPoultryFranceHt = meatPoultryFrance
+
+      const { fishEgalim } = this.fishTotals()
+      this.diagnostic.valueFishEgalimHt = fishEgalim
     },
     goToExistingDiagnostic() {
       this.bypassLeaveWarning = true
