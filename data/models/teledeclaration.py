@@ -97,6 +97,7 @@ class Teledeclaration(models.Model):
                 "email": applicant.email,
             },
             "teledeclaration": {
+                "diagnostic_type": diagnostic.diagnostic_type or "Unknown",
                 "value_total_ht": float(diagnostic.value_total_ht),
                 "value_bio_ht": float(diagnostic.value_bio_ht),
                 "value_sustainable_ht": float(diagnostic.value_sustainable_ht),

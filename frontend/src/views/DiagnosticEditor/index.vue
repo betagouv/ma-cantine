@@ -85,8 +85,19 @@
             :formIsValid="formIsValid.quality"
           >
             <v-form ref="quality" v-model="formIsValid.quality">
-              <v-switch v-model="extendedDiagnostic" label="Activer la déclaration complète" />
-              <div class="font-weight-bold mb-4">{{ diagnosticType }}</div>
+              <p>
+                Suivant le niveau d'information disponible, vous pouvez choisir entre ces trois types de délaration. À
+                terme, seule la télédéclaration complète sera acceptée.
+              </p>
+              <v-radio-group v-model="diagnostic.diagnosticType">
+                <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
+                  <template v-slot:label>
+                    <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
+                    <span class="body-2 ml-3">{{ type.help }}</span>
+                  </template>
+                </v-radio>
+              </v-radio-group>
+              <div class="font-weight-bold mb-4">{{ diagnosticTypeLabel }}</div>
               <SimplifiedQualityValues
                 :originalDiagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
@@ -246,7 +257,18 @@ export default {
       cancelDialog: false,
       teledeclarationYear: lastYear(),
       purchasesSummary: null,
-      extendedDiagnostic: false,
+      diagnosticTypes: [
+        {
+          key: "SIMPLE",
+          label: "Télédeclaration simple",
+          help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
+        },
+        {
+          key: "COMPLETE",
+          label: "Télédeclaration complète",
+          help: "Vous connaissez les labels et les familles de produits de vos achats",
+        },
+      ],
     }
   },
   components: {
@@ -321,19 +343,23 @@ export default {
         this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x) && !this.hasActiveTeledeclaration
       )
     },
-    diagnosticType() {
-      return this.extendedDiagnostic ? "Déclaration complète" : "Déclaration simplifiée"
+    diagnosticTypeLabel() {
+      return this.diagnosticTypes.find((x) => x.key === this.diagnostic.diagnosticType).label
+    },
+    extendedDiagnostic() {
+      return this.diagnostic.diagnosticType === "COMPLETE"
     },
   },
   beforeMount() {
     this.refreshDiagnostic()
-    this.extendedDiagnostic = this.showExtendedDiagnostic()
   },
   methods: {
     refreshDiagnostic() {
       const diagnostic = this.originalDiagnostic
       if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
       else this.$router.replace({ name: "NotFound" })
+      const defaultDiagnosticType = this.showExtendedDiagnostic() ? "COMPLETE" : "SIMPLE"
+      this.diagnostic.diagnosticType = this.diagnostic.diagnosticType || defaultDiagnosticType
     },
     approTotals() {
       let bioTotal = this.diagnostic.valueBioHt

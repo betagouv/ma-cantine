@@ -6,6 +6,7 @@ from .teledeclaration import ShortTeledeclarationSerializer
 FIELDS = (
     "id",
     "year",
+    "diagnostic_type",
     "value_bio_ht",
     "value_sustainable_ht",
     "value_pat_ht",

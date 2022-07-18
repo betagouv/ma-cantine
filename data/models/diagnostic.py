@@ -14,6 +14,10 @@ class Diagnostic(models.Model):
             models.UniqueConstraint(fields=["canteen", "year"], name="annual_diagnostic"),
         ]
 
+    class DiagnosticType(models.TextChoices):
+        SIMPLE = "SIMPLE", "Télédeclaration simple"
+        COMPLETE = "COMPLETE", "Télédeclaration complète"
+
     class MenuFrequency(models.TextChoices):
         LOW = "LOW", "Moins d'une fois par semaine"
         MID = "MID", "Une fois par semaine"
@@ -82,6 +86,13 @@ class Diagnostic(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
+    diagnostic_type = models.CharField(
+        max_length=255,
+        choices=DiagnosticType.choices,
+        blank=True,
+        null=True,
+        verbose_name="Type de diagnostic (simplifié, complet)",
+    )
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
