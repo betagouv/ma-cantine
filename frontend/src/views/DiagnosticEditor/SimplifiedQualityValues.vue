@@ -20,6 +20,7 @@
       :messages="totalError ? [totalErrorMessage] : undefined"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -52,6 +53,7 @@
       :error="totalError"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -92,6 +94,7 @@
       :error="totalError"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
 
     <!-- Performance Externalités -->
@@ -124,6 +127,7 @@
       :error="totalError"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
 
     <!-- Other EGAlim -->
@@ -160,6 +164,7 @@
       :error="totalError"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
 
     <v-divider class="my-4"></v-divider>
@@ -211,6 +216,7 @@
       :messages="meatPoultryError ? [meatPoultryErrorMessage] : undefined"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
 
     <!-- Viande et volailles EGALIM -->
@@ -245,6 +251,7 @@
       :error="meatPoultryError"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
 
     <!-- Viande et volailles provenance FRANCE -->
@@ -279,6 +286,7 @@
       :error="meatPoultryError"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
 
     <!-- Poissons -->
@@ -313,6 +321,7 @@
       :messages="fishError ? [fishErrorMessage] : undefined"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
 
     <!-- Poissons EGALIM -->
@@ -344,6 +353,7 @@
       :error="fishError"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
   </div>
 </template>
@@ -448,5 +458,8 @@ export default {
 <style scoped>
 fieldset {
   border: none;
+}
+.narrow-field {
+  width: 50%;
 }
 </style>
