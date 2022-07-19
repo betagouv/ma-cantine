@@ -19,7 +19,7 @@
 
 <script>
 import VueApexCharts from "vue-apexcharts"
-import { getPercentage, isDiagnosticApproComplete, getSustainableTotal } from "@/utils"
+import { getPercentage, hasDiagnosticApproData, getSustainableTotal } from "@/utils"
 
 const VALUE_DESCRIPTION = "Pourcentage d'achats"
 const BIO = "Bio"
@@ -43,7 +43,7 @@ export default {
     const completedDiagnostics = []
     const thisYear = new Date().getFullYear()
     diagArray.forEach((d) => {
-      if (isDiagnosticApproComplete(d)) {
+      if (hasDiagnosticApproData(d)) {
         completedDiagnostics.push(d)
         years.push(`${d.year}${d.year >= thisYear ? " (objectif)" : ""}`)
       }

@@ -152,10 +152,10 @@ export const strictIsNaN = (x) => {
   return Number(x) !== x
 }
 
-// For graphs, badges and calculations, we only need the
+// For graphs, badges and calculations, we only need one of the
 // values of the appro - meaning the fields on fish/meat
 // needed for the loi Climat are not necessary
-export const isDiagnosticApproComplete = (diagnostic) => {
+export const hasDiagnosticApproData = (diagnostic) => {
   const approFields = [
     "valueBioHt",
     "valueSustainableHt",
@@ -163,7 +163,7 @@ export const isDiagnosticApproComplete = (diagnostic) => {
     "valueExternalityPerformanceHt",
     "valueEgalimOthersHt",
   ]
-  return approFields.every(
+  return approFields.some(
     // sadly null >= 0 is true
     (key) => diagnostic[key] > 0 || diagnostic[key] === 0
   )
