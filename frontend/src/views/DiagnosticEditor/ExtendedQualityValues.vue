@@ -20,6 +20,7 @@
       :messages="totalError ? [totalErrorMessage] : undefined"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -27,6 +28,7 @@
       @autofill="checkTotal"
       purchaseType="totaux"
       :amount="purchasesSummary.total"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
     <label :for="'meat-poultry-' + diagnostic.year" class="body-2 mt-4 d-block">
@@ -54,6 +56,7 @@
       :readonly="readonly"
       :disabled="readonly"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
 
     <label :for="'fish-' + diagnostic.year" class="body-2 mt-4 d-block">
@@ -78,6 +81,7 @@
       :readonly="readonly"
       :disabled="readonly"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
 
     <br />
@@ -356,3 +360,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.narrow-field {
+  width: 50%;
+}
+</style>
