@@ -28,6 +28,7 @@
       @autofill="checkTotal"
       purchaseType="totaux"
       :amount="purchasesSummary.total"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
     <!-- Bio -->
@@ -61,6 +62,7 @@
       @autofill="checkTotal"
       purchaseType="bio"
       :amount="purchasesSummary.bio"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
     <!-- SIQO -->
