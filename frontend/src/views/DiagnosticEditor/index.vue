@@ -86,7 +86,7 @@
           >
             <v-form ref="quality" v-model="formIsValid.quality">
               <p>
-                Suivant le niveau d'information disponible, vous pouvez choisir entre ces trois types de délaration. À
+                Suivant le niveau d'information disponible, vous pouvez choisir entre ces deux types de déclaration. À
                 terme, seule la télédéclaration complète sera acceptée.
               </p>
               <v-radio-group v-model="diagnostic.diagnosticType">
