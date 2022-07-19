@@ -358,7 +358,8 @@ export default {
       const diagnostic = this.originalDiagnostic
       if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
       else this.$router.replace({ name: "NotFound" })
-      this.diagnostic.diagnosticType = this.diagnostic.diagnosticType || "SIMPLE"
+      const defaultDiagnosticType = this.showExtendedDiagnostic() ? "COMPLETE" : "SIMPLE"
+      this.diagnostic.diagnosticType = this.diagnostic.diagnosticType || defaultDiagnosticType
     },
     approTotals() {
       let bioTotal = this.diagnostic.valueBioHt
@@ -610,6 +611,13 @@ export default {
         fetch(`/api/v1/canteenPurchasesSummary/${this.canteenId}?year=${this.diagnostic.year}`)
           .then((response) => (response.ok ? response.json() : {}))
           .then((response) => (this.purchasesSummary = response))
+    },
+    showExtendedDiagnostic() {
+      const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
+      return (
+        characteristicGroups.egalim.fields.some((key) => !!this.originalDiagnostic[key]) ||
+        characteristicGroups.outsideLaw.fields.some((key) => !!this.originalDiagnostic[key])
+      )
     },
   },
   created() {
