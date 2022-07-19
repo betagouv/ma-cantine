@@ -128,7 +128,13 @@ def filter_by_diagnostic_params(queryset, query_params):
         if combined:
             qs_diag = qs_diag.annotate(
                 combined_share=Cast(
-                    (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
+                    (
+                        Sum("value_bio_ht", default=0)
+                        + Sum("value_sustainable_ht", default=0)
+                        + Sum("value_externality_performance_ht", default=0)
+                        + Sum("value_egalim_others_ht", default=0)
+                    )
+                    / Sum("value_total_ht"),
                     FloatField(),
                 )
             ).filter(combined_share__gte=combined)

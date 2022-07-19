@@ -314,7 +314,9 @@ class TestPublishedCanteenApi(APITestCase):
             year=publication_year,
             value_total_ht=100,
             value_bio_ht=30,
-            value_sustainable_ht=30,
+            value_sustainable_ht=10,
+            value_externality_performance_ht=10,
+            value_egalim_others_ht=10,
         )
         DiagnosticFactory.create(
             canteen=secretly_good_canteen,
@@ -322,6 +324,8 @@ class TestPublishedCanteenApi(APITestCase):
             value_total_ht=100,
             value_bio_ht=30,
             value_sustainable_ht=30,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
         )
         DiagnosticFactory.create(
             canteen=medium_canteen,
@@ -329,13 +333,17 @@ class TestPublishedCanteenApi(APITestCase):
             value_total_ht=1000,
             value_bio_ht=150,
             value_sustainable_ht=350,
+            value_externality_performance_ht=None,
+            value_egalim_others_ht=None,
         )
         DiagnosticFactory.create(
             canteen=sustainable_canteen,
             year=publication_year,
             value_total_ht=100,
-            value_bio_ht=0,
-            value_sustainable_ht=60,
+            value_bio_ht=None,
+            value_sustainable_ht=None,
+            value_externality_performance_ht=40,
+            value_egalim_others_ht=20,
         )
         DiagnosticFactory.create(
             canteen=bad_canteen,
@@ -343,6 +351,8 @@ class TestPublishedCanteenApi(APITestCase):
             value_total_ht=100,
             value_bio_ht=30,
             value_sustainable_ht=30,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
         )
         DiagnosticFactory.create(
             canteen=bad_canteen,
@@ -350,6 +360,8 @@ class TestPublishedCanteenApi(APITestCase):
             value_total_ht=10,
             value_bio_ht=0,
             value_sustainable_ht=0,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
         )
         url = f"{reverse('published_canteens')}?min_portion_bio={0.2}"
         response = self.client.get(url)

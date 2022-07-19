@@ -152,6 +152,26 @@ export const strictIsNaN = (x) => {
   return Number(x) !== x
 }
 
+// For graphs, badges and calculations, we only need one of the
+// values of the appro - meaning the fields on fish/meat
+// needed for the loi Climat are not necessary
+export const hasDiagnosticApproData = (diagnostic) => {
+  const approFields = [
+    "valueBioHt",
+    "valueSustainableHt",
+    "valueTotalHt",
+    "valueExternalityPerformanceHt",
+    "valueEgalimOthersHt",
+  ]
+  return approFields.some(
+    // sadly null >= 0 is true
+    (key) => diagnostic[key] > 0 || diagnostic[key] === 0
+  )
+}
+
+// For the teledeclaration, all values - including fish/meat
+// which are not used for graphs and calculations - must be
+// present
 export const isDiagnosticComplete = (diagnostic) => {
   const approFields = [
     "valueBioHt",
@@ -209,11 +229,19 @@ export const getPercentage = (partialValue, totalValue) => {
   }
 }
 
+export const getSustainableTotal = (diagnostic) => {
+  const sustainableSum =
+    (diagnostic.valueSustainableHt || 0) +
+    (diagnostic.valueExternalityPerformanceHt || 0) +
+    (diagnostic.valueEgalimOthersHt || 0)
+  return sustainableSum
+}
+
 export const badges = (canteen, diagnostic, sectors) => {
   let applicable = JSON.parse(JSON.stringify(jsonBadges))
   if (!diagnostic) return applicable
   const bioPercent = getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
-  const sustainablePercent = getPercentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
+  const sustainablePercent = getPercentage(getSustainableTotal(diagnostic), diagnostic.valueTotalHt)
   const applicableRules = applicableDiagnosticRules(canteen)
   if (
     bioPercent >= applicableRules.bioThreshold &&

@@ -50,7 +50,7 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
-import { getPercentage, isDiagnosticComplete, badges, latestCreatedDiagnostic } from "@/utils"
+import { getPercentage, getSustainableTotal, hasDiagnosticApproData, badges, latestCreatedDiagnostic } from "@/utils"
 
 export default {
   name: "PublishedCanteenCard",
@@ -91,7 +91,9 @@ export default {
       return this.diagValuePercent("valueBioHt")
     },
     sustainablePercent() {
-      return this.diagValuePercent("valueSustainableHt")
+      if (this.diagnostic && hasDiagnosticApproData(this.diagnostic))
+        return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+      return null
     },
     hasPercentages() {
       return this.bioPercent || this.sustainablePercent
@@ -99,7 +101,7 @@ export default {
   },
   methods: {
     diagValuePercent(valueKey) {
-      if (!this.diagnostic || !isDiagnosticComplete(this.diagnostic)) return null
+      if (!this.diagnostic || !hasDiagnosticApproData(this.diagnostic)) return null
       return getPercentage(this.diagnostic[valueKey], this.diagnostic.valueTotalHt)
     },
     badgeTitle(badge) {

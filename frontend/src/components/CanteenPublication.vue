@@ -124,9 +124,10 @@ import {
   lastYear,
   badges,
   getPercentage,
-  isDiagnosticComplete,
+  hasDiagnosticApproData,
   latestCreatedDiagnostic,
   applicableDiagnosticRules,
+  getSustainableTotal,
 } from "@/utils"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import ImageGallery from "@/components/ImageGallery"
@@ -157,7 +158,7 @@ export default {
       return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
     },
     sustainablePercent() {
-      return getPercentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)
+      return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
     },
     earnedBadges() {
       const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
@@ -169,7 +170,7 @@ export default {
     },
     shouldDisplayGraph() {
       if (!this.canteen.diagnostics || this.canteen.diagnostics.length === 0) return false
-      const completedDiagnostics = this.canteen.diagnostics.filter(isDiagnosticComplete)
+      const completedDiagnostics = this.canteen.diagnostics.filter(hasDiagnosticApproData)
       if (completedDiagnostics.length === 0) return false
       else if (completedDiagnostics.length === 1) return completedDiagnostics[0].year !== lastYear()
       else return true

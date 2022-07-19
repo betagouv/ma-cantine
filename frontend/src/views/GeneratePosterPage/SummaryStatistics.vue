@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import { getSustainableTotal } from "@/utils"
 import VueApexCharts from "vue-apexcharts"
 
 export default {
@@ -32,7 +33,7 @@ export default {
       return getPercentage(this.qualityDiagnostic.valueBioHt, this.qualityDiagnostic.valueTotalHt)
     },
     sustainablePercentage() {
-      return getPercentage(this.qualityDiagnostic.valueSustainableHt, this.qualityDiagnostic.valueTotalHt)
+      return getPercentage(getSustainableTotal(this.qualityDiagnostic), this.qualityDiagnostic.valueTotalHt)
     },
     series() {
       return [this.bioPercentage, this.sustainablePercentage, 100 - this.bioPercentage - this.sustainablePercentage]
