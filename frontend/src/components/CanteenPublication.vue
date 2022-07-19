@@ -124,7 +124,7 @@ import {
   lastYear,
   badges,
   getPercentage,
-  isDiagnosticComplete,
+  isDiagnosticApproComplete,
   latestCreatedDiagnostic,
   applicableDiagnosticRules,
   getSustainableTotal,
@@ -170,7 +170,7 @@ export default {
     },
     shouldDisplayGraph() {
       if (!this.canteen.diagnostics || this.canteen.diagnostics.length === 0) return false
-      const completedDiagnostics = this.canteen.diagnostics.filter(isDiagnosticComplete)
+      const completedDiagnostics = this.canteen.diagnostics.filter(isDiagnosticApproComplete)
       if (completedDiagnostics.length === 0) return false
       else if (completedDiagnostics.length === 1) return completedDiagnostics[0].year !== lastYear()
       else return true

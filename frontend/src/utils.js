@@ -152,6 +152,26 @@ export const strictIsNaN = (x) => {
   return Number(x) !== x
 }
 
+// For graphs, badges and calculations, we only need the
+// values of the appro - meaning the fields on fish/meat
+// needed for the loi Climat are not necessary
+export const isDiagnosticApproComplete = (diagnostic) => {
+  const approFields = [
+    "valueBioHt",
+    "valueSustainableHt",
+    "valueTotalHt",
+    "valueExternalityPerformanceHt",
+    "valueEgalimOthersHt",
+  ]
+  return approFields.every(
+    // sadly null >= 0 is true
+    (key) => diagnostic[key] > 0 || diagnostic[key] === 0
+  )
+}
+
+// For the teledeclaration, all values - including fish/meat
+// which are not used for graphs and calculations - must be
+// present
 export const isDiagnosticComplete = (diagnostic) => {
   const approFields = [
     "valueBioHt",
