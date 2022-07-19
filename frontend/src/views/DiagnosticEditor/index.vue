@@ -356,10 +356,11 @@ export default {
   methods: {
     refreshDiagnostic() {
       const diagnostic = this.originalDiagnostic
-      if (diagnostic) this.diagnostic = JSON.parse(JSON.stringify(diagnostic))
-      else this.$router.replace({ name: "NotFound" })
+      if (diagnostic) {
+        this.$set(this, "diagnostic", JSON.parse(JSON.stringify(diagnostic)))
+      } else this.$router.replace({ name: "NotFound" })
       const defaultDiagnosticType = this.showExtendedDiagnostic() ? "COMPLETE" : "SIMPLE"
-      this.diagnostic.diagnosticType = this.diagnostic.diagnosticType || defaultDiagnosticType
+      this.$set(this.diagnostic, "diagnosticType", this.diagnostic.diagnosticType || defaultDiagnosticType)
     },
     approTotals() {
       let bioTotal = this.diagnostic.valueBioHt
