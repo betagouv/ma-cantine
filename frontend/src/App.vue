@@ -68,9 +68,6 @@ export default {
       this.$store.dispatch("setShowWebinaireBanner", this.webinaireCookieIsOutdated())
     },
   },
-  beforeMount() {
-    window.$crisp.push(["do", "chat:hide"])
-  },
   methods: {
     hideBanner() {
       const upcomingCommunityEvents = this.$store.state.upcomingCommunityEvents

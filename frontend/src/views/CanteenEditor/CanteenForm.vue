@@ -493,11 +493,7 @@ export default {
       document.title = `Nouvelle cantine - ${this.$store.state.pageTitleSuffix}`
     }
   },
-  mounted() {
-    if (this.isNewCanteen) window.$crisp.push(["do", "chat:show"])
-  },
   beforeDestroy() {
-    window.$crisp.push(["do", "chat:hide"])
     window.removeEventListener("beforeunload", this.handleUnload)
   },
   methods: {
