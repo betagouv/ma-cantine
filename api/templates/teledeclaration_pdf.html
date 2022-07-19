@@ -76,7 +76,40 @@
                 <span>Valeur en HT des achats alimentaires en Bio</span> : {{ value_bio_ht|floatformat:2 }} €
             </li>
             <li>
-                <span>Valeur en HT d'autres produits de qualité et durables</span> : {{ value_sustainable_ht|floatformat:2 }} €
+                <span>Valeur en HT de mes achats SIQO (AOP/AOC, IGP, STG)</span> : {{ value_sustainable_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT de mes achats prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale</span> : {{ value_externality_performance_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT de mes autres achats EGAlim</span> : {{ value_egalim_others_ht|floatformat:2 }} €
+            </li>
+        </ul>
+
+        <p>
+            Viandes et volailles
+        </p>
+        <ul>
+            <li>
+                <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> : {{ value_meat_poultry_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées EGAlim</span> : {{ value_meat_poultry_egalim_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées provenance France</span> : {{ value_meat_poultry_france_ht|floatformat:2 }} €
+            </li>
+        </ul>
+
+        <p>
+            Poissons et produits aquatiques
+        </p>
+        <ul>
+            <li>
+                <span>Valeur totale en HT des achats en poissons et produits aquatiques</span> : {{ value_fish_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT des achats en poissons et produits aquatiques EGAlim</span> : {{ value_fish_egalim_ht|floatformat:2 }} €
             </li>
         </ul>
 
