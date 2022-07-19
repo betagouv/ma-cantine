@@ -209,11 +209,19 @@ export const getPercentage = (partialValue, totalValue) => {
   }
 }
 
+export const getSustainableTotal = (diagnostic) => {
+  const sustainableSum =
+    (diagnostic.valueSustainableHt || 0) +
+    (diagnostic.valueExternalityPerformanceHt || 0) +
+    (diagnostic.valueEgalimOthersHt || 0)
+  return sustainableSum
+}
+
 export const badges = (canteen, diagnostic, sectors) => {
   let applicable = JSON.parse(JSON.stringify(jsonBadges))
   if (!diagnostic) return applicable
   const bioPercent = getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
-  const sustainablePercent = getPercentage(diagnostic.valueSustainableHt, diagnostic.valueTotalHt)
+  const sustainablePercent = getPercentage(getSustainableTotal(diagnostic), diagnostic.valueTotalHt)
   const applicableRules = applicableDiagnosticRules(canteen)
   if (
     bioPercent >= applicableRules.bioThreshold &&

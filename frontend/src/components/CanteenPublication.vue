@@ -127,6 +127,7 @@ import {
   isDiagnosticComplete,
   latestCreatedDiagnostic,
   applicableDiagnosticRules,
+  getSustainableTotal,
 } from "@/utils"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import ImageGallery from "@/components/ImageGallery"
@@ -157,7 +158,7 @@ export default {
       return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
     },
     sustainablePercent() {
-      return getPercentage(this.diagnostic.valueSustainableHt, this.diagnostic.valueTotalHt)
+      return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
     },
     earnedBadges() {
       const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
