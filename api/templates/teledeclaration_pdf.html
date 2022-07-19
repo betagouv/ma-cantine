@@ -86,6 +86,33 @@
             </li>
         </ul>
 
+        <p>
+            Viandes et volailles
+        </p>
+        <ul>
+            <li>
+                <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> : {{ value_meat_poultry_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées EGAlim</span> : {{ value_meat_poultry_egalim_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées provenance France</span> : {{ value_meat_poultry_france_ht|floatformat:2 }} €
+            </li>
+        </ul>
+
+        <p>
+            Poissons et produits aquatiques
+        </p>
+        <ul>
+            <li>
+                <span>Valeur totale en HT des achats en poissons et produits aquatiques</span> : {{ value_fish_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT des achats en poissons et produits aquatiques EGAlim</span> : {{ value_fish_egalim_ht|floatformat:2 }} €
+            </li>
+        </ul>
+
         <div class="other-measures">
             <div>
             {% if has_waste_diagnostic %}
