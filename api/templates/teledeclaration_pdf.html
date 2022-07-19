@@ -76,7 +76,13 @@
                 <span>Valeur en HT des achats alimentaires en Bio</span> : {{ value_bio_ht|floatformat:2 }} €
             </li>
             <li>
-                <span>Valeur en HT d'autres produits de qualité et durables</span> : {{ value_sustainable_ht|floatformat:2 }} €
+                <span>Valeur en HT de mes achats SIQO (AOP/AOC, IGP, STG)</span> : {{ value_sustainable_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT de mes achats prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale</span> : {{ value_externality_performance_ht|floatformat:2 }} €
+            </li>
+            <li>
+                <span>Valeur en HT de mes autres achats EGAlim</span> : {{ value_egalim_others_ht|floatformat:2 }} €
             </li>
         </ul>
 
