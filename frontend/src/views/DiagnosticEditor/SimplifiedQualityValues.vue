@@ -366,7 +366,7 @@ import labels from "@/data/quality-labels.json"
 import validators from "@/validators"
 import LogoBio from "@/components/LogoBio"
 
-const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que la somme des valeurs par label"
+const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
 const DEFAULT_MEAT_POULTRY_ERROR = "La valeur totale doit être supérieure que celle des labels"
 const DEFAULT_FISH_ERROR = "La valeur totale doit être supérieure que la valeur EGAlim"
 
