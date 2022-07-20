@@ -4,22 +4,6 @@
     <p>
       Créez plusieurs cantines et diagnostics en transférant un fichier CSV suivant les spécifications ci-dessous.
     </p>
-    <p>
-      Vous pouvez également télécharger un fichier exemple en format de choix :
-      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_ma_cantine.csv" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        CSV (.csv)
-      </a>
-      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_ma_cantine.xlsx" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        Excel (.xlsx)
-      </a>
-      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_ma_cantine.ods" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        OpenDocument (.ods)
-      </a>
-      .
-    </p>
 
     <v-alert v-if="isStaff" outlined type="info" class="body-2 blue--text text--darken-2">
       En tant que membre de l'équipe ma cantine, vous pouvez ajoter trois colonnes additionnelles à la fin du fichier
@@ -72,6 +56,22 @@
           </v-radio>
         </v-radio-group>
         <p><a href="#documentation">Voir les données requises pour cet import.</a></p>
+        <p>
+          Vous pouvez également télécharger un fichier exemple en format de choix :
+          <a class="text-decoration-underline" :href="`${exampleFilename}.csv`" download>
+            <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
+            CSV (.csv)
+          </a>
+          <a class="text-decoration-underline" :href="`${exampleFilename}.xlsx`" download>
+            <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
+            Excel (.xlsx)
+          </a>
+          <a class="text-decoration-underline" :href="`${exampleFilename}.ods`" download>
+            <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
+            OpenDocument (.ods)
+          </a>
+          .
+        </p>
       </v-col>
       <v-col cols="4" align="right">
         <FileDrop
@@ -217,7 +217,7 @@
             <td>{{ field.name }}</td>
             <td v-html="field.description"></td>
             <td>{{ field.type }}</td>
-            <td style="min-width: 160px;">{{ field.example }}</td>
+            <td>{{ field.example }}</td>
             <td class="text-center">{{ field.optional ? "✘" : "✔" }}</td>
           </tr>
         </tbody>
@@ -228,15 +228,15 @@
     <h3 class="my-6">Fichiers d'exemple</h3>
     <p>
       Nous mettons à votre disposition un fichier exemple en format de choix :
-      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_ma_cantine.csv" download>
+      <a class="text-decoration-underline" :href="`${exampleFilename}.csv`" download>
         <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
         CSV (.csv)
       </a>
-      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_ma_cantine.xlsx" download>
+      <a class="text-decoration-underline" :href="`${exampleFilename}.xlsx`" download>
         <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
         Excel (.xlsx)
       </a>
-      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_ma_cantine.ods" download>
+      <a class="text-decoration-underline" :href="`${exampleFilename}.ods`" download>
         <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
         OpenDocument (.ods)
       </a>
@@ -402,81 +402,158 @@ export default {
   },
   computed: {
     diagnosticDocumentation() {
+      if (this.diagnosticType === "NONE") return []
       const numberFormatExample = "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>."
-      switch (this.diagnosticType) {
-        case "SIMPLE":
-          return [
-            {
-              name: "Année du diagnostic",
-              description: "En format <code>YYYY</code>.",
-              type: "Chiffre",
-              example: "2020",
-            },
-            {
-              name: "Valeur totale d'achats HT",
-              description: numberFormatExample,
-              type: "Chiffre",
-              example: "3290.23",
-            },
-            {
-              name: "Valeur d'achats bio HT",
-              description: numberFormatExample,
-              type: "Chiffre",
-              example: "1284.70",
-            },
-            {
-              name: "Valeur d'achats SIQO (hors bio) HT",
-              description: numberFormatExample,
-              type: "Chiffre",
-              example: "681",
-            },
-            {
-              name:
-                "Valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
-              description: numberFormatExample,
-              type: "Chiffre",
-              example: "681",
-            },
-            {
-              name: "Valeur (en HT) des autres achats EGAlim",
-              description: numberFormatExample,
-              type: "Chiffre",
-              example: "681",
-            },
-            {
-              name: "Valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
-              description: numberFormatExample,
-              type: "Chiffre",
-              example: "681",
-            },
-            {
-              name: "Valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
-              description: numberFormatExample,
-              type: "Chiffre",
-              example: "681",
-            },
-            {
-              name: "Valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
-              description: numberFormatExample,
-              type: "Chiffre",
-              example: "681",
-            },
-            {
-              name: "Valeur (en HT) des mes achats en poissons et produits aquatiques total",
-              description: numberFormatExample,
-              type: "Chiffre",
-              example: "681",
-            },
-            {
-              name: "Valeur (en HT) des mes achats EGAlim en poissons et produits aquatiques",
-              description: numberFormatExample,
-              type: "Chiffre",
-              example: "681",
-            },
-          ]
-        default:
-          return []
+      const simpleValues = [
+        "Valeur d'achats bio HT",
+        "Valeur d'achats SIQO (hors bio) HT",
+        "Valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
+        "Valeur (en HT) des autres achats EGAlim",
+        "Valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
+        "Valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+        "Valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
+        "Valeur (en HT) des mes achats en poissons et produits aquatiques total",
+        "Valeur (en HT) des mes achats EGAlim en poissons et produits aquatiques",
+      ]
+      let valuesArray = simpleValues
+      const array = [
+        {
+          name: "Année du diagnostic",
+          description: "En format <code>YYYY</code>.",
+          type: "Chiffre",
+          example: "2020",
+        },
+        {
+          name: "Valeur totale d'achats HT",
+          description: numberFormatExample,
+          type: "Chiffre",
+          example: "1234.99",
+        },
+      ]
+      if (this.diagnosticType === "COMPLETE") {
+        valuesArray = [
+          "Bio : Viandes et volailles fraîches et surgelées",
+          "Bio : Produits aquatiques frais et surgelés",
+          "Bio : Fruits et légumes frais et surgelés",
+          "Bio : Charcuterie",
+          "Bio : BOF (Produits laitiers, beurre et œufs)",
+          "Bio : Boulangerie/Pâtisserie fraîches",
+          "Bio : Boissons",
+          "Bio : Autres produits frais, surgelés et d’épicerie",
+          "Label rouge : Viandes et volailles fraîches et surgelées",
+          "Label rouge : Produits aquatiques frais et surgelés",
+          "Label rouge : Fruits et légumes frais et surgelés",
+          "Label rouge : Charcuterie",
+          "Label rouge : BOF (Produits laitiers, beurre et œufs)",
+          "Label rouge : Boulangerie/Pâtisserie fraîches",
+          "Label rouge : Boissons",
+          "Label rouge : Autres produits frais, surgelés et d’épicerie",
+          "AOC / AOP / IGP / STG : Viandes et volailles fraîches et surgelées",
+          "AOC / AOP / IGP / STG : Produits aquatiques frais et surgelés",
+          "AOC / AOP / IGP / STG : Fruits et légumes frais et surgelés",
+          "AOC / AOP / IGP / STG : Charcuterie",
+          "AOC / AOP / IGP / STG : BOF (Produits laitiers, beurre et œufs)",
+          "AOC / AOP / IGP / STG : Boulangerie/Pâtisserie fraîches",
+          "AOC / AOP / IGP / STG : Boissons",
+          "AOC / AOP / IGP / STG : Autres produits frais, surgelés et d’épicerie",
+          "Certification environnementale de niveau 2 ou HVE : Viandes et volailles fraîches et surgelées",
+          "Certification environnementale de niveau 2 ou HVE : Produits aquatiques frais et surgelés",
+          "Certification environnementale de niveau 2 ou HVE : Fruits et légumes frais et surgelés",
+          "Certification environnementale de niveau 2 ou HVE : Charcuterie",
+          "Certification environnementale de niveau 2 ou HVE : BOF (Produits laitiers, beurre et œufs)",
+          "Certification environnementale de niveau 2 ou HVE : Boulangerie/Pâtisserie fraîches",
+          "Certification environnementale de niveau 2 ou HVE : Boissons",
+          "Certification environnementale de niveau 2 ou HVE : Autres produits frais, surgelés et d’épicerie",
+          "Pêche durable : Viandes et volailles fraîches et surgelées",
+          "Pêche durable : Produits aquatiques frais et surgelés",
+          "Pêche durable : Fruits et légumes frais et surgelés",
+          "Pêche durable : Charcuterie",
+          "Pêche durable : BOF (Produits laitiers, beurre et œufs)",
+          "Pêche durable : Boulangerie/Pâtisserie fraîches",
+          "Pêche durable : Boissons",
+          "Pêche durable : Autres produits frais, surgelés et d’épicerie",
+          "Région ultrapériphérique : Viandes et volailles fraîches et surgelées",
+          "Région ultrapériphérique : Produits aquatiques frais et surgelés",
+          "Région ultrapériphérique : Fruits et légumes frais et surgelés",
+          "Région ultrapériphérique : Charcuterie",
+          "Région ultrapériphérique : BOF (Produits laitiers, beurre et œufs)",
+          "Région ultrapériphérique : Boulangerie/Pâtisserie fraîches",
+          "Région ultrapériphérique : Boissons",
+          "Région ultrapériphérique : Autres produits frais, surgelés et d’épicerie",
+          "Commerce équitable : Viandes et volailles fraîches et surgelées",
+          "Commerce équitable : Produits aquatiques frais et surgelés",
+          "Commerce équitable : Fruits et légumes frais et surgelés",
+          "Commerce équitable : Charcuterie",
+          "Commerce équitable : BOF (Produits laitiers, beurre et œufs)",
+          "Commerce équitable : Boulangerie/Pâtisserie fraîches",
+          "Commerce équitable : Boissons",
+          "Commerce équitable : Autres produits frais, surgelés et d’épicerie",
+          "Fermier : Viandes et volailles fraîches et surgelées",
+          "Fermier : Produits aquatiques frais et surgelés",
+          "Fermier : Fruits et légumes frais et surgelés",
+          "Fermier : Charcuterie",
+          "Fermier : BOF (Produits laitiers, beurre et œufs)",
+          "Fermier : Boulangerie/Pâtisserie fraîches",
+          "Fermier : Boissons",
+          "Fermier : Autres produits frais, surgelés et d’épicerie",
+          "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Viandes et volailles fraîches et surgelées",
+          "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Produits aquatiques frais et surgelés",
+          "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Fruits et légumes frais et surgelés",
+          "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Charcuterie",
+          "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : BOF (Produits laitiers, beurre et œufs)",
+          "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Boulangerie/Pâtisserie fraîches",
+          "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Boissons",
+          "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Autres produits frais, surgelés et d’épicerie",
+          "Produits acquis sur la base de leurs performances en matière environnementale : Viandes et volailles fraîches et surgelées",
+          "Produits acquis sur la base de leurs performances en matière environnementale : Produits aquatiques frais et surgelés",
+          "Produits acquis sur la base de leurs performances en matière environnementale : Fruits et légumes frais et surgelés",
+          "Produits acquis sur la base de leurs performances en matière environnementale : Charcuterie",
+          "Produits acquis sur la base de leurs performances en matière environnementale : BOF (Produits laitiers, beurre et œufs)",
+          "Produits acquis sur la base de leurs performances en matière environnementale : Boulangerie/Pâtisserie fraîches",
+          "Produits acquis sur la base de leurs performances en matière environnementale : Boissons",
+          "Produits acquis sur la base de leurs performances en matière environnementale : Autres produits frais, surgelés et d’épicerie",
+          "Provenance France : Viandes et volailles fraîches et surgelées",
+          "Provenance France : Produits aquatiques frais et surgelés",
+          "Provenance France : Fruits et légumes frais et surgelés",
+          "Provenance France : Charcuterie",
+          "Provenance France : BOF (Produits laitiers, beurre et œufs)",
+          "Provenance France : Boulangerie/Pâtisserie fraîches",
+          "Provenance France : Boissons",
+          "Provenance France : Autres produits frais, surgelés et d’épicerie",
+          "Circuit-court : Viandes et volailles fraîches et surgelées",
+          "Circuit-court : Produits aquatiques frais et surgelés",
+          "Circuit-court : Fruits et légumes frais et surgelés",
+          "Circuit-court : Charcuterie",
+          "Circuit-court : BOF (Produits laitiers, beurre et œufs)",
+          "Circuit-court : Boulangerie/Pâtisserie fraîches",
+          "Circuit-court : Boissons",
+          "Circuit-court : Autres produits frais, surgelés et d’épicerie",
+          "Produit local : Viandes et volailles fraîches et surgelées",
+          "Produit local : Produits aquatiques frais et surgelés",
+          "Produit local : Fruits et légumes frais et surgelés",
+          "Produit local : Charcuterie",
+          "Produit local : BOF (Produits laitiers, beurre et œufs)",
+          "Produit local : Boulangerie/Pâtisserie fraîches",
+          "Produit local : Boissons",
+          "Produit local : Autres produits frais, surgelés et d’épicerie",
+        ]
       }
+      valuesArray.forEach((value) => {
+        array.push({
+          name: value,
+          description: numberFormatExample,
+          type: "Chiffre",
+          example: "1234.99",
+          optional: this.diagnosticType === "COMPLETE",
+        })
+      })
+      return array
+    },
+    exampleFilename() {
+      const root = "/static/documents/"
+      const filename =
+        this.diagnosticType === "COMPLETE" ? "fichier_exemple_complet_ma_cantine" : "fichier_exemple_ma_cantine"
+      return root + filename
     },
   },
   methods: {
