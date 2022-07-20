@@ -1,5 +1,11 @@
 <template>
   <div class="mt-n2">
+    <TeledeclarationPreview
+      v-if="diagnostic"
+      :diagnostic="diagnostic"
+      v-model="showTeledeclarationPreview"
+      @teledeclare="submitTeledeclaration"
+    />
     <v-row class="mt-2">
       <v-col class="text-left pb-10">
         <h1 class="font-weight-black text-h4 mb-4 mt-1">
@@ -196,7 +202,7 @@
           </v-form>
           <v-sheet rounded color="white" class="d-flex">
             <v-spacer></v-spacer>
-            <v-btn x-large color="primary" @click="submitTeledeclaration" :disabled="!canSubmitTeledeclaration">
+            <v-btn x-large color="primary" @click="openTeledeclarationPreview" :disabled="!canSubmitTeledeclaration">
               <v-icon class="mr-2">mdi-cloud-upload</v-icon>
               Télédéclarer mon diagnostic
             </v-btn>
@@ -224,6 +230,7 @@ import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import SimplifiedQualityValues from "./SimplifiedQualityValues"
 import ExtendedQualityValues from "./ExtendedQualityValues"
+import TeledeclarationPreview from "./TeledeclarationPreview"
 import Constants from "@/constants"
 import {
   getObjectDiff,
@@ -269,6 +276,7 @@ export default {
           help: "Vous connaissez les labels et les familles de produits de vos achats",
         },
       ],
+      showTeledeclarationPreview: false,
     }
   },
   components: {
@@ -280,6 +288,7 @@ export default {
     TeledeclarationCancelDialog,
     SimplifiedQualityValues,
     ExtendedQualityValues,
+    TeledeclarationPreview,
   },
   props: {
     canteenUrlComponent: {
@@ -540,6 +549,13 @@ export default {
         delete e["returnValue"]
       }
     },
+    openTeledeclarationPreview() {
+      const diagnosticFormsAreValid = this.validateForms()
+      const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
+      if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
+      if (!teledeclarationFormIsValid) return
+      this.showTeledeclarationPreview = true
+    },
     submitTeledeclaration() {
       const diagnosticFormsAreValid = this.validateForms()
       const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
@@ -581,6 +597,9 @@ export default {
           this.navigateToDiagnosticList()
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+        .finally(() => {
+          this.openTeledeclarationPreview = false
+        })
     },
     cancelTeledeclaration() {
       return this.$store

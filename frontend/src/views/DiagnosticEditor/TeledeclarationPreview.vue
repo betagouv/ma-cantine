@@ -1,0 +1,488 @@
+<template>
+  <v-dialog v-model="isOpen" max-width="750">
+    <v-card ref="content">
+      <v-card-title class="font-weight-bold">Votre télédéclaration</v-card-title>
+      <v-card-text class="text-left pb-0">
+        Veuillez vérifier les données ci-dessous. Pour les données d'approvisionnement, les champs laissés en blanc
+        prendront une valeur de 0 € HT
+      </v-card-text>
+      <v-card-text ref="table" class="my-4" style="overflow-y: scroll; border: solid 1px #9b9b9b;">
+        <v-simple-table dense>
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th style="height: 0;" class="text-left"></th>
+                <th style="height: 0; min-width: 150px;" class="text-left"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left font-weight-bold">
+                  Type de déclaration : {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
+                </td>
+                <td class="text-left font-weight-bold"></td>
+              </tr>
+              <tr v-for="item in approKeys" :key="item.param">
+                <td class="text-left">{{ item.label }}</td>
+                <td class="text-left">
+                  {{ (diagnostic[item.param] || 0) | toCurrency }}
+                  HT
+                </td>
+              </tr>
+              <tr v-for="item in additionalItems" :key="item.label">
+                <td class="text-left">{{ item.label }}</td>
+                <td class="text-left">{{ item.value }}</td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-card-text>
+      <v-card-actions class="d-flex pr-4 pb-4">
+        <v-spacer></v-spacer>
+        <v-btn outlined color="primary" @click="closeDialog">Annuler</v-btn>
+        <v-btn color="primary" class="ml-4" @click="confirmTeledeclaration">Télédéclarer ces données</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script>
+export default {
+  props: {
+    value: {
+      required: true,
+    },
+    diagnostic: {
+      required: true,
+    },
+  },
+  computed: {
+    isOpen: {
+      get() {
+        return this.value
+      },
+      set(newValue) {
+        this.$emit("input", newValue)
+      },
+    },
+    approKeys() {
+      if (this.diagnostic.diagnosticType === "COMPLETE") {
+        return [
+          { param: "valueViandesVolaillesBio", label: "Mes achats viandes et volailles Bio" },
+          { param: "valueProduitsDeLaMerBio", label: "Mes achats poissons et produits de la mer Bio" },
+          { param: "valueFruitsEtLegumesBio", label: "Mes achats fruits et legumes Bio" },
+          { param: "valueCharcuterieBio", label: "Mes achats charcuterie Bio" },
+          { param: "valueProduitsLaitiersBio", label: "Mes achats produits laitiers Bio" },
+          { param: "valueBoulangerieBio", label: "Mes achats boulangerie Bio" },
+          { param: "valueBoissonsBio", label: "Mes achats boissons Bio" },
+          { param: "valueAutresBio", label: "Mes autres achats Bio" },
+          { param: "valueViandesVolaillesLabelRouge", label: "Mes achats viandes et volailles Label Rouge" },
+          { param: "valueProduitsDeLaMerLabelRouge", label: "Mes achats poissons et produits de la mer Label Rouge" },
+          { param: "valueFruitsEtLegumesLabelRouge", label: "Mes achats fruits et legumes Label Rouge" },
+          { param: "valueCharcuterieLabelRouge", label: "Mes achats charcuterie Label Rouge" },
+          { param: "valueProduitsLaitiersLabelRouge", label: "Mes achats produits laitiers Label Rouge" },
+          { param: "valueBoulangerieLabelRouge", label: "Mes achats boulangerie Label Rouge" },
+          { param: "valueBoissonsLabelRouge", label: "Mes achats boissons Label Rouge" },
+          { param: "valueAutresLabelRouge", label: "Mes autres achats Label Rouge" },
+          { param: "valueViandesVolaillesAocaopIgpStg", label: "Mes achats viandes et volailles AOC/AOP, IGP ou STG" },
+          {
+            param: "valueProduitsDeLaMerAocaopIgpStg",
+            label: "Mes achats poissons et produits de la mer AOC/AOP, IGP ou STG",
+          },
+          { param: "valueFruitsEtLegumesAocaopIgpStg", label: "Mes achats fruits et legumes AOC/AOP, IGP ou STG" },
+          { param: "valueCharcuterieAocaopIgpStg", label: "Mes achats charcuterie AOC/AOP, IGP ou STG" },
+          { param: "valueProduitsLaitiersAocaopIgpStg", label: "Mes achats produits laitiers AOC/AOP, IGP ou STG" },
+          { param: "valueBoulangerieAocaopIgpStg", label: "Mes achats boulangerie AOC/AOP, IGP ou STG" },
+          { param: "valueBoissonsAocaopIgpStg", label: "Mes achats boissons AOC/AOP, IGP ou STG" },
+          { param: "valueAutresAocaopIgpStg", label: "Mes autres achats AOC/AOP, IGP ou STG" },
+          { param: "valueViandesVolaillesHve", label: "Mes achats viandes et volailles Hve" },
+          { param: "valueProduitsDeLaMerHve", label: "Mes achats poissons et produits de la mer Hve" },
+          { param: "valueFruitsEtLegumesHve", label: "Mes achats fruits et legumes Hve" },
+          { param: "valueCharcuterieHve", label: "Mes achats charcuterie Hve" },
+          { param: "valueProduitsLaitiersHve", label: "Mes achats produits laitiers Hve" },
+          { param: "valueBoulangerieHve", label: "Mes achats boulangerie Hve" },
+          { param: "valueBoissonsHve", label: "Mes achats boissons Hve" },
+          { param: "valueAutresHve", label: "Mes autres achats Hve" },
+          { param: "valueViandesVolaillesPecheDurable", label: "Mes achats viandes et volailles Peche Durable" },
+          {
+            param: "valueProduitsDeLaMerPecheDurable",
+            label: "Mes achats poissons et produits de la mer Peche Durable",
+          },
+          { param: "valueFruitsEtLegumesPecheDurable", label: "Mes achats fruits et legumes Peche Durable" },
+          { param: "valueCharcuteriePecheDurable", label: "Mes achats charcuterie Peche Durable" },
+          { param: "valueProduitsLaitiersPecheDurable", label: "Mes achats produits laitiers Peche Durable" },
+          { param: "valueBoulangeriePecheDurable", label: "Mes achats boulangerie Peche Durable" },
+          { param: "valueBoissonsPecheDurable", label: "Mes achats boissons Peche Durable" },
+          { param: "valueAutresPecheDurable", label: "Mes autres achats Peche Durable" },
+          { param: "valueViandesVolaillesRup", label: "Mes achats viandes et volailles Rup" },
+          { param: "valueProduitsDeLaMerRup", label: "Mes achats poissons et produits de la mer Rup" },
+          { param: "valueFruitsEtLegumesRup", label: "Mes achats fruits et legumes Rup" },
+          { param: "valueCharcuterieRup", label: "Mes achats charcuterie Rup" },
+          { param: "valueProduitsLaitiersRup", label: "Mes achats produits laitiers Rup" },
+          { param: "valueBoulangerieRup", label: "Mes achats boulangerie Rup" },
+          { param: "valueBoissonsRup", label: "Mes achats boissons Rup" },
+          { param: "valueAutresRup", label: "Mes autres achats Rup" },
+          { param: "valueViandesVolaillesFermier", label: "Mes achats viandes et volailles Fermier" },
+          { param: "valueProduitsDeLaMerFermier", label: "Mes achats poissons et produits de la mer Fermier" },
+          { param: "valueFruitsEtLegumesFermier", label: "Mes achats fruits et legumes Fermier" },
+          { param: "valueCharcuterieFermier", label: "Mes achats charcuterie Fermier" },
+          { param: "valueProduitsLaitiersFermier", label: "Mes achats produits laitiers Fermier" },
+          { param: "valueBoulangerieFermier", label: "Mes achats boulangerie Fermier" },
+          { param: "valueBoissonsFermier", label: "Mes achats boissons Fermier" },
+          { param: "valueAutresFermier", label: "Mes autres achats Fermier" },
+          {
+            param: "valueViandesVolaillesExternalites",
+            label: "Mes achats viandes et volailles Externalités Environnementales",
+          },
+          {
+            param: "valueProduitsDeLaMerExternalites",
+            label: "Mes achats poissons et produits de la mer Externalités Environnementales",
+          },
+          {
+            param: "valueFruitsEtLegumesExternalites",
+            label: "Mes achats fruits et legumes Externalités Environnementales",
+          },
+          { param: "valueCharcuterieExternalites", label: "Mes achats charcuterie Externalités Environnementales" },
+          {
+            param: "valueProduitsLaitiersExternalites",
+            label: "Mes achats produits laitiers Externalités Environnementales",
+          },
+          { param: "valueBoulangerieExternalites", label: "Mes achats boulangerie Externalités Environnementales" },
+          { param: "valueBoissonsExternalites", label: "Mes achats boissons Externalités Environnementales" },
+          { param: "valueAutresExternalites", label: "Mes autres achats Externalités Environnementales" },
+          {
+            param: "valueViandesVolaillesCommerceEquitable",
+            label: "Mes achats viandes et volailles Commerce Equitable",
+          },
+          {
+            param: "valueProduitsDeLaMerCommerceEquitable",
+            label: "Mes achats poissons et produits de la mer Commerce Equitable",
+          },
+          { param: "valueFruitsEtLegumesCommerceEquitable", label: "Mes achats fruits et legumes Commerce Equitable" },
+          { param: "valueCharcuterieCommerceEquitable", label: "Mes achats charcuterie Commerce Equitable" },
+          { param: "valueProduitsLaitiersCommerceEquitable", label: "Mes achats produits laitiers Commerce Equitable" },
+          { param: "valueBoulangerieCommerceEquitable", label: "Mes achats boulangerie Commerce Equitable" },
+          { param: "valueBoissonsCommerceEquitable", label: "Mes achats boissons Commerce Equitable" },
+          { param: "valueAutresCommerceEquitable", label: "Mes autres achats Commerce Equitable" },
+          {
+            param: "valueViandesVolaillesPerformance",
+            label: "Mes achats viandes et volailles Performance Environnementale",
+          },
+          {
+            param: "valueProduitsDeLaMerPerformance",
+            label: "Mes achats poissons et produits de la mer Performance Environnementale",
+          },
+          {
+            param: "valueFruitsEtLegumesPerformance",
+            label: "Mes achats fruits et legumes Performance Environnementale",
+          },
+          { param: "valueCharcuteriePerformance", label: "Mes achats charcuterie Performance Environnementale" },
+          {
+            param: "valueProduitsLaitiersPerformance",
+            label: "Mes achats produits laitiers Performance Environnementale",
+          },
+          { param: "valueBoulangeriePerformance", label: "Mes achats boulangerie Performance Environnementale" },
+          { param: "valueBoissonsPerformance", label: "Mes achats boissons Performance Environnementale" },
+          { param: "valueAutresPerformance", label: "Mes autres achats Performance Environnementale" },
+          { param: "valueViandesVolaillesFrance", label: "Mes achats viandes et volailles provenance France" },
+          { param: "valueProduitsDeLaMerFrance", label: "Mes achats poissons et produits de la mer provenance France" },
+          { param: "valueFruitsEtLegumesFrance", label: "Mes achats fruits et legumes provenance France" },
+          { param: "valueCharcuterieFrance", label: "Mes achats charcuterie provenance France" },
+          { param: "valueProduitsLaitiersFrance", label: "Mes achats produits laitiers provenance France" },
+          { param: "valueBoulangerieFrance", label: "Mes achats boulangerie provenance France" },
+          { param: "valueBoissonsFrance", label: "Mes achats boissons provenance France" },
+          { param: "valueAutresFrance", label: "Mes autres achats provenance France" },
+          { param: "valueViandesVolaillesShortDistribution", label: "Mes achats viandes et volailles circuit-court" },
+          {
+            param: "valueProduitsDeLaMerShortDistribution",
+            label: "Mes achats poissons et produits de la mer circuit-court",
+          },
+          { param: "valueFruitsEtLegumesShortDistribution", label: "Mes achats fruits et legumes circuit-court" },
+          { param: "valueCharcuterieShortDistribution", label: "Mes achats charcuterie circuit-court" },
+          { param: "valueProduitsLaitiersShortDistribution", label: "Mes achats produits laitiers circuit-court" },
+          { param: "valueBoulangerieShortDistribution", label: "Mes achats boulangerie circuit-court" },
+          { param: "valueBoissonsShortDistribution", label: "Mes achats boissons circuit-court" },
+          { param: "valueAutresShortDistribution", label: "Mes autres achats circuit-court" },
+          { param: "valueViandesVolaillesLocal", label: "Mes achats viandes et volailles Local" },
+          { param: "valueProduitsDeLaMerLocal", label: "Mes achats poissons et produits de la mer Local" },
+          { param: "valueFruitsEtLegumesLocal", label: "Mes achats fruits et legumes Local" },
+          { param: "valueCharcuterieLocal", label: "Mes achats charcuterie Local" },
+          { param: "valueProduitsLaitiersLocal", label: "Mes achats produits laitiers Local" },
+          { param: "valueBoulangerieLocal", label: "Mes achats boulangerie Local" },
+          { param: "valueBoissonsLocal", label: "Mes achats boissons Local" },
+          { param: "valueAutresLocal", label: "Mes autres achats Local" },
+        ]
+      }
+      return [
+        { param: "valueTotalHt", label: "Mes achats alimentaires total" },
+        { param: "valueBioHt", label: "Mes achats Bio ou en conversion Bio" },
+        { param: "valueSustainableHt", label: "Mes achats SIQO (AOP/AOC, IGP, STG)" },
+        {
+          param: "valueExternalityPerformanceHt",
+          label:
+            "Mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
+        },
+        { param: "valueEgalimOthersHt", label: "Autres achats EGAlim" },
+        {
+          param: "valueMeatPoultryHt",
+          label: "Mes achats en viandes et volailles fraiches ou surgelées total",
+        },
+        {
+          param: "valueMeatPoultryEgalimHt",
+          label: "Mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+        },
+        {
+          param: "valueMeatPoultryFranceHt",
+          label: "Mes achats provenance France en viandes et volailles fraiches ou surgelées",
+        },
+        { param: "valueFishHt", label: "Mes achats en poissons et produits aquatiques total" },
+        {
+          param: "valueFishEgalimHt",
+          label: "Mes achats EGAlim en poissons et produits aquatiques",
+        },
+      ]
+    },
+    additionalItems() {
+      return [
+        {
+          label: "Diagnostic sur le gaspillage alimentaire réalisé",
+          value: this.diagnostic.hasWasteDiagnostic ? "Oui" : "Non",
+        },
+        {
+          label: "Plan d'action contre le gaspillage en place",
+          value: this.diagnostic.hasWastePlan ? "Oui" : "Non",
+        },
+        {
+          label: "Actions contre le gaspillage en place",
+          value: this.getWasteActions(this.diagnostic.wasteActions),
+        },
+        {
+          label: "Autres actions contre le gaspillage alimentaire",
+          value: this.diagnostic.otherWasteActions || "Aucune",
+        },
+        {
+          label: "Propose des dons alimentaires",
+          value: this.diagnostic.hasDonationAgreement ? "Oui" : "Non",
+        },
+        {
+          label: "Réalise des mesures de gaspillage alimentaire",
+          value: this.diagnostic.hasWasteMeasures ? "Oui" : "Non",
+        },
+        {
+          label: "Restes de pain kg/an",
+          value: this.diagnostic.breadLeftovers || "Non renseigné",
+        },
+        {
+          label: "Restes servis (plateau) kg/an",
+          value: this.diagnostic.servedLeftovers || "Non renseigné",
+        },
+        {
+          label: "Restes non servis kg/an",
+          value: this.diagnostic.unservedLeftovers || "Non renseigné",
+        },
+        {
+          label: "Restes de composantes kg/an",
+          value: this.diagnostic.sideLeftovers || "Non renseigné",
+        },
+        {
+          label: "Fréquence de dons en dons/an",
+          value: this.diagnostic.donationFrequency || "Non renseigné",
+        },
+        {
+          label: "Quantité des denrées données kg/an",
+          value: this.diagnostic.donationQuantity || "Non renseigné",
+        },
+        {
+          label: "Type de denrées données",
+          value: this.diagnostic.donationFoodType || "Non renseigné",
+        },
+        {
+          label: "Autres commentaires sur le gaspillage",
+          value: this.diagnostic.otherWasteComments || "Aucun",
+        },
+        {
+          label: "Plan de diversification de protéines en place",
+          value: this.diagnostic.hasDiversificationPlan ? "Oui" : "Non",
+        },
+        {
+          label: "Actions incluses dans le plan de diversification des protéines",
+          value: this.getDiversificationPlanActions(this.diagnostic.diversificationPlanActions),
+        },
+        {
+          label: "Menus végétariens par semaine",
+          value: this.getVegetarianWeeklyRecurrence(this.diagnostic.vegetarianWeeklyRecurrence),
+        },
+        {
+          label: "Menu végétarien proposé",
+          value: this.getVegetarianMenuType(this.diagnostic.vegetarianMenuType),
+        },
+        {
+          label: "Bases du menu végétarien",
+          value: this.getVegetarianMenuBases(this.diagnostic.vegetarianMenuBases),
+        },
+        {
+          label: "Contenants de cuisson en plastique remplacés",
+          value: this.diagnostic.cookingPlasticSubstituted ? "Oui" : "Non",
+        },
+        {
+          label: "Contenants de service en plastique remplacés",
+          value: this.diagnostic.servingPlasticSubstituted ? "Oui" : "Non",
+        },
+        {
+          label: "Bouteilles en plastique remplacées",
+          value: this.diagnostic.plasticBottlesSubstituted ? "Oui" : "Non",
+        },
+        {
+          label: "Ustensils en plastique remplacés",
+          value: this.diagnostic.plasticTablewareSubstituted ? "Oui" : "Non",
+        },
+        {
+          label: "Supports de communication utilisés",
+          value: this.getCommunicationSupports(this.diagnostic.communicationSupports),
+        },
+        {
+          label: "Autres supports de communication",
+          value: this.diagnostic.otherCommunicationSupport || "Non renseigné",
+        },
+        {
+          label: "Lien (URL) de communication",
+          value: this.diagnostic.communicationSupportUrl || "Aucun",
+        },
+        {
+          label: "Communique sur le plan alimentaire",
+          value: this.diagnostic.communicatesOnFoodPlan ? "Oui" : "Non",
+        },
+        {
+          label: "Communique sur les démarches qualité/durables/équitables",
+          value: this.diagnostic.communicatesOnFoodQuality ? "Oui" : "Non",
+        },
+        {
+          label: "Fréquence de communication",
+          value: this.getCommunicationFrequency(this.diagnostic.communicationFrequency),
+        },
+      ]
+    },
+  },
+  methods: {
+    calculateTableHeight() {
+      if (!this.$refs || !this.$refs.table || !this.$refs.content) return
+      const contentHeight = this.$refs.content.$el.offsetHeight
+      const currentTableHeight = this.$refs.table.offsetHeight
+      const remainingItemsHeight = contentHeight - currentTableHeight
+      const calculatedHeight = window.innerHeight * 0.9 - remainingItemsHeight
+      this.$refs.table.style.height = `${parseInt(calculatedHeight)}px`
+    },
+    getWasteActions(wasteActions) {
+      if (!wasteActions || !wasteActions.length) return "Aucune"
+      const actionItems = {
+        INSCRIPTION: "Pré-inscription des convives obligatoire",
+        AWARENESS: "Sensibilisation par affichage ou autre média",
+        TRAINING: "Formation / information du personnel de restauration",
+        DISTRIBUTION: "Réorganisation de la distribution des composantes du repas",
+        PORTIONS: "Choix des portions (grande faim, petite faim)",
+        REUSE: "Réutilisation des restes de préparation / surplus",
+      }
+      const actionLabels = wasteActions.map((x) => actionItems[x]).filter((x) => !!x)
+      return actionLabels.join(", ")
+    },
+    getDiversificationPlanActions(diversificationPlanActions) {
+      if (!diversificationPlanActions || !diversificationPlanActions.length) return "Non renseigné"
+      const actionItems = {
+        PRODUCTS:
+          "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
+        PRESENTATION: "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
+        MENU: "Agir sur la manière dont les menus sont conçus ces plats en soulignant leurs attributs positifs",
+        PROMOTION: "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
+        TRAINING:
+          "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
+      }
+      const labels = diversificationPlanActions.map((x) => actionItems[x]).filter((x) => !!x)
+      return labels.join(", ")
+    },
+    getVegetarianWeeklyRecurrence(vegetarianWeeklyRecurrence) {
+      if (!vegetarianWeeklyRecurrence) return "Non renseigné"
+      const items = {
+        LOW: "Moins d'une fois par semaine",
+        MID: "Une fois par semaine",
+        HIGH: "Plus d'une fois par semaine",
+        DAILY: "De façon quotidienne",
+      }
+      return items[vegetarianWeeklyRecurrence] || "Non renseigné"
+    },
+    getVegetarianMenuType(vegetarianMenuType) {
+      if (!vegetarianMenuType) return "Non renseigné"
+      const items = {
+        UNIQUE: "Un menu végétarien en plat unique, sans choix",
+        SEVERAL: "Un menu végétarien composé de plusieurs choix de plats végétariens",
+        ALTERNATIVES: "Un menu végétarien au choix, en plus d'autres plats non végétariens",
+      }
+      return items[vegetarianMenuType] || "Non renseigné"
+    },
+    getVegetarianMenuBases(vegetarianMenuBases) {
+      if (!vegetarianMenuBases || !vegetarianMenuBases.length) return "Non renseigné"
+      const actionItems = {
+        GRAIN: "De céréales et/ou les légumes secs (hors soja)",
+        SOY: "De soja",
+        CHEESE: "De fromage",
+        EGG: "D’œufs",
+        READYMADE: "Plats prêts à l'emploi",
+      }
+      const labels = vegetarianMenuBases.map((x) => actionItems[x]).filter((x) => !!x)
+      return labels.join(", ")
+    },
+    getCommunicationSupports(communicationSupports) {
+      if (!communicationSupports || !communicationSupports.length) return "Aucun"
+      const supportItems = {
+        EMAIL: "Envoi d'e-mail aux convives ou à leurs représentants",
+        DISPLAY: "Par affichage sur le lieu de restauration",
+        WEBSITE: "Sur site internet ou intranet (mairie, cantine)",
+        OTHER: "Autres moyens d'affichage et de communication électronique",
+        DIGITAL: "Par voie électronique",
+      }
+      const labels = communicationSupports.map((x) => supportItems[x]).filter((x) => !!x)
+      return labels.join(", ")
+    },
+    getCommunicationFrequency(communicationFrequency) {
+      if (!communicationFrequency) return "Non renseigné"
+      const items = {
+        REGULARLY: "Régulièrement au cours de l’année",
+        YEARLY: "Une fois par an",
+        LESS_THAN_YEARLY: "Moins d'une fois par an",
+      }
+      return items[communicationFrequency] || "Non renseigné"
+    },
+    closeDialog() {
+      this.$emit("input", false)
+    },
+    confirmTeledeclaration() {
+      this.$emit("teledeclare")
+    },
+  },
+  mounted() {
+    window.addEventListener("resize", this.calculateTableHeight)
+    this.calculateTableHeight()
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.calculateTableHeight)
+  },
+  watch: {
+    value(newValue) {
+      if (newValue) {
+        this.$nextTick().then(this.calculateTableHeight)
+      }
+    },
+  },
+  filters: {
+    toCurrency(value) {
+      if (typeof value !== "number") {
+        return value
+      }
+      const formatter = new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR",
+      })
+      return formatter.format(value)
+    },
+  },
+}
+</script>
