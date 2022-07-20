@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { isDiagnosticComplete, lastYear } from "@/utils"
+import { hasDiagnosticApproData, lastYear } from "@/utils"
 
 export default {
   name: "CanteenNavigation",
@@ -82,7 +82,7 @@ export default {
         this.canteen.productionType !== "central" &&
         this.canteen.publicationStatus === "draft" &&
         !!diagnostic &&
-        isDiagnosticComplete(diagnostic)
+        hasDiagnosticApproData(diagnostic)
       )
     },
     showSatellitePage() {

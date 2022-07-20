@@ -240,7 +240,7 @@ import {
   diagnosticYears,
   getPercentage,
   readCookie,
-  isDiagnosticComplete,
+  hasDiagnosticApproData,
 } from "@/utils"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
@@ -339,7 +339,7 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return isDiagnosticComplete(this.diagnostic)
+      return hasDiagnosticApproData(this.diagnostic)
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
