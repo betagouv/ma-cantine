@@ -2,7 +2,51 @@
   <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">Créer des cantines via CSV</h1>
     <p>
-      Créez plusieurs cantines et diagnostics en transférant un fichier CSV suivant les spécifications ci-dessous.
+      Vous gérez plus que dix cantines, ou vous avez déjà vos données en format tableur numérique ? Utilisez notre outil
+      d'import pour ajouter vos cantines en deux étapes !
+    </p>
+    <p>
+      Sinon, utilisez notre
+      <router-link :to="{ name: 'NewCanteen' }">formulaire pour ajouter une nouvelle cantine</router-link>
+      pour une experience plus guidé.
+    </p>
+
+    <h2 class="my-4">1. Preparer le fichier</h2>
+
+    <p>
+      Suivant le niveau d'information disponible, vous pouvez choisir entre ces deux types d'import. À terme, pour
+      télédéclarer vos données, seule le diagnostic complet sera accepté.
+    </p>
+    <v-radio-group v-model="diagnosticType">
+      <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
+        <template v-slot:label>
+          <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
+          <span class="body-2 ml-3">{{ type.help }}</span>
+        </template>
+      </v-radio>
+    </v-radio-group>
+    <p>
+      <a href="#documentation">
+        Voir les données requises pour
+        <b>{{ importDocString }}</b>
+        .
+      </a>
+    </p>
+    <p>
+      Vous pouvez également télécharger un fichier exemple en format de choix :
+      <a class="text-decoration-underline" :href="`${exampleFilename}.csv`" download>
+        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
+        CSV (.csv)
+      </a>
+      <a class="text-decoration-underline" :href="`${exampleFilename}.xlsx`" download>
+        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
+        Excel (.xlsx)
+      </a>
+      <a class="text-decoration-underline" :href="`${exampleFilename}.ods`" download>
+        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
+        OpenDocument (.ods)
+      </a>
+      .
     </p>
 
     <v-alert v-if="isStaff" outlined type="info" class="body-2 blue--text text--darken-2">
@@ -41,39 +85,19 @@
       Bon courage ! 👾 🚀
     </v-alert>
 
+    <h2 class="mt-8">2. Transfèrer le fichier</h2>
     <v-row>
-      <v-col class="py-10">
-        <p>
-          Suivant le niveau d'information disponible, vous pouvez choisir entre ces deux types d'import. À terme, pour
-          télédéclarer vos données, seule le diagnostic complet sera accepté.
-        </p>
-        <v-radio-group v-model="diagnosticType">
+      <v-col cols="4" class="py-10">
+        <label>Confirmer le niveau d'import :</label>
+        <v-radio-group v-model="diagnosticType" class="ml-4">
           <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
             <template v-slot:label>
-              <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
-              <span class="body-2 ml-3">{{ type.help }}</span>
+              <span class="grey--text text--darken-3">{{ type.label }}</span>
             </template>
           </v-radio>
         </v-radio-group>
-        <p><a href="#documentation">Voir les données requises pour cet import.</a></p>
-        <p>
-          Vous pouvez également télécharger un fichier exemple en format de choix :
-          <a class="text-decoration-underline" :href="`${exampleFilename}.csv`" download>
-            <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-            CSV (.csv)
-          </a>
-          <a class="text-decoration-underline" :href="`${exampleFilename}.xlsx`" download>
-            <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-            Excel (.xlsx)
-          </a>
-          <a class="text-decoration-underline" :href="`${exampleFilename}.ods`" download>
-            <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-            OpenDocument (.ods)
-          </a>
-          .
-        </p>
       </v-col>
-      <v-col cols="4" align="right">
+      <v-col>
         <FileDrop
           v-model="file"
           subtitle="Format CSV encodé en UTF-8 attendu"
@@ -90,17 +114,29 @@
       <span class="mt-1">Traitement en cours...</span>
     </v-card>
     <div v-if="!isNaN(canteenCount) && !importInProgress">
-      <v-alert type="success" outlined v-if="canteenCount > 0">
-        <span class="grey--text text--darken-4 body-2">
-          {{ canteenCount }} cantines
-          <span v-if="diagnosticCount">et {{ diagnosticCount }} diagnostics&nbsp;</span>
-          <span>ont été {{ diagnosticCount ? "traités" : "traitées" }}.</span>
-        </span>
-      </v-alert>
+      <!-- TODO: maybe just redirect to mes cantines on success ? -->
+      <div v-if="canteenCount > 0">
+        <v-alert type="success" outlined>
+          <span class="grey--text text--darken-4 body-2">
+            {{ canteenCount }} cantines
+            <span v-if="diagnosticCount">et {{ diagnosticCount }} diagnostics&nbsp;</span>
+            <span>ont été {{ diagnosticCount ? "traités" : "traitées" }}.</span>
+          </span>
+        </v-alert>
+        <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retourner à mes cantines</router-link>
+      </div>
       <div v-if="errors && errors.length">
+        <h2 class="my-4">3. Adresser les erreurs suivants, et re-essayer</h2>
         <p class="text-body-2 red--text text--darken-4" v-if="canteenCount === 0">
           Nous n'avons pas pu traiter votre fichier. Vous trouverez ci-dessous des informations sur les erreurs
           rencontrées.
+        </p>
+        <p class="text-body-2">
+          Revoir
+          <a href="#documentation">notre documentation</a>
+          pour repondre aux questions les plus fréquentes, ou
+          <a href="#contact">contactez-nous</a>
+          pour plus d'aide.
         </p>
         <v-alert type="error" outlined>
           <v-simple-table color="red darken-2" dense>
@@ -121,14 +157,14 @@
           </v-simple-table>
         </v-alert>
       </div>
-      <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retourner à mes cantines</router-link>
-      <v-divider class="my-8"></v-divider>
     </div>
 
+    <v-divider class="my-8" />
+
+    <h2 class="my-4" id="documentation">Le détail</h2>
     <v-card
       :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.xs, 'align-center': $vuetify.breakpoint.xs }"
       outlined
-      id="documentation"
     >
       <video
         ref="video"
@@ -155,14 +191,14 @@
         </p>
       </div>
     </v-card>
-    <h2 class="my-6">Format du fichier</h2>
+    <h3 class="my-6">Format du fichier</h3>
     <p>
       Le fichier CSV doit être encodé avec UTF-8 et contenir un diagnostic par ligne. Chaque ligne doit aussi inclure
       les informations de la cantine associée.
     </p>
     <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
     <p>Si un diagnostic pour la même année et la même cantine existe déjà il ne sera pas modifié.</p>
-    <h3 class="my-6">Colonnes</h3>
+    <h4 class="my-6">Colonnes</h4>
     <v-simple-table class="my-6">
       <template v-slot:default>
         <thead>
@@ -225,7 +261,7 @@
     </v-simple-table>
     <p v-else>Rien d'autre colonnes requises.</p>
 
-    <h3 class="my-6">Fichiers d'exemple</h3>
+    <h4 class="my-6">Fichiers d'exemple</h4>
     <p>
       Nous mettons à votre disposition un fichier exemple en format de choix :
       <a class="text-decoration-underline" :href="`${exampleFilename}.csv`" download>
@@ -243,7 +279,7 @@
       à remplir avec vos données.
     </p>
 
-    <h2 class="my-6">Vous avez besoin d'aide ?</h2>
+    <h2 class="my-6" id="#contact">Vous avez besoin d'aide ?</h2>
     <p>
       Si votre fichier comptable agrégé ne ressemble pas du tout à ça, vous pouvez nous l'envoyer en remplissant les
       champs ci-dessous ou nous contacter directement à l'adresse
@@ -554,6 +590,13 @@ export default {
       const filename =
         this.diagnosticType === "COMPLETE" ? "fichier_exemple_complet_ma_cantine" : "fichier_exemple_ma_cantine"
       return root + filename
+    },
+    importDocString() {
+      return {
+        SIMPLE: "l'import simple",
+        COMPLETE: "l'import complet",
+        NONE: "l'import de cantines seulement",
+      }[this.diagnosticType]
     },
   },
   methods: {
