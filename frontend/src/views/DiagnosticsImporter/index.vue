@@ -57,14 +57,33 @@
       Bon courage ! 👾 🚀
     </v-alert>
 
-    <FileDrop
-      v-model="file"
-      subtitle="Format CSV encodé en UTF-8 attendu"
-      :acceptTypes="['.csv', 'text/csv', '.tsv', 'text/tsv']"
-      maxSize="10485760"
-      @upload="upload"
-      :disabled="importInProgress"
-    />
+    <v-row>
+      <v-col class="py-10">
+        <p>
+          Suivant le niveau d'information disponible, vous pouvez choisir entre ces deux types d'import. À terme, pour
+          télédéclarer vos données, seule le diagnostic complet sera accepté.
+        </p>
+        <v-radio-group v-model="diagnosticType">
+          <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
+            <template v-slot:label>
+              <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
+              <span class="body-2 ml-3">{{ type.help }}</span>
+            </template>
+          </v-radio>
+        </v-radio-group>
+        <p><a href="#documentation">Voir les données requises pour cet import.</a></p>
+      </v-col>
+      <v-col cols="4" align="right">
+        <FileDrop
+          v-model="file"
+          subtitle="Format CSV encodé en UTF-8 attendu"
+          :acceptTypes="['.csv', 'text/csv', '.tsv', 'text/tsv']"
+          maxSize="10485760"
+          @upload="upload"
+          :disabled="importInProgress"
+        />
+      </v-col>
+    </v-row>
 
     <v-card outlined class="pa-4" v-if="importInProgress">
       <v-progress-circular indeterminate color="primary" size="28" class="mr-4"></v-progress-circular>
@@ -109,6 +128,7 @@
     <v-card
       :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.xs, 'align-center': $vuetify.breakpoint.xs }"
       outlined
+      id="documentation"
     >
       <video
         ref="video"
@@ -156,7 +176,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(field, idx) in documentation" :key="idx">
+          <tr v-for="(field, idx) in sharedDocumentation" :key="idx">
             <td class="text-center">{{ idx + 1 }}</td>
             <td>{{ field.name }}</td>
             <td v-html="field.description"></td>
@@ -167,6 +187,43 @@
         </tbody>
       </template>
     </v-simple-table>
+    <p>
+      Les champs suivants changent selon le type de diagnostic choisit. Pour rappel, à terme, seule le diagnostic
+      complète sera acceptée.
+    </p>
+    <v-radio-group v-model="diagnosticType">
+      <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
+        <template v-slot:label>
+          <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
+          <span class="body-2 ml-3">{{ type.help }}</span>
+        </template>
+      </v-radio>
+    </v-radio-group>
+    <v-simple-table class="my-2" v-if="diagnosticDocumentation.length">
+      <template v-slot:default>
+        <thead>
+          <tr>
+            <th>Colonne</th>
+            <th>Champ</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Exemple</th>
+            <th>Obligatoire</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(field, idx) in diagnosticDocumentation" :key="idx">
+            <td class="text-center">{{ sharedDocumentation.length + idx + 1 }}</td>
+            <td>{{ field.name }}</td>
+            <td v-html="field.description"></td>
+            <td>{{ field.type }}</td>
+            <td style="min-width: 160px;">{{ field.example }}</td>
+            <td class="text-center">{{ field.optional ? "✘" : "✔" }}</td>
+          </tr>
+        </tbody>
+      </template>
+    </v-simple-table>
+    <p v-else>Rien d'autre colonnes requises.</p>
 
     <h3 class="my-6">Fichiers d'exemple</h3>
     <p>
@@ -234,7 +291,6 @@ export default {
   components: { FileDrop },
   data() {
     const user = this.$store.state.loggedUser
-    const numberFormatExample = "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>."
     return {
       file: undefined,
       canteens: undefined,
@@ -243,7 +299,7 @@ export default {
       errors: undefined,
       seconds: undefined,
       importInProgress: false,
-      documentation: [
+      sharedDocumentation: [
         {
           name: "SIRET de la cuisine-site",
           description: "Ce SIRET doit être unique car il correspond à un lieu physique.",
@@ -316,73 +372,6 @@ export default {
           example: "gestionnaire1@example.com, gestionnaire2@example.com",
           optional: true,
         },
-        {
-          name: "Année du diagnostic",
-          description: "En format <code>YYYY</code>.",
-          type: "Chiffre",
-          example: "2020",
-        },
-        {
-          name: "Valeur totale d'achats HT",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "3290.23",
-        },
-        {
-          name: "Valeur d'achats bio HT",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "1284.70",
-        },
-        {
-          name: "Valeur d'achats SIQO (hors bio) HT",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "681",
-        },
-        {
-          name:
-            "Valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "681",
-        },
-        {
-          name: "Valeur (en HT) des autres achats EGAlim",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "681",
-        },
-        {
-          name: "Valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "681",
-        },
-        {
-          name: "Valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "681",
-        },
-        {
-          name: "Valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "681",
-        },
-        {
-          name: "Valeur (en HT) des mes achats en poissons et produits aquatiques total",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "681",
-        },
-        {
-          name: "Valeur (en HT) des mes achats EGAlim en poissons et produits aquatiques",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "681",
-        },
       ],
       validators,
       helpFormIsValid: true,
@@ -391,7 +380,104 @@ export default {
       message: "",
       unusualFile: null,
       isStaff: user.isStaff,
+      diagnosticTypes: [
+        {
+          key: "NONE",
+          label: "Sans diagnostic",
+          help: "Vous voulez importer des cantines sans diagnostic",
+        },
+        {
+          key: "SIMPLE",
+          label: "Diagnostic simple",
+          help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
+        },
+        {
+          key: "COMPLETE",
+          label: "Diagnostic complet",
+          help: "Vous connaissez les labels et les familles de produits de vos achats",
+        },
+      ],
+      diagnosticType: "SIMPLE",
     }
+  },
+  computed: {
+    diagnosticDocumentation() {
+      const numberFormatExample = "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>."
+      switch (this.diagnosticType) {
+        case "SIMPLE":
+          return [
+            {
+              name: "Année du diagnostic",
+              description: "En format <code>YYYY</code>.",
+              type: "Chiffre",
+              example: "2020",
+            },
+            {
+              name: "Valeur totale d'achats HT",
+              description: numberFormatExample,
+              type: "Chiffre",
+              example: "3290.23",
+            },
+            {
+              name: "Valeur d'achats bio HT",
+              description: numberFormatExample,
+              type: "Chiffre",
+              example: "1284.70",
+            },
+            {
+              name: "Valeur d'achats SIQO (hors bio) HT",
+              description: numberFormatExample,
+              type: "Chiffre",
+              example: "681",
+            },
+            {
+              name:
+                "Valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
+              description: numberFormatExample,
+              type: "Chiffre",
+              example: "681",
+            },
+            {
+              name: "Valeur (en HT) des autres achats EGAlim",
+              description: numberFormatExample,
+              type: "Chiffre",
+              example: "681",
+            },
+            {
+              name: "Valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
+              description: numberFormatExample,
+              type: "Chiffre",
+              example: "681",
+            },
+            {
+              name: "Valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+              description: numberFormatExample,
+              type: "Chiffre",
+              example: "681",
+            },
+            {
+              name: "Valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
+              description: numberFormatExample,
+              type: "Chiffre",
+              example: "681",
+            },
+            {
+              name: "Valeur (en HT) des mes achats en poissons et produits aquatiques total",
+              description: numberFormatExample,
+              type: "Chiffre",
+              example: "681",
+            },
+            {
+              name: "Valeur (en HT) des mes achats EGAlim en poissons et produits aquatiques",
+              description: numberFormatExample,
+              type: "Chiffre",
+              example: "681",
+            },
+          ]
+        default:
+          return []
+      }
+    },
   },
   methods: {
     upload() {
