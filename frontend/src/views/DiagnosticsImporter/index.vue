@@ -188,8 +188,8 @@
       </template>
     </v-simple-table>
     <p>
-      Les champs suivants changent selon le type de diagnostic choisit. Pour rappel, à terme, seule le diagnostic
-      complète sera acceptée.
+      Les champs suivants changent selon le type de diagnostic choisit. À terme, seule le diagnostic complet sera
+      accepté.
     </p>
     <v-radio-group v-model="diagnosticType">
       <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
