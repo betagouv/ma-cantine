@@ -612,9 +612,16 @@ export default {
           this.diagnosticCount = json.count
           this.errors = json.errors
           this.seconds = json.seconds
-          this.$store.dispatch("notify", {
-            message: `Fichier traité en ${Math.round(this.seconds)} secondes`,
-          })
+          let resultMessage = {
+            message: `${this.canteenCount} cantines traitées`,
+            status: "success",
+          }
+          if (this.errors.length) {
+            resultMessage.title = "Echec d'import"
+            resultMessage.message = "Merci de vérifier les erreurs détaillés et de reessayer"
+            resultMessage.status = "error"
+          }
+          this.$store.dispatch("notify", resultMessage)
           if (this.$matomo) {
             this.$matomo.trackEvent("inquiry", "send", "import-diagnostics-success")
           }
