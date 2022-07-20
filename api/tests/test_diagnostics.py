@@ -278,8 +278,9 @@ class TestDiagnosticsApi(APITestCase):
         payload = {
             "year": 2020,
             "value_bio_ht": 1000,
-            "value_sustainable_ht": 3000,
-            "value_total_ht": 1000,
+            "value_sustainable_ht": 1000,
+            "value_egalim_others_ht": 1000,
+            "value_total_ht": 2000,
         }
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

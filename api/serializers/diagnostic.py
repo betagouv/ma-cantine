@@ -183,11 +183,14 @@ class PublicDiagnosticSerializer(serializers.ModelSerializer):
         if total is not None and isinstance(total, Decimal):
             bio = self.return_value(self, data, "value_bio_ht")
             sustainable = self.return_value(self, data, "value_sustainable_ht")
-            value_sum = (bio or 0) + (sustainable or 0)
+            externality_performance = self.return_value(self, data, "value_externality_performance_ht")
+            egalim_others = self.return_value(self, data, "value_egalim_others_ht")
+            value_sum = (bio or 0) + (sustainable or 0) + (externality_performance or 0) + (egalim_others or 0)
             if value_sum > total:
                 raise serializers.ValidationError(
                     f"La somme des valeurs d'approvisionnement, {value_sum}, est plus que le total, {total}"
                 )
+            # TODO: test meat and fish too?
         return data
 
     @staticmethod

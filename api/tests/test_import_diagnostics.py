@@ -55,9 +55,14 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(diagnostic.value_total_ht, 1000)
         self.assertEqual(diagnostic.value_bio_ht, 500)
         self.assertEqual(diagnostic.value_sustainable_ht, Decimal("100.1"))
-        self.assertEqual(diagnostic.value_label_rouge, 10)
-        self.assertEqual(diagnostic.value_label_aoc_igp, 20)
-        self.assertEqual(diagnostic.value_label_hve, 30)
+        self.assertEqual(diagnostic.value_externality_performance_ht, 10)
+        self.assertEqual(diagnostic.value_egalim_others_ht, 20)
+        self.assertEqual(diagnostic.value_meat_poultry_ht, 30)
+        self.assertEqual(diagnostic.value_meat_poultry_egalim_ht, 1)
+        self.assertEqual(diagnostic.value_meat_poultry_france_ht, 2)
+        self.assertEqual(diagnostic.value_fish_ht, 4)
+        self.assertEqual(diagnostic.value_fish_egalim_ht, 3)
+        self.assertEqual(diagnostic.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertIn("seconds", body)
 
     @authenticate
@@ -327,7 +332,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(body["errors"]), 2)
-        self.assertEqual(body["errors"][0]["message"], "Format fichier : 15-18 ou 11 colonnes attendues, 21 trouvés.")
+        self.assertEqual(body["errors"][0]["message"], "Format fichier : 22 ou 11 colonnes attendues, 25 trouvés.")
         self.assertEqual(body["errors"][0]["status"], 401)
 
     @authenticate
@@ -393,7 +398,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Données manquantes : 15 colonnes attendus, 14 trouvés.",
+            "Données manquantes : 22 colonnes attendus, 21 trouvés.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -410,6 +415,23 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(
             errors.pop(0)["message"],
             "Plusieurs cantines correspondent au SIRET 42111303053388. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGAlim, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGAlim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            # TODO: is this the best field to point to as being wrong? hors bio could be confusing
+            "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons EGAlim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGAlim, 200",
         )
 
     @authenticate
