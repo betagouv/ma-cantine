@@ -567,7 +567,6 @@ export default {
           })
           .then((diagnostic) => {
             this.updateFromServer(diagnostic)
-            this.$router.push({ name: "DiagnosticList", params: { canteenUrlComponent: this.canteenUrlComponent } })
           })
       }
 
