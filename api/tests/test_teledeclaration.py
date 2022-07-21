@@ -137,7 +137,9 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE"
+        )
         payload = {"diagnosticId": diagnostic.id}
 
         response = self.client.post(reverse("teledeclaration_create"), payload)
