@@ -162,7 +162,7 @@ class ImportDiagnosticsView(APIView):
         final_value_idx = 21
         if len(row) > final_value_idx + 1 and not self.request.user.is_staff:
             raise PermissionDenied(
-                detail=f"Format fichier : {final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvés."
+                detail=f"Format fichier : {final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvées."
             )
         diagnostic_year = None
         year_idx = 11
@@ -400,7 +400,7 @@ class ImportDiagnosticsView(APIView):
         elif isinstance(e, IndexError):
             errors.append(
                 {
-                    "message": f"Données manquantes : 22 colonnes attendus, {len(row)} trouvés.",
+                    "message": f"Données manquantes : 22 colonnes attendues, {len(row)} trouvées.",
                     "code": 400,
                 }
             )
