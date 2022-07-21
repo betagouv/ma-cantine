@@ -162,9 +162,8 @@ export const hasDiagnosticApproData = (diagnostic) => {
     "valueExternalityPerformanceHt",
     "valueEgalimOthersHt",
   ]
-  const approExtendedFields = Constants.characteristicGroups.egalim.fields.concat(
-    Constants.characteristicGroups.outsideLaw.fields
-  )
+  const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
+  const approExtendedFields = characteristicGroups.egalim.fields.concat(characteristicGroups.outsideLaw.fields)
   const hasTotal = diagnostic.valueTotalHt > 0 || diagnostic.valueTotalHt === 0
   const approFields = diagnostic.diagnosticType === "COMPLETE" ? approExtendedFields : approSimplifiedFields
   return (

@@ -52,19 +52,7 @@ class TeledeclarationCreateView(APIView):
 
     @staticmethod
     def validateDiagnostic(diagnostic):
-        total_ht = diagnostic.value_total_ht
-        breakdown = [
-            diagnostic.value_sustainable_ht,
-            diagnostic.value_bio_ht,
-            diagnostic.value_externality_performance_ht,
-            diagnostic.value_egalim_others_ht,
-            diagnostic.value_meat_poultry_ht,
-            diagnostic.value_meat_poultry_egalim_ht,
-            diagnostic.value_meat_poultry_france_ht,
-            diagnostic.value_fish_ht,
-            diagnostic.value_fish_egalim_ht,
-        ]
-        if not total_ht or None in breakdown:
+        if not diagnostic.value_total_ht:
             raise ValidationError("Données d'approvisionnement manquantes")
 
 
@@ -127,6 +115,10 @@ class TeledeclarationPdfView(APIView):
             context = {
                 **declared_data["teledeclaration"],
                 **{
+                    "diagnostic_type": "complète"
+                    if teledeclaration.declared_data["teledeclaration"]["diagnostic_type"]
+                    == Diagnostic.DiagnosticType.COMPLETE
+                    else "simplifiée",
                     "year": teledeclaration.year,
                     "canteen_name": declared_data["canteen"]["name"],
                     "siret": declared_data["canteen"]["siret"],

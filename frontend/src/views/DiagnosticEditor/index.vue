@@ -232,16 +232,7 @@ import SimplifiedQualityValues from "./SimplifiedQualityValues"
 import ExtendedQualityValues from "./ExtendedQualityValues"
 import TeledeclarationPreview from "./TeledeclarationPreview"
 import Constants from "@/constants"
-import {
-  getObjectDiff,
-  timeAgo,
-  strictIsNaN,
-  lastYear,
-  diagnosticYears,
-  getPercentage,
-  readCookie,
-  hasDiagnosticApproData,
-} from "@/utils"
+import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage, readCookie } from "@/utils"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
@@ -339,7 +330,7 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return hasDiagnosticApproData(this.diagnostic)
+      return this.diagnostic.valueTotalHt > 0 || this.diagnostic.valueTotalHt === 0
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"

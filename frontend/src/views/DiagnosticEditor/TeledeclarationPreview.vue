@@ -3,8 +3,7 @@
     <v-card ref="content">
       <v-card-title class="font-weight-bold">Votre télédéclaration</v-card-title>
       <v-card-text class="text-left pb-0">
-        Veuillez vérifier les données ci-dessous. Pour les données d'approvisionnement, les champs laissés en blanc
-        prendront une valeur de 0 € HT
+        Veuillez vérifier les données ci-dessous.
       </v-card-text>
       <v-card-text ref="table" class="my-4" style="overflow-y: scroll; border: solid 1px #9b9b9b;">
         <v-simple-table dense>
@@ -25,7 +24,7 @@
               <tr v-for="item in approKeys" :key="item.param">
                 <td class="text-left">{{ item.label }}</td>
                 <td class="text-left">
-                  {{ (diagnostic[item.param] || 0) | toCurrency }}
+                  {{ (diagnostic[item.param] || "—") | toCurrency }}
                   HT
                 </td>
               </tr>
