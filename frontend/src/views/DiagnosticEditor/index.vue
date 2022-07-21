@@ -610,6 +610,16 @@ export default {
     updateFromServer(diagnostic) {
       if (this.isNewDiagnostic) {
         this.originalCanteen.diagnostics.push(diagnostic)
+
+        // We should not manually change the `year` parameter since it is populated by the router,
+        // so when we create a diagnostic we need to ask the router to take us to that new diagnostic
+        // in order to refresh the data
+        this.bypassLeaveWarning = true
+        this.$router.replace({
+          name: "DiagnosticModification",
+          params: { canteenUrlComponent: this.canteenUrlComponent, year: diagnostic.year },
+        })
+        this.bypassLeaveWarning = false
       } else {
         const diagnosticIndex = this.originalCanteen.diagnostics.findIndex((x) => x.id === diagnostic.id)
         if (diagnosticIndex > -1) this.originalCanteen.diagnostics.splice(diagnosticIndex, 1, diagnostic)
