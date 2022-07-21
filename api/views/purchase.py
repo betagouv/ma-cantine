@@ -229,13 +229,13 @@ class CanteenPurchasesSummaryView(APIView):
             "BIO",
             "LABEL_ROUGE",
             "AOCAOP_IGP_STG",
-            "EXTERNALITES",
-            "PERFORMANCE",
-            "FERMIER",
             "HVE",
             "PECHE_DURABLE",
             "RUP",
             "COMMERCE_EQUITABLE",
+            "FERMIER",
+            "EXTERNALITES",
+            "PERFORMANCE",
         ]
         other_labels = ["FRANCE", "SHORT_DISTRIBUTION", "LOCAL"]
         # reset filter to 0 exclusions
