@@ -496,7 +496,7 @@ class ImportPurchasesView(APIView):
         elif isinstance(e, BadRequest):
             errors.append(
                 {
-                    "message": f"Format fichier : 7-8 colonnes attendues, {len(row)} trouvés.",
+                    "message": f"Format fichier : 7-8 colonnes attendues, {len(row)} trouvées.",
                     "code": 400,
                 }
             )

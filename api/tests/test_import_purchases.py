@@ -86,5 +86,5 @@ class TestPurchaseImport(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Format fichier : 7-8 colonnes attendues, 6 trouvés.",
+            "Format fichier : 7-8 colonnes attendues, 6 trouvées.",
         )

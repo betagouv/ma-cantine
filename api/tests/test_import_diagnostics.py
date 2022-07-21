@@ -332,7 +332,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(body["errors"]), 2)
-        self.assertEqual(body["errors"][0]["message"], "Format fichier : 22 ou 11 colonnes attendues, 25 trouvés.")
+        self.assertEqual(body["errors"][0]["message"], "Format fichier : 22 ou 11 colonnes attendues, 25 trouvées.")
         self.assertEqual(body["errors"][0]["status"], 401)
 
     @authenticate
@@ -398,7 +398,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Données manquantes : 22 colonnes attendus, 21 trouvés.",
+            "Données manquantes : 22 colonnes attendues, 21 trouvées.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
