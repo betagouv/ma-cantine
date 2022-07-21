@@ -212,7 +212,6 @@ class Teledeclaration(models.Model):
         )
         json_appro_teledeclaration = {}
         for prop in appro_fields:
-
             json_appro_teledeclaration[prop] = (
                 float(getattr(diagnostic, prop)) if getattr(diagnostic, prop) is not None else None
             )
