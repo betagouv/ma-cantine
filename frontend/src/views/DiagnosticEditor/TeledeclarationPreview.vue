@@ -23,7 +23,7 @@
               </tr>
               <tr v-for="item in approKeys" :key="item.param">
                 <td class="text-left">{{ item.label }}</td>
-                <td class="text-left">
+                <td class="text-right">
                   {{ (diagnostic[item.param] || "—") | toCurrency }}
                   HT
                 </td>
