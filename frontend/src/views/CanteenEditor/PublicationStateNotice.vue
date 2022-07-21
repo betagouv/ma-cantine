@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { isDiagnosticComplete, lastYear } from "@/utils"
+import { hasDiagnosticApproData, lastYear } from "@/utils"
 
 export default {
   name: "PublicationStateNotice",
@@ -46,7 +46,7 @@ export default {
     },
     readyToPublish() {
       const diagnostic = this.canteen.diagnostics.find((x) => x.year === this.publicationYear)
-      return this.canteen.publicationStatus === "draft" && !!diagnostic && isDiagnosticComplete(diagnostic)
+      return this.canteen.publicationStatus === "draft" && !!diagnostic && hasDiagnosticApproData(diagnostic)
     },
   },
 }
