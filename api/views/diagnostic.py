@@ -159,18 +159,22 @@ class ImportDiagnosticsView(APIView):
         # first check that the number of columns is good
         #   to throw error if badly formatted early on.
         # NB: if year is given, appro data is required, else only canteen data required
-        if len(row) > 18 and not self.request.user.is_staff:
-            raise PermissionDenied(detail=f"Format fichier : 15-18 ou 11 colonnes attendues, {len(row)} trouvés.")
+        final_value_idx = 21
+        if len(row) > final_value_idx + 1 and not self.request.user.is_staff:
+            raise PermissionDenied(
+                detail=f"Format fichier : {final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvées."
+            )
         diagnostic_year = None
+        year_idx = 11
         try:
-            diagnostic_year = row[11]
-            if not diagnostic_year and any(row[12:18]):
+            diagnostic_year = row[year_idx]
+            if not diagnostic_year and any(row[12:final_value_idx]):
                 raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
         except IndexError:
             pass
         manager_column_idx = 10
         if diagnostic_year:
-            row[14]  # check all required diagnostic fields are given
+            row[final_value_idx]  # check all required diagnostic fields are given
         else:
             row[manager_column_idx - 1]  # managers are optional, so could be missing too
 
@@ -192,65 +196,55 @@ class ImportDiagnosticsView(APIView):
             raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
 
         if diagnostic_year:
-            try:
-                if not row[12]:
-                    raise Exception
-                value_total_ht = Decimal(row[12].strip().replace(",", "."))
-            except Exception as e:
-                raise ValidationError({"value_total_ht": number_error_message})
+            value_fields = [
+                "value_total_ht",
+                "value_bio_ht",
+                "value_sustainable_ht",
+                "value_externality_performance_ht",
+                "value_egalim_others_ht",
+                "value_meat_poultry_ht",
+                "value_meat_poultry_egalim_ht",
+                "value_meat_poultry_france_ht",
+                "value_fish_ht",
+                "value_fish_egalim_ht",
+            ]
+            values_dict = {}
+            value_offset = 0
+            for value in value_fields:
+                try:
+                    value_offset = value_offset + 1
+                    value_idx = year_idx + value_offset
+                    if not row[value_idx]:
+                        raise Exception
+                    values_dict[value] = Decimal(row[value_idx].strip().replace(",", "."))
+                except Exception as e:
+                    error = {}
+                    error[value] = number_error_message
+                    raise ValidationError(error)
 
-            try:
-                if not row[13]:
-                    raise Exception
-                value_bio_ht = Decimal(row[13].strip().replace(",", "."))
-            except Exception as e:
-                raise ValidationError({"value_bio_ht": number_error_message})
-
-            try:
-                if not row[14]:
-                    raise Exception
-                value_sustainable_ht = Decimal(row[14].strip().replace(",", "."))
-            except Exception as e:
-                raise ValidationError({"value_sustainable_ht": number_error_message})
-
-            value_label_rouge = None
-            try:
-                if len(row) >= 16 and row[15]:
-                    value_label_rouge = Decimal(row[15].strip().replace(",", "."))
-            except Exception as e:
-                raise ValidationError({"value_label_rouge": number_error_message})
-
-            value_label_aoc_igp = None
-            try:
-                if len(row) >= 17 and row[16]:
-                    value_label_aoc_igp = Decimal(row[16].strip().replace(",", "."))
-            except Exception as e:
-                raise ValidationError({"value_label_aoc_igp": number_error_message})
-
-            value_label_hve = None
-            try:
-                if len(row) >= 18 and row[17]:
-                    value_label_hve = Decimal(row[17].strip().replace(",", "."))
-            except Exception as e:
-                raise ValidationError({"value_label_hve": number_error_message})
-
+        silent_manager_idx = final_value_idx + 1
         silently_added_manager_emails = []
         import_source = "Import massif"
         publication_status = Canteen.PublicationStatus.DRAFT
-        if len(row) > 18:  # already checked earlier that it's a staff user
+        if len(row) > silent_manager_idx:  # already checked earlier that it's a staff user
             try:
-                if row[18]:
-                    silently_added_manager_emails = ImportDiagnosticsView._get_manager_emails(row[18])
+                if row[silent_manager_idx]:
+                    silently_added_manager_emails = ImportDiagnosticsView._get_manager_emails(row[silent_manager_idx])
             except Exception as e:
-                raise ValidationError({"email": "Un adresse email des gestionnaires (pas notifiés) n'est pas valide."})
+                raise ValidationError(
+                    {
+                        "email": f"Un adresse email des gestionnaires (pas notifiés) ({row[silent_manager_idx]}) n'est pas valide."
+                    }
+                )
 
             try:
-                import_source = row[19].strip()
+                import_source = row[silent_manager_idx + 1].strip()
             except Exception as e:
                 raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
 
-            if len(row) > 20 and row[20]:
-                publication_status = row[20].strip()
+            status_idx = silent_manager_idx + 2
+            if len(row) > status_idx and row[status_idx]:
+                publication_status = row[status_idx].strip()
 
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
@@ -299,12 +293,17 @@ class ImportDiagnosticsView(APIView):
             diagnostic = Diagnostic(
                 canteen_id=canteen.id,
                 year=diagnostic_year,
-                value_total_ht=value_total_ht,
-                value_bio_ht=value_bio_ht,
-                value_sustainable_ht=value_sustainable_ht,
-                value_label_rouge=value_label_rouge,
-                value_label_aoc_igp=value_label_aoc_igp,
-                value_label_hve=value_label_hve,
+                value_total_ht=values_dict["value_total_ht"],
+                value_bio_ht=values_dict["value_bio_ht"],
+                value_sustainable_ht=values_dict["value_sustainable_ht"],
+                value_externality_performance_ht=values_dict["value_externality_performance_ht"],
+                value_egalim_others_ht=values_dict["value_egalim_others_ht"],
+                value_meat_poultry_ht=values_dict["value_meat_poultry_ht"],
+                value_meat_poultry_egalim_ht=values_dict["value_meat_poultry_egalim_ht"],
+                value_meat_poultry_france_ht=values_dict["value_meat_poultry_france_ht"],
+                value_fish_ht=values_dict["value_fish_ht"],
+                value_fish_egalim_ht=values_dict["value_fish_egalim_ht"],
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             )
             diagnostic.full_clean()
             diagnostic.save()
@@ -401,7 +400,7 @@ class ImportDiagnosticsView(APIView):
         elif isinstance(e, IndexError):
             errors.append(
                 {
-                    "message": f"Données manquantes : 15 colonnes attendus, {len(row)} trouvés.",
+                    "message": f"Données manquantes : 22 colonnes attendues, {len(row)} trouvées.",
                     "code": 400,
                 }
             )

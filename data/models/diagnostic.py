@@ -1119,6 +1119,9 @@ class Diagnostic(models.Model):
     def clean(self):
         self.validate_year()
         self.validate_approvisionment_total()
+        self.validate_meat_total()
+        self.validate_fish_total()
+        self.validate_meat_fish_egalim()
         return super().clean()
 
     def validate_year(self):
@@ -1134,11 +1137,55 @@ class Diagnostic(models.Model):
     def validate_approvisionment_total(self):
         if self.value_total_ht is None or not isinstance(self.value_total_ht, Decimal):
             return
-        value_sum = (self.value_bio_ht or 0) + (self.value_sustainable_ht or 0)
+        value_sum = (
+            (self.value_bio_ht or 0)
+            + (self.value_sustainable_ht or 0)
+            + (self.value_externality_performance_ht or 0)
+            + (self.value_egalim_others_ht or 0)
+        )
         if value_sum > self.value_total_ht:
             raise ValidationError(
                 {
                     "value_total_ht": f"La somme des valeurs d'approvisionnement, {value_sum}, est plus que le total, {self.value_total_ht}"
+                }
+            )
+
+    def validate_meat_total(self):
+        if self.value_meat_poultry_egalim_ht > self.value_meat_poultry_ht:
+            raise ValidationError(
+                {
+                    "value_meat_poultry_ht": f"La valeur totale (HT) viandes et volailles fraiches ou surgelées EGAlim, {self.value_meat_poultry_egalim_ht}, est plus que la valeur totale (HT) viandes et volailles, {self.value_meat_poultry_ht}"
+                }
+            )
+        elif self.value_meat_poultry_france_ht > self.value_meat_poultry_ht:
+            raise ValidationError(
+                {
+                    "value_meat_poultry_ht": f"La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, {self.value_meat_poultry_france_ht}, est plus que la valeur totale (HT) viandes et volailles, {self.value_meat_poultry_ht}"
+                }
+            )
+
+    def validate_fish_total(self):
+        if self.value_fish_egalim_ht > self.value_fish_ht:
+            raise ValidationError(
+                {
+                    "value_fish_ht": f"La valeur totale (HT) poissons et produits aquatiques EGAlim, {self.value_fish_egalim_ht}, est plus que la valeur totale (HT) poissons et produits aquatiques, {self.value_fish_ht}"
+                }
+            )
+
+    def validate_meat_fish_egalim(self):
+        if self.value_total_ht is None or not isinstance(self.value_total_ht, Decimal):
+            return
+        egalim_sum = (
+            (self.value_bio_ht or 0)
+            + (self.value_sustainable_ht or 0)
+            + (self.value_externality_performance_ht or 0)
+            + (self.value_egalim_others_ht or 0)
+        )
+        meat_fish_egalim_sum = (self.value_fish_egalim_ht or 0) + (self.value_meat_poultry_egalim_ht or 0)
+        if meat_fish_egalim_sum > egalim_sum:
+            raise ValidationError(
+                {
+                    "value_sustainable_ht": f"La somme des valeurs viandes et poissons EGAlim, {meat_fish_egalim_sum}, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGAlim, {egalim_sum}"
                 }
             )
 
