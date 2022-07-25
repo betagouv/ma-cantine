@@ -16,8 +16,8 @@
       v-model.number="diagnostic.valueTotalHt"
       :readonly="readonly"
       :disabled="readonly"
-      :error="totalError"
-      :messages="totalError ? [totalErrorMessage] : undefined"
+      :error="totalError || familiesError"
+      :messages="totalError || familiesError ? [totalErrorMessage || familiesErrorMessage] : undefined"
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -55,6 +55,9 @@
       v-model.number="diagnostic.valueMeatPoultryHt"
       :readonly="readonly"
       :disabled="readonly"
+      :error="familiesError"
+      :messages="familiesError ? [familiesErrorMessage] : undefined"
+      @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
@@ -80,6 +83,9 @@
       v-model.number="diagnostic.valueFishHt"
       :readonly="readonly"
       :disabled="readonly"
+      :error="familiesError"
+      :messages="familiesError ? [familiesErrorMessage] : undefined"
+      @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
@@ -180,6 +186,7 @@ import labels from "@/data/quality-labels.json"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 
 const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que la somme des valeurs par label"
+const DEFAULT_FAMILY_TOTAL_ERROR = "La somme des achats par famille ne peut pas excéder le total des achats"
 
 const MISC_LABELS = {
   FERMIER: {
@@ -225,6 +232,7 @@ export default {
   data() {
     const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
     return {
+      familiesError: false,
       totalError: false,
       totalErrorMessage: DEFAULT_TOTAL_ERROR,
       families: Constants.ProductFamilies,
@@ -278,11 +286,23 @@ export default {
       // we're only checking the total against the egalim fields. Each label group of the outsideLaw fields can get up to
       // 100% but ideally wouldn't go over that. We currently don't check this however because of UX constraints.
       const totalInputs = this.sumAllEgalim()
+      const totalMeatPoultry = this.diagnostic.valueMeatPoultryHt
+      const totalFish = this.diagnostic.valueFishHt
+      const totalFamilies = totalMeatPoultry + totalFish
+
       if (totalInputs > this.diagnostic.valueTotalHt) {
         this.totalError = true
+        this.familiesError = false
         this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumAllEgalim()} €`
-      } else {
+        this.familiesErrorMessage = ""
+      } else if (totalFamilies > this.diagnostic.valueTotalHt) {
         this.totalError = false
+        this.familiesError = true
+        this.totalErrorMessage = ""
+        this.familiesErrorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}`
+      } else {
+        this.totalError = this.familiesError = false
+        this.totalErrorMessage = this.familiesErrorMessage = ""
       }
     },
     diagnosticKey(family, characteristic) {
