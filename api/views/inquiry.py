@@ -38,12 +38,10 @@ class InquiryView(APIView):
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except ValidationError as e:
-            logger.error("Missing field from inquiry view")
-            logger.exception(e)
+            logger.exception("Missing field from inquiry view:\n{e}")
             raise e
         except Exception as e:
-            logger.error(f"Exception ocurred while handling inquiry. Title: {title}, Body:\n{body}")
-            logger.exception(e)
+            logger.exception(f"Exception ocurred while handling inquiry. Title: {title}, Body:\n{body}:\n{e}")
             return JsonResponse(
                 {"error": "An error has ocurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

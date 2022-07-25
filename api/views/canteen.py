@@ -329,20 +329,16 @@ class AddManagerView(APIView):
             AddManagerView.add_manager_to_canteen(email, canteen)
             return _respond_with_team(canteen)
         except ValidationError as e:
-            logger.error(f"Attempt to add manager with invalid email {email}")
-            logger.exception(e)
+            logger.warning(f"Attempt to add manager with invalid email {email}:\n{e}")
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Canteen.DoesNotExist as e:
-            logger.error(f"Attempt to add manager to unexistent canteen {canteen_id}")
-            logger.exception(e)
+            logger.warning(f"Attempt to add manager to unexistent canteen {canteen_id}:\n{e}")
             return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
         except IntegrityError as e:
-            logger.error(f"Attempt to add existing manager with email {email} to canteen {canteen_id}")
-            logger.exception(e)
+            logger.warning(f"Attempt to add existing manager with email {email} to canteen {canteen_id}:\n{e}")
             return _respond_with_team(canteen)
         except Exception as e:
-            logger.error("Exception occurred while inviting a manager to canteen")
-            logger.exception(e)
+            logger.exception(f"Exception occurred while inviting a manager to canteen:\n{e}")
             return JsonResponse(
                 {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -377,14 +373,12 @@ class AddManagerView(APIView):
                 to=[manager_invitation.email],
             )
         except ConnectionRefusedError as e:
-            logger.error(
-                f"The manager invitation email could not be sent to {manager_invitation.email} : Connection Refused. The manager has been added anyway."
+            logger.warning(
+                f"The manager invitation email could not be sent to {manager_invitation.email} : Connection Refused. The manager has been added anyway.\n{e}"
             )
-            logger.exception(e)
             return
         except Exception as e:
-            logger.error(f"The manager invitation email could not be sent to {manager_invitation.email}")
-            logger.exception(e)
+            logger.exception(f"The manager invitation email could not be sent to {manager_invitation.email}\n{e}")
             raise Exception("Error occurred : the mail could not be sent.") from e
 
     @staticmethod
@@ -404,14 +398,12 @@ class AddManagerView(APIView):
                 to=[email],
             )
         except ConnectionRefusedError as e:
-            logger.error(
-                f"The manager add notification email could not be sent to {email} : Connection Refused. The manager has been added anyway."
+            logger.warning(
+                f"The manager add notification email could not be sent to {email} : Connection Refused. The manager has been added anyway.\n{e}"
             )
-            logger.exception(e)
             return
         except Exception as e:
-            logger.error(f"The manager add notification email could not be sent to {email}")
-            logger.exception(e)
+            logger.exception(f"The manager add notification email could not be sent to {email}\n{e}")
             raise Exception("Error occurred : the mail could not be sent.") from e
 
 
@@ -436,16 +428,13 @@ class RemoveManagerView(APIView):
                     pass
             return _respond_with_team(canteen)
         except ValidationError as e:
-            logger.error(f"Attempt to remove manager with invalid email {email}")
-            logger.exception(e)
+            logger.warning(f"Attempt to remove manager with invalid email {email}:\n{e}")
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Canteen.DoesNotExist as e:
-            logger.error(f"Attempt to remove manager from unexistent canteen {canteen_id}")
-            logger.exception(e)
+            logger.warning(f"Attempt to remove manager from unexistent canteen {canteen_id}:\n{e}")
             return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            logger.error("Exception occurred while removing a manager from a canteen")
-            logger.exception(e)
+            logger.exception(f"Exception occurred while removing a manager from a canteen:\n{e}")
             return JsonResponse(
                 {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -482,8 +471,7 @@ class SendCanteenNotFoundEmail(APIView):
         except ValidationError:
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error("Exception occurred while sending email")
-            logger.exception(e)
+            logger.exception(f"Exception occurred while sending email:\n{e}")
             return JsonResponse(
                 {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -536,8 +524,7 @@ class TeamJoinRequestView(APIView):
         except ValidationError:
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error("Exception occurred while sending email")
-            logger.exception(e)
+            logger.exception(f"Exception occurred while sending email:\n{e}")
             return JsonResponse(
                 {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -729,8 +716,7 @@ class ClaimCanteenView(APIView):
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.error("Exception occurred while sending email")
-            logger.exception(e)
+            logger.exception(f"Exception occurred while sending email:\n{e}")
             return JsonResponse(
                 {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

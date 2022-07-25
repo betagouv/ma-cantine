@@ -45,11 +45,11 @@ class DiagnosticCreateView(CreateAPIView):
                 raise PermissionDenied()
             serializer.is_valid(raise_exception=True)
             serializer.save(canteen=canteen)
-        except ObjectDoesNotExist:
-            logger.error(f"Attempt to create a diagnostic from an unexistent canteen ID : {canteen_id}")
+        except ObjectDoesNotExist as e:
+            logger.warning(f"Attempt to create a diagnostic from an unexistent canteen ID : {canteen_id}: \n{e}")
             raise NotFound()
-        except IntegrityError:
-            logger.error(f"Attempt to create an existing diagnostic for canteen ID {canteen_id}")
+        except IntegrityError as e:
+            logger.warning(f"Attempt to create an existing diagnostic for canteen ID {canteen_id}:\n{e}")
             raise DuplicateException()
 
 
@@ -98,19 +98,18 @@ class ImportDiagnosticsView(APIView):
             )
 
         except IntegrityError as e:
-            logger.exception(e)
-            logger.error("L'import du fichier CSV a échoué")
+            logger.warning("L'import du fichier CSV a échoué:\n{e}")
             return ImportDiagnosticsView._get_success_response([], 0, errors, start)
 
         except ValidationError as e:
             message = e.message
-            logger.error(message)
+            logger.warning(f"{message}")
             message = message
             errors = [{"row": 0, "status": 400, "message": message}]
             return ImportDiagnosticsView._get_success_response([], 0, errors, start)
 
         except Exception as e:
-            logger.exception(e)
+            logger.exception(f"Échec lors de la lecture du fichier:\n{e}")
             message = "Échec lors de la lecture du fichier"
             errors = [{"row": 0, "status": 400, "message": message}]
             return ImportDiagnosticsView._get_success_response([], 0, errors, start)
@@ -322,8 +321,7 @@ class ImportDiagnosticsView(APIView):
 
     @staticmethod
     def _get_error(e, message, error_status, row_number):
-        logger.error(f"Error on row {row_number}")
-        logger.exception(e)
+        logger.exception(f"Error on row {row_number}:\n{e}")
         return {"row": row_number, "status": error_status, "message": message}
 
     @staticmethod
@@ -459,7 +457,7 @@ class ImportDiagnosticsView(APIView):
                     canteen.department = row[6].split(",")[0]
                     canteen.save()
         except Exception as e:
-            logger.error(f"Error while updating location data : {repr(e)} - {e}")
+            logger.exception(f"Error while updating location data : {repr(e)} - {e}")
 
     @staticmethod
     def _get_manager_emails(row):
@@ -475,10 +473,9 @@ class ImportDiagnosticsView(APIView):
             try:
                 AddManagerView.add_manager_to_canteen(email, canteen, send_invitation_mail=send_invitation_mail)
             except IntegrityError as e:
-                logger.error(
-                    f"Attempt to add existing manager with email {email} to canteen {canteen.id} from a CSV import"
+                logger.warning(
+                    f"Attempt to add existing manager with email {email} to canteen {canteen.id} from a CSV import:\n{e}"
                 )
-                logger.exception(e)
 
 
 class EmailDiagnosticImportFileView(APIView):
@@ -502,14 +499,15 @@ class EmailDiagnosticImportFileView(APIView):
                 attachments=[(file.name, file.read(), file.content_type)],
                 context=context,
             )
-        except ValidationError:
-            logger.error(
-                f"{request.user.id} tried to upload a file that is too large (over {settings.CSV_IMPORT_MAX_SIZE})"
+        except ValidationError as e:
+            logger.warning(
+                f"{request.user.id} tried to upload a file that is too large (over {settings.CSV_IMPORT_MAX_SIZE}):\n{e}"
             )
             return HttpResponseBadRequest()
         except Exception as e:
-            logger.error(f"User {request.user.id} encountered an error when trying to email a diagnostic import file")
-            logger.exception(e)
+            logger.exception(
+                f"User {request.user.id} encountered an error when trying to email a diagnostic import file:\n{e}"
+            )
             return HttpResponseServerError()
 
         return HttpResponse()
