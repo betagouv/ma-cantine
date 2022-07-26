@@ -40,7 +40,7 @@
           mdi-food-drumstick
         </v-icon>
       </div>
-      La valeur (en HT) de mes achats des mes achats en viandes et volailles fraiches ou surgelées total
+      La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
     </label>
 
     <v-text-field
