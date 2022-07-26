@@ -51,11 +51,9 @@ def no_canteen_first_reminder():
             user.email_no_canteen_first_reminder = today
             user.save()
         except ApiException as e:
-            logger.error(f"SIB error when sending first no-cantine email to {user.username}")
-            logger.exception(e)
+            logger.exception(f"SIB error when sending first no-cantine email to {user.username}:\n{e}")
         except Exception as e:
-            logger.error(f"Unable to send first no-cantine reminder email to {user.username}")
-            logger.exception(e)
+            logger.exception(f"Unable to send first no-cantine reminder email to {user.username}:\n{e}")
 
 
 @app.task()
@@ -87,11 +85,9 @@ def no_canteen_second_reminder():
             user.email_no_canteen_second_reminder = today
             user.save()
         except ApiException as e:
-            logger.error(f"SIB error when sending second no-cantine reminder email to {user.username}")
-            logger.exception(e)
+            logger.exception(f"SIB error when sending second no-cantine reminder email to {user.username}:\n{e}")
         except Exception as e:
-            logger.error(f"Unable to send second no-cantine reminder email to {user.username}")
-            logger.exception(e)
+            logger.exception(f"Unable to send second no-cantine reminder email to {user.username}:\n{e}")
 
 
 @app.task()
@@ -130,12 +126,10 @@ def no_diagnostic_first_reminder():
                     canteen.email_no_diagnostic_first_reminder = today
                     canteen.save()
             except ApiException as e:
-                logger.error(
-                    f"SIB error when sending first no-diagnostic email to {manager.username} concerning canteen {canteen.name}"
+                logger.exception(
+                    f"SIB error when sending first no-diagnostic email to {manager.username} concerning canteen {canteen.name}:\n{e}"
                 )
-                logger.exception(e)
             except Exception as e:
-                logger.error(
-                    f"Unable to send first no-diagnostic reminder email to {manager.username} concerning canteen {canteen.name}"
+                logger.exception(
+                    f"Unable to send first no-diagnostic reminder email to {manager.username} concerning canteen {canteen.name}:\n{e}"
                 )
-                logger.exception(e)

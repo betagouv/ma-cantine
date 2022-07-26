@@ -89,13 +89,11 @@ class SubscribeBetaTester(APIView):
             return JsonResponse({}, status=status.HTTP_201_CREATED)
 
         except PipedriveException as e:
-            logger.error(f"Pipedrive API error on request by {name or ''} {email}: {message} ")
-            logger.exception(e)
+            logger.exception(f"Pipedrive API error on request by {name or ''} {email}: {message}:\n{e}")
             return JsonResponse({}, status=status.HTTP_502_BAD_GATEWAY)
 
         except Exception as e:
-            logger.error("Error on beta-tester subscription")
-            logger.exception(e)
+            logger.exception(f"Error on beta-tester subscription:\n{e}")
             return JsonResponse({}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -117,21 +115,18 @@ class SubscribeNewsletter(APIView):
         except sib_api_v3_sdk.rest.ApiException as e:
             contact_exists = json.loads(e.body).get("message") == "Contact already exist"
             if contact_exists:
-                logger.error(f"Beta-tester already exists: {email}")
+                logger.warning(f"Beta-tester already exists: {email}")
                 return JsonResponse({}, status=status.HTTP_200_OK)
-            logger.error("SIB API error in beta-tester subsription :")
-            logger.exception(e)
+            logger.exception("SIB API error in beta-tester subsription :\n{e}")
             return JsonResponse(
                 {"error": "Error calling SendInBlue API"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except ValidationError as e:
-            logger.error(f"Invalid email on beta-tester subscription: {email}")
-            logger.exception(e)
+            logger.warning(f"Invalid email on beta-tester subscription: {email}:\n{e}")
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error("Error on newsletter subscription")
-            logger.exception(e)
+            logger.exception(f"Error on newsletter subscription:\n{e}")
             return JsonResponse(
                 {"error": "An error has ocurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

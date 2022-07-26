@@ -118,13 +118,11 @@ class UsernameSuggestionView(APIView):
                 return JsonResponse({"detail": "Missing info"}, status=status.HTTP_400_BAD_REQUEST)
             return JsonResponse({"suggestion": suggested}, status=status.HTTP_200_OK)
         except UsernameSuggestionView.RetryLimitException as e:
-            logger.error(
-                f"Unable to generate a username suggestion for first name: {first_name}, last name: {last_name}, email: {email}. Retry limit exceeded."
+            logger.exception(
+                f"Unable to generate a username suggestion for first name: {first_name}, last name: {last_name}, email: {email}. Retry limit exceeded.\n{e}"
             )
-            logger.exception(e)
         except Exception as e:
-            logger.error("Unable to generate username suggestion. Unexpected error.")
-            logger.exception(e)
+            logger.exception(f"Unable to generate username suggestion. Unexpected error:\n{e}")
 
     @staticmethod
     def _generate_username_with_base(username_suggestion, attempt=0):
