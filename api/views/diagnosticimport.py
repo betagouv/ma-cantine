@@ -198,10 +198,16 @@ class ImportDiagnosticsView(APIView):
         except Exception as e:
             logger.error(f"Error while updating location data : {repr(e)} - {e}")
 
+    @staticmethod
+    def _add_error(errors, message, code=400):
+        errors.append({"message": message, "code": code})
+
 
 # flake8: noqa: C901
 class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     final_value_idx = 21
+    manager_column_idx = 10
+    year_idx = 11
 
     def _skip_row(self, row_number, row):
         return row_number == 1 and row[0].lower() == "siret"
@@ -217,18 +223,17 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
                 detail=f"Format fichier : {self.final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvées."
             )
         diagnostic_year = None
-        year_idx = 11
         try:
-            diagnostic_year = row[year_idx]
+            diagnostic_year = row[self.year_idx]
             if not diagnostic_year and any(row[12 : self.final_value_idx]):
                 raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
         except IndexError:
             pass
-        manager_column_idx = 10
+
         if diagnostic_year:
             row[self.final_value_idx]  # check all required diagnostic fields are given
         else:
-            row[manager_column_idx - 1]  # managers are optional, so could be missing too
+            row[self.manager_column_idx - 1]  # managers are optional, so could be missing too
 
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
@@ -237,13 +242,10 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
                 {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
             )
 
-        # TODO: This should take into account more number formats and be factored out to utils
-        number_error_message = "Ce champ doit être un nombre décimal."
-
         try:
             manager_emails = []
-            if len(row) > manager_column_idx + 1 and row[manager_column_idx]:
-                manager_emails = ImportDiagnosticsView._get_manager_emails(row[manager_column_idx])
+            if len(row) > self.manager_column_idx + 1 and row[self.manager_column_idx]:
+                manager_emails = ImportDiagnosticsView._get_manager_emails(row[self.manager_column_idx])
         except Exception as e:
             raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
 
@@ -265,13 +267,14 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             for value in value_fields:
                 try:
                     value_offset = value_offset + 1
-                    value_idx = year_idx + value_offset
+                    value_idx = self.year_idx + value_offset
                     if not row[value_idx]:
                         raise Exception
                     values_dict[value] = Decimal(row[value_idx].strip().replace(",", "."))
                 except Exception as e:
                     error = {}
-                    error[value] = number_error_message
+                    # TODO: This should take into account more number formats and be factored out to utils
+                    error[value] = "Ce champ doit être un nombre décimal."
                     raise ValidationError(error)
 
         silent_manager_idx = self.final_value_idx + 1
@@ -365,19 +368,9 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     def _parse_errors(self, e, row):
         errors = []
         if isinstance(e, PermissionDenied):
-            errors.append(
-                {
-                    "message": e.detail,
-                    "code": 401,
-                }
-            )
+            ImportDiagnosticsView._add_error(errors, e.detail, 401)
         elif isinstance(e, Sector.DoesNotExist):
-            errors.append(
-                {
-                    "message": "Le secteur spécifié ne fait pas partie des options acceptées",
-                    "code": 400,
-                }
-            )
+            ImportDiagnosticsView._add_error(errors, "Le secteur spécifié ne fait pas partie des options acceptées")
         elif isinstance(e, ValidationError):
             if e.message_dict:
                 for field, messages in e.message_dict.items():
@@ -388,26 +381,13 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
                             user_message = "Un diagnostic pour cette année et cette cantine existe déjà."
                         if field != "__all__":
                             user_message = f"Champ '{verbose_field_name}' : {user_message}"
-                        errors.append(
-                            {
-                                "message": user_message,
-                                "code": 400,
-                            }
-                        )
+                        ImportDiagnosticsView._add_error(errors, user_message)
 
             elif hasattr(e, "params"):
-                errors.append(
-                    {
-                        "message": f"La valeur '{e.params['value']}' n'est pas valide.",
-                        "code": 400,
-                    }
-                )
+                ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:
-                errors.append(
-                    {
-                        "message": "Une erreur s'est produite en créant un diagnostic pour cette ligne",
-                        "code": 400,
-                    }
+                ImportDiagnosticsView._add_error(
+                    errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
                 )
         elif isinstance(e, ValueError):
             match = self.value_error_regex.search(str(e))
@@ -415,32 +395,21 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             value_given = match.group(2) if match else ""
             if field_name:
                 verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field_name)
-                errors.append(
-                    {
-                        "message": f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'.",
-                        "code": 400,
-                    }
+                ImportDiagnosticsView._add_error(
+                    errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
                 )
         elif isinstance(e, IndexError):
-            errors.append(
-                {
-                    "message": f"Données manquantes : 22 colonnes attendues, {len(row)} trouvées.",
-                    "code": 400,
-                }
+            ImportDiagnosticsView._add_error(
+                errors, f"Données manquantes : 22 colonnes attendues, {len(row)} trouvées."
             )
         elif isinstance(e, Canteen.MultipleObjectsReturned):
-            errors.append(
-                {
-                    "message": f"Plusieurs cantines correspondent au SIRET {row[0]}. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
-                    "code": 400,
-                }
+            ImportDiagnosticsView._add_error(
+                errors,
+                f"Plusieurs cantines correspondent au SIRET {row[0]}. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
             )
         if not errors:
-            errors.append(
-                {
-                    "message": "Une erreur s'est produite en créant un diagnostic pour cette ligne",
-                    "code": 400,
-                }
+            ImportDiagnosticsView._add_error(
+                errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
             )
         return errors
 
