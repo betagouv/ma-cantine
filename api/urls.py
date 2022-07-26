@@ -15,7 +15,7 @@ from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, Diagn
 from api.views import EmailDiagnosticImportFileView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
 from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleView
-from api.views import ImportDiagnosticsView, ImportCompleteDiagnosticsView
+from api.views import ImportSimpleDiagnosticsView, ImportCompleteDiagnosticsView
 from api.views import TeledeclarationCreateView, TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
 from api.views import UserCanteenPreviews, CanteenLocationsView
@@ -91,7 +91,7 @@ urlpatterns = {
         RemoveManagerView.as_view(),
         name="remove_manager",
     ),
-    path("importDiagnostics/simple/", ImportDiagnosticsView.as_view(), name="import_diagnostics"),
+    path("importDiagnostics/simple/", ImportSimpleDiagnosticsView.as_view(), name="import_diagnostics"),
     path("importDiagnostics/complete/", ImportCompleteDiagnosticsView.as_view(), name="import_complete_diagnostics"),
     path("emailDiagnosticImportFile/", EmailDiagnosticImportFileView.as_view(), name="email_diagnostic_file"),
     path(

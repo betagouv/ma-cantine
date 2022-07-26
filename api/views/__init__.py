@@ -22,7 +22,7 @@ from .diagnostic import (  # noqa: F401
     EmailDiagnosticImportFileView,
 )
 from .diagnosticimport import (  # noqa: F401
-    ImportDiagnosticsView,
+    ImportSimpleDiagnosticsView,
     ImportCompleteDiagnosticsView,
 )
 from .sector import SectorListView  # noqa: F401

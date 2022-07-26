@@ -23,7 +23,7 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-# flake8: noqa: C901
+
 class ImportDiagnosticsView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
@@ -41,7 +41,7 @@ class ImportDiagnosticsView(APIView):
                 file = request.data["file"]
                 ImportDiagnosticsView._verify_file_size(file)
                 type = request.query_params.get("type", None)
-                (canteens, errors) = self._treat_csv_file(file, diagnostic_type=type)
+                (canteens, errors) = self._treat_csv_file(file)
 
                 if errors:
                     raise IntegrityError()
@@ -74,7 +74,7 @@ class ImportDiagnosticsView(APIView):
         if file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
-    def _treat_csv_file(self, file, diagnostic_type=None):
+    def _treat_csv_file(self, file):
         canteens = {}
         errors = []
         locations_csv_str = "siret,citycode,postcode\n"
@@ -86,16 +86,13 @@ class ImportDiagnosticsView(APIView):
 
         csvreader = csv.reader(filelines, dialect=dialect)
         for row_number, row in enumerate(csvreader, start=1):
-            if row_number == 1 and row[0].lower() == "siret":
+            if self._skip_row(row_number, row):
                 continue
-            # TODO: if complete type ignore two header lines
             try:
                 if row[0] == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = normalise_siret(row[0])
-                canteen, should_update_geolocation = self._update_or_create_canteen_with_diagnostic(
-                    row, siret, diagnostic_type=diagnostic_type
-                )
+                canteen, should_update_geolocation = self._update_or_create_canteen_with_diagnostic(row, siret)
                 canteens[canteen.siret] = canteen
                 if should_update_geolocation:
                     has_locations_to_find = True
@@ -111,28 +108,134 @@ class ImportDiagnosticsView(APIView):
             self._update_location_data(canteens, locations_csv_str)
         return (canteens, errors)
 
+    # def _treat_csv_file(file):
+    #     # read the file
+    #     # for each row
+    #     # basic format checks --- overriding
+    #     # optionally skip headers --- overriding
+    #     # validate canteen data, returning canteen
+    #     # validate diagnostic data, returning diagnostic --- overriding
+    #     # save canteen
+    #     # save diagnostic
+    #     pass
+
+    @staticmethod
+    def _should_update_geolocation(canteen, row):
+        if canteen.city:
+            city_code_changed = row[2] and canteen.city_insee_code != row[2].strip()
+            postal_code_changed = row[3] and canteen.postal_code != row[3].strip()
+            return city_code_changed or postal_code_changed
+        else:
+            has_geo_data = canteen.city_insee_code or canteen.postal_code
+            return has_geo_data
+
+    @staticmethod
+    def _get_error(e, message, error_status, row_number):
+        logger.error(f"Error on row {row_number}")
+        logger.exception(e)
+        return {"row": row_number, "status": error_status, "message": message}
+
+    @staticmethod
+    def _get_verbose_field_name(field_name):
+        try:
+            return Canteen._meta.get_field(field_name).verbose_name
+        except:
+            try:
+                return Diagnostic._meta.get_field(field_name).verbose_name
+            except:
+                pass
+        return field_name
+
+    @staticmethod
+    def _get_manager_emails(row):
+        manager_emails = row.split(",")
+        normalized_emails = list(map(lambda x: get_user_model().objects.normalize_email(x.strip()), manager_emails))
+        for email in normalized_emails:
+            validate_email(email)
+        return normalized_emails
+
+    @staticmethod
+    def _add_managers_to_canteen(emails, canteen, send_invitation_mail=True):
+        for email in emails:
+            try:
+                AddManagerView.add_manager_to_canteen(email, canteen, send_invitation_mail=send_invitation_mail)
+            except IntegrityError as e:
+                logger.error(
+                    f"Attempt to add existing manager with email {email} to canteen {canteen.id} from a CSV import"
+                )
+                logger.exception(e)
+
+    @staticmethod
+    def _get_success_response(canteens, count, errors, start_time):
+        return JsonResponse(
+            {
+                "canteens": canteens,
+                "count": count,
+                "errors": errors,
+                "seconds": time.time() - start_time,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    @staticmethod
+    def _update_location_data(canteens, locations_csv_str):
+        try:
+            # NB: max size of a csv file is 50 MB
+            response = requests.post(
+                "https://api-adresse.data.gouv.fr/search/csv/",
+                files={
+                    "data": ("locations.csv", locations_csv_str),
+                },
+                data={
+                    "postcode": "postcode",
+                    "citycode": "citycode",
+                    "result_columns": ["result_citycode", "result_postcode", "result_city", "result_context"],
+                },
+                timeout=3,
+            )
+            response.raise_for_status()  # Raise an exception if the request failed
+            for row in csv.reader(response.text.splitlines()):
+                if row[0] == "siret":
+                    continue  # skip header
+                if row[5] != "":  # city found, so rest of data is found
+                    canteen = canteens[row[0]]
+                    canteen.city_insee_code = row[3]
+                    canteen.postal_code = row[4]
+                    canteen.city = row[5]
+                    canteen.department = row[6].split(",")[0]
+                    canteen.save()
+        except Exception as e:
+            logger.error(f"Error while updating location data : {repr(e)} - {e}")
+
+
+# flake8: noqa: C901
+class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
+    final_value_idx = 21
+
+    def _skip_row(self, row_number, row):
+        return row_number == 1 and row[0].lower() == "siret"
+
     @transaction.atomic
-    def _update_or_create_canteen_with_diagnostic(self, row, siret, diagnostic_type):
+    def _update_or_create_canteen_with_diagnostic(self, row, siret):
         # first check that the number of columns is good
         #   to throw error if badly formatted early on.
         # NB: if year is given, appro data is required, else only canteen data required
-        final_value_idx = 21
         # TODO: different number of columns if type is complete
-        if len(row) > final_value_idx + 1 and not self.request.user.is_staff:
+        if len(row) > self.final_value_idx + 1 and not self.request.user.is_staff:
             raise PermissionDenied(
-                detail=f"Format fichier : {final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvées."
+                detail=f"Format fichier : {self.final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvées."
             )
         diagnostic_year = None
         year_idx = 11
         try:
             diagnostic_year = row[year_idx]
-            if not diagnostic_year and any(row[12:final_value_idx]):
+            if not diagnostic_year and any(row[12 : self.final_value_idx]):
                 raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
         except IndexError:
             pass
         manager_column_idx = 10
         if diagnostic_year:
-            row[final_value_idx]  # check all required diagnostic fields are given
+            row[self.final_value_idx]  # check all required diagnostic fields are given
         else:
             row[manager_column_idx - 1]  # managers are optional, so could be missing too
 
@@ -180,7 +283,7 @@ class ImportDiagnosticsView(APIView):
                     error[value] = number_error_message
                     raise ValidationError(error)
 
-        silent_manager_idx = final_value_idx + 1
+        silent_manager_idx = self.final_value_idx + 1
         silently_added_manager_emails = []
         import_source = "Import massif"
         publication_status = Canteen.PublicationStatus.DRAFT
@@ -268,34 +371,6 @@ class ImportDiagnosticsView(APIView):
             self.diagnostics_created += 1
         return (canteen, should_update_geolocation)
 
-    @staticmethod
-    def _should_update_geolocation(canteen, row):
-        if canteen.city:
-            city_code_changed = row[2] and canteen.city_insee_code != row[2].strip()
-            postal_code_changed = row[3] and canteen.postal_code != row[3].strip()
-            return city_code_changed or postal_code_changed
-        else:
-            has_geo_data = canteen.city_insee_code or canteen.postal_code
-            return has_geo_data
-
-    @staticmethod
-    def _get_error(e, message, error_status, row_number):
-        logger.error(f"Error on row {row_number}")
-        logger.exception(e)
-        return {"row": row_number, "status": error_status, "message": message}
-
-    @staticmethod
-    def _get_success_response(canteens, count, errors, start_time):
-        return JsonResponse(
-            {
-                "canteens": canteens,
-                "count": count,
-                "errors": errors,
-                "seconds": time.time() - start_time,
-            },
-            status=status.HTTP_200_OK,
-        )
-
     def _parse_errors(self, e, row):
         errors = []
         if isinstance(e, PermissionDenied):
@@ -378,66 +453,6 @@ class ImportDiagnosticsView(APIView):
             )
         return errors
 
-    @staticmethod
-    def _get_verbose_field_name(field_name):
-        try:
-            return Canteen._meta.get_field(field_name).verbose_name
-        except:
-            try:
-                return Diagnostic._meta.get_field(field_name).verbose_name
-            except:
-                pass
-        return field_name
 
-    @staticmethod
-    def _update_location_data(canteens, locations_csv_str):
-        try:
-            # NB: max size of a csv file is 50 MB
-            response = requests.post(
-                "https://api-adresse.data.gouv.fr/search/csv/",
-                files={
-                    "data": ("locations.csv", locations_csv_str),
-                },
-                data={
-                    "postcode": "postcode",
-                    "citycode": "citycode",
-                    "result_columns": ["result_citycode", "result_postcode", "result_city", "result_context"],
-                },
-                timeout=3,
-            )
-            response.raise_for_status()  # Raise an exception if the request failed
-            for row in csv.reader(response.text.splitlines()):
-                if row[0] == "siret":
-                    continue  # skip header
-                if row[5] != "":  # city found, so rest of data is found
-                    canteen = canteens[row[0]]
-                    canteen.city_insee_code = row[3]
-                    canteen.postal_code = row[4]
-                    canteen.city = row[5]
-                    canteen.department = row[6].split(",")[0]
-                    canteen.save()
-        except Exception as e:
-            logger.error(f"Error while updating location data : {repr(e)} - {e}")
-
-    @staticmethod
-    def _get_manager_emails(row):
-        manager_emails = row.split(",")
-        normalized_emails = list(map(lambda x: get_user_model().objects.normalize_email(x.strip()), manager_emails))
-        for email in normalized_emails:
-            validate_email(email)
-        return normalized_emails
-
-    @staticmethod
-    def _add_managers_to_canteen(emails, canteen, send_invitation_mail=True):
-        for email in emails:
-            try:
-                AddManagerView.add_manager_to_canteen(email, canteen, send_invitation_mail=send_invitation_mail)
-            except IntegrityError as e:
-                logger.error(
-                    f"Attempt to add existing manager with email {email} to canteen {canteen.id} from a CSV import"
-                )
-                logger.exception(e)
-
-
-class ImportCompleteDiagnosticsView(APIView):
+class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
     permission_classes = [IsAuthenticated]
