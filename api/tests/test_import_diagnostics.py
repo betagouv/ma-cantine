@@ -584,7 +584,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         Users should be able to import a complete diagnostic
         """
         with open("./api/tests/files/complete_diagnostics.csv") as diag_file:
-            response = self.client.post(f"{reverse('import_diagnostics')}?type=complete", {"file": diag_file})
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
