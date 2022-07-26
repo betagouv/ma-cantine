@@ -15,7 +15,7 @@ from django_filters import rest_framework as django_filters
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager, IsAuthenticated
 from api.serializers import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer
 from data.models import Purchase, Canteen
-from .utils import CamelCaseOrderingFilter, UnaccentSearchFilter, normalise_siret
+from .utils import MaCantineOrderingFilter, UnaccentSearchFilter, normalise_siret
 from collections import OrderedDict
 import logging
 import csv
@@ -95,7 +95,7 @@ class PurchaseListCreateView(ListCreateAPIView):
     serializer_class = PurchaseSerializer
     pagination_class = PurchasesPagination
     filter_backends = [
-        CamelCaseOrderingFilter,
+        MaCantineOrderingFilter,
         UnaccentSearchFilter,
         django_filters.DjangoFilterBackend,
     ]
