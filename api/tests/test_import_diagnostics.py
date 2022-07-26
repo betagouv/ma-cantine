@@ -199,6 +199,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        self.assertEqual(Diagnostic.objects.count(), 0)
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
         error = body["errors"][0]

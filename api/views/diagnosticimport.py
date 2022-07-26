@@ -31,43 +31,34 @@ class ImportDiagnosticsView(APIView):
 
     def __init__(self, **kwargs):
         self.diagnostics_created = 0
+        self.canteens = {}
+        self.errors = []
+        self.start_time = None
         super().__init__(**kwargs)
 
     def post(self, request):
-        start = time.time()
+        self.start_time = time.time()
         logger.info("Diagnostic bulk import started")
         try:
             with transaction.atomic():
                 file = request.data["file"]
                 ImportDiagnosticsView._verify_file_size(file)
-                type = request.query_params.get("type", None)
-                (canteens, errors) = self._treat_csv_file(file)
+                self._treat_csv_file(file)
 
-                if errors:
+                if self.errors:
                     raise IntegrityError()
-
-            serialized_canteens = [camelize(FullCanteenSerializer(canteen).data) for canteen in canteens.values()]
-            return ImportDiagnosticsView._get_success_response(
-                serialized_canteens, self.diagnostics_created, errors, start
-            )
-
         except IntegrityError as e:
             logger.exception(e)
             logger.error("L'import du fichier CSV a échoué")
-            return ImportDiagnosticsView._get_success_response([], 0, errors, start)
-
         except ValidationError as e:
             message = e.message
             logger.error(message)
-            message = message
-            errors = [{"row": 0, "status": 400, "message": message}]
-            return ImportDiagnosticsView._get_success_response([], 0, errors, start)
-
+            self.errors = [{"row": 0, "status": 400, "message": message}]
         except Exception as e:
             logger.exception(e)
-            message = "Échec lors de la lecture du fichier"
-            errors = [{"row": 0, "status": 400, "message": message}]
-            return ImportDiagnosticsView._get_success_response([], 0, errors, start)
+            self.errors = [{"row": 0, "status": 400, "message": "Échec lors de la lecture du fichier"}]
+
+        return self._get_success_response()
 
     @staticmethod
     def _verify_file_size(file):
@@ -75,8 +66,6 @@ class ImportDiagnosticsView(APIView):
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
     def _treat_csv_file(self, file):
-        canteens = {}
-        errors = []
         locations_csv_str = "siret,citycode,postcode\n"
         has_locations_to_find = False
 
@@ -93,7 +82,7 @@ class ImportDiagnosticsView(APIView):
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = normalise_siret(row[0])
                 canteen, should_update_geolocation = self._update_or_create_canteen_with_diagnostic(row, siret)
-                canteens[canteen.siret] = canteen
+                self.canteens[canteen.siret] = canteen
                 if should_update_geolocation:
                     has_locations_to_find = True
                     if canteen.city_insee_code:
@@ -103,10 +92,12 @@ class ImportDiagnosticsView(APIView):
 
             except Exception as e:
                 for error in self._parse_errors(e, row):
-                    errors.append(ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number))
+                    self.errors.append(
+                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number)
+                    )
         if has_locations_to_find:
-            self._update_location_data(canteens, locations_csv_str)
-        return (canteens, errors)
+            self._update_location_data(self.canteens, locations_csv_str)
+        return (self.canteens, self.errors)
 
     # def _treat_csv_file(file):
     #     # read the file
@@ -165,14 +156,14 @@ class ImportDiagnosticsView(APIView):
                 )
                 logger.exception(e)
 
-    @staticmethod
-    def _get_success_response(canteens, count, errors, start_time):
+    def _get_success_response(self):
+        serialized_canteens = [camelize(FullCanteenSerializer(canteen).data) for canteen in self.canteens.values()]
         return JsonResponse(
             {
-                "canteens": canteens,
-                "count": count,
-                "errors": errors,
-                "seconds": time.time() - start_time,
+                "canteens": serialized_canteens,
+                "count": 0 if len(self.errors) else self.diagnostics_created,
+                "errors": self.errors,
+                "seconds": time.time() - self.start_time,
             },
             status=status.HTTP_200_OK,
         )
