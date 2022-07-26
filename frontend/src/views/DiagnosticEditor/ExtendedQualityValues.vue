@@ -305,7 +305,7 @@ export default {
         this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumAllEgalim()} €`
       } else if (totalFamilies > this.diagnostic.valueTotalHt) {
         this.errorType = "FAMILY"
-        this.errorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}`
+        this.errorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}, actuellement ${totalFamilies} €`
       } else if (this.sumEgalimMeat() > totalMeatPoultry) {
         this.errorType = "MEAT"
         this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumEgalimMeat()} €`
