@@ -87,7 +87,8 @@ class ImportDiagnosticsView(APIView):
             with transaction.atomic():
                 file = request.data["file"]
                 ImportDiagnosticsView._verify_file_size(file)
-                (canteens, errors) = self._treat_csv_file(file)
+                type = request.query_params.get("type", None)
+                (canteens, errors) = self._treat_csv_file(file, diagnostic_type=type)
 
                 if errors:
                     raise IntegrityError()
@@ -120,7 +121,7 @@ class ImportDiagnosticsView(APIView):
         if file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
-    def _treat_csv_file(self, file):
+    def _treat_csv_file(self, file, diagnostic_type=None):
         canteens = {}
         errors = []
         locations_csv_str = "siret,citycode,postcode\n"
@@ -134,11 +135,14 @@ class ImportDiagnosticsView(APIView):
         for row_number, row in enumerate(csvreader, start=1):
             if row_number == 1 and row[0].lower() == "siret":
                 continue
+            # TODO: if complete type ignore two header lines
             try:
                 if row[0] == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = normalise_siret(row[0])
-                canteen, should_update_geolocation = self._update_or_create_canteen_with_diagnostic(row, siret)
+                canteen, should_update_geolocation = self._update_or_create_canteen_with_diagnostic(
+                    row, siret, diagnostic_type=diagnostic_type
+                )
                 canteens[canteen.siret] = canteen
                 if should_update_geolocation:
                     has_locations_to_find = True
@@ -155,11 +159,12 @@ class ImportDiagnosticsView(APIView):
         return (canteens, errors)
 
     @transaction.atomic
-    def _update_or_create_canteen_with_diagnostic(self, row, siret):
+    def _update_or_create_canteen_with_diagnostic(self, row, siret, diagnostic_type):
         # first check that the number of columns is good
         #   to throw error if badly formatted early on.
         # NB: if year is given, appro data is required, else only canteen data required
         final_value_idx = 21
+        # TODO: different number of columns if type is complete
         if len(row) > final_value_idx + 1 and not self.request.user.is_staff:
             raise PermissionDenied(
                 detail=f"Format fichier : {final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvées."

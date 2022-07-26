@@ -578,6 +578,54 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(len(mail.outbox), 0)
 
+    @authenticate
+    def test_success_complete_diagnostic_import(self, _):
+        """
+        Users should be able to import a complete diagnostic
+        """
+        with open("./api/tests/files/complete_diagnostics.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}?type=complete", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 2)
+        finished_diag = Diagnostic.objects.find(canteen__siret="29969025300230", year=2021)
+        self.assertEqual(finished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        self.assertEqual(finished_diag.value_total_ht, 10500)
+        self.assertEqual(finished_diag.value_meat_poultry_ht, 800)
+        self.assertEqual(finished_diag.value_fish_ht, 900)
+        self.assertEqual(finished_diag.total_label_bio, 80)
+        self.assertEqual(finished_diag.total_label_label_rouge, 80)
+        self.assertEqual(finished_diag.total_label_aocaop_igp_stg, 80)
+        self.assertEqual(finished_diag.total_label_hve, 80)
+        self.assertEqual(finished_diag.total_label_peche_durable, 80)
+        self.assertEqual(finished_diag.total_label_rup, 80)
+        self.assertEqual(finished_diag.total_label_fermier, 80)
+        self.assertEqual(finished_diag.total_label_externalites, 80)
+        self.assertEqual(finished_diag.total_label_commerce_equitable, 80)
+        self.assertEqual(finished_diag.total_label_performance, 80)
+        self.assertEqual(finished_diag.total_label_france, 80)
+        self.assertEqual(finished_diag.total_label_short_distribution, 80)
+        self.assertEqual(finished_diag.total_label_local, 80)
+        self.assertEqual(finished_diag.total_family_viandes_volailles, 130)
+        self.assertEqual(finished_diag.total_family_produits_de_la_mer, 130)
+        self.assertEqual(finished_diag.total_family_fruits_et_legumes, 130)
+        self.assertEqual(finished_diag.total_family_charcuterie, 130)
+        self.assertEqual(finished_diag.total_family_produits_laitiers, 130)
+        self.assertEqual(finished_diag.total_family_boulangerie, 130)
+        self.assertEqual(finished_diag.total_family_boissons, 130)
+        self.assertEqual(finished_diag.total_family_autres, 130)
+
+        unfinished_diag = Diagnostic.objects.find(canteen__siret="29969025300230", year=2022)
+        self.assertEqual(unfinished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        self.assertEqual(unfinished_diag.value_total_ht, 30300)  # picked a field at random to smoke test
+        self.assertEqual(unfinished_diag.value_autres_label_rouge, None)  # picked a field at random to smoke test
+        self.assertEqual(unfinished_diag.value_meat_poultry_ht, None)
+        self.assertEqual(unfinished_diag.value_fish_ht, None)
+
+    # TODO: test validation errors on the extended columns
+    # TODO: test staff columns with complete diagnositcs
+
     @override_settings(CONTACT_EMAIL="team@example.com")
     @authenticate
     def test_email_diagnostics_file(self, _):
