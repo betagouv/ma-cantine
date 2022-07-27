@@ -34,6 +34,8 @@ class ImportDiagnosticsView(APIView):
         self.canteens = {}
         self.errors = []
         self.start_time = None
+        # access this to trigger an error early and loudly if missing from child class
+        self.final_value_idx
         super().__init__(**kwargs)
 
     def post(self, request):
@@ -78,10 +80,7 @@ class ImportDiagnosticsView(APIView):
             if self._skip_row(row_number, row):
                 continue
             try:
-                if row[0] == "":
-                    raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
-                siret = normalise_siret(row[0])
-                canteen, should_update_geolocation = self._update_or_create_canteen_with_diagnostic(row, siret)
+                canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
                 if should_update_geolocation:
                     has_locations_to_find = True
@@ -96,19 +95,41 @@ class ImportDiagnosticsView(APIView):
                         ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number)
                     )
         if has_locations_to_find:
-            self._update_location_data(self.canteens, locations_csv_str)
-        return (self.canteens, self.errors)
+            self._update_location_data(locations_csv_str)
 
-    # def _treat_csv_file(file):
-    #     # read the file
-    #     # for each row
-    #     # basic format checks --- overriding
-    #     # optionally skip headers --- overriding
-    #     # validate canteen data, returning canteen
-    #     # validate diagnostic data, returning diagnostic --- overriding
-    #     # save canteen
-    #     # save diagnostic
-    #     pass
+    @transaction.atomic
+    def _save_data_from_row(self, row):
+        if row[0] == "":
+            raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
+        # validate data for format etc
+        self._validate_row(row)
+        manager_emails = self._validate_canteen(row)
+        diagnostic_year, values_dict = self._validate_diagnostic(row)
+        # return staff-customisable fields
+        import_source, publication_status, silently_added_manager_emails = self._generate_canteen_meta_fields(row)
+        # create the canteen and potentially the diagnostic
+        canteen, should_update_geolocation = self._update_or_create_canteen(
+            row, import_source, publication_status, manager_emails, silently_added_manager_emails
+        )
+        self._create_diagnostic_maybe(canteen, diagnostic_year, values_dict)
+
+        return (canteen, should_update_geolocation)
+
+    def _skip_row(self, row_number, row):
+        print("_skip_row has not been implemented")
+        ...
+
+    def _validate_row(self, row):
+        print("_validate_row has not been implemented")
+        ...
+
+    def _validate_diagnostic(self, row):
+        print("_validate_diagnostic has not been implemented")
+        ...
+
+    def _create_diagnostic_maybe(self, canteen, diagnostic_year, values_dict):
+        print("_create_diagnostic_maybe has not been implemented")
+        ...
 
     @staticmethod
     def _should_update_geolocation(canteen, row):
@@ -168,8 +189,7 @@ class ImportDiagnosticsView(APIView):
             status=status.HTTP_200_OK,
         )
 
-    @staticmethod
-    def _update_location_data(canteens, locations_csv_str):
+    def _update_location_data(self, locations_csv_str):
         try:
             # NB: max size of a csv file is 50 MB
             response = requests.post(
@@ -189,7 +209,7 @@ class ImportDiagnosticsView(APIView):
                 if row[0] == "siret":
                     continue  # skip header
                 if row[5] != "":  # city found, so rest of data is found
-                    canteen = canteens[row[0]]
+                    canteen = self.canteens[row[0]]
                     canteen.city_insee_code = row[3]
                     canteen.postal_code = row[4]
                     canteen.city = row[5]
@@ -219,8 +239,9 @@ class ImportDiagnosticsView(APIView):
         return manager_emails
 
     def _update_or_create_canteen(
-        self, row, siret, import_source, publication_status, manager_emails, silently_added_manager_emails
+        self, row, import_source, publication_status, manager_emails, silently_added_manager_emails
     ):
+        siret = normalise_siret(row[0])
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
 
@@ -265,6 +286,32 @@ class ImportDiagnosticsView(APIView):
             )
         return (canteen, should_update_geolocation)
 
+    def _generate_canteen_meta_fields(self, row):
+        silent_manager_idx = self.final_value_idx + 1
+        silently_added_manager_emails = []
+        import_source = "Import massif"
+        publication_status = Canteen.PublicationStatus.DRAFT
+        if len(row) > silent_manager_idx:  # already checked earlier that it's a staff user
+            try:
+                if row[silent_manager_idx]:
+                    silently_added_manager_emails = ImportDiagnosticsView._get_manager_emails(row[silent_manager_idx])
+            except Exception as e:
+                raise ValidationError(
+                    {
+                        "email": f"Un adresse email des gestionnaires (pas notifiés) ({row[silent_manager_idx]}) n'est pas valide."
+                    }
+                )
+
+            try:
+                import_source = row[silent_manager_idx + 1].strip()
+            except Exception as e:
+                raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
+
+            status_idx = silent_manager_idx + 2
+            if len(row) > status_idx and row[status_idx]:
+                publication_status = row[status_idx].strip()
+        return (import_source, publication_status, silently_added_manager_emails)
+
 
 # flake8: noqa: C901
 class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
@@ -275,13 +322,22 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     def _skip_row(self, row_number, row):
         return row_number == 1 and row[0].lower() == "siret"
 
-    @transaction.atomic
-    def _update_or_create_canteen_with_diagnostic(self, row, siret):
-        self._validate_row(row)
-        manager_emails = self._validate_canteen(row)
+    def _validate_row(self, row):
+        # first check that the number of columns is good
+        #   to throw error if badly formatted early on.
+        # manager column isn't required, so intentionally checking less than that idx
+        if len(row) < self.manager_column_idx:
+            raise IndexError()
+        elif len(row) > self.year_idx and len(row) < self.final_value_idx + 1:
+            raise IndexError()
+        elif len(row) > self.final_value_idx + 1 and not self.request.user.is_staff:
+            raise PermissionDenied(
+                detail=f"Format fichier : {self.final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvées."
+            )
 
+    def _validate_diagnostic(self, row):
         # NB: if year is given, appro data is required, else only canteen data required
-        diagnostic_year = None
+        diagnostic_year = values_dict = None
         try:
             diagnostic_year = row[self.year_idx]
             if not diagnostic_year and any(row[12 : self.final_value_idx]):
@@ -321,35 +377,11 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
                     # TODO: This should take into account more number formats and be factored out to utils
                     error[value] = "Ce champ doit être un nombre décimal."
                     raise ValidationError(error)
+        return diagnostic_year, values_dict
 
-        silent_manager_idx = self.final_value_idx + 1
-        silently_added_manager_emails = []
-        import_source = "Import massif"
-        publication_status = Canteen.PublicationStatus.DRAFT
-        if len(row) > silent_manager_idx:  # already checked earlier that it's a staff user
-            try:
-                if row[silent_manager_idx]:
-                    silently_added_manager_emails = ImportDiagnosticsView._get_manager_emails(row[silent_manager_idx])
-            except Exception as e:
-                raise ValidationError(
-                    {
-                        "email": f"Un adresse email des gestionnaires (pas notifiés) ({row[silent_manager_idx]}) n'est pas valide."
-                    }
-                )
-
-            try:
-                import_source = row[silent_manager_idx + 1].strip()
-            except Exception as e:
-                raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
-
-            status_idx = silent_manager_idx + 2
-            if len(row) > status_idx and row[status_idx]:
-                publication_status = row[status_idx].strip()
-
-        canteen, should_update_geolocation = self._update_or_create_canteen(
-            row, siret, import_source, publication_status, manager_emails, silently_added_manager_emails
-        )
-
+    # NB: this function should only be called once the data has been validated since by this point a canteen
+    # will have been saved to the DB and we don't want partial imports caused by exceptions from this method
+    def _create_diagnostic_maybe(self, canteen, diagnostic_year, values_dict):
         if diagnostic_year:
             diagnostic = Diagnostic(
                 canteen_id=canteen.id,
@@ -369,21 +401,6 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             diagnostic.full_clean()
             diagnostic.save()
             self.diagnostics_created += 1
-        return (canteen, should_update_geolocation)
-
-    # TODO: different number of columns if type is complete
-    def _validate_row(self, row):
-        # first check that the number of columns is good
-        #   to throw error if badly formatted early on.
-        # manager column isn't required, so intentionally checking less than that idx
-        if len(row) < self.manager_column_idx:
-            raise IndexError()
-        elif len(row) > self.year_idx and len(row) < self.final_value_idx + 1:
-            raise IndexError()
-        elif len(row) > self.final_value_idx + 1 and not self.request.user.is_staff:
-            raise PermissionDenied(
-                detail=f"Format fichier : {self.final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvées."
-            )
 
     def _parse_errors(self, e, row):
         errors = []
