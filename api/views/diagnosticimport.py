@@ -28,6 +28,8 @@ class ImportDiagnosticsView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
+    manager_column_idx = 10
+    year_idx = 11
 
     def __init__(self, **kwargs):
         self.diagnostics_created = 0
@@ -57,6 +59,7 @@ class ImportDiagnosticsView(APIView):
             logger.error(message)
             self.errors = [{"row": 0, "status": 400, "message": message}]
         except Exception as e:
+            print(e)
             logger.exception(e)
             self.errors = [{"row": 0, "status": 400, "message": "Échec lors de la lecture du fichier"}]
 
@@ -101,17 +104,17 @@ class ImportDiagnosticsView(APIView):
     def _save_data_from_row(self, row):
         if row[0] == "":
             raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
-        # validate data for format etc
+        # validate data for format etc, starting with basic non-data-specific row checks
         self._validate_row(row)
         manager_emails = self._validate_canteen(row)
-        diagnostic_year, values_dict = self._validate_diagnostic(row)
+        diagnostic_year, values_dict, diagnostic_type = self._validate_diagnostic(row)
         # return staff-customisable fields
         import_source, publication_status, silently_added_manager_emails = self._generate_canteen_meta_fields(row)
         # create the canteen and potentially the diagnostic
         canteen, should_update_geolocation = self._update_or_create_canteen(
             row, import_source, publication_status, manager_emails, silently_added_manager_emails
         )
-        self._create_diagnostic_maybe(canteen, diagnostic_year, values_dict)
+        self._create_diagnostic_maybe(canteen, diagnostic_year, values_dict, diagnostic_type)
 
         return (canteen, should_update_geolocation)
 
@@ -127,9 +130,19 @@ class ImportDiagnosticsView(APIView):
         print("_validate_diagnostic has not been implemented")
         ...
 
-    def _create_diagnostic_maybe(self, canteen, diagnostic_year, values_dict):
-        print("_create_diagnostic_maybe has not been implemented")
-        ...
+    # NB: this function should only be called once the data has been validated since by this point a canteen
+    # will have been saved to the DB and we don't want partial imports caused by exceptions from this method
+    def _create_diagnostic_maybe(self, canteen, diagnostic_year, values_dict, diagnostic_type):
+        if diagnostic_year:
+            diagnostic = Diagnostic(
+                canteen_id=canteen.id,
+                year=diagnostic_year,
+                diagnostic_type=diagnostic_type,
+                **values_dict,
+            )
+            diagnostic.full_clean()
+            diagnostic.save()
+            self.diagnostics_created += 1
 
     @staticmethod
     def _should_update_geolocation(canteen, row):
@@ -287,6 +300,7 @@ class ImportDiagnosticsView(APIView):
         return (canteen, should_update_geolocation)
 
     def _generate_canteen_meta_fields(self, row):
+        # TODO: maybe this should idx be defined per-class to allow staff imports + undefined columns for complete import
         silent_manager_idx = self.final_value_idx + 1
         silently_added_manager_emails = []
         import_source = "Import massif"
@@ -312,19 +326,65 @@ class ImportDiagnosticsView(APIView):
                 publication_status = row[status_idx].strip()
         return (import_source, publication_status, silently_added_manager_emails)
 
+    def _parse_errors(self, e, row):
+        errors = []
+        if isinstance(e, PermissionDenied):
+            ImportDiagnosticsView._add_error(errors, e.detail, 401)
+        elif isinstance(e, Sector.DoesNotExist):
+            ImportDiagnosticsView._add_error(errors, "Le secteur spécifié ne fait pas partie des options acceptées")
+        elif isinstance(e, ValidationError):
+            if e.message_dict:
+                for field, messages in e.message_dict.items():
+                    verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field)
+                    for message in messages:
+                        user_message = message
+                        if user_message == "Un objet Diagnostic avec ces champs Canteen et Année existe déjà.":
+                            user_message = "Un diagnostic pour cette année et cette cantine existe déjà."
+                        if field != "__all__":
+                            user_message = f"Champ '{verbose_field_name}' : {user_message}"
+                        ImportDiagnosticsView._add_error(errors, user_message)
+
+            elif hasattr(e, "params"):
+                ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
+            else:
+                print(e)
+                ImportDiagnosticsView._add_error(
+                    errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
+                )
+        elif isinstance(e, ValueError):
+            match = self.value_error_regex.search(str(e))
+            field_name = match.group(1) if match else ""
+            value_given = match.group(2) if match else ""
+            if field_name:
+                verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field_name)
+                ImportDiagnosticsView._add_error(
+                    errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
+                )
+        elif isinstance(e, IndexError):
+            ImportDiagnosticsView._add_error(
+                errors, f"Données manquantes : 22 colonnes attendues, {len(row)} trouvées."
+            )
+        elif isinstance(e, Canteen.MultipleObjectsReturned):
+            ImportDiagnosticsView._add_error(
+                errors,
+                f"Plusieurs cantines correspondent au SIRET {row[0]}. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
+            )
+        if not errors:
+            print(e)
+            ImportDiagnosticsView._add_error(
+                errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
+            )
+        return errors
+
 
 # flake8: noqa: C901
 class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     final_value_idx = 21
-    manager_column_idx = 10
-    year_idx = 11
 
     def _skip_row(self, row_number, row):
         return row_number == 1 and row[0].lower() == "siret"
 
     def _validate_row(self, row):
-        # first check that the number of columns is good
-        #   to throw error if badly formatted early on.
         # manager column isn't required, so intentionally checking less than that idx
         if len(row) < self.manager_column_idx:
             raise IndexError()
@@ -340,15 +400,11 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
         diagnostic_year = values_dict = None
         try:
             diagnostic_year = row[self.year_idx]
+            # not convinced this is actually necessary
             if not diagnostic_year and any(row[12 : self.final_value_idx]):
                 raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
         except IndexError:
             pass
-
-        if diagnostic_year:
-            row[self.final_value_idx]  # check all required diagnostic fields are given
-        else:
-            row[self.manager_column_idx - 1]  # managers are optional, so could be missing too
 
         if diagnostic_year:
             value_fields = [
@@ -377,79 +433,44 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
                     # TODO: This should take into account more number formats and be factored out to utils
                     error[value] = "Ce champ doit être un nombre décimal."
                     raise ValidationError(error)
-        return diagnostic_year, values_dict
-
-    # NB: this function should only be called once the data has been validated since by this point a canteen
-    # will have been saved to the DB and we don't want partial imports caused by exceptions from this method
-    def _create_diagnostic_maybe(self, canteen, diagnostic_year, values_dict):
-        if diagnostic_year:
-            diagnostic = Diagnostic(
-                canteen_id=canteen.id,
-                year=diagnostic_year,
-                value_total_ht=values_dict["value_total_ht"],
-                value_bio_ht=values_dict["value_bio_ht"],
-                value_sustainable_ht=values_dict["value_sustainable_ht"],
-                value_externality_performance_ht=values_dict["value_externality_performance_ht"],
-                value_egalim_others_ht=values_dict["value_egalim_others_ht"],
-                value_meat_poultry_ht=values_dict["value_meat_poultry_ht"],
-                value_meat_poultry_egalim_ht=values_dict["value_meat_poultry_egalim_ht"],
-                value_meat_poultry_france_ht=values_dict["value_meat_poultry_france_ht"],
-                value_fish_ht=values_dict["value_fish_ht"],
-                value_fish_egalim_ht=values_dict["value_fish_egalim_ht"],
-                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            )
-            diagnostic.full_clean()
-            diagnostic.save()
-            self.diagnostics_created += 1
-
-    def _parse_errors(self, e, row):
-        errors = []
-        if isinstance(e, PermissionDenied):
-            ImportDiagnosticsView._add_error(errors, e.detail, 401)
-        elif isinstance(e, Sector.DoesNotExist):
-            ImportDiagnosticsView._add_error(errors, "Le secteur spécifié ne fait pas partie des options acceptées")
-        elif isinstance(e, ValidationError):
-            if e.message_dict:
-                for field, messages in e.message_dict.items():
-                    verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field)
-                    for message in messages:
-                        user_message = message
-                        if user_message == "Un objet Diagnostic avec ces champs Canteen et Année existe déjà.":
-                            user_message = "Un diagnostic pour cette année et cette cantine existe déjà."
-                        if field != "__all__":
-                            user_message = f"Champ '{verbose_field_name}' : {user_message}"
-                        ImportDiagnosticsView._add_error(errors, user_message)
-
-            elif hasattr(e, "params"):
-                ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
-            else:
-                ImportDiagnosticsView._add_error(
-                    errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
-                )
-        elif isinstance(e, ValueError):
-            match = self.value_error_regex.search(str(e))
-            field_name = match.group(1) if match else ""
-            value_given = match.group(2) if match else ""
-            if field_name:
-                verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field_name)
-                ImportDiagnosticsView._add_error(
-                    errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
-                )
-        elif isinstance(e, IndexError):
-            ImportDiagnosticsView._add_error(
-                errors, f"Données manquantes : 22 colonnes attendues, {len(row)} trouvées."
-            )
-        elif isinstance(e, Canteen.MultipleObjectsReturned):
-            ImportDiagnosticsView._add_error(
-                errors,
-                f"Plusieurs cantines correspondent au SIRET {row[0]}. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
-            )
-        if not errors:
-            ImportDiagnosticsView._add_error(
-                errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
-            )
-        return errors
+        return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
 
 
 class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
-    permission_classes = [IsAuthenticated]
+    # not convinced this is actually necessary
+    final_value_idx = 180
+
+    def _skip_row(self, row_number, row):
+        # TODO: allow for no headers? Or at least more of a warning
+        if row_number == 1 or row_number == 2:
+            return True
+
+    def _validate_row(self, row):
+        # complete diagnostic should at least have the year and total
+        if len(row) < self.year_idx + 1:
+            raise IndexError()
+
+    def _validate_diagnostic(self, row):
+        # NB: if year is given, appro data is required, else only canteen data required
+        diagnostic_year = values_dict = None
+        diagnostic_year = row[self.year_idx]
+        values_dict = {}
+        value_offset = 0
+        for value in Diagnostic.complete_fields:
+            try:
+                value_offset = value_offset + 1
+                value_idx = self.year_idx + value_offset
+                values_dict[value] = Decimal(row[value_idx].strip().replace(",", "."))
+            except IndexError:
+                # we allow the fields to be left unspecified because there are so many
+                break
+            except Exception as e:
+                error = {}
+                # TODO: This should take into account more number formats and be factored out to utils
+                error[value] = "Ce champ doit être un nombre décimal."
+                raise ValidationError(error)
+        return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE
+
+    # TODO: reinstate these fields for complete diag
+    def _generate_canteen_meta_fields(self, row):
+        return ("Import massif", Canteen.PublicationStatus.DRAFT, [])

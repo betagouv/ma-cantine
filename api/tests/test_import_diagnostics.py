@@ -342,6 +342,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         If errors occur, discard the file and return the errors with row and message
         """
+        # creating 2 canteens with same siret here to error when this situation exists IRL
         CanteenFactory.create(siret="42111303053388")
         CanteenFactory.create(siret="42111303053388")
         with open("./api/tests/files/diagnostics_bad_file.csv") as diag_file:
@@ -349,6 +350,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 0)
+        # no new objects should have been saved to the DB since it failed
+        self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(Diagnostic.objects.count(), 0)
         errors = body["errors"]
         first_error = errors.pop(0)
@@ -590,6 +593,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        print(body)
         self.assertEqual(body["count"], 2)
         finished_diag = Diagnostic.objects.find(canteen__siret="29969025300230", year=2021)
         self.assertEqual(finished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
