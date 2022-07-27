@@ -250,10 +250,11 @@ class TestImportDiagnosticsAPI(APITestCase):
         with open("./api/tests/files/mix_diag_canteen_import.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(Diagnostic.objects.count(), 1)
         body = response.json()
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
-        self.assertEqual(Diagnostic.objects.count(), 1)
         diagnostic = Diagnostic.objects.first()
         self.assertEqual(diagnostic.canteen.siret, "73282932000074")
         self.assertEqual(Diagnostic.objects.filter(canteen=Canteen.objects.get(siret="21340172201787")).count(), 0)

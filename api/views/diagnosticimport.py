@@ -202,39 +202,7 @@ class ImportDiagnosticsView(APIView):
     def _add_error(errors, message, code=400):
         errors.append({"message": message, "code": code})
 
-
-# flake8: noqa: C901
-class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
-    final_value_idx = 21
-    manager_column_idx = 10
-    year_idx = 11
-
-    def _skip_row(self, row_number, row):
-        return row_number == 1 and row[0].lower() == "siret"
-
-    @transaction.atomic
-    def _update_or_create_canteen_with_diagnostic(self, row, siret):
-        # first check that the number of columns is good
-        #   to throw error if badly formatted early on.
-        # NB: if year is given, appro data is required, else only canteen data required
-        # TODO: different number of columns if type is complete
-        if len(row) > self.final_value_idx + 1 and not self.request.user.is_staff:
-            raise PermissionDenied(
-                detail=f"Format fichier : {self.final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvées."
-            )
-        diagnostic_year = None
-        try:
-            diagnostic_year = row[self.year_idx]
-            if not diagnostic_year and any(row[12 : self.final_value_idx]):
-                raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
-        except IndexError:
-            pass
-
-        if diagnostic_year:
-            row[self.final_value_idx]  # check all required diagnostic fields are given
-        else:
-            row[self.manager_column_idx - 1]  # managers are optional, so could be missing too
-
+    def _validate_canteen(self, row):
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
         elif not row[2] and not row[3]:
@@ -248,6 +216,83 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
                 manager_emails = ImportDiagnosticsView._get_manager_emails(row[self.manager_column_idx])
         except Exception as e:
             raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
+        return manager_emails
+
+    def _update_or_create_canteen(
+        self, row, siret, import_source, publication_status, manager_emails, silently_added_manager_emails
+    ):
+        canteen_exists = Canteen.objects.filter(siret=siret).exists()
+        canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
+
+        if canteen_exists and self.request.user not in canteen.managers.all():
+            raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
+
+        should_update_geolocation = (
+            ImportDiagnosticsView._should_update_geolocation(canteen, row) if canteen_exists else True
+        )
+
+        canteen.name = row[1].strip()
+        canteen.city_insee_code = row[2].strip()
+        canteen.postal_code = row[3].strip()
+        canteen.central_producer_siret = normalise_siret(row[4])
+        canteen.daily_meal_count = row[5].strip()
+        canteen.production_type = row[7].strip().lower()
+        canteen.management_type = row[8].strip().lower()
+        canteen.economic_model = row[9].strip().lower()
+        canteen.import_source = import_source
+        canteen.publication_status = publication_status
+
+        # full_clean must be before the relation-model updates bc they don't require a save().
+        # If an exception is launched by full_clean, it must be here.
+        canteen.full_clean()
+        if row[6]:
+            canteen.sectors.set(
+                [
+                    self.annotated_sectors.get(name_lower__unaccent=sector.strip().lower())
+                    for sector in row[6].split("+")
+                ]
+            )
+
+        canteen.save()
+
+        if not self.request.user.is_staff:
+            canteen.managers.add(self.request.user)
+        if manager_emails:
+            ImportDiagnosticsView._add_managers_to_canteen(manager_emails, canteen)
+        if silently_added_manager_emails:
+            ImportDiagnosticsView._add_managers_to_canteen(
+                silently_added_manager_emails, canteen, send_invitation_mail=False
+            )
+        return (canteen, should_update_geolocation)
+
+
+# flake8: noqa: C901
+class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
+    final_value_idx = 21
+    manager_column_idx = 10
+    year_idx = 11
+
+    def _skip_row(self, row_number, row):
+        return row_number == 1 and row[0].lower() == "siret"
+
+    @transaction.atomic
+    def _update_or_create_canteen_with_diagnostic(self, row, siret):
+        self._validate_row(row)
+        manager_emails = self._validate_canteen(row)
+
+        # NB: if year is given, appro data is required, else only canteen data required
+        diagnostic_year = None
+        try:
+            diagnostic_year = row[self.year_idx]
+            if not diagnostic_year and any(row[12 : self.final_value_idx]):
+                raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
+        except IndexError:
+            pass
+
+        if diagnostic_year:
+            row[self.final_value_idx]  # check all required diagnostic fields are given
+        else:
+            row[self.manager_column_idx - 1]  # managers are optional, so could be missing too
 
         if diagnostic_year:
             value_fields = [
@@ -301,48 +346,9 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             if len(row) > status_idx and row[status_idx]:
                 publication_status = row[status_idx].strip()
 
-        canteen_exists = Canteen.objects.filter(siret=siret).exists()
-        canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
-
-        if canteen_exists and self.request.user not in canteen.managers.all():
-            raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
-
-        should_update_geolocation = (
-            ImportDiagnosticsView._should_update_geolocation(canteen, row) if canteen_exists else True
+        canteen, should_update_geolocation = self._update_or_create_canteen(
+            row, siret, import_source, publication_status, manager_emails, silently_added_manager_emails
         )
-
-        canteen.name = row[1].strip()
-        canteen.city_insee_code = row[2].strip()
-        canteen.postal_code = row[3].strip()
-        canteen.central_producer_siret = normalise_siret(row[4])
-        canteen.daily_meal_count = row[5].strip()
-        canteen.production_type = row[7].strip().lower()
-        canteen.management_type = row[8].strip().lower()
-        canteen.economic_model = row[9].strip().lower()
-        canteen.import_source = import_source
-        canteen.publication_status = publication_status
-
-        # full_clean must be before the relation-model updates bc they don't require a save().
-        # If an exception is launched by full_clean, it must be here.
-        canteen.full_clean()
-        if row[6]:
-            canteen.sectors.set(
-                [
-                    self.annotated_sectors.get(name_lower__unaccent=sector.strip().lower())
-                    for sector in row[6].split("+")
-                ]
-            )
-
-        canteen.save()
-
-        if not self.request.user.is_staff:
-            canteen.managers.add(self.request.user)
-        if manager_emails:
-            ImportDiagnosticsView._add_managers_to_canteen(manager_emails, canteen)
-        if silently_added_manager_emails:
-            ImportDiagnosticsView._add_managers_to_canteen(
-                silently_added_manager_emails, canteen, send_invitation_mail=False
-            )
 
         if diagnostic_year:
             diagnostic = Diagnostic(
@@ -364,6 +370,20 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             diagnostic.save()
             self.diagnostics_created += 1
         return (canteen, should_update_geolocation)
+
+    # TODO: different number of columns if type is complete
+    def _validate_row(self, row):
+        # first check that the number of columns is good
+        #   to throw error if badly formatted early on.
+        # manager column isn't required, so intentionally checking less than that idx
+        if len(row) < self.manager_column_idx:
+            raise IndexError()
+        elif len(row) > self.year_idx and len(row) < self.final_value_idx + 1:
+            raise IndexError()
+        elif len(row) > self.final_value_idx + 1 and not self.request.user.is_staff:
+            raise PermissionDenied(
+                detail=f"Format fichier : {self.final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvées."
+            )
 
     def _parse_errors(self, e, row):
         errors = []
