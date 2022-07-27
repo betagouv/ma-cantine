@@ -593,9 +593,8 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        print(body)
         self.assertEqual(body["count"], 2)
-        finished_diag = Diagnostic.objects.find(canteen__siret="29969025300230", year=2021)
+        finished_diag = Diagnostic.objects.get(canteen__siret="29969025300230", year=2021)
         self.assertEqual(finished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
         self.assertEqual(finished_diag.value_total_ht, 10500)
         self.assertEqual(finished_diag.value_meat_poultry_ht, 800)
@@ -622,12 +621,12 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(finished_diag.total_family_boissons, 130)
         self.assertEqual(finished_diag.total_family_autres, 130)
 
-        unfinished_diag = Diagnostic.objects.find(canteen__siret="29969025300230", year=2022)
+        unfinished_diag = Diagnostic.objects.get(canteen__siret="29969025300230", year=2022)
         self.assertEqual(unfinished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
         self.assertEqual(unfinished_diag.value_total_ht, 30300)  # picked a field at random to smoke test
-        self.assertEqual(unfinished_diag.value_autres_label_rouge, None)  # picked a field at random to smoke test
         self.assertEqual(unfinished_diag.value_meat_poultry_ht, None)
-        self.assertEqual(unfinished_diag.value_fish_ht, None)
+        self.assertEqual(unfinished_diag.value_fish_ht, 10)
+        self.assertEqual(unfinished_diag.value_autres_label_rouge, None)  # picked a field at random to smoke test
 
     # TODO: test validation errors on the extended columns
     # TODO: test staff columns with complete diagnositcs

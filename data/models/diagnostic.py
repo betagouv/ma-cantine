@@ -1224,10 +1224,12 @@ class Diagnostic(models.Model):
 
     def clean(self):
         self.validate_year()
-        self.validate_approvisionment_total()
-        self.validate_meat_total()
-        self.validate_fish_total()
-        self.validate_meat_fish_egalim()
+        # TODO: validation for complete
+        if self.diagnostic_type is not Diagnostic.DiagnosticType.COMPLETE:
+            self.validate_approvisionment_total()
+            self.validate_meat_total()
+            self.validate_fish_total()
+            self.validate_meat_fish_egalim()
         return super().clean()
 
     def validate_year(self):

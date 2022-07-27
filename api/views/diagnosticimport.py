@@ -456,11 +456,12 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         diagnostic_year = row[self.year_idx]
         values_dict = {}
         value_offset = 0
-        for value in Diagnostic.complete_fields:
+        for value in ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht", *Diagnostic.complete_fields]:
             try:
                 value_offset = value_offset + 1
                 value_idx = self.year_idx + value_offset
-                values_dict[value] = Decimal(row[value_idx].strip().replace(",", "."))
+                if row[value_idx]:  # allowed to be blank
+                    values_dict[value] = Decimal(row[value_idx].strip().replace(",", "."))
             except IndexError:
                 # we allow the fields to be left unspecified because there are so many
                 break
