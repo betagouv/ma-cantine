@@ -28,7 +28,7 @@ class MaCantineOrderingFilter(filters.OrderingFilter):
         ordering = self.get_ordering(request, queryset, view)
 
         def make_f_object(x):
-            return F(x[1:]).desc(nulls_first=True) if x[0] == "-" else F(x).asc(nulls_first=True)
+            return F(x[1:]).desc(nulls_last=True) if x[0] == "-" else F(x).asc(nulls_first=True)
 
         if ordering:
             ordering = map(make_f_object, ordering)

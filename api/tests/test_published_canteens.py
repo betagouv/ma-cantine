@@ -336,6 +336,15 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(results[2]["name"], "Mochi")
         self.assertEqual(results[3]["name"], "Umami")
 
+        url = f"{reverse('published_canteens')}?ordering=-daily_meal_count"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 4)
+        self.assertEqual(results[0]["name"], "Umami")
+        self.assertEqual(results[1]["name"], "Mochi")
+        self.assertEqual(results[2]["name"], "Wasabi")
+        self.assertEqual(results[3]["name"], "Shiso")
+
     def test_filter_appro_values(self):
         """
         Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic
