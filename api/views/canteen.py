@@ -13,7 +13,7 @@ from django.db.models import Sum, FloatField, Avg, Func, F, Q
 from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework import status, filters
+from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
@@ -34,7 +34,7 @@ from api.permissions import (
     IsCanteenManagerUrlParam,
 )
 from api.exceptions import DuplicateException
-from .utils import camelize, UnaccentSearchFilter, CamelCaseOrderingFilter
+from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +150,7 @@ class PublishedCanteensView(ListAPIView):
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
-        filters.OrderingFilter,
+        MaCantineOrderingFilter,
     ]
     search_fields = ["name"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
@@ -175,7 +175,7 @@ class UserCanteensView(ListCreateAPIView):
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
-        filters.OrderingFilter,
+        MaCantineOrderingFilter,
     ]
     required_scopes = ["canteen"]
     search_fields = ["name"]
@@ -715,7 +715,7 @@ class SatelliteListCreateView(ListCreateAPIView):
     serializer_class = SatelliteCanteenSerializer
     pagination_class = SatellitesPagination
     filter_backends = [
-        CamelCaseOrderingFilter,
+        MaCantineOrderingFilter,
     ]
 
     ordering_fields = [

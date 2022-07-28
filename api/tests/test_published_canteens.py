@@ -298,6 +298,53 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(results[2]["name"], "Shiso")
         self.assertEqual(results[3]["name"], "Mochi")
 
+    def test_order_meal_count(self):
+        """
+        In meal count, "null" values should be placed first
+        """
+        CanteenFactory.create(
+            publication_status="published",
+            daily_meal_count=None,
+            name="Shiso",
+            creation_date=(timezone.now() - datetime.timedelta(days=10)),
+        )
+        CanteenFactory.create(
+            publication_status="published",
+            daily_meal_count=0,
+            name="Wasabi",
+            creation_date=(timezone.now() - datetime.timedelta(days=8)),
+        )
+        CanteenFactory.create(
+            publication_status="published",
+            daily_meal_count=1,
+            name="Mochi",
+            creation_date=(timezone.now() - datetime.timedelta(days=6)),
+        )
+        CanteenFactory.create(
+            publication_status="published",
+            daily_meal_count=2,
+            name="Umami",
+            creation_date=(timezone.now() - datetime.timedelta(days=4)),
+        )
+
+        url = f"{reverse('published_canteens')}?ordering=daily_meal_count"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 4)
+        self.assertEqual(results[0]["name"], "Shiso")
+        self.assertEqual(results[1]["name"], "Wasabi")
+        self.assertEqual(results[2]["name"], "Mochi")
+        self.assertEqual(results[3]["name"], "Umami")
+
+        url = f"{reverse('published_canteens')}?ordering=-daily_meal_count"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 4)
+        self.assertEqual(results[0]["name"], "Umami")
+        self.assertEqual(results[1]["name"], "Mochi")
+        self.assertEqual(results[2]["name"], "Wasabi")
+        self.assertEqual(results[3]["name"], "Shiso")
+
     def test_filter_appro_values(self):
         """
         Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic
