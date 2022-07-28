@@ -58,6 +58,8 @@ class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     email_confirmed = models.BooleanField(default="False", verbose_name="adresse email confirmée")
 
+    opt_out_reminder_emails = models.BooleanField(default="False", verbose_name="Désactiver les emails de rappel")
+
     law_awareness = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=LawAwareness.choices),
         blank=True,

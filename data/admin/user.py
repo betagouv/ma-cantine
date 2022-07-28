@@ -75,6 +75,7 @@ class MaCanteenUserAdmin(UserAdmin):
             _("Emails automatiques"),
             {
                 "fields": (
+                    "opt_out_reminder_emails",
                     "email_no_canteen_first_reminder",
                     "email_no_canteen_second_reminder",
                 ),
