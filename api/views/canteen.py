@@ -35,7 +35,6 @@ from api.permissions import (
 )
 from api.exceptions import DuplicateException
 from .utils import camelize, UnaccentSearchFilter, CamelCaseOrderingFilter
-from common import utils
 
 logger = logging.getLogger(__name__)
 
@@ -258,25 +257,7 @@ class PublishCanteenView(APIView):
             is_draft = canteen.publication_status == Canteen.PublicationStatus.DRAFT
 
             if is_draft:
-                canteen.publication_status = Canteen.PublicationStatus.PENDING
-                protocol = settings.PROTOCOL
-                admin_url = "{}://{}/admin/data/canteen/{}/change/".format(protocol, settings.HOSTNAME, canteen.id)
-
-                logger.info(f"Demande de publication de {canteen.name} (ID: {canteen.id})")
-
-                title = canteen.name
-                env = getattr(settings, "ENVIRONMENT", "")
-                if env == "demo" or env == "staging":
-                    title = f"({env.upper()}) {title}"
-
-                description = f"[admin]({admin_url})"
-                if canteen.sectors.count():
-                    description += "\n\nSecteurs\n"
-                    for sector in canteen.sectors.all().order_by("name"):
-                        description += f"\n* {sector.name}"
-                else:
-                    description += "\n\nAucun secteur"
-                utils.create_trello_card(settings.TRELLO_LIST_ID_PUBLICATION, title, description)
+                canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
 
             canteen.update_publication_comments(data)
             canteen.save()
