@@ -331,7 +331,6 @@ class TestAutomaticEmails(TestCase):
         )
         tasks.no_canteen_first_reminder()
 
-        # Email is only sent once to Jean
         tasks._send_sib_template.assert_not_called()
 
         self.assertIsNone(jean.email_no_canteen_first_reminder)
