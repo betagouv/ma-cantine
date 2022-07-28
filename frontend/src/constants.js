@@ -43,7 +43,11 @@ export default Object.freeze({
       shortText: "viandes et volailles",
       color: "pink darken-4",
     },
-    CHARCUTERIE: { text: "Charcuterie", shortText: "charcuterie", color: "pink darken-4" },
+    CHARCUTERIE: {
+      text: "Charcuterie",
+      shortText: "charcuterie",
+      color: "pink darken-4",
+    },
     PRODUITS_DE_LA_MER: {
       text: "Produits aquatiques frais et surgelés",
       shortText: "produits aquatiques",
@@ -64,7 +68,11 @@ export default Object.freeze({
       shortText: "boulangerie / pâtisserie",
       color: "deep-purple darken-3",
     },
-    BOISSONS: { text: "Boissons", shortText: "boissons", color: "green darken-4" },
+    BOISSONS: {
+      text: "Boissons",
+      shortText: "boissons",
+      color: "green darken-4",
+    },
     AUTRES: {
       text: "Autres produits frais, surgelés et d’épicerie",
       shortText: "autres produits",
@@ -98,25 +106,32 @@ export default Object.freeze({
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
-    BIO: { text: "Bio" },
-    LABEL_ROUGE: { text: "Label rouge" },
-    AOCAOP_IGP_STG: { text: "AOC / AOP / IGP / STG", longText: "AOC / AOP / IGP / STG" },
-    PECHE_DURABLE: { text: "Écolabel pêche durable" },
-    RUP: { text: "RUP", longText: "Région ultrapériphérique (RUP)" },
-    COMMERCE_EQUITABLE: { text: "Commerce équitable" },
+    BIO: { text: "Bio", color: "green" },
+    LABEL_ROUGE: { text: "Label rouge", color: "red lighten-1" },
+    AOCAOP_IGP_STG: { text: "AOC / AOP / IGP / STG", longText: "AOC / AOP / IGP / STG", color: "indigo" },
+    PECHE_DURABLE: { text: "Écolabel pêche durable", color: "blue" },
+    RUP: { text: "RUP", longText: "Région ultrapériphérique (RUP)", color: "brown" },
+    COMMERCE_EQUITABLE: { text: "Commerce équitable", color: "lime darken-2" },
     HVE: {
       text: "Certification environnementale de niveau 2 ou HVE",
       longText: "Certification environnementale de niveau 2 ou HVE",
+      color: "purple",
     },
-    FERMIER: { text: "Fermier", longText: "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »" },
+    FERMIER: {
+      text: "Fermier",
+      longText: "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »",
+      color: "orange",
+    },
     EXTERNALITES: {
       text: "Externalités environnementales",
       longText:
         "Produits acquis prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      color: "teal",
     },
     PERFORMANCE: {
       text: "Performance environnementale",
       longText: "Produits acquis sur la base de leurs performances en matière environnementale",
+      color: "pink",
     },
     FRANCE: { text: "Provenance France" },
     SHORT_DISTRIBUTION: { text: "Circuit-court" },
