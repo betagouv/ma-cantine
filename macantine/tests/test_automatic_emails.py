@@ -356,7 +356,6 @@ class TestAutomaticEmails(TestCase):
         )
         tasks.no_canteen_second_reminder()
 
-        # Email is only sent once to Jean
         tasks._send_sib_template.assert_not_called()
 
         marie.refresh_from_db()
