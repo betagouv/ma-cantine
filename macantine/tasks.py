@@ -35,6 +35,7 @@ def no_canteen_first_reminder():
         canteens=None,
         date_joined__lte=threshold,
         email_no_canteen_first_reminder__isnull=True,
+        opt_out_reminder_emails=False,
     ).all()
     if not users:
         logger.info("no_canteen_first_reminder: No users to notify.")
@@ -69,6 +70,7 @@ def no_canteen_second_reminder():
         date_joined__lte=threshold,
         email_no_canteen_first_reminder__lte=first_reminder_threshold,
         email_no_canteen_second_reminder__isnull=True,
+        opt_out_reminder_emails=False,
     ).all()
     if not users:
         logger.info("no_canteen_second_reminder: No users to notify.")
@@ -109,7 +111,7 @@ def no_diagnostic_first_reminder():
     logger.info(f"no_diagnostic_first_reminder: {len(canteens)} canteens to notify.")
 
     for canteen in canteens:
-        for manager in canteen.managers.all():
+        for manager in canteen.managers.filter(opt_out_reminder_emails=False):
 
             try:
                 parameters = {"PRENOM": manager.first_name, "NOM_CANTINE": canteen.name}
