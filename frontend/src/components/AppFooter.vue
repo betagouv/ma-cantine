@@ -81,6 +81,10 @@ export default {
           text: "Accessibilité : non conforme",
           to: { name: "AccessibilityDeclaration" },
         },
+        {
+          text: "Plan du site",
+          to: { name: "SiteMap" },
+        },
       ],
     }
   },
