@@ -35,12 +35,12 @@ export default {
     const resources = []
     if (this.$store.state.loggedUser) {
       resources.push({
-        title: "Blog",
-        icon: "mdi-post",
-        description: "Découvrez notre espace blog et témoignages",
+        title: "Générer mon affiche",
+        icon: "mdi-cloud-print-outline",
+        description: "Obtenez un PDF à afficher ou à envoyer par mail à vos convives",
         url: null,
-        to: { name: "BlogsHome" },
-        ctaText: "Visiter",
+        to: { name: "GeneratePosterPage" },
+        ctaText: "Générer mon affiche",
       })
     } else {
       resources.push({
@@ -53,32 +53,21 @@ export default {
       })
     }
     resources.push({
+      title: "Communauté",
+      icon: "mdi-account-group",
+      description: "Découvrez nos événements et échangez avec des autres gestionnaires",
+      url: null,
+      to: { name: "CommunityPage" },
+      ctaText: "Rencontrer la communauté",
+    })
+    resources.push({
       title: "Documentation",
       icon: "mdi-file-document-multiple",
       description: "Ressources pour les acteurs et actrices de la restauration collective",
       url: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
       to: null,
-      ctaText: "Consulter",
+      ctaText: "Consulter nos ressources",
     })
-    if (this.$store.state.loggedUser) {
-      resources.push({
-        title: "Générer mon affiche",
-        icon: "mdi-cloud-print-outline",
-        description: "Obtenez un PDF à afficher ou à envoyer par mail à vos convives",
-        url: null,
-        to: { name: "GeneratePosterPage" },
-        ctaText: "Générer",
-      })
-    } else {
-      resources.push({
-        title: "Devenir testeur",
-        icon: "mdi-tools",
-        description: "Ce site est en expérimentation, devenez testeur !",
-        url: null,
-        to: { name: "TesterParticipation" },
-        ctaText: "Participer",
-      })
-    }
 
     return { resources }
   },

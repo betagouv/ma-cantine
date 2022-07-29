@@ -275,6 +275,11 @@ export default {
             },
           ],
         },
+        {
+          text: "Devenir testeur",
+          to: { name: "TesterParticipation" },
+          authenticationState: false,
+        },
       ],
     }
   },
