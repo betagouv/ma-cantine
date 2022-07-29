@@ -45,7 +45,7 @@
     <div v-else>
       <v-pagination class="my-6" v-model="page" :length="Math.ceil(blogPostCount / limit)"></v-pagination>
       <v-progress-circular class="my-10" indeterminate v-if="!visibleBlogPosts"></v-progress-circular>
-      <v-row v-else class="cta-group pa-4 mt-2">
+      <v-row v-else class="cta-group pa-2 mt-2">
         <v-col cols="12" sm="6" md="4" v-for="post in visibleBlogPosts" :key="post.id">
           <BlogCard :post="post" />
         </v-col>
