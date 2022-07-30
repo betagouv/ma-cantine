@@ -600,18 +600,18 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(finished_diag.value_meat_poultry_ht, 800)
         self.assertEqual(finished_diag.value_fish_ht, 900)
         self.assertEqual(finished_diag.total_label_bio, 80)
-        self.assertEqual(finished_diag.total_label_label_rouge, 80)
-        self.assertEqual(finished_diag.total_label_aocaop_igp_stg, 80)
-        self.assertEqual(finished_diag.total_label_hve, 80)
-        self.assertEqual(finished_diag.total_label_peche_durable, 80)
-        self.assertEqual(finished_diag.total_label_rup, 80)
-        self.assertEqual(finished_diag.total_label_fermier, 80)
-        self.assertEqual(finished_diag.total_label_externalites, 80)
-        self.assertEqual(finished_diag.total_label_commerce_equitable, 80)
-        self.assertEqual(finished_diag.total_label_performance, 80)
-        self.assertEqual(finished_diag.total_label_france, 80)
-        self.assertEqual(finished_diag.total_label_short_distribution, 80)
-        self.assertEqual(finished_diag.total_label_local, 80)
+        self.assertEqual(finished_diag.total_label_label_rouge, 90)
+        self.assertEqual(finished_diag.total_label_aocaop_igp_stg, 100)
+        self.assertEqual(finished_diag.total_label_hve, 110)
+        self.assertEqual(finished_diag.total_label_peche_durable, 120)
+        self.assertEqual(finished_diag.total_label_rup, 130)
+        self.assertEqual(finished_diag.total_label_commerce_equitable, 140)
+        self.assertEqual(finished_diag.total_label_fermier, 150)
+        self.assertEqual(finished_diag.total_label_externalites, 160)
+        self.assertEqual(finished_diag.total_label_performance, 170)
+        self.assertEqual(finished_diag.total_label_france, 180)
+        self.assertEqual(finished_diag.total_label_short_distribution, 190)
+        self.assertEqual(finished_diag.total_label_local, 200)
         self.assertEqual(finished_diag.total_family_viandes_volailles, 130)
         self.assertEqual(finished_diag.total_family_produits_de_la_mer, 130)
         self.assertEqual(finished_diag.total_family_fruits_et_legumes, 130)
@@ -619,7 +619,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(finished_diag.total_family_produits_laitiers, 130)
         self.assertEqual(finished_diag.total_family_boulangerie, 130)
         self.assertEqual(finished_diag.total_family_boissons, 130)
-        self.assertEqual(finished_diag.total_family_autres, 130)
+        self.assertEqual(finished_diag.total_family_autres, 910)
 
         unfinished_diag = Diagnostic.objects.get(canteen__siret="29969025300230", year=2022)
         self.assertEqual(unfinished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
@@ -629,6 +629,63 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(unfinished_diag.value_autres_label_rouge, None)  # picked a field at random to smoke test
 
     # TODO: test validation errors on the extended columns
+    @authenticate
+    def test_complete_diagnostic_error_collection(self, _):
+        """
+        Test that the expected errors are returned for a badly formatted file for complete diagnostic
+        """
+        with open("./api/tests/files/bad_complete_diagnostics.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        errors = body["errors"]
+        print(errors)
+        self.assertGreater(len(errors), 0)
+        first_error = errors.pop(0)
+        self.assertEqual(
+            first_error["message"],
+            "Champ 'année' : L'année est obligatoire pour créer un diagnostic. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
+        )
+        # two of the same error, generated in slightly different ways
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'année' : L'année est obligatoire pour créer un diagnostic. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Données manquantes : au moins 12 colonnes attendues, 11 trouvées. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Produits aquatiques frais et surgelés, Bio' : Ce champ doit être vide ou un nombre décimal.",
+        )
+
+        with open("./api/tests/files/bad_header_complete_diagnostics_0.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+        body = response.json()
+
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Deux lignes en-tête attendues, 0 trouvée. Vieullez verifier que vous voulez importer les diagnostics complèts, et assurez-vous que le format de l'en-tête suit les exemples donnés.",
+        )
+
+        with open("./api/tests/files/bad_header_complete_diagnostics_1.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+        body = response.json()
+
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Deux lignes en-tête attendues, 1 trouvée. Vieullez verifier que vous voulez importer les diagnostics complèts, et assurez-vous que le format de l'en-tête suit les exemples donnés.",
+        )
+
     # TODO: test staff columns with complete diagnositcs
 
     @override_settings(CONTACT_EMAIL="team@example.com")

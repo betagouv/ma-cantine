@@ -347,7 +347,6 @@ class ImportDiagnosticsView(APIView):
             elif hasattr(e, "params"):
                 ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:
-                print(e)
                 ImportDiagnosticsView._add_error(
                     errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
                 )
@@ -451,9 +450,13 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
             raise IndexError()
 
     def _validate_diagnostic(self, row):
-        # NB: if year is given, appro data is required, else only canteen data required
-        diagnostic_year = values_dict = None
         diagnostic_year = row[self.year_idx]
+        if not diagnostic_year:
+            raise ValidationError(
+                {
+                    "year": "L'année est obligatoire pour créer un diagnostic. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer."
+                }
+            )
         values_dict = {}
         value_offset = 0
         for value in ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht", *Diagnostic.complete_fields]:
@@ -463,13 +466,15 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
                 if row[value_idx]:  # allowed to be blank
                     values_dict[value] = Decimal(row[value_idx].strip().replace(",", "."))
             except IndexError:
-                # we allow the fields to be left unspecified because there are so many
+                # we allow the rest of the fields to be left unspecified because there are so many
                 break
             except Exception as e:
                 error = {}
                 # TODO: This should take into account more number formats and be factored out to utils
-                error[value] = "Ce champ doit être un nombre décimal."
+                error[value] = "Ce champ doit être vide ou un nombre décimal."
                 raise ValidationError(error)
+        if not values_dict["value_total_ht"]:
+            raise ValidationError({"value_total_ht": "Ce champ doit être un nombre décimal."})
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE
 
     # TODO: reinstate these fields for complete diag
