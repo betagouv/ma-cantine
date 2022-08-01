@@ -46,6 +46,8 @@ class TestCanteenStatsApi(APITestCase):
             value_total_ht=100,
             value_bio_ht=20,
             value_sustainable_ht=30,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
             has_waste_diagnostic=False,
             waste_actions=[],
             vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY,
@@ -58,6 +60,8 @@ class TestCanteenStatsApi(APITestCase):
             value_total_ht=1000,
             value_bio_ht=400,
             value_sustainable_ht=500,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
             has_waste_diagnostic=True,
             waste_actions=["action1", "action2"],
             vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW,
@@ -74,6 +78,8 @@ class TestCanteenStatsApi(APITestCase):
             value_total_ht=100,
             value_bio_ht=100,
             value_sustainable_ht=0,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
             vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY,
         )
         DiagnosticFactory.create(
@@ -82,6 +88,8 @@ class TestCanteenStatsApi(APITestCase):
             value_total_ht=100,
             value_bio_ht=100,
             value_sustainable_ht=0,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
             cooking_plastic_substituted=True,
             serving_plastic_substituted=True,
             plastic_bottles_substituted=True,
@@ -157,21 +165,54 @@ class TestCanteenStatsApi(APITestCase):
         null_total = CanteenFactory.create()
         DiagnosticFactory.create(canteen=null_total, value_total_ht=None)
         bio_lacking = CanteenFactory.create()
-        DiagnosticFactory.create(canteen=bio_lacking, value_total_ht=100, value_bio_ht=19, value_sustainable_ht=31)
+        DiagnosticFactory.create(
+            canteen=bio_lacking,
+            value_total_ht=100,
+            value_bio_ht=19,
+            value_sustainable_ht=31,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
+        )
         # not convinced the following shouldn't get a badge but not sure how to make the Sum function work
         null_sustainable = CanteenFactory.create(region=Region.ile_de_france.value)
         DiagnosticFactory.create(
-            canteen=null_sustainable, value_total_ht=100, value_bio_ht=50, value_sustainable_ht=None
+            canteen=null_sustainable,
+            value_total_ht=100,
+            value_bio_ht=50,
+            value_sustainable_ht=None,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
         )
 
         # --- Canteens which earn appro badge:
         earned = CanteenFactory.create()
-        DiagnosticFactory.create(canteen=earned, value_total_ht=100, value_bio_ht=20, value_sustainable_ht=30)
+        DiagnosticFactory.create(
+            canteen=earned,
+            value_total_ht=100,
+            value_bio_ht=20,
+            value_sustainable_ht=30,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
+        )
         # rules per outre mer territories
         guadeloupe = CanteenFactory.create(region=Region.guadeloupe.value)
-        DiagnosticFactory.create(canteen=guadeloupe, value_total_ht=100, value_bio_ht=5, value_sustainable_ht=15)
+        DiagnosticFactory.create(
+            canteen=guadeloupe,
+            value_total_ht=100,
+            value_bio_ht=5,
+            value_sustainable_ht=15,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
+        )
         mayotte = CanteenFactory.create(region=Region.mayotte.value)
-        DiagnosticFactory.create(canteen=mayotte, value_total_ht=100, value_bio_ht=2, value_sustainable_ht=3)
+        DiagnosticFactory.create(
+            canteen=mayotte,
+            value_total_ht=100,
+            value_bio_ht=2,
+            value_sustainable_ht=3,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
+        )
         # TODO: rules per outre mer territories: Saint-Pierre-et-Miquelon
         # st_pierre_et_miquelon = CanteenFactory.create(region=Region.st_pierre_et_miquelon.value)
         # DiagnosticFactory.create(canteen=st_pierre_et_miquelon, value_total_ht=100, value_bio_ht=10, value_sustainable_ht=20)
@@ -322,3 +363,32 @@ class TestCanteenStatsApi(APITestCase):
         self.assertIn(Department.ain, body["departments"][0])
         self.assertIn(Department.aisne, body["departments"][1])
         self.assertIn("999", body["departments"])
+
+    def test_stats_simple_diagnostic(self):
+        """
+        The endpoint must take into consideration the simplified diagnostic
+        fields for EGAlim stats
+        """
+        year = 2021
+
+        published = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED.value,
+        )
+
+        # Diagnostic that should display 20% Bio and 45% other EGAlim
+        DiagnosticFactory.create(
+            canteen=published,
+            year=year,
+            value_total_ht=100,
+            value_bio_ht=20,
+            value_sustainable_ht=15,
+            value_externality_performance_ht=15,
+            value_egalim_others_ht=15,
+        )
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": year})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["bioPercent"], 20)
+        self.assertEqual(body["sustainablePercent"], 45)
