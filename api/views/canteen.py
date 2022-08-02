@@ -393,7 +393,7 @@ class RemoveManagerView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            email = request.data.get("email")
+            email = request.data.get("email", "").strip()
             validate_email(email)
             canteen_id = request.data.get("canteen_id")
             canteen = request.user.canteens.get(id=canteen_id)
@@ -425,7 +425,7 @@ class RemoveManagerView(APIView):
 class SendCanteenNotFoundEmail(APIView):
     def post(self, request):
         try:
-            email = request.data.get("from")
+            email = request.data.get("from", "").strip()
             validate_email(email)
             name = request.data.get("name") or "Un·e utilisateur·rice"
             message = request.data.get("message")
@@ -464,7 +464,7 @@ class TeamJoinRequestView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            email = request.data.get("email")
+            email = request.data.get("email", "").strip()
             validate_email(email)
             name = request.data.get("name")
             message = request.data.get("message")
