@@ -5,7 +5,7 @@
     </div>
     <div>
       <v-card-title class="text-body-1 font-weight-bold">Participez à la collecte de données 2022 !</v-card-title>
-      <v-card-text>
+      <v-card-text class="pb-0">
         Du 18 juillet au 16 octobre 2021, dans votre espace diagnostic, télédéclarez vos données 2021 et devenez membre
         de la campagne nationale de télédéclaration. L'objectif : un bilan qui permettra à l'administration d'imaginer
         des services en cohérence avec la réalité du terrain. Il n'y a rien d'obligatoire, c'est du déclaratif !
@@ -15,9 +15,11 @@
           text
           href="https://agriculture.gouv.fr/restauration-collective-top-depart-pour-la-premiere-collecte-dinformations-concernant-les"
           target="_blank"
+          rel="noopener"
+          class="text-decoration-underline"
         >
-          <v-icon class="mr-2">mdi-arrow-right</v-icon>
           Article sur le site du ministère
+          <v-icon small class="ml-2">mdi-open-in-new</v-icon>
         </v-btn>
       </v-card-actions>
     </div>
