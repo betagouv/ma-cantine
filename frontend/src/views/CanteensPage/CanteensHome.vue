@@ -60,7 +60,7 @@
       </v-row>
     </v-sheet>
 
-    <div class="d-flex align-center mt-4 pl-6">
+    <div class="d-flex align-center mt-4 pl-0 pl-md-6">
       <v-badge :value="hasActiveFilter" color="primary" dot overlap offset-x="-2">
         <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
           Filtres
