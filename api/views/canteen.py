@@ -526,7 +526,13 @@ def badges_for_queryset(diagnostic_year_queryset):
         )
         appro_share_query = appro_share_query.annotate(
             combined_share=Cast(
-                (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
+                (
+                    Sum("value_bio_ht")
+                    + Sum("value_sustainable_ht")
+                    + Sum("value_externality_performance_ht")
+                    + Sum("value_egalim_others_ht")
+                )
+                / Sum("value_total_ht"),
                 FloatField(),
             )
         )
