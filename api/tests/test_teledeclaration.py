@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory
 from data.models import Teledeclaration
 from .utils import authenticate
 
@@ -251,6 +251,35 @@ class TestTeledeclarationApi(APITestCase):
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, authenticate.user)
+
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @authenticate
+    def test_generate_pdf_legacy_teledeclaration(self):
+        """
+        The user can get a justificatif in PDF for a teledeclaration
+        with minimal information
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type=None)
+        teledeclaration = TeledeclarationFactory(
+            canteen=canteen,
+            diagnostic=diagnostic,
+            year=2021,
+            declared_data={
+                "year": 2021,
+                "canteen": {
+                    "name": "",
+                },
+                "applicant": {
+                    "name": "",
+                },
+                "teledeclaration": {},
+            },
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+        )
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
