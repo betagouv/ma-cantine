@@ -128,8 +128,9 @@ class TeledeclarationPdfView(APIView):
             pisa_status = pisa.CreatePDF(html, dest=response, link_callback=TeledeclarationPdfView.link_callback)
 
             if pisa_status.err:
-                logger.error(f"Error while generating PDF for teledeclaration {teledeclaration.id}")
-                logger.error(pisa_status.err)
+                logger.error(
+                    f"Error while generating PDF for teledeclaration {teledeclaration.id}:\n{pisa_status.err}"
+                )
                 return HttpResponse("An error ocurred", status=500)
 
             return response

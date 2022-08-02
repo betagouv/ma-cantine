@@ -21,8 +21,8 @@ class ReviewView(CreateAPIView):
             hasDiagnostic = Diagnostic.objects.filter(canteen__managers=user).exists()
             serializer.is_valid(raise_exception=True)
             serializer.save(user=user, hasCanteen=hasCanteen, hasDiagnostic=hasDiagnostic)
-        except IntegrityError:
-            logger.error(
-                f"User with id {user.id} attempted to create second review for page {serializer.validated_data['page']}"
+        except IntegrityError as e:
+            logger.exception(
+                f"User with id {user.id} attempted to create second review for page {serializer.validated_data['page']}:\n{e}"
             )
             raise DuplicateException()
