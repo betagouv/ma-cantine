@@ -21,7 +21,10 @@ import { routes } from "@/router"
 export default {
   name: "SiteMap",
   data() {
-    let mcRoutes = JSON.parse(JSON.stringify(routes))
+    let mcRoutes = JSON.parse(JSON.stringify(routes)).filter((route) => {
+      const hasViewRights = route.meta?.authenticationRequired ? this.isAuthenticated : true
+      return hasViewRights
+    })
     mcRoutes.forEach((r) => {
       if (r.children) {
         mcRoutes.push(...r.children)
@@ -47,6 +50,11 @@ export default {
         },
       ],
     }
+  },
+  computed: {
+    isAuthenticated() {
+      return !!this.$store.state.loggedUser
+    },
   },
 }
 </script>
