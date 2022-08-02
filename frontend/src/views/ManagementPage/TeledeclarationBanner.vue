@@ -1,18 +1,23 @@
 <template>
-  <v-card color="deep-purple lighten-4" elevation="1" shaped class="d-flex" max-width="750">
-    <div class="ma-4 ml-8 align-center">
+  <v-card color="deep-purple lighten-4" elevation="1" shaped class="d-flex align-center" max-width="750">
+    <div class="ma-4 ml-8">
       <v-img max-width="100" contain src="/static/images/sitting-person-color.png"></v-img>
     </div>
     <div>
-      <v-card-title class="text-body-1 font-weight-bold">Participez à la campagne de télédéclaration 2022</v-card-title>
+      <v-card-title class="text-body-1 font-weight-bold">Participez à la collecte de données 2022 !</v-card-title>
       <v-card-text>
-        Du 18 juillet au 15 octobre, remplissez vos données d'appro pour l'année civile 2021 et compléter ainsi la
-        collecte de données nationale.
+        Du 18 juillet au 16 octobre 2021, dans votre espace diagnostic, télédéclarez vos données 2021 et devenez membre
+        de la campagne nationale de télédéclaration. L'objectif : un bilan qui permettra à l'administration d'imaginer
+        des services en cohérence avec la réalité du terrain. Il n'y a rien d'obligatoire, c'est du déclaratif !
       </v-card-text>
       <v-card-actions>
-        <v-btn text>
+        <v-btn
+          text
+          href="https://agriculture.gouv.fr/restauration-collective-top-depart-pour-la-premiere-collecte-dinformations-concernant-les"
+          target="_blank"
+        >
           <v-icon class="mr-2">mdi-arrow-right</v-icon>
-          En savoir plus
+          Article sur le site du ministère
         </v-btn>
       </v-card-actions>
     </div>
