@@ -700,8 +700,6 @@ export default {
   },
   mounted() {
     this.populateParameters()
-    console.log("this.hasActiveFilter")
-    console.log(this.hasActiveFilter)
     if (this.hasActiveFilter) this.showFilters = true
   },
 }
