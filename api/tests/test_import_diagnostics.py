@@ -643,7 +643,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["count"], 0)
         errors = body["errors"]
-        print(errors)
         self.assertGreater(len(errors), 0)
         first_error = errors.pop(0)
         self.assertEqual(

@@ -59,7 +59,6 @@ class ImportDiagnosticsView(APIView):
             logger.error(message)
             self.errors = [{"row": 0, "status": 400, "message": message}]
         except Exception as e:
-            print(e)
             logger.exception(e)
             self.errors = [{"row": 0, "status": 400, "message": "Échec lors de la lecture du fichier"}]
 
@@ -80,9 +79,9 @@ class ImportDiagnosticsView(APIView):
 
         csvreader = csv.reader(filelines, dialect=dialect)
         for row_number, row in enumerate(csvreader, start=1):
-            if self._skip_row(row_number, row):
-                continue
             try:
+                if self._skip_row(row_number, row):
+                    continue
                 canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
                 if should_update_geolocation:
@@ -107,6 +106,7 @@ class ImportDiagnosticsView(APIView):
         # validate data for format etc, starting with basic non-data-specific row checks
         self._validate_row(row)
         manager_emails = self._validate_canteen(row)
+        # TODO: manager_emails = self._get_manager_emails(row)
         diagnostic_year, values_dict, diagnostic_type = self._validate_diagnostic(row)
         # return staff-customisable fields
         import_source, publication_status, silently_added_manager_emails = self._generate_canteen_meta_fields(row)
@@ -114,11 +114,13 @@ class ImportDiagnosticsView(APIView):
         canteen, should_update_geolocation = self._update_or_create_canteen(
             row, import_source, publication_status, manager_emails, silently_added_manager_emails
         )
-        self._create_diagnostic_maybe(canteen, diagnostic_year, values_dict, diagnostic_type)
+        if diagnostic_year:
+            self._create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
 
         return (canteen, should_update_geolocation)
 
     def _skip_row(self, row_number, row):
+        # TODO: python not implemented exception
         print("_skip_row has not been implemented")
         ...
 
@@ -132,17 +134,16 @@ class ImportDiagnosticsView(APIView):
 
     # NB: this function should only be called once the data has been validated since by this point a canteen
     # will have been saved to the DB and we don't want partial imports caused by exceptions from this method
-    def _create_diagnostic_maybe(self, canteen, diagnostic_year, values_dict, diagnostic_type):
-        if diagnostic_year:
-            diagnostic = Diagnostic(
-                canteen_id=canteen.id,
-                year=diagnostic_year,
-                diagnostic_type=diagnostic_type,
-                **values_dict,
-            )
-            diagnostic.full_clean()
-            diagnostic.save()
-            self.diagnostics_created += 1
+    def _create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
+        diagnostic = Diagnostic(
+            canteen_id=canteen.id,
+            year=diagnostic_year,
+            diagnostic_type=diagnostic_type,
+            **values_dict,
+        )
+        diagnostic.full_clean()
+        diagnostic.save()
+        self.diagnostics_created += 1
 
     @staticmethod
     def _should_update_geolocation(canteen, row):
@@ -360,20 +361,23 @@ class ImportDiagnosticsView(APIView):
                     errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
                 )
         elif isinstance(e, IndexError):
-            ImportDiagnosticsView._add_error(
-                errors, f"Données manquantes : 22 colonnes attendues, {len(row)} trouvées."
-            )
+            ImportDiagnosticsView._add_error(errors, self._column_count_error_message(row))
         elif isinstance(e, Canteen.MultipleObjectsReturned):
             ImportDiagnosticsView._add_error(
                 errors,
                 f"Plusieurs cantines correspondent au SIRET {row[0]}. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
             )
+        elif isinstance(e, FileFormatError):
+            ImportDiagnosticsView._add_error(errors, e.detail)
         if not errors:
-            print(e)
             ImportDiagnosticsView._add_error(
                 errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
             )
         return errors
+
+    def _column_count_error_message(self, row):
+        print("_column_count_error_message has not been implemented")
+        ...
 
 
 # flake8: noqa: C901
@@ -434,14 +438,24 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
                     raise ValidationError(error)
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
 
+    def _column_count_error_message(self, row):
+        return f"Données manquantes : 22 colonnes attendues, {len(row)} trouvées."
+
 
 class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
     # not convinced this is actually necessary
     final_value_idx = 180
 
     def _skip_row(self, row_number, row):
-        # TODO: allow for no headers? Or at least more of a warning
-        if row_number == 1 or row_number == 2:
+        if row_number == 1:
+            message = "Deux lignes en-tête attendues, {} trouvée. Vieullez verifier que vous voulez importer les diagnostics complèts, et assurez-vous que le format de l'en-tête suit les exemples donnés."
+            if row[0] and row[0].lower() == "siret":
+                raise FileFormatError(detail=message.format(1))
+            elif row[0]:
+                # making the grand assumption that anything other than "SIRET" resembles a siret number
+                raise FileFormatError(detail=message.format(0))
+            return True
+        elif row_number == 2:
             return True
 
     def _validate_row(self, row):
@@ -458,11 +472,15 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
                 }
             )
         values_dict = {}
-        value_offset = 0
-        for value in ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht", *Diagnostic.complete_fields]:
+        value_idx = self.year_idx + 1
+        # total value is required, handle this case separately to the remaining values which are optional
+        try:
+            values_dict["value_total_ht"] = Decimal(row[value_idx].strip().replace(",", "."))
+        except Exception as e:
+            raise ValidationError({"value_total_ht": "Ce champ doit être un nombre décimal."})
+        for value in ["value_meat_poultry_ht", "value_fish_ht", *Diagnostic.complete_fields]:
             try:
-                value_offset = value_offset + 1
-                value_idx = self.year_idx + value_offset
+                value_idx = value_idx + 1
                 if row[value_idx]:  # allowed to be blank
                     values_dict[value] = Decimal(row[value_idx].strip().replace(",", "."))
             except IndexError:
@@ -473,10 +491,17 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
                 # TODO: This should take into account more number formats and be factored out to utils
                 error[value] = "Ce champ doit être vide ou un nombre décimal."
                 raise ValidationError(error)
-        if not values_dict["value_total_ht"]:
-            raise ValidationError({"value_total_ht": "Ce champ doit être un nombre décimal."})
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE
 
     # TODO: reinstate these fields for complete diag
     def _generate_canteen_meta_fields(self, row):
         return ("Import massif", Canteen.PublicationStatus.DRAFT, [])
+
+    def _column_count_error_message(self, row):
+        return f"Données manquantes : au moins 12 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer."
+
+
+class FileFormatError(Exception):
+    def __init__(self, detail, **kwargs):
+        self.detail = detail
+        super().__init__(detail)
