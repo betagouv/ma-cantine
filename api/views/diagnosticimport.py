@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 import csv
 import time
 import re
@@ -24,7 +25,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 
-class ImportDiagnosticsView(APIView):
+class ImportDiagnosticsView(ABC, APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
@@ -119,17 +120,16 @@ class ImportDiagnosticsView(APIView):
 
         return (canteen, should_update_geolocation)
 
+    @abstractmethod
     def _skip_row(self, row_number, row):
-        # TODO: python not implemented exception
-        print("_skip_row has not been implemented")
         ...
 
+    @abstractmethod
     def _validate_row(self, row):
-        print("_validate_row has not been implemented")
         ...
 
+    @abstractmethod
     def _validate_diagnostic(self, row):
-        print("_validate_diagnostic has not been implemented")
         ...
 
     # NB: this function should only be called once the data has been validated since by this point a canteen
@@ -375,8 +375,8 @@ class ImportDiagnosticsView(APIView):
             )
         return errors
 
+    @abstractmethod
     def _column_count_error_message(self, row):
-        print("_column_count_error_message has not been implemented")
         ...
 
 
