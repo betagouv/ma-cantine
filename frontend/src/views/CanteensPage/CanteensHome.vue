@@ -60,206 +60,210 @@
       </v-row>
     </v-sheet>
 
-    <v-sheet class="pa-6 mt-8 text-left" rounded outlined>
-      <h2 class="text-body-1 font-weight-black mb-2 mt-n9 px-1" style="background-color: #fff; width: max-content">
-        Filtres
-        <v-btn
-          color="primary"
-          v-if="hasActiveFilter"
-          plain
-          text
-          @click="clearFilters"
-          :ripple="false"
-          class="pa-0 ml-1 mt-n2"
-          style="font-size: 13px;"
-        >
-          <v-icon small class="mt-1 mr-1">mdi-close</v-icon>
-          <span class="text-decoration-underline">Désactiver tous les filtres</span>
-        </v-btn>
-      </h2>
-      <v-row>
-        <v-col cols="12" sm="6" md="4">
-          <label
-            for="select-region"
-            :class="{
-              'text-body-2': true,
-              'active-filter-label': !!appliedFilters.chosenRegion,
-            }"
-          >
-            Région
-          </label>
-          <v-autocomplete
-            v-model="appliedFilters.chosenRegion"
-            :items="regions"
-            clearable
-            hide-details
-            id="select-region"
-            placeholder="Toutes les régions"
-            class="mt-1"
-            outlined
-            dense
-            auto-select-first
-            :filter="locationFilter"
-          ></v-autocomplete>
-        </v-col>
-        <v-col cols="12" sm="6" md="4">
-          <label
-            for="select-department"
-            :class="{
-              'text-body-2': true,
-              'active-filter-label': !!appliedFilters.chosenDepartment,
-            }"
-          >
-            Département
-          </label>
-          <v-autocomplete
-            v-model="appliedFilters.chosenDepartment"
-            :items="departments"
-            clearable
-            hide-details
-            id="select-department"
-            placeholder="Tous les départements"
-            class="mt-1"
-            outlined
-            dense
-            auto-select-first
-            :filter="locationFilter"
-          ></v-autocomplete>
-        </v-col>
-        <v-col cols="12" sm="6" md="4">
-          <label
-            for="select-sector"
-            :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.chosenSectors.length }"
-          >
-            Secteur d'activité
-          </label>
-          <v-select
-            v-model="appliedFilters.chosenSectors"
-            multiple
-            :items="sectors"
-            clearable
-            hide-details
-            id="select-sector"
-            placeholder="Tous les secteurs"
-            outlined
-            class="mt-1"
-            dense
-          ></v-select>
-        </v-col>
-      </v-row>
-      <v-row class="align-end mt-0">
-        <v-col cols="12" sm="8" md="5">
-          <label class="text-body-2">
-            Dans les assiettes, part de...
-          </label>
-          <div class="d-flex mt-n1">
-            <v-col class="pa-0 pr-1">
-              <label
-                :class="{
-                  caption: true,
-                  'pl-1': true,
-                  'active-filter-label': !!appliedFilters.minBio,
-                }"
-                id="value-percentages-bio"
-              >
-                bio minimum
-              </label>
+    <div class="d-flex align-center mt-4 pl-6">
+      <v-badge :value="hasActiveFilter" color="primary" dot overlap offset-x="-2">
+        <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
+          Filtres
+        </h2>
+      </v-badge>
+      <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1 py-4 py-sm-0">
+        <v-icon small>mdi-filter-outline</v-icon>
+        <span v-if="showFilters">Cacher les filtres</span>
+        <span v-else>Afficher les filtres</span>
+      </v-btn>
+
+      <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter">
+        <v-icon small>mdi-filter-off-outline</v-icon>
+        Enlever tous les filtres
+      </v-btn>
+      <v-divider v-if="!showFilters"></v-divider>
+    </div>
+    <v-expand-transition>
+      <v-sheet class="pa-6 text-left mt-2 ml-6" v-show="showFilters" rounded :outlined="showFilters">
+        <v-row>
+          <v-col cols="12" sm="6" md="4">
+            <label
+              for="select-region"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': !!appliedFilters.chosenRegion,
+              }"
+            >
+              Région
+            </label>
+            <v-autocomplete
+              v-model="appliedFilters.chosenRegion"
+              :items="regions"
+              clearable
+              hide-details
+              id="select-region"
+              placeholder="Toutes les régions"
+              class="mt-1"
+              outlined
+              dense
+              auto-select-first
+              :filter="locationFilter"
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="12" sm="6" md="4">
+            <label
+              for="select-department"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': !!appliedFilters.chosenDepartment,
+              }"
+            >
+              Département
+            </label>
+            <v-autocomplete
+              v-model="appliedFilters.chosenDepartment"
+              :items="departments"
+              clearable
+              hide-details
+              id="select-department"
+              placeholder="Tous les départements"
+              class="mt-1"
+              outlined
+              dense
+              auto-select-first
+              :filter="locationFilter"
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="12" sm="6" md="4">
+            <label
+              for="select-sector"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.chosenSectors.length }"
+            >
+              Secteur d'activité
+            </label>
+            <v-select
+              v-model="appliedFilters.chosenSectors"
+              multiple
+              :items="sectors"
+              clearable
+              hide-details
+              id="select-sector"
+              placeholder="Tous les secteurs"
+              outlined
+              class="mt-1"
+              dense
+            ></v-select>
+          </v-col>
+        </v-row>
+        <v-row class="align-end mt-0">
+          <v-col cols="12" sm="8" md="5">
+            <label class="text-body-2">
+              Dans les assiettes, part de...
+            </label>
+            <div class="d-flex mt-n1">
+              <v-col class="pa-0 pr-1">
+                <label
+                  :class="{
+                    caption: true,
+                    'pl-1': true,
+                    'active-filter-label': !!appliedFilters.minBio,
+                  }"
+                  id="value-percentages-bio"
+                >
+                  bio minimum
+                </label>
+                <v-text-field
+                  :value="appliedFilters.minBio"
+                  ref="minBio"
+                  :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                  @change="onChangeIntegerFilter('minBio')"
+                  hide-details="auto"
+                  append-icon="mdi-percent"
+                  outlined
+                  placeholder="0"
+                  aria-describedby="value-percentages-bio"
+                  dense
+                />
+              </v-col>
+              <v-col class="pa-0 pl-1">
+                <label
+                  :class="{
+                    caption: true,
+                    'pl-1': true,
+                    'active-filter-label': !!appliedFilters.minCombined,
+                  }"
+                  id="value-percentages-bio-qualite"
+                >
+                  bio, qualité et durables min
+                </label>
+                <v-text-field
+                  :value="appliedFilters.minCombined"
+                  ref="minCombined"
+                  :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                  @change="onChangeIntegerFilter('minCombined')"
+                  hide-details="auto"
+                  outlined
+                  placeholder="0"
+                  append-icon="mdi-percent"
+                  aria-describedby="value-percentages-bio-qualite"
+                  dense
+                />
+              </v-col>
+            </div>
+          </v-col>
+          <v-col cols="12" sm="4" md="3">
+            <label
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': !!appliedFilters.minMealCount || !!appliedFilters.maxMealCount,
+              }"
+              id="meal-count"
+            >
+              Repas par jour
+            </label>
+            <div class="d-flex mt-1">
               <v-text-field
-                :value="appliedFilters.minBio"
-                ref="minBio"
-                :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                @change="onChangeIntegerFilter('minBio')"
+                :value="appliedFilters.minMealCount"
+                ref="minMealCount"
+                :rules="[validators.nonNegativeOrEmpty]"
+                @change="onChangeIntegerFilter('minMealCount')"
                 hide-details="auto"
-                append-icon="mdi-percent"
                 outlined
-                placeholder="0"
-                aria-describedby="value-percentages-bio"
+                label="Min"
+                aria-describedby="meal-count"
                 dense
               />
-            </v-col>
-            <v-col class="pa-0 pl-1">
-              <label
-                :class="{
-                  caption: true,
-                  'pl-1': true,
-                  'active-filter-label': !!appliedFilters.minCombined,
-                }"
-                id="value-percentages-bio-qualite"
-              >
-                bio, qualité et durables min
-              </label>
+              <span class="mx-2 align-self-center">-</span>
               <v-text-field
-                :value="appliedFilters.minCombined"
-                ref="minCombined"
-                :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                @change="onChangeIntegerFilter('minCombined')"
+                :value="appliedFilters.maxMealCount"
+                ref="maxMealCount"
+                :rules="[validators.nonNegativeOrEmpty]"
+                @change="onChangeIntegerFilter('maxMealCount')"
                 hide-details="auto"
                 outlined
-                placeholder="0"
-                append-icon="mdi-percent"
-                aria-describedby="value-percentages-bio-qualite"
+                label="Max"
+                aria-describedby="meal-count"
                 dense
               />
-            </v-col>
-          </div>
-        </v-col>
-        <v-col cols="12" sm="4" md="3">
-          <label
-            :class="{
-              'text-body-2': true,
-              'active-filter-label': !!appliedFilters.minMealCount || !!appliedFilters.maxMealCount,
-            }"
-            id="meal-count"
-          >
-            Repas par jour
-          </label>
-          <div class="d-flex mt-1">
-            <v-text-field
-              :value="appliedFilters.minMealCount"
-              ref="minMealCount"
-              :rules="[validators.nonNegativeOrEmpty]"
-              @change="onChangeIntegerFilter('minMealCount')"
-              hide-details="auto"
+            </div>
+          </v-col>
+          <v-col cols="12" sm="4" md="3">
+            <label
+              for="select-management-type"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.managementType }"
+            >
+              Mode de gestion
+            </label>
+            <v-select
+              v-model="appliedFilters.managementType"
+              :items="managementTypes"
+              clearable
+              hide-details
+              id="select-management-type"
               outlined
-              label="Min"
-              aria-describedby="meal-count"
+              class="mt-1"
               dense
-            />
-            <span class="mx-2 align-self-center">-</span>
-            <v-text-field
-              :value="appliedFilters.maxMealCount"
-              ref="maxMealCount"
-              :rules="[validators.nonNegativeOrEmpty]"
-              @change="onChangeIntegerFilter('maxMealCount')"
-              hide-details="auto"
-              outlined
-              label="Max"
-              aria-describedby="meal-count"
-              dense
-            />
-          </div>
-        </v-col>
-        <v-col cols="12" sm="4" md="3">
-          <label
-            for="select-management-type"
-            :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.managementType }"
-          >
-            Mode de gestion
-          </label>
-          <v-select
-            v-model="appliedFilters.managementType"
-            :items="managementTypes"
-            clearable
-            hide-details
-            id="select-management-type"
-            outlined
-            class="mt-1"
-            dense
-            placeholder="Tous les modes"
-          ></v-select>
-        </v-col>
-      </v-row>
-    </v-sheet>
+              placeholder="Tous les modes"
+            ></v-select>
+          </v-col>
+        </v-row>
+      </v-sheet>
+    </v-expand-transition>
     <div v-if="loading" class="pa-6">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
@@ -415,6 +419,7 @@ export default {
       message: "",
       formIsValid: true,
       managementTypes: Constants.ManagementTypes,
+      showFilters: false,
     }
   },
   components: { PublishedCanteenCard },
@@ -695,6 +700,9 @@ export default {
   },
   mounted() {
     this.populateParameters()
+    console.log("this.hasActiveFilter")
+    console.log(this.hasActiveFilter)
+    if (this.hasActiveFilter) this.showFilters = true
   },
 }
 </script>
