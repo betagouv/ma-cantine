@@ -112,14 +112,16 @@ class TeledeclarationPdfView(APIView):
             response["Content-Disposition"] = f'attachment; filename="{filename}"'
             template = get_template("teledeclaration_pdf.html")
             declared_data = teledeclaration.declared_data
-            is_complete = declared_data["teledeclaration"]["diagnostic_type"] == Diagnostic.DiagnosticType.COMPLETE
+            is_complete = (
+                declared_data["teledeclaration"].get("diagnostic_type", None) == Diagnostic.DiagnosticType.COMPLETE
+            )
             context = {
                 **declared_data["teledeclaration"],
                 **{
                     "diagnostic_type": "complète" if is_complete else "simplifiée",
                     "year": teledeclaration.year,
                     "canteen_name": declared_data["canteen"]["name"],
-                    "siret": declared_data["canteen"]["siret"],
+                    "siret": declared_data["canteen"].get("siret", None),
                     "date": teledeclaration.creation_date,
                     "applicant": declared_data["applicant"]["name"],
                 },
