@@ -628,7 +628,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(unfinished_diag.value_fish_ht, 10)
         self.assertEqual(unfinished_diag.value_autres_label_rouge, None)  # picked a field at random to smoke test
 
-    # TODO: test validation errors on the extended columns
     @authenticate
     def test_complete_diagnostic_error_collection(self, _):
         """
@@ -647,12 +646,12 @@ class TestImportDiagnosticsAPI(APITestCase):
         first_error = errors.pop(0)
         self.assertEqual(
             first_error["message"],
-            "Champ 'année' : L'année est obligatoire pour créer un diagnostic. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
+            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
         )
         # two of the same error, generated in slightly different ways
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'année' : L'année est obligatoire pour créer un diagnostic. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
+            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -685,7 +684,31 @@ class TestImportDiagnosticsAPI(APITestCase):
             "Deux lignes en-tête attendues, 1 trouvée. Vieullez verifier que vous voulez importer les diagnostics complèts, et assurez-vous que le format de l'en-tête suit les exemples donnés.",
         )
 
-    # TODO: test staff columns with complete diagnositcs
+    # TODO: replace when allowing staff to add metadata
+    @authenticate
+    def test_tmp_no_staff_complete_diag(self, _):
+        """
+        Test error is thrown if staff attempts to add metadata
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.save()
+        authenticate.user.refresh_from_db()
+        with open("./api/tests/files/staff_complete_diagnostics.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        errors = body["errors"]
+        self.assertGreater(len(errors), 0)
+        self.assertEqual(errors.pop(0)["message"], "Format fichier : 119 colonnes attendues, 122 trouvées.")
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
+        )
 
     @override_settings(CONTACT_EMAIL="team@example.com")
     @authenticate

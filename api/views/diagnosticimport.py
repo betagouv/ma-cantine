@@ -106,8 +106,8 @@ class ImportDiagnosticsView(ABC, APIView):
             raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
         # validate data for format etc, starting with basic non-data-specific row checks
         self._validate_row(row)
-        manager_emails = self._validate_canteen(row)
-        # TODO: manager_emails = self._get_manager_emails(row)
+        ImportDiagnosticsView._validate_canteen(row)
+        manager_emails = self._get_manager_emails_to_notify(row)
         diagnostic_year, values_dict, diagnostic_type = self._validate_diagnostic(row)
         # return staff-customisable fields
         import_source, publication_status, silently_added_manager_emails = self._generate_canteen_meta_fields(row)
@@ -236,7 +236,8 @@ class ImportDiagnosticsView(ABC, APIView):
     def _add_error(errors, message, code=400):
         errors.append({"message": message, "code": code})
 
-    def _validate_canteen(self, row):
+    @staticmethod
+    def _validate_canteen(row):
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
         elif not row[2] and not row[3]:
@@ -244,6 +245,7 @@ class ImportDiagnosticsView(ABC, APIView):
                 {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
             )
 
+    def _get_manager_emails_to_notify(self, row):
         try:
             manager_emails = []
             if len(row) > self.manager_column_idx + 1 and row[self.manager_column_idx]:
@@ -301,7 +303,6 @@ class ImportDiagnosticsView(ABC, APIView):
         return (canteen, should_update_geolocation)
 
     def _generate_canteen_meta_fields(self, row):
-        # TODO: maybe this should idx be defined per-class to allow staff imports + undefined columns for complete import
         silent_manager_idx = self.final_value_idx + 1
         silently_added_manager_emails = []
         import_source = "Import massif"
@@ -403,7 +404,6 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
         diagnostic_year = values_dict = None
         try:
             diagnostic_year = row[self.year_idx]
-            # not convinced this is actually necessary
             if not diagnostic_year and any(row[12 : self.final_value_idx]):
                 raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
         except IndexError:
@@ -443,8 +443,7 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
 
 
 class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
-    # not convinced this is actually necessary
-    final_value_idx = 180
+    final_value_idx = 118
 
     def _skip_row(self, row_number, row):
         if row_number == 1:
@@ -462,13 +461,19 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         # complete diagnostic should at least have the year and total
         if len(row) < self.year_idx + 1:
             raise IndexError()
+        # TODO: support staff-addable meta fields
+        elif len(row) > self.final_value_idx + 1:
+            raise FileFormatError(
+                detail=f"Format fichier : {self.final_value_idx + 1} colonnes attendues, {len(row)} trouvées."
+            )
 
     def _validate_diagnostic(self, row):
-        diagnostic_year = row[self.year_idx]
-        if not diagnostic_year:
+        try:
+            diagnostic_year = int(row[self.year_idx].strip())
+        except Exception as e:
             raise ValidationError(
                 {
-                    "year": "L'année est obligatoire pour créer un diagnostic. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer."
+                    "year": "Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer."
                 }
             )
         values_dict = {}
@@ -481,19 +486,17 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         for value in ["value_meat_poultry_ht", "value_fish_ht", *Diagnostic.complete_fields]:
             try:
                 value_idx = value_idx + 1
-                if row[value_idx]:  # allowed to be blank
+                if row[value_idx]:
                     values_dict[value] = Decimal(row[value_idx].strip().replace(",", "."))
             except IndexError:
                 # we allow the rest of the fields to be left unspecified because there are so many
                 break
             except Exception as e:
                 error = {}
-                # TODO: This should take into account more number formats and be factored out to utils
                 error[value] = "Ce champ doit être vide ou un nombre décimal."
                 raise ValidationError(error)
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE
 
-    # TODO: reinstate these fields for complete diag
     def _generate_canteen_meta_fields(self, row):
         return ("Import massif", Canteen.PublicationStatus.DRAFT, [])
 
