@@ -18,6 +18,8 @@
 
 <script>
 import { routes } from "@/router"
+import Constants from "@/constants"
+
 export default {
   name: "SiteMap",
   data() {
@@ -33,24 +35,12 @@ export default {
       return !!route.sitemapGroup && hasViewRights
     })
     return {
-      sitemapGroups: [
-        {
-          title: "S'informer sur les lois",
-          links: sitemapRoutes.filter((f) => f.sitemapGroup === "LAW"),
-        },
-        {
-          title: "Se diagnostiquer",
-          links: sitemapRoutes.filter((f) => f.sitemapGroup === "DIAG"),
-        },
-        {
-          title: "Améliorer votre offre",
-          links: sitemapRoutes.filter((f) => f.sitemapGroup === "ACTION"),
-        },
-        {
-          title: "Informations sur le site",
-          links: sitemapRoutes.filter((f) => f.sitemapGroup === "SITE"),
-        },
-      ],
+      sitemapGroups: Constants.SitemapGroups.map((g) => {
+        return {
+          title: g.label,
+          links: sitemapRoutes.filter((f) => f.sitemapGroup === g.id),
+        }
+      }),
     }
   },
 }
