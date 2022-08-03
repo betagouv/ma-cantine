@@ -20,7 +20,6 @@ import BlogsPage from "@/views/BlogsPage"
 import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
 import NotFound from "@/views/NotFound"
-import TesterParticipation from "@/views/TesterParticipation"
 import CGU from "@/views/CGU.vue"
 import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
 import ManagementPage from "@/views/ManagementPage"
@@ -196,14 +195,6 @@ const routes = [
         props: true,
       },
     ],
-  },
-  {
-    path: "/devenir-testeur",
-    name: "TesterParticipation",
-    component: TesterParticipation,
-    meta: {
-      title: "Devenir Testeur",
-    },
   },
   {
     path: "/cgu",
