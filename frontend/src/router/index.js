@@ -80,7 +80,7 @@ const routes = [
           authenticationRequired: true,
           title: "Mon compte",
         },
-        mcGroup: "SITE",
+        sitemapGroup: "SITE",
       },
       {
         path: "mot-de-passe",
@@ -112,7 +112,7 @@ const routes = [
     beforeEnter: (_to, _from, next) => {
       store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
     },
-    mcGroup: "DIAG",
+    sitemapGroup: "DIAG",
   },
   {
     path: "/creation-affiche",
@@ -121,7 +121,7 @@ const routes = [
     meta: {
       title: "Affiche convives",
     },
-    mcGroup: "ACTION",
+    sitemapGroup: "ACTION",
   },
   {
     path: "/mesures-phares",
@@ -156,7 +156,7 @@ const routes = [
     meta: {
       title: "Les mesures phares",
     },
-    mcGroup: "LAW",
+    sitemapGroup: "LAW",
   },
   {
     path: "/nos-cantines",
@@ -170,7 +170,7 @@ const routes = [
         meta: {
           title: "Nos cantines",
         },
-        mcGroup: "LAW",
+        sitemapGroup: "LAW",
       },
       {
         path: ":canteenUrlComponent",
@@ -187,7 +187,7 @@ const routes = [
     meta: {
       title: "Mentions légales",
     },
-    mcGroup: "SITE",
+    sitemapGroup: "SITE",
   },
   {
     path: "/blog",
@@ -201,7 +201,7 @@ const routes = [
         meta: {
           title: "Blog",
         },
-        mcGroup: "LAW",
+        sitemapGroup: "LAW",
       },
       {
         path: ":id",
@@ -218,7 +218,7 @@ const routes = [
     meta: {
       title: "Devenir Testeur",
     },
-    mcGroup: "SITE",
+    sitemapGroup: "SITE",
   },
   {
     path: "/cgu",
@@ -227,7 +227,7 @@ const routes = [
     meta: {
       title: "Conditions générales d'utilisation",
     },
-    mcGroup: "SITE",
+    sitemapGroup: "SITE",
   },
   {
     path: "/politique-de-confidentialite",
@@ -236,7 +236,7 @@ const routes = [
     meta: {
       title: "Politique de confidentialité",
     },
-    mcGroup: "SITE",
+    sitemapGroup: "SITE",
   },
   {
     path: "/gestion",
@@ -270,7 +270,7 @@ const routes = [
         },
       },
     ],
-    mcGroup: "ACTION",
+    sitemapGroup: "ACTION",
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent",
@@ -376,7 +376,7 @@ const routes = [
       title: "Importer des diagnostics",
       authenticationRequired: true,
     },
-    mcGroup: "DIAG",
+    sitemapGroup: "DIAG",
   },
   {
     path: "/statistiques-regionales",
@@ -385,7 +385,7 @@ const routes = [
     meta: {
       title: "Les statistiques dans ma collectivité",
     },
-    mcGroup: "LAW",
+    sitemapGroup: "LAW",
   },
   {
     path: "/accessibilite",
@@ -394,7 +394,7 @@ const routes = [
     meta: {
       title: "Déclaration d'accessibilité",
     },
-    mcGroup: "SITE",
+    sitemapGroup: "SITE",
   },
   {
     path: "/contact",
@@ -403,7 +403,7 @@ const routes = [
     meta: {
       title: "Contactez-nous",
     },
-    mcGroup: "SITE",
+    sitemapGroup: "SITE",
   },
   {
     path: "/mes-achats",
@@ -413,7 +413,7 @@ const routes = [
       title: "Mes achats",
       authenticationRequired: true,
     },
-    mcGroup: "DIAG",
+    sitemapGroup: "DIAG",
   },
   {
     path: "/mes-achats/:id",
@@ -433,7 +433,7 @@ const routes = [
       title: "Nouvel achat",
       authenticationRequired: true,
     },
-    mcGroup: "DIAG",
+    sitemapGroup: "DIAG",
   },
   {
     path: "/importer-achats",
@@ -443,7 +443,7 @@ const routes = [
       title: "Importer des achats",
       authenticationRequired: true,
     },
-    mcGroup: "DIAG",
+    sitemapGroup: "DIAG",
   },
   {
     path: "/communaute/",
@@ -452,7 +452,7 @@ const routes = [
     meta: {
       title: "Communauté",
     },
-    mcGroup: "LAW",
+    sitemapGroup: "LAW",
   },
   {
     path: "/faq/",
@@ -461,7 +461,7 @@ const routes = [
     meta: {
       title: "Foire aux questions",
     },
-    mcGroup: "SITE",
+    sitemapGroup: "SITE",
   },
   {
     path: "/plan-du-site/",

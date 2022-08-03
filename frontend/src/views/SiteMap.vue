@@ -2,7 +2,7 @@
   <div class="text-left">
     <h1 class="font-weight-black my-8">Plan du site</h1>
     <v-row>
-      <v-col v-for="group in mapGroups" :key="group.title" cols="6">
+      <v-col v-for="group in sitemapGroups" :key="group.title" cols="6">
         <h2 class="my-2">{{ group.title }}</h2>
         <ul>
           <li v-for="link in group.links.filter((l) => !l.props)" :key="link.text">
@@ -21,32 +21,32 @@ import { routes } from "@/router"
 export default {
   name: "SiteMap",
   data() {
-    let mcRoutes = JSON.parse(JSON.stringify(routes)).filter((route) => {
+    let sitemapRoutes = JSON.parse(JSON.stringify(routes)).filter((route) => {
       const hasViewRights = route.meta?.authenticationRequired ? this.isAuthenticated : true
       return hasViewRights
     })
-    mcRoutes.forEach((r) => {
+    sitemapRoutes.forEach((r) => {
       if (r.children) {
-        mcRoutes.push(...r.children)
+        sitemapRoutes.push(...r.children)
       }
     })
     return {
-      mapGroups: [
+      sitemapGroups: [
         {
           title: "S'informer sur les lois",
-          links: mcRoutes.filter((f) => f.mcGroup === "LAW"),
+          links: sitemapRoutes.filter((f) => f.sitemapGroup === "LAW"),
         },
         {
           title: "Se diagnostiquer",
-          links: mcRoutes.filter((f) => f.mcGroup === "DIAG"),
+          links: sitemapRoutes.filter((f) => f.sitemapGroup === "DIAG"),
         },
         {
           title: "Améliorer votre offre",
-          links: mcRoutes.filter((f) => f.mcGroup === "ACTION"),
+          links: sitemapRoutes.filter((f) => f.sitemapGroup === "ACTION"),
         },
         {
           title: "Informations sur le site",
-          links: mcRoutes.filter((f) => f.mcGroup === "SITE"),
+          links: sitemapRoutes.filter((f) => f.sitemapGroup === "SITE"),
         },
       ],
     }
