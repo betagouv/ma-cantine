@@ -1,15 +1,13 @@
 <template>
   <div>
-    <div>
-      <VueApexCharts
-        :options="chartOptions"
-        :series="series"
-        role="img"
-        aria-description="Répartition par famille de produit"
-        :height="this.height || 'auto'"
-        :width="this.width || '100%'"
-      />
-    </div>
+    <VueApexCharts
+      :options="chartOptions"
+      :series="series"
+      role="img"
+      aria-description="Répartition par famille de produit"
+      :height="this.height || 'auto'"
+      :width="this.width || '100%'"
+    />
   </div>
 </template>
 
@@ -29,14 +27,14 @@ export default {
     width: String,
   },
   data() {
-    const families = Object.keys(Constants.ProductFamilies).map((x) => ({
-      ...Constants.ProductFamilies[x],
-      ...{ id: x },
+    const families = Object.keys(Constants.ProductFamilies).map((f) => ({
+      id: f,
+      ...Constants.ProductFamilies[f],
     }))
-    const familiesLabels = families.map((x) => x.text)
-    const characteristics = Constants.TeledeclarationCharacteristicGroups.egalim.characteristics.map((x) => ({
-      ...Constants.TeledeclarationCharacteristics[x],
-      ...{ id: x },
+    const familiesLabels = families.map((f) => f.text)
+    const characteristics = Constants.TeledeclarationCharacteristicGroups.egalim.characteristics.map((c) => ({
+      id: c,
+      ...Constants.TeledeclarationCharacteristics[c],
     }))
     return {
       families,
