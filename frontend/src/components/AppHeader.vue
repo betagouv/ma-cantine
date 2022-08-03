@@ -21,16 +21,16 @@
             position="center left"
             alt="Page d'accueil ma cantine"
           ></v-img>
-          <div style="height: 90px" class="d-flex flex-column justify-center">
-            <div>
-              <span v-if="$vuetify.breakpoint.smAndUp" id="ma-cantine-header">ma cantine</span>
-              <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
-                {{ chipInfo.text }}
-              </v-chip>
-            </div>
+          <div v-if="$vuetify.breakpoint.smAndUp" style="height: 90px" class="d-flex align-center">
+            <p id="ma-cantine-header" class="my-0">ma cantine</p>
           </div>
         </router-link>
       </v-toolbar-title>
+      <div v-if="chipInfo">
+        <v-chip label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
+          {{ chipInfo.text }}
+        </v-chip>
+      </div>
 
       <v-spacer></v-spacer>
 
