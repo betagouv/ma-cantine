@@ -218,7 +218,6 @@ const routes = [
     meta: {
       title: "Devenir Testeur",
     },
-    sitemapGroup: "SITE",
   },
   {
     path: "/cgu",
@@ -252,25 +251,18 @@ const routes = [
     name: "NewCanteen",
     component: CanteenEditor,
     redirect: { name: "NewCanteenForm" },
-    props: {
-      canteenUrlComponent: null,
-    },
-    meta: {
-      title: "Ajouter une nouvelle cantine",
-      authenticationRequired: true,
-    },
     children: [
       {
         path: "",
         name: "NewCanteenForm",
-        props: true,
         component: CanteenForm,
         meta: {
+          title: "Nouvelle cantine",
           authenticationRequired: true,
         },
+        sitemapGroup: "ACTION",
       },
     ],
-    sitemapGroup: "ACTION",
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent",
