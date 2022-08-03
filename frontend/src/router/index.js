@@ -34,6 +34,7 @@ import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DashboardPage from "@/views/CanteenEditor/DashboardPage"
 import DiagnosticEditor from "@/views/DiagnosticEditor"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
+import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
 import PublicCanteenStatisticsPage from "@/views/PublicCanteenStatisticsPage"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import ContactPage from "@/views/ContactPage"
@@ -358,6 +359,12 @@ const routes = [
       title: "Importer des diagnostics",
       authenticationRequired: true,
     },
+  },
+  {
+    path: "/importer-diagnostics/:importLevel",
+    name: "DiagnosticImportPage",
+    component: DiagnosticImportPage,
+    props: true,
   },
   {
     path: "/statistiques-regionales",
