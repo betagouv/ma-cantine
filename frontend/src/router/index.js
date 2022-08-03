@@ -127,6 +127,7 @@ const routes = [
     path: "/mesures-phares",
     name: "KeyMeasuresPage",
     component: KeyMeasuresPage,
+    redirect: { name: "KeyMeasuresHome" },
     children: [
       {
         path: "",
