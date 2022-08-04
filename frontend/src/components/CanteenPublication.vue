@@ -6,7 +6,7 @@
       </h2>
       <h3
         class="font-weight-black text-body-1 grey--text text--darken-4 my-4"
-        v-if="diagnostic.diagnosticType == 'COMPLETE'"
+        v-if="diagnostic.diagnosticType === 'COMPLETE'"
       >
         Total
       </h3>
@@ -56,11 +56,11 @@
       </v-row>
       <h3
         class="font-weight-black text-body-1 grey--text text--darken-4 mt-4"
-        v-if="diagnostic.diagnosticType == 'COMPLETE'"
+        v-if="diagnostic.diagnosticType === 'COMPLETE'"
       >
         Catégories EGAlim par famille de produit
       </h3>
-      <FamiliesGraph v-if="diagnostic.diagnosticType == 'COMPLETE'" :diagnostic="diagnostic" :height="'380px'" />
+      <FamiliesGraph v-if="diagnostic.diagnosticType === 'COMPLETE'" :diagnostic="diagnostic" :height="'380px'" />
     </div>
 
     <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-n4" v-if="Object.keys(earnedBadges).length">
