@@ -1,5 +1,5 @@
 <template>
-  <v-card color="deep-purple lighten-4" elevation="1" shaped class="d-flex align-center" max-width="750">
+  <v-card color="deep-purple lighten-4" elevation="1" shaped class="d-flex align-center">
     <div class="ma-4 ml-8" v-if="$vuetify.breakpoint.smAndUp">
       <v-img max-width="100" contain src="/static/images/sitting-person-color.png"></v-img>
     </div>
