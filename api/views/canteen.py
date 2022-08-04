@@ -526,7 +526,13 @@ def badges_for_queryset(diagnostic_year_queryset):
         )
         appro_share_query = appro_share_query.annotate(
             combined_share=Cast(
-                (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
+                (
+                    Sum("value_bio_ht")
+                    + Sum("value_sustainable_ht")
+                    + Sum("value_externality_performance_ht")
+                    + Sum("value_egalim_others_ht")
+                )
+                / Sum("value_total_ht"),
                 FloatField(),
             )
         )
@@ -616,7 +622,11 @@ class CanteenStatisticsView(APIView):
             bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField())
         )
         appro_share_query = appro_share_query.annotate(
-            sustainable_share=Cast(Sum("value_sustainable_ht") / Sum("value_total_ht"), FloatField())
+            sustainable_share=Cast(
+                (Sum("value_sustainable_ht") + Sum("value_externality_performance_ht") + Sum("value_egalim_others_ht"))
+                / Sum("value_total_ht"),
+                FloatField(),
+            )
         )
         agg = appro_share_query.aggregate(Avg("bio_share"), Avg("sustainable_share"))
         # no need for particularly fancy rounding
