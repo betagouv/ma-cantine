@@ -81,7 +81,6 @@ TRELLO_API_KEY= Optionnel - Permet la création de cartes Trello suite à une de
 TRELLO_API_TOKEN= Optionnel - Permet la création de cartes Trello suite à une demande de contact de la part de l'utilisateur. Conseils en-dessous pour l'obtenir.
 TRELLO_LIST_ID_CONTACT= Optionnel - ID de la liste où l'application mettra des cartes suite à une demande de contact de la part de l'utilistauer. Conseils en-dessous pour l'obtenir.
 TRELLO_LIST_ID_PUBLICATION= Optionnel - ID de la liste où l'application mettra des cartes suite à une demande de publication de la part de l'utilistauer. Conseils en-dessous pour l'obtenir.
-PIPEDRIVE_API_TOKEN= Optionnel - Token Pipedrive pour créer des cartes contact.
 REDIS_URL= Optionnel - L'instance redis à utiliser pour les tâches asynchrones. Cette fonctionnalité n'est pas encore utilisée. Par exemple : 'redis://localhost:6379/0'
 OVERRIDE_TEST_SEED= Optionnel - `seed` utilisé par les tests pour les éléments aléatoires. Utile lors qu'un test échoue et qu'on veut reproduire exactement ce qu'il s'est passé.
 ```
