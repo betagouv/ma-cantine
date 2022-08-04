@@ -35,10 +35,10 @@ export default {
       return !!route.sitemapGroup && hasViewRights
     })
     return {
-      sitemapGroups: Constants.SitemapGroups.map((g) => {
+      sitemapGroups: Object.values(Constants.SitemapGroups).map((g) => {
         return {
           title: g.label,
-          links: sitemapRoutes.filter((f) => f.sitemapGroup === g.id),
+          links: sitemapRoutes.filter((f) => f.sitemapGroup?.label === g.label),
         }
       }),
     }

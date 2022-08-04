@@ -43,6 +43,7 @@ import PurchasesImporter from "@/views/PurchasesImporter"
 import CommunityPage from "@/views/CommunityPage"
 import FaqPage from "@/views/FaqPage"
 import SiteMap from "@/views/SiteMap"
+import Constants from "@/constants"
 
 Vue.use(VueRouter)
 
@@ -80,7 +81,7 @@ const routes = [
           authenticationRequired: true,
           title: "Mon compte",
         },
-        sitemapGroup: "SITE",
+        sitemapGroup: Constants.SitemapGroups.SITE,
       },
       {
         path: "mot-de-passe",
@@ -112,7 +113,7 @@ const routes = [
     beforeEnter: (_to, _from, next) => {
       store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
     },
-    sitemapGroup: "DIAG",
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/creation-affiche",
@@ -121,7 +122,7 @@ const routes = [
     meta: {
       title: "Affiche convives",
     },
-    sitemapGroup: "ACTION",
+    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/mesures-phares",
@@ -157,7 +158,7 @@ const routes = [
     meta: {
       title: "Les mesures phares",
     },
-    sitemapGroup: "LAW",
+    sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
     path: "/nos-cantines",
@@ -171,7 +172,7 @@ const routes = [
         meta: {
           title: "Nos cantines",
         },
-        sitemapGroup: "LAW",
+        sitemapGroup: Constants.SitemapGroups.LAW,
       },
       {
         path: ":canteenUrlComponent",
@@ -188,7 +189,7 @@ const routes = [
     meta: {
       title: "Mentions légales",
     },
-    sitemapGroup: "SITE",
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/blog",
@@ -202,7 +203,7 @@ const routes = [
         meta: {
           title: "Blog",
         },
-        sitemapGroup: "LAW",
+        sitemapGroup: Constants.SitemapGroups.LAW,
       },
       {
         path: ":id",
@@ -227,7 +228,7 @@ const routes = [
     meta: {
       title: "Conditions générales d'utilisation",
     },
-    sitemapGroup: "SITE",
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/politique-de-confidentialite",
@@ -236,7 +237,7 @@ const routes = [
     meta: {
       title: "Politique de confidentialité",
     },
-    sitemapGroup: "SITE",
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/gestion",
@@ -261,7 +262,7 @@ const routes = [
           title: "Nouvelle cantine",
           authenticationRequired: true,
         },
-        sitemapGroup: "ACTION",
+        sitemapGroup: Constants.SitemapGroups.ACTION,
       },
     ],
   },
@@ -369,7 +370,7 @@ const routes = [
       title: "Importer des diagnostics",
       authenticationRequired: true,
     },
-    sitemapGroup: "DIAG",
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/statistiques-regionales",
@@ -378,7 +379,7 @@ const routes = [
     meta: {
       title: "Les statistiques dans ma collectivité",
     },
-    sitemapGroup: "LAW",
+    sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
     path: "/accessibilite",
@@ -387,7 +388,7 @@ const routes = [
     meta: {
       title: "Déclaration d'accessibilité",
     },
-    sitemapGroup: "SITE",
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/contact",
@@ -396,7 +397,7 @@ const routes = [
     meta: {
       title: "Contactez-nous",
     },
-    sitemapGroup: "SITE",
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/mes-achats",
@@ -406,7 +407,7 @@ const routes = [
       title: "Mes achats",
       authenticationRequired: true,
     },
-    sitemapGroup: "DIAG",
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/mes-achats/:id",
@@ -426,7 +427,7 @@ const routes = [
       title: "Nouvel achat",
       authenticationRequired: true,
     },
-    sitemapGroup: "DIAG",
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/importer-achats",
@@ -436,7 +437,7 @@ const routes = [
       title: "Importer des achats",
       authenticationRequired: true,
     },
-    sitemapGroup: "DIAG",
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/communaute/",
@@ -445,7 +446,7 @@ const routes = [
     meta: {
       title: "Communauté",
     },
-    sitemapGroup: "LAW",
+    sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
     path: "/faq/",
@@ -454,7 +455,7 @@ const routes = [
     meta: {
       title: "Foire aux questions",
     },
-    sitemapGroup: "SITE",
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/plan-du-site/",

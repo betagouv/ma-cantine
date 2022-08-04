@@ -312,22 +312,18 @@ export default Object.freeze({
       value: "OTHER",
     },
   ],
-  SitemapGroups: [
-    {
-      id: "LAW",
+  SitemapGroups: {
+    LAW: {
       label: "S'informer sur les lois",
     },
-    {
-      id: "DIAG",
+    DIAG: {
       label: "Se diagnostiquer",
     },
-    {
-      id: "ACTION",
+    ACTION: {
       label: "Améliorer votre offre",
     },
-    {
-      id: "SITE",
+    SITE: {
       label: "Informations sur le site",
     },
-  ],
+  },
 })
