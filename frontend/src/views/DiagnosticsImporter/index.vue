@@ -10,8 +10,8 @@
       <router-link :to="{ name: 'NewCanteen' }">formulaire pour ajouter une nouvelle cantine</router-link>
       pour une experience plus guidée.
     </p>
-    <v-row class="cta-group my-10 pa-2">
-      <v-col cols="12"><h2>Choisir le niveau d'information disponible</h2></v-col>
+    <h2 class="mt-6 mb-8">Choisir le niveau d'information disponible</h2>
+    <v-row class="cta-group pa-2">
       <v-col cols="12" sm="4" v-for="type in diagnosticTypes" :key="type.key">
         <v-hover>
           <template v-slot:default="{ hover }">
