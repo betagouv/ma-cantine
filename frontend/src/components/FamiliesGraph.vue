@@ -59,6 +59,7 @@ export default {
       }))
     },
     chartOptions() {
+      const maxLine = this.$vuetify.breakpoint.mdAndUp ? 25 : 20
       const legendPosition = this.$vuetify.breakpoint.mdAndUp ? "right" : "top"
       const legendAlign = this.$vuetify.breakpoint.mdAndUp ? "left" : "center"
       return {
@@ -84,7 +85,7 @@ export default {
           },
         },
         xaxis: {
-          categories: this.familiesLabels.map((x) => this.getPhrases(x, 25)),
+          categories: this.familiesLabels.map((x) => this.getPhrases(x, maxLine)),
           labels: {
             formatter: percentageFormatter,
           },
