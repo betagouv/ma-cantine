@@ -37,9 +37,12 @@ class ImportDiagnosticsView(ABC, APIView):
         self.canteens = {}
         self.errors = []
         self.start_time = None
-        # access this to trigger an error early and loudly if missing from child class
-        self.final_value_idx
         super().__init__(**kwargs)
+
+    @property
+    @abstractmethod
+    def final_value_idx():
+        ...
 
     def post(self, request):
         self.start_time = time.time()
