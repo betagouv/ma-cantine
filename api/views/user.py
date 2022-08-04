@@ -105,7 +105,7 @@ class UsernameSuggestionView(APIView):
 
     def post(self, request):
         try:
-            email = request.data.get("email")
+            email = request.data.get("email", "").strip()
             first_name = request.data.get("first_name")
             last_name = request.data.get("last_name")
             if first_name and last_name:

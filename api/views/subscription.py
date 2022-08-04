@@ -100,7 +100,7 @@ class SubscribeBetaTester(APIView):
 class SubscribeNewsletter(APIView):
     def post(self, request):
         try:
-            email = request.data.get("email")
+            email = request.data.get("email", "").strip()
             validate_email(email)
 
             list_id = settings.NEWSLETTER_SENDINBLUE_LIST_ID

@@ -2,8 +2,6 @@ from django import forms
 from django.conf import settings
 from django.contrib import admin
 from django.utils import timezone
-from common.utils import send_mail
-import urllib.parse
 from data.models import Canteen, Teledeclaration
 from .diagnostic import DiagnosticInline
 from .softdeletionadmin import SoftDeletionAdmin, SoftDeletionStatusFilter
@@ -122,24 +120,6 @@ class CanteenAdmin(SoftDeletionAdmin):
 
     def supprimée(self, obj):
         return "🗑️ Supprimée" if obj.deletion_date else ""
-
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-        if change and "publication_status" in form.changed_data and obj.publication_status == "published":
-            protocol = settings.PROTOCOL
-            canteenUrlComponent = urllib.parse.quote(f"{obj.id}--{obj.name}")
-            context = {
-                "canteen": obj.name,
-                "canteenUrl": f"{protocol}://{settings.HOSTNAME}/nos-cantines/{canteenUrlComponent}",
-            }
-            contact_list = [user.email for user in obj.managers.all()]
-            send_mail(
-                subject=f"Votre cantine « {obj.name} » est publiée",
-                template="canteen_published",
-                context=context,
-                to=contact_list,
-                fail_silently=True,
-            )
 
 
 class CanteenInline(admin.TabularInline):

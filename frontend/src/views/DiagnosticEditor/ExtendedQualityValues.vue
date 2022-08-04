@@ -17,7 +17,7 @@
       :readonly="readonly"
       :disabled="readonly"
       :error="totalError"
-      :messages="totalError ? [totalErrorMessage] : undefined"
+      :messages="totalError ? [errorMessage] : undefined"
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -40,7 +40,7 @@
           mdi-food-drumstick
         </v-icon>
       </div>
-      La valeur (en HT) de mes achats des mes achats en viandes et volailles fraiches ou surgelées total
+      La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
     </label>
 
     <v-text-field
@@ -55,6 +55,9 @@
       v-model.number="diagnostic.valueMeatPoultryHt"
       :readonly="readonly"
       :disabled="readonly"
+      :error="meatError"
+      :messages="meatError ? [errorMessage] : undefined"
+      @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
@@ -80,6 +83,9 @@
       v-model.number="diagnostic.valueFishHt"
       :readonly="readonly"
       :disabled="readonly"
+      :error="fishError"
+      :messages="fishError ? [errorMessage] : undefined"
+      @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     ></v-text-field>
@@ -180,6 +186,7 @@ import labels from "@/data/quality-labels.json"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 
 const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que la somme des valeurs par label"
+const DEFAULT_FAMILY_TOTAL_ERROR = "La somme des achats par famille ne peut pas excéder le total des achats"
 
 const MISC_LABELS = {
   FERMIER: {
@@ -225,8 +232,8 @@ export default {
   data() {
     const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
     return {
-      totalError: false,
-      totalErrorMessage: DEFAULT_TOTAL_ERROR,
+      errorType: undefined,
+      errorMessage: "",
       families: Constants.ProductFamilies,
       characteristics: Constants.TeledeclarationCharacteristics,
       characteristicGroups,
@@ -269,6 +276,15 @@ export default {
         outsideLaw: Math.round((this.fieldsCompleted.outsideLaw / this.fieldCount.outsideLaw) * 100),
       }
     },
+    totalError() {
+      return this.errorType === "FAMILY" || this.errorType === "TOTAL"
+    },
+    meatError() {
+      return this.errorType === "FAMILY" || this.errorType === "MEAT"
+    },
+    fishError() {
+      return this.errorType === "FAMILY" || this.errorType === "FISH"
+    },
   },
   methods: {
     inputHtmlId(fId, cId) {
@@ -278,11 +294,24 @@ export default {
       // we're only checking the total against the egalim fields. Each label group of the outsideLaw fields can get up to
       // 100% but ideally wouldn't go over that. We currently don't check this however because of UX constraints.
       const totalInputs = this.sumAllEgalim()
+      const totalMeatPoultry = this.diagnostic.valueMeatPoultryHt
+      const totalFish = this.diagnostic.valueFishHt
+      const totalFamilies = totalMeatPoultry + totalFish
+
+      this.errorMessage = ""
+      this.errorType = undefined
       if (totalInputs > this.diagnostic.valueTotalHt) {
-        this.totalError = true
-        this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumAllEgalim()} €`
-      } else {
-        this.totalError = false
+        this.errorType = "TOTAL"
+        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumAllEgalim()} €`
+      } else if (totalFamilies > this.diagnostic.valueTotalHt) {
+        this.errorType = "FAMILY"
+        this.errorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}, actuellement ${totalFamilies} €`
+      } else if (this.sumEgalimMeat() > totalMeatPoultry) {
+        this.errorType = "MEAT"
+        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumEgalimMeat()} €`
+      } else if (this.sumEgalimFish() > totalFish) {
+        this.errorType = "FISH"
+        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumEgalimFish()} €`
       }
     },
     diagnosticKey(family, characteristic) {
@@ -340,8 +369,19 @@ export default {
       return labelTotal
     },
     sumAllEgalim() {
+      return this.sumFields(this.characteristicGroups.egalim.fields)
+    },
+    sumEgalimMeat() {
+      return this.sumFields(
+        this.characteristicGroups.egalim.fields.filter((f) => f.startsWith("valueViandesVolailles"))
+      )
+    },
+    sumEgalimFish() {
+      return this.sumFields(this.characteristicGroups.egalim.fields.filter((f) => f.startsWith("valueProduitsDeLaMer")))
+    },
+    sumFields(fields) {
       let totalInputs = 0
-      this.characteristicGroups.egalim.fields.forEach((field) => {
+      fields.forEach((field) => {
         totalInputs += parseFloat(this.diagnostic[field]) || 0
       })
       return totalInputs
