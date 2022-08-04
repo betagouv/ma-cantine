@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class InquiryView(APIView):
     def post(self, request):
         try:
-            email = request.data.get("from")
+            email = request.data.get("from", "").strip()
             name = request.data.get("name")
             message = request.data.get("message")
             inquiry_type = request.data.get("inquiry_type", "autre")
