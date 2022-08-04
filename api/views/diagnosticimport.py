@@ -165,10 +165,10 @@ class ImportDiagnosticsView(ABC, APIView):
     def _get_verbose_field_name(field_name):
         try:
             return Canteen._meta.get_field(field_name).verbose_name
-        except:
+        except Exception:
             try:
                 return Diagnostic._meta.get_field(field_name).verbose_name
-            except:
+            except Exception:
                 pass
         return field_name
 
@@ -250,7 +250,7 @@ class ImportDiagnosticsView(ABC, APIView):
             manager_emails = []
             if len(row) > self.manager_column_idx + 1 and row[self.manager_column_idx]:
                 manager_emails = ImportDiagnosticsView._get_manager_emails(row[self.manager_column_idx])
-        except Exception as e:
+        except Exception:
             raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
         return manager_emails
 
@@ -311,7 +311,7 @@ class ImportDiagnosticsView(ABC, APIView):
             try:
                 if row[silent_manager_idx]:
                     silently_added_manager_emails = ImportDiagnosticsView._get_manager_emails(row[silent_manager_idx])
-            except Exception as e:
+            except Exception:
                 raise ValidationError(
                     {
                         "email": f"Un adresse email des gestionnaires (pas notifiés) ({row[silent_manager_idx]}) n'est pas valide."
@@ -320,7 +320,7 @@ class ImportDiagnosticsView(ABC, APIView):
 
             try:
                 import_source = row[silent_manager_idx + 1].strip()
-            except Exception as e:
+            except Exception:
                 raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
 
             status_idx = silent_manager_idx + 2
@@ -328,7 +328,7 @@ class ImportDiagnosticsView(ABC, APIView):
                 publication_status = row[status_idx].strip()
         return (import_source, publication_status, silently_added_manager_emails)
 
-    def _parse_errors(self, e, row):
+    def _parse_errors(self, e, row):  # noqa: C901
         errors = []
         if isinstance(e, PermissionDenied):
             ImportDiagnosticsView._add_error(errors, e.detail, 401)
@@ -381,7 +381,6 @@ class ImportDiagnosticsView(ABC, APIView):
         ...
 
 
-# flake8: noqa: C901
 class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     final_value_idx = 21
 
@@ -404,7 +403,8 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
         diagnostic_year = values_dict = None
         try:
             diagnostic_year = row[self.year_idx]
-            if not diagnostic_year and any(row[12 : self.final_value_idx]):
+            # Flake formatting bug: https://github.com/PyCQA/pycodestyle/issues/373#issuecomment-760190686
+            if not diagnostic_year and any(row[12 : self.final_value_idx]):  # noqa: E203
                 raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
         except IndexError:
             pass
@@ -431,7 +431,7 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
                     if not row[value_idx]:
                         raise Exception
                     values_dict[value] = Decimal(row[value_idx].strip().replace(",", "."))
-                except Exception as e:
+                except Exception:
                     error = {}
                     # TODO: This should take into account more number formats and be factored out to utils
                     error[value] = "Ce champ doit être un nombre décimal."
@@ -470,7 +470,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
     def _validate_diagnostic(self, row):
         try:
             diagnostic_year = int(row[self.year_idx].strip())
-        except Exception as e:
+        except Exception:
             raise ValidationError(
                 {
                     "year": "Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer."
@@ -481,7 +481,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         # total value is required, handle this case separately to the remaining values which are optional
         try:
             values_dict["value_total_ht"] = Decimal(row[value_idx].strip().replace(",", "."))
-        except Exception as e:
+        except Exception:
             raise ValidationError({"value_total_ht": "Ce champ doit être un nombre décimal."})
         for value in ["value_meat_poultry_ht", "value_fish_ht", *Diagnostic.complete_fields]:
             try:
@@ -491,7 +491,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
             except IndexError:
                 # we allow the rest of the fields to be left unspecified because there are so many
                 break
-            except Exception as e:
+            except Exception:
                 error = {}
                 error[value] = "Ce champ doit être vide ou un nombre décimal."
                 raise ValidationError(error)
