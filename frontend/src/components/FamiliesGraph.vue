@@ -188,9 +188,3 @@ function roundFormatter(val) {
   return Math.round(val)
 }
 </script>
-
-<style scoped>
-div >>> .apexcharts-legend.apexcharts-align-left {
-  text-align: left;
-}
-</style>
