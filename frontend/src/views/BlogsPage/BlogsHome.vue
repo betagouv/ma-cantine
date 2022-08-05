@@ -1,5 +1,6 @@
 <template>
   <div id="blogs-home" class="mt-10">
+    <BreadcrumbsNav title="Blog" />
     <v-card elevation="0" class="text-center text-md-left mb-10">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
         <v-col cols="12">
@@ -61,11 +62,12 @@
 </template>
 
 <script>
+import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import BlogCard from "./BlogCard"
 
 export default {
   name: "BlogsHome",
-  components: { BlogCard },
+  components: { BlogCard, BreadcrumbsNav },
   data() {
     return {
       limit: 6,
