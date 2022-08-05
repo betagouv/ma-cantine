@@ -349,7 +349,7 @@ class ImportDiagnosticsView(ABC, APIView):
             elif hasattr(e, "params"):
                 ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:
-                logger.error(f"Unknown validation error: {e}")
+                logger.exception(f"Unknown validation error: {e}")
                 ImportDiagnosticsView._add_error(
                     errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
                 )
@@ -372,7 +372,7 @@ class ImportDiagnosticsView(ABC, APIView):
         elif isinstance(e, FileFormatError):
             ImportDiagnosticsView._add_error(errors, e.detail)
         if not errors:
-            logger.error(f"No errors added through parsing but exception raised: {e}")
+            logger.exception(f"No errors added through parsing but exception raised: {e}")
             ImportDiagnosticsView._add_error(
                 errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
             )
