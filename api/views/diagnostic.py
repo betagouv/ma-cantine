@@ -485,7 +485,7 @@ class EmailDiagnosticImportFileView(APIView):
         try:
             file = request.data["file"]
             self._verify_file_size(file)
-            email = request.data.get("email", request.user.email)
+            email = request.data.get("email", request.user.email).strip()
             context = {
                 "from": email,
                 "name": request.data.get("name", request.user.get_full_name()),

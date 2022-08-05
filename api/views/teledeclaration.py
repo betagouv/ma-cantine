@@ -112,14 +112,16 @@ class TeledeclarationPdfView(APIView):
             response["Content-Disposition"] = f'attachment; filename="{filename}"'
             template = get_template("teledeclaration_pdf.html")
             declared_data = teledeclaration.declared_data
-            is_complete = declared_data["teledeclaration"]["diagnostic_type"] == Diagnostic.DiagnosticType.COMPLETE
+            is_complete = (
+                declared_data["teledeclaration"].get("diagnostic_type", None) == Diagnostic.DiagnosticType.COMPLETE
+            )
             context = {
                 **declared_data["teledeclaration"],
                 **{
                     "diagnostic_type": "complète" if is_complete else "simplifiée",
                     "year": teledeclaration.year,
                     "canteen_name": declared_data["canteen"]["name"],
-                    "siret": declared_data["canteen"]["siret"],
+                    "siret": declared_data["canteen"].get("siret", None),
                     "date": teledeclaration.creation_date,
                     "applicant": declared_data["applicant"]["name"],
                 },
@@ -128,8 +130,9 @@ class TeledeclarationPdfView(APIView):
             pisa_status = pisa.CreatePDF(html, dest=response, link_callback=TeledeclarationPdfView.link_callback)
 
             if pisa_status.err:
-                logger.error(f"Error while generating PDF for teledeclaration {teledeclaration.id}")
-                logger.error(pisa_status.err)
+                logger.error(
+                    f"Error while generating PDF for teledeclaration {teledeclaration.id}:\n{pisa_status.err}"
+                )
                 return HttpResponse("An error ocurred", status=500)
 
             return response

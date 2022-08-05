@@ -17,12 +17,6 @@
       {{ post.tagline }}
     </v-card-text>
     <v-spacer></v-spacer>
-    <v-card-actions class="pa-4">
-      <v-spacer></v-spacer>
-      <v-btn outlined color="primary">
-        Lire la suite
-      </v-btn>
-    </v-card-actions>
   </v-card>
 </template>
 

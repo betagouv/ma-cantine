@@ -1151,13 +1151,21 @@ class Diagnostic(models.Model):
             )
 
     def validate_meat_total(self):
-        if self.value_meat_poultry_egalim_ht > self.value_meat_poultry_ht:
+        if (
+            self.value_meat_poultry_egalim_ht is not None
+            and self.value_meat_poultry_ht is not None
+            and self.value_meat_poultry_egalim_ht > self.value_meat_poultry_ht
+        ):
             raise ValidationError(
                 {
                     "value_meat_poultry_ht": f"La valeur totale (HT) viandes et volailles fraiches ou surgelées EGAlim, {self.value_meat_poultry_egalim_ht}, est plus que la valeur totale (HT) viandes et volailles, {self.value_meat_poultry_ht}"
                 }
             )
-        elif self.value_meat_poultry_france_ht > self.value_meat_poultry_ht:
+        elif (
+            self.value_meat_poultry_france_ht is not None
+            and self.value_meat_poultry_ht is not None
+            and self.value_meat_poultry_france_ht > self.value_meat_poultry_ht
+        ):
             raise ValidationError(
                 {
                     "value_meat_poultry_ht": f"La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, {self.value_meat_poultry_france_ht}, est plus que la valeur totale (HT) viandes et volailles, {self.value_meat_poultry_ht}"
@@ -1165,7 +1173,11 @@ class Diagnostic(models.Model):
             )
 
     def validate_fish_total(self):
-        if self.value_fish_egalim_ht > self.value_fish_ht:
+        if (
+            self.value_fish_egalim_ht is not None
+            and self.value_fish_ht is not None
+            and self.value_fish_egalim_ht > self.value_fish_ht
+        ):
             raise ValidationError(
                 {
                     "value_fish_ht": f"La valeur totale (HT) poissons et produits aquatiques EGAlim, {self.value_fish_egalim_ht}, est plus que la valeur totale (HT) poissons et produits aquatiques, {self.value_fish_ht}"

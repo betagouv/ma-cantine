@@ -352,12 +352,6 @@ export default new Vuex.Store({
       return localStorage.removeItem(LOCAL_STORAGE_KEY)
     },
 
-    subscribeBetaTester(context, payload) {
-      return fetch("/api/v1/subscribeBetaTester/", { method: "POST", headers, body: JSON.stringify(payload) }).then(
-        verifyResponse
-      )
-    },
-
     subscribeNewsletter(context, email) {
       return fetch("/api/v1/subscribeNewsletter/", { method: "POST", headers, body: JSON.stringify({ email }) }).then(
         verifyResponse

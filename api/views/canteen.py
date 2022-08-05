@@ -393,7 +393,7 @@ class RemoveManagerView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            email = request.data.get("email")
+            email = request.data.get("email", "").strip()
             validate_email(email)
             canteen_id = request.data.get("canteen_id")
             canteen = request.user.canteens.get(id=canteen_id)
@@ -425,7 +425,7 @@ class RemoveManagerView(APIView):
 class SendCanteenNotFoundEmail(APIView):
     def post(self, request):
         try:
-            email = request.data.get("from")
+            email = request.data.get("from", "").strip()
             validate_email(email)
             name = request.data.get("name") or "Un·e utilisateur·rice"
             message = request.data.get("message")
@@ -464,7 +464,7 @@ class TeamJoinRequestView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            email = request.data.get("email")
+            email = request.data.get("email", "").strip()
             validate_email(email)
             name = request.data.get("name")
             message = request.data.get("message")
@@ -526,7 +526,13 @@ def badges_for_queryset(diagnostic_year_queryset):
         )
         appro_share_query = appro_share_query.annotate(
             combined_share=Cast(
-                (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
+                (
+                    Sum("value_bio_ht")
+                    + Sum("value_sustainable_ht")
+                    + Sum("value_externality_performance_ht")
+                    + Sum("value_egalim_others_ht")
+                )
+                / Sum("value_total_ht"),
                 FloatField(),
             )
         )
@@ -616,7 +622,11 @@ class CanteenStatisticsView(APIView):
             bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField())
         )
         appro_share_query = appro_share_query.annotate(
-            sustainable_share=Cast(Sum("value_sustainable_ht") / Sum("value_total_ht"), FloatField())
+            sustainable_share=Cast(
+                (Sum("value_sustainable_ht") + Sum("value_externality_performance_ht") + Sum("value_egalim_others_ht"))
+                / Sum("value_total_ht"),
+                FloatField(),
+            )
         )
         agg = appro_share_query.aggregate(Avg("bio_share"), Avg("sustainable_share"))
         # no need for particularly fancy rounding

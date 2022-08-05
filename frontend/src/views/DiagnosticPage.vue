@@ -18,20 +18,18 @@
           <KeyMeasureTitle class="flex-shrink-1" :measure="measure" />
           <v-spacer></v-spacer>
           <v-btn outlined :color="measure.isEvaluated ? 'green' : 'primary'" @click="showDiagnosticModal(measure)">
-            <span class="mx-2">Je m'évalue !</span>
+            <span class="mx-2">
+              Je m'évalue
+              <span class="d-sr-only">sur la mesure {{ measure.shortTitle }}</span>
+              !
+            </span>
             <v-icon small color="green" v-if="measure.isEvaluated">mdi-check</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text class="py-0" v-for="subMeasure in measure.subMeasures" :key="`submeasure: ${subMeasure.id}`">
-          <span>{{ subMeasure.title }}</span>
-          <v-btn
-            class="text-decoration-underline d-inline mt-n1"
-            text
-            plain
-            :ripple="false"
-            @click="toggleDescriptionDisplay(subMeasure)"
-          >
-            {{ subMeasure.readMore ? "Moins" : "En savoir plus" }}
+          <v-btn class="d-inline mt-n1" text plain :ripple="false" @click="toggleDescriptionDisplay(subMeasure)">
+            <span>{{ subMeasure.title }}.&nbsp;</span>
+            <span class="text-decoration-underline">{{ subMeasure.readMore ? "Moins" : "En savoir plus" }}</span>
           </v-btn>
 
           <v-alert outlined color="blue-grey lighten-4" :value="subMeasure.readMore" transition="scroll-y-transition">
