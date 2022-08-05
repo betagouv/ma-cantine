@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import csv
-import os
 import time
 import re
 import logging
@@ -22,7 +21,6 @@ from api.permissions import IsAuthenticated
 from .utils import camelize, normalise_siret
 from .canteen import AddManagerView
 import requests
-import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -351,9 +349,7 @@ class ImportDiagnosticsView(ABC, APIView):
             elif hasattr(e, "params"):
                 ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:
-                if os.environ.get("ENVIRONMENT") == "dev":
-                    print("ValidationError:")
-                    traceback.print_exception(type(e), e, e.__traceback__)
+                logger.error(f"Unknown validation error: {e}")
                 ImportDiagnosticsView._add_error(
                     errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
                 )
@@ -376,9 +372,7 @@ class ImportDiagnosticsView(ABC, APIView):
         elif isinstance(e, FileFormatError):
             ImportDiagnosticsView._add_error(errors, e.detail)
         if not errors:
-            if os.environ.get("ENVIRONMENT") == "dev":
-                print("No errors added through parsing but exception raised:")
-                traceback.print_exception(type(e), e, e.__traceback__)
+            logger.error(f"No errors added through parsing but exception raised: {e}")
             ImportDiagnosticsView._add_error(
                 errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
             )
