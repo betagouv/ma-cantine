@@ -227,11 +227,11 @@ export const latestCreatedDiagnostic = (canteen) => {
   return diagnostic
 }
 
-export const getPercentage = (partialValue, totalValue) => {
+export const getPercentage = (partialValue, totalValue, round = true) => {
   if (strictIsNaN(partialValue) || strictIsNaN(totalValue) || totalValue === 0) {
     return null
   } else {
-    return Math.round((100 * partialValue) / totalValue)
+    return round ? Math.round((100 * partialValue) / totalValue) : (100 * partialValue) / totalValue
   }
 }
 
