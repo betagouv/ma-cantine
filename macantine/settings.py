@@ -11,11 +11,13 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 import sys
+import logging
 from pathlib import Path
 import dotenv  # noqa
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.celery import CeleryIntegration
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,11 +53,12 @@ ENVIRONMENT = os.getenv("ENVIRONMENT")
 if not DEBUG:
     sentry_sdk.init(
         dsn="https://db78f7d440094c498a02135e8abefa27@sentry.incubateur.net/2",
-        integrations=[DjangoIntegration()],
+        integrations=[DjangoIntegration(), CeleryIntegration()],
         traces_sample_rate=0,
         send_default_pii=False,
         send_client_reports=False,
     )
+    sentry_sdk.set_level(logging.ERROR)
 
 INTERNAL_IPS = []
 
@@ -338,8 +341,6 @@ if DEBUG_PERFORMANCE:
 
 # Maximum CSV import file size: 10Mo
 CSV_IMPORT_MAX_SIZE = 10485760
-
-PIPEDRIVE_API_TOKEN = os.getenv("PIPEDRIVE_API_TOKEN", None)
 
 # CSP headers (https://content-security-policy.com/)
 

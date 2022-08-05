@@ -13,7 +13,7 @@ from django.db.models import Sum, FloatField, Avg, Func, F, Q
 from django_filters import rest_framework as django_filters
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework import status, filters
+from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
@@ -34,8 +34,7 @@ from api.permissions import (
     IsCanteenManagerUrlParam,
 )
 from api.exceptions import DuplicateException
-from .utils import camelize, UnaccentSearchFilter, CamelCaseOrderingFilter
-from common import utils
+from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
 
 logger = logging.getLogger(__name__)
 
@@ -151,7 +150,7 @@ class PublishedCanteensView(ListAPIView):
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
-        filters.OrderingFilter,
+        MaCantineOrderingFilter,
     ]
     search_fields = ["name"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
@@ -176,7 +175,7 @@ class UserCanteensView(ListCreateAPIView):
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
-        filters.OrderingFilter,
+        MaCantineOrderingFilter,
     ]
     required_scopes = ["canteen"]
     search_fields = ["name"]
@@ -258,25 +257,7 @@ class PublishCanteenView(APIView):
             is_draft = canteen.publication_status == Canteen.PublicationStatus.DRAFT
 
             if is_draft:
-                canteen.publication_status = Canteen.PublicationStatus.PENDING
-                protocol = settings.PROTOCOL
-                admin_url = "{}://{}/admin/data/canteen/{}/change/".format(protocol, settings.HOSTNAME, canteen.id)
-
-                logger.info(f"Demande de publication de {canteen.name} (ID: {canteen.id})")
-
-                title = canteen.name
-                env = getattr(settings, "ENVIRONMENT", "")
-                if env == "demo" or env == "staging":
-                    title = f"({env.upper()}) {title}"
-
-                description = f"[admin]({admin_url})"
-                if canteen.sectors.count():
-                    description += "\n\nSecteurs\n"
-                    for sector in canteen.sectors.all().order_by("name"):
-                        description += f"\n* {sector.name}"
-                else:
-                    description += "\n\nAucun secteur"
-                utils.create_trello_card(settings.TRELLO_LIST_ID_PUBLICATION, title, description)
+                canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
 
             canteen.update_publication_comments(data)
             canteen.save()
@@ -329,20 +310,16 @@ class AddManagerView(APIView):
             AddManagerView.add_manager_to_canteen(email, canteen)
             return _respond_with_team(canteen)
         except ValidationError as e:
-            logger.error(f"Attempt to add manager with invalid email {email}")
-            logger.exception(e)
+            logger.warning(f"Attempt to add manager with invalid email {email}:\n{e}")
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Canteen.DoesNotExist as e:
-            logger.error(f"Attempt to add manager to unexistent canteen {canteen_id}")
-            logger.exception(e)
+            logger.warning(f"Attempt to add manager to unexistent canteen {canteen_id}:\n{e}")
             return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
         except IntegrityError as e:
-            logger.error(f"Attempt to add existing manager with email {email} to canteen {canteen_id}")
-            logger.exception(e)
+            logger.warning(f"Attempt to add existing manager with email {email} to canteen {canteen_id}:\n{e}")
             return _respond_with_team(canteen)
         except Exception as e:
-            logger.error("Exception occurred while inviting a manager to canteen")
-            logger.exception(e)
+            logger.exception(f"Exception occurred while inviting a manager to canteen:\n{e}")
             return JsonResponse(
                 {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -377,14 +354,12 @@ class AddManagerView(APIView):
                 to=[manager_invitation.email],
             )
         except ConnectionRefusedError as e:
-            logger.error(
-                f"The manager invitation email could not be sent to {manager_invitation.email} : Connection Refused. The manager has been added anyway."
+            logger.warning(
+                f"The manager invitation email could not be sent to {manager_invitation.email} : Connection Refused. The manager has been added anyway.\n{e}"
             )
-            logger.exception(e)
             return
         except Exception as e:
-            logger.error(f"The manager invitation email could not be sent to {manager_invitation.email}")
-            logger.exception(e)
+            logger.exception(f"The manager invitation email could not be sent to {manager_invitation.email}\n{e}")
             raise Exception("Error occurred : the mail could not be sent.") from e
 
     @staticmethod
@@ -404,14 +379,12 @@ class AddManagerView(APIView):
                 to=[email],
             )
         except ConnectionRefusedError as e:
-            logger.error(
-                f"The manager add notification email could not be sent to {email} : Connection Refused. The manager has been added anyway."
+            logger.warning(
+                f"The manager add notification email could not be sent to {email} : Connection Refused. The manager has been added anyway.\n{e}"
             )
-            logger.exception(e)
             return
         except Exception as e:
-            logger.error(f"The manager add notification email could not be sent to {email}")
-            logger.exception(e)
+            logger.exception(f"The manager add notification email could not be sent to {email}\n{e}")
             raise Exception("Error occurred : the mail could not be sent.") from e
 
 
@@ -420,7 +393,7 @@ class RemoveManagerView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            email = request.data.get("email")
+            email = request.data.get("email", "").strip()
             validate_email(email)
             canteen_id = request.data.get("canteen_id")
             canteen = request.user.canteens.get(id=canteen_id)
@@ -436,16 +409,13 @@ class RemoveManagerView(APIView):
                     pass
             return _respond_with_team(canteen)
         except ValidationError as e:
-            logger.error(f"Attempt to remove manager with invalid email {email}")
-            logger.exception(e)
+            logger.warning(f"Attempt to remove manager with invalid email {email}:\n{e}")
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Canteen.DoesNotExist as e:
-            logger.error(f"Attempt to remove manager from unexistent canteen {canteen_id}")
-            logger.exception(e)
+            logger.warning(f"Attempt to remove manager from unexistent canteen {canteen_id}:\n{e}")
             return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            logger.error("Exception occurred while removing a manager from a canteen")
-            logger.exception(e)
+            logger.exception(f"Exception occurred while removing a manager from a canteen:\n{e}")
             return JsonResponse(
                 {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -455,7 +425,7 @@ class RemoveManagerView(APIView):
 class SendCanteenNotFoundEmail(APIView):
     def post(self, request):
         try:
-            email = request.data.get("from")
+            email = request.data.get("from", "").strip()
             validate_email(email)
             name = request.data.get("name") or "Un·e utilisateur·rice"
             message = request.data.get("message")
@@ -482,8 +452,7 @@ class SendCanteenNotFoundEmail(APIView):
         except ValidationError:
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error("Exception occurred while sending email")
-            logger.exception(e)
+            logger.exception(f"Exception occurred while sending email:\n{e}")
             return JsonResponse(
                 {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -495,7 +464,7 @@ class TeamJoinRequestView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            email = request.data.get("email")
+            email = request.data.get("email", "").strip()
             validate_email(email)
             name = request.data.get("name")
             message = request.data.get("message")
@@ -536,8 +505,7 @@ class TeamJoinRequestView(APIView):
         except ValidationError:
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error("Exception occurred while sending email")
-            logger.exception(e)
+            logger.exception(f"Exception occurred while sending email:\n{e}")
             return JsonResponse(
                 {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -558,7 +526,13 @@ def badges_for_queryset(diagnostic_year_queryset):
         )
         appro_share_query = appro_share_query.annotate(
             combined_share=Cast(
-                (Sum("value_bio_ht") + Sum("value_sustainable_ht")) / Sum("value_total_ht"),
+                (
+                    Sum("value_bio_ht")
+                    + Sum("value_sustainable_ht")
+                    + Sum("value_externality_performance_ht")
+                    + Sum("value_egalim_others_ht")
+                )
+                / Sum("value_total_ht"),
                 FloatField(),
             )
         )
@@ -648,7 +622,11 @@ class CanteenStatisticsView(APIView):
             bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField())
         )
         appro_share_query = appro_share_query.annotate(
-            sustainable_share=Cast(Sum("value_sustainable_ht") / Sum("value_total_ht"), FloatField())
+            sustainable_share=Cast(
+                (Sum("value_sustainable_ht") + Sum("value_externality_performance_ht") + Sum("value_egalim_others_ht"))
+                / Sum("value_total_ht"),
+                FloatField(),
+            )
         )
         agg = appro_share_query.aggregate(Avg("bio_share"), Avg("sustainable_share"))
         # no need for particularly fancy rounding
@@ -729,8 +707,7 @@ class ClaimCanteenView(APIView):
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.error("Exception occurred while sending email")
-            logger.exception(e)
+            logger.exception(f"Exception occurred while sending email:\n{e}")
             return JsonResponse(
                 {"error": "An error has occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -748,7 +725,7 @@ class SatelliteListCreateView(ListCreateAPIView):
     serializer_class = SatelliteCanteenSerializer
     pagination_class = SatellitesPagination
     filter_backends = [
-        CamelCaseOrderingFilter,
+        MaCantineOrderingFilter,
     ]
 
     ordering_fields = [

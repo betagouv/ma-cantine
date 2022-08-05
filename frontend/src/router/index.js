@@ -20,7 +20,6 @@ import BlogsPage from "@/views/BlogsPage"
 import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
 import NotFound from "@/views/NotFound"
-import TesterParticipation from "@/views/TesterParticipation"
 import CGU from "@/views/CGU.vue"
 import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
 import ManagementPage from "@/views/ManagementPage"
@@ -43,6 +42,8 @@ import PurchasePage from "@/views/PurchasePage"
 import PurchasesImporter from "@/views/PurchasesImporter"
 import CommunityPage from "@/views/CommunityPage"
 import FaqPage from "@/views/FaqPage"
+import SiteMap from "@/views/SiteMap"
+import Constants from "@/constants"
 
 Vue.use(VueRouter)
 
@@ -80,6 +81,7 @@ const routes = [
           authenticationRequired: true,
           title: "Mon compte",
         },
+        sitemapGroup: Constants.SitemapGroups.SITE,
       },
       {
         path: "mot-de-passe",
@@ -111,6 +113,7 @@ const routes = [
     beforeEnter: (_to, _from, next) => {
       store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
     },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/creation-affiche",
@@ -119,11 +122,13 @@ const routes = [
     meta: {
       title: "Affiche convives",
     },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/mesures-phares",
     name: "KeyMeasuresPage",
     component: KeyMeasuresPage,
+    redirect: { name: "KeyMeasuresHome" },
     children: [
       {
         path: "",
@@ -150,6 +155,10 @@ const routes = [
         props: true,
       },
     ],
+    meta: {
+      title: "Les mesures phares",
+    },
+    sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
     path: "/nos-cantines",
@@ -163,6 +172,7 @@ const routes = [
         meta: {
           title: "Nos cantines",
         },
+        sitemapGroup: Constants.SitemapGroups.LAW,
       },
       {
         path: ":canteenUrlComponent",
@@ -176,6 +186,10 @@ const routes = [
     path: "/mentions-legales",
     name: "LegalNotices",
     component: LegalNotices,
+    meta: {
+      title: "Mentions légales",
+    },
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/blog",
@@ -189,6 +203,7 @@ const routes = [
         meta: {
           title: "Blog",
         },
+        sitemapGroup: Constants.SitemapGroups.LAW,
       },
       {
         path: ":id",
@@ -199,20 +214,13 @@ const routes = [
     ],
   },
   {
-    path: "/devenir-testeur",
-    name: "TesterParticipation",
-    component: TesterParticipation,
-    meta: {
-      title: "Devenir Testeur",
-    },
-  },
-  {
     path: "/cgu",
     name: "CGU",
     component: CGU,
     meta: {
       title: "Conditions générales d'utilisation",
     },
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/politique-de-confidentialite",
@@ -221,6 +229,7 @@ const routes = [
     meta: {
       title: "Politique de confidentialité",
     },
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/gestion",
@@ -236,22 +245,16 @@ const routes = [
     name: "NewCanteen",
     component: CanteenEditor,
     redirect: { name: "NewCanteenForm" },
-    props: {
-      canteenUrlComponent: null,
-    },
-    meta: {
-      title: "Ajouter une nouvelle cantine",
-      authenticationRequired: true,
-    },
     children: [
       {
         path: "",
         name: "NewCanteenForm",
-        props: true,
         component: CanteenForm,
         meta: {
+          title: "Nouvelle cantine",
           authenticationRequired: true,
         },
+        sitemapGroup: Constants.SitemapGroups.ACTION,
       },
     ],
   },
@@ -359,6 +362,7 @@ const routes = [
       title: "Importer des diagnostics",
       authenticationRequired: true,
     },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/importer-diagnostics/:importLevel",
@@ -373,6 +377,7 @@ const routes = [
     meta: {
       title: "Les statistiques dans ma collectivité",
     },
+    sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
     path: "/accessibilite",
@@ -381,6 +386,7 @@ const routes = [
     meta: {
       title: "Déclaration d'accessibilité",
     },
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/contact",
@@ -389,6 +395,7 @@ const routes = [
     meta: {
       title: "Contactez-nous",
     },
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/mes-achats",
@@ -398,6 +405,7 @@ const routes = [
       title: "Mes achats",
       authenticationRequired: true,
     },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/mes-achats/:id",
@@ -417,6 +425,7 @@ const routes = [
       title: "Nouvel achat",
       authenticationRequired: true,
     },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/importer-achats",
@@ -426,6 +435,7 @@ const routes = [
       title: "Importer des achats",
       authenticationRequired: true,
     },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/communaute/",
@@ -434,6 +444,7 @@ const routes = [
     meta: {
       title: "Communauté",
     },
+    sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
     path: "/faq/",
@@ -441,6 +452,15 @@ const routes = [
     component: FaqPage,
     meta: {
       title: "Foire aux questions",
+    },
+    sitemapGroup: Constants.SitemapGroups.SITE,
+  },
+  {
+    path: "/plan-du-site/",
+    name: "SiteMap",
+    component: SiteMap,
+    meta: {
+      title: "Plan du site",
     },
   },
   {
@@ -481,4 +501,4 @@ router.beforeEach((to, from, next) => {
   chooseAuthorisedRoute(to, from, next)
 })
 
-export default router
+export { router, routes }

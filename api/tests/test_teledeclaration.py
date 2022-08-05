@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory
 from data.models import Teledeclaration
 from .utils import authenticate
 
@@ -59,7 +59,7 @@ class TestTeledeclarationApi(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         payload = {"diagnosticId": diagnostic.id}
 
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -73,7 +73,7 @@ class TestTeledeclarationApi(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, manager)
 
         payload = {"teledeclarationId": teledeclaration.id}
@@ -88,7 +88,7 @@ class TestTeledeclarationApi(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, manager)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
@@ -115,13 +115,15 @@ class TestTeledeclarationApi(APITestCase):
     @authenticate
     def test_create_incomplete_diagnostic(self):
         """
-        A diagnostic missing approvisionnement information cannot be used to
+        A diagnostic with missing total_ht information cannot be used to
         create a teledeclaration
         """
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, value_bio_ht=None)
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2020, value_total_ht=None, diagnostic_type="SIMPLE"
+        )
         payload = {"diagnosticId": diagnostic.id}
 
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -135,7 +137,9 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        diagnostic = DiagnosticFactory.create(
+            value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE"
+        )
         payload = {"diagnosticId": diagnostic.id}
 
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -225,7 +229,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
 
         payload = {"teledeclarationId": teledeclaration.id}
@@ -245,8 +249,37 @@ class TestTeledeclarationApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, authenticate.user)
+
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @authenticate
+    def test_generate_pdf_legacy_teledeclaration(self):
+        """
+        The user can get a justificatif in PDF for a teledeclaration
+        with minimal information
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type=None)
+        teledeclaration = TeledeclarationFactory(
+            canteen=canteen,
+            diagnostic=diagnostic,
+            year=2021,
+            declared_data={
+                "year": 2021,
+                "canteen": {
+                    "name": "",
+                },
+                "applicant": {
+                    "name": "",
+                },
+                "teledeclaration": {},
+            },
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+        )
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -259,7 +292,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create(siret="12345678912345")
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         Teledeclaration.createFromDiagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
@@ -275,7 +308,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create(siret="")
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         Teledeclaration.createFromDiagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
@@ -289,3 +322,60 @@ class TestTeledeclarationApi(APITestCase):
         payload = {"diagnosticId": diagnostic2.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    @authenticate
+    def test_complete_diagnostic(self):
+        """
+        When doing a TD with a complete diagnostic, the adequate fields must be
+        present in the teledeclaration
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="COMPLETE")
+        payload = {"diagnosticId": diagnostic.id}
+
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        body = response.json()
+        teledeclaration = Teledeclaration.objects.first()
+
+        self.assertEqual(body["teledeclaration"]["id"], teledeclaration.id)
+        self.assertEqual(body["teledeclaration"]["status"], "SUBMITTED")
+
+        self.assertEqual(teledeclaration.diagnostic, diagnostic)
+        self.assertEqual(teledeclaration.canteen, canteen)
+        self.assertEqual(teledeclaration.year, 2020)
+        self.assertEqual(teledeclaration.applicant, user)
+        self.assertEqual(teledeclaration.canteen_siret, canteen.siret)
+        self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
+
+        declared_data = teledeclaration.declared_data
+        self.assertEqual(declared_data["year"], 2020)
+
+        json_canteen = declared_data["canteen"]
+        self.assertEqual(json_canteen["name"], canteen.name)
+        self.assertEqual(json_canteen["siret"], canteen.siret)
+        self.assertEqual(json_canteen["city_insee_code"], canteen.city_insee_code)
+
+        json_teledeclaration = declared_data["teledeclaration"]
+
+        # Fields pertaining to the simplified declaration should not be present
+        self.assertNotIn("value_bio_ht", json_teledeclaration)
+        self.assertNotIn("value_sustainable_ht", json_teledeclaration)
+
+        # Fields pertaining to the complete declaration should be in the payload
+        self.assertIn("value_fruits_et_legumes_bio", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_label_rouge", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_aocaop_igp_stg", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_hve", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_peche_durable", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_rup", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_fermier", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_externalites", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_commerce_equitable", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_performance", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_france", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_short_distribution", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_local", json_teledeclaration)

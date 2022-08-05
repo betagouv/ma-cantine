@@ -45,13 +45,13 @@ class Command(BaseCommand):
 
         try:
             if not row[2]:
-                logger.error(f"CSV row {row} does not contain a SIRET")
+                logger.warning(f"CSV row {row} does not contain a SIRET")
                 return False
 
             siret = row[2].strip()
 
             if siret and Command._siret_exists(siret):
-                logger.error(f"Canteen with SIRET {siret} exists already crating models from CSV row : {row}")
+                logger.warning(f"Canteen with SIRET {siret} exists already crating models from CSV row : {row}")
                 return False
 
             name = row[3].strip()
@@ -62,17 +62,17 @@ class Command(BaseCommand):
 
             try:
                 daily_meal_count = int(row[13]) if row[13] else None
-            except:
+            except Exception:
                 daily_meal_count = None
 
             try:
                 bio_and_sustainable_percentage = int(row[14]) if row[14] else None
-            except:
+            except Exception:
                 bio_and_sustainable_percentage = None
 
             try:
                 bio_percentage = int(row[15]) if row[15] else None
-            except:
+            except Exception:
                 bio_percentage = None
 
             sustainable_percentage = None
@@ -119,13 +119,11 @@ class Command(BaseCommand):
                         logger.info(f"Created diagnostic for 2021 for {canteen.name} (ID: {diagnostic.id})")
                     return canteen
             except IntegrityError as e:
-                logger.error(f"Integrity error when crating models from CSV row : {row}")
-                logger.exception(e)
+                logger.warning(f"Integrity error when crating models from CSV row : {row}\n{e}")
                 return False
 
         except Exception as e:
-            logger.error(f"Unable to create cantine from CSV file : {row}")
-            logger.exception(e)
+            logger.exception(f"Unable to create cantine from CSV file : {row}\n{e}")
             return False
 
     @staticmethod
@@ -167,4 +165,4 @@ class Command(BaseCommand):
                     canteen.department = row[5].split(",")[0]
                     canteen.save()
         except Exception as e:
-            logger.error(f"Error while updating location data : {repr(e)} - {e}")
+            logger.exception(f"Error while updating location data : {repr(e)} - {e}")

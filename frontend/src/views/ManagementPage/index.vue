@@ -1,14 +1,18 @@
 <template>
   <div class="text-left">
-    <div class="mt-4">
-      <p class="my-2 text-body-1 font-weight-bold">
-        Bienvenue {{ loggedUser.firstName }}
-        <v-btn text class="text-decoration-underline text-caption mb-1" :to="{ name: 'AccountEditor' }">
+    <div class="mt-4 mb-0 mb-md-6">
+      <p
+        class="my-2 text-h6 font-weight-black"
+        :style="$vuetify.breakpoint.mdAndUp ? 'font-size: 2rem !important;' : ''"
+      >
+        Bienvenue dans votre espace, {{ loggedUser.firstName }}
+        <v-btn text class="text-decoration-underline text-caption mb-1 mb-md-n1" :to="{ name: 'AccountEditor' }">
           <v-icon class="mr-1" small>mdi-pencil</v-icon>
           Modifier mon profil
         </v-btn>
       </p>
     </div>
+    <TeledeclarationBanner />
     <CompleteProfileField />
     <div class="mt-4">
       <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
@@ -27,10 +31,11 @@ import CanteensPagination from "./CanteensPagination.vue"
 import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import UserTools from "./UserTools"
 import CompleteProfileField from "./CompleteProfileField"
+import TeledeclarationBanner from "./TeledeclarationBanner"
 import validators from "@/validators"
 
 export default {
-  components: { CanteensPagination, UserTools, CompleteProfileField, PageSatisfaction },
+  components: { CanteensPagination, UserTools, CompleteProfileField, PageSatisfaction, TeledeclarationBanner },
   data() {
     return {
       validators,

@@ -16,8 +16,8 @@
       v-model.number="diagnostic.valueTotalHt"
       :readonly="readonly"
       :disabled="readonly"
-      :error="totalError"
-      :messages="totalError ? [totalErrorMessage] : undefined"
+      :error="totalError || totalMeatPoultryError || totalFishError"
+      :messages="totalError || totalMeatPoultryError || totalFishError ? [totalErrorMessage] : undefined"
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -214,8 +214,8 @@
       v-model.number="diagnostic.valueMeatPoultryHt"
       :readonly="readonly"
       :disabled="readonly"
-      :error="meatPoultryError"
-      :messages="meatPoultryError ? [meatPoultryErrorMessage] : undefined"
+      :error="meatPoultryError || totalMeatPoultryError"
+      :messages="meatPoultryError || totalMeatPoultryError ? [meatPoultryErrorMessage] : undefined"
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -319,8 +319,8 @@
       v-model.number="diagnostic.valueFishHt"
       :readonly="readonly"
       :disabled="readonly"
-      :error="fishError"
-      :messages="fishError ? [fishErrorMessage] : undefined"
+      :error="fishError || totalFishError"
+      :messages="fishError || totalFishError ? [fishErrorMessage] : undefined"
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -367,6 +367,7 @@ import validators from "@/validators"
 import LogoBio from "@/components/LogoBio"
 
 const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
+const DEFAULT_FAMILY_TOTAL_ERROR = "La somme des achats par famille ne peut pas excéder le total des achats"
 const DEFAULT_MEAT_POULTRY_ERROR = "La valeur totale doit être supérieure que celle des labels"
 const DEFAULT_FISH_ERROR = "La valeur totale doit être supérieure que la valeur EGAlim"
 
@@ -398,6 +399,8 @@ export default {
       "Logo Commerce Équitable",
     ]
     return {
+      totalMeatPoultryError: false,
+      totalFishError: false,
       totalError: false,
       totalErrorMessage: DEFAULT_TOTAL_ERROR,
       meatPoultryError: false,
@@ -432,17 +435,33 @@ export default {
       const total = d.valueTotalHt
       const totalMeatPoultry = d.valueMeatPoultryHt
       const totalFish = d.valueFishHt
+      const totalFamilies = totalMeatPoultry + totalFish
 
       this.totalError = sumEgalim > total
-      this.totalErrorMessage = this.totalError ? `${DEFAULT_TOTAL_ERROR}, actuellement ${sumEgalim || 0} €` : ""
+      this.totalMeatPoultryError = !this.totalError && (totalMeatPoultry > total || totalFamilies > total)
+      this.totalFishError = !this.totalError && (totalFish > total || totalFamilies > total)
+      this.meatPoultryError = !this.totalMeatPoultryError && sumMeatPoultry > totalMeatPoultry
+      this.fishError = !this.totalFishError && sumFish > totalFish
 
-      this.meatPoultryError = sumMeatPoultry > totalMeatPoultry
-      this.meatPoultryErrorMessage = this.meatPoultryError
-        ? `${DEFAULT_MEAT_POULTRY_ERROR}, actuellement ${sumMeatPoultry || 0} €`
-        : ""
+      if (this.totalError) {
+        this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${sumEgalim || 0} €`
+      }
+      if (this.totalMeatPoultryError) {
+        this.meatPoultryErrorMessage = this.totalErrorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}`
+      }
+      if (this.totalFishError) {
+        this.fishErrorMessage = this.totalErrorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}`
+      }
+      if (!this.totalError && !this.totalMeatPoultryError && !this.totalFishError) {
+        this.meatPoultryErrorMessage = this.fishErrorMessage = this.totalErrorMessage = ""
+      }
 
-      this.fishError = sumFish > totalFish
-      this.fishErrorMessage = this.fishError ? `${DEFAULT_FISH_ERROR}, actuellement ${sumFish || 0} €` : ""
+      this.meatPoultryErrorMessage =
+        this.meatPoultryErrorMessage ||
+        (this.meatPoultryError ? `${DEFAULT_MEAT_POULTRY_ERROR}, actuellement ${sumMeatPoultry || 0} €` : "")
+
+      this.fishErrorMessage =
+        this.fishErrorMessage || (this.fishError ? `${DEFAULT_FISH_ERROR}, actuellement ${sumFish || 0} €` : "")
     },
     sumAllEgalim() {
       const d = this.diagnostic

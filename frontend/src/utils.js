@@ -156,16 +156,22 @@ export const strictIsNaN = (x) => {
 // values of the appro - meaning the fields on fish/meat
 // needed for the loi Climat are not necessary
 export const hasDiagnosticApproData = (diagnostic) => {
-  const approFields = [
+  const approSimplifiedFields = [
     "valueBioHt",
     "valueSustainableHt",
-    "valueTotalHt",
     "valueExternalityPerformanceHt",
     "valueEgalimOthersHt",
   ]
-  return approFields.some(
-    // sadly null >= 0 is true
-    (key) => diagnostic[key] > 0 || diagnostic[key] === 0
+  const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
+  const approExtendedFields = characteristicGroups.egalim.fields.concat(characteristicGroups.outsideLaw.fields)
+  const hasTotal = diagnostic.valueTotalHt > 0 || diagnostic.valueTotalHt === 0
+  const approFields = diagnostic.diagnosticType === "COMPLETE" ? approExtendedFields : approSimplifiedFields
+  return (
+    hasTotal &&
+    approFields.some(
+      // sadly null >= 0 is true
+      (key) => diagnostic[key] > 0 || diagnostic[key] === 0
+    )
   )
 }
 

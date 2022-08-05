@@ -66,7 +66,7 @@
           <v-spacer></v-spacer>
           <v-card-actions class="px-4">
             <v-spacer></v-spacer>
-            <v-btn :to="{ name: 'BlogsHome' }" outlined color="primary">Visiter</v-btn>
+            <v-btn :to="{ name: 'BlogsHome' }" outlined color="primary">Lire notre blog</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -88,7 +88,7 @@
               color="primary"
               rel="noopener"
             >
-              Visiter
+              Decouvrir nos ressources
               <v-icon small class="ml-2">mdi-open-in-new</v-icon>
             </v-btn>
           </v-card-actions>

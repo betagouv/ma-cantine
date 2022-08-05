@@ -56,8 +56,7 @@ class Message(models.Model):
             self.sent_date = now()
             self.save()
         except Exception as e:
-            logger.error(f"Error sending message {self.id}")
-            logger.error(e)
+            logger.exception(f"Error sending message {self.id}:\n{e}")
 
     def block(self):
         if self.status == Message.Status.SENT:

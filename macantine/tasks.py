@@ -35,6 +35,7 @@ def no_canteen_first_reminder():
         canteens=None,
         date_joined__lte=threshold,
         email_no_canteen_first_reminder__isnull=True,
+        opt_out_reminder_emails=False,
     ).all()
     if not users:
         logger.info("no_canteen_first_reminder: No users to notify.")
@@ -51,11 +52,9 @@ def no_canteen_first_reminder():
             user.email_no_canteen_first_reminder = today
             user.save()
         except ApiException as e:
-            logger.error(f"SIB error when sending first no-cantine email to {user.username}")
-            logger.exception(e)
+            logger.exception(f"SIB error when sending first no-cantine email to {user.username}:\n{e}")
         except Exception as e:
-            logger.error(f"Unable to send first no-cantine reminder email to {user.username}")
-            logger.exception(e)
+            logger.exception(f"Unable to send first no-cantine reminder email to {user.username}:\n{e}")
 
 
 @app.task()
@@ -71,6 +70,7 @@ def no_canteen_second_reminder():
         date_joined__lte=threshold,
         email_no_canteen_first_reminder__lte=first_reminder_threshold,
         email_no_canteen_second_reminder__isnull=True,
+        opt_out_reminder_emails=False,
     ).all()
     if not users:
         logger.info("no_canteen_second_reminder: No users to notify.")
@@ -87,11 +87,9 @@ def no_canteen_second_reminder():
             user.email_no_canteen_second_reminder = today
             user.save()
         except ApiException as e:
-            logger.error(f"SIB error when sending second no-cantine reminder email to {user.username}")
-            logger.exception(e)
+            logger.exception(f"SIB error when sending second no-cantine reminder email to {user.username}:\n{e}")
         except Exception as e:
-            logger.error(f"Unable to send second no-cantine reminder email to {user.username}")
-            logger.exception(e)
+            logger.exception(f"Unable to send second no-cantine reminder email to {user.username}:\n{e}")
 
 
 @app.task()
@@ -113,7 +111,7 @@ def no_diagnostic_first_reminder():
     logger.info(f"no_diagnostic_first_reminder: {len(canteens)} canteens to notify.")
 
     for canteen in canteens:
-        for manager in canteen.managers.all():
+        for manager in canteen.managers.filter(opt_out_reminder_emails=False):
 
             try:
                 parameters = {"PRENOM": manager.first_name, "NOM_CANTINE": canteen.name}
@@ -130,12 +128,10 @@ def no_diagnostic_first_reminder():
                     canteen.email_no_diagnostic_first_reminder = today
                     canteen.save()
             except ApiException as e:
-                logger.error(
-                    f"SIB error when sending first no-diagnostic email to {manager.username} concerning canteen {canteen.name}"
+                logger.exception(
+                    f"SIB error when sending first no-diagnostic email to {manager.username} concerning canteen {canteen.name}:\n{e}"
                 )
-                logger.exception(e)
             except Exception as e:
-                logger.error(
-                    f"Unable to send first no-diagnostic reminder email to {manager.username} concerning canteen {canteen.name}"
+                logger.exception(
+                    f"Unable to send first no-diagnostic reminder email to {manager.username} concerning canteen {canteen.name}:\n{e}"
                 )
-                logger.exception(e)

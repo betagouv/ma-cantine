@@ -1,5 +1,11 @@
 <template>
   <div class="mt-n2">
+    <TeledeclarationPreview
+      v-if="diagnostic"
+      :diagnostic="diagnostic"
+      v-model="showTeledeclarationPreview"
+      @teledeclare="submitTeledeclaration"
+    />
     <v-row class="mt-2">
       <v-col class="text-left pb-10">
         <h1 class="font-weight-black text-h4 mb-4 mt-1">
@@ -196,7 +202,7 @@
           </v-form>
           <v-sheet rounded color="white" class="d-flex">
             <v-spacer></v-spacer>
-            <v-btn x-large color="primary" @click="submitTeledeclaration" :disabled="!canSubmitTeledeclaration">
+            <v-btn x-large color="primary" @click="openTeledeclarationPreview" :disabled="!canSubmitTeledeclaration">
               <v-icon class="mr-2">mdi-cloud-upload</v-icon>
               Télédéclarer mon diagnostic
             </v-btn>
@@ -224,17 +230,9 @@ import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import SimplifiedQualityValues from "./SimplifiedQualityValues"
 import ExtendedQualityValues from "./ExtendedQualityValues"
+import TeledeclarationPreview from "./TeledeclarationPreview"
 import Constants from "@/constants"
-import {
-  getObjectDiff,
-  timeAgo,
-  strictIsNaN,
-  lastYear,
-  diagnosticYears,
-  getPercentage,
-  readCookie,
-  isDiagnosticComplete,
-} from "@/utils"
+import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage, readCookie } from "@/utils"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
@@ -269,6 +267,7 @@ export default {
           help: "Vous connaissez les labels et les familles de produits de vos achats",
         },
       ],
+      showTeledeclarationPreview: false,
     }
   },
   components: {
@@ -280,6 +279,7 @@ export default {
     TeledeclarationCancelDialog,
     SimplifiedQualityValues,
     ExtendedQualityValues,
+    TeledeclarationPreview,
   },
   props: {
     canteenUrlComponent: {
@@ -330,7 +330,7 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return isDiagnosticComplete(this.diagnostic)
+      return this.diagnostic.valueTotalHt > 0 || this.diagnostic.valueTotalHt === 0
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
@@ -540,6 +540,13 @@ export default {
         delete e["returnValue"]
       }
     },
+    openTeledeclarationPreview() {
+      const diagnosticFormsAreValid = this.validateForms()
+      const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
+      if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
+      if (!teledeclarationFormIsValid) return
+      this.showTeledeclarationPreview = true
+    },
     submitTeledeclaration() {
       const diagnosticFormsAreValid = this.validateForms()
       const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
@@ -560,7 +567,6 @@ export default {
           })
           .then((diagnostic) => {
             this.updateFromServer(diagnostic)
-            this.$router.push({ name: "DiagnosticList", params: { canteenUrlComponent: this.canteenUrlComponent } })
           })
       }
 
@@ -581,6 +587,9 @@ export default {
           this.navigateToDiagnosticList()
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+        .finally(() => {
+          this.openTeledeclarationPreview = false
+        })
     },
     cancelTeledeclaration() {
       return this.$store
@@ -601,6 +610,16 @@ export default {
     updateFromServer(diagnostic) {
       if (this.isNewDiagnostic) {
         this.originalCanteen.diagnostics.push(diagnostic)
+
+        // We should not manually change the `year` parameter since it is populated by the router,
+        // so when we create a diagnostic we need to ask the router to take us to that new diagnostic
+        // in order to refresh the data
+        this.bypassLeaveWarning = true
+        this.$router.replace({
+          name: "DiagnosticModification",
+          params: { canteenUrlComponent: this.canteenUrlComponent, year: diagnostic.year },
+        })
+        this.bypassLeaveWarning = false
       } else {
         const diagnosticIndex = this.originalCanteen.diagnostics.findIndex((x) => x.id === diagnostic.id)
         if (diagnosticIndex > -1) this.originalCanteen.diagnostics.splice(diagnosticIndex, 1, diagnostic)

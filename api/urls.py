@@ -3,7 +3,6 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from api.views import (
     InquiryView,
     LoggedUserView,
-    SubscribeBetaTester,
     SubscribeNewsletter,
     PurchaseListCreateView,
     PurchaseRetrieveUpdateDestroyView,
@@ -65,11 +64,6 @@ urlpatterns = {
     path("sectors/", SectorListView.as_view(), name="sectors_list"),
     path("blogPosts/", BlogPostsView.as_view(), name="blog_posts_list"),
     path("blogPosts/<int:pk>", BlogPostView.as_view(), name="single_blog_post"),
-    path(
-        "subscribeBetaTester/",
-        SubscribeBetaTester.as_view(),
-        name="subscribe_beta_tester",
-    ),
     path(
         "subscribeNewsletter/",
         SubscribeNewsletter.as_view(),

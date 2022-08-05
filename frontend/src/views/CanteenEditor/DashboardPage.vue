@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-h4 font-weight-black my-6">Où sommes nous sur les mesures de la loi ?</h1>
+    <h1 class="text-h4 font-weight-black my-6">Où en sommes nous sur les mesures de la loi ?</h1>
 
     <CanteenDashboard
       :diagnostics="diagnostics"

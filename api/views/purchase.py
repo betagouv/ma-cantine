@@ -15,7 +15,7 @@ from django_filters import rest_framework as django_filters
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager, IsAuthenticated
 from api.serializers import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer
 from data.models import Purchase, Canteen
-from .utils import CamelCaseOrderingFilter, UnaccentSearchFilter, normalise_siret
+from .utils import MaCantineOrderingFilter, UnaccentSearchFilter, normalise_siret
 from collections import OrderedDict
 import logging
 import csv
@@ -95,7 +95,7 @@ class PurchaseListCreateView(ListCreateAPIView):
     serializer_class = PurchaseSerializer
     pagination_class = PurchasesPagination
     filter_backends = [
-        CamelCaseOrderingFilter,
+        MaCantineOrderingFilter,
         UnaccentSearchFilter,
         django_filters.DjangoFilterBackend,
     ]
@@ -362,20 +362,19 @@ class ImportPurchasesView(APIView):
             return ImportPurchasesView._get_success_response([], self.purchases_created, errors, start)
 
         except IntegrityError as e:
-            logger.exception(e)
-            logger.error("L'import du fichier CSV a échoué")
+            logger.warning(f"L'import du fichier CSV a échoué:\n{e}")
             return ImportPurchasesView._get_success_response([], 0, errors, start)
 
         except ValidationError as e:
             message = e.message
-            logger.error(message)
+            logger.warning(message)
             message = message
             errors = [{"row": 0, "status": 400, "message": message}]
             return ImportPurchasesView._get_success_response([], 0, errors, start)
 
         except Exception as e:
-            logger.exception(e)
             message = "Échec lors de la lecture du fichier"
+            logger.exception(f"{message}:\n{e}")
             errors = [{"row": 0, "status": 400, "message": message}]
             return ImportPurchasesView._get_success_response([], 0, errors, start)
 
@@ -480,8 +479,7 @@ class ImportPurchasesView(APIView):
 
     @staticmethod
     def _get_error(e, message, error_status, row_number):
-        logger.error(f"Error on row {row_number}")
-        logger.exception(e)
+        logger.warning(f"Error on row {row_number}:\n{e}")
         return {"row": row_number, "status": error_status, "message": message}
 
     def _parse_errors(self, e, row):

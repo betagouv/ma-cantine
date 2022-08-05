@@ -34,11 +34,11 @@ class DiagnosticCreateView(CreateAPIView):
                 raise PermissionDenied()
             serializer.is_valid(raise_exception=True)
             serializer.save(canteen=canteen)
-        except ObjectDoesNotExist:
-            logger.error(f"Attempt to create a diagnostic from an unexistent canteen ID : {canteen_id}")
+        except ObjectDoesNotExist as e:
+            logger.warning(f"Attempt to create a diagnostic from an unexistent canteen ID : {canteen_id}: \n{e}")
             raise NotFound()
-        except IntegrityError:
-            logger.error(f"Attempt to create an existing diagnostic for canteen ID {canteen_id}")
+        except IntegrityError as e:
+            logger.warning(f"Attempt to create an existing diagnostic for canteen ID {canteen_id}:\n{e}")
             raise DuplicateException()
 
 
@@ -66,7 +66,7 @@ class EmailDiagnosticImportFileView(APIView):
         try:
             file = request.data["file"]
             self._verify_file_size(file)
-            email = request.data.get("email", request.user.email)
+            email = request.data.get("email", request.user.email).strip()
             context = {
                 "from": email,
                 "name": request.data.get("name", request.user.get_full_name()),
@@ -80,14 +80,15 @@ class EmailDiagnosticImportFileView(APIView):
                 attachments=[(file.name, file.read(), file.content_type)],
                 context=context,
             )
-        except ValidationError:
-            logger.error(
-                f"{request.user.id} tried to upload a file that is too large (over {settings.CSV_IMPORT_MAX_SIZE})"
+        except ValidationError as e:
+            logger.warning(
+                f"{request.user.id} tried to upload a file that is too large (over {settings.CSV_IMPORT_MAX_SIZE}):\n{e}"
             )
             return HttpResponseBadRequest()
         except Exception as e:
-            logger.error(f"User {request.user.id} encountered an error when trying to email a diagnostic import file")
-            logger.exception(e)
+            logger.exception(
+                f"User {request.user.id} encountered an error when trying to email a diagnostic import file:\n{e}"
+            )
             return HttpResponseServerError()
 
         return HttpResponse()

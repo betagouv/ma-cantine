@@ -56,14 +56,13 @@ class ImportDiagnosticsView(ABC, APIView):
                 if self.errors:
                     raise IntegrityError()
         except IntegrityError as e:
-            logger.exception(e)
-            logger.error("L'import du fichier CSV a échoué")
+            logger.warning(f"L'import du fichier CSV a échoué:\n{e}")
         except ValidationError as e:
             message = e.message
-            logger.error(message)
+            logger.warning(f"{message}")
             self.errors = [{"row": 0, "status": 400, "message": message}]
         except Exception as e:
-            logger.exception(e)
+            logger.exception(f"Échec lors de la lecture du fichier:\n{e}")
             self.errors = [{"row": 0, "status": 400, "message": "Échec lors de la lecture du fichier"}]
 
         return self._get_success_response()
@@ -160,8 +159,7 @@ class ImportDiagnosticsView(ABC, APIView):
 
     @staticmethod
     def _get_error(e, message, error_status, row_number):
-        logger.error(f"Error on row {row_number}")
-        logger.exception(e)
+        logger.exception(f"Error on row {row_number}:\n{e}")
         return {"row": row_number, "status": error_status, "message": message}
 
     @staticmethod
@@ -189,10 +187,9 @@ class ImportDiagnosticsView(ABC, APIView):
             try:
                 AddManagerView.add_manager_to_canteen(email, canteen, send_invitation_mail=send_invitation_mail)
             except IntegrityError as e:
-                logger.error(
-                    f"Attempt to add existing manager with email {email} to canteen {canteen.id} from a CSV import"
+                logger.warning(
+                    f"Attempt to add existing manager with email {email} to canteen {canteen.id} from a CSV import:\n{e}"
                 )
-                logger.exception(e)
 
     def _get_success_response(self):
         serialized_canteens = [camelize(FullCanteenSerializer(canteen).data) for canteen in self.canteens.values()]
@@ -233,7 +230,7 @@ class ImportDiagnosticsView(ABC, APIView):
                     canteen.department = row[6].split(",")[0]
                     canteen.save()
         except Exception as e:
-            logger.error(f"Error while updating location data : {repr(e)} - {e}")
+            logger.exception(f"Error while updating location data : {repr(e)} - {e}")
 
     @staticmethod
     def _add_error(errors, message, code=400):
