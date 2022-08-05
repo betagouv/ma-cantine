@@ -8,7 +8,7 @@
     <p>
       Sinon, utilisez notre
       <router-link :to="{ name: 'NewCanteen' }">formulaire pour ajouter une nouvelle cantine</router-link>
-      pour une experience plus guidée.
+      tout en simplicité depuis votre navigateur.
     </p>
     <h2 class="mt-6 mb-8">Choisissez un des types d'import suivants&nbsp;:</h2>
     <v-row class="cta-group pa-2">
