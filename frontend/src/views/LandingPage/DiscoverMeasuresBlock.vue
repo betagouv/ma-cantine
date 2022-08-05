@@ -26,9 +26,9 @@
             {{ measure.title }}
           </v-card-title>
           <v-spacer></v-spacer>
-          <v-card-actions class="px-4 mr-4">
+          <v-card-actions class="px-4 py-4">
             <v-spacer></v-spacer>
-            <p class="text-decoration-underline text-body-2 font-weight-medium primary--text">En savoir plus</p>
+            <v-icon color="primary">mdi-arrow-right</v-icon>
           </v-card-actions>
         </v-card>
       </v-col>

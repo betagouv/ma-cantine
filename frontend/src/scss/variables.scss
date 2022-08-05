@@ -9,10 +9,12 @@ $title-font: 'Marianne', Arial, sans-serif;
 $btn-text-transform: none;
 $btn-letter-spacing: -0.011em;
 $btn-font-weight: 500;
+$btn-border-radius: 0; // DSFR: https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/bouton/
 
 /* CARD */
 $card-title-word-break: normal !important;
 $card-hover-elevation: 4;
+$card-border-radius: 0; // DSRF: https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/carte/
 
 // /* TEXT FIELD: https://vuetifyjs.com/en/api/v-text-field/#sass-variables */
 // $text-field-solo-dense-control-min-height: 38px !default;
