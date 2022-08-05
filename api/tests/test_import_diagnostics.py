@@ -646,16 +646,16 @@ class TestImportDiagnosticsAPI(APITestCase):
         first_error = errors.pop(0)
         self.assertEqual(
             first_error["message"],
-            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
+            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
         )
         # two of the same error, generated in slightly different ways
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
+            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Données manquantes : au moins 12 colonnes attendues, 11 trouvées. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
+            "Données manquantes : au moins 12 colonnes attendues, 11 trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -672,7 +672,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         self.assertEqual(
             body["errors"][0]["message"],
-            "Deux lignes en-tête attendues, 0 trouvée. Vieullez verifier que vous voulez importer les diagnostics complèts, et assurez-vous que le format de l'en-tête suit les exemples donnés.",
+            "Deux lignes en-tête attendues, 0 trouvée. Veuillez vérifier que vous voulez importer les diagnostics complets, et assurez-vous que le format de l'en-tête suit les exemples donnés.",
         )
 
         with open("./api/tests/files/bad_header_complete_diagnostics_1.csv") as diag_file:
@@ -681,7 +681,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         self.assertEqual(
             body["errors"][0]["message"],
-            "Deux lignes en-tête attendues, 1 trouvée. Vieullez verifier que vous voulez importer les diagnostics complèts, et assurez-vous que le format de l'en-tête suit les exemples donnés.",
+            "Deux lignes en-tête attendues, 1 trouvée. Veuillez vérifier que vous voulez importer les diagnostics complets, et assurez-vous que le format de l'en-tête suit les exemples donnés.",
         )
 
     # TODO: replace when allowing staff to add metadata
@@ -707,7 +707,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(errors.pop(0)["message"], "Format fichier : 119 colonnes attendues, 122 trouvées.")
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer.",
+            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
         )
 
     @override_settings(CONTACT_EMAIL="team@example.com")

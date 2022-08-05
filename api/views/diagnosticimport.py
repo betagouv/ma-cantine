@@ -450,7 +450,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
 
     def _skip_row(self, row_number, row):
         if row_number == 1:
-            message = "Deux lignes en-tête attendues, {} trouvée. Vieullez verifier que vous voulez importer les diagnostics complèts, et assurez-vous que le format de l'en-tête suit les exemples donnés."
+            message = "Deux lignes en-tête attendues, {} trouvée. Veuillez vérifier que vous voulez importer les diagnostics complets, et assurez-vous que le format de l'en-tête suit les exemples donnés."
             if row[0] and row[0].lower() == "siret":
                 raise FileFormatError(detail=message.format(1))
             elif row[0]:
@@ -476,7 +476,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         except Exception:
             raise ValidationError(
                 {
-                    "year": "Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer."
+                    "year": "Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
                 }
             )
         values_dict = {}
@@ -504,7 +504,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         return ("Import massif", Canteen.PublicationStatus.DRAFT, [])
 
     def _column_count_error_message(self, row):
-        return f"Données manquantes : au moins 12 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, vieullez changer le type d'import et reessayer."
+        return f"Données manquantes : au moins 12 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
 
 
 class FileFormatError(Exception):

@@ -531,7 +531,7 @@ export default {
           }
           if (this.errors.length) {
             resultMessage.title = "Echec d'import"
-            resultMessage.message = "Merci de vérifier les erreurs détaillés et de reessayer"
+            resultMessage.message = "Merci de vérifier les erreurs détaillés et de réessayer"
             resultMessage.status = "error"
           }
           this.$store.dispatch("notify", resultMessage)

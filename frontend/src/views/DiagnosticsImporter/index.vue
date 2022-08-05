@@ -2,15 +2,15 @@
   <div class="text-left">
     <h1 class="font-weight-black text-h4 my-6">Importer vos données</h1>
     <p>
-      Vous gérez plus que dix cantines, ou vous avez déjà vos données en format tableur numérique ? Utilisez notre outil
-      d'import pour ajouter vos cantines en deux étapes !
+      Vous êtes en mesure d'exporter vos données en format CSV ? Utilisez notre outil d'import pour ajouter vos cantines
+      rapidement&nbsp;!
     </p>
     <p>
       Sinon, utilisez notre
       <router-link :to="{ name: 'NewCanteen' }">formulaire pour ajouter une nouvelle cantine</router-link>
       pour une experience plus guidée.
     </p>
-    <h2 class="mt-6 mb-8">Choisir le niveau d'information disponible</h2>
+    <h2 class="mt-6 mb-8">Choisissez un des types d'import suivants&nbsp;:</h2>
     <v-row class="cta-group pa-2">
       <v-col cols="12" sm="4" v-for="type in diagnosticTypes" :key="type.key">
         <v-hover>
@@ -25,7 +25,7 @@
               </v-icon>
               <v-card-title>
                 <h2 class="text-body-2 text-md-h6 font-weight-bold">
-                  {{ type.label }}
+                  {{ type.title }}
                 </h2>
               </v-card-title>
               <v-card-text>
