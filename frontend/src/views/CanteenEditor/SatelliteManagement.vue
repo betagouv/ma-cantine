@@ -32,9 +32,14 @@
       </v-data-table>
 
       <v-divider class="my-8"></v-divider>
-      <h2 class="mb-4 text-h6 font-weight-bold">
+      <h2 class="mb-2 text-h6 font-weight-bold">
         Ajoutez une nouvelle cantine satellite
       </h2>
+      <p class="text-body-2">
+        Utilisez le formulaire en dessous pour ajouter des satellites un après l'autre. Sinon, utilisez notre
+        <router-link :to="{ name: 'DiagnosticsImporter' }">outil d'import des cantines et diagnostics</router-link>
+        si vous avez les données en format CSV.
+      </p>
       <v-card outlined>
         <v-card-text>
           <v-form ref="form" v-model="formIsValid">
