@@ -620,6 +620,14 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(finished_diag.total_family_boulangerie, 130)
         self.assertEqual(finished_diag.total_family_boissons, 130)
         self.assertEqual(finished_diag.total_family_autres, 910)
+        # auto-calculated simplified fields
+        self.assertEqual(finished_diag.value_bio_ht, 80)
+        self.assertEqual(finished_diag.value_sustainable_ht, 190)
+        self.assertEqual(finished_diag.value_externality_performance_ht, 330)
+        self.assertEqual(finished_diag.value_egalim_others_ht, 650)
+        self.assertEqual(finished_diag.value_meat_poultry_egalim_ht, 100)
+        self.assertEqual(finished_diag.value_meat_poultry_france_ht, 30)
+        self.assertEqual(finished_diag.value_fish_egalim_ht, 100)
 
         unfinished_diag = Diagnostic.objects.get(canteen__siret="29969025300230", year=2022)
         self.assertEqual(unfinished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)

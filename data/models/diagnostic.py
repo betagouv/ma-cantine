@@ -1224,13 +1224,60 @@ class Diagnostic(models.Model):
 
     def clean(self):
         self.validate_year()
-        # TODO: validation for complete
-        if self.diagnostic_type is not Diagnostic.DiagnosticType.COMPLETE:
-            self.validate_approvisionment_total()
-            self.validate_meat_total()
-            self.validate_fish_total()
-            self.validate_meat_fish_egalim()
+
+        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            self.populate_simplified_diagnostic_values()
+
+        self.validate_approvisionment_total()
+        self.validate_meat_total()
+        self.validate_fish_total()
+        self.validate_meat_fish_egalim()
         return super().clean()
+
+    def populate_simplified_diagnostic_values(self):
+        self.value_bio_ht = self.total_label_bio
+        self.value_sustainable_ht = self.total_label_label_rouge + self.total_label_aocaop_igp_stg
+        self.value_externality_performance_ht = self.total_label_externalites + self.total_label_performance
+        self.value_egalim_others_ht = (
+            self.total_label_hve
+            + self.total_label_peche_durable
+            + self.total_label_rup
+            + self.total_label_commerce_equitable
+            + self.total_label_fermier
+        )
+        total_meat_egalim = total_meat_france = total_fish_egalim = 0
+        egalim_labels = [
+            "bio",
+            "label_rouge",
+            "aocaop_igp_stg",
+            "hve",
+            "peche_durable",
+            "rup",
+            "fermier",
+            "externalites",
+            "commerce_equitable",
+            "performance",
+        ]
+        for label in egalim_labels:
+            family = "viandes_volailles"
+            # need to do or 0 and not give a default value because the value can be explicitly set to None
+            total_meat_egalim = total_meat_egalim + (getattr(self, f"value_{family}_{label}") or 0)
+
+            family = "produits_de_la_mer"
+            total_fish_egalim = total_fish_egalim + (getattr(self, f"value_{family}_{label}") or 0)
+
+        france_labels = [
+            "france",
+            "short_distribution",
+            "local",
+        ]
+        for label in france_labels:
+            family = "viandes_volailles"
+            total_meat_france = total_meat_france + (getattr(self, f"value_{family}_{label}") or 0)
+
+        self.value_meat_poultry_egalim_ht = total_meat_egalim
+        self.value_meat_poultry_france_ht = total_meat_france
+        self.value_fish_egalim_ht = total_fish_egalim
 
     def validate_year(self):
         if self.year is None:
