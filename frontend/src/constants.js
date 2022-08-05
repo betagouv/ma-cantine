@@ -346,7 +346,7 @@ export default Object.freeze({
       key: "NONE",
       title: "Importer des cantines sans diagnostic",
       label: "Sans diagnostic",
-      help: "Vous voulez importer des cantines sans diagnostic",
+      help: "Vous voulez importer des cantines sans données d'approvisionnement",
       icon: "mdi-home-city",
     },
     {
