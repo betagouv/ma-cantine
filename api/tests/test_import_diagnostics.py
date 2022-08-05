@@ -673,6 +673,18 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors.pop(0)["message"],
             "Champ 'Produits aquatiques frais et surgelés, Bio' : Ce champ doit être vide ou un nombre décimal.",
         )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGAlim, 100, est plus que la valeur totale (HT) viandes et volailles, 10",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 920, est plus que la valeur totale (HT) viandes et volailles, 100",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGAlim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 10",
+        )
 
         with open("./api/tests/files/bad_header_complete_diagnostics_0.csv") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
