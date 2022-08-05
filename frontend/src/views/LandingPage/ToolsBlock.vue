@@ -8,8 +8,8 @@
           <p>Simplifiez les calculs de la loi EGAlim en ajoutant vos achats</p>
           <v-card elevation="1" max-width="400px"><v-img src="/static/images/features/achats.png"></v-img></v-card>
           <p class="mt-4">
-            Ou utilisez notre
-            <a :href="`${filepath}.xlsx`" download>tableur</a>
+            Ou
+            <a :href="`${filepath}.xlsx`" download>téléchargez notre tableur</a>
           </p>
         </div>
       </v-col>

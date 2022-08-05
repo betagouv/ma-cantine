@@ -59,7 +59,7 @@
         "id": "gaspillage-analyse",
         "readMore": false,
         "shortTitle": "Gaspillage analysé",
-        "title": "Le gaspillage alimentaire doit être analysé afin d'être réduit."
+        "title": "Le gaspillage alimentaire doit être analysé afin d'être réduit"
       },
       {
         "deadline": {
@@ -69,7 +69,7 @@
         "id": "restes",
         "readMore": false,
         "shortTitle": "Restes protégés",
-        "title": "Interdiction de rendre impropre à la consommation les denrées alimentaires encore consommables."
+        "title": "Interdiction de rendre impropre à la consommation les denrées alimentaires encore consommables"
       },
       {
         "deadline": {
@@ -79,7 +79,7 @@
         "id": "dons",
         "readMore": false,
         "shortTitle": "Dons aux associations",
-        "title": "Dons aux associations."
+        "title": "Dons aux associations"
       },
       {
         "deadline": {
@@ -89,7 +89,7 @@
         "id": "expe",
         "readMore": false,
         "shortTitle": "Expérimentation d'une solution de réservation de repas",
-        "title": "Expérimentation d'une solution de réservation de repas."
+        "title": "Expérimentation d'une solution de réservation de repas"
       }
     ],
     "tags": [
@@ -132,7 +132,7 @@
           "creche",
           "entreprises"
         ],
-        "title": "Les sources de protéines doivent être diversifiées.",
+        "title": "Les sources de protéines doivent être diversifiées",
         "who": "Pour les restaurants collectifs servant plus de 200 couverts par jour."
       },
       {
@@ -203,7 +203,7 @@
         "tags": [
           "scolaire"
         ],
-        "title": "Les bouteilles d'eau plate en plastique sont interdites."
+        "title": "Les bouteilles d'eau plate en plastique sont interdites"
       },
       {
         "deadline": {
@@ -224,7 +224,7 @@
           "creche",
           "entreprises"
         ],
-        "title": "Les ustensiles en plastique à usage unique sont interdits."
+        "title": "Les ustensiles en plastique à usage unique sont interdits"
       },
       {
         "deadline": {
@@ -240,7 +240,7 @@
           "universitaire",
           "creche"
         ],
-        "title": "Les contenants alimentaires en plastique sont interdits."
+        "title": "Les contenants alimentaires en plastique sont interdits"
       }
     ],
     "title": "Substitution des plastiques"
@@ -274,7 +274,7 @@
           "creche",
           "loisirs"
         ],
-        "title": "Les convives doivent être informés une fois par an."
+        "title": "Les convives doivent être informés une fois par an"
       },
       {
         "deadline": {
@@ -290,7 +290,7 @@
           "universitaire",
           "creche"
         ],
-        "title": "Les gestionnaires en restauration collective communiquent sur les informations nutritionnelles des repas servis."
+        "title": "Les gestionnaires en restauration collective communiquent sur les informations nutritionnelles des repas servis"
       },
       {
         "deadline": {

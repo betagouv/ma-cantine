@@ -342,8 +342,6 @@ if DEBUG_PERFORMANCE:
 # Maximum CSV import file size: 10Mo
 CSV_IMPORT_MAX_SIZE = 10485760
 
-PIPEDRIVE_API_TOKEN = os.getenv("PIPEDRIVE_API_TOKEN", None)
-
 # CSP headers (https://content-security-policy.com/)
 
 # CSP Debug domains -  unsfae-eval needed in DEBUG for hot-reload of the frontend server

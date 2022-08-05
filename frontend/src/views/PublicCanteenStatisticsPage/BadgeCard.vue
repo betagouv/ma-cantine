@@ -12,6 +12,7 @@
     <v-card-actions class="px-1">
       <router-link :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }" class="text-body-2">
         La mesure
+        <span class="d-sr-only">{{ measure.shortTitle }}</span>
       </router-link>
     </v-card-actions>
   </v-card>
