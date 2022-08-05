@@ -8,34 +8,29 @@
           <v-spacer />
         </v-col>
         <v-spacer></v-spacer>
-        <v-col cols="12" sm="8" md="6" class="text-body-2">
+        <v-col cols="12" sm="8" md="7" class="text-body-2">
           <p>
             « ma cantine » est un outil pour accompagner les acteurs de la restauration collective à proposer une
             alimentation de qualité, saine et durable.
-            <a href="https://beta.gouv.fr/startups/ma-cantine-egalim.html">
+            <a href="https://beta.gouv.fr/startups/ma-cantine-egalim.html" class="grey--text text--darken-3">
               Découvrez notre page produit
-              <v-icon small color="primary" class="ml-1">mdi-open-in-new</v-icon>
+              <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
           </p>
           <p>
             Le code source est ouvert et les contributions sont bienvenues.
-            <a href="https://github.com/betagouv/ma-cantine/">
+            <a href="https://github.com/betagouv/ma-cantine/" class="grey--text text--darken-3">
               Voir le code source
-              <v-icon small color="primary" class="ml-1">mdi-open-in-new</v-icon>
+              <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
           </p>
-          <ul class="d-flex justify-space-between font-weight-bold pl-0 flex-wrap link-group">
-            <li class="mr-1 mt-2">
-              <a href="https://legifrance.gouv.fr">legifrance.gouv.fr</a>
-            </li>
-            <li class="mr-1 mt-2">
-              <a href="https://gouvernement.fr">gouvernement.fr</a>
-            </li>
-            <li class="mr-1 mt-2">
-              <a href="https://service-public.fr">service-public.fr</a>
-            </li>
-            <li class="mr-1 mt-2">
-              <a href="https://data.gouv.fr">data.gouv.fr</a>
+          <!-- ml-n1 here makes up for the a11y need of ::before on li elements for them to be recognised by all screen readers -->
+          <ul class="d-flex justify-space-between font-weight-bold pl-0 ml-n1 flex-wrap link-group">
+            <li class="mr-1 mt-2" v-for="link in govLinks" :key="link">
+              <a class="grey--text text--darken-4 font-weight-bold" :href="`https://${link}`">
+                {{ link }}
+              </a>
+              <v-icon small color="grey darken-4">mdi-open-in-new</v-icon>
             </li>
           </ul>
         </v-col>
@@ -82,6 +77,7 @@ export default {
           to: { name: "AccessibilityDeclaration" },
         },
       ],
+      govLinks: ["legifrance.gouv.fr", "gouvernement.fr", "service-public.fr", "data.gouv.fr"],
     }
   },
   computed: {
