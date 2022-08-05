@@ -76,6 +76,10 @@ export default {
           text: "Accessibilité : non conforme",
           to: { name: "AccessibilityDeclaration" },
         },
+        {
+          text: "Plan du site",
+          to: { name: "SiteMap" },
+        },
       ],
       govLinks: ["legifrance.gouv.fr", "gouvernement.fr", "service-public.fr", "data.gouv.fr"],
     }
