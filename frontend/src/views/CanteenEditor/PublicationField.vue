@@ -36,7 +36,6 @@
                   small
                   text
                   plain
-                  :ripple="false"
                 >
                   nos cantines
                   <v-icon small color="grey darken-4" class="ml-1">mdi-open-in-new</v-icon>
@@ -49,7 +48,6 @@
                   small
                   text
                   plain
-                  :ripple="false"
                 >
                   Voir un aperçu de la publication
                 </v-btn>

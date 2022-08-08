@@ -222,7 +222,6 @@
         <v-card
           class="dsfr d-flex flex-column align-center justify-center"
           outlined
-          :ripple="false"
           min-height="220"
           height="80%"
           :to="{ name: 'NewCanteen' }"

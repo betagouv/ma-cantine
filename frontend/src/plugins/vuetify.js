@@ -1,8 +1,13 @@
 import Vue from "vue"
 import Vuetify from "vuetify/lib/framework"
 import theme from "@/theme"
+import { VBtn, VCard } from "vuetify/lib"
 
 Vue.use(Vuetify)
+
+// Defaults to conform to DSFR
+VBtn.options.props.ripple.default = false
+VCard.options.props.ripple.default = false
 
 export default new Vuetify({
   theme: theme,

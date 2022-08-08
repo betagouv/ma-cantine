@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-4 dsfr" :href="webinaire.link" outlined :ripple="false">
+  <v-card class="pa-4 dsfr" :href="webinaire.link" outlined>
     <v-row>
       <v-col cols="1" v-if="$vuetify.breakpoint.smAndUp" class="justify-center align-center d-flex">
         <v-avatar color="secondary lighten-1" size="40">

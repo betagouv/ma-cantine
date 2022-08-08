@@ -5,7 +5,6 @@
       <v-hover>
         <v-card
           outlined
-          :ripple="false"
           :to="loggedUser ? { name: 'ManagementPage' } : undefined"
           :href="loggedUser ? undefined : '/s-identifier'"
           class="fill-height pa-4 d-flex flex-column hover-transition dsfr"
@@ -37,7 +36,6 @@
       <v-hover>
         <v-card
           outlined
-          :ripple="false"
           :to="{ name: 'PublicCanteenStatisticsPage' }"
           class="fill-height pa-4 d-flex flex-column hover-transition dsfr"
         >
@@ -68,7 +66,6 @@
       <v-hover>
         <v-card
           outlined
-          :ripple="false"
           :to="{ name: 'CanteensHome' }"
           class="fill-height pa-4 d-flex flex-column hover-transition dsfr"
         >

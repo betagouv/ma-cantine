@@ -289,7 +289,6 @@
             @click="toggleOrderDirection"
             :title="`Resultats affichés en ordre ${orderDescending ? 'décroissant' : 'croissant'}`"
             plain
-            :ripple="false"
           >
             <v-icon v-if="orderDescending">mdi-arrow-down</v-icon>
             <v-icon v-else>

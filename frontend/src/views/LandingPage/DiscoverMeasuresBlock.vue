@@ -16,7 +16,6 @@
       <v-col cols="12" sm="4" v-for="measure in keyMeasures" :key="measure.id">
         <v-card
           outlined
-          :ripple="false"
           :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }"
           class="fill-height d-flex flex-column px-3 dsfr"
         >
