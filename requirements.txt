@@ -4,7 +4,7 @@ asgiref==3.5.2
 asn1crypto==1.5.1
 astroid==2.11.6
 async-timeout==4.0.2
-attrs==21.4.0
+attrs==22.1.0
 backports.zoneinfo==0.2.1
 billiard==3.6.4.0
 black==22.6.0
