@@ -12,15 +12,14 @@
           </v-card-subtitle>
 
           <v-card-text>
-            <v-form ref="form" class="d-flex" v-model="formIsValid" @submit.prevent>
-              <v-text-field
-                solo
+            <v-form ref="form" class="d-flex align-center" v-model="formIsValid" @submit.prevent>
+              <DsfrTextField
                 v-model="email"
                 ref="email"
                 label="Votre adresse email"
                 validate-on-blur
                 :rules="[validators.email]"
-              ></v-text-field>
+              />
               <v-btn @click="subscribe" outlined color="primary" class="ml-4 mt-1" large>Valider</v-btn>
             </v-form>
           </v-card-text>
@@ -35,8 +34,10 @@
 
 <script>
 import validators from "@/validators"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
+  components: { DsfrTextField },
   data() {
     return {
       email: "",

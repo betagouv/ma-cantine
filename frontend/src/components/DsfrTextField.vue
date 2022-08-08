@@ -1,0 +1,51 @@
+<template>
+  <v-text-field
+    dense
+    height="40"
+    ref="text-field"
+    solo
+    flat
+    v-bind="$attrs"
+    v-on="$listeners"
+    @input="(v) => $emit('input', v)"
+  >
+    <template v-slot:label><span></span></template>
+  </v-text-field>
+</template>
+
+<script>
+export default {
+  inheritAttrs: false,
+  data() {
+    return {
+      inputId: null,
+    }
+  },
+  methods: {
+    createLabel() {
+      const label = document.createElement("label")
+      label.setAttribute("for", this.$refs["text-field"].$refs["input"].id)
+      label.classList.add("mb-2")
+      label.textContent = this.$attrs.label
+      this.$refs["text-field"].$el.getElementsByClassName("v-input__control")[0].prepend(label)
+    },
+  },
+  mounted() {
+    this.createLabel()
+  },
+}
+</script>
+
+<style scoped>
+.v-text-field >>> .v-input__slot {
+  border-radius: 0.25rem 0.25rem 0 0;
+  background-color: #eee !important;
+  box-shadow: inset 0 -2px 0 0 #3a3a3a;
+}
+
+.v-text-field.error--text >>> .v-input__slot {
+  border-radius: 0.25rem 0.25rem 0 0;
+  background-color: #eee !important;
+  box-shadow: inset 0 -2px 0 0 #ff5252;
+}
+</style>
