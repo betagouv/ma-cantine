@@ -1,5 +1,10 @@
 <template>
-  <v-card class="fill-height text-left d-flex flex-column" hover :to="{ name: 'BlogPage', params: { id: post.id } }">
+  <v-card
+    class="fill-height text-left d-flex flex-column dsfr"
+    outlined
+    :ripple="false"
+    :to="{ name: 'BlogPage', params: { id: post.id } }"
+  >
     <v-card-title class="text-h6 font-weight-bold">{{ post.title }}</v-card-title>
     <v-card-subtitle class="pt-1">
       {{

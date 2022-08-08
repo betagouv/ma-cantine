@@ -1,6 +1,8 @@
 <template>
   <v-card
-    :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.xsOnly }"
+    outlined
+    :ripple="false"
+    :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.xsOnly, dsfr: true }"
     :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
   >
     <v-sheet

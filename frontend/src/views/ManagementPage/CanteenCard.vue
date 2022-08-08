@@ -4,7 +4,9 @@
       name: 'CanteenModification',
       params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
     }"
-    hover
+    class="dsfr"
+    outlined
+    :ripple="false"
   >
     <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160"></v-img>
     <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>

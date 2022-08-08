@@ -114,4 +114,12 @@ export default {
 .theme--light.v-card > .v-card__subtitle {
   color: rgba(0, 0, 0, 0.87);
 }
+
+.v-card.dsfr {
+  border: solid 1px #e0e0e0;
+}
+
+.v-card.dsfr:hover {
+  background-color: #f6f6f6;
+}
 </style>

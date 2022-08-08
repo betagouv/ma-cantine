@@ -15,9 +15,10 @@
     <v-row class="justify-center mt-8 mx-0 mx-md-n4 cta-group pa-4">
       <v-col cols="12" sm="4" v-for="measure in keyMeasures" :key="measure.id">
         <v-card
-          hover
+          outlined
+          :ripple="false"
           :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }"
-          class="fill-height d-flex flex-column px-3"
+          class="fill-height d-flex flex-column px-3 dsfr"
         >
           <v-card-text class="pb-1 pt-6">
             <v-icon>{{ measure.mdiIcon }}</v-icon>
