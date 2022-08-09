@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- TODO: breadcrumbs to lead back to DiagnosticPage for !isAuthenticated users ? -->
     <DashboardPage v-if="diagnostics" :diagnostics="diagnostics" />
     <EmptyDiagnosticPage v-else />
   </div>
