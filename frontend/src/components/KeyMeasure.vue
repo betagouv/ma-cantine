@@ -1,5 +1,6 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav :title="measure.shortTitle" />
     <h1 class="text-h5 text-xs-h2 font-weight-bold mb-sm-8 mt-4"><KeyMeasureTitle :measure="measure" /></h1>
 
     <v-row>
@@ -45,6 +46,7 @@ import KeyMeasureDescription from "@/components/KeyMeasureDescription"
 import KeyMeasureInfoCard from "@/components/KeyMeasureInfoCard"
 import KeyMeasureTitle from "@/components/KeyMeasureTitle"
 import KeyMeasureResource from "@/components/KeyMeasureResource"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   components: {
@@ -52,6 +54,7 @@ export default {
     KeyMeasureInfoCard,
     KeyMeasureTitle,
     KeyMeasureResource,
+    BreadcrumbsNav,
   },
   props: {
     measure: Object,

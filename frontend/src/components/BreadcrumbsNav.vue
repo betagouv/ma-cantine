@@ -4,18 +4,18 @@
       class="fr-breadcrumb__button text-decoration-underline"
       :aria-expanded="expanded"
       aria-controls="breadcrumb-1"
-      v-if="!expanded"
+      v-if="!expanded && $vuetify.breakpoint.xs"
       @click="expanded = true"
     >
       Voir le fil d’Ariane
     </button>
     <v-expand-transition>
-      <div class="fr-collapse" id="breadcrumb-1" v-show="expanded">
+      <div class="fr-collapse" id="breadcrumb-1" v-show="$vuetify.breakpoint.smAndUp || expanded">
         <ol class="fr-breadcrumb__list pl-0">
           <li>
             <router-link class="fr-breadcrumb__link" :to="homePage">Accueil</router-link>
           </li>
-          <li v-for="link in links" :key="link.title">
+          <li v-for="link in breadcrumbLinks" :key="link.title">
             <router-link class="fr-breadcrumb__link" :to="link.to">{{ link.title }}</router-link>
           </li>
           <li>
@@ -50,21 +50,27 @@ export default {
         breadcrumbRoutes.push(...r.children)
       }
     })
-    if (this.links) {
-      this.links.forEach((link) => {
-        if (!link.title) {
-          link.title = breadcrumbRoutes.find((r) => r.name === link.to.name)?.meta?.title
-        }
-      })
-    }
     return {
-      expanded: this.$vuetify.breakpoint.lgAndUp,
-      pageTitle: this.title || breadcrumbRoutes.find((r) => r.name === this.$route.name)?.meta?.title,
+      breadcrumbRoutes,
+      expanded: false,
     }
   },
   computed: {
     homePage() {
       return { name: this.$store.state.loggedUser ? "ManagementPage" : "LandingPage" }
+    },
+    pageTitle() {
+      return this.title || this.breadcrumbRoutes.find((r) => r.name === this.$route.name)?.meta?.title
+    },
+    breadcrumbLinks() {
+      if (this.links) {
+        this.links.forEach((link) => {
+          if (!link.title) {
+            link.title = this.breadcrumbRoutes.find((r) => r.name === link.to.name)?.meta?.title
+          }
+        })
+      }
+      return this.links
     },
   },
 }
@@ -212,9 +218,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
     margin-bottom: 2.5rem;
   }
 
-  .fr-breadcrumb__button {
+  /* .fr-breadcrumb__button {
     display: none;
-  }
+  } */
 
   .fr-breadcrumb .fr-collapse {
     margin-left: 0;

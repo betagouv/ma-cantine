@@ -1,5 +1,6 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav :links="[{ to: { name: 'FaqPage' } }]" />
     <h1 class="text-h4 font-weight-black mt-12 mb-10">Contactez-nous</h1>
     <p>
       Consultez notre
@@ -12,9 +13,10 @@
 
 <script>
 import GeneralContactForm from "@/components/GeneralContactForm"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "ContactPage",
-  components: { GeneralContactForm },
+  components: { GeneralContactForm, BreadcrumbsNav },
 }
 </script>

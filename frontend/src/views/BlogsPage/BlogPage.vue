@@ -1,7 +1,10 @@
 <template>
   <div id="blog-page">
     <div v-if="blogPost">
-      <BreadcrumbsNav :title="blogPost.title" :links="[{ to: { name: 'BlogsHome' } }]" />
+      <BreadcrumbsNav
+        :title="blogPost.title"
+        :links="[{ to: { name: 'CommunityPage' } }, { to: { name: 'BlogsHome' } }]"
+      />
       <v-card elevation="0" class="text-center text-md-left my-10">
         <v-row v-if="$vuetify.breakpoint.smAndDown">
           <v-col cols="12">

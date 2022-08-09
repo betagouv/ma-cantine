@@ -1,8 +1,8 @@
 <template>
   <div class="text-left">
-    <BackLink :to="canteensHomeBacklink" text="Voir la liste des cantines" />
     <div v-if="canteen" id="canteen-dashboard">
-      <v-card elevation="0" class="pa-0 mt-4 mb-8 text-left">
+      <BreadcrumbsNav :links="[{ to: { name: 'CanteensHome' } }]" :title="canteen.name" />
+      <v-card elevation="0" class="pa-0 mb-8 text-left">
         <v-row class="align-center">
           <v-col
             v-if="canteen.logo"
@@ -76,7 +76,7 @@ import { diagnosticsMap } from "@/utils"
 import CanteenPublication from "@/components/CanteenPublication"
 import ContactForm from "./ContactForm"
 import CanteenIndicators from "@/components/CanteenIndicators"
-import BackLink from "@/components/BackLink"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import labels from "@/data/quality-labels.json"
 
 export default {
@@ -92,7 +92,7 @@ export default {
     CanteenPublication,
     ContactForm,
     CanteenIndicators,
-    BackLink,
+    BreadcrumbsNav,
   },
   props: {
     canteenUrlComponent: {
