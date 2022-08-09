@@ -93,7 +93,6 @@ a {
   text-decoration: none;
 }
 
-/* TODO: fix this temporary solution */
 a:hover {
   text-decoration: underline;
 }
@@ -101,11 +100,6 @@ a:hover {
 /*!
  * DSFR v1.7.2 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
-@charset "UTF-8";
-
-/* ¯¯¯¯¯¯¯¯¯ *\
-  BREADCRUMB
-\* ˍˍˍˍˍˍˍˍˍ */
 
 /**
 un padding de 4px et une marge négative en compensation sont mis en place afin d'éviter de couper le focus.
@@ -125,21 +119,12 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-breadcrumb__button {
-  background-image: var(--underline-img), var(--underline-img);
-  background-position: var(--underline-x) 100%, var(--underline-x) calc(100% - 0.0625em);
-  background-repeat: no-repeat, no-repeat;
-  transition: background-size 0s;
-  background-size: var(--underline-hover-width) 0.125em, var(--underline-idle-width) 0.0625em;
   font-size: 0.75rem;
   line-height: 1.25rem;
   margin: 0;
   padding: 0;
   color: inherit;
 }
-
-/* .fr-breadcrumb__button[aria-expanded="true"] {
-  display: none;
-} */
 
 .fr-breadcrumb .fr-collapse {
   margin-left: -4px;
@@ -172,7 +157,6 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 .fr-breadcrumb__list li:not(:first-child)::before {
   flex: 0 0 auto;
   display: inline-block;
-  vertical-align: calc((0.75em - var(--icon-size)) * 0.5);
   background-color: currentColor;
   width: var(--icon-size);
   height: var(--icon-size);
@@ -208,19 +192,11 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
     text-decoration: underline;
   }
 }
-@media (min-width: 36em) {
-  /*! media sm */
-  /*! media sm */
-}
 @media (min-width: 48em) {
   /*! media md */
   .fr-breadcrumb {
     margin-bottom: 2.5rem;
   }
-
-  /* .fr-breadcrumb__button {
-    display: none;
-  } */
 
   .fr-breadcrumb .fr-collapse {
     margin-left: 0;
@@ -241,51 +217,5 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
     transform: none;
   }
   /*! media md */
-}
-@media (min-width: 62em) {
-  /*! media lg */
-
-  /*! media lg */
-}
-@media (min-width: 78em) {
-  /*! media xl */
-
-  /*! media xl */
-}
-@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-  /**
-  * reset liste à puce
-  */
-  .fr-breadcrumb ul {
-    list-style-type: none;
-  }
-
-  .fr-breadcrumb ol {
-    list-style-type: none;
-  }
-
-  .fr-breadcrumb ul,
-  .fr-breadcrumb ol {
-    padding-left: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-
-  .fr-breadcrumb__link:not([aria-current])::after {
-    background-color: transparent;
-    background-size: 100%;
-    background-repeat: no-repeat;
-    background-image: url("/static/icons/arrow-right-s-line.svg");
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .fr-breadcrumb {
-    color: #666;
-  }
-
-  .fr-breadcrumb__link[aria-current] {
-    color: #161616;
-  }
 }
 </style>
