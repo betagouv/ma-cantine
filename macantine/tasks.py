@@ -45,9 +45,8 @@ def no_canteen_first_reminder():
     for user in users:
         try:
             parameters = {"PRENOM": user.first_name}
-            _send_sib_template(
-                settings.TEMPLATE_ID_NO_CANTEEN_FIRST, parameters, user.email, f"{user.first_name} {user.last_name}"
-            )
+            to_name = f"{user.first_name} {user.last_name}".strip() if user.first_name or user.last_name else None
+            _send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_FIRST, parameters, user.email, to_name)
             logger.info(f"First email sent to {user.get_full_name()} ({user.email})")
             user.email_no_canteen_first_reminder = today
             user.save()
