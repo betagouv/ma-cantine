@@ -60,7 +60,7 @@
     <v-expand-transition>
       <v-row v-if="diagnostic.hasWasteMeasures" class="mt-4 ml-8">
         <v-col cols="12" md="8" class="pa-0">
-          <v-text-field
+          <DsfrTextField
             v-model="diagnostic.breadLeftovers"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
@@ -69,8 +69,8 @@
             suffix="kg/an"
             :readonly="readonly"
             :disabled="readonly"
-          ></v-text-field>
-          <v-text-field
+          />
+          <DsfrTextField
             v-model="diagnostic.servedLeftovers"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
@@ -79,8 +79,8 @@
             suffix="kg/an"
             :readonly="readonly"
             :disabled="readonly"
-          ></v-text-field>
-          <v-text-field
+          />
+          <DsfrTextField
             v-model="diagnostic.unservedLeftovers"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
@@ -89,8 +89,8 @@
             suffix="kg/an"
             :readonly="readonly"
             :disabled="readonly"
-          ></v-text-field>
-          <v-text-field
+          />
+          <DsfrTextField
             v-model="diagnostic.sideLeftovers"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
@@ -99,7 +99,7 @@
             suffix="kg/an"
             :readonly="readonly"
             :disabled="readonly"
-          ></v-text-field>
+          />
         </v-col>
       </v-row>
     </v-expand-transition>
@@ -116,7 +116,7 @@
     <v-expand-transition v-if="applicableRules.hasDonationAgreement">
       <v-row v-if="diagnostic.hasDonationAgreement" class="my-4 ml-8">
         <v-col cols="12" md="8" class="pa-0">
-          <v-text-field
+          <DsfrTextField
             v-model="diagnostic.donationFrequency"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
@@ -125,8 +125,8 @@
             suffix="dons/an"
             :readonly="readonly"
             :disabled="readonly"
-          ></v-text-field>
-          <v-text-field
+          />
+          <DsfrTextField
             v-model="diagnostic.donationQuantity"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
@@ -135,15 +135,15 @@
             suffix="kg/an"
             :readonly="readonly"
             :disabled="readonly"
-          ></v-text-field>
+          />
         </v-col>
         <v-col cols="11" class="pa-0">
-          <v-text-field
+          <DsfrTextField
             v-model="diagnostic.donationFoodType"
             label="Type de denrées données"
             :readonly="readonly"
             :disabled="readonly"
-          ></v-text-field>
+          />
         </v-col>
       </v-row>
     </v-expand-transition>
@@ -222,6 +222,7 @@
 import validators from "@/validators"
 import { applicableDiagnosticRules } from "@/utils"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
   props: {
@@ -232,7 +233,7 @@ export default {
     },
     canteen: Object,
   },
-  components: { ExpeReservation },
+  components: { ExpeReservation, DsfrTextField },
   data() {
     return {
       showExpeModal: false,

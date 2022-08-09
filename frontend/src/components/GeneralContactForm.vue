@@ -3,15 +3,14 @@
     <v-row>
       <v-col>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
-          <v-text-field
+          <DsfrTextField
             v-model="fromEmail"
             label="Votre email"
             :rules="[validators.email]"
             validate-on-blur
-            outlined
             class="my-2"
-          ></v-text-field>
-          <v-text-field v-model="name" label="Prénom et nom (facultatif)" outlined class="my-2"></v-text-field>
+          />
+          <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" class="my-2" />
           <v-select
             v-model="inquiryType"
             :items="inquiryOptions"
@@ -54,9 +53,11 @@
 
 <script>
 import validators from "@/validators"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
   name: "GeneralContactForm",
+  components: { DsfrTextField },
   props: {
     initialInquiryType: {
       type: String,

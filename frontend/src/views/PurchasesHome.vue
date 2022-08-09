@@ -35,20 +35,18 @@
     </div>
     <v-card outlined class="my-4" v-if="hasCanteens && visiblePurchases">
       <v-row class="px-4 mt-2" align="center">
-        <v-col cols="9" sm="6" class="pb-0">
-          <v-text-field
+        <v-col cols="9" sm="6" class="py-0">
+          <DsfrTextField
             v-model="searchTerm"
             label="Chercher par produit ou fournisseur"
-            outlined
-            dense
             hide-details
             clearable
             @click:clear="clearSearch"
             @keyup.enter="search"
-          ></v-text-field>
+          />
         </v-col>
         <v-col cols="2" class="px-0 pb-0">
-          <v-btn outlined color="primary" height="40px" @click="search">
+          <v-btn outlined color="primary" class="mt-5" height="40px" @click="search">
             <v-icon>mdi-magnify</v-icon>
             <span v-if="$vuetify.breakpoint.smAndUp">Chercher</span>
           </v-btn>
@@ -135,19 +133,17 @@
                   >
                     Après
                   </label>
-                  <v-text-field
+                  <DsfrTextField
                     :value="appliedFilters.startDate"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
                     v-on="on"
                     hide-details
-                    outlined
-                    dense
                     clearable
                     id="filter-startdate"
                     @click:clear="appliedFilters.startDate = null"
-                  ></v-text-field>
+                  />
                 </v-col>
               </template>
 
@@ -168,19 +164,17 @@
                   >
                     Avant
                   </label>
-                  <v-text-field
+                  <DsfrTextField
                     :value="appliedFilters.endDate"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
                     v-on="on"
                     hide-details
-                    outlined
-                    dense
                     clearable
                     id="filter-enddate"
                     @click:clear="appliedFilters.endDate = null"
-                  ></v-text-field>
+                  />
                 </v-col>
               </template>
 
@@ -250,9 +244,11 @@
 <script>
 import { formatDate, getObjectDiff } from "@/utils"
 import Constants from "@/constants"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
   name: "PurchasesHome",
+  components: { DsfrTextField },
   data() {
     return {
       searchTerm: null,

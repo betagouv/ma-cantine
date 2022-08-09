@@ -46,52 +46,44 @@
             </div>
           </v-col>
           <v-col cols="12" md="6">
-            <label for="first-name" class="body-2 mt-2 text-left">Prénom</label>
-            <v-text-field
-              id="first-name"
+            <DsfrTextField
+              label="Prénom"
               class="mt-1"
               hide-details="auto"
-              solo
               v-model="userCopy.firstName"
               :rules="[validators.required]"
               validate-on-blur
-            ></v-text-field>
+            />
           </v-col>
           <v-col cols="12" md="6">
-            <label for="last-name" class="body-2 mt-2 text-left">Nom</label>
-            <v-text-field
-              id="last-name"
+            <DsfrTextField
+              label="Nom"
               class="mt-1"
               hide-details="auto"
-              solo
               v-model="userCopy.lastName"
               :rules="[validators.required]"
               validate-on-blur
-            ></v-text-field>
+            />
           </v-col>
           <v-col cols="12" md="6">
-            <label for="phone" class="body-2 mt-2 text-left">Numéro téléphone</label>
-            <v-text-field
-              id="phone"
+            <DsfrTextField
+              label="Numéro téléphone"
               class="mt-1"
               hide-details="auto"
-              solo
               v-model="userCopy.phoneNumber"
               :rules="[validators.isEmptyOrPhoneNumber]"
               validate-on-blur
-            ></v-text-field>
+            />
           </v-col>
           <v-col cols="12">
-            <label for="email" class="body-2 mt-2 text-left">Adresse email</label>
-            <v-text-field
-              id="email"
+            <DsfrTextField
+              label="Adresse email"
               class="mt-1"
               hide-details="auto"
-              solo
               v-model="userCopy.email"
               :rules="[validators.email]"
               validate-on-blur
-            ></v-text-field>
+            />
           </v-col>
           <v-col cols="12" md="9">
             <label for="job" class="body-2 mt-2 text-left">Fonction</label>
@@ -107,13 +99,12 @@
             ></v-select>
           </v-col>
           <v-col cols="12" v-if="showOtherJobField" class="my-0">
-            <v-text-field
+            <DsfrTextField
               label="Ma fonction"
               :rules="[validators.required]"
-              solo
               v-model="userCopy.otherJobDescription"
               hide-details="auto"
-            ></v-text-field>
+            />
           </v-col>
           <v-col cols="12" md="9" v-if="!userCopy.hasMtmData">
             <label for="source" class="body-2 mt-2 text-left">Comment avez-vous connu ma-cantine ?</label>
@@ -129,13 +120,12 @@
             ></v-select>
           </v-col>
           <v-col cols="12" v-if="showOtherSourceField" class="my-0">
-            <v-text-field
+            <DsfrTextField
               label="Autre endroit"
               :rules="[validators.required]"
-              solo
               v-model="userCopy.otherSourceDescription"
               hide-details="auto"
-            ></v-text-field>
+            />
           </v-col>
         </v-row>
       </v-form>
@@ -153,9 +143,11 @@
 import validators from "@/validators"
 import Constants from "@/constants"
 import { toBase64, getObjectDiff } from "@/utils"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
   name: "AccountEditor",
+  components: { DsfrTextField },
   data() {
     return {
       userCopy: {},

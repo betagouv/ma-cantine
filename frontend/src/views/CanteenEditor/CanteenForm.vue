@@ -19,15 +19,14 @@
     <v-form ref="form" v-model="formIsValid">
       <v-row>
         <v-col cols="12" md="8">
-          <p class="body-2 mt-4 mb-2">SIRET</p>
-          <v-text-field
+          <DsfrTextField
             hide-details="auto"
             validate-on-blur
-            solo
+            label="SIRET"
             v-model="canteen.siret"
             :rules="[validators.length(14), validators.luhn]"
             @blur="getCanteenBySiret"
-          ></v-text-field>
+          />
           <p class="caption mt-1 ml-2">
             Vous ne le connaissez pas ? Utilisez cet
             <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
@@ -118,14 +117,13 @@
             </v-card-text>
           </v-card>
 
-          <p class="body-2 my-2">Nom de la cantine</p>
-          <v-text-field
+          <DsfrTextField
             hide-details="auto"
+            label="Nom de la cantine"
             :rules="[validators.required]"
             validate-on-blur
-            solo
             v-model="canteen.name"
-          ></v-text-field>
+          />
 
           <p class="body-2 mt-4 mb-2">Ville</p>
           <v-autocomplete
@@ -200,24 +198,21 @@
         </v-col>
 
         <v-col cols="12" md="6" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
-          <p class="body-2 my-2">
-            Couverts moyen par jour (convives sur place)
-          </p>
-          <v-text-field
+          <DsfrTextField
+            label="Couverts moyen par jour (convives sur place)"
             hide-details="auto"
             :rules="showDailyMealCount ? [validators.greaterThanZero] : []"
             :disabled="!showDailyMealCount"
             :messages="showDailyMealCount ? [] : 'Concerne uniquement les cantines recevant des convives'"
             validate-on-blur
-            solo
             v-model="canteen.dailyMealCount"
             prepend-icon="mdi-silverware-fork-knife"
-          ></v-text-field>
+          />
         </v-col>
 
         <v-col cols="12" md="6" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
-          <p class="body-2 my-2">Nombre de cantines à qui je fournis des repas</p>
-          <v-text-field
+          <DsfrTextField
+            label="Nombre de cantines à qui je fournis des repas"
             hide-details="auto"
             :rules="showSatelliteCanteensCount ? [validators.greaterThanZero] : []"
             :disabled="!showSatelliteCanteensCount"
@@ -225,24 +220,21 @@
               showSatelliteCanteensCount ? [] : 'Concerne uniquement les cuisines qui livrent à des satellites'
             "
             validate-on-blur
-            solo
             v-model="canteen.satelliteCanteensCount"
             prepend-icon="mdi-home-city"
-          ></v-text-field>
+          />
         </v-col>
 
         <v-expand-transition>
           <v-col cols="12" md="8" v-if="usesCentralProducer" class="py-0">
-            <label class="body-2 mt-4" for="central-siret">SIRET de la cuisine centrale</label>
-            <v-text-field
-              id="central-siret"
+            <DsfrTextField
+              label="SIRET de la cuisine centrale"
               class="mt-2"
               hide-details="auto"
               validate-on-blur
-              solo
               v-model="canteen.centralProducerSiret"
               :rules="[validators.length(14), validators.luhn]"
-            ></v-text-field>
+            />
             <p class="caption mt-1 ml-2">
               Vous ne le connaissez pas ? Utilisez cet
               <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
@@ -346,12 +338,13 @@ import PublicationStateNotice from "./PublicationStateNotice"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
 import Constants from "@/constants"
+import DsfrTextField from "@/components/DsfrTextField"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "CanteenForm",
-  components: { PublicationStateNotice, ImagesField, TechnicalControlDialog },
+  components: { PublicationStateNotice, ImagesField, TechnicalControlDialog, DsfrTextField },
   props: {
     canteenUrlComponent: {
       type: String,
