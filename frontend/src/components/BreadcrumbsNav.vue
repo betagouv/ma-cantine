@@ -19,7 +19,7 @@
             <router-link class="fr-breadcrumb__link" :to="link.to">{{ link.title }}</router-link>
           </li>
           <li>
-            <a class="fr-breadcrumb__link" aria-current="page">{{ title }}</a>
+            <a class="fr-breadcrumb__link" aria-current="page">{{ pageTitle }}</a>
           </li>
         </ol>
       </div>
@@ -28,18 +28,38 @@
 </template>
 
 <script>
+import { routes } from "@/router"
+
 export default {
   name: "BreadcrumbsNav",
   props: {
     links: {
-      type: Array, // objects of to & title
+      type: Array, // objects of to & (optionally) title
       required: false,
     },
-    title: String,
+    title: {
+      type: String,
+      required: false,
+    },
   },
   data() {
+    let breadcrumbRoutes = JSON.parse(JSON.stringify(routes))
+    // flatten routes for simplicity
+    breadcrumbRoutes.forEach((r) => {
+      if (r.children) {
+        breadcrumbRoutes.push(...r.children)
+      }
+    })
+    if (this.links) {
+      this.links.forEach((link) => {
+        if (!link.title) {
+          link.title = breadcrumbRoutes.find((r) => r.name === link.to.name)?.meta?.title
+        }
+      })
+    }
     return {
       expanded: this.$vuetify.breakpoint.lgAndUp,
+      pageTitle: this.title || breadcrumbRoutes.find((r) => r.name === this.$route.name)?.meta?.title,
     }
   },
   computed: {

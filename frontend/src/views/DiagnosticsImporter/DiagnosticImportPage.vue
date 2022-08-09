@@ -1,8 +1,6 @@
 <template>
   <div class="text-left">
-    <div class="mt-2">
-      <BackLink :to="{ name: 'DiagnosticsImporter' }" text="Choisir un autre niveau" />
-    </div>
+    <BreadcrumbsNav :links="[{ to: { name: 'DiagnosticsImporter' } }]" :title="type.title" />
 
     <v-row class="my-4 mx-0">
       <v-icon large class="mr-4" color="black">{{ type.icon }}</v-icon>
@@ -247,14 +245,14 @@
 </template>
 
 <script>
-import BackLink from "@/components/BackLink"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import FileDrop from "@/components/FileDrop"
 import HelpForm from "./HelpForm"
 import Constants from "@/constants"
 
 export default {
   name: "DiagnosticImportPage",
-  components: { BackLink, FileDrop, HelpForm },
+  components: { BreadcrumbsNav, FileDrop, HelpForm },
   props: ["importLevel"],
   data() {
     const user = this.$store.state.loggedUser
@@ -508,6 +506,9 @@ export default {
         NONE: "l'import de cantines seulement",
       }[this.importLevel]
     },
+  },
+  created() {
+    document.title = `${this.type.title} - Importer des diagnostics - ${this.$store.state.pageTitleSuffix}`
   },
   methods: {
     upload() {

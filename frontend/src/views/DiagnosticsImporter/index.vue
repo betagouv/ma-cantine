@@ -1,5 +1,6 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav />
     <h1 class="font-weight-black text-h4 my-6">Importer vos données</h1>
     <p>
       Vous êtes en mesure d'exporter vos données en format CSV ? Utilisez notre outil d'import pour ajouter vos cantines
@@ -49,10 +50,11 @@
 <script>
 import Constants from "@/constants"
 import HelpForm from "./HelpForm"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 
 export default {
   name: "ImportDiagnostics",
-  components: { HelpForm },
+  components: { HelpForm, BreadcrumbsNav },
   data() {
     return {
       diagnosticTypes: Constants.DiagnosticImportLevels,
