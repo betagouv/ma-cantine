@@ -1,22 +1,29 @@
 <template>
   <nav role="navigation" class="fr-breadcrumb text-left" aria-label="vous êtes ici :">
-    <!-- TODO: make this expansion work on mobile -->
-    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">
+    <button
+      class="fr-breadcrumb__button text-decoration-underline"
+      :aria-expanded="expanded"
+      aria-controls="breadcrumb-1"
+      v-if="!expanded"
+      @click="expanded = true"
+    >
       Voir le fil d’Ariane
     </button>
-    <div class="fr-collapse" id="breadcrumb-1">
-      <ol class="fr-breadcrumb__list">
-        <li>
-          <router-link class="fr-breadcrumb__link" :to="homePage">Accueil</router-link>
-        </li>
-        <li v-for="link in links" :key="link.title">
-          <router-link class="fr-breadcrumb__link" :to="link.to">{{ link.title }}</router-link>
-        </li>
-        <li>
-          <a class="fr-breadcrumb__link" aria-current="page">{{ title }}</a>
-        </li>
-      </ol>
-    </div>
+    <v-expand-transition>
+      <div class="fr-collapse" id="breadcrumb-1" v-show="expanded">
+        <ol class="fr-breadcrumb__list pl-0">
+          <li>
+            <router-link class="fr-breadcrumb__link" :to="homePage">Accueil</router-link>
+          </li>
+          <li v-for="link in links" :key="link.title">
+            <router-link class="fr-breadcrumb__link" :to="link.to">{{ link.title }}</router-link>
+          </li>
+          <li>
+            <a class="fr-breadcrumb__link" aria-current="page">{{ title }}</a>
+          </li>
+        </ol>
+      </div>
+    </v-expand-transition>
   </nav>
 </template>
 
@@ -29,6 +36,11 @@ export default {
       required: false,
     },
     title: String,
+  },
+  data() {
+    return {
+      expanded: this.$vuetify.breakpoint.lgAndUp,
+    }
   },
   computed: {
     homePage() {
@@ -99,9 +111,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   color: inherit;
 }
 
-.fr-breadcrumb__button[aria-expanded="true"] {
+/* .fr-breadcrumb__button[aria-expanded="true"] {
   display: none;
-}
+} */
 
 .fr-breadcrumb .fr-collapse {
   margin-left: -4px;
@@ -164,9 +176,14 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 .fr-breadcrumb__link[aria-current] {
   color: var(--text-active-grey) !important;
 }
+@media (max-width: 62em) {
+  /* mdAndDown */
+  a:not([aria-current]) {
+    text-decoration: underline;
+  }
+}
 @media (min-width: 36em) {
   /*! media sm */
-
   /*! media sm */
 }
 @media (min-width: 48em) {
@@ -197,7 +214,6 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   .fr-breadcrumb__list {
     transform: none;
   }
-
   /*! media md */
 }
 @media (min-width: 62em) {
