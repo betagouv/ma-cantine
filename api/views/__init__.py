@@ -19,8 +19,11 @@ from .canteen import (  # noqa: F401
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
     DiagnosticUpdateView,
-    ImportDiagnosticsView,
     EmailDiagnosticImportFileView,
+)
+from .diagnosticimport import (  # noqa: F401
+    ImportSimpleDiagnosticsView,
+    ImportCompleteDiagnosticsView,
 )
 from .sector import SectorListView  # noqa: F401
 from .blog import BlogPostsView, BlogPostView  # noqa: F401

@@ -341,4 +341,27 @@ export default Object.freeze({
       label: "Informations sur le site",
     },
   },
+  DiagnosticImportLevels: [
+    {
+      key: "NONE",
+      title: "Importer des cantines sans diagnostic",
+      label: "Sans diagnostic",
+      help: "Vous voulez importer des cantines sans données d'approvisionnement",
+      icon: "mdi-home-city",
+    },
+    {
+      key: "SIMPLE",
+      title: "Importer des cantines et diagnostics simples",
+      label: "Diagnostic simple",
+      help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
+      icon: "mdi-file-chart",
+    },
+    {
+      key: "COMPLETE",
+      title: "Importer des cantines et diagnostics complets",
+      label: "Diagnostic complet",
+      help: "Vous connaissez les labels et les familles de produits de vos achats",
+      icon: "mdi-file-check",
+    },
+  ],
 })

@@ -9,12 +9,12 @@ labels = [
     ("HVE", "Haute valeur environnementale"),
     ("PECHE_DURABLE", "Pêche durable"),
     ("RUP", "Région ultrapériphérique"),
+    ("COMMERCE_EQUITABLE", "Commerce équitable"),
     ("FERMIER", "Fermier"),
     (
         "EXTERNALITES",
         "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     ),
-    ("COMMERCE_EQUITABLE", "Commerce équitable"),
     ("PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"),
     ("FRANCE", "Provenance France"),
     ("SHORT_DISTRIBUTION", "Circuit-court"),
@@ -35,7 +35,7 @@ families = [(f[0].lower(), f[1]) for f in families]
 fields = []
 for label in labels:
     for family in families:
-        fields.append({"fieldname": f"value_{family[0]}_{label[0]}", "description": f"{family[1]}, {label[1]}"})
+        fields.append({"fieldname": f"value_{family[0]}_{label[0]}", "description": f"{label[1]} : {family[1]}"})
 
 print(f"# will generate {len(fields)} fields")
 for f in fields:
@@ -100,13 +100,24 @@ print("]")
 
 # importer
 print("\n# CSV")
-for f in fields:
-    print(f"\"{f['description'].replace(',', ' -')}\"", end=",")
+for l in labels:
+    print(f"{l[1]}", end="")
+    for f in families:
+        print(",", end="")
+print("")
+for l in labels:
+    for f in families:
+        print(f"{f[1].replace(',', ' et')}", end=",")
+# for f in fields:
+#     print(f"\"{f['description'].replace(',', ' -')}\"", end=",")
 print("")
 for f in fields:
     print("10", end=",")
 print("")
 # TODO: code for importer view
+print("\n# Documentation")
+for field in fields:
+    print(f"\"{field['description']}\",")
 # TODO: can make nicer column names
 
 # test
