@@ -7,10 +7,12 @@
         <div class="d-flex flex-column">
           <p>Simplifiez les calculs de la loi EGAlim en ajoutant vos achats</p>
           <v-card elevation="1" max-width="400px"><v-img src="/static/images/features/achats.png"></v-img></v-card>
-          <p class="mt-4">
-            Ou
-            <a :href="`${filepath}.xlsx`" download>téléchargez notre tableur</a>
-          </p>
+          <DownloadLink
+            class="mt-4"
+            :href="`${filepath}.xlsx`"
+            label="Ou téléchargez notre tableur"
+            :sizeStr="filesizeStr"
+          />
         </div>
       </v-col>
       <v-col cols="12" sm="6" md="4">
@@ -45,11 +47,15 @@
 </template>
 
 <script>
+import DownloadLink from "@/components/DownloadLink.vue"
+
 export default {
   name: "ToolsBlock",
+  components: { DownloadLink },
   data() {
     return {
       filepath: "/static/documents/Diagnostic approvisionnement (ma-cantine-alpha) v0.6VM",
+      filesizeStr: "2,8 Mo",
     }
   },
   computed: {
