@@ -6,7 +6,7 @@
     <div>
       <v-card-title class="text-body-1 font-weight-bold">Participez à la collecte de données 2022 !</v-card-title>
       <v-card-text class="pb-0">
-        Du 18 juillet au 16 octobre 2021, dans votre espace diagnostic, télédéclarez vos données 2021 et devenez membre
+        Du 18 juillet au 16 octobre 2022, dans votre espace diagnostic, télédéclarez vos données 2021 et devenez membre
         de la campagne nationale de télédéclaration. L'objectif : un bilan qui permettra à l'administration d'imaginer
         des services en cohérence avec la réalité du terrain. Il n'y a rien d'obligatoire, c'est du déclaratif !
       </v-card-text>
