@@ -109,4 +109,8 @@ export default {
   background-color: #b6d9c8;
   border-radius: 16px;
 }
+
+.v-expansion-panel-header__icon > .v-icon {
+  font-size: 1rem;
+}
 </style>

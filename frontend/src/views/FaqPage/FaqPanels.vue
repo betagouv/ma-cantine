@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-expansion-panels class="cta-group pa-4">
+    <v-expansion-panels hover accordion tile flat>
       <v-expansion-panel v-for="question in questions" :key="question.title">
-        <v-expansion-panel-header class="font-weight-bold" style="line-height: 20px;">
-          {{ question.title }}
+        <v-expansion-panel-header class="px-3" expand-icon="mdi-plus" disable-icon-rotate v-slot="{ open }">
+          <span :class="open && 'font-weight-bold'">{{ question.title }}</span>
         </v-expansion-panel-header>
         <v-expansion-panel-content class="faq-answer">
           {{ question.answer }}
@@ -94,5 +94,9 @@ export default {
 <style scoped>
 .faq-answer {
   white-space: pre-line;
+}
+
+.v-expansion-panel {
+  box-shadow: inset 0 1px 0 0 #ddd, 0 1px 0 0 #ddd;
 }
 </style>
