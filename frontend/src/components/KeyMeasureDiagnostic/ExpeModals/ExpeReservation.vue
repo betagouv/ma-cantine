@@ -13,10 +13,13 @@
         vous demandons de suivre et renseigner différents indicateurs nécessaires à l’évaluation du gaspillage
         alimentaire, du taux de fréquentation et de la satisfaction des usagers à 3 étapes de l’expérimentation.
       </v-card-text>
-      <v-card-text class="text-center pt-0">
-        <v-btn href="/static/documents/Guide_pratique_XP_RESERVATION.pdf" target="_blank" color="primary" outlined>
-          Télécharger le guide
-        </v-btn>
+      <v-card-text class="pt-0">
+        <DownloadLink
+          href="/static/documents/Guide_pratique_XP_RESERVATION.pdf"
+          label="Télécharger le guide d'accompagnement"
+          sizeStr="2.1 Mo"
+          target="_blank"
+        />
       </v-card-text>
       <v-divider></v-divider>
       <v-card-text>
@@ -467,8 +470,10 @@ import { formatDate, getObjectDiff } from "@/utils"
 import { treatInboundPercentageValues, treatOutboundPercentageValues } from "./utils"
 import validators from "@/validators"
 import Constants from "@/constants"
+import DownloadLink from "../../DownloadLink.vue"
 
 export default {
+  components: { DownloadLink },
   name: "ExpeReservation",
   props: {
     canteen: Object,

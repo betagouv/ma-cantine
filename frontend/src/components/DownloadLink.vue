@@ -1,7 +1,7 @@
 <template>
   <div class="fr-download">
     <p class="mb-0 primary--text">
-      <a :href="href" download class="fr-download__link">
+      <a :href="href" download class="fr-download__link" :target="target">
         {{ label }}
         <span class="fr-download__detail grey--text text--darken-1">
           {{ type }} – {{ sizeStr }}
@@ -14,7 +14,7 @@
 
 <script>
 export default {
-  props: ["href", "label", "sizeStr"],
+  props: ["href", "label", "sizeStr", "target"],
   computed: {
     type() {
       const strParts = this.href.split(".")
