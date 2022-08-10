@@ -195,6 +195,7 @@
       identité. Pour vous aider dans votre démarche,
       <a href="https://www.cnil.fr/fr/modele/courrier/exercer-son-droit-dacces" target="_blank" rel="noopener">
         un modèle de courrier élaboré par la Cnil
+        <v-icon small color="primary">mdi-open-in-new</v-icon>
       </a>
       est à votre disposition.
     </p>
@@ -207,6 +208,7 @@
         rel="noopener"
       >
         un modèle de courrier élaboré par la Cnil
+        <v-icon small color="primary">mdi-open-in-new</v-icon>
       </a>
       est à votre disposition.
     </p>
@@ -250,6 +252,7 @@
             <td>
               <a href="https://www.clever-cloud.com/fr/privacy-policy" target="_blank" rel="noopener">
                 https://www.clever-cloud.com/fr/privacy-policy
+                <v-icon small color="primary">mdi-open-in-new</v-icon>
               </a>
             </td>
           </tr>
@@ -291,11 +294,13 @@
       <li>
         <a href="https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi" target="_blank" rel="noopener">
           Cookies & traceurs : que dit la loi ?
+          <v-icon small color="primary">mdi-open-in-new</v-icon>
         </a>
       </li>
       <li>
         <a href="https://www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser" target="_blank" rel="noopener">
           Cookies : les outils pour les maîtriser
+          <v-icon small color="primary">mdi-open-in-new</v-icon>
         </a>
       </li>
     </ul>
