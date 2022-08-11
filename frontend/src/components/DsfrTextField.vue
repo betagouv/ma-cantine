@@ -7,6 +7,7 @@
     flat
     v-bind="$attrs"
     v-on="$listeners"
+    persistent-placeholder
     @input="(v) => $emit('input', v)"
   >
     <template v-slot:label><span></span></template>
