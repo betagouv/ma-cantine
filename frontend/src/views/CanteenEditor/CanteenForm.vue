@@ -26,6 +26,7 @@
             v-model="canteen.siret"
             :rules="[validators.length(14), validators.luhn]"
             @blur="getCanteenBySiret"
+            labelClasses="body-2 mb-2"
           />
           <p class="caption mt-1 ml-2">
             Vous ne le connaissez pas ? Utilisez cet
@@ -123,6 +124,7 @@
             :rules="[validators.required]"
             validate-on-blur
             v-model="canteen.name"
+            labelClasses="body-2 mb-2"
           />
 
           <p class="body-2 mt-4 mb-2">Ville</p>
@@ -207,6 +209,7 @@
             validate-on-blur
             v-model="canteen.dailyMealCount"
             prepend-icon="mdi-silverware-fork-knife"
+            labelClasses="body-2 mb-2"
           />
         </v-col>
 
@@ -222,6 +225,7 @@
             validate-on-blur
             v-model="canteen.satelliteCanteensCount"
             prepend-icon="mdi-home-city"
+            labelClasses="body-2 mb-2"
           />
         </v-col>
 
