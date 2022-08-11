@@ -22,6 +22,10 @@ export default {
     }
   },
   methods: {
+    removeLabels() {
+      const labels = this.$refs["text-field"].$el.getElementsByTagName("label")
+      if (labels && labels.length > 0) for (const label of labels) label.parentNode.removeChild(label)
+    },
     createLabel() {
       const label = document.createElement("label")
       label.setAttribute("for", this.$refs["text-field"].$refs["input"].id)
@@ -33,6 +37,7 @@ export default {
     },
   },
   mounted() {
+    this.removeLabels()
     this.createLabel()
   },
 }
