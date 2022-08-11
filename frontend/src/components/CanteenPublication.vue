@@ -1,9 +1,15 @@
 <template>
   <div class="text-left">
-    <div v-if="diagnostic.valueTotalHt && (diagnostic.valueBioHt || diagnostic.valueSustainableHt)">
+    <div v-if="diagnostic && diagnostic.valueTotalHt && (diagnostic.valueBioHt || diagnostic.valueSustainableHt)">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
       </h2>
+      <h3
+        class="font-weight-black text-body-1 grey--text text--darken-4 my-4"
+        v-if="diagnostic.diagnosticType === 'COMPLETE'"
+      >
+        Total
+      </h3>
       <v-row>
         <v-col cols="12" sm="6" md="4" v-if="diagnostic.valueBioHt">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
@@ -48,6 +54,17 @@
           </v-card>
         </v-col>
       </v-row>
+      <h3
+        class="font-weight-black text-body-1 grey--text text--darken-4 mt-4"
+        v-if="diagnostic.diagnosticType === 'COMPLETE'"
+      >
+        Catégories EGAlim par famille de produit
+      </h3>
+      <FamiliesGraph
+        v-if="diagnostic.diagnosticType === 'COMPLETE'"
+        :diagnostic="diagnostic"
+        :height="$vuetify.breakpoint.xs ? '440px' : '380px'"
+      />
     </div>
 
     <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-n4" v-if="Object.keys(earnedBadges).length">
@@ -130,6 +147,7 @@ import {
   getSustainableTotal,
 } from "@/utils"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
+import FamiliesGraph from "@/components/FamiliesGraph"
 import ImageGallery from "@/components/ImageGallery"
 
 export default {
@@ -141,7 +159,7 @@ export default {
       labels,
     }
   },
-  components: { MultiYearSummaryStatistics, ImageGallery },
+  components: { MultiYearSummaryStatistics, ImageGallery, FamiliesGraph },
   computed: {
     diagnostic() {
       if (this.canteen) return latestCreatedDiagnostic(this.canteen)
