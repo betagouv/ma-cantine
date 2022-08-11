@@ -109,4 +109,21 @@ export default {
   background-color: #b6d9c8;
   border-radius: 16px;
 }
+
+.theme--light.v-card > .v-card__text,
+.theme--light.v-card > .v-card__subtitle {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.v-card.dsfr {
+  border: solid 1px #e0e0e0;
+}
+
+.v-card.dsfr:hover {
+  background-color: #f6f6f6;
+}
+
+.v-expansion-panel-header__icon > .v-icon {
+  font-size: 1rem;
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <div v-if="diagnostic.valueTotalHt && (diagnostic.valueBioHt || diagnostic.valueSustainableHt)">
+    <div v-if="diagnostic && diagnostic.valueTotalHt && (diagnostic.valueBioHt || diagnostic.valueSustainableHt)">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
       </h2>

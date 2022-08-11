@@ -221,8 +221,8 @@
     <v-row v-else-if="visiblePurchases" class="mt-4">
       <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
         <v-card
-          class="d-flex flex-column align-center justify-center"
-          hover
+          class="dsfr d-flex flex-column align-center justify-center"
+          outlined
           min-height="220"
           height="80%"
           :to="{ name: 'NewCanteen' }"
