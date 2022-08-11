@@ -26,7 +26,7 @@ export default {
     labelClasses: {
       type: String,
       required: false,
-      default: "mb-2 text-sm-subtitle-1 text-body-2",
+      default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
     },
   },
   computed: {

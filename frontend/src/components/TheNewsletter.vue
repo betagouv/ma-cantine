@@ -15,11 +15,12 @@
             <v-form ref="form" class="d-flex align-center" v-model="formIsValid" @submit.prevent>
               <DsfrTextField
                 v-model="email"
+                class="flex-grow-1"
                 ref="email"
                 label="Votre adresse email"
                 validate-on-blur
                 :rules="[validators.email]"
-                labelClasses="text-body-2 mb-2"
+                labelClasses="text-body-2 mb-2 text-left"
               />
               <v-btn @click="subscribe" outlined color="primary" class="ml-4 mt-1" large>Valider</v-btn>
             </v-form>

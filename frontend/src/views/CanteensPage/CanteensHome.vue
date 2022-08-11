@@ -48,7 +48,7 @@
               clearable
               @click:clear="clearSearch"
               @keyup.enter="search"
-              class="mb-2"
+              class="mb-2 flex-grow-1"
             />
             <v-btn outlined color="primary" class="ml-4 mb-2" height="40px" @click="search">
               <v-icon>mdi-magnify</v-icon>
