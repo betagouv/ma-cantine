@@ -20,7 +20,14 @@ export default {
   data() {
     return {
       inputId: null,
+      label: null,
     }
+  },
+  props: {
+    labelClasses: {
+      type: String,
+      required: false,
+    },
   },
   methods: {
     removeLabels() {
@@ -30,16 +37,26 @@ export default {
     createLabel() {
       const label = document.createElement("label")
       label.setAttribute("for", this.$refs["text-field"].$refs["input"].id)
-      label.classList.add("mb-2")
-      label.classList.add("text-sm-subtitle-1")
-      label.classList.add("text-body-2")
+      this.assignLabelClasses(label)
       label.textContent = this.$attrs.label
       this.$refs["text-field"].$el.getElementsByClassName("v-input__control")[0].prepend(label)
+      this.label = label
+    },
+    assignLabelClasses(labelElement) {
+      if (!labelElement) return
+      labelElement.classList.remove(...labelElement.classList)
+      if (this.labelClasses) labelElement.classList.add(...this.labelClasses.split(" "))
+      else labelElement.classList.add("mb-2", "text-sm-subtitle-1", "text-body-2")
     },
   },
   mounted() {
     this.removeLabels()
     this.createLabel()
+  },
+  watch: {
+    labelClasses() {
+      this.assignLabelClasses(this.label)
+    },
   },
 }
 </script>
