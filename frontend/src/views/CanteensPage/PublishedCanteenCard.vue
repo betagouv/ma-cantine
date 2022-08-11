@@ -1,8 +1,8 @@
 <template>
   <v-card
     :to="{ name: 'CanteenPage', params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) } }"
-    hover
-    class="pa-4 text-left fill-height d-flex flex-column"
+    outlined
+    class="pa-4 text-left fill-height d-flex flex-column dsfr"
   >
     <v-card-title class="font-weight-black pt-1">
       {{ canteen.name }}
@@ -45,6 +45,10 @@
         <v-spacer></v-spacer>
       </div>
     </div>
+    <v-card-actions class="px-4 py-0">
+      <v-spacer></v-spacer>
+      <v-icon color="primary">mdi-arrow-right</v-icon>
+    </v-card-actions>
   </v-card>
 </template>
 

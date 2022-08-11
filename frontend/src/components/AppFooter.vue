@@ -38,7 +38,7 @@
       <v-divider v-if="!showSmallFooter" class="mt-6"></v-divider>
       <ul class="d-flex justify-sm-space-between flex-wrap link-group pl-0">
         <li v-for="(link, index) in bottomLinks" :key="link.text" class="d-flex">
-          <v-btn class="caption px-0" :to="link.to" :ripple="false" text plain>{{ link.text }}</v-btn>
+          <v-btn class="caption px-0" :to="link.to" text plain>{{ link.text }}</v-btn>
           <div class="footer-divider mt-3 mx-4" v-if="index < bottomLinks.length - 1"></div>
         </li>
         <v-spacer></v-spacer>

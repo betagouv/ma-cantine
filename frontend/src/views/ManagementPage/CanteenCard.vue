@@ -4,7 +4,9 @@
       name: 'CanteenModification',
       params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
     }"
-    hover
+    class="dsfr"
+    outlined
+    :ripple="false"
   >
     <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160"></v-img>
     <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
@@ -13,9 +15,13 @@
         {{ publicationStatus.text }}
       </v-chip>
     </v-card-subtitle>
-    <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city || canteen.sectors" class="mt-0">
+    <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city || canteen.sectors" class="mt-0 pb-0">
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
+    <v-card-actions class="px-4 py-4">
+      <v-spacer></v-spacer>
+      <v-icon color="primary">mdi-arrow-right</v-icon>
+    </v-card-actions>
   </v-card>
 </template>
 

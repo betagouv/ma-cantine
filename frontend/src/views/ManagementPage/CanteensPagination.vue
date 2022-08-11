@@ -39,8 +39,8 @@
       </v-col>
       <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
         <v-card
-          class="d-flex flex-column align-center justify-center"
-          hover
+          class="d-flex flex-column align-center justify-center dsfr"
+          outlined
           min-height="220"
           height="80%"
           :to="{ name: 'NewCanteen' }"

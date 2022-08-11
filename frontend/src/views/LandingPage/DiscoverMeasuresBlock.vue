@@ -15,9 +15,9 @@
     <v-row class="justify-center mt-8 mx-0 mx-md-n4 cta-group pa-4">
       <v-col cols="12" sm="4" v-for="measure in keyMeasures" :key="measure.id">
         <v-card
-          hover
+          outlined
           :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }"
-          class="fill-height d-flex flex-column px-3"
+          class="fill-height d-flex flex-column px-3 dsfr"
         >
           <v-card-text class="pb-1 pt-6">
             <v-icon>{{ measure.mdiIcon }}</v-icon>
@@ -26,9 +26,9 @@
             {{ measure.title }}
           </v-card-title>
           <v-spacer></v-spacer>
-          <v-card-actions class="px-4 mr-4">
+          <v-card-actions class="px-4 py-4">
             <v-spacer></v-spacer>
-            <p class="text-decoration-underline text-body-2 font-weight-medium primary--text">En savoir plus</p>
+            <v-icon color="primary">mdi-arrow-right</v-icon>
           </v-card-actions>
         </v-card>
       </v-col>
