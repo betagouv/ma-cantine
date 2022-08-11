@@ -1,5 +1,6 @@
 <template>
   <div id="legal-notices">
+    <BreadcrumbsNav />
     <h1>Mentions légales</h1>
     <h2>Éditeur de la Plateforme</h2>
     <p>
@@ -122,6 +123,15 @@
     </p>
   </div>
 </template>
+
+<script>
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+
+export default {
+  name: "LegalNotices",
+  components: { BreadcrumbsNav },
+}
+</script>
 
 <style scoped lang="scss">
 #legal-notices {

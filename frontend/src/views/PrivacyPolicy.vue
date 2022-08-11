@@ -1,5 +1,6 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav />
     <h1 class="font-weight-black my-6">
       Politique de confidentialité de « ma cantine »
     </h1>
@@ -306,3 +307,12 @@
     </ul>
   </div>
 </template>
+
+<script>
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+
+export default {
+  name: "PrivacyPolicy",
+  components: { BreadcrumbsNav },
+}
+</script>

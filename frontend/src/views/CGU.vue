@@ -1,5 +1,6 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav />
     <h1 class="font-weight-black my-6">
       Conditions générales d'utilisation de « ma cantine »
     </h1>
@@ -201,3 +202,12 @@
     </ul>
   </div>
 </template>
+
+<script>
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+
+export default {
+  name: "CGU",
+  components: { BreadcrumbsNav },
+}
+</script>
