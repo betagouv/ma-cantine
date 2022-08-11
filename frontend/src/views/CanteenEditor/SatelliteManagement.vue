@@ -46,15 +46,13 @@
             <v-row>
               <v-col cols="12" md="8">
                 <label class="body-2" for="satellite-siret">SIRET</label>
-                <v-text-field
+                <DsfrTextField
                   id="satellite-siret"
-                  class="mt-2"
                   hide-details="auto"
                   validate-on-blur
-                  solo
                   v-model="satellite.siret"
                   :rules="[validators.length(14), validators.luhn]"
-                ></v-text-field>
+                />
                 <p class="caption mt-1 ml-2">
                   Utilisez cet
                   <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
@@ -66,29 +64,25 @@
               </v-col>
               <v-col cols="12" md="4">
                 <label class="body-2" for="meal-count">Couverts par jour</label>
-                <v-text-field
+                <DsfrTextField
                   id="meal-count"
-                  class="mt-2"
                   hide-details="auto"
                   validate-on-blur
-                  solo
                   v-model="satellite.dailyMealCount"
                   prepend-icon="mdi-silverware-fork-knife"
-                ></v-text-field>
+                />
               </v-col>
             </v-row>
             <v-row class="mt-n4">
               <v-col cols="12" md="5">
                 <label class="body-2" for="satellite-name">Nom de la cantine</label>
-                <v-text-field
+                <DsfrTextField
                   id="satellite-name"
-                  class="mt-2"
                   hide-details="auto"
                   validate-on-blur
-                  solo
                   v-model="satellite.name"
                   :rules="[validators.required]"
-                ></v-text-field>
+                />
               </v-col>
               <v-col cols="12" md="5">
                 <label class="body-2" for="sectors">Secteurs d'activité</label>
@@ -121,9 +115,11 @@
 <script>
 import validators from "@/validators"
 import { sectorsSelectList, getObjectDiff } from "@/utils"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
   name: "SatelliteManagement",
+  components: { DsfrTextField },
   props: {
     originalCanteen: Object,
   },

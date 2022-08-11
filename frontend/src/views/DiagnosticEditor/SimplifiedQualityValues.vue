@@ -4,13 +4,12 @@
       La valeur (en HT) de mes achats alimentaires total
     </label>
 
-    <v-text-field
+    <DsfrTextField
       :id="'total-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueTotalHt"
@@ -21,7 +20,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueTotalHt"
@@ -39,13 +38,12 @@
         La valeur (en HT) de mes achats Bio ou en conversion Bio
       </label>
     </div>
-    <v-text-field
+    <DsfrTextField
       :id="'bio-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueBioHt"
@@ -55,7 +53,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueBioHt"
@@ -81,13 +79,12 @@
         La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG)
       </label>
     </div>
-    <v-text-field
+    <DsfrTextField
       :id="'siqo-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueSustainableHt"
@@ -97,7 +94,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
 
     <!-- Performance Externalités -->
     <div class="d-block d-sm-flex align-center mt-8">
@@ -114,7 +111,7 @@
         sur la base de leurs performances en matière environnementale
       </label>
     </div>
-    <v-text-field
+    <DsfrTextField
       :id="'ext-perf-' + diagnostic.year"
       hide-details="auto"
       type="number"
@@ -130,7 +127,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
 
     <!-- Other EGAlim -->
     <div class="d-block d-sm-flex align-center mt-8">
@@ -151,13 +148,12 @@
         La valeur (en HT) des autres achats EGAlim
       </label>
     </div>
-    <v-text-field
+    <DsfrTextField
       :id="'other-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueEgalimOthersHt"
@@ -167,7 +163,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
 
     <v-divider class="my-4"></v-divider>
 
@@ -202,13 +198,12 @@
         La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
       </label>
     </div>
-    <v-text-field
+    <DsfrTextField
       :id="'meat-poultry-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueMeatPoultryHt"
@@ -219,7 +214,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
 
     <!-- Viande et volailles EGALIM -->
     <div class="d-block d-sm-flex align-center mt-8">
@@ -238,13 +233,12 @@
         La valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées
       </label>
     </div>
-    <v-text-field
+    <DsfrTextField
       :id="'meat-poultry-egalim-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueMeatPoultryEgalimHt"
@@ -254,7 +248,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
 
     <!-- Viande et volailles provenance FRANCE -->
     <div class="d-block d-sm-flex align-center mt-8">
@@ -273,13 +267,12 @@
         La valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées
       </label>
     </div>
-    <v-text-field
+    <DsfrTextField
       :id="'meat-poultry-france-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueMeatPoultryFranceHt"
@@ -289,7 +282,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
 
     <!-- Poissons -->
     <v-divider class="mb-4 mt-8"></v-divider>
@@ -307,13 +300,12 @@
         La valeur (en HT) des mes achats en poissons et produits aquatiques total
       </label>
     </div>
-    <v-text-field
+    <DsfrTextField
       :id="'fish-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueFishHt"
@@ -324,7 +316,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
 
     <!-- Poissons EGALIM -->
     <div class="d-block d-sm-flex align-center mt-8">
@@ -340,13 +332,12 @@
         La valeur (en HT) des mes achats EGAlim en poissons et produits aquatiques
       </label>
     </div>
-    <v-text-field
+    <DsfrTextField
       :id="'fish-egalim-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueFishEgalimHt"
@@ -356,7 +347,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
   </div>
 </template>
 
@@ -365,6 +356,7 @@ import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import labels from "@/data/quality-labels.json"
 import validators from "@/validators"
 import LogoBio from "@/components/LogoBio"
+import DsfrTextField from "@/components/DsfrTextField"
 
 const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
 const DEFAULT_FAMILY_TOTAL_ERROR = "La somme des achats par famille ne peut pas excéder le total des achats"
@@ -384,6 +376,7 @@ export default {
   components: {
     PurchaseHint,
     LogoBio,
+    DsfrTextField,
   },
   data() {
     const siqoLogos = [

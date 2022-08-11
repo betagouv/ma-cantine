@@ -66,19 +66,17 @@
             min-width="auto"
           >
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
+              <DsfrTextField
                 :value="humanReadableDate(expe.dailyVegetarianOfferStartDate)"
                 prepend-icon="mdi-calendar"
                 readonly
                 v-bind="attrs"
                 v-on="on"
                 hide-details="auto"
-                solo
-                dense
                 style="max-width: 200px"
                 id="date"
-                class="mt-2 mb-4"
-              ></v-text-field>
+                class="mb-4"
+              />
             </template>
 
             <v-date-picker
@@ -101,19 +99,17 @@
             min-width="auto"
           >
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
+              <DsfrTextField
                 :value="humanReadableDate(expe.experimentationStartDate)"
                 prepend-icon="mdi-calendar"
                 readonly
                 v-bind="attrs"
                 v-on="on"
                 hide-details="auto"
-                dense
-                solo
                 style="max-width: 200px"
                 id="launch-date"
-                class="mt-2 mb-4"
-              ></v-text-field>
+                class="mb-4"
+              />
             </template>
 
             <v-date-picker v-model="expe.experimentationStartDate" locale="fr-FR"></v-date-picker>
@@ -169,18 +165,16 @@
                       Quel est le taux de prise des menus végétariens par rapport aux menus non-végétariens en cas de
                       choix multiple, en moyenne sur 20 repas successifs ?
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                      solo
-                      dense
                       v-model.number="expe[`vegetarianMenuPercentage${item.value}`]"
                       append-icon="mdi-percent"
                       style="max-width: 150px"
-                      class="mt-2 mb-4 body-2"
+                      class="mb-4 body-2"
                       :id="`vegetarian-menu-percentage-${item.value}`"
-                    ></v-text-field>
+                    />
 
                     <!-- Menu composition -->
                     <label class="body-2 grey--text text--darken-3 font-weight-medium">
@@ -205,19 +199,17 @@
                           {{ category.label }}
                         </label>
                         <div class="d-flex">
-                          <v-text-field
+                          <DsfrTextField
                             validate-on-blur
                             @blur="validateCompositionFields()"
                             hide-details="auto"
-                            solo
-                            dense
                             v-model.number="expe[`${category.fieldName}${item.value}`]"
                             :rules="compositionRules(category.fieldName, item.value)"
                             :id="`${category.htmlId}-${item.value}`"
                             suffix="/20"
                             :hint="compositionHint(category.fieldName, item.value)"
                             :persistent-hint="!!compositionHint(category.fieldName, item.value)"
-                          ></v-text-field>
+                          />
                         </div>
                         <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
                       </div>
@@ -231,18 +223,16 @@
                       Parmi les plats à base de céréales, quelle part représentent les céréales complètes et
                       semi-complètes ?
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                      solo
-                      dense
                       v-model.number="expe[`wholegrainCerealPercentage${item.value}`]"
                       append-icon="mdi-percent"
                       style="max-width: 150px"
-                      class="mt-2 mb-8 body-2"
+                      class="mb-8 body-2"
                       :id="`wholegrain-cereal-percentage-${item.value}`"
-                    ></v-text-field>
+                    />
 
                     <!-- Waste evolution from start to date, T0 only -->
                     <label
@@ -298,19 +288,17 @@
                       Ecart du gaspillage en pourcentage (ex : 30% de gaspillage en plus/en moins avec l'option
                       végétarienne)
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                      solo
-                      dense
                       v-model.number="expe[`wasteEvolutionPercentage${item.value}`]"
                       append-icon="mdi-percent"
                       style="max-width: 150px"
-                      class="mt-2 mb-8 body-2"
+                      class="mb-8 body-2"
                       :id="`waste-evolution-percentage-${item.value}`"
                       v-if="!!expe[`wasteEvolution${item.value}`] && expe[`wasteEvolution${item.value}`] !== 'same'"
-                    ></v-text-field>
+                    />
 
                     <!-- Gaspillage -->
                     <label class="body-2 grey--text text--darken-3 font-weight-medium">
@@ -331,15 +319,13 @@
                           {{ wasteItem.label }}
                         </label>
                         <div>
-                          <v-text-field
+                          <DsfrTextField
                             validate-on-blur
                             hide-details="auto"
-                            solo
-                            dense
                             v-model.number="expe[`${wasteItem.fieldName}${item.value}`]"
                             :id="`${wasteItem.htmlId}-${item.value}`"
                             :suffix="$vuetify.breakpoint.xs ? 'g' : 'g/convive'"
-                          ></v-text-field>
+                          />
                         </div>
                         <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
                       </div>
@@ -380,22 +366,20 @@
                     >
                       Écart de la fréquentation en pourcentage
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                      solo
-                      dense
                       v-model.number="expe[`attendanceEvolutionPercentage${item.value}`]"
                       append-icon="mdi-percent"
                       style="max-width: 150px"
-                      class="mt-2 mb-8 body-2"
+                      class="mb-8 body-2"
                       :id="`attendance-evolution-percentage-${item.value}`"
                       v-if="
                         !!expe[`attendanceEvolution${item.value}`] &&
                           expe[`attendanceEvolution${item.value}`] !== 'same'
                       "
-                    ></v-text-field>
+                    />
 
                     <label class="body-2 grey--text text--darken-3 font-weight-medium d-block mb-4">
                       Le coût matière moyen des menus végétariens est-il supérieur aux autres menus ?
@@ -436,35 +420,31 @@
                     <label class="body-2 grey--text text--darken-3" :for="`vegetarian-cost-${item.value}`">
                       Coût moyen du repas végétarien (en € / assiette)
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty]"
-                      solo
-                      dense
                       v-model.number="expe[`vegetarianCost${item.value}`]"
                       append-icon="mdi-currency-eur"
                       style="max-width: 150px"
-                      class="mt-2 mb-4 body-2"
+                      class="mb-4 body-2"
                       :id="`vegetarian-cost-${item.value}`"
-                    ></v-text-field>
+                    />
 
                     <!-- Coût moyen / assiette non-végétarien -->
                     <label class="body-2 grey--text text--darken-3" :for="`non-vegetarian-cost-${item.value}`">
                       Coût moyen du repas non-végétarien (en € / assiette)
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty]"
-                      solo
-                      dense
                       v-model.number="expe[`nonVegetarianCost${item.value}`]"
                       append-icon="mdi-currency-eur"
                       style="max-width: 150px"
-                      class="mt-2 mb-8 body-2"
+                      class="mb-8 body-2"
                       :id="`non-vegetarian-cost-${item.value}`"
-                    ></v-text-field>
+                    />
 
                     <!-- Cost evolution -->
                     <label
@@ -498,19 +478,17 @@
                     >
                       Écart du coût facturé aux familles
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                      solo
-                      dense
                       v-model.number="expe[`costEvolutionPercentage${item.value}`]"
                       append-icon="mdi-percent"
                       style="max-width: 150px"
-                      class="mt-2 mb-8 body-2"
+                      class="mb-8 body-2"
                       :id="`cost-evolution-percentage-${item.value}`"
                       v-if="!!expe[`costEvolution${item.value}`] && expe[`costEvolution${item.value}`] !== 'same'"
-                    ></v-text-field>
+                    />
 
                     <v-checkbox v-model="expe[`costPerMealVg${item.value}`]" :id="`cost-per-meal-${item.value}`">
                       <template v-slot:label>
@@ -729,9 +707,11 @@ import { formatDate, getObjectDiff } from "@/utils"
 import { treatInboundPercentageValues, treatOutboundPercentageValues } from "./utils"
 import validators from "@/validators"
 import Constants from "@/constants"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
   name: "ExpeVegetarian",
+  components: { DsfrTextField },
   props: {
     canteen: Object,
   },

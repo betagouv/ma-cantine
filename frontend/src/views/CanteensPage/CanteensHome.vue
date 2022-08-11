@@ -39,19 +39,17 @@
     <v-sheet class="px-6" elevation="0">
       <v-row>
         <v-col cols="12" md="7" class="pt-0">
-          <form role="search" class="d-block d-sm-flex" onsubmit="return false">
-            <v-text-field
+          <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
+            <DsfrTextField
               hide-details="auto"
               ref="search"
               v-model="searchTerm"
-              outlined
               label="Recherche par nom de l'établissement"
               clearable
               @click:clear="clearSearch"
               @keyup.enter="search"
               class="mb-2"
-              dense
-            ></v-text-field>
+            />
             <v-btn outlined color="primary" class="ml-4 mb-2" height="40px" @click="search">
               <v-icon>mdi-magnify</v-icon>
               Chercher
@@ -168,17 +166,15 @@
                 >
                   bio minimum
                 </label>
-                <v-text-field
+                <DsfrTextField
                   :value="appliedFilters.minBio"
                   ref="minBio"
                   :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
                   @change="onChangeIntegerFilter('minBio')"
                   hide-details="auto"
                   append-icon="mdi-percent"
-                  outlined
                   placeholder="0"
                   aria-describedby="value-percentages-bio"
-                  dense
                 />
               </v-col>
               <v-col class="pa-0 pl-1">
@@ -192,17 +188,15 @@
                 >
                   bio, qualité et durables min
                 </label>
-                <v-text-field
+                <DsfrTextField
                   :value="appliedFilters.minCombined"
                   ref="minCombined"
                   :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
                   @change="onChangeIntegerFilter('minCombined')"
                   hide-details="auto"
-                  outlined
                   placeholder="0"
                   append-icon="mdi-percent"
                   aria-describedby="value-percentages-bio-qualite"
-                  dense
                 />
               </v-col>
             </div>
@@ -217,30 +211,36 @@
             >
               Repas par jour
             </label>
-            <div class="d-flex mt-1">
-              <v-text-field
-                :value="appliedFilters.minMealCount"
-                ref="minMealCount"
-                :rules="[validators.nonNegativeOrEmpty]"
-                @change="onChangeIntegerFilter('minMealCount')"
-                hide-details="auto"
-                outlined
-                label="Min"
-                aria-describedby="meal-count"
-                dense
-              />
+            <div class="d-flex">
+              <div>
+                <label class="caption" for="min-meal-count-field">
+                  Min
+                </label>
+                <DsfrTextField
+                  :value="appliedFilters.minMealCount"
+                  ref="minMealCount"
+                  :rules="[validators.nonNegativeOrEmpty]"
+                  @change="onChangeIntegerFilter('minMealCount')"
+                  hide-details="auto"
+                  id="min-meal-count-field"
+                  aria-describedby="meal-count"
+                />
+              </div>
               <span class="mx-2 align-self-center">-</span>
-              <v-text-field
-                :value="appliedFilters.maxMealCount"
-                ref="maxMealCount"
-                :rules="[validators.nonNegativeOrEmpty]"
-                @change="onChangeIntegerFilter('maxMealCount')"
-                hide-details="auto"
-                outlined
-                label="Max"
-                aria-describedby="meal-count"
-                dense
-              />
+              <div>
+                <label class="caption" for="max-meal-count-field">
+                  Max
+                </label>
+                <DsfrTextField
+                  :value="appliedFilters.maxMealCount"
+                  ref="maxMealCount"
+                  :rules="[validators.nonNegativeOrEmpty]"
+                  @change="onChangeIntegerFilter('maxMealCount')"
+                  hide-details="auto"
+                  aria-describedby="meal-count"
+                  id="max-meal-count-field"
+                />
+              </div>
             </div>
           </v-col>
           <v-col cols="12" sm="4" md="3">
@@ -336,14 +336,8 @@
           Dites-nous tout, nous ferons en sorte de leur communiquer votre intérêt pour leurs initiatives en place.
         </p>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
-          <v-text-field
-            v-model="fromEmail"
-            label="Votre email"
-            :rules="[validators.email]"
-            validate-on-blur
-            outlined
-          ></v-text-field>
-          <v-text-field v-model="name" label="Prénom et nom (facultatif)" outlined></v-text-field>
+          <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
+          <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
           <v-textarea v-model="message" label="Message" outlined :rules="[validators.required]"></v-textarea>
         </v-form>
         <v-row class="pa-2">
@@ -366,10 +360,12 @@ import { getObjectDiff, normaliseText, sectorsSelectList } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import DsfrTextField from "@/components/DsfrTextField"
 
 const DEFAULT_ORDER = "creation"
 
 export default {
+  components: { PublishedCanteenCard, BreadcrumbsNav, DsfrTextField },
   data() {
     const user = this.$store.state.loggedUser
     return {
@@ -423,7 +419,6 @@ export default {
       showFilters: false,
     }
   },
-  components: { PublishedCanteenCard, BreadcrumbsNav },
   computed: {
     loading() {
       return this.publishedCanteenCount === null

@@ -4,13 +4,12 @@
       La valeur (en HT) de mes achats alimentaires total
     </label>
 
-    <v-text-field
+    <DsfrTextField
       :id="'total-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueTotalHt"
@@ -21,7 +20,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueTotalHt"
@@ -43,13 +42,12 @@
       La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
     </label>
 
-    <v-text-field
+    <DsfrTextField
       :id="'meat-poultry-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueMeatPoultryHt"
@@ -60,7 +58,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
 
     <label :for="'fish-' + diagnostic.year" class="body-2 mt-4 d-block">
       <div class="d-inline-flex mr-2">
@@ -71,13 +69,12 @@
       La valeur (en HT) des mes achats en poissons et produits aquatiques total
     </label>
 
-    <v-text-field
+    <DsfrTextField
       :id="'fish-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueFishHt"
@@ -88,7 +85,7 @@
       @blur="checkTotal"
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    ></v-text-field>
+    />
 
     <br />
     <div v-for="(group, groupId) in characteristicGroups" :key="groupId">
@@ -148,7 +145,7 @@
                   {{ family.text }}
                 </label>
 
-                <v-text-field
+                <DsfrTextField
                   :id="inputHtmlId(fId, cId)"
                   hide-details="auto"
                   type="number"
@@ -162,7 +159,7 @@
                   :disabled="readonly"
                   class="mt-2"
                   @blur="checkTotal"
-                ></v-text-field>
+                />
                 <PurchaseHint
                   v-if="displayPurchaseHints"
                   v-model="diagnostic[diagnosticKey(fId, cId)]"
@@ -184,6 +181,7 @@ import Constants from "@/constants"
 import LogoBio from "@/components/LogoBio"
 import labels from "@/data/quality-labels.json"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
+import DsfrTextField from "@/components/DsfrTextField"
 
 const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que la somme des valeurs par label"
 const DEFAULT_FAMILY_TOTAL_ERROR = "La somme des achats par famille ne peut pas excéder le total des achats"
@@ -228,6 +226,7 @@ export default {
   components: {
     LogoBio,
     PurchaseHint,
+    DsfrTextField,
   },
   data() {
     const characteristicGroups = Constants.TeledeclarationCharacteristicGroups

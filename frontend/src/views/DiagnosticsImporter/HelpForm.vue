@@ -10,16 +10,10 @@
     <v-form v-model="helpFormIsValid" ref="helpForm" @submit.prevent class="my-12">
       <v-row class="mb-1">
         <v-col cols="12" md="6" class="py-0">
-          <v-text-field
-            v-model="fromEmail"
-            label="Votre email"
-            :rules="[validators.email]"
-            validate-on-blur
-            outlined
-          ></v-text-field>
+          <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
         </v-col>
         <v-col class="py-0">
-          <v-text-field v-model="name" label="Prénom et nom" outlined></v-text-field>
+          <DsfrTextField v-model="name" label="Prénom et nom" />
         </v-col>
       </v-row>
       <v-textarea v-model="message" label="Message (facultatif)" outlined></v-textarea>
@@ -41,9 +35,11 @@
 
 <script>
 import validators from "@/validators"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
   name: "HelpForm",
+  components: { DsfrTextField },
   data() {
     const user = this.$store.state.loggedUser
     return {

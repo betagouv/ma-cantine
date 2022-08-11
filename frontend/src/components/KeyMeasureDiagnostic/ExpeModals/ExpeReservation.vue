@@ -46,19 +46,17 @@
             min-width="auto"
           >
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
+              <DsfrTextField
                 :value="humanReadableDate(expe.reservationSystemStartDate)"
                 prepend-icon="mdi-calendar"
                 readonly
                 v-bind="attrs"
                 v-on="on"
                 hide-details="auto"
-                solo
-                dense
                 style="max-width: 200px"
                 id="date"
                 class="mt-2 mb-4"
-              ></v-text-field>
+              />
             </template>
 
             <v-date-picker
@@ -81,19 +79,17 @@
             min-width="auto"
           >
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
+              <DsfrTextField
                 :value="humanReadableDate(expe.experimentationStartDate)"
                 prepend-icon="mdi-calendar"
                 readonly
                 v-bind="attrs"
                 v-on="on"
                 hide-details="auto"
-                dense
-                solo
                 style="max-width: 200px"
                 id="date"
                 class="mt-2 mb-4"
-              ></v-text-field>
+              />
             </template>
 
             <v-date-picker v-model="expe.experimentationStartDate" :max="today" locale="fr-FR"></v-date-picker>
@@ -145,39 +141,33 @@
             <label class="body-2 grey--text text--darken-3" for="leader-first-name">
               Prénom du responsable
             </label>
-            <v-text-field
+            <DsfrTextField
               hide-details="auto"
-              solo
-              dense
               v-model="expe.leaderFirstName"
               style="max-width: 300px"
-              class="mt-2 mb-2 body-2"
+              class="mb-2 body-2"
               id="leader-first-name"
-            ></v-text-field>
+            />
             <label class="body-2 grey--text text--darken-3" for="leader-last-name">
               Nom du responsable
             </label>
-            <v-text-field
+            <DsfrTextField
               hide-details="auto"
-              solo
-              dense
               v-model="expe.leaderLastName"
               style="max-width: 300px"
-              class="mt-2 mb-4 body-2"
+              class="mb-4 body-2"
               id="leader-last-name"
-            ></v-text-field>
+            />
             <label class="body-2 grey--text text--darken-3" for="leader-email">
               Adresse email du responsable
             </label>
-            <v-text-field
+            <DsfrTextField
               hide-details="auto"
-              solo
-              dense
               v-model="expe.leaderEmail"
               style="max-width: 300px"
-              class="mt-2 mb-4 body-2"
+              class="mb-4 body-2"
               id="leader-email"
-            ></v-text-field>
+            />
           </div>
 
           <!-- has regulations -->
@@ -231,17 +221,15 @@
                       <span class="font-italic">{{ item.label }}</span>
                       sur 20 déjeuners successifs
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty]"
-                      solo
-                      dense
                       v-model.number="expe[`avgWeightNotServed${item.value}`]"
                       style="max-width: 300px"
-                      class="mt-2 mb-4 body-2"
+                      class="mb-4 body-2"
                       :id="`avg-weight-not-served-${item.value}`"
-                    ></v-text-field>
+                    />
 
                     <!-- average weight food scraps -->
                     <label class="body-2 grey--text text--darken-3" :for="`avg-weight-leftover-${item.value}`">
@@ -249,34 +237,30 @@
                       <span class="font-italic">{{ item.label }}</span>
                       sur 20 déjeuners successifs
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty]"
-                      solo
-                      dense
                       v-model.number="expe[`avgWeightLeftover${item.value}`]"
                       style="max-width: 300px"
-                      class="mt-2 mb-4 body-2"
+                      class="mb-4 body-2"
                       :id="`avg-weight-leftover-${item.value}`"
-                    ></v-text-field>
+                    />
 
                     <!-- ratio edible vs non-edible -->
                     <label class="body-2 grey--text text--darken-3" :for="`ratio-edible-${item.value}`">
                       Ratio de la part non comestible (g) rapportée à la part comestible (g)
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       suffix="%"
                       :rules="[validators.isPercentageOrEmpty]"
-                      solo
-                      dense
                       v-model.number="expe[`ratioEdibleNonEdible${item.value}`]"
                       style="max-width: 300px"
-                      class="mt-2 mb-4 body-2"
+                      class="mb-4 body-2"
                       :id="`ratio-edible-${item.value}`"
-                    ></v-text-field>
+                    />
 
                     <!-- average weight preparation leftovers -->
                     <label
@@ -285,33 +269,29 @@
                     >
                       Si vous préparez les repas sur place : moyenne des pesées des excédents de préparation (g/convive)
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty]"
-                      solo
-                      dense
                       v-model.number="expe[`avgWeightPreparationLeftover${item.value}`]"
                       style="max-width: 300px"
-                      class="mt-2 mb-4 body-2"
+                      class="mb-4 body-2"
                       :id="`avg-weight-preparation-leftover-${item.value}`"
-                    ></v-text-field>
+                    />
 
                     <!-- average bread leftover -->
                     <label class="body-2 grey--text text--darken-3" :for="`avg-bread-leftover-${item.value}`">
                       Moyenne des pesées des pains jetés sur 20 déjeuners successifs (g/convive)
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty]"
-                      solo
-                      dense
                       v-model.number="expe[`avgWeightBreadLeftover${item.value}`]"
                       style="max-width: 300px"
-                      class="mt-2 mb-4 body-2"
+                      class="mb-4 body-2"
                       :id="`avg-bread-leftover-${item.value}`"
-                    ></v-text-field>
+                    />
 
                     <!-- attendance rate -->
                     <label
@@ -322,34 +302,30 @@
                       déjeuners successifs de la période d'évaluation à
                       <span class="font-italic">{{ item.label }}</span>
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.nonNegativeOrEmpty]"
-                      solo
-                      dense
                       v-model.number="expe[`avgAttendanceFromEvaluation${item.value}`]"
                       style="max-width: 300px"
-                      class="mt-2 mb-4 body-2"
+                      class="mb-4 body-2"
                       :id="`avg-attendance-from-evaluation-${item.value}`"
-                    ></v-text-field>
+                    />
 
                     <!-- reservation system usage rate -->
                     <label class="body-2 grey--text text--darken-3" :for="`solution-use-rate-${item.value}`">
                       Taux d’utilisation de la solution de réservation
                     </label>
-                    <v-text-field
+                    <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
                       :rules="[validators.isPercentageOrEmpty]"
                       suffix="%"
-                      solo
-                      dense
                       v-model.number="expe[`solutionUseRate${item.value}`]"
                       style="max-width: 300px"
-                      class="mt-2 mb-4 body-2"
+                      class="mb-4 body-2"
                       :id="`solution-use-rate-${item.value}`"
-                    ></v-text-field>
+                    />
 
                     <!-- comments -->
                     <label class="body-2 grey--text text--darken-3" :for="`comments-${item.value}`">
@@ -386,35 +362,31 @@
                       <label class="body-2 grey--text text--darken-3" for="system-cost">
                         Coût de la solution de réservation sur 3 ans
                       </label>
-                      <v-text-field
+                      <DsfrTextField
                         validate-on-blur
                         hide-details="auto"
                         :rules="[validators.nonNegativeOrEmpty]"
                         suffix="€"
-                        solo
-                        dense
                         v-model.number="expe.systemCost"
                         style="max-width: 300px"
-                        class="mt-2 mb-4 body-2"
+                        class="mb-4 body-2"
                         id="system-cost"
-                      ></v-text-field>
+                      />
 
                       <!-- participation cost -->
                       <label class="body-2 grey--text text--darken-3" for="participation-cost">
                         Coûts liés à la participation à l'expérimentation sur 3 ans
                       </label>
-                      <v-text-field
+                      <DsfrTextField
                         validate-on-blur
                         hide-details="auto"
                         :rules="[validators.nonNegativeOrEmpty]"
                         suffix="€"
-                        solo
-                        dense
                         v-model.number="expe.participationCost"
                         style="max-width: 300px"
-                        class="mt-2 mb-4 body-2"
+                        class="mb-4 body-2"
                         id="participation-cost"
-                      ></v-text-field>
+                      />
 
                       <!-- participation cost -->
                       <label class="body-2 grey--text text--darken-3" for="participation-cost-details">
@@ -434,18 +406,16 @@
                       <label class="body-2 grey--text text--darken-3" for="money-saved">
                         Gains générés par l'évitement du gaspillage laimentaire en euros sur 3 ans
                       </label>
-                      <v-text-field
+                      <DsfrTextField
                         validate-on-blur
                         hide-details="auto"
                         :rules="[validators.nonNegativeOrEmpty]"
                         suffix="€"
-                        solo
-                        dense
                         v-model.number="expe.moneySaved"
                         style="max-width: 300px"
-                        class="mt-2 mb-4 body-2"
+                        class="mb-4 body-2"
                         id="money-saved"
-                      ></v-text-field>
+                      />
                     </div>
                   </v-card-text>
                 </v-card>
@@ -471,9 +441,10 @@ import { treatInboundPercentageValues, treatOutboundPercentageValues } from "./u
 import validators from "@/validators"
 import Constants from "@/constants"
 import DownloadLink from "../../DownloadLink.vue"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
-  components: { DownloadLink },
+  components: { DownloadLink, DsfrTextField },
   name: "ExpeReservation",
   props: {
     canteen: Object,

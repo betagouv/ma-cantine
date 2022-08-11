@@ -3,19 +3,17 @@
     <v-sheet class="px-3 mt-6 mb-6" elevation="0">
       <v-row>
         <v-col cols="12" md="7" class="pa-0" v-if="showSearch">
-          <form role="search" class="d-block d-sm-flex" onsubmit="return false">
-            <v-text-field
+          <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
+            <DsfrTextField
               hide-details="auto"
               ref="search"
               v-model="searchTerm"
-              outlined
               label="Recherche par nom de l'établissement"
               clearable
               @click:clear="clearSearch"
               @keyup.enter="search"
               class="mb-2"
-              dense
-            ></v-text-field>
+            />
             <v-btn outlined color="primary" class="ml-4 mb-2" height="40px" @click="search">
               <v-icon>mdi-magnify</v-icon>
               Chercher
@@ -68,10 +66,11 @@
 
 <script>
 import CanteenCard from "./CanteenCard"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
   name: "CanteensPagination",
-  components: { CanteenCard },
+  components: { CanteenCard, DsfrTextField },
   data() {
     return {
       limit: 5,

@@ -67,18 +67,17 @@
         </v-row>
 
         <v-row v-if="showPatData" class="d-block px-4 mt-2">
-          <v-text-field
+          <DsfrTextField
             label="Part de produits provenant d'un PAT"
             style="max-width: 400px;"
             append-icon="mdi-percent"
             type="number"
-            outlined
             validate-on-blur
             v-model="patPercentage"
             :rules="[validators.isPercentageOrEmpty]"
-          ></v-text-field>
+          />
 
-          <v-text-field label="Nom du PAT" outlined v-model="patName" hide-details></v-text-field>
+          <DsfrTextField label="Nom du PAT" v-model="patName" hide-details />
           <v-btn
             x-large
             color="primary"
@@ -120,17 +119,14 @@
         <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent>
           <h2 class="mb-4">À propos de votre cantine</h2>
           <p>
-            Je représente
-            <label for="canteen-name">la cantine</label>
-            <v-text-field
-              id="canteen-name"
+            <DsfrTextField
+              label="Je represénte la cantine"
               v-model="form.canteen.name"
               placeholder="nom de l'établissement"
               hide-details="auto"
               :rules="[validators.required]"
-              solo
               class="my-4"
-            ></v-text-field>
+            />
             dans
             <label for="commune">la commune de</label>
             <v-autocomplete
@@ -150,14 +146,12 @@
             ></v-autocomplete>
           </p>
           <p>
-            <label for="servings">Nous servons</label>
-            <v-text-field
-              id="servings"
+            <DsfrTextField
+              label="Nous servons"
               v-model.number="form.canteen.dailyMealCount"
               type="number"
               :rules="[validators.greaterThanZero]"
               placeholder="200"
-              solo
               class="my-4"
               suffix="repas par jour"
               hide-details="auto"
@@ -165,18 +159,17 @@
           </p>
           <h2 class="mb-4">À propos de vos achats</h2>
           <p>
-            <label for="total">
-              Sur l'année de {{ form.diagnostic.year }}, les achats alimentaires (repas, collations et boissons)
-              répresentent
-            </label>
-            <v-text-field
+            <DsfrTextField
+              :label="
+                `Sur l'année de ${form.diagnostic.year}, les achats alimentaires (repas, collations et boissons)
+              répresentent`
+              "
               id="total"
               v-model.number="form.diagnostic.valueTotalHt"
               type="number"
               :rules="[validators.greaterThanZero]"
               placeholder="15000"
               suffix="euros HT"
-              solo
               class="my-4"
               hide-details="auto"
               validate-on-blur
@@ -184,14 +177,13 @@
           </p>
           <p>
             Sur ce total,
-            <v-text-field
+            <DsfrTextField
               id="bio"
               v-model.number="form.diagnostic.valueBioHt"
               type="number"
               :rules="[validators.greaterThanZero]"
               placeholder="3000"
               suffix="euros HT"
-              solo
               class="my-4"
               hide-details="auto"
               validate-on-blur
@@ -199,14 +191,13 @@
             correspondaient à des
             <label for="bio">produits bio</label>
             ,
-            <v-text-field
+            <DsfrTextField
               id="sustainable"
               v-model.number="form.diagnostic.valueSustainableHt"
               type="number"
               :rules="[validators.greaterThanZero]"
               placeholder="2000"
               suffix="euros HT"
-              solo
               class="my-4"
               hide-details="auto"
               validate-on-blur
@@ -216,29 +207,27 @@
             .
           </p>
           <label for="pat-percent">Part de produits provenant d'un PAT</label>
-          <v-text-field
+          <DsfrTextField
             id="pat-percent"
             append-icon="mdi-percent"
             type="number"
             placeholder="30"
-            solo
             hide-details="auto"
             class="my-4"
             validate-on-blur
             v-model="form.patPercentage"
             :rules="[validators.isPercentageOrEmpty]"
-          ></v-text-field>
+          />
 
           <label for="pat-name">Nom du PAT</label>
-          <v-text-field
+          <DsfrTextField
             id="pat-name"
-            solo
             class="my-4"
             placeholder="Mon PAT"
             hide-details="auto"
             validate-on-blur
             v-model="form.patName"
-          ></v-text-field>
+          />
           <v-btn x-large class="my-4" color="primary" @click="submit">Générer mon affiche</v-btn>
           <p class="caption" v-if="!isAuthenticated">
             Pour ajouter une photo à l'affiche et accéder à d'autres fonctionnalités,
@@ -260,11 +249,13 @@ import html2pdf from "html2pdf.js"
 import validators from "@/validators"
 import { lastYear, normaliseText } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
   components: {
     CanteenPoster,
     BreadcrumbsNav,
+    DsfrTextField,
   },
   data() {
     return {

@@ -39,6 +39,7 @@
           :readonly="readonly"
           :disabled="readonly"
         ></v-checkbox>
+        <!-- Will leave this UI version of the text-field since it is next to a checkbox -->
         <v-text-field
           class="my-0 py-0"
           hide-details

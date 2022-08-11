@@ -18,15 +18,14 @@
             ></v-select>
           </v-col>
           <v-col cols="12" sm="7" v-if="showOtherField" class="my-0">
-            <v-text-field
+            <DsfrTextField
               label="Ma fonction"
               :rules="[validators.required]"
-              solo
               v-model="otherJobDescription"
               hide-details="auto"
-            ></v-text-field>
+            />
           </v-col>
-          <v-col>
+          <v-col class="d-flex align-end">
             <v-btn color="primary" height="3.5em" @click="updateProfile">Valider</v-btn>
           </v-col>
         </v-row>
@@ -42,15 +41,14 @@
             ></v-select>
           </v-col>
           <v-col cols="12" sm="7" v-if="showOtherSourceField" class="my-0">
-            <v-text-field
+            <DsfrTextField
               label="Autre endroit"
               :rules="[validators.required]"
-              solo
               v-model="otherSourceDescription"
               hide-details="auto"
-            ></v-text-field>
+            />
           </v-col>
-          <v-col>
+          <v-col class="d-flex align-end">
             <v-btn color="primary" height="3.5em" @click="updateProfile">Valider</v-btn>
           </v-col>
         </v-row>
@@ -62,8 +60,10 @@
 <script>
 import Constants from "@/constants"
 import validators from "@/validators"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
+  components: { DsfrTextField },
   data() {
     return {
       validators,
