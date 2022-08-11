@@ -2,7 +2,7 @@
   <div>
     <h2 class="text-h4 font-weight-black mb-12">Les objectifs de la loi EGAlim</h2>
 
-    <v-row>
+    <v-row class="mb-8">
       <v-col cols="12" sm="4">
         <v-icon color="grey darken-3" class="mb-2" x-large>mdi-food-variant</v-icon>
         <p class="mt-4 text-center text-sm-left">
@@ -23,15 +23,21 @@
           Assurer la juste rémunération des agriculteurs du secteur agricole.
         </p>
       </v-col>
-
-      <a
-        color="primary"
-        class="text-body-2 font-weight-medium mx-auto mt-4 text-decoration-underline"
+    </v-row>
+    <v-row justify="center">
+      <DownloadLink
+        label="Télécharger le livret de la loi EGAlim concernant la restauration collective"
         href="/static/documents/Les mesures de la loi EGAlim restauration collective.pdf"
-        target="_blank"
-      >
-        Télécharger le livret de la loi EGAlim concernant la restauration collective
-      </a>
+        sizeStr="482 ko"
+      />
     </v-row>
   </div>
 </template>
+
+<script>
+import DownloadLink from "@/components/DownloadLink"
+
+export default {
+  components: { DownloadLink },
+}
+</script>

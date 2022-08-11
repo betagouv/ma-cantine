@@ -1,5 +1,6 @@
 <template>
   <div>
+    <BreadcrumbsNav />
     <v-card elevation="0" class="text-center text-md-left mb-6 mt-3">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
         <v-col cols="12">
@@ -364,6 +365,7 @@ import jsonRegions from "@/regions.json"
 import { getObjectDiff, normaliseText, sectorsSelectList } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 const DEFAULT_ORDER = "creation"
 
@@ -421,7 +423,7 @@ export default {
       showFilters: false,
     }
   },
-  components: { PublishedCanteenCard },
+  components: { PublishedCanteenCard, BreadcrumbsNav },
   computed: {
     loading() {
       return this.publishedCanteenCount === null

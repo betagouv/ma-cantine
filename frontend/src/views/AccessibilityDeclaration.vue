@@ -1,5 +1,6 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav />
     <h1 class="font-weight-black my-6">Déclaration d'accessibilité</h1>
     <p>
       <span>Le ministère de l'agriculture et de l'alimentation</span>
@@ -129,3 +130,12 @@
     </p>
   </div>
 </template>
+
+<script>
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+
+export default {
+  name: "AccessibilityDeclaration",
+  components: { BreadcrumbsNav },
+}
+</script>

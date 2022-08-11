@@ -1,8 +1,6 @@
 <template>
   <div class="text-left">
-    <div class="mt-2">
-      <BackLink :to="{ name: 'DiagnosticsImporter' }" text="Choisir un autre niveau" />
-    </div>
+    <BreadcrumbsNav :links="[{ to: { name: 'DiagnosticsImporter' } }]" :title="type.title" />
 
     <v-row class="my-4 mx-0">
       <v-icon large class="mr-4" color="black">{{ type.icon }}</v-icon>
@@ -16,25 +14,13 @@
         .
       </a>
     </p>
-    <p>
-      Vous pouvez également télécharger un fichier exemple en format de choix :
-      <a class="text-decoration-underline" :href="`${exampleFilename}.csv`" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        CSV (.csv)
-      </a>
-      <a class="text-decoration-underline" :href="`${exampleFilename}.xlsx`" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        Excel (.xlsx)
-      </a>
-      <a class="text-decoration-underline" :href="`${exampleFilename}.ods`" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        OpenDocument (.ods)
-      </a>
-      .
-    </p>
+    <DownloadLinkList
+      groupTitle="On met à votre disposition un fichier exemple avec les données en bon format"
+      :links="downloadLinks"
+    />
 
     <!-- TODO: for now hide if COMPLETE -->
-    <v-alert v-if="isStaff" outlined type="info" class="body-2 blue--text text--darken-2">
+    <v-alert v-if="isStaff" outlined type="info" class="body-2 blue--text text--darken-2 my-4">
       En tant que membre de l'équipe ma cantine, vous pouvez ajoter trois colonnes additionnelles à la fin du fichier
       CSV :
       <br />
@@ -224,37 +210,25 @@
     </v-simple-table>
     <p v-else>Rien d'autre colonnes requises.</p>
 
-    <h4 class="my-6">Fichiers d'exemple</h4>
-    <p>
-      Nous mettons à votre disposition un fichier exemple en format de choix :
-      <a class="text-decoration-underline" :href="`${exampleFilename}.csv`" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        CSV (.csv)
-      </a>
-      <a class="text-decoration-underline" :href="`${exampleFilename}.xlsx`" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        Excel (.xlsx)
-      </a>
-      <a class="text-decoration-underline" :href="`${exampleFilename}.ods`" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        OpenDocument (.ods)
-      </a>
-      à remplir avec vos données.
-    </p>
+    <DownloadLinkList
+      groupTitle="On met à votre disposition un fichier exemple avec les données en bon format"
+      :links="downloadLinks"
+    />
 
     <HelpForm />
   </div>
 </template>
 
 <script>
-import BackLink from "@/components/BackLink"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import FileDrop from "@/components/FileDrop"
 import HelpForm from "./HelpForm"
 import Constants from "@/constants"
+import DownloadLinkList from "@/components/DownloadLinkList.vue"
 
 export default {
   name: "DiagnosticImportPage",
-  components: { BackLink, FileDrop, HelpForm },
+  components: { BreadcrumbsNav, FileDrop, HelpForm, DownloadLinkList },
   props: ["importLevel"],
   data() {
     const user = this.$store.state.loggedUser
@@ -495,11 +469,34 @@ export default {
       })
       return array
     },
-    exampleFilename() {
-      const root = "/static/documents/"
-      const filename =
+    downloadLinks() {
+      const labels = {
+        xlsx: "Excel",
+        ods: "OpenDocument",
+        csv: "CSV",
+      }
+      const simpleFileSizes = {
+        csv: "771 o",
+        ods: "11 Ko",
+        xlsx: "11 Ko",
+      }
+      const importSizes = {
+        COMPLETE: {
+          csv: "5 Ko",
+          ods: "15 Ko",
+          xlsx: "13 Ko",
+        },
+        SIMPLE: simpleFileSizes,
+        NONE: simpleFileSizes,
+      }
+      let filename =
         this.importLevel === "COMPLETE" ? "fichier_exemple_complet_ma_cantine" : "fichier_exemple_ma_cantine"
-      return root + filename
+      filename = "/static/documents/" + filename
+      return ["xlsx", "ods", "csv"].map((fileType) => ({
+        href: `${filename}.${fileType}`,
+        label: `Télécharger le fichier exemple en format ${labels[fileType]}`,
+        sizeStr: importSizes[this.importLevel][fileType],
+      }))
     },
     importDocString() {
       return {
@@ -508,6 +505,9 @@ export default {
         NONE: "l'import de cantines seulement",
       }[this.importLevel]
     },
+  },
+  created() {
+    document.title = `${this.type.title} - Importer des diagnostics - ${this.$store.state.pageTitleSuffix}`
   },
   methods: {
     upload() {

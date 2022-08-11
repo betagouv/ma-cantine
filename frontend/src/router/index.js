@@ -413,7 +413,7 @@ const routes = [
     component: PurchasePage,
     props: true,
     meta: {
-      title: "Mon achat",
+      title: "Modifier mon achat",
       authenticationRequired: true,
     },
   },

@@ -1,6 +1,7 @@
 <template>
   <div id="content" class="text-left">
-    <h1 class="font-weight-black my-6">
+    <BreadcrumbsNav />
+    <h1 class="font-weight-black mb-6">
       Générez votre affiche
       <br />
       «&nbsp;information des convives&nbsp;»
@@ -258,10 +259,12 @@ import CanteenPoster from "./CanteenPoster"
 import html2pdf from "html2pdf.js"
 import validators from "@/validators"
 import { lastYear, normaliseText } from "@/utils"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   components: {
     CanteenPoster,
+    BreadcrumbsNav,
   },
   data() {
     return {

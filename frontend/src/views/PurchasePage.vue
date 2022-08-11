@@ -1,11 +1,9 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav :links="[{ to: { name: 'PurchasesHome' } }]" />
+
     <div v-if="loading">
       <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
-    </div>
-
-    <div>
-      <BackLink :to="backLink" text="Revenir aux achats" />
     </div>
 
     <div v-if="purchase">
@@ -247,14 +245,14 @@
 <script>
 import FileDrop from "@/components/FileDrop"
 import FilePreview from "@/components/FilePreview"
-import BackLink from "@/components/BackLink"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import { toBase64, getObjectDiff, normaliseText, formatDate } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 
 export default {
   name: "PurchasePage",
-  components: { FileDrop, FilePreview, BackLink },
+  components: { FileDrop, FilePreview, BreadcrumbsNav },
   data() {
     return {
       originalPurchase: null,
