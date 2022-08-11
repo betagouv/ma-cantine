@@ -151,6 +151,7 @@
       <a href="https://github.com/betagouv/ma-cantine/" target="_blank" rel="noopener">
         https://github.com/betagouv/ma-cantine/
       </a>
+      <v-icon small color="primary">mdi-open-in-new</v-icon>
     </p>
     <p>
       Le Service est mis à disposition sans autres garanties expresses ou tacites que celles qui sont prévues par les
