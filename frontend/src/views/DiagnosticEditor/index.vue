@@ -53,14 +53,12 @@
                   <v-icon small>mdi-check-circle</v-icon>
                   Ce diagnostic a été télédéclaré {{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.
                 </p>
-                <v-btn
-                  large
-                  color="primary"
+                <DownloadLink
                   :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
-                >
-                  <v-icon class="mr-2">mdi-file-download</v-icon>
-                  Télécharger mon justificatif
-                </v-btn>
+                  label="Télécharger mon justificatif"
+                  sizeStr="60 Ko"
+                  target="_blank"
+                />
               </div>
             </div>
 
@@ -226,6 +224,7 @@ import InformationMeasure from "@/components/KeyMeasureDiagnostic/InformationMea
 import WasteMeasure from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/DiversificationMeasure"
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
+import DownloadLink from "@/components/DownloadLink"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import SimplifiedQualityValues from "./SimplifiedQualityValues"
@@ -280,6 +279,7 @@ export default {
     SimplifiedQualityValues,
     ExtendedQualityValues,
     TeledeclarationPreview,
+    DownloadLink,
   },
   props: {
     canteenUrlComponent: {

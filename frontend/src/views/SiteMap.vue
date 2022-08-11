@@ -1,5 +1,6 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav />
     <h1 class="font-weight-black my-8">Plan du site</h1>
     <v-row>
       <v-col v-for="group in sitemapGroups" :key="group.title" cols="6">
@@ -19,9 +20,11 @@
 <script>
 import { routes } from "@/router"
 import Constants from "@/constants"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "SiteMap",
+  components: { BreadcrumbsNav },
   data() {
     const isAuthenticated = !!this.$store.state.loggedUser
     let sitemapRoutes = JSON.parse(JSON.stringify(routes))

@@ -1,7 +1,8 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav />
     <v-row align="center">
-      <v-col cols="12" sm="10" class="py-12">
+      <v-col cols="12" sm="10" class="pb-12">
         <h1 class="text-h4 font-weight-black mb-8">Foire aux questions</h1>
         <p>
           Vous n'êtes pas familier avec les obligations réglementaires ? Vous vous posez des questions sur votre
@@ -24,9 +25,11 @@
 </template>
 
 <script>
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import FaqPanels from "./FaqPanels"
+
 export default {
   name: "FaqPage",
-  components: { FaqPanels },
+  components: { FaqPanels, BreadcrumbsNav },
 }
 </script>

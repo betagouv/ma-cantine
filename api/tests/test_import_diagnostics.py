@@ -199,6 +199,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        self.assertEqual(Diagnostic.objects.count(), 0)
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
         error = body["errors"][0]
@@ -249,10 +250,11 @@ class TestImportDiagnosticsAPI(APITestCase):
         with open("./api/tests/files/mix_diag_canteen_import.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(Diagnostic.objects.count(), 1)
         body = response.json()
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
-        self.assertEqual(Diagnostic.objects.count(), 1)
         diagnostic = Diagnostic.objects.first()
         self.assertEqual(diagnostic.canteen.siret, "73282932000074")
         self.assertEqual(Diagnostic.objects.filter(canteen=Canteen.objects.get(siret="21340172201787")).count(), 0)
@@ -340,6 +342,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         If errors occur, discard the file and return the errors with row and message
         """
+        # creating 2 canteens with same siret here to error when this situation exists IRL
         CanteenFactory.create(siret="42111303053388")
         CanteenFactory.create(siret="42111303053388")
         with open("./api/tests/files/diagnostics_bad_file.csv") as diag_file:
@@ -347,6 +350,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 0)
+        # no new objects should have been saved to the DB since it failed
+        self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(Diagnostic.objects.count(), 0)
         errors = body["errors"]
         first_error = errors.pop(0)
@@ -577,6 +582,153 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(len(mail.outbox), 0)
+
+    @authenticate
+    def test_success_complete_diagnostic_import(self, _):
+        """
+        Users should be able to import a complete diagnostic
+        """
+        with open("./api/tests/files/complete_diagnostics.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 2)
+        finished_diag = Diagnostic.objects.get(canteen__siret="29969025300230", year=2021)
+        self.assertEqual(finished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        self.assertEqual(finished_diag.value_total_ht, 10500)
+        self.assertEqual(finished_diag.value_meat_poultry_ht, 800)
+        self.assertEqual(finished_diag.value_fish_ht, 900)
+        self.assertEqual(finished_diag.total_label_bio, 80)
+        self.assertEqual(finished_diag.total_label_label_rouge, 90)
+        self.assertEqual(finished_diag.total_label_aocaop_igp_stg, 100)
+        self.assertEqual(finished_diag.total_label_hve, 110)
+        self.assertEqual(finished_diag.total_label_peche_durable, 120)
+        self.assertEqual(finished_diag.total_label_rup, 130)
+        self.assertEqual(finished_diag.total_label_commerce_equitable, 140)
+        self.assertEqual(finished_diag.total_label_fermier, 150)
+        self.assertEqual(finished_diag.total_label_externalites, 160)
+        self.assertEqual(finished_diag.total_label_performance, 170)
+        self.assertEqual(finished_diag.total_label_france, 180)
+        self.assertEqual(finished_diag.total_label_short_distribution, 190)
+        self.assertEqual(finished_diag.total_label_local, 200)
+        self.assertEqual(finished_diag.total_family_viandes_volailles, 130)
+        self.assertEqual(finished_diag.total_family_produits_de_la_mer, 130)
+        self.assertEqual(finished_diag.total_family_fruits_et_legumes, 130)
+        self.assertEqual(finished_diag.total_family_charcuterie, 130)
+        self.assertEqual(finished_diag.total_family_produits_laitiers, 130)
+        self.assertEqual(finished_diag.total_family_boulangerie, 130)
+        self.assertEqual(finished_diag.total_family_boissons, 130)
+        self.assertEqual(finished_diag.total_family_autres, 910)
+        # auto-calculated simplified fields
+        self.assertEqual(finished_diag.value_bio_ht, 80)
+        self.assertEqual(finished_diag.value_sustainable_ht, 190)
+        self.assertEqual(finished_diag.value_externality_performance_ht, 330)
+        self.assertEqual(finished_diag.value_egalim_others_ht, 650)
+        self.assertEqual(finished_diag.value_meat_poultry_egalim_ht, 100)
+        self.assertEqual(finished_diag.value_meat_poultry_france_ht, 30)
+        self.assertEqual(finished_diag.value_fish_egalim_ht, 100)
+
+        unfinished_diag = Diagnostic.objects.get(canteen__siret="29969025300230", year=2022)
+        self.assertEqual(unfinished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        self.assertEqual(unfinished_diag.value_total_ht, 30300)  # picked a field at random to smoke test
+        self.assertEqual(unfinished_diag.value_meat_poultry_ht, None)
+        self.assertEqual(unfinished_diag.value_fish_ht, 10)
+        self.assertEqual(unfinished_diag.value_autres_label_rouge, None)  # picked a field at random to smoke test
+
+    @authenticate
+    def test_complete_diagnostic_error_collection(self, _):
+        """
+        Test that the expected errors are returned for a badly formatted file for complete diagnostic
+        """
+        with open("./api/tests/files/bad_complete_diagnostics.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        errors = body["errors"]
+        self.assertGreater(len(errors), 0)
+        first_error = errors.pop(0)
+        self.assertEqual(
+            first_error["message"],
+            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
+        )
+        # two of the same error, generated in slightly different ways
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Données manquantes : au moins 12 colonnes attendues, 11 trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Produits aquatiques frais et surgelés, Bio' : Ce champ doit être vide ou un nombre décimal.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGAlim, 100, est plus que la valeur totale (HT) viandes et volailles, 10",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 920, est plus que la valeur totale (HT) viandes et volailles, 100",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGAlim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 10",
+        )
+
+        with open("./api/tests/files/bad_header_complete_diagnostics_0.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+        body = response.json()
+
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Deux lignes en-tête attendues, 0 trouvée. Veuillez vérifier que vous voulez importer les diagnostics complets, et assurez-vous que le format de l'en-tête suit les exemples donnés.",
+        )
+
+        with open("./api/tests/files/bad_header_complete_diagnostics_1.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+        body = response.json()
+
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Deux lignes en-tête attendues, 1 trouvée. Veuillez vérifier que vous voulez importer les diagnostics complets, et assurez-vous que le format de l'en-tête suit les exemples donnés.",
+        )
+
+    # TODO: replace when allowing staff to add metadata
+    @authenticate
+    def test_tmp_no_staff_complete_diag(self, _):
+        """
+        Test error is thrown if staff attempts to add metadata
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.save()
+        authenticate.user.refresh_from_db()
+        with open("./api/tests/files/staff_complete_diagnostics.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        errors = body["errors"]
+        self.assertGreater(len(errors), 0)
+        self.assertEqual(errors.pop(0)["message"], "Format fichier : 119 colonnes attendues, 122 trouvées.")
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
+        )
 
     @override_settings(CONTACT_EMAIL="team@example.com")
     @authenticate

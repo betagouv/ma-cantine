@@ -1,8 +1,9 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav />
     <div class="d-flex">
       <div>
-        <h1 class="font-weight-black text-h5 text-sm-h4 my-4" style="width: 100%">
+        <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
           Mes achats
         </h1>
         <p>
@@ -245,10 +246,11 @@
 import { formatDate, getObjectDiff } from "@/utils"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "PurchasesHome",
-  components: { DsfrTextField },
+  components: { DsfrTextField, BreadcrumbsNav },
   data() {
     return {
       searchTerm: null,

@@ -1,5 +1,6 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav />
     <v-row class="my-4 align-center">
       <v-col cols="12" sm="2" class="pl-2 pr-2 pl-md-8 pr-md-0">
         <v-img src="/static/images/doodles/primary/Hi.png" max-height="180" contain></v-img>
@@ -68,10 +69,11 @@ import TheNewsletter from "@/components/TheNewsletter"
 import FacebookSection from "./FacebookSection"
 import FaqSection from "./FaqSection"
 import { hideCommunityEventsBanner } from "@/utils"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "CommunityPage",
-  components: { WebinaireCard, TheNewsletter, FacebookSection, FaqSection },
+  components: { WebinaireCard, TheNewsletter, FacebookSection, FaqSection, BreadcrumbsNav },
   data() {
     return {
       links: [

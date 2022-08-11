@@ -1,6 +1,7 @@
 <template>
   <div class="text-left grey--text text--darken-4">
-    <h1 class="text-h4 font-weight-black black--text mt-3 mb-6">Découvrir les démarches chez vous</h1>
+    <BreadcrumbsNav :links="[{ to: { name: 'CanteensHome' } }]" />
+    <h1 class="text-h4 font-weight-black black--text mb-6">Découvrir les démarches chez vous</h1>
 
     <v-card outlined>
       <v-card-text>
@@ -215,12 +216,14 @@ import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 import { lastYear, normaliseText, sectorsSelectList } from "@/utils"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "PublicCanteenStatisticsPage",
   components: {
     BadgeCard,
     VueApexCharts,
+    BreadcrumbsNav,
   },
   data() {
     return {

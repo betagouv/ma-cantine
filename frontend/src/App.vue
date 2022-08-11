@@ -122,4 +122,8 @@ export default {
 .v-card.dsfr:hover {
   background-color: #f6f6f6;
 }
+
+.v-expansion-panel-header__icon > .v-icon {
+  font-size: 1rem;
+}
 </style>

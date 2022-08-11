@@ -1,5 +1,6 @@
 <template>
   <div class="text-left">
+    <BreadcrumbsNav />
     <h1 class="font-weight-black my-6">
       Conditions générales d'utilisation de « ma cantine »
     </h1>
@@ -151,6 +152,7 @@
       <a href="https://github.com/betagouv/ma-cantine/" target="_blank" rel="noopener">
         https://github.com/betagouv/ma-cantine/
       </a>
+      <v-icon small color="primary">mdi-open-in-new</v-icon>
     </p>
     <p>
       Le Service est mis à disposition sans autres garanties expresses ou tacites que celles qui sont prévues par les
@@ -200,3 +202,12 @@
     </ul>
   </div>
 </template>
+
+<script>
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+
+export default {
+  name: "CGU",
+  components: { BreadcrumbsNav },
+}
+</script>

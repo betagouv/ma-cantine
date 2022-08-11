@@ -170,11 +170,23 @@
 
 <script>
 import HeaderDropdownList from "@/components/HeaderDropdownList"
+import keyMeasures from "@/data/key-measures.json"
 
 export default {
   name: "AppHeader",
   components: { HeaderDropdownList },
   data() {
+    const keyMeasureLinks = keyMeasures.map((km) => {
+      return {
+        text: km.shortTitle,
+        to: {
+          name: "KeyMeasurePage",
+          params: {
+            id: km.id,
+          },
+        },
+      }
+    })
     return {
       extended: true,
       logoutWarningDialog: false,
@@ -209,15 +221,7 @@ export default {
         {
           text: "À propos de la loi EGAlim",
           children: [
-            {
-              text: "Mesures phares",
-              to: {
-                name: "KeyMeasurePage",
-                params: {
-                  id: "qualite-des-produits",
-                },
-              },
-            },
+            ...keyMeasureLinks,
             {
               text: "Documentation",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
