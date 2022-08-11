@@ -27,7 +27,7 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="py-0" v-for="subMeasure in measure.subMeasures" :key="`submeasure: ${subMeasure.id}`">
-          <v-btn class="d-inline mt-n1" text plain :ripple="false" @click="toggleDescriptionDisplay(subMeasure)">
+          <v-btn class="d-inline mt-n1" text plain @click="toggleDescriptionDisplay(subMeasure)">
             <span>{{ subMeasure.title }}.&nbsp;</span>
             <span class="text-decoration-underline">{{ subMeasure.readMore ? "Moins" : "En savoir plus" }}</span>
           </v-btn>
