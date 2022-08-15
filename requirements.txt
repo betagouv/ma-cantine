@@ -8,7 +8,7 @@ attrs==22.1.0
 backports.zoneinfo==0.2.1
 billiard==3.6.4.0
 black==22.6.0
-boto3==1.24.46
+boto3==1.24.51
 botocore==1.27.46
 celery==5.2.7
 certifi==2022.6.15
@@ -101,7 +101,7 @@ toml==0.10.2
 tomli==2.0.1
 tqdm==4.64.0
 typing_extensions==4.3.0
-tzdata==2022.1
+tzdata==2022.2
 tzlocal==4.2
 uritools==4.0.0
 urllib3==1.26.11
