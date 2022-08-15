@@ -75,17 +75,23 @@ input[type="number"],
 select,
 .control-group .easy-autocomplete input {
   width: 100%;
-  height: 42px;
+  height: 40px;
   box-sizing: border-box;
-  border: 1px solid #b2b5c2;
-  border-radius: 0px;
+  border: none;
   outline: none;
   padding: 0 12px;
+  border-radius: 0.25rem 0.25rem 0 0;
+  background-color: #eee !important;
+  box-shadow: inset 0 -2px 0 0 #3a3a3a;
 }
 input[type="text"]:focus,
 input[type="password"]:focus,
 input[type="email"]:focus {
-  border: 2px solid #000091;
+  outline-style: solid;
+  outline-width: 2px;
+  outline-color: #0a76f6;
+  outline-offset: 2px;
+  border-radius: 2px 2px 0 0;
 }
 label {
   display: block;
@@ -204,11 +210,6 @@ label[for="id_number_of_managed_cantines"] {
 input.cantine-number-input {
   display: inline-block;
   width: 100px;
-  border-top: solid 1px #ecececba;
-  border-left: solid 1px #ecececba;
-  border-right: solid 1px #ecececba;
-  border-bottom: solid 2px #737373;
-  border-radius: 0;
   margin-left: 15px;
 }
 
