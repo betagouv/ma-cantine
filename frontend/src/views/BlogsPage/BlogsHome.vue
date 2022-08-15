@@ -24,19 +24,17 @@
     <v-row>
       <v-spacer></v-spacer>
       <v-col cols="12" sm="4">
-        <v-select
+        <DsfrSelect
           v-model="tag"
           :items="tags"
           clearable
           hide-details
           id="select-tag"
-          outlined
           class="mt-1"
-          dense
           width="fit-content"
           label="Filtrer par type d'article"
           @change="page = 1"
-        ></v-select>
+        />
       </v-col>
     </v-row>
     <div v-if="loading" class="mt-8">
@@ -64,10 +62,11 @@
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import BlogCard from "./BlogCard"
+import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
   name: "BlogsHome",
-  components: { BlogCard, BreadcrumbsNav },
+  components: { BlogCard, BreadcrumbsNav, DsfrSelect },
   data() {
     return {
       limit: 6,

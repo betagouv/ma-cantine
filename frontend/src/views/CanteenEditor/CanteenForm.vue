@@ -257,40 +257,38 @@
         <v-col cols="12" md="6">
           <div>
             <p class="body-2">Secteurs d'activité</p>
-            <v-select
+            <DsfrSelect
               multiple
               :items="sectors"
-              solo
               v-model="canteen.sectors"
               item-text="name"
               item-value="id"
               hide-details
-            ></v-select>
+            />
           </div>
         </v-col>
         <v-col cols="12" md="6">
           <div>
             <p class="body-2">Type d'établissement</p>
-            <v-select
+            <DsfrSelect
               :items="economicModels"
               solo
               v-model="canteen.economicModel"
               placeholder="Sélectionnez..."
               hide-details="auto"
               clearable
-            ></v-select>
+            />
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12">
           <p class="body-2">Ministère de tutelle</p>
-          <v-select
+          <DsfrSelect
             :items="ministries"
-            solo
             v-model="canteen.lineMinistry"
             placeholder="Sélectionnez le Ministère de tutelle"
             hide-details="auto"
             clearable
-          ></v-select>
+          />
         </v-col>
 
         <v-col cols="12" sm="6" md="3">
@@ -343,12 +341,20 @@ import ImagesField from "./ImagesField"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrSelect from "@/components/DsfrSelect"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "CanteenForm",
-  components: { PublicationStateNotice, ImagesField, TechnicalControlDialog, DsfrTextField, DsfrAutocomplete },
+  components: {
+    PublicationStateNotice,
+    ImagesField,
+    TechnicalControlDialog,
+    DsfrTextField,
+    DsfrAutocomplete,
+    DsfrSelect,
+  },
   props: {
     canteenUrlComponent: {
       type: String,

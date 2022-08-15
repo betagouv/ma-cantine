@@ -45,7 +45,7 @@
               <label for="select-sector" class="text-body-2">
                 Secteur d'activité
               </label>
-              <v-select
+              <DsfrSelect
                 v-model="chosenSectors"
                 multiple
                 :items="sectorsList"
@@ -55,10 +55,8 @@
                 hide-details
                 id="select-sector"
                 placeholder="Tous les secteurs"
-                outlined
                 class="mt-1"
-                dense
-              ></v-select>
+              />
             </v-col>
           </v-row>
           <v-row class="mt-8">
@@ -215,6 +213,7 @@ import jsonRegions from "@/regions.json"
 import { lastYear, normaliseText, sectorsSelectList } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
   name: "PublicCanteenStatisticsPage",
@@ -223,6 +222,7 @@ export default {
     VueApexCharts,
     BreadcrumbsNav,
     DsfrAutocomplete,
+    DsfrSelect,
   },
   data() {
     return {

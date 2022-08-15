@@ -86,17 +86,16 @@
               </v-col>
               <v-col cols="12" md="5">
                 <label class="body-2" for="sectors">Secteurs d'activité</label>
-                <v-select
+                <DsfrSelect
                   id="sectors"
                   class="mt-2"
                   multiple
                   :items="sectors"
-                  solo
                   v-model="satellite.sectors"
                   item-text="name"
                   item-value="id"
                   hide-details
-                ></v-select>
+                />
               </v-col>
               <v-spacer></v-spacer>
               <v-col class="align-self-end">
@@ -116,10 +115,11 @@
 import validators from "@/validators"
 import { sectorsSelectList, getObjectDiff } from "@/utils"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
   name: "SatelliteManagement",
-  components: { DsfrTextField },
+  components: { DsfrTextField, DsfrSelect },
   props: {
     originalCanteen: Object,
   },

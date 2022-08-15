@@ -62,7 +62,7 @@
       </v-row>
 
       <div class="d-flex align-center mt-2 mt-sm-6 mb-2">
-        <v-badge :value="hasActiveFilter" color="primary" dot overlap>
+        <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap>
           <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1 py-4 py-sm-0">
             <v-icon small>mdi-filter-outline</v-icon>
             <span v-if="showFilters">Cacher les filtres</span>
@@ -87,16 +87,14 @@
               >
                 Famille de produit
               </label>
-              <v-select
+              <DsfrSelect
                 v-model="appliedFilters.family"
                 id="filter-family"
                 :items="productFamilies"
                 hide-details
-                dense
-                outlined
                 clearable
                 class="mt-2"
-              ></v-select>
+              />
             </v-col>
             <v-col cols="12" sm="6">
               <label
@@ -105,17 +103,15 @@
               >
                 Caractéristiques
               </label>
-              <v-select
+              <DsfrSelect
                 id="filter-characteristics"
                 v-model="appliedFilters.characteristics"
                 :items="characteristics"
                 hide-details
-                dense
-                outlined
                 clearable
                 multiple
                 class="mt-2"
-              ></v-select>
+              />
             </v-col>
           </v-row>
           <v-row class="mt-0">
@@ -247,10 +243,11 @@ import { formatDate, getObjectDiff } from "@/utils"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
   name: "PurchasesHome",
-  components: { DsfrTextField, BreadcrumbsNav },
+  components: { DsfrTextField, BreadcrumbsNav, DsfrSelect },
   data() {
     return {
       searchTerm: null,
@@ -498,6 +495,6 @@ export default {
 }
 .active-filter-label::before {
   content: "⚫︎";
-  color: #0c7f46;
+  color: #ce614a;
 }
 </style>

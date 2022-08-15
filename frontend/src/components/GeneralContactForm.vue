@@ -3,22 +3,14 @@
     <v-row>
       <v-col>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
-          <DsfrTextField
-            v-model="fromEmail"
-            label="Votre email"
-            :rules="[validators.email]"
-            validate-on-blur
-            class="my-2"
-          />
-          <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" class="my-2" />
-          <v-select
+          <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
+          <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
+          <DsfrSelect
             v-model="inquiryType"
             :items="inquiryOptions"
             label="Type de demande"
-            outlined
-            class="my-2"
             :rules="[validators.required]"
-          ></v-select>
+          />
           <v-textarea
             v-model="message"
             label="Message"
@@ -54,10 +46,11 @@
 <script>
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
   name: "GeneralContactForm",
-  components: { DsfrTextField },
+  components: { DsfrTextField, DsfrSelect },
   props: {
     initialInquiryType: {
       type: String,

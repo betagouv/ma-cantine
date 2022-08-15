@@ -60,7 +60,7 @@
     </v-sheet>
 
     <div class="d-flex align-center mt-4 pl-0 pl-md-6">
-      <v-badge :value="hasActiveFilter" color="primary" dot overlap offset-x="-2">
+      <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
         <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
           Filtres
         </h2>
@@ -131,7 +131,7 @@
             >
               Secteur d'activité
             </label>
-            <v-select
+            <DsfrSelect
               v-model="appliedFilters.chosenSectors"
               multiple
               :items="sectors"
@@ -139,10 +139,8 @@
               hide-details
               id="select-sector"
               placeholder="Tous les secteurs"
-              outlined
               class="mt-1"
-              dense
-            ></v-select>
+            />
           </v-col>
         </v-row>
         <v-row class="align-end mt-0">
@@ -246,17 +244,15 @@
             >
               Mode de gestion
             </label>
-            <v-select
+            <DsfrSelect
               v-model="appliedFilters.managementType"
               :items="managementTypes"
               clearable
               hide-details
               id="select-management-type"
-              outlined
               class="mt-1"
-              dense
               placeholder="Tous les modes"
-            ></v-select>
+            />
           </v-col>
         </v-row>
       </v-sheet>
@@ -268,7 +264,7 @@
       <p class="mt-3 mb-n4 text-body-2 grey--text" v-if="resultsCountText">
         {{ resultsCountText }}
       </p>
-      <v-row class="my-2">
+      <v-row class="my-2" align="end">
         <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp"></v-col>
         <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
         <v-col cols="12" sm="6">
@@ -279,8 +275,14 @@
           ></v-pagination>
         </v-col>
         <v-spacer></v-spacer>
-        <v-col id="ordering" cols="12" sm="3" class="d-flex align-center">
-          <v-select v-model="orderBy" :items="orderOptions" hide-details label="Trier par" outlined dense></v-select>
+        <v-col id="ordering" cols="12" sm="3" class="d-flex align-end">
+          <DsfrSelect
+            v-model="orderBy"
+            :items="orderOptions"
+            labelClasses="body-2 text-left mb-2"
+            hide-details
+            label="Trier par"
+          />
           <v-btn
             icon
             @click="toggleOrderDirection"
@@ -358,11 +360,12 @@ import Constants from "@/constants"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrSelect from "@/components/DsfrSelect"
 
 const DEFAULT_ORDER = "creation"
 
 export default {
-  components: { PublishedCanteenCard, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete },
+  components: { PublishedCanteenCard, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete, DsfrSelect },
   data() {
     const user = this.$store.state.loggedUser
     return {
@@ -707,7 +710,7 @@ export default {
 }
 .active-filter-label::before {
   content: "⚫︎";
-  color: #0c7f46;
+  color: #ce614a;
 }
 div >>> .v-list-item--disabled .theme--light.v-icon {
   color: rgba(0, 0, 0, 0.22);

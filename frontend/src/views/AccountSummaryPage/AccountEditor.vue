@@ -87,16 +87,15 @@
           </v-col>
           <v-col cols="12" md="9">
             <label for="job" class="body-2 mt-2 text-left">Fonction</label>
-            <v-select
+            <DsfrSelect
               id="job"
               class="mt-1"
               v-model="userCopy.job"
               :items="jobOptions"
               :rules="[validators.required]"
-              solo
               hide-details="auto"
               placeholder="Choisir une fonction"
-            ></v-select>
+            />
           </v-col>
           <v-col cols="12" v-if="showOtherJobField" class="my-0">
             <DsfrTextField
@@ -108,16 +107,15 @@
           </v-col>
           <v-col cols="12" md="9" v-if="!userCopy.hasMtmData">
             <label for="source" class="body-2 mt-2 text-left">Comment avez-vous connu ma-cantine ?</label>
-            <v-select
+            <DsfrSelect
               id="source"
               class="mt-1"
               v-model="userCopy.source"
               :items="sourceOptions"
               :rules="[validators.required]"
-              solo
               hide-details="auto"
               placeholder="Choisir une option"
-            ></v-select>
+            />
           </v-col>
           <v-col cols="12" v-if="showOtherSourceField" class="my-0">
             <DsfrTextField
@@ -144,10 +142,11 @@ import validators from "@/validators"
 import Constants from "@/constants"
 import { toBase64, getObjectDiff } from "@/utils"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
   name: "AccountEditor",
-  components: { DsfrTextField },
+  components: { DsfrTextField, DsfrSelect },
   data() {
     return {
       userCopy: {},

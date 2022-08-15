@@ -20,8 +20,7 @@
             </v-col>
             <v-col cols="12" md="4">
               <p class="body-2 my-2">Année</p>
-              <v-select
-                solo
+              <DsfrSelect
                 ref="yearSelect"
                 v-model="diagnostic.year"
                 :rules="[validators.required, validators.diagnosticIsUnique]"
@@ -29,7 +28,7 @@
                 hide-details="auto"
                 placeholder="Année du diagnostic"
                 v-if="isNewDiagnostic"
-              ></v-select>
+              />
               <div v-else class="text-h6 font-weight-bold">{{ diagnostic.year }}</div>
             </v-col>
             <v-col v-if="!diagnosticIsUnique" cols="12" class="ma-0 text-body-2 red--text">
@@ -232,6 +231,7 @@ import ExtendedQualityValues from "./ExtendedQualityValues"
 import TeledeclarationPreview from "./TeledeclarationPreview"
 import Constants from "@/constants"
 import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage, readCookie } from "@/utils"
+import DsfrSelect from "@/components/DsfrSelect"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
@@ -280,6 +280,7 @@ export default {
     ExtendedQualityValues,
     TeledeclarationPreview,
     DownloadLink,
+    DsfrSelect,
   },
   props: {
     canteenUrlComponent: {
