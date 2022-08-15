@@ -27,10 +27,9 @@
 
     <div v-if="isAuthenticated && hasCanteens">
       <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent class="mb-4">
-        <v-row class="px-4 mt-2" align="center">
+        <v-row class="px-4 mt-2" align="end">
           <v-col cols="12" sm="6" md="7" class="my-0 my-sm-4 pl-0">
-            <v-autocomplete
-              outlined
+            <DsfrAutocomplete
               hide-details
               :items="userCanteens"
               label="Choissisez la cantine"
@@ -39,10 +38,10 @@
               item-text="name"
               item-value="id"
               no-data-text="Pas de résultats"
-            ></v-autocomplete>
+            />
           </v-col>
           <v-col class="my-0 my-sm-4 px-0 px-sm-4 d-flex justify-space-between">
-            <v-btn x-large color="primary" @click="submit" :disabled="!selectedCanteenId || loadingCanteenData">
+            <v-btn large color="primary" @click="submit" :disabled="!selectedCanteenId || loadingCanteenData">
               Générer mon affiche
             </v-btn>
           </v-col>
@@ -129,7 +128,7 @@
             />
             dans
             <label for="commune">la commune de</label>
-            <v-autocomplete
+            <DsfrAutocomplete
               id="commune"
               v-model="form.canteen.city"
               placeholder="nom de la commune"
@@ -140,10 +139,9 @@
               cache-items
               hide-details="auto"
               :rules="[validators.required]"
-              solo
               class="my-4"
               no-data-text="Pas de résultats"
-            ></v-autocomplete>
+            />
           </p>
           <p>
             <DsfrTextField
@@ -250,12 +248,14 @@ import validators from "@/validators"
 import { lastYear, normaliseText } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 
 export default {
   components: {
     CanteenPoster,
     BreadcrumbsNav,
     DsfrTextField,
+    DsfrAutocomplete,
   },
   data() {
     return {

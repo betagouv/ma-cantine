@@ -11,7 +11,7 @@
               <label for="select-region" class="text-body-2">
                 Région
               </label>
-              <v-autocomplete
+              <DsfrAutocomplete
                 v-model="chosenRegion"
                 :items="regions"
                 clearable
@@ -19,18 +19,16 @@
                 id="select-region"
                 placeholder="Toutes les régions"
                 class="mt-1"
-                outlined
-                dense
                 auto-select-first
                 :filter="locationFilter"
                 no-data-text="Pas de résultats"
-              ></v-autocomplete>
+              />
             </v-col>
             <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
               <label for="select-department" class="text-body-2">
                 Département
               </label>
-              <v-autocomplete
+              <DsfrAutocomplete
                 v-model="chosenDepartment"
                 :items="departments"
                 clearable
@@ -38,12 +36,10 @@
                 id="select-department"
                 placeholder="Tous les départements"
                 class="mt-1"
-                outlined
-                dense
                 auto-select-first
                 :filter="locationFilter"
                 no-data-text="Pas de résultats"
-              ></v-autocomplete>
+              />
             </v-col>
             <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
               <label for="select-sector" class="text-body-2">
@@ -97,7 +93,8 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
+              ).
             </p>
           </div>
           <VueApexCharts
@@ -217,6 +214,7 @@ import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 import { lastYear, normaliseText, sectorsSelectList } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 
 export default {
   name: "PublicCanteenStatisticsPage",
@@ -224,6 +222,7 @@ export default {
     BadgeCard,
     VueApexCharts,
     BreadcrumbsNav,
+    DsfrAutocomplete,
   },
   data() {
     return {

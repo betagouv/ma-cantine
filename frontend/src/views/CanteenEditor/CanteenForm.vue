@@ -128,19 +128,18 @@
           />
 
           <p class="body-2 mt-4 mb-2">Ville</p>
-          <v-autocomplete
+          <DsfrAutocomplete
             hide-details="auto"
             :rules="[validators.required]"
             :loading="loadingCommunes"
             :items="communes"
             :search-input.sync="search"
             ref="cityAutocomplete"
-            solo
             auto-select-first
             cache-items
             v-model="cityAutocompleteChoice"
             no-data-text="Pas de résultats. Veuillez renseigner votre ville"
-          ></v-autocomplete>
+          />
         </v-col>
 
         <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -343,12 +342,13 @@ import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "CanteenForm",
-  components: { PublicationStateNotice, ImagesField, TechnicalControlDialog, DsfrTextField },
+  components: { PublicationStateNotice, ImagesField, TechnicalControlDialog, DsfrTextField, DsfrAutocomplete },
   props: {
     canteenUrlComponent: {
       type: String,

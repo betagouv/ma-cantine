@@ -90,7 +90,7 @@
             >
               Région
             </label>
-            <v-autocomplete
+            <DsfrAutocomplete
               v-model="appliedFilters.chosenRegion"
               :items="regions"
               clearable
@@ -98,11 +98,9 @@
               id="select-region"
               placeholder="Toutes les régions"
               class="mt-1"
-              outlined
-              dense
               auto-select-first
               :filter="locationFilter"
-            ></v-autocomplete>
+            />
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <label
@@ -114,7 +112,7 @@
             >
               Département
             </label>
-            <v-autocomplete
+            <DsfrAutocomplete
               v-model="appliedFilters.chosenDepartment"
               :items="departments"
               clearable
@@ -122,11 +120,9 @@
               id="select-department"
               placeholder="Tous les départements"
               class="mt-1"
-              outlined
-              dense
               auto-select-first
               :filter="locationFilter"
-            ></v-autocomplete>
+            />
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <label
@@ -361,11 +357,12 @@ import validators from "@/validators"
 import Constants from "@/constants"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 
 const DEFAULT_ORDER = "creation"
 
 export default {
-  components: { PublishedCanteenCard, BreadcrumbsNav, DsfrTextField },
+  components: { PublishedCanteenCard, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete },
   data() {
     const user = this.$store.state.loggedUser
     return {
