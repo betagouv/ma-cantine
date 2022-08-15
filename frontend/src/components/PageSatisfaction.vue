@@ -1,5 +1,5 @@
 <template>
-  <v-card class="py-6 px-8 mx-auto box text-center" elevation="0" color="primary lighten-4" v-if="askForRating">
+  <v-card class="py-6 px-8 mx-auto box text-center" elevation="0" color="primary lighten-5" v-if="askForRating">
     <label class="body-2 grey--text text--darken-4" for="page-rating">
       Êtes-vous satisfait de la plateforme « ma cantine » ?
     </label>

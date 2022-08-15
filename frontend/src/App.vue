@@ -106,7 +106,7 @@ export default {
 }
 
 .cta-group {
-  background-color: #b6d9c8;
+  background-color: #cacafb;
   border-radius: 16px;
 }
 
