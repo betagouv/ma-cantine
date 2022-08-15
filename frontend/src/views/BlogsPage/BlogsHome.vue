@@ -42,19 +42,19 @@
     </div>
 
     <div v-else>
-      <v-pagination class="my-6" v-model="page" :length="Math.ceil(blogPostCount / limit)"></v-pagination>
+      <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(blogPostCount / limit)" />
       <v-progress-circular class="my-10" indeterminate v-if="!visibleBlogPosts"></v-progress-circular>
       <v-row v-else class="cta-group pa-2 mt-2">
         <v-col cols="12" sm="6" md="4" v-for="post in visibleBlogPosts" :key="post.id">
           <BlogCard :post="post" />
         </v-col>
       </v-row>
-      <v-pagination
+      <DsfrPagination
         class="my-6"
         v-model="page"
         :length="Math.ceil(blogPostCount / limit)"
         v-if="$vuetify.breakpoint.smAndDown"
-      ></v-pagination>
+      />
     </div>
   </div>
 </template>
@@ -63,10 +63,11 @@
 import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import BlogCard from "./BlogCard"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrPagination from "@/components/DsfrPagination"
 
 export default {
   name: "BlogsHome",
-  components: { BlogCard, BreadcrumbsNav, DsfrSelect },
+  components: { BlogCard, BreadcrumbsNav, DsfrSelect, DsfrPagination },
   data() {
     return {
       limit: 6,

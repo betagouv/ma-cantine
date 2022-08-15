@@ -22,12 +22,7 @@
         </v-col>
       </v-row>
     </v-sheet>
-    <v-pagination
-      v-if="showPagination"
-      class="mb-6"
-      v-model="page"
-      :length="Math.ceil(canteenCount / limit)"
-    ></v-pagination>
+    <DsfrPagination v-if="showPagination" class="mb-6" v-model="page" :length="Math.ceil(canteenCount / limit)" />
     <v-sheet fluid height="200" v-if="inProgress">
       <v-progress-circular indeterminate style="left: 50%; top: 50%"></v-progress-circular>
     </v-sheet>
@@ -67,10 +62,11 @@
 <script>
 import CanteenCard from "./CanteenCard"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrPagination from "@/components/DsfrPagination"
 
 export default {
   name: "CanteensPagination",
-  components: { CanteenCard, DsfrTextField },
+  components: { CanteenCard, DsfrTextField, DsfrPagination },
   data() {
     return {
       limit: 5,

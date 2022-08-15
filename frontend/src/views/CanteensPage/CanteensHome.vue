@@ -268,11 +268,7 @@
         <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp"></v-col>
         <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
         <v-col cols="12" sm="6">
-          <v-pagination
-            v-model="page"
-            :length="Math.ceil(publishedCanteenCount / limit)"
-            :total-visible="7"
-          ></v-pagination>
+          <DsfrPagination v-model="page" :length="Math.ceil(publishedCanteenCount / limit)" :total-visible="7" />
         </v-col>
         <v-spacer></v-spacer>
         <v-col id="ordering" cols="12" sm="3" class="d-flex align-end">
@@ -301,12 +297,12 @@
           <PublishedCanteenCard :canteen="canteen" />
         </v-col>
       </v-row>
-      <v-pagination
+      <DsfrPagination
         class="my-6"
         v-model="page"
         :length="Math.ceil(publishedCanteenCount / limit)"
         :total-visible="7"
-      ></v-pagination>
+      />
     </div>
     <div v-else class="d-flex flex-column align-center py-10">
       <v-icon large>mdi-inbox-remove</v-icon>
@@ -362,11 +358,20 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrTextarea from "@/components/DsfrTextarea"
+import DsfrPagination from "@/components/DsfrPagination"
 
 const DEFAULT_ORDER = "creation"
 
 export default {
-  components: { PublishedCanteenCard, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete, DsfrSelect, DsfrTextarea },
+  components: {
+    PublishedCanteenCard,
+    BreadcrumbsNav,
+    DsfrTextField,
+    DsfrAutocomplete,
+    DsfrSelect,
+    DsfrTextarea,
+    DsfrPagination,
+  },
   data() {
     const user = this.$store.state.loggedUser
     return {
