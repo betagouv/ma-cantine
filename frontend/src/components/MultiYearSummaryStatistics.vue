@@ -68,12 +68,12 @@ export default {
         {
           name: BIO,
           data: this.seriesData.bio,
-          color: "#06622f",
+          color: "#297254",
         },
         {
           name: SUSTAINABLE,
           data: this.seriesData.sustainable,
-          color: "#55a57e",
+          color: "#00A95F",
           foreColor: "#000",
         },
         {

@@ -237,7 +237,7 @@ export default {
       statistics: {},
       publishedChartOptions: {
         labels: ["Publiée", "Non publiée"],
-        colors: ["#55a57e", "#ccc"],
+        colors: ["#6a6af4", "#ccc"],
         dataLabels: {
           dropShadow: false,
           style: {
@@ -290,7 +290,7 @@ export default {
       return [
         {
           data: this.sectors.map((sector) => this.statistics.sectors[sector.id.toString()]),
-          color: "#55a57e",
+          color: "#6a6af4",
           name: "Nombre de cantines",
         },
       ]
