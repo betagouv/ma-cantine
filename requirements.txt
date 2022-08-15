@@ -5,7 +5,7 @@ asn1crypto==1.5.1
 astroid==2.11.6
 async-timeout==4.0.2
 attrs==22.1.0
-backports.zoneinfo==0.2.1
+backports.zoneinfo==0.2.1;python_version<"3.9"
 billiard==3.6.4.0
 black==22.6.0
 boto3==1.24.51
