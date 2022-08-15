@@ -45,14 +45,16 @@
               Générer mon affiche
             </v-btn>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-textarea
-            outlined
-            v-model="customText"
-            label="Plus de détail (facultatif)"
-            counter
-            :rules="[(v) => !v || v.length <= 915 || '915 caractères maximum']"
-          ></v-textarea>
+        </v-row>
+        <v-row class="mt-2">
+          <v-col cols="12">
+            <DsfrTextarea
+              v-model="customText"
+              label="Plus de détail (facultatif)"
+              counter
+              :rules="[(v) => !v || v.length <= 915 || '915 caractères maximum']"
+            />
+          </v-col>
         </v-row>
 
         <v-row class="px-4">
@@ -249,6 +251,7 @@ import { lastYear, normaliseText } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   components: {
@@ -256,6 +259,7 @@ export default {
     BreadcrumbsNav,
     DsfrTextField,
     DsfrAutocomplete,
+    DsfrTextarea,
   },
   data() {
     return {

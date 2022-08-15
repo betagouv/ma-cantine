@@ -99,32 +99,30 @@
           <label class="body-2 grey--text text--darken-3" for="reservation-system-description">
             Quel type de réservation de repas allez-vous mettre en place ? Décrivez-en le fonctionnement.
           </label>
-          <v-textarea
+          <DsfrTextarea
             validate-on-blur
             hide-details="auto"
             rows="2"
-            solo
             v-model="expe.reservationSystemDescription"
             placeholder="Réservation via un logiciel, une application, …"
             class="mt-2 mb-4 body-2"
             id="reservation-system-description"
-          ></v-textarea>
+          />
 
           <!-- communication -->
           <label class="body-2 grey--text text--darken-3" for="communication">
             Comment comptez-vous communiquer sur la mise en place de la solution de réservation de repas dans votre
             établissement auprès de vos usagers ?
           </label>
-          <v-textarea
+          <DsfrTextarea
             validate-on-blur
             hide-details="auto"
             rows="2"
-            solo
             v-model="expe.publiciseMethod"
             placeholder="Affichage sur lieu de restaurant, communication mail, courrier,... "
             class="mt-2 mb-4 body-2"
             id="communication"
-          ></v-textarea>
+          />
 
           <!-- leader in charge -->
 
@@ -331,15 +329,14 @@
                     <label class="body-2 grey--text text--darken-3" :for="`comments-${item.value}`">
                       Commentaire
                     </label>
-                    <v-textarea
+                    <DsfrTextarea
                       validate-on-blur
                       hide-details="auto"
                       rows="2"
-                      solo
                       v-model="expe[`comments${item.value}`]"
                       class="mt-2 mb-4 body-2"
                       :id="`comments-${item.value}`"
-                    ></v-textarea>
+                    />
 
                     <div v-if="item.value === 'T2'">
                       <!-- satisfaction -->
@@ -392,15 +389,14 @@
                       <label class="body-2 grey--text text--darken-3" for="participation-cost-details">
                         Détails des coûts liés à la participation à l'expérimentation
                       </label>
-                      <v-textarea
+                      <DsfrTextarea
                         validate-on-blur
                         hide-details="auto"
-                        solo
                         rows="2"
                         v-model="expe.participationCostDetails"
                         class="mt-2 mb-4 body-2"
                         id="participation-cost-details"
-                      ></v-textarea>
+                      />
 
                       <!-- money saved -->
                       <label class="body-2 grey--text text--darken-3" for="money-saved">
@@ -442,9 +438,10 @@ import validators from "@/validators"
 import Constants from "@/constants"
 import DownloadLink from "../../DownloadLink.vue"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
-  components: { DownloadLink, DsfrTextField },
+  components: { DownloadLink, DsfrTextField, DsfrTextarea },
   name: "ExpeReservation",
   props: {
     canteen: Object,

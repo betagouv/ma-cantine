@@ -16,7 +16,7 @@
           <DsfrTextField v-model="name" label="Prénom et nom" />
         </v-col>
       </v-row>
-      <v-textarea v-model="message" label="Message (facultatif)" outlined></v-textarea>
+      <DsfrTextarea v-model="message" label="Message (facultatif)" />
       <v-file-input
         v-model="unusualFile"
         label="Fichier"
@@ -36,10 +36,11 @@
 <script>
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "HelpForm",
-  components: { DsfrTextField },
+  components: { DsfrTextField, DsfrTextarea },
   data() {
     const user = this.$store.state.loggedUser
     return {

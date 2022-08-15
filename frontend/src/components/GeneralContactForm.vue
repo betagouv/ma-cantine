@@ -11,13 +11,7 @@
             label="Type de demande"
             :rules="[validators.required]"
           />
-          <v-textarea
-            v-model="message"
-            label="Message"
-            outlined
-            :rules="[validators.required]"
-            class="mt-2"
-          ></v-textarea>
+          <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" class="mt-2" />
           <p class="caption grey--text text--darken-1 mt-n1 mb-6">
             Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
           </p>
@@ -47,10 +41,11 @@
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "GeneralContactForm",
-  components: { DsfrTextField, DsfrSelect },
+  components: { DsfrTextField, DsfrSelect, DsfrTextarea },
   props: {
     initialInquiryType: {
       type: String,

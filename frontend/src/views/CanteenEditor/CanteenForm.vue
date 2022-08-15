@@ -57,14 +57,13 @@
             </v-card-text>
             <v-card-text v-else>
               <p>Demandez accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »</p>
-              <v-textarea
+              <DsfrTextarea
                 v-model="messageJoinCanteen"
                 label="Message (optionnel)"
-                solo
                 hide-details="auto"
                 rows="2"
                 class="mt-2 body-2"
-              ></v-textarea>
+              />
               <v-btn color="primary" class="mt-4" @click="sendMgmtRequest">
                 <v-icon class="mr-2">mdi-key</v-icon>
                 Demander l'accès
@@ -89,14 +88,14 @@
                         notre équipe reviendra vers vous dans les plus brefs délais
                       </p>
                       <v-form v-model="siretFormIsValid" ref="siretHelp" @submit.prevent>
-                        <v-textarea
+                        <DsfrTextarea
                           v-model="messageTroubleshooting"
                           label="Message"
-                          outlined
+                          labelClasses="body-2 text-left mb-2"
                           rows="3"
                           :rules="[validators.required]"
                           class="body-2"
-                        ></v-textarea>
+                        />
                       </v-form>
                     </v-card-text>
 
@@ -342,6 +341,7 @@ import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -354,6 +354,7 @@ export default {
     DsfrTextField,
     DsfrAutocomplete,
     DsfrSelect,
+    DsfrTextarea,
   },
   props: {
     canteenUrlComponent: {

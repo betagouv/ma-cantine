@@ -63,15 +63,14 @@
         <label class="body-2" for="general">
           Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
         </label>
-        <v-textarea
+        <DsfrTextarea
           id="general"
-          solo
           class="my-2"
           rows="3"
           counter="500"
           v-model="canteen.publicationComments"
           hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
-        ></v-textarea>
+        />
         <PublicationField class="mb-4" :canteen="canteen" v-model="publicationRequested" />
       </v-form>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
@@ -91,6 +90,7 @@
 import PublicationField from "./PublicationField"
 import { getObjectDiff, isDiagnosticComplete, lastYear } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -101,7 +101,7 @@ export default {
       type: Object,
     },
   },
-  components: { PublicationField, PublicationStateNotice },
+  components: { PublicationField, PublicationStateNotice, DsfrTextarea },
   data() {
     return {
       formIsValid: true,

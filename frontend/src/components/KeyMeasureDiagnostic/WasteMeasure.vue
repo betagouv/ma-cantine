@@ -149,15 +149,14 @@
       </v-row>
     </v-expand-transition>
 
-    <v-textarea
+    <DsfrTextarea
       v-model="diagnostic.otherWasteComments"
       label="Autres commentaires"
-      outlined
       rows="3"
       :readonly="readonly"
       :disabled="readonly"
       class="mt-6"
-    ></v-textarea>
+    />
 
     <v-divider v-if="showExpeSegment" class="mb-8"></v-divider>
     <div v-if="showExpeSegment">
@@ -224,6 +223,7 @@ import validators from "@/validators"
 import { applicableDiagnosticRules } from "@/utils"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   props: {
@@ -234,7 +234,7 @@ export default {
     },
     canteen: Object,
   },
-  components: { ExpeReservation, DsfrTextField },
+  components: { ExpeReservation, DsfrTextField, DsfrTextarea },
   data() {
     return {
       showExpeModal: false,

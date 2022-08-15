@@ -336,7 +336,7 @@
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
           <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
           <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
-          <v-textarea v-model="message" label="Message" outlined :rules="[validators.required]"></v-textarea>
+          <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
         </v-form>
         <v-row class="pa-2">
           <v-spacer></v-spacer>
@@ -361,11 +361,12 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 const DEFAULT_ORDER = "creation"
 
 export default {
-  components: { PublishedCanteenCard, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete, DsfrSelect },
+  components: { PublishedCanteenCard, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete, DsfrSelect, DsfrTextarea },
   data() {
     const user = this.$store.state.loggedUser
     return {

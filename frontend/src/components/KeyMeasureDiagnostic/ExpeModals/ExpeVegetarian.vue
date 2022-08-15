@@ -593,14 +593,13 @@
                     >
                       Précisez, quel livret de recette avez vous utilisé ?
                     </label>
-                    <v-textarea
+                    <DsfrTextarea
                       v-if="expe[`hasUsedRecipeDocuments${item.value}`]"
-                      solo
                       :id="`recipe-document-${item.value}`"
                       v-model="expe[`recipeDocument${item.value}`]"
                       rows="2"
                       hide-details="auto"
-                    ></v-textarea>
+                    />
 
                     <v-divider class="mt-6"></v-divider>
                     <!-- Formation -->
@@ -620,14 +619,13 @@
                     >
                       Précisez, quel type de formation ?
                     </label>
-                    <v-textarea
+                    <DsfrTextarea
                       v-if="expe[`training${item.value}`]"
-                      solo
                       :id="`training-type-${item.value}`"
                       v-model="expe[`trainingType${item.value}`]"
                       rows="2"
                       hide-details="auto"
-                    ></v-textarea>
+                    />
 
                     <v-divider class="my-6"></v-divider>
                     <!-- Difficulties -->
@@ -664,7 +662,7 @@
                     >
                       Précisez
                     </label>
-                    <v-textarea
+                    <DsfrTextarea
                       v-if="
                         expe[`difficultiesDailyOption${item.value}`] &&
                           expe[`difficultiesDailyOption${item.value}`].indexOf &&
@@ -674,7 +672,7 @@
                       :id="`difficulties-daily-option-details-${item.value}`"
                       v-model="expe[`difficultiesDailyOptionDetails${item.value}`]"
                       rows="2"
-                    ></v-textarea>
+                    />
                   </v-card-text>
                 </v-card>
               </v-tab-item>
@@ -708,10 +706,11 @@ import { treatInboundPercentageValues, treatOutboundPercentageValues } from "./u
 import validators from "@/validators"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "ExpeVegetarian",
-  components: { DsfrTextField },
+  components: { DsfrTextField, DsfrTextarea },
   props: {
     canteen: Object,
   },
