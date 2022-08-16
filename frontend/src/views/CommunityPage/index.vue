@@ -3,7 +3,7 @@
     <BreadcrumbsNav />
     <v-row class="my-4 align-center">
       <v-col cols="12" sm="2" class="pl-2 pr-2 pl-md-8 pr-md-0">
-        <v-img src="/static/images/doodles/primary/Hi.png" max-height="180" contain></v-img>
+        <v-img src="/static/images/doodles-dsfr/primary/Hi.png" max-height="180" contain></v-img>
       </v-col>
       <v-col cols="12" sm="6" class="px-2 px-md-10 py-4">
         <h1 class="text-h4 font-weight-black">

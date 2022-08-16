@@ -29,7 +29,11 @@
       <v-col cols="4" v-if="$vuetify.breakpoint.smAndUp">
         <div class="fill-height d-flex flex-column align-center">
           <v-spacer></v-spacer>
-          <v-img src="/static/images/doodles/primary/SittingDoodle.png" contain style="transform: scaleX(-1);"></v-img>
+          <v-img
+            src="/static/images/doodles-dsfr/primary/SittingDoodle.png"
+            contain
+            style="transform: scaleX(-1);"
+          ></v-img>
           <v-spacer></v-spacer>
         </div>
       </v-col>
