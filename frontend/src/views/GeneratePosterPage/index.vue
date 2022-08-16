@@ -121,7 +121,7 @@
           <h2 class="mb-4">À propos de votre cantine</h2>
           <p>
             <DsfrTextField
-              label="Je represénte la cantine"
+              label="Je représente la cantine"
               v-model="form.canteen.name"
               placeholder="nom de l'établissement"
               hide-details="auto"
