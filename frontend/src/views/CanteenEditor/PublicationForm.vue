@@ -48,16 +48,15 @@
       </v-btn>
     </div>
     <div v-else>
-      <v-alert color="amber darken-3" class="mb-1 body-2" v-if="!currentDiagnosticComplete" outlined>
+      <DsfrCallout color="#C08C65" class="mb-1 body-2" v-if="!currentDiagnosticComplete">
         <span class="grey--text text--darken-2">
-          <v-icon class="mb-1 mr-2" color="amber darken-3">mdi-alert-circle-outline</v-icon>
           Nous vous conseillons de remplir des
           <router-link :to="{ name: 'DiagnosticList', params: { canteenUrlComponent } }">
             données d'approvisionnement pour l'année {{ this.publicationYear }}
           </router-link>
           avant que vous publiiez vos données.
         </span>
-      </v-alert>
+      </DsfrCallout>
       <v-form ref="form" v-model="formIsValid">
         <PublicationStateNotice :canteen="originalCanteen" class="my-4" />
         <label class="body-2" for="general">
@@ -91,6 +90,7 @@ import PublicationField from "./PublicationField"
 import { getObjectDiff, isDiagnosticComplete, lastYear } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 import DsfrTextarea from "@/components/DsfrTextarea"
+import DsfrCallout from "@/components/DsfrCallout"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -101,7 +101,7 @@ export default {
       type: Object,
     },
   },
-  components: { PublicationField, PublicationStateNotice, DsfrTextarea },
+  components: { PublicationField, PublicationStateNotice, DsfrTextarea, DsfrCallout },
   data() {
     return {
       formIsValid: true,

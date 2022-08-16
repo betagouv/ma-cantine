@@ -6,10 +6,10 @@
       class="text-decoration-none text-left mt-4"
       hover
     >
-      <v-alert icon="mdi-content-paste" class="text-body-2 mb-0" color="#3F62D5" prominent colored-border border="left">
+      <DsfrCallout icon="mdi-file-download-outline" class="text-body-2 mb-0">
         Vous voulez éviter le gaspillage ? Télécharger ce modèle type de convention aux associations auxquelles faire
         des dons.
-      </v-alert>
+      </DsfrCallout>
     </v-card>
     <v-card
       href="/static/documents/Guide_pratique_XP_RESERVATION.pdf"
@@ -17,10 +17,18 @@
       class="text-decoration-none text-left mt-4"
       hover
     >
-      <v-alert icon="mdi-content-paste" class="text-body-2 mb-0" color="#3F62D5" prominent colored-border border="left">
+      <DsfrCallout icon="mdi-file-download-outline" class="text-body-2 mb-0">
         Consulter le Guide d’accompagnement – décret d’expérimentation de solution de réservation de repas en
         restauration collective
-      </v-alert>
+      </DsfrCallout>
     </v-card>
   </div>
 </template>
+
+<script>
+import DsfrCallout from "@/components/DsfrCallout"
+
+export default {
+  components: { DsfrCallout },
+}
+</script>
