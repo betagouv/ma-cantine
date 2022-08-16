@@ -13,7 +13,7 @@
       </p>
     </div>
     <TeledeclarationBanner />
-    <CompleteProfileField />
+    <CompleteProfileField :canteenCount="canteenCount" />
     <div class="mt-4">
       <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
       <CanteensPagination v-on:canteen-count="canteenCount = $event" />

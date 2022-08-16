@@ -79,6 +79,11 @@ export default {
       otherSourceDescription: undefined,
     }
   },
+  props: {
+    canteenCount: {
+      type: Number,
+    },
+  },
   computed: {
     loggedUser() {
       return this.$store.state.loggedUser
