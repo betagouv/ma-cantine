@@ -3,30 +3,15 @@
     <v-row>
       <v-col>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
-          <v-text-field
-            v-model="fromEmail"
-            label="Votre email"
-            :rules="[validators.email]"
-            validate-on-blur
-            outlined
-            class="my-2"
-          ></v-text-field>
-          <v-text-field v-model="name" label="Prénom et nom (facultatif)" outlined class="my-2"></v-text-field>
-          <v-select
+          <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
+          <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
+          <DsfrSelect
             v-model="inquiryType"
             :items="inquiryOptions"
             label="Type de demande"
-            outlined
-            class="my-2"
             :rules="[validators.required]"
-          ></v-select>
-          <v-textarea
-            v-model="message"
-            label="Message"
-            outlined
-            :rules="[validators.required]"
-            class="mt-2"
-          ></v-textarea>
+          />
+          <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" class="mt-2" />
           <p class="caption grey--text text--darken-1 mt-n1 mb-6">
             Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
           </p>
@@ -54,9 +39,13 @@
 
 <script>
 import validators from "@/validators"
+import DsfrTextField from "@/components/DsfrTextField"
+import DsfrSelect from "@/components/DsfrSelect"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "GeneralContactForm",
+  components: { DsfrTextField, DsfrSelect, DsfrTextarea },
   props: {
     initialInquiryType: {
       type: String,

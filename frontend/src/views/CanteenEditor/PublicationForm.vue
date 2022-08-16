@@ -48,30 +48,28 @@
       </v-btn>
     </div>
     <div v-else>
-      <v-alert color="amber darken-3" class="mb-1 body-2" v-if="!currentDiagnosticComplete" outlined>
+      <DsfrCallout color="#C08C65" class="mb-1 body-2" v-if="!currentDiagnosticComplete">
         <span class="grey--text text--darken-2">
-          <v-icon class="mb-1 mr-2" color="amber darken-3">mdi-alert-circle-outline</v-icon>
           Nous vous conseillons de remplir des
           <router-link :to="{ name: 'DiagnosticList', params: { canteenUrlComponent } }">
             données d'approvisionnement pour l'année {{ this.publicationYear }}
           </router-link>
           avant que vous publiiez vos données.
         </span>
-      </v-alert>
+      </DsfrCallout>
       <v-form ref="form" v-model="formIsValid">
         <PublicationStateNotice :canteen="originalCanteen" class="my-4" />
         <label class="body-2" for="general">
           Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
         </label>
-        <v-textarea
+        <DsfrTextarea
           id="general"
-          solo
           class="my-2"
           rows="3"
           counter="500"
           v-model="canteen.publicationComments"
           hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
-        ></v-textarea>
+        />
         <PublicationField class="mb-4" :canteen="canteen" v-model="publicationRequested" />
       </v-form>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
@@ -91,6 +89,8 @@
 import PublicationField from "./PublicationField"
 import { getObjectDiff, isDiagnosticComplete, lastYear } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
+import DsfrTextarea from "@/components/DsfrTextarea"
+import DsfrCallout from "@/components/DsfrCallout"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -101,7 +101,7 @@ export default {
       type: Object,
     },
   },
-  components: { PublicationField, PublicationStateNotice },
+  components: { PublicationField, PublicationStateNotice, DsfrTextarea, DsfrCallout },
   data() {
     return {
       formIsValid: true,

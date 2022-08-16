@@ -106,8 +106,8 @@ export default {
 }
 
 .cta-group {
-  background-color: #b6d9c8;
-  border-radius: 16px;
+  background-color: #cacafb;
+  border-radius: 0px;
 }
 
 .theme--light.v-card > .v-card__text,

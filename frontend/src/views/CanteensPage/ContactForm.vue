@@ -2,15 +2,9 @@
   <div>
     <h2 class="font-weight-black text-h6 grey--text text--darken-4 mb-6">Contactez « {{ canteen.name }} »</h2>
     <v-form v-model="formIsValid" ref="form" @submit.prevent>
-      <v-text-field
-        v-model="fromEmail"
-        label="Votre email"
-        :rules="[validators.email]"
-        validate-on-blur
-        outlined
-      ></v-text-field>
-      <v-text-field v-model="name" label="Prénom et nom (facultatif)" outlined></v-text-field>
-      <v-textarea v-model="message" label="Message" outlined :rules="[validators.required]"></v-textarea>
+      <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
+      <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
+      <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
       <p class="caption text-left grey--text text--darken-1 mt-n1 mb-6">
         Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc). Ces messages
         peuvent être lus pour des fins de modération.
@@ -25,9 +19,12 @@
 
 <script>
 import validators from "@/validators"
+import DsfrTextField from "@/components/DsfrTextField"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "ContactForm",
+  components: { DsfrTextField, DsfrTextarea },
   props: ["canteen"],
   data() {
     const user = this.$store.state.loggedUser

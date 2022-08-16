@@ -1,5 +1,5 @@
 <template>
-  <v-card class="py-6 px-8 mx-auto box text-center" elevation="0" color="primary lighten-4" v-if="askForRating">
+  <v-card class="py-6 px-8 mx-auto box text-center" elevation="0" color="primary lighten-5" v-if="askForRating">
     <label class="body-2 grey--text text--darken-4" for="page-rating">
       Êtes-vous satisfait de la plateforme « ma cantine » ?
     </label>
@@ -40,14 +40,7 @@
             <label class="body-2 grey--text text--darken-3" for="suggestion">
               Que pouvons-nous améliorer afin de mieux répondre à vos attentes ?
             </label>
-            <v-textarea
-              v-model="suggestion"
-              solo
-              id="suggestion"
-              hide-details="auto"
-              class="mt-2 mb-4 body-2"
-              rows="5"
-            ></v-textarea>
+            <DsfrTextarea v-model="suggestion" id="suggestion" hide-details="auto" class="mt-2 mb-4 body-2" rows="5" />
             <p class="caption mb-0">
               Notre équipe pourrait être amenée à prendre contact avec vous afin d'échanger sur vos besoins.
             </p>
@@ -72,9 +65,11 @@
 
 <script>
 import validators from "@/validators"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "PageSatisfaction",
+  components: { DsfrTextarea },
   data() {
     return {
       dialog: false,

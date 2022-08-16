@@ -52,23 +52,21 @@
               </v-col>
               <v-col cols="12" sm="4">
                 <label class="body-2" for="price">Prix HT</label>
-                <v-text-field
+                <DsfrTextField
                   validate-on-blur
                   hide-details="auto"
-                  solo
                   v-model="purchase.priceHt"
                   class="mt-2"
                   append-icon="mdi-currency-eur"
                   :rules="[validators.required, validators.greaterThanZero]"
                   id="price"
-                ></v-text-field>
+                />
               </v-col>
 
               <v-col cols="12" sm="8">
                 <label class="body-2" for="canteen">Cantine</label>
-                <v-autocomplete
+                <DsfrAutocomplete
                   hide-details="auto"
-                  solo
                   :items="userCanteens"
                   placeholder="Choissisez la cantine"
                   v-model="purchase.canteen"
@@ -79,7 +77,7 @@
                   class="mt-2"
                   auto-select-first
                   no-data-text="Pas de résultats"
-                ></v-autocomplete>
+                />
               </v-col>
 
               <v-col cols="12" sm="4">
@@ -93,7 +91,7 @@
                   min-width="auto"
                 >
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
+                    <DsfrTextField
                       :value="humanReadableDate"
                       prepend-icon="mdi-calendar"
                       readonly
@@ -101,10 +99,9 @@
                       :rules="[validators.required]"
                       v-on="on"
                       hide-details="auto"
-                      solo
                       id="date"
                       class="mt-2"
-                    ></v-text-field>
+                    />
                   </template>
 
                   <v-date-picker v-model="purchase.date" :max="today" locale="fr-FR"></v-date-picker>
@@ -170,16 +167,15 @@
         <v-expand-transition>
           <v-col cols="12" sm="6" v-show="showLocalDefinition" class="my-4">
             <label class="body-2" for="local-definition">C'est quoi votre définition de local ?</label>
-            <v-autocomplete
+            <DsfrAutocomplete
               hide-details="auto"
-              solo
               :items="localDefinitions"
               v-model="purchase.localDefinition"
               :rules="showLocalDefinition ? [validators.required] : []"
               id="local-definition"
               class="mt-2"
               no-data-text="Pas de résultats"
-            ></v-autocomplete>
+            />
           </v-col>
         </v-expand-transition>
         <v-sheet
@@ -249,10 +245,12 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import { toBase64, getObjectDiff, normaliseText, formatDate } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
+import DsfrTextField from "@/components/DsfrTextField"
+import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 
 export default {
   name: "PurchasePage",
-  components: { FileDrop, FilePreview, BreadcrumbsNav },
+  components: { FileDrop, FilePreview, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete },
   data() {
     return {
       originalPurchase: null,

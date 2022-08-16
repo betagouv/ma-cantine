@@ -4,13 +4,13 @@
     <v-card elevation="0" class="text-center text-md-left mb-10">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
         <v-col cols="12">
-          <v-img max-height="100px" contain src="/static/images/lighthouse.svg"></v-img>
+          <v-img max-height="100px" contain src="/static/images/lighthouse.png"></v-img>
         </v-col>
       </v-row>
       <v-row>
         <v-spacer></v-spacer>
         <v-col cols="12" sm="3" md="3" v-if="$vuetify.breakpoint.mdAndUp">
-          <v-img max-height="200px" contain src="/static/images/lighthouse.svg"></v-img>
+          <v-img max-height="200px" contain src="/static/images/lighthouse.png"></v-img>
         </v-col>
         <v-col cols="12" sm="9" md="4">
           <v-card-title class="pr-0">
@@ -24,19 +24,17 @@
     <v-row>
       <v-spacer></v-spacer>
       <v-col cols="12" sm="4">
-        <v-select
+        <DsfrSelect
           v-model="tag"
           :items="tags"
           clearable
           hide-details
           id="select-tag"
-          outlined
           class="mt-1"
-          dense
           width="fit-content"
           label="Filtrer par type d'article"
           @change="page = 1"
-        ></v-select>
+        />
       </v-col>
     </v-row>
     <div v-if="loading" class="mt-8">
@@ -44,19 +42,19 @@
     </div>
 
     <div v-else>
-      <v-pagination class="my-6" v-model="page" :length="Math.ceil(blogPostCount / limit)"></v-pagination>
+      <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(blogPostCount / limit)" />
       <v-progress-circular class="my-10" indeterminate v-if="!visibleBlogPosts"></v-progress-circular>
       <v-row v-else class="cta-group pa-2 mt-2">
         <v-col cols="12" sm="6" md="4" v-for="post in visibleBlogPosts" :key="post.id">
           <BlogCard :post="post" />
         </v-col>
       </v-row>
-      <v-pagination
+      <DsfrPagination
         class="my-6"
         v-model="page"
         :length="Math.ceil(blogPostCount / limit)"
         v-if="$vuetify.breakpoint.smAndDown"
-      ></v-pagination>
+      />
     </div>
   </div>
 </template>
@@ -64,10 +62,12 @@
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import BlogCard from "./BlogCard"
+import DsfrSelect from "@/components/DsfrSelect"
+import DsfrPagination from "@/components/DsfrPagination"
 
 export default {
   name: "BlogsHome",
-  components: { BlogCard, BreadcrumbsNav },
+  components: { BlogCard, BreadcrumbsNav, DsfrSelect, DsfrPagination },
   data() {
     return {
       limit: 6,

@@ -8,49 +8,48 @@
         </legend>
         <v-row v-if="askForRole">
           <v-col cols="12" sm="7">
-            <v-select
+            <DsfrSelect
               label="Choisir votre fonction"
               v-model="job"
               :items="jobOptions"
               :rules="[validators.required]"
-              solo
+              labelClasses="body-2 text-left mb-2"
               hide-details="auto"
-            ></v-select>
+            />
           </v-col>
           <v-col cols="12" sm="7" v-if="showOtherField" class="my-0">
-            <v-text-field
+            <DsfrTextField
               label="Ma fonction"
               :rules="[validators.required]"
-              solo
               v-model="otherJobDescription"
               hide-details="auto"
-            ></v-text-field>
+            />
           </v-col>
-          <v-col>
+          <v-col class="d-flex align-end">
             <v-btn color="primary" height="3.5em" @click="updateProfile">Valider</v-btn>
           </v-col>
         </v-row>
         <v-row v-else-if="askForSource">
           <v-col cols="12" sm="7">
-            <v-select
+            <DsfrSelect
               label="Comment avez-vous connu ma-cantine ?"
               v-model="source"
               :items="sourceOptions"
+              labelClasses="body-2 text-left mb-2"
               :rules="[validators.required]"
-              solo
               hide-details="auto"
-            ></v-select>
+            />
           </v-col>
           <v-col cols="12" sm="7" v-if="showOtherSourceField" class="my-0">
-            <v-text-field
+            <DsfrTextField
               label="Autre endroit"
               :rules="[validators.required]"
-              solo
               v-model="otherSourceDescription"
+              labelClasses="body-2 text-left mb-2"
               hide-details="auto"
-            ></v-text-field>
+            />
           </v-col>
-          <v-col>
+          <v-col class="d-flex align-end">
             <v-btn color="primary" height="3.5em" @click="updateProfile">Valider</v-btn>
           </v-col>
         </v-row>
@@ -62,8 +61,11 @@
 <script>
 import Constants from "@/constants"
 import validators from "@/validators"
+import DsfrTextField from "@/components/DsfrTextField"
+import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
+  components: { DsfrTextField, DsfrSelect },
   data() {
     return {
       validators,

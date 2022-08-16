@@ -11,7 +11,7 @@
               <label for="select-region" class="text-body-2">
                 Région
               </label>
-              <v-autocomplete
+              <DsfrAutocomplete
                 v-model="chosenRegion"
                 :items="regions"
                 clearable
@@ -19,18 +19,16 @@
                 id="select-region"
                 placeholder="Toutes les régions"
                 class="mt-1"
-                outlined
-                dense
                 auto-select-first
                 :filter="locationFilter"
                 no-data-text="Pas de résultats"
-              ></v-autocomplete>
+              />
             </v-col>
             <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
               <label for="select-department" class="text-body-2">
                 Département
               </label>
-              <v-autocomplete
+              <DsfrAutocomplete
                 v-model="chosenDepartment"
                 :items="departments"
                 clearable
@@ -38,18 +36,16 @@
                 id="select-department"
                 placeholder="Tous les départements"
                 class="mt-1"
-                outlined
-                dense
                 auto-select-first
                 :filter="locationFilter"
                 no-data-text="Pas de résultats"
-              ></v-autocomplete>
+              />
             </v-col>
             <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
               <label for="select-sector" class="text-body-2">
                 Secteur d'activité
               </label>
-              <v-select
+              <DsfrSelect
                 v-model="chosenSectors"
                 multiple
                 :items="sectorsList"
@@ -59,10 +55,8 @@
                 hide-details
                 id="select-sector"
                 placeholder="Tous les secteurs"
-                outlined
                 class="mt-1"
-                dense
-              ></v-select>
+              />
             </v-col>
           </v-row>
           <v-row class="mt-8">
@@ -97,7 +91,8 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
+              ).
             </p>
           </div>
           <VueApexCharts
@@ -217,6 +212,8 @@ import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 import { lastYear, normaliseText, sectorsSelectList } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
   name: "PublicCanteenStatisticsPage",
@@ -224,6 +221,8 @@ export default {
     BadgeCard,
     VueApexCharts,
     BreadcrumbsNav,
+    DsfrAutocomplete,
+    DsfrSelect,
   },
   data() {
     return {
@@ -238,7 +237,7 @@ export default {
       statistics: {},
       publishedChartOptions: {
         labels: ["Publiée", "Non publiée"],
-        colors: ["#55a57e", "#ccc"],
+        colors: ["#6a6af4", "#ccc"],
         dataLabels: {
           dropShadow: false,
           style: {
@@ -291,7 +290,7 @@ export default {
       return [
         {
           data: this.sectors.map((sector) => this.statistics.sectors[sector.id.toString()]),
-          color: "#55a57e",
+          color: "#6a6af4",
           name: "Nombre de cantines",
         },
       ]

@@ -36,20 +36,18 @@
     </div>
     <v-card outlined class="my-4" v-if="hasCanteens && visiblePurchases">
       <v-row class="px-4 mt-2" align="center">
-        <v-col cols="9" sm="6" class="pb-0">
-          <v-text-field
+        <v-col cols="9" sm="6" class="py-0">
+          <DsfrTextField
             v-model="searchTerm"
             label="Chercher par produit ou fournisseur"
-            outlined
-            dense
             hide-details
             clearable
             @click:clear="clearSearch"
             @keyup.enter="search"
-          ></v-text-field>
+          />
         </v-col>
         <v-col cols="2" class="px-0 pb-0">
-          <v-btn outlined color="primary" height="40px" @click="search">
+          <v-btn outlined color="primary" class="mt-5" height="40px" @click="search">
             <v-icon>mdi-magnify</v-icon>
             <span v-if="$vuetify.breakpoint.smAndUp">Chercher</span>
           </v-btn>
@@ -64,7 +62,7 @@
       </v-row>
 
       <div class="d-flex align-center mt-2 mt-sm-6 mb-2">
-        <v-badge :value="hasActiveFilter" color="primary" dot overlap>
+        <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap>
           <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1 py-4 py-sm-0">
             <v-icon small>mdi-filter-outline</v-icon>
             <span v-if="showFilters">Cacher les filtres</span>
@@ -89,16 +87,14 @@
               >
                 Famille de produit
               </label>
-              <v-select
+              <DsfrSelect
                 v-model="appliedFilters.family"
                 id="filter-family"
                 :items="productFamilies"
                 hide-details
-                dense
-                outlined
                 clearable
                 class="mt-2"
-              ></v-select>
+              />
             </v-col>
             <v-col cols="12" sm="6">
               <label
@@ -107,17 +103,15 @@
               >
                 Caractéristiques
               </label>
-              <v-select
+              <DsfrSelect
                 id="filter-characteristics"
                 v-model="appliedFilters.characteristics"
                 :items="characteristics"
                 hide-details
-                dense
-                outlined
                 clearable
                 multiple
                 class="mt-2"
-              ></v-select>
+              />
             </v-col>
           </v-row>
           <v-row class="mt-0">
@@ -136,19 +130,17 @@
                   >
                     Après
                   </label>
-                  <v-text-field
+                  <DsfrTextField
                     :value="appliedFilters.startDate"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
                     v-on="on"
                     hide-details
-                    outlined
-                    dense
                     clearable
                     id="filter-startdate"
                     @click:clear="appliedFilters.startDate = null"
-                  ></v-text-field>
+                  />
                 </v-col>
               </template>
 
@@ -169,19 +161,17 @@
                   >
                     Avant
                   </label>
-                  <v-text-field
+                  <DsfrTextField
                     :value="appliedFilters.endDate"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
                     v-on="on"
                     hide-details
-                    outlined
-                    dense
                     clearable
                     id="filter-enddate"
                     @click:clear="appliedFilters.endDate = null"
-                  ></v-text-field>
+                  />
                 </v-col>
               </template>
 
@@ -251,11 +241,13 @@
 <script>
 import { formatDate, getObjectDiff } from "@/utils"
 import Constants from "@/constants"
+import DsfrTextField from "@/components/DsfrTextField"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
   name: "PurchasesHome",
-  components: { BreadcrumbsNav },
+  components: { DsfrTextField, BreadcrumbsNav, DsfrSelect },
   data() {
     return {
       searchTerm: null,
@@ -503,6 +495,6 @@ export default {
 }
 .active-filter-label::before {
   content: "⚫︎";
-  color: #0c7f46;
+  color: #ce614a;
 }
 </style>

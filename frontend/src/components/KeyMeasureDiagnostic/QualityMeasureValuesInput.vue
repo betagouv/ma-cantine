@@ -3,7 +3,7 @@
     <legend class="my-2 body-2">{{ label }}</legend>
 
     <label :for="'total-' + diagnostic.year" class="body-2 mb-1 mt-2">...total</label>
-    <v-text-field
+    <DsfrTextField
       :id="'total-' + diagnostic.year"
       hide-details="auto"
       type="number"
@@ -12,7 +12,6 @@
         validators.gteSum([diagnostic.valueBioHt, diagnostic.valueSustainableHt], totalErrorMessage),
       ]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueTotalHt"
@@ -21,7 +20,7 @@
       :messages="totalError ? [totalErrorMessage] : undefined"
       :error="totalError"
       @blur="totalError = false"
-    ></v-text-field>
+    />
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueTotalHt"
@@ -31,20 +30,19 @@
     />
 
     <label :for="'bio-' + diagnostic.year" class="body-2 mb-1 mt-4">...en produits bio</label>
-    <v-text-field
+    <DsfrTextField
       :id="'bio-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueBioHt"
       :readonly="readonly"
       :disabled="readonly"
       @blur="checkTotal"
-    ></v-text-field>
+    />
 
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -57,20 +55,19 @@
     <label :for="'sustainable-' + diagnostic.year" class="body-2 mb-1 mt-4">
       ...en autres produits de qualité et durables (hors bio)
     </label>
-    <v-text-field
+    <DsfrTextField
       :id="'sustainable-' + diagnostic.year"
       hide-details="auto"
       type="number"
       :rules="[validators.nonNegativeOrEmpty]"
       validate-on-blur
-      solo
       placeholder="Je ne sais pas"
       suffix="€ HT"
       v-model.number="diagnostic.valueSustainableHt"
       :readonly="readonly"
       :disabled="readonly"
       @blur="checkTotal"
-    ></v-text-field>
+    />
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueSustainableHt"
@@ -84,6 +81,7 @@
 <script>
 import validators from "@/validators"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
   props: {
@@ -95,7 +93,7 @@ export default {
       default: false,
     },
   },
-  components: { PurchaseHint },
+  components: { PurchaseHint, DsfrTextField },
   data() {
     return {
       totalError: false,

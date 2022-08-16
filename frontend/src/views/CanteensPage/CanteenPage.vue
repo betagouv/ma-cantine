@@ -47,7 +47,7 @@
           Votre demande a bien été prise en compte. Nous reviendrons vers vous au plus vite.
         </v-alert>
 
-        <v-alert colored-border color="primary" elevation="2" border="left" type="info" v-else>
+        <DsfrCallout v-else>
           <div>Cet établissement n'a pas de gestionnaire associé. C'est votre établissement ?</div>
           <div v-if="loggedUser" class="mt-2">
             <v-btn @click="claimCanteen" outlined color="primary">Rejoindre cet établissement</v-btn>
@@ -58,7 +58,7 @@
             <a :href="`/s-identifier?next=${currentPage}`">connectez-vous</a>
             pour le rejoindre.
           </div>
-        </v-alert>
+        </DsfrCallout>
       </div>
 
       <CanteenPublication :canteen="canteen" />
@@ -78,6 +78,7 @@ import ContactForm from "./ContactForm"
 import CanteenIndicators from "@/components/CanteenIndicators"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import labels from "@/data/quality-labels.json"
+import DsfrCallout from "@/components/DsfrCallout"
 
 export default {
   data() {
@@ -93,6 +94,7 @@ export default {
     ContactForm,
     CanteenIndicators,
     BreadcrumbsNav,
+    DsfrCallout,
   },
   props: {
     canteenUrlComponent: {

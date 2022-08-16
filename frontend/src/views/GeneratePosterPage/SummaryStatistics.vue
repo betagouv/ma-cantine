@@ -67,7 +67,7 @@ export default {
           },
         },
         labels: ["Bio", "Qualité et durable (hors bio)", "Hors catégories EGAlim"],
-        colors: ["#06622f", "#55a57e", "#ccc"],
+        colors: ["#297254", "#00A95F", "#ccc"],
         legend: {
           show: !this.hideLegend,
           fontSize: "12px",

@@ -16,27 +16,16 @@ $card-title-word-break: normal !important;
 $card-hover-elevation: 4;
 $card-border-radius: 0; // DSRF: https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/carte/
 
-// /* TEXT FIELD: https://vuetifyjs.com/en/api/v-text-field/#sass-variables */
-// $text-field-solo-dense-control-min-height: 38px !default;
-// $text-field-filled-full-width-outlined-single-line-slot-min-height: 38px !default;
+/* ALERT */
+$alert-border-radius: 0; // DSFR
 
-$ma-cantine-dark-orange: #CA3A04;
+/* LEGACY COLORS */
 $ma-cantine-orange: #EB5B25;
-$ma-cantine-light-orange: #FDEFE9;
 $ma-cantine-green: #61753f;
-$ma-cantine-light-green: #F1F3EE;
-$ma-cantine-dark-yellow: #F0CF89;
 $ma-cantine-yellow: #E2A013;
 $ma-cantine-light-yellow: #FBF1DC;
 $ma-cantine-red: #C13331;
-$ma-cantine-pink: #D23857;
-$ma-cantine-light-pink: #FFF8FA;
-$ma-cantine-blue: #3F62D5;
-$ma-cantine-light-blue: #E8ECF9;
 $ma-cantine-black: #000000;
-$ma-cantine-light-black: rgba(0,0,0,0.83);
-$ma-cantine-dark-grey: #414141;
 $ma-cantine-grey: #333333;
-$ma-cantine-light-grey: #808080;
 $ma-cantine-dark-white: #E1E1E1;
 $ma-cantine-white: #FFFFFF;

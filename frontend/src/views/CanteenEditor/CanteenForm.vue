@@ -19,15 +19,15 @@
     <v-form ref="form" v-model="formIsValid">
       <v-row>
         <v-col cols="12" md="8">
-          <p class="body-2 mt-4 mb-2">SIRET</p>
-          <v-text-field
+          <DsfrTextField
             hide-details="auto"
             validate-on-blur
-            solo
+            label="SIRET"
             v-model="canteen.siret"
             :rules="[validators.length(14), validators.luhn]"
             @blur="getCanteenBySiret"
-          ></v-text-field>
+            labelClasses="body-2 mb-2"
+          />
           <p class="caption mt-1 ml-2">
             Vous ne le connaissez pas ? Utilisez cet
             <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
@@ -57,14 +57,13 @@
             </v-card-text>
             <v-card-text v-else>
               <p>Demandez accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »</p>
-              <v-textarea
+              <DsfrTextarea
                 v-model="messageJoinCanteen"
                 label="Message (optionnel)"
-                solo
                 hide-details="auto"
                 rows="2"
                 class="mt-2 body-2"
-              ></v-textarea>
+              />
               <v-btn color="primary" class="mt-4" @click="sendMgmtRequest">
                 <v-icon class="mr-2">mdi-key</v-icon>
                 Demander l'accès
@@ -89,14 +88,14 @@
                         notre équipe reviendra vers vous dans les plus brefs délais
                       </p>
                       <v-form v-model="siretFormIsValid" ref="siretHelp" @submit.prevent>
-                        <v-textarea
+                        <DsfrTextarea
                           v-model="messageTroubleshooting"
                           label="Message"
-                          outlined
+                          labelClasses="body-2 text-left mb-2"
                           rows="3"
                           :rules="[validators.required]"
                           class="body-2"
-                        ></v-textarea>
+                        />
                       </v-form>
                     </v-card-text>
 
@@ -118,29 +117,28 @@
             </v-card-text>
           </v-card>
 
-          <p class="body-2 my-2">Nom de la cantine</p>
-          <v-text-field
+          <DsfrTextField
             hide-details="auto"
+            label="Nom de la cantine"
             :rules="[validators.required]"
             validate-on-blur
-            solo
             v-model="canteen.name"
-          ></v-text-field>
+            labelClasses="body-2 mb-2"
+          />
 
           <p class="body-2 mt-4 mb-2">Ville</p>
-          <v-autocomplete
+          <DsfrAutocomplete
             hide-details="auto"
             :rules="[validators.required]"
             :loading="loadingCommunes"
             :items="communes"
             :search-input.sync="search"
             ref="cityAutocomplete"
-            solo
             auto-select-first
             cache-items
             v-model="cityAutocompleteChoice"
             no-data-text="Pas de résultats. Veuillez renseigner votre ville"
-          ></v-autocomplete>
+          />
         </v-col>
 
         <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -200,24 +198,22 @@
         </v-col>
 
         <v-col cols="12" md="6" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
-          <p class="body-2 my-2">
-            Couverts moyen par jour (convives sur place)
-          </p>
-          <v-text-field
+          <DsfrTextField
+            label="Couverts moyen par jour (convives sur place)"
             hide-details="auto"
             :rules="showDailyMealCount ? [validators.greaterThanZero] : []"
             :disabled="!showDailyMealCount"
             :messages="showDailyMealCount ? [] : 'Concerne uniquement les cantines recevant des convives'"
             validate-on-blur
-            solo
             v-model="canteen.dailyMealCount"
             prepend-icon="mdi-silverware-fork-knife"
-          ></v-text-field>
+            labelClasses="body-2 mb-2"
+          />
         </v-col>
 
         <v-col cols="12" md="6" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
-          <p class="body-2 my-2">Nombre de cantines à qui je fournis des repas</p>
-          <v-text-field
+          <DsfrTextField
+            label="Nombre de cantines à qui je fournis des repas"
             hide-details="auto"
             :rules="showSatelliteCanteensCount ? [validators.greaterThanZero] : []"
             :disabled="!showSatelliteCanteensCount"
@@ -225,24 +221,22 @@
               showSatelliteCanteensCount ? [] : 'Concerne uniquement les cuisines qui livrent à des satellites'
             "
             validate-on-blur
-            solo
             v-model="canteen.satelliteCanteensCount"
             prepend-icon="mdi-home-city"
-          ></v-text-field>
+            labelClasses="body-2 mb-2"
+          />
         </v-col>
 
         <v-expand-transition>
           <v-col cols="12" md="8" v-if="usesCentralProducer" class="py-0">
-            <label class="body-2 mt-4" for="central-siret">SIRET de la cuisine centrale</label>
-            <v-text-field
-              id="central-siret"
+            <DsfrTextField
+              label="SIRET de la cuisine centrale"
               class="mt-2"
               hide-details="auto"
               validate-on-blur
-              solo
               v-model="canteen.centralProducerSiret"
               :rules="[validators.length(14), validators.luhn]"
-            ></v-text-field>
+            />
             <p class="caption mt-1 ml-2">
               Vous ne le connaissez pas ? Utilisez cet
               <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
@@ -262,40 +256,38 @@
         <v-col cols="12" md="6">
           <div>
             <p class="body-2">Secteurs d'activité</p>
-            <v-select
+            <DsfrSelect
               multiple
               :items="sectors"
-              solo
               v-model="canteen.sectors"
               item-text="name"
               item-value="id"
               hide-details
-            ></v-select>
+            />
           </div>
         </v-col>
         <v-col cols="12" md="6">
           <div>
             <p class="body-2">Type d'établissement</p>
-            <v-select
+            <DsfrSelect
               :items="economicModels"
               solo
               v-model="canteen.economicModel"
               placeholder="Sélectionnez..."
               hide-details="auto"
               clearable
-            ></v-select>
+            />
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12">
           <p class="body-2">Ministère de tutelle</p>
-          <v-select
+          <DsfrSelect
             :items="ministries"
-            solo
             v-model="canteen.lineMinistry"
             placeholder="Sélectionnez le Ministère de tutelle"
             hide-details="auto"
             clearable
-          ></v-select>
+          />
         </v-col>
 
         <v-col cols="12" sm="6" md="3">
@@ -346,12 +338,24 @@ import PublicationStateNotice from "./PublicationStateNotice"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
 import Constants from "@/constants"
+import DsfrTextField from "@/components/DsfrTextField"
+import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrSelect from "@/components/DsfrSelect"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
 export default {
   name: "CanteenForm",
-  components: { PublicationStateNotice, ImagesField, TechnicalControlDialog },
+  components: {
+    PublicationStateNotice,
+    ImagesField,
+    TechnicalControlDialog,
+    DsfrTextField,
+    DsfrAutocomplete,
+    DsfrSelect,
+    DsfrTextarea,
+  },
   props: {
     canteenUrlComponent: {
       type: String,

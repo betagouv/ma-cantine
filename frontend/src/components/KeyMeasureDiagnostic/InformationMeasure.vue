@@ -45,6 +45,7 @@
           :readonly="readonly"
           :disabled="readonly"
         ></v-checkbox>
+        <!-- Will leave this UI version of the text-field since it is next to a checkbox -->
         <v-text-field
           class="my-0 py-0"
           hide-details
@@ -66,25 +67,25 @@
       class="mb-6"
     />
 
-    <label class="text-left" for="support-link">Lien vers le support de communication</label>
-    <v-text-field
-      id="support-link"
+    <DsfrTextField
       :rules="[validators.urlOrEmpty]"
-      solo
       v-model="diagnostic.communicationSupportUrl"
       placeholder="https://"
       validate-on-blur
       :readonly="readonly"
       :disabled="readonly"
       class="mt-2"
-    ></v-text-field>
+      label="Lien vers le support de communication"
+    />
   </div>
 </template>
 
 <script>
 import validators from "@/validators"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
+  components: { DsfrTextField },
   props: {
     diagnostic: Object,
     readonly: {

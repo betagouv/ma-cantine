@@ -8,43 +8,35 @@
       <v-form ref="form" v-model="formIsValid">
         <v-row>
           <v-col cols="12">
-            <label for="actual" class="body-2 mb-1 mt-2 text-left">Mot de passe actuel</label>
-            <v-text-field
-              id="actual"
+            <DsfrTextField
+              label="Mot de passe actuel"
               type="password"
               :rules="[validators.required]"
               hide-details="auto"
-              solo
               v-model="oldPassword"
               placeholder="Entrez votre mot de passe actuel"
-            ></v-text-field>
+            />
           </v-col>
           <v-col cols="12">
-            <label for="new" class="body-2 mb-1 mt-2 text-left">Nouveau mot de passe</label>
-            <v-text-field
-              id="new"
+            <DsfrTextField
+              label="Nouveau mot de passe"
               type="password"
               :rules="[validators.required]"
               hide-details="auto"
-              solo
               v-model="newPassword"
               placeholder="Entrez votre nouveau mot de passe"
-            ></v-text-field>
+            />
           </v-col>
           <v-col cols="12">
-            <label for="confirm" class="body-2 mb-1 mt-2 text-left">
-              Confirmation de nouveau mot de passe
-            </label>
-            <v-text-field
-              id="confirm"
+            <DsfrTextField
+              label="Confirmation de nouveau mot de passe"
               type="password"
               hide-details="auto"
-              solo
               v-model="newPasswordConfirmation"
               :rules="[validators.matchPassword]"
               validate-on-blur
               placeholder="Confirmez votre nouveau mot de passe"
-            ></v-text-field>
+            />
           </v-col>
         </v-row>
       </v-form>
@@ -60,9 +52,11 @@
 
 <script>
 import validators from "@/validators"
+import DsfrTextField from "@/components/DsfrTextField"
 
 export default {
   name: "PasswordChangeEditor",
+  components: { DsfrTextField },
   data() {
     return {
       oldPassword: "",

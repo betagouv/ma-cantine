@@ -39,19 +39,17 @@
     <v-sheet class="px-6" elevation="0">
       <v-row>
         <v-col cols="12" md="7" class="pt-0">
-          <form role="search" class="d-block d-sm-flex" onsubmit="return false">
-            <v-text-field
+          <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
+            <DsfrTextField
               hide-details="auto"
               ref="search"
               v-model="searchTerm"
-              outlined
               label="Recherche par nom de l'établissement"
               clearable
               @click:clear="clearSearch"
               @keyup.enter="search"
-              class="mb-2"
-              dense
-            ></v-text-field>
+              class="mb-2 flex-grow-1"
+            />
             <v-btn outlined color="primary" class="ml-4 mb-2" height="40px" @click="search">
               <v-icon>mdi-magnify</v-icon>
               Chercher
@@ -62,7 +60,7 @@
     </v-sheet>
 
     <div class="d-flex align-center mt-4 pl-0 pl-md-6">
-      <v-badge :value="hasActiveFilter" color="primary" dot overlap offset-x="-2">
+      <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
         <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
           Filtres
         </h2>
@@ -92,7 +90,7 @@
             >
               Région
             </label>
-            <v-autocomplete
+            <DsfrAutocomplete
               v-model="appliedFilters.chosenRegion"
               :items="regions"
               clearable
@@ -100,11 +98,9 @@
               id="select-region"
               placeholder="Toutes les régions"
               class="mt-1"
-              outlined
-              dense
               auto-select-first
               :filter="locationFilter"
-            ></v-autocomplete>
+            />
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <label
@@ -116,7 +112,7 @@
             >
               Département
             </label>
-            <v-autocomplete
+            <DsfrAutocomplete
               v-model="appliedFilters.chosenDepartment"
               :items="departments"
               clearable
@@ -124,11 +120,9 @@
               id="select-department"
               placeholder="Tous les départements"
               class="mt-1"
-              outlined
-              dense
               auto-select-first
               :filter="locationFilter"
-            ></v-autocomplete>
+            />
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <label
@@ -137,7 +131,7 @@
             >
               Secteur d'activité
             </label>
-            <v-select
+            <DsfrSelect
               v-model="appliedFilters.chosenSectors"
               multiple
               :items="sectors"
@@ -145,10 +139,8 @@
               hide-details
               id="select-sector"
               placeholder="Tous les secteurs"
-              outlined
               class="mt-1"
-              dense
-            ></v-select>
+            />
           </v-col>
         </v-row>
         <v-row class="align-end mt-0">
@@ -168,17 +160,15 @@
                 >
                   bio minimum
                 </label>
-                <v-text-field
+                <DsfrTextField
                   :value="appliedFilters.minBio"
                   ref="minBio"
                   :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
                   @change="onChangeIntegerFilter('minBio')"
                   hide-details="auto"
                   append-icon="mdi-percent"
-                  outlined
                   placeholder="0"
                   aria-describedby="value-percentages-bio"
-                  dense
                 />
               </v-col>
               <v-col class="pa-0 pl-1">
@@ -192,17 +182,15 @@
                 >
                   bio, qualité et durables min
                 </label>
-                <v-text-field
+                <DsfrTextField
                   :value="appliedFilters.minCombined"
                   ref="minCombined"
                   :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
                   @change="onChangeIntegerFilter('minCombined')"
                   hide-details="auto"
-                  outlined
                   placeholder="0"
                   append-icon="mdi-percent"
                   aria-describedby="value-percentages-bio-qualite"
-                  dense
                 />
               </v-col>
             </div>
@@ -217,30 +205,36 @@
             >
               Repas par jour
             </label>
-            <div class="d-flex mt-1">
-              <v-text-field
-                :value="appliedFilters.minMealCount"
-                ref="minMealCount"
-                :rules="[validators.nonNegativeOrEmpty]"
-                @change="onChangeIntegerFilter('minMealCount')"
-                hide-details="auto"
-                outlined
-                label="Min"
-                aria-describedby="meal-count"
-                dense
-              />
+            <div class="d-flex">
+              <div>
+                <label class="caption" for="min-meal-count-field">
+                  Min
+                </label>
+                <DsfrTextField
+                  :value="appliedFilters.minMealCount"
+                  ref="minMealCount"
+                  :rules="[validators.nonNegativeOrEmpty]"
+                  @change="onChangeIntegerFilter('minMealCount')"
+                  hide-details="auto"
+                  id="min-meal-count-field"
+                  aria-describedby="meal-count"
+                />
+              </div>
               <span class="mx-2 align-self-center">-</span>
-              <v-text-field
-                :value="appliedFilters.maxMealCount"
-                ref="maxMealCount"
-                :rules="[validators.nonNegativeOrEmpty]"
-                @change="onChangeIntegerFilter('maxMealCount')"
-                hide-details="auto"
-                outlined
-                label="Max"
-                aria-describedby="meal-count"
-                dense
-              />
+              <div>
+                <label class="caption" for="max-meal-count-field">
+                  Max
+                </label>
+                <DsfrTextField
+                  :value="appliedFilters.maxMealCount"
+                  ref="maxMealCount"
+                  :rules="[validators.nonNegativeOrEmpty]"
+                  @change="onChangeIntegerFilter('maxMealCount')"
+                  hide-details="auto"
+                  aria-describedby="meal-count"
+                  id="max-meal-count-field"
+                />
+              </div>
             </div>
           </v-col>
           <v-col cols="12" sm="4" md="3">
@@ -250,17 +244,15 @@
             >
               Mode de gestion
             </label>
-            <v-select
+            <DsfrSelect
               v-model="appliedFilters.managementType"
               :items="managementTypes"
               clearable
               hide-details
               id="select-management-type"
-              outlined
               class="mt-1"
-              dense
               placeholder="Tous les modes"
-            ></v-select>
+            />
           </v-col>
         </v-row>
       </v-sheet>
@@ -272,19 +264,21 @@
       <p class="mt-3 mb-n4 text-body-2 grey--text" v-if="resultsCountText">
         {{ resultsCountText }}
       </p>
-      <v-row class="my-2">
+      <v-row class="my-2" align="end">
         <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp"></v-col>
         <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
         <v-col cols="12" sm="6">
-          <v-pagination
-            v-model="page"
-            :length="Math.ceil(publishedCanteenCount / limit)"
-            :total-visible="7"
-          ></v-pagination>
+          <DsfrPagination v-model="page" :length="Math.ceil(publishedCanteenCount / limit)" :total-visible="7" />
         </v-col>
         <v-spacer></v-spacer>
-        <v-col id="ordering" cols="12" sm="3" class="d-flex align-center">
-          <v-select v-model="orderBy" :items="orderOptions" hide-details label="Trier par" outlined dense></v-select>
+        <v-col id="ordering" cols="12" sm="3" class="d-flex align-end">
+          <DsfrSelect
+            v-model="orderBy"
+            :items="orderOptions"
+            labelClasses="body-2 text-left mb-2"
+            hide-details
+            label="Trier par"
+          />
           <v-btn
             icon
             @click="toggleOrderDirection"
@@ -303,12 +297,12 @@
           <PublishedCanteenCard :canteen="canteen" />
         </v-col>
       </v-row>
-      <v-pagination
+      <DsfrPagination
         class="my-6"
         v-model="page"
         :length="Math.ceil(publishedCanteenCount / limit)"
         :total-visible="7"
-      ></v-pagination>
+      />
     </div>
     <div v-else class="d-flex flex-column align-center py-10">
       <v-icon large>mdi-inbox-remove</v-icon>
@@ -336,15 +330,9 @@
           Dites-nous tout, nous ferons en sorte de leur communiquer votre intérêt pour leurs initiatives en place.
         </p>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
-          <v-text-field
-            v-model="fromEmail"
-            label="Votre email"
-            :rules="[validators.email]"
-            validate-on-blur
-            outlined
-          ></v-text-field>
-          <v-text-field v-model="name" label="Prénom et nom (facultatif)" outlined></v-text-field>
-          <v-textarea v-model="message" label="Message" outlined :rules="[validators.required]"></v-textarea>
+          <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
+          <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
+          <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
         </v-form>
         <v-row class="pa-2">
           <v-spacer></v-spacer>
@@ -366,10 +354,24 @@ import { getObjectDiff, normaliseText, sectorsSelectList } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import DsfrTextField from "@/components/DsfrTextField"
+import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrSelect from "@/components/DsfrSelect"
+import DsfrTextarea from "@/components/DsfrTextarea"
+import DsfrPagination from "@/components/DsfrPagination"
 
 const DEFAULT_ORDER = "creation"
 
 export default {
+  components: {
+    PublishedCanteenCard,
+    BreadcrumbsNav,
+    DsfrTextField,
+    DsfrAutocomplete,
+    DsfrSelect,
+    DsfrTextarea,
+    DsfrPagination,
+  },
   data() {
     const user = this.$store.state.loggedUser
     return {
@@ -423,7 +425,6 @@ export default {
       showFilters: false,
     }
   },
-  components: { PublishedCanteenCard, BreadcrumbsNav },
   computed: {
     loading() {
       return this.publishedCanteenCount === null
@@ -715,7 +716,7 @@ export default {
 }
 .active-filter-label::before {
   content: "⚫︎";
-  color: #0c7f46;
+  color: #ce614a;
 }
 div >>> .v-list-item--disabled .theme--light.v-icon {
   color: rgba(0, 0, 0, 0.22);

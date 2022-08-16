@@ -20,7 +20,7 @@
     />
 
     <!-- TODO: for now hide if COMPLETE -->
-    <v-alert v-if="isStaff" outlined type="info" class="body-2 blue--text text--darken-2 my-4">
+    <DsfrCallout v-if="isStaff" class="body-2 my-4">
       En tant que membre de l'équipe ma cantine, vous pouvez ajoter trois colonnes additionnelles à la fin du fichier
       CSV :
       <br />
@@ -54,7 +54,7 @@
       une des colonnes de listes de gestionnaires.
       <br />
       Bon courage ! 👾 🚀
-    </v-alert>
+    </DsfrCallout>
 
     <h2 class="mt-8">2. Transfèrer le fichier</h2>
     <FileDrop
@@ -225,10 +225,11 @@ import FileDrop from "@/components/FileDrop"
 import HelpForm from "./HelpForm"
 import Constants from "@/constants"
 import DownloadLinkList from "@/components/DownloadLinkList.vue"
+import DsfrCallout from "@/components/DsfrCallout"
 
 export default {
   name: "DiagnosticImportPage",
-  components: { BreadcrumbsNav, FileDrop, HelpForm, DownloadLinkList },
+  components: { BreadcrumbsNav, FileDrop, HelpForm, DownloadLinkList, DsfrCallout },
   props: ["importLevel"],
   data() {
     const user = this.$store.state.loggedUser
