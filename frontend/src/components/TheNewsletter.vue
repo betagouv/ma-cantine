@@ -28,7 +28,7 @@
         </v-card>
       </v-col>
       <v-col v-if="$vuetify.breakpoint.smAndUp" class="d-flex align-center" cols="4" md="2">
-        <v-img src="/static/images/doodles/primary/LayingDoodle.png" contain max-height="100px"></v-img>
+        <v-img src="/static/images/doodles-dsfr/primary/LayingDoodle.png" contain max-height="100px"></v-img>
       </v-col>
     </v-row>
   </div>

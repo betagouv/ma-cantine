@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="spacer"></div>
-      <img src="/static/images/doodles/primary/CoffeeDoodle.png" id="hat" alt="" />
+      <img src="/static/images/doodles-dsfr/primary/CoffeeDoodle.png" id="hat" alt="" />
     </div>
     <div class="spacer"></div>
 

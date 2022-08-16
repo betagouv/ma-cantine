@@ -27,7 +27,7 @@
       <v-spacer></v-spacer>
 
       <v-img
-        src="/static/images/doodles/primary/ChartDoodle.png"
+        src="/static/images/doodles-dsfr/primary/ChartDoodle.png"
         v-if="$vuetify.breakpoint.smAndUp"
         class="mx-auto rounded-0"
         contain

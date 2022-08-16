@@ -4,13 +4,13 @@
     <v-card elevation="0" class="text-center text-md-left mb-6 mt-3">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
         <v-col cols="12">
-          <v-img max-height="90px" contain src="/static/images/doodles/primary/LovingDoodle.png"></v-img>
+          <v-img max-height="90px" contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="2" v-if="$vuetify.breakpoint.mdAndUp">
           <div class="d-flex fill-height align-center">
-            <v-img contain src="/static/images/doodles/primary/LovingDoodle.png"></v-img>
+            <v-img contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
           </div>
         </v-col>
         <v-col cols="12" md="10">
@@ -318,7 +318,7 @@
       <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp">
         <div class="fill-height d-flex flex-column align-center">
           <v-spacer></v-spacer>
-          <v-img src="/static/images/doodles/primary/SittingDoodle.png" contain></v-img>
+          <v-img src="/static/images/doodles-dsfr/primary/SittingDoodle.png" contain></v-img>
           <v-spacer></v-spacer>
         </div>
       </v-col>
