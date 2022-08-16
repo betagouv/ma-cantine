@@ -418,6 +418,10 @@ export default {
       }
     },
     onCanteenAutocompleteChange() {
+      if (!this.selectedCanteenId) {
+        this.selectedCanteen = {}
+        return
+      }
       if (this.fetchedCanteens[this.selectedCanteenId]) {
         this.selectedCanteen = this.fetchedCanteens[this.selectedCanteenId]
         return
