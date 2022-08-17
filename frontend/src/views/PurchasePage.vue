@@ -68,7 +68,7 @@
                 <DsfrAutocomplete
                   hide-details="auto"
                   :items="userCanteens"
-                  placeholder="Choissisez la cantine"
+                  placeholder="Choisissez la cantine"
                   v-model="purchase.canteen"
                   :rules="[validators.required]"
                   item-text="name"
