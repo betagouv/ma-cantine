@@ -36,7 +36,7 @@ export default {
     if (this.$store.state.loggedUser) {
       resources.push({
         title: "Générer mon affiche",
-        icon: "mdi-cloud-print-outline",
+        icon: "$article-fill",
         description: "Obtenez un PDF à afficher ou à envoyer par mail à vos convives",
         url: null,
         to: { name: "GeneratePosterPage" },
@@ -54,7 +54,7 @@ export default {
     }
     resources.push({
       title: "Communauté",
-      icon: "mdi-account-group",
+      icon: "$team-fill",
       description: "Découvrez nos événements et échangez avec des autres gestionnaires",
       url: null,
       to: { name: "CommunityPage" },
@@ -62,7 +62,7 @@ export default {
     })
     resources.push({
       title: "Documentation",
-      icon: "mdi-file-document-multiple",
+      icon: "$book-2-fill",
       description: "Ressources pour les acteurs et actrices de la restauration collective",
       url: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
       to: null,

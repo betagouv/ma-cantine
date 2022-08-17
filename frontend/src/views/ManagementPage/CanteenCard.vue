@@ -4,11 +4,11 @@
       name: 'CanteenModification',
       params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
     }"
-    class="dsfr"
+    class="dsfr d-flex flex-column"
     outlined
     :ripple="false"
   >
-    <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160"></v-img>
+    <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
     <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
     <v-card-subtitle class="py-1">
       <v-chip small :color="publicationStatus.color" label>
@@ -18,9 +18,10 @@
     <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city || canteen.sectors" class="mt-0 pb-0">
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
+    <v-spacer></v-spacer>
     <v-card-actions class="px-4 py-4">
       <v-spacer></v-spacer>
-      <v-icon color="primary">mdi-arrow-right</v-icon>
+      <v-icon color="primary">$arrow-right-line</v-icon>
     </v-card-actions>
   </v-card>
 </template>

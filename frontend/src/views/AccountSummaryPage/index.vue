@@ -6,7 +6,7 @@
           <v-list nav class="text-left">
             <v-list-item-group>
               <v-list-item :ripple="false" :to="{ name: 'AccountEditor' }">
-                <v-icon small class="mr-2">mdi-account</v-icon>
+                <v-icon small class="mr-2">$account-circle-fill</v-icon>
                 <v-list-item-title class="text-body-2 font-weight-bold">Profil</v-list-item-title>
               </v-list-item>
               <v-list-item :ripple="false" :to="{ name: 'PasswordChange' }" class="rounded-lg">

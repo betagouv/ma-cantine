@@ -12,7 +12,7 @@
             <div>
               <v-avatar color="grey lighten-2" size="70" class="mr-4">
                 <v-img :src="userCopy.avatar" v-if="userCopy.avatar"></v-img>
-                <v-icon v-else>mdi-account</v-icon>
+                <v-icon v-else>$account-circle-fill</v-icon>
               </v-avatar>
               <v-btn
                 text

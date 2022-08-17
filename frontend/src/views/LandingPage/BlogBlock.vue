@@ -13,7 +13,7 @@
       </v-col>
     </v-row>
     <v-btn large outlined color="primary" class="mt-2 mx-auto" :to="{ name: 'BlogsHome' }">
-      <v-icon small class="mr-1">mdi-newspaper-variant-outline</v-icon>
+      <v-icon small class="mr-1">$newspaper-fill</v-icon>
       Visiter notre blog
     </v-btn>
   </div>

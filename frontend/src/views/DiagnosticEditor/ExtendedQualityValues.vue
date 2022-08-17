@@ -200,7 +200,7 @@ const MISC_LABELS = {
     color: "green",
   },
   FRANCE: {
-    icon: "mdi-hexagon-outline",
+    icon: "$france-line",
     color: "indigo",
   },
   SHORT_DISTRIBUTION: {

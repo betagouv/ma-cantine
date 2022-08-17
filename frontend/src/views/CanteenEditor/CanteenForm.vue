@@ -206,7 +206,7 @@
             :messages="showDailyMealCount ? [] : 'Concerne uniquement les cantines recevant des convives'"
             validate-on-blur
             v-model="canteen.dailyMealCount"
-            prepend-icon="mdi-silverware-fork-knife"
+            prepend-icon="$restaurant-fill"
             labelClasses="body-2 mb-2"
           />
         </v-col>
@@ -222,7 +222,7 @@
             "
             validate-on-blur
             v-model="canteen.satelliteCanteensCount"
-            prepend-icon="mdi-home-city"
+            prepend-icon="$community-fill"
             labelClasses="body-2 mb-2"
           />
         </v-col>

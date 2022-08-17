@@ -21,7 +21,7 @@
               :to="{ name: 'DiagnosticImportPage', params: { importLevel: type.key } }"
               class="fill-height pa-4 d-flex flex-column hover-transition"
             >
-              <v-icon :x-large="$vuetify.breakpoint.mdAndUp" class="pt-4 pb-1" color="primary">
+              <v-icon :x-large="$vuetify.breakpoint.mdAndUp" class="pt-4 pb-1 align-self-center" color="primary">
                 {{ type.icon }}
               </v-icon>
               <v-card-title>
@@ -35,7 +35,7 @@
               <v-spacer></v-spacer>
               <v-card-actions class="px-4 pt-0">
                 <v-spacer></v-spacer>
-                <v-icon color="primary">mdi-arrow-right</v-icon>
+                <v-icon color="primary">$arrow-right-line</v-icon>
               </v-card-actions>
             </v-card>
           </template>

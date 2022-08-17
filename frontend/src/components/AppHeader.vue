@@ -118,7 +118,7 @@
                 >
                   {{ navLink.text }}
                   <v-icon small class="ml-2" :color="navLink.isActive ? 'primary' : 'black'">
-                    {{ value ? "mdi-chevron-up" : "mdi-chevron-down" }}
+                    {{ value ? "$arrow-up-s-line" : "$arrow-down-s-line" }}
                   </v-icon>
                 </v-tab>
               </template>
@@ -151,13 +151,13 @@
             <v-avatar size="36" class="mr-2 pt-1" v-if="loggedUser && loggedUser.avatar">
               <v-img :src="loggedUser.avatar"></v-img>
             </v-avatar>
-            <v-icon v-else>mdi-account</v-icon>
+            <v-icon v-else>$account-circle-fill</v-icon>
             <span class="font-subtitle-3 mx-2 d-none d-sm-inline">Profil</span>
-            <v-icon class="ml-1 pt-1" small>mdi-menu-down</v-icon>
+            <v-icon class="ml-1 pt-1" small>$arrow-down-s-line</v-icon>
           </v-btn>
 
           <v-btn v-else icon class="mr-2 ml-2 align-self-center" v-on="on">
-            <v-icon>mdi-menu</v-icon>
+            <v-icon>$menu-fill</v-icon>
             <span class="d-sr-only">Menu</span>
           </v-btn>
         </template>
