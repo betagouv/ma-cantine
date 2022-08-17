@@ -32,7 +32,7 @@
             <DsfrAutocomplete
               hide-details
               :items="userCanteens"
-              label="Choissisez la cantine"
+              label="Choisissez la cantine"
               v-model="selectedCanteenId"
               @change="onCanteenAutocompleteChange"
               item-text="name"
