@@ -77,7 +77,7 @@ describe("ManagerItem.vue", () => {
     const iconWrapper = wrapper.find("v-icon-stub")
     expect(iconWrapper.exists()).toBe(true)
     expect(iconWrapper.attributes().color).toBe("secondary")
-    expect(iconWrapper.text()).toBe("mdi-account-clock-outline")
+    expect(iconWrapper.text()).toBe("mdi-account-clock")
   })
 
   it("Renders a green icon with a check when dealing with an manager", () => {
@@ -103,6 +103,6 @@ describe("ManagerItem.vue", () => {
     const iconWrapper = wrapper.find("v-icon-stub")
     expect(iconWrapper.exists()).toBe(true)
     expect(iconWrapper.attributes().color).toBe("primary")
-    expect(iconWrapper.text()).toBe("mdi-account-check-outline")
+    expect(iconWrapper.text()).toBe("mdi-account-check")
   })
 })
