@@ -109,7 +109,7 @@
     "baseComponent": "DiversificationMeasure",
     "baseMeasureComponent": "DiversificationMeasure",
     "id": "diversification-des-menus",
-    "mdiIcon": "mdi-leaf",
+    "mdiIcon": "$leaf-fill",
     "mdiIconColor": "green darken-1",
     "shortTitle": "Diversification des menus",
     "subMeasures": [

@@ -4,21 +4,21 @@
 
     <v-row class="mb-8">
       <v-col cols="12" sm="4">
-        <v-icon color="grey darken-3" class="mb-2" x-large>mdi-food-variant</v-icon>
+        <v-icon color="grey darken-3" class="mb-2" x-large>$seedling-fill</v-icon>
         <p class="mt-4 text-center text-sm-left">
           Promouvoir une alimentation saine et respectueuse de l'environnement.
         </p>
       </v-col>
 
       <v-col cols="12" sm="4">
-        <v-icon color="grey darken-3" class="mb-2" x-large>mdi-account-group</v-icon>
+        <v-icon color="grey darken-3" class="mb-2" x-large>$team-fill</v-icon>
         <p class="mt-4 text-center text-sm-left">
           Réduire les inégalités d'accès à une alimentation durable et de qualité.
         </p>
       </v-col>
 
       <v-col cols="12" sm="4">
-        <v-icon color="grey darken-3" class="mb-2" x-large>mdi-playlist-check</v-icon>
+        <v-icon color="grey darken-3" class="mb-2" x-large>$money-euro-box-fill</v-icon>
         <p class="mt-4 text-center text-sm-left">
           Assurer la juste rémunération des agriculteurs du secteur agricole.
         </p>

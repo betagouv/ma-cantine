@@ -40,7 +40,7 @@ export default {
   },
   computed: {
     icon() {
-      if (this.webinaire.type === "IN_PERSON") return "mdi-account-supervisor"
+      if (this.webinaire.type === "IN_PERSON") return "$parent-fill"
       return "mdi-television-play"
     },
     date() {

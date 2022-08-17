@@ -23,7 +23,7 @@
         <template v-slot:activator="{ on, attrs }">
           <v-list-item :input-value="logoutWarningDialog" :ripple="false" v-bind="attrs" v-on="on">
             <v-list-item-title class="body-2">
-              <v-icon small color="grey darken-2" class="mt-n1 mr-2">mdi-exit-to-app</v-icon>
+              <v-icon small color="grey darken-2" class="mt-n1 mr-2">$logout-box-r-fill</v-icon>
               Me déconnecter
             </v-list-item-title>
           </v-list-item>
@@ -60,7 +60,7 @@ export default {
       items: [
         {
           text: "Mes cantines",
-          icon: "mdi-chart-bubble",
+          icon: "$layout-grid-fill",
           authenticationState: true,
           to: { name: "ManagementPage" },
         },
@@ -79,7 +79,7 @@ export default {
         },
         {
           text: "Créer un compte",
-          icon: "mdi-account",
+          icon: "$account-circle-fill",
           breakpoint: "smAndDown",
           authenticationState: false,
           href: "/creer-mon-compte",
@@ -92,12 +92,12 @@ export default {
         },
         {
           text: "Générer mon affiche",
-          icon: "mdi-cloud-print-outline",
+          icon: "$article-fill",
           to: { name: "GeneratePosterPage" },
         },
         {
           text: "Mon compte",
-          icon: "mdi-account",
+          icon: "$account-circle-fill",
           authenticationState: true,
           to: { name: "AccountSummaryPage" },
         },
@@ -106,27 +106,27 @@ export default {
         },
         {
           text: "Mesures phares",
-          icon: "mdi-playlist-check",
+          icon: "$line-chart-fill",
           to: { name: "KeyMeasuresHome" },
         },
         {
           text: "Nos cantines",
-          icon: "mdi-silverware-fork-knife",
+          icon: "$restaurant-fill",
           to: { name: "CanteensHome" },
         },
         {
           text: "Notre communauté",
-          icon: "mdi-account-group",
+          icon: "$team-fill",
           to: { name: "CommunityPage" },
         },
         {
           text: "Blog",
-          icon: "mdi-newspaper-variant-outline",
+          icon: "$newspaper-fill",
           to: { name: "BlogsHome" },
         },
         {
           text: "Documentation",
-          icon: "mdi-file-document-outline",
+          icon: "$book-2-fill",
           href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
           target: "_blank",
           rel: "noopener",
@@ -136,12 +136,12 @@ export default {
         },
         {
           text: "Statistiques régionales",
-          icon: "mdi-chart-bar",
+          icon: "$bar-chart-box-fill",
           to: { name: "PublicCanteenStatisticsPage" },
         },
         {
           text: "Contactez-nous",
-          icon: "mdi-help-circle-outline",
+          icon: "$question-answer-fill",
           to: { name: "ContactPage" },
         },
       ],

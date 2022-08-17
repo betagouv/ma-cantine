@@ -130,7 +130,7 @@
 
           <DiagnosticExpansionPanel
             iconColour="green darken-1"
-            icon="mdi-leaf"
+            icon="$leaf-fill"
             heading="Diversification des sources de protéines et menus végétariens"
             :formIsValid="formIsValid.diversification"
           >

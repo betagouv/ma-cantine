@@ -2,11 +2,11 @@
   <v-card outlined>
     <v-card-title>
       <h2 v-if="forMeasure" class="font-weight-bold text-body-1">
-        <v-icon small class="mr-2" color="grey darken-4">mdi-calendar-month</v-icon>
+        <v-icon small class="mr-2" color="grey darken-4">$calendar-2-fill</v-icon>
         Entrée en vigueur
       </h2>
       <h3 v-else class="font-weight-bold text-body-1">
-        <v-icon small class="mr-2" color="grey darken-4">mdi-calendar-month</v-icon>
+        <v-icon small class="mr-2" color="grey darken-4">$calendar-2-fill</v-icon>
         Entrée en vigueur
       </h3>
     </v-card-title>
@@ -17,11 +17,11 @@
 
     <v-card-title>
       <h2 v-if="forMeasure" class="font-weight-bold text-body-1">
-        <v-icon small class="mr-2" color="grey darken-4">mdi-account-group</v-icon>
+        <v-icon small class="mr-2" color="grey darken-4">$team-fill</v-icon>
         Pour qui ?
       </h2>
       <h3 v-else class="font-weight-bold text-body-1">
-        <v-icon small class="mr-2" color="grey darken-4">mdi-account-group</v-icon>
+        <v-icon small class="mr-2" color="grey darken-4">$team-fill</v-icon>
         Pour qui ?
       </h3>
     </v-card-title>

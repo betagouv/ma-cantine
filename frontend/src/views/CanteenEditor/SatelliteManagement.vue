@@ -69,7 +69,7 @@
                   hide-details="auto"
                   validate-on-blur
                   v-model="satellite.dailyMealCount"
-                  prepend-icon="mdi-silverware-fork-knife"
+                  prepend-icon="$restaurant-fill"
                 />
               </v-col>
             </v-row>

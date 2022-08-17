@@ -4,17 +4,17 @@
       <v-list nav class="text-left">
         <v-list-item-group>
           <v-list-item :ripple="false" :to="{ name: 'ManagementPage' }">
-            <v-icon small class="mr-2">mdi-arrow-left</v-icon>
+            <v-icon small class="mr-2">$arrow-left-line</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold grey--text text--darken-1">
               Mes cantines
             </v-list-item-title>
           </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'CanteenForm' }">
-            <v-icon small class="mr-2">mdi-silverware-fork-knife</v-icon>
+            <v-icon small class="mr-2">$restaurant-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">{{ canteen.name }}</v-list-item-title>
           </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'SatelliteManagement' }" v-if="showSatellitePage">
-            <v-icon small class="mr-2">mdi-home-city</v-icon>
+            <v-icon small class="mr-2">$community-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Satellites</v-list-item-title>
           </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'DiagnosticList' }">
@@ -50,7 +50,7 @@
             <v-badge dot inline v-if="readyToPublish"></v-badge>
           </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'CanteenManagers' }">
-            <v-icon small class="mr-2">mdi-account-group</v-icon>
+            <v-icon small class="mr-2">$team-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Gestionnaires</v-list-item-title>
           </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'CanteenDeletion' }" class="rounded-lg">

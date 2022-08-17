@@ -28,7 +28,7 @@
           <v-spacer></v-spacer>
           <v-card-actions class="px-4 py-4">
             <v-spacer></v-spacer>
-            <v-icon color="primary">mdi-arrow-right</v-icon>
+            <v-icon color="primary">$arrow-right-line</v-icon>
           </v-card-actions>
         </v-card>
       </v-col>
