@@ -20,7 +20,9 @@ class Message(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
-    destination_canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE, verbose_name="destinataire")
+    destination_canteen = models.ForeignKey(
+        Canteen, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="destinataire"
+    )
     sender_name = models.TextField(null=True, blank=True, verbose_name="nom de l'expéditeur")
     sender_email = models.TextField(verbose_name="adresse email de l'expéditeur")
     body = models.TextField(verbose_name="message")

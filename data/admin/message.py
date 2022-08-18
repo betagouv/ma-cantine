@@ -71,7 +71,7 @@ class MessageAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     actions = [send, block]
 
     def destinataire(self, obj):
-        return obj.destination_canteen.name
+        return obj.destination_canteen.name if obj.destination_canteen else "⚠️ Cantine inconnue"
 
     def statut(self, obj):
         if obj.status == Message.Status.PENDING:
