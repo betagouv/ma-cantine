@@ -15,6 +15,10 @@
       @input="(v) => $emit('input', v)"
     >
       <template v-slot:label><span></span></template>
+
+      <template v-for="(_, name) in $slots" v-slot:[name]>
+        <slot :name="name" />
+      </template>
     </v-text-field>
   </div>
 </template>
