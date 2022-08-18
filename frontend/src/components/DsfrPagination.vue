@@ -1,5 +1,14 @@
 <template>
-  <v-pagination v-bind="$attrs" v-on="$listeners" @input="(v) => $emit('input', v)"></v-pagination>
+  <v-pagination
+    prev-icon="$arrow-left-s-line"
+    next-icon="$arrow-right-s-line"
+    v-bind="$attrs"
+    v-on="$listeners"
+    @input="(v) => $emit('input', v)"
+    previous-aria-label="Page précédente"
+    current-page-aria-label="Page actuelle"
+    next-aria-label="Page suivante"
+  ></v-pagination>
 </template>
 
 <script>
