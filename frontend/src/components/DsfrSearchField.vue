@@ -17,6 +17,7 @@
         max-width="40px"
         height="40px"
         @click="searchAction"
+        aria-label="Rechercher"
       >
         <v-icon>$search-line</v-icon>
       </v-btn>

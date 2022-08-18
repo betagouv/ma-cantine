@@ -40,20 +40,6 @@
       <v-row>
         <v-col cols="12" md="7" class="pt-0">
           <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
-            <!-- <DsfrTextField
-              hide-details="auto"
-              ref="search"
-              v-model="searchTerm"
-              label="Recherche par nom de l'établissement"
-              clearable
-              @click:clear="clearSearch"
-              @keyup.enter="search"
-              class="mb-2 flex-grow-1"
-            />
-            <v-btn outlined color="primary" class="ml-4 mb-2" height="40px" @click="search">
-              <v-icon>mdi-magnify</v-icon>
-              Chercher
-            </v-btn> -->
             <DsfrSearchField
               hide-details="auto"
               ref="search"

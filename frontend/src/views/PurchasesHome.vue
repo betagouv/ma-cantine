@@ -36,21 +36,15 @@
     </div>
     <v-card outlined class="my-4" v-if="hasCanteens && visiblePurchases">
       <v-row class="px-4 mt-2" align="center">
-        <v-col cols="9" sm="6" class="py-0">
-          <DsfrTextField
+        <v-col cols="12" sm="8" class="py-0">
+          <DsfrSearchField
             v-model="searchTerm"
-            label="Chercher par produit ou fournisseur"
+            placeholder="Chercher par produit ou fournisseur"
             hide-details
             clearable
-            @click:clear="clearSearch"
-            @keyup.enter="search"
+            :clearAction="clearSearch"
+            :searchAction="search"
           />
-        </v-col>
-        <v-col cols="2" class="px-0 pb-0">
-          <v-btn outlined color="primary" class="mt-5" height="40px" @click="search">
-            <v-icon>mdi-magnify</v-icon>
-            <span v-if="$vuetify.breakpoint.smAndUp">Chercher</span>
-          </v-btn>
         </v-col>
         <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
         <v-col class="pb-sm-0">
@@ -244,10 +238,11 @@ import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrSearchField from "@/components/DsfrSearchField"
 
 export default {
   name: "PurchasesHome",
-  components: { DsfrTextField, BreadcrumbsNav, DsfrSelect },
+  components: { DsfrTextField, BreadcrumbsNav, DsfrSelect, DsfrSearchField },
   data() {
     return {
       searchTerm: null,
