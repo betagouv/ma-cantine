@@ -6,8 +6,8 @@
     <v-rating
       v-model.number="rating"
       color="primary"
-      empty-icon="mdi-star-outline"
-      full-icon="mdi-star"
+      empty-icon="$star-line"
+      full-icon="$star-fill"
       class="mt-2 body-2"
       id="page-rating"
       background-color="grey darken-1"
@@ -29,8 +29,8 @@
             <v-rating
               v-model.number="rating"
               color="primary"
-              empty-icon="mdi-star-outline"
-              full-icon="mdi-star"
+              empty-icon="$star-line"
+              full-icon="$star-fill"
               class="mt-2 mb-4 body-2"
               id="dialog-rating"
               background-color="grey"

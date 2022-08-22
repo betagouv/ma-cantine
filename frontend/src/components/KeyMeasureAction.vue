@@ -3,7 +3,7 @@
     <v-icon small v-if="isDone" color="primary" aria-label="Fait" role="img" aria-hidden="false">
       mdi-check-bold
     </v-icon>
-    <v-icon small v-else aria-label="Pas encore fait" role="img" aria-hidden="false">mdi-close</v-icon>
+    <v-icon small v-else aria-label="Pas encore fait" role="img" aria-hidden="false">$close-line</v-icon>
     <span>{{ label }}</span>
   </p>
 </template>
