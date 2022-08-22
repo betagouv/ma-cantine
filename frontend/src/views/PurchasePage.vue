@@ -24,31 +24,25 @@
             <v-row class="mb-4">
               <v-col cols="12">
                 <label class="body-2" for="description">Description du produit</label>
-                <v-combobox
+                <DsfrCombobox
                   validate-on-blur
                   hide-details="auto"
-                  solo
                   v-model="purchase.description"
                   class="mt-2"
                   id="description"
-                  hide-no-data
                   :items="productDescriptions"
-                  auto-select-first
-                ></v-combobox>
+                ></DsfrCombobox>
               </v-col>
               <v-col cols="12" sm="8">
                 <label class="body-2" for="provider">Fournisseur</label>
-                <v-combobox
+                <DsfrCombobox
                   validate-on-blur
                   hide-details="auto"
-                  solo
                   v-model="purchase.provider"
                   class="mt-2"
                   id="provider"
-                  hide-no-data
                   :items="providers"
-                  auto-select-first
-                ></v-combobox>
+                ></DsfrCombobox>
               </v-col>
               <v-col cols="12" sm="4">
                 <label class="body-2" for="price">Prix HT</label>
@@ -247,10 +241,11 @@ import validators from "@/validators"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrCombobox from "@/components/DsfrCombobox"
 
 export default {
   name: "PurchasePage",
-  components: { FileDrop, FilePreview, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete },
+  components: { FileDrop, FilePreview, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete, DsfrCombobox },
   data() {
     return {
       originalPurchase: null,
