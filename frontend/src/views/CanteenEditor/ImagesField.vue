@@ -18,7 +18,7 @@
           :for="uniqueId + '_image-input'"
           style="width: 100%; height: 100%; cursor: pointer;"
         >
-          <v-icon class="align-center mb-2" lg>mdi-camera</v-icon>
+          <v-icon class="align-center mb-2" lg>$camera-fill</v-icon>
           <div class="body-2 text-center font-weight-bold grey--text text--darken-2">Ajoutez une image</div>
         </label>
         <input

@@ -93,7 +93,7 @@
                   <template v-slot:activator="{ on, attrs }">
                     <DsfrTextField
                       :value="humanReadableDate"
-                      prepend-icon="mdi-calendar"
+                      prepend-icon="$calendar-event-fill"
                       readonly
                       v-bind="attrs"
                       :rules="[validators.required]"

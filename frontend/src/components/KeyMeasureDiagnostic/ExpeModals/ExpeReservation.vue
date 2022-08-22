@@ -48,7 +48,7 @@
             <template v-slot:activator="{ on, attrs }">
               <DsfrTextField
                 :value="humanReadableDate(expe.reservationSystemStartDate)"
-                prepend-icon="mdi-calendar"
+                prepend-icon="$calendar-event-fill"
                 readonly
                 v-bind="attrs"
                 v-on="on"
@@ -81,7 +81,7 @@
             <template v-slot:activator="{ on, attrs }">
               <DsfrTextField
                 :value="humanReadableDate(expe.experimentationStartDate)"
-                prepend-icon="mdi-calendar"
+                prepend-icon="$calendar-event-fill"
                 readonly
                 v-bind="attrs"
                 v-on="on"
