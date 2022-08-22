@@ -32,11 +32,17 @@ export default {
     inputId() {
       return this.$refs?.["textarea"]?.$refs?.["input"].id
     },
+    value() {
+      return this.$refs["textarea"].value
+    },
   },
   methods: {
     removeInnerLabel() {
       const labels = this.$refs["textarea"].$el.getElementsByTagName("label")
       if (labels && labels.length > 0) for (const label of labels) label.parentNode.removeChild(label)
+    },
+    validate() {
+      return this.$refs["textarea"].validate()
     },
   },
   mounted() {

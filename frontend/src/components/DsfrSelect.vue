@@ -33,11 +33,17 @@ export default {
     inputId() {
       return this.$refs?.["select"]?.$refs?.["input"].id
     },
+    value() {
+      return this.$refs["select"].value
+    },
   },
   methods: {
     removeInnerLabel() {
       const labels = this.$refs["select"].$el.getElementsByTagName("label")
       if (labels && labels.length > 0) for (const label of labels) label.parentNode.removeChild(label)
+    },
+    validate() {
+      return this.$refs["select"].validate()
     },
   },
   mounted() {

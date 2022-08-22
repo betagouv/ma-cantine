@@ -37,11 +37,20 @@ export default {
     inputId() {
       return this.$refs?.["text-field"]?.$refs?.["input"].id
     },
+    lazyValue() {
+      return this.$refs["text-field"].lazyValue
+    },
+    value() {
+      return this.$refs["text-field"].value
+    },
   },
   methods: {
     removeInnerLabel() {
       const labels = this.$refs["text-field"].$el.getElementsByTagName("label")
       if (labels && labels.length > 0) for (const label of labels) label.parentNode.removeChild(label)
+    },
+    validate() {
+      return this.$refs["text-field"].validate()
     },
   },
   mounted() {
