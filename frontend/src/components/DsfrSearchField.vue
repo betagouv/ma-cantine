@@ -7,6 +7,7 @@
     clearable
     @click:clear="clearAction"
     @keyup.enter="searchAction"
+    ref="text-field"
   >
     <template v-slot:append>
       <v-btn
@@ -32,6 +33,19 @@ export default {
   inheritAttrs: false,
   components: { DsfrTextField },
   props: ["searchAction", "clearAction"],
+  computed: {
+    lazyValue() {
+      return this.$refs["text-field"].lazyValue
+    },
+    value() {
+      return this.$refs["text-field"].value
+    },
+  },
+  methods: {
+    validate() {
+      return this.$refs["text-field"].validate()
+    },
+  },
 }
 </script>
 
