@@ -2,7 +2,7 @@
   <v-dialog v-model="isOpen" width="500">
     <template v-slot:activator="{ on, attrs }">
       <v-btn color="red" x-small fab outlined v-bind="attrs" v-on="on">
-        <v-icon aria-hidden="false" title="Enlever">mdi-trash-can</v-icon>
+        <v-icon aria-hidden="false" title="Enlever">$delete-fill</v-icon>
       </v-btn>
     </template>
 

@@ -49,7 +49,7 @@
               </p>
               <div v-else class="px-2 mt-2">
                 <p class="text-caption mb-2">
-                  <v-icon small>mdi-check-circle</v-icon>
+                  <v-icon small>$checkbox-fill</v-icon>
                   Ce diagnostic a été télédéclaré {{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.
                 </p>
                 <DownloadLink

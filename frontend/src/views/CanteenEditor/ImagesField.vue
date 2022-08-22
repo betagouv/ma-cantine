@@ -5,7 +5,7 @@
         <v-img :src="image.image" contain aspect-ratio="1.4" style="overflow: hidden;" class="grey lighten-2"></v-img>
         <div style="position: absolute; top: 10px; left: 10px;">
           <v-btn fab small @click="deleteImage(image.image)">
-            <v-icon aria-label="Supprimer" aria-hidden="false" color="red">mdi-trash-can-outline</v-icon>
+            <v-icon aria-label="Supprimer" aria-hidden="false" color="red">$delete-line</v-icon>
           </v-btn>
         </div>
       </v-card>

@@ -18,7 +18,7 @@
             <v-list-item-title class="text-body-2 font-weight-bold">Satellites</v-list-item-title>
           </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'DiagnosticList' }">
-            <v-icon small class="mr-2">mdi-format-list-checks</v-icon>
+            <v-icon small class="mr-2">$draft-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Diagnostics</v-list-item-title>
           </v-list-item>
           <div v-if="$vuetify.breakpoint.smAndUp">
@@ -31,13 +31,13 @@
               <v-list-item-title class="text-body-2 font-weight-bold pl-6">
                 {{ diagnostic.year }}
                 <v-icon v-if="hasActiveTeledeclaration(diagnostic)" color="grey" small class="mt-n1 ml-1">
-                  mdi-check-circle
+                  $checkbox-circle-fill
                 </v-icon>
               </v-list-item-title>
             </v-list-item>
           </div>
           <v-list-item :ripple="false" :to="{ name: 'DashboardPage' }" v-if="orderedDiagnostics.length">
-            <v-icon small class="mr-2">mdi-star-shooting</v-icon>
+            <v-icon small class="mr-2">$award-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">
               Améliorer ma cantine
             </v-list-item-title>
@@ -54,7 +54,7 @@
             <v-list-item-title class="text-body-2 font-weight-bold">Gestionnaires</v-list-item-title>
           </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'CanteenDeletion' }" class="rounded-lg">
-            <v-icon small class="mr-2">mdi-trash-can</v-icon>
+            <v-icon small class="mr-2">$delete-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Supprimer</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
