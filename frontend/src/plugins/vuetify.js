@@ -1,7 +1,7 @@
 import Vue from "vue"
 import Vuetify from "vuetify/lib/framework"
 import theme from "@/theme"
-import { VBtn, VCard } from "vuetify/lib"
+import { VBtn, VCard, VRadio, VCheckbox } from "vuetify/lib"
 import remixJson from "./remix.json"
 
 Vue.use(Vuetify)
@@ -10,6 +10,8 @@ Vue.use(Vuetify)
 VBtn.options.props.ripple.default = false
 VBtn.options.props.elevation.default = 0
 VCard.options.props.ripple.default = false
+VRadio.options.props.ripple.default = false
+VCheckbox.options.props.ripple.default = false
 
 export default new Vuetify({
   theme: theme,
