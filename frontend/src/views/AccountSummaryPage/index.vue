@@ -14,7 +14,7 @@
                 <v-list-item-title class="text-body-2 font-weight-bold">Mot de passe</v-list-item-title>
               </v-list-item>
               <v-list-item :ripple="false" :to="{ name: 'AccountDeletion' }" class="rounded-lg">
-                <v-icon small class="mr-2">mdi-trash-can</v-icon>
+                <v-icon small class="mr-2">$delete-fill</v-icon>
                 <v-list-item-title class="text-body-2 font-weight-bold">Supprimer mon compte</v-list-item-title>
               </v-list-item>
             </v-list-item-group>

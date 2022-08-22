@@ -93,7 +93,7 @@
                   <template v-slot:activator="{ on, attrs }">
                     <DsfrTextField
                       :value="humanReadableDate"
-                      prepend-icon="mdi-calendar"
+                      prepend-icon="$calendar-event-fill"
                       readonly
                       v-bind="attrs"
                       :rules="[validators.required]"
@@ -186,7 +186,7 @@
           <v-dialog v-model="showDeleteDialog" v-if="!isNewPurchase" width="500">
             <template v-slot:activator="{ on, attrs }">
               <v-btn :disabled="loading" large v-bind="attrs" v-on="on" outlined color="red darken-2" class="ma-1">
-                <v-icon class="mr-1">mdi-trash-can</v-icon>
+                <v-icon class="mr-1">$delete-fill</v-icon>
                 Supprimer
               </v-btn>
             </template>

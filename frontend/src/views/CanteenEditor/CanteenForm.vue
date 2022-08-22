@@ -171,7 +171,7 @@
               </div>
               <div v-if="canteen.logo" style="position: absolute; top: 10px; left: 10px;">
                 <v-btn fab small @click.stop.prevent="changeLogo(null)">
-                  <v-icon aria-label="Supprimer logo" aria-hidden="false" color="red">mdi-trash-can-outline</v-icon>
+                  <v-icon aria-label="Supprimer logo" aria-hidden="false" color="red">$delete-line</v-icon>
                 </v-btn>
               </div>
             </v-card>

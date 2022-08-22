@@ -5,7 +5,7 @@
         <v-img :src="image.image" contain aspect-ratio="1.4" style="overflow: hidden;" class="grey lighten-2"></v-img>
         <div style="position: absolute; top: 10px; left: 10px;">
           <v-btn fab small @click="deleteImage(image.image)">
-            <v-icon aria-label="Supprimer" aria-hidden="false" color="red">mdi-trash-can-outline</v-icon>
+            <v-icon aria-label="Supprimer" aria-hidden="false" color="red">$delete-line</v-icon>
           </v-btn>
         </div>
       </v-card>
@@ -18,7 +18,7 @@
           :for="uniqueId + '_image-input'"
           style="width: 100%; height: 100%; cursor: pointer;"
         >
-          <v-icon class="align-center mb-2" lg>mdi-camera</v-icon>
+          <v-icon class="align-center mb-2" lg>$camera-fill</v-icon>
           <div class="body-2 text-center font-weight-bold grey--text text--darken-2">Ajoutez une image</div>
         </label>
         <input

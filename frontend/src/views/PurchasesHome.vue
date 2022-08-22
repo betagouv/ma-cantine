@@ -126,7 +126,7 @@
                   </label>
                   <DsfrTextField
                     :value="appliedFilters.startDate"
-                    prepend-icon="mdi-calendar"
+                    prepend-icon="$calendar-event-fill"
                     readonly
                     v-bind="attrs"
                     v-on="on"
@@ -157,7 +157,7 @@
                   </label>
                   <DsfrTextField
                     :value="appliedFilters.endDate"
-                    prepend-icon="mdi-calendar"
+                    prepend-icon="$calendar-event-fill"
                     readonly
                     v-bind="attrs"
                     v-on="on"

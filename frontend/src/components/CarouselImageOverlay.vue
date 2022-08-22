@@ -2,7 +2,7 @@
   <div v-if="visible" v-resize="onResize">
     <v-overlay :value="visible" :dark="false">
       <v-btn @click="close" class="close-overlay" fab dark small color="grey lighten-5">
-        <v-icon color="red darken-3" aria-label="Fermer" aria-hidden="false">mdi-close</v-icon>
+        <v-icon color="red darken-3" aria-label="Fermer" aria-hidden="false">$close-line</v-icon>
       </v-btn>
 
       <v-carousel

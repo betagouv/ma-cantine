@@ -68,7 +68,7 @@
             <template v-slot:activator="{ on, attrs }">
               <DsfrTextField
                 :value="humanReadableDate(expe.dailyVegetarianOfferStartDate)"
-                prepend-icon="mdi-calendar"
+                prepend-icon="$calendar-event-fill"
                 readonly
                 v-bind="attrs"
                 v-on="on"
@@ -101,7 +101,7 @@
             <template v-slot:activator="{ on, attrs }">
               <DsfrTextField
                 :value="humanReadableDate(expe.experimentationStartDate)"
-                prepend-icon="mdi-calendar"
+                prepend-icon="$calendar-event-fill"
                 readonly
                 v-bind="attrs"
                 v-on="on"
@@ -508,8 +508,8 @@
                     <v-rating
                       v-model.number="expe[`satisfactionGuests${item.value}`]"
                       color="primary"
-                      empty-icon="mdi-star-outline"
-                      full-icon="mdi-star"
+                      empty-icon="$star-line"
+                      full-icon="$star-fill"
                       class="mt-2 mb-4 body-2"
                       :id="`satisfaction-guests-${item.value}`"
                       background-color="grey"
@@ -547,8 +547,8 @@
                     <v-rating
                       v-model.number="expe[`satisfactionStaff${item.value}`]"
                       color="primary"
-                      empty-icon="mdi-star-outline"
-                      full-icon="mdi-star"
+                      empty-icon="$star-line"
+                      full-icon="$star-fill"
                       class="mt-2 mb-4 body-2"
                       :id="`satisfaction-staff-${item.value}`"
                       background-color="grey"

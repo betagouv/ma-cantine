@@ -220,7 +220,7 @@
     <div class="d-block d-sm-flex align-center mt-8">
       <div class="d-flex">
         <v-icon size="30" color="green">
-          mdi-check-circle
+          $checkbox-circle-fill
         </v-icon>
         <v-icon size="30" color="brown">
           mdi-food-steak
@@ -322,7 +322,7 @@
     <div class="d-block d-sm-flex align-center mt-8">
       <div class="d-flex">
         <v-icon size="30" color="green">
-          mdi-check-circle
+          $checkbox-circle-fill
         </v-icon>
         <v-icon size="30" color="blue">
           mdi-fish

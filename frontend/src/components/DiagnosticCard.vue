@@ -15,7 +15,7 @@
       <v-col cols="7">
         <v-card-title class="font-weight-bold">{{ canteen.name || `SIRET : ${canteen.siret}` }}</v-card-title>
         <v-card-subtitle class="caption">
-          <v-icon v-if="hasActiveTeledeclaration" color="green" small class="mt-0">mdi-check-circle</v-icon>
+          <v-icon v-if="hasActiveTeledeclaration" color="green" small class="mt-0">$checkbox-circle-fill</v-icon>
           {{ dataStatus }}
         </v-card-subtitle>
       </v-col>

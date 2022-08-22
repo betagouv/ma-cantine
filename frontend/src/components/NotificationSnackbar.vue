@@ -19,7 +19,7 @@
         </p>
       </div>
       <v-btn class="ml-3" @click="$store.dispatch('removeNotification')" icon>
-        <v-icon color="white" width="20">mdi-close</v-icon>
+        <v-icon color="white" width="20">$close-line</v-icon>
       </v-btn>
     </div>
   </v-snackbar>
