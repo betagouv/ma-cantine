@@ -30,6 +30,7 @@
               v-model="newManagerEmail"
               label="Adresse email"
               :rules="[validators.emailOrEmpty]"
+              class="flex-grow-1"
               validate-on-blur
             />
             <v-btn
