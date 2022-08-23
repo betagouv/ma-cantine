@@ -46,8 +46,8 @@ class TestCanteenStatsApi(APITestCase):
             value_total_ht=100,
             value_bio_ht=20,
             value_sustainable_ht=30,
-            value_externality_performance_ht=0,
-            value_egalim_others_ht=0,
+            value_externality_performance_ht=None,
+            value_egalim_others_ht=None,
             has_waste_diagnostic=False,
             waste_actions=[],
             vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY,
@@ -160,58 +160,69 @@ class TestCanteenStatsApi(APITestCase):
         Test that the right canteens are identified in appro badge queryset
         """
         # --- Canteens which don't earn appro badge:
-        zero_total = CanteenFactory.create()
-        DiagnosticFactory.create(canteen=zero_total, value_total_ht=0)
-        null_total = CanteenFactory.create()
-        DiagnosticFactory.create(canteen=null_total, value_total_ht=None)
-        bio_lacking = CanteenFactory.create()
+        zero_total = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
+        DiagnosticFactory.create(year=2020, canteen=zero_total, value_total_ht=0)
+        null_total = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
+        DiagnosticFactory.create(year=2020, canteen=null_total, value_total_ht=None)
+        bio_lacking = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
         DiagnosticFactory.create(
+            year=2020,
             canteen=bio_lacking,
             value_total_ht=100,
             value_bio_ht=19,
             value_sustainable_ht=31,
-            value_externality_performance_ht=0,
-            value_egalim_others_ht=0,
+            value_externality_performance_ht=None,
+            value_egalim_others_ht=None,
         )
-        # not convinced the following shouldn't get a badge but not sure how to make the Sum function work
-        null_sustainable = CanteenFactory.create(region=Region.ile_de_france.value)
+
+        # --- Canteens which earn appro badge:
+        null_sustainable = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED.value, region=Region.ile_de_france.value
+        )
         DiagnosticFactory.create(
+            year=2020,
             canteen=null_sustainable,
             value_total_ht=100,
             value_bio_ht=50,
             value_sustainable_ht=None,
-            value_externality_performance_ht=0,
-            value_egalim_others_ht=0,
+            value_externality_performance_ht=None,
+            value_egalim_others_ht=None,
         )
 
-        # --- Canteens which earn appro badge:
-        earned = CanteenFactory.create()
+        earned = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
         DiagnosticFactory.create(
+            year=2020,
             canteen=earned,
             value_total_ht=100,
             value_bio_ht=20,
             value_sustainable_ht=30,
-            value_externality_performance_ht=0,
-            value_egalim_others_ht=0,
+            value_externality_performance_ht=None,
+            value_egalim_others_ht=None,
         )
         # rules per outre mer territories
-        guadeloupe = CanteenFactory.create(region=Region.guadeloupe.value)
+        guadeloupe = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED.value, region=Region.guadeloupe.value
+        )
         DiagnosticFactory.create(
+            year=2020,
             canteen=guadeloupe,
             value_total_ht=100,
             value_bio_ht=5,
             value_sustainable_ht=15,
-            value_externality_performance_ht=0,
+            value_externality_performance_ht=None,
             value_egalim_others_ht=0,
         )
-        mayotte = CanteenFactory.create(region=Region.mayotte.value)
+        mayotte = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED.value, region=Region.mayotte.value
+        )
         DiagnosticFactory.create(
+            year=2020,
             canteen=mayotte,
             value_total_ht=100,
             value_bio_ht=2,
             value_sustainable_ht=3,
             value_externality_performance_ht=0,
-            value_egalim_others_ht=0,
+            value_egalim_others_ht=None,
         )
         # TODO: rules per outre mer territories: Saint-Pierre-et-Miquelon
         # st_pierre_et_miquelon = CanteenFactory.create(region=Region.st_pierre_et_miquelon.value)
@@ -223,7 +234,12 @@ class TestCanteenStatsApi(APITestCase):
         self.assertTrue(appro_badge_qs.filter(canteen=earned).exists())
         self.assertTrue(appro_badge_qs.filter(canteen=guadeloupe).exists())
         self.assertTrue(appro_badge_qs.filter(canteen=mayotte).exists())
-        self.assertEqual(appro_badge_qs.count(), 3)
+        self.assertTrue(appro_badge_qs.filter(canteen=earned).exists())
+        self.assertEqual(appro_badge_qs.count(), 4)
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
+        body = response.json()
+        self.assertEqual(body["approPercent"], 57)
 
     def test_waste_badge_earned(self):
         """

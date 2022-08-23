@@ -122,7 +122,7 @@ def filter_by_diagnostic_params(queryset, query_params):
         qs_diag = Diagnostic.objects.filter(year=publication_year, value_total_ht__gt=0)
         if bio:
             qs_diag = qs_diag.annotate(
-                bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField())
+                bio_share=Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
             ).filter(bio_share__gte=bio)
         if combined:
             qs_diag = qs_diag.annotate(
@@ -520,17 +520,17 @@ def badges_for_queryset(diagnostic_year_queryset):
         appro_share_query = diagnostic_year_queryset.filter(value_total_ht__gt=0)
         appro_share_query = appro_share_query.annotate(
             bio_share=Cast(
-                Sum("value_bio_ht") / Sum("value_total_ht"),
+                Sum("value_bio_ht", default=0) / Sum("value_total_ht"),
                 FloatField(),
             )
         )
         appro_share_query = appro_share_query.annotate(
             combined_share=Cast(
                 (
-                    Sum("value_bio_ht")
-                    + Sum("value_sustainable_ht")
-                    + Sum("value_externality_performance_ht")
-                    + Sum("value_egalim_others_ht")
+                    Sum("value_bio_ht", default=0)
+                    + Sum("value_sustainable_ht", default=0)
+                    + Sum("value_externality_performance_ht", default=0)
+                    + Sum("value_egalim_others_ht", default=0)
                 )
                 / Sum("value_total_ht"),
                 FloatField(),
@@ -619,11 +619,15 @@ class CanteenStatisticsView(APIView):
             diagnostics = diagnostics.filter(canteen__sectors__in=sectors)
         appro_share_query = diagnostics.filter(value_total_ht__gt=0)
         appro_share_query = appro_share_query.annotate(
-            bio_share=Cast(Sum("value_bio_ht") / Sum("value_total_ht"), FloatField())
+            bio_share=Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
         )
         appro_share_query = appro_share_query.annotate(
             sustainable_share=Cast(
-                (Sum("value_sustainable_ht") + Sum("value_externality_performance_ht") + Sum("value_egalim_others_ht"))
+                (
+                    Sum("value_sustainable_ht", default=0)
+                    + Sum("value_externality_performance_ht", default=0)
+                    + Sum("value_egalim_others_ht", default=0)
+                )
                 / Sum("value_total_ht"),
                 FloatField(),
             )
