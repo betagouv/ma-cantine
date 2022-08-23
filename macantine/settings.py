@@ -13,6 +13,7 @@ import os
 import sys
 import logging
 from pathlib import Path
+from macantine.sentry import before_send
 import dotenv  # noqa
 
 import sentry_sdk
@@ -57,6 +58,7 @@ if not DEBUG:
         traces_sample_rate=0,
         send_default_pii=False,
         send_client_reports=False,
+        before_send=before_send,
     )
     sentry_sdk.set_level(logging.ERROR)
 
