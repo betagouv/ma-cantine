@@ -20,9 +20,6 @@ export default {
       const diagnostics = this.$store.getters.getLocalDiagnostics()
       return diagnosticsMap(diagnostics)
     },
-    isAuthenticated() {
-      return !!this.$store.state.loggedUser
-    },
   },
 }
 </script>
