@@ -172,7 +172,7 @@
         Zoom sur les familles « viandes et volailles » et « Produits de la mer »
       </div>
       <div>
-        Depuis la loi Climat et Résilience, un nouvel objectif pour une alimentation saine a été ajoutée : des produits
+        Depuis la loi Climat et Résilience, un nouvel objectif pour une alimentation saine a été ajouté : des produits
         carnés et issus de la mer plus durables, ainsi que davantage de viandes provenant de France.
       </div>
     </div>
