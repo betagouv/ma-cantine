@@ -6,7 +6,7 @@
     </div>
     <div class="separator"></div>
     <div class="flex-column-center">
-      <p class="label-title">Qualité et durable</p>
+      <p class="label-title">Qualité et durable (hors bio)</p>
       <div class="d-flex">
         <img
           v-for="label in labels"
