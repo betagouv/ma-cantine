@@ -1,5 +1,6 @@
 <template>
   <div>
+    <BreadcrumbsNav />
     <h1 class="text-h4 font-weight-black my-6">Mon tableau de bord</h1>
 
     <v-card elevation="0" class="text-left">
@@ -24,11 +25,13 @@
 <script>
 import CanteenDashboard from "@/components/CanteenDashboard"
 import GiveFeedbackLink from "@/components/GiveFeedbackLink"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   components: {
     CanteenDashboard,
     GiveFeedbackLink,
+    BreadcrumbsNav,
   },
   props: ["diagnostics", "canteen"],
 }

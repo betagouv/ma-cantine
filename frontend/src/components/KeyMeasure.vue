@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav :title="measure.shortTitle" />
+    <BreadcrumbsNav :title="measure.shortTitle" :links="breadcrumbLinks" />
     <h1 class="text-h5 text-xs-h2 font-weight-bold mb-sm-8 mt-4"><KeyMeasureTitle :measure="measure" /></h1>
 
     <v-row>
@@ -65,6 +65,13 @@ export default {
     },
     childSubMeasures() {
       return this.measure.subMeasures.filter((x) => !x.tags || x.tags.length === 0)
+    },
+    isAuthenticated() {
+      return !!this.$store.state.loggedUser
+    },
+    breadcrumbLinks() {
+      if (this.isAuthenticated) return []
+      return [{ to: { name: "KeyMeasuresHome" } }]
     },
   },
 }
