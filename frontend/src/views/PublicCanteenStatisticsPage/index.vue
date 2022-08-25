@@ -122,7 +122,7 @@
       </v-row>
       <h3 class="text-h6 font-weight-bold mt-10 mb-8">Qualité de produits en {{ year }}</h3>
       <v-row class="px-2">
-        <v-col class="pl-0 pr-1" cols="12" sm="6" md="5">
+        <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
           <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
             <v-img max-width="30" contain src="/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
             <v-card-text class="grey--text text--darken-2 px-1">
@@ -159,12 +159,12 @@
             </div>
           </v-card>
         </v-col>
-        <v-col class="pl-1 pr-0" cols="12" sm="6" md="4">
+        <v-col class="pl-1 pr-0" cols="12" sm="6" md="5">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <v-card-text>
               <span class="text-h5 font-weight-black">{{ statistics.sustainablePercent }} %</span>
               <span class="text-body-2">
-                durables et de qualité moyen
+                durables et de qualité (hors bio) moyen
               </span>
             </v-card-text>
             <div class="d-flex mt-2 justify-center flex-wrap">
