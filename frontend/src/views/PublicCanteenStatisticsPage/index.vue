@@ -130,8 +130,7 @@
                 {{ statistics.approPercent }} %
               </span>
               <span class="text-body-2">
-                ont réalisé la mesure
-                <span class="font-weight-black">« {{ approMeasure.shortTitle.toLowerCase() }} »</span>
+                ont réussi l'objectif d'approvisionnement EGAlim
               </span>
             </v-card-text>
             <v-card-actions class="px-1">
