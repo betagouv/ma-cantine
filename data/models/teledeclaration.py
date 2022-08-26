@@ -81,7 +81,7 @@ class Teledeclaration(models.Model):
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
-        version = "3"  # Helps identify which data will be present. Use incremental int values
+        version = "4"  # Helps identify which data will be present. Use incremental int values
         status = status or Teledeclaration.TeledeclarationStatus.SUBMITTED
         canteen = diagnostic.canteen
         simplified_appro_fields = [
@@ -233,6 +233,7 @@ class Teledeclaration(models.Model):
             "version": version,
             "year": diagnostic.year,
             "canteen": {
+                "id": canteen.id,
                 "name": canteen.name,
                 "siret": canteen.siret,
                 "city_insee_code": canteen.city_insee_code,

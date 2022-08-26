@@ -32,6 +32,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     )
     list_filter = ("year", "status")
     fields = (
+        "canteen",
         "year",
         "creation_date",
         "status",
