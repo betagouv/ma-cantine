@@ -88,6 +88,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "télédéclarée",
         "creation_date",
         "modification_date",
+        "source_des_données",
         "management_type",
         "supprimée",
     )
@@ -97,6 +98,7 @@ class CanteenAdmin(SoftDeletionAdmin):
     )
     list_filter = (
         "publication_status",
+        "import_source",
         "sectors",
         "management_type",
         "production_type",
@@ -117,6 +119,9 @@ class CanteenAdmin(SoftDeletionAdmin):
         ).exists():
             return "📩 Télédéclarée"
         return ""
+
+    def source_des_données(self, obj):
+        return obj.import_source
 
     def supprimée(self, obj):
         return "🗑️ Supprimée" if obj.deletion_date else ""
