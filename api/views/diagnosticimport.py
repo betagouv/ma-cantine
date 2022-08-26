@@ -216,7 +216,7 @@ class ImportDiagnosticsView(ABC, APIView):
                     "citycode": "citycode",
                     "result_columns": ["result_citycode", "result_postcode", "result_city", "result_context"],
                 },
-                timeout=3,
+                timeout=4,
             )
             response.raise_for_status()  # Raise an exception if the request failed
             for row in csv.reader(response.text.splitlines()):
