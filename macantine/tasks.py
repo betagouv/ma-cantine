@@ -146,7 +146,7 @@ def _get_location_csv_string(canteens):
     for canteen in canteens:
         if canteen.city_insee_code:
             locations_csv_string += f"{canteen.id},{canteen.city_insee_code},\n"
-        if canteen.postal_code:
+        elif canteen.postal_code:
             locations_csv_string += f"{canteen.id},,{canteen.postal_code}\n"
     return locations_csv_string
 
