@@ -1,7 +1,12 @@
 import logging
 import datetime
+import requests
+import csv
 from django.utils import timezone
 from django.conf import settings
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.db.models import F
 from data.models import User, Canteen
 from .celery import app
 import sib_api_v3_sdk
@@ -134,3 +139,81 @@ def no_diagnostic_first_reminder():
                 logger.exception(
                     f"Unable to send first no-diagnostic reminder email to {manager.username} concerning canteen {canteen.name}:\n{e}"
                 )
+
+
+def _get_location_csv_string(canteens):
+    locations_csv_string = "siret,citycode,postcode\n"
+    for canteen in canteens:
+        if canteen.city_insee_code:
+            locations_csv_string += f"{canteen.id},{canteen.city_insee_code},\n"
+        if canteen.postal_code:
+            locations_csv_string += f"{canteen.siret},,{canteen.postal_code}\n"
+    return locations_csv_string
+
+
+def _request_location_api(location_csv_string):
+    try:
+        response = requests.post(
+            "https://api-adresse.data.gouv.fr/search/csv/",
+            files={
+                "data": ("locations.csv", location_csv_string),
+            },
+            data={
+                "postcode": "postcode",
+                "citycode": "citycode",
+                "result_columns": ["result_citycode", "result_postcode", "result_city", "result_context"],
+            },
+            timeout=60,
+        )
+        response.raise_for_status()
+        return response
+    except requests.exceptions.HTTPError as e:
+        print(e)
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    except requests.exceptions.Timeout as e:
+        print(e)
+    except Exception as e:
+        print(e)
+
+
+def _get_candidate_canteens():
+    candidate_canteens = (
+        Canteen.objects.filter(Q(city=None) | Q(department=None))
+        .filter(Q(postal_code__isnull=False) | Q(city_insee_code__isnull=False))
+        .filter(geolocation_bot_attempts__lt=3)
+    )
+    return candidate_canteens
+
+
+@app.task()
+def fill_missing_geolocation_data():
+    candidate_canteens = _get_candidate_canteens()
+    candidate_canteens.update(geolocation_bot_attempts=F("geolocation_bot_attempts") + 1)
+    paginator = Paginator(candidate_canteens, 50)
+
+    # Carry out the CSV
+    for page_number in paginator:
+        canteens = paginator.get_page(page_number).object_list
+        if len(canteens) == 0:
+            continue
+        location_csv_string = _get_location_csv_string(canteens)
+        response = _request_location_api(location_csv_string)
+
+        try:
+            for row in csv.reader(response.text.splitlines()):
+                if row[0] == "id":
+                    continue
+                if row[5] != "":  # city found, so rest of data is found
+                    id = int(row[0])
+                    canteen = next(filter(lambda x: x.id == id, canteens), None)
+                    if not canteen:
+                        continue
+
+                    canteen.city_insee_code = row[3]
+                    canteen.postal_code = row[4]
+                    canteen.city = row[5]
+                    canteen.department = row[6].split(",")[0]
+                    canteen.save()
+        except Exception as e:
+            print(e)
