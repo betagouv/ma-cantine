@@ -89,10 +89,10 @@
           >
             <v-form ref="quality" v-model="formIsValid.quality">
               <p>
-                Suivant le niveau d'information disponible, vous pouvez choisir entre ces deux types de déclaration. 
-                Pour les achats des années 2021 et 2022, toutes les déclarations peuvent être remplies avec la "saisie simplifiée". 
-                Pour les données d'achats 2023, la "saisie simplifiée" sera accessible uniquement 
-                aux établissements de moins de 200 couverts/jour.
+                Suivant le niveau d'information disponible, vous pouvez choisir entre ces deux types de déclaration.
+                Pour les achats des années 2021 et 2022, toutes les déclarations peuvent être remplies avec la "saisie
+                simplifiée". Pour les données d'achats 2023, la "saisie simplifiée" sera accessible uniquement aux
+                établissements de moins de 200 couverts/jour.
               </p>
               <v-radio-group v-model="diagnostic.diagnosticType">
                 <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
