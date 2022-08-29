@@ -198,6 +198,7 @@ def fill_missing_geolocation_data():
     candidate_canteens = _get_candidate_canteens()
     candidate_canteens.update(geolocation_bot_attempts=F("geolocation_bot_attempts") + 1)
     paginator = Paginator(candidate_canteens, 50)
+    logger.info(f"Geolocation Bot: about to query {candidate_canteens.count()} canteens")
 
     # Carry out the CSV
     for page_number in paginator:
