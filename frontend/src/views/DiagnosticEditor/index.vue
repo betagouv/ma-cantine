@@ -257,12 +257,12 @@ export default {
       diagnosticTypes: [
         {
           key: "SIMPLE",
-          label: "Télédeclaration simple",
+          label: "Télédéclaration - saisie simplifiée",
           help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
         },
         {
           key: "COMPLETE",
-          label: "Télédeclaration complète",
+          label: "Télédéclaration - saisie détaillée",
           help: "Vous connaissez les labels et les familles de produits de vos achats",
         },
       ],
