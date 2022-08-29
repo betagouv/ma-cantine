@@ -72,9 +72,9 @@ export default {
             param: "valueMeatPoultryHt",
             label: "Mes achats en viandes et volailles fraiches ou surgelées total",
           },
-          { param: "valueFishHt", label: "Mes achats en poissons et produits aquatiques total" },
+          { param: "valueFishHt", label: "Mes achats en poissons, produits de la mer et aquaculture total" },
           { param: "valueViandesVolaillesBio", label: "Mes achats viandes et volailles Bio" },
-          { param: "valueProduitsDeLaMerBio", label: "Mes achats poissons et produits de la mer Bio" },
+          { param: "valueProduitsDeLaMerBio", label: "Mes achats poissons, produits de la mer et aquaculture Bio" },
           { param: "valueFruitsEtLegumesBio", label: "Mes achats fruits et legumes Bio" },
           { param: "valueCharcuterieBio", label: "Mes achats charcuterie Bio" },
           { param: "valueProduitsLaitiersBio", label: "Mes achats produits laitiers Bio" },
@@ -82,7 +82,10 @@ export default {
           { param: "valueBoissonsBio", label: "Mes achats boissons Bio" },
           { param: "valueAutresBio", label: "Mes autres achats Bio" },
           { param: "valueViandesVolaillesLabelRouge", label: "Mes achats viandes et volailles Label Rouge" },
-          { param: "valueProduitsDeLaMerLabelRouge", label: "Mes achats poissons et produits de la mer Label Rouge" },
+          {
+            param: "valueProduitsDeLaMerLabelRouge",
+            label: "Mes achats poissons, produits de la mer et aquaculture Label Rouge",
+          },
           { param: "valueFruitsEtLegumesLabelRouge", label: "Mes achats fruits et legumes Label Rouge" },
           { param: "valueCharcuterieLabelRouge", label: "Mes achats charcuterie Label Rouge" },
           { param: "valueProduitsLaitiersLabelRouge", label: "Mes achats produits laitiers Label Rouge" },
@@ -92,7 +95,7 @@ export default {
           { param: "valueViandesVolaillesAocaopIgpStg", label: "Mes achats viandes et volailles AOC/AOP, IGP ou STG" },
           {
             param: "valueProduitsDeLaMerAocaopIgpStg",
-            label: "Mes achats poissons et produits de la mer AOC/AOP, IGP ou STG",
+            label: "Mes achats poissons, produits de la mer et aquaculture AOC/AOP, IGP ou STG",
           },
           { param: "valueFruitsEtLegumesAocaopIgpStg", label: "Mes achats fruits et legumes AOC/AOP, IGP ou STG" },
           { param: "valueCharcuterieAocaopIgpStg", label: "Mes achats charcuterie AOC/AOP, IGP ou STG" },
@@ -106,7 +109,8 @@ export default {
           },
           {
             param: "valueProduitsDeLaMerHve",
-            label: "Mes achats poissons et produits de la mer Certification Environnementale de Niveau 2 ou HVE",
+            label:
+              "Mes achats poissons, produits de la mer et aquaculture Certification Environnementale de Niveau 2 ou HVE",
           },
           {
             param: "valueFruitsEtLegumesHve",
@@ -129,7 +133,7 @@ export default {
           { param: "valueViandesVolaillesPecheDurable", label: "Mes achats viandes et volailles Peche Durable" },
           {
             param: "valueProduitsDeLaMerPecheDurable",
-            label: "Mes achats poissons et produits de la mer Peche Durable",
+            label: "Mes achats poissons, produits de la mer et aquaculture Peche Durable",
           },
           { param: "valueFruitsEtLegumesPecheDurable", label: "Mes achats fruits et legumes Pêche Durable" },
           { param: "valueCharcuteriePecheDurable", label: "Mes achats charcuterie Pêche Durable" },
@@ -138,7 +142,7 @@ export default {
           { param: "valueBoissonsPecheDurable", label: "Mes achats boissons Pêche Durable" },
           { param: "valueAutresPecheDurable", label: "Mes autres achats Pêche Durable" },
           { param: "valueViandesVolaillesRup", label: "Mes achats viandes et volailles RUP" },
-          { param: "valueProduitsDeLaMerRup", label: "Mes achats poissons et produits de la mer RUP" },
+          { param: "valueProduitsDeLaMerRup", label: "Mes achats poissons, produits de la mer et aquaculture RUP" },
           { param: "valueFruitsEtLegumesRup", label: "Mes achats fruits et legumes RUP" },
           { param: "valueCharcuterieRup", label: "Mes achats charcuterie RUP" },
           { param: "valueProduitsLaitiersRup", label: "Mes achats produits laitiers RUP" },
@@ -146,7 +150,10 @@ export default {
           { param: "valueBoissonsRup", label: "Mes achats boissons RUP" },
           { param: "valueAutresRup", label: "Mes autres achats RUP" },
           { param: "valueViandesVolaillesFermier", label: "Mes achats viandes et volailles Fermier" },
-          { param: "valueProduitsDeLaMerFermier", label: "Mes achats poissons et produits de la mer Fermier" },
+          {
+            param: "valueProduitsDeLaMerFermier",
+            label: "Mes achats poissons, produits de la mer et aquaculture Fermier",
+          },
           { param: "valueFruitsEtLegumesFermier", label: "Mes achats fruits et legumes Fermier" },
           { param: "valueCharcuterieFermier", label: "Mes achats charcuterie Fermier" },
           { param: "valueProduitsLaitiersFermier", label: "Mes achats produits laitiers Fermier" },
@@ -159,7 +166,7 @@ export default {
           },
           {
             param: "valueProduitsDeLaMerExternalites",
-            label: "Mes achats poissons et produits de la mer Externalités Environnementales",
+            label: "Mes achats poissons, produits de la mer et aquaculture Externalités Environnementales",
           },
           {
             param: "valueFruitsEtLegumesExternalites",
@@ -179,7 +186,7 @@ export default {
           },
           {
             param: "valueProduitsDeLaMerCommerceEquitable",
-            label: "Mes achats poissons et produits de la mer Commerce Équitable",
+            label: "Mes achats poissons, produits de la mer et aquaculture Commerce Équitable",
           },
           { param: "valueFruitsEtLegumesCommerceEquitable", label: "Mes achats fruits et legumes Commerce Équitable" },
           { param: "valueCharcuterieCommerceEquitable", label: "Mes achats charcuterie Commerce Équitable" },
@@ -193,7 +200,7 @@ export default {
           },
           {
             param: "valueProduitsDeLaMerPerformance",
-            label: "Mes achats poissons et produits de la mer Performance Environnementale",
+            label: "Mes achats poissons, produits de la mer et aquaculture Performance Environnementale",
           },
           {
             param: "valueFruitsEtLegumesPerformance",
@@ -208,7 +215,10 @@ export default {
           { param: "valueBoissonsPerformance", label: "Mes achats boissons Performance Environnementale" },
           { param: "valueAutresPerformance", label: "Mes autres achats Performance Environnementale" },
           { param: "valueViandesVolaillesFrance", label: "Mes achats viandes et volailles provenance France" },
-          { param: "valueProduitsDeLaMerFrance", label: "Mes achats poissons et produits de la mer provenance France" },
+          {
+            param: "valueProduitsDeLaMerFrance",
+            label: "Mes achats poissons, produits de la mer et aquaculture provenance France",
+          },
           { param: "valueFruitsEtLegumesFrance", label: "Mes achats fruits et legumes provenance France" },
           { param: "valueCharcuterieFrance", label: "Mes achats charcuterie provenance France" },
           { param: "valueProduitsLaitiersFrance", label: "Mes achats produits laitiers provenance France" },
@@ -218,7 +228,7 @@ export default {
           { param: "valueViandesVolaillesShortDistribution", label: "Mes achats viandes et volailles circuit-court" },
           {
             param: "valueProduitsDeLaMerShortDistribution",
-            label: "Mes achats poissons et produits de la mer circuit-court",
+            label: "Mes achats poissons, produits de la mer et aquaculture circuit-court",
           },
           { param: "valueFruitsEtLegumesShortDistribution", label: "Mes achats fruits et legumes circuit-court" },
           { param: "valueCharcuterieShortDistribution", label: "Mes achats charcuterie circuit-court" },
@@ -227,7 +237,7 @@ export default {
           { param: "valueBoissonsShortDistribution", label: "Mes achats boissons circuit-court" },
           { param: "valueAutresShortDistribution", label: "Mes autres achats circuit-court" },
           { param: "valueViandesVolaillesLocal", label: "Mes achats viandes et volailles Local" },
-          { param: "valueProduitsDeLaMerLocal", label: "Mes achats poissons et produits de la mer Local" },
+          { param: "valueProduitsDeLaMerLocal", label: "Mes achats poissons, produits de la mer et aquaculture Local" },
           { param: "valueFruitsEtLegumesLocal", label: "Mes achats fruits et legumes Local" },
           { param: "valueCharcuterieLocal", label: "Mes achats charcuterie Local" },
           { param: "valueProduitsLaitiersLocal", label: "Mes achats produits laitiers Local" },
@@ -258,10 +268,10 @@ export default {
           param: "valueMeatPoultryFranceHt",
           label: "Mes achats provenance France en viandes et volailles fraiches ou surgelées",
         },
-        { param: "valueFishHt", label: "Mes achats en poissons et produits aquatiques total" },
+        { param: "valueFishHt", label: "Mes achats en poissons, produits de la mer et aquaculture total" },
         {
           param: "valueFishEgalimHt",
-          label: "Mes achats EGAlim en poissons et produits aquatiques",
+          label: "Mes achats EGAlim en poissons, produits de la mer et aquaculture",
         },
       ]
     },

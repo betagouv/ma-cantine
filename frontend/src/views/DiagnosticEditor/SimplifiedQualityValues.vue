@@ -288,7 +288,7 @@
     <v-divider class="mb-4 mt-8"></v-divider>
 
     <div>
-      60% - 100% pour les restaurants d'Etat de « poissons et produits aquatiques » EGAlim
+      60% - 100% pour les restaurants d'Etat de « poissons, produits de la mer et aquaculture » EGAlim
     </div>
     <div class="d-block d-sm-flex align-center mt-8">
       <div class="d-flex">
@@ -297,7 +297,7 @@
         </v-icon>
       </div>
       <label class="body-2 ml-4" :for="'fish-' + diagnostic.year">
-        La valeur (en HT) des mes achats en poissons et produits aquatiques total
+        La valeur (en HT) des mes achats en poissons, produits de la mer et aquaculture total
       </label>
     </div>
     <DsfrTextField
@@ -329,7 +329,7 @@
         </v-icon>
       </div>
       <label class="body-2 ml-4" :for="'fish-egalim-' + diagnostic.year">
-        La valeur (en HT) des mes achats EGAlim en poissons et produits aquatiques
+        La valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et aquaculture
       </label>
     </div>
     <DsfrTextField
