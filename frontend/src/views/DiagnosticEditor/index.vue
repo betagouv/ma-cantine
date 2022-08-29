@@ -89,8 +89,10 @@
           >
             <v-form ref="quality" v-model="formIsValid.quality">
               <p>
-                Suivant le niveau d'information disponible, vous pouvez choisir entre ces deux types de déclaration. À
-                terme, seule la télédéclaration complète sera acceptée.
+                Suivant le niveau d'information disponible, vous pouvez choisir entre ces deux types de déclaration.
+                Pour les achats des années 2021 et 2022, toutes les déclarations peuvent être remplies avec la "saisie
+                simplifiée". Pour les données d'achats 2023, la "saisie simplifiée" sera accessible uniquement aux
+                établissements de moins de 200 couverts/jour.
               </p>
               <v-radio-group v-model="diagnostic.diagnosticType">
                 <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
@@ -257,12 +259,12 @@ export default {
       diagnosticTypes: [
         {
           key: "SIMPLE",
-          label: "Télédeclaration simple",
+          label: "Télédéclaration - saisie simplifiée",
           help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
         },
         {
           key: "COMPLETE",
-          label: "Télédeclaration complète",
+          label: "Télédéclaration - saisie détaillée",
           help: "Vous connaissez les labels et les familles de produits de vos achats",
         },
       ],
