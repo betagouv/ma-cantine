@@ -105,7 +105,7 @@ typing_extensions==4.3.0
 tzdata==2022.2
 tzlocal==4.2
 uritools==4.0.0
-urllib3==1.26.11
+urllib3==1.26.12
 vine==5.0.0
 wcwidth==0.2.5
 webencodings==0.5.1
