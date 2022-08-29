@@ -30,7 +30,7 @@ class TestGeolocationBot(TestCase):
         """
         canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003")
         address_api_text = "id,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
-        address_api_text += f'{canteen.id},,69003,69383,69003,Lyon,"69,Something,Other"\n'
+        address_api_text += f'{canteen.id},,69003,69383,69003,Lyon,"69, Rhône, Auvergne-Rhône-Alpes"\n'
         mock.post(self.api_url, text=address_api_text)
 
         tasks.fill_missing_geolocation_data()
