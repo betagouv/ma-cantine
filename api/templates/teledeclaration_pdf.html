@@ -111,15 +111,15 @@
         </ul>
 
         <p>
-            Poissons et produits aquatiques
+            Poissons, produits de la mer et aquaculture
         </p>
         <ul>
             <li>
-                <span>Valeur totale en HT des achats en poissons et produits aquatiques</span> :
+                <span>Valeur totale en HT des achats en poissons, produits de la mer et aquaculture</span> :
                 {% if not value_fish_ht is None %}{{ value_fish_ht|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Valeur en HT des achats en poissons et produits aquatiques EGAlim</span> :
+                <span>Valeur en HT des achats en poissons, produits de la mer et aquaculture EGAlim</span> :
                 {% if not value_fish_egalim_ht is None %}{{ value_fish_egalim_ht|floatformat:2 }}{% else %}—{% endif %} €
             </li>
         </ul>
@@ -134,7 +134,7 @@
                 {% if not value_meat_poultry_ht is None %}{{ value_meat_poultry_ht|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Valeur totale en HT des achats en poissons et produits aquatiques</span> :
+                <span>Valeur totale en HT des achats en poissons, produits de la mer et aquaculture</span> :
                 {% if not value_fish_ht is None %}{{ value_fish_ht|floatformat:2 }}{% else %}—{% endif %} €
             </li>
         </ul>
@@ -144,7 +144,7 @@
                 <span>Viandes et volailles Bio</span> : {% if not value_viandes_volailles_bio is None %}{{ value_viandes_volailles_bio|floatformat:2 }}{%else%}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer Bio</span> : {% if not value_produits_de_la_mer_bio is None %}{{ value_produits_de_la_mer_bio|floatformat:2 }}{%else%}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture Bio</span> : {% if not value_produits_de_la_mer_bio is None %}{{ value_produits_de_la_mer_bio|floatformat:2 }}{%else%}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes Bio</span> : {% if not value_fruits_et_legumes_bio is None %}{{ value_fruits_et_legumes_bio|floatformat:2 }}{%else%}—{% endif %} €
@@ -173,7 +173,7 @@
                 <span>Viandes et volailles Label Rouge</span> : {% if not value_viandes_volailles_label_rouge is None%}{{ value_viandes_volailles_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer Label Rouge</span> : {% if not value_produits_de_la_mer_label_rouge is None%}{{ value_produits_de_la_mer_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture Label Rouge</span> : {% if not value_produits_de_la_mer_label_rouge is None%}{{ value_produits_de_la_mer_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes Label Rouge</span> : {% if not value_fruits_et_legumes_label_rouge is None%}{{ value_fruits_et_legumes_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
@@ -202,7 +202,7 @@
                 <span>Viandes et volailles AOC/AOP, IGP ou STG</span> : {% if not value_viandes_volailles_aocaop_igp_stg is None %}{{ value_viandes_volailles_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer AOC/AOP, IGP ou STG</span> : {% if not value_produits_de_la_mer_aocaop_igp_stg is None %}{{ value_produits_de_la_mer_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture AOC/AOP, IGP ou STG</span> : {% if not value_produits_de_la_mer_aocaop_igp_stg is None %}{{ value_produits_de_la_mer_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes AOC/AOP, IGP ou STG</span> : {% if not value_fruits_et_legumes_aocaop_igp_stg is None %}{{ value_fruits_et_legumes_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
@@ -231,7 +231,7 @@
                 <span>Viandes et volailles Certification Environnementale de Niveau 2 ou HVE</span> : {% if not value_viandes_volailles_hve is None %}{{ value_viandes_volailles_hve|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer Certification Environnementale de Niveau 2 ou HVE</span> : {% if not value_produits_de_la_mer_hve is None %}{{ value_produits_de_la_mer_hve|floatformat:2 }}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture Certification Environnementale de Niveau 2 ou HVE</span> : {% if not value_produits_de_la_mer_hve is None %}{{ value_produits_de_la_mer_hve|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes Certification Environnementale de Niveau 2 ou HVE</span> : {% if not value_fruits_et_legumes_hve is None %}{{ value_fruits_et_legumes_hve|floatformat:2 }}{% else %}—{% endif %} €
@@ -260,7 +260,7 @@
                 <span>Viandes et volailles pêche durable</span> : {% if not value_viandes_volailles_peche_durable is None %}{{ value_viandes_volailles_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer pêche durable</span> : {% if not value_produits_de_la_mer_peche_durable is None %}{{ value_produits_de_la_mer_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture pêche durable</span> : {% if not value_produits_de_la_mer_peche_durable is None %}{{ value_produits_de_la_mer_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes pêche durable</span> : {% if not value_fruits_et_legumes_peche_durable is None %}{{ value_fruits_et_legumes_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
@@ -289,7 +289,7 @@
                 <span>Viandes et volailles RUP</span> : {% if not value_viandes_volailles_rup is None %}{{ value_viandes_volailles_rup|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer RUP</span> : {% if not value_produits_de_la_mer_rup is None %}{{ value_produits_de_la_mer_rup|floatformat:2 }}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture RUP</span> : {% if not value_produits_de_la_mer_rup is None %}{{ value_produits_de_la_mer_rup|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes RUP</span> : {% if not value_fruits_et_legumes_rup is None %}{{ value_fruits_et_legumes_rup|floatformat:2 }}{% else %}—{% endif %} €
@@ -318,7 +318,7 @@
                 <span>Viandes et volailles Commerce Équitable</span> : {% if not value_viandes_volailles_commerce_equitable is None %}{{ value_viandes_volailles_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer Commerce Équitable</span> : {% if not value_produits_de_la_mer_commerce_equitable is None %}{{ value_produits_de_la_mer_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture Commerce Équitable</span> : {% if not value_produits_de_la_mer_commerce_equitable is None %}{{ value_produits_de_la_mer_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes Commerce Équitable</span> : {% if not value_fruits_et_legumes_commerce_equitable is None %}{{ value_fruits_et_legumes_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
@@ -347,7 +347,7 @@
                 <span>Viandes et volailles Fermier</span> : {% if not value_viandes_volailles_fermier is None %}{{ value_viandes_volailles_fermier|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer Fermier</span> : {% if not value_produits_de_la_mer_fermier is None %}{{ value_produits_de_la_mer_fermier|floatformat:2 }}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture Fermier</span> : {% if not value_produits_de_la_mer_fermier is None %}{{ value_produits_de_la_mer_fermier|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes Fermier</span> : {% if not value_fruits_et_legumes_fermier is None %}{{ value_fruits_et_legumes_fermier|floatformat:2 }}{% else %}—{% endif %} €
@@ -376,7 +376,7 @@
                 <span>Viandes et volailles externalités environnementales</span> : {% if not value_viandes_volailles_externalites is None %}{{ value_viandes_volailles_externalites|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer externalités environnementales</span> : {% if not value_produits_de_la_mer_externalites is None %}{{ value_produits_de_la_mer_externalites|floatformat:2 }}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture externalités environnementales</span> : {% if not value_produits_de_la_mer_externalites is None %}{{ value_produits_de_la_mer_externalites|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes externalités environnementales</span> : {% if not value_fruits_et_legumes_externalites is None %}{{ value_fruits_et_legumes_externalites|floatformat:2 }}{% else %}—{% endif %} €
@@ -405,7 +405,7 @@
                 <span>Viandes et volailles performance environnementale</span> : {% if not value_viandes_volailles_performance is None %}{{ value_viandes_volailles_performance|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer performance environnementale</span> : {% if not value_produits_de_la_mer_performance is None %}{{ value_produits_de_la_mer_performance|floatformat:2 }}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture performance environnementale</span> : {% if not value_produits_de_la_mer_performance is None %}{{ value_produits_de_la_mer_performance|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes performance environnementale</span> : {% if not value_fruits_et_legumes_performance is None %}{{ value_fruits_et_legumes_performance|floatformat:2 }}{% else %}—{% endif %} €
@@ -434,7 +434,7 @@
                 <span>Viandes et volailles provenance France</span> : {% if not value_viandes_volailles_france is None %}{{ value_viandes_volailles_france|floatformat:2}}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer provenance France</span> : {% if not value_produits_de_la_mer_france is None %}{{ value_produits_de_la_mer_france|floatformat:2}}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture provenance France</span> : {% if not value_produits_de_la_mer_france is None %}{{ value_produits_de_la_mer_france|floatformat:2}}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes provenance France</span> : {% if not value_fruits_et_legumes_france is None %}{{ value_fruits_et_legumes_france|floatformat:2}}{% else %}—{% endif %} €
@@ -463,7 +463,7 @@
                 <span>Viandes et volailles circuit-court</span> : {% if not value_viandes_volailles_short_distribution is None %}{{ value_viandes_volailles_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer circuit-court</span> : {% if not value_produits_de_la_mer_short_distribution is None %}{{ value_produits_de_la_mer_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture circuit-court</span> : {% if not value_produits_de_la_mer_short_distribution is None %}{{ value_produits_de_la_mer_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes circuit-court</span> : {% if not value_fruits_et_legumes_short_distribution is None %}{{ value_fruits_et_legumes_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
@@ -492,7 +492,7 @@
                 <span>Viandes et volailles « local »</span> : {% if not value_viandes_volailles_local is None %}{{ value_viandes_volailles_local|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
-                <span>Poissons et produits de la mer « local »</span> : {% if not value_produits_de_la_mer_local is None %}{{ value_produits_de_la_mer_local|floatformat:2 }}{% else %}—{% endif %} €
+                <span>Poissons, produits de la mer et aquaculture « local »</span> : {% if not value_produits_de_la_mer_local is None %}{{ value_produits_de_la_mer_local|floatformat:2 }}{% else %}—{% endif %} €
             </li>
             <li>
                 <span>Fruits et légumes « local »</span> : {% if not value_fruits_et_legumes_local is None %}{{ value_fruits_et_legumes_local|floatformat:2 }}{% else %}—{% endif %} €

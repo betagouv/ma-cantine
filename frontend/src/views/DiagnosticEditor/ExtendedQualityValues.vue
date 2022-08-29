@@ -66,7 +66,7 @@
           mdi-fish
         </v-icon>
       </div>
-      La valeur (en HT) des mes achats en poissons et produits aquatiques total
+      La valeur (en HT) des mes achats en poissons, produits de la mer et aquaculture total
     </label>
 
     <DsfrTextField

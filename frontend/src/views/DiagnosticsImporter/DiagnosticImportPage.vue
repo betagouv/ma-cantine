@@ -333,8 +333,8 @@ export default {
         "Valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
         "Valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
         "Valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
-        "Valeur (en HT) des mes achats en poissons et produits aquatiques total",
-        "Valeur (en HT) des mes achats EGAlim en poissons et produits aquatiques",
+        "Valeur (en HT) des mes achats en poissons, produits de la mer et aquaculture total",
+        "Valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et aquaculture",
       ]
       let valuesArray = simpleValues
       const array = [
