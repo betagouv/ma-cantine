@@ -203,6 +203,9 @@ class Canteen(SoftDeletionModel):
             self.region = self._get_region()
         super(Canteen, self).save(force_insert, force_update, using, update_fields)
 
+    # Automatic tasks
+    geolocation_bot_attempts = models.IntegerField(default=0)
+
     # Campaign tracking
     creation_mtm_source = models.TextField(
         null=True, blank=True, verbose_name="mtm_source du lien tracké lors de la création"

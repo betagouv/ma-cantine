@@ -10,6 +10,7 @@ app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend=os.getenv("REDI
 
 # At 10:00 on every day from Monday through Friday.
 daily_week = crontab(hour=10, minute=0, day_of_week="1-5")
+nightly = crontab(hour=4, minute=0, day_of_week="*")
 every_minute = crontab(minute="*/1")  # For testing purposes
 
 app.conf.beat_schedule = {
@@ -24,6 +25,10 @@ app.conf.beat_schedule = {
     "no_diagnostic_first_reminder": {
         "task": "macantine.tasks.no_diagnostic_first_reminder",
         "schedule": daily_week,
+    },
+    "fill_missing_geolocation_data": {
+        "task": "macantine.tasks.fill_missing_geolocation_data",
+        "schedule": nightly,
     },
 }
 
