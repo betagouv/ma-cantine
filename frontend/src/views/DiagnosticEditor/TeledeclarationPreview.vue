@@ -214,6 +214,27 @@ export default {
           { param: "valueBoulangeriePerformance", label: "Mes achats boulangerie Performance Environnementale" },
           { param: "valueBoissonsPerformance", label: "Mes achats boissons Performance Environnementale" },
           { param: "valueAutresPerformance", label: "Mes autres achats Performance Environnementale" },
+          {
+            param: "valueViandesVolaillesNonEgalim",
+            label: "Mes achats viandes et volailles non-EGAlim",
+          },
+          {
+            param: "valueProduitsDeLaMerNonEgalim",
+            label: "Mes achats poissons, produits de la mer et aquaculture non-EGAlim",
+          },
+          {
+            param: "valueFruitsEtLegumesNonEgalim",
+            label: "Mes achats fruits et legumes non-EGAlim",
+          },
+          { param: "valueCharcuterieNonEgalim", label: "Mes achats charcuterie non-EGAlim" },
+          {
+            param: "valueProduitsLaitiersNonEgalim",
+            label: "Mes achats produits laitiers non-EGAlim",
+          },
+          { param: "valueBoulangerieNonEgalim", label: "Mes achats boulangerie non-EGAlim" },
+          { param: "valueBoissonsNonEgalim", label: "Mes achats boissons non-EGAlim" },
+          { param: "valueAutresNonEgalim", label: "Mes autres achats non-EGAlim" },
+
           { param: "valueViandesVolaillesFrance", label: "Mes achats viandes et volailles provenance France" },
           {
             param: "valueProduitsDeLaMerFrance",

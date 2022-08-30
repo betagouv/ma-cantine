@@ -202,6 +202,10 @@ const MISC_LABELS = {
     icon: "mdi-chart-line",
     color: "green",
   },
+  NON_EGALIM: {
+    icon: "mdi-dots-horizontal",
+    color: "grey",
+  },
   FRANCE: {
     icon: "$france-line",
     color: "indigo",
@@ -241,6 +245,7 @@ export default {
       characteristicGroups,
       fieldCount: {
         egalim: characteristicGroups.egalim.fields.length,
+        nonEgalim: characteristicGroups.nonEgalim.fields.length,
         outsideLaw: characteristicGroups.outsideLaw.fields.length,
       },
     }
@@ -261,6 +266,7 @@ export default {
     fieldsCompleted() {
       let completed = {
         egalim: 0,
+        nonEgalim: 0,
         outsideLaw: 0,
       }
       Object.entries(this.diagnostic).forEach(([field, value]) => {
@@ -268,6 +274,8 @@ export default {
           completed.egalim += parseFloat(value, 10) >= 0 ? 1 : 0
         } else if (this.characteristicGroups.outsideLaw.fields.indexOf(field) > -1) {
           completed.outsideLaw += parseFloat(value, 10) >= 0 ? 1 : 0
+        } else if (this.characteristicGroups.nonEgalim.fields.indexOf(field) > -1) {
+          completed.nonEgalim += parseFloat(value, 10) >= 0 ? 1 : 0
         }
       })
       return completed
@@ -275,6 +283,7 @@ export default {
     percentageCompletion() {
       return {
         egalim: Math.round((this.fieldsCompleted.egalim / this.fieldCount.egalim) * 100),
+        nonEgalim: Math.round((this.fieldsCompleted.nonEgalim / this.fieldCount.nonEgalim) * 100),
         outsideLaw: Math.round((this.fieldsCompleted.outsideLaw / this.fieldCount.outsideLaw) * 100),
       }
     },
@@ -293,9 +302,9 @@ export default {
       return `${fId}-${cId}-${this.diagnostic.year}`
     },
     checkTotal() {
-      // we're only checking the total against the egalim fields. Each label group of the outsideLaw fields can get up to
-      // 100% but ideally wouldn't go over that. We currently don't check this however because of UX constraints.
-      const totalInputs = this.sumAllEgalim()
+      // we're only checking the total against the egalim and non-egalim fields. Each label group of the outsideLaw fields
+      // can get up to 100% but ideally wouldn't go over that. We currently don't check this however because of UX constraints.
+      const totalInputs = this.sumAllEgalimAndNonEgalim()
       const totalMeatPoultry = this.diagnostic.valueMeatPoultryHt
       const totalFish = this.diagnostic.valueFishHt
       const totalFamilies = totalMeatPoultry + totalFish
@@ -304,7 +313,7 @@ export default {
       this.errorType = undefined
       if (totalInputs > this.diagnostic.valueTotalHt) {
         this.errorType = "TOTAL"
-        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumAllEgalim()} €`
+        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumAllEgalimAndNonEgalim()} €`
       } else if (totalFamilies > this.diagnostic.valueTotalHt) {
         this.errorType = "FAMILY"
         this.errorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}, actuellement ${totalFamilies} €`
@@ -370,8 +379,11 @@ export default {
       })
       return labelTotal
     },
-    sumAllEgalim() {
-      return this.sumFields(this.characteristicGroups.egalim.fields)
+    sumAllEgalimAndNonEgalim() {
+      return (
+        this.sumFields(this.characteristicGroups.egalim.fields) +
+        this.sumFields(this.characteristicGroups.nonEgalim.fields)
+      )
     },
     sumEgalimMeat() {
       return this.sumFields(

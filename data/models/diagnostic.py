@@ -941,6 +941,62 @@ class Diagnostic(models.Model):
         null=True,
         verbose_name="Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
     )
+    value_viandes_volailles_non_egalim = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Viandes et volailles fraîches et surgelées, non-EGAlim.",
+    )
+    value_produits_de_la_mer_non_egalim = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Produits aquatiques frais et surgelés, non-EGAlim.",
+    )
+    value_fruits_et_legumes_non_egalim = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Fruits et légumes frais et surgelés, non-EGAlim.",
+    )
+    value_charcuterie_non_egalim = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Charcuterie, non-EGAlim.",
+    )
+    value_produits_laitiers_non_egalim = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="BOF (Produits laitiers, beurre et œufs), non-EGAlim.",
+    )
+    value_boulangerie_non_egalim = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boulangerie/Pâtisserie fraîches, non-EGAlim.",
+    )
+    value_boissons_non_egalim = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Boissons, non-EGAlim.",
+    )
+    value_autres_non_egalim = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Autres produits frais, surgelés et d’épicerie, non-EGAlim.",
+    )
     value_viandes_volailles_france = models.DecimalField(
         max_digits=20,
         decimal_places=2,
@@ -1190,6 +1246,14 @@ class Diagnostic(models.Model):
         "value_boulangerie_performance",
         "value_boissons_performance",
         "value_autres_performance",
+        "value_viandes_volailles_non_egalim",
+        "value_produits_de_la_mer_non_egalim",
+        "value_fruits_et_legumes_non_egalim",
+        "value_charcuterie_non_egalim",
+        "value_produits_laitiers_non_egalim",
+        "value_boulangerie_non_egalim",
+        "value_boissons_non_egalim",
+        "value_autres_non_egalim",
         "value_viandes_volailles_france",
         "value_produits_de_la_mer_france",
         "value_fruits_et_legumes_france",
