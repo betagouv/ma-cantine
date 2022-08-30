@@ -127,7 +127,10 @@
                     </v-icon>
                   </div>
                 </v-col>
-                <v-col>{{ characteristics[cId].text }}</v-col>
+                <v-col>
+                  {{ characteristics[cId].text }}
+                  <span v-if="cId === 'LOCAL'">(suivant votre propre définition)</span>
+                </v-col>
                 <v-col cols="3" class="text--secondary text-right pr-4">
                   <v-fade-transition leave-absolute>
                     <span v-if="!open" key="0">
