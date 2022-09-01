@@ -33,5 +33,5 @@ class CanteenFactory(factory.django.DjangoModelFactory):
             for manager in extracted:
                 self.managers.add(manager)
         else:
-            for _ in range(random.randint(1, 4)):
+            for _ in range(random.randint(1, 2)):
                 self.managers.add(UserFactory.create())

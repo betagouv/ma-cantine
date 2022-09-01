@@ -445,7 +445,7 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
 
 
 class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
-    final_value_idx = 118
+    final_value_idx = 126
 
     def _skip_row(self, row_number, row):
         if row_number == 1:

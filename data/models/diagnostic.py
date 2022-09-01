@@ -1453,10 +1453,7 @@ class Diagnostic(models.Model):
             "externalites",
             "commerce_equitable",
             "performance",
-            # TODO: should the following three be included if they're not EGAlim?
-            "france",
-            "short_distribution",
-            "local",
+            "non_egalim",
         ]
         sum = 0
         for label in labels:
@@ -1504,6 +1501,10 @@ class Diagnostic(models.Model):
     @property
     def total_label_performance(self):
         return self.label_sum("performance")
+
+    @property
+    def total_label_non_egalim(self):
+        return self.label_sum("non_egalim")
 
     @property
     def total_label_france(self):

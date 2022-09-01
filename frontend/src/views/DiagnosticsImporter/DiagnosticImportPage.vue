@@ -6,7 +6,7 @@
       <v-icon large class="mr-4" color="black">{{ type.icon }}</v-icon>
       <h1>{{ type.title }}</h1>
     </v-row>
-    <h2 class="my-4">1. Preparer le fichier</h2>
+    <h2 class="my-4">1. Préparer le fichier</h2>
     <p>
       <a href="#documentation">
         Voir les données requises pour
@@ -353,6 +353,8 @@ export default {
       ]
       if (this.importLevel === "COMPLETE") {
         valuesArray = [
+          "La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
+          "La valeur (en HT) des mes achats en poissons, produits de la mer et aquaculture total",
           "Bio : Viandes et volailles fraîches et surgelées",
           "Bio : Produits aquatiques frais et surgelés",
           "Bio : Fruits et légumes frais et surgelés",
@@ -433,6 +435,14 @@ export default {
           "Produits acquis sur la base de leurs performances en matière environnementale : Boulangerie/Pâtisserie fraîches",
           "Produits acquis sur la base de leurs performances en matière environnementale : Boissons",
           "Produits acquis sur la base de leurs performances en matière environnementale : Autres produits frais, surgelés et d’épicerie",
+          "Non-Egalim : Viandes et volailles fraîches et surgelées",
+          "Non-Egalim : Produits aquatiques frais et surgelés",
+          "Non-Egalim : Fruits et légumes frais et surgelés",
+          "Non-Egalim : Charcuterie",
+          "Non-Egalim : BOF (Produits laitiers, beurre et œufs)",
+          "Non-Egalim : Boulangerie/Pâtisserie fraîches",
+          "Non-Egalim : Boissons",
+          "Non-Egalim : Autres produits frais, surgelés et d’épicerie",
           "Provenance France : Viandes et volailles fraîches et surgelées",
           "Provenance France : Produits aquatiques frais et surgelés",
           "Provenance France : Fruits et légumes frais et surgelés",
