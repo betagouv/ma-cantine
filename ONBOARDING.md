@@ -61,6 +61,7 @@ DB_PORT= Le port de la base de données (par ex. '3306')
 DB_NAME= Le nom de la base de données (par ex. 'macantine-egalim'
 HOSTNAME= Le hostname dans lequel l'application se trouve (par ex. 127.0.0.1:8000)
 ALLOWED_HOSTS= Des noms de domaine/d’hôte que ce site peut servir (par ex. 'localhost, \*')
+ENFORCE_HOST= Optionnel - Si présent, les requêtes seront redirigées à ce host
 STATICFILES_STORAGE= Le système utilisé pour les fichiers statiques (par ex. 'django.contrib.staticfiles.storage.StaticFilesStorage')
 DEFAULT_FILE_STORAGE= Le système de stockage de fichiers (par ex 'django.core.files.storage.FileSystemStorage')
 FORCE_HTTPS= 'False' si on développe en local, 'True' autrement
