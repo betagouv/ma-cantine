@@ -66,10 +66,12 @@
         </v-col>
         <v-col :align="customText ? 'center' : ''">
           <qrcode-vue
-            :value="canteen.publicationStatus === 'published' ? canteenUrl : 'https://ma-cantine.beta.gouv.fr'"
+            :value="canteen.publicationStatus === 'published' ? canteenUrl : 'https://ma-cantine.agriculture.gouv.fr'"
             id="qr-code"
           ></qrcode-vue>
-          <p class="footer-text"><a href="https://ma-cantine.beta.gouv.fr/">ma-cantine.beta.gouv.fr</a></p>
+          <p class="footer-text">
+            <a href="https://ma-cantine.agriculture.gouv.fr/">ma-cantine.agriculture.gouv.fr</a>
+          </p>
         </v-col>
       </v-row>
     </div>

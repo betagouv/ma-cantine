@@ -87,7 +87,7 @@
                   <v-card-subtitle class="pt-0">
                     Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
                     produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
-                    <a href="https://ma-cantine.beta.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+                    <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
                   </v-card-subtitle>
                 </div>
               </div>

@@ -6,7 +6,7 @@
       230-5 du Code Rural et de la Pêche Maritime). Les repas doivent comporter, à partir de l'année 2022, au moins 50 %
       de produits de qualité et durables dont au moins 20 % issus de l'agriculture biologique ou en conversion pour les
       cantines en France continentale (consulter
-      <a href="https://ma-cantine.beta.gouv.fr/blog/16">notre blog</a>
+      <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">notre blog</a>
       pour le seuil des autres régions).
     </p>
     <p>

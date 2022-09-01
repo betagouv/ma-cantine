@@ -2,7 +2,7 @@
 
 Accompagner au mieux les acteurs de la restauration collective dans leur offre aux consommateurs pour une alimentation de qualité, saine et durable.
 
-[Le site](https://ma-cantine.beta.gouv.fr)
+[Le site](https://ma-cantine.agriculture.gouv.fr)
 
 [En savoir plus](https://beta.gouv.fr/startups/ma-cantine-egalim.html)
 
