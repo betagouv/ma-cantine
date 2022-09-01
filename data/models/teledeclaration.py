@@ -81,7 +81,7 @@ class Teledeclaration(models.Model):
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
-        version = "4"  # Helps identify which data will be present. Use incremental int values
+        version = "5"  # Helps identify which data will be present. Use incremental int values
         status = status or Teledeclaration.TeledeclarationStatus.SUBMITTED
         canteen = diagnostic.canteen
         simplified_appro_fields = [
@@ -180,6 +180,14 @@ class Teledeclaration(models.Model):
             "value_boulangerie_performance",
             "value_boissons_performance",
             "value_autres_performance",
+            "value_viandes_volailles_non_egalim",
+            "value_produits_de_la_mer_non_egalim",
+            "value_fruits_et_legumes_non_egalim",
+            "value_charcuterie_non_egalim",
+            "value_produits_laitiers_non_egalim",
+            "value_boulangerie_non_egalim",
+            "value_boissons_non_egalim",
+            "value_autres_non_egalim",
             "value_viandes_volailles_france",
             "value_produits_de_la_mer_france",
             "value_fruits_et_legumes_france",
