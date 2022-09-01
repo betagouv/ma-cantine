@@ -17,6 +17,7 @@ class RedirectMiddleware:
     def __call__(self, request):
         host = request.get_host().split(":")[0]
         port = request.get_port()
+        debug = getattr(settings, "DEBUG", False)
 
         if host in self.redirect_to:
             return self.get_response(request)
@@ -24,7 +25,7 @@ class RedirectMiddleware:
         new_url = "{}://{}{}{}".format(
             "https" if request.is_secure() else "http",
             self.redirect_to,
-            f":{port}" if port and port == "8000" else "",
+            f":{port}" if port and debug and port == "8000" else "",
             request.get_full_path(),
         )
 
