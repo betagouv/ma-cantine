@@ -24,7 +24,7 @@ class RedirectMiddleware:
         new_url = "{}://{}{}{}".format(
             "https" if request.is_secure() else "http",
             self.redirect_to,
-            f":{port}" if port and port != "80" and port != "443" else "",
+            f":{port}" if port and port == "8000" else "",
             request.get_full_path(),
         )
 
