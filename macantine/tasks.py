@@ -7,6 +7,7 @@ from django.conf import settings
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.db.models import F
+from django.db.models.functions import Length
 from data.models import User, Canteen
 from .celery import app
 import sib_api_v3_sdk
@@ -144,9 +145,9 @@ def no_diagnostic_first_reminder():
 def _get_location_csv_string(canteens):
     locations_csv_string = "id,citycode,postcode\n"
     for canteen in canteens:
-        if canteen.city_insee_code:
+        if canteen.city_insee_code and len(canteen.city_insee_code) == 5:
             locations_csv_string += f"{canteen.id},{canteen.city_insee_code},\n"
-        elif canteen.postal_code:
+        elif canteen.postal_code and len(canteen.postal_code) == 5:
             locations_csv_string += f"{canteen.id},,{canteen.postal_code}\n"
     return locations_csv_string
 
@@ -172,6 +173,9 @@ def _get_candidate_canteens():
         Canteen.objects.filter(Q(city=None) | Q(department=None))
         .filter(Q(postal_code__isnull=False) | Q(city_insee_code__isnull=False))
         .filter(geolocation_bot_attempts__lt=3)
+        .annotate(postal_code_len=Length("postal_code"))
+        .annotate(city_insee_code_len=Length("city_insee_code"))
+        .filter(Q(postal_code_len=5) | Q(city_insee_code_len=5))
     )
     return candidate_canteens
 
