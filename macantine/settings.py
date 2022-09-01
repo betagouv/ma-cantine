@@ -42,6 +42,7 @@ AUTHENTICATION_BACKENDS = [
     "macantine.backends.EmailUsernameBackend",
 ]
 ALLOWED_HOSTS = [x.strip() for x in os.getenv("ALLOWED_HOSTS").split(",")]
+ENFORCE_HOST = os.getenv("ENFORCE_HOST", None)
 
 DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANCE") == "True"
 
@@ -91,6 +92,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "macantine.middleware.RedirectMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
