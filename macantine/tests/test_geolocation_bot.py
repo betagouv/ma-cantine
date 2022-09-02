@@ -50,14 +50,14 @@ class TestGeolocationBot(TestCase):
         """
         candidate_canteens = [
             CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003"),
-            CanteenFactory.create(department=None, geolocation_bot_attempts=2, city_insee_code="69383"),
+            CanteenFactory.create(department=None, geolocation_bot_attempts=4, city_insee_code="69383"),
             CanteenFactory.create(department=None, geolocation_bot_attempts=1, city_insee_code="69383"),
         ]
         _ = [
-            CanteenFactory.create(city=None, geolocation_bot_attempts=3, postal_code="69003"),
+            CanteenFactory.create(city=None, geolocation_bot_attempts=5, postal_code="69003"),
             CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69", city_insee_code=None),
             CanteenFactory.create(city=None, geolocation_bot_attempts=0, city_insee_code="6009", postal_code=None),
-            CanteenFactory.create(department="69", city="Lyon", geolocation_bot_attempts=2),
+            CanteenFactory.create(department="69", city="Lyon", geolocation_bot_attempts=4),
             CanteenFactory.create(department=None, geolocation_bot_attempts=1, city_insee_code=None, postal_code=None),
         ]
         result = list(tasks._get_candidate_canteens())
