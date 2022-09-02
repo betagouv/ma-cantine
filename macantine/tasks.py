@@ -1,3 +1,4 @@
+import sys
 import logging
 import datetime
 import requests
@@ -9,11 +10,13 @@ from django.core.paginator import Paginator
 from django.db.models import F
 from django.db.models.functions import Length
 from data.models import User, Canteen
+from celery.utils.log import get_task_logger
 from .celery import app
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
-logger = logging.getLogger(__name__)
+logger = get_task_logger(__name__)
+logger.addHandler(logging.StreamHandler(sys.stdout))
 configuration = sib_api_v3_sdk.Configuration()
 configuration.api_key["api-key"] = settings.ANYMAIL.get("SENDINBLUE_API_KEY")
 api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
@@ -225,3 +228,8 @@ def fill_missing_geolocation_data():
             logger.exception(f"Geolocation Bot error: Unexpected exception\n{e}")
 
     logger.info(f"Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
+
+
+@app.task()
+def test_logging():
+    logger.info("Celery test logger - output to stdout")

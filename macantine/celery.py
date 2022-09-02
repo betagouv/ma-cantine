@@ -31,6 +31,10 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.fill_missing_geolocation_data",
         "schedule": nightly,
     },
+    "test_logging": {
+        "task": "macantine.tasks.test_logging",
+        "schedule": crontab(minute="*/5"),
+    },
 }
 
 app.conf.timezone = "Europe/Paris"
