@@ -317,12 +317,12 @@ export default {
       } else if (totalFamilies > this.diagnostic.valueTotalHt) {
         this.errorType = "FAMILY"
         this.errorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}, actuellement ${totalFamilies} €`
-      } else if (this.sumEgalimMeat() > totalMeatPoultry) {
+      } else if (this.sumMeatVolailles() > totalMeatPoultry) {
         this.errorType = "MEAT"
-        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumEgalimMeat()} €`
-      } else if (this.sumEgalimFish() > totalFish) {
+        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumMeatVolailles()} €`
+      } else if (this.sumFish() > totalFish) {
         this.errorType = "FISH"
-        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumEgalimFish()} €`
+        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumFish()} €`
       }
     },
     diagnosticKey(family, characteristic) {
@@ -380,18 +380,16 @@ export default {
       return labelTotal
     },
     sumAllEgalimAndNonEgalim() {
-      return (
-        this.sumFields(this.characteristicGroups.egalim.fields) +
-        this.sumFields(this.characteristicGroups.nonEgalim.fields)
-      )
+      const fields = this.characteristicGroups.egalim.fields.concat(this.characteristicGroups.nonEgalim.fields)
+      return this.sumFields(fields)
     },
-    sumEgalimMeat() {
-      return this.sumFields(
-        this.characteristicGroups.egalim.fields.filter((f) => f.startsWith("valueViandesVolailles"))
-      )
+    sumMeatVolailles() {
+      const fields = this.characteristicGroups.egalim.fields.concat(this.characteristicGroups.nonEgalim.fields)
+      return this.sumFields(fields.filter((f) => f.startsWith("valueViandesVolailles")))
     },
-    sumEgalimFish() {
-      return this.sumFields(this.characteristicGroups.egalim.fields.filter((f) => f.startsWith("valueProduitsDeLaMer")))
+    sumFish() {
+      const fields = this.characteristicGroups.egalim.fields.concat(this.characteristicGroups.nonEgalim.fields)
+      return this.sumFields(fields.filter((f) => f.startsWith("valueProduitsDeLaMer")))
     },
     sumFields(fields) {
       let totalInputs = 0
