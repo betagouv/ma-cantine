@@ -22,7 +22,7 @@
       },
       {
         "descriptionComponent": "LogoBio",
-        "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio » pour les cantines en France continentale (consulter <a href='https://ma-cantine.beta.gouv.fr/blog/16'>notre blog</a> pour le seuil des autres régions). C'est à dire : \n\n-  des produits issus de l'agriculture biologique.\n-  des produits végétaux étiquetés 'en conversion'.",
+        "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio » pour les cantines en France continentale (consulter <a href='https://ma-cantine.agriculture.gouv.fr/blog/16'>notre blog</a> pour le seuil des autres régions). C'est à dire : \n\n-  des produits issus de l'agriculture biologique.\n-  des produits végétaux étiquetés 'en conversion'.",
         "id": "vingt",
         "readMore": false,
         "shortTitle": "20 % bio",

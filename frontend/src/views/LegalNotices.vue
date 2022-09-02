@@ -5,7 +5,7 @@
     <h2>Éditeur de la Plateforme</h2>
     <p>
       La Plateforme
-      <a href="/">https://ma-cantine.beta.gouv.fr/</a>
+      <a href="/">https://ma-cantine.agriculture.gouv.fr/</a>
       est éditée par l'Incubateur de services numériques de la Direction interministérielle du numérique (DINUM).
     </p>
     <h3>Coordonnées</h3>
