@@ -7,6 +7,7 @@ dotenv.load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "macantine.settings")
 
 app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend=os.getenv("REDIS_URL"), include=["macantine.tasks"])
+app.worker_hijack_root_logger = False
 
 # At 10:00 on every day from Monday through Friday.
 daily_week = crontab(hour=10, minute=0, day_of_week="1-5")
