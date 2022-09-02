@@ -427,6 +427,35 @@
             </li>
         </ul>
         <p>
+            Achats non-EGAlim
+        </p>
+        <ul>
+            <li>
+                <span>Viandes et volailles performance environnementale</span> : {% if not value_viandes_volailles_non_egalim is None %}{{ value_viandes_volailles_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            </li>
+            <li>
+                <span>Poissons, produits de la mer et aquaculture performance environnementale</span> : {% if not value_produits_de_la_mer_non_egalim is None %}{{ value_produits_de_la_mer_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            </li>
+            <li>
+                <span>Fruits et légumes performance environnementale</span> : {% if not value_fruits_et_legumes_non_egalim is None %}{{ value_fruits_et_legumes_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            </li>
+            <li>
+                <span>Charcuterie performance environnementale</span> : {% if not value_charcuterie_non_egalim is None %}{{ value_charcuterie_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            </li>
+            <li>
+                <span>Produits laitiers performance environnementale</span> : {% if not value_produits_laitiers_non_egalim is None %}{{ value_produits_laitiers_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            </li>
+            <li>
+                <span>Boulangerie performance environnementale</span> : {% if not value_boulangerie_non_egalim is None %}{{ value_boulangerie_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            </li>
+            <li>
+                <span>Boissons performance environnementale</span> : {% if not value_boissons_non_egalim is None %}{{ value_boissons_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            </li>
+            <li>
+                <span>Autres produits performance environnementale</span> : {% if not value_autres_non_egalim is None %}{{ value_autres_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            </li>
+        </ul>
+        <p>
             Achats provenance France
         </p>
         <ul>

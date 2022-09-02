@@ -376,6 +376,7 @@ class TestTeledeclarationApi(APITestCase):
         self.assertIn("value_fruits_et_legumes_externalites", json_teledeclaration)
         self.assertIn("value_fruits_et_legumes_commerce_equitable", json_teledeclaration)
         self.assertIn("value_fruits_et_legumes_performance", json_teledeclaration)
+        self.assertIn("value_fruits_et_legumes_non_egalim", json_teledeclaration)
         self.assertIn("value_fruits_et_legumes_france", json_teledeclaration)
         self.assertIn("value_fruits_et_legumes_short_distribution", json_teledeclaration)
         self.assertIn("value_fruits_et_legumes_local", json_teledeclaration)

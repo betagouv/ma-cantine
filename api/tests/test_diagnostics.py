@@ -167,6 +167,14 @@ class TestDiagnosticsApi(APITestCase):
             "value_boulangerie_performance": 10,
             "value_boissons_performance": 10,
             "value_autres_performance": 10,
+            "value_viandes_volailles_non_egalim": 10,
+            "value_produits_de_la_mer_non_egalim": 10,
+            "value_fruits_et_legumes_non_egalim": 10,
+            "value_charcuterie_non_egalim": 10,
+            "value_produits_laitiers_non_egalim": 10,
+            "value_boulangerie_non_egalim": 10,
+            "value_boissons_non_egalim": 10,
+            "value_autres_non_egalim": 10,
             "value_viandes_volailles_france": 10,
             "value_produits_de_la_mer_france": 10,
             "value_fruits_et_legumes_france": 10,
@@ -229,14 +237,14 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.total_label_france, 80)
         self.assertEqual(diagnostic.total_label_short_distribution, 80)
         self.assertEqual(diagnostic.total_label_local, 80)
-        self.assertEqual(diagnostic.total_family_viandes_volailles, 130)
-        self.assertEqual(diagnostic.total_family_produits_de_la_mer, 130)
-        self.assertEqual(diagnostic.total_family_fruits_et_legumes, 130)
-        self.assertEqual(diagnostic.total_family_charcuterie, 130)
-        self.assertEqual(diagnostic.total_family_produits_laitiers, 130)
-        self.assertEqual(diagnostic.total_family_boulangerie, 130)
-        self.assertEqual(diagnostic.total_family_boissons, 130)
-        self.assertEqual(diagnostic.total_family_autres, 130)
+        self.assertEqual(diagnostic.total_family_viandes_volailles, 110)
+        self.assertEqual(diagnostic.total_family_produits_de_la_mer, 110)
+        self.assertEqual(diagnostic.total_family_fruits_et_legumes, 110)
+        self.assertEqual(diagnostic.total_family_charcuterie, 110)
+        self.assertEqual(diagnostic.total_family_produits_laitiers, 110)
+        self.assertEqual(diagnostic.total_family_boulangerie, 110)
+        self.assertEqual(diagnostic.total_family_boissons, 110)
+        self.assertEqual(diagnostic.total_family_autres, 110)
 
     @authenticate
     def test_create_duplicate_diagnostic(self):

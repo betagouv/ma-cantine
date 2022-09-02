@@ -407,8 +407,8 @@ export default {
         meatPoultryEgalim = 0
         meatPoultryFrance = 0
         const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
-        const nonEgalimFields = Constants.TeledeclarationCharacteristicGroups.outsideLaw.fields
-        const allFields = egalimFields.concat(nonEgalimFields)
+        const outsideLawFields = Constants.TeledeclarationCharacteristicGroups.outsideLaw.fields
+        const allFields = egalimFields.concat(outsideLawFields)
 
         allFields.forEach((field) => {
           const isMeatPoultry = field.includes("ViandesVolailles")

@@ -609,17 +609,18 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(finished_diag.total_label_fermier, 150)
         self.assertEqual(finished_diag.total_label_externalites, 160)
         self.assertEqual(finished_diag.total_label_performance, 170)
-        self.assertEqual(finished_diag.total_label_france, 180)
-        self.assertEqual(finished_diag.total_label_short_distribution, 190)
-        self.assertEqual(finished_diag.total_label_local, 200)
-        self.assertEqual(finished_diag.total_family_viandes_volailles, 130)
-        self.assertEqual(finished_diag.total_family_produits_de_la_mer, 130)
-        self.assertEqual(finished_diag.total_family_fruits_et_legumes, 130)
-        self.assertEqual(finished_diag.total_family_charcuterie, 130)
-        self.assertEqual(finished_diag.total_family_produits_laitiers, 130)
-        self.assertEqual(finished_diag.total_family_boulangerie, 130)
-        self.assertEqual(finished_diag.total_family_boissons, 130)
-        self.assertEqual(finished_diag.total_family_autres, 910)
+        self.assertEqual(finished_diag.total_label_non_egalim, 180)
+        self.assertEqual(finished_diag.total_label_france, 190)
+        self.assertEqual(finished_diag.total_label_short_distribution, 200)
+        self.assertEqual(finished_diag.total_label_local, 210)
+        self.assertEqual(finished_diag.total_family_viandes_volailles, 110)
+        self.assertEqual(finished_diag.total_family_produits_de_la_mer, 110)
+        self.assertEqual(finished_diag.total_family_fruits_et_legumes, 110)
+        self.assertEqual(finished_diag.total_family_charcuterie, 110)
+        self.assertEqual(finished_diag.total_family_produits_laitiers, 110)
+        self.assertEqual(finished_diag.total_family_boulangerie, 110)
+        self.assertEqual(finished_diag.total_family_boissons, 110)
+        self.assertEqual(finished_diag.total_family_autres, 660)
         # auto-calculated simplified fields
         self.assertEqual(finished_diag.value_bio_ht, 80)
         self.assertEqual(finished_diag.value_sustainable_ht, 190)
@@ -724,7 +725,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         errors = body["errors"]
         self.assertGreater(len(errors), 0)
-        self.assertEqual(errors.pop(0)["message"], "Format fichier : 119 colonnes attendues, 122 trouvées.")
+        self.assertEqual(errors.pop(0)["message"], "Format fichier : 127 colonnes attendues, 130 trouvées.")
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
