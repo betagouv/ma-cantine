@@ -225,8 +225,3 @@ def fill_missing_geolocation_data():
             logger.exception(f"Geolocation Bot error: Unexpected exception\n{e}")
 
     logger.info(f"Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
-
-
-@app.task()
-def test_logging():
-    logger.info("Celery test logger - output to stdout")
