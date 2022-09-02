@@ -2,6 +2,18 @@ import os
 import dotenv
 from celery import Celery
 from celery.schedules import crontab
+from celery.signals import setup_logging
+
+
+@setup_logging.connect
+def void(*args, **kwargs):
+    """Override celery's logging setup to prevent it from altering our settings.
+    github.com/celery/celery/issues/1867
+
+    :return void:
+    """
+    pass
+
 
 dotenv.load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "macantine.settings")

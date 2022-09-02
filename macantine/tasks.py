@@ -1,4 +1,3 @@
-import sys
 import logging
 import datetime
 import requests
@@ -10,13 +9,11 @@ from django.core.paginator import Paginator
 from django.db.models import F
 from django.db.models.functions import Length
 from data.models import User, Canteen
-from celery.utils.log import get_task_logger
 from .celery import app
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
-logger = get_task_logger(__name__)
-logger.addHandler(logging.StreamHandler(sys.stdout))
+logger = logging.getLogger(__name__)
 configuration = sib_api_v3_sdk.Configuration()
 configuration.api_key["api-key"] = settings.ANYMAIL.get("SENDINBLUE_API_KEY")
 api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
