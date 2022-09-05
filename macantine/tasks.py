@@ -188,6 +188,7 @@ def _fill_from_api_response(response, canteens):
             id = int(row[0])
             canteen = next(filter(lambda x: x.id == id, canteens), None)
             if not canteen:
+                logger.info(f"Geolocation Bot - response row, ID not found: {id}")
                 continue
 
             canteen.city_insee_code = row[3]
@@ -216,12 +217,12 @@ def fill_missing_geolocation_data():
 
             _fill_from_api_response(response, canteens)
         except requests.exceptions.HTTPError as e:
-            logger.exception(f"Geolocation Bot error: HTTPError\n{e}")
+            logger.info(f"Geolocation Bot error: HTTPError\n{e}")
         except requests.exceptions.ConnectionError as e:
-            logger.exception(f"Geolocation Bot error: ConnectionError\n{e}")
+            logger.info(f"Geolocation Bot error: ConnectionError\n{e}")
         except requests.exceptions.Timeout as e:
-            logger.exception(f"Geolocation Bot error: Timeout\n{e}")
+            logger.info(f"Geolocation Bot error: Timeout\n{e}")
         except Exception as e:
-            logger.exception(f"Geolocation Bot error: Unexpected exception\n{e}")
+            logger.info(f"Geolocation Bot error: Unexpected exception\n{e}")
 
     logger.info(f"Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
