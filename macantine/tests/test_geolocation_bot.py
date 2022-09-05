@@ -46,16 +46,16 @@ class TestGeolocationBot(TestCase):
     def test_candidate_canteens(self, _):
         """
         Only canteens with either postal code or INSEE code
-        that have not been queried more than three times
+        that have not been queried more than ten times
         are considered candidates
         """
         candidate_canteens = [
             CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003"),
-            CanteenFactory.create(department=None, geolocation_bot_attempts=4, city_insee_code="69383"),
+            CanteenFactory.create(department=None, geolocation_bot_attempts=9, city_insee_code="69383"),
             CanteenFactory.create(department=None, geolocation_bot_attempts=1, city_insee_code="69383"),
         ]
         _ = [
-            CanteenFactory.create(city=None, geolocation_bot_attempts=5, postal_code="69003"),
+            CanteenFactory.create(city=None, geolocation_bot_attempts=10, postal_code="69003"),
             CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69", city_insee_code=None),
             CanteenFactory.create(city=None, geolocation_bot_attempts=0, city_insee_code="6009", postal_code=None),
             CanteenFactory.create(department="69", city="Lyon", geolocation_bot_attempts=4),
