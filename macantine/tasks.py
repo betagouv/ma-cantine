@@ -175,7 +175,7 @@ def _get_candidate_canteens():
         .filter(geolocation_bot_attempts__lt=5)
         .annotate(postal_code_len=Length("postal_code"))
         .annotate(city_insee_code_len=Length("city_insee_code"))
-        .filter(Q(postal_code_len=5) | Q(city_insee_code_len=5))
+        .filter(Q(postal_code_len=5) | Q(city_insee_code_len=10))
     )
     return candidate_canteens
 
