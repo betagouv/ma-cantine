@@ -333,6 +333,19 @@ class AddManagerView(APIView):
             if send_invitation_mail:
                 AddManagerView._send_add_email(email, canteen)
         except get_user_model().DoesNotExist:
+            # Try to see if the user registered the email with case irregularities
+            user_qs = get_user_model().objects.filter(email__iexact=email)
+            if user_qs.count() == 1:
+                user = user_qs.first()
+                logger.info(f"Adding manager with email in different case : {email}")
+                canteen.managers.add(user)
+                if send_invitation_mail:
+                    AddManagerView._send_add_email(user.email, canteen)
+                return
+
+            if user_qs.count() > 1:
+                logger.info(f"Several users found for the case-insensitive email {email}. Unable to add manager.")
+
             with transaction.atomic():
                 pm = ManagerInvitation(canteen_id=canteen.id, email=email)
                 pm.save()
