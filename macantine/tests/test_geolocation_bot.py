@@ -1,6 +1,6 @@
 import requests_mock
 from django.test import TestCase
-from data.factories import CanteenFactory, UserFactory
+from data.factories import CanteenFactory, UserFactory, SectorFactory
 from macantine import tasks
 
 
@@ -10,11 +10,14 @@ class TestGeolocationBot(TestCase):
 
     def test_number_of_api_calls(self, mock):
         """
-        There should be one request for every 50 canteens
+        There should be one request for every 70 canteens
         """
         manager = UserFactory.create()  # Avoids integrity errors from user creation
-        for i in range(75):
-            CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003", managers=[manager])
+        sector = SectorFactory.create()
+        for i in range(130):
+            CanteenFactory.create(
+                city=None, geolocation_bot_attempts=0, postal_code="69003", managers=[manager], sectors=[sector]
+            )
 
         address_api_text = "id,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
         address_api_text += '21340172201787,,11111,00000,11111,Ma ville,"01,Something,Other"\n'
