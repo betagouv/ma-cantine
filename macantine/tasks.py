@@ -176,6 +176,7 @@ def _get_candidate_canteens():
         .annotate(postal_code_len=Length("postal_code"))
         .annotate(city_insee_code_len=Length("city_insee_code"))
         .filter(Q(postal_code_len=5) | Q(city_insee_code_len=5))
+        .order_by("creation_date")
     )
     return candidate_canteens
 
