@@ -23,7 +23,7 @@ cryptography==37.0.4
 cssselect2==0.6.0
 Deprecated==1.2.13
 dill==0.3.5.1
-Django==4.1
+Django==4.1.1
 django-anymail==8.6
 django-ckeditor==6.5.0
 django-csp==3.7
@@ -41,7 +41,7 @@ drf-base64==2.0
 drf-excel==2.1.0
 et-xmlfile==1.1.0
 factory-boy==3.2.1
-Faker==14.1.0
+Faker==14.2.0
 future==0.18.2
 html2text==2020.1.16
 html5lib==1.1
