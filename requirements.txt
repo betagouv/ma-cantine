@@ -8,7 +8,7 @@ attrs==22.1.0
 backports.zoneinfo==0.2.1;python_version<"3.9"
 billiard==3.6.4.0
 black==22.6.0
-boto3==1.24.61
+boto3==1.24.66
 botocore==1.27.61
 celery==5.2.7
 certifi==2022.6.15
@@ -41,7 +41,7 @@ drf-base64==2.0
 drf-excel==2.1.0
 et-xmlfile==1.1.0
 factory-boy==3.2.1
-Faker==14.1.0
+Faker==14.2.0
 future==0.18.2
 html2text==2020.1.16
 html5lib==1.1
