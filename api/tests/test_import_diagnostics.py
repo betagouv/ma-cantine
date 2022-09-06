@@ -753,6 +753,21 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertIn("Camille Dupont", email.body)
         self.assertIn("Help me", email.body)
 
+    @authenticate
+    def test_canteens_empty_when_error(self, _):
+        """
+        If a cantine succeeds and another one doesn't, no canteen should be saved
+        and the array of cantine should return zero
+        """
+        SectorFactory.create(name="Crèche")
+        with open("./api/tests/files/mixed_cantine_creation.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
     @unittest.skipUnless(os.environ.get("ENVIRONMENT") == "dev", "Not in dev environment")
@@ -762,7 +777,9 @@ class TestImportDiagnosticsFromAPIIntegration(APITestCase):
         Test that remaining location information is filled in from import when calling the real API
         """
         with open("./api/tests/files/diagnostics_locations.csv") as diag_file:
-            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+            with requests_mock.Mocker() as m:
+                m.register_uri("POST", "https://api-adresse.data.gouv.fr/search/csv/", real_http=True)
+                response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         canteen = Canteen.objects.get(siret="21340172201787")

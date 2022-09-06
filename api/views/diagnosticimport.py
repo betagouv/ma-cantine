@@ -192,7 +192,11 @@ class ImportDiagnosticsView(ABC, APIView):
                 )
 
     def _get_success_response(self):
-        serialized_canteens = [camelize(FullCanteenSerializer(canteen).data) for canteen in self.canteens.values()]
+        serialized_canteens = (
+            []
+            if len(self.errors)
+            else [camelize(FullCanteenSerializer(canteen).data) for canteen in self.canteens.values()]
+        )
         return JsonResponse(
             {
                 "canteens": serialized_canteens,
