@@ -1,12 +1,21 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav />
-    <h1 class="font-weight-black text-h5 text-sm-h4 mb-4">
-      Nos Partenaires
-    </h1>
-    <p>
-      Les acteurs de la restauration collective au service des gestionnaires
-    </p>
+    <v-row>
+      <v-col cols="12" sm="7" md="8">
+        <h1 class="font-weight-black text-h5 text-sm-h4 mb-4">
+          Nos Partenaires
+        </h1>
+        <p>
+          Les acteurs de la restauration collective au service des gestionnaires
+        </p>
+      </v-col>
+      <v-col cols="0" sm="5" md="4" v-if="$vuetify.breakpoint.smAndUp" class="py-0 pr-8 d-flex">
+        <v-spacer></v-spacer>
+        <v-img src="/static/images/peeps-illustration-couple.png" contain max-width="140"></v-img>
+      </v-col>
+    </v-row>
+
     <v-row>
       <v-spacer></v-spacer>
       <v-col cols="12" sm="6">
