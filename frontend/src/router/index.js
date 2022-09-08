@@ -231,7 +231,7 @@ const routes = [
         sitemapGroup: Constants.SitemapGroups.ACTION,
       },
       {
-        path: ":id",
+        path: ":partnerUrlComponent",
         name: "PartnerPage",
         component: PartnerPage,
         props: true,
