@@ -19,6 +19,9 @@ import AccountDeletion from "@/views/AccountSummaryPage/AccountDeletion"
 import BlogsPage from "@/views/BlogsPage"
 import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
+import PartnersPage from "@/views/PartnersPage"
+import PartnersHome from "@/views/PartnersPage/PartnersHome"
+import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NotFound from "@/views/NotFound"
 import CGU from "@/views/CGU.vue"
 import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
@@ -209,6 +212,28 @@ const routes = [
         path: ":id",
         name: "BlogPage",
         component: BlogPage,
+        props: true,
+      },
+    ],
+  },
+  {
+    path: "/partenaires",
+    name: "PartnersPage",
+    component: PartnersPage,
+    children: [
+      {
+        path: "",
+        name: "PartnersHome",
+        component: PartnersHome,
+        meta: {
+          title: "Partenaires",
+        },
+        sitemapGroup: Constants.SitemapGroups.ACTION,
+      },
+      {
+        path: ":id",
+        name: "PartnerPage",
+        component: PartnerPage,
         props: true,
       },
     ],
