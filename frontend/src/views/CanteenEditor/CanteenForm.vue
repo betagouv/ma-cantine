@@ -37,7 +37,7 @@
             de votre cantine.
           </p>
 
-          <v-card outlined class="mt-4" v-if="duplicateSiretCanteen" color="red lighten-5">
+          <v-card outlined class="my-4" v-if="duplicateSiretCanteen" color="red lighten-5">
             <v-card-title class="pt-2 pb-1 font-weight-medium">
               Une cantine avec ce SIRET existe déjà
             </v-card-title>
@@ -70,14 +70,16 @@
               </v-btn>
             </v-card-text>
 
-            <v-card-text class="pt-0">
-              <v-divider class="mt-4"></v-divider>
+            <v-card-text class="py-2">
+              <v-divider class="mt-2"></v-divider>
 
               <p class="mb-0 mt-2">
-                Il s'agit d'une erreur ?
+                <span style="vertical-align: sub;" class="mr-4">Il s'agit d'une erreur ?</span>
                 <v-dialog v-model="siretDialog" width="500">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn text v-bind="attrs" v-on="on" color="primary darken-1">Contactez l'équipe ma cantine</v-btn>
+                    <v-btn text v-bind="attrs" v-on="on" color="primary darken-1" class="pl-0">
+                      Contactez l'équipe ma cantine
+                    </v-btn>
                   </template>
 
                   <v-card class="text-left">
