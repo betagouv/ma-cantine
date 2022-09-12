@@ -94,7 +94,11 @@
                 simplifiée". Pour les données d'achats 2023, la "saisie simplifiée" sera accessible uniquement aux
                 établissements de moins de 200 couverts/jour.
               </p>
-              <v-radio-group v-model="diagnostic.diagnosticType">
+              <v-radio-group
+                v-model="diagnostic.diagnosticType"
+                :readonly="hasActiveTeledeclaration"
+                :disabled="hasActiveTeledeclaration"
+              >
                 <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
                   <template v-slot:label>
                     <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
