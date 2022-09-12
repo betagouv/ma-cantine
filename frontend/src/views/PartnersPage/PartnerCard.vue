@@ -4,11 +4,12 @@
       name: 'PartnerPage',
       params: { partnerUrlComponent: $store.getters.getPartnerUrlComponent(partner) },
     }"
-    class="dsfr d-flex flex-column text-left"
+    class="dsfr d-flex flex-column text-left fill-height"
     outlined
     :ripple="false"
   >
-    <v-card-title>{{ partner.name }}</v-card-title>
+    <v-img :src="partner.image || '/static/images/partner-default-image.jpg'" height="120" max-height="120"></v-img>
+    <v-card-title class="font-weight-bold">{{ partner.name }}</v-card-title>
     <v-card-text>{{ partner.shortDescription }}</v-card-text>
     <v-spacer></v-spacer>
     <v-card-actions class="px-4 py-4">
