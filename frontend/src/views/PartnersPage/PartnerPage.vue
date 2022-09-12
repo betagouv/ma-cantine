@@ -5,6 +5,8 @@
       <h1 class="font-weight-black text-h5 text-sm-h4 mb-4">
         {{ partner.name }}
       </h1>
+      <PartnerIndicators :partner="partner" class="grey--text text--darken-3 text-body-2" />
+      <v-divider class="my-4"></v-divider>
       <p v-html="partner.longDescription"></p>
     </div>
   </div>
@@ -12,10 +14,11 @@
 
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import PartnerIndicators from "@/components/PartnerIndicators"
 
 export default {
   name: "PartnerPage",
-  components: { BreadcrumbsNav },
+  components: { BreadcrumbsNav, PartnerIndicators },
   data() {
     return {
       partner: null,
