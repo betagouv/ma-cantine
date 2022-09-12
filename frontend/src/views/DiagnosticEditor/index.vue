@@ -372,7 +372,7 @@ export default {
     approTotals() {
       let bioTotal = this.diagnostic.valueBioHt
       let siqoTotal = this.diagnostic.valueSustainableHt
-      let perfExtTotal = this.diagnostic.ValueExternalityPerformanceHt
+      let perfExtTotal = this.diagnostic.valueExternalityPerformanceHt
       let egalimOthersTotal = this.diagnostic.valueEgalimOthersHt
       if (this.extendedDiagnostic) {
         bioTotal = 0
@@ -406,7 +406,7 @@ export default {
     },
     meatPoultryTotals() {
       let meatPoultryEgalim = this.diagnostic.valueSustainableHt
-      let meatPoultryFrance = this.diagnostic.ValueExternalityPerformanceHt
+      let meatPoultryFrance = this.diagnostic.valueExternalityPerformanceHt
       if (this.extendedDiagnostic) {
         meatPoultryEgalim = 0
         meatPoultryFrance = 0
