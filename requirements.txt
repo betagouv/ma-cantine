@@ -19,13 +19,13 @@ click==8.1.3
 click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.2.0
-cryptography==37.0.4
+cryptography==38.0.1
 cssselect2==0.6.0
 Deprecated==1.2.13
 dill==0.3.5.1
 Django==4.1
 django-anymail==8.6
-django-ckeditor==6.5.0
+django-ckeditor==6.5.1
 django-csp==3.7
 django-debug-toolbar==3.6.0
 django-filter==22.1
