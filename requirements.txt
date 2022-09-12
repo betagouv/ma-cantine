@@ -8,8 +8,8 @@ attrs==22.1.0
 backports.zoneinfo==0.2.1;python_version<"3.9"
 billiard==3.6.4.0
 black==22.8.0
-boto3==1.24.66
-botocore==1.27.66
+boto3==1.24.70
+botocore==1.27.70
 celery==5.2.7
 certifi==2022.6.15.1
 cffi==1.15.1
