@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     fetchCurrentPage() {
-      let queryParam = `limit=${this.limit}&offset=${this.offset}`
+      let queryParam = `limit=${this.limit}&offset=${this.offset}&type=magasin`
       return fetch(`/api/v1/partners/?${queryParam}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)

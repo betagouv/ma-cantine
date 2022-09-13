@@ -21,6 +21,27 @@ class TestPartnersApi(APITestCase):
         for partner in partners:
             self.assertTrue(any(x["id"] == partner.id for x in results))
 
+    def test_type_filter(self):
+        good = PartnerTypeFactory.create(name="Good")
+        ignored = PartnerTypeFactory.create(name="Ignored")
+
+        find_me_1 = PartnerFactory.create(name="Find me")
+        find_me_1.types.add(good)
+        find_me_2 = PartnerFactory.create(name="Find me too")
+        find_me_2.types.add(ignored)
+        find_me_2.types.add(good)
+        ignore_me = PartnerFactory.create(name="Ignore me")
+        ignore_me.types.add(ignored)
+        PartnerFactory.create(name="Typeless")
+
+        url = f"{reverse('partners_list')}?type=Good"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+        results = map(lambda r: r.get("name"), results)
+        self.assertTrue("Find me" in results)
+        self.assertTrue("Find me too" in results)
+
     def test_get_single_partner(self):
         type = PartnerTypeFactory.create(name="Test type")
         partner = PartnerFactory.create()
