@@ -57,6 +57,16 @@ export default {
           frenchKey: "besoin",
           value: undefined,
         },
+        {
+          key: "department",
+          frenchKey: "departement",
+          value: undefined,
+        },
+        {
+          key: "type",
+          frenchKey: "type",
+          value: undefined,
+        },
       ],
     }
   },
