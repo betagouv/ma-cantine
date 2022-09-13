@@ -23,6 +23,7 @@ class TestPartnersApi(APITestCase):
 
     def test_type_filter(self):
         good = PartnerTypeFactory.create(name="Good")
+        also = PartnerTypeFactory.create(name="Also good")
         ignored = PartnerTypeFactory.create(name="Ignored")
 
         find_me_1 = PartnerFactory.create(name="Find me")
@@ -30,17 +31,20 @@ class TestPartnersApi(APITestCase):
         find_me_2 = PartnerFactory.create(name="Find me too")
         find_me_2.types.add(ignored)
         find_me_2.types.add(good)
+        find_me_3 = PartnerFactory.create(name="Me three")
+        find_me_3.types.add(also)
         ignore_me = PartnerFactory.create(name="Ignore me")
         ignore_me.types.add(ignored)
         PartnerFactory.create(name="Typeless")
 
-        url = f"{reverse('partners_list')}?type=Good"
+        url = f"{reverse('partners_list')}?type=Good&type=Also good"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
+        self.assertEqual(len(results), 3)
         results = map(lambda r: r.get("name"), results)
         self.assertTrue("Find me" in results)
         self.assertTrue("Find me too" in results)
+        self.assertTrue("Me three" in results)
 
     def test_get_single_partner(self):
         type = PartnerTypeFactory.create(name="Test type")

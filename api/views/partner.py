@@ -38,9 +38,9 @@ class PartnersView(ListAPIView):
 
     def get_queryset(self):
         queryset = self.queryset
-        type = self.request.query_params.get("type", None)
-        if type is not None:
-            queryset = queryset.filter(types__name=type)
+        type = self.request.query_params.getlist("type", [])
+        if type:
+            queryset = queryset.filter(types__name__in=type)
         return queryset
 
 
