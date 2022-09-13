@@ -245,6 +245,10 @@ export default {
               text: "Blog",
               to: { name: "BlogsHome" },
             },
+            {
+              text: "Partenaires",
+              to: { name: "PartnersHome" },
+            },
           ],
         },
         {

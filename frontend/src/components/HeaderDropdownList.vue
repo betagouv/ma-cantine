@@ -120,6 +120,11 @@ export default {
           to: { name: "CommunityPage" },
         },
         {
+          text: "Partenaires",
+          icon: "$star-fill",
+          to: { name: "PartnersHome" },
+        },
+        {
           text: "Blog",
           icon: "$newspaper-fill",
           to: { name: "BlogsHome" },

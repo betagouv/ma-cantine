@@ -12,3 +12,5 @@ from .vegetarianexpe import VegetarianExpe  # noqa: F401
 from .message import Message  # noqa: F401
 from .review import Review  # noqa: F401
 from .communityevent import CommunityEvent  # noqa: F401
+from .partner import Partner  # noqa: F401
+from .partnertype import PartnerType  # noqa: F401

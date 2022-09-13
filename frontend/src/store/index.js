@@ -715,5 +715,8 @@ export default new Vuex.Store({
     getCanteenUrlComponent: () => (canteen) => {
       return `${canteen.id}--${canteen.name}`
     },
+    getPartnerUrlComponent: () => (partner) => {
+      return `${partner.id}--${partner.name}`
+    },
   },
 })
