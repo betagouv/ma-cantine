@@ -1,5 +1,9 @@
 <template>
   <div>
+    <p :class="{ 'my-0': true, inline: singleLine }" v-if="types">
+      <v-icon small>$store-fill</v-icon>
+      <span class="ml-1">{{ types }}</span>
+    </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="partner.economicModel === 'public'">
       <v-icon small>$france-fill</v-icon>
       <span class="ml-1">Public</span>
@@ -41,12 +45,16 @@ export default {
   computed: {
     departments() {
       if (!this.partner.departments) return null
-      const foo = jsonDepartments
-      const departments = foo
+      const depCopy = jsonDepartments
+      const departments = depCopy
         .filter((x) => this.partner.departments.indexOf(x.departmentCode) > -1)
         .map((x) => `${x.departmentCode} - ${x.departmentName}`)
         .join(", ")
       return departments
+    },
+    types() {
+      if (!this.partner.types) return null
+      return this.partner.types.join(", ")
     },
   },
 }
