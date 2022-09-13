@@ -9,6 +9,7 @@
       type="number"
       :rules="[
         validators.nonNegativeOrEmpty,
+        validators.decimalPlaces(2),
         validators.gteSum([diagnostic.valueBioHt, diagnostic.valueSustainableHt], totalErrorMessage),
       ]"
       validate-on-blur
@@ -34,7 +35,7 @@
       :id="'bio-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -59,7 +60,7 @@
       :id="'sustainable-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"

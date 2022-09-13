@@ -48,11 +48,12 @@
                 <label class="body-2" for="price">Prix HT</label>
                 <DsfrTextField
                   validate-on-blur
+                  type="number"
                   hide-details="auto"
                   v-model="purchase.priceHt"
                   class="mt-2"
                   append-icon="mdi-currency-eur"
-                  :rules="[validators.required, validators.greaterThanZero]"
+                  :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
                   id="price"
                 />
               </v-col>
