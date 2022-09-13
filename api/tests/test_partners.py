@@ -79,6 +79,21 @@ class TestPartnersApi(APITestCase):
         self.assertIn("Find me too", results)
         self.assertIn("Me three", results)
 
+    def test_cost_filter(self):
+        """
+        Return all the free partners
+        """
+        PartnerFactory.create(name="Find me", free=True)
+        PartnerFactory.create(name="But not me", free=False)
+
+        url = f"{reverse('partners_list')}?free=True"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["name"], "Find me")
+
+    # TODO: by need
+
     def test_get_single_partner(self):
         type = PartnerTypeFactory.create(name="Test type")
         partner = PartnerFactory.create()
