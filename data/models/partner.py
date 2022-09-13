@@ -23,6 +23,7 @@ class Partner(models.Model):
     short_description = models.TextField(verbose_name="description courte")
     long_description = RichTextUploadingField(null=True, blank=True, verbose_name="description longue")
     image = models.ImageField(null=True, blank=True, verbose_name="Photo / image")
+    website = models.URLField(blank=True, null=True, verbose_name="Site web")
 
     types = models.ManyToManyField(PartnerType, blank=True, verbose_name="types d'acteur")
 

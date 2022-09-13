@@ -20,6 +20,7 @@ class PartnerAdmin(admin.ModelAdmin):
         "short_description",
         "long_description",
         "image",
+        "website",
         "types",
         "departments",
         "national",

@@ -18,6 +18,7 @@ class PartnerSerializer(serializers.ModelSerializer):
             "short_description",
             "long_description",
             "image",
+            "website",
             "types",
             "departments",
             "national",
