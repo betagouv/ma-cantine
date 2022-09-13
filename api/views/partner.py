@@ -15,7 +15,8 @@ class PartnersPagination(LimitOffsetPagination):
     types = []
 
     def paginate_queryset(self, queryset, request, view=None):
-        self.types = Partner.objects.all().values_list("types__name", flat=True)
+        self.types = Partner.objects.all().values_list("types__name", flat=True).distinct()
+        self.types = [t for t in self.types if t is not None]
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):

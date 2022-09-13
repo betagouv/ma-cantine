@@ -6,20 +6,32 @@ from data.factories import PartnerFactory, PartnerTypeFactory
 
 class TestPartnersApi(APITestCase):
     def test_get_partners(self):
+        """
+        Returns partners and the types that are in use therefore available for filtering
+        """
+        type = PartnerTypeFactory.create(name="Test type")
+        PartnerTypeFactory.create(name="Unused type")
         partners = [
             PartnerFactory.create(),
             PartnerFactory.create(),
+            PartnerFactory.create(),
         ]
+        partners[0].types.add(type)
+        partners[1].types.add(type)  # add same type to two different partners to check deduplication
+        # don't add type to third partner to check null value filtering
         response = self.client.get(reverse("partners_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
-        self.assertEqual(body.get("count"), 2)
+        self.assertEqual(body.get("count"), 3)
 
         results = body.get("results", [])
-
         for partner in partners:
             self.assertTrue(any(x["id"] == partner.id for x in results))
+
+        types = body.get("types", [])
+        self.assertEqual(len(types), 1)
+        self.assertIn("Test type", types)
 
     def test_type_filter(self):
         """
@@ -45,9 +57,9 @@ class TestPartnersApi(APITestCase):
         results = response.json().get("results", [])
         self.assertEqual(len(results), 3)
         results = map(lambda r: r.get("name"), results)
-        self.assertTrue("Find me" in results)
-        self.assertTrue("Find me too" in results)
-        self.assertTrue("Me three" in results)
+        self.assertIn("Find me", results)
+        self.assertIn("Find me too", results)
+        self.assertIn("Me three", results)
 
     def test_get_single_partner(self):
         type = PartnerTypeFactory.create(name="Test type")
