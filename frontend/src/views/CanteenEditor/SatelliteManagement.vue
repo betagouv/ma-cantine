@@ -286,7 +286,6 @@ export default {
       this.$watch("options", this.onOptionsChange, { deep: true })
       this.$watch("$route", this.onRouteChange)
     },
-    // TODO: make it possible to open in new tab if user wants to
     onRowClick(satellite) {
       if (satellite.userCanView) {
         this.$router.push({

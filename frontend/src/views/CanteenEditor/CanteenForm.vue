@@ -618,7 +618,6 @@ export default {
             e.jsonPromise.then((json) => {
               const isDuplicateSiret = json.detail === "La resource que vous souhaitez créer existe déjà"
               if (isDuplicateSiret) {
-                // TODO: do this check when checking SIRET info from API anyway to save user from filling in lots of info to find not possible
                 this.duplicateSiretCanteen = json
                 this.messageTroubleshooting = `Je veux ajouter une deuxième cantine avec le même SIRET : ${payload.siret}...`
               }
