@@ -22,6 +22,9 @@ class TestPartnersApi(APITestCase):
             self.assertTrue(any(x["id"] == partner.id for x in results))
 
     def test_type_filter(self):
+        """
+        Return the union of all partners based on the types requested
+        """
         good = PartnerTypeFactory.create(name="Good")
         also = PartnerTypeFactory.create(name="Also good")
         ignored = PartnerTypeFactory.create(name="Ignored")
