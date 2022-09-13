@@ -39,9 +39,13 @@ class PartnersView(ListAPIView):
 
     def get_queryset(self):
         queryset = self.queryset
-        type = self.request.query_params.getlist("type", [])
-        if type:
-            queryset = queryset.filter(types__name__in=type)
+        types = self.request.query_params.getlist("type", [])
+        if types:
+            queryset = queryset.filter(types__name__in=types)
+        departments = self.request.query_params.getlist("department", [])
+        if departments:
+            queryset = queryset.filter(departments__overlap=departments)
+            # TODO: add in national option ?
         return queryset
 
 
