@@ -46,6 +46,13 @@ export default {
       types: [],
       visiblePartners: null,
       partnerCount: null,
+      filters: [
+        {
+          key: "free",
+          frenchKey: "gratuit",
+          value: undefined, // will be set from URL query
+        },
+      ],
     }
   },
   computed: {
@@ -58,12 +65,18 @@ export default {
     query() {
       let query = {}
       if (this.page) query.page = String(this.page)
+      this.filters.forEach((f) => {
+        if (f.value) query[f.frenchKey] = f.value
+      })
       return query
     },
   },
   methods: {
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
+      this.filters.forEach((f) => {
+        if (f.value) queryParam += `&${f.key}=${f.value}`
+      })
       return fetch(`/api/v1/partners/?${queryParam}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
@@ -79,6 +92,9 @@ export default {
         })
     },
     populateParameters() {
+      this.filters.forEach((f) => {
+        f.value = this.$route.query[f.frenchKey]
+      })
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
     },
     changePage() {
