@@ -12,6 +12,14 @@ class Partner(models.Model):
         PUBLIC = "public", "Public"
         PRIVATE = "private", "Privé"
 
+    class PartnerCategory(models.TextChoices):
+        APPRO = "appro", "Améliorer ma part de bio / durable"
+        PLASTIC = "plastic", "Substituer mes plastiques"
+        ASSO = "asso", "Donner à une association"
+        WASTE = "waste", "Diagnostiquer mon gaspillage"
+        TRAINING = "training", "Me former ou former mon personnel"
+        HELP = "help", "Trouver des aides / conseils sanitaires"
+
     class Meta:
         verbose_name = "partenaire"
         verbose_name_plural = "partenaires"
@@ -26,6 +34,13 @@ class Partner(models.Model):
     website = models.URLField(blank=True, null=True, verbose_name="Site web")
 
     types = models.ManyToManyField(PartnerType, blank=True, verbose_name="types d'acteur")
+    categories = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=PartnerCategory.choices),
+        blank=True,
+        null=True,
+        size=None,
+        verbose_name="Besoin(s) comblé(s) par ce partenaire",
+    )
 
     departments = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=Department.choices),

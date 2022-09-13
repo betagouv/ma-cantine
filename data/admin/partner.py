@@ -7,7 +7,7 @@ class PartnerForm(forms.ModelForm):
     class Meta:
         widgets = {
             "name": forms.Textarea(attrs={"cols": 35, "rows": 1}),
-            "short_description": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "short_description": forms.Textarea(attrs={"cols": 55, "rows": 2}),
         }
 
 
@@ -17,6 +17,7 @@ class PartnerAdmin(admin.ModelAdmin):
     form = PartnerForm
     fields = (
         "name",
+        "categories",
         "short_description",
         "long_description",
         "image",
