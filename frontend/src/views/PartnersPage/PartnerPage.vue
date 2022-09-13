@@ -6,12 +6,13 @@
         <div v-if="partner.image && $vuetify.breakpoint.smAndUp" class="mr-4">
           <v-img :src="partner.image" max-width="260" contain></v-img>
         </div>
-        <div>
+        <div class="d-flex flex-column">
           <h1 class="font-weight-black text-h5 text-sm-h4 mb-4">
             {{ partner.name }}
           </h1>
           <PartnerIndicators :partner="partner" class="grey--text text--darken-3 text-body-2" />
-          <v-btn outlined color="primary" class="mt-2" v-if="partner.website" :href="partner.website">
+          <v-spacer></v-spacer>
+          <v-btn outlined color="primary" v-if="partner.website" :href="partner.website" width="fit-content">
             <v-icon small class="mr-1">$global-fill</v-icon>
             Site web
           </v-btn>
