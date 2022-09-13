@@ -52,6 +52,11 @@ export default {
           frenchKey: "gratuit",
           value: undefined, // will be set from URL query
         },
+        {
+          key: "category",
+          frenchKey: "besoin",
+          value: undefined,
+        },
       ],
     }
   },
@@ -75,7 +80,11 @@ export default {
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       this.filters.forEach((f) => {
-        if (f.value) queryParam += `&${f.key}=${f.value}`
+        if (Array.isArray(f.value)) {
+          f.value.forEach((v) => {
+            queryParam += `&${f.key}=${v}`
+          })
+        } else if (f.value) queryParam += `&${f.key}=${f.value}`
       })
       return fetch(`/api/v1/partners/?${queryParam}`)
         .then((response) => {
