@@ -1,4 +1,5 @@
 from django.contrib.auth import views as auth_views
+from django.views.generic import TemplateView
 from django.contrib.sitemaps.views import sitemap
 from django.views.decorators.cache import cache_page
 from django.views.generic.base import RedirectView
@@ -120,5 +121,10 @@ urlpatterns = [
         cache_page(60 * 60)(sitemap),
         {"sitemaps": sitemaps},
         name="sitemap",
+    ),
+    path(
+        "googlefbd6f06a151f47ee.html",
+        TemplateView.as_view(template_name="googlefbd6f06a151f47ee.html"),
+        name="google_verification",
     ),
 ]
