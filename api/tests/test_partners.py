@@ -92,7 +92,23 @@ class TestPartnersApi(APITestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["name"], "Find me")
 
-    # TODO: by need
+    def test_categories_filter(self):
+        """
+        Returns the union of all partners based on categories (aka needs) requested
+        """
+        PartnerFactory.create(name="Find me", categories=["appro"])
+        PartnerFactory.create(name="Find me too", categories=["plastic"])
+        PartnerFactory.create(name="Me three", categories=["plastic", "asso"])
+        PartnerFactory.create(name="But not me", categories=["asso"])
+
+        url = f"{reverse('partners_list')}?category=appro&category=plastic"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 3)
+        results = map(lambda r: r.get("name"), results)
+        self.assertIn("Find me", results)
+        self.assertIn("Find me too", results)
+        self.assertIn("Me three", results)
 
     def test_get_single_partner(self):
         type = PartnerTypeFactory.create(name="Test type")
