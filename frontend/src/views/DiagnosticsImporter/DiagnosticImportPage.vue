@@ -486,23 +486,27 @@ export default {
         ods: "OpenDocument",
         csv: "CSV",
       }
-      const simpleFileSizes = {
-        csv: "771 o",
-        ods: "11 Ko",
-        xlsx: "11 Ko",
-      }
       const importSizes = {
         COMPLETE: {
           csv: "5 Ko",
           ods: "15 Ko",
           xlsx: "13 Ko",
         },
-        SIMPLE: simpleFileSizes,
-        NONE: simpleFileSizes,
+        SIMPLE: {
+          csv: "771 o",
+          ods: "11 Ko",
+          xlsx: "11 Ko",
+        },
+        NONE: {
+          csv: "321 o",
+          ods: "10 Ko",
+          xlsx: "6 Ko",
+        },
       }
-      let filename =
-        this.importLevel === "COMPLETE" ? "fichier_exemple_complet_ma_cantine" : "fichier_exemple_ma_cantine"
-      filename = "/static/documents/" + filename
+      let filename = "/static/documents/"
+      if (this.importLevel === "COMPLETE") filename = filename + "fichier_exemple_complet_ma_cantine"
+      else if (this.importLevel === "NONE") filename = filename + "fichier_exemple_ma_cantine_no_diag"
+      else filename = filename + "fichier_exemple_ma_cantine"
       return ["xlsx", "ods", "csv"].map((fileType) => ({
         href: `${filename}.${fileType}`,
         label: `Télécharger le fichier exemple en format ${labels[fileType]}`,
