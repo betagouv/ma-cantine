@@ -76,6 +76,23 @@
             />
           </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="12" sm="6">
+            <label for="select-type" :class="{ 'text-body-2': true, 'active-filter-label': !!filters.type.value }">
+              Type
+            </label>
+            <DsfrSelect
+              v-model="filters.type.value"
+              multiple
+              :items="typeItems"
+              clearable
+              hide-details
+              id="select-type"
+              placeholder="Tous les besoins"
+              class="mt-1"
+            />
+          </v-col>
+        </v-row>
       </v-sheet>
     </v-expand-transition>
     <v-row class="mt-3">
@@ -161,6 +178,7 @@ export default {
         text: `${x.departmentCode} - ${x.departmentName}`,
         value: x.departmentCode,
       })),
+      typeItems: [],
     }
   },
   computed: {
@@ -179,7 +197,7 @@ export default {
       return query
     },
     hasActiveFilter() {
-      return Object.entries(this.filters).some((arr) => arr[1].value !== undefined)
+      return Object.values(this.filters).some((f) => !!f.value && f.value.length)
     },
   },
   methods: {
@@ -200,6 +218,7 @@ export default {
         .then((response) => {
           this.partnerCount = response.count
           this.visiblePartners = response.results
+          this.typeItems = response.types
         })
         .catch((e) => {
           this.partnerCount = 0
@@ -275,3 +294,13 @@ which after setting the query data, triggers fetching data
 
 */
 </script>
+
+<style scoped>
+.active-filter-label {
+  font-weight: bold;
+}
+.active-filter-label::before {
+  content: "⚫︎";
+  color: #ce614a;
+}
+</style>
