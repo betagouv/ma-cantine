@@ -48,7 +48,7 @@ export default {
       const depCopy = jsonDepartments
       const departments = depCopy
         .filter((x) => this.partner.departments.indexOf(x.departmentCode) > -1)
-        .map((x) => `${x.departmentCode} - ${x.departmentName}`)
+        .map((x) => x.departmentName)
         .join(", ")
       return departments
     },
