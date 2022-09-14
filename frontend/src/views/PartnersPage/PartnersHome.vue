@@ -46,7 +46,7 @@
             <DsfrSelect
               v-model="filters.category.value"
               multiple
-              :items="filters.category.items"
+              :items="categoryItems"
               clearable
               hide-details
               id="select-category"
@@ -67,7 +67,7 @@
             <DsfrSelect
               v-model="filters.department.value"
               multiple
-              :items="filters.department.items"
+              :items="departmentItems"
               clearable
               hide-details
               id="select-department"
@@ -119,41 +119,11 @@ export default {
         category: {
           frenchKey: "besoin",
           value: undefined,
-          items: [
-            {
-              value: "appro",
-              text: "Améliorer ma part de bio / durable",
-            },
-            {
-              value: "plastic",
-              text: "Substituer mes plastiques",
-            },
-            {
-              value: "asso",
-              text: "Donner à une association",
-            },
-            {
-              value: "waste",
-              text: "Diagnostiquer mon gaspillage",
-            },
-            {
-              value: "training",
-              text: "Me former ou former mon personnel",
-            },
-            {
-              value: "help",
-              text: "Trouver des aides / conseils sanitaires",
-            },
-          ],
         },
         department: {
           frenchKey: "departement",
           value: [],
           default: [],
-          items: jsonDepartments.map((x) => ({
-            text: `${x.departmentCode} - ${x.departmentName}`,
-            value: x.departmentCode,
-          })),
         },
         type: {
           frenchKey: "type",
@@ -161,6 +131,36 @@ export default {
         },
       },
       showFilters: false,
+      categoryItems: [
+        {
+          value: "appro",
+          text: "Améliorer ma part de bio / durable",
+        },
+        {
+          value: "plastic",
+          text: "Substituer mes plastiques",
+        },
+        {
+          value: "asso",
+          text: "Donner à une association",
+        },
+        {
+          value: "waste",
+          text: "Diagnostiquer mon gaspillage",
+        },
+        {
+          value: "training",
+          text: "Me former ou former mon personnel",
+        },
+        {
+          value: "help",
+          text: "Trouver des aides / conseils sanitaires",
+        },
+      ],
+      departmentItems: jsonDepartments.map((x) => ({
+        text: `${x.departmentCode} - ${x.departmentName}`,
+        value: x.departmentCode,
+      })),
     }
   },
   computed: {
