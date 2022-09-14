@@ -262,7 +262,6 @@ export default {
   },
   watch: {
     page() {
-      // TODO: fix bug which results in redirect to page 1 on refresh/load of page 2+
       this.changePage()
     },
     $route() {
