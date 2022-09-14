@@ -10,14 +10,16 @@ class TestPartnersApi(APITestCase):
         Returns partners and the types that are in use therefore available for filtering
         """
         type = PartnerTypeFactory.create(name="Test type")
+        type_2 = PartnerTypeFactory.create(name="Test type 2")
         PartnerTypeFactory.create(name="Unused type")
         partners = [
-            PartnerFactory.create(),
-            PartnerFactory.create(),
-            PartnerFactory.create(),
+            PartnerFactory.create(departments=["01", "02"]),
+            PartnerFactory.create(departments=["01", "11"]),
+            PartnerFactory.create(departments=None),
         ]
         partners[0].types.add(type)
         partners[1].types.add(type)  # add same type to two different partners to check deduplication
+        partners[1].types.add(type_2)
         # don't add type to third partner to check null value filtering
         response = self.client.get(reverse("partners_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -30,8 +32,15 @@ class TestPartnersApi(APITestCase):
             self.assertTrue(any(x["id"] == partner.id for x in results))
 
         types = body.get("types", [])
-        self.assertEqual(len(types), 1)
         self.assertIn("Test type", types)
+        self.assertIn("Test type 2", types)
+        self.assertEqual(len(types), 2)
+
+        departments = body.get("departments", [])
+        self.assertIn("01", departments)
+        self.assertIn("02", departments)
+        self.assertIn("11", departments)
+        self.assertEqual(len(departments), 3)
 
     def test_type_filter(self):
         """

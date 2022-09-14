@@ -223,6 +223,7 @@ export default {
           this.partnerCount = response.count
           this.visiblePartners = response.results
           this.typeItems = response.types
+          this.setDepartments(response.departments)
         })
         .catch((e) => {
           this.partnerCount = 0
@@ -259,6 +260,31 @@ export default {
       Object.entries(this.filters).forEach(([key, f]) => {
         this.filters[key].value = f.default
       })
+    },
+    setLocations(enabledLocationIds, jsonLocations, locationKeyWord, locationsWord) {
+      const enabledLocations = jsonLocations
+        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) > -1)
+        .map((x) => ({
+          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
+          value: x[`${locationKeyWord}Code`],
+        }))
+      const headerText = `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
+      const header = { header: headerText }
+
+      const divider = { divider: true }
+
+      const disabledLocations = jsonLocations
+        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) === -1)
+        .map((x) => ({
+          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
+          value: x[`${locationKeyWord}Code`],
+          disabled: true,
+        }))
+
+      return [...enabledLocations, divider, header, ...disabledLocations]
+    },
+    setDepartments(enabledDepartmentIds) {
+      this.departmentItems = this.setLocations(enabledDepartmentIds, jsonDepartments, "department", "départements")
     },
   },
   watch: {

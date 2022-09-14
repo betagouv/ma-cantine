@@ -13,10 +13,18 @@ class PartnersPagination(LimitOffsetPagination):
     default_limit = 6
     max_limit = 30
     types = []
+    departments = []
 
     def paginate_queryset(self, queryset, request, view=None):
-        self.types = Partner.objects.all().values_list("types__name", flat=True).distinct()
+        self.types = Partner.objects.values_list("types__name", flat=True).distinct()
         self.types = [t for t in self.types if t is not None]
+        self.departments = []
+        departments = Partner.objects.values_list("departments", flat=True).distinct()
+        for depList in departments:
+            if depList is not None:
+                for department in depList:
+                    if department not in self.departments:
+                        self.departments.append(department)
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
@@ -26,6 +34,7 @@ class PartnersPagination(LimitOffsetPagination):
                     ("count", self.count),
                     ("results", data),
                     ("types", self.types),
+                    ("departments", self.departments),
                 ]
             )
         )
