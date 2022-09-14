@@ -92,6 +92,9 @@
               class="mt-1"
             />
           </v-col>
+          <v-col cols="6">
+            <v-checkbox hide-details="auto" class="mt-sm-9" v-model="filters.free.value" label="Gratuit" />
+          </v-col>
         </v-row>
       </v-sheet>
     </v-expand-transition>
