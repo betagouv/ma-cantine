@@ -38,7 +38,7 @@
         <v-row>
           <v-col cols="12" sm="6">
             <label
-              for="select-sector"
+              for="select-category"
               :class="{ 'text-body-2': true, 'active-filter-label': !!filters.category.value }"
             >
               Besoin(s) comblé(s) par le partenaire
@@ -49,14 +49,14 @@
               :items="filters.category.items"
               clearable
               hide-details
-              id="select-sector"
+              id="select-category"
               placeholder="Tous les besoins"
               class="mt-1"
             />
           </v-col>
           <v-col cols="12" sm="6">
             <label
-              for="select-sector"
+              for="select-department"
               :class="{
                 'text-body-2': true,
                 'active-filter-label': filters.department.value && !!filters.department.value.length,
@@ -70,7 +70,7 @@
               :items="filters.department.items"
               clearable
               hide-details
-              id="select-sector"
+              id="select-department"
               placeholder="Tous les départements"
               class="mt-1"
             />
