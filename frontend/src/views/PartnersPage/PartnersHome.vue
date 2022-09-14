@@ -213,7 +213,7 @@ export default {
           text: "Me former ou former mon personnel",
         },
         {
-          value: "help",
+          value: "hygiene",
           text: "Trouver des aides / conseils sanitaires",
         },
       ],
