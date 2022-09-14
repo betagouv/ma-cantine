@@ -127,7 +127,7 @@ export default {
   data() {
     return {
       limit: 6,
-      page: null,
+      page: Number(this.$route.query.page || 1),
       types: [],
       visiblePartners: null,
       partnerCount: null,
