@@ -4,10 +4,11 @@
     <v-row>
       <v-col cols="12" sm="7" md="8">
         <h1 class="font-weight-black text-h5 text-sm-h4 mb-4">
-          Nos Partenaires
+          Améliorer votre offre avec le soutien des partenaires
         </h1>
         <p>
-          Les acteurs de la restauration collective au service des gestionnaires
+          Ces acteurs de la restauration collective au service des gestionnaires sont prêts pour vous aidez à atteindre
+          les objectifs de votre cantine
         </p>
       </v-col>
       <v-col cols="0" sm="5" md="4" v-if="$vuetify.breakpoint.smAndUp" class="py-0 pr-8 d-flex">
@@ -39,7 +40,10 @@
           <v-col cols="12" sm="6">
             <label
               for="select-category"
-              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.category.value.length }"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': filters.category.value && !!filters.category.value.length,
+              }"
             >
               Besoin(s) comblé(s) par le partenaire
             </label>
@@ -80,7 +84,7 @@
           <v-col cols="12" sm="6">
             <label
               for="select-type"
-              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.type.value.length }"
+              :class="{ 'text-body-2': true, 'active-filter-label': filters.type.value && !!filters.type.value.length }"
             >
               Type
             </label>
@@ -129,12 +133,15 @@
     </div>
     <v-divider class="mb-8 mt-12"></v-divider>
     <v-row>
-      <v-col>
-        <h2 class="text-h6 font-weight-black text-left mb-4">
+      <v-col cols="12">
+        <h2 class="text-h6 font-weight-black mb-4">
           Vous n'avez pas trouvé un ou plusieurs établissements qui vous intéressent ?
         </h2>
-        <p class="body-2 text-left mb-6">
+        <p class="body-2">
           Dites-nous tout, nous ferons en sorte de trouver un partenaire pour vous aider.
+        </p>
+        <p class="body-2">
+          Si vous êtes un acteur de la restauration collective, décrivez-nous votre offre et nous vous ajoutons !
         </p>
         <GeneralContactForm initialInquiryType="other"></GeneralContactForm>
       </v-col>
