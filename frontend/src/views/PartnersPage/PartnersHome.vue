@@ -39,7 +39,7 @@
           <v-col cols="12" sm="6">
             <label
               for="select-category"
-              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.category.value }"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.category.value.length }"
             >
               Besoin(s) comblé(s) par le partenaire
             </label>
@@ -78,7 +78,10 @@
         </v-row>
         <v-row>
           <v-col cols="12" sm="6">
-            <label for="select-type" :class="{ 'text-body-2': true, 'active-filter-label': !!filters.type.value }">
+            <label
+              for="select-type"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.type.value.length }"
+            >
               Type
             </label>
             <DsfrSelect
@@ -166,7 +169,8 @@ export default {
         },
         category: {
           frenchKey: "besoin",
-          value: undefined,
+          value: [],
+          default: [],
         },
         department: {
           frenchKey: "departement",
@@ -175,7 +179,8 @@ export default {
         },
         type: {
           frenchKey: "type",
-          value: undefined,
+          value: [],
+          default: [],
         },
       },
       showFilters: false,
