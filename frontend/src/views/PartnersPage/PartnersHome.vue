@@ -53,8 +53,6 @@
               placeholder="Tous les besoins"
               class="mt-1"
             />
-          </v-col>
-          <v-col cols="12" sm="6">
             <label
               for="select-department"
               :class="{
@@ -74,10 +72,6 @@
               placeholder="Tous les départements"
               class="mt-1"
             />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" sm="6">
             <label for="select-type" :class="{ 'text-body-2': true, 'active-filter-label': !!filters.type.value }">
               Type
             </label>
@@ -91,9 +85,11 @@
               placeholder="Tous les besoins"
               class="mt-1"
             />
-          </v-col>
-          <v-col cols="6">
             <v-checkbox hide-details="auto" class="mt-sm-9" v-model="filters.free.value" label="Gratuit" />
+          </v-col>
+
+          <v-col cols="6" v-if="$vuetify.breakpoint.mdAndUp">
+            <FranceDepartmentMap @departmentClick="(code) => (this.filters.department.value = code ? [code] : [])" />
           </v-col>
         </v-row>
       </v-sheet>
@@ -118,12 +114,13 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSelect from "@/components/DsfrSelect"
 import PartnerCard from "@/views/PartnersPage/PartnerCard"
+import FranceDepartmentMap from "@/components/FranceDepartmentMap"
 import { getObjectDiff } from "@/utils"
 import jsonDepartments from "@/departments.json"
 
 export default {
   name: "PartnersHome",
-  components: { BreadcrumbsNav, DsfrPagination, DsfrSelect, PartnerCard },
+  components: { BreadcrumbsNav, DsfrPagination, DsfrSelect, PartnerCard, FranceDepartmentMap },
   data() {
     return {
       limit: 6,
