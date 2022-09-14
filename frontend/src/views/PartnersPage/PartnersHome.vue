@@ -15,8 +15,70 @@
         <v-img src="/static/images/peeps-illustration-couple.png" contain max-width="140"></v-img>
       </v-col>
     </v-row>
+    <div class="d-flex align-center mt-4 pl-0 pl-md-6">
+      <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
+        <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
+          Filtres
+        </h2>
+      </v-badge>
+      <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1 py-4 py-sm-0">
+        <v-icon small>mdi-filter-outline</v-icon>
+        <span v-if="showFilters">Cacher les filtres</span>
+        <span v-else>Afficher les filtres</span>
+      </v-btn>
 
-    <v-row>
+      <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter">
+        <v-icon small>mdi-filter-off-outline</v-icon>
+        Enlever tous les filtres
+      </v-btn>
+      <v-divider v-if="!showFilters"></v-divider>
+    </div>
+    <v-expand-transition>
+      <v-sheet class="pa-6 text-left mt-2 mx-md-6" v-show="showFilters" rounded :outlined="showFilters">
+        <v-row>
+          <v-col cols="12" sm="6">
+            <label
+              for="select-sector"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.category.value }"
+            >
+              Besoin(s) comblé(s) par le partenaire
+            </label>
+            <DsfrSelect
+              v-model="filters.category.value"
+              multiple
+              :items="filters.category.items"
+              clearable
+              hide-details
+              id="select-sector"
+              placeholder="Tous les besoins"
+              class="mt-1"
+            />
+          </v-col>
+          <v-col cols="12" sm="6">
+            <label
+              for="select-sector"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': filters.department.value && !!filters.department.value.length,
+              }"
+            >
+              Département
+            </label>
+            <DsfrSelect
+              v-model="filters.department.value"
+              multiple
+              :items="filters.department.items"
+              clearable
+              hide-details
+              id="select-sector"
+              placeholder="Tous les départements"
+              class="mt-1"
+            />
+          </v-col>
+        </v-row>
+      </v-sheet>
+    </v-expand-transition>
+    <v-row class="mt-3">
       <v-spacer></v-spacer>
       <v-col cols="12" sm="6">
         <DsfrPagination v-model="page" :length="Math.ceil(partnerCount / limit)" :total-visible="7" />
@@ -34,11 +96,14 @@
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrPagination from "@/components/DsfrPagination"
+import DsfrSelect from "@/components/DsfrSelect"
 import PartnerCard from "@/views/PartnersPage/PartnerCard"
+import { getObjectDiff } from "@/utils"
+import jsonDepartments from "@/departments.json"
 
 export default {
   name: "PartnersHome",
-  components: { BreadcrumbsNav, DsfrPagination, PartnerCard },
+  components: { BreadcrumbsNav, DsfrPagination, DsfrSelect, PartnerCard },
   data() {
     return {
       limit: 6,
@@ -46,28 +111,56 @@ export default {
       types: [],
       visiblePartners: null,
       partnerCount: null,
-      filters: [
-        {
-          key: "free",
+      filters: {
+        free: {
           frenchKey: "gratuit",
           value: undefined, // will be set from URL query
         },
-        {
-          key: "category",
+        category: {
           frenchKey: "besoin",
           value: undefined,
+          items: [
+            {
+              value: "appro",
+              text: "Améliorer ma part de bio / durable",
+            },
+            {
+              value: "plastic",
+              text: "Substituer mes plastiques",
+            },
+            {
+              value: "asso",
+              text: "Donner à une association",
+            },
+            {
+              value: "waste",
+              text: "Diagnostiquer mon gaspillage",
+            },
+            {
+              value: "training",
+              text: "Me former ou former mon personnel",
+            },
+            {
+              value: "help",
+              text: "Trouver des aides / conseils sanitaires",
+            },
+          ],
         },
-        {
-          key: "department",
+        department: {
           frenchKey: "departement",
-          value: undefined,
+          value: [],
+          default: [],
+          items: jsonDepartments.map((x) => ({
+            text: `${x.departmentCode} - ${x.departmentName}`,
+            value: x.departmentCode,
+          })),
         },
-        {
-          key: "type",
+        type: {
           frenchKey: "type",
           value: undefined,
         },
-      ],
+      },
+      showFilters: false,
     }
   },
   computed: {
@@ -80,21 +173,24 @@ export default {
     query() {
       let query = {}
       if (this.page) query.page = String(this.page)
-      this.filters.forEach((f) => {
+      Object.values(this.filters).forEach((f) => {
         if (f.value) query[f.frenchKey] = f.value
       })
       return query
+    },
+    hasActiveFilter() {
+      return Object.entries(this.filters).some((arr) => arr[1].value !== undefined)
     },
   },
   methods: {
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
-      this.filters.forEach((f) => {
+      Object.entries(this.filters).forEach(([key, f]) => {
         if (Array.isArray(f.value)) {
           f.value.forEach((v) => {
-            queryParam += `&${f.key}=${v}`
+            queryParam += `&${key}=${v}`
           })
-        } else if (f.value) queryParam += `&${f.key}=${f.value}`
+        } else if (f.value) queryParam += `&${key}=${f.value}`
       })
       return fetch(`/api/v1/partners/?${queryParam}`)
         .then((response) => {
@@ -111,15 +207,15 @@ export default {
         })
     },
     populateParameters() {
-      this.filters.forEach((f) => {
+      Object.values(this.filters).forEach((f) => {
         f.value = this.$route.query[f.frenchKey]
       })
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
+      this.fetchCurrentPage()
     },
     changePage() {
-      const override = this.page ? { page: this.page } : { page: 1 }
-      const query = Object.assign(this.query, override)
-      this.fetchCurrentPage().then(() => this.updateRouter(query))
+      const query = Object.assign(this.query, { page: this.page || 1 })
+      this.updateRouter(query)
     },
     updateRouter(query) {
       if (this.$route.query.page) {
@@ -128,17 +224,54 @@ export default {
         this.$router.replace({ query }).catch(() => {})
       }
     },
+    applyFilter() {
+      const changedKeys = Object.keys(getObjectDiff(this.query, this.$route.query))
+      const shouldNavigate = changedKeys.length > 0
+      if (shouldNavigate) {
+        this.page = 1
+        this.updateRouter(Object.assign(this.query, { page: 1 }))
+      } else this.fetchCurrentPage()
+    },
+    clearFilters() {
+      Object.entries(this.filters).forEach(([key, f]) => {
+        this.filters[key].value = f.default
+      })
+    },
   },
   watch: {
     page() {
+      // TODO: fix bug which results in redirect to page 1 on refresh/load of page 2+
       this.changePage()
     },
     $route() {
       this.populateParameters()
+    },
+    filters: {
+      handler() {
+        this.applyFilter()
+      },
+      deep: true,
     },
   },
   mounted() {
     this.populateParameters()
   },
 }
+/*
+# How the filters work:
+
+## When the user picks a filter
+
+The filters watcher detects a change in the filter object, triggering applyFilter
+applyFilter resets the page to 1 and called updateRouter
+updateRouter either pushes or replaces with the new query to the $router...
+...causing the $route watcher to call populateParameters
+populateParameters sets the values of the filters based on the URL query params and then triggers fetching data
+
+## When the user loads a URL with filters
+
+mounted triggers populateParameters
+which after setting the query data, triggers fetching data
+
+*/
 </script>
