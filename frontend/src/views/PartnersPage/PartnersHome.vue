@@ -64,7 +64,7 @@
             >
               Département
             </label>
-            <DsfrSelect
+            <DsfrCombobox
               v-model="filters.department.value"
               multiple
               :items="departmentItems"
@@ -117,13 +117,14 @@
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrCombobox from "@/components/DsfrCombobox"
 import PartnerCard from "@/views/PartnersPage/PartnerCard"
 import { getObjectDiff } from "@/utils"
 import jsonDepartments from "@/departments.json"
 
 export default {
   name: "PartnersHome",
-  components: { BreadcrumbsNav, DsfrPagination, DsfrSelect, PartnerCard },
+  components: { BreadcrumbsNav, DsfrPagination, DsfrSelect, DsfrCombobox, PartnerCard },
   data() {
     return {
       limit: 6,
