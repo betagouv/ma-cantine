@@ -101,13 +101,39 @@
     <v-row class="mt-3">
       <v-spacer></v-spacer>
       <v-col cols="12" sm="6">
-        <DsfrPagination v-model="page" :length="Math.ceil(partnerCount / limit)" :total-visible="7" />
+        <DsfrPagination
+          v-model="page"
+          :length="Math.ceil(partnerCount / limit)"
+          :total-visible="7"
+          v-if="!!partnerCount"
+        />
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
-    <v-row>
+    <v-row v-if="!!partnerCount">
       <v-col v-for="partner in visiblePartners" :key="partner.id" style="height: auto;" cols="12" sm="6" md="4">
         <PartnerCard :partner="partner" />
+      </v-col>
+    </v-row>
+    <div v-else class="d-flex flex-column align-center py-6">
+      <v-icon large>mdi-inbox-remove</v-icon>
+      <p class="text-body-1 grey--text text--darken-1 my-2">
+        Nous n'avons pas trouvé des partenaires avec ces paramètres
+      </p>
+      <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
+        Désactiver tous les filtres
+      </v-btn>
+    </div>
+    <v-divider class="mb-8 mt-12"></v-divider>
+    <v-row>
+      <v-col>
+        <h2 class="text-h6 font-weight-black text-left mb-4">
+          Vous n'avez pas trouvé un ou plusieurs établissements qui vous intéressent ?
+        </h2>
+        <p class="body-2 text-left mb-6">
+          Dites-nous tout, nous ferons en sorte de trouver un partenaire pour vous aider.
+        </p>
+        <GeneralContactForm initialInquiryType="other"></GeneralContactForm>
       </v-col>
     </v-row>
   </div>
@@ -119,12 +145,13 @@ import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrCombobox from "@/components/DsfrCombobox"
 import PartnerCard from "@/views/PartnersPage/PartnerCard"
+import GeneralContactForm from "@/components/GeneralContactForm"
 import { getObjectDiff } from "@/utils"
 import jsonDepartments from "@/departments.json"
 
 export default {
   name: "PartnersHome",
-  components: { BreadcrumbsNav, DsfrPagination, DsfrSelect, DsfrCombobox, PartnerCard },
+  components: { BreadcrumbsNav, DsfrPagination, DsfrSelect, DsfrCombobox, PartnerCard, GeneralContactForm },
   data() {
     return {
       limit: 6,

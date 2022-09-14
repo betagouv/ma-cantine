@@ -69,7 +69,7 @@ export default {
       fromEmail: user ? user.email : "",
       name: user ? `${user.firstName} ${user.lastName}` : "",
       message: "",
-      inquiryType: "",
+      inquiryType: this.initialInquiryType || "",
       inquiryOptions: [
         { text: "Poser une question sur une fonctionnalité de ma cantine ?", value: "functionalityQuestion" },
         { text: "Demander une démo", value: "demo" },
