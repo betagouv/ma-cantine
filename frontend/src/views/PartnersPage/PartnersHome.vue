@@ -171,21 +171,21 @@ export default {
       partnerCount: null,
       filters: {
         free: {
-          frenchKey: "gratuit",
+          param: "gratuit",
           value: undefined, // will be set from URL query
         },
         category: {
-          frenchKey: "besoin",
+          param: "besoin",
           value: [],
           default: [],
         },
         department: {
-          frenchKey: "departement",
+          param: "departement",
           value: [],
           default: [],
         },
         type: {
-          frenchKey: "type",
+          param: "type",
           value: [],
           default: [],
         },
@@ -235,7 +235,7 @@ export default {
       let query = {}
       if (this.page) query.page = String(this.page)
       Object.values(this.filters).forEach((f) => {
-        if (f.value) query[f.frenchKey] = f.value
+        if (f.value) query[f.param] = f.value
       })
       return query
     },
@@ -271,7 +271,7 @@ export default {
     },
     populateParameters() {
       Object.values(this.filters).forEach((f) => {
-        f.value = this.$route.query[f.frenchKey]
+        f.value = this.$route.query[f.param]
       })
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
       this.fetchCurrentPage()
