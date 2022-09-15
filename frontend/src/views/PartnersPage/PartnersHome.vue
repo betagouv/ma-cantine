@@ -95,7 +95,7 @@
               clearable
               hide-details
               id="select-type"
-              placeholder="Tous les besoins"
+              placeholder="Tous les types"
               class="mt-1"
             />
           </v-col>
@@ -293,7 +293,7 @@ export default {
       if (shouldNavigate) {
         this.page = 1
         this.updateRouter(Object.assign(this.query, { page: 1 }))
-      } else this.fetchCurrentPage()
+      }
     },
     clearFilters() {
       Object.entries(this.filters).forEach(([key, f]) => {
