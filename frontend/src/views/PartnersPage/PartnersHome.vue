@@ -16,6 +16,21 @@
         <v-img src="/static/images/peeps-illustration-couple.png" contain max-width="140"></v-img>
       </v-col>
     </v-row>
+    <p v-if="$vuetify.breakpoint.mdAndUp" class="font-weight-bold">Votre besoin</p>
+    <v-item-group v-if="$vuetify.breakpoint.mdAndUp" multiple @change="onCategoryCardsChange">
+      <v-row>
+        <v-col v-for="category in categoryItems" cols="4" :key="category.value">
+          <v-item v-slot="{ active, toggle }">
+            <v-card :color="active ? 'primary lighten-4' : ''" @click="toggle" outlined>
+              <v-card-title class="text-body-2">
+                <v-icon small class="mr-2" :color="active ? 'primary' : ''">{{ category.icon }}</v-icon>
+                {{ category.text }}
+              </v-card-title>
+            </v-card>
+          </v-item>
+        </v-col>
+      </v-row>
+    </v-item-group>
     <div class="d-flex align-center mt-4 pl-0 pl-md-6">
       <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
         <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
@@ -37,7 +52,7 @@
     <v-expand-transition>
       <v-sheet class="pa-6 text-left mt-2 mx-md-6" v-show="showFilters" rounded :outlined="showFilters">
         <v-row>
-          <v-col cols="12" sm="6">
+          <v-col cols="12" sm="6" v-if="$vuetify.breakpoint.smAndDown">
             <label
               for="select-category"
               :class="{
@@ -195,26 +210,32 @@ export default {
         {
           value: "appro",
           text: "Améliorer ma part de bio / durable",
+          icon: "$leaf-fill",
         },
         {
           value: "plastic",
           text: "Substituer mes plastiques",
+          icon: "$recycle-fill",
         },
         {
           value: "asso",
           text: "Donner à une association",
+          icon: "$user-heart-fill",
         },
         {
           value: "waste",
           text: "Diagnostiquer mon gaspillage",
+          icon: "$delete-fill",
         },
         {
           value: "training",
           text: "Me former ou former mon personnel",
+          icon: "$team-fill",
         },
         {
           value: "hygiene",
           text: "Trouver des aides / conseils sanitaires",
+          icon: "$health-book-fill",
         },
       ],
       departmentItems: jsonDepartments.map((x) => ({
@@ -325,6 +346,10 @@ export default {
     setDepartments(enabledDepartmentIds) {
       this.departmentItems = this.setLocations(enabledDepartmentIds, jsonDepartments, "department", "départements")
     },
+    onCategoryCardsChange(selectedCards) {
+      const selectedCategories = selectedCards.map((index) => this.categoryItems[index].value)
+      this.$set(this.filters.category, "value", selectedCategories)
+    },
   },
   watch: {
     page() {
@@ -370,5 +395,11 @@ which after setting the query data, triggers fetching data
 .active-filter-label::before {
   content: "⚫︎";
   color: #ce614a;
+}
+.v-item-group >>> .v-card--link:focus::before {
+  opacity: 0;
+}
+.v-item-group >>> .v-card {
+  user-select: none;
 }
 </style>
