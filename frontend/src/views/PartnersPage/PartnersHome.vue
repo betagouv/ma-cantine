@@ -262,7 +262,7 @@ export default {
     },
     hasActiveFilter() {
       const activeMobileFilters = Object.values(this.filters).filter((f) => !!f.value && f.value.length)
-      const activeDesktopFilters = activeMobileFilters.filter((f) => f.frenchKey !== "besoin")
+      const activeDesktopFilters = activeMobileFilters.filter((f) => f.param !== "besoin")
       const breakpoint = this.$vuetify.breakpoint
       return (
         (breakpoint.smAndDown && activeMobileFilters.length > 0) ||
