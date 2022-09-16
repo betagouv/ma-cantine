@@ -180,7 +180,7 @@ export default {
   data() {
     return {
       limit: 6,
-      page: Number(this.$route.query.page || 1),
+      page: this.$route.query.page,
       types: [],
       visiblePartners: null,
       partnerCount: null,
@@ -372,7 +372,12 @@ export default {
     },
   },
   mounted() {
-    this.populateParameters()
+    if (this.page) {
+      this.populateParameters()
+    } else {
+      // this will cause a redirect to the URL with the good params
+      this.page = 1
+    }
   },
 }
 /*
