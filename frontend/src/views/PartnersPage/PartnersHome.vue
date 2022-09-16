@@ -16,17 +16,21 @@
         <v-img src="/static/images/peeps-illustration-couple.png" contain max-width="140"></v-img>
       </v-col>
     </v-row>
-    <p v-if="$vuetify.breakpoint.mdAndUp" class="font-weight-bold">Votre besoin</p>
-    <v-item-group v-if="$vuetify.breakpoint.mdAndUp" multiple @change="onCategoryCardsChange">
+    <p v-if="$vuetify.breakpoint.mdAndUp" class="font-weight-bold">Vos besoins</p>
+    <v-item-group v-if="$vuetify.breakpoint.mdAndUp" multiple v-model="filters.category.value">
       <v-row>
         <v-col v-for="category in categoryItems" cols="4" :key="category.value">
-          <v-item v-slot="{ active, toggle }">
-            <v-card :color="active ? 'primary lighten-4' : ''" @click="toggle" outlined>
-              <v-card-title class="text-body-2">
-                <v-icon small class="mr-2" :color="active ? 'primary' : ''">{{ category.icon }}</v-icon>
-                {{ category.text }}
-              </v-card-title>
-            </v-card>
+          <v-item v-slot="{ active, toggle }" :value="category.value">
+            <button @click="toggle" style="width: inherit;">
+              <v-card :color="active ? 'primary lighten-4' : ''" outlined>
+                <v-card-title class="text-body-2">
+                  <v-icon small class="mr-2" :color="active ? 'primary' : ''">
+                    {{ category.icon }}
+                  </v-icon>
+                  {{ category.text }}
+                </v-card-title>
+              </v-card>
+            </button>
           </v-item>
         </v-col>
       </v-row>
@@ -351,10 +355,6 @@ export default {
     },
     setDepartments(enabledDepartmentIds) {
       this.departmentItems = this.setLocations(enabledDepartmentIds, jsonDepartments, "department", "départements")
-    },
-    onCategoryCardsChange(selectedCards) {
-      const selectedCategories = selectedCards.map((index) => this.categoryItems[index].value)
-      this.$set(this.filters.category, "value", selectedCategories)
     },
   },
   watch: {
