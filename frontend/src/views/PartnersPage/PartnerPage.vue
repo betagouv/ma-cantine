@@ -4,22 +4,42 @@
       <BreadcrumbsNav :links="[{ to: { name: 'PartnersHome' } }]" :title="partner.name" />
       <div class="d-flex">
         <div v-if="partner.image && $vuetify.breakpoint.smAndUp" class="mr-4">
-          <v-img :src="partner.image" max-width="260" contain></v-img>
+          <v-img :src="partner.image" max-width="260" max-height="200" contain></v-img>
         </div>
         <div class="d-flex flex-column">
-          <h1 class="font-weight-black text-h5 text-sm-h4 mb-4">
+          <!-- adjust line height to gain a bit of vertical space -->
+          <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="line-height: 2rem;">
             {{ partner.name }}
           </h1>
           <PartnerIndicators :partner="partner" class="grey--text text--darken-3 text-body-2" />
           <v-spacer></v-spacer>
-          <v-btn outlined color="primary" v-if="partner.website" :href="partner.website" width="fit-content">
-            <v-icon small class="mr-1">$global-fill</v-icon>
-            Site web
-          </v-btn>
+          <div class="d-flex align-end">
+            <v-btn
+              outlined
+              color="primary"
+              v-if="partner.website"
+              :href="partner.website"
+              width="fit-content"
+              class="mr-4"
+            >
+              <v-icon small class="mr-1">$global-fill</v-icon>
+              Site web
+              <span class="d-sr-only">du partenaire</span>
+              <v-icon small class="ml-1">$external-link-fill</v-icon>
+            </v-btn>
+            <v-btn outlined color="primary" href="#contact" width="fit-content" class="mr-4">
+              <v-icon small class="mr-1">$mail-line</v-icon>
+              Contactez-nous
+            </v-btn>
+          </div>
         </div>
       </div>
       <v-divider class="my-4"></v-divider>
       <p v-html="partner.longDescription"></p>
+
+      <v-divider class="my-8"></v-divider>
+
+      <ContactForm id="contact" :partner="partner" />
     </div>
   </div>
 </template>
@@ -27,10 +47,11 @@
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import PartnerIndicators from "@/components/PartnerIndicators"
+import ContactForm from "./ContactForm"
 
 export default {
   name: "PartnerPage",
-  components: { BreadcrumbsNav, PartnerIndicators },
+  components: { BreadcrumbsNav, PartnerIndicators, ContactForm },
   data() {
     return {
       partner: null,
