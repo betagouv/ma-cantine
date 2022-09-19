@@ -18,7 +18,6 @@
         :options.sync="options"
         :server-items-length="satelliteCount || 0"
         :items="visibleSatellites"
-        @click:row="onRowClick"
         :headers="headers"
       >
         <template v-slot:top>
@@ -50,7 +49,9 @@
           </v-dialog>
         </template>
         <template v-slot:[`item.userCanView`]="{ item }">
-          <a>{{ item.userCanView ? "Mettre à jour" : "Rejoindre l'équipe" }}</a>
+          <v-btn outlined color="primary" :to="satelliteLink(item)" @click="satelliteAction(item)">
+            {{ item.userCanView ? "Mettre à jour" : "Rejoindre l'équipe" }}
+          </v-btn>
         </template>
         <template v-slot:[`no-data`]>
           Vous n'avez pas renseigné des satellites
@@ -286,13 +287,16 @@ export default {
       this.$watch("options", this.onOptionsChange, { deep: true })
       this.$watch("$route", this.onRouteChange)
     },
-    onRowClick(satellite) {
+    satelliteLink(satellite) {
       if (satellite.userCanView) {
-        this.$router.push({
+        return {
           name: "CanteenModification",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(satellite) },
-        })
-      } else {
+        }
+      }
+    },
+    satelliteAction(satellite) {
+      if (!satellite.userCanView) {
         this.restrictedSatellite = satellite
         this.joinDialog = true
       }
@@ -335,9 +339,6 @@ export default {
 <style scoped>
 .v-data-table {
   border: solid 1px #ddd;
-}
-.v-data-table >>> tr {
-  cursor: pointer;
 }
 
 /* Hides items-per-row */

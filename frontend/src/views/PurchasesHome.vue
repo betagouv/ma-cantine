@@ -183,6 +183,7 @@
         :items="processedVisiblePurchases"
         @click:row="onRowClick"
       >
+        <!-- TODO: accessible row links -->
         <template v-slot:[`item.family`]="{ item }">
           <v-chip outlined small :color="getProductFamilyDisplayValue(item.family).color" dark class="font-weight-bold">
             {{ getProductFamilyDisplayValue(item.family).text }}
