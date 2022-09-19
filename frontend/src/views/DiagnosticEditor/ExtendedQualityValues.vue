@@ -8,7 +8,7 @@
       :id="'total-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -46,7 +46,7 @@
       :id="'meat-poultry-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -73,7 +73,7 @@
       :id="'fish-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -152,7 +152,11 @@
                   :id="inputHtmlId(fId, cId)"
                   hide-details="auto"
                   type="number"
-                  :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(diagnostic.valueTotalHt)]"
+                  :rules="[
+                    validators.nonNegativeOrEmpty,
+                    validators.decimalPlaces(2),
+                    validators.lteOrEmpty(diagnostic.valueTotalHt),
+                  ]"
                   validate-on-blur
                   solo
                   placeholder="Je ne sais pas"

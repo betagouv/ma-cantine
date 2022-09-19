@@ -423,7 +423,7 @@
                     <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
-                      :rules="[validators.nonNegativeOrEmpty]"
+                      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
                       v-model.number="expe[`vegetarianCost${item.value}`]"
                       append-icon="mdi-currency-eur"
                       style="max-width: 150px"
@@ -438,7 +438,7 @@
                     <DsfrTextField
                       validate-on-blur
                       hide-details="auto"
-                      :rules="[validators.nonNegativeOrEmpty]"
+                      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
                       v-model.number="expe[`nonVegetarianCost${item.value}`]"
                       append-icon="mdi-currency-eur"
                       style="max-width: 150px"

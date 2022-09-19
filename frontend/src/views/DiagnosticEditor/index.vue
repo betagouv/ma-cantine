@@ -94,7 +94,11 @@
                 simplifiée". Pour les données d'achats 2023, la "saisie simplifiée" sera accessible uniquement aux
                 établissements de moins de 200 couverts/jour.
               </p>
-              <v-radio-group v-model="diagnostic.diagnosticType">
+              <v-radio-group
+                v-model="diagnostic.diagnosticType"
+                :readonly="hasActiveTeledeclaration"
+                :disabled="hasActiveTeledeclaration"
+              >
                 <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
                   <template v-slot:label>
                     <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
@@ -368,7 +372,7 @@ export default {
     approTotals() {
       let bioTotal = this.diagnostic.valueBioHt
       let siqoTotal = this.diagnostic.valueSustainableHt
-      let perfExtTotal = this.diagnostic.ValueExternalityPerformanceHt
+      let perfExtTotal = this.diagnostic.valueExternalityPerformanceHt
       let egalimOthersTotal = this.diagnostic.valueEgalimOthersHt
       if (this.extendedDiagnostic) {
         bioTotal = 0
@@ -402,7 +406,7 @@ export default {
     },
     meatPoultryTotals() {
       let meatPoultryEgalim = this.diagnostic.valueSustainableHt
-      let meatPoultryFrance = this.diagnostic.ValueExternalityPerformanceHt
+      let meatPoultryFrance = this.diagnostic.valueExternalityPerformanceHt
       if (this.extendedDiagnostic) {
         meatPoultryEgalim = 0
         meatPoultryFrance = 0

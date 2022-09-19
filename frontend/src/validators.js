@@ -145,4 +145,18 @@ export default {
     if (phoneNumber.length == 10 && /^[0-9]+$/g.test(phoneNumber)) return true
     return "Dix chiffres numériques attendus"
   },
+  decimalPlaces(max) {
+    return (input) => {
+      const number = Number(input)
+      if (number) {
+        const tofixed = number.toFixed(max)
+        if (number !== Number(tofixed)) {
+          // not using toLocaleString on the number because want to ensure decimal places even in rounding 1,00
+          // otherwise I think the message is confusing
+          return `${max} décimales attendues, par exemple ${tofixed.replace(".", ",")}`
+        }
+      }
+      return true
+    }
+  },
 }

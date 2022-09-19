@@ -21,10 +21,36 @@
         @click:row="onRowClick"
         :headers="headers"
       >
-        <template v-slot:[`item.edit`]="{}">
-          <a>
-            Mettre à jour
-          </a>
+        <template v-slot:top>
+          <v-dialog v-model="joinDialog" max-width="800px">
+            <v-card class="text-left">
+              <v-card-title>Rejoindre l'équipe de « {{ restrictedSatellite.name }} »</v-card-title>
+              <v-card-text>
+                Vous n'êtes pas encore un membre de l'équipe de « {{ restrictedSatellite.name }} » alors vous devez
+                demander l'accès pour pourvoir voir et modifier les données de cette cantine.
+                <DsfrTextarea
+                  v-model="messageJoinCanteen"
+                  label="Message (optionnel)"
+                  hide-details="auto"
+                  rows="2"
+                  class="mt-2 body-2"
+                />
+              </v-card-text>
+              <v-divider></v-divider>
+              <v-card-actions class="py-4 pl-6">
+                <v-btn color="primary" @click="sendMgmtRequest">
+                  <v-icon class="mr-2">mdi-key</v-icon>
+                  Demander l'accès
+                </v-btn>
+                <v-btn outlined color="primary" @click="joinDialog = false">
+                  Annuler
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </template>
+        <template v-slot:[`item.userCanView`]="{ item }">
+          <a>{{ item.userCanView ? "Mettre à jour" : "Rejoindre l'équipe" }}</a>
         </template>
         <template v-slot:[`no-data`]>
           Vous n'avez pas renseigné des satellites
@@ -115,11 +141,12 @@
 import validators from "@/validators"
 import { sectorsSelectList, getObjectDiff } from "@/utils"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
   name: "SatelliteManagement",
-  components: { DsfrTextField, DsfrSelect },
+  components: { DsfrTextField, DsfrTextarea, DsfrSelect },
   props: {
     originalCanteen: Object,
   },
@@ -141,8 +168,12 @@ export default {
         { text: "Nom", value: "name" },
         { text: "SIRET", value: "siret" },
         { text: "Couverts par jour", value: "dailyMealCount" },
-        { text: "", value: "edit" },
+        { text: "", value: "userCanView" },
       ],
+      joinDialog: false,
+      restrictedSatellite: {},
+      user: this.$store.state.loggedUser,
+      messageJoinCanteen: null,
     }
   },
   computed: {
@@ -256,10 +287,35 @@ export default {
       this.$watch("$route", this.onRouteChange)
     },
     onRowClick(satellite) {
-      this.$router.push({
-        name: "CanteenModification",
-        params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(satellite) },
-      })
+      if (satellite.userCanView) {
+        this.$router.push({
+          name: "CanteenModification",
+          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(satellite) },
+        })
+      } else {
+        this.restrictedSatellite = satellite
+        this.joinDialog = true
+      }
+    },
+    sendMgmtRequest() {
+      const payload = {
+        email: this.user.email,
+        name: `${this.user.firstName} ${this.user.lastName}`,
+        message: this.messageJoinCanteen,
+      }
+
+      this.$store
+        .dispatch("sendCanteenTeamRequest", { canteenId: this.restrictedSatellite.id, payload })
+        .then(() => {
+          this.messageJoinCanteen = null
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: `Votre message a bien été envoyé.`,
+          })
+          window.scrollTo(0, 0)
+          this.joinDialog = false
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
   created() {

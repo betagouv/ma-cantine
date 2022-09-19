@@ -15,6 +15,7 @@
       @input="(v) => $emit('input', v)"
       hide-no-data
       auto-select-first
+      :return-object="false"
     >
       <template v-slot:label><span></span></template>
 

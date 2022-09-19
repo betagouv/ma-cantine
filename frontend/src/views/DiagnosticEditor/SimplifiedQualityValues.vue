@@ -8,7 +8,7 @@
       :id="'total-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -42,7 +42,7 @@
       :id="'bio-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -83,7 +83,7 @@
       :id="'siqo-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -115,7 +115,7 @@
       :id="'ext-perf-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       solo
       placeholder="Je ne sais pas"
@@ -152,7 +152,7 @@
       :id="'other-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -202,7 +202,7 @@
       :id="'meat-poultry-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -237,7 +237,7 @@
       :id="'meat-poultry-egalim-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -271,7 +271,7 @@
       :id="'meat-poultry-france-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -304,7 +304,7 @@
       :id="'fish-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"
@@ -336,7 +336,7 @@
       :id="'fish-egalim-' + diagnostic.year"
       hide-details="auto"
       type="number"
-      :rules="[validators.nonNegativeOrEmpty]"
+      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
       validate-on-blur
       placeholder="Je ne sais pas"
       suffix="€ HT"

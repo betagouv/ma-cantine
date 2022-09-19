@@ -87,6 +87,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
 
 class SatelliteCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
+    user_can_view = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -97,7 +98,13 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "siret",
             "daily_meal_count",
             "sectors",
+            "user_can_view",
         )
+
+    def get_user_can_view(self, obj):
+        # thanks to https://stackoverflow.com/questions/59430930/how-can-i-access-request-object-within-a-custom-serializer-field-in-the-django-r
+        user = self.context["request"].user
+        return obj.managers.filter(pk=user.pk).exists()
 
 
 class FullCanteenSerializer(serializers.ModelSerializer):

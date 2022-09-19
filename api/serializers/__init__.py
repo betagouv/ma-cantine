@@ -21,3 +21,4 @@ from .vegetarianexpe import VegetarianExpeSerializer  # noqa: F401
 from .message import MessageSerializer  # noqa: F401
 from .review import ReviewSerializer  # noqa: F401
 from .communityevent import CommunityEventSerializer  # noqa: F401
+from .partner import PartnerSerializer, PartnerShortSerializer  # noqa: F401
