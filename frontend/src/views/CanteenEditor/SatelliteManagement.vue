@@ -51,6 +51,7 @@
         <template v-slot:[`item.userCanView`]="{ item }">
           <v-btn outlined color="primary" :to="satelliteLink(item)" @click="satelliteAction(item)">
             {{ item.userCanView ? "Mettre à jour" : "Rejoindre l'équipe" }}
+            <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
           </v-btn>
         </template>
         <template v-slot:[`no-data`]>
