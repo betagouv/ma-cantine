@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav />
+    <BreadcrumbsNav :links="[{ to: { name: 'CommunityPage' } }]" />
     <v-row>
       <v-col cols="12" sm="7" md="8">
         <h1 class="font-weight-black text-h5 text-sm-h4 mb-4">

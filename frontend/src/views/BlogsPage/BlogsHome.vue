@@ -105,7 +105,11 @@ export default {
         query.etiquette = this.tag
       }
       // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
-      this.$router.push({ query }).catch(() => {})
+      if (this.$route.query.page) {
+        this.$router.push({ query }).catch(() => {})
+      } else {
+        this.$router.replace({ query }).catch(() => {})
+      }
     },
     populateParameters() {
       this.tag = this.$route.query.etiquette

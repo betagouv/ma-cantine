@@ -13,10 +13,14 @@
       <v-col>
         <ul class="text-body-2">
           <li v-for="link in links" :key="link.id" class="my-1">
-            <a :href="`#${link.id}`">
+            <a :href="`#${link.id}`" v-if="link.id">
               <v-icon small color="primary">mdi-chevron-right</v-icon>
               {{ link.title }}
             </a>
+            <router-link :to="link.to" v-else>
+              <v-icon small color="primary">mdi-chevron-right</v-icon>
+              {{ link.title }}
+            </router-link>
           </li>
         </ul>
       </v-col>
@@ -88,6 +92,14 @@ export default {
         {
           id: "facebook",
           title: "Rejoindre la communauté sur Facebook",
+        },
+        {
+          to: { name: "BlogsHome" },
+          title: "Notre blog",
+        },
+        {
+          to: { name: "PartnersHome" },
+          title: "Trouver des partenaires",
         },
         {
           id: "faq",
