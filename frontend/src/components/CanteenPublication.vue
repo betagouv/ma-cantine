@@ -121,6 +121,17 @@
       </div>
     </div>
 
+    <div v-if="diagnostic && diagnostic.communicationSupportUrl">
+      <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-2">
+        Information des usagers et des convives
+      </h2>
+      <p class="body-2">
+        Cette cantine communique aux usagers sur
+        <a :href="diagnostic.communicationSupportUrl">{{ diagnostic.communicationSupportUrl }}</a>
+        .
+      </p>
+    </div>
+
     <div v-if="canteen && canteen.images && canteen.images.length > 0">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-0">
         Galerie
