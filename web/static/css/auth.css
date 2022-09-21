@@ -121,6 +121,22 @@ button[type="submit"]:hover {
   border: none;
   background: #000091;
 }
+a.secondary-button {
+  text-decoration: none;
+  color: #000091;
+  width: 298px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 0px;
+  border: solid 1px #000091;
+  cursor: pointer;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  display: inline-block;
+  font-family: Marianne;
+  font-size: 0.85em;
+}
 .messages,
 .error-container {
   text-align: left;
