@@ -183,7 +183,12 @@
         :items="processedVisiblePurchases"
         @click:row="onRowClick"
       >
-        <!-- TODO: accessible row links -->
+        <template v-slot:[`item.description`]="{ item }">
+          <router-link :to="{ name: 'PurchasePage', params: { id: item.id } }">
+            {{ item.description }}
+            <span class="d-sr-only">, {{ item.date }}</span>
+          </router-link>
+        </template>
         <template v-slot:[`item.family`]="{ item }">
           <v-chip outlined small :color="getProductFamilyDisplayValue(item.family).color" dark class="font-weight-bold">
             {{ getProductFamilyDisplayValue(item.family).text }}
