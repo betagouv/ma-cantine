@@ -4,6 +4,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.views.decorators.cache import cache_page
 from django.views.generic.base import RedirectView
 from django.urls import path
+from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 from web.sitemaps import CanteenSitemap, BlogPostSitemap, WebSitemap
 from web.views import (
     VueAppDisplayView,
@@ -126,5 +127,11 @@ urlpatterns = [
         "googlefbd6f06a151f47ee.html",
         TemplateView.as_view(template_name="googlefbd6f06a151f47ee.html"),
         name="google_verification",
+    ),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
     ),
 ]
