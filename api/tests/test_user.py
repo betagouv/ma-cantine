@@ -125,13 +125,3 @@ class TestLoggedUserApi(APITestCase):
         }
         response = self.client.patch(reverse("update_user", kwargs={"pk": user.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_user_update_correct_token(self):
-        user, token = get_oauth2_token("user:write")
-        self.client.credentials(Authorization=f"Bearer {token}")
-        payload = {
-            "source": "OTHER",
-            "otherSourceDescription": "Narnia",
-        }
-        response = self.client.patch(reverse("update_user", kwargs={"pk": user.id}), payload)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)

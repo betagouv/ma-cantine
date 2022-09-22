@@ -489,7 +489,6 @@ OAUTH2_PROVIDER = {
     "PKCE_REQUIRED": False,
     "SCOPES": {
         "user:read": "Lire votre profil utilisateur",
-        "user:write": "Modifier vos données utilisateur",
         "canteen:read": "Lire les données de votre cantine",
         "canteen:write": "Modifier les données de votre cantine",
     },
