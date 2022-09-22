@@ -40,7 +40,7 @@ class TestTeledeclarationApi(APITestCase):
         A validation error is returned if the teledeclaration does not exist
         """
         payload = {"teledeclarationId": 1}
-        response = self.client.post(reverse("teledeclaration_cancel"), payload)
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": 1}), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
@@ -76,8 +76,7 @@ class TestTeledeclarationApi(APITestCase):
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, manager)
 
-        payload = {"teledeclarationId": teledeclaration.id}
-        response = self.client.post(reverse("teledeclaration_cancel"), payload)
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -101,15 +100,6 @@ class TestTeledeclarationApi(APITestCase):
         """
         payload = {}
         response = self.client.post(reverse("teledeclaration_create"), payload)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    @authenticate
-    def test_cancel_missing_teledeclaration_id(self):
-        """
-        A validation error is returned if the teledeclaration ID is missing
-        """
-        payload = {}
-        response = self.client.post(reverse("teledeclaration_cancel"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
@@ -232,8 +222,7 @@ class TestTeledeclarationApi(APITestCase):
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
 
-        payload = {"teledeclarationId": teledeclaration.id}
-        response = self.client.post(reverse("teledeclaration_cancel"), payload)
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)

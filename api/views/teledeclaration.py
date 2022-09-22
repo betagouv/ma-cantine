@@ -76,13 +76,9 @@ class TeledeclarationCancelView(APIView):
 
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         try:
-            data = request.data
-            teledeclaration_id = data.get("teledeclaration_id")
-            if not teledeclaration_id:
-                raise ValidationError("teledeclarationId manquant")
-
+            teledeclaration_id = kwargs.get("pk")
             teledeclaration = Teledeclaration.objects.get(pk=teledeclaration_id)
 
             if request.user not in teledeclaration.canteen.managers.all():

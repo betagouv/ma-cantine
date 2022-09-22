@@ -91,12 +91,12 @@ urlpatterns = {
     path("importDiagnostics/complete/", ImportCompleteDiagnosticsView.as_view(), name="import_complete_diagnostics"),
     path("emailDiagnosticImportFile/", EmailDiagnosticImportFileView.as_view(), name="email_diagnostic_file"),
     path(
-        "createTeledeclaration/",
+        "teledeclaration/",
         TeledeclarationCreateView.as_view(),
         name="teledeclaration_create",
     ),
     path(
-        "cancelTeledeclaration/",
+        "teledeclaration/<int:pk>/cancel/",
         TeledeclarationCancelView.as_view(),
         name="teledeclaration_cancel",
     ),
