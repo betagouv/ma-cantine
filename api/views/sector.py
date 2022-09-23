@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 )
 class SectorListView(ListAPIView):
     include_in_documentation = True
+    required_scopes = ["canteen"]
     model = Sector
     serializer_class = SectorSerializer
     queryset = Sector.objects.all()

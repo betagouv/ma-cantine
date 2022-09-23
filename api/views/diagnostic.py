@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 )
 class DiagnosticCreateView(CreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
     model = Diagnostic
     serializer_class = PublicDiagnosticSerializer
 
@@ -68,6 +69,7 @@ class DiagnosticUpdateView(UpdateAPIView):
         IsAuthenticatedOrTokenHasResourceScope,
         CanEditDiagnostic,
     ]
+    required_scopes = ["canteen"]
     model = Diagnostic
     serializer_class = PublicDiagnosticSerializer
     queryset = Diagnostic.objects.all()

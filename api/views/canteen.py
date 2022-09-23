@@ -284,6 +284,7 @@ def check_siret_response(request):
 )
 class PublishCanteenView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -315,6 +316,7 @@ class PublishCanteenView(APIView):
 )
 class UnpublishCanteenView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -793,6 +795,7 @@ class SatellitesPagination(LimitOffsetPagination):
 )
 class SatelliteListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
     model = Canteen
     serializer_class = SatelliteCanteenSerializer
     pagination_class = SatellitesPagination

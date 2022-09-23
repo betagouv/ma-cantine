@@ -32,6 +32,7 @@ class TeledeclarationCreateView(APIView):
     """
 
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def post(self, request):
         try:
@@ -75,6 +76,7 @@ class TeledeclarationCancelView(APIView):
     """
 
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -106,6 +108,7 @@ class TeledeclarationPdfView(APIView):
     """
 
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def get(self, request, *args, **kwargs):
 
