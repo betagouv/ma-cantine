@@ -14,16 +14,16 @@ class TestLoggedUserApi(APITestCase):
         response = self.client.get(reverse("logged_user"))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_wrong_scope_logged_user_call(self):
+    def test_wrong_scope_user_info_call(self):
         _, token = get_oauth2_token("canteen:read")
         self.client.credentials(Authorization=f"Bearer {token}")
-        response = self.client.get(reverse("logged_user"))
+        response = self.client.get(reverse("user_info"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_correct_scope_logged_user_call(self):
         _, token = get_oauth2_token("user:read")
         self.client.credentials(Authorization=f"Bearer {token}")
-        response = self.client.get(reverse("logged_user"))
+        response = self.client.get(reverse("user_info"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate
@@ -41,6 +41,16 @@ class TestLoggedUserApi(APITestCase):
         self.assertEqual(body.get("firstName"), authenticate.user.first_name)
         self.assertEqual(body.get("lastName"), authenticate.user.last_name)
         self.assertIn("id", body)
+
+    @authenticate
+    def test_authenticated_user_info_call(self):
+        response = self.client.get(reverse("user_info"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = json.loads(response.content.decode())
+        self.assertEqual(body.get("username"), authenticate.user.username)
+        self.assertEqual(body.get("firstName"), authenticate.user.first_name)
+        self.assertEqual(body.get("lastName"), authenticate.user.last_name)
 
     def test_username_generation(self):
         response = self.client.post(reverse("username_suggestion"), {"first_name": "Anne", "last_name": "Iversaire"})

@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from oauth2_provider.contrib.rest_framework import TokenHasResourceScope
-from api.serializers import LoggedUserSerializer, PasswordSerializer
+from api.serializers import LoggedUserSerializer, PasswordSerializer, UserInfoSerializer
 from api.permissions import IsProfileOwner, IsAuthenticated
 
 logger = logging.getLogger(__name__)
@@ -28,10 +28,10 @@ logger = logging.getLogger(__name__)
         description="Permet d'obtenir des informations sur l'utilisateur et son état dans notre plateforme.",
     ),
 )
-class LoggedUserView(RetrieveAPIView):
+class UserInfoView(RetrieveAPIView):
     include_in_documentation = True
     model = get_user_model()
-    serializer_class = LoggedUserSerializer
+    serializer_class = UserInfoSerializer
     queryset = get_user_model().objects.all()
     required_scopes = ["user"]
 
@@ -42,6 +42,20 @@ class LoggedUserView(RetrieveAPIView):
             raise PermissionDenied()
 
         elif IsAuthenticated().has_permission(self.request, self):
+            return super().get(request, *args, **kwargs)
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+    def get_object(self):
+        return self.request.user
+
+
+class LoggedUserView(RetrieveAPIView):
+    model = get_user_model()
+    serializer_class = LoggedUserSerializer
+    queryset = get_user_model().objects.all()
+
+    def get(self, request, *args, **kwargs):
+        if IsAuthenticated().has_permission(self.request, self):
             return super().get(request, *args, **kwargs)
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 

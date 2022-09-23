@@ -4,6 +4,20 @@ from drf_base64.fields import Base64ImageField
 from .review import MiniReviewSerializer
 
 
+class UserInfoSerializer(serializers.ModelSerializer):
+    avatar = Base64ImageField(required=False, allow_null=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "username",
+            "first_name",
+            "last_name",
+            "avatar",
+        )
+        read_only_fields = fields
+
+
 class LoggedUserSerializer(serializers.ModelSerializer):
     avatar = Base64ImageField(required=False, allow_null=True)
     reviews = MiniReviewSerializer(many=True, read_only=True, source="review_set")

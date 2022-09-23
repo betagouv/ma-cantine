@@ -1,4 +1,4 @@
-from .user import LoggedUserSerializer  # noqa: F401
+from .user import LoggedUserSerializer, UserInfoSerializer  # noqa: F401
 from .canteen import (  # noqa: F401
     PublicCanteenSerializer,
     FullCanteenSerializer,
