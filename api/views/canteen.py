@@ -241,7 +241,8 @@ class UserCanteenPreviews(ListAPIView):
         description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine.",
     ),
     delete=extend_schema(
-        exclude=True,
+        summary="Suppression d'une cantine existante.",
+        description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine. Attention : les diagnostics créés seront aussi supprimés.",
     ),
 )
 class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
