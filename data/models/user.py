@@ -68,6 +68,8 @@ class User(AbstractUser):
         verbose_name="Les affirmations suivantes concernent l'article 24 de la loi EGAlim, encadrant les objectifs d'approvisionnements (50% de produits durables et de qualité dont 20% de bio). Parmi ces affirmations, plusieurs choix sont possibles. Choisissez celles qui correspondent à votre situation :",
     )
 
+    is_dev = models.BooleanField(default="False", verbose_name="Compte développeur / technique")
+
     # Email campaigns
     email_no_canteen_first_reminder = models.DateTimeField(
         null=True, blank=True, verbose_name="Date d'envoi du premier email pour manque de cantines"

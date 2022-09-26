@@ -54,6 +54,7 @@ class MaCanteenUserAdmin(UserAdmin):
                     "email",
                     "avatar",
                     "phone_number",
+                    "is_dev",
                     "job",
                     "other_job_description",
                     "number_of_managed_cantines",
