@@ -72,6 +72,32 @@ class TestAutomaticEmails(TestCase):
         self.assertIsNone(sophie.email_no_canteen_first_reminder)
 
     @mock.patch("macantine.tasks._send_sib_template")
+    @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=1)
+    @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
+    def test_no_canteen_dev_profile(self, _):
+        """
+        The email should be not be sent to users with a dev profile, even
+        if they have all other parameters
+        """
+        today = timezone.now()
+
+        # Should not send email
+        jean = UserFactory.create(
+            date_joined=(today - timedelta(weeks=1)),
+            email_no_canteen_first_reminder=None,
+            first_name="Jean",
+            last_name="Sérien",
+            email="jean.serien@example.com",
+            is_dev=True,
+        )
+
+        tasks.no_canteen_first_reminder()
+        tasks._send_sib_template.assert_not_called()
+
+        jean.refresh_from_db()
+        self.assertIsNone(jean.email_no_canteen_first_reminder)
+
+    @mock.patch("macantine.tasks._send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_SECOND=2)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
     def test_no_canteen_second_reminder(self, _):
@@ -146,6 +172,30 @@ class TestAutomaticEmails(TestCase):
         self.assertIsNone(jean.email_no_canteen_second_reminder)
         self.assertIsNone(anna.email_no_canteen_second_reminder)
         self.assertIsNone(sophie.email_no_canteen_second_reminder)
+
+    @mock.patch("macantine.tasks._send_sib_template")
+    @override_settings(TEMPLATE_ID_NO_CANTEEN_SECOND=2)
+    @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
+    def test_no_canteen_second_reminder_dev(self, _):
+        """
+        The second reminder email should not be sent to dev users
+        """
+        today = timezone.now()
+
+        marie = UserFactory.create(
+            date_joined=(today - timedelta(weeks=2)),
+            email_no_canteen_first_reminder=(today - timedelta(weeks=1)),
+            email_no_canteen_second_reminder=None,
+            first_name="Marie",
+            last_name="Olait",
+            email="marie.olait@example.com",
+            is_dev=True,
+        )
+        tasks.no_canteen_second_reminder()
+        tasks._send_sib_template.assert_not_called()
+
+        marie.refresh_from_db()
+        self.assertIsNone(marie.email_no_canteen_second_reminder)
 
     @mock.patch("macantine.tasks._send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=None)
@@ -301,15 +351,42 @@ class TestAutomaticEmails(TestCase):
         tasks.no_diagnostic_first_reminder()
 
         # Email is only sent once to Jean
-        tasks._send_sib_template.assert_called
+        tasks._send_sib_template.assert_called()
         self.assertEqual(tasks._send_sib_template.call_count, 2)
         call_args_list = tasks._send_sib_template.call_args_list
-        self.assertEqual(call_args_list[0][0][2], "jean.serien@example.com")
-        self.assertEqual(call_args_list[1][0][2], "anna.logue@example.com")
+        recipients = [x[0][2] for x in call_args_list]
+        self.assertIn("jean.serien@example.com", recipients)
+        self.assertIn("anna.logue@example.com", recipients)
 
         # DB objects are updated
         canteen_no_diagnostics.refresh_from_db()
         self.assertIsNotNone(canteen_no_diagnostics.email_no_diagnostic_first_reminder)
+
+    @mock.patch("macantine.tasks._send_sib_template")
+    @override_settings(TEMPLATE_ID_NO_DIAGNOSTIC_FIRST=1)
+    @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
+    def test_no_diagnostic_dev_profile(self, _):
+        """
+        The email should not be sent to dev users.
+        """
+        today = timezone.now()
+
+        # We create a canteen with no diagnostics managed by
+        # Jean, a dev profile
+        jean = UserFactory.create(
+            first_name="Jean",
+            last_name="Sérien",
+            email="jean.serien@example.com",
+            is_dev=True,
+        )
+        canteen_no_diagnostics = CanteenFactory.create(managers=[jean])
+        Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
+
+        tasks.no_diagnostic_first_reminder()
+        tasks._send_sib_template.assert_not_called()
+
+        canteen_no_diagnostics.refresh_from_db()
+        self.assertIsNone(canteen_no_diagnostics.email_no_diagnostic_first_reminder)
 
     @mock.patch("macantine.tasks._send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=1)
