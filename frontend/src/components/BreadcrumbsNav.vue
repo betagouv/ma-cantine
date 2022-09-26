@@ -57,7 +57,10 @@ export default {
   },
   computed: {
     homePage() {
-      return { name: this.$store.state.loggedUser ? "ManagementPage" : "LandingPage" }
+      const loggedUser = this.$store.state.loggedUser
+      if (loggedUser && loggedUser.isDev) return { name: "DeveloperPage" }
+      if (loggedUser && !loggedUser.isDev) return { name: "ManagementPage" }
+      return { name: "LandingPage" }
     },
     pageTitle() {
       return this.title || this.breadcrumbRoutes.find((r) => r.name === this.$route.name)?.meta?.title

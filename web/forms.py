@@ -9,6 +9,7 @@ class RegisterUserForm(UserCreationForm):
     cgu_approved = forms.BooleanField(
         label=mark_safe('J\'atteste avoir lu et accepté les <a href="/cgu" target="_blank">CGU</a>')
     )
+    is_dev = forms.BooleanField()
     email = forms.EmailField()
     creation_mtm_source = forms.CharField(widget=forms.HiddenInput(), required=False)
     creation_mtm_campaign = forms.CharField(widget=forms.HiddenInput(), required=False)
@@ -21,6 +22,7 @@ class RegisterUserForm(UserCreationForm):
         fields = (
             "first_name",
             "last_name",
+            "is_dev",
             "email",
             "phone_number",
             "username",

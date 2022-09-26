@@ -524,7 +524,8 @@ function chooseAuthorisedRoute(to, from, next) {
         next({ name: "LandingPage" })
       })
   } else {
-    if (to.meta.home && store.state.loggedUser) next({ name: "ManagementPage" })
+    if (to.meta.home && store.state.loggedUser && !store.state.loggedUser.isDev) next({ name: "ManagementPage" })
+    else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "DeveloperPage" })
     else if (to.meta.home) next({ name: "LandingPage" })
     else if (!to.meta.authenticationRequired || store.state.loggedUser) next()
     else next({ name: "NotFound" })

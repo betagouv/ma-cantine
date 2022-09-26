@@ -49,6 +49,8 @@ class RegisterUserView(FormView):
         else:
             if self.request.GET.get("next"):
                 self.success_url = self.request.GET.get("next")
+            elif self.request.user.is_dev:
+                self.success_url = "/developpement-et-apis"
             else:
                 has_canteens = not self.request.user.is_anonymous and self.request.user.canteens.count() > 0
                 self.success_url = reverse_lazy("app") if has_canteens else "/nouvelle-cantine"
