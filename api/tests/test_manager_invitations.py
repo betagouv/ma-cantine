@@ -279,3 +279,16 @@ class TestManagerInvitationApi(APITestCase):
         self.assertNotIn("TEST@example.com", manager_emails)
         self.assertNotIn("TesT@example.com", manager_emails)
         self.assertEqual(len(mail.outbox), 1)
+
+    def test_create_user_with_pending_invitations(self):
+        """
+        If invitations match a newly created user's email address (case insensitive),
+        add that user to the canteen's managers
+        """
+        canteen = CanteenFactory.create()
+        self.assertFalse(canteen.managers.filter(email="new.user@example.com").exists())
+
+        ManagerInvitationFactory.create(canteen=canteen, email="new.USER@example.com")
+        UserFactory.create(email="new.user@example.com")
+
+        self.assertTrue(canteen.managers.filter(email="new.user@example.com").exists())

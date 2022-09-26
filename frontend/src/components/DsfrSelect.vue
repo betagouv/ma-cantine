@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label :for="inputId" :class="labelClasses">
+    <label :for="inputId" :class="labelClasses" v-if="$attrs.label">
       {{ $attrs.label }}
     </label>
     <v-select
