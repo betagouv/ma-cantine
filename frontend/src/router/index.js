@@ -46,6 +46,7 @@ import PurchasesImporter from "@/views/PurchasesImporter"
 import CommunityPage from "@/views/CommunityPage"
 import FaqPage from "@/views/FaqPage"
 import SiteMap from "@/views/SiteMap"
+import DeveloperPage from "@/views/DeveloperPage"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -486,6 +487,14 @@ const routes = [
     component: SiteMap,
     meta: {
       title: "Plan du site",
+    },
+  },
+  {
+    path: "/developpement-et-apis/",
+    name: "DeveloperPage",
+    component: DeveloperPage,
+    meta: {
+      title: "Développement et APIs",
     },
   },
   {
