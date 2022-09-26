@@ -20,7 +20,7 @@ click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.2.0
 cryptography==38.0.1
-cssselect2==0.6.0
+cssselect2==0.7.0
 Deprecated==1.2.13
 dill==0.3.5.1
 Django==4.1
@@ -45,7 +45,7 @@ Faker==14.2.0
 future==0.18.2
 html2text==2020.1.16
 html5lib==1.1
-idna==3.3
+idna==3.4
 iniconfig==1.1.1
 isort==5.10.1
 jmespath==1.0.1
