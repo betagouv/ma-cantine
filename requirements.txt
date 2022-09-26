@@ -1,5 +1,5 @@
 amqp==5.1.1
-arabic-reshaper==2.1.3
+arabic-reshaper==2.1.4
 asgiref==3.5.2
 asn1crypto==1.5.1
 astroid==2.12.10
@@ -8,10 +8,10 @@ attrs==22.1.0
 backports.zoneinfo==0.2.1;python_version<"3.9"
 billiard==3.6.4.0
 black==22.8.0
-boto3==1.24.75
-botocore==1.27.75
+boto3==1.24.80
+botocore==1.27.80
 celery==5.2.7
-certifi==2022.9.14
+certifi==2022.9.24
 cffi==1.15.1
 chardet==5.0.0
 charset-normalizer==2.1.1
@@ -20,14 +20,14 @@ click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.2.0
 cryptography==38.0.1
-cssselect2==0.6.0
+cssselect2==0.7.0
 Deprecated==1.2.13
 dill==0.3.5.1
 Django==4.1
 django-anymail==8.6
 django-ckeditor==6.5.1
 django-csp==3.7
-django-debug-toolbar==3.6.0
+django-debug-toolbar==3.7.0
 django-filter==22.1
 django-js-asset==2.0.0
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
