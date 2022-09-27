@@ -154,10 +154,10 @@
     <v-row>
       <v-col cols="12">
         <h2 class="text-h6 font-weight-black mb-4">
-          Vous n'avez pas trouvé un ou plusieurs établissements qui vous intéressent ?
+          Vous n'avez pas trouvé un ou plusieurs partenaires ou prestataires qui vous intéressent ?
         </h2>
         <p class="body-2">
-          Dites-nous tout, nous ferons en sorte de trouver un partenaire pour vous aider.
+          Dites-nous tout, nous ferons en sorte de vous aider.
         </p>
         <p class="body-2">
           Si vous êtes un acteur de la restauration collective, décrivez-nous votre offre et nous vous ajoutons !
