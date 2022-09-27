@@ -67,7 +67,7 @@ class TeledeclarationCreateView(APIView):
 @extend_schema_view(
     post=extend_schema(
         summary="Annuler une télédéclaration existante.",
-        description="En annulant une télédéclaration existante l'utilisateur devra en créer une nouvelle une fois que le diagnostic a été corrigé.",
+        description="Un diagnostic ne peut pas être modifié si une télédéclaration a été créée. Pour corriger des données, l'utilisateur devra d'abord annuler la télédeclaration. À noter que l'utilisateur devra en créer une nouvelle une fois que le diagnostic a été corrigé.",
     ),
 )
 class TeledeclarationCancelView(APIView):

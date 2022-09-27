@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Informations sur l'utilisateur identifié.",
+        summary="Obtenir des informations sur l'utilisateur identifié.",
         description="Permet d'obtenir des informations sur l'utilisateur.",
     ),
 )
