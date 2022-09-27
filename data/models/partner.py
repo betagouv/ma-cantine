@@ -66,6 +66,7 @@ class Partner(models.Model):
         blank=True,
         verbose_name="Secteur économique",
     )
+    published = models.BooleanField(default=False, verbose_name="publié")
 
     @property
     def url_slug(self):
