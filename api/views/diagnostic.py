@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 @extend_schema_view(
     post=extend_schema(
         summary="Création d'un nouveau diagnostic.",
-        description="Un diagnostic doit être rattaché a une cantine. Certains vérifications sur les données peuvent être effectués.",
+        description="Un diagnostic doit être rattaché a une cantine.",
     )
 )
 class DiagnosticCreateView(CreateAPIView):

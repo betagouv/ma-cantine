@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 @extend_schema_view(
     get=extend_schema(
         summary="Informations sur l'utilisateur identifié.",
-        description="Permet d'obtenir des informations sur l'utilisateur et son état dans notre plateforme.",
+        description="Permet d'obtenir des informations sur l'utilisateur.",
     ),
 )
 class UserInfoView(RetrieveAPIView):

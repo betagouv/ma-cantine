@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Liste les secteurs des cantines.",
-        description="Une cantine peut s'assigner un ou plusieurs secteurs.",
+        summary="Lister les secteurs des cantines.",
+        description="Une cantine peut s'assigner un ou plusieurs secteurs d'activité.",
     ),
 )
 class SectorListView(ListAPIView):

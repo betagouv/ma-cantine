@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 @extend_schema_view(
     post=extend_schema(
-        summary="Création d'une télédéclaration.",
+        summary="Télédéclarer un diagnostic",
         description="La télédéclaration créée prendra le diagnostic de l'année concernée pour créer un snapshot immutable. En créant une télédéclaration, l'utilisateur s'engage sur l'honneur sur la véracité des données télédéclarées.",
     ),
 )
