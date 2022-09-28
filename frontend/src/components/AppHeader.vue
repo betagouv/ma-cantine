@@ -114,12 +114,14 @@
                   v-bind="attrs"
                   v-on="on"
                   class="mc-tab body-2 text--darken-2"
-                  :class="navLink.isActive ? 'primary--text' : 'black--text'"
+                  :class="{
+                    'menu-tab': true,
+                    'primary--text': navLink.isActive,
+                    'black--text': !navLink.isActive,
+                    expanded: !!value,
+                  }"
                 >
                   {{ navLink.text }}
-                  <v-icon small class="ml-2" :color="navLink.isActive ? 'primary' : 'black'">
-                    {{ value ? "$arrow-up-s-line" : "$arrow-down-s-line" }}
-                  </v-icon>
                 </v-tab>
               </template>
               <v-list class="py-0">
@@ -355,6 +357,26 @@ export default {
   caret-color: rgb(22, 22, 22);
   outline-color: #fff;
   text-decoration-color: #fff;
+}
+.menu-tab::after {
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: calc((0.75em - var(--icon-size)) * 0.5);
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("/static/icons/arrow-down-s-line.svg");
+  mask-image: url("/static/icons/arrow-down-s-line.svg");
+  --icon-size: 1rem;
+  content: "";
+  margin-left: 0.5rem;
+  margin-right: 0;
+  transition: transform 0.3s;
+}
+.menu-tab.expanded::after {
+  transform: rotate(-180deg);
 }
 .header-signup-button.v-btn--active::before {
   opacity: 0;
