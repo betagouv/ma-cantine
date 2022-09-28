@@ -21,7 +21,7 @@
     <v-spacer></v-spacer>
     <v-card-actions class="px-4 py-4">
       <v-spacer></v-spacer>
-      <v-icon color="primary">$arrow-right-line</v-icon>
+      <span class="icon-hint access">Modifier {{ canteen.name }}</span>
     </v-card-actions>
   </v-card>
 </template>
@@ -64,3 +64,29 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.icon-hint {
+  --icon-size: 1.75rem;
+  height: var(--icon-size);
+  width: var(--icon-size);
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: calc(0.435em - var(--icon-size) * 0.5);
+}
+.icon-hint::before {
+  --icon-size: 1.75rem;
+  content: "";
+  display: inline-block;
+  flex: 0 0 auto;
+  height: var(--icon-size);
+  width: var(--icon-size);
+  --blue-france-sun-113-625: #000091;
+  background-color: var(--blue-france-sun-113-625);
+  vertical-align: calc(0.435em - var(--icon-size) * 0.5);
+}
+.access::before {
+  -webkit-mask-image: url("/static/icons/arrow-right-line.svg");
+  mask-image: url("/static/icons/arrow-right-line.svg");
+}
+</style>
