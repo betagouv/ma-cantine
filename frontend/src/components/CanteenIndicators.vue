@@ -1,24 +1,19 @@
 <template>
   <div>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="hasSatelliteCanteens">
-      <v-icon small>$community-fill</v-icon>
+    <p class="my-0 satellite-count" :class="{ inline: singleLine }" v-if="hasSatelliteCanteens">
       {{ canteen.satelliteCanteensCount }} satellites
     </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="hasDailyMealCount">
-      <span class="mx-1" v-if="singleLine && hasSatelliteCanteens">/</span>
-      <v-icon small>$restaurant-fill</v-icon>
+    <span class="mx-1" v-if="singleLine && hasDailyMealCount && hasSatelliteCanteens">/</span>
+    <p class="my-0 meal-count" :class="{ inline: singleLine }" v-if="hasDailyMealCount">
       <!-- eslint-disable-next-line prettier/prettier-->
-      {{ canteen.dailyMealCount }} par jour
-      <span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
+      {{ canteen.dailyMealCount }} par jour<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
     </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="canteen.city">
-      <span class="mx-1" v-if="singleLine && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
-      <v-icon small aria-hidden="false" role="img" aria-label="Localisation">$compass-3-fill</v-icon>
+    <span class="mx-1" v-if="singleLine && canteen.city && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
+    <p class="my-0 location" :class="{ inline: singleLine }" v-if="canteen.city">
       {{ canteen.city }}
     </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="sectors">
-      <span class="mx-1" v-if="singleLine && (canteen.dailyMealCount || canteen.city)">/</span>
-      <v-icon small aria-hidden="false" role="img" aria-label="Secteurs">$building-fill</v-icon>
+    <span class="mx-1" v-if="singleLine && sectors && (canteen.dailyMealCount || canteen.city)">/</span>
+    <p class="my-0 sectors" :class="{ inline: singleLine }" v-if="sectors">
       {{ sectors }}
     </p>
   </div>
@@ -62,5 +57,31 @@ export default {
 <style scoped>
 .inline {
   display: inline;
+}
+p::before {
+  --icon-size: 1.2rem;
+  content: "";
+  display: inline-block;
+  flex: 0 0 auto;
+  height: var(--icon-size);
+  width: var(--icon-size);
+  background-color: #777;
+  vertical-align: calc(0.375em - var(--icon-size) * 0.5);
+}
+.satellite-count::before {
+  -webkit-mask-image: url("/static/icons/community-fill.svg");
+  mask-image: url("/static/icons/community-fill.svg");
+}
+.meal-count::before {
+  -webkit-mask-image: url("/static/icons/restaurant-fill.svg");
+  mask-image: url("/static/icons/restaurant-fill.svg");
+}
+.location::before {
+  -webkit-mask-image: url("/static/icons/compass-3-fill.svg");
+  mask-image: url("/static/icons/compass-3-fill.svg");
+}
+.sectors::before {
+  -webkit-mask-image: url("/static/icons/building-fill.svg");
+  mask-image: url("/static/icons/building-fill.svg");
 }
 </style>
