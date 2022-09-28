@@ -3,17 +3,20 @@
     <p class="my-0 satellite-count" :class="{ inline: singleLine }" v-if="hasSatelliteCanteens">
       {{ canteen.satelliteCanteensCount }} satellites
     </p>
-    <span class="mx-1" v-if="singleLine && hasDailyMealCount && hasSatelliteCanteens">/</span>
-    <p class="my-0 meal-count" :class="{ inline: singleLine }" v-if="hasDailyMealCount">
+    <p class="my-0" :class="{ inline: singleLine }" v-if="hasDailyMealCount">
+      <span class="mx-1" v-if="singleLine && hasSatelliteCanteens">/</span>
+      <span class="icon-hint meal-count">Repas :</span>
       <!-- eslint-disable-next-line prettier/prettier-->
       {{ canteen.dailyMealCount }} par jour<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
     </p>
-    <span class="mx-1" v-if="singleLine && canteen.city && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
-    <p class="my-0 location" :class="{ inline: singleLine }" v-if="canteen.city">
+    <p class="my-0" :class="{ inline: singleLine }" v-if="canteen.city">
+      <span class="mx-1" v-if="singleLine && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
+      <span class="icon-hint location">Ville :</span>
       {{ canteen.city }}
     </p>
-    <span class="mx-1" v-if="singleLine && sectors && (canteen.dailyMealCount || canteen.city)">/</span>
-    <p class="my-0 sectors" :class="{ inline: singleLine }" v-if="sectors">
+    <p class="my-0" :class="{ inline: singleLine }" v-if="sectors">
+      <span class="mx-1" v-if="singleLine && (hasSatelliteCanteens || canteen.dailyMealCount || canteen.city)">/</span>
+      <span class="icon-hint sectors">Secteurs d'activité :</span>
       {{ sectors }}
     </p>
   </div>
@@ -58,15 +61,23 @@ export default {
 .inline {
   display: inline;
 }
-p::before {
-  --icon-size: 1.2rem;
+.icon-hint {
+  --icon-size: 1.1rem;
+  height: var(--icon-size);
+  width: var(--icon-size);
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: calc(0.435em - var(--icon-size) * 0.5);
+}
+.icon-hint::before {
+  --icon-size: 1.1rem;
   content: "";
   display: inline-block;
   flex: 0 0 auto;
   height: var(--icon-size);
   width: var(--icon-size);
   background-color: #777;
-  vertical-align: calc(0.375em - var(--icon-size) * 0.5);
+  vertical-align: calc(0.435em - var(--icon-size) * 0.5);
 }
 .satellite-count::before {
   -webkit-mask-image: url("/static/icons/community-fill.svg");
