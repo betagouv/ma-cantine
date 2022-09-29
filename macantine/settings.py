@@ -88,6 +88,8 @@ INSTALLED_APPS = [
     "magicauth",
     "django_filters",
     "common",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
 ]
 
 MIDDLEWARE = [
@@ -223,6 +225,24 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Ma Cantine API",
+    "DESCRIPTION": "API de l'application « ma cantine »",
+    "VERSION": "1",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+    "PREPROCESSING_HOOKS": [
+        "drf_spectacular.hooks.preprocess_exclude_path_format",
+        "api.hooks.ma_cantine_preprocessing_hook",
+    ],
+    "POSTPROCESSING_HOOKS": [
+        "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",
+    ],
 }
 
 # Frontend - VueJS application
@@ -469,7 +489,6 @@ OAUTH2_PROVIDER = {
     "PKCE_REQUIRED": False,
     "SCOPES": {
         "user:read": "Lire votre profil utilisateur",
-        "user:write": "Modifier vos données utilisateur",
         "canteen:read": "Lire les données de votre cantine",
         "canteen:write": "Modifier les données de votre cantine",
     },

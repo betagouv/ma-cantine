@@ -462,7 +462,7 @@ export default new Vuex.Store({
       const payload = {
         diagnosticId: id,
       }
-      return fetch("/api/v1/createTeledeclaration/", {
+      return fetch("/api/v1/teledeclaration/", {
         method: "POST",
         headers,
         body: JSON.stringify(payload),
@@ -480,13 +480,9 @@ export default new Vuex.Store({
 
     cancelTeledeclaration(context, { id }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      const payload = {
-        teledeclarationId: id,
-      }
-      return fetch("/api/v1/cancelTeledeclaration/", {
+      return fetch(`/api/v1/teledeclaration/${id}/cancel/`, {
         method: "POST",
         headers,
-        body: JSON.stringify(payload),
       })
         .then(verifyResponse)
         .then((diagnostic) => {

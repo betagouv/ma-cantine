@@ -6,25 +6,33 @@ from django.template.loader import get_template
 from django.contrib.staticfiles import finders
 from django.conf import settings
 from django.utils.text import slugify
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from xhtml2pdf import pisa
 from data.models import Diagnostic, Teledeclaration
 from api.serializers import FullDiagnosticSerializer
-from api.permissions import IsAuthenticated
+from api.permissions import IsAuthenticatedOrTokenHasResourceScope
 from .utils import camelize
 
 logger = logging.getLogger(__name__)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Télédéclarer un diagnostic",
+        description="La télédéclaration créée prendra le diagnostic de l'année concernée pour créer un snapshot immutable. En créant une télédéclaration, l'utilisateur s'engage sur l'honneur sur la véracité des données télédéclarées.",
+    ),
+)
 class TeledeclarationCreateView(APIView):
     """
     This view allows creating a teledeclaration from an
     existing diagnostic.
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def post(self, request):
         try:
@@ -56,20 +64,23 @@ class TeledeclarationCreateView(APIView):
             raise ValidationError("Données d'approvisionnement manquantes")
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Annuler une télédéclaration existante.",
+        description="Un diagnostic ne peut pas être modifié si une télédéclaration a été créée. Pour corriger des données, l'utilisateur devra d'abord annuler la télédeclaration. À noter que l'utilisateur devra en créer une nouvelle une fois que le diagnostic a été corrigé.",
+    ),
+)
 class TeledeclarationCancelView(APIView):
     """
     This view cancels a submitted teledeclaration
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         try:
-            data = request.data
-            teledeclaration_id = data.get("teledeclaration_id")
-            if not teledeclaration_id:
-                raise ValidationError("teledeclarationId manquant")
-
+            teledeclaration_id = kwargs.get("pk")
             teledeclaration = Teledeclaration.objects.get(pk=teledeclaration_id)
 
             if request.user not in teledeclaration.canteen.managers.all():
@@ -85,12 +96,19 @@ class TeledeclarationCancelView(APIView):
             raise ValidationError("La télédéclaration specifiée n'existe pas")
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Obtenir une représentation PDF de la télédéclaration.",
+        description="",
+    ),
+)
 class TeledeclarationPdfView(APIView):
     """
     This view returns a PDF for proof of teledeclaration
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def get(self, request, *args, **kwargs):
 

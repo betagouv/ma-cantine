@@ -3,6 +3,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from api.views import (
     InquiryView,
     LoggedUserView,
+    UserInfoView,
     SubscribeNewsletter,
     PurchaseListCreateView,
     PurchaseRetrieveUpdateDestroyView,
@@ -25,6 +26,7 @@ from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, Satelli
 
 urlpatterns = {
     path("loggedUser/", LoggedUserView.as_view(), name="logged_user"),
+    path("userInfo/", UserInfoView.as_view(), name="user_info"),
     path("user/<int:pk>", UpdateUserView.as_view(), name="update_user"),
     path("publishedCanteens/", PublishedCanteensView.as_view(), name="published_canteens"),
     path(
@@ -91,12 +93,12 @@ urlpatterns = {
     path("importDiagnostics/complete/", ImportCompleteDiagnosticsView.as_view(), name="import_complete_diagnostics"),
     path("emailDiagnosticImportFile/", EmailDiagnosticImportFileView.as_view(), name="email_diagnostic_file"),
     path(
-        "createTeledeclaration/",
+        "teledeclaration/",
         TeledeclarationCreateView.as_view(),
         name="teledeclaration_create",
     ),
     path(
-        "cancelTeledeclaration/",
+        "teledeclaration/<int:pk>/cancel/",
         TeledeclarationCancelView.as_view(),
         name="teledeclaration_cancel",
     ),

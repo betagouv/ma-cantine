@@ -5,19 +5,32 @@ from django.conf import settings
 from django.db import IntegrityError
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.views import APIView
 from api.serializers import PublicDiagnosticSerializer
 from data.models import Canteen
-from api.permissions import IsCanteenManager, CanEditDiagnostic, IsAuthenticated
+from api.permissions import (
+    IsCanteenManager,
+    CanEditDiagnostic,
+    IsAuthenticated,
+    IsAuthenticatedOrTokenHasResourceScope,
+)
 from api.exceptions import DuplicateException
 
 logger = logging.getLogger(__name__)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Créer un nouveau diagnostic.",
+        description="Un diagnostic doit être rattaché a une cantine.",
+    )
+)
 class DiagnosticCreateView(CreateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
     model = Diagnostic
     serializer_class = PublicDiagnosticSerializer
 
@@ -42,11 +55,21 @@ class DiagnosticCreateView(CreateAPIView):
             raise DuplicateException()
 
 
+@extend_schema_view(
+    patch=extend_schema(
+        summary="Modifier un diagnostic existant.",
+        description="À noter qu'un diagnostic ne peut pas être modifié une fois qu'il a été télédéclaré. Pour ce faire, il faut d'abord annuler la télédéclaration.",
+    ),
+    put=extend_schema(
+        exclude=True,
+    ),
+)
 class DiagnosticUpdateView(UpdateAPIView):
     permission_classes = [
-        IsAuthenticated,
+        IsAuthenticatedOrTokenHasResourceScope,
         CanEditDiagnostic,
     ]
+    required_scopes = ["canteen"]
     model = Diagnostic
     serializer_class = PublicDiagnosticSerializer
     queryset = Diagnostic.objects.all()

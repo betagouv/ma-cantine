@@ -9,21 +9,29 @@ from django.http import JsonResponse
 from common.utils import send_mail
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from oauth2_provider.contrib.rest_framework import TokenHasResourceScope
-from api.serializers import LoggedUserSerializer, PasswordSerializer
-from api.permissions import IsProfileOwner, IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
+from api.serializers import LoggedUserSerializer, PasswordSerializer, UserInfoSerializer
+from api.permissions import IsProfileOwner, IsAuthenticated
 
 logger = logging.getLogger(__name__)
 
 
-class LoggedUserView(RetrieveAPIView):
+@extend_schema_view(
+    get=extend_schema(
+        summary="Obtenir des informations sur l'utilisateur identifié.",
+        description="Permet d'obtenir des informations sur l'utilisateur.",
+    ),
+)
+class UserInfoView(RetrieveAPIView):
+    include_in_documentation = True
     model = get_user_model()
-    serializer_class = LoggedUserSerializer
+    serializer_class = UserInfoSerializer
     queryset = get_user_model().objects.all()
     required_scopes = ["user"]
 
@@ -41,10 +49,24 @@ class LoggedUserView(RetrieveAPIView):
         return self.request.user
 
 
+class LoggedUserView(RetrieveAPIView):
+    model = get_user_model()
+    serializer_class = LoggedUserSerializer
+    queryset = get_user_model().objects.all()
+
+    def get(self, request, *args, **kwargs):
+        if IsAuthenticated().has_permission(self.request, self):
+            return super().get(request, *args, **kwargs)
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+    def get_object(self):
+        return self.request.user
+
+
 class UpdateUserView(UpdateAPIView):
     model = get_user_model()
     serializer_class = LoggedUserSerializer
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsProfileOwner]
+    permission_classes = [IsAuthenticated, IsProfileOwner]
     required_scopes = ["user"]
     queryset = get_user_model().objects.all()
 

@@ -11,6 +11,7 @@ from django.db import transaction, IntegrityError
 from django.db.models.functions import Cast
 from django.db.models import Sum, FloatField, Avg, Func, F, Q
 from django_filters import rest_framework as django_filters
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework import status
@@ -167,6 +168,16 @@ class PublishedCanteenSingleView(RetrieveAPIView):
     queryset = Canteen.objects.filter(publication_status="published")
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Lister avec une pagination des cantines gérées par l'utilisateur. Représentation complète.",
+        description="Une pagination est mise en place pour cet endpoint. La représentation de la cantine est complète.",
+    ),
+    post=extend_schema(
+        summary="Créer une nouvelle cantine.",
+        description="La nouvelle cantine aura comme gestionnaire l'utilisateur identifié.",
+    ),
+)
 class UserCanteensView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     model = Canteen
@@ -201,6 +212,12 @@ class UserCanteensView(ListCreateAPIView):
         return super().create(request, *args, **kwargs)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Lister toutes les cantines gérées par l'utilisateur. Représentation partielle.",
+        description="La totalité des cantines gérées par l'utilisateur - par contre seules certaines informations sont incluses.",
+    ),
+)
 class UserCanteenPreviews(ListAPIView):
     model = Canteen
     serializer_class = CanteenPreviewSerializer
@@ -211,8 +228,25 @@ class UserCanteenPreviews(ListAPIView):
         return self.request.user.canteens.all()
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Obtenir les détails d'une cantine.",
+        description="Permet d'obtenir toutes les informations sur une cantine spécifique tant que l'utilisateur soit un des gestionnaires.",
+    ),
+    put=extend_schema(
+        exclude=True,
+    ),
+    patch=extend_schema(
+        summary="Modifier une cantine existante.",
+        description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine.",
+    ),
+    delete=extend_schema(
+        summary="Supprimer une cantine existante.",
+        description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine. Attention : les diagnostics créés seront aussi supprimés.",
+    ),
+)
 class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated, IsCanteenManager]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManager]
     model = Canteen
     serializer_class = FullCanteenSerializer
     queryset = Canteen.objects.all()
@@ -243,8 +277,15 @@ def check_siret_response(request):
             )
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Activer la publication de la cantine.",
+        description="La publication permet de mettre à disposition certaines données de la cantine au grand public. Il ne s'agit pas d'une télédéclaration.",
+    ),
+)
 class PublishCanteenView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -268,8 +309,15 @@ class PublishCanteenView(APIView):
             raise ValidationError("Le cantine specifié n'existe pas")
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Enlever la publication de la cantine.",
+        description="La publication permet de mettre à disposition les données de la cantine au grand public. Il ne s'agit pas d'une télédéclaration.",
+    ),
+)
 class UnpublishCanteenView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -736,8 +784,19 @@ class SatellitesPagination(LimitOffsetPagination):
     max_limit = 40
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Lister les cantines satellites pour une cuisine centrale.",
+        description="Si la cantine en question est une cuisine centrale, cet endpoint permet de lister toutes les cantines satellites attachées à elle.",
+    ),
+    post=extend_schema(
+        summary="Ajouter une cantine satellite à la cuisine centrale.",
+        description="Si la cantine en question est une cuisine centrale, cet endpoint permet d'en ajouter une cantine satellite.",
+    ),
+)
 class SatelliteListCreateView(ListCreateAPIView):
-    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
     model = Canteen
     serializer_class = SatelliteCanteenSerializer
     pagination_class = SatellitesPagination
