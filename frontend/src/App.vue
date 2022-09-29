@@ -126,4 +126,29 @@ export default {
 .v-expansion-panel-header__icon > .v-icon {
   font-size: 1rem;
 }
+
+/* Icons */
+span.icon {
+  --icon-size: 1.75rem;
+  vertical-align: calc(0.435em - var(--icon-size) * 0.5);
+  height: var(--icon-size);
+  width: var(--icon-size);
+  overflow: hidden; /* text can be added in the span, only visible to screen readers and with css disabled */
+  display: inline-block;
+}
+span.icon::before {
+  --icon-size: 1.75rem;
+  vertical-align: calc(0.435em - var(--icon-size) * 0.5);
+  height: var(--icon-size);
+  width: var(--icon-size);
+  content: "";
+  display: inline-block;
+  flex: 0 0 auto;
+  --blue-france-sun-113-625: #000091;
+  background-color: var(--blue-france-sun-113-625);
+}
+span.i-arrow-right::before {
+  -webkit-mask-image: url("/static/icons/arrow-right-line.svg");
+  mask-image: url("/static/icons/arrow-right-line.svg");
+}
 </style>
