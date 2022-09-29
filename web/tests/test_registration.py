@@ -18,6 +18,7 @@ class TestRegistration(APITestCase):
             "cgu_approved": True,
             "email": "tester@example.com",
             "username": "tester@example.com",
+            "is_dev": False,
         }
         response = self.client.post(reverse("register"), payload)
         self.assertFormError(
@@ -42,6 +43,7 @@ class TestRegistration(APITestCase):
             "cgu_approved": True,
             "username": "test-user",
             "email": email,
+            "is_dev": False,
         }
 
         # activation email must be sent after registration
@@ -75,6 +77,7 @@ class TestRegistration(APITestCase):
             "username": "test-user",
             "phone_number": "123",
             "email": email,
+            "is_dev": False,
         }
 
         response = self.client.post(reverse("register"), payload)

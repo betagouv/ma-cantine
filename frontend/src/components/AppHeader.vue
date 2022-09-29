@@ -57,7 +57,17 @@
       <v-btn
         text
         elevation="0"
-        v-if="loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
+        v-if="loggedUser && loggedUser.isDev && userDataReady && $vuetify.breakpoint.mdAndUp"
+        :to="{ name: 'DeveloperPage' }"
+        class="d-none d-sm-flex align-self-center header-signup-button primary--text"
+      >
+        <span>Développement et APIs</span>
+      </v-btn>
+
+      <v-btn
+        text
+        elevation="0"
+        v-if="loggedUser && !loggedUser.isDev && userDataReady && $vuetify.breakpoint.mdAndUp"
         :to="{ name: 'ManagementPage' }"
         class="d-none d-sm-flex align-self-center header-signup-button primary--text"
       >

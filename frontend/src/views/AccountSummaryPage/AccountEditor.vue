@@ -45,6 +45,17 @@
               </v-btn>
             </div>
           </v-col>
+          <h2 class="body-1 font-weight-bold mt-4 mb-0 ml-4">Mode développeur</h2>
+          <v-col cols="12" class="py-0">
+            <v-checkbox hide-details="auto" class="pa-0" v-model="userCopy.isDev">
+              <template v-slot:label>
+                <span class="body-2 grey--text text--darken-3">
+                  Je suis une développeuse ou un développeur logiciel et j'ai besoin d'accéder aux APIs
+                </span>
+              </template>
+            </v-checkbox>
+            <v-divider class="mt-6"></v-divider>
+          </v-col>
           <v-col cols="12" md="6">
             <DsfrTextField
               label="Prénom"
@@ -198,7 +209,8 @@ export default {
             message,
             status: "success",
           })
-          this.$router.push({ name: "ManagementPage" })
+          const nextRoute = this.$store.state.loggedUser.isDev ? { name: "DeveloperPage" } : { name: "ManagementPage" }
+          this.$router.push(nextRoute)
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)

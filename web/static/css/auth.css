@@ -207,6 +207,16 @@ label[for="id_number_of_managed_cantines"] {
   margin: 0;
 }
 
+label[for="id_is_dev"] {
+  font-size: 15px;
+  margin-top: 15px;
+}
+
+#id_is_dev {
+  float: left;
+  margin-right: 10px;
+}
+
 input.cantine-number-input {
   display: inline-block;
   width: 100px;

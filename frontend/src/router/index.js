@@ -46,6 +46,7 @@ import PurchasesImporter from "@/views/PurchasesImporter"
 import CommunityPage from "@/views/CommunityPage"
 import FaqPage from "@/views/FaqPage"
 import SiteMap from "@/views/SiteMap"
+import DeveloperPage from "@/views/DeveloperPage"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -489,6 +490,14 @@ const routes = [
     },
   },
   {
+    path: "/developpement-et-apis/",
+    name: "DeveloperPage",
+    component: DeveloperPage,
+    meta: {
+      title: "Développement et APIs",
+    },
+  },
+  {
     path: "/:catchAll(.*)",
     component: NotFound,
     name: "NotFound",
@@ -515,7 +524,8 @@ function chooseAuthorisedRoute(to, from, next) {
         next({ name: "LandingPage" })
       })
   } else {
-    if (to.meta.home && store.state.loggedUser) next({ name: "ManagementPage" })
+    if (to.meta.home && store.state.loggedUser && !store.state.loggedUser.isDev) next({ name: "ManagementPage" })
+    else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "DeveloperPage" })
     else if (to.meta.home) next({ name: "LandingPage" })
     else if (!to.meta.authenticationRequired || store.state.loggedUser) next()
     else next({ name: "NotFound" })
