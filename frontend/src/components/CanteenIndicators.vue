@@ -8,7 +8,8 @@
       <span class="mx-1" v-if="singleLine && hasSatelliteCanteens">/</span>
       <span class="icon i-restaurant">Repas :</span>
       <!-- eslint-disable-next-line prettier/prettier-->
-      {{ canteen.dailyMealCount }} par jour<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
+      {{ canteen.dailyMealCount }} par jour
+      <span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
     </p>
     <p class="my-0" :class="{ inline: singleLine }" v-if="canteen.city">
       <span class="mx-1" v-if="singleLine && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
@@ -62,22 +63,17 @@ export default {
 .inline {
   display: inline;
 }
-span.icon {
-  --icon-size: 1.1rem;
-  vertical-align: calc(0.435em - var(--icon-size) * 0.5);
-}
+span.icon,
 span.icon::before {
   --icon-size: 1.1rem;
+  --font-size: 0.875rem;
+}
+span.icon::before {
   background-color: #777;
-  vertical-align: calc(0.435em - var(--icon-size) * 0.5);
 }
 .i-community::before {
   -webkit-mask-image: url("/static/icons/community-fill.svg");
   mask-image: url("/static/icons/community-fill.svg");
-}
-.i-restaurant::before {
-  -webkit-mask-image: url("/static/icons/restaurant-fill.svg");
-  mask-image: url("/static/icons/restaurant-fill.svg");
 }
 .i-compass::before {
   -webkit-mask-image: url("/static/icons/compass-3-fill.svg");

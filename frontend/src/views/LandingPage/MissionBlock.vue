@@ -2,30 +2,30 @@
   <v-row class="text-left">
     <v-col cols="12" sm="6" md="5" class="d-flex align-center">
       <div>
-        <div>Notre mission :</div>
+        <p>Notre mission :</p>
 
-        <div class="font-weight-bold text-h6 mt-2">
+        <p class="font-weight-bold text-h6 mt-2">
           Accompagner la transition alimentaire dans les assiettes et les filières agricoles
-        </div>
+        </p>
       </div>
     </v-col>
     <v-col cols="12" sm="6" md="7" class="pl-md-8">
-      <div>Notre service « ma cantine » a vocation à :</div>
-      <div class="mt-3">
-        <v-icon color="grey darken-3" class="mr-2">$newspaper-fill</v-icon>
+      <p>Notre service « ma cantine » a vocation à :</p>
+      <p class="mt-3">
+        <span class="icon i-newspaper mr-2"></span>
         <strong>Informer, documenter et outiller</strong>
         les acteurs sur les bonnes pratiques en restauration collective
-      </div>
-      <div class="mt-3">
-        <v-icon color="grey darken-3" class="mr-2">$restaurant-fill</v-icon>
+      </p>
+      <p class="mt-3">
+        <span class="icon i-restaurant mr-2"></span>
         <strong>Acroître la transparence</strong>
         de ce que nous mangeons dans nos réfectoires, hôpitaux...
-      </div>
-      <div class="mt-3">
-        <v-icon color="grey darken-3" class="mr-2">$team-fill</v-icon>
+      </p>
+      <p class="mt-3">
+        <span class="icon i-team mr-2"></span>
         <strong>Créer une communauté</strong>
         d'intérêts et de partage d'expériences autour du mieux manger
-      </div>
+      </p>
     </v-col>
   </v-row>
 </template>
@@ -35,3 +35,18 @@ export default {
   name: "MissionBlock",
 }
 </script>
+
+<style scoped>
+.icon,
+.icon::before {
+  --icon-size: 1.6rem;
+  --font-size: 1.1rem;
+}
+.icon::before {
+  background: #424242;
+}
+.i-newspaper::before {
+  -webkit-mask-image: url("/static/icons/newspaper-fill.svg");
+  mask-image: url("/static/icons/newspaper-fill.svg");
+}
+</style>

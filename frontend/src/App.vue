@@ -128,21 +128,19 @@ export default {
 }
 
 /* Icons */
-span.icon {
+span.icon,
+span.icon::before {
+  /* override these two variables to change the size of the icon and it's alignment relative to text */
   --icon-size: 1.75rem;
-  vertical-align: calc(0.435em - var(--icon-size) * 0.5);
+  --font-size: 2rem;
+  vertical-align: calc(var(--font-size) - var(--icon-size) * 0.95);
   height: var(--icon-size);
   width: var(--icon-size);
   overflow: hidden; /* text can be added in the span, only visible to screen readers and with css disabled */
   display: inline-block;
 }
 span.icon::before {
-  --icon-size: 1.75rem;
-  vertical-align: calc(0.435em - var(--icon-size) * 0.5);
-  height: var(--icon-size);
-  width: var(--icon-size);
   content: "";
-  display: inline-block;
   flex: 0 0 auto;
   --blue-france-sun-113-625: #000091;
   background-color: var(--blue-france-sun-113-625);
@@ -150,5 +148,13 @@ span.icon::before {
 span.i-arrow-right::before {
   -webkit-mask-image: url("/static/icons/arrow-right-line.svg");
   mask-image: url("/static/icons/arrow-right-line.svg");
+}
+span.i-restaurant::before {
+  -webkit-mask-image: url("/static/icons/restaurant-fill.svg");
+  mask-image: url("/static/icons/restaurant-fill.svg");
+}
+span.i-team::before {
+  -webkit-mask-image: url("/static/icons/team-fill.svg");
+  mask-image: url("/static/icons/team-fill.svg");
 }
 </style>
