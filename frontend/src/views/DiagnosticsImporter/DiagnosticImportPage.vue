@@ -1,6 +1,9 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav :links="[{ to: { name: 'DiagnosticsImporter' } }]" :title="type.title" />
+    <BreadcrumbsNav
+      :links="[{ to: { name: 'ManagementPage' } }, { to: { name: 'DiagnosticsImporter' } }]"
+      :title="type.title"
+    />
 
     <v-row class="my-4 mx-0">
       <v-icon large class="mr-4" color="black">{{ type.icon }}</v-icon>

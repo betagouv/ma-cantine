@@ -47,7 +47,7 @@
     </div>
     <v-card-actions class="px-4 py-0">
       <v-spacer></v-spacer>
-      <v-icon color="primary">$arrow-right-line</v-icon>
+      <span class="icon i-arrow-right"></span>
     </v-card-actions>
   </v-card>
 </template>

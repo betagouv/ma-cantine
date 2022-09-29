@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav />
+    <BreadcrumbsNav :links="[{ to: { name: 'ManagementPage' } }]" />
     <h1 class="font-weight-black text-h4 my-6">Importer vos données</h1>
     <p>
       Vous êtes en mesure d'exporter vos données en format CSV ? Utilisez notre outil d'import pour ajouter vos cantines
@@ -35,7 +35,7 @@
               <v-spacer></v-spacer>
               <v-card-actions class="px-4 pt-0">
                 <v-spacer></v-spacer>
-                <v-icon color="primary">$arrow-right-line</v-icon>
+                <span class="icon i-arrow-right"></span>
               </v-card-actions>
             </v-card>
           </template>
