@@ -20,7 +20,7 @@
           class="fill-height d-flex flex-column px-3 dsfr"
         >
           <v-card-text class="pb-1 pt-6">
-            <v-icon>{{ measure.mdiIcon }}</v-icon>
+            <span :class="`icon ${measure.iconClass} measure-icon`"></span>
           </v-card-text>
           <v-card-title class="text-body-1 text-left font-weight-bold">
             {{ measure.title }}
@@ -28,7 +28,7 @@
           <v-spacer></v-spacer>
           <v-card-actions class="px-4 py-4">
             <v-spacer></v-spacer>
-            <v-icon color="primary">$arrow-right-line</v-icon>
+            <span class="icon i-arrow-right"></span>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -47,3 +47,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.measure-icon::before {
+  background-color: #424242;
+}
+</style>

@@ -144,17 +144,36 @@ span.icon::before {
   flex: 0 0 auto;
   --blue-france-sun-113-625: #000091;
   background-color: var(--blue-france-sun-113-625);
+  -webkit-mask-image: var(--icon-image);
+  mask-image: var(--icon-image);
 }
 span.i-arrow-right::before {
-  -webkit-mask-image: url("/static/icons/arrow-right-line.svg");
-  mask-image: url("/static/icons/arrow-right-line.svg");
+  --icon-image: url("/static/icons/arrow-right-line.svg");
 }
 span.i-restaurant::before {
-  -webkit-mask-image: url("/static/icons/restaurant-fill.svg");
-  mask-image: url("/static/icons/restaurant-fill.svg");
+  --icon-image: url("/static/icons/restaurant-fill.svg");
 }
 span.i-team::before {
-  -webkit-mask-image: url("/static/icons/team-fill.svg");
-  mask-image: url("/static/icons/team-fill.svg");
+  --icon-image: url("/static/icons/team-fill.svg");
+}
+span.i-leaf::before {
+  --icon-image: url("/static/icons/leaf-fill.svg");
+  background-color: #43a047; /* Vuetify green darken-2 */
+}
+span.mdi-food-apple::before {
+  --icon-image: url("/static/icons/mdi-food-apple.svg");
+  background-color: #f44336; /* Vuetify red */
+}
+span.mdi-bullhorn::before {
+  --icon-image: url("/static/icons/mdi-bullhorn.svg");
+  background-color: #ffa000; /* Vuetify amber darken-2 */
+}
+span.mdi-offer::before {
+  --icon-image: url("/static/icons/mdi-offer.svg");
+  background-color: #f57c00; /* Vuetify orange darken-2 */
+}
+span.mdi-weather-windy::before {
+  --icon-image: url("/static/icons/mdi-weather-windy.svg");
+  background-color: #1e88e5; /* Vuetify blue darken-1 */
 }
 </style>

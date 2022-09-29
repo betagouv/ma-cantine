@@ -1,6 +1,6 @@
 <template>
   <div v-if="measure">
-    <v-icon x-large class="mt-n2" :color="measure.mdiIconColor">{{ measure.mdiIcon }}</v-icon>
+    <span :class="`icon ${measure.iconClass}`"></span>
     <span class="ml-4">{{ measure.title }}</span>
   </div>
 </template>
@@ -13,3 +13,11 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.icon,
+.icon::before {
+  --icon-size: 2.5rem;
+  --font-size: 1.75rem;
+}
+</style>

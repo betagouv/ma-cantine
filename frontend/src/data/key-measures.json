@@ -8,9 +8,8 @@
       "earliestISO": "2022-01-01"
     },
     "descriptionComponent": "KeyMeasureDescriptionQuality",
+    "iconClass": "mdi-food-apple",
     "id": "qualite-des-produits",
-    "mdiIcon": "mdi-food-apple",
-    "mdiIconColor": "red",
     "shortTitle": "Qualité des produits",
     "subMeasures": [
       {
@@ -49,9 +48,8 @@
       "display": "Janvier et octobre 2020",
       "earliestISO": "2020-01-01"
     },
+    "iconClass": "mdi-offer",
     "id": "gaspillage-alimentaire",
-    "mdiIcon": "mdi-offer",
-    "mdiIconColor": "orange darken-2",
     "shortTitle": "Gaspillage alimentaire",
     "subMeasures": [
       {
@@ -108,9 +106,8 @@
     "badgeId": "diversification",
     "baseComponent": "DiversificationMeasure",
     "baseMeasureComponent": "DiversificationMeasure",
+    "iconClass": "i-leaf",
     "id": "diversification-des-menus",
-    "mdiIcon": "$leaf-fill",
-    "mdiIconColor": "green darken-1",
     "shortTitle": "Diversification des menus",
     "subMeasures": [
       {
@@ -186,9 +183,8 @@
     "badgeId": "plastic",
     "baseComponent": "NoPlasticMeasure",
     "baseMeasureComponent": null,
+    "iconClass": "mdi-weather-windy",
     "id": "interdiction-du-plastique",
-    "mdiIcon": "mdi-weather-windy",
-    "mdiIconColor": "blue darken-1",
     "shortTitle": "Interdiction du plastique",
     "subMeasures": [
       {
@@ -249,9 +245,8 @@
     "badgeId": "info",
     "baseComponent": "InformationMeasure",
     "baseMeasureComponent": null,
+    "iconClass": "mdi-bullhorn",
     "id": "information-des-usagers",
-    "mdiIcon": "mdi-bullhorn",
-    "mdiIconColor": "amber darken-2",
     "shortTitle": "Information des convives",
     "subMeasures": [
       {
