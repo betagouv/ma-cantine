@@ -16,10 +16,11 @@ class PartnersPagination(LimitOffsetPagination):
     departments = []
 
     def paginate_queryset(self, queryset, request, view=None):
-        self.types = Partner.objects.values_list("types__name", flat=True).distinct()
+        published_partners = Partner.objects.filter(published=True)
+        self.types = published_partners.values_list("types__name", flat=True).distinct()
         self.types = [t for t in self.types if t is not None]
         self.departments = []
-        departments = Partner.objects.values_list("departments", flat=True).distinct()
+        departments = published_partners.values_list("departments", flat=True).distinct()
         for depList in departments:
             if depList is not None:
                 for department in depList:
@@ -43,7 +44,7 @@ class PartnersPagination(LimitOffsetPagination):
 class PartnersView(ListAPIView):
     model = Partner
     serializer_class = PartnerShortSerializer
-    queryset = Partner.objects.all()
+    queryset = Partner.objects.filter(published=True)
     pagination_class = PartnersPagination
 
     def get_queryset(self):
@@ -67,5 +68,5 @@ class PartnersView(ListAPIView):
 
 class PartnerView(RetrieveAPIView):
     model = Partner
-    queryset = Partner.objects.all()
+    queryset = Partner.objects.filter(published=True)
     serializer_class = PartnerSerializer
