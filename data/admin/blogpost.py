@@ -31,7 +31,7 @@ class BlogPostAdmin(admin.ModelAdmin):
         "author",
         "published_state",
     )
-    list_filter = ("author",)
+    list_filter = ("published",)
 
     def published_state(self, obj):
         return "✅ Publié" if obj.published else "🔒 Non publié"
