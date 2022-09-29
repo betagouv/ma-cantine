@@ -63,24 +63,21 @@ export default {
 .inline {
   display: inline;
 }
-span.icon,
-span.icon::before {
-  --icon-size: 1.1rem;
-  --font-size: 0.875rem;
+.icon,
+.icon::before {
+  --icon-size: var(--icon-small);
+  --font-size: var(--icon-small-font);
 }
 span.icon::before {
   background-color: #777;
 }
 .i-community::before {
-  -webkit-mask-image: url("/static/icons/community-fill.svg");
-  mask-image: url("/static/icons/community-fill.svg");
+  --icon-image: url("/static/icons/community-fill.svg");
 }
 .i-compass::before {
-  -webkit-mask-image: url("/static/icons/compass-3-fill.svg");
-  mask-image: url("/static/icons/compass-3-fill.svg");
+  --icon-image: url("/static/icons/compass-3-fill.svg");
 }
 .i-building::before {
-  -webkit-mask-image: url("/static/icons/building-fill.svg");
-  mask-image: url("/static/icons/building-fill.svg");
+  --icon-image: url("/static/icons/building-fill.svg");
 }
 </style>

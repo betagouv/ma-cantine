@@ -13,7 +13,7 @@
       </v-col>
     </v-row>
     <v-btn large outlined color="primary" class="mt-2 mx-auto" :to="{ name: 'BlogsHome' }">
-      <v-icon small class="mr-1">$newspaper-fill</v-icon>
+      <span class="icon i-newspaper mr-1"></span>
       Visiter notre blog
     </v-btn>
   </div>
@@ -47,3 +47,11 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.icon,
+.icon::before {
+  --icon-size: var(--icon-small);
+  --font-size: var(--icon-small-font);
+}
+</style>

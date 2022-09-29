@@ -39,14 +39,10 @@ export default {
 <style scoped>
 .icon,
 .icon::before {
-  --icon-size: 1.6rem;
-  --font-size: 1.1rem;
+  --icon-size: var(--icon-medium);
+  --font-size: var(--icon-medium-font);
 }
 .icon::before {
   background: #424242;
-}
-.i-newspaper::before {
-  -webkit-mask-image: url("/static/icons/newspaper-fill.svg");
-  mask-image: url("/static/icons/newspaper-fill.svg");
 }
 </style>

@@ -4,7 +4,7 @@
       <v-col cols="12" sm="4" v-for="resource in resources" :key="resource.title">
         <v-card elevation="0">
           <v-card-title class="text-body-1 text-left font-weight-bold">
-            <v-icon color="grey darken-3 mr-2">{{ resource.icon }}</v-icon>
+            <span :class="`icon ${resource.icon}`"></span>
             <span class="ml-2">{{ resource.title }}</span>
           </v-card-title>
           <v-card-text class="text-left">
@@ -36,7 +36,7 @@ export default {
     if (this.$store.state.loggedUser) {
       resources.push({
         title: "Générer mon affiche",
-        icon: "$article-fill",
+        icon: "i-article",
         description: "Obtenez un PDF à afficher ou à envoyer par mail à vos convives",
         url: null,
         to: { name: "GeneratePosterPage" },
@@ -45,7 +45,7 @@ export default {
     } else {
       resources.push({
         title: "Autodiagnostic",
-        icon: "mdi-chart-pie",
+        icon: "i-pie-chart",
         description: "Simulez un diagnostic avec les données de votre établissement",
         url: null,
         to: { name: "DiagnosticPage" },
@@ -54,7 +54,7 @@ export default {
     }
     resources.push({
       title: "Communauté",
-      icon: "$team-fill",
+      icon: "i-team",
       description: "Découvrez nos événements et échangez avec des autres gestionnaires",
       url: null,
       to: { name: "CommunityPage" },
@@ -62,7 +62,7 @@ export default {
     })
     resources.push({
       title: "Documentation",
-      icon: "$book-2-fill",
+      icon: "i-book",
       description: "Ressources pour les acteurs et actrices de la restauration collective",
       url: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
       to: null,
@@ -73,3 +73,14 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.icon,
+.icon::before {
+  --icon-size: var(--icon-medium);
+  --font-size: var(--icon-medium-font);
+}
+.icon::before {
+  background-color: #424242;
+}
+</style>

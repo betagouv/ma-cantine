@@ -131,13 +131,20 @@ export default {
 span.icon,
 span.icon::before {
   /* override these two variables to change the size of the icon and it's alignment relative to text */
-  --icon-size: 1.75rem;
-  --font-size: 2rem;
+  --icon-size: var(--icon-large);
+  --font-size: var(--icon-large-font);
   vertical-align: calc(var(--font-size) - var(--icon-size) * 0.95);
   height: var(--icon-size);
   width: var(--icon-size);
   overflow: hidden; /* text can be added in the span, only visible to screen readers and with css disabled */
   display: inline-block;
+  /* standard icon size options */
+  --icon-large: 1.75rem;
+  --icon-large-font: 2rem;
+  --icon-medium: 1.6rem;
+  --icon-medium-font: 1.1rem;
+  --icon-small: 1.1rem;
+  --icon-small-font: 0.875rem;
 }
 span.icon::before {
   content: "";
@@ -155,6 +162,18 @@ span.i-restaurant::before {
 }
 span.i-team::before {
   --icon-image: url("/static/icons/team-fill.svg");
+}
+span.i-article::before {
+  --icon-image: url("/static/icons/article-fill.svg");
+}
+span.i-newspaper::before {
+  --icon-image: url("/static/icons/newspaper-fill.svg");
+}
+span.i-pie-chart::before {
+  --icon-image: url("/static/icons/pie-chart-2-fill.svg");
+}
+span.i-book::before {
+  --icon-image: url("/static/icons/book-2-fill.svg");
 }
 span.i-leaf::before {
   --icon-image: url("/static/icons/leaf-fill.svg");
