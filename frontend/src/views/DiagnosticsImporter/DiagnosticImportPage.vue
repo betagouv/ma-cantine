@@ -227,7 +227,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import FileDrop from "@/components/FileDrop"
 import HelpForm from "./HelpForm"
 import Constants from "@/constants"
-import DownloadLinkList from "@/components/DownloadLinkList.vue"
+import DownloadLinkList from "@/components/DsfrDownloadLinkList.vue"
 import DsfrCallout from "@/components/DsfrCallout"
 
 export default {

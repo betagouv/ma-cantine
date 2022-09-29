@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import DownloadLink from "@/components/DownloadLink.vue"
+import DownloadLink from "@/components/DsfrDownloadLink.vue"
 
 export default {
   name: "ToolsBlock",

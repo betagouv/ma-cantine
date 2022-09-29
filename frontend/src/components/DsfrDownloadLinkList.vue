@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import DownloadLink from "./DownloadLink"
+import DownloadLink from "./DsfrDownloadLink"
 
 export default {
   components: { DownloadLink },

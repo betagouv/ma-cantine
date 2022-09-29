@@ -229,7 +229,7 @@ import InformationMeasure from "@/components/KeyMeasureDiagnostic/InformationMea
 import WasteMeasure from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/DiversificationMeasure"
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
-import DownloadLink from "@/components/DownloadLink"
+import DownloadLink from "@/components/DsfrDownloadLink"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import SimplifiedQualityValues from "./SimplifiedQualityValues"

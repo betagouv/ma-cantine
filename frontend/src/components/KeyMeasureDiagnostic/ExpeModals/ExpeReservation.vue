@@ -436,7 +436,7 @@ import { formatDate, getObjectDiff } from "@/utils"
 import { treatInboundPercentageValues, treatOutboundPercentageValues } from "./utils"
 import validators from "@/validators"
 import Constants from "@/constants"
-import DownloadLink from "../../DownloadLink.vue"
+import DownloadLink from "@/components/DsfrDownloadLink"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 

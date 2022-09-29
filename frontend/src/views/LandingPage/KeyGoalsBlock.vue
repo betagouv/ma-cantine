@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import DownloadLink from "@/components/DownloadLink"
+import DownloadLink from "@/components/DsfrDownloadLink"
 
 export default {
   components: { DownloadLink },
