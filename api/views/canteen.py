@@ -170,11 +170,11 @@ class PublishedCanteenSingleView(RetrieveAPIView):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Liste en pagination des cantines gérées par l'utilisateur. Représentation complète.",
+        summary="Lister avec une pagination des cantines gérées par l'utilisateur. Représentation complète.",
         description="Une pagination est mise en place pour cet endpoint. La représentation de la cantine est complète.",
     ),
     post=extend_schema(
-        summary="Création d'une nouvelle cantine.",
+        summary="Créer une nouvelle cantine.",
         description="La nouvelle cantine aura comme gestionnaire l'utilisateur identifié.",
     ),
 )
@@ -214,7 +214,7 @@ class UserCanteensView(ListCreateAPIView):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Liste de toutes les cantines gérées par l'utilisateur. Représentation partielle.",
+        summary="Lister toutes les cantines gérées par l'utilisateur. Représentation partielle.",
         description="La totalité des cantines gérées par l'utilisateur - par contre seules certaines informations sont incluses.",
     ),
 )
@@ -230,18 +230,18 @@ class UserCanteenPreviews(ListAPIView):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Visualisation des détails d'une cantine.",
+        summary="Obtenir les détails d'une cantine.",
         description="Permet d'obtenir toutes les informations sur une cantine spécifique tant que l'utilisateur soit un des gestionnaires.",
     ),
     put=extend_schema(
         exclude=True,
     ),
     patch=extend_schema(
-        summary="Modification d'une cantine existante.",
+        summary="Modifier une cantine existante.",
         description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine.",
     ),
     delete=extend_schema(
-        summary="Suppression d'une cantine existante.",
+        summary="Supprimer une cantine existante.",
         description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine. Attention : les diagnostics créés seront aussi supprimés.",
     ),
 )
@@ -280,7 +280,7 @@ def check_siret_response(request):
 @extend_schema_view(
     post=extend_schema(
         summary="Activer la publication de la cantine.",
-        description="La publication permet de mettre à disposition les données de la cantine au grand public. Il ne s'agit pas d'une télédéclaration.",
+        description="La publication permet de mettre à disposition certaines données de la cantine au grand public. Il ne s'agit pas d'une télédéclaration.",
     ),
 )
 class PublishCanteenView(APIView):
@@ -786,11 +786,11 @@ class SatellitesPagination(LimitOffsetPagination):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Liste des cantines satellites pour une cuisine centrale.",
+        summary="Lister les cantines satellites pour une cuisine centrale.",
         description="Si la cantine en question est une cuisine centrale, cet endpoint permet de lister toutes les cantines satellites attachées à elle.",
     ),
     post=extend_schema(
-        summary="Ajout d'une cantine satellite à la cuisine centrale.",
+        summary="Ajouter une cantine satellite à la cuisine centrale.",
         description="Si la cantine en question est une cuisine centrale, cet endpoint permet d'en ajouter une cantine satellite.",
     ),
 )

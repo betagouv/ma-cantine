@@ -24,8 +24,8 @@ logger = logging.getLogger(__name__)
 
 @extend_schema_view(
     post=extend_schema(
-        summary="Création d'un nouveau diagnostic.",
-        description="Un diagnostic doit être rattaché a une cantine. Certains vérifications sur les données peuvent être effectués.",
+        summary="Créer un nouveau diagnostic.",
+        description="Un diagnostic doit être rattaché a une cantine.",
     )
 )
 class DiagnosticCreateView(CreateAPIView):
@@ -57,7 +57,7 @@ class DiagnosticCreateView(CreateAPIView):
 
 @extend_schema_view(
     patch=extend_schema(
-        summary="Modification d'un diagnostic existant.",
+        summary="Modifier un diagnostic existant.",
         description="À noter qu'un diagnostic ne peut pas être modifié une fois qu'il a été télédéclaré. Pour ce faire, il faut d'abord annuler la télédéclaration.",
     ),
     put=extend_schema(
