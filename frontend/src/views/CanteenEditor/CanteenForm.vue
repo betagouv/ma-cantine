@@ -199,7 +199,7 @@
           </v-radio-group>
         </v-col>
 
-        <v-col cols="12" md="6" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
+        <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
           <DsfrTextField
             label="Couverts moyen par jour (convives sur place)"
             hide-details="auto"
@@ -213,7 +213,23 @@
           />
         </v-col>
 
-        <v-col cols="12" md="6" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
+        <v-col cols="12" md="4" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
+          <DsfrTextField
+            label="Nombre total de repas à l'année (y compris les repas livrés)"
+            hide-details="auto"
+            :rules="showSatelliteCanteensCount ? [validators.greaterThanZero, greaterThanDailyMealCount] : []"
+            :disabled="!showSatelliteCanteensCount"
+            :messages="
+              showSatelliteCanteensCount ? [] : 'Concerne uniquement les cuisines qui livrent à des satellites'
+            "
+            validate-on-blur
+            v-model="canteen.yearlyMealCount"
+            prepend-icon="$restaurant-fill"
+            labelClasses="body-2 mb-2"
+          />
+        </v-col>
+
+        <v-col cols="12" md="4" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
           <DsfrTextField
             label="Nombre de cantines à qui je fournis des repas"
             hide-details="auto"
@@ -736,6 +752,12 @@ export default {
     displayTechnicalControlDialog(bodyText) {
       this.technicalControlText = bodyText
       this.showTechnicalControlDialog = true
+    },
+    greaterThanDailyMealCount(input) {
+      if (this.canteen.productionType === "central_serving" && input < this.canteen.dailyMealCount) {
+        return `Ce total doit être superieur du moyen de repas par jour sur place, actuellement ${this.canteen.dailyMealCount}`
+      }
+      return true
     },
   },
   watch: {

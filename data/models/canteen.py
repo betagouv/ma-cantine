@@ -104,6 +104,7 @@ class Canteen(SoftDeletionModel):
     )
 
     daily_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par jour")
+    yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par an (cuisines centrales)")
     satellite_canteens_count = models.IntegerField(
         null=True,
         blank=True,

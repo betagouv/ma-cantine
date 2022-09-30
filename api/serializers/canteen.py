@@ -140,6 +140,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "sectors",
             "line_ministry",
             "daily_meal_count",
+            "yearly_meal_count",
             "satellite_canteens_count",
             "siret",
             "central_producer_siret",

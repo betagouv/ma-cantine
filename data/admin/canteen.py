@@ -54,6 +54,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "city_insee_code",
         "postal_code",
         "daily_meal_count",
+        "yearly_meal_count",
         "satellite_canteens_count",
         "economic_model",
         "sectors",
