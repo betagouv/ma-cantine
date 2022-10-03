@@ -440,7 +440,7 @@ class TestPurchaseApi(APITestCase):
             date="2020-01-01",
             characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
             family=Purchase.Family.PRODUITS_DE_LA_MER,
-            price_ht=50,
+            price_ht=55,
         )
 
         # Should be counted on EGALIM
@@ -494,8 +494,8 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["fishTotal"], 155.0)
-        self.assertEqual(body["fishEgalim"], 120.0)
+        self.assertEqual(body["fishTotal"], 160.0)
+        self.assertEqual(body["fishEgalim"], 125.0)
 
     @authenticate
     def test_purchase_not_authorized(self):

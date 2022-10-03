@@ -229,6 +229,9 @@ class CanteenPurchasesSummaryView(APIView):
             "BIO",
             "LABEL_ROUGE",
             "AOCAOP_IGP_STG",
+            "AOCAOP",
+            "IGP",
+            "STG",
             "HVE",
             "PECHE_DURABLE",
             "RUP",
@@ -236,6 +239,7 @@ class CanteenPurchasesSummaryView(APIView):
             "FERMIER",
             "EXTERNALITES",
             "PERFORMANCE",
+            "EQUIVALENTS",
         ]
         other_labels = ["FRANCE", "SHORT_DISTRIBUTION", "LOCAL"]
         # reset filter to 0 exclusions
@@ -292,7 +296,7 @@ class CanteenPurchasesSummaryView(APIView):
         )
         data["fish_total"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"]
 
-        fish_egalim_purchases = purchases.filter(characteristics__overlap=egalim_labels)
+        fish_egalim_purchases = fish_purchases.filter(characteristics__overlap=egalim_labels)
         data["fish_egalim"] = fish_egalim_purchases.aggregate(total=Sum("price_ht"))["total"]
 
         return Response(PurchaseSummarySerializer(data).data)
