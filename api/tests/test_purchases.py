@@ -285,7 +285,7 @@ class TestPurchaseApi(APITestCase):
         """
         Given a year, return spending by category
         Bio category is the sum of all products with bio label
-        Every category apart from bio should exlude bio (so bio + label rouge gets counted in bio but not label rouge)
+        Every category apart from bio should exclude bio (so bio + label rouge gets counted in bio but not label rouge)
         Categories should respect the heirarchy (if something is label rouge + AOC only count in rouge; if AOC and fermier count in AOC only)
         The three categories outside of EGAlim should get the totals regardless of what other labels they have
         The category of AOC/AOP/IGP/STG should count items with two or more labels once (applicable to extended declaration)
@@ -353,6 +353,149 @@ class TestPurchaseApi(APITestCase):
             reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_purchase_meat_totals(self):
+        """
+        The totals for "viandes et volailles" must be included in the payload
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
+        # Should be counted on EGALIM only once
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=50,
+        )
+
+        # Should be counted on EGALIM
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.BIO],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=40,
+        )
+
+        # Should be counted on EGALIM
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.LABEL_ROUGE],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=30,
+        )
+
+        # Should not be counted as EGAlim, only included in the total
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=20,
+        )
+
+        # Should be counted on provenance france
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.FRANCE],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=15,
+        )
+
+        # Not in the year 2020 - should not be included at all
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2019-01-01",
+            characteristics=[],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=10,
+        )
+
+        response = self.client.get(
+            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["meatPoultryTotal"], 155.0)
+        self.assertEqual(body["meatPoultryEgalim"], 120.0)
+        self.assertEqual(body["meatPoultryFrance"], 15.0)
+
+    @authenticate
+    def test_purchase_fish_totals(self):
+        """
+        The totals for "poissons, produits de la mer et aquaculture" must be included in the payload
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
+        # Should be counted on EGALIM only once
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
+            family=Purchase.Family.PRODUITS_DE_LA_MER,
+            price_ht=50,
+        )
+
+        # Should be counted on EGALIM
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.BIO],
+            family=Purchase.Family.PRODUITS_DE_LA_MER,
+            price_ht=40,
+        )
+
+        # Should be counted on EGALIM
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.LABEL_ROUGE],
+            family=Purchase.Family.PRODUITS_DE_LA_MER,
+            price_ht=30,
+        )
+
+        # Should not be counted as EGAlim, only included in the total
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[],
+            family=Purchase.Family.PRODUITS_DE_LA_MER,
+            price_ht=20,
+        )
+
+        # Should not be counted as EGAlim, only included in the total
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.FRANCE],
+            family=Purchase.Family.PRODUITS_DE_LA_MER,
+            price_ht=15,
+        )
+
+        # Not in the year 2020 - should not be included at all
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2019-01-01",
+            characteristics=[],
+            family=Purchase.Family.PRODUITS_DE_LA_MER,
+            price_ht=10,
+        )
+
+        response = self.client.get(
+            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["fishTotal"], 155.0)
+        self.assertEqual(body["fishEgalim"], 120.0)
 
     @authenticate
     def test_purchase_not_authorized(self):

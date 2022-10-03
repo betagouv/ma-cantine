@@ -272,6 +272,29 @@ class CanteenPurchasesSummaryView(APIView):
                 key = family.lower() + "_" + label.lower()
                 data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"]
 
+        meat_poultry_purchases = purchases.filter(
+            family=Purchase.Family.VIANDES_VOLAILLES,
+        )
+        data["meat_poultry_total"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"]
+
+        meat_poultry_egalim_purchases = purchases.filter(characteristics__overlap=egalim_labels)
+        data["meat_poultry_egalim"] = meat_poultry_egalim_purchases.aggregate(total=Sum("price_ht"))["total"]
+
+        meat_poultry_egalim_france = purchases.filter(
+            characteristics__contains=[
+                "FRANCE",
+            ]
+        )
+        data["meat_poultry_france"] = meat_poultry_egalim_france.aggregate(total=Sum("price_ht"))["total"]
+
+        fish_purchases = purchases.filter(
+            family=Purchase.Family.PRODUITS_DE_LA_MER,
+        )
+        data["fish_total"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"]
+
+        fish_egalim_purchases = purchases.filter(characteristics__overlap=egalim_labels)
+        data["fish_egalim"] = fish_egalim_purchases.aggregate(total=Sum("price_ht"))["total"]
+
         return Response(PurchaseSummarySerializer(data).data)
 
     def _get_canteen(self, canteen_id, request):

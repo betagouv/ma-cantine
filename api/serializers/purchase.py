@@ -47,6 +47,12 @@ class PurchaseSummarySerializer(serializers.Serializer):
     hve = PurchaseField()
     aoc_aop_igp = PurchaseField()
     rouge = PurchaseField()
+    # meat and fish aggregates
+    meat_poultry_total = PurchaseField()
+    meat_poultry_egalim = PurchaseField()
+    meat_poultry_france = PurchaseField()
+    fish_total = PurchaseField()
+    fish_egalim = PurchaseField()
     # complex: by family and label
     viandes_volailles_bio = PurchaseField()
     produits_de_la_mer_bio = PurchaseField()
