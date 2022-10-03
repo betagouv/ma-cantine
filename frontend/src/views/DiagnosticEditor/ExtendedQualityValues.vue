@@ -59,6 +59,14 @@
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueMeatPoultryHt"
+      @autofill="checkTotal"
+      purchaseType="totaux viandes et volailles"
+      :amount="purchasesSummary.meatPoultryTotal"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+    />
 
     <label :for="'fish-' + diagnostic.year" class="body-2 mt-4 d-block">
       <div class="d-inline-flex mr-2">
@@ -84,6 +92,14 @@
       :messages="fishError ? [errorMessage] : undefined"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+    />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueFishHt"
+      @autofill="checkTotal"
+      purchaseType="totaux de poissons, produits de la mer et aquaculture"
+      :amount="purchasesSummary.fishTotal"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
