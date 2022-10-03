@@ -200,8 +200,13 @@
         </v-col>
 
         <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
+          <label for="daily-meals">
+            Couverts moyen par
+            <b>jour</b>
+            (convives sur place)
+          </label>
           <DsfrTextField
-            label="Couverts moyen par jour (convives sur place)"
+            id="daily-meals"
             hide-details="auto"
             :rules="showDailyMealCount ? [validators.greaterThanZero] : []"
             :disabled="!showDailyMealCount"
@@ -214,8 +219,13 @@
         </v-col>
 
         <v-col cols="12" md="4" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
+          <label for="yearly-meals">
+            Nombre total de couverts à
+            <b>l'année</b>
+            (y compris les couverts livrés)
+          </label>
           <DsfrTextField
-            label="Nombre total de repas à l'année (y compris les repas livrés)"
+            id="yearly-meals"
             hide-details="auto"
             :rules="showSatelliteCanteensCount ? [validators.greaterThanZero, greaterThanDailyMealCount] : []"
             :disabled="!showSatelliteCanteensCount"
@@ -231,7 +241,7 @@
 
         <v-col cols="12" md="4" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
           <DsfrTextField
-            label="Nombre de cantines à qui je fournis des repas"
+            label="Nombre de cantines/lieux de service à qui je fournis des repas"
             hide-details="auto"
             :rules="showSatelliteCanteensCount ? [validators.greaterThanZero] : []"
             :disabled="!showSatelliteCanteensCount"
