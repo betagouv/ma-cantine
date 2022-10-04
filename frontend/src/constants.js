@@ -100,7 +100,6 @@ export default Object.freeze({
       text: "Performance environnementale",
       longText: "Produits acquis sur la base de leurs performances en matière environnementale",
     },
-    NON_EGALIM: { text: "Non-EGAlim" },
     FRANCE: { text: "Provenance France" },
     SHORT_DISTRIBUTION: { text: "Circuit-court" },
     LOCAL: { text: "Local" },
