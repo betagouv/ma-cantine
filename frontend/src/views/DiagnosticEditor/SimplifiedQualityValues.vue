@@ -215,6 +215,14 @@
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueMeatPoultryHt"
+      @autofill="checkTotal"
+      purchaseType="totaux viandes et volailles"
+      :amount="purchasesSummary.meatPoultryTotal"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+    />
 
     <!-- Viande et volailles EGALIM -->
     <div class="d-block d-sm-flex align-center mt-8">
@@ -247,6 +255,14 @@
       :error="meatPoultryError"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+    />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueMeatPoultryEgalimHt"
+      @autofill="checkTotal"
+      purchaseType="viandes et volailles EGAlim"
+      :amount="purchasesSummary.meatPoultryEgalim"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -283,6 +299,14 @@
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueMeatPoultryFranceHt"
+      @autofill="checkTotal"
+      purchaseType="viandes et volailles provenance France"
+      :amount="purchasesSummary.meatPoultryFrance"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+    />
 
     <!-- Poissons -->
     <v-divider class="mb-4 mt-8"></v-divider>
@@ -317,6 +341,14 @@
       class="mt-2"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueFishHt"
+      @autofill="checkTotal"
+      purchaseType="totaux de poissons, produits de la mer et aquaculture"
+      :amount="purchasesSummary.fishTotal"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+    />
 
     <!-- Poissons EGALIM -->
     <div class="d-block d-sm-flex align-center mt-8">
@@ -346,6 +378,14 @@
       :error="fishError"
       @blur="checkTotal"
       class="mt-2"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+    />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueFishEgalimHt"
+      @autofill="checkTotal"
+      purchaseType="poissons, produits de la mer et aquaculture EGAlim"
+      :amount="purchasesSummary.fishEgalim"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
   </div>
