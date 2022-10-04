@@ -281,10 +281,10 @@ class CanteenPurchasesSummaryView(APIView):
         )
         data["meat_poultry_total"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"]
 
-        meat_poultry_egalim = purchases.filter(characteristics__overlap=egalim_labels)
+        meat_poultry_egalim = meat_poultry_purchases.filter(characteristics__overlap=egalim_labels)
         data["meat_poultry_egalim"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"]
 
-        meat_poultry_france = purchases.filter(
+        meat_poultry_france = meat_poultry_purchases.filter(
             characteristics__contains=[
                 "FRANCE",
             ]
