@@ -200,7 +200,7 @@
         </v-col>
 
         <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
-          <label for="daily-meals" class="body-2 mb-2 d-block">
+          <label for="daily-meals" class="body-2 mb-2 d-block" :class="{ 'mb-lg-7': isNewCanteen }">
             Couverts moyen par
             <b>jour</b>
             (convives sur place)
