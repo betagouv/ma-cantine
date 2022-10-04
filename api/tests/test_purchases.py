@@ -362,11 +362,15 @@ class TestPurchaseApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
 
-        # Should be counted on EGALIM only once
+        # Should be counted both on EGALIM and "Provenance France"
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
+            characteristics=[
+                Purchase.Characteristic.BIO,
+                Purchase.Characteristic.LABEL_ROUGE,
+                Purchase.Characteristic.FRANCE,
+            ],
             family=Purchase.Family.VIANDES_VOLAILLES,
             price_ht=50,
         )
@@ -424,7 +428,7 @@ class TestPurchaseApi(APITestCase):
         body = response.json()
         self.assertEqual(body["meatPoultryTotal"], 155.0)
         self.assertEqual(body["meatPoultryEgalim"], 120.0)
-        self.assertEqual(body["meatPoultryFrance"], 15.0)
+        self.assertEqual(body["meatPoultryFrance"], 65.0)
 
     @authenticate
     def test_purchase_fish_totals(self):
