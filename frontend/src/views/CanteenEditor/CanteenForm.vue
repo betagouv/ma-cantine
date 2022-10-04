@@ -200,7 +200,7 @@
         </v-col>
 
         <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
-          <label for="daily-meals">
+          <label for="daily-meals" class="body-2 mb-2 d-block">
             Couverts moyen par
             <b>jour</b>
             (convives sur place)
@@ -214,12 +214,11 @@
             validate-on-blur
             v-model="canteen.dailyMealCount"
             prepend-icon="$restaurant-fill"
-            labelClasses="body-2 mb-2"
           />
         </v-col>
 
         <v-col cols="12" md="4" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
-          <label for="yearly-meals">
+          <label for="yearly-meals" class="body-2 mb-2 d-block">
             Nombre total de couverts à
             <b>l'année</b>
             (y compris les couverts livrés)
@@ -235,7 +234,6 @@
             validate-on-blur
             v-model="canteen.yearlyMealCount"
             prepend-icon="$restaurant-fill"
-            labelClasses="body-2 mb-2"
           />
         </v-col>
 
