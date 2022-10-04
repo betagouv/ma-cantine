@@ -281,23 +281,23 @@ class CanteenPurchasesSummaryView(APIView):
         )
         data["meat_poultry_total"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"]
 
-        meat_poultry_egalim_purchases = purchases.filter(characteristics__overlap=egalim_labels)
-        data["meat_poultry_egalim"] = meat_poultry_egalim_purchases.aggregate(total=Sum("price_ht"))["total"]
+        meat_poultry_egalim = purchases.filter(characteristics__overlap=egalim_labels)
+        data["meat_poultry_egalim"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"]
 
-        meat_poultry_egalim_france = purchases.filter(
+        meat_poultry_france = purchases.filter(
             characteristics__contains=[
                 "FRANCE",
             ]
         )
-        data["meat_poultry_france"] = meat_poultry_egalim_france.aggregate(total=Sum("price_ht"))["total"]
+        data["meat_poultry_france"] = meat_poultry_france.aggregate(total=Sum("price_ht"))["total"]
 
         fish_purchases = purchases.filter(
             family=Purchase.Family.PRODUITS_DE_LA_MER,
         )
         data["fish_total"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"]
 
-        fish_egalim_purchases = fish_purchases.filter(characteristics__overlap=egalim_labels)
-        data["fish_egalim"] = fish_egalim_purchases.aggregate(total=Sum("price_ht"))["total"]
+        fish_egalim = fish_purchases.filter(characteristics__overlap=egalim_labels)
+        data["fish_egalim"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"]
 
         return Response(PurchaseSummarySerializer(data).data)
 
