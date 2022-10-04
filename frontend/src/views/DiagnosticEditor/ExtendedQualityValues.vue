@@ -209,37 +209,6 @@ import DsfrTextField from "@/components/DsfrTextField"
 const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que la somme des valeurs par label"
 const DEFAULT_FAMILY_TOTAL_ERROR = "La somme des achats par famille ne peut pas excéder le total des achats"
 
-const MISC_LABELS = {
-  FERMIER: {
-    icon: "mdi-cow",
-    color: "brown",
-  },
-  EXTERNALITES: {
-    icon: "mdi-flower-tulip-outline",
-    color: "purple",
-  },
-  PERFORMANCE: {
-    icon: "mdi-chart-line",
-    color: "green",
-  },
-  NON_EGALIM: {
-    icon: "mdi-dots-horizontal",
-    color: "grey",
-  },
-  FRANCE: {
-    icon: "$france-line",
-    color: "indigo",
-  },
-  SHORT_DISTRIBUTION: {
-    icon: "mdi-chart-timeline-variant",
-    color: "pink",
-  },
-  LOCAL: {
-    icon: "mdi-map-marker-outline",
-    color: "blue",
-  },
-}
-
 export default {
   name: "ExtendedQualityValues",
   props: {
@@ -386,7 +355,7 @@ export default {
           singleLabel = labels.find((l) => l.src.startsWith("commerce-equitable"))
           break
       }
-      singleLabel = singleLabel || MISC_LABELS[characteristicId]
+      singleLabel = singleLabel || Constants.MiscLabelIcons[characteristicId]
       if (singleLabel) {
         return [singleLabel]
       }

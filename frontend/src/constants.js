@@ -380,4 +380,34 @@ export default Object.freeze({
       icon: "$checkbox-circle-fill",
     },
   ],
+  MiscLabelIcons: {
+    FERMIER: {
+      icon: "mdi-cow",
+      color: "brown",
+    },
+    EXTERNALITES: {
+      icon: "mdi-flower-tulip-outline",
+      color: "purple",
+    },
+    PERFORMANCE: {
+      icon: "mdi-chart-line",
+      color: "green",
+    },
+    NON_EGALIM: {
+      icon: "mdi-dots-horizontal",
+      color: "grey",
+    },
+    FRANCE: {
+      icon: "$france-line",
+      color: "indigo",
+    },
+    SHORT_DISTRIBUTION: {
+      icon: "mdi-chart-timeline-variant",
+      color: "pink",
+    },
+    LOCAL: {
+      icon: "mdi-map-marker-outline",
+      color: "blue",
+    },
+  },
 })
