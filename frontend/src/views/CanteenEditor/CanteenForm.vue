@@ -217,20 +217,22 @@
           />
         </v-col>
 
-        <v-col cols="12" md="4" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
-          <label for="yearly-meals" class="body-2 mb-2 d-block">
+        <v-col cols="12" md="4">
+          <label
+            for="yearly-meals"
+            class="body-2 d-block mb-2"
+            :class="{
+              'mb-lg-7': !showSatelliteCanteensCount,
+            }"
+          >
             Nombre total de couverts à
             <b>l'année</b>
-            (y compris les couverts livrés)
+            <span v-if="showSatelliteCanteensCount">&nbsp;(y compris les couverts livrés)</span>
           </label>
           <DsfrTextField
             id="yearly-meals"
             hide-details="auto"
-            :rules="showSatelliteCanteensCount ? [validators.greaterThanZero, greaterThanDailyMealCount] : []"
-            :disabled="!showSatelliteCanteensCount"
-            :messages="
-              showSatelliteCanteensCount ? [] : 'Concerne uniquement les cuisines qui livrent à des satellites'
-            "
+            :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
             validate-on-blur
             v-model="canteen.yearlyMealCount"
             prepend-icon="$restaurant-fill"
