@@ -45,7 +45,7 @@ class TeledeclarationCreateView(APIView):
             if request.user not in diagnostic.canteen.managers.all():
                 raise PermissionDenied()
 
-            TeledeclarationCreateView.validateDiagnostic(diagnostic)
+            Teledeclaration.validateDiagnostic(diagnostic)
             Teledeclaration.createFromDiagnostic(diagnostic, request.user)
 
             data = FullDiagnosticSerializer(diagnostic).data
@@ -57,11 +57,6 @@ class TeledeclarationCreateView(APIView):
         except DjangoValidationError as e:
             message = "Il existe déjà une télédéclaration en cours pour cette année"
             raise ValidationError(message) from e
-
-    @staticmethod
-    def validateDiagnostic(diagnostic):
-        if not diagnostic.value_total_ht:
-            raise ValidationError("Données d'approvisionnement manquantes")
 
 
 @extend_schema_view(
