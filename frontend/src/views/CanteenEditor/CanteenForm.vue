@@ -199,9 +199,14 @@
           </v-radio-group>
         </v-col>
 
-        <v-col cols="12" md="6" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
+        <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
+          <label for="daily-meals" class="body-2 mb-2 d-block" :class="{ 'mb-lg-7': isNewCanteen }">
+            Couverts moyen par
+            <b>jour</b>
+            (convives sur place)
+          </label>
           <DsfrTextField
-            label="Couverts moyen par jour (convives sur place)"
+            id="daily-meals"
             hide-details="auto"
             :rules="showDailyMealCount ? [validators.greaterThanZero] : []"
             :disabled="!showDailyMealCount"
@@ -209,13 +214,34 @@
             validate-on-blur
             v-model="canteen.dailyMealCount"
             prepend-icon="$restaurant-fill"
-            labelClasses="body-2 mb-2"
           />
         </v-col>
 
-        <v-col cols="12" md="6" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
+        <v-col cols="12" md="4">
+          <label
+            for="yearly-meals"
+            class="body-2 d-block mb-2"
+            :class="{
+              'mb-lg-7': !showSatelliteCanteensCount,
+            }"
+          >
+            Nombre total de couverts à
+            <b>l'année</b>
+            <span v-if="showSatelliteCanteensCount">&nbsp;(y compris les couverts livrés)</span>
+          </label>
           <DsfrTextField
-            label="Nombre de cantines à qui je fournis des repas"
+            id="yearly-meals"
+            hide-details="auto"
+            :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
+            validate-on-blur
+            v-model="canteen.yearlyMealCount"
+            prepend-icon="$restaurant-fill"
+          />
+        </v-col>
+
+        <v-col cols="12" md="4" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
+          <DsfrTextField
+            label="Nombre de cantines/lieux de service à qui je fournis des repas"
             hide-details="auto"
             :rules="showSatelliteCanteensCount ? [validators.greaterThanZero] : []"
             :disabled="!showSatelliteCanteensCount"
@@ -736,6 +762,12 @@ export default {
     displayTechnicalControlDialog(bodyText) {
       this.technicalControlText = bodyText
       this.showTechnicalControlDialog = true
+    },
+    greaterThanDailyMealCount(input) {
+      if (this.canteen.productionType === "central_serving" && input < this.canteen.dailyMealCount) {
+        return `Ce total doit être superieur du moyen de repas par jour sur place, actuellement ${this.canteen.dailyMealCount}`
+      }
+      return true
     },
   },
   watch: {
