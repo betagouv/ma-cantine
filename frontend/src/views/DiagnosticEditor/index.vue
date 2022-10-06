@@ -218,6 +218,7 @@
               class="ma-3"
               @click="openTeledeclarationPreview"
               :disabled="!canSubmitTeledeclaration"
+              v-if="isTeledeclarationYear"
             >
               <v-icon class="mr-2">$checkbox-circle-fill</v-icon>
               Valider et télédéclarer
@@ -225,7 +226,7 @@
           </div>
           <p
             class="text-caption amber--text text--darken-3 text-md-right mb-0 mx-3 mt-n1"
-            v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration"
+            v-if="isTeledeclarationYear && !hasActiveTeledeclaration && !canSubmitTeledeclaration"
           >
             <v-icon small color="amber darken-3">mdi-alert</v-icon>
             Données d'approvisionnement manquantes
@@ -350,7 +351,7 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return this.isTeledeclarationYear && (this.diagnostic.valueTotalHt > 0 || this.diagnostic.valueTotalHt === 0)
+      return this.diagnostic.valueTotalHt > 0 || this.diagnostic.valueTotalHt === 0
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
