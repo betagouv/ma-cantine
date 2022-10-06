@@ -31,17 +31,6 @@
               />
               <div v-else class="text-h6 font-weight-bold">{{ diagnostic.year }}</div>
             </v-col>
-            <v-col
-              cols="12"
-              md="4"
-              v-if="!isNewDiagnostic && canSubmitTeledeclaration"
-              class="d-flex align-end justify-end"
-            >
-              <a color="primary" href="#teledeclaration">
-                <v-icon color="primary">mdi-arrow-down</v-icon>
-                Télédéclarer le diagnostic
-              </a>
-            </v-col>
             <v-col v-if="!diagnosticIsUnique" cols="12" class="ma-0 text-body-2 red--text">
               Un diagnostic pour cette cantine et cette année existe déjà.
               <v-btn small text class="text-decoration-underline text-body-2 mt-n1" @click="goToExistingDiagnostic">
@@ -54,9 +43,12 @@
                 <v-icon small color="primary">mdi-information</v-icon>
                 Vous pourrez télédéclarer ce diagnostic après avoir remplir les données d'approvisionnement
               </p>
-              <p v-else-if="!hasActiveTeledeclaration" class="text-caption ma-0 pl-4">
-                <v-icon small color="primary">mdi-information</v-icon>
-                Vous n'avez pas encore télédéclaré ce diagnostic
+              <p v-else-if="!hasActiveTeledeclaration" class="text-body-2 pl-4 mb-0 d-flex align-center">
+                <v-icon small color="primary" class="mr-1">mdi-information</v-icon>
+                Vous n'avez pas encore télédéclaré ce diagnostic -&nbsp;
+                <a color="primary" href="#teledeclaration">
+                  télédéclarez-le
+                </a>
               </p>
               <div v-else class="px-2 mt-2">
                 <p class="text-caption mb-2">
@@ -205,33 +197,39 @@
           </v-form>
         </div>
 
-        <v-sheet rounded color="grey lighten-4 pa-3" v-if="!hasActiveTeledeclaration" class="d-flex">
-          <v-spacer></v-spacer>
-          <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
-            Annuler
-          </v-btn>
-          <v-btn
-            x-large
-            :outlined="canSubmitTeledeclaration"
-            color="primary"
-            @click="saveDiagnostic"
-            :disabled="!diagnosticIsUnique"
-          >
-            Valider
-          </v-btn>
-          <div v-if="canSubmitTeledeclaration" class="ml-4">
-            <v-btn x-large color="primary" @click="openTeledeclarationPreview" :disabled="!canSubmitTeledeclaration">
-              <v-icon class="mr-2">mdi-cloud-upload</v-icon>
-              Télédéclarer mon diagnostic
+        <v-sheet rounded color="grey lighten-4" v-if="!hasActiveTeledeclaration" class="pa-3">
+          <div class="justify-md-end d-flex flex-column flex-md-row">
+            <v-btn x-large outlined color="primary" class="ma-3" :to="{ name: 'ManagementPage' }">
+              Annuler
             </v-btn>
-            <p
-              v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration"
-              class="text-caption mt-2 mb-0 text-right amber--text text--darken-3"
+            <v-btn
+              x-large
+              :outlined="isTeledeclarationYear"
+              color="primary"
+              class="ma-3"
+              @click="saveDiagnostic"
+              :disabled="!diagnosticIsUnique"
             >
-              <v-icon small color="amber darken-3">mdi-alert</v-icon>
-              Données d'approvisionnement manquantes
-            </p>
+              Valider
+            </v-btn>
+            <v-btn
+              x-large
+              color="primary"
+              class="ma-3"
+              @click="openTeledeclarationPreview"
+              :disabled="!canSubmitTeledeclaration"
+            >
+              <v-icon class="mr-2">$checkbox-circle-fill</v-icon>
+              Valider et télédéclarer
+            </v-btn>
           </div>
+          <p
+            class="text-caption amber--text text--darken-3 text-md-right mb-0 mx-3 mt-n1"
+            v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration"
+          >
+            <v-icon small color="amber darken-3">mdi-alert</v-icon>
+            Données d'approvisionnement manquantes
+          </p>
         </v-sheet>
       </v-col>
     </v-row>

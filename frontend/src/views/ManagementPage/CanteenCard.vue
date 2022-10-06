@@ -65,7 +65,7 @@ export default {
     teledeclarationStatus() {
       const diagnostics = this.canteen.diagnostics
       const diagnostic = diagnostics.find((d) => d.year === this.teledeclarationYear)
-      const teledeclared = diagnostic && diagnostic.teledeclaration
+      const teledeclared = diagnostic && diagnostic.teledeclaration && diagnostic.teledeclaration.status === "SUBMITTED"
       if (teledeclared) {
         return {
           color: "green lighten-4",

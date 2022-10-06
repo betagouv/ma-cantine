@@ -94,7 +94,10 @@ export default {
   },
   methods: {
     shouldTeledeclare(diagnostic) {
-      return !diagnostic.teledeclaration && diagnostic.year === lastYear()
+      return (
+        (!diagnostic.teledeclaration || diagnostic.teledeclaration.status == "CANCELLED") &&
+        diagnostic.year === lastYear()
+      )
     },
   },
 }
