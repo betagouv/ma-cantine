@@ -5,7 +5,6 @@
       :diagnostic="diagnostic"
       v-model="showTeledeclarationPreview"
       @teledeclare="submitTeledeclaration"
-      @redirect="redirectFromTeledeclarationDialog"
     />
     <v-row class="mt-2">
       <v-col class="text-left pb-10">
@@ -184,7 +183,7 @@
           </v-btn>
         </v-sheet>
 
-        <!-- <div v-if="!hasActiveTeledeclaration && isTeledeclarationYear">
+        <div v-if="!hasActiveTeledeclaration && isTeledeclarationYear">
           <v-divider class="mt-8"></v-divider>
           <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
           <p>
@@ -218,7 +217,7 @@
             <v-icon small color="amber darken-3">mdi-alert</v-icon>
             Données d'approvisionnement manquantes
           </p>
-        </div> -->
+        </div>
       </v-col>
     </v-row>
   </div>
@@ -256,7 +255,7 @@ export default {
         information: true,
         select: true,
       },
-      // teledeclarationFormIsValid: true,
+      teledeclarationFormIsValid: true,
       openedPanel: null,
       cancelDialog: false,
       teledeclarationYear: lastYear(),
@@ -499,17 +498,13 @@ export default {
         })
         .then((diagnostic) => {
           this.bypassLeaveWarning = true
+          this.$store.dispatch("notify", {
+            title: "Mise à jour prise en compte",
+            message: `Votre diagnostic a bien été ${this.isNewDiagnostic ? "créé" : "modifié"}`,
+            status: "success",
+          })
           this.updateFromServer(diagnostic)
-          if (this.isTeledeclarationYear && this.canSubmitTeledeclaration) {
-            this.openTeledeclarationPreview()
-          } else {
-            this.$store.dispatch("notify", {
-              title: "Mise à jour prise en compte",
-              message: `Votre diagnostic a bien été ${this.isNewDiagnostic ? "créé" : "modifié"}`,
-              status: "success",
-            })
-            this.navigateToDiagnosticList()
-          }
+          this.navigateToDiagnosticList()
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
@@ -554,19 +549,19 @@ export default {
     },
     openTeledeclarationPreview() {
       const diagnosticFormsAreValid = this.validateForms()
-      // const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
+      const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
       if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
-      // if (!teledeclarationFormIsValid) return
+      if (!teledeclarationFormIsValid) return
       this.showTeledeclarationPreview = true
     },
     submitTeledeclaration() {
       const diagnosticFormsAreValid = this.validateForms()
-      // const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
+      const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
 
       if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
 
-      // if (!teledeclarationFormIsValid) return
+      if (!teledeclarationFormIsValid) return
 
       const saveIfChanged = () => {
         if (!this.hasChanged) return Promise.resolve()
@@ -596,8 +591,7 @@ export default {
             status: "success",
           })
           this.updateFromServer(diagnostic)
-          // this.navigateToDiagnosticList()
-          this.$router.push({ name: "ManagementPage" })
+          this.navigateToDiagnosticList()
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
         .finally(() => {
@@ -619,15 +613,6 @@ export default {
           this.navigateToDiagnosticList()
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
-    },
-    redirectFromTeledeclarationDialog() {
-      // show message from save action in saveDiagnostic
-      this.$store.dispatch("notify", {
-        title: "Mise à jour prise en compte",
-        message: `Votre diagnostic a bien été ${this.isNewDiagnostic ? "créé" : "modifié"}`,
-        status: "success",
-      })
-      this.navigateToDiagnosticList()
     },
     updateFromServer(diagnostic) {
       if (this.isNewDiagnostic) {

@@ -1,19 +1,9 @@
 <template>
   <v-dialog v-model="isOpen" max-width="750">
     <v-card ref="content">
-      <v-card-title class="font-weight-bold">Télédéclarer mon diagnostic</v-card-title>
+      <v-card-title class="font-weight-bold">Votre télédéclaration</v-card-title>
       <v-card-text class="text-left pb-0">
-        <p>
-          Un bilan annuel relatif à la mise en œuvre des dispositions de la loi EGAlim, et notamment des objectifs
-          d'approvisionnement en produits de qualité et durables dont bio dans les repas servis dans les restaurants
-          collectifs, est prévu par le décret du 23 avril 2019.
-        </p>
-        <p>
-          Nous vous proposons d’utiliser les informations de votre autodiagnostic {{ teledeclarationYear }} et de les
-          transmettre, avec votre accord, à la DGAL, direction du Ministère de l'agriculture en charge de l'élaboration
-          de ce bilan.
-        </p>
-        <p>Veuillez vérifier les données ci-dessous.</p>
+        Veuillez vérifier les données ci-dessous.
       </v-card-text>
       <v-card-text ref="table" class="my-4" style="overflow-y: scroll; border: solid 1px #9b9b9b;">
         <v-simple-table dense>
@@ -46,29 +36,16 @@
           </template>
         </v-simple-table>
       </v-card-text>
-      <v-card-actions class="pr-4 pb-4 mt-n6 d-block">
-        <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" class="pb-1">
-          <v-checkbox
-            v-model="honourConfirmation"
-            :rules="[validators.checked]"
-            label="Je déclare sur l’honneur la véracité de mes informations"
-          ></v-checkbox>
-        </v-form>
-        <div class="d-flex">
-          <v-spacer></v-spacer>
-          <v-btn outlined color="primary" @click="closeDialog">Modifier mes données</v-btn>
-          <v-btn outlined color="primary" class="ml-4" @click="redirect">Valider sans télédéclarer</v-btn>
-          <v-btn color="primary" class="ml-4" @click="confirmTeledeclaration">Télédéclarer ces données</v-btn>
-        </div>
+      <v-card-actions class="d-flex pr-4 pb-4">
+        <v-spacer></v-spacer>
+        <v-btn outlined color="primary" @click="closeDialog">Annuler</v-btn>
+        <v-btn color="primary" class="ml-4" @click="confirmTeledeclaration">Télédéclarer ces données</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import validators from "@/validators"
-import { lastYear } from "@/utils"
-
 export default {
   props: {
     value: {
@@ -77,14 +54,6 @@ export default {
     diagnostic: {
       required: true,
     },
-  },
-  data() {
-    return {
-      validators,
-      teledeclarationFormIsValid: true,
-      teledeclarationYear: lastYear(),
-      honourConfirmation: false,
-    }
   },
   computed: {
     isOpen: {
@@ -447,9 +416,6 @@ export default {
         },
       ]
     },
-    canteenUrlComponent() {
-      return this.$store.getters.getCanteenUrlComponent(this.canteen)
-    },
   },
   methods: {
     calculateTableHeight() {
@@ -540,19 +506,10 @@ export default {
       return items[communicationFrequency] || "Non renseigné"
     },
     closeDialog() {
-      // reset form
-      this.honourConfirmation = false
-      this.$refs["teledeclarationForm"].reset()
       this.$emit("input", false)
     },
-    redirect() {
-      this.$emit("redirect")
-    },
     confirmTeledeclaration() {
-      this.teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
-      if (this.teledeclarationFormIsValid) {
-        this.$emit("teledeclare")
-      }
+      this.$emit("teledeclare")
     },
   },
   mounted() {
