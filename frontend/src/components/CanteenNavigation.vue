@@ -30,9 +30,12 @@
             >
               <v-list-item-title class="text-body-2 font-weight-bold pl-6">
                 {{ diagnostic.year }}
-                <v-icon v-if="hasActiveTeledeclaration(diagnostic)" color="grey" small class="mt-n1 ml-1">
-                  $checkbox-circle-fill
-                </v-icon>
+                <span v-if="shouldTeledeclare(diagnostic)" class="font-weight-medium">
+                  <v-icon color="primary" small class="mt-n1 ml-1">
+                    mdi-information
+                  </v-icon>
+                  Télédéclarez-le
+                </span>
               </v-list-item-title>
             </v-list-item>
           </div>
@@ -90,8 +93,8 @@ export default {
     },
   },
   methods: {
-    hasActiveTeledeclaration(diagnostic) {
-      return diagnostic.teledeclaration && diagnostic.teledeclaration.status === "SUBMITTED"
+    shouldTeledeclare(diagnostic) {
+      return !diagnostic.teledeclaration && diagnostic.year === lastYear()
     },
   },
 }
