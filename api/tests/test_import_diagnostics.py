@@ -9,6 +9,7 @@ from rest_framework import status
 from data.models import Diagnostic, Canteen, ManagerInvitation
 from data.factories import SectorFactory, CanteenFactory, UserFactory
 from data.department_choices import Department
+from data.models.teledeclaration import Teledeclaration
 from data.region_choices import Region
 import requests
 import requests_mock
@@ -767,6 +768,28 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
+
+    @authenticate
+    def test_teledeclare_diagnostics_on_import(self, _):
+        """
+        Staff have the option to teledeclare imported diagnostics directly from import
+        NB: since total is required for diag import all teledeclarations should work
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.email = "authenticate@example.com"
+        user.save()
+        authenticate.user.refresh_from_db()
+        self.assertEqual(Teledeclaration.objects.count(), 0)
+        with open("./api/tests/files/teledeclaration_simple.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(body["teledeclarations"], 1)
+        self.assertEqual(Teledeclaration.objects.count(), 1)
+
+    # TODO: test_teledeclare_complete_diagnostics_on_import for import_complete_diagnostics ?
 
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
