@@ -11,6 +11,9 @@
     <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
     <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
     <v-card-subtitle class="py-1">
+      <v-chip small :color="teledeclarationStatus.color" label class="mr-1">
+        {{ teledeclarationStatus.text }}
+      </v-chip>
       <v-chip small :color="publicationStatus.color" label>
         {{ publicationStatus.text }}
       </v-chip>
@@ -28,6 +31,7 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
+import { lastYear } from "@/utils"
 
 export default {
   name: "CanteenCard",
@@ -40,22 +44,39 @@ export default {
   components: {
     CanteenIndicators,
   },
+  data() {
+    return {
+      teledeclarationYear: lastYear(),
+    }
+  },
   computed: {
     publicationStatus() {
       return {
         draft: {
           color: "grey lighten-4",
-          text: "Pas encore publiée",
-        },
-        pending: {
-          color: "amber lighten-4",
-          text: "En attente de validation",
+          text: "Non-publiée",
         },
         published: {
           color: "green lighten-4",
           text: "Publiée",
         },
       }[this.canteen.publicationStatus || "draft"]
+    },
+    teledeclarationStatus() {
+      const diagnostics = this.canteen.diagnostics
+      const diagnostic = diagnostics.find((d) => d.year === this.teledeclarationYear)
+      const teledeclared = diagnostic && diagnostic.teledeclaration
+      if (teledeclared) {
+        return {
+          color: "green lighten-4",
+          text: `Télédéclarée (${this.teledeclarationYear})`,
+        }
+      } else {
+        return {
+          color: "grey lighten-4",
+          text: `Non-télédéclarée (${this.teledeclarationYear})`,
+        }
+      }
     },
     canteenImage() {
       if (!this.canteen.images || this.canteen.images.length === 0) return null
