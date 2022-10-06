@@ -18,7 +18,7 @@
               <p class="body-2 my-2">Cantine</p>
               <div class="text-h6 font-weight-bold">{{ originalCanteen.name }}</div>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="3">
               <p class="body-2 my-2">Année</p>
               <DsfrSelect
                 ref="yearSelect"
@@ -30,6 +30,17 @@
                 v-if="isNewDiagnostic"
               />
               <div v-else class="text-h6 font-weight-bold">{{ diagnostic.year }}</div>
+            </v-col>
+            <v-col
+              cols="12"
+              md="4"
+              v-if="!isNewDiagnostic && canSubmitTeledeclaration"
+              class="d-flex align-end justify-end"
+            >
+              <a color="primary" href="#teledeclaration">
+                <v-icon color="primary">mdi-arrow-down</v-icon>
+                Télédéclarer le diagnostic
+              </a>
             </v-col>
             <v-col v-if="!diagnosticIsUnique" cols="12" class="ma-0 text-body-2 red--text">
               Un diagnostic pour cette cantine et cette année existe déjà.
@@ -173,18 +184,7 @@
           </DiagnosticExpansionPanel>
         </v-expansion-panels>
 
-        <v-sheet rounded color="grey lighten-4 pa-3" v-if="!hasActiveTeledeclaration" class="d-flex">
-          <v-spacer></v-spacer>
-          <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
-            Annuler
-          </v-btn>
-          <v-btn x-large color="primary" @click="saveDiagnostic" :disabled="!diagnosticIsUnique">
-            Valider
-          </v-btn>
-        </v-sheet>
-
-        <div v-if="!hasActiveTeledeclaration && isTeledeclarationYear">
-          <v-divider class="mt-8"></v-divider>
+        <div v-if="!hasActiveTeledeclaration && isTeledeclarationYear" class="mt-4" id="teledeclaration">
           <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
           <p>
             Un bilan annuel relatif à la mise en œuvre des dispositions de la loi EGAlim, et notamment des objectifs
@@ -203,21 +203,36 @@
               :disabled="!canSubmitTeledeclaration"
             ></v-checkbox>
           </v-form>
-          <v-sheet rounded color="white" class="d-flex">
-            <v-spacer></v-spacer>
+        </div>
+
+        <v-sheet rounded color="grey lighten-4 pa-3" v-if="!hasActiveTeledeclaration" class="d-flex">
+          <v-spacer></v-spacer>
+          <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
+            Annuler
+          </v-btn>
+          <v-btn
+            x-large
+            :outlined="canSubmitTeledeclaration"
+            color="primary"
+            @click="saveDiagnostic"
+            :disabled="!diagnosticIsUnique"
+          >
+            Valider
+          </v-btn>
+          <div v-if="canSubmitTeledeclaration" class="ml-4">
             <v-btn x-large color="primary" @click="openTeledeclarationPreview" :disabled="!canSubmitTeledeclaration">
               <v-icon class="mr-2">mdi-cloud-upload</v-icon>
               Télédéclarer mon diagnostic
             </v-btn>
-          </v-sheet>
-          <p
-            v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration"
-            class="text-caption mt-2 mb-0 text-right amber--text text--darken-3"
-          >
-            <v-icon small color="amber darken-3">mdi-alert</v-icon>
-            Données d'approvisionnement manquantes
-          </p>
-        </div>
+            <p
+              v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration"
+              class="text-caption mt-2 mb-0 text-right amber--text text--darken-3"
+            >
+              <v-icon small color="amber darken-3">mdi-alert</v-icon>
+              Données d'approvisionnement manquantes
+            </p>
+          </div>
+        </v-sheet>
       </v-col>
     </v-row>
   </div>
@@ -337,7 +352,7 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return this.diagnostic.valueTotalHt > 0 || this.diagnostic.valueTotalHt === 0
+      return this.isTeledeclarationYear && (this.diagnostic.valueTotalHt > 0 || this.diagnostic.valueTotalHt === 0)
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
