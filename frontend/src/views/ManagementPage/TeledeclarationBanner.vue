@@ -4,11 +4,13 @@
       <v-img max-width="100" contain src="/static/images/sitting-person-color.png"></v-img>
     </div>
     <div>
-      <v-card-title class="text-body-1 font-weight-bold">Participez à la collecte de données 2022 !</v-card-title>
+      <v-card-title class="text-body-1 font-weight-bold">
+        Du 18 juillet au 16 octobre 2022, participez à la collecte de données 2022 !
+      </v-card-title>
       <v-card-text class="pb-0">
-        Du 18 juillet au 16 octobre 2022, dans votre espace diagnostic, télédéclarez vos données 2021 et devenez membre
-        de la campagne nationale de télédéclaration. L'objectif : un bilan qui permettra à l'administration d'imaginer
-        des services en cohérence avec la réalité du terrain. Il n'y a rien d'obligatoire, c'est du déclaratif !
+        Dans votre espace cantine, remplissez votre diagnostic 2021 et télédéclarez vos données (arrêté ministériel du
+        14 septembre 2022). L'objectif : établir un bilan de suivi des mesures EGAlim permettant de mieux piloter cette
+        politique publique par l'administration.
       </v-card-text>
       <v-card-actions>
         <v-btn
