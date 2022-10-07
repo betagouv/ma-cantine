@@ -18,6 +18,16 @@
         </router-link>
       </span>
     </DsfrCallout>
+    <!-- includeLink currently only used by CanteenPage, where we don't want this to show. Bit hacky -->
+    <DsfrCallout color="#C08C65" class="mb-1 body-2" v-else-if="!includeLink">
+      <span class="grey--text text--darken-2">
+        Nous vous conseillons de remplir des
+        <router-link :to="{ name: 'DiagnosticList', params: { canteenUrlComponent } }">
+          données d'approvisionnement pour l'année {{ this.publicationYear }}
+        </router-link>
+        avant que vous publiiez vos données.
+      </span>
+    </DsfrCallout>
   </div>
 </template>
 
