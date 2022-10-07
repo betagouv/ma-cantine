@@ -43,7 +43,7 @@
                 <v-icon small>mdi-information</v-icon>
                 Vous pourrez télédéclarer ce diagnostic après avoir remplir les données d'approvisionnement
               </p>
-              <p v-else-if="!hasActiveTeledeclaration" class="text-body-2 pl-4 mb-0 d-flex align-center">
+              <p v-else-if="!hasActiveTeledeclaration" class="text-body-2 pl-4 mb-0 d-md-flex align-center">
                 <v-icon small color="amber darken-3">mdi-alert</v-icon>
                 &nbsp;Vous n'avez pas encore télédéclaré ce diagnostic -&nbsp;
                 <a color="primary" href="#teledeclaration">
