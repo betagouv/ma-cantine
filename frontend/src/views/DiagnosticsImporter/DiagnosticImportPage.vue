@@ -36,6 +36,11 @@
           <code>draft</code>
           )
         </li>
+        <li>
+          Optionnel : Un état de télédéclaration (les options sont
+          <code>teledeclared</code>
+          , ou vide)
+        </li>
       </ul>
       Téléchargez l'en-tête en format :
       <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.xlsx" download>
@@ -77,6 +82,7 @@
           <span class="grey--text text--darken-4 body-2">
             {{ canteenCount }} cantines
             <span v-if="diagnosticCount">et {{ diagnosticCount }} diagnostics&nbsp;</span>
+            <span v-if="teledeclarationCount">et {{ teledeclarationCount }} télédéclarations&nbsp;</span>
             <span>ont été {{ diagnosticCount ? "traités" : "traitées" }}.</span>
           </span>
         </v-alert>
@@ -238,6 +244,7 @@ export default {
       canteens: undefined,
       canteenCount: undefined,
       diagnosticCount: undefined,
+      teledeclarationCount: undefined,
       errors: undefined,
       seconds: undefined,
       importInProgress: false,
@@ -538,6 +545,7 @@ export default {
           this.canteens = json.canteens
           this.canteenCount = json.canteens.length
           this.diagnosticCount = json.count
+          this.teledeclarationCount = json.teledeclarations
           this.errors = json.errors
           this.seconds = json.seconds
           let resultMessage = {

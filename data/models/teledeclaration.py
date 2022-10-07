@@ -75,6 +75,11 @@ class Teledeclaration(models.Model):
         return super().clean()
 
     @staticmethod
+    def validateDiagnostic(diagnostic):
+        if not diagnostic.value_total_ht:
+            raise ValidationError("Données d'approvisionnement manquantes")
+
+    @staticmethod
     def createFromDiagnostic(diagnostic, applicant, status=None):
         """
         Create a teledeclaration object from a diagnostic

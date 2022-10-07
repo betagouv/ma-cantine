@@ -5,6 +5,7 @@ import re
 import logging
 from decimal import Decimal
 from data.models.diagnostic import Diagnostic
+from data.models.teledeclaration import Teledeclaration
 from django.db import IntegrityError, transaction
 from django.db.models.functions import Lower
 from django.http import JsonResponse
@@ -34,6 +35,7 @@ class ImportDiagnosticsView(ABC, APIView):
 
     def __init__(self, **kwargs):
         self.diagnostics_created = 0
+        self.teledeclarations = 0
         self.canteens = {}
         self.errors = []
         self.start_time = None
@@ -112,13 +114,20 @@ class ImportDiagnosticsView(ABC, APIView):
         manager_emails = self._get_manager_emails_to_notify(row)
         diagnostic_year, values_dict, diagnostic_type = self._validate_diagnostic(row)
         # return staff-customisable fields
-        import_source, publication_status, silently_added_manager_emails = self._generate_canteen_meta_fields(row)
+        (
+            import_source,
+            publication_status,
+            should_teledeclare,
+            silently_added_manager_emails,
+        ) = self._generate_canteen_meta_fields(row)
         # create the canteen and potentially the diagnostic
         canteen, should_update_geolocation = self._update_or_create_canteen(
             row, import_source, publication_status, manager_emails, silently_added_manager_emails
         )
         if diagnostic_year:
-            self._create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
+            diagnostic = self._create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
+            if should_teledeclare and self.request.user.is_staff:
+                self._teledeclare_diagnostic(diagnostic)
 
         return (canteen, should_update_geolocation)
 
@@ -146,6 +155,15 @@ class ImportDiagnosticsView(ABC, APIView):
         diagnostic.full_clean()
         diagnostic.save()
         self.diagnostics_created += 1
+        return diagnostic
+
+    def _teledeclare_diagnostic(self, diagnostic):
+        try:
+            Teledeclaration.validateDiagnostic(diagnostic)
+            Teledeclaration.createFromDiagnostic(diagnostic, self.request.user)
+            self.teledeclarations += 1
+        except Exception:
+            pass
 
     @staticmethod
     def _should_update_geolocation(canteen, row):
@@ -197,15 +215,15 @@ class ImportDiagnosticsView(ABC, APIView):
             if len(self.errors)
             else [camelize(FullCanteenSerializer(canteen).data) for canteen in self.canteens.values()]
         )
-        return JsonResponse(
-            {
-                "canteens": serialized_canteens,
-                "count": 0 if len(self.errors) else self.diagnostics_created,
-                "errors": self.errors,
-                "seconds": time.time() - self.start_time,
-            },
-            status=status.HTTP_200_OK,
-        )
+        body = {
+            "canteens": serialized_canteens,
+            "count": 0 if len(self.errors) else self.diagnostics_created,
+            "errors": self.errors,
+            "seconds": time.time() - self.start_time,
+        }
+        if self.request.user.is_staff:
+            body["teledeclarations"] = self.teledeclarations
+        return JsonResponse(body, status=status.HTTP_200_OK)
 
     def _update_location_data(self, locations_csv_str):
         try:
@@ -311,6 +329,7 @@ class ImportDiagnosticsView(ABC, APIView):
         silently_added_manager_emails = []
         import_source = "Import massif"
         publication_status = Canteen.PublicationStatus.DRAFT
+        should_teledeclare = False
         if len(row) > silent_manager_idx:  # already checked earlier that it's a staff user
             try:
                 if row[silent_manager_idx]:
@@ -330,7 +349,16 @@ class ImportDiagnosticsView(ABC, APIView):
             status_idx = silent_manager_idx + 2
             if len(row) > status_idx and row[status_idx]:
                 publication_status = row[status_idx].strip()
-        return (import_source, publication_status, silently_added_manager_emails)
+            teledeclaration_idx = silent_manager_idx + 3
+            if len(row) > teledeclaration_idx and row[teledeclaration_idx]:
+                if row[teledeclaration_idx] != "teledeclared":
+                    raise ValidationError(
+                        {
+                            "teledeclaration": f"'{row[teledeclaration_idx]}' n'est pas un statut de télédéclaration valid"
+                        }
+                    )
+                should_teledeclare = True
+        return (import_source, publication_status, should_teledeclare, silently_added_manager_emails)
 
     def _parse_errors(self, e, row):  # noqa: C901
         errors = []
@@ -387,6 +415,7 @@ class ImportDiagnosticsView(ABC, APIView):
         ...
 
 
+# Allows canteen-only and simple diagnostics import
 class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     final_value_idx = 21
 
@@ -467,7 +496,6 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         # complete diagnostic should at least have the year and total
         if len(row) < self.year_idx + 1:
             raise IndexError()
-        # TODO: support staff-addable meta fields
         elif len(row) > self.final_value_idx + 1:
             raise FileFormatError(
                 detail=f"Format fichier : {self.final_value_idx + 1} colonnes attendues, {len(row)} trouvées."
@@ -504,7 +532,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE
 
     def _generate_canteen_meta_fields(self, row):
-        return ("Import massif", Canteen.PublicationStatus.DRAFT, [])
+        return ("Import massif", Canteen.PublicationStatus.DRAFT, False, [])
 
     def _column_count_error_message(self, row):
         return f"Données manquantes : au moins 12 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."

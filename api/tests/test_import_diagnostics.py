@@ -9,6 +9,7 @@ from rest_framework import status
 from data.models import Diagnostic, Canteen, ManagerInvitation
 from data.factories import SectorFactory, CanteenFactory, UserFactory
 from data.department_choices import Department
+from data.models.teledeclaration import Teledeclaration
 from data.region_choices import Region
 import requests
 import requests_mock
@@ -705,7 +706,6 @@ class TestImportDiagnosticsAPI(APITestCase):
             "Deux lignes en-tête attendues, 1 trouvée. Veuillez vérifier que vous voulez importer les diagnostics complets, et assurez-vous que le format de l'en-tête suit les exemples donnés.",
         )
 
-    # TODO: replace when allowing staff to add metadata
     @authenticate
     def test_tmp_no_staff_complete_diag(self, _):
         """
@@ -767,6 +767,48 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
+
+    @authenticate
+    def test_teledeclare_diagnostics_on_import(self, _):
+        """
+        Staff have the option to teledeclare imported diagnostics directly from import
+        NB: since total is required for diag import all teledeclarations should work
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.email = "authenticate@example.com"
+        user.save()
+        authenticate.user.refresh_from_db()
+        self.assertEqual(Teledeclaration.objects.count(), 0)
+        with open("./api/tests/files/teledeclaration_simple.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(body["teledeclarations"], 1)
+        self.assertEqual(Teledeclaration.objects.count(), 1)
+
+    @authenticate
+    def test_error_teledeclare_diagnostics_on_import(self, _):
+        """
+        If the wrong teledeclaration status is given, throw error (if blank no)
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.email = "authenticate@example.com"
+        user.save()
+        authenticate.user.refresh_from_db()
+        with open("./api/tests/files/teledeclaration_error.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Champ 'teledeclaration' : 'lol' n'est pas un statut de télédéclaration valid",
+        )
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        self.assertEqual(Teledeclaration.objects.count(), 0)
 
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
