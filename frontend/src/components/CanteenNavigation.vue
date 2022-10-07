@@ -28,14 +28,10 @@
               :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
               class="mb-0"
             >
-              <v-list-item-title class="text-body-2 font-weight-bold pl-6">
-                {{ diagnostic.year }}
-                <span v-if="shouldTeledeclare(diagnostic)" class="font-weight-medium">
-                  <v-icon color="primary" small class="mt-n1 ml-1">
-                    mdi-information
-                  </v-icon>
-                  Télédéclarez-le
-                </span>
+              <v-list-item-title class="text-body-2 font-weight-bold pl-6 d-flex align-center">
+                {{ diagnostic.year }}&nbsp;
+                <v-icon v-if="shouldTeledeclare(diagnostic)" small color="amber darken-3">mdi-alert</v-icon>
+                <span v-if="shouldTeledeclare(diagnostic)" class="font-weight-medium caption">Télédéclarez-le</span>
               </v-list-item-title>
             </v-list-item>
           </div>

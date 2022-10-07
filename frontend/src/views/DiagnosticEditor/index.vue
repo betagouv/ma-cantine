@@ -40,12 +40,12 @@
 
             <div v-if="isTeledeclarationYear">
               <p v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration" class="text-caption ma-0 pl-4">
-                <v-icon small color="primary">mdi-information</v-icon>
+                <v-icon small>mdi-information</v-icon>
                 Vous pourrez télédéclarer ce diagnostic après avoir remplir les données d'approvisionnement
               </p>
               <p v-else-if="!hasActiveTeledeclaration" class="text-body-2 pl-4 mb-0 d-flex align-center">
-                <v-icon small color="primary" class="mr-1">mdi-information</v-icon>
-                Vous n'avez pas encore télédéclaré ce diagnostic -&nbsp;
+                <v-icon small color="amber darken-3">mdi-alert</v-icon>
+                &nbsp;Vous n'avez pas encore télédéclaré ce diagnostic -&nbsp;
                 <a color="primary" href="#teledeclaration">
                   télédéclarez-le
                 </a>
