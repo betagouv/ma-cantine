@@ -706,7 +706,6 @@ class TestImportDiagnosticsAPI(APITestCase):
             "Deux lignes en-tête attendues, 1 trouvée. Veuillez vérifier que vous voulez importer les diagnostics complets, et assurez-vous que le format de l'en-tête suit les exemples donnés.",
         )
 
-    # TODO: replace when allowing staff to add metadata
     @authenticate
     def test_tmp_no_staff_complete_diag(self, _):
         """
@@ -788,8 +787,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 1)
         self.assertEqual(body["teledeclarations"], 1)
         self.assertEqual(Teledeclaration.objects.count(), 1)
-
-    # TODO: test_teledeclare_complete_diagnostics_on_import for import_complete_diagnostics ?
 
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):

@@ -490,7 +490,6 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         # complete diagnostic should at least have the year and total
         if len(row) < self.year_idx + 1:
             raise IndexError()
-        # TODO: support staff-addable meta fields
         elif len(row) > self.final_value_idx + 1:
             raise FileFormatError(
                 detail=f"Format fichier : {self.final_value_idx + 1} colonnes attendues, {len(row)} trouvées."
