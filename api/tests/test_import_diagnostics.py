@@ -788,6 +788,28 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["teledeclarations"], 1)
         self.assertEqual(Teledeclaration.objects.count(), 1)
 
+    @authenticate
+    def test_error_teledeclare_diagnostics_on_import(self, _):
+        """
+        If the wrong teledeclaration status is given, throw error (if blank no)
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.email = "authenticate@example.com"
+        user.save()
+        authenticate.user.refresh_from_db()
+        with open("./api/tests/files/teledeclaration_error.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Champ 'teledeclaration' : 'lol' n'est pas un statut de télédéclaration valid",
+        )
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        self.assertEqual(Teledeclaration.objects.count(), 0)
+
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
     @unittest.skipUnless(os.environ.get("ENVIRONMENT") == "dev", "Not in dev environment")
