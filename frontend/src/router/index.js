@@ -47,7 +47,6 @@ import CommunityPage from "@/views/CommunityPage"
 import FaqPage from "@/views/FaqPage"
 import SiteMap from "@/views/SiteMap"
 import DeveloperPage from "@/views/DeveloperPage"
-import StatsPage from "@/views/StatsPage"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -496,14 +495,6 @@ const routes = [
     component: DeveloperPage,
     meta: {
       title: "Développement et APIs",
-    },
-  },
-  {
-    path: "/statistiques-plateforme/",
-    name: "PlatformStatsPage",
-    component: StatsPage,
-    meta: {
-      title: "Statistiques d'utilisation de la plateforme",
     },
   },
   {

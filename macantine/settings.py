@@ -460,7 +460,6 @@ if DEBUG:
 CSP_FRAME_SRC = (
     "'self'",
     "ma-cantine.crisp.help",
-    "ma-cantine-metabase.cleverapps.io",
 )
 if DEBUG:
     CSP_FRAME_SRC += CSP_DEBUG_DOMAINS
