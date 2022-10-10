@@ -99,13 +99,14 @@ class CanteenAdmin(SoftDeletionAdmin):
     )
     list_filter = (
         "publication_status",
-        "import_source",
-        "sectors",
         "management_type",
         "production_type",
+        "economic_model",
         SoftDeletionStatusFilter,
+        "sectors",
         "region",
         "department",
+        "import_source",
     )
     search_fields = (
         "name",
