@@ -651,18 +651,18 @@ def badges_for_queryset(diagnostic_year_queryset):
 
 class CanteenStatisticsView(APIView):
     def get(self, request):
-        region = request.query_params.get("region")
-        department = request.query_params.get("department")
+        regions = request.query_params.getlist("region")
+        departments = request.query_params.getlist("department")
         sectors = request.query_params.getlist("sectors")
         year = request.query_params.get("year")
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
         data = {}
         canteens = Canteen.objects
-        if region:
-            canteens = canteens.filter(region=region)
-        elif department:
-            canteens = canteens.filter(department=department)
+        if regions:
+            canteens = canteens.filter(region__in=regions)
+        elif departments:
+            canteens = canteens.filter(department__in=departments)
         if sectors:
             sectors = [s for s in sectors if s.isdigit()]
             canteens = canteens.filter(sectors__in=sectors)
@@ -672,10 +672,10 @@ class CanteenStatisticsView(APIView):
         ).count()
 
         diagnostics = Diagnostic.objects.filter(year=year)
-        if region:
-            diagnostics = diagnostics.filter(canteen__region=region)
-        elif department:
-            diagnostics = diagnostics.filter(canteen__department=department)
+        if regions:
+            diagnostics = diagnostics.filter(canteen__region__in=regions)
+        elif departments:
+            diagnostics = diagnostics.filter(canteen__department__in=departments)
         if sectors:
             diagnostics = diagnostics.filter(canteen__sectors__in=sectors)
         appro_share_query = diagnostics.filter(value_total_ht__gt=0)

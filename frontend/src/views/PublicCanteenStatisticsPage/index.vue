@@ -26,12 +26,13 @@
             </v-col>
             <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
               <label for="select-department" class="text-body-2">
-                Département
+                Département(s)
               </label>
               <DsfrAutocomplete
-                v-model="chosenDepartment"
+                v-model="chosenDepartments"
                 :items="departments"
                 clearable
+                multiple
                 hide-details
                 id="select-department"
                 placeholder="Tous les départements"
@@ -229,7 +230,7 @@ export default {
       labels,
       approMeasure: keyMeasures.find((measure) => measure.badgeId === "appro"),
       otherMeasures: keyMeasures.filter((measure) => measure.badgeId !== "appro"),
-      chosenDepartment: null,
+      chosenDepartments: [],
       chosenRegion: null,
       chosenSectors: [],
       locationText: null,
@@ -417,9 +418,15 @@ export default {
     },
     createLocationText() {
       let locationText
-      if (this.chosenDepartment) {
+      if (this.chosenDepartments.length > 1) {
+        let names = []
+        this.chosenDepartments.forEach((d) => {
+          names.push(jsonDepartments.find((department) => department.departmentCode === d).departmentName)
+        })
+        locationText = `les ${this.chosenDepartments.length} départements : ${names.join(", ")}`
+      } else if (this.chosenDepartments.length === 1) {
         locationText = `« ${
-          jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment).departmentName
+          jsonDepartments.find((department) => department.departmentCode === this.chosenDepartments[0]).departmentName
         } »`
       } else if (this.chosenRegion) {
         locationText = `« ${this.chosenRegionName} »`
@@ -431,8 +438,10 @@ export default {
     updateStatistics() {
       let query = `year=${this.year}`
       this.locationText = ""
-      if (this.chosenDepartment) {
-        query += `&department=${this.chosenDepartment}`
+      if (this.chosenDepartments.length) {
+        this.chosenDepartments.forEach((d) => {
+          query += `&department=${d}`
+        })
         this.statsLevel = "department"
       } else if (this.chosenRegion) {
         query += `&region=${this.chosenRegion}`
@@ -449,8 +458,8 @@ export default {
     },
     updateRoute() {
       let query = {}
-      if (this.chosenDepartment) {
-        query.department = this.chosenDepartment
+      if (this.chosenDepartments) {
+        query.departments = this.chosenDepartments
       }
       if (this.chosenRegion) {
         query.region = this.chosenRegion
@@ -465,23 +474,20 @@ export default {
         .catch(() => {})
     },
     populateInitialParameters() {
-      this.chosenDepartment = this.$route.query.department
+      this.chosenDepartments = this.$route.query.departments || []
       this.chosenRegion = this.$route.query.region
       this.chosenSectors = this.$route.query.sectors?.split(",").map((s) => parseInt(s, 10)) || []
     },
     updateDocumentTitle() {
       let title = `Les statistiques dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
-      if (this.chosenRegion || this.chosenDepartment) title = `${this.createLocationText()} - ${title}`
+      if (this.chosenRegion || this.chosenDepartments.length) title = `${this.createLocationText()} - ${title}`
       document.title = title
     },
   },
   watch: {
     chosenRegion(newRegion) {
-      if (newRegion && this.chosenDepartment) {
-        let depInfo = jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment)
-        if (depInfo.regionCode !== newRegion) {
-          this.chosenDepartment = null
-        }
+      if (newRegion && this.chosenDepartments.length) {
+        this.chosenDepartments = []
       }
     },
     $route() {

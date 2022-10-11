@@ -120,16 +120,20 @@ class TestCanteenStatsApi(APITestCase):
         response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_canteen_stats_by_department(self):
+    def test_canteen_stats_by_departments(self):
         department = "01"
+        department_2 = "02"
         year = 2020
         CanteenFactory.create(department=department, publication_status=Canteen.PublicationStatus.PUBLISHED.value)
+        CanteenFactory.create(department=department_2, publication_status=Canteen.PublicationStatus.PUBLISHED.value)
 
-        response = self.client.get(reverse("canteen_statistics"), {"department": department, "year": year})
+        response = self.client.get(
+            reverse("canteen_statistics"), {"department": [department, department_2], "year": year}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["canteenCount"], 1)
+        self.assertEqual(body["canteenCount"], 2)
 
     def test_canteen_stats_by_sectors(self):
         year = 2020
