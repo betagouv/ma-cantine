@@ -60,6 +60,23 @@
                 class="mt-1"
               />
             </v-col>
+            <v-col class="py-2 py-sm-0" cols="12" sm="6">
+              <label for="select-epci" class="text-body-2">
+                EPCI(s)
+              </label>
+              <DsfrAutocomplete
+                v-model="chosenEpcis"
+                :items="epcis"
+                clearable
+                multiple
+                hide-details
+                id="select-epci"
+                placeholder="Tous les EPCIs"
+                class="mt-1"
+                auto-select-first
+                no-data-text="Pas de résultats"
+              />
+            </v-col>
           </v-row>
           <v-row class="mt-8">
             <v-col cols="12" sm="6" md="4">
@@ -210,6 +227,7 @@ import labels from "@/data/quality-labels.json"
 import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
+import jsonEpcis from "@/epcis.json"
 import { lastYear, normaliseText, sectorsSelectList } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
@@ -233,6 +251,7 @@ export default {
       chosenDepartments: [],
       chosenRegions: [],
       chosenSectors: [],
+      chosenEpcis: [],
       locationText: null,
       statistics: {},
       publishedChartOptions: {
@@ -272,6 +291,12 @@ export default {
     },
     regions() {
       return this.formatLocations(this.loadedRegionIds, jsonRegions, "region", "régions")
+    },
+    epcis() {
+      return jsonEpcis.map((x) => ({
+        text: x.nom,
+        value: x.code,
+      }))
     },
     publishedSeries() {
       return [
@@ -351,6 +376,7 @@ export default {
         departments: "ces départements",
         regions: "ces régions",
         site: "ce site",
+        epci: "cet EPCI",
       }[this.statsLevel]
     },
     sectorsText() {
@@ -426,7 +452,15 @@ export default {
     },
     createLocationText() {
       let locationText
-      if (this.chosenDepartments.length > 1) {
+      if (this.chosenEpcis.length > 1) {
+        let names = []
+        this.chosenEpcis.forEach((d) => {
+          names.push(jsonEpcis.find((epci) => epci.code === d).nom)
+        })
+        locationText = `les ${this.chosenEpcis.length} EPCIs : ${names.join(", ")}`
+      } else if (this.chosenEpcis.length === 1) {
+        locationText = `« ${jsonEpcis.find((epci) => epci.code === this.chosenEpcis[0]).nom} »`
+      } else if (this.chosenDepartments.length > 1) {
         let names = []
         this.chosenDepartments.forEach((d) => {
           names.push(jsonDepartments.find((department) => department.departmentCode === d).departmentName)
@@ -452,7 +486,12 @@ export default {
     updateStatistics() {
       let query = `year=${this.year}`
       this.locationText = ""
-      if (this.chosenDepartments.length) {
+      if (this.chosenEpcis.length) {
+        this.chosenEpcis.forEach((e) => {
+          query += `&epci=${e}`
+        })
+        this.statsLevel = "epci"
+      } else if (this.chosenDepartments.length) {
         this.chosenDepartments.forEach((d) => {
           query += `&department=${d}`
         })
@@ -488,6 +527,9 @@ export default {
       if (this.chosenDepartments) {
         query.department = this.chosenDepartments
       }
+      if (this.chosenEpcis) {
+        query.epcis = this.chosenEpcis
+      }
       if (this.chosenSectors.length) {
         query.sectors = this.chosenSectors.join(",")
       }
@@ -503,6 +545,7 @@ export default {
       this.chosenDepartments = this.$route.query.department || []
       if (!Array.isArray(this.chosenDepartments)) this.chosenDepartments = [this.chosenDepartments]
       this.chosenSectors = this.$route.query.sectors?.split(",").map((s) => parseInt(s, 10)) || []
+      this.chosenEpcis = this.$route.query.epcis || []
     },
     updateDocumentTitle() {
       let title = `Les statistiques dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
