@@ -162,7 +162,7 @@
         <v-expand-transition>
           <v-col cols="12" sm="6" v-show="showLocalDefinition" class="my-4">
             <label class="body-2" for="local-definition">C'est quoi votre définition de local ?</label>
-            <DsfrAutocomplete
+            <DsfrSelect
               hide-details="auto"
               :items="localDefinitions"
               v-model="purchase.localDefinition"
@@ -242,11 +242,12 @@ import validators from "@/validators"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrSelect from "@/components/DsfrSelect"
 import DsfrCombobox from "@/components/DsfrCombobox"
 
 export default {
   name: "PurchasePage",
-  components: { FileDrop, FilePreview, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete, DsfrCombobox },
+  components: { FileDrop, FilePreview, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete, DsfrSelect, DsfrCombobox },
   data() {
     return {
       originalPurchase: null,
