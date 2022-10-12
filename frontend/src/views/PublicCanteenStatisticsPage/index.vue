@@ -12,9 +12,10 @@
                 Région
               </label>
               <DsfrAutocomplete
-                v-model="chosenRegion"
+                v-model="chosenRegions"
                 :items="regions"
                 clearable
+                multiple
                 hide-details
                 id="select-region"
                 placeholder="Toutes les régions"
@@ -231,7 +232,7 @@ export default {
       approMeasure: keyMeasures.find((measure) => measure.badgeId === "appro"),
       otherMeasures: keyMeasures.filter((measure) => measure.badgeId !== "appro"),
       chosenDepartments: [],
-      chosenRegion: null,
+      chosenRegions: [],
       chosenSectors: [],
       locationText: null,
       statistics: {},
@@ -262,11 +263,13 @@ export default {
   computed: {
     departments() {
       let enabledDepartments = this.loadedDepartmentIds
-      let departmentsForRegion = jsonDepartments
-      if (this.chosenRegion) {
-        departmentsForRegion = jsonDepartments.filter((department) => department.regionCode === this.chosenRegion)
+      let departmentsForRegions = jsonDepartments
+      if (this.chosenRegions.length) {
+        departmentsForRegions = jsonDepartments.filter(
+          (department) => this.chosenRegions.indexOf(department.regionCode) > -1
+        )
       }
-      return this.formatLocations(enabledDepartments, departmentsForRegion, "department", "départements")
+      return this.formatLocations(enabledDepartments, departmentsForRegions, "department", "départements")
     },
     regions() {
       return this.formatLocations(this.loadedRegionIds, jsonRegions, "region", "régions")
@@ -428,8 +431,14 @@ export default {
         locationText = `« ${
           jsonDepartments.find((department) => department.departmentCode === this.chosenDepartments[0]).departmentName
         } »`
-      } else if (this.chosenRegion) {
-        locationText = `« ${this.chosenRegionName} »`
+      } else if (this.chosenRegions.length > 1) {
+        let names = []
+        this.chosenRegions.forEach((d) => {
+          names.push(jsonRegions.find((region) => region.regionCode === d).regionName)
+        })
+        locationText = `les ${this.chosenRegions.length} régions : ${names.join(", ")}`
+      } else if (this.chosenRegions.length === 1) {
+        locationText = `« ${jsonRegions.find((region) => region.regionCode === this.chosenRegions[0]).regionName} »`
       } else {
         locationText = this.defaultLocationText
       }
@@ -443,8 +452,10 @@ export default {
           query += `&department=${d}`
         })
         this.statsLevel = "department"
-      } else if (this.chosenRegion) {
-        query += `&region=${this.chosenRegion}`
+      } else if (this.chosenRegions.length) {
+        this.chosenRegions.forEach((r) => {
+          query += `&region=${r}`
+        })
         this.statsLevel = "region"
       } else {
         this.statsLevel = "site"
@@ -458,11 +469,11 @@ export default {
     },
     updateRoute() {
       let query = {}
-      if (this.chosenDepartments) {
-        query.departments = this.chosenDepartments
+      if (this.chosenRegions) {
+        query.region = this.chosenRegions
       }
-      if (this.chosenRegion) {
-        query.region = this.chosenRegion
+      if (this.chosenDepartments) {
+        query.department = this.chosenDepartments
       }
       if (this.chosenSectors.length) {
         query.sectors = this.chosenSectors.join(",")
@@ -474,8 +485,8 @@ export default {
         .catch(() => {})
     },
     populateInitialParameters() {
-      this.chosenDepartments = this.$route.query.departments || []
-      this.chosenRegion = this.$route.query.region
+      this.chosenRegions = this.$route.query.region || []
+      this.chosenDepartments = this.$route.query.department || []
       this.chosenSectors = this.$route.query.sectors?.split(",").map((s) => parseInt(s, 10)) || []
     },
     updateDocumentTitle() {
@@ -485,8 +496,11 @@ export default {
     },
   },
   watch: {
-    chosenRegion(newRegion) {
-      if (newRegion && this.chosenDepartments.length) {
+    chosenRegions(newRegions, oldRegions) {
+      // If the regions selection has been narrowed, chosen deps could now fall outside regions chosen.
+      // If there are no regions, all deps are valid.
+      // So if there are still regions left, but fewer than previous selection, clear department selection.
+      if (newRegions.length && newRegions.length < oldRegions.length) {
         this.chosenDepartments = []
       }
     },

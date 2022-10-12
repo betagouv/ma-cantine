@@ -5,7 +5,7 @@
     </label>
     <v-autocomplete
       dense
-      height="40"
+      min-height="40"
       ref="autocomplete"
       solo
       flat
@@ -13,6 +13,9 @@
       v-on="$listeners"
       persistent-placeholder
       @input="(v) => $emit('input', v)"
+      auto-select-first
+      :search-input.sync="searchInput"
+      @change="searchInput = ''"
     >
       <template v-slot:label><span></span></template>
     </v-autocomplete>
@@ -28,6 +31,11 @@ export default {
       required: false,
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
     },
+  },
+  data() {
+    return {
+      searchInput: null,
+    }
   },
   computed: {
     inputId() {
