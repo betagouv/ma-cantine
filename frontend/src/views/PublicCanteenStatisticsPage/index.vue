@@ -93,8 +93,7 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
-              ).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
             </p>
           </div>
           <VueApexCharts
@@ -346,7 +345,13 @@ export default {
       return desc
     },
     statsLevelDisplay() {
-      return { department: "ce département", region: "cette région", site: "ce site" }[this.statsLevel]
+      return {
+        department: "ce département",
+        region: "cette région",
+        departments: "ces départements",
+        regions: "ces régions",
+        site: "ce site",
+      }[this.statsLevel]
     },
     chosenRegionName() {
       return this.chosenRegion
@@ -451,12 +456,20 @@ export default {
         this.chosenDepartments.forEach((d) => {
           query += `&department=${d}`
         })
-        this.statsLevel = "department"
+        if (this.chosenDepartments.length === 1) {
+          this.statsLevel = "department"
+        } else {
+          this.statsLevel = "departments"
+        }
       } else if (this.chosenRegions.length) {
         this.chosenRegions.forEach((r) => {
           query += `&region=${r}`
         })
-        this.statsLevel = "region"
+        if (this.chosenRegions.length === 1) {
+          this.statsLevel = "region"
+        } else {
+          this.statsLevel = "regions"
+        }
       } else {
         this.statsLevel = "site"
       }
@@ -491,16 +504,23 @@ export default {
     },
     updateDocumentTitle() {
       let title = `Les statistiques dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
-      if (this.chosenRegion || this.chosenDepartments.length) title = `${this.createLocationText()} - ${title}`
+      if (this.chosenRegions.length || this.chosenDepartments.length) {
+        let locationText = this.createLocationText()
+        if (locationText.startsWith("les")) {
+          locationText = locationText.charAt(0).toUpperCase() + locationText.slice(1)
+        }
+        title = `${locationText} - ${title}`
+      }
       document.title = title
     },
   },
   watch: {
     chosenRegions(newRegions, oldRegions) {
       // If the regions selection has been narrowed, chosen deps could now fall outside regions chosen.
-      // If there are no regions, all deps are valid.
-      // So if there are still regions left, but fewer than previous selection, clear department selection.
-      if (newRegions.length && newRegions.length < oldRegions.length) {
+      // If chosen regions was cleared, all deps are valid, so leave selection alone.
+      // If there weren't any regions (and now there are), clear departments.
+      // If there are fewer regions than previously, clear department selection.
+      if (newRegions.length && (!oldRegions.length || newRegions.length < oldRegions.length)) {
         this.chosenDepartments = []
       }
     },
