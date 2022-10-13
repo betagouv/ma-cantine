@@ -2,23 +2,37 @@
   {
     "stats": [
       {
-        "explanation": "Here is the backstory to this data.\nAnd this is a line break",
+        "explanation": "Nombre de comptes 'cantines' créés par des utilisateurs sur la plateforme.",
         "height": 300,
-        "link": "/public/question/8910b979-baf2-47dc-a204-f28545c3877d",
-        "title": "Testing",
+        "link": "/public/question/c1251163-d9bf-48bd-a506-6231d07178fc",
+        "title": "Nombre de cantines totales inscrites",
         "width": 400
       }
     ],
-    "title": "En bref"
+    "title": "Une acquisition croissante d'établissements de restaurants collectifs utilisatrices de la plateforme"
   },
-  {
+    {
     "stats": [
       {
-        "explanation": "Here is the backstory to this data.\n\nAnd this is a new paragraph",
-        "link": "/public/question/d548a194-a203-40d1-b43a-575db32f231e",
-        "title": "Testing"
+        "explanation": "Un essaimage de la plateforme sur tout le territoire par le biais des chef(fe)s de pôle en DRAAF (Direction Régionale).",
+        "height": 300,
+        "link": "/public/question/3afe95d4-7215-4001-80b6-9a1a29e9feaf",
+        "title": "Répartition géographique du nombre d'établissements sur la plateforme",
+        "width": 400
       }
     ],
-    "title": "Mesure approvisonnement"
+    "title": "Une acquisition croissante d'établissements de restaurants collectifs utilisatrices de la plateforme"
+  },
+    {
+    "stats": [
+      {
+        "explanation": "",
+        "height": 300,
+        "link": "/public/question/1c0432da-6a6c-4a6e-8305-815863284566",
+        "title": "Evolution journalière des créations de comptes gestionnaires",
+        "width": 400
+      }
+    ],
+    "title": "Une acquisition croissante d'établissements de restaurants collectifs utilisatrices de la plateforme"
   }
 ]
