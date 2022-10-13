@@ -499,7 +499,9 @@ export default {
     },
     populateInitialParameters() {
       this.chosenRegions = this.$route.query.region || []
+      if (!Array.isArray(this.chosenRegions)) this.chosenRegions = [this.chosenRegions]
       this.chosenDepartments = this.$route.query.department || []
+      if (!Array.isArray(this.chosenDepartments)) this.chosenDepartments = [this.chosenDepartments]
       this.chosenSectors = this.$route.query.sectors?.split(",").map((s) => parseInt(s, 10)) || []
     },
     updateDocumentTitle() {
