@@ -194,10 +194,10 @@
     "stats": [
       {
         "explanation": "Chaque année, un bilan de progression de cet objectif doit être réalisé et remis au Parlement, pour être rendu public. Aussi, il est nécessaire que chaque restaurant collectif visé par la disposition de cette loi, transmette les éléments qui permettront la réalisation de ce bilan statistique, anonymisé.",
-        "height": 400,
+        "height": 500,
         "link": "/public/question/a97abe69-6410-44e0-b19c-f0b26b31bfac",
         "title": "Nb de cantines ayant participé à la Campagne #1 de télédéclaration (TD) depuis son lancement le 19 juillet 2022",
-        "width": 500
+        "width": 1100
       }
     ],
     "title": "3. Campagne de télédéclaration des données d'achats HT 2021"
