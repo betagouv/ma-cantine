@@ -1,7 +1,7 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav />
-    <h1 class="text-h4 font-weight-black black--text mb-6">L'utilisation de la plateforme</h1>
+    <h1 class="text-h4 font-weight-black black--text mb-6">Mesures d'impact, résultats et statistiques d'usage de ma-cantine</h1>
     <div>
       <p v-for="(section, sectionIdx) in sections" :key="`a-${sectionIdx}`">
         <a :href="`#${normalise(section.title)}`">{{ section.title }}</a>
