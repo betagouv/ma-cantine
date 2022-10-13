@@ -38,7 +38,7 @@
       {
     "stats": [
       {
-        "explanation": "L'éco-système de la restauration collective est très hétérogène. Aussi les modes de production varient suivant les établissements. \n Sur la plateforme, on trouve donc : \n - des cuisines 'site' : qui élaborent leurs menus et gèrent leurs achats directement \n - des cuisines 'site_cooked_somewhere_else', ou 'cuisines sattelites', i.e. des lieux de service qui sont livrés par une cuisine centrale (ou 'central' et 'central_serving', cuisine centrale avec également un lieu de service associé). \n En moyenne sur ma-cantine, une cuisine centrale dessert 30 établissements satellites.",
+        "explanation": "L'éco-système de la restauration collective est très hétérogène. Aussi les modes de production varient suivant les établissements. \n Sur la plateforme, on trouve donc : \n  a) Des cuisines 'site' : qui élaborent leurs menus et gèrent leurs achats directement \n b) des cuisines 'site_cooked_somewhere_else', ou 'cuisines sattelites', i.e. des lieux de service qui sont livrés par une cuisine centrale (ou 'central' et 'central_serving', cuisine centrale avec également un lieu de service associé). \n En moyenne sur ma-cantine, une cuisine centrale dessert 30 établissements satellites.",
         "height": 300,
         "link": "/public/question/7e25a40d-4cf9-4f39-9365-c8bfbaeee0ec",
         "title": "Répartition de nos cuisines inscrites par type de production",
@@ -244,7 +244,7 @@
         "explanation": "Une des ambitions de ma-cantine est également de favoriser les conditions d'une mise en réseau des gestionnaires, de faciliter le partage d'expérience, de témoignages,... via notamment les articles de blogs : https://ma-cantine.agriculture.gouv.fr/blog/?page=1",
         "height": 200,
         "link": "/public/question/da86949a-5e79-4034-b8ca-136b7e4f12df",
-        "title": "Nombres d'articles par catégorie",
+        "title": "Nombres d'articles total",
         "width": 600
       }
     ],
