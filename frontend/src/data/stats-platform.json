@@ -9,7 +9,7 @@
         "width": 400
       }
     ],
-    "title": "1. Acquisition croissante de cantines utilisatrices - Mieux manger de la crèches jusqu'à l'EHPAD - 90 000 établissements, 4 milliards de repas par an"
+    "title": "1. Acquisition croissante de cantines utilisatrices -  90 000 établissements, 4 milliards de repas par an"
   },
     {
     "stats": [
@@ -93,8 +93,7 @@
         "width": 500
       }
     ],
-    "title": "2. Accompagnement et outillage des gestionnaires et leurs établissements pour une amélioration de leur pratique dans leurs achats, leur lutte contre le gaspillage, la diversification des protéines, la substitution des plastiques..."
-  },
+    "title": "2. Accompagnement des gestionnaires et leurs établissements pour une amélioration de leurs pratiques (achats, gaspi, sources protéiniques,...)",
     {
     "stats": [
       {
@@ -201,7 +200,7 @@
         "width": 500
       }
     ],
-    "title": "3. Campagne de télédéclaration des données d'achats HT 2021 - L'objectif : établir un bilan de suivi des mesures EGAlim permettant de mieux piloter cette politique publique par l'administration."
+    "title": "3. Campagne de télédéclaration des données d'achats HT 2021"
   },
      {
     "stats": [
@@ -225,6 +224,18 @@
         "width": 600
       }
     ],
-    "title": "4. Statistiques d'usage des ressources et outils mis à disposition par la plateforme pour ses utilisateurs"
+    "title": "4. Statistiques d'usage des ressources et outils mis à disposition pour l'amélioration des pratiques"
+  },
+     {
+    "stats": [
+      {
+        "explanation": "Afin d'accompagner les gestionnaires dans leur compréhension de la loi, leur prise en main des outils,... nous organisons 1 à 2 webinaires par semaine. + d'infos et lien d'inscription sur notre page 'communauté' : https://ma-cantine.agriculture.gouv.fr/communaute",
+        "height": 2000,
+        "link": "/public/question/fe84f785-7a7c-4b3d-907a-ac7d998760d7",
+        "title": "Nombre de webinaires thématiques organisés",
+        "width": 600
+      }
+    ],
+    "title": ""
   } 
 ]
