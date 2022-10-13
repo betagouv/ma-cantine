@@ -9,7 +9,7 @@
         "width": 400
       }
     ],
-    "title": "Mieux manger de la crèches jusqu'à l'EHPAD - 80 000 établissements, 4 milliards de repas par an"
+    "title": "1. Acquisition croissante de cantines utilisatrices - Mieux manger de la crèches jusqu'à l'EHPAD - 90 000 établissements, 4 milliards de repas par an"
   },
     {
     "stats": [
@@ -93,7 +93,7 @@
         "width": 500
       }
     ],
-    "title": "Accompagner les gestionnaires et les établissements vers une amélioration de leur pratique"
+    "title": "2. Accompagnement et outillage des gestionnaires et leurs établissements pour une amélioration de leur pratique dans leurs achats, leur lutte contre le gaspillage, la diversification des protéines, la substitution des plastiques..."
   },
     {
     "stats": [
@@ -187,6 +187,30 @@
         "link": "/public/question/a070512b-cb60-4854-8d8e-086bd08c6174",
         "title": "Répartition des cantines inscrites sur ma-cantine en fonction de leur part de produits bio et durables en 2021",
         "width": 400
+      }
+    ],
+    "title": ""
+  },
+     {
+    "stats": [
+      {
+        "explanation": "Chaque année, un bilan de progression de cet objectif doit être réalisé et remis au Parlement, pour être rendu public. Aussi, il est nécessaire que chaque restaurant collectif visé par la disposition de cette loi, transmette les éléments qui permettront la réalisation de ce bilan statistique, anonymisé.",
+        "height": 200,
+        "link": "/public/question/a97abe69-6410-44e0-b19c-f0b26b31bfac",
+        "title": "Nb de cantines ayant participé à la Campagne #1 de télédéclaration (TD) depuis son lancement le 19 juillet 2022",
+        "width": 400
+      }
+    ],
+    "title": "3. Campagne de télédéclaration des données d'achats HT 2021 - L'objectif : établir un bilan de suivi des mesures EGAlim permettant de mieux piloter cette politique publique par l'administration."
+  },
+     {
+    "stats": [
+      {
+        "explanation": "+ d'infos sur la campagne de collecte des données : https://ma-cantine-1.gitbook.io/ma-cantine-egalim/master-1",
+        "height": 320,
+        "link": "/public/question/6b340b31-057d-4a42-8f11-1a55645e1b20",
+        "title": "Evolution des participations à la TD depuis le lancement de la campagne",
+        "width": 500
       }
     ],
     "title": ""
