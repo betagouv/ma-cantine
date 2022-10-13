@@ -123,10 +123,10 @@
     "stats": [
       {
         "explanation": "Une des fonctionnalités principales de la plateforme consiste à pouvoir suivre l'évolution de ses achats en évaluant sa part de produits bio et durables via un diagnostic quantitatif et qualitatif sur plusieurs années. ",
-        "height": 300,
-        "link": "/public/question/b8c24e50-ee42-4dd7-bf1b-73a3cc037b35",
-        "title": "Nombre de répondants (tous secteurs) par années de diagnostics d'approvisionnement",
-        "width": 400
+        "height": 400,
+        "link": "/public/question/4c65cb82-1b71-413a-af04-7b6cc740d6a1",
+        "title": "Nombre de répondants (tous secteurs) par année de diagnostics d'approvisionnement",
+        "width": 500
       }
     ],
     "title": ""
@@ -171,10 +171,10 @@
     "stats": [
       {
         "explanation": "",
-        "height": 200,
+        "height": 500,
         "link": "/public/question/7645e145-5f6f-4298-8d76-9d2d98905eda",
         "title": "Nombre de cantines ayant entrepris un audit de leur gaspillage en 2021",
-        "width": 400
+        "width": 600
       }
     ],
     "title": ""
@@ -183,10 +183,10 @@
     "stats": [
       {
         "explanation": "",
-        "height": 200,
+        "height": 500,
         "link": "/public/question/a070512b-cb60-4854-8d8e-086bd08c6174",
         "title": "Répartition des cantines inscrites sur ma-cantine en fonction de leur part de produits bio et durables en 2021",
-        "width": 400
+        "width": 600
       }
     ],
     "title": ""
@@ -195,10 +195,10 @@
     "stats": [
       {
         "explanation": "Chaque année, un bilan de progression de cet objectif doit être réalisé et remis au Parlement, pour être rendu public. Aussi, il est nécessaire que chaque restaurant collectif visé par la disposition de cette loi, transmette les éléments qui permettront la réalisation de ce bilan statistique, anonymisé.",
-        "height": 200,
+        "height": 400,
         "link": "/public/question/a97abe69-6410-44e0-b19c-f0b26b31bfac",
         "title": "Nb de cantines ayant participé à la Campagne #1 de télédéclaration (TD) depuis son lancement le 19 juillet 2022",
-        "width": 400
+        "width": 500
       }
     ],
     "title": "3. Campagne de télédéclaration des données d'achats HT 2021 - L'objectif : établir un bilan de suivi des mesures EGAlim permettant de mieux piloter cette politique publique par l'administration."
@@ -207,12 +207,24 @@
     "stats": [
       {
         "explanation": "+ d'infos sur la campagne de collecte des données : https://ma-cantine-1.gitbook.io/ma-cantine-egalim/master-1",
-        "height": 320,
+        "height": 500,
         "link": "/public/question/6b340b31-057d-4a42-8f11-1a55645e1b20",
         "title": "Evolution des participations à la TD depuis le lancement de la campagne",
-        "width": 500
+        "width": 600
       }
     ],
     "title": ""
+  },
+     {
+    "stats": [
+      {
+        "explanation": "",
+        "height": 500,
+        "link": "/public/question/fe84f785-7a7c-4b3d-907a-ac7d998760d7",
+        "title": "Nombre de cantines utilisatrices du suivi d'achats en ligne",
+        "width": 600
+      }
+    ],
+    "title": "4. Statistiques d'usage des ressources et outils mis à disposition par la plateforme pour ses utilisateurs"
   } 
 ]
