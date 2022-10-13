@@ -353,11 +353,6 @@ export default {
         site: "ce site",
       }[this.statsLevel]
     },
-    chosenRegionName() {
-      return this.chosenRegion
-        ? jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName || this.chosenRegion
-        : null
-    },
     sectorsText() {
       let sectorsText = ""
       if (this.$route.query.sectors) {
@@ -398,10 +393,15 @@ export default {
           value: x[`${locationKeyWord}Code`],
         }))
 
-      let headerText =
-        this.chosenRegion && locationKeyWord == "department"
-          ? `Pour la région « ${this.chosenRegionName} », nous `
-          : "Nous "
+      let headerText = "Nous "
+      if (this.chosenRegions.length && locationKeyWord.startsWith("department")) {
+        let regionText = "les régions séléctionnées"
+        if (this.chosenRegions.length === 1) {
+          regionText = jsonRegions.find((region) => region.regionCode === this.chosenRegions[0]).regionName
+          regionText = `la région « ${regionText} »`
+        }
+        headerText = `Pour ${regionText}, nous `
+      }
       headerText += `n'avons pas encore d'établissements dans ces ${locationsWord} :`
       const header = { header: headerText }
       const divider = { divider: true }
