@@ -12,9 +12,10 @@
                 Région
               </label>
               <DsfrAutocomplete
-                v-model="chosenRegion"
+                v-model="chosenRegions"
                 :items="regions"
                 clearable
+                multiple
                 hide-details
                 id="select-region"
                 placeholder="Toutes les régions"
@@ -29,9 +30,10 @@
                 Département
               </label>
               <DsfrAutocomplete
-                v-model="chosenDepartment"
+                v-model="chosenDepartments"
                 :items="departments"
                 clearable
+                multiple
                 hide-details
                 id="select-department"
                 placeholder="Tous les départements"
@@ -91,8 +93,7 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
-              ).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
             </p>
           </div>
           <VueApexCharts
@@ -229,8 +230,8 @@ export default {
       labels,
       approMeasure: keyMeasures.find((measure) => measure.badgeId === "appro"),
       otherMeasures: keyMeasures.filter((measure) => measure.badgeId !== "appro"),
-      chosenDepartment: null,
-      chosenRegion: null,
+      chosenDepartments: [],
+      chosenRegions: [],
       chosenSectors: [],
       locationText: null,
       statistics: {},
@@ -261,11 +262,13 @@ export default {
   computed: {
     departments() {
       let enabledDepartments = this.loadedDepartmentIds
-      let departmentsForRegion = jsonDepartments
-      if (this.chosenRegion) {
-        departmentsForRegion = jsonDepartments.filter((department) => department.regionCode === this.chosenRegion)
+      let departmentsForRegions = jsonDepartments
+      if (this.chosenRegions.length) {
+        departmentsForRegions = jsonDepartments.filter(
+          (department) => this.chosenRegions.indexOf(department.regionCode) > -1
+        )
       }
-      return this.formatLocations(enabledDepartments, departmentsForRegion, "department", "départements")
+      return this.formatLocations(enabledDepartments, departmentsForRegions, "department", "départements")
     },
     regions() {
       return this.formatLocations(this.loadedRegionIds, jsonRegions, "region", "régions")
@@ -342,12 +345,13 @@ export default {
       return desc
     },
     statsLevelDisplay() {
-      return { department: "ce département", region: "cette région", site: "ce site" }[this.statsLevel]
-    },
-    chosenRegionName() {
-      return this.chosenRegion
-        ? jsonRegions.find((region) => region.regionCode === this.chosenRegion).regionName || this.chosenRegion
-        : null
+      return {
+        department: "ce département",
+        region: "cette région",
+        departments: "ces départements",
+        regions: "ces régions",
+        site: "ce site",
+      }[this.statsLevel]
     },
     sectorsText() {
       let sectorsText = ""
@@ -389,10 +393,15 @@ export default {
           value: x[`${locationKeyWord}Code`],
         }))
 
-      let headerText =
-        this.chosenRegion && locationKeyWord == "department"
-          ? `Pour la région « ${this.chosenRegionName} », nous `
-          : "Nous "
+      let headerText = "Nous "
+      if (this.chosenRegions.length && locationKeyWord.startsWith("department")) {
+        let regionText = "les régions séléctionnées"
+        if (this.chosenRegions.length === 1) {
+          regionText = jsonRegions.find((region) => region.regionCode === this.chosenRegions[0]).regionName
+          regionText = `la région « ${regionText} »`
+        }
+        headerText = `Pour ${regionText}, nous `
+      }
       headerText += `n'avons pas encore d'établissements dans ces ${locationsWord} :`
       const header = { header: headerText }
       const divider = { divider: true }
@@ -417,12 +426,24 @@ export default {
     },
     createLocationText() {
       let locationText
-      if (this.chosenDepartment) {
+      if (this.chosenDepartments.length > 1) {
+        let names = []
+        this.chosenDepartments.forEach((d) => {
+          names.push(jsonDepartments.find((department) => department.departmentCode === d).departmentName)
+        })
+        locationText = `les ${this.chosenDepartments.length} départements : ${names.join(", ")}`
+      } else if (this.chosenDepartments.length === 1) {
         locationText = `« ${
-          jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment).departmentName
+          jsonDepartments.find((department) => department.departmentCode === this.chosenDepartments[0]).departmentName
         } »`
-      } else if (this.chosenRegion) {
-        locationText = `« ${this.chosenRegionName} »`
+      } else if (this.chosenRegions.length > 1) {
+        let names = []
+        this.chosenRegions.forEach((d) => {
+          names.push(jsonRegions.find((region) => region.regionCode === d).regionName)
+        })
+        locationText = `les ${this.chosenRegions.length} régions : ${names.join(", ")}`
+      } else if (this.chosenRegions.length === 1) {
+        locationText = `« ${jsonRegions.find((region) => region.regionCode === this.chosenRegions[0]).regionName} »`
       } else {
         locationText = this.defaultLocationText
       }
@@ -431,12 +452,24 @@ export default {
     updateStatistics() {
       let query = `year=${this.year}`
       this.locationText = ""
-      if (this.chosenDepartment) {
-        query += `&department=${this.chosenDepartment}`
-        this.statsLevel = "department"
-      } else if (this.chosenRegion) {
-        query += `&region=${this.chosenRegion}`
-        this.statsLevel = "region"
+      if (this.chosenDepartments.length) {
+        this.chosenDepartments.forEach((d) => {
+          query += `&department=${d}`
+        })
+        if (this.chosenDepartments.length === 1) {
+          this.statsLevel = "department"
+        } else {
+          this.statsLevel = "departments"
+        }
+      } else if (this.chosenRegions.length) {
+        this.chosenRegions.forEach((r) => {
+          query += `&region=${r}`
+        })
+        if (this.chosenRegions.length === 1) {
+          this.statsLevel = "region"
+        } else {
+          this.statsLevel = "regions"
+        }
       } else {
         this.statsLevel = "site"
       }
@@ -449,11 +482,11 @@ export default {
     },
     updateRoute() {
       let query = {}
-      if (this.chosenDepartment) {
-        query.department = this.chosenDepartment
+      if (this.chosenRegions) {
+        query.region = this.chosenRegions
       }
-      if (this.chosenRegion) {
-        query.region = this.chosenRegion
+      if (this.chosenDepartments) {
+        query.department = this.chosenDepartments
       }
       if (this.chosenSectors.length) {
         query.sectors = this.chosenSectors.join(",")
@@ -465,23 +498,30 @@ export default {
         .catch(() => {})
     },
     populateInitialParameters() {
-      this.chosenDepartment = this.$route.query.department
-      this.chosenRegion = this.$route.query.region
+      this.chosenRegions = this.$route.query.region || []
+      this.chosenDepartments = this.$route.query.department || []
       this.chosenSectors = this.$route.query.sectors?.split(",").map((s) => parseInt(s, 10)) || []
     },
     updateDocumentTitle() {
       let title = `Les statistiques dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
-      if (this.chosenRegion || this.chosenDepartment) title = `${this.createLocationText()} - ${title}`
+      if (this.chosenRegions.length || this.chosenDepartments.length) {
+        let locationText = this.createLocationText()
+        if (locationText.startsWith("les")) {
+          locationText = locationText.charAt(0).toUpperCase() + locationText.slice(1)
+        }
+        title = `${locationText} - ${title}`
+      }
       document.title = title
     },
   },
   watch: {
-    chosenRegion(newRegion) {
-      if (newRegion && this.chosenDepartment) {
-        let depInfo = jsonDepartments.find((department) => department.departmentCode === this.chosenDepartment)
-        if (depInfo.regionCode !== newRegion) {
-          this.chosenDepartment = null
-        }
+    chosenRegions(newRegions, oldRegions) {
+      // If the regions selection has been narrowed, chosen deps could now fall outside regions chosen.
+      // If chosen regions was cleared, all deps are valid, so leave selection alone.
+      // If there weren't any regions (and now there are), clear departments.
+      // If there are fewer regions than previously, clear department selection.
+      if (newRegions.length && (!oldRegions.length || newRegions.length < oldRegions.length)) {
+        this.chosenDepartments = []
       }
     },
     $route() {
