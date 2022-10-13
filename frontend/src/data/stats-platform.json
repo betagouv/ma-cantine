@@ -30,7 +30,7 @@
         "height": 400,
         "link": "/public/question/1c0432da-6a6c-4a6e-8305-815863284566",
         "title": "Evolution journalière des créations de comptes gestionnaires",
-        "width": 600
+        "width": 1000
       }
     ],
     "title": ""
@@ -51,10 +51,10 @@
     "stats": [
       {
         "explanation": "La restauration collective nous concerne tous, de la petite enfance aux seniors en passant bien sûr par les écoles, les hôpitaux, les maisons de retraite, les administrations ou encore les entreprises. Rares sont les périodes de notre existence où l’on ne profite pas de ce service public essentiel et qui revêt une dimension sociale forte.",
-        "height": 600,
+        "height": 320,
         "link": "/public/question/6be0db7a-407c-4cf2-ac86-bad3f7033af6",
         "title": "Répartition de nos cantines utilisatrices par grandes catégories de secteur d'activités",
-        "width": 500
+        "width": 700
       }
     ],
     "title": ""
@@ -66,7 +66,7 @@
         "height": 500,
         "link": "/public/question/5625581d-f805-4dda-bd8b-927b813fffa5",
         "title": "La parcours de nos utilisateurices",
-        "width": 700
+        "width": 1000
       }
     ],
     "title": ""
@@ -75,10 +75,10 @@
     "stats": [
       {
         "explanation": "",
-        "height": 300,
+        "height": 400,
         "link": "/public/question/63a2ba30-ef06-4be4-9d4d-177174b79c15",
         "title": "Des approvisionnements de plus en plus durables et de qualités - dans le secteur scolaire",
-        "width": 400
+        "width": 500
       }
     ],
     "title": "Accompagner les gestionnaires et les établissements vers une amélioration de leur pratique"
@@ -87,10 +87,10 @@
     "stats": [
       {
         "explanation": "",
-        "height": 300,
+        "height": 400,
         "link": "/public/question/44883272-f704-4e19-822c-3097e2e96a9f",
         "title": "Des approvisionnements de plus en plus durables et de qualités - dans le secteur administratif",
-        "width": 400
+        "width": 500
       }
     ],
     "title": ""
@@ -114,9 +114,33 @@
         "height": 200,
         "link": "/public/question/3efeadf5-79e2-42e1-ad7d-3f631bf6e385",
         "title": "Une des mesures-phare de la loi EGAlim : la substitution de la matière plastique",
-        "width": 200
+        "width": 400
       }
     ],
     "title": ""
-  }  
+  },
+     {
+    "stats": [
+      {
+        "explanation": "Afin de pouvoir évaluer les effets de la solution de réservation sur la satisfaction des usagers et le taux de fréquentation et de confirmer son potentiel en tant que levier de lutte contre le gaspillage alimentaire, il est possible sur la plateforme ma-cantine de suivre et renseigner différents indicateurs nécessaires à l’évaluation du gaspillage alimentaire, du taux de fréquentation et de la satisfaction des usagers à 3 étapes de l’expérimentation.",
+        "height": 200,
+        "link": "/public/question/434f5a4c-d2c0-46bd-bc8f-232993aa2349",
+        "title": "Nombre d'inscrits à l'expérimentation d'une solution de réservation pour la lutte contre le gaspillage",
+        "width": 400
+      }
+    ],
+    "title": ""
+  },
+     {
+    "stats": [
+      {
+        "explanation": "Pour les collectivités territoriales volontaires, une expérimentation suite à la loi Climat propose d’expérimenter, une option végétarienne quotidienne pour une durée de 2 ans, sous réserve des conditions fixées par voie réglementaire destinées à garantir l'équilibre nutritionnel des repas servis et du respect d'exigences adaptées aux besoins des usagers.",
+        "height": 200,
+        "link": "/public/question/60a6e552-5932-4866-9426-59c99ffd9fc9",
+        "title": "Nombre d'inscrits à l'expérimentation d'un repas végétarien quotidien",
+        "width": 400
+      }
+    ],
+    "title": ""
+  } 
 ]
