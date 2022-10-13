@@ -59,6 +59,18 @@
     ],
     "title": ""
   },
+       {
+    "stats": [
+      {
+        "explanation": "Nos utilisateurs sont soit en délégation de services à une entreprise de la Restauration collective (SRC) ou en gestion directe.",
+        "height": 320,
+        "link": "/public/question/08ed53af-6cf2-4285-b2a4-6d3c72f5cb60",
+        "title": "Type de gestion de nos cantines utilisatrices",
+        "width": 700
+      }
+    ],
+    "title": ""
+  },
       {
     "stats": [
       {
@@ -91,6 +103,18 @@
         "link": "/public/question/44883272-f704-4e19-822c-3097e2e96a9f",
         "title": "Des approvisionnements de plus en plus durables et de qualités - dans le secteur administratif",
         "width": 500
+      }
+    ],
+    "title": ""
+  },
+       {
+    "stats": [
+      {
+        "explanation": "",
+        "height": 400,
+        "link": "/public/question/a070512b-cb60-4854-8d8e-086bd08c6174",
+        "title": "Répartition des cantines inscrites sur ma-cantine en fonction de leur part de produits bio et durables en 2021",
+        "width": 600
       }
     ],
     "title": ""
@@ -138,6 +162,30 @@
         "height": 200,
         "link": "/public/question/60a6e552-5932-4866-9426-59c99ffd9fc9",
         "title": "Nombre d'inscrits à l'expérimentation d'un repas végétarien quotidien",
+        "width": 400
+      }
+    ],
+    "title": ""
+  },
+     {
+    "stats": [
+      {
+        "explanation": "",
+        "height": 200,
+        "link": "/public/question/7645e145-5f6f-4298-8d76-9d2d98905eda",
+        "title": "Nombre de cantines ayant entrepris un audit de leur gaspillage en 2021",
+        "width": 400
+      }
+    ],
+    "title": ""
+  }, 
+     {
+    "stats": [
+      {
+        "explanation": "",
+        "height": 200,
+        "link": "/public/question/a070512b-cb60-4854-8d8e-086bd08c6174",
+        "title": "Répartition des cantines inscrites sur ma-cantine en fonction de leur part de produits bio et durables en 2021",
         "width": 400
       }
     ],
