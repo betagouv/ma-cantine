@@ -27,7 +27,7 @@
             </v-col>
             <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
               <label for="select-department" class="text-body-2">
-                Département(s)
+                Département
               </label>
               <DsfrAutocomplete
                 v-model="chosenDepartments"
