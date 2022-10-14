@@ -11,7 +11,7 @@
     ],
     "title": "1. Acquisition croissante de cantines utilisatrices -  90 000 établissements, 4 milliards de repas par an"
   },
-    {
+  {
     "stats": [
       {
         "explanation": "Nos 4 chargé(e)s de déploiement accompagnent les gestionnaires de la France territoriale et Outre-Mer. Iels binôment notamment les actions menées au niveau territorial, que cela soit via les interco/EPCI, les régions, les départements; et les associations, telles que les Projets Alimentaires de Territoires (PAT).",
@@ -23,7 +23,7 @@
     ],
     "title": ""
   },
-    {
+  {
     "stats": [
       {
         "explanation": "Qui est concerné ? qui s’inscrit sur la plateforme ? Deux profils : les responsables légaux de services de restauration collective public et privé et les structures, personnes ayant eu délégation pour le faire (ex : SRC, cuisine centrale…). Nous comptons sur la plateforme des directeurices d'établissements, des responsables d'achats, des élu(e)s, des gestionnaires administratifs, des chef(fe)s de cuisine, des cuisiniers, des intendant(e)s comptable(s)... Vous vous reconnaissez dans ces profils ? Rejoignez notre communauté !",
@@ -35,7 +35,7 @@
     ],
     "title": ""
   },
-      {
+  {
     "stats": [
       {
         "explanation": "L'éco-système de la restauration collective est très hétérogène. Aussi les modes de production varient suivant les établissements. \n Sur la plateforme, on trouve donc : \n  Des cuisines 'site' : qui élaborent leurs menus et gèrent leurs achats directement \n des cuisines 'site_cooked_somewhere_else', ou 'cuisines sattelites', i.e. des lieux de service qui sont livrés par une cuisine centrale (ou 'central' et 'central_serving', cuisine centrale avec également un lieu de service associé). \n En moyenne sur ma-cantine, une cuisine centrale dessert 30 établissements satellites.",
@@ -47,7 +47,7 @@
     ],
     "title": ""
   },
-      {
+  {
     "stats": [
       {
         "explanation": "La restauration collective nous concerne tous, de la petite enfance aux seniors en passant bien sûr par les écoles, les hôpitaux, les maisons de retraite, les administrations ou encore les entreprises. Rares sont les périodes de notre existence où l’on ne profite pas de ce service public essentiel et qui revêt une dimension sociale forte.",
@@ -59,7 +59,7 @@
     ],
     "title": ""
   },
-       {
+  {
     "stats": [
       {
         "explanation": "Nos utilisateurs sont soit en délégation de services à une entreprise de la Restauration collective (SRC) ou en gestion directe.",
@@ -71,7 +71,7 @@
     ],
     "title": ""
   },
-      {
+  {
     "stats": [
       {
         "explanation": "",
@@ -93,8 +93,9 @@
         "width": 500
       }
     ],
-    "title": "2. Accompagnement des gestionnaires et leurs établissements pour une amélioration de leurs pratiques (achats, gaspi, sources protéiniques,...)",
-    {
+    "title": "2. Accompagnement des gestionnaires et leurs établissements pour une amélioration de leurs pratiques (achats, gaspi, sources protéiniques,...)"
+  },
+  {
     "stats": [
       {
         "explanation": "",
@@ -106,7 +107,7 @@
     ],
     "title": ""
   },
-       {
+  {
     "stats": [
       {
         "explanation": "",
@@ -118,7 +119,7 @@
     ],
     "title": ""
   },
-     {
+  {
     "stats": [
       {
         "explanation": "Une des fonctionnalités principales de la plateforme consiste à pouvoir suivre l'évolution de ses achats en évaluant sa part de produits bio et durables via un diagnostic quantitatif et qualitatif sur plusieurs années. ",
@@ -130,7 +131,7 @@
     ],
     "title": ""
   },
-     {
+  {
     "stats": [
       {
         "explanation": "Substitution du plastique: plus de bouteille d’eau, d’ustensiles à usage unique et disparition progressive des contenants de cuisine",
@@ -142,7 +143,7 @@
     ],
     "title": ""
   },
-     {
+  {
     "stats": [
       {
         "explanation": "Afin de pouvoir évaluer les effets de la solution de réservation sur la satisfaction des usagers et le taux de fréquentation et de confirmer son potentiel en tant que levier de lutte contre le gaspillage alimentaire, il est possible sur la plateforme ma-cantine de suivre et renseigner différents indicateurs nécessaires à l’évaluation du gaspillage alimentaire, du taux de fréquentation et de la satisfaction des usagers à 3 étapes de l’expérimentation.",
@@ -154,7 +155,7 @@
     ],
     "title": ""
   },
-     {
+  {
     "stats": [
       {
         "explanation": "Pour les collectivités territoriales volontaires, une expérimentation suite à la loi Climat propose d’expérimenter, une option végétarienne quotidienne pour une durée de 2 ans, sous réserve des conditions fixées par voie réglementaire destinées à garantir l'équilibre nutritionnel des repas servis et du respect d'exigences adaptées aux besoins des usagers.",
@@ -166,7 +167,7 @@
     ],
     "title": ""
   },
-     {
+  {
     "stats": [
       {
         "explanation": "",
@@ -177,8 +178,8 @@
       }
     ],
     "title": ""
-  }, 
-     {
+  },
+  {
     "stats": [
       {
         "explanation": "",
@@ -190,7 +191,7 @@
     ],
     "title": ""
   },
-     {
+  {
     "stats": [
       {
         "explanation": "Chaque année, un bilan de progression de cet objectif doit être réalisé et remis au Parlement, pour être rendu public. Aussi, il est nécessaire que chaque restaurant collectif visé par la disposition de cette loi, transmette les éléments qui permettront la réalisation de ce bilan statistique, anonymisé.",
@@ -202,7 +203,7 @@
     ],
     "title": "3. Campagne de télédéclaration des données d'achats HT 2021"
   },
-     {
+  {
     "stats": [
       {
         "explanation": "+ d'infos sur la campagne de collecte des données : https://ma-cantine-1.gitbook.io/ma-cantine-egalim/master-1",
@@ -214,7 +215,7 @@
     ],
     "title": ""
   },
-     {
+  {
     "stats": [
       {
         "explanation": "",
@@ -226,7 +227,7 @@
     ],
     "title": "4. Statistiques d'usage des ressources et outils mis à disposition pour l'amélioration des pratiques"
   },
-     {
+  {
     "stats": [
       {
         "explanation": "Afin d'accompagner les gestionnaires dans leur compréhension de la loi, leur prise en main des outils,... nous organisons 1 à 2 webinaires par semaine. + d'infos et lien d'inscription sur notre page 'communauté' : https://ma-cantine.agriculture.gouv.fr/communaute",
@@ -237,5 +238,5 @@
       }
     ],
     "title": ""
-  } 
+  }
 ]
