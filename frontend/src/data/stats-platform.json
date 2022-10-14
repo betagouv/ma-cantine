@@ -123,7 +123,7 @@
     "stats": [
       {
         "explanation": "Une des fonctionnalités principales de la plateforme consiste à pouvoir suivre l'évolution de ses achats en évaluant sa part de produits bio et durables via un diagnostic quantitatif et qualitatif sur plusieurs années. ",
-        "height": 400,
+        "height": 300,
         "link": "/public/question/4c65cb82-1b71-413a-af04-7b6cc740d6a1",
         "title": "Nombre de répondants (tous secteurs) par année de diagnostics d'approvisionnement",
         "width": 500
@@ -195,10 +195,10 @@
     "stats": [
       {
         "explanation": "Chaque année, un bilan de progression de cet objectif doit être réalisé et remis au Parlement, pour être rendu public. Aussi, il est nécessaire que chaque restaurant collectif visé par la disposition de cette loi, transmette les éléments qui permettront la réalisation de ce bilan statistique, anonymisé.",
-        "height": 500,
+        "height": 200,
         "link": "/public/question/a97abe69-6410-44e0-b19c-f0b26b31bfac",
         "title": "Nb de cantines ayant participé à la Campagne #1 de télédéclaration (TD) depuis son lancement le 19 juillet 2022",
-        "width": 1100
+        "width": 400
       }
     ],
     "title": "3. Campagne de télédéclaration des données d'achats HT 2021"
@@ -219,10 +219,10 @@
     "stats": [
       {
         "explanation": "",
-        "height": 500,
+        "height": 200,
         "link": "/public/question/fe84f785-7a7c-4b3d-907a-ac7d998760d7",
         "title": "Nombre de cantines utilisatrices du suivi d'achats en ligne",
-        "width": 600
+        "width": 400
       }
     ],
     "title": "4. Statistiques d'usage des ressources et outils mis à disposition pour l'amélioration des pratiques"
@@ -232,7 +232,7 @@
       {
         "explanation": "Afin d'accompagner les gestionnaires dans leur compréhension de la loi, leur prise en main des outils,... nous organisons 1 à 2 webinaires par semaine. + d'infos et lien d'inscription sur notre page 'communauté' : https://ma-cantine.agriculture.gouv.fr/communaute",
         "height": 2000,
-        "link": "/public/question/fe84f785-7a7c-4b3d-907a-ac7d998760d7",
+        "link": "/public/question/08d84f66-bbd3-4ef3-ac9d-61795415edf7",
         "title": "Nombre de webinaires thématiques organisés",
         "width": 600
       }
