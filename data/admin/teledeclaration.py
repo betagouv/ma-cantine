@@ -27,17 +27,43 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = (
         "canteen_name",
         "year",
+        "applicant",
         "creation_date",
         "status",
     )
     list_filter = ("year", "status")
     fields = (
         "canteen",
+        "canteen_siret",
         "year",
+        "applicant",
+        "diagnostic",
         "creation_date",
         "status",
+        "modification_date",
         "declared_data",
+    )
+    # want to be able to modify status
+    readonly_fields = (
+        "canteen",
+        "canteen_siret",
+        "year",
+        "applicant",
+        "diagnostic",
+        "creation_date",
+        "modification_date",
+        "declared_data",
+    )
+    search_fields = (
+        "canteen__name",
+        "canteen__siret",
+        "applicant__username",
+        "applicant__email",
     )
 
     def canteen_name(self, obj):
         return obj.declared_data["canteen"]["name"]
+
+    # overriding mixin
+    def has_change_permission(self, request, obj=None):
+        return True

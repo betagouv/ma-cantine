@@ -35,6 +35,7 @@ class MaCanteenUserAdmin(UserAdmin):
         "first_name",
         "last_name",
         "email",
+        "username",
     )
     readonly_fields = (
         "date_joined",
