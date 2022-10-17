@@ -42,14 +42,12 @@ export default {
             "Oui.  Le décret du 23 avril 2019, pris en application de la loi EGAlim du 30 octobre 2018, prévoit la réalisation d’un bilan statistique de la mise en œuvre des obligations prévues par la loi, sur la base des éléments transmis, dans des conditions fixées par l'arrêté ministériel du 14 septembre 2022. Ce dernier précise la nature des informations à déclarer et le moyen de le faire par ma-cantine.",
         },
         {
-          title:
-            "Qui peut s’inscrire sur ma-cantine ?",
+          title: "Qui peut s’inscrire sur ma-cantine ?",
           answer:
             "ma cantine est destinée aux responsables légaux et aux gestionnaires publics et privés des services de restauration collective. Concrètement, il s'agit de plusieurs types de peronnes : Élu(e)s de collectivité, Directeur(trice) d’établissement, Gestionnaire administratif, Comptable, Responsable Restauration, Chef(fe) et ou cuisinier. Plusieurs personnes peuvent etre rattachées à une même cantine. Les services de restauration peuvent etre en gestion directe ou en gestion déléguée/concédée.",
         },
         {
-          title:
-            "Comment s’inscrire sur ma-cantine ?",
+          title: "Comment s’inscrire sur ma-cantine ?",
           answer:
             "Il faut procéder en plusieurs étapes qui sont documentées à ce lien (https://ma-cantine-1.gitbook.io/ma-cantine-egalim/tuto-utilisation-de-la-plateforme-ma-cantine) : se créer un compte sur ma-cantine.agriculture.gouv.fr, créer sa cantine avec son numéro SIRET et créer un diagnostic pour par année civile.",
         },
@@ -59,19 +57,18 @@ export default {
             "C'est au gestionnaire de la collectivité ou du groupement de collectivités (EPCI, intercom, syndicats,...) de s'inscrire et de créer les établissements. Vous pouvez également demander à cette personne un accès gestionnaire sur ces établissements.",
         },
         {
-          title:
-            "Est-il possible d’ajouter plusieurs cantines sous le même numéro SIRET ?",
+          title: "Est-il possible d’ajouter plusieurs cantines sous le même numéro SIRET ?",
           answer:
             "Il n’est pas possible d’ajouter plusieurs cantines sous un seul et même SIRET. Dans la plupart des cas, chaque cantine dispose de son numéro de SIRET propre. Vous pouvez le trouver ici : https://annuaire-entreprises.data.gouv.fr/. Concernant les cantines scolaires, vous pouvez retrouver le SIRET de l’établissement rattaché à la cantine sur l’Annuaire de l’éducation : https://annuaire-education.fr/. Dans certains cas, il est possible que certaines cantines n’aient pas de SIRET : dans ce cas uniquement, il est possible d’indiquer le numéro de SIRET de la collectivité desservant ces cantines.",
         },
         {
-          title:
-            "Le SIRET est-il obligatoire pour créer ma cantine ?",
+          title: "Le SIRET est-il obligatoire pour créer ma cantine ?",
           answer:
             "Oui. Il est possible de le trouver ici : https://annuaire-entreprises.data.gouv.fr/. Concernant les cantines scolaires, vous pouvez retrouver le SIRET de l’établissement rattaché à la cantine sur l’Annuaire de l’éducation : https://annuaire-education.fr/.",
         },
         {
-          title: "Je suis en gestion concédée/approvisionné par un restaurateur privé (société de restauration collective, traiteur, prestataire,...), suis-je concerné ?",
+          title:
+            "Je suis en gestion concédée/approvisionné par un restaurateur privé (société de restauration collective, traiteur, prestataire,...), suis-je concerné ?",
           answer:
             "Oui, vous êtes concerné. Dans le cas d’une gestion déléguée/concédée, si en tant que donneur d’ordre vous n'avez pas toutes les informations requises pour mettre à jour vos données d'achat dans ma-cantine, vous avez deux options: soit vous les demandez à votre prestataire et les renseignez dans votre espace cantine ; soit vous autorisez le prestataire à les saisir lui-même dans votre espace cantine. Dans ce cas, votre prestataire doit se créer un compte dans ma-cantine et vous devez l'ajouter en gestionnaire de l'établissement.",
         },
