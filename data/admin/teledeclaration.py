@@ -27,6 +27,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = (
         "canteen_name",
         "year",
+        "applicant",
         "creation_date",
         "status",
     )
@@ -34,6 +35,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     fields = (
         "canteen",
         "year",
+        "applicant",
         "diagnostic",
         "creation_date",
         "status",
@@ -43,11 +45,16 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     readonly_fields = (
         "canteen",
         "year",
+        "applicant",
         "diagnostic",
         "creation_date",
         "declared_data",
     )
-    search_fields = ("canteen__name",)
+    search_fields = (
+        "canteen__name",
+        "applicant__username",
+        "applicant__email",
+    )
 
     def canteen_name(self, obj):
         return obj.declared_data["canteen"]["name"]
