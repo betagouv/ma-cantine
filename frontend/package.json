@@ -13,7 +13,7 @@
     "core-js": "^3.25.5",
     "html2pdf.js": "^0.10.1",
     "qrcode.vue": "^1.7.0",
-    "vue": "^2.6.14",
+    "vue": "^3.2.41",
     "vue-apexcharts": "^1.6.2",
     "vue-matomo": "^4.2.0",
     "vue-router": "^3.6.5",
