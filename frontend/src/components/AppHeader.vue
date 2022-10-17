@@ -269,6 +269,10 @@ export default {
               to: { name: "PublicCanteenStatisticsPage" },
             },
             {
+              text: "Mesures de notre impact",
+              to: { name: "PlatformStatsPage" },
+            },
+            {
               text: "Nos données",
               href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/f65ca7cc-c3bd-4cfb-a3dc-236f81864663",
             },
