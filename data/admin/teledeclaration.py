@@ -34,24 +34,29 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_filter = ("year", "status")
     fields = (
         "canteen",
+        "canteen_siret",
         "year",
         "applicant",
         "diagnostic",
         "creation_date",
         "status",
+        "modification_date",
         "declared_data",
     )
     # want to be able to modify status
     readonly_fields = (
         "canteen",
+        "canteen_siret",
         "year",
         "applicant",
         "diagnostic",
         "creation_date",
+        "modification_date",
         "declared_data",
     )
     search_fields = (
         "canteen__name",
+        "canteen__siret",
         "applicant__username",
         "applicant__email",
     )
