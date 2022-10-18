@@ -5,7 +5,7 @@
     </div>
     <div>
       <v-card-title class="text-body-1 font-weight-bold">
-        Du 18 juillet au 16 octobre 2022, participez à la collecte de données 2022 !
+        PROLONGATION : vous avez jusqu'au 25 novembre 2022 pour participer à la collecte de données !
       </v-card-title>
       <v-card-text class="pb-0">
         Dans votre espace cantine, remplissez votre diagnostic 2021 et télédéclarez vos données (arrêté ministériel du
