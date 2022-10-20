@@ -24,7 +24,7 @@
             <v-icon small class="mr-2" color="green">$checkbox-circle-fill</v-icon>
             <span class="caption">Rien à faire !</span>
           </div>
-          <v-btn small outlined color="primary" :to="actionLink(item)" v-else>
+          <v-btn small outlined color="primary" :to="actionLink(item)" @click="action(item)" v-else>
             <v-icon small class="mr-2" color="primary">{{ actions[item.action].icon }}</v-icon>
             {{ actions[item.action].display }}
             <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
@@ -32,12 +32,22 @@
         </template>
       </v-data-table>
     </div>
+    <TeledeclarationPreview
+      v-if="canteenForTD"
+      :diagnostic="diagnosticForTD"
+      v-model="showTeledeclarationPreview"
+      @teledeclare="submitTeledeclaration(diagnosticForTD)"
+      :canteen="canteenForTD"
+    />
   </div>
 </template>
 
 <script>
+import TeledeclarationPreview from "@/components/TeledeclarationPreview"
+
 export default {
   name: "AnnualCanteenSummaryTable",
+  components: { TeledeclarationPreview },
   data() {
     const year = 2021
     return {
@@ -87,6 +97,8 @@ export default {
           icon: "$checkbox-circle-fill",
         },
       },
+      canteenForTD: null,
+      showTeledeclarationPreview: false,
     }
   },
   computed: {
@@ -104,6 +116,13 @@ export default {
       if (this.page) query.page = String(this.page)
       if (this.searchTerm) query.recherche = this.searchTerm
       return query
+    },
+    diagnosticForTD() {
+      if (this.canteenForTD) {
+        return this.getDiagnostic(this.canteenForTD)
+      } else {
+        return null
+      }
     },
   },
   methods: {
@@ -125,24 +144,7 @@ export default {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
           this.visibleCanteens.forEach((canteen) => {
-            if (!canteen.diagnostics || canteen.diagnostics.length === 0) {
-              canteen.action = "CREATE"
-            } else {
-              const thisYearDiag = canteen.diagnostics.find((d) => d.year === this.year)
-              if (!thisYearDiag) {
-                canteen.action = "CREATE"
-              } else if (thisYearDiag.teledeclaration && thisYearDiag.teledeclaration.status === "SUBMITTED") {
-                if (canteen.publicationStatus === "draft") {
-                  canteen.action = "NOTHING"
-                } else {
-                  canteen.action = "PUBLISH"
-                }
-              } else if (thisYearDiag.valueTotalHt) {
-                canteen.action = "TELEDECLARE"
-              } else {
-                canteen.action = "COMPLETE"
-              }
-            }
+            canteen.action = this.determineAction(canteen)
           })
           this.$emit("canteen-count", this.canteenCount)
         })
@@ -170,9 +172,17 @@ export default {
       }
     },
     actionLink(canteen) {
-      return {
-        name: "CanteenModification",
-        params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+      if (canteen.action !== "TELEDECLARE") {
+        return {
+          name: "CanteenModification",
+          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+        }
+      }
+    },
+    action(canteen) {
+      if (canteen.action === "TELEDECLARE") {
+        this.canteenForTD = canteen
+        this.showTeledeclarationPreview = true
       }
     },
     addWatchers() {
@@ -191,6 +201,53 @@ export default {
     onRouteChange() {
       this.populateInitialParameters()
       this.fetchCurrentPage()
+    },
+    getDiagnostic(canteen) {
+      if (canteen.diagnostics?.length) {
+        return canteen.diagnostics.find((d) => d.year === this.year)
+      }
+    },
+    submitTeledeclaration(diagnostic) {
+      this.$store
+        .dispatch("submitTeledeclaration", { id: diagnostic.id, canteenId: this.canteenForTD.id })
+        .then((diagnostic) => {
+          this.$store.dispatch("notify", {
+            title: "Télédéclaration prise en compte",
+            status: "success",
+          })
+          this.updateCanteenDiagnostic(this.canteenForTD, diagnostic)
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+        .finally(() => {
+          this.showTeledeclarationPreview = false
+          this.canteenForTD = null
+        })
+    },
+    updateCanteenDiagnostic(canteen, diagnostic) {
+      const canteenIdx = this.visibleCanteens.findIndex((c) => c.id === canteen.id)
+      const diagnosticIdx = this.visibleCanteens[canteenIdx].diagnostics.findIndex((d) => d.id === diagnostic.id)
+      this.visibleCanteens[canteenIdx].diagnostics[diagnosticIdx] = diagnostic
+      this.visibleCanteens[canteenIdx].action = this.determineAction(this.visibleCanteens[canteenIdx])
+    },
+    determineAction(canteen) {
+      if (!canteen.diagnostics || canteen.diagnostics.length === 0) {
+        return "CREATE"
+      } else {
+        const thisYearDiag = canteen.diagnostics.find((d) => d.year === this.year)
+        if (!thisYearDiag) {
+          return "CREATE"
+        } else if (thisYearDiag.teledeclaration && thisYearDiag.teledeclaration.status === "SUBMITTED") {
+          if (canteen.publicationStatus === "published") {
+            return "NOTHING"
+          } else {
+            return "PUBLISH"
+          }
+        } else if (thisYearDiag.valueTotalHt) {
+          return "TELEDECLARE"
+        } else {
+          return "COMPLETE"
+        }
+      }
     },
   },
   mounted() {

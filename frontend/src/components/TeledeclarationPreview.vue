@@ -1,9 +1,11 @@
 <template>
   <v-dialog v-model="isOpen" max-width="750">
     <v-card ref="content">
-      <v-card-title class="font-weight-bold">Votre télédéclaration</v-card-title>
+      <v-card-title class="font-weight-bold">
+        {{ canteen ? "Télédéclaration : " + canteen.name : "Votre télédéclaration" }}
+      </v-card-title>
       <v-card-text class="text-left pb-0">
-        Veuillez vérifier les données ci-dessous.
+        Veuillez vérifier les données pour {{ diagnostic.year }} ci-dessous.
       </v-card-text>
       <v-card-text ref="table" class="my-4" style="overflow-y: scroll; border: solid 1px #9b9b9b;">
         <v-simple-table dense>
@@ -36,9 +38,22 @@
           </template>
         </v-simple-table>
       </v-card-text>
+      <v-form
+        ref="teledeclarationForm"
+        v-model="teledeclarationFormIsValid"
+        id="teledeclaration-form"
+        v-if="canteen"
+        class="px-6"
+      >
+        <v-checkbox
+          :rules="[validators.checked]"
+          label="Je déclare sur l’honneur la véracité de mes informations"
+        ></v-checkbox>
+      </v-form>
       <v-card-actions class="d-flex pr-4 pb-4">
         <v-spacer></v-spacer>
         <v-btn outlined color="primary" class="px-4" @click="closeDialog">Annuler</v-btn>
+        <v-btn outlined color="primary" class="ml-4 px-4" @click="goToEditing" v-if="canteen">Modifier</v-btn>
         <v-btn color="primary" class="ml-4 px-4" @click="confirmTeledeclaration">Télédéclarer ces données</v-btn>
       </v-card-actions>
     </v-card>
@@ -46,6 +61,8 @@
 </template>
 
 <script>
+import validators from "@/validators"
+
 export default {
   props: {
     value: {
@@ -53,6 +70,9 @@ export default {
     },
     diagnostic: {
       required: true,
+    },
+    canteen: {
+      optional: true,
     },
   },
   computed: {
@@ -416,6 +436,15 @@ export default {
         },
       ]
     },
+    canteenUrlComponent() {
+      return this.canteen ? this.$store.getters.getCanteenUrlComponent(this.canteen) : null
+    },
+  },
+  data() {
+    return {
+      teledeclarationFormIsValid: true,
+      validators,
+    }
   },
   methods: {
     calculateTableHeight() {
@@ -509,7 +538,18 @@ export default {
       this.$emit("input", false)
     },
     confirmTeledeclaration() {
+      if (this.$refs["teledeclarationForm"]) {
+        const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
+        if (!teledeclarationFormIsValid) return
+      }
       this.$emit("teledeclare")
+    },
+    goToEditing() {
+      this.$emit("input", false)
+      this.$router.push({
+        name: "DiagnosticModification",
+        params: { canteenUrlComponent: this.canteenUrlComponent, year: this.diagnostic.year },
+      })
     },
   },
   mounted() {
