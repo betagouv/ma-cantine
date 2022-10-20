@@ -270,8 +270,9 @@ export default new Vuex.Store({
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteens/${id}/publish`, { method: "POST", headers, body: JSON.stringify(payload) })
         .then(verifyResponse)
-        .then(() => {
+        .then((response) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
         })
         .catch((e) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)

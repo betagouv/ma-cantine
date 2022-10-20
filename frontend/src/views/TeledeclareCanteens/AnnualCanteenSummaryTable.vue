@@ -39,15 +39,46 @@
       @teledeclare="submitTeledeclaration(diagnosticForTD)"
       :canteen="canteenForTD"
     />
+    <v-dialog v-model="showPublicationForm" max-width="750" v-if="canteenForPublication">
+      <v-card class="text-left">
+        <v-card-title class="font-weight-bold">Publication : {{ canteenForPublication.name }}</v-card-title>
+        <v-card-text class="mt-2">
+          <p>
+            Les publications sont affichées dans
+            <router-link :to="{ name: 'CanteensHome' }" target="_blank">nos cantines</router-link>
+            pour informer les convives.
+          </p>
+          <v-form>
+            <label class="body-2" for="general">
+              Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
+            </label>
+            <DsfrTextarea
+              id="general"
+              class="my-2"
+              rows="3"
+              counter="500"
+              v-model="canteenForPublication.publicationComments"
+              hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
+            />
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="d-flex pr-6 pb-4">
+          <v-spacer></v-spacer>
+          <v-btn color="primary" outlined class="px-4 mr-2" @click="closePublication">Annuler</v-btn>
+          <v-btn color="primary" class="px-4" @click="publish">Publier</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
+import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "AnnualCanteenSummaryTable",
-  components: { TeledeclarationPreview },
+  components: { TeledeclarationPreview, DsfrTextarea },
   data() {
     const year = 2021
     return {
@@ -99,6 +130,8 @@ export default {
       },
       canteenForTD: null,
       showTeledeclarationPreview: false,
+      showPublicationForm: false,
+      canteenForPublication: null,
     }
   },
   computed: {
@@ -172,7 +205,7 @@ export default {
       }
     },
     actionLink(canteen) {
-      if (canteen.action !== "TELEDECLARE") {
+      if (canteen.action !== "TELEDECLARE" && canteen.action !== "PUBLISH") {
         return {
           name: "CanteenModification",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
@@ -183,7 +216,31 @@ export default {
       if (canteen.action === "TELEDECLARE") {
         this.canteenForTD = canteen
         this.showTeledeclarationPreview = true
+      } else if (canteen.action === "PUBLISH") {
+        this.canteenForPublication = canteen
+        this.showPublicationForm = true
       }
+    },
+    publish() {
+      this.$store
+        .dispatch("publishCanteen", {
+          id: this.canteenForPublication.id,
+          payload: this.canteenForPublication,
+        })
+        .then((canteen) => {
+          this.$store.dispatch("notify", { title: "Votre cantine est publiée", status: "success" })
+          this.updateCanteen(canteen)
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
+        .finally(() => {
+          this.closePublication()
+        })
+    },
+    closePublication() {
+      this.canteenForPublication = null
+      this.showPublicationForm = false
     },
     addWatchers() {
       // this.$watch("appliedFilters", this.onAppliedFiltersChange, { deep: true })
@@ -215,7 +272,7 @@ export default {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
-          this.updateCanteenDiagnostic(this.canteenForTD, diagnostic)
+          this.updateCanteen(this.canteenForTD, diagnostic)
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
         .finally(() => {
@@ -223,11 +280,15 @@ export default {
           this.canteenForTD = null
         })
     },
-    updateCanteenDiagnostic(canteen, diagnostic) {
+    updateCanteen(canteen, diagnostic) {
       const canteenIdx = this.visibleCanteens.findIndex((c) => c.id === canteen.id)
-      const diagnosticIdx = this.visibleCanteens[canteenIdx].diagnostics.findIndex((d) => d.id === diagnostic.id)
-      this.visibleCanteens[canteenIdx].diagnostics[diagnosticIdx] = diagnostic
+      this.visibleCanteens[canteenIdx] = canteen
+      if (diagnostic) {
+        const diagnosticIdx = this.visibleCanteens[canteenIdx].diagnostics.findIndex((d) => d.id === diagnostic.id)
+        this.visibleCanteens[canteenIdx].diagnostics[diagnosticIdx] = diagnostic
+      }
       this.visibleCanteens[canteenIdx].action = this.determineAction(this.visibleCanteens[canteenIdx])
+      console.log(this.visibleCanteens[canteenIdx].action)
     },
     determineAction(canteen) {
       if (!canteen.diagnostics || canteen.diagnostics.length === 0) {
