@@ -1,21 +1,6 @@
 <template>
   <div>
-    <div class="pa-4">
-      <v-row class="mb-4" align="center">
-        <p class="mb-0" style="height: fit-content">
-          Parmi vos {{ canteenCount }} cantines, {{ unteledeclaredCount }} cantines ne sont pas télédéclarées.
-        </p>
-        <v-btn color="primary" class="ml-2">Télédéclarer {{ unteledeclaredCount }} cantines</v-btn>
-      </v-row>
-      <v-row align="center">
-        <p class="mb-0" style="height: fit-content">
-          Parmi vos {{ canteenCount }} cantines, {{ unteledeclaredCount }} cantines ne sont pas publiées.
-        </p>
-        <v-btn color="primary" outlined class="ml-2">Publier {{ unteledeclaredCount }} cantines</v-btn>
-      </v-row>
-    </div>
     <div class="mt-4">
-      <h2>Mes cantines en {{ year }}</h2>
       <v-data-table
         v-if="visibleCanteens"
         :options.sync="options"
@@ -28,6 +13,9 @@
           disableItemsPerPage: true,
         }"
       >
+        <template v-slot:[`item.name`]="{ item }">
+          <router-link :to="toCanteen(item)">{{ item.name }}</router-link>
+        </template>
         <template v-slot:[`item.productionType`]="{ item }">
           {{ typeDisplay[item.productionType] }}
         </template>
@@ -174,6 +162,12 @@ export default {
       const override = this.searchTerm ? { page: 1, recherche: this.searchTerm } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
+    },
+    toCanteen(canteen) {
+      return {
+        name: "CanteenModification",
+        params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+      }
     },
     actionLink(canteen) {
       return {
