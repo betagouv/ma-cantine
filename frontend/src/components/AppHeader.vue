@@ -283,15 +283,15 @@ export default {
           ],
         },
         {
-          text: "Contact",
+          text: "Questions ?",
           children: [
+            {
+              text: "Foire aux questions",
+              to: { name: "FaqPage" },
+            },
             {
               text: "Contactez-nous",
               to: { name: "ContactPage" },
-            },
-            {
-              text: "FAQ",
-              to: { name: "FaqPage" },
             },
           ],
         },
