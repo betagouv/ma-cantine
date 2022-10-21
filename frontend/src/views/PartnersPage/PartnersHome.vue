@@ -124,7 +124,7 @@
         </v-row>
       </v-sheet>
     </v-expand-transition>
-    <v-row class="mt-3">
+    <v-row class="mt-3" v-if="!!partnerCount">
       <v-spacer></v-spacer>
       <v-col cols="12" sm="6">
         <DsfrPagination
@@ -140,16 +140,27 @@
       <v-col v-for="partner in visiblePartners" :key="partner.id" style="height: auto;" cols="12" sm="6" md="4">
         <PartnerCard :partner="partner" />
       </v-col>
+      <v-col style="height: auto;" cols="12" sm="6" md="4">
+        <NewPartnerCard />
+      </v-col>
     </v-row>
-    <div v-else class="d-flex flex-column align-center py-6">
-      <v-icon large>mdi-inbox-remove</v-icon>
-      <p class="text-body-1 grey--text text--darken-1 my-2">
-        Nous n'avons pas trouvé des partenaires avec ces paramètres
-      </p>
-      <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
-        Désactiver tous les filtres
-      </v-btn>
-    </div>
+    <v-row v-else>
+      <v-col cols="12">
+        <div class="d-flex flex-column align-center py-0">
+          <p class="text-body-1 grey--text text--darken-1 my-2">
+            <v-icon class="mr-1 mt-n1">mdi-inbox-remove</v-icon>
+            Nous n'avons pas trouvé des partenaires avec ces paramètres
+          </p>
+          <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
+            Désactiver tous les filtres
+          </v-btn>
+        </div>
+      </v-col>
+      <v-col style="height: auto;" cols="12" sm="6" md="4">
+        <NewPartnerCard />
+      </v-col>
+    </v-row>
+
     <v-divider class="mb-8 mt-12"></v-divider>
     <v-row>
       <v-col cols="12">
@@ -174,16 +185,25 @@ import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrCombobox from "@/components/DsfrCombobox"
 import PartnerCard from "@/views/PartnersPage/PartnerCard"
+import NewPartnerCard from "@/views/PartnersPage/NewPartnerCard"
 import GeneralContactForm from "@/components/GeneralContactForm"
 import { getObjectDiff } from "@/utils"
 import jsonDepartments from "@/departments.json"
 
 export default {
   name: "PartnersHome",
-  components: { BreadcrumbsNav, DsfrPagination, DsfrSelect, DsfrCombobox, PartnerCard, GeneralContactForm },
+  components: {
+    BreadcrumbsNav,
+    DsfrPagination,
+    DsfrSelect,
+    DsfrCombobox,
+    PartnerCard,
+    NewPartnerCard,
+    GeneralContactForm,
+  },
   data() {
     return {
-      limit: 6,
+      limit: 5,
       page: this.$route.query.page,
       types: [],
       visiblePartners: null,
