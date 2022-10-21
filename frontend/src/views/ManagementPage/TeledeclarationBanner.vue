@@ -13,7 +13,7 @@
         politique publique par l'administration.
       </v-card-text>
       <v-card-actions class="px-4 mt-2">
-        <v-btn :to="{ name: 'TeledeclareCanteens' }" color="primary">Télédéclarer mes cantines</v-btn>
+        <v-btn :to="{ name: 'PendingActions' }" color="primary">Télédéclarer mes cantines</v-btn>
         <v-btn
           text
           href="https://agriculture.gouv.fr/restauration-collective-top-depart-pour-la-premiere-collecte-dinformations-concernant-les"

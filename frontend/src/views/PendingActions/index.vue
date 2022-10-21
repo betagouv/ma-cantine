@@ -12,7 +12,7 @@ import AnnualCanteenSummaryTable from "./AnnualCanteenSummaryTable"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
-  name: "TeledeclareCanteens",
+  name: "PendingActions",
   components: { AnnualCanteenSummaryTable, BreadcrumbsNav },
   data() {
     return {

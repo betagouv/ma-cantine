@@ -26,7 +26,7 @@ import NotFound from "@/views/NotFound"
 import CGU from "@/views/CGU.vue"
 import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
 import ManagementPage from "@/views/ManagementPage"
-import TeledeclareCanteens from "@/views/TeledeclareCanteens"
+import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenForm from "@/views/CanteenEditor/CanteenForm"
 import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
@@ -270,8 +270,8 @@ const routes = [
   },
   {
     path: "/actions-en-attente",
-    name: "TeledeclareCanteens",
-    component: TeledeclareCanteens,
+    name: "PendingActions",
+    component: PendingActions,
     meta: {
       title: "Actions en attente",
       authenticationRequired: true,
