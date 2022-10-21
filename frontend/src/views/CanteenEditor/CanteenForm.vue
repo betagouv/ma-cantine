@@ -764,7 +764,7 @@ export default {
       this.showTechnicalControlDialog = true
     },
     greaterThanDailyMealCount(input) {
-      if (this.canteen.productionType === "central_serving" && input < this.canteen.dailyMealCount) {
+      if (input && this.canteen.productionType !== "central" && Number(input) < Number(this.canteen.dailyMealCount)) {
         return `Ce total doit être superieur du moyen de repas par jour sur place, actuellement ${this.canteen.dailyMealCount}`
       }
       return true
