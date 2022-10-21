@@ -9,6 +9,7 @@
         :headers="headers"
         dense
         :items-per-page="limit"
+        disable-sort
         :footer-props="{
           disableItemsPerPage: true,
         }"
