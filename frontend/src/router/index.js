@@ -269,11 +269,11 @@ const routes = [
     },
   },
   {
-    path: "/teledeclaration",
+    path: "/actions-en-attente",
     name: "TeledeclareCanteens",
     component: TeledeclareCanteens,
     meta: {
-      title: "Télédéclarer mes cantines",
+      title: "Actions en attente",
       authenticationRequired: true,
     },
   },
