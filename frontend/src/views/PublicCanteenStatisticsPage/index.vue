@@ -5,9 +5,9 @@
 
     <v-card outlined>
       <v-card-text>
-        <v-form class="my-4">
+        <v-form class="mb-2">
           <v-row>
-            <v-col class="py-0" cols="12" sm="6" md="4">
+            <v-col class="py-0 mt-4" cols="12" sm="6">
               <label for="select-region" class="text-body-2">
                 Région
               </label>
@@ -25,7 +25,7 @@
                 no-data-text="Pas de résultats"
               />
             </v-col>
-            <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
+            <v-col class="py-2 py-sm-0 mt-4" cols="12" sm="6">
               <label for="select-department" class="text-body-2">
                 Département
               </label>
@@ -43,7 +43,24 @@
                 no-data-text="Pas de résultats"
               />
             </v-col>
-            <v-col class="py-2 py-sm-0" cols="12" sm="6" md="4">
+            <v-col class="py-2 py-sm-0 mt-4" cols="12" sm="6">
+              <label for="select-epci" class="text-body-2">
+                EPCI
+              </label>
+              <DsfrAutocomplete
+                v-model="chosenEpcis"
+                :items="epcis"
+                clearable
+                multiple
+                hide-details
+                id="select-epci"
+                placeholder="Tous les EPCIs"
+                class="mt-1"
+                auto-select-first
+                no-data-text="Pas de résultats"
+              />
+            </v-col>
+            <v-col class="py-2 py-sm-0 mt-4" cols="12" sm="6">
               <label for="select-sector" class="text-body-2">
                 Secteur d'activité
               </label>
@@ -60,25 +77,8 @@
                 class="mt-1"
               />
             </v-col>
-            <v-col class="py-2 py-sm-0" cols="12" sm="6">
-              <label for="select-epci" class="text-body-2">
-                EPCI(s)
-              </label>
-              <DsfrAutocomplete
-                v-model="chosenEpcis"
-                :items="epcis"
-                clearable
-                multiple
-                hide-details
-                id="select-epci"
-                placeholder="Tous les EPCIs"
-                class="mt-1"
-                auto-select-first
-                no-data-text="Pas de résultats"
-              />
-            </v-col>
           </v-row>
-          <v-row class="mt-8">
+          <v-row class="mt-6">
             <v-col cols="12" sm="6" md="4">
               <v-btn x-large color="primary" @click="updateRoute">
                 Afficher les statistiques
@@ -110,7 +110,8 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
+              ).
             </p>
           </div>
           <VueApexCharts
