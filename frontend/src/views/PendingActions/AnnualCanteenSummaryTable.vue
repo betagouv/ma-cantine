@@ -80,12 +80,13 @@
 <script>
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import DsfrTextarea from "@/components/DsfrTextarea"
+import { lastYear } from "@/utils"
 
 export default {
   name: "AnnualCanteenSummaryTable",
   components: { TeledeclarationPreview, DsfrTextarea },
   data() {
-    const year = 2021
+    const year = lastYear()
     return {
       limit: 15,
       page: null,
