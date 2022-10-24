@@ -2,7 +2,7 @@ amqp==5.1.1
 arabic-reshaper==2.1.4
 asgiref==3.5.2
 asn1crypto==1.5.1
-astroid==2.12.11
+astroid==2.12.12
 async-timeout==4.0.2
 attrs==22.1.0
 billiard==3.6.4.0
@@ -21,7 +21,7 @@ click-repl==0.2.0
 cryptography==38.0.1
 cssselect2==0.7.0
 Deprecated==1.2.13
-dill==0.3.5.1
+dill==0.3.6
 Django==4.1
 django-anymail==8.6
 django-ckeditor==6.5.1
@@ -30,7 +30,7 @@ django-debug-toolbar==3.7.0
 django-filter==22.1
 django-js-asset==2.0.0
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
-django-oauth-toolkit==2.1.0
+django-oauth-toolkit==2.2.0
 django-otp==1.1.3
 django-storages==1.13.1
 django-webpack-loader==1.6.0
@@ -58,7 +58,7 @@ lazy-object-proxy==1.7.1
 lxml==4.9.1
 mccabe==0.6.1
 mypy-extensions==0.4.3
-oauthlib==3.2.1
+oauthlib==3.2.2
 openpyxl==3.0.10
 oscrypto==1.3.0
 packaging==21.3

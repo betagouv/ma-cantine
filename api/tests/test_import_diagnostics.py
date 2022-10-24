@@ -286,7 +286,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.is_staff = True
         user.email = "authenticate@example.com"
         user.save()
-        authenticate.user.refresh_from_db()
 
         with open("./api/tests/files/mix_diag_canteen_staff_import.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
@@ -448,7 +447,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         user = authenticate.user
         user.is_staff = True
         user.save()
-        authenticate.user.refresh_from_db()
 
         with open("./api/tests/files/diagnostics_bad_staff_file.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
@@ -714,7 +712,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         user = authenticate.user
         user.is_staff = True
         user.save()
-        authenticate.user.refresh_from_db()
         with open("./api/tests/files/staff_complete_diagnostics.csv") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
@@ -778,7 +775,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.is_staff = True
         user.email = "authenticate@example.com"
         user.save()
-        authenticate.user.refresh_from_db()
         self.assertEqual(Teledeclaration.objects.count(), 0)
         with open("./api/tests/files/teledeclaration_simple.csv") as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
@@ -797,7 +793,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.is_staff = True
         user.email = "authenticate@example.com"
         user.save()
-        authenticate.user.refresh_from_db()
         with open("./api/tests/files/teledeclaration_error.csv") as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
