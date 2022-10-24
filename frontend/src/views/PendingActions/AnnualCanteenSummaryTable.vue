@@ -230,6 +230,7 @@ export default {
         })
         .then((canteen) => {
           this.$store.dispatch("notify", { title: "Votre cantine est publiée", status: "success" })
+          canteen.action = this.determineAction(canteen)
           this.updateCanteen(canteen)
         })
         .catch((e) => {
@@ -244,12 +245,10 @@ export default {
       this.showPublicationForm = false
     },
     addWatchers() {
-      // this.$watch("appliedFilters", this.onAppliedFiltersChange, { deep: true })
       this.$watch("options", this.onOptionsChange, { deep: true })
       this.$watch("$route", this.onRouteChange)
     },
     onOptionsChange() {
-      // this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
       const replace = Object.keys(this.$route.query).length === 0
       const page = { query: { ...this.$route.query, ...{ cantinePage: this.options.page } } }
       // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
@@ -283,13 +282,13 @@ export default {
     },
     updateCanteen(canteen, diagnostic) {
       const canteenIdx = this.visibleCanteens.findIndex((c) => c.id === canteen.id)
-      this.visibleCanteens[canteenIdx] = canteen
       if (diagnostic) {
         const diagnosticIdx = this.visibleCanteens[canteenIdx].diagnostics.findIndex((d) => d.id === diagnostic.id)
         this.visibleCanteens[canteenIdx].diagnostics[diagnosticIdx] = diagnostic
+        this.visibleCanteens[canteenIdx].action = this.determineAction(this.visibleCanteens[canteenIdx])
+      } else {
+        this.visibleCanteens.splice(canteenIdx, 1, canteen)
       }
-      this.visibleCanteens[canteenIdx].action = this.determineAction(this.visibleCanteens[canteenIdx])
-      console.log(this.visibleCanteens[canteenIdx].action)
     },
     determineAction(canteen) {
       if (!canteen.diagnostics || canteen.diagnostics.length === 0) {
