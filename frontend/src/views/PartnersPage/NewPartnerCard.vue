@@ -1,17 +1,19 @@
 <template>
   <v-sheet
     min-height="240"
-    class="dsfr d-flex flex-column align-center justify-center fill-height"
+    class="dsfr d-flex flex-column align-start justify-center fill-height callout pl-4"
     outlined
     :ripple="false"
-    color="primary lighten-5"
+    color="grey lighten-4"
   >
-    <v-card-text class="font-weight-medium pt-0 text-center">
-      <div class="mb-2">Vous êtes un acteur d'accompagnement dans la restauration collective ?</div>
-      <div>Contribuez à notre initiative de référencement !</div>
+    <v-card-title class="font-weight-bold">
+      Vous êtes un acteur d'accompagnement dans la restauration collective ?
+    </v-card-title>
+    <v-card-text>
+      Contribuez à notre initiative de référencement !
     </v-card-text>
     <v-btn
-      class="mt-2"
+      class="ma-4"
       color="primary"
       href="https://startupdetat.typeform.com/to/JhhsMCYC"
       target="_blank"
@@ -28,3 +30,9 @@ export default {
   name: "NewPartnerCard",
 }
 </script>
+
+<style scoped>
+.callout {
+  box-shadow: rgb(106, 106, 244) 4px 0px 0px 0px inset !important;
+}
+</style>
