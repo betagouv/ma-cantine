@@ -210,10 +210,16 @@ export default {
       }
     },
     actionLink(canteen) {
-      if (canteen.action !== "TELEDECLARE" && canteen.action !== "PUBLISH") {
+      if (canteen.action === "CREATE") {
         return {
-          name: "CanteenModification",
+          name: "NewDiagnosticForCanteen",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+          query: { année: this.year },
+        }
+      } else if (canteen.action === "COMPLETE") {
+        return {
+          name: "DiagnosticModification",
+          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen), year: this.year },
         }
       }
     },

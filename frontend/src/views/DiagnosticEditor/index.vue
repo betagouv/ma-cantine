@@ -258,6 +258,7 @@ const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n
 export default {
   name: "DiagnosticEditor",
   data() {
+    const thisYear = new Date().getFullYear()
     return {
       diagnostic: {},
       bypassLeaveWarning: false,
@@ -287,6 +288,12 @@ export default {
         },
       ],
       showTeledeclarationPreview: false,
+      allowedYears: diagnosticYears().map((year) => {
+        return {
+          text: year + (year >= thisYear ? " (prévisionnel)" : ""),
+          value: year,
+        }
+      }),
     }
   },
   components: {
@@ -336,15 +343,6 @@ export default {
       if (!this.isNewDiagnostic || !this.diagnostic.year) return true
       const existingDiagnostic = this.originalCanteen.diagnostics.some((x) => x.year === this.diagnostic.year)
       return !existingDiagnostic
-    },
-    allowedYears() {
-      const thisYear = new Date().getFullYear()
-      return diagnosticYears().map((year) => {
-        return {
-          text: year + (year >= thisYear ? " (prévisionnel)" : ""),
-          value: year,
-        }
-      })
     },
     hasChanged() {
       const diff = getObjectDiff(this.originalDiagnostic, this.diagnostic)
@@ -663,6 +661,14 @@ export default {
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
+  },
+  mounted() {
+    if (!this.diagnostic.year) {
+      const suggestedYear = Number(this.$route.query.année)
+      if (suggestedYear && this.allowedYears.find((y) => y.value === suggestedYear)) {
+        this.diagnostic.year = suggestedYear
+      }
+    }
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.handleUnload)
