@@ -2,7 +2,7 @@ amqp==5.1.1
 arabic-reshaper==2.1.4
 asgiref==3.5.2
 asn1crypto==1.5.1
-astroid==2.12.11
+astroid==2.12.12
 async-timeout==4.0.2
 attrs==22.1.0
 billiard==3.6.4.0
