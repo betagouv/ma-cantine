@@ -21,15 +21,19 @@
           {{ typeDisplay[item.productionType] }}
         </template>
         <template v-slot:[`item.action`]="{ item }">
-          <div v-if="item.action === 'NOTHING'" class="px-3">
-            <v-icon small class="mr-2" color="green">$checkbox-circle-fill</v-icon>
-            <span class="caption">Rien à faire !</span>
-          </div>
-          <v-btn small outlined color="primary" :to="actionLink(item)" @click="action(item)" v-else>
-            <v-icon small class="mr-2" color="primary">{{ actions[item.action].icon }}</v-icon>
-            {{ actions[item.action].display }}
-            <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
-          </v-btn>
+          <v-fade-transition>
+            <div :key="`${item.id}_${item.action}`">
+              <div v-if="item.action === 'NOTHING'" class="px-3">
+                <v-icon small class="mr-2" color="green">$checkbox-circle-fill</v-icon>
+                <span class="caption">Rien à faire !</span>
+              </div>
+              <v-btn small outlined color="primary" :to="actionLink(item)" @click="action(item)" v-else>
+                <v-icon small class="mr-2" color="primary">{{ actions[item.action].icon }}</v-icon>
+                {{ actions[item.action].display }}
+                <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
+              </v-btn>
+            </div>
+          </v-fade-transition>
         </template>
       </v-data-table>
     </div>
@@ -298,7 +302,8 @@ export default {
         if (!thisYearDiag) {
           return "CREATE"
         } else if (thisYearDiag.teledeclaration && thisYearDiag.teledeclaration.status === "SUBMITTED") {
-          if (canteen.publicationStatus === "published") {
+          // for now prevent centrals from publishing to be consistent with PublicationForm
+          if (canteen.publicationStatus === "published" || canteen.productionType === "central") {
             return "NOTHING"
           } else {
             return "PUBLISH"
