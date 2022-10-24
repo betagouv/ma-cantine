@@ -10,7 +10,13 @@
       Vous êtes un acteur d'accompagnement dans la restauration collective ? Contribuez à notre initiative de
       référencement !
     </v-card-text>
-    <v-btn class="mt-2" color="primary" href="https://startupdetat.typeform.com/to/JhhsMCYC" target="_blank" rel="noopener">
+    <v-btn
+      class="mt-2"
+      color="primary"
+      href="https://startupdetat.typeform.com/to/JhhsMCYC"
+      target="_blank"
+      rel="noopener"
+    >
       Me recenser
       <v-icon small class="ml-2">mdi-open-in-new</v-icon>
     </v-btn>
