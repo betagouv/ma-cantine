@@ -7,8 +7,8 @@
     color="primary lighten-5"
   >
     <v-card-text class="font-weight-medium pt-0 text-center">
-      Vous êtes un acteur d'accompagnement dans la restauration collective ? Contribuez à notre initiative de
-      référencement !
+      <div class="mb-2">Vous êtes un acteur d'accompagnement dans la restauration collective ?</div>
+      <div>Contribuez à notre initiative de référencement !</div>
     </v-card-text>
     <v-btn
       class="mt-2"
