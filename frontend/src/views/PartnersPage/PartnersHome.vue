@@ -19,7 +19,7 @@
     <p v-if="$vuetify.breakpoint.mdAndUp" class="font-weight-bold">Vos besoins</p>
     <v-item-group v-if="$vuetify.breakpoint.mdAndUp" multiple v-model="filters.category.value">
       <v-row>
-        <v-col v-for="category in categoryItems" cols="4" :key="category.value">
+        <v-col v-for="category in categoryItems" cols="4" :key="category.value" class="pa-1">
           <v-item v-slot="{ active, toggle }" :value="category.value">
             <button @click="toggle" style="width: inherit;">
               <v-card :color="active ? 'primary lighten-4' : ''" outlined>
@@ -212,11 +212,6 @@ export default {
       showFilters: false,
       categoryItems: [
         {
-          value: "appro",
-          text: "Améliorer ma part de bio / durable",
-          icon: "$leaf-fill",
-        },
-        {
           value: "plastic",
           text: "Substituer mes plastiques",
           icon: "$recycle-fill",
@@ -237,8 +232,18 @@ export default {
           icon: "$team-fill",
         },
         {
-          value: "hygiene",
-          text: "Trouver des aides / conseils sanitaires",
+          value: "appro",
+          text: "Améliorer ma part de bio / durable",
+          icon: "$leaf-fill",
+        },
+        {
+          value: "vege",
+          text: "Diversifier mes sources de protéines",
+          icon: "mdi-barley",
+        },
+        {
+          value: "suivi",
+          text: "Assurer mon suivi d'approvisionnement",
           icon: "$health-book-fill",
         },
       ],
