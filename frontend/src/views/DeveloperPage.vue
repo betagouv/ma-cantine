@@ -55,12 +55,12 @@
         </v-col>
       </v-row>
       <p class="mt-4">
-        On a aussi créé une petite application Python/Flask
+        Une application exemple est disponible en
         <a href="https://github.com/betagouv/ma-cantine-demo-integration" target="_blank" rel="noopener">
           open source
           <v-icon small color="primary">$external-link-line</v-icon>
         </a>
-        pour démontrer comment l'intégration pourrait être faite.
+        . L'application est basée sur Python/Flask et utilise les APIs ma cantine.
       </p>
       <v-divider class="my-10"></v-divider>
 
