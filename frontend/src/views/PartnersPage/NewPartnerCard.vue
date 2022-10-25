@@ -13,7 +13,7 @@
       Contribuez à notre initiative de référencement !
     </v-card-text>
     <v-btn
-      class="ma-4"
+      class="ma-4 mt-2"
       color="primary"
       href="https://startupdetat.typeform.com/to/JhhsMCYC"
       target="_blank"
