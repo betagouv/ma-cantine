@@ -58,6 +58,8 @@
                 class="mt-1"
                 auto-select-first
                 no-data-text="Pas de résultats"
+                item-text="nom"
+                item-value="code"
               />
             </v-col>
             <v-col class="py-2 py-sm-0 mt-4" cols="12" sm="6">
@@ -272,6 +274,7 @@ export default {
       sectorChartTitle: "Nombre de cantines par secteur",
       defaultLocationText: "l'ensemble de la plateforme",
       statsLevel: "site",
+      epcis: jsonEpcis,
     }
   },
   mounted() {
@@ -292,12 +295,6 @@ export default {
     },
     regions() {
       return this.formatLocations(this.loadedRegionIds, jsonRegions, "region", "régions")
-    },
-    epcis() {
-      return jsonEpcis.map((x) => ({
-        text: x.nom,
-        value: x.code,
-      }))
     },
     publishedSeries() {
       return [
