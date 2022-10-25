@@ -11,7 +11,7 @@
           Vous n'avez ajouté aucune cantine satellite.
         </span>
         <span v-else-if="satelliteCanteensCount !== visibleSatellites.length">
-          Vous en avez renseigné {{ visibleSatellites.length }}.
+          Vous en avez renseigné {{ satelliteCount }}.
         </span>
       </p>
       <v-data-table
