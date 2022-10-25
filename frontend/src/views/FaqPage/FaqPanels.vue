@@ -147,7 +147,7 @@ export default {
             "J'utilise un outil de suivi d'achats (type GPAO). Pourrais-je transmettre les données relatives aux achats automatiquement à partir de mon logiciel de suivi ?",
           answer:
             "Une API "ma cantine" est disponible pour les développeurs afin de se pouvoir "s'interconnecter" à la plateforme. Une documentation est en cours d’élaboration mais c'est déjà opérationnel pour les éditeurs de logiciel par ex : https://ma-cantine.agriculture.gouv.fr/, en créant ou en modifiant un profil en cochant l'option "mode développeur".",
-        }
+        },
       ],
     }
   },
