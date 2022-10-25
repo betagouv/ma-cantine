@@ -54,6 +54,14 @@
           </v-card>
         </v-col>
       </v-row>
+      <p class="mt-4">
+        On a aussi créé une petite application Python/Flask
+        <a href="https://github.com/betagouv/ma-cantine-demo-integration" target="_blank" rel="noopener">
+          open source
+          <v-icon small color="primary">$external-link-line</v-icon>
+        </a>
+        pour démontrer comment l'intégration pourrait être fait.
+      </p>
       <v-divider class="my-10"></v-divider>
 
       <h2 class="text-h6 font-weight-black mt-10 mb-6">Une question ? Contactez-nous</h2>
