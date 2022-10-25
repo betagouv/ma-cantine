@@ -19,7 +19,7 @@
     <p v-if="$vuetify.breakpoint.mdAndUp" class="font-weight-bold">Vos besoins</p>
     <v-item-group v-if="$vuetify.breakpoint.mdAndUp" multiple v-model="filters.category.value">
       <v-row>
-        <v-col v-for="category in categoryItems" cols="4" :key="category.value">
+        <v-col v-for="category in categoryItems" cols="4" :key="category.value" class="pa-1">
           <v-item v-slot="{ active, toggle }" :value="category.value">
             <button @click="toggle" style="width: inherit;">
               <v-card :color="active ? 'primary lighten-4' : ''" outlined>
@@ -237,29 +237,35 @@ export default {
           icon: "$leaf-fill",
         },
         {
-          value: "plastic",
-          text: "Substituer mes plastiques",
-          icon: "$recycle-fill",
-        },
-        {
-          value: "asso",
-          text: "Donner à une association",
-          icon: "$user-heart-fill",
+          value: "suivi",
+          text: "Assurer mon suivi d'approvisionnement",
+          icon: "$survey-fill",
         },
         {
           value: "waste",
           text: "Diagnostiquer mon gaspillage",
           icon: "$delete-fill",
         },
+
+        {
+          value: "asso",
+          text: "Donner à une association",
+          icon: "$user-heart-fill",
+        },
+        {
+          value: "vege",
+          text: "Diversifier mes sources de protéines",
+          icon: "mdi-barley",
+        },
+        {
+          value: "plastic",
+          text: "Substituer mes plastiques",
+          icon: "$recycle-fill",
+        },
         {
           value: "training",
           text: "Me former ou former mon personnel",
           icon: "$team-fill",
-        },
-        {
-          value: "hygiene",
-          text: "Trouver des aides / conseils sanitaires",
-          icon: "$health-book-fill",
         },
       ],
       departmentItems: jsonDepartments.map((x) => ({

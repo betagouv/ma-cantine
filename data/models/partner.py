@@ -18,7 +18,8 @@ class Partner(models.Model):
         ASSO = "asso", "Donner à une association"
         WASTE = "waste", "Diagnostiquer mon gaspillage"
         TRAINING = "training", "Me former ou former mon personnel"
-        HYGIENE = "hygiene", "Trouver des aides / conseils sanitaires"
+        SUIVI = "suivi", "Assurer mon suivi d'approvisionnement"
+        VEGE = "vege", "Diversifier mes sources de protéines"
 
     class Meta:
         verbose_name = "partenaire"
