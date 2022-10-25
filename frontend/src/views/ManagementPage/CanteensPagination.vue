@@ -24,7 +24,12 @@
     </v-sheet>
     <v-row v-else>
       <v-col cols="12" sm="6" md="4" height="100%" v-for="canteen in visibleCanteens" :key="`canteen-${canteen.id}`">
-        <CanteenCard :canteen="canteen" class="fill-height" />
+        <CentralCuisineCard
+          :canteen="canteen"
+          class="fill-height"
+          v-if="canteen.productionType === 'central_serving' || canteen.productionType === 'central'"
+        />
+        <CanteenCard :canteen="canteen" class="fill-height" v-else />
       </v-col>
       <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
         <v-card
@@ -57,12 +62,13 @@
 
 <script>
 import CanteenCard from "./CanteenCard"
+import CentralCuisineCard from "./CentralCuisineCard"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
 
 export default {
   name: "CanteensPagination",
-  components: { CanteenCard, DsfrPagination, DsfrSearchField },
+  components: { CanteenCard, DsfrPagination, DsfrSearchField, CentralCuisineCard },
   data() {
     return {
       limit: 5,
