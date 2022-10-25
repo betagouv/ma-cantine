@@ -11,6 +11,11 @@ class PartnerForm(forms.ModelForm):
         }
 
 
+@admin.action(description="Publier partenaires")
+def publish(modeladmin, request, queryset):
+    queryset.update(published=True)
+
+
 @admin.register(Partner)
 class PartnerAdmin(admin.ModelAdmin):
 
@@ -37,6 +42,7 @@ class PartnerAdmin(admin.ModelAdmin):
         "modification_date",
     )
     list_filter = ("published",)
+    actions = [publish]
 
     def published_state(self, obj):
         return "✅ Publié" if obj.published else "🔒 Non publié"
