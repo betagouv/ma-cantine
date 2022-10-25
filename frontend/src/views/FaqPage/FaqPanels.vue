@@ -44,7 +44,7 @@ export default {
         {
           title: "Qui peut s’inscrire sur ma-cantine ?",
           answer:
-            "ma cantine est destinée aux responsables légaux et aux gestionnaires publics et privés des services de restauration collective. Concrètement, il s'agit de plusieurs types de personnes : Élu(e)s de collectivité, Directeur(trice) d’établissement, Gestionnaire administratif, Comptable, Responsable Restauration, Chef(fe) et ou cuisinier. Plusieurs personnes peuvent etre rattachées à une même cantine. Les services de restauration peuvent etre en gestion directe ou en gestion déléguée/concédée.",
+            "ma cantine est destinée aux responsables légaux et aux gestionnaires publics et privés des services de restauration collective. Concrètement, il s'agit de plusieurs types de fonctions : Élu(e)s de collectivité, Directeur(trice) d’établissement, Gestionnaire administratif, Comptable, Responsable Restauration, Chef(fe) et ou cuisinier. Plusieurs personnes peuvent etre rattachées à une même cantine. Les services de restauration peuvent etre en gestion directe ou en gestion déléguée/concédée.",
         },
         {
           title: "Comment s’inscrire sur ma-cantine ?",
@@ -116,7 +116,7 @@ export default {
           title:
             "Les produits Bleu-Blanc-Coeur (BBC) entrent-ils dans les 50 % de produits durables et de qualité ?",
           answer:
-            "A ce jour, pour les produits issus de la démarche Bleu-Blanc-Coeur ne bénéficiant pas d’un signe ou mention « officiel » listé par la loi EGAlim, il est possible de les comptabiliser, comme pour tout autre produit, dans les objectifs de la loi EGAlim à condition qu’ils soient sélectionnés à l’issue d’un processus de sélection ciblant « les produits acquis selon les modalités prenant en compte les coûts imputés aux externalités environnementales tout au long de son cycle de vie ». Le recours à cette modalité de sélection relève du libre choix et de la responsabilité de l’acheteur, dans le respect du code de la commande publique.",
+            "A ce jour, pour les produits issus de la démarche Bleu-Blanc-Coeur ne bénéficiant pas d’un signe ou mention « officiel » listé par la loi EGAlim, il est possible de les comptabiliser, comme pour tout autre produit, dans les objectifs de la loi EGAlim à condition qu’ils soient sélectionnés à l’issue d’un processus de sélection ciblant « les produits acquis selon les modalités prenant en compte les coûts imputés aux externalités environnementales tout au long de son cycle de vie » ou « les produits dont l’acquisition a été fondée principalement sur la base de leurs performances en matière de protection de l’environnement et de développement des approvisionnements directs de produits de l’agriculture ». Le recours à ces modalités de sélection relève du libre choix et de la responsabilité de l’acheteur, dans le respect du code de la commande publique.",
         },
        {
           title:
