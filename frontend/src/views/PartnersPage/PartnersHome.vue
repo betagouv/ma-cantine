@@ -212,29 +212,25 @@ export default {
       showFilters: false,
       categoryItems: [
         {
-          value: "plastic",
-          text: "Substituer mes plastiques",
-          icon: "$recycle-fill",
+          value: "appro",
+          text: "Améliorer ma part de bio / durable",
+          icon: "$leaf-fill",
         },
         {
-          value: "asso",
-          text: "Donner à une association",
-          icon: "$user-heart-fill",
+          value: "suivi",
+          text: "Assurer mon suivi d'approvisionnement",
+          icon: "$survey-fill",
         },
         {
           value: "waste",
           text: "Diagnostiquer mon gaspillage",
           icon: "$delete-fill",
         },
+
         {
-          value: "training",
-          text: "Me former ou former mon personnel",
-          icon: "$team-fill",
-        },
-        {
-          value: "appro",
-          text: "Améliorer ma part de bio / durable",
-          icon: "$leaf-fill",
+          value: "asso",
+          text: "Donner à une association",
+          icon: "$user-heart-fill",
         },
         {
           value: "vege",
@@ -242,9 +238,14 @@ export default {
           icon: "mdi-barley",
         },
         {
-          value: "suivi",
-          text: "Assurer mon suivi d'approvisionnement",
-          icon: "$survey-fill",
+          value: "plastic",
+          text: "Substituer mes plastiques",
+          icon: "$recycle-fill",
+        },
+        {
+          value: "training",
+          text: "Me former ou former mon personnel",
+          icon: "$team-fill",
         },
       ],
       departmentItems: jsonDepartments.map((x) => ({
