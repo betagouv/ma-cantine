@@ -244,7 +244,7 @@ export default {
         {
           value: "suivi",
           text: "Assurer mon suivi d'approvisionnement",
-          icon: "$health-book-fill",
+          icon: "$survey-fill",
         },
       ],
       departmentItems: jsonDepartments.map((x) => ({
