@@ -60,7 +60,7 @@
           open source
           <v-icon small color="primary">$external-link-line</v-icon>
         </a>
-        pour démontrer comment l'intégration pourrait être fait.
+        pour démontrer comment l'intégration pourrait être faite.
       </p>
       <v-divider class="my-10"></v-divider>
 
