@@ -26,6 +26,7 @@ import NotFound from "@/views/NotFound"
 import CGU from "@/views/CGU.vue"
 import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
 import ManagementPage from "@/views/ManagementPage"
+import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenForm from "@/views/CanteenEditor/CanteenForm"
 import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
@@ -264,6 +265,15 @@ const routes = [
     component: ManagementPage,
     meta: {
       title: "Gérer mes cantines",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/actions-en-attente",
+    name: "PendingActions",
+    component: PendingActions,
+    meta: {
+      title: "Actions en attente",
       authenticationRequired: true,
     },
   },
