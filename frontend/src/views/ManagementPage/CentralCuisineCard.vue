@@ -8,7 +8,10 @@
     outlined
     :ripple="false"
   >
-    <div class="tag body-2 font-weight-medium">Cuisine centrale</div>
+    <div class="tag body-2 font-weight-medium">
+      <v-icon class="mt-n1" small>$community-fill</v-icon>
+      Cuisine centrale
+    </div>
     <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
     <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
     <v-card-subtitle class="py-1">
@@ -73,10 +76,11 @@ export default {
   position: absolute;
   top: 0;
   z-index: 1;
-  background: #cacafb;
+  background: #e0e0f2;
   left: 10px;
-  padding: 2px 10px;
+  padding: 3px 10px;
   border-radius: 0px 0px 4px 4px;
   box-shadow: 4px 0px 5px -4px black;
+  color: #333;
 }
 </style>
