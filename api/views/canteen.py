@@ -188,6 +188,7 @@ class UserCanteensView(ListCreateAPIView):
         UnaccentSearchFilter,
         MaCantineOrderingFilter,
     ]
+    filterset_fields = ("production_type",)
     required_scopes = ["canteen"]
     search_fields = ["name"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
