@@ -207,6 +207,7 @@
           </label>
           <DsfrTextField
             id="daily-meals"
+            type="number"
             hide-details="auto"
             :rules="showDailyMealCount ? [validators.greaterThanZero] : []"
             :disabled="!showDailyMealCount"
@@ -231,6 +232,7 @@
           </label>
           <DsfrTextField
             id="yearly-meals"
+            type="number"
             hide-details="auto"
             :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
             validate-on-blur
@@ -242,6 +244,7 @@
         <v-col cols="12" md="4" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
           <DsfrTextField
             label="Nombre de cantines/lieux de service à qui je fournis des repas"
+            type="number"
             hide-details="auto"
             :rules="showSatelliteCanteensCount ? [validators.greaterThanZero] : []"
             :disabled="!showSatelliteCanteensCount"
