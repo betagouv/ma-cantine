@@ -44,6 +44,7 @@ class User(AbstractUser):
         DIRECT_PURCHASES_MANAGER = "DIRECT_PURCHASES_MANAGER", "Responsable d'achats en gestion directe"
         CENTRAL_MANAGER = "CENTRAL_MANAGER", "Responsable de plusieurs établissements (type cuisine centrale)"
         MANY_ESTABLISHMENTS_MANAGER = "MANY_ESTABLISHMENTS_MANAGER", "Responsable de plusieurs établissements (SRC)"
+        TECHNICAL = "TECHNICAL", "Développement logiciel, analyse de données ou autre rôle technique"
         OTHER = "OTHER", "Autre"
 
     class Sources(models.TextChoices):
