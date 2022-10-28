@@ -2,7 +2,7 @@
   <div>
     <v-sheet class="px-3 mt-6 mb-6" elevation="0">
       <v-row>
-        <v-col cols="12" md="7" class="pa-0 pr-md-8" v-if="showSearch">
+        <v-col cols="12" md="7" class="pa-0 pr-md-8">
           <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
             <DsfrSearchField
               hide-details="auto"
@@ -21,7 +21,7 @@
         </v-col>
       </v-row>
     </v-sheet>
-    <DsfrPagination v-if="showPagination" class="mb-6" v-model="page" :length="Math.ceil(canteenCount / limit)" />
+    <DsfrPagination class="mb-6" v-model="page" :length="Math.ceil(canteenCount / limit)" />
     <v-sheet fluid height="200" v-if="inProgress">
       <v-progress-circular indeterminate style="left: 50%; top: 50%"></v-progress-circular>
     </v-sheet>
@@ -85,32 +85,25 @@ export default {
     }
   },
   computed: {
-    showPagination() {
-      return this.canteenCount && this.canteenCount > this.limit
-    },
-    showSearch() {
-      return this.showPagination || this.searchTerm
-    },
     offset() {
       return (this.page - 1) * this.limit
     },
     query() {
       let query = {}
-      if (this.page) query.page = String(this.page)
+      if (this.page) query.cantinePage = String(this.page)
       if (this.searchTerm) query.recherche = this.searchTerm
       if (this.productionTypeQuery)
-        if (this.productionTypeQuery.indexOf("central") !== -1) query.type_etablissement = "central"
-        else query.type_etablissement = "satellite_site"
-      query.productionType = this.productionTypeQuery
+        if (this.productionTypeQuery.indexOf("central") !== -1) query.typeEtablissement = "central"
+        else query.typeEtablissement = "satellite_site"
       return query
     },
   },
   methods: {
     populateInitialParameters() {
       this.page = this.$route.query.cantinePage ? parseInt(this.$route.query.cantinePage) : 1
-      if (this.$route.query.type_etablissement === "central") {
+      if (this.$route.query.typeEtablissement === "central") {
         this.filterProductionType = "central"
-      } else if (this.$route.query.type_etablissement === "satellite_site") {
+      } else if (this.$route.query.typeEtablissement === "satellite_site") {
         this.filterProductionType = "satellites"
       } else {
         this.filterProductionType = "all"
@@ -152,13 +145,10 @@ export default {
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
     },
-    applyFilter() {
-      this.page = 1
-      if (this.$route.query.page) {
-        this.$router.push({ query: this.query }).catch(() => {})
-      } else {
-        this.$router.replace({ query: this.query }).catch(() => {})
-      }
+    populateProductionType() {
+      if (this.filterProductionType === "central") this.productionTypeQuery = ["central", "central_serving"]
+      else if (this.filterProductionType === "satellites") this.productionTypeQuery = ["site", "site_cooked_elsewhere"]
+      else this.productionTypeQuery = null
     },
   },
   watch: {
@@ -169,11 +159,10 @@ export default {
       if (replace) this.$router.replace(page).catch(() => {})
       else this.$router.push(page).catch(() => {})
     },
-    filterProductionType(newFilterProductionType) {
-      if (newFilterProductionType === "central") this.productionTypeQuery = ["central", "central_serving"]
-      else if (newFilterProductionType === "satellites") this.productionTypeQuery = ["site", "site_cooked_elsewhere"]
-      else this.productionTypeQuery = null
-      this.applyFilter()
+    filterProductionType() {
+      this.populateProductionType()
+      this.page = 1
+      this.$router.push({ query: this.query }).catch(() => {})
     },
     $route() {
       this.populateInitialParameters()
@@ -182,7 +171,10 @@ export default {
   },
   mounted() {
     this.populateInitialParameters()
-    if (Object.keys(this.$route.query).length > 0) this.fetchCurrentPage()
+    if (Object.keys(this.$route.query).length > 0) {
+      this.populateProductionType()
+      this.fetchCurrentPage()
+    }
   },
 }
 </script>
