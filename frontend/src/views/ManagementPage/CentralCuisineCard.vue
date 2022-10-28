@@ -15,6 +15,9 @@
     <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
     <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
     <v-card-subtitle class="py-1">
+      <v-chip small :color="teledeclarationStatus.color" label class="mr-1">
+        {{ teledeclarationStatus.text }}
+      </v-chip>
       <v-chip small :color="publicationStatus.color" label>
         {{ publicationStatus.text }}
       </v-chip>
@@ -62,6 +65,22 @@ export default {
           text: "Publiée",
         },
       }[this.canteen.publicationStatus || "draft"]
+    },
+    teledeclarationStatus() {
+      const diagnostics = this.canteen.diagnostics
+      const diagnostic = diagnostics.find((d) => d.year === this.teledeclarationYear)
+      const teledeclared = diagnostic && diagnostic.teledeclaration && diagnostic.teledeclaration.status === "SUBMITTED"
+      if (teledeclared) {
+        return {
+          color: "green lighten-4",
+          text: `Télédéclarée (${this.teledeclarationYear})`,
+        }
+      } else {
+        return {
+          color: "grey lighten-4",
+          text: `Non-télédéclarée (${this.teledeclarationYear})`,
+        }
+      }
     },
     canteenImage() {
       if (!this.canteen.images || this.canteen.images.length === 0) return null
