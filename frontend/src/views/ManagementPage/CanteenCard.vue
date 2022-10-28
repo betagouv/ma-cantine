@@ -18,7 +18,7 @@
         {{ publicationStatus.text }}
       </v-chip>
     </v-card-subtitle>
-    <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city || canteen.sectors" class="mt-0 pb-0">
+    <v-card-subtitle class="mt-0 pb-0">
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
     <v-spacer></v-spacer>
