@@ -231,8 +231,6 @@ class ManagingTeamSerializer(serializers.ModelSerializer):
 
 
 class CanteenSummarySerializer(serializers.ModelSerializer):
-    # action = serializers.SerializerMethodField(read_only=True)
-
     class Meta:
         model = Canteen
         fields = ("id", "name", "production_type", "action_last_year")

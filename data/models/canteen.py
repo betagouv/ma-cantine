@@ -273,7 +273,8 @@ class Canteen(SoftDeletionModel):
     def determine_action(self, year):
         if self.is_central_cuisine:
             registered_satellite_count = Canteen.objects.filter(central_producer_siret=self.siret).count()
-            if registered_satellite_count < self.satellite_canteens_count:
+            # TODO: could we make a new action for 'declare_satellite_count' or something?
+            if registered_satellite_count < (self.satellite_canteens_count or 0):
                 return Canteen.Actions.ADD_SATELLITES
         if not year:
             return None

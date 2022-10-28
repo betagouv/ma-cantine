@@ -908,3 +908,11 @@ class CanteenActionsView(ListAPIView):
 
     def get_queryset(self):
         return self.request.user.canteens.all()
+
+
+class CanteenSummaryView(RetrieveAPIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManager]
+    model = Canteen
+    serializer_class = CanteenSummarySerializer
+    queryset = Canteen.objects.all()
+    required_scopes = ["canteen"]

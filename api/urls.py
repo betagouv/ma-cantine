@@ -22,7 +22,7 @@ from api.views import UserCanteenPreviews, CanteenLocationsView, PartnerView, Pa
 from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView, ImportPurchasesView
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
 from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, SatelliteListCreateView
-from api.views import CanteenActionsView
+from api.views import CanteenActionsView, CanteenSummaryView
 
 
 urlpatterns = {
@@ -140,7 +140,8 @@ urlpatterns = {
     path("reviews/", ReviewView.as_view(), name="create_review"),
     path("communityEvents/", CommunityEventsView.as_view(), name="community_event_list"),
     path("canteens/<int:canteen_pk>/claim/", ClaimCanteenView.as_view(), name="claim_canteen"),
-    path("canteenActions/", CanteenActionsView.as_view(), name="canteen_actions"),
+    path("canteensSummary/", CanteenActionsView.as_view(), name="canteens_summary"),
+    path("canteensSummary/<int:pk>/", CanteenSummaryView.as_view(), name="canteen_summary"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

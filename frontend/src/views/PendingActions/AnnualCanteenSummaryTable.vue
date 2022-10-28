@@ -20,16 +20,18 @@
         <template v-slot:[`item.productionType`]="{ item }">
           {{ typeDisplay[item.productionType] }}
         </template>
-        <template v-slot:[`item.action`]="{ item }">
+        <template v-slot:[`item.actionLastYear`]="{ item }">
           <v-fade-transition>
-            <div :key="`${item.id}_${item.action}`">
-              <div v-if="item.action === 'NOTHING'" class="px-3">
+            <div :key="`${item.id}_${item.actionLastYear}`">
+              <div v-if="item.actionLastYear === 'nothing'" class="px-3">
                 <v-icon small class="mr-2" color="green">$checkbox-circle-fill</v-icon>
                 <span class="caption">Rien à faire !</span>
               </div>
               <v-btn small outlined color="primary" :to="actionLink(item)" @click="action(item)" v-else>
-                <v-icon small class="mr-2" color="primary">{{ actions[item.action].icon }}</v-icon>
-                {{ actions[item.action].display }}
+                <v-icon small class="mr-2" color="primary">
+                  {{ actions[item.actionLastYear] && actions[item.actionLastYear].icon }}
+                </v-icon>
+                {{ actions[item.actionLastYear] && actions[item.actionLastYear].display }}
                 <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
               </v-btn>
             </div>
@@ -104,7 +106,7 @@ export default {
       headers: [
         { text: "Nom", value: "name" },
         { text: "Type", value: "productionType" },
-        { text: "Action", value: "action" },
+        { text: "Action", value: "actionLastYear" },
       ],
       typeDisplay: {
         site: "Cuisine sur site",
@@ -113,23 +115,27 @@ export default {
         central_serving: "Centrale avec service sur place",
       },
       actions: {
-        CREATE: {
+        add_satellites: {
+          display: "Ajouter des satellites",
+          icon: "$community-fill",
+        },
+        create_diagnostic: {
           display: "Créer le diagnostic " + year,
           icon: "$add-circle-fill",
         },
-        COMPLETE: {
+        complete_diagnostic: {
           display: "Completer le diagnostic " + year,
           icon: "$edit-box-fill",
         },
-        TELEDECLARE: {
+        teledeclare: {
           display: "Télédéclarer",
           icon: "$send-plane-fill",
         },
-        PUBLISH: {
+        publish: {
           display: "Publier",
           icon: "mdi-bullhorn",
         },
-        NOTHING: {
+        nothing: {
           display: "Rien à faire !",
           icon: "$checkbox-circle-fill",
         },
@@ -174,7 +180,7 @@ export default {
       this.searchTerm = this.$route.query.recherche || null
       this.inProgress = true
 
-      return fetch(`/api/v1/canteens/?${queryParam}`)
+      return fetch(`/api/v1/canteensSummary/?${queryParam}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
           return response.json()
@@ -182,9 +188,6 @@ export default {
         .then((response) => {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
-          this.visibleCanteens.forEach((canteen) => {
-            canteen.action = this.determineAction(canteen)
-          })
           this.$emit("canteen-count", this.canteenCount)
         })
         .catch((e) => {
@@ -211,13 +214,18 @@ export default {
       }
     },
     actionLink(canteen) {
-      if (canteen.action === "CREATE") {
+      if (canteen.actionLastYear === "add_satellites") {
+        return {
+          name: "SatelliteManagement",
+          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+        }
+      } else if (canteen.actionLastYear === "create_diagnostic") {
         return {
           name: "NewDiagnosticForCanteen",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
           query: { année: this.year },
         }
-      } else if (canteen.action === "COMPLETE") {
+      } else if (canteen.actionLastYear === "complete_diagnostic") {
         return {
           name: "DiagnosticModification",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen), year: this.year },
@@ -225,10 +233,10 @@ export default {
       }
     },
     action(canteen) {
-      if (canteen.action === "TELEDECLARE") {
+      if (canteen.actionLastYear === "teledeclare") {
         this.canteenForTD = canteen
         this.showTeledeclarationPreview = true
-      } else if (canteen.action === "PUBLISH") {
+      } else if (canteen.actionLastYear === "publish") {
         this.canteenForPublication = canteen
         this.showPublicationForm = true
       }
@@ -241,8 +249,7 @@ export default {
         })
         .then((canteen) => {
           this.$store.dispatch("notify", { title: "Votre cantine est publiée", status: "success" })
-          canteen.action = this.determineAction(canteen)
-          this.updateCanteen(canteen)
+          this.updateCanteen(canteen.id)
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
@@ -278,12 +285,12 @@ export default {
     submitTeledeclaration(diagnostic) {
       this.$store
         .dispatch("submitTeledeclaration", { id: diagnostic.id, canteenId: this.canteenForTD.id })
-        .then((diagnostic) => {
+        .then(() => {
           this.$store.dispatch("notify", {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
-          this.updateCanteen(this.canteenForTD, diagnostic)
+          this.updateCanteen(this.canteenForTD.id)
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
         .finally(() => {
@@ -291,36 +298,22 @@ export default {
           this.canteenForTD = null
         })
     },
-    updateCanteen(canteen, diagnostic) {
-      const canteenIdx = this.visibleCanteens.findIndex((c) => c.id === canteen.id)
-      if (diagnostic) {
-        const diagnosticIdx = this.visibleCanteens[canteenIdx].diagnostics.findIndex((d) => d.id === diagnostic.id)
-        this.visibleCanteens[canteenIdx].diagnostics[diagnosticIdx] = diagnostic
-        this.visibleCanteens[canteenIdx].action = this.determineAction(this.visibleCanteens[canteenIdx])
-      } else {
-        this.visibleCanteens.splice(canteenIdx, 1, canteen)
-      }
-    },
-    determineAction(canteen) {
-      if (!canteen.diagnostics || canteen.diagnostics.length === 0) {
-        return "CREATE"
-      } else {
-        const thisYearDiag = canteen.diagnostics.find((d) => d.year === this.year)
-        if (!thisYearDiag) {
-          return "CREATE"
-        } else if (thisYearDiag.teledeclaration && thisYearDiag.teledeclaration.status === "SUBMITTED") {
-          // for now prevent centrals from publishing to be consistent with PublicationForm
-          if (canteen.publicationStatus === "published" || canteen.productionType === "central") {
-            return "NOTHING"
-          } else {
-            return "PUBLISH"
-          }
-        } else if (thisYearDiag.valueTotalHt) {
-          return "TELEDECLARE"
-        } else {
-          return "COMPLETE"
-        }
-      }
+    updateCanteen(canteenId) {
+      fetch(`/api/v1/canteensSummary/${canteenId}`)
+        .then((response) => {
+          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          return response.json()
+        })
+        .then((canteen) => {
+          const canteenIdx = this.visibleCanteens.findIndex((c) => c.id === canteenId)
+          this.visibleCanteens.splice(canteenIdx, 1, canteen)
+        })
+      // if (diagnostic) {
+      // TODO: fetch specific canteen object to refresh action from the back
+      // by the way, if sorting by action this will mess with the page ordering...
+      // const diagnosticIdx = this.visibleCanteens[canteenIdx].diagnostics.findIndex((d) => d.id === diagnostic.id)
+      // this.visibleCanteens[canteenIdx].diagnostics[diagnosticIdx] = diagnostic
+      // this.visibleCanteens[canteenIdx].action = this.determineAction(this.visibleCanteens[canteenIdx])
     },
   },
   mounted() {

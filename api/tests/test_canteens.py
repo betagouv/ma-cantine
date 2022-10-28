@@ -572,7 +572,7 @@ class TestCanteenApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
         )
 
-        response = self.client.get(reverse("canteen_actions"))
+        response = self.client.get(reverse("canteens_summary"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         returned_canteens = body["results"]
@@ -598,3 +598,17 @@ class TestCanteenApi(APITestCase):
         idx += 1
         self.assertEqual(returned_canteens[idx]["id"], 1)
         self.assertEqual(returned_canteens[idx]["actionLastYear"], "add_satellites")
+
+    @authenticate
+    def test_get_canteen_summary(self):
+        """
+        Check that this endpoint can return the summary for a specified canteen
+        """
+        canteen = CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
+        canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("canteen_summary", kwargs={"pk": 3}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], 3)
+        self.assertEqual(body["actionLastYear"], "create_diagnostic")
