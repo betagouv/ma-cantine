@@ -521,3 +521,80 @@ class TestCanteenApi(APITestCase):
         ids = list(map(lambda x: x["id"], body["results"]))
         self.assertIn(user_central_cuisine.id, ids)
         self.assertIn(user_central_serving_cuisine.id, ids)
+
+    @authenticate
+    def test_get_canteen_actions(self):
+        """
+        Check that this endpoint returns the user's canteens and the next action required
+        """
+        central_siret = "78146469373706"
+        # these canteens aren't in a very logical order, because want to test sorting by action
+        user_canteens = [
+            # create diag (has one for 2020)
+            CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE),
+            # nothing to do
+            CanteenFactory.create(
+                id=5,
+                production_type=Canteen.ProductionType.ON_SITE,
+                publication_status=Canteen.PublicationStatus.PUBLISHED,
+            ),
+            # complete diag
+            CanteenFactory.create(id=6, production_type=Canteen.ProductionType.ON_SITE),
+            # publish
+            CanteenFactory.create(id=2, production_type=Canteen.ProductionType.ON_SITE),
+            # TD
+            CanteenFactory.create(
+                id=4,
+                production_type=Canteen.ProductionType.ON_SITE,
+                publication_status=Canteen.PublicationStatus.PUBLISHED,
+            ),
+            # create satellites
+            CanteenFactory.create(
+                id=1,
+                siret=central_siret,
+                production_type=Canteen.ProductionType.CENTRAL,
+                satellite_canteens_count=2,
+            ),
+        ]
+        for canteen in user_canteens:
+            canteen.managers.add(authenticate.user)
+        CanteenFactory.create(name="Not this one")
+        DiagnosticFactory.create(year=2020, canteen=user_canteens[0])
+        td_diag = DiagnosticFactory.create(year=2021, canteen=user_canteens[1], value_total_ht=1000)
+        Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
+        DiagnosticFactory.create(year=2021, canteen=user_canteens[2], value_total_ht=None)
+        td_diag = DiagnosticFactory.create(year=2021, canteen=user_canteens[3], value_total_ht=10)
+        Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
+        DiagnosticFactory.create(year=2021, canteen=user_canteens[4], value_total_ht=100)
+        # has a diagnostic but this canteen registered only one of two satellites
+        DiagnosticFactory.create(year=2021, canteen=user_canteens[5], value_total_ht=100)
+        CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
+        )
+
+        response = self.client.get(reverse("canteen_actions"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        returned_canteens = body["results"]
+        self.assertEqual(len(returned_canteens), 6)
+        # default sorting is by canteen modification date
+        # TODO: default ordering by action, either by step in flow or by effort required,
+        # ie. pub, TD, sat, complete, create
+        idx = 0
+        self.assertEqual(returned_canteens[idx]["id"], 3)
+        self.assertEqual(returned_canteens[idx]["actionLastYear"], "create_diagnostic")
+        idx += 1
+        self.assertEqual(returned_canteens[idx]["id"], 5)
+        self.assertEqual(returned_canteens[idx]["actionLastYear"], "nothing")
+        idx += 1
+        self.assertEqual(returned_canteens[idx]["id"], 6)
+        self.assertEqual(returned_canteens[idx]["actionLastYear"], "complete_diagnostic")
+        idx += 1
+        self.assertEqual(returned_canteens[idx]["id"], 2)
+        self.assertEqual(returned_canteens[idx]["actionLastYear"], "publish")
+        idx += 1
+        self.assertEqual(returned_canteens[idx]["id"], 4)
+        self.assertEqual(returned_canteens[idx]["actionLastYear"], "teledeclare")
+        idx += 1
+        self.assertEqual(returned_canteens[idx]["id"], 1)
+        self.assertEqual(returned_canteens[idx]["actionLastYear"], "add_satellites")

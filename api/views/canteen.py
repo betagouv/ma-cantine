@@ -26,6 +26,7 @@ from api.serializers import (
     CanteenPreviewSerializer,
     ManagingTeamSerializer,
     SatelliteCanteenSerializer,
+    CanteenSummarySerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
 from data.region_choices import Region
@@ -41,7 +42,7 @@ from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
 logger = logging.getLogger(__name__)
 
 
-class CanteensPagination(LimitOffsetPagination):
+class PublishedCanteensPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
     departments = []
@@ -100,6 +101,32 @@ class CanteensPagination(LimitOffsetPagination):
         )
 
 
+class UserCanteensPagination(LimitOffsetPagination):
+    default_limit = 12
+    max_limit = 30
+
+    def paginate_queryset(self, queryset, request, view=None):
+        query_params = request.query_params
+        ordering = query_params.get("ordering")
+        if ordering == "action_last_year":
+            queryset = sorted(queryset, key=lambda k: (getattr(k, "action_last_year"),))
+        elif ordering == "-action_last_year":
+            queryset = sorted(queryset, key=lambda k: (getattr(k, "action_last_year"),), reverse=True)
+        return super().paginate_queryset(queryset, request, view)
+
+    def get_paginated_response(self, data):
+        return Response(
+            OrderedDict(
+                [
+                    ("count", self.count),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                ]
+            )
+        )
+
+
 class PublishedCanteenFilterSet(django_filters.FilterSet):
     min_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="gte")
     max_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="lte")
@@ -148,7 +175,7 @@ class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
     queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
-    pagination_class = CanteensPagination
+    pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
@@ -191,7 +218,7 @@ class UserCanteensView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     model = Canteen
     serializer_class = FullCanteenSerializer
-    pagination_class = CanteensPagination
+    pagination_class = UserCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
@@ -865,3 +892,19 @@ class SatelliteListCreateView(ListCreateAPIView):
             return JsonResponse(camelize(serialized_canteen), status=return_status)
         except Sector.DoesNotExist:
             raise BadRequest()
+
+
+class CanteenActionsView(ListAPIView):
+    model = Canteen
+    serializer_class = CanteenSummarySerializer
+    pagination_class = UserCanteensPagination
+    filter_backends = [
+        django_filters.DjangoFilterBackend,
+        MaCantineOrderingFilter,
+    ]
+    search_fields = ["name"]
+    ordering_fields = ["name", "production_type"]
+    ordering = "modification_date"
+
+    def get_queryset(self):
+        return self.request.user.canteens.all()
