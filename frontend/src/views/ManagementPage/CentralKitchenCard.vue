@@ -38,7 +38,7 @@ import CanteenIndicators from "@/components/CanteenIndicators"
 import { lastYear } from "@/utils"
 
 export default {
-  name: "CanteenCard",
+  name: "CentralKitchenCard",
   props: {
     canteen: {
       type: Object,
