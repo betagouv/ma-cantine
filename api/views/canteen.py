@@ -11,6 +11,7 @@ from django.db import transaction, IntegrityError
 from django.db.models.functions import Cast
 from django.db.models import Sum, FloatField, Avg, Func, F, Q
 from django_filters import rest_framework as django_filters
+from django_filters import BaseInFilter, CharFilter
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -168,6 +169,14 @@ class PublishedCanteenSingleView(RetrieveAPIView):
     queryset = Canteen.objects.filter(publication_status="published")
 
 
+class ProductionTypeInFilter(BaseInFilter, CharFilter):
+    pass
+
+
+class UserCanteensFilterSet(django_filters.FilterSet):
+    production_type = ProductionTypeInFilter(field_name="production_type")
+
+
 @extend_schema_view(
     get=extend_schema(
         summary="Lister avec une pagination des cantines gérées par l'utilisateur. Représentation complète.",
@@ -188,6 +197,7 @@ class UserCanteensView(ListCreateAPIView):
         UnaccentSearchFilter,
         MaCantineOrderingFilter,
     ]
+    filterset_class = UserCanteensFilterSet
     required_scopes = ["canteen"]
     search_fields = ["name"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
