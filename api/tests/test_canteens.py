@@ -502,3 +502,22 @@ class TestCanteenApi(APITestCase):
         self.assertNotIn("mtm_source_value", body)
         self.assertNotIn("mtm_campaign_value", body)
         self.assertNotIn("mtm_medium_value", body)
+
+    @authenticate
+    def test_get_canteens_filter_production_type(self):
+        user_satellite_canteen = CanteenFactory.create(production_type="site")
+        user_satellite_canteen.managers.add(authenticate.user)
+
+        user_central_cuisine = CanteenFactory.create(production_type="central")
+        user_central_cuisine.managers.add(authenticate.user)
+
+        user_central_serving_cuisine = CanteenFactory.create(production_type="central_serving")
+        user_central_serving_cuisine.managers.add(authenticate.user)
+        response = self.client.get(f"{reverse('user_canteens')}?production_type=central,central_serving")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["count"], 2)
+        ids = list(map(lambda x: x["id"], body["results"]))
+        self.assertIn(user_central_cuisine.id, ids)
+        self.assertIn(user_central_serving_cuisine.id, ids)

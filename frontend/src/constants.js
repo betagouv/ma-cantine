@@ -312,6 +312,10 @@ export default Object.freeze({
       value: "MANY_ESTABLISHMENTS_MANAGER",
     },
     {
+      text: "Développement logiciel, analyse de données ou autre rôle technique",
+      value: "TECHNICAL",
+    },
+    {
       text: "Autre (spécifiez)",
       value: "OTHER",
     },

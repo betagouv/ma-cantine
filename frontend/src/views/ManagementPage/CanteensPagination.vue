@@ -2,7 +2,7 @@
   <div>
     <v-sheet class="px-3 mt-6 mb-6" elevation="0">
       <v-row>
-        <v-col cols="12" md="7" class="pa-0" v-if="showSearch">
+        <v-col cols="12" md="7" class="pa-0 pr-md-8">
           <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
             <DsfrSearchField
               hide-details="auto"
@@ -16,9 +16,17 @@
             />
           </form>
         </v-col>
+        <v-col cols="12" md="4" class="pa-0">
+          <DsfrSelect
+            @change="applyProductionType"
+            height="40"
+            v-model="filterProductionType"
+            :items="productionTypeOptions"
+          />
+        </v-col>
       </v-row>
     </v-sheet>
-    <DsfrPagination v-if="showPagination" class="mb-6" v-model="page" :length="Math.ceil(canteenCount / limit)" />
+    <DsfrPagination class="mb-6" v-model="page" :length="Math.ceil(canteenCount / limit)" />
     <v-sheet fluid height="200" v-if="inProgress">
       <v-progress-circular indeterminate style="left: 50%; top: 50%"></v-progress-circular>
     </v-sheet>
@@ -65,10 +73,11 @@ import CanteenCard from "./CanteenCard"
 import CentralKitchenCard from "./CentralKitchenCard"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
+import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
   name: "CanteensPagination",
-  components: { CanteenCard, DsfrPagination, DsfrSearchField, CentralKitchenCard },
+  components: { CanteenCard, DsfrPagination, DsfrSearchField, CentralKitchenCard, DsfrSelect },
   data() {
     return {
       limit: 5,
@@ -76,33 +85,45 @@ export default {
       canteenCount: null,
       visibleCanteens: null,
       searchTerm: null,
+      filterProductionType: "all",
+      productionTypeQuery: null,
       inProgress: false,
+      productionTypeOptions: [
+        { text: "Toutes les cantines", value: "all" },
+        { text: "Cuisines centrales", value: "central" },
+        { text: "Cantines satellites et autogérées", value: "satellites" },
+      ],
     }
   },
   computed: {
-    showPagination() {
-      return this.canteenCount && this.canteenCount > this.limit
-    },
-    showSearch() {
-      return this.showPagination || this.searchTerm
-    },
     offset() {
       return (this.page - 1) * this.limit
     },
     query() {
       let query = {}
-      if (this.page) query.page = String(this.page)
+      if (this.page) query.cantinePage = String(this.page)
       if (this.searchTerm) query.recherche = this.searchTerm
+      if (this.productionTypeQuery)
+        if (this.productionTypeQuery === "central,central_serving") query.typeEtablissement = "central"
+        else query.typeEtablissement = "satellite_site"
       return query
     },
   },
   methods: {
     populateInitialParameters() {
       this.page = this.$route.query.cantinePage ? parseInt(this.$route.query.cantinePage) : 1
+      if (this.$route.query.typeEtablissement === "central") {
+        this.filterProductionType = "central"
+      } else if (this.$route.query.typeEtablissement === "satellite_site") {
+        this.filterProductionType = "satellites"
+      } else {
+        this.filterProductionType = "all"
+      }
     },
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
+      if (this.productionTypeQuery) queryParam += `&production_type=${this.productionTypeQuery}`
       this.searchTerm = this.$route.query.recherche || null
       this.inProgress = true
 
@@ -133,6 +154,17 @@ export default {
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
     },
+    applyProductionType() {
+      this.$nextTick(() => {
+        this.page = 1
+        this.$router.push({ query: this.query }).catch(() => {})
+      })
+    },
+    populateProductionType() {
+      if (this.filterProductionType === "central") this.productionTypeQuery = "central,central_serving"
+      else if (this.filterProductionType === "satellites") this.productionTypeQuery = "site,site_cooked_elsewhere"
+      else this.productionTypeQuery = null
+    },
   },
   watch: {
     page(newPage) {
@@ -142,14 +174,20 @@ export default {
       if (replace) this.$router.replace(page).catch(() => {})
       else this.$router.push(page).catch(() => {})
     },
+    filterProductionType() {
+      this.populateProductionType()
+    },
     $route() {
       this.populateInitialParameters()
-      this.fetchCurrentPage()
+      this.$nextTick(this.fetchCurrentPage)
     },
   },
   mounted() {
     this.populateInitialParameters()
-    if (Object.keys(this.$route.query).length > 0) this.fetchCurrentPage()
+    if (Object.keys(this.$route.query).length > 0) {
+      this.populateProductionType()
+      this.fetchCurrentPage()
+    }
   },
 }
 </script>
