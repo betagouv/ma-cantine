@@ -17,7 +17,12 @@
           </form>
         </v-col>
         <v-col cols="12" md="4" class="pa-0">
-          <DsfrSelect height="40" v-model="filterProductionType" :items="productionTypeOptions" />
+          <DsfrSelect
+            @change="applyProductionType"
+            height="40"
+            v-model="filterProductionType"
+            :items="productionTypeOptions"
+          />
         </v-col>
       </v-row>
     </v-sheet>
@@ -145,6 +150,12 @@ export default {
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
     },
+    applyProductionType() {
+      this.$nextTick(() => {
+        this.page = 1
+        this.$router.push({ query: this.query }).catch(() => {})
+      })
+    },
     populateProductionType() {
       if (this.filterProductionType === "central") this.productionTypeQuery = ["central", "central_serving"]
       else if (this.filterProductionType === "satellites") this.productionTypeQuery = ["site", "site_cooked_elsewhere"]
@@ -161,12 +172,10 @@ export default {
     },
     filterProductionType() {
       this.populateProductionType()
-      this.page = 1
-      this.$router.push({ query: this.query }).catch(() => {})
     },
     $route() {
       this.populateInitialParameters()
-      this.fetchCurrentPage()
+      this.$nextTick(this.fetchCurrentPage)
     },
   },
   mounted() {
