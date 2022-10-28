@@ -221,6 +221,14 @@ export default {
               text: "Mon compte",
               to: { name: "AccountSummaryPage" },
             },
+            {
+              text: "Importer des cantines",
+              to: { name: "DiagnosticsImporter" },
+            },
+            {
+              text: "Importer des achats",
+              to: { name: "PurchasesImporter" },
+            },
           ],
         },
         {
@@ -248,7 +256,7 @@ export default {
           text: "Communauté",
           children: [
             {
-              text: "Notre communauté",
+              text: "Webinaires",
               to: { name: "CommunityPage" },
             },
             {
