@@ -511,9 +511,13 @@ class TestCanteenApi(APITestCase):
         user_central_cuisine = CanteenFactory.create(production_type="central")
         user_central_cuisine.managers.add(authenticate.user)
 
-        response = self.client.get(reverse("user_canteens"), {"production_type": "central"})
+        user_central_serving_cuisine = CanteenFactory.create(production_type="central_serving")
+        user_central_serving_cuisine.managers.add(authenticate.user)
+        response = self.client.get(f"{reverse('user_canteens')}?production_type=central,central_serving")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
-        self.assertEqual(body["count"], 1)
-        self.assertEqual(body["results"][0]["id"], user_central_cuisine.id)
+        self.assertEqual(body["count"], 2)
+        ids = list(map(lambda x: x["id"], body["results"]))
+        self.assertIn(user_central_cuisine.id, ids)
+        self.assertIn(user_central_serving_cuisine.id, ids)

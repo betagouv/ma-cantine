@@ -98,7 +98,7 @@ export default {
       if (this.page) query.cantinePage = String(this.page)
       if (this.searchTerm) query.recherche = this.searchTerm
       if (this.productionTypeQuery)
-        if (this.productionTypeQuery.indexOf("central") !== -1) query.typeEtablissement = "central"
+        if (this.productionTypeQuery === "central,central_serving") query.typeEtablissement = "central"
         else query.typeEtablissement = "satellite_site"
       return query
     },
@@ -117,9 +117,7 @@ export default {
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
-      if (this.productionTypeQuery)
-        for (let i = 0; i < this.productionTypeQuery.length; i++)
-          queryParam += `&production_type=${this.productionTypeQuery[i]}`
+      if (this.productionTypeQuery) queryParam += `&production_type=${this.productionTypeQuery}`
       this.searchTerm = this.$route.query.recherche || null
       this.inProgress = true
 
@@ -157,8 +155,8 @@ export default {
       })
     },
     populateProductionType() {
-      if (this.filterProductionType === "central") this.productionTypeQuery = ["central", "central_serving"]
-      else if (this.filterProductionType === "satellites") this.productionTypeQuery = ["site", "site_cooked_elsewhere"]
+      if (this.filterProductionType === "central") this.productionTypeQuery = "central,central_serving"
+      else if (this.filterProductionType === "satellites") this.productionTypeQuery = "site,site_cooked_elsewhere"
       else this.productionTypeQuery = null
     },
   },
