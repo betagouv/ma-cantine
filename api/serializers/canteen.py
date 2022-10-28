@@ -231,7 +231,10 @@ class ManagingTeamSerializer(serializers.ModelSerializer):
 
 
 class CanteenSummarySerializer(serializers.ModelSerializer):
+    # TODO: is it worth moving the job of fetching the specific diag required to the front?
+    diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+
     class Meta:
         model = Canteen
-        fields = ("id", "name", "production_type", "action_last_year")
+        fields = ("id", "name", "production_type", "action_last_year", "diagnostics")
         read_only_fields = fields
