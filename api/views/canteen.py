@@ -47,12 +47,14 @@ class CanteensPagination(LimitOffsetPagination):
     departments = []
     sectors = []
     management_types = []
+    production_types = []
 
     def paginate_queryset(self, queryset, request, view=None):
         # Performance improvements possible
         self.departments = set(filter(lambda x: x, queryset.values_list("department", flat=True)))
         self.regions = set(filter(lambda x: x, queryset.values_list("region", flat=True)))
         self.management_types = set(filter(lambda x: x, queryset.values_list("management_type", flat=True)))
+        self.production_types = set(filter(lambda x: x, queryset.values_list("production_type", flat=True)))
 
         published_canteens = Canteen.objects.filter(publication_status="published")
         query_params = request.query_params
@@ -95,6 +97,7 @@ class CanteensPagination(LimitOffsetPagination):
                     ("departments", self.departments),
                     ("sectors", self.sectors),
                     ("management_types", self.management_types),
+                    ("production_types", self.production_types),
                 ]
             )
         )

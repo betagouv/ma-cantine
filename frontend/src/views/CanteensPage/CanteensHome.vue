@@ -384,6 +384,7 @@ export default {
         chosenDepartment: null,
         chosenRegion: null,
         managementType: null,
+        productionType: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -419,6 +420,7 @@ export default {
       message: "",
       formIsValid: true,
       managementTypes: Constants.ManagementTypes,
+      productionTypes: Constants.ProductionTypes,
       showFilters: false,
     }
   },
@@ -436,6 +438,7 @@ export default {
       if (this.appliedFilters.chosenDepartment) query.departement = this.appliedFilters.chosenDepartment
       if (this.appliedFilters.chosenRegion) query.region = this.appliedFilters.chosenRegion
       if (this.appliedFilters.managementType) query.modeDeGestion = this.appliedFilters.managementType
+      if (this.appliedFilters.productionType) query.typeDEtablissement = this.appliedFilters.productionType
       if (this.appliedFilters.chosenSectors && this.appliedFilters.chosenSectors.length > 0)
         query.secteurs = this.appliedFilters.chosenSectors.join("+")
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
@@ -450,6 +453,7 @@ export default {
         this.appliedFilters.chosenDepartment !== null ||
         this.appliedFilters.chosenRegion !== null ||
         this.appliedFilters.managementType !== null ||
+        this.appliedFilters.productionType !== null ||
         this.appliedFilters.chosenSectors.length > 0 ||
         this.appliedFilters.minMealCount !== null ||
         this.appliedFilters.maxMealCount !== null ||
@@ -494,6 +498,7 @@ export default {
       if (this.appliedFilters.chosenDepartment) queryParam += `&department=${this.appliedFilters.chosenDepartment}`
       if (this.appliedFilters.chosenRegion) queryParam += `&region=${this.appliedFilters.chosenRegion}`
       if (this.appliedFilters.managementType) queryParam += `&management_type=${this.appliedFilters.managementType}`
+      if (this.appliedFilters.productionType) queryParam += `&production_type=${this.appliedFilters.productionType}`
       if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
       if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
       if (this.appliedFilters.minBio) queryParam += `&min_portion_bio=${this.appliedFilters.minBio / 100}`
@@ -516,6 +521,7 @@ export default {
           this.setRegions(response.regions)
           this.setSectors(response.sectors)
           this.setManagementTypes(response.managementTypes)
+          this.setProductionTypes(response.productionTypes)
         })
         .catch((e) => {
           this.publishedCanteenCount = 0
@@ -541,6 +547,7 @@ export default {
         chosenDepartment: null,
         chosenRegion: null,
         managementType: null,
+        productionType: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -568,6 +575,7 @@ export default {
         chosenDepartment: this.$route.query.departement || null,
         chosenRegion: this.$route.query.region || null,
         managementType: this.$route.query.modeDeGestion || null,
+        productionType: this.$route.query.typeDEtablissement || null,
         chosenSectors: this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || [],
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
@@ -669,6 +677,13 @@ export default {
       this.managementTypes = Constants.ManagementTypes.map((x) =>
         Object.assign(x, {
           disabled: enabledManagementTypes.indexOf(x.value) === -1,
+        })
+      )
+    },
+    setProductionTypes(enabledProductionTypes) {
+      this.productionTypes = Constants.ProductionTypes.map((x) =>
+        Object.assign(x, {
+          disabled: enabledProductionTypes.indexOf(x.value) === -1,
         })
       )
     },

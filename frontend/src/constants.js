@@ -37,6 +37,20 @@ export default Object.freeze({
       value: "conceded",
     },
   ],
+  ProductionTypes: [
+    {
+      text: "Toutes les cantines",
+      value: null,
+    },
+    {
+      text: "Cuisines centrales",
+      value: "central,central_serving",
+    },
+    {
+      text: "Cantines satellites et autogérées",
+      value: "site,site_cooked_elsewhere",
+    },
+  ],
   ProductFamilies: {
     VIANDES_VOLAILLES: {
       text: "Viandes et volailles fraîches et surgelées",
