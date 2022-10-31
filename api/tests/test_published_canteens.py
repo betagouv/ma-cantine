@@ -552,3 +552,20 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertIn(f"{user.get_full_name()} (nom d'utilisateur : {user.username})", body)
         self.assertIn("veut revendiquer la cantine", body)
         self.assertIn(f"{canteen.name} (ID : {canteen.id}).", body)
+
+    def test_get_canteens_filter_production_type(self):
+        satellite_canteen = CanteenFactory.create(publication_status="published", production_type="site")
+        central_cuisine = CanteenFactory.create(publication_status="published", production_type="central")
+        central_serving_cuisine = CanteenFactory.create(
+            publication_status="published", production_type="central_serving"
+        )
+
+        response = self.client.get(f"{reverse('published_canteens')}?production_type=central,central_serving")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["count"], 2)
+        ids = list(map(lambda x: x["id"], body["results"]))
+        self.assertIn(central_cuisine.id, ids)
+        self.assertIn(central_serving_cuisine.id, ids)
+        self.assertNotIn(satellite_canteen.id, ids)
