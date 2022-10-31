@@ -41,6 +41,16 @@ from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
 logger = logging.getLogger(__name__)
 
 
+class PublishedCanteenSingleView(RetrieveAPIView):
+    model = Canteen
+    serializer_class = PublicCanteenSerializer
+    queryset = Canteen.objects.filter(publication_status="published")
+
+
+class ProductionTypeInFilter(BaseInFilter, CharFilter):
+    pass
+
+
 class CanteensPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
@@ -106,6 +116,7 @@ class CanteensPagination(LimitOffsetPagination):
 class PublishedCanteenFilterSet(django_filters.FilterSet):
     min_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="gte")
     max_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="lte")
+    production_type = ProductionTypeInFilter(field_name="production_type")
 
     class Meta:
         model = Canteen
@@ -164,16 +175,6 @@ class PublishedCanteensView(ListAPIView):
     def filter_queryset(self, queryset):
         new_queryset = filter_by_diagnostic_params(queryset, self.request.query_params)
         return super().filter_queryset(new_queryset)
-
-
-class PublishedCanteenSingleView(RetrieveAPIView):
-    model = Canteen
-    serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects.filter(publication_status="published")
-
-
-class ProductionTypeInFilter(BaseInFilter, CharFilter):
-    pass
 
 
 class UserCanteensFilterSet(django_filters.FilterSet):

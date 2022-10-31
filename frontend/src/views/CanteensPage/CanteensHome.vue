@@ -250,6 +250,24 @@
             />
           </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="12" sm="5" md="4">
+            <label
+              for="select-production-type"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.productionType }"
+            >
+              Type d'établissement
+            </label>
+            <DsfrSelect
+              v-model="appliedFilters.productionType"
+              :items="productionTypes"
+              clearable
+              hide-details
+              id="select-production-type"
+              class="mt-1"
+            />
+          </v-col>
+        </v-row>
       </v-sheet>
     </v-expand-transition>
     <div v-if="loading" class="pa-6">
@@ -681,9 +699,14 @@ export default {
       )
     },
     setProductionTypes(enabledProductionTypes) {
+      const whitelistedProductionTypes = ["Toutes les cantines"]
+      if (enabledProductionTypes.indexOf("site") > -1 || enabledProductionTypes.indexOf("site_cooked_elsewhere") > -1)
+        whitelistedProductionTypes.push("site,site_cooked_elsewhere")
+      if (enabledProductionTypes.indexOf("central") > -1 || enabledProductionTypes.indexOf("central_serving") > -1)
+        whitelistedProductionTypes.push("central,central_serving")
       this.productionTypes = Constants.ProductionTypes.map((x) =>
         Object.assign(x, {
-          disabled: enabledProductionTypes.indexOf(x.value) === -1,
+          disabled: whitelistedProductionTypes.indexOf(x.value) === -1,
         })
       )
     },
