@@ -39,10 +39,6 @@ export default Object.freeze({
   ],
   ProductionTypes: [
     {
-      text: "Toutes les cantines",
-      value: null,
-    },
-    {
       text: "Cuisines centrales",
       value: "central,central_serving",
     },

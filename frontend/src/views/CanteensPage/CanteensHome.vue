@@ -249,9 +249,7 @@
               placeholder="Tous les modes"
             />
           </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" sm="5" md="4">
+          <v-col cols="12" sm="6" md="5">
             <label
               for="select-production-type"
               :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.productionType }"
@@ -265,6 +263,7 @@
               hide-details
               id="select-production-type"
               class="mt-1"
+              placeholder="Tous les cantines"
             />
           </v-col>
         </v-row>
@@ -699,7 +698,7 @@ export default {
       )
     },
     setProductionTypes(enabledProductionTypes) {
-      const whitelistedProductionTypes = ["Toutes les cantines"]
+      const whitelistedProductionTypes = []
       if (enabledProductionTypes.indexOf("site") > -1 || enabledProductionTypes.indexOf("site_cooked_elsewhere") > -1)
         whitelistedProductionTypes.push("site,site_cooked_elsewhere")
       if (enabledProductionTypes.indexOf("central") > -1 || enabledProductionTypes.indexOf("central_serving") > -1)
