@@ -54,7 +54,7 @@ jmespath==1.0.1
 jsonschema==4.16.0
 jwcrypto==1.4.2
 kombu==5.2.4
-lazy-object-proxy==1.7.1
+lazy-object-proxy==1.8.0
 lxml==4.9.1
 mccabe==0.6.1
 mypy-extensions==0.4.3
