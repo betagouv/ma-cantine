@@ -910,8 +910,15 @@ class CanteenActionsView(ListAPIView):
         year = self.request.parser_context.get("kwargs").get("year")
         user_canteens = self.request.user.canteens
         # prep add satellites action
-        satellites = Canteen.objects.filter(central_producer_siret=OuterRef("siret")).values("id")
-        user_canteens = user_canteens.annotate(nb_satellites_in_db=Count(Subquery(satellites)))
+        # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
+        satellites = (
+            Canteen.objects.filter(central_producer_siret=OuterRef("siret"))
+            .order_by()
+            .values("central_producer_siret")  # sets the groupBy for the aggregation
+        )
+        # count by id per central prod siret, then fetch that count
+        satellites_count = satellites.annotate(count=Count("id")).values("count")
+        user_canteens = user_canteens.annotate(nb_satellites_in_db=Subquery(satellites_count))
         # prep add diag action
         diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year)
         user_canteens = user_canteens.annotate(has_diag=Exists(Subquery(diagnostics)))

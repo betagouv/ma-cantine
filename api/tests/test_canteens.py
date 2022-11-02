@@ -553,7 +553,7 @@ class TestCanteenApi(APITestCase):
                 id=1,
                 siret=central_siret,
                 production_type=Canteen.ProductionType.CENTRAL,
-                satellite_canteens_count=2,
+                satellite_canteens_count=3,
             ),
         ]
         last_year = 2021
@@ -567,8 +567,11 @@ class TestCanteenApi(APITestCase):
         td_diag = DiagnosticFactory.create(year=last_year, canteen=user_canteens[3], value_total_ht=10)
         Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
         DiagnosticFactory.create(year=last_year, canteen=user_canteens[4], value_total_ht=100)
-        # has a diagnostic but this canteen registered only one of two satellites
+        # has a diagnostic but this canteen registered only two of three satellites
         DiagnosticFactory.create(year=last_year, canteen=user_canteens[5], value_total_ht=100)
+        CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
+        )
         CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
         )

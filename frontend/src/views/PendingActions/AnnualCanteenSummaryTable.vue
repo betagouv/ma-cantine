@@ -20,18 +20,18 @@
         <template v-slot:[`item.productionType`]="{ item }">
           {{ typeDisplay[item.productionType] }}
         </template>
-        <template v-slot:[`item.actionLastYear`]="{ item }">
+        <template v-slot:[`item.action`]="{ item }">
           <v-fade-transition>
-            <div :key="`${item.id}_${item.actionLastYear}`">
-              <div v-if="item.actionLastYear === 'nothing'" class="px-3">
+            <div :key="`${item.id}_${item.action}`">
+              <div v-if="item.action === '95_nothing'" class="px-3">
                 <v-icon small class="mr-2" color="green">$checkbox-circle-fill</v-icon>
                 <span class="caption">Rien à faire !</span>
               </div>
               <v-btn small outlined color="primary" :to="actionLink(item)" @click="action(item)" v-else>
                 <v-icon small class="mr-2" color="primary">
-                  {{ actions[item.actionLastYear] && actions[item.actionLastYear].icon }}
+                  {{ actions[item.action] && actions[item.action].icon }}
                 </v-icon>
-                {{ actions[item.actionLastYear] && actions[item.actionLastYear].display }}
+                {{ actions[item.action] && actions[item.action].display }}
                 <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
               </v-btn>
             </div>
@@ -106,7 +106,7 @@ export default {
       headers: [
         { text: "Nom", value: "name" },
         { text: "Type", value: "productionType" },
-        { text: "Action", value: "actionLastYear" },
+        { text: "Action", value: "action" },
       ],
       typeDisplay: {
         site: "Cuisine sur site",
@@ -115,27 +115,27 @@ export default {
         central_serving: "Centrale avec service sur place",
       },
       actions: {
-        add_satellites: {
+        "10_add_satellites": {
           display: "Ajouter des satellites",
           icon: "$community-fill",
         },
-        create_diagnostic: {
+        "20_create_diagnostic": {
           display: "Créer le diagnostic " + year,
           icon: "$add-circle-fill",
         },
-        complete_diagnostic: {
+        "30_complete_diagnostic": {
           display: "Completer le diagnostic " + year,
           icon: "$edit-box-fill",
         },
-        teledeclare: {
+        "40_teledeclare": {
           display: "Télédéclarer",
           icon: "$send-plane-fill",
         },
-        publish: {
+        "50_publish": {
           display: "Publier",
           icon: "mdi-bullhorn",
         },
-        nothing: {
+        "95_nothing": {
           display: "Rien à faire !",
           icon: "$checkbox-circle-fill",
         },
@@ -175,12 +175,12 @@ export default {
       this.page = this.$route.query.cantinePage ? parseInt(this.$route.query.cantinePage) : 1
     },
     fetchCurrentPage() {
-      let queryParam = `limit=${this.limit}&offset=${this.offset}`
+      let queryParam = `ordering=action&limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
       this.searchTerm = this.$route.query.recherche || null
       this.inProgress = true
 
-      return fetch(`/api/v1/canteensSummary/?${queryParam}`)
+      return fetch(`/api/v1/canteensSummary/${this.year}?${queryParam}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
           return response.json()
@@ -214,18 +214,18 @@ export default {
       }
     },
     actionLink(canteen) {
-      if (canteen.actionLastYear === "add_satellites") {
+      if (canteen.action === "10_add_satellites") {
         return {
           name: "SatelliteManagement",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
         }
-      } else if (canteen.actionLastYear === "create_diagnostic") {
+      } else if (canteen.action === "20_create_diagnostic") {
         return {
           name: "NewDiagnosticForCanteen",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
           query: { année: this.year },
         }
-      } else if (canteen.actionLastYear === "complete_diagnostic") {
+      } else if (canteen.action === "30_complete_diagnostic") {
         return {
           name: "DiagnosticModification",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen), year: this.year },
@@ -233,10 +233,10 @@ export default {
       }
     },
     action(canteen) {
-      if (canteen.actionLastYear === "teledeclare") {
+      if (canteen.action === "40_teledeclare") {
         this.canteenForTD = canteen
         this.showTeledeclarationPreview = true
-      } else if (canteen.actionLastYear === "publish") {
+      } else if (canteen.action === "50_publish") {
         this.canteenForPublication = canteen
         this.showPublicationForm = true
       }
@@ -299,7 +299,7 @@ export default {
         })
     },
     updateCanteen(canteenId) {
-      fetch(`/api/v1/canteensSummary/${canteenId}`)
+      fetch(`/api/v1/canteensSummary/${canteenId}/${this.year}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
           return response.json()
