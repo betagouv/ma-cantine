@@ -105,15 +105,6 @@ class UserCanteensPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
 
-    def paginate_queryset(self, queryset, request, view=None):
-        query_params = request.query_params
-        ordering = query_params.get("ordering")
-        if ordering == "action_last_year":
-            queryset = sorted(queryset, key=lambda k: (getattr(k, "action_last_year"),))
-        elif ordering == "-action_last_year":
-            queryset = sorted(queryset, key=lambda k: (getattr(k, "action_last_year"),), reverse=True)
-        return super().paginate_queryset(queryset, request, view)
-
     def get_paginated_response(self, data):
         return Response(
             OrderedDict(

@@ -1280,7 +1280,6 @@ class Diagnostic(models.Model):
         "value_autres_local",
     ]
 
-    # TODO: check to see if the front ever needs to know about a cancelled TD
     @property
     def latest_submitted_teledeclaration(self):
         submitted_teledeclarations = self.teledeclaration_set.filter(status="SUBMITTED")

@@ -308,12 +308,6 @@ export default {
           const canteenIdx = this.visibleCanteens.findIndex((c) => c.id === canteenId)
           this.visibleCanteens.splice(canteenIdx, 1, canteen)
         })
-      // if (diagnostic) {
-      // TODO: fetch specific canteen object to refresh action from the back
-      // by the way, if sorting by action this will mess with the page ordering...
-      // const diagnosticIdx = this.visibleCanteens[canteenIdx].diagnostics.findIndex((d) => d.id === diagnostic.id)
-      // this.visibleCanteens[canteenIdx].diagnostics[diagnosticIdx] = diagnostic
-      // this.visibleCanteens[canteenIdx].action = this.determineAction(this.visibleCanteens[canteenIdx])
     },
   },
   mounted() {

@@ -527,48 +527,56 @@ class TestCanteenApi(APITestCase):
         """
         Check that this endpoint returns the user's canteens and the next action required
         """
-        central_siret = "78146469373706"
         # these canteens aren't in a very logical order, because want to test sorting by action
-        user_canteens = [
-            # create diag (has one for 2020)
-            CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE),
-            # nothing to do
-            CanteenFactory.create(
-                id=5,
-                production_type=Canteen.ProductionType.ON_SITE,
-                publication_status=Canteen.PublicationStatus.PUBLISHED,
-            ),
-            # complete diag
-            CanteenFactory.create(id=6, production_type=Canteen.ProductionType.ON_SITE),
-            # publish
-            CanteenFactory.create(id=2, production_type=Canteen.ProductionType.ON_SITE),
-            # TD
-            CanteenFactory.create(
-                id=4,
-                production_type=Canteen.ProductionType.ON_SITE,
-                publication_status=Canteen.PublicationStatus.PUBLISHED,
-            ),
-            # create satellites
-            CanteenFactory.create(
-                id=1,
-                siret=central_siret,
-                production_type=Canteen.ProductionType.CENTRAL,
-                satellite_canteens_count=3,
-            ),
-        ]
-        last_year = 2021
-        for canteen in user_canteens:
+        # create diag (has one for 2020)
+        needs_last_year_diag = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        # nothing to do
+        complete = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+        )
+        # complete diag
+        needs_to_complete_diag = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        # publish
+        needs_to_publish = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        # TD
+        needs_td = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+        )
+        # create satellites
+        central_siret = "78146469373706"
+        needs_satellites = CanteenFactory.create(
+            siret=central_siret,
+            production_type=Canteen.ProductionType.CENTRAL,
+            satellite_canteens_count=3,
+        )
+        CanteenFactory.create(name="Not my canteen")
+        for canteen in [
+            needs_last_year_diag,
+            complete,
+            needs_to_complete_diag,
+            needs_to_publish,
+            needs_td,
+            needs_satellites,
+        ]:
             canteen.managers.add(authenticate.user)
-        CanteenFactory.create(name="Not this one")
-        DiagnosticFactory.create(year=2020, canteen=user_canteens[0])
-        td_diag = DiagnosticFactory.create(year=last_year, canteen=user_canteens[1], value_total_ht=1000)
+
+        DiagnosticFactory.create(year=2020, canteen=needs_last_year_diag)
+
+        last_year = 2021
+        td_diag = DiagnosticFactory.create(year=last_year, canteen=complete, value_total_ht=1000)
         Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
-        DiagnosticFactory.create(year=last_year, canteen=user_canteens[2], value_total_ht=None)
-        td_diag = DiagnosticFactory.create(year=last_year, canteen=user_canteens[3], value_total_ht=10)
+
+        DiagnosticFactory.create(year=last_year, canteen=needs_to_complete_diag, value_total_ht=None)
+
+        td_diag = DiagnosticFactory.create(year=last_year, canteen=needs_to_publish, value_total_ht=10)
         Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
-        DiagnosticFactory.create(year=last_year, canteen=user_canteens[4], value_total_ht=100)
+
+        DiagnosticFactory.create(year=last_year, canteen=needs_td, value_total_ht=100)
+
         # has a diagnostic but this canteen registered only two of three satellites
-        DiagnosticFactory.create(year=last_year, canteen=user_canteens[5], value_total_ht=100)
+        DiagnosticFactory.create(year=last_year, canteen=needs_satellites, value_total_ht=100)
         CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
         )
@@ -578,28 +586,30 @@ class TestCanteenApi(APITestCase):
 
         response = self.client.get(reverse("canteens_summary", kwargs={"year": last_year}) + "?ordering=action")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         body = response.json()
         returned_canteens = body["results"]
         self.assertEqual(len(returned_canteens), 6)
+
         # TODO: currently ordering by action gives step in flow - maybe should offer by effort required ?
         # ie. pub, TD, sat, complete, create
         idx = 0
-        self.assertEqual(returned_canteens[idx]["id"], 1)
+        self.assertEqual(returned_canteens[idx]["id"], needs_satellites.id)
         self.assertEqual(returned_canteens[idx]["action"], "10_add_satellites")
         idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], 3)
+        self.assertEqual(returned_canteens[idx]["id"], needs_last_year_diag.id)
         self.assertEqual(returned_canteens[idx]["action"], "20_create_diagnostic")
         idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], 6)
+        self.assertEqual(returned_canteens[idx]["id"], needs_to_complete_diag.id)
         self.assertEqual(returned_canteens[idx]["action"], "30_complete_diagnostic")
         idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], 4)
+        self.assertEqual(returned_canteens[idx]["id"], needs_td.id)
         self.assertEqual(returned_canteens[idx]["action"], "40_teledeclare")
         idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], 2)
+        self.assertEqual(returned_canteens[idx]["id"], needs_to_publish.id)
         self.assertEqual(returned_canteens[idx]["action"], "50_publish")
         idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], 5)
+        self.assertEqual(returned_canteens[idx]["id"], complete.id)
         self.assertEqual(returned_canteens[idx]["action"], "95_nothing")
 
     @authenticate
