@@ -434,9 +434,9 @@ export default new Vuex.Store({
       }).then(verifyResponse)
     },
 
-    notify(context, { title, message, status }) {
+    notify(context, { title, message, status, duration }) {
       context.commit("SET_NOTIFICATION", { title, message, status })
-      setTimeout(() => context.commit("REMOVE_NOTIFICATION", message), 4000)
+      setTimeout(() => context.commit("REMOVE_NOTIFICATION", message), duration || 4000)
     },
     notifyRequiredFieldsError(context) {
       const title = null

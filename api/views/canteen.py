@@ -656,12 +656,18 @@ class CanteenStatisticsView(APIView):
         departments = request.query_params.getlist("department")
         sectors = request.query_params.getlist("sectors")
         epcis = request.query_params.getlist("epci")
-        postal_codes = self._get_postal_codes(epcis)
+        postal_codes = None
         year = request.query_params.get("year")
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
 
         data = {}
+        try:
+            postal_codes = self._get_postal_codes(epcis)
+        except Exception as e:
+            logger.warning(f"Error when fetching postcodes for EPCI for canteen stats: {str(e)}")
+            data["epci_error"] = "Une erreur est survenue"
+
         canteens = self._filter_canteens(regions, departments, postal_codes, sectors)
         data["canteen_count"] = canteens.count()
         data["published_canteen_count"] = canteens.filter(
@@ -717,7 +723,7 @@ class CanteenStatisticsView(APIView):
     def _get_postal_codes(self, epcis):
         postal_codes = []
         for e in epcis:
-            response = requests.get(f"https://geo.api.gouv.fr/epcis/{e}/communes?fields=codesPostaux", timeout=30)
+            response = requests.get(f"https://geo.api.gouv.fr/epcis/{e}/communes?fields=codesPostaux", timeout=5)
             response.raise_for_status()
             body = response.json()
             for commune in body:

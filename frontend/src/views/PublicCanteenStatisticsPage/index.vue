@@ -405,7 +405,19 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.statistics = data
-          this.locationText = newLocationText
+          if (this.statistics.epciError) {
+            this.$store.dispatch("notify", {
+              title: "Nous n'avons pas trouvé les infos pour l'EPCI choisi",
+              message:
+                "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à contact@egalim.beta.gouv.fr",
+              status: "error",
+              duration: 7000,
+            })
+            this.chosenEpcis = []
+            this.locationText = this.createLocationText()
+          } else {
+            this.locationText = newLocationText
+          }
         })
     },
     // this was derived from 'setLocations' in the CanteensHome page, if used again consider a util
@@ -543,7 +555,9 @@ export default {
       this.chosenDepartments = this.$route.query.department || []
       if (!Array.isArray(this.chosenDepartments)) this.chosenDepartments = [this.chosenDepartments]
       this.chosenSectors = this.$route.query.sectors?.split(",").map((s) => parseInt(s, 10)) || []
-      this.chosenEpcis = this.$route.query.epcis || []
+      let queryEpcis = this.$route.query.epcis
+      queryEpcis = queryEpcis || []
+      this.chosenEpcis = Array.isArray(queryEpcis) ? queryEpcis : [queryEpcis]
     },
     updateDocumentTitle() {
       let title = `Les statistiques dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
