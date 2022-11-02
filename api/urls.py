@@ -140,8 +140,8 @@ urlpatterns = {
     path("reviews/", ReviewView.as_view(), name="create_review"),
     path("communityEvents/", CommunityEventsView.as_view(), name="community_event_list"),
     path("canteens/<int:canteen_pk>/claim/", ClaimCanteenView.as_view(), name="claim_canteen"),
-    path("canteensSummary/", CanteenActionsView.as_view(), name="canteens_summary"),
-    path("canteensSummary/<int:pk>/", CanteenSummaryView.as_view(), name="canteen_summary"),
+    path("canteensSummary/<int:year>", CanteenActionsView.as_view(), name="canteens_summary"),
+    path("canteensSummary/<int:pk>/<int:year>", CanteenSummaryView.as_view(), name="canteen_summary"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

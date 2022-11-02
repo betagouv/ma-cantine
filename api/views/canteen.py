@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError, BadRequest
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.functions import Cast
-from django.db.models import Sum, FloatField, Avg, Func, F, Q
+from django.db.models import Sum, FloatField, Avg, Func, F, Q, Case, When, Value, Subquery, OuterRef, Exists, Count
 from django_filters import rest_framework as django_filters
 from django_filters import BaseInFilter, CharFilter
 from drf_spectacular.utils import extend_schema_view, extend_schema
@@ -28,7 +28,7 @@ from api.serializers import (
     SatelliteCanteenSerializer,
     CanteenSummarySerializer,
 )
-from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
+from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration
 from data.region_choices import Region
 from api.permissions import (
     IsCanteenManager,
@@ -903,16 +903,48 @@ class CanteenActionsView(ListAPIView):
         MaCantineOrderingFilter,
     ]
     search_fields = ["name"]
-    ordering_fields = ["name", "production_type"]
+    ordering_fields = ["name", "production_type", "action"]
     ordering = "modification_date"
 
     def get_queryset(self):
-        return self.request.user.canteens.all()
+        year = self.request.parser_context.get("kwargs").get("year")
+        user_canteens = self.request.user.canteens
+        # prep add satellites action
+        satellites = Canteen.objects.filter(central_producer_siret=OuterRef("siret")).values("id")
+        user_canteens = user_canteens.annotate(nb_satellites_in_db=Count(Subquery(satellites)))
+        # prep add diag action
+        diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year)
+        user_canteens = user_canteens.annotate(has_diag=Exists(Subquery(diagnostics)))
+        # prep complete diag action
+        # is value_total_ht of 0 a problem?
+        incomplete_diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year, value_total_ht=None)
+        user_canteens = user_canteens.annotate(has_incomplete_diag=Exists(Subquery(incomplete_diagnostics)))
+        # prep TD action
+        tds = Teledeclaration.objects.filter(
+            canteen=OuterRef("pk"), year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        )
+        user_canteens = user_canteens.annotate(has_td=Exists(Subquery(tds)))
+        # annotate with action
+        user_canteens = user_canteens.annotate(
+            action=Case(
+                When(
+                    nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)
+                ),
+                When(has_diag=False, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
+                When(has_incomplete_diag=True, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+                When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)),
+                When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH)),
+                default=Value(Canteen.Actions.NOTHING),
+            )
+        )
+        return user_canteens
 
 
 class CanteenSummaryView(RetrieveAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManager]
     model = Canteen
     serializer_class = CanteenSummarySerializer
-    queryset = Canteen.objects.all()
     required_scopes = ["canteen"]
+
+    def get_queryset(self):
+        return CanteenActionsView.get_queryset(self)

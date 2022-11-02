@@ -56,12 +56,12 @@ class Canteen(SoftDeletionModel):
         PUBLISHED = "published", "✅ Publié"
 
     class Actions(models.TextChoices):
-        ADD_SATELLITES = "add_satellites", "Ajouter des satellites"
-        CREATE_DIAGNOSTIC = "create_diagnostic", "Créer le diagnostic"
-        COMPLETE_DIAGNOSTIC = "complete_diagnostic", "Completer le diagnostic"
-        TELEDECLARE = "teledeclare", "Télédéclarer"
-        PUBLISH = "publish", "Publier"
-        NOTHING = "nothing", "Rien à faire !"
+        ADD_SATELLITES = "10_add_satellites", "Ajouter des satellites"
+        CREATE_DIAGNOSTIC = "20_create_diagnostic", "Créer le diagnostic"
+        COMPLETE_DIAGNOSTIC = "30_complete_diagnostic", "Completer le diagnostic"
+        TELEDECLARE = "40_teledeclare", "Télédéclarer"
+        PUBLISH = "50_publish", "Publier"
+        NOTHING = "95_nothing", "Rien à faire !"
 
     class Ministries(models.TextChoices):
         PREMIER_MINISTRE = "premier_ministre", "Service du Premier Ministre"
@@ -248,14 +248,6 @@ class Canteen(SoftDeletionModel):
             Canteen.ProductionType.CENTRAL_SERVING,
         ]
 
-    # a bit ugly, but for sorting it is complicated to not have the action as a property
-    # if we want to display actions for different years, we can add additional properties
-    # and let the front end decide which to use
-    @property
-    def action_last_year(self):
-        # TODO: dynamic
-        return self.determine_action(2021)
-
     def __str__(self):
         return f'Cantine "{self.name}"'
 
@@ -269,27 +261,6 @@ class Canteen(SoftDeletionModel):
 
     def _get_region(self):
         return get_region(self.department)
-
-    def determine_action(self, year):
-        if self.is_central_cuisine:
-            registered_satellite_count = Canteen.objects.filter(central_producer_siret=self.siret).count()
-            # TODO: could we make a new action for 'declare_satellite_count' or something?
-            if registered_satellite_count < (self.satellite_canteens_count or 0):
-                return Canteen.Actions.ADD_SATELLITES
-        if not year:
-            return None
-
-        diagnostic = self._get_diagnostic(year)
-        if not diagnostic:
-            return Canteen.Actions.CREATE_DIAGNOSTIC
-        elif not diagnostic.value_total_ht:
-            return Canteen.Actions.COMPLETE_DIAGNOSTIC
-        elif not diagnostic.latest_submitted_teledeclaration:
-            return Canteen.Actions.TELEDECLARE
-        elif self.publication_status != Canteen.PublicationStatus.PUBLISHED:
-            return Canteen.Actions.PUBLISH
-        else:
-            return Canteen.Actions.NOTHING
 
     def _get_diagnostic(self, year):
         from data.models import Diagnostic

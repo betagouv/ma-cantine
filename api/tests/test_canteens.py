@@ -556,48 +556,48 @@ class TestCanteenApi(APITestCase):
                 satellite_canteens_count=2,
             ),
         ]
+        last_year = 2021
         for canteen in user_canteens:
             canteen.managers.add(authenticate.user)
         CanteenFactory.create(name="Not this one")
         DiagnosticFactory.create(year=2020, canteen=user_canteens[0])
-        td_diag = DiagnosticFactory.create(year=2021, canteen=user_canteens[1], value_total_ht=1000)
+        td_diag = DiagnosticFactory.create(year=last_year, canteen=user_canteens[1], value_total_ht=1000)
         Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
-        DiagnosticFactory.create(year=2021, canteen=user_canteens[2], value_total_ht=None)
-        td_diag = DiagnosticFactory.create(year=2021, canteen=user_canteens[3], value_total_ht=10)
+        DiagnosticFactory.create(year=last_year, canteen=user_canteens[2], value_total_ht=None)
+        td_diag = DiagnosticFactory.create(year=last_year, canteen=user_canteens[3], value_total_ht=10)
         Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
-        DiagnosticFactory.create(year=2021, canteen=user_canteens[4], value_total_ht=100)
+        DiagnosticFactory.create(year=last_year, canteen=user_canteens[4], value_total_ht=100)
         # has a diagnostic but this canteen registered only one of two satellites
-        DiagnosticFactory.create(year=2021, canteen=user_canteens[5], value_total_ht=100)
+        DiagnosticFactory.create(year=last_year, canteen=user_canteens[5], value_total_ht=100)
         CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
         )
 
-        response = self.client.get(reverse("canteens_summary"))
+        response = self.client.get(reverse("canteens_summary", kwargs={"year": last_year}) + "?ordering=action")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         returned_canteens = body["results"]
         self.assertEqual(len(returned_canteens), 6)
-        # default sorting is by canteen modification date
-        # TODO: default ordering by action, either by step in flow or by effort required,
+        # TODO: currently ordering by action gives step in flow - maybe should offer by effort required ?
         # ie. pub, TD, sat, complete, create
         idx = 0
-        self.assertEqual(returned_canteens[idx]["id"], 3)
-        self.assertEqual(returned_canteens[idx]["actionLastYear"], "create_diagnostic")
+        self.assertEqual(returned_canteens[idx]["id"], 1)
+        self.assertEqual(returned_canteens[idx]["action"], "10_add_satellites")
         idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], 5)
-        self.assertEqual(returned_canteens[idx]["actionLastYear"], "nothing")
+        self.assertEqual(returned_canteens[idx]["id"], 3)
+        self.assertEqual(returned_canteens[idx]["action"], "20_create_diagnostic")
         idx += 1
         self.assertEqual(returned_canteens[idx]["id"], 6)
-        self.assertEqual(returned_canteens[idx]["actionLastYear"], "complete_diagnostic")
-        idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], 2)
-        self.assertEqual(returned_canteens[idx]["actionLastYear"], "publish")
+        self.assertEqual(returned_canteens[idx]["action"], "30_complete_diagnostic")
         idx += 1
         self.assertEqual(returned_canteens[idx]["id"], 4)
-        self.assertEqual(returned_canteens[idx]["actionLastYear"], "teledeclare")
+        self.assertEqual(returned_canteens[idx]["action"], "40_teledeclare")
         idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], 1)
-        self.assertEqual(returned_canteens[idx]["actionLastYear"], "add_satellites")
+        self.assertEqual(returned_canteens[idx]["id"], 2)
+        self.assertEqual(returned_canteens[idx]["action"], "50_publish")
+        idx += 1
+        self.assertEqual(returned_canteens[idx]["id"], 5)
+        self.assertEqual(returned_canteens[idx]["action"], "95_nothing")
 
     @authenticate
     def test_get_canteen_summary(self):
@@ -607,8 +607,8 @@ class TestCanteenApi(APITestCase):
         canteen = CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
         canteen.managers.add(authenticate.user)
 
-        response = self.client.get(reverse("canteen_summary", kwargs={"pk": 3}))
+        response = self.client.get(reverse("canteen_summary", kwargs={"pk": 3, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 3)
-        self.assertEqual(body["actionLastYear"], "create_diagnostic")
+        self.assertEqual(body["action"], "20_create_diagnostic")
