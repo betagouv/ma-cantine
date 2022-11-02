@@ -663,18 +663,18 @@ class CanteenStatisticsView(APIView):
 
         data = {}
         try:
-            postal_codes = self._get_postal_codes(epcis)
+            postal_codes = CanteenStatisticsView._get_postal_codes(epcis)
         except Exception as e:
             logger.warning(f"Error when fetching postcodes for EPCI for canteen stats: {str(e)}")
             data["epci_error"] = "Une erreur est survenue"
 
-        canteens = self._filter_canteens(regions, departments, postal_codes, sectors)
+        canteens = CanteenStatisticsView._filter_canteens(regions, departments, postal_codes, sectors)
         data["canteen_count"] = canteens.count()
         data["published_canteen_count"] = canteens.filter(
             publication_status=Canteen.PublicationStatus.PUBLISHED
         ).count()
 
-        diagnostics = self._filter_diagnostics(year, regions, departments, postal_codes, sectors)
+        diagnostics = CanteenStatisticsView._filter_diagnostics(year, regions, departments, postal_codes, sectors)
 
         appro_share_query = diagnostics.filter(value_total_ht__gt=0)
         appro_share_query = appro_share_query.annotate(
@@ -720,7 +720,7 @@ class CanteenStatisticsView(APIView):
         data["sectors"] = sectors
         return JsonResponse(camelize(data), status=status.HTTP_200_OK)
 
-    def _get_postal_codes(self, epcis):
+    def _get_postal_codes(epcis):
         postal_codes = []
         for e in epcis:
             response = requests.get(f"https://geo.api.gouv.fr/epcis/{e}/communes?fields=codesPostaux", timeout=5)
@@ -730,7 +730,7 @@ class CanteenStatisticsView(APIView):
                 postal_codes += commune["codesPostaux"]
         return postal_codes
 
-    def _filter_canteens(self, regions, departments, postal_codes, sectors):
+    def _filter_canteens(regions, departments, postal_codes, sectors):
         canteens = Canteen.objects
         if postal_codes:
             canteens = canteens.filter(postal_code__in=postal_codes)
@@ -743,7 +743,7 @@ class CanteenStatisticsView(APIView):
             canteens = canteens.filter(sectors__in=sectors)
         return canteens
 
-    def _filter_diagnostics(self, year, regions, departments, postal_codes, sectors):
+    def _filter_diagnostics(year, regions, departments, postal_codes, sectors):
         diagnostics = Diagnostic.objects.filter(year=year)
         if postal_codes:
             diagnostics = diagnostics.filter(canteen__postal_code__in=postal_codes)
