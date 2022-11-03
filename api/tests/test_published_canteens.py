@@ -554,7 +554,7 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertIn(f"{canteen.name} (ID : {canteen.id}).", body)
 
     def test_get_canteens_filter_production_type(self):
-        satellite_canteen = CanteenFactory.create(publication_status="published", production_type="site")
+        site_canteen = CanteenFactory.create(publication_status="published", production_type="site")
         central_cuisine = CanteenFactory.create(publication_status="published", production_type="central")
         central_serving_cuisine = CanteenFactory.create(
             publication_status="published", production_type="central_serving"
@@ -568,4 +568,4 @@ class TestPublishedCanteenApi(APITestCase):
         ids = list(map(lambda x: x["id"], body["results"]))
         self.assertIn(central_cuisine.id, ids)
         self.assertIn(central_serving_cuisine.id, ids)
-        self.assertNotIn(satellite_canteen.id, ids)
+        self.assertNotIn(site_canteen.id, ids)
