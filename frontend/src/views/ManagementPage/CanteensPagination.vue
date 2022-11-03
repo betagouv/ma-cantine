@@ -74,6 +74,7 @@ import CentralKitchenCard from "./CentralKitchenCard"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrSelect from "@/components/DsfrSelect"
+import Constants from "@/constants"
 
 export default {
   name: "CanteensPagination",
@@ -161,8 +162,9 @@ export default {
       })
     },
     populateProductionType() {
-      if (this.filterProductionType === "central") this.productionTypeQuery = "central,central_serving"
-      else if (this.filterProductionType === "satellites") this.productionTypeQuery = "site,site_cooked_elsewhere"
+      const [centralQuery, siteQuery] = Constants.ProductionTypes.map((x) => x.value)
+      if (this.filterProductionType === "central") this.productionTypeQuery = centralQuery
+      else if (this.filterProductionType === "satellites") this.productionTypeQuery = siteQuery
       else this.productionTypeQuery = null
     },
   },

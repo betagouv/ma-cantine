@@ -699,11 +699,12 @@ export default {
     },
     setProductionTypes(enabledProductionTypes) {
       const whitelistedProductionTypes = []
+      const [centralQuery, siteQuery] = Constants.ProductionTypes.map((x) => x.value)
       if (enabledProductionTypes.indexOf("site") > -1 || enabledProductionTypes.indexOf("site_cooked_elsewhere") > -1) {
-        whitelistedProductionTypes.push("site,site_cooked_elsewhere")
+        whitelistedProductionTypes.push(siteQuery)
       }
       if (enabledProductionTypes.indexOf("central") > -1 || enabledProductionTypes.indexOf("central_serving") > -1) {
-        whitelistedProductionTypes.push("central,central_serving")
+        whitelistedProductionTypes.push(centralQuery)
       }
       this.productionTypes = Constants.ProductionTypes.map((x) =>
         Object.assign(x, {
