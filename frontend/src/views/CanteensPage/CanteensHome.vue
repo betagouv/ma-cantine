@@ -699,10 +699,12 @@ export default {
     },
     setProductionTypes(enabledProductionTypes) {
       const whitelistedProductionTypes = []
-      if (enabledProductionTypes.indexOf("site") > -1 || enabledProductionTypes.indexOf("site_cooked_elsewhere") > -1)
+      if (enabledProductionTypes.indexOf("site") > -1 || enabledProductionTypes.indexOf("site_cooked_elsewhere") > -1) {
         whitelistedProductionTypes.push("site,site_cooked_elsewhere")
-      if (enabledProductionTypes.indexOf("central") > -1 || enabledProductionTypes.indexOf("central_serving") > -1)
+      }
+      if (enabledProductionTypes.indexOf("central") > -1 || enabledProductionTypes.indexOf("central_serving") > -1) {
         whitelistedProductionTypes.push("central,central_serving")
+      }
       this.productionTypes = Constants.ProductionTypes.map((x) =>
         Object.assign(x, {
           disabled: whitelistedProductionTypes.indexOf(x.value) === -1,
