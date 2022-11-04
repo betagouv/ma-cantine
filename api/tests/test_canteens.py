@@ -593,24 +593,17 @@ class TestCanteenApi(APITestCase):
 
         # TODO: currently ordering by action gives step in flow - maybe should offer by effort required ?
         # ie. pub, TD, sat, complete, create
-        idx = 0
-        self.assertEqual(returned_canteens[idx]["id"], needs_satellites.id)
-        self.assertEqual(returned_canteens[idx]["action"], "10_add_satellites")
-        idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], needs_last_year_diag.id)
-        self.assertEqual(returned_canteens[idx]["action"], "20_create_diagnostic")
-        idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], needs_to_complete_diag.id)
-        self.assertEqual(returned_canteens[idx]["action"], "30_complete_diagnostic")
-        idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], needs_td.id)
-        self.assertEqual(returned_canteens[idx]["action"], "40_teledeclare")
-        idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], needs_to_publish.id)
-        self.assertEqual(returned_canteens[idx]["action"], "50_publish")
-        idx += 1
-        self.assertEqual(returned_canteens[idx]["id"], complete.id)
-        self.assertEqual(returned_canteens[idx]["action"], "95_nothing")
+        expected_actions = [
+            (needs_satellites, "10_add_satellites"),
+            (needs_last_year_diag, "20_create_diagnostic"),
+            (needs_to_complete_diag, "30_complete_diagnostic"),
+            (needs_td, "40_teledeclare"),
+            (needs_to_publish, "50_publish"),
+            (complete, "95_nothing"),
+        ]
+        for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):
+            self.assertEqual(returned_canteens[index]["id"], canteen.id)
+            self.assertEqual(returned_canteens[index]["action"], action)
 
     @authenticate
     def test_get_canteen_summary(self):
