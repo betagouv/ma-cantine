@@ -18,7 +18,7 @@
       </div>
       <div class="mt-3">
         <v-icon color="grey darken-3" class="mr-2">$restaurant-fill</v-icon>
-        <strong>Acroître la transparence</strong>
+        <strong>Accroître la transparence</strong>
         de ce que nous mangeons dans nos réfectoires, hôpitaux...
       </div>
       <div class="mt-3">
