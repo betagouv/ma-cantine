@@ -231,7 +231,7 @@
             <v-icon small color="amber darken-3">mdi-alert</v-icon>
             Données d'approvisionnement manquantes.
             <span v-if="diagnostic.valueTotalHt === 0">
-              Le total des achats ne peut pas être zéro.
+              Le total des achats doit être supérieur à zéro.
             </span>
           </p>
         </v-sheet>
