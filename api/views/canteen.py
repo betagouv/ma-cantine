@@ -3,6 +3,7 @@ from collections import OrderedDict
 from datetime import date
 from django.conf import settings
 from django.http import JsonResponse
+import requests
 from common.utils import send_mail
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, BadRequest
@@ -664,30 +665,27 @@ class CanteenStatisticsView(APIView):
         regions = request.query_params.getlist("region")
         departments = request.query_params.getlist("department")
         sectors = request.query_params.getlist("sectors")
+        epcis = request.query_params.getlist("epci")
+        postal_codes = None
         year = request.query_params.get("year")
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
+
         data = {}
-        canteens = Canteen.objects
-        if regions:
-            canteens = canteens.filter(region__in=regions)
-        elif departments:
-            canteens = canteens.filter(department__in=departments)
-        if sectors:
-            sectors = [s for s in sectors if s.isdigit()]
-            canteens = canteens.filter(sectors__in=sectors)
+        try:
+            postal_codes = CanteenStatisticsView._get_postal_codes(epcis)
+        except Exception as e:
+            logger.warning(f"Error when fetching postcodes for EPCI for canteen stats: {str(e)}")
+            data["epci_error"] = "Une erreur est survenue"
+
+        canteens = CanteenStatisticsView._filter_canteens(regions, departments, postal_codes, sectors)
         data["canteen_count"] = canteens.count()
         data["published_canteen_count"] = canteens.filter(
             publication_status=Canteen.PublicationStatus.PUBLISHED
         ).count()
 
-        diagnostics = Diagnostic.objects.filter(year=year)
-        if regions:
-            diagnostics = diagnostics.filter(canteen__region__in=regions)
-        elif departments:
-            diagnostics = diagnostics.filter(canteen__department__in=departments)
-        if sectors:
-            diagnostics = diagnostics.filter(canteen__sectors__in=sectors)
+        diagnostics = CanteenStatisticsView._filter_diagnostics(year, regions, departments, postal_codes, sectors)
+
         appro_share_query = diagnostics.filter(value_total_ht__gt=0)
         appro_share_query = appro_share_query.annotate(
             bio_share=Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
@@ -731,6 +729,41 @@ class CanteenStatisticsView(APIView):
             sectors[sector.id] = canteens.filter(sectors=sector).count()
         data["sectors"] = sectors
         return JsonResponse(camelize(data), status=status.HTTP_200_OK)
+
+    def _get_postal_codes(epcis):
+        postal_codes = []
+        for e in epcis:
+            response = requests.get(f"https://geo.api.gouv.fr/epcis/{e}/communes?fields=codesPostaux", timeout=5)
+            response.raise_for_status()
+            body = response.json()
+            for commune in body:
+                postal_codes += commune["codesPostaux"]
+        return postal_codes
+
+    def _filter_canteens(regions, departments, postal_codes, sectors):
+        canteens = Canteen.objects
+        if postal_codes:
+            canteens = canteens.filter(postal_code__in=postal_codes)
+        elif departments:
+            canteens = canteens.filter(department__in=departments)
+        elif regions:
+            canteens = canteens.filter(region__in=regions)
+        if sectors:
+            sectors = [s for s in sectors if s.isdigit()]
+            canteens = canteens.filter(sectors__in=sectors)
+        return canteens
+
+    def _filter_diagnostics(year, regions, departments, postal_codes, sectors):
+        diagnostics = Diagnostic.objects.filter(year=year)
+        if postal_codes:
+            diagnostics = diagnostics.filter(canteen__postal_code__in=postal_codes)
+        elif departments:
+            diagnostics = diagnostics.filter(canteen__department__in=departments)
+        elif regions:
+            diagnostics = diagnostics.filter(canteen__region__in=regions)
+        if sectors:
+            diagnostics = diagnostics.filter(canteen__sectors__in=sectors)
+        return diagnostics
 
 
 class CanteenLocationsView(APIView):
