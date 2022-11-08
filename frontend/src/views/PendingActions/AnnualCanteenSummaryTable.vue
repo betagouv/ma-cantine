@@ -1,5 +1,9 @@
 <template>
   <div>
+    <p v-if="toTeledeclare.length > 1">
+      Vous pourrez télédéclarer {{ toTeledeclare.length }} cantines.
+      <v-btn class="primary ml-2">Télédeclare {{ toTeledeclare.length }} cantines</v-btn>
+    </p>
     <div class="mt-4">
       <v-data-table
         v-if="visibleCanteens"
@@ -144,6 +148,7 @@ export default {
       showTeledeclarationPreview: false,
       showPublicationForm: false,
       canteenForPublication: null,
+      toTeledeclare: [],
     }
   },
   computed: {
@@ -188,6 +193,7 @@ export default {
         .then((response) => {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
+          this.toTeledeclare = response.diagnosticsToTeledeclare
           this.$emit("canteen-count", this.canteenCount)
         })
         .catch((e) => {

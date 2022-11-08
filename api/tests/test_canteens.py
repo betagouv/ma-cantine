@@ -605,6 +605,46 @@ class TestCanteenApi(APITestCase):
             self.assertEqual(returned_canteens[index]["id"], canteen.id)
             self.assertEqual(returned_canteens[index]["action"], action)
 
+    @authenticate
+    def test_get_diagnostics_to_td(self):
+        """
+        Check that the actions endpoint includes a list of diagnostics that could be teledeclared
+        """
+        last_year = 2021
+        no_diag = CanteenFactory.create()
+        canteen_with_incomplete_diag = CanteenFactory.create()
+        DiagnosticFactory.create(canteen=canteen_with_incomplete_diag, year=last_year, value_total_ht=None)
+        canteen_with_complete_diag = CanteenFactory.create()
+        complete_diag = DiagnosticFactory.create(
+            canteen=canteen_with_complete_diag, year=last_year, value_total_ht=10000
+        )
+        # to verify we are returning the correct diag for the canteen, create another diag for a different year
+        DiagnosticFactory.create(canteen=canteen_with_complete_diag, year=last_year - 1, value_total_ht=10000)
+        canteen_with_td = CanteenFactory.create()
+        td_diag = DiagnosticFactory.create(canteen=canteen_with_td, year=last_year, value_total_ht=2000)
+        Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
+
+        for canteen in [no_diag, canteen_with_incomplete_diag, canteen_with_complete_diag, canteen_with_td]:
+            canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("list_canteens_action", kwargs={"year": last_year}))
+        body = response.json()
+
+        self.assertEqual(body["diagnosticsToTeledeclare"], [complete_diag.id])
+
+    @authenticate
+    def test_get_diagnostics_to_td_none(self):
+        """
+        Check that the actions endpoint includes an empty list of diagnostics that could be teledeclared
+        if there are no diags to TD
+        """
+        last_year = 2021
+
+        response = self.client.get(reverse("list_canteens_action", kwargs={"year": last_year}))
+        body = response.json()
+
+        self.assertEqual(body["diagnosticsToTeledeclare"], [])
+
     def test_list_canteen_actions_unauthenticated(self):
         """
         If the user is not authenticated, they will not be able to
