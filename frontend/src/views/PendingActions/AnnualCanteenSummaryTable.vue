@@ -286,16 +286,20 @@ export default {
           this.updateCanteen(this.canteenForTD, diagnostic)
         })
         .catch((e) => {
-          e.jsonPromise.then((serverMessage) => {
-            const title = serverMessage && serverMessage.length > 0 ? serverMessage[0] : "Oops !"
-            const status = "error"
-            let message = ""
+          if (e.jsonPromise) {
+            e.jsonPromise.then((serverMessage) => {
+              const title = serverMessage && serverMessage.length > 0 ? serverMessage[0] : "Oops !"
+              const status = "error"
+              let message = ""
 
-            if (title === "Données d'approvisionnement manquantes")
-              message = "Assurez-vous d'avoir bien renseigné au minimum le total des achats."
+              if (title === "Données d'approvisionnement manquantes")
+                message = "Assurez-vous d'avoir bien renseigné au minimum le total des achats."
 
-            this.$store.dispatch("notify", { title, message, status })
-          })
+              this.$store.dispatch("notify", { title, message, status })
+            })
+          } else {
+            this.$store.dispatch("notifyServerError", e)
+          }
         })
         .finally(() => {
           this.showTeledeclarationPreview = false
