@@ -115,6 +115,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     managers = CanteenManagerSerializer(many=True, read_only=True)
     manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
+    central_kitchen_declarations = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -130,6 +131,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "diversification_comments",
             "plastics_comments",
             "information_comments",
+            "central_kitchen_declarations",
         )
         fields = (
             "id",
@@ -138,6 +140,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "city_insee_code",
             "postal_code",
             "sectors",
+            "central_kitchen_declarations",
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
@@ -205,6 +208,18 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             canteen_image_serializer.update(canteen.images.all(), image_validated_data)
 
         return canteen
+
+    def get_central_kitchen_declarations(self, obj):
+        if not obj.central_producer_siret:
+            return None
+        try:
+            central_kitchen = Canteen.objects.get(siret=obj.central_producer_siret)
+            diagnostics = central_kitchen.diagnostic_set.filter(includes_all_satellites=True)
+            return [diag.year for diag in diagnostics]
+        except Canteen.DoesNotExist:
+            return None
+        except Exception:
+            return None
 
 
 class CanteenPreviewSerializer(serializers.ModelSerializer):

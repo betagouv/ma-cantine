@@ -55,6 +55,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
                     "canteen",
                     "year",
                     "diagnostic_type",
+                    "includes_all_satellites",
                 )
             },
         ),

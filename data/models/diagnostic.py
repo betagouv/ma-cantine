@@ -94,6 +94,13 @@ class Diagnostic(models.Model):
         verbose_name="Type de diagnostic (simplifié, complet)",
     )
 
+    # Relevant only for central cuisines
+    includes_all_satellites = models.BooleanField(
+        null=True,
+        blank=True,
+        verbose_name="Inclut les données d'approvisionnement de tous les satellites",
+    )
+
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
     year = models.IntegerField(

@@ -12,6 +12,13 @@
           {{ isNewDiagnostic ? "Nouveau diagnostic" : "Modifier mon diagnostic" }}
         </h1>
 
+        <v-card v-if="showCentralKitchenWarning" color="orange lighten-4">
+          <v-card-text>
+            Votre cuisine centrale avec le siret {{ this.originalCanteen.centralProducerSiret }} a déjà déclaré les
+            données d'approvisionnement pour votre cantine.
+          </v-card-text>
+        </v-card>
+
         <v-form ref="select" v-model="formIsValid.select">
           <v-row>
             <v-col cols="12" md="5">
@@ -69,6 +76,21 @@
             </v-col>
           </v-row>
         </v-form>
+
+        <v-checkbox
+          class="mt-0"
+          v-model="diagnostic.includesAllSatellites"
+          v-if="isCentralCanteen"
+          :disabled="hasActiveTeledeclaration"
+        >
+          <template v-slot:label>
+            <span class="body-2 grey--text text--darken-3">
+              En tant que
+              <strong>cuisine centrale,</strong>
+              ce diagnostic inclut les données d'approvisionnement pour toutes mes cantines satellites.
+            </span>
+          </template>
+        </v-checkbox>
 
         <p class="caption grey--text text--darken-1" v-if="!hasActiveTeledeclaration">
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
@@ -367,6 +389,15 @@ export default {
     },
     extendedDiagnostic() {
       return this.diagnostic.diagnosticType === "COMPLETE"
+    },
+    isCentralCanteen() {
+      return (
+        this.originalCanteen.productionType === "central_serving" || this.originalCanteen.productionType === "central"
+      )
+    },
+    showCentralKitchenWarning() {
+      if (!this.originalCanteen.centralKitchenDeclarations || !this.diagnostic.year) return false
+      return this.originalCanteen.centralKitchenDeclarations.indexOf(this.diagnostic.year) > -1
     },
   },
   beforeMount() {

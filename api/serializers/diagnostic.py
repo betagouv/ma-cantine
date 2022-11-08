@@ -7,6 +7,7 @@ FIELDS = (
     "id",
     "year",
     "diagnostic_type",
+    "includes_all_satellites",
     "value_bio_ht",
     "value_sustainable_ht",
     "value_pat_ht",
