@@ -229,7 +229,10 @@
             v-if="isTeledeclarationYear && !hasActiveTeledeclaration && !canSubmitTeledeclaration"
           >
             <v-icon small color="amber darken-3">mdi-alert</v-icon>
-            Données d'approvisionnement manquantes
+            Données d'approvisionnement manquantes.
+            <span v-if="diagnostic.valueTotalHt === 0">
+              Le total des achats doit être supérieur à zéro.
+            </span>
           </p>
         </v-sheet>
       </v-col>
@@ -349,7 +352,7 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return this.diagnostic.valueTotalHt > 0 || this.diagnostic.valueTotalHt === 0
+      return this.diagnostic.valueTotalHt > 0
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
@@ -605,7 +608,9 @@ export default {
           this.updateFromServer(diagnostic)
           this.navigateToDiagnosticList()
         })
-        .catch((e) => this.$store.dispatch("notifyServerError", e))
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
         .finally(() => {
           this.openTeledeclarationPreview = false
         })
