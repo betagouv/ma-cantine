@@ -455,7 +455,7 @@ export default {
       if (this.appliedFilters.chosenDepartment) query.departement = this.appliedFilters.chosenDepartment
       if (this.appliedFilters.chosenRegion) query.region = this.appliedFilters.chosenRegion
       if (this.appliedFilters.managementType) query.modeDeGestion = this.appliedFilters.managementType
-      if (this.appliedFilters.productionType) query.typeDEtablissement = this.appliedFilters.productionType
+      if (this.appliedFilters.productionType) query.typeEtablissement = this.appliedFilters.productionType
       if (this.appliedFilters.chosenSectors && this.appliedFilters.chosenSectors.length > 0)
         query.secteurs = this.appliedFilters.chosenSectors.join("+")
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
@@ -592,7 +592,7 @@ export default {
         chosenDepartment: this.$route.query.departement || null,
         chosenRegion: this.$route.query.region || null,
         managementType: this.$route.query.modeDeGestion || null,
-        productionType: this.$route.query.typeDEtablissement || null,
+        productionType: this.$route.query.typeEtablissement || null,
         chosenSectors: this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || [],
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
