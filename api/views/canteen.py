@@ -886,6 +886,7 @@ class SatelliteListCreateView(ListCreateAPIView):
 
 
 class CanteenActionsListView(ListAPIView):
+    permission_classes = [IsAuthenticated]
     model = Canteen
     serializer_class = CanteenActionsSerializer
     pagination_class = UserCanteensPagination
@@ -899,7 +900,9 @@ class CanteenActionsListView(ListAPIView):
 
     def get_queryset(self):
         year = self.request.parser_context.get("kwargs").get("year")
-        user_canteens = self.request.user.canteens
+        return CanteenActionsListView.annotate_actions(self.request.user.canteens, year)
+
+    def annotate_actions(queryset, year):
         # prep add satellites action
         # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
         satellites = (
@@ -909,7 +912,7 @@ class CanteenActionsListView(ListAPIView):
         )
         # count by id per central prod siret, then fetch that count
         satellites_count = satellites.annotate(count=Count("id")).values("count")
-        user_canteens = user_canteens.annotate(nb_satellites_in_db=Subquery(satellites_count))
+        user_canteens = queryset.annotate(nb_satellites_in_db=Subquery(satellites_count))
         # prep add diag action
         diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year)
         user_canteens = user_canteens.annotate(has_diag=Exists(Subquery(diagnostics)))
@@ -939,10 +942,13 @@ class CanteenActionsListView(ListAPIView):
 
 
 class CanteenActionsRetrieveView(RetrieveAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManager]
+    permission_classes = [IsAuthenticated, IsCanteenManager]
     model = Canteen
     serializer_class = CanteenActionsSerializer
     required_scopes = ["canteen"]
 
     def get_queryset(self):
-        return CanteenActionsListView.get_queryset(self)
+        year = self.request.parser_context.get("kwargs").get("year")
+        canteen_id = self.request.parser_context.get("kwargs").get("pk")
+        single_canteen_queryset = self.request.user.canteens.filter(id=canteen_id)
+        return CanteenActionsListView.annotate_actions(single_canteen_queryset, year)
