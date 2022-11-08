@@ -262,14 +262,6 @@ class Canteen(SoftDeletionModel):
     def _get_region(self):
         return get_region(self.department)
 
-    def _get_diagnostic(self, year):
-        from data.models import Diagnostic
-
-        try:
-            return Diagnostic.objects.get(canteen=self, year=year)
-        except Diagnostic.DoesNotExist:
-            return None
-
 
 class CanteenImage(models.Model):
     canteen = models.ForeignKey(Canteen, related_name="images", on_delete=models.CASCADE, null=True)
