@@ -45,14 +45,14 @@
     <v-row>
       <v-col cols="12" sm="6" height="100%">
         <v-card outlined class="d-flex flex-column fill-height pa-2">
-          <v-card-title class="font-weight-bold">Trouver des partenaires pour vos besoins</v-card-title>
+          <v-card-title class="font-weight-bold">Trouver des acteurs de l'éco-système pour vos besoins</v-card-title>
           <v-card-text>
-            Rechercher des partenaires qui pourraient vous aidez à améliorer votre offre selon vos besoins.
+            Rechercher des acteurs de l'éco-système qui pourraient vous aidez à améliorer votre offre selon vos besoins.
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="px-4">
             <v-spacer></v-spacer>
-            <v-btn :to="{ name: 'PartnersHome' }" outlined color="primary">Trouver des partenaires</v-btn>
+            <v-btn :to="{ name: 'PartnersHome' }" outlined color="primary">Trouver des acteurs</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>

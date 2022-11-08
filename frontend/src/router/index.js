@@ -220,7 +220,7 @@ const routes = [
     ],
   },
   {
-    path: "/partenaires",
+    path: "/acteurs-de-l-eco-systeme",
     name: "PartnersPage",
     component: PartnersPage,
     children: [
@@ -229,7 +229,7 @@ const routes = [
         name: "PartnersHome",
         component: PartnersHome,
         meta: {
-          title: "Partenaires",
+          title: "Acteurs de l'éco-système",
         },
         sitemapGroup: Constants.SitemapGroups.ACTION,
       },
@@ -479,7 +479,7 @@ const routes = [
     name: "CommunityPage",
     component: CommunityPage,
     meta: {
-      title: "Communauté",
+      title: "Webinaires",
     },
     sitemapGroup: Constants.SitemapGroups.LAW,
   },

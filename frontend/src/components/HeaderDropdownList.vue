@@ -96,7 +96,7 @@ export default {
           to: { name: "GeneratePosterPage" },
         },
         {
-          text: "Mon compte",
+          text: "Mon profil",
           icon: "$account-circle-fill",
           authenticationState: true,
           to: { name: "AccountSummaryPage" },
@@ -115,12 +115,12 @@ export default {
           to: { name: "CanteensHome" },
         },
         {
-          text: "Notre communauté",
+          text: "Webinaires",
           icon: "$team-fill",
           to: { name: "CommunityPage" },
         },
         {
-          text: "Partenaires",
+          text: "Acteurs de l'éco-système",
           icon: "$star-fill",
           to: { name: "PartnersHome" },
         },
@@ -141,12 +141,22 @@ export default {
         },
         {
           text: "Statistiques régionales",
-          icon: "$bar-chart-box-fill",
+          icon: "$france-fill",
           to: { name: "PublicCanteenStatisticsPage" },
         },
         {
-          text: "Contactez-nous",
+          text: "Mesures de notre impact",
+          icon: "$bar-chart-box-fill",
+          to: { name: "PlatformStatsPage" },
+        },
+        {
+          text: "Foire aux questions",
           icon: "$question-answer-fill",
+          to: { name: "FaqPage" },
+        },
+        {
+          text: "Contactez-nous",
+          icon: "$question-fill",
           to: { name: "ContactPage" },
         },
       ],

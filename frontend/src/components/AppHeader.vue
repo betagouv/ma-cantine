@@ -202,7 +202,7 @@ export default {
       logoutWarningDialog: false,
       navLinks: [
         {
-          text: "Gérer mes cantines",
+          text: "Éspace de gestion",
           authenticationState: true,
           children: [
             {
@@ -218,7 +218,7 @@ export default {
               to: { name: "GeneratePosterPage" },
             },
             {
-              text: "Mon compte",
+              text: "Mon profil",
               to: { name: "AccountSummaryPage" },
             },
             {
@@ -264,7 +264,7 @@ export default {
               to: { name: "BlogsHome" },
             },
             {
-              text: "Partenaires",
+              text: "Acteurs de l'éco-système",
               to: { name: "PartnersHome" },
             },
           ],
@@ -296,6 +296,12 @@ export default {
             {
               text: "Foire aux questions",
               to: { name: "FaqPage" },
+            },
+            {
+              text: "Documentation",
+              href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+              target: "_blank",
+              rel: "noopener",
             },
             {
               text: "Contactez-nous",
