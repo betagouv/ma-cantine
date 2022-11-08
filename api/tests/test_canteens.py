@@ -584,7 +584,7 @@ class TestCanteenApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
         )
 
-        response = self.client.get(reverse("canteens_summary", kwargs={"year": last_year}) + "?ordering=action")
+        response = self.client.get(reverse("list_canteens_action", kwargs={"year": last_year}) + "?ordering=action")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
@@ -613,7 +613,7 @@ class TestCanteenApi(APITestCase):
         canteen = CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
         canteen.managers.add(authenticate.user)
 
-        response = self.client.get(reverse("canteen_summary", kwargs={"pk": 3, "year": 2021}))
+        response = self.client.get(reverse("retrieve_canteen_action", kwargs={"pk": 3, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 3)

@@ -26,7 +26,7 @@ from api.serializers import (
     CanteenPreviewSerializer,
     ManagingTeamSerializer,
     SatelliteCanteenSerializer,
-    CanteenSummarySerializer,
+    CanteenActionsSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration
 from data.region_choices import Region
@@ -885,9 +885,9 @@ class SatelliteListCreateView(ListCreateAPIView):
             raise BadRequest()
 
 
-class CanteenActionsView(ListAPIView):
+class CanteenActionsListView(ListAPIView):
     model = Canteen
-    serializer_class = CanteenSummarySerializer
+    serializer_class = CanteenActionsSerializer
     pagination_class = UserCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -938,11 +938,11 @@ class CanteenActionsView(ListAPIView):
         return user_canteens
 
 
-class CanteenSummaryView(RetrieveAPIView):
+class CanteenActionsRetrieveView(RetrieveAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManager]
     model = Canteen
-    serializer_class = CanteenSummarySerializer
+    serializer_class = CanteenActionsSerializer
     required_scopes = ["canteen"]
 
     def get_queryset(self):
-        return CanteenActionsView.get_queryset(self)
+        return CanteenActionsListView.get_queryset(self)
