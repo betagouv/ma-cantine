@@ -606,7 +606,7 @@ class TestCanteenApi(APITestCase):
             self.assertEqual(returned_canteens[index]["action"], action)
 
     @authenticate
-    def test_get_canteen_summary(self):
+    def test_get_single_canteen_actions(self):
         """
         Check that this endpoint can return the summary for a specified canteen
         """
