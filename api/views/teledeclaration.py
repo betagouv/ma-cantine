@@ -35,25 +35,46 @@ class TeledeclarationCreateView(APIView):
     required_scopes = ["canteen"]
 
     def post(self, request):
-        try:
-            data = request.data
-            diagnostic_id = data.get("diagnostic_id")
-            if not diagnostic_id:
-                raise ValidationError("diagnosticId manquant")
+        data = request.data
+        diagnostic_id = data.get("diagnostic_id")
+        diagnostic_ids = data.getlist("diagnostic_ids")
+        if not diagnostic_id and not diagnostic_ids:
+            raise ValidationError("diagnosticId manquant")
 
-            diagnostic = Diagnostic.objects.get(pk=diagnostic_id)
-            if request.user not in diagnostic.canteen.managers.all():
-                raise PermissionDenied()
+        if not diagnostic_ids:
+            td = TeledeclarationCreateView._teledeclare_diagnostic(diagnostic_id, request.user)
 
-            Teledeclaration.validateDiagnostic(diagnostic)
-            Teledeclaration.createFromDiagnostic(diagnostic, request.user)
-
-            data = FullDiagnosticSerializer(diagnostic).data
+            data = FullDiagnosticSerializer(td.diagnostic).data
             return JsonResponse(camelize(data), status=status.HTTP_201_CREATED)
+        else:
+            td_ids = []
+            errors = {}
+            for d in diagnostic_ids:
+                try:
+                    td = TeledeclarationCreateView._teledeclare_diagnostic(d, request.user)
+                    td_ids.append(td.id)
+                except Exception as e:
+                    message = getattr(e, "detail", "Autre erreur")
+                    errors[d] = message[0] if type(message) == list else message
+            return JsonResponse({"teledeclarationIds": td_ids, "errors": errors}, status=status.HTTP_200_OK)
 
+    def _teledeclare_diagnostic(diagnostic_id, user):
+        try:
+            diagnostic = Diagnostic.objects.get(pk=diagnostic_id)
         except Diagnostic.DoesNotExist:
-            raise ValidationError("Le diagnostic specifié n'existe pas")
+            raise PermissionDenied()  # in general we through 403s not 404s
 
+        if user not in diagnostic.canteen.managers.all():
+            raise PermissionDenied()
+
+        try:
+            Teledeclaration.validateDiagnostic(diagnostic)
+        except DjangoValidationError as e:
+            raise ValidationError(e.message) from e
+
+        try:
+            td = Teledeclaration.createFromDiagnostic(diagnostic, user)
+            return td
         except DjangoValidationError as e:
             message = "Il existe déjà une télédéclaration en cours pour cette année"
             raise ValidationError(message) from e
