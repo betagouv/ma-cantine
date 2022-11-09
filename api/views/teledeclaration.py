@@ -76,7 +76,10 @@ class TeledeclarationCreateView(APIView):
             td = Teledeclaration.createFromDiagnostic(diagnostic, user)
             return td
         except DjangoValidationError as e:
-            message = "Il existe déjà une télédéclaration en cours pour cette année"
+            if hasattr(e, "message") and e.message == "Données d'approvisionnement manquantes":
+                message = e.message
+            else:
+                message = "Il existe déjà une télédéclaration en cours pour cette année"
             raise ValidationError(message) from e
 
 

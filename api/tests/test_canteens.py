@@ -586,7 +586,9 @@ class TestCanteenApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
         )
 
-        response = self.client.get(reverse("list_canteens_action", kwargs={"year": last_year}) + "?ordering=action")
+        response = self.client.get(
+            reverse("list_actionable_canteens", kwargs={"year": last_year}) + "?ordering=action"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
@@ -652,7 +654,7 @@ class TestCanteenApi(APITestCase):
         If the user is not authenticated, they will not be able to
         access the canteens actions view
         """
-        response = self.client.get(reverse("list_canteens_action", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -663,27 +665,27 @@ class TestCanteenApi(APITestCase):
         canteen = CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
         canteen.managers.add(authenticate.user)
 
-        response = self.client.get(reverse("retrieve_canteen_action", kwargs={"pk": 3, "year": 2021}))
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 3)
         self.assertEqual(body["action"], "20_create_diagnostic")
 
-    def test_get_retrieve_canteen_action_unauthenticated(self):
+    def test_get_retrieve_actionable_canteen_unauthenticated(self):
         """
         If the user is not authenticated, they will not be able to
         access the canteen actions view
         """
         CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
-        response = self.client.get(reverse("retrieve_canteen_action", kwargs={"pk": 3, "year": 2021}))
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_get_retrieve_canteen_action_unauthorized(self):
+    def test_get_retrieve_actionable_canteen_unauthorized(self):
         """
         If the user is not the manager, they will not be able to
         access the canteen actions view
         """
         CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
-        response = self.client.get(reverse("retrieve_canteen_action", kwargs={"pk": 3, "year": 2021}))
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

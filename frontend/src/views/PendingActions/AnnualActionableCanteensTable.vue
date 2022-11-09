@@ -106,7 +106,7 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 import { lastYear } from "@/utils"
 
 export default {
-  name: "AnnualCanteenSummaryTable",
+  name: "AnnualActionableCanteensTable",
   components: { TeledeclarationPreview, DsfrTextarea },
   data() {
     const year = lastYear()
@@ -204,7 +204,7 @@ export default {
       this.searchTerm = this.$route.query.recherche || null
       this.loading = true
 
-      return fetch(`/api/v1/canteenActions/${this.year}?${queryParam}`)
+      return fetch(`/api/v1/actionableCanteens/${this.year}?${queryParam}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
           return response.json()
@@ -317,14 +317,16 @@ export default {
           })
           this.updateCanteen(this.canteenForTD.id)
         })
-        .catch((e) => this.$store.dispatch("notifyServerError", e))
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
         .finally(() => {
           this.showTeledeclarationPreview = false
           this.canteenForTD = null
         })
     },
     updateCanteen(canteenId) {
-      fetch(`/api/v1/canteenActions/${canteenId}/${this.year}`)
+      fetch(`/api/v1/actionableCanteens/${canteenId}/${this.year}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
           return response.json()
