@@ -292,7 +292,9 @@ export default {
           })
           this.updateCanteen(this.canteenForTD.id)
         })
-        .catch((e) => this.$store.dispatch("notifyServerError", e))
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
         .finally(() => {
           this.showTeledeclarationPreview = false
           this.canteenForTD = null

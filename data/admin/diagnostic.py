@@ -45,6 +45,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
     )
     list_filter = ("year",)
     readonly_fields = ("creation_mtm_source", "creation_mtm_campaign", "creation_mtm_medium")
+    raw_id_fields = ("canteen",)
 
     fieldsets = (
         (
