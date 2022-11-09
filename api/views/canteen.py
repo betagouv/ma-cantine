@@ -773,7 +773,7 @@ class CanteenStatisticsView(APIView):
         if sectors:
             sectors = [s for s in sectors if s.isdigit()]
             canteens = canteens.filter(sectors__in=sectors)
-        return canteens
+        return canteens.distinct()
 
     def _filter_diagnostics(year, regions, departments, postal_codes, sectors):
         diagnostics = Diagnostic.objects.filter(year=year)
@@ -785,7 +785,7 @@ class CanteenStatisticsView(APIView):
             diagnostics = diagnostics.filter(canteen__region__in=regions)
         if sectors:
             diagnostics = diagnostics.filter(canteen__sectors__in=sectors)
-        return diagnostics
+        return diagnostics.distinct()
 
 
 class CanteenLocationsView(APIView):
