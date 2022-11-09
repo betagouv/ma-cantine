@@ -885,7 +885,7 @@ class SatelliteListCreateView(ListCreateAPIView):
             raise BadRequest()
 
 
-class CanteenActionsListView(ListAPIView):
+class ActionableCanteensListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     model = Canteen
     serializer_class = CanteenActionsSerializer
@@ -900,7 +900,7 @@ class CanteenActionsListView(ListAPIView):
 
     def get_queryset(self):
         year = self.request.parser_context.get("kwargs").get("year")
-        return CanteenActionsListView.annotate_actions(self.request.user.canteens, year)
+        return ActionableCanteensListView.annotate_actions(self.request.user.canteens, year)
 
     def annotate_actions(queryset, year):
         # prep add satellites action
@@ -941,7 +941,7 @@ class CanteenActionsListView(ListAPIView):
         return user_canteens
 
 
-class CanteenActionsRetrieveView(RetrieveAPIView):
+class ActionableCanteenRetrieveView(RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsCanteenManager]
     model = Canteen
     serializer_class = CanteenActionsSerializer
@@ -951,4 +951,4 @@ class CanteenActionsRetrieveView(RetrieveAPIView):
         year = self.request.parser_context.get("kwargs").get("year")
         canteen_id = self.request.parser_context.get("kwargs").get("pk")
         single_canteen_queryset = self.request.user.canteens.filter(id=canteen_id)
-        return CanteenActionsListView.annotate_actions(single_canteen_queryset, year)
+        return ActionableCanteensListView.annotate_actions(single_canteen_queryset, year)
