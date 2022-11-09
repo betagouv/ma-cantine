@@ -562,13 +562,15 @@ class TestCanteenApi(APITestCase):
         ]:
             canteen.managers.add(authenticate.user)
 
-        DiagnosticFactory.create(year=2020, canteen=needs_last_year_diag)
-
         last_year = 2021
+        DiagnosticFactory.create(year=last_year - 1, canteen=needs_last_year_diag)
+
         td_diag = DiagnosticFactory.create(year=last_year, canteen=complete, value_total_ht=1000)
         Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
 
         DiagnosticFactory.create(year=last_year, canteen=needs_to_complete_diag, value_total_ht=None)
+        # make sure the endpoint only looks at diagnostics of the year requested
+        DiagnosticFactory.create(year=last_year - 1, canteen=needs_to_complete_diag, value_total_ht=1000)
 
         td_diag = DiagnosticFactory.create(year=last_year, canteen=needs_to_publish, value_total_ht=10)
         Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)

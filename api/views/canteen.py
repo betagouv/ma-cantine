@@ -944,7 +944,7 @@ class CanteenActionsListView(ListAPIView):
         user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")))
         # prep complete diag action
         # is value_total_ht of 0 a problem?
-        complete_diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year, value_total_ht__gt=0)
+        complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
         user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
         # prep TD action
         tds = Teledeclaration.objects.filter(
