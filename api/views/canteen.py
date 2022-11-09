@@ -944,8 +944,8 @@ class CanteenActionsListView(ListAPIView):
         user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")))
         # prep complete diag action
         # is value_total_ht of 0 a problem?
-        incomplete_diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year, value_total_ht=None)
-        user_canteens = user_canteens.annotate(has_incomplete_diag=Exists(Subquery(incomplete_diagnostics)))
+        complete_diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year, value_total_ht__gt=0)
+        user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
         # prep TD action
         tds = Teledeclaration.objects.filter(
             canteen=OuterRef("pk"), year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
@@ -958,7 +958,7 @@ class CanteenActionsListView(ListAPIView):
                     nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)
                 ),
                 When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
-                When(has_incomplete_diag=True, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+                When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
                 When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)),
                 When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH)),
                 default=Value(Canteen.Actions.NOTHING),

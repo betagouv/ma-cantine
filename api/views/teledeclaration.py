@@ -37,7 +37,7 @@ class TeledeclarationCreateView(APIView):
     def post(self, request):
         data = request.data
         diagnostic_id = data.get("diagnostic_id")
-        diagnostic_ids = data.getlist("diagnostic_ids")
+        diagnostic_ids = data.get("diagnostic_ids")
         if not diagnostic_id and not diagnostic_ids:
             raise ValidationError("diagnosticId manquant")
 

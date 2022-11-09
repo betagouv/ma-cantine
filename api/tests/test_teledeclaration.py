@@ -385,7 +385,9 @@ class TestTeledeclarationApi(APITestCase):
         d_2 = DiagnosticFactory.create(canteen=canteen_2, value_total_ht=2000)
         diagnostic_ids = [d_1.id, d_2.id]
 
-        response = self.client.post(reverse("teledeclaration_create"), {"diagnosticIds": diagnostic_ids})
+        response = self.client.post(
+            reverse("teledeclaration_create"), {"diagnosticIds": diagnostic_ids}, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
@@ -402,7 +404,7 @@ class TestTeledeclarationApi(APITestCase):
         """
         Require user to be authenticated to access endpoint
         """
-        response = self.client.post(reverse("teledeclaration_create"), {"diagnosticIds": []})
+        response = self.client.post(reverse("teledeclaration_create"), {"diagnosticIds": []}, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -445,7 +447,9 @@ class TestTeledeclarationApi(APITestCase):
 
         self.assertEqual(Teledeclaration.objects.count(), 3)
 
-        response = self.client.post(reverse("teledeclaration_create"), {"diagnosticIds": diagnostic_ids})
+        response = self.client.post(
+            reverse("teledeclaration_create"), {"diagnosticIds": diagnostic_ids}, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(Teledeclaration.objects.count(), 5)
