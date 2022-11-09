@@ -229,7 +229,7 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.CANCELLED)
 
         body = response.json()
-        self.assertEqual(body["teledeclaration"]["status"], "CANCELLED")
+        self.assertIsNone(body["teledeclaration"])
 
     @authenticate
     def test_generate_pdf(self):
