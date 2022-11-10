@@ -549,7 +549,7 @@ class ImportPurchasesView(APIView):
         if not errors:
             errors.append(
                 {
-                    "message": "Une erreur s'est produite en créant un diagnostic pour cette ligne",
+                    "message": "Une erreur s'est produite en créant un achat pour cette ligne",
                     "code": 400,
                 }
             )
