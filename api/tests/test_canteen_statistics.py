@@ -142,7 +142,7 @@ class TestCanteenStatsApi(APITestCase):
         social = SectorFactory.create(name="Social")
         CanteenFactory.create(sectors=[school])
         CanteenFactory.create(sectors=[enterprise])
-        CanteenFactory.create(sectors=[enterprise, social])
+        CanteenFactory.create(sectors=[enterprise, social, school])
         CanteenFactory.create(sectors=[social])
 
         response = self.client.get(
@@ -152,6 +152,11 @@ class TestCanteenStatsApi(APITestCase):
 
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
+        expected_sectors = {}
+        expected_sectors[str(school.id)] = 2
+        expected_sectors[str(enterprise.id)] = 2
+        expected_sectors[str(social.id)] = 1
+        self.assertEqual(body["sectors"], expected_sectors)
 
     def test_canteen_stats_missing_data(self):
         response = self.client.get(reverse("canteen_statistics"), {"region": "01"})
