@@ -74,6 +74,7 @@ import CentralKitchenCard from "./CentralKitchenCard"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrSelect from "@/components/DsfrSelect"
+import Constants from "@/constants"
 
 export default {
   name: "CanteensPagination",
@@ -86,13 +87,8 @@ export default {
       visibleCanteens: null,
       searchTerm: null,
       filterProductionType: "all",
-      productionTypeQuery: null,
       inProgress: false,
-      productionTypeOptions: [
-        { text: "Toutes les cantines", value: "all" },
-        { text: "Cuisines centrales", value: "central" },
-        { text: "Cantines satellites et autogérées", value: "satellites" },
-      ],
+      productionTypeOptions: [{ text: "Toutes les cantines", value: "all" }].concat(Constants.ProductionTypes),
     }
   },
   computed: {
@@ -103,9 +99,7 @@ export default {
       let query = {}
       if (this.page) query.cantinePage = String(this.page)
       if (this.searchTerm) query.recherche = this.searchTerm
-      if (this.productionTypeQuery)
-        if (this.productionTypeQuery === "central,central_serving") query.typeEtablissement = "central"
-        else query.typeEtablissement = "satellite_site"
+      if (this.filterProductionType !== "all") query.typeEtablissement = this.filterProductionType
       return query
     },
   },
@@ -114,8 +108,8 @@ export default {
       this.page = this.$route.query.cantinePage ? parseInt(this.$route.query.cantinePage) : 1
       if (this.$route.query.typeEtablissement === "central") {
         this.filterProductionType = "central"
-      } else if (this.$route.query.typeEtablissement === "satellite_site") {
-        this.filterProductionType = "satellites"
+      } else if (this.$route.query.typeEtablissement) {
+        this.filterProductionType = this.$route.query.typeEtablissement
       } else {
         this.filterProductionType = "all"
       }
@@ -123,7 +117,7 @@ export default {
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
-      if (this.productionTypeQuery) queryParam += `&production_type=${this.productionTypeQuery}`
+      if (this.filterProductionType !== "all") queryParam += `&production_type=${this.filterProductionType}`
       this.searchTerm = this.$route.query.recherche || null
       this.inProgress = true
 
@@ -160,11 +154,6 @@ export default {
         this.$router.push({ query: this.query }).catch(() => {})
       })
     },
-    populateProductionType() {
-      if (this.filterProductionType === "central") this.productionTypeQuery = "central,central_serving"
-      else if (this.filterProductionType === "satellites") this.productionTypeQuery = "site,site_cooked_elsewhere"
-      else this.productionTypeQuery = null
-    },
   },
   watch: {
     page(newPage) {
@@ -174,9 +163,6 @@ export default {
       if (replace) this.$router.replace(page).catch(() => {})
       else this.$router.push(page).catch(() => {})
     },
-    filterProductionType() {
-      this.populateProductionType()
-    },
     $route() {
       this.populateInitialParameters()
       this.$nextTick(this.fetchCurrentPage)
@@ -184,10 +170,7 @@ export default {
   },
   mounted() {
     this.populateInitialParameters()
-    if (Object.keys(this.$route.query).length > 0) {
-      this.populateProductionType()
-      this.fetchCurrentPage()
-    }
+    if (Object.keys(this.$route.query).length > 0) this.fetchCurrentPage()
   },
 }
 </script>

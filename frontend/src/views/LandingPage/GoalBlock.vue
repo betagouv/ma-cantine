@@ -9,7 +9,7 @@
     </p>
     <p class="text-left">
       Agir sur la composition des assiettes est un levier fort pour améliorer l'impact sur notre santé et sur
-      l'environnement tout en influançant positivement les filières d'agriculture biologique et de qualité.
+      l'environnement tout en influençant positivement les filières d'agriculture biologique et de qualité.
     </p>
     <p class="text-left">
       Le cadre réglementaire et les lois EGAlim (2018) et Climat et Résilience (2021) ont fixé des objectifs en termes

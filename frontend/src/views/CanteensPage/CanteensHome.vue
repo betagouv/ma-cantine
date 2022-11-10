@@ -249,6 +249,23 @@
               placeholder="Tous les modes"
             />
           </v-col>
+          <v-col cols="12" sm="6" md="5">
+            <label
+              for="select-production-type"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.productionType }"
+            >
+              Type d'établissement
+            </label>
+            <DsfrSelect
+              v-model="appliedFilters.productionType"
+              :items="productionTypes"
+              clearable
+              hide-details
+              id="select-production-type"
+              class="mt-1"
+              placeholder="Tous les cantines"
+            />
+          </v-col>
         </v-row>
       </v-sheet>
     </v-expand-transition>
@@ -384,6 +401,7 @@ export default {
         chosenDepartment: null,
         chosenRegion: null,
         managementType: null,
+        productionType: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -419,6 +437,7 @@ export default {
       message: "",
       formIsValid: true,
       managementTypes: Constants.ManagementTypes,
+      productionTypes: Constants.ProductionTypes,
       showFilters: false,
     }
   },
@@ -436,6 +455,7 @@ export default {
       if (this.appliedFilters.chosenDepartment) query.departement = this.appliedFilters.chosenDepartment
       if (this.appliedFilters.chosenRegion) query.region = this.appliedFilters.chosenRegion
       if (this.appliedFilters.managementType) query.modeDeGestion = this.appliedFilters.managementType
+      if (this.appliedFilters.productionType) query.typeEtablissement = this.appliedFilters.productionType
       if (this.appliedFilters.chosenSectors && this.appliedFilters.chosenSectors.length > 0)
         query.secteurs = this.appliedFilters.chosenSectors.join("+")
       if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
@@ -450,6 +470,7 @@ export default {
         this.appliedFilters.chosenDepartment !== null ||
         this.appliedFilters.chosenRegion !== null ||
         this.appliedFilters.managementType !== null ||
+        this.appliedFilters.productionType !== null ||
         this.appliedFilters.chosenSectors.length > 0 ||
         this.appliedFilters.minMealCount !== null ||
         this.appliedFilters.maxMealCount !== null ||
@@ -494,6 +515,7 @@ export default {
       if (this.appliedFilters.chosenDepartment) queryParam += `&department=${this.appliedFilters.chosenDepartment}`
       if (this.appliedFilters.chosenRegion) queryParam += `&region=${this.appliedFilters.chosenRegion}`
       if (this.appliedFilters.managementType) queryParam += `&management_type=${this.appliedFilters.managementType}`
+      if (this.appliedFilters.productionType) queryParam += `&production_type=${this.appliedFilters.productionType}`
       if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
       if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
       if (this.appliedFilters.minBio) queryParam += `&min_portion_bio=${this.appliedFilters.minBio / 100}`
@@ -516,6 +538,7 @@ export default {
           this.setRegions(response.regions)
           this.setSectors(response.sectors)
           this.setManagementTypes(response.managementTypes)
+          this.setProductionTypes(response.productionTypes)
         })
         .catch((e) => {
           this.publishedCanteenCount = 0
@@ -541,6 +564,7 @@ export default {
         chosenDepartment: null,
         chosenRegion: null,
         managementType: null,
+        productionType: null,
         chosenSectors: [],
         minMealCount: null,
         maxMealCount: null,
@@ -568,6 +592,7 @@ export default {
         chosenDepartment: this.$route.query.departement || null,
         chosenRegion: this.$route.query.region || null,
         managementType: this.$route.query.modeDeGestion || null,
+        productionType: this.$route.query.typeEtablissement || null,
         chosenSectors: this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || [],
         minMealCount: parseInt(this.$route.query.minRepasJour) || null,
         maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
@@ -669,6 +694,21 @@ export default {
       this.managementTypes = Constants.ManagementTypes.map((x) =>
         Object.assign(x, {
           disabled: enabledManagementTypes.indexOf(x.value) === -1,
+        })
+      )
+    },
+    setProductionTypes(enabledProductionTypes) {
+      const whitelistedProductionTypes = []
+      const [centralQuery, siteQuery] = Constants.ProductionTypes.map((x) => x.value)
+      if (enabledProductionTypes.indexOf("site") > -1 || enabledProductionTypes.indexOf("site_cooked_elsewhere") > -1) {
+        whitelistedProductionTypes.push(siteQuery)
+      }
+      if (enabledProductionTypes.indexOf("central") > -1 || enabledProductionTypes.indexOf("central_serving") > -1) {
+        whitelistedProductionTypes.push(centralQuery)
+      }
+      this.productionTypes = Constants.ProductionTypes.map((x) =>
+        Object.assign(x, {
+          disabled: whitelistedProductionTypes.indexOf(x.value) === -1,
         })
       )
     },
