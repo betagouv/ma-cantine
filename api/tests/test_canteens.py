@@ -631,7 +631,7 @@ class TestCanteenApi(APITestCase):
         for canteen in [no_diag, canteen_with_incomplete_diag, canteen_with_complete_diag, canteen_with_td]:
             canteen.managers.add(authenticate.user)
 
-        response = self.client.get(reverse("list_canteens_action", kwargs={"year": last_year}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         body = response.json()
 
         self.assertEqual(body["diagnosticsToTeledeclare"], [complete_diag.id])
@@ -644,7 +644,7 @@ class TestCanteenApi(APITestCase):
         """
         last_year = 2021
 
-        response = self.client.get(reverse("list_canteens_action", kwargs={"year": last_year}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         body = response.json()
 
         self.assertEqual(body["diagnosticsToTeledeclare"], [])
