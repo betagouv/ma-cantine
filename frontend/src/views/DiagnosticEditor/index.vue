@@ -412,8 +412,8 @@ export default {
       )
     },
     showCentralKitchenWarning() {
-      if (!this.originalCanteen.centralKitchenDeclarations || !this.diagnostic.year) return false
-      return this.originalCanteen.centralKitchenDeclarations.indexOf(this.diagnostic.year) > -1
+      if (!this.originalCanteen.centralKitchenDiagnostics || !this.diagnostic.year) return false
+      return this.originalCanteen.centralKitchenDiagnostics.some((x) => x.year === this.diagnostic.year)
     },
   },
   beforeMount() {

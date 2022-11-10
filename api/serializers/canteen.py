@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from drf_base64.fields import Base64ImageField
-from data.models import Canteen, Sector, CanteenImage
+from data.models import Canteen, Sector, CanteenImage, Diagnostic
 from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer
 from .user import CanteenManagerSerializer
 from .managerinvitation import ManagerInvitationSerializer
@@ -115,7 +115,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     managers = CanteenManagerSerializer(many=True, read_only=True)
     manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
-    central_kitchen_declarations = serializers.SerializerMethodField(read_only=True)
+    central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -131,7 +131,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "diversification_comments",
             "plastics_comments",
             "information_comments",
-            "central_kitchen_declarations",
+            "central_kitchen_diagnostics",
         )
         fields = (
             "id",
@@ -140,7 +140,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "city_insee_code",
             "postal_code",
             "sectors",
-            "central_kitchen_declarations",
+            "central_kitchen_diagnostics",
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
@@ -209,13 +209,21 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
         return canteen
 
-    def get_central_kitchen_declarations(self, obj):
+    def get_central_kitchen_diagnostics(self, obj):
         if not obj.central_producer_siret:
             return None
         try:
             central_kitchen = Canteen.objects.get(siret=obj.central_producer_siret)
-            diagnostics = central_kitchen.diagnostic_set.filter(includes_all_satellites=True)
-            return [diag.year for diag in diagnostics]
+            diagnostics = central_kitchen.diagnostic_set.filter(
+                central_kitchen_diagnostic_mode__in=[
+                    Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                    Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                ]
+            )
+            return [
+                {"year": diag.year, "central_kitchen_diagnostic_mode": diag.central_kitchen_diagnostic_mode}
+                for diag in diagnostics
+            ]
         except Canteen.DoesNotExist:
             return None
         except Exception:
