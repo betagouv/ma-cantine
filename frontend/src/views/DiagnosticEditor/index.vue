@@ -77,20 +77,19 @@
           </v-row>
         </v-form>
 
-        <v-checkbox
-          class="mt-0"
-          v-model="diagnostic.includesAllSatellites"
-          v-if="isCentralCanteen"
+        <v-radio-group
+          v-model="diagnostic.centralKitchenDiagnosticMode"
+          :readonly="hasActiveTeledeclaration"
           :disabled="hasActiveTeledeclaration"
+          class="mt-0"
+          v-if="isCentralCanteen"
         >
-          <template v-slot:label>
-            <span class="body-2 grey--text text--darken-3">
-              En tant que
-              <strong>cuisine centrale,</strong>
-              ce diagnostic inclut les données d'approvisionnement pour toutes mes cantines satellites.
-            </span>
-          </template>
-        </v-checkbox>
+          <v-radio v-for="type in centralKitchenDiagnosticModes" :key="type.key" :label="type.label" :value="type.key">
+            <template v-slot:label>
+              <span class="grey--text text--darken-3">{{ type.label }}</span>
+            </template>
+          </v-radio>
+        </v-radio-group>
 
         <p class="caption grey--text text--darken-1" v-if="!hasActiveTeledeclaration">
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
@@ -310,6 +309,20 @@ export default {
           key: "COMPLETE",
           label: "Télédéclaration - saisie détaillée",
           help: "Vous connaissez les labels et les familles de produits de vos achats",
+        },
+      ],
+      centralKitchenDiagnosticModes: [
+        {
+          key: "NO_SATELLITES",
+          label: "Ce diagnostic concerne mon lieu de service et non pas les cantines satellites",
+        },
+        {
+          key: "APPRO",
+          label: "Ce diagnostic concerne les données d'approvisionnement de toutes mes cantines satellites",
+        },
+        {
+          key: "ALL",
+          label: "Ce diagnostic concerne toutes les données des cantines satellites",
         },
       ],
       showTeledeclarationPreview: false,
