@@ -103,13 +103,19 @@
           />
         </div>
 
-        <v-expansion-panels class="mb-8" :disabled="!diagnosticIsUnique" :value="openedPanel">
+        <v-expansion-panels
+          class="mb-8"
+          :disabled="!diagnosticIsUnique"
+          :value="openedPanel"
+          v-if="showExpansionPanels"
+        >
           <DiagnosticExpansionPanel
             iconColour="red"
             icon="mdi-food-apple"
             heading="Plus de produits de qualité et durables dans nos assiettes"
             :summary="approSummary() || 'Incomplet'"
             :formIsValid="formIsValid.quality"
+            v-if="showAppro"
           >
             <v-form ref="quality" v-model="formIsValid.quality">
               <p>
@@ -152,6 +158,7 @@
             icon="mdi-offer"
             heading="Lutte contre le gaspillage alimentaire et dons alimentaires"
             :formIsValid="formIsValid.waste"
+            v-if="showNonApproPanels"
           >
             <v-form ref="waste" v-model="formIsValid.waste">
               <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen="originalCanteen" />
@@ -163,6 +170,7 @@
             icon="$leaf-fill"
             heading="Diversification des sources de protéines et menus végétariens"
             :formIsValid="formIsValid.diversification"
+            v-if="showNonApproPanels"
           >
             <v-form ref="diversification" v-model="formIsValid.diversification">
               <DiversificationMeasure
@@ -179,6 +187,7 @@
             heading="Substitution des plastiques"
             :summary="plasticSummary()"
             :formIsValid="formIsValid.plastic"
+            v-if="showNonApproPanels"
           >
             <v-form ref="plastic" v-model="formIsValid.plastic">
               <NoPlasticMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />
@@ -190,6 +199,7 @@
             icon="mdi-bullhorn"
             heading="Information des usagers et convives"
             :formIsValid="formIsValid.information"
+            v-if="showNonApproPanels"
           >
             <v-form ref="information" v-model="formIsValid.information">
               <InformationMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />
@@ -412,8 +422,33 @@ export default {
       )
     },
     showCentralKitchenWarning() {
-      if (!this.originalCanteen.centralKitchenDiagnostics || !this.diagnostic.year) return false
-      return this.originalCanteen.centralKitchenDiagnostics.some((x) => x.year === this.diagnostic.year)
+      if (this.centralKitchenDiagostic) return true
+      return false
+    },
+    centralKitchenDiagostic() {
+      if (this.diagnostic.year && this.originalCanteen?.centralKitchenDiagnostics)
+        return this.originalCanteen.centralKitchenDiagnostics.find((x) => x.year === this.diagnostic.year)
+      return null
+    },
+    showAppro() {
+      if (this.originalCanteen.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic) {
+        return (
+          this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "APPRO" &&
+          this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
+        )
+      }
+      return true
+    },
+    showNonApproPanels() {
+      if (this.isCentralCanteen)
+        return this.diagnostic.centralKitchenDiagnosticMode && this.diagnostic.centralKitchenDiagnosticMode !== "APPRO"
+      return true
+    },
+    showExpansionPanels() {
+      if (this.originalCanteen.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic) {
+        return this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
+      }
+      return true
     },
   },
   beforeMount() {
