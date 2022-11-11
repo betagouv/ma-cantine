@@ -1,6 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
+import requests_mock
 from data.department_choices import Department
 from data.factories import CanteenFactory, SectorFactory
 from data.factories import DiagnosticFactory
@@ -417,3 +418,54 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)
+
+    @requests_mock.Mocker()
+    def test_epci(self, mock):
+        """
+        Test that can get canteens with postcodes that are in EPCIs requested
+        """
+        # test multiple postcodes for 1 epci
+        CanteenFactory.create(postal_code="12345", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        CanteenFactory.create(postal_code="67890", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        # 'belongs to' epci 2
+        CanteenFactory.create(postal_code="11223", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        CanteenFactory.create(postal_code="11224", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        # shouldn't be included
+        CanteenFactory.create(postal_code="00000", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        epcis = ["1", "2"]
+        # mock the API response for these two 'EPCI's
+        api_url = "https://geo.api.gouv.fr/epcis"
+        mock.get(api_url + "/1/communes", json=[{"codesPostaux": ["12345", "67890"]}])
+        mock.get(api_url + "/2/communes", json=[{"codesPostaux": ["11223"]}, {"codesPostaux": ["11224"]}])
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": 2021, "epci": epcis})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 4)
+
+    @requests_mock.Mocker()
+    def test_epci_error(self, mock):
+        """
+        Test that can get canteens with postcodes that are in EPCIs requested
+        """
+        # test multiple postcodes for 1 epci
+        CanteenFactory.create(postal_code="12345", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        CanteenFactory.create(postal_code="67890", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        # 'belongs to' epci 2
+        CanteenFactory.create(postal_code="11223", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        CanteenFactory.create(postal_code="11224", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        # ends up being included because filter will fail
+        CanteenFactory.create(postal_code="00000", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        epcis = ["1", "2"]
+        # mock the API response for these two 'EPCI's
+        api_url = "https://geo.api.gouv.fr/epcis"
+        mock.get(api_url + "/1/communes", json=[{"codesPostaux": ["12345", "67890"]}])
+        mock.get(api_url + "/2/communes", status_code=500)
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": 2021, "epci": epcis})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 5)
+        self.assertEqual(body["epciError"], "Une erreur est survenue")

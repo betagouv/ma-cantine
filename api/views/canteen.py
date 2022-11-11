@@ -3,13 +3,14 @@ from collections import OrderedDict
 from datetime import date
 from django.conf import settings
 from django.http import JsonResponse
+import requests
 from common.utils import send_mail
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, BadRequest
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
 from django.db.models.functions import Cast
-from django.db.models import Sum, FloatField, Avg, Func, F, Q
+from django.db.models import Sum, FloatField, Avg, Func, F, Q, Case, When, Value, Subquery, OuterRef, Exists, Count
 from django_filters import rest_framework as django_filters
 from django_filters import BaseInFilter, CharFilter
 from drf_spectacular.utils import extend_schema_view, extend_schema
@@ -26,8 +27,9 @@ from api.serializers import (
     CanteenPreviewSerializer,
     ManagingTeamSerializer,
     SatelliteCanteenSerializer,
+    CanteenActionsSerializer,
 )
-from data.models import Canteen, ManagerInvitation, Sector, Diagnostic
+from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration
 from data.region_choices import Region
 from api.permissions import (
     IsCanteenManager,
@@ -41,18 +43,30 @@ from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
 logger = logging.getLogger(__name__)
 
 
-class CanteensPagination(LimitOffsetPagination):
+class PublishedCanteenSingleView(RetrieveAPIView):
+    model = Canteen
+    serializer_class = PublicCanteenSerializer
+    queryset = Canteen.objects.filter(publication_status="published")
+
+
+class ProductionTypeInFilter(BaseInFilter, CharFilter):
+    pass
+
+
+class PublishedCanteensPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
     departments = []
     sectors = []
     management_types = []
+    production_types = []
 
     def paginate_queryset(self, queryset, request, view=None):
         # Performance improvements possible
         self.departments = set(filter(lambda x: x, queryset.values_list("department", flat=True)))
         self.regions = set(filter(lambda x: x, queryset.values_list("region", flat=True)))
         self.management_types = set(filter(lambda x: x, queryset.values_list("management_type", flat=True)))
+        self.production_types = set(filter(lambda x: x, queryset.values_list("production_type", flat=True)))
 
         published_canteens = Canteen.objects.filter(publication_status="published")
         query_params = request.query_params
@@ -95,6 +109,24 @@ class CanteensPagination(LimitOffsetPagination):
                     ("departments", self.departments),
                     ("sectors", self.sectors),
                     ("management_types", self.management_types),
+                    ("production_types", self.production_types),
+                ]
+            )
+        )
+
+
+class UserCanteensPagination(LimitOffsetPagination):
+    default_limit = 12
+    max_limit = 30
+
+    def get_paginated_response(self, data):
+        return Response(
+            OrderedDict(
+                [
+                    ("count", self.count),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
                 ]
             )
         )
@@ -103,6 +135,7 @@ class CanteensPagination(LimitOffsetPagination):
 class PublishedCanteenFilterSet(django_filters.FilterSet):
     min_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="gte")
     max_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="lte")
+    production_type = ProductionTypeInFilter(field_name="production_type")
 
     class Meta:
         model = Canteen
@@ -148,7 +181,7 @@ class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
     queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
-    pagination_class = CanteensPagination
+    pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
@@ -161,16 +194,6 @@ class PublishedCanteensView(ListAPIView):
     def filter_queryset(self, queryset):
         new_queryset = filter_by_diagnostic_params(queryset, self.request.query_params)
         return super().filter_queryset(new_queryset)
-
-
-class PublishedCanteenSingleView(RetrieveAPIView):
-    model = Canteen
-    serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects.filter(publication_status="published")
-
-
-class ProductionTypeInFilter(BaseInFilter, CharFilter):
-    pass
 
 
 class UserCanteensFilterSet(django_filters.FilterSet):
@@ -191,7 +214,7 @@ class UserCanteensView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     model = Canteen
     serializer_class = FullCanteenSerializer
-    pagination_class = CanteensPagination
+    pagination_class = UserCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
@@ -664,32 +687,27 @@ class CanteenStatisticsView(APIView):
         regions = request.query_params.getlist("region")
         departments = request.query_params.getlist("department")
         sectors = request.query_params.getlist("sectors")
+        epcis = request.query_params.getlist("epci")
+        postal_codes = None
         year = request.query_params.get("year")
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
+
         data = {}
-        canteens = Canteen.objects
-        if regions:
-            canteens = canteens.filter(region__in=regions)
-        elif departments:
-            canteens = canteens.filter(department__in=departments)
-        if sectors:
-            sectors = [s for s in sectors if s.isdigit()]
-            canteens = canteens.filter(sectors__in=sectors)
-        canteens = canteens.distinct()
+        try:
+            postal_codes = CanteenStatisticsView._get_postal_codes(epcis)
+        except Exception as e:
+            logger.warning(f"Error when fetching postcodes for EPCI for canteen stats: {str(e)}")
+            data["epci_error"] = "Une erreur est survenue"
+
+        canteens = CanteenStatisticsView._filter_canteens(regions, departments, postal_codes, sectors)
         data["canteen_count"] = canteens.count()
         data["published_canteen_count"] = canteens.filter(
             publication_status=Canteen.PublicationStatus.PUBLISHED
         ).count()
 
-        diagnostics = Diagnostic.objects.filter(year=year)
-        if regions:
-            diagnostics = diagnostics.filter(canteen__region__in=regions)
-        elif departments:
-            diagnostics = diagnostics.filter(canteen__department__in=departments)
-        if sectors:
-            diagnostics = diagnostics.filter(canteen__sectors__in=sectors)
-        diagnostics = diagnostics.distinct()
+        diagnostics = CanteenStatisticsView._filter_diagnostics(year, regions, departments, postal_codes, sectors)
+
         appro_share_query = diagnostics.filter(value_total_ht__gt=0)
         appro_share_query = appro_share_query.annotate(
             bio_share=Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
@@ -733,6 +751,41 @@ class CanteenStatisticsView(APIView):
             sectors[sector.id] = canteens.filter(sectors=sector).count()
         data["sectors"] = sectors
         return JsonResponse(camelize(data), status=status.HTTP_200_OK)
+
+    def _get_postal_codes(epcis):
+        postal_codes = []
+        for e in epcis:
+            response = requests.get(f"https://geo.api.gouv.fr/epcis/{e}/communes?fields=codesPostaux", timeout=5)
+            response.raise_for_status()
+            body = response.json()
+            for commune in body:
+                postal_codes += commune["codesPostaux"]
+        return postal_codes
+
+    def _filter_canteens(regions, departments, postal_codes, sectors):
+        canteens = Canteen.objects
+        if postal_codes:
+            canteens = canteens.filter(postal_code__in=postal_codes)
+        elif departments:
+            canteens = canteens.filter(department__in=departments)
+        elif regions:
+            canteens = canteens.filter(region__in=regions)
+        if sectors:
+            sectors = [s for s in sectors if s.isdigit()]
+            canteens = canteens.filter(sectors__in=sectors)
+        return canteens.distinct()
+
+    def _filter_diagnostics(year, regions, departments, postal_codes, sectors):
+        diagnostics = Diagnostic.objects.filter(year=year)
+        if postal_codes:
+            diagnostics = diagnostics.filter(canteen__postal_code__in=postal_codes)
+        elif departments:
+            diagnostics = diagnostics.filter(canteen__department__in=departments)
+        elif regions:
+            diagnostics = diagnostics.filter(canteen__region__in=regions)
+        if sectors:
+            diagnostics = diagnostics.filter(canteen__sectors__in=sectors)
+        return diagnostics.distinct()
 
 
 class CanteenLocationsView(APIView):
@@ -867,3 +920,72 @@ class SatelliteListCreateView(ListCreateAPIView):
             return JsonResponse(camelize(serialized_canteen), status=return_status)
         except Sector.DoesNotExist:
             raise BadRequest()
+
+
+class ActionableCanteensListView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    model = Canteen
+    serializer_class = CanteenActionsSerializer
+    pagination_class = UserCanteensPagination
+    filter_backends = [
+        django_filters.DjangoFilterBackend,
+        MaCantineOrderingFilter,
+    ]
+    search_fields = ["name"]
+    ordering_fields = ["name", "production_type", "action"]
+    ordering = "modification_date"
+
+    def get_queryset(self):
+        year = self.request.parser_context.get("kwargs").get("year")
+        return ActionableCanteensListView.annotate_actions(self.request.user.canteens, year)
+
+    def annotate_actions(queryset, year):
+        # prep add satellites action
+        # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
+        satellites = (
+            Canteen.objects.filter(central_producer_siret=OuterRef("siret"))
+            .order_by()
+            .values("central_producer_siret")  # sets the groupBy for the aggregation
+        )
+        # count by id per central prod siret, then fetch that count
+        satellites_count = satellites.annotate(count=Count("id")).values("count")
+        user_canteens = queryset.annotate(nb_satellites_in_db=Subquery(satellites_count))
+        # prep add diag action
+        diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year)
+        user_canteens = user_canteens.annotate(has_diag=Exists(Subquery(diagnostics)))
+        # prep complete diag action
+        # is value_total_ht of 0 a problem?
+        incomplete_diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year, value_total_ht=None)
+        user_canteens = user_canteens.annotate(has_incomplete_diag=Exists(Subquery(incomplete_diagnostics)))
+        # prep TD action
+        tds = Teledeclaration.objects.filter(
+            canteen=OuterRef("pk"), year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        )
+        user_canteens = user_canteens.annotate(has_td=Exists(Subquery(tds)))
+        # annotate with action
+        user_canteens = user_canteens.annotate(
+            action=Case(
+                When(
+                    nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)
+                ),
+                When(has_diag=False, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
+                When(has_incomplete_diag=True, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+                When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)),
+                When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH)),
+                default=Value(Canteen.Actions.NOTHING),
+            )
+        )
+        return user_canteens
+
+
+class ActionableCanteenRetrieveView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated, IsCanteenManager]
+    model = Canteen
+    serializer_class = CanteenActionsSerializer
+    required_scopes = ["canteen"]
+
+    def get_queryset(self):
+        year = self.request.parser_context.get("kwargs").get("year")
+        canteen_id = self.request.parser_context.get("kwargs").get("pk")
+        single_canteen_queryset = self.request.user.canteens.filter(id=canteen_id)
+        return ActionableCanteensListView.annotate_actions(single_canteen_queryset, year)

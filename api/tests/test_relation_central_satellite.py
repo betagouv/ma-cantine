@@ -40,7 +40,9 @@ class TestRelationCentralSatellite(APITestCase):
         self.assertEqual(satellite_1_result["siret"], satellite_1.siret)
         self.assertEqual(satellite_1_result["name"], satellite_1.name)
         self.assertEqual(satellite_1_result["dailyMealCount"], satellite_1.daily_meal_count)
-        self.assertEqual(satellite_1_result["sectors"], [school.id, enterprise.id])
+        self.assertIn(school.id, satellite_1_result["sectors"])
+        self.assertIn(enterprise.id, satellite_1_result["sectors"])
+
         # just checking if satellite 2 is in there too
         satellite_2_result = next(canteen for canteen in body if canteen["id"] == satellite_2.id)
         self.assertEqual(satellite_2_result["siret"], satellite_2.siret)
