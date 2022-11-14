@@ -30,6 +30,10 @@ def _send_sib_template(template_id, parameters, to_email, to_name):
     api_instance.send_transac_email(send_smtp_email)
 
 
+def _user_name(user):
+    return user.get_full_name() or user.username
+
+
 @app.task()
 def no_canteen_first_reminder():
     if not settings.TEMPLATE_ID_NO_CANTEEN_FIRST:
@@ -52,7 +56,7 @@ def no_canteen_first_reminder():
     for user in users:
         try:
             parameters = {"PRENOM": user.first_name}
-            to_name = f"{user.first_name} {user.last_name}".strip() if user.first_name or user.last_name else None
+            to_name = _user_name(user)
             _send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_FIRST, parameters, user.email, to_name)
             logger.info(f"First email sent to {user.get_full_name()} ({user.email})")
             user.email_no_canteen_first_reminder = today
@@ -87,9 +91,8 @@ def no_canteen_second_reminder():
     for user in users:
         try:
             parameters = {"PRENOM": user.first_name}
-            _send_sib_template(
-                settings.TEMPLATE_ID_NO_CANTEEN_SECOND, parameters, user.email, f"{user.first_name} {user.last_name}"
-            )
+            to_name = _user_name(user)
+            _send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_SECOND, parameters, user.email, to_name)
             logger.info(f"Second email sent to {user.get_full_name()} ({user.email})")
             user.email_no_canteen_second_reminder = today
             user.save()
@@ -122,25 +125,26 @@ def no_diagnostic_first_reminder():
 
             try:
                 parameters = {"PRENOM": manager.first_name, "NOM_CANTINE": canteen.name}
+                to_name = _user_name(manager)
                 _send_sib_template(
                     settings.TEMPLATE_ID_NO_DIAGNOSTIC_FIRST,
                     parameters,
                     manager.email,
-                    f"{manager.get_full_name()}",
+                    f"{to_name}",
                 )
                 logger.info(
-                    f"First no-diagnostic email sent to {manager.get_full_name()} ({manager.email}) for canteen '{canteen.name}'."
+                    f"First no-diagnostic email sent to {to_name} ({manager.email}) for canteen '{canteen.name}'."
                 )
                 if not canteen.email_no_diagnostic_first_reminder:
                     canteen.email_no_diagnostic_first_reminder = today
                     canteen.save()
             except ApiException as e:
                 logger.exception(
-                    f"SIB error when sending first no-diagnostic email to {manager.username} concerning canteen {canteen.name}:\n{e}"
+                    f"SIB error when sending first no-diagnostic email to {to_name} concerning canteen {canteen.name}:\n{e}"
                 )
             except Exception as e:
                 logger.exception(
-                    f"Unable to send first no-diagnostic reminder email to {manager.username} concerning canteen {canteen.name}:\n{e}"
+                    f"Unable to send first no-diagnostic reminder email to {to_name} concerning canteen {canteen.name}:\n{e}"
                 )
 
 

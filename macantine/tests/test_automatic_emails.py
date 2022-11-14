@@ -151,16 +151,15 @@ class TestAutomaticEmails(TestCase):
             date_joined=(today - timedelta(weeks=2)),
             email_no_canteen_first_reminder=(today - timedelta(weeks=1)),
             email_no_canteen_second_reminder=None,
-            first_name="Marie",
-            last_name="Olait",
+            username="marie.olait",
+            first_name="",
+            last_name="",
             email="marie.olait@example.com",
         )
         tasks.no_canteen_second_reminder()
 
-        # Email is only sent once to Jean
-        tasks._send_sib_template.assert_called_once_with(
-            2, {"PRENOM": "Marie"}, "marie.olait@example.com", "Marie Olait"
-        )
+        # Email is only sent once to Marie
+        tasks._send_sib_template.assert_called_once_with(2, {"PRENOM": ""}, "marie.olait@example.com", "marie.olait")
 
         jean.refresh_from_db()
         anna.refresh_from_db()
