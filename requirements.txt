@@ -51,7 +51,7 @@ inflection==0.5.1
 iniconfig==1.1.1
 isort==5.10.1
 jmespath==1.0.1
-jsonschema==4.16.0
+jsonschema==4.17.0
 jwcrypto==1.4.2
 kombu==5.2.4
 lazy-object-proxy==1.8.0
