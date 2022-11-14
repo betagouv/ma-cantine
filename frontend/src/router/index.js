@@ -220,6 +220,10 @@ const routes = [
     ],
   },
   {
+    path: "/partenaires",
+    redirect: "/acteurs-de-l-eco-systeme",
+  },
+  {
     path: "/acteurs-de-l-eco-systeme",
     name: "PartnersPage",
     component: PartnersPage,
