@@ -211,7 +211,7 @@ class PublicDiagnosticSerializer(serializers.ModelSerializer):
 
 class FullDiagnosticSerializer(serializers.ModelSerializer):
 
-    teledeclaration = ShortTeledeclarationSerializer(source="latest_teledeclaration")
+    teledeclaration = ShortTeledeclarationSerializer(source="latest_submitted_teledeclaration")
 
     class Meta:
         model = Diagnostic

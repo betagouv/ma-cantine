@@ -2,7 +2,7 @@
   <div>
     <v-sheet class="px-3 mt-6 mb-6" elevation="0">
       <v-row>
-        <v-col cols="12" md="7" class="pa-0" v-if="showSearch">
+        <v-col cols="12" md="7" class="pa-0 pr-md-8">
           <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
             <DsfrSearchField
               hide-details="auto"
@@ -16,15 +16,28 @@
             />
           </form>
         </v-col>
+        <v-col cols="12" md="4" class="pa-0">
+          <DsfrSelect
+            @change="applyProductionType"
+            height="40"
+            v-model="filterProductionType"
+            :items="productionTypeOptions"
+          />
+        </v-col>
       </v-row>
     </v-sheet>
-    <DsfrPagination v-if="showPagination" class="mb-6" v-model="page" :length="Math.ceil(canteenCount / limit)" />
+    <DsfrPagination class="mb-6" v-model="page" :length="Math.ceil(canteenCount / limit)" />
     <v-sheet fluid height="200" v-if="inProgress">
       <v-progress-circular indeterminate style="left: 50%; top: 50%"></v-progress-circular>
     </v-sheet>
     <v-row v-else>
       <v-col cols="12" sm="6" md="4" height="100%" v-for="canteen in visibleCanteens" :key="`canteen-${canteen.id}`">
-        <CanteenCard :canteen="canteen" class="fill-height" />
+        <CentralKitchenCard
+          :canteen="canteen"
+          class="fill-height"
+          v-if="canteen.productionType === 'central_serving' || canteen.productionType === 'central'"
+        />
+        <CanteenCard :canteen="canteen" class="fill-height" v-else />
       </v-col>
       <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
         <v-card
@@ -57,12 +70,15 @@
 
 <script>
 import CanteenCard from "./CanteenCard"
+import CentralKitchenCard from "./CentralKitchenCard"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
+import DsfrSelect from "@/components/DsfrSelect"
+import Constants from "@/constants"
 
 export default {
   name: "CanteensPagination",
-  components: { CanteenCard, DsfrPagination, DsfrSearchField },
+  components: { CanteenCard, DsfrPagination, DsfrSearchField, CentralKitchenCard, DsfrSelect },
   data() {
     return {
       limit: 5,
@@ -70,33 +86,38 @@ export default {
       canteenCount: null,
       visibleCanteens: null,
       searchTerm: null,
+      filterProductionType: "all",
       inProgress: false,
+      productionTypeOptions: [{ text: "Toutes les cantines", value: "all" }].concat(Constants.ProductionTypes),
     }
   },
   computed: {
-    showPagination() {
-      return this.canteenCount && this.canteenCount > this.limit
-    },
-    showSearch() {
-      return this.showPagination || this.searchTerm
-    },
     offset() {
       return (this.page - 1) * this.limit
     },
     query() {
       let query = {}
-      if (this.page) query.page = String(this.page)
+      if (this.page) query.cantinePage = String(this.page)
       if (this.searchTerm) query.recherche = this.searchTerm
+      if (this.filterProductionType !== "all") query.typeEtablissement = this.filterProductionType
       return query
     },
   },
   methods: {
     populateInitialParameters() {
       this.page = this.$route.query.cantinePage ? parseInt(this.$route.query.cantinePage) : 1
+      if (this.$route.query.typeEtablissement === "central") {
+        this.filterProductionType = "central"
+      } else if (this.$route.query.typeEtablissement) {
+        this.filterProductionType = this.$route.query.typeEtablissement
+      } else {
+        this.filterProductionType = "all"
+      }
     },
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
+      if (this.filterProductionType !== "all") queryParam += `&production_type=${this.filterProductionType}`
       this.searchTerm = this.$route.query.recherche || null
       this.inProgress = true
 
@@ -127,6 +148,12 @@ export default {
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
     },
+    applyProductionType() {
+      this.$nextTick(() => {
+        this.page = 1
+        this.$router.push({ query: this.query }).catch(() => {})
+      })
+    },
   },
   watch: {
     page(newPage) {
@@ -138,7 +165,7 @@ export default {
     },
     $route() {
       this.populateInitialParameters()
-      this.fetchCurrentPage()
+      this.$nextTick(this.fetchCurrentPage)
     },
   },
   mounted() {

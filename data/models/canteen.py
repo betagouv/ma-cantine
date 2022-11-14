@@ -53,6 +53,15 @@ class Canteen(SoftDeletionModel):
     class EconomicModel(models.TextChoices):
         PUBLIC = "public", "Public"
         PRIVATE = "private", "Privé"
+        PUBLISHED = "published", "✅ Publié"
+
+    class Actions(models.TextChoices):
+        ADD_SATELLITES = "10_add_satellites", "Ajouter des satellites"
+        CREATE_DIAGNOSTIC = "20_create_diagnostic", "Créer le diagnostic"
+        COMPLETE_DIAGNOSTIC = "30_complete_diagnostic", "Completer le diagnostic"
+        TELEDECLARE = "40_teledeclare", "Télédéclarer"
+        PUBLISH = "50_publish", "Publier"
+        NOTHING = "95_nothing", "Rien à faire !"
 
     class Ministries(models.TextChoices):
         PREMIER_MINISTRE = "premier_ministre", "Service du Premier Ministre"

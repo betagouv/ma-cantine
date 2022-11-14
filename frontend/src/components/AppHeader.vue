@@ -1,7 +1,6 @@
 <template>
   <div v-if="!!this.$route.name">
     <v-app-bar
-      v-mutate.attr="updateExtended"
       app
       clipped-right
       color="white"
@@ -198,7 +197,6 @@ export default {
       }
     })
     return {
-      extended: true,
       logoutWarningDialog: false,
       navLinks: [
         {
@@ -342,11 +340,6 @@ export default {
       if (env === "staging") return { text: "Staging", color: "purple" }
       if (env === "demo") return { text: "Démo", color: "green darken-2" }
       return null
-    },
-  },
-  methods: {
-    updateExtended() {
-      this.extended = this.$refs && this.$refs.appbar && !this.$refs.appbar.classes["v-app-bar--is-scrolled"]
     },
   },
 }

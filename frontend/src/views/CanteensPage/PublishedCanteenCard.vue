@@ -9,6 +9,10 @@
     </v-card-title>
     <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pb-4">
       <CanteenIndicators :canteen="canteen" :singleLine="true" />
+      <div v-if="isCentralKitchen" class="tag body-2 font-weight-medium mt-2">
+        <v-icon class="mt-n1" small>$community-fill</v-icon>
+        Cuisine centrale
+      </div>
     </v-card-subtitle>
     <v-spacer></v-spacer>
     <v-divider class="py-1"></v-divider>
@@ -102,6 +106,9 @@ export default {
     hasPercentages() {
       return this.bioPercent || this.sustainablePercent
     },
+    isCentralKitchen() {
+      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
+    },
   },
   methods: {
     diagValuePercent(valueKey) {
@@ -114,3 +121,14 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.tag {
+  background: #e0e0f2;
+  left: 10px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  color: #333;
+  display: inline-block;
+}
+</style>

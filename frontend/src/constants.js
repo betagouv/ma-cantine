@@ -37,6 +37,16 @@ export default Object.freeze({
       value: "conceded",
     },
   ],
+  ProductionTypes: [
+    {
+      text: "Cuisines centrales",
+      value: "central,central_serving",
+    },
+    {
+      text: "Cantines satellites et autogérées",
+      value: "site,site_cooked_elsewhere",
+    },
+  ],
   ProductFamilies: {
     VIANDES_VOLAILLES: {
       text: "Viandes et volailles fraîches et surgelées",
@@ -310,6 +320,10 @@ export default Object.freeze({
     {
       text: "Responsable de plusieurs établissements (SRC)",
       value: "MANY_ESTABLISHMENTS_MANAGER",
+    },
+    {
+      text: "Développement logiciel, analyse de données ou autre rôle technique",
+      value: "TECHNICAL",
     },
     {
       text: "Autre (spécifiez)",

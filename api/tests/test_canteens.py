@@ -502,3 +502,148 @@ class TestCanteenApi(APITestCase):
         self.assertNotIn("mtm_source_value", body)
         self.assertNotIn("mtm_campaign_value", body)
         self.assertNotIn("mtm_medium_value", body)
+
+    @authenticate
+    def test_get_canteens_filter_production_type(self):
+        user_satellite_canteen = CanteenFactory.create(production_type="site")
+        user_satellite_canteen.managers.add(authenticate.user)
+
+        user_central_cuisine = CanteenFactory.create(production_type="central")
+        user_central_cuisine.managers.add(authenticate.user)
+
+        user_central_serving_cuisine = CanteenFactory.create(production_type="central_serving")
+        user_central_serving_cuisine.managers.add(authenticate.user)
+        response = self.client.get(f"{reverse('user_canteens')}?production_type=central,central_serving")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["count"], 2)
+        ids = list(map(lambda x: x["id"], body["results"]))
+        self.assertIn(user_central_cuisine.id, ids)
+        self.assertIn(user_central_serving_cuisine.id, ids)
+
+    @authenticate
+    def test_get_canteen_actions(self):
+        """
+        Check that this endpoint returns the user's canteens and the next action required
+        """
+        # these canteens aren't in a very logical order, because want to test sorting by action
+        # create diag (has one for 2020)
+        needs_last_year_diag = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        # nothing to do
+        complete = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+        )
+        # complete diag
+        needs_to_complete_diag = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        # publish
+        needs_to_publish = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        # TD
+        needs_td = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+        )
+        # create satellites
+        central_siret = "78146469373706"
+        needs_satellites = CanteenFactory.create(
+            siret=central_siret,
+            production_type=Canteen.ProductionType.CENTRAL,
+            satellite_canteens_count=3,
+        )
+        CanteenFactory.create(name="Not my canteen")
+        for canteen in [
+            needs_last_year_diag,
+            complete,
+            needs_to_complete_diag,
+            needs_to_publish,
+            needs_td,
+            needs_satellites,
+        ]:
+            canteen.managers.add(authenticate.user)
+
+        DiagnosticFactory.create(year=2020, canteen=needs_last_year_diag)
+
+        last_year = 2021
+        td_diag = DiagnosticFactory.create(year=last_year, canteen=complete, value_total_ht=1000)
+        Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
+
+        DiagnosticFactory.create(year=last_year, canteen=needs_to_complete_diag, value_total_ht=None)
+
+        td_diag = DiagnosticFactory.create(year=last_year, canteen=needs_to_publish, value_total_ht=10)
+        Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
+
+        DiagnosticFactory.create(year=last_year, canteen=needs_td, value_total_ht=100)
+
+        # has a diagnostic but this canteen registered only two of three satellites
+        DiagnosticFactory.create(year=last_year, canteen=needs_satellites, value_total_ht=100)
+        CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
+        )
+        CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
+        )
+
+        response = self.client.get(
+            reverse("list_actionable_canteens", kwargs={"year": last_year}) + "?ordering=action"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        returned_canteens = body["results"]
+        self.assertEqual(len(returned_canteens), 6)
+
+        # TODO: currently ordering by action gives step in flow - maybe should offer by effort required ?
+        # ie. pub, TD, sat, complete, create
+        expected_actions = [
+            (needs_satellites, "10_add_satellites"),
+            (needs_last_year_diag, "20_create_diagnostic"),
+            (needs_to_complete_diag, "30_complete_diagnostic"),
+            (needs_td, "40_teledeclare"),
+            (needs_to_publish, "50_publish"),
+            (complete, "95_nothing"),
+        ]
+        for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):
+            self.assertEqual(returned_canteens[index]["id"], canteen.id)
+            self.assertEqual(returned_canteens[index]["action"], action)
+
+    def test_list_canteen_actions_unauthenticated(self):
+        """
+        If the user is not authenticated, they will not be able to
+        access the canteens actions view
+        """
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_single_canteen_actions(self):
+        """
+        Check that this endpoint can return the summary for a specified canteen
+        """
+        canteen = CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
+        canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], 3)
+        self.assertEqual(body["action"], "20_create_diagnostic")
+
+    def test_get_retrieve_actionable_canteen_unauthenticated(self):
+        """
+        If the user is not authenticated, they will not be able to
+        access the canteen actions view
+        """
+        CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_retrieve_actionable_canteen_unauthorized(self):
+        """
+        If the user is not the manager, they will not be able to
+        access the canteen actions view
+        """
+        CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
