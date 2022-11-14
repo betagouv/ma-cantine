@@ -200,7 +200,7 @@ export default {
       logoutWarningDialog: false,
       navLinks: [
         {
-          text: "Éspace de gestion",
+          text: "Espace de gestion",
           authenticationState: true,
           children: [
             {

@@ -17,7 +17,7 @@
         </router-link>
       </li>
     </ul>
-    <h2 class="mb-4">Votre question n'est pas répondue&nbsp;?</h2>
+    <h2 class="mb-4">Avez-vous une autre question ?</h2>
     <GeneralContactForm></GeneralContactForm>
   </div>
 </template>
@@ -42,7 +42,7 @@ export default {
         },
         {
           href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/nos-webinaires",
-          title: "Précedents webinaires",
+          title: "Webinaires précedents",
         },
         {
           href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
