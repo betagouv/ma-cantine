@@ -13,8 +13,8 @@
         </v-col>
       </v-row>
       <p v-else-if="toTeledeclare.length > 1">
-        Vous pourrez télédéclarer {{ toTeledeclare.length }} cantines.
-        <v-btn class="primary ml-2" @click="massTeledeclaration">Télédeclare {{ toTeledeclare.length }} cantines</v-btn>
+        Vous pouvez télédéclarer {{ toTeledeclare.length }} cantines.
+        <v-btn class="primary ml-2" @click="massTeledeclaration">Télédeclarer {{ toTeledeclare.length }} cantines</v-btn>
       </p>
       <p v-else-if="tdSuccesses.length">
         <v-icon class="mr-2" color="green">$checkbox-circle-fill</v-icon>
