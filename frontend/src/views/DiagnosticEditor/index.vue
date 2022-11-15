@@ -102,25 +102,9 @@
           />
         </div>
 
-        <v-card v-if="!showApproPanel && showNonApproPanels" color="primary lighten-4" class="dsfr mb-6">
-          <v-card-title class="font-weight-bold">
-            Données d'approvisionnement déjà déclarées
-          </v-card-title>
-          <v-card-text>
-            Votre cuisine centrale avec le siret {{ this.originalCanteen.centralProducerSiret }} a déjà renseigné les
-            données d'approvisionnement pour votre cantine. Vous pouvez remplir les informations pour les autres volets
-            de la loi EGAlim.
-          </v-card-text>
-        </v-card>
-
-        <v-card v-if="!showApproPanel && !showNonApproPanels" color="primary lighten-4" class="dsfr mb-6">
-          <v-card-title class="font-weight-bold">
-            Diagnostic déjà pris en compte par votre cuisine centrale
-          </v-card-title>
-          <v-card-text>
-            Votre cuisine centrale avec le siret {{ this.originalCanteen.centralProducerSiret }} a déjà rempli un
-            diagnostic pour cette année pour votre cantine.
-          </v-card-text>
+        <v-card v-if="infoNotice" color="primary lighten-4" class="dsfr mb-6">
+          <v-card-title class="font-weight-bold">{{ infoNotice.title }}</v-card-title>
+          <v-card-text>{{ infoNotice.message }}</v-card-text>
         </v-card>
 
         <v-expansion-panels
@@ -227,13 +211,30 @@
           </DiagnosticExpansionPanel>
         </v-expansion-panels>
 
-        <TeledeclarationNotice
-          v-model="teledeclarationFormIsValid"
-          v-if="!hasActiveTeledeclaration && isTeledeclarationYear && (showApproPanel || showNonApproPanels)"
+        <div
+          v-if="!hasActiveTeledeclaration && isTeledeclarationYear && (this.showApproPanel || showNonApproPanels)"
           class="mt-4"
-          :disabled="!canSubmitTeledeclaration"
-          :teledeclarationYear="teledeclarationYear"
-        />
+          id="teledeclaration"
+        >
+          <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
+          <p>
+            Un bilan annuel relatif à la mise en œuvre des dispositions de la loi EGAlim, et notamment des objectifs
+            d'approvisionnement en produits de qualité et durables dont bio dans les repas servis dans les restaurants
+            collectifs, est prévu par le décret du 23 avril 2019.
+          </p>
+          <p>
+            Nous vous proposons d’utiliser les informations de votre autodiagnostic {{ teledeclarationYear }} et de les
+            transmettre, avec votre accord, à la DGAL, direction du Ministère de l'agriculture en charge de
+            l'élaboration de ce bilan.
+          </p>
+          <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form">
+            <v-checkbox
+              :rules="[validators.checked]"
+              label="Je déclare sur l’honneur la véracité de mes informations"
+              :disabled="!canSubmitTeledeclaration"
+            ></v-checkbox>
+          </v-form>
+        </div>
 
         <v-sheet
           rounded
@@ -260,7 +261,7 @@
               color="primary"
               class="ma-3"
               @click="openTeledeclarationPreview"
-              :disabled="!canSubmitTeledeclaration || !teledeclarationFormIsValid"
+              :disabled="!canSubmitTeledeclaration"
               v-if="isTeledeclarationYear"
             >
               <v-icon class="mr-2">$checkbox-circle-fill</v-icon>
@@ -294,7 +295,6 @@ import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import SimplifiedQualityValues from "./SimplifiedQualityValues"
 import ExtendedQualityValues from "./ExtendedQualityValues"
-import TeledeclarationNotice from "./TeledeclarationNotice"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import Constants from "@/constants"
 import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage, readCookie } from "@/utils"
@@ -317,7 +317,7 @@ export default {
         information: true,
         select: true,
       },
-      teledeclarationFormIsValid: false,
+      teledeclarationFormIsValid: true,
       openedPanel: null,
       cancelDialog: false,
       teledeclarationYear: lastYear(),
@@ -364,7 +364,6 @@ export default {
     NoPlasticMeasure,
     DiagnosticExpansionPanel,
     TeledeclarationCancelDialog,
-    TeledeclarationNotice,
     SimplifiedQualityValues,
     ExtendedQualityValues,
     TeledeclarationPreview,
@@ -462,6 +461,22 @@ export default {
     },
     showExpansionPanels() {
       return this.showApproPanel || this.showNonApproPanels
+    },
+    infoNotice() {
+      if (this.isCentralCanteen || this.showApproPanel) return null
+      if (!this.showApproPanel && this.showNonApproPanels) {
+        return {
+          title: "Données d'approvisionnement déjà déclarées",
+          message: `Votre cuisine centrale avec le siret ${this.originalCanteen.centralProducerSiret} a déjà renseigné les
+            données d'approvisionnement pour votre cantine. Vous pouvez remplir les informations pour les autres volets
+            de la loi EGAlim.`,
+        }
+      }
+      return {
+        title: "Diagnostic déjà pris en compte par votre cuisine centrale",
+        message: `Votre cuisine centrale avec le siret ${this.originalCanteen.centralProducerSiret} a déjà rempli un
+          diagnostic pour cette année pour votre cantine.`,
+      }
     },
   },
   beforeMount() {
@@ -656,19 +671,19 @@ export default {
     },
     openTeledeclarationPreview() {
       const diagnosticFormsAreValid = this.validateForms()
-      // const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
+      const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
       if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
-      if (!this.teledeclarationFormIsValid) return
+      if (!teledeclarationFormIsValid) return
       this.showTeledeclarationPreview = true
     },
     submitTeledeclaration() {
       const diagnosticFormsAreValid = this.validateForms()
-      // const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
+      const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
 
       if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
 
-      if (!this.teledeclarationFormIsValid) return
+      if (!teledeclarationFormIsValid) return
 
       const saveIfChanged = () => {
         if (!this.hasChanged) return Promise.resolve()
@@ -795,3 +810,14 @@ function hasValue(val) {
   }
 }
 </script>
+
+<style scoped>
+#teledeclaration-form >>> .v-input--checkbox .v-label.theme--light {
+  font-size: 16px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.87);
+}
+#teledeclaration-form >>> .v-input--checkbox .v-label.theme--light.v-label--is-disabled {
+  color: rgba(0, 0, 0, 0.37);
+}
+</style>
