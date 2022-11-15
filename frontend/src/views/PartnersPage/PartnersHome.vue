@@ -1,10 +1,10 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav :links="[{ to: { name: 'CommunityPage' } }]" />
+    <BreadcrumbsNav />
     <v-row>
       <v-col cols="12" sm="7" md="8">
         <h1 class="font-weight-black text-h5 text-sm-h4 mb-4">
-          Améliorer votre offre avec le soutien des partenaires
+          Améliorer votre offre avec le soutien des acteurs de l'éco-système
         </h1>
         <p>
           Ces acteurs de la restauration collective au service des gestionnaires sont prêts pour vous aidez à atteindre
@@ -64,7 +64,7 @@
                 'active-filter-label': filters.category.value && !!filters.category.value.length,
               }"
             >
-              Besoin(s) comblé(s) par le partenaire
+              Besoin(s) comblé(s) par l'acteur
             </label>
             <DsfrSelect
               v-model="filters.category.value"
@@ -149,7 +149,7 @@
         <div class="d-flex flex-column align-center py-0">
           <p class="text-body-1 grey--text text--darken-1 my-2">
             <v-icon class="mr-1 mt-n1">mdi-inbox-remove</v-icon>
-            Nous n'avons pas trouvé des partenaires avec ces paramètres
+            Nous n'avons pas trouvé des acteurs avec ces paramètres
           </p>
           <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
             Désactiver tous les filtres
@@ -165,7 +165,7 @@
     <v-row>
       <v-col cols="12">
         <h2 class="text-h6 font-weight-black mb-4">
-          Vous n'avez pas trouvé un ou plusieurs partenaires ou prestataires qui vous intéressent ?
+          Vous n'avez pas trouvé un ou plusieurs acteurs qui vous intéressent ?
         </h2>
         <p class="body-2">
           Dites-nous tout, nous ferons en sorte de vous aider.
