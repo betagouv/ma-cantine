@@ -336,16 +336,12 @@ export default {
       ],
       centralKitchenDiagnosticModes: [
         {
-          key: "NO_SATELLITES",
-          label: "Ce diagnostic concerne mon lieu de service et non pas les cantines satellites",
-        },
-        {
           key: "APPRO",
-          label: "Ce diagnostic concerne les données d'approvisionnement de toutes mes cantines satellites",
+          label: "Je rentre les données d'approvisionnement pour toutes mes cantines satellites",
         },
         {
           key: "ALL",
-          label: "Ce diagnostic concerne toutes les données des cantines satellites",
+          label: "Je rentre toutes les données pour mes cantines satellites",
         },
       ],
       showTeledeclarationPreview: false,

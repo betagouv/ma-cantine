@@ -85,10 +85,6 @@ class Diagnostic(models.Model):
         READYMADE = "READYMADE", "Plats prêts à l'emploi"
 
     class CentralKitchenDiagnosticMode(models.TextChoices):
-        NO_SATELLITES = (
-            "NO_SATELLITES",
-            "Ce diagnostic concerne le lieu de service de la cuisine centrale et non pas ses satellites",
-        )
         APPRO = "APPRO", "Ce diagnostic concerne les données d'approvisionnement de toutes les cantines satellites"
         ALL = "ALL", "Ce diagnostic concerne toutes les données des cantines satellites"
 
