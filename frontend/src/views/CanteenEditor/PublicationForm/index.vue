@@ -1,36 +1,8 @@
 <template>
   <div class="text-left">
-    <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
-    <div v-if="isCentralCuisine">
-      <p>
-        « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
-        <b>uniquement les lieux de restauration recevant des convives.</b>
-      </p>
-      <p>
-        Vous pouvez
-        <router-link :to="{ name: 'NewCanteen' }">ajouter une cantine satellite</router-link>
-        ou indiquer que
-        <router-link
-          :to="{
-            name: 'CanteenModification',
-            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
-          }"
-        >
-          votre cantine reçoit des convives sur place.
-        </router-link>
-      </p>
-      <p v-if="publicationRequested">
-        Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
-        retirer cette publication.
-      </p>
-      <v-sheet v-if="publicationRequested" rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
-        <v-spacer></v-spacer>
-        <v-btn x-large color="primary" @click="removeCanteenPublication">
-          Retirer la publication
-        </v-btn>
-      </v-sheet>
-    </div>
+    <CentralKitchen v-if="isCentralCuisine" :originalCanteen="originalCanteen" />
     <div v-else-if="isDraft && !hasDiagnostics">
+      <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
       <p>
         Vous n'avez pas encore rempli des diagnostics pour « {{ originalCanteen.name }} ». Les diagnostics sont un
         prérequis pour la publication
@@ -77,10 +49,11 @@
 </template>
 
 <script>
-import PublicationField from "./PublicationField"
+import PublicationField from "../PublicationField"
 import { getObjectDiff, isDiagnosticComplete, lastYear } from "@/utils"
-import PublicationStateNotice from "./PublicationStateNotice"
+import PublicationStateNotice from "../PublicationStateNotice"
 import DsfrTextarea from "@/components/DsfrTextarea"
+import CentralKitchen from "./CentralKitchen"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -91,7 +64,7 @@ export default {
       type: Object,
     },
   },
-  components: { PublicationField, PublicationStateNotice, DsfrTextarea },
+  components: { PublicationField, PublicationStateNotice, DsfrTextarea, CentralKitchen },
   data() {
     return {
       formIsValid: true,
