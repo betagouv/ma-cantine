@@ -14,12 +14,23 @@
       </v-row>
       <p v-else-if="toTeledeclare.length > 1">
         Vous pouvez télédéclarer {{ toTeledeclare.length }} cantines.
-        <v-btn class="primary ml-2" @click="massTeledeclaration">Télédeclarer {{ toTeledeclare.length }} cantines</v-btn>
+        <v-btn class="primary ml-2" @click="massTeledeclaration">
+          Télédeclarer {{ toTeledeclare.length }} cantines
+        </v-btn>
       </p>
-      <p v-else-if="tdSuccesses.length">
-        <v-icon class="mr-2" color="green">$checkbox-circle-fill</v-icon>
-        {{ tdSuccesses.length }} {{ tdSuccesses.length > 1 ? "cantines télédéclarées" : "cantine télédéclarée" }}
-      </p>
+      <v-alert v-if="tdSuccesses.length" outlined type="success">
+        <p v-if="tdSuccesses.length" class="mb-0">
+          {{ tdSuccesses.length }} {{ tdSuccesses.length > 1 ? "cantines télédéclarées" : "cantine télédéclarée" }}
+        </p>
+      </v-alert>
+      <v-alert v-if="tdFailures.length" outlined type="error">
+        <p>
+          {{ tdFailures.length }}
+          {{ tdFailures.length > 1 ? "cantines pas télédéclarées" : "cantine pas télédéclarée" }}
+        </p>
+        <p>Essayez de télédéclarer les cantines restantes une par une depuis le tableur en dessous.</p>
+        <p class="mb-0">Si le problème persiste, contactez-nous.</p>
+      </v-alert>
       <div class="mt-4">
         <v-data-table
           v-if="visibleCanteens"
@@ -168,6 +179,7 @@ export default {
       toTeledeclare: [],
       tdLoading: false,
       tdSuccesses: [],
+      tdFailures: [],
     }
   },
   computed: {
@@ -343,6 +355,7 @@ export default {
         .then((response) => {
           const errors = response.errors
           this.tdSuccesses = response.teledeclarationIds
+          this.tdFailures = Object.keys(errors).length
           if (Object.keys(errors).length === 0) {
             this.$store.dispatch("notify", {
               title: `${this.tdSuccesses.length} diagnostics télédéclarés`,
@@ -351,7 +364,7 @@ export default {
           } else {
             this.$store.dispatch("notify", {
               title: `${Object.keys(errors).length} diagnostics pas télédéclarés`,
-              message: "Essayez de télédéclarer les diagnostics restants un par un en dessous ou contactez-nous.",
+              status: "error",
             })
           }
           this.fetchCurrentPage() // refresh actions
