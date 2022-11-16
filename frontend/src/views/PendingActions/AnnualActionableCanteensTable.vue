@@ -357,13 +357,21 @@ export default {
           this.tdSuccesses = response.teledeclarationIds
           this.tdFailures = Object.keys(errors).length
           if (Object.keys(errors).length === 0) {
+            const title =
+              this.tdSuccesses.length > 1
+                ? `${this.tdSuccesses.length} diagnostics télédéclarés`
+                : `${this.tdSuccesses.length} diagnostic télédéclaré`
             this.$store.dispatch("notify", {
-              title: `${this.tdSuccesses.length} diagnostics télédéclarés`,
+              title,
               status: "success",
             })
           } else {
+            const title =
+              this.tdFailures.length > 1
+                ? `${this.tdFailures.length} diagnostics pas télédéclarés`
+                : `${this.tdFailures.length} diagnostic pas télédéclaré`
             this.$store.dispatch("notify", {
-              title: `${Object.keys(errors).length} diagnostics pas télédéclarés`,
+              title,
               status: "error",
             })
           }
