@@ -355,7 +355,7 @@ export default {
         .then((response) => {
           const errors = response.errors
           this.tdSuccesses = response.teledeclarationIds
-          this.tdFailures = Object.keys(errors).length
+          this.tdFailures = Object.keys(errors)
           if (Object.keys(errors).length === 0) {
             const title =
               this.tdSuccesses.length > 1
