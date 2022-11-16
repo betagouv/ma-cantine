@@ -392,12 +392,14 @@ class TestTeledeclarationApi(APITestCase):
 
         body = response.json()
         td_ids = body["teledeclarationIds"]
-        td = Teledeclaration.objects.get(id=td_ids[0])
-        self.assertEqual(td.diagnostic, d_1)
+        self.assertEqual(len(td_ids), 2)
+
+        td = Teledeclaration.objects.get(diagnostic=d_1)
+        self.assertIn(td.id, td_ids)
         self.assertEqual(td.declared_data["teledeclaration"]["value_total_ht"], 1000)
 
-        td = Teledeclaration.objects.get(id=td_ids[1])
-        self.assertEqual(td.diagnostic, d_2)
+        td = Teledeclaration.objects.get(diagnostic=d_2)
+        self.assertIn(td.id, td_ids)
         self.assertEqual(td.declared_data["teledeclaration"]["value_total_ht"], 2000)
 
     def test_create_many_teledeclarations_unauthenticated(self):
@@ -458,7 +460,9 @@ class TestTeledeclarationApi(APITestCase):
         successes = body["teledeclarationIds"]
         second_td_for_canteen = Teledeclaration.objects.get(diagnostic=current_non_td_diagnostic.id)
         new_td_for_canteen = diag_with_cancelled_td.latest_submitted_teledeclaration
-        self.assertEqual(successes, [second_td_for_canteen.id, new_td_for_canteen.id])
+        self.assertEqual(len(successes), 2)
+        self.assertIn(second_td_for_canteen.id, successes)
+        self.assertIn(new_td_for_canteen.id, successes)
 
         failures = body["errors"]
         self.assertEqual(len(failures.keys()), 4)
