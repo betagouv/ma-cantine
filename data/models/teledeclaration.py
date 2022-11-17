@@ -62,6 +62,12 @@ class Teledeclaration(models.Model):
         blank=True,
     )
 
+    uses_central_kitchen_appro = models.BooleanField(
+        null=True,
+        blank=True,
+        verbose_name="Cantine satellite dont les données d'appro ont été prises en charge par la cuisine centrale",
+    )
+
     def clean(self):
         """
         Verify there is only one submitted declaration per year/canteen
