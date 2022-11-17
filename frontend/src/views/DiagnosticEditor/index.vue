@@ -430,10 +430,6 @@ export default {
         this.originalCanteen.productionType === "central_serving" || this.originalCanteen.productionType === "central"
       )
     },
-    showCentralKitchenWarning() {
-      if (this.centralKitchenDiagostic) return true
-      return false
-    },
     centralKitchenDiagostic() {
       if (this.diagnostic.year && this.originalCanteen?.centralKitchenDiagnostics)
         return this.originalCanteen.centralKitchenDiagnostics.find((x) => x.year === this.diagnostic.year)
