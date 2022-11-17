@@ -131,6 +131,7 @@ class TeledeclarationPdfView(APIView):
             is_complete = (
                 declared_data["teledeclaration"].get("diagnostic_type", None) == Diagnostic.DiagnosticType.COMPLETE
             )
+            central_kitchen_siret = declared_data.get("central_kitchen_siret", None)
             context = {
                 **declared_data["teledeclaration"],
                 **{
@@ -140,6 +141,8 @@ class TeledeclarationPdfView(APIView):
                     "siret": declared_data["canteen"].get("siret", None),
                     "date": teledeclaration.creation_date,
                     "applicant": declared_data["applicant"]["name"],
+                    "uses_central_kitchen_appro": teledeclaration.uses_central_kitchen_appro,
+                    "central_kitchen_siret": central_kitchen_siret,
                 },
             }
             html = template.render(context)

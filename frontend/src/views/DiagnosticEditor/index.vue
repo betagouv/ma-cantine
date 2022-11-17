@@ -56,7 +56,7 @@
                   télédéclarez-le
                 </a>
               </p>
-              <div v-else-if="showApproPanel" class="px-2 mt-2">
+              <div v-else-if="hasActiveTeledeclaration" class="px-2 mt-2">
                 <p class="text-caption mb-2">
                   <v-icon small>$checkbox-fill</v-icon>
                   Ce diagnostic a été télédéclaré {{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.
@@ -90,7 +90,10 @@
           </v-radio>
         </v-radio-group>
 
-        <p class="caption grey--text text--darken-1" v-if="showApproPanel || showNonApproPanels">
+        <p
+          class="caption grey--text text--darken-1"
+          v-if="!hasActiveTeledeclaration && (showApproPanel || showNonApproPanels)"
+        >
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
         </p>
         <div class="caption grey--text text--darken-1" v-if="hasActiveTeledeclaration">
