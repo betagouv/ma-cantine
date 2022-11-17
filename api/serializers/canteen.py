@@ -224,8 +224,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
                 {"year": diag.year, "central_kitchen_diagnostic_mode": diag.central_kitchen_diagnostic_mode}
                 for diag in diagnostics
             ]
-        except Canteen.DoesNotExist:
-            return None
         except Exception:
             return None
 
