@@ -274,6 +274,10 @@ class Teledeclaration(models.Model):
             "communicates_on_food_plan": diagnostic.communicates_on_food_plan,
             "communicates_on_food_quality": diagnostic.communicates_on_food_quality,
         }
+        is_central_cuisine = (
+            diagnostic.canteen.production_type == Canteen.ProductionType.CENTRAL
+            or diagnostic.canteen.production_type == Canteen.ProductionType.CENTRAL_SERVING
+        )
         json_fields = {
             "version": version,
             "year": diagnostic.year,
@@ -290,6 +294,9 @@ class Teledeclaration(models.Model):
             "uses_central_kitchen_appro": uses_central_kitchen_appro,
             "central_kitchen_siret": diagnostic.canteen.central_producer_siret,
             "teledeclaration": {**json_appro_teledeclaration, **json_other_teledeclaration},
+            "central_kitchen_diagnostic_mode": diagnostic.central_kitchen_diagnostic_mode
+            if is_central_cuisine
+            else None,
         }
         return TeledeclarationFactory.create(
             applicant=applicant,

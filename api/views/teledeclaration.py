@@ -143,6 +143,7 @@ class TeledeclarationPdfView(APIView):
                     "applicant": declared_data["applicant"]["name"],
                     "uses_central_kitchen_appro": teledeclaration.uses_central_kitchen_appro,
                     "central_kitchen_siret": central_kitchen_siret,
+                    "central_kitchen_diagnostic_mode": declared_data.get("central_kitchen_diagnostic_mode", None),
                 },
             }
             html = template.render(context)
