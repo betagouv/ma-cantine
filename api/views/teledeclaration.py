@@ -45,8 +45,8 @@ class TeledeclarationCreateView(APIView):
             if request.user not in diagnostic.canteen.managers.all():
                 raise PermissionDenied()
 
-            Teledeclaration.validateDiagnostic(diagnostic)
-            Teledeclaration.createFromDiagnostic(diagnostic, request.user)
+            Teledeclaration.validate_diagnostic(diagnostic)
+            Teledeclaration.create_from_diagnostic(diagnostic, request.user)
 
             data = FullDiagnosticSerializer(diagnostic).data
             return JsonResponse(camelize(data), status=status.HTTP_201_CREATED)

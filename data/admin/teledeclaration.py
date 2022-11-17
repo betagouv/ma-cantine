@@ -42,6 +42,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "status",
         "modification_date",
         "declared_data",
+        "uses_central_kitchen_appro",
     )
     # want to be able to modify status
     readonly_fields = (
@@ -53,6 +54,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "creation_date",
         "modification_date",
         "declared_data",
+        "uses_central_kitchen_appro",
     )
     search_fields = (
         "canteen__name",

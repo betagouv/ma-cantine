@@ -1,7 +1,10 @@
+import logging
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from data.models import Canteen, Diagnostic
+
+logger = logging.getLogger(__name__)
 
 
 class Teledeclaration(models.Model):
@@ -81,18 +84,39 @@ class Teledeclaration(models.Model):
         return super().clean()
 
     @staticmethod
-    def validateDiagnostic(diagnostic):
-        if not diagnostic.value_total_ht:
+    def should_use_central_kitchen_appro(diagnostic):
+        is_satellite = diagnostic.canteen.production_type == Canteen.ProductionType.ON_SITE_CENTRAL
+        if is_satellite and diagnostic.canteen.central_producer_siret:
+            try:
+                central_kitchen = Canteen.objects.get(siret=diagnostic.canteen.central_producer_siret)
+                existing_diagnostic = central_kitchen.diagnostic_set.get(year=diagnostic.year)
+                if (
+                    existing_diagnostic.central_kitchen_diagnostic_mode
+                    == Diagnostic.CentralKitchenDiagnosticMode.APPRO
+                    or existing_diagnostic.central_kitchen_diagnostic_mode
+                    == Diagnostic.CentralKitchenDiagnosticMode.ALL
+                ):
+                    return True
+            except Exception:
+                pass
+        return False
+
+    @staticmethod
+    def validate_diagnostic(diagnostic):
+        check_total_value = not Teledeclaration.should_use_central_kitchen_appro(diagnostic)
+        if check_total_value and not diagnostic.value_total_ht:
             raise ValidationError("Données d'approvisionnement manquantes")
 
     @staticmethod
-    def createFromDiagnostic(diagnostic, applicant, status=None):
+    def create_from_diagnostic(diagnostic, applicant, status=None):
         """
         Create a teledeclaration object from a diagnostic
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
-        version = "5"  # Helps identify which data will be present. Use incremental int values
+        version = "6"  # Helps identify which data will be present. Use incremental int values
+        # Version 6 - allows partial teledeclarations for satellite canteens when the central cuisine has declared for them
+
         status = status or Teledeclaration.TeledeclarationStatus.SUBMITTED
         canteen = diagnostic.canteen
         simplified_appro_fields = [
@@ -230,10 +254,12 @@ class Teledeclaration(models.Model):
             else simplified_appro_fields
         )
         json_appro_teledeclaration = {}
-        for prop in appro_fields:
-            json_appro_teledeclaration[prop] = (
-                float(getattr(diagnostic, prop)) if getattr(diagnostic, prop) is not None else None
-            )
+        uses_central_kitchen_appro = Teledeclaration.should_use_central_kitchen_appro(diagnostic)
+        if not uses_central_kitchen_appro:
+            for prop in appro_fields:
+                json_appro_teledeclaration[prop] = (
+                    float(getattr(diagnostic, prop)) if getattr(diagnostic, prop) is not None else None
+                )
         json_other_teledeclaration = {
             "diagnostic_type": diagnostic.diagnostic_type or "Unknown",
             "has_waste_diagnostic": diagnostic.has_waste_diagnostic,
@@ -261,6 +287,8 @@ class Teledeclaration(models.Model):
                 "name": applicant.get_full_name(),
                 "email": applicant.email,
             },
+            "uses_central_kitchen_appro": uses_central_kitchen_appro,
+            "central_kitchen_siret": diagnostic.canteen.central_producer_siret,
             "teledeclaration": {**json_appro_teledeclaration, **json_other_teledeclaration},
         }
         return TeledeclarationFactory.create(
@@ -271,6 +299,7 @@ class Teledeclaration(models.Model):
             status=status,
             diagnostic=diagnostic,
             declared_data=json_fields,
+            uses_central_kitchen_appro=uses_central_kitchen_appro,
         )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

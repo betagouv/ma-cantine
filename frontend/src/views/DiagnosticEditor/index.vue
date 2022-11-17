@@ -406,7 +406,7 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return this.diagnostic.valueTotalHt > 0
+      return !this.showApproPanel || this.diagnostic.valueTotalHt > 0
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"

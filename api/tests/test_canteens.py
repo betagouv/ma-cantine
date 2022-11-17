@@ -321,9 +321,9 @@ class TestCanteenApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
-        Teledeclaration.createFromDiagnostic(diagnostic, user, Teledeclaration.TeledeclarationStatus.CANCELLED)
+        Teledeclaration.create_from_diagnostic(diagnostic, user, Teledeclaration.TeledeclarationStatus.CANCELLED)
 
-        new_teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
+        new_teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
         response = self.client.get(reverse("user_canteens"))
         body = response.json().get("results")
         json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
@@ -566,12 +566,12 @@ class TestCanteenApi(APITestCase):
 
         last_year = 2021
         td_diag = DiagnosticFactory.create(year=last_year, canteen=complete, value_total_ht=1000)
-        Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
+        Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
         DiagnosticFactory.create(year=last_year, canteen=needs_to_complete_diag, value_total_ht=None)
 
         td_diag = DiagnosticFactory.create(year=last_year, canteen=needs_to_publish, value_total_ht=10)
-        Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
+        Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
         DiagnosticFactory.create(year=last_year, canteen=needs_td, value_total_ht=100)
 
