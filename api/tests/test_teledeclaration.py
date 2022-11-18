@@ -233,6 +233,22 @@ class TestTeledeclarationApi(APITestCase):
         self.assertIsNone(body["teledeclaration"])
 
     @authenticate
+    def test_diagnostic_deletion(self):
+        """
+        If the diagnostic used for the teledeclaration is deleted, the teledeclaration
+        should be cancelled
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, authenticate.user)
+
+        diagnostic.delete()
+        teledeclaration.refresh_from_db()
+        self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.CANCELLED)
+        self.assertIsNone(teledeclaration.diagnostic)
+
+    @authenticate
     def test_generate_pdf(self):
         """
         The user can get a justificatif in PDF for a teledeclaration
