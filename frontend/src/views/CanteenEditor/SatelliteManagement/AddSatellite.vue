@@ -56,7 +56,6 @@
               <label class="body-2" for="sectors">Secteurs d'activité</label>
               <DsfrSelect
                 id="sectors"
-                class="mt-2"
                 multiple
                 :items="sectors"
                 v-model="satellite.sectors"

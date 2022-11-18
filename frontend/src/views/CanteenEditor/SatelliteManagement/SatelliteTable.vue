@@ -66,13 +66,16 @@ import { getObjectDiff } from "@/utils"
 export default {
   name: "SatelliteTable",
   components: { DsfrTextarea },
+  props: {
+    canteen: Object,
+  },
   data() {
     return {
       ĺoading: false,
       limit: 10,
       visibleSatellites: null,
       satelliteCount: null,
-      satelliteCanteensCount: this.originalCanteen.satelliteCanteensCount,
+      satelliteCanteensCount: this.canteen.satelliteCanteensCount,
       options: {
         sortBy: [],
         sortDesc: [],
@@ -93,9 +96,6 @@ export default {
   computed: {
     offset() {
       return (this.options.page - 1) * this.limit
-    },
-    canteen() {
-      return this.originalCanteen
     },
     showSatelliteCanteensCount() {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
@@ -118,10 +118,10 @@ export default {
       const optionChanges = this.options ? getObjectDiff(this.options, newOptions) : newOptions
       if (Object.keys(optionChanges).length > 0) this.$set(this, "options", newOptions)
     },
-    fetchPaginatedSatellites() {
+    fetchCurrentPage() {
       // TODO: show loading circle using this var
       this.loading = true
-      const url = `/api/v1/canteens/${this.originalCanteen.id}/satellites/?${this.getApiQueryParams()}`
+      const url = `/api/v1/canteens/${this.canteen.id}/satellites/?${this.getApiQueryParams()}`
       return fetch(url)
         .then((response) => {
           if (response.status != 200) throw new Error()
@@ -145,7 +145,7 @@ export default {
       return apiQueryParams
     },
     onRouteChange() {
-      this.fetchPaginatedSatellites()
+      this.fetchCurrentPage()
     },
     onOptionsChange() {
       this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
@@ -208,7 +208,7 @@ export default {
   mounted() {
     this.populateParametersFromRoute()
     if (this.hasActiveFilter) this.showFilters = true
-    return this.fetchPaginatedSatellites().then(this.addWatchers)
+    return this.fetchCurrentPage().then(this.addWatchers)
   },
 }
 </script>

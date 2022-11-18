@@ -4,9 +4,9 @@
       <h1 class="font-weight-black text-h4 my-4">
         Vos cantines satellites
       </h1>
-      <SatelliteTable :canteen="canteen" />
+      <SatelliteTable ref="satelliteTable" :canteen="canteen" />
       <v-divider class="my-8"></v-divider>
-      <AddSatellite ref="satelliteTable" :canteen="canteen" @satelliteAdded="fetchSatelliteTable" />
+      <AddSatellite :canteen="canteen" @satelliteAdded="fetchSatellites" />
     </div>
   </div>
 </template>
@@ -27,8 +27,8 @@ export default {
     },
   },
   methods: {
-    fetchSatelliteTable() {
-      // this.$refs.satelliteTable.fetchCurrentPage()
+    fetchSatellites() {
+      this.$refs.satelliteTable.fetchCurrentPage()
     },
   },
   created() {
