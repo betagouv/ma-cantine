@@ -1,65 +1,74 @@
 <template>
   <div>
-    <div v-if="visibleSatellites">
-      <p>
-        Cette cuisine centrale fournit des repas
-        {{ satelliteCanteensCount > 1 ? `à ${satelliteCanteensCount} cantines` : "à une cantine" }}.
-        <span v-if="!visibleSatellites || visibleSatellites.length === 0">
-          Vous n'avez ajouté aucune cantine satellite.
-        </span>
-        <span v-else-if="satelliteCanteensCount !== visibleSatellites.length">
-          Vous en avez renseigné {{ satelliteCount }}.
-        </span>
-      </p>
-      <v-data-table
-        :options.sync="options"
-        :server-items-length="satelliteCount || 0"
-        :items="visibleSatellites"
-        :headers="headers"
-      >
-        <template v-slot:top>
-          <v-dialog v-model="joinDialog" max-width="800px">
-            <v-card class="text-left">
-              <v-card-title>Rejoindre l'équipe de « {{ restrictedSatellite.name }} »</v-card-title>
-              <v-card-text>
-                Vous n'êtes pas encore un membre de l'équipe de « {{ restrictedSatellite.name }} » alors vous devez
-                demander l'accès pour pouvoir voir et modifier les données de cette cantine.
-                <DsfrTextarea
-                  v-model="messageJoinCanteen"
-                  label="Message (optionnel)"
-                  hide-details="auto"
-                  rows="2"
-                  class="mt-2 body-2"
-                />
-              </v-card-text>
-              <v-divider></v-divider>
-              <v-card-actions class="py-4 pl-6">
-                <v-btn color="primary" @click="sendMgmtRequest">
-                  <v-icon class="mr-2">mdi-key</v-icon>
-                  Demander l'accès
-                </v-btn>
-                <v-btn outlined color="primary" @click="joinDialog = false">
-                  Annuler
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </template>
-        <template v-slot:[`item.userCanView`]="{ item }">
-          <v-btn outlined color="primary" :to="satelliteLink(item)" @click="satelliteAction(item)">
-            {{ item.userCanView ? "Mettre à jour" : "Rejoindre l'équipe" }}
-            <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
-          </v-btn>
-        </template>
-        <template v-slot:[`no-data`]>
-          Vous n'avez pas renseigné des satellites
-        </template>
-      </v-data-table>
-    </div>
+    <v-data-table
+      :options.sync="options"
+      :server-items-length="satelliteCount || 0"
+      :items="visibleSatellites"
+      :headers="headers"
+      v-if="visibleSatellites"
+    >
+      <template v-slot:top>
+        <v-dialog v-model="joinDialog" max-width="800px">
+          <v-card class="text-left">
+            <v-card-title>Rejoindre l'équipe de « {{ restrictedSatellite.name }} »</v-card-title>
+            <v-card-text>
+              Vous n'êtes pas encore un membre de l'équipe de « {{ restrictedSatellite.name }} » alors vous devez
+              demander l'accès pour pouvoir voir et modifier les données de cette cantine.
+              <DsfrTextarea
+                v-model="messageJoinCanteen"
+                label="Message (optionnel)"
+                hide-details="auto"
+                rows="2"
+                class="mt-2 body-2"
+              />
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions class="py-4 pl-6">
+              <v-btn color="primary" @click="sendMgmtRequest">
+                <v-icon class="mr-2">mdi-key</v-icon>
+                Demander l'accès
+              </v-btn>
+              <v-btn outlined color="primary" @click="joinDialog = false">
+                Annuler
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </template>
+      <template v-slot:[`item.userCanView`]="{ item }">
+        <v-btn outlined color="primary" :to="satelliteLink(item)" @click="satelliteAction(item)">
+          {{ item.userCanView ? "Mettre à jour" : "Rejoindre l'équipe" }}
+          <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
+        </v-btn>
+      </template>
+      <template v-slot:[`no-data`]>
+        Vous n'avez pas renseigné des satellites
+      </template>
+    </v-data-table>
   </div>
 </template>
 
 <script>
+/*
+When displaying paginated, filterable, sortable data, there are lots of things to keep in mind.
+The URL needs to be updated with changes to page, filter or sort.
+This URL needs to be in French, not English, so our data model fields need to be translated for the filter param options,
+  and for the sort values.
+The data needs to be reloaded on change to the parameters.
+The correct data needs to be fetched when loading the URL directly.
+We want to show a loading spinner when the data is being fetched.
+Error handling if the data cannot be fetched.
+We need to request the right results based on the page requested, determined by the offset and the limit.
+Filter parameters have different parsing requirements based on data type and if the value is an array or not.
+The URL structure of different paginated pages should be consistent
+  e.g. do you pass params like `foo=bar&foo=baz` or `foo=bar,baz`?
+
+For satellites in particular:
+The manager of the central kitchen may not be a manager of the satellite.
+
+Ideally, routes are managed by views, not components.
+*/
+
 import DsfrTextarea from "@/components/DsfrTextarea"
 import { getObjectDiff } from "@/utils"
 
@@ -68,6 +77,14 @@ export default {
   components: { DsfrTextarea },
   props: {
     canteen: Object,
+    sortParam: {
+      type: String,
+      default: "trier-par",
+    },
+    params: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -75,7 +92,6 @@ export default {
       limit: 10,
       visibleSatellites: null,
       satelliteCount: null,
-      satelliteCanteensCount: this.canteen.satelliteCanteensCount,
       options: {
         sortBy: [],
         sortDesc: [],
@@ -97,22 +113,21 @@ export default {
     offset() {
       return (this.options.page - 1) * this.limit
     },
-    showSatelliteCanteensCount() {
-      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
-    },
   },
   methods: {
-    populateParametersFromRoute() {
-      const page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
+    populateOptionsFromParams() {
+      const page = this.params.page ? parseInt(this.params.page) : 1
       let sortBy = []
       let sortDesc = []
+      let urlSortBy = this.params[this.sortParam]
+      if (!urlSortBy) urlSortBy = []
+      else if (!Array.isArray(urlSortBy)) urlSortBy = [urlSortBy]
 
-      this.$route.query["trier-par"] &&
-        this.$route.query["trier-par"].split(",").forEach((element) => {
-          const isDesc = element[0] === "-"
-          sortBy.push(isDesc ? element.slice(1) : element)
-          sortDesc.push(isDesc)
-        })
+      urlSortBy.forEach((element) => {
+        const isDesc = element[0] === "-"
+        sortBy.push(isDesc ? element.slice(1) : element)
+        sortDesc.push(isDesc)
+      })
 
       const newOptions = { sortBy, sortDesc, page }
       const optionChanges = this.options ? getObjectDiff(this.options, newOptions) : newOptions
@@ -130,6 +145,7 @@ export default {
         .then((response) => {
           this.satelliteCount = response.count
           this.visibleSatellites = response.results
+          this.$emit("satellitesLoaded", { total: this.satelliteCount })
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
@@ -148,12 +164,12 @@ export default {
       this.fetchCurrentPage()
     },
     onOptionsChange() {
-      this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
+      this.$emit("paramsChanged", this.getUrlQueryParams())
     },
     getUrlQueryParams() {
       let urlQueryParams = { page: this.options.page }
       const orderingItems = this.getOrderingItems()
-      if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
+      if (orderingItems.length > 0) urlQueryParams[this.sortParam] = orderingItems.join(",")
       return urlQueryParams
     },
     getOrderingItems() {
@@ -165,7 +181,6 @@ export default {
     },
     addWatchers() {
       this.$watch("options", this.onOptionsChange, { deep: true })
-      this.$watch("$route", this.onRouteChange)
     },
     satelliteLink(satellite) {
       if (satellite.userCanView) {
@@ -203,14 +218,61 @@ export default {
     },
   },
   beforeMount() {
-    if (!this.$route.query["page"]) this.$router.replace({ query: { page: 1 } })
+    if (!this.params["page"]) this.$emit("paramsChanged", { page: 1 }, true)
   },
   mounted() {
-    this.populateParametersFromRoute()
-    if (this.hasActiveFilter) this.showFilters = true
-    return this.fetchCurrentPage().then(this.addWatchers)
+    this.populateOptionsFromParams()
+    return this.fetchCurrentPage().then(() => {
+      this.addWatchers()
+      this.$emit("mountedAndFetched")
+    })
   },
 }
+/*
+Here is some suggested parent config to get you started with this component
+template:
+  <SatelliteTable
+    ref="satelliteTable"
+    :canteen="canteen"
+    :params="satelliteTableParams"
+    @mountedAndFetched="mountedAndFetched"
+    @paramsChanged="updateRoute"
+    @satellitesLoaded="updateSatellitesCount"
+  />
+
+script:
+  data() {
+    return {
+      satelliteCount: null,
+    }
+  },
+  computed: {
+    canteen() {
+      return ...
+    },
+    satelliteTableParams() {
+      return this.$route.query
+    },
+  },
+  methods: {
+    fetchSatellites() {
+      this.$refs.satelliteTable.fetchCurrentPage()
+    },
+    mountedAndFetched() {
+      this.$watch("$route", this.fetchSatellites)
+    },
+    updateSatellitesCount(data) {
+      this.satelliteCount = data.total
+    },
+    updateRoute(params, isDefaultUpdate) {
+      if (isDefaultUpdate) {
+        this.$router.replace({ query: params })
+      } else {
+        this.$router.push({ query: params })
+      }
+    },
+  },
+*/
 </script>
 
 <style scoped>
