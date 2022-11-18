@@ -18,6 +18,14 @@
         votre cantine reçoit des convives sur place.
       </router-link>
     </p>
+    <SatelliteTable
+      ref="satelliteTable"
+      :canteen="canteen"
+      :params="satelliteTableParams"
+      @mountedAndFetched="mountedAndFetched"
+      @paramsChanged="updateRoute"
+      @satellitesLoaded="updateSatellitesCount"
+    />
     <p v-if="publicationRequested">
       Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
       retirer cette publication.
@@ -32,8 +40,11 @@
 </template>
 
 <script>
+import SatelliteTable from "@/components/SatelliteTable"
+
 export default {
   name: "CentralKitchenPublication",
+  components: { SatelliteTable },
   props: {
     originalCanteen: {
       type: Object,
@@ -44,9 +55,33 @@ export default {
       publicationRequested: true,
     }
   },
+  computed: {
+    canteen() {
+      return this.originalCanteen
+    },
+    satelliteTableParams() {
+      return this.$route.query
+    },
+  },
   methods: {
     removeCanteenPublication() {
       console.log("TODO: refactor to be an emit")
+    },
+    fetchSatellites() {
+      this.$refs.satelliteTable.fetchCurrentPage()
+    },
+    mountedAndFetched() {
+      this.$watch("$route", this.fetchSatellites)
+    },
+    updateSatellitesCount(data) {
+      this.satelliteCount = data.total
+    },
+    updateRoute(params, isDefaultUpdate) {
+      if (isDefaultUpdate) {
+        this.$router.replace({ query: params })
+      } else {
+        this.$router.push({ query: params })
+      }
     },
   },
 }

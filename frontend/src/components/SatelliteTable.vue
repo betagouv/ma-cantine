@@ -241,6 +241,8 @@ template:
   />
 
 script:
+import SatelliteTable from "@/components/SatelliteTable"
+
   data() {
     return {
       satelliteCount: null,

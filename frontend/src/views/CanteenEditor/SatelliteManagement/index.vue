@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import SatelliteTable from "./SatelliteTable"
+import SatelliteTable from "@/components/SatelliteTable"
 import AddSatellite from "./AddSatellite"
 
 export default {
