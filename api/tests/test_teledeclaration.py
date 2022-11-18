@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory
-from data.models import Teledeclaration
+from data.models import Teledeclaration, Diagnostic
 from .utils import authenticate
 
 
@@ -28,11 +28,12 @@ class TestTeledeclarationApi(APITestCase):
     @authenticate
     def test_create_unexistent_diagnostic(self):
         """
-        A validation error is returned if the diagnostic does not exist
+        A permission error is returned if the diagnostic does not exist
+        So that can't find out if diagnostics exist
         """
         payload = {"diagnosticId": 1}
         response = self.client.post(reverse("teledeclaration_create"), payload)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cancel_unexistent_teledeclaration(self):
@@ -369,3 +370,105 @@ class TestTeledeclarationApi(APITestCase):
         self.assertIn("value_fruits_et_legumes_france", json_teledeclaration)
         self.assertIn("value_fruits_et_legumes_short_distribution", json_teledeclaration)
         self.assertIn("value_fruits_et_legumes_local", json_teledeclaration)
+
+    @authenticate
+    def test_create_many_teledeclarations(self):
+        """
+        Given a list of diagnostic ids that are ready to TD, TD those diagnostics and return list of successful TD ids
+        """
+        canteen_1 = CanteenFactory.create()
+        canteen_2 = CanteenFactory.create()
+        for canteen in [canteen_1, canteen_2]:
+            canteen.managers.add(authenticate.user)
+
+        d_1 = DiagnosticFactory.create(canteen=canteen_1, value_total_ht=1000)
+        d_2 = DiagnosticFactory.create(canteen=canteen_2, value_total_ht=2000)
+        diagnostic_ids = [d_1.id, d_2.id]
+
+        response = self.client.post(
+            reverse("teledeclaration_create"), {"diagnosticIds": diagnostic_ids}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        td_ids = body["teledeclarationIds"]
+        self.assertEqual(len(td_ids), 2)
+
+        td = Teledeclaration.objects.get(diagnostic=d_1)
+        self.assertIn(td.id, td_ids)
+        self.assertEqual(td.declared_data["teledeclaration"]["value_total_ht"], 1000)
+
+        td = Teledeclaration.objects.get(diagnostic=d_2)
+        self.assertIn(td.id, td_ids)
+        self.assertEqual(td.declared_data["teledeclaration"]["value_total_ht"], 2000)
+
+    def test_create_many_teledeclarations_unauthenticated(self):
+        """
+        Require user to be authenticated to access endpoint
+        """
+        response = self.client.post(reverse("teledeclaration_create"), {"diagnosticIds": []}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_create_many_teledeclarations_error_handling(self):
+        """
+        If errors occur, report back on errors and teledeclare what is possible
+        """
+        canteen_not_ready = CanteenFactory.create()
+        canteen_with_td = CanteenFactory.create()
+        canteen_with_td_last_year = CanteenFactory.create()
+        canteen_with_cancelled_td = CanteenFactory.create()
+        for canteen in [canteen_not_ready, canteen_with_td, canteen_with_td_last_year, canteen_with_cancelled_td]:
+            canteen.managers.add(authenticate.user)
+
+        not_my_canteen = CanteenFactory.create()
+
+        td_diagnostic = DiagnosticFactory.create(canteen=canteen_with_td)
+        Teledeclaration.createFromDiagnostic(td_diagnostic, authenticate.user)
+
+        old_td_diagnostic = DiagnosticFactory.create(canteen=canteen_with_td_last_year, year=2020)
+        Teledeclaration.createFromDiagnostic(old_td_diagnostic, authenticate.user)
+        current_non_td_diagnostic = DiagnosticFactory.create(canteen=canteen_with_td_last_year, year=2021)
+
+        diag_with_cancelled_td = DiagnosticFactory.create(canteen=canteen_with_cancelled_td)
+        Teledeclaration.createFromDiagnostic(
+            diag_with_cancelled_td, authenticate.user, Teledeclaration.TeledeclarationStatus.CANCELLED
+        )
+
+        not_a_diag_id = 0
+        self.assertFalse(Diagnostic.objects.filter(id=not_a_diag_id).exists())
+
+        diagnostic_ids = [
+            DiagnosticFactory.create(canteen=canteen_not_ready, value_total_ht=None).id,  # fail: bad total
+            td_diagnostic.id,  # fail: already TD
+            current_non_td_diagnostic.id,  # success
+            DiagnosticFactory.create(canteen=not_my_canteen).id,  # fail: unauthorised
+            not_a_diag_id,  # fail: unauthorised
+            diag_with_cancelled_td.id,  # success
+        ]
+
+        self.assertEqual(Teledeclaration.objects.count(), 3)
+
+        response = self.client.post(
+            reverse("teledeclaration_create"), {"diagnosticIds": diagnostic_ids}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(Teledeclaration.objects.count(), 5)
+
+        body = response.json()
+        successes = body["teledeclarationIds"]
+        second_td_for_canteen = Teledeclaration.objects.get(diagnostic=current_non_td_diagnostic.id)
+        new_td_for_canteen = diag_with_cancelled_td.latest_submitted_teledeclaration
+        self.assertEqual(len(successes), 2)
+        self.assertIn(second_td_for_canteen.id, successes)
+        self.assertIn(new_td_for_canteen.id, successes)
+
+        failures = body["errors"]
+        self.assertEqual(len(failures.keys()), 4)
+        self.assertEqual(failures[str(diagnostic_ids[0])], "Données d'approvisionnement manquantes")
+        self.assertEqual(
+            failures[str(td_diagnostic.id)], "Il existe déjà une télédéclaration en cours pour cette année"
+        )
+        self.assertEqual(failures[str(diagnostic_ids[3])], "Vous n'avez pas la permission d'effectuer cette action.")
+        self.assertEqual(failures[str(not_a_diag_id)], "Vous n'avez pas la permission d'effectuer cette action.")
