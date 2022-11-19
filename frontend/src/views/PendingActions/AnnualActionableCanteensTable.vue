@@ -1,81 +1,113 @@
 <template>
   <div>
-    <div class="mt-4">
-      <v-data-table
-        v-if="visibleCanteens"
-        :options.sync="options"
-        :server-items-length="canteenCount || 0"
-        :items="visibleCanteens"
-        :headers="headers"
-        dense
-        :items-per-page="limit"
-        disable-sort
-        :footer-props="{
-          disableItemsPerPage: true,
-        }"
-      >
-        <template v-slot:[`item.name`]="{ item }">
-          <router-link :to="toCanteen(item)">{{ item.name }}</router-link>
-        </template>
-        <template v-slot:[`item.productionType`]="{ item }">
-          {{ typeDisplay[item.productionType] }}
-        </template>
-        <template v-slot:[`item.action`]="{ item }">
-          <v-fade-transition>
-            <div :key="`${item.id}_${item.action}`">
-              <div v-if="item.action === '95_nothing'" class="px-3">
-                <v-icon small class="mr-2" color="green">$checkbox-circle-fill</v-icon>
-                <span class="caption">Rien à faire !</span>
-              </div>
-              <v-btn small outlined color="primary" :to="actionLink(item)" @click="action(item)" v-else>
-                <v-icon small class="mr-2" color="primary">
-                  {{ actions[item.action] && actions[item.action].icon }}
-                </v-icon>
-                {{ actions[item.action] && actions[item.action].display }}
-                <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
-              </v-btn>
-            </div>
-          </v-fade-transition>
-        </template>
-      </v-data-table>
+    <div v-if="loading" class="pa-10 text-center">
+      <v-progress-circular indeterminate></v-progress-circular>
     </div>
-    <TeledeclarationPreview
-      v-if="canteenForTD"
-      :diagnostic="diagnosticForTD"
-      v-model="showTeledeclarationPreview"
-      @teledeclare="submitTeledeclaration(diagnosticForTD)"
-      :canteen="canteenForTD"
-    />
-    <v-dialog v-model="showPublicationForm" max-width="750" v-if="canteenForPublication">
-      <v-card class="text-left">
-        <v-card-title class="font-weight-bold">Publication : {{ canteenForPublication.name }}</v-card-title>
-        <v-card-text class="mt-2">
-          <p>
-            Les publications sont affichées dans
-            <router-link :to="{ name: 'CanteensHome' }" target="_blank">nos cantines</router-link>
-            pour informer les convives.
-          </p>
-          <v-form>
-            <label class="body-2" for="general">
-              Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
-            </label>
-            <DsfrTextarea
-              id="general"
-              class="my-2"
-              rows="3"
-              counter="500"
-              v-model="canteenForPublication.publicationComments"
-              hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
-            />
-          </v-form>
-        </v-card-text>
-        <v-card-actions class="d-flex pr-6 pb-4">
-          <v-spacer></v-spacer>
-          <v-btn color="primary" outlined class="px-4 mr-2" @click="closePublication">Annuler</v-btn>
-          <v-btn color="primary" class="px-4" @click="publish">Publier</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <div v-else>
+      <v-row v-if="tdLoading" class="green--text">
+        <v-col cols="1" justify-self="center">
+          <v-progress-circular indeterminate></v-progress-circular>
+        </v-col>
+        <v-col>
+          <p>Télédéclarations en cours...</p>
+        </v-col>
+      </v-row>
+      <p v-else-if="toTeledeclare.length > 1">
+        Vous pouvez télédéclarer {{ toTeledeclare.length }} cantines.
+        <v-btn class="primary ml-2" @click="massTeledeclaration">
+          Télédeclarer {{ toTeledeclare.length }} cantines
+        </v-btn>
+      </p>
+      <v-alert v-if="tdSuccesses.length" outlined type="success">
+        <p v-if="tdSuccesses.length" class="mb-0">
+          {{ tdSuccesses.length }} {{ tdSuccesses.length > 1 ? "cantines télédéclarées" : "cantine télédéclarée" }}
+        </p>
+      </v-alert>
+      <v-alert v-if="tdFailures.length" outlined type="error">
+        <p>
+          {{ tdFailures.length }}
+          {{ tdFailures.length > 1 ? "cantines pas télédéclarées" : "cantine pas télédéclarée" }}
+        </p>
+        <p>Essayez de télédéclarer les cantines restantes une par une depuis le tableur en dessous.</p>
+        <p class="mb-0">Si le problème persiste, contactez-nous.</p>
+      </v-alert>
+      <div class="mt-4">
+        <v-data-table
+          v-if="visibleCanteens"
+          :options.sync="options"
+          :server-items-length="canteenCount || 0"
+          :items="visibleCanteens"
+          :headers="headers"
+          dense
+          :items-per-page="limit"
+          disable-sort
+          :footer-props="{
+            disableItemsPerPage: true,
+          }"
+        >
+          <template v-slot:[`item.name`]="{ item }">
+            <router-link :to="toCanteen(item)">{{ item.name }}</router-link>
+          </template>
+          <template v-slot:[`item.productionType`]="{ item }">
+            {{ typeDisplay[item.productionType] }}
+          </template>
+          <template v-slot:[`item.action`]="{ item }">
+            <v-fade-transition>
+              <div :key="`${item.id}_${item.action}`">
+                <div v-if="item.action === '95_nothing'" class="px-3">
+                  <v-icon small class="mr-2" color="green">$checkbox-circle-fill</v-icon>
+                  <span class="caption">Rien à faire !</span>
+                </div>
+                <v-btn small outlined color="primary" :to="actionLink(item)" @click="action(item)" v-else>
+                  <v-icon small class="mr-2" color="primary">
+                    {{ actions[item.action] && actions[item.action].icon }}
+                  </v-icon>
+                  {{ actions[item.action] && actions[item.action].display }}
+                  <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
+                </v-btn>
+              </div>
+            </v-fade-transition>
+          </template>
+        </v-data-table>
+      </div>
+      <TeledeclarationPreview
+        v-if="canteenForTD"
+        :diagnostic="diagnosticForTD"
+        v-model="showTeledeclarationPreview"
+        @teledeclare="submitTeledeclaration(diagnosticForTD)"
+        :canteen="canteenForTD"
+      />
+      <v-dialog v-model="showPublicationForm" max-width="750" v-if="canteenForPublication">
+        <v-card class="text-left">
+          <v-card-title class="font-weight-bold">Publication : {{ canteenForPublication.name }}</v-card-title>
+          <v-card-text class="mt-2">
+            <p>
+              Les publications sont affichées dans
+              <router-link :to="{ name: 'CanteensHome' }" target="_blank">nos cantines</router-link>
+              pour informer les convives.
+            </p>
+            <v-form>
+              <label class="body-2" for="general">
+                Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
+              </label>
+              <DsfrTextarea
+                id="general"
+                class="my-2"
+                rows="3"
+                counter="500"
+                v-model="canteenForPublication.publicationComments"
+                hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
+              />
+            </v-form>
+          </v-card-text>
+          <v-card-actions class="d-flex pr-6 pb-4">
+            <v-spacer></v-spacer>
+            <v-btn color="primary" outlined class="px-4 mr-2" @click="closePublication">Annuler</v-btn>
+            <v-btn color="primary" class="px-4" @click="publish">Publier</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
   </div>
 </template>
 
@@ -90,12 +122,12 @@ export default {
   data() {
     const year = lastYear()
     return {
+      loading: false,
       limit: 15,
       page: null,
       canteenCount: null,
       visibleCanteens: null,
       searchTerm: null,
-      inProgress: false,
       year,
       unteledeclaredCount: 7,
       options: {
@@ -144,6 +176,10 @@ export default {
       showTeledeclarationPreview: false,
       showPublicationForm: false,
       canteenForPublication: null,
+      toTeledeclare: [],
+      tdLoading: false,
+      tdSuccesses: [],
+      tdFailures: [],
     }
   },
   computed: {
@@ -178,7 +214,7 @@ export default {
       let queryParam = `ordering=action&limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
       this.searchTerm = this.$route.query.recherche || null
-      this.inProgress = true
+      this.loading = true
 
       return fetch(`/api/v1/actionableCanteens/${this.year}?${queryParam}`)
         .then((response) => {
@@ -188,6 +224,7 @@ export default {
         .then((response) => {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
+          this.toTeledeclare = response.diagnosticsToTeledeclare
           this.$emit("canteen-count", this.canteenCount)
         })
         .catch((e) => {
@@ -195,7 +232,7 @@ export default {
           this.$store.dispatch("notifyServerError", e)
         })
         .finally(() => {
-          this.inProgress = false
+          this.loading = false
         })
     },
     clearSearch() {
@@ -309,6 +346,40 @@ export default {
         .then((canteen) => {
           const canteenIdx = this.visibleCanteens.findIndex((c) => c.id === canteenId)
           this.visibleCanteens.splice(canteenIdx, 1, canteen)
+        })
+    },
+    massTeledeclaration() {
+      this.tdLoading = true
+      this.$store
+        .dispatch("submitMultipleTeledeclarations", { ids: this.toTeledeclare })
+        .then((response) => {
+          const errors = response.errors
+          this.tdSuccesses = response.teledeclarationIds
+          this.tdFailures = Object.keys(errors)
+          if (Object.keys(errors).length === 0) {
+            const title =
+              this.tdSuccesses.length > 1
+                ? `${this.tdSuccesses.length} diagnostics télédéclarés`
+                : `${this.tdSuccesses.length} diagnostic télédéclaré`
+            this.$store.dispatch("notify", {
+              title,
+              status: "success",
+            })
+          } else {
+            const title =
+              this.tdFailures.length > 1
+                ? `${this.tdFailures.length} diagnostics pas télédéclarés`
+                : `${this.tdFailures.length} diagnostic pas télédéclaré`
+            this.$store.dispatch("notify", {
+              title,
+              status: "error",
+            })
+          }
+          this.fetchCurrentPage() // refresh actions
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+        .finally(() => {
+          this.tdLoading = false
         })
     },
   },

@@ -132,6 +132,32 @@ class UserCanteensPagination(LimitOffsetPagination):
         )
 
 
+class CanteenActionsPagination(LimitOffsetPagination):
+    default_limit = 12
+    max_limit = 30
+    diagnostics_to_teledeclare = []
+
+    def paginate_queryset(self, queryset, request, view=None):
+        diagnostics_to_teledeclare = queryset.filter(action=Canteen.Actions.TELEDECLARE).values_list(
+            "diagnostic_for_year", flat=True
+        )
+        self.diagnostics_to_teledeclare = set(filter(lambda x: x, diagnostics_to_teledeclare))
+        return super().paginate_queryset(queryset, request, view)
+
+    def get_paginated_response(self, data):
+        return Response(
+            OrderedDict(
+                [
+                    ("count", self.count),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                    ("diagnostics_to_teledeclare", self.diagnostics_to_teledeclare),
+                ]
+            )
+        )
+
+
 class PublishedCanteenFilterSet(django_filters.FilterSet):
     min_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="gte")
     max_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="lte")
@@ -927,7 +953,7 @@ class ActionableCanteensListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     model = Canteen
     serializer_class = CanteenActionsSerializer
-    pagination_class = UserCanteensPagination
+    pagination_class = CanteenActionsPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
         MaCantineOrderingFilter,
@@ -953,11 +979,11 @@ class ActionableCanteensListView(ListAPIView):
         user_canteens = queryset.annotate(nb_satellites_in_db=Subquery(satellites_count))
         # prep add diag action
         diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year)
-        user_canteens = user_canteens.annotate(has_diag=Exists(Subquery(diagnostics)))
+        user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")))
         # prep complete diag action
         # is value_total_ht of 0 a problem?
-        incomplete_diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year, value_total_ht=None)
-        user_canteens = user_canteens.annotate(has_incomplete_diag=Exists(Subquery(incomplete_diagnostics)))
+        complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
+        user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
         # prep TD action
         tds = Teledeclaration.objects.filter(
             canteen=OuterRef("pk"), year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
@@ -969,8 +995,8 @@ class ActionableCanteensListView(ListAPIView):
                 When(
                     nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)
                 ),
-                When(has_diag=False, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
-                When(has_incomplete_diag=True, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+                When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
+                When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
                 When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)),
                 When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH)),
                 default=Value(Canteen.Actions.NOTHING),
