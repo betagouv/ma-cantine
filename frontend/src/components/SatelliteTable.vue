@@ -36,9 +36,17 @@
         </v-dialog>
       </template>
       <template v-slot:[`item.userCanView`]="{ item }">
-        <v-btn outlined color="primary" :to="satelliteLink(item)" @click="satelliteAction(item)">
-          {{ item.userCanView ? "Mettre à jour" : "Rejoindre l'équipe" }}
-          <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
+        <v-btn v-if="!item.userCanView" outlined color="primary" @click="requestAccess(item)">
+          Rejoindre l'équipe
+          <span class="d-sr-only">de {{ item.name }}</span>
+        </v-btn>
+        <v-btn v-else-if="satelliteAction(item)" outlined color="primary" @click="satelliteAction(item).action()">
+          {{ satelliteAction(item).text }}
+          <span class="d-sr-only">{{ item.name }}</span>
+        </v-btn>
+        <v-btn v-else-if="satelliteLink(item)" outlined color="primary" :to="satelliteLink(item)">
+          Mettre à jour
+          <span class="d-sr-only">{{ item.name }}</span>
         </v-btn>
       </template>
       <template v-slot:[`no-data`]>
@@ -85,6 +93,25 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    headers: {
+      type: Array,
+      default() {
+        return [
+          { text: "Nom", value: "name" },
+          { text: "SIRET", value: "siret" },
+          { text: "Couverts par jour", value: "dailyMealCount" },
+          // TODO: shouldn't be able to sort on this, since there is no header text
+          { text: "", value: "userCanView" },
+        ]
+      },
+    },
+    // this function should return an object with two keys:
+    // action: a function that takes the satellite
+    // text: to be displayed with the button
+    satelliteAction: {
+      type: Function,
+      optional: true,
+    },
   },
   data() {
     return {
@@ -97,12 +124,6 @@ export default {
         sortDesc: [],
         page: 1,
       },
-      headers: [
-        { text: "Nom", value: "name" },
-        { text: "SIRET", value: "siret" },
-        { text: "Couverts par jour", value: "dailyMealCount" },
-        { text: "", value: "userCanView" },
-      ],
       joinDialog: false,
       restrictedSatellite: {},
       user: this.$store.state.loggedUser,
@@ -190,7 +211,7 @@ export default {
         }
       }
     },
-    satelliteAction(satellite) {
+    requestAccess(satellite) {
       if (!satellite.userCanView) {
         this.restrictedSatellite = satellite
         this.joinDialog = true
