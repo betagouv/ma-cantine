@@ -4,33 +4,62 @@
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-else>
-      <v-row v-if="tdLoading" class="green--text">
-        <v-col cols="1" justify-self="center">
-          <v-progress-circular indeterminate></v-progress-circular>
-        </v-col>
-        <v-col>
-          <p>Télédéclarations en cours...</p>
-        </v-col>
-      </v-row>
-      <p v-else-if="toTeledeclare.length > 1">
-        Vous pouvez télédéclarer {{ toTeledeclare.length }} cantines.
-        <v-btn class="primary ml-2" @click="massTeledeclaration">
-          Télédeclarer {{ toTeledeclare.length }} cantines
-        </v-btn>
-      </p>
-      <v-alert v-if="tdSuccesses.length" outlined type="success">
-        <p v-if="tdSuccesses.length" class="mb-0">
-          {{ tdSuccesses.length }} {{ tdSuccesses.length > 1 ? "cantines télédéclarées" : "cantine télédéclarée" }}
+      <div>
+        <v-row v-if="tdLoading" class="green--text">
+          <v-col cols="1" justify-self="center">
+            <v-progress-circular indeterminate></v-progress-circular>
+          </v-col>
+          <v-col>
+            <p>Télédéclarations en cours...</p>
+          </v-col>
+        </v-row>
+        <p v-else-if="toTeledeclare.length > 1">
+          Vous pouvez télédéclarer {{ toTeledeclare.length }} cantines.
+          <v-btn class="primary ml-2" @click="massTeledeclaration">
+            Télédeclarer {{ toTeledeclare.length }} cantines
+          </v-btn>
         </p>
-      </v-alert>
-      <v-alert v-if="tdFailures.length" outlined type="error">
-        <p>
-          {{ tdFailures.length }}
-          {{ tdFailures.length > 1 ? "cantines pas télédéclarées" : "cantine pas télédéclarée" }}
+        <v-alert v-if="tdSuccesses.length" outlined type="success">
+          <p v-if="tdSuccesses.length" class="mb-0">
+            {{ tdSuccesses.length }} {{ tdSuccesses.length > 1 ? "cantines télédéclarées" : "cantine télédéclarée" }}
+          </p>
+        </v-alert>
+        <v-alert v-if="tdFailures.length" outlined type="error">
+          <p>
+            {{ tdFailures.length }}
+            {{ tdFailures.length > 1 ? "cantines pas télédéclarées" : "cantine pas télédéclarée" }}
+          </p>
+          <p>Essayez de télédéclarer les cantines restantes une par une depuis le tableur en dessous.</p>
+          <p class="mb-0">Si le problème persiste, contactez-nous.</p>
+        </v-alert>
+      </div>
+      <div>
+        <v-row v-if="pubLoading" class="green--text">
+          <v-col cols="1" justify-self="center">
+            <v-progress-circular indeterminate></v-progress-circular>
+          </v-col>
+          <v-col>
+            <p>Publications en cours...</p>
+          </v-col>
+        </v-row>
+        <p v-else-if="toPublish.length > 1">
+          Vous pouvez publier {{ toPublish.length }} cantines.
+          <v-btn class="primary ml-2" @click="massPublication">Publier {{ toPublish.length }} cantines</v-btn>
         </p>
-        <p>Essayez de télédéclarer les cantines restantes une par une depuis le tableur en dessous.</p>
-        <p class="mb-0">Si le problème persiste, contactez-nous.</p>
-      </v-alert>
+        <v-alert v-if="pubSuccesses.length" outlined type="success">
+          <p v-if="pubSuccesses.length" class="mb-0">
+            {{ pubSuccesses.length }} {{ pubSuccesses.length > 1 ? "cantines publiées" : "cantine publiée" }}
+          </p>
+        </v-alert>
+        <v-alert v-if="pubFailures.length" outlined type="error">
+          <p>
+            {{ pubFailures.length }}
+            {{ pubFailures.length > 1 ? "cantines pas publiées" : "cantine pas publiée" }}
+          </p>
+          <p>Essayez de publier les cantines restantes une par une depuis le tableur en dessous.</p>
+          <p class="mb-0">Si le problème persiste, contactez-nous.</p>
+        </v-alert>
+      </div>
       <div class="mt-4">
         <v-data-table
           v-if="visibleCanteens"
@@ -180,6 +209,10 @@ export default {
       tdLoading: false,
       tdSuccesses: [],
       tdFailures: [],
+      toPublish: [],
+      pubLoading: false,
+      pubSuccesses: [],
+      pubFailures: [],
     }
   },
   computed: {
@@ -225,6 +258,7 @@ export default {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
           this.toTeledeclare = response.diagnosticsToTeledeclare
+          this.toPublish = response.canteensToPublish
           this.$emit("canteen-count", this.canteenCount)
         })
         .catch((e) => {
@@ -381,6 +415,44 @@ export default {
         .finally(() => {
           this.tdLoading = false
         })
+    },
+    // this is a copy and slight modification of the function above.
+    // consider refactoring if you are making a third and similar mass action.
+    massPublication() {
+      this.pubLoading = true
+      // TODO: make this endpoint in the back, and the dispatch in the store
+      // TODO: then, add similar logic to central kitchen publication page
+      // this.$store
+      //   .dispatch("submitMultiplePublications", { ids: this.toPublish })
+      //   .then((response) => {
+      //     const errors = response.errors
+      //     this.pubSuccesses = response.ids
+      //     this.pubFailures = Object.keys(errors)
+      //     if (Object.keys(errors).length === 0) {
+      //       const title =
+      //         this.pubSuccesses.length > 1
+      //           ? `${this.pubSuccesses.length} cantines publiées`
+      //           : `${this.pubSuccesses.length} cantine publiée`
+      //       this.$store.dispatch("notify", {
+      //         title,
+      //         status: "success",
+      //       })
+      //     } else {
+      //       const title =
+      //         this.pubFailures.length > 1
+      //           ? `${this.pubFailures.length} cantines pas publiées`
+      //           : `${this.pubFailures.length} cantine pas publiée`
+      //       this.$store.dispatch("notify", {
+      //         title,
+      //         status: "error",
+      //       })
+      //     }
+      //     this.fetchCurrentPage() // refresh actions
+      //   })
+      //   .catch((e) => this.$store.dispatch("notifyServerError", e))
+      //   .finally(() => {
+      //     this.pubLoading = false
+      //   })
     },
   },
   mounted() {
