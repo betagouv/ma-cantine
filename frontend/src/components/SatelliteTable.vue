@@ -35,12 +35,25 @@
           </v-card>
         </v-dialog>
       </template>
+      <template v-slot:[`item.name`]="{ item }">
+        <router-link v-if="item.userCanView && includeSatelliteLink" :to="satelliteLink(item)">
+          {{ item.name }}
+        </router-link>
+        <span v-else>
+          {{ item.name }}
+        </span>
+      </template>
       <template v-slot:[`item.userCanView`]="{ item }">
         <v-btn v-if="!item.userCanView" outlined color="primary" @click="requestAccess(item)">
           Rejoindre l'équipe
           <span class="d-sr-only">de {{ item.name }}</span>
         </v-btn>
-        <v-btn v-else-if="satelliteAction(item)" outlined color="primary" @click="satelliteAction(item).action()">
+        <v-btn
+          v-else-if="satelliteAction && satelliteAction(item)"
+          outlined
+          color="primary"
+          @click="satelliteAction(item).action()"
+        >
           {{ satelliteAction(item).text }}
           <span class="d-sr-only">{{ item.name }}</span>
         </v-btn>
@@ -104,6 +117,10 @@ export default {
           { text: "", value: "userCanView" },
         ]
       },
+    },
+    includeSatelliteLink: {
+      type: Boolean,
+      default: false,
     },
     // this function should return an object with two keys:
     // action: a function that takes the satellite

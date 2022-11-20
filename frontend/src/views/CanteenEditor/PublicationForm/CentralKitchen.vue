@@ -19,12 +19,13 @@
         votre cantine reçoit des convives sur place.
       </router-link>
     </p>
-    <!-- TODO: add mass publish/unpublish button -->
+    <!-- TODO: add mass publish/unpublish button in next PR -->
     <!-- TODO: does central publish itself if not a site? -->
     <!-- TODO: refine wording for central_serving -->
     <SatelliteTable
       ref="satelliteTable"
       :headers="satelliteTableHeaders"
+      :includeSatelliteLink="true"
       :canteen="canteen"
       :params="satelliteTableParams"
       :satelliteAction="satelliteAction"
@@ -60,11 +61,10 @@ export default {
     return {
       published: this.originalCanteen.publicationStatus !== "draft",
       satelliteTableHeaders: [
-        // TODO: make name link to satellite mod page if have rights?
         { text: "Nom", value: "name" },
         { text: "SIRET", value: "siret" },
         // TODO: translate the value and link to publication page?
-        { text: "Publication", value: "publicationStatus" },
+        { text: "Publiée ?", value: "publicationStatus" },
         { text: "", value: "userCanView" },
       ],
     }
