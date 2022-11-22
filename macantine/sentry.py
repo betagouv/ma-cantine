@@ -1,5 +1,6 @@
 from rest_framework.exceptions import PermissionDenied
 from django.core.exceptions import ValidationError
+from data.models import Sector
 
 
 def before_send(event, hint):
@@ -16,6 +17,7 @@ def before_send(event, hint):
     exceptions = [
         PermissionDenied,
         ValidationError,
+        Sector.DoesNotExist,
     ]
 
     for exc in exceptions:
