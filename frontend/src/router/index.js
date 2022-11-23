@@ -406,7 +406,7 @@ const routes = [
     sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
-    path: "/importer-diagnostics/:importLevel",
+    path: "/importer-diagnostics/:importUrlSlug",
     name: "DiagnosticImportPage",
     component: DiagnosticImportPage,
     props: true,
