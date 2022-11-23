@@ -83,7 +83,7 @@
           <v-row class="mt-6">
             <v-col cols="12" sm="6" md="4">
               <v-btn x-large color="primary" @click="updateRoute">
-                Afficher les statistiques
+                Filtrer les données
               </v-btn>
             </v-col>
           </v-row>
@@ -91,7 +91,7 @@
       </v-card-text>
     </v-card>
     <div v-if="locationText" class="py-8">
-      <h2 class="text-h5 font-weight-bold">Les statistiques pour {{ locationText }}</h2>
+      <h2 class="text-h5 font-weight-bold">Les chiffres pour {{ locationText }}</h2>
       <p v-if="sectorsText" class="text-body-2 mt-4 grey--text text--darken-2">
         <v-icon aria-hidden="false" role="img" aria-label="Secteurs">mdi-office-building</v-icon>
         {{ sectorsText }}
@@ -560,7 +560,7 @@ export default {
       this.chosenEpcis = Array.isArray(queryEpcis) ? queryEpcis : [queryEpcis]
     },
     updateDocumentTitle() {
-      let title = `Les statistiques dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
+      let title = `Les cantines dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
       if (this.chosenRegions.length || this.chosenDepartments.length) {
         let locationText = this.createLocationText()
         if (locationText.startsWith("les")) {

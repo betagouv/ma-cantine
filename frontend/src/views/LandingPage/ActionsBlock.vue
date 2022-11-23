@@ -48,7 +48,7 @@
           ></v-img>
           <v-card-title>
             <h2 class="text-h6 font-weight-bold">
-              Suivre l'évolution de mon territoire
+              Suivre l'évolution de ma collectivité
             </h2>
           </v-card-title>
           <v-card-text>
