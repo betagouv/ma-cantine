@@ -92,6 +92,7 @@
         "title": "Expérimentation d'une solution de réservation de repas"
       }
     ],
+    "successExplanation": "La cantine a fait un diagnostic du gaspillage alimentaire et a decidé sur une ou plus actions à faire.\nSi la cantine sert 3000 repas ou plus, elle propose aussi une convention de dons à une association habilitée.",
     "tags": [
       "scolaire",
       "administration",
@@ -180,6 +181,7 @@
         "who": "Pour les collectivités volontaires."
       }
     ],
+    "successExplanation": "La cantine offre au moins un repas végétarien par semaine si elle est dans le secteur scolaire, ou un repas végétarien par jour sinon.",
     "title": "Diversification des sources de protéines et menus végétariens"
   },
   {
@@ -243,6 +245,7 @@
         "title": "Les contenants alimentaires en plastique sont interdits"
       }
     ],
+    "successExplanation": "La cantine n'utilise plus de contenants alimentaires de cuisson, de réchauffe, ni de service en matière plastique. En plus, la cantine ne mets plus à disposition des convives des bouteilles d’eau plate en plastique, ni des ustensiles à usage unique en matière plastique.",
     "title": "Substitution des plastiques"
   },
   {
@@ -313,6 +316,7 @@
         "title": "Etiquettage détaillé pour toutes les viandes"
       }
     ],
+    "successExplanation": "La cantine informe ses convives sur la part de produits de qualité et durables, entrant dans la composition des repas servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet alimentaire territorial).",
     "title": "Information des usagers et convives"
   }
 ]

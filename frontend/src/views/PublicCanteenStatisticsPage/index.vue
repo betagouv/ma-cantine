@@ -220,6 +220,7 @@
           class="mb-4"
         />
       </v-row>
+      <BadgesExplanation />
     </div>
     <v-row v-else justify="center" class="py-15">
       <v-progress-circular indeterminate></v-progress-circular>
@@ -229,6 +230,7 @@
 
 <script>
 import BadgeCard from "./BadgeCard"
+import BadgesExplanation from "./BadgesExplanation"
 import VueApexCharts from "vue-apexcharts"
 import labels from "@/data/quality-labels.json"
 import keyMeasures from "@/data/key-measures.json"
@@ -244,6 +246,7 @@ export default {
   name: "PublicCanteenStatisticsPage",
   components: {
     BadgeCard,
+    BadgesExplanation,
     VueApexCharts,
     BreadcrumbsNav,
     DsfrAutocomplete,
