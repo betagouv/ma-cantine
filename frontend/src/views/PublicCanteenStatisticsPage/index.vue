@@ -141,7 +141,8 @@
           <p id="sector-chart-description" class="d-none">{{ sectorChartDescription }}</p>
         </v-col>
       </v-row>
-      <h3 class="text-h6 font-weight-bold mt-10 mb-8">Qualité de produits en {{ year }}</h3>
+      <h3 class="text-h6 font-weight-bold mt-10 mb-2">Qualité de produits en {{ year }}</h3>
+      <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:</p>
       <v-row class="px-2">
         <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
           <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
@@ -204,9 +205,12 @@
           </v-card>
         </v-col>
       </v-row>
-      <h3 class="text-h6 font-weight-bold mt-10 mb-8">
+      <h3 class="text-h6 font-weight-bold mt-10 mb-2">
         Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}
       </h3>
+      <p class="mb-8">
+        Parmi les mêmes {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:
+      </p>
       <v-row class="justify-space-between mt-8 mb-8 px-2">
         <BadgeCard
           v-for="measure in otherMeasures"
