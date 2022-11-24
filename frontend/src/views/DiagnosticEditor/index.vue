@@ -339,12 +339,12 @@ export default {
       ],
       centralKitchenDiagnosticModes: [
         {
-          key: "APPRO",
-          label: "Je rentre les données d'approvisionnement pour toutes mes cantines satellites",
+          key: "ALL",
+          label: "Je rentre les données concernant toutes les mesures EGAlim pour mes cantines satellites",
         },
         {
-          key: "ALL",
-          label: "Je rentre toutes les données pour mes cantines satellites",
+          key: "APPRO",
+          label: "Je rentre seulement les données d'approvisionnement pour mes cantines satellites",
         },
       ],
       showTeledeclarationPreview: false,
