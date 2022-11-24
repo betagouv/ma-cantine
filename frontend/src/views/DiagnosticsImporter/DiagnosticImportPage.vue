@@ -236,10 +236,11 @@ import DsfrCallout from "@/components/DsfrCallout"
 export default {
   name: "DiagnosticImportPage",
   components: { BreadcrumbsNav, FileDrop, HelpForm, DownloadLinkList, DsfrCallout },
-  props: ["importLevel"],
+  props: ["importUrlSlug"],
   data() {
     const user = this.$store.state.loggedUser
     return {
+      importLevel: Constants.DiagnosticImportLevels.find((x) => x.urlSlug === this.importUrlSlug)["key"],
       file: undefined,
       canteens: undefined,
       canteenCount: undefined,
@@ -567,6 +568,18 @@ export default {
           this.$store.dispatch("notifyServerError", e)
         })
     },
+  },
+  beforeRouteEnter(to, from, next) {
+    const legacyUrlKeys = Constants.DiagnosticImportLevels.map((x) => ({ key: x.key, slug: x.urlSlug }))
+    for (let i = 0; i < legacyUrlKeys.length; i++) {
+      if (to.params.importUrlSlug === legacyUrlKeys[i].key)
+        return next({ name: "DiagnosticImportPage", params: { importUrlSlug: legacyUrlKeys[i].slug } })
+    }
+
+    if (Constants.DiagnosticImportLevels.map((x) => x.urlSlug).indexOf(to.params.importUrlSlug) === -1)
+      return next({ name: "NotFound" })
+
+    return next()
   },
 }
 </script>

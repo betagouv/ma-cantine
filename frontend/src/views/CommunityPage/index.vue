@@ -12,7 +12,7 @@
       </v-col>
       <v-col>
         <ul class="text-body-2">
-          <li v-for="link in links" :key="link.id" class="my-1">
+          <li v-for="link in links" :key="link.title" class="my-1">
             <a :href="`#${link.id}`" v-if="link.id">
               <v-icon small color="primary">mdi-chevron-right</v-icon>
               {{ link.title }}
@@ -60,9 +60,6 @@
     <FacebookSection id="facebook" />
 
     <v-divider class="my-10"></v-divider>
-    <FaqSection id="faq" />
-
-    <v-divider class="my-10"></v-divider>
     <TheNewsletter id="suivre" />
   </div>
 </template>
@@ -71,13 +68,12 @@
 import WebinaireCard from "./WebinaireCard"
 import TheNewsletter from "@/components/TheNewsletter"
 import FacebookSection from "./FacebookSection"
-import FaqSection from "./FaqSection"
 import { hideCommunityEventsBanner } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "CommunityPage",
-  components: { WebinaireCard, TheNewsletter, FacebookSection, FaqSection, BreadcrumbsNav },
+  components: { WebinaireCard, TheNewsletter, FacebookSection, BreadcrumbsNav },
   data() {
     return {
       links: [
@@ -99,10 +95,10 @@ export default {
         },
         {
           to: { name: "PartnersHome" },
-          title: "Trouver des partenaires",
+          title: "Trouver des acteurs de l'éco-système",
         },
         {
-          id: "faq",
+          to: { name: "FaqPage" },
           title: "Foire aux questions",
         },
         {

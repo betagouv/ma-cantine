@@ -1,5 +1,7 @@
 import logging
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from data.models import Canteen, Diagnostic
@@ -70,6 +72,15 @@ class Teledeclaration(models.Model):
         blank=True,
         verbose_name="Cantine satellite dont les données d'appro ont été prises en charge par la cuisine centrale",
     )
+
+    @receiver(pre_delete, sender=Diagnostic)
+    def cancel_teledeclaration(sender, instance, **kwargs):
+        try:
+            teledeclaration = Teledeclaration.objects.get(diagnostic=instance)
+            teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
+            teledeclaration.save()
+        except Exception:
+            pass
 
     def clean(self):
         """

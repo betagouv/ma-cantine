@@ -57,7 +57,7 @@ export default {
       })
       .catch(() => {
         this.$store.dispatch("notify", {
-          message: "Nous n'avons pas trouvé ce partenaire",
+          message: "Nous n'avons pas trouvé cet acteur",
           status: "error",
         })
         this.$router.push({ name: "PartnersHome" })

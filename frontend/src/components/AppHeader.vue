@@ -200,7 +200,7 @@ export default {
       logoutWarningDialog: false,
       navLinks: [
         {
-          text: "Gérer mes cantines",
+          text: "Espace de gestion",
           authenticationState: true,
           children: [
             {
@@ -216,8 +216,16 @@ export default {
               to: { name: "GeneratePosterPage" },
             },
             {
-              text: "Mon compte",
+              text: "Mon profil",
               to: { name: "AccountSummaryPage" },
+            },
+            {
+              text: "Importer des cantines",
+              to: { name: "DiagnosticsImporter" },
+            },
+            {
+              text: "Importer des achats",
+              to: { name: "PurchasesImporter" },
             },
           ],
         },
@@ -246,7 +254,7 @@ export default {
           text: "Communauté",
           children: [
             {
-              text: "Notre communauté",
+              text: "Webinaires",
               to: { name: "CommunityPage" },
             },
             {
@@ -254,7 +262,7 @@ export default {
               to: { name: "BlogsHome" },
             },
             {
-              text: "Partenaires",
+              text: "Acteurs de l'éco-système",
               to: { name: "PartnersHome" },
             },
           ],
@@ -286,6 +294,12 @@ export default {
             {
               text: "Foire aux questions",
               to: { name: "FaqPage" },
+            },
+            {
+              text: "Documentation",
+              href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+              target: "_blank",
+              rel: "noopener",
             },
             {
               text: "Contactez-nous",

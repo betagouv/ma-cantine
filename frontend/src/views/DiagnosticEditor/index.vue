@@ -513,6 +513,10 @@ export default {
             }
           }
         })
+        bioTotal = +bioTotal.toFixed(2)
+        siqoTotal = +siqoTotal.toFixed(2)
+        perfExtTotal = +perfExtTotal.toFixed(2)
+        egalimOthersTotal = +egalimOthersTotal.toFixed(2)
       }
       return {
         bioTotal,
@@ -542,6 +546,8 @@ export default {
           if (isEgalim) meatPoultryEgalim += value
           if (isFrance) meatPoultryFrance += value
         })
+        meatPoultryEgalim = +meatPoultryEgalim.toFixed(2)
+        meatPoultryFrance = +meatPoultryFrance.toFixed(2)
       }
       return { meatPoultryEgalim, meatPoultryFrance }
     },
@@ -559,6 +565,7 @@ export default {
           if (!isFish || !value) return
           fishEgalim += value
         })
+        fishEgalim = +fishEgalim.toFixed(2)
       }
       return { fishEgalim }
     },
