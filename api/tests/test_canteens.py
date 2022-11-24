@@ -689,3 +689,17 @@ class TestCanteenApi(APITestCase):
         CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_get_central_kitchen_name(self):
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
+        satellite = CanteenFactory.create(
+            central_producer_siret=central_kitchen.siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+        )
+        satellite.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["centralKitchenName"], central_kitchen.name)

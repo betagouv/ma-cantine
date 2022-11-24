@@ -459,17 +459,19 @@ export default {
     },
     infoNotice() {
       if (this.isCentralCanteen || this.showApproPanel) return null
+      const centralKitchen = this.originalCanteen.centralKitchenName
+        ? `« ${this.originalCanteen.centralKitchenName} »`
+        : ""
       if (!this.showApproPanel && this.showNonApproPanels) {
         return {
           title: "Données d'approvisionnement déjà déclarées",
-          message: `Votre cuisine centrale avec le siret ${this.originalCanteen.centralProducerSiret} a déjà renseigné les
-            données d'approvisionnement pour votre cantine. Vous pouvez remplir les informations pour les autres volets
-            de la loi EGAlim.`,
+          message: `Votre cuisine centrale ${centralKitchen} avec le siret ${this.originalCanteen.centralProducerSiret} a déjà renseigné les
+            données d'approvisionnement pour votre cantine. Les autres volets de la loi EGAlim vous restent accessibles.`,
         }
       }
       return {
         title: "Diagnostic déjà pris en compte par votre cuisine centrale",
-        message: `Votre cuisine centrale avec le siret ${this.originalCanteen.centralProducerSiret} a déjà rempli un
+        message: `Votre cuisine centrale ${centralKitchen} avec le siret ${this.originalCanteen.centralProducerSiret} a déjà rempli un
           diagnostic pour cette année pour votre cantine.`,
       }
     },

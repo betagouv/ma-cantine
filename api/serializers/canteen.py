@@ -116,6 +116,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
+    central_kitchen_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -147,6 +148,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "satellite_canteens_count",
             "siret",
             "central_producer_siret",
+            "central_kitchen_name",
             "management_type",
             "production_type",
             "diagnostics",
@@ -224,6 +226,15 @@ class FullCanteenSerializer(serializers.ModelSerializer):
                 {"year": diag.year, "central_kitchen_diagnostic_mode": diag.central_kitchen_diagnostic_mode}
                 for diag in diagnostics
             ]
+        except Exception:
+            return None
+
+    def get_central_kitchen_name(self, obj):
+        if not obj.central_producer_siret:
+            return None
+        try:
+            central_kitchen = Canteen.objects.get(siret=obj.central_producer_siret)
+            return central_kitchen.name
         except Exception:
             return None
 
