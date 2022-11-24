@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from xhtml2pdf import pisa
-from data.models import Diagnostic, Teledeclaration
+from data.models import Diagnostic, Teledeclaration, Canteen
 from api.serializers import FullDiagnosticSerializer
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope
 from .utils import camelize
@@ -153,6 +153,13 @@ class TeledeclarationPdfView(APIView):
                 declared_data["teledeclaration"].get("diagnostic_type", None) == Diagnostic.DiagnosticType.COMPLETE
             )
             central_kitchen_siret = declared_data.get("central_kitchen_siret", None)
+            central_kitchen_name = None
+            if central_kitchen_siret:
+                try:
+                    central_kitchen_name = Canteen.objects.get(siret=central_kitchen_siret).name
+                except Exception:
+                    pass
+
             context = {
                 **declared_data["teledeclaration"],
                 **{
@@ -164,6 +171,7 @@ class TeledeclarationPdfView(APIView):
                     "applicant": declared_data["applicant"]["name"],
                     "uses_central_kitchen_appro": teledeclaration.uses_central_kitchen_appro,
                     "central_kitchen_siret": central_kitchen_siret,
+                    "central_kitchen_name": central_kitchen_name,
                     "central_kitchen_diagnostic_mode": declared_data.get("central_kitchen_diagnostic_mode", None),
                 },
             }

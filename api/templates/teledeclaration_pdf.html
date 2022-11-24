@@ -70,7 +70,7 @@
 
         {% if uses_central_kitchen_appro %}
         <p>
-            Les données d'approvisionnement ont été déclarées par la cuisine centrale{% if central_kitchen_siret %} (SIRET : {{ central_kitchen_siret }}){% endif %}.
+            Les données d'approvisionnement ont été déclarées par la cuisine centrale{% if central_kitchen_name %} « {{ central_kitchen_name }} »{% endif %}{% if central_kitchen_siret %} (SIRET : {{ central_kitchen_siret }}){% endif %}.
         </p>
         {% endif %}
         {% if central_kitchen_diagnostic_mode == "ALL" %}
