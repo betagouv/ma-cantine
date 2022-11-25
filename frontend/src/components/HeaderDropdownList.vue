@@ -140,14 +140,14 @@ export default {
           type: "divider",
         },
         {
-          text: "Statistiques régionales",
+          text: "Les cantines dans ma collectivité",
           icon: "$france-fill",
           to: { name: "PublicCanteenStatisticsPage" },
         },
         {
           text: "Mesures de notre impact",
           icon: "$bar-chart-box-fill",
-          to: { name: "PlatformStatsPage" },
+          to: { name: "ImpactMeasuresPage" },
         },
         {
           text: "Foire aux questions",

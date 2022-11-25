@@ -48,7 +48,7 @@ import CommunityPage from "@/views/CommunityPage"
 import FaqPage from "@/views/FaqPage"
 import SiteMap from "@/views/SiteMap"
 import DeveloperPage from "@/views/DeveloperPage"
-import StatsPage from "@/views/StatsPage"
+import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -416,7 +416,7 @@ const routes = [
     name: "PublicCanteenStatisticsPage",
     component: PublicCanteenStatisticsPage,
     meta: {
-      title: "Les statistiques dans ma collectivité",
+      title: "Les cantines dans ma collectivité",
     },
     sitemapGroup: Constants.SitemapGroups.LAW,
   },
@@ -514,10 +514,10 @@ const routes = [
   },
   {
     path: "/statistiques-plateforme/",
-    name: "PlatformStatsPage",
-    component: StatsPage,
+    name: "ImpactMeasuresPage",
+    component: ImpactMeasuresPage,
     meta: {
-      title: "Statistiques d'utilisation de la plateforme",
+      title: "Mesures de notre impact",
     },
   },
   {
