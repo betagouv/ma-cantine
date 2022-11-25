@@ -12,7 +12,6 @@
         </v-btn>
       </p>
     </div>
-    <TeledeclarationBanner />
     <CompleteProfileField :canteenCount="canteenCount" />
     <div class="mt-4">
       <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
@@ -31,11 +30,10 @@ import CanteensPagination from "./CanteensPagination.vue"
 import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import UserTools from "./UserTools"
 import CompleteProfileField from "./CompleteProfileField"
-import TeledeclarationBanner from "./TeledeclarationBanner"
 import validators from "@/validators"
 
 export default {
-  components: { CanteensPagination, UserTools, CompleteProfileField, PageSatisfaction, TeledeclarationBanner },
+  components: { CanteensPagination, UserTools, CompleteProfileField, PageSatisfaction },
   data() {
     return {
       validators,
