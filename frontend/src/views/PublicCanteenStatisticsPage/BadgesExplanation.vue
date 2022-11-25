@@ -4,7 +4,7 @@
       <v-expansion-panel-header class="px-3" expand-icon="mdi-plus" disable-icon-rotate>
         <h3 class="font-weight-medium">
           <v-icon color="primary" class="mr-2">$question-line</v-icon>
-          Comment est-ce qu'on reussi les objectives EGAlim ?
+          Comment réussir les objectifs EGAlim ?
         </h3>
       </v-expansion-panel-header>
       <v-expansion-panel-content class="faq-answer">
