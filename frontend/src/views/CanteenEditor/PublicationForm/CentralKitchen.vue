@@ -16,7 +16,7 @@
           params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
         }"
       >
-        votre cantine reçoit des convives sur place.
+        votre cuisine centrale reçoit aussi des convives sur place.
       </router-link>
     </p>
     <!-- TODO: add mass publish/unpublish button in next PR -->
