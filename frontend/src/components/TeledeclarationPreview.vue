@@ -84,6 +84,9 @@ export default {
         this.$emit("input", newValue)
       },
     },
+    isCentralCanteen() {
+      return this.canteen.productionType === "central_serving" || this.canteen.productionType === "central"
+    },
     centralKitchenDiagostic() {
       if (this.diagnostic.year && this.canteen?.centralKitchenDiagnostics)
         return this.canteen.centralKitchenDiagnostics.find((x) => x.year === this.diagnostic.year)
@@ -96,6 +99,13 @@ export default {
           this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
         )
       }
+      return true
+    },
+    showAdditionalKeys() {
+      if (this.canteen?.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic)
+        return this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
+      if (this.isCentralCanteen)
+        return this.diagnostic.centralKitchenDiagnosticMode && this.diagnostic.centralKitchenDiagnosticMode !== "APPRO"
       return true
     },
     approKeys() {
@@ -332,6 +342,7 @@ export default {
       ]
     },
     additionalItems() {
+      if (!this.showAdditionalKeys) return []
       return [
         {
           label: "Diagnostic sur le gaspillage alimentaire réalisé",
