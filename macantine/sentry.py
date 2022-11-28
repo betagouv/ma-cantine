@@ -18,6 +18,13 @@ def before_send(event, hint):
         ValidationError,
     ]
 
+    try:
+        from data.models import Sector
+
+        exceptions.append(Sector.DoesNotExist)
+    except Exception:
+        pass
+
     for exc in exceptions:
         if exception_type == exc and module in modules:
             return None

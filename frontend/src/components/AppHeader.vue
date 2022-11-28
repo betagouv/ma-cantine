@@ -268,15 +268,15 @@ export default {
           ],
         },
         {
-          text: "Statistiques",
+          text: "Les chiffres",
           children: [
             {
-              text: "Statistiques régionales",
+              text: "Dans ma collectivité",
               to: { name: "PublicCanteenStatisticsPage" },
             },
             {
               text: "Mesures de notre impact",
-              to: { name: "PlatformStatsPage" },
+              to: { name: "ImpactMeasuresPage" },
             },
             {
               text: "Nos données",
