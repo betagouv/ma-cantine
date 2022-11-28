@@ -8,9 +8,9 @@
         La campagne de remontée des données 2021 est à présent terminée !
       </v-card-title>
       <v-card-text class="pb-0">
-        Les données recueillies par télédéclaration seront traitées de manière agrégée pour réaliser le bilan 
-        annuel qui sera remis au Parlement et rendu public. Vous pouvez d'ores et déjà compléter vos 
-        diagnostics achats 2022 afin d'anticiper la prochaine campagne qui commencera en janvier 2023 !
+        Les données recueillies par télédéclaration seront traitées de manière agrégée pour réaliser le bilan annuel qui
+        sera remis au Parlement et rendu public. Vous pouvez d'ores et déjà compléter vos diagnostics achats 2022 afin
+        d'anticiper la prochaine campagne qui commencera en janvier 2023 !
       </v-card-text>
       <v-card-actions class="px-4 mt-2">
         <v-btn :to="{ name: 'PendingActions' }" color="primary">Télédéclarer mes cantines</v-btn>
