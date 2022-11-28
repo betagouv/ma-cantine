@@ -123,7 +123,7 @@
             heading="Plus de produits de qualité et durables dans nos assiettes"
             :summary="approSummary() || 'Incomplet'"
             :formIsValid="formIsValid.quality"
-            v-if="showApproPanel"
+            :disabled="!showApproPanel"
           >
             <v-form ref="quality" v-model="formIsValid.quality">
               <p>
@@ -166,7 +166,7 @@
             icon="mdi-offer"
             heading="Lutte contre le gaspillage alimentaire et dons alimentaires"
             :formIsValid="formIsValid.waste"
-            v-if="showNonApproPanels"
+            :disabled="!showNonApproPanels"
           >
             <v-form ref="waste" v-model="formIsValid.waste">
               <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen="originalCanteen" />
@@ -178,7 +178,7 @@
             icon="$leaf-fill"
             heading="Diversification des sources de protéines et menus végétariens"
             :formIsValid="formIsValid.diversification"
-            v-if="showNonApproPanels"
+            :disabled="!showNonApproPanels"
           >
             <v-form ref="diversification" v-model="formIsValid.diversification">
               <DiversificationMeasure
@@ -195,7 +195,7 @@
             heading="Substitution des plastiques"
             :summary="plasticSummary()"
             :formIsValid="formIsValid.plastic"
-            v-if="showNonApproPanels"
+            :disabled="!showNonApproPanels"
           >
             <v-form ref="plastic" v-model="formIsValid.plastic">
               <NoPlasticMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />
@@ -207,7 +207,7 @@
             icon="mdi-bullhorn"
             heading="Information des usagers et convives"
             :formIsValid="formIsValid.information"
-            v-if="showNonApproPanels"
+            :disabled="!showNonApproPanels"
           >
             <v-form ref="information" v-model="formIsValid.information">
               <InformationMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />

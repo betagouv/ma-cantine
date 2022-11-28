@@ -1,6 +1,6 @@
 <template>
-  <v-expansion-panel>
-    <v-expansion-panel-header :color="!open && !formIsValid ? 'red lighten-5' : 'white'">
+  <v-expansion-panel :disabled="disabled">
+    <v-expansion-panel-header :color="color">
       <template v-slot:default="{ open }">
         <v-row no-gutters>
           <v-col cols="7" class="font-weight-bold">
@@ -13,7 +13,7 @@
           </v-col>
           <v-col cols="5" class="text--secondary text-right pr-2 align-self-center align-self-center">
             <v-fade-transition leave-absolute>
-              <span v-if="!open && formIsValid" key="0">
+              <span v-if="!disabled && !open && formIsValid" key="0">
                 {{ summary }}
               </span>
               <span v-if="!open && !formIsValid" key="1" class="red--text">
@@ -33,11 +33,18 @@
 <script>
 export default {
   name: "DiagnosticExpansionPanel",
-  props: ["iconColour", "icon", "heading", "formIsValid", "summary"],
+  props: ["iconColour", "icon", "heading", "formIsValid", "summary", "disabled"],
   data() {
     return {
       open: undefined,
     }
+  },
+  computed: {
+    color() {
+      if (this.disabled) return "grey lighten-3"
+      if (!this.open && !this.formIsValid) return "red lighten-5"
+      return "white"
+    },
   },
 }
 </script>
