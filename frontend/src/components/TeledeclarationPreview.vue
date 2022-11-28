@@ -72,7 +72,7 @@ export default {
       required: true,
     },
     canteen: {
-      optional: true,
+      required: true,
     },
   },
   computed: {
@@ -84,7 +84,22 @@ export default {
         this.$emit("input", newValue)
       },
     },
+    centralKitchenDiagostic() {
+      if (this.diagnostic.year && this.canteen?.centralKitchenDiagnostics)
+        return this.canteen.centralKitchenDiagnostics.find((x) => x.year === this.diagnostic.year)
+      return null
+    },
+    showApproKeys() {
+      if (this.canteen?.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic) {
+        return (
+          this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "APPRO" &&
+          this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
+        )
+      }
+      return true
+    },
     approKeys() {
+      if (!this.showApproKeys) return []
       if (this.diagnostic.diagnosticType === "COMPLETE") {
         return [
           { param: "valueTotalHt", label: "Mes achats alimentaires total" },
@@ -546,10 +561,12 @@ export default {
     },
     goToEditing() {
       this.$emit("input", false)
-      this.$router.push({
-        name: "DiagnosticModification",
-        params: { canteenUrlComponent: this.canteenUrlComponent, year: this.diagnostic.year },
-      })
+      this.$router
+        .push({
+          name: "DiagnosticModification",
+          params: { canteenUrlComponent: this.canteenUrlComponent, year: this.diagnostic.year },
+        })
+        .catch(() => {})
     },
   },
   mounted() {
