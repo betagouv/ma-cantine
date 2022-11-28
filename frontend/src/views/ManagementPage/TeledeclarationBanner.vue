@@ -5,12 +5,12 @@
     </div>
     <div>
       <v-card-title class="text-body-1 font-weight-bold">
-        PROLONGATION : vous avez jusqu'au 25 novembre 2022 pour participer à la collecte de données !
+        La campagne de remontée des données 2021 est à présent terminée !
       </v-card-title>
       <v-card-text class="pb-0">
-        Dans votre espace cantine, remplissez votre diagnostic 2021 et télédéclarez vos données (arrêté ministériel du
-        14 septembre 2022). L'objectif : établir un bilan de suivi des mesures EGAlim permettant de mieux piloter cette
-        politique publique par l'administration.
+        Les données recueillies par télédéclaration seront traitées de manière agrégée pour réaliser le bilan 
+        annuel qui sera remis au Parlement et rendu public. Vous pouvez d'ores et déjà compléter vos 
+        diagnostics achats 2022 afin d'anticiper la prochaine campagne qui commencera en janvier 2023 !
       </v-card-text>
       <v-card-actions class="px-4 mt-2">
         <v-btn :to="{ name: 'PendingActions' }" color="primary">Télédéclarer mes cantines</v-btn>
