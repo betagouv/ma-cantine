@@ -75,7 +75,7 @@ class Partner(models.Model):
 
     @property
     def url_path(self):
-        return f"/partenaires/{self.url_slug}"
+        return f"/acteurs-de-l-eco-systeme/{self.url_slug}"
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         max_image_size = 1600
