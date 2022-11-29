@@ -94,6 +94,7 @@
               v-model="userCopy.email"
               :rules="[validators.email]"
               validate-on-blur
+              @change="emailErrorMessages = []"
               :error-messages="emailErrorMessages"
             />
           </v-col>
