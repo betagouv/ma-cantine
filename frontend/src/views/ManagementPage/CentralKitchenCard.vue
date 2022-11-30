@@ -15,7 +15,7 @@
     <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
     <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
     <v-card-subtitle class="py-1">
-      <v-chip small :color="teledeclarationStatus.color" label class="mr-1">
+      <v-chip v-if="teledeclarationIsActive" small :color="teledeclarationStatus.color" label class="mr-1">
         {{ teledeclarationStatus.text }}
       </v-chip>
       <v-chip small :color="publicationStatus.color" label>
@@ -85,6 +85,9 @@ export default {
     canteenImage() {
       if (!this.canteen.images || this.canteen.images.length === 0) return null
       return this.canteen.images[0].image
+    },
+    teledeclarationIsActive() {
+      return window.ENABLE_TELEDECLARATION
     },
   },
 }

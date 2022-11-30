@@ -38,7 +38,7 @@
               </v-btn>
             </v-col>
 
-            <div v-if="isTeledeclarationYear">
+            <div v-if="canTeledeclare">
               <p v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration" class="text-caption ma-0 pl-4">
                 <v-icon small>mdi-information</v-icon>
                 Vous pourrez télédéclarer ce diagnostic après avoir remplir les données d'approvisionnement
@@ -176,7 +176,7 @@
           </DiagnosticExpansionPanel>
         </v-expansion-panels>
 
-        <div v-if="!hasActiveTeledeclaration && isTeledeclarationYear" class="mt-4" id="teledeclaration">
+        <div v-if="!hasActiveTeledeclaration && canTeledeclare" class="mt-4" id="teledeclaration">
           <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
           <p>
             Un bilan annuel relatif à la mise en œuvre des dispositions de la loi EGAlim, et notamment des objectifs
@@ -204,7 +204,7 @@
             </v-btn>
             <v-btn
               x-large
-              :outlined="isTeledeclarationYear"
+              :outlined="canTeledeclare"
               color="primary"
               class="ma-3"
               @click="saveDiagnostic"
@@ -218,7 +218,7 @@
               class="ma-3"
               @click="openTeledeclarationPreview"
               :disabled="!canSubmitTeledeclaration"
-              v-if="isTeledeclarationYear"
+              v-if="canTeledeclare"
             >
               <v-icon class="mr-2">$checkbox-circle-fill</v-icon>
               Valider et télédéclarer
@@ -226,7 +226,7 @@
           </div>
           <p
             class="text-caption amber--text text--darken-3 text-md-right mb-0 mx-3 mt-n1"
-            v-if="isTeledeclarationYear && !hasActiveTeledeclaration && !canSubmitTeledeclaration"
+            v-if="canTeledeclare && !hasActiveTeledeclaration && !canSubmitTeledeclaration"
           >
             <v-icon small color="amber darken-3">mdi-alert</v-icon>
             Données d'approvisionnement manquantes.
@@ -357,8 +357,8 @@ export default {
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
     },
-    isTeledeclarationYear() {
-      return this.diagnostic.year === this.teledeclarationYear
+    canTeledeclare() {
+      return window.ENABLE_TELEDECLARATION && this.diagnostic.year === this.teledeclarationYear
     },
     displayPurchaseHints() {
       return (
