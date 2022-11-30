@@ -38,19 +38,25 @@
               </v-btn>
             </v-col>
 
-            <div v-if="canTeledeclare">
-              <p v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration" class="text-caption ma-0 pl-4">
+            <div>
+              <p
+                v-if="isTeledeclarationPhase && !hasActiveTeledeclaration && !canSubmitTeledeclaration"
+                class="text-caption ma-0 pl-4"
+              >
                 <v-icon small>mdi-information</v-icon>
                 Vous pourrez télédéclarer ce diagnostic après avoir remplir les données d'approvisionnement
               </p>
-              <p v-else-if="!hasActiveTeledeclaration" class="text-body-2 pl-4 mb-0 d-md-flex align-center">
+              <p
+                v-else-if="isTeledeclarationPhase && !hasActiveTeledeclaration"
+                class="text-body-2 pl-4 mb-0 d-md-flex align-center"
+              >
                 <v-icon small color="amber darken-3">mdi-alert</v-icon>
                 &nbsp;Vous n'avez pas encore télédéclaré ce diagnostic -&nbsp;
                 <a color="primary" href="#teledeclaration">
                   télédéclarez-le
                 </a>
               </p>
-              <div v-else class="px-2 mt-2">
+              <div v-else-if="hasActiveTeledeclaration" class="px-2 mt-2">
                 <p class="text-caption mb-2">
                   <v-icon small>$checkbox-fill</v-icon>
                   Ce diagnostic a été télédéclaré {{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.
@@ -74,9 +80,10 @@
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
         </p>
         <div class="caption grey--text text--darken-1" v-if="hasActiveTeledeclaration">
-          <p class="mb-0">Une fois télédéclaré, vous ne pouvez plus modifier votre diagnostic.</p>
+          <p class="mb-2">Une fois télédéclaré, vous ne pouvez plus modifier votre diagnostic.</p>
           <TeledeclarationCancelDialog
             v-model="cancelDialog"
+            v-if="isTeledeclarationPhase"
             @cancel="cancelTeledeclaration"
             :diagnostic="diagnostic"
           />
@@ -176,7 +183,7 @@
           </DiagnosticExpansionPanel>
         </v-expansion-panels>
 
-        <div v-if="!hasActiveTeledeclaration && canTeledeclare" class="mt-4" id="teledeclaration">
+        <div v-if="!hasActiveTeledeclaration && isTeledeclarationPhase" class="mt-4" id="teledeclaration">
           <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
           <p>
             Un bilan annuel relatif à la mise en œuvre des dispositions de la loi EGAlim, et notamment des objectifs
@@ -204,7 +211,7 @@
             </v-btn>
             <v-btn
               x-large
-              :outlined="canTeledeclare"
+              :outlined="isTeledeclarationPhase"
               color="primary"
               class="ma-3"
               @click="saveDiagnostic"
@@ -218,7 +225,7 @@
               class="ma-3"
               @click="openTeledeclarationPreview"
               :disabled="!canSubmitTeledeclaration"
-              v-if="canTeledeclare"
+              v-if="isTeledeclarationPhase"
             >
               <v-icon class="mr-2">$checkbox-circle-fill</v-icon>
               Valider et télédéclarer
@@ -226,7 +233,7 @@
           </div>
           <p
             class="text-caption amber--text text--darken-3 text-md-right mb-0 mx-3 mt-n1"
-            v-if="canTeledeclare && !hasActiveTeledeclaration && !canSubmitTeledeclaration"
+            v-if="isTeledeclarationPhase && !hasActiveTeledeclaration && !canSubmitTeledeclaration"
           >
             <v-icon small color="amber darken-3">mdi-alert</v-icon>
             Données d'approvisionnement manquantes.
@@ -357,7 +364,7 @@ export default {
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
     },
-    canTeledeclare() {
+    isTeledeclarationPhase() {
       return window.ENABLE_TELEDECLARATION && this.diagnostic.year === this.teledeclarationYear
     },
     displayPurchaseHints() {
