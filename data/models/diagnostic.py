@@ -104,7 +104,7 @@ class Diagnostic(models.Model):
         choices=CentralKitchenDiagnosticMode.choices,
         blank=True,
         null=True,
-        verbose_name="Type de diagnostic pour la cuisine centrale",
+        verbose_name="seulement pertinent pour les cuisines centrales : Quelles données sont déclarées par cette cuisine centrale ?",
     )
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
