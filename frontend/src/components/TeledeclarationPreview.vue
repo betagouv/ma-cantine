@@ -23,7 +23,7 @@
                 </td>
                 <td class="text-left font-weight-bold"></td>
               </tr>
-              <tr v-for="item in approKeys" :key="item.param">
+              <tr v-for="item in approItems" :key="item.param">
                 <td class="text-left">{{ item.label }}</td>
                 <td class="text-right">
                   {{ (diagnostic[item.param] || "—") | toCurrency }}
@@ -89,7 +89,7 @@ export default {
         return this.canteen.centralKitchenDiagnostics.find((x) => x.year === this.diagnostic.year)
       return null
     },
-    showApproKeys() {
+    showApproItems() {
       if (this.canteen.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic) {
         return (
           this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "APPRO" &&
@@ -98,15 +98,15 @@ export default {
       }
       return true
     },
-    showAdditionalKeys() {
+    showAdditionalItems() {
       if (this.canteen.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic)
         return this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
       if (this.canteen.isCentralCuisine)
         return this.diagnostic.centralKitchenDiagnosticMode && this.diagnostic.centralKitchenDiagnosticMode !== "APPRO"
       return true
     },
-    approKeys() {
-      if (!this.showApproKeys) return []
+    approItems() {
+      if (!this.showApproItems) return []
       if (this.diagnostic.diagnosticType === "COMPLETE") {
         return [
           { param: "valueTotalHt", label: "Mes achats alimentaires total" },
@@ -339,7 +339,7 @@ export default {
       ]
     },
     additionalItems() {
-      if (!this.showAdditionalKeys) return []
+      if (!this.showAdditionalItems) return []
       return [
         {
           label: "Diagnostic sur le gaspillage alimentaire réalisé",
