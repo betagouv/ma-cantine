@@ -94,6 +94,8 @@
               v-model="userCopy.email"
               :rules="[validators.email]"
               validate-on-blur
+              @change="emailErrorMessages = []"
+              :error-messages="emailErrorMessages"
             />
           </v-col>
           <v-col cols="12" md="9">
@@ -166,6 +168,7 @@ export default {
       bypassLeaveWarning: false,
       jobOptions: Constants.Jobs,
       sourceOptions: Constants.UserSources,
+      emailErrorMessages: [],
     }
   },
   computed: {
@@ -213,7 +216,17 @@ export default {
           this.$router.push(nextRoute)
         })
         .catch((e) => {
-          this.$store.dispatch("notifyServerError", e)
+          if (e.jsonPromise) {
+            e.jsonPromise.then((json) => {
+              if (json.email) {
+                this.emailErrorMessages = json.email
+                return
+              }
+              this.$store.dispatch("notifyServerError", e)
+            })
+          } else {
+            this.$store.dispatch("notifyServerError", e)
+          }
         })
     },
     onProfilePhotoUploadClick() {
