@@ -18,6 +18,18 @@ class Teledeclaration(models.Model):
         SUBMITTED = "SUBMITTED", "Télédéclaré"
         CANCELLED = "CANCELLED", "Annulé"
 
+    class TeledeclarationMode(models.TextChoices):
+        SATELLITE_WITHOUT_APPRO = (
+            "SATELLITE_WITHOUT_APPRO",
+            "Cantine satellite dont les données d'appro sont déclarées par la cuisine centrale",
+        )
+        CENTRAL_APPRO = "CENTRAL_APPRO", "Cuisine centrale déclarant les données d'appro pour ses cuisines satellites"
+        CENTRAL_ALL = (
+            "CENTRAL_ALL",
+            "Cuisine centrale déclarant toutes les données EGAlim pour ses cuisines satellites",
+        )
+        SITE = "SITE", "Cantine déclarant ses propres données"
+
     # Fields that pertain to the teledeclaration. These fields
     # will not change and should contain all information to be
     # sent to the system that will treat the teledeclarations.
@@ -67,13 +79,16 @@ class Teledeclaration(models.Model):
         blank=True,
     )
 
-    # a TD can have this as true, as well as have some appro data of its own if, for example, the manager of the
-    # satellite canteen started completing a diagnostic and then the central kitchen decided to declare for its
-    # satellites. We are leaving it up to the team to interpret the data in this case.
-    uses_central_kitchen_appro = models.BooleanField(
+    # a TD can use SATELLITE_WITHOUT_APPRO mode, as well as have some appro data of its own if,
+    # for example, the manager of the satellite canteen started completing a diagnostic and then the
+    # central kitchen decided to declare for its satellites.
+    # We are leaving it up to the team to interpret the data in this case.
+    teledeclaration_mode = models.CharField(
+        max_length=255,
+        choices=TeledeclarationMode.choices,
+        verbose_name="mode de télédéclaration",
         null=True,
         blank=True,
-        verbose_name="Cantine satellite dont les données d'appro ont été prises en charge par la cuisine centrale",
     )
 
     @receiver(pre_delete, sender=Diagnostic)
@@ -288,10 +303,24 @@ class Teledeclaration(models.Model):
             "communicates_on_food_plan": diagnostic.communicates_on_food_plan,
             "communicates_on_food_quality": diagnostic.communicates_on_food_quality,
         }
-        is_central_cuisine = (
-            diagnostic.canteen.production_type == Canteen.ProductionType.CENTRAL
-            or diagnostic.canteen.production_type == Canteen.ProductionType.CENTRAL_SERVING
-        )
+        is_central_cuisine = diagnostic.canteen.is_central_cuisine
+
+        teledeclaration_mode = None
+        if uses_central_kitchen_appro:
+            teledeclaration_mode = Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+        elif (
+            is_central_cuisine
+            and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL
+        ):
+            teledeclaration_mode = Teledeclaration.TeledeclarationMode.CENTRAL_ALL
+        elif (
+            is_central_cuisine
+            and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO
+        ):
+            teledeclaration_mode = Teledeclaration.TeledeclarationMode.CENTRAL_APPRO
+        else:
+            teledeclaration_mode = Teledeclaration.TeledeclarationMode.SITE
+
         json_fields = {
             "version": version,
             "year": diagnostic.year,
@@ -300,17 +329,14 @@ class Teledeclaration(models.Model):
                 "name": canteen.name,
                 "siret": canteen.siret,
                 "city_insee_code": canteen.city_insee_code,
+                "production_type": canteen.production_type,
             },
             "applicant": {
                 "name": applicant.get_full_name(),
                 "email": applicant.email,
             },
-            "uses_central_kitchen_appro": uses_central_kitchen_appro,
             "central_kitchen_siret": diagnostic.canteen.central_producer_siret,
             "teledeclaration": {**json_appro_teledeclaration, **json_other_teledeclaration},
-            "central_kitchen_diagnostic_mode": diagnostic.central_kitchen_diagnostic_mode
-            if is_central_cuisine
-            else None,
         }
         return TeledeclarationFactory.create(
             applicant=applicant,
@@ -320,7 +346,7 @@ class Teledeclaration(models.Model):
             status=status,
             diagnostic=diagnostic,
             declared_data=json_fields,
-            uses_central_kitchen_appro=uses_central_kitchen_appro,
+            teledeclaration_mode=teledeclaration_mode,
         )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

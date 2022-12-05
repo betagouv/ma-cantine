@@ -522,4 +522,6 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
-        self.assertTrue(teledeclaration.uses_central_kitchen_appro)
+        self.assertEqual(
+            teledeclaration.teledeclaration_mode, Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+        )

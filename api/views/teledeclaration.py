@@ -154,25 +154,25 @@ class TeledeclarationPdfView(APIView):
             )
             central_kitchen_siret = declared_data.get("central_kitchen_siret", None)
             central_kitchen_name = None
-            if central_kitchen_siret:
+            if teledeclaration.teledeclaration_mode == Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO:
                 try:
                     central_kitchen_name = Canteen.objects.get(siret=central_kitchen_siret).name
-                except Exception:
+                except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
                     pass
 
             context = {
                 **declared_data["teledeclaration"],
                 **{
+                    # TODO: reuse diagnostic types from model?
                     "diagnostic_type": "complète" if is_complete else "simplifiée",
                     "year": teledeclaration.year,
                     "canteen_name": declared_data["canteen"]["name"],
                     "siret": declared_data["canteen"].get("siret", None),
                     "date": teledeclaration.creation_date,
                     "applicant": declared_data["applicant"]["name"],
-                    "uses_central_kitchen_appro": teledeclaration.uses_central_kitchen_appro,
+                    "teledeclaration_mode": teledeclaration.teledeclaration_mode,
                     "central_kitchen_siret": central_kitchen_siret,
                     "central_kitchen_name": central_kitchen_name,
-                    "central_kitchen_diagnostic_mode": declared_data.get("central_kitchen_diagnostic_mode", None),
                 },
             }
             html = template.render(context)

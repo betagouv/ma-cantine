@@ -58,9 +58,11 @@
         <h1>Justificatif pour télédéclaration {{ year }}</h1>
         <h2>Cantine {{ canteen_name }} (SIRET {{ siret }})</h2>
         <h3>Télédéclaration faite le {{ date|date:"l j F Y" }} par {{ applicant }}</h3>
-        <h3>
-            Vous avez choisi la télédéclaration {{ diagnostic_type }}.
-        </h3>
+        {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
+            <h3>
+                Vous avez choisi la télédéclaration {{ diagnostic_type }}.
+            </h3>
+        {% endif %}
 
         <p>
             Conformément à l’article 24 de la loi EGAlim, chaque établissement est tenu de
@@ -68,17 +70,15 @@
             d’approvisionnement sur l’année civile passée.
         </p>
 
-        {% if uses_central_kitchen_appro %}
+        {% if teledeclaration_mode == "SATELLITE_WITHOUT_APPRO" %}
         <p>
             Les données d'approvisionnement ont été déclarées par la cuisine centrale{% if central_kitchen_name %} « {{ central_kitchen_name }} »{% endif %}{% if central_kitchen_siret %} (SIRET : {{ central_kitchen_siret }}){% endif %}.
         </p>
-        {% endif %}
-        {% if central_kitchen_diagnostic_mode == "ALL" %}
+        {% elif teledeclaration_mode == "CENTRAL_ALL" %}
         <p>
             Vous avez choisi de déclarer ces données au nom de toutes vos cantines satellites.
         </p>
-        {% endif %}
-        {% if central_kitchen_diagnostic_mode == "APPRO" %}
+        {% elif teledeclaration_mode == "CENTRAL_APPRO" %}
         <p>
             Vous avez choisi de déclarer les données d'approvisionnement au nom de toutes vos cantines satellites.
         </p>
@@ -88,7 +88,7 @@
             {{ date|date:"l j F Y" }} via la plateforme numérique ma cantine :
         </p>
         <!-- SIMPLIFIED DECLARATION -->
-        {% if not uses_central_kitchen_appro %}
+        {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
             {% if not diagnostic_type == "complète" %}
             <ul>
                 <li>
@@ -561,7 +561,7 @@
             </ul>
             {% endif %}
         {% endif %}
-        {% if central_kitchen_diagnostic_mode != "APPRO" %}
+        {% if teledeclaration_mode != "CENTRAL_APPRO" %}
             <div class="other-measures">
                 <div>
                 {% if has_waste_diagnostic %}
