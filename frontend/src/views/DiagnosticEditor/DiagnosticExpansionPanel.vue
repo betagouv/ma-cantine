@@ -13,7 +13,7 @@
           </v-col>
           <v-col cols="5" class="text--secondary text-right pr-2 align-self-center align-self-center">
             <v-fade-transition leave-absolute>
-              <span v-if="!disabled && !open && formIsValid" key="0">
+              <span v-if="showSummary" key="0">
                 {{ summary }}
               </span>
               <span v-if="!open && !formIsValid" key="1" class="red--text">
@@ -44,6 +44,9 @@ export default {
       if (this.disabled) return "grey lighten-3"
       if (!this.open && !this.formIsValid) return "red lighten-5"
       return "white"
+    },
+    showSummary() {
+      return !this.disabled && !this.open && this.formIsValid
     },
   },
 }
