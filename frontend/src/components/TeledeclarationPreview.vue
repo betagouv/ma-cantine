@@ -99,10 +99,16 @@ export default {
       return true
     },
     showAdditionalItems() {
-      if (this.canteen.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic)
-        return this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
-      if (this.canteen.isCentralCuisine)
-        return this.diagnostic.centralKitchenDiagnosticMode && this.diagnostic.centralKitchenDiagnosticMode !== "APPRO"
+      const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
+
+      if (isSatellite) {
+        const centralKitchenDeclaresAll = this.centralKitchenDiagostic?.centralKitchenDiagnosticMode === "ALL"
+        return !centralKitchenDeclaresAll
+      } else if (this.canteen.isCentralCuisine) {
+        const onlyDeclaresApproData = this.diagnostic.centralKitchenDiagnosticMode === "APPRO"
+        return !onlyDeclaresApproData
+      }
+
       return true
     },
     approItems() {
