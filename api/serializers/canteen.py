@@ -136,6 +136,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "plastics_comments",
             "information_comments",
             "central_kitchen_diagnostics",
+            "is_central_cuisine",
         )
         fields = (
             "id",
@@ -174,6 +175,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "creation_mtm_source",
             "creation_mtm_campaign",
             "creation_mtm_medium",
+            "is_central_cuisine",
         )
 
     def __init__(self, *args, **kwargs):

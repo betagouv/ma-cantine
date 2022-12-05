@@ -84,16 +84,13 @@ export default {
         this.$emit("input", newValue)
       },
     },
-    isCentralCanteen() {
-      return this.canteen.productionType === "central_serving" || this.canteen.productionType === "central"
-    },
     centralKitchenDiagostic() {
-      if (this.diagnostic.year && this.canteen?.centralKitchenDiagnostics)
+      if (this.diagnostic.year && this.canteen.centralKitchenDiagnostics)
         return this.canteen.centralKitchenDiagnostics.find((x) => x.year === this.diagnostic.year)
       return null
     },
     showApproKeys() {
-      if (this.canteen?.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic) {
+      if (this.canteen.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic) {
         return (
           this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "APPRO" &&
           this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
@@ -102,9 +99,9 @@ export default {
       return true
     },
     showAdditionalKeys() {
-      if (this.canteen?.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic)
+      if (this.canteen.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic)
         return this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
-      if (this.isCentralCanteen)
+      if (this.canteen.isCentralCuisine)
         return this.diagnostic.centralKitchenDiagnosticMode && this.diagnostic.centralKitchenDiagnosticMode !== "APPRO"
       return true
     },

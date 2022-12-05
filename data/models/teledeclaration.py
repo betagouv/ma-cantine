@@ -119,14 +119,12 @@ class Teledeclaration(models.Model):
             try:
                 central_kitchen = Canteen.objects.get(siret=diagnostic.canteen.central_producer_siret)
                 existing_diagnostic = central_kitchen.diagnostic_set.get(year=diagnostic.year)
-                if central_kitchen.is_central_cuisine and (
-                    existing_diagnostic.central_kitchen_diagnostic_mode
-                    == Diagnostic.CentralKitchenDiagnosticMode.APPRO
-                    or existing_diagnostic.central_kitchen_diagnostic_mode
-                    == Diagnostic.CentralKitchenDiagnosticMode.ALL
-                ):
-                    return True
-            except Exception:
+                handles_satellite_data = existing_diagnostic.central_kitchen_diagnostic_mode in [
+                    Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                    Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                ]
+                return central_kitchen.is_central_cuisine and handles_satellite_data
+            except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned, Diagnostic.DoesNotExist):
                 pass
         return False
 
