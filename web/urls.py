@@ -5,7 +5,7 @@ from django.views.decorators.cache import cache_page
 from django.views.generic.base import RedirectView
 from django.urls import path
 from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
-from web.sitemaps import CanteenSitemap, BlogPostSitemap, WebSitemap
+from web.sitemaps import CanteenSitemap, BlogPostSitemap, WebSitemap, PartnerSitemap
 from web.views import (
     VueAppDisplayView,
     RegisterUserView,
@@ -19,6 +19,7 @@ from web.views import (
 sitemaps = {
     "canteens": CanteenSitemap,
     "blog": BlogPostSitemap,
+    "partners": PartnerSitemap,
     "other": WebSitemap,
 }
 

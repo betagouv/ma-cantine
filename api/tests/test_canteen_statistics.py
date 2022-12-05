@@ -37,7 +37,7 @@ class TestCanteenStatsApi(APITestCase):
             sectors=[school],
         )
         # this canteen will be included in the canteen count, but not the diagnostic count
-        #   which is used to calculate the measure success percentages
+        # which is used to calculate the measure success percentages
         out_of_date = CanteenFactory.create(
             region=region,
             publication_status=Canteen.PublicationStatus.PUBLISHED.value,
@@ -70,6 +70,7 @@ class TestCanteenStatsApi(APITestCase):
             value_egalim_others_ht=0,
             has_waste_diagnostic=True,
             waste_actions=["action1", "action2"],
+            has_donation_agreement=True,
             vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW,
             cooking_plastic_substituted=True,
             serving_plastic_substituted=True,
