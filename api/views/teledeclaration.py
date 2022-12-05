@@ -163,7 +163,6 @@ class TeledeclarationPdfView(APIView):
             context = {
                 **declared_data["teledeclaration"],
                 **{
-                    # TODO: reuse diagnostic types from model?
                     "diagnostic_type": "complète" if is_complete else "simplifiée",
                     "year": teledeclaration.year,
                     "canteen_name": declared_data["canteen"]["name"],
