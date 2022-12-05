@@ -693,9 +693,7 @@ class TestCanteenApi(APITestCase):
     @authenticate
     def test_get_central_kitchen_name(self):
         central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
-        satellite = CanteenFactory.create(
-            central_producer_siret=central_kitchen.siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
-        )
+        satellite = CanteenFactory.create(central_producer_siret=central_kitchen.siret)
         satellite.managers.add(authenticate.user)
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))

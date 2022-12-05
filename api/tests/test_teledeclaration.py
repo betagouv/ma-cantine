@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory
-from data.models import Teledeclaration, Diagnostic
+from data.models import Teledeclaration, Diagnostic, Canteen
 from .utils import authenticate
 
 
@@ -496,9 +496,9 @@ class TestTeledeclarationApi(APITestCase):
         gave the details.
         """
         user = authenticate.user
-        central_kitchen = CanteenFactory.create(production_type="central", siret="79300704800044")
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044")
         canteen = CanteenFactory.create(
-            production_type="site_cooked_elsewhere", central_producer_siret="79300704800044"
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="79300704800044"
         )
         canteen.managers.add(user)
 
@@ -506,15 +506,15 @@ class TestTeledeclarationApi(APITestCase):
             canteen=central_kitchen,
             year=2020,
             value_total_ht=100,
-            diagnostic_type="SIMPLE",
-            central_kitchen_diagnostic_mode="APPRO",
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
 
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
             year=2020,
             value_total_ht=None,
-            diagnostic_type="SIMPLE",
+            diagnostic_type=None,
         )
         payload = {"diagnosticId": diagnostic.id}
 

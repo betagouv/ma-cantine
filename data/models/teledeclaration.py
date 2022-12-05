@@ -67,6 +67,9 @@ class Teledeclaration(models.Model):
         blank=True,
     )
 
+    # a TD can have this as true, as well as have some appro data of its own if, for example, the manager of the
+    # satellite canteen started completing a diagnostic and then the central kitchen decided to declare for its
+    # satellites. We are leaving it up to the team to interpret the data in this case.
     uses_central_kitchen_appro = models.BooleanField(
         null=True,
         blank=True,
@@ -101,7 +104,7 @@ class Teledeclaration(models.Model):
             try:
                 central_kitchen = Canteen.objects.get(siret=diagnostic.canteen.central_producer_siret)
                 existing_diagnostic = central_kitchen.diagnostic_set.get(year=diagnostic.year)
-                if (
+                if central_kitchen.is_central_cuisine and (
                     existing_diagnostic.central_kitchen_diagnostic_mode
                     == Diagnostic.CentralKitchenDiagnosticMode.APPRO
                     or existing_diagnostic.central_kitchen_diagnostic_mode
