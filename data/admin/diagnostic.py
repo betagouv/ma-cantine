@@ -55,6 +55,7 @@ class DiagnosticAdmin(admin.ModelAdmin):
                     "canteen",
                     "year",
                     "diagnostic_type",
+                    "central_kitchen_diagnostic_mode",
                 )
             },
         ),

@@ -3,6 +3,7 @@
     <TeledeclarationPreview
       v-if="diagnostic"
       :diagnostic="diagnostic"
+      :canteen="originalCanteen"
       v-model="showTeledeclarationPreview"
       @teledeclare="submitTeledeclaration"
     />
@@ -40,14 +41,16 @@
 
             <div>
               <p
-                v-if="isTeledeclarationPhase && !hasActiveTeledeclaration && !canSubmitTeledeclaration"
+                v-if="
+                  isTeledeclarationPhase && !hasActiveTeledeclaration && !canSubmitTeledeclaration && showApproPanel
+                "
                 class="text-caption ma-0 pl-4"
               >
                 <v-icon small>mdi-information</v-icon>
                 Vous pourrez télédéclarer ce diagnostic après avoir remplir les données d'approvisionnement
               </p>
               <p
-                v-else-if="isTeledeclarationPhase && !hasActiveTeledeclaration"
+                v-else-if="isTeledeclarationPhase && !hasActiveTeledeclaration && showExpansionPanels"
                 class="text-body-2 pl-4 mb-0 d-md-flex align-center"
               >
                 <v-icon small color="amber darken-3">mdi-alert</v-icon>
@@ -76,7 +79,21 @@
           </v-row>
         </v-form>
 
-        <p class="caption grey--text text--darken-1" v-if="!hasActiveTeledeclaration">
+        <v-radio-group
+          v-model="diagnostic.centralKitchenDiagnosticMode"
+          :readonly="hasActiveTeledeclaration"
+          :disabled="hasActiveTeledeclaration"
+          class="mt-0"
+          v-if="isCentralCanteen"
+        >
+          <v-radio v-for="type in centralKitchenDiagnosticModes" :key="type.key" :label="type.label" :value="type.key">
+            <template v-slot:label>
+              <span class="grey--text text--darken-3">{{ type.label }}</span>
+            </template>
+          </v-radio>
+        </v-radio-group>
+
+        <p class="caption grey--text text--darken-1" v-if="!hasActiveTeledeclaration && showExpansionPanels">
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
         </p>
         <div class="caption grey--text text--darken-1" v-if="hasActiveTeledeclaration">
@@ -89,13 +106,24 @@
           />
         </div>
 
-        <v-expansion-panels class="mb-8" :disabled="!diagnosticIsUnique" :value="openedPanel">
+        <v-card v-if="dataDelegatedNotice" color="primary lighten-4" class="dsfr mb-6">
+          <v-card-title class="font-weight-bold">{{ dataDelegatedNotice.title }}</v-card-title>
+          <v-card-text>{{ dataDelegatedNotice.message }}</v-card-text>
+        </v-card>
+
+        <v-expansion-panels
+          class="mb-8"
+          :disabled="!diagnosticIsUnique"
+          :value="openedPanel"
+          v-if="showExpansionPanels"
+        >
           <DiagnosticExpansionPanel
             iconColour="red"
             icon="mdi-food-apple"
             heading="Plus de produits de qualité et durables dans nos assiettes"
             :summary="approSummary() || 'Incomplet'"
             :formIsValid="formIsValid.quality"
+            :disabled="!showApproPanel"
           >
             <v-form ref="quality" v-model="formIsValid.quality">
               <p>
@@ -138,6 +166,7 @@
             icon="mdi-offer"
             heading="Lutte contre le gaspillage alimentaire et dons alimentaires"
             :formIsValid="formIsValid.waste"
+            :disabled="!showNonApproPanels"
           >
             <v-form ref="waste" v-model="formIsValid.waste">
               <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen="originalCanteen" />
@@ -149,6 +178,7 @@
             icon="$leaf-fill"
             heading="Diversification des sources de protéines et menus végétariens"
             :formIsValid="formIsValid.diversification"
+            :disabled="!showNonApproPanels"
           >
             <v-form ref="diversification" v-model="formIsValid.diversification">
               <DiversificationMeasure
@@ -165,6 +195,7 @@
             heading="Substitution des plastiques"
             :summary="plasticSummary()"
             :formIsValid="formIsValid.plastic"
+            :disabled="!showNonApproPanels"
           >
             <v-form ref="plastic" v-model="formIsValid.plastic">
               <NoPlasticMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />
@@ -176,6 +207,7 @@
             icon="mdi-bullhorn"
             heading="Information des usagers et convives"
             :formIsValid="formIsValid.information"
+            :disabled="!showNonApproPanels"
           >
             <v-form ref="information" v-model="formIsValid.information">
               <InformationMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" />
@@ -183,7 +215,11 @@
           </DiagnosticExpansionPanel>
         </v-expansion-panels>
 
-        <div v-if="!hasActiveTeledeclaration && isTeledeclarationPhase" class="mt-4" id="teledeclaration">
+        <div
+          v-if="!hasActiveTeledeclaration && isTeledeclarationPhase && showExpansionPanels"
+          class="mt-4"
+          id="teledeclaration"
+        >
           <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
           <p>
             Un bilan annuel relatif à la mise en œuvre des dispositions de la loi EGAlim, et notamment des objectifs
@@ -195,16 +231,9 @@
             transmettre, avec votre accord, à la DGAL, direction du Ministère de l'agriculture en charge de
             l'élaboration de ce bilan.
           </p>
-          <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form">
-            <v-checkbox
-              :rules="[validators.checked]"
-              label="Je déclare sur l’honneur la véracité de mes informations"
-              :disabled="!canSubmitTeledeclaration"
-            ></v-checkbox>
-          </v-form>
         </div>
 
-        <v-sheet rounded color="grey lighten-4" v-if="!hasActiveTeledeclaration" class="pa-3">
+        <v-sheet rounded color="grey lighten-4" v-if="!hasActiveTeledeclaration && showExpansionPanels" class="pa-3">
           <div class="justify-md-end d-flex flex-column flex-md-row">
             <v-btn x-large outlined color="primary" class="ma-3" :to="{ name: 'ManagementPage' }">
               Annuler
@@ -280,7 +309,6 @@ export default {
         information: true,
         select: true,
       },
-      teledeclarationFormIsValid: true,
       openedPanel: null,
       cancelDialog: false,
       teledeclarationYear: lastYear(),
@@ -295,6 +323,16 @@ export default {
           key: "COMPLETE",
           label: "Télédéclaration - saisie détaillée",
           help: "Vous connaissez les labels et les familles de produits de vos achats",
+        },
+      ],
+      centralKitchenDiagnosticModes: [
+        {
+          key: "ALL",
+          label: "Je rentre les données concernant toutes les mesures EGAlim pour mes cantines satellites",
+        },
+        {
+          key: "APPRO",
+          label: "Je rentre seulement les données d'approvisionnement pour mes cantines satellites",
         },
       ],
       showTeledeclarationPreview: false,
@@ -359,7 +397,7 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return this.diagnostic.valueTotalHt > 0
+      return !this.showApproPanel || this.diagnostic.valueTotalHt > 0
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
@@ -377,6 +415,54 @@ export default {
     },
     extendedDiagnostic() {
       return this.diagnostic.diagnosticType === "COMPLETE"
+    },
+    isCentralCanteen() {
+      return (
+        this.originalCanteen.productionType === "central_serving" || this.originalCanteen.productionType === "central"
+      )
+    },
+    centralKitchenDiagostic() {
+      if (this.diagnostic.year && this.originalCanteen?.centralKitchenDiagnostics)
+        return this.originalCanteen.centralKitchenDiagnostics.find((x) => x.year === this.diagnostic.year)
+      return null
+    },
+    showApproPanel() {
+      if (this.originalCanteen.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic) {
+        return (
+          this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "APPRO" &&
+          this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
+        )
+      }
+      return true
+    },
+    showNonApproPanels() {
+      if (this.originalCanteen.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic)
+        return this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
+      if (this.isCentralCanteen)
+        return this.diagnostic.centralKitchenDiagnosticMode && this.diagnostic.centralKitchenDiagnosticMode !== "APPRO"
+      return true
+    },
+    showExpansionPanels() {
+      // can be false if all data is declared by the cuisine centrale
+      return this.showApproPanel || this.showNonApproPanels
+    },
+    dataDelegatedNotice() {
+      if (this.isCentralCanteen || this.showApproPanel) return null
+      const centralKitchen = this.originalCanteen.centralKitchenName
+        ? `« ${this.originalCanteen.centralKitchenName} »`
+        : ""
+      if (!this.showApproPanel && this.showNonApproPanels) {
+        return {
+          title: "Données d'approvisionnement déjà déclarées",
+          message: `Votre cuisine centrale ${centralKitchen} avec le siret ${this.originalCanteen.centralProducerSiret} a déjà renseigné les
+            données d'approvisionnement pour votre cantine. Les autres volets de la loi EGAlim vous restent accessibles.`,
+        }
+      }
+      return {
+        title: "Diagnostic déjà pris en compte par votre cuisine centrale",
+        message: `Votre cuisine centrale ${centralKitchen} avec le siret ${this.originalCanteen.centralProducerSiret} a déjà rempli un
+          diagnostic pour cette année pour votre cantine.`,
+      }
     },
   },
   beforeMount() {
@@ -578,19 +664,14 @@ export default {
     },
     openTeledeclarationPreview() {
       const diagnosticFormsAreValid = this.validateForms()
-      const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
       if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
-      if (!teledeclarationFormIsValid) return
       this.showTeledeclarationPreview = true
     },
     submitTeledeclaration() {
       const diagnosticFormsAreValid = this.validateForms()
-      const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
 
       if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
-
-      if (!teledeclarationFormIsValid) return
 
       const saveIfChanged = () => {
         if (!this.hasChanged) return Promise.resolve()
@@ -717,14 +798,3 @@ function hasValue(val) {
   }
 }
 </script>
-
-<style scoped>
-#teledeclaration-form >>> .v-input--checkbox .v-label.theme--light {
-  font-size: 16px;
-  font-weight: bold;
-  color: rgba(0, 0, 0, 0.87);
-}
-#teledeclaration-form >>> .v-input--checkbox .v-label.theme--light.v-label--is-disabled {
-  color: rgba(0, 0, 0, 0.37);
-}
-</style>

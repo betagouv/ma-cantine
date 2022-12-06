@@ -84,6 +84,10 @@ class Diagnostic(models.Model):
         EGG = "EGG", "D’œufs"
         READYMADE = "READYMADE", "Plats prêts à l'emploi"
 
+    class CentralKitchenDiagnosticMode(models.TextChoices):
+        APPRO = "APPRO", "Ce diagnostic concerne les données d'approvisionnement de toutes les cantines satellites"
+        ALL = "ALL", "Ce diagnostic concerne toutes les données des cantines satellites"
+
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
     diagnostic_type = models.CharField(
@@ -92,6 +96,15 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Type de diagnostic (simplifié, complet)",
+    )
+
+    # Relevant only for central cuisines
+    central_kitchen_diagnostic_mode = models.CharField(
+        max_length=255,
+        choices=CentralKitchenDiagnosticMode.choices,
+        blank=True,
+        null=True,
+        verbose_name="seulement pertinent pour les cuisines centrales : Quelles données sont déclarées par cette cuisine centrale ?",
     )
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
