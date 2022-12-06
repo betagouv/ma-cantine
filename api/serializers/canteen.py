@@ -102,6 +102,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "sectors",
             "user_can_view",
+            "publication_status",
         )
 
     def get_user_can_view(self, obj):
