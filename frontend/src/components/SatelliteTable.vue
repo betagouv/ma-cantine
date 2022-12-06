@@ -62,6 +62,21 @@
           <span class="d-sr-only">{{ item.name }}</span>
         </v-btn>
       </template>
+      <template v-slot:[`item.publicationStatus`]="{ item }">
+        <span v-if="item.publicationStatus === 'draft'">Non publié</span>
+        <router-link
+          :to="{
+            name: 'CanteenPage',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(item) },
+          }"
+          v-else-if="item.publicationStatus === 'published'"
+          target="_blank"
+        >
+          Publié
+          <span class="d-sr-only">- page pour {{ item.name }}</span>
+          <v-icon small color="primary">mdi-open-in-new</v-icon>
+        </router-link>
+      </template>
       <template v-slot:[`no-data`]>
         Vous n'avez pas renseigné des satellites
       </template>
@@ -113,8 +128,7 @@ export default {
           { text: "Nom", value: "name" },
           { text: "SIRET", value: "siret" },
           { text: "Couverts par jour", value: "dailyMealCount" },
-          // TODO: shouldn't be able to sort on this, since there is no header text
-          { text: "", value: "userCanView" },
+          { text: "", value: "userCanView", sortable: false },
         ]
       },
     },
@@ -264,6 +278,10 @@ export default {
       this.addWatchers()
       this.$emit("mountedAndFetched")
     })
+  },
+  created() {
+    // this fixes App.vue setting the title back on route change
+    this.$route.meta.title = document.title
   },
 }
 /*

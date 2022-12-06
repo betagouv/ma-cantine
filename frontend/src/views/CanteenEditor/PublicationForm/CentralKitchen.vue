@@ -5,7 +5,6 @@
       « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
       <b>uniquement les lieux de restauration recevant des convives.</b>
     </p>
-    <!-- TODO: more encouragement to complete satellite list if number registered < number declared -->
     <p>
       Vous pouvez
       <router-link :to="{ name: 'NewCanteen' }">ajouter une cantine satellite</router-link>
@@ -19,9 +18,6 @@
         votre cuisine centrale reçoit aussi des convives sur place.
       </router-link>
     </p>
-    <!-- TODO: add mass publish/unpublish button in next PR -->
-    <!-- TODO: does central publish itself if not a site? -->
-    <!-- TODO: refine wording for central_serving -->
     <SatelliteTable
       ref="satelliteTable"
       :headers="satelliteTableHeaders"
@@ -63,9 +59,8 @@ export default {
       satelliteTableHeaders: [
         { text: "Nom", value: "name" },
         { text: "SIRET", value: "siret" },
-        // TODO: translate the value and link to publication page?
         { text: "Publiée ?", value: "publicationStatus" },
-        { text: "", value: "userCanView" },
+        { text: "", value: "userCanView", sortable: false },
       ],
     }
   },
