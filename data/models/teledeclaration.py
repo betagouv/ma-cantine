@@ -1,7 +1,12 @@
+import logging
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from data.models import Canteen, Diagnostic
+
+logger = logging.getLogger(__name__)
 
 
 class Teledeclaration(models.Model):
@@ -12,6 +17,18 @@ class Teledeclaration(models.Model):
     class TeledeclarationStatus(models.TextChoices):
         SUBMITTED = "SUBMITTED", "Télédéclaré"
         CANCELLED = "CANCELLED", "Annulé"
+
+    class TeledeclarationMode(models.TextChoices):
+        SATELLITE_WITHOUT_APPRO = (
+            "SATELLITE_WITHOUT_APPRO",
+            "Cantine satellite dont les données d'appro sont déclarées par la cuisine centrale",
+        )
+        CENTRAL_APPRO = "CENTRAL_APPRO", "Cuisine centrale déclarant les données d'appro pour ses cuisines satellites"
+        CENTRAL_ALL = (
+            "CENTRAL_ALL",
+            "Cuisine centrale déclarant toutes les données EGAlim pour ses cuisines satellites",
+        )
+        SITE = "SITE", "Cantine déclarant ses propres données"
 
     # Fields that pertain to the teledeclaration. These fields
     # will not change and should contain all information to be
@@ -62,6 +79,27 @@ class Teledeclaration(models.Model):
         blank=True,
     )
 
+    # a TD can use SATELLITE_WITHOUT_APPRO mode, as well as have some appro data of its own if,
+    # for example, the manager of the satellite canteen started completing a diagnostic and then the
+    # central kitchen decided to declare for its satellites.
+    # We are leaving it up to the team to interpret the data in this case.
+    teledeclaration_mode = models.CharField(
+        max_length=255,
+        choices=TeledeclarationMode.choices,
+        verbose_name="mode de télédéclaration",
+        null=True,
+        blank=True,
+    )
+
+    @receiver(pre_delete, sender=Diagnostic)
+    def cancel_teledeclaration(sender, instance, **kwargs):
+        try:
+            teledeclaration = Teledeclaration.objects.get(diagnostic=instance)
+            teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
+            teledeclaration.save()
+        except Exception:
+            pass
+
     def clean(self):
         """
         Verify there is only one submitted declaration per year/canteen
@@ -75,18 +113,37 @@ class Teledeclaration(models.Model):
         return super().clean()
 
     @staticmethod
-    def validateDiagnostic(diagnostic):
-        if not diagnostic.value_total_ht:
+    def should_use_central_kitchen_appro(diagnostic):
+        is_satellite = diagnostic.canteen.production_type == Canteen.ProductionType.ON_SITE_CENTRAL
+        if is_satellite and diagnostic.canteen.central_producer_siret:
+            try:
+                central_kitchen = Canteen.objects.get(siret=diagnostic.canteen.central_producer_siret)
+                existing_diagnostic = central_kitchen.diagnostic_set.get(year=diagnostic.year)
+                handles_satellite_data = existing_diagnostic.central_kitchen_diagnostic_mode in [
+                    Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                    Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                ]
+                return central_kitchen.is_central_cuisine and handles_satellite_data
+            except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned, Diagnostic.DoesNotExist):
+                pass
+        return False
+
+    @staticmethod
+    def validate_diagnostic(diagnostic):
+        check_total_value = not Teledeclaration.should_use_central_kitchen_appro(diagnostic)
+        if check_total_value and not diagnostic.value_total_ht:
             raise ValidationError("Données d'approvisionnement manquantes")
 
     @staticmethod
-    def createFromDiagnostic(diagnostic, applicant, status=None):
+    def create_from_diagnostic(diagnostic, applicant, status=None):
         """
         Create a teledeclaration object from a diagnostic
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
-        version = "5"  # Helps identify which data will be present. Use incremental int values
+        version = "6"  # Helps identify which data will be present. Use incremental int values
+        # Version 6 - allows partial teledeclarations for satellite canteens when the central cuisine has declared for them
+
         status = status or Teledeclaration.TeledeclarationStatus.SUBMITTED
         canteen = diagnostic.canteen
         simplified_appro_fields = [
@@ -224,10 +281,12 @@ class Teledeclaration(models.Model):
             else simplified_appro_fields
         )
         json_appro_teledeclaration = {}
-        for prop in appro_fields:
-            json_appro_teledeclaration[prop] = (
-                float(getattr(diagnostic, prop)) if getattr(diagnostic, prop) is not None else None
-            )
+        uses_central_kitchen_appro = Teledeclaration.should_use_central_kitchen_appro(diagnostic)
+        if not uses_central_kitchen_appro:
+            for prop in appro_fields:
+                json_appro_teledeclaration[prop] = (
+                    float(getattr(diagnostic, prop)) if getattr(diagnostic, prop) is not None else None
+                )
         json_other_teledeclaration = {
             "diagnostic_type": diagnostic.diagnostic_type or "Unknown",
             "has_waste_diagnostic": diagnostic.has_waste_diagnostic,
@@ -242,6 +301,24 @@ class Teledeclaration(models.Model):
             "communicates_on_food_plan": diagnostic.communicates_on_food_plan,
             "communicates_on_food_quality": diagnostic.communicates_on_food_quality,
         }
+        is_central_cuisine = diagnostic.canteen.is_central_cuisine
+
+        teledeclaration_mode = None
+        if uses_central_kitchen_appro:
+            teledeclaration_mode = Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+        elif (
+            is_central_cuisine
+            and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL
+        ):
+            teledeclaration_mode = Teledeclaration.TeledeclarationMode.CENTRAL_ALL
+        elif (
+            is_central_cuisine
+            and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO
+        ):
+            teledeclaration_mode = Teledeclaration.TeledeclarationMode.CENTRAL_APPRO
+        else:
+            teledeclaration_mode = Teledeclaration.TeledeclarationMode.SITE
+
         json_fields = {
             "version": version,
             "year": diagnostic.year,
@@ -250,11 +327,13 @@ class Teledeclaration(models.Model):
                 "name": canteen.name,
                 "siret": canteen.siret,
                 "city_insee_code": canteen.city_insee_code,
+                "production_type": canteen.production_type,
             },
             "applicant": {
                 "name": applicant.get_full_name(),
                 "email": applicant.email,
             },
+            "central_kitchen_siret": diagnostic.canteen.central_producer_siret,
             "teledeclaration": {**json_appro_teledeclaration, **json_other_teledeclaration},
         }
         return TeledeclarationFactory.create(
@@ -265,6 +344,7 @@ class Teledeclaration(models.Model):
             status=status,
             diagnostic=diagnostic,
             declared_data=json_fields,
+            teledeclaration_mode=teledeclaration_mode,
         )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

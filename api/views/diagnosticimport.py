@@ -159,8 +159,8 @@ class ImportDiagnosticsView(ABC, APIView):
 
     def _teledeclare_diagnostic(self, diagnostic):
         try:
-            Teledeclaration.validateDiagnostic(diagnostic)
-            Teledeclaration.createFromDiagnostic(diagnostic, self.request.user)
+            Teledeclaration.validate_diagnostic(diagnostic)
+            Teledeclaration.create_from_diagnostic(diagnostic, self.request.user)
             self.teledeclarations += 1
         except Exception:
             pass

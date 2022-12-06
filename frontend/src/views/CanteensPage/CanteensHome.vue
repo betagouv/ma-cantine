@@ -139,12 +139,12 @@
           </v-col>
         </v-row>
         <v-row class="align-end mt-0">
-          <v-col cols="12" sm="8" md="5">
+          <v-col cols="12" sm="8" md="6">
             <label class="text-body-2">
               Dans les assiettes, part de...
             </label>
-            <div class="d-flex mt-n1">
-              <v-col class="pa-0 pr-1">
+            <div class="d-flex align-stretch mt-1">
+              <v-col class="pa-0 pr-1 d-flex flex-column">
                 <label
                   :class="{
                     caption: true,
@@ -155,6 +155,7 @@
                 >
                   bio minimum
                 </label>
+                <v-spacer></v-spacer>
                 <DsfrTextField
                   :value="appliedFilters.minBio"
                   ref="minBio"
@@ -166,7 +167,7 @@
                   aria-describedby="value-percentages-bio"
                 />
               </v-col>
-              <v-col class="pa-0 pl-1">
+              <v-col class="pa-0 pl-1 d-flex flex-column">
                 <label
                   :class="{
                     caption: true,
@@ -177,6 +178,7 @@
                 >
                   bio, qualité et durables min
                 </label>
+                <v-spacer></v-spacer>
                 <DsfrTextField
                   :value="appliedFilters.minCombined"
                   ref="minCombined"

@@ -18,7 +18,7 @@
           <template v-slot:default="{ hover }">
             <v-card
               :elevation="hover ? 6 : 2"
-              :to="{ name: 'DiagnosticImportPage', params: { importLevel: type.key } }"
+              :to="{ name: 'DiagnosticImportPage', params: { importUrlSlug: type.urlSlug } }"
               class="fill-height pa-4 d-flex flex-column hover-transition"
             >
               <v-icon :x-large="$vuetify.breakpoint.mdAndUp" class="pt-4 pb-1 align-self-center" color="primary">

@@ -1,18 +1,15 @@
 <template>
   <div>
-    <DashboardPage v-if="diagnostics" :diagnostics="diagnostics" />
-    <EmptyDiagnosticPage v-else />
+    <DashboardPage :diagnostics="diagnostics" />
   </div>
 </template>
 
 <script>
-import EmptyDiagnosticPage from "@/views/KeyMeasuresPage/EmptyDiagnosticPage"
 import DashboardPage from "@/views/KeyMeasuresPage/DashboardPage"
 import { diagnosticsMap } from "@/utils"
 
 export default {
   components: {
-    EmptyDiagnosticPage,
     DashboardPage,
   },
   computed: {

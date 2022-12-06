@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from xhtml2pdf import pisa
-from data.models import Diagnostic, Teledeclaration
+from data.models import Diagnostic, Teledeclaration, Canteen
 from api.serializers import FullDiagnosticSerializer
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope
 from .utils import camelize
@@ -68,12 +68,12 @@ class TeledeclarationCreateView(APIView):
             raise PermissionDenied()
 
         try:
-            Teledeclaration.validateDiagnostic(diagnostic)
+            Teledeclaration.validate_diagnostic(diagnostic)
         except DjangoValidationError as e:
             raise ValidationError(e.message) from e
 
         try:
-            td = Teledeclaration.createFromDiagnostic(diagnostic, user)
+            td = Teledeclaration.create_from_diagnostic(diagnostic, user)
             return td
         except DjangoValidationError as e:
             if hasattr(e, "message") and e.message == "Données d'approvisionnement manquantes":
@@ -152,6 +152,14 @@ class TeledeclarationPdfView(APIView):
             is_complete = (
                 declared_data["teledeclaration"].get("diagnostic_type", None) == Diagnostic.DiagnosticType.COMPLETE
             )
+            central_kitchen_siret = declared_data.get("central_kitchen_siret", None)
+            central_kitchen_name = None
+            if teledeclaration.teledeclaration_mode == Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO:
+                try:
+                    central_kitchen_name = Canteen.objects.get(siret=central_kitchen_siret).name
+                except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
+                    pass
+
             context = {
                 **declared_data["teledeclaration"],
                 **{
@@ -161,6 +169,9 @@ class TeledeclarationPdfView(APIView):
                     "siret": declared_data["canteen"].get("siret", None),
                     "date": teledeclaration.creation_date,
                     "applicant": declared_data["applicant"]["name"],
+                    "teledeclaration_mode": teledeclaration.teledeclaration_mode,
+                    "central_kitchen_siret": central_kitchen_siret,
+                    "central_kitchen_name": central_kitchen_name,
                 },
             }
             html = template.render(context)

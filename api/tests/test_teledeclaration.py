@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory
-from data.models import Teledeclaration, Diagnostic
+from data.models import Teledeclaration, Diagnostic, Canteen
 from .utils import authenticate
 
 
@@ -75,7 +75,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, manager)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -89,7 +89,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, manager)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -110,7 +110,7 @@ class TestTeledeclarationApi(APITestCase):
         create a teledeclaration
         """
         user = authenticate.user
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory.create(central_producer_siret=None)
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2020, value_total_ht=None, diagnostic_type="SIMPLE"
@@ -221,7 +221,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -233,6 +233,22 @@ class TestTeledeclarationApi(APITestCase):
         self.assertIsNone(body["teledeclaration"])
 
     @authenticate
+    def test_diagnostic_deletion(self):
+        """
+        If the diagnostic used for the teledeclaration is deleted, the teledeclaration
+        should be cancelled
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+
+        diagnostic.delete()
+        teledeclaration.refresh_from_db()
+        self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.CANCELLED)
+        self.assertIsNone(teledeclaration.diagnostic)
+
+    @authenticate
     def test_generate_pdf(self):
         """
         The user can get a justificatif in PDF for a teledeclaration
@@ -240,7 +256,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, authenticate.user)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -283,7 +299,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create(siret="12345678912345")
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        Teledeclaration.createFromDiagnostic(diagnostic, user)
+        Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -299,7 +315,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create(siret="")
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        Teledeclaration.createFromDiagnostic(diagnostic, user)
+        Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -424,14 +440,14 @@ class TestTeledeclarationApi(APITestCase):
         not_my_canteen = CanteenFactory.create()
 
         td_diagnostic = DiagnosticFactory.create(canteen=canteen_with_td)
-        Teledeclaration.createFromDiagnostic(td_diagnostic, authenticate.user)
+        Teledeclaration.create_from_diagnostic(td_diagnostic, authenticate.user)
 
         old_td_diagnostic = DiagnosticFactory.create(canteen=canteen_with_td_last_year, year=2020)
-        Teledeclaration.createFromDiagnostic(old_td_diagnostic, authenticate.user)
+        Teledeclaration.create_from_diagnostic(old_td_diagnostic, authenticate.user)
         current_non_td_diagnostic = DiagnosticFactory.create(canteen=canteen_with_td_last_year, year=2021)
 
         diag_with_cancelled_td = DiagnosticFactory.create(canteen=canteen_with_cancelled_td)
-        Teledeclaration.createFromDiagnostic(
+        Teledeclaration.create_from_diagnostic(
             diag_with_cancelled_td, authenticate.user, Teledeclaration.TeledeclarationStatus.CANCELLED
         )
 
@@ -472,3 +488,40 @@ class TestTeledeclarationApi(APITestCase):
         )
         self.assertEqual(failures[str(diagnostic_ids[3])], "Vous n'avez pas la permission d'effectuer cette action.")
         self.assertEqual(failures[str(not_a_diag_id)], "Vous n'avez pas la permission d'effectuer cette action.")
+
+    @authenticate
+    def test_create_incomplete_diagnostic_central_kitchen(self):
+        """
+        A diagnostic without total value HT can be teledeclared if a central kitchen
+        gave the details.
+        """
+        user = authenticate.user
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044")
+        canteen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="79300704800044"
+        )
+        canteen.managers.add(user)
+
+        DiagnosticFactory.create(
+            canteen=central_kitchen,
+            year=2020,
+            value_total_ht=100,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen,
+            year=2020,
+            value_total_ht=None,
+            diagnostic_type=None,
+        )
+        payload = {"diagnosticId": diagnostic.id}
+
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
+        self.assertEqual(
+            teledeclaration.teledeclaration_mode, Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+        )

@@ -373,6 +373,7 @@ export default Object.freeze({
   DiagnosticImportLevels: [
     {
       key: "NONE",
+      urlSlug: "cantines-seules",
       title: "Importer des cantines sans diagnostic",
       label: "Sans diagnostic",
       help: "Vous voulez importer des cantines sans données d'approvisionnement",
@@ -380,6 +381,7 @@ export default Object.freeze({
     },
     {
       key: "SIMPLE",
+      urlSlug: "cantines-et-diagnostics-simples",
       title: "Importer des cantines et diagnostics simples",
       label: "Diagnostic simple",
       help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
@@ -387,6 +389,7 @@ export default Object.freeze({
     },
     {
       key: "COMPLETE",
+      urlSlug: "cantines-et-diagnostics-complets",
       title: "Importer des cantines et diagnostics complets",
       label: "Diagnostic complet",
       help: "Vous connaissez les labels et les familles de produits de vos achats",

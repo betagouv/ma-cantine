@@ -1,9 +1,12 @@
+import logging
 from rest_framework import serializers
 from drf_base64.fields import Base64ImageField
-from data.models import Canteen, Sector, CanteenImage
+from data.models import Canteen, Sector, CanteenImage, Diagnostic
 from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer
 from .user import CanteenManagerSerializer
 from .managerinvitation import ManagerInvitationSerializer
+
+logger = logging.getLogger(__name__)
 
 
 class CanteenImageSerializer(serializers.ModelSerializer):
@@ -116,6 +119,8 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     managers = CanteenManagerSerializer(many=True, read_only=True)
     manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
+    central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
+    central_kitchen_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -131,6 +136,8 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "diversification_comments",
             "plastics_comments",
             "information_comments",
+            "central_kitchen_diagnostics",
+            "is_central_cuisine",
         )
         fields = (
             "id",
@@ -139,12 +146,14 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "city_insee_code",
             "postal_code",
             "sectors",
+            "central_kitchen_diagnostics",
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
             "satellite_canteens_count",
             "siret",
             "central_producer_siret",
+            "central_kitchen_name",
             "management_type",
             "production_type",
             "diagnostics",
@@ -167,6 +176,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "creation_mtm_source",
             "creation_mtm_campaign",
             "creation_mtm_medium",
+            "is_central_cuisine",
         )
 
     def __init__(self, *args, **kwargs):
@@ -206,6 +216,45 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             canteen_image_serializer.update(canteen.images.all(), image_validated_data)
 
         return canteen
+
+    def get_central_kitchen_diagnostics(self, obj):
+        # Ideally we would also check the status of the satellite canteen and
+        # the central cuisine, for now we omit this check. For now it is the
+        # responsibility of the frontend to use this information.
+        if not obj.central_producer_siret:
+            return None
+        try:
+            central_kitchen = Canteen.objects.get(siret=obj.central_producer_siret)
+            diagnostics = central_kitchen.diagnostic_set.filter(
+                central_kitchen_diagnostic_mode__in=[
+                    Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                    Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                ]
+            ).only("year", "central_kitchen_diagnostic_mode")
+            return [
+                {"year": diag.year, "central_kitchen_diagnostic_mode": diag.central_kitchen_diagnostic_mode}
+                for diag in diagnostics
+            ]
+        except Canteen.DoesNotExist:
+            return None
+        except Canteen.MultipleObjectsReturned as e:
+            logger.exception(f"Multiple canteens returned when obtaining the central_producer_siret field {e}")
+            return None
+
+    def get_central_kitchen_name(self, obj):
+        # Ideally we would also check the status of the satellite canteen and
+        # the central cuisine, for now we omit this check. For now it is the
+        # responsibility of the frontend to use this information.
+        if not obj.central_producer_siret:
+            return None
+        try:
+            central_kitchen = Canteen.objects.get(siret=obj.central_producer_siret)
+            return central_kitchen.name
+        except Canteen.DoesNotExist:
+            return None
+        except Canteen.MultipleObjectsReturned as e:
+            logger.exception(f"Multiple canteens returned when obtaining the central_kitchen_name field {e}")
+            return None
 
 
 class CanteenPreviewSerializer(serializers.ModelSerializer):

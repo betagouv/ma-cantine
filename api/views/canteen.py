@@ -755,8 +755,8 @@ class CanteenStatisticsView(APIView):
         data["sustainable_percent"] = int((agg["sustainable_share__avg"] or 0) * 100)
 
         # --- badges ---
-        total_diag = diagnostics
-        total_diag = total_diag.count()
+        total_diag = diagnostics.count()
+        data["diagnostics_count"] = total_diag
         data["approPercent"] = 0
         data["wastePercent"] = 0
         data["diversificationPercent"] = 0

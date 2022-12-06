@@ -25,7 +25,6 @@
             label="SIRET"
             v-model="canteen.siret"
             :rules="[validators.length(14), validators.luhn]"
-            @blur="getCanteenBySiret"
             labelClasses="body-2 mb-2"
           />
           <p class="caption mt-1 ml-2">
@@ -340,16 +339,6 @@
       </div>
     </v-form>
 
-    <v-dialog v-model="siretQueryInProgress" false width="300">
-      <v-card class="py-4">
-        <v-card-text>
-          Recherche des données en cours...
-          <br />
-          <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
     <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
       <v-spacer></v-spacer>
       <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
@@ -438,7 +427,6 @@ export default {
         { text: "Privé", value: "private" },
       ],
       user,
-      siretQueryInProgress: false,
       // contact forms
       fromEmail: user.email,
       fromName: `${user.firstName} ${user.lastName}`,
@@ -532,53 +520,6 @@ export default {
     window.removeEventListener("beforeunload", this.handleUnload)
   },
   methods: {
-    getCanteenBySiret() {
-      if (!this.canteen.siret) {
-        return
-      } else if (validators.length(14)(this.canteen.siret) !== true || validators.luhn(this.canteen.siret) !== true) {
-        return
-      }
-      if (this.canteen.name && this.cityAutocompleteChoice) {
-        return // do not override user-entered data
-      }
-      this.siretQueryInProgress = true
-      const getInfo = function() {
-        fetch(`https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/${this.canteen.siret}`)
-          .then((response) => response.json())
-          .then((body) => {
-            if (body.etablissement) {
-              if (!this.canteen.name) {
-                let name
-                if (body.etablissement.enseigne_1) {
-                  name = body.etablissement.enseigne_1
-                } else if (body.etablissement.unite_legale?.denomination) {
-                  name = body.etablissement.unite_legale.denomination
-                }
-                this.canteen.name = name
-              }
-
-              if (!this.cityAutocompleteChoice && body.etablissement.geo_id) {
-                this.canteen.postalCode = body.etablissement.code_postal
-                this.canteen.cityInseeCode = body.etablissement.code_commune
-                return fetch(`https://plateforme.adresse.data.gouv.fr/lookup/${body.etablissement.geo_id}`)
-              }
-            }
-          })
-          .then((response) => response.json())
-          .then((body) => {
-            this.canteen.city = body.commune.nom
-            this.canteen.department = body.commune.departement.code
-            // if this lookup fails, the choice will not be populated, making the user pick themselves
-            // this is the desired behaviour, since not all location data will be given otherwise
-            this.populateCityAutocomplete()
-            this.siretQueryInProgress = false
-          })
-          .catch(() => {
-            this.siretQueryInProgress = false
-          })
-      }.bind(this)
-      setTimeout(getInfo, 800)
-    },
     saveCanteen(e, bypassTechnicalControl = false) {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch("notifyRequiredFieldsError")
