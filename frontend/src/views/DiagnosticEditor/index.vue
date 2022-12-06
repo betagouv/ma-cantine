@@ -103,9 +103,9 @@
           />
         </div>
 
-        <v-card v-if="infoNotice" color="primary lighten-4" class="dsfr mb-6">
-          <v-card-title class="font-weight-bold">{{ infoNotice.title }}</v-card-title>
-          <v-card-text>{{ infoNotice.message }}</v-card-text>
+        <v-card v-if="dataDelegatedNotice" color="primary lighten-4" class="dsfr mb-6">
+          <v-card-title class="font-weight-bold">{{ dataDelegatedNotice.title }}</v-card-title>
+          <v-card-text>{{ dataDelegatedNotice.message }}</v-card-text>
         </v-card>
 
         <v-expansion-panels
@@ -440,9 +440,10 @@ export default {
       return true
     },
     showExpansionPanels() {
+      // can be false if all data is declared by the cuisine centrale
       return this.showApproPanel || this.showNonApproPanels
     },
-    infoNotice() {
+    dataDelegatedNotice() {
       if (this.isCentralCanteen || this.showApproPanel) return null
       const centralKitchen = this.originalCanteen.centralKitchenName
         ? `« ${this.originalCanteen.centralKitchenName} »`
