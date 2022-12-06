@@ -96,6 +96,7 @@ export default {
       return diagnostic.teledeclaration && diagnostic.teledeclaration.status === "SUBMITTED"
     },
     shouldTeledeclare(diagnostic) {
+      if (!window.ENABLE_TELEDECLARATION) return false
       return (
         (!diagnostic.teledeclaration || diagnostic.teledeclaration.status == "CANCELLED") &&
         diagnostic.year === lastYear()

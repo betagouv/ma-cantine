@@ -17,3 +17,8 @@ def enable_xp_vege():
 @register.simple_tag
 def enable_partners():
     return getattr(settings, "ENABLE_PARTNERS", "")
+
+
+@register.simple_tag
+def enable_teledeclaration():
+    return getattr(settings, "ENABLE_TELEDECLARATION", "")

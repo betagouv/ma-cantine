@@ -39,16 +39,18 @@
               </v-btn>
             </v-col>
 
-            <div v-if="isTeledeclarationYear">
+            <div>
               <p
-                v-if="!hasActiveTeledeclaration && !canSubmitTeledeclaration && showApproPanel"
+                v-if="
+                  isTeledeclarationPhase && !hasActiveTeledeclaration && !canSubmitTeledeclaration && showApproPanel
+                "
                 class="text-caption ma-0 pl-4"
               >
                 <v-icon small>mdi-information</v-icon>
                 Vous pourrez télédéclarer ce diagnostic après avoir remplir les données d'approvisionnement
               </p>
               <p
-                v-else-if="!hasActiveTeledeclaration && showExpansionPanels"
+                v-else-if="isTeledeclarationPhase && !hasActiveTeledeclaration && showExpansionPanels"
                 class="text-body-2 pl-4 mb-0 d-md-flex align-center"
               >
                 <v-icon small color="amber darken-3">mdi-alert</v-icon>
@@ -95,9 +97,10 @@
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
         </p>
         <div class="caption grey--text text--darken-1" v-if="hasActiveTeledeclaration">
-          <p class="mb-0">Une fois télédéclaré, vous ne pouvez plus modifier votre diagnostic.</p>
+          <p class="mb-2">Une fois télédéclaré, vous ne pouvez plus modifier votre diagnostic.</p>
           <TeledeclarationCancelDialog
             v-model="cancelDialog"
+            v-if="isTeledeclarationPhase"
             @cancel="cancelTeledeclaration"
             :diagnostic="diagnostic"
           />
@@ -213,7 +216,7 @@
         </v-expansion-panels>
 
         <div
-          v-if="!hasActiveTeledeclaration && isTeledeclarationYear && showExpansionPanels"
+          v-if="!hasActiveTeledeclaration && isTeledeclarationPhase && showExpansionPanels"
           class="mt-4"
           id="teledeclaration"
         >
@@ -237,7 +240,7 @@
             </v-btn>
             <v-btn
               x-large
-              :outlined="isTeledeclarationYear"
+              :outlined="isTeledeclarationPhase"
               color="primary"
               class="ma-3"
               @click="saveDiagnostic"
@@ -251,7 +254,7 @@
               class="ma-3"
               @click="openTeledeclarationPreview"
               :disabled="!canSubmitTeledeclaration"
-              v-if="isTeledeclarationYear"
+              v-if="isTeledeclarationPhase"
             >
               <v-icon class="mr-2">$checkbox-circle-fill</v-icon>
               Valider et télédéclarer
@@ -259,7 +262,7 @@
           </div>
           <p
             class="text-caption amber--text text--darken-3 text-md-right mb-0 mx-3 mt-n1"
-            v-if="isTeledeclarationYear && !hasActiveTeledeclaration && !canSubmitTeledeclaration"
+            v-if="isTeledeclarationPhase && !hasActiveTeledeclaration && !canSubmitTeledeclaration"
           >
             <v-icon small color="amber darken-3">mdi-alert</v-icon>
             Données d'approvisionnement manquantes.
@@ -399,8 +402,8 @@ export default {
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
     },
-    isTeledeclarationYear() {
-      return this.diagnostic.year === this.teledeclarationYear
+    isTeledeclarationPhase() {
+      return window.ENABLE_TELEDECLARATION && this.diagnostic.year === this.teledeclarationYear
     },
     displayPurchaseHints() {
       return (
