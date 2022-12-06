@@ -38,13 +38,7 @@
           </template>
         </v-simple-table>
       </v-card-text>
-      <v-form
-        ref="teledeclarationForm"
-        v-model="teledeclarationFormIsValid"
-        id="teledeclaration-form"
-        v-if="canteen"
-        class="px-6"
-      >
+      <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form" class="px-6">
         <v-checkbox
           :rules="[validators.checked]"
           label="Je déclare sur l’honneur la véracité de mes informations"

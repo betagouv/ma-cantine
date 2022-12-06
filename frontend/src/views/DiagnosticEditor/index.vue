@@ -48,7 +48,7 @@
                 Vous pourrez télédéclarer ce diagnostic après avoir remplir les données d'approvisionnement
               </p>
               <p
-                v-else-if="!hasActiveTeledeclaration && showApproPanel"
+                v-else-if="!hasActiveTeledeclaration && showExpansionPanels"
                 class="text-body-2 pl-4 mb-0 d-md-flex align-center"
               >
                 <v-icon small color="amber darken-3">mdi-alert</v-icon>
@@ -91,10 +91,7 @@
           </v-radio>
         </v-radio-group>
 
-        <p
-          class="caption grey--text text--darken-1"
-          v-if="!hasActiveTeledeclaration && (showApproPanel || showNonApproPanels)"
-        >
+        <p class="caption grey--text text--darken-1" v-if="!hasActiveTeledeclaration && showExpansionPanels">
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
         </p>
         <div class="caption grey--text text--darken-1" v-if="hasActiveTeledeclaration">
@@ -216,7 +213,7 @@
         </v-expansion-panels>
 
         <div
-          v-if="!hasActiveTeledeclaration && isTeledeclarationYear && (this.showApproPanel || showNonApproPanels)"
+          v-if="!hasActiveTeledeclaration && isTeledeclarationYear && showExpansionPanels"
           class="mt-4"
           id="teledeclaration"
         >
@@ -231,21 +228,9 @@
             transmettre, avec votre accord, à la DGAL, direction du Ministère de l'agriculture en charge de
             l'élaboration de ce bilan.
           </p>
-          <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form">
-            <v-checkbox
-              :rules="[validators.checked]"
-              label="Je déclare sur l’honneur la véracité de mes informations"
-              :disabled="!canSubmitTeledeclaration"
-            ></v-checkbox>
-          </v-form>
         </div>
 
-        <v-sheet
-          rounded
-          color="grey lighten-4"
-          v-if="!hasActiveTeledeclaration && (showApproPanel || showNonApproPanels)"
-          class="pa-3"
-        >
+        <v-sheet rounded color="grey lighten-4" v-if="!hasActiveTeledeclaration && showExpansionPanels" class="pa-3">
           <div class="justify-md-end d-flex flex-column flex-md-row">
             <v-btn x-large outlined color="primary" class="ma-3" :to="{ name: 'ManagementPage' }">
               Annuler
@@ -321,7 +306,6 @@ export default {
         information: true,
         select: true,
       },
-      teledeclarationFormIsValid: true,
       openedPanel: null,
       cancelDialog: false,
       teledeclarationYear: lastYear(),
@@ -676,19 +660,14 @@ export default {
     },
     openTeledeclarationPreview() {
       const diagnosticFormsAreValid = this.validateForms()
-      const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
       if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
-      if (!teledeclarationFormIsValid) return
       this.showTeledeclarationPreview = true
     },
     submitTeledeclaration() {
       const diagnosticFormsAreValid = this.validateForms()
-      const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
       const payload = getObjectDiff(this.originalDiagnostic, this.diagnostic)
 
       if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
-
-      if (!teledeclarationFormIsValid) return
 
       const saveIfChanged = () => {
         if (!this.hasChanged) return Promise.resolve()
@@ -815,14 +794,3 @@ function hasValue(val) {
   }
 }
 </script>
-
-<style scoped>
-#teledeclaration-form >>> .v-input--checkbox .v-label.theme--light {
-  font-size: 16px;
-  font-weight: bold;
-  color: rgba(0, 0, 0, 0.87);
-}
-#teledeclaration-form >>> .v-input--checkbox .v-label.theme--light.v-label--is-disabled {
-  color: rgba(0, 0, 0, 0.37);
-}
-</style>
