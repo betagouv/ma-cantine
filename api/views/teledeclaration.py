@@ -172,6 +172,7 @@ class TeledeclarationPdfView(APIView):
                     "teledeclaration_mode": teledeclaration.teledeclaration_mode,
                     "central_kitchen_siret": central_kitchen_siret,
                     "central_kitchen_name": central_kitchen_name,
+                    "satellites": declared_data.get("satellites", []),
                 },
             }
             html = template.render(context)

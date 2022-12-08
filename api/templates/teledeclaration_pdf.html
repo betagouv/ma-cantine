@@ -83,6 +83,15 @@
             Vous avez choisi de déclarer les données d'approvisionnement au nom de toutes vos cantines satellites.
         </p>
         {% endif %}
+        {% if teledeclaration_mode == "CENTRAL_ALL" or teledeclaration_mode == "CENTRAL_APPRO" %}
+            {% if satellites %}
+                Cette télédéclaration concerne les cuisines satallites :
+                <br />
+                {% for satellite in satellites %}
+                · {{ satellite.name }} (Siret : {{satellite.siret}})<br />
+                {% endfor %}
+            {% endif %}
+        {% endif %}
         <p>
             Pour l'année {{ year }}, les données suivantes ont été télédéclarées le
             {{ date|date:"l j F Y" }} via la plateforme numérique ma cantine :
