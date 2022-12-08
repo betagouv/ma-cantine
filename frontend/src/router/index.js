@@ -551,7 +551,7 @@ function chooseAuthorisedRoute(to, from, next) {
     else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "DeveloperPage" })
     else if (to.meta.home) next({ name: "LandingPage" })
     else if (!to.meta.authenticationRequired || store.state.loggedUser) next()
-    else next({ name: "NotFound" })
+    else window.location.href = `/s-identifier?next=${to.path}`
   }
 }
 
