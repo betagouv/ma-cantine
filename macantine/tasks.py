@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.db.models import F
 from django.db.models.functions import Length
-from data.models import User, Canteen
+from data.models import User, Canteen, Diagnostic
 from .celery import app
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
@@ -121,6 +121,9 @@ def no_diagnostic_first_reminder():
     logger.info(f"no_diagnostic_first_reminder: {len(canteens)} canteens to notify.")
 
     for canteen in canteens:
+        if _covered_by_central_kitchen(canteen):
+            continue
+
         for manager in canteen.managers.filter(opt_out_reminder_emails=False, is_dev=False):
 
             try:
@@ -146,6 +149,22 @@ def no_diagnostic_first_reminder():
                 logger.exception(
                     f"Unable to send first no-diagnostic reminder email to {to_name} concerning canteen {canteen.name}:\n{e}"
                 )
+
+
+def _covered_by_central_kitchen(canteen):
+    if canteen.production_type == Canteen.ProductionType.ON_SITE_CENTRAL and canteen.central_producer_siret:
+        try:
+            central_kitchen = Canteen.objects.get(siret=canteen.central_producer_siret)
+            covered_by_central_kitchen = central_kitchen.diagnostic_set.filter(
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            ).exists()
+            if covered_by_central_kitchen:
+                return True
+        except Canteen.DoesNotExist:
+            pass
+        except Canteen.MultipleObjectsReturned as e:
+            logger.exception(f"Multiple central canteens detected on email task: {e}")
+    return False
 
 
 def _get_location_csv_string(canteens):
