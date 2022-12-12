@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.test import TestCase
 from django.test.utils import override_settings
 from data.factories import CanteenFactory, UserFactory, DiagnosticFactory
-from data.models import Canteen
+from data.models import Canteen, Diagnostic
 from macantine import tasks
 
 
@@ -292,10 +292,11 @@ class TestAutomaticEmails(TestCase):
             email="anna.logue@example.com",
         )
         canteen_no_diagnostics = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
             managers=[
                 anna,
                 jean,
-            ]
+            ],
         )
         Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
 
@@ -307,9 +308,10 @@ class TestAutomaticEmails(TestCase):
             last_name="Stiqué",
         )
         canteen_no_diagnostics_recent = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
             managers=[
                 sophie,
-            ]
+            ],
         )
         Canteen.objects.filter(pk=canteen_no_diagnostics_recent.id).update(creation_date=(today - timedelta(days=3)))
 
@@ -321,9 +323,10 @@ class TestAutomaticEmails(TestCase):
         )
 
         canteen_with_diagnostics = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
             managers=[
                 fred,
-            ]
+            ],
         )
         Canteen.objects.filter(pk=canteen_with_diagnostics.id).update(creation_date=(today - timedelta(weeks=3)))
         DiagnosticFactory.create(canteen=canteen_with_diagnostics)
@@ -337,6 +340,7 @@ class TestAutomaticEmails(TestCase):
             email="lena.godard@example.com",
         )
         canteen_no_diagnostics_contacted = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
             email_no_diagnostic_first_reminder=(today - timedelta(weeks=1)),
             managers=[
                 lena,
@@ -378,7 +382,7 @@ class TestAutomaticEmails(TestCase):
             email="jean.serien@example.com",
             is_dev=True,
         )
-        canteen_no_diagnostics = CanteenFactory.create(managers=[jean])
+        canteen_no_diagnostics = CanteenFactory.create(managers=[jean], production_type=Canteen.ProductionType.ON_SITE)
         Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
 
         tasks.no_diagnostic_first_reminder()
@@ -461,10 +465,11 @@ class TestAutomaticEmails(TestCase):
             email="anna.logue@example.com",
         )
         canteen_no_diagnostics = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
             managers=[
                 anna,
                 jean,
-            ]
+            ],
         )
         Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
 
@@ -479,3 +484,49 @@ class TestAutomaticEmails(TestCase):
         # DB objects are updated
         canteen_no_diagnostics.refresh_from_db()
         self.assertIsNotNone(canteen_no_diagnostics.email_no_diagnostic_first_reminder)
+
+    @mock.patch("macantine.tasks._send_sib_template")
+    @override_settings(TEMPLATE_ID_NO_DIAGNOSTIC_FIRST=1)
+    @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
+    def test_no_diagnostic_satellite(self, _):
+        """
+        We should not send a reminder to a cantine that has been covered by its
+        central kitchen
+        """
+        today = timezone.now()
+
+        # We create a central kitchen canteen with a diagnostic
+        # that takes care of all aspects of its satellites
+        central_kitchen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL,
+            siret="32441387130915",
+        )
+        DiagnosticFactory.create(
+            canteen=central_kitchen,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+        )
+
+        # We create a satellite canteen with no diagnostics managed by
+        # Jean. He should not receive the email since later
+        # we will create a central kitchen that takes care of it
+        jean = UserFactory.create(
+            first_name="Jean",
+            last_name="Sérien",
+            email="jean.serien@example.com",
+        )
+        canteen_no_diagnostics = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret="32441387130915",
+            managers=[jean],
+        )
+        Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
+
+        # From all of these managers, only jean and anna should be notified.
+        tasks.no_diagnostic_first_reminder()
+
+        # Email is only sent once to Jean
+        tasks._send_sib_template.assert_not_called()
+
+        # DB objects remain unchanged
+        canteen_no_diagnostics.refresh_from_db()
+        self.assertIsNone(canteen_no_diagnostics.email_no_diagnostic_first_reminder)
