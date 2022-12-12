@@ -230,6 +230,27 @@ class UserCanteensFilterSet(django_filters.FilterSet):
     production_type = ProductionTypeInFilter(field_name="production_type")
 
 
+class PublishManyCanteensView(APIView):
+    """
+    This view allows mass publishing of canteens
+    """
+
+    permission_classes = [IsAuthenticated]
+    # TODO: open to API ?
+
+    def post(self, request):
+        data = request.data
+        canteen_ids = data.get("ids")
+        success_ids = []
+        # error if ids not provided
+        for id in canteen_ids:
+            canteen = Canteen.objects.get(pk=id)
+            canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
+            canteen.save()
+            success_ids.append(canteen.id)
+        return JsonResponse({"ids": success_ids}, status=status.HTTP_200_OK)
+
+
 @extend_schema_view(
     get=extend_schema(
         summary="Lister avec une pagination des cantines gérées par l'utilisateur. Représentation complète.",

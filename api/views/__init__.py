@@ -14,6 +14,7 @@ from .canteen import (  # noqa: F401
     RemoveManagerView,
     PublishCanteenView,
     UnpublishCanteenView,
+    PublishManyCanteensView,
     SendCanteenNotFoundEmail,
     UserCanteenPreviews,
     CanteenStatisticsView,

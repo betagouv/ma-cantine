@@ -1,18 +1,14 @@
 from data.models.canteen import Canteen
 from data.factories.canteen import CanteenFactory
 from django.urls import reverse
-from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from .utils import authenticate
-from unittest.mock import patch
 
 
-@patch("common.utils.create_trello_card")
-@override_settings(TRELLO_LIST_ID_PUBLICATION="listId")
 class TestPublishCanteen(APITestCase):
     @authenticate
-    def test_modify_canteen_unauthorized(self, _):
+    def test_modify_canteen_unauthorized(self):
         """
         Users can only publish the canteens they manage
         """
@@ -25,7 +21,7 @@ class TestPublishCanteen(APITestCase):
         self.assertEqual(persisted_canteen.publication_comments, "test")
 
     @authenticate
-    def test_publish_canteen(self, _):
+    def test_publish_canteen(self):
         """
         Users can publish the canteens they manage and add additional notes
         """
@@ -53,7 +49,7 @@ class TestPublishCanteen(APITestCase):
         self.assertEqual(response.json()["publicationComments"], "Hello, world!")
 
     @authenticate
-    def test_unpublish_canteen(self, _):
+    def test_unpublish_canteen(self):
         """
         Calling the unpublish endpoint moves canteens from published or pending
         to draft, optionally updating comments
@@ -82,3 +78,38 @@ class TestPublishCanteen(APITestCase):
         self.assertEqual(persisted_canteen.publication_status, "draft")
         self.assertEqual(persisted_canteen.publication_comments, "Hello, world!")
         self.assertEqual(response.json()["publicationComments"], "Hello, world!")
+
+    @authenticate
+    def test_publish_many_canteens(self):
+        """
+        Given a list of canteen ids, publish those canteens and return list of successful publication ids
+        """
+        canteen_1 = CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT)
+        # doesn't matter initial state
+        canteen_2 = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        for canteen in [canteen_1, canteen_2]:
+            canteen.managers.add(authenticate.user)
+
+        payload = {"ids": [canteen_1.id, canteen_2.id]}
+        response = self.client.post(reverse("publish_canteens"), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        canteen_ids = body["ids"]
+        self.assertEqual(len(canteen_ids), 2)
+
+        self.assertIn(canteen_1.id, canteen_ids)
+        self.assertIn(canteen_2.id, canteen_ids)
+
+        canteen_1.refresh_from_db()
+        self.assertEqual(canteen_1.publication_status, Canteen.PublicationStatus.PUBLISHED)
+
+        canteen_2.refresh_from_db()
+        self.assertEqual(canteen_2.publication_status, Canteen.PublicationStatus.PUBLISHED)
+
+    def test_publish_many_canteens_unauthenticated(self):
+        """
+        Require user to be authenticated to access endpoint
+        """
+        response = self.client.post(reverse("publish_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
