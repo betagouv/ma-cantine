@@ -7,8 +7,8 @@
       <v-card-text class="text-left pb-0">
         Veuillez vérifier les données pour {{ diagnostic.year }} ci-dessous.
       </v-card-text>
-      <v-card-text ref="table" class="my-4" style="overflow-y: scroll; border: solid 1px #9b9b9b;">
-        <v-simple-table dense>
+      <v-card-text ref="table" class="my-4 py-0" style="overflow-y: scroll; border: solid 1px #9b9b9b;">
+        <v-simple-table ref="innerSimpleTable" dense class="my-0 py-0">
           <template v-slot:default>
             <thead>
               <tr>
@@ -471,11 +471,12 @@ export default {
   },
   methods: {
     calculateTableHeight() {
-      if (!this.$refs || !this.$refs.table || !this.$refs.content) return
+      if (!this.$refs || !this.$refs.table || !this.$refs.content || !this.$refs.innerSimpleTable) return
       const contentHeight = this.$refs.content.$el.offsetHeight
       const currentTableHeight = this.$refs.table.offsetHeight
       const remainingItemsHeight = contentHeight - currentTableHeight
-      const calculatedHeight = window.innerHeight * 0.9 - remainingItemsHeight
+      const innerTableHeight = this.$refs.innerSimpleTable.$el.offsetHeight + 4 // 4 is the padding value
+      const calculatedHeight = Math.min(window.innerHeight * 0.9 - remainingItemsHeight, innerTableHeight)
       this.$refs.table.style.height = `${parseInt(calculatedHeight)}px`
     },
     getWasteActions(wasteActions) {
