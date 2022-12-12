@@ -158,8 +158,7 @@ def _covered_by_central_kitchen(canteen):
             covered_by_central_kitchen = central_kitchen.diagnostic_set.filter(
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
             ).exists()
-            if covered_by_central_kitchen:
-                return True
+            return covered_by_central_kitchen
         except Canteen.DoesNotExist:
             pass
         except Canteen.MultipleObjectsReturned as e:
