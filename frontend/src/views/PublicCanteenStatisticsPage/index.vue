@@ -534,7 +534,6 @@ export default {
       }
       let newLocationText = this.createLocationText()
       this.loadStatistics(newLocationText, query)
-      this.updateRoute()
     },
     updateRoute() {
       let query = {}
@@ -588,7 +587,8 @@ export default {
         this.chosenDepartments = []
       }
     },
-    $route() {
+    $route(newRoute, oldRoute) {
+      if (newRoute.fullPath === oldRoute.fullPath) return
       this.populateInitialParameters()
       this.updateStatistics()
       this.updateDocumentTitle()
