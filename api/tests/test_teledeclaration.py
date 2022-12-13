@@ -525,3 +525,50 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(
             teledeclaration.teledeclaration_mode, Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
         )
+
+    @authenticate
+    def test_central_kitchen_contains_satellites(self):
+        """
+        A diagnostic from a central kitchen must contain the satellites added at that moment
+        """
+        user = authenticate.user
+        central_kitchen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044", satellite_canteens_count=3
+        )
+        satellite_1 = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="79300704800044"
+        )
+        satellite_2 = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="79300704800044"
+        )
+        central_kitchen.managers.add(user)
+
+        diagnostic = DiagnosticFactory.create(
+            canteen=central_kitchen,
+            year=2020,
+            value_total_ht=100,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+
+        payload = {"diagnosticId": diagnostic.id}
+
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
+        data = teledeclaration.declared_data
+        self.assertEqual(len(data.get("satellites")), 2)
+        self.assertEqual(data.get("satellite_canteens_count"), 3)
+
+        satellite_1_data = next(filter(lambda x: x["id"] == satellite_1.id, data["satellites"]), None)
+        satellite_2_data = next(filter(lambda x: x["id"] == satellite_2.id, data["satellites"]), None)
+
+        self.assertIsNotNone(satellite_1_data)
+        self.assertIsNotNone(satellite_2_data)
+
+        self.assertEqual(satellite_1_data["name"], satellite_1.name)
+        self.assertEqual(satellite_1_data["siret"], satellite_1.siret)
+
+        self.assertEqual(satellite_2_data["name"], satellite_2.name)
+        self.assertEqual(satellite_2_data["siret"], satellite_2.siret)

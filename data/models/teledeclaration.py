@@ -336,6 +336,12 @@ class Teledeclaration(models.Model):
             "central_kitchen_siret": diagnostic.canteen.central_producer_siret,
             "teledeclaration": {**json_appro_teledeclaration, **json_other_teledeclaration},
         }
+
+        if is_central_cuisine:
+            json_fields["satellites"] = [
+                {"id": x.id, "siret": x.siret, "name": x.name} for x in diagnostic.canteen.satellites
+            ]
+            json_fields["satellite_canteens_count"] = diagnostic.canteen.satellite_canteens_count
         return TeledeclarationFactory.create(
             applicant=applicant,
             year=diagnostic.year,
