@@ -35,12 +35,25 @@
           </v-card>
         </v-dialog>
       </template>
+      <template v-slot:[`item.name`]="{ item }">
+        <router-link v-if="item.userCanView && includeSatelliteLink" :to="satelliteLink(item)">
+          {{ item.name }}
+        </router-link>
+        <span v-else>
+          {{ item.name }}
+        </span>
+      </template>
       <template v-slot:[`item.userCanView`]="{ item }">
         <v-btn v-if="!item.userCanView" outlined color="primary" @click="requestAccess(item)">
           Rejoindre l'équipe
           <span class="d-sr-only">de {{ item.name }}</span>
         </v-btn>
-        <v-btn v-else-if="satelliteAction(item)" outlined color="primary" @click="satelliteAction(item).action()">
+        <v-btn
+          v-else-if="satelliteAction && satelliteAction(item)"
+          outlined
+          color="primary"
+          @click="satelliteAction(item).action()"
+        >
           {{ satelliteAction(item).text }}
           <span class="d-sr-only">{{ item.name }}</span>
         </v-btn>
@@ -48,6 +61,21 @@
           Mettre à jour
           <span class="d-sr-only">{{ item.name }}</span>
         </v-btn>
+      </template>
+      <template v-slot:[`item.publicationStatus`]="{ item }">
+        <span v-if="item.publicationStatus === 'draft'">Non publié</span>
+        <router-link
+          :to="{
+            name: 'CanteenPage',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(item) },
+          }"
+          v-else-if="item.publicationStatus === 'published'"
+          target="_blank"
+        >
+          Publié
+          <span class="d-sr-only">- page pour {{ item.name }}</span>
+          <v-icon small color="primary">mdi-open-in-new</v-icon>
+        </router-link>
       </template>
       <template v-slot:[`no-data`]>
         Vous n'avez pas renseigné des satellites
@@ -100,10 +128,13 @@ export default {
           { text: "Nom", value: "name" },
           { text: "SIRET", value: "siret" },
           { text: "Couverts par jour", value: "dailyMealCount" },
-          // TODO: shouldn't be able to sort on this, since there is no header text
-          { text: "", value: "userCanView" },
+          { text: "", value: "userCanView", sortable: false },
         ]
       },
+    },
+    includeSatelliteLink: {
+      type: Boolean,
+      default: false,
     },
     // this function should return an object with two keys:
     // action: a function that takes the satellite
@@ -247,6 +278,10 @@ export default {
       this.addWatchers()
       this.$emit("mountedAndFetched")
     })
+  },
+  created() {
+    // this fixes App.vue setting the title back on route change
+    this.$route.meta.title = document.title
   },
 }
 /*

@@ -30,15 +30,20 @@ class TestCanteenStatsApi(APITestCase):
             region=region,
             publication_status=Canteen.PublicationStatus.PUBLISHED.value,
             sectors=[school, enterprise],
-            daily_meal_count=50,
         )
         unpublished = CanteenFactory.create(
             region=region,
             publication_status=Canteen.PublicationStatus.DRAFT.value,
             sectors=[school],
-            daily_meal_count=50,
         )
-        other_region = CanteenFactory.create(region="03", sectors=[social], daily_meal_count=50)
+        # this canteen will be included in the canteen count, but not the diagnostic count
+        # which is used to calculate the measure success percentages
+        out_of_date = CanteenFactory.create(
+            region=region,
+            publication_status=Canteen.PublicationStatus.PUBLISHED.value,
+            sectors=[school],
+        )
+        other_region = CanteenFactory.create(region="03", sectors=[social])
 
         # relevant diagnostics
         DiagnosticFactory.create(
@@ -65,6 +70,7 @@ class TestCanteenStatsApi(APITestCase):
             value_egalim_others_ht=0,
             has_waste_diagnostic=True,
             waste_actions=["action1", "action2"],
+            has_donation_agreement=True,
             vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW,
             cooking_plastic_substituted=True,
             serving_plastic_substituted=True,
@@ -82,6 +88,10 @@ class TestCanteenStatsApi(APITestCase):
             value_externality_performance_ht=0,
             value_egalim_others_ht=0,
             vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY,
+        )
+        DiagnosticFactory.create(
+            canteen=out_of_date,
+            year=2019,
         )
         DiagnosticFactory.create(
             canteen=other_region,
@@ -102,8 +112,9 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["canteenCount"], 2)
-        self.assertEqual(body["publishedCanteenCount"], 1)
+        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["publishedCanteenCount"], 2)
+        self.assertEqual(body["diagnosticsCount"], 2)
         self.assertEqual(body["bioPercent"], 30)
         self.assertEqual(body["sustainablePercent"], 40)
         self.assertEqual(body["approPercent"], 100)
@@ -112,7 +123,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["plasticPercent"], 50)
         self.assertEqual(body["infoPercent"], 50)
         expected_sectors = {}
-        expected_sectors[str(school.id)] = 2
+        expected_sectors[str(school.id)] = 3
         expected_sectors[str(enterprise.id)] = 1
         expected_sectors[str(social.id)] = 0
         self.assertEqual(body["sectors"], expected_sectors)

@@ -7,6 +7,7 @@ FIELDS = (
     "id",
     "year",
     "diagnostic_type",
+    "central_kitchen_diagnostic_mode",
     "value_bio_ht",
     "value_sustainable_ht",
     "value_pat_ht",

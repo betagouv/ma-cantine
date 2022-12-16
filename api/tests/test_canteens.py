@@ -321,9 +321,9 @@ class TestCanteenApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
-        Teledeclaration.createFromDiagnostic(diagnostic, user, Teledeclaration.TeledeclarationStatus.CANCELLED)
+        Teledeclaration.create_from_diagnostic(diagnostic, user, Teledeclaration.TeledeclarationStatus.CANCELLED)
 
-        new_teledeclaration = Teledeclaration.createFromDiagnostic(diagnostic, user)
+        new_teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
         response = self.client.get(reverse("user_canteens"))
         body = response.json().get("results")
         json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
@@ -566,14 +566,14 @@ class TestCanteenApi(APITestCase):
         DiagnosticFactory.create(year=last_year - 1, canteen=needs_last_year_diag)
 
         td_diag = DiagnosticFactory.create(year=last_year, canteen=complete, value_total_ht=1000)
-        Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
+        Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
         DiagnosticFactory.create(year=last_year, canteen=needs_to_complete_diag, value_total_ht=None)
         # make sure the endpoint only looks at diagnostics of the year requested
         DiagnosticFactory.create(year=last_year - 1, canteen=needs_to_complete_diag, value_total_ht=1000)
 
         td_diag = DiagnosticFactory.create(year=last_year, canteen=needs_to_publish, value_total_ht=10)
-        Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
+        Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
         DiagnosticFactory.create(year=last_year, canteen=needs_td, value_total_ht=100)
 
@@ -626,7 +626,7 @@ class TestCanteenApi(APITestCase):
         DiagnosticFactory.create(canteen=canteen_with_complete_diag, year=last_year - 1, value_total_ht=10000)
         canteen_with_td = CanteenFactory.create()
         td_diag = DiagnosticFactory.create(canteen=canteen_with_td, year=last_year, value_total_ht=2000)
-        Teledeclaration.createFromDiagnostic(td_diag, authenticate.user)
+        Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
         for canteen in [no_diag, canteen_with_incomplete_diag, canteen_with_complete_diag, canteen_with_td]:
             canteen.managers.add(authenticate.user)
@@ -689,3 +689,15 @@ class TestCanteenApi(APITestCase):
         CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_get_central_kitchen_name(self):
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
+        satellite = CanteenFactory.create(central_producer_siret=central_kitchen.siret)
+        satellite.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["centralKitchenName"], central_kitchen.name)

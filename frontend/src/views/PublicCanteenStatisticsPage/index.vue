@@ -83,7 +83,7 @@
           <v-row class="mt-6">
             <v-col cols="12" sm="6" md="4">
               <v-btn x-large color="primary" @click="updateRoute">
-                Afficher les statistiques
+                Filtrer les données
               </v-btn>
             </v-col>
           </v-row>
@@ -91,7 +91,7 @@
       </v-card-text>
     </v-card>
     <div v-if="locationText" class="py-8">
-      <h2 class="text-h5 font-weight-bold">Les statistiques pour {{ locationText }}</h2>
+      <h2 class="text-h5 font-weight-bold">Les chiffres pour {{ locationText }}</h2>
       <p v-if="sectorsText" class="text-body-2 mt-4 grey--text text--darken-2">
         <v-icon aria-hidden="false" role="img" aria-label="Secteurs">mdi-office-building</v-icon>
         {{ sectorsText }}
@@ -141,7 +141,8 @@
           <p id="sector-chart-description" class="d-none">{{ sectorChartDescription }}</p>
         </v-col>
       </v-row>
-      <h3 class="text-h6 font-weight-bold mt-10 mb-8">Qualité de produits en {{ year }}</h3>
+      <h3 class="text-h6 font-weight-bold mt-10 mb-2">Qualité de produits en {{ year }}</h3>
+      <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:</p>
       <v-row class="px-2">
         <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
           <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
@@ -204,9 +205,12 @@
           </v-card>
         </v-col>
       </v-row>
-      <h3 class="text-h6 font-weight-bold mt-10 mb-8">
+      <h3 class="text-h6 font-weight-bold mt-10 mb-2">
         Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}
       </h3>
+      <p class="mb-8">
+        Parmi les mêmes {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:
+      </p>
       <v-row class="justify-space-between mt-8 mb-8 px-2">
         <BadgeCard
           v-for="measure in otherMeasures"
@@ -216,6 +220,7 @@
           class="mb-4"
         />
       </v-row>
+      <BadgesExplanation />
     </div>
     <v-row v-else justify="center" class="py-15">
       <v-progress-circular indeterminate></v-progress-circular>
@@ -225,6 +230,7 @@
 
 <script>
 import BadgeCard from "./BadgeCard"
+import BadgesExplanation from "./BadgesExplanation"
 import VueApexCharts from "vue-apexcharts"
 import labels from "@/data/quality-labels.json"
 import keyMeasures from "@/data/key-measures.json"
@@ -240,6 +246,7 @@ export default {
   name: "PublicCanteenStatisticsPage",
   components: {
     BadgeCard,
+    BadgesExplanation,
     VueApexCharts,
     BreadcrumbsNav,
     DsfrAutocomplete,
@@ -527,7 +534,6 @@ export default {
       }
       let newLocationText = this.createLocationText()
       this.loadStatistics(newLocationText, query)
-      this.updateRoute()
     },
     updateRoute() {
       let query = {}
@@ -560,7 +566,7 @@ export default {
       this.chosenEpcis = Array.isArray(queryEpcis) ? queryEpcis : [queryEpcis]
     },
     updateDocumentTitle() {
-      let title = `Les statistiques dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
+      let title = `Les cantines dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
       if (this.chosenRegions.length || this.chosenDepartments.length) {
         let locationText = this.createLocationText()
         if (locationText.startsWith("les")) {
@@ -581,7 +587,8 @@ export default {
         this.chosenDepartments = []
       }
     },
-    $route() {
+    $route(newRoute, oldRoute) {
+      if (newRoute.fullPath === oldRoute.fullPath) return
       this.populateInitialParameters()
       this.updateStatistics()
       this.updateDocumentTitle()

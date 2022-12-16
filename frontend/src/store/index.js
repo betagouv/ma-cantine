@@ -132,7 +132,8 @@ export default new Vuex.Store({
             window.$crisp.push(["set", "user:email", [context.state.loggedUser.email]])
           }
         })
-        .catch(() => {
+        .catch((e) => {
+          console.error("fetchLoggedUser", e)
           context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.ERROR)
         })
     },
@@ -153,7 +154,8 @@ export default new Vuex.Store({
           context.commit("SET_SECTORS", response)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log("fetchSectors", e)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
         })
     },
@@ -166,7 +168,8 @@ export default new Vuex.Store({
           context.commit("SET_USER_CANTEEN_PREVIEWS", response)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log("fetchUserCanteenPreviews", e)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
         })
     },
@@ -696,6 +699,7 @@ export default new Vuex.Store({
           context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .catch((e) => {
+          console.log("fetchUpcomingCommunityEvents", e)
           context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
           throw e
         })

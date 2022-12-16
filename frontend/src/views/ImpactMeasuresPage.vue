@@ -29,7 +29,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import stats from "@/data/stats-platform.json"
 
 export default {
-  name: "StatsPage",
+  name: "ImpactMeasuresPage",
   components: { BreadcrumbsNav },
   data() {
     return {

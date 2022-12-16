@@ -48,7 +48,7 @@ import CommunityPage from "@/views/CommunityPage"
 import FaqPage from "@/views/FaqPage"
 import SiteMap from "@/views/SiteMap"
 import DeveloperPage from "@/views/DeveloperPage"
-import StatsPage from "@/views/StatsPage"
+import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -406,7 +406,7 @@ const routes = [
     sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
-    path: "/importer-diagnostics/:importLevel",
+    path: "/importer-diagnostics/:importUrlSlug",
     name: "DiagnosticImportPage",
     component: DiagnosticImportPage,
     props: true,
@@ -416,7 +416,7 @@ const routes = [
     name: "PublicCanteenStatisticsPage",
     component: PublicCanteenStatisticsPage,
     meta: {
-      title: "Les statistiques dans ma collectivité",
+      title: "Les cantines dans ma collectivité",
     },
     sitemapGroup: Constants.SitemapGroups.LAW,
   },
@@ -514,10 +514,10 @@ const routes = [
   },
   {
     path: "/statistiques-plateforme/",
-    name: "PlatformStatsPage",
-    component: StatsPage,
+    name: "ImpactMeasuresPage",
+    component: ImpactMeasuresPage,
     meta: {
-      title: "Statistiques d'utilisation de la plateforme",
+      title: "Mesures de notre impact",
     },
   },
   {
@@ -551,7 +551,7 @@ function chooseAuthorisedRoute(to, from, next) {
     else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "DeveloperPage" })
     else if (to.meta.home) next({ name: "LandingPage" })
     else if (!to.meta.authenticationRequired || store.state.loggedUser) next()
-    else next({ name: "NotFound" })
+    else window.location.href = `/s-identifier?next=${to.path}`
   }
 }
 

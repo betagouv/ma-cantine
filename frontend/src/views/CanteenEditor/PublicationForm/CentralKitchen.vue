@@ -5,7 +5,6 @@
       « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
       <b>uniquement les lieux de restauration recevant des convives.</b>
     </p>
-    <!-- TODO: more encouragement to complete satellite list if number registered < number declared -->
     <p>
       Vous pouvez
       <router-link :to="{ name: 'NewCanteen' }">ajouter une cantine satellite</router-link>
@@ -16,15 +15,13 @@
           params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
         }"
       >
-        votre cantine reçoit des convives sur place.
+        votre cuisine centrale reçoit aussi des convives sur place.
       </router-link>
     </p>
-    <!-- TODO: add mass publish/unpublish button -->
-    <!-- TODO: does central publish itself if not a site? -->
-    <!-- TODO: refine wording for central_serving -->
     <SatelliteTable
       ref="satelliteTable"
       :headers="satelliteTableHeaders"
+      :includeSatelliteLink="true"
       :canteen="canteen"
       :params="satelliteTableParams"
       :satelliteAction="satelliteAction"
@@ -60,12 +57,10 @@ export default {
     return {
       published: this.originalCanteen.publicationStatus !== "draft",
       satelliteTableHeaders: [
-        // TODO: make name link to satellite mod page if have rights?
         { text: "Nom", value: "name" },
         { text: "SIRET", value: "siret" },
-        // TODO: translate the value and link to publication page?
-        { text: "Publication", value: "publicationStatus" },
-        { text: "", value: "userCanView" },
+        { text: "Publiée ?", value: "publicationStatus" },
+        { text: "", value: "userCanView", sortable: false },
       ],
     }
   },

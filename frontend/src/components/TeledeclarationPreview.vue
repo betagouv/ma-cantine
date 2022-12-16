@@ -7,8 +7,8 @@
       <v-card-text class="text-left pb-0">
         Veuillez vérifier les données pour {{ diagnostic.year }} ci-dessous.
       </v-card-text>
-      <v-card-text ref="table" class="my-4" style="overflow-y: scroll; border: solid 1px #9b9b9b;">
-        <v-simple-table dense>
+      <v-card-text ref="table" class="my-4 py-0" style="overflow-y: scroll; border: solid 1px #9b9b9b;">
+        <v-simple-table ref="innerSimpleTable" dense class="my-0 py-0">
           <template v-slot:default>
             <thead>
               <tr>
@@ -23,7 +23,7 @@
                 </td>
                 <td class="text-left font-weight-bold"></td>
               </tr>
-              <tr v-for="item in approKeys" :key="item.param">
+              <tr v-for="item in approItems" :key="item.param">
                 <td class="text-left">{{ item.label }}</td>
                 <td class="text-right">
                   {{ (diagnostic[item.param] || "—") | toCurrency }}
@@ -38,13 +38,7 @@
           </template>
         </v-simple-table>
       </v-card-text>
-      <v-form
-        ref="teledeclarationForm"
-        v-model="teledeclarationFormIsValid"
-        id="teledeclaration-form"
-        v-if="canteen"
-        class="px-6"
-      >
+      <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form" class="px-6">
         <v-checkbox
           :rules="[validators.checked]"
           label="Je déclare sur l’honneur la véracité de mes informations"
@@ -72,7 +66,7 @@ export default {
       required: true,
     },
     canteen: {
-      optional: true,
+      required: true,
     },
   },
   computed: {
@@ -84,7 +78,35 @@ export default {
         this.$emit("input", newValue)
       },
     },
-    approKeys() {
+    centralKitchenDiagostic() {
+      if (this.diagnostic.year && this.canteen.centralKitchenDiagnostics)
+        return this.canteen.centralKitchenDiagnostics.find((x) => x.year === this.diagnostic.year)
+      return null
+    },
+    showApproItems() {
+      if (this.canteen.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic) {
+        return (
+          this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "APPRO" &&
+          this.centralKitchenDiagostic.centralKitchenDiagnosticMode !== "ALL"
+        )
+      }
+      return true
+    },
+    showAdditionalItems() {
+      const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
+
+      if (isSatellite) {
+        const centralKitchenDeclaresAll = this.centralKitchenDiagostic?.centralKitchenDiagnosticMode === "ALL"
+        return !centralKitchenDeclaresAll
+      } else if (this.canteen.isCentralCuisine) {
+        const onlyDeclaresApproData = this.diagnostic.centralKitchenDiagnosticMode === "APPRO"
+        return !onlyDeclaresApproData
+      }
+
+      return true
+    },
+    approItems() {
+      if (!this.showApproItems) return []
       if (this.diagnostic.diagnosticType === "COMPLETE") {
         return [
           { param: "valueTotalHt", label: "Mes achats alimentaires total" },
@@ -317,6 +339,7 @@ export default {
       ]
     },
     additionalItems() {
+      if (!this.showAdditionalItems) return []
       return [
         {
           label: "Diagnostic sur le gaspillage alimentaire réalisé",
@@ -448,11 +471,12 @@ export default {
   },
   methods: {
     calculateTableHeight() {
-      if (!this.$refs || !this.$refs.table || !this.$refs.content) return
+      if (!this.$refs || !this.$refs.table || !this.$refs.content || !this.$refs.innerSimpleTable) return
       const contentHeight = this.$refs.content.$el.offsetHeight
       const currentTableHeight = this.$refs.table.offsetHeight
       const remainingItemsHeight = contentHeight - currentTableHeight
-      const calculatedHeight = window.innerHeight * 0.9 - remainingItemsHeight
+      const innerTableHeight = this.$refs.innerSimpleTable.$el.offsetHeight + 4 // 4 is the padding value
+      const calculatedHeight = Math.min(window.innerHeight * 0.9 - remainingItemsHeight, innerTableHeight)
       this.$refs.table.style.height = `${parseInt(calculatedHeight)}px`
     },
     getWasteActions(wasteActions) {
@@ -546,10 +570,12 @@ export default {
     },
     goToEditing() {
       this.$emit("input", false)
-      this.$router.push({
-        name: "DiagnosticModification",
-        params: { canteenUrlComponent: this.canteenUrlComponent, year: this.diagnostic.year },
-      })
+      this.$router
+        .push({
+          name: "DiagnosticModification",
+          params: { canteenUrlComponent: this.canteenUrlComponent, year: this.diagnostic.year },
+        })
+        .catch(() => {})
     },
   },
   mounted() {
