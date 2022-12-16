@@ -169,6 +169,15 @@ FIELDS = (
 )
 
 
+class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
+    # Ideally this serializer would return the only the values in the publication
+    # page by percentages. This means no actual financial data would be exposed.
+    class Meta:
+        fields = ("id",)
+        read_only_fields = fields
+        model = Diagnostic
+
+
 class PublicDiagnosticSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diagnostic

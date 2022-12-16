@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, SectorFactory
 from data.factories import DiagnosticFactory
-from data.models import Canteen, CanteenImage
+from data.models import Canteen, CanteenImage, Diagnostic
 from .utils import authenticate
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -569,3 +569,31 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertIn(central_cuisine.id, ids)
         self.assertIn(central_serving_cuisine.id, ids)
         self.assertNotIn(site_canteen.id, ids)
+
+    def test_satellite_published(self):
+        central_siret = "22730656663081"
+        central_kitchen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory.create(
+            central_producer_siret=central_siret,
+            publication_status="published",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        )
+
+        diagnostic = DiagnosticFactory.create(
+            canteen=central_kitchen,
+            year=2020,
+            value_total_ht=1200,
+            value_bio_ht=600,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
+        body = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(body.get("id"), satellite.id)
+        self.assertEqual(len(body.get("centralKitchenDiagnostics")), 1)
+
+        serialized_diagnostic = body.get("centralKitchenDiagnostics")[0]
+        self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
