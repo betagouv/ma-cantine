@@ -8,7 +8,7 @@ attrs==22.1.0
 billiard==3.6.4.0
 black==22.10.0
 boto3==1.26.27
-botocore==1.29.27
+botocore==1.29.37
 celery==5.2.7
 certifi==2022.12.7
 cffi==1.15.1
