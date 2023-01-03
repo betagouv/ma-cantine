@@ -113,3 +113,27 @@ class TestPublishCanteen(APITestCase):
         """
         response = self.client.post(reverse("publish_canteens"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_multi_publish_empty_payload(self):
+        """
+        Should get 400 if payload does not contain an array of ids
+        """
+        response = self.client.post(reverse("publish_canteens"), {}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_multi_publish_no_ids(self):
+        """
+        Should get 400 if an empty array of ids is provided to the endpoint
+        """
+        response = self.client.post(reverse("publish_canteens"), {"ids": []}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_multi_publish_ids_bad_format(self):
+        """
+        Should get 400 if something other than an array is provided to endpoint
+        """
+        response = self.client.post(reverse("publish_canteens"), {"ids": 1}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

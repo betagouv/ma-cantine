@@ -241,6 +241,8 @@ class PublishManyCanteensView(APIView):
     def post(self, request):
         data = request.data
         canteen_ids = data.get("ids")
+        if not canteen_ids or not isinstance(canteen_ids, list):
+            raise BadRequest()
         success_ids = []
         errors = []
         # error if ids not provided
