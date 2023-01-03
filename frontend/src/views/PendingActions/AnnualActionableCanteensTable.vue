@@ -14,9 +14,12 @@
           </v-col>
         </v-row>
         <p v-else-if="toTeledeclare.length > 1">
-          Vous pouvez télédéclarer {{ toTeledeclare.length }} cantines.
+          Vous pouvez télédéclarer
+          <span v-if="toTeledeclare.length > 1">{{ toTeledeclare.length }} cantines.</span>
+          <span v-else>1 cantine.</span>
           <v-btn class="primary ml-2" @click="massTeledeclaration">
-            Télédeclarer {{ toTeledeclare.length }} cantines
+            <span v-if="toTeledeclare.length > 1">Télédeclarer {{ toTeledeclare.length }} cantines</span>
+            <span v-else>Télédeclarer la cantine</span>
           </v-btn>
         </p>
         <v-alert v-if="tdSuccesses.length" outlined type="success">
@@ -42,9 +45,14 @@
             <p>Publications en cours...</p>
           </v-col>
         </v-row>
-        <p v-else-if="toPublish.length > 1">
-          Vous pouvez publier {{ toPublish.length }} cantines.
-          <v-btn class="primary ml-2" @click="massPublication">Publier {{ toPublish.length }} cantines</v-btn>
+        <p v-else-if="showMassPublication">
+          Vous pouvez publier
+          <span v-if="toPublish.length > 1">{{ toPublish.length }} cantines.</span>
+          <span v-else>1 cantine.</span>
+          <v-btn class="primary ml-2" @click="massPublication">
+            <span v-if="toPublish.length > 1">Publier {{ toPublish.length }} cantines</span>
+            <span v-else>Publier la cantine</span>
+          </v-btn>
         </p>
         <v-alert v-if="pubSuccesses.length" outlined type="success">
           <p v-if="pubSuccesses.length" class="mb-0">
@@ -158,7 +166,6 @@ export default {
       visibleCanteens: null,
       searchTerm: null,
       year,
-      unteledeclaredCount: 7,
       options: {
         sortBy: [],
         sortDesc: [],
@@ -237,6 +244,14 @@ export default {
       } else {
         return null
       }
+    },
+    // if there are multiple pages, show the mass action buttons for convenience, otherwise
+    // only show when there is more than 1 of that action to carry out
+    showMassTD() {
+      return this.toTeledeclare?.length && (this.showPagination || this.toTeledeclare > 1)
+    },
+    showMassPublication() {
+      return this.toPublish?.length && (this.showPagination || this.toPublish > 1)
     },
   },
   methods: {
@@ -413,47 +428,28 @@ export default {
         .catch((e) => this.$store.dispatch("notifyServerError", e))
         // refresh actions
         .then(() => this.fetchCurrentPage())
-        // any errors produced by fetchCurrentPage are handled there
         .finally(() => {
           this.tdLoading = false
         })
     },
-    // this is a copy and slight modification of the function above.
-    // consider refactoring if you are making a third and similar mass action.
     massPublication() {
       this.pubLoading = true
-      // TODO: make this endpoint in the back, and the dispatch in the store
-      // TODO: then, add similar logic to central kitchen publication page
       this.$store
         .dispatch("submitMultiplePublications", { ids: this.toPublish })
         .then((response) => {
-          const errors = response.errors
           this.pubSuccesses = response.ids
-          this.pubFailures = Object.keys(errors)
-          if (this.pubFailures.length === 0) {
-            const title =
-              this.pubSuccesses.length > 1
-                ? `${this.pubSuccesses.length} cantines publiées`
-                : `${this.pubSuccesses.length} cantine publiée`
-            this.$store.dispatch("notify", {
-              title,
-              status: "success",
-            })
-          } else {
-            const title =
-              this.pubFailures.length > 1
-                ? `${this.pubFailures.length} cantines pas publiées`
-                : `${this.pubFailures.length} cantine pas publiée`
-            this.$store.dispatch("notify", {
-              title,
-              status: "error",
-            })
-          }
+          const title =
+            this.pubSuccesses.length > 1
+              ? `${this.pubSuccesses.length} cantines publiées`
+              : `${this.pubSuccesses.length} cantine publiée`
+          this.$store.dispatch("notify", {
+            title,
+            status: "success",
+          })
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
         // refresh actions
         .then(() => this.fetchCurrentPage())
-        // any errors produced by fetchCurrentPage are handled there
         .finally(() => {
           this.pubLoading = false
         })

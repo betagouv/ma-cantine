@@ -243,15 +243,11 @@ class PublishManyCanteensView(APIView):
         canteen_ids = data.get("ids")
         if not canteen_ids or not isinstance(canteen_ids, list):
             raise BadRequest()
-        success_ids = []
-        errors = []
-        # error if ids not provided
         for id in canteen_ids:
             canteen = Canteen.objects.get(pk=id)
             canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
             canteen.save()
-            success_ids.append(canteen.id)
-        return JsonResponse({"ids": success_ids, "errors": errors}, status=status.HTTP_200_OK)
+        return JsonResponse({"ids": canteen_ids}, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(
