@@ -137,3 +137,27 @@ class TestPublishCanteen(APITestCase):
         """
         response = self.client.post(reverse("publish_canteens"), {"ids": 1}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_publish_unmanaged_canteen(self):
+        """
+        If there are some canteens that aren't managed by the current user, publish what can be published
+        and return list of the canteens that are either non-existant or not managed by the user.
+        """
+        canteen_1 = CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT)
+        canteen_1.managers.add(authenticate.user)
+        canteen_2 = CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT)
+
+        payload = {"ids": [canteen_1.id, canteen_2.id, 999]}
+        response = self.client.post(reverse("publish_canteens"), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        ids = response.json()["unknown_ids"]
+        self.assertEqual(len(ids), 2)
+        self.assertIn(canteen_2.id, ids)
+        self.assertIn(999, ids)
+        self.assertNotIn(canteen_1.id, ids)
+        canteen_1.refresh_from_db()
+        self.assertEqual(canteen_1.publication_status, Canteen.PublicationStatus.PUBLISHED)
+        canteen_2.refresh_from_db()
+        self.assertEqual(canteen_2.publication_status, Canteen.PublicationStatus.DRAFT)

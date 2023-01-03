@@ -230,24 +230,42 @@ class UserCanteensFilterSet(django_filters.FilterSet):
     production_type = ProductionTypeInFilter(field_name="production_type")
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Publier plusieurs cantines.",
+        description="Vous recevrez deux tableaux : `ids` avec les identifiants des cantines publiées, "
+        + "et `unknown_ids` avec les identifiants des cantines non-publiées car l'identifiant n'existe "
+        + "pas où la cantine n'est pas gerer par l'utilisateur.",
+    ),
+)
 class PublishManyCanteensView(APIView):
     """
     This view allows mass publishing of canteens
     """
 
-    permission_classes = [IsAuthenticated]
-    # TODO: open to API ?
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
 
     def post(self, request):
         data = request.data
         canteen_ids = data.get("ids")
         if not canteen_ids or not isinstance(canteen_ids, list):
             raise BadRequest()
+
+        canteens = []
+        bad_canteens = []
         for id in canteen_ids:
-            canteen = Canteen.objects.get(pk=id)
+            try:
+                canteen = Canteen.objects.get(pk=id)
+                if canteen.managers.filter(pk=request.user.id).exists():
+                    canteens.append(canteen)
+                else:
+                    bad_canteens.append(id)
+            except Canteen.DoesNotExist:
+                bad_canteens.append(id)
+        for canteen in canteens:
             canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
             canteen.save()
-        return JsonResponse({"ids": canteen_ids}, status=status.HTTP_200_OK)
+        return JsonResponse({"ids": canteen_ids, "unknown_ids": bad_canteens}, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(
