@@ -199,7 +199,8 @@ export default {
           this.visibleSatellites = response.results
           this.$emit("satellitesLoaded", {
             total: this.satelliteCount,
-            unpublishedSatellites: response.unpublishedSatellites,
+            unpublishedCount: response.unpublishedCount,
+            satellitesToPublish: response.satellitesToPublish,
           })
         })
         .catch((e) => {

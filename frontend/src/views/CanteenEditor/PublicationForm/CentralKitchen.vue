@@ -27,14 +27,18 @@
           <p>Publications en cours...</p>
         </v-col>
       </v-row>
-      <p v-else-if="showMassPublication">
-        Vous pouvez publier
-        <span v-if="unpublishedSatellites.length > 1">{{ unpublishedSatellites.length }} satellites.</span>
-        <span v-else>1 satellite.</span>
-        <v-btn class="primary ml-2" @click="massPublication">
-          <span v-if="unpublishedSatellites.length > 1">Publier {{ unpublishedSatellites.length }} satellites</span>
+      <p v-else-if="unpublishedCount">
+        {{ publishActionPreamble }}
+        <v-btn class="primary ml-2" @click="massPublication" v-if="satellitesToPublish.length">
+          <span v-if="satellitesToPublish.length > 1">Publier {{ satellitesToPublish.length }} satellites</span>
           <span v-else>Publier la satellite</span>
         </v-btn>
+      </p>
+      <p v-else>
+        <v-icon size="30" color="green">
+          $checkbox-circle-fill
+        </v-icon>
+        Tous vos satellites sont publiés.
       </p>
     </div>
     <SatelliteTable
@@ -81,7 +85,8 @@ export default {
         { text: "Publiée ?", value: "publicationStatus" },
         { text: "", value: "userCanView", sortable: false },
       ],
-      unpublishedSatellites: [],
+      unpublishedCount: undefined,
+      satellitesToPublish: [],
       pubLoading: false,
       pubSuccesses: [],
     }
@@ -93,8 +98,23 @@ export default {
     satelliteTableParams() {
       return this.$route.query
     },
-    showMassPublication() {
-      return this.unpublishedSatellites?.length
+    publishActionPreamble() {
+      const satellitesToPublishCount = this.satellitesToPublish.length
+      const satellitesCountText = this.unpublishedCount > 1 ? `${this.unpublishedCount} satellites` : "1 satellite"
+      let preamble
+      if (this.unpublishedCount === satellitesToPublishCount) {
+        preamble = "Vous pouvez publier " + satellitesCountText
+      } else {
+        const description = this.unpublishedCount > 1 ? "ne sont pas publiés" : "n'est pas publié"
+        preamble = `Il y a ${satellitesCountText} qui ${description}`
+        if (satellitesToPublishCount) {
+          preamble += `, dont ${satellitesToPublishCount} que vous gerez et que vous pouvez publier.`
+        } else {
+          const theseSatellites = this.unpublishedCount > 1 ? `ces satellites` : "ce satellite"
+          preamble += `, mais vous n'avez pas les droits de publier ${theseSatellites}.`
+        }
+      }
+      return preamble
     },
   },
   methods: {
@@ -109,7 +129,8 @@ export default {
     },
     updateSatellitesCounts(data) {
       this.satelliteCount = data.total
-      this.unpublishedSatellites = data.unpublishedSatellites
+      this.unpublishedCount = data.unpublishedCount
+      this.satellitesToPublish = data.satellitesToPublish
     },
     updateRoute(params, isDefaultUpdate) {
       if (isDefaultUpdate) {
@@ -145,7 +166,7 @@ export default {
     massPublication() {
       this.pubLoading = true
       this.$store
-        .dispatch("submitMultiplePublications", { ids: this.unpublishedSatellites })
+        .dispatch("submitMultiplePublications", { ids: this.satellitesToPublish })
         .then((response) => {
           this.pubSuccesses = response.ids
           const title =
@@ -157,7 +178,7 @@ export default {
             status: "success",
           })
           // assume for UX that no more unpublished, but double checks with fetchSatellites
-          this.unpublishedSatellites = []
+          this.satellitesToPublish = []
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
         // refresh actions
