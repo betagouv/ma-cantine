@@ -897,6 +897,27 @@ class ClaimCanteenView(APIView):
 class SatellitesPagination(LimitOffsetPagination):
     default_limit = 10
     max_limit = 40
+    unpublished_satellites = []
+
+    def paginate_queryset(self, queryset, request, view=None):
+        unpublished_satellites = queryset.filter(publication_status=Canteen.PublicationStatus.DRAFT).values_list(
+            "pk", flat=True
+        )
+        self.unpublished_satellites = set(filter(lambda x: x, unpublished_satellites))
+        return super().paginate_queryset(queryset, request, view)
+
+    def get_paginated_response(self, data):
+        return Response(
+            OrderedDict(
+                [
+                    ("count", self.count),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                    ("unpublished_satellites", self.unpublished_satellites),
+                ]
+            )
+        )
 
 
 @extend_schema_view(

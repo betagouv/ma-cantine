@@ -18,6 +18,25 @@
         votre cuisine centrale reçoit aussi des convives sur place.
       </router-link>
     </p>
+    <div>
+      <v-row v-if="pubLoading" class="green--text">
+        <v-col cols="1" justify-self="center">
+          <v-progress-circular indeterminate></v-progress-circular>
+        </v-col>
+        <v-col>
+          <p>Publications en cours...</p>
+        </v-col>
+      </v-row>
+      <p v-else-if="showMassPublication">
+        Vous pouvez publier
+        <span v-if="unpublishedSatellites.length > 1">{{ unpublishedSatellites.length }} satellites.</span>
+        <span v-else>1 satellite.</span>
+        <v-btn class="primary ml-2" @click="massPublication">
+          <span v-if="unpublishedSatellites.length > 1">Publier {{ unpublishedSatellites.length }} satellites</span>
+          <span v-else>Publier la satellite</span>
+        </v-btn>
+      </p>
+    </div>
     <SatelliteTable
       ref="satelliteTable"
       :headers="satelliteTableHeaders"
@@ -27,7 +46,7 @@
       :satelliteAction="satelliteAction"
       @mountedAndFetched="mountedAndFetched"
       @paramsChanged="updateRoute"
-      @satellitesLoaded="updateSatellitesCount"
+      @satellitesLoaded="updateSatellitesCounts"
     />
     <p v-if="published">
       Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
@@ -62,6 +81,9 @@ export default {
         { text: "Publiée ?", value: "publicationStatus" },
         { text: "", value: "userCanView", sortable: false },
       ],
+      unpublishedSatellites: [],
+      pubLoading: false,
+      pubSuccesses: [],
     }
   },
   computed: {
@@ -70,6 +92,9 @@ export default {
     },
     satelliteTableParams() {
       return this.$route.query
+    },
+    showMassPublication() {
+      return this.unpublishedSatellites?.length
     },
   },
   methods: {
@@ -82,8 +107,9 @@ export default {
     mountedAndFetched() {
       this.$watch("$route", this.fetchSatellites)
     },
-    updateSatellitesCount(data) {
+    updateSatellitesCounts(data) {
       this.satelliteCount = data.total
+      this.unpublishedSatellites = data.unpublishedSatellites
     },
     updateRoute(params, isDefaultUpdate) {
       if (isDefaultUpdate) {
@@ -95,6 +121,7 @@ export default {
     satelliteAction(satellite) {
       const isDraft = satellite.publicationStatus === "draft"
       const store = this.$store
+      const that = this
       return {
         text: isDraft ? "Publier" : "Retirer la publication",
         action() {
@@ -111,8 +138,33 @@ export default {
               store.dispatch("notify", { title, status: "success" })
             })
             .catch((e) => store.dispatch("notifyServerError", e))
+            .finally(() => that.fetchSatellites())
         },
       }
+    },
+    massPublication() {
+      this.pubLoading = true
+      this.$store
+        .dispatch("submitMultiplePublications", { ids: this.unpublishedSatellites })
+        .then((response) => {
+          this.pubSuccesses = response.ids
+          const title =
+            this.pubSuccesses.length > 1
+              ? `${this.pubSuccesses.length} cantines satellites publiées`
+              : `${this.pubSuccesses.length} cantine satellite publiée`
+          this.$store.dispatch("notify", {
+            title,
+            status: "success",
+          })
+          // assume for UX that no more unpublished, but double checks with fetchSatellites
+          this.unpublishedSatellites = []
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+        // refresh actions
+        .then(() => this.fetchSatellites())
+        .finally(() => {
+          this.pubLoading = false
+        })
     },
   },
 }

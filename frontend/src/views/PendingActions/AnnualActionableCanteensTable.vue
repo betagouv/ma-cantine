@@ -59,14 +59,6 @@
             {{ pubSuccesses.length }} {{ pubSuccesses.length > 1 ? "cantines publiées" : "cantine publiée" }}
           </p>
         </v-alert>
-        <v-alert v-if="pubFailures.length" outlined type="error">
-          <p>
-            {{ pubFailures.length }}
-            {{ pubFailures.length > 1 ? "cantines pas publiées" : "cantine pas publiée" }}
-          </p>
-          <p>Essayez de publier les cantines restantes une par une depuis le tableur en dessous.</p>
-          <p class="mb-0">Si le problème persiste, contactez-nous.</p>
-        </v-alert>
       </div>
       <div class="mt-4">
         <v-data-table
@@ -219,7 +211,6 @@ export default {
       toPublish: [],
       pubLoading: false,
       pubSuccesses: [],
-      pubFailures: [],
     }
   },
   computed: {

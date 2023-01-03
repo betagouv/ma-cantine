@@ -197,7 +197,10 @@ export default {
         .then((response) => {
           this.satelliteCount = response.count
           this.visibleSatellites = response.results
-          this.$emit("satellitesLoaded", { total: this.satelliteCount })
+          this.$emit("satellitesLoaded", {
+            total: this.satelliteCount,
+            unpublishedSatellites: response.unpublishedSatellites,
+          })
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
