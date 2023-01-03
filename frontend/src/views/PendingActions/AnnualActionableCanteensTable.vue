@@ -390,7 +390,7 @@ export default {
           const errors = response.errors
           this.tdSuccesses = response.teledeclarationIds
           this.tdFailures = Object.keys(errors)
-          if (Object.keys(errors).length === 0) {
+          if (this.tdFailures.length === 0) {
             const title =
               this.tdSuccesses.length > 1
                 ? `${this.tdSuccesses.length} diagnostics télédéclarés`
@@ -409,9 +409,11 @@ export default {
               status: "error",
             })
           }
-          this.fetchCurrentPage() // refresh actions
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+        // refresh actions
+        .then(() => this.fetchCurrentPage())
+        // any errors produced by fetchCurrentPage are handled there
         .finally(() => {
           this.tdLoading = false
         })
@@ -422,37 +424,39 @@ export default {
       this.pubLoading = true
       // TODO: make this endpoint in the back, and the dispatch in the store
       // TODO: then, add similar logic to central kitchen publication page
-      // this.$store
-      //   .dispatch("submitMultiplePublications", { ids: this.toPublish })
-      //   .then((response) => {
-      //     const errors = response.errors
-      //     this.pubSuccesses = response.ids
-      //     this.pubFailures = Object.keys(errors)
-      //     if (Object.keys(errors).length === 0) {
-      //       const title =
-      //         this.pubSuccesses.length > 1
-      //           ? `${this.pubSuccesses.length} cantines publiées`
-      //           : `${this.pubSuccesses.length} cantine publiée`
-      //       this.$store.dispatch("notify", {
-      //         title,
-      //         status: "success",
-      //       })
-      //     } else {
-      //       const title =
-      //         this.pubFailures.length > 1
-      //           ? `${this.pubFailures.length} cantines pas publiées`
-      //           : `${this.pubFailures.length} cantine pas publiée`
-      //       this.$store.dispatch("notify", {
-      //         title,
-      //         status: "error",
-      //       })
-      //     }
-      //     this.fetchCurrentPage() // refresh actions
-      //   })
-      //   .catch((e) => this.$store.dispatch("notifyServerError", e))
-      //   .finally(() => {
-      //     this.pubLoading = false
-      //   })
+      this.$store
+        .dispatch("submitMultiplePublications", { ids: this.toPublish })
+        .then((response) => {
+          const errors = response.errors
+          this.pubSuccesses = response.ids
+          this.pubFailures = Object.keys(errors)
+          if (this.pubFailures.length === 0) {
+            const title =
+              this.pubSuccesses.length > 1
+                ? `${this.pubSuccesses.length} cantines publiées`
+                : `${this.pubSuccesses.length} cantine publiée`
+            this.$store.dispatch("notify", {
+              title,
+              status: "success",
+            })
+          } else {
+            const title =
+              this.pubFailures.length > 1
+                ? `${this.pubFailures.length} cantines pas publiées`
+                : `${this.pubFailures.length} cantine pas publiée`
+            this.$store.dispatch("notify", {
+              title,
+              status: "error",
+            })
+          }
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+        // refresh actions
+        .then(() => this.fetchCurrentPage())
+        // any errors produced by fetchCurrentPage are handled there
+        .finally(() => {
+          this.pubLoading = false
+        })
     },
   },
   mounted() {

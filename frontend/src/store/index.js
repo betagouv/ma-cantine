@@ -504,6 +504,24 @@ export default new Vuex.Store({
         })
     },
 
+    submitMultiplePublications(context, { ids }) {
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch("/api/v1/publish/", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ ids }),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
     cancelTeledeclaration(context, { id }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/teledeclaration/${id}/cancel/`, {

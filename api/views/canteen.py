@@ -242,13 +242,14 @@ class PublishManyCanteensView(APIView):
         data = request.data
         canteen_ids = data.get("ids")
         success_ids = []
+        errors = []
         # error if ids not provided
         for id in canteen_ids:
             canteen = Canteen.objects.get(pk=id)
             canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
             canteen.save()
             success_ids.append(canteen.id)
-        return JsonResponse({"ids": success_ids}, status=status.HTTP_200_OK)
+        return JsonResponse({"ids": success_ids, "errors": errors}, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(
