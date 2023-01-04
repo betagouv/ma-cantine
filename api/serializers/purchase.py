@@ -7,7 +7,6 @@ class PurchaseSerializer(serializers.ModelSerializer):
 
     canteen = serializers.PrimaryKeyRelatedField(read_only=True)
     invoice_file = Base64FileField(required=False, allow_null=True)
-    price_ht = serializers.DecimalField(localize=True, max_digits=20, decimal_places=2)
 
     class Meta:
         model = Purchase

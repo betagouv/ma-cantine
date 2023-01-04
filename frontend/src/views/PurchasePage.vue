@@ -50,7 +50,7 @@
                   validate-on-blur
                   type="number"
                   hide-details="auto"
-                  v-model="purchase.priceHt"
+                  v-model.number="purchase.priceHt"
                   class="mt-2"
                   append-icon="mdi-currency-eur"
                   :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
