@@ -1,13 +1,55 @@
 <template>
   <div>
     <h2 class="font-weight-black text-h6 grey--text text--darken-4 mb-6">Contactez « {{ canteen.name }} »</h2>
+    <div class="text-left grey--text text--darken-2 mt-n1 mb-6">
+      <p>Vous pouvez par exemple :</p>
+      <div class="ml-2">
+        <p class="mb-1">
+          <v-icon small color="green">mdi-check-bold</v-icon>
+          demander des informations supplémentaires sur la cantine que vous fréquentez;
+        </p>
+        <p class="mb-1">
+          <v-icon small color="green">mdi-check-bold</v-icon>
+          contacter un collègue gestionnaire afin de lui demander un retour d'expérience sur une action mise en place...
+        </p>
+      </div>
+      <p class="mt-4">Il ne s'agit cependant pas de :</p>
+      <div class="ml-2">
+        <p class="mb-1">
+          <v-icon small color="red">$close-line</v-icon>
+          postuler à une offre d'emploi pour une cantine => privilégier des contacts de l'établissements hors de ma
+          cantine
+        </p>
+        <p class="mb-1">
+          <v-icon small color="red">$close-line</v-icon>
+          informer l'établissement de l'absence/présence de soi ou d'un tiers au repas du jour => privilégier un contact
+          avec la "vie scolaire"
+        </p>
+        <p class="mb-1">
+          <v-icon small color="red">$close-line</v-icon>
+          en tant que fournisseur de proposer ses services => privilégier votre référencement parmis les
+          <router-link :to="{ name: 'PartnersHome' }">
+            acteurs de l'éco-système
+          </router-link>
+          en
+          <a href="https://startupdetat.typeform.com/to/JhhsMCYC" target="_blank" rel="noopener">
+            demandant votre référencement
+            <v-icon color="primary" small>mdi-open-in-new</v-icon>
+          </a>
+        </p>
+      </div>
+      <p class="mt-4">
+        Nota bene : l'équipe de « ma cantine » se réserve un droit de modération et décide ou non de valider votre
+        message dans
+        <b>les 3 jours ouvrables.</b>
+      </p>
+    </div>
     <v-form v-model="formIsValid" ref="form" @submit.prevent>
       <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
       <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
       <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
       <p class="caption text-left grey--text text--darken-1 mt-n1 mb-6">
-        Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc). Ces messages
-        peuvent être lus pour des fins de modération.
+        Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
       </p>
     </v-form>
     <v-btn x-large color="primary" class="mt-0 mb-6" @click="sendEmail">
