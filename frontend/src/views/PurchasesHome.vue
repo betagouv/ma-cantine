@@ -194,7 +194,9 @@
             {{ getProductFamilyDisplayValue(item.family).text }}
           </v-chip>
         </template>
-        <template v-slot:[`item.priceHt`]="{ item }">{{ item.priceHt }} €</template>
+        <template v-slot:[`item.priceHt`]="{ item }">
+          {{ item.priceHt.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) }}
+        </template>
         <template v-slot:[`item.hasAttachment`]="{ item }">
           <v-icon small color="grey" v-if="item.hasAttachment" aria-label="Has invoice file" :aria-hidden="false">
             mdi-paperclip
@@ -272,7 +274,7 @@ export default {
         { text: "Produit", value: "description", sortable: true },
         { text: "Famille", value: "family", sortable: false },
         { text: "Cantine", value: "canteen__name", sortable: true },
-        { text: "Prix HT", value: "priceHt", sortable: true },
+        { text: "Prix HT", value: "priceHt", sortable: true, align: "end" },
         { text: "", value: "hasAttachment", sortable: false },
       ],
       productFamilies: [],
