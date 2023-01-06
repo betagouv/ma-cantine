@@ -712,7 +712,7 @@ class CanteenStatisticsView(APIView):
     def get(self, request):
         regions = request.query_params.getlist("region")
         departments = request.query_params.getlist("department")
-        sectors = request.query_params.getlist("sectors")
+        sector_categories = request.query_params.getlist("sectors")
         epcis = request.query_params.getlist("epci")
         postal_codes = None
         year = request.query_params.get("year")
@@ -726,13 +726,15 @@ class CanteenStatisticsView(APIView):
             logger.warning(f"Error when fetching postcodes for EPCI for canteen stats: {str(e)}")
             data["epci_error"] = "Une erreur est survenue"
 
-        canteens = CanteenStatisticsView._filter_canteens(regions, departments, postal_codes, sectors)
+        canteens = CanteenStatisticsView._filter_canteens(regions, departments, postal_codes, sector_categories)
         data["canteen_count"] = canteens.count()
         data["published_canteen_count"] = canteens.filter(
             publication_status=Canteen.PublicationStatus.PUBLISHED
         ).count()
 
-        diagnostics = CanteenStatisticsView._filter_diagnostics(year, regions, departments, postal_codes, sectors)
+        diagnostics = CanteenStatisticsView._filter_diagnostics(
+            year, regions, departments, postal_codes, sector_categories
+        )
 
         appro_share_query = diagnostics.filter(value_total_ht__gt=0)
         appro_share_query = appro_share_query.annotate(
@@ -771,11 +773,14 @@ class CanteenStatisticsView(APIView):
             data["plasticPercent"] = int(badge_querysets["plastic"].count() / total_diag * 100)
             data["infoPercent"] = int(badge_querysets["info"].count() / total_diag * 100)
 
-        # count breakdown by sector
-        sectors = {}
-        for sector in Sector.objects.all():
-            sectors[sector.id] = canteens.filter(sectors=sector).count()
-        data["sectors"] = sectors
+        # count breakdown by sector category
+        sector_categories = {}
+        for category in Sector.Categories:
+            sectors = Sector.objects.filter(category=category)
+            sector_categories[category] = canteens.filter(sectors__in=sectors).count()
+        sectors = Sector.objects.filter(category=None)
+        sector_categories["inconnu"] = canteens.filter(sectors__in=sectors).count()
+        data["sector_categories"] = sector_categories
         return JsonResponse(camelize(data), status=status.HTTP_200_OK)
 
     def _get_postal_codes(epcis):
