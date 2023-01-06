@@ -369,7 +369,7 @@ export default {
       const remaining = characteristics.length - displayCount
       characteristics.splice(displayCount, Infinity)
       let str = characteristics.map((c) => this.getCharacteristicDisplayValue(c).text).join(", ")
-      if (remaining > 0) str += ` et ${remaining} autres`
+      if (remaining > 0) str += ` et ${remaining} autre${remaining > 1 ? "s" : ""}`
       return str
     },
     getCharacteristicDisplayValue(characteristic) {
