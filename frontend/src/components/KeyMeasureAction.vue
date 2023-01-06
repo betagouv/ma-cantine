@@ -1,9 +1,9 @@
 <template>
   <p class="action my-0">
-    <v-icon small v-if="isDone" color="primary" aria-label="Fait" role="img" aria-hidden="false">
-      mdi-check-bold
+    <v-icon v-if="isDone" color="primary" aria-label="Fait" role="img" aria-hidden="false" class="pl-0">
+      $check-line
     </v-icon>
-    <v-icon small v-else aria-label="Pas encore fait" role="img" aria-hidden="false">$close-line</v-icon>
+    <v-icon v-else aria-label="Pas encore fait" role="img" aria-hidden="false" class="pl-0">$close-line</v-icon>
     <span>{{ label }}</span>
   </p>
 </template>
