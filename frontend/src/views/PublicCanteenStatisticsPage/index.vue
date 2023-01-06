@@ -112,8 +112,7 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
-              ).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
             </p>
           </div>
           <VueApexCharts
@@ -266,11 +265,11 @@ export default {
       statistics: {},
       publishedChartOptions: {
         labels: ["Publiée", "Non publiée"],
-        colors: ["#6a6af4", "#ccc"],
+        colors: ["#6a6af4", "#aaa"],
         dataLabels: {
           dropShadow: false,
           style: {
-            colors: ["#333"],
+            colors: ["#000"],
             fontSize: "14px",
           },
           offsetX: 30,
