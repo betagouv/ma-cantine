@@ -237,7 +237,7 @@ import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 import jsonEpcis from "@/epcis.json"
-import { lastYear, normaliseText, sectorsSelectList } from "@/utils"
+import { lastYear, normaliseText, sectorsSelectList, capitalise } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
@@ -288,6 +288,7 @@ export default {
     this.populateInitialParameters()
     this.loadLocations()
     this.updateStatistics()
+    this.updateDocumentTitle()
   },
   computed: {
     departments() {
@@ -560,17 +561,16 @@ export default {
       if (!Array.isArray(this.chosenRegions)) this.chosenRegions = [this.chosenRegions]
       this.chosenDepartments = this.$route.query.department || []
       if (!Array.isArray(this.chosenDepartments)) this.chosenDepartments = [this.chosenDepartments]
+      this.chosenEpcis = this.$route.query.epcis || []
+      if (!Array.isArray(this.chosenEpcis)) this.chosenEpcis = [this.chosenEpcis]
       this.chosenSectors = this.$route.query.sectors?.split(",").map((s) => parseInt(s, 10)) || []
-      let queryEpcis = this.$route.query.epcis
-      queryEpcis = queryEpcis || []
-      this.chosenEpcis = Array.isArray(queryEpcis) ? queryEpcis : [queryEpcis]
     },
     updateDocumentTitle() {
       let title = `Les cantines dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
-      if (this.chosenRegions.length || this.chosenDepartments.length) {
+      if (this.chosenRegions.length || this.chosenDepartments.length || this.chosenEpcis.length) {
         let locationText = this.createLocationText()
         if (locationText.startsWith("les")) {
-          locationText = locationText.charAt(0).toUpperCase() + locationText.slice(1)
+          locationText = capitalise(locationText)
         }
         title = `${locationText} - ${title}`
       }
