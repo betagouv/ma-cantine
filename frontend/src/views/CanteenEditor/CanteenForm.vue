@@ -16,7 +16,7 @@
       v-if="!isNewCanteen && originalCanteen.productionType !== 'central'"
     />
 
-    <v-row v-if="!siret">
+    <v-row v-if="!siret && !canteen.siret">
       <v-col cols="12" md="9">
         <SiretCheck @siretIsValid="setSiret" />
       </v-col>
@@ -26,8 +26,9 @@
         <v-col cols="12" md="8">
           <p>SIRET</p>
           <p class="grey--text text--darken-2">
-            {{ siret }}
-            <v-btn small @click="siret = null">Change-le</v-btn>
+            {{ siret || canteen.siret }}
+            <!-- TODO: how to manage modify canteen form -->
+            <v-btn v-if="!canteen.siret" small @click="siret = null">Change-le</v-btn>
           </p>
           <DsfrTextField
             hide-details="auto"

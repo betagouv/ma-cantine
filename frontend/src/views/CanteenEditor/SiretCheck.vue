@@ -143,21 +143,21 @@ export default {
         window.scrollTo(0, 0)
         return
       }
-      // if (e.jsonPromise) {
-      //   e.jsonPromise.then((json) => {
-      //     const isDuplicateSiret = json.detail === "La resource que vous souhaitez créer existe déjà"
-      //     if (isDuplicateSiret) {
-      //       this.duplicateSiretCanteen = json
-      //       this.messageTroubleshooting = `Je veux ajouter une deuxième cantine avec le même SIRET : ${payload.siret}...`
-      //     }
-      //   })
-      //   this.$store.dispatch("notifyRequiredFieldsError")
-      // } else {
-      //   this.$store.dispatch("notifyServerError", e)
-      // }
-      // window.scrollTo(0, 0)
-      this.$emit("siretIsValid", this.siret)
+      return fetch("/api/v1/siret/" + this.siret)
+        .then((response) => response.json())
+        .then((response) => {
+          const isDuplicateSiret = !!response.id
+          if (isDuplicateSiret) {
+            this.duplicateSiretCanteen = response
+            this.messageTroubleshooting = `Je veux ajouter une deuxième cantine avec le même SIRET : ${this.siret}...`
+          } else {
+            this.$emit("siretIsValid", this.siret)
+          }
+        })
     },
+    // TODO: after request sent, change front end to clear message and discourage duplicate sending
+    // maybe clear siret and red box, adding a green alert at the top which includes the SIRET in the message
+    // or something...
     sendMgmtRequest() {
       const payload = {
         email: this.user.email,
