@@ -212,8 +212,11 @@
         </template>
         <template v-slot:[`item.family`]="{ item }">
           <v-chip outlined small :color="getProductFamilyDisplayValue(item.family).color" dark class="font-weight-bold">
-            {{ getProductFamilyDisplayValue(item.family).text }}
+            {{ capitalise(getProductFamilyDisplayValue(item.family).shortText) }}
           </v-chip>
+        </template>
+        <template v-slot:[`item.characteristics`]="{ item }">
+          {{ getProductCharacteristicsDisplayValue(item.characteristics) }}
         </template>
         <template v-slot:[`item.priceHt`]="{ item }">
           {{ item.priceHt.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) }}
@@ -262,7 +265,7 @@
 </template>
 
 <script>
-import { formatDate, getObjectDiff, normaliseText } from "@/utils"
+import { formatDate, getObjectDiff, normaliseText, capitalise } from "@/utils"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
@@ -295,6 +298,7 @@ export default {
         },
         { text: "Produit", value: "description", sortable: true },
         { text: "Famille", value: "family", sortable: false },
+        { text: "Caratéristiques", value: "characteristics", sortable: false },
         { text: "Cantine", value: "canteen__name", sortable: true },
         { text: "Prix HT", value: "priceHt", sortable: true, align: "end" },
         { text: "", value: "hasAttachment", sortable: false },
@@ -354,6 +358,19 @@ export default {
       if (Object.prototype.hasOwnProperty.call(Constants.ProductFamilies, family))
         return Constants.ProductFamilies[family]
       return { text: "", color: "" }
+    },
+    getProductCharacteristicsDisplayValue(characteristics) {
+      const priorityOrder = Object.keys(Constants.Characteristics)
+      characteristics = characteristics.filter((c) => priorityOrder.indexOf(c) > -1)
+      characteristics.sort((a, b) => {
+        return priorityOrder.indexOf(a) - priorityOrder.indexOf(b)
+      })
+      const displayCount = 3
+      const remaining = characteristics.length - displayCount
+      characteristics.splice(displayCount, Infinity)
+      let str = characteristics.map((c) => this.getCharacteristicDisplayValue(c).text).join(", ")
+      if (remaining > 0) str += ` et ${remaining} autres`
+      return str
     },
     getCharacteristicDisplayValue(characteristic) {
       if (Object.prototype.hasOwnProperty.call(Constants.Characteristics, characteristic))
@@ -504,6 +521,9 @@ export default {
       this.$watch("appliedFilters", this.onAppliedFiltersChange, { deep: true })
       this.$watch("options", this.onOptionsChange, { deep: true })
       this.$watch("$route", this.onRouteChange)
+    },
+    capitalise(str) {
+      return capitalise(str)
     },
   },
   beforeMount() {
