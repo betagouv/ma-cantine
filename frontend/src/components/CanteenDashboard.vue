@@ -46,12 +46,12 @@
                 :isDone="latestDiagnostic.hasWastePlan"
                 label="Mise en place d'un plan d'actions contre le gaspillage"
               />
-              <ul class="specifics-actions ml-4">
+              <ul class="specifics-actions ml-8">
                 <li v-for="action in latestDiagnostic.wasteActions" :key="action" class="my-1">
                   {{ wasteActions[action] }}
                 </li>
               </ul>
-              <ul class="specifics-actions ml-4" v-if="latestDiagnostic.otherWasteAction">
+              <ul class="specifics-actions ml-8" v-if="latestDiagnostic.otherWasteAction">
                 <li class="my-1">
                   {{ latestDiagnostic.otherWasteAction }}
                 </li>

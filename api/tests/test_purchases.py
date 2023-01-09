@@ -298,7 +298,6 @@ class TestPurchaseApi(APITestCase):
         aoc = Purchase.Characteristic.AOCAOP
         stg = Purchase.Characteristic.STG
         fairtrade = Purchase.Characteristic.COMMERCE_EQUITABLE
-        farm = Purchase.Characteristic.FERMIER
         # some non-egalim characteristics
         short_dist = Purchase.Characteristic.SHORT_DISTRIBUTION
         local = Purchase.Characteristic.LOCAL
@@ -321,14 +320,14 @@ class TestPurchaseApi(APITestCase):
         PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[stg, fairtrade], price_ht=60)
 
         # check that can have a family with only non-EGAlim labels
-        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[farm], price_ht=50)
-        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[farm], price_ht=50)
+        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[local], price_ht=50)
+        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[local], price_ht=50)
 
-        # check that this will added to the bio value before
+        # check that short distribution meat will include both this and the bio purchase which is also short dist.
         PurchaseFactory.create(canteen=canteen, date=d, family=meat, characteristics=[short_dist], price_ht=90)
 
         # check that items with no label are included in total
-        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[], price_ht=100)
+        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[], price_ht=110)
 
         # Not in the year 2020 - smoke test for year filtering
         PurchaseFactory.create(canteen=canteen, date="2019-01-01", characteristics=[bio], price_ht=666)
@@ -338,14 +337,16 @@ class TestPurchaseApi(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["total"], 580.0)
+        self.assertEqual(body["total"], 590.0)
         self.assertEqual(body["fruitsEtLegumesBio"], 200.0)
         self.assertEqual(body["viandesVolaillesBio"], 10.0)
         self.assertEqual(body["fruitsEtLegumesAocaopIgpStg"], 80.0)
         self.assertEqual(body["fruitsEtLegumesCommerceEquitable"], None)
-        self.assertEqual(body["autresFermier"], 100.0)
+        self.assertEqual(body["autresLocal"], 100.0)
         self.assertEqual(body["viandesVolaillesShortDistribution"], 100.0)
         self.assertEqual(body["viandesVolaillesLocal"], 10.0)
+        self.assertEqual(body["autresNonEgalim"], 210.0)
+        self.assertEqual(body["viandesVolaillesNonEgalim"], 90.0)
 
     def test_purchase_summary_unauthenticated(self):
         canteen = CanteenFactory.create()

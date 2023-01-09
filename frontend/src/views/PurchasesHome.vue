@@ -74,8 +74,29 @@
       </div>
       <v-expand-transition>
         <div v-show="showFilters" class="px-4 pb-6 pt-0">
-          <v-row>
-            <v-col cols="12" sm="6" md="4">
+          <v-row v-if="userCanteens.length > 1">
+            <v-col cols="12" sm="8">
+              <label
+                for="filter-canteen"
+                :class="{ 'text-body-2': true, 'active-filter-label': appliedFilters.canteen > 0 }"
+              >
+                Établissement
+              </label>
+              <DsfrAutocomplete
+                id="filter-canteen"
+                v-model="appliedFilters.canteen"
+                :items="userCanteens"
+                item-text="name"
+                item-value="id"
+                auto-select-first
+                hide-details
+                clearable
+                class="mt-2"
+              />
+            </v-col>
+          </v-row>
+          <v-row class="mt-0">
+            <v-col cols="12" sm="6" md="5">
               <label
                 for="filter-family"
                 :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.family }"
@@ -91,7 +112,7 @@
                 class="mt-2"
               />
             </v-col>
-            <v-col cols="12" sm="6">
+            <v-col cols="12" sm="5">
               <label
                 for="filter-characteristics"
                 :class="{ 'text-body-2': true, 'active-filter-label': appliedFilters.characteristics.length > 0 }"
@@ -192,10 +213,15 @@
         </template>
         <template v-slot:[`item.family`]="{ item }">
           <v-chip outlined small :color="getProductFamilyDisplayValue(item.family).color" dark class="font-weight-bold">
-            {{ getProductFamilyDisplayValue(item.family).text }}
+            {{ capitalise(getProductFamilyDisplayValue(item.family).shortText) }}
           </v-chip>
         </template>
-        <template v-slot:[`item.priceHt`]="{ item }">{{ item.priceHt }} €</template>
+        <template v-slot:[`item.characteristics`]="{ item }">
+          {{ getProductCharacteristicsDisplayValue(item.characteristics) }}
+        </template>
+        <template v-slot:[`item.priceHt`]="{ item }">
+          {{ item.priceHt.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) }}
+        </template>
         <template v-slot:[`item.hasAttachment`]="{ item }">
           <v-icon small color="grey" v-if="item.hasAttachment" aria-label="Has invoice file" :aria-hidden="false">
             mdi-paperclip
@@ -240,17 +266,25 @@
 </template>
 
 <script>
-import { formatDate, getObjectDiff } from "@/utils"
+import { formatDate, getObjectDiff, normaliseText, capitalise } from "@/utils"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrSearchField from "@/components/DsfrSearchField"
+import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import PurchasesToolExplanation from "../components/PurchasesToolExplanation"
 
 export default {
   name: "PurchasesHome",
-  components: { DsfrTextField, BreadcrumbsNav, DsfrSelect, DsfrSearchField, PurchasesToolExplanation },
+  components: {
+    DsfrTextField,
+    BreadcrumbsNav,
+    DsfrSelect,
+    DsfrSearchField,
+    DsfrAutocomplete,
+    PurchasesToolExplanation,
+  },
   data() {
     return {
       searchTerm: null,
@@ -273,8 +307,9 @@ export default {
         },
         { text: "Produit", value: "description", sortable: true },
         { text: "Famille", value: "family", sortable: false },
+        { text: "Caratéristiques", value: "characteristics", sortable: false },
         { text: "Cantine", value: "canteen__name", sortable: true },
-        { text: "Prix HT", value: "priceHt", sortable: true },
+        { text: "Prix HT", value: "priceHt", sortable: true, align: "end" },
         { text: "", value: "hasAttachment", sortable: false },
       ],
       productFamilies: [],
@@ -284,6 +319,7 @@ export default {
       endDateMenu: false,
       appliedFilters: {
         family: null,
+        canteen: null,
         characteristics: [],
         startDate: null,
         endDate: null,
@@ -311,19 +347,39 @@ export default {
         this.appliedFilters.family !== null ||
         this.appliedFilters.characteristics.length !== 0 ||
         this.appliedFilters.startDate !== null ||
-        this.appliedFilters.endDate !== null
+        this.appliedFilters.endDate !== null ||
+        this.appliedFilters.canteen !== null
       )
     },
     hasCanteens() {
       return !!this.$store.state.userCanteenPreviews && this.$store.state.userCanteenPreviews.length > 0
     },
     // TODO: format choice lists to have explanation of inactive choices
+    userCanteens() {
+      const canteens = this.$store.state.userCanteenPreviews
+      return canteens.sort((a, b) => {
+        return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
+      })
+    },
   },
   methods: {
     getProductFamilyDisplayValue(family) {
       if (Object.prototype.hasOwnProperty.call(Constants.ProductFamilies, family))
         return Constants.ProductFamilies[family]
       return { text: "", color: "" }
+    },
+    getProductCharacteristicsDisplayValue(characteristics) {
+      const priorityOrder = Object.keys(Constants.Characteristics)
+      characteristics = characteristics.filter((c) => priorityOrder.indexOf(c) > -1)
+      characteristics.sort((a, b) => {
+        return priorityOrder.indexOf(a) - priorityOrder.indexOf(b)
+      })
+      const displayCount = 3
+      const remaining = characteristics.length - displayCount
+      characteristics.splice(displayCount, Infinity)
+      let str = characteristics.map((c) => this.getCharacteristicDisplayValue(c).text).join(", ")
+      if (remaining > 0) str += ` et ${remaining} autre${remaining > 1 ? "s" : ""}`
+      return str
     },
     getCharacteristicDisplayValue(characteristic) {
       if (Object.prototype.hasOwnProperty.call(Constants.Characteristics, characteristic))
@@ -377,6 +433,7 @@ export default {
       if (this.appliedFilters.family) apiQueryParams += `&family=${this.appliedFilters.family}`
       if (this.appliedFilters.startDate) apiQueryParams += `&date_after=${this.appliedFilters.startDate}`
       if (this.appliedFilters.endDate) apiQueryParams += `&date_before=${this.appliedFilters.endDate}`
+      if (this.appliedFilters.canteen) apiQueryParams += `&canteen__id=${this.appliedFilters.canteen}`
       if (this.appliedFilters.characteristics.length > 0)
         apiQueryParams += `&characteristics=${this.appliedFilters.characteristics.join("&characteristics=")}`
       return apiQueryParams
@@ -390,6 +447,7 @@ export default {
         urlQueryParams["famille"] = this.getProductFamilyDisplayValue(this.appliedFilters.family).text
       if (this.appliedFilters.startDate) urlQueryParams["après"] = this.appliedFilters.startDate
       if (this.appliedFilters.endDate) urlQueryParams["avant"] = this.appliedFilters.endDate
+      if (this.appliedFilters.canteen) urlQueryParams["cantine"] = this.appliedFilters.canteen
       if (this.appliedFilters.characteristics.length > 0)
         urlQueryParams["caracteristiques"] = this.appliedFilters.characteristics
           .map((c) => this.getCharacteristicDisplayValue(c).text)
@@ -432,9 +490,10 @@ export default {
         endDate: this.$route.query.avant || null,
         characteristics,
         family: this.getChoiceValueFromText(Constants.ProductFamilies, this.$route.query.famille),
+        canteen: Number(this.$route.query.cantine) || null,
       }
       const filterChanges = this.appliedFilters ? getObjectDiff(this.appliedFilters, filters) : filters
-      if (Object.keys(filterChanges).length > 0) this.$set(this, "appliedFilters", filterChanges)
+      if (Object.keys(filterChanges).length > 0) this.$set(this, "appliedFilters", filters)
     },
     clearSearch() {
       this.searchTerm = ""
@@ -450,6 +509,7 @@ export default {
         endDate: null,
         characteristics: [],
         family: null,
+        canteen: null,
       })
     },
     onAppliedFiltersChange() {
@@ -470,6 +530,9 @@ export default {
       this.$watch("appliedFilters", this.onAppliedFiltersChange, { deep: true })
       this.$watch("options", this.onOptionsChange, { deep: true })
       this.$watch("$route", this.onRouteChange)
+    },
+    capitalise(str) {
+      return capitalise(str)
     },
   },
   beforeMount() {

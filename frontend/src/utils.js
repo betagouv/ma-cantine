@@ -427,3 +427,7 @@ export const hideCommunityEventsBanner = (events, store) => {
   document.cookie = `${bannerCookieName}=${lastEventId};max-age=31536000;path=/;expires=${expirationDate.toUTCString()};SameSite=Strict;`
   store.dispatch("setShowWebinaireBanner", false)
 }
+
+export const capitalise = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}

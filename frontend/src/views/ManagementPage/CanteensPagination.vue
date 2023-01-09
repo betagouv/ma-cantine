@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-sheet class="px-3 mt-6 mb-6" elevation="0">
+    <v-sheet class="px-3 mt-6 mb-6" elevation="0" v-if="showFilters">
       <v-row>
         <v-col cols="12" md="7" class="pa-0 pr-md-8">
           <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
@@ -26,7 +26,7 @@
         </v-col>
       </v-row>
     </v-sheet>
-    <DsfrPagination class="mb-6" v-model="page" :length="Math.ceil(canteenCount / limit)" />
+    <DsfrPagination class="mb-6" v-model="page" :length="Math.ceil(canteenCount / limit)" v-if="showPagination" />
     <v-sheet fluid height="200" v-if="inProgress">
       <v-progress-circular indeterminate style="left: 50%; top: 50%"></v-progress-circular>
     </v-sheet>
@@ -101,6 +101,12 @@ export default {
       if (this.searchTerm) query.recherche = this.searchTerm
       if (this.filterProductionType !== "all") query.typeEtablissement = this.filterProductionType
       return query
+    },
+    showFilters() {
+      return this.canteenCount > this.limit || this.searchTerm || this.filterProductionType
+    },
+    showPagination() {
+      return this.canteenCount > this.limit
     },
   },
   methods: {

@@ -50,7 +50,7 @@
                   validate-on-blur
                   type="number"
                   hide-details="auto"
-                  v-model="purchase.priceHt"
+                  v-model.number="purchase.priceHt"
                   class="mt-2"
                   append-icon="mdi-currency-eur"
                   :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
@@ -72,6 +72,8 @@
                   class="mt-2"
                   auto-select-first
                   no-data-text="Pas de résultats"
+                  :readonly="this.userCanteens.length === 1"
+                  :disabled="this.userCanteens.length === 1"
                 />
               </v-col>
 
@@ -401,6 +403,9 @@ export default {
     if (this.isNewPurchase) {
       this.purchase = {
         characteristics: [],
+      }
+      if (this.userCanteens.length === 1) {
+        this.purchase.canteen = this.userCanteens[0].id
       }
       return
     }
