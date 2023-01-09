@@ -112,7 +112,8 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
+              ).
             </p>
           </div>
           <VueApexCharts
@@ -128,7 +129,7 @@
         </v-col>
         <v-col cols="12" sm="8" md="6" class="pl-0">
           <VueApexCharts
-            :options="sectorGategoryChartOptions"
+            :options="sectorCategoryChartOptions"
             :series="sectorCategorySeries"
             type="bar"
             height="auto"
@@ -277,7 +278,10 @@ export default {
       },
       loadedDepartmentIds: [],
       loadedRegionIds: [],
-      sectorCategoryChartTitle: "Nombre de cantines par categorie de secteur",
+      sectorCategoryChartTitle: [
+        "Nombre de cantines par categorie de secteur.",
+        "Une cantine peut avoir plusieurs catégories.",
+      ],
       defaultLocationText: "l'ensemble de la plateforme",
       statsLevel: "site",
       epcis: jsonEpcis,
@@ -330,7 +334,7 @@ export default {
         },
       ]
     },
-    sectorGategoryChartOptions() {
+    sectorCategoryChartOptions() {
       return {
         title: {
           text: this.sectorCategoryChartTitle,
@@ -342,6 +346,7 @@ export default {
           },
           offsetX: this.$vuetify.breakpoint.mdAndUp ? 162 : 10,
           offsetY: -5,
+          margin: 20,
           floating: true,
         },
         dataLabels: {
