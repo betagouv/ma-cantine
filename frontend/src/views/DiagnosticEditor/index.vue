@@ -289,7 +289,16 @@ import SimplifiedQualityValues from "./SimplifiedQualityValues"
 import ExtendedQualityValues from "./ExtendedQualityValues"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import Constants from "@/constants"
-import { getObjectDiff, timeAgo, strictIsNaN, lastYear, diagnosticYears, getPercentage, readCookie } from "@/utils"
+import {
+  getObjectDiff,
+  timeAgo,
+  strictIsNaN,
+  lastYear,
+  diagnosticYears,
+  getPercentage,
+  readCookie,
+  capitalise,
+} from "@/utils"
 import DsfrSelect from "@/components/DsfrSelect"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
@@ -582,7 +591,7 @@ export default {
       if (this.diagnostic.plasticTablewareSubstituted) summary.push("ustensils")
       if (summary.length === 0) return "Pas de mesures de substitution"
       summary = summary.join(", ") + " substitués"
-      return summary.charAt(0).toUpperCase() + summary.slice(1)
+      return capitalise(summary)
     },
     saveDiagnostic() {
       const diagnosticFormsAreValid = this.validateForms()
