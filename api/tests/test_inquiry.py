@@ -132,7 +132,10 @@ class TestEmail(APITestCase):
         self.assertIn("Please add me to the team", email.body)
         self.assertIn("76494221950672", email.body)
         self.assertIn("Hugo", email.body)
-        self.assertIn(f"https://mysite.com/modifier-ma-cantine/{canteen.id}--Hugo/gestionnaires", email.body)
+        self.assertIn(
+            f"https://mysite.com/modifier-ma-cantine/{canteen.id}--\nHugo/gestionnaires?email=test@example.com",
+            email.body,
+        )
         self.assertEqual(len(email.reply_to), 1)
         self.assertEqual(email.reply_to[0], "test@example.com")
         self.assertEqual(email.from_email, "no-reply@example.com")
@@ -162,7 +165,10 @@ class TestEmail(APITestCase):
         self.assertIn("Please add me to the team", email.body)
         self.assertIn("76494221950672", email.body)
         self.assertIn("Hugo", email.body)
-        self.assertIn(f"https://mysite.com/modifier-ma-cantine/{canteen.id}--Hugo/gestionnaires", email.body)
+        self.assertIn(
+            f"https://mysite.com/modifier-ma-cantine/{canteen.id}--\nHugo/gestionnaires?email=test@example.com",
+            email.body,
+        )
         self.assertEqual(len(email.reply_to), 1)
         self.assertEqual(email.reply_to[0], "test@example.com")
         self.assertEqual(email.from_email, "no-reply@example.com")
