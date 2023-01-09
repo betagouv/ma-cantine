@@ -43,6 +43,7 @@ export default new Vuex.Store({
     communityEventsLoadingStatus: Constants.LoadingStatus.IDLE,
 
     sectors: [],
+    sectorCategories: [],
     userCanteenPreviews: [],
     initialDataLoaded: false,
     upcomingCommunityEvents: [],
@@ -77,6 +78,23 @@ export default new Vuex.Store({
     },
     SET_SECTORS(state, sectors) {
       state.sectors = sectors
+      state.sectorCategories = []
+      state.sectors.forEach((s) => {
+        if (!s.category) s.category = "inconnu"
+        if (state.sectorCategories.indexOf(s.category) === -1) {
+          state.sectorCategories.push(s.category)
+        }
+      })
+      // alphabetical order with other and unknown at the bottom
+      state.sectorCategories.sort((a, b) => {
+        if (a === b) return 0
+        if (a === "inconnu") return 1
+        else if (b === "inconnu") return -1
+        else if (a === "autres") return 1
+        else if (b === "autres") return -1
+        else if (a < b) return -1
+        else if (a > b) return 1
+      })
     },
     SET_USER_CANTEEN_PREVIEWS(state, userCanteenPreviews) {
       state.userCanteenPreviews = userCanteenPreviews
