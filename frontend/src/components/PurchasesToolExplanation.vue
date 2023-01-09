@@ -22,14 +22,18 @@
               }; background: #333; border-radius: 10px; position: relative; overflow: hidden;`
             "
           >
-            <iframe
-              src="https://www.loom.com/embed/c22baca19c6f4df39d426d312da2a33f"
-              frameborder="0"
-              webkitallowfullscreen
-              mozallowfullscreen
-              allowfullscreen
-              width="100%"
-            ></iframe>
+            <video
+              ref="video"
+              style="width: 100%; background: #333;"
+              poster="/static/images/video-poster-achats.webp"
+              controls
+            >
+              <source
+                type="video/mp4"
+                src="https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim/videos/Mes achats - ma cantine - 3 January 2023.mp4"
+              />
+              Votre navigateur ne peut pas afficher des vidéos.
+            </video>
           </div>
 
           <div>
