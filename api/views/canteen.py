@@ -136,12 +136,15 @@ class CanteenActionsPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
     diagnostics_to_teledeclare = []
+    canteens_to_publish = []
 
     def paginate_queryset(self, queryset, request, view=None):
         diagnostics_to_teledeclare = queryset.filter(action=Canteen.Actions.TELEDECLARE).values_list(
             "diagnostic_for_year", flat=True
         )
         self.diagnostics_to_teledeclare = set(filter(lambda x: x, diagnostics_to_teledeclare))
+        canteens_to_publish = queryset.filter(action=Canteen.Actions.PUBLISH).values_list("pk", flat=True)
+        self.canteens_to_publish = set(filter(lambda x: x, canteens_to_publish))
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
@@ -153,6 +156,7 @@ class CanteenActionsPagination(LimitOffsetPagination):
                     ("previous", self.get_previous_link()),
                     ("results", data),
                     ("diagnostics_to_teledeclare", self.diagnostics_to_teledeclare),
+                    ("canteens_to_publish", self.canteens_to_publish),
                 ]
             )
         )
@@ -224,6 +228,44 @@ class PublishedCanteensView(ListAPIView):
 
 class UserCanteensFilterSet(django_filters.FilterSet):
     production_type = ProductionTypeInFilter(field_name="production_type")
+
+
+@extend_schema_view(
+    post=extend_schema(
+        summary="Publier plusieurs cantines.",
+        description="Vous recevrez deux tableaux : `ids` avec les identifiants des cantines publiées, "
+        + "et `unknown_ids` avec les identifiants des cantines non-publiées car l'identifiant n'existe "
+        + "pas où la cantine n'est pas gérée par l'utilisateur.",
+    ),
+)
+class PublishManyCanteensView(APIView):
+    """
+    This view allows mass publishing of canteens
+    """
+
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+
+    def post(self, request):
+        data = request.data
+        canteen_ids = data.get("ids")
+        if not canteen_ids or not isinstance(canteen_ids, list):
+            raise BadRequest()
+
+        canteens = []
+        bad_canteens = []
+        for id in canteen_ids:
+            try:
+                canteen = Canteen.objects.get(pk=id)
+                if canteen.managers.filter(pk=request.user.id).exists():
+                    canteens.append(canteen)
+                else:
+                    bad_canteens.append(id)
+            except Canteen.DoesNotExist:
+                bad_canteens.append(id)
+        for canteen in canteens:
+            canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
+            canteen.save()
+        return JsonResponse({"ids": canteen_ids, "unknown_ids": bad_canteens}, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(
@@ -878,6 +920,33 @@ class ClaimCanteenView(APIView):
 class SatellitesPagination(LimitOffsetPagination):
     default_limit = 10
     max_limit = 40
+    unpublished_count = None
+    satellites_to_publish = []
+
+    def paginate_queryset(self, queryset, request, view=None):
+        unpublished_satellites = queryset.filter(publication_status=Canteen.PublicationStatus.DRAFT).only(
+            "pk", "managers"
+        )
+        self.unpublished_count = unpublished_satellites.count()
+        self.satellites_to_publish = []
+        for satellite in unpublished_satellites:
+            if satellite.managers.filter(pk=request.user.pk).exists():
+                self.satellites_to_publish.append(satellite.id)
+        return super().paginate_queryset(queryset, request, view)
+
+    def get_paginated_response(self, data):
+        return Response(
+            OrderedDict(
+                [
+                    ("count", self.count),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                    ("unpublished_count", self.unpublished_count),
+                    ("satellites_to_publish", self.satellites_to_publish),
+                ]
+            )
+        )
 
 
 @extend_schema_view(
