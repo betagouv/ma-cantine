@@ -90,6 +90,7 @@ export default Object.freeze({
     },
   },
   Characteristics: {
+    // NB: the order of these keys reflects the priority of the label in EGAlim sum calculations
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
     BIO: { text: "Bio" },
     LABEL_ROUGE: { text: "Label rouge" },

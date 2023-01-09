@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { capitalise } from "@/utils"
+
 export default {
   name: "CanteenIndicators",
   props: {
@@ -44,7 +46,7 @@ export default {
       const sectorDisplay = this.canteen.sectors
         .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
         .join(", ")
-      return sectorDisplay.charAt(0).toUpperCase() + sectorDisplay.slice(1)
+      return capitalise(sectorDisplay)
     },
     hasSatelliteCanteens() {
       return (
