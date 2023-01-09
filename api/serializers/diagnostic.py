@@ -170,12 +170,77 @@ FIELDS = (
 
 
 class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
-    # Ideally this serializer would return the only the values in the publication
-    # page by percentages. This means no actual financial data would be exposed.
+    """
+    This serializer masks financial data and gives the basic information on appro as percentages
+    """
+
+    value_total_ht = serializers.SerializerMethodField(read_only=True)
+    value_bio_ht = serializers.SerializerMethodField(read_only=True)
+    value_sustainable_ht = serializers.SerializerMethodField(read_only=True)
+    value_externality_performance_ht = serializers.SerializerMethodField(read_only=True)
+    value_egalim_others_ht = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
-        fields = ("id",)
+        fields = (
+            "id",
+            "year",
+            "diagnostic_type",
+            "central_kitchen_diagnostic_mode",
+            # Percentage-based appro values
+            "id",
+            "value_total_ht",
+            "value_bio_ht",
+            "value_sustainable_ht",
+            "value_externality_performance_ht",
+            "value_egalim_others_ht",
+            # Other values
+            "has_waste_diagnostic",
+            "has_waste_plan",
+            "waste_actions",
+            "other_waste_action",
+            "has_donation_agreement",
+            "has_waste_measures",
+            "bread_leftovers",
+            "served_leftovers",
+            "unserved_leftovers",
+            "side_leftovers",
+            "donation_frequency",
+            "donation_quantity",
+            "donation_food_type",
+            "other_waste_comments",
+            "has_diversification_plan",
+            "diversification_plan_actions",
+            "vegetarian_weekly_recurrence",
+            "vegetarian_menu_type",
+            "vegetarian_menu_bases",
+            "cooking_plastic_substituted",
+            "serving_plastic_substituted",
+            "plastic_bottles_substituted",
+            "plastic_tableware_substituted",
+            "communication_supports",
+            "other_communication_support",
+            "communication_support_url",
+            "communicates_on_food_plan",
+            "communicates_on_food_quality",
+            "communication_frequency",
+        )
         read_only_fields = fields
         model = Diagnostic
+
+    def get_value_total_ht(self, _):
+        return 1
+
+    def get_value_bio_ht(self, obj):
+        return obj.value_bio_ht / obj.value_total_ht
+
+    def get_value_sustainable_ht(self, obj):
+        return obj.value_sustainable_ht / obj.value_total_ht
+
+    def get_value_externality_performance_ht(self, obj):
+        return obj.value_externality_performance_ht / obj.value_total_ht
+
+    def get_value_egalim_others_ht(self, obj):
+        return obj.value_egalim_others_ht / obj.value_total_ht
 
 
 class PublicDiagnosticSerializer(serializers.ModelSerializer):

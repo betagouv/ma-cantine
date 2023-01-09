@@ -597,3 +597,5 @@ class TestPublishedCanteenApi(APITestCase):
 
         serialized_diagnostic = body.get("centralKitchenDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
+        self.assertEqual(serialized_diagnostic["valueTotalHt"], 1)
+        self.assertEqual(serialized_diagnostic["valueBioHt"], 0.5)
