@@ -31,7 +31,7 @@
         {{ publishActionPreamble }}
         <v-btn class="primary ml-2" @click="massPublication" v-if="satellitesToPublish.length">
           <span v-if="satellitesToPublish.length > 1">Publier {{ satellitesToPublish.length }} satellites</span>
-          <span v-else>Publier la satellite</span>
+          <span v-else>Publier la cantine satellite</span>
         </v-btn>
       </p>
       <p v-else>

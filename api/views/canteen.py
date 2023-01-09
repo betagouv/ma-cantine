@@ -235,7 +235,7 @@ class UserCanteensFilterSet(django_filters.FilterSet):
         summary="Publier plusieurs cantines.",
         description="Vous recevrez deux tableaux : `ids` avec les identifiants des cantines publiées, "
         + "et `unknown_ids` avec les identifiants des cantines non-publiées car l'identifiant n'existe "
-        + "pas où la cantine n'est pas gerer par l'utilisateur.",
+        + "pas où la cantine n'est pas gérée par l'utilisateur.",
     ),
 )
 class PublishManyCanteensView(APIView):
