@@ -71,7 +71,7 @@ prompt-toolkit==3.0.33
 psycopg2==2.9.5
 py==1.11.0
 pycparser==2.21
-pyHanko==0.15.1
+pyHanko==0.16.0
 pyhanko-certvalidator==0.19.8
 pylint==2.15.6
 pylint-django==2.5.3
