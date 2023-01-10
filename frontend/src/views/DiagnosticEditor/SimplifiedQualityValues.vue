@@ -86,8 +86,8 @@
         </v-icon>
       </div>
       <label class="body-2 ml-4" :for="'ext-perf-' + diagnostic.year">
-        La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis
-        sur la base de leurs performances en matière environnementale
+        Critères d'achat : La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités
+        environnementales ou acquis sur la base de leurs performances en matière environnementale
       </label>
     </div>
     <DsfrCurrencyField
