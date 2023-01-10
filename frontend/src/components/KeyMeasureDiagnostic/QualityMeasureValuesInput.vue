@@ -3,18 +3,13 @@
     <legend class="my-2 body-2">{{ label }}</legend>
 
     <label :for="'total-' + diagnostic.year" class="body-2 mb-1 mt-2">...total</label>
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'total-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
       :rules="[
         validators.nonNegativeOrEmpty,
         validators.decimalPlaces(2),
         validators.gteSum([diagnostic.valueBioHt, diagnostic.valueSustainableHt], totalErrorMessage),
       ]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueTotalHt"
       :readonly="readonly"
       :disabled="readonly"
@@ -31,14 +26,9 @@
     />
 
     <label :for="'bio-' + diagnostic.year" class="body-2 mb-1 mt-4">...en produits bio</label>
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'bio-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
       :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueBioHt"
       :readonly="readonly"
       :disabled="readonly"
@@ -56,14 +46,9 @@
     <label :for="'sustainable-' + diagnostic.year" class="body-2 mb-1 mt-4">
       ...en autres produits de qualité et durables (hors bio)
     </label>
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'sustainable-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
       :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueSustainableHt"
       :readonly="readonly"
       :disabled="readonly"
@@ -82,7 +67,7 @@
 <script>
 import validators from "@/validators"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
-import DsfrTextField from "@/components/DsfrTextField"
+import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 
 export default {
   props: {
@@ -94,7 +79,7 @@ export default {
       default: false,
     },
   },
-  components: { PurchaseHint, DsfrTextField },
+  components: { PurchaseHint, DsfrCurrencyField },
   data() {
     return {
       totalError: false,
