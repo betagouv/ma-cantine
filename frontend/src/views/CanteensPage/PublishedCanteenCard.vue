@@ -72,7 +72,7 @@ export default {
     CanteenIndicators,
   },
   data() {
-    const diagnostic = latestCreatedDiagnostic(this.canteen)
+    const diagnostic = latestCreatedDiagnostic(this.canteen.diagnostics)
     return {
       diagnostic,
       year: diagnostic?.year,

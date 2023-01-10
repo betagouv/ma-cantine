@@ -218,12 +218,12 @@ export const diagnosticsMap = (diagnostics) => {
   }
 }
 
-export const latestCreatedDiagnostic = (canteen) => {
+export const latestCreatedDiagnostic = (diagnostics) => {
   const minYear = 2016
   const maxYear = lastYear()
   let diagnostic = undefined
   for (let year = maxYear; year >= minYear; year--) {
-    diagnostic = canteen.diagnostics.find((d) => d.year === year)
+    diagnostic = diagnostics.find((d) => d.year === year)
     if (diagnostic) break
   }
   return diagnostic
