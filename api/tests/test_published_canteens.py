@@ -599,3 +599,32 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
         self.assertEqual(serialized_diagnostic["valueTotalHt"], 1)
         self.assertEqual(serialized_diagnostic["valueBioHt"], 0.5)
+
+    def test_satellite_published_no_type(self):
+        """
+        Central cuisine diagnostics should only be returned if their central_kitchen_diagnostic_mode
+        is set. Otherwise it may be an old diagnostic that is not meant for the satellites
+        """
+        central_siret = "22730656663081"
+        central_kitchen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory.create(
+            central_producer_siret=central_siret,
+            publication_status="published",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        )
+
+        DiagnosticFactory.create(
+            canteen=central_kitchen,
+            year=2020,
+            value_total_ht=1200,
+            value_bio_ht=600,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=None,
+        )
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
+        body = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(body.get("id"), satellite.id)
+        self.assertEqual(len(body.get("centralKitchenDiagnostics")), 0)
