@@ -62,37 +62,12 @@
         </div>
       </div>
       <label class="body-2 ml-4" :for="'siqo-' + diagnostic.year">
-        La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG)
+        La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)
       </label>
     </div>
     <DsfrCurrencyField
       :id="'siqo-' + diagnostic.year"
       v-model.number="diagnostic.valueSustainableHt"
-      :readonly="readonly"
-      :disabled="readonly"
-      :error="totalError"
-      @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
-    />
-
-    <!-- Performance Externalités -->
-    <div class="d-block d-sm-flex align-center mt-8">
-      <div class="d-flex">
-        <v-icon size="30" color="purple">
-          mdi-flower-tulip-outline
-        </v-icon>
-        <v-icon size="30" class="ml-2" color="green">
-          mdi-chart-line
-        </v-icon>
-      </div>
-      <label class="body-2 ml-4" :for="'ext-perf-' + diagnostic.year">
-        La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis
-        sur la base de leurs performances en matière environnementale
-      </label>
-    </div>
-    <DsfrCurrencyField
-      :id="'ext-perf-' + diagnostic.year"
-      v-model.number="diagnostic.valueExternalityPerformanceHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="totalError"
@@ -122,6 +97,31 @@
     <DsfrCurrencyField
       :id="'other-' + diagnostic.year"
       v-model.number="diagnostic.valueEgalimOthersHt"
+      :readonly="readonly"
+      :disabled="readonly"
+      :error="totalError"
+      @blur="checkTotal"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+    />
+
+    <!-- Performance Externalités -->
+    <div class="d-block d-sm-flex align-center mt-8">
+      <div class="d-flex">
+        <v-icon size="30" color="purple">
+          mdi-flower-tulip-outline
+        </v-icon>
+        <v-icon size="30" class="ml-2" color="green">
+          mdi-chart-line
+        </v-icon>
+      </div>
+      <label class="body-2 ml-4" :for="'ext-perf-' + diagnostic.year">
+        Critères d'achat : La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités
+        environnementales ou acquis sur la base de leurs performances en matière environnementale
+      </label>
+    </div>
+    <DsfrCurrencyField
+      :id="'ext-perf-' + diagnostic.year"
+      v-model.number="diagnostic.valueExternalityPerformanceHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="totalError"
