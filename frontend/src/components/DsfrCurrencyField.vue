@@ -1,0 +1,28 @@
+<template>
+  <DsfrTextField
+    hide-details="auto"
+    type="number"
+    min="0"
+    :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+    validate-on-blur
+    placeholder="Je ne sais pas"
+    suffix="€ HT"
+    v-bind="$attrs"
+    v-on="$listeners"
+  />
+</template>
+
+<script>
+import DsfrTextField from "@/components/DsfrTextField"
+import validators from "@/validators"
+
+export default {
+  inheritAttrs: false,
+  components: { DsfrTextField },
+  computed: {
+    validators() {
+      return validators
+    },
+  },
+}
+</script>
