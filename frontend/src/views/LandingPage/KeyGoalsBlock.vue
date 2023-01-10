@@ -27,7 +27,7 @@
     <v-row justify="center">
       <DownloadLink
         label="Télécharger le livret de la loi EGAlim concernant la restauration collective"
-        href="/static/documents/Mesures loi Egalim_Restauration collective_Septembre 2022.pdf"
+        href="/static/documents/2208_Mesures-LoiEgalim_BRO_V3.pdf"
         sizeStr="482 ko"
       />
     </v-row>
