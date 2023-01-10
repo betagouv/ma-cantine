@@ -367,7 +367,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'année' : L'année doit être comprise entre 2019 et 2023.",
+            "Champ 'année' : L'année doit être comprise entre 2019 et 2024.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -383,7 +383,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'année' : L'année doit être comprise entre 2019 et 2023.",
+            "Champ 'année' : L'année doit être comprise entre 2019 et 2024.",
         )
         self.assertEqual(
             errors.pop(0)["message"],

@@ -10,13 +10,14 @@
 <script>
 import AnnualActionableCanteensTable from "./AnnualActionableCanteensTable"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import { lastYear } from "@/utils"
 
 export default {
   name: "PendingActions",
   components: { AnnualActionableCanteensTable, BreadcrumbsNav },
   data() {
     return {
-      year: 2021,
+      year: lastYear(),
     }
   },
 }

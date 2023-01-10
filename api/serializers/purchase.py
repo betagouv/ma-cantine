@@ -7,7 +7,6 @@ class PurchaseSerializer(serializers.ModelSerializer):
 
     canteen = serializers.PrimaryKeyRelatedField(read_only=True)
     invoice_file = Base64FileField(required=False, allow_null=True)
-    price_ht = serializers.DecimalField(localize=True, max_digits=20, decimal_places=2)
 
     class Meta:
         model = Purchase
@@ -158,6 +157,14 @@ class PurchaseSummarySerializer(serializers.Serializer):
     boulangerie_local = PurchaseField()
     boissons_local = PurchaseField()
     autres_local = PurchaseField()
+    viandes_volailles_non_egalim = PurchaseField()
+    produits_de_la_mer_non_egalim = PurchaseField()
+    fruits_et_legumes_non_egalim = PurchaseField()
+    charcuterie_non_egalim = PurchaseField()
+    produits_laitiers_non_egalim = PurchaseField()
+    boulangerie_non_egalim = PurchaseField()
+    boissons_non_egalim = PurchaseField()
+    autres_non_egalim = PurchaseField()
 
 
 class PurchaseExportSerializer(serializers.ModelSerializer):

@@ -21,6 +21,7 @@ class SectorAdmin(admin.ModelAdmin):
     )
     list_display = (
         "name",
+        "category",
         "creation_date",
     )
     list_filter = ("category",)

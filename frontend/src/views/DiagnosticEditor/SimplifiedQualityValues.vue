@@ -4,22 +4,15 @@
       La valeur (en HT) de mes achats alimentaires total
     </label>
 
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'total-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueTotalHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="totalError || totalMeatPoultryError || totalFishError"
       :messages="totalError || totalMeatPoultryError || totalFishError ? [totalErrorMessage] : undefined"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -38,21 +31,14 @@
         La valeur (en HT) de mes achats Bio ou en conversion Bio
       </label>
     </div>
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'bio-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueBioHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="totalError"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -76,57 +62,17 @@
         </div>
       </div>
       <label class="body-2 ml-4" :for="'siqo-' + diagnostic.year">
-        La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG)
+        La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)
       </label>
     </div>
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'siqo-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueSustainableHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="totalError"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-    />
-
-    <!-- Performance Externalités -->
-    <div class="d-block d-sm-flex align-center mt-8">
-      <div class="d-flex">
-        <v-icon size="30" color="purple">
-          mdi-flower-tulip-outline
-        </v-icon>
-        <v-icon size="30" class="ml-2" color="green">
-          mdi-chart-line
-        </v-icon>
-      </div>
-      <label class="body-2 ml-4" :for="'ext-perf-' + diagnostic.year">
-        La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis
-        sur la base de leurs performances en matière environnementale
-      </label>
-    </div>
-    <DsfrTextField
-      :id="'ext-perf-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      solo
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
-      v-model.number="diagnostic.valueExternalityPerformanceHt"
-      :readonly="readonly"
-      :disabled="readonly"
-      :error="totalError"
-      @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
 
     <!-- Other EGAlim -->
@@ -148,21 +94,39 @@
         La valeur (en HT) des autres achats EGAlim
       </label>
     </div>
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'other-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueEgalimOthersHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="totalError"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+    />
+
+    <!-- Performance Externalités -->
+    <div class="d-block d-sm-flex align-center mt-8">
+      <div class="d-flex">
+        <v-icon size="30" color="purple">
+          mdi-flower-tulip-outline
+        </v-icon>
+        <v-icon size="30" class="ml-2" color="green">
+          mdi-chart-line
+        </v-icon>
+      </div>
+      <label class="body-2 ml-4" :for="'ext-perf-' + diagnostic.year">
+        Critères d'achat : La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités
+        environnementales ou acquis sur la base de leurs performances en matière environnementale
+      </label>
+    </div>
+    <DsfrCurrencyField
+      :id="'ext-perf-' + diagnostic.year"
+      v-model.number="diagnostic.valueExternalityPerformanceHt"
+      :readonly="readonly"
+      :disabled="readonly"
+      :error="totalError"
+      @blur="checkTotal"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
 
     <v-divider class="my-4"></v-divider>
@@ -202,22 +166,15 @@
         La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
       </label>
     </div>
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'meat-poultry-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueMeatPoultryHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="meatPoultryError || totalMeatPoultryError"
       :messages="meatPoultryError || totalMeatPoultryError ? [meatPoultryErrorMessage] : undefined"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -245,21 +202,14 @@
         La valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées
       </label>
     </div>
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'meat-poultry-egalim-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueMeatPoultryEgalimHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="meatPoultryError"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -287,21 +237,14 @@
         La valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées
       </label>
     </div>
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'meat-poultry-france-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueMeatPoultryFranceHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="meatPoultryError"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -328,22 +271,15 @@
         La valeur (en HT) des mes achats en poissons, produits de la mer et aquaculture total
       </label>
     </div>
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'fish-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueFishHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="fishError || totalFishError"
       :messages="fishError || totalFishError ? [fishErrorMessage] : undefined"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -368,21 +304,14 @@
         La valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et aquaculture
       </label>
     </div>
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'fish-egalim-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueFishEgalimHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="fishError"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -400,7 +329,7 @@ import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import labels from "@/data/quality-labels.json"
 import validators from "@/validators"
 import LogoBio from "@/components/LogoBio"
-import DsfrTextField from "@/components/DsfrTextField"
+import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 
 const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
 const DEFAULT_FAMILY_TOTAL_ERROR = "La somme des achats par famille ne peut pas excéder le total des achats"
@@ -420,7 +349,7 @@ export default {
   components: {
     PurchaseHint,
     LogoBio,
-    DsfrTextField,
+    DsfrCurrencyField,
   },
   data() {
     const siqoLogos = [

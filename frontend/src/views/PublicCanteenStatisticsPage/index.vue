@@ -129,13 +129,13 @@
         </v-col>
         <v-col cols="12" sm="8" md="6" class="pl-0">
           <VueApexCharts
-            :options="sectorChartOptions"
-            :series="sectorSeries"
+            :options="sectorCategoryChartOptions"
+            :series="sectorCategorySeries"
             type="bar"
             height="auto"
             width="100%"
             role="img"
-            :aria-label="sectorChartTitle"
+            :aria-label="sectorCategoryChartTitle"
             aria-describedby="sector-chart-description"
           />
           <p id="sector-chart-description" class="d-none">{{ sectorChartDescription }}</p>
@@ -237,7 +237,7 @@ import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 import jsonEpcis from "@/epcis.json"
-import { lastYear, normaliseText, sectorsSelectList } from "@/utils"
+import { lastYear, normaliseText, sectorsSelectList, capitalise } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
@@ -266,11 +266,11 @@ export default {
       statistics: {},
       publishedChartOptions: {
         labels: ["Publiée", "Non publiée"],
-        colors: ["#6a6af4", "#ccc"],
+        colors: ["#6a6af4", "#aaa"],
         dataLabels: {
           dropShadow: false,
           style: {
-            colors: ["#333"],
+            colors: ["#000"],
             fontSize: "14px",
           },
           offsetX: 30,
@@ -278,7 +278,10 @@ export default {
       },
       loadedDepartmentIds: [],
       loadedRegionIds: [],
-      sectorChartTitle: "Nombre de cantines par secteur",
+      sectorCategoryChartTitle: [
+        "Nombre de cantines par categorie de secteur.",
+        "Une cantine peut avoir plusieurs catégories.",
+      ],
       defaultLocationText: "l'ensemble de la plateforme",
       statsLevel: "site",
       epcis: jsonEpcis,
@@ -288,6 +291,7 @@ export default {
     this.populateInitialParameters()
     this.loadLocations()
     this.updateStatistics()
+    this.updateDocumentTitle()
   },
   computed: {
     departments() {
@@ -315,22 +319,25 @@ export default {
     sectorsList() {
       return sectorsSelectList(this.sectors)
     },
-    sectorLabels() {
-      return this.sectors.map((sector) => sector.name)
+    sectorCategories() {
+      return this.$store.state.sectorCategories
     },
-    sectorSeries() {
+    sectorCategoryLabels() {
+      return this.sectorCategories.map((category) => capitalise(category))
+    },
+    sectorCategorySeries() {
       return [
         {
-          data: this.sectors.map((sector) => this.statistics.sectors[sector.id.toString()]),
+          data: this.sectorCategories.map((category) => this.statistics.sectorCategories[category || "inconnu"]),
           color: "#6a6af4",
           name: "Nombre de cantines",
         },
       ]
     },
-    sectorChartOptions() {
+    sectorCategoryChartOptions() {
       return {
         title: {
-          text: this.sectorChartTitle,
+          text: this.sectorCategoryChartTitle,
           style: {
             fontSize: "14px",
             fontWeight: "normal",
@@ -339,6 +346,7 @@ export default {
           },
           offsetX: this.$vuetify.breakpoint.mdAndUp ? 162 : 10,
           offsetY: -5,
+          margin: 20,
           floating: true,
         },
         dataLabels: {
@@ -352,7 +360,7 @@ export default {
           animations: { enabled: false },
         },
         xaxis: {
-          categories: this.sectorLabels,
+          categories: this.sectorCategoryLabels,
           labels: {
             trim: true,
           },
@@ -369,8 +377,10 @@ export default {
     },
     sectorChartDescription() {
       let desc = ""
-      Object.keys(this.statistics.sectors).forEach((key) => {
-        desc += `${this.sectors.find((sector) => sector.id.toString() === key).name}, ${this.statistics.sectors[key]}; `
+      Object.keys(this.statistics.sectorCategories).forEach((key) => {
+        desc += `${this.sectorCategories.find((category) => category === key)}, ${
+          this.statistics.sectorCategories[key]
+        }; `
       })
       return desc
     },
@@ -560,17 +570,16 @@ export default {
       if (!Array.isArray(this.chosenRegions)) this.chosenRegions = [this.chosenRegions]
       this.chosenDepartments = this.$route.query.department || []
       if (!Array.isArray(this.chosenDepartments)) this.chosenDepartments = [this.chosenDepartments]
+      this.chosenEpcis = this.$route.query.epcis || []
+      if (!Array.isArray(this.chosenEpcis)) this.chosenEpcis = [this.chosenEpcis]
       this.chosenSectors = this.$route.query.sectors?.split(",").map((s) => parseInt(s, 10)) || []
-      let queryEpcis = this.$route.query.epcis
-      queryEpcis = queryEpcis || []
-      this.chosenEpcis = Array.isArray(queryEpcis) ? queryEpcis : [queryEpcis]
     },
     updateDocumentTitle() {
       let title = `Les cantines dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
-      if (this.chosenRegions.length || this.chosenDepartments.length) {
+      if (this.chosenRegions.length || this.chosenDepartments.length || this.chosenEpcis.length) {
         let locationText = this.createLocationText()
         if (locationText.startsWith("les")) {
-          locationText = locationText.charAt(0).toUpperCase() + locationText.slice(1)
+          locationText = capitalise(locationText)
         }
         title = `${locationText} - ${title}`
       }
