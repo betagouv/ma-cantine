@@ -3,9 +3,9 @@
     hide-details="auto"
     type="number"
     min="0"
-    :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+    :rules="$attrs.rules || [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
     validate-on-blur
-    placeholder="Je ne sais pas"
+    :placeholder="$attrs.placeholder || 'Je ne sais pas'"
     suffix="€ HT"
     v-bind="$attrs"
     v-on="$listeners"
