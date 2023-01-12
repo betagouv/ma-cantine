@@ -5,10 +5,14 @@
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
       </h2>
 
-      <p v-if="usesCentralKitchenDiagnostics">
-        La cantine « {{ canteen.name }} » sert des repas cuisinés dans une cuisine centrale. Les valeurs ci-dessous sont
-        celles du lieu de production des repas.
-      </p>
+      <v-card outlined elevation="0" color="primary lighten-5" class="d-flex" v-if="usesCentralKitchenDiagnostics">
+        <v-icon class="ml-4" color="primary">$information-fill</v-icon>
+
+        <v-card-text>
+          La cantine « {{ canteen.name }} » sert des repas cuisinés dans une cuisine centrale. Les valeurs ci-dessous
+          sont celles du lieu de production des repas.
+        </v-card-text>
+      </v-card>
 
       <h3
         class="font-weight-black text-body-1 grey--text text--darken-4 my-4"
@@ -180,8 +184,16 @@ export default {
   computed: {
     diagnosticSet() {
       if (!this.canteen) return
-      if (this.usesCentralKitchenDiagnostics) return this.canteen.centralKitchenDiagnostics
-      return this.canteen.diagnostics
+      if (!this.usesCentralKitchenDiagnostics) return this.canteen.diagnostics
+
+      // Since the central kitchen might only handle the appro values, we will merge the diagnostics
+      // from the central and satellites when necessary to show the whole picture
+      return this.canteen.centralKitchenDiagnostics.map((centralDiag) => {
+        const satelliteMatchingDiag = this.canteen.diagnostics.find((x) => x.year === centralDiag.year)
+        if (centralDiag.centralKitchenDiagnosticMode === "APPRO" && satelliteMatchingDiag)
+          return Object.assign(satelliteMatchingDiag, centralDiag)
+        return centralDiag
+      })
     },
     diagnostic() {
       if (!this.diagnosticSet) return

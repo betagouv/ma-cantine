@@ -181,19 +181,8 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
     value_egalim_others_ht = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-        fields = (
-            "id",
-            "year",
-            "diagnostic_type",
-            "central_kitchen_diagnostic_mode",
-            # Percentage-based appro values
-            "id",
-            "value_total_ht",
-            "value_bio_ht",
-            "value_sustainable_ht",
-            "value_externality_performance_ht",
-            "value_egalim_others_ht",
-            # Other values
+
+        non_appro_fields = (
             "has_waste_diagnostic",
             "has_waste_plan",
             "waste_actions",
@@ -224,8 +213,33 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
             "communicates_on_food_quality",
             "communication_frequency",
         )
+
+        fields = (
+            "id",
+            "year",
+            "diagnostic_type",
+            "central_kitchen_diagnostic_mode",
+            # Percentage-based appro values
+            "id",
+            "value_total_ht",
+            "value_bio_ht",
+            "value_sustainable_ht",
+            "value_externality_performance_ht",
+            "value_egalim_others_ht",
+        ) + non_appro_fields
         read_only_fields = fields
         model = Diagnostic
+
+    def to_representation(self, instance):
+        """
+        To facilitate the handling and merging of diagnostic in the front-end, we will include only appro
+        fields if the central kitchen diagnostic is set to mode: APPRO
+        This method pops non-appro fields if that is the case from the JSON representation
+        """
+        representation = super().to_representation(instance)
+        if instance.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
+            [representation.pop(field, "") for field in CentralKitchenDiagnosticSerializer.Meta.non_appro_fields]
+        return representation
 
     def get_value_total_ht(self, _):
         return 1
