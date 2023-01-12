@@ -10,6 +10,7 @@ from .canteen import (  # noqa: F401
 from .diagnostic import (  # noqa: F401
     PublicDiagnosticSerializer,
     FullDiagnosticSerializer,
+    CentralKitchenDiagnosticSerializer,
 )
 from .sector import SectorSerializer  # noqa: F401
 from .blogpost import BlogPostSerializer  # noqa: F401

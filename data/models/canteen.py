@@ -248,6 +248,16 @@ class Canteen(SoftDeletionModel):
             Canteen.ProductionType.CENTRAL_SERVING,
         ]
 
+    @property
+    def central_kitchen_diagnostics(self):
+        if not self.production_type == Canteen.ProductionType.ON_SITE_CENTRAL or not self.central_producer_siret:
+            return None
+        try:
+            central_kitchen = Canteen.objects.get(siret=self.central_producer_siret)
+            return central_kitchen.diagnostic_set.filter(central_kitchen_diagnostic_mode__isnull=False)
+        except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
+            return None
+
     def __str__(self):
         return f'Cantine "{self.name}"'
 

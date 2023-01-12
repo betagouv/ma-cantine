@@ -72,7 +72,6 @@
 </template>
 
 <script>
-import { diagnosticsMap } from "@/utils"
 import CanteenPublication from "@/components/CanteenPublication"
 import ContactForm from "./ContactForm"
 import CanteenIndicators from "@/components/CanteenIndicators"
@@ -103,11 +102,6 @@ export default {
     },
   },
   computed: {
-    diagnostics() {
-      if (!this.canteen) return
-      const diagnostics = this.canteen.diagnostics
-      return diagnosticsMap(diagnostics)
-    },
     loggedUser() {
       return this.$store.state.loggedUser
     },

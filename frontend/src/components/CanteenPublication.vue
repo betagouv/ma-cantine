@@ -4,6 +4,16 @@
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
       </h2>
+
+      <v-card outlined elevation="0" color="primary lighten-5" class="d-flex" v-if="usesCentralKitchenDiagnostics">
+        <v-icon class="ml-4" color="primary">$information-fill</v-icon>
+
+        <v-card-text>
+          La cantine « {{ canteen.name }} » sert des repas cuisinés dans une cuisine centrale. Les valeurs ci-dessous
+          sont celles du lieu de production des repas.
+        </v-card-text>
+      </v-card>
+
       <h3
         class="font-weight-black text-body-1 grey--text text--darken-4 my-4"
         v-if="diagnostic.diagnosticType === 'COMPLETE'"
@@ -172,16 +182,30 @@ export default {
   },
   components: { MultiYearSummaryStatistics, ImageGallery, FamiliesGraph },
   computed: {
+    diagnosticSet() {
+      if (!this.canteen) return
+      if (!this.usesCentralKitchenDiagnostics) return this.canteen.diagnostics
+
+      // Since the central kitchen might only handle the appro values, we will merge the diagnostics
+      // from the central and satellites when necessary to show the whole picture
+      return this.canteen.centralKitchenDiagnostics.map((centralDiag) => {
+        const satelliteMatchingDiag = this.canteen.diagnostics.find((x) => x.year === centralDiag.year)
+        if (centralDiag.centralKitchenDiagnosticMode === "APPRO" && satelliteMatchingDiag)
+          return Object.assign(satelliteMatchingDiag, centralDiag)
+        return centralDiag
+      })
+    },
     diagnostic() {
-      if (this.canteen) return latestCreatedDiagnostic(this.canteen)
-      return undefined
+      if (!this.diagnosticSet) return
+      return latestCreatedDiagnostic(this.diagnosticSet)
+    },
+    usesCentralKitchenDiagnostics() {
+      return (
+        this.canteen?.productionType === "site_cooked_elsewhere" && this.canteen?.centralKitchenDiagnostics?.length > 0
+      )
     },
     publicationYear() {
-      if (this.canteen) {
-        const diagnostic = latestCreatedDiagnostic(this.canteen)
-        return diagnostic?.year
-      }
-      return undefined
+      return this.diagnostic?.year
     },
     bioPercent() {
       return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
@@ -198,17 +222,17 @@ export default {
       return earnedBadges
     },
     shouldDisplayGraph() {
-      if (!this.canteen.diagnostics || this.canteen.diagnostics.length === 0) return false
-      const completedDiagnostics = this.canteen.diagnostics.filter(hasDiagnosticApproData)
+      if (!this.diagnosticSet || this.diagnosticSet.length === 0) return false
+      const completedDiagnostics = this.diagnosticSet.filter(hasDiagnosticApproData)
       if (completedDiagnostics.length === 0) return false
       else if (completedDiagnostics.length === 1) return completedDiagnostics[0].year !== lastYear()
       else return true
     },
     graphDiagnostics() {
-      if (!this.canteen.diagnostics || this.canteen.diagnostics.length === 0) return null
+      if (!this.diagnosticSet || this.diagnosticSet.length === 0) return null
       const diagnostics = {}
-      for (let i = 0; i < this.canteen.diagnostics.length; i++) {
-        const diagnostic = this.canteen.diagnostics[i]
+      for (let i = 0; i < this.diagnosticSet.length; i++) {
+        const diagnostic = this.diagnosticSet[i]
         diagnostics[diagnostic.year] = diagnostic
       }
       return diagnostics

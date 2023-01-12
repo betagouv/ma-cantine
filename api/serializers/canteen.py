@@ -2,7 +2,7 @@ import logging
 from rest_framework import serializers
 from drf_base64.fields import Base64ImageField
 from data.models import Canteen, Sector, CanteenImage, Diagnostic
-from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer
+from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer, CentralKitchenDiagnosticSerializer
 from .user import CanteenManagerSerializer
 from .managerinvitation import ManagerInvitationSerializer
 
@@ -54,6 +54,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
 
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
     can_be_claimed = serializers.SerializerMethodField(read_only=True)
@@ -82,6 +83,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "plastics_comments",
             "information_comments",
             "can_be_claimed",
+            "central_kitchen_diagnostics",
         )
 
     def get_can_be_claimed(self, obj):
