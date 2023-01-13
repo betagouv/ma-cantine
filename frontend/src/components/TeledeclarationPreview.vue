@@ -23,14 +23,13 @@
                 </td>
                 <td class="text-left font-weight-bold"></td>
               </tr>
-              <tr v-for="item in approItems" :key="item.param">
+              <tr v-for="item in approItems" :key="item.param" :class="diagnostic[item.param] ? '' : 'warn'">
                 <td class="text-left">{{ item.label }}</td>
-                <td class="text-right">
-                  {{ (diagnostic[item.param] || "—") | toCurrency }}
-                  HT
+                <td :class="diagnostic[item.param] ? 'text-right' : 'text-left'">
+                  {{ diagnostic[item.param] ? `${diagnostic[item.param]} HT` : "Je ne sais pas" | toCurrency }}
                 </td>
               </tr>
-              <tr v-for="item in additionalItems" :key="item.label">
+              <tr v-for="item in additionalItems" :key="item.label" :class="item.class || ''">
                 <td class="text-left">{{ item.label }}</td>
                 <td class="text-left">{{ item.value }}</td>
               </tr>
@@ -340,6 +339,13 @@ export default {
     },
     additionalItems() {
       if (!this.showAdditionalItems) return []
+
+      const diversificationPlanActions = this.getDiversificationPlanActions(this.diagnostic.diversificationPlanActions)
+      const vegetarianWeeklyRecurrence = this.getVegetarianWeeklyRecurrence(this.diagnostic.vegetarianWeeklyRecurrence)
+      const vegetarianMenuType = this.getVegetarianMenuType(this.diagnostic.vegetarianMenuType)
+      const vegetarianMenuBases = this.getVegetarianMenuBases(this.diagnostic.vegetarianMenuBases)
+      const communicationFrequency = this.getCommunicationFrequency(this.diagnostic.communicationFrequency)
+
       return [
         {
           label: "Diagnostic sur le gaspillage alimentaire réalisé",
@@ -368,30 +374,37 @@ export default {
         {
           label: "Restes de pain kg/an",
           value: this.diagnostic.breadLeftovers || "Non renseigné",
+          class: this.diagnostic.breadLeftovers ? "" : "warn",
         },
         {
           label: "Restes servis (plateau) kg/an",
           value: this.diagnostic.servedLeftovers || "Non renseigné",
+          class: this.diagnostic.servedLeftovers ? "" : "warn",
         },
         {
           label: "Restes non servis kg/an",
           value: this.diagnostic.unservedLeftovers || "Non renseigné",
+          class: this.diagnostic.unservedLeftovers ? "" : "warn",
         },
         {
           label: "Restes de composantes kg/an",
           value: this.diagnostic.sideLeftovers || "Non renseigné",
+          class: this.diagnostic.sideLeftovers ? "" : "warn",
         },
         {
           label: "Fréquence de dons en dons/an",
           value: this.diagnostic.donationFrequency || "Non renseigné",
+          class: this.diagnostic.donationFrequency ? "" : "warn",
         },
         {
           label: "Quantité des denrées données kg/an",
           value: this.diagnostic.donationQuantity || "Non renseigné",
+          class: this.diagnostic.donationQuantity ? "" : "warn",
         },
         {
           label: "Type de denrées données",
           value: this.diagnostic.donationFoodType || "Non renseigné",
+          class: this.diagnostic.donationFoodType ? "" : "warn",
         },
         {
           label: "Autres commentaires sur le gaspillage",
@@ -403,19 +416,23 @@ export default {
         },
         {
           label: "Actions incluses dans le plan de diversification des protéines",
-          value: this.getDiversificationPlanActions(this.diagnostic.diversificationPlanActions),
+          value: diversificationPlanActions,
+          class: diversificationPlanActions === "Non renseigné" ? "warn" : "",
         },
         {
           label: "Menus végétariens par semaine",
-          value: this.getVegetarianWeeklyRecurrence(this.diagnostic.vegetarianWeeklyRecurrence),
+          value: vegetarianWeeklyRecurrence,
+          class: vegetarianWeeklyRecurrence === "Non renseigné" ? "warn" : "",
         },
         {
           label: "Menu végétarien proposé",
-          value: this.getVegetarianMenuType(this.diagnostic.vegetarianMenuType),
+          value: vegetarianMenuType,
+          class: vegetarianMenuType === "Non renseigné" ? "warn" : "",
         },
         {
           label: "Bases du menu végétarien",
-          value: this.getVegetarianMenuBases(this.diagnostic.vegetarianMenuBases),
+          value: vegetarianMenuBases,
+          class: vegetarianMenuBases === "Non renseigné" ? "warn" : "",
         },
         {
           label: "Contenants de cuisson en plastique remplacés",
@@ -440,6 +457,7 @@ export default {
         {
           label: "Autres supports de communication",
           value: this.diagnostic.otherCommunicationSupport || "Non renseigné",
+          class: this.diagnostic.otherCommunicationSupport ? "" : "warn",
         },
         {
           label: "Lien (URL) de communication",
@@ -455,7 +473,8 @@ export default {
         },
         {
           label: "Fréquence de communication",
-          value: this.getCommunicationFrequency(this.diagnostic.communicationFrequency),
+          value: communicationFrequency,
+          class: communicationFrequency === "Non renseigné" ? "warn" : "",
         },
       ]
     },
@@ -606,3 +625,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.warn {
+  background: #fff6da;
+}
+</style>
