@@ -1,6 +1,7 @@
 import os
 import base64
 from django.urls import reverse
+from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory
@@ -522,6 +523,7 @@ class TestCanteenApi(APITestCase):
         self.assertIn(user_central_cuisine.id, ids)
         self.assertIn(user_central_serving_cuisine.id, ids)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_get_canteen_actions(self):
         """
@@ -609,6 +611,7 @@ class TestCanteenApi(APITestCase):
             self.assertEqual(returned_canteens[index]["id"], canteen.id)
             self.assertEqual(returned_canteens[index]["action"], action)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_get_diagnostics_to_td(self):
         """
