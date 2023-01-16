@@ -43,7 +43,7 @@ drf-spectacular-sidecar==2022.12.1
 et-xmlfile==1.1.0
 factory-boy==3.2.1
 Faker==15.3.3
-future==0.18.2
+future==0.18.3
 html2text==2020.1.16
 html5lib==1.1
 idna==3.4
