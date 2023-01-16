@@ -279,7 +279,7 @@ export default {
       loadedDepartmentIds: [],
       loadedRegionIds: [],
       sectorCategoryChartTitle: [
-        "Nombre de cantines par categorie de secteur.",
+        "Nombre de cantines par catégorie de secteur.",
         "Une cantine peut avoir plusieurs catégories.",
       ],
       defaultLocationText: "l'ensemble de la plateforme",
@@ -323,7 +323,16 @@ export default {
       return this.$store.state.sectorCategories
     },
     sectorCategoryLabels() {
-      return this.sectorCategories.map((category) => capitalise(category))
+      const categoriesMap = {
+        administration: "Administration",
+        enterprise: "Entreprise",
+        education: "Enseignement",
+        health: "Santé",
+        social: "Social / Médico-social",
+        leisure: "Loisirs",
+        autres: "Autres",
+      }
+      return this.sectorCategories.map((category) => categoriesMap[category] || "Inconnu")
     },
     sectorCategorySeries() {
       return [
