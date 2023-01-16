@@ -674,6 +674,26 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(body["id"], 3)
         self.assertEqual(body["action"], "20_create_diagnostic")
 
+    @override_settings(ENABLE_TELEDECLARATION=False)
+    @authenticate
+    def test_omit_teledeclaraion_acction(self):
+        """
+        Check that when the ENABLE_TELEDECLARATION setting is False we don't return that type of action
+        """
+        canteen = CanteenFactory.create(
+            id=3,
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+        )
+        canteen.managers.add(authenticate.user)
+        DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=10000)
+
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], 3)
+        self.assertEqual(body["action"], "95_nothing")
+
     def test_get_retrieve_actionable_canteen_unauthenticated(self):
         """
         If the user is not authenticated, they will not be able to
