@@ -2,7 +2,7 @@
   <div class="text-left pb-10">
     <BreadcrumbsNav :links="[{ to: { name: 'ManagementPage' } }]" v-if="isNewCanteen" />
     <h1 class="font-weight-black text-h4 my-4">
-      {{ isNewCanteen ? "Nouvelle cantine" : "Modifier ma cantine" }}
+      {{ isNewCanteen ? "Ajouter ma cantine" : "Modifier ma cantine" }}
     </h1>
 
     <TechnicalControlDialog
@@ -418,7 +418,7 @@ export default {
     if (this.originalCanteen) {
       document.title = `Modifier - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
     } else {
-      document.title = `Nouvelle cantine - ${this.$store.state.pageTitleSuffix}`
+      document.title = `Ajouter ma cantine - ${this.$store.state.pageTitleSuffix}`
     }
   },
   beforeDestroy() {
