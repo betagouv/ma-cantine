@@ -8,14 +8,6 @@
       :rules="[validators.length(14), validators.luhn]"
       labelClasses="body-2 mb-2"
     />
-    <p class="caption mt-1 ml-2">
-      Vous ne le connaissez pas ? Utilisez cet
-      <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
-        outil de recherche pour trouver le SIRET
-        <v-icon color="primary" small>mdi-open-in-new</v-icon>
-      </a>
-      de votre cantine.
-    </p>
 
     <v-card outlined class="my-4" v-if="duplicateSiretCanteen" color="red lighten-5">
       <v-card-title class="pt-2 pb-1 font-weight-medium">
@@ -98,6 +90,12 @@
         </p>
       </v-card-text>
     </v-card>
+    <p class="caption my-4">
+      Vous avez une question ? Consultez notre
+      <router-link :to="{ name: 'FAQ' }">foire aux questions</router-link>
+      ou
+      <router-link :to="{ name: 'ContactPage' }">contactez-nous</router-link>
+    </p>
     <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
       <v-spacer></v-spacer>
       <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">

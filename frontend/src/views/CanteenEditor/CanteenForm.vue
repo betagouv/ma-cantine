@@ -17,12 +17,28 @@
       v-if="!isNewCanteen && originalCanteen.productionType !== 'central'"
     />
 
-    <v-row v-if="!siret && !canteen.siret">
-      <v-col cols="12" md="9">
-        <SiretCheck @siretIsValid="setSiret" />
-      </v-col>
-    </v-row>
+    <div v-if="!siret && !canteen.siret">
+      <h2 class="mb-4">Étape 1/2 : Renseigner le SIRET</h2>
+      <p>
+        Nous utilisons le SIRET de votre cantine pour nous assurer que nous n'avons pas des doublons dans notre système.
+      </p>
+      <p>
+        Vous ne le connaissez pas ? Utilisez cet
+        <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
+          outil de recherche pour trouver le SIRET
+          <v-icon color="primary" small>mdi-open-in-new</v-icon>
+        </a>
+        de votre cantine.
+      </p>
+      <v-row>
+        <v-col cols="12" md="9">
+          <SiretCheck @siretIsValid="setSiret" />
+        </v-col>
+      </v-row>
+    </div>
+
     <v-form v-else ref="form" v-model="formIsValid">
+      <h2 class="mb-4" v-if="isNewCanteen">Étape 2/2 : Compléter les informations</h2>
       <v-row>
         <v-col cols="12" md="8">
           <p>SIRET</p>
