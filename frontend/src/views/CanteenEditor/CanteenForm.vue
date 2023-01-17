@@ -1,5 +1,6 @@
 <template>
   <div class="text-left pb-10">
+    <BreadcrumbsNav :links="[{ to: { name: 'ManagementPage' } }]" v-if="isNewCanteen" />
     <h1 class="font-weight-black text-h4 my-4">
       {{ isNewCanteen ? "Nouvelle cantine" : "Modifier ma cantine" }}
     </h1>
@@ -273,6 +274,7 @@ import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -286,6 +288,7 @@ export default {
     DsfrAutocomplete,
     DsfrSelect,
     SiretCheck,
+    BreadcrumbsNav,
   },
   props: {
     canteenUrlComponent: {
