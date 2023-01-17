@@ -5,11 +5,11 @@
       <p>Vous pouvez par exemple :</p>
       <div class="ml-2">
         <p class="mb-1">
-          <v-icon small color="green">mdi-check-bold</v-icon>
+          <v-icon small color="green">$check-line</v-icon>
           demander des informations supplémentaires sur la cantine que vous fréquentez;
         </p>
         <p class="mb-1">
-          <v-icon small color="green">mdi-check-bold</v-icon>
+          <v-icon small color="green">$check-line</v-icon>
           contacter un collègue gestionnaire afin de lui demander un retour d'expérience sur une action mise en place...
         </p>
       </div>

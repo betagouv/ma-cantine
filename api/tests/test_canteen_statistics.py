@@ -5,7 +5,7 @@ import requests_mock
 from data.department_choices import Department
 from data.factories import CanteenFactory, SectorFactory
 from data.factories import DiagnosticFactory
-from data.models import Canteen, Diagnostic
+from data.models import Canteen, Diagnostic, Sector
 from api.views.canteen import badges_for_queryset
 from data.region_choices import Region
 
@@ -15,33 +15,30 @@ class TestCanteenStatsApi(APITestCase):
         """
         This public endpoint returns some summary statistics for a region and a location
         """
-        # TODO: more nuance when choosing canteens to get stats for?
-        # How do we know that the canteen diagnostic is done?
-        # Could check for total value ht
-
         # create 5 canteens (3 in region of interest), 1 unpublished
         region = "01"
         year = 2020
-        school = SectorFactory.create(name="School")
-        enterprise = SectorFactory.create(name="Enterprise")
-        social = SectorFactory.create(name="Social")
+        primary_school = SectorFactory.create(name="Primary", category=Sector.Categories.EDUCATION)
+        secondary_school = SectorFactory.create(name="Secondary", category=Sector.Categories.EDUCATION)
+        enterprise = SectorFactory.create(name="Enterprise", category=Sector.Categories.ENTERPRISE)
+        social = SectorFactory.create(name="Social", category=Sector.Categories.SOCIAL)
 
         published = CanteenFactory.create(
             region=region,
             publication_status=Canteen.PublicationStatus.PUBLISHED.value,
-            sectors=[school, enterprise],
+            sectors=[primary_school, enterprise],
         )
         unpublished = CanteenFactory.create(
             region=region,
             publication_status=Canteen.PublicationStatus.DRAFT.value,
-            sectors=[school],
+            sectors=[primary_school, secondary_school],
         )
         # this canteen will be included in the canteen count, but not the diagnostic count
         # which is used to calculate the measure success percentages
         out_of_date = CanteenFactory.create(
             region=region,
             publication_status=Canteen.PublicationStatus.PUBLISHED.value,
-            sectors=[school],
+            sectors=[secondary_school],
         )
         other_region = CanteenFactory.create(region="03", sectors=[social])
 
@@ -122,11 +119,10 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["diversificationPercent"], 50)
         self.assertEqual(body["plasticPercent"], 50)
         self.assertEqual(body["infoPercent"], 50)
-        expected_sectors = {}
-        expected_sectors[str(school.id)] = 3
-        expected_sectors[str(enterprise.id)] = 1
-        expected_sectors[str(social.id)] = 0
-        self.assertEqual(body["sectors"], expected_sectors)
+        sector_categories = body["sectorCategories"]
+        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 3)
+        self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 1)
+        self.assertEqual(sector_categories[Sector.Categories.SOCIAL], 0)
 
         # can also call without location info
         response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
@@ -149,9 +145,9 @@ class TestCanteenStatsApi(APITestCase):
 
     def test_canteen_stats_by_sectors(self):
         year = 2020
-        school = SectorFactory.create(name="School")
-        enterprise = SectorFactory.create(name="Enterprise")
-        social = SectorFactory.create(name="Social")
+        school = SectorFactory.create(name="School", category=Sector.Categories.EDUCATION)
+        enterprise = SectorFactory.create(name="Enterprise", category=Sector.Categories.ENTERPRISE)
+        social = SectorFactory.create(name="Social", category=None)
         CanteenFactory.create(sectors=[school])
         CanteenFactory.create(sectors=[enterprise])
         CanteenFactory.create(sectors=[enterprise, social, school])
@@ -164,11 +160,10 @@ class TestCanteenStatsApi(APITestCase):
 
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
-        expected_sectors = {}
-        expected_sectors[str(school.id)] = 2
-        expected_sectors[str(enterprise.id)] = 2
-        expected_sectors[str(social.id)] = 1
-        self.assertEqual(body["sectors"], expected_sectors)
+        sector_categories = body["sectorCategories"]
+        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
+        self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
+        self.assertEqual(sector_categories["inconnu"], 1)
 
     def test_canteen_stats_missing_data(self):
         response = self.client.get(reverse("canteen_statistics"), {"region": "01"})

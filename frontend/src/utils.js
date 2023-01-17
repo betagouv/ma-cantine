@@ -218,12 +218,12 @@ export const diagnosticsMap = (diagnostics) => {
   }
 }
 
-export const latestCreatedDiagnostic = (canteen) => {
+export const latestCreatedDiagnostic = (diagnostics) => {
   const minYear = 2016
   const maxYear = lastYear()
   let diagnostic = undefined
   for (let year = maxYear; year >= minYear; year--) {
-    diagnostic = canteen.diagnostics.find((d) => d.year === year)
+    diagnostic = diagnostics.find((d) => d.year === year)
     if (diagnostic) break
   }
   return diagnostic
@@ -426,4 +426,8 @@ export const hideCommunityEventsBanner = (events, store) => {
   const lastEventId = largestId(events)
   document.cookie = `${bannerCookieName}=${lastEventId};max-age=31536000;path=/;expires=${expirationDate.toUTCString()};SameSite=Strict;`
   store.dispatch("setShowWebinaireBanner", false)
+}
+
+export const capitalise = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }

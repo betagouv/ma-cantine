@@ -136,12 +136,15 @@ class CanteenActionsPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
     diagnostics_to_teledeclare = []
+    canteens_to_publish = []
 
     def paginate_queryset(self, queryset, request, view=None):
         diagnostics_to_teledeclare = queryset.filter(action=Canteen.Actions.TELEDECLARE).values_list(
             "diagnostic_for_year", flat=True
         )
         self.diagnostics_to_teledeclare = set(filter(lambda x: x, diagnostics_to_teledeclare))
+        canteens_to_publish = queryset.filter(action=Canteen.Actions.PUBLISH).values_list("pk", flat=True)
+        self.canteens_to_publish = set(filter(lambda x: x, canteens_to_publish))
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
@@ -153,6 +156,7 @@ class CanteenActionsPagination(LimitOffsetPagination):
                     ("previous", self.get_previous_link()),
                     ("results", data),
                     ("diagnostics_to_teledeclare", self.diagnostics_to_teledeclare),
+                    ("canteens_to_publish", self.canteens_to_publish),
                 ]
             )
         )
@@ -224,6 +228,44 @@ class PublishedCanteensView(ListAPIView):
 
 class UserCanteensFilterSet(django_filters.FilterSet):
     production_type = ProductionTypeInFilter(field_name="production_type")
+
+
+@extend_schema_view(
+    post=extend_schema(
+        summary="Publier plusieurs cantines.",
+        description="Vous recevrez deux tableaux : `ids` avec les identifiants des cantines publiées, "
+        + "et `unknown_ids` avec les identifiants des cantines non-publiées car l'identifiant n'existe "
+        + "pas où la cantine n'est pas gérée par l'utilisateur.",
+    ),
+)
+class PublishManyCanteensView(APIView):
+    """
+    This view allows mass publishing of canteens
+    """
+
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+
+    def post(self, request):
+        data = request.data
+        canteen_ids = data.get("ids")
+        if not canteen_ids or not isinstance(canteen_ids, list):
+            raise BadRequest()
+
+        canteens = []
+        bad_canteens = []
+        for id in canteen_ids:
+            try:
+                canteen = Canteen.objects.get(pk=id)
+                if canteen.managers.filter(pk=request.user.id).exists():
+                    canteens.append(canteen)
+                else:
+                    bad_canteens.append(id)
+            except Canteen.DoesNotExist:
+                bad_canteens.append(id)
+        for canteen in canteens:
+            canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
+            canteen.save()
+        return JsonResponse({"ids": canteen_ids, "unknown_ids": bad_canteens}, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(
@@ -601,7 +643,7 @@ class TeamJoinRequestView(APIView):
             canteen_id = kwargs.get("pk")
             canteen = Canteen.objects.get(pk=canteen_id)
             canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
-            url = f"{'https' if settings.SECURE else 'http'}://{settings.HOSTNAME}{canteen_path}/gestionnaires"
+            url = f"{'https' if settings.SECURE else 'http'}://{settings.HOSTNAME}{canteen_path}/gestionnaires?email={email}"
 
             context = {
                 "email": email,
@@ -722,7 +764,7 @@ class CanteenStatisticsView(APIView):
     def get(self, request):
         regions = request.query_params.getlist("region")
         departments = request.query_params.getlist("department")
-        sectors = request.query_params.getlist("sectors")
+        sector_categories = request.query_params.getlist("sectors")
         epcis = request.query_params.getlist("epci")
         postal_codes = None
         year = request.query_params.get("year")
@@ -736,13 +778,15 @@ class CanteenStatisticsView(APIView):
             logger.warning(f"Error when fetching postcodes for EPCI for canteen stats: {str(e)}")
             data["epci_error"] = "Une erreur est survenue"
 
-        canteens = CanteenStatisticsView._filter_canteens(regions, departments, postal_codes, sectors)
+        canteens = CanteenStatisticsView._filter_canteens(regions, departments, postal_codes, sector_categories)
         data["canteen_count"] = canteens.count()
         data["published_canteen_count"] = canteens.filter(
             publication_status=Canteen.PublicationStatus.PUBLISHED
         ).count()
 
-        diagnostics = CanteenStatisticsView._filter_diagnostics(year, regions, departments, postal_codes, sectors)
+        diagnostics = CanteenStatisticsView._filter_diagnostics(
+            year, regions, departments, postal_codes, sector_categories
+        )
 
         appro_share_query = diagnostics.filter(value_total_ht__gt=0)
         appro_share_query = appro_share_query.annotate(
@@ -781,11 +825,14 @@ class CanteenStatisticsView(APIView):
             data["plasticPercent"] = int(badge_querysets["plastic"].count() / total_diag * 100)
             data["infoPercent"] = int(badge_querysets["info"].count() / total_diag * 100)
 
-        # count breakdown by sector
-        sectors = {}
-        for sector in Sector.objects.all():
-            sectors[sector.id] = canteens.filter(sectors=sector).count()
-        data["sectors"] = sectors
+        # count breakdown by sector category
+        sector_categories = {}
+        for category in Sector.Categories:
+            sectors = Sector.objects.filter(category=category)
+            sector_categories[category] = canteens.filter(sectors__in=sectors).count()
+        sectors = Sector.objects.filter(category=None)
+        sector_categories["inconnu"] = canteens.filter(sectors__in=sectors).count()
+        data["sector_categories"] = sector_categories
         return JsonResponse(camelize(data), status=status.HTTP_200_OK)
 
     def _get_postal_codes(epcis):
@@ -883,6 +930,33 @@ class ClaimCanteenView(APIView):
 class SatellitesPagination(LimitOffsetPagination):
     default_limit = 10
     max_limit = 40
+    unpublished_count = None
+    satellites_to_publish = []
+
+    def paginate_queryset(self, queryset, request, view=None):
+        unpublished_satellites = queryset.filter(publication_status=Canteen.PublicationStatus.DRAFT).only(
+            "pk", "managers"
+        )
+        self.unpublished_count = unpublished_satellites.count()
+        self.satellites_to_publish = []
+        for satellite in unpublished_satellites:
+            if satellite.managers.filter(pk=request.user.pk).exists():
+                self.satellites_to_publish.append(satellite.id)
+        return super().paginate_queryset(queryset, request, view)
+
+    def get_paginated_response(self, data):
+        return Response(
+            OrderedDict(
+                [
+                    ("count", self.count),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                    ("unpublished_count", self.unpublished_count),
+                    ("satellites_to_publish", self.satellites_to_publish),
+                ]
+            )
+        )
 
 
 @extend_schema_view(

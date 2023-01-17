@@ -4,22 +4,15 @@
       La valeur (en HT) de mes achats alimentaires total
     </label>
 
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'total-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueTotalHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="totalError"
       :messages="totalError ? [errorMessage] : undefined"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -42,22 +35,15 @@
       La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
     </label>
 
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'meat-poultry-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueMeatPoultryHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="meatError"
       :messages="meatError ? [errorMessage] : undefined"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -77,22 +63,15 @@
       La valeur (en HT) des mes achats en poissons, produits de la mer et aquaculture total
     </label>
 
-    <DsfrTextField
+    <DsfrCurrencyField
       :id="'fish-' + diagnostic.year"
-      hide-details="auto"
-      type="number"
-      :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      validate-on-blur
-      placeholder="Je ne sais pas"
-      suffix="€ HT"
       v-model.number="diagnostic.valueFishHt"
       :readonly="readonly"
       :disabled="readonly"
       :error="fishError"
       :messages="fishError ? [errorMessage] : undefined"
       @blur="checkTotal"
-      class="mt-2"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -164,19 +143,14 @@
                   {{ family.text }}
                 </label>
 
-                <DsfrTextField
+                <DsfrCurrencyField
                   :id="inputHtmlId(fId, cId)"
-                  hide-details="auto"
-                  type="number"
                   :rules="[
                     validators.nonNegativeOrEmpty,
                     validators.decimalPlaces(2),
                     validators.lteOrEmpty(diagnostic.valueTotalHt),
                   ]"
-                  validate-on-blur
                   solo
-                  placeholder="Je ne sais pas"
-                  suffix="€ HT"
                   v-model.number="diagnostic[diagnosticKey(fId, cId)]"
                   :readonly="readonly"
                   :disabled="readonly"
@@ -204,7 +178,7 @@ import Constants from "@/constants"
 import LogoBio from "@/components/LogoBio"
 import labels from "@/data/quality-labels.json"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
-import DsfrTextField from "@/components/DsfrTextField"
+import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 
 const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que la somme des valeurs par label"
 const DEFAULT_FAMILY_TOTAL_ERROR = "La somme des achats par famille ne peut pas excéder le total des achats"
@@ -222,7 +196,7 @@ export default {
   components: {
     LogoBio,
     PurchaseHint,
-    DsfrTextField,
+    DsfrCurrencyField,
   },
   data() {
     const characteristicGroups = Constants.TeledeclarationCharacteristicGroups

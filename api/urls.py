@@ -10,11 +10,12 @@ from api.views import (
     CanteenPurchasesSummaryView,
     UsernameSuggestionView,
 )
-from api.views import UpdateUserView, PublishedCanteensView, UserCanteensView, CanteenStatisticsView
+from api.views import UpdateUserView, UserCanteensView, CanteenStatisticsView
+from api.views import PublishedCanteensView, PublishManyCanteensView, PublishedCanteenSingleView
 from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, DiagnosticUpdateView
 from api.views import EmailDiagnosticImportFileView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
-from api.views import AddManagerView, RemoveManagerView, PublishedCanteenSingleView
+from api.views import AddManagerView, RemoveManagerView
 from api.views import ImportSimpleDiagnosticsView, ImportCompleteDiagnosticsView
 from api.views import TeledeclarationCreateView, TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
@@ -36,6 +37,7 @@ urlpatterns = {
         PublishedCanteenSingleView.as_view(),
         name="single_published_canteen",
     ),
+    path("publish/", PublishManyCanteensView.as_view(), name="publish_canteens"),
     path("canteenPreviews/", UserCanteenPreviews.as_view(), name="user_canteen_previews"),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path("canteens/<int:pk>", RetrieveUpdateUserCanteenView.as_view(), name="single_canteen"),

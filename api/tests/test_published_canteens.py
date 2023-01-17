@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, SectorFactory
 from data.factories import DiagnosticFactory
-from data.models import Canteen, CanteenImage
+from data.models import Canteen, CanteenImage, Diagnostic
 from .utils import authenticate
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -569,3 +569,108 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertIn(central_cuisine.id, ids)
         self.assertIn(central_serving_cuisine.id, ids)
         self.assertNotIn(site_canteen.id, ids)
+
+    def test_satellite_published(self):
+        central_siret = "22730656663081"
+        central_kitchen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory.create(
+            central_producer_siret=central_siret,
+            publication_status="published",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        )
+
+        diagnostic = DiagnosticFactory.create(
+            canteen=central_kitchen,
+            year=2020,
+            value_total_ht=1200,
+            value_bio_ht=600,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
+        body = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(body.get("id"), satellite.id)
+        self.assertEqual(len(body.get("centralKitchenDiagnostics")), 1)
+
+        serialized_diagnostic = body.get("centralKitchenDiagnostics")[0]
+        self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
+        self.assertEqual(serialized_diagnostic["valueTotalHt"], 1)
+        self.assertEqual(serialized_diagnostic["valueBioHt"], 0.5)
+
+    def test_satellite_published_no_type(self):
+        """
+        Central cuisine diagnostics should only be returned if their central_kitchen_diagnostic_mode
+        is set. Otherwise it may be an old diagnostic that is not meant for the satellites
+        """
+        central_siret = "22730656663081"
+        central_kitchen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory.create(
+            central_producer_siret=central_siret,
+            publication_status="published",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        )
+
+        DiagnosticFactory.create(
+            canteen=central_kitchen,
+            year=2020,
+            value_total_ht=1200,
+            value_bio_ht=600,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=None,
+        )
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
+        body = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(body.get("id"), satellite.id)
+        self.assertEqual(len(body.get("centralKitchenDiagnostics")), 0)
+
+    def test_satellite_published_needed_fields(self):
+        """
+        If the central kitchen diag is set to APPRO, only the appro fields should be included.
+        If the central kitchen diag is set to ALL, every fields should be included.
+        """
+        central_siret = "22730656663081"
+        central_kitchen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory.create(
+            central_producer_siret=central_siret,
+            publication_status="published",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        )
+
+        DiagnosticFactory.create(
+            canteen=central_kitchen,
+            year=2020,
+            value_total_ht=1200,
+            value_bio_ht=600,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+
+        DiagnosticFactory.create(
+            canteen=central_kitchen,
+            year=2021,
+            value_total_ht=1200,
+            value_bio_ht=600,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+        )
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
+        body = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(len(body.get("centralKitchenDiagnostics")), 2)
+        serialized_diagnostics = body.get("centralKitchenDiagnostics")
+        serialized_diag_2020 = next(filter(lambda x: x["year"] == 2020, serialized_diagnostics))
+        serialized_diag_2021 = next(filter(lambda x: x["year"] == 2021, serialized_diagnostics))
+
+        self.assertIn("valueTotalHt", serialized_diag_2020)
+        self.assertNotIn("hasWasteDiagnostic", serialized_diag_2020)
+
+        self.assertIn("valueTotalHt", serialized_diag_2021)
+        self.assertIn("hasWasteDiagnostic", serialized_diag_2021)

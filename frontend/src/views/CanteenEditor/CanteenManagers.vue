@@ -70,7 +70,7 @@ export default {
   data() {
     return {
       managerFormIsValid: true,
-      newManagerEmail: undefined,
+      newManagerEmail: this.$route.query.email,
     }
   },
   computed: {
