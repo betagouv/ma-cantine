@@ -27,6 +27,18 @@
           Voir les informations de « {{ duplicateSiretCanteen.name }} »
         </v-btn>
       </v-card-text>
+      <v-card-text v-else-if="duplicateSiretCanteen.canBeClaimed">
+        <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-if="claimSucceeded">
+          Votre demande a bien été prise en compte. Nous reviendrons vers vous au plus vite.
+        </v-alert>
+        <div v-else>
+          <p>La cantine « {{ duplicateSiretCanteen.name }} » existe déjà mais n'est pas encore gérée.</p>
+          <v-btn color="primary" class="mt-4" @click="claimCanteen">
+            <v-icon class="mr-2">mdi-key</v-icon>
+            Revendiquer cette cantine
+          </v-btn>
+        </div>
+      </v-card-text>
       <v-card-text v-else>
         <p>Demandez accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »</p>
         <DsfrTextarea
@@ -127,6 +139,7 @@ export default {
       messageTroubleshooting: null,
       siretFormIsValid: true,
       siretDialog: false,
+      claimSucceeded: undefined,
     }
   },
   computed: {
@@ -206,6 +219,13 @@ export default {
 
           window.scrollTo(0, 0)
         })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    claimCanteen() {
+      const canteenId = this.duplicateSiretCanteen.id
+      return this.$store
+        .dispatch("claimCanteen", { canteenId })
+        .then(() => (this.claimSucceeded = true))
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },

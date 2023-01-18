@@ -57,7 +57,6 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
-    can_be_claimed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -85,9 +84,6 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "can_be_claimed",
             "central_kitchen_diagnostics",
         )
-
-    def get_can_be_claimed(self, obj):
-        return not obj.managers.exists()
 
 
 class SatelliteCanteenSerializer(serializers.ModelSerializer):

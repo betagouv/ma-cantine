@@ -385,7 +385,12 @@ def check_siret_response(canteen_siret, user):
         if canteens.exists():
             canteen = canteens.first()
             managed_by_user = user in canteen.managers.all()
-            return {"name": canteen.name, "id": canteen.id, "isManagedByUser": managed_by_user}
+            return {
+                "name": canteen.name,
+                "id": canteen.id,
+                "isManagedByUser": managed_by_user,
+                "canBeClaimed": canteen.can_be_claimed,
+            }
 
 
 @extend_schema_view(
