@@ -18,31 +18,51 @@
         </v-btn>
       </div>
       <div v-else-if="duplicateSiretCanteen.canBeClaimed" class="black--text">
-        <p>
-          <!-- TODO: more of an explanation of how this might have happened? -->
-          <!-- e.g. your canteen was created from publicly available data? -->
-          La cantine « {{ duplicateSiretCanteen.name }} » est déjà référencée sur notre site mais n'est pas encore
-          gérée.
-        </p>
-        <v-btn color="primary" @click="claimCanteen">
-          <v-icon class="mr-2">mdi-key</v-icon>
-          Demander accès à cette cantine
-        </v-btn>
+        <div v-if="!requestSent">
+          <p>
+            <!-- TODO: more of an explanation of how this might have happened? -->
+            <!-- e.g. your canteen was created from publicly available data? -->
+            La cantine « {{ duplicateSiretCanteen.name }} » est déjà référencée sur notre site mais n'est pas encore
+            gérée.
+          </p>
+          <v-btn color="primary" @click="claimCanteen">
+            <v-icon class="mr-2">mdi-key</v-icon>
+            Demander accès à cette cantine
+          </v-btn>
+        </div>
+        <v-alert v-else type="success" class="mb-0">
+          <p class="mb-0">
+            Votre demande a bien été prise en compte. Nous reviendrons vers vous au plus vite.
+            <router-link class="white--text" :to="{ name: 'ManagementPage' }">
+              Revenir à mes cantines
+            </router-link>
+          </p>
+        </v-alert>
       </div>
       <div v-else class="black--text">
-        <p>Probablement, un autre membre de votre équipe a déjà ajouté votre cantine sur notre site.</p>
-        <p>Demandez accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »</p>
-        <DsfrTextarea
-          v-model="messageJoinCanteen"
-          label="Message (optionnel)"
-          hide-details="auto"
-          rows="2"
-          class="mt-2 body-2"
-        />
-        <v-btn color="primary" class="mt-4" @click="sendMgmtRequest">
-          <v-icon class="mr-2">mdi-key</v-icon>
-          Demander l'accès
-        </v-btn>
+        <div v-if="!requestSent">
+          <p>Probablement, un autre membre de votre équipe a déjà ajouté votre cantine sur notre site.</p>
+          <p>Demandez accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »</p>
+          <DsfrTextarea
+            v-model="messageJoinCanteen"
+            label="Message (optionnel)"
+            hide-details="auto"
+            rows="2"
+            class="mt-2 body-2"
+          />
+          <v-btn color="primary" class="mt-4" @click="sendMgmtRequest">
+            <v-icon class="mr-2">mdi-key</v-icon>
+            Demander l'accès
+          </v-btn>
+        </div>
+        <v-alert v-else type="success" class="mb-0">
+          <p class="mb-0">
+            Message envoyé,
+            <router-link class="white--text" :to="{ name: 'ManagementPage' }">
+              revenir à mes cantines
+            </router-link>
+          </p>
+        </v-alert>
       </div>
     </v-alert>
 
@@ -60,7 +80,7 @@
         color="primary"
         class="ml-4 align-self-center"
         @click="validateSiret"
-        :disabled="!siret && duplicateSiretCanteen"
+        :disabled="!siret && !!duplicateSiretCanteen"
       >
         Valider
       </v-btn>
@@ -87,10 +107,10 @@ export default {
       user,
       fromName: `${user.firstName} ${user.lastName}`,
       messageJoinCanteen: null,
+      requestSent: false,
       messageTroubleshooting: null,
       siretFormIsValid: true,
       siretDialog: false,
-      claimSucceeded: undefined,
     }
   },
   computed: {
@@ -111,6 +131,7 @@ export default {
           const isDuplicateSiret = !!response.id
           if (isDuplicateSiret) {
             this.siret = null
+            this.requestSent = false
             this.duplicateSiretCanteen = response
             this.messageTroubleshooting = `Je veux ajouter une deuxième cantine avec le même SIRET : ${this.siret}...`
           } else {
@@ -118,9 +139,6 @@ export default {
           }
         })
     },
-    // TODO: after request sent, change front end to clear message and discourage duplicate sending
-    // maybe clear siret and red box, adding a green alert at the top which includes the SIRET in the message
-    // or something...
     sendMgmtRequest() {
       const payload = {
         email: this.user.email,
@@ -131,7 +149,7 @@ export default {
       this.$store
         .dispatch("sendCanteenTeamRequest", { canteenId: this.duplicateSiretCanteen.id, payload })
         .then(() => {
-          this.message = null
+          this.requestSent = true
           this.$store.dispatch("notify", {
             status: "success",
             message: `Votre message a bien été envoyé.`,
@@ -140,6 +158,7 @@ export default {
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
+    // TODO: do we want to delete this or use this?
     sendSiretHelp() {
       this.$refs.siretHelp.validate()
       if (!this.siretFormIsValid) {
@@ -177,7 +196,7 @@ export default {
       const canteenId = this.duplicateSiretCanteen.id
       return this.$store
         .dispatch("claimCanteen", { canteenId })
-        .then(() => (this.claimSucceeded = true))
+        .then(() => (this.requestSent = true))
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
