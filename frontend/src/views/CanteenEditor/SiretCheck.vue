@@ -30,7 +30,7 @@
         </v-btn>
       </div>
       <div v-else class="black--text">
-        <p>Probablement, un autre membre de votre équipe à déjà ajouté votre cantine sur notre site.</p>
+        <p>Probablement, un autre membre de votre équipe a déjà ajouté votre cantine sur notre site.</p>
         <p>Demandez accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »</p>
         <DsfrTextarea
           v-model="messageJoinCanteen"
@@ -46,25 +46,28 @@
       </div>
     </v-alert>
 
-    <DsfrTextField
-      hide-details="auto"
-      validate-on-blur
-      label="SIRET"
-      v-model="siret"
-      :rules="[validators.length(14), validators.luhn]"
-      labelClasses="body-2 mb-2"
-      style="max-width: 20rem;"
-    />
-
-    <v-sheet rounded color="grey lighten-4 pa-3 mt-4" class="d-flex">
-      <v-spacer></v-spacer>
-      <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
-        Annuler
-      </v-btn>
-      <v-btn x-large color="primary" @click="validateSiret">
+    <v-row class="pa-4">
+      <DsfrTextField
+        validate-on-blur
+        label="SIRET"
+        v-model="siret"
+        :rules="[validators.length(14), validators.luhn]"
+        labelClasses="body-2 mb-2"
+        style="max-width: 30rem;"
+      />
+      <v-btn
+        large
+        color="primary"
+        class="ml-4 align-self-center"
+        @click="validateSiret"
+        :disabled="!siret && duplicateSiretCanteen"
+      >
         Valider
       </v-btn>
-    </v-sheet>
+      <v-btn large outlined color="primary" class="ml-4 align-self-center" :to="{ name: 'ManagementPage' }">
+        Annuler
+      </v-btn>
+    </v-row>
   </v-form>
 </template>
 
