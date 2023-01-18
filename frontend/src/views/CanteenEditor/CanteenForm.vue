@@ -20,7 +20,7 @@
     <div v-if="!siret && !canteen.siret">
       <h2 class="mb-4">Étape 1/2 : Renseigner le SIRET</h2>
       <p>
-        Nous utilisons le SIRET de votre cantine pour nous assurer que nous n'avons pas des doublons dans notre système.
+        Nous utilisons le SIRET de votre cantine pour nous assurer que nous n'avons pas des doublons.
       </p>
       <p>
         Vous ne le connaissez pas ? Utilisez cet
@@ -30,8 +30,14 @@
         </a>
         de votre cantine.
       </p>
+      <p class="caption">
+        Vous avez une question ? Consultez notre
+        <router-link :to="{ name: 'FaqPage' }">foire aux questions</router-link>
+        ou
+        <router-link :to="{ name: 'ContactPage' }">contactez-nous</router-link>
+      </p>
       <v-row>
-        <v-col cols="12" md="9">
+        <v-col cols="12" md="10">
           <SiretCheck @siretIsValid="setSiret" />
         </v-col>
       </v-row>

@@ -1,45 +1,36 @@
 <template>
   <v-form ref="siretForm">
-    <DsfrTextField
-      hide-details="auto"
-      validate-on-blur
-      label="SIRET"
-      v-model="siret"
-      :rules="[validators.length(14), validators.luhn]"
-      labelClasses="body-2 mb-2"
-    />
-
-    <v-card outlined class="my-4" v-if="duplicateSiretCanteen" color="red lighten-5">
-      <v-card-title class="pt-2 pb-1 font-weight-medium">
-        Une cantine avec ce SIRET existe déjà
-      </v-card-title>
-      <v-card-text v-if="duplicateSiretCanteen.isManagedByUser">
+    <v-alert v-if="duplicateSiretCanteen" outlined type="info">
+      <h2 class="mb-4 text-h6 black--text" style="line-height: 1.25rem;">
+        Il existe déjà une cantine avec le SIRET {{ duplicateSiretCanteen.siret }}
+      </h2>
+      <div v-if="duplicateSiretCanteen.isManagedByUser" class="black--text">
         <p>« {{ duplicateSiretCanteen.name }} » a le même SIRET et fait déjà partie de vos cantines.</p>
+        <!-- TODO: more guidance for the user in the case where they think they want to add multiple canteens with the same SIRET -->
         <v-btn
           color="primary"
           :to="{
             name: 'CanteenModification',
             params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(duplicateSiretCanteen) },
           }"
-          target="_blank"
-          rel="noopener"
         >
-          Voir les informations de « {{ duplicateSiretCanteen.name }} »
+          Accéder à « {{ duplicateSiretCanteen.name }} »
         </v-btn>
-      </v-card-text>
-      <v-card-text v-else-if="duplicateSiretCanteen.canBeClaimed">
-        <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-if="claimSucceeded">
-          Votre demande a bien été prise en compte. Nous reviendrons vers vous au plus vite.
-        </v-alert>
-        <div v-else>
-          <p>La cantine « {{ duplicateSiretCanteen.name }} » existe déjà mais n'est pas encore gérée.</p>
-          <v-btn color="primary" class="mt-4" @click="claimCanteen">
-            <v-icon class="mr-2">mdi-key</v-icon>
-            Revendiquer cette cantine
-          </v-btn>
-        </div>
-      </v-card-text>
-      <v-card-text v-else>
+      </div>
+      <div v-else-if="duplicateSiretCanteen.canBeClaimed" class="black--text">
+        <p>
+          <!-- TODO: more of an explanation of how this might have happened? -->
+          <!-- e.g. your canteen was created from publicly available data? -->
+          La cantine « {{ duplicateSiretCanteen.name }} » est déjà référencée sur notre site mais n'est pas encore
+          gérée.
+        </p>
+        <v-btn color="primary" @click="claimCanteen">
+          <v-icon class="mr-2">mdi-key</v-icon>
+          Demander accès à cette cantine
+        </v-btn>
+      </div>
+      <div v-else class="black--text">
+        <p>Probablement, un autre membre de votre équipe à déjà ajouté votre cantine sur notre site.</p>
         <p>Demandez accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »</p>
         <DsfrTextarea
           v-model="messageJoinCanteen"
@@ -52,63 +43,20 @@
           <v-icon class="mr-2">mdi-key</v-icon>
           Demander l'accès
         </v-btn>
-      </v-card-text>
+      </div>
+    </v-alert>
 
-      <v-card-text class="py-2">
-        <v-divider class="mt-2"></v-divider>
+    <DsfrTextField
+      hide-details="auto"
+      validate-on-blur
+      label="SIRET"
+      v-model="siret"
+      :rules="[validators.length(14), validators.luhn]"
+      labelClasses="body-2 mb-2"
+      style="max-width: 20rem;"
+    />
 
-        <p class="mb-0 mt-2">
-          <span style="vertical-align: sub;" class="mr-4">Il s'agit d'une erreur ?</span>
-          <v-dialog v-model="siretDialog" width="500">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn text v-bind="attrs" v-on="on" color="primary darken-1" class="pl-0">
-                Contactez l'équipe ma cantine
-              </v-btn>
-            </template>
-
-            <v-card class="text-left">
-              <v-card-title class="font-weight-bold">Contactez l'équipe ma cantine</v-card-title>
-              <v-card-text class="pb-0">
-                <p>
-                  Vous recontrez des problèmes concernant le SIRET de votre cantine ? Envoyez nous un message et notre
-                  équipe reviendra vers vous dans les plus brefs délais
-                </p>
-                <v-form v-model="siretFormIsValid" ref="siretHelp" @submit.prevent>
-                  <DsfrTextarea
-                    v-model="messageTroubleshooting"
-                    label="Message"
-                    labelClasses="body-2 text-left mb-2"
-                    rows="3"
-                    :rules="[validators.required]"
-                    class="body-2"
-                  />
-                </v-form>
-              </v-card-text>
-
-              <v-divider></v-divider>
-
-              <v-card-actions class="pa-4 pr-6">
-                <v-spacer></v-spacer>
-                <v-btn x-large outlined color="primary" @click="siretDialog = false" class="mr-2">
-                  Annuler
-                </v-btn>
-                <v-btn x-large color="primary" @click="sendSiretHelp">
-                  <v-icon class="mr-2">mdi-send</v-icon>
-                  Envoyer
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </p>
-      </v-card-text>
-    </v-card>
-    <p class="caption my-4">
-      Vous avez une question ? Consultez notre
-      <router-link :to="{ name: 'FAQ' }">foire aux questions</router-link>
-      ou
-      <router-link :to="{ name: 'ContactPage' }">contactez-nous</router-link>
-    </p>
-    <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
+    <v-sheet rounded color="grey lighten-4 pa-3 mt-4" class="d-flex">
       <v-spacer></v-spacer>
       <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
         Annuler
@@ -132,7 +80,7 @@ export default {
     const user = this.$store.state.loggedUser
     return {
       siret: undefined,
-      duplicateSiretCanteen: null,
+      duplicateSiretCanteen: undefined,
       user,
       fromName: `${user.firstName} ${user.lastName}`,
       messageJoinCanteen: null,
@@ -159,6 +107,7 @@ export default {
         .then((response) => {
           const isDuplicateSiret = !!response.id
           if (isDuplicateSiret) {
+            this.siret = null
             this.duplicateSiretCanteen = response
             this.messageTroubleshooting = `Je veux ajouter une deuxième cantine avec le même SIRET : ${this.siret}...`
           } else {

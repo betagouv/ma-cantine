@@ -388,6 +388,7 @@ def check_siret_response(canteen_siret, user):
             return {
                 "name": canteen.name,
                 "id": canteen.id,
+                "siret": canteen.siret,
                 "isManagedByUser": managed_by_user,
                 "canBeClaimed": canteen.can_be_claimed,
             }
