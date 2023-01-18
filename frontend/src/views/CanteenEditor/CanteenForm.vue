@@ -323,9 +323,11 @@ export default {
     },
   },
   data() {
+    const blankCanteen = { images: [], sectors: [] }
     return {
       siret: null,
-      canteen: { images: [], sectors: [] },
+      blankCanteen,
+      canteen: JSON.parse(JSON.stringify(blankCanteen)),
       technicalControlText: null,
       showTechnicalControlDialog: false,
       formIsValid: true,
@@ -401,12 +403,9 @@ export default {
       return !this.canteenUrlComponent
     },
     hasChanged() {
-      if (this.originalCanteen) {
-        const diff = getObjectDiff(this.originalCanteen, this.canteen)
-        return Object.keys(diff).length > 0
-      } else {
-        return Object.keys(this.canteen).length > 0
-      }
+      const comparisonCanteen = this.originalCanteen || this.blankCanteen
+      const diff = getObjectDiff(comparisonCanteen, this.canteen)
+      return Object.keys(diff).length > 0
     },
     showSatelliteCanteensCount() {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
