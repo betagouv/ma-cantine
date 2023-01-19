@@ -50,12 +50,14 @@ export default {
       validators,
       canteenCount: undefined,
       showTeledeclarationBanner: false,
-      showActionsBanner: true,
     }
   },
   computed: {
     loggedUser() {
       return this.$store.state.loggedUser
+    },
+    showActionsBanner() {
+      return this.canteenCount > 0
     },
   },
 }
