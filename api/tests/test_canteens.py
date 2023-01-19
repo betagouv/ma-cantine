@@ -1,6 +1,7 @@
 import os
 import base64
 from django.urls import reverse
+from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory
@@ -522,6 +523,7 @@ class TestCanteenApi(APITestCase):
         self.assertIn(user_central_cuisine.id, ids)
         self.assertIn(user_central_serving_cuisine.id, ids)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_get_canteen_actions(self):
         """
@@ -609,6 +611,7 @@ class TestCanteenApi(APITestCase):
             self.assertEqual(returned_canteens[index]["id"], canteen.id)
             self.assertEqual(returned_canteens[index]["action"], action)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_get_diagnostics_to_td(self):
         """
@@ -670,6 +673,26 @@ class TestCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(body["id"], 3)
         self.assertEqual(body["action"], "20_create_diagnostic")
+
+    @override_settings(ENABLE_TELEDECLARATION=False)
+    @authenticate
+    def test_omit_teledeclaraion_acction(self):
+        """
+        Check that when the ENABLE_TELEDECLARATION setting is False we don't return that type of action
+        """
+        canteen = CanteenFactory.create(
+            id=3,
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+        )
+        canteen.managers.add(authenticate.user)
+        DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=10000)
+
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], 3)
+        self.assertEqual(body["action"], "95_nothing")
 
     def test_get_retrieve_actionable_canteen_unauthenticated(self):
         """

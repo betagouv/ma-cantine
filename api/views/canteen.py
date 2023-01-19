@@ -1064,18 +1064,19 @@ class ActionableCanteensListView(ListAPIView):
         )
         user_canteens = user_canteens.annotate(has_td=Exists(Subquery(tds)))
         # annotate with action
-        user_canteens = user_canteens.annotate(
-            action=Case(
-                When(
-                    nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)
-                ),
-                When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
-                When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
-                When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)),
-                When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH)),
-                default=Value(Canteen.Actions.NOTHING),
-            )
+
+        should_teledeclare = settings.ENABLE_TELEDECLARATION
+        conditions = [
+            When(nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
+            When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
+            When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+        ]
+        if should_teledeclare:
+            conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
+        conditions.append(
+            When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
         )
+        user_canteens = user_canteens.annotate(action=Case(*conditions, default=Value(Canteen.Actions.NOTHING)))
         return user_canteens
 
 
