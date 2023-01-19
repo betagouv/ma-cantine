@@ -103,7 +103,7 @@ export default {
       return query
     },
     showFilters() {
-      return this.canteenCount > this.limit || this.searchTerm || this.filterProductionType
+      return this.canteenCount > this.limit || this.searchTerm || this.filterProductionType !== "all"
     },
     showPagination() {
       return this.canteenCount > this.limit
