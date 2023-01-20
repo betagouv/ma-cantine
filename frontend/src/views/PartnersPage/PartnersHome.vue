@@ -10,6 +10,20 @@
           Ces acteurs de la restauration collective au service des gestionnaires sont prêts pour vous aidez à atteindre
           les objectifs de votre cantine
         </p>
+        <p>
+          Apprendre plus sur quels établissements font partie de cette liste avec notre
+          <DownloadLink
+            href="/static/documents/charte_de_referencement_Version01_janvier2023.pdf"
+            label="charte de référencement"
+            sizeStr="191 ko"
+            target="_blank"
+          />
+        </p>
+        <p class="caption">
+          Cette page n’engage pas l’administration ou l'équipe ma cantine ; elle constitue une proposition à l'attention
+          des responsables légaux de restaurants collectifs. Les structures sont seules responsables de la véracité des
+          informations qu’elles communiquent sur la page partenaire.
+        </p>
       </v-col>
       <v-col cols="0" sm="5" md="4" v-if="$vuetify.breakpoint.smAndUp" class="py-0 pr-8 d-flex">
         <v-spacer></v-spacer>
@@ -187,6 +201,7 @@ import DsfrCombobox from "@/components/DsfrCombobox"
 import PartnerCard from "@/views/PartnersPage/PartnerCard"
 import NewPartnerCard from "@/views/PartnersPage/NewPartnerCard"
 import GeneralContactForm from "@/components/GeneralContactForm"
+import DownloadLink from "@/components/DownloadLink"
 import { getObjectDiff } from "@/utils"
 import jsonDepartments from "@/departments.json"
 
@@ -200,6 +215,7 @@ export default {
     PartnerCard,
     NewPartnerCard,
     GeneralContactForm,
+    DownloadLink,
   },
   data() {
     return {
