@@ -17,7 +17,7 @@
       v-if="!isNewCanteen && originalCanteen.productionType !== 'central'"
     />
 
-    <div v-if="!siret && !canteen.siret">
+    <div v-if="$route.query.etape === steps[0]">
       <h2 class="mb-4">Étape 1/2 : Renseigner le SIRET</h2>
       <p>
         Nous utilisons le SIRET de votre cantine pour nous assurer que nous n'avons pas des doublons.
@@ -51,7 +51,7 @@
           <p class="grey--text text--darken-2">
             {{ siret || canteen.siret }}
             <!-- TODO: how to manage modify canteen form -->
-            <v-btn v-if="!canteen.siret" small @click="siret = null">Change-le</v-btn>
+            <v-btn v-if="!canteen.siret" small @click="goToStep(0)">Change-le</v-btn>
           </p>
           <DsfrTextField
             hide-details="auto"
@@ -338,6 +338,7 @@ export default {
       loadingCommunes: false,
       search: null,
       managementTypes: Constants.ManagementTypes,
+      steps: ["siret", "informations-cantine"],
       productionTypes: [
         {
           title: "une <b>cantine</b> qui produit sur place les repas que je sers à mes convives",
@@ -441,6 +442,8 @@ export default {
     } else {
       document.title = `Ajouter ma cantine - ${this.$store.state.pageTitleSuffix}`
     }
+    const step = this.siret || this.canteen?.siret ? 1 : 0
+    this.goToStep(step, false)
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.handleUnload)
@@ -448,6 +451,12 @@ export default {
   methods: {
     setSiret(siret) {
       this.siret = siret
+      this.goToStep(1)
+    },
+    goToStep(index, addHistory = true) {
+      const params = { path: this.$route.path, query: { etape: this.steps[index] } }
+      if (addHistory) this.$router.push(params).catch(() => {})
+      else this.$router.replace(params).catch(() => {})
     },
     saveCanteen(e, bypassTechnicalControl = false) {
       if (!this.$refs.form.validate()) {
