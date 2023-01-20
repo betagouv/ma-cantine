@@ -1,5 +1,9 @@
 <template>
-  <v-card class="fill-height text-center pt-4 pb-2 px-2 d-flex flex-column" outlined>
+  <v-card
+    class="fill-height text-center pt-4 pb-2 px-2 d-flex flex-column"
+    outlined
+    style="max-height: 10rem; max-width: 20rem;"
+  >
     <v-img max-width="30" contain :src="`/static/images/badges/${measure.badgeId}.svg`" class="mx-auto" alt=""></v-img>
     <v-card-text class="mx-auto px-1">
       <span class="grey--text text-h5 font-weight-black text--darken-2" style="line-height: inherit;">

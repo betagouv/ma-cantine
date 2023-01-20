@@ -70,6 +70,7 @@
           dense
           :items-per-page="limit"
           disable-sort
+          :page="page"
           :footer-props="{
             disableItemsPerPage: true,
           }"
@@ -161,7 +162,6 @@ export default {
       options: {
         sortBy: [],
         sortDesc: [],
-        page: 1,
       },
       headers: [
         { text: "Nom", value: "name" },

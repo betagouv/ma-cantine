@@ -211,14 +211,10 @@
       <p class="mb-8">
         Parmi les mêmes {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:
       </p>
-      <v-row class="justify-space-between mt-8 mb-8 px-2">
-        <BadgeCard
-          v-for="measure in otherMeasures"
-          :key="measure.id"
-          :measure="measure"
-          :percentageAchieved="statistics[measure.badgeId + 'Percent']"
-          class="mb-4"
-        />
+      <v-row class="my-8">
+        <v-col cols="12" sm="6" md="5" v-for="measure in otherMeasures" :key="measure.id" class="mb-4">
+          <BadgeCard :measure="measure" :percentageAchieved="statistics[measure.badgeId + 'Percent']" />
+        </v-col>
       </v-row>
       <BadgesExplanation />
     </div>
