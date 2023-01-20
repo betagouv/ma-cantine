@@ -1,5 +1,14 @@
 <template>
   <div v-if="!!this.$route.name">
+    <div class="fr-skiplinks" ref="skiplinks">
+      <nav class="fr-container" role="navigation" aria-label="Accès rapide">
+        <ul class="fr-skiplinks__list">
+          <li><a class="fr-link" href="#contenu">Contenu</a></li>
+          <li><a class="fr-link" href="#header">Menu</a></li>
+          <li><a class="fr-link" href="#footer">Pied de page</a></li>
+        </ul>
+      </nav>
+    </div>
     <v-app-bar
       app
       clipped-right
@@ -382,5 +391,34 @@ export default {
 }
 .header-signup-button.v-btn--active:hover::before {
   opacity: 0.08;
+}
+
+.fr-skiplinks {
+  top: 0;
+  left: 0;
+  position: absolute;
+  padding: 1rem 0;
+  background-color: #ddd;
+  width: 100%;
+  z-index: 1;
+}
+
+// focus-within not currently supported by IE but I think skiplinks are mostly helpful for people
+// using screenreaders, which will read out the link whether or not it is visible on screen.
+.fr-skiplinks:focus-within {
+  z-index: 7;
+}
+
+.fr-skiplinks__list {
+  display: flex;
+
+  list-style-type: none;
+  li {
+    margin: 1em 1em;
+  }
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
+  li::before {
+    content: "\200B";
+  }
 }
 </style>
