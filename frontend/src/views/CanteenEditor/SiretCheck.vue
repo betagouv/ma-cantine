@@ -1,71 +1,5 @@
 <template>
   <v-form ref="siretForm">
-    <v-alert v-if="duplicateSiretCanteen" outlined type="info">
-      <h2 class="mb-4 text-h6 black--text" style="line-height: 1.25rem;">
-        Il existe déjà une cantine avec le SIRET {{ duplicateSiretCanteen.siret }}
-      </h2>
-      <div v-if="duplicateSiretCanteen.isManagedByUser" class="black--text">
-        <p>« {{ duplicateSiretCanteen.name }} » a le même SIRET et fait déjà partie de vos cantines.</p>
-        <!-- TODO: more guidance for the user in the case where they think they want to add multiple canteens with the same SIRET -->
-        <v-btn
-          color="primary"
-          :to="{
-            name: 'CanteenModification',
-            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(duplicateSiretCanteen) },
-          }"
-        >
-          Accéder à « {{ duplicateSiretCanteen.name }} »
-        </v-btn>
-      </div>
-      <div v-else-if="duplicateSiretCanteen.canBeClaimed" class="black--text">
-        <div v-if="!requestSent">
-          <p>
-            <!-- TODO: more of an explanation of how this might have happened? -->
-            <!-- e.g. your canteen was created from publicly available data? -->
-            La cantine « {{ duplicateSiretCanteen.name }} » est déjà référencée sur notre site mais n'est pas encore
-            gérée.
-          </p>
-          <v-btn color="primary" @click="claimCanteen">
-            <v-icon class="mr-2">mdi-key</v-icon>
-            Demander accès à cette cantine
-          </v-btn>
-        </div>
-        <v-alert v-else type="success" class="mb-0">
-          <p class="mb-0">
-            Votre demande a bien été prise en compte. Nous reviendrons vers vous au plus vite.
-            <router-link class="white--text" :to="{ name: 'ManagementPage' }">
-              Revenir à mes cantines
-            </router-link>
-          </p>
-        </v-alert>
-      </div>
-      <div v-else class="black--text">
-        <div v-if="!requestSent">
-          <p>Probablement, un autre membre de votre équipe a déjà ajouté votre cantine sur notre site.</p>
-          <p>Demandez accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »</p>
-          <DsfrTextarea
-            v-model="messageJoinCanteen"
-            label="Message (optionnel)"
-            hide-details="auto"
-            rows="2"
-            class="mt-2 body-2"
-          />
-          <v-btn color="primary" class="mt-4" @click="sendMgmtRequest">
-            <v-icon class="mr-2">mdi-key</v-icon>
-            Demander l'accès
-          </v-btn>
-        </div>
-        <v-alert v-else type="success" class="mb-0">
-          <p class="mb-0">
-            Message envoyé,
-            <router-link class="white--text" :to="{ name: 'ManagementPage' }">
-              revenir à mes cantines
-            </router-link>
-          </p>
-        </v-alert>
-      </div>
-    </v-alert>
-
     <v-row class="pa-4">
       <DsfrTextField
         validate-on-blur
@@ -88,6 +22,81 @@
         Annuler
       </v-btn>
     </v-row>
+
+    <div class="alert-container mb-6">
+      <v-alert v-if="duplicateSiretCanteen" outlined type="info" color="primary">
+        <div v-if="duplicateSiretCanteen.isManagedByUser" class="black--text">
+          <h2 class="mb-4 body-1 font-weight-bold black--text" style="line-height: 1.25rem;">
+            La cantine « {{ duplicateSiretCanteen.name }} » avec le SIRET {{ duplicateSiretCanteen.siret }} fait déjà
+            partie de vos cantines.
+          </h2>
+          <v-btn
+            color="primary"
+            :to="{
+              name: 'CanteenModification',
+              params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(duplicateSiretCanteen) },
+            }"
+          >
+            Accéder à « {{ duplicateSiretCanteen.name }} »
+          </v-btn>
+        </div>
+        <div v-else-if="duplicateSiretCanteen.canBeClaimed" class="black--text">
+          <h2 class="mb-4 body-1 font-weight-bold black--text" style="line-height: 1.25rem;">
+            Il existe déjà une cantine avec le SIRET {{ duplicateSiretCanteen.siret }}
+          </h2>
+          <div v-if="!requestSent">
+            <p>
+              <!-- TODO: more of an explanation of how this might have happened? -->
+              <!-- e.g. your canteen was created from publicly available data? -->
+              La cantine « {{ duplicateSiretCanteen.name }} » est déjà référencée sur notre site mais n'est pas encore
+              gérée.
+            </p>
+            <v-btn color="primary" @click="claimCanteen">
+              <v-icon class="mr-2">mdi-key</v-icon>
+              Demander accès à cette cantine
+            </v-btn>
+          </div>
+          <v-alert v-else type="success" class="mb-0">
+            <p class="mb-0">
+              Votre demande a bien été prise en compte. Nous reviendrons vers vous au plus vite.
+              <router-link class="white--text" :to="{ name: 'ManagementPage' }">
+                Revenir à mes cantines
+              </router-link>
+            </p>
+          </v-alert>
+        </div>
+        <div v-else class="black--text">
+          <h2 class="mb-4 body-1 font-weight-bold black--text" style="line-height: 1.25rem;">
+            Il existe déjà une cantine avec le SIRET {{ duplicateSiretCanteen.siret }}
+          </h2>
+          <div v-if="!requestSent">
+            <p>
+              Ceci peut arriver lors qu'un autre membre de votre équipe a déjà ajouté votre cantine sur notre site. Vous
+              pouvez cependant demandez l'accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »
+            </p>
+            <DsfrTextarea
+              v-model="messageJoinCanteen"
+              label="Message (optionnel)"
+              hide-details="auto"
+              rows="2"
+              class="mt-2 body-2"
+            />
+            <v-btn color="primary" class="mt-4" @click="sendMgmtRequest">
+              <v-icon class="mr-2">mdi-key</v-icon>
+              Demander l'accès
+            </v-btn>
+          </div>
+          <v-alert v-else type="success" class="mb-0">
+            <p class="mb-0">
+              Message envoyé,
+              <router-link class="white--text" :to="{ name: 'ManagementPage' }">
+                revenir à mes cantines
+              </router-link>
+            </p>
+          </v-alert>
+        </div>
+      </v-alert>
+    </div>
   </v-form>
 </template>
 
@@ -203,4 +212,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.alert-container {
+  min-height: 100px;
+}
+</style>

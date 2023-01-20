@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left pb-10">
+  <div class="text-left">
     <BreadcrumbsNav :links="[{ to: { name: 'ManagementPage' } }]" v-if="isNewCanteen" />
     <h1 class="font-weight-black text-h4 my-4">
       {{ isNewCanteen ? "Ajouter ma cantine" : "Modifier ma cantine" }}
@@ -16,12 +16,8 @@
       :includeLink="true"
       v-if="!isNewCanteen && originalCanteen.productionType !== 'central'"
     />
-
     <div v-if="$route.query.etape === steps[0]">
-      <h2 class="mb-4">Étape 1/2 : Renseigner le SIRET</h2>
-      <p>
-        Nous utilisons le SIRET de votre cantine pour nous assurer que nous n'avons pas des doublons.
-      </p>
+      <h2 class="body-1 font-weight-bold mb-4">Étape 1/2 : Renseignez le SIRET de votre établissement</h2>
       <p>
         Vous ne le connaissez pas ? Utilisez cet
         <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
@@ -30,17 +26,15 @@
         </a>
         de votre cantine.
       </p>
-      <p class="caption">
-        Vous avez une question ? Consultez notre
+
+      <SiretCheck @siretIsValid="setSiret" class="mt-10" />
+
+      <p class="caption mb-n8">
+        Pour toute question ou difficulté veuillez consulter notre
         <router-link :to="{ name: 'FaqPage' }">foire aux questions</router-link>
         ou
         <router-link :to="{ name: 'ContactPage' }">contactez-nous</router-link>
       </p>
-      <v-row>
-        <v-col cols="12" md="10">
-          <SiretCheck @siretIsValid="setSiret" />
-        </v-col>
-      </v-row>
     </div>
 
     <v-form v-else ref="form" v-model="formIsValid">
@@ -50,8 +44,7 @@
           <p>SIRET</p>
           <p class="grey--text text--darken-2">
             {{ siret || canteen.siret }}
-            <!-- TODO: how to manage modify canteen form -->
-            <v-btn v-if="!canteen.siret" small @click="goToStep(0)">Change-le</v-btn>
+            <v-btn v-if="!canteen.siret" small @click="goToStep(0)">Modifier</v-btn>
           </p>
           <DsfrTextField
             hide-details="auto"
@@ -442,7 +435,7 @@ export default {
     } else {
       document.title = `Ajouter ma cantine - ${this.$store.state.pageTitleSuffix}`
     }
-    const step = this.siret || this.canteen?.siret ? 1 : 0
+    const step = this.siret || this.canteen?.siret || this.originalCanteen?.siret ? 1 : 0
     this.goToStep(step, false)
   },
   beforeDestroy() {
