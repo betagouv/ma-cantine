@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="siretForm">
+  <v-form ref="siretForm" @submit.prevent>
     <v-row class="pa-4">
       <DsfrTextField
         validate-on-blur
