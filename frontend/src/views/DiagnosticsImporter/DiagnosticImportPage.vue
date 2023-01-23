@@ -313,6 +313,7 @@ export default {
             "Le type d'établissement. Options acceptées : <code>public</code> et <code>private</code> (privé).",
           type: "Texte (choix unique)",
           example: "public",
+          optional: true,
         },
         {
           name: "Gestionnaires additionnels (adresses emails)",

@@ -297,7 +297,7 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.daily_meal_count = row[5].strip()
         canteen.production_type = row[7].strip().lower()
         canteen.management_type = row[8].strip().lower()
-        canteen.economic_model = row[9].strip().lower()
+        canteen.economic_model = row[9].strip().lower() if row[9] else None
         canteen.import_source = import_source
         canteen.publication_status = publication_status
 
