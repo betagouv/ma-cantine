@@ -11,10 +11,9 @@
           les objectifs de votre cantine
         </p>
         <p>
-          Apprendre plus sur quels établissements font partie de cette liste avec notre
           <DownloadLink
             href="/static/documents/charte_de_referencement_Version01_janvier2023.pdf"
-            label="charte de référencement"
+            label="En savoir plus sur les critères de référencement sur la charte ma cantine"
             sizeStr="191 ko"
             target="_blank"
           />
