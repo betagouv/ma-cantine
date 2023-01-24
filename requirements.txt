@@ -32,8 +32,8 @@ django-js-asset==2.0.0
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
 django-oauth-toolkit==2.2.0
 django-otp==1.1.4
-django-storages==1.13.1
-django-webpack-loader==1.6.0
+django-storages==1.13.2
+django-webpack-loader==1.8.0
 djangorestframework==3.14.0
 djangorestframework-camel-case==1.3.0
 drf-base64==2.0
@@ -98,7 +98,7 @@ sentry-sdk==1.13.0
 sib-api-v3-sdk==7.5.0
 six==1.16.0
 sqlparse==0.4.3
-svglib==1.4.1
+svglib==1.5.1
 text-unidecode==1.3
 tinycss2==1.2.1
 toml==0.10.2
@@ -106,10 +106,10 @@ tomli==2.0.1
 tomlkit==0.11.6
 tqdm==4.64.1
 typing_extensions==4.4.0
-tzdata==2022.6
+tzdata==2022.7
 tzlocal==4.2
 uritemplate==4.1.1
-uritools==4.0.0
+uritools==4.0.1
 urllib3==1.26.13
 vine==5.0.0
 wcwidth==0.2.6
