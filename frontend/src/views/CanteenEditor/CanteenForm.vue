@@ -516,8 +516,7 @@ export default {
           }
         })
         .catch((e) => {
-          // TODO
-          console.log(e)
+          this.$store.dispatch("notifyServerError", e)
         })
     },
     onLogoUploadClick() {
