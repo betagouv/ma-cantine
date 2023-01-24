@@ -149,7 +149,7 @@ urlpatterns = {
         ActionableCanteenRetrieveView.as_view(),
         name="retrieve_actionable_canteen",
     ),
-    path("siret/<str:siret>", SiretCheckView.as_view(), name="siret_check"),
+    path("canteenStatus/siret/<str:siret>", SiretCheckView.as_view(), name="siret_check"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

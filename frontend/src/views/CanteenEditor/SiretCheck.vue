@@ -134,7 +134,7 @@ export default {
         window.scrollTo(0, 0)
         return
       }
-      return fetch("/api/v1/siret/" + this.siret)
+      return fetch("/api/v1/canteenStatus/siret/" + this.siret)
         .then((response) => response.json())
         .then((response) => {
           const isDuplicateSiret = !!response.id
