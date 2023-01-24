@@ -15,21 +15,21 @@
       <div class="mt-4">
         <p class="mb-1 d-flex align-center">
           <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-          Privilégiez les contacts directs de l'établissement pour postuler à une offre d'emploi
+          Pour postuler à une offre d'emploi privilégiez les contacts directs de l'établissement
         </p>
         <p class="mb-1 d-flex align-center">
           <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-          Utilisez la « vie scolaire » pour informer l'établissement de l'absence ou présence de soi ou d'un tiers
+          Pour informer l'établissement de l'absence ou présence de soi ou d'un tiers utilisez la « vie scolaire »
         </p>
         <p class="mb-1 d-flex align-center">
           <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-          Proposez vos services en vous référençant parmis les
+          Proposez vos services en vous référençant parmi les
           <router-link :to="{ name: 'PartnersHome' }" class="mx-1">
             acteurs de l'éco-système
           </router-link>
-          en cliquant
+          en remplissant
           <a href="https://startupdetat.typeform.com/to/JhhsMCYC" target="_blank" rel="noopener" class="mx-1">
-            ici
+            ce formulaire
             <v-icon color="primary" small>mdi-open-in-new</v-icon>
           </a>
         </p>
