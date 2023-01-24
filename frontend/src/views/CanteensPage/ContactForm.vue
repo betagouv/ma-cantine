@@ -3,32 +3,32 @@
     <h2 class="font-weight-black text-h6 grey--text text--darken-4 mb-6">Contactez « {{ canteen.name }} »</h2>
     <div class="text-left grey--text text--darken-4 mt-n1 mb-6 text-body-2">
       <div>
-        <p class="mb-1">
-          <v-icon small color="green">$check-line</v-icon>
+        <p class="mb-1 d-flex align-center">
+          <v-icon small color="green" class="mr-1">$check-line</v-icon>
           Demandez des informations supplémentaires sur la cantine « {{ canteen.name }} »
         </p>
-        <p class="mb-1">
-          <v-icon small color="green">$check-line</v-icon>
+        <p class="mb-1 d-flex align-center">
+          <v-icon small color="green" class="mr-1">$check-line</v-icon>
           Demandez aux gestionnaires leur retour d'expérience sur une action mise en place
         </p>
       </div>
       <div class="mt-4">
-        <p class="mb-1">
-          <v-icon small color="amber darken-3">$error-warning-line</v-icon>
+        <p class="mb-1 d-flex align-center">
+          <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
           Privilégiez les contacts directs de l'établissement pour postuler à une offre d'emploi
         </p>
-        <p class="mb-1">
-          <v-icon small color="amber darken-3">$error-warning-line</v-icon>
+        <p class="mb-1 d-flex align-center">
+          <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
           Utilisez la « vie scolaire » pour informer l'établissement de l'absence ou présence de soi ou d'un tiers
         </p>
-        <p class="mb-1">
-          <v-icon small color="amber darken-3">$error-warning-line</v-icon>
+        <p class="mb-1 d-flex align-center">
+          <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
           Proposez vos services en vous référençant parmis les
-          <router-link :to="{ name: 'PartnersHome' }">
+          <router-link :to="{ name: 'PartnersHome' }" class="mx-1">
             acteurs de l'éco-système
           </router-link>
           en cliquant
-          <a href="https://startupdetat.typeform.com/to/JhhsMCYC" target="_blank" rel="noopener">
+          <a href="https://startupdetat.typeform.com/to/JhhsMCYC" target="_blank" rel="noopener" class="mx-1">
             ici
             <v-icon color="primary" small>mdi-open-in-new</v-icon>
           </a>
