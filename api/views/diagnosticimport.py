@@ -297,7 +297,7 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.daily_meal_count = row[5].strip()
         canteen.production_type = row[7].strip().lower()
         canteen.management_type = row[8].strip().lower()
-        canteen.economic_model = row[9].strip().lower() if row[9] else None
+        canteen.economic_model = row[9].strip().lower() if len(row) > 9 else None
         canteen.import_source = import_source
         canteen.publication_status = publication_status
 
@@ -423,8 +423,10 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
         return row_number == 1 and row[0].lower() == "siret"
 
     def _validate_row(self, row):
-        # manager column isn't required, so intentionally checking less than that idx
-        if len(row) < self.manager_column_idx:
+        # manager column isn't required, neither is the economic_model. so intentionally checking less than that idx - 1
+        last_mandatory_column = self.manager_column_idx - 1
+
+        if len(row) < last_mandatory_column:
             raise IndexError()
         elif len(row) > self.year_idx and len(row) < self.final_value_idx + 1:
             raise IndexError()
