@@ -142,8 +142,7 @@
       </v-row>
       <div v-if="statistics.diagnosticsCount === 0">
         <p class="mt-8 caption">
-          Nous n'avons pas des données sur les mesures EGAlim atteindues par ces cantines parce que aucune cantine n'a
-          remplit un diagnostic pour l'année {{ year }}.
+          Aucune cantine n'a renseigné des données relatives à la loi EGAlim pour l'année {{ year }}.
         </p>
       </div>
       <div v-else>
