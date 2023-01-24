@@ -4,8 +4,8 @@
       <nav class="fr-container" role="navigation" aria-label="Accès rapide">
         <ul class="fr-skiplinks__list">
           <li><a class="fr-link" href="#contenu">Contenu</a></li>
-          <li><a class="fr-link" href="#header">Menu</a></li>
-          <li><a class="fr-link" href="#footer">Pied de page</a></li>
+          <li><a class="fr-link" href="#en-tete">Menu</a></li>
+          <li><a class="fr-link" href="#pied-de-page">Pied de page</a></li>
         </ul>
       </nav>
     </div>
@@ -17,7 +17,7 @@
       style="padding: 0 calc((100vw - 78rem)/2);"
       height="116px"
       extension-height="56px"
-      id="header"
+      id="en-tete"
       hide-on-scroll
     >
       <v-toolbar-title class="align-self-center">
@@ -355,7 +355,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#header {
+#en-tete {
   box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.1), 0 8px 16px -16px rgba(0, 0, 0, 0.32) !important;
 }
 #profile::v-deep .v-btn__content {
