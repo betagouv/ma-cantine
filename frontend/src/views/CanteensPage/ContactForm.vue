@@ -23,13 +23,13 @@
         </p>
         <p class="mb-1 d-flex align-center">
           <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-          Proposez vos services en vous référençant parmi les
+          Proposez vos services parmi les
           <router-link :to="{ name: 'PartnersHome' }" class="mx-1">
             acteurs de l'éco-système
           </router-link>
-          en remplissant
+          en remplissant le
           <a href="https://startupdetat.typeform.com/to/JhhsMCYC" target="_blank" rel="noopener" class="mx-1">
-            ce formulaire
+            formulaire de référencement
             <v-icon color="primary" small>mdi-open-in-new</v-icon>
           </a>
         </p>
