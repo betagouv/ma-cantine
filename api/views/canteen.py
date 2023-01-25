@@ -28,6 +28,7 @@ from api.serializers import (
     ManagingTeamSerializer,
     SatelliteCanteenSerializer,
     CanteenActionsSerializer,
+    CanteenStatusSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration
 from data.region_choices import Region
@@ -308,7 +309,7 @@ class UserCanteensView(ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         canteen_siret = request.data.get("siret")
-        error_response = check_siret_response(canteen_siret, request.user)
+        error_response = check_siret_response(canteen_siret, request)
         if error_response:
             raise DuplicateException(additional_data=error_response)
         return super().create(request, *args, **kwargs)
@@ -364,34 +365,27 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
 
     def partial_update(self, request, *args, **kwargs):
         canteen_siret = request.data.get("siret")
-        error_response = check_siret_response(canteen_siret, request.user)
+        error_response = check_siret_response(canteen_siret, request)
         if error_response:
             raise DuplicateException(additional_data=error_response)
         return super().partial_update(request, *args, **kwargs)
 
 
-class SiretCheckView(APIView):
+class CanteenStatusView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
 
     def get(self, request, *args, **kwargs):
         siret = request.parser_context.get("kwargs").get("siret")
-        error_response = check_siret_response(siret, request.user)
+        error_response = check_siret_response(siret, request)
         return JsonResponse(error_response or {}, status=status.HTTP_200_OK)
 
 
-def check_siret_response(canteen_siret, user):
+def check_siret_response(canteen_siret, request):
     if canteen_siret:
         canteens = Canteen.objects.filter(siret=canteen_siret)
         if canteens.exists():
             canteen = canteens.first()
-            managed_by_user = user in canteen.managers.all()
-            return {
-                "name": canteen.name,
-                "id": canteen.id,
-                "siret": canteen.siret,
-                "isManagedByUser": managed_by_user,
-                "canBeClaimed": canteen.can_be_claimed,
-            }
+            return camelize(CanteenStatusSerializer(canteen, context={"request": request}).data)
 
 
 @extend_schema_view(

@@ -287,3 +287,22 @@ class CanteenActionsSerializer(serializers.ModelSerializer):
         model = Canteen
         fields = ("id", "name", "production_type", "action", "diagnostics")
         read_only_fields = fields
+
+
+class CanteenStatusSerializer(serializers.ModelSerializer):
+    is_managed_by_user = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "name",
+            "id",
+            "siret",
+            "is_managed_by_user",
+            "can_be_claimed",
+        )
+        read_only_fields = fields
+
+    def get_is_managed_by_user(self, obj):
+        user = self.context["request"].user
+        return user in obj.managers.all()
