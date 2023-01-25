@@ -1,29 +1,6 @@
 <template>
   <v-form ref="siretForm" @submit.prevent>
-    <v-row class="pa-4">
-      <DsfrTextField
-        validate-on-blur
-        label="SIRET"
-        v-model="siret"
-        :rules="[validators.length(14), validators.luhn]"
-        labelClasses="body-2 mb-2"
-        style="max-width: 30rem;"
-      />
-      <v-btn
-        large
-        color="primary"
-        class="ml-4 align-self-center"
-        @click="validateSiret"
-        :disabled="!siret && !!duplicateSiretCanteen"
-      >
-        Valider
-      </v-btn>
-      <v-btn large outlined color="primary" class="ml-4 align-self-center" :to="{ name: 'ManagementPage' }">
-        Annuler
-      </v-btn>
-    </v-row>
-
-    <div class="alert-container mb-6">
+    <div class="mb-6">
       <v-alert v-if="duplicateSiretCanteen" outlined type="info" color="primary">
         <div v-if="duplicateSiretCanteen.isManagedByUser" class="black--text">
           <h2 class="mb-4 body-1 font-weight-bold black--text" style="line-height: 1.25rem;">
@@ -46,14 +23,12 @@
           </h2>
           <div v-if="!requestSent">
             <p>
-              <!-- TODO: more of an explanation of how this might have happened? -->
-              <!-- e.g. your canteen was created from publicly available data? -->
-              La cantine « {{ duplicateSiretCanteen.name }} » est déjà référencée sur notre site mais n'est pas encore
-              gérée.
+              La cantine « {{ duplicateSiretCanteen.name }} » est déjà référencée sur notre site mais n'a pas encore de
+              gestionnaire enregistré.
             </p>
             <v-btn color="primary" @click="claimCanteen">
               <v-icon class="mr-2">mdi-key</v-icon>
-              Demander accès à cette cantine
+              Revendiquer cette cantine
             </v-btn>
           </div>
           <v-alert v-else type="success" class="mb-0">
@@ -97,6 +72,29 @@
         </div>
       </v-alert>
     </div>
+
+    <v-row class="pa-4">
+      <DsfrTextField
+        validate-on-blur
+        label="SIRET"
+        v-model="siret"
+        :rules="[validators.length(14), validators.luhn]"
+        labelClasses="body-2 mb-2"
+        style="max-width: 30rem;"
+      />
+      <v-btn
+        large
+        color="primary"
+        class="ml-4 align-self-center"
+        @click="validateSiret"
+        :disabled="!siret && !!duplicateSiretCanteen"
+      >
+        Valider
+      </v-btn>
+      <v-btn large outlined color="primary" class="ml-4 align-self-center" :to="{ name: 'ManagementPage' }">
+        Annuler
+      </v-btn>
+    </v-row>
   </v-form>
 </template>
 
@@ -211,9 +209,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.alert-container {
-  min-height: 100px;
-}
-</style>
