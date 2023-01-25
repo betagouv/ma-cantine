@@ -112,8 +112,7 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
-              ).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
             </p>
           </div>
           <VueApexCharts
@@ -141,82 +140,89 @@
           <p id="sector-chart-description" class="d-none">{{ sectorChartDescription }}</p>
         </v-col>
       </v-row>
-      <h3 class="text-h6 font-weight-bold mt-10 mb-2">Qualité de produits en {{ year }}</h3>
-      <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:</p>
-      <v-row class="px-2">
-        <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
-          <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
-            <v-img max-width="30" contain src="/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
-            <v-card-text class="grey--text text--darken-2 px-1">
-              <span class="text-h5 font-weight-black" style="line-height: inherit;">
-                {{ statistics.approPercent }} %
-              </span>
-              <span class="text-body-2">
-                ont réussi l'objectif d'approvisionnement EGAlim
-              </span>
-            </v-card-text>
-            <v-card-actions class="px-1">
-              <router-link :to="{ name: 'KeyMeasurePage', params: { id: approMeasure.id } }" class="text-body-2">
-                La mesure
-              </router-link>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-        <v-col class="px-1" cols="12" sm="6" md="3">
-          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
-            <v-card-text>
-              <span class="text-h5 font-weight-black">{{ statistics.bioPercent }} %</span>
-              <span class="text-body-2">
-                bio moyen
-              </span>
-            </v-card-text>
-            <div class="mt-2">
-              <v-img
-                contain
-                src="/static/images/quality-labels/logo_bio_eurofeuille.png"
-                alt="Logo Agriculture Biologique"
-                title="Logo Agriculture Biologique"
-                max-height="35"
-              />
-            </div>
-          </v-card>
-        </v-col>
-        <v-col class="pl-1 pr-0" cols="12" sm="6" md="5">
-          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
-            <v-card-text>
-              <span class="text-h5 font-weight-black">{{ statistics.sustainablePercent }} %</span>
-              <span class="text-body-2">
-                durables et de qualité (hors bio) moyen
-              </span>
-            </v-card-text>
-            <div class="d-flex mt-2 justify-center flex-wrap">
-              <v-img
-                contain
-                v-for="label in labels"
-                :key="label.title"
-                :src="`/static/images/quality-labels/${label.src}`"
-                :alt="label.title"
-                :title="label.title"
-                class="px-1"
-                max-height="40"
-                max-width="40"
-              />
-            </div>
-          </v-card>
-        </v-col>
-      </v-row>
-      <h3 class="text-h6 font-weight-bold mt-10 mb-2">
-        Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}
-      </h3>
-      <p class="mb-8">
-        Parmi les mêmes {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:
-      </p>
-      <v-row class="my-8">
-        <v-col cols="12" sm="6" md="5" v-for="measure in otherMeasures" :key="measure.id" class="mb-4">
-          <BadgeCard :measure="measure" :percentageAchieved="statistics[measure.badgeId + 'Percent']" />
-        </v-col>
-      </v-row>
-      <BadgesExplanation />
+      <div v-if="statistics.diagnosticsCount === 0">
+        <p class="mt-8 caption">
+          Aucune cantine n'a renseigné des données relatives à la loi EGAlim pour l'année {{ year }}.
+        </p>
+      </div>
+      <div v-else>
+        <h3 class="text-h6 font-weight-bold mt-10 mb-2">Qualité de produits en {{ year }}</h3>
+        <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:</p>
+        <v-row class="px-2">
+          <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
+            <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
+              <v-img max-width="30" contain src="/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
+              <v-card-text class="grey--text text--darken-2 px-1">
+                <span class="text-h5 font-weight-black" style="line-height: inherit;">
+                  {{ statistics.approPercent }} %
+                </span>
+                <span class="text-body-2">
+                  ont réussi l'objectif d'approvisionnement EGAlim
+                </span>
+              </v-card-text>
+              <v-card-actions class="px-1">
+                <router-link :to="{ name: 'KeyMeasurePage', params: { id: approMeasure.id } }" class="text-body-2">
+                  La mesure
+                </router-link>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+          <v-col class="px-1" cols="12" sm="6" md="3">
+            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+              <v-card-text>
+                <span class="text-h5 font-weight-black">{{ statistics.bioPercent }} %</span>
+                <span class="text-body-2">
+                  bio moyen
+                </span>
+              </v-card-text>
+              <div class="mt-2">
+                <v-img
+                  contain
+                  src="/static/images/quality-labels/logo_bio_eurofeuille.png"
+                  alt="Logo Agriculture Biologique"
+                  title="Logo Agriculture Biologique"
+                  max-height="35"
+                />
+              </div>
+            </v-card>
+          </v-col>
+          <v-col class="pl-1 pr-0" cols="12" sm="6" md="5">
+            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+              <v-card-text>
+                <span class="text-h5 font-weight-black">{{ statistics.sustainablePercent }} %</span>
+                <span class="text-body-2">
+                  durables et de qualité (hors bio) moyen
+                </span>
+              </v-card-text>
+              <div class="d-flex mt-2 justify-center flex-wrap">
+                <v-img
+                  contain
+                  v-for="label in labels"
+                  :key="label.title"
+                  :src="`/static/images/quality-labels/${label.src}`"
+                  :alt="label.title"
+                  :title="label.title"
+                  class="px-1"
+                  max-height="40"
+                  max-width="40"
+                />
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+        <h3 class="text-h6 font-weight-bold mt-10 mb-2">
+          Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}
+        </h3>
+        <p class="mb-8">
+          Parmi les mêmes {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:
+        </p>
+        <v-row class="my-8">
+          <v-col cols="12" sm="6" md="5" v-for="measure in otherMeasures" :key="measure.id" class="mb-4">
+            <BadgeCard :measure="measure" :percentageAchieved="statistics[measure.badgeId + 'Percent']" />
+          </v-col>
+        </v-row>
+        <BadgesExplanation />
+      </div>
     </div>
     <v-row v-else justify="center" class="py-15">
       <v-progress-circular indeterminate></v-progress-circular>
