@@ -126,7 +126,18 @@
             </v-btn>
           </template>
           <v-card class="text-left">
-            <div class="pa-4 d-flex" style="background-color: #F5F5F5">
+            <div class="pa-4 d-flex align-center" style="background-color: #F5F5F5">
+              <div class="d-flex">
+                <v-icon color="purple">
+                  mdi-flower-tulip-outline
+                </v-icon>
+                <v-icon class="ml-1" color="green">
+                  mdi-chart-line
+                </v-icon>
+              </div>
+              <v-card-title class="text-h6">
+                Quels achats rentrent dans ce champ ?
+              </v-card-title>
               <v-spacer></v-spacer>
               <v-btn color="primary" outlined @click="valueExternalityPerformanceHtDialog = false">
                 Fermer
