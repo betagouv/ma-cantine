@@ -115,9 +115,6 @@ export default {
       fromName: `${user.firstName} ${user.lastName}`,
       messageJoinCanteen: null,
       requestSent: false,
-      messageTroubleshooting: null,
-      siretFormIsValid: true,
-      siretDialog: false,
     }
   },
   computed: {
@@ -140,7 +137,6 @@ export default {
             this.siret = null
             this.requestSent = false
             this.duplicateSiretCanteen = response
-            this.messageTroubleshooting = `Je veux ajouter une deuxième cantine avec le même SIRET : ${this.siret}...`
           } else {
             this.$emit("siretIsValid", this.siret)
           }
@@ -163,47 +159,6 @@ export default {
           })
           window.scrollTo(0, 0)
         })
-        .catch((e) => this.$store.dispatch("notifyServerError", e))
-    },
-    // TODO: do we want to delete this or use this?
-    sendSiretHelp() {
-      this.$refs.siretHelp.validate()
-      if (!this.siretFormIsValid) {
-        this.$store.dispatch("notifyRequiredFieldsError")
-        return
-      }
-
-      let meta = this.meta || {}
-      meta.userId = this.$store.state.loggedUser?.id
-      meta.userAgent = navigator.userAgent
-
-      const payload = {
-        from: this.fromEmail,
-        message: this.messageTroubleshooting,
-        // TODO: put misc inquiry types in the title of trello card directly
-        inquiryType: "cantine SIRET",
-        meta,
-      }
-
-      this.$store
-        .dispatch("sendInquiryEmail", payload)
-        .then(() => {
-          this.message = null
-          this.$store.dispatch("notify", {
-            status: "success",
-            message: `Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.`,
-          })
-          this.siretDialog = false
-
-          window.scrollTo(0, 0)
-        })
-        .catch((e) => this.$store.dispatch("notifyServerError", e))
-    },
-    claimCanteen() {
-      const canteenId = this.duplicateSiretCanteen.id
-      return this.$store
-        .dispatch("claimCanteen", { canteenId })
-        .then(() => (this.requestSent = true))
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
