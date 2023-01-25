@@ -9,6 +9,7 @@
         <p>
           Ces acteurs de la restauration collective au service des gestionnaires sont prêts pour vous aidez à atteindre
           les objectifs de votre cantine
+          <a href="#en-savoir-plus">en savoir plus</a>
         </p>
       </v-col>
       <v-col cols="0" sm="5" md="4" v-if="$vuetify.breakpoint.smAndUp" class="py-0 pr-8 d-flex">
@@ -161,6 +162,10 @@
       </v-col>
     </v-row>
 
+    <v-divider class="mt-12" id="en-savoir-plus"></v-divider>
+
+    <ReferencingInfo class="pt-12" />
+
     <v-divider class="mb-8 mt-12"></v-divider>
     <v-row>
       <v-col cols="12">
@@ -187,6 +192,7 @@ import DsfrCombobox from "@/components/DsfrCombobox"
 import PartnerCard from "@/views/PartnersPage/PartnerCard"
 import NewPartnerCard from "@/views/PartnersPage/NewPartnerCard"
 import GeneralContactForm from "@/components/GeneralContactForm"
+import ReferencingInfo from "./ReferencingInfo"
 import { getObjectDiff } from "@/utils"
 import jsonDepartments from "@/departments.json"
 
@@ -200,6 +206,7 @@ export default {
     PartnerCard,
     NewPartnerCard,
     GeneralContactForm,
+    ReferencingInfo,
   },
   data() {
     return {
