@@ -1,48 +1,39 @@
 <template>
   <div>
     <h2 class="font-weight-black text-h6 grey--text text--darken-4 mb-6">Contactez « {{ canteen.name }} »</h2>
-    <div class="text-left grey--text text--darken-2 mt-n1 mb-6">
-      <p>Vous pouvez par exemple :</p>
-      <div class="ml-2">
-        <p class="mb-1">
-          <v-icon small color="green">$check-line</v-icon>
-          demander des informations supplémentaires sur la cantine que vous fréquentez;
+    <div class="text-left grey--text text--darken-4 mt-n1 mb-6 text-body-2">
+      <div>
+        <p class="mb-1 d-flex align-center">
+          <v-icon small color="green" class="mr-1">$check-line</v-icon>
+          Demandez des informations supplémentaires sur la cantine « {{ canteen.name }} »
         </p>
-        <p class="mb-1">
-          <v-icon small color="green">$check-line</v-icon>
-          contacter un collègue gestionnaire afin de lui demander un retour d'expérience sur une action mise en place...
+        <p class="mb-1 d-flex align-center">
+          <v-icon small color="green" class="mr-1">$check-line</v-icon>
+          Demandez aux gestionnaires leur retour d'expérience sur une action mise en place
         </p>
       </div>
-      <p class="mt-4">Il ne s'agit cependant pas de :</p>
-      <div class="ml-2">
-        <p class="mb-1">
-          <v-icon small color="red">$close-line</v-icon>
-          postuler à une offre d'emploi pour une cantine => privilégier des contacts de l'établissements hors de ma
-          cantine
+      <div class="mt-4">
+        <p class="mb-1 d-flex align-center">
+          <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
+          Pour postuler à une offre d'emploi privilégiez les contacts directs de l'établissement
         </p>
-        <p class="mb-1">
-          <v-icon small color="red">$close-line</v-icon>
-          informer l'établissement de l'absence/présence de soi ou d'un tiers au repas du jour => privilégier un contact
-          avec la "vie scolaire"
+        <p class="mb-1 d-flex align-center">
+          <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
+          Pour informer l'établissement de l'absence ou présence de soi ou d'un tiers utilisez la « vie scolaire »
         </p>
-        <p class="mb-1">
-          <v-icon small color="red">$close-line</v-icon>
-          en tant que fournisseur de proposer ses services => privilégier votre référencement parmis les
-          <router-link :to="{ name: 'PartnersHome' }">
+        <p class="mb-1 d-flex align-center">
+          <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
+          Proposez vos services parmi les
+          <router-link :to="{ name: 'PartnersHome' }" class="mx-1">
             acteurs de l'éco-système
           </router-link>
-          en
-          <a href="https://startupdetat.typeform.com/to/JhhsMCYC" target="_blank" rel="noopener">
-            demandant votre référencement
+          en remplissant le
+          <a href="https://startupdetat.typeform.com/to/JhhsMCYC" target="_blank" rel="noopener" class="mx-1">
+            formulaire de référencement
             <v-icon color="primary" small>mdi-open-in-new</v-icon>
           </a>
         </p>
       </div>
-      <p class="mt-4">
-        Nota bene : l'équipe de « ma cantine » se réserve un droit de modération et décide ou non de valider votre
-        message dans
-        <b>les 3 jours ouvrables.</b>
-      </p>
     </div>
     <v-form v-model="formIsValid" ref="form" @submit.prevent>
       <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
@@ -50,6 +41,9 @@
       <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
       <p class="caption text-left grey--text text--darken-1 mt-n1 mb-6">
         Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
+        <br />
+        L'équipe de « ma cantine » se réserve un droit de modération et décide ou non de valider votre message dans les
+        3 jours ouvrables.
       </p>
     </v-form>
     <v-btn x-large color="primary" class="mt-0 mb-6" @click="sendEmail">
