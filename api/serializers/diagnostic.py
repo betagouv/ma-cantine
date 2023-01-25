@@ -3,15 +3,11 @@ from data.models import Diagnostic
 from decimal import Decimal
 from .teledeclaration import ShortTeledeclarationSerializer
 
-FIELDS = (
-    "id",
-    "year",
-    "diagnostic_type",
-    "central_kitchen_diagnostic_mode",
+SIMPLE_APPRO_FIELDS = (
+    "value_total_ht",
     "value_bio_ht",
     "value_sustainable_ht",
     "value_pat_ht",
-    "value_total_ht",
     "value_label_rouge",
     "value_label_aoc_igp",
     "value_label_hve",
@@ -22,38 +18,10 @@ FIELDS = (
     "value_meat_poultry_france_ht",
     "value_fish_ht",
     "value_fish_egalim_ht",
-    "has_waste_diagnostic",
-    "has_waste_plan",
-    "waste_actions",
-    "other_waste_action",
-    "has_donation_agreement",
-    "has_waste_measures",
-    "bread_leftovers",
-    "served_leftovers",
-    "unserved_leftovers",
-    "side_leftovers",
-    "donation_frequency",
-    "donation_quantity",
-    "donation_food_type",
-    "other_waste_comments",
-    "has_diversification_plan",
-    "diversification_plan_actions",
-    "vegetarian_weekly_recurrence",
-    "vegetarian_menu_type",
-    "vegetarian_menu_bases",
-    "cooking_plastic_substituted",
-    "serving_plastic_substituted",
-    "plastic_bottles_substituted",
-    "plastic_tableware_substituted",
-    "communication_supports",
-    "other_communication_support",
-    "communication_support_url",
-    "communicates_on_food_plan",
-    "communicates_on_food_quality",
-    "communication_frequency",
-    "creation_date",
-    "modification_date",
-    # detailed value fields
+)
+
+COMPLETE_APPRO_FIELDS = (
+    "value_total_ht",
     "value_viandes_volailles_bio",
     "value_produits_de_la_mer_bio",
     "value_fruits_et_legumes_bio",
@@ -168,6 +136,49 @@ FIELDS = (
     "value_autres_local",
 )
 
+NON_APPRO_FIELDS = (
+    "has_waste_diagnostic",
+    "has_waste_plan",
+    "waste_actions",
+    "other_waste_action",
+    "has_donation_agreement",
+    "has_waste_measures",
+    "bread_leftovers",
+    "served_leftovers",
+    "unserved_leftovers",
+    "side_leftovers",
+    "donation_frequency",
+    "donation_quantity",
+    "donation_food_type",
+    "other_waste_comments",
+    "has_diversification_plan",
+    "diversification_plan_actions",
+    "vegetarian_weekly_recurrence",
+    "vegetarian_menu_type",
+    "vegetarian_menu_bases",
+    "cooking_plastic_substituted",
+    "serving_plastic_substituted",
+    "plastic_bottles_substituted",
+    "plastic_tableware_substituted",
+    "communication_supports",
+    "other_communication_support",
+    "communication_support_url",
+    "communicates_on_food_plan",
+    "communicates_on_food_quality",
+    "communication_frequency",
+)
+
+META_FIELDS = (
+    "id",
+    "year",
+    "creation_date",
+    "modification_date",
+    "diagnostic_type",
+    "central_kitchen_diagnostic_mode",
+)
+
+FIELDS = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
+
 
 class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
     """
@@ -182,51 +193,19 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
 
     class Meta:
 
-        non_appro_fields = (
-            "has_waste_diagnostic",
-            "has_waste_plan",
-            "waste_actions",
-            "other_waste_action",
-            "has_donation_agreement",
-            "has_waste_measures",
-            "bread_leftovers",
-            "served_leftovers",
-            "unserved_leftovers",
-            "side_leftovers",
-            "donation_frequency",
-            "donation_quantity",
-            "donation_food_type",
-            "other_waste_comments",
-            "has_diversification_plan",
-            "diversification_plan_actions",
-            "vegetarian_weekly_recurrence",
-            "vegetarian_menu_type",
-            "vegetarian_menu_bases",
-            "cooking_plastic_substituted",
-            "serving_plastic_substituted",
-            "plastic_bottles_substituted",
-            "plastic_tableware_substituted",
-            "communication_supports",
-            "other_communication_support",
-            "communication_support_url",
-            "communicates_on_food_plan",
-            "communicates_on_food_quality",
-            "communication_frequency",
-        )
-
         fields = (
-            "id",
-            "year",
-            "diagnostic_type",
-            "central_kitchen_diagnostic_mode",
-            # Percentage-based appro values
-            "id",
-            "value_total_ht",
-            "value_bio_ht",
-            "value_sustainable_ht",
-            "value_externality_performance_ht",
-            "value_egalim_others_ht",
-        ) + non_appro_fields
+            META_FIELDS
+            + (
+                # Percentage-based appro values
+                # TODO: rename the fields
+                "value_total_ht",
+                "value_bio_ht",
+                "value_sustainable_ht",
+                "value_externality_performance_ht",
+                "value_egalim_others_ht",
+            )
+            + NON_APPRO_FIELDS
+        )
         read_only_fields = fields
         model = Diagnostic
 
@@ -238,7 +217,7 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
         """
         representation = super().to_representation(instance)
         if instance.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
-            [representation.pop(field, "") for field in CentralKitchenDiagnosticSerializer.Meta.non_appro_fields]
+            [representation.pop(field, "") for field in NON_APPRO_FIELDS]
         return representation
 
     def get_value_total_ht(self, _):
@@ -305,4 +284,25 @@ class FullDiagnosticSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
         fields = FIELDS + ("teledeclaration",)
+        read_only_fields = fields
+
+
+class SimpleTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Diagnostic
+        fields = META_FIELDS + SIMPLE_APPRO_FIELDS + NON_APPRO_FIELDS
+        read_only_fields = fields
+
+
+class CompleteTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Diagnostic
+        fields = META_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
+        read_only_fields = fields
+
+
+class ApproDeferredTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Diagnostic
+        fields = META_FIELDS + NON_APPRO_FIELDS
         read_only_fields = fields
