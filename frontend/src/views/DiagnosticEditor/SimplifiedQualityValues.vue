@@ -126,6 +126,12 @@
             </v-btn>
           </template>
           <v-card class="text-left">
+            <div class="pa-4 d-flex" style="background-color: #F5F5F5">
+              <v-spacer></v-spacer>
+              <v-btn color="primary" outlined @click="valueExternalityPerformanceHtDialog = false">
+                Fermer
+              </v-btn>
+            </div>
             <v-card-text class="text-sm-body-1 grey-text text-darken-3 pt-6">
               Produit acquis suivant des modalités prenant en compte les coûts imputés aux externalités
               environnementales liées au produit pendant son cycle de vie (production, transformation, conditionnement,
