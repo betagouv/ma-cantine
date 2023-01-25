@@ -153,6 +153,8 @@ class Teledeclaration(models.Model):
             SimpleTeledeclarationDiagnosticSerializer,
             CompleteTeledeclarationDiagnosticSerializer,
             ApproDeferredTeledeclarationDiagnosticSerializer,
+            SimpleApproOnlyTeledeclarationDiagnosticSerializer,
+            CompleteApproOnlyTeledeclarationDiagnosticSerializer,
         )
 
         version = "7"  # Helps identify which data will be present. Use incremental int values
@@ -163,10 +165,12 @@ class Teledeclaration(models.Model):
         uses_central_kitchen_appro = Teledeclaration.should_use_central_kitchen_appro(diagnostic)
 
         teledeclaration_mode = None
+        serialized_diagnostic = None
         canteen = diagnostic.canteen
         is_central_cuisine = canteen.is_central_cuisine
         if uses_central_kitchen_appro:
             teledeclaration_mode = Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+            serialized_diagnostic = ApproDeferredTeledeclarationDiagnosticSerializer(diagnostic)
         elif (
             is_central_cuisine
             and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL
@@ -177,13 +181,15 @@ class Teledeclaration(models.Model):
             and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO
         ):
             teledeclaration_mode = Teledeclaration.TeledeclarationMode.CENTRAL_APPRO
+            if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+                serialized_diagnostic = CompleteApproOnlyTeledeclarationDiagnosticSerializer(diagnostic)
+            else:
+                serialized_diagnostic = SimpleApproOnlyTeledeclarationDiagnosticSerializer(diagnostic)
         else:
             teledeclaration_mode = Teledeclaration.TeledeclarationMode.SITE
 
-        serialized_diagnostic = None
-        if uses_central_kitchen_appro:
-            serialized_diagnostic = ApproDeferredTeledeclarationDiagnosticSerializer(diagnostic)
-        else:
+        # both CC declaring all and on site declaring all
+        if not serialized_diagnostic:
             if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
                 serialized_diagnostic = CompleteTeledeclarationDiagnosticSerializer(diagnostic)
             else:

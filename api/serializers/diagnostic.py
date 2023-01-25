@@ -306,3 +306,18 @@ class ApproDeferredTeledeclarationDiagnosticSerializer(serializers.ModelSerializ
         model = Diagnostic
         fields = META_FIELDS + NON_APPRO_FIELDS
         read_only_fields = fields
+
+
+class SimpleApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Diagnostic
+        fields = META_FIELDS + SIMPLE_APPRO_FIELDS
+        read_only_fields = fields
+        read_only_fields = fields
+
+
+class CompleteApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Diagnostic
+        fields = META_FIELDS + COMPLETE_APPRO_FIELDS
+        read_only_fields = fields
