@@ -258,6 +258,10 @@ class Canteen(SoftDeletionModel):
         except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
             return None
 
+    @property
+    def can_be_claimed(self):
+        return not self.managers.exists()
+
     def __str__(self):
         return f'Cantine "{self.name}"'
 
