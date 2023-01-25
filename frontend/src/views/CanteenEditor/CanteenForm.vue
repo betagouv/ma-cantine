@@ -491,9 +491,9 @@ export default {
           const cookieValue = readCookie(Constants.TrackingParams[i])
           if (cookieValue) payload[`creation_${Constants.TrackingParams[i]}`] = cookieValue
         }
+        payload.siret = this.siret
       }
 
-      payload.siret = this.siret
       this.$store
         .dispatch(this.isNewCanteen ? "createCanteen" : "updateCanteen", {
           id: this.canteen.id,
