@@ -19,12 +19,17 @@
     <div v-if="$route.query.etape === steps[0]">
       <h2 class="body-1 font-weight-bold mb-4">Étape 1/2 : Renseignez le SIRET de votre établissement</h2>
       <p>
-        Vous ne le connaissez pas ? Utilisez cet
+        Vous ne le connaissez pas ? Utilisez
         <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
-          outil de recherche pour trouver le SIRET
+          l'Annuaire des Entreprises
           <v-icon color="primary" small>mdi-open-in-new</v-icon>
         </a>
-        de votre cantine.
+        pour trouver le SIRET de votre cantine, ou
+        <a href="https://annuaire-education.fr/" target="_blank" rel="noopener">
+          l'Annuaire de l'Éducation
+          <v-icon color="primary" small>mdi-open-in-new</v-icon>
+        </a>
+        pour les cantines scolaires.
       </p>
 
       <SiretCheck @siretIsValid="setSiret" class="mt-10" />
