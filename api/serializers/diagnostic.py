@@ -22,6 +22,8 @@ SIMPLE_APPRO_FIELDS = (
 
 COMPLETE_APPRO_FIELDS = (
     "value_total_ht",
+    "value_meat_poultry_ht",
+    "value_fish_ht",
     "value_viandes_volailles_bio",
     "value_produits_de_la_mer_bio",
     "value_fruits_et_legumes_bio",
