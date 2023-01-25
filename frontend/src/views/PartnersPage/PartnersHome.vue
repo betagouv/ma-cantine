@@ -164,21 +164,7 @@
 
     <v-divider class="mt-12" id="en-savoir-plus"></v-divider>
 
-    <div class="pt-12">
-      <p>
-        <DownloadLink
-          href="/static/documents/charte_de_referencement_Version01_janvier2023.pdf"
-          label="En savoir plus sur les critères de référencement sur la charte ma cantine"
-          sizeStr="191 ko"
-          target="_blank"
-        />
-      </p>
-      <p class="caption">
-        Cette page n’engage pas l’administration ou l'équipe ma cantine ; elle constitue une proposition à l'attention
-        des responsables légaux de restaurants collectifs. Les structures sont seules responsables de la véracité des
-        informations qu’elles communiquent sur la page partenaire.
-      </p>
-    </div>
+    <ReferencingInfo class="pt-12" />
 
     <v-divider class="mb-8 mt-12"></v-divider>
     <v-row>
@@ -206,7 +192,7 @@ import DsfrCombobox from "@/components/DsfrCombobox"
 import PartnerCard from "@/views/PartnersPage/PartnerCard"
 import NewPartnerCard from "@/views/PartnersPage/NewPartnerCard"
 import GeneralContactForm from "@/components/GeneralContactForm"
-import DownloadLink from "@/components/DownloadLink"
+import ReferencingInfo from "./ReferencingInfo"
 import { getObjectDiff } from "@/utils"
 import jsonDepartments from "@/departments.json"
 
@@ -220,7 +206,7 @@ export default {
     PartnerCard,
     NewPartnerCard,
     GeneralContactForm,
-    DownloadLink,
+    ReferencingInfo,
   },
   data() {
     return {
