@@ -292,7 +292,7 @@ const routes = [
         name: "NewCanteenForm",
         component: CanteenForm,
         meta: {
-          title: "Nouvelle cantine",
+          title: "Ajouter ma cantine",
           authenticationRequired: true,
         },
         sitemapGroup: Constants.SitemapGroups.ACTION,

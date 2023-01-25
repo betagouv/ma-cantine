@@ -3,7 +3,7 @@
     <v-app>
       <AppHeader class="mx-auto constrained" />
 
-      <v-main style="width: 100%" class="mb-10">
+      <v-main id="contenu" style="width: 100%" class="mb-10">
         <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner" />
         <v-container fluid :fill-height="!initialDataLoaded">
           <v-progress-circular

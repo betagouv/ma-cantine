@@ -374,9 +374,19 @@ export const sectorsSelectList = (sectors) => {
     administration: "Administration",
     leisure: "Loisirs",
     enterprise: "Entreprise",
+    inconnu: "Inconnu",
   }
   uniqueCategories.forEach((c) => sectors.push({ header: categoryDisplay[c], category: c }))
-  const categoryOrder = ["administration", "education", "health", "social", "leisure", "enterprise", "autres"]
+  const categoryOrder = [
+    "administration",
+    "education",
+    "health",
+    "social",
+    "leisure",
+    "enterprise",
+    "autres",
+    "inconnu",
+  ]
   sectors.forEach((s) => (s.sortCategoryValue = s.category ? categoryOrder.indexOf(s.category) : -1))
 
   // Need to specify every case because browsers handle them differently

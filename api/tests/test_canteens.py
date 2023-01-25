@@ -313,6 +313,58 @@ class TestCanteenApi(APITestCase):
         self.assertFalse(body["isManagedByUser"])
 
     @authenticate
+    def test_check_siret_managed(self):
+        """
+        If checking a siret of a canteen that exists and I manage, give me canteen info
+        """
+        siret = "26566234910966"
+        canteen = CanteenFactory.create(siret=siret)
+        canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("siret_check", kwargs={"siret": siret}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["name"], canteen.name)
+        self.assertEqual(body["id"], canteen.id)
+        self.assertTrue(body["isManagedByUser"])
+
+    @authenticate
+    def test_check_siret_unmanaged(self):
+        """
+        If checking a siret of a canteen that exists but no one manages,
+        give me minimal canteen info and an indication that the canteen can be claimed
+        """
+        siret = "26566234910966"
+        canteen = CanteenFactory.create(siret=siret)
+        canteen.managers.clear()
+
+        response = self.client.get(reverse("siret_check", kwargs={"siret": siret}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["name"], canteen.name)
+        self.assertEqual(body["id"], canteen.id)
+        self.assertFalse(body["isManagedByUser"])
+        self.assertTrue(body["canBeClaimed"])
+
+    @authenticate
+    def test_check_siret_managed_by_someone_else(self):
+        """
+        If checking a siret of a canteen that exists but is managed by someone else,
+        give me minimal canteen info and an indication that the canteen can't be claimed
+        """
+        siret = "26566234910966"
+        canteen = CanteenFactory.create(siret=siret)
+
+        response = self.client.get(reverse("siret_check", kwargs={"siret": siret}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["name"], canteen.name)
+        self.assertEqual(body["id"], canteen.id)
+        self.assertFalse(body["isManagedByUser"])
+        # the CanteenFactory creates canteens with managers
+        self.assertFalse(body["canBeClaimed"])
+
+    @authenticate
     def test_user_canteen_teledeclaration(self):
         """
         The teledeclaration information should only be visible to
