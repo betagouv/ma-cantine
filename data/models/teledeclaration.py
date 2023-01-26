@@ -149,51 +149,20 @@ class Teledeclaration(models.Model):
         Create a teledeclaration object from a diagnostic
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
-        from api.serializers import (
-            SimpleTeledeclarationDiagnosticSerializer,
-            CompleteTeledeclarationDiagnosticSerializer,
-            ApproDeferredTeledeclarationDiagnosticSerializer,
-            SimpleApproOnlyTeledeclarationDiagnosticSerializer,
-            CompleteApproOnlyTeledeclarationDiagnosticSerializer,
-        )
 
         version = "7"  # Helps identify which data will be present. Use incremental int values
         # Version 7 - contains all diagnostic fields relevant to the diagnostic type in JSON serialized object
 
         status = status or Teledeclaration.TeledeclarationStatus.SUBMITTED
 
-        uses_central_kitchen_appro = Teledeclaration.should_use_central_kitchen_appro(diagnostic)
-
         teledeclaration_mode = None
         serialized_diagnostic = None
         canteen = diagnostic.canteen
         is_central_cuisine = canteen.is_central_cuisine
-        if uses_central_kitchen_appro:
-            teledeclaration_mode = Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
-            serialized_diagnostic = ApproDeferredTeledeclarationDiagnosticSerializer(diagnostic)
-        elif (
-            is_central_cuisine
-            and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL
-        ):
-            teledeclaration_mode = Teledeclaration.TeledeclarationMode.CENTRAL_ALL
-        elif (
-            is_central_cuisine
-            and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO
-        ):
-            teledeclaration_mode = Teledeclaration.TeledeclarationMode.CENTRAL_APPRO
-            if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-                serialized_diagnostic = CompleteApproOnlyTeledeclarationDiagnosticSerializer(diagnostic)
-            else:
-                serialized_diagnostic = SimpleApproOnlyTeledeclarationDiagnosticSerializer(diagnostic)
-        else:
-            teledeclaration_mode = Teledeclaration.TeledeclarationMode.SITE
 
-        # both CC declaring all and on site declaring all
-        if not serialized_diagnostic:
-            if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-                serialized_diagnostic = CompleteTeledeclarationDiagnosticSerializer(diagnostic)
-            else:
-                serialized_diagnostic = SimpleTeledeclarationDiagnosticSerializer(diagnostic)
+        teledeclaration_mode = Teledeclaration._get_teledeclaration_mode(diagnostic)
+        serializer = Teledeclaration._get_diagnostic_serializer(diagnostic)
+        serialized_diagnostic = serializer(diagnostic)
 
         json_fields = {
             "version": version,
@@ -227,6 +196,49 @@ class Teledeclaration(models.Model):
             declared_data=json_fields,
             teledeclaration_mode=teledeclaration_mode,
         )
+
+    @staticmethod
+    def _get_diagnostic_serializer(diagnostic):
+        from api.serializers import (
+            SimpleTeledeclarationDiagnosticSerializer,
+            CompleteTeledeclarationDiagnosticSerializer,
+            ApproDeferredTeledeclarationDiagnosticSerializer,
+            SimpleApproOnlyTeledeclarationDiagnosticSerializer,
+            CompleteApproOnlyTeledeclarationDiagnosticSerializer,
+        )
+
+        uses_central_kitchen_appro = Teledeclaration.should_use_central_kitchen_appro(diagnostic)
+        if uses_central_kitchen_appro:
+            return ApproDeferredTeledeclarationDiagnosticSerializer
+
+        if (
+            diagnostic.canteen.is_central_cuisine
+            and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO
+        ):
+            if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+                return CompleteApproOnlyTeledeclarationDiagnosticSerializer
+            else:
+                return SimpleApproOnlyTeledeclarationDiagnosticSerializer
+
+        # both CC declaring all and on site declaring all
+        if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            return CompleteTeledeclarationDiagnosticSerializer
+        else:
+            return SimpleTeledeclarationDiagnosticSerializer
+
+    @staticmethod
+    def _get_teledeclaration_mode(diagnostic):
+        uses_central_kitchen_appro = Teledeclaration.should_use_central_kitchen_appro(diagnostic)
+        if uses_central_kitchen_appro:
+            return Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+
+        if diagnostic.canteen.is_central_cuisine:
+            if diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL:
+                return Teledeclaration.TeledeclarationMode.CENTRAL_ALL
+            if diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
+                return Teledeclaration.TeledeclarationMode.CENTRAL_APPRO
+
+        return Teledeclaration.TeledeclarationMode.SITE
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.full_clean()
