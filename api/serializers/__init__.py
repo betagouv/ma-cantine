@@ -12,6 +12,11 @@ from .diagnostic import (  # noqa: F401
     PublicDiagnosticSerializer,
     FullDiagnosticSerializer,
     CentralKitchenDiagnosticSerializer,
+    SimpleTeledeclarationDiagnosticSerializer,
+    CompleteTeledeclarationDiagnosticSerializer,
+    ApproDeferredTeledeclarationDiagnosticSerializer,
+    SimpleApproOnlyTeledeclarationDiagnosticSerializer,
+    CompleteApproOnlyTeledeclarationDiagnosticSerializer,
 )
 from .sector import SectorSerializer  # noqa: F401
 from .blogpost import BlogPostSerializer  # noqa: F401
