@@ -3,8 +3,17 @@ import Vuetify from "vuetify/lib/framework"
 import theme from "@/theme"
 import { VBtn, VCard, VRadio, VCheckbox } from "vuetify/lib"
 import remixJson from "./remix.json"
+import { Resize, ClickOutside, Scroll } from "vuetify/lib/directives"
 
-Vue.use(Vuetify)
+// Necessary for now as a workaround for a Vuetify bug: Check again
+// after next Vuetify update : https://github.com/vuetifyjs/vuetify/issues/4871
+Vue.use(Vuetify, {
+  directives: {
+    Resize,
+    ClickOutside,
+    Scroll,
+  },
+})
 
 // Defaults to conform to DSFR
 VBtn.options.props.ripple.default = false
