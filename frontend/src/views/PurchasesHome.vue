@@ -366,7 +366,7 @@ export default {
     getProductFamilyDisplayValue(family) {
       if (Object.prototype.hasOwnProperty.call(Constants.ProductFamilies, family))
         return Constants.ProductFamilies[family]
-      return { text: "", color: "" }
+      return { text: "", shortText: "", color: "" }
     },
     getProductCharacteristicsDisplayValue(characteristics) {
       const priorityOrder = Object.keys(Constants.Characteristics)

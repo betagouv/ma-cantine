@@ -72,8 +72,6 @@
                   class="mt-2"
                   auto-select-first
                   no-data-text="Pas de résultats"
-                  :readonly="this.userCanteens.length === 1"
-                  :disabled="this.userCanteens.length === 1"
                 />
               </v-col>
 
@@ -347,6 +345,9 @@ export default {
           else {
             this.purchase = {
               characteristics: [],
+            }
+            if (this.userCanteens.length === 1) {
+              this.purchase.canteen = this.userCanteens[0].id
             }
             this.$refs.form.resetValidation()
             this.fetchOptions() // if the user added a new product or provider, we need to refresh the options
