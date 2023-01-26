@@ -199,7 +199,6 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
             META_FIELDS
             + (
                 # Percentage-based appro values
-                # TODO: rename the fields
                 "value_total_ht",
                 "value_bio_ht",
                 "value_sustainable_ht",
