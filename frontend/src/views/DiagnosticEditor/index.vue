@@ -93,10 +93,10 @@
           </v-radio>
         </v-radio-group>
 
-        <p class="caption grey--text text--darken-1" v-if="!hasActiveTeledeclaration && showExpansionPanels">
+        <p class="body-2 grey--text text--darken-1" v-if="!hasActiveTeledeclaration && showExpansionPanels">
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
         </p>
-        <div class="caption grey--text text--darken-1" v-if="hasActiveTeledeclaration">
+        <div class="body-2 grey--text text--darken-1" v-if="hasActiveTeledeclaration">
           <p class="mb-2">Une fois télédéclaré, vous ne pouvez plus modifier votre diagnostic.</p>
           <TeledeclarationCancelDialog
             v-model="cancelDialog"
@@ -215,6 +215,31 @@
           </DiagnosticExpansionPanel>
         </v-expansion-panels>
 
+        <p class="body-2 grey--text text--darken-1">
+          Certaines informations liées à votre établissement seront incluses dans votre diagnostic. Merci de vérifier
+          qu'elles sont à jour.
+        </p>
+
+        <v-expansion-panels
+          class="mb-8"
+          :disabled="!diagnosticIsUnique"
+          :value="openedPanel"
+          v-if="showExpansionPanels"
+        >
+          <DiagnosticExpansionPanel
+            iconColour="purple"
+            icon="$restaurant-fill"
+            heading="Données relatives à mon établissement"
+            :summary="'summary'"
+            :formIsValid="formIsValid.canteen"
+            :disabled="!showExpansionPanels"
+          >
+            <v-form ref="canteen" v-model="formIsValid.canteen">
+              <CanteenPanel :originalCanteen="originalCanteen" />
+            </v-form>
+          </DiagnosticExpansionPanel>
+        </v-expansion-panels>
+
         <div
           v-if="!hasActiveTeledeclaration && isTeledeclarationPhase && showExpansionPanels"
           class="mt-4"
@@ -286,6 +311,7 @@ import InformationMeasure from "@/components/KeyMeasureDiagnostic/InformationMea
 import WasteMeasure from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/DiversificationMeasure"
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
+import CanteenPanel from "./CanteenPanel"
 import DownloadLink from "@/components/DownloadLink"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
@@ -321,6 +347,7 @@ export default {
         diversification: true,
         information: true,
         select: true,
+        canteen: true,
       },
       openedPanel: null,
       cancelDialog: false,
@@ -362,6 +389,7 @@ export default {
     WasteMeasure,
     DiversificationMeasure,
     NoPlasticMeasure,
+    CanteenPanel,
     DiagnosticExpansionPanel,
     TeledeclarationCancelDialog,
     SimplifiedQualityValues,
