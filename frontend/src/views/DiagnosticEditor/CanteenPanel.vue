@@ -116,10 +116,34 @@
       clearable
     />
 
-    <!-- Champs dépendants de type d'établissement (cuisine centrale vs cantine sat) -->
-    <!-- SIRET du cuisine centrale -->
-    <!-- Nombre de satellites -->
-    <!-- Nombre de cantines/lieux de service à qui je fournis des repas -->
+    <DsfrTextField
+      label="SIRET de la cuisine centrale"
+      class="mt-2"
+      hide-details="auto"
+      validate-on-blur
+      v-model="canteen.centralProducerSiret"
+      v-if="usesCentralProducer"
+      :rules="[validators.length(14), validators.luhn, validators.isDifferent(siret, satelliteSiretMessage)]"
+    />
+    <p class="caption mt-1 ml-2" v-if="usesCentralProducer">
+      Vous ne le connaissez pas ? Utilisez cet
+      <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
+        outil de recherche pour trouver le SIRET
+      </a>
+      de la cuisine centrale.
+    </p>
+
+    <DsfrTextField
+      label="Nombre de cantines/lieux de service à qui je fournis des repas"
+      type="number"
+      hide-details="auto"
+      v-if="showSatelliteCanteensCount"
+      :rules="[validators.greaterThanZero]"
+      validate-on-blur
+      v-model="canteen.satelliteCanteensCount"
+      prepend-icon="$community-fill"
+      labelClasses="body-2 mb-2"
+    />
   </div>
 </template>
 
@@ -209,6 +233,9 @@ export default {
     },
     showDailyMealCount() {
       return this.canteen.productionType && this.canteen.productionType !== "central"
+    },
+    usesCentralProducer() {
+      return this.canteen.productionType === "site_cooked_elsewhere"
     },
   },
   watch: {
