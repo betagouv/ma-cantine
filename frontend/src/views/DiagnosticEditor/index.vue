@@ -222,9 +222,16 @@
         >
           <h2 class="font-weight-black text-h5 mt-8 mb-4">Télédéclarer mon diagnostic</h2>
           <p>
-            Un bilan annuel relatif à la mise en œuvre des dispositions de la loi EGAlim, et notamment des objectifs
-            d'approvisionnement en produits de qualité et durables dont bio dans les repas servis dans les restaurants
-            collectifs, est prévu par le décret du 23 avril 2019.
+            Un bilan statistique annuel de la mise en œuvre des obligations prévues 
+            par l’article L. 230-5-1 est établi par l’administration sur la base des 
+            éléments transmis, par les personnes morales de droit public et de droit 
+            privé mentionnées aux articles L. 230-5-1 et L. 230-5-2 (décret du 
+            23 avril 2019). L’arrêté du 14 septembre 2022 précise les modalités de 
+            transmission par les gestionnaires de restaurants collectifs des données 
+            nécessaires à l’établissement de ce bilan.
+            Les informations saisies dans votre diagnostic 2022 seront celles 
+            transmises à l’administration (DGAl, direction générale de l'alimentation 
+            du Ministère de l'agriculture MASA) en charge de l’élaboration de ce bilan.
           </p>
           <p>
             Nous vous proposons d’utiliser les informations de votre autodiagnostic {{ teledeclarationYear }} et de les
