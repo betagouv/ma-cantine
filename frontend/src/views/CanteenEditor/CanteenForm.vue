@@ -198,7 +198,7 @@
               hide-details="auto"
               validate-on-blur
               v-model="canteen.centralProducerSiret"
-              :rules="[validators.length(14), validators.luhn]"
+              :rules="[validators.length(14), validators.luhn, validators.isDifferent(siret, satelliteSiretMessage)]"
             />
             <p class="caption mt-1 ml-2">
               Vous ne le connaissez pas ? Utilisez cet
@@ -337,6 +337,8 @@ export default {
       search: null,
       managementTypes: Constants.ManagementTypes,
       steps: ["siret", "informations-cantine"],
+      satelliteSiretMessage:
+        "Le numéro SIRET de la cuisine centrale ne peut pas être le même que celui de la cantine satellite.",
       productionTypes: [
         {
           title: "une <b>cantine</b> qui produit sur place les repas que je sers à mes convives",
