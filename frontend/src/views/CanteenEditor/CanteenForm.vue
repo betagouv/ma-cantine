@@ -449,6 +449,7 @@ export default {
   methods: {
     setSiret(siret) {
       this.siret = siret
+      this.canteen.siret = this.siret
       this.goToStep(1)
     },
     goToStep(index, addHistory = true) {
@@ -491,7 +492,6 @@ export default {
           const cookieValue = readCookie(Constants.TrackingParams[i])
           if (cookieValue) payload[`creation_${Constants.TrackingParams[i]}`] = cookieValue
         }
-        payload.siret = this.siret
       }
 
       this.$store
