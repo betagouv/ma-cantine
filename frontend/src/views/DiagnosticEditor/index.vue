@@ -235,7 +235,7 @@
             :disabled="!showExpansionPanels"
           >
             <v-form ref="canteen" v-model="formIsValid.canteen">
-              <CanteenPanel :originalCanteen="originalCanteen" />
+              <CanteenPanel :canteen="canteen" />
             </v-form>
           </DiagnosticExpansionPanel>
         </v-expansion-panels>
@@ -339,6 +339,7 @@ export default {
     const thisYear = new Date().getFullYear()
     return {
       diagnostic: {},
+      canteen: { images: [], sectors: [] },
       bypassLeaveWarning: false,
       formIsValid: {
         quality: true,
@@ -508,6 +509,7 @@ export default {
   },
   beforeMount() {
     this.refreshDiagnostic()
+    this.refreshCanteen()
   },
   methods: {
     refreshDiagnostic() {
@@ -517,6 +519,9 @@ export default {
       } else this.$router.replace({ name: "NotFound" })
       const defaultDiagnosticType = this.showExtendedDiagnostic() ? "COMPLETE" : "SIMPLE"
       this.$set(this.diagnostic, "diagnosticType", this.diagnostic.diagnosticType || defaultDiagnosticType)
+    },
+    refreshCanteen() {
+      if (this.originalCanteen) this.canteen = JSON.parse(JSON.stringify(this.originalCanteen))
     },
     approTotals() {
       let bioTotal = this.diagnostic.valueBioHt
@@ -646,24 +651,45 @@ export default {
         }
       }
 
-      this.$store
+      return this.$store
         .dispatch(this.isNewDiagnostic ? "createDiagnostic" : "updateDiagnostic", {
           id: this.diagnostic.id,
           canteenId: this.canteenId,
           payload,
         })
-        .then((diagnostic) => {
+        .then(this.updateFromServer)
+        .then(this.saveCanteenIfChanged()) // Important to save the canteen afterwards so the diag is not overwritten
+        .then(() => {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
             title: "Mise à jour prise en compte",
             message: `Votre diagnostic a bien été ${this.isNewDiagnostic ? "créé" : "modifié"}`,
             status: "success",
           })
-          this.updateFromServer(diagnostic)
           this.navigateToDiagnosticList()
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
+        })
+    },
+    saveCanteenIfChanged() {
+      // TODO check form validation
+      const payload = getObjectDiff(this.originalCanteen, this.canteen)
+      if (Object.keys(payload).length === 0) return Promise.resolve()
+
+      // TODO: dailyMealCount is mandatory, it should never be empty
+      const fieldsToClean = ["dailyMealCount", "satelliteCanteensCount"]
+      fieldsToClean.forEach((x) => {
+        if (Object.prototype.hasOwnProperty.call(payload, x) && payload[x] === "") payload[x] = null
+      })
+
+      return this.$store
+        .dispatch("updateCanteen", {
+          id: this.canteen.id,
+          payload,
+        })
+        .then((canteen) => {
+          this.$emit("updateCanteen", canteen)
         })
     },
     populateSimplifiedDiagnostic() {
@@ -714,7 +740,7 @@ export default {
 
       if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
 
-      const saveIfChanged = () => {
+      const saveDiagnosticIfChanged = () => {
         if (!this.hasChanged) return Promise.resolve()
 
         return this.$store
@@ -728,7 +754,8 @@ export default {
           })
       }
 
-      saveIfChanged()
+      return saveDiagnosticIfChanged()
+        .then(this.saveCanteenIfChanged())
         .then(() =>
           this.$store.dispatch("submitTeledeclaration", {
             id: this.diagnostic.id,
@@ -824,6 +851,9 @@ export default {
   watch: {
     year() {
       this.refreshDiagnostic()
+    },
+    originalCanteen() {
+      this.refreshCanteen()
     },
     "diagnostic.year": function() {
       this.fetchPurchasesSummary()

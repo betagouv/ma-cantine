@@ -123,11 +123,7 @@
       validate-on-blur
       v-model="canteen.centralProducerSiret"
       v-if="usesCentralProducer"
-      :rules="[
-        validators.length(14),
-        validators.luhn,
-        validators.isDifferent(originalCanteen.siret, satelliteSiretMessage),
-      ]"
+      :rules="[validators.length(14), validators.luhn, validators.isDifferent(canteen.siret, satelliteSiretMessage)]"
     />
     <p class="caption mt-1 ml-2" v-if="usesCentralProducer">
       Vous ne le connaissez pas ? Utilisez cet
@@ -161,7 +157,7 @@ import { sectorsSelectList } from "@/utils"
 
 export default {
   props: {
-    originalCanteen: {
+    canteen: {
       type: Object,
       required: false,
     },
@@ -172,9 +168,7 @@ export default {
   },
   components: { DsfrTextField, DsfrAutocomplete, DsfrSelect },
   data() {
-    const blankCanteen = { images: [], sectors: [] }
     return {
-      canteen: JSON.parse(JSON.stringify(blankCanteen)),
       loadingCommunes: false,
       communes: [],
       cityAutocompleteChoice: null,
@@ -201,6 +195,9 @@ export default {
       const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
       if (concernedSectors.length === 0) return false
       return this.canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
+    },
+    usesCentralProducer() {
+      return this.canteen.productionType === "site_cooked_elsewhere"
     },
   },
   methods: {
@@ -242,9 +239,6 @@ export default {
     showDailyMealCount() {
       return this.canteen.productionType && this.canteen.productionType !== "central"
     },
-    usesCentralProducer() {
-      return this.canteen.productionType === "site_cooked_elsewhere"
-    },
   },
   watch: {
     search(val) {
@@ -262,13 +256,7 @@ export default {
     },
   },
   beforeMount() {
-    const canteen = this.originalCanteen
-    if (canteen) {
-      this.canteen = JSON.parse(JSON.stringify(canteen))
-      if (canteen.city) {
-        this.populateCityAutocomplete()
-      }
-    }
+    if (this.canteen && this.canteen.city) this.populateCityAutocomplete()
   },
 }
 </script>
