@@ -233,7 +233,7 @@
             :formIsValid="formIsValid.canteen"
             :disabled="!showExpansionPanels"
           >
-            <v-form ref="canteen" v-model="formIsValid.canteen">
+            <v-form ref="canteen" v-model="formIsValid.canteen" lazy-validation>
               <CanteenPanel :canteen="canteen" />
             </v-form>
           </DiagnosticExpansionPanel>
@@ -715,8 +715,9 @@ export default {
     },
     validateForms() {
       const refs = this.$refs
-      Object.keys(this.formIsValid).forEach((ref) => refs[ref] && refs[ref].validate())
-      return Object.values(this.formIsValid).every((isValid) => isValid)
+      const panels = Object.keys(this.formIsValid)
+      for (let i = 0; i < panels.length; i++) if (!refs[panels[i]].validate()) return false
+      return true
     },
     handleUnload(e) {
       if (this.hasChanged && !this.bypassLeaveWarning) {

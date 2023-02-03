@@ -24,7 +24,7 @@
         </v-row>
       </template>
     </v-expansion-panel-header>
-    <v-expansion-panel-content>
+    <v-expansion-panel-content eager>
       <slot />
     </v-expansion-panel-content>
   </v-expansion-panel>
