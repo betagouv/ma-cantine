@@ -230,7 +230,6 @@
             iconColour="purple"
             icon="$restaurant-fill"
             heading="Données relatives à mon établissement"
-            :summary="'summary'"
             :formIsValid="formIsValid.canteen"
             :disabled="!showExpansionPanels"
           >
@@ -673,12 +672,10 @@ export default {
         })
     },
     saveCanteenIfChanged() {
-      // TODO check form validation
       const payload = getObjectDiff(this.originalCanteen, this.canteen)
       if (Object.keys(payload).length === 0) return Promise.resolve()
 
-      // TODO: dailyMealCount is mandatory, it should never be empty
-      const fieldsToClean = ["dailyMealCount", "satelliteCanteensCount"]
+      const fieldsToClean = ["satelliteCanteensCount"]
       fieldsToClean.forEach((x) => {
         if (Object.prototype.hasOwnProperty.call(payload, x) && payload[x] === "") payload[x] = null
       })
