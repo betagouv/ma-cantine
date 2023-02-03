@@ -123,7 +123,11 @@
       validate-on-blur
       v-model="canteen.centralProducerSiret"
       v-if="usesCentralProducer"
-      :rules="[validators.length(14), validators.luhn, validators.isDifferent(siret, satelliteSiretMessage)]"
+      :rules="[
+        validators.length(14),
+        validators.luhn,
+        validators.isDifferent(originalCanteen.siret, satelliteSiretMessage),
+      ]"
     />
     <p class="caption mt-1 ml-2" v-if="usesCentralProducer">
       Vous ne le connaissez pas ? Utilisez cet
@@ -179,6 +183,8 @@ export default {
       productionTypes: Constants.ProductionTypesDetailed,
       ministries: Constants.Ministries,
       economicModels: Constants.EconomicModels,
+      satelliteSiretMessage:
+        "Le numéro SIRET de la cuisine centrale ne peut pas être le même que celui de la cantine satellite.",
     }
   },
   computed: {
@@ -198,8 +204,10 @@ export default {
     },
   },
   methods: {
-    // TODO do this validation well
-    greaterThanDailyMealCount() {
+    greaterThanDailyMealCount(input) {
+      if (input && this.canteen.productionType !== "central" && Number(input) < Number(this.canteen.dailyMealCount)) {
+        return `Ce total doit être superieur du moyen de repas par jour sur place, actuellement ${this.canteen.dailyMealCount}`
+      }
       return true
     },
     queryCommunes(val) {
