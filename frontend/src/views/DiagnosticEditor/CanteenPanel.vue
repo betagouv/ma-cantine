@@ -24,10 +24,10 @@
       no-data-text="Pas de résultats. Veuillez renseigner votre ville"
     />
 
-    <p v-if="true || !canteen.productionType" class="body-1 ml-1 mt-5">Je suis...</p>
+    <p v-if="!canteen.productionType" class="body-1 ml-1 mt-5">Je suis...</p>
     <v-radio-group
       class="mt-2"
-      v-if="true || !canteen.productionType"
+      v-if="!canteen.productionType"
       v-model="canteen.productionType"
       hide-details="auto"
       :rules="[validators.required]"
