@@ -65,7 +65,7 @@ packaging==23.0
 pathspec==0.10.3
 Pillow==9.3.0
 pipdeptree==2.3.3
-platformdirs==2.5.4
+platformdirs==2.6.2
 pluggy==1.0.0
 prompt-toolkit==3.0.33
 psycopg2==2.9.5
