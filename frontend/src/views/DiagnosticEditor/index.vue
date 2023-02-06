@@ -520,7 +520,7 @@ export default {
       this.$set(this.diagnostic, "diagnosticType", this.diagnostic.diagnosticType || defaultDiagnosticType)
     },
     refreshCanteen() {
-      if (this.originalCanteen) this.canteen = JSON.parse(JSON.stringify(this.originalCanteen))
+      if (this.originalCanteen) this.$set(this, "canteen", JSON.parse(JSON.stringify(this.originalCanteen)))
     },
     approTotals() {
       let bioTotal = this.diagnostic.valueBioHt
@@ -657,7 +657,7 @@ export default {
           payload,
         })
         .then(this.updateFromServer)
-        .then(this.saveCanteenIfChanged()) // Important to save the canteen afterwards so the diag is not overwritten
+        .then(this.saveCanteenIfChanged) // Important to save the canteen afterwards so the diag is not overwritten
         .then(() => {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
@@ -686,7 +686,7 @@ export default {
           payload,
         })
         .then((canteen) => {
-          this.$emit("updateCanteen", canteen)
+          return this.$emit("updateCanteen", canteen)
         })
     },
     populateSimplifiedDiagnostic() {
@@ -753,7 +753,7 @@ export default {
       }
 
       return saveDiagnosticIfChanged()
-        .then(this.saveCanteenIfChanged())
+        .then(this.saveCanteenIfChanged)
         .then(() =>
           this.$store.dispatch("submitTeledeclaration", {
             id: this.diagnostic.id,
