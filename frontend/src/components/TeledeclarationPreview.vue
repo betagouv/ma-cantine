@@ -19,6 +19,16 @@
             <tbody>
               <tr>
                 <td class="text-left font-weight-bold">
+                  Données relatives à votre établissement
+                </td>
+                <td class="text-left font-weight-bold"></td>
+              </tr>
+              <tr v-for="item in canteenItems" :key="item.label">
+                <td class="text-left">{{ item.label }}</td>
+                <td :class="diagnostic[item.param] ? 'text-right' : 'text-left'">{{ item.value }}</td>
+              </tr>
+              <tr>
+                <td class="text-left font-weight-bold">
                   Type de déclaration : {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
                 </td>
                 <td class="text-left font-weight-bold"></td>
@@ -55,6 +65,7 @@
 
 <script>
 import validators from "@/validators"
+import { capitalise } from "@/utils"
 
 export default {
   props: {
@@ -103,6 +114,23 @@ export default {
       }
 
       return true
+    },
+    canteenItems() {
+      const items = [
+        { value: this.canteen.name, label: "Nom de la cantine" },
+        { value: this.canteen.siret, label: "Numéro SIRET" },
+        { value: this.canteen.city, label: "Ville" },
+        { value: this.canteen.productionType, label: "Type d'établissement" }, // TODO: à merger la branche du panel pour prendre ces valeurs de constants
+        { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts à l'année" },
+        { value: this.canteen.managementType, label: "Mode de gestion" },
+        { value: this.sectors, label: "Secteurs d'activité" },
+      ]
+      // TODO
+      // SIRET de la cuisine centrale
+      // nombre de satelites
+      // Couverts moyen par jour
+      // Ministère de tutelle
+      return items
     },
     approItems() {
       if (!this.showApproItems) return []
@@ -480,6 +508,14 @@ export default {
     },
     canteenUrlComponent() {
       return this.canteen ? this.$store.getters.getCanteenUrlComponent(this.canteen) : null
+    },
+    sectors() {
+      if (!this.canteen.sectors) return ""
+      const sectors = this.$store.state.sectors
+      const sectorDisplay = this.canteen.sectors
+        .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
+        .join(", ")
+      return capitalise(sectorDisplay)
     },
   },
   data() {
