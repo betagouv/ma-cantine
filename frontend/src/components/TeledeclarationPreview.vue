@@ -65,7 +65,7 @@
 
 <script>
 import validators from "@/validators"
-import { capitalise } from "@/utils"
+import { capitalise, sectorsSelectList } from "@/utils"
 
 export default {
   props: {
@@ -125,11 +125,19 @@ export default {
         { value: this.canteen.managementType, label: "Mode de gestion" },
         { value: this.sectors, label: "Secteurs d'activité" },
       ]
-      // TODO
-      // SIRET de la cuisine centrale
-      // nombre de satelites
-      // Couverts moyen par jour
-      // Ministère de tutelle
+      if (this.usesCentralProducer)
+        items.push({ value: this.canteen.centralProducerSiret, label: "SIRET de la cuisine centrale" })
+      if (this.showSatelliteCanteensCount)
+        items.push({
+          value: this.canteen.showSatelliteCanteensCount,
+          label: "Nombre de cantines à qui je fournis des repas",
+        })
+      if (this.showDailyMealCount) items.push({ value: this.canteen.dailyMealCount, label: "Couverts moyen par jour" })
+      if (this.showMinistryField) items.push({ value: this.canteen.lineMinistry, label: "Ministère de tutelle" })
+
+      // TODO - show human-readable formats of minitries, management type, etc, after merging with
+      // branch #2288
+
       return items
     },
     approItems() {
@@ -516,6 +524,21 @@ export default {
         .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
         .join(", ")
       return capitalise(sectorDisplay)
+    },
+    usesCentralProducer() {
+      return this.canteen.productionType === "site_cooked_elsewhere"
+    },
+    showSatelliteCanteensCount() {
+      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
+    },
+    showDailyMealCount() {
+      return this.canteen.productionType && this.canteen.productionType !== "central"
+    },
+    showMinistryField() {
+      const sectors = sectorsSelectList(this.$store.state.sectors)
+      const concernedSectors = sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
+      if (concernedSectors.length === 0) return false
+      return this.canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
     },
   },
   data() {
