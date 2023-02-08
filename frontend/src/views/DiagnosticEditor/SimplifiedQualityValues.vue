@@ -23,8 +23,14 @@
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
-    <!-- Bio -->
     <v-divider class="my-4"></v-divider>
+
+    <p class="caption">
+      Produit ayant plusieurs labels : la valeur d’achat de ce produit ne pourra être comptée que dans une seule des 4
+      catégories ci-dessous. Par exemple, un produit à la fois biologique et label rouge ne sera comptabilisé que dans
+      la catégorie 'bio'.
+    </p>
+    <!-- Bio -->
     <div class="d-block d-sm-flex align-center">
       <LogoBio style="max-height: 30px;" />
       <label class="body-2 ml-4" :for="'bio-' + diagnostic.year">
