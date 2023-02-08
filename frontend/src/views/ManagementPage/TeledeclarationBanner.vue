@@ -1,14 +1,29 @@
 <template>
   <v-card color="primary lighten-4" elevation="1" shaped class="d-flex align-center">
     <div>
+      <!-- TODO: update end date -->
       <v-card-title class="text-body-1 font-weight-bold">
-        La campagne de remontée des données 2021 est à présent terminée !
+        Du 13 février au XX XXX 2023, participez à la collecte de données 2022 !
       </v-card-title>
-      <v-card-text class="pb-6">
-        Les données recueillies par télédéclaration seront traitées de manière agrégée pour réaliser le bilan annuel qui
-        sera remis au Parlement et rendu public. Vous pouvez d'ores et déjà compléter vos diagnostics 2022 afin
-        d'anticiper la prochaine campagne qui commencera en janvier 2023 !
+      <v-card-text class="pb-0">
+        Dans votre espace cantine, remplissez votre diagnostic 2022 et télédéclarez vos données (arrêté ministériel du
+        14 septembre 2022). L'objectif : établir un bilan de suivi des mesures EGAlim permettant de mieux piloter cette
+        politique publique par l'administration.
       </v-card-text>
+      <v-card-actions class="px-4 mt-2">
+        <v-btn :to="{ name: 'PendingActions' }" color="primary">Télédéclarer mes cantines</v-btn>
+        <!-- TODO: update link to be to gitbook guide -->
+        <v-btn
+          text
+          href="https://agriculture.gouv.fr/restauration-collective-top-depart-pour-la-premiere-collecte-dinformations-concernant-les"
+          target="_blank"
+          rel="noopener"
+          class="text-decoration-underline"
+        >
+          Article sur le site du ministère
+          <v-icon small class="ml-2">mdi-open-in-new</v-icon>
+        </v-btn>
+      </v-card-actions>
     </div>
   </v-card>
 </template>
