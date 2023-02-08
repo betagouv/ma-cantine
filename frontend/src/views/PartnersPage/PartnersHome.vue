@@ -8,8 +8,7 @@
         </h1>
         <p>
           Ces acteurs de la restauration collective au service des gestionnaires sont prêts pour vous aidez à atteindre
-          les objectifs de votre cantine
-          <a href="#en-savoir-plus">en savoir plus</a>
+          les objectifs de votre cantine.
         </p>
       </v-col>
       <v-col cols="0" sm="5" md="4" v-if="$vuetify.breakpoint.smAndUp" class="py-0 pr-8 d-flex">
