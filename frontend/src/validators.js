@@ -159,4 +159,10 @@ export default {
       return true
     }
   },
+  isDifferent(comparisonValue, message) {
+    return (input) => {
+      if (input === comparisonValue) return message
+      return true
+    }
+  },
 }

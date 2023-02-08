@@ -1,12 +1,21 @@
 import logging
+import decimal
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from data.models import Canteen, Diagnostic
 
 logger = logging.getLogger(__name__)
+
+
+class CustomJSONEncoder(DjangoJSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o)
+        return super(CustomJSONEncoder, self).default(o)
 
 
 class Teledeclaration(models.Model):
@@ -34,7 +43,7 @@ class Teledeclaration(models.Model):
     # will not change and should contain all information to be
     # sent to the system that will treat the teledeclarations.
 
-    declared_data = models.JSONField(verbose_name="Champs")
+    declared_data = models.JSONField(verbose_name="Champs", encoder=CustomJSONEncoder)
 
     # Structured non-null fields for validation / querying.
     # These fields cannot be null and will not change if the
@@ -141,183 +150,19 @@ class Teledeclaration(models.Model):
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
-        version = "6"  # Helps identify which data will be present. Use incremental int values
-        # Version 6 - allows partial teledeclarations for satellite canteens when the central cuisine has declared for them
+        version = "7"  # Helps identify which data will be present. Use incremental int values
+        # Version 7 - contains all diagnostic fields relevant to the diagnostic type in JSON serialized object
 
         status = status or Teledeclaration.TeledeclarationStatus.SUBMITTED
-        canteen = diagnostic.canteen
-        simplified_appro_fields = [
-            "value_total_ht",
-            "value_bio_ht",
-            "value_sustainable_ht",
-            "value_externality_performance_ht",
-            "value_egalim_others_ht",
-            "value_meat_poultry_ht",
-            "value_meat_poultry_egalim_ht",
-            "value_meat_poultry_france_ht",
-            "value_fish_ht",
-            "value_fish_egalim_ht",
-        ]
-        extended_appro_fields = [
-            "value_total_ht",
-            "value_meat_poultry_ht",
-            "value_fish_ht",
-            "value_viandes_volailles_bio",
-            "value_produits_de_la_mer_bio",
-            "value_fruits_et_legumes_bio",
-            "value_charcuterie_bio",
-            "value_produits_laitiers_bio",
-            "value_boulangerie_bio",
-            "value_boissons_bio",
-            "value_autres_bio",
-            "value_viandes_volailles_label_rouge",
-            "value_produits_de_la_mer_label_rouge",
-            "value_fruits_et_legumes_label_rouge",
-            "value_charcuterie_label_rouge",
-            "value_produits_laitiers_label_rouge",
-            "value_boulangerie_label_rouge",
-            "value_boissons_label_rouge",
-            "value_autres_label_rouge",
-            "value_viandes_volailles_aocaop_igp_stg",
-            "value_produits_de_la_mer_aocaop_igp_stg",
-            "value_fruits_et_legumes_aocaop_igp_stg",
-            "value_charcuterie_aocaop_igp_stg",
-            "value_produits_laitiers_aocaop_igp_stg",
-            "value_boulangerie_aocaop_igp_stg",
-            "value_boissons_aocaop_igp_stg",
-            "value_autres_aocaop_igp_stg",
-            "value_viandes_volailles_hve",
-            "value_produits_de_la_mer_hve",
-            "value_fruits_et_legumes_hve",
-            "value_charcuterie_hve",
-            "value_produits_laitiers_hve",
-            "value_boulangerie_hve",
-            "value_boissons_hve",
-            "value_autres_hve",
-            "value_viandes_volailles_peche_durable",
-            "value_produits_de_la_mer_peche_durable",
-            "value_fruits_et_legumes_peche_durable",
-            "value_charcuterie_peche_durable",
-            "value_produits_laitiers_peche_durable",
-            "value_boulangerie_peche_durable",
-            "value_boissons_peche_durable",
-            "value_autres_peche_durable",
-            "value_viandes_volailles_rup",
-            "value_produits_de_la_mer_rup",
-            "value_fruits_et_legumes_rup",
-            "value_charcuterie_rup",
-            "value_produits_laitiers_rup",
-            "value_boulangerie_rup",
-            "value_boissons_rup",
-            "value_autres_rup",
-            "value_viandes_volailles_fermier",
-            "value_produits_de_la_mer_fermier",
-            "value_fruits_et_legumes_fermier",
-            "value_charcuterie_fermier",
-            "value_produits_laitiers_fermier",
-            "value_boulangerie_fermier",
-            "value_boissons_fermier",
-            "value_autres_fermier",
-            "value_viandes_volailles_externalites",
-            "value_produits_de_la_mer_externalites",
-            "value_fruits_et_legumes_externalites",
-            "value_charcuterie_externalites",
-            "value_produits_laitiers_externalites",
-            "value_boulangerie_externalites",
-            "value_boissons_externalites",
-            "value_autres_externalites",
-            "value_viandes_volailles_commerce_equitable",
-            "value_produits_de_la_mer_commerce_equitable",
-            "value_fruits_et_legumes_commerce_equitable",
-            "value_charcuterie_commerce_equitable",
-            "value_produits_laitiers_commerce_equitable",
-            "value_boulangerie_commerce_equitable",
-            "value_boissons_commerce_equitable",
-            "value_autres_commerce_equitable",
-            "value_viandes_volailles_performance",
-            "value_produits_de_la_mer_performance",
-            "value_fruits_et_legumes_performance",
-            "value_charcuterie_performance",
-            "value_produits_laitiers_performance",
-            "value_boulangerie_performance",
-            "value_boissons_performance",
-            "value_autres_performance",
-            "value_viandes_volailles_non_egalim",
-            "value_produits_de_la_mer_non_egalim",
-            "value_fruits_et_legumes_non_egalim",
-            "value_charcuterie_non_egalim",
-            "value_produits_laitiers_non_egalim",
-            "value_boulangerie_non_egalim",
-            "value_boissons_non_egalim",
-            "value_autres_non_egalim",
-            "value_viandes_volailles_france",
-            "value_produits_de_la_mer_france",
-            "value_fruits_et_legumes_france",
-            "value_charcuterie_france",
-            "value_produits_laitiers_france",
-            "value_boulangerie_france",
-            "value_boissons_france",
-            "value_autres_france",
-            "value_viandes_volailles_short_distribution",
-            "value_produits_de_la_mer_short_distribution",
-            "value_fruits_et_legumes_short_distribution",
-            "value_charcuterie_short_distribution",
-            "value_produits_laitiers_short_distribution",
-            "value_boulangerie_short_distribution",
-            "value_boissons_short_distribution",
-            "value_autres_short_distribution",
-            "value_viandes_volailles_local",
-            "value_produits_de_la_mer_local",
-            "value_fruits_et_legumes_local",
-            "value_charcuterie_local",
-            "value_produits_laitiers_local",
-            "value_boulangerie_local",
-            "value_boissons_local",
-            "value_autres_local",
-        ]
-        appro_fields = (
-            extended_appro_fields
-            if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE
-            else simplified_appro_fields
-        )
-        json_appro_teledeclaration = {}
-        uses_central_kitchen_appro = Teledeclaration.should_use_central_kitchen_appro(diagnostic)
-        if not uses_central_kitchen_appro:
-            for prop in appro_fields:
-                json_appro_teledeclaration[prop] = (
-                    float(getattr(diagnostic, prop)) if getattr(diagnostic, prop) is not None else None
-                )
-        json_other_teledeclaration = {
-            "diagnostic_type": diagnostic.diagnostic_type or "Unknown",
-            "has_waste_diagnostic": diagnostic.has_waste_diagnostic,
-            "has_waste_plan": diagnostic.has_waste_plan,
-            "has_donation_agreement": diagnostic.has_donation_agreement,
-            "has_waste_measures": diagnostic.has_waste_measures,
-            "has_diversification_plan": diagnostic.has_diversification_plan,
-            "cooking_plastic_substituted": diagnostic.cooking_plastic_substituted,
-            "serving_plastic_substituted": diagnostic.serving_plastic_substituted,
-            "plastic_bottles_substituted": diagnostic.plastic_bottles_substituted,
-            "plastic_tableware_substituted": diagnostic.plastic_tableware_substituted,
-            "communicates_on_food_plan": diagnostic.communicates_on_food_plan,
-            "communicates_on_food_quality": diagnostic.communicates_on_food_quality,
-        }
-        is_central_cuisine = diagnostic.canteen.is_central_cuisine
 
         teledeclaration_mode = None
-        if uses_central_kitchen_appro:
-            teledeclaration_mode = Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
-        elif (
-            is_central_cuisine
-            and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL
-        ):
-            teledeclaration_mode = Teledeclaration.TeledeclarationMode.CENTRAL_ALL
-        elif (
-            is_central_cuisine
-            and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO
-        ):
-            teledeclaration_mode = Teledeclaration.TeledeclarationMode.CENTRAL_APPRO
-        else:
-            teledeclaration_mode = Teledeclaration.TeledeclarationMode.SITE
+        serialized_diagnostic = None
+        canteen = diagnostic.canteen
+        is_central_cuisine = canteen.is_central_cuisine
+
+        teledeclaration_mode = Teledeclaration._get_teledeclaration_mode(diagnostic)
+        serializer = Teledeclaration._get_diagnostic_serializer(diagnostic)
+        serialized_diagnostic = serializer(diagnostic)
 
         json_fields = {
             "version": version,
@@ -333,25 +178,67 @@ class Teledeclaration(models.Model):
                 "name": applicant.get_full_name(),
                 "email": applicant.email,
             },
-            "central_kitchen_siret": diagnostic.canteen.central_producer_siret,
-            "teledeclaration": {**json_appro_teledeclaration, **json_other_teledeclaration},
+            "central_kitchen_siret": canteen.central_producer_siret,
+            "teledeclaration": serialized_diagnostic.data,
         }
 
         if is_central_cuisine:
-            json_fields["satellites"] = [
-                {"id": x.id, "siret": x.siret, "name": x.name} for x in diagnostic.canteen.satellites
-            ]
-            json_fields["satellite_canteens_count"] = diagnostic.canteen.satellite_canteens_count
+            json_fields["satellites"] = [{"id": x.id, "siret": x.siret, "name": x.name} for x in canteen.satellites]
+            json_fields["satellite_canteens_count"] = canteen.satellite_canteens_count
+
         return TeledeclarationFactory.create(
             applicant=applicant,
             year=diagnostic.year,
-            canteen=diagnostic.canteen,
+            canteen=canteen,
             canteen_siret=canteen.siret,
             status=status,
             diagnostic=diagnostic,
             declared_data=json_fields,
             teledeclaration_mode=teledeclaration_mode,
         )
+
+    @staticmethod
+    def _get_diagnostic_serializer(diagnostic):
+        from api.serializers import (
+            SimpleTeledeclarationDiagnosticSerializer,
+            CompleteTeledeclarationDiagnosticSerializer,
+            ApproDeferredTeledeclarationDiagnosticSerializer,
+            SimpleApproOnlyTeledeclarationDiagnosticSerializer,
+            CompleteApproOnlyTeledeclarationDiagnosticSerializer,
+        )
+
+        uses_central_kitchen_appro = Teledeclaration.should_use_central_kitchen_appro(diagnostic)
+        if uses_central_kitchen_appro:
+            return ApproDeferredTeledeclarationDiagnosticSerializer
+
+        if (
+            diagnostic.canteen.is_central_cuisine
+            and diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO
+        ):
+            if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+                return CompleteApproOnlyTeledeclarationDiagnosticSerializer
+            else:
+                return SimpleApproOnlyTeledeclarationDiagnosticSerializer
+
+        # both CC declaring all and on site declaring all
+        if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            return CompleteTeledeclarationDiagnosticSerializer
+        else:
+            return SimpleTeledeclarationDiagnosticSerializer
+
+    @staticmethod
+    def _get_teledeclaration_mode(diagnostic):
+        uses_central_kitchen_appro = Teledeclaration.should_use_central_kitchen_appro(diagnostic)
+        if uses_central_kitchen_appro:
+            return Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+
+        if diagnostic.canteen.is_central_cuisine:
+            if diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL:
+                return Teledeclaration.TeledeclarationMode.CENTRAL_ALL
+            if diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
+                return Teledeclaration.TeledeclarationMode.CENTRAL_APPRO
+
+        return Teledeclaration.TeledeclarationMode.SITE
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.full_clean()

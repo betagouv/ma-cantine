@@ -18,8 +18,11 @@
           </v-btn>
         </div>
       </div>
-      <v-divider class="my-4"></v-divider>
-      <p v-html="partner.longDescription"></p>
+      <p class="my-4" v-html="partner.longDescription"></p>
+
+      <v-divider class="mt-12"></v-divider>
+
+      <ReferencingInfo class="pt-12" />
     </div>
   </div>
 </template>
@@ -27,10 +30,11 @@
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import PartnerIndicators from "@/components/PartnerIndicators"
+import ReferencingInfo from "./ReferencingInfo"
 
 export default {
   name: "PartnerPage",
-  components: { BreadcrumbsNav, PartnerIndicators },
+  components: { BreadcrumbsNav, PartnerIndicators, ReferencingInfo },
   data() {
     return {
       partner: null,

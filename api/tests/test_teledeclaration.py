@@ -392,8 +392,8 @@ class TestTeledeclarationApi(APITestCase):
         """
         Given a list of diagnostic ids that are ready to TD, TD those diagnostics and return list of successful TD ids
         """
-        canteen_1 = CanteenFactory.create()
-        canteen_2 = CanteenFactory.create()
+        canteen_1 = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        canteen_2 = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
         for canteen in [canteen_1, canteen_2]:
             canteen.managers.add(authenticate.user)
 

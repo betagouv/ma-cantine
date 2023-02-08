@@ -14,7 +14,6 @@
     </div>
     <TeledeclarationBanner v-if="showTeledeclarationBanner" />
     <ActionsBanner v-if="showActionsBanner" />
-    <CompleteProfileField :canteenCount="canteenCount" />
     <div class="mt-4">
       <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
       <CanteensPagination v-on:canteen-count="canteenCount = $event" />
@@ -31,7 +30,6 @@
 import CanteensPagination from "./CanteensPagination.vue"
 import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import UserTools from "./UserTools"
-import CompleteProfileField from "./CompleteProfileField"
 import TeledeclarationBanner from "./TeledeclarationBanner"
 import ActionsBanner from "./ActionsBanner"
 import validators from "@/validators"
@@ -40,7 +38,6 @@ export default {
   components: {
     CanteensPagination,
     UserTools,
-    CompleteProfileField,
     PageSatisfaction,
     TeledeclarationBanner,
     ActionsBanner,

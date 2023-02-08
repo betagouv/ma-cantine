@@ -28,6 +28,7 @@ from api.serializers import (
     ManagingTeamSerializer,
     SatelliteCanteenSerializer,
     CanteenActionsSerializer,
+    CanteenStatusSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration
 from data.region_choices import Region
@@ -307,9 +308,10 @@ class UserCanteensView(ListCreateAPIView):
         canteen.managers.add(self.request.user)
 
     def create(self, request, *args, **kwargs):
-        error_response = check_siret_response(request)
+        canteen_siret = request.data.get("siret")
+        error_response = check_siret_response(canteen_siret, request)
         if error_response:
-            return error_response
+            raise DuplicateException(additional_data=error_response)
         return super().create(request, *args, **kwargs)
 
 
@@ -354,28 +356,36 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
     required_scopes = ["canteen"]
 
     def put(self, request, *args, **kwargs):
-        return JsonResponse({"error": "Only PATCH request supported in this resource"}, status=405)
+        return JsonResponse(
+            {"error": "Only PATCH request supported in this resource"}, status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
-        error_response = check_siret_response(request)
+        canteen_siret = request.data.get("siret")
+        error_response = check_siret_response(canteen_siret, request)
         if error_response:
-            return error_response
+            raise DuplicateException(additional_data=error_response)
         return super().partial_update(request, *args, **kwargs)
 
 
-def check_siret_response(request):
-    canteen_siret = request.data.get("siret")
+class CanteenStatusView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+
+    def get(self, request, *args, **kwargs):
+        siret = request.parser_context.get("kwargs").get("siret")
+        error_response = check_siret_response(siret, request)
+        return JsonResponse(error_response or {}, status=status.HTTP_200_OK)
+
+
+def check_siret_response(canteen_siret, request):
     if canteen_siret:
         canteens = Canteen.objects.filter(siret=canteen_siret)
         if canteens.exists():
             canteen = canteens.first()
-            managed_by_user = request.user in canteen.managers.all()
-            raise DuplicateException(
-                additional_data={"name": canteen.name, "id": canteen.id, "isManagedByUser": managed_by_user}
-            )
+            return camelize(CanteenStatusSerializer(canteen, context={"request": request}).data)
 
 
 @extend_schema_view(

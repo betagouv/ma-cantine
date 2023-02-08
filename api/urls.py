@@ -24,6 +24,7 @@ from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptio
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
 from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, SatelliteListCreateView
 from api.views import ActionableCanteensListView, ActionableCanteenRetrieveView
+from api.views import CanteenStatusView
 
 
 urlpatterns = {
@@ -148,6 +149,7 @@ urlpatterns = {
         ActionableCanteenRetrieveView.as_view(),
         name="retrieve_actionable_canteen",
     ),
+    path("canteenStatus/siret/<str:siret>", CanteenStatusView.as_view(), name="siret_check"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

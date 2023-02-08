@@ -273,6 +273,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(len(body["errors"]), 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
         self.assertEqual(Canteen.objects.count(), 1)
+        self.assertEqual(Canteen.objects.first().economic_model, None)
 
     @authenticate
     def test_staff_import(self, _):
