@@ -7,6 +7,8 @@ from .canteen import (  # noqa: F401
     SatelliteCanteenSerializer,
     CanteenActionsSerializer,
     CanteenStatusSerializer,
+    CanteenTeledeclarationSerializer,
+    SatelliteTeledeclarationSerializer,
 )
 from .diagnostic import (  # noqa: F401
     PublicDiagnosticSerializer,

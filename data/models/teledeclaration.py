@@ -150,8 +150,8 @@ class Teledeclaration(models.Model):
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
-        version = "7"  # Helps identify which data will be present. Use incremental int values
-        # Version 7 - contains all diagnostic fields relevant to the diagnostic type in JSON serialized object
+        version = "8"  # Helps identify which data will be present. Use incremental int values
+        # Version 8 - contains additional canteen and satellite fields in JSON serialized object
 
         status = status or Teledeclaration.TeledeclarationStatus.SUBMITTED
 
@@ -164,16 +164,17 @@ class Teledeclaration(models.Model):
         serializer = Teledeclaration._get_diagnostic_serializer(diagnostic)
         serialized_diagnostic = serializer(diagnostic)
 
+        from api.serializers import (
+            CanteenTeledeclarationSerializer,
+            SatelliteTeledeclarationSerializer,
+        )
+
+        serialized_canteen = CanteenTeledeclarationSerializer(canteen)
+
         json_fields = {
             "version": version,
             "year": diagnostic.year,
-            "canteen": {
-                "id": canteen.id,
-                "name": canteen.name,
-                "siret": canteen.siret,
-                "city_insee_code": canteen.city_insee_code,
-                "production_type": canteen.production_type,
-            },
+            "canteen": serialized_canteen.data,
             "applicant": {
                 "name": applicant.get_full_name(),
                 "email": applicant.email,
@@ -183,7 +184,9 @@ class Teledeclaration(models.Model):
         }
 
         if is_central_cuisine:
-            json_fields["satellites"] = [{"id": x.id, "siret": x.siret, "name": x.name} for x in canteen.satellites]
+            serialized_satellites = [SatelliteTeledeclarationSerializer(x).data for x in canteen.satellites]
+            json_fields["satellites"] = serialized_satellites
+            # TODO: decide whether we keep this or have it in the canteen serialization
             json_fields["satellite_canteens_count"] = canteen.satellite_canteens_count
 
         return TeledeclarationFactory.create(
