@@ -177,26 +177,26 @@
 
     <div>
       <h3 class="text-h6 font-weight-bold mb-2">
-        Zoom sur les familles « viandes et volailles » et « Produits de la mer et aquaculture»
+        Zoom sur les familles « viandes et volailles » et « Produits de la mer et d'aquaculture»
       </h3>
       <p class="text-body-2">
         Depuis la loi Climat et Résilience, un nouvel objectif pour une alimentation saine et durable a été ajouté :
         pour les achats de 2024, au moins 60% de viandes et poissons de qualité et durables. Ce taux est porté à 100 %
         pour les restaurants collectifs gérés par l'Etat, ses établissements publics et les entreprises publiques
-        nationales. La réalisation du bilan annuel fait par l’administration implique également de connaître la part des
-        produits origine France. Pour le moment, l’information est requise seulement pour la famille des viandes.
+        nationales des produits carnés et issus de la mer plus durables, ainsi que davantage de viandes provenant de
+        France.
+      </p>
+      <p class="text-body-2">
+        La réalisation du bilan annuel fait par l’administration implique également de connaitre la part des produits
+        origine France. Pour ce type de saisie, l’information est requise seulement pour la famille des viandes.
       </p>
     </div>
 
-    <v-divider class="my-4"></v-divider>
-
-    <div>
-      60% - 100% pour les restaurants d'Etat de « viandes et volailles » EGAlim
-    </div>
+    <v-divider class="my-8"></v-divider>
 
     <!-- Viande et volailles -->
 
-    <div class="d-block d-sm-flex align-center mt-8">
+    <div class="d-block d-sm-flex align-center">
       <div class="d-flex">
         <v-icon size="30" color="brown">
           mdi-food-steak
@@ -299,12 +299,9 @@
     />
 
     <!-- Poissons -->
-    <v-divider class="mb-4 mt-8"></v-divider>
+    <v-divider class="my-8"></v-divider>
 
-    <div>
-      60% - 100% pour les restaurants d'Etat de « poissons, produits de la mer et aquaculture » EGAlim
-    </div>
-    <div class="d-block d-sm-flex align-center mt-8">
+    <div class="d-block d-sm-flex align-center">
       <div class="d-flex">
         <v-icon size="30" color="blue">
           mdi-fish
