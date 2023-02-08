@@ -177,7 +177,7 @@
 
     <div>
       <h3 class="text-h6 font-weight-bold mb-2">
-        Zoom sur les familles « viandes et volailles » et « Produits de la mer et d'aquaculture»
+        Zoom sur les familles « viandes et volailles » et « produits de la mer et de l'aquaculture»
       </h3>
       <p class="text-body-2">
         Depuis la loi Climat et Résilience, un nouvel objectif pour une alimentation saine et durable a été ajouté :
@@ -308,7 +308,7 @@
         </v-icon>
       </div>
       <label class="body-2 ml-4" :for="'fish-' + diagnostic.year">
-        La valeur (en HT) des mes achats en poissons, produits de la mer et aquaculture total
+        La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total
       </label>
     </div>
     <DsfrCurrencyField
@@ -325,7 +325,7 @@
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueFishHt"
       @autofill="checkTotal"
-      purchaseType="totaux de poissons, produits de la mer et aquaculture"
+      purchaseType="totaux de poissons, produits de la mer et de l'aquaculture"
       :amount="purchasesSummary.fishTotal"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
@@ -341,7 +341,7 @@
         </v-icon>
       </div>
       <label class="body-2 ml-4" :for="'fish-egalim-' + diagnostic.year">
-        La valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et aquaculture
+        La valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture
       </label>
     </div>
     <DsfrCurrencyField
@@ -357,7 +357,7 @@
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueFishEgalimHt"
       @autofill="checkTotal"
-      purchaseType="poissons, produits de la mer et aquaculture EGAlim"
+      purchaseType="poissons, produits de la mer et de l'aquaculture EGAlim"
       :amount="purchasesSummary.fishEgalim"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
