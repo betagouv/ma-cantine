@@ -179,6 +179,9 @@ class Teledeclaration(models.Model):
                 "name": applicant.get_full_name(),
                 "email": applicant.email,
             },
+            # TODO: do we keep this for consistency with old versions, or remove it
+            # now that the data is captured by the canteen serializer?
+            # Also the key is different to the db name...
             "central_kitchen_siret": canteen.central_producer_siret,
             "teledeclaration": serialized_diagnostic.data,
         }
