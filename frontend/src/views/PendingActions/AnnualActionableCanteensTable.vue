@@ -187,6 +187,10 @@ export default {
           display: "Completer le diagnostic " + year,
           icon: "$edit-box-fill",
         },
+        "35_fill_canteen_data": {
+          display: "Compléter les données de votre établissement ",
+          icon: "$restaurant-fill",
+        },
         "40_teledeclare": {
           display: "Télédéclarer",
           icon: "$send-plane-fill",
@@ -306,6 +310,11 @@ export default {
         return {
           name: "DiagnosticModification",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen), year: this.year },
+        }
+      } else if (canteen.action === "35_fill_canteen_data") {
+        return {
+          name: "CanteenForm",
+          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
         }
       }
     },
