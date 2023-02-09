@@ -40,36 +40,41 @@
       </v-radio>
     </v-radio-group>
 
-    <label for="daily-meals" class="body-2 mb-2 mt-5 d-block" v-if="showDailyMealCount">
-      Couverts moyen par
-      <b>jour</b>
-      (convives sur place)
-    </label>
-    <DsfrTextField
-      id="daily-meals"
-      type="number"
-      hide-details="auto"
-      :rules="[validators.greaterThanZero]"
-      v-if="showDailyMealCount"
-      validate-on-blur
-      v-model="canteen.dailyMealCount"
-      prepend-icon="$restaurant-fill"
-    />
-
-    <label for="yearly-meals" class="body-2 d-block mb-2 mt-5">
-      Nombre total de couverts à
-      <b>l'année</b>
-      <span v-if="showSatelliteCanteensCount">&nbsp;(y compris les couverts livrés)</span>
-    </label>
-    <DsfrTextField
-      id="yearly-meals"
-      type="number"
-      hide-details="auto"
-      :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
-      validate-on-blur
-      v-model="canteen.yearlyMealCount"
-      prepend-icon="$restaurant-fill"
-    />
+    <v-row>
+      <v-col sm="12" md="6">
+        <label for="daily-meals" class="body-2 mb-2 mt-5 d-block" v-if="showDailyMealCount">
+          Couverts moyen par
+          <b>jour</b>
+          (convives sur place)
+        </label>
+        <DsfrTextField
+          id="daily-meals"
+          type="number"
+          hide-details="auto"
+          :rules="[validators.greaterThanZero]"
+          v-if="showDailyMealCount"
+          validate-on-blur
+          v-model="canteen.dailyMealCount"
+          prepend-icon="$restaurant-fill"
+        />
+      </v-col>
+      <v-col sm="12" md="6">
+        <label for="yearly-meals" class="body-2 d-block mb-2 mt-5">
+          Nombre total de couverts à
+          <b>l'année</b>
+          <span v-if="showSatelliteCanteensCount">&nbsp;(y compris les couverts livrés)</span>
+        </label>
+        <DsfrTextField
+          id="yearly-meals"
+          type="number"
+          hide-details="auto"
+          :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
+          validate-on-blur
+          v-model="canteen.yearlyMealCount"
+          prepend-icon="$restaurant-fill"
+        />
+      </v-col>
+    </v-row>
 
     <p class="body-2 mt-5">Mode de gestion</p>
     <v-radio-group v-model="canteen.managementType" :rules="[validators.required]">
