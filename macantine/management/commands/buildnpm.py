@@ -13,13 +13,5 @@ class Command(BaseCommand):
 
         os.chdir(os.path.join(BASE_DIR, "frontend"))
         subprocess.run(["npm", "install"])
-        subprocess.run(
-            [
-                "export",
-                "NODE_OPTIONS=--openssl-legacy-provider;",
-                "npm",
-                "run",
-                "build",
-            ]
-        )
+        subprocess.run(["npm", "run", "build"])
         os.chdir(os.path.join(BASE_DIR))
