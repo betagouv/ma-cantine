@@ -9,7 +9,6 @@
       labelClasses="body-2 mb-2"
     />
 
-    <!-- Possible to refactor to a different component. Not urgent. -->
     <p class="body-2 mt-5 mb-2">Ville</p>
     <DsfrAutocomplete
       hide-details="auto"
