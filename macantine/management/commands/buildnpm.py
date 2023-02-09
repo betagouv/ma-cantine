@@ -15,7 +15,7 @@ class Command(BaseCommand):
         subprocess.run(["npm", "install"])
         subprocess.run(
             [
-                "NODE_OPTIONS=--openssl-legacy-provider",
+                "export" "NODE_OPTIONS=--openssl-legacy-provider;",
                 "npm",
                 "run",
                 "build",
