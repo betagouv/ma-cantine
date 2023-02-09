@@ -161,6 +161,13 @@ export default {
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
+    claimCanteen() {
+      const canteenId = this.duplicateSiretCanteen.id
+      return this.$store
+        .dispatch("claimCanteen", { canteenId })
+        .then(() => (this.requestSent = true))
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
   },
 }
 </script>
