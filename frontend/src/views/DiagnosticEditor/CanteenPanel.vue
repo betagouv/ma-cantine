@@ -7,6 +7,8 @@
       validate-on-blur
       v-model="canteen.name"
       labelClasses="body-2 mb-2"
+      :readonly="readonly"
+      :disabled="readonly"
     />
 
     <p class="body-2 mt-5 mb-2">Ville</p>
@@ -16,6 +18,8 @@
       :loading="loadingCommunes"
       :items="communes"
       :search-input.sync="search"
+      :readonly="readonly"
+      :disabled="readonly"
       ref="cityAutocomplete"
       auto-select-first
       cache-items
@@ -31,7 +35,14 @@
       hide-details="auto"
       :rules="[validators.required]"
     >
-      <v-radio class="ml-0" v-for="item in productionTypes" :key="item.value" :value="item.value">
+      <v-radio
+        class="ml-0"
+        v-for="item in productionTypes"
+        :key="item.value"
+        :value="item.value"
+        :readonly="readonly"
+        :disabled="readonly"
+      >
         <template v-slot:label>
           <div class="d-block">
             <div class="body-1 grey--text text--darken-4" v-html="item.title"></div>
@@ -53,6 +64,8 @@
           type="number"
           hide-details="auto"
           :rules="[validators.greaterThanZero]"
+          :readonly="readonly"
+          :disabled="readonly"
           v-if="showDailyMealCount"
           validate-on-blur
           v-model="canteen.dailyMealCount"
@@ -70,6 +83,8 @@
           type="number"
           hide-details="auto"
           :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
+          :readonly="readonly"
+          :disabled="readonly"
           validate-on-blur
           v-model="canteen.yearlyMealCount"
           prepend-icon="$restaurant-fill"
@@ -81,6 +96,8 @@
           type="number"
           hide-details="auto"
           :rules="[validators.greaterThanZero]"
+          :readonly="readonly"
+          :disabled="readonly"
           validate-on-blur
           v-model="canteen.satelliteCanteensCount"
           prepend-icon="$community-fill"
@@ -95,6 +112,8 @@
         <DsfrSelect
           multiple
           :rules="[validators.required]"
+          :readonly="readonly"
+          :disabled="readonly"
           :items="sectors"
           v-model="canteen.sectors"
           item-text="name"
@@ -108,6 +127,8 @@
           :items="economicModels"
           solo
           :rules="[validators.required]"
+          :readonly="readonly"
+          :disabled="readonly"
           v-model="canteen.economicModel"
           placeholder="Sélectionnez..."
           hide-details="auto"
@@ -121,6 +142,8 @@
         <p v-if="showMinistryField" class="body-2 mb-2 mt-4">Ministère de tutelle</p>
         <DsfrSelect
           :rules="[validators.required]"
+          :readonly="readonly"
+          :disabled="readonly"
           :items="ministries"
           v-model="canteen.lineMinistry"
           placeholder="Sélectionnez le Ministère de tutelle"
@@ -144,6 +167,8 @@
             validators.luhn,
             validators.isDifferent(canteen.siret, satelliteSiretMessage),
           ]"
+          :readonly="readonly"
+          :disabled="readonly"
         />
       </v-col>
     </v-row>
@@ -160,6 +185,8 @@
     <v-radio-group v-model="canteen.managementType" :rules="[validators.required]">
       <v-radio
         class="ml-8"
+        :readonly="readonly"
+        :disabled="readonly"
         v-for="item in managementTypes"
         :key="item.value"
         :label="item.text"

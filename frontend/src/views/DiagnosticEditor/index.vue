@@ -234,7 +234,7 @@
             :disabled="!showExpansionPanels"
           >
             <v-form ref="canteen" v-model="formIsValid.canteen" lazy-validation>
-              <CanteenPanel :canteen="canteen" />
+              <CanteenPanel :canteen="canteen" :readonly="hasActiveTeledeclaration" />
             </v-form>
           </DiagnosticExpansionPanel>
         </v-expansion-panels>
