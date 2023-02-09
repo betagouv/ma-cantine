@@ -3,6 +3,7 @@ from rest_framework import serializers
 from drf_base64.fields import Base64ImageField
 from data.models import Canteen, Sector, CanteenImage, Diagnostic
 from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer, CentralKitchenDiagnosticSerializer
+from .sector import SectorSerializer
 from .user import CanteenManagerSerializer
 from .managerinvitation import ManagerInvitationSerializer
 
@@ -307,8 +308,7 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
 
 # remember to update TD version if you update this
 class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
-    # TODO: probably want to have more information that just the sector id
-    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
+    sectors = SectorSerializer(many=True, read_only=True)
 
     class Meta:
         model = Canteen
@@ -331,7 +331,7 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
 
 # remember to update TD version if you update this
 class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
+    sectors = SectorSerializer(many=True, read_only=True)
 
     class Meta:
         model = Canteen
