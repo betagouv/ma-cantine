@@ -1064,6 +1064,24 @@ class ActionableCanteensListView(ListAPIView):
         # prep add diag action
         diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year)
         user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")))
+        is_central_cuisine_query = Q(production_type=Canteen.ProductionType.CENTRAL) | Q(
+            production_type=Canteen.ProductionType.CENTRAL_SERVING
+        )
+        is_satellite_query = Q(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+        incomplete_canteen_data_query = (
+            Q(yearly_meal_count=None)
+            | Q(daily_meal_count=None)
+            | Q(siret=None)
+            | Q(name=None)
+            | Q(city_insee_code=None)
+            | Q(production_type=None)
+            | Q(management_type=None)
+            | (is_central_cuisine_query & Q(satellite_canteens_count=None))
+            | (is_satellite_query & Q(central_producer_siret=None))
+        )
+        # TODO: sector checks : https://stackoverflow.com/questions/42956736/querying-manytomany-in-django-giving-me-duplicate-results
+        # TODO: line ministry
+
         # prep complete diag action
         # is value_total_ht of 0 a problem?
         complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
@@ -1080,6 +1098,7 @@ class ActionableCanteensListView(ListAPIView):
             When(nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+            When(incomplete_canteen_data_query, then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
         if should_teledeclare:
             conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
