@@ -1,7 +1,6 @@
 <template>
   <v-card color="primary lighten-4" elevation="1" shaped class="d-flex align-center">
     <div>
-      <!-- TODO: update end date -->
       <v-card-title class="text-body-1 font-weight-bold">
         Du 13 février au 15 mai 2023, participez à la collecte de données 2022 !
       </v-card-title>
@@ -12,17 +11,6 @@
       </v-card-text>
       <v-card-actions class="px-4 mt-2">
         <v-btn :to="{ name: 'PendingActions' }" color="primary">Télédéclarer mes cantines</v-btn>
-        <!-- TODO: update link to be to gitbook guide -->
-        <v-btn
-          text
-          href="https://agriculture.gouv.fr/restauration-collective-top-depart-pour-la-premiere-collecte-dinformations-concernant-les"
-          target="_blank"
-          rel="noopener"
-          class="text-decoration-underline"
-        >
-          Article sur le site du ministère
-          <v-icon small class="ml-2">mdi-open-in-new</v-icon>
-        </v-btn>
       </v-card-actions>
     </div>
   </v-card>
