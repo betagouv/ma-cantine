@@ -87,16 +87,32 @@
       ></v-radio>
     </v-radio-group>
 
-    <p class="body-2">Secteurs d'activité</p>
-    <DsfrSelect
-      multiple
-      :rules="[validators.required]"
-      :items="sectors"
-      v-model="canteen.sectors"
-      item-text="name"
-      item-value="id"
-      hide-details
-    />
+    <v-row>
+      <v-col sm="12" md="6">
+        <p class="body-2">Secteurs d'activité</p>
+        <DsfrSelect
+          multiple
+          :rules="[validators.required]"
+          :items="sectors"
+          v-model="canteen.sectors"
+          item-text="name"
+          item-value="id"
+          hide-details
+        />
+      </v-col>
+      <v-col sm="12" md="6">
+        <p class="body-2">Type d'établissement</p>
+        <DsfrSelect
+          :items="economicModels"
+          solo
+          :rules="[validators.required]"
+          v-model="canteen.economicModel"
+          placeholder="Sélectionnez..."
+          hide-details="auto"
+          clearable
+        />
+      </v-col>
+    </v-row>
 
     <p v-if="showMinistryField" class="body-2 mt-5">Ministère de tutelle</p>
     <DsfrSelect
@@ -105,17 +121,6 @@
       :items="ministries"
       v-model="canteen.lineMinistry"
       placeholder="Sélectionnez le Ministère de tutelle"
-      hide-details="auto"
-      clearable
-    />
-
-    <p class="body-2 mt-5">Type d'établissement</p>
-    <DsfrSelect
-      :items="economicModels"
-      solo
-      :rules="[validators.required]"
-      v-model="canteen.economicModel"
-      placeholder="Sélectionnez..."
       hide-details="auto"
       clearable
     />
