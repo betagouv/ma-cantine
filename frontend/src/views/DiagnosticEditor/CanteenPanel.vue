@@ -23,7 +23,7 @@
       no-data-text="Pas de résultats. Veuillez renseigner votre ville"
     />
 
-    <p v-if="!canteen.productionType" class="body-1 ml-1 mt-5">Je suis...</p>
+    <p v-if="!canteen.productionType" class="body-2 ml-1 mt-5 mb-2">Je suis...</p>
     <v-radio-group
       class="mt-2"
       v-if="!canteen.productionType"
@@ -41,7 +41,8 @@
     </v-radio-group>
 
     <v-row>
-      <v-col sm="12" md="6">
+      <v-col cols="12" md="6" class="d-flex flex-column">
+        <v-spacer></v-spacer>
         <label for="daily-meals" class="body-2 mb-2 mt-5 d-block" v-if="showDailyMealCount">
           Couverts moyen par
           <b>jour</b>
@@ -58,7 +59,7 @@
           prepend-icon="$restaurant-fill"
         />
       </v-col>
-      <v-col sm="12" md="6">
+      <v-col cols="12" md="6">
         <label for="yearly-meals" class="body-2 d-block mb-2 mt-5">
           Nombre total de couverts à
           <b>l'année</b>
@@ -74,22 +75,23 @@
           prepend-icon="$restaurant-fill"
         />
       </v-col>
+      <v-col cols="12" md="6" v-if="showSatelliteCanteensCount">
+        <DsfrTextField
+          label="Nombre de cantines/lieux de service à qui je fournis des repas"
+          type="number"
+          hide-details="auto"
+          :rules="[validators.greaterThanZero]"
+          validate-on-blur
+          v-model="canteen.satelliteCanteensCount"
+          prepend-icon="$community-fill"
+          labelClasses="body-2 mb-2"
+        />
+      </v-col>
     </v-row>
-
-    <p class="body-2 mt-5">Mode de gestion</p>
-    <v-radio-group v-model="canteen.managementType" :rules="[validators.required]">
-      <v-radio
-        class="ml-8"
-        v-for="item in managementTypes"
-        :key="item.value"
-        :label="item.text"
-        :value="item.value"
-      ></v-radio>
-    </v-radio-group>
-
+    <v-divider class="mt-8 mb-10"></v-divider>
     <v-row>
-      <v-col sm="12" md="6">
-        <p class="body-2">Secteurs d'activité</p>
+      <v-col class="py-0" cols="12" md="6">
+        <p class="body-2 mb-2">Secteurs d'activité</p>
         <DsfrSelect
           multiple
           :rules="[validators.required]"
@@ -100,8 +102,8 @@
           hide-details
         />
       </v-col>
-      <v-col sm="12" md="6">
-        <p class="body-2">Type d'établissement</p>
+      <v-col class="py-0" cols="12" md="6">
+        <p class="body-2 mb-2">Type d'établissement</p>
         <DsfrSelect
           :items="economicModels"
           solo
@@ -114,26 +116,38 @@
       </v-col>
     </v-row>
 
-    <p v-if="showMinistryField" class="body-2 mt-5">Ministère de tutelle</p>
-    <DsfrSelect
-      v-if="showMinistryField"
-      :rules="[validators.required]"
-      :items="ministries"
-      v-model="canteen.lineMinistry"
-      placeholder="Sélectionnez le Ministère de tutelle"
-      hide-details="auto"
-      clearable
-    />
+    <v-row v-if="showMinistryField" class="mt-6">
+      <v-col class="py-0" cols="12">
+        <p v-if="showMinistryField" class="body-2 mb-2 mt-4">Ministère de tutelle</p>
+        <DsfrSelect
+          :rules="[validators.required]"
+          :items="ministries"
+          v-model="canteen.lineMinistry"
+          placeholder="Sélectionnez le Ministère de tutelle"
+          hide-details="auto"
+          clearable
+        />
+      </v-col>
+    </v-row>
 
-    <DsfrTextField
-      label="SIRET de la cuisine centrale"
-      class="mt-2"
-      hide-details="auto"
-      validate-on-blur
-      v-model="canteen.centralProducerSiret"
-      v-if="usesCentralProducer"
-      :rules="[validators.length(14), validators.luhn, validators.isDifferent(canteen.siret, satelliteSiretMessage)]"
-    />
+    <v-row v-if="usesCentralProducer">
+      <v-col cols="12" md="8">
+        <DsfrTextField
+          label="SIRET de la cuisine centrale"
+          class="mt-2"
+          hide-details="auto"
+          validate-on-blur
+          v-model="canteen.centralProducerSiret"
+          labelClasses="body-2 mb-2"
+          :rules="[
+            validators.length(14),
+            validators.luhn,
+            validators.isDifferent(canteen.siret, satelliteSiretMessage),
+          ]"
+        />
+      </v-col>
+    </v-row>
+
     <p class="caption mt-1 ml-2" v-if="usesCentralProducer">
       Vous ne le connaissez pas ? Utilisez cet
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
@@ -142,17 +156,16 @@
       de la cuisine centrale.
     </p>
 
-    <DsfrTextField
-      label="Nombre de cantines/lieux de service à qui je fournis des repas"
-      type="number"
-      hide-details="auto"
-      v-if="showSatelliteCanteensCount"
-      :rules="[validators.greaterThanZero]"
-      validate-on-blur
-      v-model="canteen.satelliteCanteensCount"
-      prepend-icon="$community-fill"
-      labelClasses="body-2 mb-2"
-    />
+    <p class="body-2 mt-9 mb-2">Mode de gestion</p>
+    <v-radio-group v-model="canteen.managementType" :rules="[validators.required]">
+      <v-radio
+        class="ml-8"
+        v-for="item in managementTypes"
+        :key="item.value"
+        :label="item.text"
+        :value="item.value"
+      ></v-radio>
+    </v-radio-group>
   </div>
 </template>
 
