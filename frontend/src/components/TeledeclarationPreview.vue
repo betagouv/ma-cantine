@@ -50,7 +50,7 @@
       <div v-if="unusualData.length" class="text-left px-6">
         <p>Ces données sont-elles correctes ?</p>
         <ul>
-          <li v-for="msg in unusualData" :key="msg">{{ msg }}</li>
+          <li v-for="msg in unusualData" :key="msg" class="mb-4">{{ msg }}</li>
         </ul>
       </div>
       <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form" class="px-6">
