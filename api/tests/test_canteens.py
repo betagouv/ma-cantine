@@ -591,6 +591,7 @@ class TestCanteenApi(APITestCase):
             daily_meal_count=12,
             siret="75665621899905",
             city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         # nothing to do
         complete = CanteenFactory.create(
@@ -601,6 +602,7 @@ class TestCanteenApi(APITestCase):
             daily_meal_count=12,
             siret="75665621899905",
             city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         # complete diag
         needs_to_complete_diag = CanteenFactory.create(
@@ -611,6 +613,7 @@ class TestCanteenApi(APITestCase):
             daily_meal_count=12,
             siret="75665621899905",
             city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         # publish
         needs_to_publish = CanteenFactory.create(
@@ -621,6 +624,7 @@ class TestCanteenApi(APITestCase):
             daily_meal_count=12,
             siret="75665621899905",
             city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         # TD
         needs_td = CanteenFactory.create(
@@ -631,6 +635,7 @@ class TestCanteenApi(APITestCase):
             daily_meal_count=12,
             siret="75665621899905",
             city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         # create satellites
         central_siret = "78146469373706"
@@ -713,6 +718,7 @@ class TestCanteenApi(APITestCase):
             daily_meal_count=12,
             siret="96766910375238",
             city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         DiagnosticFactory.create(year=2021, canteen=canteen, value_total_ht=1000)
         canteen.managers.add(authenticate.user)
@@ -776,6 +782,7 @@ class TestCanteenApi(APITestCase):
             daily_meal_count=12,
             siret="75665621899905",
             city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         canteen_with_incomplete_diag = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -785,6 +792,7 @@ class TestCanteenApi(APITestCase):
             daily_meal_count=12,
             siret="96766910375238",
             city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         DiagnosticFactory.create(canteen=canteen_with_incomplete_diag, year=last_year, value_total_ht=None)
         canteen_with_complete_diag = CanteenFactory.create(
@@ -795,6 +803,7 @@ class TestCanteenApi(APITestCase):
             daily_meal_count=12,
             siret="75665621899905",
             city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         complete_diag = DiagnosticFactory.create(
             canteen=canteen_with_complete_diag, year=last_year, value_total_ht=10000
@@ -809,6 +818,7 @@ class TestCanteenApi(APITestCase):
             daily_meal_count=12,
             siret="55476895458384",
             city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         td_diag = DiagnosticFactory.create(canteen=canteen_with_td, year=last_year, value_total_ht=2000)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
@@ -870,6 +880,7 @@ class TestCanteenApi(APITestCase):
             daily_meal_count="12",
             siret="75665621899905",
             city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
             management_type=Canteen.ManagementType.DIRECT,
         )
         canteen.managers.add(authenticate.user)

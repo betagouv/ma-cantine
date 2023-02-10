@@ -1076,6 +1076,7 @@ class ActionableCanteensListView(ListAPIView):
             | Q(city_insee_code=None)
             | Q(production_type=None)
             | Q(management_type=None)
+            | Q(economic_model=None)
             | (is_central_cuisine_query & Q(satellite_canteens_count=None))
             | (is_satellite_query & Q(central_producer_siret=None))
         )
