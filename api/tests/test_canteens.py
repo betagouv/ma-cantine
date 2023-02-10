@@ -702,7 +702,7 @@ class TestCanteenApi(APITestCase):
     def test_get_actions_missing_data(self):
         """
         Even if the diagnostic is complete, the mandatory information on the canteen level should
-        return a "complete_diagnostic"
+        return a "35_fill_canteen_data"
         """
         # First a case in which the canteen is complete
         canteen = CanteenFactory.create(
@@ -754,7 +754,7 @@ class TestCanteenApi(APITestCase):
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
 
-        canteen.central_producer_siret = 75665621899905
+        canteen.central_producer_siret = "75665621899905"
         canteen.save()
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
