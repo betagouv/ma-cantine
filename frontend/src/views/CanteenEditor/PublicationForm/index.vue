@@ -20,6 +20,7 @@
       </v-btn>
     </div>
     <div v-else>
+      <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
       <v-form ref="form" v-model="formIsValid">
         <PublicationStateNotice :canteen="originalCanteen" class="my-4" />
         <label class="body-2" for="general">
