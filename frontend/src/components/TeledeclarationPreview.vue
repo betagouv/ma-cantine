@@ -50,7 +50,7 @@
       <div v-if="unusualData.length" class="text-left px-6">
         <p>Ces données sont-elles correctes ?</p>
         <ul>
-          <li v-for="msg in unusualData" :key="msg">{{ msg }}</li>
+          <li v-for="msg in unusualData" :key="msg" class="mb-4">{{ msg }}</li>
         </ul>
       </div>
       <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form" class="px-6">
@@ -85,6 +85,15 @@ export default {
     canteen: {
       required: true,
     },
+  },
+  data() {
+    return {
+      teledeclarationFormIsValid: true,
+      validators,
+      maxSatellitesExpected: 200,
+      minCostPerMealExpected: 1,
+      maxCostPerMealExpected: 10,
+    }
   },
   computed: {
     isOpen: {
@@ -568,11 +577,16 @@ export default {
       if (this.isCentralCuisine) {
         if (this.canteen.satelliteCanteensCount === 1) {
           unusualData.push("Votre établissement livre des repas à un seul site")
-        } else if (this.canteen.satelliteCanteensCount > 200) {
+        } else if (this.canteen.satelliteCanteensCount > this.maxSatellitesExpected) {
           unusualData.push(
             `Votre établissement livre des repas à plus de 200 sites (${this.canteen.satelliteCanteensCount} au total)`
           )
         }
+      }
+      if (this.costPerMeal > this.maxCostPerMealExpected || this.costPerMeal < this.minCostPerMealExpected) {
+        unusualData.push(
+          `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. Si c'est pas attendu, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
+        )
       }
       return unusualData
     },
@@ -580,12 +594,10 @@ export default {
       // cannot use this.canteen.isCentralCuisine because that field may not be updated with latest canteen changes
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
     },
-  },
-  data() {
-    return {
-      teledeclarationFormIsValid: true,
-      validators,
-    }
+    costPerMeal() {
+      // assuming yearlyMealCount required by TD form
+      return Number(this.diagnostic.valueTotalHt / this.canteen.yearlyMealCount).toFixed(2)
+    },
   },
   methods: {
     calculateTableHeight() {
