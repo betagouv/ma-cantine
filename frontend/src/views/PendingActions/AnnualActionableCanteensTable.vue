@@ -184,8 +184,12 @@ export default {
           icon: "$add-circle-fill",
         },
         "30_complete_diagnostic": {
-          display: "Completer le diagnostic " + year,
+          display: "Compléter le diagnostic " + year,
           icon: "$edit-box-fill",
+        },
+        "35_fill_canteen_data": {
+          display: "Compléter les infos de la cantine",
+          icon: "$building-fill",
         },
         "40_teledeclare": {
           display: "Télédéclarer",
@@ -306,6 +310,11 @@ export default {
         return {
           name: "DiagnosticModification",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen), year: this.year },
+        }
+      } else if (canteen.action === "35_fill_canteen_data") {
+        return {
+          name: "CanteenForm",
+          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
         }
       }
     },
