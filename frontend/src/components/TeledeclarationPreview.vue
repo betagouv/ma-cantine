@@ -38,7 +38,7 @@
         </v-simple-table>
       </v-card-text>
       <div v-if="unusualData.length" class="text-left px-6">
-        <p>Veuillez vérifier les données suivantes qui sont hors du commun</p>
+        <p>Ces données sont-elles correctes ?</p>
         <ul>
           <li v-for="msg in unusualData" :key="msg">{{ msg }}</li>
         </ul>
@@ -500,7 +500,7 @@ export default {
       const unusualData = []
       if (this.isCentralCuisine) {
         if (this.canteen.satelliteCanteensCount === 1) {
-          unusualData.push("Votre établissement livre des repas à qu'un site")
+          unusualData.push("Votre établissement livre des repas à un seul site")
         } else if (this.canteen.satelliteCanteensCount > 200) {
           unusualData.push(
             `Votre établissement livre des repas à plus que 200 sites (${this.canteen.satelliteCanteensCount} en totale)`
