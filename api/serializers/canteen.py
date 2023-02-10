@@ -3,6 +3,7 @@ from rest_framework import serializers
 from drf_base64.fields import Base64ImageField
 from data.models import Canteen, Sector, CanteenImage, Diagnostic
 from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer, CentralKitchenDiagnosticSerializer
+from .sector import SectorSerializer
 from .user import CanteenManagerSerializer
 from .managerinvitation import ManagerInvitationSerializer
 
@@ -51,7 +52,6 @@ class MediaListSerializer(serializers.ListSerializer):
 
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
-
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
@@ -110,7 +110,6 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
 
 
 class FullCanteenSerializer(serializers.ModelSerializer):
-
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     logo = Base64ImageField(required=False, allow_null=True)
@@ -269,7 +268,6 @@ class CanteenPreviewSerializer(serializers.ModelSerializer):
 
 
 class ManagingTeamSerializer(serializers.ModelSerializer):
-
     managers = CanteenManagerSerializer(many=True, read_only=True)
     manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
 
@@ -306,3 +304,42 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
     def get_is_managed_by_user(self, obj):
         user = self.context["request"].user
         return user in obj.managers.all()
+
+
+# remember to update TD version if you update this
+class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
+    sectors = SectorSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "id",
+            "name",
+            "siret",
+            "city_insee_code",
+            "sectors",
+            "line_ministry",
+            "daily_meal_count",
+            "yearly_meal_count",
+            "production_type",
+            "management_type",
+            "economic_model",
+            "satellite_canteens_count",
+            "central_producer_siret",
+        )
+
+
+# remember to update TD version if you update this
+class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
+    sectors = SectorSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "id",
+            "siret",
+            "name",
+            "daily_meal_count",
+            "yearly_meal_count",
+            "sectors",
+        )

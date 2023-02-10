@@ -342,8 +342,8 @@ export default {
         "Valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
         "Valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
         "Valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
-        "Valeur (en HT) des mes achats en poissons, produits de la mer et aquaculture total",
-        "Valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et aquaculture",
+        "Valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total",
+        "Valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
       ]
       let valuesArray = simpleValues
       const array = [
@@ -363,7 +363,7 @@ export default {
       if (this.importLevel === "COMPLETE") {
         valuesArray = [
           "La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
-          "La valeur (en HT) des mes achats en poissons, produits de la mer et aquaculture total",
+          "La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total",
           "Bio : Viandes et volailles fraîches et surgelées",
           "Bio : Produits aquatiques frais et surgelés",
           "Bio : Fruits et légumes frais et surgelés",

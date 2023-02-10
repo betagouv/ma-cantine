@@ -5,7 +5,7 @@
     <p class="text-left">
       La restauration collective représente près de
       <b>4 milliards de repas servis par an</b>
-      dans plus de 90 000 de cantines, d’hopitaux, d’EPHAD, d’entreprises...
+      dans plus de 90 000 cantines, d’hopitaux, d’EPHAD, d’entreprises...
     </p>
     <p class="text-left">
       Agir sur la composition des assiettes est un levier fort pour améliorer l'impact sur notre santé et sur
