@@ -5,7 +5,7 @@
         <CanteenNavigation :canteen="canteen" />
       </v-col>
       <v-col cols="12" :sm="isNewCanteen ? 12 : 8" :md="isNewCanteen ? 12 : 9">
-        <router-view :originalCanteen="canteen" :year="year"></router-view>
+        <router-view @updateCanteen="updateCanteen" :originalCanteen="canteen" :year="year"></router-view>
       </v-col>
     </v-row>
     <v-container v-else>
@@ -40,6 +40,9 @@ export default {
     },
   },
   methods: {
+    updateCanteen(newCanteen) {
+      this.$set(this, "canteen", newCanteen)
+    },
     fetchCanteenIfNeeded() {
       if (this.isNewCanteen || this.canteen) return
 

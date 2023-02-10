@@ -93,10 +93,10 @@
           </v-radio>
         </v-radio-group>
 
-        <p class="caption grey--text text--darken-1" v-if="!hasActiveTeledeclaration && showExpansionPanels">
+        <p class="body-2 grey--text text--darken-1" v-if="!hasActiveTeledeclaration && showExpansionPanels">
           Cliquez sur les catégories ci-dessous pour remplir votre diagnostic
         </p>
-        <div class="caption grey--text text--darken-1" v-if="hasActiveTeledeclaration">
+        <div class="body-2 grey--text text--darken-1" v-if="hasActiveTeledeclaration">
           <p class="mb-2">Une fois télédéclaré, vous ne pouvez plus modifier votre diagnostic.</p>
           <TeledeclarationCancelDialog
             v-model="cancelDialog"
@@ -215,6 +215,30 @@
           </DiagnosticExpansionPanel>
         </v-expansion-panels>
 
+        <p class="body-2 grey--text text--darken-1">
+          Certaines informations liées à votre établissement seront incluses dans votre diagnostic. Merci de vérifier
+          qu'elles sont à jour.
+        </p>
+
+        <v-expansion-panels
+          class="mb-8"
+          :disabled="!diagnosticIsUnique"
+          :value="openedPanel"
+          v-if="showExpansionPanels"
+        >
+          <DiagnosticExpansionPanel
+            iconColour="purple"
+            icon="$restaurant-fill"
+            heading="Données relatives à mon établissement"
+            :formIsValid="formIsValid.canteen"
+            :disabled="!showExpansionPanels"
+          >
+            <v-form ref="canteen" v-model="formIsValid.canteen" lazy-validation>
+              <CanteenPanel :canteen="canteen" :readonly="hasActiveTeledeclaration" />
+            </v-form>
+          </DiagnosticExpansionPanel>
+        </v-expansion-panels>
+
         <div
           v-if="!hasActiveTeledeclaration && isTeledeclarationPhase && showExpansionPanels"
           class="mt-4"
@@ -283,6 +307,7 @@ import InformationMeasure from "@/components/KeyMeasureDiagnostic/InformationMea
 import WasteMeasure from "@/components/KeyMeasureDiagnostic/WasteMeasure"
 import DiversificationMeasure from "@/components/KeyMeasureDiagnostic/DiversificationMeasure"
 import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure"
+import CanteenPanel from "./CanteenPanel"
 import DownloadLink from "@/components/DownloadLink"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
 import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
@@ -310,6 +335,7 @@ export default {
     const thisYear = new Date().getFullYear()
     return {
       diagnostic: {},
+      canteen: { images: [], sectors: [] },
       bypassLeaveWarning: false,
       formIsValid: {
         quality: true,
@@ -318,6 +344,7 @@ export default {
         diversification: true,
         information: true,
         select: true,
+        canteen: true,
       },
       openedPanel: null,
       cancelDialog: false,
@@ -359,6 +386,7 @@ export default {
     WasteMeasure,
     DiversificationMeasure,
     NoPlasticMeasure,
+    CanteenPanel,
     DiagnosticExpansionPanel,
     TeledeclarationCancelDialog,
     SimplifiedQualityValues,
@@ -477,6 +505,7 @@ export default {
   },
   beforeMount() {
     this.refreshDiagnostic()
+    this.refreshCanteen()
   },
   methods: {
     refreshDiagnostic() {
@@ -486,6 +515,9 @@ export default {
       } else this.$router.replace({ name: "NotFound" })
       const defaultDiagnosticType = this.showExtendedDiagnostic() ? "COMPLETE" : "SIMPLE"
       this.$set(this.diagnostic, "diagnosticType", this.diagnostic.diagnosticType || defaultDiagnosticType)
+    },
+    refreshCanteen() {
+      if (this.originalCanteen) this.$set(this, "canteen", JSON.parse(JSON.stringify(this.originalCanteen)))
     },
     approTotals() {
       let bioTotal = this.diagnostic.valueBioHt
@@ -615,24 +647,43 @@ export default {
         }
       }
 
-      this.$store
+      return this.$store
         .dispatch(this.isNewDiagnostic ? "createDiagnostic" : "updateDiagnostic", {
           id: this.diagnostic.id,
           canteenId: this.canteenId,
           payload,
         })
-        .then((diagnostic) => {
+        .then(this.updateFromServer)
+        .then(this.saveCanteenIfChanged) // Important to save the canteen afterwards so the diag is not overwritten
+        .then(() => {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
             title: "Mise à jour prise en compte",
             message: `Votre diagnostic a bien été ${this.isNewDiagnostic ? "créé" : "modifié"}`,
             status: "success",
           })
-          this.updateFromServer(diagnostic)
           this.navigateToDiagnosticList()
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
+        })
+    },
+    saveCanteenIfChanged() {
+      const payload = getObjectDiff(this.originalCanteen, this.canteen)
+      if (Object.keys(payload).length === 0) return Promise.resolve()
+
+      const fieldsToClean = ["satelliteCanteensCount"]
+      fieldsToClean.forEach((x) => {
+        if (Object.prototype.hasOwnProperty.call(payload, x) && payload[x] === "") payload[x] = null
+      })
+
+      return this.$store
+        .dispatch("updateCanteen", {
+          id: this.canteen.id,
+          payload,
+        })
+        .then((canteen) => {
+          return this.$emit("updateCanteen", canteen)
         })
     },
     populateSimplifiedDiagnostic() {
@@ -661,8 +712,9 @@ export default {
     },
     validateForms() {
       const refs = this.$refs
-      Object.keys(this.formIsValid).forEach((ref) => refs[ref] && refs[ref].validate())
-      return Object.values(this.formIsValid).every((isValid) => isValid)
+      const panels = Object.keys(this.formIsValid)
+      for (let i = 0; i < panels.length; i++) if (!refs[panels[i]].validate()) return false
+      return true
     },
     handleUnload(e) {
       if (this.hasChanged && !this.bypassLeaveWarning) {
@@ -683,7 +735,7 @@ export default {
 
       if (!diagnosticFormsAreValid) return this.$store.dispatch("notifyRequiredFieldsError")
 
-      const saveIfChanged = () => {
+      const saveDiagnosticIfChanged = () => {
         if (!this.hasChanged) return Promise.resolve()
 
         return this.$store
@@ -697,7 +749,8 @@ export default {
           })
       }
 
-      saveIfChanged()
+      return saveDiagnosticIfChanged()
+        .then(this.saveCanteenIfChanged)
         .then(() =>
           this.$store.dispatch("submitTeledeclaration", {
             id: this.diagnostic.id,
@@ -793,6 +846,9 @@ export default {
   watch: {
     year() {
       this.refreshDiagnostic()
+    },
+    originalCanteen() {
+      this.refreshCanteen()
     },
     "diagnostic.year": function() {
       this.fetchPurchasesSummary()
