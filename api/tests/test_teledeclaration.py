@@ -582,6 +582,7 @@ class TestTeledeclarationApi(APITestCase):
             siret="79300704800044",
             satellite_canteens_count=3,
             central_producer_siret="18704793618411",
+            daily_meal_count=10,
         )
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(
@@ -598,6 +599,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen_json = teledeclaration.declared_data.get("canteen")
         self.assertIsNone(canteen_json["satellite_canteens_count"])
         self.assertIsNone(canteen_json["central_producer_siret"])
+        self.assertEqual(canteen_json["daily_meal_count"], 10)
 
         # If we change its type to cuisine centrale we should get the satellite count
         teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic).delete()
@@ -612,6 +614,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen_json = teledeclaration.declared_data.get("canteen")
         self.assertEqual(canteen_json["satellite_canteens_count"], 3)
         self.assertIsNone(canteen_json["central_producer_siret"])
+        self.assertIsNone(canteen_json["daily_meal_count"])
 
         # If we change its type to satellite we should get the central_producer_siret
         teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic).delete()
@@ -626,6 +629,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen_json = teledeclaration.declared_data.get("canteen")
         self.assertIsNone(canteen_json["satellite_canteens_count"])
         self.assertEqual(canteen_json["central_producer_siret"], "18704793618411")
+        self.assertEqual(canteen_json["daily_meal_count"], 10)
 
     @authenticate
     def test_dynamically_include_line_ministry(self):

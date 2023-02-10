@@ -328,6 +328,7 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
     central_producer_siret = serializers.SerializerMethodField(read_only=True)
     satellite_canteens_count = serializers.SerializerMethodField(read_only=True)
     line_ministry = serializers.SerializerMethodField(read_only=True)
+    daily_meal_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -363,6 +364,11 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
     def get_line_ministry(self, obj):
         concerned_sectors = obj.sectors.filter(has_line_ministry=True)
         return obj.line_ministry if len(concerned_sectors) > 0 else None
+
+    def get_daily_meal_count(self, obj):
+        if obj.production_type == Canteen.ProductionType.CENTRAL:
+            return None
+        return obj.daily_meal_count
 
 
 # remember to update TD version if you update this
