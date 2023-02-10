@@ -1,5 +1,15 @@
 <template>
   <div>
+    <div class="body-2">
+      <p v-if="!enanleProductionTypeControl">
+        {{ productionTypeLabel }}
+      </p>
+      <p v-if="usesCentralProducer && !enableCentralProducerSiretControl">
+        Siret de ma cuisine centrale :
+        <strong>{{ canteen.centralProducerSiret }}</strong>
+      </p>
+    </div>
+
     <DsfrTextField
       hide-details="auto"
       label="Nom de la cantine"
@@ -27,10 +37,10 @@
       no-data-text="Pas de résultats. Veuillez renseigner votre ville"
     />
 
-    <p v-if="!canteen.productionType" class="body-2 ml-1 mt-5 mb-2">Je suis...</p>
+    <p v-if="enanleProductionTypeControl" class="body-2 ml-1 mt-5 mb-2">Je suis...</p>
     <v-radio-group
       class="mt-2"
-      v-if="!canteen.productionType"
+      v-if="enanleProductionTypeControl"
       v-model="canteen.productionType"
       hide-details="auto"
       :rules="[validators.required]"
@@ -153,7 +163,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="usesCentralProducer">
+    <v-row v-if="usesCentralProducer && enableCentralProducerSiretControl">
       <v-col cols="12" md="8">
         <DsfrTextField
           label="SIRET de la cuisine centrale"
@@ -173,7 +183,7 @@
       </v-col>
     </v-row>
 
-    <p class="caption mt-1 ml-2" v-if="usesCentralProducer">
+    <p class="caption mt-1 ml-2" v-if="usesCentralProducer && !canteen.centralProducerSiret">
       Vous ne le connaissez pas ? Utilisez cet
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
         outil de recherche pour trouver le SIRET
@@ -226,6 +236,8 @@ export default {
       productionTypes: Constants.ProductionTypesDetailed,
       ministries: Constants.Ministries,
       economicModels: Constants.EconomicModels,
+      enanleProductionTypeControl: !this.canteen.productionType,
+      enableCentralProducerSiretControl: !this.canteen.centralProducerSiret,
       satelliteSiretMessage:
         "Le numéro SIRET de la cuisine centrale ne peut pas être le même que celui de la cantine satellite.",
     }
@@ -247,6 +259,10 @@ export default {
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
+    },
+    productionTypeLabel() {
+      const detail = this.productionTypes.find((x) => x.value === this.canteen.productionType)
+      return detail ? detail.body : null
     },
   },
   methods: {
