@@ -858,7 +858,7 @@ class TestCanteenApi(APITestCase):
 
     @override_settings(ENABLE_TELEDECLARATION=False)
     @authenticate
-    def test_omit_teledeclaraion_acction(self):
+    def test_omit_teledeclaraion_action(self):
         """
         Check that when the ENABLE_TELEDECLARATION setting is False we don't return that type of action
         """
