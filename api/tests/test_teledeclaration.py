@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory, SectorFactory
 from data.models import Teledeclaration, Diagnostic, Canteen
 from .utils import authenticate
 
@@ -626,3 +626,43 @@ class TestTeledeclarationApi(APITestCase):
         canteen_json = teledeclaration.declared_data.get("canteen")
         self.assertIsNone(canteen_json["satellite_canteens_count"])
         self.assertEqual(canteen_json["central_producer_siret"], "18704793618411")
+
+    @authenticate
+    def test_dynamically_include_line_ministry(self):
+        sector_ministry = SectorFactory.create(has_line_ministry=True)
+        sector_other = SectorFactory.create(has_line_ministry=False)
+        canteen = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE,
+            siret="79300704800044",
+            satellite_canteens_count=3,
+            sectors=[sector_other],
+            line_ministry="affaires_etrangeres",
+        )
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen,
+            year=2020,
+            value_total_ht=100,
+        )
+        payload = {"diagnosticId": diagnostic.id}
+
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
+        canteen_json = teledeclaration.declared_data.get("canteen")
+        self.assertIsNone(canteen_json["line_ministry"])
+
+        # If we add the sector_ministry we should have the line_ministry in the canteen
+        teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic).delete()
+
+        canteen.sectors.add(sector_ministry)
+        canteen.save()
+        payload = {"diagnosticId": diagnostic.id}
+
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
+        canteen_json = teledeclaration.declared_data.get("canteen")
+        self.assertEqual(canteen_json["line_ministry"], "affaires_etrangeres")
