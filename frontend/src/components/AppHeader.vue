@@ -1,6 +1,6 @@
 <template>
   <div v-if="!!this.$route.name">
-    <div class="fr-skiplinks" ref="skiplinks">
+    <!-- <div class="fr-skiplinks" ref="skiplinks">
       <nav class="fr-container" role="navigation" aria-label="Accès rapide">
         <ul class="fr-skiplinks__list">
           <li><a class="fr-link" href="#contenu">Contenu</a></li>
@@ -8,7 +8,7 @@
           <li><a class="fr-link" href="#pied-de-page">Pied de page</a></li>
         </ul>
       </nav>
-    </div>
+    </div> -->
     <v-app-bar
       app
       clipped-right
