@@ -649,8 +649,6 @@ class TestCanteenApi(APITestCase):
         returned_canteens = body["results"]
         self.assertEqual(len(returned_canteens), 6)
 
-        # TODO: currently ordering by action gives step in flow - maybe should offer by effort required ?
-        # ie. pub, TD, sat, complete, create
         expected_actions = [
             (needs_satellites, "10_add_satellites"),
             (needs_last_year_diag, "20_create_diagnostic"),
@@ -662,6 +660,7 @@ class TestCanteenApi(APITestCase):
         for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):
             self.assertEqual(returned_canteens[index]["id"], canteen.id)
             self.assertEqual(returned_canteens[index]["action"], action)
+            self.assertIn("sectors", returned_canteens[index])
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
