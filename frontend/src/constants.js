@@ -49,23 +49,23 @@ export default Object.freeze({
   ],
   ProductionTypesDetailed: [
     {
-      title: "une <b>cantine</b> qui produit sur place les repas que je sers à mes convives",
-      body: "Je prépare ce que je sers à mes convives",
+      title: "produit sur place les repas que il sers à ses convives",
+      body: "Mon établissement prépare ce qu'il sert à ses convives",
       value: "site",
     },
     {
-      title: "une <b>cantine</b> qui sert des repas preparés par une cuisine centrale",
-      body: "Les repas que je sers à mes convives sont cuisinés ailleurs",
+      title: "sert des repas preparés par un autre établissement",
+      body: "Les repas que mon établissement sert à ses convives sont cuisinés ailleurs",
       value: "site_cooked_elsewhere",
     },
     {
-      title: "une <b>cuisine centrale</b> qui livre des satellites mais n'a pas de lieu de service en propre",
-      body: "Je prépare des produits pour des cantines satellites et je ne reçois pas de convives sur place",
+      title: "livre des repas mais n'a pas de lieu de service en propre",
+      body: "Mon établissement livre des repas mais n'a pas de lieu de service en propre",
       value: "central",
     },
     {
-      title: "une <b>cuisine centrale</b> qui accueille aussi des convives sur place",
-      body: "Je prépare des produits pour des cantines satellites et j'ai aussi de la restauration sur place",
+      title: "livre des repas et accueille aussi des convives sur place",
+      body: "Mon établissement livre des repas et accueille aussi des convives sur place",
       value: "central_serving",
     },
   ],

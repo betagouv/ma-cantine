@@ -37,7 +37,7 @@
       no-data-text="Pas de résultats. Veuillez renseigner votre ville"
     />
 
-    <p v-if="enableProductionTypeControl" class="body-2 ml-1 mt-5 mb-2">Je suis...</p>
+    <p v-if="enableProductionTypeControl" class="body-2 ml-1 mt-5 mb-2">Mon établissement...</p>
     <v-radio-group
       class="mt-2"
       v-if="enableProductionTypeControl"
