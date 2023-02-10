@@ -808,6 +808,17 @@ class TestCanteenApi(APITestCase):
         complete_diag = DiagnosticFactory.create(
             canteen=canteen_with_complete_diag, year=last_year, value_total_ht=10000
         )
+
+        canteen_with_incomplete_data = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        DiagnosticFactory.create(canteen=canteen_with_incomplete_data, year=last_year, value_total_ht=10000)
         # to verify we are returning the correct diag for the canteen, create another diag for a different year
         DiagnosticFactory.create(canteen=canteen_with_complete_diag, year=last_year - 1, value_total_ht=10000)
         canteen_with_td = CanteenFactory.create(
@@ -823,7 +834,13 @@ class TestCanteenApi(APITestCase):
         td_diag = DiagnosticFactory.create(canteen=canteen_with_td, year=last_year, value_total_ht=2000)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
-        for canteen in [no_diag, canteen_with_incomplete_diag, canteen_with_complete_diag, canteen_with_td]:
+        for canteen in [
+            no_diag,
+            canteen_with_incomplete_diag,
+            canteen_with_complete_diag,
+            canteen_with_incomplete_data,
+            canteen_with_td,
+        ]:
             canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
