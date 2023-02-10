@@ -139,7 +139,7 @@ export default {
         items.push({ value: this.canteen.centralProducerSiret, label: "SIRET de la cuisine centrale" })
       if (this.showSatelliteCanteensCount)
         items.push({
-          value: this.canteen.showSatelliteCanteensCount,
+          value: this.canteen.satelliteCanteensCount,
           label: "Nombre de cantines à qui je fournis des repas",
           isNumber: true,
         })
