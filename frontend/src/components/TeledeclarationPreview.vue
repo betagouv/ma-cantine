@@ -25,7 +25,7 @@
               </tr>
               <tr v-for="item in canteenItems" :key="item.label">
                 <td class="text-left">{{ item.label }}</td>
-                <td :class="diagnostic[item.param] ? 'text-right' : 'text-left'">{{ item.value }}</td>
+                <td :class="item.isNumber ? 'text-right' : 'text-left'">{{ item.value }}</td>
               </tr>
               <tr>
                 <td class="text-left font-weight-bold">
@@ -135,10 +135,12 @@ export default {
         items.push({
           value: this.canteen.showSatelliteCanteensCount,
           label: "Nombre de cantines à qui je fournis des repas",
+          isNumber: true,
         })
-      if (this.showDailyMealCount) items.push({ value: this.canteen.dailyMealCount, label: "Couverts moyen par jour" })
+      if (this.showDailyMealCount)
+        items.push({ value: this.canteen.dailyMealCount, label: "Couverts moyen par jour", isNumber: true })
       items = items.concat([
-        { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts à l'année" },
+        { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts à l'année", isNumber: true },
         { value: this.sectors, label: "Secteurs d'activité" },
       ])
       if (this.showMinistryField)
