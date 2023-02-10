@@ -119,7 +119,7 @@
         </v-col>
 
         <v-col cols="12">
-          <p class="body-1 ml-1 mb-0">Je suis...</p>
+          <p class="body-1 ml-1 mb-0">Mon établissement...</p>
           <v-radio-group class="mt-2" v-model="canteen.productionType" hide-details="auto">
             <v-radio class="ml-0" v-for="item in productionTypes" :key="item.value" :value="item.value">
               <template v-slot:label>
