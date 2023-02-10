@@ -297,7 +297,7 @@
               </span>
             </span>
             <span v-else-if="hasSatelliteCountInconsistency">
-              Le nombre de satellites déclaré ne corresponde pas au nombre renseigné
+              Le nombre de satellites déclaré ne correspond pas au nombre renseigné
             </span>
           </p>
         </v-sheet>
