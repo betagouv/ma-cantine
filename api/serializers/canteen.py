@@ -325,6 +325,10 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
 # remember to update TD version if you update this
 class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
     sectors = SectorSerializer(many=True, read_only=True)
+    central_producer_siret = serializers.SerializerMethodField(read_only=True)
+    satellite_canteens_count = serializers.SerializerMethodField(read_only=True)
+    line_ministry = serializers.SerializerMethodField(read_only=True)
+    daily_meal_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -343,6 +347,28 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
             "satellite_canteens_count",
             "central_producer_siret",
         )
+
+    def get_central_producer_siret(self, obj):
+        if not obj.production_type == Canteen.ProductionType.ON_SITE_CENTRAL:
+            return None
+        return obj.central_producer_siret
+
+    def get_satellite_canteens_count(self, obj):
+        if (
+            not obj.production_type == Canteen.ProductionType.CENTRAL
+            and not obj.production_type == Canteen.ProductionType.CENTRAL_SERVING
+        ):
+            return None
+        return obj.satellite_canteens_count
+
+    def get_line_ministry(self, obj):
+        concerned_sectors = obj.sectors.filter(has_line_ministry=True)
+        return obj.line_ministry if len(concerned_sectors) > 0 else None
+
+    def get_daily_meal_count(self, obj):
+        if obj.production_type == Canteen.ProductionType.CENTRAL:
+            return None
+        return obj.daily_meal_count
 
 
 # remember to update TD version if you update this
