@@ -74,6 +74,15 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      teledeclarationFormIsValid: true,
+      validators,
+      maxSatellitesExpected: 200,
+      minCostPerMealExpected: 1,
+      maxCostPerMealExpected: 10,
+    }
+  },
   computed: {
     isOpen: {
       get() {
@@ -501,11 +510,16 @@ export default {
       if (this.isCentralCuisine) {
         if (this.canteen.satelliteCanteensCount === 1) {
           unusualData.push("Votre établissement livre des repas à qu'un site")
-        } else if (this.canteen.satelliteCanteensCount > 200) {
+        } else if (this.canteen.satelliteCanteensCount > this.maxSatellitesExpected) {
           unusualData.push(
             `Votre établissement livre des repas à plus que 200 sites (${this.canteen.satelliteCanteensCount} en totale)`
           )
         }
+      }
+      if (this.costPerMeal > this.maxCostPerMealExpected || this.costPerMeal < this.minCostPerMealExpected) {
+        unusualData.push(
+          `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. Si c'est pas attendu, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
+        )
       }
       return unusualData
     },
@@ -513,12 +527,10 @@ export default {
       // cannot use this.canteen.isCentralCuisine because that field may not be updated with latest canteen changes
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
     },
-  },
-  data() {
-    return {
-      teledeclarationFormIsValid: true,
-      validators,
-    }
+    costPerMeal() {
+      // assuming yearlyMealCount required by TD form
+      return Number(this.diagnostic.valueTotalHt / this.canteen.yearlyMealCount).toFixed(2)
+    },
   },
   methods: {
     calculateTableHeight() {
