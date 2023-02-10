@@ -60,7 +60,7 @@
           mdi-fish
         </v-icon>
       </div>
-      La valeur (en HT) des mes achats en poissons, produits de la mer et aquaculture total
+      La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total
     </label>
 
     <DsfrCurrencyField
@@ -77,7 +77,7 @@
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueFishHt"
       @autofill="checkTotal"
-      purchaseType="totaux de poissons, produits de la mer et aquaculture"
+      purchaseType="totaux de poissons, produits de la mer et de l'aquaculture"
       :amount="purchasesSummary.fishTotal"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
