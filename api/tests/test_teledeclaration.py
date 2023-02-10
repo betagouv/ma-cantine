@@ -572,3 +572,57 @@ class TestTeledeclarationApi(APITestCase):
 
         self.assertEqual(satellite_2_data["name"], satellite_2.name)
         self.assertEqual(satellite_2_data["siret"], satellite_2.siret)
+
+    @authenticate
+    def test_does_not_contain_irrelevant_data(self):
+        # We create a site canteen that contains irrelevant data "central_producer_siret" and
+        # "satellite_canteens_count" - this can happen after a change of data
+        canteen = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE,
+            siret="79300704800044",
+            satellite_canteens_count=3,
+            central_producer_siret="18704793618411",
+        )
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen,
+            year=2020,
+            value_total_ht=100,
+        )
+        payload = {"diagnosticId": diagnostic.id}
+
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
+        canteen_json = teledeclaration.declared_data.get("canteen")
+        self.assertIsNone(canteen_json["satellite_canteens_count"])
+        self.assertIsNone(canteen_json["central_producer_siret"])
+
+        # If we change its type to cuisine centrale we should get the satellite count
+        teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic).delete()
+
+        canteen.production_type = Canteen.ProductionType.CENTRAL
+        canteen.save()
+        payload = {"diagnosticId": diagnostic.id}
+
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
+        canteen_json = teledeclaration.declared_data.get("canteen")
+        self.assertEqual(canteen_json["satellite_canteens_count"], 3)
+        self.assertIsNone(canteen_json["central_producer_siret"])
+
+        # If we change its type to satellite we should get the central_producer_siret
+        teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic).delete()
+
+        canteen.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
+        canteen.save()
+        payload = {"diagnosticId": diagnostic.id}
+
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
+        canteen_json = teledeclaration.declared_data.get("canteen")
+        self.assertIsNone(canteen_json["satellite_canteens_count"])
+        self.assertEqual(canteen_json["central_producer_siret"], "18704793618411")

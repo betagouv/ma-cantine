@@ -325,6 +325,8 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
 # remember to update TD version if you update this
 class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
     sectors = SectorSerializer(many=True, read_only=True)
+    central_producer_siret = serializers.SerializerMethodField(read_only=True)
+    satellite_canteens_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -343,6 +345,19 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
             "satellite_canteens_count",
             "central_producer_siret",
         )
+
+    def get_central_producer_siret(self, obj):
+        if not obj.production_type == Canteen.ProductionType.ON_SITE_CENTRAL:
+            return None
+        return obj.central_producer_siret
+
+    def get_satellite_canteens_count(self, obj):
+        if (
+            not obj.production_type == Canteen.ProductionType.CENTRAL
+            and not obj.production_type == Canteen.ProductionType.CENTRAL_SERVING
+        ):
+            return None
+        return obj.satellite_canteens_count
 
 
 # remember to update TD version if you update this
