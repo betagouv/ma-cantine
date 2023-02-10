@@ -39,7 +39,6 @@ export default {
   data() {
     return {
       satelliteCount: null,
-      satelliteCanteensCount: this.originalCanteen.satelliteCanteensCount,
     }
   },
   computed: {
@@ -48,6 +47,9 @@ export default {
     },
     satelliteTableParams() {
       return this.$route.query
+    },
+    satelliteCanteensCount() {
+      return this.originalCanteen.satelliteCanteensCount
     },
   },
   methods: {
@@ -59,6 +61,7 @@ export default {
     },
     updateSatellitesCount(data) {
       this.satelliteCount = data.total
+      this.$emit("satellitesCounted", { total: this.satelliteCount })
     },
     updateRoute(params, isDefaultUpdate) {
       if (isDefaultUpdate) {

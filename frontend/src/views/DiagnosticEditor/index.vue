@@ -287,15 +287,25 @@
           </div>
           <p
             class="text-caption amber--text text--darken-3 text-md-right mb-0 mx-3 mt-n1"
-            v-if="isTeledeclarationPhase && !hasActiveTeledeclaration && !canSubmitTeledeclaration"
+            v-if="!canSubmitTeledeclaration && isTeledeclarationPhase && !hasActiveTeledeclaration"
           >
             <v-icon small color="amber darken-3">mdi-alert</v-icon>
-            Données d'approvisionnement manquantes.
-            <span v-if="diagnostic.valueTotalHt === 0">
-              Le total des achats doit être supérieur à zéro.
+            <span v-if="!diagnostic.valueTotalHt">
+              Données d'approvisionnement manquantes.
+              <span v-if="diagnostic.valueTotalHt === 0">
+                Le total des achats doit être supérieur à zéro.
+              </span>
+            </span>
+            <span v-else-if="hasSatelliteCountInconsistency">
+              Le nombre de satellites déclaré ne correspond pas au nombre renseigné
             </span>
           </p>
         </v-sheet>
+        <SatelliteManagement
+          v-if="hasSatelliteCountInconsistency"
+          :originalCanteen="canteen"
+          @satellitesCounted="updateSatellitesCount"
+        />
       </v-col>
     </v-row>
   </div>
@@ -326,6 +336,7 @@ import {
   capitalise,
 } from "@/utils"
 import DsfrSelect from "@/components/DsfrSelect"
+import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
 
@@ -379,6 +390,7 @@ export default {
           value: year,
         }
       }),
+      satelliteDbCount: null,
     }
   },
   components: {
@@ -394,6 +406,7 @@ export default {
     TeledeclarationPreview,
     DownloadLink,
     DsfrSelect,
+    SatelliteManagement,
   },
   props: {
     canteenUrlComponent: {
@@ -435,7 +448,7 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return !this.showApproPanel || this.diagnostic.valueTotalHt > 0
+      return (!this.showApproPanel || this.diagnostic.valueTotalHt > 0) && !this.hasSatelliteCountInconsistency
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
@@ -501,6 +514,9 @@ export default {
         message: `Votre cuisine centrale ${centralKitchen} avec le siret ${this.originalCanteen.centralProducerSiret} a déjà rempli un
           diagnostic pour cette année pour votre cantine.`,
       }
+    },
+    hasSatelliteCountInconsistency() {
+      return this.isCentralCanteen && this.canteen.satelliteCanteensCount !== this.satelliteDbCount
     },
   },
   beforeMount() {
@@ -820,6 +836,9 @@ export default {
         characteristicGroups.egalim.fields.some((key) => !!this.originalDiagnostic[key]) ||
         characteristicGroups.outsideLaw.fields.some((key) => !!this.originalDiagnostic[key])
       )
+    },
+    updateSatellitesCount(data) {
+      this.satelliteDbCount = data.total
     },
   },
   created() {
