@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import Constants from "@/constants"
 import validators from "@/validators"
 import { capitalise, sectorsSelectList } from "@/utils"
 
@@ -116,13 +117,18 @@ export default {
       return true
     },
     canteenItems() {
+      const productionTypeDetail = Constants.ProductionTypesDetailed.find(
+        (x) => x.value === this.canteen.productionType
+      )
+      const managementTypeDetail = Constants.ManagementTypes.find((x) => x.value === this.canteen.managementType)
+      const ministryDetail = Constants.Ministries.find((x) => x.value === this.canteen.lineMinistry)
       const items = [
         { value: this.canteen.name, label: "Nom de la cantine" },
         { value: this.canteen.siret, label: "Numéro SIRET" },
         { value: this.canteen.city, label: "Ville" },
-        { value: this.canteen.productionType, label: "Type d'établissement" }, // TODO: à merger la branche du panel pour prendre ces valeurs de constants
+        { value: productionTypeDetail ? productionTypeDetail.body : "", label: "Type d'établissement" },
         { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts à l'année" },
-        { value: this.canteen.managementType, label: "Mode de gestion" },
+        { value: managementTypeDetail ? managementTypeDetail.text : "", label: "Mode de gestion" },
         { value: this.sectors, label: "Secteurs d'activité" },
       ]
       if (this.usesCentralProducer)
@@ -133,10 +139,8 @@ export default {
           label: "Nombre de cantines à qui je fournis des repas",
         })
       if (this.showDailyMealCount) items.push({ value: this.canteen.dailyMealCount, label: "Couverts moyen par jour" })
-      if (this.showMinistryField) items.push({ value: this.canteen.lineMinistry, label: "Ministère de tutelle" })
-
-      // TODO - show human-readable formats of minitries, management type, etc, after merging with
-      // branch #2288
+      if (this.showMinistryField)
+        items.push({ value: ministryDetail ? ministryDetail.text : "", label: "Ministère de tutelle" })
 
       return items
     },
