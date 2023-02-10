@@ -5,7 +5,7 @@
         {{ productionTypeLabel }}
       </p>
       <p v-if="usesCentralProducer && !enableCentralProducerSiretControl">
-        Siret de ma cuisine centrale :
+        SIRET de ma cuisine centrale :
         <strong>{{ canteen.centralProducerSiret }}</strong>
       </p>
     </div>

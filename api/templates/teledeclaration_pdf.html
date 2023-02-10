@@ -88,7 +88,8 @@
                 Cette télédéclaration concerne les cuisines satellites :
                 <br />
                 {% for satellite in satellites %}
-                · {{ satellite.name }} (Siret : {{satellite.siret}})<br />
+                ·
+                {{ satellite.name }} (SIRET : {{satellite.siret}})<br />
                 {% endfor %}
             {% endif %}
         {% endif %}
