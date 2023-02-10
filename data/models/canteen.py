@@ -53,7 +53,6 @@ class Canteen(SoftDeletionModel):
     class EconomicModel(models.TextChoices):
         PUBLIC = "public", "Public"
         PRIVATE = "private", "Privé"
-        PUBLISHED = "published", "✅ Publié"
 
     class Actions(models.TextChoices):
         ADD_SATELLITES = "10_add_satellites", "Ajouter des satellites"
