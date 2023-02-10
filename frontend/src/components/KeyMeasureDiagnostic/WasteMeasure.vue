@@ -62,7 +62,7 @@
       <v-row v-if="diagnostic.hasWasteMeasures" class="mt-4 ml-8">
         <v-col cols="12" md="8" class="pa-0">
           <DsfrTextField
-            v-model="diagnostic.breadLeftovers"
+            v-model.number="diagnostic.breadLeftovers"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
             validate-on-blur
@@ -72,7 +72,7 @@
             :disabled="readonly"
           />
           <DsfrTextField
-            v-model="diagnostic.servedLeftovers"
+            v-model.number="diagnostic.servedLeftovers"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
             validate-on-blur
@@ -82,7 +82,7 @@
             :disabled="readonly"
           />
           <DsfrTextField
-            v-model="diagnostic.unservedLeftovers"
+            v-model.number="diagnostic.unservedLeftovers"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
             validate-on-blur
@@ -92,7 +92,7 @@
             :disabled="readonly"
           />
           <DsfrTextField
-            v-model="diagnostic.sideLeftovers"
+            v-model.number="diagnostic.sideLeftovers"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
             validate-on-blur
@@ -118,7 +118,7 @@
       <v-row v-if="diagnostic.hasDonationAgreement" class="my-4 ml-8">
         <v-col cols="12" md="8" class="pa-0">
           <DsfrTextField
-            v-model="diagnostic.donationFrequency"
+            v-model.number="diagnostic.donationFrequency"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
             validate-on-blur
@@ -128,7 +128,7 @@
             :disabled="readonly"
           />
           <DsfrTextField
-            v-model="diagnostic.donationQuantity"
+            v-model.number="diagnostic.donationQuantity"
             type="number"
             :rules="[validators.nonNegativeOrEmpty]"
             validate-on-blur

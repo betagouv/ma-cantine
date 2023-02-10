@@ -37,6 +37,12 @@
           </template>
         </v-simple-table>
       </v-card-text>
+      <div v-if="unusualData.length" class="text-left px-6">
+        <p>Veuillez vérifier les données suivantes qui sont hors du commun</p>
+        <ul>
+          <li v-for="msg in unusualData" :key="msg">{{ msg }}</li>
+        </ul>
+      </div>
       <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form" class="px-6">
         <v-checkbox
           :rules="[validators.checked]"
@@ -489,6 +495,23 @@ export default {
     },
     canteenUrlComponent() {
       return this.canteen ? this.$store.getters.getCanteenUrlComponent(this.canteen) : null
+    },
+    unusualData() {
+      const unusualData = []
+      if (this.isCentralCuisine) {
+        if (this.canteen.satelliteCanteensCount === 1) {
+          unusualData.push("Votre établissement livre des repas à qu'un site")
+        } else if (this.canteen.satelliteCanteensCount > 200) {
+          unusualData.push(
+            `Votre établissement livre des repas à plus que 200 sites (${this.canteen.satelliteCanteensCount} en totale)`
+          )
+        }
+      }
+      return unusualData
+    },
+    isCentralCuisine() {
+      // cannot use this.canteen.isCentralCuisine because that field may not be updated with latest canteen changes
+      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
     },
   },
   data() {

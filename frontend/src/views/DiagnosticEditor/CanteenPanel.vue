@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="body-2">
-      <p v-if="!enanleProductionTypeControl">
+      <p v-if="!enableProductionTypeControl">
         {{ productionTypeLabel }}
       </p>
       <p v-if="usesCentralProducer && !enableCentralProducerSiretControl">
@@ -37,10 +37,10 @@
       no-data-text="Pas de résultats. Veuillez renseigner votre ville"
     />
 
-    <p v-if="enanleProductionTypeControl" class="body-2 ml-1 mt-5 mb-2">Je suis...</p>
+    <p v-if="enableProductionTypeControl" class="body-2 ml-1 mt-5 mb-2">Je suis...</p>
     <v-radio-group
       class="mt-2"
-      v-if="enanleProductionTypeControl"
+      v-if="enableProductionTypeControl"
       v-model="canteen.productionType"
       hide-details="auto"
       :rules="[validators.required]"
@@ -78,7 +78,7 @@
           :disabled="readonly"
           v-if="showDailyMealCount"
           validate-on-blur
-          v-model="canteen.dailyMealCount"
+          v-model.number="canteen.dailyMealCount"
           prepend-icon="$restaurant-fill"
         />
       </v-col>
@@ -96,7 +96,7 @@
           :readonly="readonly"
           :disabled="readonly"
           validate-on-blur
-          v-model="canteen.yearlyMealCount"
+          v-model.number="canteen.yearlyMealCount"
           prepend-icon="$restaurant-fill"
         />
       </v-col>
@@ -109,7 +109,7 @@
           :readonly="readonly"
           :disabled="readonly"
           validate-on-blur
-          v-model="canteen.satelliteCanteensCount"
+          v-model.number="canteen.satelliteCanteensCount"
           prepend-icon="$community-fill"
           labelClasses="body-2 mb-2"
         />
@@ -236,7 +236,7 @@ export default {
       productionTypes: Constants.ProductionTypesDetailed,
       ministries: Constants.Ministries,
       economicModels: Constants.EconomicModels,
-      enanleProductionTypeControl: !this.canteen.productionType,
+      enableProductionTypeControl: !this.canteen.productionType,
       enableCentralProducerSiretControl: !this.canteen.centralProducerSiret,
       satelliteSiretMessage:
         "Le numéro SIRET de la cuisine centrale ne peut pas être le même que celui de la cantine satellite.",
