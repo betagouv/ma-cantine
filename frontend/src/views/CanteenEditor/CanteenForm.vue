@@ -145,7 +145,7 @@
             :disabled="!showDailyMealCount"
             :messages="showDailyMealCount ? [] : 'Concerne uniquement les cantines recevant des convives'"
             validate-on-blur
-            v-model="canteen.dailyMealCount"
+            v-model.number="canteen.dailyMealCount"
             prepend-icon="$restaurant-fill"
           />
         </v-col>
@@ -168,7 +168,7 @@
             hide-details="auto"
             :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
             validate-on-blur
-            v-model="canteen.yearlyMealCount"
+            v-model.number="canteen.yearlyMealCount"
             prepend-icon="$restaurant-fill"
           />
         </v-col>
@@ -184,7 +184,7 @@
               showSatelliteCanteensCount ? [] : 'Concerne uniquement les cuisines qui livrent à des satellites'
             "
             validate-on-blur
-            v-model="canteen.satelliteCanteensCount"
+            v-model.number="canteen.satelliteCanteensCount"
             prepend-icon="$community-fill"
             labelClasses="body-2 mb-2"
           />

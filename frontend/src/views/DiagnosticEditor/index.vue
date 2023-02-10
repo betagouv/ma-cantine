@@ -268,7 +268,7 @@
               :outlined="isTeledeclarationPhase"
               color="primary"
               class="ma-3"
-              @click="saveDiagnostic"
+              @click="saveWithoutTeledeclaration"
               :disabled="!diagnosticIsUnique"
             >
               Valider
@@ -626,7 +626,7 @@ export default {
       summary = summary.join(", ") + " substitués"
       return capitalise(summary)
     },
-    saveDiagnostic() {
+    saveWithoutTeledeclaration() {
       const diagnosticFormsAreValid = this.validateForms()
 
       if (!diagnosticFormsAreValid) {

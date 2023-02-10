@@ -47,6 +47,12 @@
           </template>
         </v-simple-table>
       </v-card-text>
+      <div v-if="unusualData.length" class="text-left px-6">
+        <p>Ces données sont-elles correctes ?</p>
+        <ul>
+          <li v-for="msg in unusualData" :key="msg">{{ msg }}</li>
+        </ul>
+      </div>
       <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form" class="px-6">
         <v-checkbox
           :rules="[validators.checked]"
@@ -133,7 +139,7 @@ export default {
         items.push({ value: this.canteen.centralProducerSiret, label: "SIRET de la cuisine centrale" })
       if (this.showSatelliteCanteensCount)
         items.push({
-          value: this.canteen.showSatelliteCanteensCount,
+          value: this.canteen.satelliteCanteensCount,
           label: "Nombre de cantines à qui je fournis des repas",
           isNumber: true,
         })
@@ -556,6 +562,23 @@ export default {
       const concernedSectors = sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
       if (concernedSectors.length === 0) return false
       return this.canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
+    },
+    unusualData() {
+      const unusualData = []
+      if (this.isCentralCuisine) {
+        if (this.canteen.satelliteCanteensCount === 1) {
+          unusualData.push("Votre établissement livre des repas à un seul site")
+        } else if (this.canteen.satelliteCanteensCount > 200) {
+          unusualData.push(
+            `Votre établissement livre des repas à plus de 200 sites (${this.canteen.satelliteCanteensCount} au total)`
+          )
+        }
+      }
+      return unusualData
+    },
+    isCentralCuisine() {
+      // cannot use this.canteen.isCentralCuisine because that field may not be updated with latest canteen changes
+      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
     },
   },
   data() {
