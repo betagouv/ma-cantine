@@ -280,10 +280,26 @@ class CanteenActionsSerializer(serializers.ModelSerializer):
     # TODO: is it worth moving the job of fetching the specific diag required to the front?
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     action = serializers.CharField(allow_null=True)
+    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
 
     class Meta:
         model = Canteen
-        fields = ("id", "name", "production_type", "action", "diagnostics")
+        fields = (
+            "id",
+            "name",
+            "siret",
+            "city",
+            "production_type",
+            "daily_meal_count",
+            "yearly_meal_count",
+            "management_type",
+            "sectors",
+            "line_ministry",
+            "satellite_canteens_count",
+            "central_producer_siret",
+            "action",
+            "diagnostics",
+        )
         read_only_fields = fields
 
 

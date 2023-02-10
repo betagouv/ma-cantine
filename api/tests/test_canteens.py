@@ -583,20 +583,59 @@ class TestCanteenApi(APITestCase):
         """
         # these canteens aren't in a very logical order, because want to test sorting by action
         # create diag (has one for 2020)
-        needs_last_year_diag = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        needs_last_year_diag = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.DRAFT,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
         # nothing to do
         complete = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
             publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         # complete diag
-        needs_to_complete_diag = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        needs_to_complete_diag = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.DRAFT,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
         # publish
-        needs_to_publish = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        needs_to_publish = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.DRAFT,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
         # TD
         needs_td = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
             publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         # create satellites
         central_siret = "78146469373706"
@@ -649,8 +688,6 @@ class TestCanteenApi(APITestCase):
         returned_canteens = body["results"]
         self.assertEqual(len(returned_canteens), 6)
 
-        # TODO: currently ordering by action gives step in flow - maybe should offer by effort required ?
-        # ie. pub, TD, sat, complete, create
         expected_actions = [
             (needs_satellites, "10_add_satellites"),
             (needs_last_year_diag, "20_create_diagnostic"),
@@ -662,6 +699,72 @@ class TestCanteenApi(APITestCase):
         for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):
             self.assertEqual(returned_canteens[index]["id"], canteen.id)
             self.assertEqual(returned_canteens[index]["action"], action)
+            self.assertIn("sectors", returned_canteens[index])
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_get_actions_missing_data(self):
+        """
+        Even if the diagnostic is complete, the mandatory information on the canteen level should
+        return a "35_fill_canteen_data"
+        """
+        # First a case in which the canteen is complete
+        canteen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="96766910375238",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        DiagnosticFactory.create(year=2021, canteen=canteen, value_total_ht=1000)
+        canteen.managers.add(authenticate.user)
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        returned_canteens = response.json()["results"]
+        self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
+
+        # If mandatory data on the canteen is missing, we need a 35_fill_canteen_data
+        canteen.yearly_meal_count = None
+        canteen.save()
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        returned_canteens = response.json()["results"]
+        self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
+
+        # Central cuisines should have the number of satellites filled in
+        canteen.yearly_meal_count = 1000
+        canteen.production_type = Canteen.ProductionType.CENTRAL
+        canteen.satellite_canteens_count = None
+        canteen.save()
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        returned_canteens = response.json()["results"]
+        self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
+
+        canteen.satellite_canteens_count = 123
+        canteen.save()
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        returned_canteens = response.json()["results"]
+        self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
+
+        # Satellites should have the SIRET of the central cuisine
+        canteen.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
+        canteen.central_producer_siret = None
+        canteen.save()
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        returned_canteens = response.json()["results"]
+        self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
+
+        canteen.central_producer_siret = "75665621899905"
+        canteen.save()
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        returned_canteens = response.json()["results"]
+        self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
@@ -670,20 +773,74 @@ class TestCanteenApi(APITestCase):
         Check that the actions endpoint includes a list of diagnostics that could be teledeclared
         """
         last_year = 2021
-        no_diag = CanteenFactory.create()
-        canteen_with_incomplete_diag = CanteenFactory.create()
+        no_diag = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        canteen_with_incomplete_diag = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="96766910375238",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
         DiagnosticFactory.create(canteen=canteen_with_incomplete_diag, year=last_year, value_total_ht=None)
-        canteen_with_complete_diag = CanteenFactory.create()
+        canteen_with_complete_diag = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
         complete_diag = DiagnosticFactory.create(
             canteen=canteen_with_complete_diag, year=last_year, value_total_ht=10000
         )
+
+        canteen_with_incomplete_data = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            siret=None,  # this needs to be completed for the diag to be teledeclarable
+        )
+        DiagnosticFactory.create(canteen=canteen_with_incomplete_data, year=last_year, value_total_ht=10000)
         # to verify we are returning the correct diag for the canteen, create another diag for a different year
         DiagnosticFactory.create(canteen=canteen_with_complete_diag, year=last_year - 1, value_total_ht=10000)
-        canteen_with_td = CanteenFactory.create()
+        canteen_with_td = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="55476895458384",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
         td_diag = DiagnosticFactory.create(canteen=canteen_with_td, year=last_year, value_total_ht=2000)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
-        for canteen in [no_diag, canteen_with_incomplete_diag, canteen_with_complete_diag, canteen_with_td]:
+        for canteen in [
+            no_diag,
+            canteen_with_incomplete_diag,
+            canteen_with_complete_diag,
+            canteen_with_incomplete_data,
+            canteen_with_td,
+        ]:
             canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
@@ -728,7 +885,7 @@ class TestCanteenApi(APITestCase):
 
     @override_settings(ENABLE_TELEDECLARATION=False)
     @authenticate
-    def test_omit_teledeclaraion_acction(self):
+    def test_omit_teledeclaraion_action(self):
         """
         Check that when the ENABLE_TELEDECLARATION setting is False we don't return that type of action
         """
@@ -736,6 +893,12 @@ class TestCanteenApi(APITestCase):
             id=3,
             production_type=Canteen.ProductionType.ON_SITE,
             publication_status=Canteen.PublicationStatus.PUBLISHED,
+            yearly_meal_count="123",
+            daily_meal_count="12",
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            management_type=Canteen.ManagementType.DIRECT,
         )
         canteen.managers.add(authenticate.user)
         DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=10000)
