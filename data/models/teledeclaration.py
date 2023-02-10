@@ -179,9 +179,6 @@ class Teledeclaration(models.Model):
                 "name": applicant.get_full_name(),
                 "email": applicant.email,
             },
-            # TODO: do we keep this for consistency with old versions, or remove it
-            # now that the data is captured by the canteen serializer?
-            # Also the key is different to the db name...
             "central_kitchen_siret": canteen.central_producer_siret,
             "teledeclaration": serialized_diagnostic.data,
         }
@@ -189,7 +186,6 @@ class Teledeclaration(models.Model):
         if is_central_cuisine:
             serialized_satellites = [SatelliteTeledeclarationSerializer(x).data for x in canteen.satellites]
             json_fields["satellites"] = serialized_satellites
-            # TODO: decide whether we keep this or have it in the canteen serialization
             json_fields["satellite_canteens_count"] = canteen.satellite_canteens_count
 
         return TeledeclarationFactory.create(
