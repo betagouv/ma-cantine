@@ -49,7 +49,7 @@ export default Object.freeze({
   ],
   ProductionTypesDetailed: [
     {
-      title: "produit sur place les repas que il sers à ses convives",
+      title: "produit sur place les repas qu'il sert à ses convives",
       body: "Mon établissement prépare ce qu'il sert à ses convives",
       value: "site",
     },
