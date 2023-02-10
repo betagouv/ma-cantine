@@ -503,7 +503,7 @@ export default {
           unusualData.push("Votre établissement livre des repas à un seul site")
         } else if (this.canteen.satelliteCanteensCount > 200) {
           unusualData.push(
-            `Votre établissement livre des repas à plus que 200 sites (${this.canteen.satelliteCanteensCount} en totale)`
+            `Votre établissement livre des repas à plus de 200 sites (${this.canteen.satelliteCanteensCount} au total)`
           )
         }
       }
