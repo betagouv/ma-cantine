@@ -250,14 +250,11 @@
             par l’administration sur la base des éléments transmis, par les personnes morales de droit public et de
             droit privé mentionnées aux articles L. 230-5-1 et L. 230-5-2 (décret du 23 avril 2019). L’arrêté du 14
             septembre 2022 précise les modalités de transmission par les gestionnaires de restaurants collectifs des
-            données nécessaires à l’établissement de ce bilan. Les informations saisies dans votre diagnostic 2022
-            seront celles transmises à l’administration (DGAl, direction générale de l'alimentation du Ministère de
-            l'agriculture MASA) en charge de l’élaboration de ce bilan.
+            données nécessaires à l’établissement de ce bilan.
           </p>
           <p>
-            Nous vous proposons d’utiliser les informations de votre autodiagnostic {{ teledeclarationYear }} et de les
-            transmettre, avec votre accord, à la DGAL, direction du Ministère de l'agriculture en charge de
-            l'élaboration de ce bilan.
+            Les informations saisies dans votre diagnostic {{ teledeclarationYear }} seront celles transmises à
+            l’administration (DGAL direction du MASA) en charge de l’élaboration de ce bilan.
           </p>
         </div>
 

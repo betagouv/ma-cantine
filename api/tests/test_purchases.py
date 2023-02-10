@@ -434,7 +434,7 @@ class TestPurchaseApi(APITestCase):
     @authenticate
     def test_purchase_fish_totals(self):
         """
-        The totals for "poissons, produits de la mer et aquaculture" must be included in the payload
+        The totals for "poissons, produits de la mer et de l'aquaculture" must be included in the payload
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
