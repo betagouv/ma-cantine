@@ -53,12 +53,12 @@ class Canteen(SoftDeletionModel):
     class EconomicModel(models.TextChoices):
         PUBLIC = "public", "Public"
         PRIVATE = "private", "Privé"
-        PUBLISHED = "published", "✅ Publié"
 
     class Actions(models.TextChoices):
         ADD_SATELLITES = "10_add_satellites", "Ajouter des satellites"
         CREATE_DIAGNOSTIC = "20_create_diagnostic", "Créer le diagnostic"
-        COMPLETE_DIAGNOSTIC = "30_complete_diagnostic", "Completer le diagnostic"
+        COMPLETE_DIAGNOSTIC = "30_complete_diagnostic", "Compléter le diagnostic"
+        FILL_CANTEEN_DATA = "35_fill_canteen_data", "Compléter les infos de la cantine"
         TELEDECLARE = "40_teledeclare", "Télédéclarer"
         PUBLISH = "50_publish", "Publier"
         NOTHING = "95_nothing", "Rien à faire !"
