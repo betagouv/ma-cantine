@@ -19,6 +19,16 @@
             <tbody>
               <tr>
                 <td class="text-left font-weight-bold">
+                  Données relatives à votre établissement
+                </td>
+                <td class="text-left font-weight-bold"></td>
+              </tr>
+              <tr v-for="item in canteenItems" :key="item.label">
+                <td class="text-left">{{ item.label }}</td>
+                <td :class="item.isNumber ? 'text-right' : 'text-left'">{{ item.value }}</td>
+              </tr>
+              <tr>
+                <td class="text-left font-weight-bold">
                   Type de déclaration : {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
                 </td>
                 <td class="text-left font-weight-bold"></td>
@@ -54,7 +64,9 @@
 </template>
 
 <script>
+import Constants from "@/constants"
 import validators from "@/validators"
+import { capitalise, sectorsSelectList } from "@/utils"
 
 export default {
   props: {
@@ -103,6 +115,38 @@ export default {
       }
 
       return true
+    },
+    canteenItems() {
+      const productionTypeDetail = Constants.ProductionTypesDetailed.find(
+        (x) => x.value === this.canteen.productionType
+      )
+      const managementTypeDetail = Constants.ManagementTypes.find((x) => x.value === this.canteen.managementType)
+      const ministryDetail = Constants.Ministries.find((x) => x.value === this.canteen.lineMinistry)
+      let items = [
+        { value: this.canteen.name, label: "Nom de la cantine" },
+        { value: this.canteen.siret, label: "Numéro SIRET" },
+        { value: this.canteen.city, label: "Ville" },
+        { value: managementTypeDetail ? managementTypeDetail.text : "", label: "Mode de gestion" },
+        { value: productionTypeDetail ? productionTypeDetail.body : "", label: "Type d'établissement" },
+      ]
+      if (this.usesCentralProducer)
+        items.push({ value: this.canteen.centralProducerSiret, label: "SIRET de la cuisine centrale" })
+      if (this.showSatelliteCanteensCount)
+        items.push({
+          value: this.canteen.showSatelliteCanteensCount,
+          label: "Nombre de cantines à qui je fournis des repas",
+          isNumber: true,
+        })
+      if (this.showDailyMealCount)
+        items.push({ value: this.canteen.dailyMealCount, label: "Couverts moyen par jour", isNumber: true })
+      items = items.concat([
+        { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts à l'année", isNumber: true },
+        { value: this.sectors, label: "Secteurs d'activité" },
+      ])
+      if (this.showMinistryField)
+        items.push({ value: ministryDetail ? ministryDetail.text : "", label: "Ministère de tutelle" })
+
+      return items
     },
     approItems() {
       if (!this.showApproItems) return []
@@ -489,6 +533,29 @@ export default {
     },
     canteenUrlComponent() {
       return this.canteen ? this.$store.getters.getCanteenUrlComponent(this.canteen) : null
+    },
+    sectors() {
+      if (!this.canteen.sectors) return ""
+      const sectors = this.$store.state.sectors
+      const sectorDisplay = this.canteen.sectors
+        .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
+        .join(", ")
+      return capitalise(sectorDisplay)
+    },
+    usesCentralProducer() {
+      return this.canteen.productionType === "site_cooked_elsewhere"
+    },
+    showSatelliteCanteensCount() {
+      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
+    },
+    showDailyMealCount() {
+      return this.canteen.productionType && this.canteen.productionType !== "central"
+    },
+    showMinistryField() {
+      const sectors = sectorsSelectList(this.$store.state.sectors)
+      const concernedSectors = sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
+      if (concernedSectors.length === 0) return false
+      return this.canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
     },
   },
   data() {

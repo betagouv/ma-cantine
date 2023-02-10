@@ -3,7 +3,7 @@
     <TeledeclarationPreview
       v-if="diagnostic"
       :diagnostic="diagnostic"
-      :canteen="originalCanteen"
+      :canteen="canteen"
       v-model="showTeledeclarationPreview"
       @teledeclare="submitTeledeclaration"
     />
