@@ -599,6 +599,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen_json = teledeclaration.declared_data.get("canteen")
         self.assertIsNone(canteen_json["satellite_canteens_count"])
         self.assertIsNone(canteen_json["central_producer_siret"])
+        self.assertIsNone(teledeclaration.declared_data["central_kitchen_siret"])
         self.assertEqual(canteen_json["daily_meal_count"], 10)
 
         # If we change its type to cuisine centrale we should get the satellite count
@@ -614,6 +615,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen_json = teledeclaration.declared_data.get("canteen")
         self.assertEqual(canteen_json["satellite_canteens_count"], 3)
         self.assertIsNone(canteen_json["central_producer_siret"])
+        self.assertIsNone(teledeclaration.declared_data["central_kitchen_siret"])
         self.assertIsNone(canteen_json["daily_meal_count"])
 
         # If we change its type to satellite we should get the central_producer_siret
@@ -629,6 +631,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen_json = teledeclaration.declared_data.get("canteen")
         self.assertIsNone(canteen_json["satellite_canteens_count"])
         self.assertEqual(canteen_json["central_producer_siret"], "18704793618411")
+        self.assertEqual(teledeclaration.declared_data["central_kitchen_siret"], "18704793618411")
         self.assertEqual(canteen_json["daily_meal_count"], 10)
 
     @authenticate
