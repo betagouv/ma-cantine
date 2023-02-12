@@ -162,25 +162,25 @@ class Teledeclaration(models.Model):
 
         teledeclaration_mode = Teledeclaration._get_teledeclaration_mode(diagnostic)
         serializer = Teledeclaration._get_diagnostic_serializer(diagnostic)
-        serialized_diagnostic = serializer(diagnostic)
+        serialized_diagnostic = serializer(diagnostic).data
 
         from api.serializers import (
             CanteenTeledeclarationSerializer,
             SatelliteTeledeclarationSerializer,
         )
 
-        serialized_canteen = CanteenTeledeclarationSerializer(canteen)
+        serialized_canteen = CanteenTeledeclarationSerializer(canteen).data
 
         json_fields = {
             "version": version,
             "year": diagnostic.year,
-            "canteen": serialized_canteen.data,
+            "canteen": serialized_canteen,
             "applicant": {
                 "name": applicant.get_full_name(),
                 "email": applicant.email,
             },
-            "central_kitchen_siret": canteen.central_producer_siret,
-            "teledeclaration": serialized_diagnostic.data,
+            "central_kitchen_siret": serialized_canteen.get("central_producer_siret"),
+            "teledeclaration": serialized_diagnostic,
         }
 
         if is_central_cuisine:
