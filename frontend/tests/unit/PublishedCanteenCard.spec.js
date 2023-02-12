@@ -15,7 +15,6 @@ describe("PublishedCanteenCard.vue", () => {
       year: 2021,
       valueBioHt: 5000,
       valueSustainableHt: 2000,
-      valuePatHt: 1000,
       valueTotalHt: 10000,
       cookingPlasticSubstituted: true,
       servingPlasticSubstituted: true,
