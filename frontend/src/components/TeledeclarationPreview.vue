@@ -91,7 +91,7 @@ export default {
       teledeclarationFormIsValid: true,
       validators,
       maxSatellitesExpected: 200,
-      minCostPerMealExpected: 1,
+      minCostPerMealExpected: 0.1,
       maxCostPerMealExpected: 10,
     }
   },
