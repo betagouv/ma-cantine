@@ -585,7 +585,7 @@ export default {
       }
       if (this.costPerMeal > this.maxCostPerMealExpected || this.costPerMeal < this.minCostPerMealExpected) {
         unusualData.push(
-          `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. Si c'est pas attendu, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
+          `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
         )
       }
       return unusualData
