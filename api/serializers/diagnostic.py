@@ -7,10 +7,6 @@ SIMPLE_APPRO_FIELDS = (
     "value_total_ht",
     "value_bio_ht",
     "value_sustainable_ht",
-    "value_pat_ht",
-    "value_label_rouge",
-    "value_label_aoc_igp",
-    "value_label_hve",
     "value_externality_performance_ht",
     "value_egalim_others_ht",
     "value_meat_poultry_ht",
@@ -194,7 +190,6 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
     value_egalim_others_ht = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-
         fields = (
             META_FIELDS
             + (
@@ -279,7 +274,6 @@ class PublicDiagnosticSerializer(serializers.ModelSerializer):
 
 
 class FullDiagnosticSerializer(serializers.ModelSerializer):
-
     teledeclaration = ShortTeledeclarationSerializer(source="latest_submitted_teledeclaration")
 
     class Meta:

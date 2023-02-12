@@ -150,8 +150,8 @@ class Teledeclaration(models.Model):
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
-        version = "8"  # Helps identify which data will be present. Use incremental int values
-        # Version 8 - contains additional canteen and satellite fields in JSON serialized object
+        version = "9"  # Helps identify which data will be present. Use incremental int values
+        # Version 9 - removes legacy fields: value_pat_ht, value_label_hve, value_label_rouge, value_label_aoc_igp and value_pat_ht
 
         status = status or Teledeclaration.TeledeclarationStatus.SUBMITTED
 
