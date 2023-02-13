@@ -23,7 +23,7 @@
         <p class="grey--text text--darken-1">
           Si vous n'arrivez pas à utiliser le formulaire ci-dessus, vous pouvez nous contacter directement par email à
           l'adresse suivante:
-          <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+          <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
         </p>
       </v-col>
       <v-col cols="4" v-if="$vuetify.breakpoint.smAndUp">

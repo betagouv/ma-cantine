@@ -42,7 +42,7 @@
               <br />
               <br />
               Si vous avez toujours des questions ou des problèmes, n'hésitez pas à nous contacter à
-              <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+              <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
               .
             </p>
           </div>

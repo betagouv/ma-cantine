@@ -472,7 +472,7 @@ export default new Vuex.Store({
       const message =
         error instanceof AuthenticationError
           ? "Votre session a expiré. Rechargez la page et reconnectez-vous pour continuer."
-          : "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à contact@egalim.beta.gouv.fr"
+          : "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr"
       const status = "error"
       context.dispatch("notify", { title, message, status })
     },
