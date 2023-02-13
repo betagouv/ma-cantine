@@ -1,5 +1,8 @@
 <template>
   <div>
+    <!-- Input used for cross-field validation : https://github.com/vuetifyjs/vuetify/issues/8698 -->
+    <v-input hidden :rules="[checkTotal]" hide-details></v-input>
+
     <label :for="'total-' + diagnostic.year" class="body-2">
       La valeur (en HT) de mes achats alimentaires total
     </label>
@@ -277,16 +280,21 @@ export default {
       if (totalInputs > this.diagnostic.valueTotalHt) {
         this.errorType = "TOTAL"
         this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumAllEgalimAndNonEgalim()} €`
+        return false
       } else if (totalFamilies > this.diagnostic.valueTotalHt) {
         this.errorType = "FAMILY"
         this.errorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}, actuellement ${totalFamilies} €`
+        return false
       } else if (this.sumMeatVolailles() > totalMeatPoultry) {
         this.errorType = "MEAT"
         this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumMeatVolailles()} €`
+        return false
       } else if (this.sumFish() > totalFish) {
         this.errorType = "FISH"
         this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumFish()} €`
+        return false
       }
+      return true
     },
     diagnosticKey(family, characteristic) {
       return this.camelize(`value_${family}_${characteristic}`)
