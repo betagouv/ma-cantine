@@ -298,6 +298,16 @@
             </span>
             <span v-else-if="hasSatelliteCountInconsistency">
               Le nombre de satellites déclaré ne correspond pas au nombre renseigné
+              <br />
+              <span class="grey--text text--darken-3">
+                Vous pouvez utiliser le
+                <strong>formulaire ci-dessous</strong>
+                pour rentrer les détails de vos cantines satellites.
+                <br />
+                Vous avez renseigné
+                <strong>{{ satelliteDbCount }} / {{ canteen.satelliteCanteensCount }}</strong>
+                satellites
+              </span>
             </span>
           </p>
         </v-sheet>
