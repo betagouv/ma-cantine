@@ -180,7 +180,7 @@
     </p>
     <p>
       Par voie numérique :
-      <strong>contact@egalim.beta.gouv.fr</strong>
+      <strong>support-egalim@beta.gouv.fr</strong>
     </p>
     <p>Par voie postale :</p>
     <p class="font-weight-bold">

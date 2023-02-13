@@ -53,7 +53,7 @@
     <ul>
       <li>
         nous signaler par email :
-        <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+        <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
       </li>
       <li>
         créer une “issue” sur
@@ -118,7 +118,7 @@
     <h2>Contactez-nous</h2>
     <p>
       Des questions ? Une difficulté ? Envoyez-nous un email à
-      <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+      <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
       .
     </p>
   </div>

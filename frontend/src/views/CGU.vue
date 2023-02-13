@@ -123,7 +123,7 @@
       La validation des CGU implique l’inscription automatique à l’infolettre « ma cantine ». Conforment à la
       réglementation, cette inscription est révocable à tout moment, soit en vous désabonnant à réception du courriel,
       ou en nous notifiant votre refus à l’adresse suivante :
-      <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+      <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
     </p>
 
     <h2 class="my-6">
@@ -189,15 +189,15 @@
     <ul class="mb-4">
       <li>
         Difficultés techniques :
-        <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr.</a>
+        <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr.</a>
       </li>
       <li>
         Problèmes liés à la procédure :
-        <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr.</a>
+        <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr.</a>
       </li>
       <li>
         Droit d’accès CNIL :
-        <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr.</a>
+        <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr.</a>
       </li>
     </ul>
   </div>
