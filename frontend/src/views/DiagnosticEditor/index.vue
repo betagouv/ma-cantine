@@ -114,7 +114,7 @@
         <v-expansion-panels
           class="mb-8"
           :disabled="!diagnosticIsUnique"
-          :value="openedPanel"
+          :value="openedApproPanel"
           v-if="showExpansionPanels"
         >
           <DiagnosticExpansionPanel
@@ -223,8 +223,8 @@
         <v-expansion-panels
           class="mb-8"
           :disabled="!diagnosticIsUnique"
-          :value="openedPanel"
           v-if="showExpansionPanels"
+          :value="openedCanteenPanel"
         >
           <DiagnosticExpansionPanel
             iconColour="purple"
@@ -357,7 +357,8 @@ export default {
         select: true,
         canteen: true,
       },
-      openedPanel: null,
+      openedApproPanel: null,
+      openedCanteenPanel: null,
       cancelDialog: false,
       teledeclarationYear: lastYear(),
       purchasesSummary: null,
@@ -647,7 +648,8 @@ export default {
 
       if (!diagnosticFormsAreValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
-        this.openedPanel = Object.values(this.formIsValid).findIndex((isValid) => !isValid)
+        if (!this.formIsValid.quality) this.openedApproPanel = true
+        if (!this.formIsValid.canteen) this.openedCanteenPanel = true
         return
       }
 
