@@ -18,21 +18,19 @@
             </thead>
             <tbody>
               <tr>
-                <td class="text-left font-weight-bold">
+                <td class="text-left font-weight-bold" colspan="2">
                   Données relatives à votre établissement
                 </td>
-                <td class="text-left font-weight-bold"></td>
               </tr>
               <tr v-for="item in canteenItems" :key="item.label">
                 <td class="text-left">{{ item.label }}</td>
                 <td :class="item.isNumber ? 'text-right' : 'text-left'">{{ item.value }}</td>
               </tr>
               <tr>
-                <td class="text-left font-weight-bold" v-if="showApproItems">
+                <td class="text-left font-weight-bold" v-if="showApproItems" colspan="2">
                   Saisie de données d'approvisionnement :
                   {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
                 </td>
-                <td class="text-left font-weight-bold" v-if="showApproItems"></td>
                 <td class="text-left font-weight-bold" v-else colspan="2">
                   Données d'approvisonnement renseignées par la cuisine centrale
                 </td>
