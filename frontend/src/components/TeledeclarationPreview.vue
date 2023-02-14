@@ -27,6 +27,9 @@
                 <td class="text-left">{{ item.label }}</td>
                 <td :class="item.isNumber ? 'text-right' : 'text-left'">{{ item.value }}</td>
               </tr>
+              <tr v-if="centralKitchenDiagnosticModeDisplay">
+                <td class="text-left font-weight-bold" colspan="2">{{ centralKitchenDiagnosticModeDisplay }}</td>
+              </tr>
               <tr>
                 <td class="text-left font-weight-bold">
                   Type de déclaration : {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
@@ -597,6 +600,15 @@ export default {
     costPerMeal() {
       // assuming yearlyMealCount required by TD form
       return Number(this.diagnostic.valueTotalHt / this.canteen.yearlyMealCount).toFixed(2)
+    },
+    centralKitchenDiagnosticModeDisplay() {
+      if (this.diagnostic.centralKitchenDiagnosticMode) {
+        const mode = Constants.CentralKitchenDiagnosticModes.find(
+          (mode) => mode.key === this.diagnostic.centralKitchenDiagnosticMode
+        )
+        return mode?.label
+      }
+      return null
     },
   },
   methods: {

@@ -384,16 +384,7 @@ export default {
           help: "Vous connaissez les labels et les familles de produits de vos achats",
         },
       ],
-      centralKitchenDiagnosticModes: [
-        {
-          key: "ALL",
-          label: "Je rentre les données concernant toutes les mesures EGAlim pour mes cantines satellites",
-        },
-        {
-          key: "APPRO",
-          label: "Je rentre seulement les données d'approvisionnement pour mes cantines satellites",
-        },
-      ],
+      centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
       showTeledeclarationPreview: false,
       allowedYears: diagnosticYears().map((year) => {
         return {
