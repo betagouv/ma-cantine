@@ -194,11 +194,7 @@ class CanteenPurchasesSummaryView(APIView):
             | Q(characteristics__contains=[Purchase.Characteristic.STG])
         )
         egalim_others_filter = (
-            Q(characteristics__contains=[Purchase.Characteristic.LABEL_ROUGE])
-            | Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
-            | Q(characteristics__contains=[Purchase.Characteristic.IGP])
-            | Q(characteristics__contains=[Purchase.Characteristic.STG])
-            | Q(characteristics__contains=[Purchase.Characteristic.HVE])
+            Q(characteristics__contains=[Purchase.Characteristic.HVE])
             | Q(characteristics__contains=[Purchase.Characteristic.PECHE_DURABLE])
             | Q(characteristics__contains=[Purchase.Characteristic.RUP])
             | Q(characteristics__contains=[Purchase.Characteristic.FERMIER])
