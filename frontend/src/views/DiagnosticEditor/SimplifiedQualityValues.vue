@@ -201,7 +201,7 @@
       v-if="displayPurchaseHints"
       v-model="diagnostic.valueExternalityPerformanceHt"
       @autofill="checkTotal"
-      purchaseType="critères d'achat"
+      purchaseType="« critères d'achat »"
       :amount="purchasesSummary.externalitiesPerformance"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
