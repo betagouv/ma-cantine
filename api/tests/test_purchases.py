@@ -443,7 +443,7 @@ class TestPurchaseApi(APITestCase):
         body = response.json()
         self.assertEqual(body["valueMeatPoultryHt"], 155.0)
         self.assertEqual(body["valueMeatPoultryEgalimHt"], 120.0)
-        self.assertEqual(body["valueMeatPoultryFranceHT"], 65.0)
+        self.assertEqual(body["valueMeatPoultryFranceHt"], 65.0)
 
     @authenticate
     def test_purchase_fish_totals(self):

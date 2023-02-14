@@ -280,7 +280,7 @@ class CanteenPurchasesSummaryView(APIView):
                     purchase_family = purchase_family.exclude(
                         Q(characteristics__contains=[Purchase.Characteristic[label]])
                     )
-                key = family.lower() + "_" + label.lower()
+                key = "value_" + family.lower() + "_" + label.lower()
                 data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"]
             # outside of EGAlim, products can be counted twice across characteristics
             purchase_family = purchases.filter(family=family)
@@ -295,7 +295,7 @@ class CanteenPurchasesSummaryView(APIView):
             non_egalim_purchases = purchase_family.filter(
                 Q(characteristics__contained_by=other_labels_characteristics) | Q(characteristics__len=0)
             ).distinct()
-            key = family.lower() + "_non_egalim"
+            key = "value_" + family.lower() + "_non_egalim"
             data[key] = non_egalim_purchases.aggregate(total=Sum("price_ht"))["total"]
 
         meat_poultry_purchases = purchases.filter(
