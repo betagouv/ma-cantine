@@ -464,15 +464,6 @@ export default {
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
     },
-    siqoPurchaseHintAmount() {
-      if (!this.purchasesSummary) return null
-      const labels = ["rouge", "aocAopIgp"]
-      return labels.reduce((acc, key) => acc + (this.purchasesSummary[key] || 0), 0)
-    },
-    otherPurchaseHintAmount() {
-      if (!this.purchasesSummary) return null
-      return this.purchasesSummary["sustainable"] - this.siqoPurchaseHintAmount
-    },
   },
   methods: {
     checkTotal() {
