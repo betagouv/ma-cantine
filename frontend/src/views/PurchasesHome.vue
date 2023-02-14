@@ -219,6 +219,16 @@
         <template v-slot:[`item.characteristics`]="{ item }">
           {{ getProductCharacteristicsDisplayValue(item.characteristics) }}
         </template>
+        <template v-slot:[`item.canteen`]="{ item }">
+          <router-link
+            :to="{
+              name: 'CanteenModification',
+              params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(item.canteen) },
+            }"
+          >
+            {{ item.canteen.name }}
+          </router-link>
+        </template>
         <template v-slot:[`item.priceHt`]="{ item }">
           {{ item.priceHt.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) }}
         </template>
@@ -308,7 +318,7 @@ export default {
         { text: "Produit", value: "description", sortable: true },
         { text: "Famille", value: "family", sortable: false },
         { text: "Caratéristiques", value: "characteristics", sortable: false },
-        { text: "Cantine", value: "canteen__name", sortable: true },
+        { text: "Cantine", value: "canteen", sortable: false },
         { text: "Prix HT", value: "priceHt", sortable: true, align: "end" },
         { text: "", value: "hasAttachment", sortable: false },
       ],
@@ -336,7 +346,7 @@ export default {
         const canteen = canteens.find((y) => y.id === x.canteen)
         const date = x.date ? formatDate(x.date) : null
         const hasAttachment = !!x.invoiceFile
-        return Object.assign(x, { canteen__name: canteen?.name, date, hasAttachment })
+        return Object.assign(x, { canteen, date, hasAttachment })
       })
     },
     exportUrl() {
