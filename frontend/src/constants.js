@@ -479,4 +479,14 @@ export default Object.freeze({
     { value: "transformation", text: "Ministère de la Transformation et de la Fonction Publiques" },
     { value: "autre", text: "Autre" },
   ],
+  CentralKitchenDiagnosticModes: [
+    {
+      key: "ALL",
+      label: "Je rentre les données concernant toutes les mesures EGAlim pour mes cantines satellites",
+    },
+    {
+      key: "APPRO",
+      label: "Je rentre seulement les données d'approvisionnement pour mes cantines satellites",
+    },
+  ],
 })

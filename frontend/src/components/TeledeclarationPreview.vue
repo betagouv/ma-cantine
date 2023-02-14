@@ -26,6 +26,9 @@
                 <td class="text-left">{{ item.label }}</td>
                 <td :class="item.isNumber ? 'text-right' : 'text-left'">{{ item.value }}</td>
               </tr>
+              <tr v-if="centralKitchenDiagnosticModeDisplay">
+                <td class="text-left font-weight-bold" colspan="2">{{ centralKitchenDiagnosticModeDisplay }}</td>
+              </tr>
               <tr>
                 <td class="text-left font-weight-bold" v-if="showApproItems">
                   Saisie de données d'approvisionnement :
@@ -588,10 +591,12 @@ export default {
           )
         }
       }
-      if (this.costPerMeal > this.maxCostPerMealExpected || this.costPerMeal < this.minCostPerMealExpected) {
-        unusualData.push(
-          `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
-        )
+      if (this.showApproItems) {
+        if (this.costPerMeal > this.maxCostPerMealExpected || this.costPerMeal < this.minCostPerMealExpected) {
+          unusualData.push(
+            `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
+          )
+        }
       }
       return unusualData
     },
@@ -600,11 +605,20 @@ export default {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
     },
     costPerMeal() {
-      // assuming yearlyMealCount required by TD form
+      if (!this.showApproItems || !this.canteen.yearlyMealCount) return
       return Number(this.diagnostic.valueTotalHt / this.canteen.yearlyMealCount).toFixed(2)
     },
     approSummary() {
       return approSummary(this.diagnostic)
+    },
+    centralKitchenDiagnosticModeDisplay() {
+      if (this.diagnostic.centralKitchenDiagnosticMode) {
+        const mode = Constants.CentralKitchenDiagnosticModes.find(
+          (mode) => mode.key === this.diagnostic.centralKitchenDiagnosticMode
+        )
+        return mode?.label
+      }
+      return null
     },
   },
   methods: {
