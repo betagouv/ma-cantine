@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="isOpen" max-width="750">
+  <v-dialog v-model="isOpen" max-width="900">
     <v-card ref="content">
       <v-card-title class="font-weight-bold">
         {{ canteen ? "Télédéclaration : " + canteen.name : "Votre télédéclaration" }}
@@ -13,7 +13,7 @@
             <thead>
               <tr>
                 <th style="height: 0;" class="text-left"></th>
-                <th style="height: 0; min-width: 150px;" class="text-left"></th>
+                <th style="height: 0;" class="text-left"></th>
               </tr>
             </thead>
             <tbody>
@@ -27,9 +27,12 @@
                 <td :class="item.isNumber ? 'text-right' : 'text-left'">{{ item.value }}</td>
               </tr>
               <tr>
-                <td class="text-left font-weight-bold" v-if="showApproItems" colspan="2">
+                <td class="text-left font-weight-bold" v-if="showApproItems">
                   Saisie de données d'approvisionnement :
                   {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
+                </td>
+                <td class="text-left grey--text text--darken-2" colspan="2" v-if="showApproItems">
+                  {{ approSummary }}
                 </td>
                 <td class="text-left font-weight-bold" v-else colspan="2">
                   Données d'approvisonnement renseignées par la cuisine centrale
@@ -74,7 +77,7 @@
 <script>
 import Constants from "@/constants"
 import validators from "@/validators"
-import { capitalise, sectorsSelectList } from "@/utils"
+import { capitalise, sectorsSelectList, approSummary } from "@/utils"
 
 export default {
   props: {
@@ -599,6 +602,9 @@ export default {
     costPerMeal() {
       // assuming yearlyMealCount required by TD form
       return Number(this.diagnostic.valueTotalHt / this.canteen.yearlyMealCount).toFixed(2)
+    },
+    approSummary() {
+      return approSummary(this.diagnostic)
     },
   },
   methods: {
