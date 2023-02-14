@@ -112,7 +112,8 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
+              ).
             </p>
           </div>
           <VueApexCharts
@@ -437,7 +438,7 @@ export default {
             this.$store.dispatch("notify", {
               title: "Nous n'avons pas trouvé les infos pour l'EPCI choisi",
               message:
-                "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à contact@egalim.beta.gouv.fr",
+                "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr",
               status: "error",
               duration: 7000,
             })

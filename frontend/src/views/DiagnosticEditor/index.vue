@@ -114,7 +114,7 @@
         <v-expansion-panels
           class="mb-8"
           :disabled="!diagnosticIsUnique"
-          :value="openedPanel"
+          :value="openedApproPanel"
           v-if="showExpansionPanels"
         >
           <DiagnosticExpansionPanel
@@ -223,8 +223,8 @@
         <v-expansion-panels
           class="mb-8"
           :disabled="!diagnosticIsUnique"
-          :value="openedPanel"
           v-if="showExpansionPanels"
+          :value="openedCanteenPanel"
         >
           <DiagnosticExpansionPanel
             iconColour="purple"
@@ -298,6 +298,16 @@
             </span>
             <span v-else-if="hasSatelliteCountInconsistency">
               Le nombre de satellites déclaré ne correspond pas au nombre renseigné
+              <br />
+              <span class="grey--text text--darken-3">
+                Vous pouvez utiliser le
+                <strong>formulaire ci-dessous</strong>
+                pour rentrer les détails de vos cantines satellites.
+                <br />
+                Vous avez renseigné
+                <strong>{{ satelliteDbCount }} / {{ canteen.satelliteCanteensCount }}</strong>
+                satellites
+              </span>
             </span>
           </p>
         </v-sheet>
@@ -357,7 +367,8 @@ export default {
         select: true,
         canteen: true,
       },
-      openedPanel: null,
+      openedApproPanel: null,
+      openedCanteenPanel: null,
       cancelDialog: false,
       teledeclarationYear: lastYear(),
       purchasesSummary: null,
@@ -647,7 +658,8 @@ export default {
 
       if (!diagnosticFormsAreValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
-        this.openedPanel = Object.values(this.formIsValid).findIndex((isValid) => !isValid)
+        if (!this.formIsValid.quality) this.openedApproPanel = true
+        if (!this.formIsValid.canteen) this.openedCanteenPanel = true
         return
       }
 

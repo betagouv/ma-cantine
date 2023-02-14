@@ -1,5 +1,8 @@
 <template>
   <div>
+    <!-- Input used for cross-field validation : https://github.com/vuetifyjs/vuetify/issues/8698 -->
+    <v-input hidden :rules="[checkTotal]" hide-details></v-input>
+
     <label :for="'total-' + diagnostic.year" class="body-2">
       La valeur (en HT) de mes achats alimentaires total
     </label>
@@ -475,6 +478,14 @@ export default {
 
       this.fishErrorMessage =
         this.fishErrorMessage || (this.fishError ? `${DEFAULT_FISH_ERROR}, actuellement ${sumFish || 0} €` : "")
+
+      return [
+        this.totalError,
+        this.totalMeatPoultryError,
+        this.totalFishError,
+        this.meatPoultryError,
+        this.fishError,
+      ].every((x) => !x)
     },
     sumAllEgalim() {
       const d = this.diagnostic

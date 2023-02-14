@@ -4,7 +4,7 @@
     <p>
       Si votre fichier comptable agrégé ne ressemble pas du tout à ça, vous pouvez nous l'envoyer en remplissant les
       champs ci-dessous ou nous contacter directement à l'adresse
-      <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+      <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
       .
     </p>
     <v-form v-model="helpFormIsValid" ref="helpForm" @submit.prevent class="my-12">
