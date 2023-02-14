@@ -597,8 +597,7 @@ export default {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
     },
     costPerMeal() {
-      if (!this.showApproItems) return
-      // assuming yearlyMealCount required by TD form
+      if (!this.showApproItems || !this.canteen.yearlyMealCount) return
       return Number(this.diagnostic.valueTotalHt / this.canteen.yearlyMealCount).toFixed(2)
     },
   },
