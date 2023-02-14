@@ -810,17 +810,11 @@ export default {
       return toCurrency(value)
     },
     fillFields() {
-      // TODO: update after https://github.com/betagouv/ma-cantine/issues/2314 fixed
-      // so that the serializer keys and the diagnostic keys can be standardised
       // TODO: no fields should be empty - instead set to 0 ?
       if (!this.purchasesSummary) return
       Object.entries(this.purchasesSummary).forEach(([key, value]) => {
-        if (key !== "total") {
-          if (!this.diagnostic[`value${capitalise(key)}`]) {
-            this.diagnostic[`value${capitalise(key)}`] = value
-          }
-        } else if (!this.diagnostic.valueTotalHt) {
-          this.diagnostic.valueTotalHt = this.purchasesSummary.total
+        if (!this.diagnostic[key]) {
+          this.diagnostic[key] = value
         }
       })
     },

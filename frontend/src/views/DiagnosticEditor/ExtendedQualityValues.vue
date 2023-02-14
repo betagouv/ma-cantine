@@ -164,7 +164,7 @@
                   v-if="displayPurchaseHints"
                   v-model="diagnostic[diagnosticKey(fId, cId)]"
                   :purchaseType="family.shortText + ' pour ce caractéristique'"
-                  :amount="purchasesSummary[summaryKey(fId, cId)]"
+                  :amount="purchasesSummary[diagnosticKey(fId, cId)]"
                 />
               </v-col>
             </v-row>
@@ -298,9 +298,6 @@ export default {
     },
     diagnosticKey(family, characteristic) {
       return this.camelize(`value_${family}_${characteristic}`)
-    },
-    summaryKey(family, characteristic) {
-      return this.camelize(`${family}_${characteristic}`)
     },
     camelize(underscoredString) {
       const stringArray = underscoredString.split("_")
