@@ -56,6 +56,10 @@ export default {
           color: "grey lighten-4",
           text: "Non-publiée",
         },
+        pending: {
+          color: "amber lighten-4",
+          text: "En attente de validation",
+        },
         published: {
           color: "green lighten-4",
           text: "Publiée",
