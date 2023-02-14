@@ -253,7 +253,13 @@ class TestPurchaseApi(APITestCase):
             price_ht=22,
         )
         PurchaseFactory.create(
-            canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.IGP], price_ht=8
+            canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.IGP], price_ht=4
+        )
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.IGP, Purchase.Characteristic.HVE],
+            price_ht=4,
         )
         PurchaseFactory.create(
             canteen=canteen,
