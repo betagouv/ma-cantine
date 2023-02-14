@@ -146,7 +146,7 @@
               </v-radio-group>
               <div class="font-weight-bold mb-4">{{ diagnosticTypeLabel }}</div>
 
-              <div v-if="displayPurchaseHints" class="primary lighten-5 pa-4 text-body-2 mb-4">
+              <div v-if="displayPurchaseHints && !areFieldsFilled" class="primary lighten-5 pa-4 text-body-2 mb-4">
                 <p>
                   Vous avez rentrez un total de {{ toCurrency(purchasesSummary.valueTotalHt) }} en achats HT dans notre
                   outil.
@@ -155,8 +155,14 @@
                   Voulez-vous remplir tous les champs avec les taux qui corresponde nos données ? Vous pouvez toujours
                   changer les valeurs après.
                 </p>
-                <v-btn @click="fillFields" class="primary">Remplir les valeurs d'achat</v-btn>
+                <v-btn @click="fillFields" class="primary font-weight-bold">Remplir les valeurs d'achat</v-btn>
               </div>
+
+              <v-alert v-else-if="displayPurchaseHints" type="success" class="mb-4 text-body-2 font-weight-bold">
+                <p class="mb-0">
+                  Les champs ont été bien completés avec les données du suivi d'achat
+                </p>
+              </v-alert>
               <SimplifiedQualityValues
                 :originalDiagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
@@ -406,6 +412,7 @@ export default {
         }
       }),
       satelliteDbCount: null,
+      areFieldsFilled: false,
     }
   },
   components: {
@@ -820,6 +827,9 @@ export default {
           this.diagnostic[key] = value
         }
       })
+      // TODO: replace this hacky way of communicating to the user that
+      // the fields have been filled in
+      this.areFieldsFilled = true
     },
   },
   created() {
