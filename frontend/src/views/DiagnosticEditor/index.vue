@@ -145,6 +145,15 @@
                 </v-radio>
               </v-radio-group>
               <div class="font-weight-bold mb-4">{{ diagnosticTypeLabel }}</div>
+
+              <div v-if="displayPurchaseHints">
+                <p>
+                  Vous avez rentrez un total de {{ toCurrency(purchasesSummary.total) }} en achats HT dans notre outil.
+                </p>
+                <p>Voulez-vous remplir tous les champs avec les taux qui corresponde nos données ?</p>
+                <p>Vous pouvez toujours changer les valeurs après.</p>
+                <v-btn @click="fillFields" class="primary">Remplir les valeurs d'achat</v-btn>
+              </div>
               <SimplifiedQualityValues
                 :originalDiagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
@@ -344,6 +353,7 @@ import {
   getPercentage,
   readCookie,
   capitalise,
+  toCurrency,
 } from "@/utils"
 import DsfrSelect from "@/components/DsfrSelect"
 import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
@@ -851,6 +861,24 @@ export default {
     },
     updateSatellitesCount(data) {
       this.satelliteDbCount = data.total
+    },
+    toCurrency(value) {
+      return toCurrency(value)
+    },
+    fillFields() {
+      // TODO: update after https://github.com/betagouv/ma-cantine/issues/2314 fixed
+      // so that the serializer keys and the diagnostic keys can be standardised
+      // TODO: no fields should be empty - instead set to 0 ?
+      if (!this.purchasesSummary) return
+      Object.entries(this.purchasesSummary).forEach(([key, value]) => {
+        if (key !== "total") {
+          if (!this.diagnostic[`value${capitalise(key)}`]) {
+            this.diagnostic[`value${capitalise(key)}`] = value
+          }
+        } else if (!this.diagnostic.valueTotalHt) {
+          this.diagnostic.valueTotalHt = this.purchasesSummary.total
+        }
+      })
     },
   },
   created() {
