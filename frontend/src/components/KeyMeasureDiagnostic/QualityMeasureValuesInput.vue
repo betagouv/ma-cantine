@@ -39,13 +39,6 @@
       :disabled="readonly"
       @blur="checkTotal"
     />
-    <PurchaseHint
-      v-if="displayPurchaseHints"
-      v-model="diagnostic.valueSustainableHt"
-      @autofill="checkTotal"
-      purchaseType="qualité et durable"
-      :amount="purchasesSummary.siqo"
-    />
   </fieldset>
 </template>
 
