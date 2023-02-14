@@ -1,5 +1,5 @@
 amqp==5.1.1
-arabic-reshaper==2.1.4
+arabic-reshaper==3.0.0
 asgiref==3.5.2
 asn1crypto==1.5.1
 astroid==2.12.12
