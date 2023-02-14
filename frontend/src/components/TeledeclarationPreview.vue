@@ -586,10 +586,12 @@ export default {
           )
         }
       }
-      if (this.costPerMeal > this.maxCostPerMealExpected || this.costPerMeal < this.minCostPerMealExpected) {
-        unusualData.push(
-          `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
-        )
+      if (this.showApproItems) {
+        if (this.costPerMeal > this.maxCostPerMealExpected || this.costPerMeal < this.minCostPerMealExpected) {
+          unusualData.push(
+            `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
+          )
+        }
       }
       return unusualData
     },
@@ -598,7 +600,7 @@ export default {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
     },
     costPerMeal() {
-      // assuming yearlyMealCount required by TD form
+      if (!this.showApproItems || !this.canteen.yearlyMealCount) return
       return Number(this.diagnostic.valueTotalHt / this.canteen.yearlyMealCount).toFixed(2)
     },
     centralKitchenDiagnosticModeDisplay() {
