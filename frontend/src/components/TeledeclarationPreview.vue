@@ -36,7 +36,7 @@
               <tr v-for="item in approItems" :key="item.param" :class="diagnostic[item.param] ? '' : 'warn'">
                 <td class="text-left">{{ item.label }}</td>
                 <td :class="diagnostic[item.param] ? 'text-right' : 'text-left'">
-                  {{ diagnostic[item.param] ? `${diagnostic[item.param]} HT` : "Je ne sais pas" | toCurrency }}
+                  {{ diagnostic[item.param] ? `${toCurrency(diagnostic[item.param])} HT` : "Je ne sais pas" }}
                 </td>
               </tr>
               <tr v-for="item in additionalItems" :key="item.label" :class="item.class || ''">
@@ -707,6 +707,16 @@ export default {
         })
         .catch(() => {})
     },
+    toCurrency(value) {
+      if (typeof value !== "number") {
+        return value
+      }
+      const formatter = new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR",
+      })
+      return formatter.format(value)
+    },
   },
   mounted() {
     window.addEventListener("resize", this.calculateTableHeight)
@@ -720,18 +730,6 @@ export default {
       if (newValue) {
         this.$nextTick().then(this.calculateTableHeight)
       }
-    },
-  },
-  filters: {
-    toCurrency(value) {
-      if (typeof value !== "number") {
-        return value
-      }
-      const formatter = new Intl.NumberFormat("fr-FR", {
-        style: "currency",
-        currency: "EUR",
-      })
-      return formatter.format(value)
     },
   },
 }
