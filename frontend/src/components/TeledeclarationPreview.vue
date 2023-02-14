@@ -28,10 +28,13 @@
                 <td :class="item.isNumber ? 'text-right' : 'text-left'">{{ item.value }}</td>
               </tr>
               <tr>
-                <td class="text-left font-weight-bold">
+                <td class="text-left font-weight-bold" v-if="showApproItems">
                   Type de déclaration : {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
                 </td>
-                <td class="text-left font-weight-bold"></td>
+                <td class="text-left font-weight-bold" v-if="showApproItems"></td>
+                <td class="text-left font-weight-bold" v-else colspan="2">
+                  Données d'approvisonnement renseignées par la cuisine centrale
+                </td>
               </tr>
               <tr v-for="item in approItems" :key="item.param" :class="diagnostic[item.param] ? '' : 'warn'">
                 <td class="text-left">{{ item.label }}</td>
