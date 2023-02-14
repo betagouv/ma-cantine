@@ -148,7 +148,7 @@
 
               <div v-if="displayPurchaseHints && !areFieldsFilled" class="primary lighten-5 pa-4 text-body-2 mb-4">
                 <p>
-                  Vous avez rentrez un total de {{ toCurrency(purchasesSummary.valueTotalHt) }} en achats HT dans notre
+                  Vous avez rentré un total de {{ toCurrency(purchasesSummary.valueTotalHt) }} en achats HT dans notre
                   outil.
                 </p>
                 <p>
