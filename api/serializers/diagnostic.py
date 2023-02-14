@@ -220,15 +220,23 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
         return 1
 
     def get_value_bio_ht(self, obj):
+        if not obj.value_bio_ht or not obj.value_total_ht:
+            return None
         return obj.value_bio_ht / obj.value_total_ht
 
     def get_value_sustainable_ht(self, obj):
+        if not obj.value_sustainable_ht or not obj.value_total_ht:
+            return None
         return obj.value_sustainable_ht / obj.value_total_ht
 
     def get_value_externality_performance_ht(self, obj):
+        if not obj.value_externality_performance_ht or not obj.value_total_ht:
+            return None
         return obj.value_externality_performance_ht / obj.value_total_ht
 
     def get_value_egalim_others_ht(self, obj):
+        if not obj.value_egalim_others_ht or not obj.value_total_ht:
+            return None
         return obj.value_egalim_others_ht / obj.value_total_ht
 
 
