@@ -59,7 +59,7 @@
       v-model="diagnostic.valueSustainableHt"
       @autofill="checkTotal"
       purchaseType="qualité et durable"
-      :amount="purchasesSummary.sustainable"
+      :amount="purchasesSummary.siqo"
     />
   </fieldset>
 </template>

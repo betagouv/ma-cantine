@@ -9,7 +9,7 @@ from drf_excel.mixins import XLSXFileMixin
 from django.conf import settings
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError, transaction
-from django.db.models import Sum, Q, Func, F
+from django.db.models import Sum, Q
 from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager, IsAuthenticated
@@ -184,34 +184,47 @@ class CanteenPurchasesSummaryView(APIView):
             canteen=canteen, date__year=year
         )
 
+        bio_filter = Q(characteristics__contains=[Purchase.Characteristic.BIO]) | Q(
+            characteristics__contains=[Purchase.Characteristic.CONVERSION_BIO]
+        )
+        siqo_filter = (
+            Q(characteristics__contains=[Purchase.Characteristic.LABEL_ROUGE])
+            | Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
+            | Q(characteristics__contains=[Purchase.Characteristic.IGP])
+            | Q(characteristics__contains=[Purchase.Characteristic.STG])
+        )
+        egalim_others_filter = (
+            Q(characteristics__contains=[Purchase.Characteristic.HVE])
+            | Q(characteristics__contains=[Purchase.Characteristic.PECHE_DURABLE])
+            | Q(characteristics__contains=[Purchase.Characteristic.RUP])
+            | Q(characteristics__contains=[Purchase.Characteristic.FERMIER])
+            | Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE])
+        )
+        externalities_performance_filter = Q(characteristics__contains=[Purchase.Characteristic.EXTERNALITES]) | Q(
+            characteristics__contains=[Purchase.Characteristic.PERFORMANCE]
+        )
+
         data = {}
         data["total"] = purchases.aggregate(total=Sum("price_ht"))["total"]
-        bio_purchases = purchases.filter(
-            Q(characteristics__contains=[Purchase.Characteristic.BIO])
-            | Q(characteristics__contains=[Purchase.Characteristic.CONVERSION_BIO])
-        ).distinct()
+        bio_purchases = purchases.filter(bio_filter).distinct()
         data["bio"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"]
+
         # the remaining stats should ignore any bio products
-        purchases = purchases.exclude(
-            Q(characteristics__contains=[Purchase.Characteristic.BIO])
-            | Q(characteristics__contains=[Purchase.Characteristic.CONVERSION_BIO])
-        )
-        sustainable_purchases = purchases.annotate(
-            characteristics_len=Func(F("characteristics"), function="CARDINALITY")
-        )
-        sustainable_purchases = sustainable_purchases.filter(characteristics_len__gt=0)
-        # TODO: fix this aggregation to not count non-EGAlim characteristics
-        data["sustainable"] = sustainable_purchases.aggregate(total=Sum("price_ht"))["total"]
-        # NB: the following totals are not mutually exclusive unlike the detailed totals further on
-        hve_purchases = purchases.filter(characteristics__contains=[Purchase.Characteristic.HVE])
-        data["hve"] = hve_purchases.aggregate(total=Sum("price_ht"))["total"]
-        aoc_aop_igp_purchases = purchases.filter(
-            Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
-            | Q(characteristics__contains=[Purchase.Characteristic.IGP])
-        ).distinct()
-        data["aoc_aop_igp"] = aoc_aop_igp_purchases.aggregate(total=Sum("price_ht"))["total"]
-        rouge_purchases = purchases.filter(characteristics__contains=[Purchase.Characteristic.LABEL_ROUGE])
-        data["rouge"] = rouge_purchases.aggregate(total=Sum("price_ht"))["total"]
+        purchases = purchases.exclude(bio_filter)
+        siqo_purchases = purchases.filter(siqo_filter).distinct()
+        data["siqo"] = siqo_purchases.aggregate(total=Sum("price_ht"))["total"]
+
+        # the remaining stats should ignore any SIQO products
+        purchases = purchases.exclude(siqo_filter)
+        egalim_others_purchases = purchases.filter(egalim_others_filter).distinct()
+        data["egalim_others"] = egalim_others_purchases.aggregate(total=Sum("price_ht"))["total"]
+
+        # the remaining stats should ignore any "other Egalim" products
+        purchases = purchases.exclude(egalim_others_filter)
+        externalities_performance_purchases = purchases.filter(externalities_performance_filter).distinct()
+        data["externalities_performance"] = externalities_performance_purchases.aggregate(total=Sum("price_ht"))[
+            "total"
+        ]
 
         # summary for detailed teledeclaration totals, by family and label
         families = [
