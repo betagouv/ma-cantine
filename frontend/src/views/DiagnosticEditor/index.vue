@@ -146,12 +146,15 @@
               </v-radio-group>
               <div class="font-weight-bold mb-4">{{ diagnosticTypeLabel }}</div>
 
-              <div v-if="displayPurchaseHints">
+              <div v-if="displayPurchaseHints" class="primary lighten-5 pa-4 text-body-2 mb-4">
                 <p>
-                  Vous avez rentrez un total de {{ toCurrency(purchasesSummary.total) }} en achats HT dans notre outil.
+                  Vous avez rentrez un total de {{ toCurrency(purchasesSummary.valueTotalHt) }} en achats HT dans notre
+                  outil.
                 </p>
-                <p>Voulez-vous remplir tous les champs avec les taux qui corresponde nos données ?</p>
-                <p>Vous pouvez toujours changer les valeurs après.</p>
+                <p>
+                  Voulez-vous remplir tous les champs avec les taux qui corresponde nos données ? Vous pouvez toujours
+                  changer les valeurs après.
+                </p>
                 <v-btn @click="fillFields" class="primary">Remplir les valeurs d'achat</v-btn>
               </div>
               <SimplifiedQualityValues
