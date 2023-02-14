@@ -29,7 +29,8 @@
               </tr>
               <tr>
                 <td class="text-left font-weight-bold" v-if="showApproItems">
-                  Type de déclaration : {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
+                  Saisie de données d'approvisionnement :
+                  {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
                 </td>
                 <td class="text-left font-weight-bold" v-if="showApproItems"></td>
                 <td class="text-left font-weight-bold" v-else colspan="2">
