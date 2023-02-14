@@ -72,7 +72,7 @@
 <script>
 import Constants from "@/constants"
 import validators from "@/validators"
-import { capitalise, sectorsSelectList } from "@/utils"
+import { capitalise, sectorsSelectList, toCurrency } from "@/utils"
 
 export default {
   props: {
@@ -708,14 +708,7 @@ export default {
         .catch(() => {})
     },
     toCurrency(value) {
-      if (typeof value !== "number") {
-        return value
-      }
-      const formatter = new Intl.NumberFormat("fr-FR", {
-        style: "currency",
-        currency: "EUR",
-      })
-      return formatter.format(value)
+      return toCurrency(value)
     },
   },
   mounted() {
