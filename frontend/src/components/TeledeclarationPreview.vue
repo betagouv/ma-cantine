@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="isOpen" max-width="750">
+  <v-dialog v-model="isOpen" max-width="900">
     <v-card ref="content">
       <v-card-title class="font-weight-bold">
         {{ canteen ? "Télédéclaration : " + canteen.name : "Votre télédéclaration" }}
@@ -13,25 +13,33 @@
             <thead>
               <tr>
                 <th style="height: 0;" class="text-left"></th>
-                <th style="height: 0; min-width: 150px;" class="text-left"></th>
+                <th style="height: 0;" class="text-left"></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td class="text-left font-weight-bold">
+                <td class="text-left font-weight-bold" colspan="2">
                   Données relatives à votre établissement
                 </td>
-                <td class="text-left font-weight-bold"></td>
               </tr>
               <tr v-for="item in canteenItems" :key="item.label">
                 <td class="text-left">{{ item.label }}</td>
                 <td :class="item.isNumber ? 'text-right' : 'text-left'">{{ item.value }}</td>
               </tr>
+              <tr v-if="centralKitchenDiagnosticModeDisplay">
+                <td class="text-left font-weight-bold" colspan="2">{{ centralKitchenDiagnosticModeDisplay }}</td>
+              </tr>
               <tr>
-                <td class="text-left font-weight-bold">
-                  Type de déclaration : {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
+                <td class="text-left font-weight-bold" v-if="showApproItems">
+                  Saisie de données d'approvisionnement :
+                  {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
                 </td>
-                <td class="text-left font-weight-bold"></td>
+                <td class="text-left grey--text text--darken-2" colspan="2" v-if="showApproItems">
+                  {{ approSummary }}
+                </td>
+                <td class="text-left font-weight-bold" v-else colspan="2">
+                  Données d'approvisonnement renseignées par la cuisine centrale
+                </td>
               </tr>
               <tr v-for="item in approItems" :key="item.param" :class="diagnostic[item.param] ? '' : 'warn'">
                 <td class="text-left">{{ item.label }}</td>
@@ -72,7 +80,7 @@
 <script>
 import Constants from "@/constants"
 import validators from "@/validators"
-import { capitalise, sectorsSelectList, toCurrency } from "@/utils"
+import { capitalise, sectorsSelectList, approSummary, toCurrency } from "@/utils"
 
 export default {
   props: {
@@ -583,10 +591,12 @@ export default {
           )
         }
       }
-      if (this.costPerMeal > this.maxCostPerMealExpected || this.costPerMeal < this.minCostPerMealExpected) {
-        unusualData.push(
-          `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
-        )
+      if (this.showApproItems) {
+        if (this.costPerMeal > this.maxCostPerMealExpected || this.costPerMeal < this.minCostPerMealExpected) {
+          unusualData.push(
+            `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
+          )
+        }
       }
       return unusualData
     },
@@ -595,8 +605,20 @@ export default {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
     },
     costPerMeal() {
-      // assuming yearlyMealCount required by TD form
+      if (!this.showApproItems || !this.canteen.yearlyMealCount) return
       return Number(this.diagnostic.valueTotalHt / this.canteen.yearlyMealCount).toFixed(2)
+    },
+    approSummary() {
+      return approSummary(this.diagnostic)
+    },
+    centralKitchenDiagnosticModeDisplay() {
+      if (this.diagnostic.centralKitchenDiagnosticMode) {
+        const mode = Constants.CentralKitchenDiagnosticModes.find(
+          (mode) => mode.key === this.diagnostic.centralKitchenDiagnosticMode
+        )
+        return mode?.label
+      }
+      return null
     },
   },
   methods: {

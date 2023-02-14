@@ -4,7 +4,6 @@ from drf_base64.fields import Base64FileField
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
-
     canteen = serializers.PrimaryKeyRelatedField(read_only=True)
     invoice_file = Base64FileField(required=False, allow_null=True)
 
@@ -42,10 +41,9 @@ class PurchaseField(serializers.DecimalField):
 class PurchaseSummarySerializer(serializers.Serializer):
     total = PurchaseField()
     bio = PurchaseField()
-    sustainable = PurchaseField()
-    hve = PurchaseField()
-    aoc_aop_igp = PurchaseField()
-    rouge = PurchaseField()
+    egalim_others = PurchaseField()
+    siqo = PurchaseField()
+    externalities_performance = PurchaseField()
     # meat and fish aggregates
     meat_poultry_total = PurchaseField()
     meat_poultry_egalim = PurchaseField()

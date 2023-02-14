@@ -121,7 +121,7 @@
             iconColour="red"
             icon="mdi-food-apple"
             heading="Plus de produits de qualité et durables dans nos assiettes"
-            :summary="approSummary() || 'Incomplet'"
+            :summary="approSummary"
             :formIsValid="formIsValid.quality"
             :disabled="!showApproPanel"
           >
@@ -347,13 +347,13 @@ import Constants from "@/constants"
 import {
   getObjectDiff,
   timeAgo,
-  strictIsNaN,
   lastYear,
   diagnosticYears,
-  getPercentage,
   readCookie,
   capitalise,
   toCurrency,
+  approTotals,
+  approSummary,
 } from "@/utils"
 import DsfrSelect from "@/components/DsfrSelect"
 import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
@@ -394,16 +394,7 @@ export default {
           help: "Vous connaissez les labels et les familles de produits de vos achats",
         },
       ],
-      centralKitchenDiagnosticModes: [
-        {
-          key: "ALL",
-          label: "Je rentre les données concernant toutes les mesures EGAlim pour mes cantines satellites",
-        },
-        {
-          key: "APPRO",
-          label: "Je rentre seulement les données d'approvisionnement pour mes cantines satellites",
-        },
-      ],
+      centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
       showTeledeclarationPreview: false,
       allowedYears: diagnosticYears().map((year) => {
         return {
@@ -539,6 +530,9 @@ export default {
     hasSatelliteCountInconsistency() {
       return this.isCentralCanteen && this.canteen.satelliteCanteensCount !== this.satelliteDbCount
     },
+    approSummary() {
+      return approSummary(this.diagnostic, this.extendedDiagnostic)
+    },
   },
   beforeMount() {
     this.refreshDiagnostic()
@@ -557,43 +551,7 @@ export default {
       if (this.originalCanteen) this.$set(this, "canteen", JSON.parse(JSON.stringify(this.originalCanteen)))
     },
     approTotals() {
-      let bioTotal = this.diagnostic.valueBioHt
-      let siqoTotal = this.diagnostic.valueSustainableHt
-      let perfExtTotal = this.diagnostic.valueExternalityPerformanceHt
-      let egalimOthersTotal = this.diagnostic.valueEgalimOthersHt
-      if (this.extendedDiagnostic) {
-        bioTotal = 0
-        siqoTotal = 0
-        perfExtTotal = 0
-        egalimOthersTotal = 0
-        const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
-        egalimFields.forEach((field) => {
-          const value = parseFloat(this.diagnostic[field])
-          if (value) {
-            if (field.endsWith("Bio")) {
-              bioTotal += value
-            } else if (!field.startsWith("valueLabel") && !field.endsWith("Ht")) {
-              if (field.endsWith("LabelRouge") || field.endsWith("AocaopIgpStg")) {
-                siqoTotal += value
-              } else if (field.endsWith("Performance") || field.endsWith("Externalites")) {
-                perfExtTotal += value
-              } else {
-                egalimOthersTotal += value
-              }
-            }
-          }
-        })
-        bioTotal = +bioTotal.toFixed(2)
-        siqoTotal = +siqoTotal.toFixed(2)
-        perfExtTotal = +perfExtTotal.toFixed(2)
-        egalimOthersTotal = +egalimOthersTotal.toFixed(2)
-      }
-      return {
-        bioTotal,
-        siqoTotal,
-        perfExtTotal,
-        egalimOthersTotal,
-      }
+      return approTotals(this.diagnostic)
     },
     meatPoultryTotals() {
       let meatPoultryEgalim = this.diagnostic.valueSustainableHt
@@ -638,20 +596,6 @@ export default {
         fishEgalim = +fishEgalim.toFixed(2)
       }
       return { fishEgalim }
-    },
-    approSummary() {
-      if (this.diagnostic.valueTotalHt > 0) {
-        const { bioTotal, siqoTotal, perfExtTotal, egalimOthersTotal } = this.approTotals()
-        const qualityTotal = (siqoTotal || 0) + (perfExtTotal || 0) + (egalimOthersTotal || 0)
-        let summary = []
-        if (hasValue(bioTotal)) {
-          summary.push(`${getPercentage(bioTotal, this.diagnostic.valueTotalHt)} % bio`)
-        }
-        if (hasValue(qualityTotal)) {
-          summary.push(`${getPercentage(qualityTotal, this.diagnostic.valueTotalHt)} % de qualité et durable`)
-        }
-        return summary.join(", ")
-      }
     },
     plasticSummary() {
       let summary = []
@@ -913,13 +857,5 @@ export default {
       this.fetchPurchasesSummary()
     },
   },
-}
-
-function hasValue(val) {
-  if (typeof val === "string") {
-    return !!val
-  } else {
-    return !strictIsNaN(val)
-  }
 }
 </script>
