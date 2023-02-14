@@ -336,7 +336,7 @@ export default {
           sortable: true,
         },
         { text: "Produit", value: "description", sortable: true },
-        { text: "Famille", value: "family", sortable: false },
+        { text: "Famille", value: "family", sortable: true },
         { text: "Caratéristiques", value: "characteristics", sortable: false },
         { text: "Cantine", value: "canteen__name", sortable: true },
         { text: "Prix HT", value: "priceHt", sortable: true, align: "end" },
