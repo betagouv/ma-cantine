@@ -83,6 +83,14 @@
       @blur="checkTotal"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueSustainableHt"
+      @autofill="checkTotal"
+      purchaseType="SIQO"
+      :amount="purchasesSummary.siqo"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+    />
 
     <!-- Other EGAlim -->
     <div class="d-block d-sm-flex align-center mt-8">
@@ -111,6 +119,14 @@
       :error="totalError"
       @blur="checkTotal"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+    />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueEgalimOthersHt"
+      @autofill="checkTotal"
+      purchaseType="« autre EGAlim »"
+      :amount="purchasesSummary.egalimOthers"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
     <!-- Performance Externalités -->
@@ -180,6 +196,14 @@
       :error="totalError"
       @blur="checkTotal"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+    />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueExternalityPerformanceHt"
+      @autofill="checkTotal"
+      purchaseType="critères d'achat"
+      :amount="purchasesSummary.externalitiesPerformance"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
     <v-divider class="my-4"></v-divider>
@@ -439,6 +463,15 @@ export default {
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
+    },
+    siqoPurchaseHintAmount() {
+      if (!this.purchasesSummary) return null
+      const labels = ["rouge", "aocAopIgp"]
+      return labels.reduce((acc, key) => acc + (this.purchasesSummary[key] || 0), 0)
+    },
+    otherPurchaseHintAmount() {
+      if (!this.purchasesSummary) return null
+      return this.purchasesSummary["sustainable"] - this.siqoPurchaseHintAmount
     },
   },
   methods: {
