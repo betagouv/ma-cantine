@@ -441,3 +441,71 @@ export const hideCommunityEventsBanner = (events, store) => {
 export const capitalise = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
+
+export const approTotals = (diagnostic) => {
+  let bioTotal = diagnostic.valueBioHt
+  let siqoTotal = diagnostic.valueSustainableHt
+  let perfExtTotal = diagnostic.valueExternalityPerformanceHt
+  let egalimOthersTotal = diagnostic.valueEgalimOthersHt
+  const usesExtendedDiagnostic = diagnostic.diagnosticType === "COMPLETE"
+  if (usesExtendedDiagnostic) {
+    bioTotal = 0
+    siqoTotal = 0
+    perfExtTotal = 0
+    egalimOthersTotal = 0
+    const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+    egalimFields.forEach((field) => {
+      const value = parseFloat(diagnostic[field])
+      if (value) {
+        if (field.endsWith("Bio")) {
+          bioTotal += value
+        } else if (!field.startsWith("valueLabel") && !field.endsWith("Ht")) {
+          if (field.endsWith("LabelRouge") || field.endsWith("AocaopIgpStg")) {
+            siqoTotal += value
+          } else if (field.endsWith("Performance") || field.endsWith("Externalites")) {
+            perfExtTotal += value
+          } else {
+            egalimOthersTotal += value
+          }
+        }
+      }
+    })
+    bioTotal = +bioTotal.toFixed(2)
+    siqoTotal = +siqoTotal.toFixed(2)
+    perfExtTotal = +perfExtTotal.toFixed(2)
+    egalimOthersTotal = +egalimOthersTotal.toFixed(2)
+  }
+  return {
+    bioTotal,
+    siqoTotal,
+    perfExtTotal,
+    egalimOthersTotal,
+  }
+}
+
+export const approSummary = (diagnostic) => {
+  if (diagnostic.valueTotalHt > 0) {
+    const { bioTotal, siqoTotal, perfExtTotal, egalimOthersTotal } = approTotals(diagnostic)
+    let qualityTotal
+    if (siqoTotal || perfExtTotal || egalimOthersTotal) {
+      qualityTotal = (siqoTotal || 0) + (perfExtTotal || 0) + (egalimOthersTotal || 0)
+    }
+    let summary = []
+    if (hasValue(bioTotal)) {
+      summary.push(`${getPercentage(bioTotal, diagnostic.valueTotalHt)} % bio`)
+    }
+    if (hasValue(qualityTotal)) {
+      summary.push(`${getPercentage(qualityTotal, diagnostic.valueTotalHt)} % de qualité et durable`)
+    }
+    return summary.join(", ")
+  }
+  return "Incomplet"
+}
+
+function hasValue(val) {
+  if (typeof val === "string") {
+    return !!val
+  } else {
+    return !strictIsNaN(val)
+  }
+}
