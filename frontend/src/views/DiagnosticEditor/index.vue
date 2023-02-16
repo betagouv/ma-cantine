@@ -151,21 +151,19 @@
                 class="primary lighten-5 pa-4 text-body-2 mb-4"
               >
                 <p>
-                  Vous avez rentré un total de {{ toCurrency(purchasesSummary.valueTotalHt) }} en achats HT dans notre
-                  outil.
+                  Un total d'achats de {{ toCurrency(purchasesSummary.valueTotalHt) }} a été rentré pour cette cantine.
                 </p>
                 <p>
-                  Voulez-vous remplir tous les champs avec les taux qui corresponde nos données ? Vous pouvez toujours
-                  changer les valeurs après.
+                  Voulez-vous pré-remplir les champs ci-dessous avec les données de ces achats ?
                 </p>
                 <v-btn @click="fillFieldsFromPurchases" class="primary font-weight-bold">
-                  Remplir les valeurs d'achat
+                  Pré-remplir avec les valeurs d'achat
                 </v-btn>
               </div>
 
               <v-alert v-else-if="displayPurchaseHints" type="success" class="mb-4 text-body-2 font-weight-bold">
                 <p class="mb-0">
-                  Les champs ont bien été complétés avec les données de vos achats
+                  Les champs ont bien été pré-remplis avec les données de vos achats
                 </p>
               </v-alert>
               <SimplifiedQualityValues
