@@ -165,7 +165,7 @@
 
               <v-alert v-else-if="displayPurchaseHints" type="success" class="mb-4 text-body-2 font-weight-bold">
                 <p class="mb-0">
-                  Les champs ont été bien completés avec les données du suivi d'achat
+                  Les champs ont bien été complétés avec les données de vos achats
                 </p>
               </v-alert>
               <SimplifiedQualityValues
