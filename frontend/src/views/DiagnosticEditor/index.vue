@@ -826,9 +826,7 @@ export default {
       // TODO: no fields should be empty - instead set to 0 ?
       if (!this.purchasesSummary) return
       Object.entries(this.purchasesSummary).forEach(([key, value]) => {
-        if (!this.diagnostic[key]) {
-          this.diagnostic[key] = value
-        }
+        this.$set(this.diagnostic, key, this.diagnostic[key] || value)
       })
       this.fieldsFilledFromPurchases = true
     },
