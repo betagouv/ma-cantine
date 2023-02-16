@@ -160,10 +160,9 @@ class TeledeclarationPdfView(APIView):
                     pass
 
             canteen_data = declared_data["canteen"]
+            teledeclaration_data = declared_data["teledeclaration"]
             processed_canteen_data = {
-                "sectors": (
-                    ", ".join([x["name"] for x in canteen_data["sectors"]]) if canteen_data.get("sectors") else None
-                ),
+                "sectors": ", ".join([x["name"] for x in canteen_data.get("sectors", [])]),
                 "production_type": (
                     Canteen.ProductionType(canteen_data["production_type"]).label
                     if canteen_data["production_type"]
@@ -184,8 +183,21 @@ class TeledeclarationPdfView(APIView):
                 ),
             }
 
+            processed_waste_actions = [
+                Diagnostic.WasteActions(x).label for x in teledeclaration_data.get("waste_actions", [])
+            ]
+            combined_waste_actions = processed_waste_actions + (
+                [teledeclaration_data.get("other_waste_action")]
+                if teledeclaration_data.get("other_waste_action")
+                else []
+            )
+
+            processed_diagnostic_data = {
+                "waste_actions": combined_waste_actions,
+            }
+
             context = {
-                **declared_data["teledeclaration"],
+                **{**declared_data["teledeclaration"], **processed_diagnostic_data},
                 **{
                     "diagnostic_type": "complète" if is_complete else "simplifiée",
                     "year": teledeclaration.year,

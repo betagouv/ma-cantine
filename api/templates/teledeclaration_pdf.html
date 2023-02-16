@@ -609,76 +609,103 @@
         {% endif %}
         {% if teledeclaration_mode != "CENTRAL_APPRO" %}
             <div class="other-measures">
+
+                <h3>Lutte contre le gaspillage et dons alimentaires</h3>
+
                 <div>
                 {% if has_waste_diagnostic %}
                 <span>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
                 </span>
+                Diagnostic sur le gaspillage réalisé
                 {% else %}
                 <span>
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
                 </span>
                 {% endif %}
-                Diagnostic sur le gaspillage réalisé
+                Diagnostic sur le gaspillage manquant
                 </div>
                 <div>
                 {% if has_waste_plan %}
                 <span>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
                 </span>
+                Plan d'action contre le gaspillage en place
                 {% else %}
                 <span>
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
                 </span>
+                Pas de plan d'action contre le gaspillage en place
                 {% endif %}
+                </div>
 
-                // TODO waste_actions
-
-                // TODO other waste_actions
-
-                Plan d'action contre le gaspillage en place
+                <div>
+                {% if waste_actions %}
+                <span>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                </span>
+                Actions de lutte contre le gaspillage :
+                <ul>
+                    {% for action in waste_actions %}
+                    <li>{{ action }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
                 </div>
                 <div>
                 {% if has_donation_agreement %}
                 <span>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Propose des dons alimentaires
                 </span>
-                {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <ul>
+                    {% if donation_frequency %}
+                    <li>Fréquence de dons : {{donation_frequency}} dons/an</li>
+                    {% endif %}
+                    {% if donation_quantity %}
+                    <li>Quantité des denrées données : {{donation_quantity}} kg/an</li>
+                    {% endif %}
+                    {% if donation_food_type %}
+                    <li>Type de denrées données : {{donation_food_type}}</li>
+                    {% endif %}
+                </ul>
                 {% endif %}
-                Propose des dons alimentaires
                 </div>
                 <div>
                 {% if has_waste_measures %}
                 <span>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Réalise des mesures contre le gaspillage alimentaire
                 </span>
+                <ul>
+                    {% if bread_leftovers %}
+                    <li> Reste de pain : {{ bread_leftovers }} kg/an </li>
+                    {% endif %}
+                    {% if served_leftovers %}
+                    <li> Reste plateau : {{ served_leftovers }} kg/an </li>
+                    {% endif %}
+                    {% if unserved_leftovers %}
+                    <li> Reste en production (non servi) : {{ unserved_leftovers }} kg/an </li>
+                    {% endif %}
+                    {% if side_leftovers %}
+                    <li> Reste de composantes (entrée, plat dessert...) : {{ side_leftovers }} kg/an </li>
+                    {% endif %}
+                </ul>
                 {% else %}
                 <span>
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Pas de mesures contre le gaspillage alimentaire
                 </span>
+                </div>
                 {% endif %}
 
-                // TODO bread_leftovers
-
-                // TODO served_leftovers
-
-                // TODO unserved_leftovers
-
-                // TODO side_leftovers
-
-                // TODO donation_frequency
-
-                // TODO donation_quantity
-
-                // TODO donation_food_type
-
-                // TODO other waste_comments
-
-                Réalise des mesures contre le gaspillage alimentaire
+                <div>
+                {% if other_waste_comments %}
+                Commentaires concernant la lutte contre le gaspillage et dons alimentaires: <br />
+                « {{ other_waste_comments }} »
+                {% endif %}
                 </div>
+
                 <div>
                 {% if has_diversification_plan %}
                 <span>
