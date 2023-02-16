@@ -130,7 +130,6 @@ class TeledeclarationPdfView(APIView):
     required_scopes = ["canteen"]
 
     def get(self, request, *args, **kwargs):
-
         try:
             teledeclaration_id = kwargs.get("pk")
 
@@ -160,19 +159,43 @@ class TeledeclarationPdfView(APIView):
                 except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
                     pass
 
+            canteen_data = declared_data["canteen"]
+            processed_canteen_data = {
+                "sectors": (
+                    ", ".join([x["name"] for x in canteen_data["sectors"]]) if canteen_data.get("sectors") else None
+                ),
+                "production_type": (
+                    Canteen.ProductionType(canteen_data["production_type"]).label
+                    if canteen_data["production_type"]
+                    else None
+                ),
+                "management_type": (
+                    Canteen.ManagementType(canteen_data["management_type"]).label
+                    if canteen_data["management_type"]
+                    else None
+                ),
+                "line_ministry": (
+                    Canteen.Ministries(canteen_data["line_ministry"]).label if canteen_data["line_ministry"] else None
+                ),
+                "economic_model": (
+                    Canteen.EconomicModel(canteen_data["economic_model"]).label
+                    if canteen_data["economic_model"]
+                    else None
+                ),
+            }
+
             context = {
                 **declared_data["teledeclaration"],
                 **{
                     "diagnostic_type": "complète" if is_complete else "simplifiée",
                     "year": teledeclaration.year,
-                    "canteen_name": declared_data["canteen"]["name"],
-                    "siret": declared_data["canteen"].get("siret", None),
                     "date": teledeclaration.creation_date,
                     "applicant": declared_data["applicant"]["name"],
                     "teledeclaration_mode": teledeclaration.teledeclaration_mode,
                     "central_kitchen_siret": central_kitchen_siret,
                     "central_kitchen_name": central_kitchen_name,
                     "satellites": declared_data.get("satellites", []),
+                    "canteen": {**canteen_data, **processed_canteen_data},
                 },
             }
             html = template.render(context)

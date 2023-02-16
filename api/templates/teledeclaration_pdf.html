@@ -56,8 +56,44 @@
             <img src="{% static '../../web/static/images/logo_transparent_white.png' %}" alt="ma cantine" height="30" width="142" />
         </div>
         <h1>Justificatif pour télédéclaration {{ year }}</h1>
-        <h2>Cantine {{ canteen_name }} (SIRET {{ siret }})</h2>
-        <h3>Télédéclaration faite le {{ date|date:"l j F Y" }} par {{ applicant }}</h3>
+        <h2>Télédéclaration faite le {{ date|date:"l j F Y" }} par {{ applicant }}</h2>
+        <h3>Informations de mon établissement</h3>
+        <ul>
+        {% if canteen.name %}
+            <li><span>Nom</span> : {{ canteen.name }}</li>
+        {% endif %}
+        {% if canteen.siret %}
+            <li><span>SIRET</span> : {{ canteen.siret }}</li>
+        {% endif %}
+        {% if canteen.production_type %}
+            <li><span>Mode de production</span> : {{ canteen.production_type }}</li>
+        {% endif %}
+        {% if canteen.city_insee_code %}
+            <li><span>Code Insee</span> : {{ canteen.city_insee_code }}</li>
+        {% endif %}
+        {% if canteen.central_producer_siret %}
+            <li><span>SIRET de la cuisine centrale</span> : {{ canteen.central_producer_siret }}</li>
+        {% endif %}
+        {% if canteen.daily_meal_count %}
+            <li><span>Nombre de repas par jour</span> : {{ canteen.daily_meal_count }}</li>
+        {% endif %}
+        {% if canteen.yearly_meal_count %}
+            <li><span>Nombre de repas par an</span> : {{ canteen.yearly_meal_count }}</li>
+        {% endif %}
+        {% if canteen.sectors %}
+            <li><span>Secteurs d'activité</span> : {{ canteen.sectors }}</li>
+        {% endif %}
+        {% if canteen.line_ministry %}
+            <li><span>Ministère de tutelle</span> : {{ canteen.line_ministry }}</li>
+        {% endif %}
+        {% if canteen.management_type %}
+            <li><span>Mode de gestion</span> : {{ canteen.management_type }}</li>
+        {% endif %}
+        {% if canteen.economic_model %}
+            <li><span>Type d'établissement</span> : {{ canteen.economic_model }}</li>
+        {% endif %}
+        </ul>
+
         {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
             <h3>
                 Vous avez choisi la télédéclaration {{ diagnostic_type }}.
@@ -595,6 +631,11 @@
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
                 </span>
                 {% endif %}
+
+                // TODO waste_actions
+
+                // TODO other waste_actions
+
                 Plan d'action contre le gaspillage en place
                 </div>
                 <div>
@@ -619,6 +660,23 @@
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
                 </span>
                 {% endif %}
+
+                // TODO bread_leftovers
+
+                // TODO served_leftovers
+
+                // TODO unserved_leftovers
+
+                // TODO side_leftovers
+
+                // TODO donation_frequency
+
+                // TODO donation_quantity
+
+                // TODO donation_food_type
+
+                // TODO other waste_comments
+
                 Réalise des mesures contre le gaspillage alimentaire
                 </div>
                 <div>
@@ -643,6 +701,9 @@
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
                 </span>
                 {% endif %}
+
+                // TODO diversification_plan_actions
+
                 Contenants de cuisson en plastique remplacés
                 </div>
                 <div>
@@ -693,6 +754,12 @@
                 {% endif %}
                 Communique sur le plan alimentaire
                 </div>
+                // TODO communication_supports
+                // TODO other_communication_support
+
+                // TODO communication_support_url
+                // TODO communicates_on_food_plan
+                // TODO communication_frequency
                 <div>
                 {% if communicates_on_food_quality %}
                 <span>
