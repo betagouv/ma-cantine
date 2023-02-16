@@ -619,7 +619,7 @@ export default {
       return Number(this.diagnostic.valueTotalHt / this.canteen.yearlyMealCount).toFixed(2)
     },
     daysOpenPerYear() {
-      if (!this.canteen.dailyMealCount) return
+      if (!this.canteen.dailyMealCount || !this.canteen.yearlyMealCount) return
       return Number(this.canteen.yearlyMealCount / this.canteen.dailyMealCount).toFixed(0)
     },
     approSummary() {
