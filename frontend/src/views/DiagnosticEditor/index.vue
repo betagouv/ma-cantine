@@ -146,7 +146,10 @@
               </v-radio-group>
               <div class="font-weight-bold mb-4">{{ diagnosticTypeLabel }}</div>
 
-              <div v-if="displayPurchaseHints && !areFieldsFilled" class="primary lighten-5 pa-4 text-body-2 mb-4">
+              <div
+                v-if="displayPurchaseHints && !fieldsFilledFromPurchases"
+                class="primary lighten-5 pa-4 text-body-2 mb-4"
+              >
                 <p>
                   Vous avez rentré un total de {{ toCurrency(purchasesSummary.valueTotalHt) }} en achats HT dans notre
                   outil.
@@ -412,7 +415,7 @@ export default {
         }
       }),
       satelliteDbCount: null,
-      areFieldsFilled: false,
+      fieldsFilledFromPurchases: false,
     }
   },
   components: {
@@ -827,9 +830,7 @@ export default {
           this.diagnostic[key] = value
         }
       })
-      // TODO: replace this hacky way of communicating to the user that
-      // the fields have been filled in
-      this.areFieldsFilled = true
+      this.fieldsFilledFromPurchases = true
     },
   },
   created() {
