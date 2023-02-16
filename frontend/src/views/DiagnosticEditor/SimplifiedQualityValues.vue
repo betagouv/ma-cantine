@@ -1,5 +1,8 @@
 <template>
   <div>
+    <!-- Input used for cross-field validation : https://github.com/vuetifyjs/vuetify/issues/8698 -->
+    <v-input hidden :rules="[checkTotal]" hide-details></v-input>
+
     <label :for="'total-' + diagnostic.year" class="body-2">
       La valeur (en HT) de mes achats alimentaires total
     </label>
@@ -80,6 +83,14 @@
       @blur="checkTotal"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueSustainableHt"
+      @autofill="checkTotal"
+      purchaseType="SIQO"
+      :amount="purchasesSummary.siqo"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+    />
 
     <!-- Other EGAlim -->
     <div class="d-block d-sm-flex align-center mt-8">
@@ -108,6 +119,14 @@
       :error="totalError"
       @blur="checkTotal"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+    />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueEgalimOthersHt"
+      @autofill="checkTotal"
+      purchaseType="« autre EGAlim »"
+      :amount="purchasesSummary.egalimOthers"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
     <!-- Performance Externalités -->
@@ -177,6 +196,14 @@
       :error="totalError"
       @blur="checkTotal"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+    />
+    <PurchaseHint
+      v-if="displayPurchaseHints"
+      v-model="diagnostic.valueExternalityPerformanceHt"
+      @autofill="checkTotal"
+      purchaseType="« critères d'achat »"
+      :amount="purchasesSummary.externalitiesPerformance"
+      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
     <v-divider class="my-4"></v-divider>
@@ -475,6 +502,14 @@ export default {
 
       this.fishErrorMessage =
         this.fishErrorMessage || (this.fishError ? `${DEFAULT_FISH_ERROR}, actuellement ${sumFish || 0} €` : "")
+
+      return [
+        this.totalError,
+        this.totalMeatPoultryError,
+        this.totalFishError,
+        this.meatPoultryError,
+        this.fishError,
+      ].every((x) => !x)
     },
     sumAllEgalim() {
       const d = this.diagnostic
