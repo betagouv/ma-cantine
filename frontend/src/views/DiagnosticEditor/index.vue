@@ -823,10 +823,9 @@ export default {
       return toCurrency(value)
     },
     fillFieldsFromPurchases() {
-      // TODO: no fields should be empty - instead set to 0 ?
       if (!this.purchasesSummary) return
       Object.entries(this.purchasesSummary).forEach(([key, value]) => {
-        this.$set(this.diagnostic, key, this.diagnostic[key] || value)
+        this.$set(this.diagnostic, key, this.diagnostic[key] || value || 0)
       })
       this.fieldsFilledFromPurchases = true
     },
