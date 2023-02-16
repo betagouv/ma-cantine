@@ -158,7 +158,9 @@
                   Voulez-vous remplir tous les champs avec les taux qui corresponde nos données ? Vous pouvez toujours
                   changer les valeurs après.
                 </p>
-                <v-btn @click="fillFields" class="primary font-weight-bold">Remplir les valeurs d'achat</v-btn>
+                <v-btn @click="fillFieldsFromPurchases" class="primary font-weight-bold">
+                  Remplir les valeurs d'achat
+                </v-btn>
               </div>
 
               <v-alert v-else-if="displayPurchaseHints" type="success" class="mb-4 text-body-2 font-weight-bold">
@@ -822,7 +824,7 @@ export default {
     toCurrency(value) {
       return toCurrency(value)
     },
-    fillFields() {
+    fillFieldsFromPurchases() {
       // TODO: no fields should be empty - instead set to 0 ?
       if (!this.purchasesSummary) return
       Object.entries(this.purchasesSummary).forEach(([key, value]) => {
