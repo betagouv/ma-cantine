@@ -600,7 +600,10 @@ export default {
           )
         }
       }
-      if (this.daysOpenPerYear < this.minDaysOpenExpected || this.daysOpenPerYear > this.maxDaysOpenExpected) {
+      if (
+        this.daysOpenPerYear &&
+        (this.daysOpenPerYear < this.minDaysOpenExpected || this.daysOpenPerYear > this.maxDaysOpenExpected)
+      ) {
         unusualData.push(
           `Votre établissement sert des repas environ ${this.daysOpenPerYear} jours par an. S'il s'agit d'une erreur, veuillez modifier le nombre de repas par jour et/ou le nombre de repas par an.`
         )
