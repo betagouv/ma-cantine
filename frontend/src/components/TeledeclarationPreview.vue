@@ -17,24 +17,29 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr class="header">
                 <td class="text-left font-weight-bold" colspan="2">
                   Données relatives à votre établissement
                 </td>
               </tr>
               <tr v-for="item in canteenItems" :key="item.label">
                 <td class="text-left">{{ item.label }}</td>
-                <td :class="item.isNumber ? 'text-right' : 'text-left'">{{ item.value }}</td>
+                <td
+                  :class="item.isNumber ? 'text-right' : 'text-left'"
+                  :width="$vuetify.breakpoint.smAndUp ? '42%' : '50%'"
+                >
+                  {{ item.value }}
+                </td>
               </tr>
               <tr v-if="centralKitchenDiagnosticModeDisplay">
                 <td class="text-left font-weight-bold" colspan="2">{{ centralKitchenDiagnosticModeDisplay }}</td>
               </tr>
-              <tr>
+              <tr class="header">
                 <td class="text-left font-weight-bold" v-if="showApproItems">
                   Saisie de données d'approvisionnement :
                   {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
                 </td>
-                <td class="text-left grey--text text--darken-2" colspan="2" v-if="showApproItems">
+                <td class="text-left grey--text text--darken-3" colspan="2" v-if="showApproItems">
                   {{ approSummary }}
                 </td>
                 <td class="text-left font-weight-bold" v-else colspan="2">
@@ -53,6 +58,11 @@
                       ? `${toCurrency(diagnostic[item.param])} HT`
                       : "Je ne sais pas"
                   }}
+                </td>
+              </tr>
+              <tr class="header">
+                <td class="text-left font-weight-bold" colspan="2">
+                  Autres données EGAlim
                 </td>
               </tr>
               <tr v-for="item in additionalItems" :key="item.label" :class="item.class || ''">
@@ -777,7 +787,20 @@ export default {
 </script>
 
 <style scoped>
-.warn {
-  background: #fff6da;
+.v-data-table >>> table {
+  border-collapse: collapse;
+}
+tr:hover {
+  background-color: transparent !important;
+}
+tr.warn,
+tr.warn:hover {
+  background: #fff6da !important;
+}
+tr.header,
+tr.header:hover {
+  background: #f0f0f0 !important;
+  border-bottom: solid 1px #c8c8c8;
+  border-top: solid 1px #e6e6e6;
 }
 </style>
