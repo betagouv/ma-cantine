@@ -706,99 +706,164 @@
                 {% endif %}
                 </div>
 
-                <div>
+                <h3>Diversification des sources de protéines et menus végétariens</h3>
+
                 {% if has_diversification_plan %}
+                <div>
                 <span>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Plan de diversification en place
                 </span>
-                {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                {% if diversification_plan_actions %}
+                . Ce plan comporte les actions suivantes :
+                <ul>
+                    {% for action in diversification_plan_actions %}
+                    <li>{{ action }}</li>
+                    {% endfor %}
+                </ul>
                 {% endif %}
-                Plan de diversification en place
                 </div>
+                {% endif %}
+
+                <div>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Fréquence hebdomadaire des menus végétariens : {{ vegetarian_weekly_recurrence }}
+                </div>
+
+                <div>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Type de menu végétarien : {{ vegetarian_menu_type }}
+                </div>
+
+                {% if vegetarian_menu_bases %}
+                <div>
+                    <span>
+                        <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                        Le plat principal du menu végétarien est majoritairement à base de :
+                    </span>
+                    <ul>
+                        {% for base in vegetarian_menu_bases %}
+                        <li>{{ base }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <h3>Substitution des plastiques</h3>
                 <div>
                 {% if cooking_plastic_substituted %}
                 <span>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Contenants de cuisson en plastique remplacés
                 </span>
                 {% else %}
                 <span>
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Contenants de cuisson en plastique non remplacés
                 </span>
                 {% endif %}
 
-                // TODO diversification_plan_actions
-
-                Contenants de cuisson en plastique remplacés
                 </div>
                 <div>
                 {% if serving_plastic_substituted %}
                 <span>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Contenants de service en plastique remplacés
                 </span>
                 {% else %}
                 <span>
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Contenants de service en plastique non remplacés
                 </span>
                 {% endif %}
-                Contenants de service en plastique remplacés
                 </div>
+
                 <div>
                 {% if plastic_bottles_substituted %}
                 <span>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Bouteilles en plastique remplacées
                 </span>
                 {% else %}
                 <span>
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Bouteilles en plastique non remplacées
                 </span>
                 {% endif %}
-                Bouteilles en plastique remplacées
                 </div>
+
                 <div>
                 {% if plastic_tableware_substituted %}
                 <span>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Ustensils en plastique remplacés
                 </span>
                 {% else %}
                 <span>
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Ustensils en plastique non remplacés
                 </span>
                 {% endif %}
-                Ustensils en plastique remplacés
                 </div>
+
+                <h3>Information des usagers et convives</h3>
                 <div>
                 {% if communicates_on_food_plan %}
                 <span>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Communique sur le plan alimentaire
                 </span>
                 {% else %}
                 <span>
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                    Ne communique pas sur le plan alimentaire
                 </span>
                 {% endif %}
-                Communique sur le plan alimentaire
                 </div>
-                // TODO communication_supports
-                // TODO other_communication_support
 
-                // TODO communication_support_url
-                // TODO communicates_on_food_plan
-                // TODO communication_frequency
+                {% if communication_frequency %}
+                <div>
+                    <span>
+                        <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                        Fréquence de cette communication : {{ communication_frequency }}
+                    </span>
+                </div>
+                {% endif %}
+
+                {% if communication_supports %}
+                <div>
+                    <span>
+                        <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                        L'information sur la qualité des approvisionnements se fait :
+                    </span>
+                    <ul>
+                        {% for support in communication_supports %}
+                        <li>{{ support }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
                 <div>
                 {% if communicates_on_food_quality %}
                 <span>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
                 </span>
+                Communique sur les démarches qualité/durables/équitables
                 {% else %}
                 <span>
                     <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
                 </span>
+                Ne communique pas sur les démarches qualité/durables/équitables
                 {% endif %}
-                Communique sur les démarches qualité/durables/équitables
                 </div>
+
+                {% if communication_support_url %}
+                <span>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
+                </span>
+                Lien vers le support de communication : {{ communication_support_url }}
+                {% endif %}
             </div>
         {% endif %}
 
