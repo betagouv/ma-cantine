@@ -41,10 +41,18 @@
                   Données d'approvisonnement renseignées par la cuisine centrale
                 </td>
               </tr>
-              <tr v-for="item in approItems" :key="item.param" :class="diagnostic[item.param] ? '' : 'warn'">
+              <tr
+                v-for="item in approItems"
+                :key="item.param"
+                :class="isTruthyOrZero(diagnostic[item.param]) ? '' : 'warn'"
+              >
                 <td class="text-left">{{ item.label }}</td>
-                <td :class="diagnostic[item.param] ? 'text-right' : 'text-left'">
-                  {{ diagnostic[item.param] ? `${toCurrency(diagnostic[item.param])} HT` : "Je ne sais pas" }}
+                <td :class="isTruthyOrZero(diagnostic[item.param]) ? 'text-right' : 'text-left'">
+                  {{
+                    isTruthyOrZero(diagnostic[item.param])
+                      ? `${toCurrency(diagnostic[item.param])} HT`
+                      : "Je ne sais pas"
+                  }}
                 </td>
               </tr>
               <tr v-for="item in additionalItems" :key="item.label" :class="item.class || ''">
@@ -728,6 +736,9 @@ export default {
           params: { canteenUrlComponent: this.canteenUrlComponent, year: this.diagnostic.year },
         })
         .catch(() => {})
+    },
+    isTruthyOrZero(value) {
+      return !!value || value === 0
     },
     toCurrency(value) {
       if (typeof value !== "number") {
