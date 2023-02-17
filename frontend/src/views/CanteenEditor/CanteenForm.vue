@@ -120,7 +120,12 @@
 
         <v-col cols="12">
           <p class="body-1 ml-1 mb-0">Mon établissement...</p>
-          <v-radio-group class="mt-2" v-model="canteen.productionType" hide-details="auto">
+          <v-radio-group
+            class="mt-2"
+            v-model="canteen.productionType"
+            hide-details="auto"
+            :rules="[validators.required]"
+          >
             <v-radio class="ml-0" v-for="item in productionTypes" :key="item.value" :value="item.value">
               <template v-slot:label>
                 <div class="d-block">
@@ -223,6 +228,7 @@
               multiple
               :items="sectors"
               v-model="canteen.sectors"
+              :rules="[validators.required]"
               item-text="name"
               item-value="id"
               hide-details
@@ -236,6 +242,7 @@
               :items="economicModels"
               solo
               v-model="canteen.economicModel"
+              :rules="[validators.required]"
               placeholder="Sélectionnez..."
               hide-details="auto"
               clearable
@@ -247,6 +254,7 @@
           <DsfrSelect
             :items="ministries"
             v-model="canteen.lineMinistry"
+            :rules="[validators.required]"
             placeholder="Sélectionnez le Ministère de tutelle"
             hide-details="auto"
             clearable
@@ -255,7 +263,7 @@
 
         <v-col cols="12" sm="6" md="3">
           <p class="body-2 ml-4">Mode de gestion</p>
-          <v-radio-group v-model="canteen.managementType">
+          <v-radio-group v-model="canteen.managementType" :rules="[validators.required]">
             <v-radio
               class="ml-8"
               v-for="item in managementTypes"
