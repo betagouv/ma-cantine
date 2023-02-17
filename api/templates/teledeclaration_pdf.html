@@ -717,15 +717,19 @@
                 </div>
                 {% endif %}
 
+                {% if vegetarian_weekly_recurrence %}
                 <div>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                     Fréquence hebdomadaire des menus végétariens : {{ vegetarian_weekly_recurrence }}
                 </div>
+                {% endif %}
 
+                {% if vegetarian_menu_type %}
                 <div>
                     <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                     Type de menu végétarien : {{ vegetarian_menu_type }}
                 </div>
+                {% endif %}
 
                 {% if vegetarian_menu_bases %}
                 <div>
