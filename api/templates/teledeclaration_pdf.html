@@ -56,8 +56,44 @@
             <img src="{% static '../../web/static/images/logo_transparent_white.png' %}" alt="ma cantine" height="30" width="142" />
         </div>
         <h1>Justificatif pour télédéclaration {{ year }}</h1>
-        <h2>Cantine {{ canteen_name }} (SIRET {{ siret }})</h2>
-        <h3>Télédéclaration faite le {{ date|date:"l j F Y" }} par {{ applicant }}</h3>
+        <h2>Télédéclaration faite le {{ date|date:"l j F Y" }} par {{ applicant }}</h2>
+        <h3>Informations de mon établissement</h3>
+        <ul>
+        {% if canteen.name %}
+            <li><span>Nom</span> : {{ canteen.name }}</li>
+        {% endif %}
+        {% if canteen.siret %}
+            <li><span>SIRET</span> : {{ canteen.siret }}</li>
+        {% endif %}
+        {% if canteen.production_type %}
+            <li><span>Mode de production</span> : {{ canteen.production_type }}</li>
+        {% endif %}
+        {% if canteen.city_insee_code %}
+            <li><span>Code Insee</span> : {{ canteen.city_insee_code }}</li>
+        {% endif %}
+        {% if canteen.central_producer_siret %}
+            <li><span>SIRET de la cuisine centrale</span> : {{ canteen.central_producer_siret }}</li>
+        {% endif %}
+        {% if canteen.daily_meal_count %}
+            <li><span>Nombre de repas par jour</span> : {{ canteen.daily_meal_count }}</li>
+        {% endif %}
+        {% if canteen.yearly_meal_count %}
+            <li><span>Nombre de repas par an</span> : {{ canteen.yearly_meal_count }}</li>
+        {% endif %}
+        {% if canteen.sectors %}
+            <li><span>Secteurs d'activité</span> : {{ canteen.sectors }}</li>
+        {% endif %}
+        {% if canteen.line_ministry %}
+            <li><span>Ministère de tutelle</span> : {{ canteen.line_ministry }}</li>
+        {% endif %}
+        {% if canteen.management_type %}
+            <li><span>Mode de gestion</span> : {{ canteen.management_type }}</li>
+        {% endif %}
+        {% if canteen.economic_model %}
+            <li><span>Type d'établissement</span> : {{ canteen.economic_model }}</li>
+        {% endif %}
+        </ul>
+
         {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
             <h3>
                 Vous avez choisi la télédéclaration {{ diagnostic_type }}.
@@ -86,16 +122,16 @@
         {% if teledeclaration_mode == "CENTRAL_ALL" or teledeclaration_mode == "CENTRAL_APPRO" %}
             {% if satellites %}
                 Cette télédéclaration concerne les cuisines satellites :
-                <br />
+                <ul>
                 {% for satellite in satellites %}
-                ·
-                {{ satellite.name }} (SIRET : {{satellite.siret}})<br />
+                <li>{{ satellite.name }} (SIRET : {{ satellite.siret }})</li>
                 {% endfor %}
+                </ul>
             {% endif %}
         {% endif %}
         <p>
             Pour l'année {{ year }}, les données suivantes ont été télédéclarées le
-            {{ date|date:"l j F Y" }} via la plateforme numérique ma cantine :
+            {{ date|date:"l j F Y" }} via la plateforme numérique « ma cantine » :
         </p>
         <!-- SIMPLIFIED DECLARATION -->
         {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
@@ -108,14 +144,14 @@
                     <span>Valeur en HT des achats alimentaires en Bio</span> : {% if not value_bio_ht is None %}{{ value_bio_ht|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Valeur en HT de mes achats SIQO (AOP/AOC, IGP, STG)</span> : {% if not value_sustainable_ht is None %}{{ value_sustainable_ht|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Valeur en HT de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)</span> : {% if not value_sustainable_ht is None %}{{ value_sustainable_ht|floatformat:2 }}{% else %}—{% endif %} €
+                </li>
+                <li>
+                    <span>Valeur en HT de mes autres achats EGAlim</span> : {% if not value_egalim_others_ht is None %}{{ value_egalim_others_ht|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
                     <span>Valeur en HT de mes achats prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale</span> :
                     {% if not value_externality_performance_ht is None %}{{ value_externality_performance_ht|floatformat:2 }}{% else %}—{% endif %} €
-                </li>
-                <li>
-                    <span>Valeur en HT de mes autres achats EGAlim</span> : {% if not value_egalim_others_ht is None %}{{ value_egalim_others_ht|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
             </ul>
 
@@ -280,7 +316,7 @@
                 </li>
             </ul>
             <p>
-                Achats pêche durable
+                Achats Écolabel pêche durable
             </p>
             <ul>
                 <li>
@@ -458,28 +494,28 @@
             </p>
             <ul>
                 <li>
-                    <span>Viandes et volailles performance environnementale</span> : {% if not value_viandes_volailles_non_egalim is None %}{{ value_viandes_volailles_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Viandes et volailles non-EGAlim</span> : {% if not value_viandes_volailles_non_egalim is None %}{{ value_viandes_volailles_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Poissons, produits de la mer et de l'aquaculture performance environnementale</span> : {% if not value_produits_de_la_mer_non_egalim is None %}{{ value_produits_de_la_mer_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Poissons, produits de la mer et de l'aquaculture non-EGAlim</span> : {% if not value_produits_de_la_mer_non_egalim is None %}{{ value_produits_de_la_mer_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Fruits et légumes performance environnementale</span> : {% if not value_fruits_et_legumes_non_egalim is None %}{{ value_fruits_et_legumes_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Fruits et légumes non-EGAlim</span> : {% if not value_fruits_et_legumes_non_egalim is None %}{{ value_fruits_et_legumes_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Charcuterie performance environnementale</span> : {% if not value_charcuterie_non_egalim is None %}{{ value_charcuterie_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Charcuterie non-EGAlim</span> : {% if not value_charcuterie_non_egalim is None %}{{ value_charcuterie_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Produits laitiers performance environnementale</span> : {% if not value_produits_laitiers_non_egalim is None %}{{ value_produits_laitiers_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Produits laitiers non-EGAlim</span> : {% if not value_produits_laitiers_non_egalim is None %}{{ value_produits_laitiers_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Boulangerie performance environnementale</span> : {% if not value_boulangerie_non_egalim is None %}{{ value_boulangerie_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Boulangerie non-EGAlim</span> : {% if not value_boulangerie_non_egalim is None %}{{ value_boulangerie_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Boissons performance environnementale</span> : {% if not value_boissons_non_egalim is None %}{{ value_boissons_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Boissons non-EGAlim</span> : {% if not value_boissons_non_egalim is None %}{{ value_boissons_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Autres produits performance environnementale</span> : {% if not value_autres_non_egalim is None %}{{ value_autres_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Autres produits non-EGAlim</span> : {% if not value_autres_non_egalim is None %}{{ value_autres_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
             </ul>
             <p>
@@ -573,143 +609,261 @@
         {% endif %}
         {% if teledeclaration_mode != "CENTRAL_APPRO" %}
             <div class="other-measures">
-                <div>
+
+                <h3>Lutte contre le gaspillage et dons alimentaires</h3>
+
+                <p>
                 {% if has_waste_diagnostic %}
-                <span>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
-                {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
-                {% endif %}
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                 Diagnostic sur le gaspillage réalisé
-                </div>
-                <div>
-                {% if has_waste_plan %}
-                <span>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
                 {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <img src="{% static '../../web/static/images/close-outline.png' %}" height="14" width="14" />
+                Diagnostic sur le gaspillage manquant
                 {% endif %}
+                </p>
+                <p>
+                {% if has_waste_plan %}
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                 Plan d'action contre le gaspillage en place
+                {% else %}
+                <img src="{% static '../../web/static/images/close-outline.png' %}" height="14" width="14" />
+                Pas de plan d'action contre le gaspillage en place
+                {% endif %}
+                </p>
+
+                <div>
+                {% if waste_actions %}
+                <p>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Actions de lutte contre le gaspillage :
+                </p>
+                <ul>
+                    {% for action in waste_actions %}
+                    <li>{{ action }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
                 </div>
                 <div>
                 {% if has_donation_agreement %}
-                <span>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
-                {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Propose des dons alimentaires
+                </p>
+                <ul>
+                    {% if donation_frequency %}
+                    <li>Fréquence de dons : {{donation_frequency}} dons/an</li>
+                    {% endif %}
+                    {% if donation_quantity %}
+                    <li>Quantité des denrées données : {{donation_quantity}} kg/an</li>
+                    {% endif %}
+                    {% if donation_food_type %}
+                    <li>Type de denrées données : {{donation_food_type}}</li>
+                    {% endif %}
+                </ul>
                 {% endif %}
-                Propose des dons alimentaires
                 </div>
                 <div>
                 {% if has_waste_measures %}
-                <span>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Réalise des mesures contre le gaspillage alimentaire
+                </p>
+                <ul>
+                    {% if bread_leftovers %}
+                    <li> Reste de pain : {{ bread_leftovers }} kg/an </li>
+                    {% endif %}
+                    {% if served_leftovers %}
+                    <li> Reste plateau : {{ served_leftovers }} kg/an </li>
+                    {% endif %}
+                    {% if unserved_leftovers %}
+                    <li> Reste en production (non servi) : {{ unserved_leftovers }} kg/an </li>
+                    {% endif %}
+                    {% if side_leftovers %}
+                    <li> Reste de composantes (entrée, plat dessert...) : {{ side_leftovers }} kg/an </li>
+                    {% endif %}
+                </ul>
                 {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
-                {% endif %}
-                Réalise des mesures contre le gaspillage alimentaire
+                <p>
+                    <img src="{% static '../../web/static/images/close-outline.png' %}" height="14" width="14" />
+                    Pas de mesures contre le gaspillage alimentaire
+                </p>
                 </div>
+                {% endif %}
+
                 <div>
-                {% if has_diversification_plan %}
-                <span>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
-                {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                {% if other_waste_comments %}
+                Commentaires concernant la lutte contre le gaspillage et dons alimentaires : <br />
+                « {{ other_waste_comments }} »
                 {% endif %}
-                Plan de diversification en place
                 </div>
+
+                <h3>Diversification des sources de protéines et menus végétariens</h3>
+
+                {% if has_diversification_plan %}
+                <div>
+                <p>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Plan de diversification en place
+                </p>
+                {% if diversification_plan_actions %}
+                . Ce plan comporte les actions suivantes :
+                <ul>
+                    {% for action in diversification_plan_actions %}
+                    <li>{{ action }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                </div>
+                {% endif %}
+
+                {% if vegetarian_weekly_recurrence %}
+                <div>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Fréquence hebdomadaire des menus végétariens : {{ vegetarian_weekly_recurrence }}
+                </div>
+                {% endif %}
+
+                {% if vegetarian_menu_type %}
+                <div>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Type de menu végétarien : {{ vegetarian_menu_type }}
+                </div>
+                {% endif %}
+
+                {% if vegetarian_menu_bases %}
+                <div>
+                    <p>
+                        <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                        Le plat principal du menu végétarien est majoritairement à base de :
+                    </p>
+                    <ul>
+                        {% for base in vegetarian_menu_bases %}
+                        <li>{{ base }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <h3>Substitution des plastiques</h3>
                 <div>
                 {% if cooking_plastic_substituted %}
-                <span>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Contenants de cuisson en plastique remplacés
+                </p>
                 {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/close-outline.png' %}" height="14" width="14" />
+                    Contenants de cuisson en plastique non remplacés
+                </p>
                 {% endif %}
-                Contenants de cuisson en plastique remplacés
+
                 </div>
                 <div>
                 {% if serving_plastic_substituted %}
-                <span>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Contenants de service en plastique remplacés
+                </p>
                 {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/close-outline.png' %}" height="14" width="14" />
+                    Contenants de service en plastique non remplacés
+                </p>
                 {% endif %}
-                Contenants de service en plastique remplacés
                 </div>
+
                 <div>
                 {% if plastic_bottles_substituted %}
-                <span>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Bouteilles en plastique remplacées
+                </p>
                 {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/close-outline.png' %}" height="14" width="14" />
+                    Bouteilles en plastique non remplacées
+                </p>
                 {% endif %}
-                Bouteilles en plastique remplacées
                 </div>
+
                 <div>
                 {% if plastic_tableware_substituted %}
-                <span>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Ustensils en plastique remplacés
+                </p>
                 {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/close-outline.png' %}" height="14" width="14" />
+                    Ustensils en plastique non remplacés
+                </p>
                 {% endif %}
-                Ustensils en plastique remplacés
                 </div>
+
+                <h3>Information des usagers et convives</h3>
                 <div>
                 {% if communicates_on_food_plan %}
-                <span>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Communique sur le plan alimentaire
+                </p>
                 {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
+                <p>
+                    <img src="{% static '../../web/static/images/close-outline.png' %}" height="14" width="14" />
+                    Ne communique pas sur le plan alimentaire
+                </p>
                 {% endif %}
-                Communique sur le plan alimentaire
                 </div>
+
+                {% if communication_frequency %}
                 <div>
-                {% if communicates_on_food_quality %}
-                <span>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
-                {% else %}
-                <span>
-                    <img src="{% static '../../web/static/images/close-outline.png' %}" alt="ma cantine" height="16" width="16" />
-                </span>
-                {% endif %}
-                Communique sur les démarches qualité/durables/équitables
+                    <p>
+                        <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                        Fréquence de cette communication : {{ communication_frequency }}
+                    </p>
                 </div>
+                {% endif %}
+
+                {% if communication_supports %}
+                <div>
+                    <p>
+                        <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                        L'information sur la qualité des approvisionnements se fait :
+                    </p>
+                    <ul>
+                        {% for support in communication_supports %}
+                        <li>{{ support }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <p>
+                {% if communicates_on_food_quality %}
+                <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                Communique sur les démarches qualité/durables/équitables
+                {% else %}
+                <img src="{% static '../../web/static/images/close-outline.png' %}" height="14" width="14" />
+                Ne communique pas sur les démarches qualité/durables/équitables
+                {% endif %}
+                </p>
+
+                {% if communication_support_url %}
+                <p>
+                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                    Lien vers le support de communication :
+                    <a href="{{ communication_support_url }}">
+                        {{ communication_support_url }}
+                    </a>
+                </p>
+                {% endif %}
             </div>
         {% endif %}
 
         <hr />
 
-        En savoir plus de la loi EGAlim : https://ma-cantine.agriculture.gouv.fr/
+        <p>En savoir plus de la loi EGAlim : <a href="https://ma-cantine.agriculture.gouv.fr/">https://ma-cantine.agriculture.gouv.fr/</a></p>
     </body>
 </html>
