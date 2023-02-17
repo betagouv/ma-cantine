@@ -161,75 +161,11 @@ class TeledeclarationPdfView(APIView):
 
             canteen_data = declared_data["canteen"]
             teledeclaration_data = declared_data["teledeclaration"]
-            processed_canteen_data = {
-                "sectors": ", ".join([x["name"] for x in canteen_data.get("sectors", [])]),
-                "production_type": (
-                    Canteen.ProductionType(canteen_data["production_type"]).label
-                    if canteen_data["production_type"]
-                    else None
-                ),
-                "management_type": (
-                    Canteen.ManagementType(canteen_data["management_type"]).label
-                    if canteen_data["management_type"]
-                    else None
-                ),
-                "line_ministry": (
-                    Canteen.Ministries(canteen_data["line_ministry"]).label if canteen_data["line_ministry"] else None
-                ),
-                "economic_model": (
-                    Canteen.EconomicModel(canteen_data["economic_model"]).label
-                    if canteen_data["economic_model"]
-                    else None
-                ),
-            }
-
-            processed_waste_actions = [
-                Diagnostic.WasteActions(x).label for x in teledeclaration_data.get("waste_actions", [])
-            ]
-            combined_waste_actions = processed_waste_actions + (
-                [teledeclaration_data.get("other_waste_action")]
-                if teledeclaration_data.get("other_waste_action")
-                else []
-            )
-            processed_communication_supports = [
-                Diagnostic.CommunicationType(x).label for x in teledeclaration_data.get("communication_supports", [])
-            ]
-            combined_communication_supports = processed_communication_supports + (
-                [teledeclaration_data.get("other_communication_support")]
-                if teledeclaration_data.get("other_communication_support")
-                else []
-            )
-
-            processed_diagnostic_data = {
-                "waste_actions": combined_waste_actions,
-                "diversification_plan_actions": [
-                    Diagnostic.DiversificationPlanActions(x).label
-                    for x in teledeclaration_data.get("diversification_plan_actions", [])
-                ],
-                "vegetarian_weekly_recurrence": (
-                    Diagnostic.MenuFrequency(teledeclaration_data["vegetarian_weekly_recurrence"]).label
-                    if teledeclaration_data["vegetarian_weekly_recurrence"]
-                    else None
-                ),
-                "vegetarian_menu_type": (
-                    Diagnostic.MenuType(teledeclaration_data["vegetarian_menu_type"]).label
-                    if teledeclaration_data["vegetarian_menu_type"]
-                    else None
-                ),
-                "vegetarian_menu_bases": [
-                    Diagnostic.VegetarianMenuBase(x).label
-                    for x in teledeclaration_data.get("vegetarian_menu_bases", [])
-                ],
-                "communication_frequency": (
-                    Diagnostic.CommunicationFrequency(teledeclaration_data["communication_frequency"]).label
-                    if teledeclaration_data["communication_frequency"]
-                    else None
-                ),
-                "communication_supports": combined_communication_supports,
-            }
+            processed_canteen_data = TeledeclarationPdfView._get_canteen_override_data(canteen_data)
+            processed_diagnostic_data = TeledeclarationPdfView._get_teledeclaration_override_data(teledeclaration_data)
 
             context = {
-                **{**declared_data["teledeclaration"], **processed_diagnostic_data},
+                **{**teledeclaration_data, **processed_diagnostic_data},
                 **{
                     "diagnostic_type": "complète" if is_complete else "simplifiée",
                     "year": teledeclaration.year,
@@ -293,3 +229,78 @@ class TeledeclarationPdfView(APIView):
         if not os.path.isfile(path):
             raise Exception("media URI must start with {} or {}".format(sUrl, mUrl))
         return path
+
+    @staticmethod
+    def _get_canteen_override_data(canteen_data):
+        """
+        Returns the JSON data of the canteen parameters that need to be overriden in order for
+        them to be human-readable (e.g., replacing keys with labels)
+        """
+        return {
+            "sectors": ", ".join([x["name"] for x in canteen_data.get("sectors", [])]),
+            "production_type": (
+                Canteen.ProductionType(canteen_data["production_type"]).label
+                if canteen_data["production_type"]
+                else None
+            ),
+            "management_type": (
+                Canteen.ManagementType(canteen_data["management_type"]).label
+                if canteen_data["management_type"]
+                else None
+            ),
+            "line_ministry": (
+                Canteen.Ministries(canteen_data["line_ministry"]).label if canteen_data["line_ministry"] else None
+            ),
+            "economic_model": (
+                Canteen.EconomicModel(canteen_data["economic_model"]).label if canteen_data["economic_model"] else None
+            ),
+        }
+
+    @staticmethod
+    def _get_teledeclaration_override_data(teledeclaration_data):
+        """
+        Returns the JSON data of the teledeclaration parameters that need to be overriden in order for
+        them to be human-readable (e.g., replacing keys with labels and merging multiple choice with
+        "other" editable choices)
+        """
+        processed_waste_actions = [
+            Diagnostic.WasteActions(x).label for x in teledeclaration_data.get("waste_actions", [])
+        ]
+        combined_waste_actions = processed_waste_actions + (
+            [teledeclaration_data.get("other_waste_action")] if teledeclaration_data.get("other_waste_action") else []
+        )
+        processed_communication_supports = [
+            Diagnostic.CommunicationType(x).label for x in teledeclaration_data.get("communication_supports", [])
+        ]
+        combined_communication_supports = processed_communication_supports + (
+            [teledeclaration_data.get("other_communication_support")]
+            if teledeclaration_data.get("other_communication_support")
+            else []
+        )
+
+        return {
+            "waste_actions": combined_waste_actions,
+            "diversification_plan_actions": [
+                Diagnostic.DiversificationPlanActions(x).label
+                for x in teledeclaration_data.get("diversification_plan_actions", [])
+            ],
+            "vegetarian_weekly_recurrence": (
+                Diagnostic.MenuFrequency(teledeclaration_data["vegetarian_weekly_recurrence"]).label
+                if teledeclaration_data["vegetarian_weekly_recurrence"]
+                else None
+            ),
+            "vegetarian_menu_type": (
+                Diagnostic.MenuType(teledeclaration_data["vegetarian_menu_type"]).label
+                if teledeclaration_data["vegetarian_menu_type"]
+                else None
+            ),
+            "vegetarian_menu_bases": [
+                Diagnostic.VegetarianMenuBase(x).label for x in teledeclaration_data.get("vegetarian_menu_bases", [])
+            ],
+            "communication_frequency": (
+                Diagnostic.CommunicationFrequency(teledeclaration_data["communication_frequency"]).label
+                if teledeclaration_data["communication_frequency"]
+                else None
+            ),
+            "communication_supports": combined_communication_supports,
+        }
