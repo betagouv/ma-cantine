@@ -212,7 +212,7 @@ class TestPurchaseApi(APITestCase):
         Given a year, return spending by category
         Bio category is the sum of all products with either bio or bio en conversion labels
         Every category apart from bio should exlude bio (so bio + label rouge gets counted in bio but not label rouge)
-        The category of AOC/AOP/IGP should count items with two or more labels once
+        The categories with multiple labels on them should count items with two or more labels once
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
@@ -253,7 +253,22 @@ class TestPurchaseApi(APITestCase):
             price_ht=22,
         )
         PurchaseFactory.create(
-            canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.IGP], price_ht=8
+            canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.IGP], price_ht=4
+        )
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.IGP, Purchase.Characteristic.HVE],
+            price_ht=4,
+        )
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.EXTERNALITES, Purchase.Characteristic.PERFORMANCE],
+            price_ht=30,
+        )
+        PurchaseFactory.create(
+            canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.PERFORMANCE], price_ht=15
         )
         # some other durable label
         PurchaseFactory.create(
@@ -273,12 +288,11 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["total"], 1000.0)
+        self.assertEqual(body["total"], 1045.0)
         self.assertEqual(body["bio"], 200.0)
-        self.assertEqual(body["sustainable"], 300.0)
-        self.assertEqual(body["hve"], 10.0)
-        self.assertEqual(body["rouge"], 20.0)
-        self.assertEqual(body["aocAopIgp"], 30.0)
+        self.assertEqual(body["siqo"], 50.0)
+        self.assertEqual(body["egalimOthers"], 250.0)
+        self.assertEqual(body["externalitiesPerformance"], 45.0)
 
     @authenticate
     def test_complex_purchase_total_summary(self):
