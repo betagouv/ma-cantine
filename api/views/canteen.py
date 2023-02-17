@@ -30,7 +30,7 @@ from api.serializers import (
     CanteenActionsSerializer,
     CanteenStatusSerializer,
 )
-from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration
+from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration, CanteenSectorRelation
 from data.region_choices import Region
 from api.permissions import (
     IsCanteenManager,
@@ -1068,6 +1068,12 @@ class ActionableCanteensListView(ListAPIView):
             production_type=Canteen.ProductionType.CENTRAL_SERVING
         )
         is_satellite_query = Q(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+        # prep line ministry check
+        has_sector_requiring_line_ministry = CanteenSectorRelation.objects.filter(
+            canteen=OuterRef("pk"), sector__has_line_ministry=True
+        )
+        user_canteens = user_canteens.annotate(requires_line_ministry=Exists(has_sector_requiring_line_ministry))
+
         incomplete_canteen_data_query = (
             Q(yearly_meal_count=None)
             | Q(daily_meal_count=None)
@@ -1079,9 +1085,8 @@ class ActionableCanteensListView(ListAPIView):
             | Q(economic_model=None)
             | (is_central_cuisine_query & Q(satellite_canteens_count=None))
             | (is_satellite_query & Q(central_producer_siret=None))
+            | (Q(line_ministry=None) & Q(requires_line_ministry=True))
         )
-        # TODO: sector checks : https://stackoverflow.com/questions/42956736/querying-manytomany-in-django-giving-me-duplicate-results
-        # TODO: line ministry
 
         # prep complete diag action
         # is value_total_ht of 0 a problem?
