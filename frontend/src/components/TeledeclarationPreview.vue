@@ -605,7 +605,7 @@ export default {
         (this.daysOpenPerYear < this.minDaysOpenExpected || this.daysOpenPerYear > this.maxDaysOpenExpected)
       ) {
         unusualData.push(
-          `Les chiffres renseignées pour « nombre de repas par jour » et « nombre de repas par an » donnent une moyenne de ${this.daysOpenPerYear} jours de service par an. S'il s'agit d'une erreur, veuillez modifier ces chiffres.`
+          `Vos jours de service est estimé à ${this.daysOpenPerYear} par an. S'il s'agit d'une erreur, veuillez modifier les chiffres pour « nombre de repas par jour » et/ou « nombre de repas par an ».`
         )
       }
       return unusualData
