@@ -267,6 +267,9 @@ export default {
     inputHtmlId(fId, cId) {
       return `${fId}-${cId}-${this.diagnostic.year}`
     },
+    isTruthyOrZero(value) {
+      return !!value || value === 0
+    },
     checkTotal() {
       // we're only checking the total against the egalim and non-egalim fields. Each label group of the outsideLaw fields
       // can get up to 100% but ideally wouldn't go over that. We currently don't check this however because of UX constraints.
@@ -285,11 +288,11 @@ export default {
         this.errorType = "FAMILY"
         this.errorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}, actuellement ${totalFamilies} €`
         return false
-      } else if (this.sumMeatVolailles() > totalMeatPoultry) {
+      } else if (this.isTruthyOrZero(totalMeatPoultry) && this.sumMeatVolailles() > totalMeatPoultry) {
         this.errorType = "MEAT"
         this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumMeatVolailles()} €`
         return false
-      } else if (this.sumFish() > totalFish) {
+      } else if (this.isTruthyOrZero(totalFish) && this.sumFish() > totalFish) {
         this.errorType = "FISH"
         this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumFish()} €`
         return false
