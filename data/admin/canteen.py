@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.utils import timezone
 from data.models import Canteen, Teledeclaration
 from .diagnostic import DiagnosticInline
+from .canteensector import CanteenSectorInline
 from .softdeletionadmin import SoftDeletionAdmin, SoftDeletionStatusFilter
 
 
@@ -41,7 +42,10 @@ def unpublish(modeladmin, request, queryset):
 @admin.register(Canteen)
 class CanteenAdmin(SoftDeletionAdmin):
     form = CanteenForm
-    inlines = (DiagnosticInline,)
+    inlines = (
+        DiagnosticInline,
+        CanteenSectorInline,
+    )
     fields = (
         "name",
         "siret",
@@ -56,7 +60,6 @@ class CanteenAdmin(SoftDeletionAdmin):
         "yearly_meal_count",
         "satellite_canteens_count",
         "economic_model",
-        # "sectors",
         "line_ministry",
         "managers",
         "management_type",
@@ -92,17 +95,13 @@ class CanteenAdmin(SoftDeletionAdmin):
         "management_type",
         "supprimée",
     )
-    filter_vertical = (
-        # "sectors",
-        "managers",
-    )
+    filter_vertical = ("managers",)
     list_filter = (
         "publication_status",
         "management_type",
         "production_type",
         "economic_model",
         SoftDeletionStatusFilter,
-        # "sectors",
         "region",
         "department",
         "import_source",
