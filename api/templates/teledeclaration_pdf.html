@@ -122,11 +122,11 @@
         {% if teledeclaration_mode == "CENTRAL_ALL" or teledeclaration_mode == "CENTRAL_APPRO" %}
             {% if satellites %}
                 Cette télédéclaration concerne les cuisines satellites :
-                <br />
+                <ul>
                 {% for satellite in satellites %}
-                ·
-                {{ satellite.name }} (SIRET : {{satellite.siret}})<br />
+                <li>{{ satellite.name }} (SIRET : {{satellite.siret}})</li>
                 {% endfor %}
+                </ul>
             {% endif %}
         {% endif %}
         <p>
