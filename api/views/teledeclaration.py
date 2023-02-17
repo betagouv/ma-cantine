@@ -191,9 +191,41 @@ class TeledeclarationPdfView(APIView):
                 if teledeclaration_data.get("other_waste_action")
                 else []
             )
+            processed_communication_supports = [
+                Diagnostic.CommunicationType(x).label for x in teledeclaration_data.get("communication_supports", [])
+            ]
+            combined_communication_supports = processed_communication_supports + (
+                [teledeclaration_data.get("other_communication_support")]
+                if teledeclaration_data.get("other_communication_support")
+                else []
+            )
 
             processed_diagnostic_data = {
                 "waste_actions": combined_waste_actions,
+                "diversification_plan_actions": [
+                    Diagnostic.DiversificationPlanActions(x).label
+                    for x in teledeclaration_data.get("diversification_plan_actions", [])
+                ],
+                "vegetarian_weekly_recurrence": (
+                    Diagnostic.MenuFrequency(teledeclaration_data["vegetarian_weekly_recurrence"]).label
+                    if teledeclaration_data["vegetarian_weekly_recurrence"]
+                    else None
+                ),
+                "vegetarian_menu_type": (
+                    Diagnostic.MenuType(teledeclaration_data["vegetarian_menu_type"]).label
+                    if teledeclaration_data["vegetarian_menu_type"]
+                    else None
+                ),
+                "vegetarian_menu_bases": [
+                    Diagnostic.VegetarianMenuBase(x).label
+                    for x in teledeclaration_data.get("vegetarian_menu_bases", [])
+                ],
+                "communication_frequency": (
+                    Diagnostic.CommunicationFrequency(teledeclaration_data["communication_frequency"]).label
+                    if teledeclaration_data["communication_frequency"]
+                    else None
+                ),
+                "communication_supports": combined_communication_supports,
             }
 
             context = {
