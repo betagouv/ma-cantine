@@ -121,6 +121,8 @@ export default {
       maxSatellitesExpected: 200,
       minCostPerMealExpected: 0.1,
       maxCostPerMealExpected: 10,
+      minDaysOpenExpected: 50,
+      maxDaysOpenExpected: 365,
     }
   },
   computed: {
@@ -624,6 +626,14 @@ export default {
           )
         }
       }
+      if (
+        this.daysOpenPerYear &&
+        (this.daysOpenPerYear < this.minDaysOpenExpected || this.daysOpenPerYear > this.maxDaysOpenExpected)
+      ) {
+        unusualData.push(
+          `Vos jours de service sont estimés à ${this.daysOpenPerYear} par an. S'il s'agit d'une erreur, veuillez modifier les chiffres « nombre de repas par jour » et/ou « nombre de repas par an ».`
+        )
+      }
       return unusualData
     },
     isCentralCuisine() {
@@ -633,6 +643,10 @@ export default {
     costPerMeal() {
       if (!this.showApproItems || !this.canteen.yearlyMealCount) return
       return Number(this.diagnostic.valueTotalHt / this.canteen.yearlyMealCount).toFixed(2)
+    },
+    daysOpenPerYear() {
+      if (!this.canteen.dailyMealCount || !this.canteen.yearlyMealCount) return
+      return Number(this.canteen.yearlyMealCount / this.canteen.dailyMealCount).toFixed(0)
     },
     approSummary() {
       return approSummary(this.diagnostic)
