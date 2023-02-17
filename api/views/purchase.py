@@ -205,26 +205,26 @@ class CanteenPurchasesSummaryView(APIView):
         )
 
         data = {}
-        data["total"] = purchases.aggregate(total=Sum("price_ht"))["total"]
+        data["value_total_ht"] = purchases.aggregate(total=Sum("price_ht"))["total"]
         bio_purchases = purchases.filter(bio_filter).distinct()
-        data["bio"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"]
+        data["value_bio_ht"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"]
 
         # the remaining stats should ignore any bio products
         purchases = purchases.exclude(bio_filter)
         siqo_purchases = purchases.filter(siqo_filter).distinct()
-        data["siqo"] = siqo_purchases.aggregate(total=Sum("price_ht"))["total"]
+        data["value_sustainable_ht"] = siqo_purchases.aggregate(total=Sum("price_ht"))["total"]
 
         # the remaining stats should ignore any SIQO products
         purchases = purchases.exclude(siqo_filter)
         egalim_others_purchases = purchases.filter(egalim_others_filter).distinct()
-        data["egalim_others"] = egalim_others_purchases.aggregate(total=Sum("price_ht"))["total"]
+        data["value_egalim_others_ht"] = egalim_others_purchases.aggregate(total=Sum("price_ht"))["total"]
 
         # the remaining stats should ignore any "other Egalim" products
         purchases = purchases.exclude(egalim_others_filter)
         externalities_performance_purchases = purchases.filter(externalities_performance_filter).distinct()
-        data["externalities_performance"] = externalities_performance_purchases.aggregate(total=Sum("price_ht"))[
-            "total"
-        ]
+        data["value_externality_performance_ht"] = externalities_performance_purchases.aggregate(
+            total=Sum("price_ht")
+        )["total"]
 
         # summary for detailed teledeclaration totals, by family and label
         families = [
@@ -280,7 +280,7 @@ class CanteenPurchasesSummaryView(APIView):
                     purchase_family = purchase_family.exclude(
                         Q(characteristics__contains=[Purchase.Characteristic[label]])
                     )
-                key = family.lower() + "_" + label.lower()
+                key = "value_" + family.lower() + "_" + label.lower()
                 data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"]
             # outside of EGAlim, products can be counted twice across characteristics
             purchase_family = purchases.filter(family=family)
@@ -288,38 +288,38 @@ class CanteenPurchasesSummaryView(APIView):
             for label in other_labels:
                 characteristic = Purchase.Characteristic[label]
                 fam_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
-                key = family.lower() + "_" + label.lower()
+                key = "value_" + family.lower() + "_" + label.lower()
                 data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"]
                 other_labels_characteristics.append(characteristic)
             # Non-EGAlim totals: contains no labels or only one or more of other_labels
             non_egalim_purchases = purchase_family.filter(
                 Q(characteristics__contained_by=other_labels_characteristics) | Q(characteristics__len=0)
             ).distinct()
-            key = family.lower() + "_non_egalim"
+            key = "value_" + family.lower() + "_non_egalim"
             data[key] = non_egalim_purchases.aggregate(total=Sum("price_ht"))["total"]
 
         meat_poultry_purchases = purchases.filter(
             family=Purchase.Family.VIANDES_VOLAILLES,
         )
-        data["meat_poultry_total"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"]
+        data["value_meat_poultry_ht"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"]
 
         meat_poultry_egalim = meat_poultry_purchases.filter(characteristics__overlap=egalim_labels)
-        data["meat_poultry_egalim"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"]
+        data["value_meat_poultry_egalim_ht"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"]
 
         meat_poultry_france = meat_poultry_purchases.filter(
             characteristics__contains=[
                 "FRANCE",
             ]
         )
-        data["meat_poultry_france"] = meat_poultry_france.aggregate(total=Sum("price_ht"))["total"]
+        data["value_meat_poultry_france_ht"] = meat_poultry_france.aggregate(total=Sum("price_ht"))["total"]
 
         fish_purchases = purchases.filter(
             family=Purchase.Family.PRODUITS_DE_LA_MER,
         )
-        data["fish_total"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"]
+        data["value_fish_ht"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"]
 
         fish_egalim = fish_purchases.filter(characteristics__overlap=egalim_labels)
-        data["fish_egalim"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"]
+        data["value_fish_egalim_ht"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"]
 
         return Response(PurchaseSummarySerializer(data).data)
 

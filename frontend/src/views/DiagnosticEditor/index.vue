@@ -145,6 +145,27 @@
                 </v-radio>
               </v-radio-group>
               <div class="font-weight-bold mb-4">{{ diagnosticTypeLabel }}</div>
+
+              <div
+                v-if="displayOneClickPurchaseFill && !fieldsFilledFromPurchases"
+                class="primary lighten-5 pa-4 text-body-2 mb-4"
+              >
+                <p>
+                  Un total d'achats de {{ toCurrency(purchasesSummary.valueTotalHt) }} a été rentré pour cette cantine.
+                </p>
+                <p>
+                  Voulez-vous pré-remplir les champs ci-dessous avec les données de ces achats ?
+                </p>
+                <v-btn @click="fillFieldsFromPurchases" class="primary font-weight-bold">
+                  Pré-remplir avec les valeurs d'achat
+                </v-btn>
+              </div>
+
+              <v-alert v-else-if="fieldsFilledFromPurchases" type="success" class="mb-4 text-body-2 font-weight-bold">
+                <p class="mb-0">
+                  Les champs ont bien été pré-remplis avec les données de vos achats
+                </p>
+              </v-alert>
               <SimplifiedQualityValues
                 :originalDiagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
@@ -342,6 +363,7 @@ import {
   diagnosticYears,
   readCookie,
   capitalise,
+  toCurrency,
   approTotals,
   approSummary,
 } from "@/utils"
@@ -393,6 +415,7 @@ export default {
         }
       }),
       satelliteDbCount: null,
+      fieldsFilledFromPurchases: false,
     }
   },
   components: {
@@ -458,9 +481,12 @@ export default {
     isTeledeclarationPhase() {
       return window.ENABLE_TELEDECLARATION && this.diagnostic.year === this.teledeclarationYear
     },
-    displayPurchaseHints() {
+    displayOneClickPurchaseFill() {
       return (
-        this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x) && !this.hasActiveTeledeclaration
+        this.purchasesSummary &&
+        Object.values(this.purchasesSummary).some((x) => !!x) &&
+        !this.hasActiveTeledeclaration &&
+        this.missingSomeApproFields
       )
     },
     diagnosticTypeLabel() {
@@ -522,6 +548,27 @@ export default {
     },
     approSummary() {
       return approSummary(this.diagnostic, this.extendedDiagnostic)
+    },
+    approFields() {
+      const groups = Constants.TeledeclarationCharacteristicGroups
+      return [
+        "valueTotalHt",
+        "valueBioHt",
+        "valueSustainableHt",
+        "valueEgalimOthersHt",
+        "valueExternalityPerformanceHt",
+        "valueMeatPoultryHt",
+        "valueMeatPoultryEgalimHt",
+        "valueMeatPoultryFranceHt",
+        "valueFishHt",
+        "valueFishEgalimHt",
+      ]
+        .concat(groups.egalim.fields)
+        .concat(groups.nonEgalim.fields)
+        .concat(groups.outsideLaw.fields)
+    },
+    missingSomeApproFields() {
+      return this.approFields.some((key) => !this.diagnostic[key] && this.diagnostic[key] !== 0)
     },
   },
   beforeMount() {
@@ -795,6 +842,16 @@ export default {
     },
     updateSatellitesCount(data) {
       this.satelliteDbCount = data.total
+    },
+    toCurrency(value) {
+      return toCurrency(value)
+    },
+    fillFieldsFromPurchases() {
+      if (!this.purchasesSummary) return
+      Object.entries(this.purchasesSummary).forEach(([key, value]) => {
+        this.$set(this.diagnostic, key, this.diagnostic[key] || value || 0)
+      })
+      this.fieldsFilledFromPurchases = true
     },
   },
   created() {

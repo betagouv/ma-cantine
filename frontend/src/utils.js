@@ -442,6 +442,17 @@ export const capitalise = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
+export const toCurrency = (value) => {
+  if (typeof value !== "number") {
+    return value
+  }
+  const formatter = new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+  })
+  return formatter.format(value)
+}
+
 export const approTotals = (diagnostic) => {
   let bioTotal = diagnostic.valueBioHt
   let siqoTotal = diagnostic.valueSustainableHt

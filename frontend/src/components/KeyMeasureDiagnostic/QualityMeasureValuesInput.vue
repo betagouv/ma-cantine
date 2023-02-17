@@ -17,13 +17,6 @@
       :error="totalError"
       @blur="totalError = false"
     />
-    <PurchaseHint
-      v-if="displayPurchaseHints"
-      v-model="diagnostic.valueTotalHt"
-      @autofill="checkTotal"
-      purchaseType="totaux"
-      :amount="purchasesSummary.total"
-    />
 
     <label :for="'bio-' + diagnostic.year" class="body-2 mb-1 mt-4">...en produits bio</label>
     <DsfrCurrencyField
@@ -33,14 +26,6 @@
       :readonly="readonly"
       :disabled="readonly"
       @blur="checkTotal"
-    />
-
-    <PurchaseHint
-      v-if="displayPurchaseHints"
-      v-model="diagnostic.valueBioHt"
-      @autofill="checkTotal"
-      purchaseType="bio"
-      :amount="purchasesSummary.bio"
     />
 
     <label :for="'sustainable-' + diagnostic.year" class="body-2 mb-1 mt-4">
@@ -54,19 +39,11 @@
       :disabled="readonly"
       @blur="checkTotal"
     />
-    <PurchaseHint
-      v-if="displayPurchaseHints"
-      v-model="diagnostic.valueSustainableHt"
-      @autofill="checkTotal"
-      purchaseType="qualité et durable"
-      :amount="purchasesSummary.siqo"
-    />
   </fieldset>
 </template>
 
 <script>
 import validators from "@/validators"
-import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 
 export default {
@@ -79,7 +56,7 @@ export default {
       default: false,
     },
   },
-  components: { PurchaseHint, DsfrCurrencyField },
+  components: { DsfrCurrencyField },
   data() {
     return {
       totalError: false,
@@ -92,9 +69,6 @@ export default {
     },
     diagnostic() {
       return this.originalDiagnostic
-    },
-    displayPurchaseHints() {
-      return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x) && !this.readonly
     },
   },
   methods: {

@@ -12,7 +12,7 @@
         <v-btn tabindex="0" @click="onFill" class="hint py-1" text>
           <span>
             <span class="font-weight-medium grey--text text--darken-3">{{ visibleLabel }}&nbsp;</span>
-            <span class="text-decoration-underline primary--text text--darken-1">{{ amount }} €</span>
+            <span class="text-decoration-underline primary--text text--darken-1">{{ toCurrency(amount) }}</span>
           </span>
         </v-btn>
       </v-col>
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { toCurrency } from "@/utils"
+
 export default {
   name: "PurchaseHint",
   data() {
@@ -54,6 +56,9 @@ export default {
     onFill() {
       this.$emit("input", this.amount)
       this.$emit("autofill")
+    },
+    toCurrency(value) {
+      return toCurrency(value)
     },
   },
   computed: {

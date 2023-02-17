@@ -288,11 +288,11 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["total"], 1045.0)
-        self.assertEqual(body["bio"], 200.0)
-        self.assertEqual(body["siqo"], 50.0)
-        self.assertEqual(body["egalimOthers"], 250.0)
-        self.assertEqual(body["externalitiesPerformance"], 45.0)
+        self.assertEqual(body["valueTotalHt"], 1045.0)
+        self.assertEqual(body["valueBioHt"], 200.0)
+        self.assertEqual(body["valueSustainableHt"], 50.0)
+        self.assertEqual(body["valueEgalimOthersHt"], 250.0)
+        self.assertEqual(body["valueExternalityPerformanceHt"], 45.0)
 
     @authenticate
     def test_complex_purchase_total_summary(self):
@@ -351,16 +351,16 @@ class TestPurchaseApi(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["total"], 590.0)
-        self.assertEqual(body["fruitsEtLegumesBio"], 200.0)
-        self.assertEqual(body["viandesVolaillesBio"], 10.0)
-        self.assertEqual(body["fruitsEtLegumesAocaopIgpStg"], 80.0)
-        self.assertEqual(body["fruitsEtLegumesCommerceEquitable"], None)
-        self.assertEqual(body["autresLocal"], 100.0)
-        self.assertEqual(body["viandesVolaillesShortDistribution"], 100.0)
-        self.assertEqual(body["viandesVolaillesLocal"], 10.0)
-        self.assertEqual(body["autresNonEgalim"], 210.0)
-        self.assertEqual(body["viandesVolaillesNonEgalim"], 90.0)
+        self.assertEqual(body["valueTotalHt"], 590.0)
+        self.assertEqual(body["valueFruitsEtLegumesBio"], 200.0)
+        self.assertEqual(body["valueViandesVolaillesBio"], 10.0)
+        self.assertEqual(body["valueFruitsEtLegumesAocaopIgpStg"], 80.0)
+        self.assertEqual(body["valueFruitsEtLegumesCommerceEquitable"], None)
+        self.assertEqual(body["valueAutresLocal"], 100.0)
+        self.assertEqual(body["valueViandesVolaillesShortDistribution"], 100.0)
+        self.assertEqual(body["valueViandesVolaillesLocal"], 10.0)
+        self.assertEqual(body["valueAutresNonEgalim"], 210.0)
+        self.assertEqual(body["valueViandesVolaillesNonEgalim"], 90.0)
 
     def test_purchase_summary_unauthenticated(self):
         canteen = CanteenFactory.create()
@@ -441,9 +441,9 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["meatPoultryTotal"], 155.0)
-        self.assertEqual(body["meatPoultryEgalim"], 120.0)
-        self.assertEqual(body["meatPoultryFrance"], 65.0)
+        self.assertEqual(body["valueMeatPoultryHt"], 155.0)
+        self.assertEqual(body["valueMeatPoultryEgalimHt"], 120.0)
+        self.assertEqual(body["valueMeatPoultryFranceHt"], 65.0)
 
     @authenticate
     def test_purchase_fish_totals(self):
@@ -513,8 +513,8 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["fishTotal"], 160.0)
-        self.assertEqual(body["fishEgalim"], 125.0)
+        self.assertEqual(body["valueFishHt"], 160.0)
+        self.assertEqual(body["valueFishEgalimHt"], 125.0)
 
     @authenticate
     def test_purchase_not_authorized(self):

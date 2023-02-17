@@ -22,7 +22,7 @@
       v-model="diagnostic.valueTotalHt"
       @autofill="checkTotal"
       purchaseType="totaux"
-      :amount="purchasesSummary.total"
+      :amount="purchasesSummary.valueTotalHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -53,7 +53,7 @@
       v-model="diagnostic.valueMeatPoultryHt"
       @autofill="checkTotal"
       purchaseType="totaux viandes et volailles"
-      :amount="purchasesSummary.meatPoultryTotal"
+      :amount="purchasesSummary.valueMeatPoultryHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -81,7 +81,7 @@
       v-model="diagnostic.valueFishHt"
       @autofill="checkTotal"
       purchaseType="totaux de poissons, produits de la mer et de l'aquaculture"
-      :amount="purchasesSummary.fishTotal"
+      :amount="purchasesSummary.valueFishHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -164,7 +164,7 @@
                   v-if="displayPurchaseHints"
                   v-model="diagnostic[diagnosticKey(fId, cId)]"
                   :purchaseType="family.shortText + ' pour ce caractéristique'"
-                  :amount="purchasesSummary[summaryKey(fId, cId)]"
+                  :amount="purchasesSummary[diagnosticKey(fId, cId)]"
                 />
               </v-col>
             </v-row>
@@ -301,9 +301,6 @@ export default {
     },
     diagnosticKey(family, characteristic) {
       return this.camelize(`value_${family}_${characteristic}`)
-    },
-    summaryKey(family, characteristic) {
-      return this.camelize(`${family}_${characteristic}`)
     },
     camelize(underscoredString) {
       const stringArray = underscoredString.split("_")

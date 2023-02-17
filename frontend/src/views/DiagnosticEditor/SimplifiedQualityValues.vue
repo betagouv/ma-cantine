@@ -22,7 +22,7 @@
       v-model="diagnostic.valueTotalHt"
       @autofill="checkTotal"
       purchaseType="totaux"
-      :amount="purchasesSummary.total"
+      :amount="purchasesSummary.valueTotalHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -54,7 +54,7 @@
       v-model="diagnostic.valueBioHt"
       @autofill="checkTotal"
       purchaseType="bio"
-      :amount="purchasesSummary.bio"
+      :amount="purchasesSummary.valueBioHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -88,7 +88,7 @@
       v-model="diagnostic.valueSustainableHt"
       @autofill="checkTotal"
       purchaseType="SIQO"
-      :amount="purchasesSummary.siqo"
+      :amount="purchasesSummary.valueSustainableHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -125,7 +125,7 @@
       v-model="diagnostic.valueEgalimOthersHt"
       @autofill="checkTotal"
       purchaseType="« autre EGAlim »"
-      :amount="purchasesSummary.egalimOthers"
+      :amount="purchasesSummary.valueEgalimOthersHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -202,7 +202,7 @@
       v-model="diagnostic.valueExternalityPerformanceHt"
       @autofill="checkTotal"
       purchaseType="« critères d'achat »"
-      :amount="purchasesSummary.externalitiesPerformance"
+      :amount="purchasesSummary.valueExternalityPerformanceHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -257,7 +257,7 @@
       v-model="diagnostic.valueMeatPoultryHt"
       @autofill="checkTotal"
       purchaseType="totaux viandes et volailles"
-      :amount="purchasesSummary.meatPoultryTotal"
+      :amount="purchasesSummary.valueMeatPoultryHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -292,7 +292,7 @@
       v-model="diagnostic.valueMeatPoultryEgalimHt"
       @autofill="checkTotal"
       purchaseType="viandes et volailles EGAlim"
-      :amount="purchasesSummary.meatPoultryEgalim"
+      :amount="purchasesSummary.valueMeatPoultryEgalimHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -327,7 +327,7 @@
       v-model="diagnostic.valueMeatPoultryFranceHt"
       @autofill="checkTotal"
       purchaseType="viandes et volailles provenance France"
-      :amount="purchasesSummary.meatPoultryFrance"
+      :amount="purchasesSummary.valueMeatPoultryFranceHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -359,7 +359,7 @@
       v-model="diagnostic.valueFishHt"
       @autofill="checkTotal"
       purchaseType="totaux de poissons, produits de la mer et de l'aquaculture"
-      :amount="purchasesSummary.fishTotal"
+      :amount="purchasesSummary.valueFishHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
 
@@ -391,7 +391,7 @@
       v-model="diagnostic.valueFishEgalimHt"
       @autofill="checkTotal"
       purchaseType="poissons, produits de la mer et de l'aquaculture EGAlim"
-      :amount="purchasesSummary.fishEgalim"
+      :amount="purchasesSummary.valueFishEgalimHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
   </div>
