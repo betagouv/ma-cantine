@@ -173,7 +173,7 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
         fields = (
             "department",
             "region",
-            "sectors",
+            # "sectors",
             "min_daily_meal_count",
             "max_daily_meal_count",
             "management_type",
@@ -737,7 +737,7 @@ def badges_for_queryset(diagnostic_year_queryset):
     if scolaire_sectors.count():
         diversification_badge_query = diversification_badge_query.filter(
             Q(
-                canteen__sectors__in=scolaire_sectors,
+                # canteen__sectors__in=scolaire_sectors,
                 vegetarian_weekly_recurrence__in=[
                     Diagnostic.MenuFrequency.MID,
                     Diagnostic.MenuFrequency.HIGH,

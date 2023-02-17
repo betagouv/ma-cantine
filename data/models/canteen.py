@@ -101,7 +101,7 @@ class Canteen(SoftDeletionModel):
     department = models.TextField(null=True, blank=True, choices=Department.choices, verbose_name="département")
     region = models.TextField(null=True, blank=True, choices=Region.choices, verbose_name="région")
     postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name="code postal")
-    sectors = models.ManyToManyField(Sector, blank=True, verbose_name="secteurs d'activité")
+    sectors = models.ManyToManyField(Sector, through="CanteenSectorRelation")
     line_ministry = models.TextField(
         null=True, blank=True, choices=Ministries.choices, verbose_name="Ministère de tutelle"
     )

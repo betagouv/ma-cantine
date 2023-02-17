@@ -40,7 +40,6 @@ def unpublish(modeladmin, request, queryset):
 
 @admin.register(Canteen)
 class CanteenAdmin(SoftDeletionAdmin):
-
     form = CanteenForm
     inlines = (DiagnosticInline,)
     fields = (
@@ -57,7 +56,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "yearly_meal_count",
         "satellite_canteens_count",
         "economic_model",
-        "sectors",
+        # "sectors",
         "line_ministry",
         "managers",
         "management_type",
@@ -94,7 +93,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "supprimée",
     )
     filter_vertical = (
-        "sectors",
+        # "sectors",
         "managers",
     )
     list_filter = (
@@ -103,7 +102,7 @@ class CanteenAdmin(SoftDeletionAdmin):
         "production_type",
         "economic_model",
         SoftDeletionStatusFilter,
-        "sectors",
+        # "sectors",
         "region",
         "department",
         "import_source",
