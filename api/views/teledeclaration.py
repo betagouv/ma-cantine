@@ -237,22 +237,24 @@ class TeledeclarationPdfView(APIView):
         them to be human-readable (e.g., replacing keys with labels)
         """
         return {
-            "sectors": ", ".join([x["name"] for x in canteen_data.get("sectors", [])]),
+            "sectors": ", ".join([x["name"] for x in (canteen_data.get("sectors") or [])]),
             "production_type": (
                 Canteen.ProductionType(canteen_data["production_type"]).label
-                if canteen_data["production_type"]
+                if canteen_data.get("production_type")
                 else None
             ),
             "management_type": (
                 Canteen.ManagementType(canteen_data["management_type"]).label
-                if canteen_data["management_type"]
+                if canteen_data.get("management_type")
                 else None
             ),
             "line_ministry": (
-                Canteen.Ministries(canteen_data["line_ministry"]).label if canteen_data["line_ministry"] else None
+                Canteen.Ministries(canteen_data["line_ministry"]).label if canteen_data.get("line_ministry") else None
             ),
             "economic_model": (
-                Canteen.EconomicModel(canteen_data["economic_model"]).label if canteen_data["economic_model"] else None
+                Canteen.EconomicModel(canteen_data["economic_model"]).label
+                if canteen_data.get("economic_model")
+                else None
             ),
         }
 
@@ -264,13 +266,13 @@ class TeledeclarationPdfView(APIView):
         "other" editable choices)
         """
         processed_waste_actions = [
-            Diagnostic.WasteActions(x).label for x in teledeclaration_data.get("waste_actions", [])
+            Diagnostic.WasteActions(x).label for x in (teledeclaration_data.get("waste_actions") or [])
         ]
         combined_waste_actions = processed_waste_actions + (
             [teledeclaration_data.get("other_waste_action")] if teledeclaration_data.get("other_waste_action") else []
         )
         processed_communication_supports = [
-            Diagnostic.CommunicationType(x).label for x in teledeclaration_data.get("communication_supports", [])
+            Diagnostic.CommunicationType(x).label for x in (teledeclaration_data.get("communication_supports") or [])
         ]
         combined_communication_supports = processed_communication_supports + (
             [teledeclaration_data.get("other_communication_support")]
@@ -282,24 +284,25 @@ class TeledeclarationPdfView(APIView):
             "waste_actions": combined_waste_actions,
             "diversification_plan_actions": [
                 Diagnostic.DiversificationPlanActions(x).label
-                for x in teledeclaration_data.get("diversification_plan_actions", [])
+                for x in (teledeclaration_data.get("diversification_plan_actions") or [])
             ],
             "vegetarian_weekly_recurrence": (
                 Diagnostic.MenuFrequency(teledeclaration_data["vegetarian_weekly_recurrence"]).label
-                if teledeclaration_data["vegetarian_weekly_recurrence"]
+                if teledeclaration_data.get("vegetarian_weekly_recurrence")
                 else None
             ),
             "vegetarian_menu_type": (
                 Diagnostic.MenuType(teledeclaration_data["vegetarian_menu_type"]).label
-                if teledeclaration_data["vegetarian_menu_type"]
+                if teledeclaration_data.get("vegetarian_menu_type")
                 else None
             ),
             "vegetarian_menu_bases": [
-                Diagnostic.VegetarianMenuBase(x).label for x in teledeclaration_data.get("vegetarian_menu_bases", [])
+                Diagnostic.VegetarianMenuBase(x).label
+                for x in (teledeclaration_data.get("vegetarian_menu_bases") or [])
             ],
             "communication_frequency": (
                 Diagnostic.CommunicationFrequency(teledeclaration_data["communication_frequency"]).label
-                if teledeclaration_data["communication_frequency"]
+                if teledeclaration_data.get("communication_frequency")
                 else None
             ),
             "communication_supports": combined_communication_supports,
