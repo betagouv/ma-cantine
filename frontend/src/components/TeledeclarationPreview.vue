@@ -57,7 +57,9 @@
               </tr>
               <tr v-for="item in additionalItems" :key="item.label" :class="item.class || ''">
                 <td class="text-left">{{ item.label }}</td>
-                <td class="text-left">{{ item.value }}</td>
+                <td :class="item.isNumber && isTruthyOrZero(item.value) ? 'text-right' : 'text-left'">
+                  {{ isTruthyOrZero(item.value) ? item.value : "Non renseigné" }}
+                </td>
               </tr>
             </tbody>
           </template>
@@ -457,38 +459,44 @@ export default {
         },
         {
           label: "Restes de pain kg/an",
-          value: this.diagnostic.breadLeftovers || "Non renseigné",
-          class: this.diagnostic.breadLeftovers ? "" : "warn",
+          isNumber: true,
+          value: this.diagnostic.breadLeftovers,
+          class: this.isTruthyOrZero(this.diagnostic.breadLeftovers) ? "" : "warn",
         },
         {
           label: "Restes servis (plateau) kg/an",
-          value: this.diagnostic.servedLeftovers || "Non renseigné",
-          class: this.diagnostic.servedLeftovers ? "" : "warn",
+          isNumber: true,
+          value: this.diagnostic.servedLeftovers,
+          class: this.isTruthyOrZero(this.diagnostic.servedLeftovers) ? "" : "warn",
         },
         {
           label: "Restes non servis kg/an",
-          value: this.diagnostic.unservedLeftovers || "Non renseigné",
-          class: this.diagnostic.unservedLeftovers ? "" : "warn",
+          isNumber: true,
+          value: this.diagnostic.unservedLeftovers,
+          class: this.isTruthyOrZero(this.diagnostic.unservedLeftovers) ? "" : "warn",
         },
         {
           label: "Restes de composantes kg/an",
-          value: this.diagnostic.sideLeftovers || "Non renseigné",
-          class: this.diagnostic.sideLeftovers ? "" : "warn",
+          isNumber: true,
+          value: this.diagnostic.sideLeftovers,
+          class: this.isTruthyOrZero(this.diagnostic.sideLeftovers) ? "" : "warn",
         },
         {
           label: "Fréquence de dons en dons/an",
-          value: this.diagnostic.donationFrequency || "Non renseigné",
-          class: this.diagnostic.donationFrequency ? "" : "warn",
+          isNumber: true,
+          value: this.diagnostic.donationFrequency,
+          class: this.isTruthyOrZero(this.diagnostic.donationFrequency) ? "" : "warn",
         },
         {
           label: "Quantité des denrées données kg/an",
-          value: this.diagnostic.donationQuantity || "Non renseigné",
-          class: this.diagnostic.donationQuantity ? "" : "warn",
+          isNumber: true,
+          value: this.diagnostic.donationQuantity,
+          class: this.isTruthyOrZero(this.diagnostic.donationQuantity) ? "" : "warn",
         },
         {
           label: "Type de denrées données",
-          value: this.diagnostic.donationFoodType || "Non renseigné",
-          class: this.diagnostic.donationFoodType ? "" : "warn",
+          value: this.diagnostic.donationFoodType,
+          class: this.isTruthyOrZero(this.diagnostic.donationFoodType) ? "" : "warn",
         },
         {
           label: "Autres commentaires sur le gaspillage",
@@ -540,7 +548,7 @@ export default {
         },
         {
           label: "Autres supports de communication",
-          value: this.diagnostic.otherCommunicationSupport || "Non renseigné",
+          value: this.diagnostic.otherCommunicationSupport,
           class: this.diagnostic.otherCommunicationSupport ? "" : "warn",
         },
         {
