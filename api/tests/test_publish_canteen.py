@@ -66,19 +66,6 @@ class TestPublishCanteen(APITestCase):
         self.assertEqual(persisted_canteen.publication_status, "draft")
         self.assertEqual(persisted_canteen.publication_comments, "Hello, world!")
 
-        canteen = CanteenFactory.create(publication_status="pending")
-        canteen.managers.add(authenticate.user)
-        response = self.client.post(
-            reverse("unpublish_canteen", kwargs={"pk": canteen.id}),
-            {"publication_comments": "Hello, world!"},
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        persisted_canteen = Canteen.objects.get(pk=canteen.id)
-        self.assertEqual(persisted_canteen.publication_status, "draft")
-        self.assertEqual(persisted_canteen.publication_comments, "Hello, world!")
-        self.assertEqual(response.json()["publicationComments"], "Hello, world!")
-
     @authenticate
     def test_publish_many_canteens(self):
         """

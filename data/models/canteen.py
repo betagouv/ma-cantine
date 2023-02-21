@@ -47,7 +47,6 @@ class Canteen(SoftDeletionModel):
 
     class PublicationStatus(models.TextChoices):
         DRAFT = "draft", "🔒 Non publié"
-        PENDING = "pending", "❓ En attente de vérification"
         PUBLISHED = "published", "✅ Publié"
 
     class EconomicModel(models.TextChoices):
