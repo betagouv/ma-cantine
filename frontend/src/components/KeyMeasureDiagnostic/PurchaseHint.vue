@@ -1,5 +1,5 @@
 <template>
-  <v-sheet :color="backgroundColor" class="body-2 pr-3 pt-8 pb-1 mt-n7">
+  <v-sheet :color="backgroundColor" class="body-2 pr-3 pt-10 pb-1 mt-n9">
     <p class="mb-0 caption pl-3" v-if="!amount">
       {{ emptyLabel }}
     </p>
@@ -78,7 +78,7 @@ export default {
 
 <style scoped>
 .v-sheet {
-  border-radius: 12px !important;
+  border-radius: 0 0 12px 12px !important;
 }
 .hint {
   max-width: 100%;
