@@ -762,7 +762,6 @@ export default {
         if (!teledeclarationFormIsValid) return
       }
       this.$emit("teledeclare")
-      this.$emit("input", false)
     },
     goToEditing() {
       this.$emit("input", false)
@@ -779,13 +778,6 @@ export default {
     toCurrency(value) {
       return toCurrency(value)
     },
-    handlePreviewStateChange(value) {
-      if (value) {
-        console.log("value open")
-      } else {
-        console.log("value close")
-      }
-    },
   },
   mounted() {
     window.addEventListener("resize", this.calculateTableHeight)
@@ -799,7 +791,6 @@ export default {
       if (newValue) {
         this.$nextTick().then(this.calculateTableHeight)
       }
-      this.handlePreviewStateChange(newValue)
     },
   },
 }
