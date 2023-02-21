@@ -25,7 +25,7 @@ class TestPublishedCanteenApi(APITestCase):
         canteen = CanteenFactory.create(city="Paris")
         canteen.managers.add(authenticate.user)
         payload = {
-            "publication_status": "pending",
+            "publication_status": "published",
             "publication_comments": "Some comments",
         }
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
@@ -46,7 +46,7 @@ class TestPublishedCanteenApi(APITestCase):
         ]
         private_canteens = [
             CanteenFactory.create(),
-            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PENDING.value),
+            CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT.value),
         ]
         response = self.client.get(reverse("published_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
