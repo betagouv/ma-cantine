@@ -30,9 +30,7 @@
         <li>
           Optionnel : Un état de publication (les options sont
           <code>published</code>
-          ,
-          <code>pending</code>
-          , ou
+          ou
           <code>draft</code>
           )
         </li>

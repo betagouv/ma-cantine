@@ -51,7 +51,7 @@ class TestPublishCanteen(APITestCase):
     @authenticate
     def test_unpublish_canteen(self):
         """
-        Calling the unpublish endpoint moves canteens from published or pending
+        Calling the unpublish endpoint moves canteens from published
         to draft, optionally updating comments
         """
         canteen = CanteenFactory.create(publication_status="published")
