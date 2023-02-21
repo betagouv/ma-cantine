@@ -36,10 +36,10 @@ export default {
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
     },
   },
+  data() {
+    return { inputId: null }
+  },
   computed: {
-    inputId() {
-      return this.$refs?.["combobox"]?.$refs?.["input"].id
-    },
     value() {
       return this.$refs["combobox"].value
     },
@@ -52,9 +52,13 @@ export default {
     validate() {
       return this.$refs["combobox"].validate()
     },
+    assignInputId() {
+      this.inputId = this.$refs?.["combobox"]?.$refs?.["input"].id
+    },
   },
   mounted() {
     this.removeInnerLabel()
+    this.assignInputId()
   },
 }
 </script>
