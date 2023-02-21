@@ -630,7 +630,8 @@ export default {
       this.$store
         .dispatch("sendCanteenNotFoundEmail", payload)
         .then(() => {
-          this.$refs.form.reset()
+          this.message = ""
+          this.$refs.form.resetValidation()
           this.$store.dispatch("notify", {
             status: "success",
             message: `Votre message a bien été envoyé.`,
