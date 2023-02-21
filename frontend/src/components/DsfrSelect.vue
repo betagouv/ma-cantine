@@ -29,10 +29,10 @@ export default {
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
     },
   },
+  data() {
+    return { inputId: null }
+  },
   computed: {
-    inputId() {
-      return this.$refs?.["select"]?.$refs?.["input"].id
-    },
     value() {
       return this.$refs["select"].value
     },
@@ -45,9 +45,13 @@ export default {
     validate() {
       return this.$refs["select"].validate()
     },
+    assignInputId() {
+      this.inputId = this.$refs?.["select"]?.$refs?.["input"].id
+    },
   },
   mounted() {
     this.removeInnerLabel()
+    this.assignInputId()
   },
 }
 </script>
