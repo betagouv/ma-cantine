@@ -231,7 +231,7 @@
               :rules="[validators.required]"
               item-text="name"
               item-value="id"
-              hide-details
+              hide-details="auto"
             />
           </div>
         </v-col>

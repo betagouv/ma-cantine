@@ -128,7 +128,7 @@
           v-model="canteen.sectors"
           item-text="name"
           item-value="id"
-          hide-details
+          hide-details="auto"
         />
       </v-col>
       <v-col class="py-0" cols="12" md="6">

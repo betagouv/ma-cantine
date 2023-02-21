@@ -83,7 +83,8 @@
                 v-model="satellite.sectors"
                 item-text="name"
                 item-value="id"
-                hide-details
+                hide-details="auto"
+                :rules="[validators.required]"
               />
             </v-col>
             <v-spacer></v-spacer>
