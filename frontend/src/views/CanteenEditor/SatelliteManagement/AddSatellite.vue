@@ -160,7 +160,7 @@ export default {
     },
     greaterThanDailyMealCount(input) {
       if (input && Number(input) < Number(this.satellite.dailyMealCount)) {
-        return `Ce total doit être superieur du moyen de repas par jour sur place, actuellement ${this.satellite.dailyMealCount}`
+        return `Ce total doit être supérieur du moyen de repas par jour sur place, actuellement ${this.satellite.dailyMealCount}`
       }
       return true
     },
