@@ -5,7 +5,7 @@ from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory
-from data.factories import DiagnosticFactory
+from data.factories import DiagnosticFactory, SectorFactory
 from data.models import Canteen, Teledeclaration
 from .utils import authenticate, get_oauth2_token
 
@@ -939,3 +939,48 @@ class TestCanteenApi(APITestCase):
         body = response.json()
 
         self.assertEqual(body["centralKitchenName"], central_kitchen.name)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_get_actions_missing_line_ministry(self):
+        """
+        Even if the diagnostic is complete, the mandatory information on the canteen level should
+        return a "35_fill_canteen_data" if line ministry is not there
+        """
+        with_lm = SectorFactory.create(has_line_ministry=True)
+        without_lm = SectorFactory.create(has_line_ministry=False)
+        canteen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="96766910375238",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            sectors=[with_lm, without_lm],
+            line_ministry=None,
+        )
+        DiagnosticFactory.create(year=2021, canteen=canteen, value_total_ht=1000)
+        canteen.managers.add(authenticate.user)
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        returned_canteens = response.json()["results"]
+        self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
+
+        # a canteen that has a line ministry should be complete
+        canteen.line_ministry = Canteen.Ministries.AFFAIRES_ETRANGERES
+        canteen.save()
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        returned_canteens = response.json()["results"]
+        self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
+
+        # a canteen without a line ministry and without a sector that demands one is also complete
+        canteen.line_ministry = None
+        canteen.sectors.clear()
+        canteen.sectors.set([without_lm])
+        canteen.save()
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        returned_canteens = response.json()["results"]
+        self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
