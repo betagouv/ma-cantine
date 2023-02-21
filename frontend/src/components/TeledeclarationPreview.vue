@@ -90,7 +90,7 @@
       <v-card-actions class="d-flex pr-4 pb-4">
         <v-spacer></v-spacer>
         <v-btn outlined color="primary" class="px-4" @click="closeDialog">Annuler</v-btn>
-        <v-btn outlined color="primary" class="ml-4 px-4" @click="goToEditing" v-if="canteen">Modifier</v-btn>
+        <v-btn outlined color="primary" class="ml-4 px-4" @click="goToEditing" v-if="!fromDiagPage">Modifier</v-btn>
         <v-btn color="primary" class="ml-4 px-4" @click="confirmTeledeclaration">Télédéclarer ces données</v-btn>
       </v-card-actions>
     </v-card>
@@ -659,6 +659,9 @@ export default {
         return mode?.label
       }
       return null
+    },
+    fromDiagPage() {
+      return this.$route.name === "DiagnosticModification"
     },
   },
   methods: {
