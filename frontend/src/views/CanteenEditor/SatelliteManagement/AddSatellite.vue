@@ -12,7 +12,7 @@
       <v-card-text>
         <v-form ref="form" v-model="formIsValid">
           <v-row>
-            <v-col cols="12" md="8">
+            <v-col cols="12" md="6" class="mb-n4">
               <label class="body-2" for="satellite-siret">SIRET</label>
               <DsfrTextField
                 id="satellite-siret"
@@ -35,18 +35,38 @@
                 pour les cantines scolaires.
               </p>
             </v-col>
-            <v-col cols="12" md="4">
-              <label class="body-2" for="meal-count">Couverts par jour</label>
+            <v-col cols="6" md="3">
+              <label class="body-2" for="meal-count">
+                Couverts
+                <b>par jour</b>
+              </label>
               <DsfrTextField
                 id="meal-count"
+                type="number"
                 hide-details="auto"
                 validate-on-blur
-                v-model="satellite.dailyMealCount"
+                v-model.number="satellite.dailyMealCount"
                 prepend-icon="$restaurant-fill"
+                :rules="[validators.greaterThanZero]"
+              />
+            </v-col>
+            <v-col cols="6" md="3">
+              <label class="body-2 d-block" for="yearly-meals">
+                Couverts
+                <b>par an</b>
+              </label>
+              <DsfrTextField
+                id="yearly-meals"
+                type="number"
+                hide-details="auto"
+                validate-on-blur
+                v-model.number="satellite.yearlyMealCount"
+                prepend-icon="$restaurant-fill"
+                :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
               />
             </v-col>
           </v-row>
-          <v-row class="mt-n4">
+          <v-row>
             <v-col cols="12" md="5">
               <label class="body-2" for="satellite-name">Nom de la cantine</label>
               <DsfrTextField
@@ -66,7 +86,8 @@
                 v-model="satellite.sectors"
                 item-text="name"
                 item-value="id"
-                hide-details
+                hide-details="auto"
+                :rules="[validators.required]"
               />
             </v-col>
             <v-spacer></v-spacer>
@@ -136,6 +157,12 @@ export default {
             this.$store.dispatch("notifyServerError", error)
           }
         })
+    },
+    greaterThanDailyMealCount(input) {
+      if (input && Number(input) < Number(this.satellite.dailyMealCount)) {
+        return `Ce total doit être supérieur du moyen de repas par jour sur place, actuellement ${this.satellite.dailyMealCount}`
+      }
+      return true
     },
   },
 }
