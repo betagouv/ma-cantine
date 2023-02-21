@@ -61,10 +61,10 @@
       </v-radio>
     </v-radio-group>
 
-    <v-row>
-      <v-col cols="12" md="6" class="d-flex flex-column">
+    <v-row class="mt-5">
+      <v-col cols="12" md="6" class="d-flex flex-column" v-if="showDailyMealCount">
         <v-spacer></v-spacer>
-        <label for="daily-meals" class="body-2 mb-2 mt-5 d-block" v-if="showDailyMealCount">
+        <label for="daily-meals" class="body-2 mb-2 d-block">
           Couverts moyen par
           <b>jour</b>
           (convives sur place)
@@ -76,14 +76,13 @@
           :rules="[validators.greaterThanZero]"
           :readonly="readonly"
           :disabled="readonly"
-          v-if="showDailyMealCount"
           validate-on-blur
           v-model.number="canteen.dailyMealCount"
           prepend-icon="$restaurant-fill"
         />
       </v-col>
       <v-col cols="12" md="6">
-        <label for="yearly-meals" class="body-2 d-block mb-2 mt-5">
+        <label for="yearly-meals" class="body-2 d-block mb-2">
           Nombre total de couverts à
           <b>l'année</b>
           <span v-if="showSatelliteCanteensCount">&nbsp;(y compris les couverts livrés)</span>
@@ -132,7 +131,7 @@
         />
       </v-col>
       <v-col class="py-0" cols="12" md="6">
-        <p class="body-2 mb-2">Type d'établissement</p>
+        <p class="body-2 mb-2 mt-6 mt-md-0">Type d'établissement</p>
         <DsfrSelect
           :items="economicModels"
           solo
@@ -264,6 +263,9 @@ export default {
       const detail = this.productionTypes.find((x) => x.value === this.canteen.productionType)
       return detail ? detail.body : null
     },
+    showDailyMealCount() {
+      return this.canteen.productionType && this.canteen.productionType !== "central"
+    },
   },
   methods: {
     greaterThanDailyMealCount(input) {
@@ -300,9 +302,6 @@ export default {
       }
       this.communes.push(initialCityAutocomplete)
       this.cityAutocompleteChoice = initialCityAutocomplete.value
-    },
-    showDailyMealCount() {
-      return this.canteen.productionType && this.canteen.productionType !== "central"
     },
   },
   watch: {
