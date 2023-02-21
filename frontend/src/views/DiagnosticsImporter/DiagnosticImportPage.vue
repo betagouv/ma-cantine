@@ -286,6 +286,11 @@ export default {
           example: "300",
         },
         {
+          name: "Nombre total de couverts à l'année",
+          type: "Chiffre",
+          example: "67000",
+        },
+        {
           name: "Secteurs",
           description: `Options acceptées : ${this.$store.state.sectors.map(
             (x) => " <code>" + x.name + "</code>"
