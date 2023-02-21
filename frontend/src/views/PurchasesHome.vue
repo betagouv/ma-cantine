@@ -318,7 +318,7 @@ export default {
         { text: "Produit", value: "description", sortable: true },
         { text: "Famille", value: "family", sortable: true },
         { text: "Caratéristiques", value: "characteristics", sortable: false },
-        { text: "Cantine", value: "canteen", sortable: false },
+        { text: "Cantine", value: "canteen", sortable: true },
         { text: "Prix HT", value: "priceHt", sortable: true, align: "end" },
         { text: "", value: "hasAttachment", sortable: false },
       ],
@@ -437,7 +437,7 @@ export default {
     },
     getApiQueryParams(includePagination = true) {
       let apiQueryParams = includePagination ? `limit=${this.limit}&offset=${this.offset}` : ""
-      const orderingItems = this.getOrderingItems()
+      const orderingItems = this.getApiOrderingItems()
       if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
       if (this.searchTerm) apiQueryParams += `&search=${this.searchTerm}`
       if (this.appliedFilters.family) apiQueryParams += `&family=${this.appliedFilters.family}`
@@ -450,7 +450,7 @@ export default {
     },
     getUrlQueryParams() {
       let urlQueryParams = { page: this.options.page }
-      const orderingItems = this.getOrderingItems()
+      const orderingItems = this.getUrlOrderingItems()
       if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
       if (this.searchTerm) urlQueryParams["recherche"] = this.searchTerm
       if (this.appliedFilters.family)
@@ -464,11 +464,21 @@ export default {
           .join(",")
       return urlQueryParams
     },
-    getOrderingItems() {
+    getUrlOrderingItems() {
       let orderParams = []
       if (this.options.sortBy && this.options.sortBy.length > 0)
         for (let i = 0; i < this.options.sortBy.length; i++)
           orderParams.push(this.options.sortDesc[i] ? `-${this.options.sortBy[i]}` : this.options.sortBy[i])
+      return orderParams
+    },
+    getApiOrderingItems() {
+      let orderParams = []
+      if (this.options.sortBy && this.options.sortBy.length > 0)
+        for (let i = 0; i < this.options.sortBy.length; i++) {
+          let ordering = this.options.sortBy[i]
+          ordering = ordering === "canteen" ? "canteen__name" : ordering
+          orderParams.push(this.options.sortDesc[i] ? `-${ordering}` : ordering)
+        }
       return orderParams
     },
     populateParametersFromRoute() {
