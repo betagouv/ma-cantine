@@ -90,7 +90,7 @@
       <v-card-actions class="d-flex pr-4 pb-4">
         <v-spacer></v-spacer>
         <v-btn outlined color="primary" class="px-4" @click="closeDialog">Annuler</v-btn>
-        <v-btn outlined color="primary" class="ml-4 px-4" @click="goToEditing" v-if="canteen">Modifier</v-btn>
+        <v-btn outlined color="primary" class="ml-4 px-4" @click="goToEditing" v-if="!fromDiagPage">Modifier</v-btn>
         <v-btn color="primary" class="ml-4 px-4" @click="confirmTeledeclaration">Télédéclarer ces données</v-btn>
       </v-card-actions>
     </v-card>
@@ -660,6 +660,9 @@ export default {
       }
       return null
     },
+    fromDiagPage() {
+      return this.$route.name === "DiagnosticModification"
+    },
   },
   methods: {
     calculateTableHeight() {
@@ -759,6 +762,7 @@ export default {
         if (!teledeclarationFormIsValid) return
       }
       this.$emit("teledeclare")
+      this.$emit("input", false)
     },
     goToEditing() {
       this.$emit("input", false)
@@ -775,6 +779,13 @@ export default {
     toCurrency(value) {
       return toCurrency(value)
     },
+    handlePreviewStateChange(value) {
+      if (value) {
+        console.log("value open")
+      } else {
+        console.log("value close")
+      }
+    },
   },
   mounted() {
     window.addEventListener("resize", this.calculateTableHeight)
@@ -788,6 +799,7 @@ export default {
       if (newValue) {
         this.$nextTick().then(this.calculateTableHeight)
       }
+      this.handlePreviewStateChange(newValue)
     },
   },
 }
