@@ -403,6 +403,7 @@ import labels from "@/data/quality-labels.json"
 import validators from "@/validators"
 import LogoBio from "@/components/LogoBio"
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
+import { toCurrency } from "@/utils"
 
 const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
 const DEFAULT_FAMILY_TOTAL_ERROR = "La somme des achats par famille ne peut pas excéder le total des achats"
@@ -484,7 +485,7 @@ export default {
       this.fishError = !this.totalFishError && sumFish > totalFish
 
       if (this.totalError) {
-        this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${sumEgalim || 0} €`
+        this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${toCurrency(sumEgalim || 0)}`
       }
       if (this.totalMeatPoultryError) {
         this.meatPoultryErrorMessage = this.totalErrorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}`
@@ -498,10 +499,11 @@ export default {
 
       this.meatPoultryErrorMessage =
         this.meatPoultryErrorMessage ||
-        (this.meatPoultryError ? `${DEFAULT_MEAT_POULTRY_ERROR}, actuellement ${sumMeatPoultry || 0} €` : "")
+        (this.meatPoultryError ? `${DEFAULT_MEAT_POULTRY_ERROR}, actuellement ${toCurrency(sumMeatPoultry || 0)}` : "")
 
       this.fishErrorMessage =
-        this.fishErrorMessage || (this.fishError ? `${DEFAULT_FISH_ERROR}, actuellement ${sumFish || 0} €` : "")
+        this.fishErrorMessage ||
+        (this.fishError ? `${DEFAULT_FISH_ERROR}, actuellement ${toCurrency(sumFish || 0)}` : "")
 
       return [
         this.totalError,

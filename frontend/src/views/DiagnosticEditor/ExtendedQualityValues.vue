@@ -182,6 +182,7 @@ import LogoBio from "@/components/LogoBio"
 import labels from "@/data/quality-labels.json"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
+import { toCurrency } from "@/utils"
 
 const DEFAULT_TOTAL_ERROR = "Le totale doit être plus que la somme des valeurs par label"
 const DEFAULT_FAMILY_TOTAL_ERROR = "La somme des achats par famille ne peut pas excéder le total des achats"
@@ -282,19 +283,19 @@ export default {
       this.errorType = undefined
       if (totalInputs > this.diagnostic.valueTotalHt) {
         this.errorType = "TOTAL"
-        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumAllEgalimAndNonEgalim()} €`
+        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${toCurrency(this.sumAllEgalimAndNonEgalim())}`
         return false
       } else if (totalFamilies > this.diagnostic.valueTotalHt) {
         this.errorType = "FAMILY"
-        this.errorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}, actuellement ${totalFamilies} €`
+        this.errorMessage = `${DEFAULT_FAMILY_TOTAL_ERROR}, actuellement ${toCurrency(totalFamilies)}`
         return false
       } else if (this.isTruthyOrZero(totalMeatPoultry) && this.sumMeatVolailles() > totalMeatPoultry) {
         this.errorType = "MEAT"
-        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumMeatVolailles()} €`
+        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${toCurrency(this.sumMeatVolailles())}`
         return false
       } else if (this.isTruthyOrZero(totalFish) && this.sumFish() > totalFish) {
         this.errorType = "FISH"
-        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${this.sumFish()} €`
+        this.errorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${toCurrency(this.sumFish())}`
         return false
       }
       return true
