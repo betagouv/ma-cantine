@@ -288,6 +288,7 @@ export default {
         {
           name: "Nombre total de couverts à l'année",
           type: "Chiffre",
+          description: "Y compris les couverts livrés",
           example: "67000",
         },
         {
