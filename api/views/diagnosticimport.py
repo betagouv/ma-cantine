@@ -30,8 +30,8 @@ class ImportDiagnosticsView(ABC, APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
-    manager_column_idx = 10
-    year_idx = 11
+    manager_column_idx = 11
+    year_idx = 12
 
     def __init__(self, **kwargs):
         self.diagnostics_created = 0
@@ -262,6 +262,8 @@ class ImportDiagnosticsView(ABC, APIView):
     def _validate_canteen(row):
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
+        if not row[6]:
+            raise ValidationError({"yearly_meal_count": "Ce champ ne peut pas être vide."})
         elif not row[2] and not row[3]:
             raise ValidationError(
                 {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
@@ -295,20 +297,21 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.postal_code = row[3].strip()
         canteen.central_producer_siret = normalise_siret(row[4])
         canteen.daily_meal_count = row[5].strip()
-        canteen.production_type = row[7].strip().lower()
-        canteen.management_type = row[8].strip().lower()
-        canteen.economic_model = row[9].strip().lower() if len(row) > 9 else None
+        canteen.yearly_meal_count = row[6].strip()
+        canteen.production_type = row[8].strip().lower()
+        canteen.management_type = row[9].strip().lower()
+        canteen.economic_model = row[10].strip().lower() if len(row) > 10 else None
         canteen.import_source = import_source
         canteen.publication_status = publication_status
 
         # full_clean must be before the relation-model updates bc they don't require a save().
         # If an exception is launched by full_clean, it must be here.
         canteen.full_clean()
-        if row[6]:
+        if row[7]:
             canteen.sectors.set(
                 [
                     self.annotated_sectors.get(name_lower__unaccent=sector.strip().lower())
-                    for sector in row[6].split("+")
+                    for sector in row[7].split("+")
                 ]
             )
 
@@ -417,7 +420,7 @@ class ImportDiagnosticsView(ABC, APIView):
 
 # Allows canteen-only and simple diagnostics import
 class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
-    final_value_idx = 21
+    final_value_idx = 22
 
     def _skip_row(self, row_number, row):
         return row_number == 1 and row[0].lower() == "siret"
@@ -432,7 +435,7 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             raise IndexError()
         elif len(row) > self.final_value_idx + 1 and not self.request.user.is_staff:
             raise PermissionDenied(
-                detail=f"Format fichier : {self.final_value_idx + 1} ou 11 colonnes attendues, {len(row)} trouvées."
+                detail=f"Format fichier : {self.final_value_idx + 1} ou 12 colonnes attendues, {len(row)} trouvées."
             )
 
     def _validate_diagnostic(self, row):
@@ -441,7 +444,7 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
         try:
             diagnostic_year = row[self.year_idx]
             # Flake formatting bug: https://github.com/PyCQA/pycodestyle/issues/373#issuecomment-760190686
-            if not diagnostic_year and any(row[12 : self.final_value_idx]):  # noqa: E203
+            if not diagnostic_year and any(row[13 : self.final_value_idx]):  # noqa: E203
                 raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
         except IndexError:
             pass
@@ -476,11 +479,11 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
 
     def _column_count_error_message(self, row):
-        return f"Données manquantes : 22 colonnes attendues, {len(row)} trouvées."
+        return f"Données manquantes : 23 colonnes attendues, {len(row)} trouvées."
 
 
 class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
-    final_value_idx = 126
+    final_value_idx = 127
 
     def _skip_row(self, row_number, row):
         if row_number == 1:
@@ -537,7 +540,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         return ("Import massif", Canteen.PublicationStatus.DRAFT, False, [])
 
     def _column_count_error_message(self, row):
-        return f"Données manquantes : au moins 12 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
+        return f"Données manquantes : au moins 13 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
 
 
 class FileFormatError(Exception):
