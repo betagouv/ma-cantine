@@ -36,7 +36,10 @@
               </p>
             </v-col>
             <v-col cols="6" md="3">
-              <label class="body-2" for="meal-count">Couverts par jour</label>
+              <label class="body-2" for="meal-count">
+                Couverts
+                <b>par jour</b>
+              </label>
               <DsfrTextField
                 id="meal-count"
                 type="number"
