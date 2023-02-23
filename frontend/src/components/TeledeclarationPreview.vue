@@ -78,7 +78,7 @@
       <div v-if="unusualData.length" class="text-left px-6">
         <p>Ces données sont-elles correctes ?</p>
         <ul>
-          <li v-for="msg in unusualData" :key="msg" class="mb-4">{{ msg }}</li>
+          <li v-for="data in unusualData" :key="data.id" class="mb-4">{{ data.text }}</li>
         </ul>
       </div>
       <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form" class="px-6">
@@ -612,27 +612,49 @@ export default {
       const unusualData = []
       if (this.isCentralCuisine) {
         if (this.canteen.satelliteCanteensCount === 1) {
-          unusualData.push("Votre établissement livre des repas à un seul site")
+          unusualData.push({
+            text: "Votre établissement livre des repas à un seul site",
+            id: "td-satellite-count-is-1",
+          })
         } else if (this.canteen.satelliteCanteensCount > this.maxSatellitesExpected) {
-          unusualData.push(
-            `Votre établissement livre des repas à plus de 200 sites (${this.canteen.satelliteCanteensCount} au total)`
-          )
+          unusualData.push({
+            text: `Votre établissement livre des repas à plus de ${this.maxSatellitesExpected} sites (${this.canteen.satelliteCanteensCount} au total)`,
+            id: `td-satellite-count-over-${this.maxSatellitesExpected}`,
+            value: this.canteen.satelliteCanteensCount,
+          })
         }
       }
       if (this.showApproItems) {
-        if (this.costPerMeal > this.maxCostPerMealExpected || this.costPerMeal < this.minCostPerMealExpected) {
-          unusualData.push(
-            `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
-          )
+        const text = `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
+        if (this.costPerMeal > this.maxCostPerMealExpected) {
+          unusualData.push({
+            text,
+            id: `td-meal-cost-over-${this.maxCostPerMealExpected}`,
+            value: this.costPerMeal,
+          })
+        } else if (this.costPerMeal < this.minCostPerMealExpected) {
+          unusualData.push({
+            text,
+            id: `td-meal-cost-under-${this.minCostPerMealExpected}`,
+            value: this.costPerMeal,
+          })
         }
       }
-      if (
-        this.daysOpenPerYear &&
-        (this.daysOpenPerYear < this.minDaysOpenExpected || this.daysOpenPerYear > this.maxDaysOpenExpected)
-      ) {
-        unusualData.push(
-          `Vos jours de service sont estimés à ${this.daysOpenPerYear} par an. S'il s'agit d'une erreur, veuillez modifier les chiffres « nombre de repas par jour » et/ou « nombre de repas par an ».`
-        )
+      if (this.daysOpenPerYear) {
+        const text = `Vos jours de service sont estimés à ${this.daysOpenPerYear} par an. S'il s'agit d'une erreur, veuillez modifier les chiffres « nombre de repas par jour » et/ou « nombre de repas par an ».`
+        if (this.daysOpenPerYear > this.maxDaysOpenExpected) {
+          unusualData.push({
+            text,
+            id: `td-days-open-over-${this.maxDaysOpenExpected}`,
+            value: this.daysOpenPerYear,
+          })
+        } else if (this.daysOpenPerYear < this.minDaysOpenExpected) {
+          unusualData.push({
+            text,
+            id: `td-days-open-under-${this.minDaysOpenExpected}`,
+            value: this.daysOpenPerYear,
+          })
+        }
       }
       return unusualData
     },
@@ -761,6 +783,7 @@ export default {
         const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
         if (!teledeclarationFormIsValid) return
       }
+      this.handlePreviewClose("teledeclare")
       this.$emit("teledeclare")
     },
     goToEditing() {
@@ -778,6 +801,15 @@ export default {
     toCurrency(value) {
       return toCurrency(value)
     },
+    handlePreviewClose(eventAction) {
+      const eventCategory = "data-warning"
+      if (this.$matomo) {
+        this.unusualData.forEach((data) => {
+          if (data.value) this.$matomo.trackEvent(eventCategory, eventAction, data.id, data.value)
+          else this.$matomo.trackEvent(eventCategory, eventAction, data.id)
+        })
+      }
+    },
   },
   mounted() {
     window.addEventListener("resize", this.calculateTableHeight)
@@ -790,6 +822,10 @@ export default {
     value(newValue) {
       if (newValue) {
         this.$nextTick().then(this.calculateTableHeight)
+      }
+      // doesn't get here from confirmTeledeclaration, so we know this is a close
+      else {
+        this.handlePreviewClose("go-back")
       }
     },
   },
