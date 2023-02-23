@@ -33,10 +33,10 @@ export default {
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
     },
   },
+  data() {
+    return { inputId: null }
+  },
   computed: {
-    inputId() {
-      return this.$refs?.["text-field"]?.$refs?.["input"].id
-    },
     lazyValue() {
       return this.$refs["text-field"].lazyValue
     },
@@ -52,9 +52,13 @@ export default {
     validate() {
       return this.$refs["text-field"].validate()
     },
+    assignInputId() {
+      this.inputId = this.$refs?.["text-field"]?.$refs?.["input"].id
+    },
   },
   mounted() {
     this.removeInnerLabel()
+    this.assignInputId()
   },
 }
 </script>

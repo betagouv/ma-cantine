@@ -35,21 +35,21 @@ export default {
   data() {
     return {
       searchInput: null,
+      inputId: null,
     }
-  },
-  computed: {
-    inputId() {
-      return this.$refs?.["autocomplete"]?.$refs?.["input"].id
-    },
   },
   methods: {
     removeInnerLabel() {
       const labels = this.$refs["autocomplete"].$el.getElementsByTagName("label")
       if (labels && labels.length > 0) for (const label of labels) label.parentNode.removeChild(label)
     },
+    assignInputId() {
+      this.inputId = this.$refs?.["autocomplete"]?.$refs?.["input"].id
+    },
   },
   mounted() {
     this.removeInnerLabel()
+    this.assignInputId()
   },
 }
 </script>

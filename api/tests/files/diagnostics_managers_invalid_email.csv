@@ -1,2 +1,2 @@
-SIRET;Nom de la cantine;INSEE;Code postal;SIRET cuisine centrale;Repas par jour;Secteurs;Mode de production;Mode de gestion;Secteur économique;Gestionnaires additionnels;Année du diagnostic;Total;Bio;SIQO;Environnement;Autre egalim;Viandes;Viandes egalim;Viandes france;Poissons;Poissons egalim
-21340172201787;A canteen;;17000;42126486200010;700;;site;conceded;public;"gestionnaire1@, gestionnaire2@example.com";2020;1000;500;100.10;0;0;0;0;0;0;0
+SIRET;Nom de la cantine;INSEE;Code postal;SIRET cuisine centrale;Repas par jour;Repas par an;Secteurs;Mode de production;Mode de gestion;Secteur économique;Gestionnaires additionnels;Année du diagnostic;Total;Bio;SIQO;Environnement;Autre egalim;Viandes;Viandes egalim;Viandes france;Poissons;Poissons egalim
+21340172201787;A canteen;;17000;42126486200010;700;14000;;site;conceded;public;"gestionnaire1@, gestionnaire2@example.com";2020;1000;500;100.10;0;0;0;0;0;0;0

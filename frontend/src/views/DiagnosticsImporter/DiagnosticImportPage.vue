@@ -30,9 +30,7 @@
         <li>
           Optionnel : Un état de publication (les options sont
           <code>published</code>
-          ,
-          <code>pending</code>
-          , ou
+          ou
           <code>draft</code>
           )
         </li>
@@ -284,6 +282,12 @@ export default {
           name: "Nombre de repas servis par jour",
           type: "Chiffre",
           example: "300",
+        },
+        {
+          name: "Nombre total de couverts à l'année",
+          type: "Chiffre",
+          description: "Y compris les couverts livrés",
+          example: "67000",
         },
         {
           name: "Secteurs",

@@ -46,6 +46,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 2)
         canteen = Canteen.objects.get(siret="21340172201787")
         self.assertEqual(canteen.daily_meal_count, 700)
+        self.assertEqual(canteen.yearly_meal_count, 14000)
         self.assertEqual(canteen.production_type, "site")
         self.assertEqual(canteen.management_type, "conceded")
         self.assertEqual(canteen.economic_model, "public")
@@ -335,7 +336,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(body["errors"]), 2)
-        self.assertEqual(body["errors"][0]["message"], "Format fichier : 22 ou 11 colonnes attendues, 25 trouvées.")
+        self.assertEqual(body["errors"][0]["message"], "Format fichier : 23 ou 12 colonnes attendues, 26 trouvées.")
         self.assertEqual(body["errors"][0]["status"], 401)
 
     @authenticate
@@ -404,7 +405,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Données manquantes : 22 colonnes attendues, 21 trouvées.",
+            "Données manquantes : 23 colonnes attendues, 22 trouvées.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -664,7 +665,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Données manquantes : au moins 12 colonnes attendues, 11 trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
+            "Données manquantes : au moins 13 colonnes attendues, 12 trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -723,7 +724,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         errors = body["errors"]
         self.assertGreater(len(errors), 0)
-        self.assertEqual(errors.pop(0)["message"], "Format fichier : 127 colonnes attendues, 130 trouvées.")
+        self.assertEqual(errors.pop(0)["message"], "Format fichier : 128 colonnes attendues, 131 trouvées.")
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
