@@ -91,7 +91,14 @@
       >
         Valider
       </v-btn>
-      <v-btn large outlined color="primary" class="ml-4 align-self-center" :to="{ name: 'ManagementPage' }">
+      <v-btn
+        large
+        outlined
+        color="primary"
+        v-if="!existingCanteenSiret"
+        class="ml-4 align-self-center"
+        :to="{ name: 'ManagementPage' }"
+      >
         Annuler
       </v-btn>
     </v-row>
@@ -106,10 +113,11 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 export default {
   name: "SiretCheck",
   components: { DsfrTextField, DsfrTextarea },
+  props: ["existingCanteenSiret"],
   data() {
     const user = this.$store.state.loggedUser
     return {
-      siret: undefined,
+      siret: this.existingCanteenSiret,
       duplicateSiretCanteen: undefined,
       user,
       fromName: `${user.firstName} ${user.lastName}`,
@@ -129,6 +137,9 @@ export default {
         window.scrollTo(0, 0)
         return
       }
+
+      if (this.existingCanteenSiret && this.siret === this.existingCanteenSiret) this.$emit("siretIsValid", this.siret)
+
       return fetch("/api/v1/canteenStatus/siret/" + this.siret)
         .then((response) => response.json())
         .then((response) => {

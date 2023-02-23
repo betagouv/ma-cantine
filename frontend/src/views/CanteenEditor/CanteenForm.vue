@@ -32,7 +32,7 @@
         pour les cantines scolaires.
       </p>
 
-      <SiretCheck @siretIsValid="setSiret" class="mt-10" />
+      <SiretCheck @siretIsValid="setSiret" :existingCanteenSiret="canteen ? canteen.siret : null" class="mt-10" />
 
       <p class="caption mb-n8">
         Pour toute question ou difficulté veuillez consulter notre
@@ -49,7 +49,7 @@
           <p>SIRET</p>
           <p class="grey--text text--darken-2">
             {{ siret || canteen.siret }}
-            <v-btn v-if="!canteen.siret" small @click="goToStep(0)">Modifier</v-btn>
+            <v-btn small @click="goToStep(0)">Modifier</v-btn>
           </p>
           <DsfrTextField
             hide-details="auto"
