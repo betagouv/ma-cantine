@@ -17,9 +17,8 @@
     <div class="spacer"></div>
 
     <p id="introduction">
-      Sur les {{ canteen.dailyMealCount }} repas servis aux convives, pour l’année {{ infoYear }}, voici la répartition,
-      en valeur d’achat, des produits bio, de qualité et durables (liste de labels ci-dessous) utilisés dans la
-      confection des repas
+      {{ introText }}, pour l’année {{ infoYear }}, voici la répartition, en valeur d’achat, des produits bio, de
+      qualité et durables (liste de labels ci-dessous) utilisés dans la confection des repas
     </p>
 
     <p class="pat pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
@@ -116,6 +115,17 @@ export default {
     },
     infoYear() {
       return this.diagnostic.year || lastYear()
+    },
+    introText() {
+      if (this.canteen.productionType === "central")
+        return `Sur les ${this.canteen.satelliteCanteensCount || ""} cantines satellites déservies`
+      if (this.canteen.productionType === "central_serving")
+        return `Sur les ${this.canteen.satelliteCanteensCount || ""} cantines satellites déservies et les ${
+          this.canteen.dailyMealCount
+        } repas servis sur place`
+      if (this.canteen.productionType === "site_cooked_elsewhere")
+        return `Sur les repas faits par la cuisine central déservant cette cantine`
+      else return `Sur les ${this.canteen.dailyMealCount || ""} repas servis aux convives`
     },
   },
 }
