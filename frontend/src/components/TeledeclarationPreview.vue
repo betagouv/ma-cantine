@@ -824,7 +824,7 @@ export default {
         this.$nextTick().then(this.calculateTableHeight)
       }
       // doesn't get here from confirmTeledeclaration, so we know this is a close
-      if (!newValue) {
+      else {
         this.handlePreviewClose("go-back")
       }
     },
