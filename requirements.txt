@@ -57,7 +57,7 @@ kombu==5.2.4
 lazy-object-proxy==1.8.0
 lxml==4.9.2
 mccabe==0.6.1
-mypy-extensions==0.4.3
+mypy-extensions==1.0.0
 oauthlib==3.2.2
 openpyxl==3.0.10
 oscrypto==1.3.0
