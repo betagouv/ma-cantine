@@ -95,7 +95,7 @@
         large
         outlined
         color="primary"
-        v-if="!existingCanteenSiret"
+        v-if="!canteen || !canteen.siret"
         class="ml-4 align-self-center"
         :to="{ name: 'ManagementPage' }"
       >
@@ -113,11 +113,11 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 export default {
   name: "SiretCheck",
   components: { DsfrTextField, DsfrTextarea },
-  props: ["existingCanteenSiret", "existingCanteenId"],
+  props: ["canteen"],
   data() {
     const user = this.$store.state.loggedUser
     return {
-      siret: this.existingCanteenSiret,
+      siret: this.canteen?.siret,
       duplicateSiretCanteen: undefined,
       user,
       fromName: `${user.firstName} ${user.lastName}`,
@@ -138,7 +138,7 @@ export default {
         return
       }
 
-      if (this.existingCanteenSiret && this.siret === this.existingCanteenSiret) {
+      if (this.canteen?.siret && this.siret === this.canteen?.siret) {
         this.$emit("siretIsValid", this.siret)
         return
       }
@@ -183,9 +183,9 @@ export default {
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
     saveSiretIfNeeded() {
-      if (!this.existingCanteenId) return Promise.resolve()
+      if (!this.canteen?.id) return Promise.resolve()
       const payload = { siret: this.siret }
-      return this.$store.dispatch("updateCanteen", { id: this.existingCanteenId, payload }).then(() => {
+      return this.$store.dispatch("updateCanteen", { id: this.canteen?.id, payload }).then(() => {
         this.$store.dispatch("notify", {
           status: "success",
           message: "Votre SIRET a bien été mis à jour",
