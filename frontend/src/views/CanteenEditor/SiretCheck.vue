@@ -113,7 +113,7 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 export default {
   name: "SiretCheck",
   components: { DsfrTextField, DsfrTextarea },
-  props: ["existingCanteenSiret"],
+  props: ["existingCanteenSiret", "existingCanteenId"],
   data() {
     const user = this.$store.state.loggedUser
     return {
@@ -138,7 +138,10 @@ export default {
         return
       }
 
-      if (this.existingCanteenSiret && this.siret === this.existingCanteenSiret) this.$emit("siretIsValid", this.siret)
+      if (this.existingCanteenSiret && this.siret === this.existingCanteenSiret) {
+        this.$emit("siretIsValid", this.siret)
+        return
+      }
 
       return fetch("/api/v1/canteenStatus/siret/" + this.siret)
         .then((response) => response.json())
@@ -149,7 +152,7 @@ export default {
             this.requestSent = false
             this.duplicateSiretCanteen = response
           } else {
-            this.$emit("siretIsValid", this.siret)
+            this.saveSiretIfNeeded().then(() => this.$emit("siretIsValid", this.siret))
           }
         })
     },
@@ -178,6 +181,16 @@ export default {
         .dispatch("claimCanteen", { canteenId })
         .then(() => (this.requestSent = true))
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    saveSiretIfNeeded() {
+      if (!this.existingCanteenId) return Promise.resolve()
+      const payload = { siret: this.siret }
+      return this.$store.dispatch("updateCanteen", { id: this.existingCanteenId, payload }).then(() => {
+        this.$store.dispatch("notify", {
+          status: "success",
+          message: "Votre SIRET a bien été mis à jour",
+        })
+      })
     },
   },
 }
