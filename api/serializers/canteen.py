@@ -228,10 +228,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
                     Diagnostic.CentralKitchenDiagnosticMode.APPRO,
                 ]
             ).only("year", "central_kitchen_diagnostic_mode")
-            return [
-                {"year": diag.year, "central_kitchen_diagnostic_mode": diag.central_kitchen_diagnostic_mode}
-                for diag in diagnostics
-            ]
+            return CentralKitchenDiagnosticSerializer(diagnostics, many=True).data
         except Canteen.DoesNotExist:
             return None
         except Canteen.MultipleObjectsReturned as e:
