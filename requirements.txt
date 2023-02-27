@@ -1,6 +1,6 @@
 amqp==5.1.1
 arabic-reshaper==3.0.0
-asgiref==3.5.2
+asgiref==3.6.0
 asn1crypto==1.5.1
 astroid==2.14.2
 async-timeout==4.0.2
