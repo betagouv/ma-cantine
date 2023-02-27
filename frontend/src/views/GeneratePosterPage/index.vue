@@ -311,11 +311,23 @@ export default {
     isAuthenticated() {
       return !!this.$store.state.loggedUser
     },
+    usesCentralKitchenDiagnostics() {
+      return (
+        this.selectedCanteen?.productionType === "site_cooked_elsewhere" &&
+        this.selectedCanteen?.centralKitchenDiagnostics?.length > 0
+      )
+    },
+    diagnosticSet() {
+      if (!this.selectedCanteen) return null
+      return this.usesCentralKitchenDiagnostics
+        ? this.selectedCanteen.centralKitchenDiagnostics
+        : this.selectedCanteen.diagnostics
+    },
     currentDiagnostic() {
-      return this.selectedCanteen?.diagnostics?.find((x) => x.year === this.publicationYear) || {}
+      return this.diagnosticSet?.find((x) => x.year === this.publicationYear) || {}
     },
     previousDiagnostic() {
-      return this.selectedCanteen?.diagnostics?.find((x) => x.year === this.publicationYear - 1) || {}
+      return this.diagnosticSet?.find((x) => x.year === this.publicationYear - 1) || {}
     },
     hasCanteens() {
       return !!this.$store.state.userCanteenPreviews && this.$store.state.userCanteenPreviews.length > 0
