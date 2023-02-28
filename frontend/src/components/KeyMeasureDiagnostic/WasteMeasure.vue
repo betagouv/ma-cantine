@@ -63,7 +63,7 @@
         <v-col cols="12" md="8" class="pa-0">
           <DsfrTextField
             v-model.number="diagnostic.breadLeftovers"
-            :rules="[validators.nonNegativeOrEmpty]"
+            :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
             validate-on-blur
             label="Reste de pain"
             suffix="kg/an"
@@ -72,7 +72,7 @@
           />
           <DsfrTextField
             v-model.number="diagnostic.servedLeftovers"
-            :rules="[validators.nonNegativeOrEmpty]"
+            :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
             validate-on-blur
             label="Reste plateau"
             suffix="kg/an"
@@ -81,7 +81,7 @@
           />
           <DsfrTextField
             v-model.number="diagnostic.unservedLeftovers"
-            :rules="[validators.nonNegativeOrEmpty]"
+            :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
             validate-on-blur
             label="Reste en production (non servi)"
             suffix="kg/an"
@@ -90,7 +90,7 @@
           />
           <DsfrTextField
             v-model.number="diagnostic.sideLeftovers"
-            :rules="[validators.nonNegativeOrEmpty]"
+            :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
             validate-on-blur
             label="Reste de composantes (entrée, plat dessert...)"
             suffix="kg/an"
