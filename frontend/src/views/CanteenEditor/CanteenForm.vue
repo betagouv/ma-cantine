@@ -32,7 +32,12 @@
         pour les cantines scolaires.
       </p>
 
-      <SiretCheck @siretIsValid="setSiret" :canteen="canteen" class="mt-10" />
+      <SiretCheck
+        @siretIsValid="setSiret"
+        :canteen="canteen"
+        @updateCanteen="(x) => $emit('updateCanteen', x)"
+        class="mt-10"
+      />
 
       <p class="caption mb-n8">
         Pour toute question ou difficulté veuillez consulter notre

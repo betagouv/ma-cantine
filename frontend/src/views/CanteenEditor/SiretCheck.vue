@@ -185,11 +185,12 @@ export default {
     saveSiretIfNeeded() {
       if (!this.canteen?.id) return Promise.resolve()
       const payload = { siret: this.siret }
-      return this.$store.dispatch("updateCanteen", { id: this.canteen?.id, payload }).then(() => {
+      return this.$store.dispatch("updateCanteen", { id: this.canteen?.id, payload }).then((canteen) => {
         this.$store.dispatch("notify", {
           status: "success",
           message: "Votre SIRET a bien été mis à jour",
         })
+        this.$emit("updateCanteen", canteen)
       })
     },
   },
