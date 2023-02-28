@@ -13,3 +13,4 @@
 | data-warning | teledeclare / go-back | td-days-open-under-50 | # de jours | Message affiché quand le nombre de jours de service moins de 50 | Preview de télédéclaration (page diagnostic / page actions) |
 | canteen | modification | technical-control-cancel/technical-control-save | | Garde-fous de modification d'une cantine (CC avec un satellite ou plus de 250) | Page modification cantine |
 | message | send | canteen-not-found-email | | Quelqu'un a envoyé un demande pour trouver une cantine | Page nos cantines / Page d'une cantine publiée |
+| form | submit | poster-generator | | Quelqu'un a téléchargé un affichage | Page generateur affichage |
