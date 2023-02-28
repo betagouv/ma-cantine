@@ -72,7 +72,6 @@
             label="Part de produits provenant d'un PAT"
             style="max-width: 400px;"
             append-icon="mdi-percent"
-            type="number"
             validate-on-blur
             v-model="patPercentage"
             :rules="[validators.isPercentageOrEmpty]"
@@ -149,7 +148,6 @@
             <DsfrTextField
               label="Nous servons"
               v-model.number="form.canteen.dailyMealCount"
-              type="number"
               :rules="[validators.greaterThanZero]"
               placeholder="200"
               class="my-4"
@@ -166,7 +164,6 @@
               "
               id="total"
               v-model.number="form.diagnostic.valueTotalHt"
-              type="number"
               :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
               placeholder="15000"
               suffix="euros HT"
@@ -180,7 +177,6 @@
             <DsfrTextField
               id="bio"
               v-model.number="form.diagnostic.valueBioHt"
-              type="number"
               :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
               placeholder="3000"
               suffix="euros HT"
@@ -194,7 +190,6 @@
             <DsfrTextField
               id="sustainable"
               v-model.number="form.diagnostic.valueSustainableHt"
-              type="number"
               :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
               placeholder="2000"
               suffix="euros HT"
@@ -210,7 +205,6 @@
           <DsfrTextField
             id="pat-percent"
             append-icon="mdi-percent"
-            type="number"
             placeholder="30"
             hide-details="auto"
             class="my-4"

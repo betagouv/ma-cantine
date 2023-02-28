@@ -71,7 +71,6 @@
         </label>
         <DsfrTextField
           id="daily-meals"
-          type="number"
           hide-details="auto"
           :rules="[validators.greaterThanZero]"
           :readonly="readonly"
@@ -89,7 +88,6 @@
         </label>
         <DsfrTextField
           id="yearly-meals"
-          type="number"
           hide-details="auto"
           :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
           :readonly="readonly"
@@ -102,7 +100,6 @@
       <v-col cols="12" md="6" v-if="showSatelliteCanteensCount">
         <DsfrTextField
           label="Nombre de cantines/lieux de service à qui je fournis des repas"
-          type="number"
           hide-details="auto"
           :rules="[validators.greaterThanZero]"
           :readonly="readonly"
