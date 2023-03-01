@@ -53,7 +53,7 @@
         </v-tabs-items>
       </v-card>
     </div>
-    <v-btn color="primary" class="mt-2" target="_parent" :href="link">
+    <v-btn color="primary" class="mt-2" target="_blank" :href="link">
       Voir sur la plateforme
       <v-icon small class="ml-1">mdi-open-in-new</v-icon>
     </v-btn>
