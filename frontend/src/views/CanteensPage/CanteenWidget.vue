@@ -163,6 +163,14 @@ export default {
         this.$router.push({ name: "CanteensHome" })
       })
   },
+  mounted() {
+    if (this.$matomo) {
+      const eventCategory = "iframe"
+      const eventAction = "view"
+      const eventName = "iframe-published-canteen"
+      this.$matomo.trackEvent(eventCategory, eventAction, eventName)
+    }
+  },
   watch: {
     orderedBadges(badges) {
       this.selectedBadgeKey = badges[0].key
