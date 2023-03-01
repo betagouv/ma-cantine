@@ -10,6 +10,15 @@ from common.utils import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, FormView, View
 from web.forms import RegisterUserForm
+from django.views.decorators.clickjacking import xframe_options_exempt
+
+
+class XFrameExemptView(TemplateView):
+    template_name = "vue-app.html"
+
+    @xframe_options_exempt
+    def get(self, request, *args, **kwargs):
+        return super(VueAppDisplayView, self).get(request, *args, **kwargs)
 
 
 class VueAppDisplayView(TemplateView):
@@ -18,6 +27,15 @@ class VueAppDisplayView(TemplateView):
     """
 
     template_name = "vue-app.html"
+    xframe_exempt_path_beginnings = ["/nos-cantines/"]
+
+    def get(self, request, *args, **kwargs):
+        if self._isXframeExempt(request):
+            return XFrameExemptView.get(self, request, *args, **kwargs)
+        return super(VueAppDisplayView, self).get(request, *args, **kwargs)
+
+    def _isXframeExempt(self, request):
+        return any(request.path.startswith(x) for x in self.xframe_exempt_path_beginnings)
 
 
 class RegisterUserView(FormView):
