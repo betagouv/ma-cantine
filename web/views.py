@@ -27,7 +27,6 @@ class VueAppDisplayView(TemplateView):
     """
 
     template_name = "vue-app.html"
-    xframe_exempt_path_beginnings = ["/nos-cantines/"]
 
     def get(self, request, *args, **kwargs):
         if self._isXframeExempt(request):
@@ -35,7 +34,7 @@ class VueAppDisplayView(TemplateView):
         return super(VueAppDisplayView, self).get(request, *args, **kwargs)
 
     def _isXframeExempt(self, request):
-        return any(request.path.startswith(x) for x in self.xframe_exempt_path_beginnings)
+        return request.path.startswith("/widgets/")
 
 
 class RegisterUserView(FormView):

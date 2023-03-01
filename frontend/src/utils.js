@@ -520,3 +520,7 @@ function hasValue(val) {
     return !strictIsNaN(val)
   }
 }
+
+export const isWidget = function(path) {
+  return path.startsWith("/widgets/")
+}
