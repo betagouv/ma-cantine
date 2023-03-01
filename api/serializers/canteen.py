@@ -57,6 +57,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
+    is_managed_by_user = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -82,8 +83,13 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "plastics_comments",
             "information_comments",
             "can_be_claimed",
+            "is_managed_by_user",
             "central_kitchen_diagnostics",
         )
+
+    def get_is_managed_by_user(self, obj):
+        user = self.context["request"].user
+        return user in obj.managers.all()
 
 
 class SatelliteCanteenSerializer(serializers.ModelSerializer):

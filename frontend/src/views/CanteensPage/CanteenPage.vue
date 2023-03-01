@@ -39,6 +39,18 @@
               </div>
             </v-card-subtitle>
           </v-col>
+          <v-col v-if="isCanteenManager">
+            <DsfrCallout icon=" ">
+              <div class="ml-n4">
+                <p class="text-body-1 font-weight-bold">
+                  Ajouter un apérçu de cette page sur votre site !
+                </p>
+                <div class="text-body-2" style="font-family: monospace;">
+                  {{ iframeCodeSnippet }}
+                </div>
+              </div>
+            </DsfrCallout>
+          </v-col>
         </v-row>
       </v-card>
 
@@ -110,6 +122,12 @@ export default {
     },
     currentPage() {
       return window.location.pathname
+    },
+    isCanteenManager() {
+      return this.canteen.isManagedByUser
+    },
+    iframeCodeSnippet() {
+      return `<iframe src='${window.location}' style='width: 480px; height: 420px;' scrolling='no'></iframe>`
     },
   },
   methods: {
