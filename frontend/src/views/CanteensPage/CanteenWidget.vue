@@ -53,7 +53,7 @@
         </v-tabs-items>
       </v-card>
     </div>
-    <v-btn class="primary mt-4" target="_parent" :href="link">
+    <v-btn color="primary" class="mt-2" target="_parent" :href="link">
       Voir sur la plateforme
       <v-icon small class="ml-1">mdi-open-in-new</v-icon>
     </v-btn>
@@ -87,7 +87,7 @@ export default {
     link() {
       const l = document.location
       const prefixLength = "/widgets".length
-      return `${l.origin}${l.pathname.slice(prefixLength)}`
+      return `${l.origin}${l.pathname.slice(prefixLength)}?mtm_campaign=widget-cantine`
     },
     diagnosticSet() {
       if (!this.canteen) return
