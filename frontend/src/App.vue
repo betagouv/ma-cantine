@@ -20,6 +20,8 @@
       <div ref="crisp"></div>
     </v-app>
     <v-app v-else>
+      <WidgetHeader class="ma-4 mb-0 constrained" />
+
       <v-main id="contenu" style="width: 100%">
         <v-container fluid :fill-height="!initialDataLoaded">
           <v-progress-circular
@@ -27,7 +29,7 @@
             style="position: absolute; left: 50%; top: 50%"
             v-if="!initialDataLoaded"
           ></v-progress-circular>
-          <router-view v-else class="mx-auto constrained" />
+          <router-view v-else class="ma-4 mt-0 constrained" />
         </v-container>
       </v-main>
     </v-app>
@@ -36,6 +38,7 @@
 
 <script>
 import AppHeader from "@/components/AppHeader"
+import WidgetHeader from "@/components/WidgetHeader"
 import AppFooter from "@/components/AppFooter"
 import WebinaireBanner from "@/components/WebinaireBanner"
 import NotificationSnackbar from "@/components/NotificationSnackbar"
@@ -45,6 +48,7 @@ import { readCookie, largestId, bannerCookieName, hideCommunityEventsBanner, isW
 export default {
   components: {
     AppHeader,
+    WidgetHeader,
     AppFooter,
     NotificationSnackbar,
     WebinaireBanner,

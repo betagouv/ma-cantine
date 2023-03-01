@@ -1,6 +1,6 @@
 <template>
   <div class="text-left" v-if="canteen">
-    <h1 class="text-h4 font-weight-black mb-1">
+    <h1 class="text-h4 font-weight-black mb-1 mt-0">
       {{ canteen.name }}
     </h1>
     <CanteenIndicators :canteen="canteen" :singleLine="true" class="grey--text text--darken-3 caption" />
