@@ -73,7 +73,7 @@
             style="max-width: 400px;"
             append-icon="mdi-percent"
             validate-on-blur
-            v-model="patPercentage"
+            v-model.number="patPercentage"
             :rules="[validators.isPercentageOrEmpty]"
           />
 
