@@ -173,6 +173,24 @@ class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
 
 class CanteenPurchasesSummaryView(APIView):
+    # the order of egalim_labels is significant - determines which labels trump others when aggregating purchases
+    egalim_labels = [
+        "BIO",
+        "LABEL_ROUGE",
+        "AOCAOP_IGP_STG",
+        "AOCAOP",
+        "IGP",
+        "STG",
+        "HVE",
+        "PECHE_DURABLE",
+        "RUP",
+        "COMMERCE_EQUITABLE",
+        "FERMIER",
+        "EXTERNALITES",
+        "PERFORMANCE",
+        "EQUIVALENTS",
+    ]
+
     def get(self, request, *args, **kwargs):
         canteen_id = kwargs.get("canteen_pk")
         year = request.query_params.get("year")
@@ -183,7 +201,23 @@ class CanteenPurchasesSummaryView(APIView):
         purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
             canteen=canteen, date__year=year
         )
+        data = {}
+        CanteenPurchasesSummaryView._simple_diag_data(purchases, data)
+        CanteenPurchasesSummaryView._complete_diag_data(purchases, data)
+        CanteenPurchasesSummaryView._misc_totals(purchases, data)
 
+        return Response(PurchaseSummarySerializer(data).data)
+
+    def _get_canteen(self, canteen_id, request):
+        try:
+            canteen = Canteen.objects.get(pk=canteen_id)
+            if not IsCanteenManager().has_object_permission(request, self, canteen):
+                raise PermissionDenied()
+            return canteen
+        except Canteen.DoesNotExist as e:
+            raise NotFound() from e
+
+    def _simple_diag_data(purchases, data):
         bio_filter = Q(characteristics__contains=[Purchase.Characteristic.BIO]) | Q(
             characteristics__contains=[Purchase.Characteristic.CONVERSION_BIO]
         )
@@ -204,28 +238,28 @@ class CanteenPurchasesSummaryView(APIView):
             characteristics__contains=[Purchase.Characteristic.PERFORMANCE]
         )
 
-        data = {}
         data["value_total_ht"] = purchases.aggregate(total=Sum("price_ht"))["total"]
         bio_purchases = purchases.filter(bio_filter).distinct()
         data["value_bio_ht"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"]
 
         # the remaining stats should ignore any bio products
-        purchases = purchases.exclude(bio_filter)
-        siqo_purchases = purchases.filter(siqo_filter).distinct()
+        purchases_no_bio = purchases.exclude(bio_filter)
+        siqo_purchases = purchases_no_bio.filter(siqo_filter).distinct()
         data["value_sustainable_ht"] = siqo_purchases.aggregate(total=Sum("price_ht"))["total"]
 
         # the remaining stats should ignore any SIQO products
-        purchases = purchases.exclude(siqo_filter)
-        egalim_others_purchases = purchases.filter(egalim_others_filter).distinct()
+        purchases_no_siqo = purchases_no_bio.exclude(siqo_filter)
+        egalim_others_purchases = purchases_no_siqo.filter(egalim_others_filter).distinct()
         data["value_egalim_others_ht"] = egalim_others_purchases.aggregate(total=Sum("price_ht"))["total"]
 
         # the remaining stats should ignore any "other Egalim" products
-        purchases = purchases.exclude(egalim_others_filter)
-        externalities_performance_purchases = purchases.filter(externalities_performance_filter).distinct()
+        purchases_no_other = purchases_no_siqo.exclude(egalim_others_filter)
+        externalities_performance_purchases = purchases_no_other.filter(externalities_performance_filter).distinct()
         data["value_externality_performance_ht"] = externalities_performance_purchases.aggregate(
             total=Sum("price_ht")
         )["total"]
 
+    def _complete_diag_data(purchases, data):
         # summary for detailed teledeclaration totals, by family and label
         families = [
             "VIANDES_VOLAILLES",
@@ -237,31 +271,11 @@ class CanteenPurchasesSummaryView(APIView):
             "BOISSONS",
             "AUTRES",
         ]
-        # the order of egalim_labels is significant - determines which labels trump others when aggregating purchases
-        egalim_labels = [
-            "BIO",
-            "LABEL_ROUGE",
-            "AOCAOP_IGP_STG",
-            "AOCAOP",
-            "IGP",
-            "STG",
-            "HVE",
-            "PECHE_DURABLE",
-            "RUP",
-            "COMMERCE_EQUITABLE",
-            "FERMIER",
-            "EXTERNALITES",
-            "PERFORMANCE",
-            "EQUIVALENTS",
-        ]
         other_labels = ["FRANCE", "SHORT_DISTRIBUTION", "LOCAL"]
-        # reset filter to 0 exclusions
-        purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
-            canteen=canteen, date__year=year
-        )
+
         for family in families:
             purchase_family = purchases.filter(family=family)
-            for label in egalim_labels:
+            for label in CanteenPurchasesSummaryView.egalim_labels:
                 if label == "AOCAOP_IGP_STG":
                     fam_label = purchase_family.filter(
                         Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
@@ -298,12 +312,15 @@ class CanteenPurchasesSummaryView(APIView):
             key = "value_" + family.lower() + "_non_egalim"
             data[key] = non_egalim_purchases.aggregate(total=Sum("price_ht"))["total"]
 
+    def _misc_totals(purchases, data):
         meat_poultry_purchases = purchases.filter(
             family=Purchase.Family.VIANDES_VOLAILLES,
         )
         data["value_meat_poultry_ht"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"]
 
-        meat_poultry_egalim = meat_poultry_purchases.filter(characteristics__overlap=egalim_labels)
+        meat_poultry_egalim = meat_poultry_purchases.filter(
+            characteristics__overlap=CanteenPurchasesSummaryView.egalim_labels
+        )
         data["value_meat_poultry_egalim_ht"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"]
 
         meat_poultry_france = meat_poultry_purchases.filter(
@@ -318,19 +335,8 @@ class CanteenPurchasesSummaryView(APIView):
         )
         data["value_fish_ht"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"]
 
-        fish_egalim = fish_purchases.filter(characteristics__overlap=egalim_labels)
+        fish_egalim = fish_purchases.filter(characteristics__overlap=CanteenPurchasesSummaryView.egalim_labels)
         data["value_fish_egalim_ht"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"]
-
-        return Response(PurchaseSummarySerializer(data).data)
-
-    def _get_canteen(self, canteen_id, request):
-        try:
-            canteen = Canteen.objects.get(pk=canteen_id)
-            if not IsCanteenManager().has_object_permission(request, self, canteen):
-                raise PermissionDenied()
-            return canteen
-        except Canteen.DoesNotExist as e:
-            raise NotFound() from e
 
 
 class PurchaseListExportView(PurchaseListCreateView, XLSXFileMixin):
