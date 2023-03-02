@@ -171,9 +171,9 @@ export default Object.freeze({
       color: "pink",
     },
     NON_EGALIM: { text: "Non-EGAlim" },
-    FRANCE: { text: "Provenance France" },
-    SHORT_DISTRIBUTION: { text: "Circuit-court" },
-    LOCAL: { text: "Local" },
+    FRANCE: { text: "Provenance France", additional: true },
+    SHORT_DISTRIBUTION: { text: "Circuit-court", additional: true },
+    LOCAL: { text: "Local", additional: true },
   },
   LocalDefinitions: {
     AUTOUR_SERVICE: { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },

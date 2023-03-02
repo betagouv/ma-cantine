@@ -262,11 +262,19 @@
         </v-btn>
       </v-col>
     </v-row>
+    <div v-if="vizCanteen && vizYear">
+      <h2 class="font-weight-black text-h5 text-sm-h4 mb-4">
+        Sythèse
+      </h2>
+      <h3>Pour {{ vizCanteen }} en {{ vizYear }}</h3>
+      <VueApexCharts v-if="series" :options="chartOptions" :series="series" role="img" height="auto" width="100%" />
+      <!-- TODO: a11y description -->
+    </div>
   </div>
 </template>
 
 <script>
-import { formatDate, getObjectDiff, normaliseText, capitalise } from "@/utils"
+import { formatDate, getObjectDiff, normaliseText, capitalise, lastYear } from "@/utils"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
@@ -274,6 +282,7 @@ import DsfrSelect from "@/components/DsfrSelect"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import PurchasesToolExplanation from "../components/PurchasesToolExplanation"
+import VueApexCharts from "vue-apexcharts"
 
 export default {
   name: "PurchasesHome",
@@ -284,6 +293,7 @@ export default {
     DsfrSearchField,
     DsfrAutocomplete,
     PurchasesToolExplanation,
+    VueApexCharts,
   },
   data() {
     return {
@@ -324,6 +334,8 @@ export default {
         startDate: null,
         endDate: null,
       },
+      vizYear: lastYear(),
+      vizData: undefined,
     }
   },
   computed: {
@@ -332,7 +344,7 @@ export default {
     },
     processedVisiblePurchases() {
       const canteens = this.$store.state.userCanteenPreviews
-      return this.visiblePurchases.map((x) => {
+      return this.visiblePurchases?.map((x) => {
         const canteen = canteens.find((y) => y.id === x.canteen)
         const date = x.date ? formatDate(x.date) : null
         const hasAttachment = !!x.invoiceFile
@@ -360,6 +372,58 @@ export default {
       return canteens.sort((a, b) => {
         return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
       })
+    },
+    vizCanteen() {
+      return this.processedVisiblePurchases && this.processedVisiblePurchases[0].canteen
+    },
+    chartOptions() {
+      const legendPosition = this.$vuetify.breakpoint.smAndUp ? "right" : "top"
+      const legendAlign = this.$vuetify.breakpoint.smAndUp ? "left" : "center"
+      return {
+        chart: {
+          type: "bar",
+          stacked: true,
+          stackType: "100%",
+          toolbar: { tools: { download: false } },
+          animations: {
+            enabled: false,
+          },
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+          },
+        },
+        states: {
+          hover: {
+            filter: {
+              type: "darken",
+              value: 0.75,
+            },
+          },
+        },
+        xaxis: {
+          categories: Object.values(Constants.ProductFamilies).map((f) => this.capitalise(f.shortText)),
+        },
+        legend: {
+          position: legendPosition,
+          horizontalAlign: legendAlign,
+        },
+        dataLabels: {
+          enabled: false,
+        },
+      }
+    },
+    series() {
+      if (!this.vizData) return
+      return this.egalimCharacteristics.map(([key, c]) => ({
+        name: c.text,
+        color: c.color,
+        data: this.vizData[key],
+      }))
+    },
+    egalimCharacteristics() {
+      return Object.entries(Constants.TeledeclarationCharacteristics).filter(([, value]) => !value.additional)
     },
   },
   methods: {
@@ -534,6 +598,27 @@ export default {
     capitalise(str) {
       return capitalise(str)
     },
+    camelise(str) {
+      return str
+        .split("_")
+        .map((s) => this.capitalise(s.toLowerCase()))
+        .join("")
+    },
+    getCharacteristicByFamilyData() {
+      if (!this.vizCanteen || !this.vizYear) return
+      fetch(`/api/v1/canteenPurchasesSummary/${this.vizCanteen}?year=${this.vizYear}`)
+        .then((response) => (response.ok ? response.json() : {}))
+        .then((response) => {
+          this.vizData = {}
+          this.egalimCharacteristics.forEach(([char]) => {
+            this.vizData[char] = []
+            Object.keys(Constants.ProductFamilies).forEach((family) => {
+              const key = `value${this.camelise(family)}${this.camelise(char)}`
+              this.vizData[char].push(response[key] || 0)
+            })
+          })
+        })
+    },
   },
   beforeMount() {
     if (!this.$route.query["page"]) this.$router.replace({ query: { page: 1 } })
@@ -542,6 +627,11 @@ export default {
     this.populateParametersFromRoute()
     if (this.hasActiveFilter) this.showFilters = true
     return this.fetchCurrentPage().then(this.addWatchers)
+  },
+  watch: {
+    vizCanteen() {
+      this.getCharacteristicByFamilyData()
+    },
   },
 }
 </script>
