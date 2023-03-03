@@ -370,7 +370,7 @@ export default {
     },
     processedVisiblePurchases() {
       const canteens = this.$store.state.userCanteenPreviews
-      return this.visiblePurchases?.map((x) => {
+      return this.visiblePurchases.map((x) => {
         const canteen = canteens.find((y) => y.id === x.canteen)
         const date = x.date ? formatDate(x.date) : null
         const hasAttachment = !!x.invoiceFile
@@ -652,9 +652,8 @@ export default {
     return this.fetchCurrentPage().then(this.addWatchers)
   },
   watch: {
-    processedVisiblePurchases(newPurchases, oldPurchases) {
-      if (newPurchases && !oldPurchases)
-        this.vizCanteen = this.processedVisiblePurchases && this.processedVisiblePurchases[0].canteen
+    visiblePurchases(newPurchases, oldPurchases) {
+      if (newPurchases && !oldPurchases) this.vizCanteen = newPurchases[0].canteen
     },
     vizCanteen(newCanteen) {
       if (newCanteen) this.getCharacteristicByFamilyData()
