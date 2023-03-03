@@ -262,11 +262,30 @@
         </v-btn>
       </v-col>
     </v-row>
-    <div v-if="vizCanteen && vizYear">
+    <div v-if="vizCanteen && vizYear" class="mt-8">
       <h2 class="font-weight-black text-h5 text-sm-h4 mb-4">
         Sythèse
       </h2>
-      <h3>Pour {{ vizCanteen }} en {{ vizYear }}</h3>
+      <v-row>
+        <v-col cols="12" sm="6">
+          <label class="body-2" for="canteen">Cantine</label>
+          <DsfrAutocomplete
+            hide-details="auto"
+            :items="userCanteens"
+            placeholder="Choisissez la cantine"
+            v-model="vizCanteen"
+            item-text="name"
+            item-value="id"
+            id="canteen"
+            class="mt-2"
+            auto-select-first
+            no-data-text="Pas de résultats"
+          />
+        </v-col>
+        <v-col cols="12" sm="4">
+          <DsfrSelect label="Année" v-model="vizYear" :items="allowedYears" hide-details="auto" />
+        </v-col>
+      </v-row>
       <VueApexCharts v-if="series" :options="chartOptions" :series="series" role="img" height="auto" width="100%" />
       <!-- TODO: a11y description -->
     </div>
@@ -274,7 +293,7 @@
 </template>
 
 <script>
-import { formatDate, getObjectDiff, normaliseText, capitalise, lastYear } from "@/utils"
+import { formatDate, getObjectDiff, normaliseText, capitalise, lastYear, diagnosticYears } from "@/utils"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
@@ -335,7 +354,14 @@ export default {
         endDate: null,
       },
       vizYear: lastYear(),
+      vizCanteen: undefined,
       vizData: undefined,
+      allowedYears: diagnosticYears().map((year) => {
+        return {
+          text: year + (year > lastYear() ? " (prévisionnel)" : ""),
+          value: year,
+        }
+      }),
     }
   },
   computed: {
@@ -372,9 +398,6 @@ export default {
       return canteens.sort((a, b) => {
         return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
       })
-    },
-    vizCanteen() {
-      return this.processedVisiblePurchases && this.processedVisiblePurchases[0].canteen
     },
     chartOptions() {
       const legendPosition = this.$vuetify.breakpoint.smAndUp ? "right" : "top"
@@ -418,7 +441,7 @@ export default {
       if (!this.vizData) return
       return this.egalimCharacteristics.map(([key, c]) => ({
         name: c.text,
-        color: c.color,
+        color: c.colorHex,
         data: this.vizData[key],
       }))
     },
@@ -629,8 +652,15 @@ export default {
     return this.fetchCurrentPage().then(this.addWatchers)
   },
   watch: {
-    vizCanteen() {
-      this.getCharacteristicByFamilyData()
+    processedVisiblePurchases(newPurchases, oldPurchases) {
+      if (newPurchases && !oldPurchases)
+        this.vizCanteen = this.processedVisiblePurchases && this.processedVisiblePurchases[0].canteen
+    },
+    vizCanteen(newCanteen) {
+      if (newCanteen) this.getCharacteristicByFamilyData()
+    },
+    vizYear(newYear, oldYear) {
+      if (oldYear && newYear) this.getCharacteristicByFamilyData()
     },
   },
 }
