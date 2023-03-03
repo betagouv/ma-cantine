@@ -427,6 +427,14 @@ export default {
         },
         xaxis: {
           categories: Object.values(Constants.ProductFamilies).map((f) => this.capitalise(f.shortText)),
+          title: {
+            text: "Pourcentage par famille",
+          },
+        },
+        yaxis: {
+          title: {
+            text: "Famille de produit",
+          },
         },
         legend: {
           position: legendPosition,
