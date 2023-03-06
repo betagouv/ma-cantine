@@ -42,7 +42,6 @@
               </label>
               <DsfrTextField
                 id="meal-count"
-                type="number"
                 hide-details="auto"
                 validate-on-blur
                 v-model.number="satellite.dailyMealCount"
@@ -57,7 +56,6 @@
               </label>
               <DsfrTextField
                 id="yearly-meals"
-                type="number"
                 hide-details="auto"
                 validate-on-blur
                 v-model.number="satellite.yearlyMealCount"

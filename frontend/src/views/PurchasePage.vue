@@ -48,7 +48,6 @@
                 <label class="body-2" for="price">Prix HT</label>
                 <DsfrTextField
                   validate-on-blur
-                  type="number"
                   hide-details="auto"
                   v-model.number="purchase.priceHt"
                   class="mt-2"

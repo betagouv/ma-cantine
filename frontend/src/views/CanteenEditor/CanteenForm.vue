@@ -32,7 +32,12 @@
         pour les cantines scolaires.
       </p>
 
-      <SiretCheck @siretIsValid="setSiret" class="mt-10" />
+      <SiretCheck
+        @siretIsValid="setSiret"
+        :canteen="canteen"
+        @updateCanteen="(x) => $emit('updateCanteen', x)"
+        class="mt-10"
+      />
 
       <p class="caption mb-n8">
         Pour toute question ou difficulté veuillez consulter notre
@@ -49,7 +54,7 @@
           <p>SIRET</p>
           <p class="grey--text text--darken-2">
             {{ siret || canteen.siret }}
-            <v-btn v-if="!canteen.siret" small @click="goToStep(0)">Modifier</v-btn>
+            <v-btn small @click="goToStep(0)">Modifier</v-btn>
           </p>
           <DsfrTextField
             hide-details="auto"
@@ -144,7 +149,6 @@
           </label>
           <DsfrTextField
             id="daily-meals"
-            type="number"
             hide-details="auto"
             :rules="showDailyMealCount ? [validators.greaterThanZero] : []"
             :disabled="!showDailyMealCount"
@@ -169,7 +173,6 @@
           </label>
           <DsfrTextField
             id="yearly-meals"
-            type="number"
             hide-details="auto"
             :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
             validate-on-blur
@@ -181,7 +184,6 @@
         <v-col cols="12" md="4" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
           <DsfrTextField
             label="Nombre de cantines/lieux de service à qui je fournis des repas"
-            type="number"
             hide-details="auto"
             :rules="showSatelliteCanteensCount ? [validators.greaterThanZero] : []"
             :disabled="!showSatelliteCanteensCount"
