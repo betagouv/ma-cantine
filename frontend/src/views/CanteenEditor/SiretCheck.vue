@@ -91,7 +91,14 @@
       >
         Valider
       </v-btn>
-      <v-btn large outlined color="primary" class="ml-4 align-self-center" :to="{ name: 'ManagementPage' }">
+      <v-btn
+        large
+        outlined
+        color="primary"
+        v-if="!canteen || !canteen.siret"
+        class="ml-4 align-self-center"
+        :to="{ name: 'ManagementPage' }"
+      >
         Annuler
       </v-btn>
     </v-row>
@@ -106,10 +113,11 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 export default {
   name: "SiretCheck",
   components: { DsfrTextField, DsfrTextarea },
+  props: ["canteen"],
   data() {
     const user = this.$store.state.loggedUser
     return {
-      siret: undefined,
+      siret: this.canteen?.siret,
       duplicateSiretCanteen: undefined,
       user,
       fromName: `${user.firstName} ${user.lastName}`,
@@ -129,6 +137,12 @@ export default {
         window.scrollTo(0, 0)
         return
       }
+
+      if (this.canteen?.siret && this.siret === this.canteen?.siret) {
+        this.$emit("siretIsValid", this.siret)
+        return
+      }
+
       return fetch("/api/v1/canteenStatus/siret/" + this.siret)
         .then((response) => response.json())
         .then((response) => {
@@ -138,7 +152,7 @@ export default {
             this.requestSent = false
             this.duplicateSiretCanteen = response
           } else {
-            this.$emit("siretIsValid", this.siret)
+            this.saveSiretIfNeeded().then(() => this.$emit("siretIsValid", this.siret))
           }
         })
     },
@@ -167,6 +181,17 @@ export default {
         .dispatch("claimCanteen", { canteenId })
         .then(() => (this.requestSent = true))
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    saveSiretIfNeeded() {
+      if (!this.canteen?.id) return Promise.resolve()
+      const payload = { siret: this.siret }
+      return this.$store.dispatch("updateCanteen", { id: this.canteen?.id, payload }).then((canteen) => {
+        this.$store.dispatch("notify", {
+          status: "success",
+          message: "Votre SIRET a bien été mis à jour",
+        })
+        this.$emit("updateCanteen", canteen)
+      })
     },
   },
 }
