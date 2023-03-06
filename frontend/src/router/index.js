@@ -44,6 +44,7 @@ import ContactPage from "@/views/ContactPage"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
 import PurchasesImporter from "@/views/PurchasesImporter"
+import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
 import FaqPage from "@/views/FaqPage"
 import SiteMap from "@/views/SiteMap"
@@ -474,6 +475,16 @@ const routes = [
     component: PurchasesImporter,
     meta: {
       title: "Importer des achats",
+      authenticationRequired: true,
+    },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
+  },
+  {
+    path: "/synthese-achats",
+    name: "PurchasesSummary",
+    component: PurchasesSummary,
+    meta: {
+      title: "Synthèse des achats",
       authenticationRequired: true,
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,

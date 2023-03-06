@@ -19,6 +19,16 @@
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
             Créer plusieurs achats depuis un fichier
           </v-btn>
+          <v-btn
+            text
+            color="primary"
+            :to="{ name: 'PurchasesSummary' }"
+            class="px-0 px-md-2 my-3"
+            v-if="$vuetify.breakpoint.xs"
+          >
+            <v-icon class="mr-2">$pie-chart-2-fill</v-icon>
+            Voir la synthèse de mes achats
+          </v-btn>
         </v-row>
         <p class="font-weight-bold" v-else>
           Pour commencer à suivre vos achats, veuillez ajouter une cantine.
@@ -26,14 +36,33 @@
       </div>
       <v-spacer></v-spacer>
 
+      <v-card
+        class="dsfr d-flex flex-column justify-center"
+        :to="{ name: 'PurchasesSummary' }"
+        min-width="300px"
+        v-if="purchaseCount && $vuetify.breakpoint.smAndUp"
+      >
+        <v-card-text class="text-center">
+          <v-icon x-large color="primary">
+            $pie-chart-2-fill
+          </v-icon>
+        </v-card-text>
+        <v-card-text class="text-center text-body-1 font-weight-bold py-0">
+          La synthèse de vos achats
+        </v-card-text>
+        <v-card-text class="text-center pt-2">
+          Cliquez ici pour visualiser les données relatives à vos achats
+        </v-card-text>
+      </v-card>
       <v-img
         src="/static/images/doodles-dsfr/primary/ChartDoodle.png"
-        v-if="$vuetify.breakpoint.smAndUp"
+        v-else-if="$vuetify.breakpoint.smAndUp"
         class="mx-auto rounded-0"
         contain
         max-width="150"
       ></v-img>
     </div>
+
     <PurchasesToolExplanation class="my-1" />
     <v-card outlined v-if="hasCanteens && visiblePurchases">
       <v-row class="px-4 mt-2" align="center">
@@ -262,46 +291,18 @@
         </v-btn>
       </v-col>
     </v-row>
-    <div v-if="vizCanteen && vizYear" class="mt-8">
-      <h2 class="font-weight-black text-h5 text-sm-h4 mb-4">
-        Sythèse
-      </h2>
-      <v-row>
-        <v-col cols="12" sm="6">
-          <label class="body-2" for="canteen">Cantine</label>
-          <DsfrAutocomplete
-            hide-details="auto"
-            :items="userCanteens"
-            placeholder="Choisissez la cantine"
-            v-model="vizCanteen"
-            item-text="name"
-            item-value="id"
-            id="canteen"
-            class="mt-2"
-            auto-select-first
-            no-data-text="Pas de résultats"
-          />
-        </v-col>
-        <v-col cols="12" sm="4">
-          <DsfrSelect label="Année" v-model="vizYear" :items="allowedYears" hide-details="auto" />
-        </v-col>
-      </v-row>
-      <VueApexCharts v-if="series" :options="chartOptions" :series="series" role="img" height="auto" width="100%" />
-      <!-- TODO: a11y description -->
-    </div>
   </div>
 </template>
 
 <script>
-import { formatDate, getObjectDiff, normaliseText, capitalise, lastYear, diagnosticYears } from "@/utils"
+import { formatDate, getObjectDiff, normaliseText, capitalise } from "@/utils"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import PurchasesToolExplanation from "../components/PurchasesToolExplanation"
-import VueApexCharts from "vue-apexcharts"
+import PurchasesToolExplanation from "@/components/PurchasesToolExplanation"
 
 export default {
   name: "PurchasesHome",
@@ -312,7 +313,6 @@ export default {
     DsfrSearchField,
     DsfrAutocomplete,
     PurchasesToolExplanation,
-    VueApexCharts,
   },
   data() {
     return {
@@ -353,15 +353,6 @@ export default {
         startDate: null,
         endDate: null,
       },
-      vizYear: lastYear(),
-      vizCanteen: undefined,
-      vizData: undefined,
-      allowedYears: diagnosticYears().map((year) => {
-        return {
-          text: year + (year > lastYear() ? " (prévisionnel)" : ""),
-          value: year,
-        }
-      }),
     }
   },
   computed: {
@@ -398,63 +389,6 @@ export default {
       return canteens.sort((a, b) => {
         return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
       })
-    },
-    chartOptions() {
-      const legendPosition = this.$vuetify.breakpoint.smAndUp ? "right" : "top"
-      const legendAlign = this.$vuetify.breakpoint.smAndUp ? "left" : "center"
-      return {
-        chart: {
-          type: "bar",
-          stacked: true,
-          stackType: "100%",
-          toolbar: { tools: { download: false } },
-          animations: {
-            enabled: false,
-          },
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-          },
-        },
-        states: {
-          hover: {
-            filter: {
-              type: "darken",
-              value: 0.75,
-            },
-          },
-        },
-        xaxis: {
-          categories: Object.values(Constants.ProductFamilies).map((f) => this.capitalise(f.shortText)),
-          title: {
-            text: "Pourcentage par famille",
-          },
-        },
-        yaxis: {
-          title: {
-            text: "Famille de produit",
-          },
-        },
-        legend: {
-          position: legendPosition,
-          horizontalAlign: legendAlign,
-        },
-        dataLabels: {
-          enabled: false,
-        },
-      }
-    },
-    series() {
-      if (!this.vizData) return
-      return this.egalimCharacteristics.map(([key, c]) => ({
-        name: c.text,
-        color: c.colorHex,
-        data: this.vizData[key],
-      }))
-    },
-    egalimCharacteristics() {
-      return Object.entries(Constants.TeledeclarationCharacteristics).filter(([, value]) => !value.additional)
     },
   },
   methods: {
@@ -626,30 +560,7 @@ export default {
       this.$watch("options", this.onOptionsChange, { deep: true })
       this.$watch("$route", this.onRouteChange)
     },
-    capitalise(str) {
-      return capitalise(str)
-    },
-    camelise(str) {
-      return str
-        .split("_")
-        .map((s) => this.capitalise(s.toLowerCase()))
-        .join("")
-    },
-    getCharacteristicByFamilyData() {
-      if (!this.vizCanteen || !this.vizYear) return
-      fetch(`/api/v1/canteenPurchasesSummary/${this.vizCanteen}?year=${this.vizYear}`)
-        .then((response) => (response.ok ? response.json() : {}))
-        .then((response) => {
-          this.vizData = {}
-          this.egalimCharacteristics.forEach(([char]) => {
-            this.vizData[char] = []
-            Object.keys(Constants.ProductFamilies).forEach((family) => {
-              const key = `value${this.camelise(family)}${this.camelise(char)}`
-              this.vizData[char].push(response[key] || 0)
-            })
-          })
-        })
-    },
+    capitalise: capitalise,
   },
   beforeMount() {
     if (!this.$route.query["page"]) this.$router.replace({ query: { page: 1 } })
@@ -658,17 +569,6 @@ export default {
     this.populateParametersFromRoute()
     if (this.hasActiveFilter) this.showFilters = true
     return this.fetchCurrentPage().then(this.addWatchers)
-  },
-  watch: {
-    visiblePurchases(newPurchases, oldPurchases) {
-      if (newPurchases && !oldPurchases) this.vizCanteen = newPurchases[0].canteen
-    },
-    vizCanteen(newCanteen) {
-      if (newCanteen) this.getCharacteristicByFamilyData()
-    },
-    vizYear(newYear, oldYear) {
-      if (oldYear && newYear) this.getCharacteristicByFamilyData()
-    },
   },
 }
 </script>
