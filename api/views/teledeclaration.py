@@ -6,8 +6,8 @@ from django.template.loader import get_template
 from django.contrib.staticfiles import finders
 from django.conf import settings
 from django.utils.text import slugify
-from drf_spectacular.utils import extend_schema_view, extend_schema
-from rest_framework import status
+from drf_spectacular.utils import extend_schema_view, extend_schema, inline_serializer
+from rest_framework import status, serializers
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from xhtml2pdf import pisa
@@ -22,7 +22,9 @@ logger = logging.getLogger(__name__)
 @extend_schema_view(
     post=extend_schema(
         summary="Télédéclarer un diagnostic",
-        description="La télédéclaration créée prendra le diagnostic de l'année concernée pour créer un snapshot immutable. En créant une télédéclaration, l'utilisateur s'engage sur l'honneur sur la véracité des données télédéclarées.",
+        description="La télédéclaration créée prendra le diagnostic de l'année concernée pour créer un snapshot immutable. En créant une télédéclaration,"
+        + "l'utilisateur s'engage sur l'honneur sur la véracité des données télédéclarées.\n\n"
+        + "C'est possible d'envoyer une liste de `diagnostic_ids` pour télédéclarer plusieurs avec une requête. Dans ce cas, vous recevrez une `200` réponse, sinon une `201`.",
     ),
 )
 class TeledeclarationCreateView(APIView):
@@ -34,6 +36,19 @@ class TeledeclarationCreateView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
 
+    @extend_schema(
+        request=inline_serializer(name="Testing", fields={"diagnostic_id": serializers.IntegerField()}),
+        responses={
+            "201": FullDiagnosticSerializer,
+            "200": inline_serializer(
+                name="Teledeclarations",
+                fields={
+                    "teledeclarationIds": serializers.ListField(child=serializers.IntegerField()),
+                    "errors": serializers.ListField(child=serializers.CharField()),
+                },
+            ),
+        },
+    )
     def post(self, request):
         data = request.data
         diagnostic_id = data.get("diagnostic_id")
