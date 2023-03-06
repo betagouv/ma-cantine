@@ -49,7 +49,7 @@ html5lib==1.1
 idna==3.4
 inflection==0.5.1
 iniconfig==2.0.0
-isort==5.10.1
+isort==5.12.0
 jmespath==1.0.1
 jsonschema==4.17.3
 jwcrypto==1.4.2
