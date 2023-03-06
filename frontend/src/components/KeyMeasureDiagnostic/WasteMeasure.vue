@@ -63,8 +63,7 @@
         <v-col cols="12" md="8" class="pa-0">
           <DsfrTextField
             v-model.number="diagnostic.breadLeftovers"
-            type="number"
-            :rules="[validators.nonNegativeOrEmpty]"
+            :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
             validate-on-blur
             label="Reste de pain"
             suffix="kg/an"
@@ -73,8 +72,7 @@
           />
           <DsfrTextField
             v-model.number="diagnostic.servedLeftovers"
-            type="number"
-            :rules="[validators.nonNegativeOrEmpty]"
+            :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
             validate-on-blur
             label="Reste plateau"
             suffix="kg/an"
@@ -83,8 +81,7 @@
           />
           <DsfrTextField
             v-model.number="diagnostic.unservedLeftovers"
-            type="number"
-            :rules="[validators.nonNegativeOrEmpty]"
+            :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
             validate-on-blur
             label="Reste en production (non servi)"
             suffix="kg/an"
@@ -93,8 +90,7 @@
           />
           <DsfrTextField
             v-model.number="diagnostic.sideLeftovers"
-            type="number"
-            :rules="[validators.nonNegativeOrEmpty]"
+            :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
             validate-on-blur
             label="Reste de composantes (entrée, plat dessert...)"
             suffix="kg/an"
@@ -119,7 +115,6 @@
         <v-col cols="12" md="8" class="pa-0">
           <DsfrTextField
             v-model.number="diagnostic.donationFrequency"
-            type="number"
             :rules="[validators.nonNegativeOrEmpty]"
             validate-on-blur
             label="Fréquence de dons"
@@ -129,7 +124,6 @@
           />
           <DsfrTextField
             v-model.number="diagnostic.donationQuantity"
-            type="number"
             :rules="[validators.nonNegativeOrEmpty]"
             validate-on-blur
             label="Quantité des denrées données"

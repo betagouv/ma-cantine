@@ -1,7 +1,6 @@
 <template>
   <DsfrTextField
     hide-details="auto"
-    type="number"
     min="0"
     :rules="$attrs.rules || [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
     validate-on-blur
