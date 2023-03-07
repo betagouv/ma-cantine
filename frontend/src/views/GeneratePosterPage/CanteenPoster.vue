@@ -16,9 +16,12 @@
     </div>
     <div class="spacer"></div>
 
-    <p id="introduction">
+    <p id="introduction" v-if="hasCurrentYearData">
       {{ introText }}, pour l’année {{ infoYear }}, voici la répartition, en valeur d’achat, des produits bio, de
-      qualité et durables (liste de labels ci-dessous) utilisés dans la confection des repas
+      qualité et durables (liste de labels ci-dessous) utilisés dans la confection des repas.
+    </p>
+    <p id="introduction" v-else>
+      Nous n'avons pas de données renseignées pour cet établissement pour l’année {{ infoYear }}.
     </p>
 
     <p class="pat pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
@@ -29,24 +32,51 @@
     <p class="pat" v-else-if="patName">Certains de nos produits proviennent du PAT « {{ patName }} »</p>
 
     <div class="spacer"></div>
-    <div id="graphs">
-      <div>
-        <p class="graph-title">Approvisionnement {{ infoYear }}</p>
-        <SummaryStatistics
-          :width="showPreviousDiagnostic ? 300 : 450"
-          :qualityDiagnostic="diagnostic"
-          class="summary-statistics"
-          :hideLegend="showPreviousDiagnostic"
-        />
-      </div>
-      <div v-if="showPreviousDiagnostic">
-        <p class="graph-2-title">Rappel {{ infoYear - 1 }}</p>
+    <div id="graphs" v-if="hasCurrentYearData">
+      <div class="d-flex justify-space-between">
+        <div class="appro-box">
+          <p>
+            <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
+            <span class="caption grey--text text--darken-2">
+              bio
+            </span>
+          </p>
+          <div>
+            <img
+              contain
+              src="/static/images/quality-labels/logo_bio_eurofeuille.png"
+              alt="Logo Agriculture Biologique"
+              title="Logo Agriculture Biologique"
+              height="35"
+            />
+          </div>
+        </div>
 
-        <SummaryStatistics :width="390" :qualityDiagnostic="previousDiagnostic" class="summary-statistics" />
+        <div class="appro-box">
+          <p>
+            <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
+            <span class="caption grey--text text--darken-2">
+              durables et de qualité (hors bio)
+            </span>
+          </p>
+          <div class="d-flex justify-center flex-wrap">
+            <img
+              contain
+              v-for="label in labels"
+              :key="label.title"
+              :src="`/static/images/quality-labels/${label.src}`"
+              :alt="label.title"
+              :title="label.title"
+              height="33"
+            />
+          </div>
+        </div>
       </div>
     </div>
-
-    <LogoList id="logos" />
+    <p class="previous-year" v-if="showPreviousDiagnostic">
+      En {{ infoYear - 1 }}, nos produits étaient à {{ previousBioPercent }} % Bio et {{ previousSustainablePercent }} %
+      de qualité et durables.
+    </p>
     <div class="spacer"></div>
 
     <p id="custom-text">{{ customText }}</p>
@@ -79,16 +109,13 @@
 </template>
 
 <script>
-import LogoList from "@/components/LogoList"
-import SummaryStatistics from "./SummaryStatistics"
 import CanteenIndicators from "@/components/CanteenIndicators"
 import QrcodeVue from "qrcode.vue"
-import { lastYear } from "@/utils"
+import { lastYear, getPercentage, getSustainableTotal } from "@/utils"
+import labels from "@/data/quality-labels.json"
 
 export default {
   components: {
-    LogoList,
-    SummaryStatistics,
     CanteenIndicators,
     QrcodeVue,
   },
@@ -99,6 +126,9 @@ export default {
     customText: String,
     patPercentage: String,
     patName: String,
+  },
+  data() {
+    return { labels }
   },
   computed: {
     showPreviousDiagnostic() {
@@ -125,7 +155,23 @@ export default {
         } repas servis sur place`
       if (this.canteen.productionType === "site_cooked_elsewhere")
         return `Sur les repas faits par la cuisine central déservant cette cantine`
-      else return `Sur les ${this.canteen.dailyMealCount || ""} repas servis aux convives`
+      else return `Sur les ${this.canteen.dailyMealCount || ""} repas par jour servis aux convives`
+    },
+    bioPercent() {
+      return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
+    },
+    sustainablePercent() {
+      return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+    },
+    previousBioPercent() {
+      return getPercentage(this.previousDiagnostic.valueBioHt, this.previousDiagnostic.valueTotalHt)
+    },
+    previousSustainablePercent() {
+      return getPercentage(getSustainableTotal(this.previousDiagnostic), this.previousDiagnostic.valueTotalHt)
+    },
+    hasCurrentYearData() {
+      if (!this.diagnostic) return false
+      return !!this.diagnostic.valueTotalHt
     },
   },
 }
@@ -193,7 +239,8 @@ i {
 }
 
 #introduction,
-.pat {
+.pat,
+.previous-year {
   font-size: 14px;
 }
 
@@ -215,20 +262,11 @@ i {
   display: flex;
   align-items: center;
   margin-bottom: 1em;
+  width: 100%;
 }
 
-.graph-title {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 8px;
-  margin-left: 16px;
-  margin-right: 16px;
-}
-
-.graph-2-title {
-  font-weight: bold;
-  margin-bottom: 8px;
-  margin-left: 24px;
+#graphs > div {
+  width: 100%;
 }
 
 #custom-text {
@@ -260,5 +298,23 @@ i {
   #qr-code {
     padding-top: 14px;
   }
+}
+.appro-box {
+  text-align: center;
+  border: solid 1px #ccc;
+  width: 49%;
+  padding: 10px;
+}
+.d-flex {
+  display: flex;
+}
+.justify-space-between {
+  justify-content: space-between !important;
+}
+.justify-center {
+  justify-content: center !important;
+}
+.flex-wrap {
+  flex-wrap: wrap !important;
 }
 </style>
