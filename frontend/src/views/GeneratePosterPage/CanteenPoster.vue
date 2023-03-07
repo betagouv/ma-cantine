@@ -59,7 +59,7 @@
           <p class="footer-text">
             L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des produits composant
             les menus et de soutenir l’objectif d’une alimentation plus saine et plus durable dans les restaurants. En
-            partenariat avec « ma cantine », plateforme gouvernementale, cet établissement a rempli ses obligations
+            partenariat avec « ma cantine », plateforme nationale, cet établissement a rempli ses obligations
             d’information des convives.
           </p>
         </v-col>
