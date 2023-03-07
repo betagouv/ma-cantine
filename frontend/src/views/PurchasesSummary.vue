@@ -5,9 +5,6 @@
       <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
         La synthèse de mes achats
       </h1>
-      <p>
-        Choisissez la cantine et l'année pour voir la répartition par label de vos achats
-      </p>
       <v-row class="mb-2">
         <v-col cols="12" sm="6">
           <DsfrAutocomplete
@@ -47,12 +44,7 @@ export default {
     return {
       vizYear: lastYear(),
       vizCanteen: null,
-      allowedYears: diagnosticYears().map((year) => {
-        return {
-          text: year + (year > lastYear() ? " (prévisionnel)" : ""),
-          value: year,
-        }
-      }),
+      allowedYears: diagnosticYears().filter((year) => year <= lastYear() + 1),
       summary: null,
     }
   },
