@@ -145,7 +145,11 @@ export default Object.freeze({
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
     BIO: { text: "Bio", color: "green" },
     LABEL_ROUGE: { text: "Label rouge", color: "red lighten-1" },
-    AOCAOP_IGP_STG: { text: "AOC / AOP / IGP / STG", longText: "AOC / AOP / IGP / STG", color: "indigo" },
+    AOCAOP_IGP_STG: {
+      text: "AOC / AOP / IGP / STG",
+      longText: "AOC / AOP / IGP / STG",
+      color: "indigo",
+    },
     PECHE_DURABLE: { text: "Écolabel pêche durable", color: "blue" },
     RUP: { text: "RUP", longText: "Région ultrapériphérique (RUP)", color: "brown" },
     COMMERCE_EQUITABLE: { text: "Commerce équitable", color: "lime darken-2" },
@@ -170,10 +174,10 @@ export default Object.freeze({
       longText: "Produits acquis sur la base de leurs performances en matière environnementale",
       color: "pink",
     },
-    NON_EGALIM: { text: "Non-EGAlim" },
-    FRANCE: { text: "Provenance France" },
-    SHORT_DISTRIBUTION: { text: "Circuit-court" },
-    LOCAL: { text: "Local" },
+    NON_EGALIM: { text: "Non-EGAlim", color: "blue-grey lighten-2" },
+    FRANCE: { text: "Provenance France", additional: true },
+    SHORT_DISTRIBUTION: { text: "Circuit-court", additional: true },
+    LOCAL: { text: "Local", additional: true },
   },
   LocalDefinitions: {
     AUTOUR_SERVICE: { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },

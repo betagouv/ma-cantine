@@ -13,7 +13,6 @@
 
 <script>
 import VueApexCharts from "vue-apexcharts"
-import { getPercentage, strictIsNaN } from "@/utils"
 import Constants from "@/constants"
 import colors from "vuetify/lib/util/colors"
 
@@ -66,6 +65,7 @@ export default {
         chart: {
           type: "bar",
           stacked: true,
+          stackType: "100%",
           toolbar: { tools: { download: false } },
           animations: {
             enabled: false,
@@ -169,13 +169,7 @@ export default {
       return this.families.map((family) => {
         const baseField = baseFields[family.id]
         const field = `${baseField}${modifier}`
-        const familyTotal = Object.values(baseModifiers)
-          .map((baseModifier) => {
-            return strictIsNaN(diag[`${baseField}${baseModifier}`]) ? 0 : diag[`${baseField}${baseModifier}`]
-          })
-          .reduce((a, b) => a + b, 0)
-        const percentage = getPercentage(strictIsNaN(diag[field]) ? 0 : diag[field], familyTotal, false)
-        return Math.round(percentage * 10) / 10
+        return diag[field]
       })
     },
   },
