@@ -291,7 +291,6 @@ class SimpleApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSerial
         model = Diagnostic
         fields = META_FIELDS + SIMPLE_APPRO_FIELDS
         read_only_fields = fields
-        read_only_fields = fields
 
 
 class CompleteApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
