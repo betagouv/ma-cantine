@@ -1,23 +1,25 @@
 <template>
   <div>
     <h1 class="font-weight-black text-h4 my-4">Publier mes satellites</h1>
-    <p>
-      « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
-      <b>uniquement les lieux de restauration recevant des convives.</b>
-    </p>
-    <p>
-      Vous pouvez
-      <router-link :to="{ name: 'NewCanteen' }">ajouter une cantine satellite</router-link>
-      ou indiquer que
-      <router-link
-        :to="{
-          name: 'CanteenModification',
-          params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
-        }"
-      >
-        votre cuisine centrale reçoit aussi des convives sur place.
-      </router-link>
-    </p>
+    <div v-if="!receivesGuests">
+      <p>
+        « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
+        <b>uniquement les lieux de restauration recevant des convives.</b>
+      </p>
+      <p>
+        Vous pouvez
+        <router-link :to="{ name: 'NewCanteen' }">ajouter une cantine satellite</router-link>
+        ou indiquer que
+        <router-link
+          :to="{
+            name: 'CanteenModification',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
+          }"
+        >
+          votre cuisine centrale reçoit aussi des convives sur place.
+        </router-link>
+      </p>
+    </div>
     <div>
       <v-row v-if="pubLoading" class="green--text">
         <v-col cols="1" justify-self="center">
@@ -52,11 +54,11 @@
       @paramsChanged="updateRoute"
       @satellitesLoaded="updateSatellitesCounts"
     />
-    <p v-if="published">
+    <p v-if="published && !receivesGuests" class="mt-8">
       Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
       retirer cette publication.
     </p>
-    <v-sheet v-if="published" rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
+    <v-sheet v-if="published && !receivesGuests" rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
       <v-spacer></v-spacer>
       <v-btn x-large color="primary" @click="removeCanteenPublication">
         Retirer la publication
@@ -115,6 +117,9 @@ export default {
         }
       }
       return preamble
+    },
+    receivesGuests() {
+      return this.originalCanteen.productionType !== "central"
     },
   },
   methods: {
