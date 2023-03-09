@@ -3,10 +3,9 @@
     <div class="spacer"></div>
     <div id="heading">
       <div>
-        <h2>Qualité des approvisionnements dans l’établissement {{ canteen.name || "_________" }}</h2>
+        <h2>{{ canteen.name || "_________" }}</h2>
         <div id="indicators">
-          <img contain :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
-
+          <img contain v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
           <CanteenIndicators :canteen="canteen" />
         </div>
       </div>
@@ -76,6 +75,22 @@
       En {{ infoYear - 1 }}, nos produits étaient à {{ previousBioPercent }} % Bio et {{ previousSustainablePercent }} %
       durables et de qualité (hors bio).
     </p>
+    <div v-if="Object.keys(earnedBadges).length" class="badge-container">
+      <div v-for="(badge, key) in earnedBadges" :key="key" class="d-flex" style="margin-bottom: 8px;">
+        <img width="30" contain :src="`/static/images/badges/${key}.svg`" alt="" />
+        <div
+          class="badge-description"
+          v-text="badge.subtitle"
+          v-if="key !== 'appro' || applicableRules.qualityThreshold === 50"
+        ></div>
+        <div class="badge-description" v-else>
+          Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits
+          durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
+          <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+        </div>
+      </div>
+    </div>
+
     <div class="spacer"></div>
 
     <p id="custom-text">{{ customText }}</p>
@@ -110,7 +125,7 @@
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
 import QrcodeVue from "qrcode.vue"
-import { lastYear, getPercentage, getSustainableTotal } from "@/utils"
+import { lastYear, getPercentage, getSustainableTotal, badges, applicableDiagnosticRules } from "@/utils"
 import labels from "@/data/quality-labels.json"
 
 export default {
@@ -123,7 +138,7 @@ export default {
     diagnostic: Object,
     previousDiagnostic: Object,
     customText: String,
-    patPercentage: String,
+    patPercentage: [String, Number],
     patName: String,
   },
   data() {
@@ -171,6 +186,18 @@ export default {
     hasCurrentYearData() {
       if (!this.diagnostic) return false
       return !!this.diagnostic.valueTotalHt
+    },
+    earnedBadges() {
+      if (!Object.keys(this.canteen).length) return {}
+      const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
+      let earnedBadges = {}
+      Object.keys(canteenBadges).forEach((key) => {
+        if (canteenBadges[key].earned) earnedBadges[key] = canteenBadges[key]
+      })
+      return earnedBadges
+    },
+    applicableRules() {
+      return applicableDiagnosticRules(this.canteen)
     },
   },
 }
@@ -235,8 +262,16 @@ i {
 
 #introduction,
 .pat,
-.previous-year {
+.previous-year,
+.badge-description {
   font-size: 14px;
+}
+
+.badge-description {
+  margin-left: 8px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .pat-heading {
@@ -268,6 +303,7 @@ i {
   font-size: 14px;
   overflow-wrap: break-word;
   hyphens: auto;
+  margin-top: 8px;
 }
 
 #about {
@@ -328,5 +364,10 @@ i {
 }
 .flex-wrap {
   flex-wrap: wrap !important;
+}
+.badge-container {
+  padding: 8px 0;
+  border-top: solid 1px #ddd;
+  border-bottom: solid 1px #ddd;
 }
 </style>

@@ -52,7 +52,7 @@
               v-model="customText"
               label="Plus de détail (facultatif)"
               counter
-              :rules="[(v) => !v || v.length <= 915 || '915 caractères maximum']"
+              :rules="[(v) => !v || v.length <= 700 || '700 caractères maximum']"
             />
           </v-col>
         </v-row>
