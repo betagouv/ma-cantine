@@ -203,14 +203,12 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
 
     def to_percentages(representation, instance):
         appro_field = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
-        if instance.value_total_ht:
-            for field in appro_field:
-                if field in representation and representation[field]:
-                    representation[field] = representation[field] / instance.value_total_ht
-        else:
-            for field in appro_field:
-                if field in representation and representation[field]:
-                    representation[field] = None
+        total = instance.value_total_ht
+
+        for field in appro_field:
+            if representation.get(field):
+                representation[field] = representation[field] / total if total else None
+
         representation["value_total_ht"] = 1
         return representation
 
