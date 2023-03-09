@@ -60,6 +60,7 @@
         class="mx-auto rounded-0"
         contain
         max-width="150"
+        :style="purchaseCount === null ? 'visibility: hidden;' : ''"
       ></v-img>
     </div>
 
