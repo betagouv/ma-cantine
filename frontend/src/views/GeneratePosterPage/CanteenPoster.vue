@@ -35,8 +35,8 @@
       <div class="d-flex justify-space-between">
         <div class="appro-box">
           <p>
-            <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
-            <span class="caption grey--text text--darken-2">
+            <span class="percent">{{ bioPercent }} %</span>
+            <span class="appro-label">
               bio
             </span>
           </p>
@@ -53,8 +53,8 @@
 
         <div class="appro-box">
           <p>
-            <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
-            <span class="caption grey--text text--darken-2">
+            <span class="percent">{{ sustainablePercent }} %</span>
+            <span class="appro-label">
               durables et de qualité (hors bio)
             </span>
           </p>
@@ -74,7 +74,7 @@
     </div>
     <p class="previous-year" v-if="showPreviousDiagnostic">
       En {{ infoYear - 1 }}, nos produits étaient à {{ previousBioPercent }} % Bio et {{ previousSustainablePercent }} %
-      de qualité et durables.
+      durables et de qualité (hors bio).
     </p>
     <div class="spacer"></div>
 
@@ -184,7 +184,7 @@ export default {
   overflow: hidden; // to show how it will be on paper
   padding: 14mm;
   // Need to repeat some styling directly here for PDF generation
-  font-family: "Marianne";
+  font-family: "Marianne" !important;
 }
 
 // copy vuetify styling to have on generated PDF
@@ -299,6 +299,23 @@ i {
   border: solid 1px #ccc;
   width: 49%;
   padding: 10px;
+
+  .percent {
+    font-size: 1.5rem !important;
+    font-weight: 900;
+    line-height: 2rem;
+    letter-spacing: normal !important;
+    color: #464646;
+    margin-right: 4px;
+  }
+
+  .appro-label {
+    color: #464646;
+    font-size: 0.75rem !important;
+    font-weight: 400;
+    letter-spacing: 0.0333333333em !important;
+    line-height: 1.25rem;
+  }
 }
 .d-flex {
   display: flex;
