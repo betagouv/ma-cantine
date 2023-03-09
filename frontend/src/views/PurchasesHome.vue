@@ -19,6 +19,16 @@
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
             Créer plusieurs achats depuis un fichier
           </v-btn>
+          <v-btn
+            text
+            color="primary"
+            :to="{ name: 'PurchasesSummary' }"
+            class="px-0 px-md-2 my-3"
+            v-if="$vuetify.breakpoint.xs"
+          >
+            <v-icon class="mr-2">$pie-chart-2-fill</v-icon>
+            Voir la synthèse de mes achats
+          </v-btn>
         </v-row>
         <p class="font-weight-bold" v-else>
           Pour commencer à suivre vos achats, veuillez ajouter une cantine.
@@ -26,14 +36,33 @@
       </div>
       <v-spacer></v-spacer>
 
+      <v-card
+        class="dsfr d-flex flex-column justify-center"
+        :to="{ name: 'PurchasesSummary' }"
+        min-width="300px"
+        v-if="purchaseCount && $vuetify.breakpoint.smAndUp"
+      >
+        <v-card-text class="text-center">
+          <v-icon x-large color="primary">
+            $pie-chart-2-fill
+          </v-icon>
+        </v-card-text>
+        <v-card-text class="text-center text-body-1 font-weight-bold py-0">
+          La synthèse de vos achats
+        </v-card-text>
+        <v-card-text class="text-center pt-2">
+          Cliquez ici pour visualiser les données relatives à vos achats
+        </v-card-text>
+      </v-card>
       <v-img
         src="/static/images/doodles-dsfr/primary/ChartDoodle.png"
-        v-if="$vuetify.breakpoint.smAndUp"
+        v-else-if="$vuetify.breakpoint.smAndUp"
         class="mx-auto rounded-0"
         contain
         max-width="150"
       ></v-img>
     </div>
+
     <PurchasesToolExplanation class="my-1" />
     <v-card outlined v-if="hasCanteens && visiblePurchases">
       <v-row class="px-4 mt-2" align="center">
@@ -273,7 +302,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import PurchasesToolExplanation from "../components/PurchasesToolExplanation"
+import PurchasesToolExplanation from "@/components/PurchasesToolExplanation"
 
 export default {
   name: "PurchasesHome",
@@ -531,9 +560,7 @@ export default {
       this.$watch("options", this.onOptionsChange, { deep: true })
       this.$watch("$route", this.onRouteChange)
     },
-    capitalise(str) {
-      return capitalise(str)
-    },
+    capitalise: capitalise,
   },
   beforeMount() {
     if (!this.$route.query["page"]) this.$router.replace({ query: { page: 1 } })
