@@ -1,5 +1,7 @@
 # Tracking avec matomo
 
+lien de la page sur stats : https://stats.data.gouv.fr/index.php?module=CoreHome&action=index&idSite=162&period=range&date=previous30&updated=1#?idSite=162&period=range&date=previous30&category=General_Actions&subcategory=Events_Events
+
 | catégorie | action | nom | valeur | description | depuis où |
 | --- | --- | --- | --- | --- | --- |
 | inquiry | send | functionalityQuestion / demo / bug / egalim / other | | Les demandes envoyées | Page contact / Page dév / Page partenaires |
