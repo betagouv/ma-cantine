@@ -24,7 +24,68 @@
           <DsfrSelect label="Année" v-model="vizYear" :items="allowedYears" hide-details="auto" />
         </v-col>
       </v-row>
-      <FamiliesGraph v-if="summary" :diagnostic="summary" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
+      <v-row v-if="summary">
+        <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
+          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+            <p class="ma-0">
+              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                {{ toCurrency(summary.valueTotalHt) }}
+              </span>
+              <span class="caption grey--text text--darken-2">
+                total HT
+              </span>
+            </p>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6" md="4" v-if="summary.valueBioHt">
+          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+            <p class="ma-0">
+              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
+              <span class="caption grey--text text--darken-2">
+                bio
+              </span>
+            </p>
+            <div class="mt-2">
+              <v-img
+                contain
+                src="/static/images/quality-labels/logo_bio_eurofeuille.png"
+                alt="Logo Agriculture Biologique"
+                title="Logo Agriculture Biologique"
+                max-height="35"
+              />
+            </div>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6" md="4" v-if="summary.valueSustainableHt">
+          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+            <p class="ma-0">
+              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
+              <span class="caption grey--text text--darken-2">
+                durables et de qualité (hors bio)
+              </span>
+            </p>
+            <div class="d-flex mt-2 justify-center flex-wrap">
+              <v-img
+                contain
+                v-for="label in labels"
+                :key="label.title"
+                :src="`/static/images/quality-labels/${label.src}`"
+                :alt="label.title"
+                :title="label.title"
+                class="px-1"
+                max-height="40"
+                max-width="40"
+              />
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+      <FamiliesGraph
+        v-if="summary"
+        :diagnostic="summary"
+        :height="$vuetify.breakpoint.xs ? '440px' : '380px'"
+        class="mt-4"
+      />
       <!-- TODO: a11y description -->
       <div v-if="loading" style="height: 250px">
         <v-progress-circular indeterminate style="left: 50%; top: 50%"></v-progress-circular>
@@ -34,11 +95,12 @@
 </template>
 
 <script>
-import { lastYear, diagnosticYears, normaliseText } from "@/utils"
+import { lastYear, diagnosticYears, normaliseText, getPercentage, getSustainableTotal, toCurrency } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import FamiliesGraph from "@/components/FamiliesGraph"
+import labels from "@/data/quality-labels.json"
 
 export default {
   name: "PurchasesSummary",
@@ -50,6 +112,7 @@ export default {
       allowedYears: diagnosticYears().filter((year) => year <= lastYear() + 1),
       summary: null,
       loading: false,
+      labels,
     }
   },
   computed: {
@@ -58,6 +121,12 @@ export default {
       return canteens.sort((a, b) => {
         return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
       })
+    },
+    bioPercent() {
+      return this.summary && getPercentage(this.summary.valueBioHt, this.summary.valueTotalHt)
+    },
+    sustainablePercent() {
+      return this.summary && getPercentage(getSustainableTotal(this.summary), this.summary.valueTotalHt)
     },
   },
   methods: {
@@ -71,6 +140,9 @@ export default {
           this.summary = response
         })
         .finally(() => (this.loading = false))
+    },
+    toCurrency(value) {
+      return toCurrency(value)
     },
   },
   watch: {
