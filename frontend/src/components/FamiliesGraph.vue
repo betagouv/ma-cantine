@@ -105,7 +105,14 @@ export default {
           },
         },
         tooltip: {
-          y: { formatter: percentageFormatter },
+          y: {
+            formatter: function(value, { series, seriesIndex }) {
+              const row = series[seriesIndex]
+              const sum = row.reduce((a, b) => a + b, 0)
+              const percentage = (value / sum) * 100
+              return `${percentage.toFixed(2)} %`
+            },
+          },
         },
       }
     },
