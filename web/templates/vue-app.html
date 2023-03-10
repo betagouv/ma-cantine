@@ -39,7 +39,7 @@
         window.ENABLE_TELEDECLARATION = "{% enable_teledeclaration %}" === "True"
         window.IS_WIDGET = "{{ is_widget }}"
     </script>
-    {% if is_widget %}
+    {% if is_widget != True %}
     <script type="text/javascript">
         window.$crisp = [];
         window.CRISP_WEBSITE_ID = "071cca61-bd5f-4950-a5ed-c02238666a5c";

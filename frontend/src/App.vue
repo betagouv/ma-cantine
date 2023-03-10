@@ -1,9 +1,10 @@
 <template>
   <div id="app">
-    <v-app v-if="!isWidget">
-      <AppHeader class="mx-auto constrained" />
+    <v-app>
+      <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
+      <AppHeader class="mx-auto constrained" v-else />
 
-      <v-main id="contenu" style="width: 100%" class="mb-10">
+      <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget }">
         <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner" />
         <v-container fluid :fill-height="!initialDataLoaded">
           <v-progress-circular
@@ -11,26 +12,12 @@
             style="position: absolute; left: 50%; top: 50%"
             v-if="!initialDataLoaded"
           ></v-progress-circular>
-          <router-view v-else class="mx-auto constrained" />
+          <router-view v-else :class="isWidget ? 'ma-4 mt-0 constrained' : 'mx-auto constrained'" />
         </v-container>
       </v-main>
 
-      <AppFooter />
-      <NotificationSnackbar />
-    </v-app>
-    <v-app v-else>
-      <WidgetHeader class="ma-4 mb-0 constrained" />
-
-      <v-main id="contenu" style="width: 100%">
-        <v-container fluid :fill-height="!initialDataLoaded">
-          <v-progress-circular
-            indeterminate
-            style="position: absolute; left: 50%; top: 50%"
-            v-if="!initialDataLoaded"
-          ></v-progress-circular>
-          <router-view v-else class="ma-4 mt-0 constrained" />
-        </v-container>
-      </v-main>
+      <AppFooter v-if="!isWidget" />
+      <NotificationSnackbar v-if="!isWidget" />
     </v-app>
   </div>
 </template>
@@ -54,7 +41,7 @@ export default {
   },
   data() {
     return {
-      isWidget: false,
+      isWidget: window.IS_WIDGET,
     }
   },
   computed: {
@@ -62,7 +49,7 @@ export default {
       return this.$store.state.initialDataLoaded
     },
     showWebinaireBanner() {
-      return this.$store.state.showWebinaireBanner
+      return this.$store.state.showWebinaireBanner && !this.isWidget
     },
   },
   mounted() {
@@ -82,7 +69,6 @@ export default {
       const suffix = "ma cantine"
       document.title = to.meta.title ? to.meta.title + " - " + suffix : suffix
       document.querySelector('meta[property="og:url"]').setAttribute("content", window.location)
-      this.isWidget = window.IS_WIDGET
     },
     initialDataLoaded() {
       if (!this.$store.state.loggedUser) return
