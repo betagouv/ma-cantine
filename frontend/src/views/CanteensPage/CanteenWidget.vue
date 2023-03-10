@@ -132,7 +132,6 @@ export default {
         })
     },
     selectedBadge() {
-      console.log(this.selectedBadgeKey)
       return this.canteenBadges[this.selectedBadgeKey]
     },
     applicableRules() {
@@ -156,11 +155,7 @@ export default {
         response.json().then(this.setCanteen)
       })
       .catch(() => {
-        this.$store.dispatch("notify", {
-          message: "Nous n'avons pas trouvé cette cantine",
-          status: "error",
-        })
-        this.$router.push({ name: "CanteensHome" })
+        this.$router.push({ name: "NotFound" })
       })
   },
   mounted() {
