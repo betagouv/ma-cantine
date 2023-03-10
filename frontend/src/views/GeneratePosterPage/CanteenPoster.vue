@@ -22,13 +22,6 @@
       Nous n'avons pas de données renseignées pour cet établissement pour l’année {{ infoYear }}.
     </p>
 
-    <p class="pat pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
-    <p class="pat" v-if="patPercentage && patName">
-      {{ patPercentage }} % de nos produits proviennent du PAT « {{ patName }} »
-    </p>
-    <p class="pat" v-else-if="patPercentage">{{ patPercentage }} % de nos produits proviennent d'un PAT</p>
-    <p class="pat" v-else-if="patName">Certains de nos produits proviennent du PAT « {{ patName }} »</p>
-
     <div class="spacer"></div>
     <div id="graphs" v-if="hasCurrentYearData">
       <div class="d-flex justify-space-between">
@@ -90,6 +83,15 @@
         </div>
       </div>
     </div>
+
+    <div class="spacer"></div>
+
+    <p class="pat pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
+    <p class="pat" v-if="patPercentage && patName">
+      {{ patPercentage }} % de nos produits proviennent du PAT « {{ patName }} »
+    </p>
+    <p class="pat" v-else-if="patPercentage">{{ patPercentage }} % de nos produits proviennent d'un PAT</p>
+    <p class="pat" v-else-if="patName">Certains de nos produits proviennent du PAT « {{ patName }} »</p>
 
     <div class="spacer"></div>
 
