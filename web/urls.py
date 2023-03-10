@@ -3,11 +3,12 @@ from django.views.generic import TemplateView
 from django.contrib.sitemaps.views import sitemap
 from django.views.decorators.cache import cache_page
 from django.views.generic.base import RedirectView
-from django.urls import path
+from django.urls import path, re_path
 from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 from web.sitemaps import CanteenSitemap, BlogPostSitemap, WebSitemap, PartnerSitemap
 from web.views import (
     VueAppDisplayView,
+    WidgetView,
     RegisterUserView,
     ActivationTokenView,
     RegisterDoneView,
@@ -24,6 +25,7 @@ sitemaps = {
 }
 
 urlpatterns = [
+    re_path(r"^widgets/.*$", WidgetView.as_view(), name="widget_app"),
     path("", VueAppDisplayView.as_view(), name="app"),
     # https://docs.djangoproject.com/en/3.1/topics/auth/default/#django.contrib.auth.views.LoginView
     path(

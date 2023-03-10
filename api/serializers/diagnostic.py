@@ -183,25 +183,8 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
     This serializer masks financial data and gives the basic information on appro as percentages
     """
 
-    value_total_ht = serializers.SerializerMethodField(read_only=True)
-    value_bio_ht = serializers.SerializerMethodField(read_only=True)
-    value_sustainable_ht = serializers.SerializerMethodField(read_only=True)
-    value_externality_performance_ht = serializers.SerializerMethodField(read_only=True)
-    value_egalim_others_ht = serializers.SerializerMethodField(read_only=True)
-
     class Meta:
-        fields = (
-            META_FIELDS
-            + (
-                # Percentage-based appro values
-                "value_total_ht",
-                "value_bio_ht",
-                "value_sustainable_ht",
-                "value_externality_performance_ht",
-                "value_egalim_others_ht",
-            )
-            + NON_APPRO_FIELDS
-        )
+        fields = FIELDS
         read_only_fields = fields
         model = Diagnostic
 
@@ -214,30 +197,20 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         if instance.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
             [representation.pop(field, "") for field in NON_APPRO_FIELDS]
+        if instance.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
+            [representation.pop(field, "") for field in COMPLETE_APPRO_FIELDS]
+        return CentralKitchenDiagnosticSerializer.to_percentages(representation, instance)
+
+    def to_percentages(representation, instance):
+        appro_field = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
+        total = instance.value_total_ht
+
+        for field in appro_field:
+            if representation.get(field):
+                representation[field] = representation[field] / total if total else None
+
+        representation["value_total_ht"] = 1
         return representation
-
-    def get_value_total_ht(self, _):
-        return 1
-
-    def get_value_bio_ht(self, obj):
-        if not obj.value_bio_ht or not obj.value_total_ht:
-            return None
-        return obj.value_bio_ht / obj.value_total_ht
-
-    def get_value_sustainable_ht(self, obj):
-        if not obj.value_sustainable_ht or not obj.value_total_ht:
-            return None
-        return obj.value_sustainable_ht / obj.value_total_ht
-
-    def get_value_externality_performance_ht(self, obj):
-        if not obj.value_externality_performance_ht or not obj.value_total_ht:
-            return None
-        return obj.value_externality_performance_ht / obj.value_total_ht
-
-    def get_value_egalim_others_ht(self, obj):
-        if not obj.value_egalim_others_ht or not obj.value_total_ht:
-            return None
-        return obj.value_egalim_others_ht / obj.value_total_ht
 
 
 class PublicDiagnosticSerializer(serializers.ModelSerializer):
@@ -315,7 +288,6 @@ class SimpleApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSerial
     class Meta:
         model = Diagnostic
         fields = META_FIELDS + SIMPLE_APPRO_FIELDS
-        read_only_fields = fields
         read_only_fields = fields
 
 

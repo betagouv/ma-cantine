@@ -3,11 +3,9 @@
     <div class="spacer"></div>
     <div id="heading">
       <div>
-        <h2>Qualité des approvisionnements dans l’établissement {{ canteen.name || "_________" }}</h2>
+        <h2>{{ canteen.name || "_________" }}</h2>
         <div id="indicators">
-          <!-- Can't use <img> because the object-fit is not respected in the PDF generation -->
-          <div :style="`background-image: url('${canteen.logo}')`" v-if="canteen.logo" class="cantine-image" alt="" />
-
+          <img contain v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
           <CanteenIndicators :canteen="canteen" />
         </div>
       </div>
@@ -16,10 +14,77 @@
     </div>
     <div class="spacer"></div>
 
-    <p id="introduction">
+    <p id="introduction" v-if="hasCurrentYearData">
       {{ introText }}, pour l’année {{ infoYear }}, voici la répartition, en valeur d’achat, des produits bio, de
-      qualité et durables (liste de labels ci-dessous) utilisés dans la confection des repas
+      qualité et durables (liste de labels ci-dessous) utilisés dans la confection des repas.
     </p>
+    <p id="introduction" v-else>
+      Nous n'avons pas de données renseignées pour cet établissement pour l’année {{ infoYear }}.
+    </p>
+
+    <div class="spacer"></div>
+    <div id="graphs" v-if="hasCurrentYearData">
+      <div class="d-flex justify-space-between">
+        <div class="appro-box">
+          <p>
+            <span class="percent">{{ bioPercent }} %</span>
+            <span class="appro-label">
+              bio
+            </span>
+          </p>
+          <div>
+            <img
+              contain
+              src="/static/images/quality-labels/logo_bio_eurofeuille.png"
+              alt="Logo Agriculture Biologique"
+              title="Logo Agriculture Biologique"
+              height="35"
+            />
+          </div>
+        </div>
+
+        <div class="appro-box">
+          <p>
+            <span class="percent">{{ sustainablePercent }} %</span>
+            <span class="appro-label">
+              durables et de qualité (hors bio)
+            </span>
+          </p>
+          <div class="d-flex justify-center flex-wrap">
+            <img
+              contain
+              v-for="label in labels"
+              :key="label.title"
+              :src="`/static/images/quality-labels/${label.src}`"
+              :alt="label.title"
+              :title="label.title"
+              height="33"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="previous-year" v-if="showPreviousDiagnostic">
+      En {{ infoYear - 1 }}, nos produits étaient à {{ previousBioPercent }}&nbsp;% Bio et
+      {{ previousSustainablePercent }}&nbsp;% durables et de qualité (hors bio).
+    </p>
+    <div v-if="Object.keys(earnedBadges).length" class="badge-container">
+      <div v-for="(badge, key) in earnedBadges" :key="key" class="d-flex" style="margin-bottom: 8px;">
+        <img width="30" contain :src="`/static/images/badges/${key}.svg`" alt="" />
+        <div
+          class="badge-description"
+          v-text="badge.subtitle"
+          v-if="key !== 'appro' || applicableRules.qualityThreshold === 50"
+        ></div>
+        <div class="badge-description" v-else>
+          Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }}&nbsp;% de produits
+          durables et de qualité, dont {{ applicableRules.bioThreshold }}&nbsp;% bio, en respectant les seuils
+          d'Outre-mer.
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
 
     <p class="pat pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
     <p class="pat" v-if="patPercentage && patName">
@@ -28,25 +93,6 @@
     <p class="pat" v-else-if="patPercentage">{{ patPercentage }} % de nos produits proviennent d'un PAT</p>
     <p class="pat" v-else-if="patName">Certains de nos produits proviennent du PAT « {{ patName }} »</p>
 
-    <div class="spacer"></div>
-    <div id="graphs">
-      <div>
-        <p class="graph-title">Approvisionnement {{ infoYear }}</p>
-        <SummaryStatistics
-          :width="showPreviousDiagnostic ? 300 : 450"
-          :qualityDiagnostic="diagnostic"
-          class="summary-statistics"
-          :hideLegend="showPreviousDiagnostic"
-        />
-      </div>
-      <div v-if="showPreviousDiagnostic">
-        <p class="graph-2-title">Rappel {{ infoYear - 1 }}</p>
-
-        <SummaryStatistics :width="390" :qualityDiagnostic="previousDiagnostic" class="summary-statistics" />
-      </div>
-    </div>
-
-    <LogoList id="logos" />
     <div class="spacer"></div>
 
     <p id="custom-text">{{ customText }}</p>
@@ -59,7 +105,7 @@
           <p class="footer-text">
             L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des produits composant
             les menus et de soutenir l’objectif d’une alimentation plus saine et plus durable dans les restaurants. En
-            partenariat avec « ma cantine », plateforme gouvernementale, cet établissement a rempli ses obligations
+            partenariat avec « ma cantine », plateforme nationale, cet établissement a rempli ses obligations
             d’information des convives.
           </p>
         </v-col>
@@ -79,16 +125,13 @@
 </template>
 
 <script>
-import LogoList from "@/components/LogoList"
-import SummaryStatistics from "./SummaryStatistics"
 import CanteenIndicators from "@/components/CanteenIndicators"
 import QrcodeVue from "qrcode.vue"
-import { lastYear } from "@/utils"
+import { lastYear, getPercentage, getSustainableTotal, badges, applicableDiagnosticRules } from "@/utils"
+import labels from "@/data/quality-labels.json"
 
 export default {
   components: {
-    LogoList,
-    SummaryStatistics,
     CanteenIndicators,
     QrcodeVue,
   },
@@ -97,8 +140,11 @@ export default {
     diagnostic: Object,
     previousDiagnostic: Object,
     customText: String,
-    patPercentage: String,
+    patPercentage: [String, Number],
     patName: String,
+  },
+  data() {
+    return { labels }
   },
   computed: {
     showPreviousDiagnostic() {
@@ -125,7 +171,35 @@ export default {
         } repas servis sur place`
       if (this.canteen.productionType === "site_cooked_elsewhere")
         return `Sur les repas faits par la cuisine central déservant cette cantine`
-      else return `Sur les ${this.canteen.dailyMealCount || ""} repas servis aux convives`
+      else return `Sur les ${this.canteen.dailyMealCount || ""} repas par jour servis aux convives`
+    },
+    bioPercent() {
+      return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
+    },
+    sustainablePercent() {
+      return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+    },
+    previousBioPercent() {
+      return getPercentage(this.previousDiagnostic.valueBioHt, this.previousDiagnostic.valueTotalHt)
+    },
+    previousSustainablePercent() {
+      return getPercentage(getSustainableTotal(this.previousDiagnostic), this.previousDiagnostic.valueTotalHt)
+    },
+    hasCurrentYearData() {
+      if (!this.diagnostic) return false
+      return !!this.diagnostic.valueTotalHt
+    },
+    earnedBadges() {
+      if (!Object.keys(this.canteen).length) return {}
+      const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
+      let earnedBadges = {}
+      Object.keys(canteenBadges).forEach((key) => {
+        if (canteenBadges[key].earned) earnedBadges[key] = canteenBadges[key]
+      })
+      return earnedBadges
+    },
+    applicableRules() {
+      return applicableDiagnosticRules(this.canteen)
     },
   },
 }
@@ -139,7 +213,7 @@ export default {
   overflow: hidden; // to show how it will be on paper
   padding: 14mm;
   // Need to repeat some styling directly here for PDF generation
-  font-family: "Marianne";
+  font-family: "Marianne" !important;
 }
 
 // copy vuetify styling to have on generated PDF
@@ -167,14 +241,10 @@ i {
   }
 }
 
-.cantine-image {
-  width: 150px;
-  height: 75px;
-  border-radius: 4px;
-  margin-right: 8px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+.canteen-image {
+  max-width: 150px;
+  max-height: 150px;
+  margin-right: 10px;
 }
 
 #indicators {
@@ -193,8 +263,17 @@ i {
 }
 
 #introduction,
-.pat {
+.pat,
+.previous-year,
+.badge-description {
   font-size: 14px;
+}
+
+.badge-description {
+  margin-left: 8px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .pat-heading {
@@ -215,26 +294,18 @@ i {
   display: flex;
   align-items: center;
   margin-bottom: 1em;
+  width: 100%;
 }
 
-.graph-title {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 8px;
-  margin-left: 16px;
-  margin-right: 16px;
-}
-
-.graph-2-title {
-  font-weight: bold;
-  margin-bottom: 8px;
-  margin-left: 24px;
+#graphs > div {
+  width: 100%;
 }
 
 #custom-text {
   font-size: 14px;
   overflow-wrap: break-word;
   hyphens: auto;
+  margin-top: 8px;
 }
 
 #about {
@@ -260,5 +331,45 @@ i {
   #qr-code {
     padding-top: 14px;
   }
+}
+.appro-box {
+  text-align: center;
+  border: solid 1px #ccc;
+  width: 49%;
+  padding: 10px;
+
+  .percent {
+    font-size: 1.5rem !important;
+    font-weight: 900;
+    line-height: 2rem;
+    letter-spacing: normal !important;
+    color: #464646;
+    margin-right: 4px;
+  }
+
+  .appro-label {
+    color: #464646;
+    font-size: 0.75rem !important;
+    font-weight: 400;
+    letter-spacing: 0.0333333333em !important;
+    line-height: 1.25rem;
+  }
+}
+.d-flex {
+  display: flex;
+}
+.justify-space-between {
+  justify-content: space-between !important;
+}
+.justify-center {
+  justify-content: center !important;
+}
+.flex-wrap {
+  flex-wrap: wrap !important;
+}
+.badge-container {
+  padding: 8px 0;
+  border-top: solid 1px #ddd;
+  border-bottom: solid 1px #ddd;
 }
 </style>

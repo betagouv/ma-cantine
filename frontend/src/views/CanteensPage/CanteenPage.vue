@@ -39,6 +39,28 @@
               </div>
             </v-card-subtitle>
           </v-col>
+          <v-col v-if="isCanteenManager">
+            <DsfrCallout icon=" ">
+              <div class="ml-n4">
+                <p class="text-body-1 font-weight-bold">
+                  Ajoutez un apérçu sur votre site
+                </p>
+                <div class="text-body-2" style="font-family: monospace;">
+                  <DsfrTextField class="widget-text-field" :value="iframeCodeSnippet" readonly hide-details />
+                  <div class="d-flex mt-6 mb-2">
+                    <v-btn small color="primary" outlined @click="onWidgetCopy">
+                      <v-icon small class="mr-2">$clipboard-fill</v-icon>
+                      Copier
+                    </v-btn>
+                    <div class="green--text text--darken-3 ml-4 mt-1" v-if="showCopySuccessMessage">
+                      <v-icon small color="success">$checkbox-circle-fill</v-icon>
+                      Copié
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </DsfrCallout>
+          </v-col>
         </v-row>
       </v-card>
 
@@ -78,6 +100,7 @@ import CanteenIndicators from "@/components/CanteenIndicators"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import labels from "@/data/quality-labels.json"
 import DsfrCallout from "@/components/DsfrCallout"
+import DsfrTextField from "@/components/DsfrTextField.vue"
 
 export default {
   data() {
@@ -86,6 +109,7 @@ export default {
       labels,
       canteensHomeBacklink: { name: "CanteensHome" },
       claimSucceeded: false,
+      showCopySuccessMessage: false,
     }
   },
   components: {
@@ -94,6 +118,7 @@ export default {
     CanteenIndicators,
     BreadcrumbsNav,
     DsfrCallout,
+    DsfrTextField,
   },
   props: {
     canteenUrlComponent: {
@@ -111,6 +136,13 @@ export default {
     currentPage() {
       return window.location.pathname
     },
+    isCanteenManager() {
+      return this.canteen.isManagedByUser
+    },
+    iframeCodeSnippet() {
+      const url = `${window.location.origin}/widgets${window.location.pathname}`
+      return `<iframe src='${url}' style='width: 480px; height: 420px;' scrolling='no'></iframe>`
+    },
   },
   methods: {
     setCanteen(canteen) {
@@ -123,6 +155,11 @@ export default {
         .dispatch("claimCanteen", { canteenId })
         .then(() => (this.claimSucceeded = true))
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    onWidgetCopy() {
+      navigator.clipboard.writeText(this.iframeCodeSnippet)
+      this.showCopySuccessMessage = true
+      setTimeout(() => (this.showCopySuccessMessage = false), 3000)
     },
   },
   beforeMount() {
@@ -151,3 +188,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.widget-text-field >>> .v-input .v-input__slot {
+  background: white !important;
+}
+</style>

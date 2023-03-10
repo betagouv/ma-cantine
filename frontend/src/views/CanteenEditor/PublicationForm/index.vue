@@ -101,7 +101,10 @@ export default {
         .then(() => {
           this.$store.dispatch("notify", { title, status: "success" })
           this.bypassLeaveWarning = true
-          this.$router.push({ name: "ManagementPage" })
+          this.$router.push({
+            name: "CanteenPage",
+            params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
+          })
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)

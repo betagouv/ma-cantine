@@ -1,9 +1,10 @@
 <template>
   <div id="app">
     <v-app>
-      <AppHeader class="mx-auto constrained" />
+      <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
+      <AppHeader class="mx-auto constrained" v-else />
 
-      <v-main id="contenu" style="width: 100%" class="mb-10">
+      <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget }">
         <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner" />
         <v-container fluid :fill-height="!initialDataLoaded">
           <v-progress-circular
@@ -11,18 +12,19 @@
             style="position: absolute; left: 50%; top: 50%"
             v-if="!initialDataLoaded"
           ></v-progress-circular>
-          <router-view v-else class="mx-auto constrained" />
+          <router-view v-else :class="isWidget ? 'ma-4 mt-0 constrained' : 'mx-auto constrained'" />
         </v-container>
       </v-main>
 
-      <AppFooter />
-      <NotificationSnackbar />
+      <AppFooter v-if="!isWidget" />
+      <NotificationSnackbar v-if="!isWidget" />
     </v-app>
   </div>
 </template>
 
 <script>
 import AppHeader from "@/components/AppHeader"
+import WidgetHeader from "@/components/WidgetHeader"
 import AppFooter from "@/components/AppFooter"
 import WebinaireBanner from "@/components/WebinaireBanner"
 import NotificationSnackbar from "@/components/NotificationSnackbar"
@@ -32,16 +34,22 @@ import { readCookie, largestId, bannerCookieName, hideCommunityEventsBanner } fr
 export default {
   components: {
     AppHeader,
+    WidgetHeader,
     AppFooter,
     NotificationSnackbar,
     WebinaireBanner,
+  },
+  data() {
+    return {
+      isWidget: window.IS_WIDGET,
+    }
   },
   computed: {
     initialDataLoaded() {
       return this.$store.state.initialDataLoaded
     },
     showWebinaireBanner() {
-      return this.$store.state.showWebinaireBanner
+      return this.$store.state.showWebinaireBanner && !this.isWidget
     },
   },
   mounted() {
