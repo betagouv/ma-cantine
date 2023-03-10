@@ -72,8 +72,8 @@
       </div>
     </div>
     <p class="previous-year" v-if="showPreviousDiagnostic">
-      En {{ infoYear - 1 }}, nos produits étaient à {{ previousBioPercent }} % Bio et {{ previousSustainablePercent }} %
-      durables et de qualité (hors bio).
+      En {{ infoYear - 1 }}, nos produits étaient à {{ previousBioPercent }}&nbsp;% Bio et
+      {{ previousSustainablePercent }}&nbsp;% durables et de qualité (hors bio).
     </p>
     <div v-if="Object.keys(earnedBadges).length" class="badge-container">
       <div v-for="(badge, key) in earnedBadges" :key="key" class="d-flex" style="margin-bottom: 8px;">
@@ -84,9 +84,9 @@
           v-if="key !== 'appro' || applicableRules.qualityThreshold === 50"
         ></div>
         <div class="badge-description" v-else>
-          Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits
-          durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
-          <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+          Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }}&nbsp;% de produits
+          durables et de qualité, dont {{ applicableRules.bioThreshold }}&nbsp;% bio, en respectant les seuils
+          d'Outre-mer.
         </div>
       </div>
     </div>
