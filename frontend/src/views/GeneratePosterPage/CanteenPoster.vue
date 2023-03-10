@@ -3,14 +3,14 @@
     <div class="spacer"></div>
     <div id="heading">
       <div>
-        <h2>{{ canteen.name || "_________" }}</h2>
+        <h2>Manger plus saine et écolo en {{ infoYear }}</h2>
+        <h3>{{ canteen.name || "_________" }}</h3>
         <div id="indicators">
-          <img contain v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
           <CanteenIndicators :canteen="canteen" />
         </div>
       </div>
       <div class="spacer"></div>
-      <img src="/static/images/doodles-dsfr/primary/CoffeeDoodle.png" id="hat" alt="" />
+      <img contain v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
     </div>
     <div class="spacer"></div>
 
@@ -23,6 +23,7 @@
     </p>
 
     <div class="spacer"></div>
+    <h3 v-if="hasCurrentYearData">Qualité de la nourriture</h3>
     <div id="graphs" v-if="hasCurrentYearData">
       <div class="d-flex justify-space-between">
         <div class="appro-box">
@@ -64,11 +65,25 @@
         </div>
       </div>
     </div>
+
     <p class="previous-year" v-if="showPreviousDiagnostic">
-      En {{ infoYear - 1 }}, nos produits étaient à {{ previousBioPercent }}&nbsp;% Bio et
+      En {{ infoYear - 1 }}, nos produits étaient à {{ previousBioPercent }}&nbsp;% bio et
       {{ previousSustainablePercent }}&nbsp;% durables et de qualité (hors bio).
     </p>
+
+    <div class="spacer"></div>
+
+    <p class="pat pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
+    <p class="pat" v-if="patPercentage && patName">
+      {{ patPercentage }} % de nos produits proviennent du PAT « {{ patName }} »
+    </p>
+    <p class="pat" v-else-if="patPercentage">{{ patPercentage }} % de nos produits proviennent d'un PAT</p>
+    <p class="pat" v-else-if="patName">Certains de nos produits proviennent du PAT « {{ patName }} »</p>
+
+    <div class="spacer"></div>
+
     <div v-if="Object.keys(earnedBadges).length" class="badge-container">
+      <h3 class="badge-heading">Nos succès</h3>
       <div v-for="(badge, key) in earnedBadges" :key="key" class="d-flex" style="margin-bottom: 8px;">
         <img width="30" contain :src="`/static/images/badges/${key}.svg`" alt="" />
         <div
@@ -84,23 +99,22 @@
       </div>
     </div>
 
-    <div class="spacer"></div>
-
-    <p class="pat pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
-    <p class="pat" v-if="patPercentage && patName">
-      {{ patPercentage }} % de nos produits proviennent du PAT « {{ patName }} »
-    </p>
-    <p class="pat" v-else-if="patPercentage">{{ patPercentage }} % de nos produits proviennent d'un PAT</p>
-    <p class="pat" v-else-if="patName">Certains de nos produits proviennent du PAT « {{ patName }} »</p>
-
-    <div class="spacer"></div>
-
+    <h3 v-if="customText">Un mot du gestionnaire</h3>
     <p id="custom-text">{{ customText }}</p>
 
     <div class="spacer"></div>
     <div id="about">
       <v-row align="start">
-        <v-col :cols="customText ? 9 : 12">
+        <v-col align="center" v-if="customText">
+          <qrcode-vue
+            :value="canteen.publicationStatus === 'published' ? canteenUrl : 'https://ma-cantine.agriculture.gouv.fr'"
+            id="qr-code"
+          ></qrcode-vue>
+          <p class="footer-text">
+            <a href="https://ma-cantine.agriculture.gouv.fr/">ma-cantine.agriculture.gouv.fr</a>
+          </p>
+        </v-col>
+        <v-col :class="customText && 'poster-explainer'" :cols="customText ? 9 : 12">
           <h3>Pourquoi je vois cette affiche ?</h3>
           <p class="footer-text">
             L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des produits composant
@@ -109,7 +123,7 @@
             d’information des convives.
           </p>
         </v-col>
-        <v-col :align="customText ? 'center' : ''">
+        <v-col v-if="!customText">
           <qrcode-vue
             :value="canteen.publicationStatus === 'published' ? canteenUrl : 'https://ma-cantine.agriculture.gouv.fr'"
             id="qr-code"
@@ -238,6 +252,7 @@ i {
 
   h2 {
     font-size: 25px;
+    margin-bottom: 16px;
   }
 }
 
@@ -248,7 +263,7 @@ i {
 }
 
 #indicators {
-  margin: 16px 0px 12px 0;
+  margin: 0px 0px 12px 0;
   font-size: 12px;
   line-height: 20px;
   color: rgba(0, 0, 0, 0.54);
@@ -294,6 +309,7 @@ i {
   display: flex;
   align-items: center;
   margin-bottom: 1em;
+  margin-top: 1em;
   width: 100%;
 }
 
@@ -369,7 +385,12 @@ i {
 }
 .badge-container {
   padding: 8px 0;
-  border-top: solid 1px #ddd;
-  border-bottom: solid 1px #ddd;
+  margin-bottom: 1em;
+}
+.badge-heading {
+  margin-bottom: 1em;
+}
+.poster-explainer {
+  margin-top: 12px;
 }
 </style>
