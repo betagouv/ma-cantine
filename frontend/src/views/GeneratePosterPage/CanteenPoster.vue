@@ -14,18 +14,14 @@
     </div>
     <div class="spacer"></div>
 
-    <p id="introduction" v-if="hasCurrentYearData">
-      {{ introText }}, pour l’année {{ infoYear }}, voici la répartition, en valeur d’achat, des produits bio, de
-      qualité et durables (liste de labels ci-dessous) utilisés dans la confection des repas.
-    </p>
-    <p id="introduction" v-else>
+    <p id="introduction" v-if="!hasCurrentYearData">
       Nous n'avons pas de données renseignées pour cet établissement pour l’année {{ infoYear }}.
     </p>
 
     <div class="spacer"></div>
     <h3 v-if="hasCurrentYearData">Qualité de la nourriture</h3>
     <div id="graphs" v-if="hasCurrentYearData">
-      <div class="d-flex justify-space-between">
+      <div :class="hasBadges ? 'd-flex justify-space-between' : ''">
         <div class="appro-box">
           <p>
             <span class="percent">{{ bioPercent }} %</span>
@@ -44,7 +40,7 @@
           </div>
         </div>
 
-        <div class="appro-box">
+        <div class="appro-box" :class="hasBadges ? '' : 'mt-4'">
           <p>
             <span class="percent">{{ sustainablePercent }} %</span>
             <span class="appro-label">
@@ -82,7 +78,7 @@
 
     <div class="spacer"></div>
 
-    <div v-if="Object.keys(earnedBadges).length" class="badge-container">
+    <div v-if="hasBadges" class="badge-container">
       <h3 class="badge-heading">Nos succès</h3>
       <div v-for="(badge, key) in earnedBadges" :key="key" class="d-flex" style="margin-bottom: 8px;">
         <img width="30" contain :src="`/static/images/badges/${key}.svg`" alt="" />
@@ -176,17 +172,6 @@ export default {
     infoYear() {
       return this.diagnostic.year || lastYear()
     },
-    introText() {
-      if (this.canteen.productionType === "central")
-        return `Sur les ${this.canteen.satelliteCanteensCount || ""} cantines satellites déservies`
-      if (this.canteen.productionType === "central_serving")
-        return `Sur les ${this.canteen.satelliteCanteensCount || ""} cantines satellites déservies et les ${
-          this.canteen.dailyMealCount
-        } repas servis sur place`
-      if (this.canteen.productionType === "site_cooked_elsewhere")
-        return `Sur les repas faits par la cuisine central déservant cette cantine`
-      else return `Sur les ${this.canteen.dailyMealCount || ""} repas par jour servis aux convives`
-    },
     bioPercent() {
       return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
     },
@@ -214,6 +199,9 @@ export default {
     },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
+    },
+    hasBadges() {
+      return !!Object.keys(this.earnedBadges).length
     },
   },
 }
@@ -353,6 +341,7 @@ i {
   border: solid 1px #ccc;
   width: 49%;
   padding: 10px;
+  height: 115px;
 
   .percent {
     font-size: 1.5rem !important;
@@ -392,5 +381,8 @@ i {
 }
 .poster-explainer {
   margin-top: 12px;
+}
+.mt-4 {
+  margin-top: 16px;
 }
 </style>
