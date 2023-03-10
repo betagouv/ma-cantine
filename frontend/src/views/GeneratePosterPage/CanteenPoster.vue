@@ -4,7 +4,7 @@
     <div id="heading">
       <div>
         <h2>Manger plus saine et écolo en {{ infoYear }}</h2>
-        <h3>{{ canteen.name || "_________" }}</h3>
+        <h3 v-if="canteen.name">{{ canteen.name }}</h3>
         <div id="indicators">
           <CanteenIndicators :canteen="canteen" />
         </div>
@@ -67,7 +67,7 @@
       {{ previousSustainablePercent }}&nbsp;% durables et de qualité (hors bio).
     </p>
 
-    <div class="spacer"></div>
+    <div class="spacer" v-if="patPercentage || patName"></div>
 
     <p class="pat pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
     <p class="pat" v-if="patPercentage && patName">
@@ -76,21 +76,21 @@
     <p class="pat" v-else-if="patPercentage">{{ patPercentage }} % de nos produits proviennent d'un PAT</p>
     <p class="pat" v-else-if="patName">Certains de nos produits proviennent du PAT « {{ patName }} »</p>
 
-    <div class="spacer"></div>
+    <div class="spacer" v-if="hasBadges"></div>
 
-    <div v-if="hasBadges" class="badge-container">
+    <div v-if="hasBadges" :class="contentHeavy ? 'badge-container small' : 'badge-container'">
       <h3 class="badge-heading">Nos succès</h3>
-      <div v-for="(badge, key) in earnedBadges" :key="key" class="d-flex" style="margin-bottom: 8px;">
-        <img width="30" contain :src="`/static/images/badges/${key}.svg`" alt="" />
+      <div v-for="(badge, key) in earnedBadges" :key="key" class="d-flex" style="margin-bottom: 14px;">
+        <img :width="contentHeavy ? 30 : 38" contain :src="`/static/images/badges/${key}.svg`" alt="" />
         <div
           class="badge-description"
           v-text="badge.subtitle"
           v-if="key !== 'appro' || applicableRules.qualityThreshold === 50"
         ></div>
         <div class="badge-description" v-else>
-          Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }}&nbsp;% de produits
-          durables et de qualité, dont {{ applicableRules.bioThreshold }}&nbsp;% bio, en respectant les seuils
-          d'Outre-mer.
+          Ce qui est servi dans les assiettes est au moins à
+          {{ applicableRules.qualityThreshold }}&nbsp;% de produits durables et de qualité, dont
+          {{ applicableRules.bioThreshold }}&nbsp;% bio, en respectant les seuils d'Outre-mer.
         </div>
       </div>
     </div>
@@ -101,7 +101,7 @@
     <div class="spacer"></div>
     <div id="about">
       <v-row align="start">
-        <v-col align="center" v-if="customText">
+        <v-col align="center" v-if="contentHeavy">
           <qrcode-vue
             :value="canteen.publicationStatus === 'published' ? canteenUrl : 'https://ma-cantine.agriculture.gouv.fr'"
             id="qr-code"
@@ -110,16 +110,14 @@
             <a href="https://ma-cantine.agriculture.gouv.fr/">ma-cantine.agriculture.gouv.fr</a>
           </p>
         </v-col>
-        <v-col :class="customText && 'poster-explainer'" :cols="customText ? 9 : 12">
+        <v-col :cols="contentHeavy ? 8 : 12">
           <h3>Pourquoi je vois cette affiche ?</h3>
           <p class="footer-text">
             L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des produits composant
-            les menus et de soutenir l’objectif d’une alimentation plus saine et plus durable dans les restaurants. En
-            partenariat avec « ma cantine », plateforme nationale, cet établissement a rempli ses obligations
-            d’information des convives.
+            les menus et de soutenir l’objectif d’une alimentation plus saine et plus durable dans les restaurants.
           </p>
         </v-col>
-        <v-col v-if="!customText">
+        <v-col v-if="!contentHeavy">
           <qrcode-vue
             :value="canteen.publicationStatus === 'published' ? canteenUrl : 'https://ma-cantine.agriculture.gouv.fr'"
             id="qr-code"
@@ -203,6 +201,9 @@ export default {
     hasBadges() {
       return !!Object.keys(this.earnedBadges).length
     },
+    contentHeavy() {
+      return Object.keys(this.earnedBadges).length > 3 || !!this.customText
+    },
   },
 }
 </script>
@@ -239,9 +240,21 @@ i {
   }
 
   h2 {
-    font-size: 25px;
+    font-size: 30px;
     margin-bottom: 16px;
   }
+
+  h3 {
+    font-weight: normal;
+  }
+}
+
+h3 {
+  font-size: 24px;
+}
+
+p {
+  font-size: 16px;
 }
 
 .canteen-image {
@@ -252,7 +265,7 @@ i {
 
 #indicators {
   margin: 0px 0px 12px 0;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 20px;
   color: rgba(0, 0, 0, 0.54);
   display: flex;
@@ -265,18 +278,16 @@ i {
   margin-left: 1em;
 }
 
-#introduction,
-.pat,
-.previous-year,
-.badge-description {
-  font-size: 14px;
-}
-
 .badge-description {
   margin-left: 8px;
   display: flex;
   justify-content: center;
   flex-direction: column;
+  font-size: 16px;
+}
+
+.badge-description.small {
+  font-size: 14px;
 }
 
 .pat-heading {
@@ -328,7 +339,7 @@ i {
   }
 
   .footer-text {
-    font-size: 12px;
+    font-size: 14px;
     margin: 0;
   }
 
@@ -374,10 +385,9 @@ i {
 }
 .badge-container {
   padding: 8px 0;
-  margin-bottom: 1em;
 }
 .badge-heading {
-  margin-bottom: 1em;
+  margin-bottom: 8px;
 }
 .poster-explainer {
   margin-top: 12px;
