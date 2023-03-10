@@ -9,6 +9,7 @@ import KeyMeasuresHome from "@/views/KeyMeasuresPage/KeyMeasuresHome"
 import KeyMeasurePage from "@/views/KeyMeasuresPage/KeyMeasurePage"
 import GeneratePosterPage from "@/views/GeneratePosterPage"
 import CanteensPage from "@/views/CanteensPage"
+import CanteenWidget from "@/views/CanteensPage/CanteenWidget"
 import CanteensHome from "@/views/CanteensPage/CanteensHome"
 import CanteenPage from "@/views/CanteensPage/CanteenPage"
 import LegalNotices from "@/views/LegalNotices"
@@ -188,6 +189,12 @@ const routes = [
         props: true,
       },
     ],
+  },
+  {
+    path: "/widgets/nos-cantines/:canteenUrlComponent",
+    name: "CanteenWidget",
+    component: CanteenWidget,
+    props: true,
   },
   {
     path: "/mentions-legales",

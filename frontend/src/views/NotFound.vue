@@ -6,8 +6,16 @@
     <v-card-subtitle class="text-h6 grey--text text--darken-4">
       La page que vous recherchez semble introuvable
     </v-card-subtitle>
-    <v-card-text>
+    <v-card-text v-if="!isWidget">
       <v-btn x-large color="primary" class="mt-4" :to="{ name: 'LandingPage' }">Revenir à l'accueil</v-btn>
     </v-card-text>
   </v-card>
 </template>
+
+<script>
+export default {
+  data() {
+    return { isWidget: window.IS_WIDGET }
+  },
+}
+</script>
