@@ -26,6 +26,9 @@
       </v-row>
       <FamiliesGraph v-if="summary" :diagnostic="summary" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
       <!-- TODO: a11y description -->
+      <div v-if="loading" style="height: 250px">
+        <v-progress-circular indeterminate style="left: 50%; top: 50%"></v-progress-circular>
+      </div>
     </div>
   </div>
 </template>
@@ -46,6 +49,7 @@ export default {
       vizCanteen: null,
       allowedYears: diagnosticYears().filter((year) => year <= lastYear() + 1),
       summary: null,
+      loading: false,
     }
   },
   computed: {
@@ -58,12 +62,15 @@ export default {
   },
   methods: {
     getCharacteristicByFamilyData() {
+      this.summary = null
       if (!this.vizCanteen || !this.vizYear) return
+      this.loading = true
       fetch(`/api/v1/canteenPurchasesSummary/${this.vizCanteen}?year=${this.vizYear}`)
         .then((response) => (response.ok ? response.json() : {}))
         .then((response) => {
           this.summary = response
         })
+        .finally(() => (this.loading = false))
     },
   },
   watch: {
