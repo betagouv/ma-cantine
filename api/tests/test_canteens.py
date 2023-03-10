@@ -320,6 +320,34 @@ class TestCanteenApi(APITestCase):
         self.assertTrue(body["isManagedByUser"])
 
     @authenticate
+    def test_patch_with_own_siret(self):
+        """
+        A canteen modification should pass if the siret in the payload is already the canteen's siret
+        """
+        siret = "26566234910966"
+        canteen = CanteenFactory.create(siret=siret)
+        canteen.managers.add(authenticate.user)
+
+        payload = {"siret": siret}
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @authenticate
+    def test_refuse_patch_with_no_siret(self):
+        """
+        A canteen modification shouldn't allow deleting a SIRET
+        """
+        siret = "26566234910966"
+        canteen = CanteenFactory.create(siret=siret)
+        canteen.managers.add(authenticate.user)
+
+        payload = {"siret": ""}
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(body["siret"], ["Le numéro SIRET ne peut pas être vide."])
+
+    @authenticate
     def test_update_canteen_duplicate_siret_unmanaged(self):
         """
         If attempt to update a canteen with the same SIRET as one that I don't manage, give
