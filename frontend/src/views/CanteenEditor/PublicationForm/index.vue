@@ -101,10 +101,14 @@ export default {
         .then(() => {
           this.$store.dispatch("notify", { title, status: "success" })
           this.bypassLeaveWarning = true
-          this.$router.push({
-            name: "CanteenPage",
-            params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
-          })
+          if (this.publicationRequested) {
+            this.$router.push({
+              name: "CanteenPage",
+              params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
+            })
+          } else {
+            this.$router.push({ name: "ManagementPage" })
+          }
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
