@@ -82,7 +82,21 @@ export default {
     },
   },
   mounted() {
-    if (this.userCanteens && this.userCanteens.length > 0) this.vizCanteen = this.userCanteens[0].id
+    fetch("/api/v1/purchases/?limit=1&ordering=-date")
+      .then((response) => {
+        if (response.status < 200 || response.status >= 400) throw new Error()
+        return response.json()
+      })
+      .then((response) => {
+        const purchase = response.results[0]
+        this.vizCanteen = purchase.canteen
+        this.vizYear = new Date(purchase.date).getFullYear()
+      })
+      .finally(() => {
+        if (!this.vizCanteen && this.userCanteens?.length) {
+          this.vizCanteen = this.userCanteens[0].id
+        }
+      })
   },
 }
 </script>
