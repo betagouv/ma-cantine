@@ -17,7 +17,6 @@
 
       <AppFooter />
       <NotificationSnackbar />
-      <div ref="crisp"></div>
     </v-app>
     <v-app v-else>
       <WidgetHeader class="ma-4 mb-0 constrained" />
@@ -43,7 +42,7 @@ import AppFooter from "@/components/AppFooter"
 import WebinaireBanner from "@/components/WebinaireBanner"
 import NotificationSnackbar from "@/components/NotificationSnackbar"
 import Constants from "@/constants"
-import { readCookie, largestId, bannerCookieName, hideCommunityEventsBanner, isWidget } from "@/utils"
+import { readCookie, largestId, bannerCookieName, hideCommunityEventsBanner } from "@/utils"
 
 export default {
   components: {
@@ -83,13 +82,7 @@ export default {
       const suffix = "ma cantine"
       document.title = to.meta.title ? to.meta.title + " - " + suffix : suffix
       document.querySelector('meta[property="og:url"]').setAttribute("content", window.location)
-      this.isWidget = isWidget(to.path)
-      if (!this.isWidget) {
-        let crispEl = document.createElement("script")
-        crispEl.setAttribute("src", "https://client.crisp.chat/l.js")
-        crispEl.setAttribute("async", 1)
-        this.$refs.crisp.appendChild(crispEl)
-      }
+      this.isWidget = window.IS_WIDGET
     },
     initialDataLoaded() {
       if (!this.$store.state.loggedUser) return

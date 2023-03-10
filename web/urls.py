@@ -8,6 +8,7 @@ from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 from web.sitemaps import CanteenSitemap, BlogPostSitemap, WebSitemap, PartnerSitemap
 from web.views import (
     VueAppDisplayView,
+    WidgetView,
     RegisterUserView,
     ActivationTokenView,
     RegisterDoneView,
@@ -24,6 +25,7 @@ sitemaps = {
 }
 
 urlpatterns = [
+    path("widgets", WidgetView.as_view(), name="widgetapp"),
     path("", VueAppDisplayView.as_view(), name="app"),
     # https://docs.djangoproject.com/en/3.1/topics/auth/default/#django.contrib.auth.views.LoginView
     path(

@@ -13,12 +13,18 @@ from web.forms import RegisterUserForm
 from django.views.decorators.clickjacking import xframe_options_exempt
 
 
-class XFrameExemptView(TemplateView):
+class WidgetView(TemplateView):
     template_name = "vue-app.html"
 
     @xframe_options_exempt
     def get(self, request, *args, **kwargs):
-        return super(VueAppDisplayView, self).get(request, *args, **kwargs)
+        return super(WidgetView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print("HI")
+        context["is_widget"] = True
+        return context
 
 
 class VueAppDisplayView(TemplateView):
@@ -27,14 +33,6 @@ class VueAppDisplayView(TemplateView):
     """
 
     template_name = "vue-app.html"
-
-    def get(self, request, *args, **kwargs):
-        if self._isXframeExempt(request):
-            return XFrameExemptView.get(self, request, *args, **kwargs)
-        return super(VueAppDisplayView, self).get(request, *args, **kwargs)
-
-    def _isXframeExempt(self, request):
-        return request.path.startswith("/widgets/")
 
 
 class RegisterUserView(FormView):

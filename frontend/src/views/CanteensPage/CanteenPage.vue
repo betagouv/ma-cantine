@@ -127,6 +127,7 @@ export default {
       return this.canteen.isManagedByUser
     },
     iframeCodeSnippet() {
+      // TODO: add /widgets/ to path
       return `<iframe src='${window.location}' style='width: 480px; height: 420px;' scrolling='no'></iframe>`
     },
   },
