@@ -106,11 +106,11 @@ export default {
         },
         tooltip: {
           y: {
-            formatter: function(value, { series, seriesIndex }) {
-              const row = series[seriesIndex]
+            formatter: function(value, { series, dataPointIndex }) {
+              const row = series.map((column) => column[dataPointIndex])
               const sum = row.reduce((a, b) => a + b, 0)
               const percentage = (value / sum) * 100
-              return `${percentage.toFixed(2)} %`
+              return `${percentage.toFixed(0)} %`
             },
           },
         },
