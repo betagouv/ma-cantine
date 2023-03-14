@@ -9,8 +9,7 @@
           <CanteenIndicators :canteen="canteen" :singleLine="isHighContent" />
         </div>
       </div>
-      <div class="spacer"></div>
-      <img v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
+      <img contain v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
     </div>
 
     <div class="spacer"></div>
@@ -212,9 +211,15 @@ export default {
       let linesOfVariableContent = 0
       // canteen indicators
       linesOfVariableContent += !!this.canteen.dailyMealCount && 1
-      linesOfVariableContent += !!this.canteen.sectors?.length && 1
+      linesOfVariableContent += this.canteen.sectors?.length / 2 || 0
       linesOfVariableContent += !!this.canteen.satelliteCanteensCount && 1
       linesOfVariableContent += !!this.canteen.city && 1
+      const hasIndicators = linesOfVariableContent > 0
+      if (this.canteen.logo && !hasIndicators) {
+        linesOfVariableContent += 4
+      } else if (this.canteen.logo) {
+        linesOfVariableContent += 1
+      }
 
       linesOfVariableContent += !!this.patPercentage && 1
       linesOfVariableContent += !!this.patName && 1
@@ -272,7 +277,8 @@ export default {
 
 #heading {
   display: flex;
-  align-items: top;
+  align-items: center;
+  justify-content: space-between;
 
   div {
     text-align: left;
@@ -292,14 +298,11 @@ export default {
   max-width: 200px;
   max-height: 150px;
   margin-right: 10px;
-  object-fit: contain;
 }
 
 #indicators {
   font-size: 0.875em;
   color: rgba(0, 0, 0, 0.54);
-  display: flex;
-  align-items: center;
   margin-top: 0.3em;
 }
 
