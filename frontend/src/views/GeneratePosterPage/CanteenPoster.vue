@@ -22,7 +22,7 @@
       <h3>Qualité de la nourriture en {{ infoYear }}</h3>
       <div id="quality-data">
         <div :class="!isLowContent ? 'd-flex justify-space-between' : ''">
-          <div class="appro-box">
+          <div class="appro-box" :class="{ big: isLowContent }">
             <p>
               <span class="percent">{{ bioPercent }} %</span>
               <span class="appro-label">
@@ -40,7 +40,7 @@
             </div>
           </div>
 
-          <div class="appro-box" :class="!isLowContent ? '' : 'mt-4'">
+          <div class="appro-box" :class="{ big: isLowContent }">
             <p>
               <span class="percent">{{ sustainablePercent }} %</span>
               <span class="appro-label">
@@ -222,8 +222,8 @@ export default {
       linesOfVariableContent += this.hasCurrentYearData && 4
       linesOfVariableContent += this.showPreviousDiagnostic && 1
 
-      linesOfVariableContent += this.hasBadges && Object.keys(this.earnedBadges).length
-      const charactersPerLine = 80 // estimate, changes based on font size
+      linesOfVariableContent += this.hasBadges && Object.keys(this.earnedBadges).length * 2
+      const charactersPerLine = 90 // estimate, changes based on font size
       linesOfVariableContent += this.customText?.length / charactersPerLine || 0
       // range from 0 - approx 25
       return linesOfVariableContent
@@ -232,7 +232,7 @@ export default {
       return this.contentLength >= 20
     },
     isLowContent() {
-      return this.contentLength <= 10
+      return this.contentLength <= 8
     },
   },
 }
@@ -368,12 +368,23 @@ export default {
 
   .appro-label {
     color: #464646;
-    font-size: 1em;
+    font-size: 0.9em;
     font-weight: 400;
     letter-spacing: 0.0333333333em;
     line-height: 1.25em;
   }
 }
+
+.appro-box.big {
+  width: 60%;
+  margin-top: 1em;
+  height: 130px;
+
+  .appro-label {
+    font-size: 1em;
+  }
+}
+
 #custom-text {
   font-size: 0.9em;
   overflow-wrap: break-word;
@@ -423,8 +434,5 @@ export default {
 }
 .poster-explainer {
   margin-top: 0.75em;
-}
-.mt-4 {
-  margin-top: 1em;
 }
 </style>
