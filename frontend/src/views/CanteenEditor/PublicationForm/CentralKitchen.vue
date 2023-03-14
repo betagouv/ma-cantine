@@ -153,6 +153,7 @@ export default {
       return {
         text: isDraft ? "Publier" : "Retirer la publication",
         color: isDraft ? "green darken-3" : "red darken-3",
+        icon: isDraft ? "mdi-bullhorn" : "mdi-cancel",
         action() {
           store
             .dispatch(isDraft ? "publishCanteen" : "unpublishCanteen", {
