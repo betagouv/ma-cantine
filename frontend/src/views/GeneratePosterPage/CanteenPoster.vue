@@ -12,7 +12,6 @@
       <div class="spacer"></div>
       <img v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
     </div>
-    <div class="spacer"></div>
 
     <div class="spacer"></div>
 
@@ -105,6 +104,7 @@
     <p id="custom-text">{{ customText }}</p>
 
     <div class="spacer"></div>
+    <div class="spacer"></div>
     <div id="about">
       <v-row align="start">
         <v-col align="center" v-if="isHighContent">
@@ -113,7 +113,7 @@
             id="qr-code"
           ></qrcode-vue>
         </v-col>
-        <v-col :cols="isHighContent ? 8 : 12">
+        <v-col :cols="isHighContent ? 9 : 12">
           <h3>Pourquoi je vois cette affiche ?</h3>
           <p class="footer-text">
             L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des produits composant
@@ -225,7 +225,6 @@ export default {
       linesOfVariableContent += this.hasBadges && Object.keys(this.earnedBadges).length
       const charactersPerLine = 80 // estimate, changes based on font size
       linesOfVariableContent += this.customText?.length / charactersPerLine || 0
-      console.log(linesOfVariableContent)
       // range from 0 - approx 25
       return linesOfVariableContent
     },
@@ -250,7 +249,7 @@ export default {
   font-family: "Marianne" !important;
   // copy vuetify styling to have on generated PDF
   p {
-    margin-bottom: 16px;
+    margin-bottom: 0;
     font-size: 100%; // 16px
   }
   i {
@@ -297,9 +296,7 @@ export default {
 }
 
 #indicators {
-  margin: 0px 0px 12px 0;
   font-size: 0.875em;
-  line-height: 20px;
   color: rgba(0, 0, 0, 0.54);
   display: flex;
   align-items: center;
@@ -377,7 +374,7 @@ export default {
   }
 }
 #custom-text {
-  font-size: 0.875em;
+  font-size: 0.9em;
   overflow-wrap: break-word;
   hyphens: auto;
   margin-top: 8px;
@@ -401,10 +398,11 @@ export default {
   .footer-text {
     font-size: 0.875em;
     margin: 0;
+    margin-top: 0.3em;
   }
 
   #qr-code {
-    padding-top: 0.875em;
+    padding-top: 0.4em;
   }
 }
 .d-flex {
@@ -418,9 +416,6 @@ export default {
 }
 .flex-wrap {
   flex-wrap: wrap !important;
-}
-.badge-container {
-  padding: 0.5em 0;
 }
 .badge-heading {
   margin-bottom: 0.5em;
