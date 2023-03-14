@@ -107,23 +107,23 @@
     <div class="spacer"></div>
     <div id="about">
       <v-row align="start">
-        <v-col align="center" v-if="isHighContent">
+        <v-col align="center" v-if="!isLowContent">
           <qrcode-vue
             :value="canteen.publicationStatus === 'published' ? canteenUrl : 'https://ma-cantine.agriculture.gouv.fr'"
             id="qr-code"
           ></qrcode-vue>
         </v-col>
-        <v-col :cols="isHighContent ? 9 : 12">
+        <v-col :cols="!isLowContent ? 9 : 12">
           <h3>Pourquoi je vois cette affiche ?</h3>
           <p class="footer-text">
             L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des produits composant
             les menus et de soutenir l’objectif d’une alimentation plus saine et plus durable dans les restaurants.
           </p>
-          <p class="footer-text" v-if="isHighContent">
+          <p class="footer-text" v-if="!isLowContent">
             <a href="https://ma-cantine.agriculture.gouv.fr/">ma-cantine.agriculture.gouv.fr</a>
           </p>
         </v-col>
-        <v-col v-if="!isHighContent">
+        <v-col v-if="isLowContent">
           <qrcode-vue
             :value="canteen.publicationStatus === 'published' ? canteenUrl : 'https://ma-cantine.agriculture.gouv.fr'"
             id="qr-code"
@@ -300,6 +300,7 @@ export default {
   color: rgba(0, 0, 0, 0.54);
   display: flex;
   align-items: center;
+  margin-top: 0.3em;
 }
 
 #hat {
