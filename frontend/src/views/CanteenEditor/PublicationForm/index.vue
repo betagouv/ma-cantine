@@ -1,8 +1,9 @@
 <template>
   <div class="text-left">
+    <h1 class="font-weight-black text-h4 my-4">{{ pageTitle }}</h1>
+    <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
     <CentralKitchen v-if="isCentralCuisine" :originalCanteen="originalCanteen" />
     <div v-if="isDraft && !hasDiagnostics && receivesGuests">
-      <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
       <p>
         Vous n'avez pas encore rempli des diagnostics pour « {{ originalCanteen.name }} ». Les diagnostics sont un
         prérequis pour la publication
@@ -20,9 +21,7 @@
       </v-btn>
     </div>
     <div v-else-if="receivesGuests">
-      <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
       <v-form ref="form" v-model="formIsValid">
-        <PublicationStateNotice :canteen="originalCanteen" class="my-4" />
         <label class="body-2" for="general">
           Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
         </label>
@@ -142,6 +141,15 @@ export default {
     window.confirm(LEAVE_WARNING) ? next() : next(false)
   },
   computed: {
+    pageTitle() {
+      if (this.isCentralCuisine) {
+        return "Publier mes satellites"
+      } else if (this.isDraft) {
+        return "Publier ma cantine"
+      } else {
+        return "Modifier ma publication"
+      }
+    },
     hasChanged() {
       const publicationRequested =
         this.publicationRequested &&

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1 class="font-weight-black text-h4 my-4">Publier mes satellites</h1>
     <div v-if="!receivesGuests">
       <p>
         « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
@@ -37,12 +36,14 @@
         </v-btn>
       </p>
       <p v-else>
+        <!-- TODO: do not show this if have no satellites -->
         <v-icon size="30" color="green">
           $checkbox-circle-fill
         </v-icon>
         Tous vos satellites sont publiés.
       </p>
     </div>
+    <!-- TODO: if have no satellites, encourage adding them -->
     <SatelliteTable
       ref="satelliteTable"
       :headers="satelliteTableHeaders"
@@ -53,6 +54,7 @@
       @mountedAndFetched="mountedAndFetched"
       @paramsChanged="updateRoute"
       @satellitesLoaded="updateSatellitesCounts"
+      class="mb-4"
     />
     <p v-if="published && !receivesGuests" class="mt-8">
       Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais

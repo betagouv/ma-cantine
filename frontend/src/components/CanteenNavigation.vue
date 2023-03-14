@@ -48,6 +48,9 @@
             <v-icon small class="mr-2">mdi-bullhorn</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">
               Publication
+              <v-icon v-if="isPublished" color="grey" small>
+                $checkbox-circle-fill
+              </v-icon>
             </v-list-item-title>
             <v-badge dot inline v-if="readyToPublish"></v-badge>
           </v-list-item>
@@ -89,6 +92,9 @@ export default {
     },
     showSatellitePage() {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
+    },
+    isPublished() {
+      return this.canteen.publicationStatus === "published"
     },
   },
   methods: {
