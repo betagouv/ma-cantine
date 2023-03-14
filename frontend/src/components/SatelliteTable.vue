@@ -51,7 +51,7 @@
         <v-btn
           v-else-if="satelliteAction && satelliteAction(item)"
           outlined
-          color="primary"
+          :color="satelliteAction(item).color || 'primary'"
           @click="satelliteAction(item).action()"
         >
           {{ satelliteAction(item).text }}
