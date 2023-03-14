@@ -3,14 +3,14 @@
     <div class="spacer"></div>
     <div id="heading">
       <div>
-        <h2>Manger plus saine et écolo en {{ infoYear }}</h2>
+        <h2>Manger plus saine et écolo</h2>
         <h3 v-if="canteen.name">{{ canteen.name }}</h3>
         <div id="indicators">
           <CanteenIndicators :canteen="canteen" />
         </div>
       </div>
       <div class="spacer"></div>
-      <img contain v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
+      <img v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
     </div>
     <div class="spacer"></div>
 
@@ -19,7 +19,7 @@
     </p>
 
     <div class="spacer"></div>
-    <h3 v-if="hasCurrentYearData">Qualité de la nourriture</h3>
+    <h3 v-if="hasCurrentYearData">Qualité de la nourriture en {{ infoYear }}</h3>
     <div id="graphs" v-if="hasCurrentYearData">
       <div :class="hasBadges ? 'd-flex justify-space-between' : ''">
         <div class="appro-box">
@@ -258,9 +258,10 @@ p {
 }
 
 .canteen-image {
-  max-width: 150px;
-  max-height: 150px;
+  max-width: 200px;
+  max-height: 200px;
   margin-right: 10px;
+  object-fit: contain;
 }
 
 #indicators {
