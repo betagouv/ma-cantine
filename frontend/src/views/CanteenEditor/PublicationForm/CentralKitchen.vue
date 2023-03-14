@@ -88,6 +88,7 @@ export default {
         { text: "Publiée ?", value: "publicationStatus" },
         { text: "", value: "userCanView", sortable: false },
       ],
+      satelliteCount: 0,
       unpublishedCount: undefined,
       satellitesToPublish: [],
       pubLoading: false,
@@ -151,6 +152,7 @@ export default {
       const that = this
       return {
         text: isDraft ? "Publier" : "Retirer la publication",
+        color: isDraft ? "green darken-3" : "red darken-3",
         action() {
           store
             .dispatch(isDraft ? "publishCanteen" : "unpublishCanteen", {
