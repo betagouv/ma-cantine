@@ -1,12 +1,12 @@
 <template>
-  <div class="poster-contents">
+  <div class="poster-contents" :class="{ small: isHighContent, big: isLowContent }">
     <div class="spacer"></div>
     <div id="heading">
       <div>
         <h2>Manger plus saine et écolo</h2>
         <h3 v-if="canteen.name">{{ canteen.name }}</h3>
         <div id="indicators">
-          <CanteenIndicators :canteen="canteen" />
+          <CanteenIndicators :canteen="canteen" :singleLine="isHighContent" />
         </div>
       </div>
       <div class="spacer"></div>
@@ -14,53 +14,57 @@
     </div>
     <div class="spacer"></div>
 
+    <div class="spacer"></div>
+
     <p id="introduction" v-if="!hasCurrentYearData">
       Nous n'avons pas de données renseignées pour cet établissement pour l’année {{ infoYear }}.
     </p>
-
-    <div class="spacer"></div>
-    <h3 v-if="hasCurrentYearData">Qualité de la nourriture en {{ infoYear }}</h3>
-    <div id="graphs" v-if="hasCurrentYearData">
-      <div :class="hasBadges ? 'd-flex justify-space-between' : ''">
-        <div class="appro-box">
-          <p>
-            <span class="percent">{{ bioPercent }} %</span>
-            <span class="appro-label">
-              bio
-            </span>
-          </p>
-          <div>
-            <img
-              contain
-              src="/static/images/quality-labels/logo_bio_eurofeuille.png"
-              alt="Logo Agriculture Biologique"
-              title="Logo Agriculture Biologique"
-              height="35"
-            />
+    <div v-else>
+      <h3>Qualité de la nourriture en {{ infoYear }}</h3>
+      <div id="quality-data">
+        <div :class="!isLowContent ? 'd-flex justify-space-between' : ''">
+          <div class="appro-box">
+            <p>
+              <span class="percent">{{ bioPercent }} %</span>
+              <span class="appro-label">
+                bio
+              </span>
+            </p>
+            <div>
+              <img
+                contain
+                src="/static/images/quality-labels/logo_bio_eurofeuille.png"
+                alt="Logo Agriculture Biologique"
+                title="Logo Agriculture Biologique"
+                height="35"
+              />
+            </div>
           </div>
-        </div>
 
-        <div class="appro-box" :class="hasBadges ? '' : 'mt-4'">
-          <p>
-            <span class="percent">{{ sustainablePercent }} %</span>
-            <span class="appro-label">
-              durables et de qualité (hors bio)
-            </span>
-          </p>
-          <div class="d-flex justify-center flex-wrap">
-            <img
-              contain
-              v-for="label in labels"
-              :key="label.title"
-              :src="`/static/images/quality-labels/${label.src}`"
-              :alt="label.title"
-              :title="label.title"
-              height="33"
-            />
+          <div class="appro-box" :class="!isLowContent ? '' : 'mt-4'">
+            <p>
+              <span class="percent">{{ sustainablePercent }} %</span>
+              <span class="appro-label">
+                durables et de qualité (hors bio)
+              </span>
+            </p>
+            <div class="d-flex justify-center flex-wrap">
+              <img
+                contain
+                v-for="label in labels"
+                :key="label.title"
+                :src="`/static/images/quality-labels/${label.src}`"
+                :alt="label.title"
+                :title="label.title"
+                height="33"
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <div class="spacer" v-if="showPreviousDiagnostic"></div>
 
     <p class="previous-year" v-if="showPreviousDiagnostic">
       En {{ infoYear - 1 }}, nos produits étaient à {{ previousBioPercent }}&nbsp;% bio et
@@ -69,7 +73,7 @@
 
     <div class="spacer" v-if="patPercentage || patName"></div>
 
-    <p class="pat pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
+    <p class="pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
     <p class="pat" v-if="patPercentage && patName">
       {{ patPercentage }} % de nos produits proviennent du PAT « {{ patName }} »
     </p>
@@ -78,10 +82,10 @@
 
     <div class="spacer" v-if="hasBadges"></div>
 
-    <div v-if="hasBadges" :class="contentHeavy ? 'badge-container small' : 'badge-container'">
+    <div v-if="hasBadges" class="badge-container">
       <h3 class="badge-heading">Nos succès</h3>
       <div v-for="(badge, key) in earnedBadges" :key="key" class="d-flex" style="margin-bottom: 14px;">
-        <img :width="contentHeavy ? 30 : 38" contain :src="`/static/images/badges/${key}.svg`" alt="" />
+        <img :width="isHighContent ? 25 : 38" contain :src="`/static/images/badges/${key}.svg`" alt="" />
         <div
           class="badge-description"
           v-text="badge.subtitle"
@@ -95,29 +99,31 @@
       </div>
     </div>
 
+    <div class="spacer" v-if="customText"></div>
+
     <h3 v-if="customText">Un mot du gestionnaire</h3>
     <p id="custom-text">{{ customText }}</p>
 
     <div class="spacer"></div>
     <div id="about">
       <v-row align="start">
-        <v-col align="center" v-if="contentHeavy">
+        <v-col align="center" v-if="isHighContent">
           <qrcode-vue
             :value="canteen.publicationStatus === 'published' ? canteenUrl : 'https://ma-cantine.agriculture.gouv.fr'"
             id="qr-code"
           ></qrcode-vue>
-          <p class="footer-text">
-            <a href="https://ma-cantine.agriculture.gouv.fr/">ma-cantine.agriculture.gouv.fr</a>
-          </p>
         </v-col>
-        <v-col :cols="contentHeavy ? 8 : 12">
+        <v-col :cols="isHighContent ? 8 : 12">
           <h3>Pourquoi je vois cette affiche ?</h3>
           <p class="footer-text">
             L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des produits composant
             les menus et de soutenir l’objectif d’une alimentation plus saine et plus durable dans les restaurants.
           </p>
+          <p class="footer-text" v-if="isHighContent">
+            <a href="https://ma-cantine.agriculture.gouv.fr/">ma-cantine.agriculture.gouv.fr</a>
+          </p>
         </v-col>
-        <v-col v-if="!contentHeavy">
+        <v-col v-if="!isHighContent">
           <qrcode-vue
             :value="canteen.publicationStatus === 'published' ? canteenUrl : 'https://ma-cantine.agriculture.gouv.fr'"
             id="qr-code"
@@ -201,8 +207,33 @@ export default {
     hasBadges() {
       return !!Object.keys(this.earnedBadges).length
     },
-    contentHeavy() {
-      return Object.keys(this.earnedBadges).length > 3 || !!this.customText
+    contentLength() {
+      // this is an estimation of lines, not literal
+      let linesOfVariableContent = 0
+      // canteen indicators
+      linesOfVariableContent += !!this.canteen.dailyMealCount && 1
+      linesOfVariableContent += !!this.canteen.sectors?.length && 1
+      linesOfVariableContent += !!this.canteen.satelliteCanteensCount && 1
+      linesOfVariableContent += !!this.canteen.city && 1
+
+      linesOfVariableContent += !!this.patPercentage && 1
+      linesOfVariableContent += !!this.patName && 1
+
+      linesOfVariableContent += this.hasCurrentYearData && 4
+      linesOfVariableContent += this.showPreviousDiagnostic && 1
+
+      linesOfVariableContent += this.hasBadges && Object.keys(this.earnedBadges).length
+      const charactersPerLine = 80 // estimate, changes based on font size
+      linesOfVariableContent += this.customText?.length / charactersPerLine || 0
+      console.log(linesOfVariableContent)
+      // range from 0 - approx 25
+      return linesOfVariableContent
+    },
+    isHighContent() {
+      return this.contentLength >= 20
+    },
+    isLowContent() {
+      return this.contentLength <= 10
     },
   },
 }
@@ -217,14 +248,23 @@ export default {
   padding: 14mm;
   // Need to repeat some styling directly here for PDF generation
   font-family: "Marianne" !important;
+  // copy vuetify styling to have on generated PDF
+  p {
+    margin-bottom: 16px;
+    font-size: 100%; // 16px
+  }
+  i {
+    background: white;
+  }
+  h3 {
+    font-size: 1.5em;
+  }
 }
-
-// copy vuetify styling to have on generated PDF
-p {
-  margin-bottom: 16px;
+.poster-contents.small {
+  font-size: 90%;
 }
-i {
-  background: white;
+.poster-contents.big {
+  font-size: 110%;
 }
 
 .spacer {
@@ -240,7 +280,7 @@ i {
   }
 
   h2 {
-    font-size: 30px;
+    font-size: 2em;
     margin-bottom: 16px;
   }
 
@@ -249,24 +289,16 @@ i {
   }
 }
 
-h3 {
-  font-size: 24px;
-}
-
-p {
-  font-size: 16px;
-}
-
 .canteen-image {
   max-width: 200px;
-  max-height: 200px;
+  max-height: 150px;
   margin-right: 10px;
   object-fit: contain;
 }
 
 #indicators {
   margin: 0px 0px 12px 0;
-  font-size: 14px;
+  font-size: 0.875em;
   line-height: 20px;
   color: rgba(0, 0, 0, 0.54);
   display: flex;
@@ -284,16 +316,16 @@ p {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  font-size: 16px;
-}
-
-.badge-description.small {
-  font-size: 14px;
+  font-size: 1em;
 }
 
 .pat-heading {
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
   font-weight: bold;
+}
+
+.pat {
+  margin-bottom: 0 !important;
 }
 
 #logos {
@@ -304,7 +336,7 @@ p {
   align-self: center;
 }
 
-#graphs {
+#quality-data {
   align-self: center;
   display: flex;
   align-items: center;
@@ -313,12 +345,39 @@ p {
   width: 100%;
 }
 
-#graphs > div {
+#quality-data > div {
   width: 100%;
 }
 
+.appro-box {
+  text-align: center;
+  border: solid 1px #ccc;
+  width: 49%;
+  padding: 0.625em;
+
+  p {
+    margin-bottom: 0.5em;
+  }
+
+  .percent {
+    font-size: 1.5em;
+    font-weight: 900;
+    line-height: 1.8em;
+    letter-spacing: normal;
+    color: #464646;
+    margin-right: 4px;
+  }
+
+  .appro-label {
+    color: #464646;
+    font-size: 1em;
+    font-weight: 400;
+    letter-spacing: 0.0333333333em;
+    line-height: 1.25em;
+  }
+}
 #custom-text {
-  font-size: 14px;
+  font-size: 0.875em;
   overflow-wrap: break-word;
   hyphens: auto;
   margin-top: 8px;
@@ -330,7 +389,7 @@ p {
 
   h3 {
     margin-bottom: 8px;
-    font-size: 1rem;
+    font-size: 1em;
     font-weight: bold;
   }
 
@@ -340,36 +399,12 @@ p {
   }
 
   .footer-text {
-    font-size: 14px;
+    font-size: 0.875em;
     margin: 0;
   }
 
   #qr-code {
-    padding-top: 14px;
-  }
-}
-.appro-box {
-  text-align: center;
-  border: solid 1px #ccc;
-  width: 49%;
-  padding: 10px;
-  height: 115px;
-
-  .percent {
-    font-size: 1.5rem !important;
-    font-weight: 900;
-    line-height: 2rem;
-    letter-spacing: normal !important;
-    color: #464646;
-    margin-right: 4px;
-  }
-
-  .appro-label {
-    color: #464646;
-    font-size: 0.75rem !important;
-    font-weight: 400;
-    letter-spacing: 0.0333333333em !important;
-    line-height: 1.25rem;
+    padding-top: 0.875em;
   }
 }
 .d-flex {
@@ -385,15 +420,15 @@ p {
   flex-wrap: wrap !important;
 }
 .badge-container {
-  padding: 8px 0;
+  padding: 0.5em 0;
 }
 .badge-heading {
-  margin-bottom: 8px;
+  margin-bottom: 0.5em;
 }
 .poster-explainer {
-  margin-top: 12px;
+  margin-top: 0.75em;
 }
 .mt-4 {
-  margin-top: 16px;
+  margin-top: 1em;
 }
 </style>
