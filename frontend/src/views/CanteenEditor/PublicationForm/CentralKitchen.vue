@@ -35,8 +35,7 @@
           <span v-else>Publier la cantine satellite</span>
         </v-btn>
       </p>
-      <p v-else>
-        <!-- TODO: do not show this if have no satellites -->
+      <p v-else-if="satelliteCount">
         <v-icon size="30" color="green">
           $checkbox-circle-fill
         </v-icon>
