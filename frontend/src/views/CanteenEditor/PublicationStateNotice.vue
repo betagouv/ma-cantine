@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="!isPublished">
-      <DsfrCallout v-if="readyToPublish" class="mb-1 body-2">
+      <DsfrCallout v-if="readyToPublish" class="mb-1">
         <span class="grey--text text--darken-2">
           Vos données d'approvisionnement pour l'année {{ publicationYear }} sont completées, alors nous vous
           encourageons de publier votre cantine.
@@ -11,7 +11,7 @@
         </span>
       </DsfrCallout>
       <!-- includeLink currently only used by CanteenPage, where we don't want this to show. Bit hacky -->
-      <DsfrCallout color="#C08C65" class="mb-1 body-2" v-else-if="!includeLink">
+      <DsfrCallout color="#C08C65" class="mb-1" v-else-if="!includeLink">
         <span class="grey--text text--darken-2">
           Nous vous conseillons de remplir des
           <router-link :to="{ name: 'DiagnosticList', params: { canteenUrlComponent } }">

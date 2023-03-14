@@ -22,7 +22,7 @@
     </div>
     <div v-else-if="receivesGuests">
       <v-form ref="form" v-model="formIsValid">
-        <label class="body-2" for="general">
+        <label for="general">
           Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
         </label>
         <DsfrTextarea
