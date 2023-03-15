@@ -1,22 +1,21 @@
 <template>
   <div>
-    <PublicationPreviewDialog
-      v-if="!isNewCanteen"
-      :canteen="canteen"
-      :value="showPreview"
-      @close="showPreview = false"
-    />
-    <v-row v-if="!isNewCanteen">
+    <PublicationPreviewDialog :canteen="canteen" :value="showPreview" @close="showPreview = false" />
+    <v-row>
       <v-col cols="12">
-        <v-checkbox hide-details="auto" class="mt-0" color="primary" :input-value="value" @change="updateValue">
+        <v-checkbox
+          hide-details="auto"
+          class="mt-0"
+          color="primary"
+          :input-value="value"
+          @change="updateValue"
+          :rules="[validators.checked]"
+          validate-on-blur
+        >
           <template v-slot:label>
             <p class="text-body-2 grey--text text--darken-4 pb-0 my-0 ml-2" :class="{ 'pt-1': isDraft }">
               J'accepte que les données relatives aux mesures EGAlim de ma cantine soient visibles sur
-              <router-link
-                :to="{
-                  name: 'CanteensHome',
-                }"
-              >
+              <router-link :to="{ name: 'CanteensHome' }">
                 nos cantines
               </router-link>
               <br />
@@ -41,6 +40,7 @@
 
 <script>
 import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewDialog"
+import validators from "@/validators"
 
 export default {
   name: "PublicationField",
@@ -58,12 +58,10 @@ export default {
   data() {
     return {
       showPreview: false,
+      validators,
     }
   },
   computed: {
-    isNewCanteen() {
-      return !this.canteen.id
-    },
     isDraft() {
       return this.canteen.publicationStatus === "draft"
     },
