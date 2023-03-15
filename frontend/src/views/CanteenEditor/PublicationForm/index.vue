@@ -2,7 +2,9 @@
   <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">{{ pageTitle }}</h1>
     <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
+    <CentralKitchen v-if="isCentralCuisine" :originalCanteen="originalCanteen" />
     <div v-if="!isDraft">
+      <h2 class="mt-8 mb-2" v-if="isCentralCuisine">Gérer le lieu de service</h2>
       <p>
         <v-icon color="green">$checkbox-circle-fill</v-icon>
         Cette cantine est actuellement publiée sur
@@ -18,9 +20,7 @@
         </router-link>
       </p>
       <AddPublishedCanteenWidget :canteen="originalCanteen" />
-      <h2 class="mt-8 mb-2">Modifier la publication</h2>
     </div>
-    <CentralKitchen v-if="isCentralCuisine" :originalCanteen="originalCanteen" />
     <div v-if="isDraft && !hasDiagnostics && receivesGuests">
       <p>
         Vous n'avez pas encore rempli des diagnostics pour « {{ originalCanteen.name }} ». Les diagnostics sont un
@@ -39,6 +39,8 @@
       </v-btn>
     </div>
     <div v-else-if="receivesGuests">
+      <h2 class="mt-8 mb-2" v-if="!isDraft">Modifier la publication</h2>
+      <h2 class="mt-8 mb-2" v-else-if="isCentralCuisine">Publier le lieu de service</h2>
       <v-form ref="form" @submit.prevent>
         <label for="general">
           Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
@@ -170,8 +172,9 @@ export default {
   computed: {
     pageTitle() {
       if (this.isCentralCuisine) {
-        return "Publier mes satellites"
-      } else if (this.isDraft) {
+        return "Gérer mes satellites"
+      }
+      if (this.isDraft) {
         return "Publier ma cantine"
       } else {
         return "La publication"
