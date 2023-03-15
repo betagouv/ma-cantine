@@ -124,7 +124,17 @@ export default {
   },
   methods: {
     removeCanteenPublication() {
-      console.log("TODO: refactor to be an emit")
+      this.$store
+        .dispatch("unpublishCanteen", {
+          id: this.canteen.id,
+        })
+        .then(() => {
+          this.$store.dispatch("notify", { title: "Votre cuisine centrale n'est plus publiée", status: "success" })
+          this.$router.push({ name: "ManagementPage" })
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
     },
     fetchSatellites() {
       this.$refs.satelliteTable.fetchCurrentPage()
