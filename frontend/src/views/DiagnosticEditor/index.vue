@@ -292,7 +292,7 @@
               @click="saveWithoutTeledeclaration"
               :disabled="!diagnosticIsUnique"
             >
-              Valider
+              {{ isTeledeclarationPhase ? "Sauvegarder le brouillon" : "Valider" }}
             </v-btn>
             <v-btn
               x-large
@@ -303,7 +303,7 @@
               v-if="isTeledeclarationPhase"
             >
               <v-icon class="mr-2">$checkbox-circle-fill</v-icon>
-              Valider et télédéclarer
+              Télédéclarer
             </v-btn>
           </div>
           <p
