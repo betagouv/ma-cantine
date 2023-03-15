@@ -78,8 +78,8 @@
             </p>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="6" md="4" v-if="mealCost">
-          <v-card class="fill-height text-center py-6 d-flex flex-column justify-center" outlined>
+        <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
+          <v-card v-if="mealCost" class="fill-height text-center py-6 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
               <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
                 {{ toCurrency(mealCost) }}
@@ -101,6 +101,21 @@
                 mettre à jour
                 <span class="d-sr-only">le repas par an</span>
               </router-link>
+            </p>
+          </v-card>
+          <v-card v-else class="fill-height text-center py-6 d-flex flex-column justify-center" outlined>
+            <p class="text-body-2 mb-0">
+              <router-link
+                :to="{
+                  name: 'CanteenForm',
+                  params: {
+                    canteenUrlComponent: $store.getters.getCanteenUrlComponent(vizCanteen),
+                  },
+                }"
+              >
+                Renseigner le nombre de couverts à l'année
+              </router-link>
+              pour voir une estimation de coût par repas
             </p>
           </v-card>
         </v-col>
@@ -162,7 +177,7 @@ export default {
       return this.summary.valueTotalHt / this.yearlyMealCount
     },
     includeFillerCol() {
-      return this.bioPercent && this.sustainablePercent && this.summary?.valueTotalHt && this.mealCost
+      return this.bioPercent && this.sustainablePercent && this.summary?.valueTotalHt
     },
   },
   methods: {
