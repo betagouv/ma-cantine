@@ -11,7 +11,7 @@
             hide-details="auto"
             :items="userCanteens"
             placeholder="Choisissez la cantine"
-            v-model="vizCanteen"
+            v-model="vizCanteenId"
             item-text="name"
             item-value="id"
             id="canteen"
@@ -25,23 +25,11 @@
         </v-col>
       </v-row>
       <v-row v-if="summary">
-        <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
-          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
-            <p class="ma-0">
-              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                {{ toCurrency(summary.valueTotalHt) }}
-              </span>
-              <span class="caption grey--text text--darken-2">
-                total HT
-              </span>
-            </p>
-          </v-card>
-        </v-col>
         <v-col cols="12" sm="6" md="4" v-if="summary.valueBioHt">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
               <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
-              <span class="caption grey--text text--darken-2">
+              <span class="caption">
                 bio
               </span>
             </p>
@@ -60,7 +48,7 @@
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
               <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
-              <span class="caption grey--text text--darken-2">
+              <span class="caption">
                 durables et de qualité (hors bio)
               </span>
             </p>
@@ -77,6 +65,46 @@
                 max-width="40"
               />
             </div>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row v-if="summary">
+        <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
+          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+            <p class="ma-0">
+              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                {{ toCurrency(summary.valueTotalHt) }}
+              </span>
+              <span class="caption">
+                total HT
+              </span>
+            </p>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6" md="4" v-if="mealCost">
+          <v-card class="fill-height text-center py-6 d-flex flex-column justify-center" outlined>
+            <p class="ma-0">
+              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                {{ toCurrency(mealCost) }}
+              </span>
+              <span class="caption">
+                coût par repas éstimé
+              </span>
+            </p>
+            <p class="caption grey--text text--darken-2 mb-0">
+              Pour {{ yearlyMealCount }} repas / an -
+              <router-link
+                :to="{
+                  name: 'CanteenForm',
+                  params: {
+                    canteenUrlComponent: $store.getters.getCanteenUrlComponent(vizCanteen),
+                  },
+                }"
+              >
+                mettre à jour
+                <span class="d-sr-only">le repas par an</span>
+              </router-link>
+            </p>
           </v-card>
         </v-col>
       </v-row>
@@ -108,6 +136,7 @@ export default {
   data() {
     return {
       vizYear: lastYear(),
+      vizCanteenId: null,
       vizCanteen: null,
       allowedYears: diagnosticYears().filter((year) => year <= lastYear() + 1),
       summary: null,
@@ -128,13 +157,20 @@ export default {
     sustainablePercent() {
       return this.summary && getPercentage(getSustainableTotal(this.summary), this.summary.valueTotalHt)
     },
+    yearlyMealCount() {
+      return this.vizCanteen?.yearlyMealCount
+    },
+    mealCost() {
+      if (!this.summary || !this.yearlyMealCount) return
+      return this.summary.valueTotalHt / this.yearlyMealCount
+    },
   },
   methods: {
     getCharacteristicByFamilyData() {
       this.summary = null
-      if (!this.vizCanteen || !this.vizYear) return
+      if (!this.vizCanteenId || !this.vizYear) return
       this.loading = true
-      fetch(`/api/v1/canteenPurchasesSummary/${this.vizCanteen}?year=${this.vizYear}`)
+      fetch(`/api/v1/canteenPurchasesSummary/${this.vizCanteenId}?year=${this.vizYear}`)
         .then((response) => (response.ok ? response.json() : {}))
         .then((response) => {
           this.summary = response
@@ -144,10 +180,17 @@ export default {
     toCurrency(value) {
       return toCurrency(value)
     },
+    fetchCanteen(id) {
+      this.vizCanteen = null
+      this.$store.dispatch("fetchCanteen", { id }).then((canteen) => (this.vizCanteen = canteen))
+    },
   },
   watch: {
-    vizCanteen(newCanteen) {
-      if (newCanteen) this.getCharacteristicByFamilyData()
+    vizCanteenId(newCanteen) {
+      if (newCanteen) {
+        this.getCharacteristicByFamilyData()
+        this.fetchCanteen(newCanteen)
+      }
     },
     vizYear(newYear, oldYear) {
       if (oldYear && newYear) this.getCharacteristicByFamilyData()
@@ -161,12 +204,12 @@ export default {
       })
       .then((response) => {
         const purchase = response.results[0]
-        this.vizCanteen = purchase.canteen
+        this.vizCanteenId = purchase.canteen
         this.vizYear = new Date(purchase.date).getFullYear()
       })
       .finally(() => {
-        if (!this.vizCanteen && this.userCanteens?.length) {
-          this.vizCanteen = this.userCanteens[0].id
+        if (!this.vizCanteenId && this.userCanteens?.length) {
+          this.vizCanteenId = this.userCanteens[0].id
         }
       })
   },
