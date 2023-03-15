@@ -84,7 +84,7 @@
           </v-col>
           <v-col cols="0" md="4" v-if="mealCost && !showMealCountField && includeFillerCol" />
           <v-col cols="0" md="2" v-else-if="!mealCost" />
-          <v-col cols="12" sm="6" md="4" v-if="summary.valueBioHt">
+          <v-col cols="12" sm="6" md="4" v-if="bioPercent">
             <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
               <p class="ma-0">
                 <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
@@ -103,7 +103,7 @@
               </div>
             </v-card>
           </v-col>
-          <v-col cols="12" sm="6" md="4" v-if="summary.valueSustainableHt">
+          <v-col cols="12" sm="6" md="4" v-if="sustainablePercent">
             <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
               <p class="ma-0">
                 <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
