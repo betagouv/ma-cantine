@@ -5,7 +5,7 @@
       <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
         La synthèse de mes achats
       </h1>
-      <v-row class="mb-2">
+      <v-row>
         <v-col cols="12" sm="6">
           <DsfrAutocomplete
             hide-details="auto"
@@ -23,109 +23,112 @@
         <v-col cols="12" sm="4">
           <DsfrSelect label="Année" v-model="vizYear" :items="allowedYears" hide-details="auto" />
         </v-col>
-        <v-col cols="12" sm="6" md="4" v-if="summary.valueBioHt">
-          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
-            <p class="ma-0">
-              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
-              <span class="caption">
-                bio
-              </span>
-            </p>
-            <div class="mt-2">
-              <v-img
-                contain
-                src="/static/images/quality-labels/logo_bio_eurofeuille.png"
-                alt="Logo Agriculture Biologique"
-                title="Logo Agriculture Biologique"
-                max-height="35"
-              />
-            </div>
-          </v-card>
-        </v-col>
-        <v-col cols="12" sm="6" md="4" v-if="summary.valueSustainableHt">
-          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
-            <p class="ma-0">
-              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
-              <span class="caption">
-                durables et de qualité (hors bio)
-              </span>
-            </p>
-            <div class="d-flex mt-2 justify-center flex-wrap">
-              <v-img
-                contain
-                v-for="label in labels"
-                :key="label.title"
-                :src="`/static/images/quality-labels/${label.src}`"
-                :alt="label.title"
-                :title="label.title"
-                class="px-1"
-                max-height="40"
-                max-width="40"
-              />
-            </div>
-          </v-card>
-        </v-col>
-        <v-col cols="0" sm="2" md="4" v-if="includeFillerCol"></v-col>
-        <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
-          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
-            <p class="ma-0">
-              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                {{ toCurrency(summary.valueTotalHt) }}
-              </span>
-              <span class="caption">
-                total HT
-              </span>
-            </p>
-          </v-card>
-        </v-col>
-        <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
-          <v-card v-if="mealCost" class="fill-height text-center py-6 d-flex flex-column justify-center" outlined>
-            <p class="ma-0">
-              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                {{ toCurrency(mealCost) }}
-              </span>
-              <span class="caption">
-                coût par repas éstimé
-              </span>
-            </p>
-            <p class="caption grey--text text--darken-2 mb-0">
-              Pour {{ yearlyMealCount }} repas / an -
-              <router-link
-                :to="{
-                  name: 'CanteenForm',
-                  params: {
-                    canteenUrlComponent: $store.getters.getCanteenUrlComponent(vizCanteen),
-                  },
-                }"
-              >
-                mettre à jour
-                <span class="d-sr-only">le repas par an</span>
-              </router-link>
-            </p>
-          </v-card>
-          <v-card v-else class="fill-height text-center py-6 d-flex flex-column justify-center" outlined>
-            <p class="text-body-2 mb-0">
-              <router-link
-                :to="{
-                  name: 'CanteenForm',
-                  params: {
-                    canteenUrlComponent: $store.getters.getCanteenUrlComponent(vizCanteen),
-                  },
-                }"
-              >
-                Renseigner le nombre de couverts à l'année
-              </router-link>
-              pour voir une estimation de coût par repas
-            </p>
-          </v-card>
-        </v-col>
       </v-row>
-      <FamiliesGraph
-        v-if="summary"
-        :diagnostic="summary"
-        :height="$vuetify.breakpoint.xs ? '440px' : '380px'"
-        class="mt-4"
-      />
+      <div v-if="summary">
+        <v-row class="mb-2">
+          <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
+            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+              <p class="ma-0">
+                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                  {{ toCurrency(summary.valueTotalHt) }}
+                </span>
+                <span class="caption">
+                  total HT
+                </span>
+              </p>
+            </v-card>
+          </v-col>
+          <v-col col="8" sm="6" v-if="summary.valueTotalHt && (showMealCountField || !mealCost)">
+            <v-card class="fill-height text-center pa-4 d-flex flex-column justify-center" outlined>
+              <v-form ref="mealCountForm" @submit.prevent>
+                <label for="yearly-meals" class="body-2 d-block mb-2 text-left">
+                  Nombre total de couverts à
+                  <b>l'année</b>
+                  <span v-if="isCentralCanteen">&nbsp;(y compris les couverts livrés)</span>
+                </label>
+                <v-row>
+                  <v-col cols="8">
+                    <DsfrTextField
+                      id="yearly-meals"
+                      hide-details="auto"
+                      :rules="[validators.greaterThanZero]"
+                      v-model.number="newYearlyMealCount"
+                      prepend-icon="$restaurant-fill"
+                    />
+                  </v-col>
+                  <v-col cols="2">
+                    <v-btn color="primary" @click="saveMealCount">
+                      Valider
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" v-else-if="mealCost">
+            <v-card class="fill-height text-center py-6 d-flex flex-column justify-center" outlined>
+              <p class="ma-0">
+                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                  {{ toCurrency(mealCost) }}
+                </span>
+                <span class="caption">
+                  coût par repas éstimé
+                </span>
+              </p>
+              <p class="caption grey--text text--darken-2 mb-0 d-flex align-center justify-center">
+                <v-btn @click="showMealCountField = true" plain class="text-decoration-underline px-1">
+                  {{ yearlyMealCount }} repas / an - modifier
+                </v-btn>
+              </p>
+            </v-card>
+          </v-col>
+          <v-col cols="0" md="4" v-if="mealCost && !showMealCountField && includeFillerCol" />
+          <v-col cols="0" md="2" v-else-if="!mealCost" />
+          <v-col cols="12" sm="6" md="4" v-if="summary.valueBioHt">
+            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+              <p class="ma-0">
+                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
+                <span class="caption">
+                  bio
+                </span>
+              </p>
+              <div class="mt-2">
+                <v-img
+                  contain
+                  src="/static/images/quality-labels/logo_bio_eurofeuille.png"
+                  alt="Logo Agriculture Biologique"
+                  title="Logo Agriculture Biologique"
+                  max-height="35"
+                />
+              </div>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" v-if="summary.valueSustainableHt">
+            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+              <p class="ma-0">
+                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
+                <span class="caption">
+                  durables et de qualité (hors bio)
+                </span>
+              </p>
+              <div class="d-flex mt-2 justify-center flex-wrap">
+                <v-img
+                  contain
+                  v-for="label in labels"
+                  :key="label.title"
+                  :src="`/static/images/quality-labels/${label.src}`"
+                  :alt="label.title"
+                  :title="label.title"
+                  class="px-1"
+                  max-height="40"
+                  max-width="40"
+                />
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+        <FamiliesGraph :diagnostic="summary" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" class="mt-4" />
+      </div>
       <!-- TODO: a11y description -->
       <div v-if="loading" style="height: 250px">
         <v-progress-circular indeterminate style="left: 50%; top: 50%"></v-progress-circular>
@@ -139,12 +142,14 @@ import { lastYear, diagnosticYears, normaliseText, getPercentage, getSustainable
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrTextField from "@/components/DsfrTextField"
 import FamiliesGraph from "@/components/FamiliesGraph"
 import labels from "@/data/quality-labels.json"
+import validators from "@/validators"
 
 export default {
   name: "PurchasesSummary",
-  components: { BreadcrumbsNav, DsfrSelect, DsfrAutocomplete, FamiliesGraph },
+  components: { BreadcrumbsNav, DsfrSelect, DsfrAutocomplete, DsfrTextField, FamiliesGraph },
   data() {
     return {
       vizYear: lastYear(),
@@ -154,6 +159,9 @@ export default {
       summary: null,
       loading: false,
       labels,
+      validators,
+      newYearlyMealCount: undefined,
+      showMealCountField: false,
     }
   },
   computed: {
@@ -179,6 +187,9 @@ export default {
     includeFillerCol() {
       return this.bioPercent && this.sustainablePercent && this.summary?.valueTotalHt
     },
+    isCentralCanteen() {
+      return ["central", "central_serving"].includes(this.vizCanteen?.productionType)
+    },
   },
   methods: {
     getCharacteristicByFamilyData() {
@@ -197,7 +208,27 @@ export default {
     },
     fetchCanteen(id) {
       this.vizCanteen = null
-      this.$store.dispatch("fetchCanteen", { id }).then((canteen) => (this.vizCanteen = canteen))
+      this.$store.dispatch("fetchCanteen", { id }).then((canteen) => {
+        this.vizCanteen = canteen
+        this.newYearlyMealCount = this.vizCanteen.yearlyMealCount
+        this.showMealCountField = false
+      })
+    },
+    saveMealCount() {
+      if (!this.vizCanteen) return
+      if (!this.$refs.mealCountForm.validate()) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
+      this.$store
+        .dispatch("updateCanteen", {
+          id: this.vizCanteen.id,
+          payload: {
+            yearlyMealCount: this.newYearlyMealCount,
+          },
+        })
+        .then(() => this.fetchCanteen(this.vizCanteen.id))
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
   watch: {
