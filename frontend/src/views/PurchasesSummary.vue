@@ -23,8 +23,6 @@
         <v-col cols="12" sm="4">
           <DsfrSelect label="Année" v-model="vizYear" :items="allowedYears" hide-details="auto" />
         </v-col>
-      </v-row>
-      <v-row v-if="summary">
         <v-col cols="12" sm="6" md="4" v-if="summary.valueBioHt">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
@@ -67,8 +65,7 @@
             </div>
           </v-card>
         </v-col>
-      </v-row>
-      <v-row v-if="summary">
+        <v-col cols="0" sm="2" md="4" v-if="includeFillerCol"></v-col>
         <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
@@ -163,6 +160,9 @@ export default {
     mealCost() {
       if (!this.summary || !this.yearlyMealCount) return
       return this.summary.valueTotalHt / this.yearlyMealCount
+    },
+    includeFillerCol() {
+      return this.bioPercent && this.sustainablePercent && this.summary?.valueTotalHt && this.mealCost
     },
   },
   methods: {
