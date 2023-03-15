@@ -2,6 +2,24 @@
   <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">{{ pageTitle }}</h1>
     <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
+    <div v-if="!isDraft">
+      <p>
+        <v-icon color="green">$checkbox-circle-fill</v-icon>
+        Cette cantine est actuellement publiée sur
+        <router-link
+          :to="{
+            name: 'CanteenPage',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+          }"
+          target="_blank"
+        >
+          nos cantines
+          <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
+        </router-link>
+      </p>
+      <AddPublishedCanteenWidget :canteen="originalCanteen" />
+      <h2 class="mt-8 mb-2">Modifier la publication</h2>
+    </div>
     <CentralKitchen v-if="isCentralCuisine" :originalCanteen="originalCanteen" />
     <div v-if="isDraft && !hasDiagnostics && receivesGuests">
       <p>
@@ -58,6 +76,7 @@ import PublicationField from "../PublicationField"
 import { getObjectDiff, isDiagnosticComplete, lastYear } from "@/utils"
 import PublicationStateNotice from "../PublicationStateNotice"
 import DsfrTextarea from "@/components/DsfrTextarea"
+import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 import CentralKitchen from "./CentralKitchen"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Vos changements n'ont pas été sauvegardés."
@@ -69,7 +88,7 @@ export default {
       type: Object,
     },
   },
-  components: { PublicationField, PublicationStateNotice, DsfrTextarea, CentralKitchen },
+  components: { PublicationField, PublicationStateNotice, DsfrTextarea, AddPublishedCanteenWidget, CentralKitchen },
   data() {
     return {
       acceptPublication: false,
@@ -155,7 +174,7 @@ export default {
       } else if (this.isDraft) {
         return "Publier ma cantine"
       } else {
-        return "Modifier ma publication"
+        return "La publication"
       }
     },
     hasChanged() {

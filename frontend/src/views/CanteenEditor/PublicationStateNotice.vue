@@ -1,19 +1,6 @@
 <template>
   <div>
-    <DsfrCallout v-if="isPublished" icon="$checkbox-circle-fill" color="green">
-      Cette cantine est actuellement publiée sur
-      <router-link
-        :to="{
-          name: 'CanteenPage',
-          params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-        }"
-        target="_blank"
-      >
-        nos cantines
-        <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
-      </router-link>
-    </DsfrCallout>
-    <DsfrCallout v-else-if="readyToPublish" class="mb-1">
+    <DsfrCallout v-if="isDraft && readyToPublish" class="mb-1">
       <span class="grey--text text--darken-2">
         Vos données d'approvisionnement pour l'année {{ publicationYear }} sont completées, alors nous vous encourageons
         de publier votre cantine.
@@ -23,7 +10,7 @@
       </span>
     </DsfrCallout>
     <!-- includeLink currently only used by CanteenPage, where we don't want this to show. Bit hacky -->
-    <DsfrCallout color="#C08C65" class="mb-1" v-else-if="!includeLink">
+    <DsfrCallout color="#C08C65" class="mb-1" v-else-if="isDraft && !includeLink">
       <span class="grey--text text--darken-2">
         Nous vous conseillons de remplir des
         <router-link :to="{ name: 'DiagnosticList', params: { canteenUrlComponent } }">
@@ -57,10 +44,10 @@ export default {
     },
     readyToPublish() {
       const diagnostic = this.canteen.diagnostics.find((x) => x.year === this.publicationYear)
-      return this.canteen.publicationStatus === "draft" && !!diagnostic && hasDiagnosticApproData(diagnostic)
+      return this.isDraft && !!diagnostic && hasDiagnosticApproData(diagnostic)
     },
-    isPublished() {
-      return this.canteen.publicationStatus === "published"
+    isDraft() {
+      return this.canteen.publicationStatus === "draft"
     },
   },
 }
