@@ -246,6 +246,7 @@ class PublishManyCanteensView(APIView):
     """
 
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def post(self, request):
         data = request.data
@@ -378,6 +379,7 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
 
 class CanteenStatusView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
 
     def get(self, request, *args, **kwargs):
         siret = request.parser_context.get("kwargs").get("siret")
