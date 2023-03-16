@@ -292,7 +292,7 @@
               @click="saveWithoutTeledeclaration"
               :disabled="!diagnosticIsUnique"
             >
-              {{ isTeledeclarationPhase ? "Sauvegarder le brouillon" : "Valider" }}
+              {{ isTeledeclarationPhase ? "Sauvegarder le brouillon" : "Sauvegarder" }}
             </v-btn>
             <v-btn
               x-large
