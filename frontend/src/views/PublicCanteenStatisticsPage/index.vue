@@ -278,9 +278,12 @@ export default {
     DsfrSelect,
   },
   data() {
+    const yearGenerator = function*() {
+      for (let n = 2020; n <= lastYear(); n += 1) yield n
+    }
     return {
       year: null,
-      yearsList: [2020, 2021, 2022],
+      yearsList: Array.from(yearGenerator()),
       labels,
       approMeasure: keyMeasures.find((measure) => measure.badgeId === "appro"),
       otherMeasures: keyMeasures.filter((measure) => measure.badgeId !== "appro"),
