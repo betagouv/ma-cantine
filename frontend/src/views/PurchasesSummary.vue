@@ -42,7 +42,10 @@
             <v-card class="fill-height text-center pa-4 d-flex flex-column justify-center" outlined>
               <v-form ref="mealCountForm" @submit.prevent>
                 <label for="yearly-meals" class="body-2 d-block mb-2 text-left">
-                  Nombre total de couverts à
+                  <span v-if="!yearlyMealCount">
+                    Afin de calculer le prix par repas, veuillez renseigner le nombre total de couverts à
+                  </span>
+                  <span v-else>Nombre total de couverts à</span>
                   <b>l'année</b>
                   <span v-if="isCentralCanteen">&nbsp;(y compris les couverts livrés)</span>
                 </label>
@@ -75,11 +78,13 @@
                   coût par repas éstimé
                 </span>
               </p>
-              <p class="caption grey--text text--darken-2 mb-0 d-flex align-center justify-center">
-                <v-btn @click="showMealCountField = true" plain class="text-decoration-underline px-1">
-                  {{ yearlyMealCount }} repas / an - modifier
-                </v-btn>
+              <p class="caption grey--text text--darken-2 mb-0 mt-2">
+                Ce montant est obtenu en divisant le total de vos achats par le nombre des repas par an de votre
+                établissement ({{ yearlyMealCount }}).
               </p>
+              <v-btn @click="showMealCountField = true" plain class="text-decoration-underline px-1">
+                Modifier le nombre de repas par an
+              </v-btn>
             </v-card>
           </v-col>
           <v-col cols="0" md="4" v-if="mealCost && !showMealCountField && includeFillerCol" />
