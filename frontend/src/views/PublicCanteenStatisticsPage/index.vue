@@ -146,48 +146,30 @@
       <v-progress-circular indeterminate></v-progress-circular>
     </v-row>
     <div v-if="!diagnosticsLoading">
+      <v-row class="mt-10 mb-2 px-3 align-center">
+        <h3 class="text-h6 font-weight-bold">
+          Qualité de produits en
+        </h3>
+        <div>
+          <label for="select-year" class="d-sr-only">
+            Année
+          </label>
+          <DsfrSelect
+            v-model="year"
+            :items="yearsList"
+            hide-details
+            id="select-year"
+            class="ml-2"
+            style="max-width: 8em"
+          />
+        </div>
+      </v-row>
       <div v-if="statistics.diagnosticsCount === 0">
-        <v-row class="mt-10 mb-2 px-3 align-center">
-          <h3 class="text-h6 font-weight-bold">
-            Qualité de produits en
-          </h3>
-          <div>
-            <label for="select-year" class="d-sr-only">
-              Année
-            </label>
-            <DsfrSelect
-              v-model="year"
-              :items="yearsList"
-              hide-details
-              id="select-year"
-              class="ml-2"
-              style="max-width: 8em"
-            />
-          </div>
-        </v-row>
         <p class="mt-8 caption">
           Aucune cantine n'a renseigné des données relatives à la loi EGAlim pour l'année {{ year }}.
         </p>
       </div>
       <div v-else>
-        <v-row class="mt-10 mb-2 px-3 align-center">
-          <h3 class="text-h6 font-weight-bold">
-            Qualité de produits en
-          </h3>
-          <div>
-            <label for="select-year" class="d-sr-only">
-              Année
-            </label>
-            <DsfrSelect
-              v-model="year"
-              :items="yearsList"
-              hide-details
-              id="select-year"
-              class="ml-2"
-              style="max-width: 8em"
-            />
-          </div>
-        </v-row>
         <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:</p>
         <v-row class="px-2">
           <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
