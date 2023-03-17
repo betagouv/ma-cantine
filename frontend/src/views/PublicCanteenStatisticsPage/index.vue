@@ -582,10 +582,6 @@ export default {
       let newLocationText = this.createLocationText()
       this.loadStatistics(newLocationText, query)
     },
-    updateAllStatistics() {
-      this.locationText = ""
-      this.updateStatistics()
-    },
     updateRoute() {
       let query = {}
       if (this.year) {
@@ -648,7 +644,8 @@ export default {
       if (changedParams.length === 1 && changedParams[0] === "year") {
         this.updateStatistics()
       } else {
-        this.updateAllStatistics()
+        this.locationText = "" // refresh whole page, not just year stats
+        this.updateStatistics()
       }
       this.updateDocumentTitle()
     },
