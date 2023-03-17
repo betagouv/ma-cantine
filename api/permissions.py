@@ -17,14 +17,15 @@ class IsAuthenticated(permissions.IsAuthenticated):
 
 class IsAuthenticatedOrTokenHasResourceScope(permissions.BasePermission):
     def has_permission(self, request, view):
-        is_authenticated = IsAuthenticated().has_permission(request, view)
+        is_authenticated = permissions.IsAuthenticated().has_permission(request, view)
 
         oauth2authenticated = False
         if is_authenticated:
             oauth2authenticated = isinstance(request.successful_authenticator, OAuth2Authentication)
 
         token_has_scope = TokenHasResourceScope()
-        return (is_authenticated and not oauth2authenticated) or token_has_scope.has_permission(request, view)
+        has_web_authentication = is_authenticated and not oauth2authenticated
+        return has_web_authentication or token_has_scope.has_permission(request, view)
 
 
 class IsProfileOwner(permissions.BasePermission):
