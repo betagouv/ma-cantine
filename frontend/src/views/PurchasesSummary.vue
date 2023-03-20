@@ -79,7 +79,7 @@
                 </span>
               </p>
               <p class="caption grey--text text--darken-2 mb-0 mt-2">
-                Ce montant est obtenu en divisant le total de vos achats par le nombre des repas par an de votre
+                Ce montant est obtenu en divisant le total de vos achats par le nombre de repas par an de votre
                 établissement ({{ yearlyMealCount }}).
               </p>
               <v-btn @click="showMealCountField = true" plain class="text-decoration-underline px-1">
