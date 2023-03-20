@@ -19,7 +19,7 @@
         </p>
         <p class="mb-1 d-flex align-center">
           <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-          Pour informer l'établissement de l'absence ou présence de soi ou d'un tiers utilisez la « vie scolaire »
+          Pour informer l'établissement de l'absence de votre enfant à la pension du midi, utilisez votre site de « vie scolaire »
         </p>
         <p class="mb-1 d-flex align-center">
           <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
