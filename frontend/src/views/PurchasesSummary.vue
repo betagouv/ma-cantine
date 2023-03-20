@@ -45,7 +45,7 @@
                   <span v-if="!yearlyMealCount">
                     Afin de calculer le prix par repas, veuillez renseigner le nombre total de couverts à
                   </span>
-                  <span v-else>Nombre total de couverts à</span>
+                  <span v-else>Nombre total de couverts à&nbsp;</span>
                   <b>l'année</b>
                   <span v-if="isCentralCanteen">&nbsp;(y compris les couverts livrés)</span>
                 </label>
