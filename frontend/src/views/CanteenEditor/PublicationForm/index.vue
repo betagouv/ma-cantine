@@ -2,9 +2,7 @@
   <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">{{ pageTitle }}</h1>
     <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
-    <CentralKitchen v-if="isCentralCuisine" :originalCanteen="originalCanteen" />
-    <div v-if="!isDraft">
-      <h2 class="mt-8 mb-2" v-if="isCentralCuisine">Gérer le lieu de service</h2>
+    <div v-if="isPublished">
       <p>
         <v-icon color="green">$checkbox-circle-fill</v-icon>
         Cette cantine est actuellement publiée sur
@@ -20,8 +18,20 @@
         </router-link>
       </p>
       <AddPublishedCanteenWidget :canteen="originalCanteen" />
+      <div v-if="!receivesGuests">
+        <p class="mt-8">
+          Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
+          retirer cette publication.
+        </p>
+        <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
+          <v-spacer></v-spacer>
+          <v-btn x-large color="primary" @click="removeCanteenPublication">
+            Retirer la publication
+          </v-btn>
+        </v-sheet>
+      </div>
     </div>
-    <div v-if="isDraft && !hasDiagnostics && receivesGuests">
+    <div v-else-if="!hasDiagnostics && receivesGuests">
       <p>
         Vous n'avez pas encore rempli des diagnostics pour « {{ originalCanteen.name }} ». Les diagnostics sont un
         prérequis pour la publication
@@ -38,9 +48,8 @@
         Ajouter un diagnostic
       </v-btn>
     </div>
-    <div v-else-if="receivesGuests">
-      <h2 class="mt-8 mb-2" v-if="!isDraft">Modifier la publication</h2>
-      <h2 class="mt-8 mb-2" v-else-if="isCentralCuisine">Publier le lieu de service</h2>
+    <div v-if="receivesGuests">
+      <h2 class="mt-8 mb-2" v-if="isPublished">Modifier la publication</h2>
       <v-form ref="form" @submit.prevent>
         <label for="general">
           Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
@@ -59,13 +68,13 @@
         <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
           Annuler
         </v-btn>
-        <v-btn v-if="isDraft" x-large color="primary" @click="publishCanteen">
+        <v-btn v-if="!isPublished" x-large color="primary" @click="publishCanteen">
           Publier
         </v-btn>
         <v-btn v-else x-large color="red darken-3" class="mr-4" outlined @click="removeCanteenPublication">
           Retirer la publication
         </v-btn>
-        <v-btn v-if="!isDraft" x-large color="primary" @click="saveCanteen">
+        <v-btn v-if="isPublished" x-large color="primary" @click="saveCanteen">
           Mettre à jour
         </v-btn>
       </v-sheet>
@@ -79,7 +88,6 @@ import { getObjectDiff, isDiagnosticComplete, lastYear } from "@/utils"
 import PublicationStateNotice from "../PublicationStateNotice"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
-import CentralKitchen from "./CentralKitchen"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Vos changements n'ont pas été sauvegardés."
 
@@ -90,7 +98,7 @@ export default {
       type: Object,
     },
   },
-  components: { PublicationField, PublicationStateNotice, DsfrTextarea, AddPublishedCanteenWidget, CentralKitchen },
+  components: { PublicationField, PublicationStateNotice, DsfrTextarea, AddPublishedCanteenWidget },
   data() {
     return {
       acceptPublication: false,
@@ -171,13 +179,10 @@ export default {
   },
   computed: {
     pageTitle() {
-      if (this.isCentralCuisine) {
-        return "Gérer mes satellites"
-      }
-      if (this.isDraft) {
-        return "Publier ma cantine"
-      } else {
+      if (this.isPublished) {
         return "La publication"
+      } else {
+        return "Publier le lieu de service"
       }
     },
     hasChanged() {
@@ -202,8 +207,8 @@ export default {
     hasDiagnostics() {
       return this.originalCanteen.diagnostics && this.originalCanteen.diagnostics.length > 0
     },
-    isDraft() {
-      return this.canteen.publicationStatus === "draft"
+    isPublished() {
+      return this.canteen.publicationStatus === "published"
     },
   },
 }

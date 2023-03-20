@@ -1,24 +1,6 @@
 <template>
-  <div>
-    <div v-if="!receivesGuests">
-      <p>
-        « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
-        <b>uniquement les lieux de restauration recevant des convives.</b>
-      </p>
-      <p>
-        Vous pouvez
-        <router-link :to="{ name: 'NewCanteen' }">ajouter une cantine satellite</router-link>
-        ou indiquer que
-        <router-link
-          :to="{
-            name: 'CanteenModification',
-            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
-          }"
-        >
-          votre cuisine centrale reçoit aussi des convives sur place.
-        </router-link>
-      </p>
-    </div>
+  <div class="text-left">
+    <h1 class="font-weight-black text-h4 my-4">Publier mes satellites</h1>
     <div>
       <v-row v-if="pubLoading" class="green--text">
         <v-col cols="1" justify-self="center">
@@ -55,16 +37,25 @@
       @satellitesLoaded="updateSatellitesCounts"
       class="mb-4"
     />
-    <p v-if="published && !receivesGuests" class="mt-8">
-      Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
-      retirer cette publication.
-    </p>
-    <v-sheet v-if="published && !receivesGuests" rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
-      <v-spacer></v-spacer>
-      <v-btn x-large color="primary" @click="removeCanteenPublication">
-        Retirer la publication
-      </v-btn>
-    </v-sheet>
+    <div v-if="!receivesGuests">
+      <p>
+        « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
+        <b>uniquement les lieux de restauration recevant des convives.</b>
+      </p>
+      <p>
+        Vous pouvez
+        <router-link :to="{ name: 'NewCanteen' }">ajouter une cantine satellite</router-link>
+        ou indiquer que
+        <router-link
+          :to="{
+            name: 'CanteenModification',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
+          }"
+        >
+          votre cuisine centrale reçoit aussi des convives sur place.
+        </router-link>
+      </p>
+    </div>
   </div>
 </template>
 
@@ -72,7 +63,7 @@
 import SatelliteTable from "@/components/SatelliteTable"
 
 export default {
-  name: "CentralKitchenPublication",
+  name: "PublishSatellites",
   components: { SatelliteTable },
   props: {
     originalCanteen: {
@@ -81,7 +72,6 @@ export default {
   },
   data() {
     return {
-      published: this.originalCanteen.publicationStatus !== "draft",
       satelliteTableHeaders: [
         { text: "Nom", value: "name" },
         { text: "SIRET", value: "siret" },
@@ -196,6 +186,9 @@ export default {
           this.pubLoading = false
         })
     },
+  },
+  created() {
+    document.title = `Publier satellites - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
   },
 }
 </script>

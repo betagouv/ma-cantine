@@ -35,6 +35,7 @@ import DiagnosticList from "@/views/CanteenEditor/DiagnosticList"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
+import PublishSatellites from "@/views/CanteenEditor/PublishSatellites"
 import DashboardPage from "@/views/CanteenEditor/DashboardPage"
 import DiagnosticEditor from "@/views/DiagnosticEditor"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
@@ -359,6 +360,14 @@ const routes = [
         path: "publier",
         name: "PublicationForm",
         component: PublicationForm,
+        meta: {
+          authenticationRequired: true,
+        },
+      },
+      {
+        path: "publier-satellites",
+        name: "PublishSatellites",
+        component: PublishSatellites,
         meta: {
           authenticationRequired: true,
         },
