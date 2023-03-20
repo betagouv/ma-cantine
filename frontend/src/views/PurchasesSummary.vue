@@ -208,12 +208,14 @@ export default {
       return toCurrency(value)
     },
     fetchCanteen(id) {
-      this.vizCanteen = null
-      this.$store.dispatch("fetchCanteen", { id }).then((canteen) => {
-        this.vizCanteen = canteen
-        this.newYearlyMealCount = this.vizCanteen.yearlyMealCount
-        this.showMealCountField = false
-      })
+      this.$store
+        .dispatch("fetchCanteen", { id })
+        .then((canteen) => {
+          this.vizCanteen = canteen
+          this.newYearlyMealCount = this.vizCanteen.yearlyMealCount
+          this.showMealCountField = false
+        })
+        .catch(() => (this.vizCanteen = null))
     },
     saveMealCount() {
       if (!this.vizCanteen) return
@@ -236,6 +238,7 @@ export default {
     vizCanteenId(newCanteen) {
       if (newCanteen) {
         this.getCharacteristicByFamilyData()
+        this.vizCanteen = null
         this.fetchCanteen(newCanteen)
       }
     },
