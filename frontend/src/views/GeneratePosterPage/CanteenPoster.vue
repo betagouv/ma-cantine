@@ -205,30 +205,30 @@ export default {
     },
     contentLength() {
       // this is an estimation of lines, not literal
-      let linesOfVariableContent = 0
+      let contentLength = 0
       // canteen indicators
-      linesOfVariableContent += !!this.canteen.dailyMealCount && 1
-      linesOfVariableContent += this.canteen.sectors?.length / 2 || 0
-      linesOfVariableContent += !!this.canteen.satelliteCanteensCount && 1
-      linesOfVariableContent += !!this.canteen.city && 1
-      const hasIndicators = linesOfVariableContent > 0
+      contentLength += !!this.canteen.dailyMealCount && 1
+      contentLength += this.canteen.sectors?.length / 2 || 0
+      contentLength += !!this.canteen.satelliteCanteensCount && 1
+      contentLength += !!this.canteen.city && 1
+      const hasIndicators = contentLength > 0
       if (this.canteen.logo && !hasIndicators) {
-        linesOfVariableContent += 4
+        contentLength += 4
       } else if (this.canteen.logo) {
-        linesOfVariableContent += 1
+        contentLength += 1
       }
 
-      linesOfVariableContent += !!this.patPercentage && 1
-      linesOfVariableContent += !!this.patName && 1
+      contentLength += !!this.patPercentage && 1
+      contentLength += !!this.patName && 1
 
-      linesOfVariableContent += this.hasCurrentYearData && 4
-      linesOfVariableContent += this.showPreviousDiagnostic && 1
+      contentLength += this.hasCurrentYearData && 4
+      contentLength += this.showPreviousDiagnostic && 1
 
-      linesOfVariableContent += this.hasBadges && Object.keys(this.earnedBadges).length * 2
+      contentLength += this.hasBadges && Object.keys(this.earnedBadges).length * 2
       const charactersPerLine = 90 // estimate, changes based on font size
-      linesOfVariableContent += this.customText?.length / charactersPerLine || 0
+      contentLength += this.customText?.length / charactersPerLine || 0
       // range from 0 - approx 25
-      return linesOfVariableContent
+      return contentLength
     },
     isHighContent() {
       return this.contentLength >= 20
