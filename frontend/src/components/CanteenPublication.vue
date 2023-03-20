@@ -161,7 +161,6 @@ import labels from "@/data/quality-labels.json"
 import {
   lastYear,
   badges,
-  getPercentage,
   hasDiagnosticApproData,
   latestCreatedDiagnostic,
   applicableDiagnosticRules,
@@ -208,10 +207,10 @@ export default {
       return this.diagnostic?.year
     },
     bioPercent() {
-      return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
+      return Math.round(this.diagnostic.valueBioHt * 100)
     },
     sustainablePercent() {
-      return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+      return Math.round(getSustainableTotal(this.diagnostic) * 100)
     },
     earnedBadges() {
       const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)

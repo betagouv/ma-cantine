@@ -63,7 +63,7 @@
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
 import labels from "@/data/quality-labels.json"
-import { badges, getPercentage, latestCreatedDiagnostic, applicableDiagnosticRules, getSustainableTotal } from "@/utils"
+import { badges, latestCreatedDiagnostic, applicableDiagnosticRules, getSustainableTotal } from "@/utils"
 
 export default {
   data() {
@@ -110,10 +110,10 @@ export default {
       return this.diagnostic?.year
     },
     bioPercent() {
-      return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
+      return Math.round(this.diagnostic.valueBioHt * 100)
     },
     sustainablePercent() {
-      return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+      return Math.round(getSustainableTotal(this.diagnostic) * 100)
     },
     canteenBadges() {
       return badges(this.canteen, this.diagnostic, this.$store.state.sectors)
