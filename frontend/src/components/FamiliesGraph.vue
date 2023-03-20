@@ -149,7 +149,7 @@ export default {
       return colors[baseColor][modifier]
     },
     getValuesForCharacteristic(characteristicId) {
-      const usesPercentages = "percentageValueHt" in this.diagnostic
+      const usesPercentages = "percentageValueTotalHt" in this.diagnostic
       const baseFields = {
         VIANDES_VOLAILLES: usesPercentages ? "percentageValueViandesVolailles" : "valueViandesVolailles",
         CHARCUTERIE: usesPercentages ? "percentageValueCharcuterie" : "valueCharcuterie",
@@ -177,7 +177,7 @@ export default {
       return this.families.map((family) => {
         const baseField = baseFields[family.id]
         const field = `${baseField}${modifier}`
-        return diag[field]
+        return diag[field] || 0
       })
     },
   },
