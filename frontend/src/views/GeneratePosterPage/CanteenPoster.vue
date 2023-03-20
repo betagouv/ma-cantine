@@ -1,10 +1,10 @@
 <template>
   <div class="poster-contents" :class="{ small: isHighContent, big: isLowContent }">
     <div class="spacer"></div>
+    <h2>Où en sommes-nous de notre transition alimentaire ?</h2>
     <div id="heading">
       <div>
-        <h2>Manger plus saine et écolo</h2>
-        <h3 v-if="canteen.name">{{ canteen.name }}</h3>
+        <p id="canteen-name" v-if="canteen.name">{{ canteen.name }}</p>
         <div id="indicators">
           <CanteenIndicators :canteen="canteen" :singleLine="isHighContent" />
         </div>
@@ -69,11 +69,8 @@
       {{ previousSustainablePercent }}&nbsp;% durables et de qualité (hors bio).
     </p>
 
-    <div class="spacer" v-if="patPercentage || patName"></div>
-
-    <p class="pat-heading" v-if="patPercentage || patName">Projet Alimentaires Territoriaux</p>
     <p class="pat" v-if="patPercentage && patName">
-      {{ patPercentage }} % de nos produits proviennent du PAT « {{ patName }} »
+      {{ patPercentage }} % de nos produits proviennent du Projet Alimentaire Territorial (PAT) « {{ patName }} »
     </p>
     <p class="pat" v-else-if="patPercentage">{{ patPercentage }} % de nos produits proviennent d'un PAT</p>
     <p class="pat" v-else-if="patName">Certains de nos produits proviennent du PAT « {{ patName }} »</p>
@@ -275,22 +272,18 @@ export default {
   flex-grow: 1;
 }
 
+h2 {
+  font-size: 26px;
+  margin-bottom: 16px;
+}
+
 #heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
+  margin-top: 10px;
   div {
     text-align: left;
-  }
-
-  h2 {
-    font-size: 2em;
-    margin-bottom: 16px;
-  }
-
-  h3 {
-    font-weight: normal;
   }
 }
 
@@ -327,6 +320,7 @@ export default {
 
 .pat {
   margin-bottom: 0 !important;
+  margin-top: 8px;
 }
 
 #logos {
@@ -389,7 +383,6 @@ export default {
 }
 
 #custom-text {
-  font-size: 0.9em;
   overflow-wrap: break-word;
   hyphens: auto;
   margin-top: 8px;
