@@ -313,11 +313,6 @@ h2 {
   font-size: 1em;
 }
 
-.pat-heading {
-  margin-bottom: 0 !important;
-  font-weight: bold;
-}
-
 .pat {
   margin-bottom: 0 !important;
   margin-top: 8px;
