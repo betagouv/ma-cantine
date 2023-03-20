@@ -183,10 +183,14 @@ def appro_to_percentages(representation, instance):
     total = instance.value_total_ht
 
     for field in appro_field:
+        new_field_name = f"percentage_{field}"
         if representation.get(field):
-            representation[field] = representation[field] / total if total else None
+            representation[new_field_name] = representation[field] / total if total else None
+        representation.pop(field, None)
 
-    representation["value_total_ht"] = 1
+    representation["percentage_value_total_ht"] = 1
+    representation.pop("value_total_ht", None)
+
     return representation
 
 

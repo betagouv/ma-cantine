@@ -110,7 +110,7 @@ export default {
       return this.diagnostic?.year
     },
     bioPercent() {
-      return Math.round(this.diagnostic.valueBioHt * 100)
+      return Math.round(this.diagnostic.percentageValueBioHt * 100)
     },
     sustainablePercent() {
       return Math.round(getSustainableTotal(this.diagnostic) * 100)

@@ -96,7 +96,8 @@ export default {
         })
     },
     bioPercent() {
-      return this.diagValuePercent("valueBioHt")
+      if (!this.diagnostic || !hasDiagnosticApproData(this.diagnostic)) return null
+      return Math.round(this.diagnostic["percentageValueBioHt"] * 100)
     },
     sustainablePercent() {
       if (this.diagnostic && hasDiagnosticApproData(this.diagnostic))
@@ -111,10 +112,6 @@ export default {
     },
   },
   methods: {
-    diagValuePercent(valueKey) {
-      if (!this.diagnostic || !hasDiagnosticApproData(this.diagnostic)) return null
-      return Math.round(this.diagnostic[valueKey] * 100)
-    },
     badgeTitle(badge) {
       return `${badge.title}${badge.earned ? "" : " (à faire)"}`
     },

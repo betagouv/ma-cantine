@@ -597,8 +597,8 @@ class TestPublishedCanteenApi(APITestCase):
 
         serialized_diagnostic = body.get("centralKitchenDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
-        self.assertEqual(serialized_diagnostic["valueTotalHt"], 1)
-        self.assertEqual(serialized_diagnostic["valueBioHt"], 0.5)
+        self.assertEqual(serialized_diagnostic["percentageValueTotalHt"], 1)
+        self.assertEqual(serialized_diagnostic["percentageValueBioHt"], 0.5)
 
     def test_satellite_published_without_bio(self):
         central_siret = "22730656663081"
@@ -627,8 +627,8 @@ class TestPublishedCanteenApi(APITestCase):
 
         serialized_diagnostic = body.get("centralKitchenDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
-        self.assertEqual(serialized_diagnostic["valueTotalHt"], 1)
-        self.assertEqual(serialized_diagnostic["valueBioHt"], None)
+        self.assertEqual(serialized_diagnostic["percentageValueTotalHt"], 1)
+        self.assertNotIn("percentageValueBioHt", serialized_diagnostic)
 
     def test_satellite_published_no_type(self):
         """
@@ -699,10 +699,10 @@ class TestPublishedCanteenApi(APITestCase):
         serialized_diag_2020 = next(filter(lambda x: x["year"] == 2020, serialized_diagnostics))
         serialized_diag_2021 = next(filter(lambda x: x["year"] == 2021, serialized_diagnostics))
 
-        self.assertIn("valueTotalHt", serialized_diag_2020)
+        self.assertIn("percentageValueTotalHt", serialized_diag_2020)
         self.assertNotIn("hasWasteDiagnostic", serialized_diag_2020)
 
-        self.assertIn("valueTotalHt", serialized_diag_2021)
+        self.assertIn("percentageValueTotalHt", serialized_diag_2021)
         self.assertIn("hasWasteDiagnostic", serialized_diag_2021)
 
     def test_percentage_values(self):
@@ -732,6 +732,6 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(len(body.get("diagnostics")), 1)
         serialized_diag = body.get("diagnostics")[0]
 
-        self.assertEqual(serialized_diag["valueTotalHt"], 1)
-        self.assertEqual(serialized_diag["valueBioHt"], 0.5)
-        self.assertEqual(serialized_diag["valueSustainableHt"], 0.25)
+        self.assertEqual(serialized_diag["percentageValueTotalHt"], 1)
+        self.assertEqual(serialized_diag["percentageValueBioHt"], 0.5)
+        self.assertEqual(serialized_diag["percentageValueSustainableHt"], 0.25)
