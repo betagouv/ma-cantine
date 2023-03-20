@@ -5,7 +5,7 @@
       <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
         La synthèse de mes achats
       </h1>
-      <v-row>
+      <v-row class="pb-3">
         <v-col cols="12" sm="6">
           <DsfrAutocomplete
             hide-details="auto"
@@ -68,7 +68,7 @@
               </v-form>
             </v-card>
           </v-col>
-          <v-col cols="12" sm="6" md="4" v-else-if="mealCost">
+          <v-col cols="12" sm="6" v-else-if="mealCost">
             <v-card class="fill-height text-center py-6 d-flex flex-column justify-center" outlined>
               <p class="ma-0">
                 <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
@@ -79,18 +79,17 @@
                 </span>
               </p>
               <p class="caption grey--text text--darken-2 mb-0 mt-2">
-                Ce montant est obtenu en divisant le total de vos achats par le nombre de repas par an de votre
-                établissement ({{ yearlyMealCount }}).
+                Ce montant est obtenu en divisant le total de vos achats
+                <br v-if="$vuetify.breakpoint.smAndUp" />
+                par le nombre de repas par an de votre établissement ({{ yearlyMealCount }}).
               </p>
               <v-btn @click="showMealCountField = true" plain class="text-decoration-underline px-1">
                 Modifier le nombre de repas par an
               </v-btn>
             </v-card>
           </v-col>
-          <v-col cols="0" md="4" v-if="mealCost && !showMealCountField && includeFillerCol" />
-          <v-col cols="0" md="2" v-else-if="!mealCost" />
-          <v-col cols="12" sm="6" md="4" v-if="bioPercent">
-            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+          <v-col cols="12" sm="6" md="5" v-if="bioPercent">
+            <v-card class="fill-height text-center py-6 d-flex flex-column justify-center" outlined>
               <p class="ma-0">
                 <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
                 <span class="caption">
@@ -108,8 +107,8 @@
               </div>
             </v-card>
           </v-col>
-          <v-col cols="12" sm="6" md="4" v-if="sustainablePercent">
-            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+          <v-col cols="12" sm="6" md="5" v-if="sustainablePercent">
+            <v-card class="fill-height text-center py-6 d-flex flex-column justify-center" outlined>
               <p class="ma-0">
                 <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
                 <span class="caption">
@@ -165,7 +164,7 @@ export default {
       loading: false,
       labels,
       validators,
-      newYearlyMealCount: undefined,
+      newYearlyMealCount: null,
       showMealCountField: false,
     }
   },
@@ -188,9 +187,6 @@ export default {
     mealCost() {
       if (!this.summary || !this.yearlyMealCount) return
       return this.summary.valueTotalHt / this.yearlyMealCount
-    },
-    includeFillerCol() {
-      return this.bioPercent && this.sustainablePercent && this.summary?.valueTotalHt
     },
     isCentralCanteen() {
       return ["central", "central_serving"].includes(this.vizCanteen?.productionType)
