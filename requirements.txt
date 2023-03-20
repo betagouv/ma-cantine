@@ -31,7 +31,7 @@ django-filter==22.1
 django-js-asset==2.0.0
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
 django-oauth-toolkit==2.2.0
-django-otp==1.1.4
+django-otp==1.1.6
 django-storages==1.13.2
 django-webpack-loader==1.8.1
 djangorestframework==3.14.0
@@ -84,11 +84,11 @@ pytest-django==4.5.2
 python-bidi==0.4.2
 python-dateutil==2.8.2
 python-dotenv==1.0.0
-pytz==2022.6
+pytz==2022.7.1
 pytz-deprecation-shim==0.1.0.post0
 PyYAML==6.0
 qrcode==7.4.2
-redis==4.3.4
+redis==4.5.1
 regex==2022.10.31
 reportlab==3.6.12
 requests==2.28.2
@@ -105,9 +105,9 @@ toml==0.10.2
 tomli==2.0.1
 tomlkit==0.11.6
 tqdm==4.64.1
-typing_extensions==4.4.0
+typing_extensions==4.5.0
 tzdata==2022.7
-tzlocal==4.2
+tzlocal==4.3
 uritemplate==4.1.1
 uritools==4.0.1
 urllib3==1.26.14

@@ -90,7 +90,7 @@
         </v-form>
       </v-card-text>
     </v-card>
-    <div v-if="locationText" class="py-8">
+    <div v-if="locationText" class="pt-8">
       <h2 class="text-h5 font-weight-bold">Les chiffres pour {{ locationText }}</h2>
       <p v-if="sectorsText" class="text-body-2 mt-4 grey--text text--darken-2">
         <v-icon aria-hidden="false" role="img" aria-label="Secteurs">mdi-office-building</v-icon>
@@ -141,13 +141,35 @@
           <p id="sector-chart-description" class="d-none">{{ sectorChartDescription }}</p>
         </v-col>
       </v-row>
+    </div>
+    <v-row v-else justify="center" class="py-15">
+      <v-progress-circular indeterminate></v-progress-circular>
+    </v-row>
+    <div v-if="!diagnosticsLoading">
+      <v-row class="mt-10 mb-2 px-3 align-center">
+        <h3 class="text-h6 font-weight-bold">
+          Qualité de produits en
+        </h3>
+        <div>
+          <label for="select-year" class="d-sr-only">
+            Année
+          </label>
+          <DsfrSelect
+            v-model="year"
+            :items="yearsList"
+            hide-details
+            id="select-year"
+            class="ml-2"
+            style="max-width: 8em"
+          />
+        </div>
+      </v-row>
       <div v-if="statistics.diagnosticsCount === 0">
         <p class="mt-8 caption">
           Aucune cantine n'a renseigné des données relatives à la loi EGAlim pour l'année {{ year }}.
         </p>
       </div>
       <div v-else>
-        <h3 class="text-h6 font-weight-bold mt-10 mb-2">Qualité de produits en {{ year }}</h3>
         <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:</p>
         <v-row class="px-2">
           <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
@@ -225,7 +247,7 @@
         <BadgesExplanation />
       </div>
     </div>
-    <v-row v-else justify="center" class="py-15">
+    <v-row v-else-if="locationText" justify="center" class="py-15">
       <v-progress-circular indeterminate></v-progress-circular>
     </v-row>
   </div>
@@ -240,7 +262,7 @@ import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 import jsonEpcis from "@/epcis.json"
-import { lastYear, normaliseText, sectorsSelectList, capitalise } from "@/utils"
+import { lastYear, normaliseText, sectorsSelectList, capitalise, getObjectDiff } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
@@ -256,8 +278,12 @@ export default {
     DsfrSelect,
   },
   data() {
+    const yearGenerator = function*() {
+      for (let n = 2020; n <= lastYear(); n += 1) yield n
+    }
     return {
-      year: lastYear(),
+      year: null,
+      yearsList: Array.from(yearGenerator()),
       labels,
       approMeasure: keyMeasures.find((measure) => measure.badgeId === "appro"),
       otherMeasures: keyMeasures.filter((measure) => measure.badgeId !== "appro"),
@@ -288,6 +314,7 @@ export default {
       defaultLocationText: "l'ensemble de la plateforme",
       statsLevel: "site",
       epcis: jsonEpcis,
+      diagnosticsLoading: true,
     }
   },
   mounted() {
@@ -447,6 +474,7 @@ export default {
           } else {
             this.locationText = newLocationText
           }
+          this.diagnosticsLoading = false
         })
     },
     // this was derived from 'setLocations' in the CanteensHome page, if used again consider a util
@@ -523,8 +551,8 @@ export default {
       return locationText
     },
     updateStatistics() {
+      this.diagnosticsLoading = true
       let query = `year=${this.year}`
-      this.locationText = ""
       if (this.chosenEpcis.length) {
         this.chosenEpcis.forEach((e) => {
           query += `&epci=${e}`
@@ -559,6 +587,9 @@ export default {
     },
     updateRoute() {
       let query = {}
+      if (this.year) {
+        query.year = this.year
+      }
       if (this.chosenRegions) {
         query.region = this.chosenRegions
       }
@@ -578,6 +609,7 @@ export default {
         .catch(() => {})
     },
     populateInitialParameters() {
+      this.year = +this.$route.query.year || lastYear()
       this.chosenRegions = this.$route.query.region || []
       if (!Array.isArray(this.chosenRegions)) this.chosenRegions = [this.chosenRegions]
       this.chosenDepartments = this.$route.query.department || []
@@ -611,8 +643,17 @@ export default {
     $route(newRoute, oldRoute) {
       if (newRoute.fullPath === oldRoute.fullPath) return
       this.populateInitialParameters()
-      this.updateStatistics()
+      const changedParams = Object.keys(getObjectDiff(newRoute.query, oldRoute.query))
+      if (changedParams.length === 1 && changedParams[0] === "year") {
+        this.updateStatistics()
+      } else {
+        this.locationText = "" // refresh whole page, not just year stats
+        this.updateStatistics()
+      }
       this.updateDocumentTitle()
+    },
+    year() {
+      this.updateRoute()
     },
   },
 }
