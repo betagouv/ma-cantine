@@ -704,3 +704,34 @@ class TestPublishedCanteenApi(APITestCase):
 
         self.assertIn("valueTotalHt", serialized_diag_2021)
         self.assertIn("hasWasteDiagnostic", serialized_diag_2021)
+
+    def test_percentage_values(self):
+        """
+        The published endpoint should not contain the real economic data, only percentages.
+        """
+        central_siret = "22730656663081"
+        canteen = CanteenFactory.create(
+            siret=central_siret,
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status="published",
+        )
+
+        DiagnosticFactory.create(
+            canteen=canteen,
+            year=2021,
+            value_total_ht=1200,
+            value_bio_ht=600,
+            value_sustainable_ht=300,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+        )
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(len(body.get("diagnostics")), 1)
+        serialized_diag = body.get("diagnostics")[0]
+
+        self.assertEqual(serialized_diag["valueTotalHt"], 1)
+        self.assertEqual(serialized_diag["valueBioHt"], 0.5)
+        self.assertEqual(serialized_diag["valueSustainableHt"], 0.25)
