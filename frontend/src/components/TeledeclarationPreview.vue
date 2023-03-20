@@ -668,6 +668,8 @@ export default {
     },
     daysOpenPerYear() {
       if (!this.canteen.dailyMealCount || !this.canteen.yearlyMealCount) return
+      // can't easily estimate days open for even central_serving without taking into account all satellites
+      if (this.canteen.isCentralCuisine) return
       return Number(this.canteen.yearlyMealCount / this.canteen.dailyMealCount).toFixed(0)
     },
     approSummary() {

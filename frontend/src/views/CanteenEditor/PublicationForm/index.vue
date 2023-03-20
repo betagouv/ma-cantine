@@ -1,7 +1,7 @@
 <template>
   <div class="text-left">
     <CentralKitchen v-if="isCentralCuisine" :originalCanteen="originalCanteen" />
-    <div v-else-if="isDraft && !hasDiagnostics">
+    <div v-if="isDraft && !hasDiagnostics && receivesGuests">
       <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
       <p>
         Vous n'avez pas encore rempli des diagnostics pour « {{ originalCanteen.name }} ». Les diagnostics sont un
@@ -19,7 +19,7 @@
         Ajouter un diagnostic
       </v-btn>
     </div>
-    <div v-else>
+    <div v-else-if="receivesGuests">
       <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
       <v-form ref="form" v-model="formIsValid">
         <PublicationStateNotice :canteen="originalCanteen" class="my-4" />
@@ -101,10 +101,14 @@ export default {
         .then(() => {
           this.$store.dispatch("notify", { title, status: "success" })
           this.bypassLeaveWarning = true
-          this.$router.push({
-            name: "CanteenPage",
-            params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
-          })
+          if (this.publicationRequested) {
+            this.$router.push({
+              name: "CanteenPage",
+              params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
+            })
+          } else {
+            this.$router.push({ name: "ManagementPage" })
+          }
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
@@ -160,7 +164,12 @@ export default {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
     isCentralCuisine() {
-      return this.originalCanteen.productionType === "central"
+      return (
+        this.originalCanteen.productionType === "central" || this.originalCanteen.productionType === "central_serving"
+      )
+    },
+    receivesGuests() {
+      return this.originalCanteen.productionType !== "central"
     },
     hasDiagnostics() {
       return this.originalCanteen.diagnostics && this.originalCanteen.diagnostics.length > 0

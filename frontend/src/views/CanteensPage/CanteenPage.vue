@@ -43,7 +43,7 @@
             <DsfrCallout icon=" ">
               <div class="ml-n4">
                 <p class="text-body-1 font-weight-bold">
-                  Ajoutez un apérçu sur votre site
+                  Ajoutez un aperçu sur votre site
                 </p>
                 <div class="text-body-2" style="font-family: monospace;">
                   <DsfrTextField class="widget-text-field" :value="iframeCodeSnippet" readonly hide-details />
