@@ -365,7 +365,7 @@ const routes = [
         },
       },
       {
-        path: "publier-satellites",
+        path: "publier-mes-satellites",
         name: "PublishSatellites",
         component: PublishSatellites,
         meta: {
