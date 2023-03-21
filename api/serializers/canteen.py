@@ -224,16 +224,17 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         # Ideally we would also check the status of the satellite canteen and
         # the central cuisine, for now we omit this check. For now it is the
         # responsibility of the frontend to use this information.
-        if not obj.central_producer_siret:
+        if not obj.central_producer_siret or not obj.production_type == Canteen.ProductionType.ON_SITE_CENTRAL:
             return None
         try:
-            central_kitchen = Canteen.objects.get(siret=obj.central_producer_siret)
-            diagnostics = central_kitchen.diagnostic_set.filter(
+            diagnostics = Diagnostic.objects.filter(
+                canteen__siret=obj.central_producer_siret,
                 central_kitchen_diagnostic_mode__in=[
                     Diagnostic.CentralKitchenDiagnosticMode.ALL,
                     Diagnostic.CentralKitchenDiagnosticMode.APPRO,
-                ]
-            ).only("year", "central_kitchen_diagnostic_mode")
+                ],
+            )
+
             return CentralKitchenDiagnosticSerializer(diagnostics, many=True).data
         except Canteen.DoesNotExist:
             return None
