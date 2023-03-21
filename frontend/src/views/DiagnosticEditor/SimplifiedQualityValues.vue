@@ -216,8 +216,7 @@
         Depuis la loi Climat et Résilience, un nouvel objectif pour une alimentation saine et durable a été ajouté :
         pour les achats de 2024, au moins 60% de viandes et poissons de qualité et durables. Ce taux est porté à 100 %
         pour les restaurants collectifs gérés par l'Etat, ses établissements publics et les entreprises publiques
-        nationales des produits carnés et issus de la mer plus durables, ainsi que davantage de viandes provenant de
-        France.
+        nationales.
       </p>
       <p class="text-body-2">
         La réalisation du bilan annuel fait par l’administration implique également de connaitre la part des produits

@@ -92,7 +92,7 @@
         "title": "Expérimentation d'une solution de réservation de repas"
       }
     ],
-    "successExplanation": "La cantine a fait un diagnostic du gaspillage alimentaire et a décidé sur une ou plus actions à faire.\nSi la cantine sert 3000 repas ou plus, elle propose aussi une convention de dons à une association habilitée.",
+    "successExplanation": "La cantine a fait un diagnostic du gaspillage alimentaire et a mis en œuvre une ou des actions de lutte contre le gaspillage alimentaire.\n Si la cantine sert au moins 3000 repas en moyenne par jour, elle propose aussi une convention de dons à une association habilitée.",
     "tags": [
       "scolaire",
       "administration",
@@ -181,7 +181,7 @@
         "who": "Pour les collectivités volontaires."
       }
     ],
-    "successExplanation": "La cantine offre au moins un repas végétarien par semaine si elle est dans le secteur scolaire, ou un repas végétarien par jour pour les autres secteurs.",
+    "successExplanation": "La cantine offre au moins un repas végétarien par semaine si elle est dans le secteur scolaire, ou et depuis janvier 2023, un repas végétarien par jour pour les restaurants collectifs de l'État, les établissements publics et les entreprises publiques nationales (s'ils proposent habituellement un choix multiple de menus).",
     "title": "Diversification des sources de protéines et menus végétariens"
   },
   {

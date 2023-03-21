@@ -47,7 +47,7 @@
           <div v-if="!requestSent">
             <p>
               Ceci peut arriver lors qu'un autre membre de votre équipe a déjà ajouté votre cantine sur notre site. Vous
-              pouvez cependant demandez l'accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »
+              pouvez cependant demander l'accès aux gestionnaires de « {{ duplicateSiretCanteen.name }} »
             </p>
             <DsfrTextarea
               v-model="messageJoinCanteen"
