@@ -525,18 +525,36 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_purchase_missing_year(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}),
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    @authenticate
-    def test_purchase_inexistent_canteen(self):
+    def test_purchase_nonexistent_canteen(self):
         response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": 999999}), {"year": 2020})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_get_multi_year_purchase_statistics(self):
+        """
+        It is possible for a manager to retrieve year-on-year purchase totals for a canteen
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
+        PurchaseFactory.create(canteen=canteen, price_ht=100, date="2020-01-01")
+        PurchaseFactory.create(canteen=canteen, price_ht=50, date="2020-12-31")
+        PurchaseFactory.create(canteen=canteen, price_ht=300, date="2021-01-01")
+        PurchaseFactory.create(canteen=canteen, price_ht=150, date="2021-12-31")
+
+        other_canteen = CanteenFactory.create()
+        other_canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(canteen=other_canteen, price_ht=999, date="2021-01-01")
+
+        response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertIn("resultsByYear", body)
+        self.assertEquals(len(body["resultsByYear"]), 2)
+        self.assertEquals(body["resultsByYear"][0]["year"], 2020)
+        self.assertEquals(body["resultsByYear"][0]["valueTotalHt"], 150)
+        self.assertEquals(body["resultsByYear"][1]["year"], 2021)
+        self.assertEquals(body["resultsByYear"][1]["valueTotalHt"], 450)
 
     @authenticate
     def test_delete_purchase(self):
@@ -786,7 +804,8 @@ class TestPurchaseApi(APITestCase):
     @authenticate
     def test_get_purchase_options(self):
         """
-        A manager should be able to retrieve a list of products and providers that they've already entered on their own purchases
+        A manager should be able to retrieve a list of products and providers that
+        they've already entered on their own purchases
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
