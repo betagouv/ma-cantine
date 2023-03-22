@@ -180,9 +180,9 @@ export default {
   computed: {
     pageTitle() {
       if (this.isPublished) {
-        return "La publication"
+        return "Votre publication"
       } else {
-        return "Publier le lieu de service"
+        return "Publier votre lieu de service"
       }
     },
     hasChanged() {
