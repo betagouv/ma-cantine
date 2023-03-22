@@ -214,7 +214,7 @@ class CanteenPurchasesSummaryView(APIView):
         return Response(PurchaseSummarySerializer(data).data)
 
     def _canteen_summary(canteen):
-        data = {"results_by_year": []}
+        data = {"results": []}
         years = (
             Purchase.objects.filter(canteen=canteen)
             .annotate(year=ExtractYear("date"))
@@ -224,9 +224,9 @@ class CanteenPurchasesSummaryView(APIView):
         years = [y["year"] for y in years.values()]
         for year in years:
             year_data = {"year": year}
-            total = Purchase.objects.filter(canteen=canteen, date__year=year).aggregate(Sum("price_ht"))
-            year_data["value_total_ht"] = total["price_ht__sum"]
-            data["results_by_year"].append(year_data)
+            purchases = Purchase.objects.filter(canteen=canteen, date__year=year)
+            CanteenPurchasesSummaryView._simple_diag_data(purchases, year_data)
+            data["results"].append(year_data)
 
         return Response(data)
 

@@ -549,12 +549,13 @@ class TestPurchaseApi(APITestCase):
         response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertIn("resultsByYear", body)
-        self.assertEquals(len(body["resultsByYear"]), 2)
-        self.assertEquals(body["resultsByYear"][0]["year"], 2020)
-        self.assertEquals(body["resultsByYear"][0]["valueTotalHt"], 150)
-        self.assertEquals(body["resultsByYear"][1]["year"], 2021)
-        self.assertEquals(body["resultsByYear"][1]["valueTotalHt"], 450)
+        self.assertIn("results", body)
+        self.assertEquals(len(body["results"]), 2)
+        self.assertEquals(body["results"][0]["year"], 2020)
+        self.assertEquals(body["results"][0]["valueTotalHt"], 150)
+        self.assertIn("valueBioHt", body["results"][0])
+        self.assertEquals(body["results"][1]["year"], 2021)
+        self.assertEquals(body["results"][1]["valueTotalHt"], 450)
 
     @authenticate
     def test_delete_purchase(self):

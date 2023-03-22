@@ -59,6 +59,7 @@ export default {
         bio: this.completedDiagnostics.map((d) => getPercentage(d.valueBioHt, d.valueTotalHt)),
         sustainable: this.completedDiagnostics.map((d) => getPercentage(getSustainableTotal(d), d.valueTotalHt)),
         other: this.completedDiagnostics.map((d) => {
+          // TODO: review this calculation
           return 100 - getPercentage(d.valueBioHt, d.valueTotalHt) - getPercentage(d.valueSustainableHt, d.valueTotalHt)
         }),
       }
