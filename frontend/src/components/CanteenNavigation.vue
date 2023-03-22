@@ -28,7 +28,7 @@
               :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
               class="mb-0"
             >
-              <v-list-item-title class="text-body-2 pl-6 d-flex align-center">
+              <v-list-item-title class="text-body-2 font-weight-bold pl-6 d-flex align-center">
                 {{ diagnostic.year }}&nbsp;
                 <v-icon v-if="hasActiveTeledeclaration(diagnostic)" color="grey" small>
                   $checkbox-circle-fill
@@ -56,8 +56,8 @@
               <v-badge dot inline v-if="readyToPublish"></v-badge>
             </v-list-item>
             <v-list-item v-if="isCentralCuisine" :ripple="false" :to="{ name: 'PublishSatellites' }" class="mt-n2">
-              <v-list-item-title class="text-body-2 pl-6">
-                Satellites
+              <v-list-item-title class="text-body-2 font-weight-bold pl-6">
+                Publier mes satellites
               </v-list-item-title>
             </v-list-item>
           </div>

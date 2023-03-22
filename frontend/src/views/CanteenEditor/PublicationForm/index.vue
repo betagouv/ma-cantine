@@ -5,7 +5,7 @@
     <div v-if="isPublished">
       <p>
         <v-icon color="green">$checkbox-circle-fill</v-icon>
-        Cette cantine est actuellement publiée sur
+        Votre lieu de service est actuellement publié sur
         <router-link
           :to="{
             name: 'CanteenPage',
@@ -48,17 +48,14 @@
         Ajouter un diagnostic
       </v-btn>
     </div>
+    <p v-if="isCentralCuisine">
+      <router-link :to="{ name: 'PublishSatellites' }">Gérer la publication de mes satellites</router-link>
+    </p>
     <div v-if="receivesGuests">
       <h2 class="mt-8 mb-2" v-if="isPublished">Modifier la publication</h2>
       <v-form ref="form" @submit.prevent>
         <label for="general">
           Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
-          <br />
-          <span class="caption grey--text text--darken-1">
-            Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des
-            personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques...
-            Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label...
-          </span>
         </label>
         <DsfrTextarea id="general" class="my-2" rows="5" counter="500" v-model="canteen.publicationComments" />
         <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
