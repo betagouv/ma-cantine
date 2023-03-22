@@ -29,8 +29,9 @@
         <MultiYearSummaryStatistics
           :diagnostics="yearlySummary"
           height="260"
-          :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+          :width="$vuetify.breakpoint.mdAndUp ? '800px' : '100%'"
           :applicableRules="applicableRules"
+          :showTotal="true"
         />
       </div>
       <div v-if="summary">
