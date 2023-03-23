@@ -56,11 +56,9 @@ export default {
   computed: {
     seriesData() {
       return {
-        bio: this.completedDiagnostics.map((d) => getPercentage(d.valueBioHt, d.valueTotalHt)),
-        sustainable: this.completedDiagnostics.map((d) => getPercentage(getSustainableTotal(d), d.valueTotalHt)),
-        other: this.completedDiagnostics.map((d) => {
-          return 100 - getPercentage(d.valueBioHt, d.valueTotalHt) - getPercentage(d.valueSustainableHt, d.valueTotalHt)
-        }),
+        bio: this.completedDiagnostics.map(this.bioPercentage),
+        sustainable: this.completedDiagnostics.map(this.sustainablePercentage),
+        other: this.completedDiagnostics.map(this.otherPercentage),
       }
     },
     series() {
@@ -147,6 +145,21 @@ export default {
           enabled: false,
         },
       }
+    },
+  },
+  methods: {
+    bioPercentage(diag) {
+      return "percentageValueBioHt" in diag
+        ? Math.round(diag.percentageValueBioHt * 100)
+        : getPercentage(diag.valueBioHt, diag.valueTotalHt)
+    },
+    sustainablePercentage(diag) {
+      return "percentageValueTotalHt" in diag
+        ? Math.round(getSustainableTotal(diag) * 100)
+        : getPercentage(getSustainableTotal(diag), diag.valueTotalHt)
+    },
+    otherPercentage(diag) {
+      return 100 - this.bioPercentage(diag) - this.sustainablePercentage(diag)
     },
   },
 }

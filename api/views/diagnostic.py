@@ -9,7 +9,7 @@ from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.views import APIView
-from api.serializers import PublicDiagnosticSerializer
+from api.serializers import ManagerDiagnosticSerializer
 from data.models import Canteen
 from api.permissions import (
     IsCanteenManager,
@@ -32,12 +32,12 @@ class DiagnosticCreateView(CreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
     model = Diagnostic
-    serializer_class = PublicDiagnosticSerializer
+    serializer_class = ManagerDiagnosticSerializer
 
     def get_serializer(self, *args, **kwargs):
         kwargs.setdefault("context", self.get_serializer_context())
         kwargs.setdefault("action", "create")
-        return PublicDiagnosticSerializer(*args, **kwargs)
+        return ManagerDiagnosticSerializer(*args, **kwargs)
 
     def perform_create(self, serializer):
         try:
@@ -71,7 +71,7 @@ class DiagnosticUpdateView(UpdateAPIView):
     ]
     required_scopes = ["canteen"]
     model = Diagnostic
-    serializer_class = PublicDiagnosticSerializer
+    serializer_class = ManagerDiagnosticSerializer
     queryset = Diagnostic.objects.all()
 
     def put(self, request, *args, **kwargs):

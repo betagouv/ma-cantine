@@ -11,6 +11,7 @@ from .canteen import (  # noqa: F401
     SatelliteTeledeclarationSerializer,
 )
 from .diagnostic import (  # noqa: F401
+    ManagerDiagnosticSerializer,
     PublicDiagnosticSerializer,
     FullDiagnosticSerializer,
     CentralKitchenDiagnosticSerializer,

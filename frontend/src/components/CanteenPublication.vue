@@ -1,6 +1,12 @@
 <template>
   <div class="text-left">
-    <div v-if="diagnostic && diagnostic.valueTotalHt && (diagnostic.valueBioHt || diagnostic.valueSustainableHt)">
+    <div
+      v-if="
+        diagnostic &&
+          diagnostic.percentageValueTotalHt &&
+          (diagnostic.percentageValueBioHt || diagnostic.percentageValueSustainableHt)
+      "
+    >
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
       </h2>
@@ -21,7 +27,7 @@
         Total
       </h3>
       <v-row>
-        <v-col cols="12" sm="6" md="4" v-if="diagnostic.valueBioHt">
+        <v-col cols="12" sm="6" md="4" v-if="diagnostic.percentageValueBioHt">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
               <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
@@ -40,7 +46,7 @@
             </div>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="6" md="4" v-if="diagnostic.valueSustainableHt">
+        <v-col cols="12" sm="6" md="4" v-if="diagnostic.percentageValueSustainableHt">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
               <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
@@ -161,7 +167,6 @@ import labels from "@/data/quality-labels.json"
 import {
   lastYear,
   badges,
-  getPercentage,
   hasDiagnosticApproData,
   latestCreatedDiagnostic,
   applicableDiagnosticRules,
@@ -208,10 +213,10 @@ export default {
       return this.diagnostic?.year
     },
     bioPercent() {
-      return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
+      return Math.round(this.diagnostic.percentageValueBioHt * 100)
     },
     sustainablePercent() {
-      return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+      return Math.round(getSustainableTotal(this.diagnostic) * 100)
     },
     earnedBadges() {
       const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
