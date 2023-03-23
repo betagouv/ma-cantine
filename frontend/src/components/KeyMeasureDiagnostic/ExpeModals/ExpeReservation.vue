@@ -40,7 +40,7 @@
           <v-menu
             v-if="expe.hasReservationSystem"
             v-model="reservationSystemStartDateMenu"
-            :close-on-content-click="true"
+            :close-on-content-click="false"
             transition="scale-transition"
             offset-y
             min-width="auto"
@@ -64,6 +64,7 @@
               v-model="expe.reservationSystemStartDate"
               :max="today"
               locale="fr-FR"
+              @change="reservationSystemStartDateMenu = false"
             ></v-date-picker>
           </v-menu>
 
@@ -73,7 +74,7 @@
           </label>
           <v-menu
             v-model="launchDateMenu"
-            :close-on-content-click="true"
+            :close-on-content-click="false"
             transition="scale-transition"
             offset-y
             min-width="auto"
@@ -92,7 +93,12 @@
               />
             </template>
 
-            <v-date-picker v-model="expe.experimentationStartDate" :max="today" locale="fr-FR"></v-date-picker>
+            <v-date-picker
+              v-model="expe.experimentationStartDate"
+              :max="today"
+              locale="fr-FR"
+              @change="launchDateMenu = false"
+            ></v-date-picker>
           </v-menu>
 
           <!-- description -->
