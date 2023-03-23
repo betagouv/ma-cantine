@@ -8,17 +8,18 @@
       <span class="mx-1" v-if="singleLine && hasSatelliteCanteens">/</span>
       <v-icon small>$restaurant-fill</v-icon>
       <!-- eslint-disable-next-line prettier/prettier-->
-      {{ canteen.dailyMealCount }} par jour<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
+      {{ canteen.dailyMealCount }} par jour
+      <span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
     </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="canteen.city">
       <span class="mx-1" v-if="singleLine && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
       <v-icon small aria-hidden="false" role="img" aria-label="Localisation">$compass-3-fill</v-icon>
       {{ canteen.city }}
     </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="sectors">
+    <p :class="{ 'my-0': true, inline: singleLine }" v-if="types">
       <span class="mx-1" v-if="singleLine && (canteen.dailyMealCount || canteen.city)">/</span>
       <v-icon small aria-hidden="false" role="img" aria-label="Secteurs">$building-fill</v-icon>
-      {{ sectors }}
+      {{ types }}
     </p>
   </div>
 </template>
@@ -37,15 +38,27 @@ export default {
       type: Boolean,
       default: false,
     },
+    useCategories: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
-    sectors() {
+    types() {
       if (!this.canteen.sectors) return null
+      return this.useCategories ? this.categoriesDisplayString : this.sectorsDisplayString
+    },
+    categoriesDisplayString() {
+      const categories = this.sectors.map((s) => s.category)
+      const uniqueCategories = categories.filter((c, idx, self) => c && self.indexOf(c) === idx)
+      return capitalise(uniqueCategories.join(", "))
+    },
+    sectorsDisplayString() {
+      return capitalise(this.sectors.map((x) => x.name.toLowerCase()).join(", "))
+    },
+    sectors() {
       const sectors = this.$store.state.sectors
-      const sectorDisplay = this.canteen.sectors
-        .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
-        .join(", ")
-      return capitalise(sectorDisplay)
+      return this.canteen.sectors.map((sectorId) => sectors.find((s) => s.id === sectorId))
     },
     hasSatelliteCanteens() {
       return (

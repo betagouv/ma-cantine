@@ -31,7 +31,7 @@
                 contain
               ></v-img>
               <div>
-                <CanteenIndicators :canteen="canteen" class="grey--text text--darken-3" />
+                <CanteenIndicators :useCategories="true" :canteen="canteen" class="grey--text text--darken-3" />
                 <router-link to="#contact">
                   <v-icon small>mdi-email-outline</v-icon>
                   Contactez-nous
