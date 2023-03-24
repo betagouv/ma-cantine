@@ -71,6 +71,10 @@
             <v-icon small class="mr-2">$team-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Gestionnaires</v-list-item-title>
           </v-list-item>
+          <v-list-item :ripple="false" :to="{ name: 'CanteenGeneratePoster' }">
+            <v-icon small class="mr-2">$article-fill</v-icon>
+            <v-list-item-title class="text-body-2 font-weight-bold">Générer mon affiche</v-list-item-title>
+          </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'CanteenDeletion' }" class="rounded-lg">
             <v-icon small class="mr-2">$delete-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Supprimer</v-list-item-title>
