@@ -18,7 +18,12 @@
       <v-chip v-if="teledeclarationIsActive" small :color="teledeclarationStatus.color" label class="mr-1">
         {{ teledeclarationStatus.text }}
       </v-chip>
-      <v-chip small :color="publicationStatus.color" label>
+      <v-chip
+        small
+        :color="publicationStatus.color"
+        label
+        v-if="this.canteen.publicationStatus === 'published' || this.canteen.productionType === 'central_serving'"
+      >
         {{ publicationStatus.text }}
       </v-chip>
     </v-card-subtitle>

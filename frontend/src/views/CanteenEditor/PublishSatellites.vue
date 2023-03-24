@@ -1,6 +1,43 @@
 <template>
-  <div>
+  <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">Publier mes satellites</h1>
+    <div>
+      <v-row v-if="pubLoading" class="green--text">
+        <v-col cols="1" justify-self="center">
+          <v-progress-circular indeterminate></v-progress-circular>
+        </v-col>
+        <v-col>
+          <p>Publications en cours...</p>
+        </v-col>
+      </v-row>
+      <p v-else-if="unpublishedCount">
+        {{ publishActionPreamble }}
+        <br />
+        <v-btn class="primary mt-3" @click="massPublication" v-if="satellitesToPublish.length">
+          <span v-if="satellitesToPublish.length > 1">Publier {{ satellitesToPublish.length }} satellites</span>
+          <span v-else>Publier la cantine satellite</span>
+        </v-btn>
+      </p>
+      <p v-else-if="satelliteCount">
+        <v-icon size="30" color="green">
+          $checkbox-circle-fill
+        </v-icon>
+        Tous vos satellites sont publiés.
+      </p>
+    </div>
+    <!-- TODO: if have no satellites, encourage adding them -->
+    <SatelliteTable
+      ref="satelliteTable"
+      :headers="satelliteTableHeaders"
+      :includeSatelliteLink="true"
+      :canteen="canteen"
+      :params="satelliteTableParams"
+      :satelliteAction="satelliteAction"
+      @mountedAndFetched="mountedAndFetched"
+      @paramsChanged="updateRoute"
+      @satellitesLoaded="updateSatellitesCounts"
+      class="mb-4"
+    />
     <div v-if="!receivesGuests">
       <p>
         « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
@@ -20,50 +57,6 @@
         </router-link>
       </p>
     </div>
-    <div>
-      <v-row v-if="pubLoading" class="green--text">
-        <v-col cols="1" justify-self="center">
-          <v-progress-circular indeterminate></v-progress-circular>
-        </v-col>
-        <v-col>
-          <p>Publications en cours...</p>
-        </v-col>
-      </v-row>
-      <p v-else-if="unpublishedCount">
-        {{ publishActionPreamble }}
-        <v-btn class="primary ml-2" @click="massPublication" v-if="satellitesToPublish.length">
-          <span v-if="satellitesToPublish.length > 1">Publier {{ satellitesToPublish.length }} satellites</span>
-          <span v-else>Publier la cantine satellite</span>
-        </v-btn>
-      </p>
-      <p v-else>
-        <v-icon size="30" color="green">
-          $checkbox-circle-fill
-        </v-icon>
-        Tous vos satellites sont publiés.
-      </p>
-    </div>
-    <SatelliteTable
-      ref="satelliteTable"
-      :headers="satelliteTableHeaders"
-      :includeSatelliteLink="true"
-      :canteen="canteen"
-      :params="satelliteTableParams"
-      :satelliteAction="satelliteAction"
-      @mountedAndFetched="mountedAndFetched"
-      @paramsChanged="updateRoute"
-      @satellitesLoaded="updateSatellitesCounts"
-    />
-    <p v-if="published && !receivesGuests" class="mt-8">
-      Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
-      retirer cette publication.
-    </p>
-    <v-sheet v-if="published && !receivesGuests" rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
-      <v-spacer></v-spacer>
-      <v-btn x-large color="primary" @click="removeCanteenPublication">
-        Retirer la publication
-      </v-btn>
-    </v-sheet>
   </div>
 </template>
 
@@ -71,7 +64,7 @@
 import SatelliteTable from "@/components/SatelliteTable"
 
 export default {
-  name: "CentralKitchenPublication",
+  name: "PublishSatellites",
   components: { SatelliteTable },
   props: {
     originalCanteen: {
@@ -80,13 +73,13 @@ export default {
   },
   data() {
     return {
-      published: this.originalCanteen.publicationStatus !== "draft",
       satelliteTableHeaders: [
         { text: "Nom", value: "name" },
         { text: "SIRET", value: "siret" },
         { text: "Publiée ?", value: "publicationStatus" },
         { text: "", value: "userCanView", sortable: false },
       ],
+      satelliteCount: 0,
       unpublishedCount: undefined,
       satellitesToPublish: [],
       pubLoading: false,
@@ -160,6 +153,8 @@ export default {
       const that = this
       return {
         text: isDraft ? "Publier" : "Retirer la publication",
+        color: isDraft ? "green darken-3" : "red darken-3",
+        icon: isDraft ? "mdi-bullhorn" : "mdi-cancel",
         action() {
           store
             .dispatch(isDraft ? "publishCanteen" : "unpublishCanteen", {
@@ -202,6 +197,9 @@ export default {
           this.pubLoading = false
         })
     },
+  },
+  created() {
+    document.title = `Publier satellites - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
   },
 }
 </script>

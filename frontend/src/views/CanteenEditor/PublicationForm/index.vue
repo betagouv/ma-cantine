@@ -1,8 +1,37 @@
 <template>
   <div class="text-left">
-    <CentralKitchen v-if="isCentralCuisine" :originalCanteen="originalCanteen" />
-    <div v-if="isDraft && !hasDiagnostics && receivesGuests">
-      <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
+    <h1 class="font-weight-black text-h4 my-4">{{ pageTitle }}</h1>
+    <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
+    <div v-if="isPublished">
+      <p>
+        <v-icon color="green">$checkbox-circle-fill</v-icon>
+        Votre lieu de service est actuellement publié sur
+        <router-link
+          :to="{
+            name: 'CanteenPage',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+          }"
+          target="_blank"
+        >
+          nos cantines
+          <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
+        </router-link>
+      </p>
+      <AddPublishedCanteenWidget :canteen="originalCanteen" />
+      <div v-if="!receivesGuests">
+        <p class="mt-8">
+          Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
+          retirer cette publication.
+        </p>
+        <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
+          <v-spacer></v-spacer>
+          <v-btn x-large color="primary" @click="removeCanteenPublication">
+            Retirer la publication
+          </v-btn>
+        </v-sheet>
+      </div>
+    </div>
+    <div v-else-if="!hasDiagnostics && receivesGuests">
       <p>
         Vous n'avez pas encore rempli des diagnostics pour « {{ originalCanteen.name }} ». Les diagnostics sont un
         prérequis pour la publication
@@ -19,30 +48,31 @@
         Ajouter un diagnostic
       </v-btn>
     </div>
-    <div v-else-if="receivesGuests">
-      <h1 class="font-weight-black text-h4 my-4">Publier ma cantine</h1>
-      <v-form ref="form" v-model="formIsValid">
-        <PublicationStateNotice :canteen="originalCanteen" class="my-4" />
-        <label class="body-2" for="general">
+    <p v-if="isCentralCuisine">
+      <router-link :to="{ name: 'PublishSatellites' }">Gérer la publication de mes satellites</router-link>
+    </p>
+    <div v-if="receivesGuests">
+      <h2 class="mt-8 mb-2" v-if="isPublished">Modifier la publication</h2>
+      <v-form ref="form" @submit.prevent>
+        <label for="general">
           Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
         </label>
-        <DsfrTextarea
-          id="general"
-          class="my-2"
-          rows="3"
-          counter="500"
-          v-model="canteen.publicationComments"
-          hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
-        />
-        <PublicationField class="mb-4" :canteen="canteen" v-model="publicationRequested" />
+        <DsfrTextarea id="general" class="my-2" rows="5" counter="500" v-model="canteen.publicationComments" />
+        <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
       </v-form>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
         <v-spacer></v-spacer>
         <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
           Annuler
         </v-btn>
-        <v-btn x-large color="primary" @click="saveCanteen">
-          Valider
+        <v-btn v-if="!isPublished" x-large color="primary" @click="publishCanteen">
+          Publier
+        </v-btn>
+        <v-btn v-else x-large color="red darken-3" class="mr-4" outlined @click="removeCanteenPublication">
+          Retirer la publication
+        </v-btn>
+        <v-btn v-if="isPublished" x-large color="primary" @click="saveCanteen">
+          Mettre à jour
         </v-btn>
       </v-sheet>
     </div>
@@ -54,9 +84,9 @@ import PublicationField from "../PublicationField"
 import { getObjectDiff, isDiagnosticComplete, lastYear } from "@/utils"
 import PublicationStateNotice from "../PublicationStateNotice"
 import DsfrTextarea from "@/components/DsfrTextarea"
-import CentralKitchen from "./CentralKitchen"
+import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 
-const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
+const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Vos changements n'ont pas été sauvegardés."
 
 export default {
   name: "PublicationForm",
@@ -65,11 +95,10 @@ export default {
       type: Object,
     },
   },
-  components: { PublicationField, PublicationStateNotice, DsfrTextarea, CentralKitchen },
+  components: { PublicationField, PublicationStateNotice, DsfrTextarea, AddPublishedCanteenWidget },
   data() {
     return {
-      formIsValid: true,
-      publicationRequested: false,
+      acceptPublication: false,
       canteen: {},
       bypassLeaveWarning: false,
       publicationYear: lastYear(),
@@ -79,29 +108,37 @@ export default {
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
-      this.publicationRequested = !!canteen.publicationStatus && canteen.publicationStatus !== "draft"
+      this.acceptPublication = !!canteen.publicationStatus && canteen.publicationStatus !== "draft"
     }
   },
   methods: {
-    saveCanteen() {
-      if (this.$refs.form) {
-        this.$refs.form.validate()
-
-        if (!this.formIsValid) {
-          this.$store.dispatch("notifyRequiredFieldsError")
-          return
-        }
+    publishCanteen() {
+      const valid = this.$refs.form.validate()
+      if (!valid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
       }
-      const title = this.publicationRequested ? "Votre cantine est publiée" : "Votre cantine n'est plus publiée"
+      this.changePublicationStatus(true)
+    },
+    saveCanteen() {
+      this.publishCanteen(true, "Votre publication est mise à jour")
+    },
+    removeCanteenPublication() {
+      this.changePublicationStatus(false)
+    },
+    changePublicationStatus(toPublish, title) {
+      if (!title) {
+        title = toPublish ? "Votre cantine est publiée" : "Votre cantine n'est plus publiée"
+      }
       this.$store
-        .dispatch(this.publicationRequested ? "publishCanteen" : "unpublishCanteen", {
+        .dispatch(toPublish ? "publishCanteen" : "unpublishCanteen", {
           id: this.canteen.id,
           payload: this.canteen,
         })
         .then(() => {
           this.$store.dispatch("notify", { title, status: "success" })
           this.bypassLeaveWarning = true
-          if (this.publicationRequested) {
+          if (toPublish) {
             this.$router.push({
               name: "CanteenPage",
               params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
@@ -122,10 +159,6 @@ export default {
         delete e["returnValue"]
       }
     },
-    removeCanteenPublication() {
-      this.publicationRequested = false
-      this.saveCanteen()
-    },
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
@@ -142,17 +175,14 @@ export default {
     window.confirm(LEAVE_WARNING) ? next() : next(false)
   },
   computed: {
-    hasChanged() {
-      const publicationRequested =
-        this.publicationRequested &&
-        (this.originalCanteen.publicationStatus === "draft" || !this.originalCanteen.publicationStatus)
-      const unpublicationRequested =
-        !this.publicationRequested &&
-        !!this.originalCanteen.publicationRequested &&
-        this.originalCanteen.publicationRequested !== "draft"
-      if (publicationRequested || unpublicationRequested) {
-        return true
+    pageTitle() {
+      if (this.isPublished) {
+        return "Votre publication"
+      } else {
+        return "Publier votre lieu de service"
       }
+    },
+    hasChanged() {
       const diff = getObjectDiff(this.originalCanteen, this.canteen)
       return Object.keys(diff).length > 0
     },
@@ -174,8 +204,8 @@ export default {
     hasDiagnostics() {
       return this.originalCanteen.diagnostics && this.originalCanteen.diagnostics.length > 0
     },
-    isDraft() {
-      return this.canteen.publicationStatus === "draft"
+    isPublished() {
+      return this.canteen.publicationStatus === "published"
     },
   },
 }
