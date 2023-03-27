@@ -488,7 +488,7 @@ export default {
           description: numberFormatExample,
           type: "Chiffre",
           example: "1234.99",
-          optional: this.importLevel === "COMPLETE",
+          optional: true,
         })
       })
       return array
