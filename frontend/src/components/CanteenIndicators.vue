@@ -15,10 +15,10 @@
       <v-icon small aria-hidden="false" role="img" aria-label="Localisation">$compass-3-fill</v-icon>
       {{ canteen.city }}
     </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="types">
+    <p :class="{ 'my-0': true, inline: singleLine }" v-if="businessSegments">
       <span class="mx-1" v-if="singleLine && (canteen.dailyMealCount || canteen.city)">/</span>
       <v-icon small aria-hidden="false" role="img" aria-label="Secteurs">$building-fill</v-icon>
-      {{ types }}
+      {{ businessSegments }}
     </p>
   </div>
 </template>
@@ -43,7 +43,7 @@ export default {
     },
   },
   computed: {
-    types() {
+    businessSegments() {
       if (!this.canteen.sectors) return null
       return this.useCategories ? this.categoriesDisplayString : this.sectorsDisplayString
     },
