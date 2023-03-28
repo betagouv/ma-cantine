@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left pb-10">
+  <div class="text-left">
     <h1 class="font-weight-black text-h4 my-4">
       Générer mon affiche
     </h1>
@@ -10,7 +10,7 @@
 
     <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent class="mb-4">
       <v-row class="mt-2">
-        <v-col cols="12">
+        <v-col cols="12" class="pb-0">
           <DsfrTextarea
             v-model="customText"
             label="Plus de détail (facultatif)"
@@ -20,7 +20,7 @@
         </v-col>
       </v-row>
 
-      <v-row class="px-4">
+      <v-row class="px-4 mt-0">
         <v-checkbox v-model="showPatData">
           <template v-slot:label>
             <span class="body-2 grey--text text--darken-3">
