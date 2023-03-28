@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, ManagerInvitationFactory
 from data.factories import DiagnosticFactory, SectorFactory
-from data.models import Canteen, Teledeclaration
+from data.models import Canteen, Teledeclaration, Diagnostic
 from .utils import authenticate, get_oauth2_token
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -134,6 +134,34 @@ class TestCanteenApi(APITestCase):
 
         self.assertEqual(body["id"], user_canteen.id)
         self.assertEqual(body["managers"][0]["email"], authenticate.user.email)
+
+    @authenticate
+    def test_get_numeric_appro_values(self):
+        """
+        The endpoint for canteen managers should return the economic data of the appro
+        values - as opposed to the published endpoint which returns percentage values
+        """
+        user_canteen = CanteenFactory.create()
+        user_canteen.managers.add(authenticate.user)
+
+        DiagnosticFactory.create(
+            canteen=user_canteen,
+            year=2021,
+            value_total_ht=1200,
+            value_bio_ht=600,
+            value_sustainable_ht=300,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+        )
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
+        body = response.json()
+
+        self.assertEqual(len(body.get("diagnostics")), 1)
+        serialized_diag = body.get("diagnostics")[0]
+
+        self.assertEqual(serialized_diag["valueTotalHt"], 1200)
+        self.assertEqual(serialized_diag["valueBioHt"], 600)
+        self.assertEqual(serialized_diag["valueSustainableHt"], 300)
 
     @authenticate
     def test_get_single_user_canteen_unauthorized(self):

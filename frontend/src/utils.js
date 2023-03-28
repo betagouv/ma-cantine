@@ -166,11 +166,16 @@ export const hasDiagnosticApproData = (diagnostic) => {
   const approExtendedFields = characteristicGroups.egalim.fields
     .concat(characteristicGroups.outsideLaw.fields)
     .concat(characteristicGroups.nonEgalim.fields)
-  const hasTotal = diagnostic.valueTotalHt > 0 || diagnostic.valueTotalHt === 0
+  const hasTotal =
+    diagnostic.valueTotalHt > 0 ||
+    diagnostic.valueTotalHt === 0 ||
+    diagnostic.percentageValueTotalHt > 0 ||
+    diagnostic.percentageValueTotalHt === 0
   const approFields = diagnostic.diagnosticType === "COMPLETE" ? approExtendedFields : approSimplifiedFields
+  const percentageApproFields = approFields.map((x) => `percentage${x.charAt(0).toUpperCase() + x.slice(1)}`)
   return (
     hasTotal &&
-    approFields.some(
+    approFields.concat(percentageApproFields).some(
       // sadly null >= 0 is true
       (key) => diagnostic[key] > 0 || diagnostic[key] === 0
     )
@@ -241,15 +246,24 @@ export const getSustainableTotal = (diagnostic) => {
   const sustainableSum =
     (diagnostic.valueSustainableHt || 0) +
     (diagnostic.valueExternalityPerformanceHt || 0) +
-    (diagnostic.valueEgalimOthersHt || 0)
+    (diagnostic.valueEgalimOthersHt || 0) +
+    (diagnostic.percentageValueSustainableHt || 0) +
+    (diagnostic.percentageValueExternalityPerformanceHt || 0) +
+    (diagnostic.percentageValueEgalimOthersHt || 0)
   return sustainableSum
 }
 
 export const badges = (canteen, diagnostic, sectors) => {
   let applicable = JSON.parse(JSON.stringify(jsonBadges))
   if (!diagnostic) return applicable
-  const bioPercent = getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
-  const sustainablePercent = getPercentage(getSustainableTotal(diagnostic), diagnostic.valueTotalHt)
+  const bioPercent =
+    "percentageValueBioHt" in diagnostic
+      ? Math.round(diagnostic.percentageValueBioHt * 100)
+      : getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
+  const sustainablePercent =
+    "percentageValueSustainableHt" in diagnostic
+      ? Math.round(getSustainableTotal(diagnostic) * 100)
+      : getPercentage(getSustainableTotal(diagnostic), diagnostic.valueTotalHt)
   const applicableRules = applicableDiagnosticRules(canteen)
   if (
     bioPercent >= applicableRules.bioThreshold &&

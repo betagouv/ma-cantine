@@ -178,6 +178,22 @@ META_FIELDS = (
 FIELDS = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
 
 
+def appro_to_percentages(representation, instance):
+    appro_field = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
+    total = instance.value_total_ht
+
+    for field in appro_field:
+        new_field_name = f"percentage_{field}"
+        if representation.get(field):
+            representation[new_field_name] = representation[field] / total if total else None
+        representation.pop(field, None)
+
+    representation["percentage_value_total_ht"] = 1
+    representation.pop("value_total_ht", None)
+
+    return representation
+
+
 class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
     """
     This serializer masks financial data and gives the basic information on appro as percentages
@@ -199,21 +215,21 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
             [representation.pop(field, "") for field in NON_APPRO_FIELDS]
         if instance.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
             [representation.pop(field, "") for field in COMPLETE_APPRO_FIELDS]
-        return CentralKitchenDiagnosticSerializer.to_percentages(representation, instance)
-
-    def to_percentages(representation, instance):
-        appro_field = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
-        total = instance.value_total_ht
-
-        for field in appro_field:
-            if representation.get(field):
-                representation[field] = representation[field] / total if total else None
-
-        representation["value_total_ht"] = 1
-        return representation
+        return appro_to_percentages(representation, instance)
 
 
 class PublicDiagnosticSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Diagnostic
+        fields = FIELDS
+        read_ony_fields = FIELDS
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return appro_to_percentages(representation, instance)
+
+
+class ManagerDiagnosticSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
         read_only_fields = ("id",)

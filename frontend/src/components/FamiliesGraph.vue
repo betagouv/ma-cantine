@@ -149,15 +149,16 @@ export default {
       return colors[baseColor][modifier]
     },
     getValuesForCharacteristic(characteristicId) {
+      const usesPercentages = "percentageValueTotalHt" in this.diagnostic
       const baseFields = {
-        VIANDES_VOLAILLES: "valueViandesVolailles",
-        CHARCUTERIE: "valueCharcuterie",
-        PRODUITS_DE_LA_MER: "valueProduitsDeLaMer",
-        FRUITS_ET_LEGUMES: "valueFruitsEtLegumes",
-        PRODUITS_LAITIERS: "valueProduitsLaitiers",
-        BOULANGERIE: "valueBoulangerie",
-        BOISSONS: "valueBoissons",
-        AUTRES: "valueAutres",
+        VIANDES_VOLAILLES: usesPercentages ? "percentageValueViandesVolailles" : "valueViandesVolailles",
+        CHARCUTERIE: usesPercentages ? "percentageValueCharcuterie" : "valueCharcuterie",
+        PRODUITS_DE_LA_MER: usesPercentages ? "percentageValueProduitsDeLaMer" : "valueProduitsDeLaMer",
+        FRUITS_ET_LEGUMES: usesPercentages ? "percentageValueFruitsEtLegumes" : "valueFruitsEtLegumes",
+        PRODUITS_LAITIERS: usesPercentages ? "percentageValueProduitsLaitiers" : "valueProduitsLaitiers",
+        BOULANGERIE: usesPercentages ? "percentageValueBoulangerie" : "valueBoulangerie",
+        BOISSONS: usesPercentages ? "percentageValueBoissons" : "valueBoissons",
+        AUTRES: usesPercentages ? "percentageValueAutres" : "valueAutres",
       }
       const baseModifiers = {
         BIO: "Bio",
@@ -176,7 +177,7 @@ export default {
       return this.families.map((family) => {
         const baseField = baseFields[family.id]
         const field = `${baseField}${modifier}`
-        return diag[field]
+        return diag[field] || 0
       })
     },
   },
