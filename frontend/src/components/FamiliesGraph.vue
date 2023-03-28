@@ -31,10 +31,12 @@ export default {
       ...Constants.ProductFamilies[f],
     }))
     const familiesLabels = families.map((f) => f.text)
-    const characteristics = Constants.TeledeclarationCharacteristicGroups.egalim.characteristics.map((c) => ({
-      id: c,
-      ...Constants.TeledeclarationCharacteristics[c],
-    }))
+    const characteristics = Constants.TeledeclarationCharacteristicGroups.egalim.characteristics
+      .concat(Constants.TeledeclarationCharacteristicGroups.nonEgalim.characteristics)
+      .map((c) => ({
+        id: c,
+        ...Constants.TeledeclarationCharacteristics[c],
+      }))
     return {
       families,
       familiesLabels,
@@ -144,8 +146,12 @@ export default {
     },
     getHexColor(vuetifyColor) {
       const elements = vuetifyColor.split(" ")
-      const baseColor = elements[0]
       const modifier = elements.length === 2 ? elements[1].replace("-", "") : "base"
+      let baseColor = elements[0]
+      if (baseColor.indexOf("-") > -1) {
+        const segments = baseColor.split("-")
+        baseColor = `${segments[0]}${segments[1].charAt(0).toUpperCase()}${segments[1].slice(1)}`
+      }
       return colors[baseColor][modifier]
     },
     getValuesForCharacteristic(characteristicId) {
@@ -171,6 +177,7 @@ export default {
         FERMIER: "Fermier",
         EXTERNALITES: "Externalites",
         PERFORMANCE: "Performance",
+        NON_EGALIM: "NonEgalim",
       }
       const modifier = baseModifiers[characteristicId]
       const diag = this.diagnostic
