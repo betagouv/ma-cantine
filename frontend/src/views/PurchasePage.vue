@@ -79,7 +79,7 @@
 
                 <v-menu
                   v-model="menu"
-                  :close-on-content-click="true"
+                  :close-on-content-click="false"
                   transition="scale-transition"
                   offset-y
                   min-width="auto"
@@ -98,7 +98,12 @@
                     />
                   </template>
 
-                  <v-date-picker v-model="purchase.date" :max="today" locale="fr-FR"></v-date-picker>
+                  <v-date-picker
+                    v-model="purchase.date"
+                    :max="today"
+                    locale="fr-FR"
+                    @change="menu = false"
+                  ></v-date-picker>
                 </v-menu>
               </v-col>
             </v-row>

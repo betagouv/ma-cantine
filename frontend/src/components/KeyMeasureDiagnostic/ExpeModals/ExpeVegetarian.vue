@@ -60,7 +60,7 @@
           <v-menu
             v-if="expe.hasDailyVegetarianOffer"
             v-model="vegetarianDailyStartDateMenu"
-            :close-on-content-click="true"
+            :close-on-content-click="false"
             transition="scale-transition"
             offset-y
             min-width="auto"
@@ -84,6 +84,7 @@
               v-model="expe.dailyVegetarianOfferStartDate"
               :max="today"
               locale="fr-FR"
+              @change="vegetarianDailyStartDateMenu = false"
             ></v-date-picker>
           </v-menu>
 
@@ -93,7 +94,7 @@
           </label>
           <v-menu
             v-model="launchDateMenu"
-            :close-on-content-click="true"
+            :close-on-content-click="false"
             transition="scale-transition"
             offset-y
             min-width="auto"
@@ -112,7 +113,11 @@
               />
             </template>
 
-            <v-date-picker v-model="expe.experimentationStartDate" locale="fr-FR"></v-date-picker>
+            <v-date-picker
+              v-model="expe.experimentationStartDate"
+              locale="fr-FR"
+              @change="launchDateMenu = false"
+            ></v-date-picker>
           </v-menu>
 
           <!-- Menu Type before the XP -->
