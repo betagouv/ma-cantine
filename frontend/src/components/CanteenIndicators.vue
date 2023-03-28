@@ -8,8 +8,7 @@
       <span class="mx-1" v-if="singleLine && hasSatelliteCanteens">/</span>
       <v-icon small>$restaurant-fill</v-icon>
       <!-- eslint-disable-next-line prettier/prettier-->
-      {{ canteen.dailyMealCount }} par jour
-      <span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
+      {{ canteen.dailyMealCount }} par jour<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
     </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="canteen.city">
       <span class="mx-1" v-if="singleLine && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
