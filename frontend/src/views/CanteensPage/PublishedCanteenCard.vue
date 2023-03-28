@@ -7,7 +7,7 @@
     <v-card-title class="font-weight-black pt-1">
       {{ canteen.name }}
     </v-card-title>
-    <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pb-4">
+    <v-card-subtitle class="pb-4">
       <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" />
       <div v-if="isCentralKitchen" class="tag body-2 font-weight-medium mt-2">
         <v-icon class="mt-n1" small>$community-fill</v-icon>
