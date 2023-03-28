@@ -103,6 +103,7 @@ class PurchaseListCreateView(ListCreateAPIView):
         "date",
         "provider",
         "price_ht",
+        "canteen__name",
         "description",
         "family",
     ]
