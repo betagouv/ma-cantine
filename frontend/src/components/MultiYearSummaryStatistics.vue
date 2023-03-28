@@ -25,7 +25,6 @@ const VALUE_DESCRIPTION = "Pourcentage d'achats"
 const BIO = "Bio"
 const SUSTAINABLE = "Qualité et durable (hors bio)"
 const OTHER = "Hors EGAlim"
-const TOTAL = "Total HT"
 
 export default {
   components: {
@@ -37,7 +36,6 @@ export default {
     height: String,
     width: String,
     applicableRules: Object,
-    showTotal: Boolean,
   },
   data() {
     let years = []
@@ -65,36 +63,24 @@ export default {
       }
     },
     series() {
-      const data = [
+      return [
         {
           name: BIO,
           data: this.seriesData.bio,
-          type: "column",
           color: "#297254",
         },
         {
           name: SUSTAINABLE,
           data: this.seriesData.sustainable,
-          type: "column",
           color: "#00A95F",
           foreColor: "#000",
         },
         {
           name: OTHER,
           data: this.seriesData.other,
-          type: "column",
           color: "#ccc",
         },
       ]
-      if (this.showTotal) {
-        data.push({
-          name: TOTAL,
-          data: this.seriesData.total,
-          type: "line",
-          color: "#000091",
-        })
-      }
-      return data
     },
     description() {
       let description = `${VALUE_DESCRIPTION}. `
@@ -107,47 +93,6 @@ export default {
       return description
     },
     chartOptions() {
-      const yaxis = [
-        {
-          seriesName: BIO,
-          title: {
-            text: this.$vuetify.breakpoint.xs ? undefined : VALUE_DESCRIPTION,
-          },
-          labels: {
-            formatter: percentageFormatter,
-          },
-          max: 100,
-          min: 0,
-          tickAmount: 4,
-        },
-        {
-          seriesName: SUSTAINABLE,
-          labels: {
-            formatter: percentageFormatter,
-          },
-          show: false,
-        },
-        {
-          seriesName: OTHER,
-          labels: {
-            formatter: percentageFormatter,
-          },
-          show: false,
-        },
-      ]
-      if (this.showTotal) {
-        yaxis.push({
-          seriesName: TOTAL,
-          opposite: true,
-          title: {
-            text: this.$vuetify.breakpoint.xs ? undefined : "Somme d'achats",
-          },
-          labels: {
-            formatter: currencyFormatter,
-          },
-        })
-      }
-
       const legendPosition = this.$vuetify.breakpoint.smAndUp ? "right" : "top"
       const legendAlign = this.$vuetify.breakpoint.smAndUp ? "left" : "center"
       return {
@@ -170,7 +115,17 @@ export default {
         xaxis: {
           categories: this.years,
         },
-        yaxis,
+        yaxis: {
+          title: {
+            text: this.$vuetify.breakpoint.xs ? undefined : VALUE_DESCRIPTION,
+          },
+          labels: {
+            formatter: percentageFormatter,
+          },
+          max: 100,
+          min: 0,
+          tickAmount: 4,
+        },
         stroke: {
           width: [0, 0, 0, 2],
           curve: "straight",
@@ -223,10 +178,6 @@ export default {
 
 function percentageFormatter(val) {
   return val + " %"
-}
-
-function currencyFormatter(val) {
-  return val + " €"
 }
 </script>
 
