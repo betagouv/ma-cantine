@@ -163,7 +163,7 @@
           <v-row class="mt-0">
             <v-menu
               v-model="startDateMenu"
-              :close-on-content-click="true"
+              :close-on-content-click="false"
               transition="scale-transition"
               offset-y
               min-width="auto"
@@ -190,11 +190,15 @@
                 </v-col>
               </template>
 
-              <v-date-picker v-model="appliedFilters.startDate" locale="fr-FR"></v-date-picker>
+              <v-date-picker
+                v-model="appliedFilters.startDate"
+                locale="fr-FR"
+                @change="startDateMenu = false"
+              ></v-date-picker>
             </v-menu>
             <v-menu
               v-model="endDateMenu"
-              :close-on-content-click="true"
+              :close-on-content-click="false"
               transition="scale-transition"
               offset-y
               min-width="auto"
@@ -221,7 +225,11 @@
                 </v-col>
               </template>
 
-              <v-date-picker v-model="appliedFilters.endDate" locale="fr-FR"></v-date-picker>
+              <v-date-picker
+                v-model="appliedFilters.endDate"
+                locale="fr-FR"
+                @change="endDateMenu = false"
+              ></v-date-picker>
             </v-menu>
           </v-row>
         </div>
