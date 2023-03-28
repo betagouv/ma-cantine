@@ -421,6 +421,7 @@ class ImportDiagnosticsView(ABC, APIView):
 # Allows canteen-only and simple diagnostics import
 class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     final_value_idx = 22
+    total_value_idx = 13
 
     def _skip_row(self, row_number, row):
         return row_number == 1 and row[0].lower() == "siret"
@@ -431,7 +432,7 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
 
         if len(row) < last_mandatory_column:
             raise IndexError()
-        elif len(row) > self.year_idx and len(row) < self.final_value_idx + 1:
+        elif len(row) > self.year_idx and len(row) < self.total_value_idx + 1:
             raise IndexError()
         elif len(row) > self.final_value_idx + 1 and not self.request.user.is_staff:
             raise PermissionDenied(
@@ -450,6 +451,9 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             pass
 
         if diagnostic_year:
+            mandatory_fields = [
+                "value_total_ht",
+            ]
             value_fields = [
                 "value_total_ht",
                 "value_bio_ht",
@@ -462,15 +466,19 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
                 "value_fish_ht",
                 "value_fish_egalim_ht",
             ]
+            appro_fields_length = len(row) - self.total_value_idx
+            value_fields = value_fields[:appro_fields_length]
             values_dict = {}
             value_offset = 0
             for value in value_fields:
                 try:
                     value_offset = value_offset + 1
                     value_idx = self.year_idx + value_offset
-                    if not row[value_idx]:
+                    if value in mandatory_fields and not row[value_idx]:
                         raise Exception
-                    values_dict[value] = Decimal(row[value_idx].strip().replace(",", "."))
+                    values_dict[value] = (
+                        None if not row[value_idx] else Decimal(row[value_idx].strip().replace(",", "."))
+                    )
                 except Exception:
                     error = {}
                     # TODO: This should take into account more number formats and be factored out to utils

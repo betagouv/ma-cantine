@@ -11,7 +11,7 @@
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
       </h2>
 
-      <v-card outlined elevation="0" color="primary lighten-5" class="d-flex" v-if="usesCentralKitchenDiagnostics">
+      <v-card outlined elevation="0" color="primary lighten-5" class="d-flex mb-6" v-if="usesCentralKitchenDiagnostics">
         <v-icon class="ml-4" color="primary">$information-fill</v-icon>
 
         <v-card-text>

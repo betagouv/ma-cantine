@@ -405,7 +405,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Données manquantes : 23 colonnes attendues, 22 trouvées.",
+            "Champ 'repas par an (y compris livrés)' : Ce champ ne peut pas être vide.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -806,6 +806,39 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(Diagnostic.objects.count(), 0)
         self.assertEqual(Teledeclaration.objects.count(), 0)
+
+    @authenticate
+    def test_optional_appro_values(self, _):
+        """
+        For simplified diagnostics, an empty appro value is considered unknown
+        """
+        with open("./api/tests/files/diagnostic_simplified_optional_appro.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(Diagnostic.objects.count(), 1)
+        diagnostic = Diagnostic.objects.first()
+
+        self.assertEqual(diagnostic.value_total_ht, 1000)
+        self.assertIsNone(diagnostic.value_bio_ht)
+        self.assertEqual(diagnostic.value_sustainable_ht, 0)
+
+    @authenticate
+    def test_mandatory_total_ht_simplified(self, _):
+        """
+        For simplified diagnostics, only the total HT is mandatory in the appro fields
+        """
+        with open("./api/tests/files/diagnostic_simplified_missing_total_ht.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+
+        self.assertEqual(
+            body["errors"][0]["message"], "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal."
+        )
 
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
