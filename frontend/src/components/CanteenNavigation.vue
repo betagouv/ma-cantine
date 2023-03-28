@@ -13,7 +13,7 @@
             <v-icon small class="mr-2">$restaurant-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">{{ canteen.name }}</v-list-item-title>
           </v-list-item>
-          <v-list-item :ripple="false" :to="{ name: 'SatelliteManagement' }" v-if="showSatellitePage">
+          <v-list-item :ripple="false" :to="{ name: 'SatelliteManagement' }" v-if="isCentralCuisine">
             <v-icon small class="mr-2">$community-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Satellites</v-list-item-title>
           </v-list-item>
@@ -21,7 +21,7 @@
             <v-icon small class="mr-2">$draft-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Diagnostics</v-list-item-title>
           </v-list-item>
-          <div v-if="$vuetify.breakpoint.smAndUp">
+          <div v-if="$vuetify.breakpoint.smAndUp" class="mt-n2">
             <v-list-item
               v-for="diagnostic in orderedDiagnostics"
               :key="`diagnostic-${diagnostic.id}`"
@@ -44,12 +44,28 @@
               Améliorer ma cantine
             </v-list-item-title>
           </v-list-item>
-          <v-list-item :ripple="false" :to="{ name: 'PublicationForm' }">
+          <div v-if="isPublished || hasSite">
+            <v-list-item :ripple="false" :to="{ name: 'PublicationForm' }">
+              <v-icon small class="mr-2">mdi-bullhorn</v-icon>
+              <v-list-item-title class="text-body-2 font-weight-bold">
+                Publication
+                <v-icon v-if="isPublished" color="grey" small>
+                  $checkbox-circle-fill
+                </v-icon>
+              </v-list-item-title>
+              <v-badge dot inline v-if="readyToPublish"></v-badge>
+            </v-list-item>
+            <v-list-item v-if="isCentralCuisine" :ripple="false" :to="{ name: 'PublishSatellites' }" class="mt-n2">
+              <v-list-item-title class="text-body-2 font-weight-bold pl-6">
+                Publier mes satellites
+              </v-list-item-title>
+            </v-list-item>
+          </div>
+          <v-list-item v-else :ripple="false" :to="{ name: 'PublishSatellites' }" class="mt-n2">
             <v-icon small class="mr-2">mdi-bullhorn</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">
-              Publication
+              Publier mes satellites
             </v-list-item-title>
-            <v-badge dot inline v-if="readyToPublish"></v-badge>
           </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'CanteenManagers' }">
             <v-icon small class="mr-2">$team-fill</v-icon>
@@ -87,8 +103,14 @@ export default {
         hasDiagnosticApproData(diagnostic)
       )
     },
-    showSatellitePage() {
+    isCentralCuisine() {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
+    },
+    isPublished() {
+      return this.canteen.publicationStatus === "published"
+    },
+    hasSite() {
+      return ["site", "site_cooked_elsewhere", "central_serving"].includes(this.canteen.productionType)
     },
   },
   methods: {

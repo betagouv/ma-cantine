@@ -45,15 +45,17 @@
       </template>
       <template v-slot:[`item.userCanView`]="{ item }">
         <v-btn v-if="!item.userCanView" outlined color="primary" @click="requestAccess(item)">
+          <v-icon small class="mr-2">mdi-key</v-icon>
           Rejoindre l'équipe
           <span class="d-sr-only">de {{ item.name }}</span>
         </v-btn>
         <v-btn
           v-else-if="satelliteAction && satelliteAction(item)"
           outlined
-          color="primary"
+          :color="satelliteAction(item).color || 'primary'"
           @click="satelliteAction(item).action()"
         >
+          <v-icon v-if="satelliteAction(item).icon" small class="mr-2">{{ satelliteAction(item).icon }}</v-icon>
           {{ satelliteAction(item).text }}
           <span class="d-sr-only">{{ item.name }}</span>
         </v-btn>
