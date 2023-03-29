@@ -105,6 +105,7 @@ class PurchaseListCreateView(ListCreateAPIView):
         "price_ht",
         "canteen__name",
         "description",
+        "family",
     ]
     search_fields = [
         "description",
