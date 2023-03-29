@@ -32,6 +32,12 @@
           :width="$vuetify.breakpoint.mdAndUp ? '800px' : '100%'"
           :applicableRules="applicableRules"
         />
+        <VueApexCharts
+          :options="totalSpendChartOptions"
+          :series="totalSpendSeries"
+          height="260"
+          :width="$vuetify.breakpoint.mdAndUp ? '600px' : '100%'"
+        />
       </div>
       <div v-if="summary">
         <v-row class="mb-2">
@@ -151,6 +157,7 @@
 </template>
 
 <script>
+import VueApexCharts from "vue-apexcharts"
 import {
   lastYear,
   diagnosticYears,
@@ -172,6 +179,7 @@ import validators from "@/validators"
 export default {
   name: "PurchasesSummary",
   components: {
+    VueApexCharts,
     BreadcrumbsNav,
     DsfrSelect,
     DsfrAutocomplete,
@@ -222,6 +230,55 @@ export default {
     },
     displayMultiYearSummary() {
       return this.yearlySummary ? Object.keys(this.yearlySummary).length > 1 : false
+    },
+    totalSpendChartOptions() {
+      return {
+        chart: {
+          type: "bar",
+          stacked: true,
+          toolbar: { tools: { download: false } },
+          animations: {
+            enabled: false,
+          },
+        },
+        states: {
+          hover: {
+            filter: {
+              type: "darken",
+              value: 0.75,
+            },
+          },
+        },
+        xaxis: {
+          categories: Object.keys(this.yearlySummary),
+        },
+        yaxis: {
+          title: {
+            text: this.$vuetify.breakpoint.xs ? undefined : "Total HT",
+          },
+          labels: {
+            formatter: toCurrency,
+          },
+          forceNiceScale: true,
+          tickAmount: 4,
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        tooltip: {
+          intersect: false,
+          shared: true,
+        },
+      }
+    },
+    totalSpendSeries() {
+      if (!this.displayMultiYearSummary) return
+      return [
+        {
+          name: "Total HT",
+          data: Object.values(this.yearlySummary).map((s) => s.valueTotalHt),
+        },
+      ]
     },
   },
   methods: {

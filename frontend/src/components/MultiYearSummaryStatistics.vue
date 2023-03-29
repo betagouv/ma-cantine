@@ -126,13 +126,6 @@ export default {
           min: 0,
           tickAmount: 4,
         },
-        stroke: {
-          width: [0, 0, 0, 2],
-          curve: "straight",
-        },
-        markers: {
-          size: 3,
-        },
         annotations: {
           yaxis: [
             {
