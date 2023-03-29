@@ -36,6 +36,7 @@ export default {
     height: String,
     width: String,
     applicableRules: Object,
+    legendPosition: String,
   },
   data() {
     let years = []
@@ -93,8 +94,8 @@ export default {
       return description
     },
     chartOptions() {
-      const legendPosition = this.$vuetify.breakpoint.smAndUp ? "right" : "top"
-      const legendAlign = this.$vuetify.breakpoint.smAndUp ? "left" : "center"
+      const legendPosition = this.legendPosition || (this.$vuetify.breakpoint.smAndUp ? "right" : "top")
+      const legendAlign = legendPosition === "right" ? "left" : "center"
       return {
         chart: {
           type: "bar",

@@ -24,21 +24,20 @@
           <DsfrSelect label="Année" v-model="vizYear" :items="allowedYears" hide-details="auto" />
         </v-col>
       </v-row>
-      <div v-if="displayMultiYearSummary">
+      <v-row v-if="displayMultiYearSummary">
         <!-- TODO: a11y -->
-        <MultiYearSummaryStatistics
-          :diagnostics="yearlySummary"
-          height="260"
-          :width="$vuetify.breakpoint.mdAndUp ? '800px' : '100%'"
-          :applicableRules="applicableRules"
-        />
-        <VueApexCharts
-          :options="totalSpendChartOptions"
-          :series="totalSpendSeries"
-          height="260"
-          :width="$vuetify.breakpoint.mdAndUp ? '600px' : '100%'"
-        />
-      </div>
+        <v-col cols="12" sm="8" md="6">
+          <MultiYearSummaryStatistics
+            :diagnostics="yearlySummary"
+            height="260"
+            :applicableRules="applicableRules"
+            legendPosition="top"
+          />
+        </v-col>
+        <v-col cols="12" sm="8" md="6">
+          <VueApexCharts :options="totalSpendChartOptions" :series="totalSpendSeries" height="260" />
+        </v-col>
+      </v-row>
       <div v-if="summary">
         <v-row class="mb-2">
           <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
