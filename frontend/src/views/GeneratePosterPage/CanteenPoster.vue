@@ -6,7 +6,7 @@
       <div>
         <p id="canteen-name" v-if="canteen.name">{{ canteen.name }}</p>
         <div id="indicators">
-          <CanteenIndicators :canteen="canteen" :singleLine="isHighContent" />
+          <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="isHighContent" />
         </div>
       </div>
       <img contain v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
