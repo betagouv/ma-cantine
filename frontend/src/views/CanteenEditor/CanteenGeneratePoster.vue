@@ -9,26 +9,20 @@
     </p>
 
     <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent class="mb-4">
-      <v-row class="mt-2">
-        <v-col cols="12" class="pb-0">
-          <DsfrTextarea
-            v-model="customText"
-            label="Plus de détail (facultatif)"
-            counter
-            :rules="[(v) => !v || v.length <= 700 || '700 caractères maximum']"
-          />
-        </v-col>
-      </v-row>
+      <DsfrTextarea
+        v-model="customText"
+        label="Plus de détail (facultatif)"
+        counter
+        :rules="[(v) => !v || v.length <= 700 || '700 caractères maximum']"
+      />
 
-      <v-row class="px-4 mt-0">
-        <v-checkbox v-model="showPatData">
-          <template v-slot:label>
-            <span class="body-2 grey--text text--darken-3">
-              Certains de mes produit proviennent d'un PAT en {{ publicationYear }}
-            </span>
-          </template>
-        </v-checkbox>
-      </v-row>
+      <v-checkbox v-model="showPatData" class="mt-0" hide-details="auto">
+        <template v-slot:label>
+          <span class="body-2 grey--text text--darken-3">
+            Certains de mes produit proviennent d'un PAT en {{ publicationYear }}
+          </span>
+        </template>
+      </v-checkbox>
 
       <v-row v-if="showPatData" class="d-block px-4 mt-2">
         <v-col cols="12" md="8">
