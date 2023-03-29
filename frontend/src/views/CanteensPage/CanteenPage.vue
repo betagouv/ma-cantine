@@ -21,7 +21,7 @@
               </h1>
             </v-card-title>
             <v-spacer></v-spacer>
-            <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pa-0 pt-4 d-flex">
+            <v-card-subtitle class="pa-0 pt-4 d-flex">
               <v-img
                 v-if="canteen.logo"
                 max-width="100px"
