@@ -53,7 +53,7 @@
         :patName="showPatData ? patName : null"
       />
     </div>
-    <v-btn x-large color="primary" @click="submit" class="my-8">
+    <v-btn x-large color="primary" @click="submit">
       Générer mon affiche
     </v-btn>
   </div>
