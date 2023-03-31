@@ -27,6 +27,7 @@
       <v-row v-if="displayMultiYearSummary">
         <!-- TODO: a11y -->
         <v-col cols="12" sm="8" md="6">
+          <div class="text-center font-weight-bold mb-2">Distribution de mes achats par an</div>
           <MultiYearSummaryStatistics
             :diagnostics="yearlySummary"
             height="260"
@@ -35,9 +36,13 @@
           />
         </v-col>
         <v-col cols="12" sm="8" md="6">
+          <div class="text-center font-weight-bold mb-2">Total de mes achats par an</div>
           <VueApexCharts :options="totalSpendChartOptions" :series="totalSpendSeries" height="260" />
         </v-col>
       </v-row>
+      <div class="text-left font-weight-bold mb-4" v-if="displayMultiYearSummary">
+        Détail de mes achats pour {{ vizYear }}
+      </div>
       <div v-if="summary">
         <v-row class="mb-2">
           <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
@@ -145,7 +150,11 @@
             </v-card>
           </v-col>
         </v-row>
-        <FamiliesGraph :diagnostic="summary" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" class="mt-4" />
+        <FamiliesGraph
+          :diagnostic="summary"
+          :height="$vuetify.breakpoint.xs ? '440px' : '380px'"
+          :class="displayMultiYearSummary ? 'mt-0' : 'mt-4'"
+        />
       </div>
       <!-- TODO: a11y description -->
       <div v-if="loading" style="height: 250px">
@@ -274,7 +283,7 @@ export default {
       if (!this.displayMultiYearSummary) return
       return [
         {
-          name: "Total HT",
+          name: "Total de mes achats HT",
           data: Object.values(this.yearlySummary).map((s) => s.valueTotalHt),
         },
       ]
