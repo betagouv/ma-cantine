@@ -67,6 +67,10 @@
               Publier mes satellites
             </v-list-item-title>
           </v-list-item>
+          <v-list-item :ripple="false" :to="{ name: 'CanteenGeneratePoster' }">
+            <v-icon small class="mr-2">$article-fill</v-icon>
+            <v-list-item-title class="text-body-2 font-weight-bold">Générer mon affiche</v-list-item-title>
+          </v-list-item>
           <v-list-item :ripple="false" :to="{ name: 'CanteenManagers' }">
             <v-icon small class="mr-2">$team-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Gestionnaires</v-list-item-title>

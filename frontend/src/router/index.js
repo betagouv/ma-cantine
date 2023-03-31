@@ -33,6 +33,7 @@ import CanteenForm from "@/views/CanteenEditor/CanteenForm"
 import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
 import DiagnosticList from "@/views/CanteenEditor/DiagnosticList"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
+import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import PublishSatellites from "@/views/CanteenEditor/PublishSatellites"
@@ -344,6 +345,14 @@ const routes = [
         path: "gestionnaires",
         name: "CanteenManagers",
         component: CanteenManagers,
+        meta: {
+          authenticationRequired: true,
+        },
+      },
+      {
+        path: "generer-mon-affiche",
+        name: "CanteenGeneratePoster",
+        component: CanteenGeneratePoster,
         meta: {
           authenticationRequired: true,
         },
