@@ -40,7 +40,6 @@ def unpublish(modeladmin, request, queryset):
 
 @admin.register(Canteen)
 class CanteenAdmin(SoftDeletionAdmin):
-
     form = CanteenForm
     inlines = (DiagnosticInline,)
     fields = (

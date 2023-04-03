@@ -22,6 +22,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from simple_history.utils import update_change_reason
 from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
@@ -308,6 +309,7 @@ class UserCanteensView(ListCreateAPIView):
     def perform_create(self, serializer):
         canteen = serializer.save()
         canteen.managers.add(self.request.user)
+        update_change_reason(canteen, "UserCanteensView")
 
     def create(self, request, *args, **kwargs):
         canteen_siret = request.data.get("siret")

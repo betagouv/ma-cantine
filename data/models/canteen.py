@@ -2,6 +2,7 @@ from urllib.parse import quote
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from simple_history.models import HistoricalRecords
 from data.department_choices import Department
 from data.region_choices import Region
 from data.utils import get_region, optimize_image
@@ -91,6 +92,7 @@ class Canteen(SoftDeletionModel):
     import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     name = models.TextField(verbose_name="nom")
 

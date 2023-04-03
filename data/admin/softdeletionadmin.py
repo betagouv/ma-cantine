@@ -1,7 +1,8 @@
 from django.contrib import admin
+from simple_history.admin import SimpleHistoryAdmin
 
 
-class SoftDeletionAdmin(admin.ModelAdmin):
+class SoftDeletionAdmin(SimpleHistoryAdmin):
     def get_queryset(self, request):
         qs = self.model.all_objects
         ordering = self.get_ordering(request)
