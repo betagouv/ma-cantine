@@ -21,6 +21,8 @@ def update_satellites_siret(sender, instance, raw, using, update_fields, **kwarg
         return
     try:
         obj = sender.objects.get(pk=instance.pk)
+        if not obj.siret or not instance.siret:
+            return
         siret_has_changed = obj.siret != instance.siret
         if siret_has_changed:
             logger.info(

@@ -241,6 +241,28 @@ class TestCanteenApi(APITestCase):
             self.assertEqual(satellite.central_producer_siret, "35662897196149")
 
     @authenticate
+    def test_add_siret_to_central_kitchen(self):
+        """
+        A central cuisine without a SIRET can add one without modifying everybody else
+        """
+        central_kitchen = CanteenFactory.create(siret=None, production_type=Canteen.ProductionType.CENTRAL)
+        central_kitchen.managers.add(authenticate.user)
+
+        other_canteens = [
+            CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None),
+            CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL_SERVING, central_producer_siret=None),
+            CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE, central_producer_siret=None),
+        ]
+
+        payload = {"siret": "35662897196149"}
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": central_kitchen.id}), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for canteen in other_canteens:
+            canteen.refresh_from_db()
+            self.assertIsNone(canteen.central_producer_siret)
+
+    @authenticate
     def test_soft_delete(self):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
