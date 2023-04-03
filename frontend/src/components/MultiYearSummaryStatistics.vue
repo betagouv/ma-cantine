@@ -36,6 +36,7 @@ export default {
     height: String,
     width: String,
     applicableRules: Object,
+    legendPosition: String,
   },
   data() {
     let years = []
@@ -59,6 +60,7 @@ export default {
         bio: this.completedDiagnostics.map(this.bioPercentage),
         sustainable: this.completedDiagnostics.map(this.sustainablePercentage),
         other: this.completedDiagnostics.map(this.otherPercentage),
+        total: this.completedDiagnostics.map((d) => d.valueTotalHt),
       }
     },
     series() {
@@ -92,8 +94,8 @@ export default {
       return description
     },
     chartOptions() {
-      const legendPosition = this.$vuetify.breakpoint.smAndUp ? "right" : "top"
-      const legendAlign = this.$vuetify.breakpoint.smAndUp ? "left" : "center"
+      const legendPosition = this.legendPosition || (this.$vuetify.breakpoint.smAndUp ? "right" : "top")
+      const legendAlign = legendPosition === "right" ? "left" : "center"
       return {
         chart: {
           type: "bar",
@@ -143,6 +145,10 @@ export default {
         },
         dataLabels: {
           enabled: false,
+        },
+        tooltip: {
+          intersect: false,
+          shared: true,
         },
       }
     },
