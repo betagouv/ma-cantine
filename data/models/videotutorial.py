@@ -28,3 +28,6 @@ class VideoTutorial(models.Model):
         verbose_name="catégorie",
     )
     thumbnail = models.ImageField(null=True, blank=True, verbose_name="aperçu")
+
+    def __str__(self):
+        return self.title

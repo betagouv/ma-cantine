@@ -26,6 +26,13 @@
       </v-col>
     </v-row>
 
+    <VideoTutorials
+      id="evenements-passes"
+      class="mb-4"
+      v-if="videoTutorials && videoTutorials.length > 0"
+      :tutorials="videoTutorials"
+    />
+
     <h2 class="font-weight-black text-h5" id="evenements">Webinaires à venir</h2>
     <p class="my-4">
       Membres de la communauté partagent expériences et conseils pour utiliser notre plateforme et améliorer votre
@@ -66,6 +73,7 @@
 
 <script>
 import WebinaireCard from "./WebinaireCard"
+import VideoTutorials from "./VideoTutorials"
 import TheNewsletter from "@/components/TheNewsletter"
 import FacebookSection from "./FacebookSection"
 import { hideCommunityEventsBanner } from "@/utils"
@@ -73,10 +81,19 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "CommunityPage",
-  components: { WebinaireCard, TheNewsletter, FacebookSection, BreadcrumbsNav },
+  components: { WebinaireCard, TheNewsletter, FacebookSection, BreadcrumbsNav, VideoTutorials },
   data() {
-    return {
-      links: [
+    return {}
+  },
+  computed: {
+    webinaires() {
+      return this.$store.state.upcomingCommunityEvents
+    },
+    videoTutorials() {
+      return this.$store.state.videoTutorials
+    },
+    links() {
+      const links = [
         {
           id: "evenements",
           title: "Webinaires à venir",
@@ -105,12 +122,13 @@ export default {
           id: "suivre",
           title: "Suivre nos actus",
         },
-      ],
-    }
-  },
-  computed: {
-    webinaires() {
-      return this.$store.state.upcomingCommunityEvents
+      ]
+      if (this.videoTutorials && this.videoTutorials.length > 0)
+        links.unshift({
+          id: "evenements-passes",
+          title: "Nos webinaires",
+        })
+      return links
     },
   },
   mounted() {
