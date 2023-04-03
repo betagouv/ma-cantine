@@ -225,7 +225,9 @@ class CanteenPurchasesSummaryView(APIView):
         years = [y["year"] for y in years.values()]
         for year in years:
             year_data = {"year": year}
-            purchases = Purchase.objects.filter(canteen=canteen, date__year=year)
+            purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
+                canteen=canteen, date__year=year
+            )
             CanteenPurchasesSummaryView._simple_diag_data(purchases, year_data)
             data["results"].append(year_data)
 
