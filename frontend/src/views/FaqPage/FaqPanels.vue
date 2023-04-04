@@ -37,12 +37,6 @@ export default {
               answer:
                 "« ma cantine » est un service numérique opéré par le Ministère en charge de l’agriculture (MASA) avec l’appui de la Direction Interministérielle du Numérique (DINUM). Son objectif est d'accompagner la transition alimentaire des services de restauration collective, les cantines vers une alimentation et une consommation plus durable. Cette plateforme est à la fois un outil d’accompagnement pour les gestionnaires, un outil d’information pour les convives citoyens et un outil de transmission d’information vers l’administration pour le suivi de cette transition.",
             },
-            {
-              title:
-                "Quel intérêt pour une SRC (société de restauration collective) de saisir les informations des restaurants clients concernant les dispositions de la loi sur la plateforme « ma cantine » ?",
-              answer:
-                "Les restaurants « clients » doivent transmettre via « ma cantine » les informations sur leurs données d’achat. La possibilité est donnée à une SRC de pouvoir télétransmettre les données pour l’ensemble de ses restaurants « clients » (avec une possibilité de transmettre « en masse »). L’intérêt pour la SRC est de télétransmettre rapidement et simplement, et de pouvoir montrer, par la publication, les efforts et les résultats de son action. C’est aussi un service amené aux clients de la SRC qui n’auront pas cette action de télédéclaration à faire eux-mêmes. Cette décision de qui télédéclare entre la SRC et le client est à voir entre les deux parties.",
-            },
           ],
         },
         {
@@ -79,6 +73,12 @@ export default {
                 "Je suis en gestion concédée/approvisionné par un restaurateur privé (société de restauration collective, traiteur, prestataire,...), suis-je concerné ?",
               answer:
                 "Oui, vous êtes concerné. Dans le cas d’une gestion déléguée/concédée, si en tant que donneur d’ordre vous n'avez pas toutes les informations requises pour mettre à jour vos données d'achat dans « ma cantine », vous avez deux options: soit vous les demandez à votre prestataire et les renseignez dans votre espace cantine ; soit vous autorisez le prestataire à les saisir lui-même dans votre espace cantine. Dans ce cas, votre prestataire doit se créer un compte dans « ma cantine » et vous devez l'ajouter en gestionnaire de l'établissement.",
+            },
+            {
+              title:
+                "Quel intérêt pour une SRC (société de restauration collective) de saisir les informations des restaurants clients concernant les dispositions de la loi sur la plateforme « ma cantine » ?",
+              answer:
+                "Les restaurants « clients » doivent transmettre via « ma cantine » les informations sur leurs données d’achat. La possibilité est donnée à une SRC de pouvoir télétransmettre les données pour l’ensemble de ses restaurants « clients » (avec une possibilité de transmettre « en masse »). L’intérêt pour la SRC est de télétransmettre rapidement et simplement, et de pouvoir montrer, par la publication, les efforts et les résultats de son action. C’est aussi un service amené aux clients de la SRC qui n’auront pas cette action de télédéclaration à faire eux-mêmes. Cette décision de qui télédéclare entre la SRC et le client est à voir entre les deux parties.",
             },
             {
               title:
@@ -120,6 +120,12 @@ export default {
           questions: [
             {
               title:
+                "Pourquoi, dans mon diagnostic, fournir les valeurs d’achat et pas les parts (en %) des produits durables et de qualité, et de produits bio ?",
+              answer:
+                "Le décret du 23 avril 2019, pris en application de la loi EGAlim du 30 octobre 2018 précise que ces parts (taux EGAlim) sont calculées à partir des valeurs d’achats HT des produits alimentaires. L’arrêté du 14 septembre 2022, indique que les informations à transmettre via « ma cantine » sont les valeurs d’achat (HT). Ces données permettent de réaliser le bilan statistique annuel.",
+            },
+            {
+              title:
                 "Comment sont vérifiées les obligations des lois EGAlim et Climat et Résilience visant la restauration collective ?",
               answer:
                 "A ce jour, la loi ne prévoit pas de sanctions, ni de contrôles pour ce qui concerne l'atteinte des mesures EGAlim ciblant directement la restauration collective. Cependant la loi EGAlim et plus récemment la Climat et Résilience prévoient un renforcement de la transparence vis-à-vis des convives avec notamment l’obligation d’une information des convives sur leur lieu de repas, de la mise en œuvre des objectifs en matière de produits durables et de qualité entrant dans la composition des repas (Art. L. 230-5-3 du code rural) et d’une information aux citoyens au travers un bilan statistique annuel de l’application de ces objectifs, remis au Parlement par le Gouvernement et rendu public depuis le 1 er janvier 2022 (Article L. 230-5-1 du code rural).",
@@ -130,23 +136,17 @@ export default {
               answer:
                 "L’obligation d’atteinte des taux EGAlim s’impose aux donneurs d’ordre et ils sont responsables d'en faire une information donnée à leurs convives. Les taux EGAlim sont calculés à partir des valeurs d’achats HT des produits alimentaires. D'autre part, les valeurs d’achat sont les informations qui permettront à l’administration de réaliser le bilan annuel qui doit être remis au parlement et rendu public. Cette obligation de transmission d’information peut être reportée dans le contrat qui lie le donneur d’ordre et son prestataire. Une convention de délégation pour la déclaration de ces éléments peut être établie entre le donneur d'ordre et le délégataire. Un modèle de convention est proposé dans la documentation de « ma cantine » (https://ma-cantine-1.gitbook.io/ma-cantine-egalim/procedure-campagne-de-remontee-des-donnees-2022).",
             },
-          ],
-        },
-        {
-          title: "La mesure EGAlim « qualité de produits »",
-          questions: [
-            {
-              title:
-                "Pourquoi, dans mon diagnostic, fournir les valeurs d’achat et pas les parts (en %) des produits durables et de qualité, et de produits bio ?",
-              answer:
-                "Le décret du 23 avril 2019, pris en application de la loi EGAlim du 30 octobre 2018 précise que ces parts (taux EGAlim) sont calculées à partir des valeurs d’achats HT des produits alimentaires. L’arrêté du 14 septembre 2022, indique que les informations à transmettre via « ma cantine » sont les valeurs d’achat (HT). Ces données permettent de réaliser le bilan statistique annuel.",
-            },
             {
               title:
                 "A qui les données relatives aux achats de denrées alimentaires déclarées dans « ma cantine » sont-elles fournies ? Pour quoi faire ?",
               answer:
                 "Les données d'achat saisies dans « ma cantine » (dans le diagnostic) sont à télédéclarer tous les ans. Elles sont transmises à la DGAL (Direction générale de l’Alimentation - ministère de l’Agriculture et de la Souveraineté Alimentaire (MASA) en vue d'etablir le bilan annuel à remettre au Parlement qui sera un document public. Les données recueillies par télédéclaration seront traitées de manière agrégée pour réaliser le bilan annuel et aucune donnée individuelle ne sera rendue publique dans ce cadre.",
             },
+          ],
+        },
+        {
+          title: "La mesure EGAlim « qualité de produits »",
+          questions: [
             {
               title:
                 "Les produits Bleu-Blanc-Coeur (BBC) entrent-ils dans les 50 % de produits durables et de qualité ?",
