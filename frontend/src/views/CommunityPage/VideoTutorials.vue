@@ -64,7 +64,6 @@ export default {
 }
 .video-label {
   position: absolute;
-  z-index: 9;
   color: white;
   margin-top: 0px;
   margin-left: 0px;
