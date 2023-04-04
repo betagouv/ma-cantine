@@ -50,6 +50,10 @@ export default {
           category: "Je suis...",
           videos: this.tutorials.filter((x) => x.categories.indexOf("profile") > -1),
         },
+        {
+          category: "Autres webinaires",
+          videos: this.tutorials.filter((x) => !x.categories || x.categories.length === 0),
+        },
       ].filter((x) => x.videos.length > 0)
     },
   },
