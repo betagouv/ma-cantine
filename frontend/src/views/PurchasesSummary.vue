@@ -24,6 +24,25 @@
           <DsfrSelect label="Année" v-model="vizYear" :items="allowedYears" hide-details="auto" />
         </v-col>
       </v-row>
+      <v-row v-if="displayMultiYearSummary">
+        <!-- TODO: a11y -->
+        <v-col cols="12" sm="8" md="6">
+          <div class="text-center font-weight-bold mb-2">Distribution de mes achats par an</div>
+          <MultiYearSummaryStatistics
+            :diagnostics="yearlySummary"
+            height="260"
+            :applicableRules="applicableRules"
+            legendPosition="top"
+          />
+        </v-col>
+        <v-col cols="12" sm="8" md="6">
+          <div class="text-center font-weight-bold mb-2">Total de mes achats par an</div>
+          <VueApexCharts :options="totalSpendChartOptions" :series="totalSpendSeries" height="260" />
+        </v-col>
+      </v-row>
+      <div class="text-left font-weight-bold mb-4" v-if="displayMultiYearSummary">
+        Détail de mes achats pour {{ vizYear }}
+      </div>
       <div v-if="summary">
         <v-row class="mb-2">
           <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
@@ -131,7 +150,11 @@
             </v-card>
           </v-col>
         </v-row>
-        <FamiliesGraph :diagnostic="summary" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" class="mt-4" />
+        <FamiliesGraph
+          :diagnostic="summary"
+          :height="$vuetify.breakpoint.xs ? '440px' : '380px'"
+          :class="displayMultiYearSummary ? 'mt-0' : 'mt-4'"
+        />
       </div>
       <!-- TODO: a11y description -->
       <div v-if="loading" style="height: 250px">
@@ -142,24 +165,43 @@
 </template>
 
 <script>
-import { lastYear, diagnosticYears, normaliseText, getPercentage, getSustainableTotal, toCurrency } from "@/utils"
+import VueApexCharts from "vue-apexcharts"
+import {
+  lastYear,
+  diagnosticYears,
+  normaliseText,
+  getPercentage,
+  getSustainableTotal,
+  toCurrency,
+  applicableDiagnosticRules,
+} from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrTextField from "@/components/DsfrTextField"
 import FamiliesGraph from "@/components/FamiliesGraph"
+import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import labels from "@/data/quality-labels.json"
 import validators from "@/validators"
 
 export default {
   name: "PurchasesSummary",
-  components: { BreadcrumbsNav, DsfrSelect, DsfrAutocomplete, DsfrTextField, FamiliesGraph },
+  components: {
+    VueApexCharts,
+    BreadcrumbsNav,
+    DsfrSelect,
+    DsfrAutocomplete,
+    DsfrTextField,
+    FamiliesGraph,
+    MultiYearSummaryStatistics,
+  },
   data() {
     return {
       vizYear: lastYear(),
       vizCanteenId: null,
       vizCanteen: null,
       allowedYears: diagnosticYears().filter((year) => year <= lastYear() + 1),
+      yearlySummary: null,
       summary: null,
       loading: false,
       labels,
@@ -191,9 +233,64 @@ export default {
     isCentralCanteen() {
       return ["central", "central_serving"].includes(this.vizCanteen?.productionType)
     },
+    applicableRules() {
+      return applicableDiagnosticRules(this.vizCanteen)
+    },
+    displayMultiYearSummary() {
+      return this.yearlySummary ? Object.keys(this.yearlySummary).length > 1 : false
+    },
+    totalSpendChartOptions() {
+      return {
+        chart: {
+          type: "bar",
+          stacked: true,
+          toolbar: { tools: { download: false } },
+          animations: {
+            enabled: false,
+          },
+        },
+        states: {
+          hover: {
+            filter: {
+              type: "darken",
+              value: 0.75,
+            },
+          },
+        },
+        xaxis: {
+          categories: Object.keys(this.yearlySummary),
+        },
+        yaxis: {
+          title: {
+            text: this.$vuetify.breakpoint.xs ? undefined : "Total HT",
+          },
+          labels: {
+            formatter: toCurrency,
+          },
+          forceNiceScale: true,
+          tickAmount: 4,
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        tooltip: {
+          intersect: false,
+          shared: true,
+        },
+      }
+    },
+    totalSpendSeries() {
+      if (!this.displayMultiYearSummary) return
+      return [
+        {
+          name: "Total de mes achats HT",
+          data: Object.values(this.yearlySummary).map((s) => s.valueTotalHt),
+        },
+      ]
+    },
   },
   methods: {
-    getCharacteristicByFamilyData() {
+    getPurchaseSummaryForCanteenAndYear() {
       this.summary = null
       if (!this.vizCanteenId || !this.vizYear) return
       this.loading = true
@@ -201,6 +298,21 @@ export default {
         .then((response) => (response.ok ? response.json() : {}))
         .then((response) => {
           this.summary = response
+        })
+        .finally(() => (this.loading = false))
+    },
+    getPurchaseSummaryForCanteen() {
+      this.yearlySummary = null
+      if (!this.vizCanteenId) return
+      this.loading = true
+      fetch(`/api/v1/canteenPurchasesSummary/${this.vizCanteenId}`)
+        .then((response) => (response.ok ? response.json() : {}))
+        .then((response) => {
+          const results = response.results
+          const yearlySummary = {}
+          // reformatting for MultiYearSummaryStatistics
+          results.forEach((result) => (yearlySummary[result.year] = result))
+          this.yearlySummary = yearlySummary
         })
         .finally(() => (this.loading = false))
     },
@@ -237,13 +349,14 @@ export default {
   watch: {
     vizCanteenId(newCanteen) {
       if (newCanteen) {
-        this.getCharacteristicByFamilyData()
+        this.getPurchaseSummaryForCanteen()
+        this.getPurchaseSummaryForCanteenAndYear()
         this.vizCanteen = null
         this.fetchCanteen(newCanteen)
       }
     },
     vizYear(newYear, oldYear) {
-      if (oldYear && newYear) this.getCharacteristicByFamilyData()
+      if (oldYear && newYear) this.getPurchaseSummaryForCanteenAndYear()
     },
   },
   mounted() {

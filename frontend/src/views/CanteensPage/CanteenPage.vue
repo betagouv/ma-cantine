@@ -21,7 +21,7 @@
               </h1>
             </v-card-title>
             <v-spacer></v-spacer>
-            <v-card-subtitle v-if="canteen.dailyMealCount || canteen.city" class="pa-0 pt-4 d-flex">
+            <v-card-subtitle class="pa-0 pt-4 d-flex">
               <v-img
                 v-if="canteen.logo"
                 max-width="100px"
@@ -31,7 +31,7 @@
                 contain
               ></v-img>
               <div>
-                <CanteenIndicators :canteen="canteen" class="grey--text text--darken-3" />
+                <CanteenIndicators :useCategories="true" :canteen="canteen" class="grey--text text--darken-3" />
                 <router-link to="#contact">
                   <v-icon small>mdi-email-outline</v-icon>
                   Contactez-nous

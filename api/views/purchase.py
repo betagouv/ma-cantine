@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import Sum, Q
+from django.db.models.functions import ExtractYear
 from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager, IsAuthenticated
@@ -105,6 +106,7 @@ class PurchaseListCreateView(ListCreateAPIView):
         "price_ht",
         "canteen__name",
         "description",
+        "family",
     ]
     search_fields = [
         "description",
@@ -173,6 +175,7 @@ class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
 
 class CanteenPurchasesSummaryView(APIView):
+    permission_classes = [IsAuthenticated]
     # the order of egalim_labels is significant - determines which labels trump others when aggregating purchases
     egalim_labels = [
         "BIO",
@@ -193,11 +196,14 @@ class CanteenPurchasesSummaryView(APIView):
 
     def get(self, request, *args, **kwargs):
         canteen_id = kwargs.get("canteen_pk")
+        canteen = self._get_canteen(canteen_id, self.request)
         year = request.query_params.get("year")
-        if not year:
-            raise BadRequest("Missing year in request's query parameters")
+        if year:
+            return CanteenPurchasesSummaryView._canteen_summary_for_year(canteen, year)
+        else:
+            return CanteenPurchasesSummaryView._canteen_summary(canteen)
 
-        canteen = self._get_canteen(canteen_id, request)
+    def _canteen_summary_for_year(canteen, year):
         purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
             canteen=canteen, date__year=year
         )
@@ -207,6 +213,25 @@ class CanteenPurchasesSummaryView(APIView):
         CanteenPurchasesSummaryView._misc_totals(purchases, data)
 
         return Response(PurchaseSummarySerializer(data).data)
+
+    def _canteen_summary(canteen):
+        data = {"results": []}
+        years = (
+            Purchase.objects.filter(canteen=canteen)
+            .annotate(year=ExtractYear("date"))
+            .order_by("year")
+            .distinct("year")
+        )
+        years = [y["year"] for y in years.values()]
+        for year in years:
+            year_data = {"year": year}
+            purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
+                canteen=canteen, date__year=year
+            )
+            CanteenPurchasesSummaryView._simple_diag_data(purchases, year_data)
+            data["results"].append(year_data)
+
+        return Response(data)
 
     def _get_canteen(self, canteen_id, request):
         try:
