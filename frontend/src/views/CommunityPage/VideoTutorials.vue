@@ -1,7 +1,5 @@
 <template>
   <div>
-    <h2 class="font-weight-black text-h5" id="evenements-passes">Nos webinaires</h2>
-
     <div v-for="tutorial in sortedTutorials" :key="tutorial.category" class="my-4">
       <h3 class="mb-2">{{ tutorial.category }}</h3>
       <v-row>

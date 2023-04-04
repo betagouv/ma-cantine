@@ -26,12 +26,29 @@
       </v-col>
     </v-row>
 
+    <h3 class="font-weight-black text-h5 mt-8" id="precedents-evenements">Précedents webinaires à revoir</h3>
+    <p class="my-4">
+      Nos webinaires sont interactifs et permettent de poser vos questions aux intervenants. Vous pouvez toutefois
+      regarder les replays !
+    </p>
+
     <VideoTutorials
       id="evenements-passes"
-      class="mb-4"
       v-if="videoTutorials && videoTutorials.length > 0"
       :tutorials="videoTutorials"
     />
+
+    <v-btn
+      outlined
+      color="primary"
+      large
+      class="mt-4 mb-8"
+      href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/webinaires-les-defis-de-ma-cantine"
+    >
+      <v-icon class="mr-2">mdi-play-circle</v-icon>
+      <span v-if="videoTutorials && videoTutorials.length > 0">Revoir les autres webinaires</span>
+      <span v-else>Revoir les webinaires</span>
+    </v-btn>
 
     <h2 class="font-weight-black text-h5" id="evenements">Webinaires à venir</h2>
     <p class="my-4">
@@ -47,21 +64,6 @@
         <p class="mb-0">Aucun webinaire à venir, à bientôt !</p>
       </v-col>
     </v-row>
-
-    <h3 class="font-weight-black text-h5 mt-8" id="precedents-evenements">Précedents webinaires à revoir</h3>
-    <p class="my-4">
-      Nos webinaires sont interactifs et permettent de poser vos questions aux intervenants. Vous pouvez toutefois
-      regarder les replays !
-    </p>
-    <v-btn
-      outlined
-      color="primary"
-      large
-      href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/webinaires-les-defis-de-ma-cantine"
-    >
-      <v-icon class="mr-2">mdi-play-circle</v-icon>
-      Revoir les webinaires
-    </v-btn>
 
     <v-divider class="my-10"></v-divider>
     <FacebookSection id="facebook" />
@@ -83,24 +85,15 @@ export default {
   name: "CommunityPage",
   components: { WebinaireCard, TheNewsletter, FacebookSection, BreadcrumbsNav, VideoTutorials },
   data() {
-    return {}
-  },
-  computed: {
-    webinaires() {
-      return this.$store.state.upcomingCommunityEvents
-    },
-    videoTutorials() {
-      return this.$store.state.videoTutorials
-    },
-    links() {
-      const links = [
-        {
-          id: "evenements",
-          title: "Webinaires à venir",
-        },
+    return {
+      links: [
         {
           id: "precedents-evenements",
           title: "Précedents webinaires",
+        },
+        {
+          id: "evenements",
+          title: "Webinaires à venir",
         },
         {
           id: "facebook",
@@ -122,13 +115,15 @@ export default {
           id: "suivre",
           title: "Suivre nos actus",
         },
-      ]
-      if (this.videoTutorials && this.videoTutorials.length > 0)
-        links.unshift({
-          id: "evenements-passes",
-          title: "Nos webinaires",
-        })
-      return links
+      ],
+    }
+  },
+  computed: {
+    webinaires() {
+      return this.$store.state.upcomingCommunityEvents
+    },
+    videoTutorials() {
+      return this.$store.state.videoTutorials
     },
   },
   mounted() {
