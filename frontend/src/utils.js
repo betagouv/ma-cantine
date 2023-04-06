@@ -380,16 +380,7 @@ export const sectorsSelectList = (sectors) => {
   const categories = sectors.map((s) => s.category)
   // unique filter : https://stackoverflow.com/a/14438954/3845770
   const uniqueCategories = categories.filter((c, idx, self) => c && self.indexOf(c) === idx)
-  const categoryDisplay = {
-    education: "Enseignement",
-    health: "Santé",
-    autres: "Autre",
-    social: "Social et Médico-Social",
-    administration: "Administration",
-    leisure: "Loisirs",
-    enterprise: "Entreprise",
-    inconnu: "Inconnu",
-  }
+  const categoryDisplay = Constants.SectorCategoryTranslations
   uniqueCategories.forEach((c) => sectors.push({ header: categoryDisplay[c], category: c }))
   const categoryOrder = [
     "administration",
