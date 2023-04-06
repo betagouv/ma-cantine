@@ -299,7 +299,7 @@
 
 <script>
 import validators from "@/validators"
-import { toBase64, getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
+import { toBase64, getObjectDiff, sectorsSelectList, readCookie, lastYear } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
@@ -484,8 +484,16 @@ export default {
               params: { canteenUrlComponent },
             })
           } else {
-            // TODO: if has diagnostic ready for TD, direct to that diag
-            this.$router.push({ name: "ManagementPage" })
+            // encourage TDs by redirecting to diagnostic page if relevant
+            const diag = this.canteen.diagnostics.find((d) => d.year == lastYear())
+            if (diag && diag.teledeclaration?.status !== "SUBMITTED") {
+              this.$router.push({
+                name: "DiagnosticModification",
+                params: { canteenUrlComponent: this.canteenUrlComponent, year: lastYear() },
+              })
+            } else {
+              this.$router.push({ name: "ManagementPage" })
+            }
           }
         })
         .catch((e) => {
