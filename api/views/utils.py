@@ -13,7 +13,7 @@ def camelize(data):
 
 
 def normalise_siret(siret):
-    return siret.replace(" ", "")
+    return siret.replace(" ", "").replace("\xa0", "")
 
 
 class MaCantineOrderingFilter(filters.OrderingFilter):
@@ -37,7 +37,6 @@ class MaCantineOrderingFilter(filters.OrderingFilter):
         return queryset
 
     def get_ordering(self, request, queryset, view):
-
         params = request.query_params.get(self.ordering_param)
         if params:
             fields = [
