@@ -33,7 +33,7 @@
       </p>
 
       <SiretCheck
-        @siretIsValid="setSiret"
+        @siretIsValid="setCanteenData"
         :canteen="canteen"
         @updateCanteen="(x) => $emit('updateCanteen', x)"
         class="mt-10"
@@ -410,9 +410,19 @@ export default {
     window.removeEventListener("beforeunload", this.handleUnload)
   },
   methods: {
-    setSiret(siret) {
-      this.siret = siret
+    setCanteenData(data) {
+      this.siret = data.siret
       this.canteen.siret = this.siret
+      if (!this.canteen.name) {
+        this.canteen.name = data.name
+      }
+      if (!this.canteen.city) {
+        this.canteen.city = data.city
+        this.canteen.cityInseeCode = data.cityInseeCode
+        this.canteen.postalCode = data.postalCode
+        this.canteen.department = data.department
+        this.populateCityAutocomplete()
+      }
       this.goToStep(1)
     },
     goToStep(index, addHistory = true) {

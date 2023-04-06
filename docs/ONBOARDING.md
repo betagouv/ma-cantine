@@ -84,6 +84,8 @@ TRELLO_LIST_ID_CONTACT= Optionnel - ID de la liste où l'application mettra des 
 TRELLO_LIST_ID_PUBLICATION= Optionnel - ID de la liste où l'application mettra des cartes suite à une demande de publication de la part de l'utilistauer. Conseils en-dessous pour l'obtenir.
 REDIS_URL= Optionnel - L'instance redis à utiliser pour les tâches asynchrones. Cette fonctionnalité n'est pas encore utilisée. Par exemple : 'redis://localhost:6379/0'
 OVERRIDE_TEST_SEED= Optionnel - `seed` utilisé par les tests pour les éléments aléatoires. Utile lors qu'un test échoue et qu'on veut reproduire exactement ce qu'il s'est passé.
+SIRET_API_KEY=Optionnel - pour utiliser l'API INSEE Sirene
+SIRET_API_SECRET=Optionnel - pour utiliser l'API INSEE Sirene
 ```
 
 ### Activer les feature flags

@@ -1,4 +1,5 @@
 import logging
+import base64
 from collections import OrderedDict
 from datetime import date
 from django.apps import apps
@@ -383,8 +384,49 @@ class CanteenStatusView(APIView):
 
     def get(self, request, *args, **kwargs):
         siret = request.parser_context.get("kwargs").get("siret")
-        error_response = check_siret_response(siret, request)
-        return JsonResponse(error_response or {}, status=status.HTTP_200_OK)
+        response = check_siret_response(siret, request)
+        if not response:
+            # if no env variables, skip
+            # generate token: (is it better to only do this once a day?)
+            base64Cred = base64.b64encode(
+                bytes(f"{settings.SIRET_API_KEY}:{settings.SIRET_API_SECRET}", "utf-8")
+            ).decode("utf-8")
+            token_data = {"grant_type": "client_credentials", "validity_period": 604800}
+            token_headers = {"Authorization": f"Basic {base64Cred}"}
+            token_response = requests.post("https://api.insee.fr/token", data=token_data, headers=token_headers)
+            if token_response.ok:
+                token_response = token_response.json()
+                token = token_response["access_token"]
+                siret_response = requests.get(
+                    f"https://api.insee.fr/entreprises/sirene/V3/siret/{siret}",
+                    headers={"Authorization": f"Bearer {token}"},
+                )
+                if siret_response.ok:
+                    siret_response = siret_response.json()
+                    response = {
+                        "siret": siret,
+                        "name": siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"],
+                    }
+                    postcode = siret_response["etablissement"]["adresseEtablissement"]["codePostalEtablissement"]
+                    if postcode:
+                        query = siret_response["etablissement"]["adresseEtablissement"]["libelleCommuneEtablissement"]
+                        location_response = requests.get(
+                            f"https://api-adresse.data.gouv.fr/search/?q={query}&postcode={postcode}&type=municipality&autocomplete=1"
+                        )
+                        if location_response.ok:
+                            location_response = location_response.json()
+                            results = location_response["features"]
+                            if results and results[0]:
+                                result = results[0]["properties"]
+                                if result:
+                                    response["city"] = result["label"]
+                                    response["cityInseeCode"] = result["citycode"]
+                                    response["postalCode"] = postcode
+                                    response["department"] = result["context"].split(",")[0]
+
+            else:
+                print(token_response.json())
+        return JsonResponse(response or {}, status=status.HTTP_200_OK)
 
 
 def check_siret_response(canteen_siret, request):
