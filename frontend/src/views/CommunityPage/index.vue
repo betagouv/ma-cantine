@@ -26,6 +26,30 @@
       </v-col>
     </v-row>
 
+    <h3 class="font-weight-black text-h5 mt-8" id="precedents-evenements">Précedents webinaires à revoir</h3>
+    <p class="my-4">
+      Nos webinaires sont interactifs et permettent de poser vos questions aux intervenants. Vous pouvez toutefois
+      regarder les replays !
+    </p>
+
+    <VideoTutorials
+      id="evenements-passes"
+      v-if="videoTutorials && videoTutorials.length > 0"
+      :tutorials="videoTutorials"
+    />
+
+    <v-btn
+      outlined
+      color="primary"
+      large
+      class="mt-4 mb-8"
+      href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/webinaires-les-defis-de-ma-cantine"
+    >
+      <v-icon class="mr-2">mdi-play-circle</v-icon>
+      <span v-if="videoTutorials && videoTutorials.length > 0">Revoir les autres webinaires</span>
+      <span v-else>Revoir les webinaires</span>
+    </v-btn>
+
     <h2 class="font-weight-black text-h5" id="evenements">Webinaires à venir</h2>
     <p class="my-4">
       Membres de la communauté partagent expériences et conseils pour utiliser notre plateforme et améliorer votre
@@ -41,21 +65,6 @@
       </v-col>
     </v-row>
 
-    <h3 class="font-weight-black text-h5 mt-8" id="precedents-evenements">Précedents webinaires à revoir</h3>
-    <p class="my-4">
-      Nos webinaires sont interactifs et permettent de poser vos questions aux intervenants. Vous pouvez toutefois
-      regarder les replays !
-    </p>
-    <v-btn
-      outlined
-      color="primary"
-      large
-      href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/webinaires-les-defis-de-ma-cantine"
-    >
-      <v-icon class="mr-2">mdi-play-circle</v-icon>
-      Revoir les webinaires
-    </v-btn>
-
     <v-divider class="my-10"></v-divider>
     <FacebookSection id="facebook" />
 
@@ -66,6 +75,7 @@
 
 <script>
 import WebinaireCard from "./WebinaireCard"
+import VideoTutorials from "./VideoTutorials"
 import TheNewsletter from "@/components/TheNewsletter"
 import FacebookSection from "./FacebookSection"
 import { hideCommunityEventsBanner } from "@/utils"
@@ -73,17 +83,17 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "CommunityPage",
-  components: { WebinaireCard, TheNewsletter, FacebookSection, BreadcrumbsNav },
+  components: { WebinaireCard, TheNewsletter, FacebookSection, BreadcrumbsNav, VideoTutorials },
   data() {
     return {
       links: [
         {
-          id: "evenements",
-          title: "Webinaires à venir",
-        },
-        {
           id: "precedents-evenements",
           title: "Précedents webinaires",
+        },
+        {
+          id: "evenements",
+          title: "Webinaires à venir",
         },
         {
           id: "facebook",
@@ -111,6 +121,9 @@ export default {
   computed: {
     webinaires() {
       return this.$store.state.upcomingCommunityEvents
+    },
+    videoTutorials() {
+      return this.$store.state.videoTutorials
     },
   },
   mounted() {

@@ -41,12 +41,14 @@ export default new Vuex.Store({
     purchasesLoadingStatus: Constants.LoadingStatus.IDLE,
     expeLoadingStatus: Constants.LoadingStatus.IDLE,
     communityEventsLoadingStatus: Constants.LoadingStatus.IDLE,
+    videoTutorialsLoadingStatus: Constants.LoadingStatus.IDLE,
 
     sectors: [],
     sectorCategories: [],
     userCanteenPreviews: [],
     initialDataLoaded: false,
     upcomingCommunityEvents: [],
+    videoTutorials: [],
 
     notification: {
       message: "",
@@ -72,6 +74,9 @@ export default new Vuex.Store({
     },
     SET_COMMUNITY_EVENTS_LOADING_STATUS(state, status) {
       state.communityEventsLoadingStatus = status
+    },
+    SET_VIDEO_TUTORIALS_LOADING_STATUS(state, status) {
+      state.videoTutorialsLoadingStatus = status
     },
     SET_LOGGED_USER(state, loggedUser) {
       state.loggedUser = loggedUser
@@ -132,6 +137,9 @@ export default new Vuex.Store({
     },
     SET_UPCOMING_COMMUNITY_EVENTS(state, events) {
       state.upcomingCommunityEvents = events
+    },
+    SET_VIDEO_TUTORIALS(state, events) {
+      state.videoTutorials = events
     },
     SET_SHOW_WEBINAIRE_BANNER(state, showWebinaireBanner) {
       state.showWebinaireBanner = showWebinaireBanner
@@ -207,6 +215,7 @@ export default new Vuex.Store({
         context.dispatch("fetchLoggedUser"),
         context.dispatch("fetchSectors"),
         context.dispatch("fetchUpcomingCommunityEvents"),
+        context.dispatch("fetchVideoTutorials"),
       ])
         .then(() => {
           if (context.state.loggedUser) return context.dispatch("fetchUserCanteenPreviews")
@@ -728,7 +737,7 @@ export default new Vuex.Store({
 
     fetchUpcomingCommunityEvents(context) {
       context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch("/api/v1/communityEvents")
+      return fetch("/api/v1/communityEvents/")
         .then(verifyResponse)
         .then((response) => {
           context.commit("SET_UPCOMING_COMMUNITY_EVENTS", response)
@@ -737,6 +746,21 @@ export default new Vuex.Store({
         .catch((e) => {
           console.log("fetchUpcomingCommunityEvents", e)
           context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
+    fetchVideoTutorials(context) {
+      context.commit("SET_VIDEO_TUTORIALS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch("/api/v1/videoTutorials/")
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_VIDEO_TUTORIALS", response)
+          context.commit("SET_VIDEO_TUTORIALS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
+        .catch((e) => {
+          console.log("fetchVideoTutorials", e)
+          context.commit("SET_VIDEO_TUTORIALS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
           throw e
         })
     },
