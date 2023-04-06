@@ -537,17 +537,19 @@ export default {
         })
     },
     populateCityAutocomplete() {
-      const initialCityAutocomplete = {
-        text: this.canteen.city,
-        value: {
-          label: this.canteen.city,
-          citycode: this.canteen.cityInseeCode,
-          postcode: this.canteen.postalCode,
-          context: this.canteen.department,
-        },
+      if (this.canteen.city && this.canteen.cityInseeCode && this.canteen.postalCode && this.canteen.department) {
+        const initialCityAutocomplete = {
+          text: this.canteen.city,
+          value: {
+            label: this.canteen.city,
+            citycode: this.canteen.cityInseeCode,
+            postcode: this.canteen.postalCode,
+            context: this.canteen.department,
+          },
+        }
+        this.communes.push(initialCityAutocomplete)
+        this.cityAutocompleteChoice = initialCityAutocomplete.value
       }
-      this.communes.push(initialCityAutocomplete)
-      this.cityAutocompleteChoice = initialCityAutocomplete.value
     },
     displayTechnicalControlDialog(bodyText) {
       this.technicalControlText = bodyText

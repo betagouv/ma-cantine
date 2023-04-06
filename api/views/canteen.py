@@ -387,12 +387,14 @@ class CanteenStatusView(APIView):
         response = check_siret_response(siret, request) or {}
         if not response:
             CanteenStatusView.complete_canteen_data(siret, response)
-            if response["postalCode"] and response["city"]:
-                CanteenStatusView.complete_location_data(response["city"], response["postalCode"], response)
-            # TODO: log lack of info with response recieved to debug?
-        return JsonResponse(response or {}, status=status.HTTP_200_OK)
+            city = response.get("city", None)
+            postcode = response.get("postalCode", None)
+            if city and postcode:
+                CanteenStatusView.complete_location_data(city, postcode, response)
+        return JsonResponse(response, status=status.HTTP_200_OK)
 
     def complete_canteen_data(siret, response):
+        response["siret"] = siret
         token = CanteenStatusView.get_siret_token()
         if token:
             siret_response = requests.get(
@@ -401,16 +403,23 @@ class CanteenStatusView(APIView):
             )
             if siret_response.ok:
                 siret_response = siret_response.json()
-                response["siret"] = siret
-                response["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
-                response["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
-                    "codePostalEtablissement"
-                ]
-                response["city"] = siret_response["etablissement"]["adresseEtablissement"]["codePostalEtablissement"]
-            # TODO: log error
+                try:
+                    response["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
+                    response["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
+                        "codePostalEtablissement"
+                    ]
+                    response["city"] = siret_response["etablissement"]["adresseEtablissement"][
+                        "libelleCommuneEtablissement"
+                    ]
+                except KeyError as e:
+                    logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
+            else:
+                logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response.json()}")
 
     def get_siret_token():
-        # if no env variables, skip
+        if not settings.SIRET_API_KEY or not settings.SIRET_API_SECRET:
+            logger.warning("skipping siret token fetching because key and secret env vars aren't set")
+            return
         # generate token: (is it better to only do this once a day?)
         base64Cred = base64.b64encode(bytes(f"{settings.SIRET_API_KEY}:{settings.SIRET_API_SECRET}", "utf-8")).decode(
             "utf-8"
@@ -421,7 +430,8 @@ class CanteenStatusView(APIView):
         if token_response.ok:
             token_response = token_response.json()
             return token_response["access_token"]
-        # TODO: log error
+        else:
+            logger.warning(f"token fetching failed, code {token_response.status_code} : {token_response.json()}")
 
     def complete_location_data(city, postcode, response):
         location_response = requests.get(
@@ -431,12 +441,23 @@ class CanteenStatusView(APIView):
             location_response = location_response.json()
             results = location_response["features"]
             if results and results[0]:
-                result = results[0]["properties"]
-                if result:
-                    response["city"] = result["label"]
-                    response["cityInseeCode"] = result["citycode"]
-                    response["postalCode"] = postcode
-                    response["department"] = result["context"].split(",")[0]
+                try:
+                    result = results[0]["properties"]
+                    if result:
+                        response["city"] = result["label"]
+                        response["cityInseeCode"] = result["citycode"]
+                        response["postalCode"] = postcode
+                        response["department"] = result["context"].split(",")[0]
+                except KeyError as e:
+                    logger.warning(f"unexpected location response format : {location_response}. Unknown key : {e}")
+            else:
+                logger.warning(
+                    f"features array for city '{city}' and postcode '{postcode}' in location response format is non-existant or empty : {location_response}"
+                )
+        else:
+            logger.warning(
+                f"location fetching failed, code {location_response.status_code} : {location_response.json()}"
+            )
 
 
 def check_siret_response(canteen_siret, request):
