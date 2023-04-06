@@ -205,7 +205,11 @@
               hide-details="auto"
               validate-on-blur
               v-model="canteen.centralProducerSiret"
-              :rules="[validators.length(14), validators.luhn, validators.isDifferent(siret, satelliteSiretMessage)]"
+              :rules="[
+                validators.length(14),
+                validators.luhn,
+                validators.isDifferent(canteen.siret, satelliteSiretMessage),
+              ]"
             />
             <p class="caption mt-1 ml-2">
               Vous ne le connaissez pas ? Utilisez cet
@@ -480,6 +484,7 @@ export default {
               params: { canteenUrlComponent },
             })
           } else {
+            // TODO: if has diagnostic ready for TD, direct to that diag
             this.$router.push({ name: "ManagementPage" })
           }
         })
