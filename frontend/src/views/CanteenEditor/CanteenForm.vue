@@ -476,6 +476,7 @@ export default {
             message,
             status: "success",
           })
+          this.$emit("updateCanteen", canteenJson)
           if (this.isNewCanteen) {
             const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteenJson)
             this.$router.push({
@@ -489,7 +490,10 @@ export default {
             if (diag && diag.teledeclaration?.status !== "SUBMITTED") {
               this.$router.push({
                 name: "DiagnosticModification",
-                params: { canteenUrlComponent: this.canteenUrlComponent, year: lastYear() },
+                params: {
+                  canteenUrlComponent: this.canteenUrlComponent,
+                  year: lastYear(),
+                },
               })
             } else {
               this.$router.push({ name: "ManagementPage" })
