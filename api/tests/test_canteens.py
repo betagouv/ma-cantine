@@ -956,6 +956,62 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(body["diagnosticsToTeledeclare"], [complete_diag.id])
 
     @authenticate
+    def test_filter_td_bad_sirets(self):
+        """
+        Check that canteens with SIRET issues (no SIRET, SIRET = central_producer_siret) have complete canteen actions and not TD actions
+        """
+        last_year = 2021
+        canteen_with_no_siret = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            siret=None,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        # complete diag
+        DiagnosticFactory.create(canteen=canteen_with_no_siret, year=last_year, value_total_ht=10000)
+        canteen_with_bad_central_siret = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            siret="75665621899905",
+            central_producer_siret="75665621899905",
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        # complete diag
+        DiagnosticFactory.create(canteen=canteen_with_bad_central_siret, year=last_year, value_total_ht=10000)
+        canteen_to_td = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            siret="75665621899905",
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        # complete diag
+        diag_to_td = DiagnosticFactory.create(canteen=canteen_to_td, year=last_year, value_total_ht=10000)
+
+        for canteen in [
+            canteen_with_no_siret,
+            canteen_with_bad_central_siret,
+            canteen_to_td,
+        ]:
+            canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
+        body = response.json()
+
+        self.assertEqual(body["diagnosticsToTeledeclare"], [diag_to_td.id])
+        returned_canteens = body["results"]
+        self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
+        self.assertEqual(returned_canteens[1]["action"], "35_fill_canteen_data")
+
+    @authenticate
     def test_get_diagnostics_to_td_none(self):
         """
         Check that the actions endpoint includes an empty list of diagnostics that could be teledeclared

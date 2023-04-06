@@ -1058,7 +1058,6 @@ class ActionableCanteensListView(ListAPIView):
         return ActionableCanteensListView.annotate_actions(self.request.user.canteens, year)
 
     def annotate_actions(queryset, year):
-        # TODO: prevent TD of canteens with no siret or siret=central_siret
         # prep add satellites action
         # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
         satellites = (
@@ -1093,6 +1092,7 @@ class ActionableCanteensListView(ListAPIView):
             | Q(economic_model=None)
             | (is_central_cuisine_query & Q(satellite_canteens_count=None))
             | (is_satellite_query & Q(central_producer_siret=None))
+            | (is_satellite_query & Q(central_producer_siret=F("siret")))
             | (Q(line_ministry=None) & Q(requires_line_ministry=True))
         )
 
