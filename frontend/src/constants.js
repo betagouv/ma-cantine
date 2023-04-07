@@ -493,4 +493,14 @@ export default Object.freeze({
       label: "Je rentre seulement les données d'approvisionnement pour mes cantines satellites",
     },
   ],
+  SectorCategoryTranslations: {
+    education: "Enseignement",
+    health: "Santé",
+    autres: "Autre",
+    social: "Social et Médico-Social",
+    administration: "Administration",
+    leisure: "Loisirs",
+    enterprise: "Entreprise",
+    inconnu: "Inconnu",
+  },
 })
