@@ -2,6 +2,7 @@ import logging
 import base64
 from collections import OrderedDict
 from datetime import date
+import redis as r
 from django.apps import apps
 from django.conf import settings
 from django.http import JsonResponse
@@ -44,6 +45,7 @@ from api.exceptions import DuplicateException
 from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
 
 logger = logging.getLogger(__name__)
+redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
 class PublishedCanteenSingleView(RetrieveAPIView):
@@ -396,31 +398,42 @@ class CanteenStatusView(APIView):
     def complete_canteen_data(siret, response):
         response["siret"] = siret
         token = CanteenStatusView.get_siret_token()
-        if token:
-            siret_response = requests.get(
-                f"https://api.insee.fr/entreprises/sirene/V3/siret/{siret}",
-                headers={"Authorization": f"Bearer {token}"},
-            )
-            if siret_response.ok:
-                siret_response = siret_response.json()
-                try:
-                    response["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
-                    response["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
-                        "codePostalEtablissement"
-                    ]
-                    response["city"] = siret_response["etablissement"]["adresseEtablissement"][
-                        "libelleCommuneEtablissement"
-                    ]
-                except KeyError as e:
-                    logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
-            else:
-                logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response.json()}")
+        if not token:
+            return
+
+        redis_key = "SIRET_API_CALLS_PER_MINUTE"
+        redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
+        if int(redis.get(redis_key)) > 30:
+            logger.warning("Siret lookup failed - API rate has been exceeded.")
+            return
+
+        siret_response = requests.get(
+            f"https://api.insee.fr/entreprises/sirene/V3/siret/{siret}",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        if siret_response.ok:
+            siret_response = siret_response.json()
+            try:
+                response["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
+                response["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
+                    "codePostalEtablissement"
+                ]
+                response["city"] = siret_response["etablissement"]["adresseEtablissement"][
+                    "libelleCommuneEtablissement"
+                ]
+            except KeyError as e:
+                logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
+        else:
+            logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
 
     def get_siret_token():
         if not settings.SIRET_API_KEY or not settings.SIRET_API_SECRET:
             logger.warning("skipping siret token fetching because key and secret env vars aren't set")
             return
-        # generate token: (is it better to only do this once a day?)
+        token_redis_key = "SIRET_API_TOKEN"
+        if redis.exists(token_redis_key):
+            return redis.get(token_redis_key)
+
         base64Cred = base64.b64encode(bytes(f"{settings.SIRET_API_KEY}:{settings.SIRET_API_SECRET}", "utf-8")).decode(
             "utf-8"
         )
@@ -429,7 +442,10 @@ class CanteenStatusView(APIView):
         token_response = requests.post("https://api.insee.fr/token", data=token_data, headers=token_headers)
         if token_response.ok:
             token_response = token_response.json()
-            return token_response["access_token"]
+            token = token_response["access_token"]
+            expiration_seconds = 60 * 60 * 24
+            redis.set(token_redis_key, token, ex=expiration_seconds)
+            return token
         else:
             logger.warning(f"token fetching failed, code {token_response.status_code} : {token_response.json()}")
 

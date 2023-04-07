@@ -499,3 +499,5 @@ OAUTH2_PROVIDER = {
         "canteen:write": "Modifier les données de votre cantine",
     },
 }
+
+REDIS_URL = os.getenv("REDIS_URL")
