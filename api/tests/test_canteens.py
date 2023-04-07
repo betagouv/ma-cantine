@@ -507,6 +507,10 @@ class TestCanteenApi(APITestCase):
         }
         mock.get(geo_api_url, json=geo_mocked_response)
 
+        token_api_url = "https://api.insee.fr/token"
+        token_mocked_response = {"access_token": "test"}
+        mock.post(token_api_url, json=token_mocked_response)
+
         response = self.client.get(reverse("siret_check", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
