@@ -1,5 +1,6 @@
 import os
 import base64
+import requests_mock
 from django.urls import reverse
 from django.test.utils import override_settings
 from rest_framework.test import APITestCase
@@ -470,6 +471,55 @@ class TestCanteenApi(APITestCase):
         self.assertFalse(body["isManagedByUser"])
         # the CanteenFactory creates canteens with managers
         self.assertFalse(body["canBeClaimed"])
+
+    @requests_mock.Mocker()
+    @authenticate
+    def test_check_siret_new_canteen(self, mock):
+        siret = "34974603058674"
+        city = "Paris 15e Arrondissement"
+        postcode = "75015"
+        insee_code = "75115"
+        sirene_api_url = f"https://api.insee.fr/entreprises/sirene/V3/siret/{siret}"
+        sirene_mocked_response = {
+            "etablissement": {
+                "uniteLegale": {"denominationUniteLegale": "Canteen Name"},
+                "adresseEtablissement": {
+                    "codePostalEtablissement": postcode,
+                    "libelleCommuneEtablissement": city,
+                },
+            },
+        }
+        mock.get(sirene_api_url, json=sirene_mocked_response)
+
+        geo_api_url = (
+            f"https://api-adresse.data.gouv.fr/search/?q={city}&postcode={postcode}&type=municipality&autocomplete=1"
+        )
+        geo_mocked_response = {
+            "features": [
+                {
+                    "properties": {
+                        "label": city,
+                        "citycode": insee_code,
+                        "context": "75,0",
+                    }
+                }
+            ],
+        }
+        mock.get(geo_api_url, json=geo_mocked_response)
+
+        token_api_url = "https://api.insee.fr/token"
+        token_mocked_response = {"access_token": "test"}
+        mock.post(token_api_url, json=token_mocked_response)
+
+        response = self.client.get(reverse("siret_check", kwargs={"siret": siret}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["name"], "Canteen Name")
+        self.assertEqual(body["siret"], siret)
+        self.assertEqual(body["postalCode"], postcode)
+        self.assertEqual(body["city"], city)
+        self.assertEqual(body["cityInseeCode"], insee_code)
+        self.assertEqual(body["department"], "75")
 
     @authenticate
     def test_user_canteen_teledeclaration(self):

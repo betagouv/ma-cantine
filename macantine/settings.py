@@ -277,6 +277,10 @@ TRELLO_API_TOKEN = os.getenv("TRELLO_API_TOKEN")
 TRELLO_LIST_ID_CONTACT = os.getenv("TRELLO_LIST_ID_CONTACT")
 TRELLO_LIST_ID_PUBLICATION = os.getenv("TRELLO_LIST_ID_PUBLICATION")
 
+# SIRET API
+SIRET_API_KEY = os.getenv("SIRET_API_KEY")
+SIRET_API_SECRET = os.getenv("SIRET_API_SECRET")
+
 # Magicauth
 MAGICAUTH_EMAIL_FIELD = "email"
 MAGICAUTH_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
@@ -495,3 +499,6 @@ OAUTH2_PROVIDER = {
         "canteen:write": "Modifier les données de votre cantine",
     },
 }
+
+REDIS_URL = os.getenv("REDIS_URL")
+REDIS_PREPEND_KEY = os.getenv("REDIS_PREPEND_KEY", "")
