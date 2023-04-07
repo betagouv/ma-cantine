@@ -173,20 +173,34 @@ export default {
       return this.diagnostic.year || lastYear()
     },
     bioPercent() {
+      if (this.diagnostic.percentageValueTotalHt)
+        return getPercentage(this.diagnostic.percentageValueBioHt, this.diagnostic.percentageValueTotalHt)
       return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
     },
     sustainablePercent() {
+      if (this.diagnostic.percentageValueTotalHt)
+        return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.percentageValueTotalHt)
       return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
     },
     previousBioPercent() {
+      if (this.diagnostic.percentageValueTotalHt)
+        return getPercentage(
+          this.previousDiagnostic.percentageValueBioHt,
+          this.previousDiagnostic.percentageValueTotalHt
+        )
       return getPercentage(this.previousDiagnostic.valueBioHt, this.previousDiagnostic.valueTotalHt)
     },
     previousSustainablePercent() {
+      if (this.diagnostic.percentageValueTotalHt)
+        return getPercentage(
+          getSustainableTotal(this.previousDiagnostic),
+          this.previousDiagnostic.percentageValueTotalHt
+        )
       return getPercentage(getSustainableTotal(this.previousDiagnostic), this.previousDiagnostic.valueTotalHt)
     },
     hasCurrentYearData() {
       if (!this.diagnostic) return false
-      return !!this.diagnostic.valueTotalHt
+      return !!this.diagnostic.valueTotalHt || !!this.diagnostic.percentageValueTotalHt
     },
     earnedBadges() {
       if (!Object.keys(this.canteen).length) return {}
