@@ -501,3 +501,4 @@ OAUTH2_PROVIDER = {
 }
 
 REDIS_URL = os.getenv("REDIS_URL")
+REDIS_PREPEND_KEY = os.getenv("REDIS_PREPEND_KEY", "")

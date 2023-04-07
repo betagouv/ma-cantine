@@ -401,7 +401,7 @@ class CanteenStatusView(APIView):
         if not token:
             return
 
-        redis_key = "SIRET_API_CALLS_PER_MINUTE"
+        redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
         redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
         if int(redis.get(redis_key)) > 30:
             logger.warning("Siret lookup failed - API rate has been exceeded.")
@@ -430,7 +430,7 @@ class CanteenStatusView(APIView):
         if not settings.SIRET_API_KEY or not settings.SIRET_API_SECRET:
             logger.warning("skipping siret token fetching because key and secret env vars aren't set")
             return
-        token_redis_key = "SIRET_API_TOKEN"
+        token_redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_TOKEN"
         if redis.exists(token_redis_key):
             return redis.get(token_redis_key)
 
