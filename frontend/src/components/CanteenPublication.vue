@@ -1,12 +1,6 @@
 <template>
   <div class="text-left">
-    <div
-      v-if="
-        diagnostic &&
-          diagnostic.percentageValueTotalHt &&
-          (diagnostic.percentageValueBioHt || diagnostic.percentageValueSustainableHt)
-      "
-    >
+    <div v-if="showPercentagesBlock">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
       </h2>
@@ -20,16 +14,22 @@
         </v-card-text>
       </v-card>
 
-      <h3 class="font-weight-black text-body-1 grey--text text--darken-4 my-4">
+      <h3
+        class="font-weight-black text-body-1 grey--text text--darken-4 my-4"
+        v-if="
+          diagnostic.diagnosticType === 'COMPLETE' ||
+            meatEgalimPercentage ||
+            meatFrancePercentage ||
+            fishEgalimPercentage
+        "
+      >
         Total
       </h3>
       <v-row>
-        <v-col cols="12" sm="6" md="4" v-if="toPercentage(diagnostic.percentageValueBioHt)">
+        <v-col cols="12" sm="6" md="4" v-if="bioPercentage">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
-              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                {{ toPercentage(diagnostic.percentageValueBioHt) }} %
-              </span>
+              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercentage }} %</span>
               <span class="caption grey--text text--darken-2">
                 bio
               </span>
@@ -45,11 +45,11 @@
             </div>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="6" md="4" v-if="toPercentage(sustainableTotal)">
+        <v-col cols="12" sm="6" md="4" v-if="sustainablePercentage">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
               <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                {{ toPercentage(sustainableTotal) }} %
+                {{ sustainablePercentage }} %
               </span>
               <span class="caption grey--text text--darken-2">
                 durables et de qualité (hors bio)
@@ -77,16 +77,16 @@
         </h3>
         <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
       </div>
-      <div v-else>
+      <div v-else-if="meatEgalimPercentage || meatFrancePercentage || fishEgalimPercentage">
         <h3 class="font-weight-black text-body-1 grey--text text--darken-4 mb-4 mt-8">
           Par famille de produit
         </h3>
         <v-row>
-          <v-col cols="12" sm="4" md="4" v-if="toPercentage(diagnostic.percentageValueMeatPoultryEgalimHt)">
+          <v-col cols="12" sm="4" md="4" v-if="meatEgalimPercentage">
             <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
               <p class="ma-0">
                 <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                  {{ toPercentage(diagnostic.percentageValueMeatPoultryEgalimHt) }} %
+                  {{ meatEgalimPercentage }} %
                 </span>
                 <span class="caption grey--text text--darken-2">
                   viandes et volailles EGAlim
@@ -105,11 +105,11 @@
               </div>
             </v-card>
           </v-col>
-          <v-col cols="12" sm="4" md="4" v-if="toPercentage(diagnostic.percentageValueMeatPoultryFranceHt)">
+          <v-col cols="12" sm="4" md="4" v-if="meatFrancePercentage">
             <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
               <p class="ma-0">
                 <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                  {{ toPercentage(diagnostic.percentageValueMeatPoultryFranceHt) }} %
+                  {{ meatFrancePercentage }} %
                 </span>
                 <span class="caption grey--text text--darken-2">
                   viandes et volailles provenance France
@@ -128,11 +128,11 @@
               </div>
             </v-card>
           </v-col>
-          <v-col cols="12" sm="4" md="4" v-if="toPercentage(diagnostic.percentageValueFishEgalimHt)">
+          <v-col cols="12" sm="4" md="4" v-if="fishEgalimPercentage">
             <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
               <p class="ma-0">
                 <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                  {{ toPercentage(diagnostic.percentageValueFishEgalimHt) }} %
+                  {{ fishEgalimPercentage }} %
                 </span>
                 <span class="caption grey--text text--darken-2">
                   produits aquatiques EGAlim
@@ -240,6 +240,7 @@ import {
   latestCreatedDiagnostic,
   applicableDiagnosticRules,
   getSustainableTotal,
+  getPercentage,
 } from "@/utils"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import FamiliesGraph from "@/components/FamiliesGraph"
@@ -281,8 +282,43 @@ export default {
     publicationYear() {
       return this.diagnostic?.year
     },
-    sustainableTotal() {
-      return getSustainableTotal(this.diagnostic)
+    showPercentagesBlock() {
+      return (
+        this.diagnostic &&
+        (this.bioPercentage ||
+          this.sustainablePercentage ||
+          this.meatEgalimPercentage ||
+          this.meatFrancePercentage ||
+          this.fishEgalimPercentage)
+      )
+    },
+    hasPercentages() {
+      return "percentageValueTotalHt" in this.diagnostic
+    },
+    bioPercentage() {
+      return this.hasPercentages
+        ? this.toPercentage(this.diagnostic.percentageValueBioHt)
+        : getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
+    },
+    sustainablePercentage() {
+      return this.hasPercentages
+        ? this.toPercentage(getSustainableTotal(this.diagnostic))
+        : getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+    },
+    meatEgalimPercentage() {
+      return this.hasPercentages
+        ? this.toPercentage(this.diagnostic.percentageValueMeatPoultryEgalimHt)
+        : getPercentage(this.diagnostic.valueMeatPoultryEgalimHt, this.diagnostic.valueMeatPoultryHt)
+    },
+    meatFrancePercentage() {
+      return this.hasPercentages
+        ? this.toPercentage(this.diagnostic.percentageValueMeatPoultryFranceHt)
+        : getPercentage(this.diagnostic.valueMeatPoultryFranceHt, this.diagnostic.valueMeatPoultryHt)
+    },
+    fishEgalimPercentage() {
+      return this.hasPercentages
+        ? this.toPercentage(this.diagnostic.percentageValueFishEgalimHt)
+        : getPercentage(this.diagnostic.valueFishEgalimHt, this.diagnostic.valueFishHt)
     },
     earnedBadges() {
       const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
