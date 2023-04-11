@@ -43,14 +43,9 @@ export default {
           title: "Inscription",
           questions: [
             {
-              title: "Pourquoi s'inscrire ?",
+              title: "L’inscription sur la plateforme est-elle obligatoire ?",
               answer:
-                "L’inscription des gestionnaires, responsables légaux d’un service de restauration (dans les secteurs public et privé), leur permet de bénéficier d'un accompagnement à la mise en place des mesures réglementaires des lois EGAlim et Climat et Résilience et de répondre aux obligations d’information des convives. « ma cantine » est également la plateforme pour faire remonter, par télédéclaration chaque année, les données relatives aux achats de denrées alimentaires qui permettent de calculer les taux EGAlim requis par la loi pour que l’État réalise le bilan annuel du suivi des objectifs de la loi EGalim.",
-            },
-            {
-              title: "L'inscription sur « ma cantine » est-elle obligatoire ?",
-              answer:
-                "Oui.  Le décret du 23 avril 2019, pris en application de la loi EGAlim du 30 octobre 2018, prévoit la réalisation d’un bilan statistique de la mise en œuvre des obligations prévues par la loi, sur la base des éléments transmis, dans des conditions fixées par l'arrêté ministériel du 14 septembre 2022. Ce dernier précise la nature des informations à déclarer et le moyen de le faire par « ma cantine ».",
+                "L’inscription des gestionnaires, responsables légaux d’un service de restauration (dans les secteurs public et privé) est obligatoire. Le décret du 23 avril 2019, pris en application de la loi EGAlim du 30 octobre 2018, prévoit la réalisation d’un bilan statistique de la mise en œuvre des obligations prévues par la loi, sur la base des éléments transmis, dans des conditions fixées par l'arrêté ministériel du 14 septembre 2022. Ce dernier précise la nature des informations à déclarer et le moyen de le faire par « ma cantine ». La plateforme permet également de bénéficier d'un accompagnement à la mise en place des mesures réglementaires des lois EGAlim et Climat et Résilience et de répondre aux obligations d’information des convives.",
             },
             {
               title: "Qui peut s’inscrire sur « ma cantine » ?",
@@ -104,14 +99,9 @@ export default {
           title: "Création de mon établissement",
           questions: [
             {
-              title: "Est-il possible d’ajouter plusieurs cantines sous le même numéro SIRET ?",
+              title: "Le SIRET st il obligatoire pour créer ma cantine ?",
               answer:
-                "Il n’est pas possible d’ajouter plusieurs cantines sous un seul et même SIRET. Dans la plupart des cas, chaque cantine dispose de son numéro de SIRET propre. Vous pouvez le trouver ici : https://annuaire-entreprises.data.gouv.fr/. Concernant les cantines scolaires, vous pouvez retrouver le SIRET de l’établissement rattaché à la cantine sur l’Annuaire de l’éducation : https://annuaire-education.fr/. Dans certains cas, il est possible que certaines cantines n’aient pas de SIRET : dans ce cas uniquement, il est possible d’indiquer le numéro de SIRET de la collectivité desservant ces cantines.",
-            },
-            {
-              title: "Le SIRET est-il obligatoire pour créer ma cantine ?",
-              answer:
-                "Oui. Il est possible de le trouver ici : https://annuaire-entreprises.data.gouv.fr/. Concernant les cantines scolaires, vous pouvez retrouver le SIRET de l’établissement rattaché à la cantine sur l’Annuaire de l’éducation : https://annuaire-education.fr/. S’il existe déjà ou a été créé par une entité, je peux demander à rejoindre ma cantine.",
+                "Oui. Il est possible de le trouver ici : https://annuaire-entreprises.data.gouv.fr/. Concernant les cantines scolaires, vous pouvez retrouver le SIRET de l’établissement rattaché à la cantine sur l’Annuaire de l’éducation : https://annuaire-education.fr/. Attention, il n’est pas possible d’ajouter plusieurs cantines sous un seul et même SIRET. Dans la plupart des cas, chaque cantine dispose de son numéro de SIRET propre. Dans certains cas, il est possible que certaines cantines n’aient pas de SIRET : dans ce cas uniquement, il est possible d’indiquer le numéro de SIRET de la collectivité desservant ces cantines. S’il existe déjà ou a été créé par une entité, je peux demander à rejoindre ma cantine.",
             },
           ],
         },
@@ -120,27 +110,15 @@ export default {
           questions: [
             {
               title:
-                "Pourquoi, dans mon diagnostic, fournir les valeurs d’achat et pas les parts (en %) des produits durables et de qualité, et de produits bio ?",
+                "Comment sont vérifiées les obligations sur l’atteinte des taux EGAlim en restauration collective ?",
               answer:
-                "Le décret du 23 avril 2019, pris en application de la loi EGAlim du 30 octobre 2018 précise que ces parts (taux EGAlim) sont calculées à partir des valeurs d’achats HT des produits alimentaires. L’arrêté du 14 septembre 2022, indique que les informations à transmettre via « ma cantine » sont les valeurs d’achat (HT). Ces données permettent de réaliser le bilan statistique annuel.",
-            },
-            {
-              title:
-                "Comment sont vérifiées les obligations des lois EGAlim et Climat et Résilience visant la restauration collective ?",
-              answer:
-                "A ce jour, la loi ne prévoit pas de sanctions, ni de contrôles pour ce qui concerne l'atteinte des mesures EGAlim ciblant directement la restauration collective. Cependant la loi EGAlim et plus récemment la Climat et Résilience prévoient un renforcement de la transparence vis-à-vis des convives avec notamment l’obligation d’une information des convives sur leur lieu de repas, de la mise en œuvre des objectifs en matière de produits durables et de qualité entrant dans la composition des repas (Art. L. 230-5-3 du code rural) et d’une information aux citoyens au travers un bilan statistique annuel de l’application de ces objectifs, remis au Parlement par le Gouvernement et rendu public depuis le 1 er janvier 2022 (Article L. 230-5-1 du code rural).",
+                "A ce jour, la loi ne prévoit pas de sanctions, ni de contrôles pour ce qui concerne l'atteinte des taux EGAlim. Cependant la loi EGAlim et plus récemment la Climat et Résilience, prévoient un renforcement de la transparence vis-à-vis des convives avec notamment l’obligation d’une information des convives sur leur lieu de repas, des objectifs atteints en matière de produits durables et de qualité entrant dans la composition des repas (Art. L. 230-5-3 du code rural) et d’une information des citoyens au travers un bilan statistique annuel de l’application de ces objectifs, remis au Parlement par le Gouvernement et rendu public (Article L. 230-5-1 du code rural).",
             },
             {
               title:
                 "Mon prestataire ou délégataire refuse de me transmettre mes données d'achats. Quelles obligations pour lui ?",
               answer:
                 "L’obligation d’atteinte des taux EGAlim s’impose aux donneurs d’ordre et ils sont responsables d'en faire une information donnée à leurs convives. Les taux EGAlim sont calculés à partir des valeurs d’achats HT des produits alimentaires. D'autre part, les valeurs d’achat sont les informations qui permettront à l’administration de réaliser le bilan annuel qui doit être remis au parlement et rendu public. Cette obligation de transmission d’information peut être reportée dans le contrat qui lie le donneur d’ordre et son prestataire. Une convention de délégation pour la déclaration de ces éléments peut être établie entre le donneur d'ordre et le délégataire. Un modèle de convention est proposé dans la documentation de « ma cantine » (https://ma-cantine-1.gitbook.io/ma-cantine-egalim/procedure-campagne-de-remontee-des-donnees-2022).",
-            },
-            {
-              title:
-                "A qui les données relatives aux achats de denrées alimentaires déclarées dans « ma cantine » sont-elles fournies ? Pour quoi faire ?",
-              answer:
-                "Les données d'achat saisies dans « ma cantine » (dans le diagnostic) sont à télédéclarer tous les ans. Elles sont transmises à la DGAL (Direction générale de l’Alimentation - ministère de l’Agriculture et de la Souveraineté Alimentaire (MASA) en vue d'etablir le bilan annuel à remettre au Parlement qui sera un document public. Les données recueillies par télédéclaration seront traitées de manière agrégée pour réaliser le bilan annuel et aucune donnée individuelle ne sera rendue publique dans ce cadre.",
             },
           ],
         },
@@ -170,11 +148,33 @@ export default {
               answer:
                 "Pour un produit « origine France » ou acquis en « circuit court », il peut être comptabilisé s’il satisfait une des catégories définies dans la loi. Pour la catégorie « produit dont l’acquisition a été fondée principalement sur la base de leurs performances en matière de protection de l’environnement et de développement des approvisionnements directs de produits de l’agriculture », une expertise juridique est encore en cours, pour cadrer l’utilisation de ces critères de sélection. Le suivi des caractéristiques, produit « issu d’un circuit court » ou « d’origine française » est nécessaire pour l’établissement d’un bilan statistique annuel à remettre au Parlement chaque année. ",
             },
+          ],
+        },
+        {
+          title: "Transmission des données par « ma cantine »",
+          questions: [
+            {
+              title:
+                "Pourquoi, dans mon diagnostic, fournir les valeurs d’achat et pas les parts (en %) des produits durables et de qualité, et de produits bio ?",
+              answer:
+                "Le décret du 23 avril 2019, pris en application de la loi EGAlim du 30 octobre 2018 précise que ces parts (taux EGAlim) sont calculées à partir des valeurs d’achats HT des produits alimentaires. L’arrêté du 14 septembre 2022, indique que les informations à transmettre via « ma cantine » sont les valeurs d’achat (HT). Ces données permettent de réaliser le bilan statistique annuel.",
+            },
+            {
+              title:
+                "A qui les données relatives aux achats de denrées alimentaires déclarées dans « ma cantine » sont-elles fournies ? Pour quoi faire ?",
+              answer:
+                "Les données d'achat saisies dans « ma cantine » (dans le diagnostic) sont à télédéclarer tous les ans. Elles sont transmises à la DGAL (Direction générale de l’Alimentation - ministère de l’Agriculture et de la Souveraineté Alimentaire (MASA)) en vue d'etablir le bilan annuel à remettre au Parlement qui sera un document public. Les données recueillies par télédéclaration seront traitées de manière agrégée pour réaliser le bilan annuel et aucune donnée individuelle ne sera rendue publique dans ce cadre.",
+            },
             {
               title:
                 "J'utilise un outil de suivi d'achats (type GPAO). Pourrais-je transmettre les données relatives aux achats automatiquement à partir de mon logiciel de suivi ?",
               answer:
                 "Une API « ma cantine » est disponible pour les développeurs afin de se pouvoir s'interconnecter à la plateforme. La documentation est accessible pour les éditeurs de logiciel, il suffit de créer ou modifier votre profil en cochant le mode développeur.",
+            },
+            {
+              title: "Je ne dispose pas d’outil pour le suivi de mes achats comment faire ?",
+              answer:
+                "« ma cantine » propose un outil de suivi de ses achats, gratuit, en ligne et qui permet de restituer ses informations dans un tableau de bord et de procéder simplement à la télédéclaration annuelle de ses achats. Pour l’utiliser il faut se créer un compte.",
             },
           ],
         },
