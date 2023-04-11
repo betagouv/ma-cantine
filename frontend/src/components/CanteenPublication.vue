@@ -78,7 +78,7 @@
         <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
       </div>
       <div v-else>
-        <h3 class="font-weight-black text-body-1 grey--text text--darken-4 my-4">
+        <h3 class="font-weight-black text-body-1 grey--text text--darken-4 mb-4 mt-8">
           Par famille de produit
         </h3>
         <v-row>
