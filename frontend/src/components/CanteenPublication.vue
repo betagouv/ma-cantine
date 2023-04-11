@@ -20,17 +20,16 @@
         </v-card-text>
       </v-card>
 
-      <h3
-        class="font-weight-black text-body-1 grey--text text--darken-4 my-4"
-        v-if="diagnostic.diagnosticType === 'COMPLETE'"
-      >
+      <h3 class="font-weight-black text-body-1 grey--text text--darken-4 my-4">
         Total
       </h3>
       <v-row>
-        <v-col cols="12" sm="6" md="4" v-if="diagnostic.percentageValueBioHt">
+        <v-col cols="12" sm="6" md="4" v-if="toPercentage(diagnostic.percentageValueBioHt)">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
-              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercent }} %</span>
+              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                {{ toPercentage(diagnostic.percentageValueBioHt) }} %
+              </span>
               <span class="caption grey--text text--darken-2">
                 bio
               </span>
@@ -46,10 +45,12 @@
             </div>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="6" md="4" v-if="diagnostic.percentageValueSustainableHt">
+        <v-col cols="12" sm="6" md="4" v-if="toPercentage(sustainableTotal)">
           <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
             <p class="ma-0">
-              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
+              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                {{ toPercentage(sustainableTotal) }} %
+              </span>
               <span class="caption grey--text text--darken-2">
                 durables et de qualité (hors bio)
               </span>
@@ -70,17 +71,85 @@
           </v-card>
         </v-col>
       </v-row>
-      <h3
-        class="font-weight-black text-body-1 grey--text text--darken-4 mt-4"
-        v-if="diagnostic.diagnosticType === 'COMPLETE'"
-      >
-        Catégories EGAlim par famille de produit
-      </h3>
-      <FamiliesGraph
-        v-if="diagnostic.diagnosticType === 'COMPLETE'"
-        :diagnostic="diagnostic"
-        :height="$vuetify.breakpoint.xs ? '440px' : '380px'"
-      />
+      <div v-if="diagnostic.diagnosticType === 'COMPLETE'">
+        <h3 class="font-weight-black text-body-1 grey--text text--darken-4 mt-4">
+          Catégories EGAlim par famille de produit
+        </h3>
+        <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
+      </div>
+      <div v-else>
+        <h3 class="font-weight-black text-body-1 grey--text text--darken-4 my-4">
+          Par famille de produit
+        </h3>
+        <v-row>
+          <v-col cols="12" sm="4" md="4" v-if="toPercentage(diagnostic.percentageValueMeatPoultryEgalimHt)">
+            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+              <p class="ma-0">
+                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                  {{ toPercentage(diagnostic.percentageValueMeatPoultryEgalimHt) }} %
+                </span>
+                <span class="caption grey--text text--darken-2">
+                  viandes et volailles EGAlim
+                </span>
+              </p>
+              <div class="mt-2">
+                <v-icon size="30" color="brown">
+                  mdi-food-steak
+                </v-icon>
+                <v-icon size="30" color="brown">
+                  mdi-food-drumstick
+                </v-icon>
+                <v-icon size="30" color="green">
+                  $checkbox-circle-fill
+                </v-icon>
+              </div>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="4" md="4" v-if="toPercentage(diagnostic.percentageValueMeatPoultryFranceHt)">
+            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+              <p class="ma-0">
+                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                  {{ toPercentage(diagnostic.percentageValueMeatPoultryFranceHt) }} %
+                </span>
+                <span class="caption grey--text text--darken-2">
+                  viandes et volailles provenance France
+                </span>
+              </p>
+              <div class="mt-2">
+                <v-icon size="30" color="brown">
+                  mdi-food-steak
+                </v-icon>
+                <v-icon size="30" color="brown">
+                  mdi-food-drumstick
+                </v-icon>
+                <v-icon size="30" color="indigo">
+                  $france-line
+                </v-icon>
+              </div>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="4" md="4" v-if="toPercentage(diagnostic.percentageValueFishEgalimHt)">
+            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+              <p class="ma-0">
+                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                  {{ toPercentage(diagnostic.percentageValueFishEgalimHt) }} %
+                </span>
+                <span class="caption grey--text text--darken-2">
+                  produits aquatiques EGAlim
+                </span>
+              </p>
+              <div class="mt-2">
+                <v-icon size="30" color="blue">
+                  mdi-fish
+                </v-icon>
+                <v-icon size="30" color="green">
+                  $checkbox-circle-fill
+                </v-icon>
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+      </div>
     </div>
 
     <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-n4" v-if="Object.keys(earnedBadges).length">
@@ -212,11 +281,8 @@ export default {
     publicationYear() {
       return this.diagnostic?.year
     },
-    bioPercent() {
-      return Math.round(this.diagnostic.percentageValueBioHt * 100)
-    },
-    sustainablePercent() {
-      return Math.round(getSustainableTotal(this.diagnostic) * 100)
+    sustainableTotal() {
+      return getSustainableTotal(this.diagnostic)
     },
     earnedBadges() {
       const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
@@ -244,6 +310,11 @@ export default {
     },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
+    },
+  },
+  methods: {
+    toPercentage(value) {
+      return Math.round(value * 100)
     },
   },
 }
