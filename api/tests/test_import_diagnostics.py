@@ -840,6 +840,24 @@ class TestImportDiagnosticsAPI(APITestCase):
             body["errors"][0]["message"], "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal."
         )
 
+    @authenticate
+    def test_siret_cc(self, _):
+        """
+        A validation error should appear if the SIRET for the CC is the same as the SIRET
+        for the canteen.
+        """
+        with open("./api/tests/files/diagnostic_same_siret_cc.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Champ 'siret de la cuisine centrale' : Le SIRET de la cuisine centrale doit être différent de celui de la cantine",
+        )
+
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
     @unittest.skipUnless(os.environ.get("ENVIRONMENT") == "dev", "Not in dev environment")
