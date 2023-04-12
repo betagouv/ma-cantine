@@ -955,6 +955,7 @@ class TestCanteenApi(APITestCase):
 
         self.assertEqual(body["diagnosticsToTeledeclare"], [complete_diag.id])
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_filter_td_bad_sirets(self):
         """
@@ -1005,9 +1006,6 @@ class TestCanteenApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         body = response.json()
-
-        print(body)
-        print(Teledeclaration.objects.filter(canteen=canteen_to_td))
 
         self.assertEqual(body["diagnosticsToTeledeclare"], [diag_to_td.id])
         returned_canteens = body["results"]
