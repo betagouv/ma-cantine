@@ -1005,6 +1005,7 @@ class TestCanteenApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         body = response.json()
+        print(body)
 
         self.assertEqual(body["diagnosticsToTeledeclare"], [diag_to_td.id])
         returned_canteens = body["results"]
