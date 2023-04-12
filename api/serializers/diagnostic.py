@@ -179,7 +179,36 @@ FIELDS = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_F
 
 
 def appro_to_percentages(representation, instance):
-    appro_field = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
+    # first do the percentages relative to meat and fish totals
+    # not removing these totals so that can then calculate the percent of those compared to global total
+    meat_total = representation.get("value_meat_poultry_ht")
+    if meat_total:
+        field = "value_meat_poultry_egalim_ht"
+        value = representation.get(field)
+        if value:
+            representation[f"percentage_{field}"] = value / meat_total
+        representation.pop(field, None)
+        field = "value_meat_poultry_france_ht"
+        value = representation.get(field)
+        if value:
+            representation[f"percentage_{field}"] = value / meat_total
+        representation.pop(field, None)
+
+    fish_total = representation.get("value_fish_ht")
+    if fish_total:
+        field = "value_fish_egalim_ht"
+        value = representation.get(field)
+        if value:
+            representation[f"percentage_{field}"] = value / fish_total
+        representation.pop(field, None)
+
+    appro_field = (
+        "value_total_ht",
+        "value_bio_ht",
+        "value_sustainable_ht",
+        "value_externality_performance_ht",
+        "value_egalim_others_ht",
+    ) + COMPLETE_APPRO_FIELDS  # meat and fish totals included in COMPLETE
     total = instance.value_total_ht
 
     for field in appro_field:
