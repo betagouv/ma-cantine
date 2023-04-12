@@ -974,8 +974,8 @@ class TestCanteenApi(APITestCase):
         DiagnosticFactory.create(canteen=canteen_with_no_siret, year=last_year, value_total_ht=10000)
         canteen_with_bad_central_siret = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            siret="75665621899905",
-            central_producer_siret="75665621899905",
+            siret="59282615314394",
+            central_producer_siret="59282615314394",
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -986,7 +986,7 @@ class TestCanteenApi(APITestCase):
         DiagnosticFactory.create(canteen=canteen_with_bad_central_siret, year=last_year, value_total_ht=10000)
         canteen_to_td = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            siret="75665621899905",
+            siret="55314169703815",
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -1005,7 +1005,6 @@ class TestCanteenApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         body = response.json()
-        print(body)
 
         self.assertEqual(body["diagnosticsToTeledeclare"], [diag_to_td.id])
         returned_canteens = body["results"]
