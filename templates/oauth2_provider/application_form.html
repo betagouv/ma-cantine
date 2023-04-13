@@ -20,7 +20,7 @@
                     <input type="hidden" name="{{field.name}}" value="" />
                 {% else %}
                     <div class="control-group {% if field.errors %}error{% endif %}">
-                        <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        <label class="control-label" for="{{ field.id_for_label }}">{% trans field.label %}</label>
                         <div class="controls">
                             {{ field }}
                             {% for error in field.errors %}

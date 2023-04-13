@@ -96,6 +96,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "macantine.middleware.RedirectMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -165,6 +166,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = "fr-fr"
+LANGUAGES = (("fr", "Français"),)
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, "templates", "locale"),
+]
+
 TIME_ZONE = "Europe/Paris"
 USE_I18N = True
 USE_L10N = True
