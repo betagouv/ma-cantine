@@ -268,6 +268,15 @@ class ImportDiagnosticsView(ABC, APIView):
             raise ValidationError(
                 {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
             )
+        if row[4]:
+            central_producer_siret = normalise_siret(row[4])
+            siret = normalise_siret(row[0])
+            if central_producer_siret == siret:
+                raise ValidationError(
+                    {
+                        "central_producer_siret": "Le SIRET de la cuisine centrale doit être différent de celui de la cantine"
+                    }
+                )
 
     def _get_manager_emails_to_notify(self, row):
         try:
