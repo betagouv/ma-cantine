@@ -49,6 +49,10 @@ msgstr "Type de client"
 msgid "Authorization Grant Type"
 msgstr "Type de flux d'autorisation"
 
+#: templates/oauth2_provider/application_form.html:23
+msgid "Name"
+msgstr "Nom"
+
 #: templates/oauth2_provider/application_detail.html:36
 #: templates/oauth2_provider/application_form.html:43
 msgid "Go Back"
@@ -193,6 +197,3 @@ msgstr "Il n'y a pas encore de jetons."
 
 #~ msgid "The access token is valid but does not have enough scope."
 #~ msgstr "Le token d'accès est valide, mais sa portée n'est pas suffisante."
-
-#~ msgid "Name"
-#~ msgstr "Nom"
