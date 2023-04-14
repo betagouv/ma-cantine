@@ -22,13 +22,24 @@ class TestRelationCentralSatellite(APITestCase):
         central = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
         school = SectorFactory.create(name="School")
         enterprise = SectorFactory.create(name="Enterprise")
-        satellite_1 = CanteenFactory.create(central_producer_siret=central_siret, sectors=[school, enterprise])
+        satellite_1 = CanteenFactory.create(
+            central_producer_siret=central_siret,
+            sectors=[school, enterprise],
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        )
         # although user does not have mgmt rights on this, can get same data
-        satellite_2 = CanteenFactory.create(central_producer_siret=central_siret)
+        satellite_2 = CanteenFactory.create(
+            central_producer_siret=central_siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+        )
         # the following canteen should not be returned
         CanteenFactory.create()
+        # neither should this canteen which isn't the satellite production type
+        not_a_satellite = CanteenFactory.create(
+            central_producer_siret=central_siret,
+            production_type=Canteen.ProductionType.ON_SITE,
+        )
         user = authenticate.user
-        for canteen in [central, satellite_1]:
+        for canteen in [central, satellite_1, not_a_satellite]:
             canteen.managers.add(user)
 
         response = self.client.get(reverse("list_create_update_satellite", kwargs={"canteen_pk": central.id}))
@@ -56,10 +67,16 @@ class TestRelationCentralSatellite(APITestCase):
         central_siret = "22730656663081"
         central = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
         satellite_1 = CanteenFactory.create(
-            central_producer_siret=central_siret, publication_status=Canteen.PublicationStatus.DRAFT
+            central_producer_siret=central_siret,
+            publication_status=Canteen.PublicationStatus.DRAFT,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
         )
         # although user does not have mgmt rights on this, can get same data
-        CanteenFactory.create(central_producer_siret=central_siret, publication_status=Canteen.PublicationStatus.DRAFT)
+        CanteenFactory.create(
+            central_producer_siret=central_siret,
+            publication_status=Canteen.PublicationStatus.DRAFT,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        )
         # the following canteen should not be returned
         CanteenFactory.create()
         user = authenticate.user
