@@ -206,6 +206,6 @@ Il faut néanmoins tenir en compte que la mise en page ne sera pas visible et qu
 
 ### Celery
 
-Celery est un gestionnaire de tâches asynchrone. À l'heure actuelle il n'est pas utilisé, mais le roadmap prévoit la mise en place de tâches récurrentes. Pour l'utiliser, un serveur redis est nécessaire.
+Celery est un gestionnaire de tâches asynchrone utilisé par exemple pour l'envoi périodique de courriels de rappel et pour le remplissage des donn
 
 Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable `CC_PYTHON_CELERY_MODULE=macantine.celery`. La fonctionnalité Celery Beat doit aussi être activée : `CC_PYTHON_CELERY_USE_BEAT=true`, ainsi que le timezone souhaité : `CELERY_TIMEZONE:'Europe/Paris'`
