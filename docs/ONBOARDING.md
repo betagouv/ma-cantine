@@ -30,7 +30,7 @@ pip install -r requirements.txt
 
 ### Installer les dépendances du frontend
 
-On utilise `node` version 14 et npm version 6.
+On utilise les dernires versions LTS de `node` et `npm`.
 
 L'application frontend se trouve sous `/frontend`. Pour installer les dépendances :
 
