@@ -20,10 +20,10 @@
             avant remplir le diagnostic.
           </p>
           <p v-else-if="isSatelliteWithBadSiret" class="mb-0">
-            Vous avez declaré que cette cantine reçois des repas preparés par un autre établissement, mais les SIRETs
-            renseignés sont les mêmes. Pensez à
+            Vous avez déclaré que cette cantine reçoit des repas préparés par un autre établissement, mais les SIRETs
+            renseignés pour la cuisine centrale et l'établissement sont les mêmes. Pensez à
             <router-link :to="{ name: 'CanteenForm' }">mettre à jour les SIRETs</router-link>
-            avant remplir le diagnostic.
+            avant de remplir le diagnostic.
           </p>
         </v-alert>
 
@@ -346,7 +346,7 @@
             </span>
             <span v-else-if="!canteen.siret">
               Vous pourrez télédéclarer après avoir
-              <router-link :to="{ name: 'CanteenForm' }">reseigné le SIRET</router-link>
+              <router-link :to="{ name: 'CanteenForm' }">renseigné le SIRET</router-link>
             </span>
             <span v-else-if="isSatelliteWithBadSiret">
               Vous pourrez télédéclarer après avoir
