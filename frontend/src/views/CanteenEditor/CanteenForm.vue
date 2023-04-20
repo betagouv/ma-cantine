@@ -205,7 +205,11 @@
               hide-details="auto"
               validate-on-blur
               v-model="canteen.centralProducerSiret"
-              :rules="[validators.length(14), validators.luhn, validators.isDifferent(siret, satelliteSiretMessage)]"
+              :rules="[
+                validators.length(14),
+                validators.luhn,
+                validators.isDifferent(canteen.siret, satelliteSiretMessage),
+              ]"
             />
             <p class="caption mt-1 ml-2">
               Vous ne le connaissez pas ? Utilisez cet
@@ -295,7 +299,7 @@
 
 <script>
 import validators from "@/validators"
-import { toBase64, getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
+import { toBase64, getObjectDiff, sectorsSelectList, readCookie, lastYear } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
@@ -482,6 +486,7 @@ export default {
             message,
             status: "success",
           })
+          this.$emit("updateCanteen", canteenJson)
           if (this.isNewCanteen) {
             const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteenJson)
             this.$router.push({
@@ -490,7 +495,19 @@ export default {
               params: { canteenUrlComponent },
             })
           } else {
-            this.$router.push({ name: "ManagementPage" })
+            // encourage TDs by redirecting to diagnostic page if relevant
+            const diag = this.canteen.diagnostics.find((d) => d.year == lastYear())
+            if (diag && diag.teledeclaration?.status !== "SUBMITTED") {
+              this.$router.push({
+                name: "DiagnosticModification",
+                params: {
+                  canteenUrlComponent: this.canteenUrlComponent,
+                  year: lastYear(),
+                },
+              })
+            } else {
+              this.$router.push({ name: "ManagementPage" })
+            }
           }
         })
         .catch((e) => {
