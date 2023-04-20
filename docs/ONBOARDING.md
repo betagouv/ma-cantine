@@ -125,6 +125,16 @@ python manage.py migrate
 
 Notez que cette commande est à effectuer à chaque changement de schema de la base de données.
 
+### Génération des fichiers de i18n
+
+Pour créer les fichiers compilés de traduction :
+
+```
+python manage.py compilemessages
+```
+
+Notez que cette commande est à effectuer à chaque changement de fichier de traduction *po.
+
 ## Lancer l'application en mode développement
 
 Pour le développement il faudra avoir deux terminales ouvertes : une pour l'application Django, et une autre pour l'application VueJS.
