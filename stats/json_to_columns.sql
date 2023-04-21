@@ -5,22 +5,24 @@ select
     year,
     status,
     applicant_id,
+    declared_data -> 'applicant' ->> 'name' as applicant_name,
+    declared_data -> 'applicant' ->> 'email' as applicant_email,
     canteen_id,
     canteen_siret,
     declared_data -> 'canteen' ->> 'name' as canteen_name,
-    declared_data -> 'canteen' ->> 'line_ministry' as line_ministry,
+    declared_data -> 'canteen' ->> 'daily_meal_count' as daily_meal_count,
+    declared_data -> 'canteen' ->> 'yearly_meal_count' as yearly_meal_count,
     declared_data -> 'canteen' ->> 'economic_model' as economic_model,
     declared_data -> 'canteen' ->> 'city_insee_code' as city_insee_code,
     department,
     region,
     declared_data -> 'canteen' ->> 'management_type' as management_type,
     declared_data -> 'canteen' ->> 'production_type' as production_type,
-    declared_data -> 'canteen' ->> 'daily_meal_count' as daily_meal_count,
-    declared_data -> 'canteen' ->> 'yearly_meal_count' as yearly_meal_count,
     declared_data -> 'canteen' ->> 'central_producer_siret' as central_producer_siret,
     declared_data -> 'canteen' ->> 'satellite_canteens_count' as satellite_canteens_count,
-    declared_data -> 'applicant' ->> 'name' as applicant_name,
-    declared_data -> 'applicant' ->> 'email' as applicant_email,
+    declared_data -> 'satellites' as satellites,
+    declared_data -> 'canteen' ->> 'sectors' as sectors,
+    declared_data -> 'canteen' ->> 'line_ministry' as line_ministry,
     -- meta fields
     teledeclaration_mode,
     declared_data -> 'teledeclaration' ->> 'central_kitchen_diagnostic_mode' as central_kitchen_diagnostic_mode,
@@ -188,3 +190,4 @@ left join (
 ) as geo_data
 on city_insee_code = declared_data -> 'canteen' ->> 'city_insee_code'
 where {{snippet: filtre TDs actives en 2022}}
+order by creation_date desc
