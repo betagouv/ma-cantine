@@ -618,6 +618,10 @@ export default {
       } else this.$router.replace({ name: "NotFound" })
       const defaultDiagnosticType = this.showExtendedDiagnostic() ? "COMPLETE" : "SIMPLE"
       this.$set(this.diagnostic, "diagnosticType", this.diagnostic.diagnosticType || defaultDiagnosticType)
+      if (!this.diagnostic.year) {
+        const hasLastYearDiag = this.originalCanteen.diagnostics.some((d) => d.year === this.teledeclarationYear)
+        if (!hasLastYearDiag) this.$set(this.diagnostic, "year", this.teledeclarationYear)
+      }
     },
     refreshCanteen() {
       if (this.originalCanteen) this.$set(this, "canteen", JSON.parse(JSON.stringify(this.originalCanteen)))
