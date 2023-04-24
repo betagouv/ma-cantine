@@ -2,27 +2,25 @@
   <div>
     <v-dialog max-width="700" v-model="calculatorModal" @input="stopVideo">
       <template v-slot:activator="{ on, attrs }">
-        <v-card class="text-decoration-none text-left mt-4" hover v-on="on" v-bind="attrs">
-          <DsfrCallout icon="mdi-calculator" class="text-body-2 mb-0">
-            Si vous avez besoin d'aide pour calculer votre part de bios et de produits labélisés, vous pouvez tester
-            notre calculateur sous format excel.
-          </DsfrCallout>
-        </v-card>
+        <p class="mt-4 body-1">
+          Si vous avez besoin d'aide pour calculer votre part de bios et de produits labélisés, vous pouvez
+          <a href="#" v-on="on" v-bind="attrs">tester notre calculateur sous format excel</a>
+        </p>
       </template>
       <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />
     </v-dialog>
 
-    <v-card
-      href="https://www.inao.gouv.fr/Espace-professionnel-et-outils/Rechercher-un-produit"
-      target="_blank"
-      class="text-decoration-none text-left mt-4"
-      hover
-    >
-      <DsfrCallout icon="mdi-sprout" color="#00A95F" class="text-body-2 mb-0">
-        Trouver des catégories de produits en recherchant par labels, siqo et/ou régions avec le moteur de recherche de
-        l'INAO.
-      </DsfrCallout>
-    </v-card>
+    <p class="mt-4 body-1">
+      Trouver des catégories de produits en recherchant par labels, SIQO et/ou régions avec
+      <a
+        href="https://www.inao.gouv.fr/Espace-professionnel-et-outils/Rechercher-un-produit"
+        target="_blank"
+        rel="noopener"
+      >
+        le moteur de recherche de l'INAO
+        <v-icon color="primary" small>mdi-open-in-new</v-icon>
+      </a>
+    </p>
 
     <DownloadLink
       href="/static/documents/Guide Pratique MP Gestion directe.pdf"
@@ -35,13 +33,11 @@
 
 <script>
 import CalculatorResourceModal from "@/components/KeyMeasureResource/CalculatorResourceModal"
-import DsfrCallout from "@/components/DsfrCallout"
 import DownloadLink from "@/components/DownloadLink"
 
 export default {
   components: {
     CalculatorResourceModal,
-    DsfrCallout,
     DownloadLink,
   },
   data() {
