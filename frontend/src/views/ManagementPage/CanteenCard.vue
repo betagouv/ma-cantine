@@ -1,7 +1,7 @@
 <template>
   <v-card
     :to="{
-      name: 'CanteenModification',
+      name: 'DiagnosticList',
       params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
     }"
     class="dsfr d-flex flex-column"
