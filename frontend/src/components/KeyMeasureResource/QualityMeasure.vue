@@ -24,39 +24,25 @@
       </DsfrCallout>
     </v-card>
 
-    <v-card
+    <DownloadLink
       href="/static/documents/Guide Pratique MP Gestion directe.pdf"
-      target="_blank"
-      class="text-decoration-none text-left mt-4"
-      hover
-    >
-      <DsfrCallout icon="mdi-file-download-outline" class="text-body-2 mb-0" color="#C08C65">
-        Télécharger le guide pratique de rédaction des marchés publics pour des appros durables à destination des
-        acteurs de la restauration collective en gestion directe.
-      </DsfrCallout>
-    </v-card>
-
-    <v-card
-      href="https://ma-cantine-1.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2FnKCl4FRksM2ovwTi7ORw%2FCNRC%20Guide%20acheteurs%20prestation%20service%2011%202021.pdf?alt=media"
-      target="_blank"
-      class="text-decoration-none text-left mt-4"
-      hover
-    >
-      <DsfrCallout icon="mdi-file-download-outline" color="#C08C65" class="text-body-2 mb-0">
-        Télécharger le guide pratique à destination des acteurs de la restauration collective en prestation de service.
-      </DsfrCallout>
-    </v-card>
+      label="Télécharger le guide pratique de rédaction des marchés publics pour des appros durables à destination des acteurs de la restauration collective en gestion directe."
+      sizeStr="2,1 Mo"
+      class="mt-4"
+    />
   </div>
 </template>
 
 <script>
 import CalculatorResourceModal from "@/components/KeyMeasureResource/CalculatorResourceModal"
 import DsfrCallout from "@/components/DsfrCallout"
+import DownloadLink from "@/components/DownloadLink"
 
 export default {
   components: {
     CalculatorResourceModal,
     DsfrCallout,
+    DownloadLink,
   },
   data() {
     return {
