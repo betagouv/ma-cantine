@@ -1,37 +1,30 @@
 <template>
   <div>
-    <v-card
-      href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/diversification-des-sources-de-proteines-et-menus-vegetariens/guide-pour-la-mise-en-place-du-menu-vegetarien-en-milieu-scolaire"
-      class="text-decoration-none text-left mt-4"
-      target="_blank"
-      rel="noopener"
-      hover
-    >
-      <DsfrCallout icon="mdi-carrot" class="text-body-2 mb-0" color="#00A95F">
-        Vous pouvez accéder à un guide sur le menu végétarien hebdomadaire en restauration scolaire ou notre livret de
-        recettes pour menus végétariens dans nos ressources.
-        <v-icon color="black" small class="pb-1">mdi-open-in-new</v-icon>
-      </DsfrCallout>
-    </v-card>
-    <v-card
-      href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/diversification-des-sources-de-proteines-et-menus-vegetariens/untitled"
-      class="text-decoration-none text-left mt-4"
-      target="_blank"
-      rel="noopener"
-      hover
-    >
-      <DsfrCallout icon="mdi-carrot" class="text-body-2 mb-0" color="#00A95F">
-        Accéder le cadre général du plan pluriannuel de diversification des sources de protéines.
-        <v-icon color="black" small class="pb-1">mdi-open-in-new</v-icon>
-      </DsfrCallout>
-    </v-card>
+    <DownloadLink
+      href="/static/documents/Guide CNRC Expérimentation du Menu Végétarien Restauration Scolaire.pdf"
+      label="Télécharger un guide sur le menu végétarien hebdomadaire en restauration scolaire"
+      sizeStr="2,1 Mo"
+      class="mt-4"
+    />
+    <DownloadLink
+      href="/static/documents/Livret de Recettes Végétariennes.pdf"
+      label="Télécharger un livret de recettes pour menus végétariens"
+      sizeStr="8,9 Mo"
+      class="mt-4"
+    />
+    <DownloadLink
+      href="/static/documents/Cadre Général CNRC Plan pluriannuel de diversification des sources de protéines.pdf"
+      label="Télécharger le cadre général du plan pluriannuel de diversification des sources de protéines"
+      sizeStr="5,6 Mo"
+      class="mt-4"
+    />
   </div>
 </template>
 
 <script>
-import DsfrCallout from "@/components/DsfrCallout"
+import DownloadLink from "@/components/DownloadLink"
 
 export default {
-  components: { DsfrCallout },
+  components: { DownloadLink },
 }
 </script>
