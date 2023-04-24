@@ -210,14 +210,34 @@
                 validators.luhn,
                 validators.isDifferent(canteen.siret, satelliteSiretMessage),
               ]"
+              @blur="getCentralKitchen"
             />
             <p class="caption mt-1 ml-2">
               Vous ne le connaissez pas ? Utilisez cet
               <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
                 outil de recherche pour trouver le SIRET
+                <v-icon x-small color="primary">mdi-open-in-new</v-icon>
               </a>
               de la cuisine centrale.
             </p>
+            <v-expand-transition>
+              <DsfrCallout v-if="centralKitchen">
+                <p v-if="centralKitchen.isManagedByUser" class="mb-0">
+                  Ce SIRET correspond à l'établissement que vous gérez
+                  <router-link
+                    :to="{
+                      name: 'CanteenModification',
+                      params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(centralKitchen) },
+                    }"
+                    target="_blank"
+                  >
+                    « {{ centralKitchen.name }} »
+                    <v-icon small color="primary">mdi-open-in-new</v-icon>
+                  </router-link>
+                </p>
+                <p v-else class="mb-0">Ce SIRET correspond à l'établissement « {{ centralKitchen.name }} »</p>
+              </DsfrCallout>
+            </v-expand-transition>
           </v-col>
         </v-expand-transition>
       </v-row>
@@ -308,6 +328,7 @@ import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrCallout from "@/components/DsfrCallout"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
@@ -321,6 +342,7 @@ export default {
     DsfrTextField,
     DsfrAutocomplete,
     DsfrSelect,
+    DsfrCallout,
     SiretCheck,
     BreadcrumbsNav,
   },
@@ -356,6 +378,7 @@ export default {
       productionTypes: Constants.ProductionTypesDetailed,
       economicModels: Constants.EconomicModels,
       ministries: Constants.Ministries,
+      centralKitchen: null,
     }
   },
   computed: {
@@ -398,6 +421,7 @@ export default {
         this.populateCityAutocomplete()
       }
       if (!this.canteen.images) this.canteen.images = []
+      this.getCentralKitchen()
     } else this.$router.push({ name: "NewCanteen" })
   },
   created() {
@@ -577,6 +601,13 @@ export default {
         return `Ce total doit être superieur du moyen de repas par jour sur place, actuellement ${this.canteen.dailyMealCount}`
       }
       return true
+    },
+    getCentralKitchen() {
+      if (this.canteen.centralProducerSiret && this.canteen.siret !== this.canteen.centralProducerSiret) {
+        fetch("/api/v1/canteenStatus/siret/" + this.canteen.centralProducerSiret)
+          .then((response) => response.json())
+          .then((response) => (this.centralKitchen = response))
+      }
     },
   },
   watch: {
