@@ -1,16 +1,25 @@
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
+from django.conf import settings
 from django.contrib.auth import get_user_model, tokens, login
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.conf import settings
 from django.utils.encoding import force_bytes
 from common.utils import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, FormView, View
 from web.forms import RegisterUserForm
 from django.views.decorators.clickjacking import xframe_options_exempt
+from authlib.integrations.django_client import OAuth
+
+if settings.USES_MONCOMPTEPRO:
+    oauth = OAuth()
+    oauth.register(
+        name="moncomptepro",
+        server_metadata_url=settings.MONCOMPTEPRO_CONFIG,
+        client_kwargs={"scope": "openid email profile organizations"},
+    )
 
 
 class WidgetView(TemplateView):
@@ -173,3 +182,19 @@ def _login_and_send_activation_email(username, request):
         return redirect(reverse_lazy("app"))
     except Exception:
         raise Exception("Error occurred : the mail could not be sent.")
+
+
+class SampleOIDCLoginView(View):
+    def get(self, request, *args, **kwargs):
+        redirect_uri = request.build_absolute_uri("/signin-oidc")  # Use reverse
+        return oauth.moncomptepro.authorize_redirect(request, redirect_uri)
+
+
+class SampleOIDCAuthorizeView(View):
+    def get(self, request, *args, **kwargs):
+        token = oauth.moncomptepro.authorize_access_token(request)
+        resp = oauth.moncomptepro.userinfo(token=token)
+        userinfo = token["userinfo"]
+        # Create user, mark it as logged in, etc
+        print(resp)
+        print(userinfo)

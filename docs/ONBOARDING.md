@@ -87,6 +87,9 @@ REDIS_PREPEND_KEY= Optionnel - Ajout ce string au début de chaque clé Redis. U
 OVERRIDE_TEST_SEED= Optionnel - `seed` utilisé par les tests pour les éléments aléatoires. Utile lors qu'un test échoue et qu'on veut reproduire exactement ce qu'il s'est passé.
 SIRET_API_KEY= Optionnel - pour utiliser l'API INSEE Sirene. Pour générer : accèder votre compte https://api.insee.fr/catalogue/ > My applications > Add application
 SIRET_API_SECRET= Optionnel - pour utiliser l'API INSEE Sirene
+MONCOMPTEPRO_CLIENT_ID= Optionnel - Client ID utilisé pour l'authentification via [MonComptePro](https://github.com/betagouv/moncomptepro).
+MONCOMPTEPRO_SECRET= Optionnel - Secret utilisé pour l'authentification via [MonComptePro](https://github.com/betagouv/moncomptepro).
+MONCOMPTEPRO_CONFIG= Optionnel - Url de configuration utilisé pour l'authentification via [MonComptePro](https://github.com/betagouv/moncomptepro). Par exemple : `https://app-test.moncomptepro.beta.gouv.fr/.well-known/openid-configuration`
 ```
 
 ### Activer les feature flags
