@@ -186,7 +186,7 @@ def _login_and_send_activation_email(username, request):
 
 class SampleOIDCLoginView(View):
     def get(self, request, *args, **kwargs):
-        redirect_uri = request.build_absolute_uri("/signin-oidc")  # Use reverse
+        redirect_uri = request.build_absolute_uri(reverse_lazy("/oidc-authorize"))
         return oauth.moncomptepro.authorize_redirect(request, redirect_uri)
 
 
