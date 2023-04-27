@@ -11,6 +11,11 @@
           Modifier mon profil
         </v-btn>
       </p>
+      <CanteenCreationDialog
+        v-if="showCanteenCreationPrompt !== null"
+        :organizations="loggedUser.mcpOrganizations"
+        v-model="showCanteenCreationPrompt"
+      />
     </div>
     <TeledeclarationBanner v-if="showTeledeclarationBanner" />
     <ActionsBanner v-if="showActionsBanner" />
@@ -31,6 +36,7 @@ import CanteensPagination from "./CanteensPagination.vue"
 import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import UserTools from "./UserTools"
 import TeledeclarationBanner from "./TeledeclarationBanner"
+import CanteenCreationDialog from "./CanteenCreationDialog"
 import ActionsBanner from "./ActionsBanner"
 import validators from "@/validators"
 
@@ -41,12 +47,14 @@ export default {
     PageSatisfaction,
     TeledeclarationBanner,
     ActionsBanner,
+    CanteenCreationDialog,
   },
   data() {
     return {
       validators,
       canteenCount: undefined,
       showTeledeclarationBanner: true,
+      showCanteenCreationPrompt: null,
     }
   },
   computed: {
@@ -55,6 +63,13 @@ export default {
     },
     showActionsBanner() {
       return this.canteenCount > 0 && !this.showTeledeclarationBanner
+    },
+  },
+  watch: {
+    canteenCount(count) {
+      if (this.loggedUser.mcpOrganizations && count === 0 && this.showCanteenCreationPrompt === null) {
+        this.showCanteenCreationPrompt = true
+      }
     },
   },
 }
