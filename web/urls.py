@@ -153,7 +153,7 @@ if settings.USES_MONCOMPTEPRO:
 
     urlpatterns.append(
         path(
-            "signin-oidc/",
+            "signin-oidc",
             SampleOIDCAuthorizeView.as_view(),
             name="oidc-authorize",
         )
