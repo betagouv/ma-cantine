@@ -46,7 +46,10 @@
       </v-card>
 
       <div v-if="showClaimCanteen">
-        <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-if="claimSucceeded">
+        <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-if="undoSucceeded">
+          Vous n'êtes plus le gestionnaire de cet établissement.
+        </v-alert>
+        <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-else-if="claimSucceeded">
           <p>
             Vous êtes maintenant gestionnaire de cet établissement, et vous pouvez le
             <router-link
@@ -60,10 +63,9 @@
           </p>
           <p class="mb-0">
             Il s'agit d'une erreur ?
-            <router-link :to="{ name: 'ContactPage' }">Contactez-nous</router-link>
+            <v-btn @click="undoClaim" outlined color="primary" class="ml-2">Retirez-vous</v-btn>
           </p>
         </v-alert>
-
         <DsfrCallout v-else>
           <div>Cet établissement n'a pas de gestionnaire associé. C'est votre établissement ?</div>
           <div v-if="loggedUser" class="mt-2">
@@ -104,6 +106,7 @@ export default {
       labels,
       canteensHomeBacklink: { name: "CanteensHome" },
       claimSucceeded: false,
+      undoSucceeded: false,
       showCopySuccessMessage: false,
     }
   },
@@ -146,6 +149,16 @@ export default {
         .dispatch("claimCanteen", { canteenId })
         .then(() => (this.claimSucceeded = true))
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    undoClaim() {
+      this.$store
+        .dispatch("removeManager", {
+          canteenId: this.canteen.id,
+          email: this.loggedUser.email.trim(),
+        })
+        .then(() => {
+          this.undoSucceeded = true
+        })
     },
   },
   beforeMount() {
