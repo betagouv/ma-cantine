@@ -97,6 +97,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "macantine.middleware.RedirectMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -167,6 +168,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = "fr-fr"
+LANGUAGES = (("fr", "Français"),)
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, "templates", "locale"),
+]
+
 TIME_ZONE = "Europe/Paris"
 USE_I18N = True
 USE_L10N = True
@@ -278,6 +284,10 @@ TRELLO_API_KEY = os.getenv("TRELLO_API_KEY")
 TRELLO_API_TOKEN = os.getenv("TRELLO_API_TOKEN")
 TRELLO_LIST_ID_CONTACT = os.getenv("TRELLO_LIST_ID_CONTACT")
 TRELLO_LIST_ID_PUBLICATION = os.getenv("TRELLO_LIST_ID_PUBLICATION")
+
+# SIRET API
+SIRET_API_KEY = os.getenv("SIRET_API_KEY")
+SIRET_API_SECRET = os.getenv("SIRET_API_SECRET")
 
 # Magicauth
 MAGICAUTH_EMAIL_FIELD = "email"
@@ -497,3 +507,6 @@ OAUTH2_PROVIDER = {
         "canteen:write": "Modifier les données de votre cantine",
     },
 }
+
+REDIS_URL = os.getenv("REDIS_URL")
+REDIS_PREPEND_KEY = os.getenv("REDIS_PREPEND_KEY", "")

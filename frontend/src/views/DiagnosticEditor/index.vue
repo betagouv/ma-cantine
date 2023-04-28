@@ -13,6 +13,20 @@
           {{ isNewDiagnostic ? "Nouveau diagnostic" : "Modifier mon diagnostic" }}
         </h1>
 
+        <v-alert v-if="hasSiretIssue" type="error" outlined>
+          <p v-if="!canteen.siret" class="mb-0">
+            Vous n'avez pas renseigné le SIRET pour cette cantine, pensez à
+            <router-link :to="{ name: 'CanteenForm' }">ajouter le SIRET</router-link>
+            avant remplir le diagnostic.
+          </p>
+          <p v-else-if="isSatelliteWithBadSiret" class="mb-0">
+            Vous avez déclaré que cette cantine reçoit des repas préparés par un autre établissement, mais les SIRETs
+            renseignés pour la cuisine centrale et l'établissement sont les mêmes. Pensez à
+            <router-link :to="{ name: 'CanteenForm' }">mettre à jour les SIRETs</router-link>
+            avant de remplir le diagnostic.
+          </p>
+        </v-alert>
+
         <v-form ref="select" v-model="formIsValid.select">
           <v-row>
             <v-col cols="12" md="5">
@@ -330,6 +344,14 @@
                 satellites
               </span>
             </span>
+            <span v-else-if="!canteen.siret">
+              Vous pourrez télédéclarer après avoir
+              <router-link :to="{ name: 'CanteenForm' }">renseigné le SIRET</router-link>
+            </span>
+            <span v-else-if="isSatelliteWithBadSiret">
+              Vous pourrez télédéclarer après avoir
+              <router-link :to="{ name: 'CanteenForm' }">corrigé les SIRETs</router-link>
+            </span>
           </p>
         </v-sheet>
         <SatelliteManagement
@@ -473,7 +495,11 @@ export default {
       return Object.keys(diff).length > 0
     },
     canSubmitTeledeclaration() {
-      return (!this.showApproPanel || this.diagnostic.valueTotalHt > 0) && !this.hasSatelliteCountInconsistency
+      return (
+        (!this.showApproPanel || this.diagnostic.valueTotalHt > 0) &&
+        !this.hasSatelliteCountInconsistency &&
+        !this.hasSiretIssue
+      )
     },
     hasActiveTeledeclaration() {
       return this.diagnostic.teledeclaration && this.diagnostic.teledeclaration.status === "SUBMITTED"
@@ -504,6 +530,15 @@ export default {
       if (this.diagnostic.year && this.originalCanteen?.centralKitchenDiagnostics)
         return this.originalCanteen.centralKitchenDiagnostics.find((x) => x.year === this.diagnostic.year)
       return null
+    },
+    isSatelliteWithBadSiret() {
+      return (
+        this.canteen.siret === this.canteen.centralProducerSiret &&
+        this.canteen.productionType === "site_cooked_elsewhere"
+      )
+    },
+    hasSiretIssue() {
+      return !this.canteen.siret || this.isSatelliteWithBadSiret
     },
     showApproPanel() {
       if (this.originalCanteen.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic) {
@@ -583,6 +618,10 @@ export default {
       } else this.$router.replace({ name: "NotFound" })
       const defaultDiagnosticType = this.showExtendedDiagnostic() ? "COMPLETE" : "SIMPLE"
       this.$set(this.diagnostic, "diagnosticType", this.diagnostic.diagnosticType || defaultDiagnosticType)
+      if (!this.diagnostic.year) {
+        const hasLastYearDiag = this.originalCanteen.diagnostics.some((d) => d.year === this.teledeclarationYear)
+        if (!hasLastYearDiag) this.$set(this.diagnostic, "year", this.teledeclarationYear)
+      }
     },
     refreshCanteen() {
       if (this.originalCanteen) this.$set(this, "canteen", JSON.parse(JSON.stringify(this.originalCanteen)))

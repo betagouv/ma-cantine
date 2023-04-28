@@ -25,6 +25,7 @@
 
 <script>
 import { capitalise } from "@/utils"
+import Constants from "@/constants"
 
 export default {
   name: "CanteenIndicators",
@@ -50,7 +51,7 @@ export default {
     categoriesDisplayString() {
       const categories = this.sectors.map((s) => s.category)
       const uniqueCategories = categories.filter((c, idx, self) => c && self.indexOf(c) === idx)
-      return capitalise(uniqueCategories.join(", "))
+      return capitalise(uniqueCategories.map((c) => Constants.SectorCategoryTranslations[c]).join(", "))
     },
     sectorsDisplayString() {
       return capitalise(this.sectors.map((x) => x.name.toLowerCase()).join(", "))

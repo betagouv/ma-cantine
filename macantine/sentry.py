@@ -16,6 +16,7 @@ def before_send(event, hint):
     exceptions = [
         PermissionDenied,
         ValidationError,
+        IndexError,
     ]
 
     try:

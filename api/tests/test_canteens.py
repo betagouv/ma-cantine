@@ -1,5 +1,6 @@
 import os
 import base64
+import requests_mock
 from django.urls import reverse
 from django.test.utils import override_settings
 from rest_framework.test import APITestCase
@@ -470,6 +471,55 @@ class TestCanteenApi(APITestCase):
         self.assertFalse(body["isManagedByUser"])
         # the CanteenFactory creates canteens with managers
         self.assertFalse(body["canBeClaimed"])
+
+    @requests_mock.Mocker()
+    @authenticate
+    def test_check_siret_new_canteen(self, mock):
+        siret = "34974603058674"
+        city = "Paris 15e Arrondissement"
+        postcode = "75015"
+        insee_code = "75115"
+        sirene_api_url = f"https://api.insee.fr/entreprises/sirene/V3/siret/{siret}"
+        sirene_mocked_response = {
+            "etablissement": {
+                "uniteLegale": {"denominationUniteLegale": "Canteen Name"},
+                "adresseEtablissement": {
+                    "codePostalEtablissement": postcode,
+                    "libelleCommuneEtablissement": city,
+                },
+            },
+        }
+        mock.get(sirene_api_url, json=sirene_mocked_response)
+
+        geo_api_url = (
+            f"https://api-adresse.data.gouv.fr/search/?q={city}&postcode={postcode}&type=municipality&autocomplete=1"
+        )
+        geo_mocked_response = {
+            "features": [
+                {
+                    "properties": {
+                        "label": city,
+                        "citycode": insee_code,
+                        "context": "75,0",
+                    }
+                }
+            ],
+        }
+        mock.get(geo_api_url, json=geo_mocked_response)
+
+        token_api_url = "https://api.insee.fr/token"
+        token_mocked_response = {"access_token": "test"}
+        mock.post(token_api_url, json=token_mocked_response)
+
+        response = self.client.get(reverse("siret_check", kwargs={"siret": siret}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["name"], "Canteen Name")
+        self.assertEqual(body["siret"], siret)
+        self.assertEqual(body["postalCode"], postcode)
+        self.assertEqual(body["city"], city)
+        self.assertEqual(body["cityInseeCode"], insee_code)
+        self.assertEqual(body["department"], "75")
 
     @authenticate
     def test_user_canteen_teledeclaration(self):
@@ -954,6 +1004,63 @@ class TestCanteenApi(APITestCase):
         body = response.json()
 
         self.assertEqual(body["diagnosticsToTeledeclare"], [complete_diag.id])
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_filter_td_bad_sirets(self):
+        """
+        Check that canteens with SIRET issues (no SIRET, SIRET = central_producer_siret) have complete canteen actions and not TD actions
+        """
+        last_year = 2021
+        canteen_with_no_siret = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            siret=None,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        # complete diag
+        DiagnosticFactory.create(canteen=canteen_with_no_siret, year=last_year, value_total_ht=10000)
+        canteen_with_bad_central_siret = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            siret="59282615314394",
+            central_producer_siret="59282615314394",
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        # complete diag
+        DiagnosticFactory.create(canteen=canteen_with_bad_central_siret, year=last_year, value_total_ht=10000)
+        canteen_to_td = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            siret="55314169703815",
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        # complete diag
+        diag_to_td = DiagnosticFactory.create(canteen=canteen_to_td, year=last_year, value_total_ht=10000)
+
+        for canteen in [
+            canteen_with_no_siret,
+            canteen_with_bad_central_siret,
+            canteen_to_td,
+        ]:
+            canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
+        body = response.json()
+
+        self.assertEqual(body["diagnosticsToTeledeclare"], [diag_to_td.id])
+        returned_canteens = body["results"]
+        self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
+        self.assertEqual(returned_canteens[1]["action"], "35_fill_canteen_data")
 
     @authenticate
     def test_get_diagnostics_to_td_none(self):

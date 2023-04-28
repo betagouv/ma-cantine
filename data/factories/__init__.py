@@ -18,3 +18,4 @@ from .review import ReviewFactory  # noqa
 from .communityevent import CommunityEventFactory  # noqa
 from .partner import PartnerFactory  # noqa
 from .partnertype import PartnerTypeFactory  # noqa
+from .videotutorial import VideoTutorialFactory  # noqa

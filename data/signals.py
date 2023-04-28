@@ -28,7 +28,10 @@ def update_satellites_siret(sender, instance, raw, using, update_fields, **kwarg
             logger.info(
                 f"SIRET change. Central kitchen {instance.id} ({instance.name}) changed its SIRET from {obj.siret} to {instance.siret}"
             )
-            satellites = Canteen.objects.filter(central_producer_siret=obj.siret).only("id")
+            satellites = Canteen.objects.filter(
+                central_producer_siret=obj.siret,
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            ).only("id")
             for satellite in satellites:
                 logger.info(
                     f"SIRET change. Satellite cantine {satellite.id} had its central_producer_siret changed automatically from {obj.siret} to {instance.siret}"

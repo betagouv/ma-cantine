@@ -152,7 +152,7 @@ export default {
             this.requestSent = false
             this.duplicateSiretCanteen = response
           } else {
-            this.saveSiretIfNeeded().then(() => this.$emit("siretIsValid", this.siret))
+            this.saveSiretIfNeeded().then(() => this.$emit("siretIsValid", response))
           }
         })
     },

@@ -6,6 +6,7 @@
     "managetasks": [
       "migrate --noinput",
       "buildnpm",
+      "compilemessages",
       "collectstatic --noinput"
     ]
   }

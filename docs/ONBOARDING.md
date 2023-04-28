@@ -30,7 +30,7 @@ pip install -r requirements.txt
 
 ### Installer les dépendances du frontend
 
-On utilise `node` version 14 et npm version 6.
+On utilise les dernires versions LTS de `node` et `npm`.
 
 L'application frontend se trouve sous `/frontend`. Pour installer les dépendances :
 
@@ -82,8 +82,11 @@ TRELLO_API_KEY= Optionnel - Permet la création de cartes Trello suite à une de
 TRELLO_API_TOKEN= Optionnel - Permet la création de cartes Trello suite à une demande de contact de la part de l'utilisateur. Conseils en-dessous pour l'obtenir.
 TRELLO_LIST_ID_CONTACT= Optionnel - ID de la liste où l'application mettra des cartes suite à une demande de contact de la part de l'utilistauer. Conseils en-dessous pour l'obtenir.
 TRELLO_LIST_ID_PUBLICATION= Optionnel - ID de la liste où l'application mettra des cartes suite à une demande de publication de la part de l'utilistauer. Conseils en-dessous pour l'obtenir.
-REDIS_URL= Optionnel - L'instance redis à utiliser pour les tâches asynchrones. Cette fonctionnalité n'est pas encore utilisée. Par exemple : 'redis://localhost:6379/0'
+REDIS_URL= L'instance redis à utiliser pour les tâches asynchrones et le cache des clés API. Par exemple : 'redis://localhost:6379/0'
+REDIS_PREPEND_KEY= Optionnel - Ajout ce string au début de chaque clé Redis. Utile pour partager la même DB Redis sur plusieurs environnements
 OVERRIDE_TEST_SEED= Optionnel - `seed` utilisé par les tests pour les éléments aléatoires. Utile lors qu'un test échoue et qu'on veut reproduire exactement ce qu'il s'est passé.
+SIRET_API_KEY= Optionnel - pour utiliser l'API INSEE Sirene. Pour générer : accèder votre compte https://api.insee.fr/catalogue/ > My applications > Add application
+SIRET_API_SECRET= Optionnel - pour utiliser l'API INSEE Sirene
 ```
 
 ### Activer les feature flags
@@ -121,6 +124,16 @@ python manage.py migrate
 ```
 
 Notez que cette commande est à effectuer à chaque changement de schema de la base de données.
+
+### Génération des fichiers de i18n
+
+Pour créer les fichiers compilés de traduction :
+
+```
+python manage.py compilemessages
+```
+
+Notez que cette commande est à effectuer à chaque changement de fichier de traduction *po.
 
 ## Lancer l'application en mode développement
 
@@ -203,6 +216,6 @@ Il faut néanmoins tenir en compte que la mise en page ne sera pas visible et qu
 
 ### Celery
 
-Celery est un gestionnaire de tâches asynchrone. À l'heure actuelle il n'est pas utilisé, mais le roadmap prévoit la mise en place de tâches récurrentes. Pour l'utiliser, un serveur redis est nécessaire.
+Celery est un gestionnaire de tâches asynchrone utilisé par exemple pour l'envoi périodique de courriels de rappel et pour le remplissage des donn
 
 Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable `CC_PYTHON_CELERY_MODULE=macantine.celery`. La fonctionnalité Celery Beat doit aussi être activée : `CC_PYTHON_CELERY_USE_BEAT=true`, ainsi que le timezone souhaité : `CELERY_TIMEZONE:'Europe/Paris'`

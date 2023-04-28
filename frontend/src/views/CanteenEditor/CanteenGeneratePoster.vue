@@ -90,6 +90,12 @@ export default {
     validators() {
       return validators
     },
+    usesCentralKitchenDiagnostics() {
+      return (
+        this.originalCanteen?.productionType === "site_cooked_elsewhere" &&
+        this.originalCanteen?.centralKitchenDiagnostics?.length > 0
+      )
+    },
     diagnosticSet() {
       return this.usesCentralKitchenDiagnostics
         ? this.originalCanteen.centralKitchenDiagnostics

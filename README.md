@@ -8,7 +8,7 @@ Accompagner au mieux les acteurs de la restauration collective dans leur offre a
 
 ## Aspects techniques
 
-Si vous voulez installer l'environnement en local : [ONBOARDING.md](./ONBOARDING.md)
+Si vous voulez installer l'environnement en local : [ONBOARDING.md](./docs/ONBOARDING.md)
 
 ### Architecture
 

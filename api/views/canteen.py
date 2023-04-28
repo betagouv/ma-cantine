@@ -1,6 +1,8 @@
 import logging
+import base64
 from collections import OrderedDict
 from datetime import date
+import redis as r
 from django.apps import apps
 from django.conf import settings
 from django.http import JsonResponse
@@ -44,6 +46,7 @@ from api.exceptions import DuplicateException
 from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
 
 logger = logging.getLogger(__name__)
+redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
 class PublishedCanteenSingleView(RetrieveAPIView):
@@ -385,8 +388,94 @@ class CanteenStatusView(APIView):
 
     def get(self, request, *args, **kwargs):
         siret = request.parser_context.get("kwargs").get("siret")
-        error_response = check_siret_response(siret, request)
-        return JsonResponse(error_response or {}, status=status.HTTP_200_OK)
+        response = check_siret_response(siret, request) or {}
+        if not response:
+            CanteenStatusView.complete_canteen_data(siret, response)
+            city = response.get("city", None)
+            postcode = response.get("postalCode", None)
+            if city and postcode:
+                CanteenStatusView.complete_location_data(city, postcode, response)
+        return JsonResponse(response, status=status.HTTP_200_OK)
+
+    def complete_canteen_data(siret, response):
+        response["siret"] = siret
+        token = CanteenStatusView.get_siret_token()
+        if not token:
+            return
+
+        redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
+        redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
+        if int(redis.get(redis_key)) > 30:
+            logger.warning("Siret lookup failed - API rate has been exceeded.")
+            return
+
+        siret_response = requests.get(
+            f"https://api.insee.fr/entreprises/sirene/V3/siret/{siret}",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        if siret_response.ok:
+            siret_response = siret_response.json()
+            try:
+                response["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
+                response["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
+                    "codePostalEtablissement"
+                ]
+                response["city"] = siret_response["etablissement"]["adresseEtablissement"][
+                    "libelleCommuneEtablissement"
+                ]
+            except KeyError as e:
+                logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
+        else:
+            logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
+
+    def get_siret_token():
+        if not settings.SIRET_API_KEY or not settings.SIRET_API_SECRET:
+            logger.warning("skipping siret token fetching because key and secret env vars aren't set")
+            return
+        token_redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_TOKEN"
+        if redis.exists(token_redis_key):
+            return redis.get(token_redis_key)
+
+        base64Cred = base64.b64encode(bytes(f"{settings.SIRET_API_KEY}:{settings.SIRET_API_SECRET}", "utf-8")).decode(
+            "utf-8"
+        )
+        token_data = {"grant_type": "client_credentials", "validity_period": 604800}
+        token_headers = {"Authorization": f"Basic {base64Cred}"}
+        token_response = requests.post("https://api.insee.fr/token", data=token_data, headers=token_headers)
+        if token_response.ok:
+            token_response = token_response.json()
+            token = token_response["access_token"]
+            expiration_seconds = 60 * 60 * 24
+            redis.set(token_redis_key, token, ex=expiration_seconds)
+            return token
+        else:
+            logger.warning(f"token fetching failed, code {token_response.status_code} : {token_response.json()}")
+
+    def complete_location_data(city, postcode, response):
+        location_response = requests.get(
+            f"https://api-adresse.data.gouv.fr/search/?q={city}&postcode={postcode}&type=municipality&autocomplete=1"
+        )
+        if location_response.ok:
+            location_response = location_response.json()
+            results = location_response["features"]
+            if results and results[0]:
+                try:
+                    result = results[0]["properties"]
+                    if result:
+                        response["city"] = result["label"]
+                        response["cityInseeCode"] = result["citycode"]
+                        response["postalCode"] = postcode
+                        response["department"] = result["context"].split(",")[0]
+                except KeyError as e:
+                    logger.warning(f"unexpected location response format : {location_response}. Unknown key : {e}")
+            else:
+                logger.warning(
+                    f"features array for city '{city}' and postcode '{postcode}' in location response format is non-existant or empty : {location_response}"
+                )
+        else:
+            logger.warning(
+                f"location fetching failed, code {location_response.status_code} : {location_response.json()}"
+            )
 
 
 def check_siret_response(canteen_siret, request):
@@ -1063,7 +1152,10 @@ class ActionableCanteensListView(ListAPIView):
         # prep add satellites action
         # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
         satellites = (
-            Canteen.objects.filter(central_producer_siret=OuterRef("siret"))
+            Canteen.objects.filter(
+                central_producer_siret=OuterRef("siret"),
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            )
             .order_by()
             .values("central_producer_siret")  # sets the groupBy for the aggregation
         )
@@ -1087,13 +1179,15 @@ class ActionableCanteensListView(ListAPIView):
             Q(yearly_meal_count=None)
             | Q(daily_meal_count=None)
             | Q(siret=None)
+            | Q(siret="")
             | Q(name=None)
             | Q(city_insee_code=None)
             | Q(production_type=None)
             | Q(management_type=None)
             | Q(economic_model=None)
             | (is_central_cuisine_query & Q(satellite_canteens_count=None))
-            | (is_satellite_query & Q(central_producer_siret=None))
+            | (is_satellite_query & (Q(central_producer_siret=None) | Q(central_producer_siret="")))
+            | (is_satellite_query & Q(central_producer_siret=F("siret")))
             | (Q(line_ministry=None) & Q(requires_line_ministry=True))
         )
 

@@ -33,7 +33,7 @@
       </p>
 
       <SiretCheck
-        @siretIsValid="setSiret"
+        @siretIsValid="setCanteenData"
         :canteen="canteen"
         @updateCanteen="(x) => $emit('updateCanteen', x)"
         class="mt-10"
@@ -205,7 +205,11 @@
               hide-details="auto"
               validate-on-blur
               v-model="canteen.centralProducerSiret"
-              :rules="[validators.length(14), validators.luhn, validators.isDifferent(siret, satelliteSiretMessage)]"
+              :rules="[
+                validators.length(14),
+                validators.luhn,
+                validators.isDifferent(canteen.siret, satelliteSiretMessage),
+              ]"
             />
             <p class="caption mt-1 ml-2">
               Vous ne le connaissez pas ? Utilisez cet
@@ -295,7 +299,7 @@
 
 <script>
 import validators from "@/validators"
-import { toBase64, getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
+import { toBase64, getObjectDiff, sectorsSelectList, readCookie, lastYear } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
@@ -410,9 +414,19 @@ export default {
     window.removeEventListener("beforeunload", this.handleUnload)
   },
   methods: {
-    setSiret(siret) {
-      this.siret = siret
+    setCanteenData(data) {
+      this.siret = data.siret
       this.canteen.siret = this.siret
+      if (!this.canteen.name) {
+        this.canteen.name = data.name
+      }
+      if (!this.canteen.city) {
+        this.canteen.city = data.city
+        this.canteen.cityInseeCode = data.cityInseeCode
+        this.canteen.postalCode = data.postalCode
+        this.canteen.department = data.department
+        this.populateCityAutocomplete()
+      }
       this.goToStep(1)
     },
     goToStep(index, addHistory = true) {
@@ -472,6 +486,7 @@ export default {
             message,
             status: "success",
           })
+          this.$emit("updateCanteen", canteenJson)
           if (this.isNewCanteen) {
             const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteenJson)
             this.$router.push({
@@ -480,7 +495,19 @@ export default {
               params: { canteenUrlComponent },
             })
           } else {
-            this.$router.push({ name: "ManagementPage" })
+            // encourage TDs by redirecting to diagnostic page if relevant
+            const diag = this.canteen.diagnostics.find((d) => d.year == lastYear())
+            if (diag && diag.teledeclaration?.status !== "SUBMITTED") {
+              this.$router.push({
+                name: "DiagnosticModification",
+                params: {
+                  canteenUrlComponent: this.canteenUrlComponent,
+                  year: lastYear(),
+                },
+              })
+            } else {
+              this.$router.push({ name: "ManagementPage" })
+            }
           }
         })
         .catch((e) => {
@@ -527,17 +554,19 @@ export default {
         })
     },
     populateCityAutocomplete() {
-      const initialCityAutocomplete = {
-        text: this.canteen.city,
-        value: {
-          label: this.canteen.city,
-          citycode: this.canteen.cityInseeCode,
-          postcode: this.canteen.postalCode,
-          context: this.canteen.department,
-        },
+      if (this.canteen.city && this.canteen.cityInseeCode && this.canteen.postalCode && this.canteen.department) {
+        const initialCityAutocomplete = {
+          text: this.canteen.city,
+          value: {
+            label: this.canteen.city,
+            citycode: this.canteen.cityInseeCode,
+            postcode: this.canteen.postalCode,
+            context: this.canteen.department,
+          },
+        }
+        this.communes.push(initialCityAutocomplete)
+        this.cityAutocompleteChoice = initialCityAutocomplete.value
       }
-      this.communes.push(initialCityAutocomplete)
-      this.cityAutocompleteChoice = initialCityAutocomplete.value
     },
     displayTechnicalControlDialog(bodyText) {
       this.technicalControlText = bodyText
