@@ -991,36 +991,20 @@ class CanteenLocationsView(APIView):
 class ClaimCanteenView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @transaction.atomic
     def post(self, request, canteen_pk):
         try:
-            canteen_name = Canteen.objects.only("name").get(pk=canteen_pk).name
+            canteen = Canteen.objects.only("name").get(pk=canteen_pk)
+        except Canteen.DoesNotExist:
+            raise BadRequest()
 
-            context = {
-                "email": self.request.user.email,
-                "name": self.request.user.get_full_name(),
-                "username": self.request.user.username,
-                "canteen_name": canteen_name,
-                "canteen_id": canteen_pk,
-                "protocol": settings.PROTOCOL,
-                "domain": settings.HOSTNAME,
-            }
+        if canteen.managers.exists() or canteen.publication_status != Canteen.PublicationStatus.PUBLISHED:
+            raise BadRequest()
 
-            send_mail(
-                subject=f"{self.request.user.get_full_name()} voudrait revendiquer la canteen {canteen_name}",
-                to=[
-                    settings.CONTACT_EMAIL,
-                ],
-                template="canteen_claim",
-                context=context,
-            )
-
-            return JsonResponse({}, status=status.HTTP_200_OK)
-        except Exception as e:
-            logger.exception(f"Exception occurred while sending email:\n{e}")
-            return JsonResponse(
-                {"error": "An error has occurred"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        canteen.managers.add(self.request.user)
+        canteen.claimed_by = self.request.user
+        canteen.save()
+        return JsonResponse({}, status=status.HTTP_200_OK)
 
 
 class SatellitesPagination(LimitOffsetPagination):

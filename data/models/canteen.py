@@ -110,6 +110,13 @@ class Canteen(SoftDeletionModel):
         related_name="canteens",
         verbose_name="gestionnaires",
     )
+    claimed_by = models.ForeignKey(
+        get_user_model(),
+        blank=True,
+        null=True,
+        verbose_name="Personne qui a revendiqué la cantine",
+        on_delete=models.SET("deleted user"),
+    )
 
     daily_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par jour")
     yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par an (y compris livrés)")

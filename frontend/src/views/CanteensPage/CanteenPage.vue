@@ -47,7 +47,21 @@
 
       <div v-if="showClaimCanteen">
         <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-if="claimSucceeded">
-          Votre demande a bien été prise en compte. Nous reviendrons vers vous au plus vite.
+          <p>
+            Vous êtes maintenant gestionnaire de cet établissement, et vous pouvez le
+            <router-link
+              :to="{
+                name: 'DiagnosticList',
+                params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+              }"
+            >
+              diagnostiquer
+            </router-link>
+          </p>
+          <p class="mb-0">
+            Il s'agit d'une erreur ?
+            <router-link :to="{ name: 'ContactPage' }">Contactez-nous</router-link>
+          </p>
         </v-alert>
 
         <DsfrCallout v-else>
