@@ -39,7 +39,7 @@
       <v-btn
         x-large
         color="primary"
-        class="mt-4"
+        class="mb-8"
         :to="{
           name: 'NewDiagnosticForCanteen',
           params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
