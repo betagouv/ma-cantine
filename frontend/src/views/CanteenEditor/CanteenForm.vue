@@ -37,6 +37,7 @@
         :canteen="canteen"
         @updateCanteen="(x) => $emit('updateCanteen', x)"
         class="mt-10"
+        ref="siret-check"
       />
 
       <p class="caption mb-n8">
@@ -398,7 +399,7 @@ export default {
         this.populateCityAutocomplete()
       }
       if (!this.canteen.images) this.canteen.images = []
-    } else this.$router.push({ name: "NewCanteen" })
+    } else this.$router.push({ name: "NewCanteen", query: this.$route.query })
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
@@ -408,7 +409,14 @@ export default {
       document.title = `Ajouter ma cantine - ${this.$store.state.pageTitleSuffix}`
     }
     const step = this.siret || this.canteen?.siret || this.originalCanteen?.siret ? 1 : 0
+    const queryParamsSiret = this.$route.query.siret
     this.goToStep(step, false)
+    if (step === 0 && queryParamsSiret && !this.siret) {
+      this.$nextTick(() => {
+        this.$refs["siret-check"].siret = queryParamsSiret
+        this.$nextTick(() => this.$refs["siret-check"].validateSiret())
+      })
+    }
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.handleUnload)

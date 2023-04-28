@@ -8,12 +8,18 @@
         Cliquez sur l'établissement qui correspond à votre cantine
       </p>
       <div class="mt-4">
-        <v-card outlined v-for="organization in organizations" :key="organization.id" class="text-left mb-4">
+        <v-card
+          outlined
+          v-for="organization in organizations"
+          :key="organization.id"
+          class="text-left mb-4"
+          :to="{ name: 'NewCanteen', query: { siret: organization.siret } }"
+        >
           <v-card-title>{{ organization.label }}</v-card-title>
           <v-card-text>SIRET : {{ organization.siret }}</v-card-text>
         </v-card>
         <v-divider class="mb-4"></v-divider>
-        <v-card outlined class="text-left mb-4">
+        <v-card outlined class="text-left mb-4" :to="{ name: 'NewCanteen' }">
           <v-card-title>Créer un autre établissement</v-card-title>
         </v-card>
       </div>
