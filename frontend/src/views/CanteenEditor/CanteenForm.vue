@@ -36,6 +36,7 @@
         @siretIsValid="setCanteenData"
         :canteen="canteen"
         @updateCanteen="(x) => $emit('updateCanteen', x)"
+        :backTo="{ name: 'ManagementPage' }"
         class="mt-10"
       />
 
