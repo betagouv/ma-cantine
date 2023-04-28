@@ -79,7 +79,18 @@
                 :rules="[validators.required]"
               />
             </v-col>
-            <!-- TODO: add line ministry -->
+            <v-col v-if="showMinistryField" cols="12" md="6">
+              <label class="body-2" for="line-ministry">Ministère de tutelle</label>
+              <DsfrSelect
+                id="line-ministry"
+                :items="ministries"
+                v-model="satellite.lineMinistry"
+                :rules="[validators.required]"
+                placeholder="Sélectionnez le Ministère de tutelle"
+                hide-details="auto"
+                clearable
+              />
+            </v-col>
           </v-row>
           <v-row>
             <v-col cols="6" md="4">
@@ -130,6 +141,7 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrSelect from "@/components/DsfrSelect"
 import SiretCheck from "../SiretCheck"
 import CityField from "../CityField"
+import Constants from "@/constants"
 
 export default {
   name: "AddSatellite",
@@ -141,6 +153,7 @@ export default {
     return {
       formIsValid: true,
       satellite: {},
+      ministries: Constants.Ministries,
     }
   },
   computed: {
@@ -149,6 +162,11 @@ export default {
     },
     sectors() {
       return sectorsSelectList(this.$store.state.sectors)
+    },
+    showMinistryField() {
+      const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
+      if (concernedSectors.length === 0) return false
+      return this.satellite.sectors?.some((x) => concernedSectors.indexOf(x) > -1)
     },
   },
   methods: {
