@@ -67,7 +67,7 @@
           />
 
           <p class="body-2 mt-4 mb-2">Ville</p>
-          <CityField :location="canteen" :rules="[validators.required]" @locationUpdate="setCanteenLocation" />
+          <CityField :location="canteen" :rules="[validators.required]" @locationUpdate="setLocation" />
         </v-col>
 
         <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -560,7 +560,7 @@ export default {
           .then((response) => (this.centralKitchen = response))
       }
     },
-    setCanteenLocation(location) {
+    setLocation(location) {
       this.canteen.city = location.city
       this.canteen.cityInseeCode = location.cityInseeCode
       this.canteen.postalCode = location.postalCode

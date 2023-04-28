@@ -55,6 +55,17 @@
                 :rules="[validators.required]"
               />
             </v-col>
+            <v-col cols="12" md="6">
+              <label class="body-2" for="satellite-city">Ville</label>
+              <CityField
+                :location="satellite"
+                :rules="[validators.required]"
+                @locationUpdate="setLocation"
+                id="satellite-city"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
             <v-col cols="12" md="5">
               <label class="body-2" for="sectors">Secteurs d'activité</label>
               <DsfrSelect
@@ -68,9 +79,10 @@
                 :rules="[validators.required]"
               />
             </v-col>
+            <!-- TODO: add line ministry -->
           </v-row>
           <v-row>
-            <v-col cols="6" md="3">
+            <v-col cols="6" md="4">
               <label class="body-2" for="meal-count">
                 Couverts
                 <b>par jour</b>
@@ -84,7 +96,7 @@
                 :rules="[validators.greaterThanZero]"
               />
             </v-col>
-            <v-col cols="6" md="3">
+            <v-col cols="6" md="4">
               <label class="body-2 d-block" for="yearly-meals">
                 Couverts
                 <b>par an</b>
@@ -117,10 +129,11 @@ import { sectorsSelectList } from "@/utils"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrSelect from "@/components/DsfrSelect"
 import SiretCheck from "../SiretCheck"
+import CityField from "../CityField"
 
 export default {
   name: "AddSatellite",
-  components: { DsfrTextField, DsfrSelect, SiretCheck },
+  components: { DsfrTextField, DsfrSelect, SiretCheck, CityField },
   props: {
     canteen: Object,
   },
@@ -175,6 +188,12 @@ export default {
         return `Ce total doit être supérieur du moyen de repas par jour sur place, actuellement ${this.satellite.dailyMealCount}`
       }
       return true
+    },
+    setLocation(location) {
+      this.satellite.city = location.city
+      this.satellite.cityInseeCode = location.cityInseeCode
+      this.satellite.postalCode = location.postalCode
+      this.satellite.department = location.department
     },
   },
 }
