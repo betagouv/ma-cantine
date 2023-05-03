@@ -1003,6 +1003,27 @@ class ClaimCanteenView(APIView):
 
         canteen.managers.add(self.request.user)
         canteen.claimed_by = self.request.user
+        canteen.has_been_claimed = True
+        canteen.save()
+        return JsonResponse({}, status=status.HTTP_200_OK)
+
+
+class UndoClaimCanteenView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request, canteen_pk):
+        try:
+            canteen = Canteen.objects.get(pk=canteen_pk)
+        except Canteen.DoesNotExist:
+            raise BadRequest()
+
+        if canteen.claimed_by != self.request.user:
+            raise PermissionDenied()
+
+        canteen.managers.remove(self.request.user)
+        canteen.claimed_by = None
+        canteen.has_been_claimed = False
         canteen.save()
         return JsonResponse({}, status=status.HTTP_200_OK)
 

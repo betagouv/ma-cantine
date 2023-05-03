@@ -769,6 +769,10 @@ export default new Vuex.Store({
       return fetch(`/api/v1/canteens/${canteenId}/claim/`, { method: "POST", headers }).then(verifyResponse)
     },
 
+    undoClaimCanteen(context, { canteenId }) {
+      return fetch(`/api/v1/canteens/${canteenId}/undoClaim/`, { method: "POST", headers }).then(verifyResponse)
+    },
+
     addSatellite(context, { id, payload }) {
       return fetch(`/api/v1/canteens/${id}/satellites/`, {
         method: "POST",

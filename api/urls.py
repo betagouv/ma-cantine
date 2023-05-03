@@ -22,7 +22,7 @@ from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFo
 from api.views import UserCanteenPreviews, CanteenLocationsView, PartnerView, PartnersView
 from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView, ImportPurchasesView
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
-from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, SatelliteListCreateView
+from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, UndoClaimCanteenView, SatelliteListCreateView
 from api.views import ActionableCanteensListView, ActionableCanteenRetrieveView
 from api.views import CanteenStatusView, VideoTutorialListView
 
@@ -143,6 +143,7 @@ urlpatterns = {
     path("reviews/", ReviewView.as_view(), name="create_review"),
     path("communityEvents/", CommunityEventsView.as_view(), name="community_event_list"),
     path("canteens/<int:canteen_pk>/claim/", ClaimCanteenView.as_view(), name="claim_canteen"),
+    path("canteens/<int:canteen_pk>/undoClaim/", UndoClaimCanteenView.as_view(), name="undo_claim_canteen"),
     path("actionableCanteens/<int:year>", ActionableCanteensListView.as_view(), name="list_actionable_canteens"),
     path(
         "actionableCanteens/<int:pk>/<int:year>",

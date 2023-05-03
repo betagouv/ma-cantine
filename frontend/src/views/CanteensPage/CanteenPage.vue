@@ -154,10 +154,7 @@ export default {
     },
     undoClaim() {
       this.$store
-        .dispatch("removeManager", {
-          canteenId: this.canteen.id,
-          email: this.loggedUser.email.trim(),
-        })
+        .dispatch("undoClaimCanteen", { canteenId: this.canteen.id })
         .then(() => {
           this.undoSucceeded = true
         })

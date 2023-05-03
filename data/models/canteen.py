@@ -115,8 +115,9 @@ class Canteen(SoftDeletionModel):
         blank=True,
         null=True,
         verbose_name="Personne qui a revendiqué la cantine",
-        on_delete=models.SET("deleted user"),
+        on_delete=models.SET_NULL,
     )
+    has_been_claimed = models.BooleanField(default=False, verbose_name="cette cantine a été revendiquée")
 
     daily_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par jour")
     yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par an (y compris livrés)")
@@ -199,11 +200,11 @@ class Canteen(SoftDeletionModel):
 
     # experiments
     reservation_expe_participant = models.BooleanField(
-        null=True, blank=True, verbose_name="participnte à l'expérimentation réservation"
+        null=True, blank=True, verbose_name="participante à l'expérimentation réservation"
     )
 
     vegetarian_expe_participant = models.BooleanField(
-        null=True, blank=True, verbose_name="participnte à l'expérimentation repas végétariens"
+        null=True, blank=True, verbose_name="participante à l'expérimentation repas végétariens"
     )
 
     # Email campaigns

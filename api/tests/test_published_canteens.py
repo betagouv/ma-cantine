@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.core.files import File
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, SectorFactory
+from data.factories import CanteenFactory, SectorFactory, UserFactory
 from data.factories import DiagnosticFactory
 from data.models import Canteen, CanteenImage, Diagnostic
 from .utils import authenticate
@@ -545,6 +545,7 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(canteen.managers.count(), 1)
         canteen.refresh_from_db()
         self.assertEqual(canteen.claimed_by, user)
+        self.assertTrue(canteen.has_been_claimed)
 
     @authenticate
     def test_canteen_claim_request_fails_when_already_claimed(self):
@@ -556,6 +557,8 @@ class TestPublishedCanteenApi(APITestCase):
         response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(canteen.managers.filter(id=user.id).exists())
+        canteen.refresh_from_db()
+        self.assertFalse(canteen.has_been_claimed)
 
     @authenticate
     def test_canteen_claim_request_fails_when_not_published(self):
@@ -565,6 +568,33 @@ class TestPublishedCanteenApi(APITestCase):
         response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(canteen.managers.count(), 0)
+        canteen.refresh_from_db()
+        self.assertFalse(canteen.has_been_claimed)
+
+    @authenticate
+    def test_undo_claim_canteen(self):
+        canteen = CanteenFactory.create(claimed_by=authenticate.user, has_been_claimed=True)
+        canteen.managers.add(authenticate.user)
+
+        response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(canteen.managers.filter(id=authenticate.user.id).exists())
+        canteen.refresh_from_db()
+        self.assertIsNone(canteen.claimed_by)
+        self.assertFalse(canteen.has_been_claimed)
+
+    @authenticate
+    def test_undo_claim_canteen_fails_if_not_original_claimer(self):
+        other_user = UserFactory.create()
+        canteen = CanteenFactory.create(claimed_by=other_user, has_been_claimed=True)
+        canteen.managers.add(authenticate.user)
+
+        response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(canteen.managers.filter(id=authenticate.user.id).exists())
+        canteen.refresh_from_db()
+        self.assertTrue(canteen.has_been_claimed)
+        self.assertEqual(canteen.claimed_by, other_user)
 
     def test_get_canteens_filter_production_type(self):
         site_canteen = CanteenFactory.create(publication_status="published", production_type="site")
