@@ -994,7 +994,7 @@ class ClaimCanteenView(APIView):
     @transaction.atomic
     def post(self, request, canteen_pk):
         try:
-            canteen = Canteen.objects.only("name").get(pk=canteen_pk)
+            canteen = Canteen.objects.get(pk=canteen_pk)
         except Canteen.DoesNotExist:
             raise BadRequest()
 

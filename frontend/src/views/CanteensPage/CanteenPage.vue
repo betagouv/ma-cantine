@@ -47,23 +47,25 @@
 
       <div v-if="showClaimCanteen">
         <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-if="undoSucceeded">
-          Vous n'êtes plus le gestionnaire de cet établissement.
+          Vous n'êtes plus gestionnaire de cet établissement.
         </v-alert>
         <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-else-if="claimSucceeded">
           <p>
-            Vous êtes maintenant gestionnaire de cet établissement, et vous pouvez le
+            Vous êtes maintenant gestionnaire.
             <router-link
               :to="{
                 name: 'DiagnosticList',
                 params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
               }"
             >
-              diagnostiquer
+              Évaluez cet établissement
             </router-link>
           </p>
           <p class="mb-0">
-            Il s'agit d'une erreur ?
-            <v-btn @click="undoClaim" outlined color="primary" class="ml-2">Retirez-vous</v-btn>
+            S'agit-il d'une erreur ?
+            <v-btn @click="undoClaim" outlined color="primary" class="ml-2">
+              Je ne suis pas gestionnaire de cet établissement
+            </v-btn>
           </p>
         </v-alert>
         <DsfrCallout v-else>
@@ -158,6 +160,14 @@ export default {
         })
         .then(() => {
           this.undoSucceeded = true
+        })
+        .catch(() => {
+          this.undoSucceeded = false
+          this.$store.dispatch("notify", {
+            message:
+              "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr",
+            status: "error",
+          })
         })
     },
   },
