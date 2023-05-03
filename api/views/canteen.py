@@ -1190,8 +1190,9 @@ class ActionableCanteensListView(ListAPIView):
         )
 
         # prep complete diag action
-        # is value_total_ht of 0 a problem?
-        complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
+        complete_diagnostics = Diagnostic.objects.filter(
+            pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0, diagnostic_type__isnull=False
+        )
         user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
         # prep TD action
         tds = Teledeclaration.objects.filter(
