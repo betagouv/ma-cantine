@@ -397,34 +397,38 @@ class CanteenStatusView(APIView):
 
     def complete_canteen_data(siret, response):
         response["siret"] = siret
-        token = CanteenStatusView.get_siret_token()
-        if not token:
-            return
+        try:
+            token = CanteenStatusView.get_siret_token()
+            if not token:
+                return
 
-        redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
-        redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
-        if int(redis.get(redis_key)) > 30:
-            logger.warning("Siret lookup failed - API rate has been exceeded.")
-            return
+            redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
+            redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
+            if int(redis.get(redis_key)) > 30:
+                logger.warning("Siret lookup failed - API rate has been exceeded.")
+                return
 
-        siret_response = requests.get(
-            f"https://api.insee.fr/entreprises/sirene/V3/siret/{siret}",
-            headers={"Authorization": f"Bearer {token}"},
-        )
-        if siret_response.ok:
-            siret_response = siret_response.json()
-            try:
-                response["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
-                response["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
-                    "codePostalEtablissement"
-                ]
-                response["city"] = siret_response["etablissement"]["adresseEtablissement"][
-                    "libelleCommuneEtablissement"
-                ]
-            except KeyError as e:
-                logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
-        else:
-            logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
+            siret_response = requests.get(
+                f"https://api.insee.fr/entreprises/sirene/V3/siret/{siret}",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+            if siret_response.ok:
+                siret_response = siret_response.json()
+                try:
+                    response["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
+                    response["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
+                        "codePostalEtablissement"
+                    ]
+                    response["city"] = siret_response["etablissement"]["adresseEtablissement"][
+                        "libelleCommuneEtablissement"
+                    ]
+                except KeyError as e:
+                    logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
+            else:
+                logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
+        except Exception as e:
+            logger.exception(f"Error completing canteen data with SIRET {siret}")
+            logger.exception(e)
 
     def get_siret_token():
         if not settings.SIRET_API_KEY or not settings.SIRET_API_SECRET:
@@ -450,30 +454,34 @@ class CanteenStatusView(APIView):
             logger.warning(f"token fetching failed, code {token_response.status_code} : {token_response.json()}")
 
     def complete_location_data(city, postcode, response):
-        location_response = requests.get(
-            f"https://api-adresse.data.gouv.fr/search/?q={city}&postcode={postcode}&type=municipality&autocomplete=1"
-        )
-        if location_response.ok:
-            location_response = location_response.json()
-            results = location_response["features"]
-            if results and results[0]:
-                try:
-                    result = results[0]["properties"]
-                    if result:
-                        response["city"] = result["label"]
-                        response["cityInseeCode"] = result["citycode"]
-                        response["postalCode"] = postcode
-                        response["department"] = result["context"].split(",")[0]
-                except KeyError as e:
-                    logger.warning(f"unexpected location response format : {location_response}. Unknown key : {e}")
+        try:
+            location_response = requests.get(
+                f"https://api-adresse.data.gouv.fr/search/?q={city}&postcode={postcode}&type=municipality&autocomplete=1"
+            )
+            if location_response.ok:
+                location_response = location_response.json()
+                results = location_response["features"]
+                if results and results[0]:
+                    try:
+                        result = results[0]["properties"]
+                        if result:
+                            response["city"] = result["label"]
+                            response["cityInseeCode"] = result["citycode"]
+                            response["postalCode"] = postcode
+                            response["department"] = result["context"].split(",")[0]
+                    except KeyError as e:
+                        logger.warning(f"unexpected location response format : {location_response}. Unknown key : {e}")
+                else:
+                    logger.warning(
+                        f"features array for city '{city}' and postcode '{postcode}' in location response format is non-existant or empty : {location_response}"
+                    )
             else:
                 logger.warning(
-                    f"features array for city '{city}' and postcode '{postcode}' in location response format is non-existant or empty : {location_response}"
+                    f"location fetching failed, code {location_response.status_code} : {location_response.json()}"
                 )
-        else:
-            logger.warning(
-                f"location fetching failed, code {location_response.status_code} : {location_response.json()}"
-            )
+        except Exception as e:
+            logger.exception(f"Error completing location data with SIRET for city: {city}, postcode: {postcode}")
+            logger.exception(e)
 
 
 def check_siret_response(canteen_siret, request):
