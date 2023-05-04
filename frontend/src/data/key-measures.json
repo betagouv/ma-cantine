@@ -250,6 +250,7 @@
           "earliestISO": "2020-01-01"
         },
         "description": "Obligation de réemploi de la vaiselle et des récipients.",
+        "id": "reuse",
         "readMore": false,
         "tags": [
           "Portage à domicile"
@@ -263,6 +264,7 @@
           "earliestISO": "2025-01-01"
         },
         "description": "Obligation de proposer un contenant réutilisable ou composé de matières recyclables pour la vente à emporter en restauration collective.",
+        "id": "reuse-takeaway",
         "readMore": false,
         "tags": [
           "scolaire",
