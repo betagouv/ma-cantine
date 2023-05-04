@@ -40,7 +40,6 @@ def unpublish(modeladmin, request, queryset):
 
 @admin.register(Canteen)
 class CanteenAdmin(SoftDeletionAdmin):
-
     form = CanteenForm
     inlines = (DiagnosticInline,)
     fields = (
@@ -60,6 +59,8 @@ class CanteenAdmin(SoftDeletionAdmin):
         "sectors",
         "line_ministry",
         "managers",
+        "claimed_by",
+        "has_been_claimed",
         "management_type",
         "production_type",
         "central_producer_siret",
@@ -81,6 +82,8 @@ class CanteenAdmin(SoftDeletionAdmin):
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
+        "claimed_by",
+        "has_been_claimed",
     )
     list_display = (
         "name",

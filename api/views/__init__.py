@@ -21,6 +21,7 @@ from .canteen import (  # noqa: F401
     CanteenLocationsView,
     TeamJoinRequestView,
     ClaimCanteenView,
+    UndoClaimCanteenView,
     SatelliteListCreateView,
     ActionableCanteensListView,
     ActionableCanteenRetrieveView,
