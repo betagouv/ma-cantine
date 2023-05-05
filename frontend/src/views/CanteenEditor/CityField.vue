@@ -8,7 +8,8 @@
     cache-items
     v-model="cityAutocompleteChoice"
     no-data-text="Pas de résultats. Veuillez renseigner votre ville"
-    :rules="rules || []"
+    v-bind="$attrs"
+    v-on="$listeners"
   />
 </template>
 
@@ -18,7 +19,7 @@ import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 export default {
   name: "CityField",
   components: { DsfrAutocomplete },
-  props: ["location", "rules"],
+  props: ["location"],
   data() {
     return {
       cityAutocompleteChoice: null,
