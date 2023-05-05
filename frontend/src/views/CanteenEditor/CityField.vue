@@ -4,7 +4,6 @@
     :loading="loadingCommunes"
     :items="communes"
     :search-input.sync="search"
-    ref="cityAutocomplete"
     auto-select-first
     cache-items
     v-model="cityAutocompleteChoice"
