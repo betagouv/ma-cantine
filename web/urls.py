@@ -16,8 +16,8 @@ from web.views import (
     RegisterSendMailFailedView,
     RegisterInvalidTokenView,
     AccountActivationView,
-    SampleOIDCLoginView,
-    SampleOIDCAuthorizeView,
+    OIDCLoginView,
+    OIDCAuthorizeView,
 )
 
 sitemaps = {
@@ -146,7 +146,7 @@ if settings.USES_MONCOMPTEPRO:
     urlpatterns.append(
         path(
             "oidc-login",
-            SampleOIDCLoginView.as_view(),
+            OIDCLoginView.as_view(),
             name="oidc-login",
         )
     )
@@ -154,7 +154,7 @@ if settings.USES_MONCOMPTEPRO:
     urlpatterns.append(
         path(
             "signin-oidc",
-            SampleOIDCAuthorizeView.as_view(),
+            OIDCAuthorizeView.as_view(),
             name="oidc-authorize",
         )
     )

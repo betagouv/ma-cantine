@@ -188,13 +188,13 @@ def _login_and_send_activation_email(username, request):
         raise Exception("Error occurred : the mail could not be sent.")
 
 
-class SampleOIDCLoginView(View):
+class OIDCLoginView(View):
     def get(self, request, *args, **kwargs):
         redirect_uri = request.build_absolute_uri(reverse_lazy("oidc-authorize"))
         return oauth.moncomptepro.authorize_redirect(request, redirect_uri)
 
 
-class SampleOIDCAuthorizeView(View):
+class OIDCAuthorizeView(View):
     def get(self, request, *args, **kwargs):
         try:
             token = oauth.moncomptepro.authorize_access_token(request)
