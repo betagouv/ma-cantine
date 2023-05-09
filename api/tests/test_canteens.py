@@ -881,7 +881,6 @@ class TestCanteenApi(APITestCase):
     def test_central_without_satellites_has_complete_satellites_action(self):
         """
         Test for a bug fix. A central that doesn't have any satellites at all should get the complete satellite action.
-        Of the time of writing, this is only the case for centrals that have some but not all satellites entered.
         """
         has_no_satellites = CanteenFactory.create(
             siret="45467900121441",
