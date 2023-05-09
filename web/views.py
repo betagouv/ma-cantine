@@ -225,7 +225,7 @@ class OIDCAuthorizeView(View):
             logger.info(f"MonComptePro user {mcp_id} (ID Ma Cantine: {user.id}) was found.")
             return user, False
         except get_user_model().DoesNotExist:
-            logger.info(f"MonComptePro user {mcp_id} was not found.")
+            pass
 
         # Attempt with email
         try:
@@ -233,7 +233,7 @@ class OIDCAuthorizeView(View):
             logger.info(f"MonComptePro user {mcp_id} was already registered in MaCantine with email {mcp_email}.")
             return user, False
         except get_user_model().DoesNotExist:
-            logger.info(f"MonComptePro user {mcp_id} ({mcp_email}) was not found on our database.")
+            pass
 
         # Create user
         logger.info(f"Creating new user from MonComptePro user {mcp_id} with email {mcp_email}.")
