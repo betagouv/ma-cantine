@@ -95,9 +95,9 @@
         large
         outlined
         color="primary"
-        v-if="!canteen || !canteen.siret"
+        v-if="backTo && (!canteen || !canteen.siret)"
         class="ml-4 align-self-center"
-        :to="{ name: 'ManagementPage' }"
+        :to="backTo"
       >
         Annuler
       </v-btn>
@@ -113,7 +113,7 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 export default {
   name: "SiretCheck",
   components: { DsfrTextField, DsfrTextarea },
-  props: ["canteen"],
+  props: ["canteen", "backTo"],
   data() {
     const user = this.$store.state.loggedUser
     return {
