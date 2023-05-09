@@ -814,7 +814,7 @@ class TestCanteenApi(APITestCase):
         )
         # create satellites
         central_siret = "78146469373706"
-        needs_satellites = CanteenFactory.create(
+        needs_additional_satellites = CanteenFactory.create(
             siret=central_siret,
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=3,
@@ -826,7 +826,7 @@ class TestCanteenApi(APITestCase):
             needs_to_complete_diag,
             needs_to_publish,
             needs_td,
-            needs_satellites,
+            needs_additional_satellites,
         ]:
             canteen.managers.add(authenticate.user)
 
@@ -846,7 +846,7 @@ class TestCanteenApi(APITestCase):
         DiagnosticFactory.create(year=last_year, canteen=needs_td, value_total_ht=100)
 
         # has a diagnostic but this canteen registered only two of three satellites
-        DiagnosticFactory.create(year=last_year, canteen=needs_satellites, value_total_ht=100)
+        DiagnosticFactory.create(year=last_year, canteen=needs_additional_satellites, value_total_ht=100)
         CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
         )
@@ -864,7 +864,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(len(returned_canteens), 6)
 
         expected_actions = [
-            (needs_satellites, "10_add_satellites"),
+            (needs_additional_satellites, "10_add_satellites"),
             (needs_last_year_diag, "20_create_diagnostic"),
             (needs_to_complete_diag, "30_complete_diagnostic"),
             (needs_td, "40_teledeclare"),
@@ -875,6 +875,25 @@ class TestCanteenApi(APITestCase):
             self.assertEqual(returned_canteens[index]["id"], canteen.id)
             self.assertEqual(returned_canteens[index]["action"], action)
             self.assertIn("sectors", returned_canteens[index])
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_central_without_satellites_has_complete_satellites_action(self):
+        """
+        Test for a bug fix. A central that doesn't have any satellites at all should get the complete satellite action.
+        Of the time of writing, this is only the case for centrals that have some but not all satellites entered.
+        """
+        has_no_satellites = CanteenFactory.create(
+            siret="45467900121441",
+            production_type=Canteen.ProductionType.CENTRAL,
+            satellite_canteens_count=3,
+        )
+        has_no_satellites.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}) + "?ordering=action")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["results"][0]["action"], "10_add_satellites")
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
@@ -923,7 +942,7 @@ class TestCanteenApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
         returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
+        self.assertEqual(returned_canteens[0]["action"], "10_add_satellites")
 
         # Satellites should have the SIRET of the central cuisine
         canteen.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
