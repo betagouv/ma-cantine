@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Créer mon compte{% endblock %}
+{% load moncomptepro %}
 {% load static %}
 
 {% block content %}
@@ -165,5 +166,16 @@
         </script>
 
     </form>
-    <a href="{% url 'login' %}"><button>J'ai déjà un compte</button></a>
+    <div>
+        <a href="{% url 'login' %}"><button>J'ai déjà un compte</button></a>
+    </div>
+    {% uses_moncomptepro as show_mcp_button %}
+    {% if show_mcp_button %}
+    <div style="margin-top: 16px;">
+        <a href="{% url 'oidc-login' %}">
+            <img src="{% static 'images/button-moncomptepro.svg' %}" />
+        </a>
+    </div>
+    {% endif %}
+
 {% endblock %}

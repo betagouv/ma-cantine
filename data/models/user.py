@@ -71,6 +71,11 @@ class User(AbstractUser):
 
     is_dev = models.BooleanField(default="False", verbose_name="Compte développeur / technique")
 
+    # MonComptePro
+    created_with_mcp = models.BooleanField(default="False", verbose_name="Compte créé avec MonComptePro")
+    mcp_id = models.TextField(blank=True, null=True, verbose_name="ID MonComptePro")
+    mcp_organizations = models.JSONField(blank=True, null=True, verbose_name="Organisations sous MonComptePro")
+
     # Email campaigns
     email_no_canteen_first_reminder = models.DateTimeField(
         null=True, blank=True, verbose_name="Date d'envoi du premier email pour manque de cantines"

@@ -2,6 +2,7 @@
 {% block title %}S'identifier{% endblock %}
 
 {% load static %}
+{% load moncomptepro %}
 
 {% block content %}
 
@@ -58,6 +59,12 @@
     </form>
     <a href="{% url 'register' %}"><button>Créer mon compte</button></a>
     <hr style="margin-top: 22px;" />
+    {% uses_moncomptepro as show_mcp_button %}
+    {% if show_mcp_button %}
+    <a href="{% url 'oidc-login' %}">
+        <img src="{% static 'images/button-moncomptepro.svg' %}" />
+    </a>
+    {% endif %}
     <p style="font-size: 0.85em; margin-top: 20px;"><a href="{% url 'password_reset' %}">J'ai perdu mon mot de passe</a></p>
     <p style="font-size: 0.85em; margin-top: 20px;"><a href="{% url 'magicauth-login' %}">Recevoir un lien de connexion par email</a></p>
 {% endblock %}

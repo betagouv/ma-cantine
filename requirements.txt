@@ -5,6 +5,7 @@ asn1crypto==1.5.1
 astroid==2.15.4
 async-timeout==4.0.2
 attrs==23.1.0
+Authlib==1.2.0
 billiard==3.6.4.0
 black==23.3.0
 boto3==1.26.129
@@ -40,6 +41,7 @@ drf-excel==2.3.0
 drf-spectacular==0.25.1
 drf-spectacular-sidecar==2023.4.1
 et-xmlfile==1.1.0
+exceptiongroup==1.1.1
 factory-boy==3.2.1
 Faker==17.6.0
 future==0.18.3
@@ -76,7 +78,9 @@ pylint==2.17.2
 pylint-django==2.5.3
 pylint-plugin-utils==0.7
 pyparsing==3.0.9
+pypdf==3.7.1
 PyPDF3==1.0.6
+pypng==0.20220715.0
 pyrsistent==0.19.3
 pytest==7.3.1
 pytest-django==4.5.2
