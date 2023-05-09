@@ -199,7 +199,7 @@ class OIDCAuthorizeView(View):
         try:
             token = oauth.moncomptepro.authorize_access_token(request)
             mcp_data = oauth.moncomptepro.userinfo(token=token)
-            user, created = self.get_or_create_user(mcp_data)
+            user, created = OIDCAuthorizeView.get_or_create_user(mcp_data)
 
             if created:
                 user.created_with_mcp = True
@@ -214,7 +214,8 @@ class OIDCAuthorizeView(View):
             logger.exception(e)
             return redirect("app")
 
-    def get_or_create_user(self, mcp_data):
+    @staticmethod
+    def get_or_create_user(mcp_data):
         mcp_id = mcp_data.get("sub")
         mcp_email = mcp_data.get("email")
 
