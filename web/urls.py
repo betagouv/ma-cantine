@@ -145,7 +145,7 @@ urlpatterns = [
 if settings.USES_MONCOMPTEPRO:
     urlpatterns.append(
         path(
-            "oidc-login/",
+            "oidc-login",
             SampleOIDCLoginView.as_view(),
             name="oidc-login",
         )
