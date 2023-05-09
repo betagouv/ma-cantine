@@ -373,7 +373,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'repas par jour' : La valeur «\xa0not a number\xa0» doit être un nombre entier.",
+            "Champ 'repas par jour' : La valeur « not a number » doit être un nombre entier.",
         )
         self.assertEqual(
             errors.pop(0)["message"],

@@ -10,32 +10,90 @@
     </p>
     <v-card outlined>
       <v-card-text>
-        <v-form ref="form" v-model="formIsValid">
-          <v-row>
-            <v-col cols="12" md="6" class="mb-n4">
-              <label class="body-2" for="satellite-siret">SIRET</label>
-              <DsfrTextField
-                id="satellite-siret"
-                hide-details="auto"
-                validate-on-blur
-                v-model="satellite.siret"
-                :rules="[validators.length(14), validators.luhn]"
-              />
-              <p class="caption mt-1 ml-2">
-                Utilisez
-                <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
-                  l'Annuaire des Entreprises
-                  <v-icon color="primary" small>mdi-open-in-new</v-icon>
-                </a>
-                pour trouver le SIRET de votre cantine, ou
-                <a href="https://annuaire-education.fr/" target="_blank" rel="noopener">
-                  l'Annuaire de l'Éducation
-                  <v-icon color="primary" small>mdi-open-in-new</v-icon>
-                </a>
-                pour les cantines scolaires.
+        <v-row v-if="!satellite.siret">
+          <v-col>
+            <h3 class="body-1 font-weight-bold mb-4">Étape 1/2 : Renseignez le SIRET de votre établissement</h3>
+            <p>
+              Vous ne le connaissez pas ? Utilisez
+              <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
+                l'Annuaire des Entreprises
+                <v-icon color="primary" small>mdi-open-in-new</v-icon>
+              </a>
+              pour trouver le SIRET de votre cantine, ou
+              <a href="https://annuaire-education.fr/" target="_blank" rel="noopener">
+                l'Annuaire de l'Éducation
+                <v-icon color="primary" small>mdi-open-in-new</v-icon>
+              </a>
+              pour les cantines scolaires.
+            </p>
+            <SiretCheck
+              @siretIsValid="setCanteenData"
+              :canteen="satellite"
+              @updateCanteen="(x) => $emit('updateCanteen', x)"
+            />
+          </v-col>
+        </v-row>
+        <v-form ref="form" v-model="formIsValid" v-if="satellite.siret">
+          <h3 class="mb-4">Étape 2/2 : Compléter les informations</h3>
+          <v-row class="pb-0">
+            <v-col cols="12" md="8">
+              <p class="mb-0">SIRET</p>
+              <p class="grey--text text--darken-2 mb-0">
+                {{ satellite.siret }}
+                <v-btn small @click="satellite = {}">Modifier</v-btn>
               </p>
             </v-col>
-            <v-col cols="6" md="3">
+          </v-row>
+          <v-row class="mt-0">
+            <v-col cols="12" md="5">
+              <label class="body-2" for="satellite-name">Nom de la cantine</label>
+              <DsfrTextField
+                id="satellite-name"
+                hide-details="auto"
+                validate-on-blur
+                v-model="satellite.name"
+                :rules="[validators.required]"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <label class="body-2" for="satellite-city">Ville</label>
+              <CityField
+                :location="satellite"
+                :rules="[validators.required]"
+                @locationUpdate="setLocation"
+                id="satellite-city"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" md="5">
+              <label class="body-2" for="sectors">Secteurs d'activité</label>
+              <DsfrSelect
+                id="sectors"
+                multiple
+                :items="sectors"
+                v-model="satellite.sectors"
+                item-text="name"
+                item-value="id"
+                hide-details="auto"
+                :rules="[validators.required]"
+              />
+            </v-col>
+            <v-col v-if="showMinistryField" cols="12" md="6">
+              <label class="body-2" for="line-ministry">Ministère de tutelle</label>
+              <DsfrSelect
+                id="line-ministry"
+                :items="ministries"
+                v-model="satellite.lineMinistry"
+                :rules="[validators.required]"
+                placeholder="Sélectionnez le Ministère de tutelle"
+                hide-details="auto"
+                clearable
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="6" md="4">
               <label class="body-2" for="meal-count">
                 Couverts
                 <b>par jour</b>
@@ -49,7 +107,7 @@
                 :rules="[validators.greaterThanZero]"
               />
             </v-col>
-            <v-col cols="6" md="3">
+            <v-col cols="6" md="4">
               <label class="body-2 d-block" for="yearly-meals">
                 Couverts
                 <b>par an</b>
@@ -61,31 +119,6 @@
                 v-model.number="satellite.yearlyMealCount"
                 prepend-icon="$restaurant-fill"
                 :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" md="5">
-              <label class="body-2" for="satellite-name">Nom de la cantine</label>
-              <DsfrTextField
-                id="satellite-name"
-                hide-details="auto"
-                validate-on-blur
-                v-model="satellite.name"
-                :rules="[validators.required]"
-              />
-            </v-col>
-            <v-col cols="12" md="5">
-              <label class="body-2" for="sectors">Secteurs d'activité</label>
-              <DsfrSelect
-                id="sectors"
-                multiple
-                :items="sectors"
-                v-model="satellite.sectors"
-                item-text="name"
-                item-value="id"
-                hide-details="auto"
-                :rules="[validators.required]"
               />
             </v-col>
             <v-spacer></v-spacer>
@@ -106,10 +139,13 @@ import validators from "@/validators"
 import { sectorsSelectList } from "@/utils"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrSelect from "@/components/DsfrSelect"
+import SiretCheck from "../SiretCheck"
+import CityField from "../CityField"
+import Constants from "@/constants"
 
 export default {
   name: "AddSatellite",
-  components: { DsfrTextField, DsfrSelect },
+  components: { DsfrTextField, DsfrSelect, SiretCheck, CityField },
   props: {
     canteen: Object,
   },
@@ -117,6 +153,7 @@ export default {
     return {
       formIsValid: true,
       satellite: {},
+      ministries: Constants.Ministries,
     }
   },
   computed: {
@@ -126,8 +163,16 @@ export default {
     sectors() {
       return sectorsSelectList(this.$store.state.sectors)
     },
+    showMinistryField() {
+      const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
+      if (concernedSectors.length === 0) return false
+      return this.satellite.sectors?.some((x) => concernedSectors.indexOf(x) > -1)
+    },
   },
   methods: {
+    setCanteenData(data) {
+      this.$set(this, "satellite", data)
+    },
     saveSatellite() {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch("notifyRequiredFieldsError")
@@ -161,6 +206,12 @@ export default {
         return `Ce total doit être supérieur du moyen de repas par jour sur place, actuellement ${this.satellite.dailyMealCount}`
       }
       return true
+    },
+    setLocation(location) {
+      this.satellite.city = location.city
+      this.satellite.cityInseeCode = location.cityInseeCode
+      this.satellite.postalCode = location.postalCode
+      this.satellite.department = location.department
     },
   },
 }

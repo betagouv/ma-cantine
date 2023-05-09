@@ -36,6 +36,7 @@
         @siretIsValid="setCanteenData"
         :canteen="canteen"
         @updateCanteen="(x) => $emit('updateCanteen', x)"
+        :backTo="{ name: 'ManagementPage' }"
         class="mt-10"
         ref="siret-check"
       />
@@ -67,18 +68,7 @@
           />
 
           <p class="body-2 mt-4 mb-2">Ville</p>
-          <DsfrAutocomplete
-            hide-details="auto"
-            :rules="[validators.required]"
-            :loading="loadingCommunes"
-            :items="communes"
-            :search-input.sync="search"
-            ref="cityAutocomplete"
-            auto-select-first
-            cache-items
-            v-model="cityAutocompleteChoice"
-            no-data-text="Pas de résultats. Veuillez renseigner votre ville"
-          />
+          <CityField :location="canteen" :rules="[validators.required]" @locationUpdate="setLocation" />
         </v-col>
 
         <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -327,7 +317,7 @@ import ImagesField from "./ImagesField"
 import SiretCheck from "./SiretCheck"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
-import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import CityField from "./CityField"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrCallout from "@/components/DsfrCallout"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
@@ -341,7 +331,7 @@ export default {
     ImagesField,
     TechnicalControlDialog,
     DsfrTextField,
-    DsfrAutocomplete,
+    CityField,
     DsfrSelect,
     DsfrCallout,
     SiretCheck,
@@ -368,10 +358,6 @@ export default {
       formIsValid: true,
       bypassLeaveWarning: false,
       deletionDialog: false,
-      cityAutocompleteChoice: null,
-      communes: [],
-      loadingCommunes: false,
-      search: null,
       managementTypes: Constants.ManagementTypes,
       steps: ["siret", "informations-cantine"],
       satelliteSiretMessage:
@@ -418,9 +404,6 @@ export default {
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
-      if (canteen.city) {
-        this.populateCityAutocomplete()
-      }
       if (!this.canteen.images) this.canteen.images = []
       this.getCentralKitchen()
     } else this.$router.push({ name: "NewCanteen", query: this.$route.query })
@@ -457,7 +440,6 @@ export default {
         this.canteen.cityInseeCode = data.cityInseeCode
         this.canteen.postalCode = data.postalCode
         this.canteen.department = data.department
-        this.populateCityAutocomplete()
       }
       this.goToStep(1)
     },
@@ -569,37 +551,6 @@ export default {
         delete e["returnValue"]
       }
     },
-    queryCommunes(val) {
-      this.loadingCommunes = true
-      const queryUrl = "https://api-adresse.data.gouv.fr/search/?q=" + val + "&type=municipality&autocomplete=1"
-      return fetch(queryUrl)
-        .then((response) => response.json())
-        .then((response) => {
-          const communes = response.features
-          this.communes = communes.map((commune) => {
-            return { text: `${commune.properties.label} (${commune.properties.context})`, value: commune.properties }
-          })
-          this.loadingCommunes = false
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
-    populateCityAutocomplete() {
-      if (this.canteen.city && this.canteen.cityInseeCode && this.canteen.postalCode && this.canteen.department) {
-        const initialCityAutocomplete = {
-          text: this.canteen.city,
-          value: {
-            label: this.canteen.city,
-            citycode: this.canteen.cityInseeCode,
-            postcode: this.canteen.postalCode,
-            context: this.canteen.department,
-          },
-        }
-        this.communes.push(initialCityAutocomplete)
-        this.cityAutocompleteChoice = initialCityAutocomplete.value
-      }
-    },
     displayTechnicalControlDialog(bodyText) {
       this.technicalControlText = bodyText
       this.showTechnicalControlDialog = true
@@ -617,20 +568,11 @@ export default {
           .then((response) => (this.centralKitchen = response))
       }
     },
-  },
-  watch: {
-    search(val) {
-      return val && val !== this.canteen.city && this.queryCommunes(val)
-    },
-    cityAutocompleteChoice(val) {
-      if (val?.label) {
-        this.canteen.city = val.label
-        this.canteen.cityInseeCode = val.citycode
-        this.canteen.postalCode = val.postcode
-        this.canteen.department = val.context.split(",")[0]
-      }
-
-      this.search = this.canteen.city
+    setLocation(location) {
+      this.canteen.city = location.city
+      this.canteen.cityInseeCode = location.cityInseeCode
+      this.canteen.postalCode = location.postalCode
+      this.canteen.department = location.department
     },
   },
   beforeRouteLeave(to, from, next) {
