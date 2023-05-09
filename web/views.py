@@ -199,14 +199,7 @@ class OIDCAuthorizeView(View):
         try:
             token = oauth.moncomptepro.authorize_access_token(request)
             mcp_data = oauth.moncomptepro.userinfo(token=token)
-            user, created = OIDCAuthorizeView.get_or_create_user(mcp_data)
-
-            if created:
-                user.created_with_mcp = True
-            if not user.mcp_id:
-                user.mcp_id = mcp_data.get("sub")
-            user.mcp_organizations = mcp_data.get("organizations")
-            user.save()
+            user = OIDCAuthorizeView.get_or_create_user(mcp_data)
             login(request, user)
             return redirect(reverse_lazy("app"))
         except Exception as e:
@@ -222,16 +215,21 @@ class OIDCAuthorizeView(View):
         # Attempt with mcp_id
         try:
             user = get_user_model().objects.get(mcp_id=mcp_id)
+            user.mcp_organizations = mcp_data.get("organizations")
+            user.save()
             logger.info(f"MonComptePro user {mcp_id} (ID Ma Cantine: {user.id}) was found.")
-            return user, False
+            return user
         except get_user_model().DoesNotExist:
             pass
 
         # Attempt with email
         try:
             user = get_user_model().objects.get(email=mcp_email)
+            user.mcp_id = mcp_data.get("sub")
+            user.mcp_organizations = mcp_data.get("organizations")
+            user.save()
             logger.info(f"MonComptePro user {mcp_id} was already registered in MaCantine with email {mcp_email}.")
-            return user, False
+            return user
         except get_user_model().DoesNotExist:
             pass
 
@@ -247,4 +245,4 @@ class OIDCAuthorizeView(View):
             mcp_organizations=mcp_data.get("organizations"),
             created_with_mcp=True,
         )
-        return user, True
+        return user
