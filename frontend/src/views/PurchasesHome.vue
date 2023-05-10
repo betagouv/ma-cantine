@@ -275,14 +275,12 @@
         </template>
       </v-data-table>
       <v-expand-transition>
-        <v-row v-show="selectedPurchases.length">
-          <v-col>
-            <p>{{ selectedPurchases.length }} achats selectionnés</p>
-          </v-col>
-          <v-col>
-            <v-btn @click="deleteSelectedPurchases" color="red">Supprimer</v-btn>
-          </v-col>
-        </v-row>
+        <div v-show="selectedPurchases.length" class="px-4 pb-4 mt-n10">
+          <v-btn @click="deleteSelectedPurchases" color="red darken-2" class="white--text">
+            <v-icon class="mr-1" small>mdi-delete-forever</v-icon>
+            Supprimer {{ selectedPurchases.length }} {{ selectedPurchases.length > 1 ? "achats" : "achat" }}
+          </v-btn>
+        </div>
       </v-expand-transition>
     </v-card>
     <v-row v-else-if="visiblePurchases" class="mt-4">
@@ -449,8 +447,24 @@ export default {
     // the following requires that purchases are SoftDeletionObjects
     // in 2nd PR: if too many purchase objects in soft deleted state, make weekly bot to clear out purchases that have been deleted for > 1 week (or whatever time period)
     deleteSelectedPurchases() {
-      // dispatch DELETE request to /purchases with array of purchase ids
-      // if successful re run fetchCurrentPage to update display and clear selectedPurchases and trigger temp message with undo option
+      const selectedCount = this.selectedPurchases.length
+      if (!selectedCount) return
+      this.$store
+        .dispatch("deletePurchases", { ids: this.selectedPurchases.map((p) => p.id) })
+        .then(() => {
+          const title =
+            selectedCount > 1 ? `${selectedCount} achats ont bien été supprimés` : "L'achat a bien été supprimé"
+          // TODO: add undo button to message
+          this.$store.dispatch("notify", {
+            title,
+            status: "success",
+          })
+          this.selectedPurchases = []
+          this.fetchCurrentPage()
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
     },
     recoverLastDeletedPurchases() {
       // dispatch POST request to /purchases/recover
