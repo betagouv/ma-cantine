@@ -1216,7 +1216,12 @@ class ActionableCanteensListView(ListAPIView):
 
         should_teledeclare = settings.ENABLE_TELEDECLARATION
         conditions = [
+            When(
+                (Q(satellite_canteens_count__gt=0) & Q(nb_satellites_in_db=None) & is_central_cuisine_query),
+                then=Value(Canteen.Actions.ADD_SATELLITES),
+            ),
             When(nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
+            When(nb_satellites_in_db__gt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
             When(incomplete_canteen_data_query, then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
