@@ -5,7 +5,6 @@ from rest_framework.test import APITestCase
 from data.factories import UserFactory, PurchaseFactory, CanteenFactory
 from data.models import Purchase
 from .utils import authenticate
-import datetime
 
 
 class TestPurchaseApi(APITestCase):
@@ -643,16 +642,16 @@ class TestPurchaseApi(APITestCase):
         This endpoint restores the last deleted purchases, grouping together deletions of 1 minute
         """
         date = timezone.now()
-        other_date = timezone.now() - datetime.timedelta(seconds=60)
-        not_this_time = timezone.now() - datetime.timedelta(seconds=61)
         purchase_1 = PurchaseFactory.create(deletion_date=date)
-        canteen = purchase_1.canteen
-        canteen.managers.add(authenticate.user)
-        purchase_2 = PurchaseFactory.create(canteen=canteen, deletion_date=other_date)
-        not_me = PurchaseFactory.create(canteen=canteen, deletion_date=not_this_time)
+        purchase_2 = PurchaseFactory.create(deletion_date=date)
+        not_me = PurchaseFactory.create(deletion_date=date)
+        for p in [purchase_1, purchase_2, not_me]:
+            p.canteen.managers.add(authenticate.user)
         not_my_purchase = PurchaseFactory.create(deletion_date=date)
 
-        response = self.client.post(reverse("restore_purchases"))
+        response = self.client.post(
+            reverse("restore_purchases"), {"ids": [purchase_1.id, purchase_2.id, not_my_purchase.id]}, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 2)
@@ -662,7 +661,7 @@ class TestPurchaseApi(APITestCase):
         not_my_purchase.refresh_from_db()
         self.assertIsNone(purchase_1.deletion_date)
         self.assertIsNone(purchase_2.deletion_date)
-        self.assertEqual(not_me.deletion_date, not_this_time)
+        self.assertEqual(not_me.deletion_date, date)
         self.assertEqual(not_my_purchase.deletion_date, date)
 
     @authenticate

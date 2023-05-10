@@ -645,11 +645,12 @@ export default new Vuex.Store({
         })
     },
 
-    restoreLastDeletedPurchases(context) {
+    restorePurchases(context, ids) {
       context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/purchases/restore/`, {
         method: "POST",
         headers,
+        body: JSON.stringify({ ids }),
       })
         .then(verifyResponse)
         .then((response) => {

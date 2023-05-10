@@ -449,8 +449,9 @@ export default {
     deleteSelectedPurchases() {
       const selectedCount = this.selectedPurchases.length
       if (!selectedCount) return
+      const ids = this.selectedPurchases.map((p) => p.id)
       this.$store
-        .dispatch("deletePurchases", { ids: this.selectedPurchases.map((p) => p.id) })
+        .dispatch("deletePurchases", { ids })
         .then(() => {
           const title =
             selectedCount === 1 ? "L'achat a bien été supprimé" : `${selectedCount} achats ont bien été supprimés`
@@ -459,7 +460,7 @@ export default {
             status: "success",
             duration: 10000,
             undoMessage: "Restaurer achats",
-            undoAction: this.recoverLastDeletedPurchases,
+            undoAction: this.recoverDeletedPurchases(ids),
           })
           this.selectedPurchases = []
           this.fetchCurrentPage()
@@ -468,22 +469,24 @@ export default {
           this.$store.dispatch("notifyServerError", e)
         })
     },
-    recoverLastDeletedPurchases() {
-      this.$store
-        .dispatch("restoreLastDeletedPurchases")
-        .then((response) => {
-          const title =
-            response.count === 1 ? "L'achat a bien été restauré" : `${response.count} achats ont bien été restaurés`
-          this.$store.dispatch("notify", {
-            title,
-            status: "success",
+    recoverDeletedPurchases(ids) {
+      return () => {
+        this.$store
+          .dispatch("restorePurchases", ids)
+          .then((response) => {
+            const title =
+              response.count === 1 ? "L'achat a bien été restauré" : `${response.count} achats ont bien été restaurés`
+            this.$store.dispatch("notify", {
+              title,
+              status: "success",
+            })
+            this.selectedPurchases = []
+            this.fetchCurrentPage()
           })
-          this.selectedPurchases = []
-          this.fetchCurrentPage()
-        })
-        .catch((e) => {
-          this.$store.dispatch("notifyServerError", e)
-        })
+          .catch((e) => {
+            this.$store.dispatch("notifyServerError", e)
+          })
+      }
     },
     fetchCurrentPage() {
       this.loading = true
