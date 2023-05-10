@@ -1,10 +1,11 @@
 from django.contrib import admin
 from data.models import Purchase
-from .utils import ReadOnlyAdminMixin, get_arrayfield_list_filter
+from .utils import get_arrayfield_list_filter
+from .softdeletionadmin import SoftDeletionAdmin, SoftDeletionStatusFilter
 
 
 @admin.register(Purchase)
-class PurchaseAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
+class PurchaseAdmin(SoftDeletionAdmin):
     fields = (
         "canteen",
         "date",
@@ -16,8 +17,20 @@ class PurchaseAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "price_ht",
         "invoice_file",
         "local_definition",
+        "deletion_date",
     )
-    read_only_fields = fields
+    readonly_fields = (
+        "canteen",
+        "date",
+        "description",
+        "provider",
+        "family",
+        "category",
+        "characteristics",
+        "price_ht",
+        "invoice_file",
+        "local_definition",
+    )
     list_display = (
         "date",
         "description",
@@ -26,4 +39,8 @@ class PurchaseAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "canteen",
         "price_ht",
     )
-    list_filter = ("family", get_arrayfield_list_filter("characteristics", "Caractéristique"))
+    list_filter = (
+        "family",
+        get_arrayfield_list_filter("characteristics", "Caractéristique"),
+        SoftDeletionStatusFilter,
+    )
