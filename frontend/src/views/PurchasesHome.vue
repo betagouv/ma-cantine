@@ -453,8 +453,27 @@ export default {
         .dispatch("deletePurchases", { ids: this.selectedPurchases.map((p) => p.id) })
         .then(() => {
           const title =
-            selectedCount > 1 ? `${selectedCount} achats ont bien été supprimés` : "L'achat a bien été supprimé"
-          // TODO: add undo button to message
+            selectedCount === 1 ? "L'achat a bien été supprimé" : `${selectedCount} achats ont bien été supprimés`
+          this.$store.dispatch("notify", {
+            title,
+            status: "success",
+            duration: 10000,
+            undoMessage: "Restaurer achats",
+            undoAction: this.recoverLastDeletedPurchases,
+          })
+          this.selectedPurchases = []
+          this.fetchCurrentPage()
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
+    },
+    recoverLastDeletedPurchases() {
+      this.$store
+        .dispatch("restoreLastDeletedPurchases")
+        .then((response) => {
+          const title =
+            response.count === 1 ? "L'achat a bien été restauré" : `${response.count} achats ont bien été restaurés`
           this.$store.dispatch("notify", {
             title,
             status: "success",
@@ -465,13 +484,6 @@ export default {
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
-    },
-    recoverLastDeletedPurchases() {
-      // dispatch POST request to /purchases/recover
-      // which finds the last deleted purchase date
-    },
-    openSelectedPurchases() {
-      // open all selected purchases in a new tab? maybe in a different PR
     },
     fetchCurrentPage() {
       this.loading = true

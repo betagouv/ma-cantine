@@ -21,6 +21,7 @@ from collections import OrderedDict
 import logging
 import csv
 import time
+import datetime
 
 
 logger = logging.getLogger(__name__)
@@ -613,3 +614,18 @@ class ImportPurchasesView(APIView):
                 }
             )
         return errors
+
+
+class PurchasesRestoreView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        deleted_user_purchases = Purchase.all_objects.filter(
+            canteen__in=self.request.user.canteens.all(), deletion_date__isnull=False
+        )
+        deleted_user_purchases = deleted_user_purchases.order_by("-deletion_date")
+        latest_date = deleted_user_purchases.first().deletion_date
+        threshold_date = latest_date - datetime.timedelta(seconds=60)
+        purchases_to_restore = deleted_user_purchases.filter(deletion_date__gte=threshold_date)
+        restored_count = purchases_to_restore.update(deletion_date=None)
+        return JsonResponse({"count": restored_count}, status=status.HTTP_200_OK)
