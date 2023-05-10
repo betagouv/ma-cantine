@@ -43,4 +43,13 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "family",
         get_arrayfield_list_filter("characteristics", "Caractéristique"),
         SoftDeletionStatusFilter,
+        "deletion_date",
     )
+    search_fields = (
+        "description",
+        "canteen__name",
+        "canteen__siret",
+    )
+
+    def canteen_name(self, obj):
+        return obj.canteen.name
