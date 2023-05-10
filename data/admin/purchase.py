@@ -17,6 +17,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "price_ht",
         "invoice_file",
         "local_definition",
+        "import_source",
         "deletion_date",
     )
     readonly_fields = (
@@ -30,6 +31,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "price_ht",
         "invoice_file",
         "local_definition",
+        "import_source",
     )
     list_display = (
         "date",
@@ -49,6 +51,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "description",
         "canteen__name",
         "canteen__siret",
+        "import_source",
     )
 
     def canteen_name(self, obj):
