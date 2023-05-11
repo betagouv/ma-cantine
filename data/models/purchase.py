@@ -40,8 +40,7 @@ class Purchase(models.Model):
         CONVERSION_BIO = "CONVERSION_BIO", "En conversion bio"  # not used anymore
         LABEL_ROUGE = "LABEL_ROUGE", "Label rouge"
         AOCAOP = "AOCAOP", "AOC / AOP"
-        # ICP here is a typo
-        IGP = "ICP", "Indication géographique protégée"
+        IGP = "IGP", "Indication géographique protégée"
         STG = "STG", "Spécialité traditionnelle garantie"
         HVE = "HVE", "Haute valeur environnementale"
         PECHE_DURABLE = "PECHE_DURABLE", "Pêche durable"
