@@ -22,6 +22,11 @@
         <v-icon color="white" width="20">$close-line</v-icon>
       </v-btn>
     </div>
+    <div v-if="notification.undoMessage && notification.undoAction">
+      <v-btn @click="notification.undoAction" color="white" class="primary--text">
+        {{ notification.undoMessage }}
+      </v-btn>
+    </div>
   </v-snackbar>
 </template>
 

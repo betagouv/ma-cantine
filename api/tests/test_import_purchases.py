@@ -36,7 +36,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL])
         self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTMENT)
-        self.assertEqual(purchase.import_source, "Import du fichier CSV")
+        self.assertRegex(purchase.import_source, "Import du fichier CSV .+")
 
     # TODO: check semi colon and tab separators
 

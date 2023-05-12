@@ -12,6 +12,7 @@ from django.db import IntegrityError, transaction
 from django.db.models import Sum, Q
 from django.db.models.functions import ExtractYear
 from django.http import JsonResponse
+from django.utils import timezone
 from django_filters import rest_framework as django_filters
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager, IsAuthenticated
 from api.serializers import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer
@@ -486,6 +487,7 @@ class ImportPurchasesView(APIView):
         dialect = csv.Sniffer().sniff(filelines[0])
 
         csvreader = csv.reader(filelines, dialect=dialect)
+        import_source = f"Import du fichier CSV {timezone.now()}"
         for row_number, row in enumerate(csvreader, start=1):
             if row_number == 1 and row[0].lower().__contains__("siret"):
                 continue
@@ -498,7 +500,7 @@ class ImportPurchasesView(APIView):
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = normalise_siret(siret)
-                purchase = self._create_purchase_for_canteen(siret, row)
+                purchase = self._create_purchase_for_canteen(siret, row, import_source)
                 purchases.append(purchase)
 
             except Exception as e:
@@ -507,7 +509,7 @@ class ImportPurchasesView(APIView):
         return (purchases, errors)
 
     @transaction.atomic
-    def _create_purchase_for_canteen(self, siret, row):
+    def _create_purchase_for_canteen(self, siret, row, import_source):
         if not Canteen.objects.filter(siret=siret).exists():
             raise ObjectDoesNotExist()
         canteen = Canteen.objects.get(siret=siret)
@@ -544,7 +546,7 @@ class ImportPurchasesView(APIView):
             family=family.strip(),
             characteristics=characteristics,
             local_definition=local_definition.strip(),
-            import_source="Import du fichier CSV",
+            import_source=import_source,
         )
         purchase.full_clean()
         purchase.save()
@@ -621,3 +623,25 @@ class ImportPurchasesView(APIView):
                 }
             )
         return errors
+
+
+class PurchasesDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        purchase_ids = request.data.get("ids")
+        purchases = Purchase.objects.filter(canteen__in=self.request.user.canteens.all(), id__in=purchase_ids)
+        deleted_count = purchases.delete()
+        return JsonResponse({"count": deleted_count}, status=status.HTTP_200_OK)
+
+
+class PurchasesRestoreView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        purchase_ids = request.data.get("ids")
+        purchases_to_restore = Purchase.all_objects.filter(
+            canteen__in=self.request.user.canteens.all(), id__in=purchase_ids
+        )
+        restored_count = purchases_to_restore.update(deletion_date=None)
+        return JsonResponse({"count": restored_count}, status=status.HTTP_200_OK)
