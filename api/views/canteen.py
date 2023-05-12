@@ -1133,6 +1133,7 @@ class SatelliteListCreateView(ListCreateAPIView):
                     import_source=f"Cuisine centrale : {canteen.siret}",
                     production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 )
+            if created or satellite.managers.count() == 0:
                 for manager in canteen.managers.all():
                     satellite.managers.add(manager)
             serialized_canteen = FullCanteenSerializer(satellite).data
