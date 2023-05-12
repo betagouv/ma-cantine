@@ -605,7 +605,7 @@ class TestPurchaseApi(APITestCase):
         purchase_2.canteen.managers.add(authenticate.user)
 
         response = self.client.delete(
-            reverse("purchase_list_create"), {"ids": [purchase_1.id, purchase_2.id]}, format="json"
+            reverse("delete_purchases"), {"ids": [purchase_1.id, purchase_2.id]}, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         purchase_1.refresh_from_db()
@@ -628,12 +628,14 @@ class TestPurchaseApi(APITestCase):
         not_mine = PurchaseFactory.create(deletion_date=None)
         ids = [should_delete.id, already_deleted.id, invalid_id, not_mine.id]
 
-        response = self.client.delete(reverse("purchase_list_create"), {"ids": ids}, format="json")
+        response = self.client.delete(reverse("delete_purchases"), {"ids": ids}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["count"], 1)
         should_delete.refresh_from_db()
-        already_deleted.refresh_from_db()
         self.assertIsNotNone(should_delete.deletion_date)
+        already_deleted.refresh_from_db()
         self.assertEqual(already_deleted.deletion_date, date)
+        not_mine.refresh_from_db()
         self.assertIsNone(not_mine.deletion_date)
 
     @authenticate

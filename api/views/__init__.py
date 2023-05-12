@@ -52,6 +52,7 @@ from .purchase import (  # noqa: F401
     PurchaseListExportView,
     PurchaseOptionsView,
     ImportPurchasesView,
+    PurchasesDeleteView,
     PurchasesRestoreView,
 )
 from .reservationexpe import ReservationExpeView  # noqa: F401

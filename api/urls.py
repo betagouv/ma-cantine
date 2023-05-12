@@ -7,6 +7,7 @@ from api.views import (
     SubscribeNewsletter,
     PurchaseListCreateView,
     PurchaseRetrieveUpdateDestroyView,
+    PurchasesDeleteView,
     PurchasesRestoreView,
     CanteenPurchasesSummaryView,
     UsernameSuggestionView,
@@ -127,6 +128,11 @@ urlpatterns = {
         "purchases/<int:pk>",
         PurchaseRetrieveUpdateDestroyView.as_view(),
         name="purchase_retrieve_update_destroy",
+    ),
+    path(
+        "purchases/delete/",
+        PurchasesDeleteView.as_view(),
+        name="delete_purchases",
     ),
     path(
         "purchases/restore/",

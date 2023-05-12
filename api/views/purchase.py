@@ -144,12 +144,6 @@ class PurchaseListCreateView(ListCreateAPIView):
             queryset = queryset.filter(characteristics__overlap=characteristics)
         return super().filter_queryset(queryset)
 
-    def delete(self, request, *args, **kwargs):
-        purchase_ids = request.data.get("ids")
-        purchases = Purchase.objects.filter(id__in=purchase_ids)
-        purchases.delete()
-        return JsonResponse({}, status=status.HTTP_200_OK)
-
 
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
@@ -615,6 +609,16 @@ class ImportPurchasesView(APIView):
                 }
             )
         return errors
+
+
+class PurchasesDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        purchase_ids = request.data.get("ids")
+        purchases = Purchase.objects.filter(canteen__in=self.request.user.canteens.all(), id__in=purchase_ids)
+        deleted_count = purchases.delete()
+        return JsonResponse({"count": deleted_count}, status=status.HTTP_200_OK)
 
 
 class PurchasesRestoreView(APIView):
