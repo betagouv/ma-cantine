@@ -121,7 +121,7 @@ export default Object.freeze({
     BIO: { text: "Bio" },
     LABEL_ROUGE: { text: "Label rouge" },
     AOCAOP: { text: "AOC / AOP", longText: "Appellation d'origine (AOC / AOP)" },
-    ICP: { text: "IGP", longText: "Indication géographique protégée (IGP)" },
+    IGP: { text: "IGP", longText: "Indication géographique protégée (IGP)" },
     STG: { text: "STG", longText: "Spécialité traditionnelle garantie (STG)" },
     HVE: { text: "HVE", longText: "Certification environnementale de niveau 2 ou HVE" },
     PECHE_DURABLE: { text: "Écolabel pêche durable" },
