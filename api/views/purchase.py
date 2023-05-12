@@ -469,6 +469,20 @@ class ImportPurchasesView(APIView):
 
         filestring = file.read().decode("utf-8-sig")
         filelines = filestring.splitlines()
+
+        if len(filelines) > settings.CSV_PURCHASES_MAX_LINES:
+            return (
+                [],
+                [
+                    ImportPurchasesView._get_error(
+                        "Too many lines",
+                        f"Le fichier ne peut pas contenir plus de {settings.CSV_PURCHASES_MAX_LINES} lignes.",
+                        400,
+                        len(filelines),
+                    )
+                ],
+            )
+
         dialect = csv.Sniffer().sniff(filelines[0])
 
         csvreader = csv.reader(filelines, dialect=dialect)
@@ -559,7 +573,7 @@ class ImportPurchasesView(APIView):
 
     @staticmethod
     def _get_error(e, message, error_status, row_number):
-        logger.warning(f"Error on row {row_number}:\n{e}")
+        logger.warning(f"Error on row {row_number}:\n{e}\n{message}")
         return {"row": row_number, "status": error_status, "message": message}
 
     def _parse_errors(self, e, row):
