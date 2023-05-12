@@ -614,7 +614,7 @@ class ImportPurchasesView(APIView):
 class PurchasesDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def delete(self, request):
+    def post(self, request):
         purchase_ids = request.data.get("ids")
         purchases = Purchase.objects.filter(canteen__in=self.request.user.canteens.all(), id__in=purchase_ids)
         deleted_count = purchases.delete()
