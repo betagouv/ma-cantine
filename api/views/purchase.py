@@ -477,7 +477,7 @@ class ImportPurchasesView(APIView):
                     ImportPurchasesView._get_error(
                         "Too many lines",
                         f"Le fichier ne peut pas contenir plus de {settings.CSV_PURCHASES_MAX_LINES} lignes.",
-                        "Too many lines",
+                        400,
                         len(filelines),
                     )
                 ],

@@ -55,7 +55,7 @@ class TestPurchaseImport(APITestCase):
         errors = response.json()["errors"]
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0]["message"], "Le fichier ne peut pas contenir plus de 10 lignes.")
-        self.assertEqual(errors[0]["status"], "Too many lines")
+        self.assertEqual(errors[0]["status"], 400)
 
     @authenticate
     def test_import_bad_purchases(self):
