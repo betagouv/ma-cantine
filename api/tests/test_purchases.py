@@ -639,7 +639,7 @@ class TestPurchaseApi(APITestCase):
     @authenticate
     def test_restore_purchases(self):
         """
-        This endpoint restores the last deleted purchases, grouping together deletions of 1 minute
+        This endpoint restores the given IDs of deleted purchases
         """
         date = timezone.now()
         purchase_1 = PurchaseFactory.create(deletion_date=date)
