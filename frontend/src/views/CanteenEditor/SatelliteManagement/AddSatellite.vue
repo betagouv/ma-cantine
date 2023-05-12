@@ -207,6 +207,7 @@ export default {
           } else {
             this.$store.dispatch("notifyServerError", error)
           }
+          this.satellite = {}
         })
     },
     greaterThanDailyMealCount(input) {
