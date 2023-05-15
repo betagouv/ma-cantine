@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 from data.factories import UserFactory, PurchaseFactory, CanteenFactory
@@ -591,7 +592,79 @@ class TestPurchaseApi(APITestCase):
         response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)
+        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)  #
+
+    @authenticate
+    def test_delete_multiple_purchases(self):
+        """
+        Given a list of purchase ids, soft delete those purchases
+        """
+        purchase_1 = PurchaseFactory.create(deletion_date=None)
+        purchase_1.canteen.managers.add(authenticate.user)
+        purchase_2 = PurchaseFactory.create(deletion_date=None)
+        purchase_2.canteen.managers.add(authenticate.user)
+
+        response = self.client.post(
+            reverse("delete_purchases"), {"ids": [purchase_1.id, purchase_2.id]}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        purchase_1.refresh_from_db()
+        purchase_2.refresh_from_db()
+        self.assertIsNotNone(purchase_1.deletion_date)
+        self.assertIsNotNone(purchase_2.deletion_date)
+
+    @authenticate
+    def test_delete_invalid_purchases(self):
+        """
+        Ignore ids that are: non-existant; already deleted; not managed by the user
+        And delete what can be deleted
+        """
+        should_delete = PurchaseFactory.create(deletion_date=None)
+        date = timezone.now()
+        already_deleted = PurchaseFactory.create(deletion_date=date)
+        should_delete.canteen.managers.add(authenticate.user)
+        already_deleted.canteen.managers.add(authenticate.user)
+        invalid_id = "999"
+        not_mine = PurchaseFactory.create(deletion_date=None)
+        ids = [should_delete.id, already_deleted.id, invalid_id, not_mine.id]
+
+        response = self.client.post(reverse("delete_purchases"), {"ids": ids}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["count"], 1)
+        should_delete.refresh_from_db()
+        self.assertIsNotNone(should_delete.deletion_date)
+        already_deleted.refresh_from_db()
+        self.assertEqual(already_deleted.deletion_date, date)
+        not_mine.refresh_from_db()
+        self.assertIsNone(not_mine.deletion_date)
+
+    @authenticate
+    def test_restore_purchases(self):
+        """
+        This endpoint restores the given IDs of deleted purchases
+        """
+        date = timezone.now()
+        purchase_1 = PurchaseFactory.create(deletion_date=date)
+        purchase_2 = PurchaseFactory.create(deletion_date=date)
+        not_me = PurchaseFactory.create(deletion_date=date)
+        for p in [purchase_1, purchase_2, not_me]:
+            p.canteen.managers.add(authenticate.user)
+        not_my_purchase = PurchaseFactory.create(deletion_date=date)
+
+        response = self.client.post(
+            reverse("restore_purchases"), {"ids": [purchase_1.id, purchase_2.id, not_my_purchase.id]}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 2)
+        purchase_1.refresh_from_db()
+        purchase_2.refresh_from_db()
+        not_me.refresh_from_db()
+        not_my_purchase.refresh_from_db()
+        self.assertIsNone(purchase_1.deletion_date)
+        self.assertIsNone(purchase_2.deletion_date)
+        self.assertEqual(not_me.deletion_date, date)
+        self.assertEqual(not_my_purchase.deletion_date, date)
 
     @authenticate
     def test_search_purchases(self):

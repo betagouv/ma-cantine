@@ -173,6 +173,54 @@ class TestRelationCentralSatellite(APITestCase):
         self.assertEqual(existing_canteen.central_producer_siret, canteen.siret)
 
     @authenticate
+    def test_add_existing_satellite_without_managers(self):
+        """
+        If the satellite has no managers, the CC managers get access to it
+        """
+        satellite_siret = "89834106501485"
+        existing_canteen = CanteenFactory.create(siret=satellite_siret, production_type=Canteen.ProductionType.ON_SITE)
+        existing_canteen.managers.all().delete()
+        central_siret = "08376514425566"
+        canteen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        canteen.managers.add(authenticate.user)
+        request = {
+            "name": existing_canteen.name,
+            "siret": existing_canteen.siret,
+            "dailyMealCount": existing_canteen.daily_meal_count,
+        }
+        response = self.client.post(
+            reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}), request
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        existing_canteen.refresh_from_db()
+        self.assertIn(authenticate.user, existing_canteen.managers.all())
+
+    @authenticate
+    def test_add_existing_satellite_with_managers(self):
+        """
+        If the satellite already has managers, the CC managers do not get automatic access
+        """
+        satellite_siret = "89834106501485"
+        existing_canteen = CanteenFactory.create(siret=satellite_siret, production_type=Canteen.ProductionType.ON_SITE)
+        existing_canteen.managers.add(UserFactory.create())
+        central_siret = "08376514425566"
+        canteen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        canteen.managers.add(authenticate.user)
+        request = {
+            "name": existing_canteen.name,
+            "siret": existing_canteen.siret,
+            "dailyMealCount": existing_canteen.daily_meal_count,
+        }
+        response = self.client.post(
+            reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}), request
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        existing_canteen.refresh_from_db()
+        self.assertNotIn(authenticate.user, existing_canteen.managers.all())
+
+    @authenticate
     def test_add_existing_satellite_already_linked(self):
         """
         If the satellite targeted already has a central siret listed, don't change anything

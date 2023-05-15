@@ -1,7 +1,14 @@
 from django.contrib import admin
 
 
+@admin.action(description="Restaurer les objets supprimés par l'utilisateur")
+def restore_objects(modeladmin, request, queryset):
+    queryset.update(deletion_date=None)
+
+
 class SoftDeletionAdmin(admin.ModelAdmin):
+    actions = [restore_objects]
+
     def get_queryset(self, request):
         qs = self.model.all_objects
         ordering = self.get_ordering(request)

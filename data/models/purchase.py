@@ -2,9 +2,10 @@ from datetime import date
 from django.db import models
 from data.fields import ChoiceArrayField
 from .canteen import Canteen
+from .softdeletionmodel import SoftDeletionModel
 
 
-class Purchase(models.Model):
+class Purchase(SoftDeletionModel):
     class Meta:
         verbose_name = "achat"
         verbose_name_plural = "achats"

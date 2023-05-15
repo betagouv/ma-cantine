@@ -1,6 +1,7 @@
 from datetime import date
 from decimal import Decimal
 from django.urls import reverse
+from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory
@@ -35,11 +36,27 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL])
         self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTMENT)
-        self.assertEqual(purchase.import_source, "Import du fichier CSV")
+        self.assertRegex(purchase.import_source, "Import du fichier CSV .+")
 
     # TODO: check semi colon and tab separators
 
-    # Errors to test
+    @authenticate
+    @override_settings(CSV_PURCHASES_MAX_LINES=10)
+    def test_import_too_many_lines(self):
+        """
+        Test that the file is not treated if there are too many lines
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="36462492895701")
+        with open("./api/tests/files/bad_purchase_import.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        errors = response.json()["errors"]
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0]["message"], "Le fichier ne peut pas contenir plus de 10 lignes.")
+        self.assertEqual(errors[0]["status"], 400)
+
     @authenticate
     def test_import_bad_purchases(self):
         """
