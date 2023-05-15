@@ -1006,7 +1006,7 @@ class ClaimCanteenView(APIView):
         except Canteen.DoesNotExist:
             raise BadRequest()
 
-        if canteen.managers.exists() or canteen.publication_status != Canteen.PublicationStatus.PUBLISHED:
+        if canteen.managers.exists():
             raise BadRequest()
 
         canteen.managers.add(self.request.user)
