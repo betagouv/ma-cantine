@@ -162,7 +162,7 @@ urlpatterns = {
         ActionableCanteenRetrieveView.as_view(),
         name="retrieve_actionable_canteen",
     ),
-    path("canteenStatus/siret/<str:siret>", CanteenStatusView.as_view(), name="siret_check"),
+    path("canteenStatus/siret/<str:siret>", CanteenStatusView.as_view(), name="canteen_status"),
     path("videoTutorials/", VideoTutorialListView.as_view(), name="video_tutorials"),
 }
 
