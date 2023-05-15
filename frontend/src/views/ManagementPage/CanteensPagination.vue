@@ -103,7 +103,12 @@ export default {
       return query
     },
     showFilters() {
-      return this.canteenCount > this.limit || this.searchTerm || this.filterProductionType !== "all"
+      return (
+        this.canteenCount > this.limit ||
+        this.searchTerm ||
+        this.filterProductionType !== "all" ||
+        this.$route.query.recherche
+      )
     },
     showPagination() {
       return this.canteenCount > this.limit
@@ -119,12 +124,12 @@ export default {
       } else {
         this.filterProductionType = "all"
       }
+      this.searchTerm = this.$route.query.recherche || null
     },
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
       if (this.filterProductionType !== "all") queryParam += `&production_type=${this.filterProductionType}`
-      this.searchTerm = this.$route.query.recherche || null
       this.inProgress = true
 
       return fetch(`/api/v1/canteens/?${queryParam}`)
