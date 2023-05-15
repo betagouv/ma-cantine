@@ -2,7 +2,7 @@
   <v-card color="primary lighten-4" elevation="1" shaped class="d-flex align-center">
     <div>
       <v-card-title class="text-body-1 font-weight-bold">
-        PROLONGATION : vous avez jusqu'au 30 juillet 2023 pour participer à la collecte de données !
+        PROLONGATION : vous avez jusqu'au 30 juin 2023 pour participer à la collecte de données !
       </v-card-title>
       <v-card-text class="pb-0">
         Dans votre espace cantine, remplissez votre diagnostic 2022 et télédéclarez vos données (arrêté ministériel du
