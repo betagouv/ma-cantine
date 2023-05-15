@@ -2,7 +2,7 @@ amqp==5.1.1
 arabic-reshaper==3.0.0
 asgiref==3.6.0
 asn1crypto==1.5.1
-astroid==2.15.4
+astroid==2.15.5
 async-timeout==4.0.2
 attrs==23.1.0
 Authlib==1.2.0
