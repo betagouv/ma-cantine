@@ -6,7 +6,7 @@
       </v-sheet>
     </v-dialog>
     <v-form ref="siretForm" @submit.prevent>
-      <div class="mb-6">
+      <div class="mb-6" v-if="!allowDuplicates">
         <v-alert v-if="duplicateSiretCanteen" outlined type="info" color="primary">
           <div v-if="duplicateSiretCanteen.isManagedByUser" class="black--text">
             <h2 class="mb-4 body-1 font-weight-bold black--text" style="line-height: 1.25rem;">
@@ -120,7 +120,7 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 export default {
   name: "SiretCheck",
   components: { DsfrTextField, DsfrTextarea },
-  props: ["canteen", "backTo"],
+  props: ["canteen", "backTo", "allowDuplicates"],
   data() {
     const user = this.$store.state.loggedUser
     return {
@@ -156,13 +156,14 @@ export default {
         .then((response) => response.json())
         .then((response) => {
           const isDuplicateSiret = !!response.id
-          if (isDuplicateSiret) {
-            this.siret = null
-            this.requestSent = false
-            this.duplicateSiretCanteen = response
-          } else {
-            this.saveSiretIfNeeded().then(() => this.$emit("siretIsValid", response))
-          }
+
+          if (!isDuplicateSiret) return this.saveSiretIfNeeded().then(() => this.$emit("siretIsValid", response))
+
+          if (this.allowDuplicates) return this.$emit("duplicateCanteenFound", response)
+
+          this.siret = null
+          this.requestSent = false
+          this.duplicateSiretCanteen = response
         })
         .finally(() => (this.showProgressIndicator = false))
     },

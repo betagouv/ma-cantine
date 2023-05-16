@@ -28,12 +28,13 @@
             </p>
             <SiretCheck
               @siretIsValid="setCanteenData"
+              @duplicateCanteenFound="addExistingCanteen"
               :canteen="satellite"
-              @updateCanteen="(x) => $emit('updateCanteen', x)"
+              :allowDuplicates="true"
             />
           </v-col>
         </v-row>
-        <v-form ref="form" v-model="formIsValid" v-if="satellite.siret">
+        <v-form ref="form" v-model="formIsValid" v-if="satellite.siret && !satellite.id">
           <h3 class="mb-4">Étape 2/2 : Compléter les informations</h3>
           <v-row class="pb-0">
             <v-col cols="12" md="8">
@@ -173,18 +174,25 @@ export default {
     setCanteenData(data) {
       this.$set(this, "satellite", data)
     },
+    addExistingCanteen(data) {
+      this.$set(this, "satellite", data)
+      this.addSatellite()
+    },
     saveSatellite() {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch("notifyRequiredFieldsError")
         window.scrollTo(0, 0)
         return
       }
+      this.addSatellite()
+    },
+    addSatellite() {
       this.$store
         .dispatch("addSatellite", { id: this.canteen.id, payload: this.satellite })
         .then(() => {
           this.$store.dispatch("notify", {
             title: "Cantine satellite ajoutée",
-            message: "Votre cantine satellite a bien été créée.",
+            message: "Votre cantine satellite a bien été ajoutée.",
             status: "success",
           })
           this.satellite = {}
@@ -199,6 +207,7 @@ export default {
           } else {
             this.$store.dispatch("notifyServerError", error)
           }
+          this.satellite = {}
         })
     },
     greaterThanDailyMealCount(input) {

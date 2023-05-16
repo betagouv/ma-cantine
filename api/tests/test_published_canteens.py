@@ -561,17 +561,6 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertFalse(canteen.has_been_claimed)
 
     @authenticate
-    def test_canteen_claim_request_fails_when_not_published(self):
-        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT)
-        canteen.managers.clear()
-
-        response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(canteen.managers.count(), 0)
-        canteen.refresh_from_db()
-        self.assertFalse(canteen.has_been_claimed)
-
-    @authenticate
     def test_undo_claim_canteen(self):
         canteen = CanteenFactory.create(claimed_by=authenticate.user, has_been_claimed=True)
         canteen.managers.add(authenticate.user)

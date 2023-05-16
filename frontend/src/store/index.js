@@ -107,10 +107,12 @@ export default new Vuex.Store({
     SET_INITIAL_DATA_LOADED(state) {
       state.initialDataLoaded = true
     },
-    SET_NOTIFICATION(state, { message, title, status }) {
+    SET_NOTIFICATION(state, { message, title, status, undoAction, undoMessage }) {
       state.notification.message = message
       state.notification.title = title
       state.notification.status = status
+      state.notification.undoAction = undoAction
+      state.notification.undoMessage = undoMessage
     },
     ADD_CANTEEN(state, canteen) {
       state.userCanteenPreviews.push({
@@ -134,6 +136,8 @@ export default new Vuex.Store({
       state.notification.message = null
       state.notification.status = null
       state.notification.title = null
+      state.notification.undoAction = null
+      state.notification.undoMessage = null
     },
     SET_UPCOMING_COMMUNITY_EVENTS(state, events) {
       state.upcomingCommunityEvents = events
@@ -466,8 +470,8 @@ export default new Vuex.Store({
       }).then(verifyResponse)
     },
 
-    notify(context, { title, message, status, duration }) {
-      context.commit("SET_NOTIFICATION", { title, message, status })
+    notify(context, { title, message, status, undoAction, undoMessage, duration }) {
+      context.commit("SET_NOTIFICATION", { title, message, status, undoAction, undoMessage })
       setTimeout(() => context.commit("REMOVE_NOTIFICATION", message), duration || 4000)
     },
     notifyRequiredFieldsError(context) {
@@ -611,6 +615,42 @@ export default new Vuex.Store({
       return fetch(`/api/v1/purchases/${id}`, {
         method: "DELETE",
         headers,
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
+        })
+        .catch((e) => {
+          context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
+    deletePurchases(context, { ids }) {
+      context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/purchases/`, {
+        method: "DELETE",
+        headers,
+        body: JSON.stringify({ ids }),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
+        })
+        .catch((e) => {
+          context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
+    restorePurchases(context, ids) {
+      context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch(`/api/v1/purchases/restore/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ ids }),
       })
         .then(verifyResponse)
         .then((response) => {

@@ -2,9 +2,10 @@ from datetime import date
 from django.db import models
 from data.fields import ChoiceArrayField
 from .canteen import Canteen
+from .softdeletionmodel import SoftDeletionModel
 
 
-class Purchase(models.Model):
+class Purchase(SoftDeletionModel):
     class Meta:
         verbose_name = "achat"
         verbose_name_plural = "achats"
@@ -40,8 +41,7 @@ class Purchase(models.Model):
         CONVERSION_BIO = "CONVERSION_BIO", "En conversion bio"  # not used anymore
         LABEL_ROUGE = "LABEL_ROUGE", "Label rouge"
         AOCAOP = "AOCAOP", "AOC / AOP"
-        # ICP here is a typo
-        IGP = "ICP", "Indication géographique protégée"
+        IGP = "IGP", "Indication géographique protégée"
         STG = "STG", "Spécialité traditionnelle garantie"
         HVE = "HVE", "Haute valeur environnementale"
         PECHE_DURABLE = "PECHE_DURABLE", "Pêche durable"
