@@ -89,9 +89,20 @@
       </v-form>
       <v-card-actions class="d-flex pr-4 pb-4">
         <v-spacer></v-spacer>
-        <v-btn outlined color="primary" class="px-4" @click="closeDialog">Annuler</v-btn>
-        <v-btn outlined color="primary" class="ml-4 px-4" @click="goToEditing" v-if="!fromDiagPage">Modifier</v-btn>
-        <v-btn color="primary" class="ml-4 px-4" @click="confirmTeledeclaration">Télédéclarer ces données</v-btn>
+        <v-btn :disabled="tdLoading" outlined color="primary" class="px-4" @click="closeDialog">Annuler</v-btn>
+        <v-btn
+          :disabled="tdLoading"
+          outlined
+          color="primary"
+          class="ml-4 px-4"
+          @click="goToEditing"
+          v-if="!fromDiagPage"
+        >
+          Modifier
+        </v-btn>
+        <v-btn :disabled="tdLoading" color="primary" class="ml-4 px-4" @click="confirmTeledeclaration">
+          Télédéclarer ces données
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -123,6 +134,7 @@ export default {
       maxCostPerMealExpected: 10,
       minDaysOpenExpected: 50,
       maxDaysOpenExpected: 365,
+      tdLoading: false,
     }
   },
   computed: {
@@ -785,6 +797,7 @@ export default {
         const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
         if (!teledeclarationFormIsValid) return
       }
+      this.tdLoading = true
       this.handlePreviewClose("teledeclare")
       this.$emit("teledeclare")
     },
