@@ -369,16 +369,29 @@ class DiagnosticsFromPurchasesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        created_diags = []
         year = request.data.get("year")
         canteen_ids = request.data.get("canteen_ids")
-        # TODO: throw error if no year or no canteen ids
+        if not year or not canteen_ids:
+            raise BadRequest("Missing year and/or canteen ids")
+
+        created_diags = []
+        errors = []
         for canteen_id in canteen_ids:
-            canteen = Canteen.objects.get(id=canteen_id)
-            # TODO: check permission
+            try:
+                canteen = Canteen.objects.get(id=canteen_id)
+            except Canteen.DoesNotExist:
+                errors.append(f"Unknown canteen for id: {canteen_id}")
+                continue
+            if request.user not in canteen.managers.all():
+                errors.append(f"You do not manage canteen with id: {canteen_id}")
+                continue
             values_dict = canteen_summary_for_year(canteen, year)
-            # TODO: skip if diagnostic total ht is 0
+            total_ht = values_dict["value_total_ht"]
+            if total_ht == 0 or total_ht is None:
+                errors.append(f"No purchases found for canteen with id: {canteen_id}")
+                continue
             # TODO: auto-select CentralKitchenDiagnosticMode ?
+            # TODO: handle annual_diagnostic unique constraint
             diagnostic = Diagnostic(
                 canteen=canteen, year=year, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict
             )

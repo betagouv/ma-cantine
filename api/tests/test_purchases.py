@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
-from data.factories import UserFactory, PurchaseFactory, CanteenFactory
+from data.factories import UserFactory, PurchaseFactory, CanteenFactory, DiagnosticFactory
 from data.models import Purchase, Diagnostic
 from .utils import authenticate
 
@@ -946,5 +946,59 @@ class TestPurchaseApi(APITestCase):
         self.assertIn(diag_2.id, results)
         self.assertEqual(diag_2.value_total_ht, 20)
 
-    # test error handling: no year given; no ids given; existing diag for year; no canteen; not manager for canteen; no purchases for year
+    def test_unauthorised_create_diagnostics_from_purchases(self):
+        """
+        If not logged in, throw a 403
+        """
+        response = self.client.post(reverse("diagnostics_from_purchases"), {})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_missing_year_create_diagnostics_from_purchases(self):
+        """
+        If year is missing, throw a 400
+        """
+        response = self.client.post(reverse("diagnostics_from_purchases"), {"canteenIds": []}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_missing_canteens_create_diagnostics_from_purchases(self):
+        """
+        If canteen ids are missing, throw a 400
+        """
+        response = self.client.post(reverse("diagnostics_from_purchases"), {"year": 2021}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_errors_for_create_diagnostics_from_purchases(self):
+        """
+        Handle errors in diagnostic creation gracefully, creating what can be created
+        """
+        canteen_with_diag = CanteenFactory.create()
+        canteen_without_purchases = CanteenFactory.create()
+        good_canteen = CanteenFactory.create()
+        canteens = [canteen_with_diag, canteen_without_purchases, good_canteen]
+        for canteen in canteens:
+            canteen.managers.add(authenticate.user)
+        not_my_canteen = CanteenFactory.create()
+
+        DiagnosticFactory.create(canteen=canteen_with_diag)
+        year = 2023
+        PurchaseFactory.create(canteen=good_canteen, date=f"{year}-01-01", price_ht=100)
+        PurchaseFactory.create(canteen=canteen_with_diag, date=f"{year}-01-01", price_ht=666)
+        PurchaseFactory.create(canteen=not_my_canteen, date=f"{year}-01-01", price_ht=666)
+
+        response = self.client.post(
+            reverse("diagnostics_from_purchases"),
+            {"year": year, "canteenIds": ["666"] + [canteen.id for canteen in canteens]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 1)
+        errors = body["errors"]
+        self.assertEqual(len(errors), 4)
+
+    # test error handling: existing diag for year; no canteen; not manager for canteen; no purchases for year
     # test another endpoint: fetching canteens that can have diags created + provisional totals (preview before creation?)
