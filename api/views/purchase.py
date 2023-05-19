@@ -16,7 +16,7 @@ from django.utils import timezone
 from django_filters import rest_framework as django_filters
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager, IsAuthenticated
 from api.serializers import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer
-from data.models import Purchase, Canteen
+from data.models import Purchase, Canteen, Diagnostic
 from .utils import MaCantineOrderingFilter, UnaccentSearchFilter, normalise_siret
 from collections import OrderedDict
 import logging
@@ -182,10 +182,7 @@ class CanteenPurchasesSummaryView(APIView):
         canteen_id = kwargs.get("canteen_pk")
         canteen = self._get_canteen(canteen_id, self.request)
         year = request.query_params.get("year")
-        if year:
-            return canteen_summary_for_year(canteen, year)
-        else:
-            return canteen_summary(canteen)
+        return Response(canteen_summary_for_year(canteen, year) if year else canteen_summary(canteen))
 
     def _get_canteen(self, canteen_id, request):
         try:
@@ -206,7 +203,24 @@ def canteen_summary_for_year(canteen, year):
     complete_diag_data(purchases, data)
     misc_totals(purchases, data)
 
-    return Response(PurchaseSummarySerializer(data).data)
+    return PurchaseSummarySerializer(data).data
+
+
+def canteen_summary(canteen):
+    data = {"results": []}
+    years = (
+        Purchase.objects.filter(canteen=canteen).annotate(year=ExtractYear("date")).order_by("year").distinct("year")
+    )
+    years = [y["year"] for y in years.values()]
+    for year in years:
+        year_data = {"year": year}
+        purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
+            canteen=canteen, date__year=year
+        )
+        simple_diag_data(purchases, year_data)
+        data["results"].append(year_data)
+
+    return data
 
 
 # the order of EGALIM_LABELS is significant - determines which labels trump others when aggregating purchases
@@ -226,23 +240,6 @@ EGALIM_LABELS = [
     "PERFORMANCE",
     "EQUIVALENTS",
 ]
-
-
-def canteen_summary(canteen):
-    data = {"results": []}
-    years = (
-        Purchase.objects.filter(canteen=canteen).annotate(year=ExtractYear("date")).order_by("year").distinct("year")
-    )
-    years = [y["year"] for y in years.values()]
-    for year in years:
-        year_data = {"year": year}
-        purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
-            canteen=canteen, date__year=year
-        )
-        simple_diag_data(purchases, year_data)
-        data["results"].append(year_data)
-
-    return Response(data)
 
 
 def simple_diag_data(purchases, data):
@@ -373,6 +370,21 @@ class DiagnosticsFromPurchasesView(APIView):
 
     def post(self, request, *args, **kwargs):
         created_diags = []
+        year = request.data.get("year")
+        canteen_ids = request.data.get("canteen_ids")
+        # TODO: throw error if no year or no canteen ids
+        for canteen_id in canteen_ids:
+            canteen = Canteen.objects.get(id=canteen_id)
+            # TODO: check permission
+            values_dict = canteen_summary_for_year(canteen, year)
+            # TODO: skip if diagnostic total ht is 0
+            # TODO: auto-select CentralKitchenDiagnosticMode ?
+            diagnostic = Diagnostic(
+                canteen=canteen, year=year, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict
+            )
+            diagnostic.full_clean()
+            diagnostic.save()
+            created_diags.append(diagnostic.id)
         return JsonResponse({"results": created_diags}, status=status.HTTP_201_CREATED)
 
 

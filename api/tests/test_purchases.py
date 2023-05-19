@@ -931,17 +931,19 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=canteens).count(), 0)
 
         response = self.client.post(
-            reverse("diagnostics_from_purchases"), {"year": year, "canteenIds": [canteen_1.id, canteen_2.id]}
+            reverse("diagnostics_from_purchases"),
+            {"year": year, "canteenIds": [canteen_1.id, canteen_2.id]},
+            format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         results = body["results"]
         self.assertEqual(len(results), 2)
         diag_1 = Diagnostic.objects.get(year=year, canteen=canteen_1)
-        self.assertIn(results, diag_1.id)
+        self.assertIn(diag_1.id, results)
         self.assertEqual(diag_1.value_total_ht, 200)
         diag_2 = Diagnostic.objects.get(year=year, canteen=canteen_2)
-        self.assertIn(results, diag_2.id)
+        self.assertIn(diag_2.id, results)
         self.assertEqual(diag_2.value_total_ht, 20)
 
     # test error handling: no year given; no ids given; existing diag for year; no canteen; not manager for canteen; no purchases for year
