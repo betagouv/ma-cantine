@@ -982,15 +982,15 @@ class TestPurchaseApi(APITestCase):
             canteen.managers.add(authenticate.user)
         not_my_canteen = CanteenFactory.create()
 
-        DiagnosticFactory.create(canteen=canteen_with_diag)
         year = 2023
+        DiagnosticFactory.create(canteen=canteen_with_diag, year=year)
         PurchaseFactory.create(canteen=good_canteen, date=f"{year}-01-01", price_ht=100)
         PurchaseFactory.create(canteen=canteen_with_diag, date=f"{year}-01-01", price_ht=666)
         PurchaseFactory.create(canteen=not_my_canteen, date=f"{year}-01-01", price_ht=666)
 
         response = self.client.post(
             reverse("diagnostics_from_purchases"),
-            {"year": year, "canteenIds": ["666"] + [canteen.id for canteen in canteens]},
+            {"year": year, "canteenIds": ["666", not_my_canteen.id] + [canteen.id for canteen in canteens]},
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -998,7 +998,12 @@ class TestPurchaseApi(APITestCase):
         results = body["results"]
         self.assertEqual(len(results), 1)
         errors = body["errors"]
+        self.assertEqual(errors[0], "Inconnue cantine : 666")
+        self.assertEqual(errors[1], f"Vous ne gerez pas la cantine : {not_my_canteen.id}")
+        self.assertEqual(
+            errors[2], f"Il existe déjà un diagnostic pour l'année 2023 pour la cantine : {canteen_with_diag.id}"
+        )
+        self.assertEqual(errors[3], f"Aucun achat trouvé pour la cantine : {canteen_without_purchases.id}")
         self.assertEqual(len(errors), 4)
 
-    # test error handling: existing diag for year; no canteen; not manager for canteen; no purchases for year
     # test another endpoint: fetching canteens that can have diags created + provisional totals (preview before creation?)

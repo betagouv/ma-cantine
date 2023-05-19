@@ -380,25 +380,29 @@ class DiagnosticsFromPurchasesView(APIView):
             try:
                 canteen = Canteen.objects.get(id=canteen_id)
             except Canteen.DoesNotExist:
-                errors.append(f"Unknown canteen for id: {canteen_id}")
+                errors.append(f"Inconnue cantine : {canteen_id}")
                 continue
             if request.user not in canteen.managers.all():
-                errors.append(f"You do not manage canteen with id: {canteen_id}")
+                errors.append(f"Vous ne gerez pas la cantine : {canteen_id}")
                 continue
             values_dict = canteen_summary_for_year(canteen, year)
             total_ht = values_dict["value_total_ht"]
             if total_ht == 0 or total_ht is None:
-                errors.append(f"No purchases found for canteen with id: {canteen_id}")
+                errors.append(f"Aucun achat trouvé pour la cantine : {canteen_id}")
                 continue
             # TODO: auto-select CentralKitchenDiagnosticMode ?
             # TODO: handle annual_diagnostic unique constraint
             diagnostic = Diagnostic(
                 canteen=canteen, year=year, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict
             )
-            diagnostic.full_clean()
+            try:
+                diagnostic.full_clean()
+            except ValidationError:
+                errors.append(f"Il existe déjà un diagnostic pour l'année {year} pour la cantine : {canteen_id}")
+                continue
             diagnostic.save()
             created_diags.append(diagnostic.id)
-        return JsonResponse({"results": created_diags}, status=status.HTTP_201_CREATED)
+        return JsonResponse({"results": created_diags, "errors": errors}, status=status.HTTP_201_CREATED)
 
 
 class PurchaseListExportView(PurchaseListCreateView, XLSXFileMixin):
