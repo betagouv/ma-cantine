@@ -390,8 +390,8 @@ class DiagnosticsFromPurchasesView(APIView):
             if total_ht == 0 or total_ht is None:
                 errors.append(f"Aucun achat trouvé pour la cantine : {canteen_id}")
                 continue
-            # TODO: auto-select CentralKitchenDiagnosticMode ?
-            # TODO: handle annual_diagnostic unique constraint
+            if canteen.is_central_cuisine:
+                values_dict["central_kitchen_diagnostic_mode"] = Diagnostic.CentralKitchenDiagnosticMode.APPRO
             diagnostic = Diagnostic(
                 canteen=canteen, year=year, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict
             )

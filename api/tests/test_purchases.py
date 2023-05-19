@@ -3,7 +3,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 from data.factories import UserFactory, PurchaseFactory, CanteenFactory, DiagnosticFactory
-from data.models import Purchase, Diagnostic
+from data.models import Purchase, Diagnostic, Canteen
 from .utils import authenticate
 
 
@@ -911,40 +911,42 @@ class TestPurchaseApi(APITestCase):
         pre-filled with purchase totals for that year
         """
         # TODO: refactor canteen creation and manager adding into setup and takedown?
-        canteen_1 = CanteenFactory.create()
-        canteen_2 = CanteenFactory.create()
-        canteens = [canteen_1, canteen_2]
+        canteen_site = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL)
+        canteens = [canteen_site, central_kitchen]
         for canteen in canteens:
             canteen.managers.add(authenticate.user)
         # purchases to be included in totals
-        PurchaseFactory.create(canteen=canteen_1, date="2021-01-01", price_ht=50)
-        PurchaseFactory.create(canteen=canteen_1, date="2021-12-31", price_ht=150)
+        PurchaseFactory.create(canteen=canteen_site, date="2021-01-01", price_ht=50)
+        PurchaseFactory.create(canteen=canteen_site, date="2021-12-31", price_ht=150)
 
-        PurchaseFactory.create(canteen=canteen_2, date="2021-01-01", price_ht=5)
-        PurchaseFactory.create(canteen=canteen_2, date="2021-12-31", price_ht=15)
+        PurchaseFactory.create(canteen=central_kitchen, date="2021-01-01", price_ht=5)
+        PurchaseFactory.create(canteen=central_kitchen, date="2021-12-31", price_ht=15)
 
         # purchases to be filtered out from totals
-        PurchaseFactory.create(canteen=canteen_1, date="2022-01-01", price_ht=666)
-        PurchaseFactory.create(canteen=canteen_2, date="2020-12-31", price_ht=666)
+        PurchaseFactory.create(canteen=canteen_site, date="2022-01-01", price_ht=666)
+        PurchaseFactory.create(canteen=central_kitchen, date="2020-12-31", price_ht=666)
 
         year = 2021
         self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=canteens).count(), 0)
 
         response = self.client.post(
             reverse("diagnostics_from_purchases"),
-            {"year": year, "canteenIds": [canteen_1.id, canteen_2.id]},
+            {"year": year, "canteenIds": [canteen_site.id, central_kitchen.id]},
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         results = body["results"]
         self.assertEqual(len(results), 2)
-        diag_1 = Diagnostic.objects.get(year=year, canteen=canteen_1)
-        self.assertIn(diag_1.id, results)
-        self.assertEqual(diag_1.value_total_ht, 200)
-        diag_2 = Diagnostic.objects.get(year=year, canteen=canteen_2)
-        self.assertIn(diag_2.id, results)
-        self.assertEqual(diag_2.value_total_ht, 20)
+        diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
+        self.assertIn(diag_site.id, results)
+        self.assertEqual(diag_site.value_total_ht, 200)
+        self.assertEqual(diag_site.central_kitchen_diagnostic_mode, None)
+        diag_cc = Diagnostic.objects.get(year=year, canteen=central_kitchen)
+        self.assertIn(diag_cc.id, results)
+        self.assertEqual(diag_cc.value_total_ht, 20)
+        self.assertEqual(diag_cc.central_kitchen_diagnostic_mode, "APPRO")
 
     def test_unauthorised_create_diagnostics_from_purchases(self):
         """
