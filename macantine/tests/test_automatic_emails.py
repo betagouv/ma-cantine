@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.test import TestCase
 from django.test.utils import override_settings
 from data.factories import CanteenFactory, UserFactory, DiagnosticFactory
-from data.models import Canteen, Diagnostic
+from data.models import Canteen
 from macantine import tasks
 
 
@@ -503,7 +503,6 @@ class TestAutomaticEmails(TestCase):
         )
         DiagnosticFactory.create(
             canteen=central_kitchen,
-            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
         )
 
         # We create a satellite canteen with no diagnostics managed by
