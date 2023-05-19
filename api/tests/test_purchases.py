@@ -1008,4 +1008,28 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(errors[3], f"Aucun achat trouvé pour la cantine : {canteen_without_purchases.id}")
         self.assertEqual(len(errors), 4)
 
-    # test another endpoint: fetching canteens that can have diags created + provisional totals (preview before creation?)
+    @authenticate
+    def test_get_canteens_with_purchases_no_diagnostics_for_year(self):
+        """
+        Return a list of canteens I manage who do have purchases for the given year,
+        but have not yet created a diagnostic
+        """
+        year = 2023
+        canteen_without_diag = CanteenFactory.create()
+        canteen_with_diag = CanteenFactory.create()
+        canteen_without_purchases = CanteenFactory.create()
+        not_my_canteen = CanteenFactory.create()
+        canteens = [canteen_with_diag, canteen_without_diag, canteen_without_purchases]
+        for canteen in canteens:
+            canteen.managers.add(authenticate.user)
+        DiagnosticFactory.create(canteen=canteen_with_diag, year=year)
+        PurchaseFactory.create(canteen=canteen_without_diag, date=f"{year}-01-01")
+        # add second purchase to check canteen id deduplication
+        PurchaseFactory.create(canteen=canteen_without_diag, date=f"{year}-12-01")
+        PurchaseFactory.create(canteen=canteen_with_diag, date=f"{year}-01-01")
+        PurchaseFactory.create(canteen=not_my_canteen, date=f"{year}-01-01")
+
+        response = self.client.get(reverse("diagnostics_from_purchases"), {"year": year})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenIds"], [canteen_without_diag.id])

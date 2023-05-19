@@ -365,8 +365,20 @@ def misc_totals(purchases, data):
 
 
 class DiagnosticsFromPurchasesView(APIView):
-    # TODO: get
     permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        year = request.query_params.get("year")
+        canteens = request.user.canteens.all()
+        canteens_with_diagnostics = Diagnostic.objects.filter(canteen__in=canteens, year=year).values("canteen")
+        canteens_without_diagnostics = canteens.exclude(id__in=canteens_with_diagnostics)
+        canteen_ids = []
+        if canteens_with_diagnostics.count() > 0:
+            canteens_with_purchases = Purchase.objects.filter(
+                canteen__in=canteens_without_diagnostics, date__year=year
+            ).values("canteen")
+            canteen_ids = list(Canteen.objects.filter(id__in=canteens_with_purchases).values_list("id", flat=True))
+        return JsonResponse(data={"canteenIds": canteen_ids}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         year = request.data.get("year")
