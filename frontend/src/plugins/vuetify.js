@@ -1,5 +1,7 @@
 import Vue from "vue"
 import Vuetify from "vuetify/lib/framework"
+import "vuetify/styles"
+import { createVuetify } from "vuetify"
 import theme from "@/theme"
 import { VBtn, VCard, VRadio, VCheckbox } from "vuetify/lib"
 import remixJson from "./remix.json"
@@ -22,7 +24,7 @@ VCard.options.props.ripple.default = false
 VRadio.options.props.ripple.default = false
 VCheckbox.options.props.ripple.default = false
 
-export default new Vuetify({
+export default createVuetify({
   theme: theme,
   iconfont: "md",
   breakpoint: {
