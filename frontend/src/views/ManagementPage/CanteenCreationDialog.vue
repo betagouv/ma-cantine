@@ -1,5 +1,11 @@
 <template>
-  <v-dialog persistent max-width="1000" v-model="value" @click:outside="$emit('input', false)">
+  <v-dialog
+    persistent
+    max-width="1000"
+    :value="value"
+    @input="value = $event.target.value"
+    @click:outside="$emit('input', false)"
+  >
     <v-sheet class="pa-8 text-left">
       <h2 class="font-weight-black">
         Créez votre cantine

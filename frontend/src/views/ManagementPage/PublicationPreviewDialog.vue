@@ -1,5 +1,11 @@
 <template>
-  <v-dialog persistent max-width="1000" v-model="value" @click:outside="$emit('close')">
+  <v-dialog
+    persistent
+    max-width="1000"
+    :value="value"
+    @input="value = $event.target.value"
+    @click:outside="$emit('close')"
+  >
     <v-card>
       <div class="mb-4 pa-4 d-flex" style="background-color: #F5F5F5">
         <v-spacer></v-spacer>
