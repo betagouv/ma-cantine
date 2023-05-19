@@ -3,7 +3,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 from data.factories import UserFactory, PurchaseFactory, CanteenFactory
-from data.models import Purchase
+from data.models import Purchase, Diagnostic
 from .utils import authenticate
 
 
@@ -903,3 +903,46 @@ class TestPurchaseApi(APITestCase):
     def test_get_purchase_options_unauthenticated(self):
         response = self.client.get(reverse("purchase_options"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_create_diagnostics_from_purchases(self):
+        """
+        Given a list of canteen ids and a year, create diagnostics
+        pre-filled with purchase totals for that year
+        """
+        # TODO: refactor canteen creation and manager adding into setup and takedown?
+        canteen_1 = CanteenFactory.create()
+        canteen_2 = CanteenFactory.create()
+        canteens = [canteen_1, canteen_2]
+        for canteen in canteens:
+            canteen.managers.add(authenticate.user)
+        # purchases to be included in totals
+        PurchaseFactory.create(canteen=canteen_1, date="2021-01-01", price_ht=50)
+        PurchaseFactory.create(canteen=canteen_1, date="2021-12-31", price_ht=150)
+
+        PurchaseFactory.create(canteen=canteen_2, date="2021-01-01", price_ht=5)
+        PurchaseFactory.create(canteen=canteen_2, date="2021-12-31", price_ht=15)
+
+        # purchases to be filtered out from totals
+        PurchaseFactory.create(canteen=canteen_1, date="2022-01-01", price_ht=666)
+        PurchaseFactory.create(canteen=canteen_2, date="2020-12-31", price_ht=666)
+
+        year = 2021
+        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=canteens).count(), 0)
+
+        response = self.client.post(
+            reverse("diagnostics_from_purchases"), {"year": year, "canteenIds": [canteen_1.id, canteen_2.id]}
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 2)
+        diag_1 = Diagnostic.objects.get(year=year, canteen=canteen_1)
+        self.assertIn(results, diag_1.id)
+        self.assertEqual(diag_1.value_total_ht, 200)
+        diag_2 = Diagnostic.objects.get(year=year, canteen=canteen_2)
+        self.assertIn(results, diag_2.id)
+        self.assertEqual(diag_2.value_total_ht, 20)
+
+    # test error handling: no year given; no ids given; existing diag for year; no canteen; not manager for canteen; no purchases for year
+    # test another endpoint: fetching canteens that can have diags created + provisional totals (preview before creation?)
