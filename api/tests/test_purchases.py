@@ -931,8 +931,8 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=canteens).count(), 0)
 
         response = self.client.post(
-            reverse("diagnostics_from_purchases"),
-            {"year": year, "canteenIds": [canteen_site.id, central_kitchen.id]},
+            reverse("diagnostics_from_purchases", kwargs={"year": year}),
+            {"canteenIds": [canteen_site.id, central_kitchen.id]},
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -952,23 +952,15 @@ class TestPurchaseApi(APITestCase):
         """
         If not logged in, throw a 403
         """
-        response = self.client.post(reverse("diagnostics_from_purchases"), {})
+        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2020}), {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_missing_year_create_diagnostics_from_purchases(self):
-        """
-        If year is missing, throw a 400
-        """
-        response = self.client.post(reverse("diagnostics_from_purchases"), {"canteenIds": []}, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
     def test_missing_canteens_create_diagnostics_from_purchases(self):
         """
         If canteen ids are missing, throw a 400
         """
-        response = self.client.post(reverse("diagnostics_from_purchases"), {"year": 2021}, format="json")
+        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2021}), {}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
@@ -991,8 +983,8 @@ class TestPurchaseApi(APITestCase):
         PurchaseFactory.create(canteen=not_my_canteen, date=f"{year}-01-01", price_ht=666)
 
         response = self.client.post(
-            reverse("diagnostics_from_purchases"),
-            {"year": year, "canteenIds": ["666", not_my_canteen.id] + [canteen.id for canteen in canteens]},
+            reverse("diagnostics_from_purchases", kwargs={"year": year}),
+            {"canteenIds": ["666", not_my_canteen.id] + [canteen.id for canteen in canteens]},
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -1029,7 +1021,7 @@ class TestPurchaseApi(APITestCase):
         PurchaseFactory.create(canteen=canteen_with_diag, date=f"{year}-01-01")
         PurchaseFactory.create(canteen=not_my_canteen, date=f"{year}-01-01")
 
-        response = self.client.get(reverse("diagnostics_from_purchases"), {"year": year})
+        response = self.client.get(reverse("diagnostics_from_purchases", kwargs={"year": year}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenIds"], [canteen_without_diag.id])

@@ -368,7 +368,7 @@ class DiagnosticsFromPurchasesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        year = request.query_params.get("year")
+        year = kwargs.get("year")
         canteens = request.user.canteens.all()
         canteens_with_diagnostics = Diagnostic.objects.filter(canteen__in=canteens, year=year).values("canteen")
         canteens_without_diagnostics = canteens.exclude(id__in=canteens_with_diagnostics)
@@ -381,7 +381,7 @@ class DiagnosticsFromPurchasesView(APIView):
         return JsonResponse(data={"canteenIds": canteen_ids}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        year = request.data.get("year")
+        year = kwargs.get("year")
         canteen_ids = request.data.get("canteen_ids")
         if not year or not canteen_ids:
             raise BadRequest("Missing year and/or canteen ids")
