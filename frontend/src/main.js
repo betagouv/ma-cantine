@@ -1,5 +1,5 @@
 import Vue from "vue"
-import { createApp } from "vue"
+import { createApp, configureCompat } from "vue"
 import VueMatomo from "vue-matomo"
 import App from "./App.vue"
 import { router } from "./router"
@@ -7,6 +7,11 @@ import store from "./store"
 import vuetify from "./plugins/vuetify"
 
 Vue.config.productionTip = false
+
+// disable compat for certain features
+configureCompat({
+  COMPONENT_ASYNC: false,
+})
 
 if (window.MATOMO_ID) {
   Vue.use(VueMatomo, {

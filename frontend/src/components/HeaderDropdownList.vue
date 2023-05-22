@@ -20,8 +20,8 @@
       <v-divider v-if="loggedUser" class="my-2"></v-divider>
       <!-- logout button with warning -->
       <v-dialog v-if="loggedUser" v-model="logoutWarningDialog" max-width="500">
-        <template v-slot:activator="{ on, attrs }">
-          <v-list-item :input-value="logoutWarningDialog" :ripple="false" v-bind="attrs" v-on="on">
+        <template v-slot:activator="{ props }">
+          <v-list-item :input-value="logoutWarningDialog" :ripple="false" v-bind="props">
             <v-list-item-title class="body-2">
               <v-icon small color="grey darken-2" class="mt-n1 mr-2">$logout-box-r-fill</v-icon>
               Me déconnecter

@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="isOpen" width="500">
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn class="text-caption mb-4 px-0" x-small text plain v-bind="attrs" v-on="on">
+    <template v-slot:activator="{ props }">
+      <v-btn class="text-caption mb-4 px-0" x-small text plain v-bind="props">
         <v-icon x-small class="mr-1">$close-line</v-icon>
         Annuler ma télédéclaration
       </v-btn>

@@ -28,6 +28,6 @@ export default createVuetify({
   */
   icons: {
     iconfont: "mdi",
-    values: remixJson,
+    aliases: remixJson,
   },
 })

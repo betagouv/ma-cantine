@@ -18,8 +18,8 @@
       </v-col>
       <v-col cols="1" class="text-right mx-0">
         <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon tabindex="0" v-bind="attrs" v-on="on" small>mdi-help-circle-outline</v-icon>
+          <template v-slot:activator="{ props }">
+            <v-icon tabindex="0" v-bind="props" small>mdi-help-circle-outline</v-icon>
           </template>
           <span>{{ helpLabel }}</span>
         </v-tooltip>

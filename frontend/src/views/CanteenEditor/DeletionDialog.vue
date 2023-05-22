@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="isOpen" width="500">
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn color="red darken-2" outlined v-bind="attrs" v-on="on">
+    <template v-slot:activator="{ props }">
+      <v-btn color="red darken-2" outlined v-bind="props">
         <v-icon small class="mr-2">mdi-alert</v-icon>
         Supprimer cette cantine
       </v-btn>

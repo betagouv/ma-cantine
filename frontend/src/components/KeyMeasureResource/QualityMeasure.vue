@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-dialog max-width="700" v-model="calculatorModal" @input="stopVideo">
-      <template v-slot:activator="{ on, attrs }">
+      <template v-slot:activator="{ props }">
         <p class="mt-4 body-1">
           Si vous avez besoin d'aide pour calculer votre part de bios et de produits labélisés, vous pouvez
-          <a href="#" v-on="on" v-bind="attrs">tester notre calculateur sous format excel</a>
+          <a href="#" v-bind="props">tester notre calculateur sous format excel</a>
         </p>
       </template>
       <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />

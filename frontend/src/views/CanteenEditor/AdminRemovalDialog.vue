@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="isOpen" width="500">
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn color="red" x-small fab outlined v-bind="attrs" v-on="on">
+    <template v-slot:activator="{ props }">
+      <v-btn color="red" x-small fab outlined v-bind="props">
         <v-icon aria-hidden="false" title="Enlever">$delete-fill</v-icon>
       </v-btn>
     </template>

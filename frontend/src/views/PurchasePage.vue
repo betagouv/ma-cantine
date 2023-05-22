@@ -84,14 +84,13 @@
                   offset-y
                   min-width="auto"
                 >
-                  <template v-slot:activator="{ on, attrs }">
+                  <template v-slot:activator="{ props }">
                     <DsfrTextField
                       :value="humanReadableDate"
                       prepend-icon="$calendar-event-fill"
                       readonly
-                      v-bind="attrs"
+                      v-bind="props"
                       :rules="[validators.required]"
-                      v-on="on"
                       hide-details="auto"
                       id="date"
                       class="mt-2"
@@ -183,8 +182,8 @@
           class="d-flex flex-column flex-sm-row align-start align-sm-center"
         >
           <v-dialog v-model="showDeleteDialog" v-if="!isNewPurchase" width="500">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn :disabled="loading" large v-bind="attrs" v-on="on" outlined color="red darken-2" class="ma-1">
+            <template v-slot:activator="{ props }">
+              <v-btn :disabled="loading" large v-bind="props" outlined color="red darken-2" class="ma-1">
                 <v-icon class="mr-1">$delete-fill</v-icon>
                 Supprimer
               </v-btn>

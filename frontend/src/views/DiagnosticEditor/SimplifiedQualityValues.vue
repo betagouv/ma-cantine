@@ -144,8 +144,8 @@
         environnementales ou acquis sur la base de leurs performances en matière environnementale.
         <br />
         <v-dialog v-model="valueExternalityPerformanceHtDialog" max-width="600">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" outlined small v-bind="attrs" v-on="on">
+          <template v-slot:activator="{ props }">
+            <v-btn color="primary" outlined small v-bind="props">
               <v-icon small class="mr-2">$information-line</v-icon>
               Plus d'informations
             </v-btn>

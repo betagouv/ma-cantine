@@ -168,7 +168,7 @@
               offset-y
               min-width="auto"
             >
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-col cols="12" sm="6" md="3">
                   <label
                     for="filter-startdate"
@@ -180,8 +180,7 @@
                     :value="appliedFilters.startDate"
                     prepend-icon="$calendar-event-fill"
                     readonly
-                    v-bind="attrs"
-                    v-on="on"
+                    v-bind="props"
                     hide-details
                     clearable
                     id="filter-startdate"
@@ -203,7 +202,7 @@
               offset-y
               min-width="auto"
             >
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-col cols="12" sm="6" md="3">
                   <label
                     for="filter-enddate"
@@ -215,8 +214,7 @@
                     :value="appliedFilters.endDate"
                     prepend-icon="$calendar-event-fill"
                     readonly
-                    v-bind="attrs"
-                    v-on="on"
+                    v-bind="props"
                     hide-details
                     clearable
                     id="filter-enddate"

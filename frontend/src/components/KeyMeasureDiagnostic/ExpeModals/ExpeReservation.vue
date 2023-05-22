@@ -45,13 +45,12 @@
             offset-y
             min-width="auto"
           >
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <DsfrTextField
                 :value="humanReadableDate(expe.reservationSystemStartDate)"
                 prepend-icon="$calendar-event-fill"
                 readonly
-                v-bind="attrs"
-                v-on="on"
+                v-bind="props"
                 hide-details="auto"
                 style="max-width: 200px"
                 id="date"
@@ -79,13 +78,12 @@
             offset-y
             min-width="auto"
           >
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <DsfrTextField
                 :value="humanReadableDate(expe.experimentationStartDate)"
                 prepend-icon="$calendar-event-fill"
                 readonly
-                v-bind="attrs"
-                v-on="on"
+                v-bind="props"
                 hide-details="auto"
                 style="max-width: 200px"
                 id="date"

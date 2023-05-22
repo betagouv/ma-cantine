@@ -15,8 +15,8 @@
           <v-card-actions class="px-4">
             <v-spacer></v-spacer>
             <v-dialog max-width="700" v-model="calculatorModal">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn outlined color="primary" v-on="on" v-bind="attrs">
+              <template v-slot:activator="{ props }">
+                <v-btn outlined color="primary" v-bind="props">
                   Télécharger le tableur
                 </v-btn>
               </template>

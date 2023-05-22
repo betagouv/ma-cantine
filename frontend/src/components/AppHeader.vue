@@ -87,10 +87,9 @@
         v-model="logoutWarningDialog"
         max-width="500"
       >
-        <template v-slot:activator="{ on, attrs }">
+        <template v-slot:activator="{ props }">
           <v-btn
-            v-bind="attrs"
-            v-on="on"
+            v-bind="props"
             text
             elevation="0"
             class="d-none d-sm-flex align-self-center header-signup-button primary--text"
@@ -127,10 +126,9 @@
             :class="navLink.isActive ? 'mc-active-tab' : ''"
           >
             <v-menu v-if="navLink.children" rounded="0" offset-y attach="#header-tabs" nudge-right="16">
-              <template v-slot:activator="{ on, attrs, value }">
+              <template v-slot:activator="{ props }">
                 <v-tab
-                  v-bind="attrs"
-                  v-on="on"
+                  v-bind="props"
                   class="mc-tab body-2 text--darken-2"
                   :class="navLink.isActive ? 'primary--text' : 'black--text'"
                 >
@@ -164,8 +162,9 @@
         </v-tabs>
       </template>
       <v-menu v-if="$vuetify.display.smAndDown && userDataReady" left bottom offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn v-if="loggedUser" class="mr-2 ml-2 align-self-center" id="profile" plain v-on="on">
+        <!-- TODO MIGRATION - double check this area's behaviour after the change to v-bind="props" -->
+        <template v-slot:activator="{ props }">
+          <v-btn v-if="loggedUser" class="mr-2 ml-2 align-self-center" id="profile" plain v-bind="props">
             <v-avatar size="36" class="mr-2 pt-1" v-if="loggedUser && loggedUser.avatar">
               <v-img :src="loggedUser.avatar"></v-img>
             </v-avatar>
@@ -174,7 +173,7 @@
             <v-icon class="ml-1 pt-1" small>$arrow-down-s-line</v-icon>
           </v-btn>
 
-          <v-btn v-else icon class="mr-2 ml-2 align-self-center" v-on="on">
+          <v-btn v-else icon class="mr-2 ml-2 align-self-center" v-bind="props">
             <v-icon>$menu-fill</v-icon>
             <span class="d-sr-only">Menu</span>
           </v-btn>
