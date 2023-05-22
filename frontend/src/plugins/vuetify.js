@@ -1,6 +1,6 @@
 import "vuetify/styles"
 import { createVuetify } from "vuetify"
-import theme from "@/theme"
+import maCantineTheme from "@/theme"
 import { VBtn, VCard, VRadio, VCheckbox } from "vuetify/components"
 import remixJson from "./remix.json"
 
@@ -12,7 +12,12 @@ VRadio.props.ripple.default = false
 VCheckbox.props.ripple.default = false
 
 export default createVuetify({
-  theme: theme,
+  theme: {
+    defaultTheme: "maCantineTheme",
+    themes: {
+      maCantineTheme,
+    },
+  },
   iconfont: "md",
   breakpoint: {
     mobileBreakpoint: "sm",
