@@ -165,8 +165,8 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   height: var(--icon-size);
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
-  -webkit-mask-image: url("/static/icons/arrow-right-s-line.svg");
-  mask-image: url("/static/icons/arrow-right-s-line.svg");
+  /* -webkit-mask-image: url("/static/icons/arrow-right-s-line.svg");
+  mask-image: url("/static/icons/arrow-right-s-line.svg"); */
   --icon-size: 1rem;
   content: "";
   margin-left: 0.25rem;

@@ -60,8 +60,8 @@ export default {
   height: var(--icon-size);
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
-  -webkit-mask-image: url("/static/icons/download-line.svg");
-  mask-image: url("/static/icons/download-line.svg");
+  /* -webkit-mask-image: url("/static/icons/download-line.svg");
+  mask-image: url("/static/icons/download-line.svg"); */
   content: "";
 }
 
