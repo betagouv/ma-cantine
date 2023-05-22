@@ -21,6 +21,11 @@ module.exports = {
 
   css: {
     sourceMap: true,
+    loaderOptions: {
+      sass: {
+        additionalData: `@import "./src/scss/variables.scss";`,
+      },
+    },
   },
 
   chainWebpack: (config) => {
