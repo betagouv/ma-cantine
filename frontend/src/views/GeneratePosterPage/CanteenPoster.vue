@@ -103,12 +103,12 @@
     <div class="spacer"></div>
     <div id="about">
       <v-row align="start">
-        <v-col align="center" v-if="!isLowContent">
+        <!-- <v-col align="center" v-if="!isLowContent">
           <qrcode-vue
             :value="canteen.publicationStatus === 'published' ? canteenUrl : 'https://ma-cantine.agriculture.gouv.fr'"
             id="qr-code"
           ></qrcode-vue>
-        </v-col>
+        </v-col> -->
         <v-col :cols="!isLowContent ? 9 : 12">
           <h3>Pourquoi je vois cette affiche ?</h3>
           <p class="footer-text">
@@ -136,14 +136,14 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
-import QrcodeVue from "qrcode.vue"
+// import QrcodeVue from "qrcode.vue"
 import { lastYear, getPercentage, getSustainableTotal, badges, applicableDiagnosticRules } from "@/utils"
 import labels from "@/data/quality-labels.json"
 
 export default {
   components: {
     CanteenIndicators,
-    QrcodeVue,
+    // QrcodeVue,
   },
   props: {
     canteen: Object,
