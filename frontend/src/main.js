@@ -1,4 +1,5 @@
 import Vue from "vue"
+import { createApp } from "vue"
 import VueMatomo from "vue-matomo"
 import App from "./App.vue"
 import { router } from "./router"
@@ -21,9 +22,8 @@ if (window.MATOMO_ID) {
   })
 }
 
-new Vue({
-  vuetify,
-  router,
-  store,
-  render: (h) => h(App),
-}).$mount("#app")
+createApp(App)
+  .use(store)
+  .use(router)
+  .use(vuetify)
+  .mount("#app")
