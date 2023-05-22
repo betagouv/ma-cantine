@@ -1,5 +1,4 @@
-import Vue from "vue"
-import VueRouter from "vue-router"
+import { createRouter, createWebHistory } from "vue-router"
 import store from "@/store/index"
 import LandingPage from "@/views/LandingPage"
 import ManagerLanding from "@/views/ManagerLanding"
@@ -55,7 +54,7 @@ import DeveloperPage from "@/views/DeveloperPage"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import Constants from "@/constants"
 
-Vue.use(VueRouter)
+// TODO MIGRATION : catch all routes have changed : https://router.vuejs.org/guide/migration/#removed-star-or-catch-all-routes
 
 const routes = [
   {
@@ -563,8 +562,8 @@ const routes = [
   },
 ]
 
-const router = new VueRouter({
-  mode: "history",
+const router = createRouter({
+  history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) return { selector: to.hash, offset: { y: 200 } }
