@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card elevation="0" class="text-center text-md-left">
-      <v-row v-if="$vuetify.breakpoint.smAndDown">
+      <v-row v-if="$vuetify.display.smAndDown">
         <v-col cols="12">
           <v-img max-height="150px" contain src="/static/images/doodles-dsfr/primary/SittingChef.png"></v-img>
         </v-col>
@@ -13,7 +13,7 @@
             <h1 class="font-weight-black text-h5 text-sm-h4 text-md-h3 mt-0 mt-sm-4">
               Référencez votre cantine sur la plateforme nationale de la restauration collective
             </h1>
-            <v-spacer v-if="$vuetify.breakpoint.smAndDown"></v-spacer>
+            <v-spacer v-if="$vuetify.display.smAndDown"></v-spacer>
           </v-card-title>
           <v-card-text class="pb-0">
             <p class="mt-4">
@@ -25,12 +25,12 @@
             </p>
           </v-card-text>
         </v-col>
-        <v-col cols="3" class="d-flex flex-column align-self-end" v-if="$vuetify.breakpoint.mdAndUp">
+        <v-col cols="3" class="d-flex flex-column align-self-end" v-if="$vuetify.display.mdAndUp">
           <v-spacer></v-spacer>
           <v-img max-height="200px" contain src="/static/images/doodles-dsfr/primary/SittingChef.png"></v-img>
           <v-spacer></v-spacer>
         </v-col>
-        <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
+        <v-spacer v-if="$vuetify.display.mdAndUp"></v-spacer>
         <v-spacer></v-spacer>
       </v-row>
       <v-row>

@@ -148,7 +148,7 @@
             <v-tabs
               next-icon="mdi-chevron-right"
               prev-icon="mdi-chevron-left"
-              :show-arrows="$vuetify.breakpoint.xs"
+              :show-arrows="$vuetify.display.xs"
               v-model="tab"
               align-with-title
               color="primary darken-1"
@@ -198,7 +198,7 @@
                       >
                         <label
                           class="body-2 grey--text text--darken-3 pr-2"
-                          :style="$vuetify.breakpoint.mdAndUp ? 'width: 35%;' : 'width: 70%;'"
+                          :style="$vuetify.display.mdAndUp ? 'width: 35%;' : 'width: 70%;'"
                           :for="`${category.htmlId}-${item.value}`"
                         >
                           {{ category.label }}
@@ -216,7 +216,7 @@
                             :persistent-hint="!!compositionHint(category.fieldName, item.value)"
                           />
                         </div>
-                        <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
+                        <v-spacer v-if="$vuetify.display.mdAndUp"></v-spacer>
                       </div>
                     </div>
 
@@ -318,7 +318,7 @@
                       >
                         <label
                           class="body-2 grey--text text--darken-3 pr-2"
-                          :style="$vuetify.breakpoint.mdAndUp ? 'width: 55%;' : 'width: 70%;'"
+                          :style="$vuetify.display.mdAndUp ? 'width: 55%;' : 'width: 70%;'"
                           :for="`${wasteItem.htmlId}-${item.value}`"
                         >
                           {{ wasteItem.label }}
@@ -329,10 +329,10 @@
                             hide-details="auto"
                             v-model.number="expe[`${wasteItem.fieldName}${item.value}`]"
                             :id="`${wasteItem.htmlId}-${item.value}`"
-                            :suffix="$vuetify.breakpoint.xs ? 'g' : 'g/convive'"
+                            :suffix="$vuetify.display.xs ? 'g' : 'g/convive'"
                           />
                         </div>
-                        <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
+                        <v-spacer v-if="$vuetify.display.mdAndUp"></v-spacer>
                       </div>
                     </div>
 

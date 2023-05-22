@@ -21,7 +21,7 @@
               :to="{ name: 'DiagnosticImportPage', params: { importUrlSlug: type.urlSlug } }"
               class="fill-height pa-4 d-flex flex-column hover-transition"
             >
-              <v-icon :x-large="$vuetify.breakpoint.mdAndUp" class="pt-4 pb-1 align-self-center" color="primary">
+              <v-icon :x-large="$vuetify.display.mdAndUp" class="pt-4 pb-1 align-self-center" color="primary">
                 {{ type.icon }}
               </v-icon>
               <v-card-title>

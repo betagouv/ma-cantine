@@ -16,7 +16,7 @@
     </v-card-subtitle>
     <v-spacer></v-spacer>
     <v-divider class="py-1"></v-divider>
-    <div class="grey--text text--darken-2" :style="$vuetify.breakpoint.smAndDown ? '' : 'height: 95px;'">
+    <div class="grey--text text--darken-2" :style="$vuetify.display.smAndDown ? '' : 'height: 95px;'">
       <v-card-text class="py-1 fill-height d-flex flex-column" v-if="diagnostic">
         <span>En {{ year }} :</span>
         <v-row class="ma-0" v-if="hasPercentages">

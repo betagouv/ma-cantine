@@ -11,13 +11,13 @@
           les objectifs de votre cantine.
         </p>
       </v-col>
-      <v-col cols="0" sm="5" md="4" v-if="$vuetify.breakpoint.smAndUp" class="py-0 pr-8 d-flex">
+      <v-col cols="0" sm="5" md="4" v-if="$vuetify.display.smAndUp" class="py-0 pr-8 d-flex">
         <v-spacer></v-spacer>
         <v-img src="/static/images/peeps-illustration-couple.png" contain max-width="140"></v-img>
       </v-col>
     </v-row>
-    <p v-if="$vuetify.breakpoint.mdAndUp" class="font-weight-bold">Vos besoins</p>
-    <v-item-group v-if="$vuetify.breakpoint.mdAndUp" multiple v-model="filters.category.value">
+    <p v-if="$vuetify.display.mdAndUp" class="font-weight-bold">Vos besoins</p>
+    <v-item-group v-if="$vuetify.display.mdAndUp" multiple v-model="filters.category.value">
       <v-row>
         <v-col v-for="category in categoryItems" cols="4" :key="category.value" class="pa-1">
           <v-item v-slot="{ active, toggle }" :value="category.value">
@@ -56,7 +56,7 @@
     <v-expand-transition>
       <v-sheet class="pa-6 text-left mt-2 mx-md-6" v-show="showFilters" rounded :outlined="showFilters">
         <v-row>
-          <v-col cols="12" sm="6" v-if="$vuetify.breakpoint.smAndDown">
+          <v-col cols="12" sm="6" v-if="$vuetify.display.smAndDown">
             <label
               for="select-category"
               :class="{
@@ -299,7 +299,7 @@ export default {
     hasActiveFilter() {
       const activeMobileFilters = Object.values(this.filters).filter((f) => !!f.value && f.value.length)
       const activeDesktopFilters = activeMobileFilters.filter((f) => f.param !== "besoin")
-      const breakpoint = this.$vuetify.breakpoint
+      const breakpoint = this.$vuetify.display
       return (
         (breakpoint.smAndDown && activeMobileFilters.length > 0) ||
         (breakpoint.mdAndUp && activeDesktopFilters.length > 0)

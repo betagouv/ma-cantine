@@ -3,7 +3,7 @@
     <v-divider style="position: absolute; top: 0; left: 0; width: 100%"></v-divider>
     <v-container class="constrained pb-4 pb-sm-0 pt-0 text-left">
       <v-row v-if="!showSmallFooter" class="pt-12 pt-sm-0">
-        <v-col cols="12" sm="3" :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.name != 'xs' }">
+        <v-col cols="12" sm="3" :class="{ 'd-flex': true, 'flex-column': $vuetify.display.name != 'xs' }">
           <v-img src="/static/images/Marianne.png" contain class="mb-4" max-width="230"></v-img>
           <v-spacer />
         </v-col>

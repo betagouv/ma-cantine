@@ -94,7 +94,7 @@ export default {
       return description
     },
     chartOptions() {
-      const legendPosition = this.legendPosition || (this.$vuetify.breakpoint.smAndUp ? "right" : "top")
+      const legendPosition = this.legendPosition || (this.$vuetify.display.smAndUp ? "right" : "top")
       const legendAlign = legendPosition === "right" ? "left" : "center"
       return {
         chart: {
@@ -118,7 +118,7 @@ export default {
         },
         yaxis: {
           title: {
-            text: this.$vuetify.breakpoint.xs ? undefined : VALUE_DESCRIPTION,
+            text: this.$vuetify.display.xs ? undefined : VALUE_DESCRIPTION,
           },
           labels: {
             formatter: percentageFormatter,

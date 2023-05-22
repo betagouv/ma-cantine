@@ -2,13 +2,13 @@
   <div>
     <BreadcrumbsNav />
     <v-card elevation="0" class="text-center text-md-left mb-6 mt-3">
-      <v-row v-if="$vuetify.breakpoint.smAndDown">
+      <v-row v-if="$vuetify.display.smAndDown">
         <v-col cols="12">
           <v-img max-height="90px" contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="2" v-if="$vuetify.breakpoint.mdAndUp">
+        <v-col cols="2" v-if="$vuetify.display.mdAndUp">
           <div class="d-flex fill-height align-center">
             <v-img contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
           </div>
@@ -279,8 +279,8 @@
         {{ resultsCountText }}
       </p>
       <v-row class="my-2" align="end">
-        <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp"></v-col>
-        <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
+        <v-col cols="3" v-if="$vuetify.display.smAndUp"></v-col>
+        <v-spacer v-if="$vuetify.display.smAndUp"></v-spacer>
         <v-col cols="12" sm="6">
           <DsfrPagination v-model="page" :length="Math.ceil(publishedCanteenCount / limit)" :total-visible="7" />
         </v-col>
@@ -329,7 +329,7 @@
     <v-divider class="mb-8 mt-12"></v-divider>
 
     <v-row class="mb-6" style="position: relative">
-      <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp">
+      <v-col cols="3" v-if="$vuetify.display.smAndUp">
         <div class="fill-height d-flex flex-column align-center">
           <v-spacer></v-spacer>
           <v-img src="/static/images/doodles-dsfr/primary/SittingDoodle.png" contain></v-img>

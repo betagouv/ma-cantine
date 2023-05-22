@@ -171,7 +171,7 @@ export default {
     shouldDisplay(item) {
       if (item.authenticationState === true && !this.loggedUser) return false
       if (item.authenticationState === false && this.loggedUser) return false
-      if (item.breakpoint && !this.$vuetify.breakpoint[item.breakpoint]) return false
+      if (item.breakpoint && !this.$vuetify.display[item.breakpoint]) return false
       return true
     },
   },

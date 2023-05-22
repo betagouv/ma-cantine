@@ -96,7 +96,7 @@
         <v-icon aria-hidden="false" role="img" aria-label="Secteurs">mdi-office-building</v-icon>
         {{ sectorsText }}
       </p>
-      <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'mt-8': true }">
+      <v-row :class="{ 'flex-column': $vuetify.display.smAndDown, 'mt-8': true }">
         <v-col cols="12" md="6" class="pr-0">
           <div id="published-canteen-text" class="mb-5">
             <p class="mb-0">
@@ -112,7 +112,8 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
+              ).
             </p>
           </div>
           <VueApexCharts
@@ -120,7 +121,7 @@
             :series="publishedSeries"
             type="pie"
             height="auto"
-            v-if="$vuetify.breakpoint.mdAndUp"
+            v-if="$vuetify.display.mdAndUp"
             width="62%"
             role="img"
             aria-describedby="published-canteen-text"
@@ -382,7 +383,7 @@ export default {
             fontFamily: "Marianne",
             color: "#333",
           },
-          offsetX: this.$vuetify.breakpoint.mdAndUp ? 162 : 10,
+          offsetX: this.$vuetify.display.mdAndUp ? 162 : 10,
           offsetY: -5,
           margin: 20,
           floating: true,

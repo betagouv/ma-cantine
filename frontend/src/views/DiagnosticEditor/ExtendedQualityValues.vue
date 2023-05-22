@@ -15,7 +15,7 @@
       :error="totalError"
       :messages="totalError ? [errorMessage] : undefined"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -23,7 +23,7 @@
       @autofill="checkTotal"
       purchaseType="totaux"
       :amount="purchasesSummary.valueTotalHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <label :for="'meat-poultry-' + diagnostic.year" class="body-2 mt-4 d-block">
@@ -46,7 +46,7 @@
       :error="meatError"
       :messages="meatError ? [errorMessage] : undefined"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -54,7 +54,7 @@
       @autofill="checkTotal"
       purchaseType="totaux viandes et volailles"
       :amount="purchasesSummary.valueMeatPoultryHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <label :for="'fish-' + diagnostic.year" class="body-2 mt-4 d-block">
@@ -74,7 +74,7 @@
       :error="fishError"
       :messages="fishError ? [errorMessage] : undefined"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -82,7 +82,7 @@
       @autofill="checkTotal"
       purchaseType="totaux de poissons, produits de la mer et de l'aquaculture"
       :amount="purchasesSummary.valueFishHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <br />
@@ -105,7 +105,7 @@
                   cols="2"
                   class="py-0 my-1 pr-0 d-flex align-center justify-center"
                   style="display: block; height: 30px;"
-                  v-if="$vuetify.breakpoint.smAndUp"
+                  v-if="$vuetify.display.smAndUp"
                 >
                   <LogoBio v-if="cId === 'BIO'" style="max-width: 100%; max-height: 100%;" />
                   <div

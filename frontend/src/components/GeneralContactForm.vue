@@ -26,7 +26,7 @@
           <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
         </p>
       </v-col>
-      <v-col cols="4" v-if="$vuetify.breakpoint.smAndUp">
+      <v-col cols="4" v-if="$vuetify.display.smAndUp">
         <div class="fill-height d-flex flex-column align-center">
           <v-spacer></v-spacer>
           <v-img

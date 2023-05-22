@@ -1,10 +1,7 @@
 <template>
   <div class="text-left">
     <div class="mt-4 mb-0 mb-md-6">
-      <p
-        class="my-2 text-h6 font-weight-black"
-        :style="$vuetify.breakpoint.mdAndUp ? 'font-size: 2rem !important;' : ''"
-      >
+      <p class="my-2 text-h6 font-weight-black" :style="$vuetify.display.mdAndUp ? 'font-size: 2rem !important;' : ''">
         Bienvenue dans votre espace, {{ loggedUser.firstName }}
         <v-btn text class="text-decoration-underline text-caption mb-1 mb-md-n1" :to="{ name: 'AccountEditor' }">
           <v-icon class="mr-1" small>mdi-pencil</v-icon>

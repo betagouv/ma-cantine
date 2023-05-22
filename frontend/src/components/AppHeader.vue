@@ -29,7 +29,7 @@
             position="center left"
             alt="Page d'accueil ma cantine"
           ></v-img>
-          <div v-if="$vuetify.breakpoint.smAndUp" style="height: 90px" class="d-flex align-center">
+          <div v-if="$vuetify.display.smAndUp" style="height: 90px" class="d-flex align-center">
             <p id="ma-cantine-header" class="my-0">ma cantine</p>
           </div>
         </router-link>
@@ -46,7 +46,7 @@
         text
         elevation="0"
         class="align-self-center header-login-button ml-2 primary--text"
-        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
+        v-if="!loggedUser && userDataReady && $vuetify.display.mdAndUp"
         href="/s-identifier"
       >
         <span>S'identifier</span>
@@ -55,7 +55,7 @@
       <v-btn
         text
         elevation="0"
-        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
+        v-if="!loggedUser && userDataReady && $vuetify.display.mdAndUp"
         href="/creer-mon-compte"
         class="d-none d-sm-flex align-self-center header-signup-button primary--text"
       >
@@ -65,7 +65,7 @@
       <v-btn
         text
         elevation="0"
-        v-if="loggedUser && loggedUser.isDev && userDataReady && $vuetify.breakpoint.mdAndUp"
+        v-if="loggedUser && loggedUser.isDev && userDataReady && $vuetify.display.mdAndUp"
         :to="{ name: 'DeveloperPage' }"
         class="d-none d-sm-flex align-self-center header-signup-button primary--text"
       >
@@ -75,7 +75,7 @@
       <v-btn
         text
         elevation="0"
-        v-if="loggedUser && !loggedUser.isDev && userDataReady && $vuetify.breakpoint.mdAndUp"
+        v-if="loggedUser && !loggedUser.isDev && userDataReady && $vuetify.display.mdAndUp"
         :to="{ name: 'ManagementPage' }"
         class="d-none d-sm-flex align-self-center header-signup-button primary--text"
       >
@@ -83,7 +83,7 @@
       </v-btn>
 
       <v-dialog
-        v-if="loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
+        v-if="loggedUser && userDataReady && $vuetify.display.mdAndUp"
         v-model="logoutWarningDialog"
         max-width="500"
       >
@@ -118,7 +118,7 @@
         </v-card>
       </v-dialog>
 
-      <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
+      <template v-slot:extension v-if="$vuetify.display.mdAndUp">
         <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
         <v-tabs align-with-title id="header-tabs" active-class="stealth-active-tab" hide-slider>
           <div
@@ -163,7 +163,7 @@
           </div>
         </v-tabs>
       </template>
-      <v-menu v-if="$vuetify.breakpoint.smAndDown && userDataReady" left bottom offset-y>
+      <v-menu v-if="$vuetify.display.smAndDown && userDataReady" left bottom offset-y>
         <template v-slot:activator="{ on }">
           <v-btn v-if="loggedUser" class="mr-2 ml-2 align-self-center" id="profile" plain v-on="on">
             <v-avatar size="36" class="mr-2 pt-1" v-if="loggedUser && loggedUser.avatar">

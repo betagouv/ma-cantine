@@ -4,13 +4,13 @@
       class="fr-breadcrumb__button text-decoration-underline"
       :aria-expanded="expanded"
       aria-controls="breadcrumb-1"
-      v-if="!expanded && $vuetify.breakpoint.xs"
+      v-if="!expanded && $vuetify.display.xs"
       @click="expanded = true"
     >
       Voir le fil d’Ariane
     </button>
     <v-expand-transition>
-      <div class="fr-collapse" id="breadcrumb-1" v-show="$vuetify.breakpoint.smAndUp || expanded">
+      <div class="fr-collapse" id="breadcrumb-1" v-show="$vuetify.display.smAndUp || expanded">
         <ol class="fr-breadcrumb__list pl-0">
           <li>
             <router-link class="fr-breadcrumb__link" :to="homePage">Accueil</router-link>

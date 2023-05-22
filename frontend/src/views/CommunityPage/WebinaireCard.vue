@@ -1,7 +1,7 @@
 <template>
   <v-card class="pa-4 dsfr" :href="webinaire.link" outlined>
     <v-row>
-      <v-col cols="1" v-if="$vuetify.breakpoint.smAndUp" class="justify-center align-center d-flex">
+      <v-col cols="1" v-if="$vuetify.display.smAndUp" class="justify-center align-center d-flex">
         <v-avatar color="secondary lighten-1" size="40">
           <v-icon>{{ icon }}</v-icon>
         </v-avatar>

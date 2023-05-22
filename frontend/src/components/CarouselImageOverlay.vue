@@ -67,7 +67,7 @@ export default {
       this.$emit("done")
     },
     setCarouselDimensions() {
-      switch (this.$vuetify.breakpoint.name) {
+      switch (this.$vuetify.display.name) {
         case "xs":
         case "sm":
           this.carouselWidth = `${window.innerWidth - 30}px`

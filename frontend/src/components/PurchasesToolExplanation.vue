@@ -12,13 +12,13 @@
       <v-expansion-panel-content class="faq-answer">
         <v-card
           class="pa-3"
-          :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.xs, 'align-center': $vuetify.breakpoint.xs }"
+          :class="{ 'd-flex': true, 'flex-column': $vuetify.display.xs, 'align-center': $vuetify.display.xs }"
           outlined
         >
           <div
             :style="
               `max-width: ${
-                $vuetify.breakpoint.xs ? '70%' : '50%'
+                $vuetify.display.xs ? '70%' : '50%'
               }; background: #333; border-radius: 10px; position: relative; overflow: hidden;`
             "
           >

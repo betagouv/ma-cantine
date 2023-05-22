@@ -26,7 +26,7 @@
                 <td class="text-left">{{ item.label }}</td>
                 <td
                   :class="item.isNumber ? 'text-right' : 'text-left'"
-                  :width="$vuetify.breakpoint.smAndUp ? '42%' : '50%'"
+                  :width="$vuetify.display.smAndUp ? '42%' : '50%'"
                 >
                   {{ item.value }}
                 </td>

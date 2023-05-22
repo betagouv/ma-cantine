@@ -24,7 +24,7 @@
             color="primary"
             :to="{ name: 'PurchasesSummary' }"
             class="px-0 px-md-2 my-3"
-            v-if="$vuetify.breakpoint.xs"
+            v-if="$vuetify.display.xs"
           >
             <v-icon class="mr-2">$pie-chart-2-fill</v-icon>
             Voir la synthèse de mes achats
@@ -40,7 +40,7 @@
         class="dsfr d-flex flex-column justify-center"
         :to="{ name: 'PurchasesSummary' }"
         min-width="300px"
-        v-if="purchaseCount && $vuetify.breakpoint.smAndUp"
+        v-if="purchaseCount && $vuetify.display.smAndUp"
       >
         <v-card-text class="text-center">
           <v-icon x-large color="primary">
@@ -56,7 +56,7 @@
       </v-card>
       <v-img
         src="/static/images/doodles-dsfr/primary/ChartDoodle.png"
-        v-else-if="$vuetify.breakpoint.smAndUp"
+        v-else-if="$vuetify.display.smAndUp"
         class="mx-auto rounded-0"
         contain
         max-width="150"
@@ -77,7 +77,7 @@
             :searchAction="search"
           />
         </v-col>
-        <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
+        <v-spacer v-if="$vuetify.display.smAndUp"></v-spacer>
         <v-col class="pb-sm-0">
           <a :href="exportUrl" class="primary--text body-2 mr-sm-4 text-no-wrap" download>
             <v-icon class="mr-1" color="primary">mdi-microsoft-excel</v-icon>

@@ -49,7 +49,7 @@ export default {
         : null
     },
     isMobile() {
-      return this.$vuetify.breakpoint.mobile
+      return this.$vuetify.display.mobile
     },
     notification() {
       return this.$store.state.notification

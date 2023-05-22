@@ -75,7 +75,7 @@
         <h3 class="font-weight-black text-body-1 grey--text text--darken-4 mt-4">
           Catégories EGAlim par famille de produit
         </h3>
-        <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
+        <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.display.xs ? '440px' : '380px'" />
       </div>
       <div v-else-if="meatEgalimPercentage || meatFrancePercentage || fishEgalimPercentage">
         <h3 class="font-weight-black text-body-1 grey--text text--darken-4 mb-4 mt-8">
@@ -200,7 +200,7 @@
           :diagnostics="graphDiagnostics"
           headingId="appro-heading"
           height="260"
-          :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+          :width="$vuetify.display.mdAndUp ? '650px' : '100%'"
           :applicableRules="applicableRules"
         />
       </div>

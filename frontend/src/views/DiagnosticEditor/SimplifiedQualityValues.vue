@@ -15,7 +15,7 @@
       :error="totalError || totalMeatPoultryError || totalFishError"
       :messages="totalError || totalMeatPoultryError || totalFishError ? [totalErrorMessage] : undefined"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -23,7 +23,7 @@
       @autofill="checkTotal"
       purchaseType="totaux"
       :amount="purchasesSummary.valueTotalHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <v-divider class="my-4"></v-divider>
@@ -47,7 +47,7 @@
       :disabled="readonly"
       :error="totalError"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -55,7 +55,7 @@
       @autofill="checkTotal"
       purchaseType="bio"
       :amount="purchasesSummary.valueBioHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <!-- SIQO -->
@@ -81,7 +81,7 @@
       :disabled="readonly"
       :error="totalError"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -89,7 +89,7 @@
       @autofill="checkTotal"
       purchaseType="SIQO"
       :amount="purchasesSummary.valueSustainableHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <!-- Other EGAlim -->
@@ -118,7 +118,7 @@
       :disabled="readonly"
       :error="totalError"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -126,7 +126,7 @@
       @autofill="checkTotal"
       purchaseType="« autre EGAlim »"
       :amount="purchasesSummary.valueEgalimOthersHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <!-- Performance Externalités -->
@@ -195,7 +195,7 @@
       :disabled="readonly"
       :error="totalError"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -203,7 +203,7 @@
       @autofill="checkTotal"
       purchaseType="« critères d'achat »"
       :amount="purchasesSummary.valueExternalityPerformanceHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <v-divider class="my-4"></v-divider>
@@ -249,7 +249,7 @@
       :error="meatPoultryError || totalMeatPoultryError"
       :messages="meatPoultryError || totalMeatPoultryError ? [meatPoultryErrorMessage] : undefined"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -257,7 +257,7 @@
       @autofill="checkTotal"
       purchaseType="totaux viandes et volailles"
       :amount="purchasesSummary.valueMeatPoultryHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <!-- Viande et volailles EGALIM -->
@@ -284,7 +284,7 @@
       :disabled="readonly"
       :error="meatPoultryError"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -292,7 +292,7 @@
       @autofill="checkTotal"
       purchaseType="viandes et volailles EGAlim"
       :amount="purchasesSummary.valueMeatPoultryEgalimHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <!-- Viande et volailles provenance FRANCE -->
@@ -319,7 +319,7 @@
       :disabled="readonly"
       :error="meatPoultryError"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -327,7 +327,7 @@
       @autofill="checkTotal"
       purchaseType="viandes et volailles provenance France"
       :amount="purchasesSummary.valueMeatPoultryFranceHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <!-- Poissons -->
@@ -351,7 +351,7 @@
       :error="fishError || totalFishError"
       :messages="fishError || totalFishError ? [fishErrorMessage] : undefined"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -359,7 +359,7 @@
       @autofill="checkTotal"
       purchaseType="totaux de poissons, produits de la mer et de l'aquaculture"
       :amount="purchasesSummary.valueFishHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
 
     <!-- Poissons EGALIM -->
@@ -383,7 +383,7 @@
       :disabled="readonly"
       :error="fishError"
       @blur="checkTotal"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -391,7 +391,7 @@
       @autofill="checkTotal"
       purchaseType="poissons, produits de la mer et de l'aquaculture EGAlim"
       :amount="purchasesSummary.valueFishEgalimHt"
-      :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+      :class="$vuetify.display.mdAndUp ? 'narrow-field' : ''"
     />
   </div>
 </template>

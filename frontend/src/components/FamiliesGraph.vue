@@ -60,9 +60,9 @@ export default {
       }))
     },
     chartOptions() {
-      const maxLine = this.$vuetify.breakpoint.mdAndUp ? 25 : 20
-      const legendPosition = this.$vuetify.breakpoint.mdAndUp ? "right" : "top"
-      const legendAlign = this.$vuetify.breakpoint.mdAndUp ? "left" : "center"
+      const maxLine = this.$vuetify.display.mdAndUp ? 25 : 20
+      const legendPosition = this.$vuetify.display.mdAndUp ? "right" : "top"
+      const legendAlign = this.$vuetify.display.mdAndUp ? "left" : "center"
       return {
         chart: {
           type: "bar",

@@ -3,7 +3,7 @@
     <div v-if="partner">
       <BreadcrumbsNav :links="[{ to: { name: 'PartnersHome' } }]" :title="partner.name" />
       <div class="d-flex">
-        <div v-if="partner.image && $vuetify.breakpoint.smAndUp" class="mr-4">
+        <div v-if="partner.image && $vuetify.display.smAndUp" class="mr-4">
           <v-img :src="partner.image" max-width="260" contain></v-img>
         </div>
         <div class="d-flex flex-column">

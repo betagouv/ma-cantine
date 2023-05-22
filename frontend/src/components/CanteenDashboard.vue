@@ -20,7 +20,7 @@
               :diagnostics="dashboardDiagnostics"
               headingId="appro-heading"
               height="260"
-              :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+              :width="$vuetify.display.mdAndUp ? '650px' : '100%'"
               :applicableRules="applicableRules"
             />
             <KeyMeasureResource :baseComponent="qualityMeasure.baseComponent" v-if="showResources" />

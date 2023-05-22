@@ -21,7 +21,7 @@
             <v-icon small class="mr-2">$draft-fill</v-icon>
             <v-list-item-title class="text-body-2 font-weight-bold">Diagnostics</v-list-item-title>
           </v-list-item>
-          <div v-if="$vuetify.breakpoint.smAndUp" class="mt-n2">
+          <div v-if="$vuetify.display.smAndUp" class="mt-n2">
             <v-list-item
               v-for="diagnostic in orderedDiagnostics"
               :key="`diagnostic-${diagnostic.id}`"

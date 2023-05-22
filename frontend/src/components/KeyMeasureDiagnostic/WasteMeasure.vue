@@ -205,7 +205,7 @@
         Mettre à jour mes données
       </v-btn>
 
-      <v-dialog v-model="showExpeModal" :width="$vuetify.breakpoint.mdAndUp ? 900 : undefined">
+      <v-dialog v-model="showExpeModal" :width="$vuetify.display.mdAndUp ? 900 : undefined">
         <ExpeReservation v-if="showExpeModal" @close="() => (showExpeModal = false)" :canteen="canteen" />
       </v-dialog>
     </div>

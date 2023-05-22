@@ -11,7 +11,7 @@
         >
           <v-img
             src="/static/images/doodles-dsfr/secondary/SprintingDoodle.png"
-            v-if="$vuetify.breakpoint.smAndUp"
+            v-if="$vuetify.display.smAndUp"
             class="mx-auto rounded-0"
             contain
             max-height="100"
@@ -32,7 +32,7 @@
         </v-card>
       </v-hover>
     </v-col>
-    <v-col cols="12" md="4" :style="{ 'border-right': $vuetify.breakpoint.mdAndUp ? 'dotted 4px #e5fbf0' : 'none' }">
+    <v-col cols="12" md="4" :style="{ 'border-right': $vuetify.display.mdAndUp ? 'dotted 4px #e5fbf0' : 'none' }">
       <v-hover>
         <v-card
           outlined
@@ -41,7 +41,7 @@
         >
           <v-img
             src="/static/images/doodles-dsfr/secondary/SitReadingDoodle.png"
-            v-if="$vuetify.breakpoint.smAndUp"
+            v-if="$vuetify.display.smAndUp"
             class="mx-auto rounded-0"
             contain
             max-height="100"
@@ -71,7 +71,7 @@
         >
           <v-img
             src="/static/images/doodles-dsfr/secondary/DogDoodle.png"
-            v-if="$vuetify.breakpoint.smAndUp"
+            v-if="$vuetify.display.smAndUp"
             class="mx-auto rounded-0"
             contain
             max-height="100"

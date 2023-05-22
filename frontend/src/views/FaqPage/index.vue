@@ -13,7 +13,7 @@
       <v-col cols="2">
         <v-img
           src="/static/images/doodles-dsfr/primary/ReadingDoodle.png"
-          v-if="$vuetify.breakpoint.smAndUp"
+          v-if="$vuetify.display.smAndUp"
           class="mx-auto rounded-0"
           contain
           max-width="100%"

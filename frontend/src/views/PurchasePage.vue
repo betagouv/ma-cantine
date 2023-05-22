@@ -206,7 +206,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
+          <v-spacer v-if="$vuetify.display.smAndUp"></v-spacer>
           <v-btn
             :disabled="loading"
             x-large

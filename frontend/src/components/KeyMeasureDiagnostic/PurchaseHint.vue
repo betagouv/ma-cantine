@@ -64,7 +64,7 @@ export default {
   computed: {
     visibleLabel() {
       // TODO: for screen readers only don't shorten label ever?
-      return this.$vuetify.breakpoint.smAndDown ? this.shortLabel : this.label
+      return this.$vuetify.display.smAndDown ? this.shortLabel : this.label
     },
     compliant() {
       return this.value === this.amount

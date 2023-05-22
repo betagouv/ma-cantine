@@ -567,7 +567,7 @@ const router = createRouter({
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) return { selector: to.hash, offset: { y: 200 } }
-    if (to.name === from.name && this.app.$vuetify.breakpoint.mdAndUp) return savedPosition
+    if (to.name === from.name && this.app.$vuetify.display.mdAndUp) return savedPosition
     return { x: 0, y: 0 }
   },
 })

@@ -1,12 +1,12 @@
 <template>
   <v-card
     outlined
-    :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.xsOnly, dsfr: true }"
+    :class="{ 'd-flex': true, 'flex-column': $vuetify.display.xsOnly, dsfr: true }"
     :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
   >
     <v-sheet
       color="grey lighten-4"
-      :width="$vuetify.breakpoint.xsOnly ? 'auto' : 150"
+      :width="$vuetify.display.xsOnly ? 'auto' : 150"
       class="d-flex flex-column justify-center px-4"
     >
       <div class="text-h3 grey--text text--darken-1 font-weight-black text-center">{{ diagnostic.year }}</div>
@@ -19,7 +19,7 @@
           {{ dataStatus }}
         </v-card-subtitle>
       </v-col>
-      <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
+      <v-spacer v-if="$vuetify.display.smAndUp"></v-spacer>
       <v-col cols="5" class="align-self-center">
         <v-card-text>{{ dateText }}</v-card-text>
       </v-col>

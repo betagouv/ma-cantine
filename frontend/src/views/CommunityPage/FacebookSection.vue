@@ -21,7 +21,7 @@
           Rejoindre le groupe
         </v-btn>
       </v-col>
-      <v-col cols="4" v-if="$vuetify.breakpoint.mdAndUp">
+      <v-col cols="4" v-if="$vuetify.display.mdAndUp">
         <v-card href="https://www.facebook.com/groups/719336016153227/" target="_blank" rel="noopener">
           <v-img contain src="/static/images/facebook-cover.jpg" alt="Groupe Facebook ma cantine"></v-img>
         </v-card>

@@ -124,13 +124,13 @@
 
     <h2 class="my-4" id="documentation">Le détail</h2>
     <v-card
-      :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.xs, 'align-center': $vuetify.breakpoint.xs }"
+      :class="{ 'd-flex': true, 'flex-column': $vuetify.display.xs, 'align-center': $vuetify.display.xs }"
       outlined
     >
       <video
         ref="video"
         class="ma-4"
-        :style="`max-width: ${$vuetify.breakpoint.xs ? '70%' : '30%'}; background: #333; border-radius: 10px`"
+        :style="`max-width: ${$vuetify.display.xs ? '70%' : '30%'}; background: #333; border-radius: 10px`"
         poster="/static/images/video-poster-import-masse.webp"
         controls
       >

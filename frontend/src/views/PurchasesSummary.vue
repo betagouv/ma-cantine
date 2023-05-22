@@ -99,7 +99,7 @@
               </p>
               <p class="caption grey--text text--darken-2 mb-0 mt-2">
                 Ce montant est obtenu en divisant le total de vos achats
-                <br v-if="$vuetify.breakpoint.smAndUp" />
+                <br v-if="$vuetify.display.smAndUp" />
                 par le nombre de repas par an de votre établissement ({{ yearlyMealCount }}).
               </p>
               <v-btn @click="showMealCountField = true" plain class="text-decoration-underline px-1">
@@ -152,7 +152,7 @@
         </v-row>
         <FamiliesGraph
           :diagnostic="summary"
-          :height="$vuetify.breakpoint.xs ? '440px' : '380px'"
+          :height="$vuetify.display.xs ? '440px' : '380px'"
           :class="displayMultiYearSummary ? 'mt-0' : 'mt-4'"
         />
       </div>
@@ -262,7 +262,7 @@ export default {
         },
         yaxis: {
           title: {
-            text: this.$vuetify.breakpoint.xs ? undefined : "Total HT",
+            text: this.$vuetify.display.xs ? undefined : "Total HT",
           },
           labels: {
             formatter: toCurrency,
