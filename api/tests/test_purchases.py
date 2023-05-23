@@ -959,6 +959,7 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(diag_site.value_boulangerie_non_egalim, 150)
         self.assertEqual(diag_site.value_autres_aocaop_igp_stg, 0)
         self.assertEqual(diag_site.central_kitchen_diagnostic_mode, None)
+        self.assertEqual(diag_site.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
         diag_cc = Diagnostic.objects.get(year=year, canteen=central_kitchen)
         self.assertIn(diag_cc.id, results)
         self.assertEqual(diag_cc.value_total_ht, 20)
