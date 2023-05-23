@@ -55,6 +55,7 @@ class Canteen(SoftDeletionModel):
 
     class Actions(models.TextChoices):
         ADD_SATELLITES = "10_add_satellites", "Ajouter des satellites"
+        PREFILL_DIAGNOSTIC = "18_prefill_diagnostic", "Créer et pre-remplir le diagnostic"
         CREATE_DIAGNOSTIC = "20_create_diagnostic", "Créer le diagnostic"
         COMPLETE_DIAGNOSTIC = "30_complete_diagnostic", "Compléter le diagnostic"
         FILL_CANTEEN_DATA = "35_fill_canteen_data", "Compléter les infos de la cantine"
