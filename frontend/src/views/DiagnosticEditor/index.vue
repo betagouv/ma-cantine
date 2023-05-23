@@ -890,7 +890,7 @@ export default {
       Object.entries(this.purchasesSummary).forEach(([key, value]) => {
         this.$set(this.diagnostic, key, this.diagnostic[key] || value)
       })
-      // TODO: set diagnostic_type to COMPLETE ?
+      this.diagnostic.diagnosticType = "COMPLETE"
       this.fieldsFilledFromPurchases = true
     },
   },
