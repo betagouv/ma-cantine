@@ -11,7 +11,6 @@
     </div> -->
     <v-app-bar
       app
-      clipped-right
       color="white"
       ref="appbar"
       style="padding: 0 calc((100vw - 78rem)/2);"

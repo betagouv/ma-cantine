@@ -1,25 +1,23 @@
 <template>
-  <div id="app">
-    <v-app>
-      <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
-      <AppHeader class="mx-auto constrained" v-else />
+  <v-app>
+    <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
+    <AppHeader class="mx-auto constrained" v-else />
 
-      <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget }">
-        <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner" />
-        <v-container fluid :fill-height="!initialDataLoaded">
-          <v-progress-circular
-            indeterminate
-            style="position: absolute; left: 50%; top: 50%"
-            v-if="!initialDataLoaded"
-          ></v-progress-circular>
-          <router-view v-else :class="isWidget ? 'ma-4 mt-0 constrained' : 'mx-auto constrained'" />
-        </v-container>
-      </v-main>
+    <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget }">
+      <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner" />
+      <v-container fluid :fill-height="!initialDataLoaded">
+        <v-progress-circular
+          indeterminate
+          style="position: absolute; left: 50%; top: 50%"
+          v-if="!initialDataLoaded"
+        ></v-progress-circular>
+        <router-view v-else :class="isWidget ? 'ma-4 mt-0 constrained' : 'mx-auto constrained'" />
+      </v-container>
+    </v-main>
 
-      <AppFooter v-if="!isWidget" />
-      <NotificationSnackbar v-if="!isWidget" />
-    </v-app>
-  </div>
+    <AppFooter v-if="!isWidget" />
+    <NotificationSnackbar v-if="!isWidget" />
+  </v-app>
 </template>
 
 <script>

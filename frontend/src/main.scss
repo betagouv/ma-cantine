@@ -1,0 +1,24 @@
+$body-font-family: 'Marianne', Arial, sans-serif;
+@use "vuetify" with (
+    /* GENERAL: https://vuetifyjs.com/en/api/vuetify/#sass-variables */
+    $border-radius-root: 12px,
+
+    /* FONT: https://vuetifyjs.com/en/api/vuetify/#sass-variables */
+    $body-font-family: $body-font-family,
+    // $title-font: $body-font-family,
+
+    // /* BUTTON: https://vuetifyjs.com/en/api/v-btn/#sass-variables */
+    // $btn-text-transform: none,
+    // $btn-letter-spacing: -0.011em,
+    // $btn-font-weight: 500,
+    // $btn-border-radius: 0, // DSFR: https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/bouton/
+
+    // /* CARD */
+    // $card-title-word-break: "normal !important",
+    // $card-hover-elevation: 4,
+    // $card-border-radius: 0, // DSRF: https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/carte/
+
+    // /* ALERT */
+    // $alert-border-radius: 0, // DSFR
+
+)

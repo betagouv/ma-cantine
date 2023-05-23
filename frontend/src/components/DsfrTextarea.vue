@@ -45,7 +45,7 @@ export default {
       return this.$refs["textarea"].validate()
     },
     assignInputId() {
-      this.inputId = this.$refs?.["textarea"]?.$refs?.["input"].id
+      this.inputId = this.$refs?.["textarea"]?.$el.querySelector("input")?.id
     },
   },
   mounted() {

@@ -53,7 +53,7 @@ export default {
       return this.$refs["combobox"].validate()
     },
     assignInputId() {
-      this.inputId = this.$refs?.["combobox"]?.$refs?.["input"].id
+      this.inputId = this.$refs?.["combobox"]?.$el.querySelector("input")?.id
     },
   },
   mounted() {

@@ -44,7 +44,7 @@ export default {
       if (labels && labels.length > 0) for (const label of labels) label.parentNode.removeChild(label)
     },
     assignInputId() {
-      this.inputId = this.$refs?.["autocomplete"]?.$refs?.["input"].id
+      this.inputId = this.$refs?.["autocomplete"]?.$el.querySelector("input")?.id
     },
   },
   mounted() {

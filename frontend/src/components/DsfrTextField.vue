@@ -53,7 +53,7 @@ export default {
       return this.$refs["text-field"].validate()
     },
     assignInputId() {
-      this.inputId = this.$refs?.["text-field"]?.$refs?.["input"].id
+      this.inputId = this.$refs?.["text-field"]?.$el.querySelector("input")?.id
     },
   },
   mounted() {

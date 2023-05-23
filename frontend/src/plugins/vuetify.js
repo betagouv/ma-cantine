@@ -1,4 +1,5 @@
-import "vuetify/styles"
+// import "vuetify/styles"
+// import "../main.scss"
 import { createVuetify } from "vuetify"
 import maCantineTheme from "@/theme"
 import { VBtn, VCard, VRadio, VCheckbox } from "vuetify/components"
@@ -12,6 +13,7 @@ VRadio.props.ripple.default = false
 VCheckbox.props.ripple.default = false
 
 export default createVuetify({
+  // customVariables: ["./../scss/variables.scss"],
   theme: {
     defaultTheme: "maCantineTheme",
     themes: {

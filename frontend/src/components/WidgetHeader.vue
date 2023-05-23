@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar app clipped-right color="white" ref="appbar" id="en-tete" hide-on-scroll height="30" class="pt-4">
+    <v-app-bar app color="white" ref="appbar" id="en-tete" hide-on-scroll height="30" class="pt-4">
       <v-toolbar-title>
         <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex ml-3" target="_blank">
           <v-img

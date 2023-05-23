@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router"
 import store from "@/store/index"
+import { getCurrentInstance } from "vue"
 import LandingPage from "@/views/LandingPage"
 import ManagerLanding from "@/views/ManagerLanding"
 import DiagnosticPage from "@/views/DiagnosticPage"
@@ -566,8 +567,10 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
+    const instance = getCurrentInstance()
     if (to.hash) return { selector: to.hash, offset: { y: 200 } }
-    if (to.name === from.name && this.app.$vuetify.display.mdAndUp) return savedPosition
+    // TODO MIGRATION : Check the instance proxy works
+    if (to.name === from.name && instance?.proxy?.$vuetify.mdAndUp) return savedPosition
     return { x: 0, y: 0 }
   },
 })

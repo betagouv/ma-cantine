@@ -46,7 +46,7 @@ export default {
       return this.$refs["select"].validate()
     },
     assignInputId() {
-      this.inputId = this.$refs?.["select"]?.$refs?.["input"].id
+      this.inputId = this.$refs?.["select"]?.$el.querySelector("input")?.id
     },
   },
   mounted() {

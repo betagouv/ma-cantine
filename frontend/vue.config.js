@@ -23,7 +23,10 @@ module.exports = {
     sourceMap: true,
     loaderOptions: {
       sass: {
-        additionalData: `@import "./src/scss/variables.scss";`,
+        additionalData: `
+          @import "./src/main.scss";
+          @import "./src/scss/variables.scss";
+        `,
       },
     },
   },
