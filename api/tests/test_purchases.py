@@ -911,7 +911,6 @@ class TestPurchaseApi(APITestCase):
         Given a list of canteen ids and a year, create diagnostics
         pre-filled with purchase totals for that year
         """
-        # TODO: refactor canteen creation and manager adding into setup and takedown?
         canteen_site = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
         central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL)
         canteens = [canteen_site, central_kitchen]
