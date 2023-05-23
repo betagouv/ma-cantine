@@ -356,12 +356,13 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(body["valueFruitsEtLegumesBio"], 200.0)
         self.assertEqual(body["valueViandesVolaillesBio"], 10.0)
         self.assertEqual(body["valueFruitsEtLegumesAocaopIgpStg"], 80.0)
-        self.assertEqual(body["valueFruitsEtLegumesCommerceEquitable"], None)
+        self.assertEqual(body["valueFruitsEtLegumesCommerceEquitable"], 0.0)
         self.assertEqual(body["valueAutresLocal"], 100.0)
         self.assertEqual(body["valueViandesVolaillesShortDistribution"], 100.0)
         self.assertEqual(body["valueViandesVolaillesLocal"], 10.0)
         self.assertEqual(body["valueAutresNonEgalim"], 210.0)
         self.assertEqual(body["valueViandesVolaillesNonEgalim"], 90.0)
+        self.assertEqual(body["valueExternalityPerformanceHt"], 0.0)
 
     def test_purchase_summary_unauthenticated(self):
         canteen = CanteenFactory.create()
@@ -917,8 +918,20 @@ class TestPurchaseApi(APITestCase):
         for canteen in canteens:
             canteen.managers.add(authenticate.user)
         # purchases to be included in totals
-        PurchaseFactory.create(canteen=canteen_site, date="2021-01-01", price_ht=50)
-        PurchaseFactory.create(canteen=canteen_site, date="2021-12-31", price_ht=150)
+        PurchaseFactory.create(
+            canteen=canteen_site,
+            date="2021-01-01",
+            price_ht=50,
+            family=Purchase.Family.BOISSONS,
+            characteristics=[Purchase.Characteristic.AOCAOP],
+        )
+        PurchaseFactory.create(
+            canteen=canteen_site,
+            date="2021-12-31",
+            price_ht=150,
+            family=Purchase.Family.BOULANGERIE,
+            characteristics=[],
+        )
 
         PurchaseFactory.create(canteen=central_kitchen, date="2021-01-01", price_ht=5)
         PurchaseFactory.create(canteen=central_kitchen, date="2021-12-31", price_ht=15)
@@ -942,6 +955,9 @@ class TestPurchaseApi(APITestCase):
         diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
         self.assertIn(diag_site.id, results)
         self.assertEqual(diag_site.value_total_ht, 200)
+        self.assertEqual(diag_site.value_boissons_aocaop_igp_stg, 50)
+        self.assertEqual(diag_site.value_boulangerie_non_egalim, 150)
+        self.assertEqual(diag_site.value_autres_aocaop_igp_stg, 0)
         self.assertEqual(diag_site.central_kitchen_diagnostic_mode, None)
         diag_cc = Diagnostic.objects.get(year=year, canteen=central_kitchen)
         self.assertIn(diag_cc.id, results)
