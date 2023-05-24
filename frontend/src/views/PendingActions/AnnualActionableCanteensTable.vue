@@ -369,6 +369,7 @@ export default {
       }
     },
     submitTeledeclaration(diagnostic) {
+      // TODO: remove canteenId here, not used in method.
       this.$store
         .dispatch("submitTeledeclaration", { id: diagnostic.id, canteenId: this.canteenForTD.id })
         .then(() => {
