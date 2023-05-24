@@ -1008,8 +1008,8 @@ class TestPurchaseApi(APITestCase):
         results = body["results"]
         self.assertEqual(len(results), 1)
         errors = body["errors"]
-        self.assertEqual(errors[0], "Inconnue cantine : 666")
-        self.assertEqual(errors[1], f"Vous ne gerez pas la cantine : {not_my_canteen.id}")
+        self.assertEqual(errors[0], "Cantine inconnue : 666")
+        self.assertEqual(errors[1], f"Vous ne gérez pas la cantine : {not_my_canteen.id}")
         self.assertEqual(
             errors[2], f"Il existe déjà un diagnostic pour l'année 2023 pour la cantine : {canteen_with_diag.id}"
         )
