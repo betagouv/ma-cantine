@@ -809,12 +809,7 @@ export default {
 
       return saveDiagnosticIfChanged()
         .then(this.saveCanteenIfChanged)
-        .then(() =>
-          this.$store.dispatch("submitTeledeclaration", {
-            id: this.diagnostic.id,
-            canteenId: this.canteenId,
-          })
-        )
+        .then(() => this.$store.dispatch("submitTeledeclaration", { id: this.diagnostic.id }))
         .then((diagnostic) => {
           this.bypassLeaveWarning = true
           this.$store.dispatch("notify", {
