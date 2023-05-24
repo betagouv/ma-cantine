@@ -2,7 +2,7 @@
   <v-dialog v-model="isOpen" max-width="900">
     <v-card ref="content">
       <v-card-title class="font-weight-bold">
-        {{ canteen ? "Télédéclaration : " + canteen.name : "Votre télédéclaration" }}
+        {{ "Télédéclaration : " + canteen.name }}
       </v-card-title>
       <v-card-text class="text-left pb-0">
         Veuillez vérifier les données pour {{ diagnostic.year }} ci-dessous.
