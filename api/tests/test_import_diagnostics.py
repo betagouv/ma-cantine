@@ -440,6 +440,10 @@ class TestImportDiagnosticsAPI(APITestCase):
             # TODO: is this the best field to point to as being wrong? hors bio could be confusing
             "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons EGAlim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGAlim, 200",
         )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'siret' : Le SIRET doit être composé des chiffres",
+        )
 
     @authenticate
     def test_staff_error_collection(self, _):
