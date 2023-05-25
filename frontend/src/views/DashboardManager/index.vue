@@ -43,7 +43,7 @@ export default {
       return this.$store.state.loggedUser
     },
     hasProgression() {
-      return true
+      return false
     },
   },
 }
