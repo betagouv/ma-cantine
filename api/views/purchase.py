@@ -379,10 +379,10 @@ class DiagnosticsFromPurchasesView(APIView):
             try:
                 canteen = Canteen.objects.get(id=canteen_id)
             except Canteen.DoesNotExist:
-                errors.append(f"Inconnue cantine : {canteen_id}")
+                errors.append(f"Cantine inconnue : {canteen_id}")
                 continue
             if request.user not in canteen.managers.all():
-                errors.append(f"Vous ne gerez pas la cantine : {canteen_id}")
+                errors.append(f"Vous ne gérez pas la cantine : {canteen_id}")
                 continue
             values_dict = canteen_summary_for_year(canteen, year)
             total_ht = values_dict["value_total_ht"]
