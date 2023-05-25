@@ -6,6 +6,6 @@
 
 <script>
 export default {
-  name: "CanteenDashboard",
+  name: "DashboardManager",
 }
 </script>

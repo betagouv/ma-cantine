@@ -53,7 +53,7 @@ import FaqPage from "@/views/FaqPage"
 import SiteMap from "@/views/SiteMap"
 import DeveloperPage from "@/views/DeveloperPage"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
-import CanteenDashboard from "@/views/CanteenDashboard"
+import DashboardManager from "@/views/DashboardManager"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -562,8 +562,8 @@ const routes = [
 if (window.ENABLE_DASHBOARD) {
   routes.push({
     path: "/dashboard",
-    name: "CanteenDashboard",
-    component: CanteenDashboard,
+    name: "DashboardManager",
+    component: DashboardManager,
   })
 }
 
