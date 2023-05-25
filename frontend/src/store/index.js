@@ -519,7 +519,7 @@ export default new Vuex.Store({
       const payload = {
         canteenIds: ids,
       }
-      return fetch(`/api/v1/diagnosticsFromPurchases/${year}`, {
+      return fetch(`/api/v1/createDiagnosticsFromPurchases/${year}`, {
         method: "POST",
         headers,
         body: JSON.stringify(payload),

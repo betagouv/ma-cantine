@@ -146,7 +146,7 @@ urlpatterns = {
         name="canteen_purchases_summary",
     ),
     path(
-        "diagnosticsFromPurchases/<int:year>",
+        "createDiagnosticsFromPurchases/<int:year>",
         DiagnosticsFromPurchasesView.as_view(),
         name="diagnostics_from_purchases",
     ),
