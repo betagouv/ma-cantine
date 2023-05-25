@@ -481,6 +481,7 @@ ENABLE_XP_RESERVATION = os.getenv("ENABLE_XP_RESERVATION") == "True"
 ENABLE_XP_VEGE = os.getenv("ENABLE_XP_VEGE") == "True"
 ENABLE_PARTNERS = os.getenv("ENABLE_PARTNERS") == "True"
 ENABLE_TELEDECLARATION = os.getenv("ENABLE_TELEDECLARATION") == "True"
+ENABLE_DASHBOARD = os.getenv("ENABLE_DASHBOARD") == "True"
 
 # Custom testing
 

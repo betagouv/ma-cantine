@@ -53,6 +53,7 @@ import FaqPage from "@/views/FaqPage"
 import SiteMap from "@/views/SiteMap"
 import DeveloperPage from "@/views/DeveloperPage"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
+import CanteenDashboard from "@/views/CanteenDashboard"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -556,12 +557,21 @@ const routes = [
       title: "Mesures de notre impact",
     },
   },
-  {
-    path: "/:catchAll(.*)",
-    component: NotFound,
-    name: "NotFound",
-  },
 ]
+
+if (window.ENABLE_DASHBOARD) {
+  routes.push({
+    path: "/dashboard",
+    name: "CanteenDashboard",
+    component: CanteenDashboard,
+  })
+}
+
+routes.push({
+  path: "/:catchAll(.*)",
+  component: NotFound,
+  name: "NotFound",
+})
 
 const router = new VueRouter({
   mode: "history",
