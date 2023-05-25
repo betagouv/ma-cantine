@@ -1,0 +1,83 @@
+---
+title: "Ma-Cantine : Reconstruction des statistiques du bilan 2021"
+author:
+  - "Quentin Loridant"
+date: "2023-05-24"
+format:
+  html:
+    embed-resources: true
+    code-fold: false
+    theme:
+      - readable
+    toc: true
+    toc-depth: 2
+execute:
+  cache: true
+---
+
+# Contexte
+Analyse des données de la campagne de TD 2022.
+
+* En 2021, l'application ne permettait pas de spécifier le mode de télédéclaration.  
+* La campagne de 2022 porte sur les données de 2021  
+* Les données sont issus d'une extractation de la base de données de l'application Ma-Cantine, en filtrant sur l'année 2021, et les données de type 'SUMBITTED'.
+
+
+# Import des données et des librairies
+```{python import}
+import pandas as pd
+import os
+import requests
+
+```
+
+Afin de récupérer les données, il vous faut un TOKEN metabase. Pour cela :
+curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://https://ma-cantine-metabase.cleverapps.io/api/session
+
+```{python Import des données}
+query = {
+    "database": 2,
+    "type": "native",
+    "native": {
+        "query": "SELECT * FROM data_teledeclaration WHERE status = 'SUBMITTED' and year = 2021"
+    },
+}
+
+res = requests.post(
+    "https://ma-cantine-metabase.cleverapps.io/api/dataset",
+    headers={
+        "Content-Type": "application/json",
+        "X-Metabase-Session": os.environ.get('METABASE_TOKEN')
+    },
+    json=query,
+)
+names = [x["display_name"] for x in res.json()["data"]["results_metadata"]["columns"]]
+td = pd.DataFrame(res.json()["data"]["rows"])
+td.columns = names
+print(td.head(1))
+print(td.columns)
+```
+
+# Nettoyage des données
+```{python Nettoyage des données}
+td = td.dropna(subset=["canteen_id"])
+```
+
+# Vérifications de la qualité des données
+```{python Vérification des données}
+assert td["canteen_id"].isna().sum() == 0, "Il y a des cantines sans identifiant"
+assert len(td["canteen_id"]) == len(
+    td["canteen_id"].unique()
+), "Il y a des doublons dans les cantines"
+```
+
+# Chiffres clés
+```{python Nombre de Télédéclarations}
+nbre_td = print("Nombre de Télédéclarations : ", len(td))
+```
+
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+cuisine_centrales = nbre_td
+td['nbre_satellites'] = td['declared_data'].apply(lambda x: len(x['satellites']))
+
+```
