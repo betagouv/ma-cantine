@@ -28,37 +28,35 @@ Analyse des données de la campagne de TD 2022.
 import pandas as pd
 import os
 import requests
+import json
 
 ```
 
 Afin de récupérer les données, il vous faut un TOKEN metabase. Pour cela :
 curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://https://ma-cantine-metabase.cleverapps.io/api/session
 
-```{python Import des données}
-query = {
-    "database": 2,
-    "type": "native",
-    "native": {
-        "query": "SELECT * FROM data_teledeclaration WHERE status = 'SUBMITTED' and year = 2021"
-    },
+```{python Import des données TD}
+url = "https://ma-cantine-metabase.cleverapps.io/api/card/795/query/json"
+header = {
+    "Content-Type": "application/json",
+    "X-Metabase-Session": os.environ["METABASE_TOKEN"],
 }
 
 res = requests.post(
-    "https://ma-cantine-metabase.cleverapps.io/api/dataset",
-    headers={
-        "Content-Type": "application/json",
-        "X-Metabase-Session": os.environ.get('METABASE_TOKEN')
-    },
-    json=query,
+    url,
+    headers=header,
 )
-names = [x["display_name"] for x in res.json()["data"]["results_metadata"]["columns"]]
-td = pd.DataFrame(res.json()["data"]["rows"])
-td.columns = names
-print(td.head(1))
-print(td.columns)
+td = pd.DataFrame(res.json())
+td['declared_data'] = td['declared_data'].apply(json.loads)
+td_json = pd.json_normalize(td["declared_data"])
+td = pd.concat([td.drop("declared_data", axis=1), td_json], axis=1)
+for col in td.columns:
+    print(col)
+
 ```
 
-# Nettoyage des données
+
+# Nettoyage et formattage des données
 ```{python Nettoyage des données}
 td = td.dropna(subset=["canteen_id"])
 ```
@@ -66,18 +64,84 @@ td = td.dropna(subset=["canteen_id"])
 # Vérifications de la qualité des données
 ```{python Vérification des données}
 assert td["canteen_id"].isna().sum() == 0, "Il y a des cantines sans identifiant"
-assert len(td["canteen_id"]) == len(
-    td["canteen_id"].unique()
-), "Il y a des doublons dans les cantines"
+assert len(td["canteen_id"]) == len(td["canteen_id"].unique()), "Il y a des doublons dans les cantines"
 ```
 
 # Chiffres clés
 ```{python Nombre de Télédéclarations}
-nbre_td = print("Nombre de Télédéclarations : ", len(td))
+print("Nombre de Télédéclarations : ", len(td))
+print(td['production_type'].unique())
 ```
 
-```{python Nombre de sites de restauration concernés par la télédéclaration}
-cuisine_centrales = nbre_td
-td['nbre_satellites'] = td['declared_data'].apply(lambda x: len(x['satellites']))
+Dans les télédéclarations pour la campagne 2022, il n'y a pas d'indication du nombre de satellites, du managment_type et du produciton_type. 
 
+Les informations suivanted proviennent donc des informations renseignées pour les cantines. Les données ont peut-être légérement été modifié depuis la télédéclaration.
+
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+print(
+    "Nombre de sites de restauration concernés par la télédéclaration : ",
+    len(td) + td["satellite_canteens_count"].sum(),
+)
+```
+
+```{python Nombre de cantines sur place (sites et satellites)}
+cuisines_sur_place = td[td['production_type'].isin(["site", "site_cooked_elsewhere"])]
+print(
+    "Nombre de cantines sur place (sites et satellites) : ",
+    len(cuisines_sur_place),
+)
+```
+
+```{python Nombre de cantines centrales}
+cuisines_centrales = td[td['production_type'].isin(["central_serving", "central"])]
+print(
+    "Nombre de cantines centrales : ",
+    len(cuisines_centrales),
+)
+```
+
+```{python Nombre de repas}
+print(
+    "Nombre de repas moyens par jour pour les cantines sur place : ",
+    int(cuisines_sur_place["daily_meal_count"].mean()),
+)
+print(
+    "Nombre de repas moyens par jour pour les cantines centrales : ",
+    int(cuisines_centrales["daily_meal_count"].mean()),
+)
+print("Nombre de repas totaux pour l'année : ", f"{int(td['yearly_meal_count'].sum())}")
+```
+
+```{python Répartition du nombre de cantines en gestion directe / en gestion concédée}
+print(
+    f"Répartition du nombre de cantines en gestion directe : {100 * len(td[td.management_type == 'direct']) / len(td):.2f} %"
+)
+print(
+    f"Répartition du nombre de cantines en gestion concédée : {100 * len(td[td.management_type == 'conceded']) / len(td):.2f} %"
+)
+print(
+    f"Répartition du nombre de cantines en gestion non renseignée : {100 * len(td[~td.management_type.isin(['direct', 'conceded'])]) / len(td):.2f} %"
+)
+```
+
+Pour les montants, nous nous rebasons sur les données de TD.
+```{python Montants d'achat alimentaires déclarés}
+print(
+    "Montants d'achat alimentaires déclarés : ",
+    f"{int(td['teledeclaration.value_total_ht'].sum())} €",
+)
+```
+
+```{python Taux global des achats en bio}
+print(
+    "Taux global des achats en bio : ",
+    f"{100 * td['teledeclaration.value_bio_ht'].sum() / td['teledeclaration.value_total_ht'].sum():.2f} %",
+)
+```
+
+```{python Taux global des achats EGALIM (bio inclus)}
+print(
+    "Taux global des achats EGALIM (bio inclus) : ",
+    f"{100 * (td['teledeclaration.value_egalim_others_ht'].sum() + td['teledeclaration.value_fish_egalim_ht'].sum() + td['teledeclaration.value_meat_poultry_egalim_ht'].sum() + td['teledeclaration.value_bio_ht'].sum()) / td['teledeclaration.value_total_ht'].sum():.2f} %",
+)
 ```
