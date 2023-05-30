@@ -5,6 +5,31 @@
     </div>
     <div v-else>
       <div>
+        <v-row v-if="diagLoading" class="green--text">
+          <v-col cols="1" justify-self="center">
+            <v-progress-circular indeterminate></v-progress-circular>
+          </v-col>
+          <v-col>
+            <p>Création de diagnostics en cours...</p>
+          </v-col>
+        </v-row>
+        <p v-else-if="showMassDiagnose">
+          Vous pouvez créer
+          <span v-if="toDiagnose.length > 1">{{ toDiagnose.length }} diagnostics</span>
+          <span v-else>1 diagnostic</span>
+          depuis les achats renseignés
+          <v-btn class="primary ml-2" @click="massDiagnose">
+            <span v-if="toDiagnose.length > 1">Créer {{ toDiagnose.length }} diagnostics</span>
+            <span v-else>Créer le diagnostic</span>
+          </v-btn>
+        </p>
+        <v-alert v-if="diagSuccesses.length" outlined type="success">
+          <p v-if="diagSuccesses.length" class="mb-0">
+            {{ diagSuccesses.length }} {{ diagSuccesses.length > 1 ? "diagnostics créés" : "diagnostic créé" }}
+          </p>
+        </v-alert>
+      </div>
+      <div>
         <v-row v-if="tdLoading" class="green--text">
           <v-col cols="1" justify-self="center">
             <v-progress-circular indeterminate></v-progress-circular>
@@ -179,6 +204,10 @@ export default {
           display: "Ajouter des satellites",
           icon: "$community-fill",
         },
+        "18_prefill_diagnostic": {
+          display: "Créer le diagnostic " + year,
+          icon: "$add-circle-fill",
+        },
         "20_create_diagnostic": {
           display: "Créer le diagnostic " + year,
           icon: "$add-circle-fill",
@@ -208,6 +237,9 @@ export default {
       showTeledeclarationPreview: false,
       showPublicationForm: false,
       canteenForPublication: null,
+      toDiagnose: [],
+      diagLoading: false,
+      diagSuccesses: [],
       toTeledeclare: [],
       tdLoading: false,
       tdSuccesses: [],
@@ -248,6 +280,9 @@ export default {
     showMassPublication() {
       return this.toPublish?.length && (this.showPagination || this.toPublish > 1)
     },
+    showMassDiagnose() {
+      return this.toDiagnose?.length && (this.showPagination || this.toDiagnose > 1)
+    },
   },
   methods: {
     populateInitialParameters() {
@@ -267,6 +302,7 @@ export default {
         .then((response) => {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
+          this.toDiagnose = response.undiagnosedCanteensWithPurchases
           this.toTeledeclare = response.diagnosticsToTeledeclare
           this.toPublish = response.canteensToPublish
           this.$emit("canteen-count", this.canteenCount)
@@ -300,7 +336,7 @@ export default {
           name: "SatelliteManagement",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
         }
-      } else if (canteen.action === "20_create_diagnostic") {
+      } else if (canteen.action === "20_create_diagnostic" || canteen.action === "18_prefill_diagnostic") {
         return {
           name: "NewDiagnosticForCanteen",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
@@ -395,6 +431,28 @@ export default {
         .then((canteen) => {
           const canteenIdx = this.visibleCanteens.findIndex((c) => c.id === canteenId)
           this.visibleCanteens.splice(canteenIdx, 1, canteen)
+        })
+    },
+    massDiagnose() {
+      this.diagLoading = true
+      this.$store
+        .dispatch("createAndPrefillDiagnostics", { year: this.year, ids: this.toDiagnose })
+        .then((response) => {
+          this.diagSuccesses = response.results
+          const title =
+            this.diagSuccesses.length > 1
+              ? `${this.diagSuccesses.length} diagnostics créés`
+              : `${this.diagSuccesses.length} diagnostic créé`
+          this.$store.dispatch("notify", {
+            title,
+            status: "success",
+          })
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+        // refresh actions
+        .then(() => this.fetchCurrentPage())
+        .finally(() => {
+          this.diagLoading = false
         })
     },
     massTeledeclaration() {

@@ -10,6 +10,7 @@ from api.views import (
     PurchasesDeleteView,
     PurchasesRestoreView,
     CanteenPurchasesSummaryView,
+    DiagnosticsFromPurchasesView,
     UsernameSuggestionView,
 )
 from api.views import UpdateUserView, UserCanteensView, CanteenStatisticsView
@@ -143,6 +144,11 @@ urlpatterns = {
         "canteenPurchasesSummary/<int:canteen_pk>",
         CanteenPurchasesSummaryView.as_view(),
         name="canteen_purchases_summary",
+    ),
+    path(
+        "createDiagnosticsFromPurchases/<int:year>",
+        DiagnosticsFromPurchasesView.as_view(),
+        name="diagnostics_from_purchases",
     ),
     path("purchaseOptions/", PurchaseOptionsView.as_view(), name="purchase_options"),
     path("importPurchases/", ImportPurchasesView.as_view(), name="import_purchases"),
