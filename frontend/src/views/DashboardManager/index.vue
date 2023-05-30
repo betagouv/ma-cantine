@@ -1,10 +1,10 @@
 <template>
   <div class="text-left">
-    <p class="my-4 text-h5 font-weight-bold">Bienvenue {{ loggedUser.firstName }}</p>
+    <h1 class="my-4 text-h5 font-weight-bold">Bienvenue {{ loggedUser.firstName }}</h1>
 
-    <p class="mt-8 mb-2 text-h6 font-weight-bold">
+    <h2 class="mt-8 mb-2 text-h6 font-weight-bold">
       Ma progression
-    </p>
+    </h2>
     <p class="body-2">
       Vous trouverez ci-dessous une vue d'ensemble de votre progression sur les cinq volets de la loi EGAlim.
     </p>
@@ -14,16 +14,16 @@
       <EmptyProgression v-else />
     </div>
 
-    <p class="mt-10 mb-2 text-h6 font-weight-bold">
+    <h2 class="mt-10 mb-2 text-h6 font-weight-bold">
       Mon établissement
-    </p>
+    </h2>
     <p class="body-2">
       Accédez ci-dessous aux différents outils de gestion de votre établissement sur la plateforme « ma cantine ».
     </p>
 
-    <p class="mt-10 mb-2 text-h6 font-weight-bold">
+    <h2 class="mt-10 mb-2 text-h6 font-weight-bold">
       Mes ressources personalisées
-    </p>
+    </h2>
     <p class="body-2">
       Découvrez ci-dessous des articles et des outils pratiques, ainsi que des suggestions de partenaires et des
       cantines inspirantes sur votre territoire qui correspondent à vos enjeux.
