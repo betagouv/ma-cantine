@@ -3,10 +3,10 @@
     <v-row>
       <v-col cols="12" sm="6" md="5" class="d-flex flex-column">
         <div v-for="measure in keyMeasures" :key="measure.id" class="d-flex my-3">
-          <div class="text-body-1 font-weight-bold">
+          <p class="text-body-1 font-weight-bold my-0">
             <v-icon class="mr-2" size="20" :color="measure.mdiIconColor">{{ measure.mdiIcon }}</v-icon>
             {{ measure.shortTitle }}
-          </div>
+          </p>
           <v-spacer></v-spacer>
           <v-chip small>À COMPLÈTER</v-chip>
         </div>
