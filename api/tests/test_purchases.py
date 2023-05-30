@@ -1,8 +1,9 @@
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
-from data.factories import UserFactory, PurchaseFactory, CanteenFactory
-from data.models import Purchase
+from data.factories import UserFactory, PurchaseFactory, CanteenFactory, DiagnosticFactory
+from data.models import Purchase, Diagnostic, Canteen
 from .utils import authenticate
 
 
@@ -355,12 +356,13 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(body["valueFruitsEtLegumesBio"], 200.0)
         self.assertEqual(body["valueViandesVolaillesBio"], 10.0)
         self.assertEqual(body["valueFruitsEtLegumesAocaopIgpStg"], 80.0)
-        self.assertEqual(body["valueFruitsEtLegumesCommerceEquitable"], None)
+        self.assertEqual(body["valueFruitsEtLegumesCommerceEquitable"], 0.0)
         self.assertEqual(body["valueAutresLocal"], 100.0)
         self.assertEqual(body["valueViandesVolaillesShortDistribution"], 100.0)
         self.assertEqual(body["valueViandesVolaillesLocal"], 10.0)
         self.assertEqual(body["valueAutresNonEgalim"], 210.0)
         self.assertEqual(body["valueViandesVolaillesNonEgalim"], 90.0)
+        self.assertEqual(body["valueExternalityPerformanceHt"], 0.0)
 
     def test_purchase_summary_unauthenticated(self):
         canteen = CanteenFactory.create()
@@ -591,7 +593,79 @@ class TestPurchaseApi(APITestCase):
         response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)
+        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)  #
+
+    @authenticate
+    def test_delete_multiple_purchases(self):
+        """
+        Given a list of purchase ids, soft delete those purchases
+        """
+        purchase_1 = PurchaseFactory.create(deletion_date=None)
+        purchase_1.canteen.managers.add(authenticate.user)
+        purchase_2 = PurchaseFactory.create(deletion_date=None)
+        purchase_2.canteen.managers.add(authenticate.user)
+
+        response = self.client.post(
+            reverse("delete_purchases"), {"ids": [purchase_1.id, purchase_2.id]}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        purchase_1.refresh_from_db()
+        purchase_2.refresh_from_db()
+        self.assertIsNotNone(purchase_1.deletion_date)
+        self.assertIsNotNone(purchase_2.deletion_date)
+
+    @authenticate
+    def test_delete_invalid_purchases(self):
+        """
+        Ignore ids that are: non-existant; already deleted; not managed by the user
+        And delete what can be deleted
+        """
+        should_delete = PurchaseFactory.create(deletion_date=None)
+        date = timezone.now()
+        already_deleted = PurchaseFactory.create(deletion_date=date)
+        should_delete.canteen.managers.add(authenticate.user)
+        already_deleted.canteen.managers.add(authenticate.user)
+        invalid_id = "999"
+        not_mine = PurchaseFactory.create(deletion_date=None)
+        ids = [should_delete.id, already_deleted.id, invalid_id, not_mine.id]
+
+        response = self.client.post(reverse("delete_purchases"), {"ids": ids}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["count"], 1)
+        should_delete.refresh_from_db()
+        self.assertIsNotNone(should_delete.deletion_date)
+        already_deleted.refresh_from_db()
+        self.assertEqual(already_deleted.deletion_date, date)
+        not_mine.refresh_from_db()
+        self.assertIsNone(not_mine.deletion_date)
+
+    @authenticate
+    def test_restore_purchases(self):
+        """
+        This endpoint restores the given IDs of deleted purchases
+        """
+        date = timezone.now()
+        purchase_1 = PurchaseFactory.create(deletion_date=date)
+        purchase_2 = PurchaseFactory.create(deletion_date=date)
+        not_me = PurchaseFactory.create(deletion_date=date)
+        for p in [purchase_1, purchase_2, not_me]:
+            p.canteen.managers.add(authenticate.user)
+        not_my_purchase = PurchaseFactory.create(deletion_date=date)
+
+        response = self.client.post(
+            reverse("restore_purchases"), {"ids": [purchase_1.id, purchase_2.id, not_my_purchase.id]}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 2)
+        purchase_1.refresh_from_db()
+        purchase_2.refresh_from_db()
+        not_me.refresh_from_db()
+        not_my_purchase.refresh_from_db()
+        self.assertIsNone(purchase_1.deletion_date)
+        self.assertIsNone(purchase_2.deletion_date)
+        self.assertEqual(not_me.deletion_date, date)
+        self.assertEqual(not_my_purchase.deletion_date, date)
 
     @authenticate
     def test_search_purchases(self):
@@ -830,3 +904,114 @@ class TestPurchaseApi(APITestCase):
     def test_get_purchase_options_unauthenticated(self):
         response = self.client.get(reverse("purchase_options"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_create_diagnostics_from_purchases(self):
+        """
+        Given a list of canteen ids and a year, create diagnostics
+        pre-filled with purchase totals for that year
+        """
+        canteen_site = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL)
+        canteens = [canteen_site, central_kitchen]
+        for canteen in canteens:
+            canteen.managers.add(authenticate.user)
+        # purchases to be included in totals
+        PurchaseFactory.create(
+            canteen=canteen_site,
+            date="2021-01-01",
+            price_ht=50,
+            family=Purchase.Family.BOISSONS,
+            characteristics=[Purchase.Characteristic.AOCAOP],
+        )
+        PurchaseFactory.create(
+            canteen=canteen_site,
+            date="2021-12-31",
+            price_ht=150,
+            family=Purchase.Family.BOULANGERIE,
+            characteristics=[],
+        )
+
+        PurchaseFactory.create(canteen=central_kitchen, date="2021-01-01", price_ht=5)
+        PurchaseFactory.create(canteen=central_kitchen, date="2021-12-31", price_ht=15)
+
+        # purchases to be filtered out from totals
+        PurchaseFactory.create(canteen=canteen_site, date="2022-01-01", price_ht=666)
+        PurchaseFactory.create(canteen=central_kitchen, date="2020-12-31", price_ht=666)
+
+        year = 2021
+        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=canteens).count(), 0)
+
+        response = self.client.post(
+            reverse("diagnostics_from_purchases", kwargs={"year": year}),
+            {"canteenIds": [canteen_site.id, central_kitchen.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 2)
+        diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
+        self.assertIn(diag_site.id, results)
+        self.assertEqual(diag_site.value_total_ht, 200)
+        self.assertEqual(diag_site.value_boissons_aocaop_igp_stg, 50)
+        self.assertEqual(diag_site.value_boulangerie_non_egalim, 150)
+        self.assertEqual(diag_site.value_autres_aocaop_igp_stg, 0)
+        self.assertEqual(diag_site.central_kitchen_diagnostic_mode, None)
+        self.assertEqual(diag_site.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        diag_cc = Diagnostic.objects.get(year=year, canteen=central_kitchen)
+        self.assertIn(diag_cc.id, results)
+        self.assertEqual(diag_cc.value_total_ht, 20)
+        self.assertEqual(diag_cc.central_kitchen_diagnostic_mode, "APPRO")
+
+    def test_unauthorised_create_diagnostics_from_purchases(self):
+        """
+        If not logged in, throw a 403
+        """
+        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2020}), {})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_missing_canteens_create_diagnostics_from_purchases(self):
+        """
+        If canteen ids are missing, throw a 400
+        """
+        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2021}), {}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_errors_for_create_diagnostics_from_purchases(self):
+        """
+        Handle errors in diagnostic creation gracefully, creating what can be created
+        """
+        canteen_with_diag = CanteenFactory.create()
+        canteen_without_purchases = CanteenFactory.create()
+        good_canteen = CanteenFactory.create()
+        canteens = [canteen_with_diag, canteen_without_purchases, good_canteen]
+        for canteen in canteens:
+            canteen.managers.add(authenticate.user)
+        not_my_canteen = CanteenFactory.create()
+
+        year = 2023
+        DiagnosticFactory.create(canteen=canteen_with_diag, year=year)
+        PurchaseFactory.create(canteen=good_canteen, date=f"{year}-01-01", price_ht=100)
+        PurchaseFactory.create(canteen=canteen_with_diag, date=f"{year}-01-01", price_ht=666)
+        PurchaseFactory.create(canteen=not_my_canteen, date=f"{year}-01-01", price_ht=666)
+
+        response = self.client.post(
+            reverse("diagnostics_from_purchases", kwargs={"year": year}),
+            {"canteenIds": ["666", not_my_canteen.id] + [canteen.id for canteen in canteens]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 1)
+        errors = body["errors"]
+        self.assertEqual(errors[0], "Cantine inconnue : 666")
+        self.assertEqual(errors[1], f"Vous ne gérez pas la cantine : {not_my_canteen.id}")
+        self.assertEqual(
+            errors[2], f"Il existe déjà un diagnostic pour l'année 2023 pour la cantine : {canteen_with_diag.id}"
+        )
+        self.assertEqual(errors[3], f"Aucun achat trouvé pour la cantine : {canteen_without_purchases.id}")
+        self.assertEqual(len(errors), 4)

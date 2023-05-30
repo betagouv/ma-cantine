@@ -1,5 +1,6 @@
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
+from django.conf import settings
 from django.contrib.sitemaps.views import sitemap
 from django.views.decorators.cache import cache_page
 from django.views.generic.base import RedirectView
@@ -15,6 +16,8 @@ from web.views import (
     RegisterSendMailFailedView,
     RegisterInvalidTokenView,
     AccountActivationView,
+    OIDCLoginView,
+    OIDCAuthorizeView,
 )
 
 sitemaps = {
@@ -138,3 +141,20 @@ urlpatterns = [
         name="swagger-ui",
     ),
 ]
+
+if settings.USES_MONCOMPTEPRO:
+    urlpatterns.append(
+        path(
+            "oidc-login",
+            OIDCLoginView.as_view(),
+            name="oidc-login",
+        )
+    )
+
+    urlpatterns.append(
+        path(
+            "signin-oidc",
+            OIDCAuthorizeView.as_view(),
+            name="oidc-authorize",
+        )
+    )

@@ -59,6 +59,8 @@ class CanteenAdmin(SoftDeletionAdmin):
         "sectors",
         "line_ministry",
         "managers",
+        "claimed_by",
+        "has_been_claimed",
         "management_type",
         "production_type",
         "central_producer_siret",
@@ -80,6 +82,8 @@ class CanteenAdmin(SoftDeletionAdmin):
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
+        "claimed_by",
+        "has_been_claimed",
     )
     list_display = (
         "name",
@@ -115,10 +119,17 @@ class CanteenAdmin(SoftDeletionAdmin):
         actions = [publish, unpublish]
 
     def télédéclarée(self, obj):
-        if Teledeclaration.objects.filter(
-            canteen=obj, year=(timezone.now().year - 1), status=Teledeclaration.TeledeclarationStatus.SUBMITTED
-        ).exists():
+        active_tds = Teledeclaration.objects.filter(
+            year=(timezone.now().year - 1), status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        )
+        if active_tds.filter(canteen=obj).exists():
             return "📩 Télédéclarée"
+        if obj.production_type == Canteen.ProductionType.ON_SITE_CENTRAL and obj.central_producer_siret:
+            central_types = [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
+            centrals = Canteen.objects.filter(siret=obj.central_producer_siret, production_type__in=central_types)
+            if centrals.exists() and centrals.count() == 1:
+                if active_tds.filter(canteen=centrals.first()).exists():
+                    return "📩 Télédéclarée (par CC)"
         return ""
 
     def source_des_données(self, obj):

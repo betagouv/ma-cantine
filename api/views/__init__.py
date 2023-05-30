@@ -21,6 +21,7 @@ from .canteen import (  # noqa: F401
     CanteenLocationsView,
     TeamJoinRequestView,
     ClaimCanteenView,
+    UndoClaimCanteenView,
     SatelliteListCreateView,
     ActionableCanteensListView,
     ActionableCanteenRetrieveView,
@@ -51,6 +52,9 @@ from .purchase import (  # noqa: F401
     PurchaseListExportView,
     PurchaseOptionsView,
     ImportPurchasesView,
+    PurchasesDeleteView,
+    PurchasesRestoreView,
+    DiagnosticsFromPurchasesView,
 )
 from .reservationexpe import ReservationExpeView  # noqa: F401
 from .vegetarianexpe import VegetarianExpeView  # noqa: F401

@@ -242,6 +242,8 @@
         :headers="headers"
         :items="processedVisiblePurchases"
         @click:row="onRowClick"
+        v-model="selectedPurchases"
+        show-select
       >
         <template v-slot:[`item.description`]="{ item }">
           <router-link :to="{ name: 'PurchasePage', params: { id: item.id } }">
@@ -272,6 +274,14 @@
           </div>
         </template>
       </v-data-table>
+      <v-expand-transition>
+        <div v-show="selectedPurchases.length" class="px-4 pb-4 mt-n10">
+          <v-btn @click="deleteSelectedPurchases" color="red darken-2" class="white--text">
+            <v-icon class="mr-1" small>mdi-delete-forever</v-icon>
+            Supprimer {{ selectedPurchases.length }} {{ selectedPurchases.length > 1 ? "achats" : "achat" }}
+          </v-btn>
+        </div>
+      </v-expand-transition>
     </v-card>
     <v-row v-else-if="visiblePurchases" class="mt-4">
       <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -362,6 +372,7 @@ export default {
         startDate: null,
         endDate: null,
       },
+      selectedPurchases: [],
     }
   },
   computed: {
@@ -429,7 +440,53 @@ export default {
       return entry ? entry[0] : null
     },
     onRowClick(purchase) {
-      this.$router.push({ name: "PurchasePage", params: { id: purchase.id } })
+      const purchaseIndex = this.selectedPurchases.findIndex((p) => p.id === purchase.id)
+      if (purchaseIndex === -1) this.selectedPurchases.push(purchase)
+      else this.selectedPurchases.splice(purchaseIndex, 1)
+    },
+    // the following requires that purchases are SoftDeletionObjects
+    // in 2nd PR: if too many purchase objects in soft deleted state, make weekly bot to clear out purchases that have been deleted for > 1 week (or whatever time period)
+    deleteSelectedPurchases() {
+      const selectedCount = this.selectedPurchases.length
+      if (!selectedCount) return
+      const ids = this.selectedPurchases.map((p) => p.id)
+      this.$store
+        .dispatch("deletePurchases", { ids })
+        .then(() => {
+          const title =
+            selectedCount === 1 ? "L'achat a bien été supprimé" : `${selectedCount} achats ont bien été supprimés`
+          this.$store.dispatch("notify", {
+            title,
+            status: "success",
+            duration: 10000,
+            undoMessage: "Restaurer achats",
+            undoAction: this.recoverDeletedPurchases(ids),
+          })
+          this.selectedPurchases = []
+          this.fetchCurrentPage()
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
+    },
+    recoverDeletedPurchases(ids) {
+      return () => {
+        this.$store
+          .dispatch("restorePurchases", ids)
+          .then((response) => {
+            const title =
+              response.count === 1 ? "L'achat a bien été restauré" : `${response.count} achats ont bien été restaurés`
+            this.$store.dispatch("notify", {
+              title,
+              status: "success",
+            })
+            this.selectedPurchases = []
+            this.fetchCurrentPage()
+          })
+          .catch((e) => {
+            this.$store.dispatch("notifyServerError", e)
+          })
+      }
     },
     fetchCurrentPage() {
       this.loading = true

@@ -373,7 +373,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'repas par jour' : La valeur «\xa0not a number\xa0» doit être un nombre entier.",
+            "Champ 'repas par jour' : La valeur « not a number » doit être un nombre entier.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -439,6 +439,10 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors.pop(0)["message"],
             # TODO: is this the best field to point to as being wrong? hors bio could be confusing
             "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons EGAlim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGAlim, 200",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'siret' : Le SIRET doit être composé des chiffres",
         )
 
     @authenticate

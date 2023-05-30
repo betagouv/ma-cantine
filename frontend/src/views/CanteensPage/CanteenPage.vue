@@ -46,10 +46,28 @@
       </v-card>
 
       <div v-if="showClaimCanteen">
-        <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-if="claimSucceeded">
-          Votre demande a bien été prise en compte. Nous reviendrons vers vous au plus vite.
+        <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-if="undoSucceeded">
+          Vous n'êtes plus gestionnaire de cet établissement.
         </v-alert>
-
+        <v-alert colored-border color="primary" elevation="2" border="left" type="success" v-else-if="claimSucceeded">
+          <p>
+            Vous êtes maintenant gestionnaire.
+            <router-link
+              :to="{
+                name: 'DiagnosticList',
+                params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+              }"
+            >
+              Évaluez cet établissement
+            </router-link>
+          </p>
+          <p class="mb-0">
+            S'agit-il d'une erreur ?
+            <v-btn @click="undoClaim" outlined color="primary" class="ml-2">
+              Je ne suis pas gestionnaire de cet établissement
+            </v-btn>
+          </p>
+        </v-alert>
         <DsfrCallout v-else>
           <div>Cet établissement n'a pas de gestionnaire associé. C'est votre établissement ?</div>
           <div v-if="loggedUser" class="mt-2">
@@ -90,6 +108,7 @@ export default {
       labels,
       canteensHomeBacklink: { name: "CanteensHome" },
       claimSucceeded: false,
+      undoSucceeded: false,
       showCopySuccessMessage: false,
     }
   },
@@ -132,6 +151,21 @@ export default {
         .dispatch("claimCanteen", { canteenId })
         .then(() => (this.claimSucceeded = true))
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    undoClaim() {
+      this.$store
+        .dispatch("undoClaimCanteen", { canteenId: this.canteen.id })
+        .then(() => {
+          this.undoSucceeded = true
+        })
+        .catch(() => {
+          this.undoSucceeded = false
+          this.$store.dispatch("notify", {
+            message:
+              "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr",
+            status: "error",
+          })
+        })
     },
   },
   beforeMount() {

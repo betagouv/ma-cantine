@@ -89,6 +89,11 @@ export default {
       const prefixLength = "/widgets".length
       return `${l.origin}${l.pathname.slice(prefixLength)}?mtm_campaign=widget-cantine`
     },
+    usesCentralKitchenDiagnostics() {
+      return (
+        this.canteen?.productionType === "site_cooked_elsewhere" && this.canteen?.centralKitchenDiagnostics?.length > 0
+      )
+    },
     diagnosticSet() {
       if (!this.canteen) return
       if (!this.usesCentralKitchenDiagnostics) return this.canteen.diagnostics

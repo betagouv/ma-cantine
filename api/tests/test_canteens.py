@@ -1,11 +1,13 @@
 import os
 import base64
+import requests
 import requests_mock
+from unittest import mock
 from django.urls import reverse
 from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, ManagerInvitationFactory
+from data.factories import CanteenFactory, ManagerInvitationFactory, PurchaseFactory
 from data.factories import DiagnosticFactory, SectorFactory
 from data.models import Canteen, Teledeclaration, Diagnostic
 from .utils import authenticate, get_oauth2_token
@@ -429,7 +431,7 @@ class TestCanteenApi(APITestCase):
         canteen = CanteenFactory.create(siret=siret)
         canteen.managers.add(authenticate.user)
 
-        response = self.client.get(reverse("siret_check", kwargs={"siret": siret}))
+        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
@@ -446,7 +448,7 @@ class TestCanteenApi(APITestCase):
         canteen = CanteenFactory.create(siret=siret)
         canteen.managers.clear()
 
-        response = self.client.get(reverse("siret_check", kwargs={"siret": siret}))
+        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
@@ -463,7 +465,7 @@ class TestCanteenApi(APITestCase):
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret)
 
-        response = self.client.get(reverse("siret_check", kwargs={"siret": siret}))
+        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
@@ -472,6 +474,8 @@ class TestCanteenApi(APITestCase):
         # the CanteenFactory creates canteens with managers
         self.assertFalse(body["canBeClaimed"])
 
+    @override_settings(SIRET_API_KEY="dummy")
+    @override_settings(SIRET_API_SECRET="dummy")
     @requests_mock.Mocker()
     @authenticate
     def test_check_siret_new_canteen(self, mock):
@@ -511,7 +515,7 @@ class TestCanteenApi(APITestCase):
         token_mocked_response = {"access_token": "test"}
         mock.post(token_api_url, json=token_mocked_response)
 
-        response = self.client.get(reverse("siret_check", kwargs={"siret": siret}))
+        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["name"], "Canteen Name")
@@ -520,6 +524,22 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(body["city"], city)
         self.assertEqual(body["cityInseeCode"], insee_code)
         self.assertEqual(body["department"], "75")
+
+    @mock.patch("requests.get", side_effect=requests.exceptions.ConnectTimeout)
+    @mock.patch("requests.post", side_effect=requests.exceptions.ConnectTimeout)
+    @authenticate
+    def test_external_api_down(self, mock_get, mock_post):
+        siret = "34974603058674"
+
+        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["siret"], "34974603058674")
+        self.assertNotIn("name", body)
+        self.assertNotIn("postalCode", body)
+        self.assertNotIn("city", body)
+        self.assertNotIn("cityInseeCode", body)
+        self.assertNotIn("department", body)
 
     @authenticate
     def test_user_canteen_teledeclaration(self):
@@ -796,7 +816,7 @@ class TestCanteenApi(APITestCase):
         )
         # create satellites
         central_siret = "78146469373706"
-        needs_satellites = CanteenFactory.create(
+        needs_additional_satellites = CanteenFactory.create(
             siret=central_siret,
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=3,
@@ -808,7 +828,7 @@ class TestCanteenApi(APITestCase):
             needs_to_complete_diag,
             needs_to_publish,
             needs_td,
-            needs_satellites,
+            needs_additional_satellites,
         ]:
             canteen.managers.add(authenticate.user)
 
@@ -828,7 +848,7 @@ class TestCanteenApi(APITestCase):
         DiagnosticFactory.create(year=last_year, canteen=needs_td, value_total_ht=100)
 
         # has a diagnostic but this canteen registered only two of three satellites
-        DiagnosticFactory.create(year=last_year, canteen=needs_satellites, value_total_ht=100)
+        DiagnosticFactory.create(year=last_year, canteen=needs_additional_satellites, value_total_ht=100)
         CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
         )
@@ -846,7 +866,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(len(returned_canteens), 6)
 
         expected_actions = [
-            (needs_satellites, "10_add_satellites"),
+            (needs_additional_satellites, "10_add_satellites"),
             (needs_last_year_diag, "20_create_diagnostic"),
             (needs_to_complete_diag, "30_complete_diagnostic"),
             (needs_td, "40_teledeclare"),
@@ -857,6 +877,24 @@ class TestCanteenApi(APITestCase):
             self.assertEqual(returned_canteens[index]["id"], canteen.id)
             self.assertEqual(returned_canteens[index]["action"], action)
             self.assertIn("sectors", returned_canteens[index])
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_central_without_satellites_has_complete_satellites_action(self):
+        """
+        Test for a bug fix. A central that doesn't have any satellites at all should get the complete satellite action.
+        """
+        has_no_satellites = CanteenFactory.create(
+            siret="45467900121441",
+            production_type=Canteen.ProductionType.CENTRAL,
+            satellite_canteens_count=3,
+        )
+        has_no_satellites.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}) + "?ordering=action")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["results"][0]["action"], "10_add_satellites")
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
@@ -905,7 +943,7 @@ class TestCanteenApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
         returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
+        self.assertEqual(returned_canteens[0]["action"], "10_add_satellites")
 
         # Satellites should have the SIRET of the central cuisine
         canteen.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
@@ -1004,6 +1042,32 @@ class TestCanteenApi(APITestCase):
         body = response.json()
 
         self.assertEqual(body["diagnosticsToTeledeclare"], [complete_diag.id])
+
+    @authenticate
+    def test_get_canteens_with_purchases_no_diagnostics_for_year(self):
+        """
+        Return a list of canteens I manage who do have purchases for the given year,
+        but have not yet created a diagnostic
+        """
+        year = 2023
+        canteen_without_diag = CanteenFactory.create()
+        canteen_with_diag = CanteenFactory.create()
+        canteen_without_purchases = CanteenFactory.create()
+        not_my_canteen = CanteenFactory.create()
+        canteens = [canteen_with_diag, canteen_without_diag, canteen_without_purchases]
+        for canteen in canteens:
+            canteen.managers.add(authenticate.user)
+        DiagnosticFactory.create(canteen=canteen_with_diag, year=year)
+        PurchaseFactory.create(canteen=canteen_without_diag, date=f"{year}-01-01")
+        # add second purchase to check canteen id deduplication
+        PurchaseFactory.create(canteen=canteen_without_diag, date=f"{year}-12-01")
+        PurchaseFactory.create(canteen=canteen_with_diag, date=f"{year}-01-01")
+        PurchaseFactory.create(canteen=not_my_canteen, date=f"{year}-01-01")
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": year}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["undiagnosedCanteensWithPurchases"], [canteen_without_diag.id])
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate

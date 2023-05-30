@@ -377,6 +377,7 @@ if DEBUG_PERFORMANCE:
 
 # Maximum CSV import file size: 10Mo
 CSV_IMPORT_MAX_SIZE = 10485760
+CSV_PURCHASES_MAX_LINES = 4000
 
 # CSP headers (https://content-security-policy.com/)
 
@@ -510,3 +511,14 @@ OAUTH2_PROVIDER = {
 
 REDIS_URL = os.getenv("REDIS_URL")
 REDIS_PREPEND_KEY = os.getenv("REDIS_PREPEND_KEY", "")
+
+AUTHLIB_OAUTH_CLIENTS = {
+    "moncomptepro": {
+        "client_id": os.getenv("MONCOMPTEPRO_CLIENT_ID"),
+        "client_secret": os.getenv("MONCOMPTEPRO_SECRET"),
+    }
+}
+MONCOMPTEPRO_CONFIG = os.getenv("MONCOMPTEPRO_CONFIG")
+USES_MONCOMPTEPRO = (
+    os.getenv("MONCOMPTEPRO_CLIENT_ID") and os.getenv("MONCOMPTEPRO_SECRET") and os.getenv("MONCOMPTEPRO_CONFIG")
+)

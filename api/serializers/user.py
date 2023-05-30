@@ -46,6 +46,7 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "other_source_description",
             "has_mtm_data",
             "reviews",
+            "mcp_organizations",
         )
 
 
@@ -65,7 +66,6 @@ class CanteenManagerSerializer(serializers.ModelSerializer):
 
 
 class BlogPostAuthor(serializers.ModelSerializer):
-
     avatar = Base64ImageField(required=False, allow_null=True)
 
     class Meta:

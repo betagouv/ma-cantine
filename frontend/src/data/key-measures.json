@@ -55,7 +55,7 @@
     "shortTitle": "Lutte contre le gaspillage",
     "subMeasures": [
       {
-        "description": "Obligation de mettre en place une démarche de lutte contre le gaspillage alimentaire étendu à la restauration collective privée et obligation d'effectuer un diagnostic préalable à la réalisation de cette démarche. Lancement d’une expérimentation consistant à mettre en place une solution de réservation de repas pour adapter le nombre de repas nécessaires pour les gestionnaires volontaires de services de restauration collective dont les personnes morales de droit public ont la charge est lancée dès la promulgation de la loi et pour une durée de 3 ans. Les modalités d’application doivent être définies par décret.",
+        "description": "Obligation de faire un diagnostic de gaspillage pour l’ensemble de la restauration collective (y compris privée) et obligation de mettre en place une démarche de lutte contre le gaspillage alimentaire. La loi AGEC vise une réduction du gaspillage alimentaire de 50% d’ici 2025 par rapport à son niveau de 2015.",
         "id": "gaspillage-analyse",
         "readMore": false,
         "shortTitle": "Gaspillage analysé",
@@ -85,11 +85,10 @@
         "deadline": {
           "earliestISO": "2020-10-22"
         },
-        "description": "Pour évaluer ses effets sur le gaspillage alimentaire, la satisfaction de vos convives et le taux de fréquentation de votre établissement, nous vous proposons de participer à une expérimentation prévue par la loi Climat et résilience.",
+        "description": "Expérimentation consistant à mettre en place une solution de réservation de repas pour adapter le nombre de repas effectivement nécessaire, pour les gestionnaires de services de restauration collective volontaires dont les personnes morales de droit public ont la charge. L’objectif est d’évaluer les effets de solutions de réservation de repas sur le gaspillage alimentaire, la satisfaction des convives et le taux de fréquentation des établissements.\n\nParticipez à l’expérimentation prévue par la loi Climat et résilience, jusqu’au 1er juillet 2023, en remplissant votre diagnostic.",
         "id": "expe",
         "readMore": false,
-        "shortTitle": "Expérimentation d'une solution de réservation de repas",
-        "title": "Expérimentation d'une solution de réservation de repas"
+        "title": "Expérimentation de solutions de réservation de repas"
       }
     ],
     "successExplanation": "La cantine a fait un diagnostic du gaspillage alimentaire et a mis en œuvre une ou des actions de lutte contre le gaspillage alimentaire.\n Si la cantine sert au moins 3000 repas en moyenne par jour, elle propose aussi une convention de dons à une association habilitée.",
@@ -233,7 +232,7 @@
           "display": "À partir du 1er janvier 2025 (sauf pour les communes de - de 2000 hab : 1er janvier 2028)",
           "earliestISO": "2025-01-01"
         },
-        "description": "L'utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite.\nObligation de proposer un contenant réutilisable ou composé de matière recyclable pour la vente à emporter.",
+        "description": "L'utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite.",
         "id": "contenants",
         "readMore": false,
         "shortTitle": "Contenants",
@@ -242,7 +241,42 @@
           "universitaire",
           "creche"
         ],
-        "title": "Les contenants alimentaires en plastique sont interdits"
+        "title": "Les contenants alimentaires en plastique sont interdits",
+        "who": "Services de pédiatrie d'obstétrique et de maternité. Tous services de santé maternelle et infantile et centres périnataux de proximité."
+      },
+      {
+        "deadline": {
+          "display": "Depuis le 1er janvier 2020",
+          "earliestISO": "2020-01-01"
+        },
+        "description": "Obligation de réemploi de la vaiselle et des récipients.",
+        "id": "reuse",
+        "readMore": false,
+        "tags": [
+          "Portage à domicile"
+        ],
+        "title": "Obligation de réemploi",
+        "who": "Portage à domicile"
+      },
+      {
+        "deadline": {
+          "display": "Depuis le 1er janvier 2025",
+          "earliestISO": "2025-01-01"
+        },
+        "description": "Obligation de proposer un contenant réutilisable ou composé de matières recyclables pour la vente à emporter en restauration collective.",
+        "id": "reuse-takeaway",
+        "readMore": false,
+        "tags": [
+          "scolaire",
+          "administration",
+          "universitaire",
+          "social",
+          "medical",
+          "loisirs",
+          "creche",
+          "entreprises"
+        ],
+        "title": "Obligation vente à emporter"
       }
     ],
     "successExplanation": "La cantine n'utilise plus de contenants alimentaires de cuisson, de réchauffe, ni de service en matière plastique. De plus, la cantine ne met plus à disposition des convives des bouteilles d’eau plate en plastique, ni des ustensiles à usage unique en matière plastique.",
@@ -264,7 +298,7 @@
           "display": "Depuis le 1er janvier 2020",
           "earliestISO": "2020-01-01"
         },
-        "htmlDescription": "Les personnes morales ayant la charge d'un restaurant collectif informent à l'entrée du restaurant, par un affichage permanent, actualisé au moins une fois par an, lisible par tous les usagers et au moins une fois par an par communication électronique, les usagers des restaurants collectifs de la part des produits définis au I de l'article L. 230-5-1 et de la part des produits issus de projets alimentaires territoriaux entrant dans la composition des repas servis.",
+        "description": "Les personnes morales ayant la charge d'un restaurant collectif informent à l'entrée du restaurant, par un affichage permanent, actualisé au moins une fois par an, lisible par tous les usagers et au moins une fois par an par communication électronique, les usagers des restaurants collectifs de la part des produits définis au I de l'article L. 230-5-3 et de la part des produits issus de projets alimentaires territoriaux entrant dans la composition des repas servis.",
         "id": "convives-informes",
         "readMore": false,
         "shortTitle": "Convives informés",

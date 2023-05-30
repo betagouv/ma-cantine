@@ -12,10 +12,11 @@ from django.db import IntegrityError, transaction
 from django.db.models import Sum, Q
 from django.db.models.functions import ExtractYear
 from django.http import JsonResponse
+from django.utils import timezone
 from django_filters import rest_framework as django_filters
 from api.permissions import IsLinkedCanteenManager, IsCanteenManager, IsAuthenticated
 from api.serializers import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer
-from data.models import Purchase, Canteen
+from data.models import Purchase, Canteen, Diagnostic
 from .utils import MaCantineOrderingFilter, UnaccentSearchFilter, normalise_siret
 from collections import OrderedDict
 import logging
@@ -176,62 +177,12 @@ class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
 class CanteenPurchasesSummaryView(APIView):
     permission_classes = [IsAuthenticated]
-    # the order of egalim_labels is significant - determines which labels trump others when aggregating purchases
-    egalim_labels = [
-        "BIO",
-        "LABEL_ROUGE",
-        "AOCAOP_IGP_STG",
-        "AOCAOP",
-        "IGP",
-        "STG",
-        "HVE",
-        "PECHE_DURABLE",
-        "RUP",
-        "COMMERCE_EQUITABLE",
-        "FERMIER",
-        "EXTERNALITES",
-        "PERFORMANCE",
-        "EQUIVALENTS",
-    ]
 
     def get(self, request, *args, **kwargs):
         canteen_id = kwargs.get("canteen_pk")
         canteen = self._get_canteen(canteen_id, self.request)
         year = request.query_params.get("year")
-        if year:
-            return CanteenPurchasesSummaryView._canteen_summary_for_year(canteen, year)
-        else:
-            return CanteenPurchasesSummaryView._canteen_summary(canteen)
-
-    def _canteen_summary_for_year(canteen, year):
-        purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
-            canteen=canteen, date__year=year
-        )
-        data = {}
-        CanteenPurchasesSummaryView._simple_diag_data(purchases, data)
-        CanteenPurchasesSummaryView._complete_diag_data(purchases, data)
-        CanteenPurchasesSummaryView._misc_totals(purchases, data)
-
-        return Response(PurchaseSummarySerializer(data).data)
-
-    def _canteen_summary(canteen):
-        data = {"results": []}
-        years = (
-            Purchase.objects.filter(canteen=canteen)
-            .annotate(year=ExtractYear("date"))
-            .order_by("year")
-            .distinct("year")
-        )
-        years = [y["year"] for y in years.values()]
-        for year in years:
-            year_data = {"year": year}
-            purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
-                canteen=canteen, date__year=year
-            )
-            CanteenPurchasesSummaryView._simple_diag_data(purchases, year_data)
-            data["results"].append(year_data)
-
-        return Response(data)
+        return Response(canteen_summary_for_year(canteen, year) if year else canteen_summary(canteen))
 
     def _get_canteen(self, canteen_id, request):
         try:
@@ -242,126 +193,215 @@ class CanteenPurchasesSummaryView(APIView):
         except Canteen.DoesNotExist as e:
             raise NotFound() from e
 
-    def _simple_diag_data(purchases, data):
-        bio_filter = Q(characteristics__contains=[Purchase.Characteristic.BIO]) | Q(
-            characteristics__contains=[Purchase.Characteristic.CONVERSION_BIO]
+
+def canteen_summary_for_year(canteen, year):
+    purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
+        canteen=canteen, date__year=year
+    )
+    data = {}
+    simple_diag_data(purchases, data)
+    complete_diag_data(purchases, data)
+    misc_totals(purchases, data)
+
+    return PurchaseSummarySerializer(data).data
+
+
+def canteen_summary(canteen):
+    data = {"results": []}
+    years = (
+        Purchase.objects.filter(canteen=canteen).annotate(year=ExtractYear("date")).order_by("year").distinct("year")
+    )
+    years = [y["year"] for y in years.values()]
+    for year in years:
+        year_data = {"year": year}
+        purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
+            canteen=canteen, date__year=year
         )
-        siqo_filter = (
-            Q(characteristics__contains=[Purchase.Characteristic.LABEL_ROUGE])
-            | Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
-            | Q(characteristics__contains=[Purchase.Characteristic.IGP])
-            | Q(characteristics__contains=[Purchase.Characteristic.STG])
-        )
-        egalim_others_filter = (
-            Q(characteristics__contains=[Purchase.Characteristic.HVE])
-            | Q(characteristics__contains=[Purchase.Characteristic.PECHE_DURABLE])
-            | Q(characteristics__contains=[Purchase.Characteristic.RUP])
-            | Q(characteristics__contains=[Purchase.Characteristic.FERMIER])
-            | Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE])
-        )
-        externalities_performance_filter = Q(characteristics__contains=[Purchase.Characteristic.EXTERNALITES]) | Q(
-            characteristics__contains=[Purchase.Characteristic.PERFORMANCE]
-        )
+        simple_diag_data(purchases, year_data)
+        data["results"].append(year_data)
 
-        data["value_total_ht"] = purchases.aggregate(total=Sum("price_ht"))["total"]
-        bio_purchases = purchases.filter(bio_filter).distinct()
-        data["value_bio_ht"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"]
+    return data
 
-        # the remaining stats should ignore any bio products
-        purchases_no_bio = purchases.exclude(bio_filter)
-        siqo_purchases = purchases_no_bio.filter(siqo_filter).distinct()
-        data["value_sustainable_ht"] = siqo_purchases.aggregate(total=Sum("price_ht"))["total"]
 
-        # the remaining stats should ignore any SIQO products
-        purchases_no_siqo = purchases_no_bio.exclude(siqo_filter)
-        egalim_others_purchases = purchases_no_siqo.filter(egalim_others_filter).distinct()
-        data["value_egalim_others_ht"] = egalim_others_purchases.aggregate(total=Sum("price_ht"))["total"]
+# the order of EGALIM_LABELS is significant - determines which labels trump others when aggregating purchases
+EGALIM_LABELS = [
+    "BIO",
+    "LABEL_ROUGE",
+    "AOCAOP_IGP_STG",
+    "AOCAOP",
+    "IGP",
+    "STG",
+    "HVE",
+    "PECHE_DURABLE",
+    "RUP",
+    "COMMERCE_EQUITABLE",
+    "FERMIER",
+    "EXTERNALITES",
+    "PERFORMANCE",
+    "EQUIVALENTS",
+]
 
-        # the remaining stats should ignore any "other Egalim" products
-        purchases_no_other = purchases_no_siqo.exclude(egalim_others_filter)
-        externalities_performance_purchases = purchases_no_other.filter(externalities_performance_filter).distinct()
-        data["value_externality_performance_ht"] = externalities_performance_purchases.aggregate(
-            total=Sum("price_ht")
-        )["total"]
 
-    def _complete_diag_data(purchases, data):
-        # summary for detailed teledeclaration totals, by family and label
-        families = [
-            "VIANDES_VOLAILLES",
-            "PRODUITS_DE_LA_MER",
-            "FRUITS_ET_LEGUMES",
-            "CHARCUTERIE",
-            "PRODUITS_LAITIERS",
-            "BOULANGERIE",
-            "BOISSONS",
-            "AUTRES",
+def simple_diag_data(purchases, data):
+    bio_filter = Q(characteristics__contains=[Purchase.Characteristic.BIO]) | Q(
+        characteristics__contains=[Purchase.Characteristic.CONVERSION_BIO]
+    )
+    siqo_filter = (
+        Q(characteristics__contains=[Purchase.Characteristic.LABEL_ROUGE])
+        | Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
+        | Q(characteristics__contains=[Purchase.Characteristic.IGP])
+        | Q(characteristics__contains=[Purchase.Characteristic.STG])
+    )
+    egalim_others_filter = (
+        Q(characteristics__contains=[Purchase.Characteristic.HVE])
+        | Q(characteristics__contains=[Purchase.Characteristic.PECHE_DURABLE])
+        | Q(characteristics__contains=[Purchase.Characteristic.RUP])
+        | Q(characteristics__contains=[Purchase.Characteristic.FERMIER])
+        | Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE])
+    )
+    externalities_performance_filter = Q(characteristics__contains=[Purchase.Characteristic.EXTERNALITES]) | Q(
+        characteristics__contains=[Purchase.Characteristic.PERFORMANCE]
+    )
+
+    data["value_total_ht"] = purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    bio_purchases = purchases.filter(bio_filter).distinct()
+    data["value_bio_ht"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+
+    # the remaining stats should ignore any bio products
+    purchases_no_bio = purchases.exclude(bio_filter)
+    siqo_purchases = purchases_no_bio.filter(siqo_filter).distinct()
+    data["value_sustainable_ht"] = siqo_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+
+    # the remaining stats should ignore any SIQO products
+    purchases_no_siqo = purchases_no_bio.exclude(siqo_filter)
+    egalim_others_purchases = purchases_no_siqo.filter(egalim_others_filter).distinct()
+    data["value_egalim_others_ht"] = egalim_others_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+
+    # the remaining stats should ignore any "other Egalim" products
+    purchases_no_other = purchases_no_siqo.exclude(egalim_others_filter)
+    externalities_performance_purchases = purchases_no_other.filter(externalities_performance_filter).distinct()
+    data["value_externality_performance_ht"] = (
+        externalities_performance_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    )
+
+
+def complete_diag_data(purchases, data):
+    # summary for detailed teledeclaration totals, by family and label
+    families = [
+        "VIANDES_VOLAILLES",
+        "PRODUITS_DE_LA_MER",
+        "FRUITS_ET_LEGUMES",
+        "CHARCUTERIE",
+        "PRODUITS_LAITIERS",
+        "BOULANGERIE",
+        "BOISSONS",
+        "AUTRES",
+    ]
+    other_labels = ["FRANCE", "SHORT_DISTRIBUTION", "LOCAL"]
+
+    for family in families:
+        purchase_family = purchases.filter(family=family)
+        for label in EGALIM_LABELS:
+            if label == "AOCAOP_IGP_STG":
+                fam_label = purchase_family.filter(
+                    Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
+                    | Q(characteristics__contains=[Purchase.Characteristic.IGP])
+                    | Q(characteristics__contains=[Purchase.Characteristic.STG])
+                ).distinct()
+                # the remaining stats should ignore already counted labels
+                purchase_family = purchase_family.exclude(
+                    Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
+                    | Q(characteristics__contains=[Purchase.Characteristic.IGP])
+                    | Q(characteristics__contains=[Purchase.Characteristic.STG])
+                )
+            else:
+                fam_label = purchase_family.filter(Q(characteristics__contains=[Purchase.Characteristic[label]]))
+                # the remaining stats should ignore already counted labels
+                purchase_family = purchase_family.exclude(
+                    Q(characteristics__contains=[Purchase.Characteristic[label]])
+                )
+            key = "value_" + family.lower() + "_" + label.lower()
+            data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0
+        # outside of EGAlim, products can be counted twice across characteristics
+        purchase_family = purchases.filter(family=family)
+        other_labels_characteristics = []
+        for label in other_labels:
+            characteristic = Purchase.Characteristic[label]
+            fam_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
+            key = "value_" + family.lower() + "_" + label.lower()
+            data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0
+            other_labels_characteristics.append(characteristic)
+        # Non-EGAlim totals: contains no labels or only one or more of other_labels
+        non_egalim_purchases = purchase_family.filter(
+            Q(characteristics__contained_by=other_labels_characteristics) | Q(characteristics__len=0)
+        ).distinct()
+        key = "value_" + family.lower() + "_non_egalim"
+        data[key] = non_egalim_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+
+
+def misc_totals(purchases, data):
+    meat_poultry_purchases = purchases.filter(
+        family=Purchase.Family.VIANDES_VOLAILLES,
+    )
+    data["value_meat_poultry_ht"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+
+    meat_poultry_egalim = meat_poultry_purchases.filter(characteristics__overlap=EGALIM_LABELS)
+    data["value_meat_poultry_egalim_ht"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
+
+    meat_poultry_france = meat_poultry_purchases.filter(
+        characteristics__contains=[
+            "FRANCE",
         ]
-        other_labels = ["FRANCE", "SHORT_DISTRIBUTION", "LOCAL"]
+    )
+    data["value_meat_poultry_france_ht"] = meat_poultry_france.aggregate(total=Sum("price_ht"))["total"] or 0
 
-        for family in families:
-            purchase_family = purchases.filter(family=family)
-            for label in CanteenPurchasesSummaryView.egalim_labels:
-                if label == "AOCAOP_IGP_STG":
-                    fam_label = purchase_family.filter(
-                        Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
-                        | Q(characteristics__contains=[Purchase.Characteristic.IGP])
-                        | Q(characteristics__contains=[Purchase.Characteristic.STG])
-                    ).distinct()
-                    # the remaining stats should ignore already counted labels
-                    purchase_family = purchase_family.exclude(
-                        Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
-                        | Q(characteristics__contains=[Purchase.Characteristic.IGP])
-                        | Q(characteristics__contains=[Purchase.Characteristic.STG])
-                    )
-                else:
-                    fam_label = purchase_family.filter(Q(characteristics__contains=[Purchase.Characteristic[label]]))
-                    # the remaining stats should ignore already counted labels
-                    purchase_family = purchase_family.exclude(
-                        Q(characteristics__contains=[Purchase.Characteristic[label]])
-                    )
-                key = "value_" + family.lower() + "_" + label.lower()
-                data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"]
-            # outside of EGAlim, products can be counted twice across characteristics
-            purchase_family = purchases.filter(family=family)
-            other_labels_characteristics = []
-            for label in other_labels:
-                characteristic = Purchase.Characteristic[label]
-                fam_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
-                key = "value_" + family.lower() + "_" + label.lower()
-                data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"]
-                other_labels_characteristics.append(characteristic)
-            # Non-EGAlim totals: contains no labels or only one or more of other_labels
-            non_egalim_purchases = purchase_family.filter(
-                Q(characteristics__contained_by=other_labels_characteristics) | Q(characteristics__len=0)
-            ).distinct()
-            key = "value_" + family.lower() + "_non_egalim"
-            data[key] = non_egalim_purchases.aggregate(total=Sum("price_ht"))["total"]
+    fish_purchases = purchases.filter(
+        family=Purchase.Family.PRODUITS_DE_LA_MER,
+    )
+    data["value_fish_ht"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
-    def _misc_totals(purchases, data):
-        meat_poultry_purchases = purchases.filter(
-            family=Purchase.Family.VIANDES_VOLAILLES,
-        )
-        data["value_meat_poultry_ht"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"]
+    fish_egalim = fish_purchases.filter(characteristics__overlap=EGALIM_LABELS)
+    data["value_fish_egalim_ht"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
 
-        meat_poultry_egalim = meat_poultry_purchases.filter(
-            characteristics__overlap=CanteenPurchasesSummaryView.egalim_labels
-        )
-        data["value_meat_poultry_egalim_ht"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"]
 
-        meat_poultry_france = meat_poultry_purchases.filter(
-            characteristics__contains=[
-                "FRANCE",
-            ]
-        )
-        data["value_meat_poultry_france_ht"] = meat_poultry_france.aggregate(total=Sum("price_ht"))["total"]
+class DiagnosticsFromPurchasesView(APIView):
+    permission_classes = [IsAuthenticated]
 
-        fish_purchases = purchases.filter(
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-        )
-        data["value_fish_ht"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"]
+    def post(self, request, *args, **kwargs):
+        year = kwargs.get("year")
+        canteen_ids = request.data.get("canteen_ids")
+        if not year or not canteen_ids:
+            raise BadRequest("Missing year and/or canteen ids")
 
-        fish_egalim = fish_purchases.filter(characteristics__overlap=CanteenPurchasesSummaryView.egalim_labels)
-        data["value_fish_egalim_ht"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"]
+        created_diags = []
+        errors = []
+        for canteen_id in canteen_ids:
+            try:
+                canteen = Canteen.objects.get(id=canteen_id)
+            except Canteen.DoesNotExist:
+                errors.append(f"Cantine inconnue : {canteen_id}")
+                continue
+            if request.user not in canteen.managers.all():
+                errors.append(f"Vous ne gérez pas la cantine : {canteen_id}")
+                continue
+            values_dict = canteen_summary_for_year(canteen, year)
+            total_ht = values_dict["value_total_ht"]
+            if total_ht == 0 or total_ht is None:
+                errors.append(f"Aucun achat trouvé pour la cantine : {canteen_id}")
+                continue
+            if canteen.is_central_cuisine:
+                values_dict["central_kitchen_diagnostic_mode"] = Diagnostic.CentralKitchenDiagnosticMode.APPRO
+            diagnostic = Diagnostic(
+                canteen=canteen, year=year, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict
+            )
+            try:
+                diagnostic.full_clean()
+            except ValidationError:
+                errors.append(f"Il existe déjà un diagnostic pour l'année {year} pour la cantine : {canteen_id}")
+                continue
+            diagnostic.save()
+            created_diags.append(diagnostic.id)
+        return JsonResponse({"results": created_diags, "errors": errors}, status=status.HTTP_201_CREATED)
 
 
 class PurchaseListExportView(PurchaseListCreateView, XLSXFileMixin):
@@ -469,9 +509,24 @@ class ImportPurchasesView(APIView):
 
         filestring = file.read().decode("utf-8-sig")
         filelines = filestring.splitlines()
+
+        if len(filelines) > settings.CSV_PURCHASES_MAX_LINES:
+            return (
+                [],
+                [
+                    ImportPurchasesView._get_error(
+                        "Too many lines",
+                        f"Le fichier ne peut pas contenir plus de {settings.CSV_PURCHASES_MAX_LINES} lignes.",
+                        400,
+                        len(filelines),
+                    )
+                ],
+            )
+
         dialect = csv.Sniffer().sniff(filelines[0])
 
         csvreader = csv.reader(filelines, dialect=dialect)
+        import_source = f"Import du fichier CSV {timezone.now()}"
         for row_number, row in enumerate(csvreader, start=1):
             if row_number == 1 and row[0].lower().__contains__("siret"):
                 continue
@@ -484,7 +539,7 @@ class ImportPurchasesView(APIView):
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = normalise_siret(siret)
-                purchase = self._create_purchase_for_canteen(siret, row)
+                purchase = self._create_purchase_for_canteen(siret, row, import_source)
                 purchases.append(purchase)
 
             except Exception as e:
@@ -493,7 +548,7 @@ class ImportPurchasesView(APIView):
         return (purchases, errors)
 
     @transaction.atomic
-    def _create_purchase_for_canteen(self, siret, row):
+    def _create_purchase_for_canteen(self, siret, row, import_source):
         if not Canteen.objects.filter(siret=siret).exists():
             raise ObjectDoesNotExist()
         canteen = Canteen.objects.get(siret=siret)
@@ -530,7 +585,7 @@ class ImportPurchasesView(APIView):
             family=family.strip(),
             characteristics=characteristics,
             local_definition=local_definition.strip(),
-            import_source="Import du fichier CSV",
+            import_source=import_source,
         )
         purchase.full_clean()
         purchase.save()
@@ -559,7 +614,7 @@ class ImportPurchasesView(APIView):
 
     @staticmethod
     def _get_error(e, message, error_status, row_number):
-        logger.warning(f"Error on row {row_number}:\n{e}")
+        logger.warning(f"Error on row {row_number}:\n{e}\n{message}")
         return {"row": row_number, "status": error_status, "message": message}
 
     def _parse_errors(self, e, row):
@@ -607,3 +662,25 @@ class ImportPurchasesView(APIView):
                 }
             )
         return errors
+
+
+class PurchasesDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        purchase_ids = request.data.get("ids")
+        purchases = Purchase.objects.filter(canteen__in=self.request.user.canteens.all(), id__in=purchase_ids)
+        deleted_count = purchases.delete()
+        return JsonResponse({"count": deleted_count}, status=status.HTTP_200_OK)
+
+
+class PurchasesRestoreView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        purchase_ids = request.data.get("ids")
+        purchases_to_restore = Purchase.all_objects.filter(
+            canteen__in=self.request.user.canteens.all(), id__in=purchase_ids
+        )
+        restored_count = purchases_to_restore.update(deletion_date=None)
+        return JsonResponse({"count": restored_count}, status=status.HTTP_200_OK)

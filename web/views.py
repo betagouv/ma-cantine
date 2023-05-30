@@ -1,16 +1,29 @@
+import logging
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
+from django.conf import settings
 from django.contrib.auth import get_user_model, tokens, login
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.conf import settings
 from django.utils.encoding import force_bytes
 from common.utils import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, FormView, View
 from web.forms import RegisterUserForm
+from data.factories import UserFactory
 from django.views.decorators.clickjacking import xframe_options_exempt
+from authlib.integrations.django_client import OAuth
+
+logger = logging.getLogger(__name__)
+
+if settings.USES_MONCOMPTEPRO:
+    oauth = OAuth()
+    oauth.register(
+        name="moncomptepro",
+        server_metadata_url=settings.MONCOMPTEPRO_CONFIG,
+        client_kwargs={"scope": "openid email profile organizations"},
+    )
 
 
 class WidgetView(TemplateView):
@@ -173,3 +186,63 @@ def _login_and_send_activation_email(username, request):
         return redirect(reverse_lazy("app"))
     except Exception:
         raise Exception("Error occurred : the mail could not be sent.")
+
+
+class OIDCLoginView(View):
+    def get(self, request, *args, **kwargs):
+        redirect_uri = request.build_absolute_uri(reverse_lazy("oidc-authorize"))
+        return oauth.moncomptepro.authorize_redirect(request, redirect_uri)
+
+
+class OIDCAuthorizeView(View):
+    def get(self, request, *args, **kwargs):
+        try:
+            token = oauth.moncomptepro.authorize_access_token(request)
+            mcp_data = oauth.moncomptepro.userinfo(token=token)
+            user = OIDCAuthorizeView.get_or_create_user(mcp_data)
+            login(request, user)
+            return redirect(reverse_lazy("app"))
+        except Exception as e:
+            logger.exception("Error authenticating with MonComptePro")
+            logger.exception(e)
+            return redirect("app")
+
+    @staticmethod
+    def get_or_create_user(mcp_data):
+        mcp_id = mcp_data.get("sub")
+        mcp_email = mcp_data.get("email")
+
+        # Attempt with mcp_id
+        try:
+            user = get_user_model().objects.get(mcp_id=mcp_id)
+            user.mcp_organizations = mcp_data.get("organizations")
+            user.save()
+            logger.info(f"MonComptePro user {mcp_id} (ID Ma Cantine: {user.id}) was found.")
+            return user
+        except get_user_model().DoesNotExist:
+            pass
+
+        # Attempt with email
+        try:
+            user = get_user_model().objects.get(email=mcp_email)
+            user.mcp_id = mcp_data.get("sub")
+            user.mcp_organizations = mcp_data.get("organizations")
+            user.save()
+            logger.info(f"MonComptePro user {mcp_id} was already registered in MaCantine with email {mcp_email}.")
+            return user
+        except get_user_model().DoesNotExist:
+            pass
+
+        # Create user
+        logger.info(f"Creating new user from MonComptePro user {mcp_id} with email {mcp_email}.")
+        user = UserFactory.create(
+            first_name=mcp_data.get("given_name"),
+            last_name=mcp_data.get("family_name"),
+            email=mcp_email,
+            mcp_id=mcp_id,
+            phone_number=mcp_data.get("phone_number"),
+            username=f"{mcp_data.get('family_name')}-mcp-{mcp_id}",
+            mcp_organizations=mcp_data.get("organizations"),
+            created_with_mcp=True,
+        )
+        return user

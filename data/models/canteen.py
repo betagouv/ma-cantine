@@ -56,6 +56,7 @@ class Canteen(SoftDeletionModel):
 
     class Actions(models.TextChoices):
         ADD_SATELLITES = "10_add_satellites", "Ajouter des satellites"
+        PREFILL_DIAGNOSTIC = "18_prefill_diagnostic", "Créer et pré-remplir le diagnostic"
         CREATE_DIAGNOSTIC = "20_create_diagnostic", "Créer le diagnostic"
         COMPLETE_DIAGNOSTIC = "30_complete_diagnostic", "Compléter le diagnostic"
         FILL_CANTEEN_DATA = "35_fill_canteen_data", "Compléter les infos de la cantine"
@@ -112,6 +113,14 @@ class Canteen(SoftDeletionModel):
         related_name="canteens",
         verbose_name="gestionnaires",
     )
+    claimed_by = models.ForeignKey(
+        get_user_model(),
+        blank=True,
+        null=True,
+        verbose_name="Personne qui a revendiqué la cantine",
+        on_delete=models.SET_NULL,
+    )
+    has_been_claimed = models.BooleanField(default=False, verbose_name="cette cantine a été revendiquée")
 
     daily_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par jour")
     yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par an (y compris livrés)")
@@ -194,11 +203,11 @@ class Canteen(SoftDeletionModel):
 
     # experiments
     reservation_expe_participant = models.BooleanField(
-        null=True, blank=True, verbose_name="participnte à l'expérimentation réservation"
+        null=True, blank=True, verbose_name="participante à l'expérimentation réservation"
     )
 
     vegetarian_expe_participant = models.BooleanField(
-        null=True, blank=True, verbose_name="participnte à l'expérimentation repas végétariens"
+        null=True, blank=True, verbose_name="participante à l'expérimentation repas végétariens"
     )
 
     # Email campaigns
