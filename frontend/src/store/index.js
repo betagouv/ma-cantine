@@ -514,6 +514,7 @@ export default new Vuex.Store({
         })
     },
 
+    // TODO: remove
     submitMultipleTeledeclarations(context, { ids }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       const payload = {

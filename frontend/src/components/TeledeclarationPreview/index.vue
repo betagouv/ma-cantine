@@ -1,7 +1,8 @@
 <template>
   <v-dialog v-model="isOpen" max-width="900">
     <!-- maybe make dialog fullscreen for xs (and s) ? -->
-    <SingleView :canteen="canteen" :diagnostic="diagnostic" @teledeclare="teledeclare" @close="close" />
+    <!-- TODO: add visualisation of canteen count if passed diagnostics array -->
+    <SingleView :canteen="canteenForTD" :diagnostic="diagnosticForTD" @teledeclare="teledeclare" @close="close" />
   </v-dialog>
 </template>
 
@@ -14,12 +15,14 @@ export default {
     value: {
       required: true,
     },
-    diagnostic: {
-      required: true,
-    },
-    canteen: {
-      required: true,
-    },
+    diagnostic: Object,
+    canteen: Object,
+    diagnostics: Array,
+  },
+  data() {
+    return {
+      idx: 0,
+    }
   },
   computed: {
     isOpen: {
@@ -30,9 +33,16 @@ export default {
         this.$emit("input", newValue)
       },
     },
+    canteenForTD() {
+      return this.canteen || this.diagnosticForTD?.canteen
+    },
+    diagnosticForTD() {
+      return this.diagnostic || this.diagnostics[this.idx]
+    },
   },
   methods: {
     teledeclare() {
+      // TODO: handle multi teledeclarations
       this.$emit("teledeclare")
     },
     close() {

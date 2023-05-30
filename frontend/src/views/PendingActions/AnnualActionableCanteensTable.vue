@@ -5,19 +5,17 @@
     </div>
     <div v-else>
       <div>
-        <v-row v-if="tdLoading" class="green--text">
-          <v-col cols="1" justify-self="center">
-            <v-progress-circular indeterminate></v-progress-circular>
-          </v-col>
-          <v-col>
-            <p>Télédéclarations en cours...</p>
-          </v-col>
-        </v-row>
-        <p v-else-if="toTeledeclare.length > 1">
+        <TeledeclarationPreview
+          v-if="diagnosticsForTD"
+          :diagnostics="diagnosticsForTD"
+          v-model="showTeledeclarationPreview"
+          @teledeclare="submitTeledeclaration(diagnosticForTD)"
+        />
+        <p v-if="toTeledeclare.length > 1">
           Vous pouvez télédéclarer
           <span v-if="toTeledeclare.length > 1">{{ toTeledeclare.length }} cantines.</span>
           <span v-else>1 cantine.</span>
-          <v-btn class="primary ml-2" @click="massTeledeclaration">
+          <v-btn class="primary ml-2" @click="showTeledeclarationPreview = true">
             <span v-if="toTeledeclare.length > 1">Télédeclarer {{ toTeledeclare.length }} cantines</span>
             <span v-else>Télédeclarer la cantine</span>
           </v-btn>
@@ -209,7 +207,6 @@ export default {
       showPublicationForm: false,
       canteenForPublication: null,
       toTeledeclare: [],
-      tdLoading: false,
       tdSuccesses: [],
       tdFailures: [],
       toPublish: [],
@@ -247,6 +244,9 @@ export default {
     },
     showMassPublication() {
       return this.toPublish?.length && (this.showPagination || this.toPublish > 1)
+    },
+    diagnosticsForTD() {
+      return this.toTeledeclare
     },
   },
   methods: {
@@ -395,41 +395,6 @@ export default {
         .then((canteen) => {
           const canteenIdx = this.visibleCanteens.findIndex((c) => c.id === canteenId)
           this.visibleCanteens.splice(canteenIdx, 1, canteen)
-        })
-    },
-    massTeledeclaration() {
-      this.tdLoading = true
-      this.$store
-        .dispatch("submitMultipleTeledeclarations", { ids: this.toTeledeclare })
-        .then((response) => {
-          const errors = response.errors
-          this.tdSuccesses = response.teledeclarationIds
-          this.tdFailures = Object.keys(errors)
-          if (this.tdFailures.length === 0) {
-            const title =
-              this.tdSuccesses.length > 1
-                ? `${this.tdSuccesses.length} diagnostics télédéclarés`
-                : `${this.tdSuccesses.length} diagnostic télédéclaré`
-            this.$store.dispatch("notify", {
-              title,
-              status: "success",
-            })
-          } else {
-            const title =
-              this.tdFailures.length > 1
-                ? `${this.tdFailures.length} diagnostics pas télédéclarés`
-                : `${this.tdFailures.length} diagnostic pas télédéclaré`
-            this.$store.dispatch("notify", {
-              title,
-              status: "error",
-            })
-          }
-        })
-        .catch((e) => this.$store.dispatch("notifyServerError", e))
-        // refresh actions
-        .then(() => this.fetchCurrentPage())
-        .finally(() => {
-          this.tdLoading = false
         })
     },
     massPublication() {

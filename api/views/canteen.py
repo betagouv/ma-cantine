@@ -32,6 +32,7 @@ from api.serializers import (
     SatelliteCanteenSerializer,
     CanteenActionsSerializer,
     CanteenStatusSerializer,
+    DiagnosticAndCanteenSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration
 from data.region_choices import Region
@@ -147,7 +148,9 @@ class CanteenActionsPagination(LimitOffsetPagination):
         diagnostics_to_teledeclare = queryset.filter(action=Canteen.Actions.TELEDECLARE).values_list(
             "diagnostic_for_year", flat=True
         )
-        self.diagnostics_to_teledeclare = set(filter(lambda x: x, diagnostics_to_teledeclare))
+        diagnostics_to_teledeclare = Diagnostic.objects.filter(id__in=diagnostics_to_teledeclare)
+        # TODO: paginate if > 100
+        self.diagnostics_to_teledeclare = DiagnosticAndCanteenSerializer(diagnostics_to_teledeclare, many=True).data
         canteens_to_publish = queryset.filter(action=Canteen.Actions.PUBLISH).values_list("pk", flat=True)
         self.canteens_to_publish = set(filter(lambda x: x, canteens_to_publish))
         return super().paginate_queryset(queryset, request, view)

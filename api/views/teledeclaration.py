@@ -49,6 +49,7 @@ class TeledeclarationCreateView(APIView):
             ),
         },
     )
+    # TODO: decide whether to delete mass TD
     def post(self, request):
         data = request.data
         diagnostic_id = data.get("diagnostic_id")
