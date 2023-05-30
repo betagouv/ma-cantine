@@ -13,7 +13,7 @@
       </v-col>
       <v-col cols="12" sm="6" md="7" class="text-center">
         <v-card color="primary lighten-5 fill-height rounded">
-          <v-card-text class="font-weight-bold">Vous êtes prêt.e à vous lancer !</v-card-text>
+          <v-card-text class="font-weight-bold">Tout est prêt pour se lancer !</v-card-text>
           <v-card-text>
             Réalisez un premier bilan, complet ou intermédiaire, pour mesurer votre avancée par rapport aux objectifs de
             la loi EGAlim, et parcourez des ressources personnalisées selon votre situation et vos résultats pour vous
