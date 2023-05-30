@@ -1,8 +1,17 @@
 <template>
   <v-dialog v-model="isOpen" max-width="900">
-    <!-- maybe make dialog fullscreen for xs (and s) ? -->
-    <!-- TODO: add visualisation of canteen count if passed diagnostics array -->
-    <SingleView :canteen="canteenForTD" :diagnostic="diagnosticForTD" @teledeclare="teledeclare" @close="close" />
+    <v-card>
+      <!-- maybe make dialog fullscreen for xs (and s) ? -->
+      <v-row align="center" class="pt-4 mx-0" v-if="diagnostics && diagnostics.length > 1">
+        <v-col cols="6" sm="8" md="9" class="pb-1">
+          <v-progress-linear :value="(idx / diagnostics.length) * 100" rounded height="6"></v-progress-linear>
+        </v-col>
+        <v-col class="text-right pb-1">
+          <p class="caption my-0">{{ idx }} / {{ diagnostics.length }} diagnostics télédéclarés</p>
+        </v-col>
+      </v-row>
+      <SingleView :canteen="canteenForTD" :diagnostic="diagnosticForTD" @teledeclare="teledeclare" @close="close" />
+    </v-card>
   </v-dialog>
 </template>
 
@@ -27,7 +36,7 @@ export default {
   computed: {
     isOpen: {
       get() {
-        return this.value
+        return this.value && this.canteenForTD
       },
       set(newValue) {
         this.$emit("input", newValue)
@@ -37,13 +46,15 @@ export default {
       return this.canteen || this.diagnosticForTD?.canteen
     },
     diagnosticForTD() {
-      return this.diagnostic || this.diagnostics[this.idx]
+      if (this.diagnostics) return this.diagnostics[this.idx]
+      return this.diagnostic
     },
   },
   methods: {
     teledeclare() {
-      // TODO: handle multi teledeclarations
-      this.$emit("teledeclare")
+      const keepDialog = !this.diagnostics || this.idx + 1 < this.diagnostics.length
+      this.$emit("teledeclare", this.diagnosticForTD, keepDialog)
+      this.idx++
     },
     close() {
       this.$emit("input", false)

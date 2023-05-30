@@ -9,7 +9,7 @@
           v-if="diagnosticsForTD"
           :diagnostics="diagnosticsForTD"
           v-model="showTeledeclarationPreview"
-          @teledeclare="submitTeledeclaration(diagnosticForTD)"
+          @teledeclare="submitTeledeclaration"
         />
         <p v-if="toTeledeclare.length > 1">
           Vous pouvez télédéclarer
@@ -102,7 +102,7 @@
         v-if="canteenForTD"
         :diagnostic="diagnosticForTD"
         v-model="showTeledeclarationPreview"
-        @teledeclare="submitTeledeclaration(diagnosticForTD)"
+        @teledeclare="submitTeledeclaration"
         :canteen="canteenForTD"
       />
       <v-dialog v-model="showPublicationForm" max-width="750" v-if="canteenForPublication">
@@ -368,7 +368,8 @@ export default {
         return canteen.diagnostics.find((d) => d.year === this.year)
       }
     },
-    submitTeledeclaration(diagnostic) {
+    submitTeledeclaration(diagnostic, persist) {
+      diagnostic = diagnostic || this.diagnosticForTD
       this.$store
         .dispatch("submitTeledeclaration", { id: diagnostic.id })
         .then(() => {
@@ -376,13 +377,14 @@ export default {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
-          this.updateCanteen(this.canteenForTD.id)
+          this.updateCanteen(diagnostic.canteen?.id || this.canteenForTD?.id)
+          // TODO: maybe update diagnosticsToTD so that when dialog closes button will be at good state
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
         .finally(() => {
-          this.showTeledeclarationPreview = false
+          this.showTeledeclarationPreview = persist
           this.canteenForTD = null
         })
     },

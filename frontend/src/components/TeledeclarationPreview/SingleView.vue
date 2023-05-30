@@ -1,11 +1,12 @@
 <template>
-  <v-card ref="content">
+  <div ref="content">
     <v-card-title class="font-weight-bold">
       {{ "Télédéclaration : " + canteen.name }}
     </v-card-title>
     <v-card-text class="text-left pb-0">
       Veuillez vérifier les données pour {{ diagnostic.year }} ci-dessous.
     </v-card-text>
+    <!-- TODO: can the scrolling be replaced by https://v2.vuetifyjs.com/en/components/dialogs/#scrollable -->
     <v-card-text ref="table" class="my-4 py-0" style="overflow-y: scroll; border: solid 1px #9b9b9b; max-height: 50vh;">
       <v-simple-table ref="innerSimpleTable" dense class="my-0 py-0">
         <template v-slot:default>
@@ -82,6 +83,7 @@
       <v-checkbox
         :rules="[validators.checked]"
         label="Je déclare sur l’honneur la véracité de mes informations"
+        v-model="tdConfirmed"
       ></v-checkbox>
     </v-form>
     <v-card-actions class="d-flex pr-4 pb-4">
@@ -94,7 +96,7 @@
         Télédéclarer ces données
       </v-btn>
     </v-card-actions>
-  </v-card>
+  </div>
 </template>
 
 <script>
@@ -121,6 +123,7 @@ export default {
       minDaysOpenExpected: 50,
       maxDaysOpenExpected: 365,
       tdLoading: false,
+      tdConfirmed: false,
     }
   },
   computed: {
@@ -820,6 +823,13 @@ export default {
       else {
         this.handlePreviewClose("go-back")
       }
+    },
+    diagnostic() {
+      // we get here if there are multiple TDs to get through at once
+      this.tdLoading = false
+      this.tdConfirmed = false
+      this.teledeclarationFormIsValid = true
+      this.$refs["teledeclarationForm"].reset()
     },
   },
 }
