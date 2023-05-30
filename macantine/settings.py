@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     "common",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "simple_history",
 ]
 
 MIDDLEWARE = [
@@ -104,6 +105,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "csp.middleware.CSPMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 CSRF_COOKIE_NAME = "csrftoken"
 ROOT_URLCONF = "macantine.urls"
