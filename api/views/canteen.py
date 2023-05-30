@@ -314,6 +314,7 @@ class UserCanteensView(ListCreateAPIView):
     def get_queryset(self):
         return self.request.user.canteens.all()
 
+    @transaction.atomic
     def perform_create(self, serializer):
         canteen = serializer.save()
         canteen.managers.add(self.request.user)
