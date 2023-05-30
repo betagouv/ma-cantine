@@ -71,14 +71,32 @@ export default {
   components: {
     CanteenIndicators,
   },
-  data() {
-    const diagnostic = latestCreatedDiagnostic(this.canteen.diagnostics)
-    return {
-      diagnostic,
-      year: diagnostic?.year,
-    }
-  },
   computed: {
+    usesCentralKitchenDiagnostics() {
+      return (
+        this.canteen?.productionType === "site_cooked_elsewhere" && this.canteen?.centralKitchenDiagnostics?.length > 0
+      )
+    },
+    diagnosticSet() {
+      if (!this.canteen) return
+      if (!this.usesCentralKitchenDiagnostics) return this.canteen.diagnostics
+
+      // Since the central kitchen might only handle the appro values, we will merge the diagnostics
+      // from the central and satellites when necessary to show the whole picture
+      return this.canteen.centralKitchenDiagnostics.map((centralDiag) => {
+        const satelliteMatchingDiag = this.canteen.diagnostics.find((x) => x.year === centralDiag.year)
+        if (centralDiag.centralKitchenDiagnosticMode === "APPRO" && satelliteMatchingDiag)
+          return Object.assign(satelliteMatchingDiag, centralDiag)
+        return centralDiag
+      })
+    },
+    diagnostic() {
+      if (!this.diagnosticSet) return
+      return latestCreatedDiagnostic(this.diagnosticSet)
+    },
+    year() {
+      return this.diagnostic?.year
+    },
     canteenBadges() {
       return badges(this.canteen, this.diagnostic, this.$store.state.sectors)
     },
