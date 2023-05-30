@@ -564,6 +564,11 @@ if (window.ENABLE_DASHBOARD) {
     path: "/dashboard",
     name: "DashboardManager",
     component: DashboardManager,
+    meta: {
+        title: "Tableau de bord",
+        authenticationRequired: true,
+    },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   })
 }
 
