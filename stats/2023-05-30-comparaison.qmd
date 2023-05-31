@@ -1,0 +1,113 @@
+---
+title: "Ma-Cantine : Analyse des différences entre 2 analyses"
+author:
+  - "Quentin Loridant"
+date: "2023-05-30"
+format:
+  html:
+    embed-resources: true
+    code-fold: true
+    theme:
+      - readable
+    toc: true
+    toc-depth: 2
+execute:
+  cache: true
+---
+
+# Contexte
+
+Nous analysons le jeu de données extrait et transferé à la DGAL pour la rédaction parlementaire à un export récent. Le but est de retrouver les différences entre les deux jeux de données.
+
+* Analyse récente de Quentin : 3547 TD
+* Analyse parlementaire : 3281 TD
+
+# Import des données et des librairies
+```{python import}
+import pandas as pd
+import os
+import requests
+import json
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from dotenv import load_dotenv
+
+```
+
+
+
+> Afin de récupérer les données, il vous faut un TOKEN metabase :  
+> `curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://ma-cantine-metabase.cleverapps.io/api/session`
+
+```{python Import des données TD}
+td_rapport = pd.read_csv("20230103_analyses.csv", sep=";")
+td_rapport = td_rapport[td_rapport["year"] == 2021]
+td_rapport = td_rapport[td_rapport["status"] == "SUBMITTED"]
+
+load_dotenv()
+
+url = "https://ma-cantine-metabase.cleverapps.io/api/card/795/query/json"
+header = {
+    "Content-Type": "application/json",
+    "X-Metabase-Session": os.getenv("METABASE_TOKEN"),
+}
+
+res = requests.post(
+    url,
+    headers=header,
+)
+td = pd.DataFrame(res.json())
+td["declared_data"] = td["declared_data"].apply(json.loads)
+td_json = pd.json_normalize(td["declared_data"])
+td = pd.concat([td.drop("declared_data", axis=1), td_json], axis=1)
+```
+
+# Taille des datasets
+```{python Taille des dataset}
+print(f"Longueur du dataset TD / TD rapport: {len(td)} / {len(td_rapport)}")
+# Suppression des TD ayant des duplicats de cantines
+
+```
+
+# Nettoyage et formattage des données
+```{python Nettoyage des données}
+
+td = td.drop_duplicates(subset=["canteen_id"])
+td_rapport = td_rapport.drop_duplicates(subset=["canteen_id"])
+print(f"Longueur du dataset TD / TD rapport après suppression des doublons : {len(td)} / {len(td_rapport)}")
+
+td = td.dropna(subset=["canteen_id"])
+print(
+    f"Longueur du dataset TD / TD rapport après suppression des cantines sans identifiant : {len(td)} / {len(td_rapport)}"
+)
+```
+
+# Vérifications de la qualité des données
+```{python Vérification des données}
+for df in [td, td_rapport]:
+    assert df["canteen_id"].isna().sum() == 0, "Il y a des cantines sans identifiant"
+    assert len(df["canteen_id"]) == len(df["canteen_id"].unique()), "Il y a des doublons dans les cantines"
+```
+Il n'y a pas de doublons dans les cantines et toutes les cantines ont un identifiant.
+
+# Identification des cantines déclarées dans le TD mais pas dans le TD rapport
+```{python Identification des cantines déclarées dans le TD mais pas dans le TD rapport}
+diff = td.groupby("creation_date").agg({"canteen_id": "count"}).reset_index()
+diff["creation_date"] = pd.to_datetime(diff["creation_date"])
+diff = diff.set_index("creation_date")
+diff = diff.resample("D").sum().reset_index()
+diff["in_report"] = np.where(
+    ("2022-12-31" >= diff["creation_date"]) & (diff["creation_date"] >= "2022-01-01"), True, False
+)
+
+sns.relplot(data=diff, x="creation_date", y="canteen_id", hue="in_report", hue_order=[True, False], aspect=1.61)
+plt.show()
+```
+
+Nous observons qu'un certain nombre de TD labellisés '2021' ont des 'creation_date' qui ne sont pas compris dans les dates de la campagne :  
+ * Comment a été crée la colonne 'year' ?  
+ * Que faire des TD en dehors de la campagne ?
+
+
+# set_diff = np.setdiff1d(list(td["canteen_id"]), list(td_rapport["canteen_id"]))
