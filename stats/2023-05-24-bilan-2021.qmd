@@ -37,9 +37,13 @@ curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "p
 
 ```{python Import des données TD}
 url = "https://ma-cantine-metabase.cleverapps.io/api/card/795/query/json"
+
+load_dotenv()
+
 header = {
     "Content-Type": "application/json",
-    "X-Metabase-Session": os.environ["METABASE_TOKEN"],
+    "X-Metabase-Session": os.getenv("METABASE_TOKEN"),
+,
 }
 
 res = requests.post(
@@ -50,15 +54,23 @@ td = pd.DataFrame(res.json())
 td['declared_data'] = td['declared_data'].apply(json.loads)
 td_json = pd.json_normalize(td["declared_data"])
 td = pd.concat([td.drop("declared_data", axis=1), td_json], axis=1)
+
 for col in td.columns:
     print(col)
-
 ```
 
 
 # Nettoyage et formattage des données
 ```{python Nettoyage des données}
+print(len(td))
 td = td.dropna(subset=["canteen_id"])
+print(len(td))
+```
+
+# Filtrage
+```{python Filtrage des données}
+td_date = td[td['creation_date'] >= '2022-01-01']
+print(len(td_date))
 ```
 
 # Vérifications de la qualité des données
@@ -142,6 +154,15 @@ print(
 ```{python Taux global des achats EGALIM (bio inclus)}
 print(
     "Taux global des achats EGALIM (bio inclus) : ",
-    f"{100 * (td['teledeclaration.value_egalim_others_ht'].sum() + td['teledeclaration.value_fish_egalim_ht'].sum() + td['teledeclaration.value_meat_poultry_egalim_ht'].sum() + td['teledeclaration.value_bio_ht'].sum()) / td['teledeclaration.value_total_ht'].sum():.2f} %",
+    f"{100 * (td['teledeclaration.value_egalim_others_ht'].sum() + td['teledeclaration.value_externality_performance_ht'].sum() + td['teledeclaration.value_bio_ht'].sum()  + td['teledeclaration.value_sustainable_ht'].sum()) / td['teledeclaration.value_total_ht'].sum():.2f} %",
 )
 ```
+
+```{python}
+display(td['test' in td['canteen_name']].production_type)
+```
+
+```{python}
+```
+
+## Attention : filtrer les cantines test
