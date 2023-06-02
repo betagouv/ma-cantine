@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import admin
-from data.models import Diagnostic
+from data.models import Diagnostic, Teledeclaration
 from .teledeclaration import TeledeclarationInline
 
 
@@ -34,7 +34,6 @@ class DiagnosticInline(admin.TabularInline):
 
 @admin.register(Diagnostic)
 class DiagnosticAdmin(admin.ModelAdmin):
-
     form = DiagnosticForm
     inlines = (TeledeclarationInline,)
     list_display = (
@@ -267,6 +266,16 @@ class DiagnosticAdmin(admin.ModelAdmin):
         "canteen__name",
         "canteen__siret",
     )
+
+    def has_change_permission(self, request, obj=None):
+        return obj and not DiagnosticAdmin._has_teledeclaration(obj)
+
+    def has_delete_permission(self, request, obj=None):
+        return obj and not DiagnosticAdmin._has_teledeclaration(obj)
+
+    @staticmethod
+    def _has_teledeclaration(obj):
+        return obj.teledeclaration_set.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED).exists()
 
     def canteen_name(self, obj):
         return obj.canteen.name
