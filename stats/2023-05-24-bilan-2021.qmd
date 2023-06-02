@@ -6,7 +6,7 @@ date: "2023-05-24"
 format:
   html:
     embed-resources: true
-    code-fold: false
+    code-fold: true
     theme:
       - readable
     toc: true
@@ -20,20 +20,24 @@ Analyse des données de la campagne de TD 2022.
 
 * En 2021, l'application ne permettait pas de spécifier le mode de télédéclaration.  
 * La campagne de 2022 porte sur les données de 2021  
-* Les données sont issus d'une extractation de la base de données de l'application Ma-Cantine, en filtrant sur l'année 2021, et les données de type 'SUMBITTED'.
+* Les données sont issus d'une extractation de la base de données de l'application Ma-Cantine, en filtrant sur :
+    * l'année 2021
+    * les données de type 'SUMBITTED'
+    * les `creation_date` qui sont compris dans les dates de la campagne : du 16 juillet 2022 au 31 décembre 2022.
 
 
 # Import des données et des librairies
 ```{python import}
 import pandas as pd
 import os
+import datetime
 import requests
 import json
-
+from dotenv import load_dotenv
 ```
 
-Afin de récupérer les données, il vous faut un TOKEN metabase. Pour cela :
-curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://https://ma-cantine-metabase.cleverapps.io/api/session
+Afin de récupérer les données, il vous faut un TOKEN metabase :  
+`curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://https://ma-cantine-metabase.cleverapps.io/api/session`
 
 ```{python Import des données TD}
 url = "https://ma-cantine-metabase.cleverapps.io/api/card/795/query/json"
@@ -43,7 +47,6 @@ load_dotenv()
 header = {
     "Content-Type": "application/json",
     "X-Metabase-Session": os.getenv("METABASE_TOKEN"),
-,
 }
 
 res = requests.post(
@@ -51,27 +54,22 @@ res = requests.post(
     headers=header,
 )
 td = pd.DataFrame(res.json())
-td['declared_data'] = td['declared_data'].apply(json.loads)
+td["declared_data"] = td["declared_data"].apply(json.loads)
 td_json = pd.json_normalize(td["declared_data"])
 td = pd.concat([td.drop("declared_data", axis=1), td_json], axis=1)
 
-for col in td.columns:
-    print(col)
 ```
 
 
 # Nettoyage et formattage des données
 ```{python Nettoyage des données}
-print(len(td))
+nbre_td_full = len(td)
 td = td.dropna(subset=["canteen_id"])
-print(len(td))
+print(f'Nous avons enlevé {nbre_td_full - len(td)} doublons')
+print('Nombre de télédcélarations uniques: ', len(td))
 ```
 
-# Filtrage
-```{python Filtrage des données}
-td_date = td[td['creation_date'] >= '2022-01-01']
-print(len(td_date))
-```
+
 
 # Vérifications de la qualité des données
 ```{python Vérification des données}
@@ -81,8 +79,8 @@ assert len(td["canteen_id"]) == len(td["canteen_id"].unique()), "Il y a des doub
 
 # Chiffres clés
 ```{python Nombre de Télédéclarations}
-print("Nombre de Télédéclarations : ", len(td))
-print(td['production_type'].unique())
+indicateurs = {}
+indicateurs["Nombre de Télédéclarations"] = len(td)
 ```
 
 Dans les télédéclarations pour la campagne 2022, il n'y a pas d'indication du nombre de satellites, du managment_type et du produciton_type. 
@@ -90,79 +88,58 @@ Dans les télédéclarations pour la campagne 2022, il n'y a pas d'indication du
 Les informations suivanted proviennent donc des informations renseignées pour les cantines. Les données ont peut-être légérement été modifié depuis la télédéclaration.
 
 ```{python Nombre de sites de restauration concernés par la télédéclaration}
-print(
-    "Nombre de sites de restauration concernés par la télédéclaration : ",
-    len(td) + td["satellite_canteens_count"].sum(),
-)
+indicateurs['Nombre de sites de restauration concernés par la télédéclaration'] = len(td) + td['satellite_canteens_count'].sum()
 ```
+
 
 ```{python Nombre de cantines sur place (sites et satellites)}
-cuisines_sur_place = td[td['production_type'].isin(["site", "site_cooked_elsewhere"])]
-print(
-    "Nombre de cantines sur place (sites et satellites) : ",
-    len(cuisines_sur_place),
-)
+cuisines_sur_place = td[td["production_type"].isin(["site", "site_cooked_elsewhere"])]
+indicateurs['Nombre de cantines sur place (sites et satellites)'] = len(cuisines_sur_place)
 ```
 
+
 ```{python Nombre de cantines centrales}
-cuisines_centrales = td[td['production_type'].isin(["central_serving", "central"])]
-print(
-    "Nombre de cantines centrales : ",
-    len(cuisines_centrales),
-)
+cuisines_centrales = td[td["production_type"].isin(["central_serving", "central"])]
+indicateurs['Nombre de cantines centrales'] = len(cuisines_centrales)
 ```
 
 ```{python Nombre de repas}
-print(
-    "Nombre de repas moyens par jour pour les cantines sur place : ",
-    int(cuisines_sur_place["daily_meal_count"].mean()),
-)
-print(
-    "Nombre de repas moyens par jour pour les cantines centrales : ",
-    int(cuisines_centrales["daily_meal_count"].mean()),
-)
-print("Nombre de repas totaux pour l'année : ", f"{int(td['yearly_meal_count'].sum())}")
+indicateurs['Nombre de repas moyens par jour pour les cantines sur place'] = int(cuisines_sur_place['daily_meal_count'].mean())
+indicateurs['Nombre de repas moyens par jour pour les cantines centrales'] = int(cuisines_centrales['daily_meal_count'].mean())
+indicateurs['Nombre de repas totaux pour l\'année'] = int(td['yearly_meal_count'].sum())
 ```
 
 ```{python Répartition du nombre de cantines en gestion directe / en gestion concédée}
-print(
-    f"Répartition du nombre de cantines en gestion directe : {100 * len(td[td.management_type == 'direct']) / len(td):.2f} %"
-)
-print(
-    f"Répartition du nombre de cantines en gestion concédée : {100 * len(td[td.management_type == 'conceded']) / len(td):.2f} %"
-)
-print(
-    f"Répartition du nombre de cantines en gestion non renseignée : {100 * len(td[~td.management_type.isin(['direct', 'conceded'])]) / len(td):.2f} %"
-)
+indicateurs['Répartition du nombre de cantines en gestion directe'] = f"{100 * len(td[td.management_type == 'direct']) / len(td):.2f} %"
+indicateurs['Répartition du nombre de cantines en gestion concédée'] = f"{100 * len(td[td.management_type == 'conceded']) / len(td):.2f} %"
+indicateurs['Répartition du nombre de cantines en gestion non renseignée'] = f"{100 * len(td[~td.management_type.isin(['direct', 'conceded'])]) / len(td):.2f} %"
 ```
+
 
 Pour les montants, nous nous rebasons sur les données de TD.
 ```{python Montants d'achat alimentaires déclarés}
-print(
-    "Montants d'achat alimentaires déclarés : ",
-    f"{int(td['teledeclaration.value_total_ht'].sum())} €",
-)
+indicateurs['Montants d\'achat alimentaires déclarés'] = f"{int(td['teledeclaration.value_total_ht'].sum())} €"
 ```
+
 
 ```{python Taux global des achats en bio}
-print(
-    "Taux global des achats en bio : ",
-    f"{100 * td['teledeclaration.value_bio_ht'].sum() / td['teledeclaration.value_total_ht'].sum():.2f} %",
-)
+indicateurs['Taux global des achats en bio'] = f"{100 * td['teledeclaration.value_bio_ht'].sum() / td['teledeclaration.value_total_ht'].sum():.2f} %"
 ```
+
 
 ```{python Taux global des achats EGALIM (bio inclus)}
-print(
-    "Taux global des achats EGALIM (bio inclus) : ",
-    f"{100 * (td['teledeclaration.value_egalim_others_ht'].sum() + td['teledeclaration.value_externality_performance_ht'].sum() + td['teledeclaration.value_bio_ht'].sum()  + td['teledeclaration.value_sustainable_ht'].sum()) / td['teledeclaration.value_total_ht'].sum():.2f} %",
-)
+indicateurs['Taux global des achats EGALIM (bio inclus)'] = f"{100 * (td['teledeclaration.value_egalim_others_ht'].sum() + td['teledeclaration.value_externality_performance_ht'].sum() + td['teledeclaration.value_bio_ht'].sum()  + td['teledeclaration.value_sustainable_ht'].sum()) / td['teledeclaration.value_total_ht'].sum():.2f} %"
 ```
 
-```{python}
-display(td['test' in td['canteen_name']].production_type)
+```{python Vérification de la non existence de TD tests}
+import re
+pattern = r'test|testing|sample|temp|debug|beta'
+mask = td['name'].str.contains(pattern, flags=re.IGNORECASE, regex=True)
+testing_elements = td[mask]
 ```
 
-```{python}
-```
+# Questions
 
-## Attention : filtrer les cantines test
+* Quelles sont les dates de la campagne de TD 2021 ?
+* Que fait on des TD hors cadre d'une campagne ?
+* Existe-il des cantines de test dans la campagne ? (apparement non)
