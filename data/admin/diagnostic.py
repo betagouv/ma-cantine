@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from data.models import Diagnostic
+from simple_history.admin import SimpleHistoryAdmin
 from .teledeclaration import TeledeclarationInline
 
 
@@ -33,8 +34,7 @@ class DiagnosticInline(admin.TabularInline):
 
 
 @admin.register(Diagnostic)
-class DiagnosticAdmin(admin.ModelAdmin):
-
+class DiagnosticAdmin(SimpleHistoryAdmin):
     form = DiagnosticForm
     inlines = (TeledeclarationInline,)
     list_display = (
