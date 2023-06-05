@@ -514,6 +514,27 @@ export default new Vuex.Store({
         })
     },
 
+    createAndPrefillDiagnostics(context, { year, ids }) {
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      const payload = {
+        canteenIds: ids,
+      }
+      return fetch(`/api/v1/createDiagnosticsFromPurchases/${year}`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      })
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          return response
+        })
+        .catch((e) => {
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
+          throw e
+        })
+    },
+
     // TODO: remove
     submitMultipleTeledeclarations(context, { ids }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)

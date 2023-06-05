@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, ManagerInvitationFactory
+from data.factories import CanteenFactory, ManagerInvitationFactory, PurchaseFactory
 from data.factories import DiagnosticFactory, SectorFactory
 from data.models import Canteen, Teledeclaration, Diagnostic
 from .utils import authenticate, get_oauth2_token
@@ -1044,6 +1044,32 @@ class TestCanteenApi(APITestCase):
         diagnostics = body["diagnosticsToTeledeclare"]
         self.assertEqual(len(diagnostics), 1)
         self.assertEqual(diagnostics[0]["id"], complete_diag.id)
+
+    @authenticate
+    def test_get_canteens_with_purchases_no_diagnostics_for_year(self):
+        """
+        Return a list of canteens I manage who do have purchases for the given year,
+        but have not yet created a diagnostic
+        """
+        year = 2023
+        canteen_without_diag = CanteenFactory.create()
+        canteen_with_diag = CanteenFactory.create()
+        canteen_without_purchases = CanteenFactory.create()
+        not_my_canteen = CanteenFactory.create()
+        canteens = [canteen_with_diag, canteen_without_diag, canteen_without_purchases]
+        for canteen in canteens:
+            canteen.managers.add(authenticate.user)
+        DiagnosticFactory.create(canteen=canteen_with_diag, year=year)
+        PurchaseFactory.create(canteen=canteen_without_diag, date=f"{year}-01-01")
+        # add second purchase to check canteen id deduplication
+        PurchaseFactory.create(canteen=canteen_without_diag, date=f"{year}-12-01")
+        PurchaseFactory.create(canteen=canteen_with_diag, date=f"{year}-01-01")
+        PurchaseFactory.create(canteen=not_my_canteen, date=f"{year}-01-01")
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": year}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["undiagnosedCanteensWithPurchases"], [canteen_without_diag.id])
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate

@@ -8,8 +8,8 @@ attrs==23.1.0
 Authlib==1.2.0
 billiard==3.6.4.0
 black==23.3.0
-boto3==1.26.137
-botocore==1.29.137
+boto3==1.26.142
+botocore==1.29.142
 celery==5.2.7
 certifi==2022.12.7
 cffi==1.15.1
@@ -32,6 +32,7 @@ django-js-asset==2.0.0
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
 django-oauth-toolkit==2.2.0
 django-otp==1.1.6
+django-simple-history==3.3.0
 django-storages==1.13.2
 django-webpack-loader==1.8.1
 djangorestframework==3.14.0
@@ -63,7 +64,7 @@ oauthlib==3.2.2
 openpyxl==3.1.2
 oscrypto==1.3.0
 packaging==23.1
-pathspec==0.11.0
+pathspec==0.11.1
 Pillow==9.5.0
 pipdeptree==2.7.0
 platformdirs==3.2.0
@@ -91,7 +92,7 @@ pytz==2023.3
 pytz-deprecation-shim==0.1.0.post0
 PyYAML==6.0
 qrcode==7.4.2
-redis==4.5.4
+redis==4.5.5
 regex==2023.5.5
 reportlab==3.6.12
 requests==2.31.0
@@ -109,8 +110,8 @@ tomli==2.0.1
 tomlkit==0.11.8
 tqdm==4.65.0
 typing_extensions==4.5.0
-tzdata==2023.2
-tzlocal==4.3
+tzdata==2023.3
+tzlocal==5.0.1
 uritemplate==4.1.1
 uritools==4.0.1
 urllib3==1.26.15

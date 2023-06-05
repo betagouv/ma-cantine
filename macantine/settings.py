@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     "common",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "simple_history",
 ]
 
 MIDDLEWARE = [
@@ -104,6 +105,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "csp.middleware.CSPMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 CSRF_COOKIE_NAME = "csrftoken"
 ROOT_URLCONF = "macantine.urls"
@@ -481,6 +483,7 @@ ENABLE_XP_RESERVATION = os.getenv("ENABLE_XP_RESERVATION") == "True"
 ENABLE_XP_VEGE = os.getenv("ENABLE_XP_VEGE") == "True"
 ENABLE_PARTNERS = os.getenv("ENABLE_PARTNERS") == "True"
 ENABLE_TELEDECLARATION = os.getenv("ENABLE_TELEDECLARATION") == "True"
+ENABLE_DASHBOARD = os.getenv("ENABLE_DASHBOARD") == "True"
 
 # Custom testing
 

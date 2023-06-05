@@ -2,8 +2,8 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
-from data.factories import UserFactory, PurchaseFactory, CanteenFactory
-from data.models import Purchase
+from data.factories import UserFactory, PurchaseFactory, CanteenFactory, DiagnosticFactory
+from data.models import Purchase, Diagnostic, Canteen
 from .utils import authenticate
 
 
@@ -356,12 +356,13 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(body["valueFruitsEtLegumesBio"], 200.0)
         self.assertEqual(body["valueViandesVolaillesBio"], 10.0)
         self.assertEqual(body["valueFruitsEtLegumesAocaopIgpStg"], 80.0)
-        self.assertEqual(body["valueFruitsEtLegumesCommerceEquitable"], None)
+        self.assertEqual(body["valueFruitsEtLegumesCommerceEquitable"], 0.0)
         self.assertEqual(body["valueAutresLocal"], 100.0)
         self.assertEqual(body["valueViandesVolaillesShortDistribution"], 100.0)
         self.assertEqual(body["valueViandesVolaillesLocal"], 10.0)
         self.assertEqual(body["valueAutresNonEgalim"], 210.0)
         self.assertEqual(body["valueViandesVolaillesNonEgalim"], 90.0)
+        self.assertEqual(body["valueExternalityPerformanceHt"], 0.0)
 
     def test_purchase_summary_unauthenticated(self):
         canteen = CanteenFactory.create()
@@ -903,3 +904,114 @@ class TestPurchaseApi(APITestCase):
     def test_get_purchase_options_unauthenticated(self):
         response = self.client.get(reverse("purchase_options"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_create_diagnostics_from_purchases(self):
+        """
+        Given a list of canteen ids and a year, create diagnostics
+        pre-filled with purchase totals for that year
+        """
+        canteen_site = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL)
+        canteens = [canteen_site, central_kitchen]
+        for canteen in canteens:
+            canteen.managers.add(authenticate.user)
+        # purchases to be included in totals
+        PurchaseFactory.create(
+            canteen=canteen_site,
+            date="2021-01-01",
+            price_ht=50,
+            family=Purchase.Family.BOISSONS,
+            characteristics=[Purchase.Characteristic.AOCAOP],
+        )
+        PurchaseFactory.create(
+            canteen=canteen_site,
+            date="2021-12-31",
+            price_ht=150,
+            family=Purchase.Family.BOULANGERIE,
+            characteristics=[],
+        )
+
+        PurchaseFactory.create(canteen=central_kitchen, date="2021-01-01", price_ht=5)
+        PurchaseFactory.create(canteen=central_kitchen, date="2021-12-31", price_ht=15)
+
+        # purchases to be filtered out from totals
+        PurchaseFactory.create(canteen=canteen_site, date="2022-01-01", price_ht=666)
+        PurchaseFactory.create(canteen=central_kitchen, date="2020-12-31", price_ht=666)
+
+        year = 2021
+        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=canteens).count(), 0)
+
+        response = self.client.post(
+            reverse("diagnostics_from_purchases", kwargs={"year": year}),
+            {"canteenIds": [canteen_site.id, central_kitchen.id]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 2)
+        diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
+        self.assertIn(diag_site.id, results)
+        self.assertEqual(diag_site.value_total_ht, 200)
+        self.assertEqual(diag_site.value_boissons_aocaop_igp_stg, 50)
+        self.assertEqual(diag_site.value_boulangerie_non_egalim, 150)
+        self.assertEqual(diag_site.value_autres_aocaop_igp_stg, 0)
+        self.assertEqual(diag_site.central_kitchen_diagnostic_mode, None)
+        self.assertEqual(diag_site.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        diag_cc = Diagnostic.objects.get(year=year, canteen=central_kitchen)
+        self.assertIn(diag_cc.id, results)
+        self.assertEqual(diag_cc.value_total_ht, 20)
+        self.assertEqual(diag_cc.central_kitchen_diagnostic_mode, "APPRO")
+
+    def test_unauthorised_create_diagnostics_from_purchases(self):
+        """
+        If not logged in, throw a 403
+        """
+        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2020}), {})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_missing_canteens_create_diagnostics_from_purchases(self):
+        """
+        If canteen ids are missing, throw a 400
+        """
+        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2021}), {}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_errors_for_create_diagnostics_from_purchases(self):
+        """
+        Handle errors in diagnostic creation gracefully, creating what can be created
+        """
+        canteen_with_diag = CanteenFactory.create()
+        canteen_without_purchases = CanteenFactory.create()
+        good_canteen = CanteenFactory.create()
+        canteens = [canteen_with_diag, canteen_without_purchases, good_canteen]
+        for canteen in canteens:
+            canteen.managers.add(authenticate.user)
+        not_my_canteen = CanteenFactory.create()
+
+        year = 2023
+        DiagnosticFactory.create(canteen=canteen_with_diag, year=year)
+        PurchaseFactory.create(canteen=good_canteen, date=f"{year}-01-01", price_ht=100)
+        PurchaseFactory.create(canteen=canteen_with_diag, date=f"{year}-01-01", price_ht=666)
+        PurchaseFactory.create(canteen=not_my_canteen, date=f"{year}-01-01", price_ht=666)
+
+        response = self.client.post(
+            reverse("diagnostics_from_purchases", kwargs={"year": year}),
+            {"canteenIds": ["666", not_my_canteen.id] + [canteen.id for canteen in canteens]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 1)
+        errors = body["errors"]
+        self.assertEqual(errors[0], "Cantine inconnue : 666")
+        self.assertEqual(errors[1], f"Vous ne gérez pas la cantine : {not_my_canteen.id}")
+        self.assertEqual(
+            errors[2], f"Il existe déjà un diagnostic pour l'année 2023 pour la cantine : {canteen_with_diag.id}"
+        )
+        self.assertEqual(errors[3], f"Aucun achat trouvé pour la cantine : {canteen_without_purchases.id}")
+        self.assertEqual(len(errors), 4)

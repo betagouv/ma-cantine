@@ -10,6 +10,7 @@ from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.views import APIView
 from api.serializers import ManagerDiagnosticSerializer
+from simple_history.utils import update_change_reason
 from data.models import Canteen
 from api.permissions import (
     IsCanteenManager,
@@ -47,6 +48,7 @@ class DiagnosticCreateView(CreateAPIView):
                 raise PermissionDenied()
             serializer.is_valid(raise_exception=True)
             serializer.save(canteen=canteen)
+            update_change_reason(canteen, "DiagnosticCreateView")
         except ObjectDoesNotExist as e:
             logger.warning(f"Attempt to create a diagnostic from an unexistent canteen ID : {canteen_id}: \n{e}")
             raise NotFound()

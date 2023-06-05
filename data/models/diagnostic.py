@@ -2,6 +2,7 @@ import datetime
 from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import models
+from simple_history.models import HistoricalRecords
 from data.fields import ChoiceArrayField
 from .canteen import Canteen
 
@@ -90,6 +91,7 @@ class Diagnostic(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
     diagnostic_type = models.CharField(
         max_length=255,
         choices=DiagnosticType.choices,

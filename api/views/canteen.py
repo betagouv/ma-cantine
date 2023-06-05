@@ -24,6 +24,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from simple_history.utils import update_change_reason
 from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
@@ -34,7 +35,7 @@ from api.serializers import (
     CanteenStatusSerializer,
     DiagnosticAndCanteenSerializer,
 )
-from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration
+from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration, Purchase
 from data.region_choices import Region
 from api.permissions import (
     IsCanteenManager,
@@ -141,10 +142,15 @@ class UserCanteensPagination(LimitOffsetPagination):
 class CanteenActionsPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
+    undiagnosed_canteens_with_purchases = []
     diagnostics_to_teledeclare = []
     canteens_to_publish = []
 
     def paginate_queryset(self, queryset, request, view=None):
+        undiagnosed_canteens_with_purchases = queryset.filter(action=Canteen.Actions.PREFILL_DIAGNOSTIC).values_list(
+            "pk", flat=True
+        )
+        self.undiagnosed_canteens_with_purchases = set(filter(lambda x: x, undiagnosed_canteens_with_purchases))
         diagnostics_to_teledeclare = queryset.filter(action=Canteen.Actions.TELEDECLARE).values_list(
             "diagnostic_for_year", flat=True
         )
@@ -163,6 +169,7 @@ class CanteenActionsPagination(LimitOffsetPagination):
                     ("next", self.get_next_link()),
                     ("previous", self.get_previous_link()),
                     ("results", data),
+                    ("undiagnosed_canteens_with_purchases", self.undiagnosed_canteens_with_purchases),
                     ("diagnostics_to_teledeclare", self.diagnostics_to_teledeclare),
                     ("canteens_to_publish", self.canteens_to_publish),
                 ]
@@ -311,9 +318,11 @@ class UserCanteensView(ListCreateAPIView):
     def get_queryset(self):
         return self.request.user.canteens.all()
 
+    @transaction.atomic
     def perform_create(self, serializer):
         canteen = serializer.save()
         canteen.managers.add(self.request.user)
+        update_change_reason(canteen, "UserCanteensView")
 
     def create(self, request, *args, **kwargs):
         canteen_siret = request.data.get("siret")
@@ -1177,9 +1186,11 @@ class ActionableCanteensListView(ListAPIView):
         # count by id per central prod siret, then fetch that count
         satellites_count = satellites.annotate(count=Count("id")).values("count")
         user_canteens = queryset.annotate(nb_satellites_in_db=Subquery(satellites_count))
-        # prep add diag action
+        # prep add diag actions
         diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year)
         user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")))
+        purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
+        user_canteens = user_canteens.annotate(has_purchases_for_year=Exists(purchases_for_year))
         is_central_cuisine_query = Q(production_type=Canteen.ProductionType.CENTRAL) | Q(
             production_type=Canteen.ProductionType.CENTRAL_SERVING
         )
@@ -1226,6 +1237,10 @@ class ActionableCanteensListView(ListAPIView):
             ),
             When(nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
             When(nb_satellites_in_db__gt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
+            When(
+                Q(diagnostic_for_year=None) & Q(has_purchases_for_year=True),
+                then=Value(Canteen.Actions.PREFILL_DIAGNOSTIC),
+            ),
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
             When(incomplete_canteen_data_query, then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),

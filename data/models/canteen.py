@@ -2,6 +2,7 @@ from urllib.parse import quote
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from simple_history.models import HistoricalRecords
 from data.department_choices import Department
 from data.region_choices import Region
 from data.utils import get_region, optimize_image
@@ -55,6 +56,7 @@ class Canteen(SoftDeletionModel):
 
     class Actions(models.TextChoices):
         ADD_SATELLITES = "10_add_satellites", "Ajouter des satellites"
+        PREFILL_DIAGNOSTIC = "18_prefill_diagnostic", "Créer et pré-remplir le diagnostic"
         CREATE_DIAGNOSTIC = "20_create_diagnostic", "Créer le diagnostic"
         COMPLETE_DIAGNOSTIC = "30_complete_diagnostic", "Compléter le diagnostic"
         FILL_CANTEEN_DATA = "35_fill_canteen_data", "Compléter les infos de la cantine"
@@ -91,6 +93,7 @@ class Canteen(SoftDeletionModel):
     import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     name = models.TextField(verbose_name="nom")
 

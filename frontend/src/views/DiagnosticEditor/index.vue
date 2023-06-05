@@ -883,8 +883,9 @@ export default {
     fillFieldsFromPurchases() {
       if (!this.purchasesSummary) return
       Object.entries(this.purchasesSummary).forEach(([key, value]) => {
-        this.$set(this.diagnostic, key, this.diagnostic[key] || value || 0)
+        this.$set(this.diagnostic, key, this.diagnostic[key] || value)
       })
+      this.diagnostic.diagnosticType = "COMPLETE"
       this.fieldsFilledFromPurchases = true
     },
   },
