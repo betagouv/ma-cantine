@@ -1,3 +1,4 @@
+import logging
 import json
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models import F
@@ -5,6 +6,9 @@ from rest_framework import filters
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 from djangorestframework_camel_case.util import camel_to_underscore
 from djangorestframework_camel_case.settings import api_settings
+from simple_history.utils import update_change_reason
+
+logger = logging.getLogger(__name__)
 
 
 def camelize(data):
@@ -14,6 +18,16 @@ def camelize(data):
 
 def normalise_siret(siret):
     return siret.replace(" ", "").replace("\xa0", "")
+
+
+def update_change_reason_with_auth(view, object):
+    try:
+        update_change_reason(
+            object, f"{view.request.successful_authenticator.__class__.__name__[:100]}"
+        )  # The max allowed chars is 100
+    except Exception as e:
+        logger.warning(f"Unable to set reason change on {view.__class__.__name__} for object ID : {object.id}: \n{e}")
+        update_change_reason(object, "Unknown")
 
 
 class MaCantineOrderingFilter(filters.OrderingFilter):
