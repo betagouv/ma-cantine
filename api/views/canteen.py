@@ -1137,6 +1137,7 @@ class SatelliteListCreateView(ListCreateAPIView):
                     raise PermissionDenied("Cette cantine est déjà fourni par une autre cuisine centrale")
 
                 satellite.central_producer_siret = canteen.siret
+                satellite.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
                 satellite.save()
                 update_change_reason_with_auth(self, satellite)
             else:
