@@ -20,6 +20,7 @@ from .diagnostic import (  # noqa: F401
     ApproDeferredTeledeclarationDiagnosticSerializer,
     SimpleApproOnlyTeledeclarationDiagnosticSerializer,
     CompleteApproOnlyTeledeclarationDiagnosticSerializer,
+    DiagnosticAndCanteenSerializer,
 )
 from .sector import SectorSerializer  # noqa: F401
 from .blogpost import BlogPostSerializer  # noqa: F401
@@ -34,4 +35,3 @@ from .review import ReviewSerializer  # noqa: F401
 from .communityevent import CommunityEventSerializer  # noqa: F401
 from .partner import PartnerSerializer, PartnerShortSerializer  # noqa: F401
 from .videotutorial import VideoTutorialSerializer  # noqa: F401
-from .diagnosticcanteen import DiagnosticAndCanteenSerializer  # noqa: F401

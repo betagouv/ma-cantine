@@ -341,3 +341,16 @@ class CompleteApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSeri
         model = Diagnostic
         fields = META_FIELDS + COMPLETE_APPRO_FIELDS
         read_only_fields = fields
+
+
+class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
+    canteen = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Diagnostic
+        fields = tuple(FullDiagnosticSerializer().fields) + ("canteen",)
+
+    def get_canteen(self, obj):
+        from .canteen import FullCanteenSerializer
+
+        return FullCanteenSerializer(obj.canteen).data
