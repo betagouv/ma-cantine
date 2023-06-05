@@ -17,7 +17,7 @@
       <v-card-text class="text-left pb-0">
         Veuillez vérifier les données pour {{ diagnosticForTD.year }} ci-dessous.
       </v-card-text>
-      <SingleView ref="table" :canteen="canteenForTD" :diagnostic="diagnosticForTD" />
+      <PreviewTable ref="table" :canteen="canteenForTD" :diagnostic="diagnosticForTD" />
       <div v-if="unusualData.length" class="text-left px-6">
         <p>Ces données sont-elles correctes ?</p>
         <ul>
@@ -53,11 +53,11 @@
 </template>
 
 <script>
-import SingleView from "./SingleView"
+import PreviewTable from "./PreviewTable"
 import validators from "@/validators"
 
 export default {
-  components: { SingleView },
+  components: { PreviewTable },
   props: {
     value: {
       required: true,
