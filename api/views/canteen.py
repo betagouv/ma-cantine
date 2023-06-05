@@ -24,7 +24,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from simple_history.utils import update_change_reason
+from api.views.utils import update_change_reason_with_auth
 from api.serializers import (
     PublicCanteenSerializer,
     FullCanteenSerializer,
@@ -281,6 +281,7 @@ class PublishManyCanteensView(APIView):
         for canteen in canteens:
             canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
             canteen.save()
+            update_change_reason_with_auth(self, canteen)
         return JsonResponse({"ids": canteen_ids, "unknown_ids": bad_canteens}, status=status.HTTP_200_OK)
 
 
@@ -322,7 +323,7 @@ class UserCanteensView(ListCreateAPIView):
     def perform_create(self, serializer):
         canteen = serializer.save()
         canteen.managers.add(self.request.user)
-        update_change_reason(canteen, "UserCanteensView")
+        update_change_reason_with_auth(self, canteen)
 
     def create(self, request, *args, **kwargs):
         canteen_siret = request.data.get("siret")
@@ -390,6 +391,10 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
         if error_response and error_response.get("id") != kwargs.get("pk"):
             raise DuplicateException(additional_data=error_response)
         return super().partial_update(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        canteen = serializer.save()
+        update_change_reason_with_auth(self, canteen)
 
 
 class CanteenStatusView(APIView):
@@ -529,6 +534,7 @@ class PublishCanteenView(APIView):
 
             canteen.update_publication_comments(data)
             canteen.save()
+            update_change_reason_with_auth(self, canteen)
             serialized_canteen = FullCanteenSerializer(canteen).data
             return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
 
@@ -561,6 +567,7 @@ class UnpublishCanteenView(APIView):
 
             canteen.update_publication_comments(data)
             canteen.save()
+            update_change_reason_with_auth(self, canteen)
             serialized_canteen = FullCanteenSerializer(canteen).data
             return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
 
@@ -1133,7 +1140,9 @@ class SatelliteListCreateView(ListCreateAPIView):
                     raise PermissionDenied("Cette cantine est déjà fourni par une autre cuisine centrale")
 
                 satellite.central_producer_siret = canteen.siret
+                satellite.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
                 satellite.save()
+                update_change_reason_with_auth(self, satellite)
             else:
                 new_satellite = FullCanteenSerializer(data=request.data)
                 new_satellite.is_valid(raise_exception=True)
@@ -1145,6 +1154,7 @@ class SatelliteListCreateView(ListCreateAPIView):
                     import_source=f"Cuisine centrale : {canteen.siret}",
                     production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 )
+                update_change_reason_with_auth(self, satellite)
             if created or satellite.managers.count() == 0:
                 for manager in canteen.managers.all():
                     satellite.managers.add(manager)

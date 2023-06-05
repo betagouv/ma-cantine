@@ -155,7 +155,9 @@ class TestRelationCentralSatellite(APITestCase):
         sending off a request to join the mgmt team if necessary (200)
         """
         satellite_siret = "89834106501485"
-        existing_canteen = CanteenFactory.create(siret=satellite_siret, production_type=Canteen.ProductionType.ON_SITE)
+        existing_canteen = CanteenFactory.create(
+            siret=satellite_siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+        )
         central_siret = "08376514425566"
         canteen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
         canteen.managers.add(authenticate.user)
@@ -171,6 +173,30 @@ class TestRelationCentralSatellite(APITestCase):
 
         existing_canteen.refresh_from_db()
         self.assertEqual(existing_canteen.central_producer_siret, canteen.siret)
+
+    @authenticate
+    def test_add_existing_site_satellite(self):
+        """
+        If the added canteen exists already and has a "site" production type, we must update
+        it to "satellite"
+        """
+        satellite_siret = "89834106501485"
+        existing_canteen = CanteenFactory.create(siret=satellite_siret, production_type=Canteen.ProductionType.ON_SITE)
+        central_siret = "08376514425566"
+        canteen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        canteen.managers.add(authenticate.user)
+        request = {
+            "name": existing_canteen.name,
+            "siret": existing_canteen.siret,
+            "dailyMealCount": existing_canteen.daily_meal_count,
+        }
+        response = self.client.post(
+            reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}), request
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        existing_canteen.refresh_from_db()
+        self.assertEqual(existing_canteen.production_type, Canteen.ProductionType.ON_SITE_CENTRAL)
 
     @authenticate
     def test_add_existing_satellite_without_managers(self):
