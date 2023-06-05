@@ -1,107 +1,76 @@
 <template>
-  <div ref="content">
-    <v-card-title class="font-weight-bold">
-      {{ "Télédéclaration : " + canteen.name }}
-    </v-card-title>
-    <v-card-text class="text-left pb-0">
-      Veuillez vérifier les données pour {{ diagnostic.year }} ci-dessous.
-    </v-card-text>
-    <!-- TODO: can the scrolling be replaced by https://v2.vuetifyjs.com/en/components/dialogs/#scrollable -->
-    <v-card-text ref="table" class="my-4 py-0" style="overflow-y: scroll; border: solid 1px #9b9b9b; max-height: 50vh;">
-      <v-simple-table ref="innerSimpleTable" dense class="my-0 py-0">
-        <template v-slot:default>
-          <thead>
-            <tr>
-              <th style="height: 0;" class="text-left"></th>
-              <th style="height: 0;" class="text-left"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="header">
-              <td class="text-left font-weight-bold" colspan="2">
-                Données relatives à votre établissement
-              </td>
-            </tr>
-            <tr v-for="item in canteenItems" :key="item.label">
-              <td class="text-left">{{ item.label }}</td>
-              <td
-                :class="item.isNumber ? 'text-right' : 'text-left'"
-                :width="$vuetify.breakpoint.smAndUp ? '42%' : '50%'"
-              >
-                {{ item.value }}
-              </td>
-            </tr>
-            <tr v-if="centralKitchenDiagnosticModeDisplay">
-              <td class="text-left font-weight-bold" colspan="2">{{ centralKitchenDiagnosticModeDisplay }}</td>
-            </tr>
-            <tr class="header">
-              <td class="text-left font-weight-bold" v-if="showApproItems">
-                Saisie de données d'approvisionnement :
-                {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
-              </td>
-              <td class="text-left grey--text text--darken-3" colspan="2" v-if="showApproItems">
-                {{ approSummary }}
-              </td>
-              <td class="text-left font-weight-bold" v-else colspan="2">
-                Données d'approvisonnement renseignées par la cuisine centrale
-              </td>
-            </tr>
-            <tr
-              v-for="item in approItems"
-              :key="item.param"
-              :class="isTruthyOrZero(diagnostic[item.param]) ? '' : 'warn'"
+  <!-- TODO: can the scrolling be replaced by https://v2.vuetifyjs.com/en/components/dialogs/#scrollable -->
+  <v-card-text ref="innerTable" class="my-4 py-0" style="overflow-y: scroll; border: solid 1px #9b9b9b;">
+    <v-simple-table ref="innerSimpleTable" dense class="my-0 py-0">
+      <template v-slot:default>
+        <thead>
+          <tr>
+            <th style="height: 0;" class="text-left"></th>
+            <th style="height: 0;" class="text-left"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="header">
+            <td class="text-left font-weight-bold" colspan="2">
+              Données relatives à votre établissement
+            </td>
+          </tr>
+          <tr v-for="item in canteenItems" :key="item.label">
+            <td class="text-left">{{ item.label }}</td>
+            <td
+              :class="item.isNumber ? 'text-right' : 'text-left'"
+              :width="$vuetify.breakpoint.smAndUp ? '42%' : '50%'"
             >
-              <td class="text-left">{{ item.label }}</td>
-              <td :class="isTruthyOrZero(diagnostic[item.param]) ? 'text-right' : 'text-left'">
-                {{
-                  isTruthyOrZero(diagnostic[item.param]) ? `${toCurrency(diagnostic[item.param])} HT` : "Je ne sais pas"
-                }}
-              </td>
-            </tr>
-            <tr class="header">
-              <td class="text-left font-weight-bold" colspan="2">
-                Autres données EGAlim
-              </td>
-            </tr>
-            <tr v-for="item in additionalItems" :key="item.label" :class="item.class || ''">
-              <td class="text-left">{{ item.label }}</td>
-              <td :class="item.isNumber && isTruthyOrZero(item.value) ? 'text-right' : 'text-left'">
-                {{ isTruthyOrZero(item.value) ? item.value : "Non renseigné" }}
-              </td>
-            </tr>
-          </tbody>
-        </template>
-      </v-simple-table>
-    </v-card-text>
-    <div v-if="unusualData.length" class="text-left px-6">
-      <p>Ces données sont-elles correctes ?</p>
-      <ul>
-        <li v-for="data in unusualData" :key="data.id" class="mb-4">{{ data.text }}</li>
-      </ul>
-    </div>
-    <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form" class="px-6">
-      <v-checkbox
-        :rules="[validators.checked]"
-        label="Je déclare sur l’honneur la véracité de mes informations"
-        v-model="tdConfirmed"
-      ></v-checkbox>
-    </v-form>
-    <v-card-actions class="d-flex pr-4 pb-4">
-      <v-spacer></v-spacer>
-      <v-btn :disabled="tdLoading" outlined color="primary" class="px-4" @click="closeDialog">Annuler</v-btn>
-      <v-btn :disabled="tdLoading" outlined color="primary" class="ml-4 px-4" @click="goToEditing" v-if="!fromDiagPage">
-        Modifier
-      </v-btn>
-      <v-btn :disabled="tdLoading" color="primary" class="ml-4 px-4" @click="confirmTeledeclaration">
-        Télédéclarer ces données
-      </v-btn>
-    </v-card-actions>
-  </div>
+              {{ item.value }}
+            </td>
+          </tr>
+          <tr v-if="centralKitchenDiagnosticModeDisplay">
+            <td class="text-left font-weight-bold" colspan="2">{{ centralKitchenDiagnosticModeDisplay }}</td>
+          </tr>
+          <tr class="header">
+            <td class="text-left font-weight-bold" v-if="showApproItems">
+              Saisie de données d'approvisionnement :
+              {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
+            </td>
+            <td class="text-left grey--text text--darken-3" colspan="2" v-if="showApproItems">
+              {{ approSummary }}
+            </td>
+            <td class="text-left font-weight-bold" v-else colspan="2">
+              Données d'approvisonnement renseignées par la cuisine centrale
+            </td>
+          </tr>
+          <tr
+            v-for="item in approItems"
+            :key="item.param"
+            :class="isTruthyOrZero(diagnostic[item.param]) ? '' : 'warn'"
+          >
+            <td class="text-left">{{ item.label }}</td>
+            <td :class="isTruthyOrZero(diagnostic[item.param]) ? 'text-right' : 'text-left'">
+              {{
+                isTruthyOrZero(diagnostic[item.param]) ? `${toCurrency(diagnostic[item.param])} HT` : "Je ne sais pas"
+              }}
+            </td>
+          </tr>
+          <tr class="header">
+            <td class="text-left font-weight-bold" colspan="2">
+              Autres données EGAlim
+            </td>
+          </tr>
+          <tr v-for="item in additionalItems" :key="item.label" :class="item.class || ''">
+            <td class="text-left">{{ item.label }}</td>
+            <td :class="item.isNumber && isTruthyOrZero(item.value) ? 'text-right' : 'text-left'">
+              {{ isTruthyOrZero(item.value) ? item.value : "Non renseigné" }}
+            </td>
+          </tr>
+        </tbody>
+      </template>
+    </v-simple-table>
+  </v-card-text>
 </template>
 
 <script>
 import Constants from "@/constants"
-import validators from "@/validators"
+
 import { capitalise, sectorsSelectList, approSummary, toCurrency } from "@/utils"
 
 export default {
@@ -112,19 +81,6 @@ export default {
     canteen: {
       required: true,
     },
-  },
-  data() {
-    return {
-      teledeclarationFormIsValid: true,
-      validators,
-      maxSatellitesExpected: 200,
-      minCostPerMealExpected: 0.1,
-      maxCostPerMealExpected: 10,
-      minDaysOpenExpected: 50,
-      maxDaysOpenExpected: 365,
-      tdLoading: false,
-      tdConfirmed: false,
-    }
   },
   computed: {
     centralKitchenDiagostic() {
@@ -575,9 +531,6 @@ export default {
         },
       ]
     },
-    canteenUrlComponent() {
-      return this.canteen ? this.$store.getters.getCanteenUrlComponent(this.canteen) : null
-    },
     sectors() {
       if (!this.canteen.sectors) return ""
       const sectors = this.$store.state.sectors
@@ -601,70 +554,6 @@ export default {
       if (concernedSectors.length === 0) return false
       return this.canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
     },
-    unusualData() {
-      const unusualData = []
-      if (this.isCentralCuisine) {
-        if (this.canteen.satelliteCanteensCount === 1) {
-          unusualData.push({
-            text: "Votre établissement livre des repas à un seul site",
-            id: "td-satellite-count-is-1",
-          })
-        } else if (this.canteen.satelliteCanteensCount > this.maxSatellitesExpected) {
-          unusualData.push({
-            text: `Votre établissement livre des repas à plus de ${this.maxSatellitesExpected} sites (${this.canteen.satelliteCanteensCount} au total)`,
-            id: `td-satellite-count-over-${this.maxSatellitesExpected}`,
-            value: this.canteen.satelliteCanteensCount,
-          })
-        }
-      }
-      if (this.showApproItems) {
-        const text = `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
-        if (this.costPerMeal > this.maxCostPerMealExpected) {
-          unusualData.push({
-            text,
-            id: `td-meal-cost-over-${this.maxCostPerMealExpected}`,
-            value: this.costPerMeal,
-          })
-        } else if (this.costPerMeal < this.minCostPerMealExpected) {
-          unusualData.push({
-            text,
-            id: `td-meal-cost-under-${this.minCostPerMealExpected}`,
-            value: this.costPerMeal,
-          })
-        }
-      }
-      if (this.daysOpenPerYear) {
-        const text = `Vos jours de service sont estimés à ${this.daysOpenPerYear} par an. S'il s'agit d'une erreur, veuillez modifier les chiffres « nombre de repas par jour » et/ou « nombre de repas par an ».`
-        if (this.daysOpenPerYear > this.maxDaysOpenExpected) {
-          unusualData.push({
-            text,
-            id: `td-days-open-over-${this.maxDaysOpenExpected}`,
-            value: this.daysOpenPerYear,
-          })
-        } else if (this.daysOpenPerYear < this.minDaysOpenExpected) {
-          unusualData.push({
-            text,
-            id: `td-days-open-under-${this.minDaysOpenExpected}`,
-            value: this.daysOpenPerYear,
-          })
-        }
-      }
-      return unusualData
-    },
-    isCentralCuisine() {
-      // cannot use this.canteen.isCentralCuisine because that field may not be updated with latest canteen changes
-      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
-    },
-    costPerMeal() {
-      if (!this.showApproItems || !this.canteen.yearlyMealCount) return
-      return Number(this.diagnostic.valueTotalHt / this.canteen.yearlyMealCount).toFixed(2)
-    },
-    daysOpenPerYear() {
-      if (!this.canteen.dailyMealCount || !this.canteen.yearlyMealCount) return
-      // can't easily estimate days open for even central_serving without taking into account all satellites
-      if (this.canteen.isCentralCuisine) return
-      return Number(this.canteen.yearlyMealCount / this.canteen.dailyMealCount).toFixed(0)
-    },
     approSummary() {
       return approSummary(this.diagnostic)
     },
@@ -677,20 +566,8 @@ export default {
       }
       return null
     },
-    fromDiagPage() {
-      return this.$route.name === "DiagnosticModification"
-    },
   },
   methods: {
-    calculateTableHeight() {
-      if (!this.$refs || !this.$refs.table || !this.$refs.content || !this.$refs.innerSimpleTable) return
-      const contentHeight = this.$refs.content.$el.offsetHeight
-      const currentTableHeight = this.$refs.table.offsetHeight
-      const remainingItemsHeight = contentHeight - currentTableHeight
-      const innerTableHeight = this.$refs.innerSimpleTable.$el.offsetHeight + 4 // 4 is the padding value
-      const calculatedHeight = Math.min(window.innerHeight * 0.9 - remainingItemsHeight, innerTableHeight)
-      this.$refs.table.style.height = `${parseInt(calculatedHeight)}px`
-    },
     getWasteActions(wasteActions) {
       if (!wasteActions || !wasteActions.length) return "Aucune"
       const actionItems = {
@@ -770,66 +647,11 @@ export default {
       }
       return items[communicationFrequency] || "Non renseigné"
     },
-    closeDialog() {
-      this.$emit("close")
-    },
-    confirmTeledeclaration() {
-      if (this.$refs["teledeclarationForm"]) {
-        const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
-        if (!teledeclarationFormIsValid) return
-      }
-      this.tdLoading = true
-      this.handlePreviewClose("teledeclare")
-      this.$emit("teledeclare")
-    },
-    goToEditing() {
-      this.$emit("close")
-      this.$router
-        .push({
-          name: "DiagnosticModification",
-          params: { canteenUrlComponent: this.canteenUrlComponent, year: this.diagnostic.year },
-        })
-        .catch(() => {})
-    },
     isTruthyOrZero(value) {
       return !!value || value === 0
     },
     toCurrency(value) {
       return toCurrency(value)
-    },
-    handlePreviewClose(eventAction) {
-      const eventCategory = "data-warning"
-      if (this.$matomo) {
-        this.unusualData.forEach((data) => {
-          if (data.value) this.$matomo.trackEvent(eventCategory, eventAction, data.id, data.value)
-          else this.$matomo.trackEvent(eventCategory, eventAction, data.id)
-        })
-      }
-    },
-  },
-  mounted() {
-    // window.addEventListener("resize", this.calculateTableHeight)
-    // this.calculateTableHeight()
-  },
-  beforeDestroy() {
-    // window.removeEventListener("resize", this.calculateTableHeight)
-  },
-  watch: {
-    value(newValue) {
-      if (newValue) {
-        // this.$nextTick().then(this.calculateTableHeight)
-      }
-      // doesn't get here from confirmTeledeclaration, so we know this is a close
-      else {
-        this.handlePreviewClose("go-back")
-      }
-    },
-    diagnostic() {
-      // we get here if there are multiple TDs to get through at once
-      this.tdLoading = false
-      this.tdConfirmed = false
-      this.teledeclarationFormIsValid = true
-      this.$refs["teledeclarationForm"].reset()
     },
   },
 }

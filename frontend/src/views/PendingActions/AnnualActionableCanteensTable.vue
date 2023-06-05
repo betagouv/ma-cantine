@@ -30,31 +30,23 @@
         </v-alert>
       </div>
       <div>
-        <v-row v-if="tdLoading" class="green--text">
-          <v-col cols="1" justify-self="center">
-            <v-progress-circular indeterminate></v-progress-circular>
-          </v-col>
-          <v-col>
-            <p>Télédéclarations en cours...</p>
-          </v-col>
-        </v-row>
-        <v-card color="primary lighten-5" outlined v-else-if="toTeledeclare.length > 1">
+        <v-card color="primary lighten-5" outlined v-if="toTeledeclare.length > 1">
           <v-card-text class="pb-1">
             Vous pouvez dès à présent effectuer la télédéclaration pour
             <span v-if="toTeledeclare.length > 1">{{ toTeledeclare.length }} cantines.</span>
             <span v-else>une cantine.</span>
           </v-card-text>
           <v-card-actions class="pb-4">
-            <v-btn class="primary ml-2" @click="showTeledeclarationPreview = true">
+            <v-btn class="primary ml-2" @click="showMultipleTeledeclarationPreview = true">
               <span v-if="toTeledeclare.length > 1">Télédeclarer {{ toTeledeclare.length }} cantines</span>
               <span v-else>Télédeclarer la cantine</span>
             </v-btn>
           </v-card-actions>
         </v-card>
         <TeledeclarationPreview
-          v-if="diagnosticsForTD"
-          :diagnostics="diagnosticsForTD"
-          v-model="showTeledeclarationPreview"
+          v-if="toTeledeclare.length > 1"
+          :diagnostics="toTeledeclare"
+          v-model="showMultipleTeledeclarationPreview"
           @teledeclare="submitTeledeclaration"
         />
         <v-alert v-if="tdSuccesses.length" outlined type="success">
@@ -245,6 +237,7 @@ export default {
       },
       canteenForTD: null,
       showTeledeclarationPreview: false,
+      showMultipleTeledeclarationPreview: false,
       showPublicationForm: false,
       canteenForPublication: null,
       toDiagnose: [],
@@ -288,9 +281,6 @@ export default {
     },
     showMassPublication() {
       return this.toPublish?.length && (this.showPagination || this.toPublish > 1)
-    },
-    diagnosticsForTD() {
-      return this.toTeledeclare
     },
     showMassDiagnose() {
       return this.toDiagnose?.length && (this.showPagination || this.toDiagnose > 1)
