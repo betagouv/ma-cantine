@@ -465,41 +465,6 @@ export default {
           this.diagLoading = false
         })
     },
-    massTeledeclaration() {
-      this.tdLoading = true
-      this.$store
-        .dispatch("submitMultipleTeledeclarations", { ids: this.toTeledeclare })
-        .then((response) => {
-          const errors = response.errors
-          this.tdSuccesses = response.teledeclarationIds
-          this.tdFailures = Object.keys(errors)
-          if (this.tdFailures.length === 0) {
-            const title =
-              this.tdSuccesses.length > 1
-                ? `${this.tdSuccesses.length} diagnostics télédéclarés`
-                : `${this.tdSuccesses.length} diagnostic télédéclaré`
-            this.$store.dispatch("notify", {
-              title,
-              status: "success",
-            })
-          } else {
-            const title =
-              this.tdFailures.length > 1
-                ? `${this.tdFailures.length} diagnostics pas télédéclarés`
-                : `${this.tdFailures.length} diagnostic pas télédéclaré`
-            this.$store.dispatch("notify", {
-              title,
-              status: "error",
-            })
-          }
-        })
-        .catch((e) => this.$store.dispatch("notifyServerError", e))
-        // refresh actions
-        .then(() => this.fetchCurrentPage())
-        .finally(() => {
-          this.tdLoading = false
-        })
-    },
     massPublication() {
       this.pubLoading = true
       this.$store
