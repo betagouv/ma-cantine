@@ -38,21 +38,25 @@
             <p>Télédéclarations en cours...</p>
           </v-col>
         </v-row>
+        <v-card color="primary lighten-5" outlined v-else-if="toTeledeclare.length > 1">
+          <v-card-text class="pb-1">
+            Vous pouvez dès à présent effectuer la télédéclaration pour
+            <span v-if="toTeledeclare.length > 1">{{ toTeledeclare.length }} cantines.</span>
+            <span v-else>une cantine.</span>
+          </v-card-text>
+          <v-card-actions class="pb-4">
+            <v-btn class="primary ml-2" @click="showTeledeclarationPreview = true">
+              <span v-if="toTeledeclare.length > 1">Télédeclarer {{ toTeledeclare.length }} cantines</span>
+              <span v-else>Télédeclarer la cantine</span>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
         <TeledeclarationPreview
-          v-else-if="diagnosticsForTD"
+          v-if="diagnosticsForTD"
           :diagnostics="diagnosticsForTD"
           v-model="showTeledeclarationPreview"
           @teledeclare="submitTeledeclaration"
         />
-        <p v-else-if="toTeledeclare.length > 1">
-          Vous pouvez télédéclarer
-          <span v-if="toTeledeclare.length > 1">{{ toTeledeclare.length }} cantines.</span>
-          <span v-else>1 cantine.</span>
-          <v-btn class="primary ml-2" @click="showTeledeclarationPreview = true">
-            <span v-if="toTeledeclare.length > 1">Télédeclarer {{ toTeledeclare.length }} cantines</span>
-            <span v-else>Télédeclarer la cantine</span>
-          </v-btn>
-        </p>
         <v-alert v-if="tdSuccesses.length" outlined type="success">
           <p v-if="tdSuccesses.length" class="mb-0">
             {{ tdSuccesses.length }} {{ tdSuccesses.length > 1 ? "cantines télédéclarées" : "cantine télédéclarée" }}
