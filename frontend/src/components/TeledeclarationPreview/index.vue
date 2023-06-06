@@ -178,9 +178,11 @@ export default {
   },
   methods: {
     teledeclare() {
-      const keepDialog = !this.diagnostics || this.idx + 1 < this.diagnostics.length
-      this.$emit("teledeclare", this.diagnosticForTD, keepDialog)
+      this.$emit("teledeclare", this.diagnosticForTD, this.keepDialog)
       this.idx++
+    },
+    keepDialog() {
+      return !this.diagnostics || this.idx + 1 < this.diagnostics.length
     },
     close() {
       this.$emit("input", false)
@@ -210,7 +212,7 @@ export default {
       }
       this.tdLoading = true
       this.handlePreviewClose("teledeclare")
-      this.$emit("teledeclare")
+      this.teledeclare()
     },
     handlePreviewClose(eventAction) {
       const eventCategory = "data-warning"

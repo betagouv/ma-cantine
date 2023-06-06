@@ -415,8 +415,8 @@ export default {
             status: "success",
           })
           this.updateCanteen(diagnostic.canteen?.id || this.canteenForTD?.id)
-          // TODO: maybe update diagnosticsToTD so that when dialog closes button will be at good state
         })
+        .then(this.fetchDiagnosticsToTeledeclare)
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
