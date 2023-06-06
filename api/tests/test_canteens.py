@@ -961,90 +961,6 @@ class TestCanteenApi(APITestCase):
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @authenticate
-    def test_get_diagnostics_to_td(self):
-        """
-        Check that the actions endpoint includes a list of diagnostics that could be teledeclared
-        """
-        last_year = 2021
-        no_diag = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
-            management_type=Canteen.ManagementType.DIRECT,
-            yearly_meal_count=1000,
-            daily_meal_count=12,
-            siret="75665621899905",
-            city_insee_code="69123",
-            economic_model=Canteen.EconomicModel.PUBLIC,
-        )
-        canteen_with_incomplete_diag = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
-            management_type=Canteen.ManagementType.DIRECT,
-            yearly_meal_count=1000,
-            daily_meal_count=12,
-            siret="96766910375238",
-            city_insee_code="69123",
-            economic_model=Canteen.EconomicModel.PUBLIC,
-        )
-        DiagnosticFactory.create(canteen=canteen_with_incomplete_diag, year=last_year, value_total_ht=None)
-        canteen_with_complete_diag = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
-            management_type=Canteen.ManagementType.DIRECT,
-            yearly_meal_count=1000,
-            daily_meal_count=12,
-            siret="75665621899905",
-            city_insee_code="69123",
-            economic_model=Canteen.EconomicModel.PUBLIC,
-        )
-        complete_diag = DiagnosticFactory.create(
-            canteen=canteen_with_complete_diag, year=last_year, value_total_ht=10000
-        )
-
-        canteen_with_incomplete_data = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
-            management_type=Canteen.ManagementType.DIRECT,
-            yearly_meal_count=1000,
-            daily_meal_count=12,
-            city_insee_code="69123",
-            economic_model=Canteen.EconomicModel.PUBLIC,
-            siret=None,  # this needs to be completed for the diag to be teledeclarable
-        )
-        DiagnosticFactory.create(canteen=canteen_with_incomplete_data, year=last_year, value_total_ht=10000)
-        # to verify we are returning the correct diag for the canteen, create another diag for a different year
-        DiagnosticFactory.create(canteen=canteen_with_complete_diag, year=last_year - 1, value_total_ht=10000)
-        canteen_with_td = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
-            management_type=Canteen.ManagementType.DIRECT,
-            yearly_meal_count=1000,
-            daily_meal_count=12,
-            siret="55476895458384",
-            city_insee_code="69123",
-            economic_model=Canteen.EconomicModel.PUBLIC,
-        )
-        td_diag = DiagnosticFactory.create(canteen=canteen_with_td, year=last_year, value_total_ht=2000)
-        Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
-
-        for canteen in [
-            no_diag,
-            canteen_with_incomplete_diag,
-            canteen_with_complete_diag,
-            canteen_with_incomplete_data,
-            canteen_with_td,
-        ]:
-            canteen.managers.add(authenticate.user)
-
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
-        body = response.json()
-
-        diagnostics = body["diagnosticsToTeledeclare"]
-        self.assertEqual(len(diagnostics), 1)
-        self.assertEqual(diagnostics[0]["id"], complete_diag.id)
-
     @authenticate
     def test_get_canteens_with_purchases_no_diagnostics_for_year(self):
         """
@@ -1110,8 +1026,6 @@ class TestCanteenApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
-        # complete diag
-        diag_to_td = DiagnosticFactory.create(canteen=canteen_to_td, year=last_year, value_total_ht=10000)
 
         for canteen in [
             canteen_with_no_siret,
@@ -1123,25 +1037,9 @@ class TestCanteenApi(APITestCase):
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         body = response.json()
 
-        diagnostics = body["diagnosticsToTeledeclare"]
-        self.assertEqual(len(diagnostics), 1)
-        self.assertEqual(diagnostics[0]["id"], diag_to_td.id)
         returned_canteens = body["results"]
         self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
         self.assertEqual(returned_canteens[1]["action"], "35_fill_canteen_data")
-
-    @authenticate
-    def test_get_diagnostics_to_td_none(self):
-        """
-        Check that the actions endpoint includes an empty list of diagnostics that could be teledeclared
-        if there are no diags to TD
-        """
-        last_year = 2021
-
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
-        body = response.json()
-
-        self.assertEqual(body["diagnosticsToTeledeclare"], [])
 
     def test_list_canteen_actions_unauthenticated(self):
         """

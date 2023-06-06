@@ -6,12 +6,13 @@ from django.db import IntegrityError
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from drf_spectacular.utils import extend_schema_view, extend_schema
-from rest_framework.generics import UpdateAPIView, CreateAPIView
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.generics import UpdateAPIView, CreateAPIView, ListAPIView
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.views import APIView
-from api.serializers import ManagerDiagnosticSerializer
+from api.serializers import ManagerDiagnosticSerializer, DiagnosticAndCanteenSerializer
 from api.views.utils import update_change_reason_with_auth
-from data.models import Canteen
+from data.models import Canteen, Teledeclaration
 from api.permissions import (
     IsCanteenManager,
     CanEditDiagnostic,
@@ -123,3 +124,66 @@ class EmailDiagnosticImportFileView(APIView):
     def _verify_file_size(file):
         if file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
+
+
+class DiagnosticsToTeledeclarePagination(LimitOffsetPagination):
+    default_limit = 100
+    max_limit = 100
+
+
+class DiagnosticsToTeledeclareListView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    model = Diagnostic
+    serializer_class = DiagnosticAndCanteenSerializer
+    pagination_class = DiagnosticsToTeledeclarePagination
+    ordering = "modification_date"
+
+    def get_queryset(self):
+        year = self.request.parser_context.get("kwargs").get("year")
+        canteens = DiagnosticsToTeledeclareListView._get_complete_canteens(self.request.user.canteens.all())
+        complete_diagnostics = Diagnostic.objects.filter(
+            year=year, canteen__in=canteens, value_total_ht__gt=0, diagnostic_type__isnull=False
+        )
+        teledeclared = (
+            Teledeclaration.objects.filter(
+                diagnostic__in=complete_diagnostics, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+            )
+            .values_list("diagnostic__id", flat=True)
+            .distinct()
+        )
+        return complete_diagnostics.exclude(id__in=teledeclared)
+
+    @staticmethod
+    def _get_complete_canteens(canteens):
+        # We use this method instead of the SQL based one in the views/canteen.py file because we
+        # don't need all the actions. By doing this on Python we can return early without running
+        # all SQL requests when not needed. We are also not interested exactly in the kind of
+        # completeness, just wether or not the canteen can teledeclare.
+        def canteen_is_complete(canteen):
+            has_complete_data = (
+                canteen.yearly_meal_count
+                and canteen.daily_meal_count
+                and canteen.siret
+                and canteen.name
+                and canteen.city_insee_code
+                and canteen.production_type
+                and canteen.management_type
+                and canteen.economic_model
+            )
+            if has_complete_data and canteen.is_satellite:
+                has_complete_data = canteen.central_producer_siret and canteen.central_producer_siret != canteen.siret
+            if has_complete_data and canteen.is_central_cuisine:
+                has_complete_data = canteen.satellite_canteens_count
+                # We check again to avoid useless DB hits
+                if has_complete_data:
+                    has_complete_data = (
+                        Canteen.objects.filter(central_producer_siret=canteen.siret).count()
+                        == canteen.satellite_canteens_count
+                    )
+
+            if has_complete_data and canteen.sectors.filter(has_line_ministry=True).exists():
+                has_complete_data = canteen.line_ministry
+            return has_complete_data
+
+        complete_canteens = list(filter(canteen_is_complete, canteens))
+        return complete_canteens
