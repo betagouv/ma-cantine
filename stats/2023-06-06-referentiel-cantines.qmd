@@ -1,0 +1,72 @@
+---
+title: "Ma-Cantine : Création du référentiel des cantines"
+author:
+  - "Quentin Loridant"
+date: "2023-06-06"
+format:
+  html:
+    embed-resources: true
+    code-fold: true
+    theme:
+      - readable
+    toc: true
+    toc-depth: 2
+execute:
+  cache: true
+---
+
+
+# Import des données et des librairies
+```{python import}
+import pandas as pd
+import os
+import datetime
+import requests
+import json
+from dotenv import load_dotenv
+from frictionless import describe
+from table_schema_to_markdown import convert_source
+
+```
+
+Afin de récupérer les données, il vous faut un TOKEN metabase :  
+`curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://ma-cantine-metabase.cleverapps.io/api/session`
+
+```{python Import des données canteens}
+url = "https://ma-cantine-metabase.cleverapps.io/api/card/799/query/json"
+
+load_dotenv()
+
+header = {
+    "Content-Type": "application/json",
+    "X-Metabase-Session": os.getenv("METABASE_TOKEN"),
+}
+
+res = requests.post(
+    url,
+    headers=header,
+)
+canteens = pd.DataFrame(res.json())
+
+```
+
+
+# Nettoyage et formattage des données
+```{python Nettoyage des données}
+nbre_canteens = len(canteens)
+canteens = canteens.dropna(subset=["id"])
+print(f"Nous avons enlevé {nbre_canteens - len(canteens)} doublons")
+print("Nombre de cantines uniques: ", len(canteens))
+```
+
+
+```{python Construction du schéma des données}
+
+# Generate a Markdown documentation from a JSON file
+table_schema = "schema_cantines.json"
+with open("schema_cantines.md", "w") as out:
+    convert_source(table_schema, out)
+```
+
+```{python Construction du schéma des données}
+```

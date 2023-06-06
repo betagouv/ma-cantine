@@ -2,3 +2,4 @@ pandas
 ipykernel
 ydata-profiling
 ipywidgets
+frictionless

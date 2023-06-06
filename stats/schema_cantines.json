@@ -1,0 +1,167 @@
+{
+  "fields": [
+    {
+      "name": "id",
+      "type": "integer",
+      "title": "Identifiant",
+      "description": "Identifiant Unique de la Cantine",
+      "example": 71331
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "title": "Nom",
+      "description": "Nom la Cantine",
+      "example": "Restaurant Scolaire de Marigny-le-Lozon"
+    },
+    {
+      "name": "siret",
+      "type": "string",
+      "title": "Siret",
+      "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine",
+      "example": "20005822000092"
+    },
+    {
+      "name": "city",
+      "type": "string",
+      "title": "Ville",
+      "description": "Ville dans laquelle se trouve la cantine",
+      "example": "Marigny-Le-Lozon"
+    },
+    {
+      "name": "city_insee_code",
+      "type": "string",
+      "title": "Code Insee ville",
+      "description": "Code Insee de la ville dans laquelle se trouve la cantine",
+      "example": "50292"
+    },
+    {
+      "name": "postal_code",
+      "type": "string",
+      "title": "Code postal",
+      "description": "Code postal de la ville dans laquelle se trouve la cantine",
+      "example": "50570"
+    },
+    {
+      "name": "department",
+      "type": "string",
+      "title": "Code Département",
+      "description": "Code Insee du département dans lequel se trouve la cantine",
+      "example": "50"
+    },
+    {
+      "name": "region",
+      "type": "string",
+      "title": "Code Département",
+      "description": "Code Insee de la région dans lequel se trouve la cantine",
+      "example": "28"
+    },
+    {
+      "name": "economic_model",
+      "type": "string",
+      "title": "Modèle Economique",
+      "description": "Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).",
+      "example": "public"
+    },
+    {
+      "name": "management_type",
+      "type": "string",
+      "title": "Type de Management",
+      "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée",
+      "example": "conceded"
+    },
+    {
+      "name": "production_type",
+      "type": "string",
+      "title": "Type de Production",
+      "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
+      "example": "central"
+    },
+    {
+      "name": "satellite_canteens_count",
+      "type": "number",
+      "title": "Nombre de cantines satellites",
+      "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée",
+      "example": "0"
+    },
+    {
+      "name": "central_producer_siret",
+      "type": "string",
+      "title": "SIRET de la cantine centrale",
+      "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine ayant produit les repas",
+      "example": ""
+    },
+    {
+      "name": "vegetarian_expe_participant",
+      "type": "string"
+    },
+    {
+      "name": "creation_mtm_medium",
+      "type": "string"
+    },
+    {
+      "name": "email_no_diagnostic_first_reminder",
+      "type": "string"
+    },
+    {
+      "name": "creation_date",
+      "type": "string"
+    },
+    {
+      "name": "creation_mtm_source",
+      "type": "string"
+    },
+    {
+      "name": "daily_meal_count",
+      "type": "number"
+    },
+    {
+      "name": "deletion_date",
+      "type": "string"
+    },
+    {
+      "name": "line_ministry",
+      "type": "string"
+    },
+    {
+      "name": "diversification_comments",
+      "type": "string"
+    },
+    {
+      "name": "yearly_meal_count",
+      "type": "number"
+    },
+    {
+      "name": "creation_mtm_campaign",
+      "type": "string"
+    },
+    {
+      "name": "modification_date",
+      "type": "string"
+    },
+    {
+      "name": "logo",
+      "type": "string"
+    },
+    {
+      "name": "publication_comments",
+      "type": "string"
+    },
+    {
+      "name": "plastics_comments",
+      "type": "string"
+    },
+    {
+      "name": "has_been_claimed",
+      "type": "boolean"
+    },
+    {
+      "name": "import_source",
+      "type": "string"
+    },
+    {
+      "name": "publication_status",
+      "type": "string"
+    }
+  ]
+}
