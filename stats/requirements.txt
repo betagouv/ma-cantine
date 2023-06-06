@@ -1,0 +1,4 @@
+pandas
+ipykernel
+ydata-profiling
+ipywidgets
