@@ -24,6 +24,7 @@ Analyse des données de la campagne de TD 2022.
     * l'année 2021
     * les données de type 'SUMBITTED'
     * les `creation_date` qui sont compris dans les dates de la campagne : du 16 juillet 2022 au 31 décembre 2022.
+    * Les canteen ID qui sont renseignés
 
 
 # Import des données et des librairies
@@ -34,10 +35,12 @@ import datetime
 import requests
 import json
 from dotenv import load_dotenv
+from ydata_profiling import ProfileReport
+
 ```
 
 Afin de récupérer les données, il vous faut un TOKEN metabase :  
-`curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://https://ma-cantine-metabase.cleverapps.io/api/session`
+`curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://ma-cantine-metabase.cleverapps.io/api/session`
 
 ```{python Import des données TD}
 url = "https://ma-cantine-metabase.cleverapps.io/api/card/795/query/json"
@@ -65,8 +68,8 @@ td = pd.concat([td.drop("declared_data", axis=1), td_json], axis=1)
 ```{python Nettoyage des données}
 nbre_td_full = len(td)
 td = td.dropna(subset=["canteen_id"])
-print(f'Nous avons enlevé {nbre_td_full - len(td)} doublons')
-print('Nombre de télédcélarations uniques: ', len(td))
+print(f"Nous avons enlevé {nbre_td_full - len(td)} doublons")
+print("Nombre de télédcélarations uniques: ", len(td))
 ```
 
 
@@ -75,6 +78,22 @@ print('Nombre de télédcélarations uniques: ', len(td))
 ```{python Vérification des données}
 assert td["canteen_id"].isna().sum() == 0, "Il y a des cantines sans identifiant"
 assert len(td["canteen_id"]) == len(td["canteen_id"].unique()), "Il y a des doublons dans les cantines"
+```
+
+# Profiling
+```{python Profiling}
+td.describe(include="all")
+# for col in td.columns:
+#     # if type(td[col]) == "object":
+#     td[col] = td[col].astype("string")
+# profile = ProfileReport(td, title="Profiling Report")
+# profile.to_file("your_report.html")
+# profile.to_notebook_iframe()
+```
+
+```{python Verificaiton des valeurs en recréant l'erreur}
+td_to_keep = pd.read_csv('stats/canteen_id_rapport.csv')
+td = td[td['canteen_id'].isin(td_to_keep['canteen_id'])]
 ```
 
 # Chiffres clés
@@ -88,58 +107,97 @@ Dans les télédéclarations pour la campagne 2022, il n'y a pas d'indication du
 Les informations suivanted proviennent donc des informations renseignées pour les cantines. Les données ont peut-être légérement été modifié depuis la télédéclaration.
 
 ```{python Nombre de sites de restauration concernés par la télédéclaration}
-indicateurs['Nombre de sites de restauration concernés par la télédéclaration'] = len(td) + td['satellite_canteens_count'].sum()
+indicateurs["Nombre de sites de restauration concernés par la télédéclaration"] = (
+    len(td) + td["satellite_canteens_count"].sum()
+)
 ```
 
 
 ```{python Nombre de cantines sur place (sites et satellites)}
 cuisines_sur_place = td[td["production_type"].isin(["site", "site_cooked_elsewhere"])]
-indicateurs['Nombre de cantines sur place (sites et satellites)'] = len(cuisines_sur_place)
+indicateurs["Nombre de cantines sur place (sites et satellites)"] = len(cuisines_sur_place)
 ```
 
 
 ```{python Nombre de cantines centrales}
 cuisines_centrales = td[td["production_type"].isin(["central_serving", "central"])]
-indicateurs['Nombre de cantines centrales'] = len(cuisines_centrales)
+indicateurs["Nombre de cantines centrales"] = len(cuisines_centrales)
 ```
 
 ```{python Nombre de repas}
-indicateurs['Nombre de repas moyens par jour pour les cantines sur place'] = int(cuisines_sur_place['daily_meal_count'].mean())
-indicateurs['Nombre de repas moyens par jour pour les cantines centrales'] = int(cuisines_centrales['daily_meal_count'].mean())
-indicateurs['Nombre de repas totaux pour l\'année'] = int(td['yearly_meal_count'].sum())
+indicateurs["Nombre de repas moyens par jour pour les cantines sur place"] = int(
+    cuisines_sur_place["daily_meal_count"].mean()
+)
+indicateurs["Nombre de repas moyens par jour pour les cantines centrales"] = int(
+    cuisines_centrales["daily_meal_count"].mean()
+)
+indicateurs["Nombre de repas totaux pour l'année"] = int(td["yearly_meal_count"].sum())
 ```
 
 ```{python Répartition du nombre de cantines en gestion directe / en gestion concédée}
-indicateurs['Répartition du nombre de cantines en gestion directe'] = f"{100 * len(td[td.management_type == 'direct']) / len(td):.2f} %"
-indicateurs['Répartition du nombre de cantines en gestion concédée'] = f"{100 * len(td[td.management_type == 'conceded']) / len(td):.2f} %"
-indicateurs['Répartition du nombre de cantines en gestion non renseignée'] = f"{100 * len(td[~td.management_type.isin(['direct', 'conceded'])]) / len(td):.2f} %"
+indicateurs[
+    "Répartition du nombre de cantines en gestion directe"
+] = f"{100 * len(td[td.management_type == 'direct']) / len(td):.2f} %"
+indicateurs[
+    "Répartition du nombre de cantines en gestion concédée"
+] = f"{100 * len(td[td.management_type == 'conceded']) / len(td):.2f} %"
+indicateurs[
+    "Répartition du nombre de cantines en gestion non renseignée"
+] = f"{100 * len(td[~td.management_type.isin(['direct', 'conceded'])]) / len(td):.2f} %"
 ```
 
 
 Pour les montants, nous nous rebasons sur les données de TD.
+
 ```{python Montants d'achat alimentaires déclarés}
-indicateurs['Montants d\'achat alimentaires déclarés'] = f"{int(td['teledeclaration.value_total_ht'].sum())} €"
+indicateurs["Montants d'achat alimentaires déclarés"] = f"{int(td['teledeclaration.value_total_ht'].sum())} €"
 ```
 
 
 ```{python Taux global des achats en bio}
-indicateurs['Taux global des achats en bio'] = f"{100 * td['teledeclaration.value_bio_ht'].sum() / td['teledeclaration.value_total_ht'].sum():.2f} %"
+indicateurs[
+    "Taux global des achats en bio"
+] = f"{100 * td['teledeclaration.value_bio_ht'].sum() / td['teledeclaration.value_total_ht'].sum():.2f} %"
 ```
 
 
 ```{python Taux global des achats EGALIM (bio inclus)}
-indicateurs['Taux global des achats EGALIM (bio inclus)'] = f"{100 * (td['teledeclaration.value_egalim_others_ht'].sum() + td['teledeclaration.value_externality_performance_ht'].sum() + td['teledeclaration.value_bio_ht'].sum()  + td['teledeclaration.value_sustainable_ht'].sum()) / td['teledeclaration.value_total_ht'].sum():.2f} %"
+indicateurs[
+    "Taux global des achats EGALIM (bio inclus)"
+] = f"{100 * (td['teledeclaration.value_egalim_others_ht'].sum() + td['teledeclaration.value_externality_performance_ht'].sum() + td['teledeclaration.value_bio_ht'].sum()  + td['teledeclaration.value_sustainable_ht'].sum()) / td['teledeclaration.value_total_ht'].sum():.2f} %"
+for key, value in indicateurs.items():
+    print(key, ":", value)
+```
+```
 ```
 
 ```{python Vérification de la non existence de TD tests}
 import re
-pattern = r'test|testing|sample|temp|debug|beta'
-mask = td['name'].str.contains(pattern, flags=re.IGNORECASE, regex=True)
+
+pattern = r"test|testing|sample|temp|debug|beta"
+mask = td["name"].str.contains(pattern, flags=re.IGNORECASE, regex=True)
 testing_elements = td[mask]
 ```
 
+```{python Vérification du taux de présence de la donnée repas par an}
+print(
+    f"Le taux de présence de la donnée repas par an est de {100 * (1 - td['yearly_meal_count'].isna().sum() / len(td)):.2f} %"
+)
+```
+
+
+
+
 # Questions
 
-* Quelles sont les dates de la campagne de TD 2021 ?
+* Quelles sont les dates de la campagne de TD 2021 ? 
+La communication avait été lancée mi-juillet. Cependant la fonctionnalité existait déjà.
+
 * Que fait on des TD hors cadre d'une campagne ?
 * Existe-il des cantines de test dans la campagne ? (apparement non)
+
+* D'ou sortent les 300 TD d'avant le lancement de la campagne ? => Bizdev ? => A vérifier  
+
+A faire : 
+* Verifier le taux de presence de la donnée repas par an
+* Relancer en supprimant les 8 cantines
