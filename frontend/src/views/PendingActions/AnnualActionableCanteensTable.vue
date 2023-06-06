@@ -305,7 +305,6 @@ export default {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
           this.toDiagnose = response.undiagnosedCanteensWithPurchases
-          this.toTeledeclare = response.diagnosticsToTeledeclare
           this.toPublish = response.canteensToPublish
           this.$emit("canteen-count", this.canteenCount)
         })
@@ -481,10 +480,26 @@ export default {
           this.pubLoading = false
         })
     },
+    fetchDiagnosticsToTeledeclare() {
+      return fetch(`/api/v1/diagnosticsToTeledeclare/${this.year}`)
+        .then((response) => {
+          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          return response.json()
+        })
+        .then((response) => {
+          this.toTeledeclare = response.results
+        })
+        .catch((e) => {
+          this.toTeledeclare = []
+          this.$store.dispatch("notifyServerError", e)
+        })
+    },
   },
   mounted() {
     this.populateInitialParameters()
-    return this.fetchCurrentPage().then(this.addWatchers)
+    return this.fetchDiagnosticsToTeledeclare()
+      .then(this.fetchCurrentPage)
+      .then(this.addWatchers)
   },
 }
 </script>
