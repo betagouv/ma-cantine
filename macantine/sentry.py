@@ -12,11 +12,12 @@ def before_send(event, hint):
     exception_type, _, _ = hint.get("exc_info")
     module = hint.get("log_record").module
 
-    modules = ["diagnosticimport"]
+    modules = ["diagnosticimport", "purchaseimport"]
     exceptions = [
         PermissionDenied,
         ValidationError,
         IndexError,
+        UnicodeDecodeError,
     ]
 
     try:
