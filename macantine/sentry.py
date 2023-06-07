@@ -1,5 +1,6 @@
 from rest_framework.exceptions import PermissionDenied
 from django.core.exceptions import ValidationError
+from api.views.diagnosticimport import FileFormatError
 
 
 def before_send(event, hint):
@@ -18,6 +19,7 @@ def before_send(event, hint):
         ValidationError,
         IndexError,
         UnicodeDecodeError,
+        FileFormatError,
     ]
 
     try:
