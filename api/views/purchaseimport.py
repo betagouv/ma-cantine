@@ -41,6 +41,12 @@ class ImportPurchasesView(APIView):
             logger.warning(f"L'import du fichier CSV a échoué:\n{e}")
             return ImportPurchasesView._get_success_response([], 0, errors, start)
 
+        except UnicodeDecodeError as e:
+            message = e.message
+            logger.warning(f"{message}")
+            self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
+            return ImportPurchasesView._get_success_response([], 0, errors, start)
+
         except ValidationError as e:
             message = e.message
             logger.warning(message)
