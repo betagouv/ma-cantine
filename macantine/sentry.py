@@ -1,6 +1,5 @@
 from rest_framework.exceptions import PermissionDenied
 from django.core.exceptions import ValidationError
-from api.views.diagnosticimport import FileFormatError
 
 
 def before_send(event, hint):
@@ -19,13 +18,18 @@ def before_send(event, hint):
         ValidationError,
         IndexError,
         UnicodeDecodeError,
-        FileFormatError,
     ]
 
     try:
+        # Defered loading because at the time of loading this file
+        # the app registry is not ready yet.
+        # django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet.
+
         from data.models import Sector
+        from api.views.diagnosticimport import FileFormatError
 
         exceptions.append(Sector.DoesNotExist)
+        exceptions.append(FileFormatError)
     except Exception:
         pass
 
