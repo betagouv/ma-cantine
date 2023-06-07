@@ -159,6 +159,7 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
         # don't need all the actions. By doing this on Python we can return early without running
         # all SQL requests when not needed. We are also not interested exactly in the kind of
         # completeness, just wether or not the canteen can teledeclare.
+        # Possible to have this method in the model
         def canteen_is_complete(canteen):
             has_complete_data = (
                 canteen.yearly_meal_count

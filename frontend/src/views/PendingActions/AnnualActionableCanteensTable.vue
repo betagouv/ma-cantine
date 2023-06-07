@@ -33,12 +33,18 @@
         <v-card color="primary lighten-5" outlined v-if="toTeledeclare.length > 1">
           <v-card-text class="pb-1">
             Vous pouvez dès à présent effectuer la télédéclaration pour
-            <span v-if="toTeledeclare.length > 1">{{ toTeledeclare.length }} cantines.</span>
+            <span v-if="toTeledeclare.length > 1">{{ toTeledeclareCount }} cantines.</span>
             <span v-else>une cantine.</span>
           </v-card-text>
           <v-card-actions class="pb-4">
             <v-btn class="primary ml-2" @click="showMultipleTeledeclarationPreview = true">
-              <span v-if="toTeledeclare.length > 1">Télédeclarer {{ toTeledeclare.length }} cantines</span>
+              <span v-if="toTeledeclare.length > 1">
+                Télédeclarer
+                <span v-if="toTeledeclareCount > toTeledeclare.length">
+                  les {{ toTeledeclare.length }} premières cantines
+                </span>
+                <span v-else>{{ toTeledeclare.length }} cantines</span>
+              </span>
               <span v-else>Télédeclarer la cantine</span>
             </v-btn>
           </v-card-actions>
@@ -72,7 +78,7 @@
             <p>Publications en cours...</p>
           </v-col>
         </v-row>
-        <p v-else-if="showMassPublication">
+        <p class="mt-4" v-else-if="showMassPublication">
           Vous pouvez publier
           <span v-if="toPublish.length > 1">{{ toPublish.length }} cantines.</span>
           <span v-else>1 cantine.</span>
@@ -244,6 +250,7 @@ export default {
       diagLoading: false,
       diagSuccesses: [],
       toTeledeclare: [],
+      toTeledeclareCount: null,
       tdSuccesses: [],
       tdFailures: [],
       toPublish: [],
@@ -488,6 +495,7 @@ export default {
         })
         .then((response) => {
           this.toTeledeclare = response.results
+          this.toTeledeclareCount = response.count
         })
         .catch((e) => {
           this.toTeledeclare = []
