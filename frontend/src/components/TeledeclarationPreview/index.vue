@@ -201,6 +201,12 @@ export default {
       const contentHeight = this.$refs.content.$el.offsetHeight
       const currentTableHeight = this.$refs.table.$el.offsetHeight
       const remainingItemsHeight = contentHeight - currentTableHeight
+
+      // If not enough space (for example in a phone), everything must scroll
+      if (remainingItemsHeight > contentHeight * 0.75) {
+        this.$refs.table.$refs.innerTable.style.height = "auto"
+        return
+      }
       const innerTableHeight = this.$refs.table.$refs.innerSimpleTable.$el.offsetHeight + 4 // 4 is the padding value
       const calculatedHeight = Math.min(window.innerHeight * 0.9 - remainingItemsHeight, innerTableHeight)
       this.$refs.table.$refs.innerTable.style.height = `${parseInt(calculatedHeight)}px`
