@@ -1,192 +1,27 @@
+> :warning: FICHIER GENERE AUTOMATIQUEMENT. NE PAS MODIFIER. POUR TOUTE MODIFICATION, EDITEZ LE FICHIER schema_teledeclaration.json /////
+
 
 ### Modèle de données
 
 |Nom|Type|Description|Exemple|Propriétés|
 |-|-|-|-|-|
-|canteen_id|nombre entier|||
-|applicant_id|nombre réel|||
-|canteen_siret|chaîne de caractères|||
-|teledeclaration_mode|chaîne de caractères|||
-|id|nombre entier|||
-|creation_date|chaîne de caractères|||
-|status|chaîne de caractères|||
-|year|nombre entier|||
-|diagnostic_id|nombre entier|||
-|modification_date|chaîne de caractères|||
-|year|nombre entier|||
-|version|chaîne de caractères|||
-|central_kitchen_siret|chaîne de caractères|||
-|canteen.id|nombre entier|||
-|canteen.name|chaîne de caractères|||
-|canteen.siret|chaîne de caractères|||
-|canteen.sectors|liste|||
-|canteen.line_ministry|chaîne de caractères|||
-|canteen.economic_model|chaîne de caractères|||
-|canteen.city_insee_code|chaîne de caractères|||
-|canteen.management_type|chaîne de caractères|||
-|canteen.production_type|chaîne de caractères|||
-|canteen.daily_meal_count|nombre réel|||
-|canteen.yearly_meal_count|nombre réel|||
-|canteen.central_producer_siret|chaîne de caractères|||
-|canteen.satellite_canteens_count|nombre réel|||
-|applicant.name|chaîne de caractères|||
-|applicant.email|chaîne de caractères|||
-|teledeclaration.id|nombre entier|||
-|teledeclaration.year|nombre entier|||
-|teledeclaration.creation_date|chaîne de caractères|||
-|teledeclaration.value_fish_ht|nombre réel|||
-|teledeclaration.waste_actions|liste|||
-|teledeclaration.has_waste_plan|chaîne de caractères|||
-|teledeclaration.side_leftovers|nombre réel|||
-|teledeclaration.value_total_ht|nombre réel|||
-|teledeclaration.bread_leftovers|nombre réel|||
-|teledeclaration.diagnostic_type|chaîne de caractères|||
-|teledeclaration.served_leftovers|nombre réel|||
-|teledeclaration.value_autres_bio|nombre réel|||
-|teledeclaration.value_autres_hve|nombre réel|||
-|teledeclaration.value_autres_rup|nombre réel|||
-|teledeclaration.donation_quantity|nombre réel|||
-|teledeclaration.modification_date|chaîne de caractères|||
-|teledeclaration.donation_food_type|chaîne de caractères|||
-|teledeclaration.donation_frequency|nombre réel|||
-|teledeclaration.has_waste_measures|chaîne de caractères|||
-|teledeclaration.other_waste_action|chaîne de caractères|||
-|teledeclaration.unserved_leftovers|nombre réel|||
-|teledeclaration.value_autres_local|nombre réel|||
-|teledeclaration.value_boissons_bio|nombre réel|||
-|teledeclaration.value_boissons_hve|nombre réel|||
-|teledeclaration.value_boissons_rup|nombre réel|||
-|teledeclaration.value_autres_france|nombre réel|||
-|teledeclaration.has_waste_diagnostic|chaîne de caractères|||
-|teledeclaration.other_waste_comments|chaîne de caractères|||
-|teledeclaration.value_autres_fermier|nombre réel|||
-|teledeclaration.value_boissons_local|nombre réel|||
-|teledeclaration.vegetarian_menu_type|chaîne de caractères|||
-|teledeclaration.value_boissons_france|nombre réel|||
-|teledeclaration.value_boulangerie_bio|nombre réel|||
-|teledeclaration.value_boulangerie_hve|nombre réel|||
-|teledeclaration.value_boulangerie_rup|nombre réel|||
-|teledeclaration.value_charcuterie_bio|nombre réel|||
-|teledeclaration.value_charcuterie_hve|nombre réel|||
-|teledeclaration.value_charcuterie_rup|nombre réel|||
-|teledeclaration.value_meat_poultry_ht|nombre réel|||
-|teledeclaration.vegetarian_menu_bases|liste|||
-|teledeclaration.communication_supports|liste|||
-|teledeclaration.has_donation_agreement|chaîne de caractères|||
-|teledeclaration.value_boissons_fermier|nombre réel|||
-|teledeclaration.communication_frequency|chaîne de caractères|||
-|teledeclaration.value_autres_non_egalim|nombre réel|||
-|teledeclaration.value_boulangerie_local|nombre réel|||
-|teledeclaration.value_charcuterie_local|nombre réel|||
-|teledeclaration.has_diversification_plan|chaîne de caractères|||
-|teledeclaration.value_autres_label_rouge|nombre réel|||
-|teledeclaration.value_autres_performance|nombre réel|||
-|teledeclaration.value_boulangerie_france|nombre réel|||
-|teledeclaration.value_charcuterie_france|nombre réel|||
-|teledeclaration.communicates_on_food_plan|chaîne de caractères|||
-|teledeclaration.communication_support_url|chaîne de caractères|||
-|teledeclaration.value_autres_externalites|nombre réel|||
-|teledeclaration.value_boissons_non_egalim|nombre réel|||
-|teledeclaration.value_boulangerie_fermier|nombre réel|||
-|teledeclaration.value_charcuterie_fermier|nombre réel|||
-|teledeclaration.value_autres_peche_durable|nombre réel|||
-|teledeclaration.value_boissons_label_rouge|nombre réel|||
-|teledeclaration.value_boissons_performance|nombre réel|||
-|teledeclaration.cooking_plastic_substituted|chaîne de caractères|||
-|teledeclaration.other_communication_support|chaîne de caractères|||
-|teledeclaration.plastic_bottles_substituted|chaîne de caractères|||
-|teledeclaration.serving_plastic_substituted|chaîne de caractères|||
-|teledeclaration.value_autres_aocaop_igp_stg|nombre réel|||
-|teledeclaration.value_boissons_externalites|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_bio|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_hve|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_rup|nombre réel|||
-|teledeclaration.value_produits_laitiers_bio|nombre réel|||
-|teledeclaration.value_produits_laitiers_hve|nombre réel|||
-|teledeclaration.value_produits_laitiers_rup|nombre réel|||
-|teledeclaration.value_viandes_volailles_bio|nombre réel|||
-|teledeclaration.value_viandes_volailles_hve|nombre réel|||
-|teledeclaration.value_viandes_volailles_rup|nombre réel|||
-|teledeclaration.communicates_on_food_quality|chaîne de caractères|||
-|teledeclaration.diversification_plan_actions|liste|||
-|teledeclaration.value_boissons_peche_durable|nombre réel|||
-|teledeclaration.value_boulangerie_non_egalim|nombre réel|||
-|teledeclaration.value_charcuterie_non_egalim|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_bio|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_hve|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_rup|nombre réel|||
-|teledeclaration.vegetarian_weekly_recurrence|chaîne de caractères|||
-|teledeclaration.plastic_tableware_substituted|chaîne de caractères|||
-|teledeclaration.value_boissons_aocaop_igp_stg|nombre réel|||
-|teledeclaration.value_boulangerie_label_rouge|nombre réel|||
-|teledeclaration.value_boulangerie_performance|nombre réel|||
-|teledeclaration.value_charcuterie_label_rouge|nombre réel|||
-|teledeclaration.value_charcuterie_performance|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_local|nombre réel|||
-|teledeclaration.value_produits_laitiers_local|nombre réel|||
-|teledeclaration.value_viandes_volailles_local|nombre réel|||
-|teledeclaration.value_boulangerie_externalites|nombre réel|||
-|teledeclaration.value_charcuterie_externalites|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_france|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_local|nombre réel|||
-|teledeclaration.value_produits_laitiers_france|nombre réel|||
-|teledeclaration.value_viandes_volailles_france|nombre réel|||
-|teledeclaration.central_kitchen_diagnostic_mode|chaîne de caractères|||
-|teledeclaration.value_autres_commerce_equitable|nombre réel|||
-|teledeclaration.value_autres_short_distribution|nombre réel|||
-|teledeclaration.value_boulangerie_peche_durable|nombre réel|||
-|teledeclaration.value_charcuterie_peche_durable|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_fermier|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_france|nombre réel|||
-|teledeclaration.value_produits_laitiers_fermier|nombre réel|||
-|teledeclaration.value_viandes_volailles_fermier|nombre réel|||
-|teledeclaration.value_boulangerie_aocaop_igp_stg|nombre réel|||
-|teledeclaration.value_charcuterie_aocaop_igp_stg|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_fermier|nombre réel|||
-|teledeclaration.value_boissons_commerce_equitable|nombre réel|||
-|teledeclaration.value_boissons_short_distribution|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_non_egalim|nombre réel|||
-|teledeclaration.value_produits_laitiers_non_egalim|nombre réel|||
-|teledeclaration.value_viandes_volailles_non_egalim|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_label_rouge|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_performance|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_non_egalim|nombre réel|||
-|teledeclaration.value_produits_laitiers_label_rouge|nombre réel|||
-|teledeclaration.value_produits_laitiers_performance|nombre réel|||
-|teledeclaration.value_viandes_volailles_label_rouge|nombre réel|||
-|teledeclaration.value_viandes_volailles_performance|nombre réel|||
-|teledeclaration.value_boulangerie_commerce_equitable|nombre réel|||
-|teledeclaration.value_boulangerie_short_distribution|nombre réel|||
-|teledeclaration.value_charcuterie_commerce_equitable|nombre réel|||
-|teledeclaration.value_charcuterie_short_distribution|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_externalites|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_label_rouge|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_performance|nombre réel|||
-|teledeclaration.value_produits_laitiers_externalites|nombre réel|||
-|teledeclaration.value_viandes_volailles_externalites|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_peche_durable|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_externalites|nombre réel|||
-|teledeclaration.value_produits_laitiers_peche_durable|nombre réel|||
-|teledeclaration.value_viandes_volailles_peche_durable|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_aocaop_igp_stg|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_peche_durable|nombre réel|||
-|teledeclaration.value_produits_laitiers_aocaop_igp_stg|nombre réel|||
-|teledeclaration.value_viandes_volailles_aocaop_igp_stg|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_aocaop_igp_stg|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_commerce_equitable|nombre réel|||
-|teledeclaration.value_fruits_et_legumes_short_distribution|nombre réel|||
-|teledeclaration.value_produits_laitiers_commerce_equitable|nombre réel|||
-|teledeclaration.value_produits_laitiers_short_distribution|nombre réel|||
-|teledeclaration.value_viandes_volailles_commerce_equitable|nombre réel|||
-|teledeclaration.value_viandes_volailles_short_distribution|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_commerce_equitable|nombre réel|||
-|teledeclaration.value_produits_de_la_mer_short_distribution|nombre réel|||
-|satellites|chaîne de caractères|||
-|satellite_canteens_count|nombre réel|||
-|teledeclaration.value_bio_ht|nombre réel|||
-|teledeclaration.value_fish_egalim_ht|nombre réel|||
-|teledeclaration.value_sustainable_ht|nombre réel|||
-|teledeclaration.value_egalim_others_ht|nombre réel|||
-|teledeclaration.value_meat_poultry_egalim_ht|nombre réel|||
-|teledeclaration.value_meat_poultry_france_ht|nombre réel|||
-|teledeclaration.value_externality_performance_ht|nombre réel|||
+|id (Identifiant Télédéclaration)|nombre entier|Identifiant unique de la télédéclaration|15572||
+|applicant_id (Identifiant de)|nombre réel|Identifiant unique de la personne ayant télédéclaré. Cette personne est rattachée à la cantine référencée par le champ 'canteen_id'|2717||
+|teledeclaration_mode (Mode de télédéclaration)|chaîne de caractères|Mode de télédéclaration. Il existe 4 types différents : CENTRAL_APPRO (cuisine centrale déclarant les données d'appro pour ses cuisines satellites), CENTRAL_ALL (cuisine centrale déclarant toutes les données EGAlim pour ses cuisines satellites), SITE (cantine déclarant ses propres données), SATELLITE_WITHOUT_APPRO (cantine satellite dont les données d'appro sont déclarées par la cuisine centrale). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.|SITE||
+|creation_date (Date de création)|chaîne de caractères|Date de création de la télédéclaration|2019-04-01T00:00:00.000Z||
+|year (Année)|nombre entier|Année de la télédéclaration|2022||
+|version (Version)|chaîne de caractères|Version de la télédéclaration|9||
+|canteen_id (Identifiant Cantine)|nombre entier|Identifiant unique de la cantine ayant télédéclaré|15572||
+|canteen_siret (Identifiant de)|chaîne de caractères|Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine ayant télédéclaré|78542453200014||
+|canteen_name (Nom de la cantine)|chaîne de caractères|Nom de la cantine ayant télédéclaré|ASS GEST STE FOY INSTIT ST DOMINIQUE||
+|cantine_central_kitchen_siret (Identifiant de la cuisine centrale)|chaîne de caractères|Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cuisine centrale a la quelle la cantine est rattachée|||
+|canteen_department (Code Département)|chaîne de caractères|Code Insee du département dans lequel se trouve la cantine|50||
+|canteen_region (Code Département)|chaîne de caractères|Code Insee de la région dans lequel se trouve la cantine|28||
+|cantine_satellite_canteens_count (Nombre de cantines satellites)|nombre réel|Nombre de cantines satellites pour une cantine qui produit les repas sur place|0||
+|cantine_economic_model (Modèle Economique de la cantine)|chaîne de caractères|Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).|public||
+|cantine_management_type (Type de Management de la cantine)|chaîne de caractères|Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée. Si la valeur est 'concédée', la délégation peut être totale ou partielle|conceded||
+|cantine_production_type (Type de Production de la cantine)|chaîne de caractères|Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.|central||
+|canteen_sectors (Secteurs)|liste|Liste définissant les secteurs d'activités concernés par le télédéclaration. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).|[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]||
+|canteen_line_ministry (Ministère de tutelle)|chaîne de caractères|Ministère de tutelle de la cantine, s'il y en a un|Ministère de l'Education Nationale||
+|teledeclaration_ratio_bio (Télédéclaration Ratio Bio)|nombre réel|Part du bio dans les achats alimentaires de l'année|0.1||
+|teledeclaration_ratio_egalim_hors_bio (Télédéclaration Ratio Bio)|nombre réel|Part du bio dans les achats alimentaires de l'année|0.1||

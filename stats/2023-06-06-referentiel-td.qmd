@@ -32,12 +32,7 @@ from table_schema_to_markdown import convert_source
 Afin de récupérer les données, il vous faut un TOKEN metabase :  
 `curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://ma-cantine-metabase.cleverapps.io/api/session`
 
-```{python Import des données des campagnes}
-campagnes = {
-  "2021": "800"
-  "2022": "802"
-}
-```
+
 
 ```{python Import des données canteens}
 url = "https://ma-cantine-metabase.cleverapps.io/api/card/800/query/json"
@@ -73,5 +68,6 @@ print("Nombre de télédéclarations uniques: ", len(td))
 # Generate a Markdown documentation from a JSON file
 table_schema = "open_data/schema_teledeclaration.json"
 with open("open_data/schema_teledeclaration.md", "w") as out:
+    out.write("> :warning: FICHIER GENERE AUTOMATIQUEMENT. NE PAS MODIFIER. POUR TOUTE MODIFICATION, EDITEZ LE FICHIER schema_teledeclaration.json /////\n\n")
     convert_source(table_schema, out)
 ```

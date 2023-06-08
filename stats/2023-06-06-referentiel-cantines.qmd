@@ -60,6 +60,13 @@ print(f"Nous avons enlevé {nbre_canteens - len(canteens)} doublons")
 print("Nombre de cantines uniques: ", len(canteens))
 ```
 
+# Suppression des cantines fermées
+```{python Suppression des cantines fermées}
+canteens = canteens[canteens["deletion_date"].isna()]
+print("Nombre de cantines uniques: ", len(canteens))
+
+```
+
 
 ```{python Construction du schéma des données}
 
