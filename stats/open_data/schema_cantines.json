@@ -102,21 +102,21 @@
       "name": "daily_meal_count",
       "type": "number",
       "title": "Nombre de repas par jour",
-      "description": "Nombre de repas servis par jour dans la cantine",
+      "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
       "example": "100"
     },
     {
       "name": "yearly_meal_count",
       "type": "number",
       "title": "Nombre de repas par an",
-      "description": "Nombre de repas servis par an dans la cantine",
+      "description": "Nombre de repas servis, en moyenne, par an dans la cantine",
       "example": "20000"
     },
     {
       "name": "line_ministry",
       "type": "string",
       "title": "Ministère de tutelle",
-      "description": "Cantine sous tutelle d'un ministère",
+      "description": "Ministère de tutelle de la cantine, s'il y en a un",
       "example": "Ministère de l'Education Nationale"
     },
     {
@@ -134,10 +134,6 @@
       "example": "published"
     },
     {
-      "name": "deletion_date",
-      "type": "string # TODO : verifier que les cantines sont bien supprimées"
-    },
-    {
       "name": "logo",
       "type": "string",
       "title": "Logo",
@@ -146,13 +142,13 @@
     },
     {
       "name": "has_been_claimed",
-      "type": "boolean TODO: a mieux comprednre"
+      "type": "boolean"
     },
     {
       "name": "sectors",
       "type": "array",
       "title": "Secteurs",
-      "description": "Secteurs d'activité de la cantine. Il existe 4 secteurs différents : TODO",
+      "description": "Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
       "example": "[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]"
     }
   ]
