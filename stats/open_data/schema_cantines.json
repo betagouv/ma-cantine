@@ -5,7 +5,7 @@
       "type": "integer",
       "title": "Identifiant",
       "description": "Identifiant Unique de la Cantine",
-      "example": 71331
+      "example": "71331"
     },
     {
       "name": "name",
@@ -67,7 +67,7 @@
       "name": "management_type",
       "type": "string",
       "title": "Type de Management",
-      "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée",
+      "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée. Si la valeur est 'concédée', la délégation peut être totale ou partielle",
       "example": "conceded"
     },
     {
@@ -81,7 +81,7 @@
       "name": "satellite_canteens_count",
       "type": "number",
       "title": "Nombre de cantines satellites",
-      "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée",
+      "description": "Nombre de cantines satellites pour une cantine qui produit les repas sur place",
       "example": "0"
     },
     {
@@ -92,76 +92,68 @@
       "example": ""
     },
     {
-      "name": "vegetarian_expe_participant",
-      "type": "string"
-    },
-    {
-      "name": "creation_mtm_medium",
-      "type": "string"
-    },
-    {
-      "name": "email_no_diagnostic_first_reminder",
-      "type": "string"
-    },
-    {
       "name": "creation_date",
-      "type": "string"
-    },
-    {
-      "name": "creation_mtm_source",
-      "type": "string"
+      "type": "string",
+      "title": "Date de création",
+      "description": "Date de création de la cantine au format ISO 8601",
+      "example": "2018-01-01"
     },
     {
       "name": "daily_meal_count",
-      "type": "number"
-    },
-    {
-      "name": "deletion_date",
-      "type": "string"
-    },
-    {
-      "name": "line_ministry",
-      "type": "string"
-    },
-    {
-      "name": "diversification_comments",
-      "type": "string"
+      "type": "number",
+      "title": "Nombre de repas par jour",
+      "description": "Nombre de repas servis par jour dans la cantine",
+      "example": "100"
     },
     {
       "name": "yearly_meal_count",
-      "type": "number"
+      "type": "number",
+      "title": "Nombre de repas par an",
+      "description": "Nombre de repas servis par an dans la cantine",
+      "example": "20000"
     },
     {
-      "name": "creation_mtm_campaign",
-      "type": "string"
+      "name": "line_ministry",
+      "type": "string",
+      "title": "Ministère de tutelle",
+      "description": "Cantine sous tutelle d'un ministère",
+      "example": "Ministère de l'Education Nationale"
     },
     {
       "name": "modification_date",
-      "type": "string"
-    },
-    {
-      "name": "logo",
-      "type": "string"
-    },
-    {
-      "name": "publication_comments",
-      "type": "string"
-    },
-    {
-      "name": "plastics_comments",
-      "type": "string"
-    },
-    {
-      "name": "has_been_claimed",
-      "type": "boolean"
-    },
-    {
-      "name": "import_source",
-      "type": "string"
+      "type": "string",
+      "title": "Date de modification",
+      "description": "Date de dernière modification de la cantine au format ISO 8601",
+      "example": "2018-01-01"
     },
     {
       "name": "publication_status",
-      "type": "string"
+      "type": "string",
+      "title": "Statut de publication",
+      "description": "Statut de publication de la cantine. Il existe 3 statuts différents : published (cantine publiée), draft (brouillon), deleted (cantine supprimée)",
+      "example": "published"
+    },
+    {
+      "name": "deletion_date",
+      "type": "string # TODO : verifier que les cantines sont bien supprimées"
+    },
+    {
+      "name": "logo",
+      "type": "string",
+      "title": "Logo",
+      "description": "Logo de la cantine",
+      "example": "https://www.mangerlocal.fr/static/img/logo.png"
+    },
+    {
+      "name": "has_been_claimed",
+      "type": "boolean TODO: a mieux comprednre"
+    },
+    {
+      "name": "sectors",
+      "type": "array",
+      "title": "Secteurs",
+      "description": "Secteurs d'activité de la cantine. Il existe 4 secteurs différents : TODO",
+      "example": "[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]"
     }
   ]
 }

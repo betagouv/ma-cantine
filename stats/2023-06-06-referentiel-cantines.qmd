@@ -31,12 +31,13 @@ from table_schema_to_markdown import convert_source
 
 Afin de récupérer les données, il vous faut un TOKEN metabase :  
 `curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://ma-cantine-metabase.cleverapps.io/api/session`
+Ce TOKEN a une durée limité dans le temps, il faut donc le renouveler régulièrement.
 
 ```{python Import des données canteens}
 url = "https://ma-cantine-metabase.cleverapps.io/api/card/799/query/json"
 
 load_dotenv()
-
+token = os.getenv("METABASE_TOKEN")
 header = {
     "Content-Type": "application/json",
     "X-Metabase-Session": os.getenv("METABASE_TOKEN"),
@@ -63,10 +64,8 @@ print("Nombre de cantines uniques: ", len(canteens))
 ```{python Construction du schéma des données}
 
 # Generate a Markdown documentation from a JSON file
-table_schema = "schema_cantines.json"
-with open("schema_cantines.md", "w") as out:
+table_schema = "open_data/schema_cantines.json"
+with open("open_data/schema_cantines.md", "w") as out:
+    out.write("> :warning: FICHIER GENERE AUTOMATIQUEMENT. NE PAS MODIFIER. POUR TOUTE MODIFICATION, EDITEZ LE FICHIER schema_cantines.json /////\n\n")
     convert_source(table_schema, out)
-```
-
-```{python Construction du schéma des données}
 ```

@@ -1,0 +1,798 @@
+{
+  "fields": [
+    {
+      "name": "id",
+      "type": "integer",
+      "title": "Identifiant Télédéclaration",
+      "description": "Identifiant unique de la télédéclaration",
+      "example": "15572"
+    },
+    {
+      "name": "canteen_id",
+      "type": "integer",
+      "title": "Identifiant Cantine",
+      "description": "Identifiant unique de la cantine ayant télédéclaré",
+      "example": "15572"
+    },
+    {
+      "name": "applicant_id",
+      "type": "number",
+      "title": "Identifiant de",
+      "description": "Identifiant unique de la personne ayant télédéclaré. Cette personne est rattachée à la cantine référencée par le champ 'canteen_id'",
+      "example": "2717"
+    },
+    {
+      "name": "canteen_siret",
+      "type": "string",
+      "title": "Identifiant de",
+      "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine ayant télédéclaré",
+      "example": "78542453200014"
+    },
+    {
+      "name": "teledeclaration_mode",
+      "type": "string",
+      "title": "Mode de télédéclaration",
+      "description": "Mode de télédéclaration. Il existe 4 types différents : CENTRAL_APPRO (cuisine centrale déclarant les données d'appro pour ses cuisines satellites), CENTRAL_ALL (cuisine centrale déclarant toutes les données EGAlim pour ses cuisines satellites), SITE (cantine déclarant ses propres données), SATELLITE_WITHOUT_APPRO (cantine satellite dont les données d'appro sont déclarées par la cuisine centrale). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
+      "example": "SITE"
+    },
+    {
+      "name": "creation_date",
+      "type": "string",
+      "title": "Date de création",
+      "description": "Date de création de la télédéclaration",
+      "example": "2019-04-01T00:00:00.000Z"
+    },
+    {
+      "name": "year",
+      "type": "integer",
+      "title": "Année",
+      "description": "Année de la télédéclaration",
+      "example": "2022"
+    },
+    {
+      "name": "central_kitchen_siret",
+      "type": "string",
+      "title": "Identifiant de la cuisine centrale",
+      "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cuisine centrale a la quelle la cantine est rattachée",
+      "example": "78542453200014"
+    },
+    {
+      "name": "version",
+      "type": "string",
+      "title": "Version",
+      "description": "Version de la télédéclaration",
+      "example": "9"
+    },
+    {
+      "name": "sectors",
+      "type": "array",
+      "title": "Secteurs",
+      "description": "Liste définissant les secteurs d'activités concernés par le télédéclaration. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
+      "example": "[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]"
+    },
+    {
+      "name": "status",
+      "type": "string"
+    },
+    {
+      "name": "year",
+      "type": "integer"
+    },
+    {
+      "name": "diagnostic_id",
+      "type": "integer"
+    },
+    {
+      "name": "modification_date",
+      "type": "string"
+    },
+    {
+      "name": "year",
+      "type": "integer"
+    },
+    {
+      "name": "version",
+      "type": "string"
+    },
+    {
+      "name": "central_kitchen_siret",
+      "type": "string"
+    },
+    {
+      "name": "canteen.id",
+      "type": "integer"
+    },
+    {
+      "name": "canteen.name",
+      "type": "string"
+    },
+    {
+      "name": "canteen.siret",
+      "type": "string"
+    },
+    {
+      "name": "canteen.sectors",
+      "type": "array"
+    },
+    {
+      "name": "canteen.line_ministry",
+      "type": "string"
+    },
+    {
+      "name": "canteen.economic_model",
+      "type": "string"
+    },
+    {
+      "name": "canteen.city_insee_code",
+      "type": "string"
+    },
+    {
+      "name": "canteen.management_type",
+      "type": "string"
+    },
+    {
+      "name": "canteen.production_type",
+      "type": "string"
+    },
+    {
+      "name": "canteen.daily_meal_count",
+      "type": "number"
+    },
+    {
+      "name": "canteen.yearly_meal_count",
+      "type": "number"
+    },
+    {
+      "name": "canteen.central_producer_siret",
+      "type": "string"
+    },
+    {
+      "name": "canteen.satellite_canteens_count",
+      "type": "number"
+    },
+    {
+      "name": "applicant.name",
+      "type": "string"
+    },
+    {
+      "name": "applicant.email",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.id",
+      "type": "integer"
+    },
+    {
+      "name": "teledeclaration.year",
+      "type": "integer"
+    },
+    {
+      "name": "teledeclaration.creation_date",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.value_fish_ht",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.waste_actions",
+      "type": "array"
+    },
+    {
+      "name": "teledeclaration.has_waste_plan",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.side_leftovers",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_total_ht",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.bread_leftovers",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.diagnostic_type",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.served_leftovers",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_autres_bio",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_autres_hve",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_autres_rup",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.donation_quantity",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.modification_date",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.donation_food_type",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.donation_frequency",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.has_waste_measures",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.other_waste_action",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.unserved_leftovers",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_autres_local",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boissons_bio",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boissons_hve",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boissons_rup",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_autres_france",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.has_waste_diagnostic",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.other_waste_comments",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.value_autres_fermier",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boissons_local",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.vegetarian_menu_type",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.value_boissons_france",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_bio",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_hve",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_rup",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_bio",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_hve",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_rup",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_meat_poultry_ht",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.vegetarian_menu_bases",
+      "type": "array"
+    },
+    {
+      "name": "teledeclaration.communication_supports",
+      "type": "array"
+    },
+    {
+      "name": "teledeclaration.has_donation_agreement",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.value_boissons_fermier",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.communication_frequency",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.value_autres_non_egalim",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_local",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_local",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.has_diversification_plan",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.value_autres_label_rouge",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_autres_performance",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_france",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_france",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.communicates_on_food_plan",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.communication_support_url",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.value_autres_externalites",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boissons_non_egalim",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_fermier",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_fermier",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_autres_peche_durable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boissons_label_rouge",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boissons_performance",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.cooking_plastic_substituted",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.other_communication_support",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.plastic_bottles_substituted",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.serving_plastic_substituted",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.value_autres_aocaop_igp_stg",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boissons_externalites",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_bio",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_hve",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_rup",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_bio",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_hve",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_rup",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_bio",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_hve",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_rup",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.communicates_on_food_quality",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.diversification_plan_actions",
+      "type": "array"
+    },
+    {
+      "name": "teledeclaration.value_boissons_peche_durable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_non_egalim",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_non_egalim",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_bio",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_hve",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_rup",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.vegetarian_weekly_recurrence",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.plastic_tableware_substituted",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.value_boissons_aocaop_igp_stg",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_label_rouge",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_performance",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_label_rouge",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_performance",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_local",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_local",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_local",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_externalites",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_externalites",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_france",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_local",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_france",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_france",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.central_kitchen_diagnostic_mode",
+      "type": "string"
+    },
+    {
+      "name": "teledeclaration.value_autres_commerce_equitable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_autres_short_distribution",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_peche_durable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_peche_durable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_fermier",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_france",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_fermier",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_fermier",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_aocaop_igp_stg",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_aocaop_igp_stg",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_fermier",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boissons_commerce_equitable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boissons_short_distribution",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_non_egalim",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_non_egalim",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_non_egalim",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_label_rouge",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_performance",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_non_egalim",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_label_rouge",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_performance",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_label_rouge",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_performance",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_commerce_equitable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_boulangerie_short_distribution",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_commerce_equitable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_charcuterie_short_distribution",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_externalites",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_label_rouge",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_performance",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_externalites",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_externalites",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_peche_durable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_externalites",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_peche_durable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_peche_durable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_aocaop_igp_stg",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_peche_durable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_aocaop_igp_stg",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_aocaop_igp_stg",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_aocaop_igp_stg",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_commerce_equitable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fruits_et_legumes_short_distribution",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_commerce_equitable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_laitiers_short_distribution",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_commerce_equitable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_viandes_volailles_short_distribution",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_commerce_equitable",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_produits_de_la_mer_short_distribution",
+      "type": "number"
+    },
+    {
+      "name": "satellites",
+      "type": "string"
+    },
+    {
+      "name": "satellite_canteens_count",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_bio_ht",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_fish_egalim_ht",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_sustainable_ht",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_egalim_others_ht",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_meat_poultry_egalim_ht",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_meat_poultry_france_ht",
+      "type": "number"
+    },
+    {
+      "name": "teledeclaration.value_externality_performance_ht",
+      "type": "number"
+    }
+  ]
+}
