@@ -38,12 +38,19 @@ from dotenv import load_dotenv
 from ydata_profiling import ProfileReport
 
 ```
+```{python Import des données des campagnes}
+campagnes = {
+  "2021": "795",
+  "2022": "802"
+}
+```
 
 Afin de récupérer les données, il vous faut un TOKEN metabase :  
 `curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://ma-cantine-metabase.cleverapps.io/api/session`
 
 ```{python Import des données TD}
-url = "https://ma-cantine-metabase.cleverapps.io/api/card/795/query/json"
+year = '2022'
+url = f"https://ma-cantine-metabase.cleverapps.io/api/card/{campagnes[year]}/query/json"
 
 load_dotenv()
 
@@ -61,6 +68,11 @@ td["declared_data"] = td["declared_data"].apply(json.loads)
 td_json = pd.json_normalize(td["declared_data"])
 td = pd.concat([td.drop("declared_data", axis=1), td_json], axis=1)
 
+if year == '2021':
+    col_to_rename = {}
+    for col in ['production_type', 'management_type', 'yearly_meal_count', 'daily_meal_count']:
+        col_to_rename[col] = f"canteen.{col}"
+    td = td.rename(columns=col_to_rename)
 ```
 
 
@@ -73,25 +85,21 @@ print("Nombre de télédcélarations uniques: ", len(td))
 ```
 
 
-
 # Vérifications de la qualité des données
+```{python Vérification des données}
+td.groupby("canteen_id").size().sort_values(ascending=False).head(10)
+td = td[td.id != 10871] # Doublon inexpliqué entre les id 10871 et 10870
+```
+
 ```{python Vérification des données}
 assert td["canteen_id"].isna().sum() == 0, "Il y a des cantines sans identifiant"
 assert len(td["canteen_id"]) == len(td["canteen_id"].unique()), "Il y a des doublons dans les cantines"
+for col in td.columns:
+    print(col)
 ```
 
-# Profiling
-```{python Profiling}
-td.describe(include="all")
-# for col in td.columns:
-#     # if type(td[col]) == "object":
-#     td[col] = td[col].astype("string")
-# profile = ProfileReport(td, title="Profiling Report")
-# profile.to_file("your_report.html")
-# profile.to_notebook_iframe()
-```
-
-```{python Verificaiton des valeurs en recréant l'erreur}
+# Comparaison avec les données du rapport
+```{python Verification des valeurs en recréant l'erreur}
 td_to_keep = pd.read_csv('stats/canteen_id_rapport.csv')
 td = td[td['canteen_id'].isin(td_to_keep['canteen_id'])]
 ```
@@ -110,40 +118,27 @@ Les informations suivanted proviennent donc des informations renseignées pour l
 indicateurs["Nombre de sites de restauration concernés par la télédéclaration"] = (
     len(td) + td["satellite_canteens_count"].sum()
 )
-```
-
-
-```{python Nombre de cantines sur place (sites et satellites)}
-cuisines_sur_place = td[td["production_type"].isin(["site", "site_cooked_elsewhere"])]
+cuisines_sur_place = td[td["canteen.production_type"].isin(["site", "site_cooked_elsewhere"])]
 indicateurs["Nombre de cantines sur place (sites et satellites)"] = len(cuisines_sur_place)
-```
 
-
-```{python Nombre de cantines centrales}
-cuisines_centrales = td[td["production_type"].isin(["central_serving", "central"])]
+cuisines_centrales = td[td["canteen.production_type"].isin(["central_serving", "central"])]
 indicateurs["Nombre de cantines centrales"] = len(cuisines_centrales)
-```
 
-```{python Nombre de repas}
 indicateurs["Nombre de repas moyens par jour pour les cantines sur place"] = int(
-    cuisines_sur_place["daily_meal_count"].mean()
+    cuisines_sur_place["canteen.daily_meal_count"].mean()
 )
 indicateurs["Nombre de repas moyens par jour pour les cantines centrales"] = int(
-    cuisines_centrales["daily_meal_count"].mean()
+    cuisines_centrales["canteen.daily_meal_count"].mean()
 )
-indicateurs["Nombre de repas totaux pour l'année"] = int(td["yearly_meal_count"].sum())
-```
+indicateurs["Nombre de repas totaux pour l'année"] = int(td["canteen.yearly_meal_count"].sum())
 
-```{python Répartition du nombre de cantines en gestion directe / en gestion concédée}
-indicateurs[
-    "Répartition du nombre de cantines en gestion directe"
-] = f"{100 * len(td[td.management_type == 'direct']) / len(td):.2f} %"
+indicateurs["Répartition du nombre de cantines en gestion directe"] = f"{100 * len(td[td['canteen.management_type'] == 'direct']) / len(td):.2f} %"
 indicateurs[
     "Répartition du nombre de cantines en gestion concédée"
-] = f"{100 * len(td[td.management_type == 'conceded']) / len(td):.2f} %"
+] = f"{100 * len(td[td['canteen.management_type'] == 'conceded']) / len(td):.2f} %"
 indicateurs[
     "Répartition du nombre de cantines en gestion non renseignée"
-] = f"{100 * len(td[~td.management_type.isin(['direct', 'conceded'])]) / len(td):.2f} %"
+] = f"{100 * len(td[~td['canteen.management_type'].isin(['direct', 'conceded'])]) / len(td):.2f} %"
 ```
 
 
@@ -151,24 +146,18 @@ Pour les montants, nous nous rebasons sur les données de TD.
 
 ```{python Montants d'achat alimentaires déclarés}
 indicateurs["Montants d'achat alimentaires déclarés"] = f"{int(td['teledeclaration.value_total_ht'].sum())} €"
-```
 
-
-```{python Taux global des achats en bio}
 indicateurs[
     "Taux global des achats en bio"
 ] = f"{100 * td['teledeclaration.value_bio_ht'].sum() / td['teledeclaration.value_total_ht'].sum():.2f} %"
-```
 
-
-```{python Taux global des achats EGALIM (bio inclus)}
 indicateurs[
     "Taux global des achats EGALIM (bio inclus)"
 ] = f"{100 * (td['teledeclaration.value_egalim_others_ht'].sum() + td['teledeclaration.value_externality_performance_ht'].sum() + td['teledeclaration.value_bio_ht'].sum()  + td['teledeclaration.value_sustainable_ht'].sum()) / td['teledeclaration.value_total_ht'].sum():.2f} %"
-for key, value in indicateurs.items():
-    print(key, ":", value)
-```
-```
+
+indicateurs['Nombre de TD ayant déclaré 0€ d\'achats en Bio'] = len(td[td['teledeclaration.value_bio_ht'] == 0])
+
+
 ```
 
 ```{python Vérification de la non existence de TD tests}
@@ -181,7 +170,7 @@ testing_elements = td[mask]
 
 ```{python Vérification du taux de présence de la donnée repas par an}
 print(
-    f"Le taux de présence de la donnée repas par an est de {100 * (1 - td['yearly_meal_count'].isna().sum() / len(td)):.2f} %"
+    f"Le taux de présence de la donnée repas par an est de {100 * (1 - td['canteen.yearly_meal_count'].isna().sum() / len(td)):.2f} %"
 )
 ```
 

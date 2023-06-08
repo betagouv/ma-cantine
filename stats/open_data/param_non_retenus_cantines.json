@@ -1,0 +1,38 @@
+[
+    {
+        "name": "vegetarian_expe_participant",
+        "type": "string"
+    },
+    {
+        "name": "creation_mtm_medium",
+        "type": "string"
+    },
+    {
+        "name": "email_no_diagnostic_first_reminder",
+        "type": "string"
+    },
+    {
+        "name": "creation_mtm_source",
+        "type": "string"
+    },
+    {
+        "name": "diversification_comments",
+        "type": "string"
+    },
+    {
+        "name": "creation_mtm_campaign",
+        "type": "string"
+    },
+    {
+        "name": "publication_comments",
+        "type": "string"
+    },
+    {
+        "name": "plastics_comments",
+        "type": "string"
+    },
+    {
+        "name": "import_source",
+        "type": "string"
+    }
+]
