@@ -19,13 +19,18 @@ class CustomJSONEncoder(DjangoJSONEncoder):
 
 
 class Teledeclaration(models.Model):
-    class Meta:
-        verbose_name = "télédéclaration"
-        verbose_name_plural = "télédéclarations"
-
     class TeledeclarationStatus(models.TextChoices):
         SUBMITTED = "SUBMITTED", "Télédéclaré"
         CANCELLED = "CANCELLED", "Annulé"
+
+    class Meta:
+        verbose_name = "télédéclaration"
+        verbose_name_plural = "télédéclarations"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["year", "canteen"], condition=models.Q(status="SUBMITTED"), name="unique_submitted_td"
+            )
+        ]
 
     class TeledeclarationMode(models.TextChoices):
         SATELLITE_WITHOUT_APPRO = (

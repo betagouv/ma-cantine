@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.db.utils import IntegrityError
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory, SectorFactory
@@ -673,3 +674,63 @@ class TestTeledeclarationApi(APITestCase):
         teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
         canteen_json = teledeclaration.declared_data.get("canteen")
         self.assertEqual(canteen_json["line_ministry"], "affaires_etrangeres")
+
+    def test_one_submitted_td_constraint(self):
+        """
+        Only one TD per canteen and per year can be submitted
+        """
+        # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
+        # bulk_create does not pass through the `save` method, so it allows us to test the
+        # actual constraint.
+        canteen = CanteenFactory.create()
+        diagnostic = DiagnosticFactory.create(canteen=canteen)
+        applicant = UserFactory.create()
+        teledeclaration_1 = Teledeclaration(
+            canteen=canteen,
+            year=2022,
+            diagnostic=diagnostic,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            declared_data={"foo": 1},
+        )
+        teledeclaration_2 = Teledeclaration(
+            canteen=canteen,
+            year=2022,
+            diagnostic=diagnostic,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            declared_data={"foo": 1},
+        )
+        with self.assertRaises(IntegrityError):
+            Teledeclaration.objects.bulk_create([teledeclaration_1, teledeclaration_2])
+
+    def test_several_cancelled_td_constraint(self):
+        """
+        Cancelled TDs should not influence the constraint
+        """
+        # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
+        # bulk_create does not pass through the `save` method, so it allows us to test the
+        # actual constraint.
+        canteen = CanteenFactory.create()
+        diagnostic = DiagnosticFactory.create(canteen=canteen)
+        applicant = UserFactory.create()
+        teledeclaration_1 = Teledeclaration(
+            canteen=canteen,
+            year=2022,
+            diagnostic=diagnostic,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
+            declared_data={"foo": 1},
+        )
+        teledeclaration_2 = Teledeclaration(
+            canteen=canteen,
+            year=2022,
+            diagnostic=diagnostic,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            declared_data={"foo": 1},
+        )
+        try:
+            Teledeclaration.objects.bulk_create([teledeclaration_1, teledeclaration_2])
+        except IntegrityError:
+            self.fail("Should be able to create a submitted TD if a cancelled one exists already")
