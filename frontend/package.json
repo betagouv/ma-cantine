@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "apexcharts": "^3.40.0",
-    "core-js": "^3.30.2",
+    "core-js": "^3.31.0",
     "html2pdf.js": "^0.10.1",
     "qrcode.vue": "^1.7.0",
     "vue": "^2.6.14",
