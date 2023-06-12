@@ -86,7 +86,7 @@
     },
     {
       "name": "cantine_satellite_canteens_count",
-      "type": "number",
+      "type": "integer",
       "title": "Nombre de cantines satellites",
       "description": "Nombre de cantines satellites pour une cantine qui produit les repas sur place",
       "example": "0"
@@ -128,17 +128,17 @@
     },
     {
       "name": "teledeclaration_ratio_bio",
-      "type": "number",
+      "type": "integer",
       "title": "Télédéclaration Ratio Bio",
       "description": "Part du bio dans les achats alimentaires de l'année",
       "example": "0.1"
     },
     {
       "name": "teledeclaration_ratio_egalim_hors_bio",
-      "type": "number",
+      "type": "integer",
       "title": "Télédéclaration Ratio Bio",
       "description": "Part du bio dans les achats alimentaires de l'année",
       "example": "0.1"
     }
- ]
+  ]
 }
