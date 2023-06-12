@@ -79,7 +79,7 @@
     },
     {
       "name": "satellite_canteens_count",
-      "type": "number",
+      "type": "integer",
       "title": "Nombre de cantines satellites",
       "description": "Nombre de cantines satellites pour une cantine qui produit les repas sur place",
       "example": "0"
@@ -100,14 +100,14 @@
     },
     {
       "name": "daily_meal_count",
-      "type": "number",
+      "type": "integer",
       "title": "Nombre de repas par jour",
       "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
       "example": "100"
     },
     {
       "name": "yearly_meal_count",
-      "type": "number",
+      "type": "integer",
       "title": "Nombre de repas par an",
       "description": "Nombre de repas servis, en moyenne, par an dans la cantine",
       "example": "20000"
