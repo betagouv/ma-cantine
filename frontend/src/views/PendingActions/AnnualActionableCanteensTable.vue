@@ -36,7 +36,7 @@
             </v-alert>
           </v-card>
         </v-col>
-        <v-col v-if="toTeledeclare.length || tdSuccesses.length || tdFailures.length" cols="12" sm="6" md="4">
+        <v-col v-if="toTeledeclare.length > 1 || tdSuccesses.length || tdFailures.length" cols="12" sm="6" md="4">
           <v-card outlined v-if="toTeledeclare.length > 1">
             <v-card-text>
               Vous pouvez dès à présent effectuer la télédéclaration pour
@@ -56,12 +56,6 @@
               </v-btn>
             </v-card-actions>
           </v-card>
-          <TeledeclarationPreview
-            v-if="toTeledeclare.length > 1"
-            :diagnostics="toTeledeclare"
-            v-model="showMultipleTeledeclarationPreview"
-            @teledeclare="submitTeledeclaration"
-          />
           <v-alert v-if="tdSuccesses.length" outlined type="success">
             <p v-if="tdSuccesses.length" class="mb-0">
               {{ tdSuccesses.length }} {{ tdSuccesses.length > 1 ? "cantines télédéclarées" : "cantine télédéclarée" }}
@@ -102,6 +96,14 @@
           </v-card>
         </v-col>
       </v-row>
+      <TeledeclarationPreview
+        v-if="toTeledeclare.length"
+        :diagnostics="toTeledeclare"
+        v-model="showMultipleTeledeclarationPreview"
+        @teledeclare="submitTeledeclaration"
+        :tdLoading="tdLoading"
+        :idx="tdIdx"
+      />
       <div class="mt-4">
         <v-data-table
           v-if="visibleCanteens"
@@ -148,6 +150,7 @@
         v-model="showTeledeclarationPreview"
         @teledeclare="submitTeledeclaration"
         :canteen="canteenForTD"
+        :tdLoading="tdLoading"
       />
       <v-dialog v-model="showPublicationForm" max-width="750" v-if="canteenForPublication">
         <v-card class="text-left">
@@ -259,11 +262,13 @@ export default {
       diagLoading: false,
       diagSuccesses: [],
       toTeledeclare: [],
+      tdIdx: 0,
       toTeledeclareCount: null,
       tdSuccesses: [],
       tdFailures: [],
       toPublish: [],
       pubLoading: false,
+      tdLoading: false,
     }
   },
   computed: {
@@ -421,6 +426,7 @@ export default {
       }
     },
     submitTeledeclaration(diagnostic, persist) {
+      this.tdLoading = true
       diagnostic = diagnostic || this.diagnosticForTD
       this.$store
         .dispatch("submitTeledeclaration", { id: diagnostic.id })
@@ -429,15 +435,24 @@ export default {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
+        })
+        .then(() => {
+          if (this.tdIdx + 1 >= this.toTeledeclare.length) {
+            this.fetchDiagnosticsToTeledeclare()
+          } else {
+            this.tdIdx++
+          }
+        })
+        .then(() => {
           this.updateCanteen(diagnostic.canteen?.id || this.canteenForTD?.id)
         })
-        .then(this.fetchDiagnosticsToTeledeclare)
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
         .finally(() => {
           this.showTeledeclarationPreview = persist
           this.canteenForTD = null
+          this.tdLoading = false
         })
     },
     updateCanteen(canteenId) {
@@ -504,6 +519,7 @@ export default {
         .then((response) => {
           this.toTeledeclare = response.results
           this.toTeledeclareCount = response.count
+          this.tdIdx = 0
         })
         .catch((e) => {
           this.toTeledeclare = []

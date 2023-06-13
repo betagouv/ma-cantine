@@ -2,7 +2,7 @@
   <v-dialog v-model="isOpen" max-width="900" :scrollable="false">
     <v-card ref="content">
       <!-- maybe make dialog fullscreen for xs (and s) ? -->
-      <v-row align="center" class="pt-4 mx-0" v-if="diagnostics && diagnostics.length > 1">
+      <v-row align="center" class="pt-4 mx-0" v-if="diagnostics && diagnostics.length">
         <v-col cols="6" sm="8" md="9" class="pb-1">
           <v-progress-linear :value="(idx / diagnostics.length) * 100" rounded height="6"></v-progress-linear>
         </v-col>
@@ -65,12 +65,12 @@ export default {
     diagnostic: Object,
     canteen: Object,
     diagnostics: Array,
+    tdLoading: Boolean,
+    idx: Number,
   },
   data() {
     return {
-      idx: 0,
       validators,
-      tdLoading: false,
       tdConfirmed: false,
       teledeclarationFormIsValid: true,
       maxSatellitesExpected: 200,
@@ -179,7 +179,6 @@ export default {
   methods: {
     teledeclare() {
       this.$emit("teledeclare", this.diagnosticForTD, this.keepDialog)
-      this.idx++
     },
     keepDialog() {
       return !this.diagnostics || this.idx + 1 < this.diagnostics.length
@@ -216,7 +215,6 @@ export default {
         const teledeclarationFormIsValid = this.$refs["teledeclarationForm"].validate()
         if (!teledeclarationFormIsValid) return
       }
-      this.tdLoading = true
       this.handlePreviewClose("teledeclare")
       this.teledeclare()
     },
@@ -246,6 +244,12 @@ export default {
       else {
         this.handlePreviewClose("go-back")
       }
+    },
+    idx() {
+      // we get here if there are multiple TDs to get through at once
+      this.tdConfirmed = false
+      this.teledeclarationFormIsValid = true
+      this.$refs["teledeclarationForm"].reset()
     },
   },
 }
