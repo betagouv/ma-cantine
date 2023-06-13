@@ -9,7 +9,7 @@
     },
     {
       "name": "applicant_id",
-      "type": "number",
+      "type": "integer",
       "title": "Identifiant de",
       "description": "Identifiant unique de la personne ayant télédéclaré. Cette personne est rattachée à la cantine référencée par le champ 'canteen_id'",
       "example": "2717"

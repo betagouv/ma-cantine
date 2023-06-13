@@ -1,5 +1,3 @@
-> :warning: FICHIER GENERE AUTOMATIQUEMENT. NE PAS MODIFIER. POUR TOUTE MODIFICATION, EDITEZ LE FICHIER schema_cantines.json /////
-
 
 ### Modèle de données
 
@@ -16,15 +14,14 @@
 |economic_model (Modèle Economique)|chaîne de caractères|Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).|public||
 |management_type (Type de Management)|chaîne de caractères|Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée. Si la valeur est 'concédée', la délégation peut être totale ou partielle|conceded||
 |production_type (Type de Production)|chaîne de caractères|Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.|central||
-|satellite_canteens_count (Nombre de cantines satellites)|nombre réel|Nombre de cantines satellites pour une cantine qui produit les repas sur place|0||
+|satellite_canteens_count (Nombre de cantines satellites)|nombre entier|Nombre de cantines satellites pour une cantine qui produit les repas sur place|0||
 |central_producer_siret (SIRET de la cantine centrale)|chaîne de caractères|Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine ayant produit les repas|||
 |creation_date (Date de création)|chaîne de caractères|Date de création de la cantine au format ISO 8601|2018-01-01||
-|daily_meal_count (Nombre de repas par jour)|nombre réel|Nombre de repas servis par jour dans la cantine|100||
-|yearly_meal_count (Nombre de repas par an)|nombre réel|Nombre de repas servis par an dans la cantine|20000||
-|line_ministry (Ministère de tutelle)|chaîne de caractères|Cantine sous tutelle d'un ministère|Ministère de l'Education Nationale||
+|daily_meal_count (Nombre de repas par jour)|nombre entier|Nombre de repas servis, en moyenne, par jour dans la cantine|100||
+|yearly_meal_count (Nombre de repas par an)|nombre entier|Nombre de repas servis, en moyenne, par an dans la cantine|20000||
+|line_ministry (Ministère de tutelle)|chaîne de caractères|Ministère de tutelle de la cantine, s'il y en a un|Ministère de l'Education Nationale||
 |modification_date (Date de modification)|chaîne de caractères|Date de dernière modification de la cantine au format ISO 8601|2018-01-01||
 |publication_status (Statut de publication)|chaîne de caractères|Statut de publication de la cantine. Il existe 3 statuts différents : published (cantine publiée), draft (brouillon), deleted (cantine supprimée)|published||
-|deletion_date|??string # TODO : verifier que les cantines sont bien supprimées??|||
 |logo (Logo)|chaîne de caractères|Logo de la cantine|https://www.mangerlocal.fr/static/img/logo.png||
-|has_been_claimed|??boolean TODO: a mieux comprednre??|||
-|sectors (Secteurs)|liste|Secteurs d'activité de la cantine. Il existe 4 secteurs différents : TODO|[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]||
+|sectors (Secteurs)|liste|Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).|[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]||
+|active_on_ma_cantine (Actif sur Ma Cantine)|booléen|Indique si la cantine est active sur l'apllication Ma Cantine ou si elle a été importée via une source de données externe|true||

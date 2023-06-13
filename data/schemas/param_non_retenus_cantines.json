@@ -34,5 +34,9 @@
     {
         "name": "import_source",
         "type": "string"
+    },
+    {
+        "name": "has_been_claimed",
+        "type": "boolean"
     }
 ]

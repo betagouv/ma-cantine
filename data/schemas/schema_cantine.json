@@ -141,15 +141,18 @@
       "example": "https://www.mangerlocal.fr/static/img/logo.png"
     },
     {
-      "name": "has_been_claimed",
-      "type": "boolean"
-    },
-    {
       "name": "sectors",
       "type": "array",
       "title": "Secteurs",
       "description": "Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
       "example": "[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]"
+    },
+    {
+      "name": "active_on_ma_cantine",
+      "type": "boolean",
+      "title": "Actif sur Ma Cantine",
+      "description": "Indique si la cantine est active sur l'apllication Ma Cantine ou si elle a été importée via une source de données externe",
+      "example": "true"
     }
   ]
 }
