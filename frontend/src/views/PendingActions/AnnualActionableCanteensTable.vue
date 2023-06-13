@@ -4,95 +4,104 @@
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-else>
-      <div>
-        <v-row v-if="diagLoading" class="green--text">
-          <v-col cols="1" justify-self="center">
-            <v-progress-circular indeterminate></v-progress-circular>
-          </v-col>
-          <v-col>
-            <p>Création de diagnostics en cours...</p>
-          </v-col>
-        </v-row>
-        <p v-else-if="showMassDiagnose">
-          Vous pouvez créer
-          <span v-if="toDiagnose.length > 1">{{ toDiagnose.length }} diagnostics</span>
-          <span v-else>1 diagnostic</span>
-          depuis les achats renseignés
-          <v-btn class="primary ml-2" @click="massDiagnose">
-            <span v-if="toDiagnose.length > 1">Créer {{ toDiagnose.length }} diagnostics</span>
-            <span v-else>Créer le diagnostic</span>
-          </v-btn>
-        </p>
-        <v-alert v-if="diagSuccesses.length" outlined type="success">
-          <p v-if="diagSuccesses.length" class="mb-0">
-            {{ diagSuccesses.length }} {{ diagSuccesses.length > 1 ? "diagnostics créés" : "diagnostic créé" }}
-          </p>
-        </v-alert>
-      </div>
-      <div>
-        <v-card color="primary lighten-5" outlined v-if="toTeledeclare.length > 1">
-          <v-card-text class="pb-1">
-            Vous pouvez dès à présent effectuer la télédéclaration pour
-            <span v-if="toTeledeclare.length > 1">{{ toTeledeclareCount }} cantines.</span>
-            <span v-else>une cantine.</span>
-          </v-card-text>
-          <v-card-actions class="pb-4">
-            <v-btn class="primary ml-2" @click="showMultipleTeledeclarationPreview = true">
-              <span v-if="toTeledeclare.length > 1">
-                Télédeclarer
-                <span v-if="toTeledeclareCount > toTeledeclare.length">
-                  les {{ toTeledeclare.length }} premières cantines
+      <v-row>
+        <v-col v-if="showMassDiagnose || diagLoading" cols="12" sm="6" md="4">
+          <v-card outlined>
+            <v-card-text v-if="diagLoading" class="green--text">
+              <v-col cols="1" justify-self="center">
+                <v-progress-circular indeterminate></v-progress-circular>
+              </v-col>
+              <v-col>
+                <p>Création de diagnostics en cours...</p>
+              </v-col>
+            </v-card-text>
+            <div v-else-if="showMassDiagnose">
+              <v-card-text>
+                Vous pouvez créer
+                <span v-if="toDiagnose.length > 1">{{ toDiagnose.length }} diagnostics</span>
+                <span v-else>1 diagnostic</span>
+                depuis les achats renseignés.
+              </v-card-text>
+              <v-card-actions class="pb-4">
+                <v-btn class="primary ml-2" @click="massDiagnose">
+                  <span v-if="toDiagnose.length > 1">Créer {{ toDiagnose.length }} diagnostics</span>
+                  <span v-else>Créer le diagnostic</span>
+                </v-btn>
+              </v-card-actions>
+            </div>
+            <v-alert v-if="diagSuccesses.length" outlined type="success">
+              <p v-if="diagSuccesses.length" class="mb-0">
+                {{ diagSuccesses.length }} {{ diagSuccesses.length > 1 ? "diagnostics créés" : "diagnostic créé" }}
+              </p>
+            </v-alert>
+          </v-card>
+        </v-col>
+        <v-col v-if="toTeledeclare.length || tdSuccesses.length || tdFailures.length" cols="12" sm="6" md="4">
+          <v-card outlined v-if="toTeledeclare.length > 1">
+            <v-card-text>
+              Vous pouvez dès à présent effectuer la télédéclaration pour
+              <span v-if="toTeledeclare.length > 1">{{ toTeledeclareCount }} cantines.</span>
+              <span v-else>une cantine.</span>
+            </v-card-text>
+            <v-card-actions class="pb-4">
+              <v-btn class="primary ml-2" @click="showMultipleTeledeclarationPreview = true">
+                <span v-if="toTeledeclare.length > 1">
+                  Télédeclarer
+                  <span v-if="toTeledeclareCount > toTeledeclare.length">
+                    les {{ toTeledeclare.length }} premières cantines
+                  </span>
+                  <span v-else>{{ toTeledeclare.length }} cantines</span>
                 </span>
-                <span v-else>{{ toTeledeclare.length }} cantines</span>
-              </span>
-              <span v-else>Télédeclarer la cantine</span>
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        <TeledeclarationPreview
-          v-if="toTeledeclare.length > 1"
-          :diagnostics="toTeledeclare"
-          v-model="showMultipleTeledeclarationPreview"
-          @teledeclare="submitTeledeclaration"
-        />
-        <v-alert v-if="tdSuccesses.length" outlined type="success">
-          <p v-if="tdSuccesses.length" class="mb-0">
-            {{ tdSuccesses.length }} {{ tdSuccesses.length > 1 ? "cantines télédéclarées" : "cantine télédéclarée" }}
-          </p>
-        </v-alert>
-        <v-alert v-if="tdFailures.length" outlined type="error">
-          <p>
-            {{ tdFailures.length }}
-            {{ tdFailures.length > 1 ? "cantines pas télédéclarées" : "cantine pas télédéclarée" }}
-          </p>
-          <p>Essayez de télédéclarer les cantines restantes une par une depuis le tableur en dessous.</p>
-          <p class="mb-0">Si le problème persiste, contactez-nous.</p>
-        </v-alert>
-      </div>
-      <div>
-        <v-row v-if="pubLoading" class="green--text">
-          <v-col cols="1" justify-self="center">
-            <v-progress-circular indeterminate></v-progress-circular>
-          </v-col>
-          <v-col>
-            <p>Publications en cours...</p>
-          </v-col>
-        </v-row>
-        <p class="mt-4" v-else-if="showMassPublication">
-          Vous pouvez publier
-          <span v-if="toPublish.length > 1">{{ toPublish.length }} cantines.</span>
-          <span v-else>1 cantine.</span>
-          <v-btn class="primary ml-2" @click="massPublication">
-            <span v-if="toPublish.length > 1">Publier {{ toPublish.length }} cantines</span>
-            <span v-else>Publier la cantine</span>
-          </v-btn>
-        </p>
-        <v-alert v-if="pubSuccesses.length" outlined type="success">
-          <p v-if="pubSuccesses.length" class="mb-0">
-            {{ pubSuccesses.length }} {{ pubSuccesses.length > 1 ? "cantines publiées" : "cantine publiée" }}
-          </p>
-        </v-alert>
-      </div>
+                <span v-else>Télédeclarer la cantine</span>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+          <TeledeclarationPreview
+            v-if="toTeledeclare.length > 1"
+            :diagnostics="toTeledeclare"
+            v-model="showMultipleTeledeclarationPreview"
+            @teledeclare="submitTeledeclaration"
+          />
+          <v-alert v-if="tdSuccesses.length" outlined type="success">
+            <p v-if="tdSuccesses.length" class="mb-0">
+              {{ tdSuccesses.length }} {{ tdSuccesses.length > 1 ? "cantines télédéclarées" : "cantine télédéclarée" }}
+            </p>
+          </v-alert>
+          <v-alert v-if="tdFailures.length" outlined type="error">
+            <p>
+              {{ tdFailures.length }}
+              {{ tdFailures.length > 1 ? "cantines pas télédéclarées" : "cantine pas télédéclarée" }}
+            </p>
+            <p>Essayez de télédéclarer les cantines restantes une par une depuis le tableur en dessous.</p>
+            <p class="mb-0">Si le problème persiste, contactez-nous.</p>
+          </v-alert>
+        </v-col>
+        <v-col v-if="pubLoading || showMassPublication" cols="12" sm="6" md="4">
+          <v-card outlined>
+            <v-row v-if="pubLoading" class="green--text">
+              <v-col cols="1" justify-self="center">
+                <v-progress-circular indeterminate></v-progress-circular>
+              </v-col>
+              <v-col>
+                <p>Publications en cours...</p>
+              </v-col>
+            </v-row>
+            <div v-else-if="showMassPublication">
+              <v-card-text>
+                Vous pouvez publier
+                <span v-if="toPublish.length > 1">{{ toPublish.length }} cantines.</span>
+                <span v-else>1 cantine.</span>
+              </v-card-text>
+              <v-card-actions class="pb-4">
+                <v-btn class="primary ml-2" @click="massPublication">
+                  <span v-if="toPublish.length > 1">Publier {{ toPublish.length }} cantines</span>
+                  <span v-else>Publier la cantine</span>
+                </v-btn>
+              </v-card-actions>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
       <div class="mt-4">
         <v-data-table
           v-if="visibleCanteens"
@@ -255,7 +264,6 @@ export default {
       tdFailures: [],
       toPublish: [],
       pubLoading: false,
-      pubSuccesses: [],
     }
   },
   computed: {
@@ -470,11 +478,11 @@ export default {
       this.$store
         .dispatch("submitMultiplePublications", { ids: this.toPublish })
         .then((response) => {
-          this.pubSuccesses = response.ids
+          let pubSuccesses = response.ids
           const title =
-            this.pubSuccesses.length > 1
-              ? `${this.pubSuccesses.length} cantines publiées`
-              : `${this.pubSuccesses.length} cantine publiée`
+            pubSuccesses.length > 1
+              ? `${pubSuccesses.length} cantines publiées`
+              : `${pubSuccesses.length} cantine publiée`
           this.$store.dispatch("notify", {
             title,
             status: "success",
