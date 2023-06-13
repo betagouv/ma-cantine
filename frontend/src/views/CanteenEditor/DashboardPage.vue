@@ -10,8 +10,9 @@
     />
 
     <div class="text-left mt-10">
-      <h2>Où sont les autres cantines comme celle-ci ?</h2>
+      <h2 class="my-6">Où sont les autres cantines comme celle-ci ?</h2>
       <p>Pour les cantines dans le département {{ department }}{{ sectorSpecifierText }} :</p>
+
       <div v-if="!diagnosticsLoading">
         <v-row class="mt-10 mb-2 px-3 align-center">
           <h3 class="text-h6 font-weight-bold">Qualité de produits en {{ year }}</h3>
@@ -101,7 +102,14 @@
       <v-row v-else justify="center" class="py-15">
         <v-progress-circular indeterminate></v-progress-circular>
       </v-row>
-      <!-- two links : one to nos cantines pre-filtered and one to stats page pre-filtered -->
+      <v-row class="px-3">
+        <v-btn outlined color="primary" class="mr-2" :to="{ name: 'CanteensHome', query: translatedParams }">
+          Les cantines
+        </v-btn>
+        <v-btn outlined color="primary" :to="{ name: 'PublicCanteenStatisticsPage', query: params }">
+          Tous les chiffres
+        </v-btn>
+      </v-row>
     </div>
   </div>
 </template>
@@ -173,6 +181,19 @@ export default {
         .join(", ")
       string += " " + categoriesDisplayString
       return string
+    },
+    params() {
+      return {
+        year: this.year,
+        department: this.department,
+        sectors: this.searchSectors.join(","),
+      }
+    },
+    translatedParams() {
+      return {
+        departement: this.department,
+        secteurs: this.searchSectors.join("+"),
+      }
     },
   },
   methods: {
