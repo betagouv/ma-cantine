@@ -51,11 +51,11 @@ from .purchase import (  # noqa: F401
     CanteenPurchasesSummaryView,
     PurchaseListExportView,
     PurchaseOptionsView,
-    ImportPurchasesView,
     PurchasesDeleteView,
     PurchasesRestoreView,
     DiagnosticsFromPurchasesView,
 )
+from .purchaseimport import ImportPurchasesView  # noqa: F401
 from .reservationexpe import ReservationExpeView  # noqa: F401
 from .vegetarianexpe import VegetarianExpeView  # noqa: F401
 from .message import MessageCreateView  # noqa: F401
