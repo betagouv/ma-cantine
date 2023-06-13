@@ -142,7 +142,6 @@ class CanteenActionsPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
     undiagnosed_canteens_with_purchases = []
-    diagnostics_to_teledeclare = []
     canteens_to_publish = []
 
     def paginate_queryset(self, queryset, request, view=None):
@@ -150,10 +149,6 @@ class CanteenActionsPagination(LimitOffsetPagination):
             "pk", flat=True
         )
         self.undiagnosed_canteens_with_purchases = set(filter(lambda x: x, undiagnosed_canteens_with_purchases))
-        diagnostics_to_teledeclare = queryset.filter(action=Canteen.Actions.TELEDECLARE).values_list(
-            "diagnostic_for_year", flat=True
-        )
-        self.diagnostics_to_teledeclare = set(filter(lambda x: x, diagnostics_to_teledeclare))
         canteens_to_publish = queryset.filter(action=Canteen.Actions.PUBLISH).values_list("pk", flat=True)
         self.canteens_to_publish = set(filter(lambda x: x, canteens_to_publish))
         return super().paginate_queryset(queryset, request, view)
@@ -167,7 +162,6 @@ class CanteenActionsPagination(LimitOffsetPagination):
                     ("previous", self.get_previous_link()),
                     ("results", data),
                     ("undiagnosed_canteens_with_purchases", self.undiagnosed_canteens_with_purchases),
-                    ("diagnostics_to_teledeclare", self.diagnostics_to_teledeclare),
                     ("canteens_to_publish", self.canteens_to_publish),
                 ]
             )

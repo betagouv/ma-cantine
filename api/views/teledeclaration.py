@@ -40,38 +40,17 @@ class TeledeclarationCreateView(APIView):
         request=inline_serializer(name="Testing", fields={"diagnostic_id": serializers.IntegerField()}),
         responses={
             "201": FullDiagnosticSerializer,
-            "200": inline_serializer(
-                name="Teledeclarations",
-                fields={
-                    "teledeclarationIds": serializers.ListField(child=serializers.IntegerField()),
-                    "errors": serializers.ListField(child=serializers.CharField()),
-                },
-            ),
         },
     )
     def post(self, request):
         data = request.data
         diagnostic_id = data.get("diagnostic_id")
-        diagnostic_ids = data.get("diagnostic_ids")
-        if not diagnostic_id and not diagnostic_ids:
+        if not diagnostic_id:
             raise ValidationError("diagnosticId manquant")
 
-        if not diagnostic_ids:
-            td = TeledeclarationCreateView._teledeclare_diagnostic(diagnostic_id, request.user)
-
-            data = FullDiagnosticSerializer(td.diagnostic).data
-            return JsonResponse(camelize(data), status=status.HTTP_201_CREATED)
-        else:
-            td_ids = []
-            errors = {}
-            for d in diagnostic_ids:
-                try:
-                    td = TeledeclarationCreateView._teledeclare_diagnostic(d, request.user)
-                    td_ids.append(td.id)
-                except Exception as e:
-                    message = getattr(e, "detail", "Autre erreur")
-                    errors[d] = message[0] if type(message) == list else message
-            return JsonResponse({"teledeclarationIds": td_ids, "errors": errors}, status=status.HTTP_200_OK)
+        td = TeledeclarationCreateView._teledeclare_diagnostic(diagnostic_id, request.user)
+        data = FullDiagnosticSerializer(td.diagnostic).data
+        return JsonResponse(camelize(data), status=status.HTTP_201_CREATED)
 
     def _teledeclare_diagnostic(diagnostic_id, user):
         try:

@@ -31,6 +31,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
+    DiagnosticsToTeledeclareListView,
 )
 from .diagnosticimport import (  # noqa: F401
     ImportSimpleDiagnosticsView,

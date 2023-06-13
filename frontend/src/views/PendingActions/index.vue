@@ -1,8 +1,7 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav :links="[{ to: { name: 'ManagementPage' } }]" />
-    <h1 class="font-weight-black text-h4 mb-2">Actions en attente</h1>
-    <p class="mt-0 mb-8">Concernant l'année {{ year }}</p>
+    <h1 class="font-weight-black text-h4 mb-8">Actions en attente en {{ year }}</h1>
     <AnnualActionableCanteensTable />
   </div>
 </template>

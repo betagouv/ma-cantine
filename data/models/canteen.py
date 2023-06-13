@@ -262,6 +262,10 @@ class Canteen(SoftDeletionModel):
         ]
 
     @property
+    def is_satellite(self):
+        return self.production_type and self.production_type == Canteen.ProductionType.ON_SITE_CENTRAL
+
+    @property
     def central_kitchen_diagnostics(self):
         if not self.production_type == Canteen.ProductionType.ON_SITE_CENTRAL or not self.central_producer_siret:
             return None
