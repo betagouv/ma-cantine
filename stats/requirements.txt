@@ -3,3 +3,4 @@ ipykernel
 ydata-profiling
 ipywidgets
 frictionless
+nbformat
