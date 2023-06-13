@@ -35,7 +35,13 @@ Afin de récupérer les données, il vous faut un TOKEN metabase :
 
 
 ```{python Import des données canteens}
-url = "https://ma-cantine-metabase.cleverapps.io/api/card/800/query/json"
+campagne = {
+  '2021': '795',
+  '2020': '802',
+}
+year = '2021'
+
+url = f"https://ma-cantine-metabase.cleverapps.io/api/card/{campagne[year]}/query/json"
 
 load_dotenv()
 
@@ -63,6 +69,10 @@ print(f"Nous avons enlevé {nbre_td_full - len(td)} doublons")
 print("Nombre de télédéclarations uniques: ", len(td))
 ```
 
+```{python Export en csv}
+
+td.to_csv(f"open_data/td_{year}.csv", index=False)
+```
 
 ```{python Construction du schéma des données}
 # Generate a Markdown documentation from a JSON file

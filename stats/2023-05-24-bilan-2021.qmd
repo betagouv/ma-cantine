@@ -22,9 +22,9 @@ Analyse des données de la campagne de TD 2022.
 * La campagne de 2022 porte sur les données de 2021  
 * Les données sont issus d'une extractation de la base de données de l'application Ma-Cantine, en filtrant sur :
     * l'année 2021
-    * les données de type 'SUMBITTED'
-    * les `creation_date` qui sont compris dans les dates de la campagne : du 16 juillet 2022 au 31 décembre 2022.
-    * Les canteen ID qui sont renseignés
+    * les données de type 'SUBMITTED'
+    * les `creation_date` qui sont compris dans les dates de la campagne : **du 17 juillet 2022 au 05 décembre 2022**. (les autres TD de 2021 avant la campagne sont dans un format trop différent pour être traité)
+    * Les canteen ID qui sont renseignés (champs non nuls)
 
 
 # Import des données et des librairies
@@ -94,15 +94,15 @@ td = td[td.id != 10871] # Doublon inexpliqué entre les id 10871 et 10870
 ```{python Vérification des données}
 assert td["canteen_id"].isna().sum() == 0, "Il y a des cantines sans identifiant"
 assert len(td["canteen_id"]) == len(td["canteen_id"].unique()), "Il y a des doublons dans les cantines"
-for col in td.columns:
-    print(col)
+# for col in td.columns:
+#     print(col)
 ```
 
 # Comparaison avec les données du rapport
-```{python Verification des valeurs en recréant l'erreur}
+<!-- ```{python Verification des valeurs en recréant l'erreur}
 td_to_keep = pd.read_csv('stats/canteen_id_rapport.csv')
 td = td[td['canteen_id'].isin(td_to_keep['canteen_id'])]
-```
+``` -->
 
 # Chiffres clés
 ```{python Nombre de Télédéclarations}
@@ -157,8 +157,10 @@ indicateurs[
 
 indicateurs['Nombre de TD ayant déclaré 0€ d\'achats en Bio'] = len(td[td['teledeclaration.value_bio_ht'] == 0])
 
-
+for i in indicateurs:
+    print(i, indicateurs[i])
 ```
+
 
 ```{python Vérification de la non existence de TD tests}
 import re
@@ -175,18 +177,38 @@ print(
 ```
 
 
+# Traitement des champs manquants, stratégie 2022
+
+## Stratégie 2022
+
+Si les 4 champs sont vides => on ne force pas à 0 (108 cantines concernés)
+
+* Pour le calcul du bio -> mettre les valeurs à 0
+* Pour le calcul du EGAlim -> mettre les valeurs à 0
+
+* Pour les TD complètes de la campagne , on ne retrouvait pas les bonnes valeurs : total bio et somme des achats bio
+22 TD complètes. Le total des achats bio est rempli automatiquement. Le calcul ne correspondait pas à la somme de tous les produits bio. Corrigé ?
 
 
-# Questions
+## Stratégie 2023
 
-* Quelles sont les dates de la campagne de TD 2021 ? 
-La communication avait été lancée mi-juillet. Cependant la fonctionnalité existait déjà.
+* Normalement, champ "je ne sais pas"
+* Import par fichiers, il y a peut-être des champs vides, ou des valeurs à 0
 
-* Que fait on des TD hors cadre d'une campagne ?
-* Existe-il des cantines de test dans la campagne ? (apparement non)
 
-* D'ou sortent les 300 TD d'avant le lancement de la campagne ? => Bizdev ? => A vérifier  
+# Changelog pour la campagne 2022
 
-A faire : 
-* Verifier le taux de presence de la donnée repas par an
-* Relancer en supprimant les 8 cantines
+* Supprimer les cuisine centrales du calcul du nombre de site de restauration concerné
+* Se rebaser sur les données cantine fournies dans la télédéclaration
+* Nombre de repas moyen : on se rebase sur les données cantine fournies dans la télédéclaration (et non pas une approximation détaillée par secteur)
+* (eventuellement) Changer la stratégie pour les champs vides
+
+# Analyses à mener 
+
+* Pertinence des garde fous (bloquant et non bloquant) (cf Matomo)
+* Nombre de déclarants ont rempli des valeurs d'achat bio (O € compris)
+* Même télédeclarant que l'année dernière ? est-ce que leur pourcentage de bio est cohérent avec l'année dernière ?
+* Est-ce que les nouveaux télédeclarants ont un pourcentage de bio qui contribue à la baisse ou à la hausse du pourcentage de bio global ?
+* Répartition individuelle des des répartition du bio . Moyenne du pourcentage
+* Stats par familles d'achat
+* Mesurer l'effort de TD entre 3 semaine avant la date limite et la date limite

@@ -67,6 +67,11 @@ print("Nombre de cantines uniques: ", len(canteens))
 
 ```
 
+```{python Export en csv}
+
+canteens.to_csv("open_data/cantines.csv", index=False)
+```
+
 
 ```{python Construction du schéma des données}
 
