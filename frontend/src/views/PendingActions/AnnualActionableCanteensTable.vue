@@ -408,6 +408,7 @@ export default {
     addWatchers() {
       this.$watch("options", this.onOptionsChange, { deep: true })
       this.$watch("$route", this.onRouteChange)
+      this.$watch("showMultipleTeledeclarationPreview", (open) => (open ? null : this.fetchDiagnosticsToTeledeclare()))
     },
     onOptionsChange() {
       const replace = Object.keys(this.$route.query).length === 0
