@@ -254,5 +254,7 @@ def fill_missing_geolocation_data():
 @app.task()
 def delete_old_historical_records():
     if not settings.MAX_DAYS_HISTORIAL_RECORDS:
+        logger.info("Environment variable MAX_DAYS_HISTORIAL_RECORDS not set. Old history items will not be removed.")
         return
+    logger.info(f"History items older than {settings.MAX_DAYS_HISTORIAL_RECORDS} days will be removed.")
     call_command("clean_old_history", days=settings.MAX_DAYS_HISTORIAL_RECORDS, auto=True)

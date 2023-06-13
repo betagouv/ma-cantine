@@ -43,6 +43,10 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.fill_missing_geolocation_data",
         "schedule": nightly,
     },
+    "delete_old_historical_records": {
+        "task": "macantine.tasks.delete_old_historical_records",
+        "schedule": nightly,
+    },
 }
 
 app.conf.timezone = "Europe/Paris"
