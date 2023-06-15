@@ -432,6 +432,13 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertIn("Shiso", result_names)
         self.assertIn("Wasabi", result_names)
 
+        url = f"{reverse('published_canteens')}?badge=appro"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 1)
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Shiso", result_names)
+
     def test_pagination_departments(self):
         CanteenFactory.create(publication_status="published", department="75", name="Shiso")
         CanteenFactory.create(publication_status="published", department="75", name="Wasabi")
