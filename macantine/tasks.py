@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.db.models import F
 from django.db.models.functions import Length
+from django.core.management import call_command
 from data.models import User, Canteen
 from .celery import app
 import sib_api_v3_sdk
@@ -248,3 +249,12 @@ def fill_missing_geolocation_data():
             logger.info(f"Geolocation Bot error: Unexpected exception\n{e}")
 
     logger.info(f"Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
+
+
+@app.task()
+def delete_old_historical_records():
+    if not settings.MAX_DAYS_HISTORICAL_RECORDS:
+        logger.info("Environment variable MAX_DAYS_HISTORICAL_RECORDS not set. Old history items will not be removed.")
+        return
+    logger.info(f"History items older than {settings.MAX_DAYS_HISTORICAL_RECORDS} days will be removed.")
+    call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)

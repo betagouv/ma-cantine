@@ -90,6 +90,7 @@ SIRET_API_SECRET= Optionnel - pour utiliser l'API INSEE Sirene
 MONCOMPTEPRO_CLIENT_ID= Optionnel - Client ID utilisé pour l'authentification via [MonComptePro](https://github.com/betagouv/moncomptepro).
 MONCOMPTEPRO_SECRET= Optionnel - Secret utilisé pour l'authentification via [MonComptePro](https://github.com/betagouv/moncomptepro).
 MONCOMPTEPRO_CONFIG= Optionnel - Url de configuration utilisé pour l'authentification via [MonComptePro](https://github.com/betagouv/moncomptepro). Par exemple : `https://app-test.moncomptepro.beta.gouv.fr/.well-known/openid-configuration`
+MAX_DAYS_HISTORICAL_RECORDS= Optionnel - Flag pour indiquer le nombre de jours pendant lequels on garde l'historique des modèles. Utilisé lors d'une tâche Celery.
 ```
 
 ### Activer les feature flags
