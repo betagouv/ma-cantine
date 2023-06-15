@@ -80,13 +80,13 @@
               for="select-region"
               :class="{
                 'text-body-2': true,
-                'active-filter-label': !!appliedFilters.chosenRegion,
+                'active-filter-label': !!filters.region.value,
               }"
             >
               Région
             </label>
             <DsfrAutocomplete
-              v-model="appliedFilters.chosenRegion"
+              v-model="filters.region.value"
               :items="regions"
               clearable
               hide-details
@@ -102,13 +102,13 @@
               for="select-department"
               :class="{
                 'text-body-2': true,
-                'active-filter-label': !!appliedFilters.chosenDepartment,
+                'active-filter-label': !!filters.department.value,
               }"
             >
               Département
             </label>
             <DsfrAutocomplete
-              v-model="appliedFilters.chosenDepartment"
+              v-model="filters.department.value"
               :items="departments"
               clearable
               hide-details
@@ -122,12 +122,15 @@
           <v-col cols="12" sm="6" md="4">
             <label
               for="select-sector"
-              :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.chosenSectors.length }"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': filters.sectors.value && !!filters.sectors.value.length,
+              }"
             >
               Secteur d'activité
             </label>
             <DsfrSelect
-              v-model="appliedFilters.chosenSectors"
+              v-model="filters.sectors.value"
               multiple
               :items="sectors"
               clearable
@@ -149,7 +152,7 @@
                   :class="{
                     caption: true,
                     'pl-1': true,
-                    'active-filter-label': !!appliedFilters.minBio,
+                    'active-filter-label': !!filters.min_portion_bio.value,
                   }"
                   id="value-percentages-bio"
                 >
@@ -157,10 +160,10 @@
                 </label>
                 <v-spacer></v-spacer>
                 <DsfrTextField
-                  :value="appliedFilters.minBio"
-                  ref="minBio"
+                  :value="filters.min_portion_bio.value"
+                  ref="min_portion_bio"
                   :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                  @change="onChangeIntegerFilter('minBio')"
+                  @change="onChangeIntegerFilter('min_portion_bio')"
                   hide-details="auto"
                   append-icon="mdi-percent"
                   placeholder="0"
@@ -172,7 +175,7 @@
                   :class="{
                     caption: true,
                     'pl-1': true,
-                    'active-filter-label': !!appliedFilters.minCombined,
+                    'active-filter-label': !!filters.min_portion_combined.value,
                   }"
                   id="value-percentages-bio-qualite"
                 >
@@ -180,10 +183,10 @@
                 </label>
                 <v-spacer></v-spacer>
                 <DsfrTextField
-                  :value="appliedFilters.minCombined"
-                  ref="minCombined"
+                  :value="filters.min_portion_combined.value"
+                  ref="min_portion_combined"
                   :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                  @change="onChangeIntegerFilter('minCombined')"
+                  @change="onChangeIntegerFilter('min_portion_combined')"
                   hide-details="auto"
                   placeholder="0"
                   append-icon="mdi-percent"
@@ -196,7 +199,7 @@
             <label
               :class="{
                 'text-body-2': true,
-                'active-filter-label': !!appliedFilters.minMealCount || !!appliedFilters.maxMealCount,
+                'active-filter-label': !!filters.min_daily_meal_count.value || !!filters.max_daily_meal_count.value,
               }"
               id="meal-count"
             >
@@ -208,10 +211,10 @@
                   Min
                 </label>
                 <DsfrTextField
-                  :value="appliedFilters.minMealCount"
-                  ref="minMealCount"
+                  :value="filters.min_daily_meal_count.value"
+                  ref="min_daily_meal_count"
                   :rules="[validators.nonNegativeOrEmpty]"
-                  @change="onChangeIntegerFilter('minMealCount')"
+                  @change="onChangeIntegerFilter('min_daily_meal_count')"
                   hide-details="auto"
                   id="min-meal-count-field"
                   aria-describedby="meal-count"
@@ -223,10 +226,10 @@
                   Max
                 </label>
                 <DsfrTextField
-                  :value="appliedFilters.maxMealCount"
-                  ref="maxMealCount"
+                  :value="filters.max_daily_meal_count.value"
+                  ref="max_daily_meal_count"
                   :rules="[validators.nonNegativeOrEmpty]"
-                  @change="onChangeIntegerFilter('maxMealCount')"
+                  @change="onChangeIntegerFilter('max_daily_meal_count')"
                   hide-details="auto"
                   aria-describedby="meal-count"
                   id="max-meal-count-field"
@@ -237,12 +240,12 @@
           <v-col cols="12" sm="4" md="3">
             <label
               for="select-management-type"
-              :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.managementType }"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.management_type.value }"
             >
               Mode de gestion
             </label>
             <DsfrSelect
-              v-model="appliedFilters.managementType"
+              v-model="filters.management_type.value"
               :items="managementTypes"
               clearable
               hide-details
@@ -254,12 +257,12 @@
           <v-col cols="12" sm="6" md="5">
             <label
               for="select-production-type"
-              :class="{ 'text-body-2': true, 'active-filter-label': !!appliedFilters.productionType }"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.production_type.value }"
             >
               Type d'établissement
             </label>
             <DsfrSelect
-              v-model="appliedFilters.productionType"
+              v-model="filters.production_type.value"
               :items="productionTypes"
               clearable
               hide-details
@@ -399,16 +402,61 @@ export default {
       publishedCanteenCount: null,
       page: null,
       searchTerm: null,
-      appliedFilters: {
-        chosenDepartment: null,
-        chosenRegion: null,
-        managementType: null,
-        productionType: null,
-        chosenSectors: [],
-        minMealCount: null,
-        maxMealCount: null,
-        minBio: null,
-        minCombined: null,
+      filters: {
+        department: {
+          param: "departement",
+          value: null,
+          default: null,
+        },
+        region: {
+          param: "region",
+          value: null,
+          default: null,
+        },
+        management_type: {
+          param: "modeDeGestion",
+          value: null,
+          default: null,
+        },
+        production_type: {
+          param: "typeEtablissement",
+          value: null,
+          default: null,
+        },
+        sectors: {
+          param: "secteurs",
+          value: [],
+          default: [],
+          transformToFrontend(values) {
+            return Array.isArray(values) ? values.map((v) => +v) : +values
+          },
+        },
+        min_daily_meal_count: {
+          param: "minRepasJour",
+          value: null,
+          default: null,
+        },
+        max_daily_meal_count: {
+          param: "maxRepasJour",
+          value: null,
+          default: null,
+        },
+        min_portion_bio: {
+          param: "minBio",
+          value: null,
+          default: null,
+          transformToBackend(value) {
+            return value / 100
+          },
+        },
+        min_portion_combined: {
+          param: "minQualite",
+          value: null,
+          default: null,
+          transformToBackend(value) {
+            return value / 100
+          },
+        },
       },
       orderBy: null,
       orderOptions: [
@@ -453,50 +501,20 @@ export default {
     query() {
       let query = {}
       if (this.page) query.page = String(this.page)
-      if (this.searchTerm) query.recherche = this.searchTerm
-      if (this.appliedFilters.chosenDepartment) query.departement = this.appliedFilters.chosenDepartment
-      if (this.appliedFilters.chosenRegion) query.region = this.appliedFilters.chosenRegion
-      if (this.appliedFilters.managementType) query.modeDeGestion = this.appliedFilters.managementType
-      if (this.appliedFilters.productionType) query.typeEtablissement = this.appliedFilters.productionType
-      if (this.appliedFilters.chosenSectors && this.appliedFilters.chosenSectors.length > 0)
-        query.secteurs = this.appliedFilters.chosenSectors.join("+")
-      if (this.appliedFilters.minMealCount) query.minRepasJour = String(this.appliedFilters.minMealCount)
-      if (this.appliedFilters.maxMealCount) query.maxRepasJour = String(this.appliedFilters.maxMealCount)
-      if (this.appliedFilters.minBio) query.minBio = String(this.appliedFilters.minBio)
-      if (this.appliedFilters.minCombined) query.minQualite = String(this.appliedFilters.minCombined)
+      Object.values(this.filters).forEach((f) => {
+        if (f.value) query[f.param] = f.value
+      })
       if (this.order) query.trier = this.order.display
       return query
     },
     hasActiveFilter() {
-      return (
-        this.appliedFilters.chosenDepartment !== null ||
-        this.appliedFilters.chosenRegion !== null ||
-        this.appliedFilters.managementType !== null ||
-        this.appliedFilters.productionType !== null ||
-        this.appliedFilters.chosenSectors.length > 0 ||
-        this.appliedFilters.minMealCount !== null ||
-        this.appliedFilters.maxMealCount !== null ||
-        this.appliedFilters.minBio !== null ||
-        this.appliedFilters.minCombined !== null
-      )
+      return Object.values(this.filters).some((f) => !!f.value && f.value.length)
     },
     validators() {
       return validators
     },
     resultsCountText() {
-      const filterQueries = [
-        this.$route.query.recherche,
-        this.$route.query.departement,
-        this.$route.query.region,
-        this.$route.query.secteurs,
-        this.$route.query.minRepasJour,
-        this.$route.query.maxRepasJour,
-        this.$route.query.minBio,
-        this.$route.query.minQualite,
-      ]
-      const hasFilter = filterQueries.some((x) => x !== 0 && !!x)
-
-      if (!hasFilter || !this.publishedCanteenCount) return null
+      if (!this.hasActiveFilter || !this.publishedCanteenCount) return null
 
       if (this.publishedCanteenCount === 1) return "Un établissement correspond à votre recherche"
       else return `${this.publishedCanteenCount} établissements correspondent à votre recherche`
@@ -513,20 +531,14 @@ export default {
   methods: {
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
-      if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
-      if (this.appliedFilters.chosenDepartment) queryParam += `&department=${this.appliedFilters.chosenDepartment}`
-      if (this.appliedFilters.chosenRegion) queryParam += `&region=${this.appliedFilters.chosenRegion}`
-      if (this.appliedFilters.managementType) queryParam += `&management_type=${this.appliedFilters.managementType}`
-      if (this.appliedFilters.productionType) queryParam += `&production_type=${this.appliedFilters.productionType}`
-      if (this.appliedFilters.minMealCount) queryParam += `&min_daily_meal_count=${this.appliedFilters.minMealCount}`
-      if (this.appliedFilters.maxMealCount) queryParam += `&max_daily_meal_count=${this.appliedFilters.maxMealCount}`
-      if (this.appliedFilters.minBio) queryParam += `&min_portion_bio=${this.appliedFilters.minBio / 100}`
-      if (this.appliedFilters.minCombined)
-        queryParam += `&min_portion_combined=${this.appliedFilters.minCombined / 100}`
+      Object.entries(this.filters).forEach(([key, f]) => {
+        if (Array.isArray(f.value)) {
+          f.value.forEach((v) => {
+            queryParam += `&${key}=${v}`
+          })
+        } else if (f.value) queryParam += `&${key}=${f.transformToBackend ? f.transformToBackend(f.value) : f.value}`
+      })
       if (this.order) queryParam += `&ordering=${this.order.query}`
-
-      for (let i = 0; i < this.appliedFilters.chosenSectors.length; i++)
-        queryParam += `&sectors=${this.appliedFilters.chosenSectors[i]}`
 
       return fetch(`/api/v1/publishedCanteens/?${queryParam}`)
         .then((response) => {
@@ -562,17 +574,9 @@ export default {
       this.$router.push({ query }).catch(() => {})
     },
     clearFilters() {
-      this.appliedFilters = {
-        chosenDepartment: null,
-        chosenRegion: null,
-        managementType: null,
-        productionType: null,
-        chosenSectors: [],
-        minMealCount: null,
-        maxMealCount: null,
-        minBio: null,
-        minCombined: null,
-      }
+      Object.entries(this.filters).forEach(([key, f]) => {
+        this.filters[key].value = f.default
+      })
     },
     changePage() {
       const override = this.page ? { page: this.page } : { page: 1 }
@@ -588,24 +592,18 @@ export default {
       } else this.fetchCurrentPage()
     },
     populateParameters() {
-      this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
       this.searchTerm = this.$route.query.recherche || null
-      this.appliedFilters = {
-        chosenDepartment: this.$route.query.departement || null,
-        chosenRegion: this.$route.query.region || null,
-        managementType: this.$route.query.modeDeGestion || null,
-        productionType: this.$route.query.typeEtablissement || null,
-        chosenSectors: this.$route.query.secteurs?.split?.("+").map((x) => parseInt(x)) || [],
-        minMealCount: parseInt(this.$route.query.minRepasJour) || null,
-        maxMealCount: parseInt(this.$route.query.maxRepasJour) || null,
-        minBio: parseInt(this.$route.query.minBio) || null,
-        minCombined: parseInt(this.$route.query.minQualite) || null,
-      }
+      Object.values(this.filters).forEach((f) => {
+        f.value = this.$route.query[f.param]
+        if (f.transformToFrontend) f.value = f.transformToFrontend(f.value)
+      })
+      this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
       this.orderBy = this.$route.query.trier?.slice(0, -3) || DEFAULT_ORDER
       this.orderDescending = this.$route.query.trier?.slice(-3) === "Dec"
+      this.fetchCurrentPage()
     },
     onChangeIntegerFilter(ref) {
-      if (this.$refs[ref].validate()) this.appliedFilters[ref] = parseInt(this.$refs[ref].lazyValue) || null
+      if (this.$refs[ref].validate()) this.filters[ref].value = parseInt(this.$refs[ref].lazyValue) || null
     },
     updateRouter(query) {
       if (this.$route.query.page) {
@@ -721,7 +719,7 @@ export default {
     },
   },
   watch: {
-    appliedFilters: {
+    filters: {
       handler() {
         this.applyFilter()
       },
