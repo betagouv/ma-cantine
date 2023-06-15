@@ -9,11 +9,11 @@
       :singleColumn="true"
     />
 
-    <div class="text-left mt-10">
+    <div class="text-left mt-10" v-if="this.statistics">
       <h2 class="my-6">Où en sont les cantines similaires à la mienne ?</h2>
-      <p>Pour les cantines dans le département {{ department }}{{ sectorSpecifierText }} :</p>
+      <p>Pour les cantines {{ groupingDescription }} :</p>
 
-      <div v-if="!diagnosticsLoading">
+      <div>
         <v-row class="mt-10 mb-2 px-3 align-center">
           <h3 class="text-h6 font-weight-bold">Qualité de produits en {{ year }}</h3>
         </v-row>
@@ -99,9 +99,6 @@
           </v-row>
         </div>
       </div>
-      <v-row v-else justify="center" class="py-15">
-        <v-progress-circular indeterminate></v-progress-circular>
-      </v-row>
       <v-row class="px-3">
         <v-btn outlined color="primary" class="mr-2" :to="{ name: 'CanteensHome', query: translatedParams }">
           Les cantines
@@ -131,8 +128,7 @@ export default {
   data() {
     return {
       year: lastYear(),
-      statistics: {},
-      diagnosticsLoading: false,
+      statistics: null,
       approMeasure: keyMeasures.find((measure) => measure.badgeId === "appro"),
       otherMeasures: keyMeasures.filter((measure) => measure.badgeId !== "appro"),
       labels,
@@ -140,6 +136,7 @@ export default {
   },
   computed: {
     regionalQueryString() {
+      if (!this.department && !this.searchSectors.length) return
       let query = `year=${this.year}`
       if (this.department) {
         query += `&department=${this.department}`
@@ -168,13 +165,26 @@ export default {
         .filter((sector) => this.canteenSectorCategories.includes(sector.category))
         .map((sector) => sector.id)
     },
+    groupingDescription() {
+      let description = ""
+      if (this.department) {
+        description += `dans le département ${this.department}`
+        if (this.sectorSpecifierText) {
+          description += " et "
+        }
+      }
+      if (this.sectorSpecifierText) {
+        description += this.sectorSpecifierText
+      }
+      return description
+    },
     sectorSpecifierText() {
       if (this.searchSectors.length === 0) return ""
-      let string = " et "
+      let string = ""
       if (this.canteenSectorCategories.length === 1) {
-        string += "la catégorie de secteur"
+        string += "avec la catégorie de secteur"
       } else {
-        string += "les catégories de secteur"
+        string += "avec les catégories de secteur"
       }
       const categoriesDisplayString = this.canteenSectorCategories
         .map((c) => Constants.SectorCategoryTranslations[c])
@@ -198,12 +208,11 @@ export default {
   },
   methods: {
     loadStatistics() {
-      this.diagnosticsLoading = true
+      if (!this.regionalQueryString) return
       fetch(`/api/v1/canteenStatistics/?${this.regionalQueryString}`)
         .then((response) => response.json())
         .then((data) => {
           this.statistics = data
-          this.diagnosticsLoading = false
         })
     },
   },
