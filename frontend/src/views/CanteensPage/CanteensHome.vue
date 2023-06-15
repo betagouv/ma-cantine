@@ -271,6 +271,20 @@
               placeholder="Tous les cantines"
             />
           </v-col>
+          <v-col cols="12" sm="6" md="5">
+            <label for="select-badge" :class="{ 'text-body-2': true, 'active-filter-label': !!filters.badge.value }">
+              Measure EGAlim réalisée
+            </label>
+            <DsfrSelect
+              v-model="filters.badge.value"
+              :items="badges"
+              clearable
+              hide-details
+              id="select-badge"
+              class="mt-1"
+              placeholder="Tous les cantines"
+            />
+          </v-col>
         </v-row>
       </v-sheet>
     </v-expand-transition>
@@ -370,6 +384,7 @@ import jsonRegions from "@/regions.json"
 import { getObjectDiff, normaliseText, sectorsSelectList } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
+import badges from "@/badges"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
@@ -457,6 +472,11 @@ export default {
             return value / 100
           },
         },
+        badge: {
+          param: "badge",
+          value: null,
+          default: null,
+        },
       },
       orderBy: null,
       orderOptions: [
@@ -489,6 +509,11 @@ export default {
       managementTypes: Constants.ManagementTypes,
       productionTypes: Constants.ProductionTypes,
       showFilters: false,
+      badges: [
+        Object.entries(badges).map(([key, value]) => {
+          return { value: key, text: value.title }
+        })[0], // for now only the appro measure is available as a filter
+      ],
     }
   },
   computed: {
