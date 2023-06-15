@@ -10,7 +10,7 @@
     />
 
     <div class="text-left mt-10">
-      <h2 class="my-6">Où sont les autres cantines comme celle-ci ?</h2>
+      <h2 class="my-6">Où en sont les cantines similaires à la mienne ?</h2>
       <p>Pour les cantines dans le département {{ department }}{{ sectorSpecifierText }} :</p>
 
       <div v-if="!diagnosticsLoading">
