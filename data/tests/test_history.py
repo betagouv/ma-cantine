@@ -6,7 +6,7 @@ from macantine import tasks
 
 
 class TestModelHistory(TestCase):
-    @override_settings(MAX_DAYS_HISTORIAL_RECORDS=1)
+    @override_settings(MAX_DAYS_HISTORICAL_RECORDS=1)
     def test_old_history_removal(self):
         canteen = CanteenFactory.create()
         canteen.name = "Updated name"
@@ -24,7 +24,7 @@ class TestModelHistory(TestCase):
         self.assertFalse(canteen.history.filter(history_type="+").exists())
         self.assertTrue(canteen.history.filter(history_type="~").exists())
 
-    @override_settings(MAX_DAYS_HISTORIAL_RECORDS=None)
+    @override_settings(MAX_DAYS_HISTORICAL_RECORDS=None)
     def test_keep_history_if_env_var_not_set(self):
         canteen = CanteenFactory.create()
 
