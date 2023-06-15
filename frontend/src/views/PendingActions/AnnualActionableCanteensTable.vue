@@ -4,87 +4,106 @@
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-else>
-      <div>
-        <v-row v-if="diagLoading" class="green--text">
-          <v-col cols="1" justify-self="center">
-            <v-progress-circular indeterminate></v-progress-circular>
-          </v-col>
-          <v-col>
-            <p>Création de diagnostics en cours...</p>
-          </v-col>
-        </v-row>
-        <p v-else-if="showMassDiagnose">
-          Vous pouvez créer
-          <span v-if="toDiagnose.length > 1">{{ toDiagnose.length }} diagnostics</span>
-          <span v-else>1 diagnostic</span>
-          depuis les achats renseignés
-          <v-btn class="primary ml-2" @click="massDiagnose">
-            <span v-if="toDiagnose.length > 1">Créer {{ toDiagnose.length }} diagnostics</span>
-            <span v-else>Créer le diagnostic</span>
-          </v-btn>
-        </p>
-        <v-alert v-if="diagSuccesses.length" outlined type="success">
-          <p v-if="diagSuccesses.length" class="mb-0">
-            {{ diagSuccesses.length }} {{ diagSuccesses.length > 1 ? "diagnostics créés" : "diagnostic créé" }}
-          </p>
-        </v-alert>
-      </div>
-      <div>
-        <v-row v-if="tdLoading" class="green--text">
-          <v-col cols="1" justify-self="center">
-            <v-progress-circular indeterminate></v-progress-circular>
-          </v-col>
-          <v-col>
-            <p>Télédéclarations en cours...</p>
-          </v-col>
-        </v-row>
-        <p v-else-if="toTeledeclare.length > 1">
-          Vous pouvez télédéclarer
-          <span v-if="toTeledeclare.length > 1">{{ toTeledeclare.length }} cantines.</span>
-          <span v-else>1 cantine.</span>
-          <v-btn class="primary ml-2" @click="massTeledeclaration">
-            <span v-if="toTeledeclare.length > 1">Télédeclarer {{ toTeledeclare.length }} cantines</span>
-            <span v-else>Télédeclarer la cantine</span>
-          </v-btn>
-        </p>
-        <v-alert v-if="tdSuccesses.length" outlined type="success">
-          <p v-if="tdSuccesses.length" class="mb-0">
-            {{ tdSuccesses.length }} {{ tdSuccesses.length > 1 ? "cantines télédéclarées" : "cantine télédéclarée" }}
-          </p>
-        </v-alert>
-        <v-alert v-if="tdFailures.length" outlined type="error">
-          <p>
-            {{ tdFailures.length }}
-            {{ tdFailures.length > 1 ? "cantines pas télédéclarées" : "cantine pas télédéclarée" }}
-          </p>
-          <p>Essayez de télédéclarer les cantines restantes une par une depuis le tableur en dessous.</p>
-          <p class="mb-0">Si le problème persiste, contactez-nous.</p>
-        </v-alert>
-      </div>
-      <div>
-        <v-row v-if="pubLoading" class="green--text">
-          <v-col cols="1" justify-self="center">
-            <v-progress-circular indeterminate></v-progress-circular>
-          </v-col>
-          <v-col>
-            <p>Publications en cours...</p>
-          </v-col>
-        </v-row>
-        <p v-else-if="showMassPublication">
-          Vous pouvez publier
-          <span v-if="toPublish.length > 1">{{ toPublish.length }} cantines.</span>
-          <span v-else>1 cantine.</span>
-          <v-btn class="primary ml-2" @click="massPublication">
-            <span v-if="toPublish.length > 1">Publier {{ toPublish.length }} cantines</span>
-            <span v-else>Publier la cantine</span>
-          </v-btn>
-        </p>
-        <v-alert v-if="pubSuccesses.length" outlined type="success">
-          <p v-if="pubSuccesses.length" class="mb-0">
-            {{ pubSuccesses.length }} {{ pubSuccesses.length > 1 ? "cantines publiées" : "cantine publiée" }}
-          </p>
-        </v-alert>
-      </div>
+      <v-row>
+        <v-col v-if="showMassDiagnose || diagLoading" cols="12" sm="6" md="4">
+          <v-card outlined>
+            <v-card-text v-if="diagLoading" class="green--text">
+              <v-col cols="1" justify-self="center">
+                <v-progress-circular indeterminate></v-progress-circular>
+              </v-col>
+              <v-col>
+                <p>Création de diagnostics en cours...</p>
+              </v-col>
+            </v-card-text>
+            <div v-else-if="showMassDiagnose">
+              <v-card-text>
+                Vous pouvez créer
+                <span v-if="toDiagnose.length > 1">{{ toDiagnose.length }} diagnostics</span>
+                <span v-else>1 diagnostic</span>
+                depuis les achats renseignés.
+              </v-card-text>
+              <v-card-actions class="pb-4">
+                <v-btn class="primary ml-2" @click="massDiagnose">
+                  <span v-if="toDiagnose.length > 1">Créer {{ toDiagnose.length }} diagnostics</span>
+                  <span v-else>Créer le diagnostic</span>
+                </v-btn>
+              </v-card-actions>
+            </div>
+            <v-alert v-if="diagSuccesses.length" outlined type="success">
+              <p v-if="diagSuccesses.length" class="mb-0">
+                {{ diagSuccesses.length }} {{ diagSuccesses.length > 1 ? "diagnostics créés" : "diagnostic créé" }}
+              </p>
+            </v-alert>
+          </v-card>
+        </v-col>
+        <v-col v-if="toTeledeclare.length > 1 || tdSuccesses.length || tdFailures.length" cols="12" sm="6" md="4">
+          <v-card outlined v-if="toTeledeclare.length > 1">
+            <v-card-text>
+              Vous pouvez dès à présent effectuer la télédéclaration pour
+              <span v-if="toTeledeclare.length > 1">{{ toTeledeclareCount }} cantines.</span>
+              <span v-else>une cantine.</span>
+            </v-card-text>
+            <v-card-actions class="pb-4">
+              <v-btn class="primary ml-2" @click="showMultipleTeledeclarationPreview = true">
+                <span v-if="toTeledeclare.length > 1">
+                  Télédeclarer
+                  <span v-if="toTeledeclareCount > toTeledeclare.length">
+                    les {{ toTeledeclare.length }} premières cantines
+                  </span>
+                  <span v-else>{{ toTeledeclare.length }} cantines</span>
+                </span>
+                <span v-else>Télédeclarer la cantine</span>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+          <v-alert v-if="tdSuccesses.length" outlined type="success">
+            <p v-if="tdSuccesses.length" class="mb-0">
+              {{ tdSuccesses.length }} {{ tdSuccesses.length > 1 ? "cantines télédéclarées" : "cantine télédéclarée" }}
+            </p>
+          </v-alert>
+          <v-alert v-if="tdFailures.length" outlined type="error">
+            <p>
+              {{ tdFailures.length }}
+              {{ tdFailures.length > 1 ? "cantines pas télédéclarées" : "cantine pas télédéclarée" }}
+            </p>
+            <p>Essayez de télédéclarer les cantines restantes une par une depuis le tableur en dessous.</p>
+            <p class="mb-0">Si le problème persiste, contactez-nous.</p>
+          </v-alert>
+        </v-col>
+        <v-col v-if="pubLoading || showMassPublication" cols="12" sm="6" md="4">
+          <v-card outlined>
+            <v-row v-if="pubLoading" class="green--text">
+              <v-col cols="1" justify-self="center">
+                <v-progress-circular indeterminate></v-progress-circular>
+              </v-col>
+              <v-col>
+                <p>Publications en cours...</p>
+              </v-col>
+            </v-row>
+            <div v-else-if="showMassPublication">
+              <v-card-text>
+                Vous pouvez publier
+                <span v-if="toPublish.length > 1">{{ toPublish.length }} cantines.</span>
+                <span v-else>1 cantine.</span>
+              </v-card-text>
+              <v-card-actions class="pb-4">
+                <v-btn class="primary ml-2" @click="massPublication">
+                  <span v-if="toPublish.length > 1">Publier {{ toPublish.length }} cantines</span>
+                  <span v-else>Publier la cantine</span>
+                </v-btn>
+              </v-card-actions>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+      <TeledeclarationPreview
+        v-if="toTeledeclare.length"
+        :diagnostics="toTeledeclare"
+        v-model="showMultipleTeledeclarationPreview"
+        @teledeclare="submitTeledeclaration"
+        :tdLoading="tdLoading"
+        :idx="tdIdx"
+      />
       <div class="mt-4">
         <v-data-table
           v-if="visibleCanteens"
@@ -129,8 +148,9 @@
         v-if="canteenForTD"
         :diagnostic="diagnosticForTD"
         v-model="showTeledeclarationPreview"
-        @teledeclare="submitTeledeclaration(diagnosticForTD)"
+        @teledeclare="submitTeledeclaration"
         :canteen="canteenForTD"
+        :tdLoading="tdLoading"
       />
       <v-dialog v-model="showPublicationForm" max-width="750" v-if="canteenForPublication">
         <v-card class="text-left">
@@ -235,18 +255,20 @@ export default {
       },
       canteenForTD: null,
       showTeledeclarationPreview: false,
+      showMultipleTeledeclarationPreview: false,
       showPublicationForm: false,
       canteenForPublication: null,
       toDiagnose: [],
       diagLoading: false,
       diagSuccesses: [],
       toTeledeclare: [],
-      tdLoading: false,
+      tdIdx: 0,
+      toTeledeclareCount: null,
       tdSuccesses: [],
       tdFailures: [],
       toPublish: [],
       pubLoading: false,
-      pubSuccesses: [],
+      tdLoading: false,
     }
   },
   computed: {
@@ -303,7 +325,6 @@ export default {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
           this.toDiagnose = response.undiagnosedCanteensWithPurchases
-          this.toTeledeclare = response.diagnosticsToTeledeclare
           this.toPublish = response.canteensToPublish
           this.$emit("canteen-count", this.canteenCount)
         })
@@ -387,6 +408,7 @@ export default {
     addWatchers() {
       this.$watch("options", this.onOptionsChange, { deep: true })
       this.$watch("$route", this.onRouteChange)
+      this.$watch("showMultipleTeledeclarationPreview", (open) => (open ? null : this.fetchDiagnosticsToTeledeclare()))
     },
     onOptionsChange() {
       const replace = Object.keys(this.$route.query).length === 0
@@ -404,22 +426,34 @@ export default {
         return canteen.diagnostics.find((d) => d.year === this.year)
       }
     },
-    submitTeledeclaration(diagnostic) {
+    submitTeledeclaration(diagnostic, persist) {
+      this.tdLoading = true
+      diagnostic = diagnostic || this.diagnosticForTD
       this.$store
-        .dispatch("submitTeledeclaration", { id: diagnostic.id, canteenId: this.canteenForTD.id })
+        .dispatch("submitTeledeclaration", { id: diagnostic.id })
         .then(() => {
           this.$store.dispatch("notify", {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
-          this.updateCanteen(this.canteenForTD.id)
+        })
+        .then(() => {
+          if (this.tdIdx + 1 >= this.toTeledeclare.length) {
+            this.fetchDiagnosticsToTeledeclare()
+          } else {
+            this.tdIdx++
+          }
+        })
+        .then(() => {
+          this.updateCanteen(diagnostic.canteen?.id || this.canteenForTD?.id)
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
         .finally(() => {
-          this.showTeledeclarationPreview = false
+          this.showTeledeclarationPreview = persist
           this.canteenForTD = null
+          this.tdLoading = false
         })
     },
     updateCanteen(canteenId) {
@@ -455,51 +489,16 @@ export default {
           this.diagLoading = false
         })
     },
-    massTeledeclaration() {
-      this.tdLoading = true
-      this.$store
-        .dispatch("submitMultipleTeledeclarations", { ids: this.toTeledeclare })
-        .then((response) => {
-          const errors = response.errors
-          this.tdSuccesses = response.teledeclarationIds
-          this.tdFailures = Object.keys(errors)
-          if (this.tdFailures.length === 0) {
-            const title =
-              this.tdSuccesses.length > 1
-                ? `${this.tdSuccesses.length} diagnostics télédéclarés`
-                : `${this.tdSuccesses.length} diagnostic télédéclaré`
-            this.$store.dispatch("notify", {
-              title,
-              status: "success",
-            })
-          } else {
-            const title =
-              this.tdFailures.length > 1
-                ? `${this.tdFailures.length} diagnostics pas télédéclarés`
-                : `${this.tdFailures.length} diagnostic pas télédéclaré`
-            this.$store.dispatch("notify", {
-              title,
-              status: "error",
-            })
-          }
-        })
-        .catch((e) => this.$store.dispatch("notifyServerError", e))
-        // refresh actions
-        .then(() => this.fetchCurrentPage())
-        .finally(() => {
-          this.tdLoading = false
-        })
-    },
     massPublication() {
       this.pubLoading = true
       this.$store
         .dispatch("submitMultiplePublications", { ids: this.toPublish })
         .then((response) => {
-          this.pubSuccesses = response.ids
+          let pubSuccesses = response.ids
           const title =
-            this.pubSuccesses.length > 1
-              ? `${this.pubSuccesses.length} cantines publiées`
-              : `${this.pubSuccesses.length} cantine publiée`
+            pubSuccesses.length > 1
+              ? `${pubSuccesses.length} cantines publiées`
+              : `${pubSuccesses.length} cantine publiée`
           this.$store.dispatch("notify", {
             title,
             status: "success",
@@ -512,10 +511,28 @@ export default {
           this.pubLoading = false
         })
     },
+    fetchDiagnosticsToTeledeclare() {
+      return fetch(`/api/v1/diagnosticsToTeledeclare/${this.year}`)
+        .then((response) => {
+          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          return response.json()
+        })
+        .then((response) => {
+          this.toTeledeclare = response.results
+          this.toTeledeclareCount = response.count
+          this.tdIdx = 0
+        })
+        .catch((e) => {
+          this.toTeledeclare = []
+          this.$store.dispatch("notifyServerError", e)
+        })
+    },
   },
   mounted() {
     this.populateInitialParameters()
-    return this.fetchCurrentPage().then(this.addWatchers)
+    return this.fetchDiagnosticsToTeledeclare()
+      .then(this.fetchCurrentPage)
+      .then(this.addWatchers)
   },
 }
 </script>

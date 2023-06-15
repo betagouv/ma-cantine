@@ -27,7 +27,7 @@ from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptio
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
 from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, UndoClaimCanteenView, SatelliteListCreateView
 from api.views import ActionableCanteensListView, ActionableCanteenRetrieveView
-from api.views import CanteenStatusView, VideoTutorialListView
+from api.views import CanteenStatusView, VideoTutorialListView, DiagnosticsToTeledeclareListView
 
 
 urlpatterns = {
@@ -167,6 +167,11 @@ urlpatterns = {
         "actionableCanteens/<int:pk>/<int:year>",
         ActionableCanteenRetrieveView.as_view(),
         name="retrieve_actionable_canteen",
+    ),
+    path(
+        "diagnosticsToTeledeclare/<int:year>",
+        DiagnosticsToTeledeclareListView.as_view(),
+        name="diagnostics_to_teledeclare",
     ),
     path("canteenStatus/siret/<str:siret>", CanteenStatusView.as_view(), name="canteen_status"),
     path("videoTutorials/", VideoTutorialListView.as_view(), name="video_tutorials"),
