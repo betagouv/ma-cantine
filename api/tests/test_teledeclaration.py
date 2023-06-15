@@ -632,3 +632,33 @@ class TestTeledeclarationApi(APITestCase):
             Teledeclaration.objects.bulk_create([teledeclaration_1, teledeclaration_2])
         except IntegrityError:
             self.fail("Should be able to create a submitted TD if a cancelled one exists already")
+
+    def test_bypass_constraint_if_no_canteen(self):
+        """
+        A TD that does not have a canteen attached to it (e.g., for deleted canteens) should not be
+        considered in the constraint.
+        """
+        # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
+        # bulk_create does not pass through the `save` method, so it allows us to test the
+        # actual constraint.
+        applicant = UserFactory.create()
+        teledeclaration_1 = Teledeclaration(
+            canteen=None,
+            year=2022,
+            diagnostic=None,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            declared_data={"foo": 1},
+        )
+        teledeclaration_2 = Teledeclaration(
+            canteen=None,
+            year=2022,
+            diagnostic=None,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            declared_data={"foo": 1},
+        )
+        try:
+            Teledeclaration.objects.bulk_create([teledeclaration_1, teledeclaration_2])
+        except IntegrityError:
+            self.fail("Should be able to have several submitted TDs for deleted canteens")
