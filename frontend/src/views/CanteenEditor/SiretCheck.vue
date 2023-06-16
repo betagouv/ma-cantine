@@ -84,7 +84,7 @@
           validate-on-blur
           label="SIRET"
           v-model="siret"
-          :rules="[validators.length(14), validators.luhn]"
+          :rules="[validators.length(14), validators.luhn, siretSatelliteValidator()]"
           labelClasses="body-2 mb-2"
           style="max-width: 30rem;"
         />
@@ -203,6 +203,12 @@ export default {
         })
         this.$emit("updateCanteen", canteen)
       })
+    },
+    siretSatelliteValidator() {
+      if (!this.canteen?.centralProducerSiret) return true
+      const message =
+        "Le numéro SIRET de la cuisine centrale ne peut pas être le même que celui de la cantine satellite."
+      return validators.isDifferent(this.canteen?.centralProducerSiret, message)
     },
   },
 }
