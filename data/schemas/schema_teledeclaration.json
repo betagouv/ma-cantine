@@ -130,7 +130,7 @@
       "name": "teledeclaration_ratio_bio",
       "type": "integer",
       "title": "Télédéclaration Ratio Bio",
-      "description": "Part du bio dans les achats alimentaires de l'année",
+      "description": "Part du bio dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)",
       "example": "0.1"
     },
     {

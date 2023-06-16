@@ -151,7 +151,7 @@
       "name": "active_on_ma_cantine",
       "type": "boolean",
       "title": "Actif sur Ma Cantine",
-      "description": "Indique si la cantine est active sur l'apllication Ma Cantine ou si elle a été importée via une source de données externe",
+      "description": "A un gestionnaire sur (email) et a fais au moins une action (à définir) - Indique si la cantine est active sur l'apllication Ma Cantine ou si elle a été importée via une source de données externe",
       "example": "true"
     }
   ]
