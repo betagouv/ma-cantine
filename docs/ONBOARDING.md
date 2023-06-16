@@ -54,7 +54,7 @@ L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), 
 ```
 SECRET= Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
 DEBUG= `True` pour le développement local ou `False` autrement
-DB_USER= L'utilisateur de la base de données
+DB_USER= L'utilisateur de la base de données. Doit avoir les droits de creation de db pour les tests.
 DB_PASSWORD= Le mot de passe pour accéder à la base de données
 DB_HOST= Le host de la base de données (par ex. '127.0.0.1')
 DB_PORT= Le port de la base de données (par ex. '3306')
