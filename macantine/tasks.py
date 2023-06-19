@@ -258,3 +258,14 @@ def delete_old_historical_records():
         return
     logger.info(f"History items older than {settings.MAX_DAYS_HISTORICAL_RECORDS} days will be removed.")
     call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)
+
+
+def _extract_dataset_teledeclaration():
+    canteens = Canteen.objects.all()
+    return canteens
+
+
+@app.task()
+def extract_datasets():
+    td = _extract_dataset_teledeclaration()
+    return td

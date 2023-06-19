@@ -4,7 +4,7 @@ from django.test.utils import override_settings
 from django.utils.timezone import now
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, TeledeclarationFactory
 from data.models import Teledeclaration
-
+from macantine.tasks import extract_datasets
 
 class TestExtractionOpenData(TestCase):
 
@@ -31,5 +31,5 @@ class TestExtractionOpenData(TestCase):
             },
             teledeclaration_mode='SITE',
         )
-        td = extract_dataset_teledeclaration(year=diagnostic.year)
-        assert len(td) == 1, "There should be one teledeclaration for 2021"
+        td = extract_datasets()
+        assert len(td) == 1, "There should b    e one teledeclaration for 2021"
