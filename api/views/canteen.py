@@ -1110,7 +1110,7 @@ class SatelliteListCreateView(ListCreateAPIView):
         return Canteen.objects.only("siret").get(pk=canteen_pk).satellites
 
     def post(self, request, canteen_pk):
-        canteen = Canteen.objects.only("siret", "central_producer_siret").get(pk=canteen_pk)
+        canteen = Canteen.objects.get(pk=canteen_pk)
         siret_satellite = request.data.get("siret")
         created = False
 
