@@ -78,7 +78,7 @@ export default {
     },
   },
   mounted() {
-    return fetch(`/api/v1/actionableCanteens/${lastYear()}`)
+    return fetch(`/api/v1/actionableCanteens/${lastYear()}?limit=1&offset=0`)
       .then((response) => {
         if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
         return response.json()
