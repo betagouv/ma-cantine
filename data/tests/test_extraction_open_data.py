@@ -6,6 +6,7 @@ from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, Teled
 from data.models import Teledeclaration
 from macantine.tasks import extract_datasets
 
+
 class TestExtractionOpenData(TestCase):
 
     def test_extraction_teledeclaration(self):
@@ -31,5 +32,24 @@ class TestExtractionOpenData(TestCase):
             },
             teledeclaration_mode='SITE',
         )
-        td = extract_datasets()
-        assert len(td) == 1, "There should b    e one teledeclaration for 2021"
+        TeledeclarationFactory.create(
+            applicant=applicant,
+            year=diagnostic.year,
+            canteen=canteen,
+            canteen_siret=canteen.siret,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            diagnostic=diagnostic,
+            declared_data={
+                "year": str(int(diagnostic.year) + 1),
+                "canteen": {
+                    "name": "",
+                },
+                "applicant": {
+                    "name": "",
+                },
+                "teledeclaration": {},
+            },
+            teledeclaration_mode='SITE',
+        )
+        td = extract_datasets(year=diagnostic.year)
+        assert len(td) == 1, "There should be one teledeclaration for 2021"
