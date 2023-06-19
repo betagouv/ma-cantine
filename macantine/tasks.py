@@ -8,8 +8,12 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.db.models import F
 from django.db.models.functions import Length
+<<<<<<< HEAD
 from django.core.management import call_command
 from data.models import User, Canteen
+=======
+from data.models import User, Canteen, Teledeclaration
+>>>>>>> 62be657f... [Pass]
 from .celery import app
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
@@ -260,12 +264,12 @@ def delete_old_historical_records():
     call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)
 
 
-def _extract_dataset_teledeclaration():
-    canteens = Canteen.objects.all()
+def _extract_dataset_teledeclaration(year):
+    canteens = Teledeclaration.objects.filter(year=year)
     return canteens
 
 
 @app.task()
-def extract_datasets():
-    td = _extract_dataset_teledeclaration()
+def extract_datasets(year):
+    td = _extract_dataset_teledeclaration(year)
     return td

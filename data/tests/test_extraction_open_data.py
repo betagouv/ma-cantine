@@ -34,13 +34,13 @@ class TestExtractionOpenData(TestCase):
         )
         TeledeclarationFactory.create(
             applicant=applicant,
-            year=diagnostic.year,
+            year=diagnostic.year + 1,
             canteen=canteen,
             canteen_siret=canteen.siret,
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
             diagnostic=diagnostic,
             declared_data={
-                "year": str(int(diagnostic.year) + 1),
+                "year": diagnostic.year + 1,
                 "canteen": {
                     "name": "",
                 },
