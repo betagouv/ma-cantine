@@ -2,6 +2,7 @@ import logging
 import datetime
 import requests
 import csv
+import pandas as pd
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
@@ -264,9 +265,20 @@ def delete_old_historical_records():
     call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)
 
 
+def _flatten_declared_data(df):
+    tmp_df = pd.json_normalize(df["declared_data"])
+    df = pd.concat([df.drop("declared_data", axis=1), tmp_df], axis=1)
+    return df
+
+
 def _extract_dataset_teledeclaration(year):
-    canteens = Teledeclaration.objects.filter(year=year)
-    return canteens
+    # Exact match from the schema : td_columns = ["id", "applicant_id", "teledeclaration_mode", "creation_date", "year", "version", "canteen_id", "canteen_siret", "canteen_name", "cantine_central_kitchen_siret", "canteen_department", "canteen_region", "cantine_satellite_canteens_count", "cantine_economic_model", "cantine_management_type", "cantine_production_type", "canteen_sectors", "canteen_line_ministry", "teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"]
+    td_columns = ["id", "applicant_id", "teledeclaration_mode", "creation_date", "year", "version", "canteen.id", "canteen.siret", "canteen.name", "canteen.central_producer_siret", "canteen.department", "canteen.region", "canteen.satellite_canteens_count", "canteen.economic_model", "canteen.management_type", "canteen.production_type", "canteen.sectors", "canteen.line_ministry", "teledeclaration.value_bio_ht", "teledeclaration.value_total_ht", "teledeclaration.value_sustainable_ht"]
+    td = pd.DataFrame(Teledeclaration.objects.filter(year=year).values())
+    td = _flatten_declared_data(td)
+    td = td[td_columns]
+    td = td.reset_index(drop=True)
+    return td
 
 
 @app.task()

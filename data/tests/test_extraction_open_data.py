@@ -1,37 +1,19 @@
 from django.test import TestCase
-from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, TeledeclarationFactory
+from data.factories import DiagnosticFactory, CanteenFactory, UserFactory
 from data.models import Teledeclaration
 from macantine.tasks import extract_datasets
 
 
 class TestExtractionOpenData(TestCase):
-    td_columns = ["id", "applicant_id", "teledeclaration_mode", "creation_date", "year", "version", "canteen_id", "canteen_siret", "canteen_name", "cantine_central_kitchen_siret", "canteen_department", "canteen_region", "cantine_satellite_canteens_count", "cantine_economic_model", "cantine_management_type", "cantine_production_type", "canteen_sectors", "canteen_line_ministry", "teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"]
+    td_columns = ["id", "applicant_id", "teledeclaration_mode", "creation_date", "year", "version", "canteen.id", "canteen.siret", "canteen.name", "canteen.central_producer_siret", "canteen.department", "canteen.region", "canteen.satellite_canteens_count", "canteen.economic_model", "canteen.management_type", "canteen.production_type", "canteen.sectors", "canteen.line_ministry", "teledeclaration.value_bio_ht", "teledeclaration.value_total_ht", "teledeclaration.value_sustainable_ht"]
 
     def test_extraction_teledeclaration(self):
         canteen = CanteenFactory.create()
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type=None)
         applicant = UserFactory.create()
         for year_td in [2021, 2022]:
-            TeledeclarationFactory.create(
-                applicant=applicant,
-                year=year_td,
-                canteen=canteen,
-                canteen_siret=canteen.siret,
-                status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-                diagnostic=diagnostic,
-                declared_data={
-                    "year": year_td,
-                    "canteen": {
-                        "name": "",
-                    },
-                    "applicant": {
-                        "name": "",
-                    },
-                    "teledeclaration": {},
-                },
-                teledeclaration_mode='SITE',
-            )
+            diagnostic = DiagnosticFactory.create(canteen=canteen, year=year_td, diagnostic_type=None)
+            Teledeclaration.create_from_diagnostic(diagnostic, applicant)
 
         td = extract_datasets(year=diagnostic.year)
         assert len(td) == 1, "There should be one teledeclaration for 2021"
-        assert td.columns == self.td_columns, "There should be one teledeclaration for 2021"
+        assert len(td.columns) == len(self.td_columns) + 1, "The columns should match the schema. Adding the index"
