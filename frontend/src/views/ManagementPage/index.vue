@@ -60,6 +60,7 @@ export default {
       canteenCount: undefined,
       hasActions: false,
       showCanteenCreationPrompt: null,
+      showTeledeclarationBanner: true,
     }
   },
   computed: {
@@ -82,7 +83,7 @@ export default {
         if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
         return response.json()
       })
-      .then((response) => (this.hasActions = response.count > 0))
+      .then((response) => (this.hasActions = response.hasPendingActions))
       .catch(() => (this.hasActions = true))
   },
   watch: {
