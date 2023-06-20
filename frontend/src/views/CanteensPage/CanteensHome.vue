@@ -273,7 +273,7 @@
           </v-col>
           <v-col cols="12" sm="6" md="5">
             <label for="select-badge" :class="{ 'text-body-2': true, 'active-filter-label': !!filters.badge.value }">
-              Measure EGAlim réalisée
+              Mesure EGAlim réalisée
             </label>
             <DsfrSelect
               v-model="filters.badge.value"
