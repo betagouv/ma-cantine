@@ -60,7 +60,7 @@ export default {
       canteenCount: undefined,
       hasActions: false,
       showCanteenCreationPrompt: null,
-      showTeledeclarationBanner: true,
+      teledeclarationCampaignActive: window.ENABLE_TELEDECLARATION,
     }
   },
   computed: {
@@ -68,10 +68,10 @@ export default {
       return this.$store.state.loggedUser
     },
     showActionsBanner() {
-      return this.canteenCount > 0 && this.hasActions && !this.showTeledeclarationBanner
+      return this.canteenCount > 0 && this.hasActions && !this.teledeclarationCampaignActive
     },
     showPendingTeledeclarationBanner() {
-      return this.canteenCount > 0 && this.hasActions && this.showTeledeclarationBanner
+      return this.canteenCount > 0 && this.hasActions && this.teledeclarationCampaignActive
     },
     showSuccessBanner() {
       return this.canteenCount > 0 && !this.hasActions
