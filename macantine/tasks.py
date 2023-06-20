@@ -276,7 +276,6 @@ def _flatten_declared_data(df):
 
 
 def _extract_dataset_teledeclaration(year):
-    # Exact match from the schema : td_columns = ["id", "applicant_id", "teledeclaration_mode", "creation_date", "year", "version", "canteen_id", "canteen_siret", "canteen_name", "cantine_central_kitchen_siret", "canteen_department", "canteen_region", "cantine_satellite_canteens_count", "cantine_economic_model", "cantine_management_type", "cantine_production_type", "canteen_sectors", "canteen_line_ministry", "teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"]
     td_columns = ["id", "applicant_id", "teledeclaration_mode", "creation_date", "year", "version", "canteen.id", "canteen.siret", "canteen.name", "canteen.central_producer_siret", "canteen.department", "canteen.region", "canteen.satellite_canteens_count", "canteen.economic_model", "canteen.management_type", "canteen.production_type", "canteen.sectors", "canteen.line_ministry", "teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"]
     td = pd.DataFrame(Teledeclaration.objects.filter(year=year).values())
     td = _flatten_declared_data(td)
@@ -284,9 +283,20 @@ def _extract_dataset_teledeclaration(year):
     td['teledeclaration_ratio_egalim_hors_bio'] = td['teledeclaration.value_sustainable_ht'] / td['teledeclaration.value_total_ht']
     td = td[td_columns]
     td.columns = td.columns.str.replace('.', '_')
-
     td = td.reset_index(drop=True)
     return td
+
+
+def _extract_dataset_canteen():
+    canteens_col = ['id', 'name', 'siret', 'city', 'city_insee_code', 'postal_code', 'department', 'region', 'economic_model', 'management_type', 'production_type', 'satellite_canteens_count', 'central_producer_siret', 'creation_date', 'daily_meal_count', 'yearly_meal_count', 'line_ministry', 'modification_date', 'publication_status', 'logo', 'sectors', 'active_on_ma_cantine']
+    canteens = pd.DataFrame(Canteen.objects.all().values())
+    # canteens_with_manager = Canteen.objects.filter(Q(managers__isnull=False) & Q(manager_field__exists=True)).values_list('id', flat=True)
+    canteens['active_on_ma_cantine'] = True
+    canteens['sectors'] = True
+    # canteens['active_on_ma_cantine'] = canteens['id'].apply(lambda x: x in canteens_with_manager, axis=1)
+    canteens = canteens[canteens_col]
+    canteens = canteens.reset_index(drop=True)
+    return canteens
 
 
 def _export_dataset(td, file_name):

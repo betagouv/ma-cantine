@@ -22,8 +22,10 @@ class TestExtractionOpenData(TestCase):
 
     def test_extraction_canteen(self):
         schema = json.load(open("data/schemas/schema_cantine.json"))
+        schema_cols = [i["name"] for i in schema["fields"]]
 
         canteen = CanteenFactory.create()
-
+        manager = UserFactory.create()
+        canteen.managers.add(manager)
         canteens = _extract_dataset_canteen()
         assert len(canteens) == 1, "There should be one canteen"
