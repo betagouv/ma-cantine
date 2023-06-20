@@ -614,7 +614,7 @@ export default {
       if (shouldNavigate) {
         this.page = 1
         this.updateRouter(Object.assign(this.query, { page: 1 }))
-      } else this.fetchCurrentPage()
+      }
     },
     populateParameters() {
       this.searchTerm = this.$route.query.recherche || null
