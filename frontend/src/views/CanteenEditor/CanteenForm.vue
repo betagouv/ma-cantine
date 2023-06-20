@@ -212,7 +212,7 @@
               de la cuisine centrale.
             </p>
             <v-expand-transition>
-              <DsfrCallout v-if="centralKitchen">
+              <DsfrCallout v-if="centralKitchen && centralKitchen.id && centralKitchen.name">
                 <p v-if="centralKitchen.isManagedByUser" class="mb-0">
                   Ce SIRET correspond à l'établissement que vous gérez
                   <router-link
