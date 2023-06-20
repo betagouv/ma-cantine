@@ -24,12 +24,15 @@ class TestExtractionOpenData(TestCase):
         schema = json.load(open("data/schemas/schema_cantine.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
-        canteen = CanteenFactory.create()
-        canteen.managers.add(UserFactory.create())
+        canteen_1 = CanteenFactory.create()
+        canteen_1.managers.add(UserFactory.create())
+        print(canteen_1.managers.all())
 
-        CanteenFactory.create()  # Another canteen, but without a manager
-
+        canteen_2 = CanteenFactory.create()  # Another canteen, but without a manager
+        canteen_2.managers.clear()
+        print(canteen_2.managers.all())
+        
         canteens = _extract_dataset_canteen()
         assert len(canteens) == 2, "There should be two canteens"
-        assert canteens.iloc[0]['active_on_ma_cantine'], "The canteen should be active because there is at least one manager"
-        assert not canteens.iloc[1]['active_on_ma_cantine'], "The canteen should not be active because there no manager"
+        assert canteens[canteens.id == canteen_1.id].iloc[0]['active_on_ma_cantine'], "The canteen should be active because there is at least one manager"
+        assert not canteens[canteens.id == canteen_2.id].iloc[0]['active_on_ma_cantine'], "The canteen should not be active because there no manager"

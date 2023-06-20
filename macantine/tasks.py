@@ -289,11 +289,15 @@ def _extract_dataset_teledeclaration(year):
 
 def _extract_dataset_canteen():
     canteens_col = ['id', 'name', 'siret', 'city', 'city_insee_code', 'postal_code', 'department', 'region', 'economic_model', 'management_type', 'production_type', 'satellite_canteens_count', 'central_producer_siret', 'creation_date', 'daily_meal_count', 'yearly_meal_count', 'line_ministry', 'modification_date', 'publication_status', 'logo', 'sectors', 'active_on_ma_cantine']
-    canteens = pd.DataFrame(Canteen.objects.all().values())
-    # canteens_with_manager = Canteen.objects.filter(Q(managers__isnull=False) & Q(manager_field__exists=True)).values_list('id', flat=True)
-    canteens['active_on_ma_cantine'] = True
+    all_canteens = Canteen.objects.all()
+    
+    active_canteens_id = [c.id for c in all_canteens if not c.can_be_claimed]
+
+    canteens = pd.DataFrame(all_canteens.values())
+    canteens['active_on_ma_cantine'] = canteens['id'].apply(lambda x: x in active_canteens_id)
+
     canteens['sectors'] = True
-    # canteens['active_on_ma_cantine'] = canteens['id'].apply(lambda x: x in canteens_with_manager, axis=1)
+    
     canteens = canteens[canteens_col]
     canteens = canteens.reset_index(drop=True)
     return canteens
