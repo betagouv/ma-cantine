@@ -2,6 +2,9 @@ import logging
 import datetime
 import requests
 import csv
+import boto3
+import os
+import csv
 import pandas as pd
 from django.utils import timezone
 from django.conf import settings
@@ -17,6 +20,7 @@ from data.models import User, Canteen, Teledeclaration
 >>>>>>> 62be657f... [Pass]
 from .celery import app
 import sib_api_v3_sdk
+from django.core.files.storage import default_storage
 from sib_api_v3_sdk.rest import ApiException
 
 logger = logging.getLogger(__name__)
@@ -281,7 +285,17 @@ def _extract_dataset_teledeclaration(year):
     return td
 
 
+def _export_dataset(td, file_name):
+    with default_storage.open(file_name, 'w') as file:
+        csv_writer = csv.writer(file, delimiter=';')
+        csv_writer.writerow(td.columns)
+        # Write the data rows
+        for row in td.itertuples(index=False):
+            csv_writer.writerow(row)
+    
+
 @app.task()
 def extract_datasets(year):
     td = _extract_dataset_teledeclaration(year)
+    _export_dataset(td, "campagne_td_2021.csv")
     return td
