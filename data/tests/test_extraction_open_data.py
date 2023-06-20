@@ -25,7 +25,11 @@ class TestExtractionOpenData(TestCase):
         schema_cols = [i["name"] for i in schema["fields"]]
 
         canteen = CanteenFactory.create()
-        manager = UserFactory.create()
-        canteen.managers.add(manager)
+        canteen.managers.add(UserFactory.create())
+
+        CanteenFactory.create()  # Another canteen, but without a manager
+
         canteens = _extract_dataset_canteen()
-        assert len(canteens) == 1, "There should be one canteen"
+        assert len(canteens) == 2, "There should be two canteens"
+        assert canteens.iloc[0]['active_on_ma_cantine'], "The canteen should be active because there is at least one manager"
+        assert not canteens.iloc[1]['active_on_ma_cantine'], "The canteen should not be active because there no manager"
