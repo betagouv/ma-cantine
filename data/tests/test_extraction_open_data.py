@@ -1,7 +1,7 @@
 from django.test import TestCase
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory
 from data.models import Teledeclaration
-from macantine.tasks import _extract_dataset_teledeclaration#, _extract_dataset_canteen
+from macantine.tasks import _extract_dataset_teledeclaration, _extract_dataset_canteen
 import json
 
 
@@ -19,3 +19,11 @@ class TestExtractionOpenData(TestCase):
         td = _extract_dataset_teledeclaration(year=diagnostic.year)
         assert len(td) == 1, "There should be one teledeclaration for 2021"
         assert len(td.columns) == len(schema_cols) + 1, "The columns should match the schema. Adding the index"
+
+    def test_extraction_canteen(self):
+        schema = json.load(open("data/schemas/schema_cantine.json"))
+
+        canteen = CanteenFactory.create()
+
+        canteens = _extract_dataset_canteen()
+        assert len(canteens) == 1, "There should be one canteen"
