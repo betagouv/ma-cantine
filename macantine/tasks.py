@@ -277,10 +277,14 @@ def _flatten_declared_data(df):
 
 def _extract_dataset_teledeclaration(year):
     # Exact match from the schema : td_columns = ["id", "applicant_id", "teledeclaration_mode", "creation_date", "year", "version", "canteen_id", "canteen_siret", "canteen_name", "cantine_central_kitchen_siret", "canteen_department", "canteen_region", "cantine_satellite_canteens_count", "cantine_economic_model", "cantine_management_type", "cantine_production_type", "canteen_sectors", "canteen_line_ministry", "teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"]
-    td_columns = ["id", "applicant_id", "teledeclaration_mode", "creation_date", "year", "version", "canteen.id", "canteen.siret", "canteen.name", "canteen.central_producer_siret", "canteen.department", "canteen.region", "canteen.satellite_canteens_count", "canteen.economic_model", "canteen.management_type", "canteen.production_type", "canteen.sectors", "canteen.line_ministry", "teledeclaration.value_bio_ht", "teledeclaration.value_total_ht", "teledeclaration.value_sustainable_ht"]
+    td_columns = ["id", "applicant_id", "teledeclaration_mode", "creation_date", "year", "version", "canteen.id", "canteen.siret", "canteen.name", "canteen.central_producer_siret", "canteen.department", "canteen.region", "canteen.satellite_canteens_count", "canteen.economic_model", "canteen.management_type", "canteen.production_type", "canteen.sectors", "canteen.line_ministry", "teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"]
     td = pd.DataFrame(Teledeclaration.objects.filter(year=year).values())
     td = _flatten_declared_data(td)
+    td['teledeclaration_ratio_bio'] = td['teledeclaration.value_bio_ht'] / td['teledeclaration.value_total_ht']
+    td['teledeclaration_ratio_egalim_hors_bio'] = td['teledeclaration.value_sustainable_ht'] / td['teledeclaration.value_total_ht']
     td = td[td_columns]
+    td.columns = td.columns.str.replace('.', '_')
+
     td = td.reset_index(drop=True)
     return td
 
@@ -295,7 +299,11 @@ def _export_dataset(td, file_name):
     
 
 @app.task()
-def extract_datasets(year):
-    td = _extract_dataset_teledeclaration(year)
-    _export_dataset(td, "campagne_td_2021.csv")
-    return td
+def export_datasets(year):
+    # Campagnes de télédéclarations
+    td_2021 = _extract_dataset_teledeclaration(2021)
+    _export_dataset(td_2021, "campagne_td_2021.csv")
+
+    # Registre des cantines
+    # canteens = _extract_dataset_canteen()
+    # _export_dataset(canteens, "registre_cantines.csv")
