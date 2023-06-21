@@ -12,12 +12,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.db.models import F
 from django.db.models.functions import Length
-<<<<<<< HEAD
 from django.core.management import call_command
-from data.models import User, Canteen
-=======
-from data.models import User, Canteen, Teledeclaration
->>>>>>> 62be657f... [Pass]
+from data.models import User, Canteen, Teledeclaration, Sector
 from .celery import app
 import sib_api_v3_sdk
 from django.core.files.storage import default_storage
@@ -288,17 +284,24 @@ def _extract_dataset_teledeclaration(year):
 
 
 def _extract_dataset_canteen():
-    canteens_col = ['id', 'name', 'siret', 'city', 'city_insee_code', 'postal_code', 'department', 'region', 'economic_model', 'management_type', 'production_type', 'satellite_canteens_count', 'central_producer_siret', 'creation_date', 'daily_meal_count', 'yearly_meal_count', 'line_ministry', 'modification_date', 'publication_status', 'logo', 'sectors', 'active_on_ma_cantine']
+    canteens_col = ['id', 'name', 'siret', 'city', 'city_insee_code', 'postal_code', 'department', 'region', 'economic_model', 'management_type', 'production_type', 'satellite_canteens_count', 'central_producer_siret', 'creation_date', 'daily_meal_count', 'yearly_meal_count', 'line_ministry', 'modification_date', 'publication_status', 'logo', 'sectors']
     all_canteens = Canteen.objects.all()
-    
     active_canteens_id = [c.id for c in all_canteens if not c.can_be_claimed]
 
-    canteens = pd.DataFrame(all_canteens.values())
-    canteens['active_on_ma_cantine'] = canteens['id'].apply(lambda x: x in active_canteens_id)
+    # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
+    canteens = pd.DataFrame(all_canteens.values(*canteens_col))
 
-    canteens['sectors'] = True
+    # Adding the active_on_ma_cantine column
+    canteens['active_on_ma_cantine'] = canteens['id'].apply(lambda x: x in active_canteens_id)
+    canteens_col.append('active_on_ma_cantine')
     
-    canteens = canteens[canteens_col]
+    # Fetching sectors information and aggreting in list in order to have only one row per canteen
+    canteens['sectors'] = canteens['sectors'].apply(lambda x: Sector.objects.get(id=x))
+    canteens_sectors = canteens.groupby('id')['sectors'].apply(list)
+    del canteens['sectors']
+    canteens = canteens.merge(canteens_sectors, on='id')
+    canteens = canteens.drop_duplicates(subset=['id'])
+
     canteens = canteens.reset_index(drop=True)
     return canteens
 
