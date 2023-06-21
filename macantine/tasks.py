@@ -2,9 +2,6 @@ import logging
 import datetime
 import requests
 import csv
-import boto3
-import os
-import csv
 import pandas as pd
 from django.utils import timezone
 from django.conf import settings
@@ -272,20 +269,65 @@ def _flatten_declared_data(df):
 
 
 def _extract_dataset_teledeclaration(year):
-    td_columns = ["id", "applicant_id", "teledeclaration_mode", "creation_date", "year", "version", "canteen.id", "canteen.siret", "canteen.name", "canteen.central_producer_siret", "canteen.department", "canteen.region", "canteen.satellite_canteens_count", "canteen.economic_model", "canteen.management_type", "canteen.production_type", "canteen.sectors", "canteen.line_ministry", "teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"]
+    td_columns = [
+        "id",
+        "applicant_id",
+        "teledeclaration_mode",
+        "creation_date",
+        "year",
+        "version",
+        "canteen.id",
+        "canteen.siret",
+        "canteen.name",
+        "canteen.central_producer_siret",
+        "canteen.department",
+        "canteen.region",
+        "canteen.satellite_canteens_count",
+        "canteen.economic_model",
+        "canteen.management_type",
+        "canteen.production_type",
+        "canteen.sectors",
+        "canteen.line_ministry",
+        "teledeclaration_ratio_bio",
+        "teledeclaration_ratio_egalim_hors_bio",
+    ]
     td = pd.DataFrame(Teledeclaration.objects.filter(year=year).values())
     td = _flatten_declared_data(td)
-    td['teledeclaration_ratio_bio'] = td['teledeclaration.value_bio_ht'] / td['teledeclaration.value_total_ht']
-    td['teledeclaration_ratio_egalim_hors_bio'] = td['teledeclaration.value_sustainable_ht'] / td['teledeclaration.value_total_ht']
+    td["teledeclaration_ratio_bio"] = td["teledeclaration.value_bio_ht"] / td["teledeclaration.value_total_ht"]
+    td["teledeclaration_ratio_egalim_hors_bio"] = (
+        td["teledeclaration.value_sustainable_ht"] / td["teledeclaration.value_total_ht"]
+    )
     td = td.loc[:, ~td.columns.duplicated()]
     td = td[td_columns]
-    td.columns = td.columns.str.replace('.', '_')
+    td.columns = td.columns.str.replace(".", "_")
     td = td.reset_index(drop=True)
     return td
 
 
 def _extract_dataset_canteen():
-    canteens_col = ['id', 'name', 'siret', 'city', 'city_insee_code', 'postal_code', 'department', 'region', 'economic_model', 'management_type', 'production_type', 'satellite_canteens_count', 'central_producer_siret', 'creation_date', 'daily_meal_count', 'yearly_meal_count', 'line_ministry', 'modification_date', 'publication_status', 'logo', 'sectors']
+    canteens_col = [
+        "id",
+        "name",
+        "siret",
+        "city",
+        "city_insee_code",
+        "postal_code",
+        "department",
+        "region",
+        "economic_model",
+        "management_type",
+        "production_type",
+        "satellite_canteens_count",
+        "central_producer_siret",
+        "creation_date",
+        "daily_meal_count",
+        "yearly_meal_count",
+        "line_ministry",
+        "modification_date",
+        "publication_status",
+        "logo",
+        "sectors",
+    ]
     all_canteens = Canteen.objects.all()
     active_canteens_id = [c.id for c in all_canteens if not c.can_be_claimed]
 
@@ -293,28 +335,28 @@ def _extract_dataset_canteen():
     canteens = pd.DataFrame(all_canteens.values(*canteens_col))
 
     # Adding the active_on_ma_cantine column
-    canteens['active_on_ma_cantine'] = canteens['id'].apply(lambda x: x in active_canteens_id)
-    canteens_col.append('active_on_ma_cantine')
-    
+    canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
+    canteens_col.append("active_on_ma_cantine")
+
     # Fetching sectors information and aggreting in list in order to have only one row per canteen
-    canteens['sectors'] = canteens['sectors'].apply(lambda x: Sector.objects.get(id=x))
-    canteens_sectors = canteens.groupby('id')['sectors'].apply(list)
-    del canteens['sectors']
-    canteens = canteens.merge(canteens_sectors, on='id')
-    canteens = canteens.drop_duplicates(subset=['id'])
+    canteens["sectors"] = canteens["sectors"].apply(lambda x: Sector.objects.get(id=x))
+    canteens_sectors = canteens.groupby("id")["sectors"].apply(list)
+    del canteens["sectors"]
+    canteens = canteens.merge(canteens_sectors, on="id")
+    canteens = canteens.drop_duplicates(subset=["id"])
 
     canteens = canteens.reset_index(drop=True)
     return canteens
 
 
 def _export_dataset(td, file_name):
-    with default_storage.open(file_name, 'w') as file:
-        csv_writer = csv.writer(file, delimiter=';')
+    with default_storage.open(file_name, "w") as file:
+        csv_writer = csv.writer(file, delimiter=";")
         csv_writer.writerow(td.columns)
         # Write the data rows
         for row in td.itertuples(index=False):
             csv_writer.writerow(row)
-    
+
 
 @app.task()
 def export_datasets(year):
