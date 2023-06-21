@@ -12,8 +12,8 @@ from django.db.models.functions import Length
 from django.core.management import call_command
 from data.models import User, Canteen, Teledeclaration, Sector
 from .celery import app
-import sib_api_v3_sdk
 from django.core.files.storage import default_storage
+import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
 logger = logging.getLogger(__name__)
