@@ -277,6 +277,7 @@ def _extract_dataset_teledeclaration(year):
     td = _flatten_declared_data(td)
     td['teledeclaration_ratio_bio'] = td['teledeclaration.value_bio_ht'] / td['teledeclaration.value_total_ht']
     td['teledeclaration_ratio_egalim_hors_bio'] = td['teledeclaration.value_sustainable_ht'] / td['teledeclaration.value_total_ht']
+    td = td.loc[:, ~td.columns.duplicated()]
     td = td[td_columns]
     td.columns = td.columns.str.replace('.', '_')
     td = td.reset_index(drop=True)
@@ -322,5 +323,5 @@ def export_datasets(year):
     _export_dataset(td_2021, "campagne_td_2021.csv")
 
     # Registre des cantines
-    # canteens = _extract_dataset_canteen()
-    # _export_dataset(canteens, "registre_cantines.csv")
+    canteens = _extract_dataset_canteen()
+    _export_dataset(canteens, "registre_cantines.csv")
