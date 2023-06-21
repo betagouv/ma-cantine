@@ -47,6 +47,10 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.delete_old_historical_records",
         "schedule": nightly,
     },
+    "export_datasets": {
+        "task": "macantine.tasks.export_datasets",
+        "schedule": nightly,
+    }
 }
 
 app.conf.timezone = "Europe/Paris"
