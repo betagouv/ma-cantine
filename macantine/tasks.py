@@ -298,7 +298,7 @@ def _extract_dataset_teledeclaration(year):
         td["teledeclaration.value_sustainable_ht"] / td["teledeclaration.value_total_ht"]
     )
     td = td.loc[:, ~td.columns.duplicated()]
-    td = td[td_columns]
+    td = td.reindex(td_columns, axis="columns")
     td.columns = td.columns.str.replace(".", "_")
     td = td.reset_index(drop=True)
     return td
@@ -359,7 +359,7 @@ def _export_dataset(td, file_name):
 
 
 @app.task()
-def export_datasets(year):
+def export_datasets():
     # Campagnes de télédéclarations
     td_2021 = _extract_dataset_teledeclaration(2021)
     _export_dataset(td_2021, "campagne_td_2021.csv")
