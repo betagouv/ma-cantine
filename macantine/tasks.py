@@ -329,7 +329,7 @@ def _extract_dataset_canteen():
         "sectors",
     ]
     all_canteens = Canteen.objects.all()
-    active_canteens_id = [c.id for c in all_canteens if not c.can_be_claimed]
+    active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
 
     # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
     canteens = pd.DataFrame(all_canteens.values(*canteens_col))
