@@ -2,6 +2,7 @@ import logging
 import datetime
 import requests
 import csv
+import math
 import pandas as pd
 from django.utils import timezone
 from django.conf import settings
@@ -339,7 +340,7 @@ def _extract_dataset_canteen():
     canteens_col.append("active_on_ma_cantine")
 
     # Fetching sectors information and aggreting in list in order to have only one row per canteen
-    canteens["sectors"] = canteens["sectors"].apply(lambda x: Sector.objects.get(id=x))
+    canteens["sectors"] = canteens["sectors"].apply(lambda x: Sector.objects.get(id=x) if not math.isnan(x) else '')
     canteens_sectors = canteens.groupby("id")["sectors"].apply(list)
     del canteens["sectors"]
     canteens = canteens.merge(canteens_sectors, on="id")
