@@ -41,3 +41,8 @@ class TestExtractionOpenData(TestCase):
         ], "The canteen should not be active because there no manager"
         assert isinstance(canteens["sectors"][0], list), "The sectors should be a list"
         assert len(canteens.columns) == len(schema_cols), "The columns should match the schema."
+
+        canteen_2.sectors.clear()
+        canteens = _extract_dataset_canteen()
+        assert canteens[canteens.id == canteen_2.id].iloc[0]['sectors'] == [], "The sectors should be an empty list"
+
