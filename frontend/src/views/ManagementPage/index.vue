@@ -17,8 +17,9 @@
         v-model="showCanteenCreationPrompt"
       />
     </div>
-    <TeledeclarationBanner v-if="showTeledeclarationBanner" />
-    <ActionsBanner v-if="showActionsBanner" />
+    <TeledeclarationBanner v-if="showPendingTeledeclarationBanner" />
+    <ActionsBanner v-else-if="showActionsBanner" />
+    <SuccessBanner v-else-if="showSuccessBanner" />
     <div class="mt-4">
       <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
       <CanteensPagination v-on:canteen-count="canteenCount = $event" />
@@ -38,23 +39,28 @@ import UserTools from "./UserTools"
 import TeledeclarationBanner from "./TeledeclarationBanner"
 import CanteenCreationDialog from "./CanteenCreationDialog"
 import ActionsBanner from "./ActionsBanner"
+import SuccessBanner from "./SuccessBanner"
 import validators from "@/validators"
+import { lastYear } from "@/utils"
 
 export default {
+  name: "ManagementPage",
   components: {
     CanteensPagination,
     UserTools,
     PageSatisfaction,
     TeledeclarationBanner,
     ActionsBanner,
+    SuccessBanner,
     CanteenCreationDialog,
   },
   data() {
     return {
       validators,
       canteenCount: undefined,
-      showTeledeclarationBanner: true,
+      hasActions: false,
       showCanteenCreationPrompt: null,
+      teledeclarationCampaignActive: window.ENABLE_TELEDECLARATION,
     }
   },
   computed: {
@@ -62,8 +68,23 @@ export default {
       return this.$store.state.loggedUser
     },
     showActionsBanner() {
-      return this.canteenCount > 0 && !this.showTeledeclarationBanner
+      return this.canteenCount > 0 && this.hasActions && !this.teledeclarationCampaignActive
     },
+    showPendingTeledeclarationBanner() {
+      return this.canteenCount > 0 && this.hasActions && this.teledeclarationCampaignActive
+    },
+    showSuccessBanner() {
+      return this.canteenCount > 0 && !this.hasActions
+    },
+  },
+  mounted() {
+    return fetch(`/api/v1/actionableCanteens/${lastYear()}?limit=1&offset=0`)
+      .then((response) => {
+        if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+        return response.json()
+      })
+      .then((response) => (this.hasActions = response.hasPendingActions))
+      .catch(() => (this.hasActions = true))
   },
   watch: {
     canteenCount(count) {

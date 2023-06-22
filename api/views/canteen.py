@@ -143,6 +143,7 @@ class CanteenActionsPagination(LimitOffsetPagination):
     max_limit = 30
     undiagnosed_canteens_with_purchases = []
     canteens_to_publish = []
+    has_pending_actions = False
 
     def paginate_queryset(self, queryset, request, view=None):
         undiagnosed_canteens_with_purchases = queryset.filter(action=Canteen.Actions.PREFILL_DIAGNOSTIC).values_list(
@@ -151,6 +152,7 @@ class CanteenActionsPagination(LimitOffsetPagination):
         self.undiagnosed_canteens_with_purchases = set(filter(lambda x: x, undiagnosed_canteens_with_purchases))
         canteens_to_publish = queryset.filter(action=Canteen.Actions.PUBLISH).values_list("pk", flat=True)
         self.canteens_to_publish = set(filter(lambda x: x, canteens_to_publish))
+        self.has_pending_actions = queryset.exclude(action=Canteen.Actions.NOTHING).exists()
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
@@ -163,6 +165,7 @@ class CanteenActionsPagination(LimitOffsetPagination):
                     ("results", data),
                     ("undiagnosed_canteens_with_purchases", self.undiagnosed_canteens_with_purchases),
                     ("canteens_to_publish", self.canteens_to_publish),
+                    ("has_pending_actions", self.has_pending_actions),
                 ]
             )
         )
