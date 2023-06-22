@@ -12,6 +12,8 @@ from django.db.models import F
 from django.db.models.functions import Length
 from django.core.management import call_command
 from data.models import User, Canteen, Teledeclaration, Sector
+from api.serializers import SectorSerializer
+from api.views.utils import camelize
 from .celery import app
 from django.core.files.storage import default_storage
 import sib_api_v3_sdk
@@ -292,12 +294,15 @@ def _extract_dataset_teledeclaration(year):
         "teledeclaration_ratio_bio",
         "teledeclaration_ratio_egalim_hors_bio",
     ]
-    td = pd.DataFrame(Teledeclaration.objects.filter(year=year).values())
+    td = pd.DataFrame(Teledeclaration.objects.filter(year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values())
+    if len(td) == 0:
+        return td
     td = _flatten_declared_data(td)
     td["teledeclaration_ratio_bio"] = td["teledeclaration.value_bio_ht"] / td["teledeclaration.value_total_ht"]
     td["teledeclaration_ratio_egalim_hors_bio"] = (
         td["teledeclaration.value_sustainable_ht"] / td["teledeclaration.value_total_ht"]
     )
+
     td = td.loc[:, ~td.columns.duplicated()]
     td = td.reindex(td_columns, axis="columns")
     td.columns = td.columns.str.replace(".", "_")
@@ -329,7 +334,7 @@ def _extract_dataset_canteen():
         "logo",
         "sectors",
     ]
-    all_canteens = Canteen.objects.all()
+    all_canteens = Canteen.objects.filter(deletion_date__isnull=True)
     active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
 
     # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
@@ -339,13 +344,17 @@ def _extract_dataset_canteen():
     canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
     canteens_col.append("active_on_ma_cantine")
 
+    canteens = canteens.reindex(canteens_col, axis="columns")
+
     # Fetching sectors information and aggreting in list in order to have only one row per canteen
-    canteens["sectors"] = canteens["sectors"].apply(lambda x: Sector.objects.get(id=x) if not math.isnan(x) else '')
-    canteens_sectors = canteens.groupby("id")["sectors"].apply(list)
+    canteens["sectors"] = canteens["sectors"].apply(
+        lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data) if (x and not math.isnan(x)) else ''
+    )
+    canteens_sectors = canteens.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [''] else [])
+
     del canteens["sectors"]
     canteens = canteens.merge(canteens_sectors, on="id")
     canteens = canteens.drop_duplicates(subset=["id"])
-
     canteens = canteens.reset_index(drop=True)
     return canteens
 
