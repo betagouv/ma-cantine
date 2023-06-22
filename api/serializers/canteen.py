@@ -341,6 +341,8 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
             "name",
             "siret",
             "city_insee_code",
+            "department",
+            "region",
             "sectors",
             "line_ministry",
             "daily_meal_count",

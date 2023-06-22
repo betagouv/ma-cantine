@@ -2,6 +2,7 @@ import logging
 import datetime
 import requests
 import csv
+import pandas as pd
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
@@ -9,8 +10,9 @@ from django.core.paginator import Paginator
 from django.db.models import F
 from django.db.models.functions import Length
 from django.core.management import call_command
-from data.models import User, Canteen
+from data.models import User, Canteen, Teledeclaration, Sector
 from .celery import app
+from django.core.files.storage import default_storage
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
@@ -258,3 +260,110 @@ def delete_old_historical_records():
         return
     logger.info(f"History items older than {settings.MAX_DAYS_HISTORICAL_RECORDS} days will be removed.")
     call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)
+
+
+def _flatten_declared_data(df):
+    tmp_df = pd.json_normalize(df["declared_data"])
+    df = pd.concat([df.drop("declared_data", axis=1), tmp_df], axis=1)
+    return df
+
+
+def _extract_dataset_teledeclaration(year):
+    td_columns = [
+        "id",
+        "applicant_id",
+        "teledeclaration_mode",
+        "creation_date",
+        "year",
+        "version",
+        "canteen.id",
+        "canteen.siret",
+        "canteen.name",
+        "canteen.central_producer_siret",
+        "canteen.department",
+        "canteen.region",
+        "canteen.satellite_canteens_count",
+        "canteen.economic_model",
+        "canteen.management_type",
+        "canteen.production_type",
+        "canteen.sectors",
+        "canteen.line_ministry",
+        "teledeclaration_ratio_bio",
+        "teledeclaration_ratio_egalim_hors_bio",
+    ]
+    td = pd.DataFrame(Teledeclaration.objects.filter(year=year).values())
+    td = _flatten_declared_data(td)
+    td["teledeclaration_ratio_bio"] = td["teledeclaration.value_bio_ht"] / td["teledeclaration.value_total_ht"]
+    td["teledeclaration_ratio_egalim_hors_bio"] = (
+        td["teledeclaration.value_sustainable_ht"] / td["teledeclaration.value_total_ht"]
+    )
+    td = td.loc[:, ~td.columns.duplicated()]
+    td = td[td_columns]
+    td.columns = td.columns.str.replace(".", "_")
+    td = td.reset_index(drop=True)
+    return td
+
+
+def _extract_dataset_canteen():
+    canteens_col = [
+        "id",
+        "name",
+        "siret",
+        "city",
+        "city_insee_code",
+        "postal_code",
+        "department",
+        "region",
+        "economic_model",
+        "management_type",
+        "production_type",
+        "satellite_canteens_count",
+        "central_producer_siret",
+        "creation_date",
+        "daily_meal_count",
+        "yearly_meal_count",
+        "line_ministry",
+        "modification_date",
+        "publication_status",
+        "logo",
+        "sectors",
+    ]
+    all_canteens = Canteen.objects.all()
+    active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
+
+    # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
+    canteens = pd.DataFrame(all_canteens.values(*canteens_col))
+
+    # Adding the active_on_ma_cantine column
+    canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
+    canteens_col.append("active_on_ma_cantine")
+
+    # Fetching sectors information and aggreting in list in order to have only one row per canteen
+    canteens["sectors"] = canteens["sectors"].apply(lambda x: Sector.objects.get(id=x))
+    canteens_sectors = canteens.groupby("id")["sectors"].apply(list)
+    del canteens["sectors"]
+    canteens = canteens.merge(canteens_sectors, on="id")
+    canteens = canteens.drop_duplicates(subset=["id"])
+
+    canteens = canteens.reset_index(drop=True)
+    return canteens
+
+
+def _export_dataset(td, file_name):
+    with default_storage.open(file_name, "w") as file:
+        csv_writer = csv.writer(file, delimiter=";")
+        csv_writer.writerow(td.columns)
+        # Write the data rows
+        for row in td.itertuples(index=False):
+            csv_writer.writerow(row)
+
+
+@app.task()
+def export_datasets(year):
+    # Campagnes de télédéclarations
+    td_2021 = _extract_dataset_teledeclaration(2021)
+    _export_dataset(td_2021, "campagne_td_2021.csv")
+
+    # Registre des cantines
+    canteens = _extract_dataset_canteen()
+    _export_dataset(canteens, "registre_cantines.csv")
