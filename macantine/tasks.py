@@ -273,28 +273,9 @@ def _flatten_declared_data(df):
 
 
 def _extract_dataset_teledeclaration(year):
-    td_columns = [
-        "id",
-        "applicant_id",
-        "teledeclaration_mode",
-        "creation_date",
-        "year",
-        "version",
-        "canteen.id",
-        "canteen.siret",
-        "canteen.name",
-        "canteen.central_producer_siret",
-        "canteen.department",
-        "canteen.region",
-        "canteen.satellite_canteens_count",
-        "canteen.economic_model",
-        "canteen.management_type",
-        "canteen.production_type",
-        "canteen.sectors",
-        "canteen.line_ministry",
-        "teledeclaration_ratio_bio",
-        "teledeclaration_ratio_egalim_hors_bio",
-    ]
+    schema = json.load(open("data/schemas/schema_teledeclaration.json"))
+    td_columns = [i["name"].replace("canteen_", "canteen.") for i in schema["fields"]]
+
     td = pd.DataFrame(
         Teledeclaration.objects.filter(year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values()
     )
@@ -338,11 +319,11 @@ def _extract_dataset_canteen():
     canteens = canteens.merge(canteens_sectors, on="id")
     canteens = canteens.drop_duplicates(subset=["id"])
     canteens = canteens.reset_index(drop=True)
-    
+
     for col_int in schema["fields"]:
         if col_int["type"] == "integer":
             # Force column o Int64 to maintain an integer column despite the NaN values
-            canteens[col_int['name']] = canteens[col_int['name']].astype("Int64")
+            canteens[col_int["name"]] = canteens[col_int["name"]].astype("Int64")
     return canteens
 
 
