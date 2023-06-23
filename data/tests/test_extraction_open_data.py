@@ -46,7 +46,6 @@ class TestExtractionOpenData(TestCase):
         canteen_2.managers.clear()
 
         canteens = _extract_dataset_canteen()
-
         assert len(canteens) == 2, "There should be two canteens"
         assert canteens[canteens.id == canteen_1.id].iloc[0][
             "active_on_ma_cantine"
@@ -56,9 +55,11 @@ class TestExtractionOpenData(TestCase):
         ], "The canteen should not be active because there no manager"
         assert isinstance(canteens["sectors"][0], list), "The sectors should be a list"
         assert len(canteens.columns) == len(schema_cols), "The columns should match the schema."
+
         self.assertEqual(
             canteens[canteens.id == canteen_1.id].iloc[0]["sectors"],
             [camelize(SectorSerializer(x).data) for x in canteen_1.sectors.all()],
+            "The sectors should be a list of sectors",
         )
 
         canteen_2.sectors.clear()
