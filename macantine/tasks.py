@@ -4,6 +4,7 @@ import requests
 import csv
 import math
 import pandas as pd
+import json
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
@@ -294,7 +295,9 @@ def _extract_dataset_teledeclaration(year):
         "teledeclaration_ratio_bio",
         "teledeclaration_ratio_egalim_hors_bio",
     ]
-    td = pd.DataFrame(Teledeclaration.objects.filter(year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values())
+    td = pd.DataFrame(
+        Teledeclaration.objects.filter(year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values()
+    )
     if len(td) == 0:
         return td
     td = _flatten_declared_data(td)
@@ -311,51 +314,35 @@ def _extract_dataset_teledeclaration(year):
 
 
 def _extract_dataset_canteen():
-    canteens_col = [
-        "id",
-        "name",
-        "siret",
-        "city",
-        "city_insee_code",
-        "postal_code",
-        "department",
-        "region",
-        "economic_model",
-        "management_type",
-        "production_type",
-        "satellite_canteens_count",
-        "central_producer_siret",
-        "creation_date",
-        "daily_meal_count",
-        "yearly_meal_count",
-        "line_ministry",
-        "modification_date",
-        "publication_status",
-        "logo",
-        "sectors",
-    ]
+    schema = json.load(open("data/schemas/schema_cantine.json"))
+    canteens_col = [i["name"] for i in schema["fields"]]
+
     all_canteens = Canteen.objects.filter(deletion_date__isnull=True)
     active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
 
     # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-    canteens = pd.DataFrame(all_canteens.values(*canteens_col))
+    canteens = pd.DataFrame(all_canteens.values(*canteens_col[:-1]))
 
     # Adding the active_on_ma_cantine column
     canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
-    canteens_col.append("active_on_ma_cantine")
 
     canteens = canteens.reindex(canteens_col, axis="columns")
 
     # Fetching sectors information and aggreting in list in order to have only one row per canteen
     canteens["sectors"] = canteens["sectors"].apply(
-        lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data) if (x and not math.isnan(x)) else ''
+        lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data) if (x and not math.isnan(x)) else ""
     )
-    canteens_sectors = canteens.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [''] else [])
+    canteens_sectors = canteens.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
 
     del canteens["sectors"]
     canteens = canteens.merge(canteens_sectors, on="id")
     canteens = canteens.drop_duplicates(subset=["id"])
     canteens = canteens.reset_index(drop=True)
+    
+    for col_int in schema["fields"]:
+        if col_int["type"] == "integer":
+            # Force column o Int64 to maintain an integer column despite the NaN values
+            canteens[col_int['name']] = canteens[col_int['name']].astype("Int64")
     return canteens
 
 
