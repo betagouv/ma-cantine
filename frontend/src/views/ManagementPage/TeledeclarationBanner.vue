@@ -21,6 +21,16 @@
           Le guide de télédéclaration
           <v-icon small class="ml-2">mdi-open-in-new</v-icon>
         </v-btn>
+        <v-btn
+          text
+          href="https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2FlNPOtFoTKyfj5UnjZKJj%2FEGAlim%20Bilan%20statistique%202023%20d%C3%A9finitif.pdf?alt=media"
+          target="_blank"
+          rel="noopener"
+          class="text-decoration-underline"
+        >
+          Bilan EGAlim pour la campagne de 2022
+          <v-icon small class="ml-2">mdi-open-in-new</v-icon>
+        </v-btn>
       </v-card-actions>
     </div>
   </v-card>
