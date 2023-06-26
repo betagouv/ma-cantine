@@ -2,7 +2,9 @@ import logging
 import datetime
 import requests
 import csv
+import math
 import pandas as pd
+import json
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
@@ -11,6 +13,8 @@ from django.db.models import F
 from django.db.models.functions import Length
 from django.core.management import call_command
 from data.models import User, Canteen, Teledeclaration, Sector
+from api.serializers import SectorSerializer
+from api.views.utils import camelize
 from .celery import app
 from django.core.files.storage import default_storage
 import sib_api_v3_sdk
@@ -269,83 +273,57 @@ def _flatten_declared_data(df):
 
 
 def _extract_dataset_teledeclaration(year):
-    td_columns = [
-        "id",
-        "applicant_id",
-        "teledeclaration_mode",
-        "creation_date",
-        "year",
-        "version",
-        "canteen.id",
-        "canteen.siret",
-        "canteen.name",
-        "canteen.central_producer_siret",
-        "canteen.department",
-        "canteen.region",
-        "canteen.satellite_canteens_count",
-        "canteen.economic_model",
-        "canteen.management_type",
-        "canteen.production_type",
-        "canteen.sectors",
-        "canteen.line_ministry",
-        "teledeclaration_ratio_bio",
-        "teledeclaration_ratio_egalim_hors_bio",
-    ]
-    td = pd.DataFrame(Teledeclaration.objects.filter(year=year).values())
+    schema = json.load(open("data/schemas/schema_teledeclaration.json"))
+    td_columns = [i["name"].replace("canteen_", "canteen.") for i in schema["fields"]]
+
+    td = pd.DataFrame(
+        Teledeclaration.objects.filter(year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values()
+    )
+    if len(td) == 0:
+        return td
     td = _flatten_declared_data(td)
     td["teledeclaration_ratio_bio"] = td["teledeclaration.value_bio_ht"] / td["teledeclaration.value_total_ht"]
     td["teledeclaration_ratio_egalim_hors_bio"] = (
         td["teledeclaration.value_sustainable_ht"] / td["teledeclaration.value_total_ht"]
     )
+
     td = td.loc[:, ~td.columns.duplicated()]
-    td = td[td_columns]
+    td = td.reindex(td_columns, axis="columns")
     td.columns = td.columns.str.replace(".", "_")
     td = td.reset_index(drop=True)
     return td
 
 
 def _extract_dataset_canteen():
-    canteens_col = [
-        "id",
-        "name",
-        "siret",
-        "city",
-        "city_insee_code",
-        "postal_code",
-        "department",
-        "region",
-        "economic_model",
-        "management_type",
-        "production_type",
-        "satellite_canteens_count",
-        "central_producer_siret",
-        "creation_date",
-        "daily_meal_count",
-        "yearly_meal_count",
-        "line_ministry",
-        "modification_date",
-        "publication_status",
-        "logo",
-        "sectors",
-    ]
-    all_canteens = Canteen.objects.all()
+    schema = json.load(open("data/schemas/schema_cantine.json"))
+    canteens_col = [i["name"] for i in schema["fields"]]
+
+    all_canteens = Canteen.objects.filter(deletion_date__isnull=True)
     active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
 
     # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-    canteens = pd.DataFrame(all_canteens.values(*canteens_col))
+    canteens = pd.DataFrame(all_canteens.values(*canteens_col[:-1]))
 
     # Adding the active_on_ma_cantine column
     canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
-    canteens_col.append("active_on_ma_cantine")
+
+    canteens = canteens.reindex(canteens_col, axis="columns")
 
     # Fetching sectors information and aggreting in list in order to have only one row per canteen
-    canteens["sectors"] = canteens["sectors"].apply(lambda x: Sector.objects.get(id=x))
-    canteens_sectors = canteens.groupby("id")["sectors"].apply(list)
+    canteens["sectors"] = canteens["sectors"].apply(
+        lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data) if (x and not math.isnan(x)) else ""
+    )
+    canteens_sectors = canteens.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
+
     del canteens["sectors"]
     canteens = canteens.merge(canteens_sectors, on="id")
     canteens = canteens.drop_duplicates(subset=["id"])
-
     canteens = canteens.reset_index(drop=True)
+
+    for col_int in schema["fields"]:
+        if col_int["type"] == "integer":
+            # Force column o Int64 to maintain an integer column despite the NaN values
+            canteens[col_int["name"]] = canteens[col_int["name"]].astype("Int64")
     return canteens
 
 
@@ -359,7 +337,7 @@ def _export_dataset(td, file_name):
 
 
 @app.task()
-def export_datasets(year):
+def export_datasets():
     # Campagnes de télédéclarations
     td_2021 = _extract_dataset_teledeclaration(2021)
     _export_dataset(td_2021, "campagne_td_2021.csv")
