@@ -37,6 +37,7 @@ export default {
   },
   methods: {
     queryCommunes(val) {
+      if (val?.length < 3) return
       this.loadingCommunes = true
       const queryUrl = "https://api-adresse.data.gouv.fr/search/?q=" + val + "&type=municipality&autocomplete=1"
       return fetch(queryUrl)
@@ -53,8 +54,9 @@ export default {
         })
     },
     populateCityAutocomplete() {
+      let initialCityAutocomplete = {}
       if (this.location.city && this.location.cityInseeCode && this.location.postalCode && this.location.department) {
-        const initialCityAutocomplete = {
+        initialCityAutocomplete = {
           text: this.location.city,
           value: {
             label: this.location.city,
@@ -63,13 +65,23 @@ export default {
             context: this.location.department,
           },
         }
-        this.communes.push(initialCityAutocomplete)
-        this.cityAutocompleteChoice = initialCityAutocomplete.value
+      } else if (this.value && !this.cityAutocompleteChoice) {
+        initialCityAutocomplete = {
+          text: `Code INSEE : ${this.value}`,
+          value: {
+            label: `Code INSEE : ${this.value}`,
+            citycode: this.value,
+            postcode: null,
+            context: null,
+          },
+        }
       }
+      this.communes.push(initialCityAutocomplete)
+      this.cityAutocompleteChoice = initialCityAutocomplete.value
     },
   },
   beforeMount() {
-    if (this.location.city) {
+    if (this.location.city || this.value) {
       this.populateCityAutocomplete()
     }
   },
@@ -78,7 +90,7 @@ export default {
       return val && val !== this.location.city && this.queryCommunes(val)
     },
     cityAutocompleteChoice(val) {
-      if (val?.label) {
+      if (val?.label && val?.context) {
         const jsonRepresentation = {
           city: val.label,
           cityInseeCode: val.citycode,
@@ -91,6 +103,9 @@ export default {
       }
 
       this.search = this.location.city
+    },
+    value() {
+      if (!this.location || !this.location.city) this.populateCityAutocomplete()
     },
   },
 }
