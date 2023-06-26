@@ -9,6 +9,7 @@ from rest_framework import status
 from data.factories import CanteenFactory, SectorFactory, UserFactory
 from data.factories import DiagnosticFactory
 from data.models import Canteen, CanteenImage, Diagnostic
+from data.region_choices import Region
 from .utils import authenticate
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -347,11 +348,24 @@ class TestPublishedCanteenApi(APITestCase):
         """
         Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic
         """
-        good_canteen = CanteenFactory.create(publication_status="published", name="Shiso")
-        medium_canteen = CanteenFactory.create(publication_status="published", name="Wasabi")
-        sustainable_canteen = CanteenFactory.create(publication_status="published", name="Umami")
-        bad_canteen = CanteenFactory.create(publication_status="published", name="Mochi")
-        secretly_good_canteen = CanteenFactory.create(publication_status="draft", name="Secret")
+        good_canteen = CanteenFactory.create(
+            publication_status="published", name="Shiso", region=Region.auvergne_rhone_alpes
+        )
+        medium_canteen = CanteenFactory.create(
+            publication_status="published", name="Wasabi", region=Region.auvergne_rhone_alpes
+        )
+        sustainable_canteen = CanteenFactory.create(
+            publication_status="published", name="Umami", region=Region.auvergne_rhone_alpes
+        )
+        bad_canteen = CanteenFactory.create(
+            publication_status="published", name="Mochi", region=Region.auvergne_rhone_alpes
+        )
+        secretly_good_canteen = CanteenFactory.create(
+            publication_status="draft", name="Secret", region=Region.auvergne_rhone_alpes
+        )
+        guadeloupe_canteen = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED, region=Region.guadeloupe, name="Guadeloupe"
+        )
 
         publication_year = date.today().year - 1
         DiagnosticFactory.create(
@@ -408,6 +422,15 @@ class TestPublishedCanteenApi(APITestCase):
             value_externality_performance_ht=0,
             value_egalim_others_ht=0,
         )
+        DiagnosticFactory.create(
+            canteen=guadeloupe_canteen,
+            year=publication_year,
+            value_total_ht=100,
+            value_bio_ht=5,
+            value_sustainable_ht=15,
+            value_externality_performance_ht=None,
+            value_egalim_others_ht=0,
+        )
         url = f"{reverse('published_canteens')}?min_portion_bio={0.2}"
         response = self.client.get(url)
         results = response.json().get("results", [])
@@ -431,6 +454,30 @@ class TestPublishedCanteenApi(APITestCase):
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Wasabi", result_names)
+
+        url = f"{reverse('published_canteens')}?badge=appro"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Shiso", result_names)
+        self.assertIn("Guadeloupe", result_names)
+
+        # if both badge and thresholds specified, return the results that match the most strict threshold
+        url = f"{reverse('published_canteens')}?badge=appro&min_portion_combined={0.01}"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Shiso", result_names)
+        self.assertIn("Guadeloupe", result_names)
+
+        url = f"{reverse('published_canteens')}?badge=appro&min_portion_combined={0.5}"
+        response = self.client.get(url)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 1)
+        result_names = list(map(lambda x: x.get("name"), results))
+        self.assertIn("Shiso", result_names)
 
     def test_pagination_departments(self):
         CanteenFactory.create(publication_status="published", department="75", name="Shiso")
