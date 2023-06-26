@@ -14,24 +14,25 @@ class TestExtractionOpenData(TestCase):
         canteen = CanteenFactory.create()
         applicant = UserFactory.create()
 
-        assert len(_extract_dataset_teledeclaration(year=1990)) == 0, "There should be no teledeclaration"
+        self.assertEqual(len(_extract_dataset_teledeclaration(year=1990)), 0, "There should be no teledeclaration")
 
-        for year_td in [2021, 2022]:
-            diagnostic = DiagnosticFactory.create(canteen=canteen, year=year_td, diagnostic_type=None)
-            teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant)
+        diagnostic_2021 = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type=None)
+        Teledeclaration.create_from_diagnostic(diagnostic_2021, applicant)
+        diagnostic_2022 = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
 
-        td = _extract_dataset_teledeclaration(year=diagnostic.year)
-        assert len(td) == 1, "There should be one teledeclaration for 2021"
-        assert len(td.columns) == len(schema_cols), "The columns should match the schema"
+        td = _extract_dataset_teledeclaration(year=diagnostic_2022.year)
+        self.assertEqual(len(td), 1, "There should be one teledeclaration for 2021")
+        self.assertEqual(len(td.columns), len(schema_cols), "The columns should match the schema")
 
         teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
         teledeclaration.save()
-        td = _extract_dataset_teledeclaration(year=diagnostic.year)
+        td = _extract_dataset_teledeclaration(year=diagnostic_2022.year)
         self.assertEqual(len(td), 0)
 
         canteen.sectors.clear()
-        Teledeclaration.create_from_diagnostic(diagnostic, applicant)
-        td = _extract_dataset_teledeclaration(year=diagnostic.year)
+        Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
+        td = _extract_dataset_teledeclaration(year=diagnostic_2022.year)
         self.assertEqual(td.iloc[0]["canteen_sectors"], list(), "The sectors should be an empty list")
 
     def test_extraction_canteen(self):
@@ -46,15 +47,15 @@ class TestExtractionOpenData(TestCase):
         canteen_2.managers.clear()
 
         canteens = _extract_dataset_canteen()
-        assert len(canteens) == 2, "There should be two canteens"
-        assert canteens[canteens.id == canteen_1.id].iloc[0][
+        self.assertEqual(len(canteens), 2, "There should be two canteens")
+        self.assertTrue(canteens[canteens.id == canteen_1.id].iloc[0][
             "active_on_ma_cantine"
-        ], "The canteen should be active because there is at least one manager"
-        assert not canteens[canteens.id == canteen_2.id].iloc[0][
+        ], "The canteen should be active because there is at least one manager")
+        self.assertFalse(canteens[canteens.id == canteen_2.id].iloc[0][
             "active_on_ma_cantine"
-        ], "The canteen should not be active because there no manager"
-        assert isinstance(canteens["sectors"][0], list), "The sectors should be a list"
-        assert len(canteens.columns) == len(schema_cols), "The columns should match the schema."
+        ], "The canteen should not be active because there no manager")
+        self.assertIsInstance(canteens["sectors"][0], list, "The sectors should be a list")
+        self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
 
         self.assertEqual(
             canteens[canteens.id == canteen_1.id].iloc[0]["sectors"],
