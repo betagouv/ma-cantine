@@ -121,6 +121,27 @@
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <label
+              for="select-department"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': !!filters.department.value,
+              }"
+            >
+              Commune
+            </label>
+            <CityField
+              v-model="filters.city_insee_code.value"
+              clearable
+              hide-details
+              id="select-commune"
+              placeholder="Toutes les communes"
+              class="mt-1"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" sm="6" md="4">
+            <label
               for="select-sector"
               :class="{
                 'text-body-2': true,
@@ -138,6 +159,40 @@
               id="select-sector"
               placeholder="Tous les secteurs"
               class="mt-1"
+            />
+          </v-col>
+          <v-col cols="12" sm="4" md="3">
+            <label
+              for="select-management-type"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.management_type.value }"
+            >
+              Mode de gestion
+            </label>
+            <DsfrSelect
+              v-model="filters.management_type.value"
+              :items="managementTypes"
+              clearable
+              hide-details
+              id="select-management-type"
+              class="mt-1"
+              placeholder="Tous les modes"
+            />
+          </v-col>
+          <v-col cols="12" sm="6" md="5">
+            <label
+              for="select-production-type"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.production_type.value }"
+            >
+              Type d'établissement
+            </label>
+            <DsfrSelect
+              v-model="filters.production_type.value"
+              :items="productionTypes"
+              clearable
+              hide-details
+              id="select-production-type"
+              class="mt-1"
+              placeholder="Tous les cantines"
             />
           </v-col>
         </v-row>
@@ -236,40 +291,6 @@
                 />
               </div>
             </div>
-          </v-col>
-          <v-col cols="12" sm="4" md="3">
-            <label
-              for="select-management-type"
-              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.management_type.value }"
-            >
-              Mode de gestion
-            </label>
-            <DsfrSelect
-              v-model="filters.management_type.value"
-              :items="managementTypes"
-              clearable
-              hide-details
-              id="select-management-type"
-              class="mt-1"
-              placeholder="Tous les modes"
-            />
-          </v-col>
-          <v-col cols="12" sm="6" md="5">
-            <label
-              for="select-production-type"
-              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.production_type.value }"
-            >
-              Type d'établissement
-            </label>
-            <DsfrSelect
-              v-model="filters.production_type.value"
-              :items="productionTypes"
-              clearable
-              hide-details
-              id="select-production-type"
-              class="mt-1"
-              placeholder="Tous les cantines"
-            />
           </v-col>
           <v-col cols="12" sm="6" md="5">
             <label for="select-badge" :class="{ 'text-body-2': true, 'active-filter-label': !!filters.badge.value }">
@@ -392,6 +413,7 @@ import DsfrSelect from "@/components/DsfrSelect"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
+import CityField from "@/views/CanteenEditor/CityField"
 
 const DEFAULT_ORDER = "creation"
 
@@ -405,6 +427,7 @@ export default {
     DsfrTextarea,
     DsfrPagination,
     DsfrSearchField,
+    CityField,
   },
   data() {
     const user = this.$store.state.loggedUser
@@ -425,6 +448,11 @@ export default {
         },
         region: {
           param: "region",
+          value: null,
+          default: null,
+        },
+        city_insee_code: {
+          param: "commune",
           value: null,
           default: null,
         },

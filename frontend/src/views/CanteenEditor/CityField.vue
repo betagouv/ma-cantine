@@ -19,7 +19,14 @@ import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 export default {
   name: "CityField",
   components: { DsfrAutocomplete },
-  props: ["location"],
+  props: {
+    location: {
+      default: () => ({}),
+    },
+    value: {
+      required: false,
+    },
+  },
   data() {
     return {
       cityAutocompleteChoice: null,
@@ -72,12 +79,15 @@ export default {
     },
     cityAutocompleteChoice(val) {
       if (val?.label) {
-        this.$emit("locationUpdate", {
+        const jsonRepresentation = {
           city: val.label,
           cityInseeCode: val.citycode,
           postalCode: val.postcode,
           department: val.context.split(",")[0],
-        })
+        }
+        const inseeCode = val.citycode
+        this.$emit("locationUpdate", jsonRepresentation)
+        this.$emit("input", inseeCode)
       }
 
       this.search = this.location.city
