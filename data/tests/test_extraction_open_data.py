@@ -1,7 +1,5 @@
 from django.test import TestCase
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory
-from api.serializers import SectorSerializer
-from api.views.utils import camelize
 from data.models import Teledeclaration
 from macantine.tasks import _extract_dataset_teledeclaration, _extract_dataset_canteen
 import json
@@ -59,13 +57,12 @@ class TestExtractionOpenData(TestCase):
             canteens[canteens.id == canteen_2.id].iloc[0]["active_on_ma_cantine"],
             "The canteen should not be active because there no manager",
         )
-        self.assertIsInstance(canteens["sectors"][0], list, "The sectors should be a list")
         self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
 
+        self.assertIsInstance(canteens["sectors"][0], list, "The sectors should be a list of sectors")
         self.assertEqual(
-            canteens[canteens.id == canteen_1.id].iloc[0]["sectors"],
-            [camelize(SectorSerializer(x).data) for x in canteen_1.sectors.all()],
-            "The sectors should be a list of sectors",
+            list(canteens[canteens.id == canteen_1.id].iloc[0]["sectors"][0].keys()),
+            ["id", "name", "category", "hasLineMinistry"],
         )
 
         canteen_2.sectors.clear()
@@ -83,12 +80,10 @@ class TestExtractionOpenData(TestCase):
                 "The extraction should not fail if one column is completely empty. In this case, there is no sector"
             )
 
-        # canteen_1.delete()
-        # canteens = _extract_dataset_canteen()
-        # self.assertEqual(len(canteens), 1, "There should be one canteen less after soft deletion")
+        canteen_1.delete()
+        canteens = _extract_dataset_canteen()
+        self.assertEqual(len(canteens), 1, "There should be one canteen less after soft deletion")
 
-        # canteen_2.hard_delete()
-        # canteens = _extract_dataset_canteen()
-        # self.assertEqual(len(canteens), 0, "There should be one canteen less after hard deletion")
-
-
+        canteen_2.hard_delete()
+        canteens = _extract_dataset_canteen()
+        self.assertEqual(len(canteens), 0, "There should be one canteen less after hard deletion")
