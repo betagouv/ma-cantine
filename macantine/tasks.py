@@ -299,11 +299,14 @@ def _extract_dataset_canteen():
     canteens_col = [i["name"] for i in schema["fields"]]
 
     all_canteens = Canteen.objects.filter(deletion_date__isnull=True)
+    if all_canteens.count() == 0:
+        return pd.DataFrame(columns=canteens_col)
+    
     active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
 
     # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
     canteens = pd.DataFrame(all_canteens.values(*canteens_col[:-1]))
-
+    
     # Adding the active_on_ma_cantine column
     canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
 
