@@ -354,7 +354,7 @@ def _export_dataset(td, file_name):
         csv_writer.writerow(td.columns)
         # Write the data rows
         for row in td.itertuples(index=False):
-            csv_writer.writerow(row, na="nan")
+            csv.writerow(["NaN" if value is None else value for value in row])
 
 
 @app.task()
