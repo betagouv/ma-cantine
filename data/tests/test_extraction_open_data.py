@@ -1,5 +1,5 @@
 from django.test import TestCase
-from data.factories import DiagnosticFactory, CanteenFactory, UserFactory
+from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
 from macantine.tasks import _extract_dataset_teledeclaration, _extract_dataset_canteen
 import json
@@ -87,3 +87,9 @@ class TestExtractionOpenData(TestCase):
         canteen_2.hard_delete()
         canteens = _extract_dataset_canteen()
         self.assertEqual(len(canteens), 0, "There should be one canteen less after hard deletion")
+
+        CanteenFactory.create(sectors=[SectorFactory.create(name="Restaurants des armées/police/gendarmerie")])
+        canteens = _extract_dataset_canteen()
+        self.assertEqual(
+            len(canteens), 0, "There should be one canteen less as this specific sector has to remain private"
+        )

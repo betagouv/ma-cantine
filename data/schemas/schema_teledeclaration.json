@@ -128,14 +128,14 @@
     },
     {
       "name": "teledeclaration_ratio_bio",
-      "type": "integer",
+      "type": "float",
       "title": "Télédéclaration Ratio Bio",
       "description": "Part du bio dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)",
       "example": "0.1"
     },
     {
       "name": "teledeclaration_ratio_egalim_hors_bio",
-      "type": "integer",
+      "type": "float",
       "title": "Télédéclaration Ratio Bio",
       "description": "Part du bio dans les achats alimentaires de l'année",
       "example": "0.1"

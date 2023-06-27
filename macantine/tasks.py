@@ -272,6 +272,28 @@ def _flatten_declared_data(df):
     return df
 
 
+def _format_na(df):
+    df = df.fillna()
+    return df
+
+
+def _clean_dataset(df, schema, columns):
+    df = df.loc[:, ~df.columns.duplicated()]
+
+    df = df.reindex(columns, axis="columns")
+    df.columns = df.columns.str.replace(".", "_")
+    df = df.drop_duplicates(subset=["id"])
+    df = df.reset_index(drop=True)
+
+    # df = _format_na(df)
+    for col_int in schema["fields"]:
+        if col_int["type"] == "integer":
+            # Force column o Int64 to maintain an integer column despite the NaN values
+            df[col_int["name"]] = df[col_int["name"]].astype("Int64")
+    df = df.replace("<NA>", "")
+    return df
+
+
 def _extract_dataset_teledeclaration(year):
     schema = json.load(open("data/schemas/schema_teledeclaration.json"))
     td_columns = [i["name"].replace("canteen_", "canteen.") for i in schema["fields"]]
@@ -286,12 +308,19 @@ def _extract_dataset_teledeclaration(year):
     td["teledeclaration_ratio_egalim_hors_bio"] = (
         td["teledeclaration.value_sustainable_ht"] / td["teledeclaration.value_total_ht"]
     )
-
-    td = td.loc[:, ~td.columns.duplicated()]
-    td = td.reindex(td_columns, axis="columns")
-    td.columns = td.columns.str.replace(".", "_")
-    td = td.reset_index(drop=True)
+    td = _clean_dataset(td, schema, td_columns)
     return td
+
+
+def _extract_sectors(canteens):
+    # Fetching sectors information and aggreting in list in order to have only one row per canteen
+    canteens["sectors"] = canteens["sectors"].apply(
+        lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data) if (x and not math.isnan(x)) else ""
+    )
+    canteens_sectors = canteens.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
+    del canteens["sectors"]
+
+    return canteens.merge(canteens_sectors, on="id")
 
 
 def _extract_dataset_canteen():
@@ -310,23 +339,12 @@ def _extract_dataset_canteen():
     # Adding the active_on_ma_cantine column
     canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
 
-    canteens = canteens.reindex(canteens_col, axis="columns")
+    canteens = _extract_sectors(canteens)
+    canteens = canteens[
+        canteens.apply(lambda x: "Restaurants des armées/police/gendarmerie" not in str(x["sectors"]), axis=1)
+    ]
 
-    # Fetching sectors information and aggreting in list in order to have only one row per canteen
-    canteens["sectors"] = canteens["sectors"].apply(
-        lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data) if (x and not math.isnan(x)) else ""
-    )
-    canteens_sectors = canteens.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
-
-    del canteens["sectors"]
-    canteens = canteens.merge(canteens_sectors, on="id")
-    canteens = canteens.drop_duplicates(subset=["id"])
-    canteens = canteens.reset_index(drop=True)
-
-    for col_int in schema["fields"]:
-        if col_int["type"] == "integer":
-            # Force column o Int64 to maintain an integer column despite the NaN values
-            canteens[col_int["name"]] = canteens[col_int["name"]].astype("Int64")
+    canteens = _clean_dataset(canteens, schema, canteens_col)
     return canteens
 
 
@@ -336,7 +354,7 @@ def _export_dataset(td, file_name):
         csv_writer.writerow(td.columns)
         # Write the data rows
         for row in td.itertuples(index=False):
-            csv_writer.writerow(row)
+            csv_writer.writerow(row, na="nan")
 
 
 @app.task()
