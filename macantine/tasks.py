@@ -290,6 +290,8 @@ def _clean_dataset(df, schema, columns):
         if col_int["type"] == "integer":
             # Force column o Int64 to maintain an integer column despite the NaN values
             df[col_int["name"]] = df[col_int["name"]].astype("Int64")
+        if col_int["type"] == "float":
+            df[col_int["name"]] = df[col_int["name"]].round(decimals=4)
     df = df.replace("<NA>", "")
     return df
 
