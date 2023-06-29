@@ -16,6 +16,7 @@ class TestExtractionOpenData(TestCase):
 
         diagnostic_2021 = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type=None)
         Teledeclaration.create_from_diagnostic(diagnostic_2021, applicant)
+
         diagnostic_2022 = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
 
@@ -26,7 +27,7 @@ class TestExtractionOpenData(TestCase):
         teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
         teledeclaration.save()
         td = _extract_dataset_teledeclaration(year=diagnostic_2022.year)
-        self.assertEqual(len(td), 0)
+        self.assertEqual(len(td), 0, "The list should be empty as the only td has the CANCELLED status")
 
         canteen.sectors.clear()
         Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)

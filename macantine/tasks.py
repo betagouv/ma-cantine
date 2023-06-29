@@ -300,11 +300,21 @@ def _extract_dataset_teledeclaration(year):
     schema = json.load(open("data/schemas/schema_teledeclaration.json"))
     td_columns = [i["name"].replace("canteen_", "canteen.") for i in schema["fields"]]
 
-    td = pd.DataFrame(
-        Teledeclaration.objects.filter(year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values()
-    )
+    if year == 2021:
+        td = pd.DataFrame(
+            Teledeclaration.objects.filter(
+                year=year,
+                creation_date__range=("2021-07-17", "2021-12-05"),
+                status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            ).values()
+        )
+    else:
+        td = pd.DataFrame(
+            Teledeclaration.objects.filter(year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values()
+        )
     if len(td) == 0:
         return td
+
     td = _flatten_declared_data(td)
     td["teledeclaration_ratio_bio"] = td["teledeclaration.value_bio_ht"] / td["teledeclaration.value_total_ht"]
     td["teledeclaration_ratio_egalim_hors_bio"] = (
@@ -356,7 +366,7 @@ def _export_dataset(td, file_name):
         csv_writer.writerow(td.columns)
         # Write the data rows
         for row in td.itertuples(index=False):
-            csv.writerow(["NaN" if value is None else value for value in row])
+            csv_writer.writerow(["NaN" if value is None else value for value in row])
 
 
 @app.task()
