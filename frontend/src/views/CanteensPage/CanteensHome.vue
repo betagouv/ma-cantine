@@ -556,6 +556,7 @@ export default {
         if (f.value) query[f.param] = f.value
       })
       if (this.order) query.trier = this.order.display
+      if (this.searchTerm) query.recherche = this.searchTerm
       return query
     },
     hasActiveFilter() {
@@ -582,6 +583,7 @@ export default {
   methods: {
     fetchCurrentPage() {
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
+      if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
       Object.entries(this.filters).forEach(([key, f]) => {
         if (Array.isArray(f.value)) {
           f.value.forEach((v) => {
