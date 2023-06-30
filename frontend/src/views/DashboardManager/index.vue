@@ -102,6 +102,46 @@
             </v-card-actions>
           </v-card>
         </v-col>
+        <v-col cols="4" id="managers">
+          <v-card outlined>
+            <v-card-title class="font-weight-bold">
+              Mon équipe
+            </v-card-title>
+            <v-card-text>
+              <div v-if="managers.length > 1">
+                <p>
+                  {{ managers.length }} personnes (dont vous) peuvent actuellement modifier cet établissement et ajouter
+                  des données
+                </p>
+                <ul class="pl-0">
+                  <li v-for="(manager, idx) in managers" :key="manager.email">
+                    <v-icon>
+                      {{ manager.isInvite ? "mdi-account-clock-outline" : "mdi-account-check-outline" }}
+                    </v-icon>
+                    {{ manager.isInvite ? manager.email : `${manager.firstName} ${manager.lastName}` }}
+                    <span v-if="idx === 0">(vous)</span>
+                  </li>
+                </ul>
+              </div>
+              <p v-else>
+                Actuellement, vous êtes la seule personne qui peut modiifer cet établissement et ajouter des données
+              </p>
+            </v-card-text>
+            <v-card-actions class="justify-end">
+              <v-btn
+                :to="{
+                  name: 'CanteenManagers',
+                  params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+                }"
+                outlined
+                color="primary"
+                class="mx-2 mb-2"
+              >
+                Gérer mon équipe
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
       </v-row>
     </div>
 
@@ -154,6 +194,21 @@ export default {
     },
     canteenId() {
       return this.canteenPreviews[5]?.id
+    },
+    managers() {
+      if (!this.canteen) []
+      const managersCopy = [...this.canteen.managers]
+      const loggedUserIndex = managersCopy.findIndex((x) => x.email === this.$store.state.loggedUser.email)
+      managersCopy.splice(0, 0, managersCopy.splice(loggedUserIndex, 1)[0])
+      return managersCopy.concat(this.managerInvitations)
+    },
+    managerInvitations() {
+      return (
+        this.canteen?.managerInvitations.map((i) => {
+          i.isInvite = true
+          return i
+        }) || []
+      )
     },
   },
   methods: {
@@ -242,3 +297,13 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+ul {
+  list-style: none;
+}
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
+ul li::before {
+  content: "\200B";
+}
+</style>
