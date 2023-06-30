@@ -54,7 +54,7 @@ export default {
         })
     },
     populateCityAutocomplete() {
-      let initialCityAutocomplete = {}
+      let initialCityAutocomplete = { text: "" }
       if (this.location.city && this.location.cityInseeCode && this.location.postalCode && this.location.department) {
         initialCityAutocomplete = {
           text: this.location.city,
