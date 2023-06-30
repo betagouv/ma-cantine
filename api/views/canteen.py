@@ -315,7 +315,7 @@ class UserCanteensView(ListCreateAPIView):
     ]
     filterset_class = UserCanteensFilterSet
     required_scopes = ["canteen"]
-    search_fields = ["name"]
+    search_fields = ["name", "siret"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
 
     def get_serializer(self, *args, **kwargs):

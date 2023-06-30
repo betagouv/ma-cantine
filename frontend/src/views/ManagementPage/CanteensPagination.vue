@@ -8,7 +8,7 @@
               hide-details="auto"
               ref="search"
               v-model="searchTerm"
-              placeholder="Recherche par nom de l'établissement"
+              placeholder="Recherche par nom ou SIRET de l'établissement"
               clearable
               :clearAction="clearSearch"
               :searchAction="search"
