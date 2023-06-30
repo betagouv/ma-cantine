@@ -629,8 +629,8 @@ export default new Vuex.Store({
 
     deletePurchases(context, { ids }) {
       context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/purchases/`, {
-        method: "DELETE",
+      return fetch(`/api/v1/purchases/delete/`, {
+        method: "POST",
         headers,
         body: JSON.stringify({ ids }),
       })
