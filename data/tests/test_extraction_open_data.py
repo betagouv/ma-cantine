@@ -1,5 +1,5 @@
 from django.test import TestCase
-from data.factories import DiagnosticFactory, CanteenFactory, UserFactory
+from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
 from macantine.tasks import _extract_dataset_teledeclaration, _extract_dataset_canteen
 import json
@@ -16,6 +16,7 @@ class TestExtractionOpenData(TestCase):
 
         diagnostic_2021 = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type=None)
         Teledeclaration.create_from_diagnostic(diagnostic_2021, applicant)
+
         diagnostic_2022 = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
 
@@ -26,7 +27,7 @@ class TestExtractionOpenData(TestCase):
         teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
         teledeclaration.save()
         td = _extract_dataset_teledeclaration(year=diagnostic_2022.year)
-        self.assertEqual(len(td), 0)
+        self.assertEqual(len(td), 0, "The list should be empty as the only td has the CANCELLED status")
 
         canteen.sectors.clear()
         Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
@@ -87,3 +88,9 @@ class TestExtractionOpenData(TestCase):
         canteen_2.hard_delete()
         canteens = _extract_dataset_canteen()
         self.assertEqual(len(canteens), 0, "There should be one canteen less after hard deletion")
+
+        CanteenFactory.create(sectors=[SectorFactory.create(name="Restaurants des armées/police/gendarmerie")])
+        canteens = _extract_dataset_canteen()
+        self.assertEqual(
+            len(canteens), 0, "There should be one canteen less as this specific sector has to remain private"
+        )

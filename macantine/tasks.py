@@ -272,26 +272,61 @@ def _flatten_declared_data(df):
     return df
 
 
+def _clean_dataset(df, schema, columns):
+    df = df.loc[:, ~df.columns.duplicated()]
+
+    df = df.reindex(columns, axis="columns")
+    df.columns = df.columns.str.replace(".", "_")
+    df = df.drop_duplicates(subset=["id"])
+    df = df.reset_index(drop=True)
+
+    for col_int in schema["fields"]:
+        if col_int["type"] == "integer":
+            # Force column o Int64 to maintain an integer column despite the NaN values
+            df[col_int["name"]] = df[col_int["name"]].astype("Int64")
+        if col_int["type"] == "float":
+            df[col_int["name"]] = df[col_int["name"]].round(decimals=4)
+    df = df.replace("<NA>", "")
+    return df
+
+
 def _extract_dataset_teledeclaration(year):
     schema = json.load(open("data/schemas/schema_teledeclaration.json"))
     td_columns = [i["name"].replace("canteen_", "canteen.") for i in schema["fields"]]
 
-    td = pd.DataFrame(
-        Teledeclaration.objects.filter(year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values()
-    )
+    if year == 2021:
+        td = pd.DataFrame(
+            Teledeclaration.objects.filter(
+                year=year,
+                creation_date__range=(datetime.date(2021, 7, 17), datetime.date(2021, 12, 15)),
+                status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            ).values()
+        )
+    else:
+        td = pd.DataFrame(
+            Teledeclaration.objects.filter(year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values()
+        )
     if len(td) == 0:
         return td
+
     td = _flatten_declared_data(td)
     td["teledeclaration_ratio_bio"] = td["teledeclaration.value_bio_ht"] / td["teledeclaration.value_total_ht"]
     td["teledeclaration_ratio_egalim_hors_bio"] = (
         td["teledeclaration.value_sustainable_ht"] / td["teledeclaration.value_total_ht"]
     )
-
-    td = td.loc[:, ~td.columns.duplicated()]
-    td = td.reindex(td_columns, axis="columns")
-    td.columns = td.columns.str.replace(".", "_")
-    td = td.reset_index(drop=True)
+    td = _clean_dataset(td, schema, td_columns)
     return td
+
+
+def _extract_sectors(canteens):
+    # Fetching sectors information and aggreting in list in order to have only one row per canteen
+    canteens["sectors"] = canteens["sectors"].apply(
+        lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data) if (x and not math.isnan(x)) else ""
+    )
+    canteens_sectors = canteens.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
+    del canteens["sectors"]
+
+    return canteens.merge(canteens_sectors, on="id")
 
 
 def _extract_dataset_canteen():
@@ -310,33 +345,18 @@ def _extract_dataset_canteen():
     # Adding the active_on_ma_cantine column
     canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
 
-    canteens = canteens.reindex(canteens_col, axis="columns")
+    canteens = _extract_sectors(canteens)
+    canteens = canteens[
+        canteens.apply(lambda x: "Restaurants des armées/police/gendarmerie" not in str(x["sectors"]), axis=1)
+    ]
 
-    # Fetching sectors information and aggreting in list in order to have only one row per canteen
-    canteens["sectors"] = canteens["sectors"].apply(
-        lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data) if (x and not math.isnan(x)) else ""
-    )
-    canteens_sectors = canteens.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
-
-    del canteens["sectors"]
-    canteens = canteens.merge(canteens_sectors, on="id")
-    canteens = canteens.drop_duplicates(subset=["id"])
-    canteens = canteens.reset_index(drop=True)
-
-    for col_int in schema["fields"]:
-        if col_int["type"] == "integer":
-            # Force column o Int64 to maintain an integer column despite the NaN values
-            canteens[col_int["name"]] = canteens[col_int["name"]].astype("Int64")
+    canteens = _clean_dataset(canteens, schema, canteens_col)
     return canteens
 
 
 def _export_dataset(td, file_name):
     with default_storage.open(file_name, "w") as file:
-        csv_writer = csv.writer(file, delimiter=";")
-        csv_writer.writerow(td.columns)
-        # Write the data rows
-        for row in td.itertuples(index=False):
-            csv_writer.writerow(row)
+        td.to_csv(file, sep=";", index=False, na_rep="")
 
 
 @app.task()
