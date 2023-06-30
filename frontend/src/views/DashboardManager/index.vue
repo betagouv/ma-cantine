@@ -26,10 +26,23 @@
         <v-col cols="8" id="latest-purchases">
           <!-- How relevant are purchases to satellites? -->
           <v-card outlined>
-            <v-card-title>Mes achats</v-card-title>
+            <v-card-title>Mes derniers achats</v-card-title>
             <div v-if="purchases.length">
-              <v-data-table class="px-4" :items="purchases" :headers="purchaseHeaders" />
+              <v-data-table
+                class="px-4"
+                :items="purchases"
+                :headers="purchaseHeaders"
+                :hide-default-header="true"
+                :hide-default-footer="true"
+                :disable-sort="true"
+              />
               <v-card-actions>
+                <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
+                  Ajouter un achat
+                </v-btn>
+                <v-btn :to="{ name: 'PurchasesImporter' }" outlined color="primary" class="mx-2 mb-2">
+                  Importer des achats
+                </v-btn>
                 <v-btn :to="{ name: 'PurchasesHome' }" outlined color="primary" class="mx-2 mb-2">
                   Tous mes achats
                 </v-btn>
@@ -101,6 +114,7 @@
 import EmptyProgression from "./EmptyProgression.vue"
 import EgalimProgression from "./EgalimProgression.vue"
 import CanteenIndicators from "@/components/CanteenIndicators"
+import { toCurrency } from "@/utils"
 
 export default {
   name: "DashboardManager",
@@ -114,7 +128,7 @@ export default {
         {
           text: "Date",
           align: "start",
-          value: "date",
+          value: "relativeDate", // is purchase date or creation date more relevant?
         },
         { text: "Produit", value: "description" },
         { text: "Prix HT", value: "priceHt", align: "end" },
@@ -174,6 +188,24 @@ export default {
         })
         .then((response) => {
           this.purchases = response.results
+          this.purchases.forEach((purchase) => {
+            purchase.priceHt = toCurrency(purchase.priceHt)
+            const dateDelta = Date.now() - new Date(purchase.date).getTime()
+            const millisecondsInDay = 1000 * 60 * 60 * 24
+            const daysAgo = Math.floor(dateDelta / millisecondsInDay)
+            const weeksAgo = Math.floor(daysAgo / 7)
+            const monthsAgo = Math.floor(daysAgo / 30)
+            const yearsAgo = Math.floor(daysAgo / 365)
+            if (yearsAgo > 0) {
+              purchase.relativeDate = `il y a ${yearsAgo} an${yearsAgo === 1 ? "" : "s"}`
+            } else if (monthsAgo > 0) {
+              purchase.relativeDate = `il y a ${monthsAgo} mois`
+            } else if (weeksAgo > 0) {
+              purchase.relativeDate = `il y a ${weeksAgo} semaine${weeksAgo === 1 ? "" : "s"}`
+            } else {
+              purchase.relativeDate = `il y a ${daysAgo} jour${daysAgo === 1 ? "" : "s"}`
+            }
+          })
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
