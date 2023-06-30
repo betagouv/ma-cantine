@@ -44,7 +44,7 @@
               hide-details="auto"
               ref="search"
               v-model="searchTerm"
-              placeholder="Recherche par nom de l'établissement"
+              placeholder="Recherche par nom ou SIRET de l'établissement"
               :searchAction="search"
               :clearAction="clearSearch"
               class="mb-2 flex-grow-1"

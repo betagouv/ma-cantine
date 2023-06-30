@@ -240,7 +240,7 @@ class PublishedCanteensView(ListAPIView):
         UnaccentSearchFilter,
         MaCantineOrderingFilter,
     ]
-    search_fields = ["name"]
+    search_fields = ["name", "siret"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
 
