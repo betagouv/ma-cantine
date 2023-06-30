@@ -513,7 +513,6 @@ export default {
           this.canteens = response.canteens.map((c) => ({ text: c, value: c }))
         })
         .catch((e) => {
-          this.publishedCanteenCount = 0
           this.$store.dispatch("notifyServerError", e)
         })
         .finally(() => {
