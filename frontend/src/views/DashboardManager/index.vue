@@ -3,7 +3,7 @@
     <h1 class="my-4 text-h5 font-weight-bold" v-if="canteen">{{ canteen.name }}</h1>
     <h1 class="my-4 text-h5 font-weight-bold" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
 
-    <h2 class="mt-8 mb-2 text-h6 font-weight-bold">
+    <h2 class="mt-8 mb-2 text-h6 font-weight-bold primary--text">
       Ma progression
     </h2>
     <p class="body-2">
@@ -16,7 +16,7 @@
     </div>
 
     <div v-if="canteen">
-      <h2 class="mt-10 mb-2 text-h6 font-weight-bold">
+      <h2 class="mt-10 mb-2 text-h6 font-weight-bold primary--text">
         Mon établissement
       </h2>
       <p class="body-2">
@@ -26,7 +26,7 @@
         <v-col cols="8" id="latest-purchases">
           <!-- How relevant are purchases to satellites? -->
           <v-card outlined>
-            <v-card-title>Mes derniers achats</v-card-title>
+            <v-card-title class="font-weight-bold">Mes achats</v-card-title>
             <div v-if="purchases.length">
               <v-data-table
                 class="px-4"
@@ -35,8 +35,12 @@
                 :hide-default-header="true"
                 :hide-default-footer="true"
                 :disable-sort="true"
-              />
-              <v-card-actions>
+              >
+                <template v-slot:[`item.characteristics`]="{ item }">
+                  {{ getProductCharacteristicsDisplayValue(item.characteristics) }}
+                </template>
+              </v-data-table>
+              <v-card-actions class="justify-end">
                 <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
                   Ajouter un achat
                 </v-btn>
@@ -49,7 +53,7 @@
               </v-card-actions>
             </div>
             <div v-else>
-              <v-card-actions>
+              <v-card-actions class="justify-end">
                 <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
                   Ajouter mon premier achat
                 </v-btn>
@@ -62,6 +66,7 @@
         </v-col>
         <v-col cols="6" md="4" id="canteen-info-card">
           <v-card outlined>
+            <v-card-title class="font-weight-bold">Mon établissement</v-card-title>
             <v-card-text>
               <p>SIRET : {{ canteen.siret }}</p>
               <div v-if="centralKitchen">
@@ -83,7 +88,7 @@
               </div>
               <CanteenIndicators :canteen="canteen" />
             </v-card-text>
-            <v-card-actions class="mx-2 mb-2">
+            <v-card-actions class="mx-2 mb-2 justify-end">
               <v-btn
                 :to="{
                   name: 'CanteenForm',
@@ -100,7 +105,7 @@
       </v-row>
     </div>
 
-    <h2 class="mt-10 mb-2 text-h6 font-weight-bold">
+    <h2 class="mt-10 mb-2 text-h6 font-weight-bold primary--text">
       Mes ressources personalisées
     </h2>
     <p class="body-2">
@@ -115,6 +120,7 @@ import EmptyProgression from "./EmptyProgression.vue"
 import EgalimProgression from "./EgalimProgression.vue"
 import CanteenIndicators from "@/components/CanteenIndicators"
 import { toCurrency } from "@/utils"
+import Constants from "@/constants"
 
 export default {
   name: "DashboardManager",
@@ -131,6 +137,7 @@ export default {
           value: "relativeDate", // is purchase date or creation date more relevant?
         },
         { text: "Produit", value: "description" },
+        { text: "Caractéristiques", value: "characteristics" },
         { text: "Prix HT", value: "priceHt", align: "end" },
       ],
     }
@@ -146,7 +153,7 @@ export default {
       return this.$store.state.userCanteenPreviews
     },
     canteenId() {
-      return this.canteenPreviews[0]?.id
+      return this.canteenPreviews[5]?.id
     },
   },
   methods: {
@@ -210,6 +217,24 @@ export default {
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
+    },
+    getProductCharacteristicsDisplayValue(characteristics) {
+      const priorityOrder = Object.keys(Constants.Characteristics)
+      characteristics = characteristics.filter((c) => priorityOrder.indexOf(c) > -1)
+      characteristics.sort((a, b) => {
+        return priorityOrder.indexOf(a) - priorityOrder.indexOf(b)
+      })
+      const displayCount = 3
+      const remaining = characteristics.length - displayCount
+      characteristics.splice(displayCount, Infinity)
+      let str = characteristics.map((c) => this.getCharacteristicDisplayValue(c).text).join(", ")
+      if (remaining > 0) str += ` et ${remaining} autre${remaining > 1 ? "s" : ""}`
+      return str
+    },
+    getCharacteristicDisplayValue(characteristic) {
+      if (Object.prototype.hasOwnProperty.call(Constants.Characteristics, characteristic))
+        return Constants.Characteristics[characteristic]
+      return { text: "" }
     },
   },
   mounted() {
