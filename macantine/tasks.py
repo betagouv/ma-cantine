@@ -272,11 +272,6 @@ def _flatten_declared_data(df):
     return df
 
 
-def _format_na(df):
-    df = df.fillna()
-    return df
-
-
 def _clean_dataset(df, schema, columns):
     df = df.loc[:, ~df.columns.duplicated()]
 
@@ -285,7 +280,6 @@ def _clean_dataset(df, schema, columns):
     df = df.drop_duplicates(subset=["id"])
     df = df.reset_index(drop=True)
 
-    # df = _format_na(df)
     for col_int in schema["fields"]:
         if col_int["type"] == "integer":
             # Force column o Int64 to maintain an integer column despite the NaN values
@@ -304,7 +298,7 @@ def _extract_dataset_teledeclaration(year):
         td = pd.DataFrame(
             Teledeclaration.objects.filter(
                 year=year,
-                creation_date__range=("2021-07-17", "2021-12-05"),
+                creation_date__range=(datetime.date(2021, 7, 17), datetime.date(2021, 12, 15)),
                 status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
             ).values()
         )
@@ -362,11 +356,7 @@ def _extract_dataset_canteen():
 
 def _export_dataset(td, file_name):
     with default_storage.open(file_name, "w") as file:
-        csv_writer = csv.writer(file, delimiter=";")
-        csv_writer.writerow(td.columns)
-        # Write the data rows
-        for row in td.itertuples(index=False):
-            csv_writer.writerow(["NaN" if value is None else value for value in row])
+        td.to_csv(file, sep=";", index=False, na_rep="")
 
 
 @app.task()
