@@ -31,9 +31,11 @@
         <v-icon small class="ml-2">mdi-open-in-new</v-icon>
       </v-btn>
     </div>
-    <TeledeclarationBanner v-if="showPendingTeledeclarationBanner" />
-    <ActionsBanner v-else-if="showActionsBanner" />
-    <SuccessBanner v-else-if="showSuccessBanner" />
+    <div v-if="canteenCount > 0">
+      <SuccessBanner v-if="showSuccessBanner" />
+      <TeledeclarationBanner v-else-if="this.teledeclarationCampaignActive" />
+      <ActionsBanner v-else />
+    </div>
     <div class="mt-4">
       <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
       <CanteensPagination v-on:canteen-count="canteenCount = $event" />
@@ -75,20 +77,15 @@ export default {
       hasActions: false,
       showCanteenCreationPrompt: null,
       teledeclarationCampaignActive: window.ENABLE_TELEDECLARATION,
+      actionsLoading: true,
     }
   },
   computed: {
     loggedUser() {
       return this.$store.state.loggedUser
     },
-    showActionsBanner() {
-      return this.canteenCount > 0 && this.hasActions && !this.teledeclarationCampaignActive
-    },
-    showPendingTeledeclarationBanner() {
-      return this.canteenCount > 0 && this.hasActions && this.teledeclarationCampaignActive
-    },
     showSuccessBanner() {
-      return this.canteenCount > 0 && !this.hasActions
+      return !this.actionsLoading && !this.hasActions
     },
   },
   mounted() {
@@ -99,6 +96,7 @@ export default {
       })
       .then((response) => (this.hasActions = response.hasPendingActions))
       .catch(() => (this.hasActions = true))
+      .finally(() => (this.actionsLoading = false))
   },
   watch: {
     canteenCount(count) {
