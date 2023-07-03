@@ -7,7 +7,9 @@
     auto-select-first
     cache-items
     v-model="cityAutocompleteChoice"
-    no-data-text="Pas de résultats. Veuillez renseigner votre ville"
+    :no-data-text="
+      this.loadingCommunes ? 'Chargement en cours...' : 'Pas de résultats. Veuillez renseigner votre ville'
+    "
     v-bind="$attrs"
     v-on="$listeners"
   />
@@ -65,19 +67,38 @@ export default {
             context: this.location.department,
           },
         }
+        this.communes.push(initialCityAutocomplete)
+        this.cityAutocompleteChoice = initialCityAutocomplete.value
       } else if (this.value && !this.cityAutocompleteChoice) {
-        initialCityAutocomplete = {
-          text: `Code INSEE : ${this.value}`,
-          value: {
-            label: `Code INSEE : ${this.value}`,
-            citycode: this.value,
-            postcode: null,
-            context: null,
-          },
-        }
+        this.fillFromInseeCode(this.value)
       }
-      this.communes.push(initialCityAutocomplete)
-      this.cityAutocompleteChoice = initialCityAutocomplete.value
+    },
+    fillFromInseeCode(inseeCode) {
+      this.loadingCommunes = true
+      const queryUrl = "https://api-adresse.data.gouv.fr/search/?q=" + inseeCode + "&type=municipality&autocomplete=1"
+      return fetch(queryUrl)
+        .then((response) => response.json())
+        .then((response) => {
+          const communes = response.features.map((commune) => {
+            return { text: `${commune.properties.label} (${commune.properties.context})`, value: commune.properties }
+          })
+          this.loadingCommunes = false
+          const communeLabel = communes.length > 0 ? communes[0].text : `Code INSEE : ${this.value}`
+          const initialCityAutocomplete = {
+            text: communeLabel,
+            value: {
+              label: communeLabel,
+              citycode: this.value,
+              postcode: null,
+              context: null,
+            },
+          }
+          this.communes.push(initialCityAutocomplete)
+          this.cityAutocompleteChoice = initialCityAutocomplete.value
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
   },
   beforeMount() {
