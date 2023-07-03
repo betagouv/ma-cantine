@@ -48,8 +48,8 @@
     <div class="mt-12 mb-8" v-else>
       <h2 class="text-h5 font-weight-black mb-4">Quelques outils pour commencer</h2>
       <v-row>
-        <v-col cols="12" sm="6" height="100%" v-for="(resource, idx) in resources" :key="idx">
-          <v-card outlined class="d-flex flex-column fill-height pa-2">
+        <v-col cols="12" sm="6" md="4" v-for="(resource, idx) in resources" :key="idx">
+          <v-card outlined class="d-flex flex-column pa-4" :class="resource.class">
             <v-card-title class="font-weight-bold">{{ resource.title }}</v-card-title>
             <v-card-text>{{ resource.text }}</v-card-text>
             <v-spacer></v-spacer>
@@ -99,22 +99,28 @@ export default {
       teledeclarationCampaignActive: window.ENABLE_TELEDECLARATION,
       actionsLoading: true,
       resources: [
+        // Q: comment decider sur Article/Webinaire/Tutoriel/Réglementation ?
         {
+          // TODO: ajouter une photo
           title: "Les 5 points essentiels à connaître sur la loi EGAlim en restauration collective",
           text:
             "Les mesures pour la restauration collective de la loi EGAlim en restauration collective sont un volet important dans l’ensemble de la loi EGAlim. Celles-ci ont vocation à...",
           links: [
             {
-              text: "Lire plus",
+              text: "Découvrir",
               href: "https://ma-cantine.agriculture.gouv.fr/blog/25",
             },
             {
+              // Q: c'est quoi le rapport entre ce lien et l'article ? P-e plutôt lien vers les mesures
+              // et ajouter une autre carte pour les cantines
               text: "Voir toutes les cantines",
               to: { name: "CanteensHome" },
             },
           ],
         },
         {
+          // Q: pas certaine que c'est idéale de prevoir avoir un wébinaire à venir sur cette question, alors j'ai un peu changé
+          // mais ça veut dire qu'on perd une carte
           title: "Comment utiliser « ma cantine » ?",
           text:
             "Comment créer une cantine sur la plateforme ? Quelles sont mes obligations ? Trouver ces réponses dans nos webinaires enregistrés.",
@@ -129,12 +135,12 @@ export default {
         },
         {
           title: "Foire aux questions",
-          text: "Trouver les réponses des questions les plus demandées",
+          text: "Vous avez besoin d'aide sur plusieurs aspects techniques ou légaux ?",
           links: [
             {
               text: "Consulter l'aide",
               to: {
-                name: "FaqPage",
+                name: "FaqPage", // Q: c'est le lien attendu ?
               },
             },
             {
@@ -144,6 +150,7 @@ export default {
               },
             },
           ],
+          class: "primary lighten-5", // Q: quel bleu à utiliser ?
         },
       ],
     }
