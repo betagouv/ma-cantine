@@ -23,7 +23,7 @@
         Accédez ci-dessous aux différents outils de gestion de votre établissement sur la plateforme « ma cantine ».
       </p>
       <v-row>
-        <v-col cols="8" id="latest-purchases">
+        <v-col cols="12" md="8" id="latest-purchases">
           <!-- How relevant are purchases to satellites? -->
           <v-card outlined>
             <v-card-title class="font-weight-bold">Mes achats</v-card-title>
