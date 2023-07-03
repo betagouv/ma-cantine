@@ -27,7 +27,7 @@
           <!-- How relevant are purchases to satellites? -->
           <v-card outlined>
             <v-card-title class="font-weight-bold">Mes achats</v-card-title>
-            <div v-if="purchases.length">
+            <div>
               <v-data-table
                 class="px-4"
                 :items="purchases"
@@ -35,12 +35,13 @@
                 :hide-default-header="true"
                 :hide-default-footer="true"
                 :disable-sort="true"
+                no-data-text="Saisissez vos achats manuellement ou connectez votre logiciel de gestion habituel"
               >
                 <template v-slot:[`item.characteristics`]="{ item }">
                   {{ getProductCharacteristicsDisplayValue(item.characteristics) }}
                 </template>
               </v-data-table>
-              <v-card-actions class="justify-end">
+              <v-card-actions class="justify-end" v-if="purchases.length">
                 <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
                   Ajouter un achat
                 </v-btn>
@@ -51,9 +52,7 @@
                   Tous mes achats
                 </v-btn>
               </v-card-actions>
-            </div>
-            <div v-else>
-              <v-card-actions class="justify-end">
+              <v-card-actions class="justify-end" v-else>
                 <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
                   Ajouter mon premier achat
                 </v-btn>
