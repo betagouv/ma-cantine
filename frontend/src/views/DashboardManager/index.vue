@@ -3,7 +3,7 @@
     <h1 class="my-4 text-h5 font-weight-bold" v-if="canteen">{{ canteen.name }}</h1>
     <h1 class="my-4 text-h5 font-weight-bold" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
 
-    <h2 class="mt-8 mb-2 text-h6 font-weight-bold primary--text">
+    <h2 class="mt-8 mb-2 text-h6 font-weight-bold">
       Ma progression
     </h2>
     <p class="body-2">
@@ -16,7 +16,7 @@
     </div>
 
     <div v-if="canteen">
-      <h2 class="mt-10 mb-2 text-h6 font-weight-bold primary--text">
+      <h2 class="mt-10 mb-2 text-h6 font-weight-bold">
         Mon établissement
       </h2>
       <p class="body-2">
@@ -145,7 +145,7 @@
       </v-row>
     </div>
 
-    <h2 class="mt-10 mb-2 text-h6 font-weight-bold primary--text">
+    <h2 class="mt-10 mb-2 text-h6 font-weight-bold">
       Mes ressources personalisées
     </h2>
     <p class="body-2">
@@ -174,7 +174,7 @@ export default {
         {
           text: "Date",
           align: "start",
-          value: "relativeDate", // is purchase date or creation date more relevant?
+          value: "relativeDate",
         },
         { text: "Produit", value: "description" },
         { text: "Caractéristiques", value: "characteristics" },
@@ -193,7 +193,7 @@ export default {
       return this.$store.state.userCanteenPreviews
     },
     canteenId() {
-      return this.canteenPreviews[5]?.id
+      return this.canteenPreviews[0]?.id
     },
     managers() {
       if (!this.canteen) []
