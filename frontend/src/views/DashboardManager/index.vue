@@ -25,7 +25,7 @@
       <v-row>
         <v-col cols="12" md="8" id="latest-purchases">
           <!-- How relevant are purchases to satellites? -->
-          <v-card outlined>
+          <v-card outlined class="fill-height">
             <v-card-title class="font-weight-bold">Mes achats</v-card-title>
             <div>
               <v-data-table
@@ -35,10 +35,16 @@
                 :hide-default-header="true"
                 :hide-default-footer="true"
                 :disable-sort="true"
-                no-data-text="Saisissez vos achats manuellement ou connectez votre logiciel de gestion habituel"
               >
                 <template v-slot:[`item.characteristics`]="{ item }">
                   {{ getProductCharacteristicsDisplayValue(item.characteristics) }}
+                </template>
+                <template v-slot:[`no-data`]>
+                  <v-card outlined rounded class="mb-4 py-4" color="primary lighten-5">
+                    <v-card-text>
+                      Saisissez vos achats manuellement ou connectez votre logiciel de gestion habituel
+                    </v-card-text>
+                  </v-card>
                 </template>
               </v-data-table>
               <v-card-actions class="justify-end" v-if="purchases.length">
