@@ -74,7 +74,7 @@ export default {
     },
     fillFromInseeCode(inseeCode) {
       this.loadingCommunes = true
-      const queryUrl = "https://api-adresse.data.gouv.fr/search/?q=" + inseeCode + "&type=municipality&autocomplete=1"
+      const queryUrl = `https://api-adresse.data.gouv.fr/search/?q=${inseeCode}&type=municipality&citycode=${inseeCode}`
       return fetch(queryUrl)
         .then((response) => response.json())
         .then((response) => {
