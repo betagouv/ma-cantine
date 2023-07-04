@@ -121,7 +121,7 @@
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <label
-              for="select-department"
+              for="select-commune"
               :class="{
                 'text-body-2': true,
                 'active-filter-label': !!filters.department.value,
