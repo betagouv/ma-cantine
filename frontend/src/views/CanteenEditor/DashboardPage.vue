@@ -202,7 +202,7 @@ export default {
     translatedParams() {
       return {
         departement: this.department,
-        secteurs: this.searchSectors.join("+"),
+        secteurs: this.searchSectors,
       }
     },
   },
