@@ -298,7 +298,7 @@ def _extract_dataset_teledeclaration(year):
         td = pd.DataFrame(
             Teledeclaration.objects.filter(
                 year=year,
-                creation_date__range=(datetime.date(2021, 7, 17), datetime.date(2021, 12, 15)),
+                creation_date__range=(datetime.date(2022, 7, 17), datetime.date(2022, 12, 15)),
                 status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
             ).values()
         )
@@ -308,7 +308,6 @@ def _extract_dataset_teledeclaration(year):
         )
     if len(td) == 0:
         return td
-
     td = _flatten_declared_data(td)
     td["teledeclaration_ratio_bio"] = td["teledeclaration.value_bio_ht"] / td["teledeclaration.value_total_ht"]
     td["teledeclaration_ratio_egalim_hors_bio"] = (
