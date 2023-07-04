@@ -7,9 +7,7 @@
     auto-select-first
     cache-items
     v-model="cityAutocompleteChoice"
-    :no-data-text="
-      this.loadingCommunes ? 'Chargement en cours...' : 'Pas de résultats. Veuillez renseigner votre ville'
-    "
+    :no-data-text="noDataText"
     v-bind="$attrs"
     v-on="$listeners"
   />
@@ -36,6 +34,14 @@ export default {
       loadingCommunes: false,
       search: null,
     }
+  },
+  computed: {
+    noDataText() {
+      if (!this.search || this.search.length < 3) {
+        return "Veuillez rentrer au moins trois caractères"
+      }
+      return this.loadingCommunes ? "Chargement en cours..." : "Pas de résultats"
+    },
   },
   methods: {
     queryCommunes(val) {
