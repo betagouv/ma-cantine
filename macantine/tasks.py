@@ -5,6 +5,7 @@ import csv
 import math
 import pandas as pd
 import json
+import os
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
@@ -348,6 +349,10 @@ def _extract_dataset_canteen():
     canteens = canteens[
         canteens.apply(lambda x: "Restaurants des armées/police/gendarmerie" not in str(x["sectors"]), axis=1)
     ]
+
+    bucket_url = os.environ.get("CELLAR_HOST")
+    bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
+    canteens["logo"] = canteens["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
 
     canteens = _clean_dataset(canteens, schema, canteens_col)
     return canteens
