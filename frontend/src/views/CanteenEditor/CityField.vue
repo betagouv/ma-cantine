@@ -32,6 +32,7 @@ export default {
       communes: [],
       loadingCommunes: false,
       search: null,
+      disableSearchWatcher: false,
     }
   },
   computed: {
@@ -74,11 +75,12 @@ export default {
         this.communes.push(initialCityAutocomplete)
         this.cityAutocompleteChoice = initialCityAutocomplete.value
       } else if (this.value && !this.cityAutocompleteChoice) {
-        this.fillFromInseeCode(this.value)
+        return this.fillFromInseeCode(this.value)
       }
     },
     fillFromInseeCode(inseeCode) {
       this.loadingCommunes = true
+      this.disableSearchWatcher = true
       const queryUrl = `https://api-adresse.data.gouv.fr/search/?q=${inseeCode}&type=municipality&citycode=${inseeCode}`
       return fetch(queryUrl)
         .then((response) => response.json())
@@ -86,7 +88,6 @@ export default {
           const communes = response.features.map((commune) => {
             return { text: `${commune.properties.label} (${commune.properties.context})`, value: commune.properties }
           })
-          this.loadingCommunes = false
           const communeLabel = communes.length > 0 ? communes[0].text : `Code INSEE : ${this.value}`
           const initialCityAutocomplete = {
             text: communeLabel,
@@ -100,19 +101,24 @@ export default {
           this.communes.push(initialCityAutocomplete)
           this.cityAutocompleteChoice = initialCityAutocomplete.value
         })
+        .then(this.$nextTick)
         .catch((error) => {
           console.log(error)
+        })
+        .finally(() => {
+          this.disableSearchWatcher = false
+          this.loadingCommunes = false
         })
     },
   },
   beforeMount() {
     if (this.location.city || this.value) {
-      this.populateCityAutocomplete()
+      return this.populateCityAutocomplete()
     }
   },
   watch: {
     search(val) {
-      return val && val !== this.location.city && this.queryCommunes(val)
+      return val && !this.disableSearchWatcher && val !== this.location.city && this.queryCommunes(val)
     },
     cityAutocompleteChoice(val) {
       if (val?.label && val?.context) {
