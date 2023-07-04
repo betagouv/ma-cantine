@@ -52,7 +52,7 @@
           <v-card outlined class="d-flex flex-column" :style="resource.style">
             <v-img height="215" :src="resource.img" v-if="resource.img"></v-img>
             <div class="pa-4">
-              <v-card-title class="font-weight-bold">{{ resource.title }}</v-card-title>
+              <v-card-title class="font-weight-bold" v-html="resource.title"></v-card-title>
               <v-card-text>{{ resource.text }}</v-card-text>
               <v-spacer></v-spacer>
               <v-card-actions class="px-4 justify-end">
@@ -119,7 +119,7 @@ export default {
           ],
         },
         {
-          title: "Comment utiliser la plateforme « ma cantine » ?",
+          title: "Comment utiliser la plateforme «&nbsp;ma cantine&nbsp;» ?",
           text:
             "Comment créer une cantine sur la plateforme ? Quelles sont mes obligations ? Trouver ces réponses dans nos webinaires enregistrés.",
           links: [
