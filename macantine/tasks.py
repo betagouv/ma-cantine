@@ -301,6 +301,7 @@ def _extract_dataset_teledeclaration(year):
                 year=year,
                 creation_date__range=(datetime.date(2022, 7, 17), datetime.date(2022, 12, 15)),
                 status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+                canteen_id__isnull=False,
             ).values()
         )
     else:
@@ -315,6 +316,7 @@ def _extract_dataset_teledeclaration(year):
         td["teledeclaration.value_sustainable_ht"] / td["teledeclaration.value_total_ht"]
     )
     td = _clean_dataset(td, schema, td_columns)
+    td = _filter_by_sectors(td)
     return td
 
 
@@ -327,6 +329,11 @@ def _extract_sectors(canteens):
     del canteens["sectors"]
 
     return canteens.merge(canteens_sectors, on="id")
+
+
+def _filter_by_sectors(df):
+    sector_col_name = "sectors" if "sectors" in df.columns else "canteen_sectors"
+    return df[df.apply(lambda x: "Restaurants des armées/police/gendarmerie" not in str(x[sector_col_name]), axis=1)]
 
 
 def _extract_dataset_canteen():
@@ -346,9 +353,7 @@ def _extract_dataset_canteen():
     canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
 
     canteens = _extract_sectors(canteens)
-    canteens = canteens[
-        canteens.apply(lambda x: "Restaurants des armées/police/gendarmerie" not in str(x["sectors"]), axis=1)
-    ]
+    canteens = _filter_by_sectors(canteens)
 
     bucket_url = os.environ.get("CELLAR_HOST")
     bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
@@ -359,7 +364,7 @@ def _extract_dataset_canteen():
 
 
 def _export_dataset(td, file_name):
-    with default_storage.open(file_name, "w") as file:
+    with default_storage.open(f"open_data/{file_name}", "w") as file:
         td.to_csv(file, sep=";", index=False, na_rep="")
 
 
