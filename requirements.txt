@@ -22,7 +22,7 @@ cryptography==41.0.1
 cssselect2==0.7.0
 Deprecated==1.2.13
 dill==0.3.6
-Django==4.2.1
+Django==4.2.3
 django-anymail==9.1
 django-ckeditor==6.5.1
 django-csp==3.7
