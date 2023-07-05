@@ -109,7 +109,6 @@ class CanteenAdmin(SoftDeletionAdmin):
         "sectors",
         "region",
         "department",
-        "import_source",
     )
     search_fields = (
         "name",
