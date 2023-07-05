@@ -48,22 +48,19 @@
     <div class="mt-12 mb-8" v-else>
       <h2 class="text-h5 font-weight-black mb-4">Quelques outils pour commencer</h2>
       <v-row>
-        <v-col cols="12" sm="6" md="4" v-for="(resource, idx) in resources" :key="idx">
-          <v-card outlined class="d-flex flex-column" :style="resource.style">
-            <v-img height="215" :src="resource.img" v-if="resource.img"></v-img>
-            <div class="pa-4">
-              <v-card-title class="font-weight-bold" v-html="resource.title"></v-card-title>
-              <v-card-text>{{ resource.text }}</v-card-text>
-              <v-spacer></v-spacer>
-              <v-card-actions class="px-4 justify-end">
-                <v-btn text color="primary" :to="resource.links[1].to" v-if="resource.links[1]">
-                  {{ resource.links[1].text }}
-                </v-btn>
-                <v-btn outlined color="primary" :to="resource.links[0].to" :href="resource.links[0].href">
-                  {{ resource.links[0].text }}
-                </v-btn>
-              </v-card-actions>
-            </div>
+        <v-col cols="12" sm="6" v-for="(resource, idx) in resources" :key="idx">
+          <v-card outlined class="d-flex flex-column fill-height pa-4" :style="resource.style">
+            <v-card-title class="font-weight-bold" v-html="resource.title"></v-card-title>
+            <v-card-text>{{ resource.text }}</v-card-text>
+            <v-spacer></v-spacer>
+            <v-card-actions class="px-4 justify-end">
+              <v-btn text color="primary" :to="resource.links[1].to" v-if="resource.links[1]">
+                {{ resource.links[1].text }}
+              </v-btn>
+              <v-btn outlined color="primary" :to="resource.links[0].to" :href="resource.links[0].href">
+                {{ resource.links[0].text }}
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
@@ -103,7 +100,6 @@ export default {
       actionsLoading: true,
       resources: [
         {
-          img: "/static/images/egalim-article.png",
           title: "Les 5 points essentiels à connaître sur la loi EGAlim en restauration collective",
           text:
             "Les mesures pour la restauration collective de la loi EGAlim en restauration collective sont un volet important dans l’ensemble de la loi EGAlim. Celles-ci ont vocation à...",
