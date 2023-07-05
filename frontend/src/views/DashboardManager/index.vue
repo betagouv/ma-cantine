@@ -40,16 +40,20 @@
                   {{ getProductCharacteristicsDisplayValue(item.characteristics) }}
                 </template>
                 <template v-slot:[`no-data`]>
-                  <v-card outlined rounded class="mb-4 py-4" color="primary lighten-5">
+                  <v-card outlined rounded class="mb-4 py-4" color="primary lighten-5" v-if="!purchasesFetchingError">
                     <v-card-text>
                       Saisissez vos achats manuellement ou connectez votre logiciel de gestion habituel
                     </v-card-text>
                   </v-card>
+                  <v-alert outlined type="error" v-else>
+                    <p>{{ purchasesFetchingError }}</p>
+                    <v-btn @click="fetchPurchases" outlined color="primary">Essayer à nouveau</v-btn>
+                  </v-alert>
                 </template>
               </v-data-table>
             </v-card-text>
             <v-spacer></v-spacer>
-            <v-card-actions class="justify-end" v-if="purchases.length">
+            <v-card-actions class="justify-end" v-if="purchases.length || purchasesFetchingError">
               <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
                 Ajouter un achat
               </v-btn>
@@ -188,6 +192,7 @@ export default {
         { text: "Caractéristiques", value: "characteristics" },
         { text: "Prix HT", value: "priceHt", align: "end" },
       ],
+      purchasesFetchingError: null,
     }
   },
   computed: {
@@ -249,6 +254,7 @@ export default {
       }
     },
     fetchPurchases() {
+      this.purchasesFetchingError = null
       const purchaseLimit = 3
       const query = `limit=${purchaseLimit}&ordering=-date&canteen__id=${this.canteenId}`
       return fetch(`/api/v1/purchases/?${query}`)
@@ -277,8 +283,9 @@ export default {
             }
           })
         })
-        .catch((e) => {
-          this.$store.dispatch("notifyServerError", e)
+        .catch(() => {
+          this.purchases = []
+          this.purchasesFetchingError = "Échec lors du téléchargement des achats"
         })
     },
     getProductCharacteristicsDisplayValue(characteristics) {
@@ -289,7 +296,7 @@ export default {
       })
       const displayCount = 3
       const remaining = characteristics.length - displayCount
-      characteristics.splice(displayCount, Infinity)
+      characteristics.splice(displayCount)
       let str = characteristics.map((c) => this.getCharacteristicDisplayValue(c).text).join(", ")
       if (remaining > 0) str += ` et ${remaining} autre${remaining > 1 ? "s" : ""}`
       return str
