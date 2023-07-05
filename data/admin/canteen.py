@@ -124,12 +124,8 @@ class CanteenAdmin(SoftDeletionAdmin):
         )
         if active_tds.filter(canteen=obj).exists():
             return "📩 Télédéclarée"
-        if obj.production_type == Canteen.ProductionType.ON_SITE_CENTRAL and obj.central_producer_siret:
-            central_types = [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
-            centrals = Canteen.objects.filter(siret=obj.central_producer_siret, production_type__in=central_types)
-            if centrals.exists() and centrals.count() == 1:
-                if active_tds.filter(canteen=centrals.first()).exists():
-                    return "📩 Télédéclarée (par CC)"
+        if obj.central_kitchen and active_tds.filter(canteen=obj.central_kitchen).exists():
+            return "📩 Télédéclarée (par CC)"
         return ""
 
     def source_des_données(self, obj):
