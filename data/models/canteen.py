@@ -35,6 +35,7 @@ class Canteen(SoftDeletionModel):
         verbose_name = "cantine"
         verbose_name_plural = "cantines"
         ordering = ["-creation_date"]
+        indexes = [models.Index(fields=["central_producer_siret"])]
 
     class ManagementType(models.TextChoices):
         DIRECT = "direct", "Directe"
