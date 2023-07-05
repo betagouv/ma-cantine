@@ -1,7 +1,33 @@
 <template>
   <div class="text-left">
-    <h1 class="my-4 text-h5 font-weight-bold" v-if="canteen">{{ canteen.name }}</h1>
+    <v-row v-if="showCanteenSelection" class="my-6">
+      <v-col cols="12" sm="6">
+        <label class="body-2 d-sr-only" for="canteen">Établissement</label>
+        <DsfrAutocomplete
+          hide-details="auto"
+          :items="canteenPreviews"
+          placeholder="Choisissez l'établissement"
+          v-model="nextCanteenId"
+          item-text="name"
+          item-value="id"
+          id="canteen"
+          class="mt-2"
+          auto-select-first
+          no-data-text="Pas de résultats"
+          @blur="showCanteenSelection = false"
+        />
+      </v-col>
+    </v-row>
+    <h1 class="my-4 text-h5 font-weight-bold" v-else-if="canteen">{{ canteen.name }}</h1>
     <h1 class="my-4 text-h5 font-weight-bold" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
+    <v-row v-if="!showCanteenSelection">
+      <v-col>
+        <v-btn @click="showCanteenSelection = true" outlined small color="primary" v-if="canteenPreviews.length > 1">
+          <v-icon class="mr-1" small>mdi-pencil</v-icon>
+          Changer d'établissement
+        </v-btn>
+      </v-col>
+    </v-row>
 
     <h2 class="mt-8 mb-2 text-h6 font-weight-bold">
       Ma progression
@@ -171,14 +197,19 @@
 import EmptyProgression from "./EmptyProgression.vue"
 import EgalimProgression from "./EgalimProgression.vue"
 import CanteenIndicators from "@/components/CanteenIndicators"
+import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import { toCurrency } from "@/utils"
 import Constants from "@/constants"
+import validators from "@/validators"
 
 export default {
   name: "DashboardManager",
-  components: { EmptyProgression, EgalimProgression, CanteenIndicators },
+  components: { EmptyProgression, EgalimProgression, CanteenIndicators, DsfrAutocomplete },
   data() {
+    const canteenId = this.$store.state.userCanteenPreviews[0]?.id
     return {
+      canteenId,
+      nextCanteenId: canteenId,
       canteen: null,
       centralKitchen: null,
       purchases: [],
@@ -193,6 +224,8 @@ export default {
         { text: "Prix HT", value: "priceHt", align: "end" },
       ],
       purchasesFetchingError: null,
+      showCanteenSelection: false,
+      validators,
     }
   },
   computed: {
@@ -204,9 +237,6 @@ export default {
     },
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
-    },
-    canteenId() {
-      return this.canteenPreviews[0]?.id
     },
     managers() {
       if (!this.canteen) []
@@ -243,6 +273,7 @@ export default {
         })
     },
     getCentralKitchen() {
+      this.centralKitchen = null
       if (
         this.canteen &&
         this.canteen.centralProducerSiret &&
@@ -309,6 +340,18 @@ export default {
   },
   mounted() {
     this.fetchCanteenIfNeeded()
+  },
+  watch: {
+    canteenId() {
+      this.canteen = null
+      this.fetchCanteenIfNeeded()
+    },
+    nextCanteenId(newValue) {
+      if (newValue) {
+        this.canteenId = newValue
+        this.showCanteenSelection = false
+      }
+    },
   },
 }
 </script>
