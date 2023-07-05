@@ -14,7 +14,10 @@ logger = logging.getLogger(__name__)
 class SubscribeNewsletter(APIView):
     def post(self, request):
         try:
-            email = request.data.get("email", "").strip()
+            email = request.data.get("email", "")
+            if not email:
+                raise ValidationError("No email given")
+            email.strip()
             validate_email(email)
 
             list_id = settings.NEWSLETTER_SENDINBLUE_LIST_ID
