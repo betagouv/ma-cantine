@@ -64,8 +64,8 @@ class ImportDiagnosticsView(ABC, APIView):
             logger.warning(f"{message}")
             self.errors = [{"row": 0, "status": 400, "message": message}]
         except UnicodeDecodeError as e:
-            message = e.message
-            logger.warning(f"{message}")
+            message = e.reason
+            logger.warning(f"UnicodeDecodeError: {message}")
             self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
         except Exception as e:
             logger.exception(f"Échec lors de la lecture du fichier:\n{e}")
