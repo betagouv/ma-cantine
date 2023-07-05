@@ -17,7 +17,7 @@ class SubscribeNewsletter(APIView):
             email = request.data.get("email", "")
             if not email:
                 raise ValidationError("No email given")
-            email.strip()
+            email = email.strip()
             validate_email(email)
 
             list_id = settings.NEWSLETTER_SENDINBLUE_LIST_ID
