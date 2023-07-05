@@ -25,11 +25,11 @@
       <v-row>
         <v-col cols="12" md="8" id="latest-purchases">
           <!-- How relevant are purchases to satellites? -->
-          <v-card outlined class="fill-height">
+          <v-card outlined class="fill-height d-flex flex-column">
             <v-card-title class="font-weight-bold">Mes achats</v-card-title>
-            <div>
+            <v-spacer></v-spacer>
+            <v-card-text>
               <v-data-table
-                class="px-4"
                 :items="purchases"
                 :headers="purchaseHeaders"
                 :hide-default-header="true"
@@ -47,30 +47,31 @@
                   </v-card>
                 </template>
               </v-data-table>
-              <v-card-actions class="justify-end" v-if="purchases.length">
-                <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
-                  Ajouter un achat
-                </v-btn>
-                <v-btn :to="{ name: 'PurchasesImporter' }" outlined color="primary" class="mx-2 mb-2">
-                  Importer des achats
-                </v-btn>
-                <v-btn :to="{ name: 'PurchasesHome' }" outlined color="primary" class="mx-2 mb-2">
-                  Tous mes achats
-                </v-btn>
-              </v-card-actions>
-              <v-card-actions class="justify-end" v-else>
-                <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
-                  Ajouter mon premier achat
-                </v-btn>
-                <v-btn :to="{ name: 'PurchasesImporter' }" outlined color="primary" class="mx-2 mb-2">
-                  Importer mes achats
-                </v-btn>
-              </v-card-actions>
-            </div>
+            </v-card-text>
+            <v-spacer></v-spacer>
+            <v-card-actions class="justify-end" v-if="purchases.length">
+              <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
+                Ajouter un achat
+              </v-btn>
+              <v-btn :to="{ name: 'PurchasesImporter' }" outlined color="primary" class="mx-2 mb-2">
+                Importer des achats
+              </v-btn>
+              <v-btn :to="{ name: 'PurchasesHome' }" outlined color="primary" class="mx-2 mb-2">
+                Tous mes achats
+              </v-btn>
+            </v-card-actions>
+            <v-card-actions class="justify-end" v-else>
+              <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
+                Ajouter mon premier achat
+              </v-btn>
+              <v-btn :to="{ name: 'PurchasesImporter' }" outlined color="primary" class="mx-2 mb-2">
+                Importer mes achats
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </v-col>
         <v-col cols="6" md="4" id="canteen-info-card">
-          <v-card outlined>
+          <v-card outlined class="fill-height d-flex flex-column">
             <v-card-title class="font-weight-bold">Mon établissement</v-card-title>
             <v-card-text>
               <p>SIRET : {{ canteen.siret }}</p>
@@ -93,6 +94,7 @@
               </div>
               <CanteenIndicators :canteen="canteen" />
             </v-card-text>
+            <v-spacer></v-spacer>
             <v-card-actions class="mx-2 mb-2 justify-end">
               <v-btn
                 :to="{
@@ -108,7 +110,7 @@
           </v-card>
         </v-col>
         <v-col cols="4" id="managers">
-          <v-card outlined>
+          <v-card outlined class="fill-height d-flex flex-column">
             <v-card-title class="font-weight-bold">
               Mon équipe
             </v-card-title>
@@ -132,6 +134,7 @@
                 Actuellement, vous êtes la seule personne qui peut modiifer cet établissement et ajouter des données
               </p>
             </v-card-text>
+            <v-spacer></v-spacer>
             <v-card-actions class="justify-end">
               <v-btn
                 :to="{
