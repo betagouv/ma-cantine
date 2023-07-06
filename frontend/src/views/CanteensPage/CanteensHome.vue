@@ -130,7 +130,7 @@
               Commune
             </label>
             <CityField
-              v-model="filters.city_insee_code.value"
+              :inseeCode.sync="filters.city_insee_code.value"
               clearable
               hide-details
               id="select-commune"

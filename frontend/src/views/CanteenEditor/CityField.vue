@@ -5,10 +5,12 @@
     :items="communes"
     :search-input.sync="search"
     auto-select-first
+    cache-items
     v-model="cityAutocompleteChoice"
     :no-data-text="noDataText"
     v-bind="$attrs"
     v-on="$listeners"
+    ref="autocomplete"
   />
 </template>
 
@@ -22,7 +24,7 @@ export default {
     location: {
       default: () => ({}),
     },
-    value: {
+    inseeCode: {
       required: false,
     },
   },
@@ -51,6 +53,7 @@ export default {
       return fetch(queryUrl)
         .then((response) => response.json())
         .then((response) => {
+          this.clearCache()
           const communes = response.features
           this.communes = communes.map((commune) => {
             return { text: `${commune.properties.label} (${commune.properties.context})`, value: commune.properties }
@@ -74,8 +77,8 @@ export default {
         }
         this.communes.push(initialCityAutocomplete)
         this.cityAutocompleteChoice = initialCityAutocomplete.value
-      } else if (this.value && !this.cityAutocompleteChoice) {
-        return this.fillFromInseeCode(this.value)
+      } else if (this.inseeCode && !this.cityAutocompleteChoice) {
+        return this.fillFromInseeCode(this.inseeCode)
       }
     },
     fillFromInseeCode(inseeCode) {
@@ -88,12 +91,12 @@ export default {
           const communes = response.features.map((commune) => {
             return { text: `${commune.properties.label} (${commune.properties.context})`, value: commune.properties }
           })
-          const communeLabel = communes.length > 0 ? communes[0].text : `Code INSEE : ${this.value}`
+          const communeLabel = communes.length > 0 ? communes[0].text : `Code INSEE : ${this.inseeCode}`
           const initialCityAutocomplete = {
             text: communeLabel,
             value: {
               label: communeLabel,
-              citycode: this.value,
+              citycode: this.inseeCode,
               postcode: null,
               context: null,
             },
@@ -110,9 +113,12 @@ export default {
           this.loadingCommunes = false
         })
     },
+    clearCache() {
+      if (this.$refs?.autocomplete?.$refs?.autocomplete) this.$refs.autocomplete.$refs.autocomplete.cachedItems = []
+    },
   },
   beforeMount() {
-    if (this.location.city || this.value) {
+    if (this.location.city || this.inseeCode) {
       return this.populateCityAutocomplete()
     }
   },
@@ -130,12 +136,12 @@ export default {
         }
         const inseeCode = val.citycode
         this.$emit("locationUpdate", jsonRepresentation)
-        this.$emit("input", inseeCode)
+        this.$emit("update:inseeCode", inseeCode)
       }
 
       this.search = this.location.city
     },
-    value() {
+    inseeCode() {
       if (!this.location || !this.location.city) this.populateCityAutocomplete()
     },
   },
