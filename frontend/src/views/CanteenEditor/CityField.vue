@@ -5,7 +5,6 @@
     :items="communes"
     :search-input.sync="search"
     auto-select-first
-    cache-items
     v-model="cityAutocompleteChoice"
     :no-data-text="noDataText"
     v-bind="$attrs"
@@ -112,9 +111,6 @@ export default {
           this.disableSearchWatcher = false
           this.loadingCommunes = false
         })
-    },
-    clearCache() {
-      if (this.$refs?.autocomplete?.$refs?.autocomplete) this.$refs.autocomplete.$refs.autocomplete.cachedItems = []
     },
   },
   beforeMount() {
