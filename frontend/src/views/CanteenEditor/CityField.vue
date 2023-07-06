@@ -5,6 +5,8 @@
     :items="communes"
     :search-input.sync="search"
     auto-select-first
+    cache-items
+    @click:clear="$emit('update:inseeCode', null)"
     v-model="cityAutocompleteChoice"
     :no-data-text="noDataText"
     v-bind="$attrs"
@@ -52,7 +54,6 @@ export default {
       return fetch(queryUrl)
         .then((response) => response.json())
         .then((response) => {
-          this.clearCache()
           const communes = response.features
           this.communes = communes.map((commune) => {
             return { text: `${commune.properties.label} (${commune.properties.context})`, value: commune.properties }
