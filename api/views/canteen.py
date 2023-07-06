@@ -182,6 +182,7 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
             "department",
             "region",
             "sectors",
+            "city_insee_code",
             "min_daily_meal_count",
             "max_daily_meal_count",
             "management_type",
