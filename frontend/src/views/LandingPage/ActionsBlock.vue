@@ -17,7 +17,7 @@
             max-height="100"
           ></v-img>
           <v-card-title>
-            <h2 class="text-h3">
+            <h2 class="text-h5">
               Gérer ma cantine pour atteindre mes objectifs
             </h2>
           </v-card-title>
@@ -47,7 +47,7 @@
             max-height="100"
           ></v-img>
           <v-card-title>
-            <h2 class="text-h3">
+            <h2 class="text-h5">
               Suivre l'évolution de ma collectivité
             </h2>
           </v-card-title>
@@ -77,7 +77,7 @@
             max-height="100"
           ></v-img>
           <v-card-title>
-            <h2 class="text-h3">En savoir plus sur la cantine que je fréquente</h2>
+            <h2 class="text-h5">En savoir plus sur la cantine que je fréquente</h2>
           </v-card-title>
           <v-card-text class="text-body-1">
             Connaître les initiatives de mon restaurant ou celui de mes enfants
