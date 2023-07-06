@@ -3,7 +3,7 @@
     <v-row>
       <v-spacer></v-spacer>
       <v-col cols="12" sm="8">
-        <h2 class="text-h4 font-weight-black">Les dernières actualités et partage d'expériences</h2>
+        <h2 class="text-h2">Les dernières actualités et partage d'expériences</h2>
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
@@ -12,7 +12,7 @@
         <BlogCard :post="post" />
       </v-col>
     </v-row>
-    <v-btn large outlined color="primary" class="mt-2 mx-auto" :to="{ name: 'BlogsHome' }">
+    <v-btn large outlined color="primary" class="text-button mt-2 mx-auto" :to="{ name: 'BlogsHome' }">
       <v-icon small class="mr-1">$newspaper-fill</v-icon>
       Visiter notre blog
     </v-btn>

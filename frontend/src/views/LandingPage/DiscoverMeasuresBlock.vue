@@ -3,11 +3,11 @@
     <v-row>
       <v-spacer></v-spacer>
       <v-col cols="12" sm="8">
-        <h2 class="text-h4 font-weight-black">Les mesures phares de la loi EGAlim en restauration collective</h2>
+        <h2 class="text-h2">Les mesures phares de la loi EGAlim en restauration collective</h2>
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
-    <p class="text-left mt-8">
+    <p class="text-left mt-8 text-body-1">
       Découvrez les mesures, leurs échéances, le public cible ainsi que des ressources pour vous aider à atteindre leurs
       objectifs.
     </p>
@@ -19,10 +19,10 @@
           :to="{ name: 'KeyMeasurePage', params: { id: measure.id } }"
           class="fill-height d-flex flex-column px-3 dsfr"
         >
-          <v-card-text class="pb-1 pt-6">
+          <v-card-text class="pb-1 pt-6 text-body-1">
             <v-icon>{{ measure.mdiIcon }}</v-icon>
           </v-card-text>
-          <v-card-title class="text-body-1 text-left font-weight-bold">
+          <v-card-title class="text-h6 text-left">
             {{ measure.title }}
           </v-card-title>
           <v-spacer></v-spacer>

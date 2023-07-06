@@ -17,11 +17,11 @@
             max-height="100"
           ></v-img>
           <v-card-title>
-            <h2 class="text-h6 font-weight-bold">
+            <h2 class="text-h3">
               Gérer ma cantine pour atteindre mes objectifs
             </h2>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="text-body-1">
             Être outillé pour atteindre les objectifs des lois EGAlim et Climat
           </v-card-text>
           <v-spacer></v-spacer>
@@ -47,11 +47,11 @@
             max-height="100"
           ></v-img>
           <v-card-title>
-            <h2 class="text-h6 font-weight-bold">
+            <h2 class="text-h3">
               Suivre l'évolution de ma collectivité
             </h2>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="text-body-1">
             Savoir où en sont les établissements de ma région ou mon département
           </v-card-text>
           <v-spacer></v-spacer>
@@ -76,10 +76,10 @@
             contain
             max-height="100"
           ></v-img>
-          <v-card-title class="text-h6 font-weight-bold">
-            <h2 class="text-h6 font-weight-bold">En savoir plus sur la cantine que je fréquente</h2>
+          <v-card-title>
+            <h2 class="text-h3">En savoir plus sur la cantine que je fréquente</h2>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="text-body-1">
             Connaître les initiatives de mon restaurant ou celui de mes enfants
           </v-card-text>
           <v-spacer></v-spacer>

@@ -1,13 +1,13 @@
 <template>
-  <div>
+  <div class="text-left">
     <v-row>
       <v-col class="pa-4 pa-md-0" cols="12" sm="8" md="7">
         <v-card elevation="0" class="pa-0">
-          <v-card-title class="font-weight-bold">
+          <v-card-title class="text-h4">
             Suivre les actualités du site ma cantine
           </v-card-title>
 
-          <v-card-subtitle class="text-left">
+          <v-card-subtitle class="text-body-1">
             Inscrivez-vous à la newsletter et recevez environ 1 email par mois.
           </v-card-subtitle>
 
@@ -20,9 +20,9 @@
                 label="Votre adresse email"
                 validate-on-blur
                 :rules="[validators.email]"
-                labelClasses="text-body-2 mb-2 text-left"
+                labelClasses="text-body-1 mb-2"
               />
-              <v-btn @click="subscribe" outlined color="primary" class="ml-4 mt-1" large>Valider</v-btn>
+              <v-btn @click="subscribe" outlined color="primary" class="text-button ml-4 mt-1" large>Valider</v-btn>
             </v-form>
           </v-card-text>
         </v-card>

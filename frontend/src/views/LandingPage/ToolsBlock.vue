@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h2 class="text-h4 font-weight-black mb-12">Nos outils et ressources</h2>
+  <div class="text-body-1">
+    <h2 class="text-h2 mb-12">Nos outils et ressources</h2>
 
     <v-row class="text-left">
       <v-col cols="12" sm="6" md="4">
@@ -37,7 +37,7 @@
         <v-spacer></v-spacer>
         <v-btn v-if="!loggedUser" href="/s-identifier" color="primary" large outlined class="mr-2">M'identifier</v-btn>
         <v-btn v-if="!loggedUser" href="/creer-mon-compte" color="primary" large>Créer mon compte</v-btn>
-        <v-btn v-if="loggedUser" :to="{ name: 'ManagementPage' }" color="primary" large outlined>
+        <v-btn v-if="loggedUser" :to="{ name: 'ManagementPage' }" color="primary" large outlined class="text-button">
           Gérer mes cantines
         </v-btn>
         <v-spacer></v-spacer>
