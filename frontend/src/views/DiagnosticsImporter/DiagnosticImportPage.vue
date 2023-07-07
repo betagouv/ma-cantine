@@ -185,6 +185,33 @@
         </tbody>
       </template>
     </v-simple-table>
+    <p v-if="ccDocumentation && ccDocumentation.length > 0">
+      Les champs suivants concernent les cuisines centrales
+    </p>
+    <v-simple-table class="mt-0 mb-6" v-if="ccDocumentation.length && ccDocumentation.length > 0">
+      <template v-slot:default>
+        <thead>
+          <tr>
+            <th>Colonne</th>
+            <th>Champ</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Exemple</th>
+            <th>Obligatoire</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(field, idx) in ccDocumentation" :key="idx">
+            <td class="text-center">{{ sharedDocumentation.length + idx + 1 }}</td>
+            <td>{{ field.name }}</td>
+            <td v-html="field.description"></td>
+            <td>{{ field.type }}</td>
+            <td>{{ field.example }}</td>
+            <td class="text-center">{{ field.optional ? "✘" : "✔" }}</td>
+          </tr>
+        </tbody>
+      </template>
+    </v-simple-table>
     <p>
       Les champs suivants concernent les données d'approvisionnement.
     </p>
@@ -202,7 +229,7 @@
         </thead>
         <tbody>
           <tr v-for="(field, idx) in diagnosticDocumentation" :key="idx">
-            <td class="text-center">{{ sharedDocumentation.length + idx + 1 }}</td>
+            <td class="text-center">{{ sharedDocumentation.length + ccDocumentation.length + idx + 1 }}</td>
             <td>{{ field.name }}</td>
             <td v-html="field.description"></td>
             <td>{{ field.type }}</td>
@@ -337,6 +364,19 @@ export default {
     type() {
       return this.importLevels.find((level) => level.key === this.importLevel)
     },
+    ccDocumentation() {
+      if (this.importLevel !== "CC_SIMPLE" && this.importLevel !== "CC_COMPLETE") return []
+      return [
+        {
+          name: "Nombre de cantines satellites",
+          description:
+            "Nombre de cantines/lieux de service à qui je fournis des repas. Obligatoire pour les cuisines centrales.",
+          type: "Chiffre entier",
+          example: "14",
+          optional: true,
+        },
+      ]
+    },
     diagnosticDocumentation() {
       if (this.importLevel === "NONE") return []
       const numberFormatExample = "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>."
@@ -366,7 +406,7 @@ export default {
           example: "1234.99",
         },
       ]
-      if (this.importLevel === "COMPLETE") {
+      if (this.importLevel === "COMPLETE" || this.importLevel === "CC_COMPLETE") {
         valuesArray = [
           "La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
           "La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total",
