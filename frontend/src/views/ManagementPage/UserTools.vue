@@ -116,6 +116,9 @@ import CalculatorResourceModal from "@/components/KeyMeasureResource/CalculatorR
 
 export default {
   components: { CalculatorResourceModal },
+  props: {
+    canteenCount: Boolean,
+  },
   data() {
     return {
       calculatorModal: false,
