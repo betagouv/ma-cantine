@@ -425,7 +425,7 @@ export default {
       })
       const displayCount = 3
       const remaining = characteristics.length - displayCount
-      characteristics.splice(displayCount, Infinity)
+      characteristics.splice(displayCount)
       let str = characteristics.map((c) => this.getCharacteristicDisplayValue(c).text).join(", ")
       if (remaining > 0) str += ` et ${remaining} autre${remaining > 1 ? "s" : ""}`
       return str
@@ -513,7 +513,6 @@ export default {
           this.canteens = response.canteens.map((c) => ({ text: c, value: c }))
         })
         .catch((e) => {
-          this.publishedCanteenCount = 0
           this.$store.dispatch("notifyServerError", e)
         })
         .finally(() => {
