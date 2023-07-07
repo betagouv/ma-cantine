@@ -427,6 +427,30 @@ export default Object.freeze({
       icon: "$checkbox-circle-fill",
     },
   ],
+  CentralKitchenImportLevels: [
+    {
+      key: "CC_SIMPLE",
+      urlSlug: "cuisine-centrale-diagnostics-simples",
+      title: "Mettre à jour vos satellites et renseigner des diagnostics simples",
+      description:
+        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement simplifiées au niveau de la cuisine centrale et de lister vos cantines satellites seulement avec leurs données d'établissement. Les données d'approvisionnement restent donc seulement nécessaires pour les cuisines centrales.",
+      label: "Cuisine centrale avec diagnostic simple",
+      help:
+        "Vous voules renseigner vos satellites et vous connaissez les valeurs totaux, bio, et de qualité et durable",
+      icon: "$bar-chart-box-fill",
+    },
+    {
+      key: "CC_COMPLETE",
+      urlSlug: "cuisine-centrale-diagnostics-complets",
+      title: "Mettre à jour vos satellites et renseigner des diagnostics complets",
+      description:
+        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement complètes au niveau de la cuisine centrale et de lister vos cantines satellites seulement avec leurs données d'établissement. Les données d'approvisionnement restent donc seulement nécessaires pour les cuisines centrales.",
+      label: "Cuisine centrale avec diagnostic complet",
+      help:
+        "Vous voules renseigner vos satellites et vous connaissez les labels et les familles de produits de vos achats",
+      icon: "$checkbox-circle-fill",
+    },
+  ],
   MiscLabelIcons: {
     FERMIER: {
       icon: "mdi-cow",

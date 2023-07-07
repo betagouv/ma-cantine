@@ -5,6 +5,7 @@
     <v-row class="my-4 mx-0">
       <v-icon large class="mr-4" color="black">{{ type.icon }}</v-icon>
       <h1>{{ type.title }}</h1>
+      <p v-if="type.description">{{ type.description }}</p>
     </v-row>
     <h2 class="my-4">1. Préparer le fichier</h2>
     <p>
@@ -185,8 +186,7 @@
       </template>
     </v-simple-table>
     <p>
-      Les champs suivants changent selon le type de diagnostic choisit. À terme, seule le diagnostic complet sera
-      accepté.
+      Les champs suivants concernent les données d'approvisionnement.
     </p>
     <v-simple-table class="my-2" v-if="diagnosticDocumentation.length">
       <template v-slot:default>
@@ -237,8 +237,10 @@ export default {
   props: ["importUrlSlug"],
   data() {
     const user = this.$store.state.loggedUser
+    const importLevels = Constants.DiagnosticImportLevels.concat(Constants.CentralKitchenImportLevels)
     return {
-      importLevel: Constants.DiagnosticImportLevels.find((x) => x.urlSlug === this.importUrlSlug)["key"],
+      importLevels,
+      importLevel: importLevels.find((x) => x.urlSlug === this.importUrlSlug)["key"],
       file: undefined,
       canteens: undefined,
       canteenCount: undefined,
@@ -249,13 +251,13 @@ export default {
       importInProgress: false,
       sharedDocumentation: [
         {
-          name: "SIRET de la cuisine-site",
+          name: "SIRET de l'établissement",
           description: "Ce SIRET doit être unique car il correspond à un lieu physique.",
           type: "14 chiffres, avec ou sans espaces",
           example: "000 000 000 00000",
         },
         {
-          name: "Nom de la cantine",
+          name: "Nom de l'établissement",
           example: "Ma Cantine",
           type: "Texte libre",
         },
@@ -333,7 +335,7 @@ export default {
   },
   computed: {
     type() {
-      return Constants.DiagnosticImportLevels.find((level) => level.key === this.importLevel)
+      return this.importLevels.find((level) => level.key === this.importLevel)
     },
     diagnosticDocumentation() {
       if (this.importLevel === "NONE") return []
@@ -500,6 +502,16 @@ export default {
         csv: "CSV",
       }
       const importSizes = {
+        CC_COMPLETE: {
+          csv: "UNKNOWN ko",
+          ods: "UNKNOWN Ko",
+          xlsx: "UNKNOWN Ko",
+        },
+        CC_SIMPLE: {
+          csv: "UNKNOWN ko",
+          ods: "UNKNOWN Ko",
+          xlsx: "UNKNOWN Ko",
+        },
         COMPLETE: {
           csv: "5 Ko",
           ods: "15 Ko",
@@ -531,6 +543,8 @@ export default {
         SIMPLE: "l'import simple",
         COMPLETE: "l'import complet",
         NONE: "l'import de cantines seulement",
+        CC_SIMPLE: "la mise à jour des satellites et l'import simple",
+        CC_COMPLETE: "la mise à jour des satellites et l'import complet",
       }[this.importLevel]
     },
   },
@@ -575,14 +589,14 @@ export default {
     },
   },
   beforeRouteEnter(to, from, next) {
-    const legacyUrlKeys = Constants.DiagnosticImportLevels.map((x) => ({ key: x.key, slug: x.urlSlug }))
+    const importLevels = Constants.DiagnosticImportLevels.concat(Constants.CentralKitchenImportLevels)
+    const legacyUrlKeys = importLevels.map((x) => ({ key: x.key, slug: x.urlSlug }))
     for (let i = 0; i < legacyUrlKeys.length; i++) {
       if (to.params.importUrlSlug === legacyUrlKeys[i].key)
         return next({ name: "DiagnosticImportPage", params: { importUrlSlug: legacyUrlKeys[i].slug } })
     }
 
-    if (Constants.DiagnosticImportLevels.map((x) => x.urlSlug).indexOf(to.params.importUrlSlug) === -1)
-      return next({ name: "NotFound" })
+    if (importLevels.map((x) => x.urlSlug).indexOf(to.params.importUrlSlug) === -1) return next({ name: "NotFound" })
 
     return next()
   },
