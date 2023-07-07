@@ -35,6 +35,7 @@ class Canteen(SoftDeletionModel):
         verbose_name = "cantine"
         verbose_name_plural = "cantines"
         ordering = ["-creation_date"]
+        indexes = [models.Index(fields=["central_producer_siret"])]
 
     class ManagementType(models.TextChoices):
         DIRECT = "direct", "Directe"
@@ -264,6 +265,15 @@ class Canteen(SoftDeletionModel):
     @property
     def is_satellite(self):
         return self.production_type and self.production_type == Canteen.ProductionType.ON_SITE_CENTRAL
+
+    @property
+    def central_kitchen(self):
+        if self.is_satellite and self.central_producer_siret:
+            central_types = [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
+            try:
+                return Canteen.objects.get(siret=self.central_producer_siret, production_type__in=central_types)
+            except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
+                return None
 
     @property
     def central_kitchen_diagnostics(self):

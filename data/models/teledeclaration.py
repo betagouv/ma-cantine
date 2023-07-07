@@ -31,6 +31,7 @@ class Teledeclaration(models.Model):
                 fields=["year", "canteen"], condition=models.Q(status="SUBMITTED"), name="unique_submitted_td"
             )
         ]
+        indexes = [models.Index(fields=["canteen", "year"])]
 
     class TeledeclarationMode(models.TextChoices):
         SATELLITE_WITHOUT_APPRO = (
