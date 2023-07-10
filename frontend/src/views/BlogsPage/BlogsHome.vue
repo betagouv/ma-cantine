@@ -23,6 +23,18 @@
 
     <v-row>
       <v-spacer></v-spacer>
+      <v-col cols="1" sm="4">
+        <DsfrSearchField
+          v-model="searchTerm"
+          placeholder="Chercher par titre ou contenu"
+          hide-details
+          clearable
+          :clearAction="clearSearch"
+          :searchAction="search"
+          label="Rechercher"
+        />
+      </v-col>
+
       <v-col cols="12" sm="4">
         <DsfrSelect
           v-model="tag"
@@ -64,10 +76,11 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import BlogCard from "./BlogCard"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrPagination from "@/components/DsfrPagination"
+import DsfrSearchField from "@/components/DsfrSearchField"
 
 export default {
   name: "BlogsHome",
-  components: { BlogCard, BreadcrumbsNav, DsfrSelect, DsfrPagination },
+  components: { BlogCard, BreadcrumbsNav, DsfrSelect, DsfrPagination, DsfrSearchField },
   data() {
     return {
       limit: 6,
@@ -76,6 +89,7 @@ export default {
       tags: [],
       visibleBlogPosts: null,
       blogPostCount: null,
+      searchTerm: null,
     }
   },
   computed: {
@@ -87,6 +101,22 @@ export default {
     },
   },
   methods: {
+    search() {
+      this.$store
+        .dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag, search: this.searchTerm })
+        .then((response) => {
+          this.tags = response.tags
+          this.visibleBlogPosts = response.results
+          this.blogPostCount = response.count
+        })
+        .catch(() => {
+          this.$store.dispatch("notifyServerError")
+        })
+    },
+    clearSearch() {
+      this.searchTerm = ""
+      this.search()
+    },
     fetchCurrentPage() {
       this.$store
         .dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag })
