@@ -36,7 +36,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL])
         self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTMENT)
-        self.assertRegex(purchase.import_source, "Import du fichier CSV .+")
+        self.assertIsNotNone(purchase.import_source)
 
     # TODO: check semi colon and tab separators
 
@@ -105,3 +105,25 @@ class TestPurchaseImport(APITestCase):
             errors.pop(0)["message"],
             "Format fichier : 7-8 colonnes attendues, 6 trouvées.",
         )
+
+    @authenticate
+    def test_warn_duplicate_file(self):
+        """
+        Tests that the system will warn of duplicate file upload
+        and allow override of the warning
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+
+        with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        errors = response.json()["errors"]
+        self.assertEqual(errors.pop(0)["message"], "Ce fichier a déjà été utilisé pour un import")
+        # no additional purchases created
+        self.assertEqual(Purchase.objects.count(), 1)
+
+        # TODO: test request with override param

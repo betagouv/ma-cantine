@@ -1,8 +1,8 @@
 import csv
 import time
 import logging
+import hashlib
 from django.db import IntegrityError, transaction
-from django.utils import timezone
 from django.conf import settings
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
 from django.http import JsonResponse
@@ -21,6 +21,8 @@ class ImportPurchasesView(APIView):
 
     def __init__(self, **kwargs):
         self.purchases_created = 0
+        self.file_digest = None
+        self.file = None
         super().__init__(**kwargs)
 
     def post(self, request):
@@ -28,9 +30,11 @@ class ImportPurchasesView(APIView):
         logger.info("Purchase bulk import started")
         try:
             with transaction.atomic():
-                file = request.data["file"]
-                ImportPurchasesView._verify_file_size(file)
-                (purchases, errors) = self._treat_csv_file(file)
+                self.file = request.data["file"]
+                self._verify_file_size()
+                self.file = self.file.read()
+                self._check_duplication()
+                (purchases, errors) = self._treat_csv_file()
 
                 if errors:
                     raise IntegrityError()
@@ -60,16 +64,22 @@ class ImportPurchasesView(APIView):
             errors = [{"row": 0, "status": 400, "message": message}]
             return ImportPurchasesView._get_success_response([], 0, errors, start)
 
-    @staticmethod
-    def _verify_file_size(file):
-        if file.size > settings.CSV_IMPORT_MAX_SIZE:
+    def _verify_file_size(self):
+        if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
-    def _treat_csv_file(self, file):
+    def _check_duplication(self):
+        m = hashlib.md5()
+        m.update(self.file)
+        self.file_digest = m.hexdigest()
+        if Purchase.objects.filter(import_source=self.file_digest).exists():
+            raise ValidationError("Ce fichier a déjà été utilisé pour un import")
+
+    def _treat_csv_file(self):
         purchases = []
         errors = []
 
-        filestring = file.read().decode("utf-8-sig")
+        filestring = self.file.decode("utf-8-sig")
         filelines = filestring.splitlines()
 
         if len(filelines) > settings.CSV_PURCHASES_MAX_LINES:
@@ -88,7 +98,7 @@ class ImportPurchasesView(APIView):
         dialect = csv.Sniffer().sniff(filelines[0])
 
         csvreader = csv.reader(filelines, dialect=dialect)
-        import_source = f"Import du fichier CSV {timezone.now()}"
+        import_source = self.file_digest
         for row_number, row in enumerate(csvreader, start=1):
             if row_number == 1 and row[0].lower().__contains__("siret"):
                 continue
