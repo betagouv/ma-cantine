@@ -11,7 +11,8 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 from api.permissions import IsAuthenticated
 from data.models import Purchase, Canteen
-from .utils import normalise_siret
+from api.serializers import PurchaseSerializer
+from .utils import normalise_siret, camelize
 
 logger = logging.getLogger(__name__)
 
@@ -20,13 +21,16 @@ class ImportPurchasesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def __init__(self, **kwargs):
-        self.purchases_created = 0
+        self.purchases = []
+        self.purchases_count = 0
+        self.errors = []
+        self.start = None
         self.file_digest = None
         self.file = None
         super().__init__(**kwargs)
 
     def post(self, request):
-        start = time.time()
+        self.start = time.time()
         logger.info("Purchase bulk import started")
         try:
             with transaction.atomic():
@@ -34,35 +38,35 @@ class ImportPurchasesView(APIView):
                 self._verify_file_size()
                 self.file = self.file.read()
                 self._check_duplication()
-                (purchases, errors) = self._treat_csv_file()
+                self._treat_csv_file()
 
-                if errors:
+                if self.errors:
                     raise IntegrityError()
 
-            return ImportPurchasesView._get_success_response([], self.purchases_created, errors, start)
+            return self._get_success_response()
 
         except IntegrityError as e:
             logger.warning(f"L'import du fichier CSV a échoué:\n{e}")
-            return ImportPurchasesView._get_success_response([], 0, errors, start)
+            return self._get_success_response()
 
         except UnicodeDecodeError as e:
             message = e.reason
             logger.warning(f"UnicodeDecodeError: {message}")
             self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
-            return ImportPurchasesView._get_success_response([], 0, errors, start)
+            return self._get_success_response()
 
         except ValidationError as e:
             message = e.message
             logger.warning(message)
             message = message
-            errors = [{"row": 0, "status": 400, "message": message}]
-            return ImportPurchasesView._get_success_response([], 0, errors, start)
+            self.errors = [{"row": 0, "status": 400, "message": message}]
+            return self._get_success_response()
 
         except Exception as e:
             message = "Échec lors de la lecture du fichier"
             logger.exception(f"{message}:\n{e}")
-            errors = [{"row": 0, "status": 400, "message": message}]
-            return ImportPurchasesView._get_success_response([], 0, errors, start)
+            self.errors = [{"row": 0, "status": 400, "message": message}]
+            return self._get_success_response()
 
     def _verify_file_size(self):
         if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
@@ -72,7 +76,10 @@ class ImportPurchasesView(APIView):
         m = hashlib.md5()
         m.update(self.file)
         self.file_digest = m.hexdigest()
-        if Purchase.objects.filter(import_source=self.file_digest).exists():
+        matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
+        if matching_purchases.exists():
+            self.purchases_count = matching_purchases.count()
+            self.purchases = matching_purchases.all()[:10]
             raise ValidationError("Ce fichier a déjà été utilisé pour un import")
 
     def _treat_csv_file(self):
@@ -83,17 +90,15 @@ class ImportPurchasesView(APIView):
         filelines = filestring.splitlines()
 
         if len(filelines) > settings.CSV_PURCHASES_MAX_LINES:
-            return (
-                [],
-                [
-                    ImportPurchasesView._get_error(
-                        "Too many lines",
-                        f"Le fichier ne peut pas contenir plus de {settings.CSV_PURCHASES_MAX_LINES} lignes.",
-                        400,
-                        len(filelines),
-                    )
-                ],
-            )
+            self.errors = [
+                ImportPurchasesView._get_error(
+                    "Too many lines",
+                    f"Le fichier ne peut pas contenir plus de {settings.CSV_PURCHASES_MAX_LINES} lignes.",
+                    400,
+                    len(filelines),
+                )
+            ]
+            return
 
         dialect = csv.Sniffer().sniff(filelines[0])
 
@@ -117,7 +122,8 @@ class ImportPurchasesView(APIView):
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
-        return (purchases, errors)
+        self.errors = errors
+        # self.purchases = purchases
 
     @transaction.atomic
     def _create_purchase_for_canteen(self, siret, row, import_source):
@@ -161,18 +167,17 @@ class ImportPurchasesView(APIView):
         )
         purchase.full_clean()
         purchase.save()
-        self.purchases_created += 1
+        self.purchases_count += 1
 
         return purchase
 
-    @staticmethod
-    def _get_success_response(purchases, count, errors, start_time):
+    def _get_success_response(self):
         return JsonResponse(
             {
-                "purchases": purchases,
-                "count": count,
-                "errors": errors,
-                "seconds": time.time() - start_time,
+                "purchases": camelize(PurchaseSerializer(self.purchases, many=True).data),
+                "count": self.purchases_count,
+                "errors": self.errors,
+                "seconds": time.time() - self.start,
             },
             status=status.HTTP_200_OK,
         )

@@ -110,7 +110,6 @@ class TestPurchaseImport(APITestCase):
     def test_warn_duplicate_file(self):
         """
         Tests that the system will warn of duplicate file upload
-        and allow override of the warning
         """
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
@@ -121,9 +120,11 @@ class TestPurchaseImport(APITestCase):
         with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        errors = response.json()["errors"]
+        body = response.json()
+        errors = body["errors"]
         self.assertEqual(errors.pop(0)["message"], "Ce fichier a déjà été utilisé pour un import")
+        self.assertEqual(body["count"], 1)
+        purchases = body["purchases"]
+        self.assertEqual(purchases[0]["description"], "Pommes, rouges")
         # no additional purchases created
         self.assertEqual(Purchase.objects.count(), 1)
-
-        # TODO: test request with override param
