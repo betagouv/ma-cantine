@@ -570,6 +570,14 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         return f"Données manquantes : au moins 13 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
 
 
+class ImportSimpleCuisineCentraleView(ImportDiagnosticsView):
+    pass
+
+
+class ImportCompleteCuisineCentraleView(ImportDiagnosticsView):
+    pass
+
+
 class FileFormatError(Exception):
     def __init__(self, detail, **kwargs):
         self.detail = detail
