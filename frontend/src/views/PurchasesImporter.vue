@@ -48,19 +48,19 @@
         </span>
       </v-alert>
       <div v-if="duplicateFile">
-        <p class="text-body-2 orange--text text--darken-4">
+        <p class="orange--text text--darken-4">
           Ce fichier a déjà été utilisé pour importer {{ purchaseCount }}
           <span v-if="purchaseCount > 1">achats.</span>
           <span v-else>achat.</span>
         </p>
-        <p class="text-body-2 orange--text text--darken-4" v-if="purchaseCount > 10">
+        <p class="orange--text text--darken-4" v-if="purchaseCount > 10">
           Les premiers 10 sont affichés là-dessous.
         </p>
-        <p class="text-body-2 orange--text text--darken-4" v-else>Les achats sont affichés là-dessous.</p>
-        <PurchasesTable :purchases="purchases" />
+        <p class="orange--text text--darken-4" v-else>Les achats sont affichés là-dessous.</p>
+        <PurchasesTable :purchases="purchases" :hide-default-footer="true" class="mb-6" />
       </div>
       <div v-else-if="errors && errors.length">
-        <p class="text-body-2 red--text text--darken-4" v-if="purchaseCount === 0">
+        <p class="red--text text--darken-4" v-if="purchaseCount === 0">
           Nous n'avons pas pu traiter votre fichier. Vous trouverez ci-dessous des informations sur les erreurs
           rencontrées.
         </p>

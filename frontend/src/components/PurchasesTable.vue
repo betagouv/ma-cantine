@@ -4,8 +4,9 @@
     :loading="loading"
     :headers="headers"
     :items="processedVisiblePurchases"
-    @click:row="selectable && onRowClick"
+    @click:row="onRowClick"
     :show-select="selectable"
+    v-bind="$attrs"
   >
     <template v-slot:[`item.description`]="{ item }">
       <router-link :to="{ name: 'PurchasePage', params: { id: item.id } }">
@@ -113,10 +114,13 @@ export default {
       return { text: "" }
     },
     onRowClick(purchase) {
-      // TODO: maybe if not selectable, navigate to purchase
-      const purchaseIndex = this.selectedPurchases.findIndex((p) => p.id === purchase.id)
-      if (purchaseIndex === -1) this.selectedPurchases.push(purchase)
-      else this.selectedPurchases.splice(purchaseIndex, 1)
+      if (this.selectable) {
+        const purchaseIndex = this.selectedPurchases.findIndex((p) => p.id === purchase.id)
+        if (purchaseIndex === -1) this.selectedPurchases.push(purchase)
+        else this.selectedPurchases.splice(purchaseIndex, 1)
+      } else {
+        this.$router.push({ name: "PurchasePage", params: { id: purchase.id } })
+      }
     },
     capitalise,
   },
