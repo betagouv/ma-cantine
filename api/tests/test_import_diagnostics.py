@@ -862,7 +862,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             "Champ 'siret de la cuisine centrale' : Le SIRET de la cuisine centrale doit être différent de celui de la cantine",
         )
 
-    @tag("X_DEBUG")
+    @tag("DEBUG")
     @authenticate
     def test_success_cuisine_centrale_complete_import(self, _):
         """
@@ -948,7 +948,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(unfinished_diag.value_fish_ht, 10)
         self.assertEqual(unfinished_diag.value_autres_label_rouge, None)
 
-    @tag("X_DEBUG")
+    @tag("DEBUG")
     @authenticate
     def test_success_cuisine_centrale_complete_update_satellites(self, _):
         """
