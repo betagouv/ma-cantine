@@ -581,19 +581,13 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         return f"Données manquantes : au moins 13 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
 
 
-class ImportSimpleCuisineCentraleView(ImportSimpleDiagnosticsView):
-    final_value_idx = 23
+class CCImportMixin:
     total_value_idx = 14
     year_idx = 13
     cc_satellite_dict = {}
 
-    def _treat_csv_file(self, file):
-        return_value = super()._treat_csv_file(file)
-        self._clean_removed_satellites()
-        return return_value
-
     def _validate_row(self, row):
-        is_central_kitchen = ImportSimpleCuisineCentraleView._is_central_kitchen(row)
+        is_central_kitchen = CCImportMixin._is_central_kitchen(row)
         last_mandatory_column = self.manager_column_idx - 1
 
         if is_central_kitchen:
@@ -607,102 +601,23 @@ class ImportSimpleCuisineCentraleView(ImportSimpleDiagnosticsView):
         elif len(row) < last_mandatory_column:
             raise IndexError()
 
-    # def _validate_diagnostic(self, row):
-    #     return super()._validate_diagnostic(row)
-
-    def _save_data_from_row(self, row):
-        canteen, should_update_geolocation = super()._save_data_from_row(row)
-        if ImportSimpleCuisineCentraleView._is_central_kitchen(row) and canteen.siret not in self.cc_satellite_dict:
-            self.cc_satellite_dict[canteen.siret] = []
-        else:
-            if canteen.central_producer_siret in self.cc_satellite_dict:
-                self.cc_satellite_dict[canteen.central_producer_siret].append(canteen.siret)
-            else:
-                self.cc_satellite_dict[canteen.central_producer_siret] = [canteen.siret]
-        return (canteen, should_update_geolocation)
-
-    def _update_or_create_canteen(
-        self,
-        row,
-        import_source,
-        publication_status,
-        manager_emails,
-        silently_added_manager_emails,
-        satellite_canteens_count=None,
-    ):
-        is_central_kitchen = ImportSimpleCuisineCentraleView._is_central_kitchen(row)
-        if is_central_kitchen:
-            satellite_canteens_count = row[12].strip()
-        return super()._update_or_create_canteen(
-            row,
-            import_source,
-            publication_status,
-            manager_emails,
-            silently_added_manager_emails,
-            satellite_canteens_count,
-        )
-
-    def _column_count_error_message(self, row):
-        return f"Données manquantes : 24 colonnes attendues, {len(row)} trouvées."
-
-    def _clean_removed_satellites(self):
-        for central_cuisine_siret in self.cc_satellite_dict:
-            satellite_sirets = self.cc_satellite_dict[central_cuisine_siret]
-            Canteen.objects.filter(central_producer_siret=central_cuisine_siret).exclude(
-                siret__in=satellite_sirets
-            ).update(central_producer_siret=None)
-
-    @staticmethod
-    def _validate_canteen(row):
-        # TODO If it is a cuisine centrale check number of satellites added
-        return super()._validate_canteen(row)
-
-    @staticmethod
-    def _is_central_kitchen(row):
-        production_type = row[8].strip().lower()
-        return (
-            production_type == Canteen.ProductionType.CENTRAL.value
-            or production_type == Canteen.ProductionType.CENTRAL_SERVING.value
-        )
-
-
-class ImportCompleteCuisineCentraleView(ImportCompleteDiagnosticsView):
-    final_value_idx = 128
-    total_value_idx = 14
-    year_idx = 13
-    cc_satellite_dict = {}
-
     def _treat_csv_file(self, file):
         return_value = super()._treat_csv_file(file)
         self._clean_removed_satellites()
         return return_value
 
-    def _validate_row(self, row):
-        is_central_kitchen = ImportCompleteCuisineCentraleView._is_central_kitchen(row)
-        last_mandatory_column = self.manager_column_idx - 1
-
-        if is_central_kitchen:
-            return super()._validate_row(row)
-
-        elif len(row) < last_mandatory_column:
-            raise IndexError()
+    def _clean_removed_satellites(self):
+        for central_cuisine_siret in self.cc_satellite_dict:
+            satellite_sirets = self.cc_satellite_dict[central_cuisine_siret]
+            Canteen.objects.filter(central_producer_siret=central_cuisine_siret).exclude(
+                siret__in=satellite_sirets
+            ).update(central_producer_siret=None)
 
     def _validate_diagnostic(self, row):
-        is_central_kitchen = ImportCompleteCuisineCentraleView._is_central_kitchen(row)
+        is_central_kitchen = CCImportMixin._is_central_kitchen(row)
         if is_central_kitchen:
             return super()._validate_diagnostic(row)
         return None, None, None
-
-    def _save_data_from_row(self, row):
-        canteen, should_update_geolocation = super()._save_data_from_row(row)
-        if ImportCompleteCuisineCentraleView._is_central_kitchen(row) and canteen.siret not in self.cc_satellite_dict:
-            self.cc_satellite_dict[canteen.siret] = []
-        else:
-            if canteen.central_producer_siret in self.cc_satellite_dict:
-                self.cc_satellite_dict[canteen.central_producer_siret].append(canteen.siret)
-            else:
-                self.cc_satellite_dict[canteen.central_producer_siret] = [canteen.siret]
-        return (canteen, should_update_geolocation)
 
     def _update_or_create_canteen(
         self,
@@ -713,7 +628,7 @@ class ImportCompleteCuisineCentraleView(ImportCompleteDiagnosticsView):
         silently_added_manager_emails,
         satellite_canteens_count=None,
     ):
-        is_central_kitchen = ImportCompleteCuisineCentraleView._is_central_kitchen(row)
+        is_central_kitchen = CCImportMixin._is_central_kitchen(row)
         if is_central_kitchen:
             satellite_canteens_count = row[12].strip()
         return super()._update_or_create_canteen(
@@ -725,21 +640,6 @@ class ImportCompleteCuisineCentraleView(ImportCompleteDiagnosticsView):
             satellite_canteens_count,
         )
 
-    def _column_count_error_message(self, row):
-        return f"Données manquantes : au moins 14 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
-
-    def _clean_removed_satellites(self):
-        for central_cuisine_siret in self.cc_satellite_dict:
-            satellite_sirets = self.cc_satellite_dict[central_cuisine_siret]
-            Canteen.objects.filter(central_producer_siret=central_cuisine_siret).exclude(
-                siret__in=satellite_sirets
-            ).update(central_producer_siret=None)
-
-    @staticmethod
-    def _validate_canteen(row):
-        # TODO If it is a cuisine centrale check number of satellites added
-        return super()._validate_canteen(row)
-
     @staticmethod
     def _is_central_kitchen(row):
         production_type = row[8].strip().lower()
@@ -747,6 +647,31 @@ class ImportCompleteCuisineCentraleView(ImportCompleteDiagnosticsView):
             production_type == Canteen.ProductionType.CENTRAL.value
             or production_type == Canteen.ProductionType.CENTRAL_SERVING.value
         )
+
+    def _save_data_from_row(self, row):
+        canteen, should_update_geolocation = super()._save_data_from_row(row)
+        if CCImportMixin._is_central_kitchen(row) and canteen.siret not in self.cc_satellite_dict:
+            self.cc_satellite_dict[canteen.siret] = []
+        else:
+            if canteen.central_producer_siret in self.cc_satellite_dict:
+                self.cc_satellite_dict[canteen.central_producer_siret].append(canteen.siret)
+            else:
+                self.cc_satellite_dict[canteen.central_producer_siret] = [canteen.siret]
+        return (canteen, should_update_geolocation)
+
+
+class ImportSimpleCuisineCentraleView(CCImportMixin, ImportSimpleDiagnosticsView):
+    final_value_idx = 23
+
+    def _column_count_error_message(self, row):
+        return f"Données manquantes : 24 colonnes attendues, {len(row)} trouvées."
+
+
+class ImportCompleteCuisineCentraleView(CCImportMixin, ImportCompleteDiagnosticsView):
+    final_value_idx = 128
+
+    def _column_count_error_message(self, row):
+        return f"Données manquantes : au moins 129 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
 
 
 class FileFormatError(Exception):
