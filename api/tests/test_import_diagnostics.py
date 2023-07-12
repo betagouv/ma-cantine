@@ -2,7 +2,7 @@ import os
 from decimal import Decimal
 import unittest
 from django.urls import reverse
-from django.test.utils import override_settings, tag
+from django.test.utils import override_settings
 from django.core import mail
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -862,7 +862,6 @@ class TestImportDiagnosticsAPI(APITestCase):
             "Champ 'siret de la cuisine centrale' : Le SIRET de la cuisine centrale doit être différent de celui de la cantine",
         )
 
-    @tag("DEBUG")
     @authenticate
     def test_success_cuisine_centrale_complete_import(self, _):
         """
@@ -948,7 +947,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(unfinished_diag.value_fish_ht, 10)
         self.assertEqual(unfinished_diag.value_autres_label_rouge, None)
 
-    @tag("DEBUG")
     @authenticate
     def test_success_cuisine_centrale_complete_update_satellites(self, _):
         """
@@ -1010,7 +1008,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         for satellite in (satellite_2_1, satellite_2_2):
             self.assertEqual(satellite.central_producer_siret, cuisine_centrale_2.siret)
 
-    @tag("DEBUG")
     @authenticate
     def test_success_cuisine_centrale_simple_import(self, _):
         """
@@ -1067,7 +1064,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(cc2_diag.value_meat_poultry_ht, 6000)
         self.assertEqual(cc2_diag.value_fish_ht, 3000)
 
-    @tag("DEBUG")
     @authenticate
     def test_success_cuisine_centrale_simple_update_satellites(self, _):
         """
