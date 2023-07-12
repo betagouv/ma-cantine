@@ -862,19 +862,20 @@ class TestImportDiagnosticsAPI(APITestCase):
             "Champ 'siret de la cuisine centrale' : Le SIRET de la cuisine centrale doit être différent de celui de la cantine",
         )
 
-    @tag("DEBUG")
+    @tag("X_DEBUG")
     @authenticate
-    def test_success_cuisine_centrale_import(self, _):
+    def test_success_cuisine_centrale_complete_import(self, _):
         """
         Users should be able to import a file with central cuisines and their satellites, with only
         appro data at the level of the cuisine centrale.
         """
         with open("./api/tests/files/cc_complete_diagnostics.csv") as diag_file:
-            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+            response = self.client.post(f"{reverse('import_cc_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["count"], 7)
+        self.assertEqual(body["count"], 2)  # Only two diagnostics created
+        self.assertEqual(len(body["canteens"]), 7)  # Seven canteens involved
 
         # Verify the correct links between CC and satellites are created
 
@@ -947,9 +948,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(unfinished_diag.value_fish_ht, 10)
         self.assertEqual(unfinished_diag.value_autres_label_rouge, None)
 
-    @tag("DEBUG")
+    @tag("X_DEBUG")
     @authenticate
-    def test_success_cuisine_centrale_update_satellites(self, _):
+    def test_success_cuisine_centrale_complete_update_satellites(self, _):
         """
         Users should be able to import a file with central cuisines and their satellites. The existing satellites
         should be updated.
@@ -981,12 +982,135 @@ class TestImportDiagnosticsAPI(APITestCase):
             central_producer_siret="96463820453707",
         )
 
+        for canteen in (cuisine_centrale_1, satellite_1_1, satellite_1_3, cuisine_centrale_2, satellite_to_remove):
+            canteen.managers.add(authenticate.user)
+
         with open("./api/tests/files/cc_complete_diagnostics.csv") as diag_file:
-            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+            response = self.client.post(f"{reverse('import_cc_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["count"], 7)
+        self.assertEqual(body["count"], 2)  # Only two diagnostics created
+        self.assertEqual(len(body["canteens"]), 7)  # Seven canteens involved
+
+        for canteen in (cuisine_centrale_1, satellite_1_1, satellite_1_3, cuisine_centrale_2, satellite_to_remove):
+            canteen.refresh_from_db()
+
+        satellite_1_2 = Canteen.objects.get(siret="30218342886548")
+        satellite_2_1 = Canteen.objects.get(siret="65436828882140")
+        satellite_2_2 = Canteen.objects.get(siret="21231178258956")
+
+        self.assertIsNone(satellite_to_remove.central_producer_siret)
+        self.assertEqual(cuisine_centrale_1.satellite_canteens_count, 3)
+        self.assertEqual(cuisine_centrale_2.satellite_canteens_count, 2)
+
+        for satellite in (satellite_1_1, satellite_1_2, satellite_1_3):
+            self.assertEqual(satellite.central_producer_siret, cuisine_centrale_1.siret)
+
+        for satellite in (satellite_2_1, satellite_2_2):
+            self.assertEqual(satellite.central_producer_siret, cuisine_centrale_2.siret)
+
+    @tag("DEBUG")
+    @authenticate
+    def test_success_cuisine_centrale_simple_import(self, _):
+        """
+        Users should be able to import a file with central cuisines and their satellites, with only
+        simplified appro data at the level of the cuisine centrale.
+        """
+        with open("./api/tests/files/cc_simple_diagnostics.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_cc_diagnostics')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 2)  # Only two diagnostics created
+        self.assertEqual(len(body["canteens"]), 7)  # Seven canteens involved
+
+        # Verify the correct links between CC and satellites are created
+
+        cuisine_centrale_1 = Canteen.objects.get(siret="29969025300230")
+        satellite_1_1 = Canteen.objects.get(siret="38589540005962")
+        satellite_1_2 = Canteen.objects.get(siret="30218342886548")
+        satellite_1_3 = Canteen.objects.get(siret="27309825823572")
+
+        cuisine_centrale_2 = Canteen.objects.get(siret="96463820453707")
+        satellite_2_1 = Canteen.objects.get(siret="65436828882140")
+        satellite_2_2 = Canteen.objects.get(siret="21231178258956")
+
+        for satellite in (satellite_1_1, satellite_1_2, satellite_1_3):
+            self.assertEqual(satellite.central_producer_siret, cuisine_centrale_1.siret)
+
+        for satellite in (satellite_2_1, satellite_2_2):
+            self.assertEqual(satellite.central_producer_siret, cuisine_centrale_2.siret)
+
+        # Ensure no diagnostics were created in the satellites
+
+        for satellite in (satellite_1_1, satellite_1_2, satellite_1_3, satellite_2_1, satellite_2_2):
+            self.assertFalse(Diagnostic.objects.filter(canteen=satellite).exists())
+
+        # Verify the content of diagnostics for the CCs
+
+        cc1_diag = Diagnostic.objects.get(canteen__siret="29969025300230", year=2021)
+        cc1_diag.central_kitchen_diagnostic_mode = Diagnostic.CentralKitchenDiagnosticMode.APPRO
+
+        self.assertEqual(cc1_diag.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
+        self.assertEqual(cc1_diag.value_total_ht, 10500)
+        self.assertEqual(cc1_diag.value_bio_ht, 500)
+        self.assertEqual(cc1_diag.value_sustainable_ht, Decimal("100.10"))
+        self.assertEqual(cc1_diag.value_meat_poultry_ht, 0)
+        self.assertEqual(cc1_diag.value_fish_ht, 0)
+
+        cc2_diag = Diagnostic.objects.get(canteen__siret="96463820453707", year=2022)
+        cc2_diag.central_kitchen_diagnostic_mode = Diagnostic.CentralKitchenDiagnosticMode.APPRO
+
+        self.assertEqual(cc2_diag.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
+        self.assertEqual(cc2_diag.value_total_ht, 30300)
+        self.assertEqual(cc2_diag.value_meat_poultry_ht, 6000)
+        self.assertEqual(cc2_diag.value_fish_ht, 3000)
+
+    @tag("DEBUG")
+    @authenticate
+    def test_success_cuisine_centrale_simple_update_satellites(self, _):
+        """
+        Users should be able to import a file with central cuisines and their satellites. The existing satellites
+        should be updated. This should be the case even if the user does not manage the satellites.
+        """
+        # In the file, cuisine_centrale_1 has three satellites. We will create two of them and verify that a
+        # third one is added after the import
+        cuisine_centrale_1 = CanteenFactory.create(
+            siret="29969025300230", production_type=Canteen.ProductionType.CENTRAL
+        )
+        satellite_1_1 = CanteenFactory.create(
+            siret="38589540005962",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret="29969025300230",
+        )
+        satellite_1_3 = CanteenFactory.create(
+            siret="27309825823572",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret="29969025300230",
+        )
+
+        # In the file, cuisine_centrale_2 has two satellites. We will create a different one of them and verify that a
+        # it is removed from the list of satellites after the import
+        cuisine_centrale_2 = CanteenFactory.create(
+            siret="96463820453707", production_type=Canteen.ProductionType.CENTRAL
+        )
+        satellite_to_remove = CanteenFactory.create(
+            siret="44331934540185",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret="96463820453707",
+        )
+
+        for canteen in (cuisine_centrale_1, satellite_1_1, satellite_1_3, cuisine_centrale_2, satellite_to_remove):
+            canteen.managers.add(authenticate.user)
+
+        with open("./api/tests/files/cc_simple_diagnostics.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_cc_diagnostics')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 2)  # Only two diagnostics created
+        self.assertEqual(len(body["canteens"]), 7)  # Seven canteens involved
 
         for canteen in (cuisine_centrale_1, satellite_1_1, satellite_1_3, cuisine_centrale_2, satellite_to_remove):
             canteen.refresh_from_db()
