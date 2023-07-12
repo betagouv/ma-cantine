@@ -543,14 +543,14 @@ export default {
       }
       const importSizes = {
         CC_COMPLETE: {
-          csv: "UNKNOWN ko",
-          ods: "UNKNOWN Ko",
-          xlsx: "UNKNOWN Ko",
+          csv: "5.5 ko",
+          ods: "21 Ko",
+          xlsx: "9.4 Ko",
         },
         CC_SIMPLE: {
-          csv: "UNKNOWN ko",
-          ods: "UNKNOWN Ko",
-          xlsx: "UNKNOWN Ko",
+          csv: "782 o",
+          ods: "17.1 Ko",
+          xlsx: "6 Ko",
         },
         COMPLETE: {
           csv: "5 Ko",
@@ -570,6 +570,8 @@ export default {
       }
       let filename = "/static/documents/"
       if (this.importLevel === "COMPLETE") filename = filename + "fichier_exemple_complet_ma_cantine"
+      else if (this.importLevel === "CC_SIMPLE") filename = filename + "fichier_exemple_ma_cantine_cc_simple"
+      else if (this.importLevel === "CC_COMPLETE") filename = filename + "fichier_exemple_ma_cantine_cc_complet"
       else if (this.importLevel === "NONE") filename = filename + "fichier_exemple_ma_cantine_no_diag"
       else filename = filename + "fichier_exemple_ma_cantine"
       return ["xlsx", "ods", "csv"].map((fileType) => ({
