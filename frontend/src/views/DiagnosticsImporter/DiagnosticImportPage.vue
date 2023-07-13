@@ -544,13 +544,13 @@ export default {
       const importSizes = {
         CC_COMPLETE: {
           csv: "5.5 ko",
-          ods: "21 Ko",
-          xlsx: "9.4 Ko",
+          ods: "21 ko",
+          xlsx: "9.4 ko",
         },
         CC_SIMPLE: {
           csv: "782 o",
-          ods: "17.1 Ko",
-          xlsx: "6 Ko",
+          ods: "17.1 ko",
+          xlsx: "6 ko",
         },
         COMPLETE: {
           csv: "5 Ko",
