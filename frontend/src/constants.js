@@ -436,7 +436,7 @@ export default Object.freeze({
         "Ce type de fichier vous permet de renseigner vos données d'approvisionnement simplifiées au niveau de la cuisine centrale et de lister vos cantines satellites seulement avec leurs données d'établissement. Les données d'approvisionnement restent donc seulement nécessaires pour les cuisines centrales.",
       label: "Cuisine centrale avec diagnostic simple",
       help:
-        "Vous voules renseigner vos satellites et vous connaissez les valeurs totaux, bio, et de qualité et durable",
+        "Vous voulez renseigner vos satellites et vous connaissez les valeurs totaux, bio, et de qualité et durable",
       icon: "$bar-chart-box-fill",
     },
     {
