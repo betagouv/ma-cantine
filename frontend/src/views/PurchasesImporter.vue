@@ -54,9 +54,9 @@
           <span v-else>achat.</span>
         </p>
         <p class="orange--text text--darken-4" v-if="purchaseCount > 10">
-          Les premiers 10 sont affichés là-dessous.
+          Les premiers dix achats sont affichés ci-dessous.
         </p>
-        <p class="orange--text text--darken-4" v-else>Les achats sont affichés là-dessous.</p>
+        <p class="orange--text text--darken-4" v-else>Les achats sont affichés ci-dessous.</p>
         <PurchasesTable :purchases="purchases" :hide-default-footer="true" class="mb-6" />
       </div>
       <div v-else-if="errors && errors.length">
