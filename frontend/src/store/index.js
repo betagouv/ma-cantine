@@ -453,8 +453,8 @@ export default new Vuex.Store({
         COMPLETE: "complete",
         SIMPLE: "simple",
         NONE: "simple",
-        CC_SIMPLE: "cc_simple",
-        CC_COMPLETE: "cc_complete",
+        CC_SIMPLE: "ccSimple",
+        CC_COMPLETE: "ccComplete",
       }
       return fetch(`/api/v1/importDiagnostics/${importLevels[importLevel]}/`, {
         method: "POST",
