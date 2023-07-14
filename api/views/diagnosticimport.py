@@ -16,6 +16,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
+from simple_history.utils import update_change_reason
 from api.serializers import FullCanteenSerializer
 from data.models import Canteen, Sector
 from api.permissions import IsAuthenticated
@@ -346,6 +347,7 @@ class ImportDiagnosticsView(ABC, APIView):
             )
 
         canteen.save()
+        update_change_reason(canteen, f"Mass CSV import. {self.__class__.__name__[:100]}")
 
         if not self.request.user.is_staff:
             canteen.managers.add(self.request.user)
