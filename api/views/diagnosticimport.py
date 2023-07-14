@@ -159,6 +159,7 @@ class ImportDiagnosticsView(ABC, APIView):
         )
         diagnostic.full_clean()
         diagnostic.save()
+        update_change_reason(diagnostic, f"Mass CSV import. {self.__class__.__name__[:100]}")
         self.diagnostics_created += 1
         return diagnostic
 
@@ -256,6 +257,7 @@ class ImportDiagnosticsView(ABC, APIView):
                     canteen.city = row[5]
                     canteen.department = row[6].split(",")[0]
                     canteen.save()
+                    update_change_reason(canteen, f"Mass CSV import - Geo data. {self.__class__.__name__[:100]}")
         except Exception as e:
             logger.exception(f"Error while updating location data : {repr(e)} - {e}")
 
@@ -313,6 +315,9 @@ class ImportDiagnosticsView(ABC, APIView):
         siret = normalise_siret(row[0])
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
+
+        if not canteen_exists:
+            update_change_reason(canteen, f"Mass CSV import - canteen creation. {self.__class__.__name__[:100]}")
 
         if canteen_exists and not self._has_canteen_permission(canteen):
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
@@ -611,9 +616,12 @@ class CCImportMixin:
     def _clean_removed_satellites(self):
         for central_cuisine_siret in self.cc_satellite_dict:
             satellite_sirets = self.cc_satellite_dict[central_cuisine_siret]
-            Canteen.objects.filter(central_producer_siret=central_cuisine_siret).exclude(
+            canteens_to_remove = Canteen.objects.filter(central_producer_siret=central_cuisine_siret).exclude(
                 siret__in=satellite_sirets
-            ).update(central_producer_siret=None)
+            )
+            canteens_to_remove.update(central_producer_siret=None)
+            for canteen in canteens_to_remove:
+                update_change_reason(canteen, f"Mass CSV import - unlinking CC. {self.__class__.__name__[:100]}")
 
     def _validate_diagnostic(self, row):
         is_central_kitchen = CCImportMixin._is_central_kitchen(row)
