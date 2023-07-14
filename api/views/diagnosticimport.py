@@ -670,14 +670,14 @@ class CCImportMixin:
         return (canteen, should_update_geolocation)
 
 
-class ImportSimpleCuisineCentraleView(CCImportMixin, ImportSimpleDiagnosticsView):
+class ImportSimpleCentralKitchenView(CCImportMixin, ImportSimpleDiagnosticsView):
     final_value_idx = 23
 
     def _column_count_error_message(self, row):
         return f"Données manquantes : 24 colonnes attendues, {len(row)} trouvées."
 
 
-class ImportCompleteCuisineCentraleView(CCImportMixin, ImportCompleteDiagnosticsView):
+class ImportCompleteCentralKitchenView(CCImportMixin, ImportCompleteDiagnosticsView):
     final_value_idx = 128
 
     def _column_count_error_message(self, row):

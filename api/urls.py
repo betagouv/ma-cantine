@@ -12,8 +12,8 @@ from api.views import (
     CanteenPurchasesSummaryView,
     DiagnosticsFromPurchasesView,
     UsernameSuggestionView,
-    ImportSimpleCuisineCentraleView,
-    ImportCompleteCuisineCentraleView,
+    ImportSimpleCentralKitchenView,
+    ImportCompleteCentralKitchenView,
 )
 from api.views import UpdateUserView, UserCanteensView, CanteenStatisticsView
 from api.views import PublishedCanteensView, PublishManyCanteensView, PublishedCanteenSingleView
@@ -100,10 +100,10 @@ urlpatterns = {
     ),
     path("importDiagnostics/simple/", ImportSimpleDiagnosticsView.as_view(), name="import_diagnostics"),
     path("importDiagnostics/complete/", ImportCompleteDiagnosticsView.as_view(), name="import_complete_diagnostics"),
-    path("importDiagnostics/ccSimple/", ImportSimpleCuisineCentraleView.as_view(), name="import_cc_diagnostics"),
+    path("importDiagnostics/ccSimple/", ImportSimpleCentralKitchenView.as_view(), name="import_cc_diagnostics"),
     path(
         "importDiagnostics/ccComplete/",
-        ImportCompleteCuisineCentraleView.as_view(),
+        ImportCompleteCentralKitchenView.as_view(),
         name="import_cc_complete_diagnostics",
     ),
     path("emailDiagnosticImportFile/", EmailDiagnosticImportFileView.as_view(), name="email_diagnostic_file"),
