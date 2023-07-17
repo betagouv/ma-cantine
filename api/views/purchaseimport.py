@@ -78,8 +78,7 @@ class ImportPurchasesView(APIView):
         self.file_digest = m.hexdigest()
         matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
         if matching_purchases.exists():
-            self.purchases_count = matching_purchases.count()
-            self.purchases = matching_purchases.all()[:10]
+            self.purchases = matching_purchases.all()
             raise ValidationError("Ce fichier a déjà été utilisé pour un import")
 
     def _treat_csv_file(self):
@@ -121,6 +120,10 @@ class ImportPurchasesView(APIView):
                 for error in self._parse_errors(e, row):
                     errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
         self.errors = errors
+        if not self.errors:
+            self.purchases = Purchase.objects.bulk_create(self.purchases)
+        else:
+            self.purchases = []
 
     @transaction.atomic
     def _create_purchase_for_canteen(self, siret, row, import_source):
@@ -163,14 +166,13 @@ class ImportPurchasesView(APIView):
             import_source=import_source,
         )
         purchase.full_clean()
-        purchase.save()
-        self.purchases_count += 1
+        self.purchases.append(purchase)
 
     def _get_success_response(self):
         return JsonResponse(
             {
-                "purchases": camelize(PurchaseSerializer(self.purchases, many=True).data),
-                "count": self.purchases_count,
+                "purchases": camelize(PurchaseSerializer(self.purchases[:10], many=True).data),
+                "count": len(self.purchases),
                 "errors": self.errors,
                 "seconds": time.time() - self.start,
             },

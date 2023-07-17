@@ -128,3 +128,17 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchases[0]["description"], "Pommes, rouges")
         # no additional purchases created
         self.assertEqual(Purchase.objects.count(), 1)
+
+    @authenticate
+    def test_errors_prevent_all_purchase_creation(self):
+        """
+        Tests that no purchases are created if there are any errors in the file
+        even if certain lines are valid
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        with open("./api/tests/files/nearly_good_purchase_import.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 1)
