@@ -49,11 +49,17 @@
         />
       </v-col>
     </v-row>
+    <div v-if="searchTerm && visibleBlogPosts.length === 0" class="d-flex flex-column align-center py-10">
+      <v-spacer></v-spacer>
+      <v-icon large>mdi-inbox-remove</v-icon>
+      <p class="text-body-1 grey--text text--darken-1 my-2">Cette recherche n'a pas permis de trouver d'article</p>
+    </div>
+
     <div v-if="loading" class="mt-8">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
 
-    <div v-else>
+    <div v-if="!loading && visibleBlogPosts.length > 0">
       <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(blogPostCount / limit)" />
       <v-progress-circular class="my-10" indeterminate v-if="!visibleBlogPosts"></v-progress-circular>
       <v-row v-else class="cta-group pa-2 mt-2">
