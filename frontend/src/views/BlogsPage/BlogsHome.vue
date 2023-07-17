@@ -23,10 +23,10 @@
 
     <v-row>
       <v-spacer></v-spacer>
-      <v-col cols="1" sm="4">
+      <v-col cols="12" sm="8" md="4">
         <DsfrSearchField
           v-model="searchTerm"
-          placeholder="Chercher par titre ou contenu"
+          placeholder=" "
           hide-details
           clearable
           :clearAction="clearSearch"
