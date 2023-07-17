@@ -10,6 +10,7 @@ class Purchase(SoftDeletionModel):
         verbose_name = "achat"
         verbose_name_plural = "achats"
         ordering = ["-date", "-creation_date"]
+        indexes = [models.Index(fields=["import_source"])]
 
     class Category(models.TextChoices):
         VIANDES_VOLAILLES = "VIANDES_VOLAILLES", "Viandes, volailles"
