@@ -22,22 +22,22 @@
     </v-card>
 
     <v-row>
-      <v-spacer></v-spacer>
-      <v-col cols="12" sm="8" md="4">
+      <v-col cols="12" sm="6" md="8">
         <DsfrSearchField
           v-model="searchTerm"
-          placeholder=" "
+          placeholder="Rechercher par titre ou contenu"
           hide-details
           clearable
           :clearAction="clearSearch"
-          :searchAction="search"
+          :searchAction="fetchCurrentPage"
           label="Rechercher"
         />
       </v-col>
 
-      <v-col cols="12" sm="4">
+      <v-col cols="12" sm="6" md="4">
         <DsfrSelect
           v-model="tag"
+          placeholder="Tout types d'articles"
           :items="tags"
           clearable
           hide-details
