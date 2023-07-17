@@ -74,7 +74,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="error in errors" :key="error.row">
+                <tr v-for="(error, idx) in errors" :key="idx">
                   <td>{{ error.row }}</td>
                   <td>{{ error.message }}</td>
                 </tr>
