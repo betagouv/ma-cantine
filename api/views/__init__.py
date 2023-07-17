@@ -36,6 +36,8 @@ from .diagnostic import (  # noqa: F401
 from .diagnosticimport import (  # noqa: F401
     ImportSimpleDiagnosticsView,
     ImportCompleteDiagnosticsView,
+    ImportSimpleCentralKitchenView,
+    ImportCompleteCentralKitchenView,
 )
 from .sector import SectorListView  # noqa: F401
 from .blog import BlogPostsView, BlogPostView  # noqa: F401

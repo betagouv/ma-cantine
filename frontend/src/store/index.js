@@ -449,7 +449,14 @@ export default new Vuex.Store({
     importDiagnostics(context, { importLevel, payload }) {
       let form = new FormData()
       form.append("file", payload.file)
-      return fetch(`/api/v1/importDiagnostics/${importLevel === "COMPLETE" ? "complete" : "simple"}/`, {
+      const importLevels = {
+        COMPLETE: "complete",
+        SIMPLE: "simple",
+        NONE: "simple",
+        CC_SIMPLE: "ccSimple",
+        CC_COMPLETE: "ccComplete",
+      }
+      return fetch(`/api/v1/importDiagnostics/${importLevels[importLevel]}/`, {
         method: "POST",
         headers: {
           "X-CSRFToken": window.CSRF_TOKEN || "",
