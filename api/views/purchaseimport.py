@@ -83,7 +83,6 @@ class ImportPurchasesView(APIView):
             raise ValidationError("Ce fichier a déjà été utilisé pour un import")
 
     def _treat_csv_file(self):
-        purchases = []
         errors = []
 
         filestring = self.file.decode("utf-8-sig")
@@ -116,14 +115,12 @@ class ImportPurchasesView(APIView):
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = normalise_siret(siret)
-                purchase = self._create_purchase_for_canteen(siret, row, import_source)
-                purchases.append(purchase)
+                self._create_purchase_for_canteen(siret, row, import_source)
 
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
         self.errors = errors
-        # self.purchases = purchases
 
     @transaction.atomic
     def _create_purchase_for_canteen(self, siret, row, import_source):
@@ -168,8 +165,6 @@ class ImportPurchasesView(APIView):
         purchase.full_clean()
         purchase.save()
         self.purchases_count += 1
-
-        return purchase
 
     def _get_success_response(self):
         return JsonResponse(
