@@ -18,8 +18,8 @@
         />
       </v-col>
     </v-row>
-    <h1 class="my-4 fr-h1" v-else-if="canteen">{{ canteen.name }}</h1>
-    <h1 class="my-4 fr-h1" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
+    <h1 class="my-4 fr-h2" v-else-if="canteen">{{ canteen.name }}</h1>
+    <h1 class="my-4 fr-h2" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
     <v-row v-if="!showCanteenSelection">
       <v-col>
         <v-btn @click="showCanteenSelection = true" outlined small color="primary" v-if="canteenPreviews.length > 1">
@@ -30,10 +30,10 @@
     </v-row>
 
     <div v-if="canteen">
-      <h2 class="mt-8 mb-2 text-h6 font-weight-bold">
+      <h2 class="mt-8 mb-2 fr-h4">
         Ma progression
       </h2>
-      <p class="body-2">
+      <p class="fr-text-sm">
         Vous trouverez ci-dessous une vue d'ensemble de votre progression sur les cinq volets de la loi EGAlim.
       </p>
 
@@ -43,17 +43,17 @@
       </div>
 
       <div v-if="canteen">
-        <h2 class="mt-10 mb-2 text-h6 font-weight-bold">
+        <h2 class="mt-10 mb-2 fr-h4">
           Mon établissement
         </h2>
-        <p class="body-2">
+        <p class="fr-text-sm">
           Accédez ci-dessous aux différents outils de gestion de votre établissement sur la plateforme « ma cantine ».
         </p>
         <v-row>
           <v-col cols="12" md="8" id="latest-purchases">
             <!-- How relevant are purchases to satellites? -->
-            <v-card outlined class="fill-height d-flex flex-column">
-              <v-card-title class="font-weight-bold">Mes achats</v-card-title>
+            <v-card outlined class="fill-height d-flex flex-column pa-4">
+              <v-card-title class="fr-h4">Mes achats</v-card-title>
               <v-spacer></v-spacer>
               <v-card-text>
                 <v-data-table
@@ -68,7 +68,7 @@
                   </template>
                   <template v-slot:[`no-data`]>
                     <v-card outlined rounded class="mb-4 py-4" color="primary lighten-5" v-if="!purchasesFetchingError">
-                      <v-card-text>
+                      <v-card-text class="fr-text-xs">
                         Saisissez vos achats manuellement ou connectez votre logiciel de gestion habituel
                       </v-card-text>
                     </v-card>
@@ -102,9 +102,9 @@
             </v-card>
           </v-col>
           <v-col cols="6" md="4" id="canteen-info-card">
-            <v-card outlined class="fill-height d-flex flex-column">
-              <v-card-title class="font-weight-bold">Mon établissement</v-card-title>
-              <v-card-text>
+            <v-card outlined class="fill-height d-flex flex-column pa-4">
+              <v-card-title class="fr-h4">Mon établissement</v-card-title>
+              <v-card-text class="fr-text-xs">
                 <p>SIRET : {{ canteen.siret }}</p>
                 <div v-if="centralKitchen">
                   <p>
@@ -141,17 +141,17 @@
             </v-card>
           </v-col>
           <v-col cols="4" id="managers">
-            <v-card outlined class="fill-height d-flex flex-column">
-              <v-card-title class="font-weight-bold">
+            <v-card outlined class="fill-height d-flex flex-column pa-4">
+              <v-card-title class="fr-h4">
                 Mon équipe
               </v-card-title>
               <v-card-text>
                 <div v-if="managers.length > 1">
-                  <p>
+                  <p class="fr-text">
                     {{ managers.length }} personnes (dont vous) peuvent actuellement modifier cet établissement et
                     ajouter des données
                   </p>
-                  <ul class="pl-0">
+                  <ul class="pl-0 fr-text-xs">
                     <li v-for="(manager, idx) in managers" :key="manager.email">
                       <v-icon>
                         {{ manager.isInvite ? "mdi-account-clock-outline" : "mdi-account-check-outline" }}
@@ -161,7 +161,7 @@
                     </li>
                   </ul>
                 </div>
-                <p v-else>
+                <p class="fr-text" v-else>
                   Actuellement, vous êtes la seule personne qui peut modiifer cet établissement et ajouter des données
                 </p>
               </v-card-text>
