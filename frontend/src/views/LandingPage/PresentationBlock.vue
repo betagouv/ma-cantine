@@ -11,7 +11,7 @@
         <v-col cols="12" md="7">
           <v-card-title>
             <v-spacer></v-spacer>
-            <h1 class="text-h1">
+            <h1 class="font-weight-black text-h3 mt-0 mt-sm-4">
               Mieux manger
               <br v-if="$vuetify.breakpoint.mdAndUp" />
               de la crèche à l’EHPAD

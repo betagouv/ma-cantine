@@ -1,15 +1,14 @@
 <template>
-  <div class="text-body-1">
-    <h2 class="text-h2 mb-12">
+  <div>
+    <h2 class="text-h4 font-weight-black mb-12">
       Nos partenaires
     </h2>
 
     <p class="text-center text-sm-left">
-      « ma cantine » est une plateforme publique développée en collaboration avec la Direction Générale de
-      l'Alimentation du Ministère de l'Agriculture et de l'Alimentation, suivant la méthode beta.gouv.fr de la DINUM
-      (Direction Interministérielle du Numérique). C'est avec un objectif de partage et de complémentarité avec les
-      acteurs de l'éco-système de la restauration collective que l'équipe s'efforce d'accompagner la transition
-      alimentaire.
+      ma cantine est une plateforme publique développée en collaboration avec la Direction Générale de l'Alimentation du
+      Ministère de l'Agriculture et de l'Alimentation, suivant la méthode beta.gouv.fr de la DINUM (Direction
+      Interministérielle du Numérique). C'est avec un objectif de partage et de complémentarité avec les acteurs de
+      l'éco-système de la restauration collective que l'équipe s'efforce d'accompagner la transition alimentaire.
     </p>
     <v-row class="mt-8">
       <v-col

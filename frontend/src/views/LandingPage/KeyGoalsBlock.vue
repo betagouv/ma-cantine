@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h2 class="text-h2 mb-12">Les objectifs de la loi EGAlim</h2>
+    <h2 class="text-h4 font-weight-black mb-12">Les objectifs de la loi EGAlim</h2>
 
-    <v-row class="mb-8 text-body-1">
+    <v-row class="mb-8">
       <v-col cols="12" sm="4">
         <v-icon color="grey darken-3" class="mb-2" x-large>$seedling-fill</v-icon>
         <p class="mt-4 text-center text-sm-left">

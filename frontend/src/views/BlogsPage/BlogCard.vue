@@ -4,8 +4,8 @@
     outlined
     :to="{ name: 'BlogPage', params: { id: post.id } }"
   >
-    <v-card-title class="text-h5">{{ post.title }}</v-card-title>
-    <v-card-subtitle class="pt-1 text-caption">
+    <v-card-title class="text-h6 font-weight-bold">{{ post.title }}</v-card-title>
+    <v-card-subtitle class="pt-1">
       {{
         new Date(post.displayDate).toLocaleDateString("fr-FR", {
           year: "numeric",
@@ -14,7 +14,7 @@
         })
       }}
     </v-card-subtitle>
-    <v-card-text class="text-body-1">
+    <v-card-text>
       <div class="mb-2" v-if="post.tags && post.tags.length > 0">
         <v-chip v-for="tag in post.tags" small :color="tagColor(tag)" :key="tag" class="mr-1">{{ tag }}</v-chip>
       </div>
