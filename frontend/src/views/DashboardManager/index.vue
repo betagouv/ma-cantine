@@ -18,8 +18,8 @@
         />
       </v-col>
     </v-row>
-    <h1 class="my-4 text-h5 font-weight-bold" v-else-if="canteen">{{ canteen.name }}</h1>
-    <h1 class="my-4 text-h5 font-weight-bold" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
+    <h1 class="my-4 fr-h1" v-else-if="canteen">{{ canteen.name }}</h1>
+    <h1 class="my-4 fr-h1" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
     <v-row v-if="!showCanteenSelection">
       <v-col>
         <v-btn @click="showCanteenSelection = true" outlined small color="primary" v-if="canteenPreviews.length > 1">

@@ -1,0 +1,122 @@
+// this file copies DSFR naming conventions
+
+.fr-h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 3rem;
+  letter-spacing: normal;
+  text-transform: false
+}
+
+// $headings: (
+//   (
+//     // DSFR: https://www.systeme-de-design.gouv.fr/elements-d-interface/fondamentaux-de-l-identite-de-l-etat/typographie
+//     'h1': (
+//       'size': 2.5rem,
+//       'weight': 700,
+//       'line-height': 3rem,
+//       'letter-spacing': normal,
+//       'font-family': $heading-font-family,
+//       'text-transform': false
+//     ),
+//     'h2': (
+//       'size': 2rem,
+//       'weight': 700,
+//       'line-height': 2.5rem,
+//       'letter-spacing': normal,
+//       'font-family': $heading-font-family,
+//       'text-transform': false
+//     ),
+//     'h3': (
+//       'size': 1.75rem,
+//       'weight': 700,
+//       'line-height': 2.25rem,
+//       'letter-spacing': normal,
+//       'font-family': $heading-font-family,
+//       'text-transform': false
+//     ),
+//     'h4': (
+//       'size': 1.5rem,
+//       'weight': 700,
+//       'line-height': 2rem,
+//       'letter-spacing': normal,
+//       'font-family': $heading-font-family,
+//       'text-transform': false
+//     ),
+//     'h5': (
+//       'size': 1.375rem,
+//       'weight': 700,
+//       'line-height': 1.75rem,
+//       'letter-spacing': normal,
+//       'font-family': $heading-font-family,
+//       'text-transform': false
+//     ),
+//     'h6': (
+//       'size': 1.25rem,
+//       'weight': 700,
+//       'line-height': 1.75rem,
+//       'letter-spacing': normal,
+//       'font-family': $heading-font-family,
+//       'text-transform': false
+//     ),
+//     // the subtitles are still vuetify defaults
+//     'subtitle-1': (
+//       'size': 1rem,
+//       'weight': normal,
+//       'line-height': 1.75rem,
+//       'letter-spacing': .009375em,
+//       'font-family': $body-font-family,
+//       'text-transform': false
+//     ),
+//     'subtitle-2': (
+//       'size': .875rem,
+//       'weight': 500,
+//       'line-height': 1.375rem,
+//       'letter-spacing': .0071428571em,
+//       'font-family': $body-font-family,
+//       'text-transform': false
+//     ),
+//     // back to DSFR
+//     'body-1': ( // DSFR: text MD
+//       'size': 1rem,
+//       'weight': 400,
+//       'line-height': 1.5rem,
+//       'letter-spacing': normal,
+//       'font-family': $body-font-family,
+//       'text-transform': false
+//     ),
+//     'body-2': ( // DSFR: text SM
+//       'size': .875rem,
+//       'weight': 400,
+//       'line-height': 1.5rem,
+//       'letter-spacing': normal,
+//       'font-family': $body-font-family,
+//       'text-transform': false
+//     ),
+//     'button': ( // https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/bouton
+//       'size': 1rem,
+//       'weight': 500,
+//       'line-height': 1.5rem,
+//       'letter-spacing': normal,
+//       'font-family': $body-font-family,
+//       'text-transform': false
+//     ),
+//     'caption': ( // DSFR: text mention
+//       'size': .75rem,
+//       'weight': 400,
+//       'line-height': 1.25rem,
+//       'letter-spacing': .0333333333em,
+//       'font-family': $body-font-family,
+//       'text-transform': false
+//     ),
+//     'overline': ( // vuetify default
+//       'size': .75rem,
+//       'weight': 500,
+//       'line-height': 1.25rem,
+//       'letter-spacing': .1666666667em,
+//       'font-family': $body-font-family,
+//       'text-transform': uppercase
+//     )
+//     // missing typos DSFR: text XL, text LG, 5 x titre alternatifs,
+//   )
+// );

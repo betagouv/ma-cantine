@@ -14,6 +14,11 @@ module.exports = {
 
   css: {
     sourceMap: true,
+    loaderOptions: {
+      scss: {
+        additionalData: '@import "@/scss/dsfr.scss";',
+      },
+    },
   },
 
   chainWebpack: (config) => {
