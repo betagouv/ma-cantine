@@ -101,7 +101,7 @@ export default {
     },
   },
   methods: {
-    search() {
+    fetchCurrentPage() {
       this.$store
         .dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag, search: this.searchTerm })
         .then((response) => {
@@ -115,19 +115,7 @@ export default {
     },
     clearSearch() {
       this.searchTerm = ""
-      this.search()
-    },
-    fetchCurrentPage() {
-      this.$store
-        .dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag })
-        .then((response) => {
-          this.tags = response.tags
-          this.visibleBlogPosts = response.results
-          this.blogPostCount = response.count
-        })
-        .catch(() => {
-          this.$store.dispatch("notifyServerError")
-        })
+      this.fetchCurrentPage()
     },
     updateRoute() {
       let query = { page: this.page }
