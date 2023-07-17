@@ -5,7 +5,8 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from api.serializers import BlogPostSerializer
 from data.models import BlogPost
-from django.contrib.postgres.search import SearchQuery, SearchVector
+from django_filters import rest_framework as django_filters
+from .utils import UnaccentSearchFilter
 
 logger = logging.getLogger(__name__)
 
@@ -37,16 +38,14 @@ class BlogPostsView(ListAPIView):
     queryset = BlogPost.objects.filter(published=True)
     pagination_class = BlogPostsPagination
 
+    filter_backends = [django_filters.DjangoFilterBackend, UnaccentSearchFilter]
+    search_fields = ["title", "tagline", "body"]
+
     def get_queryset(self):
         queryset = self.queryset
         tag = self.request.query_params.get("tag", None)
         if tag is not None:
             queryset = queryset.filter(tags__name=tag)
-        search = self.request.query_params.get("search", None)
-        if search is not None:
-            queryset = queryset.annotate(
-                search=SearchVector("title", "tagline", "body"),
-            ).filter(search=SearchQuery(search))
         return queryset
 
 
