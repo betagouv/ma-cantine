@@ -29,7 +29,7 @@
           hide-details
           clearable
           :clearAction="clearSearch"
-          :searchAction="fetchCurrentPage"
+          :searchAction="search"
           label="Rechercher"
         />
       </v-col>
@@ -96,6 +96,11 @@ export default {
       visibleBlogPosts: null,
       blogPostCount: null,
       searchTerm: null,
+      options: {
+        sortBy: [],
+        sortDesc: [],
+        page: 1,
+      },
     }
   },
   computed: {
@@ -107,7 +112,22 @@ export default {
     },
   },
   methods: {
+    search() {
+      if (this.searchTerm && this.options.page !== 1) this.options.page = 1
+      else this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
+    },
+    getUrlQueryParams() {
+      let urlQueryParams = { page: this.options.page }
+      if (this.searchTerm) urlQueryParams["recherche"] = this.searchTerm
+      return urlQueryParams
+    },
     fetchCurrentPage() {
+      if (this.searchTerm) {
+        console.log("yo")
+        let urlQueryParams = { page: this.options.page }
+        console.log(urlQueryParams)
+        urlQueryParams["recherche"] = this.searchTerm
+      }
       this.$store
         .dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag, search: this.searchTerm })
         .then((response) => {
