@@ -5,6 +5,7 @@ from data.department_choices import Department
 from data.utils import optimize_image
 from data.fields import ChoiceArrayField
 from .partnertype import PartnerType
+from .sector import Sector
 
 
 class Partner(models.Model):
@@ -55,6 +56,7 @@ class Partner(models.Model):
         null=True,
         verbose_name="Le partenaire est présent dans tout le territoire national (tous les departements)",
     )
+    sectors = models.ManyToManyField(Sector, blank=True, verbose_name="secteurs d'activité")
     free = models.BooleanField(
         blank=True,
         null=True,

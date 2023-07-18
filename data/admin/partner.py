@@ -18,7 +18,6 @@ def publish(modeladmin, request, queryset):
 
 @admin.register(Partner)
 class PartnerAdmin(admin.ModelAdmin):
-
     form = PartnerForm
     fields = (
         "name",
@@ -30,6 +29,7 @@ class PartnerAdmin(admin.ModelAdmin):
         "types",
         "departments",
         "national",
+        "sectors",
         "free",
         "economic_model",
         "published",
@@ -41,7 +41,7 @@ class PartnerAdmin(admin.ModelAdmin):
         "creation_date",
         "modification_date",
     )
-    list_filter = ("published",)
+    list_filter = ("published", "sectors")
     actions = [publish]
 
     def published_state(self, obj):
