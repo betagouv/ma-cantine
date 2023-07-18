@@ -41,7 +41,7 @@ class PartnerAdmin(admin.ModelAdmin):
         "creation_date",
         "modification_date",
     )
-    list_filter = ("published", "sectors")
+    list_filter = ("published", "types", "sectors")
     actions = [publish]
 
     def published_state(self, obj):

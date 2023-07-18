@@ -98,12 +98,36 @@
               class="mt-1"
             />
           </v-col>
+          <v-col cols="12" sm="6">
+            <label
+              for="select-sector"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': filters.sectors.value && !!filters.sectors.value.length,
+              }"
+            >
+              Secteur d'activité
+            </label>
+            <DsfrSelect
+              v-model="filters.sectors.value"
+              multiple
+              :items="sectors"
+              clearable
+              hide-details
+              id="select-sector"
+              placeholder="Tous les secteurs"
+              class="mt-1"
+            />
+          </v-col>
         </v-row>
         <v-row>
           <v-col cols="12" sm="6">
             <label
               for="select-type"
-              :class="{ 'text-body-2': true, 'active-filter-label': filters.type.value && !!filters.type.value.length }"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': filters.type.value && !!filters.type.value.length,
+              }"
             >
               Type
             </label>
@@ -192,7 +216,7 @@ import PartnerCard from "@/views/PartnersPage/PartnerCard"
 import NewPartnerCard from "@/views/PartnersPage/NewPartnerCard"
 import GeneralContactForm from "@/components/GeneralContactForm"
 import ReferencingInfo from "./ReferencingInfo"
-import { getObjectDiff } from "@/utils"
+import { getObjectDiff, sectorsSelectList } from "@/utils"
 import jsonDepartments from "@/departments.json"
 
 export default {
@@ -228,6 +252,14 @@ export default {
           param: "departement",
           value: [],
           default: [],
+        },
+        sectors: {
+          param: "secteurs",
+          value: [],
+          default: [],
+          transformToFrontend(values) {
+            return Array.isArray(values) ? values.map((v) => +v) : +values
+          },
         },
         type: {
           param: "type",
@@ -278,6 +310,7 @@ export default {
         text: `${x.departmentCode} - ${x.departmentName}`,
         value: x.departmentCode,
       })),
+      sectors: [],
       typeItems: [],
     }
   },
@@ -326,6 +359,7 @@ export default {
           this.visiblePartners = response.results
           this.typeItems = response.types
           this.setDepartments(response.departments)
+          this.setSectors(response.sectors)
         })
         .catch((e) => {
           this.partnerCount = 0
@@ -335,6 +369,7 @@ export default {
     populateParameters() {
       Object.values(this.filters).forEach((f) => {
         f.value = this.$route.query[f.param]
+        if (f.transformToFrontend) f.value = f.transformToFrontend(f.value)
       })
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
       this.fetchCurrentPage()
@@ -387,6 +422,18 @@ export default {
     },
     setDepartments(enabledDepartmentIds) {
       this.departmentItems = this.setLocations(enabledDepartmentIds, jsonDepartments, "department", "départements")
+    },
+    setSectors(enabledSectorIds) {
+      // so few partners and so many sectors that I decided to filter the sectors
+      // list so that the valid sectors don't get lost in the sea of unusable sectors
+      this.sectors = sectorsSelectList(this.$store.state.sectors)
+        .filter((sector) => enabledSectorIds.indexOf(sector.id) > -1)
+        .map((x) => {
+          return {
+            text: x.name,
+            value: x.id,
+          }
+        })
     },
   },
   watch: {
