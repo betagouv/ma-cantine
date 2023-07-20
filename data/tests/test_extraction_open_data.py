@@ -66,6 +66,12 @@ class TestExtractionOpenData(TestCase):
             ["id", "name", "category", "hasLineMinistry"],
         )
 
+        canteen_1.department = "29"
+        canteen_1.save()
+        canteens = _extract_dataset_canteen()
+        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["department_lib"], "Finistère")
+        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["region_lib"], "Bretagne")
+
         canteen_2.sectors.clear()
 
         canteens = _extract_dataset_canteen()

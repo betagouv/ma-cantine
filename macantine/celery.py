@@ -24,6 +24,7 @@ app.worker_hijack_root_logger = False
 # At 10:00 on every day from Monday through Friday.
 daily_week = crontab(hour=10, minute=0, day_of_week="1-5")
 nightly = crontab(hour=4, minute=0, day_of_week="*")
+weekly = crontab(hour=4, minute=0, day_of_week=6)
 every_minute = crontab(minute="*/1")  # For testing purposes
 
 app.conf.beat_schedule = {
@@ -49,8 +50,8 @@ app.conf.beat_schedule = {
     },
     "export_datasets": {
         "task": "macantine.tasks.export_datasets",
-        "schedule": nightly,
-    }
+        "schedule": weekly,
+    },
 }
 
 app.conf.timezone = "Europe/Paris"
