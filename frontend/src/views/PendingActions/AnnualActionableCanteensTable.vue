@@ -533,7 +533,6 @@ export default {
         window.ENABLE_TELEDECLARATION
       )
         return true
-      else return false
     },
   },
   mounted() {
