@@ -36,7 +36,12 @@
             </v-alert>
           </v-card>
         </v-col>
-        <v-col v-if="toTeledeclare.length > 1 || tdSuccesses.length || tdFailures.length" cols="12" sm="6" md="4">
+        <v-col
+          v-if="(toTeledeclare.length > 1 || tdSuccesses.length || tdFailures.length) && shouldTeledeclare()"
+          cols="12"
+          sm="6"
+          md="4"
+        >
           <v-card outlined v-if="toTeledeclare.length > 1">
             <v-card-text>
               Vous pouvez dès à présent effectuer la télédéclaration pour
@@ -526,6 +531,10 @@ export default {
           this.toTeledeclare = []
           this.$store.dispatch("notifyServerError", e)
         })
+    },
+    shouldTeledeclare() {
+      if (window.ENABLE_TELEDECLARATION) return true
+      else return false
     },
   },
   mounted() {
