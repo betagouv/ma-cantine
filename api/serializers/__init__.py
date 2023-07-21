@@ -23,6 +23,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticAndCanteenSerializer,
 )
 from .sector import SectorSerializer  # noqa: F401
+from .partnertype import PartnerTypeSerializer  # noqa: F401
 from .blogpost import BlogPostSerializer  # noqa: F401
 from .password import PasswordSerializer  # noqa: F401
 from .managerinvitation import ManagerInvitationSerializer  # noqa: F401

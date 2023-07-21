@@ -18,7 +18,11 @@
         />
       </v-col>
       <v-col class="pa-0" cols="12" sm="6">
-        <DsfrTextField v-model="partner.website" label="URL du site" :rules="[validators.required]" />
+        <DsfrTextField
+          v-model="partner.website"
+          label="URL du site"
+          :rules="[validators.required, validators.urlOrEmpty]"
+        />
       </v-col>
       <!-- TODO: optional image -->
       <v-col class="pa-0" cols="12" md="9">
@@ -30,7 +34,16 @@
           v-model="partner.categories"
         />
       </v-col>
-      <!-- TODO: actor type -->
+      <v-col class="pa-0" cols="12" md="7">
+        <DsfrSelect
+          label="Type d'acteur"
+          multiple
+          :items="partnerTypes"
+          v-model="partner.types"
+          item-text="name"
+          item-value="id"
+        />
+      </v-col>
       <!-- TODO: create a DsfrRadio component and use that instead -->
       <!-- https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/bouton-radio -->
       <v-col class="pa-0" cols="12" md="4">
@@ -101,6 +114,7 @@ export default {
       contactName: user ? `${user.firstName} ${user.lastName}` : "",
       message: "",
       sectors: sectorsSelectList(this.$store.state.sectors),
+      partnerTypes: this.$store.state.partnerTypes,
       economicModels: [
         {
           text: "Public",
