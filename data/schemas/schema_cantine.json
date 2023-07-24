@@ -1,158 +1,172 @@
 {
   "fields": [
     {
-      "name": "id",
-      "type": "integer",
-      "title": "Identifiant",
       "description": "Identifiant Unique de la Cantine",
-      "example": "71331"
+      "example": "71331",
+      "name": "id",
+      "title": "Identifiant",
+      "type": "integer"
     },
     {
-      "name": "name",
-      "type": "string",
-      "title": "Nom",
       "description": "Nom la Cantine",
-      "example": "Restaurant Scolaire de Marigny-le-Lozon"
+      "example": "Restaurant Scolaire de Marigny-le-Lozon",
+      "name": "name",
+      "title": "Nom",
+      "type": "string"
     },
     {
-      "name": "siret",
-      "type": "string",
-      "title": "Siret",
       "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine",
-      "example": "20005822000092"
+      "example": "20005822000092",
+      "name": "siret",
+      "title": "Siret",
+      "type": "string"
     },
     {
-      "name": "city",
-      "type": "string",
-      "title": "Ville",
       "description": "Ville dans laquelle se trouve la cantine",
-      "example": "Marigny-Le-Lozon"
+      "example": "Marigny-Le-Lozon",
+      "name": "city",
+      "title": "Ville",
+      "type": "string"
     },
     {
-      "name": "city_insee_code",
-      "type": "string",
-      "title": "Code Insee ville",
       "description": "Code Insee de la ville dans laquelle se trouve la cantine",
-      "example": "50292"
+      "example": "50292",
+      "name": "city_insee_code",
+      "title": "Code Insee ville",
+      "type": "string"
     },
     {
-      "name": "postal_code",
-      "type": "string",
-      "title": "Code postal",
       "description": "Code postal de la ville dans laquelle se trouve la cantine",
-      "example": "50570"
+      "example": "50570",
+      "name": "postal_code",
+      "title": "Code postal",
+      "type": "string"
     },
     {
-      "name": "department",
-      "type": "string",
-      "title": "Code Département",
       "description": "Code Insee du département dans lequel se trouve la cantine",
-      "example": "50"
-    },
-    {
-      "name": "region",
-      "type": "string",
+      "example": "29",
+      "name": "department",
       "title": "Code Département",
+      "type": "string"
+    },
+    {
+      "description": "Libellé du département dans lequel se trouve la cantine",
+      "example": "Finistère",
+      "name": "department_lib",
+      "title": "Département Libellé",
+      "type": "string"
+    },
+    {
       "description": "Code Insee de la région dans lequel se trouve la cantine",
-      "example": "28"
+      "example": "53",
+      "name": "region",
+      "title": "Code Région",
+      "type": "string"
     },
     {
-      "name": "economic_model",
-      "type": "string",
-      "title": "Modèle Economique",
+      "description": "Libellé de la région dans lequel se trouve la cantine",
+      "example": "Bretagne",
+      "name": "region_lib",
+      "title": "Région libellé",
+      "type": "string"
+    },
+    {
       "description": "Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).",
-      "example": "public"
+      "example": "public",
+      "name": "economic_model",
+      "title": "Modèle Economique",
+      "type": "string"
     },
     {
-      "name": "management_type",
-      "type": "string",
-      "title": "Type de Management",
       "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée. Si la valeur est 'concédée', la délégation peut être totale ou partielle",
-      "example": "conceded"
+      "example": "conceded",
+      "name": "management_type",
+      "title": "Type de Management",
+      "type": "string"
     },
     {
-      "name": "production_type",
-      "type": "string",
-      "title": "Type de Production",
       "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
-      "example": "central"
+      "example": "central",
+      "name": "production_type",
+      "title": "Type de Production",
+      "type": "string"
     },
     {
-      "name": "satellite_canteens_count",
-      "type": "integer",
-      "title": "Nombre de cantines satellites",
       "description": "Nombre de cantines satellites pour une cantine qui produit les repas sur place",
-      "example": "0"
+      "example": "0",
+      "name": "satellite_canteens_count",
+      "title": "Nombre de cantines satellites",
+      "type": "integer"
     },
     {
-      "name": "central_producer_siret",
-      "type": "string",
-      "title": "SIRET de la cantine centrale",
       "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine ayant produit les repas",
-      "example": ""
+      "example": "",
+      "name": "central_producer_siret",
+      "title": "SIRET de la cantine centrale",
+      "type": "string"
     },
     {
-      "name": "creation_date",
-      "type": "string",
-      "title": "Date de création",
       "description": "Date de création de la cantine au format ISO 8601",
-      "example": "2018-01-01"
+      "example": "2018-01-01",
+      "name": "creation_date",
+      "title": "Date de création",
+      "type": "string"
     },
     {
-      "name": "daily_meal_count",
-      "type": "integer",
-      "title": "Nombre de repas par jour",
       "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
-      "example": "100"
+      "example": "100",
+      "name": "daily_meal_count",
+      "title": "Nombre de repas par jour",
+      "type": "integer"
     },
     {
-      "name": "yearly_meal_count",
-      "type": "integer",
-      "title": "Nombre de repas par an",
       "description": "Nombre de repas servis, en moyenne, par an dans la cantine",
-      "example": "20000"
+      "example": "20000",
+      "name": "yearly_meal_count",
+      "title": "Nombre de repas par an",
+      "type": "integer"
     },
     {
-      "name": "line_ministry",
-      "type": "string",
-      "title": "Ministère de tutelle",
       "description": "Ministère de tutelle de la cantine, s'il y en a un",
-      "example": "Ministère de l'Education Nationale"
+      "example": "Ministère de l'Education Nationale",
+      "name": "line_ministry",
+      "title": "Ministère de tutelle",
+      "type": "string"
     },
     {
-      "name": "modification_date",
-      "type": "string",
-      "title": "Date de modification",
       "description": "Date de dernière modification de la cantine au format ISO 8601",
-      "example": "2018-01-01"
+      "example": "2018-01-01",
+      "name": "modification_date",
+      "title": "Date de modification",
+      "type": "string"
     },
     {
-      "name": "publication_status",
-      "type": "string",
-      "title": "Statut de publication",
       "description": "Statut de publication de la cantine. Il existe 3 statuts différents : published (cantine publiée), draft (brouillon), deleted (cantine supprimée)",
-      "example": "published"
+      "example": "published",
+      "name": "publication_status",
+      "title": "Statut de publication",
+      "type": "string"
     },
     {
-      "name": "logo",
-      "type": "string",
-      "title": "Logo",
       "description": "Logo de la cantine",
-      "example": "https://www.mangerlocal.fr/static/img/logo.png"
+      "example": "https://www.mangerlocal.fr/static/img/logo.png",
+      "name": "logo",
+      "title": "Logo",
+      "type": "string"
     },
     {
-      "name": "sectors",
-      "type": "array",
-      "title": "Secteurs",
       "description": "Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
-      "example": "[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]"
+      "example": "[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]",
+      "name": "sectors",
+      "title": "Secteurs",
+      "type": "array"
     },
     {
-      "name": "active_on_ma_cantine",
-      "type": "boolean",
-      "title": "Actif sur Ma Cantine",
       "description": "A un gestionnaire sur (email) et a fais au moins une action (à définir) - Indique si la cantine est active sur l'apllication Ma Cantine ou si elle a été importée via une source de données externe",
-      "example": "true"
+      "example": "true",
+      "name": "active_on_ma_cantine",
+      "title": "Actif sur Ma Cantine",
+      "type": "boolean"
     }
   ]
 }
