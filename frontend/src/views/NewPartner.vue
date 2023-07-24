@@ -17,13 +17,6 @@
           :rules="[validators.required]"
         />
       </v-col>
-      <v-col class="pa-0" cols="12" sm="6">
-        <DsfrTextField
-          v-model="partner.website"
-          label="URL du site"
-          :rules="[validators.required, validators.urlOrEmpty]"
-        />
-      </v-col>
       <!-- TODO: optional image -->
       <v-col class="pa-0" cols="12" md="9">
         <DsfrSelect
@@ -32,6 +25,7 @@
           label="Sur quels aspects, pouvez-vous aider des gestionnaires de restaurants collectifs ?"
           :items="categories"
           v-model="partner.categories"
+          :rules="[validators.required]"
         />
       </v-col>
       <v-col class="pa-0" cols="12" md="7">
@@ -42,12 +36,18 @@
           v-model="partner.types"
           item-text="name"
           item-value="id"
+          :rules="[validators.required]"
         />
       </v-col>
       <!-- TODO: create a DsfrRadio component and use that instead -->
       <!-- https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/bouton-radio -->
       <v-col class="pa-0" cols="12" md="4">
-        <DsfrSelect label="Secteur économique" :items="economicModels" v-model="partner.economicModel" />
+        <DsfrRadio
+          label="Secteur économique"
+          :items="economicModels"
+          v-model="partner.economicModel"
+          :rules="[validators.required]"
+        />
       </v-col>
       <!-- TODO: actor provides free and/or paying services? -->
       <v-col class="pa-0" cols="12" md="9">
@@ -72,6 +72,13 @@
         :rules="[validators.required]"
         :rows="2"
       />
+      <v-col class="pa-0" cols="12" sm="6">
+        <DsfrTextField
+          v-model="partner.website"
+          label="URL du site"
+          :rules="[validators.required, validators.urlOrEmpty]"
+        />
+      </v-col>
       <v-row>
         <v-col cols="12" sm="6">
           <DsfrTextField v-model="contactEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
@@ -86,7 +93,7 @@
       </p>
       <!-- TODO: accept conditions -->
     </v-form>
-    <v-btn x-large color="primary" class="mt-0 mb-6" @click="sendEmail">
+    <v-btn x-large color="primary" class="mt-0 mb-6" @click="createPartner">
       <v-icon class="mr-2">mdi-send</v-icon>
       Envoyer
     </v-btn>
@@ -99,11 +106,12 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrRadio from "@/components/DsfrRadio"
 import { sectorsSelectList } from "@/utils"
 
 export default {
   name: "NewPartner",
-  components: { BreadcrumbsNav, DsfrTextField, DsfrTextarea, DsfrSelect },
+  components: { BreadcrumbsNav, DsfrTextField, DsfrTextarea, DsfrSelect, DsfrRadio },
   props: ["canteen"],
   data() {
     const user = this.$store.state.loggedUser
@@ -163,7 +171,8 @@ export default {
     },
   },
   methods: {
-    sendEmail() {
+    createPartner() {
+      console.log(this.partner.economicModel)
       this.$refs.form.validate()
       if (!this.formIsValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
