@@ -43,7 +43,7 @@ drf-spectacular==0.26.3
 drf-spectacular-sidecar==2023.4.1
 et-xmlfile==1.1.0
 exceptiongroup==1.1.1
-factory-boy==3.2.1
+factory-boy==3.3.0
 Faker==17.6.0
 future==0.18.3
 html2text==2020.1.16
