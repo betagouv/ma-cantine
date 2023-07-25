@@ -37,7 +37,7 @@
       <v-col cols="12" sm="6" md="4">
         <DsfrSelect
           v-model="tag"
-          placeholder="Tout types d'articles"
+          placeholder="Tous types d'articles"
           :items="tags"
           clearable
           hide-details
