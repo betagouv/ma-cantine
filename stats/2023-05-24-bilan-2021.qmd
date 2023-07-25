@@ -20,7 +20,7 @@ execute:
 ## Contexte
 
 Le bilan statistique annuel de l’application des objectifs d’approvisionnement fixés à la restauration collective donne lieu à un rapport du gouvernement qui est remis au parlement chaque année.
-Celui-ci contient une analyse des données de la campagne de télédéclaration. Le premier bilan est disponible pour la [campagne 2022]().
+Celui-ci contient une analyse des données de la campagne de télédéclaration. Le premier bilan est disponible pour la [campagne 2022](https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2F6RxGNr0aJ4BPSzFsDQGs%2FBilan%20statistique%20EGAlim_achats2021.pdf?alt=media&token=).
 
 Dans ce document nous créeons et documentons les statistiques nécessaires pour la campagne 2023. Cette campagne a eu lieu sur le premier semestre 2023 et porte sur les données de l'année 2022.
 
