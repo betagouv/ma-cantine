@@ -141,7 +141,7 @@ export default {
     },
     clearSearch() {
       this.searchTerm = ""
-      this.fetchCurrentPage()
+      this.search()
     },
     updateRoute() {
       let query = { page: this.page }
