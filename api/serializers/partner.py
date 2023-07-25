@@ -4,7 +4,6 @@ from data.models import Partner
 
 
 class PartnerShortSerializer(serializers.ModelSerializer):
-
     types = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
     image = Base64ImageField(required=False, allow_null=True)
 
@@ -27,7 +26,6 @@ class PartnerShortSerializer(serializers.ModelSerializer):
 
 
 class PartnerSerializer(serializers.ModelSerializer):
-
     types = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
     image = Base64ImageField(required=False, allow_null=True)
 
@@ -48,4 +46,31 @@ class PartnerSerializer(serializers.ModelSerializer):
             "national",
             "free",
             "economic_model",
+        )
+
+
+class PartnerContactSerializer(serializers.ModelSerializer):
+    types = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
+    image = Base64ImageField(required=False, allow_null=True)
+
+    class Meta:
+        model = Partner
+        fields = (
+            "id",
+            "creation_date",
+            "modification_date",
+            "name",
+            "categories",
+            "short_description",
+            "long_description",
+            "image",
+            "website",
+            "types",
+            "departments",
+            "national",
+            "free",
+            "economic_model",
+            "contact_email",
+            "contact_name",
+            "contact_message",
         )

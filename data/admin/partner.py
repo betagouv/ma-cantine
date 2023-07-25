@@ -8,6 +8,8 @@ class PartnerForm(forms.ModelForm):
         widgets = {
             "name": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "short_description": forms.Textarea(attrs={"cols": 55, "rows": 2}),
+            "contact_name": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "contact_message": forms.Textarea(attrs={"cols": 55, "rows": 2}),
         }
 
 
@@ -33,6 +35,9 @@ class PartnerAdmin(admin.ModelAdmin):
         "free",
         "economic_model",
         "published",
+        "contact_name",
+        "contact_email",
+        "contact_message",
     )
     filter_vertical = ("types",)
     list_display = (

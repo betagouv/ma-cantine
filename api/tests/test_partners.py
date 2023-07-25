@@ -149,11 +149,26 @@ class TestPartnersApi(APITestCase):
         Test that unauthenticated users can create draft partners
         """
         self.assertEqual(Partner.objects.count(), 0)
-        payload = {"name": "New partner please", "shortDescription": "This is a required field", "published": True}
+        payload = {
+            "name": "New partner please",
+            "shortDescription": "This is a required field",
+            "published": True,
+            "contactEmail": "test@example.com",
+        }
         response = self.client.post(reverse("partners_list"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Partner.objects.count(), 1, "Exactly one partner added to DB")
         partner = Partner.objects.first()
         self.assertEqual(partner.name, "New partner please")
         self.assertEqual(partner.short_description, "This is a required field")
+        self.assertEqual(partner.contact_email, "test@example.com")
         self.assertFalse(partner.published, "A user can't create a published partner")
+
+    def test_cannot_fetch_contact_info(self):
+        partner = PartnerFactory.create(published=True, contact_email="secret@mi5.com")
+
+        response = self.client.get(reverse("partners_list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        partner = body["results"][0]
+        self.assertNotIn("contactEmail", partner)

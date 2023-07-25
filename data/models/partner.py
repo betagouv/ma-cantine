@@ -1,5 +1,6 @@
 from urllib.parse import quote
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from ckeditor_uploader.fields import RichTextUploadingField
 from data.department_choices import Department
 from data.utils import optimize_image
@@ -70,6 +71,10 @@ class Partner(models.Model):
         verbose_name="Secteur économique",
     )
     published = models.BooleanField(default=False, verbose_name="publié")
+
+    contact_email = models.EmailField(_("email address"), blank=True, null=True)
+    contact_name = models.TextField(verbose_name="Nom de contact", blank=True, null=True)
+    contact_message = models.TextField(verbose_name="Commentaires sur la demande", blank=True, null=True)
 
     @property
     def url_slug(self):

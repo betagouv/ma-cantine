@@ -852,6 +852,17 @@ export default new Vuex.Store({
     setShowWebinaireBanner(context, showWebinaireBanner) {
       context.commit("SET_SHOW_WEBINAIRE_BANNER", showWebinaireBanner)
     },
+
+    createPartner(context, { payload }) {
+      return fetch("/api/v1/partners/", { method: "POST", headers, body: JSON.stringify(payload) })
+        .then(verifyResponse)
+        .then((response) => {
+          return response
+        })
+        .catch((e) => {
+          throw e
+        })
+    },
   },
 
   getters: {

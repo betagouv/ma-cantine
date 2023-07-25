@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import RetrieveAPIView, ListCreateAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
-from api.serializers import PartnerSerializer, PartnerShortSerializer
+from api.serializers import PartnerSerializer, PartnerShortSerializer, PartnerContactSerializer
 from data.models import Partner, Sector
 
 logger = logging.getLogger(__name__)
@@ -49,11 +49,15 @@ class PartnersPagination(LimitOffsetPagination):
 
 class PartnersView(ListCreateAPIView):
     model = Partner
-    serializer_class = PartnerShortSerializer
     queryset = Partner.objects.filter(published=True)
     pagination_class = PartnersPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["sectors"]
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return PartnerContactSerializer
+        return PartnerShortSerializer
 
     def get_queryset(self):
         queryset = self.queryset

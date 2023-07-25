@@ -17,7 +17,6 @@
           :rules="[validators.required]"
         />
       </v-col>
-      <!-- TODO: optional image -->
       <v-col class="pa-0" cols="12" md="9">
         <DsfrSelect
           multiple
@@ -80,6 +79,7 @@
           :rules="[validators.required, validators.urlOrEmpty]"
         />
       </v-col>
+      <!-- TODO: optional image field -->
       <v-row>
         <v-col cols="12" sm="6">
           <DsfrTextField v-model="partner.contactEmail" label="Votre email" :rules="[validators.email]" />
@@ -131,6 +131,7 @@ export default {
           value: "private",
         },
       ],
+      // TODO: update these options and backend to include mixed payment option
       serviceCostOptions: [
         {
           text: "Oui",
@@ -180,14 +181,20 @@ export default {
   },
   methods: {
     createPartner() {
-      console.log(this.partner.economicModel)
       this.$refs.form.validate()
       if (!this.formIsValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
-      // TODO: backend request to create draft partner
-      // and email confirmation to the contact with our reply address?
+      // TODO: debug sector and actor type setting
+      this.$store.dispatch("createPartner", { payload: this.partner }).then(() => {
+        this.$store.dispatch("notify", {
+          status: "success",
+          message: "Votre demande a bien été envoyé.",
+        })
+        this.$router.push({ name: "PartnersHome" })
+      })
+      // TODO: rate limit requests?
     },
   },
 }
