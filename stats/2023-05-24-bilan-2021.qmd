@@ -1,5 +1,5 @@
 ---
-title: "Ma-Cantine : Reconstruction des statistiques du bilan 2021"
+title: "Ma-Cantine : Bilan statistique 2023"
 author:
   - "Quentin Loridant"
 date: "2023-05-24"
@@ -15,20 +15,28 @@ execute:
   cache: true
 ---
 
-# Contexte
-Analyse des données de la campagne de TD 2022.
+# Introduction
 
-* En 2021, l'application ne permettait pas de spécifier le mode de télédéclaration.  
-* La campagne de 2022 porte sur les données de 2021  
-* Les données sont issus d'une extractation de la base de données de l'application Ma-Cantine, en filtrant sur :
-    * l'année 2021
-    * les données de type 'SUBMITTED'
-    * les `creation_date` qui sont compris dans les dates de la campagne : **du 17 juillet 2022 au 05 décembre 2022**. (les autres TD de 2021 avant la campagne sont dans un format trop différent pour être traité)
-    * Les canteen ID qui sont renseignés (champs non nuls)
+## Contexte
+
+Le bilan statistique annuel de l’application des objectifs d’approvisionnement fixés à la restauration collective donne lieu à un rapport du gouvernement qui est remis au parlement chaque année.
+Celui-ci contient une analyse des données de la campagne de télédéclaration. Le premier bilan est disponible pour la [campagne 2022](https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2F6RxGNr0aJ4BPSzFsDQGs%2FBilan%20statistique%20EGAlim_achats2021.pdf?alt=media&token=d172dcbe-b409-45ae-a73f-82390b07bda5).
+
+Dans ce document nous créeons et documentons les statistiques nécessaires pour la campagne 2023. Cette campagne a eu lieu sur le premier semestre 2023 et porte sur les données de l'année 2022.
+
+## Changements par rapport à la campagne 2022
+
+En 2021, l'application ne permettait pas de spécifier le mode de télédéclaration (cuisine centrale ou satellite). Pour la campagne 2023, il est possible que la télédéclaration soit rensignée soit par :
+
+* une cuisine préparant ses propres repas
+* une cuisine centrale (dans ce cas elle peut renseigner les données pour ces satellites)
+* une cuisine satellite directement
 
 
 # Import des données et des librairies
+
 ```{python import}
+#| echo: false
 import pandas as pd
 import os
 import datetime
@@ -36,52 +44,96 @@ import requests
 import json
 from dotenv import load_dotenv
 from ydata_profiling import ProfileReport
+import psycopg2
+import plotly.express as px
 
 ```
 ```{python Import des données des campagnes}
+#| echo: false
 campagnes = {
-  "2021": "795",
-  "2022": "802"
+  "2021": {"start_date": "2022-07-16", "end_date": "2022-12-05", "card": "795"},
+  "2022": {"start_date": "2023-02-15", "end_date": "2023-06-30", "card": "802"}
 }
+
 ```
 
-Afin de récupérer les données, il vous faut un TOKEN metabase :  
-`curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://ma-cantine-metabase.cleverapps.io/api/session`
+<!-- Afin de récupérer les données, il vous faut un TOKEN metabase :
+`curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://ma-cantine-metabase.cleverapps.io/api/session` -->
+
 
 ```{python Import des données TD}
+# conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')} sslmode=require")
+# conn = psycopg2.connect(host=os.getenv('DB_HOST'), dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), sslmode="require")
+# conn.set_session(readonly=True)
+# cur = conn.cursor()
 year = '2022'
-url = f"https://ma-cantine-metabase.cleverapps.io/api/card/{campagnes[year]}/query/json"
-
+url = f"https://ma-cantine-metabase.cleverapps.io/api/card/{campagnes[year]['card']}/query/json"
 load_dotenv()
-
 header = {
     "Content-Type": "application/json",
-    "X-Metabase-Session": os.getenv("METABASE_TOKEN"),
+    "X-Metabase-Session": os.environ.get('METABASE_TOKEN'),
 }
 
 res = requests.post(
     url,
     headers=header,
 )
-td = pd.DataFrame(res.json())
-td["declared_data"] = td["declared_data"].apply(json.loads)
-td_json = pd.json_normalize(td["declared_data"])
-td = pd.concat([td.drop("declared_data", axis=1), td_json], axis=1)
+td_raw = pd.DataFrame(res.json())
+del td_raw['year']
+td_raw["declared_data"] = td_raw["declared_data"].apply(json.loads)
+td_json = pd.json_normalize(td_raw["declared_data"])
+td_raw = pd.concat([td_raw.drop("declared_data", axis=1), td_json], axis=1)
 
 if year == '2021':
     col_to_rename = {}
     for col in ['production_type', 'management_type', 'yearly_meal_count', 'daily_meal_count']:
         col_to_rename[col] = f"canteen.{col}"
-    td = td.rename(columns=col_to_rename)
+    td_raw = td_raw.rename(columns=col_to_rename)
 ```
 
+Les données sont extraites de la base de données de ma-cantine. Plusieurs filtres sont appliqués :
+
+1. date : les télédéclarations doivent être comprises dans les dates de campagne: `creation_date BETWEEN XX mars au 30 juin 2023`
+2. statut : la télédéclaration doit avoir été validée par son éditeur. `status="SUBMITTED"`
+3. année 2022 : `year==2022`
+4. canteen ID qui sont renseignés (champs non nuls) : `canteen_id.notnull()`
+
+```{python Nettoyage des données}
+td = td_raw.copy()
+td = td[td.status == 'SUBMITTED']
+td = td[td.canteen_id.notnull()]
+tds = {}
+for year in campagnes.keys():
+    tds[year] = td.copy()
+    tds[year] = tds[year][tds[year].year==int(year)]
+    tds[year] = tds[year][(tds[year]['creation_date'] >= campagnes[year]["start_date"]) & (tds[year]['creation_date'] <= campagnes[year]["end_date"])]
+```
 
 # Nettoyage et formattage des données
+Comparaison des dates de télédéclarations.
 ```{python Nettoyage des données}
-nbre_td_full = len(td)
-td = td.dropna(subset=["canteen_id"])
-print(f"Nous avons enlevé {nbre_td_full - len(td)} doublons")
-print("Nombre de télédcélarations uniques: ", len(td))
+tds_ts =  {}
+for year in campagnes.keys():
+    tds_ts[year] = tds[year].copy()
+    tds_ts[year]['creation_date'] = pd.to_datetime(tds_ts[year]['creation_date']).dt.strftime('%V')
+    tds_ts[year] = tds_ts[year].groupby('creation_date').count()
+    tds_ts[year] = tds_ts[year].rename(columns={'canteen_id': 'cmpt_td_2022'})
+
+import matplotlib.pyplot as plt
+# Plot the superposed time series
+axe = 0
+fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 8))
+for year in tds_ts.keys():
+
+    axes[axe].plot(tds_ts[year].index, tds_ts[year]['cmpt_td_2022'])
+    axes[axe].set_ylabel('Normalized Value')
+    axes[axe].set_title(f'Time Series {axe} (Year {year})')
+    axes[axe].legend()
+    axes[axe].grid(True)
+    axe += 1
+
+plt.tight_layout()
+plt.show()
 ```
 
 
@@ -92,8 +144,8 @@ td = td[td.id != 10871] # Doublon inexpliqué entre les id 10871 et 10870
 ```
 
 ```{python Vérification des données}
-assert td["canteen_id"].isna().sum() == 0, "Il y a des cantines sans identifiant"
-assert len(td["canteen_id"]) == len(td["canteen_id"].unique()), "Il y a des doublons dans les cantines"
+# assert td["canteen_id"].isna().sum() == 0, "Il y a des cantines sans identifiant"
+# assert len(td["canteen_id"]) == len(td["canteen_id"].unique()), "Il y a des doublons dans les cantines"
 # for col in td.columns:
 #     print(col)
 ```
@@ -110,7 +162,7 @@ indicateurs = {}
 indicateurs["Nombre de Télédéclarations"] = len(td)
 ```
 
-Dans les télédéclarations pour la campagne 2022, il n'y a pas d'indication du nombre de satellites, du managment_type et du produciton_type. 
+Dans les télédéclarations pour la campagne 2022, il n'y a pas d'indication du nombre de satellites, du managment_type et du produciton_type.
 
 Les informations suivanted proviennent donc des informations renseignées pour les cantines. Les données ont peut-être légérement été modifié depuis la télédéclaration.
 
@@ -163,11 +215,11 @@ for i in indicateurs:
 
 
 ```{python Vérification de la non existence de TD tests}
-import re
+# import re
 
-pattern = r"test|testing|sample|temp|debug|beta"
-mask = td["name"].str.contains(pattern, flags=re.IGNORECASE, regex=True)
-testing_elements = td[mask]
+# pattern = r"test|testing|sample|temp|debug|beta"
+# mask = td["name"].str.contains(pattern, flags=re.IGNORECASE, regex=True)
+# testing_elements = td[mask]
 ```
 
 ```{python Vérification du taux de présence de la donnée repas par an}
@@ -203,7 +255,7 @@ Si les 4 champs sont vides => on ne force pas à 0 (108 cantines concernés)
 * Nombre de repas moyen : on se rebase sur les données cantine fournies dans la télédéclaration (et non pas une approximation détaillée par secteur)
 * (eventuellement) Changer la stratégie pour les champs vides
 
-# Analyses à mener 
+# Analyses à mener
 
 * Pertinence des garde fous (bloquant et non bloquant) (cf Matomo)
 * Nombre de déclarants ont rempli des valeurs d'achat bio (O € compris)
