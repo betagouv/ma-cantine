@@ -1,15 +1,15 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav :links="[{ to: { name: 'PartnersHome' } }]" />
-    <h1>Nouvel acteur de l'éco-système</h1>
+    <h1 class="font-weight-black text-h5 text-sm-h4 mb-4">Nouvel acteur de l'éco-système</h1>
     <p>
       Veuillez renseigner ce formulaire et notre équipe va vérifier votre demande et ajouter votre organisation dans
       notre base de données.
     </p>
-    <p>
+    <p class="text-caption">
       Sauf mention contraire “(optionnel)” dans le label, tous les champs sont obligatoires
     </p>
-    <v-form v-model="formIsValid" ref="form" @submit.prevent>
+    <v-form v-model="formIsValid" ref="form" @submit.prevent class="mt-8">
       <v-col class="pa-0" cols="12" sm="6">
         <DsfrTextField
           v-model="partner.name"
@@ -28,6 +28,12 @@
           :rules="[validators.required]"
         />
       </v-col>
+      <DsfrRadio
+        label="Secteur économique"
+        :items="economicModels"
+        v-model="partner.economicModel"
+        :rules="[validators.required]"
+      />
       <v-col class="pa-0" cols="12" md="7">
         <DsfrSelect
           label="Type d'acteur"
@@ -39,20 +45,9 @@
           :rules="[validators.required]"
         />
       </v-col>
-      <!-- TODO: create a DsfrRadio component and use that instead -->
-      <!-- https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/bouton-radio -->
-      <v-col class="pa-0" cols="12" md="4">
-        <DsfrRadio
-          label="Secteur économique"
-          :items="economicModels"
-          v-model="partner.economicModel"
-          :rules="[validators.required]"
-        />
-      </v-col>
-      <!-- TODO: actor provides free and/or paying services? -->
       <v-col class="pa-0" cols="12" md="9">
         <DsfrSelect
-          label="Secteurs d'activité"
+          label="Secteurs d'activité (optionnel)"
           multiple
           :items="sectors"
           v-model="partner.sectors"
@@ -60,6 +55,12 @@
           item-value="id"
         />
       </v-col>
+      <DsfrRadio
+        label="Est-ce que vous offrez des services gratuits ?"
+        :items="serviceCostOptions"
+        v-model="partner.free"
+        :rules="[validators.required]"
+      />
       <!-- TODO: actor region/department OR national -->
       <DsfrTextarea
         v-model="partner.longDescription"
@@ -81,17 +82,13 @@
       </v-col>
       <v-row>
         <v-col cols="12" sm="6">
-          <DsfrTextField v-model="contactEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
+          <DsfrTextField v-model="partner.contactEmail" label="Votre email" :rules="[validators.email]" />
         </v-col>
         <v-col cols="12" sm="6">
-          <DsfrTextField v-model="contactName" label="Prénom et nom (facultatif)" validate-on-blur />
+          <DsfrTextField v-model="partner.contactName" label="Prénom et nom (optionnel)" />
         </v-col>
       </v-row>
-      <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
-      <p class="caption text-left grey--text text--darken-1 mt-n1 mb-6">
-        Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
-      </p>
-      <!-- TODO: accept conditions -->
+      <DsfrTextarea v-model="partner.contactMessage" label="Commentaires sur votre demande (optionnel)" :rows="2" />
     </v-form>
     <v-btn x-large color="primary" class="mt-0 mb-6" @click="createPartner">
       <v-icon class="mr-2">mdi-send</v-icon>
@@ -117,10 +114,11 @@ export default {
     const user = this.$store.state.loggedUser
     return {
       formIsValid: true,
-      partner: {},
-      contactEmail: user ? user.email : "",
-      contactName: user ? `${user.firstName} ${user.lastName}` : "",
-      message: "",
+      partner: {
+        contactEmail: user ? user.email : "",
+        contactName: user ? `${user.firstName} ${user.lastName}` : "",
+      },
+      conditionsAccepted: false,
       sectors: sectorsSelectList(this.$store.state.sectors),
       partnerTypes: this.$store.state.partnerTypes,
       economicModels: [
@@ -131,6 +129,16 @@ export default {
         {
           text: "Privé",
           value: "private",
+        },
+      ],
+      serviceCostOptions: [
+        {
+          text: "Oui",
+          value: true,
+        },
+        {
+          text: "Non",
+          value: false,
         },
       ],
       categories: [
