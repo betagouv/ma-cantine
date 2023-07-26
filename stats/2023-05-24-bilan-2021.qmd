@@ -12,6 +12,7 @@ format:
     toc: true
     toc-depth: 2
 execute:
+  warning: false
   cache: true
 ---
 
@@ -62,6 +63,7 @@ campagnes = {
 
 
 ```{python Import des données TD}
+#| echo: false
 # conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')} sslmode=require")
 # conn = psycopg2.connect(host=os.getenv('DB_HOST'), dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), sslmode="require")
 # conn.set_session(readonly=True)
@@ -110,7 +112,7 @@ for year in campagnes.keys():
 ```
 
 # Nettoyage et formattage des données
-Comparaison des dates de télédéclarations.
+Comparaison de la dynamique de télédéclarations lors des deux dernières campagnes. 
 ```{python Nettoyage des données}
 tds_ts =  {}
 for year in campagnes.keys():
@@ -122,12 +124,12 @@ for year in campagnes.keys():
 import matplotlib.pyplot as plt
 # Plot the superposed time series
 axe = 0
-fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 8))
+fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(8, 6))
 for year in tds_ts.keys():
 
     axes[axe].plot(tds_ts[year].index, tds_ts[year]['cmpt_td_2022'])
-    axes[axe].set_ylabel('Normalized Value')
-    axes[axe].set_title(f'Time Series {axe} (Year {year})')
+    axes[axe].set_ylabel('Nombre de télédéclaration')
+    axes[axe].set_title(f'Nombre de télédéclaration par semaine (Année {year})')
     axes[axe].legend()
     axes[axe].grid(True)
     axe += 1
