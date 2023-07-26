@@ -163,4 +163,7 @@ celerybeat-schedule.db
 celerybeat-schedule
 celerybeat-schedule.db
 
+# Jupyter
+stats/.jupyter_cache/
+
 notes/
