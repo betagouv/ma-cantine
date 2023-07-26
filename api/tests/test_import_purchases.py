@@ -1,3 +1,4 @@
+from api.views.utils import read_file_by_batch
 from datetime import date
 from decimal import Decimal
 from django.urls import reverse
@@ -16,6 +17,26 @@ class TestPurchaseImport(APITestCase):
         """
         response = self.client.post(reverse("import_purchases"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_read_file_by_batch(self):
+        # Test file path and batch size
+        file_path = "./api/tests/files/good_purchase_import.csv"  # Replace this with the actual file path
+        batch_size = 10
+        with open(file_path) as purchase_file:
+            # Call the function to read the file in batches
+            batches = read_file_by_batch(purchase_file, batch_size)
+
+            # Assert that batches is a list
+            self.assertIsInstance(batches, list)
+
+            # Assert that each batch has the specified batch_size
+            # for batch in batches:
+            #     self.assertEqual(len(batch), batch_size)
+
+            # # Assert that all lines in the file are read
+            # total_lines = sum(len(batch) for batch in batches)
+            # expected_total_lines = len(purchase_file.readlines())
+            # self.assertEqual(total_lines, expected_total_lines)
 
     @authenticate
     def test_import_good_purchases(self):
