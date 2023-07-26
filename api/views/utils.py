@@ -30,6 +30,10 @@ def update_change_reason_with_auth(view, object):
         update_change_reason(object, "Unknown")
 
 
+def read_file_by_batch(file, batches):
+    pass
+
+
 class MaCantineOrderingFilter(filters.OrderingFilter):
     """
     Allows filtering with camel case parameters. More info :
