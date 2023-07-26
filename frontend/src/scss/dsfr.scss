@@ -1,0 +1,84 @@
+// this file copies DSFR naming conventions
+
+// Typography
+// DSFR: https://www.systeme-de-design.gouv.fr/elements-d-interface/fondamentaux-de-l-identite-de-l-etat/typographie
+.fr-h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 3rem;
+  letter-spacing: normal;
+  text-transform: false
+}
+
+.fr-h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 2.5rem;
+  letter-spacing: normal;
+  text-transform: false
+}
+
+.fr-h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 2.25rem;
+  letter-spacing: normal;
+  text-transform: false
+}
+
+.fr-h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 2rem;
+  letter-spacing: normal;
+  text-transform: false
+}
+
+.fr-h5 {
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.75rem;
+  letter-spacing: normal;
+  text-transform: false
+}
+
+.fr-h6 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.75rem;
+  letter-spacing: normal;
+  text-transform: false
+}
+
+// NB: not all typographies added yet, if the one you need isn't here add it
+.fr-text {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5rem;
+  letter-spacing: normal;
+  text-transform: false
+}
+
+.fr-text-sm {
+  font-size: .875rem;
+  font-weight: 400;
+  line-height: 1.5rem;
+  letter-spacing: normal;
+  text-transform: false
+}
+
+.fr-button { // https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/bouton
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  letter-spacing: normal;
+  text-transform: false
+}
+
+.fr-text-xs {
+  font-size: .75rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  letter-spacing: .0333333333em;
+  text-transform: false
+}
