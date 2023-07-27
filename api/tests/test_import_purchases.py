@@ -20,8 +20,8 @@ class TestPurchaseImport(APITestCase):
 
     def test_read_file_by_batch(self):
         # Test file path and batch size
-        file_path = "./api/tests/files/good_purchase_import.csv"  # Replace this with the actual file path
-        batch_size = 10
+        file_path = "./api/tests/files/batch_purchase_import.csv"  # Replace this with the actual file path
+        batch_size = 2
         with open(file_path) as purchase_file:
             # Call the function to read the file in batches
             batches = read_file_by_batch(purchase_file, batch_size)
@@ -30,8 +30,8 @@ class TestPurchaseImport(APITestCase):
             self.assertIsInstance(batches, list)
 
             # Assert that each batch has the specified batch_size
-            # for batch in batches:
-            #     self.assertEqual(len(batch), batch_size)
+            for batch in batches:
+                self.assertEqual(len(batch), batch_size)
 
             # # Assert that all lines in the file are read
             # total_lines = sum(len(batch) for batch in batches)
