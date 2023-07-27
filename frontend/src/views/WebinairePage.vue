@@ -1,16 +1,22 @@
 <template>
-  <div>
-    <div v-if="mainVideo">
-      <div>HELLO WORLD: {{ webinaireUrlComponent }}</div>
-      <div>Video url : {{ mainVideo.video }}</div>
-      <div>
-        <router-link :to="{ name: 'WebinairePage', params: { webinaireUrlComponent: '2--notexist' } }">
-          Next video
-        </router-link>
-      </div>
+  <div class="text-left">
+    <h1 v-if="mainVideo && mainVideo.title" class="font-weight-black text-h5 mt-8">{{ mainVideo.title }}</h1>
+    <div>
+      <video
+        :title="mainVideo.title"
+        style="background: #333;"
+        :poster="mainVideo.thumbnail"
+        controls
+        class="player"
+        :id="`video-${mainVideo.id}`"
+      >
+        <source :src="mainVideo.video" />
+        Votre navigateur ne peut pas afficher des vidéos.
+      </video>
     </div>
-    <div v-else>
-      Video not found!
+    <p v-if="mainVideo && mainVideo.description">{{ mainVideo.description }}</p>
+    <div v-if="suggestedVideos && suggestedVideos.length > 0">
+      <h2 class="text-h6">Autres webinaires</h2>
     </div>
   </div>
 </template>
@@ -25,13 +31,26 @@ export default {
     },
   },
   computed: {
+    videoId() {
+      return parseInt(this.webinaireUrlComponent.split("--")[0])
+    },
     videoTutorials() {
       return this.$store.state.videoTutorials
     },
     mainVideo() {
-      const id = parseInt(this.webinaireUrlComponent.split("--")[0])
-      return this.videoTutorials.find((x) => x.id === id)
+      return this.videoTutorials.find((x) => x.id === this.videoId)
+    },
+    suggestedVideos() {
+      return this.videoTutorials.filter((x) => x.id !== this.videoId)
     },
   },
 }
 </script>
+
+<style scoped>
+.player {
+  height: 400px;
+  overflow: hidden;
+  width: 100%;
+}
+</style>
