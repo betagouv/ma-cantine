@@ -13,6 +13,11 @@ class Partner(models.Model):
         PUBLIC = "public", "Public"
         PRIVATE = "private", "Privé"
 
+    class GratuityOption(models.TextChoices):
+        FREE = "free", "Gratuit"
+        PAID = "paid", "Payant"
+        MIX = "mix", "Mixte"
+
     class PartnerCategory(models.TextChoices):
         APPRO = "appro", "Améliorer ma part de bio / durable"
         PLASTIC = "plastic", "Substituer mes plastiques"
@@ -57,10 +62,12 @@ class Partner(models.Model):
         verbose_name="Le partenaire est présent dans tout le territoire national (tous les departements)",
     )
     sectors = models.ManyToManyField(Sector, blank=True, verbose_name="secteurs d'activité")
-    free = models.BooleanField(
-        blank=True,
+    gratuity_option = models.CharField(
+        max_length=50,
+        choices=GratuityOption.choices,
         null=True,
-        verbose_name="Gratuit",
+        blank=True,
+        verbose_name="Type d'offre",
     )
     economic_model = models.CharField(
         max_length=50,
