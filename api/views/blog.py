@@ -5,6 +5,8 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from api.serializers import BlogPostSerializer
 from data.models import BlogPost
+from django_filters import rest_framework as django_filters
+from .utils import UnaccentSearchFilter
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +37,9 @@ class BlogPostsView(ListAPIView):
     serializer_class = BlogPostSerializer
     queryset = BlogPost.objects.filter(published=True)
     pagination_class = BlogPostsPagination
+
+    filter_backends = [django_filters.DjangoFilterBackend, UnaccentSearchFilter]
+    search_fields = ["title", "tagline", "body"]
 
     def get_queryset(self):
         queryset = self.queryset
