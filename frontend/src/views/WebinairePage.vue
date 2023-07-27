@@ -9,6 +9,9 @@
         </router-link>
       </div>
     </div>
+    <div v-else>
+      Video not found!
+    </div>
   </div>
 </template>
 
@@ -29,14 +32,6 @@ export default {
       const id = parseInt(this.webinaireUrlComponent.split("--")[0])
       return this.videoTutorials.find((x) => x.id === id)
     },
-  },
-  watch: {
-    mainVideo(newVideo) {
-      if (!newVideo) this.$router.push({ name: "NotFound" })
-    },
-  },
-  beforeMount() {
-    if (!this.mainVideo) this.$router.push({ name: "NotFound" })
   },
 }
 </script>
