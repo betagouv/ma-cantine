@@ -1,10 +1,11 @@
 from collections import OrderedDict
 import logging
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from api.serializers import PartnerSerializer, PartnerShortSerializer
-from data.models import Partner
+from data.models import Partner, Sector
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +15,7 @@ class PartnersPagination(LimitOffsetPagination):
     max_limit = 30
     types = []
     departments = []
+    sectors = []
 
     def paginate_queryset(self, queryset, request, view=None):
         published_partners = Partner.objects.filter(published=True)
@@ -26,6 +28,9 @@ class PartnersPagination(LimitOffsetPagination):
                 for department in depList:
                     if department not in self.departments:
                         self.departments.append(department)
+        self.sectors = (
+            Sector.objects.filter(partner__in=list(published_partners)).values_list("id", flat=True).distinct()
+        )
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
@@ -36,6 +41,7 @@ class PartnersPagination(LimitOffsetPagination):
                     ("results", data),
                     ("types", self.types),
                     ("departments", self.departments),
+                    ("sectors", self.sectors),
                 ]
             )
         )
@@ -46,6 +52,8 @@ class PartnersView(ListAPIView):
     serializer_class = PartnerShortSerializer
     queryset = Partner.objects.filter(published=True)
     pagination_class = PartnersPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["sectors"]
 
     def get_queryset(self):
         queryset = self.queryset

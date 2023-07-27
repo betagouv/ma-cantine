@@ -35,7 +35,7 @@
         </v-col>
       </v-row>
     </v-item-group>
-    <div class="d-flex align-center mt-4 pl-0 pl-md-6">
+    <div class="d-flex align-center mt-8 pl-0">
       <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
         <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
           Filtres
@@ -54,7 +54,7 @@
       <v-divider v-if="!showFilters"></v-divider>
     </div>
     <v-expand-transition>
-      <v-sheet class="pa-6 text-left mt-2 mx-md-6" v-show="showFilters" rounded :outlined="showFilters">
+      <v-sheet class="pa-6 text-left mt-2 ma-0" v-show="showFilters" rounded :outlined="showFilters">
         <v-row>
           <v-col cols="12" sm="6" v-if="$vuetify.breakpoint.smAndDown">
             <label
@@ -98,12 +98,36 @@
               class="mt-1"
             />
           </v-col>
+          <v-col cols="12" sm="6">
+            <label
+              for="select-sector"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': filters.sectors.value && !!filters.sectors.value.length,
+              }"
+            >
+              Secteur d'activité
+            </label>
+            <DsfrSelect
+              v-model="filters.sectors.value"
+              multiple
+              :items="sectors"
+              clearable
+              hide-details
+              id="select-sector"
+              placeholder="Tous les secteurs"
+              class="mt-1"
+            />
+          </v-col>
         </v-row>
         <v-row>
           <v-col cols="12" sm="6">
             <label
               for="select-type"
-              :class="{ 'text-body-2': true, 'active-filter-label': filters.type.value && !!filters.type.value.length }"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': filters.type.value && !!filters.type.value.length,
+              }"
             >
               Type
             </label>
@@ -124,42 +148,44 @@
         </v-row>
       </v-sheet>
     </v-expand-transition>
-    <v-row class="mt-3" v-if="!!partnerCount">
-      <v-spacer></v-spacer>
-      <v-col cols="12" sm="6">
-        <DsfrPagination
-          v-model="page"
-          :length="Math.ceil(partnerCount / limit)"
-          :total-visible="7"
-          v-if="!!partnerCount"
-        />
-      </v-col>
-      <v-spacer></v-spacer>
-    </v-row>
-    <v-row v-if="!!partnerCount">
-      <v-col v-for="partner in visiblePartners" :key="partner.id" style="height: auto;" cols="12" sm="6" md="4">
-        <PartnerCard :partner="partner" />
-      </v-col>
-      <v-col style="height: auto;" cols="12" sm="6" md="4">
-        <NewPartnerCard />
-      </v-col>
-    </v-row>
-    <v-row v-else>
-      <v-col cols="12">
-        <div class="d-flex flex-column align-center py-0">
-          <p class="text-body-1 grey--text text--darken-1 my-2">
-            <v-icon class="mr-1 mt-n1">mdi-inbox-remove</v-icon>
-            Nous n'avons pas trouvé des acteurs avec ces paramètres
-          </p>
-          <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
-            Désactiver tous les filtres
-          </v-btn>
-        </div>
-      </v-col>
-      <v-col style="height: auto;" cols="12" sm="6" md="4">
-        <NewPartnerCard />
-      </v-col>
-    </v-row>
+    <div class="mt-3">
+      <v-row v-if="!!partnerCount">
+        <v-spacer></v-spacer>
+        <v-col cols="12" sm="6">
+          <DsfrPagination
+            v-model="page"
+            :length="Math.ceil(partnerCount / limit)"
+            :total-visible="7"
+            v-if="!!partnerCount"
+          />
+        </v-col>
+        <v-spacer></v-spacer>
+      </v-row>
+      <v-row v-if="!!partnerCount">
+        <v-col v-for="partner in visiblePartners" :key="partner.id" style="height: auto;" cols="12" sm="6" md="4">
+          <PartnerCard :partner="partner" />
+        </v-col>
+        <v-col style="height: auto;" cols="12" sm="6" md="4">
+          <NewPartnerCard />
+        </v-col>
+      </v-row>
+      <v-row v-else>
+        <v-col cols="12">
+          <div class="d-flex flex-column align-center py-0">
+            <p class="text-body-1 grey--text text--darken-1 my-2">
+              <v-icon class="mr-1 mt-n1">mdi-inbox-remove</v-icon>
+              Nous n'avons pas trouvé des acteurs avec ces paramètres
+            </p>
+            <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
+              Désactiver tous les filtres
+            </v-btn>
+          </div>
+        </v-col>
+        <v-col style="height: auto;" cols="12" sm="6" md="4">
+          <NewPartnerCard />
+        </v-col>
+      </v-row>
+    </div>
 
     <v-divider class="mt-12" id="en-savoir-plus"></v-divider>
 
@@ -192,7 +218,7 @@ import PartnerCard from "@/views/PartnersPage/PartnerCard"
 import NewPartnerCard from "@/views/PartnersPage/NewPartnerCard"
 import GeneralContactForm from "@/components/GeneralContactForm"
 import ReferencingInfo from "./ReferencingInfo"
-import { getObjectDiff } from "@/utils"
+import { getObjectDiff, sectorsSelectList } from "@/utils"
 import jsonDepartments from "@/departments.json"
 
 export default {
@@ -228,6 +254,14 @@ export default {
           param: "departement",
           value: [],
           default: [],
+        },
+        sectors: {
+          param: "secteurs",
+          value: [],
+          default: [],
+          transformToFrontend(values) {
+            return Array.isArray(values) ? values.map((v) => +v) : +values
+          },
         },
         type: {
           param: "type",
@@ -278,6 +312,7 @@ export default {
         text: `${x.departmentCode} - ${x.departmentName}`,
         value: x.departmentCode,
       })),
+      sectors: [],
       typeItems: [],
     }
   },
@@ -326,6 +361,7 @@ export default {
           this.visiblePartners = response.results
           this.typeItems = response.types
           this.setDepartments(response.departments)
+          this.setSectors(response.sectors)
         })
         .catch((e) => {
           this.partnerCount = 0
@@ -335,6 +371,7 @@ export default {
     populateParameters() {
       Object.values(this.filters).forEach((f) => {
         f.value = this.$route.query[f.param]
+        if (f.transformToFrontend) f.value = f.transformToFrontend(f.value)
       })
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
       this.fetchCurrentPage()
@@ -387,6 +424,18 @@ export default {
     },
     setDepartments(enabledDepartmentIds) {
       this.departmentItems = this.setLocations(enabledDepartmentIds, jsonDepartments, "department", "départements")
+    },
+    setSectors(enabledSectorIds) {
+      // so few partners and so many sectors that I decided to filter the sectors
+      // list so that the valid sectors don't get lost in the sea of unusable sectors
+      this.sectors = sectorsSelectList(this.$store.state.sectors)
+        .filter((sector) => enabledSectorIds.indexOf(sector.id) > -1)
+        .map((x) => {
+          return {
+            text: x.name,
+            value: x.id,
+          }
+        })
     },
   },
   watch: {

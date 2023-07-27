@@ -1,144 +1,158 @@
 {
   "fields": [
     {
-      "name": "id",
-      "type": "integer",
-      "title": "Identifiant Télédéclaration",
       "description": "Identifiant unique de la télédéclaration",
-      "example": "15572"
+      "example": "15572",
+      "name": "id",
+      "title": "Identifiant Télédéclaration",
+      "type": "integer"
     },
     {
-      "name": "applicant_id",
-      "type": "integer",
-      "title": "Identifiant de",
       "description": "Identifiant unique de la personne ayant télédéclaré. Cette personne est rattachée à la cantine référencée par le champ 'canteen_id'",
-      "example": "2717"
-    },
-    {
-      "name": "teledeclaration_mode",
-      "type": "string",
-      "title": "Mode de télédéclaration",
-      "description": "Mode de télédéclaration. Il existe 4 types différents : CENTRAL_APPRO (cuisine centrale déclarant les données d'appro pour ses cuisines satellites), CENTRAL_ALL (cuisine centrale déclarant toutes les données EGAlim pour ses cuisines satellites), SITE (cantine déclarant ses propres données), SATELLITE_WITHOUT_APPRO (cantine satellite dont les données d'appro sont déclarées par la cuisine centrale). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
-      "example": "SITE"
-    },
-    {
-      "name": "creation_date",
-      "type": "string",
-      "title": "Date de création",
-      "description": "Date de création de la télédéclaration",
-      "example": "2019-04-01T00:00:00.000Z"
-    },
-    {
-      "name": "year",
-      "type": "integer",
-      "title": "Année",
-      "description": "Année de la télédéclaration",
-      "example": "2022"
-    },
-    {
-      "name": "version",
-      "type": "string",
-      "title": "Version",
-      "description": "Version de la télédéclaration",
-      "example": "9"
-    },
-    {
-      "name": "canteen_id",
-      "type": "integer",
-      "title": "Identifiant Cantine",
-      "description": "Identifiant unique de la cantine ayant télédéclaré",
-      "example": "15572"
-    },
-    {
-      "name": "canteen_siret",
-      "type": "string",
+      "example": "2717",
+      "name": "applicant_id",
       "title": "Identifiant de",
+      "type": "integer"
+    },
+    {
+      "description": "Mode de télédéclaration. Il existe 4 types différents : CENTRAL_APPRO (cuisine centrale déclarant les données d'appro pour ses cuisines satellites), CENTRAL_ALL (cuisine centrale déclarant toutes les données EGAlim pour ses cuisines satellites), SITE (cantine déclarant ses propres données), SATELLITE_WITHOUT_APPRO (cantine satellite dont les données d'appro sont déclarées par la cuisine centrale). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
+      "example": "SITE",
+      "name": "teledeclaration_mode",
+      "title": "Mode de télédéclaration",
+      "type": "string"
+    },
+    {
+      "description": "Date de création de la télédéclaration",
+      "example": "2019-04-01T00:00:00.000Z",
+      "name": "creation_date",
+      "title": "Date de création",
+      "type": "string"
+    },
+    {
+      "description": "Année de la télédéclaration",
+      "example": "2022",
+      "name": "year",
+      "title": "Année",
+      "type": "integer"
+    },
+    {
+      "description": "Version de la télédéclaration",
+      "example": "9",
+      "name": "version",
+      "title": "Version",
+      "type": "string"
+    },
+    {
+      "description": "Identifiant unique de la cantine ayant télédéclaré",
+      "example": "15572",
+      "name": "canteen_id",
+      "title": "Identifiant Cantine",
+      "type": "integer"
+    },
+    {
       "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine ayant télédéclaré",
-      "example": "78542453200014"
+      "example": "78542453200014",
+      "name": "canteen_siret",
+      "title": "Identifiant de",
+      "type": "string"
     },
     {
-      "name": "canteen_name",
-      "type": "string",
-      "title": "Nom de la cantine",
       "description": "Nom de la cantine ayant télédéclaré",
-      "example": "ASS GEST STE FOY INSTIT ST DOMINIQUE"
+      "example": "ASS GEST STE FOY INSTIT ST DOMINIQUE",
+      "name": "canteen_name",
+      "title": "Nom de la cantine",
+      "type": "string"
     },
     {
-      "name": "cantine_central_kitchen_siret",
-      "type": "string",
-      "title": "Identifiant de la cuisine centrale",
       "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cuisine centrale a la quelle la cantine est rattachée",
-      "example": ""
+      "example": "",
+      "name": "cantine_central_kitchen_siret",
+      "title": "Identifiant de la cuisine centrale",
+      "type": "string"
     },
     {
-      "name": "canteen_department",
-      "type": "string",
-      "title": "Code Département",
       "description": "Code Insee du département dans lequel se trouve la cantine",
-      "example": "50"
-    },
-    {
-      "name": "canteen_region",
-      "type": "string",
+      "example": "50",
+      "name": "canteen_department",
       "title": "Code Département",
+      "type": "string"
+    },
+    {
+      "description": "Libellé du département dans lequel se trouve la cantine",
+      "example": "Finistère",
+      "name": "canteen_department_lib",
+      "title": "Département Libellé",
+      "type": "string"
+    },
+    {
       "description": "Code Insee de la région dans lequel se trouve la cantine",
-      "example": "28"
+      "example": "53",
+      "name": "canteen_region",
+      "title": "Code Département",
+      "type": "string"
     },
     {
-      "name": "cantine_satellite_canteens_count",
-      "type": "integer",
-      "title": "Nombre de cantines satellites",
+      "description": "Libellé de la région dans lequel se trouve la cantine",
+      "example": "Bretagne",
+      "name": "canteen_region_lib",
+      "title": "Région libellé",
+      "type": "string"
+    },
+    {
       "description": "Nombre de cantines satellites pour une cantine qui produit les repas sur place",
-      "example": "0"
+      "example": "0",
+      "name": "cantine_satellite_canteens_count",
+      "title": "Nombre de cantines satellites",
+      "type": "integer"
     },
     {
-      "name": "cantine_economic_model",
-      "type": "string",
-      "title": "Modèle Economique de la cantine",
       "description": "Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).",
-      "example": "public"
+      "example": "public",
+      "name": "cantine_economic_model",
+      "title": "Modèle Economique de la cantine",
+      "type": "string"
     },
     {
-      "name": "cantine_management_type",
-      "type": "string",
-      "title": "Type de Management de la cantine",
       "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée. Si la valeur est 'concédée', la délégation peut être totale ou partielle",
-      "example": "conceded"
+      "example": "conceded",
+      "name": "cantine_management_type",
+      "title": "Type de Management de la cantine",
+      "type": "string"
     },
     {
-      "name": "cantine_production_type",
-      "type": "string",
-      "title": "Type de Production de la cantine",
       "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
-      "example": "central"
+      "example": "central",
+      "name": "cantine_production_type",
+      "title": "Type de Production de la cantine",
+      "type": "string"
     },
     {
-      "name": "canteen_sectors",
-      "type": "array",
-      "title": "Secteurs",
       "description": "Liste définissant les secteurs d'activités concernés par le télédéclaration. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
-      "example": "[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]"
+      "example": "[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]",
+      "name": "canteen_sectors",
+      "title": "Secteurs",
+      "type": "array"
     },
     {
-      "name": "canteen_line_ministry",
-      "type": "string",
-      "title": "Ministère de tutelle",
       "description": "Ministère de tutelle de la cantine, s'il y en a un",
-      "example": "Ministère de l'Education Nationale"
+      "example": "Ministère de l'Education Nationale",
+      "name": "canteen_line_ministry",
+      "title": "Ministère de tutelle",
+      "type": "string"
     },
     {
-      "name": "teledeclaration_ratio_bio",
-      "type": "float",
-      "title": "Télédéclaration Ratio Bio",
       "description": "Part du bio dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)",
-      "example": "0.1"
+      "example": "0.1",
+      "name": "teledeclaration_ratio_bio",
+      "title": "Télédéclaration Ratio Bio",
+      "type": "float"
     },
     {
-      "name": "teledeclaration_ratio_egalim_hors_bio",
-      "type": "float",
-      "title": "Télédéclaration Ratio Bio",
       "description": "Part du bio dans les achats alimentaires de l'année",
-      "example": "0.1"
+      "example": "0.1",
+      "name": "teledeclaration_ratio_egalim_hors_bio",
+      "title": "Télédéclaration Ratio Bio",
+      "type": "float"
     }
   ]
 }
