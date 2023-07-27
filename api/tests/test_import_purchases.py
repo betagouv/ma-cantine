@@ -20,8 +20,8 @@ class TestPurchaseImport(APITestCase):
 
     def test_read_file_by_batch(self):
         # Test file path and batch size
-        file_path = "./api/tests/files/batch_purchase_import.csv"  # Replace this with the actual file path
-        batch_size = 2
+        file_path = "./api/tests/files/good_purchase_import.csv"  # Replace this with the actual file path
+        batch_size = 1
         with open(file_path) as purchase_file:
             # Call the function to read the file in batches
             batches = read_file_by_batch(purchase_file, batch_size)

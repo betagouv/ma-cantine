@@ -29,6 +29,19 @@ class ImportPurchasesView(APIView):
         self.file = None
         super().__init__(**kwargs)
 
+    def process_file(self, file_path):
+        hash = hashlib.md5()
+        block_size = 10
+        with open(file_path, 'rb') as f:
+            while True:
+                chunk = f.read(block_size)
+                if not chunk:
+                    break
+                hash.update(chunk)
+        # Check
+        self._check_duplication(hash)
+        self._treat_csv_file()
+
     def post(self, request):
         self.start = time.time()
         logger.info("Purchase bulk import started")
@@ -36,10 +49,8 @@ class ImportPurchasesView(APIView):
             with transaction.atomic():
                 self.file = request.data["file"]
                 self._verify_file_size()
-                for chunk in pd.read_csv(self.file):
-                    self.file = self.file.read()
-                    self._check_duplication()
-                    self._treat_csv_file()
+
+                self.process_file(self.file)
 
                 if self.errors:
                     raise IntegrityError()
@@ -73,11 +84,12 @@ class ImportPurchasesView(APIView):
         if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
-    def _check_duplication(self):
-        m = hashlib.md5()
-        m.update(self.file)
-        self.file_digest = m.hexdigest()
-        matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
+    def _check_duplication(self, m):
+        try:
+            self.file_digest = m.hexdigest()
+            matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
+        except Exception as e:
+            print(e)
         if matching_purchases.exists():
             self.purchases = matching_purchases.all()
             raise ValidationError("Ce fichier a déjà été utilisé pour un import")
