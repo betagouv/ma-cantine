@@ -36,9 +36,10 @@ class ImportPurchasesView(APIView):
             with transaction.atomic():
                 self.file = request.data["file"]
                 self._verify_file_size()
-                self.file = self.file.read()
-                self._check_duplication()
-                self._treat_csv_file()
+                for chunk in pd.read_csv(self.file):
+                    self.file = self.file.read()
+                    self._check_duplication()
+                    self._treat_csv_file()
 
                 if self.errors:
                     raise IntegrityError()
