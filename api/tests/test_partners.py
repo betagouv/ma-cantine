@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import PartnerFactory, PartnerTypeFactory
+from data.factories import PartnerFactory, PartnerTypeFactory, SectorFactory
 
 
 class TestPartnersApi(APITestCase):
@@ -9,6 +9,9 @@ class TestPartnersApi(APITestCase):
         """
         Returns partners and the types that are in use therefore available for filtering
         """
+        sector_1 = SectorFactory.create()
+        sector_2 = SectorFactory.create()
+        sector_3 = SectorFactory.create()
         type = PartnerTypeFactory.create(name="Test type")
         type_2 = PartnerTypeFactory.create(name="Test type 2")
         PartnerTypeFactory.create(name="Unused type")
@@ -18,8 +21,10 @@ class TestPartnersApi(APITestCase):
             PartnerFactory.create(departments=None, published=True),
         ]
         partners[0].types.add(type)
+        partners[0].sectors.add(sector_1)
         partners[1].types.add(type)  # add same type to two different partners to check deduplication
         partners[1].types.add(type_2)
+        partners[1].sectors.add(sector_2)
         # don't add type to third partner to check null value filtering
         response = self.client.get(reverse("partners_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -41,6 +46,11 @@ class TestPartnersApi(APITestCase):
         self.assertIn("02", departments)
         self.assertIn("11", departments)
         self.assertEqual(len(departments), 3)
+
+        sectors = body.get("sectors", [])
+        self.assertIn(sector_1.id, sectors)
+        self.assertIn(sector_2.id, sectors)
+        self.assertNotIn(sector_3.id, sectors)
 
     def test_type_filter(self):
         """
