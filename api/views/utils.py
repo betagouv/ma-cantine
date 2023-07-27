@@ -30,8 +30,14 @@ def update_change_reason_with_auth(view, object):
         update_change_reason(object, "Unknown")
 
 
-def read_file_by_batch(file, batches):
-    pass
+def read_file_by_batch(file, batch_size):
+    batches = []
+    while True:
+        batch = file.readlines(batch_size)
+        if not batch:
+            break
+        batches.append(batch)
+    return batches
 
 
 class MaCantineOrderingFilter(filters.OrderingFilter):
