@@ -30,7 +30,7 @@ class PartnerAdmin(admin.ModelAdmin):
         "departments",
         "national",
         "sectors",
-        "free",
+        "gratuity_option",
         "economic_model",
         "published",
     )

@@ -4,7 +4,6 @@ from data.models import Partner
 
 
 class PartnerShortSerializer(serializers.ModelSerializer):
-
     types = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
     image = Base64ImageField(required=False, allow_null=True)
 
@@ -21,13 +20,12 @@ class PartnerShortSerializer(serializers.ModelSerializer):
             "types",
             "departments",
             "national",
-            "free",
+            "gratuity_option",
             "economic_model",
         )
 
 
 class PartnerSerializer(serializers.ModelSerializer):
-
     types = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
     image = Base64ImageField(required=False, allow_null=True)
 
