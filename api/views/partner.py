@@ -67,10 +67,9 @@ class PartnersView(ListAPIView):
         if departments:
             queryset = queryset.filter(departments__overlap=departments)
             # TODO: add in national option ?
-        only_free = self.request.query_params.get("free", None)
-        # free AND/OR public ?
-        if only_free:
-            queryset = queryset.filter(free=True)
+        gratuityOptions = self.request.query_params.getlist("gratuityOption", [])
+        if gratuityOptions:
+            queryset = queryset.filter(gratuity_option__in=gratuityOptions)
         return queryset
 
 

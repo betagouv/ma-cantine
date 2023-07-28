@@ -44,6 +44,6 @@ class PartnerSerializer(serializers.ModelSerializer):
             "types",
             "departments",
             "national",
-            "free",
+            "gratuity_option",
             "economic_model",
         )
