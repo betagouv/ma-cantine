@@ -114,7 +114,7 @@ tzdata==2023.3
 tzlocal==5.0.1
 uritemplate==4.1.1
 uritools==4.0.1
-urllib3==1.26.15
+urllib3==2.0.4
 vine==5.0.0
 wcwidth==0.2.6
 webencodings==0.5.1
