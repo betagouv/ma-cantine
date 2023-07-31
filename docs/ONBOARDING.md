@@ -2,6 +2,8 @@
 
 ## Mise en place de l'environnement dev
 
+Please note that the `staging` and `main` branches are protected and all commits must come through a pull request.
+
 ### À installer localement
 
 - [Python3](https://www.python.org/downloads/) (de préference 3.8)

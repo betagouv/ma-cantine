@@ -55,6 +55,7 @@ import SiteMap from "@/views/SiteMap"
 import DeveloperPage from "@/views/DeveloperPage"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
+import WebinairePage from "@/views/WebinairePage"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -566,6 +567,12 @@ const routes = [
     meta: {
       title: "Mesures de notre impact",
     },
+  },
+  {
+    path: "/webinaires/:webinaireUrlComponent",
+    name: "WebinairePage",
+    component: WebinairePage,
+    props: true,
   },
 ]
 

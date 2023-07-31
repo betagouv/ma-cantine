@@ -219,9 +219,10 @@ export default new Vuex.Store({
         })
     },
 
-    fetchBlogPosts(context, { limit = 6, offset, tag }) {
+    fetchBlogPosts(context, { limit = 6, offset, tag, search }) {
       let url = `/api/v1/blogPosts/?limit=${limit}&offset=${offset}`
       if (tag) url += `&tag=${tag}`
+      if (search) url += `&search=${search}`
       return fetch(url)
         .then(verifyResponse)
         .then((response) => {
