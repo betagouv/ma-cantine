@@ -5,7 +5,7 @@ from data.factories import PartnerTypeFactory
 
 
 class TestPartnerTypeApi(APITestCase):
-    def test_get_sectors(self):
+    def test_get_partner_types(self):
         """
         The API should return all partner types
         """
