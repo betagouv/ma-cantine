@@ -90,7 +90,6 @@
         v-model="partner.free"
         :rules="[validators.required]"
       />
-      <!-- TODO: actor region/department OR national -->
       <DsfrTextarea
         v-model="partner.longDescription"
         label="Comment présentez-vous en détail votre activité ?"
