@@ -70,7 +70,7 @@ Pillow==9.5.0
 pipdeptree==2.7.1
 platformdirs==3.8.0
 pluggy==1.0.0
-prompt-toolkit==3.0.38
+prompt-toolkit==3.0.39
 psycopg2==2.9.6
 py==1.11.0
 pycparser==2.21
