@@ -14,8 +14,6 @@ logger = logging.getLogger(__name__)
     ),
 )
 class PartnerTypeListView(ListAPIView):
-    include_in_documentation = True
-    # required_scopes = ["canteen"]
     model = PartnerType
     serializer_class = PartnerTypeSerializer
     queryset = PartnerType.objects.all()
