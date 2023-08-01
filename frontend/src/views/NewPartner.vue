@@ -55,7 +55,7 @@
         />
       </v-col>
       <DsfrRadio
-        label="Est-ce que vous offrez des services gratuits ?"
+        label="Quel type de service offrez-vous ?"
         :items="serviceCostOptions"
         v-model="partner.free"
         :rules="[validators.required]"
@@ -131,15 +131,18 @@ export default {
           value: "private",
         },
       ],
-      // TODO: update these options and backend to include mixed payment option
       serviceCostOptions: [
         {
-          text: "Oui",
-          value: true,
+          text: "Des services gratuits",
+          value: "free",
         },
         {
-          text: "Non",
-          value: false,
+          text: "Des services payants",
+          value: "paid",
+        },
+        {
+          text: "Les deux : services gratuits et payants",
+          value: "mix",
         },
       ],
       categories: [
