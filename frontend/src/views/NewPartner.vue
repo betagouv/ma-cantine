@@ -107,7 +107,6 @@
           :rules="[validators.required, validators.urlOrEmpty]"
         />
       </v-col>
-      <!-- TODO: optional image field -->
       <v-row>
         <v-col cols="12" sm="6">
           <DsfrTextField v-model="partner.contactEmail" label="Votre email" :rules="[validators.email]" />
