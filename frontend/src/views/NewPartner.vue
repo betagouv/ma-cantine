@@ -10,13 +10,47 @@
       Sauf mention contraire “(optionnel)” dans le label, tous les champs sont obligatoires
     </p>
     <v-form v-model="formIsValid" ref="form" @submit.prevent class="mt-8">
-      <v-col class="pa-0" cols="12" sm="6">
-        <DsfrTextField
-          v-model="partner.name"
-          label="Nom de votre structure / organisation"
-          :rules="[validators.required]"
-        />
-      </v-col>
+      <v-row>
+        <v-col cols="12" sm="6">
+          <DsfrTextField
+            v-model="partner.name"
+            label="Nom de votre structure / organisation"
+            :rules="[validators.required]"
+          />
+          <DsfrRadio
+            label="Secteur économique"
+            :items="economicModels"
+            v-model="partner.economicModel"
+            :rules="[validators.required]"
+          />
+        </v-col>
+        <v-col class="pa-0 pa-sm-10" cols="12" sm="6">
+          <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onImageChanged" id="logo" />
+          <v-card
+            @click="onImageUploadClick"
+            rounded
+            color="grey lighten-5"
+            class="fill-height"
+            style="overflow: hidden;"
+            min-height="130"
+          >
+            <div v-if="partner.image" class="d-flex flex-column fill-height">
+              <v-spacer></v-spacer>
+              <v-img contain :src="partner.image" max-height="135"></v-img>
+              <v-spacer></v-spacer>
+            </div>
+            <div v-else class="d-flex flex-column align-center justify-center fill-height">
+              <v-icon class="pb-2">mdi-shape</v-icon>
+              <p class="ma-0 text-center font-weight-bold body-2 grey--text text--darken-2">Ajoutez une image</p>
+            </div>
+            <div v-if="partner.image" style="position: absolute; top: 10px; left: 10px;">
+              <v-btn fab small @click.stop.prevent="changeImage(null)">
+                <v-icon aria-label="Supprimer l'image" aria-hidden="false" color="red">$delete-line</v-icon>
+              </v-btn>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
       <v-col class="pa-0" cols="12" md="9">
         <DsfrSelect
           multiple
@@ -27,12 +61,6 @@
           :rules="[validators.required]"
         />
       </v-col>
-      <DsfrRadio
-        label="Secteur économique"
-        :items="economicModels"
-        v-model="partner.economicModel"
-        :rules="[validators.required]"
-      />
       <v-col class="pa-0" cols="12" md="7">
         <DsfrSelect
           label="Type d'acteur"
@@ -104,7 +132,7 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrRadio from "@/components/DsfrRadio"
-import { sectorsSelectList } from "@/utils"
+import { sectorsSelectList, toBase64 } from "@/utils"
 
 export default {
   name: "NewPartner",
@@ -198,6 +226,21 @@ export default {
         this.$router.push({ name: "PartnersHome" })
       })
       // TODO: rate limit requests?
+    },
+    onImageUploadClick() {
+      this.$refs.uploader.click()
+    },
+    onImageChanged(e) {
+      this.changeImage(e.target.files[0])
+    },
+    changeImage(file) {
+      if (!file) {
+        this.partner.image = null
+        return
+      }
+      toBase64(file, (base64) => {
+        this.$set(this.partner, "image", base64)
+      })
     },
   },
 }
