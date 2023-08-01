@@ -47,3 +47,31 @@ class PartnerSerializer(serializers.ModelSerializer):
             "gratuity_option",
             "economic_model",
         )
+
+
+class PartnerContactSerializer(serializers.ModelSerializer):
+    types = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
+    image = Base64ImageField(required=False, allow_null=True)
+
+    class Meta:
+        model = Partner
+        fields = (
+            "id",
+            "creation_date",
+            "modification_date",
+            "name",
+            "categories",
+            "short_description",
+            "long_description",
+            "image",
+            "website",
+            "types",
+            "departments",
+            "national",
+            "gratuity_option",
+            "economic_model",
+            "contact_email",
+            "contact_name",
+            "contact_message",
+            "contact_phone_number",
+        )

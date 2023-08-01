@@ -12,15 +12,8 @@
     <v-card-text>
       Contribuez à notre initiative de référencement !
     </v-card-text>
-    <v-btn
-      class="ma-4 mt-2"
-      color="primary"
-      href="https://startupdetat.typeform.com/to/JhhsMCYC"
-      target="_blank"
-      rel="noopener"
-    >
+    <v-btn class="ma-4 mt-2" color="primary" :to="{ name: 'NewPartner' }">
       Me recenser
-      <v-icon small class="ml-2">mdi-open-in-new</v-icon>
     </v-btn>
   </v-sheet>
 </template>

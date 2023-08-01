@@ -24,7 +24,8 @@ from api.views import AddManagerView, RemoveManagerView
 from api.views import ImportSimpleDiagnosticsView, ImportCompleteDiagnosticsView
 from api.views import TeledeclarationCreateView, TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
-from api.views import UserCanteenPreviews, CanteenLocationsView, PartnerView, PartnersView
+from api.views import UserCanteenPreviews, CanteenLocationsView
+from api.views import PartnerView, PartnersView, PartnerTypeListView
 from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView, ImportPurchasesView
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
 from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, UndoClaimCanteenView, SatelliteListCreateView
@@ -73,6 +74,7 @@ urlpatterns = {
     ),
     path("canteenStatistics/", CanteenStatisticsView.as_view(), name="canteen_statistics"),
     path("sectors/", SectorListView.as_view(), name="sectors_list"),
+    path("partnerTypes/", PartnerTypeListView.as_view(), name="partner_types_list"),
     path("blogPosts/", BlogPostsView.as_view(), name="blog_posts_list"),
     path("blogPosts/<int:pk>", BlogPostView.as_view(), name="single_blog_post"),
     path("partners/", PartnersView.as_view(), name="partners_list"),

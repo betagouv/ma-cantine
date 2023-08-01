@@ -1,5 +1,6 @@
 from urllib.parse import quote
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from ckeditor_uploader.fields import RichTextUploadingField
 from data.department_choices import Department
 from data.utils import optimize_image
@@ -78,6 +79,11 @@ class Partner(models.Model):
     )
     published = models.BooleanField(default=False, verbose_name="publié")
 
+    contact_email = models.EmailField(_("email address"), blank=True, null=True)
+    contact_name = models.TextField(verbose_name="Nom de contact", blank=True, null=True)
+    contact_message = models.TextField(verbose_name="Commentaires sur la demande", blank=True, null=True)
+    contact_phone_number = models.CharField("Numéro téléphone", max_length=50, null=True, blank=True)
+
     @property
     def url_slug(self):
         return f"{self.id}--{quote(self.name)}"
@@ -91,3 +97,6 @@ class Partner(models.Model):
         if self.image:
             self.image = optimize_image(self.image, self.image.name, max_image_size)
         super(Partner, self).save(force_insert, force_update, using, update_fields)
+
+    def __str__(self):
+        return f'Partenaire "{self.name}"'

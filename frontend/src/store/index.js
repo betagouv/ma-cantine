@@ -49,6 +49,7 @@ export default new Vuex.Store({
     initialDataLoaded: false,
     upcomingCommunityEvents: [],
     videoTutorials: [],
+    partnerTypes: [],
 
     notification: {
       message: "",
@@ -148,6 +149,9 @@ export default new Vuex.Store({
     SET_SHOW_WEBINAIRE_BANNER(state, showWebinaireBanner) {
       state.showWebinaireBanner = showWebinaireBanner
     },
+    SET_PARTNER_TYPES(state, types) {
+      state.partnerTypes = types
+    },
   },
 
   actions: {
@@ -190,6 +194,17 @@ export default new Vuex.Store({
         })
     },
 
+    fetchPartnerTypes(context) {
+      return fetch("/api/v1/partnerTypes/")
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_PARTNER_TYPES", response)
+        })
+        .catch((e) => {
+          console.log("fetchPartnerTypes", e)
+        })
+    },
+
     fetchUserCanteenPreviews(context) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch("/api/v1/canteenPreviews/")
@@ -219,6 +234,7 @@ export default new Vuex.Store({
       return Promise.all([
         context.dispatch("fetchLoggedUser"),
         context.dispatch("fetchSectors"),
+        context.dispatch("fetchPartnerTypes"),
         context.dispatch("fetchUpcomingCommunityEvents"),
         context.dispatch("fetchVideoTutorials"),
       ])
@@ -836,6 +852,17 @@ export default new Vuex.Store({
 
     setShowWebinaireBanner(context, showWebinaireBanner) {
       context.commit("SET_SHOW_WEBINAIRE_BANNER", showWebinaireBanner)
+    },
+
+    createPartner(context, { payload }) {
+      return fetch("/api/v1/partners/", { method: "POST", headers, body: JSON.stringify(payload) })
+        .then(verifyResponse)
+        .then((response) => {
+          return response
+        })
+        .catch((e) => {
+          throw e
+        })
     },
   },
 

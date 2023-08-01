@@ -40,6 +40,7 @@ from .diagnosticimport import (  # noqa: F401
     ImportCompleteCentralKitchenView,
 )
 from .sector import SectorListView  # noqa: F401
+from .partnertype import PartnerTypeListView  # noqa: F401
 from .blog import BlogPostsView, BlogPostView  # noqa: F401
 from .subscription import SubscribeNewsletter  # noqa: F401
 from .teledeclaration import (  # noqa: F401

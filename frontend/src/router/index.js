@@ -23,6 +23,7 @@ import BlogPage from "@/views/BlogsPage/BlogPage"
 import PartnersPage from "@/views/PartnersPage"
 import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
+import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
 import CGU from "@/views/CGU.vue"
 import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
@@ -256,6 +257,15 @@ const routes = [
         props: true,
       },
     ],
+  },
+  {
+    path: "/nouveau-acteur-de-l-ecosysteme",
+    name: "NewPartner",
+    component: NewPartner,
+    meta: {
+      title: "Nouvel acteur de l'éco-système",
+    },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/cgu",
