@@ -236,7 +236,6 @@ export default {
         })
         this.$router.push({ name: "PartnersHome" })
       })
-      // TODO: rate limit requests?
     },
     onImageUploadClick() {
       this.$refs.uploader.click()
