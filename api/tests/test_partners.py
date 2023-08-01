@@ -103,10 +103,10 @@ class TestPartnersApi(APITestCase):
         """
         Return all the free partners
         """
-        PartnerFactory.create(name="Find me", free=True, published=True)
-        PartnerFactory.create(name="But not me", free=False, published=True)
+        PartnerFactory.create(name="Find me", gratuity_option=Partner.GratuityOption.FREE, published=True)
+        PartnerFactory.create(name="But not me", gratuity_option=Partner.GratuityOption.PAID, published=True)
 
-        url = f"{reverse('partners_list')}?free=True"
+        url = f"{reverse('partners_list')}?gratuityOption=free"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 1)

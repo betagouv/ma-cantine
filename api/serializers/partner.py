@@ -20,7 +20,7 @@ class PartnerShortSerializer(serializers.ModelSerializer):
             "types",
             "departments",
             "national",
-            "free",
+            "gratuity_option",
             "economic_model",
         )
 
@@ -44,7 +44,7 @@ class PartnerSerializer(serializers.ModelSerializer):
             "types",
             "departments",
             "national",
-            "free",
+            "gratuity_option",
             "economic_model",
         )
 

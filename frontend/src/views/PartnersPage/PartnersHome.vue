@@ -143,7 +143,25 @@
             />
           </v-col>
           <v-col cols="6">
-            <v-checkbox hide-details="auto" class="mt-sm-9" v-model="filters.free.value" label="Gratuit" />
+            <label
+              for="select-gratuity-option"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': filters.gratuityOption.value && !!filters.gratuityOption.value.length,
+              }"
+            >
+              Type d'offre
+            </label>
+            <DsfrSelect
+              v-model="filters.gratuityOption.value"
+              multiple
+              :items="gratuityOptions"
+              clearable
+              hide-details
+              id="select-gratuity-option"
+              placeholder="Toutes"
+              class="mt-1"
+            />
           </v-col>
         </v-row>
       </v-sheet>
@@ -241,9 +259,10 @@ export default {
       visiblePartners: null,
       partnerCount: null,
       filters: {
-        free: {
+        gratuityOption: {
           param: "gratuit",
-          value: undefined, // will be set from URL query
+          value: [],
+          default: [],
         },
         category: {
           param: "besoin",
@@ -314,6 +333,20 @@ export default {
       })),
       sectors: [],
       typeItems: [],
+      gratuityOptions: [
+        {
+          value: "free",
+          text: "Gratuit",
+        },
+        {
+          value: "paid",
+          text: "Payant",
+        },
+        {
+          value: "mix",
+          text: "Mixte",
+        },
+      ],
     }
   },
   computed: {

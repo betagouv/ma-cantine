@@ -70,7 +70,7 @@ Pillow==9.5.0
 pipdeptree==2.7.1
 platformdirs==3.8.0
 pluggy==1.0.0
-prompt-toolkit==3.0.38
+prompt-toolkit==3.0.39
 psycopg2==2.9.6
 py==1.11.0
 pycparser==2.21
@@ -90,7 +90,7 @@ python-dateutil==2.8.2
 python-dotenv==1.0.0
 pytz==2023.3
 pytz-deprecation-shim==0.1.0.post0
-PyYAML==6.0
+PyYAML==6.0.1
 qrcode==7.4.2
 redis==4.6.0
 regex==2023.6.3
