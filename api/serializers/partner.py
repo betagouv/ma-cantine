@@ -68,7 +68,7 @@ class PartnerContactSerializer(serializers.ModelSerializer):
             "types",
             "departments",
             "national",
-            "free",
+            "gratuity_option",
             "economic_model",
             "contact_email",
             "contact_name",
