@@ -117,6 +117,18 @@
         </v-col>
       </v-row>
       <DsfrTextarea v-model="partner.contactMessage" label="Commentaires sur votre demande (optionnel)" :rows="2" />
+      <v-checkbox :rules="[validators.checked]" class="mb-6">
+        <template v-slot:label>
+          <span class="body-2 grey--text text--darken-3">
+            Je déclare avoir lu et et être en accord avec la
+            <a href="/static/documents/charte-referencement-1.pdf" target="_blank" @click.stop>
+              charte de référencement
+              <v-icon small color="primary">mdi-open-in-new</v-icon>
+            </a>
+            .
+          </span>
+        </template>
+      </v-checkbox>
     </v-form>
     <v-btn x-large color="primary" class="mt-0 mb-6" @click="createPartner">
       <v-icon class="mr-2">mdi-send</v-icon>
