@@ -73,4 +73,5 @@ class PartnerContactSerializer(serializers.ModelSerializer):
             "contact_email",
             "contact_name",
             "contact_message",
+            "contact_phone_number",
         )

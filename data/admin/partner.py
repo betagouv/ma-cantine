@@ -38,6 +38,7 @@ class PartnerAdmin(admin.ModelAdmin):
         "contact_name",
         "contact_email",
         "contact_message",
+        "contact_phone_number",
     )
     filter_vertical = ("types",)
     list_display = (

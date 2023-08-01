@@ -82,6 +82,7 @@ class Partner(models.Model):
     contact_email = models.EmailField(_("email address"), blank=True, null=True)
     contact_name = models.TextField(verbose_name="Nom de contact", blank=True, null=True)
     contact_message = models.TextField(verbose_name="Commentaires sur la demande", blank=True, null=True)
+    contact_phone_number = models.CharField("Numéro téléphone", max_length=50, null=True, blank=True)
 
     @property
     def url_slug(self):

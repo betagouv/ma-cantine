@@ -24,7 +24,7 @@
             :rules="[validators.required]"
           />
         </v-col>
-        <v-col class="pa-0 pa-sm-10" cols="12" sm="6">
+        <v-col class="pa-10" cols="12" sm="6">
           <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onImageChanged" id="logo" />
           <v-card
             @click="onImageUploadClick"
@@ -41,7 +41,9 @@
             </div>
             <div v-else class="d-flex flex-column align-center justify-center fill-height">
               <v-icon class="pb-2">mdi-shape</v-icon>
-              <p class="ma-0 text-center font-weight-bold body-2 grey--text text--darken-2">Ajoutez une image</p>
+              <p class="ma-0 text-center font-weight-bold body-2 grey--text text--darken-2">
+                Ajoutez une image (optionnel)
+              </p>
             </div>
             <div v-if="partner.image" style="position: absolute; top: 10px; left: 10px;">
               <v-btn fab small @click.stop.prevent="changeImage(null)">
@@ -51,7 +53,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-col class="pa-0" cols="12" md="9">
+      <v-col class="mt-6 mpa-0" cols="12" md="9">
         <DsfrSelect
           multiple
           clearable
@@ -114,6 +116,13 @@
         <v-col cols="12" sm="6">
           <DsfrTextField v-model="partner.contactName" label="Prénom et nom (optionnel)" />
         </v-col>
+        <v-col cols="12" sm="6">
+          <DsfrTextField
+            label="Numéro téléphone (optionnel)"
+            v-model="partner.contactPhoneNumber"
+            :rules="[validators.isEmptyOrPhoneNumber]"
+          />
+        </v-col>
       </v-row>
       <DsfrTextarea v-model="partner.contactMessage" label="Commentaires sur votre demande (optionnel)" :rows="2" />
       <v-checkbox :rules="[validators.checked]" class="mb-6">
@@ -156,6 +165,7 @@ export default {
       partner: {
         contactEmail: user ? user.email : "",
         contactName: user ? `${user.firstName} ${user.lastName}` : "",
+        contactPhoneNumber: user ? user.phone_number : "",
       },
       conditionsAccepted: false,
       sectors: sectorsSelectList(this.$store.state.sectors),
