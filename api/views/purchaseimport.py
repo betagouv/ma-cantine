@@ -2,6 +2,7 @@ import csv
 import time
 import logging
 import hashlib
+import io
 from django.db import IntegrityError, transaction
 from django.conf import settings
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
@@ -29,18 +30,16 @@ class ImportPurchasesView(APIView):
         self.file = None
         super().__init__(**kwargs)
 
-    def process_file(self, file_path):
+    def _process_file(self):
         hash = hashlib.md5()
-        block_size = 10
-        with open(file_path, 'rb') as f:
-            while True:
-                chunk = f.read(block_size)
-                if not chunk:
-                    break
-                hash.update(chunk)
-        # Check
+        chunk_size = settings.FILE_CHUNK_SIZE
+        for chunk in self.file.chunks(chunk_size):
+            hash.update(chunk)
+            self._treat_csv_chunk(chunk)
+
+        # The duplication check is called after the processing. The cost of eventually processing
+        # the file for nothing appears to be smaller than reand the file twice.
         self._check_duplication(hash)
-        self._treat_csv_file()
 
     def post(self, request):
         self.start = time.time()
@@ -50,7 +49,7 @@ class ImportPurchasesView(APIView):
                 self.file = request.data["file"]
                 self._verify_file_size()
 
-                self.process_file(self.file)
+                self._process_file()
 
                 if self.errors:
                     raise IntegrityError()
@@ -94,28 +93,12 @@ class ImportPurchasesView(APIView):
             self.purchases = matching_purchases.all()
             raise ValidationError("Ce fichier a déjà été utilisé pour un import")
 
-    def _treat_csv_file(self):
+    def _treat_csv_chunk(self, chunk):
         errors = []
-
-        filestring = self.file.decode("utf-8-sig")
-        filelines = filestring.splitlines()
-
-        if len(filelines) > settings.CSV_PURCHASES_MAX_LINES:
-            self.errors = [
-                ImportPurchasesView._get_error(
-                    "Too many lines",
-                    f"Le fichier ne peut pas contenir plus de {settings.CSV_PURCHASES_MAX_LINES} lignes.",
-                    400,
-                    len(filelines),
-                )
-            ]
-            return
-
-        dialect = csv.Sniffer().sniff(filelines[0])
-
-        csvreader = csv.reader(filelines, dialect=dialect)
+        csvreader = csv.reader(io.StringIO(chunk.decode()), delimiter=',')
         import_source = self.file_digest
         for row_number, row in enumerate(csvreader, start=1):
+            # If header, pass
             if row_number == 1 and row[0].lower().__contains__("siret"):
                 continue
             try:
