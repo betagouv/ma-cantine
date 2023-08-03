@@ -31,28 +31,29 @@ class ImportPurchasesView(APIView):
         super().__init__(**kwargs)
 
     def _process_file(self):
-        hash = hashlib.md5()
+        file_hash = hashlib.md5()
         chunk_size = settings.FILE_CHUNK_SIZE
         chunk = []
         batch_i = 1
         for row in self.file:
-            try:
-                hash.update(row)
-                chunk.append(row.decode())
-                if batch_i == chunk_size:
-                    self._process_chunk(chunk)
-                    chunk = []
-                    batch_i = 0
-            except Exception as e:
-                print(e)
+            # Split into chunks
+            file_hash.update(row)
+            chunk.append(row.decode())
+
+            # Process full chunk
+            if batch_i == chunk_size:
+                self._process_chunk(chunk)
+                chunk = []
+                batch_i = 0
             batch_i += 1
             
+        # Process the last chunk
         if batch_i < chunk_size and len(chunk) > 0:
             self._process_chunk(chunk)
 
         # The duplication check is called after the processing. The cost of eventually processing
         # the file for nothing appears to be smaller than reand the file twice.
-        self._check_duplication(hash)
+        self._check_duplication(file_hash)
 
     def post(self, request):
         self.start = time.time()
@@ -66,8 +67,6 @@ class ImportPurchasesView(APIView):
                     self.purchases = Purchase.objects.bulk_create(self.purchases)
             else:
                 self.purchases = []
-
-            if self.errors:
                 raise IntegrityError()
 
             return self._get_success_response()
