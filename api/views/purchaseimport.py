@@ -62,7 +62,8 @@ class ImportPurchasesView(APIView):
             self._verify_file_size()
             self._process_file()
             if not self.errors:
-                self.purchases = Purchase.objects.bulk_create(self.purchases)
+                with transaction.atomic():
+                    self.purchases = Purchase.objects.bulk_create(self.purchases)
             else:
                 self.purchases = []
 
