@@ -33,9 +33,22 @@ class ImportPurchasesView(APIView):
     def _process_file(self):
         hash = hashlib.md5()
         chunk_size = settings.FILE_CHUNK_SIZE
-        for chunk in self.file.chunks(chunk_size):
-            hash.update(chunk)
-            self._treat_csv_chunk(chunk)
+        chunk = []
+        batch_i = 1
+        for row in self.file:
+            try:
+                hash.update(row)
+                chunk.append(row.decode())
+                if batch_i == chunk_size:
+                    self._process_chunk(chunk)
+                    chunk = []
+                    batch_i = 0
+            except Exception as e:
+                print(e)
+            batch_i += 1
+            
+        if batch_i < chunk_size and len(chunk) > 0:
+            self._process_chunk(chunk)
 
         # The duplication check is called after the processing. The cost of eventually processing
         # the file for nothing appears to be smaller than reand the file twice.
@@ -45,14 +58,16 @@ class ImportPurchasesView(APIView):
         self.start = time.time()
         logger.info("Purchase bulk import started")
         try:
-            with transaction.atomic():
-                self.file = request.data["file"]
-                self._verify_file_size()
+            self.file = request.data["file"]
+            self._verify_file_size()
+            self._process_file()
+            if not self.errors:
+                self.purchases = Purchase.objects.bulk_create(self.purchases)
+            else:
+                self.purchases = []
 
-                self._process_file()
-
-                if self.errors:
-                    raise IntegrityError()
+            if self.errors:
+                raise IntegrityError()
 
             return self._get_success_response()
 
@@ -93,9 +108,9 @@ class ImportPurchasesView(APIView):
             self.purchases = matching_purchases.all()
             raise ValidationError("Ce fichier a déjà été utilisé pour un import")
 
-    def _treat_csv_chunk(self, chunk):
+    def _process_chunk(self, chunk):
         errors = []
-        csvreader = csv.reader(io.StringIO(chunk.decode()), delimiter=',')
+        csvreader = csv.reader(io.StringIO(''.join(chunk)), delimiter=',')
         import_source = self.file_digest
         for row_number, row in enumerate(csvreader, start=1):
             # If header, pass
@@ -116,10 +131,6 @@ class ImportPurchasesView(APIView):
                 for error in self._parse_errors(e, row):
                     errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
         self.errors = errors
-        if not self.errors:
-            self.purchases = Purchase.objects.bulk_create(self.purchases)
-        else:
-            self.purchases = []
 
     @transaction.atomic
     def _create_purchase_for_canteen(self, siret, row, import_source):
