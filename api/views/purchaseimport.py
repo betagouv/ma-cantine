@@ -3,6 +3,7 @@ import time
 import logging
 import hashlib
 import io
+import uuid
 from django.db import IntegrityError, transaction
 from django.conf import settings
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
@@ -27,6 +28,7 @@ class ImportPurchasesView(APIView):
         self.errors = []
         self.start = None
         self.file_digest = None
+        self.tmp_id = uuid.uuid4()
         self.file = None
         super().__init__(**kwargs)
 
@@ -35,24 +37,21 @@ class ImportPurchasesView(APIView):
         chunk_size = settings.FILE_CHUNK_SIZE
         chunk = []
         batch_i = 1
-        try:
-            for row in self.file:
-                # Split into chunks
-                file_hash.update(row)
-                chunk.append(row.decode())
+        for row in self.file:
+            # Split into chunks
+            file_hash.update(row)
+            chunk.append(row.decode())
 
-                # Process full chunk
-                if batch_i == chunk_size:
-                    self._process_chunk(chunk)
-                    chunk = []
-                    batch_i = 0
-                batch_i += 1
-
-            # Process the last chunk
-            if batch_i < chunk_size and len(chunk) > 0:
+            # Process full chunk
+            if batch_i == chunk_size:
                 self._process_chunk(chunk)
-        except Exception as e:
-            print(e)
+                chunk = []
+                batch_i = 0
+            batch_i += 1
+
+        # Process the last chunk
+        if batch_i < chunk_size and len(chunk) > 0:
+            self._process_chunk(chunk)
 
         # The duplication check is called after the processing. The cost of eventually processing
         # the file for nothing appears to be smaller than reand the file twice.
@@ -71,6 +70,9 @@ class ImportPurchasesView(APIView):
                 # transaction and rollback the insertion of any data
                 if self.errors:
                     raise IntegrityError()
+                
+                # Update all purchases's import source with file digest
+                Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.file_digest)
             return self._get_success_response()
 
         except IntegrityError as e:
@@ -101,11 +103,8 @@ class ImportPurchasesView(APIView):
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
     def _check_duplication(self, m):
-        try:
-            self.file_digest = m.hexdigest()
-            matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
-        except Exception as e:
-            print(e)
+        self.file_digest = m.hexdigest()
+        matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
         if matching_purchases.exists():
             self.purchases = matching_purchases.all()
             raise ValidationError("Ce fichier a déjà été utilisé pour un import")
@@ -114,7 +113,6 @@ class ImportPurchasesView(APIView):
         errors = []
         self.purchases = []
         csvreader = csv.reader(io.StringIO("".join(chunk)), delimiter=",")
-        import_source = self.file_digest
         for row_number, row in enumerate(csvreader, start=1):
             # If header, pass
             if row_number == 1 and row[0].lower().__contains__("siret"):
@@ -128,10 +126,9 @@ class ImportPurchasesView(APIView):
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = normalise_siret(siret)
-                self._create_purchase_for_canteen(siret, row, import_source)
+                self._create_purchase_for_canteen(siret, row)
 
             except Exception as e:
-                print(e)
                 for error in self._parse_errors(e, row):
                     errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
         self.errors += errors
@@ -140,7 +137,7 @@ class ImportPurchasesView(APIView):
         if not self.errors:
             Purchase.objects.bulk_create(self.purchases)
 
-    def _create_purchase_for_canteen(self, siret, row, import_source):
+    def _create_purchase_for_canteen(self, siret, row):
         if not Canteen.objects.filter(siret=siret).exists():
             raise ObjectDoesNotExist()
         canteen = Canteen.objects.get(siret=siret)
@@ -177,7 +174,7 @@ class ImportPurchasesView(APIView):
             family=family.strip(),
             characteristics=characteristics,
             local_definition=local_definition.strip(),
-            import_source=import_source,
+            import_source=self.tmp_id,
         )
         purchase.full_clean()
         self.purchases.append(purchase)
