@@ -35,21 +35,24 @@ class ImportPurchasesView(APIView):
         chunk_size = settings.FILE_CHUNK_SIZE
         chunk = []
         batch_i = 1
-        for row in self.file:
-            # Split into chunks
-            file_hash.update(row)
-            chunk.append(row.decode())
+        try:
+            for row in self.file:
+                # Split into chunks
+                file_hash.update(row)
+                chunk.append(row.decode())
 
-            # Process full chunk
-            if batch_i == chunk_size:
+                # Process full chunk
+                if batch_i == chunk_size:
+                    self._process_chunk(chunk)
+                    chunk = []
+                    batch_i = 0
+                batch_i += 1
+
+            # Process the last chunk
+            if batch_i < chunk_size and len(chunk) > 0:
                 self._process_chunk(chunk)
-                chunk = []
-                batch_i = 0
-            batch_i += 1
-            
-        # Process the last chunk
-        if batch_i < chunk_size and len(chunk) > 0:
-            self._process_chunk(chunk)
+        except Exception as e:
+            print(e)
 
         # The duplication check is called after the processing. The cost of eventually processing
         # the file for nothing appears to be smaller than reand the file twice.
@@ -61,14 +64,16 @@ class ImportPurchasesView(APIView):
         try:
             self.file = request.data["file"]
             self._verify_file_size()
-            self._process_file()
-            if not self.errors:
-                with transaction.atomic():
-                    self.purchases = Purchase.objects.bulk_create(self.purchases)
-            else:
-                self.purchases = []
-                raise IntegrityError()
+            with transaction.atomic():
+                try:
+                    self._process_file()
 
+                    # If at least an error has been detected, we raise an error to interrupt the 
+                    # transaction and rollback the insertion of any data
+                    if self.errors:
+                        raise IntegrityError()
+                except Exception as e:
+                    print(e)
             return self._get_success_response()
 
         except IntegrityError as e:
@@ -110,7 +115,8 @@ class ImportPurchasesView(APIView):
 
     def _process_chunk(self, chunk):
         errors = []
-        csvreader = csv.reader(io.StringIO(''.join(chunk)), delimiter=',')
+        self.purchases = []
+        csvreader = csv.reader(io.StringIO("".join(chunk)), delimiter=",")
         import_source = self.file_digest
         for row_number, row in enumerate(csvreader, start=1):
             # If header, pass
@@ -128,11 +134,15 @@ class ImportPurchasesView(APIView):
                 self._create_purchase_for_canteen(siret, row, import_source)
 
             except Exception as e:
+                print(e)
                 for error in self._parse_errors(e, row):
                     errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
-        self.errors = errors
+        self.errors += errors
 
-    @transaction.atomic
+        # If no error has been detected in the file so far, we insert the chunk into the db
+        if not self.errors:
+            Purchase.objects.bulk_create(self.purchases)
+
     def _create_purchase_for_canteen(self, siret, row, import_source):
         if not Canteen.objects.filter(siret=siret).exists():
             raise ObjectDoesNotExist()
