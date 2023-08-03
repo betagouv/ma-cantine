@@ -53,7 +53,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2)
-
+        
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=10)
     def test_import_file_too_big(self):
