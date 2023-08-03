@@ -65,15 +65,12 @@ class ImportPurchasesView(APIView):
             self.file = request.data["file"]
             self._verify_file_size()
             with transaction.atomic():
-                try:
-                    self._process_file()
+                self._process_file()
 
-                    # If at least an error has been detected, we raise an error to interrupt the 
-                    # transaction and rollback the insertion of any data
-                    if self.errors:
-                        raise IntegrityError()
-                except Exception as e:
-                    print(e)
+                # If at least an error has been detected, we raise an error to interrupt the 
+                # transaction and rollback the insertion of any data
+                if self.errors:
+                    raise IntegrityError()
             return self._get_success_response()
 
         except IntegrityError as e:
