@@ -40,7 +40,7 @@ class TestPurchaseImport(APITestCase):
         self.assertIsNotNone(purchase.import_source)
 
     # TODO: check semi colon and tab separators
-    
+
     @authenticate
     @override_settings(FILE_CHUNK_SIZE=1)
     def test_import_batch_purchases(self):
@@ -53,7 +53,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2)
-        
+
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=10)
     def test_import_file_too_big(self):
@@ -68,7 +68,9 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
         self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
+        self.assertEqual(
+            errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
+        )
         self.assertEqual(errors[0]["status"], 400)
 
     @authenticate
