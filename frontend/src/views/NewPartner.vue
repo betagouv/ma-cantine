@@ -53,7 +53,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-col class="mt-6 mpa-0" cols="12" md="9">
+      <v-col class="mt-6 pa-0" cols="12" md="9">
         <DsfrSelect
           multiple
           clearable
