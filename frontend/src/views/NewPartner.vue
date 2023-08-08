@@ -87,7 +87,7 @@
       <DsfrRadio
         label="Quel type de service offrez-vous ?"
         :items="serviceCostOptions"
-        v-model="partner.free"
+        v-model="partner.gratuityOption"
         :rules="[validators.required]"
       />
       <DsfrTextarea
