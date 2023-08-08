@@ -38,13 +38,19 @@ class RegisterUserForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(RegisterUserForm, self).__init__(*args, **kwargs)
         self.label_suffix = ""
-        self.fields["first_name"].widget.attrs.update({"placeholder": "Agnès"}, autoFocus=True)
-        self.fields["last_name"].widget.attrs.update({"placeholder": "Dufresne"})
+        self.fields["first_name"].widget.attrs.update(
+            {"placeholder": "Agnès", "autocomplete": "given-name"}, autoFocus=True
+        )
+        self.fields["last_name"].widget.attrs.update({"placeholder": "Dufresne", "autocomplete": "family-name"})
         self.fields["username"].widget.attrs.update({"placeholder": "agnes.dufresne"})
-        self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com"})
-        self.fields["phone_number"].widget.attrs.update({"placeholder": "0* ** ** ** **"})
-        self.fields["password1"].widget.attrs.update({"placeholder": "Entrez votre mot de passe"})
-        self.fields["password2"].widget.attrs.update({"placeholder": "Confirmez votre mot de passe"})
+        self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com", "autocomplete": "email"})
+        self.fields["phone_number"].widget.attrs.update({"placeholder": "0* ** ** ** **", "autocomplete": "tel"})
+        self.fields["password1"].widget.attrs.update(
+            {"placeholder": "Entrez votre mot de passe", "autocomplete": "new-password"}
+        )
+        self.fields["password2"].widget.attrs.update(
+            {"placeholder": "Confirmez votre mot de passe", "autocomplete": "new-password"}
+        )
         self.fields["number_of_managed_cantines"].widget.attrs.update({"class": "cantine-number-input", "min": "0"})
 
     def left_column_fields(self):
