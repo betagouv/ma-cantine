@@ -220,7 +220,12 @@
       Plan d’action
     </h3>
     <p>
-      À compléter. TODO
+      Vous pouvez suivre notre progrès sur l'amélioration de nos non-confirmités sur
+      <a href="https://github.com/betagouv/ma-cantine/issues?q=is%3Aissue+is%3Aopen+label%3Aa11y">
+        GitHub
+        <v-icon small color="grey darken-4">mdi-open-in-new</v-icon>
+      </a>
+      .
     </p>
     <h3 class="fr-h3">
       Retour d’information et contact
