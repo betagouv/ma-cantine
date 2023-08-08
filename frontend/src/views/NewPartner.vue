@@ -237,14 +237,18 @@ export default {
         this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
-      // TODO: debug sector and actor type setting
-      this.$store.dispatch("createPartner", { payload: this.partner }).then(() => {
-        this.$store.dispatch("notify", {
-          status: "success",
-          message: "Votre demande a bien été envoyé.",
+      return this.$store
+        .dispatch("createPartner", { payload: this.partner })
+        .then(() => {
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: "Votre demande a bien été envoyé.",
+          })
+          this.$router.push({ name: "PartnersHome" })
         })
-        this.$router.push({ name: "PartnersHome" })
-      })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
     },
     onImageUploadClick() {
       this.$refs.uploader.click()
