@@ -34,9 +34,9 @@
             {{form.username}}
             {% if form.username.errors %}
                 {% for error in form.username.errors %}
-                    <div class="inline-error-container">
+                    <p class="inline-error-container">
                         {{ error | safe }}
-                    </div>
+                    </p>
                 {% endfor %}
             {% endif %}
         </div>
@@ -45,9 +45,9 @@
             {{ form.password }}
             {% if form.password.errors %}
                 {% for error in form.password.errors %}
-                    <div class="inline-error-container">
+                    <p class="inline-error-container">
                         {{ error | safe }}
-                    </div>
+                    </p>
                 {% endfor %}
             {% endif %}
         </div>

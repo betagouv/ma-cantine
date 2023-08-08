@@ -64,9 +64,9 @@
                     <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
                         {{ field }}
                         {% for error in field.errors %}
-                        <div class="inline-error-container">
+                        <p class="inline-error-container">
                             {{ error | safe }}
-                        </div>
+                        </p>
                         {% endfor %}
                     </div>
                 {% endfor %}
@@ -78,9 +78,9 @@
                     <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
                         {{ field }}
                         {% for error in field.errors %}
-                        <div class="inline-error-container">
+                        <p class="inline-error-container">
                             {{ error | safe }}
-                        </div>
+                        </p>
                         {% endfor %}
                     </div>
                 {% endfor %}
@@ -90,9 +90,9 @@
                         {{ form.cgu_approved }}
                         <label class="control-label" for="{{form.cgu_approved.id_for_label}}">{{ form.cgu_approved.label }}</label>
                         {% for error in form.cgu_approved.errors %}
-                            <div class="inline-error-container">
+                            <p class="inline-error-container">
                                 {{ error | safe }}
-                            </div>
+                            </p>
                         {% endfor %}
                         </div>
                     </div>

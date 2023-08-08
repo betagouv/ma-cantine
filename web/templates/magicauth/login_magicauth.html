@@ -33,9 +33,9 @@
             {{form.email}}
             {% if form.email.errors %}
                 {% for error in form.email.errors %}
-                    <div class="inline-error-container">
+                    <p class="inline-error-container">
                         {{ error | safe }}
-                    </div>
+                    </p>
                 {% endfor %}
             {% endif %}
         </div>

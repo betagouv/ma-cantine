@@ -139,10 +139,11 @@ button[type="submit"]:hover {
   margin: 0;
   color: #751818;
 }
-.inline-error-container {
+p.inline-error-container {
   color: #db2929;
   font-size: 10px;
   margin-top: 5px;
+  margin-bottom: 0;
 }
 hr {
   height: 1px;
