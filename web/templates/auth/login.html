@@ -58,7 +58,7 @@
         </div>
     </form>
     <a href="{% url 'register' %}"><button>Créer mon compte</button></a>
-    <hr style="margin-top: 22px;" />
+    <hr aria-hidden="true" style="margin-top: 22px;" />
     {% uses_moncomptepro as show_mcp_button %}
     {% if show_mcp_button %}
     <a href="{% url 'oidc-login' %}">
