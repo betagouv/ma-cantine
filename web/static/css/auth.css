@@ -132,17 +132,15 @@ button[type="submit"]:hover {
 .messages {
   background: #d5ffde;
 }
-.error-container {
+p.error-container {
   background: #ffe3e3;
+  font-size: 0.95em;
 }
-.error-container p {
-  margin: 0;
-  color: #751818;
-}
-.inline-error-container {
+p.inline-error-container {
   color: #db2929;
   font-size: 10px;
   margin-top: 5px;
+  margin-bottom: 0;
 }
 hr {
   height: 1px;
