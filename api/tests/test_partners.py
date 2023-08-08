@@ -158,20 +158,28 @@ class TestPartnersApi(APITestCase):
         """
         Test that unauthenticated users can create draft partners
         """
+        sector = SectorFactory.create()
+        partner_type = PartnerTypeFactory.create()
         self.assertEqual(Partner.objects.count(), 0)
         payload = {
             "name": "New partner please",
             "shortDescription": "This is a required field",
             "published": True,
             "contactEmail": "test@example.com",
+            "sectors": [sector.id],
+            "types": [partner_type.id],
         }
-        response = self.client.post(reverse("partners_list"), payload)
+        response = self.client.post(reverse("partners_list"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Partner.objects.count(), 1, "Exactly one partner added to DB")
         partner = Partner.objects.first()
         self.assertEqual(partner.name, "New partner please")
         self.assertEqual(partner.short_description, "This is a required field")
         self.assertEqual(partner.contact_email, "test@example.com")
+        self.assertEqual(partner.sectors.count(), 1)
+        self.assertEqual(partner.sectors.first().id, sector.id)
+        self.assertEqual(partner.types.count(), 1)
+        self.assertEqual(partner.types.first().id, partner_type.id)
         self.assertFalse(partner.published, "A user can't create a published partner")
 
     def test_cannot_fetch_contact_info(self):
