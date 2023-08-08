@@ -1,8 +1,10 @@
 import json
+import datetime
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import SectorFactory
+from data.factories import SectorFactory, PartnerTypeFactory, CommunityEventFactory, VideoTutorialFactory
 from .utils import authenticate
 
 
@@ -13,6 +15,9 @@ class TestInitialDataApi(APITestCase):
         by other views. If the call isn't authenticated, "loggedUser" should be None
         """
         sector = SectorFactory.create()
+        partner_type = PartnerTypeFactory.create()
+        community_event = CommunityEventFactory.create(end_date=timezone.now() + datetime.timedelta(days=10))
+        video_tutorial = VideoTutorialFactory.create(published=True)
 
         response = self.client.get(reverse("initial_data"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -26,8 +31,16 @@ class TestInitialDataApi(APITestCase):
         self.assertEqual(body["sectors"][0]["name"], sector.name)
 
         self.assertIn("partnerTypes", body)
+        self.assertEqual(len(body["partnerTypes"]), 1)
+        self.assertEqual(body["partnerTypes"][0]["name"], partner_type.name)
+
         self.assertIn("communityEvents", body)
+        self.assertEqual(len(body["communityEvents"]), 1)
+        self.assertEqual(body["communityEvents"][0]["title"], community_event.title)
+
         self.assertIn("videoTutorials", body)
+        self.assertEqual(len(body["videoTutorials"]), 1)
+        self.assertEqual(body["videoTutorials"][0]["title"], video_tutorial.title)
 
     @authenticate
     def test_authenticated_logged_initial_data(self):
