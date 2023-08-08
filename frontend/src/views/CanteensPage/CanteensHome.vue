@@ -310,7 +310,14 @@
     <div v-if="loading" class="pa-6">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
-    <div v-else-if="visibleCanteens && visibleCanteens.length > 0">
+    <div v-else-if="publishedCanteenCount === 0" class="d-flex flex-column align-center py-10">
+      <v-icon large>mdi-inbox-remove</v-icon>
+      <p class="text-body-1 grey--text text--darken-1 my-2">Nous n'avons pas trouvé des cantines avec ces paramètres</p>
+      <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
+        Désactiver tous les filtres
+      </v-btn>
+    </div>
+    <div v-else>
       <p class="mt-3 mb-n4 text-body-2 grey--text" v-if="resultsCountText">
         {{ resultsCountText }}
       </p>
@@ -342,7 +349,10 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-row>
+      <div v-if="pageLoading" class="pa-6">
+        <v-progress-circular indeterminate></v-progress-circular>
+      </div>
+      <v-row v-else>
         <v-col v-for="canteen in visibleCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
           <PublishedCanteenCard :canteen="canteen" />
         </v-col>
@@ -352,14 +362,8 @@
         v-model="page"
         :length="Math.ceil(publishedCanteenCount / limit)"
         :total-visible="7"
+        v-if="!pageLoading"
       />
-    </div>
-    <div v-else class="d-flex flex-column align-center py-10">
-      <v-icon large>mdi-inbox-remove</v-icon>
-      <p class="text-body-1 grey--text text--darken-1 my-2">Nous n'avons pas trouvé des cantines avec ces paramètres</p>
-      <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
-        Désactiver tous les filtres
-      </v-btn>
     </div>
 
     <v-divider class="mb-8 mt-12"></v-divider>
@@ -546,6 +550,9 @@ export default {
     loading() {
       return this.publishedCanteenCount === null
     },
+    pageLoading() {
+      return this.visibleCanteens === null
+    },
     offset() {
       return (this.page - 1) * this.limit
     },
@@ -652,6 +659,7 @@ export default {
       if (shouldNavigate) {
         this.page = 1
         this.updateRouter(Object.assign(this.query, { page: 1 }))
+        this.publishedCanteenCount = null // trigger this.loading
       }
     },
     populateParameters() {
@@ -789,6 +797,7 @@ export default {
       deep: true,
     },
     page() {
+      this.visibleCanteens = null // trigger this.pageLoading
       this.changePage()
     },
     orderBy() {
