@@ -642,7 +642,9 @@ export default {
       // https://github.com/betagouv/ma-cantine/issues/2773
       const urlQuery = JSON.parse(JSON.stringify(this.$route.query))
       Object.values(this.filters).forEach((f) => {
-        if (f.transformToFrontend) urlQuery[f.param] = f.transformToFrontend(this.$route.query[f.param])
+        if (f.transformToFrontend && urlQuery[f.param]) {
+          urlQuery[f.param] = f.transformToFrontend(this.$route.query[f.param])
+        }
       })
 
       const changedKeys = Object.keys(getObjectDiff(this.query, urlQuery))
