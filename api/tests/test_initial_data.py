@@ -12,6 +12,10 @@ class TestInitialDataApi(APITestCase):
 
         body = json.loads(response.content.decode())
         self.assertIn("loggedUser", body)
+        self.assertIn("sectors", body)
+        self.assertIn("partnerTypes", body)
+        self.assertIn("communityEvents", body)
+        self.assertIn("videoTutorials", body)
 
     @authenticate
     def test_authenticated_logged_initial_data(self):
@@ -20,3 +24,7 @@ class TestInitialDataApi(APITestCase):
 
         body = json.loads(response.content.decode())
         self.assertIn("loggedUser", body)
+        self.assertIn("sectors", body)
+        self.assertIn("partnerTypes", body)
+        self.assertIn("communityEvents", body)
+        self.assertIn("videoTutorials", body)
