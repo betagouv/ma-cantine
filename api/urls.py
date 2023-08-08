@@ -31,6 +31,7 @@ from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
 from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, UndoClaimCanteenView, SatelliteListCreateView
 from api.views import ActionableCanteensListView, ActionableCanteenRetrieveView
 from api.views import CanteenStatusView, VideoTutorialListView, DiagnosticsToTeledeclareListView
+from api.views import InitialDataView
 
 
 urlpatterns = {
@@ -185,6 +186,7 @@ urlpatterns = {
     ),
     path("canteenStatus/siret/<str:siret>", CanteenStatusView.as_view(), name="canteen_status"),
     path("videoTutorials/", VideoTutorialListView.as_view(), name="video_tutorials"),
+    path("initialData/", InitialDataView.as_view(), name="initial_data"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)
