@@ -85,7 +85,7 @@
         />
       </v-col>
       <v-col class="pa-0" cols="12" md="9">
-        <v-checkbox class="mb-4" v-model="partner.national">
+        <v-checkbox hide-details class="mb-4" v-model="partner.national">
           <template v-slot:label>
             <span class="grey--text text--darken-4">
               Mon activité est présente sur tout le territoire national
@@ -93,7 +93,7 @@
           </template>
         </v-checkbox>
       </v-col>
-      <v-col v-if="showDepartmentSelector" class="pa-0" cols="12" md="9">
+      <v-col v-if="showDepartmentSelector" class="pa-0 mb-n4" cols="12" md="9">
         <DsfrSelect
           label="Departements où votre activité est présente"
           multiple
@@ -107,6 +107,7 @@
         :items="serviceCostOptions"
         v-model="partner.free"
         :rules="[validators.required]"
+        class="mt-8"
       />
       <DsfrTextarea
         v-model="partner.longDescription"
