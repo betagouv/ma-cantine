@@ -50,7 +50,6 @@ class PartnerSerializer(serializers.ModelSerializer):
 
 
 class PartnerContactSerializer(serializers.ModelSerializer):
-    types = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
     image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
@@ -68,10 +67,11 @@ class PartnerContactSerializer(serializers.ModelSerializer):
             "types",
             "departments",
             "national",
+            "sectors",
             "gratuity_option",
             "economic_model",
-            "contact_email",
             "contact_name",
+            "contact_email",
             "contact_message",
             "contact_phone_number",
         )

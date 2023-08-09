@@ -105,7 +105,7 @@
       <DsfrRadio
         label="Quel type de service offrez-vous ?"
         :items="serviceCostOptions"
-        v-model="partner.free"
+        v-model="partner.gratuityOption"
         :rules="[validators.required]"
         class="mt-8"
       />
@@ -266,14 +266,18 @@ export default {
         return
       }
       if (this.partner.national) this.$set(this.partner, "departments", null)
-      // TODO: debug sector and actor type setting
-      this.$store.dispatch("createPartner", { payload: this.partner }).then(() => {
-        this.$store.dispatch("notify", {
-          status: "success",
-          message: "Votre demande a bien été envoyé.",
+      return this.$store
+        .dispatch("createPartner", { payload: this.partner })
+        .then(() => {
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: "Votre demande a bien été envoyé.",
+          })
+          this.$router.push({ name: "PartnersHome" })
         })
-        this.$router.push({ name: "PartnersHome" })
-      })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
     },
     onImageUploadClick() {
       this.$refs.uploader.click()

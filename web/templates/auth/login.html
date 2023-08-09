@@ -16,9 +16,9 @@
 
     {% if form.non_field_errors %}
         {% for error in form.non_field_errors %}
-            <div class="error-container">
+            <p class="error-container">
                 {{ error }}
-            </div>
+            </p>
         {% endfor %}
     {% endif %}
 
@@ -34,9 +34,9 @@
             {{form.username}}
             {% if form.username.errors %}
                 {% for error in form.username.errors %}
-                    <div class="inline-error-container">
+                    <p class="inline-error-container">
                         {{ error | safe }}
-                    </div>
+                    </p>
                 {% endfor %}
             {% endif %}
         </div>
@@ -45,9 +45,9 @@
             {{ form.password }}
             {% if form.password.errors %}
                 {% for error in form.password.errors %}
-                    <div class="inline-error-container">
+                    <p class="inline-error-container">
                         {{ error | safe }}
-                    </div>
+                    </p>
                 {% endfor %}
             {% endif %}
         </div>
@@ -57,8 +57,8 @@
             </div>
         </div>
     </form>
-    <a href="{% url 'register' %}"><button>Créer mon compte</button></a>
-    <hr style="margin-top: 22px;" />
+    <a href="{% url 'register' %}">Créer mon compte</a>
+    <hr aria-hidden="true" style="margin-top: 22px;" />
     {% uses_moncomptepro as show_mcp_button %}
     {% if show_mcp_button %}
     <a href="{% url 'oidc-login' %}">
