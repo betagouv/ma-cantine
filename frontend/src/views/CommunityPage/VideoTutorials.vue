@@ -16,6 +16,7 @@
               :id="`video-${video.id}`"
             >
               <source :src="video.video" />
+              <track v-if="video.subtitles" label="Français" kind="subtitles" srclang="fr" :src="video.subtitles" />
               Votre navigateur ne peut pas afficher des vidéos.
             </video>
           </v-card>
