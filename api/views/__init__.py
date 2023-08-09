@@ -67,3 +67,4 @@ from .review import ReviewView  # noqa: F401
 from .communityevent import CommunityEventsView  # noqa: F401
 from .partner import PartnersView, PartnerView  # noqa: F401
 from .videotutorial import VideoTutorialListView  # noqa: F401
+from .initial import InitialDataView  # noqa: F401

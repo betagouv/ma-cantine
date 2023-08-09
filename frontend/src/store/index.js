@@ -231,13 +231,24 @@ export default new Vuex.Store({
     },
 
     fetchInitialData(context) {
-      return Promise.all([
-        context.dispatch("fetchLoggedUser"),
-        context.dispatch("fetchSectors"),
-        context.dispatch("fetchPartnerTypes"),
-        context.dispatch("fetchUpcomingCommunityEvents"),
-        context.dispatch("fetchVideoTutorials"),
-      ])
+      context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      context.commit("SET_VIDEO_TUTORIALS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch("/api/v1/initialData/")
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_LOGGED_USER", response.loggedUser)
+          context.commit("SET_SECTORS", response.sectors)
+          context.commit("SET_PARTNER_TYPES", response.partnerTypes)
+          context.commit("SET_UPCOMING_COMMUNITY_EVENTS", response.communityEvents)
+          context.commit("SET_VIDEO_TUTORIALS", response.videoTutorials)
+
+          context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("SET_VIDEO_TUTORIALS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+        })
         .then(() => {
           if (context.state.loggedUser) return context.dispatch("fetchUserCanteenPreviews")
         })
