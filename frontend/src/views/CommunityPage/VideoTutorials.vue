@@ -4,21 +4,7 @@
       <h3 class="mb-2">{{ tutorial.category }}</h3>
       <v-row>
         <v-col cols="12" sm="4" md="3" v-for="video in tutorial.videos" :key="video.id">
-          <v-card class="video-card">
-            <label :for="`video-${video.id}`" class="video-label text-body-2 font-weight-bold">{{ video.title }}</label>
-            <video
-              ref="video"
-              :title="video.title"
-              style="background: #333;"
-              :poster="video.thumbnail"
-              controls
-              class="player"
-              :id="`video-${video.id}`"
-            >
-              <source :src="video.video" />
-              Votre navigateur ne peut pas afficher des vidéos.
-            </video>
-          </v-card>
+          <VideoTutorialCard :videoTutorial="video" />
         </v-col>
       </v-row>
     </div>
@@ -26,8 +12,10 @@
 </template>
 
 <script>
+import VideoTutorialCard from "@/components/VideoTutorialCard"
 export default {
   name: "VideoTutorials",
+  components: { VideoTutorialCard },
   props: {
     tutorials: {
       type: Array,
@@ -59,23 +47,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.player {
-  height: 200px;
-  overflow: hidden;
-  width: 100%;
-}
-.video-label {
-  position: absolute;
-  color: white;
-  margin-top: 0px;
-  margin-left: 0px;
-  text-shadow: 0px 0px 4px black;
-  background-color: #00000053;
-  padding: 2px 8px;
-}
-.video-card {
-  position: relative;
-}
-</style>
