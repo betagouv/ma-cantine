@@ -55,7 +55,7 @@ import SiteMap from "@/views/SiteMap"
 import DeveloperPage from "@/views/DeveloperPage"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
-import WebinairePage from "@/views/WebinairePage"
+import VideoTutorial from "@/views/VideoTutorial"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -570,8 +570,8 @@ const routes = [
   },
   {
     path: "/webinaires/:webinaireUrlComponent",
-    name: "WebinairePage",
-    component: WebinairePage,
+    name: "VideoTutorial",
+    component: VideoTutorial,
     props: true,
   },
 ]

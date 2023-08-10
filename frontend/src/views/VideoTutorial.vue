@@ -33,7 +33,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import VideoTutorialCard from "@/components/VideoTutorialCard"
 
 export default {
-  name: "WebinairePage",
+  name: "VideoTutorial",
   components: { BreadcrumbsNav, VideoTutorialCard },
   props: {
     webinaireUrlComponent: {

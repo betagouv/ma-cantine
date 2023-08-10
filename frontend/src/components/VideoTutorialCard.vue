@@ -2,7 +2,10 @@
   <v-card
     class="dsfr"
     outlined
-    :to="{ name: 'WebinairePage', params: { webinaireUrlComponent: `${videoTutorial.id}--${videoTutorial.title}` } }"
+    :to="{
+      name: 'VideoTutorial',
+      params: { webinaireUrlComponent: `${videoTutorial.id}--${videoTutorial.title}` },
+    }"
   >
     <v-card-title class="text-body-1 font-weight-bold">
       <v-icon color="grey darken-3" class="mr-1">$film-fill</v-icon>
