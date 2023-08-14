@@ -52,6 +52,11 @@ class IsCanteenManager(permissions.BasePermission):
         return obj.managers.filter(id=request.user.id).exists()
 
 
+class IsElected(IsAuthenticated):
+    def has_permission(self, request, view):
+        return super().has_permission(request, view) and request.user.is_elected
+
+
 class IsCanteenManagerUrlParam(permissions.BasePermission):
     """
     Looks for the url_param `canteen_pk` and checks the user is

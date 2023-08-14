@@ -1165,3 +1165,61 @@ class TestCanteenApi(APITestCase):
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
+
+    @authenticate
+    def test_elected_canteens_list(self):
+        """
+        Elected profiles should get information on canteens in their
+        geographical area even if they are not the managers
+        """
+
+        # Set an elected profile
+        user = authenticate.user
+        user.is_elected = True
+        user.departments = ["01", "02"]
+        user.save()
+
+        # Create canteens
+        published_canteen = CanteenFactory.create(
+            department="01", publication_status=Canteen.PublicationStatus.PUBLISHED
+        )
+        unpublished_canteen = CanteenFactory.create(
+            department="02", publication_status=Canteen.PublicationStatus.DRAFT
+        )
+        out_of_place_canteen = CanteenFactory.create(department="03")
+
+        # Make request
+        response = self.client.get(reverse("elected_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()["results"]
+
+        self.assertEqual(len(body), 2)
+        ids = list(map(lambda x: x["id"], body))
+
+        self.assertIn(published_canteen.id, ids)
+        self.assertIn(unpublished_canteen.id, ids)
+        self.assertNotIn(out_of_place_canteen.id, ids)
+
+    @authenticate
+    def test_non_elected_canteens_list(self):
+        """
+        Profiles not enabled as "elected" should not get information on
+        canteens via the elected_canteens API endpoint
+        """
+
+        # Set an elected profile
+        user = authenticate.user
+        user.is_elected = False
+        user.save()
+
+        # Make request
+        response = self.client.get(reverse("elected_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_unauthenticated_elected_canteens_list(self):
+        """
+        Profiles not authenticated should not be able to use the endpoint
+        elected_canteens
+        """
+        response = self.client.get(reverse("elected_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
