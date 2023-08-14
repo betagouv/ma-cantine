@@ -56,6 +56,7 @@ import DeveloperPage from "@/views/DeveloperPage"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
 import WebinairePage from "@/views/WebinairePage"
+import ElectedCanteens from "@/views/ElectedCanteens"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -573,6 +574,21 @@ const routes = [
     name: "WebinairePage",
     component: WebinairePage,
     props: true,
+  },
+  {
+    path: "/les-cantines-de-mon-territoire",
+    name: "ElectedCanteens",
+    component: ElectedCanteens,
+    meta: {
+      title: "Les cantines de mon territoire",
+      authenticationRequired: true,
+    },
+    // beforeEnter: (to, from) => {
+    //   console.log(`${to} - ${from}`)
+    //   // TODO - Reject if not elected
+    //   // return false
+    //   return true
+    // },
   },
 ]
 
