@@ -122,3 +122,8 @@ class MaCanteenUserAdmin(UserAdmin):
         ),
     )
     inlines = (CanteenInline,)
+    list_filter = (
+        "is_elected",
+        "is_dev",
+        "is_staff",
+    )
