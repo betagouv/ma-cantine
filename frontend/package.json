@@ -17,7 +17,7 @@
     "vue-apexcharts": "^1.6.2",
     "vue-matomo": "^4.2.0",
     "vue-router": "^3.6.5",
-    "vuetify": "^2.7.0",
+    "vuetify": "^2.7.1",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
@@ -31,7 +31,7 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^3.4.1",
-    "eslint-plugin-vue": "^9.16.1",
+    "eslint-plugin-vue": "^9.17.0",
     "prettier": "^1.19.1",
     "sass": "^1.64.2",
     "sass-loader": "^10.0.0",
