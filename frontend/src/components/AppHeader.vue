@@ -213,6 +213,11 @@ export default {
           authenticationState: true,
           children: [
             {
+              text: "Dans mon territoire",
+              to: { name: "ElectedCanteens" },
+              elected: true,
+            },
+            {
               text: "Mes cantines",
               to: { name: "ManagementPage" },
             },
@@ -337,10 +342,12 @@ export default {
           menuItem.isActive = false
         }
       })
-      if (!this.loggedUser) {
-        return this.navLinks.filter((link) => !link.authenticationState)
+      if (this.loggedUser) {
+        const navlinks = this.navLinks.filter((link) => link.authenticationState !== false)
+        if (!this.loggedUser.isElected) navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.elected)))
+        return navlinks
       } else {
-        return this.navLinks.filter((link) => link.authenticationState !== false)
+        return this.navLinks.filter((link) => !link.authenticationState)
       }
     },
     chipInfo() {
@@ -350,14 +357,6 @@ export default {
       if (env === "demo") return { text: "Démo", color: "green darken-2" }
       return null
     },
-  },
-  beforeMount() {
-    if (this.loggedUser?.isElected) {
-      this.navLinks[0].children.unshift({
-        text: "Dans mon territoire",
-        to: { name: "ElectedCanteens" },
-      })
-    }
   },
 }
 </script>
