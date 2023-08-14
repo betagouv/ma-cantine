@@ -63,6 +63,15 @@ class MaCanteenUserAdmin(UserAdmin):
             },
         ),
         (
+            _("Section pour les élu·e·s"),
+            {
+                "fields": (
+                    "is_elected",
+                    "departments",
+                ),
+            },
+        ),
+        (
             _("Permissions"),
             {
                 "fields": (

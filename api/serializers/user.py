@@ -40,6 +40,7 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "avatar",
             "is_staff",
             "is_dev",
+            "is_elected",
             "job",
             "other_job_description",
             "source",
@@ -47,6 +48,7 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "has_mtm_data",
             "reviews",
             "mcp_organizations",
+            "departments",
         )
 
 
