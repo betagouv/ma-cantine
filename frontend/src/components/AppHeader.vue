@@ -351,6 +351,14 @@ export default {
       return null
     },
   },
+  beforeMount() {
+    if (this.loggedUser?.isElected) {
+      this.navLinks[0].children.unshift({
+        text: "Dans mon territoire",
+        to: { name: "ElectedCanteens" },
+      })
+    }
+  },
 }
 </script>
 

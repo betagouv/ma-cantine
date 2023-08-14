@@ -583,12 +583,9 @@ const routes = [
       title: "Les cantines de mon territoire",
       authenticationRequired: true,
     },
-    // beforeEnter: (to, from) => {
-    //   console.log(`${to} - ${from}`)
-    //   // TODO - Reject if not elected
-    //   // return false
-    //   return true
-    // },
+    beforeEnter: (_to, _from, next) => {
+      store.state.loggedUser?.isElected ? next() : next({ name: "ManagementPage" })
+    },
   },
 ]
 
