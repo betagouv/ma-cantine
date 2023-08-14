@@ -92,6 +92,43 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
         return user in obj.managers.all()
 
 
+class ElectedCanteenSerializer(serializers.ModelSerializer):
+    sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
+    is_managed_by_user = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "id",
+            "name",
+            "siret",
+            "diagnostics",
+            "city",
+            "city_insee_code",
+            "postal_code",
+            "sectors",
+            "daily_meal_count",
+            "yearly_meal_count",
+            "production_type",
+            "satellite_canteens_count",
+            "region",
+            "department",
+            "quality_comments",
+            "waste_comments",
+            "diversification_comments",
+            "plastics_comments",
+            "information_comments",
+            "is_managed_by_user",
+            "central_kitchen_diagnostics",
+        )
+
+    def get_is_managed_by_user(self, obj):
+        user = self.context["request"].user
+        return user in obj.managers.all()
+
+
 class SatelliteCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
     user_can_view = serializers.SerializerMethodField(read_only=True)

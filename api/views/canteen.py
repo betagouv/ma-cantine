@@ -33,6 +33,7 @@ from api.serializers import (
     SatelliteCanteenSerializer,
     CanteenActionsSerializer,
     CanteenStatusSerializer,
+    ElectedCanteenSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration, Purchase
 from data.region_choices import Region
@@ -1290,7 +1291,7 @@ class ActionableCanteenRetrieveView(RetrieveAPIView):
 class ElectedCanteensListView(ListAPIView):
     model = Canteen
     permission_classes = [IsElected]
-    serializer_class = PublicCanteenSerializer
+    serializer_class = ElectedCanteenSerializer
     pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
