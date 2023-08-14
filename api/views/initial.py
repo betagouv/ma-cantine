@@ -1,3 +1,4 @@
+import json
 from api.views import (
     LoggedUserView,
     SectorListView,
@@ -7,6 +8,7 @@ from api.views import (
     UserCanteenPreviews,
 )
 from rest_framework.views import APIView
+from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 from django.http import JsonResponse
 from rest_framework import status
 
@@ -15,11 +17,12 @@ class InitialDataView(APIView):
     def get(self, request, *args, **kwargs):
         is_authenticated = request.user.is_authenticated
         json_content = {
-            "loggedUser": LoggedUserView.as_view()(request._request).data,
+            "logged_user": LoggedUserView.as_view()(request._request).data,
             "sectors": SectorListView.as_view()(request._request).data,
-            "partnerTypes": PartnerTypeListView.as_view()(request._request).data,
-            "communityEvents": CommunityEventsView.as_view()(request._request).data,
-            "videoTutorials": VideoTutorialListView.as_view()(request._request).data,
-            "canteenPreviews": UserCanteenPreviews.as_view()(request._request).data if is_authenticated else None,
+            "partner_types": PartnerTypeListView.as_view()(request._request).data,
+            "community_events": CommunityEventsView.as_view()(request._request).data,
+            "video_tutorials": VideoTutorialListView.as_view()(request._request).data,
+            "canteen_previews": UserCanteenPreviews.as_view()(request._request).data if is_authenticated else None,
         }
-        return JsonResponse(json_content, status=status.HTTP_200_OK)
+        payload = json.loads(CamelCaseJSONRenderer().render(json_content))
+        return JsonResponse(payload, status=status.HTTP_200_OK)

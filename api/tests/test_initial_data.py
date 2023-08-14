@@ -69,6 +69,7 @@ class TestInitialDataApi(APITestCase):
         self.assertEqual(body["loggedUser"]["id"], authenticate.user.id)
         self.assertEqual(body["loggedUser"]["email"], authenticate.user.email)
         self.assertEqual(body["loggedUser"]["username"], authenticate.user.username)
+        self.assertEqual(body["loggedUser"]["firstName"], authenticate.user.first_name)
 
         self.assertIn("canteenPreviews", body)
         self.assertEqual(len(body["canteenPreviews"]), 1)
