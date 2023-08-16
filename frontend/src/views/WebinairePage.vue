@@ -22,7 +22,7 @@
       <p>
         Cette vidéo n'a pas de sous-titres. Si vous en avez besoin, contactez-nous avec notre
         <router-link :to="{ name: 'ContactPage' }">formulaire de contact</router-link>
-        pour qu'on puisse prioriser le sous-titrage de ce contenu.
+        pour prioriser le sous-titrage de ce contenu.
       </p>
       <p class="mb-0">
         Pour plus d'info sur le status de l'accessibilité de ce site, consultez notre
