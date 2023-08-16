@@ -11,6 +11,15 @@
           Modifier mon profil
         </v-btn>
       </p>
+
+      <div v-if="loggedUser.isElected">
+        Vous avez un compte élu / élue, vous pouvez voir
+        <router-link text color="primary" :to="{ name: 'ElectedCanteens' }">
+          les cantines de votre territoire
+        </router-link>
+        .
+      </div>
+
       <CanteenCreationDialog
         v-if="showCanteenCreationPrompt !== null"
         :organizations="loggedUser.mcpOrganizations"
