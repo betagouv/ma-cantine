@@ -53,7 +53,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-col class="mt-6 mpa-0" cols="12" md="9">
+      <v-col class="mt-6 pa-0" cols="12" md="9">
         <DsfrSelect
           multiple
           clearable
@@ -84,11 +84,30 @@
           item-value="id"
         />
       </v-col>
+      <v-col class="pa-0" cols="12" md="9">
+        <v-checkbox hide-details class="mb-4" v-model="partner.national">
+          <template v-slot:label>
+            <span class="grey--text text--darken-4">
+              Mon activité est présente sur tout le territoire national
+            </span>
+          </template>
+        </v-checkbox>
+      </v-col>
+      <v-col v-if="showDepartmentSelector" class="pa-0 mb-n4" cols="12" md="9">
+        <DsfrSelect
+          label="Departements où votre activité est présente"
+          multiple
+          :items="departmentItems"
+          v-model="partner.departments"
+          :rules="[validators.required]"
+        />
+      </v-col>
       <DsfrRadio
         label="Quel type de service offrez-vous ?"
         :items="serviceCostOptions"
         v-model="partner.gratuityOption"
         :rules="[validators.required]"
+        class="mt-8"
       />
       <DsfrTextarea
         v-model="partner.longDescription"
@@ -151,6 +170,7 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrRadio from "@/components/DsfrRadio"
+import jsonDepartments from "@/departments.json"
 import { sectorsSelectList, toBase64 } from "@/utils"
 
 export default {
@@ -165,6 +185,7 @@ export default {
         contactEmail: user ? user.email : "",
         contactName: user ? `${user.firstName} ${user.lastName}` : "",
         contactPhoneNumber: user ? user.phone_number : "",
+        national: true,
       },
       conditionsAccepted: false,
       sectors: sectorsSelectList(this.$store.state.sectors),
@@ -223,11 +244,18 @@ export default {
           text: "Diversifier mes sources de protéines",
         },
       ],
+      departmentItems: jsonDepartments.map((x) => ({
+        text: `${x.departmentCode} - ${x.departmentName}`,
+        value: x.departmentCode,
+      })),
     }
   },
   computed: {
     validators() {
       return validators
+    },
+    showDepartmentSelector() {
+      return !this.partner.national
     },
   },
   methods: {
@@ -237,6 +265,7 @@ export default {
         this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
+      if (this.partner.national) this.$set(this.partner, "departments", null)
       return this.$store
         .dispatch("createPartner", { payload: this.partner })
         .then(() => {
