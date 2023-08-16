@@ -2,12 +2,14 @@ import logging
 import base64
 from collections import OrderedDict
 from datetime import date
+from xhtml2pdf import pisa
 import redis as r
 from django.apps import apps
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import requests
 from common.utils import send_mail
+from django.utils.text import slugify
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, BadRequest
 from django.contrib.auth import get_user_model
@@ -16,6 +18,7 @@ from django.db.models.functions import Cast
 from django.db.models import Sum, FloatField, Avg, Func, F, Q, Case, When, Value, Subquery, OuterRef, Exists, Count
 from django_filters import rest_framework as django_filters
 from django_filters import BaseInFilter, CharFilter
+from django.template.loader import get_template
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -43,7 +46,7 @@ from api.permissions import (
     IsCanteenManagerUrlParam,
 )
 from api.exceptions import DuplicateException
-from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
+from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter, link_callback
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -1172,6 +1175,38 @@ class SatelliteListCreateView(ListCreateAPIView):
             return JsonResponse(camelize(serialized_canteen), status=return_status)
         except Sector.DoesNotExist:
             raise BadRequest()
+
+
+class PosterPdfView(APIView):
+    """
+    This view will return a PDF with the poster for a certain canteen
+    """
+
+    def get(self, request, *args, **kwargs):
+        canteen_id = kwargs.get("pk")
+        canteen = Canteen.objects.get(pk=canteen_id)
+
+        response = HttpResponse(content_type="application/pdf")
+        filename = PosterPdfView.get_filename(canteen)
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        template = get_template("poster_pdf.html")
+
+        context = {
+            "canteen": canteen,
+        }
+
+        html = template.render(context)
+        pisa_status = pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+
+        if pisa_status.err:
+            logger.error(f"Error while generating poster PDF for canteen {canteen.id}:\n{pisa_status.err}")
+            return HttpResponse("An error ocurred", status=500)
+        return response
+
+    @staticmethod
+    def get_filename(canteen):
+        canteen_name = slugify(canteen.name)
+        return f"affiche-{canteen_name}--{canteen.siret}.pdf"
 
 
 class ActionableCanteensListView(ListAPIView):

@@ -23,6 +23,7 @@ from .canteen import (  # noqa: F401
     ClaimCanteenView,
     UndoClaimCanteenView,
     SatelliteListCreateView,
+    PosterPdfView,
     ActionableCanteensListView,
     ActionableCanteenRetrieveView,
     CanteenStatusView,

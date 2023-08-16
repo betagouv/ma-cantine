@@ -1,0 +1,74 @@
+{% load static %}
+<html>
+    <head>
+        <style>
+            @font-face {
+            font-family: 'Marianne';
+            src: url({% static '../../web/static/fonts/Marianne-Regular.ttf' %}) format('truetype');
+            }
+            @font-face {
+                font-family: 'Marianne-Bold';
+                src:  url({% static '../../web/static/fonts/Marianne-Bold.ttf' %}) format('truetype');
+            }
+            @font-face {
+                font-family: 'Marianne-ExtraBold';
+                src: url({% static '../../web/static/fonts/Marianne-ExtraBold.ttf' %}) format('truetype');
+            }
+            body {
+                font-family: 'Marianne', Arial, Helvetica, sans-serif;
+            }
+            h1 {
+                font-family: 'Marianne-ExtraBold';
+                font-size: 24px;
+                margin: 32px 0px 16px 0px;
+            }
+            h2 {
+                font-family: 'Marianne-Bold';
+                font-size: 16px;
+                margin: 16px 0px;
+            }
+            h3 {
+                font-family: 'Marianne-Bold';
+            }
+            li span {
+                font-family: 'Marianne-Bold';
+            }
+            p, li {
+                margin: 16px 0px;
+            }
+            .image-container {
+                background-color:#0c7f46;
+                padding: 16px;
+            }
+            .other-measures > div {
+                margin-bottom: 10px;
+            }
+            .other-measures > div > span {
+                margin-right: 4px;
+            }
+            hr {
+                margin-top: 24px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Où en sommes-nous de notre transition alimentaire ?</h1>
+        <h2>{{ canteen.name }}</h2>
+        <h3>TODO: Canteen indicators</h3>
+
+        <h4>Qualité de la nourriture en 2022</h4>
+        CHARTS
+
+        <h5>Pourquoi je vois cette affiche ?</h5>
+        <p>
+            L’objectif de cet affichage est de rendre plus transparentes l’origine et la qualité des
+            produits composant les menus et de soutenir l’objectif d’une alimentation plus saine et
+            plus durable dans les restaurants.
+        </p>
+
+        QRCODE
+        <p class="footer-text">
+            <a href="https://ma-cantine.agriculture.gouv.fr/">ma-cantine.agriculture.gouv.fr</a>
+        </p>
+    </body>
+</html>

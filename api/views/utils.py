@@ -1,12 +1,15 @@
+import os
 import logging
 import json
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models import F
+from django.conf import settings
 from rest_framework import filters
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 from djangorestframework_camel_case.util import camel_to_underscore
 from djangorestframework_camel_case.settings import api_settings
 from simple_history.utils import update_change_reason
+from django.contrib.staticfiles import finders
 
 logger = logging.getLogger(__name__)
 
@@ -81,3 +84,34 @@ class UnaccentSearchFilter(filters.SearchFilter):
                 lookup,
             ]
         )
+
+
+def link_callback(uri, rel):
+    """
+    Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+    resources
+    https://xhtml2pdf.readthedocs.io/en/latest/usage.html#using-xhtml2pdf-in-django
+    """
+    result = finders.find(uri)
+    if result:
+        if not isinstance(result, (list, tuple)):
+            result = [result]
+        result = list(os.path.realpath(path) for path in result)
+        path = result[0]
+    else:
+        sUrl = settings.STATIC_URL
+        sRoot = settings.STATIC_ROOT
+        mUrl = settings.MEDIA_URL
+        mRoot = settings.MEDIA_ROOT
+
+        if uri.startswith(mUrl):
+            path = os.path.join(mRoot, uri.replace(mUrl, ""))
+        elif uri.startswith(sUrl):
+            path = os.path.join(sRoot, uri.replace(sUrl, ""))
+        else:
+            return uri
+
+    # make sure that file exists
+    if not os.path.isfile(path):
+        raise Exception("media URI must start with {} or {}".format(sUrl, mUrl))
+    return path

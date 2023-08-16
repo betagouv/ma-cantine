@@ -1,10 +1,7 @@
 import logging
-import os
 from django.http import JsonResponse, HttpResponse
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.template.loader import get_template
-from django.contrib.staticfiles import finders
-from django.conf import settings
 from django.utils.text import slugify
 from drf_spectacular.utils import extend_schema_view, extend_schema, inline_serializer
 from rest_framework import status, serializers
@@ -14,7 +11,7 @@ from xhtml2pdf import pisa
 from data.models import Diagnostic, Teledeclaration, Canteen
 from api.serializers import FullDiagnosticSerializer
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope
-from .utils import camelize
+from .utils import camelize, link_callback
 
 logger = logging.getLogger(__name__)
 
@@ -173,7 +170,7 @@ class TeledeclarationPdfView(APIView):
                 },
             }
             html = template.render(context)
-            pisa_status = pisa.CreatePDF(html, dest=response, link_callback=TeledeclarationPdfView.link_callback)
+            pisa_status = pisa.CreatePDF(html, dest=response, link_callback=link_callback)
 
             if pisa_status.err:
                 logger.error(
@@ -189,40 +186,9 @@ class TeledeclarationPdfView(APIView):
     @staticmethod
     def get_filename(teledeclaration):
         year = teledeclaration.year
-        canteenName = slugify(teledeclaration.declared_data["canteen"]["name"])
+        canteen_name = slugify(teledeclaration.declared_data["canteen"]["name"])
         creation_date = teledeclaration.creation_date.strftime("%Y-%m-%d")
-        return f"teledeclaration-{year}--{canteenName}--{creation_date}.pdf"
-
-    @staticmethod
-    def link_callback(uri, rel):
-        """
-        Convert HTML URIs to absolute system paths so xhtml2pdf can access those
-        resources
-        https://xhtml2pdf.readthedocs.io/en/latest/usage.html#using-xhtml2pdf-in-django
-        """
-        result = finders.find(uri)
-        if result:
-            if not isinstance(result, (list, tuple)):
-                result = [result]
-            result = list(os.path.realpath(path) for path in result)
-            path = result[0]
-        else:
-            sUrl = settings.STATIC_URL
-            sRoot = settings.STATIC_ROOT
-            mUrl = settings.MEDIA_URL
-            mRoot = settings.MEDIA_ROOT
-
-            if uri.startswith(mUrl):
-                path = os.path.join(mRoot, uri.replace(mUrl, ""))
-            elif uri.startswith(sUrl):
-                path = os.path.join(sRoot, uri.replace(sUrl, ""))
-            else:
-                return uri
-
-        # make sure that file exists
-        if not os.path.isfile(path):
-            raise Exception("media URI must start with {} or {}".format(sUrl, mUrl))
-        return path
+        return f"teledeclaration-{year}--{canteen_name}--{creation_date}.pdf"
 
     @staticmethod
     def _get_canteen_override_data(canteen_data):

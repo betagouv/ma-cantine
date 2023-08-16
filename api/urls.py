@@ -14,6 +14,7 @@ from api.views import (
     UsernameSuggestionView,
     ImportSimpleCentralKitchenView,
     ImportCompleteCentralKitchenView,
+    PosterPdfView,
 )
 from api.views import UpdateUserView, UserCanteensView, CanteenStatisticsView
 from api.views import PublishedCanteensView, PublishManyCanteensView, PublishedCanteenSingleView
@@ -48,6 +49,7 @@ urlpatterns = {
     path("canteenPreviews/", UserCanteenPreviews.as_view(), name="user_canteen_previews"),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path("canteens/<int:pk>", RetrieveUpdateUserCanteenView.as_view(), name="single_canteen"),
+    path("canteens/<int:pk>/poster", PosterPdfView.as_view(), name="single_canteen_poster"),
     path(
         "canteens/<int:pk>/publish",
         PublishCanteenView.as_view(),
