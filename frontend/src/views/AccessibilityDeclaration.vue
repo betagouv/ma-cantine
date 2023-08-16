@@ -37,6 +37,7 @@
       et extranet), ses applications mobiles, ses progiciels et son mobilier urbain numérique conformément à l’article
       47 de la loi n°2005-102 du 11 février 2005.
     </p>
+    <!-- TODO: complete after a11y meeting in september 2023
     <p>
       À cette fin, elle met en œuvre la stratégie et les actions suivantes :
     </p>
@@ -48,6 +49,7 @@
         Plan d’action AAAA-AAAA.
       </li>
     </ul>
+    -->
     <h2 class="fr-h2">Déclaration de non-conformité au RGAA</h2>
     <p>
       Cette déclaration s’applique au site « ma-cantine.agriculture.gouv.fr ».
