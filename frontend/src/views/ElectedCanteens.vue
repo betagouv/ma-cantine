@@ -1,6 +1,7 @@
 <template>
   <div class="text-left">
-    <h1 class="text-h6 mt-6 mb-2 font-weight-bold">
+    <BreadcrumbsNav />
+    <h1 class="text-h6 mt-n2 mb-2 font-weight-bold">
       Les cantines de mon territoire
     </h1>
     <p>Établissements dans {{ departmentsString }}</p>
@@ -30,9 +31,11 @@
 <script>
 import jsonDepartments from "@/departments.json"
 import { getObjectDiff } from "@/utils"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "ElectedCanteens",
+  components: { BreadcrumbsNav },
   data() {
     return {
       loading: false,
