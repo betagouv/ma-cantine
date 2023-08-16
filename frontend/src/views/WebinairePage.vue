@@ -18,14 +18,14 @@
       </video>
     </div>
     <p class="mt-2 mb-4" v-if="mainVideo && mainVideo.description">{{ mainVideo.description }}</p>
-    <v-alert v-if="!mainVideo.subtitles" type="error" outlined>
+    <v-alert v-if="!mainVideo.subtitles" type="info" outlined>
       <p>
         Cette vidéo n'a pas de sous-titres. Si vous en avez besoin, contactez-nous avec notre
         <router-link :to="{ name: 'ContactPage' }">formulaire de contact</router-link>
         pour prioriser le sous-titrage de ce contenu.
       </p>
       <p class="mb-0">
-        Pour plus d'info sur le status de l'accessibilité de ce site, consultez notre
+        Pour plus d'informations consultez notre
         <router-link :to="{ name: 'AccessibilityDeclaration' }">déclaration d'accessibilité</router-link>
       </p>
     </v-alert>
