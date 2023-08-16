@@ -4,7 +4,13 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import SectorFactory, PartnerTypeFactory, CommunityEventFactory, VideoTutorialFactory
+from data.factories import (
+    SectorFactory,
+    PartnerTypeFactory,
+    CommunityEventFactory,
+    VideoTutorialFactory,
+    CanteenFactory,
+)
 from .utils import authenticate
 
 
@@ -42,12 +48,19 @@ class TestInitialDataApi(APITestCase):
         self.assertEqual(len(body["videoTutorials"]), 1)
         self.assertEqual(body["videoTutorials"][0]["title"], video_tutorial.title)
 
+        self.assertIn("canteenPreviews", body)
+        self.assertIsNone(body["canteenPreviews"])
+
     @authenticate
     def test_authenticated_logged_initial_data(self):
         """
         Same endpoint, this time with data in the "loggedUser" property. Not needed
         to thoroughly test the other keys, just making sure they are present.
+        The cantine previews should also be present in this case.
         """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
         response = self.client.get(reverse("initial_data"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -56,6 +69,12 @@ class TestInitialDataApi(APITestCase):
         self.assertEqual(body["loggedUser"]["id"], authenticate.user.id)
         self.assertEqual(body["loggedUser"]["email"], authenticate.user.email)
         self.assertEqual(body["loggedUser"]["username"], authenticate.user.username)
+        self.assertEqual(body["loggedUser"]["firstName"], authenticate.user.first_name)
+
+        self.assertIn("canteenPreviews", body)
+        self.assertEqual(len(body["canteenPreviews"]), 1)
+        self.assertEqual(body["canteenPreviews"][0]["name"], canteen.name)
+
         self.assertIn("sectors", body)
         self.assertIn("partnerTypes", body)
         self.assertIn("communityEvents", body)

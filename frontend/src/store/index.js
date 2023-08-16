@@ -243,14 +243,12 @@ export default new Vuex.Store({
           context.commit("SET_PARTNER_TYPES", response.partnerTypes)
           context.commit("SET_UPCOMING_COMMUNITY_EVENTS", response.communityEvents)
           context.commit("SET_VIDEO_TUTORIALS", response.videoTutorials)
+          context.commit("SET_USER_CANTEEN_PREVIEWS", response.canteenPreviews)
 
           context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           context.commit("SET_VIDEO_TUTORIALS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
-        })
-        .then(() => {
-          if (context.state.loggedUser) return context.dispatch("fetchUserCanteenPreviews")
         })
         .then(() => {
           const criticalLoadingStatuses = ["canteensLoadingStatus"]
