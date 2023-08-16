@@ -10,12 +10,14 @@
       :options.sync="options"
       :loading="loading"
       :headers="headers"
+      :server-items-length="canteenCount || 0"
     ></v-data-table>
   </div>
 </template>
 
 <script>
 import jsonDepartments from "@/departments.json"
+import { getObjectDiff } from "@/utils"
 
 export default {
   name: "ElectedCanteens",
@@ -33,21 +35,12 @@ export default {
       footerProps: {
         disableItemsPerPage: true,
         itemsPerPageText: "Cantines per page",
-        pagination: {
-          itemsLength: 0,
-        },
       },
       headers: [
-        {
-          text: "SIRET",
-          align: "start",
-          filterable: false,
-          value: "siret",
-          sortable: false,
-        },
+        { text: "SIRET", value: "siret", sortable: true },
         { text: "Nom", value: "name", sortable: true },
         { text: "Ville", value: "city", sortable: true },
-        { text: "Couverts moyen par jour", value: "dailyMealCount", sortable: false },
+        { text: "Couverts moyen par jour", value: "dailyMealCount", sortable: true },
       ],
     }
   },
@@ -67,15 +60,14 @@ export default {
   methods: {
     fetchCurrentPage() {
       this.loading = true
-      let queryParam = `limit=${this.limit}&offset=${this.offset}`
-      return fetch(`/api/v1/electedCanteens/?${queryParam}`)
+      return fetch(`/api/v1/electedCanteens/?${this.getApiQueryParams()}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
           return response.json()
         })
         .then((response) => {
           this.visibleCanteens = response.results
-          this.canteenCount = this.footerProps.pagination.itemsLength = response.count
+          this.canteenCount = response.count
         })
         .catch((e) => {
           this.publishedCanteenCount = 0
@@ -84,9 +76,59 @@ export default {
         })
         .finally(() => (this.loading = false))
     },
+    getApiQueryParams(includePagination = true) {
+      let apiQueryParams = includePagination ? `limit=${this.limit}&offset=${this.offset}` : ""
+      const orderingItems = this.getOrderingItems()
+      if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
+      return apiQueryParams
+    },
+    addWatchers() {
+      this.$watch("options", this.onOptionsChange, { deep: true })
+      this.$watch("$route", this.onRouteChange)
+    },
+    onOptionsChange() {
+      this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
+    },
+    onRouteChange() {
+      this.populateParametersFromRoute()
+      this.fetchCurrentPage()
+    },
+    getUrlQueryParams() {
+      let urlQueryParams = { page: this.options.page }
+      const orderingItems = this.getOrderingItems()
+      if (orderingItems.length > 0) urlQueryParams["trier-par"] = orderingItems.join(",")
+      return urlQueryParams
+    },
+    getOrderingItems() {
+      let orderParams = []
+      if (this.options.sortBy && this.options.sortBy.length > 0)
+        for (let i = 0; i < this.options.sortBy.length; i++)
+          orderParams.push(this.options.sortDesc[i] ? `-${this.options.sortBy[i]}` : this.options.sortBy[i])
+      return orderParams
+    },
+    populateParametersFromRoute() {
+      const page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
+      let sortBy = []
+      let sortDesc = []
+
+      this.$route.query["trier-par"] &&
+        this.$route.query["trier-par"].split(",").forEach((element) => {
+          const isDesc = element[0] === "-"
+          sortBy.push(isDesc ? element.slice(1) : element)
+          sortDesc.push(isDesc)
+        })
+
+      const newOptions = { sortBy, sortDesc, page }
+      const optionChanges = this.options ? getObjectDiff(this.options, newOptions) : newOptions
+      if (Object.keys(optionChanges).length > 0) this.$set(this, "options", newOptions)
+    },
+  },
+  beforeMount() {
+    if (!this.$route.query["page"]) this.$router.replace({ query: { page: 1 } })
   },
   mounted() {
-    this.fetchCurrentPage()
+    this.populateParametersFromRoute()
+    this.fetchCurrentPage().then(this.addWatchers)
   },
 }
 </script>

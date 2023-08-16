@@ -1299,7 +1299,7 @@ class ElectedCanteensListView(ListAPIView):
         MaCantineOrderingFilter,
     ]
     search_fields = ["name", "siret"]
-    ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
+    ordering_fields = ["name", "city", "siret", "daily_meal_count"]
 
     def get_queryset(self):
         departments = self.request.user.departments
