@@ -11,7 +11,19 @@
       :loading="loading"
       :headers="headers"
       :server-items-length="canteenCount || 0"
-    ></v-data-table>
+    >
+      <template v-slot:[`item.publicationStatus`]="{ item }">
+        <router-link
+          v-if="item.publicationStatus === 'published'"
+          :to="{ name: 'CanteenPage', params: { canteenUrlComponent: `${item.id}--${item.name}` } }"
+        >
+          Publiée
+        </router-link>
+        <span v-else>
+          Non publiée
+        </span>
+      </template>
+    </v-data-table>
   </div>
 </template>
 
@@ -41,6 +53,7 @@ export default {
         { text: "Nom", value: "name", sortable: true },
         { text: "Ville", value: "city", sortable: true },
         { text: "Couverts moyen par jour", value: "dailyMealCount", sortable: true },
+        { text: "Publication", value: "publicationStatus", sortable: false },
       ],
     }
   },

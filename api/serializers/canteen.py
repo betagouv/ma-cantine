@@ -122,6 +122,7 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
             "information_comments",
             "is_managed_by_user",
             "central_kitchen_diagnostics",
+            "publication_status",
         )
 
     def get_is_managed_by_user(self, obj):
