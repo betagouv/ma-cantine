@@ -4,6 +4,10 @@
       Ce service est en expérimentation jusqu'à décembre 2023. Les acteurs se sont référencés eux mêmes en respectant
       notre charte.
     </p>
+    <p>
+      Cette page n’engage pas l’administration ou l'équipe ma cantine ; elle constitue une proposition à l'attention des
+      responsables légaux de restaurants collectifs
+    </p>
     <DownloadLink
       href="/static/documents/charte-referencement-acteurs-de-l-ecosysteme.pdf"
       label="Télécharger la charte de référencement"
