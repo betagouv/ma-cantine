@@ -25,6 +25,11 @@
         </span>
       </template>
     </v-data-table>
+    <p class="body-2 mt-2 mb-0">
+      Pour mettre à jour vos départements ou signaler une erreur, veuillez
+      <router-link :to="{ name: 'ContactPage' }">nous contacter</router-link>
+      .
+    </p>
   </div>
 </template>
 
