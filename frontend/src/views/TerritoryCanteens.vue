@@ -4,7 +4,12 @@
     <h1 class="fr-h1 mt-n4 mb-2">
       Les cantines de mon territoire
     </h1>
-    <p>Établissements dans {{ departmentsString }}</p>
+    <p v-if="hasDepartments">Établissements dans {{ departmentsString }}</p>
+    <p v-else>
+      Votre profil n'a pas encore été assigné un territoire. Veuillez
+      <router-link :to="{ name: 'ContactPage' }">nous contacter</router-link>
+      afin d'afficher les établissements correspondant à votre territoire.
+    </p>
     <v-data-table
       :footer-props="footerProps"
       :items="visibleCanteens"
@@ -25,7 +30,7 @@
         </span>
       </template>
     </v-data-table>
-    <p class="body-2 mt-2 mb-0">
+    <p class="body-2 mt-2 mb-0" v-if="hasDepartments">
       Pour mettre à jour vos départements ou signaler une erreur, veuillez
       <router-link :to="{ name: 'ContactPage' }">nous contacter</router-link>
       .
@@ -76,6 +81,9 @@ export default {
         .map((x) => `${x.departmentName} (${x.departmentCode})`)
       if (departmentsArray.length < 2) return `le département ${departmentsArray.join("")}`
       return `les départements ${departmentsArray.slice(0, -1).join(", ")} et ${departmentsArray.slice(-1)}`
+    },
+    hasDepartments() {
+      return this.$store.state.loggedUser.departments?.length > 0
     },
   },
   methods: {
