@@ -39,7 +39,7 @@ import { getObjectDiff } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
-  name: "ElectedCanteens",
+  name: "TerritoryCanteens",
   components: { BreadcrumbsNav },
   data() {
     return {
@@ -81,7 +81,7 @@ export default {
   methods: {
     fetchCurrentPage() {
       this.loading = true
-      return fetch(`/api/v1/electedCanteens/?${this.getApiQueryParams()}`)
+      return fetch(`/api/v1/territoryCanteens/?${this.getApiQueryParams()}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
           return response.json()

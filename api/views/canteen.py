@@ -1288,7 +1288,7 @@ class ActionableCanteenRetrieveView(RetrieveAPIView):
         return ActionableCanteensListView.annotate_actions(single_canteen_queryset, year)
 
 
-class ElectedCanteensListView(ListAPIView):
+class TerritoryCanteensListView(ListAPIView):
     model = Canteen
     permission_classes = [IsElected]
     serializer_class = ElectedCanteenSerializer

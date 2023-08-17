@@ -214,7 +214,7 @@ export default {
           children: [
             {
               text: "Dans mon territoire",
-              to: { name: "ElectedCanteens" },
+              to: { name: "TerritoryCanteens" },
               elected: true,
             },
             {

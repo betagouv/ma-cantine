@@ -56,7 +56,7 @@ import DeveloperPage from "@/views/DeveloperPage"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
 import WebinairePage from "@/views/WebinairePage"
-import ElectedCanteens from "@/views/ElectedCanteens"
+import TerritoryCanteens from "@/views/TerritoryCanteens"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -574,8 +574,8 @@ const routes = [
   },
   {
     path: "/les-cantines-de-mon-territoire",
-    name: "ElectedCanteens",
-    component: ElectedCanteens,
+    name: "TerritoryCanteens",
+    component: TerritoryCanteens,
     meta: {
       title: "Les cantines de mon territoire",
       authenticationRequired: true,
