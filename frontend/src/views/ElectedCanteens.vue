@@ -92,8 +92,8 @@ export default {
         })
         .finally(() => (this.loading = false))
     },
-    getApiQueryParams(includePagination = true) {
-      let apiQueryParams = includePagination ? `limit=${this.limit}&offset=${this.offset}` : ""
+    getApiQueryParams() {
+      let apiQueryParams = `limit=${this.limit}&offset=${this.offset}`
       const orderingItems = this.getOrderingItems()
       if (orderingItems.length > 0) apiQueryParams += `&ordering=${orderingItems.join(",")}`
       return apiQueryParams
