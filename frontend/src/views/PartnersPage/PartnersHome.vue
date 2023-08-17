@@ -10,10 +10,11 @@
           Ces acteurs de la restauration collective au service des gestionnaires sont prêts pour vous aidez à atteindre
           les objectifs de votre cantine.
         </p>
+        <ReferencingInfo />
       </v-col>
       <v-col cols="0" sm="5" md="4" v-if="$vuetify.breakpoint.smAndUp" class="py-0 pr-8 d-flex">
         <v-spacer></v-spacer>
-        <v-img src="/static/images/peeps-illustration-couple.png" contain max-width="140"></v-img>
+        <v-img src="/static/images/peeps-illustration-couple.png" contain max-width="200"></v-img>
       </v-col>
     </v-row>
     <p v-if="$vuetify.breakpoint.mdAndUp" class="font-weight-bold">Vos besoins</p>
@@ -204,11 +205,6 @@
         </v-col>
       </v-row>
     </div>
-
-    <v-divider class="mt-12" id="en-savoir-plus"></v-divider>
-
-    <ReferencingInfo class="pt-12" />
-
     <v-divider class="mb-8 mt-12"></v-divider>
     <v-row>
       <v-col cols="12">

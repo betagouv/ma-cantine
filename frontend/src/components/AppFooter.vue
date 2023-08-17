@@ -35,11 +35,11 @@
           </ul>
         </v-col>
       </v-row>
-      <v-divider v-if="!showSmallFooter" class="mt-6"></v-divider>
+      <v-divider v-if="!showSmallFooter" class="mt-6 mb-2"></v-divider>
       <ul class="d-flex justify-sm-space-between flex-wrap link-group pl-0">
-        <li v-for="(link, index) in bottomLinks" :key="link.text" class="d-flex">
-          <v-btn class="caption px-0" :to="link.to" text plain>{{ link.text }}</v-btn>
-          <div class="footer-divider mt-3 mx-4" v-if="index < bottomLinks.length - 1"></div>
+        <li v-for="(link, index) in bottomLinks" :key="link.text" class="d-flex my-1">
+          <router-link class="caption px-0 grey--text text--darken-2" :to="link.to">{{ link.text }}</router-link>
+          <div class="footer-divider mx-4" v-if="index < bottomLinks.length - 1"></div>
         </li>
         <v-spacer></v-spacer>
       </ul>
@@ -97,7 +97,7 @@ export default {
 .footer-divider {
   background-color: #d7d8de;
   width: 1px;
-  height: 16px;
+  height: inherit;
 }
 .tab-bar-spacer {
   height: 56px;
@@ -111,5 +111,9 @@ export default {
 }
 .link-group > li > a {
   text-decoration: none;
+}
+.link-group > li > a:hover,
+.link-group > li > a:focus {
+  text-decoration: underline;
 }
 </style>
