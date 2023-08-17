@@ -61,7 +61,7 @@ export default {
         { text: "Nom", value: "name", sortable: true },
         { text: "Ville", value: "city", sortable: true },
         { text: "Couverts moyen par jour", value: "dailyMealCount", sortable: true },
-        { text: "Publication", value: "publicationStatus", sortable: false },
+        { text: "Publication", value: "publicationStatus", sortable: true },
       ],
     }
   },
