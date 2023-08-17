@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav />
+    <BreadcrumbsNav :links="[{ to: { name: 'ManagementPage' } }]" />
     <h1 class="text-h6 mt-n2 mb-2 font-weight-bold">
       Les cantines de mon territoire
     </h1>
