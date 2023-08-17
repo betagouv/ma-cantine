@@ -318,6 +318,16 @@ export default {
           text: "Me former ou former mon personnel",
           icon: "$team-fill",
         },
+        {
+          value: "network",
+          text: "Mise en réseau d’acteurs de terrain",
+          icon: "$user-add-fill",
+        },
+        {
+          value: "financial",
+          text: "Aide financière / matérielle",
+          icon: "$money-euro-box-fill",
+        },
       ],
       departmentItems: jsonDepartments.map((x) => ({
         text: `${x.departmentCode} - ${x.departmentName}`,
