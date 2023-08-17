@@ -175,7 +175,6 @@ const routes = [
   },
   {
     path: "/nos-cantines",
-    name: "CanteensPage",
     component: CanteensPage,
     children: [
       {
@@ -212,7 +211,6 @@ const routes = [
   },
   {
     path: "/blog",
-    name: "BlogsPage",
     component: BlogsPage,
     children: [
       {
@@ -238,7 +236,6 @@ const routes = [
   },
   {
     path: "/acteurs-de-l-eco-systeme",
-    name: "PartnersPage",
     component: PartnersPage,
     children: [
       {
