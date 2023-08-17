@@ -12,7 +12,7 @@
         </v-btn>
       </p>
 
-      <div v-if="loggedUser.isElected">
+      <div v-if="loggedUser.isElectedOfficial">
         Vous avez un compte élu / élue, vous pouvez voir
         <router-link text color="primary" :to="{ name: 'TerritoryCanteens' }">
           les cantines de votre territoire

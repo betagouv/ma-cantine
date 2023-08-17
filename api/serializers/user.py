@@ -40,7 +40,7 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "avatar",
             "is_staff",
             "is_dev",
-            "is_elected",
+            "is_elected_official",
             "job",
             "other_job_description",
             "source",

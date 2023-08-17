@@ -66,7 +66,7 @@ class MaCanteenUserAdmin(UserAdmin):
             _("Section pour les élu·e·s"),
             {
                 "fields": (
-                    "is_elected",
+                    "is_elected_official",
                     "departments",
                 ),
             },
@@ -123,7 +123,7 @@ class MaCanteenUserAdmin(UserAdmin):
     )
     inlines = (CanteenInline,)
     list_filter = (
-        "is_elected",
+        "is_elected_official",
         "is_dev",
         "is_staff",
     )

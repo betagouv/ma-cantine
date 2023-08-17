@@ -581,7 +581,7 @@ const routes = [
       authenticationRequired: true,
     },
     beforeEnter: (_to, _from, next) => {
-      store.state.loggedUser?.isElected ? next() : next({ name: "ManagementPage" })
+      store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "ManagementPage" })
     },
   },
 ]

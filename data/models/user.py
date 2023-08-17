@@ -71,7 +71,7 @@ class User(AbstractUser):
     )
 
     is_dev = models.BooleanField(default="False", verbose_name="Compte développeur / technique")
-    is_elected = models.BooleanField(default="False", verbose_name="Compte élu·e")
+    is_elected_official = models.BooleanField(default="False", verbose_name="Compte élu·e")
 
     # MonComptePro
     created_with_mcp = models.BooleanField(default="False", verbose_name="Compte créé avec MonComptePro")

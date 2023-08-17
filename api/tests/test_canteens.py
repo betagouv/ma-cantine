@@ -1175,7 +1175,7 @@ class TestCanteenApi(APITestCase):
 
         # Set an elected profile
         user = authenticate.user
-        user.is_elected = True
+        user.is_elected_official = True
         user.departments = ["01", "02"]
         user.save()
 
@@ -1209,7 +1209,7 @@ class TestCanteenApi(APITestCase):
 
         # Set an elected profile
         user = authenticate.user
-        user.is_elected = False
+        user.is_elected_official = False
         user.save()
 
         # Make request

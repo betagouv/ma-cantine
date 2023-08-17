@@ -52,9 +52,9 @@ class IsCanteenManager(permissions.BasePermission):
         return obj.managers.filter(id=request.user.id).exists()
 
 
-class IsElected(IsAuthenticated):
+class IsElectedOfficial(IsAuthenticated):
     def has_permission(self, request, view):
-        return super().has_permission(request, view) and request.user.is_elected
+        return super().has_permission(request, view) and request.user.is_elected_official
 
 
 class IsCanteenManagerUrlParam(permissions.BasePermission):

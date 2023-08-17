@@ -344,7 +344,8 @@ export default {
       })
       if (this.loggedUser) {
         const navlinks = this.navLinks.filter((link) => link.authenticationState !== false)
-        if (!this.loggedUser.isElected) navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.elected)))
+        if (!this.loggedUser.isElectedOfficial)
+          navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.elected)))
         return navlinks
       } else {
         return this.navLinks.filter((link) => !link.authenticationState)

@@ -42,7 +42,7 @@ from api.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManagerUrlParam,
-    IsElected,
+    IsElectedOfficial,
 )
 from api.exceptions import DuplicateException
 from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
@@ -1290,7 +1290,7 @@ class ActionableCanteenRetrieveView(RetrieveAPIView):
 
 class TerritoryCanteensListView(ListAPIView):
     model = Canteen
-    permission_classes = [IsElected]
+    permission_classes = [IsElectedOfficial]
     serializer_class = ElectedCanteenSerializer
     pagination_class = PublishedCanteensPagination
     filter_backends = [
