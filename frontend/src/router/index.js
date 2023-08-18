@@ -55,6 +55,7 @@ import SiteMap from "@/views/SiteMap"
 import DeveloperPage from "@/views/DeveloperPage"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
+import TerritoryCanteens from "@/views/TerritoryCanteens"
 import VideoTutorial from "@/views/VideoTutorial"
 import Constants from "@/constants"
 
@@ -570,6 +571,18 @@ const routes = [
     name: "VideoTutorial",
     component: VideoTutorial,
     props: true,
+  },
+  {
+    path: "/les-cantines-de-mon-territoire",
+    name: "TerritoryCanteens",
+    component: TerritoryCanteens,
+    meta: {
+      title: "Les cantines de mon territoire",
+      authenticationRequired: true,
+    },
+    beforeEnter: (_to, _from, next) => {
+      store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "ManagementPage" })
+    },
   },
 ]
 

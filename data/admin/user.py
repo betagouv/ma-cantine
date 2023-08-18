@@ -63,6 +63,15 @@ class MaCanteenUserAdmin(UserAdmin):
             },
         ),
         (
+            _("Section pour les élu·e·s"),
+            {
+                "fields": (
+                    "is_elected_official",
+                    "departments",
+                ),
+            },
+        ),
+        (
             _("Permissions"),
             {
                 "fields": (
@@ -113,3 +122,8 @@ class MaCanteenUserAdmin(UserAdmin):
         ),
     )
     inlines = (CanteenInline,)
+    list_filter = (
+        "is_elected_official",
+        "is_dev",
+        "is_staff",
+    )

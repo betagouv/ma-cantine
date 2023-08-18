@@ -33,6 +33,7 @@ from api.serializers import (
     SatelliteCanteenSerializer,
     CanteenActionsSerializer,
     CanteenStatusSerializer,
+    ElectedCanteenSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration, Purchase
 from data.region_choices import Region
@@ -41,6 +42,7 @@ from api.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManagerUrlParam,
+    IsElectedOfficial,
 )
 from api.exceptions import DuplicateException
 from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
@@ -1284,3 +1286,21 @@ class ActionableCanteenRetrieveView(RetrieveAPIView):
         canteen_id = self.request.parser_context.get("kwargs").get("pk")
         single_canteen_queryset = self.request.user.canteens.filter(id=canteen_id)
         return ActionableCanteensListView.annotate_actions(single_canteen_queryset, year)
+
+
+class TerritoryCanteensListView(ListAPIView):
+    model = Canteen
+    permission_classes = [IsElectedOfficial]
+    serializer_class = ElectedCanteenSerializer
+    pagination_class = PublishedCanteensPagination
+    filter_backends = [
+        django_filters.DjangoFilterBackend,
+        UnaccentSearchFilter,
+        MaCantineOrderingFilter,
+    ]
+    search_fields = ["name", "siret"]
+    ordering_fields = ["name", "city", "siret", "daily_meal_count", "publication_status"]
+
+    def get_queryset(self):
+        departments = self.request.user.departments
+        return Canteen.objects.filter(department__in=departments)
