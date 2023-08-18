@@ -56,6 +56,7 @@ import DeveloperPage from "@/views/DeveloperPage"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
 import WebinairePage from "@/views/WebinairePage"
+import TerritoryCanteens from "@/views/TerritoryCanteens"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -175,7 +176,6 @@ const routes = [
   },
   {
     path: "/nos-cantines",
-    name: "CanteensPage",
     component: CanteensPage,
     children: [
       {
@@ -212,7 +212,6 @@ const routes = [
   },
   {
     path: "/blog",
-    name: "BlogsPage",
     component: BlogsPage,
     children: [
       {
@@ -238,7 +237,6 @@ const routes = [
   },
   {
     path: "/acteurs-de-l-eco-systeme",
-    name: "PartnersPage",
     component: PartnersPage,
     children: [
       {
@@ -573,6 +571,18 @@ const routes = [
     name: "WebinairePage",
     component: WebinairePage,
     props: true,
+  },
+  {
+    path: "/les-cantines-de-mon-territoire",
+    name: "TerritoryCanteens",
+    component: TerritoryCanteens,
+    meta: {
+      title: "Les cantines de mon territoire",
+      authenticationRequired: true,
+    },
+    beforeEnter: (_to, _from, next) => {
+      store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "ManagementPage" })
+    },
   },
 ]
 

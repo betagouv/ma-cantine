@@ -13,10 +13,22 @@
         :id="`video-${mainVideo.id}`"
       >
         <source :src="mainVideo.video" />
+        <track v-if="mainVideo.subtitles" label="Français" kind="subtitles" srclang="fr" :src="mainVideo.subtitles" />
         Votre navigateur ne peut pas afficher des vidéos.
       </video>
     </div>
     <p class="mt-2 mb-4" v-if="mainVideo && mainVideo.description">{{ mainVideo.description }}</p>
+    <v-alert v-if="!mainVideo.subtitles" type="info" outlined>
+      <p>
+        Cette vidéo n'a pas de sous-titres. Si vous en avez besoin, contactez-nous avec notre
+        <router-link :to="{ name: 'ContactPage' }">formulaire de contact</router-link>
+        pour prioriser le sous-titrage de ce contenu.
+      </p>
+      <p class="mb-0">
+        Pour plus d'informations consultez notre
+        <router-link :to="{ name: 'AccessibilityDeclaration' }">déclaration d'accessibilité</router-link>
+      </p>
+    </v-alert>
     <div v-if="suggestedVideos && suggestedVideos.length > 0">
       <h2 class="text-h6 mb-4">Autres webinaires</h2>
       <v-row>

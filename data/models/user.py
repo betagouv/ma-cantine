@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db import models
 from data.utils import optimize_image
 from data.fields import ChoiceArrayField
+from data.department_choices import Department
 
 
 class User(AbstractUser):
@@ -70,6 +71,7 @@ class User(AbstractUser):
     )
 
     is_dev = models.BooleanField(default="False", verbose_name="Compte développeur / technique")
+    is_elected_official = models.BooleanField(default="False", verbose_name="Compte élu·e")
 
     # MonComptePro
     created_with_mcp = models.BooleanField(default="False", verbose_name="Compte créé avec MonComptePro")
@@ -137,6 +139,15 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.username})"
+
+    # Geographical scope for elected profiles
+    departments = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=Department.choices),
+        blank=True,
+        null=True,
+        size=None,
+        verbose_name="departements où l'élu·e peut regarder les cantines",
+    )
 
     @property
     def has_mtm_data(self):

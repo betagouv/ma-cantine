@@ -14,6 +14,7 @@ from api.views import (
     UsernameSuggestionView,
     ImportSimpleCentralKitchenView,
     ImportCompleteCentralKitchenView,
+    TerritoryCanteensListView,
     PosterPdfView,
 )
 from api.views import UpdateUserView, UserCanteensView, CanteenStatisticsView
@@ -189,6 +190,7 @@ urlpatterns = {
     path("canteenStatus/siret/<str:siret>", CanteenStatusView.as_view(), name="canteen_status"),
     path("videoTutorials/", VideoTutorialListView.as_view(), name="video_tutorials"),
     path("initialData/", InitialDataView.as_view(), name="initial_data"),
+    path("territoryCanteens/", TerritoryCanteensListView.as_view(), name="territory_canteens"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)
