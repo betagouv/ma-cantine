@@ -26,6 +26,7 @@ from .canteen import (  # noqa: F401
     ActionableCanteensListView,
     ActionableCanteenRetrieveView,
     CanteenStatusView,
+    TerritoryCanteensListView,
 )
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
