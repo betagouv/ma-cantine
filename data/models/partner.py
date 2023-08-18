@@ -27,6 +27,8 @@ class Partner(models.Model):
         TRAINING = "training", "Me former ou former mon personnel"
         SUIVI = "suivi", "Assurer mon suivi d'approvisionnement"
         VEGE = "vege", "Diversifier mes sources de protéines"
+        NETWORK = "network", "Mise en réseau d’acteurs de terrain"
+        FINANCIAL = "financial", "Aide financière / matérielle"
 
     class Meta:
         verbose_name = "partenaire"
