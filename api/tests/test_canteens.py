@@ -1201,7 +1201,7 @@ class TestCanteenApi(APITestCase):
         self.assertNotIn(out_of_place_canteen.id, ids)
 
     @authenticate
-    def test_non_territory_canteens_list(self):
+    def test_not_elected_official_territory_canteens_list(self):
         """
         Profiles not enabled as "elected" should not get information on
         canteens via the territory_canteens API endpoint
