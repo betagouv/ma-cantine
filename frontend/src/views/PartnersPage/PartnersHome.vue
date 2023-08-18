@@ -6,10 +6,6 @@
         <h1 class="font-weight-black text-h5 text-sm-h4 mb-4">
           Améliorer votre offre avec le soutien des acteurs de l'éco-système
         </h1>
-        <p>
-          Ces acteurs de la restauration collective au service des gestionnaires sont prêts pour vous aidez à atteindre
-          les objectifs de votre cantine.
-        </p>
         <ReferencingInfo />
       </v-col>
       <v-col cols="0" sm="5" md="4" v-if="$vuetify.breakpoint.smAndUp" class="py-0 pr-8 d-flex">
@@ -20,11 +16,11 @@
     <p v-if="$vuetify.breakpoint.mdAndUp" class="font-weight-bold">Vos besoins</p>
     <v-item-group v-if="$vuetify.breakpoint.mdAndUp" multiple v-model="filters.category.value">
       <v-row>
-        <v-col v-for="category in categoryItems" cols="4" :key="category.value" class="pa-1">
+        <v-col v-for="category in categoryItems" cols="4" :key="category.value" class="pa-1" fill-height>
           <v-item v-slot="{ active, toggle }" :value="category.value">
-            <button @click="toggle" style="width: inherit;">
-              <v-card :color="active ? 'primary lighten-4' : ''" outlined>
-                <v-card-title class="text-body-2">
+            <button @click="toggle" style="width: inherit;" class="fill-height">
+              <v-card :color="active ? 'primary lighten-4' : ''" outlined class="fill-height">
+                <v-card-title class="text-body-2 d-block text-left">
                   <v-icon small class="mr-2" :color="active ? 'primary' : ''">
                     {{ category.icon }}
                   </v-icon>
@@ -288,7 +284,7 @@ export default {
       categoryItems: [
         {
           value: "appro",
-          text: "Améliorer ma part de bio / durable",
+          text: "Améliorer ma part de bio et de produits durables",
           icon: "$leaf-fill",
         },
         {
@@ -309,7 +305,7 @@ export default {
         },
         {
           value: "vege",
-          text: "Diversifier mes sources de protéines",
+          text: "Diversifier mes sources de protéines et atteindre l'équilibre alimentaire des menus",
           icon: "mdi-barley",
         },
         {
