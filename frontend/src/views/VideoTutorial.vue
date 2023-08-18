@@ -33,13 +33,7 @@
       <h2 class="text-h6 mb-4">Autres webinaires</h2>
       <v-row>
         <v-col cols="12" sm="6" md="4" v-for="video in suggestedVideos" :key="video.id">
-          <v-card
-            class="dsfr"
-            :to="{ name: 'WebinairePage', params: { webinaireUrlComponent: `${video.id}--${video.title}` } }"
-          >
-            <v-card-title>{{ video.title }}</v-card-title>
-            <v-card-text>{{ video.description }}</v-card-text>
-          </v-card>
+          <VideoTutorialCard :videoTutorial="video" />
         </v-col>
       </v-row>
     </div>
@@ -48,10 +42,11 @@
 
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import VideoTutorialCard from "@/components/VideoTutorialCard"
 
 export default {
-  name: "WebinairePage",
-  components: { BreadcrumbsNav },
+  name: "VideoTutorial",
+  components: { BreadcrumbsNav, VideoTutorialCard },
   props: {
     webinaireUrlComponent: {
       type: String,
