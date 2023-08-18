@@ -320,12 +320,12 @@ export default {
         },
         {
           value: "network",
-          text: "Mise en réseau d’acteurs de terrain",
+          text: "Me mettre en réseau avec les acteurs du terrain",
           icon: "$user-add-fill",
         },
         {
           value: "financial",
-          text: "Aide financière / matérielle",
+          text: "Obtenir une aide financière / matérielle",
           icon: "$money-euro-box-fill",
         },
       ],
