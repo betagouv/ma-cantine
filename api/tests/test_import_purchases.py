@@ -1,4 +1,4 @@
-from api.views.utils import read_file_by_batch
+import hashlib
 from datetime import date
 from decimal import Decimal
 from django.urls import reverse
@@ -7,6 +7,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory
 from data.models.purchase import Purchase
+from pathlib import Path
 from .utils import authenticate
 
 
@@ -45,7 +46,7 @@ class TestPurchaseImport(APITestCase):
     @override_settings(FILE_CHUNK_SIZE=1)
     def test_import_batch_purchases(self):
         """
-        Tests that can import a well formatted purchases file
+        Tests that we can import with different batches a well formated file
         """
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
 
@@ -53,6 +54,11 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2)
+        filebytes = Path("./api/tests/files/batch_purchase_import.csv").read_bytes()
+
+        filehash_md5 = hashlib.md5(filebytes).hexdigest()
+        self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
+
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=10)
