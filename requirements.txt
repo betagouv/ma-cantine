@@ -13,7 +13,7 @@ botocore==1.31.9
 celery==5.3.1
 certifi==2023.7.22
 cffi==1.15.1
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
 click==8.1.6
 click-didyoumean==0.3.0
 click-plugins==1.1.1
