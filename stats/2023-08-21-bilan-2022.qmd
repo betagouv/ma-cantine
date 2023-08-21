@@ -34,8 +34,6 @@ En 2021, l'application ne permettait pas de spécifier le mode de télédéclara
 * une cuisine satellite directement
 
 
-# Import des données et des librairies
-
 ```{python import}
 #| echo: false
 import pandas as pd
@@ -64,17 +62,12 @@ campagnes = {
 
 ```{python Import des données TD}
 #| echo: false
-# conn = psycopg2.connect(f"host={os.getenv('DB_HOST')} dbname={os.getenv('DB_NAME')} user={os.getenv('DB_USER')} password={os.getenv('DB_PASSWORD')} sslmode=require")
-# conn = psycopg2.connect(host=os.getenv('DB_HOST'), dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), sslmode="require")
-# conn.set_session(readonly=True)
-# cur = conn.cursor()
 url = f"https://ma-cantine-metabase.cleverapps.io/api/card/802/query/json"
 load_dotenv()
 header = {
     "Content-Type": "application/json",
     "X-Metabase-Session": os.environ.get('METABASE_TOKEN'),
 }
-
 res = requests.post(
     url,
     headers=header,
@@ -84,12 +77,6 @@ del td_raw['year']
 td_raw["declared_data"] = td_raw["declared_data"].apply(json.loads)
 td_json = pd.json_normalize(td_raw["declared_data"])
 td_raw = pd.concat([td_raw.drop("declared_data", axis=1), td_json], axis=1)
-
-# if year == '2021':
-#     col_to_rename = {}
-#     for col in ['production_type', 'management_type', 'yearly_meal_count', 'daily_meal_count']:
-#         col_to_rename[col] = f"canteen.{col}"
-#     td_raw = td_raw.rename(columns=col_to_rename)
 ```
 
 Les données sont extraites de la base de données de ma-cantine. Plusieurs filtres sont appliqués :
@@ -98,6 +85,8 @@ Les données sont extraites de la base de données de ma-cantine. Plusieurs filt
 2. statut : la télédéclaration doit avoir été validée par son éditeur. `status="SUBMITTED"`
 3. année 2022 : `year==2022`
 4. canteen ID qui sont renseignés (champs non nuls) : `canteen_id.notnull()`
+
+Vous pouvez retrouver le code utilisé pour ces filtres ci dessous :
 
 ```{python Ajout des données cantines pour les td de la campagne 2022}
 def add_canteen_info(df):
@@ -138,8 +127,7 @@ tds['2021'] = add_canteen_info(tds['2021'])
 
 
 
-# Nettoyage et formattage des données
-Comparaison de la dynamique de télédéclarations lors des deux dernières campagnes. 
+# Comparaison de la dynamique de télédéclarations lors des deux dernières campagnes. 
 ```{python Nettoyage des données}
 tds_ts =  {}
 for year in campagnes.keys():
@@ -179,7 +167,6 @@ Nous remplaçons les valeurs manquantes par la valeur 0.
 ```{python Basic}
 
 for year in ['2021', '2022']:
-    print(tds[year].describe())
     tds[year] = tds[year].fillna(0)
 ```
 
