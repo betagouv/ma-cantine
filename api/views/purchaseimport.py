@@ -34,7 +34,6 @@ class ImportPurchasesView(APIView):
 
     def _process_file(self):
         file_hash = hashlib.md5()
-        chunk_size = settings.FILE_CHUNK_SIZE
         chunk = []
         batch_i = 1
         for row in self.file:
@@ -43,14 +42,14 @@ class ImportPurchasesView(APIView):
             chunk.append(row.decode())
 
             # Process full chunk
-            if batch_i == chunk_size:
+            if batch_i == settings.FILE_CHUNK_SIZE:
                 self._process_chunk(chunk)
                 chunk = []
                 batch_i = 0
             batch_i += 1
 
         # Process the last chunk
-        if batch_i < chunk_size and len(chunk) > 0:
+        if batch_i < settings.FILE_CHUNK_SIZE and len(chunk) > 0:
             self._process_chunk(chunk)
 
         # The duplication check is called after the processing. The cost of eventually processing
