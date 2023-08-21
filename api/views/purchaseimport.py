@@ -53,7 +53,7 @@ class ImportPurchasesView(APIView):
             self._process_chunk(chunk)
 
         # The duplication check is called after the processing. The cost of eventually processing
-        # the file for nothing appears to be smaller than reand the file twice.
+        # the file for nothing appears to be smaller than read the file twice.
         self._check_duplication(file_hash)
 
     def post(self, request):
