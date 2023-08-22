@@ -26,10 +26,11 @@
 
 <script>
 import SiretRequired from "./AnswerComponents/SiretRequired"
+import NoSiret from "./AnswerComponents/NoSiret"
 
 export default {
   name: "FaqPanels",
-  components: { SiretRequired },
+  components: { SiretRequired, NoSiret },
   data() {
     return {
       sections: [
@@ -105,6 +106,10 @@ export default {
             {
               title: "Le SIRET est-il obligatoire pour créer ma cantine ?",
               answerComponent: "SiretRequired",
+            },
+            {
+              title: "Comment faire si je ne dispose pas de SIRET pour créer mon établissement dans ma cantine ?",
+              answerComponent: "NoSiret",
             },
           ],
         },
