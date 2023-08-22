@@ -8,7 +8,7 @@
             <span :class="open && 'font-weight-bold'">{{ question.title }}</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content class="faq-answer">
-            {{ question.answer }}
+            <p class="mb-0">{{ question.answer }}</p>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
