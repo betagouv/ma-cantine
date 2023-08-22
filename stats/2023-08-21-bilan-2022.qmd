@@ -51,7 +51,7 @@ import plotly.express as px
 #| echo: false
 campagnes = {
   "2021": {"start_date": "2022-07-16", "end_date": "2022-12-05", "card": "795"},
-  "2022": {"start_date": "2023-02-15", "end_date": "2023-06-30", "card": "802"}
+  "2022": {"start_date": "2023-02-13", "end_date": "2023-06-30", "card": "802"}
 }
 
 ```
@@ -119,9 +119,13 @@ tds = {}
 for year in campagnes.keys():
     tds[year] = td.copy()
     tds[year] = tds[year][tds[year].year==int(year)]
+    tds[year]['creation_date'] = tds[year]['creation_date'].apply(lambda x: x.split('T')[0])
     tds[year] = tds[year][(tds[year]['creation_date'] >= campagnes[year]["start_date"]) & (tds[year]['creation_date'] <= campagnes[year]["end_date"])]
 
 tds['2021'] = add_canteen_info(tds['2021'])
+
+for year in campagnes.keys():
+    tds[year].to_csv(f'export_dataset_stats_campagne_{year}.csv', sep=';', index=False)
 
 ```
 
@@ -166,8 +170,8 @@ for year in tds.keys():
 Nous remplaçons les valeurs manquantes par la valeur 0.
 ```{python Basic}
 
-for year in ['2021', '2022']:
-    tds[year] = tds[year].fillna(0)
+# for year in ['2021', '2022']:
+#     tds[year] = tds[year].fillna(0)
 ```
 
 # Chiffres clés
@@ -179,7 +183,6 @@ Les informations suivantes proviennent donc des informations renseignées pour l
 ```{python Nombre de sites de restauration concernés par la télédéclaration}
 indicateurs = {}
 for year in ['2021', '2022']:
-    print(year)
     indicateurs[year] = {}
     indicateurs[year]["Nombre de Télédéclarations"] = len(tds[year])
     indicateurs[year]["Nombre de sites de restauration concernés par la télédéclaration"] = (
