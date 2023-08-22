@@ -5,7 +5,9 @@
       <v-expansion-panels hover accordion tile flat>
         <v-expansion-panel v-for="question in section.questions" :key="question.title">
           <v-expansion-panel-header class="px-3" expand-icon="mdi-plus" disable-icon-rotate v-slot="{ open }">
-            <span :class="open && 'font-weight-bold'">{{ question.title }}</span>
+            <h3 class="fr-text" :class="open && 'font-weight-bold'">
+              {{ question.title }}
+            </h3>
           </v-expansion-panel-header>
           <v-expansion-panel-content class="faq-answer">
             <component :is="question.answerComponent" v-if="question.answerComponent" />
