@@ -8,7 +8,8 @@
             <span :class="open && 'font-weight-bold'">{{ question.title }}</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content class="faq-answer">
-            <p class="mb-0">{{ question.answer }}</p>
+            <component :is="question.answerComponent" v-if="question.answerComponent" />
+            <p v-else class="mb-0">{{ question.answer }}</p>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -24,8 +25,11 @@
 </template>
 
 <script>
+import SiretRequired from "./AnswerComponents/SiretRequired"
+
 export default {
   name: "FaqPanels",
+  components: { SiretRequired },
   data() {
     return {
       sections: [
@@ -100,8 +104,7 @@ export default {
           questions: [
             {
               title: "Le SIRET est-il obligatoire pour créer ma cantine ?",
-              answer:
-                "Oui. Il est possible de le trouver ici : https://annuaire-entreprises.data.gouv.fr/. Concernant les cantines scolaires, vous pouvez retrouver le SIRET de l’établissement rattaché à la cantine sur l’Annuaire de l’éducation : https://annuaire-education.fr/. Attention, il n’est pas possible d’ajouter plusieurs cantines sous un seul et même SIRET. Dans la plupart des cas, chaque cantine dispose de son numéro de SIRET propre. Dans certains cas, il est possible que certaines cantines n’aient pas de SIRET : dans ce cas uniquement, il est possible d’indiquer le numéro de SIRET de la collectivité desservant ces cantines. S’il existe déjà ou a été créé par une entité, je peux demander à rejoindre ma cantine.",
+              answerComponent: "SiretRequired",
             },
           ],
         },
