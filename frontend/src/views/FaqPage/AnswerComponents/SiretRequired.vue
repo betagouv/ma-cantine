@@ -5,18 +5,17 @@
       cantines sous un seul et même SIRET.
     </p>
     <p>
-      Pour trouver le SIRET de votre établissement :
+      Pour trouver le SIRET de votre établissement utilisez
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
-        https://annuaire-entreprises.data.gouv.fr/
+        l'Annuaire des Entreprises
         <v-icon small color="primary" class="ml-1">mdi-open-in-new</v-icon>
       </a>
       .
     </p>
     <p>
       Pour les cantines scolaires, le SIRET peut-être celui de votre école et vous pouvez retrouver le SIRET sur
-      l’annuaire de l’éducation :
       <a href="https://annuaire-education.fr/" target="_blank" rel="noopener">
-        https://annuaire-education.fr/
+        l’Annuaire de l’Éducation
         <v-icon small color="primary" class="ml-1">mdi-open-in-new</v-icon>
       </a>
       .
