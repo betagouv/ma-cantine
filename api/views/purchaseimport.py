@@ -35,21 +35,21 @@ class ImportPurchasesView(APIView):
     def _process_file(self):
         file_hash = hashlib.md5()
         chunk = []
-        batch_i = 1
+        row_count = 1
         for row in self.file:
             # Split into chunks
             file_hash.update(row)
             chunk.append(row.decode())
 
             # Process full chunk
-            if batch_i == settings.CSV_PURCHASE_CHUNK_LINES:
+            if row_count == settings.CSV_PURCHASE_CHUNK_LINES:
                 self._process_chunk(chunk)
                 chunk = []
-                batch_i = 0
-            batch_i += 1
+                row_count = 0
+            row_count += 1
 
         # Process the last chunk
-        if batch_i < settings.CSV_PURCHASE_CHUNK_LINES and len(chunk) > 0:
+        if row_count < settings.CSV_PURCHASE_CHUNK_LINES and len(chunk) > 0:
             self._process_chunk(chunk)
 
         # The duplication check is called after the processing. The cost of eventually processing
