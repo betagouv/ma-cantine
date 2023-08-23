@@ -21,7 +21,6 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    @override_settings(CSV_PURCHASE_CHUNK_LINES=1)
     def test_import_good_purchases(self):
         """
         Tests that can import a well formatted purchases file
