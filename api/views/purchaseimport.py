@@ -95,7 +95,7 @@ class ImportPurchasesView(APIView):
             row_count += 1
 
         # Process the last chunk
-        if row_count < settings.CSV_PURCHASE_CHUNK_LINES and len(chunk) > 0:
+        if len(chunk) > 0:
             self._process_chunk(chunk)
 
         self.file_digest = file_hash.hexdigest()
