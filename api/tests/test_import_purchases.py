@@ -54,11 +54,11 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2)
-        filebytes = Path("./api/tests/files/batch_purchase_import.csv").read_bytes()
 
+        # Test that the purchase import source contains the complete file digest
+        filebytes = Path("./api/tests/files/batch_purchase_import.csv").read_bytes()
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
-
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=10)
