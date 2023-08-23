@@ -62,7 +62,7 @@
     {% uses_moncomptepro as show_mcp_button %}
     {% if show_mcp_button %}
     <a href="{% url 'oidc-login' %}">
-        <img src="{% static 'images/button-moncomptepro.svg' %}" />
+        <img src="{% static 'images/button-moncomptepro.svg' %}" alt="S'identifier avec MonComptePro" />
     </a>
     {% endif %}
     <p style="font-size: 0.85em; margin-top: 20px;"><a href="{% url 'password_reset' %}">J'ai perdu mon mot de passe</a></p>
