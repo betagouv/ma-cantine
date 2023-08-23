@@ -46,8 +46,13 @@ class ImportPurchasesView(APIView):
                 if self.errors:
                     raise IntegrityError()
                 
+                # The duplication check is called after the processing. The cost of eventually processing
+                # the file for nothing appears to be smaller than read the file twice.
+                self._check_duplication()
+
                 # Update all purchases's import source with file digest
                 Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.file_digest)
+
             return self._get_success_response()
 
         except IntegrityError as e:
@@ -93,16 +98,13 @@ class ImportPurchasesView(APIView):
         if row_count < settings.CSV_PURCHASE_CHUNK_LINES and len(chunk) > 0:
             self._process_chunk(chunk)
 
-        # The duplication check is called after the processing. The cost of eventually processing
-        # the file for nothing appears to be smaller than read the file twice.
-        self._check_duplication(file_hash)
+        self.file_digest = file_hash.hexdigest()
 
     def _verify_file_size(self):
         if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
-    def _check_duplication(self, m):
-        self.file_digest = m.hexdigest()
+    def _check_duplication(self):
         matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
         if matching_purchases.exists():
             self.purchases = matching_purchases.all()
