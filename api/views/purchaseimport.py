@@ -42,14 +42,14 @@ class ImportPurchasesView(APIView):
             chunk.append(row.decode())
 
             # Process full chunk
-            if batch_i == settings.FILE_CHUNK_SIZE:
+            if batch_i == settings.CSV_PURCHASE_CHUNK_LINES:
                 self._process_chunk(chunk)
                 chunk = []
                 batch_i = 0
             batch_i += 1
 
         # Process the last chunk
-        if batch_i < settings.FILE_CHUNK_SIZE and len(chunk) > 0:
+        if batch_i < settings.CSV_PURCHASE_CHUNK_LINES and len(chunk) > 0:
             self._process_chunk(chunk)
 
         # The duplication check is called after the processing. The cost of eventually processing

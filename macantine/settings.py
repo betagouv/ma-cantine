@@ -379,7 +379,7 @@ if DEBUG_PERFORMANCE:
 CSV_IMPORT_MAX_SIZE = 10485760
 
 # Size of each chunk when processing files
-FILE_CHUNK_SIZE = 81920
+CSV_PURCHASE_CHUNK_LINES = 10000
 
 # CSP headers (https://content-security-policy.com/)
 
