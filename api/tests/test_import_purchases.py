@@ -52,10 +52,15 @@ class TestPurchaseImport(APITestCase):
         Tests that can import a well formatted purchases file
         """
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
-        with open("./api/tests/files/purchase_import_sep_tab.csv") as purchase_file:
+        with open("./api/tests/files/purchase_import_delimiter_tab.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
+
+        with open("./api/tests/files/purchase_import_delimiter_semicolon.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 2)
 
     @authenticate
     @override_settings(CSV_PURCHASE_CHUNK_LINES=1)

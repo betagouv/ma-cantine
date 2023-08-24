@@ -30,6 +30,7 @@ class ImportPurchasesView(APIView):
         self.file_digest = None
         self.tmp_id = uuid.uuid4()
         self.file = None
+        self.dialect = None
         super().__init__(**kwargs)
 
     def post(self, request):
@@ -83,6 +84,11 @@ class ImportPurchasesView(APIView):
         chunk = []
         row_count = 1
         for row in self.file:
+            if self.dialect is None:  # Sniffing header
+                try:
+                    self.dialect = csv.Sniffer().sniff(row.decode())
+                except Exception as e:
+                    print(e)
             # Split into chunks
             file_hash.update(row)
             chunk.append(row.decode())
@@ -113,7 +119,8 @@ class ImportPurchasesView(APIView):
     def _process_chunk(self, chunk):
         errors = []
         self.purchases = []
-        csvreader = csv.reader(io.StringIO("".join(chunk)), delimiter=",")
+
+        csvreader = csv.reader(io.StringIO("".join(chunk)), self.dialect)
         for row_number, row in enumerate(csvreader, start=1):
             # If header, pass
             if row_number == 1 and row[0].lower().__contains__("siret"):
