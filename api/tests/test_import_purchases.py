@@ -46,7 +46,16 @@ class TestPurchaseImport(APITestCase):
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
 
-    # TODO: check semi colon and tab separators
+    @authenticate
+    def test_import_purchases_different_separators(self):
+        """
+        Tests that can import a well formatted purchases file
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        with open("./api/tests/files/purchase_import_sep_tab.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
 
     @authenticate
     @override_settings(CSV_PURCHASE_CHUNK_LINES=1)
