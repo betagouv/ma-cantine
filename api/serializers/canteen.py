@@ -51,10 +51,26 @@ class MediaListSerializer(serializers.ListSerializer):
         return media
 
 
+class CentralKitchenPublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Canteen
+        read_only_fields = (
+            "id",
+            "name",
+            "publication_status",
+        )
+        fields = (
+            "id",
+            "name",
+            "publication_status",
+        )
+
+
 class PublicCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
+    central_kitchen = CentralKitchenPublicSerializer(read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
@@ -85,6 +101,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "can_be_claimed",
             "is_managed_by_user",
             "central_kitchen_diagnostics",
+            "central_kitchen",
         )
 
     def get_is_managed_by_user(self, obj):
