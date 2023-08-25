@@ -1,11 +1,11 @@
 <template>
   <div>
-    <DsfrSkipLinks :links="[{ text: 'Contenu', to: '#contenu' }]" />
+    <DsfrSkipLinks :links="[{ text: 'Contenu', id: 'contenu' }]" />
     <DsfrHeader
       service-title="ma cantine"
       :quick-links="[
-        { label: 'S\'identifier', to: '/s-identifier' },
-        { label: 'Créer mon compte', to: '/creer-mon-compte' },
+        { label: 'S\'identifier', href: authUrl('/s-identifier') },
+        { label: 'Créer mon compte', href: authUrl('/creer-mon-compte') },
       ]"
     >
       <DsfrNavigation
@@ -25,5 +25,13 @@
 <script>
 export default {
   name: "App",
+  methods: {
+    authUrl(path) {
+      // header component will interpret a link
+      // as a router-link unless it starts with http
+      // https://github.com/dnum-mi/vue-dsfr/pull/54/files
+      return `${location.origin}${path}`
+    },
+  },
 }
 </script>
