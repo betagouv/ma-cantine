@@ -1,11 +1,24 @@
 import { createRouter, createWebHistory } from "vue-router"
+import LandingPage from "@/views/LandingPage"
+import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 
 const routes = [
+  // {
+  //   path: "/",
+  //   meta: {
+  //     home: true,
+  //   },
+  // },
   {
+    // path: "/accueil",
     path: "/",
-    meta: {
-      home: true,
-    },
+    name: "LandingPage",
+    component: LandingPage,
+  },
+  {
+    path: "/a11y",
+    name: "AccessibilityDeclaration",
+    component: AccessibilityDeclaration,
   },
 ]
 

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <DsfrSkipLinks :links="[{ text: 'Test', to: '#test' }]" />
+    <DsfrSkipLinks :links="[{ text: 'Contenu', to: '#contenu' }]" />
     <DsfrHeader
       service-title="ma cantine"
       :quick-links="[
         { label: 'S\'identifier', to: '/s-identifier' },
-        { label: 'Créer mon compte', to: '/creer-mon-compmte' },
+        { label: 'Créer mon compte', to: '/creer-mon-compte' },
       ]"
     >
       <DsfrNavigation
@@ -15,10 +15,8 @@
         ]"
       />
     </DsfrHeader>
-    <div class="fr-container">
-      <h1>Test DSFR</h1>
-      <DsfrAlert title="Testing" />
-      <router-link :to="{ path: 'test' }">Testing</router-link>
+    <div id="contenu" class="fr-container">
+      <router-view />
     </div>
     <DsfrFooter />
   </div>
