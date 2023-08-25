@@ -178,7 +178,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
-    central_kitchen_name = serializers.SerializerMethodField(read_only=True)
+    central_kitchen = CentralKitchenPublicSerializer(read_only=True)
 
     class Meta:
         model = Canteen
@@ -195,6 +195,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "plastics_comments",
             "information_comments",
             "central_kitchen_diagnostics",
+            "central_kitchen",
             "is_central_cuisine",
         )
         fields = (
@@ -211,7 +212,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "satellite_canteens_count",
             "siret",
             "central_producer_siret",
-            "central_kitchen_name",
+            "central_kitchen",
             "management_type",
             "production_type",
             "diagnostics",
@@ -295,21 +296,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             return None
         except Canteen.MultipleObjectsReturned as e:
             logger.exception(f"Multiple canteens returned when obtaining the central_producer_siret field {e}")
-            return None
-
-    def get_central_kitchen_name(self, obj):
-        # Ideally we would also check the status of the satellite canteen and
-        # the central cuisine, for now we omit this check. For now it is the
-        # responsibility of the frontend to use this information.
-        if not obj.central_producer_siret:
-            return None
-        try:
-            central_kitchen = Canteen.objects.get(siret=obj.central_producer_siret)
-            return central_kitchen.name
-        except Canteen.DoesNotExist:
-            return None
-        except Canteen.MultipleObjectsReturned as e:
-            logger.exception(f"Multiple canteens returned when obtaining the central_kitchen_name field {e}")
             return None
 
 
