@@ -9,8 +9,20 @@
         <v-icon class="ml-4" color="primary">$information-fill</v-icon>
 
         <v-card-text>
-          La cantine « {{ canteen.name }} » sert des repas cuisinés dans une cuisine centrale. Les valeurs ci-dessous
-          sont celles du lieu de production des repas.
+          La cantine « {{ canteen.name }} » sert des repas cuisinés dans la cuisine centrale
+          <span v-if="canteen.centralKitchen.publicationStatus === 'published'">
+            <router-link
+              :to="{
+                name: 'CanteenPage',
+                params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen.centralKitchen) },
+              }"
+            >
+              « {{ canteen.centralKitchen.name }} »
+            </router-link>
+            .
+          </span>
+          <span v-else>« {{ canteen.centralKitchen.name }} ».</span>
+          Les valeurs ci-dessous sont celles du lieu de production des repas.
         </v-card-text>
       </v-card>
 
