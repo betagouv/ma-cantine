@@ -228,7 +228,7 @@ import PartnerCard from "@/views/PartnersPage/PartnerCard"
 import NewPartnerCard from "@/views/PartnersPage/NewPartnerCard"
 import GeneralContactForm from "@/components/GeneralContactForm"
 import ReferencingInfo from "./ReferencingInfo"
-import { getObjectDiff, sectorsSelectList } from "@/utils"
+import { getObjectDiff, sectorsSelectList, departmentItems } from "@/utils"
 import jsonDepartments from "@/departments.json"
 
 export default {
@@ -329,10 +329,7 @@ export default {
           icon: "$money-euro-box-fill",
         },
       ],
-      departmentItems: jsonDepartments.map((x) => ({
-        text: `${x.departmentCode} - ${x.departmentName}`,
-        value: x.departmentCode,
-      })),
+      departmentItems,
       sectors: [],
       typeItems: [],
       gratuityOptions: [

@@ -1,5 +1,6 @@
 import Constants from "@/constants"
 import jsonBadges from "@/badges"
+import jsonDepartments from "@/departments.json"
 
 export const timeAgo = (date, displayPrefix = false) => {
   if (typeof date === "string") {
@@ -517,6 +518,11 @@ export const approSummary = (diagnostic) => {
   }
   return "Incomplet"
 }
+
+export const departmentItems = jsonDepartments.map((x) => ({
+  text: `${x.departmentCode} - ${x.departmentName}`,
+  value: x.departmentCode,
+}))
 
 function hasValue(val) {
   if (typeof val === "string") {
