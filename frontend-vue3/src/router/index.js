@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router"
 import store from "@/store"
+import Constants from "@/constants"
 import LandingPage from "@/views/LandingPage"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
+import FaqPage from "@/views/FaqPage"
 
 const routes = [
   // {
@@ -20,6 +22,15 @@ const routes = [
     path: "/a11y",
     name: "AccessibilityDeclaration",
     component: AccessibilityDeclaration,
+  },
+  {
+    path: "/faq/",
+    name: "FaqPage",
+    component: FaqPage,
+    meta: {
+      title: "Foire aux questions",
+    },
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
 ]
 

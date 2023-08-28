@@ -5,7 +5,7 @@
       <DsfrNavigation
         :nav-items="[
           { text: 'Test', to: '/test' },
-          { title: 'Test menu', links: [{ text: 'Test', to: '/test' }] },
+          { title: 'Questions ?', links: [{ text: 'FAQ', to: '/faq' }] },
         ]"
       />
     </DsfrHeader>
