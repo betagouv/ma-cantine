@@ -5,8 +5,10 @@ import VueDsfr from "@gouvminint/vue-dsfr" // Import (par défaut) de la bibliot
 
 import App from "./App.vue"
 import { router } from "./router"
+import store from "./store"
 
 createApp(App)
   .use(VueDsfr) // Enregistrement de la bibliothèque en tant que plugin
   .use(router)
+  .use(store)
   .mount("#app")

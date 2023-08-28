@@ -1,0 +1,22 @@
+{
+  "appro": {
+    "subtitle": "Ce qui est servi dans les assiettes est au moins à 50 % de produits durables et de qualité, dont 20 % bio.",
+    "title": "Des produits durables et de qualité"
+  },
+  "diversification": {
+    "subtitle": "Les protéines des repas servis peuvent aussi être présents dans des plats végétariens.",
+    "title": "Equilibre nutritionnel et menu végé"
+  },
+  "info": {
+    "subtitle": "Votre gestionnaire informe ses convives de toutes ses démarches pour du mieux manger !",
+    "title": "Transparence et communication"
+  },
+  "plastic": {
+    "subtitle": "La cantine n’utilise plus du tout de plastique ni pour sa production ni pour le service.",
+    "title": "Une démarche 0 plastique"
+  },
+  "waste": {
+    "subtitle": "La cantine est engagée dans une démarche de réduction drastique de son gaspillage.",
+    "title": "Vers du 0 gaspi alimentaire"
+  }
+}

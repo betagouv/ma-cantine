@@ -1,13 +1,7 @@
 <template>
   <div>
     <DsfrSkipLinks :links="[{ text: 'Contenu', id: 'contenu' }]" />
-    <DsfrHeader
-      service-title="ma cantine"
-      :quick-links="[
-        { label: 'S\'identifier', href: authUrl('/s-identifier') },
-        { label: 'Créer mon compte', href: authUrl('/creer-mon-compte') },
-      ]"
-    >
+    <DsfrHeader service-title="ma cantine" :quick-links="headerLinks">
       <DsfrNavigation
         :nav-items="[
           { text: 'Test', to: '/test' },
@@ -25,6 +19,25 @@
 <script>
 export default {
   name: "App",
+  computed: {
+    loggedUser() {
+      return this.$store.state.loggedUser
+    },
+    headerLinks() {
+      return this.loggedUser
+        ? [
+            {
+              // TODO: use modal for confirmation
+              label: "Me déconnecter",
+              href: this.authUrl("/se-deconnecter"),
+            },
+          ]
+        : [
+            { label: "S'identifier", href: this.authUrl("/s-identifier") },
+            { label: "Créer mon compte", href: this.authUrl("/creer-mon-compte") },
+          ]
+    },
+  },
   methods: {
     authUrl(path) {
       // header component will interpret a link
