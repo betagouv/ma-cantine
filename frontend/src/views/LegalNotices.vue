@@ -23,7 +23,7 @@
     </address>
     <h2>Directeur de la publication</h2>
     <address>
-      <img src="/static/images/Marianne.png" alt="" />
+      <img src="/static/images/Marianne.png" alt="Ministère de l'agriculture et de la souveraineté alimentaire" />
       <p>
         MINISTÈRE DE L’AGRICULTURE - Direction Générale de l’Alimentation
         <br />
@@ -70,7 +70,7 @@
     <h2>Données personnelles, suivi d’audience et gestion des cookies</h2>
 
     <div id="cookies-definition">
-      <img src="/static/images/cookie.png" />
+      <img src="/static/images/cookie.png" alt="" />
       <p>
         Le cookie est un petit fichier texte enregistré par le navigateur de votre ordinateur, tablette ou smartphone et
         qui permet de conserver des données utilisateur afin de faciliter la navigation et de permettre certaines
