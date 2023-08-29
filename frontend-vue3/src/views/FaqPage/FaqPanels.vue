@@ -1,6 +1,6 @@
 <template>
   <div>
-    <DsfrAccordionsGroup v-for="section in sections" :key="section.title">
+    <DsfrAccordionsGroup v-for="section in sections" :key="section.title" class="fr-mb-6w">
       <h3>{{ section.title }}</h3>
       <li v-for="question in section.questions" :key="question.title">
         <DsfrAccordion :title="question.title" :expanded-id="expandedId" @expand="expandedId = $event">
