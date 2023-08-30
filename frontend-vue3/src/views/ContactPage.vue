@@ -13,7 +13,6 @@
         >
           <v-icon small color="primary">mdi-chevron-right</v-icon>
           {{ link.title }}
-          <v-icon v-if="link.href" small color="primary">mdi-open-in-new</v-icon>
         </router-link>
       </li>
     </ul>
