@@ -1,5 +1,7 @@
 from collections import OrderedDict
 import logging
+import random
+from django.db import connection
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import RetrieveAPIView, ListCreateAPIView
 from rest_framework.pagination import LimitOffsetPagination
@@ -49,7 +51,6 @@ class PartnersPagination(LimitOffsetPagination):
 
 class PartnersView(ListCreateAPIView):
     model = Partner
-    queryset = Partner.objects.filter(published=True)
     pagination_class = PartnersPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["sectors"]
@@ -60,7 +61,8 @@ class PartnersView(ListCreateAPIView):
         return PartnerShortSerializer
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = Partner.objects.filter(published=True)
+
         types = self.request.query_params.getlist("type", [])
         if types:
             queryset = queryset.filter(types__name__in=types)
@@ -74,7 +76,29 @@ class PartnersView(ListCreateAPIView):
         gratuityOptions = self.request.query_params.getlist("gratuityOption", [])
         if gratuityOptions:
             queryset = queryset.filter(gratuity_option__in=gratuityOptions)
-        return queryset
+        return self.randomize_queryset(queryset)
+
+    def randomize_queryset(self, queryset):
+        seed = self.get_seed()
+        cursor = connection.cursor()
+        cursor.execute("SELECT setseed(%s);" % (seed))
+        cursor.close()
+        return queryset.order_by("?")
+
+    def get_randomized_queryset(self):
+        seed = self.get_seed()
+        cursor = connection.cursor()
+        cursor.execute("SELECT setseed(%s);" % (seed))
+        cursor.close()
+        return Partner.objects.filter(published=True).order_by("?")
+
+    def get_seed(self):
+        if self.request.user.is_authenticated:
+            random.seed(self.request.user.id)
+            return random.uniform(-1, 1)
+        if not self.request.session.get("seed"):
+            self.request.session["seed"] = random.uniform(-1, 1)
+        return self.request.session.get("seed")
 
 
 class PartnerView(RetrieveAPIView):
