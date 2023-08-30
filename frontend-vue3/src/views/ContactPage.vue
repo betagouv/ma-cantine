@@ -5,13 +5,11 @@
     <h2 class="mb-4">Ressources</h2>
     <ul class="text-body-2 mb-8">
       <li v-for="link in links" :key="link.title" class="my-1">
-        <router-link
-          :to="link.to || {}"
-          :href="link.href"
-          :target="link.href && '_blank'"
-          :rel="link.href && 'noopener'"
-        >
-          <v-icon small color="primary">mdi-chevron-right</v-icon>
+        <v-icon small color="primary">mdi-chevron-right</v-icon>
+        <a v-if="link.href" :href="link.href" :target="link.href && '_blank'" :rel="link.href && 'noopener'">
+          {{ link.title }}
+        </a>
+        <router-link :to="link.to" v-else>
           {{ link.title }}
         </router-link>
       </li>
