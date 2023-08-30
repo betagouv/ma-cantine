@@ -12,6 +12,7 @@
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
     "vue-router": "^4.2.4",
+    "vuetify": "^3.3.14",
     "vuex": "^4.0.2",
     "webpack-bundle-tracker": "^2.0.1"
   },

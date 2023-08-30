@@ -4,6 +4,7 @@ import Constants from "@/constants"
 import LandingPage from "@/views/LandingPage"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import FaqPage from "@/views/FaqPage"
+import ContactPage from "@/views/ContactPage"
 
 const routes = [
   // {
@@ -29,6 +30,15 @@ const routes = [
     component: FaqPage,
     meta: {
       title: "Foire aux questions",
+    },
+    sitemapGroup: Constants.SitemapGroups.SITE,
+  },
+  {
+    path: "/contact",
+    name: "ContactPage",
+    component: ContactPage,
+    meta: {
+      title: "Contactez-nous",
     },
     sitemapGroup: Constants.SitemapGroups.SITE,
   },
