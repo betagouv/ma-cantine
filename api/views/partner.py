@@ -85,13 +85,6 @@ class PartnersView(ListCreateAPIView):
         cursor.close()
         return queryset.order_by("?")
 
-    def get_randomized_queryset(self):
-        seed = self.get_seed()
-        cursor = connection.cursor()
-        cursor.execute("SELECT setseed(%s);" % (seed))
-        cursor.close()
-        return Partner.objects.filter(published=True).order_by("?")
-
     def get_seed(self):
         if self.request.user.is_authenticated:
             random.seed(self.request.user.id)
