@@ -86,9 +86,6 @@ class PartnersView(ListCreateAPIView):
         return queryset.order_by("?")
 
     def get_seed(self):
-        if self.request.user.is_authenticated:
-            random.seed(self.request.user.id)
-            return random.uniform(-1, 1)
         if not self.request.session.get("seed"):
             self.request.session["seed"] = random.uniform(-1, 1)
         return self.request.session.get("seed")
