@@ -48,7 +48,7 @@ export default {
             link.text = this.breadcrumbRoutes.find((r) => r.name === link.to.name)?.meta?.title
           }
         })
-        links.push(this.links)
+        links.push(...this.links)
       }
       const thispage = { text: this.pageTitle }
       links.push(thispage)
