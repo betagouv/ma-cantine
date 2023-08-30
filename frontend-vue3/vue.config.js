@@ -1,5 +1,6 @@
 const { defineConfig } = require("@vue/cli-service")
 const BundleTracker = require("webpack-bundle-tracker")
+const { VuetifyPlugin } = require("webpack-plugin-vuetify")
 const debug = !process.env.DEBUG || process.env.DEBUG === "True"
 const publicPath = debug ? "http://127.0.0.1:8080/" : "/static/"
 
@@ -22,6 +23,10 @@ module.exports = defineConfig({
     config.optimization.splitChunks(false)
 
     config.plugin("BundleTracker").use(BundleTracker, [{ path: "../frontend-vue3/", filename: "webpack-stats.json" }])
+
+    config
+      .plugin("VuetifyPlugin")
+      .use(VuetifyPlugin, [{ autoimport: true, styles: { configFile: "src/styles/settings.scss" } }])
 
     config.resolve.alias.set("__STATIC__", "static")
 
