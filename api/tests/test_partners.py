@@ -193,13 +193,14 @@ class TestPartnersApi(APITestCase):
 
     def test_randomized_results(self):
         """
-        Results should be randomized yet consistent with the user
+        Results should be randomized yet consistent with the session
         """
         for i in range(50):
             PartnerFactory.create(published=True)
         user_1 = UserFactory.create()
         user_2 = UserFactory.create()
 
+        # Creates a session
         self.client.force_login(user=user_1)
 
         response = self.client.get(reverse("partners_list"))
@@ -212,6 +213,8 @@ class TestPartnersApi(APITestCase):
         body = response.json()
 
         user_1_results_2 = [x["id"] for x in body.get("results")]
+
+        # Creates a new different session
         self.client.force_login(user=user_2)
 
         response = self.client.get(reverse("partners_list"))
