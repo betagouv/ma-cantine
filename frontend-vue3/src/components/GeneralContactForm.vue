@@ -16,7 +16,7 @@
             Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
           </p>
         </v-form>
-        <v-btn x-large color="primary" class="mt-0 mb-6" @click="sendEmail">
+        <v-btn size="x-large" color="primary" class="mt-0 mb-6" @click="sendEmail" variant="flat">
           <v-icon class="mr-2">mdi-send</v-icon>
           Envoyer
         </v-btn>
