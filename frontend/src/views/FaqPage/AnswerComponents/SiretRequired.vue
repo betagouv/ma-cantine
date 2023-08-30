@@ -21,8 +21,8 @@
       .
     </p>
     <p class="mb-0">
-      Si le SIRET existe déjà ou a été créé par une entité, je peux demander à rejoindre ma cantine ou à signaler le
-      problème.
+      Si le SIRET existe déjà ou a été créé par une entité, vous pouvez demander à rejoindre l'équipe de la cantine ou
+      signaler le problème.
     </p>
   </div>
 </template>
