@@ -3,7 +3,15 @@
     <label :for="inputId" :class="labelClasses" v-if="$attrs.label">
       {{ $attrs.label }}
     </label>
-    <v-textarea dense ref="textarea" solo flat v-bind="$attrs" persistent-placeholder @input="(v) => $emit('input', v)">
+    <v-textarea
+      density="compact"
+      ref="textarea"
+      variant="solo"
+      flat
+      v-bind="$attrs"
+      persistent-placeholder
+      @update:model-value="(v) => $emit('input', v)"
+    >
       <template v-slot:label><span></span></template>
     </v-textarea>
   </div>

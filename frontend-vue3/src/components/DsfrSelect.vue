@@ -4,14 +4,14 @@
       {{ $attrs.label }}
     </label>
     <v-select
-      dense
+      density="compact"
       min-height="40"
       ref="select"
-      solo
+      variant="solo"
       flat
       v-bind="$attrs"
       persistent-placeholder
-      @input="(v) => $emit('input', v)"
+      @update:model-value="(v) => $emit('input', v)"
     >
       <template v-slot:label><span></span></template>
     </v-select>

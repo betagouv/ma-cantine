@@ -2,8 +2,8 @@
   <div>
     <v-row>
       <v-col>
-        <v-form v-model="formIsValid" ref="form" @submit.prevent>
-          <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
+        <v-form ref="form" @submit.prevent>
+          <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on="blur" />
           <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
           <DsfrSelect
             v-model="inquiryType"
@@ -65,17 +65,16 @@ export default {
   data() {
     const user = this.$store.state.loggedUser
     return {
-      formIsValid: true,
       fromEmail: user ? user.email : "",
       name: user ? `${user.firstName} ${user.lastName}` : "",
       message: "",
       inquiryType: this.initialInquiryType || "",
       inquiryOptions: [
-        { text: "Poser une question sur une fonctionnalité de ma cantine ?", value: "functionalityQuestion" },
-        { text: "Demander une démo", value: "demo" },
-        { text: "Signaler un bug", value: "bug" },
-        { text: "Question sur la loi EGAlim", value: "egalim" },
-        { text: "Autre", value: "other" },
+        { title: "Poser une question sur une fonctionnalité de ma cantine ?", value: "functionalityQuestion" },
+        { title: "Demander une démo", value: "demo" },
+        { title: "Signaler un bug", value: "bug" },
+        { title: "Question sur la loi EGAlim", value: "egalim" },
+        { title: "Autre", value: "other" },
       ],
     }
   },
@@ -85,9 +84,9 @@ export default {
     },
   },
   methods: {
-    sendEmail() {
-      this.$refs.form.validate()
-      if (!this.formIsValid) {
+    async sendEmail() {
+      const result = await this.$refs.form.validate()
+      if (!result.valid) {
         this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
