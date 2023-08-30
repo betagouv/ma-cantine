@@ -41,4 +41,7 @@ export default createVuetify({
       dsfrLightTheme,
     },
   },
+  display: {
+    mobileBreakpoint: "sm",
+  },
 })

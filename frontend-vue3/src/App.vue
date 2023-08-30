@@ -13,12 +13,16 @@
       <router-view />
     </div>
     <DsfrFooter />
+    <NotificationSnackbar />
   </div>
 </template>
 
 <script>
+import NotificationSnackbar from "@/components/NotificationSnackbar"
+
 export default {
   name: "App",
+  components: { NotificationSnackbar },
   computed: {
     loggedUser() {
       return this.$store.state.loggedUser
