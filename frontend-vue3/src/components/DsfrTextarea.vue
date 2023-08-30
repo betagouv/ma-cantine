@@ -6,8 +6,7 @@
     <v-textarea
       density="compact"
       ref="textarea"
-      variant="solo"
-      flat
+      single-line
       v-bind="$attrs"
       persistent-placeholder
       @update:model-value="(v) => $emit('input', v)"

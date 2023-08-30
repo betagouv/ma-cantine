@@ -5,10 +5,8 @@
     </label>
     <v-text-field
       density="compact"
-      height="40"
+      single-line
       ref="text-field"
-      variant="solo"
-      flat
       v-bind="$attrs"
       persistent-placeholder
       @update:model-value="(v) => $emit('input', v)"

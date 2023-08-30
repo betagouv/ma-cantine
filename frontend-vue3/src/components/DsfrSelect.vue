@@ -5,10 +5,8 @@
     </label>
     <v-select
       density="compact"
-      min-height="40"
+      single-line
       ref="select"
-      variant="solo"
-      flat
       v-bind="$attrs"
       persistent-placeholder
       @update:model-value="(v) => $emit('input', v)"
