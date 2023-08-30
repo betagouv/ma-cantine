@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import PartnerFactory, PartnerTypeFactory, SectorFactory
+from data.factories import PartnerFactory, PartnerTypeFactory, SectorFactory, UserFactory
 from data.models import Partner
 
 
@@ -76,7 +76,7 @@ class TestPartnersApi(APITestCase):
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 3)
-        results = map(lambda r: r.get("name"), results)
+        results = list(map(lambda r: r.get("name"), results))
         self.assertIn("Find me", results)
         self.assertIn("Find me too", results)
         self.assertIn("Me three", results)
@@ -94,7 +94,7 @@ class TestPartnersApi(APITestCase):
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 3)
-        results = map(lambda r: r.get("name"), results)
+        results = list(map(lambda r: r.get("name"), results))
         self.assertIn("Find me", results)
         self.assertIn("Find me too", results)
         self.assertIn("Me three", results)
@@ -125,7 +125,7 @@ class TestPartnersApi(APITestCase):
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 3)
-        results = map(lambda r: r.get("name"), results)
+        results = list(map(lambda r: r.get("name"), results))
         self.assertIn("Find me", results)
         self.assertIn("Find me too", results)
         self.assertIn("Me three", results)
@@ -190,3 +190,40 @@ class TestPartnersApi(APITestCase):
         body = response.json()
         partner = body["results"][0]
         self.assertNotIn("contactEmail", partner)
+
+    def test_randomized_results(self):
+        """
+        Results should be randomized yet consistent with the user
+        """
+        for i in range(50):
+            PartnerFactory.create(published=True)
+        user_1 = UserFactory.create()
+        user_2 = UserFactory.create()
+
+        self.client.force_login(user=user_1)
+
+        response = self.client.get(reverse("partners_list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        user_1_results_1 = [x["id"] for x in body.get("results")]
+        response = self.client.get(reverse("partners_list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        user_1_results_2 = [x["id"] for x in body.get("results")]
+        self.client.force_login(user=user_2)
+
+        response = self.client.get(reverse("partners_list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        user_2_results_1 = [x["id"] for x in body.get("results")]
+        response = self.client.get(reverse("partners_list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        user_2_results_2 = [x["id"] for x in body.get("results")]
+        self.assertEqual(user_1_results_1, user_1_results_2)
+        self.assertEqual(user_2_results_1, user_2_results_2)
+        self.assertNotEqual(user_1_results_1, user_2_results_1)
