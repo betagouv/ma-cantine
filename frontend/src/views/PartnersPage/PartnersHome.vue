@@ -314,7 +314,7 @@ export default {
         },
         {
           value: "training",
-          text: "Me former ou former mon personnel",
+          text: "Me former ou former mon personnel (formation qualifiante)",
           icon: "$team-fill",
         },
         {
