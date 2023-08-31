@@ -23,6 +23,11 @@
               Voir le code source
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
+            . Vous pouvez également obtenir des informations concernant la
+            <a href="https://updown.io/2l7f" class="grey--text text--darken-3">
+              disponibilité de la plateforme
+              <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
+            </a>
           </p>
           <!-- ml-n1 here makes up for the a11y need of ::before on li elements for them to be recognised by all screen readers -->
           <ul class="d-flex justify-space-between font-weight-bold pl-0 ml-n1 flex-wrap link-group">
