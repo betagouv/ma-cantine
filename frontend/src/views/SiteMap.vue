@@ -3,7 +3,7 @@
     <BreadcrumbsNav />
     <h1 class="font-weight-black my-8">Plan du site</h1>
     <v-row>
-      <v-col v-for="group in sitemapGroups" :key="group.title" cols="6">
+      <v-col v-for="group in sitemapGroups" :key="group.title" cols="12" sm="6">
         <h2 class="my-2">{{ group.title }}</h2>
         <ul>
           <li v-for="link in group.links" :key="link.text">

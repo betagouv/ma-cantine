@@ -1,8 +1,8 @@
 <template>
   <div>
     <p>
-      Ce service est en expérimentation jusqu'à décembre 2023. Les acteurs se sont référencés eux mêmes en respectant
-      notre charte.
+      Ce service est en expérimentation pendant six mois. Les acteurs se sont référencés eux mêmes en respectant notre
+      charte.
     </p>
     <p>
       Cette page n’engage pas l’administration ou l'équipe ma cantine ; elle constitue une proposition à l'attention des
