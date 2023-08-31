@@ -267,9 +267,9 @@ export default {
       return this.canteen.centralKitchenDiagnostics.map((centralDiag) => {
         const satelliteMatchingDiag = this.canteen.diagnostics.find((x) => x.year === centralDiag.year)
         if (centralDiag.centralKitchenDiagnosticMode === "APPRO" && satelliteMatchingDiag) {
-          const nonApproSatelliteFields = Object.assign({}, satelliteMatchingDiag)
-          this.approFields.forEach((x) => delete nonApproSatelliteFields[x])
-          return Object.assign(nonApproSatelliteFields, centralDiag)
+          const satelliteDiagCopy = Object.assign({}, satelliteMatchingDiag)
+          this.approFields.forEach((x) => delete satelliteDiagCopy[x])
+          return Object.assign(satelliteDiagCopy, centralDiag)
         }
         return centralDiag
       })
