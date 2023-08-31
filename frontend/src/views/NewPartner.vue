@@ -216,31 +216,40 @@ export default {
       categories: [
         {
           value: "appro",
-          text: "Améliorer ma part de bio / durable",
-        },
-        {
-          value: "plastic",
-          text: "Substituer mes plastiques",
-        },
-        {
-          value: "asso",
-          text: "Donner à une association",
-        },
-        {
-          value: "waste",
-          text: "Diagnostiquer mon gaspillage",
-        },
-        {
-          value: "training",
-          text: "Me former ou former mon personnel",
+          text: "Améliorer ma part de bio et de produits durables",
         },
         {
           value: "suivi",
           text: "Assurer mon suivi d'approvisionnement",
         },
         {
+          value: "waste",
+          text: "Diagnostiquer mon gaspillage",
+        },
+
+        {
+          value: "asso",
+          text: "Donner à une association",
+        },
+        {
           value: "vege",
-          text: "Diversifier mes sources de protéines",
+          text: "Diversifier mes sources de protéines et atteindre l'équilibre alimentaire des menus",
+        },
+        {
+          value: "plastic",
+          text: "Substituer mes plastiques",
+        },
+        {
+          value: "training",
+          text: "Me former ou former mon personnel",
+        },
+        {
+          value: "network",
+          text: "Me mettre en réseau avec les acteurs du terrain",
+        },
+        {
+          value: "financial",
+          text: "Obtenir une aide financière / matérielle",
         },
       ],
       departmentItems,
