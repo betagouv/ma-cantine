@@ -5,6 +5,7 @@ import LandingPage from "@/views/LandingPage"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import FaqPage from "@/views/FaqPage"
 import ContactPage from "@/views/ContactPage"
+import PurchasesHome from "@/views/PurchasesHome"
 
 const routes = [
   // {
@@ -17,6 +18,12 @@ const routes = [
     // path: "/accueil",
     path: "/",
     name: "LandingPage",
+    component: LandingPage,
+  },
+  {
+    // path: "/accueil",
+    path: "/",
+    name: "DeveloperPage",
     component: LandingPage,
   },
   {
@@ -41,6 +48,16 @@ const routes = [
       title: "Contactez-nous",
     },
     sitemapGroup: Constants.SitemapGroups.SITE,
+  },
+  {
+    path: "/mes-achats",
+    name: "PurchasesHome",
+    component: PurchasesHome,
+    meta: {
+      title: "Mes achats",
+      authenticationRequired: true,
+    },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
 ]
 
