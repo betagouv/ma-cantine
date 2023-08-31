@@ -17,10 +17,13 @@
             label="Nom de votre structure / organisation"
             :rules="[validators.required]"
           />
-          <DsfrRadio
-            label="Secteur économique"
-            :items="economicModels"
-            v-model="partner.economicModel"
+          <DsfrSelect
+            label="Type d'acteur"
+            multiple
+            :items="partnerTypes"
+            v-model="partner.types"
+            item-text="name"
+            item-value="id"
             :rules="[validators.required]"
           />
         </v-col>
@@ -60,17 +63,6 @@
           label="Sur quels aspects, pouvez-vous aider des gestionnaires de restaurants collectifs ?"
           :items="categories"
           v-model="partner.categories"
-          :rules="[validators.required]"
-        />
-      </v-col>
-      <v-col class="pa-0" cols="12" md="7">
-        <DsfrSelect
-          label="Type d'acteur"
-          multiple
-          :items="partnerTypes"
-          v-model="partner.types"
-          item-text="name"
-          item-value="id"
           :rules="[validators.required]"
         />
       </v-col>
@@ -241,7 +233,7 @@ export default {
         },
         {
           value: "training",
-          text: "Me former ou former mon personnel",
+          text: "Me former ou former mon personnel (formation qualifiante)",
         },
         {
           value: "network",

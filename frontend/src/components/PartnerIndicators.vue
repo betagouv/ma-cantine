@@ -4,17 +4,11 @@
       <v-icon small>$store-fill</v-icon>
       <span class="ml-1">{{ types }}</span>
     </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="partner.economicModel === 'public'">
-      <v-icon small>$france-fill</v-icon>
-      <span class="ml-1">Public</span>
-    </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="partner.economicModel === 'private'">
-      <v-icon small>$building-fill</v-icon>
-      <span class="ml-1">Privée</span>
-    </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="partner.free === true">
-      <v-icon small v-if="partner.free === true">$money-euro-circle-fill</v-icon>
-      <span class="ml-1">Gratuit</span>
+    <p :class="{ 'my-0': true, inline: singleLine }" v-if="partner.gratuityOption">
+      <v-icon small>$money-euro-circle-fill</v-icon>
+      <span class="ml-1" v-if="partner.gratuityOption === 'free'">Gratuit</span>
+      <span class="ml-1" v-if="partner.gratuityOption === 'paid'">Payant</span>
+      <span class="ml-1" v-if="partner.gratuityOption === 'mix'">Mixte gratuit et payant</span>
     </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="partner.national">
       <v-icon small>$road-map-fill</v-icon>
