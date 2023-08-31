@@ -210,9 +210,6 @@
         <p class="body-2">
           Dites-nous tout, nous ferons en sorte de vous aider.
         </p>
-        <p class="body-2">
-          Si vous êtes un acteur de la restauration collective, décrivez-nous votre offre et nous vous ajoutons !
-        </p>
         <GeneralContactForm initialInquiryType="other"></GeneralContactForm>
       </v-col>
     </v-row>
