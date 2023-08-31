@@ -126,7 +126,7 @@
                 'active-filter-label': filters.type.value && !!filters.type.value.length,
               }"
             >
-              Type
+              Type d'acteur
             </label>
             <DsfrSelect
               v-model="filters.type.value"
