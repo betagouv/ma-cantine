@@ -245,6 +245,7 @@ import {
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import FamiliesGraph from "@/components/FamiliesGraph"
 import ImageGallery from "@/components/ImageGallery"
+import Constants from "@/constants"
 
 export default {
   props: {
@@ -265,10 +266,29 @@ export default {
       // from the central and satellites when necessary to show the whole picture
       return this.canteen.centralKitchenDiagnostics.map((centralDiag) => {
         const satelliteMatchingDiag = this.canteen.diagnostics.find((x) => x.year === centralDiag.year)
-        if (centralDiag.centralKitchenDiagnosticMode === "APPRO" && satelliteMatchingDiag)
-          return Object.assign(satelliteMatchingDiag, centralDiag)
+        if (centralDiag.centralKitchenDiagnosticMode === "APPRO" && satelliteMatchingDiag) {
+          const satelliteDiagCopy = Object.assign({}, satelliteMatchingDiag)
+          this.approFields.forEach((x) => delete satelliteDiagCopy[x])
+          return Object.assign(satelliteDiagCopy, centralDiag)
+        }
         return centralDiag
       })
+    },
+    approFields() {
+      const approSimplifiedFields = [
+        "valueTotalHt",
+        "valueBioHt",
+        "valueSustainableHt",
+        "valueExternalityPerformanceHt",
+        "valueEgalimOthersHt",
+      ]
+      const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
+      const approFields = characteristicGroups.egalim.fields
+        .concat(characteristicGroups.outsideLaw.fields)
+        .concat(characteristicGroups.nonEgalim.fields)
+        .concat(approSimplifiedFields)
+      const percentageApproFields = approFields.map((x) => `percentage${x.charAt(0).toUpperCase() + x.slice(1)}`)
+      return approFields.concat(percentageApproFields)
     },
     diagnostic() {
       if (!this.diagnosticSet) return
