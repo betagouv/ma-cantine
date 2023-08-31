@@ -31,11 +31,11 @@ export default {
           videos: this.tutorials.filter((x) => x.categories.indexOf("technical") > -1),
         },
         {
-          category: "Transition alimentaire",
+          category: "Webinaires : transition alimentaire",
           videos: this.tutorials.filter((x) => x.categories.indexOf("transition") > -1),
         },
         {
-          category: "Je suis...",
+          category: "Webinaires : cas d'usage particuliers",
           videos: this.tutorials.filter((x) => x.categories.indexOf("profile") > -1),
         },
         {

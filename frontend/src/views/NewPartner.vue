@@ -170,8 +170,7 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrRadio from "@/components/DsfrRadio"
-import jsonDepartments from "@/departments.json"
-import { sectorsSelectList, toBase64 } from "@/utils"
+import { sectorsSelectList, toBase64, departmentItems } from "@/utils"
 
 export default {
   name: "NewPartner",
@@ -244,10 +243,7 @@ export default {
           text: "Diversifier mes sources de protéines",
         },
       ],
-      departmentItems: jsonDepartments.map((x) => ({
-        text: `${x.departmentCode} - ${x.departmentName}`,
-        value: x.departmentCode,
-      })),
+      departmentItems,
     }
   },
   computed: {

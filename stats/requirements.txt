@@ -2,5 +2,5 @@ pandas==2.0.3
 ipykernel==6.25.1
 ydata-profiling==4.3.2
 ipywidgets==8.0.7
-frictionless==5.13.1
+frictionless==5.15.10
 nbformat==5.9.0
