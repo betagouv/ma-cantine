@@ -59,23 +59,7 @@ campagnes = {
     "2021": {"start_date": "2022-07-16", "end_date": "2022-12-05", "card": "795"},
     "2022": {"start_date": "2023-02-13", "end_date": "2023-06-30", "card": "802"},
 }
-import os
-
-os.environ["TEST"] = "1"
-
-TEST = "test"
-
 ```
-
-...
-<details>
-<p>This is an HTML paragraph.</p>
-<ul>
-  <li>{r}campagnes{r}</li>
-  <li>Item 2</li>
-</ul>
-</details>
-...
 
 <!-- Afin de récupérer les données, il vous faut un TOKEN metabase :
 `curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://ma-cantine-metabase.cleverapps.io/api/session` -->
@@ -98,8 +82,6 @@ del td_raw["year"]
 td_raw["declared_data"] = td_raw["declared_data"].apply(json.loads)
 td_json = pd.json_normalize(td_raw["declared_data"])
 td_raw = pd.concat([td_raw.drop("declared_data", axis=1), td_json], axis=1)
-
-
 ```
 
 Les données sont extraites de la base de données de ma-cantine. Plusieurs filtres sont appliqués :
@@ -122,9 +104,8 @@ def add_canteen_info(df):
         },
     )
     td_canteen = pd.DataFrame(res.json())
-
     col_to_rename = {}
-    for col in ["production_type", "management_type", "yearly_meal_count", "daily_meal_count"]:
+    for col in ["production_type", "management_type", "yearly_meal_count", "daily_meal_count", "sectors"]:
         del df[f"canteen.{col}"]
         col_to_rename[f"{col}"] = f"canteen.{col}"
     td_canteen = td_canteen.rename(columns=col_to_rename)
@@ -159,7 +140,7 @@ for year in campagnes.keys():
 
 
 # Comparaison de la dynamique de télédéclarations lors des deux dernières campagnes. 
-```{python Nettoyage des données}
+```{python}
 
 tds_ts = {}
 for year in campagnes.keys():
@@ -235,7 +216,7 @@ for year in campagnes.keys():
         pourcentage_in_file[year][col] = f"{100 * (1 - tds[year][col].isna().sum() / len(tds[year])):.2f} %"
 
 pourcentage_in_file_to_display = pd.DataFrame(pourcentage_in_file)
-print(pourcentage_in_file_to_display.to_markdown())
+# print(pourcentage_in_file_to_display.to_markdown())
 print(":::")
 ```
 
@@ -299,10 +280,61 @@ indicateurs_to_display = pd.DataFrame(indicateurs)
 print(indicateurs_to_display.to_markdown())
 ```
 
+
+
 # Focus par secteurs
+Répartition des télédéclaration en fonction du secteur principal.
+
 ```{python}
+# | echo: false
+# | output: asis
+
+
+def traitement_secteurs(df, year):
+    df["canteen.sectors"] = tds[year]["canteen.sectors"].fillna("[]")
+    if year != "2021":  # Transform the dict into a list of category
+        df["canteen.sectors_"] = df["canteen.sectors"].apply(lambda x: ["sector." + item["category"] for item in x])
+        # print(df["canteen.sectors_"])
+    else:
+        df["canteen.sectors_"] = df["canteen.sectors"].apply(lambda x: x.split(","))
+        # print(df["canteen.sectors_"])
+
+    # Explode the lists into separate rows
+    df_exploded = df.explode("canteen.sectors_")
+
+    # Use get_dummies to create dummy columns for each category
+    categories_dummies = pd.get_dummies(df_exploded["canteen.sectors_"])
+
+    # Group by the index (items) and sum the dummy columns
+
+    categories_dummies_grouped = categories_dummies.groupby(by=categories_dummies.index).sum()
+    # Concatenate the dummy columns with the original DataFrame
+    df_normalized = pd.concat([df, categories_dummies_grouped], axis=1)
+
+    # Drop the 'categories' column since we have the dummies
+    df_normalized = df_normalized.drop(columns=["canteen.sectors_"])
+
+    return df_normalized
+
+
+for year in campagnes.keys():
+    tds[year] = traitement_secteurs(tds[year], year)
+    categories = list(filter(lambda k: "sector." in k, tds[year].columns))
+
+sectors = pd.DataFrame({"2021": tds["2021"][categories].sum(), "2022": tds["2022"][categories].sum()})
+print(sectors.to_markdown())
 
 ```
+
+```{python}
+for year in campagnes.keys():
+    for category in categories:
+        print('\n#####\n' + category + '\n')
+        tds[year] = tds[year].loc[:, ~tds[year].columns.duplicated()]
+        print(tds[year][tds[year][category] > 0][['canteen_id', 'teledeclaration.value_bio_ht']].describe())
+```
+## Secteur Administration
+
 
 ## Etudes des populations de déclarants
 
