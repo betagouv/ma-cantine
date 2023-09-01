@@ -84,13 +84,13 @@ class ImportPurchasesView(APIView):
         chunk = []
         row_count = 1
         for row in self.file:
-            if self.dialect is None:  # Sniffing header
-                try:
-                    self.dialect = csv.Sniffer().sniff(row.decode())
-                except Exception as e:
-                    print(e)
-            # Split into chunks
+            # Sniffing header
+            if self.dialect is None:
+                self.dialect = csv.Sniffer().sniff(row.decode())
+
             file_hash.update(row)
+            
+            # Split into chunks
             chunk.append(row.decode())
 
             # Process full chunk
