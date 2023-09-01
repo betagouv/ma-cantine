@@ -173,7 +173,7 @@ export default {
               title:
                 "A qui les données relatives aux achats de denrées alimentaires déclarées dans « ma cantine » sont-elles fournies ? Pour quoi faire ?",
               answer:
-                "Les données d'achat saisies dans « ma cantine » (dans le diagnostic) sont à télédéclarer tous les ans. Elles sont transmises à la DGAL (Direction générale de l’Alimentation) - ministère de l’Agriculture et de la Souveraineté Alimentaire (MASA) en vue d'etablir le bilan annuel à remettre au Parlement qui sera un document public. Les données recueillies par télédéclaration seront traitées de manière agrégée pour réaliser le bilan annuel et aucune donnée individuelle ne sera rendue publique dans ce cadre.",
+                "Les données d'achat saisies dans « ma cantine » (dans le diagnostic) sont à télédéclarer tous les ans. Elles sont transmises à la DGAL (Direction générale de l’Alimentation) - ministère de l’Agriculture et de la Souveraineté Alimentaire (MASA) en vue d'etablir le bilan annuel à remettre au Parlement qui sera un document public.",
             },
             {
               title:
