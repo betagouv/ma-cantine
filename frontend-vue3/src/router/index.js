@@ -59,6 +59,17 @@ const routes = [
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,
   },
+  // temporary routes so that don't have to modify bits of code
+  {
+    path: "/",
+    name: "DeveloperPage",
+    component: LandingPage,
+  },
+  {
+    path: "/",
+    name: "ManagementPage",
+    component: LandingPage,
+  },
 ]
 
 const router = createRouter({
