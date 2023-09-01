@@ -9,12 +9,12 @@
       </li>
     </DsfrAccordionsGroup>
 
-    <!-- <div class="mt-6 d-flex">
-      <v-btn large :to="{ name: 'ContactPage' }" outlined color="primary">
+    <div class="my-6 d-flex">
+      <v-btn size="large" :to="{ name: 'ContactPage' }" variant="outlined" color="primary">
         <v-icon class="mr-2">mdi-help-circle</v-icon>
         Soumettre une nouvelle question
       </v-btn>
-    </div> -->
+    </div>
   </div>
 </template>
 
