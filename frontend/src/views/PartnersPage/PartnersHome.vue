@@ -325,7 +325,8 @@ export default {
           icon: "$money-euro-box-fill",
         },
       ],
-      departmentItems,
+      // Need to create a deep copy to avoid modiifying the array elsewhere in the app
+      departmentItems: JSON.parse(JSON.stringify(departmentItems)),
       sectors: [],
       typeItems: [],
       gratuityOptions: [
@@ -429,11 +430,11 @@ export default {
       })
     },
     setLocations(enabledLocationIds) {
-      const enabledLocations = departmentItems.filter((x) => enabledLocationIds.indexOf(x.value) > -1)
+      const enabledLocations = this.departmentItems.filter((x) => enabledLocationIds.indexOf(x.value) > -1)
       const header = { header: `Nous n'avons pas encore d'établissements dans ces departements :` }
       const divider = { divider: true }
 
-      const disabledLocations = departmentItems
+      const disabledLocations = this.departmentItems
         .filter((x) => enabledLocationIds.indexOf(x.value) === -1)
         .map((x) => Object.assign(x, { disabled: true }))
 
