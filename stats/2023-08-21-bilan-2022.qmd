@@ -82,6 +82,8 @@ del td_raw["year"]
 td_raw["declared_data"] = td_raw["declared_data"].apply(json.loads)
 td_json = pd.json_normalize(td_raw["declared_data"])
 td_raw = pd.concat([td_raw.drop("declared_data", axis=1), td_json], axis=1)
+
+
 ```
 
 Les données sont extraites de la base de données de ma-cantine. Plusieurs filtres sont appliqués :
@@ -208,7 +210,6 @@ Avant d'étudier les chiffres clés de la télédéclaration, nous vous présent
 # | echo: false
 # | output: asis
 
-print("::: {.spoiler} \n")
 pourcentage_in_file = {}
 for year in campagnes.keys():
     pourcentage_in_file[year] = {}
@@ -217,7 +218,6 @@ for year in campagnes.keys():
 
 pourcentage_in_file_to_display = pd.DataFrame(pourcentage_in_file)
 # print(pourcentage_in_file_to_display.to_markdown())
-print(":::")
 ```
 
 # Chiffres clés
@@ -327,27 +327,53 @@ print(sectors.to_markdown())
 ```
 
 ```{python}
+# | echo: false
 for year in campagnes.keys():
     for category in categories:
-        print('\n#####\n' + category + '\n')
+        # print("\n#####\n" + category + "\n")
         tds[year] = tds[year].loc[:, ~tds[year].columns.duplicated()]
-        print(tds[year][tds[year][category] > 0][['canteen_id', 'teledeclaration.value_bio_ht']].describe())
-```
-## Secteur Administration
-
-
-## Etudes des populations de déclarants
-
-```{python}
-# First we want a dataframe in which each line represent a canteen, whatever its production type (central, satellite...). In order to do this, we need to dig in the line of the central kitchen
-# for year in campagnes.keys():
-
+        # print(tds[year][tds[year][category] > 0][["canteen_id", "teledeclaration.value_bio_ht"]].describe())
 ```
 
 
-# Traitement des champs manquants, stratégie 2022
+# Etudes des populations de déclarants
 
-## Stratégie 2022
+```{python Etablire exactement les cantines ayant participé directement ou indirectement (direct, satellites...)}
+# | output: asis
+
+import numpy as np
+
+satellites_sirets = {}
+liste_cantines = {}
+for year in campagnes.keys():
+    df = tds[year]["satellites"].dropna()
+    satellites_sirets_raw = df.apply(lambda x: [item["siret"] for item in x]).values.tolist()
+    # Flatten the nested lists into one list with sirets as elements
+    satellites_sirets[year] = [item for sublist in satellites_sirets_raw for item in sublist]
+    # Uncommnent the line comment to add satellites sirets (only exists for 2022)
+    satellites_sirets[year] = tds[year].canteen_siret.values.tolist()  # + satellites_sirets[year]
+
+    # Remove duplicates
+    satellites_sirets[year] = list(set(satellites_sirets[year]))
+
+# Télédeclarants présents dans les siret 2022 mais non 2021
+entrants = [item for item in satellites_sirets["2022"] if item not in satellites_sirets["2021"]]
+print(f"Il y a {len(entrants)} nouveaux teledeclarants (ayant déclaré sur la campagne 2023 mais pas celle de 2022)")
+# Télédeclarants présents dans les siret 2021 mais non 2022
+sortants = [item for item in satellites_sirets["2021"] if item not in satellites_sirets["2022"]]
+print(
+    f"Il y a {len(sortants)} teledeclarant n'ayant pas renouvellé (ayant déclaré sur la campagne 2022 mais pas celle de 2023)"
+)
+```
+
+Analysons les profils entrants et sortants.  
+**En cours**
+
+# Annexe
+
+## Traitement des champs manquants, stratégie 2022
+
+### Stratégie 2022
 
 Si les 4 champs sont vides => on ne force pas à 0 (108 cantines concernés)
 
@@ -358,21 +384,21 @@ Si les 4 champs sont vides => on ne force pas à 0 (108 cantines concernés)
 22 TD complètes. Le total des achats bio est rempli automatiquement. Le calcul ne correspondait pas à la somme de tous les produits bio. Corrigé ?
 
 
-## Stratégie 2023
+### Stratégie 2023
 
 * Normalement, champ "je ne sais pas"
 * Import par fichiers, il y a peut-être des champs vides, ou des valeurs à 0
 * Valeurs vides => on ne prend pas en compte la colonne pour les calculs
 
 
-# Changelog pour la campagne 2022
+## Changelog pour la campagne 2022
 
 * Supprimer les cuisine centrales du calcul du nombre de site de restauration concerné
 * Se rebaser sur les données cantine fournies dans la télédéclaration
 * Nombre de repas moyen : on se rebase sur les données cantine fournies dans la télédéclaration (et non pas une approximation détaillée par secteur)
 * (eventuellement) Changer la stratégie pour les champs vides
 
-# Analyses à mener
+## Analyses à mener
 
 * Pertinence des garde fous (bloquant et non bloquant) (cf Matomo)
 * Nombre de déclarants ont rempli des valeurs d'achat bio (O € compris)
@@ -381,3 +407,12 @@ Si les 4 champs sont vides => on ne force pas à 0 (108 cantines concernés)
 * Répartition individuelle des des répartition du bio . Moyenne du pourcentage
 * Stats par familles d'achat
 * Mesurer l'effort de TD entre 3 semaine avant la date limite et la date limite
+
+
+
+## Qualité des données
+
+```{python}
+print(pourcentage_in_file_to_display.to_markdown())
+
+```
