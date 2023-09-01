@@ -28,11 +28,11 @@
     <body>
         <main>
             <div id="wrapper" {% if form.uses_columns %}class="columns"{% endif %}>
-                <h1 id="ma-cantine">
+                <div id="ma-cantine">
                     <a href="/">
-                        <img src="{% static 'images/header-logos-extended.png' %}" alt="ma cantine" class="auth_logo" />
+                        <img src="{% static 'images/header-logos-extended.png' %}" alt="Ma cantine (aller à l'accueil) - Ministère de l'agriculture et de la souveraineté alimentaire" class="auth_logo" />
                     </a>
-                </h1>
+                </div>
                 {% block content %}
                 {% endblock %}
             </div>
