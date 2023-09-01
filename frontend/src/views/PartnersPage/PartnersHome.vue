@@ -126,7 +126,7 @@
                 'active-filter-label': filters.type.value && !!filters.type.value.length,
               }"
             >
-              Type
+              Type d'acteur
             </label>
             <DsfrSelect
               v-model="filters.type.value"
@@ -210,9 +210,6 @@
         <p class="body-2">
           Dites-nous tout, nous ferons en sorte de vous aider.
         </p>
-        <p class="body-2">
-          Si vous êtes un acteur de la restauration collective, décrivez-nous votre offre et nous vous ajoutons !
-        </p>
         <GeneralContactForm initialInquiryType="other"></GeneralContactForm>
       </v-col>
     </v-row>
@@ -228,8 +225,7 @@ import PartnerCard from "@/views/PartnersPage/PartnerCard"
 import NewPartnerCard from "@/views/PartnersPage/NewPartnerCard"
 import GeneralContactForm from "@/components/GeneralContactForm"
 import ReferencingInfo from "./ReferencingInfo"
-import { getObjectDiff, sectorsSelectList } from "@/utils"
-import jsonDepartments from "@/departments.json"
+import { getObjectDiff, sectorsSelectList, departmentItems } from "@/utils"
 
 export default {
   name: "PartnersHome",
@@ -315,7 +311,7 @@ export default {
         },
         {
           value: "training",
-          text: "Me former ou former mon personnel",
+          text: "Me former ou former mon personnel (formation qualifiante)",
           icon: "$team-fill",
         },
         {
@@ -329,10 +325,8 @@ export default {
           icon: "$money-euro-box-fill",
         },
       ],
-      departmentItems: jsonDepartments.map((x) => ({
-        text: `${x.departmentCode} - ${x.departmentName}`,
-        value: x.departmentCode,
-      })),
+      // Need to create a deep copy to avoid modiifying the array elsewhere in the app
+      departmentItems: JSON.parse(JSON.stringify(departmentItems)),
       sectors: [],
       typeItems: [],
       gratuityOptions: [
@@ -435,30 +429,19 @@ export default {
         this.filters[key].value = f.default
       })
     },
-    setLocations(enabledLocationIds, jsonLocations, locationKeyWord, locationsWord) {
-      const enabledLocations = jsonLocations
-        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) > -1)
-        .map((x) => ({
-          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
-          value: x[`${locationKeyWord}Code`],
-        }))
-      const headerText = `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
-      const header = { header: headerText }
-
+    setLocations(enabledLocationIds) {
+      const enabledLocations = this.departmentItems.filter((x) => enabledLocationIds.indexOf(x.value) > -1)
+      const header = { header: `Nous n'avons pas encore d'établissements dans ces departements :` }
       const divider = { divider: true }
 
-      const disabledLocations = jsonLocations
-        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) === -1)
-        .map((x) => ({
-          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
-          value: x[`${locationKeyWord}Code`],
-          disabled: true,
-        }))
+      const disabledLocations = this.departmentItems
+        .filter((x) => enabledLocationIds.indexOf(x.value) === -1)
+        .map((x) => Object.assign(x, { disabled: true }))
 
       return [...enabledLocations, divider, header, ...disabledLocations]
     },
     setDepartments(enabledDepartmentIds) {
-      this.departmentItems = this.setLocations(enabledDepartmentIds, jsonDepartments, "department", "départements")
+      this.departmentItems = this.setLocations(enabledDepartmentIds)
     },
     setSectors(enabledSectorIds) {
       // so few partners and so many sectors that I decided to filter the sectors

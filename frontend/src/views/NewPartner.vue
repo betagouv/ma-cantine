@@ -17,10 +17,13 @@
             label="Nom de votre structure / organisation"
             :rules="[validators.required]"
           />
-          <DsfrRadio
-            label="Secteur économique"
-            :items="economicModels"
-            v-model="partner.economicModel"
+          <DsfrSelect
+            label="Type d'acteur"
+            multiple
+            :items="partnerTypes"
+            v-model="partner.types"
+            item-text="name"
+            item-value="id"
             :rules="[validators.required]"
           />
         </v-col>
@@ -60,17 +63,6 @@
           label="Sur quels aspects, pouvez-vous aider des gestionnaires de restaurants collectifs ?"
           :items="categories"
           v-model="partner.categories"
-          :rules="[validators.required]"
-        />
-      </v-col>
-      <v-col class="pa-0" cols="12" md="7">
-        <DsfrSelect
-          label="Type d'acteur"
-          multiple
-          :items="partnerTypes"
-          v-model="partner.types"
-          item-text="name"
-          item-value="id"
           :rules="[validators.required]"
         />
       </v-col>
@@ -147,7 +139,7 @@
         <template v-slot:label>
           <span class="body-2 grey--text text--darken-3">
             Je déclare avoir lu et et être en accord avec la
-            <a href="/static/documents/charte-referencement-1.pdf" target="_blank" @click.stop>
+            <a href="/static/documents/charte-referencement-acteurs-de-l-ecosysteme.pdf" target="_blank" @click.stop>
               charte de référencement
               <v-icon small color="primary">mdi-open-in-new</v-icon>
             </a>
@@ -170,8 +162,7 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrRadio from "@/components/DsfrRadio"
-import jsonDepartments from "@/departments.json"
-import { sectorsSelectList, toBase64 } from "@/utils"
+import { sectorsSelectList, toBase64, departmentItems } from "@/utils"
 
 export default {
   name: "NewPartner",
@@ -217,37 +208,43 @@ export default {
       categories: [
         {
           value: "appro",
-          text: "Améliorer ma part de bio / durable",
-        },
-        {
-          value: "plastic",
-          text: "Substituer mes plastiques",
-        },
-        {
-          value: "asso",
-          text: "Donner à une association",
-        },
-        {
-          value: "waste",
-          text: "Diagnostiquer mon gaspillage",
-        },
-        {
-          value: "training",
-          text: "Me former ou former mon personnel",
+          text: "Améliorer ma part de bio et de produits durables",
         },
         {
           value: "suivi",
           text: "Assurer mon suivi d'approvisionnement",
         },
         {
+          value: "waste",
+          text: "Diagnostiquer mon gaspillage",
+        },
+
+        {
+          value: "asso",
+          text: "Donner à une association",
+        },
+        {
           value: "vege",
-          text: "Diversifier mes sources de protéines",
+          text: "Diversifier mes sources de protéines et atteindre l'équilibre alimentaire des menus",
+        },
+        {
+          value: "plastic",
+          text: "Substituer mes plastiques",
+        },
+        {
+          value: "training",
+          text: "Me former ou former mon personnel (formation qualifiante)",
+        },
+        {
+          value: "network",
+          text: "Me mettre en réseau avec les acteurs du terrain",
+        },
+        {
+          value: "financial",
+          text: "Obtenir une aide financière / matérielle",
         },
       ],
-      departmentItems: jsonDepartments.map((x) => ({
-        text: `${x.departmentCode} - ${x.departmentName}`,
-        value: x.departmentCode,
-      })),
+      departmentItems,
     }
   },
   computed: {

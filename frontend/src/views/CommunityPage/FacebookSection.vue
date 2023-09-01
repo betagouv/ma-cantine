@@ -23,7 +23,11 @@
       </v-col>
       <v-col cols="4" v-if="$vuetify.breakpoint.mdAndUp">
         <v-card href="https://www.facebook.com/groups/719336016153227/" target="_blank" rel="noopener">
-          <v-img contain src="/static/images/facebook-cover.jpg" alt="Groupe Facebook ma cantine"></v-img>
+          <v-img
+            contain
+            src="/static/images/facebook-cover.jpg"
+            alt="ma-cantine.beta.gouv.fr (accéder au groupe facebook) - communauté d'entraide et d'échange de la restauration collective"
+          ></v-img>
         </v-card>
       </v-col>
     </v-row>
