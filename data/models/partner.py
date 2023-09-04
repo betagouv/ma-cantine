@@ -65,6 +65,14 @@ class Partner(models.Model):
         verbose_name="Le partenaire est présent dans tout le territoire national (tous les departements)",
     )
     sectors = models.ManyToManyField(Sector, blank=True, verbose_name="secteurs d'activité")
+    sector_categories = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=Sector.Categories.choices),
+        blank=True,
+        null=True,
+        size=None,
+        verbose_name="Catégorie du secteur dans lequel ce partenaire situe son activité",
+    )
+
     gratuity_option = models.CharField(
         max_length=50,
         choices=GratuityOption.choices,
