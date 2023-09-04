@@ -1,11 +1,14 @@
+import hashlib
 from datetime import date
 from decimal import Decimal
 from django.urls import reverse
 from django.test.utils import override_settings
 from rest_framework.test import APITestCase
+from unittest.mock import patch
 from rest_framework import status
 from data.factories import CanteenFactory
 from data.models.purchase import Purchase
+from pathlib import Path
 from .utils import authenticate
 
 
@@ -26,8 +29,8 @@ class TestPurchaseImport(APITestCase):
         with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 1)
-        purchase = Purchase.objects.first()
+        self.assertEqual(Purchase.objects.count(), 2)
+        purchase = Purchase.objects.filter(description="Pommes, rouges").first()
         self.assertEqual(purchase.canteen.siret, "82399356058716")
         self.assertEqual(purchase.description, "Pommes, rouges")
         self.assertEqual(purchase.provider, "Le bon traiteur")
@@ -36,13 +39,45 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL])
         self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTMENT)
-        self.assertIsNotNone(purchase.import_source)
 
-    # TODO: check semi colon and tab separators
+        # Test that the purchase import source contains the complete file digest
+        self.assertIsNotNone(purchase.import_source)
+        filebytes = Path("./api/tests/files/good_purchase_import.csv").read_bytes()
+        filehash_md5 = hashlib.md5(filebytes).hexdigest()
+        self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
 
     @authenticate
-    @override_settings(CSV_PURCHASES_MAX_LINES=10)
-    def test_import_too_many_lines(self):
+    def test_import_purchases_different_separators(self):
+        """
+        Tests that can import a well formatted purchases file
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        with open("./api/tests/files/purchase_import_delimiter_tab.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+
+        with open("./api/tests/files/purchase_import_delimiter_semicolon.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 2)
+
+    @authenticate
+    @override_settings(CSV_PURCHASE_CHUNK_LINES=1)
+    @patch("api.views.ImportPurchasesView._process_chunk")
+    def test_import_batch_purchases(self, _process_chunk_mock):
+        """
+        Tests that actually split the file into chunks. The header is considered as a line.
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+
+        with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
+            _ = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(_process_chunk_mock.call_count, 3)
+
+    @authenticate
+    @override_settings(CSV_IMPORT_MAX_SIZE=10)
+    def test_import_file_too_big(self):
         """
         Test that the file is not treated if there are too many lines
         """
@@ -54,7 +89,9 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
         self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0]["message"], "Le fichier ne peut pas contenir plus de 10 lignes.")
+        self.assertEqual(
+            errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
+        )
         self.assertEqual(errors[0]["status"], 400)
 
     @authenticate
@@ -115,7 +152,7 @@ class TestPurchaseImport(APITestCase):
         with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(Purchase.objects.count(), 2)
 
         with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
@@ -123,11 +160,11 @@ class TestPurchaseImport(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(errors.pop(0)["message"], "Ce fichier a déjà été utilisé pour un import")
-        self.assertEqual(body["count"], 1)
+        self.assertEqual(body["count"], 2)
         purchases = body["purchases"]
-        self.assertEqual(purchases[0]["description"], "Pommes, rouges")
+        self.assertIn("Pommes, rouges", str(purchases))
         # no additional purchases created
-        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(Purchase.objects.count(), 2)
 
     @authenticate
     def test_errors_prevent_all_purchase_creation(self):
