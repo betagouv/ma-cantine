@@ -67,7 +67,7 @@ class PartnerContactSerializer(serializers.ModelSerializer):
             "types",
             "departments",
             "national",
-            "sectors",
+            "sector_categories",
             "gratuity_option",
             "economic_model",
             "contact_name",

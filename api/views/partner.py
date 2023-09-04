@@ -7,7 +7,7 @@ from rest_framework.generics import RetrieveAPIView, ListCreateAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from api.serializers import PartnerSerializer, PartnerShortSerializer, PartnerContactSerializer
-from data.models import Partner, Sector
+from data.models import Partner
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class PartnersPagination(LimitOffsetPagination):
     max_limit = 30
     types = []
     departments = []
-    sectors = []
+    sector_categories = []
 
     def paginate_queryset(self, queryset, request, view=None):
         published_partners = Partner.objects.filter(published=True)
@@ -30,9 +30,14 @@ class PartnersPagination(LimitOffsetPagination):
                 for department in depList:
                     if department not in self.departments:
                         self.departments.append(department)
-        self.sectors = (
-            Sector.objects.filter(partner__in=list(published_partners)).values_list("id", flat=True).distinct()
-        )
+
+        sector_categories = published_partners.values_list("sector_categories", flat=True).distinct()
+        for sector_categories_list in sector_categories:
+            if sector_categories_list is not None:
+                for department in sector_categories_list:
+                    if department not in self.sector_categories:
+                        self.sector_categories.append(department)
+
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
@@ -43,7 +48,7 @@ class PartnersPagination(LimitOffsetPagination):
                     ("results", data),
                     ("types", self.types),
                     ("departments", self.departments),
-                    ("sectors", self.sectors),
+                    ("sector_categories", self.sector_categories),
                 ]
             )
         )
@@ -53,7 +58,6 @@ class PartnersView(ListCreateAPIView):
     model = Partner
     pagination_class = PartnersPagination
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["sectors"]
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -73,6 +77,9 @@ class PartnersView(ListCreateAPIView):
         if departments:
             queryset = queryset.filter(departments__overlap=departments)
             # TODO: add in national option ?
+        sector_categories = self.request.query_params.getlist("sector_categories", [])
+        if sector_categories:
+            queryset = queryset.filter(sector_categories__overlap=sector_categories)
         gratuityOptions = self.request.query_params.getlist("gratuityOption", [])
         if gratuityOptions:
             queryset = queryset.filter(gratuity_option__in=gratuityOptions)

@@ -1,8 +1,8 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import PartnerFactory, PartnerTypeFactory, SectorFactory, UserFactory
-from data.models import Partner
+from data.factories import PartnerFactory, PartnerTypeFactory, UserFactory
+from data.models import Partner, Sector
 
 
 class TestPartnersApi(APITestCase):
@@ -10,9 +10,9 @@ class TestPartnersApi(APITestCase):
         """
         Returns partners and the types that are in use therefore available for filtering
         """
-        sector_1 = SectorFactory.create()
-        sector_2 = SectorFactory.create()
-        sector_3 = SectorFactory.create()
+        sector_category_1 = Sector.Categories.ADMINISTRATION
+        sector_category_2 = Sector.Categories.AUTRES
+        sector_category_3 = Sector.Categories.EDUCATION
         type = PartnerTypeFactory.create(name="Test type")
         type_2 = PartnerTypeFactory.create(name="Test type 2")
         PartnerTypeFactory.create(name="Unused type")
@@ -22,10 +22,13 @@ class TestPartnersApi(APITestCase):
             PartnerFactory.create(departments=None, published=True),
         ]
         partners[0].types.add(type)
-        partners[0].sectors.add(sector_1)
+        partners[0].sector_categories = [sector_category_1]
+        partners[0].save()
+
         partners[1].types.add(type)  # add same type to two different partners to check deduplication
         partners[1].types.add(type_2)
-        partners[1].sectors.add(sector_2)
+        partners[1].sector_categories = [sector_category_2]
+        partners[1].save()
         # don't add type to third partner to check null value filtering
         response = self.client.get(reverse("partners_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -48,10 +51,10 @@ class TestPartnersApi(APITestCase):
         self.assertIn("11", departments)
         self.assertEqual(len(departments), 3)
 
-        sectors = body.get("sectors", [])
-        self.assertIn(sector_1.id, sectors)
-        self.assertIn(sector_2.id, sectors)
-        self.assertNotIn(sector_3.id, sectors)
+        sector_categories = body.get("sectorCategories", [])
+        self.assertIn(sector_category_1.value, sector_categories)
+        self.assertIn(sector_category_2.value, sector_categories)
+        self.assertNotIn(sector_category_3.value, sector_categories)
 
     def test_type_filter(self):
         """
@@ -158,7 +161,7 @@ class TestPartnersApi(APITestCase):
         """
         Test that unauthenticated users can create draft partners
         """
-        sector = SectorFactory.create()
+        sector_cateory = Sector.Categories.ADMINISTRATION
         partner_type = PartnerTypeFactory.create()
         self.assertEqual(Partner.objects.count(), 0)
         payload = {
@@ -166,7 +169,7 @@ class TestPartnersApi(APITestCase):
             "shortDescription": "This is a required field",
             "published": True,
             "contactEmail": "test@example.com",
-            "sectors": [sector.id],
+            "sector_categories": [sector_cateory.value],
             "types": [partner_type.id],
         }
         response = self.client.post(reverse("partners_list"), payload, format="json")
@@ -176,8 +179,7 @@ class TestPartnersApi(APITestCase):
         self.assertEqual(partner.name, "New partner please")
         self.assertEqual(partner.short_description, "This is a required field")
         self.assertEqual(partner.contact_email, "test@example.com")
-        self.assertEqual(partner.sectors.count(), 1)
-        self.assertEqual(partner.sectors.first().id, sector.id)
+        self.assertIn(sector_cateory, partner.sector_categories)
         self.assertEqual(partner.types.count(), 1)
         self.assertEqual(partner.types.first().id, partner_type.id)
         self.assertFalse(partner.published, "A user can't create a published partner")
