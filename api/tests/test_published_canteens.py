@@ -673,6 +673,7 @@ class TestPublishedCanteenApi(APITestCase):
 
         self.assertEqual(body.get("id"), satellite.id)
         self.assertEqual(len(body.get("centralKitchenDiagnostics")), 1)
+        self.assertEqual(body.get("centralKitchen").get("id"), central_kitchen.id)
 
         serialized_diagnostic = body.get("centralKitchenDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
