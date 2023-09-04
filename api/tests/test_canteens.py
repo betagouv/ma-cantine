@@ -1110,16 +1110,19 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_get_central_kitchen_name(self):
+    def test_get_central_kitchen(self):
         central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
-        satellite = CanteenFactory.create(central_producer_siret=central_kitchen.siret)
+        satellite = CanteenFactory.create(
+            central_producer_siret=central_kitchen.siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+        )
         satellite.managers.add(authenticate.user)
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
-        self.assertEqual(body["centralKitchenName"], central_kitchen.name)
+        self.assertEqual(body["centralKitchen"]["name"], central_kitchen.name)
+        self.assertEqual(body["centralKitchen"]["id"], central_kitchen.id)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate

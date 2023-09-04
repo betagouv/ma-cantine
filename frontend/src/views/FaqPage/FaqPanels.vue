@@ -5,10 +5,13 @@
       <v-expansion-panels hover accordion tile flat>
         <v-expansion-panel v-for="question in section.questions" :key="question.title">
           <v-expansion-panel-header class="px-3" expand-icon="mdi-plus" disable-icon-rotate v-slot="{ open }">
-            <span :class="open && 'font-weight-bold'">{{ question.title }}</span>
+            <h3 class="fr-text" :class="open && 'font-weight-bold'">
+              {{ question.title }}
+            </h3>
           </v-expansion-panel-header>
           <v-expansion-panel-content class="faq-answer">
-            {{ question.answer }}
+            <component :is="question.answerComponent" v-if="question.answerComponent" />
+            <p v-else class="mb-0">{{ question.answer }}</p>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -24,8 +27,14 @@
 </template>
 
 <script>
+import SiretRequired from "./AnswerComponents/SiretRequired"
+import NoSiret from "./AnswerComponents/NoSiret"
+import HowToSignUp from "./AnswerComponents/HowToSignUp"
+import ProviderObligation from "./AnswerComponents/ProviderObligation"
+
 export default {
   name: "FaqPanels",
+  components: { SiretRequired, NoSiret, HowToSignUp, ProviderObligation },
   data() {
     return {
       sections: [
@@ -54,8 +63,7 @@ export default {
             },
             {
               title: "Comment s’inscrire sur « ma cantine » ?",
-              answer:
-                "Il faut procéder en plusieurs étapes qui sont documentées à ce lien (https://ma-cantine-1.gitbook.io/ma-cantine-egalim/tuto-utilisation-de-la-plateforme-ma-cantine) : se créer un compte sur ma-cantine.agriculture.gouv.fr, créer sa cantine avec son numéro SIRET et créer un diagnostic pour par année civile.",
+              answerComponent: "HowToSignUp",
             },
             {
               title:
@@ -100,8 +108,11 @@ export default {
           questions: [
             {
               title: "Le SIRET est-il obligatoire pour créer ma cantine ?",
-              answer:
-                "Oui. Il est possible de le trouver ici : https://annuaire-entreprises.data.gouv.fr/. Concernant les cantines scolaires, vous pouvez retrouver le SIRET de l’établissement rattaché à la cantine sur l’Annuaire de l’éducation : https://annuaire-education.fr/. Attention, il n’est pas possible d’ajouter plusieurs cantines sous un seul et même SIRET. Dans la plupart des cas, chaque cantine dispose de son numéro de SIRET propre. Dans certains cas, il est possible que certaines cantines n’aient pas de SIRET : dans ce cas uniquement, il est possible d’indiquer le numéro de SIRET de la collectivité desservant ces cantines. S’il existe déjà ou a été créé par une entité, je peux demander à rejoindre ma cantine.",
+              answerComponent: "SiretRequired",
+            },
+            {
+              title: "Comment faire si je ne dispose pas de SIRET pour créer mon établissement dans ma cantine ?",
+              answerComponent: "NoSiret",
             },
           ],
         },
@@ -117,8 +128,7 @@ export default {
             {
               title:
                 "Mon prestataire ou délégataire refuse de me transmettre mes données d'achats. Quelles obligations pour lui ?",
-              answer:
-                "L’obligation d’atteinte des taux EGAlim s’impose aux donneurs d’ordre et ils sont responsables d'en faire une information donnée à leurs convives. Les taux EGAlim sont calculés à partir des valeurs d’achats HT des produits alimentaires. D'autre part, les valeurs d’achat sont les informations qui permettront à l’administration de réaliser le bilan annuel qui doit être remis au parlement et rendu public. Cette obligation de transmission d’information peut être reportée dans le contrat qui lie le donneur d’ordre et son prestataire. Une convention de délégation pour la déclaration de ces éléments peut être établie entre le donneur d'ordre et le délégataire. Un modèle de convention est proposé dans la documentation de « ma cantine » (https://ma-cantine-1.gitbook.io/ma-cantine-egalim/procedure-campagne-de-remontee-des-donnees-2022).",
+              answerComponent: "ProviderObligation",
             },
           ],
         },
@@ -163,7 +173,7 @@ export default {
               title:
                 "A qui les données relatives aux achats de denrées alimentaires déclarées dans « ma cantine » sont-elles fournies ? Pour quoi faire ?",
               answer:
-                "Les données d'achat saisies dans « ma cantine » (dans le diagnostic) sont à télédéclarer tous les ans. Elles sont transmises à la DGAL (Direction générale de l’Alimentation) - ministère de l’Agriculture et de la Souveraineté Alimentaire (MASA) en vue d'etablir le bilan annuel à remettre au Parlement qui sera un document public. Les données recueillies par télédéclaration seront traitées de manière agrégée pour réaliser le bilan annuel et aucune donnée individuelle ne sera rendue publique dans ce cadre.",
+                "Les données d'achat saisies dans « ma cantine » (dans le diagnostic) sont à télédéclarer tous les ans. Elles sont transmises à la DGAL (Direction générale de l’Alimentation) - ministère de l’Agriculture et de la Souveraineté Alimentaire (MASA) en vue d'etablir le bilan annuel à remettre au Parlement qui sera un document public.",
             },
             {
               title:

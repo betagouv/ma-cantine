@@ -562,8 +562,8 @@ export default {
     },
     dataDelegatedNotice() {
       if (this.isCentralCanteen || this.showApproPanel) return null
-      const centralKitchen = this.originalCanteen.centralKitchenName
-        ? `« ${this.originalCanteen.centralKitchenName} »`
+      const centralKitchen = this.originalCanteen.centralKitchen?.name
+        ? `« ${this.originalCanteen.centralKitchen.name} »`
         : ""
       if (!this.showApproPanel && this.showNonApproPanels) {
         return {

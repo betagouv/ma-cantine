@@ -2,6 +2,8 @@ import csv
 import time
 import logging
 import hashlib
+import io
+import uuid
 from django.db import IntegrityError, transaction
 from django.conf import settings
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
@@ -26,22 +28,31 @@ class ImportPurchasesView(APIView):
         self.errors = []
         self.start = None
         self.file_digest = None
+        self.tmp_id = uuid.uuid4()
         self.file = None
+        self.dialect = None
         super().__init__(**kwargs)
 
     def post(self, request):
         self.start = time.time()
         logger.info("Purchase bulk import started")
         try:
+            self.file = request.data["file"]
+            self._verify_file_size()
             with transaction.atomic():
-                self.file = request.data["file"]
-                self._verify_file_size()
-                self.file = self.file.read()
-                self._check_duplication()
-                self._treat_csv_file()
+                self._process_file()
 
+                # If at least an error has been detected, we raise an error to interrupt the 
+                # transaction and rollback the insertion of any data
                 if self.errors:
                     raise IntegrityError()
+                
+                # The duplication check is called after the processing. The cost of eventually processing
+                # the file for nothing appears to be smaller than read the file twice.
+                self._check_duplication()
+
+                # Update all purchases's import source with file digest
+                Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.file_digest)
 
             return self._get_success_response()
 
@@ -67,42 +78,51 @@ class ImportPurchasesView(APIView):
             logger.exception(f"{message}:\n{e}")
             self.errors = [{"row": 0, "status": 400, "message": message}]
             return self._get_success_response()
+        
+    def _process_file(self):
+        file_hash = hashlib.md5()
+        chunk = []
+        row_count = 1
+        for row in self.file:
+            # Sniffing header
+            if self.dialect is None:
+                self.dialect = csv.Sniffer().sniff(row.decode())
+
+            file_hash.update(row)
+            
+            # Split into chunks
+            chunk.append(row.decode())
+
+            # Process full chunk
+            if row_count == settings.CSV_PURCHASE_CHUNK_LINES:
+                self._process_chunk(chunk)
+                chunk = []
+                row_count = 0
+            row_count += 1
+
+        # Process the last chunk
+        if len(chunk) > 0:
+            self._process_chunk(chunk)
+
+        self.file_digest = file_hash.hexdigest()
 
     def _verify_file_size(self):
         if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
     def _check_duplication(self):
-        m = hashlib.md5()
-        m.update(self.file)
-        self.file_digest = m.hexdigest()
         matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
         if matching_purchases.exists():
             self.purchases = matching_purchases.all()
             raise ValidationError("Ce fichier a déjà été utilisé pour un import")
 
-    def _treat_csv_file(self):
+    def _process_chunk(self, chunk):
         errors = []
+        self.purchases = []
 
-        filestring = self.file.decode("utf-8-sig")
-        filelines = filestring.splitlines()
-
-        if len(filelines) > settings.CSV_PURCHASES_MAX_LINES:
-            self.errors = [
-                ImportPurchasesView._get_error(
-                    "Too many lines",
-                    f"Le fichier ne peut pas contenir plus de {settings.CSV_PURCHASES_MAX_LINES} lignes.",
-                    400,
-                    len(filelines),
-                )
-            ]
-            return
-
-        dialect = csv.Sniffer().sniff(filelines[0])
-
-        csvreader = csv.reader(filelines, dialect=dialect)
-        import_source = self.file_digest
+        csvreader = csv.reader(io.StringIO("".join(chunk)), self.dialect)
         for row_number, row in enumerate(csvreader, start=1):
+            # If header, pass
             if row_number == 1 and row[0].lower().__contains__("siret"):
                 continue
             try:
@@ -114,19 +134,18 @@ class ImportPurchasesView(APIView):
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = normalise_siret(siret)
-                self._create_purchase_for_canteen(siret, row, import_source)
+                self._create_purchase_for_canteen(siret, row)
 
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
-        self.errors = errors
-        if not self.errors:
-            self.purchases = Purchase.objects.bulk_create(self.purchases)
-        else:
-            self.purchases = []
+        self.errors += errors
 
-    @transaction.atomic
-    def _create_purchase_for_canteen(self, siret, row, import_source):
+        # If no error has been detected in the file so far, we insert the chunk into the db
+        if not self.errors:
+            Purchase.objects.bulk_create(self.purchases)
+
+    def _create_purchase_for_canteen(self, siret, row):
         if not Canteen.objects.filter(siret=siret).exists():
             raise ObjectDoesNotExist()
         canteen = Canteen.objects.get(siret=siret)
@@ -163,7 +182,7 @@ class ImportPurchasesView(APIView):
             family=family.strip(),
             characteristics=characteristics,
             local_definition=local_definition.strip(),
-            import_source=import_source,
+            import_source=self.tmp_id,
         )
         purchase.full_clean()
         self.purchases.append(purchase)
