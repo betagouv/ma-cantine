@@ -77,7 +77,7 @@ class PartnersView(ListCreateAPIView):
         if departments:
             queryset = queryset.filter(departments__overlap=departments)
             # TODO: add in national option ?
-        sector_categories = self.request.query_params.getlist("sector_categories", [])
+        sector_categories = self.request.query_params.getlist("sectorCategories", [])
         if sector_categories:
             queryset = queryset.filter(sector_categories__overlap=sector_categories)
         gratuityOptions = self.request.query_params.getlist("gratuityOption", [])
