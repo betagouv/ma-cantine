@@ -100,15 +100,15 @@
               for="select-sector"
               :class="{
                 'text-body-2': true,
-                'active-filter-label': filters.sectors.value && !!filters.sectors.value.length,
+                'active-filter-label': filters.sectorCategories.value && !!filters.sectorCategories.value.length,
               }"
             >
               Secteur d'activité
             </label>
             <DsfrSelect
-              v-model="filters.sectors.value"
+              v-model="filters.sectorCategories.value"
               multiple
-              :items="sectors"
+              :items="sectorCategories"
               clearable
               hide-details
               id="select-sector"
@@ -217,6 +217,7 @@
 </template>
 
 <script>
+import Constants from "@/constants"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSelect from "@/components/DsfrSelect"
@@ -225,7 +226,7 @@ import PartnerCard from "@/views/PartnersPage/PartnerCard"
 import NewPartnerCard from "@/views/PartnersPage/NewPartnerCard"
 import GeneralContactForm from "@/components/GeneralContactForm"
 import ReferencingInfo from "./ReferencingInfo"
-import { getObjectDiff, sectorsSelectList, departmentItems } from "@/utils"
+import { getObjectDiff, departmentItems } from "@/utils"
 
 export default {
   name: "PartnersHome",
@@ -262,13 +263,10 @@ export default {
           value: [],
           default: [],
         },
-        sectors: {
-          param: "secteurs",
+        sectorCategories: {
+          param: "secteur",
           value: [],
           default: [],
-          transformToFrontend(values) {
-            return Array.isArray(values) ? values.map((v) => +v) : +values
-          },
         },
         type: {
           param: "type",
@@ -327,7 +325,7 @@ export default {
       ],
       // Need to create a deep copy to avoid modiifying the array elsewhere in the app
       departmentItems: JSON.parse(JSON.stringify(departmentItems)),
-      sectors: [],
+      sectorCategories: [],
       typeItems: [],
       gratuityOptions: [
         {
@@ -390,7 +388,7 @@ export default {
           this.visiblePartners = response.results
           this.typeItems = response.types
           this.setDepartments(response.departments)
-          this.setSectors(response.sectors)
+          this.setSectorCategories(response.sectorCategories)
         })
         .catch((e) => {
           this.partnerCount = 0
@@ -431,7 +429,7 @@ export default {
     },
     setLocations(enabledLocationIds) {
       const enabledLocations = this.departmentItems.filter((x) => enabledLocationIds.indexOf(x.value) > -1)
-      const header = { header: `Nous n'avons pas encore d'établissements dans ces departements :` }
+      const header = { header: `Nous n'avons pas encore de partenaires dans ces departements :` }
       const divider = { divider: true }
 
       const disabledLocations = this.departmentItems
@@ -443,17 +441,25 @@ export default {
     setDepartments(enabledDepartmentIds) {
       this.departmentItems = this.setLocations(enabledDepartmentIds)
     },
-    setSectors(enabledSectorIds) {
-      // so few partners and so many sectors that I decided to filter the sectors
-      // list so that the valid sectors don't get lost in the sea of unusable sectors
-      this.sectors = sectorsSelectList(this.$store.state.sectors)
-        .filter((sector) => enabledSectorIds.indexOf(sector.id) > -1)
+    setSectorCategories(enabledSectorCategories) {
+      const header = { header: `Nous n'avons pas encore de partenaires dans ces domaines :` }
+      const divider = { divider: true }
+      const disabledCategories = Object.keys(Constants.SectorCategoryTranslations)
+        .filter((x) => !enabledSectorCategories.includes(x) && x !== "inconnu")
         .map((x) => {
           return {
-            text: x.name,
-            value: x.id,
+            text: Constants.SectorCategoryTranslations[x],
+            value: x,
+            disabled: true,
           }
         })
+      const enabledCategories = enabledSectorCategories.map((x) => {
+        return {
+          text: Constants.SectorCategoryTranslations[x],
+          value: x,
+        }
+      })
+      this.sectorCategories = [...enabledCategories, divider, header, ...disabledCategories]
     },
   },
   watch: {
