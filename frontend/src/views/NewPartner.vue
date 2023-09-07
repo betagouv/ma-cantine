@@ -68,10 +68,11 @@
       </v-col>
       <v-col class="pa-0" cols="12" md="9">
         <DsfrSelect
-          label="Secteurs d'activité (optionnel)"
+          label="Secteurs d'activité"
           multiple
           :items="sectorCategories"
           v-model="partner.sectorCategories"
+          :rules="[validators.required]"
         />
       </v-col>
       <v-col class="pa-0" cols="12" md="9">
