@@ -138,7 +138,7 @@
       <v-checkbox :rules="[validators.checked]" class="mb-6">
         <template v-slot:label>
           <span class="body-2 grey--text text--darken-3">
-            Je déclare avoir lu et et être en accord avec la
+            Je déclare avoir lu et respecter la
             <a href="/static/documents/charte-referencement-acteurs-de-l-ecosysteme.pdf" target="_blank" @click.stop>
               charte de référencement
               <v-icon small color="primary">mdi-open-in-new</v-icon>
