@@ -8,7 +8,8 @@
     outlined
     :ripple="false"
   >
-    <v-img :src="partner.image || '/static/images/partner-default-image.jpg'" height="120" max-height="120"></v-img>
+    <v-img contain :src="partner.image" height="120" max-height="120" v-if="partner.image"></v-img>
+    <v-img src="/static/images/partner-default-image.jpg" height="120" max-height="120" v-else></v-img>
     <v-card-title class="font-weight-bold">{{ partner.name }}</v-card-title>
     <v-card-subtitle>
       <PartnerIndicators :partner="partner" />
