@@ -152,11 +152,13 @@
       <v-icon class="mr-2">mdi-send</v-icon>
       Envoyer
     </v-btn>
+    <PageSatisfaction class="my-12" />
   </div>
 </template>
 
 <script>
 import validators from "@/validators"
+import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
@@ -166,7 +168,7 @@ import { sectorsSelectList, toBase64, departmentItems } from "@/utils"
 
 export default {
   name: "NewPartner",
-  components: { BreadcrumbsNav, DsfrTextField, DsfrTextarea, DsfrSelect, DsfrRadio },
+  components: { BreadcrumbsNav, DsfrTextField, DsfrTextarea, DsfrSelect, DsfrRadio, PageSatisfaction },
   props: ["canteen"],
   data() {
     const user = this.$store.state.loggedUser
