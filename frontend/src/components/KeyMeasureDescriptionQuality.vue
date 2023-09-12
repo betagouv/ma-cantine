@@ -3,9 +3,9 @@
     <p>
       La loi EGAlim et la loi Climat et Résilience encadrent la qualité des produits achetés entrant dans la composition
       des repas servis en restauration collective du secteur public et des établissements du secteur privé (article L.
-      230-5 du Code Rural et de la Pêche Maritime). Les repas doivent comporter, à partir de l'année 2022, au moins 50 %
-      de produits de qualité et durables dont au moins 20 % issus de l'agriculture biologique ou en conversion pour les
-      cantines en France continentale (consulter
+      230-5-1 du Code Rural et de la Pêche Maritime). Les repas doivent comporter, à partir de l'année 2022, au moins 50
+      % de produits de qualité et durables dont au moins 20 % issus de l'agriculture biologique ou en conversion pour
+      les cantines en France continentale (consulter
       <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">notre blog</a>
       pour le seuil des autres régions).
     </p>
