@@ -6,7 +6,7 @@ from django.db import migrations, models
 def populate_sector_categories(apps, schema_editor):
     Partner = apps.get_model('data', 'Partner')
     for partner in Partner.objects.all():
-        partner.sector_categories = list(set([sector.category for sector in partner.sectors.all()]))
+        partner.sector_categories = list(set([sector.category for sector in partner.sectors.all() if sector is not None]))
         partner.save()
 
 
