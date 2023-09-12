@@ -31,12 +31,13 @@ class PartnersPagination(LimitOffsetPagination):
                     if department not in self.departments:
                         self.departments.append(department)
 
+        self.sector_categories = []
         sector_categories = published_partners.values_list("sector_categories", flat=True).distinct()
         for sector_categories_list in sector_categories:
             if sector_categories_list is not None:
-                for department in sector_categories_list:
-                    if department not in self.sector_categories:
-                        self.sector_categories.append(department)
+                for sector_category in sector_categories_list:
+                    if sector_category not in self.sector_categories:
+                        self.sector_categories.append(sector_category)
 
         return super().paginate_queryset(queryset, request, view)
 
