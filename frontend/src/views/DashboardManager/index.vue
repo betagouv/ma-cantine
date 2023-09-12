@@ -162,7 +162,7 @@
                   </ul>
                 </div>
                 <p class="fr-text" v-else>
-                  Actuellement, vous êtes la seule personne qui peut modiifer cet établissement et ajouter des données
+                  Actuellement, vous êtes la seule personne qui peut modifier cet établissement et ajouter des données
                 </p>
               </v-card-text>
               <v-spacer></v-spacer>
