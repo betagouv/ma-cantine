@@ -137,7 +137,7 @@
       <v-checkbox :rules="[validators.checked]" class="mb-6">
         <template v-slot:label>
           <span class="body-2 grey--text text--darken-3">
-            Je déclare avoir lu et et être en accord avec la
+            Je déclare avoir lu et respecter la
             <a href="/static/documents/charte-referencement-acteurs-de-l-ecosysteme.pdf" target="_blank" @click.stop>
               charte de référencement
               <v-icon small color="primary">mdi-open-in-new</v-icon>
@@ -151,12 +151,14 @@
       <v-icon class="mr-2">mdi-send</v-icon>
       Envoyer
     </v-btn>
+    <PageSatisfaction class="my-12" />
   </div>
 </template>
 
 <script>
 import validators from "@/validators"
 import Constants from "@/constants"
+import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
@@ -166,7 +168,7 @@ import { toBase64, departmentItems } from "@/utils"
 
 export default {
   name: "NewPartner",
-  components: { BreadcrumbsNav, DsfrTextField, DsfrTextarea, DsfrSelect, DsfrRadio },
+  components: { BreadcrumbsNav, DsfrTextField, DsfrTextarea, DsfrSelect, DsfrRadio, PageSatisfaction },
   props: ["canteen"],
   data() {
     const user = this.$store.state.loggedUser

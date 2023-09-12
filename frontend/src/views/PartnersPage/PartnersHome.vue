@@ -323,7 +323,7 @@ export default {
           icon: "$money-euro-box-fill",
         },
       ],
-      // Need to create a deep copy to avoid modiifying the array elsewhere in the app
+      // Need to create a deep copy to avoid modifying the array elsewhere in the app
       departmentItems: JSON.parse(JSON.stringify(departmentItems)),
       sectorCategories: [],
       typeItems: [],
