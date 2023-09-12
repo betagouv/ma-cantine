@@ -7,7 +7,7 @@ def restore_objects(modeladmin, request, queryset):
     queryset.update(deletion_date=None)
 
 
-class SoftDeletionAdmin(SimpleHistoryAdmin):
+class SoftDeletionAdmin(admin.ModelAdmin):
     actions = [restore_objects]
 
     def get_queryset(self, request):
@@ -22,6 +22,10 @@ class SoftDeletionAdmin(SimpleHistoryAdmin):
 
     def delete_queryset(self, request, queryset):
         return queryset.hard_delete()
+
+
+class SoftDeletionHistoryAdmin(SoftDeletionAdmin, SimpleHistoryAdmin):
+    pass
 
 
 class SoftDeletionStatusFilter(admin.SimpleListFilter):
