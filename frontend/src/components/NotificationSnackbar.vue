@@ -19,7 +19,7 @@
         </p>
       </div>
       <v-btn class="ml-3" @click="$store.dispatch('removeNotification')" icon>
-        <v-icon color="white" width="20">$close-line</v-icon>
+        <v-icon color="white" width="20" aria-hidden="false" aria-label="Fermer">$close-line</v-icon>
       </v-btn>
     </div>
     <div v-if="notification.undoMessage && notification.undoAction">
