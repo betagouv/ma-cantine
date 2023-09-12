@@ -328,7 +328,7 @@ def complete_diag_data(purchases, data):
             other_labels_characteristics.append(characteristic)
         # Non-EGAlim totals: contains no labels or only one or more of other_labels
         non_egalim_purchases = purchase_family.filter(
-            Q(characteristics__contained_by=other_labels_characteristics) | Q(characteristics__len=0)
+            Q(characteristics__contained_by=(other_labels_characteristics + [""])) | Q(characteristics__len=0)
         ).distinct()
         key = "value_" + family.lower() + "_non_egalim"
         data[key] = non_egalim_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
