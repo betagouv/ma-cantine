@@ -1,0 +1,356 @@
+[
+  {
+    "badgeId": "appro",
+    "baseComponent": "QualityMeasure",
+    "baseMeasureComponent": "QualityMeasure",
+    "deadline": {
+      "display": "À partir du 1er janvier 2022 et 2024 pour la restauration privée",
+      "earliestISO": "2022-01-01"
+    },
+    "descriptionComponent": "KeyMeasureDescriptionQuality",
+    "id": "qualite-des-produits",
+    "mdiIcon": "mdi-food-apple",
+    "mdiIconColor": "red",
+    "shortTitle": "Qualité des produits",
+    "subMeasures": [
+      {
+        "descriptionComponent": "KeyMeasureDescriptionLabels",
+        "id": "cinquante",
+        "readMore": false,
+        "shortTitle": "50 % de qualité et durables",
+        "title": "Produits de qualité et durables"
+      },
+      {
+        "descriptionComponent": "LogoBio",
+        "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio » pour les cantines en France continentale (consulter <a href='https://ma-cantine.agriculture.gouv.fr/blog/16'>notre blog</a> pour le seuil des autres régions). C'est à dire : \n\n-  des produits issus de l'agriculture biologique.\n-  des produits végétaux étiquetés 'en conversion'.",
+        "id": "vingt",
+        "readMore": false,
+        "shortTitle": "20 % bio",
+        "title": "Produits biologiques"
+      }
+    ],
+    "tags": [
+      "scolaire",
+      "administration",
+      "universitaire",
+      "medical",
+      "social",
+      "creche",
+      "loisirs",
+      "entreprises"
+    ],
+    "title": "Plus de produits de qualité et durables dans nos assiettes"
+  },
+  {
+    "badgeId": "waste",
+    "baseComponent": "WasteMeasure",
+    "baseMeasureComponent": "WasteMeasure",
+    "deadline": {
+      "display": "Janvier et octobre 2020",
+      "earliestISO": "2020-01-01"
+    },
+    "id": "gaspillage-alimentaire",
+    "mdiIcon": "mdi-offer",
+    "mdiIconColor": "orange darken-2",
+    "shortTitle": "Lutte contre le gaspillage",
+    "subMeasures": [
+      {
+        "description": "Obligation de faire un diagnostic de gaspillage pour l’ensemble de la restauration collective (y compris privée) et obligation de mettre en place une démarche de lutte contre le gaspillage alimentaire. La loi AGEC vise une réduction du gaspillage alimentaire de 50% d’ici 2025 par rapport à son niveau de 2015.",
+        "id": "gaspillage-analyse",
+        "readMore": false,
+        "shortTitle": "Gaspillage analysé",
+        "title": "Le gaspillage alimentaire doit être analysé afin d'être réduit"
+      },
+      {
+        "deadline": {
+          "earliestISO": "2020-01-01"
+        },
+        "description": "L'infraction à cette disposition est susceptible d'une amende de 3 750 €.",
+        "id": "restes",
+        "readMore": false,
+        "shortTitle": "Restes protégés",
+        "title": "Interdiction de rendre impropre à la consommation les denrées alimentaires encore consommables"
+      },
+      {
+        "deadline": {
+          "earliestISO": "2020-10-22"
+        },
+        "htmlDescription": "Depuis le 22 octobre 2020, les cuisines centrales ou sur place qui <b>préparent plus de 3000 repas par jour</b> ont l'obligation de proposer une convention de dons à une association habilitée.",
+        "id": "dons",
+        "readMore": false,
+        "shortTitle": "Dons aux associations",
+        "title": "Dons aux associations"
+      },
+      {
+        "deadline": {
+          "earliestISO": "2020-10-22"
+        },
+        "description": "Expérimentation consistant à mettre en place une solution de réservation de repas pour adapter le nombre de repas effectivement nécessaire, pour les gestionnaires de services de restauration collective volontaires dont les personnes morales de droit public ont la charge. L’objectif est d’évaluer les effets de solutions de réservation de repas sur le gaspillage alimentaire, la satisfaction des convives et le taux de fréquentation des établissements.\n\nParticipez à l’expérimentation prévue par la loi Climat et résilience, jusqu’au 1er juillet 2023, en remplissant votre diagnostic.",
+        "id": "expe",
+        "readMore": false,
+        "title": "Expérimentation de solutions de réservation de repas"
+      }
+    ],
+    "successExplanation": "La cantine a fait un diagnostic du gaspillage alimentaire et a mis en œuvre une ou des actions de lutte contre le gaspillage alimentaire.\n Si la cantine sert au moins 3000 repas en moyenne par jour, elle propose aussi une convention de dons à une association habilitée.",
+    "tags": [
+      "scolaire",
+      "administration",
+      "universitaire",
+      "medical",
+      "social",
+      "creche",
+      "loisirs",
+      "entreprises"
+    ],
+    "title": "Lutte contre le gaspillage alimentaire et dons alimentaires"
+  },
+  {
+    "badgeId": "diversification",
+    "baseComponent": "DiversificationMeasure",
+    "baseMeasureComponent": "DiversificationMeasure",
+    "id": "diversification-des-menus",
+    "mdiIcon": "$leaf-fill",
+    "mdiIconColor": "green darken-1",
+    "shortTitle": "Diversification des menus",
+    "subMeasures": [
+      {
+        "deadline": {
+          "display": "Depuis le 30 octobre 2018 et 1er janvier 2024 (pour la restauration d'entreprises)",
+          "earliestISO": "2018-10-30"
+        },
+        "description": "Les gestionnaires des restaurants collectifs sont tenus de présenter à leurs structures dirigeantes un plan pluriannuel de diversification de protéines incluant des alternatives à base de protéines végétales dans les repas qu'ils proposent.",
+        "id": "proteines",
+        "readMore": false,
+        "shortTitle": "Protéines diversifiées",
+        "tags": [
+          "scolaire",
+          "administration",
+          "universitaire",
+          "social",
+          "medical",
+          "loisirs",
+          "creche",
+          "entreprises"
+        ],
+        "title": "Les sources de protéines doivent être diversifiées",
+        "who": "Pour les restaurants collectifs servant plus de 200 couverts par jour."
+      },
+      {
+        "deadline": {
+          "display": "depuis le 1er novembre 2019",
+          "earliestISO": "2019-11-01"
+        },
+        "htmlDescription": "Tous les restaurants collectifs scolaires (publics ou privés), de la maternelle au lycée, sont tenus de proposer, au moins une fois par semaine, un menu végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n\n\n<b>Qu'est-ce qu'un menu végétarien ?</b>\n\nIl s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers.",
+        "id": "menu-vege",
+        "readMore": false,
+        "shortTitle": "Menu végé hebdo",
+        "tags": [
+          "scolaire"
+        ],
+        "title": "Menu végétarien hebdomadaire"
+      },
+      {
+        "deadline": {
+          "display": "1er janvier 2023",
+          "earliestISO": "2023-01-01"
+        },
+        "htmlDescription": "À partir du 1er janvier 2023, les restaurants collectifs de l'État, les établissements publics et les entreprises publiques nationales doivent proposer une option végétarienne quotidienne, dès lors qu'ils proposent habituellement un choix multiple de menus.\n\nCes établissements sont les suivants :\n\n - les universités ou enseignements supérieurs publics, administration (RA ou RIA), établissements pénitenciers, restaurants des armées ;\n - les établissements publics placés sous la tutelle de l’État, comme par exemple des agences, instituts et centres nationaux (OFB, ANSES, IGNF, INRAE, ...), des établissements publics de santé* (CHR/CHU, CHN, CH, HL, CHS...) ou des établissements publics nationaux (ASP, CdC, CNRS, ...) ;​\n - les entreprises publiques : établissements publics industriels et commerciaux, sociétés commerciales (détention majoritaire du capital par l’État).",
+        "id": "option-vege",
+        "readMore": false,
+        "shortTitle": "Menu végé quoti",
+        "tags": [
+          "administration",
+          "restaurants d'Etat (définition à venir)"
+        ],
+        "title": "Option végétarienne quotidienne"
+      },
+      {
+        "deadline": {
+          "display": "du 24 août 2021 au 24 août 2023",
+          "earliestISO": "2022-08-24"
+        },
+        "description": "Pour les collectivités territoriales volontaires, une expérimentation suite à la loi Climat propose d’expérimenter, une option végétarienne quotidienne pour une durée de 2 ans, sous réserve des conditions fixées par voie réglementaire destinées à garantir l'équilibre nutritionnel des repas servis et du respect d'exigences adaptées aux besoins des usagers.",
+        "id": "expevege",
+        "readMore": false,
+        "shortTitle": "Expérimentation végé",
+        "tags": [
+          "Collectivités volontaires"
+        ],
+        "title": "Expérimentation de l'option végétarienne quotidienne pour les collectivités volontaires",
+        "who": "Pour les collectivités volontaires."
+      }
+    ],
+    "successExplanation": "La cantine offre au moins un repas végétarien par semaine si elle est dans le secteur scolaire, ou et depuis janvier 2023, un repas végétarien par jour pour les restaurants collectifs de l'État, les établissements publics et les entreprises publiques nationales (s'ils proposent habituellement un choix multiple de menus).",
+    "title": "Diversification des sources de protéines et menus végétariens"
+  },
+  {
+    "badgeId": "plastic",
+    "baseComponent": "NoPlasticMeasure",
+    "baseMeasureComponent": null,
+    "id": "interdiction-du-plastique",
+    "mdiIcon": "mdi-weather-windy",
+    "mdiIconColor": "blue darken-1",
+    "shortTitle": "Interdiction du plastique",
+    "subMeasures": [
+      {
+        "deadline": {
+          "display": "Depuis le 1er janvier 2020",
+          "earliestISO": "2020-01-01"
+        },
+        "description": "L'utilisation de bouteilles d'eau plate en plastique est interdite en restauration scolaire depuis le 1er janvier 2020. Cette mesure s'applique aux territoires desservis par un réseau d'eau potable et peut être suspendue en cas exceptionnel de restriction de l'eau destinée à la consommation humaine prononcée par le Préfet.",
+        "id": "bouteilles",
+        "readMore": false,
+        "shortTitle": "Bouteilles",
+        "tags": [
+          "scolaire"
+        ],
+        "title": "Les bouteilles d'eau plate en plastique sont interdites"
+      },
+      {
+        "deadline": {
+          "display": "Depuis le 1er janvier 2020",
+          "earliestISO": "2020-01-01"
+        },
+        "description": "La mise à disposition des ustensiles à usage unique en matière plastique (sauf, jusqu'au 3 juillet 2021, ceux compostables en compostage domestique et constitués, pour tout ou partie, de matières biosourcées) suivants est interdite : gobelets, verres, assiettes, pailles, couverts, piques à steak, couvercles à verre, plateaux-repas, pots à glace, saladiers, boîtes et bâtonnets mélangeurs pour boissons.",
+        "id": "ustensiles",
+        "readMore": false,
+        "shortTitle": "Ustensiles",
+        "tags": [
+          "scolaire",
+          "administration",
+          "universitaire",
+          "social",
+          "medical",
+          "loisirs",
+          "creche",
+          "entreprises"
+        ],
+        "title": "Les ustensiles en plastique à usage unique sont interdits"
+      },
+      {
+        "deadline": {
+          "display": "À partir du 1er janvier 2025 (sauf pour les communes de - de 2000 hab : 1er janvier 2028)",
+          "earliestISO": "2025-01-01"
+        },
+        "description": "L'utilisation de contenants alimentaires de cuisson, de réchauffe ou de service en matière plastique est interdite.",
+        "id": "contenants",
+        "readMore": false,
+        "shortTitle": "Contenants",
+        "tags": [
+          "scolaire",
+          "universitaire",
+          "creche"
+        ],
+        "title": "Les contenants alimentaires en plastique sont interdits",
+        "who": "Services de pédiatrie d'obstétrique et de maternité. Tous services de santé maternelle et infantile et centres périnataux de proximité."
+      },
+      {
+        "deadline": {
+          "display": "Depuis le 1er janvier 2020",
+          "earliestISO": "2020-01-01"
+        },
+        "description": "Obligation de réemploi de la vaisselle et des récipients.",
+        "id": "reuse",
+        "readMore": false,
+        "tags": [
+          "Portage à domicile"
+        ],
+        "title": "Obligation de réemploi",
+        "who": "Portage à domicile"
+      },
+      {
+        "deadline": {
+          "display": "Depuis le 1er janvier 2025",
+          "earliestISO": "2025-01-01"
+        },
+        "description": "Obligation de proposer un contenant réutilisable ou composé de matières recyclables pour la vente à emporter en restauration collective.",
+        "id": "reuse-takeaway",
+        "readMore": false,
+        "tags": [
+          "scolaire",
+          "administration",
+          "universitaire",
+          "social",
+          "medical",
+          "loisirs",
+          "creche",
+          "entreprises"
+        ],
+        "title": "Obligation vente à emporter"
+      }
+    ],
+    "successExplanation": "La cantine n'utilise plus de contenants alimentaires de cuisson, de réchauffe, ni de service en matière plastique. De plus, la cantine ne met plus à disposition des convives des bouteilles d’eau plate en plastique, ni des ustensiles à usage unique en matière plastique.",
+    "title": "Substitution des plastiques"
+  },
+  {
+    "badgeId": "info",
+    "baseComponent": "InformationMeasure",
+    "baseMeasureComponent": null,
+    "id": "information-des-usagers",
+    "mdiIcon": "mdi-bullhorn",
+    "mdiIconColor": "amber darken-2",
+    "shortTitle": "Information des convives",
+    "subMeasures": [
+      {
+        "baseComponent": "InformDiners",
+        "baseMeasureComponent": "InformDiners",
+        "deadline": {
+          "display": "Depuis le 1er janvier 2020",
+          "earliestISO": "2020-01-01"
+        },
+        "description": "Les personnes morales ayant la charge d'un restaurant collectif informent à l'entrée du restaurant, par un affichage permanent, actualisé au moins une fois par an, lisible par tous les usagers et au moins une fois par an par communication électronique, les usagers des restaurants collectifs de la part des produits définis au I de l'article L. 230-5-3 et de la part des produits issus de projets alimentaires territoriaux entrant dans la composition des repas servis.",
+        "id": "convives-informes",
+        "readMore": false,
+        "shortTitle": "Convives informés",
+        "tags": [
+          "scolaire",
+          "administration",
+          "universitaire",
+          "medical",
+          "social",
+          "creche",
+          "loisirs"
+        ],
+        "title": "Les convives doivent être informés une fois par an"
+      },
+      {
+        "deadline": {
+          "display": "Depuis l'arrêté de 2011",
+          "earliestISO": "2011-01-01"
+        },
+        "description": "Les gestionnaires de restauration collective doivent communiquer, informer et consulter les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis (arrêté du 30 septembre 2011 relatif à la qualité nutritionnelle des repas servis dans la restauration scolaire).",
+        "id": "informations-nutritionnelles",
+        "readMore": false,
+        "shortTitle": "Infos nutritionnelles",
+        "tags": [
+          "scolaire",
+          "universitaire",
+          "creche"
+        ],
+        "title": "Les gestionnaires en restauration collective communiquent sur les informations nutritionnelles des repas servis"
+      },
+      {
+        "deadline": {
+          "display": "Depuis le 1er mars 2022",
+          "earliestISO": "2022-03-01"
+        },
+        "description": "A compter du 1er mars 2022, l’origine de la viande de porc, volaille, agneau et mouton servie dans tous les restaurants hors domicile (cantines, restaurants commerciaux, restaurants d’entreprises) devra être indiquée, comme cela est le cas pour les viandes bovines depuis 2002. L’étiquetage de l’origine des viandes porcines, ovines et de volaille devra mentionner le pays d’élevage et le pays d’abattage. Cette obligation s’appliquera aux viandes achetées crues par les restaurateurs, qu’il s’agisse de viandes fraîches, réfrigérées, congelées ou surgelées, mais pas aux viandes achetées déjà préparées ou cuisinées (décret n° 2022-65 du 26 janvier 2022 modifiant le décret n° 2002-1465 du 17 décembre 2002 relatif à l’étiquetage des viandes bovines dans les établissements de restauration).",
+        "id": "informations-etiquet-viande",
+        "readMore": false,
+        "shortTitle": "Étiquetage des viandes",
+        "tags": [
+          "scolaire",
+          "universitaire",
+          "creche",
+          "administration",
+          "medical",
+          "social",
+          "loisirs"
+        ],
+        "title": "Étiquetage détaillé pour toutes les viandes"
+      }
+    ],
+    "successExplanation": "La cantine informe ses convives sur la part de produits de qualité et durables, entrant dans la composition des repas servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet alimentaire territorial).",
+    "title": "Information des usagers et convives"
+  }
+]

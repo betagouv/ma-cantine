@@ -6,6 +6,10 @@ import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import FaqPage from "@/views/FaqPage"
 import ContactPage from "@/views/ContactPage"
 import PurchasesHome from "@/views/PurchasesHome"
+import CanteensPage from "@/views/CanteensPage"
+// import CanteenWidget from "@/views/CanteensPage/CanteenWidget"
+import CanteensHome from "@/views/CanteensPage/CanteensHome"
+import CanteenPage from "@/views/CanteensPage/CanteenPage"
 
 const routes = [
   // {
@@ -69,6 +73,27 @@ const routes = [
     path: "/",
     name: "ManagementPage",
     component: LandingPage,
+  },
+  {
+    path: "/nos-cantines",
+    component: CanteensPage,
+    children: [
+      {
+        path: "",
+        name: "CanteensHome",
+        component: CanteensHome,
+        meta: {
+          title: "Nos cantines",
+        },
+        sitemapGroup: Constants.SitemapGroups.LAW,
+      },
+      {
+        path: ":canteenUrlComponent",
+        name: "CanteenPage",
+        component: CanteenPage,
+        props: true,
+      },
+    ],
   },
 ]
 

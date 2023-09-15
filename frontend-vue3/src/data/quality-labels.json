@@ -1,0 +1,42 @@
+[
+  {
+    "src": "label-rouge.png",
+    "text": "Label rouge - Signe national qui atteste qu'un produit possède un ensemble de caractéristiques spécifiques établissant un niveau de qualité supérieur à celui d'un produit similaire.",
+    "title": "Logo Label Rouge"
+  },
+  {
+    "src": "Logo-AOC-AOP.png",
+    "text": "Appellation d'origine (AOC/AOP) - L'Appellation d'origine protégée (AOP) désigne un produit dont toutes les étapes de production sont réalisées selon un savoir-faire reconnu dans une même aire géographique, qui donne ses caractéristiques au produit.",
+    "title": "Logo Appellation d'origine (AOC/AOP)"
+  },
+  {
+    "src": "IGP.png",
+    "text": "Indication géographique (IGP) - L'Indication géographique protégée (IGP) identifie un produit agricole, brut ou transformé, dont la qualité, la réputation ou d'autres caractéristiques sont liées à son origine géographique.",
+    "title": "Logo indication géographique"
+  },
+  {
+    "src": "STG.png",
+    "text": "Spécialité traditionnelle garantie (STG) - Un produit dont les qualités spécifiques sont liées à une composition, des méthodes de fabrication ou de transformation fondées sur une tradition.",
+    "title": "Logo Spécialité traditionnelle garantie"
+  },
+  {
+    "src": "hve.png",
+    "text": "Mention « issu d'une exploitation à Haute Valeur Environnementale » (HVE + niveau 2 accepté jusqu'au 31/12/2026)",
+    "title": "Logo Haute Valeur Environnementale"
+  },
+  {
+    "src": "logo_label-peche-durable.png",
+    "text": "Écolabel pêche durable",
+    "title": "Écolabel pêche durable"
+  },
+  {
+    "src": "rup.png",
+    "text": "Logo « Région ultrapériphérique » (RUP) - Produits issus de 9 régions ultra-phériques à l'UE (Azores, Maderes, Canaries, Guadeloupe, Guyane, Martinique, à la Réunion, à Mayotte, Saint-Martin)",
+    "title": "Logo Région Ultrapériphérique"
+  },
+  {
+    "src": "commerce-equitable.jpg",
+    "text": "Commerce Équitable",
+    "title": "Logo Commerce Équitable"
+  }
+]
