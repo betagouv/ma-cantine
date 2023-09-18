@@ -20,7 +20,7 @@ click-plugins==1.1.1
 click-repl==0.3.0
 cryptography==41.0.3
 cssselect2==0.7.0
-Deprecated==1.2.13
+Deprecated==1.2.14
 dill==0.3.7
 Django==4.2.4
 django-anymail==10.1
