@@ -1,17 +1,18 @@
 <template>
   <div>
-    <label :for="inputId" :class="labelClasses" v-if="$attrs.label">
+    <label v-if="$attrs.label" :for="inputId" :class="labelClasses">
       {{ $attrs.label }}
     </label>
     <v-select
+      ref="select"
       density="compact"
       single-line
-      ref="select"
       v-bind="$attrs"
       persistent-placeholder
+      :item-title="itemTitle"
       @update:model-value="(v) => $emit('input', v)"
     >
-      <template v-slot:label><span></span></template>
+      <template #label><span></span></template>
     </v-select>
   </div>
 </template>
@@ -26,6 +27,7 @@ export default {
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
     },
   },
+  emits: ["input"],
   data() {
     return { inputId: null }
   },
@@ -33,6 +35,15 @@ export default {
     value() {
       return this.$refs["select"].value
     },
+    // for backwards compatibility with vuetify 2, try to deduce item display text from values given
+    itemTitle() {
+      const item = this.$attrs.items.find((i) => !!i.value)
+      return item?.text ? "text" : "title"
+    },
+  },
+  mounted() {
+    this.removeInnerLabel()
+    this.assignInputId()
   },
   methods: {
     removeInnerLabel() {
@@ -45,10 +56,6 @@ export default {
     assignInputId() {
       this.inputId = this.$refs?.["select"]?.$refs?.["input"]?.id
     },
-  },
-  mounted() {
-    this.removeInnerLabel()
-    this.assignInputId()
   },
 }
 </script>
