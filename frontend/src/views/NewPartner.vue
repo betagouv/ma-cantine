@@ -68,12 +68,11 @@
       </v-col>
       <v-col class="pa-0" cols="12" md="9">
         <DsfrSelect
-          label="Secteurs d'activité (optionnel)"
+          label="Secteurs d'activité"
           multiple
-          :items="sectors"
-          v-model="partner.sectors"
-          item-text="name"
-          item-value="id"
+          :items="sectorCategories"
+          v-model="partner.sectorCategories"
+          :rules="[validators.required]"
         />
       </v-col>
       <v-col class="pa-0" cols="12" md="9">
@@ -158,13 +157,14 @@
 
 <script>
 import validators from "@/validators"
+import Constants from "@/constants"
 import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrRadio from "@/components/DsfrRadio"
-import { sectorsSelectList, toBase64, departmentItems } from "@/utils"
+import { toBase64, departmentItems } from "@/utils"
 
 export default {
   name: "NewPartner",
@@ -181,7 +181,9 @@ export default {
         national: true,
       },
       conditionsAccepted: false,
-      sectors: sectorsSelectList(this.$store.state.sectors),
+      sectorCategories: Object.entries(Constants.SectorCategoryTranslations)
+        .filter((x) => x[0] !== "inconnu")
+        .map((x) => ({ value: x[0], text: x[1] })),
       partnerTypes: this.$store.state.partnerTypes,
       economicModels: [
         {
