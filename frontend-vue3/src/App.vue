@@ -4,8 +4,14 @@
     <DsfrHeader service-title="ma cantine" :quick-links="headerLinks">
       <DsfrNavigation
         :nav-items="[
-          { text: 'Test', to: '/test' },
-          { title: 'Questions ?', links: [{ text: 'FAQ', to: '/faq' }] },
+          { text: 'Nos cantines', to: { name: 'CanteensHome' } },
+          {
+            title: 'Questions ?',
+            links: [
+              { text: 'FAQ', to: { name: 'FaqPage' } },
+              { text: 'Contactez-nous', to: { name: 'ContactPage' } },
+            ],
+          },
         ]"
       />
     </DsfrHeader>
