@@ -26,6 +26,7 @@
             </p>
             <p>
               Consulter
+              <!-- TODO -->
               <!-- <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
                 les statistiques de votre collectivité (régions et départements)
               </router-link> -->
@@ -39,16 +40,16 @@
     <v-sheet class="px-6" elevation="0">
       <v-row>
         <v-col cols="12" md="7" class="pt-0">
-          <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
-            <!-- <DsfrSearchField
-              hide-details="auto"
+          <form role="search" onsubmit="return false">
+            <DsfrSearchField
               ref="search"
               v-model="searchTerm"
               placeholder="Recherche par nom ou SIRET de l'établissement"
-              :searchAction="search"
-              :clearAction="clearSearch"
+              :search-action="search"
+              :clear-action="clearSearch"
+              hide-details="auto"
               class="mb-2 flex-grow-1"
-            /> -->
+            />
           </form>
         </v-col>
       </v-row>
@@ -414,7 +415,7 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrTextarea from "@/components/DsfrTextarea"
 // import DsfrPagination from "@/components/DsfrPagination"
-// import DsfrSearchField from "@/components/DsfrSearchField"
+import DsfrSearchField from "@/components/DsfrSearchField"
 // import CityField from "@/views/CanteenEditor/CityField"
 
 const DEFAULT_ORDER = "creation"
@@ -428,7 +429,7 @@ export default {
     DsfrSelect,
     DsfrTextarea,
     // DsfrPagination,
-    // DsfrSearchField,
+    DsfrSearchField,
     // CityField,
   },
   data() {
