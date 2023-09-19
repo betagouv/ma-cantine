@@ -203,7 +203,7 @@ export default {
       return !!this.diagnostic.valueTotalHt || !!this.diagnostic.percentageValueTotalHt
     },
     earnedBadges() {
-      if (!Object.keys(this.canteen).length) return {}
+      if (!Object.keys(this.canteen).length || !this.canteen.id) return {}
       const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
       let earnedBadges = {}
       Object.keys(canteenBadges).forEach((key) => {
