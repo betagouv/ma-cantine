@@ -56,11 +56,11 @@
 
     <div class="d-flex align-center mt-4 pl-0 pl-md-6">
       <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
-        <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
+        <h2 class="text-body-1 font-weight-black mb-0" style="background-color: #fff; width: max-content">
           Filtres
         </h2>
       </v-badge>
-      <v-btn text color="primary" small class="ml-1 py-4 py-sm-0" @click="showFilters = !showFilters">
+      <v-btn variant="text" color="primary" small class="ml-1 py-4 py-sm-0" @click="showFilters = !showFilters">
         <v-icon small>mdi-filter-outline</v-icon>
         <span v-if="showFilters">Cacher les filtres</span>
         <span v-else>Afficher les filtres</span>
@@ -70,7 +70,7 @@
         <v-icon small>mdi-filter-off-outline</v-icon>
         Enlever tous les filtres
       </v-btn>
-      <v-divider v-if="!showFilters"></v-divider>
+      <v-divider v-if="!showFilters" class="pb-0"></v-divider>
     </div>
     <v-expand-transition>
       <v-sheet v-show="showFilters" class="pa-6 text-left mt-2 ml-6" rounded :outlined="showFilters">
