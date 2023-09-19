@@ -46,6 +46,16 @@ export default createVuetify({
   display: {
     mobileBreakpoint: "sm",
   },
+  // some of this could be controlled with settings.scss instead, but this has faster updates
+  defaults: {
+    VBtn: {
+      style: "text-transform: none; font-weight: 500; border-radius: 0; letter-spacing: -0.011em",
+      elevation: 0,
+    },
+    VCard: {
+      elevation: 0,
+    },
+  },
   /*
   remixJson contains a key-value pair of icon names and svg paths. These correspond to the icons
   on https://www.systeme-de-design.gouv.fr/elements-d-interface/fondamentaux-techniques/icones.

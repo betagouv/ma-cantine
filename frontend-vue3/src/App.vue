@@ -58,3 +58,38 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+#app {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  // text-align: center;
+}
+
+// .constrained {
+//   max-width: 1024px !important;
+// }
+
+// .v-menu__content {
+//   text-align: left;
+// }
+
+// .cta-group {
+//   background-color: #cacafb;
+//   border-radius: 0px;
+// }
+
+// .theme--light.v-card > .v-card__text,
+// .theme--light.v-card > .v-card__subtitle {
+//   color: rgba(0, 0, 0, 0.87);
+// }
+
+.v-card.dsfr {
+  border: solid 1px #e0e0e0;
+  border-radius: 0px;
+}
+
+.v-card.dsfr:hover {
+  background-color: #f6f6f6;
+}
+</style>
