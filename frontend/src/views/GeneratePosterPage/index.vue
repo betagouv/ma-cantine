@@ -281,13 +281,11 @@ export default {
       return validators
     },
     userCanteens() {
-      if (this.isAuthenticated) {
-        const canteens = this.$store.state.userCanteenPreviews
-        return canteens.sort((a, b) => {
-          return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
-        })
-      }
-      return []
+      if (!this.isAuthenticated) return []
+      const canteens = this.$store.state.userCanteenPreviews
+      return canteens.sort((a, b) => {
+        return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
+      })
     },
     userCanteen() {
       return this.userCanteens.length > 0 ? this.userCanteens[0] : {}
