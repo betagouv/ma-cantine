@@ -13,6 +13,28 @@
       @update:model-value="(v) => $emit('input', v)"
     >
       <template #label><span></span></template>
+      <!-- https://github.com/vuetifyjs/vuetify/issues/15721#issuecomment-1595860094 -->
+      <template #item="{ item, props }">
+        <v-divider v-if="'divider' in item.raw" class="pb-0" />
+        <v-list-subheader v-else-if="'header' in item.raw" :title="item.raw.header" />
+        <!-- include item.text for backwards compatibility old vuetify 2 code -->
+        <v-list-item
+          v-else-if="!$attrs.hasOwnProperty('multiple')"
+          v-bind="props"
+          :title="item.raw.title || item.raw.text"
+          :value="item.value"
+        />
+        <v-list-item v-else>
+          <v-checkbox
+            v-bind="$attrs"
+            :label="item.raw.title || item.raw.text"
+            :value="item.value"
+            class="my-0 text-black"
+            hide-details
+            color="primary"
+          />
+        </v-list-item>
+      </template>
     </v-select>
   </div>
 </template>
@@ -36,6 +58,7 @@ export default {
       return this.$refs["select"].value
     },
     // for backwards compatibility with vuetify 2, try to deduce item display text from values given
+    // necessary despite VListItem to show the values properly once selected
     itemTitle() {
       const item = this.$attrs.items.find((i) => !!i.value)
       return item?.text ? "text" : "title"

@@ -3,7 +3,7 @@ import { createVuetify } from "vuetify"
 import * as components from "vuetify/components"
 import * as directives from "vuetify/directives"
 import remixJson from "./remix.json"
-import { mdi } from "vuetify/iconsets/mdi-svg"
+// import { mdi } from "vuetify/iconsets/mdi-svg"
 
 const dsfrLightTheme = {
   dark: false,
@@ -64,7 +64,7 @@ export default createVuetify({
       ...remixJson,
     },
     sets: {
-      mdi,
+      // mdi,
       // remixJson,
     },
   },

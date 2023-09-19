@@ -473,7 +473,7 @@ export default {
           value: [],
           default: [],
           transformToFrontend(values) {
-            return Array.isArray(values) ? values.map((v) => +v) : +values
+            return Array.isArray(values) ? values.map((v) => +v) : []
           },
         },
         min_daily_meal_count: {
