@@ -1,6 +1,6 @@
 <template>
   <div class="text-left grey--text text--darken-4">
-    <BreadcrumbsNav :links="[{ to: { name: 'CanteensHome' } }]" />
+    <BreadcrumbsNav />
     <h1 class="text-h4 font-weight-black black--text mb-6">Découvrir les démarches chez vous</h1>
 
     <v-card outlined>
@@ -112,7 +112,8 @@
                   : "s ont publié leurs données (répertoriées dans"
               }}
               <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
+              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>
+              ).
             </p>
           </div>
           <VueApexCharts
