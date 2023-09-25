@@ -1,0 +1,224 @@
+---
+title: "Bilan statistique de la campagne ma-cantine portant sur l'année 2022 (travail en cours)"
+author:
+  - "Quentin Loridant"
+date: "2023-09-07"
+format:
+  html:
+    embed-resources: true
+    code-fold: true
+    theme:
+      - flatly
+    toc: true
+    toc-depth: 2
+execute:
+  warning: false
+  cache: true
+---
+
+# Introduction
+
+## Contexte
+
+Le bilan statistique annuel de l’application des objectifs d’approvisionnement fixés à la restauration collective donne lieu à un rapport du gouvernement qui est remis au parlement chaque année.
+Celui-ci contient une analyse des données de la campagne de télédéclaration. Le premier bilan est disponible pour la [campagne portant sur les données 2021](https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2F6RxGNr0aJ4BPSzFsDQGs%2FBilan%20statistique%20EGAlim_achats2021.pdf?alt=media&token=).
+
+Dans ce document nous créons et documentons les statistiques nécessaires pour la campagne ayant eu lieu sur le premier semestre 2023 et portant sur les données de l'année 2022.
+
+
+```{python import}
+# | echo: false
+import pandas as pd
+import numpy as np
+import ast
+import datetime
+from ydata_profiling import ProfileReport
+import psycopg2
+import plotly.express as px
+import matplotlib.pyplot as plt
+from matplotlib import dates as mdates
+import locale
+import utils
+
+```
+
+<!-- Afin de récupérer les données, il vous faut un TOKEN metabase :
+`curl -X POST -H "Content-Type: application/json" -d '{"username": <USERNAME>, "password": <PASSWORD>}' https://ma-cantine-metabase.cleverapps.io/api/session` -->
+
+Les données sont extraites de la base de données de ma-cantine. Plusieurs filtres sont appliqués :
+
+1. date : les télédéclarations doivent être comprises dans les dates de campagne: `creation_date BETWEEN XX mars au 30 juin 2023`
+2. statut : la télédéclaration doit avoir été validée par son éditeur. `status="SUBMITTED"`
+3. année 2022 : `year==2022`
+4. `teledeclaration.value_total_ht` non vide
+
+
+Vous pouvez retrouver l'intégralité du code utilisé sur la page [github de ma-cantine](https://github.com/betagouv/ma-cantine/tree/staging/stats).
+
+```{python Main}
+# | echo: false
+
+tds = {}
+columns_of_interest = [
+    "teledeclaration.value_bio_ht",
+    "teledeclaration.value_total_ht",
+    "teledeclaration.value_egalim_others_ht",
+    "teledeclaration.value_sustainable_ht",
+    "teledeclaration.value_externality_performance_ht",
+]
+
+cache=True
+
+if cache:
+    for year in utils.CAMPAGNES.keys():
+        tds[year] = pd.read_csv(f"export_dataset_stats_campagne_{year}.csv", sep=";")
+else:
+    td_raw = utils.load_td()
+    tds = utils.split_td_into_years(td_raw)
+    
+
+for year in utils.CAMPAGNES.keys():
+    # Deleting line terminator substring that could corrupt the backup file
+    tds[year]['teledeclaration.other_waste_comments'] = tds[year]['teledeclaration.other_waste_comments'].replace('\r\n', ' ', regex=True).replace('\n', ' ', regex=True)
+    # Saving the file
+    tds[year].to_csv(f"export_dataset_stats_campagne_{year}.csv", sep=";", index=False)
+
+# Suppression des td non appros
+tds["2022"] = tds["2022"].dropna(
+    how="all",
+    subset=columns_of_interest,
+)
+```
+
+
+## Qualité des données
+
+Avant d'étudier les chiffres clés de la télédéclaration, nous vous présentons des informations sur la disponibilité des données. Ces informations sont importantes pour saisir au mieux la portée des indicateurs.
+
+
+```{python Vérification du taux de présence de la donnée repas par an}
+# | echo: false
+# | output: asis
+
+utils.assert_quality(tds)
+
+
+utils.display_data_coverage(
+    tds,
+    sub_columns=columns_of_interest,
+    years=["2021", "2022"],
+)
+```
+
+Observons la distribution des valeurs d'achats totaux et des achats bio. Les valeurs étant très différentes entre les différents acteurs (de 0€ à plusieurs millions d'euros déclarés), nous visualisons le logarithme des achats.
+
+```{python}
+# | echo: false
+
+import seaborn as sns
+
+col_achats = [
+    "teledeclaration.value_bio_ht",
+    "teledeclaration.value_total_ht",
+]
+
+year = "2022"
+for col in col_achats:
+    tds[year][col + "_log"] = np.log10(tds[year][[col]].replace(0, 1))
+
+g = sns.displot(tds[year][["teledeclaration.value_bio_ht_log",
+    "teledeclaration.value_total_ht_log"]], kde=True)
+
+# Iterate thorugh each axis
+for ax in g.axes.flat:
+    ax.set_title('Distribution des valeurs d\'achats en € totales et bio', fontsize='large')
+    ax.set_ylabel('Nombre de TD', fontsize='large')
+    ax.set_xlabel('Valeurs d\'achats en € (en log)', fontsize='large')
+g
+```
+
+Nous observons une loi log-normale pour les deux valeurs d'achats (une variable peut être modélisée par une loi log-normale si elle est le résultat de la multiplication d'un grand nombre de petits facteurs indépendants).  
+
+A la vue des ces graphiques, nous prenons une **première hypothèse** : *étant possible de réaliser une modélisation, nous estimons que la qualité globale des données de ces champs est bonne. Il existe cependant une légère sur-déclaration de valeurs très faibles (par exemple, nous pouvons nous interroger sur la déclaration de moins de 100€ d'achats bio).*
+
+
+## Traitement des valeurs manquantes
+
+Nous avons traité de 2 façons différentes les valeurs manquantes.
+
+Ces deux stratégies se concentrent sur les cinq champs de la télédéclaration simplifiée: 
+
+1. `value_bio_ht`
+2. `value_total_ht`
+3. `value_egalim_others_ht`
+4. `value_externality_performance_ht`
+5. `value_sustainable_ht`
+
+
+### Stratégie Historique
+
+La **"stratégie Historique"** (qui a été appliquée sur le premier bilan) : nous remplaçons les valeurs manquantes par la valeur 0, sauf si les 5 champs d'une même déclaration sont vides, auquel cas nous ne prenons pas en compte la ligne
+```{python}
+# | output: asis
+# | echo : false
+
+
+# TODO : garder value_total dans le dropna ? On supprime peut-etre qq lignes de trop, ou peut etre pas assez !
+
+tds["2022_strat_hist"] = tds["2022"].dropna(
+    how="all",
+    subset=columns_of_interest,
+)
+
+print(f'Après filtrage des lignes dont les 5 champs sont manquants, nous avons gardé **{len(tds["2022_strat_hist"])}** télédéclarations sur les **{len(tds["2022"])}** télédéclarations totales.\n Ensuite nous avons remplaçé par 0 les valeurs manquantes : \n')
+
+achats = {}
+for col in columns_of_interest:
+    achats[col.replace('teledeclaration.', '')] = tds["2022_strat_hist"][col].isna().sum()
+
+tds["2022_strat_hist"][col_achats] = tds["2022_strat_hist"][col_achats].fillna(0)
+df_val_manquantes = pd.DataFrame.from_dict(achats, orient="index").rename(columns={0: "Nombre de valeurs manquantes, remplaçées par 0"})
+print(df_val_manquantes.to_markdown())
+```
+
+### Stratégie 'Je Ne Sais Pas'
+
+La **"stratégie Je Ne Sais Pas"** : afin de minimiser l'impact des valeurs manquantes, nous supprimons toutes les lignes dès que le champ `teledeclaration.value_bio_ht` est vide. 
+
+Dans les autres cas, comme dans la stratégie 'Historique', nous remplaçons les champs vides par 0.
+
+
+```{python}
+# | output: asis
+# | echo: false
+
+for year in ['2021', '2022']:
+    tds[f"{year}_strat_2"] = tds[year].dropna(
+        how="any",
+        subset=[
+            "teledeclaration.value_total_ht",
+            "teledeclaration.value_bio_ht",
+        ],
+    )
+    if year == '2022':
+        print(f'Nous supprimons {len(tds[year]) - len(tds[f"{year}_strat_2"])} lignes car le champ `teledeclaration.value_bio_ht` est vide. \n')
+```
+
+# Chiffres clés
+
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+# | echo: false
+# | output: asis
+
+indicateurs = utils.calcul_indicateur(tds, years=["2022_strat_2", "2022_strat_hist"])
+indicateurs = indicateurs.rename(columns={'2022_strat_2': 'Données 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Données 2022 - Stratégie "Historique"'})
+utils.display_indicateurs(indicateurs)
+```
+
+::: info
+Pour la suite de l'étude, nous utiliserons uniquement la stratégie **Je Ne Sais Pas** afin de minimiser les hypothèses que nous prenons sur les données.
+:::
+
+
+{{< include _secteurs.qmd >}}
+{{< include _populations.qmd >}}

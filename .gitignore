@@ -165,5 +165,8 @@ celerybeat-schedule.db
 
 # Jupyter
 stats/.jupyter_cache/
+stats/bilan/.quarto/
+stats/bilan/_output/
 
 notes/
+

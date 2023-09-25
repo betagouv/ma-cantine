@@ -1,0 +1,74 @@
+```{python}
+import utils
+```
+
+# Etudes des populations de déclarants
+
+```{python Etablire exactement les cantines ayant participé directement ou indirectement (direct, satellites...)}
+# | output: asis
+# | echo: false
+
+satellites_sirets = {}
+liste_cantines = {}
+for year in utils.CAMPAGNES.keys():
+    df = tds[year]["satellites"].dropna()
+    satellites_sirets_raw = df.apply(lambda x: [item["siret"] for item in ast.literal_eval(x)]).values.tolist()
+    # Flatten the nested lists into one list with sirets as elements
+    satellites_sirets[year] = [item for sublist in satellites_sirets_raw for item in sublist]
+    # Uncommnent the line comment to add satellites sirets (only exists for 2022)
+    satellites_sirets[year] = tds[year].canteen_siret.values.tolist()  # + satellites_sirets[year]
+
+    # Remove duplicates
+    satellites_sirets[year] = list(set(satellites_sirets[year]))
+
+# Télédeclarants présents dans les siret 2022 mais non 2021
+entrants = [item for item in satellites_sirets["2022"] if item not in satellites_sirets["2021"]]
+print(f"Il y a **{len(entrants)} nouveaux teledeclarants** (ayant déclaré sur la campagne 2023 mais pas celle de 2022)\n")
+
+# Télédeclarants présents dans les siret 2021 mais non 2022
+sortants = [item for item in satellites_sirets["2021"] if item not in satellites_sirets["2022"]]
+print(
+    f"Il y a **{len(sortants)} teledeclarants** n'ayant pas renouvellé (ayant déclaré sur la campagne 2022 mais pas celle de 2023)\n"
+)
+
+# Télédéclarants présents lors des deux campagnes
+restants = [item for item in satellites_sirets["2021"] if item in satellites_sirets["2022"]]
+
+print(f'Intéressons nous aux autres, que nous appellerons les élèves assidus. Ils sont **{len(restants)} teledeclarants**\n')
+```
+
+```{python Echantillon commun}
+# | echo: false
+
+tds_commun = {}
+for year in ['2021_strat_2', '2022_strat_2']:
+    tds_commun[year] = tds[year][tds[year]["canteen.siret"].isin(restants)]
+```
+
+## Etude sur échantillon commun - "les élèves assidus"
+```{python}
+# | output: asis
+# | echo: false
+
+indicateurs = pd.DataFrame(utils.calcul_indicateur(tds_commun, years=['2021_strat_2', '2022_strat_2']))
+indicateurs = utils.ajout_col_comparaison(indicateurs)
+indicateurs = indicateurs.rename(columns={'2021_strat_2': 'Données 2021', '2022_strat_2': 'Données 2022'})
+utils.display_indicateurs(indicateurs)
+
+```
+
+
+## Comparaison entre le sortants et les nouveaux arrivants
+```{python}
+# | output: asis
+# | echo: false
+
+
+tds_cmp = {}
+tds_cmp['Sortants (données 2022)'] = tds['2021_strat_2'][tds['2021_strat_2']["canteen.siret"].isin(sortants)]
+tds_cmp['Entrants (données 2021)'] = tds['2022_strat_2'][tds['2022_strat_2']["canteen.siret"].isin(entrants)]
+
+indicateurs = pd.DataFrame(utils.calcul_indicateur(tds_cmp, years=['Sortants (données 2022)', 'Entrants (données 2021)']))
+indicateurs = utils.ajout_col_comparaison(indicateurs)
+utils.display_indicateurs(indicateurs)
+```
