@@ -1,5 +1,5 @@
 ---
-title: "Ma-Cantine : Bilan statistique de la campagne portant sur l'année 2022"
+title: "Bilan statistique de la campagne ma-cantine portant sur l'année 2022 (travail en cours)"
 author:
   - "Quentin Loridant"
 date: "2023-09-07"
@@ -23,12 +23,14 @@ execute:
 Le bilan statistique annuel de l’application des objectifs d’approvisionnement fixés à la restauration collective donne lieu à un rapport du gouvernement qui est remis au parlement chaque année.
 Celui-ci contient une analyse des données de la campagne de télédéclaration. Le premier bilan est disponible pour la [campagne portant sur les données 2021](https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2F6RxGNr0aJ4BPSzFsDQGs%2FBilan%20statistique%20EGAlim_achats2021.pdf?alt=media&token=).
 
-Dans ce document nous créeons et documentons les statistiques nécessaires pour la campagne ayant eu lieu sur le premier semestre 2023 et portant sur les données de l'année 2022.
+Dans ce document nous créons et documentons les statistiques nécessaires pour la campagne ayant eu lieu sur le premier semestre 2023 et portant sur les données de l'année 2022.
 
 
 ```{python import}
 # | echo: false
 import pandas as pd
+import numpy as np
+import ast
 import os
 import datetime
 import requests
@@ -90,6 +92,7 @@ SECTORS = {
 
 ```{python Import des données TD}
 # | echo: false
+
 def load_td():
     url = f"https://ma-cantine-metabase.cleverapps.io/api/card/802/query/json"
     load_dotenv()
@@ -122,13 +125,13 @@ Les données sont extraites de la base de données de ma-cantine. Plusieurs filt
 1. date : les télédéclarations doivent être comprises dans les dates de campagne: `creation_date BETWEEN XX mars au 30 juin 2023`
 2. statut : la télédéclaration doit avoir été validée par son éditeur. `status="SUBMITTED"`
 3. année 2022 : `year==2022`
-4. canteen ID qui sont renseignés (champs non nuls) : `canteen_id.notnull()`
+4. `teledeclaration.value_total_ht` non vide
 
-Vous pouvez retrouver le code utilisé pour ces filtres ci dessous :
+
+Vous pouvez retrouver l'intégralité du code utilisé sur la page [github de ma-cantine](https://github.com/betagouv/ma-cantine/tree/staging/stats).
 
 ```{python Ajout des données cantines pour les td de la campagne 2021}
 # | echo: false
-
 
 def add_canteen_info(df):
     url = f"https://ma-cantine-metabase.cleverapps.io/api/card/820/query/json"
@@ -154,7 +157,6 @@ def split_td_into_years(td_raw):
     tds = {}
     td = td_raw.copy()
     td = td[td.status == "SUBMITTED"]
-    td = td[td.canteen_id.notnull()]
     for year in campagnes.keys():
         tds[year] = td.copy()
         tds[year] = tds[year][tds[year].year == int(year)]
@@ -169,7 +171,16 @@ def split_td_into_years(td_raw):
 ```
 
 ```{python Main}
+# | echo: false
+
 tds = {}
+columns_of_interest = [
+    "teledeclaration.value_bio_ht",
+    "teledeclaration.value_total_ht",
+    "teledeclaration.value_egalim_others_ht",
+    "teledeclaration.value_sustainable_ht",
+    "teledeclaration.value_externality_performance_ht",
+]
 
 cache=True
 
@@ -179,6 +190,7 @@ if cache:
 else:
     td_raw = load_td()
     tds = split_td_into_years(td_raw)
+    
 
 for year in campagnes.keys():
     # Deleting line terminator substring that could corrupt the backup file
@@ -186,12 +198,18 @@ for year in campagnes.keys():
     # Saving the file
     tds[year].to_csv(f"export_dataset_stats_campagne_{year}.csv", sep=";", index=False)
 
+# Suppression des td non appros
+tds["2022"] = tds["2022"].dropna(
+    how="all",
+    subset=columns_of_interest,
+)
 ```
 
 
 
 ```{python Vérification des données}
 # | echo: false
+
 for year in tds.keys():
     assert (
         tds[year].groupby("canteen_id").size().sort_values(ascending=False).head(1).iloc[0] == 1
@@ -212,15 +230,6 @@ Avant d'étudier les chiffres clés de la télédéclaration, nous vous présent
 # | echo: false
 # | output: asis
 
-columns_of_interest = [
-    "teledeclaration.value_bio_ht",
-    "teledeclaration.value_total_ht",
-    "teledeclaration.value_egalim_others_ht",
-    "teledeclaration.value_sustainable_ht",
-    "teledeclaration.value_externality_performance_ht",
-]
-
-
 def display_data_coverage(dfs, sub_columns=[], years=[]):
     """
     Takes a dict of DataFrame and display the coverage of data in a markdown table.
@@ -236,14 +245,13 @@ def display_data_coverage(dfs, sub_columns=[], years=[]):
             ] = f"{100 * (1 - dfs[year][col].isna().sum() / len(dfs[year])):.2f} %"
 
     pourcentage_in_file_to_display = pd.DataFrame(pourcentage_in_file)
-    pourcentage_in_file_to_display = pourcentage_in_file_to_display.rename(columns={'2022': 'Ratio des valeurs non vides (données 2022)'})
+    pourcentage_in_file_to_display = pourcentage_in_file_to_display.rename(columns={'2022': 'Part des valeurs non vides (2022)', '2021': 'Part des valeurs non vides (2021)'})
     print(pourcentage_in_file_to_display.to_html())
-
 
 display_data_coverage(
     tds,
     sub_columns=columns_of_interest,
-    years=["2022"],
+    years=["2021", "2022"],
 )
 ```
 
@@ -253,7 +261,6 @@ Observons la distribution des valeurs d'achats totaux et des achats bio. Les val
 # | echo: false
 
 import seaborn as sns
-import numpy as np
 
 col_achats = [
     "teledeclaration.value_bio_ht",
@@ -284,13 +291,13 @@ A la vue des ces graphiques, nous prenons une **première hypothèse** : *étant
 
 Nous avons traité de 2 façons différentes les valeurs manquantes.
 
-Ces deux stratégies se concentrent sur ces cinq champs : 
+Ces deux stratégies se concentrent sur les cinq champs de la télédéclaration simplifiée: 
 
-1. value_bio_ht
-2. value_total_ht
-3. value_egalim_others_ht
-4. value_externality_performance_ht
-5. value_sustainable_ht
+1. `value_bio_ht`
+2. `value_total_ht`
+3. `value_egalim_others_ht`
+4. `value_externality_performance_ht`
+5. `value_sustainable_ht`
 
 
 ### Stratégie Historique
@@ -298,17 +305,20 @@ Ces deux stratégies se concentrent sur ces cinq champs :
 La **"stratégie Historique"** (qui a été appliquée sur le premier bilan) : nous remplaçons les valeurs manquantes par la valeur 0, sauf si les 5 champs d'une même déclaration sont vides, auquel cas nous ne prenons pas en compte la ligne
 ```{python}
 # | output: asis
+# | echo : false
 
+
+# TODO : garder value_total dans le dropna ? On supprime peut-etre qq lignes de trop, ou peut etre pas assez !
 
 tds["2022_strat_hist"] = tds["2022"].dropna(
     how="all",
     subset=columns_of_interest,
 )
 
-print(f'Après filtrage des lignes dont les 4 champs sont manquants, nous avons gardé **{len(tds["2022_strat_hist"])}** télédéclarations sur les **{len(tds["2022"])}** télédéclarations totales.\n Ensuite nous avons remplaçé par 0 les valeurs manquantes : \n')
+print(f'Après filtrage des lignes dont les 5 champs sont manquants, nous avons gardé **{len(tds["2022_strat_hist"])}** télédéclarations sur les **{len(tds["2022"])}** télédéclarations totales.\n Ensuite nous avons remplaçé par 0 les valeurs manquantes : \n')
 
 achats = {}
-for col in col_achats:
+for col in columns_of_interest:
     achats[col.replace('teledeclaration.', '')] = tds["2022_strat_hist"][col].isna().sum()
 
 tds["2022_strat_hist"][col_achats] = tds["2022_strat_hist"][col_achats].fillna(0)
@@ -316,27 +326,27 @@ df_val_manquantes = pd.DataFrame.from_dict(achats, orient="index").rename(column
 print(df_val_manquantes.to_markdown())
 ```
 
-Nous observons que le champ `teledeclaration.value_total_ht` n'est jamais remplacé par 0. En effet, quand ce champ est vide, les autres champs sont systémaiquement vides également, et les lignes sont donc supprimées.
+### Stratégie 'Je Ne Sais Pas'
 
-### Stratégie ANY
+La **"stratégie Je Ne Sais Pas"** : afin de minimiser l'impact des valeurs manquantes, nous supprimons toutes les lignes dès que le champ `teledeclaration.value_bio_ht` est vide. 
 
-La **"stratégie Any"** : afin de minimiser l'impact des valeurs manquantes, nous supprimons toutes les lignes dès que l'un de ces champs est vide : 
+Dans les autres cas, comme dans la stratégie 'Historique', nous remplaçons les champs vides par 0.
 
-1. teledeclaration.value_bio_ht
-2. teledeclaration.value_total_ht
-
-Nous n'incluons pas le champ `teledeclaration.value_egalim_others_ht` das ce critère de filtre, car il est régulièrement nul et nous préférons ne pas altérer la qualité des décalarations sur le **bio**.
 
 ```{python}
 # | output: asis
-tds["2022_strat_2"] = tds["2022"].dropna(
-    how="any",
-    subset=[
-        "teledeclaration.value_total_ht",
-        "teledeclaration.value_bio_ht",
-    ],
-)
-print(f'Nous supprimons {len(tds["2022"]) - len(tds["2022_strat_2"])} lignes car soit le champ `teledeclaration.value_total_ht` est vide, soit le champ `teledeclaration.value_bio_ht` est vide. \n')
+# | echo: false
+
+for year in ['2021', '2022']:
+    tds[f"{year}_strat_2"] = tds[year].dropna(
+        how="any",
+        subset=[
+            "teledeclaration.value_total_ht",
+            "teledeclaration.value_bio_ht",
+        ],
+    )
+    if year == '2022':
+        print(f'Nous supprimons {len(tds[year]) - len(tds[f"{year}_strat_2"])} lignes car le champ `teledeclaration.value_bio_ht` est vide. \n')
 ```
 
 # Chiffres clés
@@ -347,7 +357,7 @@ print(f'Nous supprimons {len(tds["2022"]) - len(tds["2022_strat_2"])} lignes car
 
 def calcul_indicateur(tds: {}, years=[]):
     indicateurs = {}
-    for year in years if len(years) else dfs.keys():
+    for year in years if len(years) else tds.keys():
         indicateurs[year] = {}
         indicateurs[year]["Nombre de Télédéclarations"] = len(tds[year])
         indicateurs[year]["Nombre de sites de restauration concernés par la télédéclaration"] = (
@@ -395,24 +405,22 @@ def calcul_indicateur(tds: {}, years=[]):
 
 
 indicateurs_to_display = pd.DataFrame(calcul_indicateur(tds, years=["2022_strat_2", "2022_strat_hist"]))
-indicateurs_to_display = indicateurs_to_display.rename(columns={'2022_strat_2': 'Données 2022 - Stratégie B', '2022_strat_hist': 'Données 2022 - Stratégie A'})
+indicateurs_to_display = indicateurs_to_display.rename(columns={'2022_strat_2': 'Données 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Données 2022 - Stratégie "Historique"'})
 print(indicateurs_to_display.to_html())
 ```
 
 ::: info
-Pour la suite de l'étude, nous utiliserons uniquement la stratégie **ANY** afin de minimiser les hypothèses que nous prenons sur les données.
+Pour la suite de l'étude, nous utiliserons uniquement la stratégie **Je Ne Sais Pas** afin de minimiser les hypothèses que nous prenons sur les données.
 :::
 
 
 # Focus par secteurs
 
-Nous nous intéressions à la répartition des télédéclaration en fonction des secteurs principaux et secondaires, pour la campagne sur les données 2022. Nous utilisons la stratégie **ANY** pour le traitement des valeurs manquantes.
+Nous nous intéressions à la répartition des télédéclaration en fonction des secteurs principaux et secondaires, pour la campagne sur les données 2022. Nous utilisons la stratégie **Je Ne Sais Pas** pour le traitement des valeurs manquantes.
 
 ```{python}
 # | echo: false
 # | output: asis
-
-import ast
 
 def traitement_secteurs(df, year):
     df["canteen.sectors"] = tds[year]["canteen.sectors"].fillna("[]")
@@ -454,7 +462,6 @@ for year in ["2022_strat_2"]:
         sectors[year][cat]['Valeur totale des achats'] = df_cat["teledeclaration.value_total_ht"].sum()
         sectors[year][cat]['% achats secteurs'] = f'{100*df_cat["teledeclaration.value_total_ht"].sum()/ tds[year]["teledeclaration.value_total_ht"].sum():.2f} %'
         sectors[year][cat]['Valeur des achats Bio'] = df_cat["teledeclaration.value_bio_ht"].sum()
-        sectors[year][cat]['Valeur des achats EGALIM (hors Bio)'] = df_cat["teledeclaration.value_sustainable_ht"].sum()
     summary_by_sector = pd.DataFrame.from_dict(sectors[year]).T
 
     # Ajout des catégories pour caractériser chaque sous-catégorie
@@ -466,11 +473,69 @@ for year in ["2022_strat_2"]:
 
 ```
 
+# Etudes des populations de déclarants
+
+```{python Etablire exactement les cantines ayant participé directement ou indirectement (direct, satellites...)}
+# | output: asis
+# | echo: false
+
+satellites_sirets = {}
+liste_cantines = {}
+for year in campagnes.keys():
+    df = tds[year]["satellites"].dropna()
+    satellites_sirets_raw = df.apply(lambda x: [item["siret"] for item in ast.literal_eval(x)]).values.tolist()
+    # Flatten the nested lists into one list with sirets as elements
+    satellites_sirets[year] = [item for sublist in satellites_sirets_raw for item in sublist]
+    # Uncommnent the line comment to add satellites sirets (only exists for 2022)
+    satellites_sirets[year] = tds[year].canteen_siret.values.tolist()  # + satellites_sirets[year]
+
+    # Remove duplicates
+    satellites_sirets[year] = list(set(satellites_sirets[year]))
+
+# Télédeclarants présents dans les siret 2022 mais non 2021
+entrants = [item for item in satellites_sirets["2022"] if item not in satellites_sirets["2021"]]
+print(f"Il y a **{len(entrants)} nouveaux teledeclarants** (ayant déclaré sur la campagne 2023 mais pas celle de 2022)\n")
+
+# Télédeclarants présents dans les siret 2021 mais non 2022
+sortants = [item for item in satellites_sirets["2021"] if item not in satellites_sirets["2022"]]
+print(
+    f"Il y a **{len(sortants)} teledeclarants** n'ayant pas renouvellé (ayant déclaré sur la campagne 2022 mais pas celle de 2023)\n"
+)
+
+# Télédéclarants présents lors des deux campagnes
+restants = [item for item in satellites_sirets["2021"] if item in satellites_sirets["2022"]]
+
+print(f'Intéressons nous aux autres, que nous appellerons les élèves assidus. Ils sont **{len(restants)} teledeclarants**\n')
+```
+
+```{python Echantillon commun}
+# | echo: false
+
+tds_commun = {}
+for year in ['2021_strat_2', '2022_strat_2']:
+    tds_commun[year] = tds[year][tds[year]["canteen.siret"].isin(restants)]
+
+```
+
+## Etude sur échantillon commun - "les élèves assidus"
+```{python}
+# | output: asis
+# | echo: false
+
+
+indicateurs_to_display = pd.DataFrame(calcul_indicateur(tds_commun, years=['2021_strat_2', '2022_strat_2']))
+print(indicateurs_to_display.rename(columns={'2021_strat_2': 'Données 2021', '2022_strat_2': 'Données 2022'}).to_markdown())
+```
+
+
+
 ```{python}
 # | echo: false
-# for year in campagnes.keys():
-    # for category in categories:
-        # print("\n#####\n" + category + "\n")
-        # tds[year] = tds[year].loc[:, ~tds[year].columns.duplicated()]
-        # print(tds[year][tds[year][category] > 0][["canteen_id", "teledeclaration.value_bio_ht"]].describe())
+
+# Teledeclaration par fichier - Import de masse ?
+# Import Source ?
+# Qualité données des nouveaux TD
+# Nombre de td avec les colonnes remplis (a inclure ds le tableau)
+# Restants + nouveaux := 5400 ? ou les 100 ?
+
 ```
