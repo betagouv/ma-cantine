@@ -6,7 +6,10 @@
       </v-icon>
       <span>Information des convives</span>
     </v-card-title>
-    <v-card-text :class="level.colorClass">
+    <v-card-text v-if="needsData">
+      <MissingDataChip v-if="!hasPurchases && !hasCurrentDiagnostic && !hasLastYearDiagnostic" />
+    </v-card-text>
+    <v-card-text :class="level.colorClass" v-else>
       NIVEAU :
       <span class="font-weight-bold">{{ level.text }}</span>
     </v-card-text>
@@ -16,10 +19,15 @@
 
 <script>
 import Constants from "@/constants"
+import MissingDataChip from "./MissingDataChip.vue"
 
 export default {
   name: "InformationCard",
+  components: { MissingDataChip },
   computed: {
+    needsData() {
+      return this.level === Constants.Levels.UNKNOWN
+    },
     level() {
       return Constants.Levels.ADVANCED
     },

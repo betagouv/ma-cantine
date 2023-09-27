@@ -11,36 +11,15 @@
           <DsfrSelect ref="yearSelect" v-model="year" :items="allowedYears" hide-details="auto" placeholder="Année" />
         </v-col>
       </v-row>
-      <v-chip
-        outlined
-        color="primary"
-        small
-        label
-        v-if="!hasPurchases && !hasCurrentDiagnostic && !hasLastYearDiagnostic"
-        class="mt-4 mb-n2"
-      >
-        <v-icon small class="mr-2">$information-fill</v-icon>
-        DONNÉES À COMPLETER
-      </v-chip>
+      <MissingDataChip v-if="!hasPurchases && !hasCurrentDiagnostic && !hasLastYearDiagnostic" class="mt-4 mb-n2" />
       <v-divider class="my-6"></v-divider>
-      <div v-if="!hasPurchases && !hasCurrentDiagnostic && !hasLastYearDiagnostic" class="body-1">
-        <p class="font-weight-bold">Pilotez votre progression tout au long de l’année en cours</p>
-        <p class="body-2">
-          Avec l’outil de suivi d’achats de “ma cantine”, calculez automatiquement et en temps réel la part de vos
-          approvisionnements qui correspondent aux critères de la loi EGAlim, et facilitez ainsi votre prochaine
-          télédéclaration.
-        </p>
-        <p class="body-2">
-          Pour cela, vous pouvez renseigner tous vos achats au fil de l’eau ou par import en masse, ou bien connecter
-          votre outil de gestion habituel si cela est possible pour transférer les données.
-        </p>
-      </div>
+      <ApproSegment :purchases="null" :currentDiagnostic="null" :lastYearDiagnostic="null" />
     </v-col>
     <v-col cols="12" md="8">
       <v-row style="position: relative;">
         <div
           class="overlay d-flex align-center justify-center"
-          v-if="!hasPurchases && !hasCurrentDiagnostic && !hasLastYearDiagnostic && false"
+          v-if="!hasPurchases && !hasCurrentDiagnostic && !hasLastYearDiagnostic"
         >
           <v-btn color="primary">Commencer</v-btn>
         </div>
@@ -68,10 +47,20 @@ import FoodWasteCard from "./FoodWasteCard.vue"
 import DiversificationCard from "./DiversificationCard.vue"
 import NoPlasticCard from "./NoPlasticCard.vue"
 import InformationCard from "./InformationCard.vue"
+import MissingDataChip from "./MissingDataChip.vue"
+import ApproSegment from "./ApproSegment.vue"
 
 export default {
   name: "EgalimProgression",
-  components: { DsfrSelect, FoodWasteCard, DiversificationCard, NoPlasticCard, InformationCard },
+  components: {
+    DsfrSelect,
+    FoodWasteCard,
+    DiversificationCard,
+    NoPlasticCard,
+    InformationCard,
+    MissingDataChip,
+    ApproSegment,
+  },
   data() {
     return {
       year: lastYear(),
