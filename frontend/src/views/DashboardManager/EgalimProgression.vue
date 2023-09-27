@@ -40,7 +40,7 @@
       <v-row style="position: relative;">
         <div
           class="overlay d-flex align-center justify-center"
-          v-if="!hasPurchases && !hasCurrentDiagnostic && !hasLastYearDiagnostic"
+          v-if="!hasPurchases && !hasCurrentDiagnostic && !hasLastYearDiagnostic && false"
         >
           <v-btn color="primary">Commencer</v-btn>
         </div>

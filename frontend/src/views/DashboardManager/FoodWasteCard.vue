@@ -6,19 +6,26 @@
       </v-icon>
       <span>Lutte contre le gaspillage</span>
     </v-card-title>
-    <v-card-text>
+    <v-card-text :class="level.colorClass">
       NIVEAU :
-      <span class="font-weight-bold">AVANCÉ</span>
+      <span class="font-weight-bold">{{ level.text }}</span>
     </v-card-text>
-    <v-card-text>
-      Bravo pour vos actions ! Pour aller plus loin dans la lutte contre le gaspillage, et si vous rendiez la
-      pré-inscription des convives obligatoires ?
-    </v-card-text>
+    <v-card-text>{{ cardBody }}</v-card-text>
   </v-card>
 </template>
 
 <script>
+import Constants from "@/constants"
+
 export default {
   name: "FoodWasteCard",
+  computed: {
+    level() {
+      return Constants.Levels.EXPERT
+    },
+    cardBody() {
+      return "Bravo pour vos actions ! Pour aller plus loin dans la lutte contre le gaspillage, et si vous rendiez la pré-inscription des convives obligatoires ?"
+    },
+  },
 }
 </script>

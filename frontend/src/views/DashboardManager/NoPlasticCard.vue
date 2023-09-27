@@ -6,19 +6,26 @@
       </v-icon>
       <span>Interdiction du plastique</span>
     </v-card-title>
-    <v-card-text>
+    <v-card-text :class="level.colorClass">
       NIVEAU :
-      <span class="font-weight-bold">AVANCÉ</span>
+      <span class="font-weight-bold">{{ level.text }}</span>
     </v-card-text>
-    <v-card-text>
-      Bravo pour vos actions ! Continuez à substituer les matières plastiques : et si vous disiez au revoir aux
-      ustensiles à usage unique ?
-    </v-card-text>
+    <v-card-text>{{ cardBody }}</v-card-text>
   </v-card>
 </template>
 
 <script>
+import Constants from "@/constants"
+
 export default {
   name: "NoPlasticCard",
+  computed: {
+    level() {
+      return Constants.Levels.UNKNOWN
+    },
+    cardBody() {
+      return "Bravo pour vos actions ! Continuez à substituer les matières plastiques : et si vous disiez au revoir aux ustensiles à usage unique ?"
+    },
+  },
 }
 </script>
