@@ -101,7 +101,7 @@
               </v-card-actions>
             </v-card>
           </v-col>
-          <v-col cols="12" md="4" id="publication">
+          <v-col v-if="!canteen.isCentralCuisine" cols="12" md="4" id="publication">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
               <v-card-title class="fr-h4">Ma vitrine en ligne</v-card-title>
               <v-card-text class="fr-text-xs">
@@ -122,29 +122,67 @@
               </v-card-actions>
             </v-card>
           </v-col>
+          <v-col v-else cols="12" md="4" id="satellites">
+            <v-card outlined class="fill-height d-flex flex-column pa-4">
+              <v-card-title class="fr-h4">Mes satellites</v-card-title>
+              <v-card-text class="fr-text-xs">
+                <p>TODO</p>
+                <p>{{ satelliteCount }} / {{ canteen.satelliteCanteensCount }} renseignés</p>
+              </v-card-text>
+              <v-spacer></v-spacer>
+              <v-card-actions class="mx-2 mb-2 justify-end">
+                <v-btn
+                  :to="{
+                    name: 'SatelliteManagement',
+                    params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                  }"
+                  color="primary"
+                  outlined
+                >
+                  Modifier
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
           <v-col cols="12" md="8" id="canteen-info-card">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
               <v-card-title class="fr-h4">Mon établissement</v-card-title>
               <v-card-text class="fr-text-xs">
-                <p>SIRET : {{ canteen.siret }}</p>
-                <div v-if="centralKitchen">
-                  <p>
-                    La cuisine qui fournit les repas :
-                    <router-link
-                      :to="{
-                        name: 'CanteenModification',
-                        params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(centralKitchen) },
-                      }"
-                      target="_blank"
-                      v-if="centralKitchen.isManagedByUser"
-                    >
-                      « {{ centralKitchen.name }} »
-                      <v-icon small color="primary">mdi-open-in-new</v-icon>
-                    </router-link>
-                    <span v-else>« {{ centralKitchen.name }} »</span>
-                  </p>
-                </div>
-                <CanteenIndicators :canteen="canteen" />
+                <!-- image -->
+                <p>
+                  Nom :
+                  <b>{{ canteen.name }}</b>
+                </p>
+                <p>
+                  Commune :
+                  <b>{{ canteenCommune }}</b>
+                </p>
+                <br />
+                <p>
+                  <b>{{ canteenProductionType }}</b>
+                </p>
+                <p v-if="centralKitchen">
+                  Cuisine centrale :
+                  <b>{{ centralKitchen.name || centralKitchen.siret || "Non renseignée" }}</b>
+                </p>
+                <br />
+                <p>
+                  Secteur d'activité :
+                  <b>{{ canteenSector }}</b>
+                </p>
+                <p>
+                  Mode de gestion :
+                  <b>{{ canteenMgmt }}</b>
+                </p>
+                <br />
+                <p>
+                  Couverts par jour :
+                  <b>{{ canteen.dailyMealCount }}</b>
+                </p>
+                <p>
+                  Couverts par année :
+                  <b>{{ canteen.yearlyMealCount }}</b>
+                </p>
               </v-card-text>
               <v-spacer></v-spacer>
               <v-card-actions class="mx-2 mb-2 justify-end">
@@ -246,15 +284,14 @@
 <script>
 import EmptyProgression from "./EmptyProgression.vue"
 import EgalimProgression from "./EgalimProgression.vue"
-import CanteenIndicators from "@/components/CanteenIndicators"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import { toCurrency } from "@/utils"
+import { toCurrency, capitalise } from "@/utils"
 import Constants from "@/constants"
 import validators from "@/validators"
 
 export default {
   name: "DashboardManager",
-  components: { EmptyProgression, EgalimProgression, CanteenIndicators, DsfrAutocomplete },
+  components: { EmptyProgression, EgalimProgression, DsfrAutocomplete },
   data() {
     const canteenId = this.$store.state.userCanteenPreviews[0]?.id
     return {
@@ -262,6 +299,7 @@ export default {
       nextCanteenId: canteenId,
       canteen: null,
       centralKitchen: null,
+      satelliteCount: null,
       purchases: [],
       purchaseHeaders: [
         {
@@ -303,6 +341,28 @@ export default {
         }) || []
       )
     },
+    // canteen info widget
+    canteenCommune() {
+      if (!this.canteen.city) {
+        return "Non renseigné"
+      }
+      return `${this.canteen.city} (${this.canteen.department})`
+    },
+    canteenProductionType() {
+      const type = Constants.ProductionTypesDetailed.find((mt) => mt.value === this.canteen.productionType)
+      return capitalise(type?.title) || "Non renseigné"
+    },
+    sectors() {
+      const sectors = this.$store.state.sectors
+      return this.canteen.sectors.map((sectorId) => sectors.find((s) => s.id === sectorId))
+    },
+    canteenSector() {
+      return capitalise(this.sectors.map((x) => x.name.toLowerCase()).join(", ")) || "Non renseigné"
+    },
+    canteenMgmt() {
+      const type = Constants.ManagementTypes.find((mt) => mt.value === this.canteen.managementType)
+      return type?.text || "Non renseigné"
+    },
   },
   methods: {
     fetchCanteenIfNeeded() {
@@ -313,6 +373,7 @@ export default {
         .then((canteen) => {
           this.canteen = canteen
           this.getCentralKitchen()
+          this.updateSatelliteCount()
           this.fetchPurchases()
         })
         .catch(() => {
@@ -333,6 +394,13 @@ export default {
           .then((response) => response.json())
           .then((response) => (this.centralKitchen = response))
       }
+    },
+    updateSatelliteCount() {
+      if (!this.canteen.isCentralCuisine) return
+      const url = `/api/v1/canteens/${this.canteen.id}/satellites`
+      fetch(url)
+        .then((response) => response.json())
+        .then((response) => (this.satelliteCount = response.count))
     },
     fetchPurchases() {
       this.purchasesFetchingError = null
