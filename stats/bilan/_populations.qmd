@@ -5,49 +5,22 @@ import utils
 ```
 
 # Etudes des populations de déclarants
-
-```{python Etablire exactement les cantines ayant participé directement ou indirectement (direct, satellites...)}
-# | output: asis
+```{python}
 # | echo: false
+# | output: asis
 
-# satellites_sirets = {}
-# liste_cantines = {}
-# for year in utils.CAMPAGNES.keys():
-    # df = tds[year]["satellites"].dropna()
-    # satellites_sirets_raw = df.apply(lambda x: [item["siret"] for item in ast.literal_eval(x)]).values.tolist()
-    # Flatten the nested lists into one list with sirets as elements
-    # satellites_sirets[year] = [item for sublist in satellites_sirets_raw for item in sublist]
-    # Uncommnent the line comment to add satellites sirets (only exists for 2022)
-    # satellites_sirets[year] = tds[year]['canteen.siret'].values.tolist()  # + satellites_sirets[year]
+print(f"Il y a **{len(entrants)} nouveaux teledeclarants** (ayant déclaré sur la campagne 2023 mais pas celle de 2023)\n")
 
-    # Remove duplicates
-    # satellites_sirets[year] = list(set(satellites_sirets[year]))
-sirets = {}
-sirets['2022'] = list(set(tds['2022_strat_2']['canteen.id'].values.tolist())) 
-sirets['2021'] = list(set(tds['2021_strat_2']['canteen.id'].values.tolist())) 
-# Télédeclarants présents dans les siret 2022 mais non 2021
-entrants = list(set([item for item in sirets['2022'] if item not in sirets['2021']]))
-print(f"Il y a **{len(entrants)} nouveaux teledeclarants** (ayant déclaré sur la campagne 2023 mais pas celle de 2022)\n")
-
-# Télédeclarants présents dans les siret 2021 mais non 2022
-sortants = list(set([item for item in sirets['2021'] if item not in sirets['2022']]))
+# Télédeclarants présents dans les siret 2022 mais non 2023
+sortants = list(set([item for item in td_pop['2022'] if item not in td_pop['2023']]))
 print(
-    f"Il y a **{len(sortants)} teledeclarants** n'ayant pas renouvellé (ayant déclaré sur la campagne 2022 mais pas celle de 2023)\n"
+    f"Il y a **{len(sortants)} teledeclarants** n'ayant pas renouvellé (ayant déclaré sur la campagne 2023 mais pas celle de 2023)\n"
 )
 
 # Télédéclarants présents lors des deux campagnes
-restants = [item for item in sirets['2021'] if item in sirets['2022']]
+restants = [item for item in td_pop['2022'] if item in td_pop['2023']]
 
 print(f'Intéressons nous aux autres, que nous appellerons les élèves assidus. Ils sont **{len(restants)} teledeclarants**\n')
-```
-
-```{python Echantillon commun}
-# | echo: false
-
-tds_commun = {}
-for year in ['2021_strat_2', '2022_strat_2', '2021_strat_hist', '2022_strat_hist']:
-    tds_commun[year] = tds[year][tds[year]["canteen.id"].isin(restants)]
-    tds_commun[year] = tds_commun[year].drop_duplicates('canteen.id')
 ```
 
 ## Etude sur échantillon commun - "les élèves assidus"
@@ -55,14 +28,14 @@ for year in ['2021_strat_2', '2022_strat_2', '2021_strat_hist', '2022_strat_hist
 # | output: asis
 # | echo: false
 
-indic_divers, indic_appro = utils.calcul_indicateur(tds_commun, years=['2021_strat_2', '2022_strat_2'])
+indic_divers, indic_appro = utils.calcul_indicateur(tds_commun, years=['2022_strat_2', '2023_strat_2'])
 
 indic_divers = utils.ajout_col_comparaison(indic_divers)
-indic_divers = indic_divers.rename(columns={'2021_strat_2': 'Données 2021', '2022_strat_2': 'Données 2022'})
+indic_divers = indic_divers.rename(columns={'2022_strat_2': 'Données 2022', '2023_strat_2': 'Données 2023'})
 utils.display_indicateurs(indic_divers)
 
 indic_appro = utils.ajout_col_comparaison(indic_appro)
-indic_appro = indic_appro.rename(columns={'2021_strat_2': 'Données 2021', '2022_strat_2': 'Données 2022'})
+indic_appro = indic_appro.rename(columns={'2022_strat_2': 'Données 2022', '2023_strat_2': 'Données 2023'})
 utils.display_indicateurs(indic_appro)
 ```
 
@@ -77,8 +50,8 @@ Observations : Progression des télédéclarants assidus (maturité)
 La suite de ces travaux est en cours de réalisation. Il est encore incomplet et peut contenir des erreurs.
 :::
 
-1. Sortants : "Ayant télédéclaré leur données 2021 mais pas 2022"
-2. Entrants : "Ayant télédéclaré leur données 2022 mais pas 2021"
+1. Sortants : "Ayant télédéclaré leur données 2022 mais pas 2023"
+2. Entrants : "Ayant télédéclaré leur données 2023 mais pas 2022"
 
 ```{python}
 # | output: asis
@@ -86,10 +59,10 @@ La suite de ces travaux est en cours de réalisation. Il est encore incomplet et
 
 
 tds_cmp = {}
-tds_cmp['Sortants (données 2021)'] = tds['2021_strat_2'][tds['2021_strat_2']["canteen.id"].isin(sortants)]
-tds_cmp['Entrants (données 2022)'] = tds['2022_strat_2'][tds['2022_strat_2']["canteen.id"].isin(entrants)]
+tds_cmp['Sortants (données 2022)'] = tds['2022_strat_2'][tds['2022_strat_2']["canteen.id"].isin(sortants)]
+tds_cmp['Entrants (données 2023)'] = tds['2023_strat_2'][tds['2023_strat_2']["canteen.id"].isin(entrants)]
 
-indic_divers, indic_appro = utils.calcul_indicateur(tds_cmp, years=['Sortants (données 2021)', 'Entrants (données 2022)'])
+indic_divers, indic_appro = utils.calcul_indicateur(tds_cmp, years=['Sortants (données 2022)', 'Entrants (données 2023)'])
 
 indic_divers = utils.ajout_col_comparaison(indic_divers)
 utils.display_indicateurs(indic_divers)
@@ -109,7 +82,7 @@ On remarque un nombre beaucoup moins important de **repas moyens par jour** alor
 
 import seaborn as sns
 
-td_raw = pd.concat([tds['2022_strat_2'], tds['2021_strat_2']], axis=0, ignore_index=True)
+td_raw = pd.concat([tds['2023_strat_2'], tds['2022_strat_2']], axis=0, ignore_index=True)
 td_without_good_students = td_raw[~td_raw['canteen.id'].isin(restants)]
 td_without_good_students["canteen.daily_meal_count_log"] = np.log10(td_without_good_students[["canteen.daily_meal_count"]].replace(0, 1))
 td_without_good_students["canteen.yearly_meal_count_log"] = np.log10(td_without_good_students[["canteen.yearly_meal_count"]].replace(0, 1))

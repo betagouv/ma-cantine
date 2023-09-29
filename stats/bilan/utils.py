@@ -12,8 +12,8 @@ from dotenv import load_dotenv
 
 
 CAMPAGNES = {
-    "2021": {"start_date": "2022-07-16", "end_date": "2022-12-05", "card": "795"},
-    "2022": {"start_date": "2023-02-13", "end_date": "2023-06-30", "card": "802"},
+    "2022": {"start_date": "2022-07-16", "end_date": "2022-12-05", "card": "795"},
+    "2023": {"start_date": "2023-02-13", "end_date": "2023-06-30", "card": "802"},
 }
 
 SECTORS = {
@@ -88,6 +88,10 @@ COLUMNS_TO_SAVE = [
     "teledeclaration.value_sustainable_ht",
     "teledeclaration.value_egalim_others_ht",
     "teledeclaration.value_externality_performance_ht",
+    "teledeclaration.value_meat_poultry_egalim_ht",
+    "teledeclaration.value_meat_poultry_ht",
+    "teledeclaration.value_fish_ht",
+    "teledeclaration.value_fish_egalim_ht"
 ]
 
 
@@ -150,6 +154,8 @@ def load_td():
     )
     return td_raw
 
+df = load_td()
+
 
 def add_canteen_info(df):
     url = "https://ma-cantine-metabase.cleverapps.io/api/card/820/query/json"
@@ -177,13 +183,14 @@ def split_td_into_years(td_raw):
     td = td[td.status == "SUBMITTED"]
     for year in CAMPAGNES.keys():
         tds[year] = td.copy()
+        tds[year]['year'] = tds[year]['year'].apply(lambda x: x + 1)
         tds[year] = tds[year][tds[year].year == int(year)]
         tds[year]["creation_date"] = tds[year]["creation_date"].apply(lambda x: x.split("T")[0])
         tds[year] = tds[year][
             (tds[year]["creation_date"] >= CAMPAGNES[year]["start_date"])
             & (tds[year]["creation_date"] <= CAMPAGNES[year]["end_date"])
         ]
-    tds["2021"] = add_canteen_info(tds["2021"])
+    tds["2022"] = add_canteen_info(tds["2022"])
     return tds
 
 
@@ -231,6 +238,22 @@ def calcul_indicateur_divers(tds: {}, years=[], col_comparaison=True):
     return pd.DataFrame(indicateurs)
 
 
+def calcul_indicateur_famille(tds: {}, years=[], col_comparaison=True):
+    indicateurs = {}
+    for year in years if len(years) else tds.keys():
+        indicateurs[year] = {}
+
+        indicateurs[year]["Taux d'achat alimentaires de la famille Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
+        indicateurs[year]["Montant d'achat alimentaires Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
+        indicateurs[year]["Taux d'achat alimentaires Egalim au sein de la famille Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_egalim_ht"].sum()) / int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
+        indicateurs[year]["Montant d'achat alimentaires Egalim Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_egalim_ht"].sum())
+        indicateurs[year]["Taux d'achat alimentaires Egalim au sein de la famille  Poissons/Produits de la mer"] = int(tds[year]["teledeclaration.value_fish_egalim_ht"].sum()) / int(tds[year]["teledeclaration.value_fish_ht"].sum())
+        indicateurs[year]["Montant d'achat alimentaires Poissons/Produits de la mer"] = int(tds[year]["teledeclaration.value_fish_ht"].sum())
+        indicateurs[year]["Montant d'achat alimentaires Egalim Poissons/Produits de la mer"] = int(tds[year]["teledeclaration.value_fish_egalim_ht"].sum())
+
+    return pd.DataFrame(indicateurs)
+
+
 def calcul_indicateur_appro(tds: {}, years=[], col_comparaison=True):
     indicateurs = {}
     for year in years if len(years) else tds.keys():
@@ -243,12 +266,26 @@ def calcul_indicateur_appro(tds: {}, years=[], col_comparaison=True):
         )
         indicateurs[year]["Montant d'achat alimentaires bio"] = int(tds[year]["teledeclaration.value_bio_ht"].sum())
 
+        indicateurs[year]["Nombre de TD ayant déclaré 0€ d'achats en Bio"] = len(
+            tds[year][tds[year]["teledeclaration.value_bio_ht"] == 0]
+        )
+
+        indicateurs[year]["Taux global des achats SIQO"] = (tds[year]["teledeclaration.value_sustainable_ht"].sum()) / tds[year]["teledeclaration.value_total_ht"].sum()
+        indicateurs[year]["Montant d'achat alimentaires SIQO"] = tds[year]["teledeclaration.value_sustainable_ht"].sum()
+        
+        indicateurs[year]["Taux global des autres achats Egalim"] = (tds[year]["teledeclaration.value_egalim_others_ht"].sum()) / tds[year]["teledeclaration.value_total_ht"].sum()
+        indicateurs[year]["Montant des autres achats Egalim"] = tds[year]["teledeclaration.value_egalim_others_ht"].sum()
+        
+        indicateurs[year]["Taux global des achats perf/ext"] = (tds[year]["teledeclaration.value_externality_performance_ht"].sum()) / tds[year]["teledeclaration.value_total_ht"].sum()
+        indicateurs[year]["Montant des achats perf/ext"] = tds[year]["teledeclaration.value_externality_performance_ht"].sum()
+        
         indicateurs[year]["Taux global des achats EGALIM (bio inclus)"] = (
             tds[year]["teledeclaration.value_egalim_others_ht"].sum()
             + tds[year]["teledeclaration.value_externality_performance_ht"].sum()
             + tds[year]["teledeclaration.value_bio_ht"].sum()
             + tds[year]["teledeclaration.value_sustainable_ht"].sum()
         ) / tds[year]["teledeclaration.value_total_ht"].sum()
+        indicateurs[year]["Montant d'achat alimentaires bio"] = int(tds[year]["teledeclaration.value_bio_ht"].sum())
 
         indicateurs[year]["Montant d'achat alimentaires EGALIM (bio inclus)"] = (
             tds[year]["teledeclaration.value_egalim_others_ht"].sum()
@@ -256,11 +293,7 @@ def calcul_indicateur_appro(tds: {}, years=[], col_comparaison=True):
             + tds[year]["teledeclaration.value_bio_ht"].sum()
             + tds[year]["teledeclaration.value_sustainable_ht"].sum()
         )
-
-        indicateurs[year]["Nombre de TD ayant déclaré 0€ d'achats en Bio"] = len(
-            tds[year][tds[year]["teledeclaration.value_bio_ht"] == 0]
-        )
-
+        
     return pd.DataFrame(indicateurs)
 
 
@@ -339,6 +372,6 @@ def display_data_coverage(dfs, sub_columns=[], years=[]):
 
     pourcentage_in_file_to_display = pd.DataFrame(pourcentage_in_file)
     pourcentage_in_file_to_display = pourcentage_in_file_to_display.rename(
-        columns={"2022": "Part des valeurs renseignées (2022)", "2021": "Part des valeurs renseignées (2021)"}
+        columns={"2023": "Part des valeurs renseignées (2023)", "2022": "Part des valeurs renseignées (2022)"}
     )
     print(pourcentage_in_file_to_display.to_html())

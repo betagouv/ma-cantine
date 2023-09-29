@@ -1,7 +1,7 @@
 
 # Focus par secteurs
 
-Nous nous intéressions à la répartition des télédéclaration en fonction des secteurs principaux et secondaires, pour la campagne sur les données 2022. Nous utilisons la stratégie **Je Ne Sais Pas** pour le traitement des valeurs manquantes.
+Nous nous intéressions à la répartition des télédéclaration en fonction des secteurs principaux et secondaires, pour la campagne sur les données 2023. Nous utilisons la stratégie **Je Ne Sais Pas** pour le traitement des valeurs manquantes.
 
 ::: {.callout-note}
 Les cuisines centrales ont été supprimées car elles cumulent plusieurs secteurs (`central` et `central_serving`)
@@ -14,7 +14,7 @@ Les cuisines centrales ont été supprimées car elles cumulent plusieurs secteu
 
 def traitement_secteurs(df, year):
     df["canteen.sectors"] = tds[year]["canteen.sectors"].fillna("[]")
-    if year != "2021":  # Transform the dict into a list of category
+    if year != "2022":  # Transform the dict into a list of category
         df["canteen.sectors"] = df["canteen.sectors"].apply(lambda x: ast.literal_eval(x))
         df["canteen.sectors_"] = df["canteen.sectors"].apply(lambda x: [item["name"] for item in x])
     else:
@@ -38,7 +38,7 @@ def traitement_secteurs(df, year):
     return df_normalized
 
 sectors = {}
-year ="2022_strat_2"
+year ="2023_strat_2"
 sectors[year] = {}
 df_processed_sectors = traitement_secteurs(tds[year], year)
 df_processed_sectors = df_processed_sectors[~df_processed_sectors['canteen.production_type'].isin(['central', 'central_serving'])]

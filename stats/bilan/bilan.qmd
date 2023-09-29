@@ -1,5 +1,5 @@
 ---
-title: "Bilan statistique de la campagne ma-cantine portant sur l'année 2022 (travail en cours)"
+title: "Bilan statistique de la campagne ma-cantine portant sur l'année 2023 (travail en cours)"
 author:
   - "Quentin Loridant"
   - "Valérie Merle"
@@ -11,10 +11,10 @@ format:
     theme:
       - flatly
     toc: true
-    toc-depth: 3
+    toc-depth: 5
 execute:
   warning: false
-  cache: true
+  cache: false
 ---
 
 # Introduction
@@ -22,9 +22,9 @@ execute:
 ## Contexte
 
 Le bilan statistique annuel de l’application des objectifs d’approvisionnement fixés à la restauration collective donne lieu à un rapport du gouvernement qui est remis au parlement chaque année.
-Celui-ci contient une analyse des données de la campagne de télédéclaration. Le premier bilan est disponible pour la [campagne portant sur les données 2021](https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2F6RxGNr0aJ4BPSzFsDQGs%2FBilan%20statistique%20EGAlim_achats2021.pdf?alt=media&token=).
+Celui-ci contient une analyse des données de la campagne de télédéclaration. Le premier bilan est disponible pour la [campagne portant sur les données 2022](https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2F6RxGNr0aJ4BPSzFsDQGs%2FBilan%20statistique%20EGAlim_achats2022.pdf?alt=media&token=).
 
-Dans ce document nous créons et documentons les statistiques nécessaires pour la campagne ayant eu lieu sur le premier semestre 2023 et portant sur les données de l'année 2022.
+Dans ce document nous créons et documentons les statistiques nécessaires pour la campagne ayant eu lieu sur le premier semestre 2023 et portant sur les données de l'année 2023.
 
 
 ```{python import}
@@ -50,7 +50,7 @@ Les données sont extraites de la base de données de ma-cantine. Plusieurs filt
 
 1. date : les télédéclarations doivent être comprises dans les dates de campagne: `creation_date BETWEEN XX mars au 30 juin 2023`
 2. statut : la télédéclaration doit avoir été validée par son éditeur. `status="SUBMITTED"`
-3. année 2022 : `year==2022`
+3. année 2023 : `year==2023`
 4. `teledeclaration.value_total_ht` non vide
 
 
@@ -60,7 +60,7 @@ Vous pouvez retrouver l'intégralité du code utilisé sur la page [github de ma
 # | echo: false
 
 tds = {}
-cache=True
+cache=False
 
 if not cache:
     td_raw = utils.load_td()
@@ -77,6 +77,7 @@ if not cache:
         tds[year] = tds[year][utils.COLUMNS_TO_SAVE] 
 
         tds[year].to_csv(f"export_dataset_stats_campagne_{year}.csv", sep=";", index=False)
+        
         # TODO Parser siret comme str
         # TODO YEAR and ID en int et pas float
 
@@ -84,6 +85,41 @@ if not cache:
 # Whether we use cache or ot, we re-read the file to have consistency in the dataframe
 for year in utils.CAMPAGNES.keys():
     tds[year] = pd.read_csv(f"export_dataset_stats_campagne_{year}.csv", sep=";")
+
+# Application de la stratégie historique
+for year in utils.CAMPAGNES.keys():
+    tds[f"{year}_strat_hist"] = tds[year].dropna(
+        how="all",
+        subset=utils.APPRO_SIMPLIFIED,
+    )
+
+# Application de la stratégie Je Ne Sais pas
+for year in ['2022', '2023']:
+    tds[f"{year}_strat_2"] = tds[year].dropna(
+        how="any",
+        subset=[
+            "teledeclaration.value_total_ht",
+            "teledeclaration.value_bio_ht",
+        ],
+    )
+
+# Définition des populations assidus, entrantes et sortantes
+td_pop = {}
+td_pop['2023'] = list(set(tds['2023_strat_2']['canteen.id'].values.tolist())) 
+td_pop['2022'] = list(set(tds['2022_strat_2']['canteen.id'].values.tolist())) 
+# Télédeclarants présents dans les siret 2023 mais non 2022
+entrants = list(set([item for item in td_pop['2023'] if item not in td_pop['2022']]))
+
+# Télédeclarants présents dans les siret 2022 mais non 2023
+sortants = list(set([item for item in td_pop['2022'] if item not in td_pop['2023']]))
+
+# Télédéclarants présents lors des deux campagnes
+restants = [item for item in td_pop['2022'] if item in td_pop['2023']]
+
+tds_commun = {}
+for year in ['2022_strat_2', '2023_strat_2', '2022_strat_hist', '2023_strat_hist']:
+    tds_commun[year] = tds[year][tds[year]["canteen.id"].isin(restants)]
+    tds_commun[year] = tds_commun[year].drop_duplicates('canteen.id')
 ```
 
 
@@ -91,6 +127,7 @@ for year in utils.CAMPAGNES.keys():
 
 Avant d'étudier les chiffres clés de la télédéclaration, nous vous présentons des informations sur la disponibilité des données. Ces informations sont importantes pour saisir au mieux la portée des indicateurs.
 
+### 📷 Campagne 2022
 
 ```{python Vérification du taux de présence de la donnée repas par an}
 # | echo: false
@@ -101,7 +138,37 @@ utils.assert_quality(tds)
 utils.display_data_coverage(
     tds,
     sub_columns=utils.APPRO_SIMPLIFIED,
-    years=["2021", "2022"],
+    years=["2022"],
+)
+```
+
+### 📷 Campagne 2023
+
+```{python Vérification du taux de présence de la donnée repas par an}
+# | echo: false
+# | output: asis
+
+utils.assert_quality(tds)
+
+utils.display_data_coverage(
+    tds,
+    sub_columns=utils.APPRO_SIMPLIFIED,
+    years=["2023"],
+)
+```
+
+### ⚖️ Comparaison isopérimètre
+
+```{python Vérification du taux de présence de la donnée repas par an}
+# | echo: false
+# | output: asis
+
+utils.assert_quality(tds)
+
+utils.display_data_coverage(
+    tds_commun,
+    sub_columns=utils.APPRO_SIMPLIFIED,
+    years=["2022_strat_2", "2023_strat_2"],
 )
 ```
 
@@ -117,7 +184,7 @@ col_achats = [
     "teledeclaration.value_total_ht",
 ]
 
-year = "2022"
+year = "2023"
 for col in col_achats:
     tds[year][col + "_log"] = np.log10(tds[year][[col]].replace(0, 1))
 
@@ -139,7 +206,7 @@ A la vue des ces graphiques, nous prenons une **première hypothèse** : *étant
 
 ## Traitement des valeurs manquantes
 
-Nous avons traité de 2 façons différentes les valeurs manquantes.
+Nous avons traité de 2 façons différentes les valeurs manquantes : **stratégie historique** et **stratégie Je Ne Sais Pas**.
 
 Ces deux stratégies se concentrent sur les cinq champs de la télédéclaration simplifiée: 
 
@@ -153,18 +220,14 @@ Ces deux stratégies se concentrent sur les cinq champs de la télédéclaration
 ### Stratégie Historique
 
 La **"stratégie Historique"** (qui a été appliquée sur le premier bilan) : nous remplaçons les valeurs manquantes par la valeur 0, sauf si les 5 champs d'une même déclaration sont vides, auquel cas nous ne prenons pas en compte la ligne
+
+#### 📷 2022
+
 ```{python}
 # | output: asis
 # | echo : false
 
-
 # TODO : garder value_total dans le dropna ? On supprime peut-etre qq lignes de trop, ou peut etre pas assez !
-
-for year in utils.CAMPAGNES.keys():
-    tds[f"{year}_strat_hist"] = tds[year].dropna(
-        how="all",
-        subset=utils.APPRO_SIMPLIFIED,
-    )
 
 achats = {}
 for col in utils.APPRO_SIMPLIFIED:
@@ -179,6 +242,26 @@ print(f'Après filtrage des lignes dont les 5 champs sont manquants, nous avons 
 print(df_val_manquantes.to_markdown())
 ```
 
+#### 📷 2023
+```{python}
+# | output: asis
+# | echo : false
+
+achats = {}
+for col in utils.APPRO_SIMPLIFIED:
+    achats[col.replace('teledeclaration.', '')] = tds["2023_strat_hist"][col].isna().sum()
+
+for year in utils.CAMPAGNES.keys():
+    tds[f"{year}_strat_hist"][col_achats] = tds[f"{year}_strat_hist"][col_achats].fillna(0)
+
+df_val_manquantes = pd.DataFrame.from_dict(achats, orient="index").rename(columns={0: "Nombre de valeurs manquantes, remplaçées par 0"})
+
+print(f'Après filtrage des lignes dont les 5 champs sont manquants, nous avons gardé **{len(tds["2023_strat_hist"])}** télédéclarations sur les **{len(tds["2023"])}** télédéclarations totales.\n Ensuite nous avons remplaçé par 0 les valeurs manquantes : \n')
+print(df_val_manquantes.to_markdown())
+```
+
+#### ⚖️ Comparaison isopérimètre
+
 ### Stratégie 'Je Ne Sais Pas'
 
 La **"stratégie Je Ne Sais Pas"** : afin de minimiser l'impact des valeurs manquantes, nous supprimons toutes les lignes dès que le champ `teledeclaration.value_bio_ht` est vide. 
@@ -190,16 +273,8 @@ Dans les autres cas, comme dans la stratégie 'Historique', nous remplaçons les
 # | output: asis
 # | echo: false
 
-for year in ['2021', '2022']:
-    tds[f"{year}_strat_2"] = tds[year].dropna(
-        how="any",
-        subset=[
-            "teledeclaration.value_total_ht",
-            "teledeclaration.value_bio_ht",
-        ],
-    )
-    if year == '2022':
-        print(f'Nous supprimons {len(tds[year]) - len(tds[f"{year}_strat_2"])} lignes car le champ `teledeclaration.value_bio_ht` est vide. \n')
+year = '2023'
+print(f'Nous supprimons {len(tds[year]) - len(tds[f"{year}_strat_2"])} lignes car le champ `teledeclaration.value_bio_ht` est vide. \n')
 ```
 
 # Chiffres clés
@@ -211,9 +286,9 @@ for year in ['2021', '2022']:
 # | echo: false
 # | output: asis
 
-indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["2022_strat_2", "2022_strat_hist"])
+indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["2023_strat_2", "2023_strat_hist", "2022_strat_2", "2022_strat_hist"])
 
-indic_divers = indic_divers.rename(columns={'2022_strat_2': 'Données 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Données 2022 - Stratégie "Historique"'})
+indic_divers = indic_divers.rename(columns={'2023_strat_2': 'Données 2023 - Stratégie "Je Ne Sais Pas"', '2023_strat_hist': 'Données 2023 - Stratégie "Historique"'})
 indic_divers = utils.ajout_col_comparaison(indic_divers)
 
 utils.display_indicateurs(indic_divers)
@@ -225,7 +300,7 @@ utils.display_indicateurs(indic_divers)
 # | echo: false
 # | output: asis
 
-indic_appro = indic_appro.rename(columns={'2022_strat_2': 'Données 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Données 2022 - Stratégie "Historique"'})
+indic_appro = indic_appro.rename(columns={'2023_strat_2': 'Données 2023 - Stratégie "Je Ne Sais Pas"', '2023_strat_hist': 'Données 2023 - Stratégie "Historique"'})
 indic_appro = utils.ajout_col_comparaison(indic_appro)
 
 utils.display_indicateurs(indic_appro)
@@ -242,11 +317,9 @@ Pour la suite de l'étude, nous utiliserons uniquement la stratégie "**Je Ne Sa
 # | echo: false
 # | output: asis
 
-indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["2021_strat_2", "2022_strat_2"])
+indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["2022_strat_2", "2023_strat_2"])
 indic_divers = utils.ajout_col_comparaison(indic_divers)
-
-indic_divers = indic_divers.rename(columns={'2022_strat_2': 'Données 2022', '2021_strat_2': 'Données 2021'})
-
+indic_divers = indic_divers.rename(columns={'2023_strat_2': 'Données 2023', '2022_strat_2': 'Données 2022'})
 utils.display_indicateurs(indic_divers)
 
 ```
@@ -256,9 +329,21 @@ utils.display_indicateurs(indic_divers)
 # | echo: false
 # | output: asis
 indic_appro = utils.ajout_col_comparaison(indic_appro)
-
-indic_appro = indic_appro.rename(columns={'2022_strat_2': 'Données 2022', '2021_strat_2': 'Données 2021'})
+indic_appro = indic_appro.rename(columns={'2023_strat_2': 'Données 2023', '2022_strat_2': 'Données 2022'})
 utils.display_indicateurs(indic_appro)
+```
+
+### Chiffres par famille de produits
+::: {.callout-warning}
+Pour le moment, ces chiffres ne décrivent que les télédéclarations de type simplifiées. L'ajout de télédéclaration complètes est en cours. A priori, les ratio devraient cependant rester sembables.
+:::
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+# | echo: false
+# | output: asis
+indic_famille = utils.calcul_indicateur_famille(tds, years=["2022_strat_2", "2023_strat_2"])
+indic_famille = utils.ajout_col_comparaison(indic_famille)
+indic_famille = indic_famille.rename(columns={'2023_strat_2': 'Données 2023', '2022_strat_2': 'Données 2022'})
+utils.display_indicateurs(indic_famille)
 ```
 
 {{< include _secteurs.qmd >}}
