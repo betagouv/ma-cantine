@@ -312,6 +312,8 @@ export default {
             {
               text: "Indicateurs de résultats de la plateforme",
               href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/3dab8a21-c4b9-46e1-84fa-7ba485ddfbbb",
+              target: "_blank",
+              rel: "noopener",
             },
             {
               text: "Usage du site",
