@@ -247,10 +247,20 @@ export default {
         },
         {
           text: "Comprendre mes obligations",
-          children: keyMeasures.map((x) => ({
-            text: x.shortTitle,
-            to: { name: "KeyMeasurePage", params: { id: x.id } },
-          })),
+          children: [
+            ...keyMeasures.map((x) => ({
+              text: x.shortTitle,
+              to: { name: "KeyMeasurePage", params: { id: x.id } },
+            })),
+            ...[
+              {
+                text: "Documentation",
+                href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+                target: "_blank",
+                rel: "noopener",
+              },
+            ],
+          ],
         },
         {
           text: "Toutes les cantines",
@@ -258,7 +268,7 @@ export default {
             {
               text: "Dans mon territoire",
               to: { name: "TerritoryCanteens" },
-              elected: true,
+              forElected: true,
             },
             {
               text: "Nos cantines publiées",
@@ -340,7 +350,7 @@ export default {
       if (this.loggedUser) {
         const navlinks = this.navLinks.filter((link) => link.authenticationState !== false)
         if (!this.loggedUser.isElectedOfficial)
-          navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.elected)))
+          navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.forElected)))
         return navlinks
       } else {
         return this.navLinks.filter((link) => !link.authenticationState)
@@ -356,9 +366,9 @@ export default {
   },
   methods: {
     shouldDisplayChild(child) {
-      if (child.authenticationState === undefined && !child.elected) return true
+      if (child.authenticationState === undefined && !child.forElected) return true
       if (!this.loggedUser) return child.authenticationState === false
-      if (child.elected) return this.loggedUser.isElectedOfficial
+      if (child.forElected) return this.loggedUser.isElectedOfficial
       return child.authenticationState === true
     },
   },
