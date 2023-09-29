@@ -130,7 +130,7 @@
                 <p>{{ satelliteCount }} / {{ canteen.satelliteCanteensCount }} renseignés</p>
               </v-card-text>
               <v-spacer></v-spacer>
-              <v-card-actions class="mx-2 mb-2 justify-end">
+              <v-card-actions class="mx-2 mb-2">
                 <v-btn
                   :to="{
                     name: 'SatelliteManagement',
@@ -191,7 +191,7 @@
                     </p>
                   </v-card-text>
                   <v-spacer></v-spacer>
-                  <v-card-actions class="mx-2 mb-2 justify-end">
+                  <v-card-actions class="mx-2 mb-2">
                     <v-btn
                       :to="{
                         name: 'CanteenForm',
@@ -233,7 +233,7 @@
                 </p>
               </v-card-text>
               <v-spacer></v-spacer>
-              <v-card-actions class="justify-end">
+              <v-card-actions>
                 <v-btn
                   :to="{
                     name: 'CanteenManagers',
