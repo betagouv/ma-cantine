@@ -183,11 +183,11 @@
                     <br />
                     <p v-if="canteen.productionType !== 'central'" class="mb-0">
                       Couverts par jour :
-                      <span class="font-weight-medium">{{ canteen.dailyMealCount }}</span>
+                      <span class="font-weight-medium">{{ canteen.dailyMealCount || "Non renseigné" }}</span>
                     </p>
                     <p class="mb-0">
                       Couverts par année :
-                      <span class="font-weight-medium">{{ canteen.yearlyMealCount }}</span>
+                      <span class="font-weight-medium">{{ canteen.yearlyMealCount || "Non renseigné" }}</span>
                     </p>
                   </v-card-text>
                   <v-spacer></v-spacer>
@@ -354,18 +354,20 @@ export default {
       if (!this.canteen.city) {
         return "Non renseigné"
       }
-      return `${this.canteen.city} (${this.canteen.department})`
+      const departmentString = this.canteen.department ? ` (${this.canteen.department})` : ""
+      return `${this.canteen.city}${departmentString}`
     },
     canteenProductionType() {
       const type = Constants.ProductionTypesDetailed.find((mt) => mt.value === this.canteen.productionType)
-      return capitalise(type?.title) || "Non renseigné"
+      return type?.title ? capitalise(type?.title) : "Mode de production non renseigné"
     },
     sectors() {
       const sectors = this.$store.state.sectors
       return this.canteen.sectors.map((sectorId) => sectors.find((s) => s.id === sectorId))
     },
     canteenSector() {
-      return capitalise(this.sectors.map((x) => x.name.toLowerCase()).join(", ")) || "Non renseigné"
+      const sectorString = this.sectors.map((x) => x.name.toLowerCase()).join(", ")
+      return sectorString ? capitalise(sectorString) : "Non renseigné"
     },
     canteenMgmt() {
       const type = Constants.ManagementTypes.find((mt) => mt.value === this.canteen.managementType)
