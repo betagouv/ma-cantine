@@ -212,24 +212,28 @@
               <v-card-title class="fr-h4">
                 Mon équipe
               </v-card-title>
-              <v-card-text>
-                <div v-if="managers.length > 1">
-                  <p class="fr-text">
+              <v-card-text class="fill-height">
+                <div v-if="managers.length > 1" class="fill-height d-flex flex-column">
+                  <p class="fr-text mb-0 grey--text text--darken-3">
                     {{ managers.length }} personnes (dont vous) peuvent actuellement modifier cet établissement et
-                    ajouter des données
+                    ajouter des données.
                   </p>
-                  <ul class="pl-0 fr-text-xs">
-                    <li v-for="(manager, idx) in managers" :key="manager.email">
-                      <v-icon>
-                        {{ manager.isInvite ? "mdi-account-clock-outline" : "mdi-account-check-outline" }}
-                      </v-icon>
-                      {{ manager.isInvite ? manager.email : `${manager.firstName} ${manager.lastName}` }}
-                      <span v-if="idx === 0">(vous)</span>
+                  <v-spacer></v-spacer>
+                  <ul class="pl-0 fr-text-xs grey--text text--darken-2 mb-n2">
+                    <li v-for="manager in managers" :key="manager.email" class="mb-4">
+                      <v-row class="align-center mx-0">
+                        <v-icon small class="mr-2">
+                          {{ manager.isInvite ? "$user-add-line" : "$user-line" }}
+                        </v-icon>
+                        {{ manager.isInvite ? manager.email : `${manager.firstName} ${manager.lastName}` }}
+                        <span v-if="manager.email === loggedUser.email" class="ml-1">(vous)</span>
+                      </v-row>
                     </li>
                   </ul>
+                  <v-spacer></v-spacer>
                 </div>
-                <p class="fr-text" v-else>
-                  Actuellement, vous êtes la seule personne qui peut modifier cet établissement et ajouter des données
+                <p class="fr-text grey--text text--darken-3" v-else>
+                  Actuellement, vous êtes la seule personne qui peut modifier cet établissement et ajouter des données.
                 </p>
               </v-card-text>
               <v-spacer></v-spacer>
@@ -243,7 +247,7 @@
                   color="primary"
                   class="mx-2 mb-2"
                 >
-                  Gérer mon équipe
+                  Modifier
                 </v-btn>
               </v-card-actions>
             </v-card>
