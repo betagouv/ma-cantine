@@ -3,6 +3,11 @@
 
 Nous nous intéressions à la répartition des télédéclaration en fonction des secteurs principaux et secondaires, pour la campagne sur les données 2022. Nous utilisons la stratégie **Je Ne Sais Pas** pour le traitement des valeurs manquantes.
 
+::: {.callout-note}
+Les cuisines centrales ont été supprimées car elles cumulent plusieurs secteurs (`central` et `central_serving`)
+:::
+
+## Focus sur les catégories principales
 ```{python}
 # | echo: false
 # | output: asis
@@ -10,8 +15,7 @@ Nous nous intéressions à la répartition des télédéclaration en fonction de
 def traitement_secteurs(df, year):
     df["canteen.sectors"] = tds[year]["canteen.sectors"].fillna("[]")
     if year != "2021":  # Transform the dict into a list of category
-        if cache:
-            df["canteen.sectors"] = df["canteen.sectors"].apply(lambda x: ast.literal_eval(x))
+        df["canteen.sectors"] = df["canteen.sectors"].apply(lambda x: ast.literal_eval(x))
         df["canteen.sectors_"] = df["canteen.sectors"].apply(lambda x: [item["name"] for item in x])
     else:
         df["canteen.sectors_"] = df["canteen.sectors"].apply(lambda x: x.split(","))
@@ -33,27 +37,40 @@ def traitement_secteurs(df, year):
 
     return df_normalized
 
-
 sectors = {}
-for year in ["2022_strat_2"]:
-    sectors[year] = {}
-    df_processed_sectors = traitement_secteurs(tds[year], year)
+year ="2022_strat_2"
+sectors[year] = {}
+df_processed_sectors = traitement_secteurs(tds[year], year)
+df_processed_sectors = df_processed_sectors[~df_processed_sectors['canteen.production_type'].isin(['central', 'central_serving'])]
+for cat in utils.SECTORS.keys():
+    sectors[year][cat] = {}
+    df_cat = df_processed_sectors[df_processed_sectors[cat] > 0]
+    sectors[year][cat]['Nombre de TD'] = df_cat[cat].sum()
+    sectors[year][cat]['Taux des TD pris en compte'] = len(df_cat[cat])/len(tds[year])
+    sectors[year][cat]['Montant total des achats'] = df_cat["teledeclaration.value_total_ht"].sum()
+    sectors[year][cat]['Taux des achats Bio'] = df_cat["teledeclaration.value_bio_ht"].sum()/df_cat["teledeclaration.value_total_ht"].sum()
+    sectors[year][cat]['Montant des achats Bio'] = df_cat["teledeclaration.value_bio_ht"].sum()
+    sectors[year][cat]['Taux achats secteurs'] = df_cat["teledeclaration.value_total_ht"].sum()/ tds[year]["teledeclaration.value_total_ht"].sum()
 
-    for cat in utils.SECTORS.keys():
-        sectors[year][cat] = {}
-        df_cat = df_processed_sectors[df_processed_sectors[cat] > 0]
-        sectors[year][cat]['Nombre de TD'] = df_cat[cat].sum()
-        sectors[year][cat]['% des TD pris en compte'] = f'{100*len(df_cat[cat])/len(tds[year]):.2f} %'
-        sectors[year][cat]['Valeur totale des achats'] = f'{df_cat["teledeclaration.value_total_ht"].sum():.0f}'
-        sectors[year][cat]['% achats secteurs'] = f'{100*df_cat["teledeclaration.value_total_ht"].sum()/ tds[year]["teledeclaration.value_total_ht"].sum():.2f} %'
-        sectors[year][cat]['Valeur des achats Bio'] = f'{df_cat["teledeclaration.value_bio_ht"].sum():.0f}'
-    summary_by_sector = pd.DataFrame.from_dict(sectors[year]).T
+summary = pd.DataFrame.from_dict(sectors[year]).T
 
-    # Ajout des catégories pour caractériser chaque sous-catégorie
-    summary_by_sector['sector'] = summary_by_sector.index.map(utils.SECTORS)
-    summary_by_sector = summary_by_sector.reset_index(names='sub_sector')
-    summary_by_sector = summary_by_sector.groupby(['sector', 'sub_sector']).sum()
-    print(summary_by_sector.to_html())
-    print('\n')
+# Ajout des catégories pour caractériser chaque sous-catégorie
+summary['sector'] = summary.index.map(utils.SECTORS)
+summary = summary.reset_index(names='sub_sector')
 
+# Calcul des totaux par secteurs
+summary_by_sector = summary.groupby(['sector']).sum()
+summary_by_sector['sub_sector'] = ['Total (somme)'] * len(summary_by_sector)
+summary_by_sector = summary_by_sector.reset_index(names='sector')
+
+# Agregation des sous secteur et secteurs
+summary_by_sub_sector = pd.concat([summary, summary_by_sector])
+summary_by_sub_sector = summary_by_sub_sector.groupby(['sector', 'sub_sector']).sum()
+
+# TODO  A optimiser : Actuellement nous recalculons tous les taux car ils ont été corrompus par l'aggrégation en somme
+summary_by_sub_sector['Taux des achats Bio'] = summary_by_sub_sector.apply(lambda x: x['Montant des achats Bio'] / x['Montant total des achats'], axis=1)
+summary_by_sub_sector['Taux achats secteurs'] = summary_by_sub_sector.apply(lambda x: x['Montant total des achats'] / tds[year]["teledeclaration.value_total_ht"].sum(), axis=1)
+
+utils.display_indicateurs(summary_by_sub_sector, transpose=False)
+print('\n')
 ```

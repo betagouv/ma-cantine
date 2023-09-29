@@ -1,4 +1,6 @@
 ```{python}
+# | output: asis
+# | echo: false
 import utils
 ```
 
@@ -8,31 +10,33 @@ import utils
 # | output: asis
 # | echo: false
 
-satellites_sirets = {}
-liste_cantines = {}
-for year in utils.CAMPAGNES.keys():
-    df = tds[year]["satellites"].dropna()
-    satellites_sirets_raw = df.apply(lambda x: [item["siret"] for item in ast.literal_eval(x)]).values.tolist()
+# satellites_sirets = {}
+# liste_cantines = {}
+# for year in utils.CAMPAGNES.keys():
+    # df = tds[year]["satellites"].dropna()
+    # satellites_sirets_raw = df.apply(lambda x: [item["siret"] for item in ast.literal_eval(x)]).values.tolist()
     # Flatten the nested lists into one list with sirets as elements
-    satellites_sirets[year] = [item for sublist in satellites_sirets_raw for item in sublist]
+    # satellites_sirets[year] = [item for sublist in satellites_sirets_raw for item in sublist]
     # Uncommnent the line comment to add satellites sirets (only exists for 2022)
-    satellites_sirets[year] = tds[year].canteen_siret.values.tolist()  # + satellites_sirets[year]
+    # satellites_sirets[year] = tds[year]['canteen.siret'].values.tolist()  # + satellites_sirets[year]
 
     # Remove duplicates
-    satellites_sirets[year] = list(set(satellites_sirets[year]))
-
+    # satellites_sirets[year] = list(set(satellites_sirets[year]))
+sirets = {}
+sirets['2022'] = list(set(tds['2022_strat_2']['canteen.id'].values.tolist())) 
+sirets['2021'] = list(set(tds['2021_strat_2']['canteen.id'].values.tolist())) 
 # Télédeclarants présents dans les siret 2022 mais non 2021
-entrants = [item for item in satellites_sirets["2022"] if item not in satellites_sirets["2021"]]
+entrants = list(set([item for item in sirets['2022'] if item not in sirets['2021']]))
 print(f"Il y a **{len(entrants)} nouveaux teledeclarants** (ayant déclaré sur la campagne 2023 mais pas celle de 2022)\n")
 
 # Télédeclarants présents dans les siret 2021 mais non 2022
-sortants = [item for item in satellites_sirets["2021"] if item not in satellites_sirets["2022"]]
+sortants = list(set([item for item in sirets['2021'] if item not in sirets['2022']]))
 print(
     f"Il y a **{len(sortants)} teledeclarants** n'ayant pas renouvellé (ayant déclaré sur la campagne 2022 mais pas celle de 2023)\n"
 )
 
 # Télédéclarants présents lors des deux campagnes
-restants = [item for item in satellites_sirets["2021"] if item in satellites_sirets["2022"]]
+restants = [item for item in sirets['2021'] if item in sirets['2022']]
 
 print(f'Intéressons nous aux autres, que nous appellerons les élèves assidus. Ils sont **{len(restants)} teledeclarants**\n')
 ```
@@ -41,8 +45,9 @@ print(f'Intéressons nous aux autres, que nous appellerons les élèves assidus.
 # | echo: false
 
 tds_commun = {}
-for year in ['2021_strat_2', '2022_strat_2']:
-    tds_commun[year] = tds[year][tds[year]["canteen.siret"].isin(restants)]
+for year in ['2021_strat_2', '2022_strat_2', '2021_strat_hist', '2022_strat_hist']:
+    tds_commun[year] = tds[year][tds[year]["canteen.id"].isin(restants)]
+    tds_commun[year] = tds_commun[year].drop_duplicates('canteen.id')
 ```
 
 ## Etude sur échantillon commun - "les élèves assidus"
@@ -50,25 +55,113 @@ for year in ['2021_strat_2', '2022_strat_2']:
 # | output: asis
 # | echo: false
 
-indicateurs = pd.DataFrame(utils.calcul_indicateur(tds_commun, years=['2021_strat_2', '2022_strat_2']))
-indicateurs = utils.ajout_col_comparaison(indicateurs)
-indicateurs = indicateurs.rename(columns={'2021_strat_2': 'Données 2021', '2022_strat_2': 'Données 2022'})
-utils.display_indicateurs(indicateurs)
+indic_divers, indic_appro = utils.calcul_indicateur(tds_commun, years=['2021_strat_2', '2022_strat_2'])
 
+indic_divers = utils.ajout_col_comparaison(indic_divers)
+indic_divers = indic_divers.rename(columns={'2021_strat_2': 'Données 2021', '2022_strat_2': 'Données 2022'})
+utils.display_indicateurs(indic_divers)
+
+indic_appro = utils.ajout_col_comparaison(indic_appro)
+indic_appro = indic_appro.rename(columns={'2021_strat_2': 'Données 2021', '2022_strat_2': 'Données 2022'})
+utils.display_indicateurs(indic_appro)
 ```
 
+Observations : Progression des télédéclarants assidus (maturité)
+1. + Bio
+2. + Egalim
+3. + De télédéclaration complètes => meilleur connaissance des produits achetés
+4. - de TD avec bio à 0€
 
 ## Comparaison entre le sortants et les nouveaux arrivants
+::: {.callout-warning}
+La suite de ces travaux est en cours de réalisation. Il est encore incomplet et peut contenir des erreurs.
+:::
+
+1. Sortants : "Ayant télédéclaré leur données 2021 mais pas 2022"
+2. Entrants : "Ayant télédéclaré leur données 2022 mais pas 2021"
+
 ```{python}
 # | output: asis
 # | echo: false
 
 
 tds_cmp = {}
-tds_cmp['Sortants (données 2022)'] = tds['2021_strat_2'][tds['2021_strat_2']["canteen.siret"].isin(sortants)]
-tds_cmp['Entrants (données 2021)'] = tds['2022_strat_2'][tds['2022_strat_2']["canteen.siret"].isin(entrants)]
+tds_cmp['Sortants (données 2021)'] = tds['2021_strat_2'][tds['2021_strat_2']["canteen.id"].isin(sortants)]
+tds_cmp['Entrants (données 2022)'] = tds['2022_strat_2'][tds['2022_strat_2']["canteen.id"].isin(entrants)]
 
-indicateurs = pd.DataFrame(utils.calcul_indicateur(tds_cmp, years=['Sortants (données 2022)', 'Entrants (données 2021)']))
-indicateurs = utils.ajout_col_comparaison(indicateurs)
-utils.display_indicateurs(indicateurs)
+indic_divers, indic_appro = utils.calcul_indicateur(tds_cmp, years=['Sortants (données 2021)', 'Entrants (données 2022)'])
+
+indic_divers = utils.ajout_col_comparaison(indic_divers)
+utils.display_indicateurs(indic_divers)
+
+indic_appro = utils.ajout_col_comparaison(indic_appro)
+utils.display_indicateurs(indic_appro)
+
+
 ```
+
+On remarque un nombre beaucoup moins important de **repas moyens par jour** alors que le nombre de cuisines augmente. Cela signifie que nous avons une plus grande représentation sur cette campagne des petites cantines. 
+
+### Comparaison des profils de cantines "entrantes" et "sortantes"
+
+```{python}
+# | echo: false
+
+import seaborn as sns
+
+td_raw = pd.concat([tds['2022_strat_2'], tds['2021_strat_2']], axis=0, ignore_index=True)
+td_without_good_students = td_raw[~td_raw['canteen.id'].isin(restants)]
+td_without_good_students["canteen.daily_meal_count_log"] = np.log10(td_without_good_students[["canteen.daily_meal_count"]].replace(0, 1))
+td_without_good_students["canteen.yearly_meal_count_log"] = np.log10(td_without_good_students[["canteen.yearly_meal_count"]].replace(0, 1))
+
+fig, axes = plt.subplots(3, 1, figsize=(8, 25))
+
+# Daily meals
+sns.histplot(data=td_without_good_students, x="canteen.daily_meal_count_log", hue='year', ax=axes[0], palette='deep', kde=True)
+axes[0].set_title('Distribution du nombre de repas moyen servi par jour en fonction de profils entrants et sortants', fontsize='large')
+axes[0].set_ylabel('Nombre de TD', fontsize='large')
+axes[0].set_xlabel('Nombre de repas journaliers moyens (log)', fontsize='large')
+
+# Yearly meals
+sns.histplot(data=td_without_good_students, x="canteen.management_type", hue='year', ax=axes[1], palette='deep')
+axes[1].set_title('Répartition des types de gérance en fonction des profils entrants et sortants', fontsize='large')
+axes[1].set_ylabel('Nombre de TD', fontsize='large')
+axes[1].set_xlabel('Type de gérance', fontsize='large')
+
+sns.histplot(data=td_without_good_students, x="canteen.production_type", hue='year', ax=axes[2], palette='deep')
+axes[2].set_title('Répartition des types de production en fonction des profils entrants et sortants', fontsize='large')
+axes[2].set_ylabel('Nombre de TD', fontsize='large')
+axes[2].set_xlabel('Type de production', fontsize='large')
+# sns.histplot(data=td_raw, x="canteen.satellite_canteens_count", hue='year', ax=axes[4], palette='deep')
+# sns.histplot(data=td_raw, x="canteen.economic_model", hue='year', ax=axes[5], palette='deep')
+
+# for ax in axes:
+#     ax.set_title('Distribution des valeurs d\'achats en € totales et bio', fontsize='large')
+#     ax.set_ylabel('Nombre de TD', fontsize='large')
+#     ax.set_xlabel('Nombre de repas journaliers moyens', fontsize='large')
+# g
+
+```
+
+<!-- ### Comparaison sur les télédéclarations
+
+```{python}
+# | echo: false
+
+columns_of_interest = [
+    "teledeclaration.value_bio_ht",
+    "teledeclaration.value_total_ht",
+    "teledeclaration.value_egalim_others_ht",
+    "teledeclaration.value_sustainable_ht",
+    "teledeclaration.value_externality_performance_ht",
+]
+
+fig, axes = plt.subplots(5, 1, figsize=(8, 30))
+
+for i in range(0, len(columns_of_interest)):
+    sns.kdeplot(data=td_raw, x=columns_of_interest[i], hue='year', ax=axes[i], palette='deep')
+
+    axes[i].set_title('Distribution', fontsize='large')
+    axes[i].set_ylabel('Nombre de TD', fontsize='large')
+    axes[i].set_xlabel(f'{columns_of_interest[i].split(".")[1]}', fontsize='large')
+``` -->

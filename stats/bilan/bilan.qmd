@@ -2,6 +2,7 @@
 title: "Bilan statistique de la campagne ma-cantine portant sur l'année 2022 (travail en cours)"
 author:
   - "Quentin Loridant"
+  - "Valérie Merle"
 date: "2023-09-07"
 format:
   html:
@@ -10,7 +11,7 @@ format:
     theme:
       - flatly
     toc: true
-    toc-depth: 2
+    toc-depth: 3
 execute:
   warning: false
   cache: true
@@ -59,35 +60,30 @@ Vous pouvez retrouver l'intégralité du code utilisé sur la page [github de ma
 # | echo: false
 
 tds = {}
-columns_of_interest = [
-    "teledeclaration.value_bio_ht",
-    "teledeclaration.value_total_ht",
-    "teledeclaration.value_egalim_others_ht",
-    "teledeclaration.value_sustainable_ht",
-    "teledeclaration.value_externality_performance_ht",
-]
-
 cache=True
 
-if cache:
-    for year in utils.CAMPAGNES.keys():
-        tds[year] = pd.read_csv(f"export_dataset_stats_campagne_{year}.csv", sep=";")
-else:
+if not cache:
     td_raw = utils.load_td()
     tds = utils.split_td_into_years(td_raw)
     
+    for year in utils.CAMPAGNES.keys():
+        # Deleting line terminator substring that could corrupt the backup file
+        tds[year]['teledeclaration.other_waste_comments'] = tds[year]['teledeclaration.other_waste_comments'].replace('\r\n', ' ', regex=True).replace('\n', ' ', regex=True)
 
+        # Saving the file 
+        tds[year].to_csv(f"export_dataset_stats_campagne_{year}_raw.csv", sep=";", index=False)
+ 
+         # Keeping only the columns we want
+        tds[year] = tds[year][utils.COLUMNS_TO_SAVE] 
+
+        tds[year].to_csv(f"export_dataset_stats_campagne_{year}.csv", sep=";", index=False)
+        # TODO Parser siret comme str
+        # TODO YEAR and ID en int et pas float
+
+
+# Whether we use cache or ot, we re-read the file to have consistency in the dataframe
 for year in utils.CAMPAGNES.keys():
-    # Deleting line terminator substring that could corrupt the backup file
-    tds[year]['teledeclaration.other_waste_comments'] = tds[year]['teledeclaration.other_waste_comments'].replace('\r\n', ' ', regex=True).replace('\n', ' ', regex=True)
-    # Saving the file
-    tds[year].to_csv(f"export_dataset_stats_campagne_{year}.csv", sep=";", index=False)
-
-# Suppression des td non appros
-tds["2022"] = tds["2022"].dropna(
-    how="all",
-    subset=columns_of_interest,
-)
+    tds[year] = pd.read_csv(f"export_dataset_stats_campagne_{year}.csv", sep=";")
 ```
 
 
@@ -102,10 +98,9 @@ Avant d'étudier les chiffres clés de la télédéclaration, nous vous présent
 
 utils.assert_quality(tds)
 
-
 utils.display_data_coverage(
     tds,
-    sub_columns=columns_of_interest,
+    sub_columns=utils.APPRO_SIMPLIFIED,
     years=["2021", "2022"],
 )
 ```
@@ -165,19 +160,22 @@ La **"stratégie Historique"** (qui a été appliquée sur le premier bilan) : n
 
 # TODO : garder value_total dans le dropna ? On supprime peut-etre qq lignes de trop, ou peut etre pas assez !
 
-tds["2022_strat_hist"] = tds["2022"].dropna(
-    how="all",
-    subset=columns_of_interest,
-)
-
-print(f'Après filtrage des lignes dont les 5 champs sont manquants, nous avons gardé **{len(tds["2022_strat_hist"])}** télédéclarations sur les **{len(tds["2022"])}** télédéclarations totales.\n Ensuite nous avons remplaçé par 0 les valeurs manquantes : \n')
+for year in utils.CAMPAGNES.keys():
+    tds[f"{year}_strat_hist"] = tds[year].dropna(
+        how="all",
+        subset=utils.APPRO_SIMPLIFIED,
+    )
 
 achats = {}
-for col in columns_of_interest:
+for col in utils.APPRO_SIMPLIFIED:
     achats[col.replace('teledeclaration.', '')] = tds["2022_strat_hist"][col].isna().sum()
 
-tds["2022_strat_hist"][col_achats] = tds["2022_strat_hist"][col_achats].fillna(0)
+for year in utils.CAMPAGNES.keys():
+    tds[f"{year}_strat_hist"][col_achats] = tds[f"{year}_strat_hist"][col_achats].fillna(0)
+
 df_val_manquantes = pd.DataFrame.from_dict(achats, orient="index").rename(columns={0: "Nombre de valeurs manquantes, remplaçées par 0"})
+
+print(f'Après filtrage des lignes dont les 5 champs sont manquants, nous avons gardé **{len(tds["2022_strat_hist"])}** télédéclarations sur les **{len(tds["2022"])}** télédéclarations totales.\n Ensuite nous avons remplaçé par 0 les valeurs manquantes : \n')
 print(df_val_manquantes.to_markdown())
 ```
 
@@ -206,19 +204,62 @@ for year in ['2021', '2022']:
 
 # Chiffres clés
 
+## Comparaison des stratétiges de valeurs manquantes
+
+### Chiffre généraux
 ```{python Nombre de sites de restauration concernés par la télédéclaration}
 # | echo: false
 # | output: asis
 
-indicateurs = utils.calcul_indicateur(tds, years=["2022_strat_2", "2022_strat_hist"])
-indicateurs = indicateurs.rename(columns={'2022_strat_2': 'Données 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Données 2022 - Stratégie "Historique"'})
-utils.display_indicateurs(indicateurs)
+indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["2022_strat_2", "2022_strat_hist"])
+
+indic_divers = indic_divers.rename(columns={'2022_strat_2': 'Données 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Données 2022 - Stratégie "Historique"'})
+indic_divers = utils.ajout_col_comparaison(indic_divers)
+
+utils.display_indicateurs(indic_divers)
+
 ```
 
-::: info
-Pour la suite de l'étude, nous utiliserons uniquement la stratégie **Je Ne Sais Pas** afin de minimiser les hypothèses que nous prenons sur les données.
+### Chiffres appro
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+# | echo: false
+# | output: asis
+
+indic_appro = indic_appro.rename(columns={'2022_strat_2': 'Données 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Données 2022 - Stratégie "Historique"'})
+indic_appro = utils.ajout_col_comparaison(indic_appro)
+
+utils.display_indicateurs(indic_appro)
+```
+
+::: {.callout-note}
+Pour la suite de l'étude, nous utiliserons uniquement la stratégie "**Je Ne Sais Pas**"" afin de minimiser les hypothèses que nous prenons sur les données.
 :::
 
+## Comparaison avec l'année précédente
+
+### Chiffre généraux
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+# | echo: false
+# | output: asis
+
+indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["2021_strat_2", "2022_strat_2"])
+indic_divers = utils.ajout_col_comparaison(indic_divers)
+
+indic_divers = indic_divers.rename(columns={'2022_strat_2': 'Données 2022', '2021_strat_2': 'Données 2021'})
+
+utils.display_indicateurs(indic_divers)
+
+```
+
+### Chiffres appro
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+# | echo: false
+# | output: asis
+indic_appro = utils.ajout_col_comparaison(indic_appro)
+
+indic_appro = indic_appro.rename(columns={'2022_strat_2': 'Données 2022', '2021_strat_2': 'Données 2021'})
+utils.display_indicateurs(indic_appro)
+```
 
 {{< include _secteurs.qmd >}}
 {{< include _populations.qmd >}}
