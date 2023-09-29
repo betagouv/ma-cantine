@@ -204,6 +204,11 @@ export default {
       logoutWarningDialog: false,
       navLinks: [
         {
+          text: "Mon tableau de bord",
+          to: { name: "ManagementPage" },
+          authenticationState: true,
+        },
+        {
           text: "Mes achats",
           to: { name: "PurchasesHome" },
           authenticationState: true,
@@ -250,11 +255,6 @@ export default {
         {
           text: "Toutes les cantines",
           children: [
-            {
-              text: "Mes cantines",
-              to: { name: "ManagementPage" },
-              authenticationState: true,
-            },
             {
               text: "Dans mon territoire",
               to: { name: "TerritoryCanteens" },
