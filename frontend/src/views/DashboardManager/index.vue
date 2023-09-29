@@ -101,7 +101,28 @@
               </v-card-actions>
             </v-card>
           </v-col>
-          <v-col cols="6" md="4" id="canteen-info-card">
+          <v-col cols="12" md="4" id="publication">
+            <v-card outlined class="fill-height d-flex flex-column pa-4">
+              <v-card-title class="fr-h4">Ma vitrine en ligne</v-card-title>
+              <v-card-text class="fr-text-xs">
+                <p>TODO</p>
+              </v-card-text>
+              <v-spacer></v-spacer>
+              <v-card-actions class="mx-2 mb-2 justify-end">
+                <v-btn
+                  :to="{
+                    name: 'PublicationForm',
+                    params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                  }"
+                  color="primary"
+                  outlined
+                >
+                  Éditer ma vitrine
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+          <v-col cols="12" md="8" id="canteen-info-card">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
               <v-card-title class="fr-h4">Mon établissement</v-card-title>
               <v-card-text class="fr-text-xs">
@@ -140,7 +161,7 @@
               </v-card-actions>
             </v-card>
           </v-col>
-          <v-col cols="4" id="managers">
+          <v-col cols="12" md="4" id="managers">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
               <v-card-title class="fr-h4">
                 Mon équipe
