@@ -1,6 +1,6 @@
 <template>
-  <v-row>
-    <v-col cols="12" md="4">
+  <v-row style="position: relative;">
+    <v-col cols="12" md="4" class="d-flex flex-column">
       <v-row>
         <v-col cols="7">
           <h2 class="fr-h5 mb-0 mt-1 align-center">
@@ -11,29 +11,31 @@
           <DsfrSelect ref="yearSelect" v-model="year" :items="allowedYears" hide-details="auto" placeholder="Année" />
         </v-col>
       </v-row>
-      <MissingDataChip v-if="!hasPurchases && !hasCurrentDiagnostic && !hasLastYearDiagnostic" class="mt-4 mb-n2" />
-      <v-divider class="my-6"></v-divider>
-      <ApproSegment :purchases="null" :currentDiagnostic="null" :lastYearDiagnostic="null" />
+      <div>
+        <MissingDataChip v-if="!hasPurchases && !diagnostic && !hasLastYearDiagnostic" class="mt-4" />
+        <v-divider class="my-6"></v-divider>
+      </div>
+      <ApproSegment :purchases="null" :diagnostic="diagnostic" :lastYearDiagnostic="null" />
     </v-col>
     <v-col cols="12" md="8">
       <v-row style="position: relative;">
         <div
           class="overlay d-flex align-center justify-center"
-          v-if="!hasPurchases && !hasCurrentDiagnostic && !hasLastYearDiagnostic"
+          v-if="!hasPurchases && !diagnostic && !hasLastYearDiagnostic"
         >
           <v-btn color="primary">Commencer</v-btn>
         </div>
         <v-col cols="12" md="6" fill-height>
-          <FoodWasteCard />
+          <FoodWasteCard :diagnostic="diagnostic" />
         </v-col>
         <v-col cols="12" md="6" fill-height>
-          <DiversificationCard />
+          <DiversificationCard :diagnostic="diagnostic" />
         </v-col>
         <v-col cols="12" md="6" fill-height>
-          <NoPlasticCard />
+          <NoPlasticCard :diagnostic="diagnostic" />
         </v-col>
         <v-col cols="12" md="6" fill-height>
-          <InformationCard />
+          <InformationCard :diagnostic="diagnostic" />
         </v-col>
       </v-row>
     </v-col>
@@ -61,6 +63,12 @@ export default {
     MissingDataChip,
     ApproSegment,
   },
+  props: {
+    canteen: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       year: lastYear(),
@@ -68,10 +76,10 @@ export default {
     }
   },
   computed: {
-    hasPurchases() {
-      return false
+    diagnostic() {
+      return this.canteen.diagnostics.find((x) => x.year === this.year)
     },
-    hasCurrentDiagnostic() {
+    hasPurchases() {
       return false
     },
     hasLastYearDiagnostic() {

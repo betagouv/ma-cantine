@@ -31,7 +31,7 @@
 
     <div v-if="canteen">
       <div class="mt-4">
-        <EgalimProgression />
+        <EgalimProgression :canteen="canteen" />
       </div>
 
       <div v-if="canteen">
