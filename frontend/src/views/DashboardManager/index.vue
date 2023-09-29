@@ -145,58 +145,66 @@
             </v-card>
           </v-col>
           <v-col cols="12" md="8" id="canteen-info-card">
-            <v-card outlined class="fill-height d-flex flex-column pa-4">
-              <v-card-title class="fr-h4">Mon établissement</v-card-title>
-              <v-card-text class="fr-text-xs">
-                <!-- image -->
-                <p>
-                  Nom :
-                  <b>{{ canteen.name }}</b>
-                </p>
-                <p>
-                  Commune :
-                  <b>{{ canteenCommune }}</b>
-                </p>
-                <br />
-                <p>
-                  <b>{{ canteenProductionType }}</b>
-                </p>
-                <p v-if="centralKitchen">
-                  Cuisine centrale :
-                  <b>{{ centralKitchen.name || centralKitchen.siret || "Non renseignée" }}</b>
-                </p>
-                <br />
-                <p>
-                  Secteur d'activité :
-                  <b>{{ canteenSector }}</b>
-                </p>
-                <p>
-                  Mode de gestion :
-                  <b>{{ canteenMgmt }}</b>
-                </p>
-                <br />
-                <p>
-                  Couverts par jour :
-                  <b>{{ canteen.dailyMealCount }}</b>
-                </p>
-                <p>
-                  Couverts par année :
-                  <b>{{ canteen.yearlyMealCount }}</b>
-                </p>
-              </v-card-text>
-              <v-spacer></v-spacer>
-              <v-card-actions class="mx-2 mb-2 justify-end">
-                <v-btn
-                  :to="{
-                    name: 'CanteenForm',
-                    params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                  }"
-                  color="primary"
-                  outlined
-                >
-                  Modifier
-                </v-btn>
-              </v-card-actions>
+            <v-card outlined class="fill-height">
+              <v-row>
+                <v-col cols="4" v-if="$vuetify.breakpoint.smAndUp">
+                  <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" class="fill-height"></v-img>
+                </v-col>
+                <v-col class="py-8 pr-8">
+                  <v-card-title class="fr-h4 mb-2">Mon établissement</v-card-title>
+                  <v-card-text class="fr-text">
+                    <p class="mb-0">
+                      Nom :
+                      <span class="font-weight-medium">{{ canteen.name }}</span>
+                    </p>
+                    <p class="mb-0">
+                      Commune :
+                      <span class="font-weight-medium">{{ canteenCommune }}</span>
+                    </p>
+                    <br />
+                    <p class="mb-0">
+                      <span class="font-weight-medium">{{ canteenProductionType }}</span>
+                    </p>
+                    <p v-if="centralKitchen">
+                      Cuisine centrale :
+                      <span class="font-weight-medium">
+                        {{ centralKitchen.name || centralKitchen.siret || "Non renseignée" }}
+                      </span>
+                    </p>
+                    <br />
+                    <p class="mb-0">
+                      Secteur d'activité :
+                      <span class="font-weight-medium">{{ canteenSector }}</span>
+                    </p>
+                    <p class="mb-0">
+                      Mode de gestion :
+                      <span class="font-weight-medium">{{ canteenMgmt }}</span>
+                    </p>
+                    <br />
+                    <p v-if="canteen.productionType !== 'central'" class="mb-0">
+                      Couverts par jour :
+                      <span class="font-weight-medium">{{ canteen.dailyMealCount }}</span>
+                    </p>
+                    <p class="mb-0">
+                      Couverts par année :
+                      <span class="font-weight-medium">{{ canteen.yearlyMealCount }}</span>
+                    </p>
+                  </v-card-text>
+                  <v-spacer></v-spacer>
+                  <v-card-actions class="mx-2 mb-2 justify-end">
+                    <v-btn
+                      :to="{
+                        name: 'CanteenForm',
+                        params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                      }"
+                      color="primary"
+                      outlined
+                    >
+                      Modifier
+                    </v-btn>
+                  </v-card-actions>
+                </v-col>
+              </v-row>
             </v-card>
           </v-col>
           <v-col cols="12" md="4" id="managers">
@@ -362,6 +370,10 @@ export default {
     canteenMgmt() {
       const type = Constants.ManagementTypes.find((mt) => mt.value === this.canteen.managementType)
       return type?.text || "Non renseigné"
+    },
+    canteenImage() {
+      if (!this.canteen.images || this.canteen.images.length === 0) return null
+      return this.canteen.images[0].image
     },
   },
   methods: {
