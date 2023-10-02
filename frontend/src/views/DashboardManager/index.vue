@@ -11,10 +11,11 @@
           item-text="name"
           item-value="id"
           id="canteen"
-          class="mt-2"
+          class="mt-6"
           auto-select-first
           no-data-text="Pas de résultats"
           @blur="showCanteenSelection = false"
+          autofocus
         />
       </v-col>
     </v-row>
