@@ -142,7 +142,13 @@
               </template>
               <v-list class="py-0">
                 <div v-for="(subItem, subIndex) in navLink.children" :key="subIndex">
-                  <v-list-item :to="subItem.to" :href="subItem.href" :target="subItem.target" :rel="subItem.rel">
+                  <v-list-item
+                    v-if="shouldDisplayChild(subItem)"
+                    :to="subItem.to"
+                    :href="subItem.href"
+                    :target="subItem.target"
+                    :rel="subItem.rel"
+                  >
                     <v-list-item-title class="text-body-2">
                       {{ subItem.text }}
                       <v-icon v-if="subItem.href" small color="rgb(22,22,22)">mdi-open-in-new</v-icon>
@@ -194,54 +200,18 @@ export default {
   name: "AppHeader",
   components: { HeaderDropdownList },
   data() {
-    const keyMeasureLinks = keyMeasures.map((km) => {
-      return {
-        text: km.shortTitle,
-        to: {
-          name: "KeyMeasurePage",
-          params: {
-            id: km.id,
-          },
-        },
-      }
-    })
     return {
       logoutWarningDialog: false,
       navLinks: [
         {
-          text: "Espace de gestion",
+          text: "Mon tableau de bord",
+          to: { name: "ManagementPage" },
           authenticationState: true,
-          children: [
-            {
-              text: "Dans mon territoire",
-              to: { name: "TerritoryCanteens" },
-              elected: true,
-            },
-            {
-              text: "Mes cantines",
-              to: { name: "ManagementPage" },
-            },
-            {
-              text: "Mes achats",
-              to: { name: "PurchasesHome" },
-            },
-            {
-              text: "Générer mon affiche",
-              to: { name: "GeneratePosterPage" },
-            },
-            {
-              text: "Mon profil",
-              to: { name: "AccountSummaryPage" },
-            },
-            {
-              text: "Importer des cantines",
-              to: { name: "DiagnosticsImporter" },
-            },
-            {
-              text: "Importer des achats",
-              to: { name: "PurchasesImporter" },
-            },
-          ],
+        },
+        {
+          text: "Mes achats",
+          to: { name: "PurchasesHome" },
+          authenticationState: true,
         },
         {
           text: "M'auto-évaluer",
@@ -249,24 +219,16 @@ export default {
           authenticationState: false,
         },
         {
-          text: "À propos de la loi EGAlim",
+          text: "M'améliorer",
           children: [
-            ...keyMeasureLinks,
             {
-              text: "Documentation",
-              href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-              target: "_blank",
-              rel: "noopener",
+              text: "Acteurs de l'éco-système",
+              to: { name: "PartnersHome" },
             },
-          ],
-        },
-        {
-          text: "Nos cantines",
-          to: { name: "CanteensHome" },
-        },
-        {
-          text: "Communauté",
-          children: [
+            {
+              text: "Générer mon affiche",
+              to: { name: "GeneratePosterPage" },
+            },
             {
               text: "Webinaires",
               to: { name: "CommunityPage" },
@@ -276,38 +238,66 @@ export default {
               to: { name: "BlogsHome" },
             },
             {
-              text: "Acteurs de l'éco-système",
-              to: { name: "PartnersHome" },
+              text: "Documentation",
+              href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+              target: "_blank",
+              rel: "noopener",
             },
           ],
         },
         {
-          text: "Les chiffres",
+          text: "Comprendre mes obligations",
           children: [
+            ...keyMeasures.map((x) => ({
+              text: x.shortTitle,
+              to: { name: "KeyMeasurePage", params: { id: x.id } },
+            })),
+            ...[
+              {
+                text: "Documentation",
+                href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+                target: "_blank",
+                rel: "noopener",
+              },
+            ],
+          ],
+        },
+        {
+          text: "Toutes les cantines",
+          children: [
+            {
+              text: "Dans mon territoire",
+              to: { name: "TerritoryCanteens" },
+              forElected: true,
+            },
+            {
+              text: "Nos cantines publiées",
+              to: { name: "CanteensHome" },
+            },
             {
               text: "Dans ma collectivité",
               to: { name: "PublicCanteenStatisticsPage" },
             },
-            {
-              text: "Mesures de notre impact",
-              to: { name: "ImpactMeasuresPage" },
-            },
-            {
-              text: "Indicateurs de résultats de la plateforme",
-              href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/3dab8a21-c4b9-46e1-84fa-7ba485ddfbbb",
-            },
-            {
-              text: "Usage du site",
-              href: "https://stats.data.gouv.fr/index.php?idSite=162",
-            },
           ],
         },
         {
-          text: "Questions ?",
+          text: "Aide",
           children: [
             {
               text: "Foire aux questions",
               to: { name: "FaqPage" },
+            },
+            {
+              text: "Contactez-nous",
+              to: { name: "ContactPage" },
+            },
+            {
+              text: "Webinaires",
+              to: { name: "CommunityPage" },
+            },
+            {
+              text: "Blog",
+              to: { name: "BlogsHome" },
             },
             {
               text: "Documentation",
@@ -316,10 +306,27 @@ export default {
               rel: "noopener",
             },
             {
-              text: "Contactez-nous",
-              to: { name: "ContactPage" },
+              text: "Mesures de notre impact",
+              to: { name: "ImpactMeasuresPage" },
+            },
+            {
+              text: "Indicateurs",
+              href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/3dab8a21-c4b9-46e1-84fa-7ba485ddfbbb",
+              target: "_blank",
+              rel: "noopener",
+            },
+            {
+              text: "Usage du site",
+              href: "https://stats.data.gouv.fr/index.php?idSite=162",
+              target: "_blank",
+              rel: "noopener",
             },
           ],
+        },
+        {
+          text: "Mon compte",
+          to: { name: "AccountSummaryPage" },
+          authenticationState: true,
         },
       ],
     }
@@ -345,7 +352,7 @@ export default {
       if (this.loggedUser) {
         const navlinks = this.navLinks.filter((link) => link.authenticationState !== false)
         if (!this.loggedUser.isElectedOfficial)
-          navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.elected)))
+          navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.forElected)))
         return navlinks
       } else {
         return this.navLinks.filter((link) => !link.authenticationState)
@@ -357,6 +364,14 @@ export default {
       if (env === "staging") return { text: "Staging", color: "purple" }
       if (env === "demo") return { text: "Démo", color: "green darken-2" }
       return null
+    },
+  },
+  methods: {
+    shouldDisplayChild(child) {
+      if (child.authenticationState === undefined && !child.forElected) return true
+      if (!this.loggedUser) return child.authenticationState === false
+      if (child.forElected) return this.loggedUser.isElectedOfficial
+      return child.authenticationState === true
     },
   },
 }

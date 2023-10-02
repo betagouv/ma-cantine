@@ -93,35 +93,39 @@
               </v-card-actions>
             </v-card>
           </v-col>
-          <v-col cols="6" md="4" id="canteen-info-card">
+          <v-col v-if="!canteen.isCentralCuisine" cols="12" md="4" id="publication">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
-              <v-card-title class="fr-h4">Mon établissement</v-card-title>
+              <v-card-title class="fr-h4">Ma vitrine en ligne</v-card-title>
               <v-card-text class="fr-text-xs">
-                <p>SIRET : {{ canteen.siret }}</p>
-                <div v-if="centralKitchen">
-                  <p>
-                    La cuisine qui fournit les repas :
-                    <router-link
-                      :to="{
-                        name: 'CanteenModification',
-                        params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(centralKitchen) },
-                      }"
-                      target="_blank"
-                      v-if="centralKitchen.isManagedByUser"
-                    >
-                      « {{ centralKitchen.name }} »
-                      <v-icon small color="primary">mdi-open-in-new</v-icon>
-                    </router-link>
-                    <span v-else>« {{ centralKitchen.name }} »</span>
-                  </p>
-                </div>
-                <CanteenIndicators :canteen="canteen" />
+                <p>TODO</p>
               </v-card-text>
               <v-spacer></v-spacer>
               <v-card-actions class="mx-2 mb-2 justify-end">
                 <v-btn
                   :to="{
-                    name: 'CanteenForm',
+                    name: 'PublicationForm',
+                    params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                  }"
+                  color="primary"
+                  outlined
+                >
+                  Éditer ma vitrine
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+          <v-col v-else cols="12" md="4" id="satellites">
+            <v-card outlined class="fill-height d-flex flex-column pa-4">
+              <v-card-title class="fr-h4">Mes satellites</v-card-title>
+              <v-card-text class="fr-text-xs">
+                <p>TODO</p>
+                <p>{{ satelliteCount }} / {{ canteen.satelliteCanteensCount }} renseignés</p>
+              </v-card-text>
+              <v-spacer></v-spacer>
+              <v-card-actions class="mx-2 mb-2">
+                <v-btn
+                  :to="{
+                    name: 'SatelliteManagement',
                     params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
                   }"
                   color="primary"
@@ -132,7 +136,70 @@
               </v-card-actions>
             </v-card>
           </v-col>
-          <v-col cols="4" id="managers">
+          <v-col cols="12" md="8" id="canteen-info-card">
+            <v-card outlined class="fill-height">
+              <v-row>
+                <v-col cols="4" v-if="$vuetify.breakpoint.smAndUp">
+                  <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" class="fill-height"></v-img>
+                </v-col>
+                <v-col class="py-8 pr-8">
+                  <v-card-title class="fr-h4 mb-2">Mon établissement</v-card-title>
+                  <v-card-text class="fr-text">
+                    <p class="mb-0">
+                      Nom :
+                      <span class="font-weight-medium">{{ canteen.name }}</span>
+                    </p>
+                    <p class="mb-0">
+                      Commune :
+                      <span class="font-weight-medium">{{ canteenCommune }}</span>
+                    </p>
+                    <br />
+                    <p class="mb-0">
+                      <span class="font-weight-medium">{{ canteenProductionType }}</span>
+                    </p>
+                    <p v-if="centralKitchen">
+                      Cuisine centrale :
+                      <span class="font-weight-medium">
+                        {{ centralKitchen.name || centralKitchen.siret || "Non renseignée" }}
+                      </span>
+                    </p>
+                    <br />
+                    <p class="mb-0">
+                      Secteur d'activité :
+                      <span class="font-weight-medium">{{ canteenSector }}</span>
+                    </p>
+                    <p class="mb-0">
+                      Mode de gestion :
+                      <span class="font-weight-medium">{{ canteenMgmt }}</span>
+                    </p>
+                    <br />
+                    <p v-if="canteen.productionType !== 'central'" class="mb-0">
+                      Couverts par jour :
+                      <span class="font-weight-medium">{{ canteen.dailyMealCount || "Non renseigné" }}</span>
+                    </p>
+                    <p class="mb-0">
+                      Couverts par année :
+                      <span class="font-weight-medium">{{ canteen.yearlyMealCount || "Non renseigné" }}</span>
+                    </p>
+                  </v-card-text>
+                  <v-spacer></v-spacer>
+                  <v-card-actions class="mx-2 mb-2">
+                    <v-btn
+                      :to="{
+                        name: 'CanteenForm',
+                        params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                      }"
+                      color="primary"
+                      outlined
+                    >
+                      Modifier
+                    </v-btn>
+                  </v-card-actions>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+          <v-col cols="12" md="4" id="managers">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
               <v-card-title class="fr-h4">
                 Mon équipe
@@ -158,7 +225,7 @@
                 </p>
               </v-card-text>
               <v-spacer></v-spacer>
-              <v-card-actions class="justify-end">
+              <v-card-actions>
                 <v-btn
                   :to="{
                     name: 'CanteenManagers',
@@ -216,9 +283,8 @@
 
 <script>
 import EgalimProgression from "./EgalimProgression.vue"
-import CanteenIndicators from "@/components/CanteenIndicators"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import { toCurrency } from "@/utils"
+import { toCurrency, capitalise } from "@/utils"
 import Constants from "@/constants"
 import validators from "@/validators"
 
@@ -234,6 +300,7 @@ export default {
       nextCanteenId: canteenId,
       canteen: null,
       centralKitchen: null,
+      satelliteCount: null,
       purchases: [],
       purchaseHeaders: [
         {
@@ -272,6 +339,34 @@ export default {
         }) || []
       )
     },
+    // canteen info widget
+    canteenCommune() {
+      if (!this.canteen.city) {
+        return "Non renseigné"
+      }
+      const departmentString = this.canteen.department ? ` (${this.canteen.department})` : ""
+      return `${this.canteen.city}${departmentString}`
+    },
+    canteenProductionType() {
+      const type = Constants.ProductionTypesDetailed.find((mt) => mt.value === this.canteen.productionType)
+      return type?.title ? capitalise(type?.title) : "Mode de production non renseigné"
+    },
+    sectors() {
+      const sectors = this.$store.state.sectors
+      return this.canteen.sectors.map((sectorId) => sectors.find((s) => s.id === sectorId))
+    },
+    canteenSector() {
+      const sectorString = this.sectors.map((x) => x.name.toLowerCase()).join(", ")
+      return sectorString ? capitalise(sectorString) : "Non renseigné"
+    },
+    canteenMgmt() {
+      const type = Constants.ManagementTypes.find((mt) => mt.value === this.canteen.managementType)
+      return type?.text || "Non renseigné"
+    },
+    canteenImage() {
+      if (!this.canteen.images || this.canteen.images.length === 0) return null
+      return this.canteen.images[0].image
+    },
   },
   methods: {
     fetchCanteenIfNeeded() {
@@ -282,6 +377,7 @@ export default {
         .then((canteen) => {
           this.canteen = canteen
           this.getCentralKitchen()
+          this.updateSatelliteCount()
           this.fetchPurchases()
         })
         .catch(() => {
@@ -302,6 +398,13 @@ export default {
           .then((response) => response.json())
           .then((response) => (this.centralKitchen = response))
       }
+    },
+    updateSatelliteCount() {
+      if (!this.canteen.isCentralCuisine) return
+      const url = `/api/v1/canteens/${this.canteen.id}/satellites`
+      fetch(url)
+        .then((response) => response.json())
+        .then((response) => (this.satelliteCount = response.count))
     },
     fetchPurchases() {
       this.purchasesFetchingError = null
