@@ -134,15 +134,27 @@
           <v-col v-else cols="12" md="4" id="satellites">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
               <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes satellites</h3></v-card-title>
-              <v-card-text class="fr-text-xs grey--text text--darken-2 mt-3">
-                <p>Ajoutez et publiez les cantines que vous livrez</p>
+              <v-card-text v-if="!satellites.length" class="fr-text-xs grey--text text--darken-2 mt-3 pb-0">
+                <p class="mb-0">Ajoutez et publiez les cantines que vous livrez</p>
               </v-card-text>
               <v-spacer v-if="!satellites.length" />
-              <v-card-text class="fr-text-xs grey--text text--darken-2" v-if="canteen.satelliteCanteensCount">
-                <p>{{ satelliteCount }} / {{ canteen.satelliteCanteensCount }} renseignés</p>
+              <v-card-text class="fr-text-xs grey--text text--darken-2 mt-3 pb-0" v-if="canteen.satelliteCanteensCount">
+                <p class="mb-0">{{ satelliteCount }} / {{ canteen.satelliteCanteensCount }} satellites renseignés</p>
               </v-card-text>
-              <v-spacer v-if="!satellites.length" />
-              <v-card-actions class="mx-2 mb-2">
+              <v-spacer v-if="satellites.length" />
+              <v-card-text class="py-0" v-if="satellites.length">
+                <v-data-table
+                  :items="satellites"
+                  :headers="satelliteHeaders"
+                  :hide-default-footer="true"
+                  :disable-sort="true"
+                  class="dsfr-table grey--table"
+                  :class="satellites.length && 'table-preview'"
+                  dense
+                />
+              </v-card-text>
+              <v-spacer />
+              <v-card-actions class="ma-2">
                 <v-btn
                   :to="{
                     name: 'SatelliteManagement',
@@ -317,13 +329,17 @@ export default {
   name: "DashboardManager",
   components: { EmptyProgression, EgalimProgression, DsfrAutocomplete },
   data() {
-    const canteenId = this.$store.state.userCanteenPreviews[1]?.id
+    const canteenId = this.$store.state.userCanteenPreviews[6]?.id
     return {
       canteenId,
       nextCanteenId: canteenId,
       canteen: null,
       centralKitchen: null,
       satellites: [],
+      satelliteHeaders: [
+        { text: "Nom", value: "name" },
+        { text: "Statut", value: "publicationStatus" },
+      ],
       satelliteCount: null,
       purchases: [],
       purchaseHeaders: [
@@ -430,10 +446,13 @@ export default {
     },
     updateSatelliteCount() {
       if (!this.canteen.isCentralCuisine) return
-      const url = `/api/v1/canteens/${this.canteen.id}/satellites`
+      const url = `/api/v1/canteens/${this.canteen.id}/satellites?limit=3`
       fetch(url)
         .then((response) => response.json())
-        .then((response) => (this.satelliteCount = response.count))
+        .then((response) => {
+          this.satelliteCount = response.count
+          this.satellites = response.results
+        })
     },
     fetchPurchases() {
       this.purchasesFetchingError = null

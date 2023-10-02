@@ -140,11 +140,17 @@ export default {
 .dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
   color: #000091;
 }
+.dsfr-table.grey--table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
+  color: #3a3a3a;
+}
 .dsfr-table.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
   height: 32px;
 }
 .dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th {
   border-bottom: thin solid #000091;
+}
+.dsfr-table.grey--table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th {
+  border-bottom: thin solid #3a3a3a;
 }
 .dsfr-table.v-data-table > .v-data-table__wrapper > table > tbody > tr.v-data-table__empty-wrapper > td {
   padding: 0px;
@@ -152,6 +158,9 @@ export default {
 // no IE8 support
 .dsfr-table > .v-data-table__wrapper > table > tbody > tr:nth-child(even) {
   background-color: #f5f5f5;
+}
+.dsfr-table.grey--table > .v-data-table__wrapper > table > tbody > tr:nth-child(even) {
+  background-color: #f6f6f6;
 }
 .dsfr-table.theme--light.v-data-table
   > .v-data-table__wrapper
@@ -164,7 +173,7 @@ export default {
 .dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(.v-data-table__empty-wrapper) {
   pointer-events: none; // disable background colour change on hover
 }
-.dsfr-table.table-preview > .v-data-table__wrapper > table > tbody > tr:last-child {
+.dsfr-table.table-preview > .v-data-table__wrapper > table > tbody > tr:nth-child(3) {
   // Not supported by all browsers, but is a nice to have rather than necessity
   -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.6)), to(rgba(0, 0, 0, 0)));
 }
