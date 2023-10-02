@@ -23,10 +23,7 @@
           class="overlay d-flex align-center justify-center"
           v-if="!hasPurchases && !diagnostic && !hasLastYearDiagnostic"
         >
-          <v-btn
-            color="primary"
-            :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
-          >
+          <v-btn color="primary" :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: year } }">
             Commencer
           </v-btn>
         </div>

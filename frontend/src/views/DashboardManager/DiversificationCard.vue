@@ -1,6 +1,6 @@
 <template>
   <v-card
-    :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
+    :to="diagnostic ? { name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } } : null"
     outlined
     class="fill-height d-flex flex-column dsfr"
   >
