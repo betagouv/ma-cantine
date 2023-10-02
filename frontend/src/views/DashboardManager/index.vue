@@ -105,7 +105,6 @@
             <v-card outlined class="fill-height d-flex flex-column pa-4">
               <v-card-title class="fr-h4">Ma vitrine en ligne</v-card-title>
               <v-card-text class="fr-text">
-                <!-- TODO: UI for the status tag -->
                 <p class="publication-detail">
                   Statut
                   <v-chip
@@ -523,11 +522,14 @@ export default {
     },
     getPublishedPageViewCount() {
       if (!this.isPublished) this.viewCount = 0
+      if (!this.$matomo) this.viewCount = 0
+      const pageUrl =
+        `${window.origin}${this.$router.resolve({ name: "CanteensHome" }).href}` +
+        // Do not include the title part of the URL to handle A) name changes and B) / or no / ending
+        `${this.canteen.id}--`
       const url =
         "https://stats.data.gouv.fr/index.php?module=API&method=VisitsSummary.getVisits&idSite=162&period=range&date=last30&format=JSON&token_auth=anonymous&segment=pageUrl=^" +
-        // TODO: use vue router to generate this link
-        encodeURIComponent("https://ma-cantine.agriculture.gouv.fr/nos-cantines/") +
-        encodeURIComponent(`${this.canteen.id}--`)
+        encodeURIComponent(pageUrl)
       return fetch(url)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
