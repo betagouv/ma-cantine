@@ -104,24 +104,46 @@
           <v-col v-if="!canteen.isCentralCuisine" cols="12" md="4" id="publication">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
               <v-card-title class="fr-h4">Ma vitrine en ligne</v-card-title>
-              <v-card-text class="fr-text-xs">
+              <v-card-text class="fr-text">
                 <!-- TODO: UI for the status tag -->
-                <p>Statut : {{ isPublished ? "publiée" : "non publiée" }}</p>
-                <!-- TODO: derniere MAJ -->
-                <p>Nombre de visiteurs : {{ viewCount }}</p>
+                <p class="publication-detail">
+                  Statut
+                  <v-chip
+                    :color="isPublished ? 'green lighten-4' : 'grey lighten-2'"
+                    :class="isPublished ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
+                    class="font-weight-bold px-2 fr-text-xs"
+                    style="border-radius: 4px !important;"
+                    small
+                    label
+                  >
+                    {{ isPublished ? "PUBLIÉE" : "NON PUBLIÉE" }}
+                  </v-chip>
+                </p>
+                <p class="publication-detail">
+                  Dernière mise à jour
+                  <span class="font-weight-bold fr-text-xs">{{ publicationUpdateDate }}</span>
+                </p>
+                <p class="publication-detail">
+                  Nombre de visiteurs
+                  <span class="font-weight-bold fr-text-xs">{{ viewCount }}</span>
+                </p>
               </v-card-text>
               <v-spacer></v-spacer>
-              <v-card-actions class="mx-2 mb-2 justify-end">
+              <v-card-actions class="mx-2 mb-2">
                 <v-btn
                   :to="{
                     name: 'PublicationForm',
                     params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
                   }"
                   color="primary"
-                  outlined
+                  :outlined="isPublished || !hasPublicationData"
+                  :disabled="!isPublished && !hasPublicationData"
                 >
-                  Éditer ma vitrine
+                  {{ isPublished ? "Éditer ma vitrine" : "Publier ma cantine" }}
                 </v-btn>
+                <p v-if="!isPublished && !hasPublicationData" class="grey--text text--darken-1 fr-text-xs mb-0 ml-3">
+                  Pas de données
+                </p>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -300,9 +322,8 @@
 import EmptyProgression from "./EmptyProgression.vue"
 import EgalimProgression from "./EgalimProgression.vue"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import { toCurrency, capitalise } from "@/utils"
+import { toCurrency, capitalise, formatDate, lastYear } from "@/utils"
 import Constants from "@/constants"
-import validators from "@/validators"
 
 export default {
   name: "DashboardManager",
@@ -313,8 +334,11 @@ export default {
       canteenId,
       nextCanteenId: canteenId,
       canteen: null,
+      showCanteenSelection: false,
+      // canteen info widget
       centralKitchen: null,
       satelliteCount: null,
+      // purchases widget
       purchases: [],
       purchaseHeaders: [
         {
@@ -327,9 +351,9 @@ export default {
         { text: "Prix HT", value: "priceHt", align: "end" },
       ],
       purchasesFetchingError: null,
-      showCanteenSelection: false,
-      validators,
+      // publication widget
       viewCount: 0,
+      year: lastYear(),
     }
   },
   computed: {
@@ -385,8 +409,24 @@ export default {
       if (!this.canteen.images || this.canteen.images.length === 0) return null
       return this.canteen.images[0].image
     },
+    // publication widget
+    diagnostic() {
+      return this.canteen?.diagnostics.find((x) => x.year === this.year)
+    },
     isPublished() {
-      return this.canteen.publicationStatus === "published"
+      return this.canteen?.publicationStatus === "published"
+    },
+    publicationUpdateDate() {
+      if (!this.canteen || !this.isPublished) return "jamais"
+      let date = new Date(this.canteen.modificationDate)
+      if (this.diagnostic) {
+        let diagDate = new Date(this.diagnostic.modificationDate)
+        if (diagDate > date) date = diagDate
+      }
+      return formatDate(date.toISOString())
+    },
+    hasPublicationData() {
+      return !!this.diagnostic?.valueTotalHt
     },
   },
   methods: {
@@ -482,7 +522,7 @@ export default {
       return { text: "" }
     },
     getPublishedPageViewCount() {
-      if (!this.isPublished) return 0
+      if (!this.isPublished) this.viewCount = 0
       const url =
         "https://stats.data.gouv.fr/index.php?module=API&method=VisitsSummary.getVisits&idSite=162&period=range&date=last30&format=JSON&token_auth=anonymous&segment=pageUrl=^" +
         // TODO: use vue router to generate this link
@@ -527,5 +567,8 @@ ul {
 /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
 ul li::before {
   content: "\200B";
+}
+p.publication-detail > span {
+  float: right;
 }
 </style>

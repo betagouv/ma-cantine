@@ -197,6 +197,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "central_kitchen_diagnostics",
             "central_kitchen",
             "is_central_cuisine",
+            "modification_date",
         )
         fields = (
             "id",
@@ -236,6 +237,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "creation_mtm_campaign",
             "creation_mtm_medium",
             "is_central_cuisine",
+            "modification_date",
         )
 
     def __init__(self, *args, **kwargs):
