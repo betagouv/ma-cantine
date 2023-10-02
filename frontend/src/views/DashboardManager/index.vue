@@ -328,7 +328,7 @@ export default {
   name: "DashboardManager",
   components: { EmptyProgression, EgalimProgression, DsfrAutocomplete },
   data() {
-    const canteenId = this.$store.state.userCanteenPreviews[0]?.id
+    const canteenId = +this.$route.query.cantine || this.$store.state.userCanteenPreviews[0]?.id
     return {
       canteenId,
       nextCanteenId: canteenId,
@@ -365,6 +365,7 @@ export default {
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
     },
+    // team widget
     managers() {
       if (!this.canteen) []
       const managersCopy = [...this.canteen.managers]
@@ -430,7 +431,11 @@ export default {
   },
   methods: {
     fetchCanteenIfNeeded() {
-      if (this.canteen || !this.canteenId) return
+      if (!this.canteenId) {
+        this.canteen = null
+        return
+      }
+      if (this.canteen?.id === this.canteenId) return
       const id = this.canteenId
       return this.$store
         .dispatch("fetchCanteen", { id })
@@ -440,8 +445,10 @@ export default {
           this.updateSatelliteCount()
           this.fetchPurchases()
           this.getPublishedPageViewCount()
+          this.$router.push({ query: { cantine: id } }).catch(() => {})
         })
         .catch(() => {
+          this.canteen = null
           this.$store.dispatch("notify", {
             message: "Nous n'avons pas trouvé cette cantine",
             status: "error",
@@ -549,13 +556,17 @@ export default {
   },
   watch: {
     canteenId() {
-      this.canteen = null
       this.fetchCanteenIfNeeded()
     },
     nextCanteenId(newValue) {
       if (newValue) {
         this.canteenId = newValue
         this.showCanteenSelection = false
+      }
+    },
+    $route(newRoute, oldRoute) {
+      if (newRoute.query.cantine !== oldRoute.query.cantine) {
+        this.nextCanteenId = +newRoute.query.cantine
       }
     },
   },
