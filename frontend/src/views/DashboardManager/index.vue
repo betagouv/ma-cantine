@@ -290,11 +290,9 @@ import validators from "@/validators"
 
 export default {
   name: "DashboardManager",
-  components: { EgalimProgression, CanteenIndicators, DsfrAutocomplete },
+  components: { EgalimProgression, DsfrAutocomplete },
   data() {
-    // const canteenId = this.$store.state.userCanteenPreviews[0]?.id
-    const canteenId = 6 // Site avec diag
-    // const canteenId = 227 // Satellite sans diag
+    const canteenId = this.$store.state.userCanteenPreviews[0]?.id
     return {
       canteenId,
       nextCanteenId: canteenId,
