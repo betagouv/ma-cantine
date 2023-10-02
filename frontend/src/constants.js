@@ -530,19 +530,19 @@ export default Object.freeze({
   Levels: {
     UNKNOWN: {
       text: "INCONNU",
-      colorClass: "grey--text text--darken-1",
+      colorClass: "grey--text text--darken-2",
     },
     BEGINNER: {
       text: "NOVICE",
-      colorClass: "grey--text text--darken-1",
+      colorClass: "grey--text text--darken-2",
     },
     ADVANCED: {
       text: "AVANCÉ",
-      colorClass: "blue--text text--darken-1",
+      colorClass: "blue--text text--darken-3",
     },
     EXPERT: {
       text: "EXPERT",
-      colorClass: "green--text text--darken-2",
+      colorClass: "green--text text--darken-4",
     },
   },
 })
