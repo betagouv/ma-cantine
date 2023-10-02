@@ -105,7 +105,10 @@
             <v-card outlined class="fill-height d-flex flex-column pa-4">
               <v-card-title class="fr-h4">Ma vitrine en ligne</v-card-title>
               <v-card-text class="fr-text-xs">
-                <p>TODO</p>
+                <!-- TODO: UI for the status tag -->
+                <p>Statut : {{ isPublished ? "publiée" : "non publiée" }}</p>
+                <!-- TODO: derniere MAJ -->
+                <p>Nombre de visiteurs : {{ viewCount }}</p>
               </v-card-text>
               <v-spacer></v-spacer>
               <v-card-actions class="mx-2 mb-2 justify-end">
@@ -322,6 +325,7 @@ export default {
       purchasesFetchingError: null,
       showCanteenSelection: false,
       validators,
+      viewCount: 0,
     }
   },
   computed: {
@@ -377,6 +381,9 @@ export default {
       if (!this.canteen.images || this.canteen.images.length === 0) return null
       return this.canteen.images[0].image
     },
+    isPublished() {
+      return this.canteen.publicationStatus === "published"
+    },
   },
   methods: {
     fetchCanteenIfNeeded() {
@@ -389,6 +396,7 @@ export default {
           this.getCentralKitchen()
           this.updateSatelliteCount()
           this.fetchPurchases()
+          this.getPublishedPageViewCount()
         })
         .catch(() => {
           this.$store.dispatch("notify", {
@@ -468,6 +476,26 @@ export default {
       if (Object.prototype.hasOwnProperty.call(Constants.Characteristics, characteristic))
         return Constants.Characteristics[characteristic]
       return { text: "" }
+    },
+    getPublishedPageViewCount() {
+      if (!this.isPublished) return 0
+      const url =
+        "https://stats.data.gouv.fr/index.php?module=API&method=VisitsSummary.getVisits&idSite=162&period=range&date=last30&format=JSON&token_auth=anonymous&segment=pageUrl=^" +
+        // TODO: use vue router to generate this link
+        encodeURIComponent("https://ma-cantine.agriculture.gouv.fr/nos-cantines/") +
+        encodeURIComponent(`${this.canteen.id}--`)
+      return fetch(url)
+        .then((response) => {
+          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          return response.json()
+        })
+        .then((response) => {
+          this.viewCount = response.value
+        })
+        .catch(() => {
+          console.warn("Error when fetching page visits for url", url)
+          this.viewCount = 0
+        })
     },
   },
   mounted() {
