@@ -82,6 +82,7 @@ export default {
     },
     canteen: {
       type: Object,
+      required: true,
     },
     lastYearDiagnostic: {
       type: Object,
