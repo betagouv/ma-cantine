@@ -14,10 +14,10 @@
     </div>
     <v-card outlined class="fill-height d-flex flex-column" v-else-if="!hasApproData">
       <v-card-title class="font-weight-bold body-1">
-        <v-icon color="red" class="mr-2">
-          mdi-food-apple
+        <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
+          {{ keyMeasure.mdiIcon }}
         </v-icon>
-        <h3>Qualité des produits</h3>
+        <h3>{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
       <v-card-text class="fill-height" style="position: relative;">
         <div class="overlay d-flex flex-column align-center justify-center">
@@ -41,10 +41,10 @@
       v-else-if="diagnostic"
     >
       <v-card-title class="font-weight-bold body-1">
-        <v-icon color="red" class="mr-2">
-          mdi-food-apple
+        <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
+          {{ keyMeasure.mdiIcon }}
         </v-icon>
-        <h3>Qualité des produits</h3>
+        <h3>{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
       <v-card-text :class="`mt-n4 pl-12 py-0 ${level.colorClass}`">
         NIVEAU :
@@ -69,6 +69,7 @@
 import { hasDiagnosticApproData, lastYear } from "@/utils"
 import Constants from "@/constants"
 import ApproGraph from "./ApproGraph"
+import keyMeasures from "@/data/key-measures.json"
 
 export default {
   name: "ApproSegment",
@@ -89,6 +90,9 @@ export default {
     },
   },
   computed: {
+    keyMeasure() {
+      return keyMeasures.find((x) => x.id === "qualite-des-produits")
+    },
     hasApproData() {
       return this.diagnostic && hasDiagnosticApproData(this.diagnostic)
     },

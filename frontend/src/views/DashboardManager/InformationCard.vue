@@ -5,10 +5,10 @@
     class="fill-height d-flex flex-column dsfr"
   >
     <v-card-title class="font-weight-bold body-1">
-      <v-icon color="amber darken-2" class="mr-2">
-        mdi-bullhorn
+      <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
+        {{ keyMeasure.mdiIcon }}
       </v-icon>
-      <h3>Information des convives</h3>
+      <h3>{{ keyMeasure.shortTitle }}</h3>
     </v-card-title>
     <v-card-text v-if="needsData">
       <MissingDataChip class="mt-n4 ml-8" />
@@ -31,6 +31,7 @@
 <script>
 import Constants from "@/constants"
 import MissingDataChip from "./MissingDataChip"
+import keyMeasures from "@/data/key-measures.json"
 
 export default {
   name: "InformationCard",
@@ -45,6 +46,9 @@ export default {
     },
   },
   computed: {
+    keyMeasure() {
+      return keyMeasures.find((x) => x.id === "information-des-usagers")
+    },
     needsData() {
       return this.level === Constants.Levels.UNKNOWN
     },
