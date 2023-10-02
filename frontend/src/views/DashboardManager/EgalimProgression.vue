@@ -47,12 +47,12 @@
 <script>
 import DsfrSelect from "@/components/DsfrSelect"
 import { lastYear, diagnosticYears } from "@/utils"
-import FoodWasteCard from "./FoodWasteCard.vue"
-import DiversificationCard from "./DiversificationCard.vue"
-import NoPlasticCard from "./NoPlasticCard.vue"
-import InformationCard from "./InformationCard.vue"
-import MissingDataChip from "./MissingDataChip.vue"
-import ApproSegment from "./ApproSegment.vue"
+import FoodWasteCard from "./FoodWasteCard"
+import DiversificationCard from "./DiversificationCard"
+import NoPlasticCard from "./NoPlasticCard"
+import InformationCard from "./InformationCard"
+import MissingDataChip from "./MissingDataChip"
+import ApproSegment from "./ApproSegment"
 
 export default {
   name: "EgalimProgression",

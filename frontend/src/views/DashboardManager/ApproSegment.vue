@@ -68,7 +68,7 @@
 <script>
 import { hasDiagnosticApproData, lastYear } from "@/utils"
 import Constants from "@/constants"
-import ApproGraph from "./ApproGraph.vue"
+import ApproGraph from "./ApproGraph"
 
 export default {
   name: "ApproSegment",

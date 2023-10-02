@@ -282,7 +282,7 @@
 </template>
 
 <script>
-import EgalimProgression from "./EgalimProgression.vue"
+import EgalimProgression from "./EgalimProgression"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import { toCurrency, capitalise } from "@/utils"
 import Constants from "@/constants"

@@ -28,7 +28,7 @@
 
 <script>
 import Constants from "@/constants"
-import MissingDataChip from "./MissingDataChip.vue"
+import MissingDataChip from "./MissingDataChip"
 
 export default {
   name: "DiversificationCard",
