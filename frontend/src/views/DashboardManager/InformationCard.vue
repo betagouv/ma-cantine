@@ -1,5 +1,9 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column dsfr">
+  <v-card
+    :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
+    outlined
+    class="fill-height d-flex flex-column dsfr"
+  >
     <v-card-title class="font-weight-bold body-1">
       <v-icon color="amber darken-2" class="mr-2">
         mdi-bullhorn
@@ -7,7 +11,7 @@
       <span>Information des convives</span>
     </v-card-title>
     <v-card-text v-if="needsData">
-      <MissingDataChip />
+      <MissingDataChip class="mt-n4 ml-8" />
     </v-card-text>
     <v-card-text :class="`mt-n4 pl-12 ${level.colorClass}`" v-else>
       NIVEAU :
@@ -33,6 +37,9 @@ export default {
     diagnostic: {
       type: Object,
     },
+    canteen: {
+      type: Object,
+    },
   },
   computed: {
     needsData() {
@@ -43,6 +50,9 @@ export default {
     },
     cardBody() {
       return "Vous êtes au point ! N’hésitez pas à utiliser les outils fournis par “ma cantine” pour informer encore plus facilement vos convives de vos actions."
+    },
+    canteenUrlComponent() {
+      return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
   },
 }

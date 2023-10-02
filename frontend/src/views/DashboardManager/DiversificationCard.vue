@@ -1,5 +1,9 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column dsfr">
+  <v-card
+    :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
+    outlined
+    class="fill-height d-flex flex-column dsfr"
+  >
     <v-card-title class="font-weight-bold body-1">
       <v-icon color="green darken-1" class="mr-2">
         $leaf-fill
@@ -7,7 +11,7 @@
       <span>Diversification des menus</span>
     </v-card-title>
     <v-card-text v-if="needsData">
-      <MissingDataChip />
+      <MissingDataChip class="mt-n4 ml-8" />
     </v-card-text>
     <v-card-text :class="`mt-n4 pl-12 ${level.colorClass}`" v-else>
       NIVEAU :
@@ -33,6 +37,9 @@ export default {
     diagnostic: {
       type: Object,
     },
+    canteen: {
+      type: Object,
+    },
   },
   computed: {
     needsData() {
@@ -43,6 +50,9 @@ export default {
     },
     cardBody() {
       return "Faites un premier pas : mettez en place un menu végétarien par semaine. Découvrez des recettes et des conseils directement sur “ma cantine” !"
+    },
+    canteenUrlComponent() {
+      return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
   },
 }

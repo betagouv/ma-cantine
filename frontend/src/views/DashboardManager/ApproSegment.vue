@@ -12,10 +12,34 @@
         votre outil de gestion habituel si cela est possible pour transférer les données.
       </p>
     </div>
-    <div v-else-if="!hasApproData">
-      TODO : Page 3000
-    </div>
-    <v-card outlined class="fill-height d-flex flex-column dsfr" v-else-if="diagnostic">
+    <v-card outlined class="fill-height d-flex flex-column" v-else-if="!hasApproData">
+      <v-card-title class="font-weight-bold body-1">
+        <v-icon color="red" class="mr-2">
+          mdi-food-apple
+        </v-icon>
+        <span>Qualité des produits</span>
+      </v-card-title>
+      <v-card-text class="fill-height" style="position: relative;">
+        <div class="overlay d-flex flex-column align-center justify-center">
+          <p class="body-2 pa-4 text-center">
+            Avec l’outil de suivi d’achats, pilotez en temps réel votre progression EGAlim sur l’année en cours, et
+            simplifiez votre prochaine télédéclaration.
+          </p>
+          <v-btn
+            color="primary"
+            :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
+          >
+            Commencer
+          </v-btn>
+        </div>
+      </v-card-text>
+    </v-card>
+    <v-card
+      :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
+      outlined
+      class="fill-height d-flex flex-column dsfr"
+      v-else-if="diagnostic"
+    >
       <v-card-title class="font-weight-bold body-1">
         <v-icon color="red" class="mr-2">
           mdi-food-apple
@@ -50,7 +74,13 @@
   </div>
 </template>
 <script>
-import { hasDiagnosticApproData, getSustainableTotal, getPercentage, applicableDiagnosticRules } from "@/utils"
+import {
+  hasDiagnosticApproData,
+  getSustainableTotal,
+  getPercentage,
+  applicableDiagnosticRules,
+  lastYear,
+} from "@/utils"
 import VueApexCharts from "vue-apexcharts"
 import Constants from "@/constants"
 
@@ -64,6 +94,9 @@ export default {
     diagnostic: {
       type: Object,
     },
+    canteen: {
+      type: Object,
+    },
     lastYearDiagnostic: {
       type: Object,
     },
@@ -71,6 +104,9 @@ export default {
   computed: {
     hasApproData() {
       return this.diagnostic && hasDiagnosticApproData(this.diagnostic)
+    },
+    isCurrentYear() {
+      return this.diagnostic.year === lastYear() + 1
     },
     level() {
       return Constants.Levels.BEGINNER
@@ -179,6 +215,23 @@ export default {
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
     },
+    canteenUrlComponent() {
+      return this.$store.getters.getCanteenUrlComponent(this.canteen)
+    },
   },
 }
 </script>
+
+<style scoped>
+.overlay {
+  position: absolute;
+  top: 4%;
+  left: 3%;
+  z-index: 1;
+  background: #bbbbbb50;
+  width: 94%;
+  height: 92%;
+  backdrop-filter: blur(7px);
+  border: dashed #bbb;
+}
+</style>

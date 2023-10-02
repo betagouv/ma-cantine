@@ -15,7 +15,7 @@
         <MissingDataChip v-if="!hasPurchases && !diagnostic && !hasLastYearDiagnostic" class="mt-4" />
         <v-divider class="my-6"></v-divider>
       </div>
-      <ApproSegment :purchases="null" :diagnostic="diagnostic" :lastYearDiagnostic="null" />
+      <ApproSegment :purchases="null" :diagnostic="diagnostic" :lastYearDiagnostic="null" :canteen="canteen" />
     </v-col>
     <v-col cols="12" md="8">
       <v-row style="position: relative;">
@@ -23,19 +23,24 @@
           class="overlay d-flex align-center justify-center"
           v-if="!hasPurchases && !diagnostic && !hasLastYearDiagnostic"
         >
-          <v-btn color="primary">Commencer</v-btn>
+          <v-btn
+            color="primary"
+            :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
+          >
+            Commencer
+          </v-btn>
         </div>
         <v-col cols="12" md="6" fill-height>
-          <FoodWasteCard :diagnostic="diagnostic" />
+          <FoodWasteCard :diagnostic="diagnostic" :canteen="canteen" />
         </v-col>
         <v-col cols="12" md="6" fill-height>
-          <DiversificationCard :diagnostic="diagnostic" />
+          <DiversificationCard :diagnostic="diagnostic" :canteen="canteen" />
         </v-col>
         <v-col cols="12" md="6" fill-height>
-          <NoPlasticCard :diagnostic="diagnostic" />
+          <NoPlasticCard :diagnostic="diagnostic" :canteen="canteen" />
         </v-col>
         <v-col cols="12" md="6" fill-height>
-          <InformationCard :diagnostic="diagnostic" />
+          <InformationCard :diagnostic="diagnostic" :canteen="canteen" />
         </v-col>
       </v-row>
     </v-col>
@@ -84,6 +89,9 @@ export default {
     },
     hasLastYearDiagnostic() {
       return false
+    },
+    canteenUrlComponent() {
+      return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
   },
 }
