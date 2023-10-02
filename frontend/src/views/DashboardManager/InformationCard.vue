@@ -8,7 +8,7 @@
       <v-icon color="amber darken-2" class="mr-2">
         mdi-bullhorn
       </v-icon>
-      <span>Information des convives</span>
+      <h3>Information des convives</h3>
     </v-card-title>
     <v-card-text v-if="needsData">
       <MissingDataChip class="mt-n4 ml-8" />

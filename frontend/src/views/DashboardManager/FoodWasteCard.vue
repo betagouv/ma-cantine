@@ -8,7 +8,7 @@
       <v-icon color="orange darken-2" class="mr-2">
         mdi-offer
       </v-icon>
-      <span>Lutte contre le gaspillage</span>
+      <h3>Lutte contre le gaspillage</h3>
     </v-card-title>
     <v-card-text v-if="needsData">
       <MissingDataChip class="mt-n4 ml-8" />

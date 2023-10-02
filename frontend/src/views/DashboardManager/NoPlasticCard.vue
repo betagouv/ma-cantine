@@ -8,7 +8,7 @@
       <v-icon color="blue darken-1" class="mr-2">
         mdi-weather-windy
       </v-icon>
-      <span>Interdiction du plastique</span>
+      <h3>Interdiction du plastique</h3>
     </v-card-title>
     <v-card-text v-if="needsData">
       <MissingDataChip class="mt-n4 ml-8" />

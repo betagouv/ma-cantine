@@ -8,7 +8,7 @@
       <v-icon color="green darken-1" class="mr-2">
         $leaf-fill
       </v-icon>
-      <span>Diversification des menus</span>
+      <h3>Diversification des menus</h3>
     </v-card-title>
     <v-card-text v-if="needsData">
       <MissingDataChip class="mt-n4 ml-8" />

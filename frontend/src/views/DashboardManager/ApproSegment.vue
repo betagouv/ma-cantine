@@ -17,7 +17,7 @@
         <v-icon color="red" class="mr-2">
           mdi-food-apple
         </v-icon>
-        <span>Qualité des produits</span>
+        <h3>Qualité des produits</h3>
       </v-card-title>
       <v-card-text class="fill-height" style="position: relative;">
         <div class="overlay d-flex flex-column align-center justify-center">
@@ -44,7 +44,7 @@
         <v-icon color="red" class="mr-2">
           mdi-food-apple
         </v-icon>
-        <span>Qualité des produits</span>
+        <h3>Qualité des produits</h3>
       </v-card-title>
       <v-card-text :class="`mt-n4 pl-12 py-0 ${level.colorClass}`">
         NIVEAU :
