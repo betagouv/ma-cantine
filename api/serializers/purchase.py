@@ -22,8 +22,14 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "price_ht",
             "invoice_file",
             "local_definition",
+            "import_source",
         )
-        read_only_fields = ("id",)
+        read_only_fields = (
+            "id",
+            "creation_date",
+            "modification_date",
+            "import_source",
+        )
 
     def create(self, validated_data):
         if "canteen" not in validated_data:

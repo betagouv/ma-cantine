@@ -55,18 +55,21 @@
             <v-card outlined class="fill-height d-flex flex-column pa-4">
               <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes achats</h3></v-card-title>
               <v-card-text class="fr-text-xs grey--text text--darken-2 py-0 mt-3">
-                <p>
+                <p v-if="!purchases.length">
                   Renseignez vos achats pour calculer automatiquement votre progression sur le volet approvisionnements
                   EGAlim.
                 </p>
+                <p v-else>Source des données : {{ purchaseDataSourceString }}.</p>
               </v-card-text>
-              <v-card-text class="py-0">
+              <v-card-text class="pt-0">
                 <v-data-table
                   :items="purchases"
                   :headers="purchaseHeaders"
                   :hide-default-footer="true"
                   :disable-sort="true"
                   class="dsfr-table"
+                  :class="purchases.length && 'table-preview'"
+                  dense
                 >
                   <template v-slot:[`item.characteristics`]="{ item }">
                     {{ getProductCharacteristicsDisplayValue(item.characteristics) }}
@@ -94,7 +97,7 @@
                 </v-data-table>
               </v-card-text>
               <v-spacer></v-spacer>
-              <v-card-actions class="justify-end" v-if="purchases.length || purchasesFetchingError">
+              <v-card-actions v-if="purchases.length || purchasesFetchingError">
                 <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
                   Ajouter un achat
                 </v-btn>
@@ -382,6 +385,12 @@ export default {
     canteenImage() {
       if (!this.canteen.images || this.canteen.images.length === 0) return null
       return this.canteen.images[0].image
+    },
+    // purchases widget
+    purchaseDataSourceString() {
+      if (!this.purchases.length) return
+      // TODO: if the latest purchase source is API show that too
+      return this.purchases[0].importSource ? "import en masse" : "ajout manuel"
     },
   },
   methods: {
