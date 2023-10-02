@@ -3,7 +3,7 @@
     <div v-if="showFirstTimeView" class="body-1">
       <p class="font-weight-bold">Pilotez votre progression tout au long de l’année en cours</p>
       <p class="body-2">
-        Avec l’outil de suivi d’achats de “ma cantine”, calculez automatiquement et en temps réel la part de vos
+        Avec l’outil de suivi d’achats de « ma cantine », calculez automatiquement et en temps réel la part de vos
         approvisionnements qui correspondent aux critères de la loi EGAlim, et facilitez ainsi votre prochaine
         télédéclaration.
       </p>
