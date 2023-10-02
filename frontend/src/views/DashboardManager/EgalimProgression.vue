@@ -8,7 +8,7 @@
           </h2>
         </v-col>
         <v-col cols="5">
-          <DsfrSelect ref="yearSelect" v-model="year" :items="allowedYears" hide-details="auto" placeholder="Année" />
+          <DsfrSelect v-model="year" :items="allowedYears" hide-details="auto" placeholder="Année" />
         </v-col>
       </v-row>
       <div>
