@@ -136,4 +136,17 @@ export default {
 .v-expansion-panel-header__icon > .v-icon {
   font-size: 1rem;
 }
+
+.dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
+  color: #000091;
+}
+.dsfr-table.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
+  height: 32px;
+}
+.dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th {
+  border-bottom: thin solid #000091;
+}
+.dsfr-table.v-data-table > .v-data-table__wrapper > table > tbody > tr.v-data-table__empty-wrapper > td {
+  padding: 0px;
+}
 </style>
