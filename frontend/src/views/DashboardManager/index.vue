@@ -133,12 +133,15 @@
           </v-col>
           <v-col v-else cols="12" md="4" id="satellites">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
-              <v-card-title class="fr-h4">Mes satellites</v-card-title>
-              <v-card-text class="fr-text-xs">
-                <p>TODO</p>
+              <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes satellites</h3></v-card-title>
+              <v-card-text class="fr-text-xs grey--text text--darken-2 mt-3">
+                <p>Ajoutez et publiez les cantines que vous livrez</p>
+              </v-card-text>
+              <v-spacer v-if="!satellites.length" />
+              <v-card-text class="fr-text-xs grey--text text--darken-2" v-if="canteen.satelliteCanteensCount">
                 <p>{{ satelliteCount }} / {{ canteen.satelliteCanteensCount }} renseignés</p>
               </v-card-text>
-              <v-spacer></v-spacer>
+              <v-spacer v-if="!satellites.length" />
               <v-card-actions class="mx-2 mb-2">
                 <v-btn
                   :to="{
@@ -146,9 +149,9 @@
                     params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
                   }"
                   color="primary"
-                  outlined
+                  :outlined="!!satellites.length"
                 >
-                  Modifier
+                  {{ satellites.length ? "Modifier" : "Ajouter mes satellites" }}
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -314,12 +317,13 @@ export default {
   name: "DashboardManager",
   components: { EmptyProgression, EgalimProgression, DsfrAutocomplete },
   data() {
-    const canteenId = this.$store.state.userCanteenPreviews[0]?.id
+    const canteenId = this.$store.state.userCanteenPreviews[1]?.id
     return {
       canteenId,
       nextCanteenId: canteenId,
       canteen: null,
       centralKitchen: null,
+      satellites: [],
       satelliteCount: null,
       purchases: [],
       purchaseHeaders: [
