@@ -17,7 +17,9 @@
       NIVEAU :
       <span class="font-weight-bold">{{ level.text }}</span>
     </v-card-text>
-    <v-card-text>{{ cardBody }}</v-card-text>
+    <v-card-text>
+      <p>{{ cardBody }}</p>
+    </v-card-text>
     <v-spacer></v-spacer>
     <v-card-actions class="px-4 pt-0">
       <v-spacer></v-spacer>
