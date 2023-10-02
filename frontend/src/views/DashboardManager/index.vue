@@ -151,7 +151,20 @@
                   class="dsfr-table grey--table"
                   :class="satellites.length && 'table-preview'"
                   dense
-                />
+                >
+                  <template v-slot:[`item.publicationStatus`]="{ item }">
+                    <v-chip
+                      :color="isPublished(item) ? 'green lighten-4' : 'grey lighten-2'"
+                      :class="isPublished(item) ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
+                      class="font-weight-bold px-2 fr-text-xs"
+                      style="border-radius: 4px !important;"
+                      small
+                      label
+                    >
+                      {{ isPublished(item) ? "PUBLIÉE" : "NON PUBLIÉE" }}
+                    </v-chip>
+                  </template>
+                </v-data-table>
               </v-card-text>
               <v-spacer />
               <v-card-actions class="ma-2">
@@ -506,6 +519,9 @@ export default {
       if (Object.prototype.hasOwnProperty.call(Constants.Characteristics, characteristic))
         return Constants.Characteristics[characteristic]
       return { text: "" }
+    },
+    isPublished(canteen) {
+      return canteen.publicationStatus === "published"
     },
   },
   mounted() {
