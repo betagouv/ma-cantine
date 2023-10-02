@@ -51,15 +51,7 @@
         <span class="font-weight-bold">{{ level.text }}</span>
       </v-card-text>
       <v-card-text>
-        <VueApexCharts
-          :options="chartOptions"
-          :series="series"
-          role="img"
-          aria-description="Approvisionnement bio et durable"
-          height="100px"
-          width="100%"
-          class="my-4"
-        />
+        <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
         <p class="body-2">
           C’est parti ! Découvrez les outils et les ressources personnalisées pour vous aider à atteindre un des deux
           objectifs EGAlim et passer au niveau suivant !
@@ -74,19 +66,13 @@
   </div>
 </template>
 <script>
-import {
-  hasDiagnosticApproData,
-  getSustainableTotal,
-  getPercentage,
-  applicableDiagnosticRules,
-  lastYear,
-} from "@/utils"
-import VueApexCharts from "vue-apexcharts"
+import { hasDiagnosticApproData, lastYear } from "@/utils"
 import Constants from "@/constants"
+import ApproGraph from "./ApproGraph.vue"
 
 export default {
   name: "ApproSegment",
-  components: { VueApexCharts },
+  components: { ApproGraph },
   props: {
     purchases: {
       type: Array,
@@ -119,101 +105,6 @@ export default {
     },
     hasLastYearDiagnostic() {
       return false
-    },
-    bioPercentage() {
-      return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt, true)
-    },
-    sustainablePercentage() {
-      return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt, true)
-    },
-    chartOptions() {
-      return {
-        chart: {
-          type: "bar",
-          stacked: true,
-          toolbar: { show: false },
-        },
-        tooltip: {
-          enabled: false,
-        },
-        states: {
-          hover: {
-            filter: {
-              type: "none",
-            },
-          },
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-          },
-        },
-        xaxis: {
-          max: 100,
-          min: 0,
-          tickAmount: 4,
-          labels: { show: false },
-          axisTicks: { show: false },
-        },
-        yaxis: {
-          labels: { show: false },
-        },
-        grid: {
-          padding: {
-            left: -14,
-          },
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        annotations: {
-          xaxis: [
-            {
-              x: this.applicableRules.qualityThreshold,
-              borderColor: "#00A95F",
-              label: {
-                offsetY: -14,
-                orientation: "horizontal",
-                style: {
-                  color: "#00A95F",
-                  background: "#fff",
-                },
-                text: `${this.applicableRules.qualityThreshold} %`,
-              },
-            },
-            {
-              x: this.applicableRules.bioThreshold,
-              borderColor: "#297254",
-              label: {
-                offsetY: -14,
-                orientation: "horizontal",
-                style: {
-                  color: "#297254",
-                  background: "#fff",
-                },
-                text: `${this.applicableRules.bioThreshold} %`,
-              },
-            },
-          ],
-        },
-      }
-    },
-    series() {
-      return [
-        {
-          name: `Bio : ${this.bioPercentage} %`,
-          data: [this.bioPercentage],
-          color: "#297254",
-        },
-        {
-          name: `Durable et de qualité : ${this.sustainablePercentage} %`,
-          data: [this.sustainablePercentage],
-          color: "#00A95F",
-        },
-      ]
-    },
-    applicableRules() {
-      return applicableDiagnosticRules(this.canteen)
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
