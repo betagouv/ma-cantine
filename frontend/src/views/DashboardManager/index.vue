@@ -30,16 +30,8 @@
     </v-row>
 
     <div v-if="canteen">
-      <h2 class="mt-8 mb-2 fr-h4">
-        Ma progression
-      </h2>
-      <p class="fr-text-sm">
-        Vous trouverez ci-dessous une vue d'ensemble de votre progression sur les cinq volets de la loi EGAlim.
-      </p>
-
-      <div>
-        <EgalimProgression v-if="hasProgression" />
-        <EmptyProgression v-else />
+      <div class="mt-4">
+        <EgalimProgression :canteen="canteen" />
       </div>
 
       <div v-if="canteen">
@@ -294,8 +286,7 @@
 </template>
 
 <script>
-import EmptyProgression from "./EmptyProgression.vue"
-import EgalimProgression from "./EgalimProgression.vue"
+import EgalimProgression from "./EgalimProgression"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import { toCurrency, capitalise } from "@/utils"
 import Constants from "@/constants"
@@ -303,7 +294,7 @@ import validators from "@/validators"
 
 export default {
   name: "DashboardManager",
-  components: { EmptyProgression, EgalimProgression, DsfrAutocomplete },
+  components: { EgalimProgression, DsfrAutocomplete },
   data() {
     const canteenId = this.$store.state.userCanteenPreviews[0]?.id
     return {
@@ -331,9 +322,6 @@ export default {
   computed: {
     loggedUser() {
       return this.$store.state.loggedUser
-    },
-    hasProgression() {
-      return false
     },
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
