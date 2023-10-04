@@ -7,18 +7,24 @@ Nous nous intéressions à la répartition des télédéclaration en fonction de
 Les cuisines centrales ont été supprimées car elles cumulent plusieurs secteurs (`central` et `central_serving`)
 :::
 
-## Focus sur les catégories principales
 ```{python}
 # | echo: false
 # | output: asis
 
-def traitement_secteurs(df, year):
-    df["canteen.sectors"] = tds[year]["canteen.sectors"].fillna("[]")
-    if year != "2022":  # Transform the dict into a list of category
-        df["canteen.sectors"] = df["canteen.sectors"].apply(lambda x: ast.literal_eval(x))
-        df["canteen.sectors_"] = df["canteen.sectors"].apply(lambda x: [item["name"] for item in x])
+def traitement_secteurs(tds, year):
+    df = tds[year].copy()
+
+     
+    if tds[year]['year'].max() != 2022:  # Transform the dict into a list of category
+        df["canteen.sectors_"] = df["canteen.sectors"].fillna('[]')
+        df["canteen.sectors_"] = df["canteen.sectors_"].apply(lambda x: [item["name"] for item in ast.literal_eval(x)])
     else:
-        df["canteen.sectors_"] = df["canteen.sectors"].apply(lambda x: x.split(","))
+        df["canteen.sectors_"] = df["canteen.sectors"].fillna('')
+        df["canteen.sectors_"] = df["canteen.sectors_"].apply(lambda x: x.split(","))
+
+    # Process all central kitchen as one sector
+    df['canteen.sectors_'] = df['canteen.sectors_'].apply(lambda x: ['Secteurs multiples'] if str(x).count(',') > 0 else x)
+    df['canteen.sectors_'].to_csv('sectors.csv')
 
     # Explode the lists into separate rows
     df_exploded = df.explode("canteen.sectors_")
@@ -27,8 +33,8 @@ def traitement_secteurs(df, year):
     categories_dummies = pd.get_dummies(df_exploded["canteen.sectors_"])
 
     # Group by the index (items) and sum the dummy columns
-
     categories_dummies_grouped = categories_dummies.groupby(by=categories_dummies.index).sum()
+    
     # Concatenate the dummy columns with the original DataFrame
     df_normalized = pd.concat([df, categories_dummies_grouped], axis=1)
 
@@ -37,40 +43,125 @@ def traitement_secteurs(df, year):
 
     return df_normalized
 
-sectors = {}
-year ="2023_strat_2"
-sectors[year] = {}
-df_processed_sectors = traitement_secteurs(tds[year], year)
-df_processed_sectors = df_processed_sectors[~df_processed_sectors['canteen.production_type'].isin(['central', 'central_serving'])]
-for cat in utils.SECTORS.keys():
-    sectors[year][cat] = {}
-    df_cat = df_processed_sectors[df_processed_sectors[cat] > 0]
-    sectors[year][cat]['Nombre de TD'] = df_cat[cat].sum()
-    sectors[year][cat]['Taux des TD pris en compte'] = len(df_cat[cat])/len(tds[year])
-    sectors[year][cat]['Montant total des achats'] = df_cat["teledeclaration.value_total_ht"].sum()
-    sectors[year][cat]['Taux des achats Bio'] = df_cat["teledeclaration.value_bio_ht"].sum()/df_cat["teledeclaration.value_total_ht"].sum()
-    sectors[year][cat]['Montant des achats Bio'] = df_cat["teledeclaration.value_bio_ht"].sum()
-    sectors[year][cat]['Taux achats secteurs'] = df_cat["teledeclaration.value_total_ht"].sum()/ tds[year]["teledeclaration.value_total_ht"].sum()
+def calcul_indicateurs_secteurs(tds, year, suffix=''):
+    sectors = {}
+    sectors[year] = {}
+    df_processed_sectors = traitement_secteurs(tds, year)
 
-summary = pd.DataFrame.from_dict(sectors[year]).T
+    # Clearing out central kitchen as they have multiple sectors
+    # TODO : les inclure sous une nouvelle catégorie
 
-# Ajout des catégories pour caractériser chaque sous-catégorie
-summary['sector'] = summary.index.map(utils.SECTORS)
-summary = summary.reset_index(names='sub_sector')
+    for cat in utils.SECTORS.keys():
+        sectors[year][cat] = {}
+        if cat in df_processed_sectors.columns:
+            df_cat = df_processed_sectors[df_processed_sectors[cat] > 0]
+            sectors[year][cat][f'Nombre de TD{suffix}'] = df_cat[cat].sum()
+            sectors[year][cat][f'Taux des TD pris en compte{suffix}'] = len(df_cat[cat])/len(tds[year])
+            sectors[year][cat][f'Montant total des achats{suffix}'] = df_cat["teledeclaration.value_total_ht"].sum()
+            sectors[year][cat][f'Taux des achats Bio{suffix}'] = df_cat["teledeclaration.value_bio_ht"].sum()/df_cat["teledeclaration.value_total_ht"].sum()
+            sectors[year][cat][f'Montant des achats Bio{suffix}'] = df_cat["teledeclaration.value_bio_ht"].sum()
+            sectors[year][cat][f'Taux achats secteurs{suffix}'] = df_cat["teledeclaration.value_total_ht"].sum()/ tds[year]["teledeclaration.value_total_ht"].sum()
 
-# Calcul des totaux par secteurs
-summary_by_sector = summary.groupby(['sector']).sum()
-summary_by_sector['sub_sector'] = ['Total (somme)'] * len(summary_by_sector)
-summary_by_sector = summary_by_sector.reset_index(names='sector')
+    summary = pd.DataFrame.from_dict(sectors[year]).T
 
-# Agregation des sous secteur et secteurs
-summary_by_sub_sector = pd.concat([summary, summary_by_sector])
-summary_by_sub_sector = summary_by_sub_sector.groupby(['sector', 'sub_sector']).sum()
+    # Ajout des catégories pour caractériser chaque sous-catégorie
+    summary['sector'] = summary.index.map(utils.SECTORS)
+    summary = summary.reset_index(names='sub_sector')
 
-# TODO  A optimiser : Actuellement nous recalculons tous les taux car ils ont été corrompus par l'aggrégation en somme
-summary_by_sub_sector['Taux des achats Bio'] = summary_by_sub_sector.apply(lambda x: x['Montant des achats Bio'] / x['Montant total des achats'], axis=1)
-summary_by_sub_sector['Taux achats secteurs'] = summary_by_sub_sector.apply(lambda x: x['Montant total des achats'] / tds[year]["teledeclaration.value_total_ht"].sum(), axis=1)
+    # Calcul des totaux par secteurs
+    summary_by_sector = summary.groupby(['sector']).sum()
+    summary_by_sector['sub_sector'] = ['Total (somme)'] * len(summary_by_sector)
+    summary_by_sector = summary_by_sector.reset_index(names='sector')
 
-utils.display_indicateurs(summary_by_sub_sector, transpose=False)
-print('\n')
+    # Agregation des sous secteur et secteurs
+    summary_by_sub_sector = pd.concat([summary, summary_by_sector])
+    summary_by_sub_sector = summary_by_sub_sector.groupby(['sector', 'sub_sector']).sum()
+
+    # TODO  A optimiser : Actuellement nous recalculons tous les taux car ils ont été corrompus par l'aggrégation en somme
+    summary_by_sub_sector[f'Taux des achats Bio{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Montant des achats Bio{suffix}'] / x[f'Montant total des achats{suffix}'], axis=1)
+    summary_by_sub_sector[f'Taux achats secteurs{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Montant total des achats{suffix}'] / tds[year]["teledeclaration.value_total_ht"].sum(), axis=1)
+
+    # Suppression des colonnes après leur utilisation pour les calculs de ratio
+    del summary_by_sub_sector[f'Montant total des achats{suffix}']
+    del summary_by_sub_sector[f'Montant des achats Bio{suffix}']
+
+    return summary_by_sub_sector
+```
+
+## 📷 2022
+```{python}
+# | echo: false
+# | output: asis
+
+summary = calcul_indicateurs_secteurs(tds, 'Campagne 2022')
+utils.display_indicateurs(summary, transpose=False)
+```
+
+## 📷 2023
+```{python}
+# | echo: false
+# | output: asis
+
+summary = calcul_indicateurs_secteurs(tds, 'Campagne 2023')
+
+def display_sub_sector(summary, sector):
+    summary_sector = summary[summary.index.isin([sector], level=0)].copy()
+    summary_sector = summary_sector.reset_index(0)
+    del summary_sector['sector']
+    summary_sector.index = summary_sector.index.set_names('Sous Secteur')
+    utils.display_indicateurs(summary_sector, transpose=False)
+
+print('### Enseignement')
+display_sub_sector(summary, 'education')
+
+print('### Médico Social')
+display_sub_sector(summary, 'social')
+
+print('### Santé')
+display_sub_sector(summary, 'health')
+
+print('### Administration')
+display_sub_sector(summary, 'administration')
+
+print('### Multi Secteurs')
+display_sub_sector(summary, 'multiple_sectors')
+
+```
+
+## ⚖️ Comparaison isopérimètre
+```{python}
+# | echo: false
+# | output: asis
+summary_2022 = calcul_indicateurs_secteurs(tds_commun, 'Campagne 2022', suffix=' 2022')
+summary_2023 = calcul_indicateurs_secteurs(tds_commun, 'Campagne 2023', suffix=' 2023')
+summary = pd.concat([summary_2022, summary_2023], axis=1)
+utils.display_indicateurs(summary, transpose=False)
+
+```
+```{python}
+# | echo: false
+# | output: asis
+
+def display_sub_sector(summary, sector):
+    summary_sector = summary[summary.index.isin([sector], level=0)].copy()
+    summary_sector = summary_sector.reset_index(0)
+    del summary_sector['sector']
+    summary_sector.index = summary_sector.index.set_names('Sous Secteur')
+    utils.display_indicateurs(summary_sector, transpose=False)
+
+print('### Enseignement')
+display_sub_sector(summary, 'education')
+
+print('### Médico Social')
+display_sub_sector(summary, 'social')
+
+print('### Santé')
+display_sub_sector(summary, 'health')
+
+print('### Administration')
+display_sub_sector(summary, 'administration')
+
+print('### Multi Secteurs')
+display_sub_sector(summary, 'multiple_sectors')
+
 ```

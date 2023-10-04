@@ -42,6 +42,7 @@ SECTORS = {
     "IME/ITEP": "social",
     "Hôpitaux": "health",
     "Supérieur et Universitaire": "education",
+    "Secteurs multiples": 'multiple_sectors'
 }
 
 APPRO_SIMPLIFIED = [
@@ -90,8 +91,9 @@ COLUMNS_TO_SAVE = [
     "teledeclaration.value_externality_performance_ht",
     "teledeclaration.value_meat_poultry_egalim_ht",
     "teledeclaration.value_meat_poultry_ht",
+    "teledeclaration.value_meat_poultry_france_ht",
     "teledeclaration.value_fish_ht",
-    "teledeclaration.value_fish_egalim_ht"
+    "teledeclaration.value_fish_egalim_ht",
 ]
 
 
@@ -153,8 +155,6 @@ def load_td():
         td_raw, "externality_performance", ["_externality_performance", "_performance", "_externalites"]
     )
     return td_raw
-
-df = load_td()
 
 
 def add_canteen_info(df):
@@ -228,12 +228,9 @@ def calcul_indicateur_divers(tds: {}, years=[], col_comparaison=True):
         indicateurs[year]["Taux de cantines en gestion directe"] = len(
             tds[year][tds[year]["canteen.management_type"] == "direct"]
         ) / len(tds[year])
-        indicateurs[year]["Taux de cantines en gestion concédée"] = len(
-            tds[year][tds[year]["canteen.management_type"] == "conceded"]
-        ) / len(tds[year])
-
-        indicateurs[year]["Taux de TD simplifiées"] = len(
-            tds[year][tds[year]["teledeclaration.diagnostic_type"] == "SIMPLE"]
+        
+        indicateurs[year]["Taux de TD détaillées"] = len(
+            tds[year][tds[year]["teledeclaration.diagnostic_type"] == "COMPLETE"]
         ) / len(tds[year])
     return pd.DataFrame(indicateurs)
 
@@ -243,10 +240,12 @@ def calcul_indicateur_famille(tds: {}, years=[], col_comparaison=True):
     for year in years if len(years) else tds.keys():
         indicateurs[year] = {}
 
-        indicateurs[year]["Taux d'achat alimentaires de la famille Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
+        indicateurs[year]["Taux d'achat alimentaires de la famille Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum()) / int(tds[year]["teledeclaration.value_total_ht"].sum())
         indicateurs[year]["Montant d'achat alimentaires Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
         indicateurs[year]["Taux d'achat alimentaires Egalim au sein de la famille Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_egalim_ht"].sum()) / int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
         indicateurs[year]["Montant d'achat alimentaires Egalim Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_egalim_ht"].sum())
+        
+        indicateurs[year]["Taux d'achat alimentaires de la famille Poissons/produits de la mer"] = int(tds[year]["teledeclaration.value_fish_ht"].sum()) / int(tds[year]["teledeclaration.value_total_ht"].sum())
         indicateurs[year]["Taux d'achat alimentaires Egalim au sein de la famille  Poissons/Produits de la mer"] = int(tds[year]["teledeclaration.value_fish_egalim_ht"].sum()) / int(tds[year]["teledeclaration.value_fish_ht"].sum())
         indicateurs[year]["Montant d'achat alimentaires Poissons/Produits de la mer"] = int(tds[year]["teledeclaration.value_fish_ht"].sum())
         indicateurs[year]["Montant d'achat alimentaires Egalim Poissons/Produits de la mer"] = int(tds[year]["teledeclaration.value_fish_egalim_ht"].sum())
@@ -259,7 +258,7 @@ def calcul_indicateur_appro(tds: {}, years=[], col_comparaison=True):
     for year in years if len(years) else tds.keys():
         indicateurs[year] = {}
 
-        indicateurs[year]["Montant d'achat alimentaires"] = int(tds[year]["teledeclaration.value_total_ht"].sum())
+        indicateurs[year]["Montant d'achat alimentaires total"] = int(tds[year]["teledeclaration.value_total_ht"].sum())
 
         indicateurs[year]["Taux global des achats en bio"] = (
             tds[year]["teledeclaration.value_bio_ht"].sum() / tds[year]["teledeclaration.value_total_ht"].sum()
@@ -306,7 +305,7 @@ def ajout_col_comparaison(indicateurs):
 
 
 # Define custom formatter functions²
-def nombre_formatter(value, comparaison=False):
+def nombre_formatter(value):
     # Your custom formatting logic here
     return f"{value:,.0f}".replace(",", " ")
 
@@ -321,9 +320,7 @@ def montant_formatter(value):
     return f"{value:,.0f} €".replace(",", " ")
 
 
-def display_indicateurs(df, transpose=True):
-    if transpose:
-        df = df.T
+def apply_formatters(df):
     df[df.columns[df.columns.str.startswith("Taux")]] = df[df.columns[df.columns.str.startswith("Taux")]].applymap(
         taux_formatter
     )
@@ -333,27 +330,32 @@ def display_indicateurs(df, transpose=True):
     df[df.columns[df.columns.str.startswith("Nombre")]] = df[df.columns[df.columns.str.startswith("Nombre")]].applymap(
         nombre_formatter
     )
+    return df
+
+
+def display_indicateurs(df, transpose=True):
     if transpose:
         df = df.T
-    if "Comparaison" in df.columns:
-        df["Comparaison"] = df["Comparaison"].apply(lambda x: f"+{x}" if "-" not in x else x)
+    try:
+        df = apply_formatters(df)
+    except Exception as e:
+        pass
+    if transpose:
+        df = df.T
     print(df.to_html())
 
 
-######################
-# Divers
-######################
+def display_stacked_bars(df, title='Comparaison entre les campagnes 2022 et 2023', fmt=nombre_formatter, legend=True):
+    # Choosing order of bars displaying
+    
+    ax = df.plot.barh(color=("#4FC4AF", "#063442"), figsize=(8, 2.))
+    for bars in ax.containers:
+        ax.bar_label(bars, fmt=fmt, label_type='edge')
 
-
-def assert_quality(tds):
-    for year in tds.keys():
-        assert (
-            tds[year].groupby("canteen.id").size().sort_values(ascending=False).head(1).iloc[0] == 1
-        ), "Il y a des doublons de canteen.id"
-        assert tds[year]["canteen.id"].isna().sum() == 0, "Il y a des cantines sans identifiant"
-        assert len(tds[year]["canteen.id"]) == len(
-            tds[year]["canteen.id"].unique()
-        ), "Il y a des doublons dans les cantines"
+    ax.set_title(title)
+    if not legend:
+        legend = ax.legend()
+        legend.remove()
 
 
 def display_data_coverage(dfs, sub_columns=[], years=[]):
@@ -375,3 +377,19 @@ def display_data_coverage(dfs, sub_columns=[], years=[]):
         columns={"2023": "Part des valeurs renseignées (2023)", "2022": "Part des valeurs renseignées (2022)"}
     )
     print(pourcentage_in_file_to_display.to_html())
+
+
+######################
+# Divers
+######################
+
+
+def assert_quality(tds):
+    for year in tds.keys():
+        assert (
+            tds[year].groupby("canteen.id").size().sort_values(ascending=False).head(1).iloc[0] == 1
+        ), "Il y a des doublons de canteen.id"
+        assert tds[year]["canteen.id"].isna().sum() == 0, "Il y a des cantines sans identifiant"
+        assert len(tds[year]["canteen.id"]) == len(
+            tds[year]["canteen.id"].unique()
+        ), "Il y a des doublons dans les cantines"

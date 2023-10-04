@@ -40,7 +40,6 @@ import matplotlib.pyplot as plt
 from matplotlib import dates as mdates
 import locale
 import utils
-
 ```
 
 <!-- Afin de récupérer les données, il vous faut un TOKEN metabase :
@@ -60,7 +59,8 @@ Vous pouvez retrouver l'intégralité du code utilisé sur la page [github de ma
 # | echo: false
 
 tds = {}
-cache=False
+cache=True
+
 
 if not cache:
     td_raw = utils.load_td()
@@ -71,12 +71,12 @@ if not cache:
         tds[year]['teledeclaration.other_waste_comments'] = tds[year]['teledeclaration.other_waste_comments'].replace('\r\n', ' ', regex=True).replace('\n', ' ', regex=True)
 
         # Saving the file 
-        tds[year].to_csv(f"export_dataset_stats_campagne_{year}_raw.csv", sep=";", index=False)
+        tds[year].to_csv(f"data/export_dataset_stats_campagne_{year}_raw.csv", sep=";", index=False)
  
          # Keeping only the columns we want
         tds[year] = tds[year][utils.COLUMNS_TO_SAVE] 
 
-        tds[year].to_csv(f"export_dataset_stats_campagne_{year}.csv", sep=";", index=False)
+        tds[year].to_csv(f"data/export_dataset_stats_campagne_{year}.csv", sep=";", index=False)
         
         # TODO Parser siret comme str
         # TODO YEAR and ID en int et pas float
@@ -84,7 +84,7 @@ if not cache:
 
 # Whether we use cache or ot, we re-read the file to have consistency in the dataframe
 for year in utils.CAMPAGNES.keys():
-    tds[year] = pd.read_csv(f"export_dataset_stats_campagne_{year}.csv", sep=";")
+    tds[year] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}.csv", sep=";")
 
 # Application de la stratégie historique
 for year in utils.CAMPAGNES.keys():
@@ -95,7 +95,7 @@ for year in utils.CAMPAGNES.keys():
 
 # Application de la stratégie Je Ne Sais pas
 for year in ['2022', '2023']:
-    tds[f"{year}_strat_2"] = tds[year].dropna(
+    tds[f"Campagne {year}"] = tds[year].dropna(
         how="any",
         subset=[
             "teledeclaration.value_total_ht",
@@ -105,8 +105,8 @@ for year in ['2022', '2023']:
 
 # Définition des populations assidus, entrantes et sortantes
 td_pop = {}
-td_pop['2023'] = list(set(tds['2023_strat_2']['canteen.id'].values.tolist())) 
-td_pop['2022'] = list(set(tds['2022_strat_2']['canteen.id'].values.tolist())) 
+td_pop['2023'] = list(set(tds['Campagne 2023']['canteen.id'].values.tolist())) 
+td_pop['2022'] = list(set(tds['Campagne 2022']['canteen.id'].values.tolist())) 
 # Télédeclarants présents dans les siret 2023 mais non 2022
 entrants = list(set([item for item in td_pop['2023'] if item not in td_pop['2022']]))
 
@@ -117,7 +117,7 @@ sortants = list(set([item for item in td_pop['2022'] if item not in td_pop['2023
 restants = [item for item in td_pop['2022'] if item in td_pop['2023']]
 
 tds_commun = {}
-for year in ['2022_strat_2', '2023_strat_2', '2022_strat_hist', '2023_strat_hist']:
+for year in ['2022', '2023', 'Campagne 2022', 'Campagne 2023', '2022_strat_hist', '2023_strat_hist']:
     tds_commun[year] = tds[year][tds[year]["canteen.id"].isin(restants)]
     tds_commun[year] = tds_commun[year].drop_duplicates('canteen.id')
 ```
@@ -168,7 +168,7 @@ utils.assert_quality(tds)
 utils.display_data_coverage(
     tds_commun,
     sub_columns=utils.APPRO_SIMPLIFIED,
-    years=["2022_strat_2", "2023_strat_2"],
+    years=["2022", "2023"],
 )
 ```
 
@@ -221,78 +221,115 @@ Ces deux stratégies se concentrent sur les cinq champs de la télédéclaration
 
 La **"stratégie Historique"** (qui a été appliquée sur le premier bilan) : nous remplaçons les valeurs manquantes par la valeur 0, sauf si les 5 champs d'une même déclaration sont vides, auquel cas nous ne prenons pas en compte la ligne
 
+```{python}
+# | output: asis
+# | echo : false
+
+
+valeurs_manquantes = {}
+valeurs_manquantes_iso_perim = {}
+for year in utils.CAMPAGNES.keys():
+    valeurs_manquantes[year] = {}
+    valeurs_manquantes_iso_perim[year] = {}
+    for col in utils.APPRO_SIMPLIFIED:
+        valeurs_manquantes[year][col.replace('teledeclaration.', '')] = tds[f"{year}_strat_hist"][col].isna().sum()    
+        valeurs_manquantes_iso_perim[year][col.replace('teledeclaration.', '')] = tds_commun[f"{year}_strat_hist"][col].isna().sum()    
+
+    # Creating the version of the dataset using this strategy
+    # tds[f"{year}_strat_hist"][col_achats] = tds[f"{year}_strat_hist"][col_achats].fillna(0)
+
+def display_data_coverage(year):
+    print(f'Après filtrage des lignes dont les 5 champs sont manquants, nous avons gardé **{len(tds[f"{year}_strat_hist"])}** télédéclarations sur les **{len(tds[year])}** télédéclarations totales.\n Ensuite nous avons remplaçé par 0 les valeurs manquantes : \n')
+    utils.display_indicateurs(pd.DataFrame.from_dict(valeurs_manquantes[year], orient="index").rename(columns={0: "Nombre de valeurs manquantes, remplaçées par 0"}))
+```
+
 #### 📷 2022
 
 ```{python}
 # | output: asis
 # | echo : false
-
-# TODO : garder value_total dans le dropna ? On supprime peut-etre qq lignes de trop, ou peut etre pas assez !
-
-achats = {}
-for col in utils.APPRO_SIMPLIFIED:
-    achats[col.replace('teledeclaration.', '')] = tds["2022_strat_hist"][col].isna().sum()
-
-for year in utils.CAMPAGNES.keys():
-    tds[f"{year}_strat_hist"][col_achats] = tds[f"{year}_strat_hist"][col_achats].fillna(0)
-
-df_val_manquantes = pd.DataFrame.from_dict(achats, orient="index").rename(columns={0: "Nombre de valeurs manquantes, remplaçées par 0"})
-
-print(f'Après filtrage des lignes dont les 5 champs sont manquants, nous avons gardé **{len(tds["2022_strat_hist"])}** télédéclarations sur les **{len(tds["2022"])}** télédéclarations totales.\n Ensuite nous avons remplaçé par 0 les valeurs manquantes : \n')
-print(df_val_manquantes.to_markdown())
+display_data_coverage('2022')
 ```
 
 #### 📷 2023
 ```{python}
 # | output: asis
 # | echo : false
-
-achats = {}
-for col in utils.APPRO_SIMPLIFIED:
-    achats[col.replace('teledeclaration.', '')] = tds["2023_strat_hist"][col].isna().sum()
-
-for year in utils.CAMPAGNES.keys():
-    tds[f"{year}_strat_hist"][col_achats] = tds[f"{year}_strat_hist"][col_achats].fillna(0)
-
-df_val_manquantes = pd.DataFrame.from_dict(achats, orient="index").rename(columns={0: "Nombre de valeurs manquantes, remplaçées par 0"})
-
-print(f'Après filtrage des lignes dont les 5 champs sont manquants, nous avons gardé **{len(tds["2023_strat_hist"])}** télédéclarations sur les **{len(tds["2023"])}** télédéclarations totales.\n Ensuite nous avons remplaçé par 0 les valeurs manquantes : \n')
-print(df_val_manquantes.to_markdown())
+display_data_coverage('2023')
 ```
 
 #### ⚖️ Comparaison isopérimètre
-
+```{python}
+# | output: asis
+# | echo : false
+utils.display_indicateurs(pd.DataFrame.from_dict(valeurs_manquantes_iso_perim).rename(columns={'2022': "2022 : Nombre de valeurs manquantes, remplaçées par 0", '2023': '2023 : Nombre de valeurs manquantes, remplaçées par 0'}))
+```
 ### Stratégie 'Je Ne Sais Pas'
 
 La **"stratégie Je Ne Sais Pas"** : afin de minimiser l'impact des valeurs manquantes, nous supprimons toutes les lignes dès que le champ `teledeclaration.value_bio_ht` est vide. 
 
 Dans les autres cas, comme dans la stratégie 'Historique', nous remplaçons les champs vides par 0.
 
+#### 📷 2022
+```{python}
+# | output: asis
+# | echo: false
 
+year = '2022'
+print(f'Nous supprimons {len(tds[year]) - len(tds[f"Campagne {year}"])} lignes car le champ `teledeclaration.value_bio_ht` est vide. \n')
+```
+
+#### 📷 2023
 ```{python}
 # | output: asis
 # | echo: false
 
 year = '2023'
-print(f'Nous supprimons {len(tds[year]) - len(tds[f"{year}_strat_2"])} lignes car le champ `teledeclaration.value_bio_ht` est vide. \n')
+print(f'Nous supprimons {len(tds[year]) - len(tds[f"Campagne {year}"])} lignes car le champ `teledeclaration.value_bio_ht` est vide. \n')
 ```
+#### ⚖️ Comparaison isopérimètre
+```{python}
+# | output: asis
+# | echo: false
+
+indic = {}
+for year in utils.CAMPAGNES.keys():
+    indic[year] = len(tds_commun[year]) - len(tds_commun[f"Campagne {year}"])
+
+utils.display_indicateurs(pd.DataFrame.from_dict(indic, orient='index').rename(columns={0: 'teledeclaration.value_bio_ht'}).T.rename(columns={'2022': "2022 : Nombre de valeurs manquantes, remplaçées par 0", '2023': '2023 : Nombre de valeurs manquantes, remplaçées par 0'}))
+```
+
 
 # Chiffres clés
 
-## Comparaison des stratétiges de valeurs manquantes
-
+## 📷 2022
 ### Chiffre généraux
 ```{python Nombre de sites de restauration concernés par la télédéclaration}
 # | echo: false
 # | output: asis
 
-indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["2023_strat_2", "2023_strat_hist", "2022_strat_2", "2022_strat_hist"])
+indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["Campagne 2022", "2022_strat_hist", "Campagne 2023", "2023_strat_hist"])
 
-indic_divers = indic_divers.rename(columns={'2023_strat_2': 'Données 2023 - Stratégie "Je Ne Sais Pas"', '2023_strat_hist': 'Données 2023 - Stratégie "Historique"'})
-indic_divers = utils.ajout_col_comparaison(indic_divers)
+indic_divers = indic_divers.rename(columns={'Campagne 2022': 'Campagne 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Campagne 2022 - Stratégie "Historique"', 'Campagne 2023': 'Campagne 2023 - Stratégie "Je Ne Sais Pas"', '2023_strat_hist': 'Campagne 2023 - Stratégie "Historique"'})
 
-utils.display_indicateurs(indic_divers)
+utils.display_indicateurs(indic_divers[['Campagne 2022 - Stratégie "Je Ne Sais Pas"', 'Campagne 2022 - Stratégie "Historique"']])
+```
 
+### Chiffres appro
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+# | echo: false
+# | output: asis
+indic_appro = indic_appro.rename(columns={'Campagne 2022': 'Campagne 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Campagne 2022 - Stratégie "Historique"', 'Campagne 2023': 'Campagne 2023 - Stratégie "Je Ne Sais Pas"', '2023_strat_hist': 'Campagne 2023 - Stratégie "Historique"'})
+utils.display_indicateurs(indic_appro[['Campagne 2022 - Stratégie "Je Ne Sais Pas"', 'Campagne 2022 - Stratégie "Historique"']])
+```
+
+## 📷 2023
+### Chiffre généraux
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+# | echo: false
+# | output: asis
+
+utils.display_indicateurs(indic_divers[['Campagne 2023 - Stratégie "Je Ne Sais Pas"', 'Campagne 2023 - Stratégie "Historique"']])
 ```
 
 ### Chiffres appro
@@ -300,49 +337,66 @@ utils.display_indicateurs(indic_divers)
 # | echo: false
 # | output: asis
 
-indic_appro = indic_appro.rename(columns={'2023_strat_2': 'Données 2023 - Stratégie "Je Ne Sais Pas"', '2023_strat_hist': 'Données 2023 - Stratégie "Historique"'})
-indic_appro = utils.ajout_col_comparaison(indic_appro)
+utils.display_indicateurs(indic_appro[['Campagne 2023 - Stratégie "Je Ne Sais Pas"', 'Campagne 2023 - Stratégie "Historique"']])
+```
 
+## ⚖️ Comparaison isopérimètre
+
+### Chiffres généraux
+
+```{python}
+# | echo: false
+# | output: asis
+
+
+indic_divers, indic_appro = utils.calcul_indicateur(tds_commun, years=["Campagne 2022", "Campagne 2023"])
+
+# Table view
+utils.display_indicateurs(indic_divers)
+
+# Graph view
+df_indic_divers = pd.DataFrame(indic_divers)
+df_indic_appro = pd.DataFrame(indic_appro)
+
+# Isolate the values with numbers
+divers_colonnes_nombre = ['Nombre de cantines centrales',  'Nombre de cantines sur place (sites et satellites)', 'Nombre de Télédéclarations']
+
+utils.display_stacked_bars(df_indic_divers.T[divers_colonnes_nombre].T, title='Comparaison des profils',  fmt=utils.nombre_formatter)
+
+# Isolate the values with ratios
+divers_colonnes_ratios = ['Taux de TD détaillées']
+
+utils.display_stacked_bars(df_indic_divers.T[divers_colonnes_ratios].T, title='Comparaison des profils', fmt=utils.taux_formatter)
+```
+
+### Chiffres appro
+```{python}
+# | echo: false
+# | output: asis
+
+# Isolate the values with numbers
+appro_colonnes_montants = ['Montant d\'achat alimentaires bio', 'Montant d\'achat alimentaires EGALIM (bio inclus)', 'Montant d\'achat alimentaires total']
 utils.display_indicateurs(indic_appro)
+utils.display_stacked_bars(df_indic_appro.T[appro_colonnes_montants].T, title='Comparaison des montants alimentaires dépensés',  fmt=utils.montant_formatter)
+
+# Isolate the values with ratios
+appro_colonnes_taux = ['Taux global des achats en bio',  'Taux global des achats EGALIM (bio inclus)']
+utils.display_stacked_bars(df_indic_appro.T[appro_colonnes_taux].T, title='Comparaison des ratios sur les montants',  fmt=utils.taux_formatter)
 ```
 
 ::: {.callout-note}
 Pour la suite de l'étude, nous utiliserons uniquement la stratégie "**Je Ne Sais Pas**"" afin de minimiser les hypothèses que nous prenons sur les données.
 :::
 
-## Comparaison avec l'année précédente
-
-### Chiffre généraux
-```{python Nombre de sites de restauration concernés par la télédéclaration}
-# | echo: false
-# | output: asis
-
-indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["2022_strat_2", "2023_strat_2"])
-indic_divers = utils.ajout_col_comparaison(indic_divers)
-indic_divers = indic_divers.rename(columns={'2023_strat_2': 'Données 2023', '2022_strat_2': 'Données 2022'})
-utils.display_indicateurs(indic_divers)
-
-```
-
-### Chiffres appro
-```{python Nombre de sites de restauration concernés par la télédéclaration}
-# | echo: false
-# | output: asis
-indic_appro = utils.ajout_col_comparaison(indic_appro)
-indic_appro = indic_appro.rename(columns={'2023_strat_2': 'Données 2023', '2022_strat_2': 'Données 2022'})
-utils.display_indicateurs(indic_appro)
-```
-
-### Chiffres par famille de produits
+# Chiffres par famille de produits
 ::: {.callout-warning}
 Pour le moment, ces chiffres ne décrivent que les télédéclarations de type simplifiées. L'ajout de télédéclaration complètes est en cours. A priori, les ratio devraient cependant rester sembables.
 :::
 ```{python Nombre de sites de restauration concernés par la télédéclaration}
 # | echo: false
 # | output: asis
-indic_famille = utils.calcul_indicateur_famille(tds, years=["2022_strat_2", "2023_strat_2"])
+indic_famille = utils.calcul_indicateur_famille(tds, years=["Campagne 2022", "Campagne 2023"])
 indic_famille = utils.ajout_col_comparaison(indic_famille)
-indic_famille = indic_famille.rename(columns={'2023_strat_2': 'Données 2023', '2022_strat_2': 'Données 2022'})
 utils.display_indicateurs(indic_famille)
 ```
 

@@ -20,30 +20,9 @@ print(
 # Télédéclarants présents lors des deux campagnes
 restants = [item for item in td_pop['2022'] if item in td_pop['2023']]
 
-print(f'Intéressons nous aux autres, que nous appellerons les élèves assidus. Ils sont **{len(restants)} teledeclarants**\n')
+print(f'**{len(restants)} teledeclarants ont participé aux deux campagnes.**\n')
 ```
 
-## Etude sur échantillon commun - "les élèves assidus"
-```{python}
-# | output: asis
-# | echo: false
-
-indic_divers, indic_appro = utils.calcul_indicateur(tds_commun, years=['2022_strat_2', '2023_strat_2'])
-
-indic_divers = utils.ajout_col_comparaison(indic_divers)
-indic_divers = indic_divers.rename(columns={'2022_strat_2': 'Données 2022', '2023_strat_2': 'Données 2023'})
-utils.display_indicateurs(indic_divers)
-
-indic_appro = utils.ajout_col_comparaison(indic_appro)
-indic_appro = indic_appro.rename(columns={'2022_strat_2': 'Données 2022', '2023_strat_2': 'Données 2023'})
-utils.display_indicateurs(indic_appro)
-```
-
-Observations : Progression des télédéclarants assidus (maturité)
-1. + Bio
-2. + Egalim
-3. + De télédéclaration complètes => meilleur connaissance des produits achetés
-4. - de TD avec bio à 0€
 
 ## Comparaison entre le sortants et les nouveaux arrivants
 ::: {.callout-warning}
@@ -57,32 +36,58 @@ La suite de ces travaux est en cours de réalisation. Il est encore incomplet et
 # | output: asis
 # | echo: false
 
-
 tds_cmp = {}
-tds_cmp['Sortants (données 2022)'] = tds['2022_strat_2'][tds['2022_strat_2']["canteen.id"].isin(sortants)]
-tds_cmp['Entrants (données 2023)'] = tds['2023_strat_2'][tds['2023_strat_2']["canteen.id"].isin(entrants)]
+tds_cmp['Sortants (données 2022)'] = tds['Campagne 2022'][tds['Campagne 2022']["canteen.id"].isin(sortants)]
+tds_cmp['Entrants (données 2023)'] = tds['Campagne 2023'][tds['Campagne 2023']["canteen.id"].isin(entrants)]
 
 indic_divers, indic_appro = utils.calcul_indicateur(tds_cmp, years=['Sortants (données 2022)', 'Entrants (données 2023)'])
 
-indic_divers = utils.ajout_col_comparaison(indic_divers)
+# indic_divers = utils.ajout_col_comparaison(indic_divers)
 utils.display_indicateurs(indic_divers)
 
-indic_appro = utils.ajout_col_comparaison(indic_appro)
+# indic_appro = utils.ajout_col_comparaison(indic_appro)
 utils.display_indicateurs(indic_appro)
+```
 
+```{python}
+# | echo: false
+# | output: asis
+
+# Graph view
+df_indic_divers = pd.DataFrame(indic_divers)
+df_indic_appro = pd.DataFrame(indic_appro)
+
+# Isolate the values with numbers
+divers_colonnes_nombre = ['Nombre de cantines centrales',  'Nombre de cantines sur place (sites et satellites)', 'Nombre de Télédéclarations']
+
+utils.display_stacked_bars(df_indic_divers.T[divers_colonnes_nombre].T, title='Comparaison des profils',  fmt=utils.nombre_formatter)
+
+# Isolate the values with ratios
+divers_colonnes_ratios = [col for col in df_indic_divers.index if col.startswith('Taux')]
+
+utils.display_stacked_bars(df_indic_divers.T[divers_colonnes_ratios].T, title='Comparaison des profils', fmt=utils.taux_formatter, legend=False)
+
+# Isolate the values with numbers
+appro_colonnes_montants = ['Montant d\'achat alimentaires bio', 'Montant d\'achat alimentaires EGALIM (bio inclus)', 'Montant d\'achat alimentaires total']
+utils.display_indicateurs(indic_appro)
+utils.display_stacked_bars(df_indic_appro.T[appro_colonnes_montants].T, title='Comparaison des montants alimentaires dépensés',  fmt=utils.montant_formatter)
+
+# Isolate the values with ratios
+appro_colonnes_taux = ['Taux global des achats en bio',  'Taux global des achats EGALIM (bio inclus)']
+utils.display_stacked_bars(df_indic_appro.T[appro_colonnes_taux].T, title='Comparaison des ratios sur les montants',  fmt=utils.taux_formatter)
 
 ```
 
-On remarque un nombre beaucoup moins important de **repas moyens par jour** alors que le nombre de cuisines augmente. Cela signifie que nous avons une plus grande représentation sur cette campagne des petites cantines. 
 
-### Comparaison des profils de cantines "entrantes" et "sortantes"
+
+## Comparaison des profils de cantines "entrantes" et "sortantes"
 
 ```{python}
 # | echo: false
 
 import seaborn as sns
 
-td_raw = pd.concat([tds['2023_strat_2'], tds['2022_strat_2']], axis=0, ignore_index=True)
+td_raw = pd.concat([tds['Campagne 2023'], tds['Campagne 2022']], axis=0, ignore_index=True)
 td_without_good_students = td_raw[~td_raw['canteen.id'].isin(restants)]
 td_without_good_students["canteen.daily_meal_count_log"] = np.log10(td_without_good_students[["canteen.daily_meal_count"]].replace(0, 1))
 td_without_good_students["canteen.yearly_meal_count_log"] = np.log10(td_without_good_students[["canteen.yearly_meal_count"]].replace(0, 1))
@@ -116,25 +121,9 @@ axes[2].set_xlabel('Type de production', fontsize='large')
 
 ```
 
-<!-- ### Comparaison sur les télédéclarations
-
 ```{python}
-# | echo: false
-
-columns_of_interest = [
-    "teledeclaration.value_bio_ht",
-    "teledeclaration.value_total_ht",
-    "teledeclaration.value_egalim_others_ht",
-    "teledeclaration.value_sustainable_ht",
-    "teledeclaration.value_externality_performance_ht",
-]
-
-fig, axes = plt.subplots(5, 1, figsize=(8, 30))
-
-for i in range(0, len(columns_of_interest)):
-    sns.kdeplot(data=td_raw, x=columns_of_interest[i], hue='year', ax=axes[i], palette='deep')
-
-    axes[i].set_title('Distribution', fontsize='large')
-    axes[i].set_ylabel('Nombre de TD', fontsize='large')
-    axes[i].set_xlabel(f'{columns_of_interest[i].split(".")[1]}', fontsize='large')
-``` -->
+tds['Campagne 2023'][tds['Campagne 2023']['canteen.id'].isin(entrants)].to_csv('data/entrants.csv', sep=';', index=False)
+tds['Campagne 2022'][tds['Campagne 2022']['canteen.id'].isin(sortants)].to_csv('data/sortants.csv', sep=';', index=False)
+tds_commun['Campagne 2023'].to_csv('data/assidus_2023.csv', sep=';', index=False)
+tds_commun['Campagne 2022'].to_csv('data/assidus_2022.csv', sep=';', index=False)
+```
