@@ -175,6 +175,7 @@ const routes = [
     sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
+    // if you change this path, update the visitor view count logic in the publication widget
     path: "/nos-cantines",
     component: CanteensPage,
     children: [

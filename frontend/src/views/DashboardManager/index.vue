@@ -11,10 +11,11 @@
           item-text="name"
           item-value="id"
           id="canteen"
-          class="mt-2"
+          class="mt-6"
           auto-select-first
           no-data-text="Pas de résultats"
           @blur="showCanteenSelection = false"
+          autofocus
         />
       </v-col>
     </v-row>
@@ -102,22 +103,49 @@
           </v-col>
           <v-col v-if="!canteen.isCentralCuisine" cols="12" md="4" id="publication">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
-              <v-card-title class="fr-h4">Ma vitrine en ligne</v-card-title>
-              <v-card-text class="fr-text-xs">
-                <p>TODO</p>
+              <v-card-title><h3 class="fr-h4 mb-0">Ma vitrine en ligne</h3></v-card-title>
+              <v-spacer></v-spacer>
+              <v-card-text class="fr-text">
+                <p class="publication-detail">
+                  Statut
+                  <v-chip
+                    :color="isPublished ? 'green lighten-4' : 'grey lighten-2'"
+                    :class="isPublished ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
+                    class="font-weight-bold px-2 fr-text-xs text-uppercase"
+                    style="border-radius: 4px !important;"
+                    small
+                    label
+                  >
+                    {{ isPublished ? "Publiée" : "Non publiée" }}
+                  </v-chip>
+                </p>
+                <p class="publication-detail">
+                  Dernière mise à jour
+                  <span class="font-weight-bold fr-text-xs">{{ publicationUpdateDate }}</span>
+                </p>
+                <p class="publication-detail">
+                  Nombre de visiteurs
+                  <span class="font-weight-bold fr-text-xs">
+                    {{ isPublished && viewCount !== null ? viewCount : "-" }}
+                  </span>
+                </p>
               </v-card-text>
               <v-spacer></v-spacer>
-              <v-card-actions class="mx-2 mb-2 justify-end">
+              <v-card-actions class="mx-2 mb-2">
                 <v-btn
                   :to="{
                     name: 'PublicationForm',
                     params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
                   }"
                   color="primary"
-                  outlined
+                  :outlined="isPublished || !hasPublicationData"
+                  :disabled="!isPublished && !hasPublicationData"
                 >
-                  Éditer ma vitrine
+                  {{ isPublished ? "Éditer ma vitrine" : "Publier ma cantine" }}
                 </v-btn>
+                <p v-if="!isPublished && !hasPublicationData" class="grey--text text--darken-1 fr-text-xs mb-0 ml-3">
+                  Pas de données
+                </p>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -143,14 +171,14 @@
                 >
                   <template v-slot:[`item.publicationStatus`]="{ item }">
                     <v-chip
-                      :color="isPublished(item) ? 'green lighten-4' : 'grey lighten-2'"
-                      :class="isPublished(item) ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
+                      :color="isSatellitePublished(item) ? 'green lighten-4' : 'grey lighten-2'"
+                      :class="isSatellitePublished(item) ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
                       class="font-weight-bold px-2 fr-text-xs text-uppercase"
                       style="border-radius: 4px !important;"
                       small
                       label
                     >
-                      {{ isPublished(item) ? "Publiée" : "Non publiée" }}
+                      {{ isSatellitePublished(item) ? "Publiée" : "Non publiée" }}
                     </v-chip>
                   </template>
                 </v-data-table>
@@ -212,8 +240,12 @@
                       <span class="font-weight-medium">{{ canteen.dailyMealCount || "Non renseigné" }}</span>
                     </p>
                     <p class="mb-0">
-                      Couverts par année :
-                      <span class="font-weight-medium">{{ canteen.yearlyMealCount || "Non renseigné" }}</span>
+                      <span v-if="canteen.productionType === 'central'">Couverts livrés à l'année :</span>
+                      <span v-else-if="canteen.productionType === 'central_serving'">
+                        Couverts à l'année (y compris livrés) :
+                      </span>
+                      <span v-else>Couverts par année :</span>
+                      <span class="font-weight-medium ml-1">{{ canteen.yearlyMealCount || "Non renseigné" }}</span>
                     </p>
                   </v-card-text>
                   <v-spacer></v-spacer>
@@ -322,19 +354,20 @@
 <script>
 import EgalimProgression from "./EgalimProgression"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import { toCurrency, capitalise } from "@/utils"
+import { toCurrency, capitalise, formatDate, lastYear } from "@/utils"
 import Constants from "@/constants"
-import validators from "@/validators"
 
 export default {
   name: "DashboardManager",
   components: { EgalimProgression, DsfrAutocomplete },
   data() {
-    const canteenId = this.$store.state.userCanteenPreviews[6]?.id
+    const canteenId = +this.$route.query.cantine || this.$store.state.userCanteenPreviews[0]?.id
     return {
       canteenId,
       nextCanteenId: canteenId,
       canteen: null,
+      showCanteenSelection: false,
+      // canteen info widget
       centralKitchen: null,
       satellites: [],
       satelliteHeaders: [
@@ -342,6 +375,7 @@ export default {
         { text: "Statut", value: "publicationStatus" },
       ],
       satelliteCount: null,
+      // purchases widget
       purchases: [],
       purchaseHeaders: [
         { text: "Date", value: "relativeDate" },
@@ -350,8 +384,9 @@ export default {
         { text: "Prix HT", value: "priceHt" },
       ],
       purchasesFetchingError: null,
-      showCanteenSelection: false,
-      validators,
+      // publication widget
+      viewCount: null,
+      year: lastYear(),
     }
   },
   computed: {
@@ -361,6 +396,7 @@ export default {
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
     },
+    // team widget
     managers() {
       if (!this.canteen) []
       const managersCopy = [...this.canteen.managers]
@@ -404,6 +440,25 @@ export default {
       if (!this.canteen.images || this.canteen.images.length === 0) return null
       return this.canteen.images[0].image
     },
+    // publication widget
+    diagnostic() {
+      return this.canteen?.diagnostics.find((x) => x.year === this.year)
+    },
+    isPublished() {
+      return this.canteen?.publicationStatus === "published"
+    },
+    publicationUpdateDate() {
+      if (!this.canteen || !this.isPublished) return "jamais"
+      let date = new Date(this.canteen.modificationDate)
+      if (this.diagnostic) {
+        let diagDate = new Date(this.diagnostic.modificationDate)
+        if (diagDate > date) date = diagDate
+      }
+      return formatDate(date.toISOString())
+    },
+    hasPublicationData() {
+      return !!this.diagnostic?.valueTotalHt
+    },
     // purchases widget
     purchaseDataSourceString() {
       if (!this.purchases.length) return
@@ -412,7 +467,11 @@ export default {
   },
   methods: {
     fetchCanteenIfNeeded() {
-      if (this.canteen || !this.canteenId) return
+      if (!this.canteenId) {
+        this.canteen = null
+        return
+      }
+      if (this.canteen?.id === this.canteenId) return
       const id = this.canteenId
       return this.$store
         .dispatch("fetchCanteen", { id })
@@ -421,8 +480,11 @@ export default {
           this.getCentralKitchen()
           this.updateSatelliteCount()
           this.fetchPurchases()
+          this.getPublishedPageViewCount()
+          this.$router.push({ query: { cantine: id } }).catch(() => {})
         })
         .catch(() => {
+          this.canteen = null
           this.$store.dispatch("notify", {
             message: "Nous n'avons pas trouvé cette cantine",
             status: "error",
@@ -504,7 +566,31 @@ export default {
         return Constants.Characteristics[characteristic]
       return { text: "" }
     },
-    isPublished(canteen) {
+    getPublishedPageViewCount() {
+      if (!this.isPublished) this.viewCount = null
+      if (!this.$matomo) this.viewCount = null
+      const pageUrl =
+        `${window.origin}${this.$router.resolve({ name: "CanteensHome" }).href}` +
+        // Do not include the title part of the URL to handle A) name changes and B) / or no / ending
+        `${this.canteen.id}--`
+      const url =
+        "https://stats.data.gouv.fr/index.php?module=API&method=VisitsSummary.getVisits&period=range&date=last30&format=JSON&token_auth=anonymous&" +
+        `idSite=${window.MATOMO_ID}&` +
+        `segment=pageUrl=^${encodeURIComponent(pageUrl)}`
+      return fetch(url)
+        .then((response) => {
+          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          return response.json()
+        })
+        .then((response) => {
+          this.viewCount = response.value
+        })
+        .catch(() => {
+          console.warn("Error when fetching page visits for url", url)
+          this.viewCount = null
+        })
+    },
+    isSatellitePublished(canteen) {
       return canteen.publicationStatus === "published"
     },
   },
@@ -513,13 +599,17 @@ export default {
   },
   watch: {
     canteenId() {
-      this.canteen = null
       this.fetchCanteenIfNeeded()
     },
     nextCanteenId(newValue) {
       if (newValue) {
         this.canteenId = newValue
         this.showCanteenSelection = false
+      }
+    },
+    $route(newRoute, oldRoute) {
+      if (newRoute.query.cantine !== oldRoute.query.cantine) {
+        this.nextCanteenId = +newRoute.query.cantine
       }
     },
   },
@@ -533,6 +623,9 @@ ul {
 /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
 ul li::before {
   content: "\200B";
+}
+p.publication-detail > span {
+  float: right;
 }
 .no-purchases {
   background-color: #f5f5fe;

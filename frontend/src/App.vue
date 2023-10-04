@@ -137,6 +137,10 @@ export default {
   font-size: 1rem;
 }
 
+.theme--light.v-btn.v-btn--disabled {
+  color: #757575 !important; // grey--text text--darken-1 for a11y
+}
+
 .dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
   color: #000091;
 }
