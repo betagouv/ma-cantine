@@ -2,17 +2,11 @@
   <div class="text-left">
     <h1 class="my-4 fr-h2" v-if="canteen">{{ canteen.name }}</h1>
     <h1 class="my-4 fr-h2" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
-    <v-row>
-      <v-col v-if="canteenPreviews.length > 1">
+    <v-row v-if="canteenPreviews.length > 1">
+      <v-col>
         <v-btn outlined small color="primary" :to="{ name: 'ManagementPage' }">
           <v-icon class="mr-1" small>mdi-pencil</v-icon>
           Changer d'établissement
-        </v-btn>
-      </v-col>
-      <v-col v-else>
-        <v-btn outlined small color="primary" :to="{ name: 'NewCanteen' }">
-          <v-icon class="mr-1" small>mdi-pencil</v-icon>
-          Ajouter un établissement
         </v-btn>
       </v-col>
     </v-row>
