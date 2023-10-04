@@ -127,7 +127,7 @@
                 <p class="publication-detail">
                   Nombre de visiteurs
                   <span class="font-weight-bold fr-text-xs">
-                    {{ isPublished && viewCount >= 0 ? viewCount : "-" }}
+                    {{ isPublished && viewCount !== null ? viewCount : "-" }}
                   </span>
                 </p>
               </v-card-text>
