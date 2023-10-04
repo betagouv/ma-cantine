@@ -9,8 +9,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "apexcharts": "^3.42.0",
-    "core-js": "^3.32.2",
+    "apexcharts": "^3.43.0",
+    "core-js": "^3.33.0",
     "html2pdf.js": "^0.10.1",
     "qrcode.vue": "^1.7.0",
     "vue": "^2.6.14",

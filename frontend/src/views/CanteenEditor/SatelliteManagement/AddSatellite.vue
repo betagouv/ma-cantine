@@ -105,7 +105,7 @@
                 validate-on-blur
                 v-model.number="satellite.dailyMealCount"
                 prepend-icon="$restaurant-fill"
-                :rules="[validators.greaterThanZero]"
+                :rules="[validators.greaterThanZero, validators.isInteger]"
               />
             </v-col>
             <v-col cols="6" md="4">
@@ -119,7 +119,7 @@
                 validate-on-blur
                 v-model.number="satellite.yearlyMealCount"
                 prepend-icon="$restaurant-fill"
-                :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
+                :rules="[validators.greaterThanZero, validators.isInteger, greaterThanDailyMealCount]"
               />
             </v-col>
             <v-spacer></v-spacer>

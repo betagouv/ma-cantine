@@ -527,4 +527,22 @@ export default Object.freeze({
     enterprise: "Entreprise",
     inconnu: "Inconnu",
   },
+  Levels: {
+    UNKNOWN: {
+      text: "INCONNU",
+      colorClass: "grey--text text--darken-2",
+    },
+    BEGINNER: {
+      text: "NOVICE",
+      colorClass: "grey--text text--darken-2",
+    },
+    ADVANCED: {
+      text: "AVANCÉ",
+      colorClass: "blue--text text--darken-3",
+    },
+    EXPERT: {
+      text: "EXPERT",
+      colorClass: "green--text text--darken-4",
+    },
+  },
 })

@@ -141,7 +141,7 @@
           <DsfrTextField
             id="daily-meals"
             hide-details="auto"
-            :rules="showDailyMealCount ? [validators.greaterThanZero] : []"
+            :rules="showDailyMealCount ? [validators.greaterThanZero, validators.isInteger] : []"
             :disabled="!showDailyMealCount"
             :messages="showDailyMealCount ? [] : 'Concerne uniquement les cantines recevant des convives'"
             validate-on-blur
@@ -165,7 +165,7 @@
           <DsfrTextField
             id="yearly-meals"
             hide-details="auto"
-            :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
+            :rules="[validators.greaterThanZero, validators.isInteger, greaterThanDailyMealCount]"
             validate-on-blur
             v-model.number="canteen.yearlyMealCount"
             prepend-icon="$restaurant-fill"
@@ -176,7 +176,7 @@
           <DsfrTextField
             label="Nombre de cantines/lieux de service à qui je fournis des repas"
             hide-details="auto"
-            :rules="showSatelliteCanteensCount ? [validators.greaterThanZero] : []"
+            :rules="showSatelliteCanteensCount ? [validators.greaterThanZero, validators.isInteger] : []"
             :disabled="!showSatelliteCanteensCount"
             :messages="
               showSatelliteCanteensCount ? [] : 'Concerne uniquement les cuisines qui livrent à des satellites'

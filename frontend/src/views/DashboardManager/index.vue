@@ -31,16 +31,8 @@
     </v-row>
 
     <div v-if="canteen">
-      <h2 class="mt-8 mb-2 fr-h4">
-        Ma progression
-      </h2>
-      <p class="fr-text-sm">
-        Vous trouverez ci-dessous une vue d'ensemble de votre progression sur les cinq volets de la loi EGAlim.
-      </p>
-
-      <div>
-        <EgalimProgression v-if="hasProgression" />
-        <EmptyProgression v-else />
+      <div class="mt-4">
+        <EgalimProgression :canteen="canteen" />
       </div>
 
       <div v-if="canteen">
@@ -52,26 +44,41 @@
         </p>
         <v-row>
           <v-col cols="12" md="8" id="latest-purchases">
-            <!-- How relevant are purchases to satellites? -->
             <v-card outlined class="fill-height d-flex flex-column pa-4">
-              <v-card-title class="fr-h4">Mes achats</v-card-title>
-              <v-spacer></v-spacer>
-              <v-card-text>
+              <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes achats</h3></v-card-title>
+              <v-card-text class="fr-text-xs grey--text text--darken-2 py-0 mt-3">
+                <p v-if="!purchases.length">
+                  Renseignez vos achats pour calculer automatiquement votre progression sur le volet approvisionnements
+                  EGAlim.
+                </p>
+                <p v-else>Source des données : {{ purchaseDataSourceString }}.</p>
+              </v-card-text>
+              <v-card-text class="pt-0">
                 <v-data-table
                   :items="purchases"
                   :headers="purchaseHeaders"
-                  :hide-default-header="true"
                   :hide-default-footer="true"
                   :disable-sort="true"
+                  :class="`dsfr-table ${purchases.length && 'table-preview'}`"
+                  dense
                 >
                   <template v-slot:[`item.characteristics`]="{ item }">
                     {{ getProductCharacteristicsDisplayValue(item.characteristics) }}
                   </template>
                   <template v-slot:[`no-data`]>
-                    <v-card outlined rounded class="mb-4 py-4" color="primary lighten-5" v-if="!purchasesFetchingError">
-                      <v-card-text class="fr-text-xs">
+                    <v-card outlined rounded class="my-4 py-4 no-purchases" v-if="!purchasesFetchingError">
+                      <v-card-text class="fr-text-xs primary--text">
                         Saisissez vos achats manuellement ou connectez votre logiciel de gestion habituel
                       </v-card-text>
+                      <v-card-actions class="justify-center">
+                        <v-btn
+                          :to="{ name: 'PurchasesHome' }"
+                          color="primary"
+                          class="mx-2 mb-2 fr-text-sm font-weight-medium"
+                        >
+                          Compléter mes achats
+                        </v-btn>
+                      </v-card-actions>
                     </v-card>
                     <v-alert outlined type="error" v-else>
                       <p>{{ purchasesFetchingError }}</p>
@@ -81,7 +88,7 @@
                 </v-data-table>
               </v-card-text>
               <v-spacer></v-spacer>
-              <v-card-actions class="justify-end" v-if="purchases.length || purchasesFetchingError">
+              <v-card-actions v-if="purchases.length || purchasesFetchingError">
                 <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
                   Ajouter un achat
                 </v-btn>
@@ -90,14 +97,6 @@
                 </v-btn>
                 <v-btn :to="{ name: 'PurchasesHome' }" outlined color="primary" class="mx-2 mb-2">
                   Tous mes achats
-                </v-btn>
-              </v-card-actions>
-              <v-card-actions class="justify-end" v-else>
-                <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
-                  Ajouter mon premier achat
-                </v-btn>
-                <v-btn :to="{ name: 'PurchasesImporter' }" outlined color="primary" class="mx-2 mb-2">
-                  Importer mes achats
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -152,22 +151,49 @@
           </v-col>
           <v-col v-else cols="12" md="4" id="satellites">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
-              <v-card-title class="fr-h4">Mes satellites</v-card-title>
-              <v-card-text class="fr-text-xs">
-                <p>TODO</p>
-                <p>{{ satelliteCount }} / {{ canteen.satelliteCanteensCount }} renseignés</p>
+              <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes satellites</h3></v-card-title>
+              <v-card-text v-if="!satellites.length" class="fr-text-xs grey--text text--darken-2 mt-3 pb-0">
+                <p class="mb-0">Ajoutez et publiez les cantines que vous livrez</p>
               </v-card-text>
-              <v-spacer></v-spacer>
-              <v-card-actions class="mx-2 mb-2">
+              <v-spacer v-if="!satellites.length" />
+              <v-card-text class="fr-text-xs grey--text text--darken-2 mt-3 pb-0" v-if="canteen.satelliteCanteensCount">
+                <p class="mb-0">{{ satelliteCount }} / {{ canteen.satelliteCanteensCount }} satellites renseignés</p>
+              </v-card-text>
+              <v-spacer v-if="satellites.length" />
+              <v-card-text class="py-0" v-if="satellites.length">
+                <v-data-table
+                  :items="satellites"
+                  :headers="satelliteHeaders"
+                  :hide-default-footer="true"
+                  :disable-sort="true"
+                  :class="`dsfr-table grey--table ${satellites.length && 'table-preview'}`"
+                  dense
+                >
+                  <template v-slot:[`item.publicationStatus`]="{ item }">
+                    <v-chip
+                      :color="isSatellitePublished(item) ? 'green lighten-4' : 'grey lighten-2'"
+                      :class="isSatellitePublished(item) ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
+                      class="font-weight-bold px-2 fr-text-xs text-uppercase"
+                      style="border-radius: 4px !important;"
+                      small
+                      label
+                    >
+                      {{ isSatellitePublished(item) ? "Publiée" : "Non publiée" }}
+                    </v-chip>
+                  </template>
+                </v-data-table>
+              </v-card-text>
+              <v-spacer />
+              <v-card-actions class="ma-2">
                 <v-btn
                   :to="{
                     name: 'SatelliteManagement',
                     params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
                   }"
                   color="primary"
-                  outlined
+                  :outlined="!!satellites.length"
                 >
-                  Modifier
+                  {{ satellites.length ? "Modifier" : "Ajouter mes satellites" }}
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -244,24 +270,28 @@
               <v-card-title class="fr-h4">
                 Mon équipe
               </v-card-title>
-              <v-card-text>
-                <div v-if="managers.length > 1">
-                  <p class="fr-text">
+              <v-card-text class="fill-height">
+                <div v-if="managers.length > 1" class="fill-height d-flex flex-column">
+                  <p class="fr-text mb-0 grey--text text--darken-3">
                     {{ managers.length }} personnes (dont vous) peuvent actuellement modifier cet établissement et
-                    ajouter des données
+                    ajouter des données.
                   </p>
-                  <ul class="pl-0 fr-text-xs">
-                    <li v-for="(manager, idx) in managers" :key="manager.email">
-                      <v-icon>
-                        {{ manager.isInvite ? "mdi-account-clock-outline" : "mdi-account-check-outline" }}
-                      </v-icon>
-                      {{ manager.isInvite ? manager.email : `${manager.firstName} ${manager.lastName}` }}
-                      <span v-if="idx === 0">(vous)</span>
+                  <v-spacer></v-spacer>
+                  <ul class="pl-0 fr-text-xs grey--text text--darken-2 mb-n2">
+                    <li v-for="manager in managers" :key="manager.email" class="mb-4">
+                      <v-row class="align-center mx-0">
+                        <v-icon small class="mr-2">
+                          {{ manager.isInvite ? "$user-add-line" : "$user-line" }}
+                        </v-icon>
+                        {{ manager.isInvite ? manager.email : `${manager.firstName} ${manager.lastName}` }}
+                        <span v-if="manager.email === loggedUser.email" class="ml-1">(vous)</span>
+                      </v-row>
                     </li>
                   </ul>
+                  <v-spacer></v-spacer>
                 </div>
-                <p class="fr-text" v-else>
-                  Actuellement, vous êtes la seule personne qui peut modifier cet établissement et ajouter des données
+                <p class="fr-text grey--text text--darken-3" v-else>
+                  Actuellement, vous êtes la seule personne qui peut modifier cet établissement et ajouter des données.
                 </p>
               </v-card-text>
               <v-spacer></v-spacer>
@@ -275,7 +305,7 @@
                   color="primary"
                   class="mx-2 mb-2"
                 >
-                  Gérer mon équipe
+                  Modifier
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -322,15 +352,14 @@
 </template>
 
 <script>
-import EmptyProgression from "./EmptyProgression.vue"
-import EgalimProgression from "./EgalimProgression.vue"
+import EgalimProgression from "./EgalimProgression"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import { toCurrency, capitalise, formatDate, lastYear } from "@/utils"
 import Constants from "@/constants"
 
 export default {
   name: "DashboardManager",
-  components: { EmptyProgression, EgalimProgression, DsfrAutocomplete },
+  components: { EgalimProgression, DsfrAutocomplete },
   data() {
     const canteenId = +this.$route.query.cantine || this.$store.state.userCanteenPreviews[0]?.id
     return {
@@ -340,18 +369,19 @@ export default {
       showCanteenSelection: false,
       // canteen info widget
       centralKitchen: null,
+      satellites: [],
+      satelliteHeaders: [
+        { text: "Nom", value: "name" },
+        { text: "Statut", value: "publicationStatus" },
+      ],
       satelliteCount: null,
       // purchases widget
       purchases: [],
       purchaseHeaders: [
-        {
-          text: "Date",
-          align: "start",
-          value: "relativeDate",
-        },
+        { text: "Date", value: "relativeDate" },
         { text: "Produit", value: "description" },
         { text: "Caractéristiques", value: "characteristics" },
-        { text: "Prix HT", value: "priceHt", align: "end" },
+        { text: "Prix HT", value: "priceHt" },
       ],
       purchasesFetchingError: null,
       // publication widget
@@ -362,9 +392,6 @@ export default {
   computed: {
     loggedUser() {
       return this.$store.state.loggedUser
-    },
-    hasProgression() {
-      return false
     },
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
@@ -432,6 +459,11 @@ export default {
     hasPublicationData() {
       return !!this.diagnostic?.valueTotalHt
     },
+    // purchases widget
+    purchaseDataSourceString() {
+      if (!this.purchases.length) return
+      return this.purchases[0].createdByImport ? "import en masse" : "ajout manuel"
+    },
   },
   methods: {
     fetchCanteenIfNeeded() {
@@ -473,10 +505,13 @@ export default {
     },
     updateSatelliteCount() {
       if (!this.canteen.isCentralCuisine) return
-      const url = `/api/v1/canteens/${this.canteen.id}/satellites`
+      const url = `/api/v1/canteens/${this.canteen.id}/satellites?limit=3`
       fetch(url)
         .then((response) => response.json())
-        .then((response) => (this.satelliteCount = response.count))
+        .then((response) => {
+          this.satelliteCount = response.count
+          this.satellites = response.results
+        })
     },
     fetchPurchases() {
       this.purchasesFetchingError = null
@@ -555,6 +590,9 @@ export default {
           this.viewCount = null
         })
     },
+    isSatellitePublished(canteen) {
+      return canteen.publicationStatus === "published"
+    },
   },
   mounted() {
     this.fetchCanteenIfNeeded()
@@ -588,5 +626,12 @@ ul li::before {
 }
 p.publication-detail > span {
   float: right;
+}
+.no-purchases {
+  background-color: #f5f5fe;
+  border: thin dashed #000091;
+}
+.v-application .rounded {
+  border-radius: 8px !important;
 }
 </style>

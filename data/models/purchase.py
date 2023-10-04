@@ -118,3 +118,7 @@ class Purchase(SoftDeletionModel):
             except Exception:
                 pass
         return ", ".join(valid_characteristics) if valid_characteristics else None
+
+    @property
+    def created_by_import(self):
+        return bool(self.import_source)

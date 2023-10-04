@@ -72,7 +72,7 @@
         <DsfrTextField
           id="daily-meals"
           hide-details="auto"
-          :rules="[validators.greaterThanZero]"
+          :rules="[validators.greaterThanZero, validators.isInteger]"
           :readonly="readonly"
           :disabled="readonly"
           validate-on-blur
@@ -89,7 +89,7 @@
         <DsfrTextField
           id="yearly-meals"
           hide-details="auto"
-          :rules="[validators.greaterThanZero, greaterThanDailyMealCount]"
+          :rules="[validators.greaterThanZero, validators.isInteger, greaterThanDailyMealCount]"
           :readonly="readonly"
           :disabled="readonly"
           validate-on-blur
@@ -101,7 +101,7 @@
         <DsfrTextField
           label="Nombre de cantines/lieux de service à qui je fournis des repas"
           hide-details="auto"
-          :rules="[validators.greaterThanZero]"
+          :rules="[validators.greaterThanZero, validators.isInteger]"
           :readonly="readonly"
           :disabled="readonly"
           validate-on-blur
