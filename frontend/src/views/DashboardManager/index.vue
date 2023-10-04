@@ -148,20 +148,19 @@
                   :headers="satelliteHeaders"
                   :hide-default-footer="true"
                   :disable-sort="true"
-                  class="dsfr-table grey--table"
-                  :class="satellites.length && 'table-preview'"
+                  :class="`dsfr-table grey--table ${satellites.length && 'table-preview'}`"
                   dense
                 >
                   <template v-slot:[`item.publicationStatus`]="{ item }">
                     <v-chip
                       :color="isPublished(item) ? 'green lighten-4' : 'grey lighten-2'"
                       :class="isPublished(item) ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
-                      class="font-weight-bold px-2 fr-text-xs"
+                      class="font-weight-bold px-2 fr-text-xs text-uppercase"
                       style="border-radius: 4px !important;"
                       small
                       label
                     >
-                      {{ isPublished(item) ? "PUBLIÉE" : "NON PUBLIÉE" }}
+                      {{ isPublished(item) ? "Publiée" : "Non publiée" }}
                     </v-chip>
                   </template>
                 </v-data-table>
