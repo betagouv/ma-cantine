@@ -104,19 +104,20 @@
           </v-col>
           <v-col v-if="!canteen.isCentralCuisine" cols="12" md="4" id="publication">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
-              <v-card-title class="fr-h4">Ma vitrine en ligne</v-card-title>
+              <v-card-title><h3 class="fr-h4 mb-0">Ma vitrine en ligne</h3></v-card-title>
+              <v-spacer></v-spacer>
               <v-card-text class="fr-text">
                 <p class="publication-detail">
                   Statut
                   <v-chip
                     :color="isPublished ? 'green lighten-4' : 'grey lighten-2'"
                     :class="isPublished ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
-                    class="font-weight-bold px-2 fr-text-xs"
+                    class="font-weight-bold px-2 fr-text-xs text-uppercase"
                     style="border-radius: 4px !important;"
                     small
                     label
                   >
-                    {{ isPublished ? "PUBLIÉE" : "NON PUBLIÉE" }}
+                    {{ isPublished ? "Publiée" : "Non publiée" }}
                   </v-chip>
                 </p>
                 <p class="publication-detail">
@@ -125,7 +126,9 @@
                 </p>
                 <p class="publication-detail">
                   Nombre de visiteurs
-                  <span class="font-weight-bold fr-text-xs">{{ viewCount }}</span>
+                  <span class="font-weight-bold fr-text-xs">
+                    {{ isPublished && viewCount >= 0 ? viewCount : "-" }}
+                  </span>
                 </p>
               </v-card-text>
               <v-spacer></v-spacer>
@@ -352,7 +355,7 @@ export default {
       ],
       purchasesFetchingError: null,
       // publication widget
-      viewCount: 0,
+      viewCount: null,
       year: lastYear(),
     }
   },
@@ -529,15 +532,16 @@ export default {
       return { text: "" }
     },
     getPublishedPageViewCount() {
-      if (!this.isPublished) this.viewCount = 0
-      if (!this.$matomo) this.viewCount = 0
+      if (!this.isPublished) this.viewCount = null
+      if (!this.$matomo) this.viewCount = null
       const pageUrl =
         `${window.origin}${this.$router.resolve({ name: "CanteensHome" }).href}` +
         // Do not include the title part of the URL to handle A) name changes and B) / or no / ending
         `${this.canteen.id}--`
       const url =
-        "https://stats.data.gouv.fr/index.php?module=API&method=VisitsSummary.getVisits&idSite=162&period=range&date=last30&format=JSON&token_auth=anonymous&segment=pageUrl=^" +
-        encodeURIComponent(pageUrl)
+        "https://stats.data.gouv.fr/index.php?module=API&method=VisitsSummary.getVisits&period=range&date=last30&format=JSON&token_auth=anonymous&" +
+        `idSite=${window.MATOMO_ID}&` +
+        `segment=pageUrl=^${encodeURIComponent(pageUrl)}`
       return fetch(url)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
@@ -548,7 +552,7 @@ export default {
         })
         .catch(() => {
           console.warn("Error when fetching page visits for url", url)
-          this.viewCount = 0
+          this.viewCount = null
         })
     },
   },
