@@ -136,4 +136,36 @@ export default {
 .v-expansion-panel-header__icon > .v-icon {
   font-size: 1rem;
 }
+
+.dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
+  color: #000091;
+}
+.dsfr-table.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
+  height: 32px;
+}
+.dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th {
+  border-bottom: thin solid #000091;
+}
+.dsfr-table.v-data-table > .v-data-table__wrapper > table > tbody > tr.v-data-table__empty-wrapper > td {
+  padding: 0px;
+}
+// no IE8 support
+.dsfr-table > .v-data-table__wrapper > table > tbody > tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+.dsfr-table.theme--light.v-data-table
+  > .v-data-table__wrapper
+  > table
+  > tbody
+  > tr:not(:last-child)
+  > td:not(.v-data-table__mobile-row) {
+  border-bottom: none;
+}
+.dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(.v-data-table__empty-wrapper) {
+  pointer-events: none; // disable background colour change on hover
+}
+.dsfr-table.table-preview > .v-data-table__wrapper > table > tbody > tr:last-child {
+  // Not supported by all browsers, but is a nice to have rather than necessity
+  -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.6)), to(rgba(0, 0, 0, 0)));
+}
 </style>

@@ -43,26 +43,41 @@
         </p>
         <v-row>
           <v-col cols="12" md="8" id="latest-purchases">
-            <!-- How relevant are purchases to satellites? -->
             <v-card outlined class="fill-height d-flex flex-column pa-4">
-              <v-card-title class="fr-h4">Mes achats</v-card-title>
-              <v-spacer></v-spacer>
-              <v-card-text>
+              <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes achats</h3></v-card-title>
+              <v-card-text class="fr-text-xs grey--text text--darken-2 py-0 mt-3">
+                <p v-if="!purchases.length">
+                  Renseignez vos achats pour calculer automatiquement votre progression sur le volet approvisionnements
+                  EGAlim.
+                </p>
+                <p v-else>Source des données : {{ purchaseDataSourceString }}.</p>
+              </v-card-text>
+              <v-card-text class="pt-0">
                 <v-data-table
                   :items="purchases"
                   :headers="purchaseHeaders"
-                  :hide-default-header="true"
                   :hide-default-footer="true"
                   :disable-sort="true"
+                  :class="`dsfr-table ${purchases.length && 'table-preview'}`"
+                  dense
                 >
                   <template v-slot:[`item.characteristics`]="{ item }">
                     {{ getProductCharacteristicsDisplayValue(item.characteristics) }}
                   </template>
                   <template v-slot:[`no-data`]>
-                    <v-card outlined rounded class="mb-4 py-4" color="primary lighten-5" v-if="!purchasesFetchingError">
-                      <v-card-text class="fr-text-xs">
+                    <v-card outlined rounded class="my-4 py-4 no-purchases" v-if="!purchasesFetchingError">
+                      <v-card-text class="fr-text-xs primary--text">
                         Saisissez vos achats manuellement ou connectez votre logiciel de gestion habituel
                       </v-card-text>
+                      <v-card-actions class="justify-center">
+                        <v-btn
+                          :to="{ name: 'PurchasesHome' }"
+                          color="primary"
+                          class="mx-2 mb-2 fr-text-sm font-weight-medium"
+                        >
+                          Compléter mes achats
+                        </v-btn>
+                      </v-card-actions>
                     </v-card>
                     <v-alert outlined type="error" v-else>
                       <p>{{ purchasesFetchingError }}</p>
@@ -72,7 +87,7 @@
                 </v-data-table>
               </v-card-text>
               <v-spacer></v-spacer>
-              <v-card-actions class="justify-end" v-if="purchases.length || purchasesFetchingError">
+              <v-card-actions v-if="purchases.length || purchasesFetchingError">
                 <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
                   Ajouter un achat
                 </v-btn>
@@ -81,14 +96,6 @@
                 </v-btn>
                 <v-btn :to="{ name: 'PurchasesHome' }" outlined color="primary" class="mx-2 mb-2">
                   Tous mes achats
-                </v-btn>
-              </v-card-actions>
-              <v-card-actions class="justify-end" v-else>
-                <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
-                  Ajouter mon premier achat
-                </v-btn>
-                <v-btn :to="{ name: 'PurchasesImporter' }" outlined color="primary" class="mx-2 mb-2">
-                  Importer mes achats
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -305,14 +312,10 @@ export default {
       satelliteCount: null,
       purchases: [],
       purchaseHeaders: [
-        {
-          text: "Date",
-          align: "start",
-          value: "relativeDate",
-        },
+        { text: "Date", value: "relativeDate" },
         { text: "Produit", value: "description" },
         { text: "Caractéristiques", value: "characteristics" },
-        { text: "Prix HT", value: "priceHt", align: "end" },
+        { text: "Prix HT", value: "priceHt" },
       ],
       purchasesFetchingError: null,
       showCanteenSelection: false,
@@ -368,6 +371,11 @@ export default {
     canteenImage() {
       if (!this.canteen.images || this.canteen.images.length === 0) return null
       return this.canteen.images[0].image
+    },
+    // purchases widget
+    purchaseDataSourceString() {
+      if (!this.purchases.length) return
+      return this.purchases[0].createdByImport ? "import en masse" : "ajout manuel"
     },
   },
   methods: {
@@ -487,5 +495,12 @@ ul {
 /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
 ul li::before {
   content: "\200B";
+}
+.no-purchases {
+  background-color: #f5f5fe;
+  border: thin dashed #000091;
+}
+.v-application .rounded {
+  border-radius: 8px !important;
 }
 </style>
