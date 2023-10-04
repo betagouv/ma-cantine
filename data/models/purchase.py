@@ -121,4 +121,4 @@ class Purchase(SoftDeletionModel):
 
     @property
     def created_by_import(self):
-        return True if self.import_source else False
+        return bool(self.import_source)
