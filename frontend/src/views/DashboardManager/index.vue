@@ -51,7 +51,6 @@
         </p>
         <v-row>
           <v-col cols="12" md="8" id="latest-purchases">
-            <!-- How relevant are purchases to satellites? -->
             <v-card outlined class="fill-height d-flex flex-column pa-4">
               <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes achats</h3></v-card-title>
               <v-card-text class="fr-text-xs grey--text text--darken-2 py-0 mt-3">
@@ -67,8 +66,7 @@
                   :headers="purchaseHeaders"
                   :hide-default-footer="true"
                   :disable-sort="true"
-                  class="dsfr-table"
-                  :class="purchases.length && 'table-preview'"
+                  :class="`dsfr-table ${purchases.length && 'table-preview'}`"
                   dense
                 >
                   <template v-slot:[`item.characteristics`]="{ item }">
@@ -389,7 +387,6 @@ export default {
     // purchases widget
     purchaseDataSourceString() {
       if (!this.purchases.length) return
-      // TODO: if the latest purchase source is API show that too
       return this.purchases[0].importSource ? "import en masse" : "ajout manuel"
     },
   },
