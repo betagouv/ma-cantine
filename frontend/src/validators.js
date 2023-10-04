@@ -165,4 +165,10 @@ export default {
       return true
     }
   },
+  isInteger(input) {
+    if (input && !Number.isInteger(input)) {
+      return "Un nombre entier attendu"
+    }
+    return true
+  },
 }
