@@ -581,7 +581,9 @@ export default {
       this.fetchCanteenIfNeeded()
     },
     $route(newRoute, oldRoute) {
-      if (newRoute.query.cantine !== oldRoute.query.cantine) {
+      if (!newRoute.query.cantine) {
+        this.canteenId = this.$store.state.userCanteenPreviews[0]?.id
+      } else if (newRoute.query.cantine !== oldRoute.query.cantine) {
         this.canteenId = +newRoute.query.cantine
       }
     },
