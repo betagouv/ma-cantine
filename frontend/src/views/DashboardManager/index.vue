@@ -387,7 +387,7 @@ export default {
     // purchases widget
     purchaseDataSourceString() {
       if (!this.purchases.length) return
-      return this.purchases[0].importSource ? "import en masse" : "ajout manuel"
+      return this.purchases[0].createdByImport ? "import en masse" : "ajout manuel"
     },
   },
   methods: {

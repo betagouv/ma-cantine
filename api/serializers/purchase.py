@@ -22,13 +22,13 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "price_ht",
             "invoice_file",
             "local_definition",
-            "import_source",
+            "created_by_import",
         )
         read_only_fields = (
             "id",
             "creation_date",
             "modification_date",
-            "import_source",
+            "created_by_import",
         )
 
     def create(self, validated_data):
