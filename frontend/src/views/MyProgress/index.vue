@@ -16,12 +16,15 @@
         </nav>
       </v-col>
       <v-col cols="12" sm="9" md="10">
-        <DsfrTabsVue fixed-tabs :tabs="tabHeaders">
+        <DsfrTabsVue :tabs="tabHeaders" active-class="selected">
           <template v-slot:tabs>
-            <v-tab v-for="tab in tabHeaders" :key="tab">{{ tab }}</v-tab>
+            <v-tab v-for="tab in tabHeaders" class="mx-1" :key="tab.text">
+              <v-icon small class="mr-1">{{ tab.icon }}</v-icon>
+              {{ tab.text }}
+            </v-tab>
           </template>
           <template v-slot:items>
-            <v-tab-item v-for="(item, index) in tabItems" :key="`${index}-content`">
+            <v-tab-item class="my-4" v-for="(item, index) in tabItems" :key="`${index}-content`">
               <component :is="item" />
             </v-tab-item>
           </template>
@@ -56,12 +59,12 @@ export default {
   data() {
     return {
       tabHeaders: [
-        "Appro.",
-        "Gaspillage",
-        "Protéines végétales",
-        "Substit. plastiques",
-        "Info. convives",
-        "Établissement",
+        { text: "Appro.", icon: "mdi-food-apple" },
+        { text: "Gaspillage", icon: "mdi-offer" },
+        { text: "Protéines végétales", icon: "$leaf-fill" },
+        { text: "Substit. plastiques", icon: "mdi-weather-windy" },
+        { text: "Info. convives", icon: "mdi-bullhorn" },
+        { text: "Établissement", icon: "$building-fill" },
       ],
       tabItems: [ApproProgress, WasteProgress, DiversificationProgress, PlasticProgress, Inforogress, CanteenProgress],
       canteen: null,
