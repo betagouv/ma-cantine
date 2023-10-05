@@ -18,13 +18,11 @@
       <v-col cols="12" sm="9" md="10">
         <DsfrTabsVue fixed-tabs :tabs="tabHeaders">
           <template v-slot:tabs>
-            <v-tab v-for="tab in tabHeaders" :key="`${tab}-header`">{{ tab }}</v-tab>
+            <v-tab v-for="tab in tabHeaders" :key="tab">{{ tab }}</v-tab>
           </template>
           <template v-slot:items>
-            <v-tab-item v-for="tab in tabHeaders" :key="`${tab}-content`">
-              <v-card>
-                <v-card-text>Hello {{ tab }}</v-card-text>
-              </v-card>
+            <v-tab-item v-for="(item, index) in tabItems" :key="`${index}-content`">
+              <component :is="item" />
             </v-tab-item>
           </template>
         </DsfrTabsVue>
@@ -36,10 +34,25 @@
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import DsfrTabsVue from "@/components/DsfrTabs"
+import ApproProgress from "./ApproProgress"
+import DiversificationProgress from "./DiversificationProgress"
+import Inforogress from "./InfoProgress"
+import PlasticProgress from "./PlasticProgress"
+import WasteProgress from "./WasteProgress"
+import CanteenProgress from "./CanteenProgress"
 
 export default {
   name: "MyProgress",
-  components: { BreadcrumbsNav, DsfrTabsVue },
+  components: {
+    BreadcrumbsNav,
+    DsfrTabsVue,
+    ApproProgress,
+    DiversificationProgress,
+    Inforogress,
+    PlasticProgress,
+    WasteProgress,
+    CanteenProgress,
+  },
   data() {
     return {
       tabHeaders: [
@@ -50,6 +63,7 @@ export default {
         "Info. convives",
         "Établissement",
       ],
+      tabItems: [ApproProgress, WasteProgress, DiversificationProgress, PlasticProgress, Inforogress, CanteenProgress],
       canteen: null,
       years: [2021, 2022, 2023, 2024],
     }
