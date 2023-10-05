@@ -14,7 +14,7 @@
       clipped-right
       color="white"
       ref="appbar"
-      style="padding: 0 calc((100vw - 78rem)/2);"
+      :style="dashboardEnabled ? 'padding: 0 calc((100vw - 79.3rem)/2);' : 'padding: 0 calc((100vw - 78rem)/2);'"
       height="116px"
       extension-height="56px"
       id="en-tete"
@@ -202,6 +202,7 @@ export default {
   data() {
     return {
       logoutWarningDialog: false,
+      dashboardEnabled: window.ENABLE_DASHBOARD,
       navLinks: [
         {
           text: "Mon tableau de bord",
