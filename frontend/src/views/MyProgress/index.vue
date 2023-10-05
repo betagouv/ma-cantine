@@ -4,7 +4,7 @@
     <h1 class="mb-10 fr-h2" v-if="canteen">{{ canteen.name }}</h1>
     <v-row>
       <v-col cols="12" sm="3" md="2" style="border-right: 1px solid #DDD;">
-        <div>Ma progression</div>
+        <h2 class="fr-h5">Ma progression</h2>
         <nav aria-label="Année du diagnostic" v-if="canteen">
           <v-list nav class="text-left">
             <v-list-item-group>
