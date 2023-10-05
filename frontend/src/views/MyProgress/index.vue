@@ -89,3 +89,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.constrained {
+  max-width: 1200px !important;
+}
+</style>
