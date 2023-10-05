@@ -16,16 +16,18 @@
         </nav>
       </v-col>
       <v-col cols="12" sm="9" md="10">
-        <v-tabs v-model="tab" fixed-tabs>
-          <v-tab v-for="tab in tabHeaders" :key="`${tab}-header`">{{ tab }}</v-tab>
-        </v-tabs>
-        <v-tabs-items v-model="tab">
-          <v-tab-item v-for="tab in tabHeaders" :key="`${tab}-content`">
-            <v-card>
-              <v-card-text>Hello {{ tab }}</v-card-text>
-            </v-card>
-          </v-tab-item>
-        </v-tabs-items>
+        <DsfrTabsVue fixed-tabs :tabs="tabHeaders">
+          <template v-slot:tabs>
+            <v-tab v-for="tab in tabHeaders" :key="`${tab}-header`">{{ tab }}</v-tab>
+          </template>
+          <template v-slot:items>
+            <v-tab-item v-for="tab in tabHeaders" :key="`${tab}-content`">
+              <v-card>
+                <v-card-text>Hello {{ tab }}</v-card-text>
+              </v-card>
+            </v-tab-item>
+          </template>
+        </DsfrTabsVue>
       </v-col>
     </v-row>
   </div>
@@ -33,13 +35,13 @@
 
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
+import DsfrTabsVue from "@/components/DsfrTabs"
 
 export default {
   name: "MyProgress",
-  components: { BreadcrumbsNav },
+  components: { BreadcrumbsNav, DsfrTabsVue },
   data() {
     return {
-      tab: null,
       tabHeaders: [
         "Appro.",
         "Gaspillage",
@@ -81,9 +83,6 @@ export default {
       this.canteen = null
       this.fetchCanteen()
     },
-  },
-  beforeUpdate() {
-    this.fetchCanteen()
   },
   beforeMount() {
     this.fetchCanteen()
