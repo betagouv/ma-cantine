@@ -600,7 +600,7 @@ if (window.ENABLE_DASHBOARD) {
     sitemapGroup: Constants.SitemapGroups.DIAG,
   })
   routes.push({
-    path: "/ma-progression/:canteenUrlComponent",
+    path: "/ma-progression/:canteenUrlComponent/:year/:measure",
     name: "MyProgress",
     component: MyProgress,
     props: true,

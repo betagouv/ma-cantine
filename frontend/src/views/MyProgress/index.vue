@@ -8,7 +8,12 @@
         <nav aria-label="Année du diagnostic" v-if="canteen">
           <v-list nav class="text-left">
             <v-list-item-group>
-              <v-list-item v-for="year in years" :key="year">
+              <v-list-item
+                :ripple="false"
+                :to="{ name: 'MyProgress', params: { year } }"
+                v-for="year in years"
+                :key="year"
+              >
                 <v-list-item-title>{{ year }}</v-list-item-title>
               </v-list-item>
             </v-list-item-group>
@@ -16,11 +21,11 @@
         </nav>
       </v-col>
       <v-col cols="12" sm="9" md="10">
-        <DsfrTabsVue :tabs="tabHeaders" active-class="selected">
+        <DsfrTabsVue v-model="tab" :tabs="tabHeaders" active-class="selected">
           <template v-slot:tabs>
-            <v-tab v-for="tab in tabHeaders" class="mx-1" :key="tab.text">
-              <v-icon small class="mr-1">{{ tab.icon }}</v-icon>
-              {{ tab.text }}
+            <v-tab v-for="tabItem in tabHeaders" class="mx-1" :key="tabItem.text">
+              <v-icon small class="mr-1">{{ tabItem.icon }}</v-icon>
+              {{ tabItem.text }}
             </v-tab>
           </template>
           <template v-slot:items>
@@ -58,13 +63,44 @@ export default {
   },
   data() {
     return {
+      tab: null,
       tabHeaders: [
-        { text: "Appro.", icon: "mdi-food-apple" },
-        { text: "Gaspillage", icon: "mdi-offer" },
-        { text: "Protéines végétales", icon: "$leaf-fill" },
-        { text: "Substit. plastiques", icon: "mdi-weather-windy" },
-        { text: "Info. convives", icon: "mdi-bullhorn" },
-        { text: "Établissement", icon: "$building-fill" },
+        {
+          urlSlug: "qualite-des-produits",
+          text: "Appro.",
+          icon: "mdi-food-apple",
+          to: { params: { measure: "qualite-des-produits" } },
+        },
+        {
+          urlSlug: "gaspillage-alimentaire",
+          text: "Gaspillage",
+          icon: "mdi-offer",
+          to: { params: { measure: "gaspillage-alimentaire" } },
+        },
+        {
+          urlSlug: "diversification-des-menus",
+          text: "Protéines végétales",
+          icon: "$leaf-fill",
+          to: { params: { measure: "diversification-des-menus" } },
+        },
+        {
+          urlSlug: "interdiction-du-plastique",
+          text: "Substit. plastiques",
+          icon: "mdi-weather-windy",
+          to: { params: { measure: "interdiction-du-plastique" } },
+        },
+        {
+          urlSlug: "information-des-usagers",
+          text: "Info. convives",
+          icon: "mdi-bullhorn",
+          to: { params: { measure: "information-des-usagers" } },
+        },
+        {
+          urlSlug: "etablissement",
+          text: "Établissement",
+          icon: "$building-fill",
+          to: { params: { measure: "etablissement" } },
+        },
       ],
       tabItems: [ApproProgress, WasteProgress, DiversificationProgress, PlasticProgress, Inforogress, CanteenProgress],
       canteen: null,
@@ -74,7 +110,13 @@ export default {
   props: {
     canteenUrlComponent: {
       type: String,
-      required: false,
+      required: true,
+    },
+    year: {
+      required: true,
+    },
+    measure: {
+      required: true,
     },
   },
   methods: {
@@ -94,15 +136,33 @@ export default {
           this.$router.push({ name: "ManagementPage" })
         })
     },
+    // onTabChange() {
+    //   this.$nextTick().then(() => {
+    //     if (!this.$route.params.measure === this.tabHeaders[this.tab].urlSlug)
+    //       this.$router.replace({ params: { measure: this.tabHeaders[this.tab].urlSlug } })
+    //   })
+    // },
   },
   watch: {
     canteenUrlComponent() {
       this.canteen = null
       this.fetchCanteen()
     },
+    tab() {
+      if (this.$route.params.measure !== this.tabHeaders[this.tab].urlSlug)
+        this.$router.replace({ params: { measure: this.tabHeaders[this.tab].urlSlug } })
+    },
   },
   beforeMount() {
     this.fetchCanteen()
+    const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
+    if (!initialTab) {
+      this.$router.replace({
+        name: this.$route.name,
+        params: { canteenUrlComponent: this.canteenUrlComponent, year: this.year, measure: this.tabHeaders[0].urlSlug },
+      })
+      this.tab = 0
+    } else this.tab = this.tabHeaders.indexOf(initialTab)
   },
 }
 </script>

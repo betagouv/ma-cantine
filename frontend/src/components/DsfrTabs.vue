@@ -14,10 +14,15 @@
 export default {
   inheritAttrs: false,
   props: ["value"],
-  data() {
-    return {
-      tab: null,
-    }
+  computed: {
+    tab: {
+      get() {
+        return this.value
+      },
+      set(value) {
+        this.$emit("input", value)
+      },
+    },
   },
 }
 </script>
@@ -31,7 +36,6 @@ export default {
 .v-tabs >>> .v-tab.selected {
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
-  /* transition: none !important; */
 }
 .v-tabs >>> .v-tab.selected::before {
   background-color: inherit;
