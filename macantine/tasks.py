@@ -338,14 +338,19 @@ def _extract_dataset_teledeclaration(year):
             Teledeclaration.objects.filter(year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values()
         )
     if len(td) == 0:
+        logger.warning('TD campagne dataset is empty')
         return td
+    logger.debug('TD campagne : Flatten declared data...')
     td = _flatten_declared_data(td)
     td["teledeclaration_ratio_bio"] = td["teledeclaration.value_bio_ht"] / td["teledeclaration.value_total_ht"]
     td["teledeclaration_ratio_egalim_hors_bio"] = (
         td["teledeclaration.value_sustainable_ht"] / td["teledeclaration.value_total_ht"]
     )
+    logger.debug('TD campagne : Clean dataset...')
     td = _clean_dataset(td, schema)
+    logger.debug('TD campagne : Filter by sector...')
     td = _filter_by_sectors(td)
+    logger.debug('TD campagne : Fill geo name...')
     td = _fill_geo_name(td)
 
     return td
@@ -386,15 +391,19 @@ def _extract_dataset_canteen():
 
     # Adding the active_on_ma_cantine column
     canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
-
+    
+    logger.debug('Canteens : Extract sectors...')
     canteens = _extract_sectors(canteens)
+    logger.debug('Canteens : Filter by sectors...')
     canteens = _filter_by_sectors(canteens)
 
     bucket_url = os.environ.get("CELLAR_HOST")
     bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
     canteens["logo"] = canteens["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
 
+    logger.debug('Canteens : Clean dataset...')
     canteens = _clean_dataset(canteens, schema)
+    logger.debug('Canteens : Fill geo name...')
     canteens = _fill_geo_name(canteens)
 
     return canteens
@@ -407,10 +416,15 @@ def _export_dataset(td, file_name):
 
 @app.task()
 def export_datasets():
+    logger.info('Starting datasets extractions')
     # Campagnes de télédéclaration
+    logger.info('A) Starting campagne teledeclaration 2021 dataset extraction')
     td_2021 = _extract_dataset_teledeclaration(2021)
+    logger.info(f'A) Saving campagne teledeclaration 2021 dataset. Dataset size : {len(td_2021)} lines')
     _export_dataset(td_2021, "campagne_td_2021.csv")
 
     # Registre des cantines
+    logger.info('B) Starting cantines dataset extraction')
     canteens = _extract_dataset_canteen()
+    logger.info(f'B) Saving cantines teledeclaration dataset. Dataset size : {len(canteens)} lines')
     _export_dataset(canteens, "registre_cantines.csv")
