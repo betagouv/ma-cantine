@@ -1,13 +1,5 @@
 <template>
-  <v-card
-    :to="{
-      name: 'CanteenModification',
-      params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-    }"
-    class="dsfr d-flex flex-column"
-    outlined
-    :ripple="false"
-  >
+  <v-card :to="canteenLink" class="dsfr d-flex flex-column" outlined :ripple="false">
     <div class="tag body-2 font-weight-medium">
       <v-icon class="mt-n1" small>$community-fill</v-icon>
       Cuisine centrale
@@ -93,6 +85,15 @@ export default {
     },
     teledeclarationIsActive() {
       return window.ENABLE_TELEDECLARATION
+    },
+    canteenLink() {
+      if (window.ENABLE_DASHBOARD && window.DEBUG) {
+        return { name: "DashboardManager", query: { cantine: this.canteen.id } }
+      }
+      return {
+        name: "CanteenModification",
+        params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
+      }
     },
   },
 }

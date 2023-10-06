@@ -27,3 +27,8 @@ def enable_teledeclaration():
 @register.simple_tag
 def enable_dashboard():
     return getattr(settings, "ENABLE_DASHBOARD", "")
+
+
+@register.simple_tag
+def debug():
+    return getattr(settings, "DEBUG", "")

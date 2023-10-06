@@ -205,7 +205,7 @@ export default {
       navLinks: [
         {
           text: "Mon tableau de bord",
-          to: window.ENABLE_DASHBOARD ? { name: "DashboardManager" } : { name: "ManagementPage" },
+          to: { name: "ManagementPage" },
           authenticationState: true,
         },
         {
