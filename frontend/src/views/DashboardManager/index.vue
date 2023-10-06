@@ -43,56 +43,11 @@
           Accédez ci-dessous aux différents outils de gestion de votre établissement sur la plateforme « ma cantine ».
         </p>
         <v-row>
-          <v-col cols="12" md="8" id="latest-purchases" fill-height>
+          <v-col cols="12" md="8">
             <PurchasesWidget :canteen="canteen" />
           </v-col>
-          <v-col v-if="!canteen.isCentralCuisine" cols="12" md="4" id="publication">
-            <v-card outlined class="fill-height d-flex flex-column pa-4">
-              <v-card-title><h3 class="fr-h4 mb-0">Ma vitrine en ligne</h3></v-card-title>
-              <v-spacer></v-spacer>
-              <v-card-text class="fr-text">
-                <p class="publication-detail">
-                  Statut
-                  <v-chip
-                    :color="isPublished ? 'green lighten-4' : 'grey lighten-2'"
-                    :class="isPublished ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
-                    class="font-weight-bold px-2 fr-text-xs text-uppercase"
-                    style="border-radius: 4px !important;"
-                    small
-                    label
-                  >
-                    {{ isPublished ? "Publiée" : "Non publiée" }}
-                  </v-chip>
-                </p>
-                <p class="publication-detail">
-                  Dernière mise à jour
-                  <span class="font-weight-bold fr-text-xs">{{ publicationUpdateDate }}</span>
-                </p>
-                <p class="publication-detail">
-                  Nombre de visiteurs
-                  <span class="font-weight-bold fr-text-xs">
-                    {{ isPublished && viewCount !== null ? viewCount : "-" }}
-                  </span>
-                </p>
-              </v-card-text>
-              <v-spacer></v-spacer>
-              <v-card-actions class="mx-2 mb-2">
-                <v-btn
-                  :to="{
-                    name: 'PublicationForm',
-                    params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                  }"
-                  color="primary"
-                  :outlined="isPublished || !hasPublicationData"
-                  :disabled="!isPublished && !hasPublicationData"
-                >
-                  {{ isPublished ? "Éditer ma vitrine" : "Publier ma cantine" }}
-                </v-btn>
-                <p v-if="!isPublished && !hasPublicationData" class="grey--text text--darken-1 fr-text-xs mb-0 ml-3">
-                  Pas de données
-                </p>
-              </v-card-actions>
-            </v-card>
+          <v-col v-if="!canteen.isCentralCuisine" cols="12" md="4">
+            <PublicationWidget :canteen="canteen" />
           </v-col>
           <v-col v-else cols="12" md="4" id="satellites">
             <v-card outlined class="fill-height d-flex flex-column pa-4">
@@ -299,13 +254,14 @@
 <script>
 import EgalimProgression from "./EgalimProgression"
 import PurchasesWidget from "./PurchasesWidget"
+import PublicationWidget from "./PublicationWidget"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import { capitalise, formatDate, lastYear } from "@/utils"
+import { capitalise } from "@/utils"
 import Constants from "@/constants"
 
 export default {
   name: "DashboardManager",
-  components: { EgalimProgression, DsfrAutocomplete, PurchasesWidget },
+  components: { EgalimProgression, DsfrAutocomplete, PurchasesWidget, PublicationWidget },
   data() {
     const canteenId = +this.$route.query.cantine || this.$store.state.userCanteenPreviews[0]?.id
     return {
@@ -321,9 +277,6 @@ export default {
         { text: "Statut", value: "publicationStatus" },
       ],
       satelliteCount: null,
-      // publication widget
-      viewCount: null,
-      year: lastYear(),
     }
   },
   computed: {
@@ -377,25 +330,6 @@ export default {
       if (!this.canteen.images || this.canteen.images.length === 0) return null
       return this.canteen.images[0].image
     },
-    // publication widget
-    diagnostic() {
-      return this.canteen?.diagnostics.find((x) => x.year === this.year)
-    },
-    isPublished() {
-      return this.canteen?.publicationStatus === "published"
-    },
-    publicationUpdateDate() {
-      if (!this.canteen || !this.isPublished) return "jamais"
-      let date = new Date(this.canteen.modificationDate)
-      if (this.diagnostic) {
-        let diagDate = new Date(this.diagnostic.modificationDate)
-        if (diagDate > date) date = diagDate
-      }
-      return formatDate(date.toISOString())
-    },
-    hasPublicationData() {
-      return !!this.diagnostic?.valueTotalHt
-    },
   },
   methods: {
     fetchCanteenIfNeeded() {
@@ -411,7 +345,6 @@ export default {
           this.canteen = canteen
           this.getCentralKitchen()
           this.updateSatelliteCount()
-          this.getPublishedPageViewCount()
           this.$router.push({ query: { cantine: id } }).catch(() => {})
         })
         .catch(() => {
@@ -442,30 +375,6 @@ export default {
         .then((response) => {
           this.satelliteCount = response.count
           this.satellites = response.results
-        })
-    },
-    getPublishedPageViewCount() {
-      if (!this.isPublished) this.viewCount = null
-      if (!this.$matomo) this.viewCount = null
-      const pageUrl =
-        `${window.origin}${this.$router.resolve({ name: "CanteensHome" }).href}` +
-        // Do not include the title part of the URL to handle A) name changes and B) / or no / ending
-        `${this.canteen.id}--`
-      const url =
-        "https://stats.data.gouv.fr/index.php?module=API&method=VisitsSummary.getVisits&period=range&date=last30&format=JSON&token_auth=anonymous&" +
-        `idSite=${window.MATOMO_ID}&` +
-        `segment=pageUrl=^${encodeURIComponent(pageUrl)}`
-      return fetch(url)
-        .then((response) => {
-          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
-          return response.json()
-        })
-        .then((response) => {
-          this.viewCount = response.value
-        })
-        .catch(() => {
-          console.warn("Error when fetching page visits for url", url)
-          this.viewCount = null
         })
     },
     isSatellitePublished(canteen) {
@@ -505,8 +414,5 @@ ul {
 /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
 ul li::before {
   content: "\200B";
-}
-p.publication-detail > span {
-  float: right;
 }
 </style>
