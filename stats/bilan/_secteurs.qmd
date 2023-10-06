@@ -60,6 +60,8 @@ def calcul_indicateurs_secteurs(tds, year, suffix=''):
             sectors[year][cat][f'Montant total des achats{suffix}'] = df_cat["teledeclaration.value_total_ht"].sum()
             sectors[year][cat][f'Taux des achats Bio{suffix}'] = df_cat["teledeclaration.value_bio_ht"].sum()/df_cat["teledeclaration.value_total_ht"].sum()
             sectors[year][cat][f'Montant des achats Bio{suffix}'] = df_cat["teledeclaration.value_bio_ht"].sum()
+            sectors[year][cat][f'Taux des achats EGAlim{suffix}'] = (df_cat["teledeclaration.value_bio_ht"].sum() + df_cat["teledeclaration.value_externality_performance_ht"].sum() + df_cat["teledeclaration.value_sustainable_ht"].sum() + df_cat["teledeclaration.value_egalim_others_ht"].sum()) / df_cat["teledeclaration.value_total_ht"].sum()
+            sectors[year][cat][f'Montant des achats EGAlim{suffix}'] = df_cat["teledeclaration.value_bio_ht"].sum() + df_cat["teledeclaration.value_externality_performance_ht"].sum() + df_cat["teledeclaration.value_sustainable_ht"].sum() + df_cat["teledeclaration.value_egalim_others_ht"].sum()
             sectors[year][cat][f'Taux achats secteurs{suffix}'] = df_cat["teledeclaration.value_total_ht"].sum()/ tds[year]["teledeclaration.value_total_ht"].sum()
 
     summary = pd.DataFrame.from_dict(sectors[year]).T
@@ -79,11 +81,12 @@ def calcul_indicateurs_secteurs(tds, year, suffix=''):
 
     # TODO  A optimiser : Actuellement nous recalculons tous les taux car ils ont été corrompus par l'aggrégation en somme
     summary_by_sub_sector[f'Taux des achats Bio{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Montant des achats Bio{suffix}'] / x[f'Montant total des achats{suffix}'], axis=1)
+    summary_by_sub_sector[f'Taux des achats EGAlim{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Montant des achats EGAlim{suffix}'] / x[f'Montant total des achats{suffix}'], axis=1)
     summary_by_sub_sector[f'Taux achats secteurs{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Montant total des achats{suffix}'] / tds[year]["teledeclaration.value_total_ht"].sum(), axis=1)
 
     # Suppression des colonnes après leur utilisation pour les calculs de ratio
-    del summary_by_sub_sector[f'Montant total des achats{suffix}']
-    del summary_by_sub_sector[f'Montant des achats Bio{suffix}']
+    # del summary_by_sub_sector[f'Montant total des achats{suffix}']
+    # del summary_by_sub_sector[f'Montant des achats Bio{suffix}']
 
     return summary_by_sub_sector
 ```
