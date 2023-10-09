@@ -340,17 +340,17 @@ def _extract_dataset_teledeclaration(year):
     if len(td) == 0:
         logger.warning('TD campagne dataset is empty')
         return td
-    logger.debug('TD campagne : Flatten declared data...')
+    logger.info('TD campagne : Flatten declared data...')
     td = _flatten_declared_data(td)
     td["teledeclaration_ratio_bio"] = td["teledeclaration.value_bio_ht"] / td["teledeclaration.value_total_ht"]
     td["teledeclaration_ratio_egalim_hors_bio"] = (
         td["teledeclaration.value_sustainable_ht"] / td["teledeclaration.value_total_ht"]
     )
-    logger.debug('TD campagne : Clean dataset...')
+    logger.info('TD campagne : Clean dataset...')
     td = _clean_dataset(td, schema)
-    logger.debug('TD campagne : Filter by sector...')
+    logger.info('TD campagne : Filter by sector...')
     td = _filter_by_sectors(td)
-    logger.debug('TD campagne : Fill geo name...')
+    logger.info('TD campagne : Fill geo name...')
     td = _fill_geo_name(td)
 
     return td
@@ -392,18 +392,18 @@ def _extract_dataset_canteen():
     # Adding the active_on_ma_cantine column
     canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
     
-    logger.debug('Canteens : Extract sectors...')
+    logger.info('Canteens : Extract sectors...')
     canteens = _extract_sectors(canteens)
-    logger.debug('Canteens : Filter by sectors...')
+    logger.info('Canteens : Filter by sectors...')
     canteens = _filter_by_sectors(canteens)
 
     bucket_url = os.environ.get("CELLAR_HOST")
     bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
     canteens["logo"] = canteens["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
 
-    logger.debug('Canteens : Clean dataset...')
+    logger.info('Canteens : Clean dataset...')
     canteens = _clean_dataset(canteens, schema)
-    logger.debug('Canteens : Fill geo name...')
+    logger.info('Canteens : Fill geo name...')
     canteens = _fill_geo_name(canteens)
 
     return canteens
