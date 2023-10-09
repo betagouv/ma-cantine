@@ -180,4 +180,17 @@ export default {
 .constrained {
   max-width: 1200px !important;
 }
+.v-list-item {
+  font-weight: bold;
+  border-radius: 0;
+  min-height: 35px;
+  margin-bottom: 16px !important;
+}
+.v-list-item.v-item--active {
+  color: rgb(0, 0, 145);
+  border-left: solid;
+}
+.v-list-item--link::before {
+  background-color: transparent;
+}
 </style>
