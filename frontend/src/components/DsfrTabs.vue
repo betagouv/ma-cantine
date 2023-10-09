@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-tabs v-bind="$attrs" v-model="tab" v-on="$listeners">
+    <DsfrSelect :label="mobileLabel" :items="mobileSelectItems" v-model="tab" v-if="enableMobileView" />
+    <v-tabs v-bind="$attrs" v-model="tab" v-on="$listeners" v-else>
       <slot name="tabs" />
     </v-tabs>
 
@@ -11,9 +12,12 @@
 </template>
 
 <script>
+import DsfrSelect from "@/components/DsfrSelect"
+
 export default {
   inheritAttrs: false,
-  props: ["value"],
+  props: ["value", "enableMobileView", "mobileLabel", "mobileSelectItems"],
+  components: { DsfrSelect },
   computed: {
     tab: {
       get() {

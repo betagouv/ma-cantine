@@ -5,7 +5,7 @@
     <v-row>
       <v-col cols="12" sm="3" md="2" style="border-right: 1px solid #DDD;">
         <h2 class="fr-h5">Ma progression</h2>
-        <nav aria-label="Année du diagnostic" v-if="canteen">
+        <nav aria-label="Année du diagnostic" v-if="canteen && $vuetify.breakpoint.smAndUp">
           <v-list nav class="text-left">
             <v-list-item-group>
               <v-list-item
@@ -19,9 +19,16 @@
             </v-list-item-group>
           </v-list>
         </nav>
+        <DsfrSelect label="Année" :items="years" v-model="year" v-else-if="canteen" />
       </v-col>
       <v-col cols="12" sm="9" md="10">
-        <DsfrTabsVue v-model="tab" :tabs="tabHeaders" active-class="selected">
+        <DsfrTabsVue
+          v-model="tab"
+          :enableMobileView="$vuetify.breakpoint.smAndDown"
+          mobileLabel="Volet de la loi EGAlim"
+          :mobileSelectItems="mobileSelectItems"
+          active-class="selected"
+        >
           <template v-slot:tabs>
             <v-tab v-for="tabItem in tabHeaders" class="mx-1" :key="tabItem.text">
               <v-icon small class="mr-1">{{ tabItem.icon }}</v-icon>
@@ -48,6 +55,7 @@ import Inforogress from "./InfoProgress"
 import PlasticProgress from "./PlasticProgress"
 import WasteProgress from "./WasteProgress"
 import CanteenProgress from "./CanteenProgress"
+import DsfrSelect from "@/components/DsfrSelect"
 
 export default {
   name: "MyProgress",
@@ -60,6 +68,7 @@ export default {
     PlasticProgress,
     WasteProgress,
     CanteenProgress,
+    DsfrSelect,
   },
   data() {
     return {
@@ -105,7 +114,7 @@ export default {
       ],
       tabItems: [ApproProgress, WasteProgress, DiversificationProgress, PlasticProgress, Inforogress, CanteenProgress],
       canteen: null,
-      years: [2021, 2022, 2023, 2024],
+      years: ["2021", "2022", "2023", "2024"],
     }
   },
   props: {
@@ -118,6 +127,11 @@ export default {
     },
     measure: {
       required: true,
+    },
+  },
+  computed: {
+    mobileSelectItems() {
+      return this.tabHeaders.map((x, index) => ({ text: x.text, value: index }))
     },
   },
   methods: {
