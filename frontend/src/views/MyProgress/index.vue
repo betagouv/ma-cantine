@@ -19,7 +19,7 @@
             </v-list-item-group>
           </v-list>
         </nav>
-        <DsfrSelect label="Année" :items="years" v-model="year" v-else-if="canteen" />
+        <DsfrSelect hide-details label="Année" :items="years" v-model="year" v-else-if="canteen" />
       </v-col>
       <v-col cols="12" sm="9" md="10">
         <DsfrTabsVue

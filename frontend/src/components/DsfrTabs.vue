@@ -1,6 +1,13 @@
 <template>
   <div>
-    <DsfrSelect :label="mobileLabel" :items="mobileSelectItems" v-model="tab" v-if="enableMobileView" />
+    <DsfrSelect
+      hide-details
+      class="mb-4"
+      :label="mobileLabel"
+      :items="mobileSelectItems"
+      v-model="tab"
+      v-if="enableMobileView"
+    />
     <v-tabs v-bind="$attrs" v-model="tab" v-on="$listeners" v-else>
       <slot name="tabs" />
     </v-tabs>
