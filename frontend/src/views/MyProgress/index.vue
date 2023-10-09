@@ -30,7 +30,7 @@
           </template>
           <template v-slot:items>
             <v-tab-item class="my-4" v-for="(item, index) in tabItems" :key="`${index}-content`">
-              <component :is="item" />
+              <component :is="item" :diagnostic="diagnostic" />
             </v-tab-item>
           </template>
         </DsfrTabsVue>
@@ -64,6 +64,7 @@ export default {
   data() {
     return {
       tab: null,
+      diagnostic: null,
       tabHeaders: [
         {
           urlSlug: "qualite-des-produits",
@@ -128,6 +129,7 @@ export default {
       return this.$store
         .dispatch("fetchCanteen", { id })
         .then((canteen) => this.updateCanteen(canteen))
+        .then(this.assignDiagnostic)
         .catch(() => {
           this.$store.dispatch("notify", {
             message: "Nous n'avons pas trouvé cette cantine",
@@ -136,12 +138,13 @@ export default {
           this.$router.push({ name: "ManagementPage" })
         })
     },
-    // onTabChange() {
-    //   this.$nextTick().then(() => {
-    //     if (!this.$route.params.measure === this.tabHeaders[this.tab].urlSlug)
-    //       this.$router.replace({ params: { measure: this.tabHeaders[this.tab].urlSlug } })
-    //   })
-    // },
+    assignDiagnostic() {
+      this.$set(
+        this,
+        "diagnostic",
+        this.canteen?.diagnostics?.find((x) => +x.year === +this.year)
+      )
+    },
   },
   watch: {
     canteenUrlComponent() {
@@ -151,6 +154,12 @@ export default {
     tab() {
       if (this.$route.params.measure !== this.tabHeaders[this.tab].urlSlug)
         this.$router.replace({ params: { measure: this.tabHeaders[this.tab].urlSlug } })
+    },
+    year() {
+      this.assignDiagnostic()
+    },
+    canteen() {
+      this.assignDiagnostic()
     },
   },
   beforeMount() {
