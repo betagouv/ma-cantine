@@ -56,6 +56,7 @@ import PlasticProgress from "./PlasticProgress"
 import WasteProgress from "./WasteProgress"
 import CanteenProgress from "./CanteenProgress"
 import DsfrSelect from "@/components/DsfrSelect"
+import { diagnosticYears } from "@/utils"
 
 export default {
   name: "MyProgress",
@@ -114,7 +115,7 @@ export default {
       ],
       tabItems: [ApproProgress, WasteProgress, DiversificationProgress, PlasticProgress, Inforogress, CanteenProgress],
       canteen: null,
-      years: ["2021", "2022", "2023", "2024"],
+      years: diagnosticYears(),
     }
   },
   props: {
