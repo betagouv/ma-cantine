@@ -38,6 +38,26 @@
               disponibilité de la plateforme
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
+            ,
+            <a
+              href="https://ma-cantine-metabase.cleverapps.io/public/dashboard/3dab8a21-c4b9-46e1-84fa-7ba485ddfbbb"
+              class="grey--text text--darken-3"
+              target="_blank"
+              rel="noopener"
+            >
+              nos indicateurs
+              <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
+            </a>
+            , et
+            <a
+              href="https://stats.data.gouv.fr/index.php?idSite=162"
+              class="grey--text text--darken-3"
+              target="_blank"
+              rel="noopener"
+            >
+              l'usage du site
+              <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
+            </a>
           </p>
           <!-- ml-n1 here makes up for the a11y need of ::before on li elements for them to be recognised by all screen readers -->
           <ul class="d-flex justify-space-between font-weight-bold pl-0 ml-n1 flex-wrap link-group">
