@@ -25,7 +25,7 @@
         <DsfrTabsVue
           v-model="tab"
           :enableMobileView="$vuetify.breakpoint.smAndDown"
-          mobileLabel="Volet de la loi EGAlim"
+          mobileLabel="Mesure de la loi EGAlim"
           :mobileSelectItems="mobileSelectItems"
           active-class="selected"
         >
