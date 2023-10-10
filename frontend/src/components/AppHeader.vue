@@ -239,7 +239,7 @@ export default {
               to: { name: "BlogsHome" },
             },
             {
-              text: "Documentation",
+              text: "Pour aller plus loin",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
               target: "_blank",
               rel: "noopener",
@@ -255,7 +255,7 @@ export default {
             })),
             ...[
               {
-                text: "Documentation",
+                text: "Pour aller plus loin",
                 href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
                 target: "_blank",
                 rel: "noopener",
