@@ -239,28 +239,11 @@ export default {
               to: { name: "BlogsHome" },
             },
             {
-              text: "Documentation",
+              text: "Pour aller plus loin",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
               target: "_blank",
               rel: "noopener",
             },
-          ],
-        },
-        {
-          text: "Comprendre mes obligations",
-          children: [
-            ...keyMeasures.map((x) => ({
-              text: x.shortTitle,
-              to: { name: "KeyMeasurePage", params: { id: x.id } },
-            })),
-            ...[
-              {
-                text: "Documentation",
-                href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-                target: "_blank",
-                rel: "noopener",
-              },
-            ],
           ],
         },
         {
@@ -279,6 +262,27 @@ export default {
               text: "Dans ma collectivité",
               to: { name: "PublicCanteenStatisticsPage" },
             },
+            {
+              text: "Mesures de notre impact",
+              to: { name: "ImpactMeasuresPage" },
+            },
+          ],
+        },
+        {
+          text: "Comprendre mes obligations",
+          children: [
+            ...keyMeasures.map((x) => ({
+              text: x.shortTitle,
+              to: { name: "KeyMeasurePage", params: { id: x.id } },
+            })),
+            ...[
+              {
+                text: "Pour aller plus loin",
+                href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+                target: "_blank",
+                rel: "noopener",
+              },
+            ],
           ],
         },
         {
@@ -293,32 +297,8 @@ export default {
               to: { name: "ContactPage" },
             },
             {
-              text: "Webinaires",
-              to: { name: "CommunityPage" },
-            },
-            {
-              text: "Blog",
-              to: { name: "BlogsHome" },
-            },
-            {
               text: "Documentation",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-              target: "_blank",
-              rel: "noopener",
-            },
-            {
-              text: "Mesures de notre impact",
-              to: { name: "ImpactMeasuresPage" },
-            },
-            {
-              text: "Indicateurs",
-              href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/3dab8a21-c4b9-46e1-84fa-7ba485ddfbbb",
-              target: "_blank",
-              rel: "noopener",
-            },
-            {
-              text: "Usage du site",
-              href: "https://stats.data.gouv.fr/index.php?idSite=162",
               target: "_blank",
               rel: "noopener",
             },
