@@ -1,7 +1,8 @@
 <template>
   <div class="text-left">
-    <h1 class="my-4 fr-h2" v-if="canteen">{{ canteen.name }}</h1>
-    <h1 class="my-4 fr-h2" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
+    <ProductionTypeTag v-if="canteen" :canteen="canteen" />
+    <h1 class="mt-2 mb-4 fr-h1" v-if="canteen">{{ canteen.name }}</h1>
+    <h1 class="mt-2 mb-4 fr-h1" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
     <v-row v-if="canteenPreviews.length > 1">
       <v-col>
         <v-btn outlined small color="primary" :to="{ name: 'ManagementPage' }">
@@ -87,6 +88,7 @@ import PublicationWidget from "./PublicationWidget"
 import SatellitesWidget from "./SatellitesWidget"
 import CanteenInfoWidget from "./CanteenInfoWidget"
 import TeamWidget from "./TeamWidget"
+import ProductionTypeTag from "./ProductionTypeTag"
 
 export default {
   name: "DashboardManager",
@@ -97,6 +99,7 @@ export default {
     SatellitesWidget,
     CanteenInfoWidget,
     TeamWidget,
+    ProductionTypeTag,
   },
   data() {
     return {
