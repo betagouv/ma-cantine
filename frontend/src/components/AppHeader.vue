@@ -247,23 +247,6 @@ export default {
           ],
         },
         {
-          text: "Comprendre mes obligations",
-          children: [
-            ...keyMeasures.map((x) => ({
-              text: x.shortTitle,
-              to: { name: "KeyMeasurePage", params: { id: x.id } },
-            })),
-            ...[
-              {
-                text: "Pour aller plus loin",
-                href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-                target: "_blank",
-                rel: "noopener",
-              },
-            ],
-          ],
-        },
-        {
           text: "Toutes les cantines",
           children: [
             {
@@ -283,6 +266,23 @@ export default {
               text: "Mesures de notre impact",
               to: { name: "ImpactMeasuresPage" },
             },
+          ],
+        },
+        {
+          text: "Comprendre mes obligations",
+          children: [
+            ...keyMeasures.map((x) => ({
+              text: x.shortTitle,
+              to: { name: "KeyMeasurePage", params: { id: x.id } },
+            })),
+            ...[
+              {
+                text: "Pour aller plus loin",
+                href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+                target: "_blank",
+                rel: "noopener",
+              },
+            ],
           ],
         },
         {
