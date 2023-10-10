@@ -51,7 +51,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import ApproProgress from "./ApproProgress"
 import DiversificationProgress from "./DiversificationProgress"
-import Inforogress from "./InfoProgress"
+import InfoProgress from "./InfoProgress"
 import PlasticProgress from "./PlasticProgress"
 import WasteProgress from "./WasteProgress"
 import CanteenProgress from "./CanteenProgress"
@@ -66,7 +66,7 @@ export default {
     DsfrTabsVue,
     ApproProgress,
     DiversificationProgress,
-    Inforogress,
+    InfoProgress,
     PlasticProgress,
     WasteProgress,
     CanteenProgress,
@@ -92,7 +92,7 @@ export default {
           },
         ],
       ],
-      tabItems: [ApproProgress, WasteProgress, DiversificationProgress, PlasticProgress, Inforogress, CanteenProgress],
+      tabItems: [ApproProgress, WasteProgress, DiversificationProgress, PlasticProgress, InfoProgress, CanteenProgress],
       canteen: null,
       years: diagnosticYears().map((x) => x.toString()),
     }
