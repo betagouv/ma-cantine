@@ -39,15 +39,9 @@
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
             ,
-            <a
-              href="https://ma-cantine-metabase.cleverapps.io/public/dashboard/3dab8a21-c4b9-46e1-84fa-7ba485ddfbbb"
-              class="grey--text text--darken-3"
-              target="_blank"
-              rel="noopener"
-            >
-              nos indicateurs
-              <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
-            </a>
+            <router-link :to="{ name: 'ImpactMeasuresPage' }" class="grey--text text--darken-3">
+              mesures de notre impact
+            </router-link>
             , et
             <a
               href="https://stats.data.gouv.fr/index.php?idSite=162"
