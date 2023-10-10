@@ -134,6 +134,20 @@ export default {
         this.canteen?.diagnostics?.find((x) => +x.year === +this.year)
       )
     },
+    assignTab() {
+      const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
+      if (!initialTab) {
+        this.$router.replace({
+          name: this.$route.name,
+          params: {
+            canteenUrlComponent: this.canteenUrlComponent,
+            year: this.year,
+            measure: this.tabHeaders[0].urlSlug,
+          },
+        })
+        this.tab = 0
+      } else this.tab = this.tabHeaders.indexOf(initialTab)
+    },
   },
   watch: {
     canteenUrlComponent() {
@@ -142,7 +156,7 @@ export default {
     },
     tab() {
       if (this.$route.params.measure !== this.tabHeaders[this.tab].urlSlug)
-        this.$router.replace({ params: { measure: this.tabHeaders[this.tab].urlSlug } })
+        this.$router.push({ params: { measure: this.tabHeaders[this.tab].urlSlug } })
     },
     year() {
       this.assignDiagnostic()
@@ -150,17 +164,13 @@ export default {
     canteen() {
       this.assignDiagnostic()
     },
+    $route() {
+      this.assignTab()
+    },
   },
   beforeMount() {
     this.fetchCanteen()
-    const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
-    if (!initialTab) {
-      this.$router.replace({
-        name: this.$route.name,
-        params: { canteenUrlComponent: this.canteenUrlComponent, year: this.year, measure: this.tabHeaders[0].urlSlug },
-      })
-      this.tab = 0
-    } else this.tab = this.tabHeaders.indexOf(initialTab)
+    this.assignTab()
   },
 }
 </script>
