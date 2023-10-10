@@ -279,6 +279,10 @@ export default {
               text: "Dans ma collectivité",
               to: { name: "PublicCanteenStatisticsPage" },
             },
+            {
+              text: "Mesures de notre impact",
+              to: { name: "ImpactMeasuresPage" },
+            },
           ],
         },
         {
@@ -297,10 +301,6 @@ export default {
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
               target: "_blank",
               rel: "noopener",
-            },
-            {
-              text: "Mesures de notre impact",
-              to: { name: "ImpactMeasuresPage" },
             },
             {
               text: "Indicateurs",
