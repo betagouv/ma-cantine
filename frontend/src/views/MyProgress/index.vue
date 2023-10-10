@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav />
+    <BreadcrumbsNav :links="[{ to: { name: 'DashboardManager' }, title: canteen.name }]" />
     <h1 class="mb-10 fr-h2" v-if="canteen">{{ canteen.name }}</h1>
     <v-row>
       <v-col cols="12" sm="3" md="2" style="border-right: 1px solid #DDD;">
@@ -120,7 +120,6 @@ export default {
   props: {
     canteenUrlComponent: {
       type: String,
-      required: true,
     },
     year: {
       required: true,

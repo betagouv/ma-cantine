@@ -590,9 +590,10 @@ const routes = [
 
 if (window.ENABLE_DASHBOARD) {
   routes.push({
-    path: "/dashboard",
+    path: "/dashboard/:canteenUrlComponent",
     name: "DashboardManager",
     component: DashboardManager,
+    props: true,
     meta: {
       title: "Tableau de bord",
       authenticationRequired: true,
