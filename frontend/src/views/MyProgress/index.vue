@@ -182,4 +182,7 @@ export default {
 .v-list-item--link::before {
   background-color: transparent;
 }
+.v-list-item:focus {
+  outline: 2px solid #3b87ff;
+}
 </style>
