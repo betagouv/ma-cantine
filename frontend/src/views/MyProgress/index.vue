@@ -101,12 +101,8 @@ export default {
     canteenUrlComponent: {
       type: String,
     },
-    year: {
-      required: true,
-    },
-    measure: {
-      required: true,
-    },
+    year: {},
+    measure: {},
   },
   computed: {
     mobileSelectItems() {
