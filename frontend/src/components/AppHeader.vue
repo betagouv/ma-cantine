@@ -293,14 +293,6 @@ export default {
               to: { name: "ContactPage" },
             },
             {
-              text: "Webinaires",
-              to: { name: "CommunityPage" },
-            },
-            {
-              text: "Blog",
-              to: { name: "BlogsHome" },
-            },
-            {
               text: "Documentation",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
               target: "_blank",
