@@ -99,14 +99,20 @@ export default {
     TeamWidget,
   },
   data() {
-    const canteenId = +this.$route.query.cantine || this.$store.state.userCanteenPreviews[0]?.id
     return {
-      canteenId,
       canteen: null,
       showCanteenSelection: false,
     }
   },
+  props: {
+    canteenUrlComponent: {
+      type: String,
+    },
+  },
   computed: {
+    canteenId() {
+      return this.canteenUrlComponent.split("--")[0]
+    },
     loggedUser() {
       return this.$store.state.loggedUser
     },
@@ -116,20 +122,15 @@ export default {
   },
   methods: {
     fetchCanteenIfNeeded() {
-      if (!this.canteenId) {
-        this.canteen = null
-        return
-      }
       if (this.canteen?.id === this.canteenId) return
       const id = this.canteenId
       return this.$store
         .dispatch("fetchCanteen", { id })
         .then((canteen) => {
-          this.canteen = canteen
-          this.$router.push({ query: { cantine: id } }).catch(() => {})
+          this.$set(this, "canteen", canteen)
         })
         .catch(() => {
-          this.canteen = null
+          this.$set(this, "canteen", null)
           this.$store.dispatch("notify", {
             message: "Nous n'avons pas trouvé cette cantine",
             status: "error",
@@ -141,15 +142,12 @@ export default {
     this.fetchCanteenIfNeeded()
   },
   watch: {
-    canteenId() {
-      this.fetchCanteenIfNeeded()
+    canteenUrlComponent() {
+      this.$set(this, "canteen", null)
+      this.fetchCanteen()
     },
-    $route(newRoute, oldRoute) {
-      if (!newRoute.query.cantine) {
-        this.canteenId = this.$store.state.userCanteenPreviews[0]?.id
-      } else if (newRoute.query.cantine !== oldRoute.query.cantine) {
-        this.canteenId = +newRoute.query.cantine
-      }
+    $route() {
+      this.fetchCanteenIfNeeded()
     },
   },
 }

@@ -57,6 +57,7 @@ import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
 import TerritoryCanteens from "@/views/TerritoryCanteens"
 import VideoTutorial from "@/views/VideoTutorial"
+import MyProgress from "@/views/MyProgress"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -589,11 +590,23 @@ const routes = [
 
 if (window.ENABLE_DASHBOARD) {
   routes.push({
-    path: "/dashboard",
+    path: "/dashboard/:canteenUrlComponent",
     name: "DashboardManager",
     component: DashboardManager,
+    props: true,
     meta: {
       title: "Tableau de bord",
+      authenticationRequired: true,
+    },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
+  })
+  routes.push({
+    path: "/ma-progression/:canteenUrlComponent/:year/:measure",
+    name: "MyProgress",
+    component: MyProgress,
+    props: true,
+    meta: {
+      title: "Ma progression",
       authenticationRequired: true,
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,

@@ -88,7 +88,10 @@ export default {
     },
     canteenLink() {
       if (window.ENABLE_DASHBOARD && window.ENVIRONMENT === "dev") {
-        return { name: "DashboardManager", query: { cantine: this.canteen.id } }
+        return {
+          name: "DashboardManager",
+          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
+        }
       }
       return {
         name: "CanteenModification",
