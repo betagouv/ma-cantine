@@ -605,7 +605,7 @@ if (window.ENABLE_DASHBOARD) {
     component: MyProgress,
     props: true,
     meta: {
-      title: "Ma Progression",
+      title: "Ma progression",
       authenticationRequired: true,
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,
