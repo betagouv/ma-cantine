@@ -29,6 +29,7 @@
         "title": "Produits biologiques"
       }
     ],
+    "tabText": "Appro.",
     "tags": [
       "scolaire",
       "administration",
@@ -92,6 +93,7 @@
       }
     ],
     "successExplanation": "La cantine a fait un diagnostic du gaspillage alimentaire et a mis en œuvre une ou des actions de lutte contre le gaspillage alimentaire.\n Si la cantine sert au moins 3000 repas en moyenne par jour, elle propose aussi une convention de dons à une association habilitée.",
+    "tabText": "Gaspillage",
     "tags": [
       "scolaire",
       "administration",
@@ -181,6 +183,7 @@
       }
     ],
     "successExplanation": "La cantine offre au moins un repas végétarien par semaine si elle est dans le secteur scolaire, ou et depuis janvier 2023, un repas végétarien par jour pour les restaurants collectifs de l'État, les établissements publics et les entreprises publiques nationales (s'ils proposent habituellement un choix multiple de menus).",
+    "tabText": "Protéines végétales",
     "title": "Diversification des sources de protéines et menus végétariens"
   },
   {
@@ -280,6 +283,7 @@
       }
     ],
     "successExplanation": "La cantine n'utilise plus de contenants alimentaires de cuisson, de réchauffe, ni de service en matière plastique. De plus, la cantine ne met plus à disposition des convives des bouteilles d’eau plate en plastique, ni des ustensiles à usage unique en matière plastique.",
+    "tabText": "Substit. plastiques",
     "title": "Substitution des plastiques"
   },
   {
@@ -351,6 +355,7 @@
       }
     ],
     "successExplanation": "La cantine informe ses convives sur la part de produits de qualité et durables, entrant dans la composition des repas servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet alimentaire territorial).",
+    "tabText": "Info. convives",
     "title": "Information des usagers et convives"
   }
 ]

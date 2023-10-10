@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav :links="[{ to: { name: 'DashboardManager' }, title: canteen.name }]" />
+    <BreadcrumbsNav :links="[{ to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' }]" />
     <h1 class="mb-10 fr-h2" v-if="canteen">{{ canteen.name }}</h1>
     <v-row>
       <v-col cols="12" sm="3" md="2" style="border-right: 1px solid #DDD;">
@@ -57,6 +57,7 @@ import WasteProgress from "./WasteProgress"
 import CanteenProgress from "./CanteenProgress"
 import DsfrSelect from "@/components/DsfrSelect"
 import { diagnosticYears } from "@/utils"
+import keyMeasures from "@/data/key-measures.json"
 
 export default {
   name: "MyProgress",
@@ -76,42 +77,20 @@ export default {
       tab: null,
       diagnostic: null,
       tabHeaders: [
-        {
-          urlSlug: "qualite-des-produits",
-          text: "Appro.",
-          icon: "mdi-food-apple",
-          to: { params: { measure: "qualite-des-produits" } },
-        },
-        {
-          urlSlug: "gaspillage-alimentaire",
-          text: "Gaspillage",
-          icon: "mdi-offer",
-          to: { params: { measure: "gaspillage-alimentaire" } },
-        },
-        {
-          urlSlug: "diversification-des-menus",
-          text: "Protéines végétales",
-          icon: "$leaf-fill",
-          to: { params: { measure: "diversification-des-menus" } },
-        },
-        {
-          urlSlug: "interdiction-du-plastique",
-          text: "Substit. plastiques",
-          icon: "mdi-weather-windy",
-          to: { params: { measure: "interdiction-du-plastique" } },
-        },
-        {
-          urlSlug: "information-des-usagers",
-          text: "Info. convives",
-          icon: "mdi-bullhorn",
-          to: { params: { measure: "information-des-usagers" } },
-        },
-        {
-          urlSlug: "etablissement",
-          text: "Établissement",
-          icon: "$building-fill",
-          to: { params: { measure: "etablissement" } },
-        },
+        ...keyMeasures.map((x) => ({
+          urlSlug: x.id,
+          text: x.tabText,
+          icon: x.mdiIcon,
+          to: { params: { measure: x.id } },
+        })),
+        ...[
+          {
+            urlSlug: "etablissement",
+            text: "Établissement",
+            icon: "$building-fill",
+            to: { params: { measure: "etablissement" } },
+          },
+        ],
       ],
       tabItems: [ApproProgress, WasteProgress, DiversificationProgress, PlasticProgress, Inforogress, CanteenProgress],
       canteen: null,
