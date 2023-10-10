@@ -1,13 +1,5 @@
 <template>
-  <v-card
-    :to="{
-      name: 'DiagnosticList',
-      params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-    }"
-    class="dsfr d-flex flex-column"
-    outlined
-    :ripple="false"
-  >
+  <v-card :to="canteenLink" class="dsfr d-flex flex-column" outlined :ripple="false">
     <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
     <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
     <v-card-subtitle class="py-1">
@@ -96,6 +88,15 @@ export default {
     },
     teledeclarationIsActive() {
       return window.ENABLE_TELEDECLARATION
+    },
+    canteenLink() {
+      if (window.ENABLE_DASHBOARD && window.ENVIRONMENT === "dev") {
+        return { name: "DashboardManager", query: { cantine: this.canteen.id } }
+      }
+      return {
+        name: "DiagnosticList",
+        params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
+      }
     },
   },
 }

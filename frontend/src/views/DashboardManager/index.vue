@@ -1,29 +1,10 @@
 <template>
   <div class="text-left">
-    <v-row v-if="showCanteenSelection" class="my-6">
-      <v-col cols="12" sm="6">
-        <label class="body-2 d-sr-only" for="canteen">Établissement</label>
-        <DsfrAutocomplete
-          hide-details="auto"
-          :items="canteenPreviews"
-          placeholder="Choisissez l'établissement"
-          v-model="nextCanteenId"
-          item-text="name"
-          item-value="id"
-          id="canteen"
-          class="mt-6"
-          auto-select-first
-          no-data-text="Pas de résultats"
-          @blur="showCanteenSelection = false"
-          autofocus
-        />
-      </v-col>
-    </v-row>
-    <h1 class="my-4 fr-h2" v-else-if="canteen">{{ canteen.name }}</h1>
+    <h1 class="my-4 fr-h2" v-if="canteen">{{ canteen.name }}</h1>
     <h1 class="my-4 fr-h2" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
-    <v-row v-if="!showCanteenSelection">
+    <v-row v-if="canteenPreviews.length > 1">
       <v-col>
-        <v-btn @click="showCanteenSelection = true" outlined small color="primary" v-if="canteenPreviews.length > 1">
+        <v-btn outlined small color="primary" :to="{ name: 'ManagementPage' }">
           <v-icon class="mr-1" small>mdi-pencil</v-icon>
           Changer d'établissement
         </v-btn>
@@ -106,13 +87,11 @@ import PublicationWidget from "./PublicationWidget"
 import SatellitesWidget from "./SatellitesWidget"
 import CanteenInfoWidget from "./CanteenInfoWidget"
 import TeamWidget from "./TeamWidget"
-import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 
 export default {
   name: "DashboardManager",
   components: {
     EgalimProgression,
-    DsfrAutocomplete,
     PurchasesWidget,
     PublicationWidget,
     SatellitesWidget,
@@ -123,7 +102,6 @@ export default {
     const canteenId = +this.$route.query.cantine || this.$store.state.userCanteenPreviews[0]?.id
     return {
       canteenId,
-      nextCanteenId: canteenId,
       canteen: null,
       showCanteenSelection: false,
     }
@@ -166,15 +144,11 @@ export default {
     canteenId() {
       this.fetchCanteenIfNeeded()
     },
-    nextCanteenId(newValue) {
-      if (newValue) {
-        this.canteenId = newValue
-        this.showCanteenSelection = false
-      }
-    },
     $route(newRoute, oldRoute) {
-      if (newRoute.query.cantine !== oldRoute.query.cantine) {
-        this.nextCanteenId = +newRoute.query.cantine
+      if (!newRoute.query.cantine) {
+        this.canteenId = this.$store.state.userCanteenPreviews[0]?.id
+      } else if (newRoute.query.cantine !== oldRoute.query.cantine) {
+        this.canteenId = +newRoute.query.cantine
       }
     },
   },
