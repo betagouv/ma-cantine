@@ -90,7 +90,7 @@ export default {
       return window.ENABLE_TELEDECLARATION
     },
     canteenLink() {
-      if (window.ENABLE_DASHBOARD && window.DEBUG) {
+      if (window.ENABLE_DASHBOARD && window.ENVIRONMENT === "dev") {
         return { name: "DashboardManager", query: { cantine: this.canteen.id } }
       }
       return {
