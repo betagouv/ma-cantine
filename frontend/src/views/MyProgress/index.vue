@@ -94,7 +94,7 @@ export default {
       ],
       tabItems: [ApproProgress, WasteProgress, DiversificationProgress, PlasticProgress, Inforogress, CanteenProgress],
       canteen: null,
-      years: diagnosticYears(),
+      years: diagnosticYears().map((x) => x.toString()),
     }
   },
   props: {
