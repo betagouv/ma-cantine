@@ -302,18 +302,6 @@ export default {
               target: "_blank",
               rel: "noopener",
             },
-            {
-              text: "Indicateurs",
-              href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/3dab8a21-c4b9-46e1-84fa-7ba485ddfbbb",
-              target: "_blank",
-              rel: "noopener",
-            },
-            {
-              text: "Usage du site",
-              href: "https://stats.data.gouv.fr/index.php?idSite=162",
-              target: "_blank",
-              rel: "noopener",
-            },
           ],
         },
         {
