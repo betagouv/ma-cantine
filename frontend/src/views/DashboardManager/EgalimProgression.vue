@@ -86,6 +86,10 @@ export default {
   },
   computed: {
     diagnostic() {
+      if (this.canteen.productionType === "site_cooked_elsewhere") {
+        const ccDiag = this.canteen.centralKitchenDiagnostics?.find((x) => x.year === this.year)
+        if (ccDiag) return ccDiag
+      }
       return this.canteen.diagnostics.find((x) => x.year === this.year)
     },
     hasPurchases() {

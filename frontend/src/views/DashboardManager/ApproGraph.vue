@@ -116,10 +116,16 @@ export default {
       return applicableDiagnosticRules(this.canteen)
     },
     bioPercentage() {
-      return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt, true)
+      return (
+        Math.round(this.diagnostic.percentageValueBioHt * 100) ||
+        getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt, true)
+      )
     },
     sustainablePercentage() {
-      return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt, true)
+      return (
+        Math.round(this.diagnostic.percentageValueSustainableHt * 100) ||
+        getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt, true)
+      )
     },
   },
 }
