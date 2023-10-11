@@ -61,12 +61,7 @@
         </div>
       </v-card-text>
     </v-card>
-    <v-card
-      :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
-      outlined
-      class="fill-height d-flex flex-column dsfr"
-      v-else-if="diagnostic"
-    >
+    <v-card :to="link" outlined class="fill-height d-flex flex-column dsfr" v-else-if="diagnostic">
       <v-card-title class="font-weight-bold body-1">
         <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
           {{ keyMeasure.mdiIcon }}
@@ -152,6 +147,18 @@ export default {
       return this.canteen.centralProducerSiret
         ? `l'établissement avec le SIRET ${this.canteen.centralProducerSiret}`
         : "un établissement inconnu"
+    },
+    link() {
+      return this.diagnostic
+        ? {
+            name: "MyProgress",
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+              year: this.diagnostic.year,
+              measure: "qualite-des-produits",
+            },
+          }
+        : null
     },
   },
 }
