@@ -7,17 +7,18 @@
       <h3>{{ keyMeasure.shortTitle }}</h3>
     </v-card-title>
     <v-card-text v-if="needsData">
-      <MissingDataChip class="mt-n4 ml-8" />
+      <MissingDataChip class="py-0 ml-8" />
     </v-card-text>
-    <v-card-text :class="`mt-n4 pl-12 ${level.colorClass}`" v-else>
+    <v-card-text :class="`py-0 pl-12 ${level.colorClass}`" v-else-if="!delegatedToSatellite">
       NIVEAU :
       <span class="font-weight-bold">{{ level.text }}</span>
     </v-card-text>
+    <v-spacer />
     <v-card-text>
       <p>{{ cardBody }}</p>
     </v-card-text>
     <v-spacer></v-spacer>
-    <v-card-actions class="px-4 pt-0">
+    <v-card-actions v-if="!delegatedToSatellite" class="px-4 pt-0">
       <v-spacer></v-spacer>
       <v-icon color="primary">$arrow-right-line</v-icon>
     </v-card-actions>
@@ -54,16 +55,19 @@ export default {
       return this.level === Constants.Levels.UNKNOWN
     },
     level() {
-      return Constants.Levels.UNKNOWN
+      return this.delegatedToSatellite ? null : Constants.Levels.UNKNOWN
     },
     cardBody() {
-      return "Bravo pour vos actions ! Continuez à substituer les matières plastiques : et si vous disiez au revoir aux ustensiles à usage unique ?"
+      if (this.delegatedToSatellite) {
+        return "Les données associées à cette mesure EGAlim sont renseignées au niveau de chaque lieu de service que vous livrez."
+      }
+      return "Vous êtes au point ! N’hésitez pas à utiliser les outils fournis par “ma cantine” pour informer encore plus facilement vos convives de vos actions."
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
     link() {
-      return this.diagnostic
+      return !this.delegatedToSatellite && this.diagnostic
         ? {
             name: "MyProgress",
             params: {
@@ -73,6 +77,9 @@ export default {
             },
           }
         : null
+    },
+    delegatedToSatellite() {
+      return this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
     },
   },
 }
