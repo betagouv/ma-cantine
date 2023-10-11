@@ -30,7 +30,12 @@
           active-class="selected"
         >
           <template v-slot:tabs>
-            <v-tab v-for="tabItem in tabHeaders" class="mx-1" :key="tabItem.text">
+            <v-tab
+              v-for="tabItem in tabHeaders"
+              class="mx-1"
+              :key="tabItem.text"
+              :disabled="usesSatelliteDiagnosticForMeasure(tabItem)"
+            >
               <v-icon small class="mr-1">{{ tabItem.icon }}</v-icon>
               {{ tabItem.text }}
             </v-tab>
@@ -190,6 +195,15 @@ export default {
       }
       return false
     },
+    usesSatelliteDiagnosticForMeasure(tabItem) {
+      if (this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving") {
+        if (tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement") {
+          return false
+        }
+        return this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
+      }
+      return false
+    },
   },
   watch: {
     canteenUrlComponent() {
@@ -236,5 +250,10 @@ export default {
 }
 .v-list-item:focus {
   outline: 2px solid #3b87ff;
+}
+.v-tab--disabled {
+  opacity: 100%;
+  background-color: #e5e5e5 !important;
+  color: #929292 !important;
 }
 </style>
