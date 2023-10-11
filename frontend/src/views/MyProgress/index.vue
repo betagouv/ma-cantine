@@ -40,7 +40,7 @@
               <component :is="item" :diagnostic="diagnostic" :centralDiagnostic="centralDiagnostic" />
               <div v-if="index < 5">
                 <v-btn
-                  v-if="diagnostic && !usesCentralDiagnosticForMeasure(index)"
+                  v-if="diagnostic && !usesOtherDiagnosticForMeasure(index)"
                   outlined
                   color="primary"
                   :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
@@ -48,7 +48,7 @@
                   Modifier
                 </v-btn>
                 <v-btn
-                  v-else-if="!diagnostic && !usesCentralDiagnosticForMeasure(index)"
+                  v-else-if="!diagnostic && !usesOtherDiagnosticForMeasure(index)"
                   color="primary"
                   :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
                 >
@@ -173,10 +173,20 @@ export default {
         this.tab = 0
       } else this.tab = this.tabHeaders.indexOf(initialTab)
     },
-    usesCentralDiagnosticForMeasure(index) {
-      if (index === 0) return !!this.centralDiagnostic
-      if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
-        return !!this.centralDiagnostic
+    usesOtherDiagnosticForMeasure(index) {
+      if (this.canteen?.productionType === "site") {
+        return false
+      } else if (this.canteen?.productionType === "site_cooked_elsewhere") {
+        if (index === 0) return !!this.centralDiagnostic
+        if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
+          return !!this.centralDiagnostic
+        }
+      } else {
+        // both CC production types
+        if (index > 0) {
+          const satelliteProvidesOtherMeasures = this.diagnostic.centralKitchenDiagnosticMode === "APPRO"
+          return satelliteProvidesOtherMeasures
+        }
       }
       return false
     },
