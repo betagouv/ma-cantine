@@ -184,7 +184,7 @@ export default {
       } else {
         // both CC production types
         if (index > 0) {
-          const satelliteProvidesOtherMeasures = this.diagnostic.centralKitchenDiagnosticMode === "APPRO"
+          const satelliteProvidesOtherMeasures = this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
           return satelliteProvidesOtherMeasures
         }
       }
