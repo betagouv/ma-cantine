@@ -86,6 +86,7 @@ export default {
   },
   computed: {
     diagnostic() {
+      // TODO: appro and remaining measures diagnostics might be different for satellites.
       if (this.canteen.productionType === "site_cooked_elsewhere") {
         const ccDiag = this.canteen.centralKitchenDiagnostics?.find((x) => x.year === this.year)
         if (ccDiag) return ccDiag

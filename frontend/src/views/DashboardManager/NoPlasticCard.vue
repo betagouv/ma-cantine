@@ -1,9 +1,5 @@
 <template>
-  <v-card
-    :to="diagnostic ? { name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } } : null"
-    outlined
-    class="fill-height d-flex flex-column dsfr"
-  >
+  <v-card :to="link" outlined class="fill-height d-flex flex-column dsfr">
     <v-card-title class="font-weight-bold body-1">
       <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
         {{ keyMeasure.mdiIcon }}
@@ -45,9 +41,14 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      measureId: "interdiction-du-plastique",
+    }
+  },
   computed: {
     keyMeasure() {
-      return keyMeasures.find((x) => x.id === "interdiction-du-plastique")
+      return keyMeasures.find((x) => x.id === this.measureId)
     },
     needsData() {
       return this.level === Constants.Levels.UNKNOWN
@@ -60,6 +61,18 @@ export default {
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
+    },
+    link() {
+      return this.diagnostic
+        ? {
+            name: "MyProgress",
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+              year: this.diagnostic.year,
+              measure: this.measureId,
+            },
+          }
+        : null
     },
   },
 }

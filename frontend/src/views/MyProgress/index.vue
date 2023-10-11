@@ -37,7 +37,24 @@
           </template>
           <template v-slot:items>
             <v-tab-item class="my-4" v-for="(item, index) in tabItems" :key="`${index}-content`">
-              <component :is="item" :diagnostic="diagnostic" />
+              <component :is="item" :diagnostic="diagnostic" :centralDiagnostic="centralDiagnostic" />
+              <div v-if="index < 5">
+                <v-btn
+                  v-if="diagnostic && !usesCentralDiagnosticForMeasure(index)"
+                  outlined
+                  color="primary"
+                  :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
+                >
+                  Modifier
+                </v-btn>
+                <v-btn
+                  v-else-if="!diagnostic && !usesCentralDiagnosticForMeasure(index)"
+                  color="primary"
+                  :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
+                >
+                  Commencer
+                </v-btn>
+              </div>
             </v-tab-item>
           </template>
         </DsfrTabsVue>
@@ -76,6 +93,7 @@ export default {
     return {
       tab: null,
       diagnostic: null,
+      centralDiagnostic: null,
       tabHeaders: [
         ...keyMeasures.map((x) => ({
           urlSlug: x.id,
@@ -133,6 +151,13 @@ export default {
         "diagnostic",
         this.canteen?.diagnostics?.find((x) => +x.year === +this.year)
       )
+      if (this.canteen?.productionType === "site_cooked_elsewhere") {
+        this.$set(
+          this,
+          "centralDiagnostic",
+          this.canteen?.centralKitchenDiagnostics?.find((x) => +x.year === +this.year)
+        )
+      }
     },
     assignTab() {
       const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
@@ -147,6 +172,13 @@ export default {
         })
         this.tab = 0
       } else this.tab = this.tabHeaders.indexOf(initialTab)
+    },
+    usesCentralDiagnosticForMeasure(index) {
+      if (index === 0) return !!this.centralDiagnostic
+      if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
+        return !!this.centralDiagnostic
+      }
+      return false
     },
   },
   watch: {
