@@ -9,10 +9,12 @@
       </v-card-title>
       <v-card-text class="fill-height d-flex flex-column" style="position: relative;">
         <v-spacer />
-        <p>
-          Votre cuisine sert des repas préparés par
-          <strong>{{ centralKitchenDisplayName }}</strong>
-        </p>
+        <v-card class="py-4 px-5" color="grey lighten-4">
+          <p class="mb-0 grey--text text--darken-2">
+            Votre cantine sert des repas préparés par
+            <strong>{{ centralKitchenDisplayName }}</strong>
+          </p>
+        </v-card>
         <v-spacer />
         <div v-if="!hasApproData">
           <p>

@@ -16,16 +16,12 @@
             <span class="font-weight-medium">{{ canteenCommune }}</span>
           </p>
           <br />
-          <p class="mb-0">
-            <span class="font-weight-medium">{{ canteenProductionType }}</span>
-          </p>
-          <p v-if="centralKitchen">
-            Cuisine centrale :
-            <span class="font-weight-medium">
-              {{ centralKitchen.name || centralKitchen.siret || "Non renseignée" }}
-            </span>
-          </p>
-          <br />
+          <div v-if="!isSatellite">
+            <p class="mb-0">
+              <span class="font-weight-medium">{{ canteenProductionType }}</span>
+            </p>
+            <br />
+          </div>
           <p class="mb-0">
             Secteur d'activité :
             <span class="font-weight-medium">{{ canteenSector }}</span>
@@ -48,6 +44,13 @@
             <span class="font-weight-medium ml-1">{{ canteen.yearlyMealCount || "Non renseigné" }}</span>
           </p>
         </v-card-text>
+        <v-spacer v-if="isSatellite"></v-spacer>
+        <v-card v-if="isSatellite" class="mx-4 mb-4 mt-2 py-4 px-5" color="grey lighten-4">
+          <p class="mb-0 grey--text text--darken-2">
+            Mon établissement sert des repas préparés par
+            <strong>{{ centralKitchenDisplayName }}</strong>
+          </p>
+        </v-card>
         <v-spacer></v-spacer>
         <v-card-actions class="mx-2 mb-2">
           <v-btn
@@ -110,6 +113,17 @@ export default {
     canteenImage() {
       if (!this.canteen.images || this.canteen.images.length === 0) return null
       return this.canteen.images[0].image
+    },
+    isSatellite() {
+      return this.canteen.productionType === "site_cooked_elsewhere"
+    },
+    centralKitchenDisplayName() {
+      if (this.canteen.centralKitchen?.name) {
+        return this.canteen.centralKitchen.name
+      }
+      return this.canteen.centralProducerSiret
+        ? `l'établissement avec le SIRET ${this.canteen.centralProducerSiret}`
+        : "un établissement inconnu"
     },
   },
   methods: {
