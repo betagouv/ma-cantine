@@ -21,7 +21,9 @@
             Les données d’approvisionnement apparaîtront directement ici lorsque votre cuisine centrale les aura
             renseignées.
           </p>
-          <p>En attendant, déclarez vos actions concernant les autres volets de la loi EGAlim.</p>
+          <p v-if="diagnostic.centralKitchenDiagnosticMode !== 'ALL'">
+            En attendant, déclarez vos actions concernant les autres volets de la loi EGAlim.
+          </p>
         </div>
         <div v-else>
           <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
