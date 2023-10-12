@@ -20,8 +20,11 @@
       </div>
       <ApproSegment :purchases="null" :diagnostic="approDiagnostic" :lastYearDiagnostic="null" :canteen="canteen" />
     </v-col>
+    <!-- <div class="d-flex" style="height: auto;">
+      <p>test</p>
+    </div> -->
     <v-col cols="12" md="8">
-      <v-row style="position: relative;">
+      <v-row style="position: relative; height: 100%" class="ma-0">
         <div
           class="overlay d-flex align-center justify-center"
           v-if="!hasPurchases && !otherMeasuresDiagnostic && !hasLastYearDiagnostic"
@@ -37,16 +40,16 @@
             Commencer
           </v-btn>
         </div>
-        <v-col cols="12" md="6" fill-height>
+        <v-col cols="12" md="6" class="pt-md-0">
           <FoodWasteCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
-        <v-col cols="12" md="6" fill-height>
+        <v-col cols="12" md="6" class="pt-md-0">
           <DiversificationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
-        <v-col cols="12" md="6" fill-height>
+        <v-col cols="12" md="6" class="pb-md-0">
           <NoPlasticCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
-        <v-col cols="12" md="6" fill-height>
+        <v-col cols="12" md="6" class="pb-md-0">
           <InformationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
       </v-row>
