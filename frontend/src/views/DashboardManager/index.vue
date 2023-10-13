@@ -4,8 +4,7 @@
     <h1 class="my-4 fr-display-xs" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
     <v-row v-if="canteenPreviews.length > 1">
       <v-col>
-        <v-btn outlined small color="primary" :to="{ name: 'ManagementPage' }">
-          <v-icon class="mr-1" small>mdi-pencil</v-icon>
+        <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
           Changer d'établissement
         </v-btn>
       </v-col>
