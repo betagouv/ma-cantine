@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column pa-4">
+  <v-card outlined class="fill-height d-flex flex-column dsfr pa-6">
     <v-card-title class="fr-h4">
       Mon équipe
     </v-card-title>

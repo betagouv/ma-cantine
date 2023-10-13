@@ -17,7 +17,7 @@
       </div>
 
       <div v-if="canteen">
-        <h2 class="mt-10 mb-2 fr-h4">
+        <h2 class="mt-10 mb-2 fr-h2">
           Mon établissement
         </h2>
         <p class="fr-text-sm">
@@ -156,5 +156,8 @@ export default {
 <style scoped>
 .constrained {
   max-width: 1200px !important;
+}
+.v-card.dsfr {
+  border: solid 1.5px #dddddd;
 }
 </style>

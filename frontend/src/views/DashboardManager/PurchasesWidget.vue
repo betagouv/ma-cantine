@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column pa-4">
+  <v-card outlined class="fill-height d-flex flex-column dsfr pa-6">
     <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes achats</h3></v-card-title>
     <v-card-text class="fr-text-xs grey--text text--darken-2 py-0 mt-3">
       <p v-if="!purchases.length">

@@ -132,4 +132,7 @@ export default {
   backdrop-filter: blur(7px);
   border: dashed #bbb;
 }
+.v-card.dsfr {
+  border: solid 1.5px #dddddd;
+}
 </style>
