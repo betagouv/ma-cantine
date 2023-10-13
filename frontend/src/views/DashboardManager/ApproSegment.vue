@@ -14,7 +14,7 @@
     </div>
     <v-card outlined class="fill-height d-flex flex-column" v-else-if="!hasApproData">
       <v-card-title class="font-weight-bold fr-text">
-        <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
+        <v-icon small :color="keyMeasure.mdiIconColor" class="mr-2">
           {{ keyMeasure.mdiIcon }}
         </v-icon>
         <h3>{{ keyMeasure.shortTitle }}</h3>
@@ -37,32 +37,32 @@
     <v-card
       :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
       outlined
-      class="fill-height d-flex flex-column dsfr pa-8"
+      class="fill-height d-flex flex-column dsfr pa-6"
       v-else-if="diagnostic"
     >
-      <v-card-title class="font-weight-bold fr-text">
-        <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
+      <v-card-title class="mx-1">
+        <v-icon small :color="keyMeasure.mdiIconColor" class="mr-2">
           {{ keyMeasure.mdiIcon }}
         </v-icon>
-        <h3>{{ keyMeasure.shortTitle }}</h3>
+        <h3 class="fr-text font-weight-bold">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
       <v-card-text :class="`mt-n4 pl-12 py-0 ${level.colorClass}`">
-        <p class="mb-0 mt-2">
+        <p class="mb-0 mt-2 fr-text-xs">
           NIVEAU :
-          <span class="font-weight-bold">{{ level.text }}</span>
+          <span class="font-weight-black">{{ level.text }}</span>
         </p>
       </v-card-text>
-      <v-card-text>
+      <v-card-text class="fr-text-xs">
         <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
-        <p class="fr-text-xs mb-0">
+        <p>
           C’est parti ! Découvrez les outils et les ressources personnalisées pour vous aider à atteindre un des deux
           objectifs EGAlim et passer au niveau suivant !
         </p>
       </v-card-text>
       <v-spacer></v-spacer>
-      <v-card-actions class="px-4 pt-0">
+      <v-card-actions class="px-4">
         <v-spacer></v-spacer>
-        <v-icon color="primary">$arrow-right-line</v-icon>
+        <v-icon color="primary" class="mr-n1">$arrow-right-line</v-icon>
       </v-card-actions>
     </v-card>
   </div>
