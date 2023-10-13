@@ -40,13 +40,15 @@
     <v-spacer></v-spacer>
     <v-card-actions v-if="purchases.length || purchasesFetchingError">
       <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
+        <v-icon small class="mr-2">$add-line</v-icon>
         Ajouter un achat
       </v-btn>
-      <v-btn :to="{ name: 'PurchasesImporter' }" outlined color="primary" class="mx-2 mb-2">
+      <v-btn :to="{ name: 'PurchasesImporter' }" outlined color="primary" class="mx-2 mb-2 fr-btn--tertiary">
+        <v-icon small class="mr-2">$file-add-line</v-icon>
         Importer des achats
       </v-btn>
-      <v-btn :to="{ name: 'PurchasesHome' }" outlined color="primary" class="mx-2 mb-2">
-        Tous mes achats
+      <v-btn :to="{ name: 'PurchasesHome' }" text color="primary" class="mx-2 mb-2">
+        Voir tous mes achats
       </v-btn>
     </v-card-actions>
   </v-card>

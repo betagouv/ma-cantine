@@ -58,7 +58,7 @@
             color="primary"
             outlined
           >
-            Modifier
+            Modifier mon établissement
           </v-btn>
         </v-card-actions>
       </v-col>

@@ -38,7 +38,7 @@
         color="primary"
         class="mx-2 mb-2"
       >
-        Modifier
+        Gérer mon équipe
       </v-btn>
     </v-card-actions>
   </v-card>
