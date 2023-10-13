@@ -13,7 +13,7 @@
       </p>
     </div>
     <v-card outlined class="fill-height d-flex flex-column" v-else-if="!hasApproData">
-      <v-card-title class="font-weight-bold body-1">
+      <v-card-title class="font-weight-bold fr-text">
         <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
           {{ keyMeasure.mdiIcon }}
         </v-icon>
@@ -37,22 +37,24 @@
     <v-card
       :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
       outlined
-      class="fill-height d-flex flex-column dsfr"
+      class="fill-height d-flex flex-column dsfr pa-8"
       v-else-if="diagnostic"
     >
-      <v-card-title class="font-weight-bold body-1">
+      <v-card-title class="font-weight-bold fr-text">
         <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
           {{ keyMeasure.mdiIcon }}
         </v-icon>
         <h3>{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
       <v-card-text :class="`mt-n4 pl-12 py-0 ${level.colorClass}`">
-        NIVEAU :
-        <span class="font-weight-bold">{{ level.text }}</span>
+        <p class="mb-0 mt-2">
+          NIVEAU :
+          <span class="font-weight-bold">{{ level.text }}</span>
+        </p>
       </v-card-text>
       <v-card-text>
         <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
-        <p class="body-2">
+        <p class="fr-text-xs mb-0">
           C’est parti ! Découvrez les outils et les ressources personnalisées pour vous aider à atteindre un des deux
           objectifs EGAlim et passer au niveau suivant !
         </p>
