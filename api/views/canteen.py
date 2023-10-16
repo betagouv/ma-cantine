@@ -479,7 +479,7 @@ class CanteenStatusView(APIView):
             redis.set(token_redis_key, token, ex=expiration_seconds)
             return token
         else:
-            logger.warning(f"token fetching failed, code {token_response.status_code} : {token_response.json()}")
+            logger.warning(f"token fetching failed, code {token_response.status_code} : {token_response}")
 
     def complete_location_data(city, postcode, response):
         try:
