@@ -16,7 +16,7 @@
           v-if="!hasPurchases && (!approDiagnostic || !otherMeasuresDiagnostic) && !hasLastYearDiagnostic"
           class="mt-4"
         />
-        <v-divider class="my-6"></v-divider>
+        <hr aria-hidden="true" role="presentation" class="my-6" />
       </div>
       <ApproSegment :purchases="null" :diagnostic="approDiagnostic" :lastYearDiagnostic="null" :canteen="canteen" />
     </v-col>
