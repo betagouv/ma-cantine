@@ -27,6 +27,7 @@
           v-if="!hasPurchases && !otherMeasuresDiagnostic && !hasLastYearDiagnostic"
         >
           <v-btn
+            large
             color="primary"
             :to="{
               name: !otherMeasuresDiagnostic ? 'NewDiagnosticForCanteen' : 'DiagnosticModification',
@@ -34,7 +35,7 @@
               query: { année: year },
             }"
           >
-            Commencer
+            <span class="fr-text-lg">Commencer</span>
           </v-btn>
         </div>
         <v-col cols="12" md="6" class="pt-md-0">
@@ -124,13 +125,15 @@ export default {
 .overlay {
   position: absolute;
   top: 4%;
-  left: 3%;
+  left: 5%;
   z-index: 1;
-  background: #bbbbbb50;
-  width: 94%;
+  background: rgba(245, 245, 254, 0.2);
+  width: 90%;
   height: 92%;
   backdrop-filter: blur(7px);
-  border: dashed #bbb;
+  border: 1.5px dashed #000091;
+  border-radius: 5px;
+  color: #3a3a3a;
 }
 .v-card.dsfr {
   border: solid 1.5px #dddddd;
