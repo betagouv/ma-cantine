@@ -1,8 +1,12 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column pa-4">
-    <v-card-title><h3 class="fr-h4 mb-0">Ma vitrine en ligne</h3></v-card-title>
+  <v-card outlined class="fill-height d-flex flex-column dsfr pa-6">
+    <v-card-title>
+      <h3 class="fr-h4 mb-0">
+        Ma vitrine en ligne
+      </h3>
+    </v-card-title>
     <v-spacer></v-spacer>
-    <v-card-text class="fr-text">
+    <v-card-text class="fr-text grey--text text--darken-2">
       <p class="publication-detail">
         Statut
         <v-chip
@@ -21,7 +25,7 @@
         <span class="font-weight-bold fr-text-xs">{{ publicationUpdateDate }}</span>
       </p>
       <p class="publication-detail">
-        Nombre de visiteurs
+        Visiteurs (année en cours)
         <span class="font-weight-bold fr-text-xs">
           {{ isPublished && viewCount !== null ? viewCount : "-" }}
         </span>
@@ -92,8 +96,10 @@ export default {
         `${window.origin}${this.$router.resolve({ name: "CanteensHome" }).href}` +
         // Do not include the title part of the URL to handle A) name changes and B) / or no / ending
         `${this.canteen.id}--`
+      const currentYear = this.year + 1
       const url =
-        "https://stats.data.gouv.fr/index.php?module=API&method=VisitsSummary.getVisits&period=range&date=last30&format=JSON&token_auth=anonymous&" +
+        "https://stats.data.gouv.fr/index.php?module=API&method=VisitsSummary.getVisits&format=JSON&token_auth=anonymous&period=range&" +
+        `date=${currentYear}-01-01,today&` +
         `idSite=${window.MATOMO_ID}&` +
         `segment=pageUrl=^${encodeURIComponent(pageUrl)}`
       return fetch(url)

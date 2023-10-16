@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="fill-height">
+  <v-card outlined class="fill-height dsfr">
     <v-row>
       <v-col cols="4" v-if="$vuetify.breakpoint.smAndUp">
         <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" class="fill-height"></v-img>
@@ -61,7 +61,7 @@
             color="primary"
             outlined
           >
-            Modifier
+            Modifier mon établissement
           </v-btn>
         </v-card-actions>
       </v-col>
