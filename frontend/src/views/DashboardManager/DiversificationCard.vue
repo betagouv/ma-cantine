@@ -14,7 +14,7 @@
       </h3>
     </v-card-title>
     <v-card-text v-if="needsData">
-      <MissingDataChip class="mt-n4 ml-8" />
+      <DataInfoChip class="mt-n4 ml-8" />
     </v-card-text>
     <v-card-text :class="`mt-n4 pl-12 ${level.colorClass}`" v-else>
       <p class="mb-0 mt-2 fr-text-xs">
@@ -35,12 +35,12 @@
 
 <script>
 import Constants from "@/constants"
-import MissingDataChip from "./MissingDataChip"
+import DataInfoChip from "./DataInfoChip"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
   name: "DiversificationCard",
-  components: { MissingDataChip },
+  components: { DataInfoChip },
   props: {
     diagnostic: {
       type: Object,
