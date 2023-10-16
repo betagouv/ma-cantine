@@ -197,13 +197,11 @@ export default {
       return false
     },
     usesSatelliteDiagnosticForMeasure(tabItem) {
-      if (this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving") {
-        if (tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement") {
-          return false
-        }
-        return this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
-      }
-      return false
+      const tabAlwaysShown = tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement"
+      if (tabAlwaysShown) return false
+      const isCentralKitchen =
+        this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
+      return isCentralKitchen && this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
     },
   },
   watch: {
