@@ -20,9 +20,6 @@
       </div>
       <ApproSegment :purchases="null" :diagnostic="approDiagnostic" :lastYearDiagnostic="null" :canteen="canteen" />
     </v-col>
-    <!-- <div class="d-flex" style="height: auto;">
-      <p>test</p>
-    </div> -->
     <v-col cols="12" md="8">
       <v-row style="position: relative; height: 100%" class="ma-0">
         <div
