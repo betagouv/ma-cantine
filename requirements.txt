@@ -83,7 +83,7 @@ pypdf==3.16.3
 PyPDF3==1.0.6
 pypng==0.20220715.0
 pyrsistent==0.19.3
-pytest==7.4.0
+pytest==7.4.2
 pytest-django==4.5.2
 python-bidi==0.4.2
 python-dateutil==2.8.2
