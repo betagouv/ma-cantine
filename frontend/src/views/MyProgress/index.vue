@@ -179,16 +179,17 @@ export default {
       } else this.tab = this.tabHeaders.indexOf(initialTab)
     },
     usesOtherDiagnosticForMeasure(index) {
+      const isApproTab = index === 0
       if (this.canteen?.productionType === "site") {
         return false
       } else if (this.canteen?.productionType === "site_cooked_elsewhere") {
-        if (index === 0) return !!this.centralDiagnostic
+        if (isApproTab) return !!this.centralDiagnostic
         if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
           return !!this.centralDiagnostic
         }
       } else {
         // both CC production types
-        if (index > 0) {
+        if (!isApproTab) {
           const satelliteProvidesOtherMeasures = this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
           return satelliteProvidesOtherMeasures
         }
