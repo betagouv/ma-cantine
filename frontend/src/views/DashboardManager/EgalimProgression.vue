@@ -2,12 +2,12 @@
   <v-row style="position: relative;">
     <v-col cols="12" md="4" class="d-flex flex-column">
       <v-row>
-        <v-col cols="7">
-          <h2 class="fr-h5 mb-0 mt-1 align-center">
+        <v-col cols="8">
+          <h2 class="fr-h3 mb-0 mt-1 align-center">
             Ma progression
           </h2>
         </v-col>
-        <v-col cols="5">
+        <v-col cols="4">
           <DsfrSelect v-model="year" :items="allowedYears" hide-details="auto" placeholder="Année" />
         </v-col>
       </v-row>
@@ -112,5 +112,8 @@ export default {
   height: 92%;
   backdrop-filter: blur(7px);
   border: dashed #bbb;
+}
+.v-card.dsfr {
+  border: solid 1.5px #dddddd;
 }
 </style>

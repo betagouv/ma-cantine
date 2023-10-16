@@ -1,11 +1,10 @@
 <template>
   <div class="text-left">
-    <h1 class="my-4 fr-h2" v-if="canteen">{{ canteen.name }}</h1>
-    <h1 class="my-4 fr-h2" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
+    <h1 class="my-4 fr-display-xs" v-if="canteen">{{ canteen.name }}</h1>
+    <h1 class="my-4 fr-display-xs" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
     <v-row v-if="canteenPreviews.length > 1">
       <v-col>
-        <v-btn outlined small color="primary" :to="{ name: 'ManagementPage' }">
-          <v-icon class="mr-1" small>mdi-pencil</v-icon>
+        <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
           Changer d'établissement
         </v-btn>
       </v-col>
@@ -17,7 +16,7 @@
       </div>
 
       <div v-if="canteen">
-        <h2 class="mt-10 mb-2 fr-h4">
+        <h2 class="mt-10 mb-2 fr-h2">
           Mon établissement
         </h2>
         <p class="fr-text-sm">
@@ -156,5 +155,8 @@ export default {
 <style scoped>
 .constrained {
   max-width: 1200px !important;
+}
+.v-card.dsfr {
+  border: solid 1.5px #dddddd;
 }
 </style>

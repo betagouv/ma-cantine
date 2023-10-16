@@ -1,6 +1,10 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column pa-4">
-    <v-card-title><h3 class="fr-h4 mb-0">Ma vitrine en ligne</h3></v-card-title>
+  <v-card outlined class="fill-height d-flex flex-column dsfr pa-6">
+    <v-card-title>
+      <h3 class="fr-h4 mb-0">
+        Ma vitrine en ligne
+      </h3>
+    </v-card-title>
     <v-spacer></v-spacer>
     <v-card-text class="fr-text grey--text text--darken-2">
       <p class="publication-detail">

@@ -181,4 +181,7 @@ export default {
   // Not supported by all browsers, but is a nice to have rather than necessity
   -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.6)), to(rgba(0, 0, 0, 0)));
 }
+.fr-btn--tertiary {
+  border: thin solid #ddd;
+}
 </style>

@@ -2,28 +2,33 @@
   <v-card
     :to="diagnostic ? { name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } } : null"
     outlined
-    class="fill-height d-flex flex-column dsfr"
+    class="fill-height d-flex flex-column dsfr pa-6"
+    style="background-color: #F6F6F6;"
   >
-    <v-card-title class="font-weight-bold body-1">
-      <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
+    <v-card-title class="mx-1">
+      <v-icon small :color="keyMeasure.mdiIconColor" class="mr-2">
         {{ keyMeasure.mdiIcon }}
       </v-icon>
-      <h3>{{ keyMeasure.shortTitle }}</h3>
+      <h3 class="fr-text font-weight-bold">
+        {{ keyMeasure.shortTitle }}
+      </h3>
     </v-card-title>
     <v-card-text v-if="needsData">
       <MissingDataChip class="mt-n4 ml-8" />
     </v-card-text>
     <v-card-text :class="`mt-n4 pl-12 ${level.colorClass}`" v-else>
-      NIVEAU :
-      <span class="font-weight-bold">{{ level.text }}</span>
+      <p class="mb-0 mt-2 fr-text-xs">
+        NIVEAU :
+        <span class="font-weight-black">{{ level.text }}</span>
+      </p>
     </v-card-text>
-    <v-card-text>
-      <p>{{ cardBody }}</p>
+    <v-card-text class="fr-text-xs pb-0">
+      <p class="mb-0">{{ cardBody }}</p>
     </v-card-text>
     <v-spacer></v-spacer>
-    <v-card-actions class="px-4 pt-0">
+    <v-card-actions class="px-4">
       <v-spacer></v-spacer>
-      <v-icon color="primary">$arrow-right-line</v-icon>
+      <v-icon color="primary" class="mr-n1">$arrow-right-line</v-icon>
     </v-card-actions>
   </v-card>
 </template>
@@ -56,7 +61,7 @@ export default {
       return Constants.Levels.BEGINNER
     },
     cardBody() {
-      return "Faites un premier pas : mettez en place un menu végétarien par semaine. Découvrez des recettes et des conseils directement sur “ma cantine” !"
+      return "Faites un premier pas : mettez en place un menu végétarien par semaine. Découvrez des recettes et des conseils directement sur « ma cantine » !"
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
