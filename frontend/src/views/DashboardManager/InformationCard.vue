@@ -53,10 +53,7 @@ export default {
       return keyMeasures.find((x) => x.id === this.measureId)
     },
     needsData() {
-      const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
-      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId !== this.canteen.id
-      const delegatedToCentralKitchen = usesCentralDiag && this.diagnostic?.centralKitchenDiagnosticMode === "ALL"
-      return !delegatedToCentralKitchen && this.level === Constants.Levels.UNKNOWN
+      return !this.delegatedToCentralKitchen && this.level === Constants.Levels.UNKNOWN
     },
     level() {
       return Constants.Levels.ADVANCED
@@ -64,6 +61,8 @@ export default {
     cardBody() {
       if (this.delegatedToSatellite) {
         return "Les données associées à cette mesure EGAlim sont renseignées au niveau de chaque lieu de service que vous livrez."
+      } else if (this.delegatedToCentralKitchen) {
+        return "Votre cuisine centrale a renseigné les données de cette mesure à votre place."
       }
       return "Vous êtes au point ! N’hésitez pas à utiliser les outils fournis par « ma cantine » pour informer encore plus facilement vos convives de vos actions."
     },
@@ -84,6 +83,11 @@ export default {
     },
     delegatedToSatellite() {
       return this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
+    },
+    delegatedToCentralKitchen() {
+      const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
+      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId !== this.canteen.id
+      return usesCentralDiag && this.diagnostic?.centralKitchenDiagnosticMode === "ALL"
     },
   },
 }
