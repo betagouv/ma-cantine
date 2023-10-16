@@ -17,11 +17,11 @@
         <span class="font-weight-black">{{ level.text }}</span>
       </p>
     </v-card-text>
-    <v-card-text class="fr-text-xs pb-0">
+    <v-card-text class="fr-text-xs">
       <p class="mb-0">{{ cardBody }}</p>
     </v-card-text>
     <v-spacer></v-spacer>
-    <v-card-actions v-if="!delegatedToSatellite" class="px-4">
+    <v-card-actions v-if="!delegatedToSatellite" class="px-4 pt-0 mt-n2">
       <v-spacer></v-spacer>
       <v-icon color="primary" class="mr-n1">$arrow-right-line</v-icon>
     </v-card-actions>
