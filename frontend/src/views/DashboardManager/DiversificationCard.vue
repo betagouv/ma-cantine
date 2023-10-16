@@ -55,7 +55,10 @@ export default {
       return keyMeasures.find((x) => x.id === this.measureId)
     },
     needsData() {
-      return this.level === Constants.Levels.UNKNOWN
+      const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
+      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId !== this.canteen.id
+      const delegatedToCentralKitchen = usesCentralDiag && this.diagnostic?.centralKitchenDiagnosticMode === "ALL"
+      return !delegatedToCentralKitchen && this.level === Constants.Levels.UNKNOWN
     },
     level() {
       return Constants.Levels.BEGINNER
