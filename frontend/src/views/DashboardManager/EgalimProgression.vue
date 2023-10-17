@@ -12,7 +12,7 @@
         </v-col>
       </v-row>
       <div>
-        <DataInfoChip :currentYear="isCurrentYear" :missingData="needsData" class="mt-4" />
+        <DataInfoBadge :currentYear="isCurrentYear" :missingData="needsData" class="mt-4" />
         <v-divider class="my-6"></v-divider>
       </div>
       <ApproSegment :purchases="null" :diagnostic="approDiagnostic" :lastYearDiagnostic="null" :canteen="canteen" />
@@ -58,7 +58,7 @@ import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
 import NoPlasticCard from "./NoPlasticCard"
 import InformationCard from "./InformationCard"
-import DataInfoChip from "./DataInfoChip"
+import DataInfoBadge from "./DataInfoBadge"
 import ApproSegment from "./ApproSegment"
 
 export default {
@@ -69,7 +69,7 @@ export default {
     DiversificationCard,
     NoPlasticCard,
     InformationCard,
-    DataInfoChip,
+    DataInfoBadge,
     ApproSegment,
   },
   props: {

@@ -7,7 +7,7 @@
 <script>
 import DsfrBadge from "@/components/DsfrBadge"
 export default {
-  name: "DataInfoChip",
+  name: "DataInfoBadge",
   components: { DsfrBadge },
   props: {
     currentYear: {
