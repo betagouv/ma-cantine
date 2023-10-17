@@ -64,8 +64,8 @@
               :key="tabItem.text"
               :disabled="usesSatelliteDiagnosticForMeasure(tabItem)"
             >
-              <v-icon small class="mr-1">{{ tabItem.icon }}</v-icon>
-              {{ tabItem.text }}
+              <v-icon small :class="`mr-1 ${tabTextClasses(tabItem)}`">{{ tabItem.icon }}</v-icon>
+              <span :class="tabTextClasses(tabItem)">{{ tabItem.text }}</span>
             </v-tab>
           </template>
           <template v-slot:items>
@@ -239,6 +239,9 @@ export default {
     },
     isCentralKitchen() {
       return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
+    },
+    tabTextClasses(tabItem) {
+      return this.usesSatelliteDiagnosticForMeasure(tabItem) ? "grey--text" : "black--text"
     },
   },
   watch: {
