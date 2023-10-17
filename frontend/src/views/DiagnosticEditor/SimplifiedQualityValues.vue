@@ -526,9 +526,6 @@ export default {
 </script>
 
 <style scoped>
-fieldset {
-  border: none;
-}
 .narrow-field {
   width: 50%;
 }
