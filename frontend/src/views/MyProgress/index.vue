@@ -262,9 +262,7 @@ export default {
       this.assignTab()
     },
     centralKitchenDiagnosticMode(newMode) {
-      // TODO: don't want to have disabled tab selected. Update selected tab to appro if changed?
       if (!this.isCentralKitchen || !this.canteen) return
-      // TODO: in the case of a new diagnostic, only save the mode when click Commencer
       if (!this.diagnostic || !this.diagnostic.id) return
       if (!newMode || this.diagnostic.centralKitchenDiagnosticMode === newMode) return
       this.$store.dispatch("updateDiagnostic", {
