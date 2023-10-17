@@ -226,7 +226,7 @@ export default {
       } else {
         // both CC production types
         if (!isApproTab) {
-          const satelliteProvidesOtherMeasures = this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
+          const satelliteProvidesOtherMeasures = this.centralKitchenDiagnosticMode === "APPRO"
           return satelliteProvidesOtherMeasures
         }
       }
@@ -235,7 +235,7 @@ export default {
     usesSatelliteDiagnosticForMeasure(tabItem) {
       const tabAlwaysShown = tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement"
       if (tabAlwaysShown) return false
-      return this.isCentralKitchen && this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
+      return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
     },
     isCentralKitchen() {
       return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
@@ -259,11 +259,17 @@ export default {
     $route() {
       this.assignTab()
     },
-    centralKitchenDiagnosticMode(newMode, oldMode) {
-      if (!this.isCentralKitchen) return
-      // TODO: save diagnostic change in backend
-      console.log(oldMode)
-      console.log(newMode)
+    centralKitchenDiagnosticMode(newMode) {
+      // TODO: don't want to have disabled tab selected. Update selected tab to appro if changed?
+      if (!this.isCentralKitchen || !this.canteen) return
+      // TODO: in the case of a new diagnostic, only save the mode when click Commencer
+      if (!this.diagnostic || !this.diagnostic.id) return
+      if (!newMode || this.diagnostic.centralKitchenDiagnosticMode === newMode) return
+      this.$store.dispatch("updateDiagnostic", {
+        canteenId: this.canteen.id,
+        id: this.diagnostic.id,
+        payload: { centralKitchenDiagnosticMode: newMode },
+      })
     },
   },
   beforeMount() {
