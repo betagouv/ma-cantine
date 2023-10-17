@@ -166,6 +166,9 @@ export default {
       // TODO
       return false
     },
+    isCentralKitchen() {
+      return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
+    },
   },
   methods: {
     updateCanteen(newCanteen) {
@@ -236,9 +239,6 @@ export default {
       const tabAlwaysShown = tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement"
       if (tabAlwaysShown) return false
       return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
-    },
-    isCentralKitchen() {
-      return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
     },
     tabTextClasses(tabItem) {
       return this.usesSatelliteDiagnosticForMeasure(tabItem) ? "grey--text" : "black--text"
