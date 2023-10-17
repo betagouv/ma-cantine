@@ -163,8 +163,7 @@ export default {
       return this.tabHeaders.map((x, index) => ({ text: x.text, value: index }))
     },
     hasActiveTeledeclaration() {
-      // TODO
-      return false
+      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
     },
     isCentralKitchen() {
       return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
