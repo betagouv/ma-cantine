@@ -22,6 +22,34 @@
         <DsfrSelect hide-details label="Année" :items="years" v-model="year" v-else-if="canteen" />
       </v-col>
       <v-col cols="12" sm="9" md="10">
+        <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
+          <fieldset class="fr-text">
+            <legend class="font-weight-bold">
+              Pour mes cantines satellites, je saisis :
+            </legend>
+            <v-radio-group
+              v-model="centralKitchenDiagnosticMode"
+              :readonly="hasActiveTeledeclaration"
+              :disabled="hasActiveTeledeclaration"
+              class="py-0"
+              hide-details
+              row
+            >
+              <v-radio
+                v-for="type in centralKitchenDiagnosticModes"
+                :key="type.key"
+                :label="type.shortLabel"
+                :value="type.key"
+              >
+                <template v-slot:label>
+                  <span class="fr-text mr-2 mr-lg-8 grey--text text--darken-4">
+                    {{ type.shortLabel }}
+                  </span>
+                </template>
+              </v-radio>
+            </v-radio-group>
+          </fieldset>
+        </v-card>
         <DsfrTabsVue
           v-model="tab"
           :enableMobileView="$vuetify.breakpoint.smAndDown"
@@ -80,6 +108,7 @@ import CanteenProgress from "./CanteenProgress"
 import DsfrSelect from "@/components/DsfrSelect"
 import { diagnosticYears } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
+import Constants from "@/constants"
 
 export default {
   name: "MyProgress",
@@ -118,6 +147,8 @@ export default {
       tabItems: [ApproProgress, WasteProgress, DiversificationProgress, PlasticProgress, InfoProgress, CanteenProgress],
       canteen: null,
       years: diagnosticYears().map((x) => x.toString()),
+      centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
+      centralKitchenDiagnosticMode: null,
     }
   },
   props: {
@@ -130,6 +161,10 @@ export default {
   computed: {
     mobileSelectItems() {
       return this.tabHeaders.map((x, index) => ({ text: x.text, value: index }))
+    },
+    hasActiveTeledeclaration() {
+      // TODO
+      return false
     },
   },
   methods: {
@@ -163,6 +198,7 @@ export default {
           this.canteen?.centralKitchenDiagnostics?.find((x) => +x.year === +this.year)
         )
       }
+      this.centralKitchenDiagnosticMode = this.diagnostic?.centralKitchenDiagnosticMode
     },
     assignTab() {
       const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
@@ -199,9 +235,10 @@ export default {
     usesSatelliteDiagnosticForMeasure(tabItem) {
       const tabAlwaysShown = tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement"
       if (tabAlwaysShown) return false
-      const isCentralKitchen =
-        this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
-      return isCentralKitchen && this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
+      return this.isCentralKitchen && this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
+    },
+    isCentralKitchen() {
+      return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
     },
   },
   watch: {
@@ -221,6 +258,12 @@ export default {
     },
     $route() {
       this.assignTab()
+    },
+    centralKitchenDiagnosticMode(newMode, oldMode) {
+      if (!this.isCentralKitchen) return
+      // TODO: save diagnostic change in backend
+      console.log(oldMode)
+      console.log(newMode)
     },
   },
   beforeMount() {
