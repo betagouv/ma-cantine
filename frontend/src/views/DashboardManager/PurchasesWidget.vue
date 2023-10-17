@@ -2,10 +2,10 @@
   <v-card outlined class="fill-height d-flex flex-column dsfr pa-6">
     <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes achats</h3></v-card-title>
     <v-card-text class="fr-text-xs grey--text text--darken-2 py-0 mt-3">
-      <p v-if="!purchases.length">
+      <p v-if="purchases.length">Source des données : {{ purchaseDataSourceString }}.</p>
+      <p v-else-if="!purchasesDelegated">
         Renseignez vos achats pour calculer automatiquement votre progression sur le volet approvisionnements EGAlim.
       </p>
-      <p v-else>Source des données : {{ purchaseDataSourceString }}.</p>
     </v-card-text>
     <v-card-text class="pt-0">
       <v-data-table
@@ -20,9 +20,24 @@
           {{ getProductCharacteristicsDisplayValue(item.characteristics) }}
         </template>
         <template v-slot:[`no-data`]>
-          <v-card outlined rounded class="my-4 py-4 no-purchases" v-if="!purchasesFetchingError">
+          <v-card outlined rounded class="my-4 py-4 no-purchases" v-if="purchasesDelegated">
             <v-card-text class="fr-text-xs primary--text">
-              Saisissez vos achats manuellement ou connectez votre logiciel de gestion habituel
+              <p>
+                Mon établissement sert des repas préparés par
+                <br />
+                <strong>{{ centralKitchenName }}</strong>
+              </p>
+              <p class="mb-0">
+                Les achats sont renseignés par la cuisine centrale pour calculer les taux EGalim de tous les lieux de
+                service.
+              </p>
+            </v-card-text>
+          </v-card>
+          <v-card outlined rounded class="my-4 py-4 no-purchases" v-else-if="!purchasesFetchingError">
+            <v-card-text class="fr-text-xs primary--text">
+              <p class="mb-0">
+                Saisissez vos achats manuellement ou connectez votre logiciel de gestion habituel
+              </p>
             </v-card-text>
             <v-card-actions class="justify-center">
               <v-btn :to="{ name: 'PurchasesHome' }" color="primary" class="mx-2 mb-2 fr-text-sm font-weight-medium">
@@ -38,7 +53,7 @@
       </v-data-table>
     </v-card-text>
     <v-spacer></v-spacer>
-    <v-card-actions v-if="purchases.length || purchasesFetchingError">
+    <v-card-actions v-if="(purchases.length || purchasesFetchingError) && !purchasesDelegated">
       <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
         <v-icon small class="mr-2">$add-line</v-icon>
         Ajouter un achat
@@ -85,6 +100,18 @@ export default {
     purchaseDataSourceString() {
       if (!this.purchases.length) return
       return this.purchases[0].createdByImport ? "import en masse" : "ajout manuel"
+    },
+    purchasesDelegated() {
+      return this.canteen.productionType === "site_cooked_elsewhere"
+    },
+    centralKitchenName() {
+      if (!this.purchasesDelegated) return null
+      if (this.canteen.centralKitchen?.name) {
+        return this.canteen.centralKitchen.name
+      }
+      return this.canteen.centralProducerSiret
+        ? `l'établissement avec le SIRET ${this.canteen.centralProducerSiret}`
+        : "un établissement inconnu"
     },
   },
   methods: {

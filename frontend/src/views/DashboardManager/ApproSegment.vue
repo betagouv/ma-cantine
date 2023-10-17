@@ -1,6 +1,37 @@
 <template>
   <div class="fill-height">
-    <div v-if="showFirstTimeView" class="body-1">
+    <v-card v-if="isCentralDiagnostic" outlined class="fill-height d-flex flex-column">
+      <v-card-title class="font-weight-bold body-1">
+        <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
+          {{ keyMeasure.mdiIcon }}
+        </v-icon>
+        <h3>{{ keyMeasure.shortTitle }}</h3>
+      </v-card-title>
+      <v-card-text class="fill-height d-flex flex-column" style="position: relative;">
+        <v-spacer />
+        <v-card class="py-4 px-5" color="grey lighten-4">
+          <p class="mb-0 grey--text text--darken-2">
+            Votre cantine sert des repas préparés par
+            <strong>{{ centralKitchenDisplayName }}</strong>
+          </p>
+        </v-card>
+        <v-spacer />
+        <div v-if="!hasApproData">
+          <p>
+            Les données d’approvisionnement apparaîtront directement ici lorsque votre cuisine centrale les aura
+            renseignées.
+          </p>
+          <p v-if="diagnostic.centralKitchenDiagnosticMode !== 'ALL'">
+            En attendant, déclarez vos actions concernant les autres volets de la loi EGAlim.
+          </p>
+        </div>
+        <div v-else>
+          <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
+        </div>
+        <v-spacer />
+      </v-card-text>
+    </v-card>
+    <div v-else-if="showFirstTimeView" class="body-1">
       <p class="font-weight-bold">Pilotez votre progression tout au long de l’année en cours</p>
       <p class="body-2">
         Avec l’outil de suivi d’achats de « ma cantine », calculez automatiquement et en temps réel la part de vos
@@ -34,12 +65,7 @@
         </div>
       </v-card-text>
     </v-card>
-    <v-card
-      :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
-      outlined
-      class="fill-height d-flex flex-column dsfr pa-6"
-      v-else-if="diagnostic"
-    >
+    <v-card :to="link" outlined class="fill-height d-flex flex-column dsfr pa-6" v-else-if="diagnostic">
       <v-card-title class="mx-1">
         <v-icon small :color="keyMeasure.mdiIconColor" class="mr-2">
           {{ keyMeasure.mdiIcon }}
@@ -115,6 +141,30 @@ export default {
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
+    },
+    isCentralDiagnostic() {
+      if (this.canteen.productionType !== "site_cooked_elsewhere") return false
+      return this.diagnostic && this.diagnostic.canteenId === this.canteen.centralKitchen.id
+    },
+    centralKitchenDisplayName() {
+      if (this.canteen.centralKitchen?.name) {
+        return this.canteen.centralKitchen.name
+      }
+      return this.canteen.centralProducerSiret
+        ? `l'établissement avec le SIRET ${this.canteen.centralProducerSiret}`
+        : "un établissement inconnu"
+    },
+    link() {
+      return this.diagnostic
+        ? {
+            name: "MyProgress",
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+              year: this.diagnostic.year,
+              measure: "qualite-des-produits",
+            },
+          }
+        : null
     },
   },
 }

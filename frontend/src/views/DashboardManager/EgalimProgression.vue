@@ -15,36 +15,36 @@
         <DataInfoChip :currentYear="isCurrentYear" :missingData="needsData" class="mt-4" />
         <v-divider class="my-6"></v-divider>
       </div>
-      <ApproSegment :purchases="null" :diagnostic="diagnostic" :lastYearDiagnostic="null" :canteen="canteen" />
+      <ApproSegment :purchases="null" :diagnostic="approDiagnostic" :lastYearDiagnostic="null" :canteen="canteen" />
     </v-col>
     <v-col cols="12" md="8">
-      <v-row style="position: relative;">
+      <v-row style="position: relative; height: 100%" class="ma-0">
         <div
           class="overlay d-flex align-center justify-center"
-          v-if="!hasPurchases && !diagnostic && !hasLastYearDiagnostic"
+          v-if="!hasPurchases && !otherMeasuresDiagnostic && !hasLastYearDiagnostic"
         >
           <v-btn
             color="primary"
             :to="{
-              name: !diagnostic ? 'NewDiagnosticForCanteen' : 'DiagnosticModification',
-              params: { canteenUrlComponent, year: diagnostic && year },
+              name: !otherMeasuresDiagnostic ? 'NewDiagnosticForCanteen' : 'DiagnosticModification',
+              params: { canteenUrlComponent, year: otherMeasuresDiagnostic && year },
               query: { année: year },
             }"
           >
             Commencer
           </v-btn>
         </div>
-        <v-col cols="12" md="6" fill-height>
-          <FoodWasteCard :diagnostic="diagnostic" :canteen="canteen" />
+        <v-col cols="12" md="6" class="pt-md-0">
+          <FoodWasteCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
-        <v-col cols="12" md="6" fill-height>
-          <DiversificationCard :diagnostic="diagnostic" :canteen="canteen" />
+        <v-col cols="12" md="6" class="pt-md-0">
+          <DiversificationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
-        <v-col cols="12" md="6" fill-height>
-          <NoPlasticCard :diagnostic="diagnostic" :canteen="canteen" />
+        <v-col cols="12" md="6" class="pb-md-0">
+          <NoPlasticCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
-        <v-col cols="12" md="6" fill-height>
-          <InformationCard :diagnostic="diagnostic" :canteen="canteen" />
+        <v-col cols="12" md="6" class="pb-md-0">
+          <InformationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
       </v-row>
     </v-col>
@@ -85,8 +85,24 @@ export default {
     }
   },
   computed: {
-    diagnostic() {
+    canteenDiagnostic() {
       return this.canteen.diagnostics.find((x) => x.year === this.year)
+    },
+    centralDiagnostic() {
+      if (this.canteen.productionType === "site_cooked_elsewhere") {
+        const ccDiag = this.canteen.centralKitchenDiagnostics?.find((x) => x.year === this.year)
+        return ccDiag
+      }
+      return null
+    },
+    approDiagnostic() {
+      return this.centralDiagnostic || this.canteenDiagnostic
+    },
+    otherMeasuresDiagnostic() {
+      if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
+        return this.centralDiagnostic
+      }
+      return this.canteenDiagnostic
     },
     hasPurchases() {
       return false
@@ -101,7 +117,9 @@ export default {
       return this.year === lastYear() + 1
     },
     needsData() {
-      return !this.hasPurchases && !this.diagnostic && !this.hasLastYearDiagnostic
+      return (
+        !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic) && !this.hasLastYearDiagnostic
+      )
     },
   },
 }

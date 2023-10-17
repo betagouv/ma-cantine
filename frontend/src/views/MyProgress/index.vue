@@ -30,14 +30,36 @@
           active-class="selected"
         >
           <template v-slot:tabs>
-            <v-tab v-for="tabItem in tabHeaders" class="mx-1" :key="tabItem.text">
+            <v-tab
+              v-for="tabItem in tabHeaders"
+              class="mx-1"
+              :key="tabItem.text"
+              :disabled="usesSatelliteDiagnosticForMeasure(tabItem)"
+            >
               <v-icon small class="mr-1">{{ tabItem.icon }}</v-icon>
               {{ tabItem.text }}
             </v-tab>
           </template>
           <template v-slot:items>
             <v-tab-item class="my-4" v-for="(item, index) in tabItems" :key="`${index}-content`">
-              <component :is="item" :diagnostic="diagnostic" />
+              <component :is="item" :diagnostic="diagnostic" :centralDiagnostic="centralDiagnostic" />
+              <div v-if="index < 5">
+                <v-btn
+                  v-if="diagnostic && !usesOtherDiagnosticForMeasure(index)"
+                  outlined
+                  color="primary"
+                  :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
+                >
+                  Modifier
+                </v-btn>
+                <v-btn
+                  v-else-if="!diagnostic && !usesOtherDiagnosticForMeasure(index)"
+                  color="primary"
+                  :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
+                >
+                  Commencer
+                </v-btn>
+              </div>
             </v-tab-item>
           </template>
         </DsfrTabsVue>
@@ -76,6 +98,7 @@ export default {
     return {
       tab: null,
       diagnostic: null,
+      centralDiagnostic: null,
       tabHeaders: [
         ...keyMeasures.map((x) => ({
           urlSlug: x.id,
@@ -133,6 +156,13 @@ export default {
         "diagnostic",
         this.canteen?.diagnostics?.find((x) => +x.year === +this.year)
       )
+      if (this.canteen?.productionType === "site_cooked_elsewhere") {
+        this.$set(
+          this,
+          "centralDiagnostic",
+          this.canteen?.centralKitchenDiagnostics?.find((x) => +x.year === +this.year)
+        )
+      }
     },
     assignTab() {
       const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
@@ -147,6 +177,31 @@ export default {
         })
         this.tab = 0
       } else this.tab = this.tabHeaders.indexOf(initialTab)
+    },
+    usesOtherDiagnosticForMeasure(index) {
+      const isApproTab = index === 0
+      if (this.canteen?.productionType === "site") {
+        return false
+      } else if (this.canteen?.productionType === "site_cooked_elsewhere") {
+        if (isApproTab) return !!this.centralDiagnostic
+        if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
+          return !!this.centralDiagnostic
+        }
+      } else {
+        // both CC production types
+        if (!isApproTab) {
+          const satelliteProvidesOtherMeasures = this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
+          return satelliteProvidesOtherMeasures
+        }
+      }
+      return false
+    },
+    usesSatelliteDiagnosticForMeasure(tabItem) {
+      const tabAlwaysShown = tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement"
+      if (tabAlwaysShown) return false
+      const isCentralKitchen =
+        this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
+      return isCentralKitchen && this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
     },
   },
   watch: {
@@ -194,5 +249,10 @@ export default {
 }
 .v-list-item:focus {
   outline: 2px solid #3b87ff;
+}
+.v-tab--disabled {
+  opacity: 100%;
+  background-color: #e5e5e5 !important;
+  color: #929292 !important;
 }
 </style>
