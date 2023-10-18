@@ -60,7 +60,10 @@
             large
             class="mb-10"
             color="primary"
-            :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
+            :to="{
+              name: 'MyProgress',
+              params: { canteenUrlComponent, year: diagnostic.year, measure: 'qualite-des-produits' },
+            }"
           >
             <span class="fr-text-lg">Commencer</span>
           </v-btn>
