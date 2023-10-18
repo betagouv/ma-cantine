@@ -2,7 +2,7 @@
   <div class="text-left">
     <BreadcrumbsNav :links="[{ to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' }]" />
     <h1 class="mb-10 fr-h2" v-if="canteen">{{ canteen.name }}</h1>
-    <v-row>
+    <v-row v-if="canteen">
       <v-col cols="12" sm="3" md="2" style="border-right: 1px solid #DDD;">
         <h2 class="fr-h5">Ma progression</h2>
         <nav aria-label="Année du diagnostic" v-if="canteen && $vuetify.breakpoint.smAndUp">
@@ -41,25 +41,14 @@
             </v-tab>
           </template>
           <template v-slot:items>
-            <v-tab-item class="my-4" v-for="(item, index) in tabItems" :key="`${index}-content`">
-              <component :is="item" :diagnostic="diagnostic" :centralDiagnostic="centralDiagnostic" />
-              <div v-if="index < 5" class="px-8">
-                <v-btn
-                  v-if="diagnostic && !usesOtherDiagnosticForMeasure(index)"
-                  outlined
-                  color="primary"
-                  :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
-                >
-                  Modifier
-                </v-btn>
-                <v-btn
-                  v-else-if="!diagnostic && !usesOtherDiagnosticForMeasure(index)"
-                  color="primary"
-                  :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
-                >
-                  Commencer
-                </v-btn>
-              </div>
+            <v-tab-item class="my-4" v-for="(item, index) in tabHeaders" :key="`${index}-content`">
+              <ProgressTab
+                :measureIndex="index"
+                :year="year"
+                :canteen="canteen"
+                :diagnostic="diagnostic"
+                :centralDiagnostic="centralDiagnostic"
+              />
             </v-tab-item>
           </template>
         </DsfrTabsVue>
@@ -69,14 +58,9 @@
 </template>
 
 <script>
-import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
-import ApproProgress from "./ApproProgress"
-import DiversificationProgress from "./DiversificationProgress"
-import InfoProgress from "./InfoProgress"
-import PlasticProgress from "./PlasticProgress"
-import WasteProgress from "./WasteProgress"
-import CanteenProgress from "./CanteenProgress"
 import DsfrSelect from "@/components/DsfrSelect"
 import { diagnosticYears } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
@@ -85,13 +69,8 @@ export default {
   name: "MyProgress",
   components: {
     BreadcrumbsNav,
+    ProgressTab,
     DsfrTabsVue,
-    ApproProgress,
-    DiversificationProgress,
-    InfoProgress,
-    PlasticProgress,
-    WasteProgress,
-    CanteenProgress,
     DsfrSelect,
   },
   data() {
@@ -115,7 +94,6 @@ export default {
           },
         ],
       ],
-      tabItems: [ApproProgress, WasteProgress, DiversificationProgress, PlasticProgress, InfoProgress, CanteenProgress],
       canteen: null,
       years: diagnosticYears().map((x) => x.toString()),
     }
@@ -177,24 +155,6 @@ export default {
         })
         this.tab = 0
       } else this.tab = this.tabHeaders.indexOf(initialTab)
-    },
-    usesOtherDiagnosticForMeasure(index) {
-      const isApproTab = index === 0
-      if (this.canteen?.productionType === "site") {
-        return false
-      } else if (this.canteen?.productionType === "site_cooked_elsewhere") {
-        if (isApproTab) return !!this.centralDiagnostic
-        if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
-          return !!this.centralDiagnostic
-        }
-      } else {
-        // both CC production types
-        if (!isApproTab) {
-          const satelliteProvidesOtherMeasures = this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
-          return satelliteProvidesOtherMeasures
-        }
-      }
-      return false
     },
     usesSatelliteDiagnosticForMeasure(tabItem) {
       const tabAlwaysShown = tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement"
