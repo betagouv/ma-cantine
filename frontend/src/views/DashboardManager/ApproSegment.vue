@@ -146,7 +146,7 @@ export default {
     },
     isCentralDiagnostic() {
       if (this.canteen.productionType !== "site_cooked_elsewhere") return false
-      return this.diagnostic && this.diagnostic.canteenId === this.canteen.centralKitchen.id
+      return this.diagnostic && this.diagnostic.canteenId === this.canteen.centralKitchen?.id
     },
     centralKitchenDisplayName() {
       if (this.canteen.centralKitchen?.name) {
