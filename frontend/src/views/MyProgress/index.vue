@@ -43,7 +43,7 @@
           <template v-slot:items>
             <v-tab-item class="my-4" v-for="(item, index) in tabItems" :key="`${index}-content`">
               <component :is="item" :diagnostic="diagnostic" :centralDiagnostic="centralDiagnostic" />
-              <div v-if="index < 5">
+              <div v-if="index < 5" class="px-8">
                 <v-btn
                   v-if="diagnostic && !usesOtherDiagnosticForMeasure(index)"
                   outlined
