@@ -57,6 +57,14 @@
 }
 
 // NB: not all typographies added yet, if the one you need isn't here add it
+.fr-text-lg {
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.75rem;
+  letter-spacing: normal;
+  text-transform: false;
+}
+
 .fr-text {
   font-size: 1rem;
   font-weight: 400;
