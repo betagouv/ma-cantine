@@ -1,6 +1,6 @@
 <template>
   <div class="fill-height">
-    <v-card v-if="isCentralDiagnostic" outlined class="fill-height d-flex flex-column dsfr pa-6">
+    <v-card v-if="hasCentralKitchen" outlined class="fill-height d-flex flex-column dsfr pa-6">
       <v-card-title>
         <v-icon small :color="keyMeasure.mdiIconColor" class="mx-2">
           {{ keyMeasure.mdiIcon }}
@@ -21,7 +21,7 @@
             Les données d’approvisionnement apparaîtront directement ici lorsque votre cuisine centrale les aura
             renseignées.
           </p>
-          <p v-if="diagnostic.centralKitchenDiagnosticMode !== 'ALL'">
+          <p v-if="!diagnostic || diagnostic.centralKitchenDiagnosticMode !== 'ALL'">
             En attendant, déclarez vos actions concernant les autres volets de la loi EGAlim.
           </p>
         </div>
@@ -43,7 +43,7 @@
         votre outil de gestion habituel si cela est possible pour transférer les données.
       </p>
     </div>
-    <v-card outlined class="fill-height d-flex flex-column dsfr pa-6" v-else-if="!hasApproData">
+    <v-card outlined class="fill-height d-flex flex-column dsfr pa-6" v-else-if="!hasApproData && isCurrentYear">
       <v-card-title>
         <v-icon small :color="keyMeasure.mdiIconColor" class="mx-2">
           {{ keyMeasure.mdiIcon }}
@@ -56,15 +56,7 @@
             Avec l’outil de suivi d’achats, pilotez en temps réel votre progression EGAlim sur l’année en cours, et
             simplifiez votre prochaine télédéclaration.
           </p>
-          <v-btn
-            large
-            class="mb-10"
-            color="primary"
-            :to="{
-              name: 'MyProgress',
-              params: { canteenUrlComponent, year: diagnostic.year, measure: 'qualite-des-produits' },
-            }"
-          >
+          <v-btn large class="mb-10" color="primary" :to="{ name: 'PurchasesHome' }">
             <span class="fr-text-lg">Commencer</span>
           </v-btn>
         </div>
@@ -121,6 +113,14 @@ export default {
     lastYearDiagnostic: {
       type: Object,
     },
+    year: {
+      type: Number,
+    },
+  },
+  data() {
+    return {
+      lastYear: lastYear(),
+    }
   },
   computed: {
     keyMeasure() {
@@ -130,7 +130,7 @@ export default {
       return this.diagnostic && hasDiagnosticApproData(this.diagnostic)
     },
     isCurrentYear() {
-      return this.diagnostic.year === lastYear() + 1
+      return this.year === this.lastYear + 1
     },
     level() {
       return Constants.Levels.BEGINNER
@@ -142,14 +142,14 @@ export default {
       return false
     },
     hasLastYearDiagnostic() {
-      return false
+      return !!this.lastYearDiagnostic
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
-    isCentralDiagnostic() {
+    hasCentralKitchen() {
       if (this.canteen.productionType !== "site_cooked_elsewhere") return false
-      return this.diagnostic && this.diagnostic.canteenId === this.canteen.centralKitchen.id
+      return !!this.canteen.centralKitchen?.id
     },
     centralKitchenDisplayName() {
       if (this.canteen.centralKitchen?.name) {

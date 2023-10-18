@@ -18,7 +18,13 @@
         />
         <hr aria-hidden="true" role="presentation" class="my-6" />
       </div>
-      <ApproSegment :purchases="null" :diagnostic="approDiagnostic" :lastYearDiagnostic="null" :canteen="canteen" />
+      <ApproSegment
+        :purchases="null"
+        :diagnostic="approDiagnostic"
+        :lastYearDiagnostic="lastYearDiagnostic"
+        :canteen="canteen"
+        :year="year"
+      />
     </v-col>
     <v-col cols="12" md="8">
       <v-row style="position: relative; height: 100%" class="ma-0">
@@ -83,6 +89,7 @@ export default {
   },
   data() {
     return {
+      lastYear: lastYear(),
       year: lastYear(),
       allowedYears: diagnosticYears().map((year) => ({ text: year, value: year })),
     }
@@ -90,6 +97,9 @@ export default {
   computed: {
     canteenDiagnostic() {
       return this.canteen.diagnostics.find((x) => x.year === this.year)
+    },
+    lastYearDiagnostic() {
+      return this.canteen.diagnostics.find((x) => x.year === this.lastYear)
     },
     centralDiagnostic() {
       if (this.canteen.productionType === "site_cooked_elsewhere") {
@@ -111,7 +121,7 @@ export default {
       return false
     },
     hasLastYearDiagnostic() {
-      return false
+      return !!this.lastYearDiagnostic
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
