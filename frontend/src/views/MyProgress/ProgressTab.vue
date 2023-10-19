@@ -38,7 +38,7 @@ export default {
   name: "ProgressTab",
   props: {
     measureId: {
-      type: Number,
+      type: String,
       required: true,
     },
     year: {
