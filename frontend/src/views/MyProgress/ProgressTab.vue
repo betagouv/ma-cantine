@@ -1,6 +1,6 @@
 <template>
   <div class="pa-8 pb-4">
-    <v-row v-if="diagnostic">
+    <v-row v-if="diagnostic || centralDiagnostic">
       <v-col cols="12" md="8">
         <h3 class="fr-h6 font-weight-bold mb-0">
           {{ keyMeasure.title }}
@@ -19,7 +19,7 @@
     <h3 v-else class="fr-h6 font-weight-bold mb-4">
       {{ keyMeasure.title }}
     </h3>
-    <div v-if="!diagnostic || showIntro">
+    <div v-if="(!diagnostic && !centralDiagnostic) || showIntro">
       <component
         :is="`${keyMeasure.baseComponent}Info`"
         :diagnostic="diagnostic"
@@ -35,20 +35,33 @@
         Commencer
       </v-btn>
     </div>
-    <div v-if="diagnostic">
+    <div v-if="diagnostic || centralDiagnostic">
       <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
+      <div v-if="usesOtherDiagnosticForMeasure(measureId) && isSatellite" class="fr-text pa-6 grey lighten-4 mb-6">
+        <p class="mb-1 grey--text text--darken-4">
+          Votre cantine sert des repas préparés par
+          <span class="font-weight-bold">{{ centralKitchenName }}</span>
+        </p>
+        <p class="mb-0 grey--text text--darken-2">
+          Votre cuisine centrale a déjà renseigné les données de cette mesure pour votre cantine. Retrouvez la synthèse
+          ci-dessous.
+          <span v-if="centralDiagnostic.centralKitchenDiagnosticMode !== 'ALL' && measureId === approId">
+            Les autres volets de la loi EGAlim vous restent accessibles.
+          </span>
+        </p>
+      </div>
       <v-row class="mb-4">
         <v-col class="d-flex align-end">
           <h4 class="fr-text-sm font-weight-bold">SYNTHÈSE</h4>
         </v-col>
         <v-col class="text-right">
           <v-btn
-            v-if="!hasActiveTeledeclaration"
+            v-if="!hasActiveTeledeclaration && !usesOtherDiagnosticForMeasure(measureId)"
             outlined
             small
             color="primary"
             class="fr-btn--tertiary px-2"
-            :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
+            :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: year } }"
           >
             <v-icon small class="mr-2">$pencil-line</v-icon>
             Modifier mes données
@@ -124,8 +137,20 @@ export default {
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
+    isSatellite() {
+      return this.canteen.productionType === "site_cooked_elsewhere"
+    },
+    centralKitchenName() {
+      if (!this.isSatellite) return null
+      if (this.canteen.centralKitchen?.name) {
+        return this.canteen.centralKitchen.name
+      }
+      return this.canteen.centralProducerSiret
+        ? `l'établissement avec le SIRET ${this.canteen.centralProducerSiret}`
+        : "un établissement inconnu"
+    },
     hasActiveTeledeclaration() {
-      return false
+      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
     },
     level() {
       return "EXPERT"
@@ -137,9 +162,9 @@ export default {
   methods: {
     usesOtherDiagnosticForMeasure(id) {
       const isApproTab = id === this.approId
-      if (this.canteen?.productionType === "site") {
+      if (this.canteen.productionType === "site") {
         return false
-      } else if (this.canteen?.productionType === "site_cooked_elsewhere") {
+      } else if (this.isSatellite) {
         if (isApproTab) return !!this.centralDiagnostic
         if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
           return !!this.centralDiagnostic
