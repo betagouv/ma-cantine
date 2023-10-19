@@ -27,7 +27,7 @@
       />
       <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
       <v-btn
-        v-if="measureId !== establishmentId && !diagnostic && !usesOtherDiagnosticForMeasure(measureId)"
+        v-if="measureId !== establishmentId && !diagnostic && !usesOtherDiagnosticForMeasure"
         color="primary"
         :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
         class="mt-4"
@@ -37,7 +37,7 @@
     </div>
     <div v-if="diagnostic || centralDiagnostic">
       <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
-      <div v-if="usesOtherDiagnosticForMeasure(measureId) && isSatellite" class="fr-text pa-6 grey lighten-4 mb-6">
+      <div v-if="usesOtherDiagnosticForMeasure && isSatellite" class="fr-text pa-6 grey lighten-4 mb-6">
         <p class="mb-1 grey--text text--darken-4">
           Votre cantine sert des repas préparés par
           <span class="font-weight-bold">{{ centralKitchenName }}</span>
@@ -52,11 +52,11 @@
       </div>
       <v-row class="mb-4">
         <v-col class="d-flex align-end">
-          <h4 class="fr-text-sm font-weight-bold">SYNTHÈSE</h4>
+          <h4 class="fr-text-sm font-weight-bold my-1">SYNTHÈSE</h4>
         </v-col>
         <v-col class="text-right">
           <v-btn
-            v-if="!hasActiveTeledeclaration && !usesOtherDiagnosticForMeasure(measureId)"
+            v-if="!hasActiveTeledeclaration && !usesOtherDiagnosticForMeasure"
             outlined
             small
             color="primary"
@@ -149,19 +149,8 @@ export default {
         ? `l'établissement avec le SIRET ${this.canteen.centralProducerSiret}`
         : "un établissement inconnu"
     },
-    hasActiveTeledeclaration() {
-      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
-    },
-    level() {
-      return "EXPERT"
-    },
-    levelMessage() {
-      return "Vous êtes au point, bravo ! Partagez vos meilleures idées pour inspirer d'autres cantines !"
-    },
-  },
-  methods: {
-    usesOtherDiagnosticForMeasure(id) {
-      const isApproTab = id === this.approId
+    usesOtherDiagnosticForMeasure() {
+      const isApproTab = this.measureId === this.approId
       if (this.canteen.productionType === "site") {
         return false
       } else if (this.isSatellite) {
@@ -177,6 +166,15 @@ export default {
         }
       }
       return false
+    },
+    hasActiveTeledeclaration() {
+      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+    },
+    level() {
+      return "EXPERT"
+    },
+    levelMessage() {
+      return "Vous êtes au point, bravo ! Partagez vos meilleures idées pour inspirer d'autres cantines !"
     },
   },
 }
