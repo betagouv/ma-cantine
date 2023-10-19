@@ -86,12 +86,12 @@
 </template>
 
 <script>
-import QualityMeasureInfo from "./introduction/ApproProgress"
-import DiversificationMeasureInfo from "./introduction/DiversificationProgress"
-import InformationMeasureInfo from "./introduction/InfoProgress"
-import NoPlasticMeasureInfo from "./introduction/PlasticProgress"
-import WasteMeasureInfo from "./introduction/WasteProgress"
-import CanteenProgressInfo from "./introduction/CanteenProgress"
+import QualityMeasureInfo from "./information/QualityMeasureInfo"
+import DiversificationMeasureInfo from "./information/DiversificationMeasureInfo"
+import InformationMeasureInfo from "./information/InformationMeasureInfo"
+import NoPlasticMeasureInfo from "./information/NoPlasticMeasureInfo"
+import WasteMeasureInfo from "./information/WasteMeasureInfo"
+import CanteenInfo from "./information/CanteenInfo"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
@@ -118,7 +118,7 @@ export default {
     InformationMeasureInfo,
     NoPlasticMeasureInfo,
     WasteMeasureInfo,
-    CanteenProgressInfo,
+    CanteenInfo,
   },
   data() {
     return {
@@ -130,7 +130,7 @@ export default {
   computed: {
     keyMeasure() {
       if (this.measureId === this.establishmentId) {
-        return { title: "Établissement", baseComponent: "CanteenProgress" }
+        return { title: "Établissement", baseComponent: "Canteen" }
       }
       return keyMeasures.find((x) => x.id === this.measureId)
     },
