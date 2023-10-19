@@ -1,11 +1,11 @@
 <template>
   <div class="fill-height">
-    <v-card v-if="isCentralDiagnostic" outlined class="fill-height d-flex flex-column">
-      <v-card-title class="font-weight-bold body-1">
-        <v-icon :color="keyMeasure.mdiIconColor" class="mr-2">
+    <v-card v-if="isCentralDiagnostic" outlined class="fill-height d-flex flex-column dsfr pa-6">
+      <v-card-title>
+        <v-icon small :color="keyMeasure.mdiIconColor" class="mx-2">
           {{ keyMeasure.mdiIcon }}
         </v-icon>
-        <h3>{{ keyMeasure.shortTitle }}</h3>
+        <h3 class="font-weight-bold fr-text">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
       <v-card-text class="fill-height d-flex flex-column" style="position: relative;">
         <v-spacer />
@@ -43,31 +43,33 @@
         votre outil de gestion habituel si cela est possible pour transférer les données.
       </p>
     </div>
-    <v-card outlined class="fill-height d-flex flex-column" v-else-if="!hasApproData">
-      <v-card-title class="font-weight-bold fr-text">
-        <v-icon small :color="keyMeasure.mdiIconColor" class="mr-2">
+    <v-card outlined class="fill-height d-flex flex-column dsfr pa-6" v-else-if="!hasApproData">
+      <v-card-title>
+        <v-icon small :color="keyMeasure.mdiIconColor" class="mx-2">
           {{ keyMeasure.mdiIcon }}
         </v-icon>
-        <h3>{{ keyMeasure.shortTitle }}</h3>
+        <h3 class="font-weight-bold fr-text">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
-      <v-card-text class="fill-height" style="position: relative;">
-        <div class="overlay d-flex flex-column align-center justify-center">
-          <p class="body-2 pa-4 text-center">
+      <v-card-text class="fill-height mt-2">
+        <div class="overlay d-flex flex-column align-center justify-center fill-height pa-6">
+          <p class="fr-text text-center my-10">
             Avec l’outil de suivi d’achats, pilotez en temps réel votre progression EGAlim sur l’année en cours, et
             simplifiez votre prochaine télédéclaration.
           </p>
           <v-btn
+            large
+            class="mb-10"
             color="primary"
             :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
           >
-            Commencer
+            <span class="fr-text-lg">Commencer</span>
           </v-btn>
         </div>
       </v-card-text>
     </v-card>
     <v-card :to="link" outlined class="fill-height d-flex flex-column dsfr pa-6" v-else-if="diagnostic">
-      <v-card-title class="mx-1">
-        <v-icon small :color="keyMeasure.mdiIconColor" class="mr-2">
+      <v-card-title>
+        <v-icon small :color="keyMeasure.mdiIconColor" class="mx-2">
           {{ keyMeasure.mdiIcon }}
         </v-icon>
         <h3 class="fr-text font-weight-bold">{{ keyMeasure.shortTitle }}</h3>
@@ -144,7 +146,7 @@ export default {
     },
     isCentralDiagnostic() {
       if (this.canteen.productionType !== "site_cooked_elsewhere") return false
-      return this.diagnostic && this.diagnostic.canteenId === this.canteen.centralKitchen.id
+      return this.diagnostic && this.diagnostic.canteenId === this.canteen.centralKitchen?.id
     },
     centralKitchenDisplayName() {
       if (this.canteen.centralKitchen?.name) {
@@ -172,15 +174,11 @@ export default {
 
 <style scoped>
 .overlay {
-  position: absolute;
-  top: 4%;
-  left: 3%;
-  z-index: 1;
-  background: #bbbbbb50;
-  width: 94%;
-  height: 92%;
+  background: #f5f5fe;
   backdrop-filter: blur(7px);
-  border: dashed #bbb;
+  border: 1.5px dashed #000091;
+  border-radius: 5px;
+  color: #3a3a3a;
 }
 .v-card.dsfr {
   border: solid 1.5px #dddddd;

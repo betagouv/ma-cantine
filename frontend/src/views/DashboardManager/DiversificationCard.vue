@@ -9,7 +9,7 @@
       </h3>
     </v-card-title>
     <v-card-text v-if="needsData">
-      <MissingDataChip class="py-0 ml-8" />
+      <DataInfoBadge class="py-0 ml-8" />
     </v-card-text>
     <v-card-text :class="`mt-n4 pl-12 ${level.colorClass}`" v-else-if="!delegatedToSatellite">
       <p class="mb-0 mt-2 fr-text-xs">
@@ -30,12 +30,12 @@
 
 <script>
 import Constants from "@/constants"
-import MissingDataChip from "./MissingDataChip"
+import DataInfoBadge from "./DataInfoBadge"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
   name: "DiversificationCard",
-  components: { MissingDataChip },
+  components: { DataInfoBadge },
   props: {
     diagnostic: {
       type: Object,
@@ -88,7 +88,7 @@ export default {
     },
     delegatedToCentralKitchen() {
       const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
-      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId === this.canteen.centralKitchen.id
+      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId === this.canteen.centralKitchen?.id
       return usesCentralDiag && this.diagnostic?.centralKitchenDiagnosticMode === "ALL"
     },
   },
