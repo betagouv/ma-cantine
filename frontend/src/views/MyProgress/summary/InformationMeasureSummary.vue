@@ -1,11 +1,11 @@
 <template>
   <div>
-    Plastic info
+    Info summary
   </div>
 </template>
 
 <script>
 export default {
-  name: "NoPlasticMeasureInfo",
+  name: "InformationMeasureSummary",
 }
 </script>

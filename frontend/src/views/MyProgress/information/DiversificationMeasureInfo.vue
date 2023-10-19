@@ -1,20 +1,11 @@
 <template>
   <div>
-    Diversification Progress
-    <div v-if="usesCentralDiagnostic">Vos données sont fournis par votre cuisine centrale</div>
-    <div v-else-if="diagnostic">plan de diversification en place : {{ diagnostic.hasDiversificationPlan }}</div>
-    <div v-else>Pas de diagnostic</div>
+    Diversification information
   </div>
 </template>
 
 <script>
 export default {
-  name: "DiversificationProgress",
-  props: ["diagnostic", "centralDiagnostic"],
-  computed: {
-    usesCentralDiagnostic() {
-      return this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL"
-    },
-  },
+  name: "DiversificationMeasureInfo",
 }
 </script>

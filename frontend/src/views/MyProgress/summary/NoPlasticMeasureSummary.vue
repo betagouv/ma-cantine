@@ -1,11 +1,11 @@
 <template>
   <div>
-    Canteen Progress
+    Plastic summary
   </div>
 </template>
 
 <script>
 export default {
-  name: "CanteenProgress",
+  name: "NoPlasticMeasureSummary",
 }
 </script>

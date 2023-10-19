@@ -1,87 +1,95 @@
 <template>
   <div class="pa-8 pb-4">
-    <v-row v-if="diagnostic || centralDiagnostic">
-      <v-col cols="12" md="8">
-        <h3 class="fr-h6 font-weight-bold mb-0">
-          {{ keyMeasure.title }}
-        </h3>
-        <v-btn text color="primary" class="px-0" @click="() => (showIntro = !showIntro)">
-          En savoir plus
-        </v-btn>
-      </v-col>
-      <v-col class="fr-text-xs text-right">
-        <p class="mb-0">Votre niveau : {{ level }}</p>
-        <p class="grey--text text--darken-2 mb-0">
-          {{ levelMessage }}
-        </p>
-      </v-col>
-    </v-row>
-    <h3 v-else class="fr-h6 font-weight-bold mb-4">
-      {{ keyMeasure.title }}
-    </h3>
-    <div v-if="(!diagnostic && !centralDiagnostic) || showIntro">
-      <component
-        :is="`${keyMeasure.baseComponent}Info`"
-        :diagnostic="diagnostic"
-        :centralDiagnostic="centralDiagnostic"
-      />
-      <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
-      <v-btn
-        v-if="measureId !== establishmentId && !diagnostic && !usesOtherDiagnosticForMeasure"
-        color="primary"
-        :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
-        class="mt-4"
-      >
-        Commencer
-      </v-btn>
-    </div>
-    <div v-if="diagnostic || centralDiagnostic">
-      <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
-      <div v-if="usesOtherDiagnosticForMeasure && isSatellite" class="fr-text pa-6 grey lighten-4 mb-6">
-        <p class="mb-1 grey--text text--darken-4">
-          Votre cantine sert des repas préparés par
-          <span class="font-weight-bold">{{ centralKitchenName }}</span>
-        </p>
-        <p class="mb-0 grey--text text--darken-2">
-          Votre cuisine centrale a déjà renseigné les données de cette mesure pour votre cantine. Retrouvez la synthèse
-          ci-dessous.
-          <span v-if="centralDiagnostic.centralKitchenDiagnosticMode !== 'ALL' && measureId === approId">
-            Les autres volets de la loi EGAlim vous restent accessibles.
-          </span>
-        </p>
-      </div>
-      <v-row class="mb-4">
-        <v-col class="d-flex align-end">
-          <h4 class="fr-text-sm font-weight-bold my-1">SYNTHÈSE</h4>
-        </v-col>
-        <v-col class="text-right">
-          <v-btn
-            v-if="!hasActiveTeledeclaration && !usesOtherDiagnosticForMeasure"
-            outlined
-            small
-            color="primary"
-            class="fr-btn--tertiary px-2"
-            :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: year } }"
-          >
-            <v-icon small class="mr-2">$pencil-line</v-icon>
-            Modifier mes données
+    <div v-if="measureId !== establishmentId">
+      <v-row v-if="diagnostic || centralDiagnostic">
+        <v-col cols="12" md="8">
+          <h3 class="fr-h6 font-weight-bold mb-0">
+            {{ keyMeasure.title }}
+          </h3>
+          <v-btn text color="primary" class="px-0" @click="() => (showIntro = !showIntro)">
+            En savoir plus
           </v-btn>
         </v-col>
+        <v-col class="fr-text-xs text-right">
+          <p class="mb-0">Votre niveau : {{ level }}</p>
+          <p class="grey--text text--darken-2 mb-0">
+            {{ levelMessage }}
+          </p>
+        </v-col>
       </v-row>
-      <component
-        :is="`${keyMeasure.baseComponent}Info`"
-        :diagnostic="diagnostic"
-        :centralDiagnostic="centralDiagnostic"
-      />
+      <h3 v-else class="fr-h6 font-weight-bold mb-4">
+        {{ keyMeasure.title }}
+      </h3>
+      <div v-if="(!diagnostic && !centralDiagnostic) || showIntro">
+        <component
+          :is="`${keyMeasure.baseComponent}Info`"
+          :diagnostic="diagnostic"
+          :centralDiagnostic="centralDiagnostic"
+        />
+        <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
+        <v-btn
+          v-if="measureId !== establishmentId && !diagnostic && !usesOtherDiagnosticForMeasure"
+          color="primary"
+          :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
+          class="mt-4"
+        >
+          Commencer
+        </v-btn>
+      </div>
+      <div v-if="diagnostic || centralDiagnostic">
+        <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
+        <div v-if="usesOtherDiagnosticForMeasure && isSatellite" class="fr-text pa-6 grey lighten-4 mb-6">
+          <p class="mb-1 grey--text text--darken-4">
+            Votre cantine sert des repas préparés par
+            <span class="font-weight-bold">{{ centralKitchenName }}</span>
+          </p>
+          <p class="mb-0 grey--text text--darken-2">
+            Votre cuisine centrale a déjà renseigné les données de cette mesure pour votre cantine. Retrouvez la
+            synthèse ci-dessous.
+            <span v-if="centralDiagnostic.centralKitchenDiagnosticMode !== 'ALL' && measureId === approId">
+              Les autres volets de la loi EGAlim vous restent accessibles.
+            </span>
+          </p>
+        </div>
+        <v-row class="mb-4">
+          <v-col class="d-flex align-end">
+            <h4 class="fr-text-sm font-weight-bold my-1">SYNTHÈSE</h4>
+          </v-col>
+          <v-col class="text-right">
+            <v-btn
+              v-if="!hasActiveTeledeclaration && !usesOtherDiagnosticForMeasure"
+              outlined
+              small
+              color="primary"
+              class="fr-btn--tertiary px-2"
+              :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: year } }"
+            >
+              <v-icon small class="mr-2">$pencil-line</v-icon>
+              Modifier mes données
+            </v-btn>
+          </v-col>
+        </v-row>
+        <component
+          :is="`${keyMeasure.baseComponent}Summary`"
+          :diagnostic="diagnostic"
+          :centralDiagnostic="centralDiagnostic"
+        />
+      </div>
+      <v-row class="mt-6">
+        <v-col cols="6">
+          <router-link :to="{}">Previous tab</router-link>
+        </v-col>
+        <v-col cols="6" class="text-right">
+          <router-link :to="{}">Next tab</router-link>
+        </v-col>
+      </v-row>
     </div>
-    <v-row class="mt-6">
-      <v-col cols="6">
-        <router-link :to="{}">Previous tab</router-link>
-      </v-col>
-      <v-col cols="6" class="text-right">
-        <router-link :to="{}">Next tab</router-link>
-      </v-col>
-    </v-row>
+    <div v-else>
+      <h3 class="fr-h6 font-weight-bold mb-4">
+        Établissement
+      </h3>
+      <CanteenSummary :canteen="canteen" />
+    </div>
   </div>
 </template>
 
@@ -91,7 +99,12 @@ import DiversificationMeasureInfo from "./information/DiversificationMeasureInfo
 import InformationMeasureInfo from "./information/InformationMeasureInfo"
 import NoPlasticMeasureInfo from "./information/NoPlasticMeasureInfo"
 import WasteMeasureInfo from "./information/WasteMeasureInfo"
-import CanteenInfo from "./information/CanteenInfo"
+import QualityMeasureSummary from "./summary/QualityMeasureSummary"
+import DiversificationMeasureSummary from "./summary/DiversificationMeasureSummary"
+import InformationMeasureSummary from "./summary/InformationMeasureSummary"
+import NoPlasticMeasureSummary from "./summary/NoPlasticMeasureSummary"
+import WasteMeasureSummary from "./summary/WasteMeasureSummary"
+import CanteenSummary from "./summary/CanteenSummary"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
@@ -118,7 +131,12 @@ export default {
     InformationMeasureInfo,
     NoPlasticMeasureInfo,
     WasteMeasureInfo,
-    CanteenInfo,
+    QualityMeasureSummary,
+    DiversificationMeasureSummary,
+    InformationMeasureSummary,
+    NoPlasticMeasureSummary,
+    WasteMeasureSummary,
+    CanteenSummary,
   },
   data() {
     return {
@@ -130,7 +148,7 @@ export default {
   computed: {
     keyMeasure() {
       if (this.measureId === this.establishmentId) {
-        return { title: "Établissement", baseComponent: "Canteen" }
+        return { title: "Établissement" }
       }
       return keyMeasures.find((x) => x.id === this.measureId)
     },
