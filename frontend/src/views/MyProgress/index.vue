@@ -242,6 +242,16 @@ export default {
     tabTextClasses(tabItem) {
       return this.usesSatelliteDiagnosticForMeasure(tabItem) ? "grey--text" : "black--text"
     },
+    redirectTabFromMode() {
+      const approId = "qualite-des-produits"
+      if (
+        this.centralKitchenDiagnosticMode === "APPRO" &&
+        this.measure !== approId &&
+        this.measure !== "etablissement"
+      ) {
+        this.$router.replace({ name: "MyProgress", params: { measure: approId } })
+      }
+    },
   },
   watch: {
     canteenUrlComponent() {
@@ -265,11 +275,13 @@ export default {
       if (!this.isCentralKitchen || !this.canteen) return
       if (!this.diagnostic || !this.diagnostic.id) return
       if (!newMode || this.diagnostic.centralKitchenDiagnosticMode === newMode) return
+      this.diagnostic.centralKitchenDiagnosticMode = newMode
       this.$store.dispatch("updateDiagnostic", {
         canteenId: this.canteen.id,
         id: this.diagnostic.id,
         payload: { centralKitchenDiagnosticMode: newMode },
       })
+      this.redirectTabFromMode()
     },
   },
   beforeMount() {
