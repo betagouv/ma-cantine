@@ -88,7 +88,7 @@ export default {
     },
     delegatedToCentralKitchen() {
       const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
-      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId === this.canteen.centralKitchen.id
+      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId === this.canteen.centralKitchen?.id
       return usesCentralDiag && this.diagnostic?.centralKitchenDiagnosticMode === "ALL"
     },
   },
