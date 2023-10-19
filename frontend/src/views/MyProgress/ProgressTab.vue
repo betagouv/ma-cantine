@@ -10,9 +10,9 @@
         </v-btn>
       </v-col>
       <v-col class="fr-text-xs text-right">
-        <p class="mb-0">Votre niveau : EXPERT</p>
+        <p class="mb-0">Votre niveau : {{ level }}</p>
         <p class="grey--text text--darken-2 mb-0">
-          Vous êtes au point, bravo ! Partagez vos meilleures idées pour inspirer d'autres cantines !
+          {{ levelMessage }}
         </p>
       </v-col>
     </v-row>
@@ -126,6 +126,12 @@ export default {
     },
     hasActiveTeledeclaration() {
       return false
+    },
+    level() {
+      return "EXPERT"
+    },
+    levelMessage() {
+      return "Vous êtes au point, bravo ! Partagez vos meilleures idées pour inspirer d'autres cantines !"
     },
   },
   methods: {
