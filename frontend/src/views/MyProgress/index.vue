@@ -43,7 +43,7 @@
           <template v-slot:items>
             <v-tab-item class="my-4" v-for="(item, index) in tabHeaders" :key="`${index}-content`">
               <ProgressTab
-                :measureIndex="index"
+                :measureId="item.urlSlug"
                 :year="year"
                 :canteen="canteen"
                 :diagnostic="diagnostic"

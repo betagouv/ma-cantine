@@ -3,11 +3,11 @@
     <h3 class="fr-text font-weight-bold mb-4">
       {{ keyMeasure.title }}
     </h3>
-    <component :is="progressComponents[measureIndex]" :diagnostic="diagnostic" :centralDiagnostic="centralDiagnostic" />
+    <component :is="progressComponents[measureId]" :diagnostic="diagnostic" :centralDiagnostic="centralDiagnostic" />
     <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
-    <div v-if="measureIndex < 5" class="pt-4">
+    <div v-if="measureId !== establishmentId" class="pt-4">
       <v-btn
-        v-if="diagnostic && !usesOtherDiagnosticForMeasure(measureIndex)"
+        v-if="diagnostic && !usesOtherDiagnosticForMeasure(measureId)"
         outlined
         color="primary"
         :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: diagnostic.year } }"
@@ -15,7 +15,7 @@
         Modifier
       </v-btn>
       <v-btn
-        v-else-if="!diagnostic && !usesOtherDiagnosticForMeasure(measureIndex)"
+        v-else-if="!diagnostic && !usesOtherDiagnosticForMeasure(measureId)"
         color="primary"
         :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
       >
@@ -37,7 +37,7 @@ import keyMeasures from "@/data/key-measures.json"
 export default {
   name: "ProgressTab",
   props: {
-    measureIndex: {
+    measureId: {
       type: Number,
       required: true,
     },
@@ -62,27 +62,32 @@ export default {
   },
   data() {
     return {
-      progressComponents: [
-        ApproProgress,
-        WasteProgress,
-        DiversificationProgress,
-        PlasticProgress,
-        InfoProgress,
-        CanteenProgress,
-      ],
+      approId: "produits-de-qualite",
+      establishmentId: "etablissement",
+      progressComponents: {
+        "produits-de-qualite": ApproProgress,
+        "gaspillage-alimentaire": WasteProgress,
+        "diversification-des-menus": DiversificationProgress,
+        "interdiction-du-plastique": PlasticProgress,
+        "information-convives": InfoProgress,
+        etablissement: CanteenProgress,
+      },
     }
   },
   computed: {
     keyMeasure() {
-      return keyMeasures.find((x) => x.id === "gaspillage-alimentaire")
+      if (this.measureId === this.establishmentId) {
+        return { title: "Établissement" }
+      }
+      return keyMeasures.find((x) => x.id === this.measureId)
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
   },
   methods: {
-    usesOtherDiagnosticForMeasure(index) {
-      const isApproTab = index === 0
+    usesOtherDiagnosticForMeasure(id) {
+      const isApproTab = id === this.approId
       if (this.canteen?.productionType === "site") {
         return false
       } else if (this.canteen?.productionType === "site_cooked_elsewhere") {
@@ -102,5 +107,3 @@ export default {
   },
 }
 </script>
-
-<style></style>
