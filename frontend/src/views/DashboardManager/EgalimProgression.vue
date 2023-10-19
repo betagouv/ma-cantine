@@ -27,9 +27,8 @@
             large
             color="primary"
             :to="{
-              name: !otherMeasuresDiagnostic ? 'NewDiagnosticForCanteen' : 'DiagnosticModification',
-              params: { canteenUrlComponent, year: otherMeasuresDiagnostic && year },
-              query: { année: year },
+              name: 'MyProgress',
+              params: { canteenUrlComponent, year: year, measure: 'qualite-des-produits' },
             }"
           >
             <span class="fr-text-lg">Commencer</span>
