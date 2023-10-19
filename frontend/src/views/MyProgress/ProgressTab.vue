@@ -3,7 +3,11 @@
     <h3 class="fr-text font-weight-bold mb-4">
       {{ keyMeasure.title }}
     </h3>
-    <component :is="progressComponents[measureId]" :diagnostic="diagnostic" :centralDiagnostic="centralDiagnostic" />
+    <component
+      :is="`${keyMeasure.baseComponent}Info`"
+      :diagnostic="diagnostic"
+      :centralDiagnostic="centralDiagnostic"
+    />
     <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
     <div v-if="measureId !== establishmentId" class="pt-4">
       <v-btn
@@ -26,12 +30,12 @@
 </template>
 
 <script>
-import ApproProgress from "./ApproProgress"
-import DiversificationProgress from "./DiversificationProgress"
-import InfoProgress from "./InfoProgress"
-import PlasticProgress from "./PlasticProgress"
-import WasteProgress from "./WasteProgress"
-import CanteenProgress from "./CanteenProgress"
+import QualityMeasureInfo from "./introduction/ApproProgress"
+import DiversificationMeasureInfo from "./introduction/DiversificationProgress"
+import InformationMeasureInfo from "./introduction/InfoProgress"
+import NoPlasticMeasureInfo from "./introduction/PlasticProgress"
+import WasteMeasureInfo from "./introduction/WasteProgress"
+import CanteenProgressInfo from "./introduction/CanteenProgress"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
@@ -53,31 +57,23 @@ export default {
     centralDiagnostic: Object,
   },
   components: {
-    ApproProgress,
-    DiversificationProgress,
-    InfoProgress,
-    PlasticProgress,
-    WasteProgress,
-    CanteenProgress,
+    QualityMeasureInfo,
+    DiversificationMeasureInfo,
+    InformationMeasureInfo,
+    NoPlasticMeasureInfo,
+    WasteMeasureInfo,
+    CanteenProgressInfo,
   },
   data() {
     return {
       approId: "produits-de-qualite",
       establishmentId: "etablissement",
-      progressComponents: {
-        "produits-de-qualite": ApproProgress,
-        "gaspillage-alimentaire": WasteProgress,
-        "diversification-des-menus": DiversificationProgress,
-        "interdiction-du-plastique": PlasticProgress,
-        "information-convives": InfoProgress,
-        etablissement: CanteenProgress,
-      },
     }
   },
   computed: {
     keyMeasure() {
       if (this.measureId === this.establishmentId) {
-        return { title: "Établissement" }
+        return { title: "Établissement", baseComponent: "CanteenProgress" }
       }
       return keyMeasures.find((x) => x.id === this.measureId)
     },
