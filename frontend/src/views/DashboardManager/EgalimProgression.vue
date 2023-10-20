@@ -12,7 +12,12 @@
         </v-col>
       </v-row>
       <div>
-        <DataInfoBadge :currentYear="isCurrentYear" :missingData="needsData" class="mt-4" />
+        <DataInfoBadge
+          :currentYear="isCurrentYear"
+          :missingData="needsData"
+          :readyToTeledeclare="readyToTeledeclare"
+          class="mt-4"
+        />
         <hr aria-hidden="true" role="presentation" class="my-6" />
       </div>
       <ApproSegment :purchases="null" :diagnostic="approDiagnostic" :lastYearDiagnostic="null" :canteen="canteen" />
@@ -23,6 +28,7 @@
           class="overlay d-flex align-center justify-center"
           v-if="!hasPurchases && !otherMeasuresDiagnostic && !hasLastYearDiagnostic"
         >
+          <!-- TODO: for satellites who have APPRO declared for them, skip to gaspi tab -->
           <v-btn
             large
             color="primary"
@@ -53,7 +59,7 @@
 
 <script>
 import DsfrSelect from "@/components/DsfrSelect"
-import { lastYear, diagnosticYears } from "@/utils"
+import { lastYear, diagnosticYears, hasDiagnosticApproData } from "@/utils"
 import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
 import NoPlasticCard from "./NoPlasticCard"
@@ -120,6 +126,17 @@ export default {
       return (
         !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic) && !this.hasLastYearDiagnostic
       )
+    },
+    readyToTeledeclare() {
+      const inTdCampaign = window.ENABLE_TELEDECLARATION && this.year === lastYear()
+      if (!inTdCampaign) return false
+      if (this.centralDiagnostic) {
+        const noNeedToTd = this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
+        const requiresOtherData = !noNeedToTd
+        const hasOtherData = !!this.canteenDiagnostic
+        return requiresOtherData && hasOtherData
+      }
+      return this.canteenDiagnostic && hasDiagnosticApproData(this.canteenDiagnostic)
     },
   },
 }
