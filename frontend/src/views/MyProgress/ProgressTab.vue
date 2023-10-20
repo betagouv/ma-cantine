@@ -23,6 +23,7 @@
       <div v-if="(!diagnostic && !centralDiagnostic) || showIntro">
         <component
           :is="`${keyMeasure.baseComponent}Info`"
+          :canteen="canteen"
           :diagnostic="diagnostic"
           :centralDiagnostic="centralDiagnostic"
         />
