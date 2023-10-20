@@ -28,7 +28,6 @@
           class="overlay d-flex align-center justify-center"
           v-if="!hasPurchases && !otherMeasuresDiagnostic && !hasLastYearDiagnostic"
         >
-          <!-- TODO: for satellites who have APPRO declared for them, skip to gaspi tab -->
           <v-btn
             large
             color="primary"
