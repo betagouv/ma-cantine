@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "DiversificationProgress",
+  name: "DiversificationMeasureSummary",
   props: ["diagnostic", "centralDiagnostic"],
   computed: {
     usesCentralDiagnostic() {

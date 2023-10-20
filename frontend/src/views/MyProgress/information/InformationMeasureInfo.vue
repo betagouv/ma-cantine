@@ -1,11 +1,11 @@
 <template>
   <div>
-    Info Progress
+    Info info
   </div>
 </template>
 
 <script>
 export default {
-  name: "InfoProgress",
+  name: "InformationMeasureInfo",
 }
 </script>

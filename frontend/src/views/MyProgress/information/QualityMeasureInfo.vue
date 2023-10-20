@@ -1,11 +1,11 @@
 <template>
   <div>
-    Waste Progress
+    Appro information
   </div>
 </template>
 
 <script>
 export default {
-  name: "WasteProgress",
+  name: "QualityMeasureInfo",
 }
 </script>
