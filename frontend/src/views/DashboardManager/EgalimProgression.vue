@@ -31,7 +31,7 @@
             color="primary"
             :to="{
               name: 'MyProgress',
-              params: { canteenUrlComponent, year: year, measure: 'qualite-des-produits' },
+              params: { canteenUrlComponent, year: year, measure: firstActionableMeasure },
             }"
           >
             <span class="fr-text-lg">Faire le bilan {{ year }}</span>
@@ -110,6 +110,15 @@ export default {
         return this.centralDiagnostic
       }
       return this.canteenDiagnostic
+    },
+    firstActionableMeasure() {
+      if (
+        this.canteen.productionType === "site_cooked_elsewhere" &&
+        this.centralDiagnostic?.centralKitchenDiagnosticMode === "APPRO"
+      ) {
+        return "gaspillage-alimentaire"
+      }
+      return "qualite-des-produits"
     },
     hasPurchases() {
       return false
