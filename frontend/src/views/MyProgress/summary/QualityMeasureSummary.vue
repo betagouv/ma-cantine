@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "ApproProgress",
+  name: "QualityMeasureSummary",
   props: ["diagnostic", "centralDiagnostic"],
 }
 </script>

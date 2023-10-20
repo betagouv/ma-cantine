@@ -12,7 +12,12 @@
         </v-col>
       </v-row>
       <div>
-        <DataInfoBadge :currentYear="isCurrentYear" :missingData="needsData" class="mt-4" />
+        <DataInfoBadge
+          :currentYear="isCurrentYear"
+          :missingData="needsData"
+          :readyToTeledeclare="readyToTeledeclare"
+          class="mt-4"
+        />
         <hr aria-hidden="true" role="presentation" class="my-6" />
       </div>
       <ApproSegment :purchases="null" :diagnostic="approDiagnostic" :lastYearDiagnostic="null" :canteen="canteen" />
@@ -27,9 +32,8 @@
             large
             color="primary"
             :to="{
-              name: !otherMeasuresDiagnostic ? 'NewDiagnosticForCanteen' : 'DiagnosticModification',
-              params: { canteenUrlComponent, year: otherMeasuresDiagnostic && year },
-              query: { année: year },
+              name: 'MyProgress',
+              params: { canteenUrlComponent, year: year, measure: 'qualite-des-produits' },
             }"
           >
             <span class="fr-text-lg">Commencer</span>
@@ -54,7 +58,7 @@
 
 <script>
 import DsfrSelect from "@/components/DsfrSelect"
-import { lastYear, diagnosticYears } from "@/utils"
+import { lastYear, diagnosticYears, hasDiagnosticApproData } from "@/utils"
 import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
 import NoPlasticCard from "./NoPlasticCard"
@@ -121,6 +125,17 @@ export default {
       return (
         !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic) && !this.hasLastYearDiagnostic
       )
+    },
+    readyToTeledeclare() {
+      const inTdCampaign = window.ENABLE_TELEDECLARATION && this.year === lastYear()
+      if (!inTdCampaign) return false
+      if (this.centralDiagnostic) {
+        const noNeedToTd = this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
+        const requiresOtherData = !noNeedToTd
+        const hasOtherData = !!this.canteenDiagnostic
+        return requiresOtherData && hasOtherData
+      }
+      return this.canteenDiagnostic && hasDiagnosticApproData(this.canteenDiagnostic)
     },
   },
 }
