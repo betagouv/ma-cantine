@@ -13,6 +13,6 @@
 
 <script>
 export default {
-  name: "WasteProgress",
+  name: "WasteMeasureInfo",
 }
 </script>
