@@ -12,10 +12,7 @@
         </v-col>
       </v-row>
       <div>
-        <MissingDataChip
-          v-if="!hasPurchases && (!approDiagnostic || !otherMeasuresDiagnostic) && !hasLastYearDiagnostic"
-          class="mt-4"
-        />
+        <DataInfoBadge :currentYear="isCurrentYear" :missingData="needsData" class="mt-4" />
         <hr aria-hidden="true" role="presentation" class="my-6" />
       </div>
       <ApproSegment
@@ -67,7 +64,7 @@ import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
 import NoPlasticCard from "./NoPlasticCard"
 import InformationCard from "./InformationCard"
-import MissingDataChip from "./MissingDataChip"
+import DataInfoBadge from "./DataInfoBadge"
 import ApproSegment from "./ApproSegment"
 
 export default {
@@ -78,7 +75,7 @@ export default {
     DiversificationCard,
     NoPlasticCard,
     InformationCard,
-    MissingDataChip,
+    DataInfoBadge,
     ApproSegment,
   },
   props: {
@@ -125,6 +122,14 @@ export default {
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
+    },
+    isCurrentYear() {
+      return this.year === lastYear() + 1
+    },
+    needsData() {
+      return (
+        !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic) && !this.hasLastYearDiagnostic
+      )
     },
   },
 }
