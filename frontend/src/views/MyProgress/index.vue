@@ -72,7 +72,7 @@
             <v-tab-item class="my-4" v-for="(item, index) in tabHeaders" :key="`${index}-content`">
               <ProgressTab
                 :measureId="item.urlSlug"
-                :year="year"
+                :year="+year"
                 :canteen="canteen"
                 :diagnostic="diagnostic"
                 :centralDiagnostic="centralDiagnostic"
@@ -156,7 +156,6 @@ export default {
       return this.$store
         .dispatch("fetchCanteen", { id })
         .then((canteen) => this.updateCanteen(canteen))
-        .then(this.assignDiagnostic)
         .catch(() => {
           this.$store.dispatch("notify", {
             message: "Nous n'avons pas trouvé cette cantine",
@@ -179,6 +178,7 @@ export default {
         )
       }
       this.centralKitchenDiagnosticMode = this.diagnostic?.centralKitchenDiagnosticMode
+      this.redirectTabFromMode()
     },
     assignTab() {
       const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
@@ -193,6 +193,7 @@ export default {
         })
         this.tab = 0
       } else this.tab = this.tabHeaders.indexOf(initialTab)
+      this.redirectTabFromMode()
     },
     usesSatelliteDiagnosticForMeasure(tabItem) {
       const tabAlwaysShown = tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement"
