@@ -31,38 +31,19 @@
         <v-spacer />
       </v-card-text>
     </v-card>
-    <div v-else-if="showFirstTimeView" class="body-1">
-      <p class="font-weight-bold">Pilotez votre progression tout au long de l’année en cours</p>
-      <p class="body-2">
-        Avec l’outil de suivi d’achats de « ma cantine », calculez automatiquement et en temps réel la part de vos
-        approvisionnements qui correspondent aux critères de la loi EGAlim, et facilitez ainsi votre prochaine
-        télédéclaration.
-      </p>
-      <p class="body-2">
-        Pour cela, vous pouvez renseigner tous vos achats au fil de l’eau ou par import en masse, ou bien connecter
-        votre outil de gestion habituel si cela est possible pour transférer les données.
-      </p>
-    </div>
-    <v-card outlined class="fill-height d-flex flex-column dsfr pa-6" v-else-if="!hasApproData && isCurrentYear">
-      <v-card-title>
-        <v-icon small :color="keyMeasure.mdiIconColor" class="mx-2">
-          {{ keyMeasure.mdiIcon }}
-        </v-icon>
-        <h3 class="font-weight-bold fr-text">{{ keyMeasure.shortTitle }}</h3>
-      </v-card-title>
-      <v-card-text class="fill-height mt-2">
-        <div class="overlay d-flex flex-column align-center justify-center fill-height pa-6">
-          <p class="fr-text text-center my-10">
-            Avec l’outil de suivi d’achats, pilotez en temps réel votre progression EGAlim sur l’année en cours, et
-            simplifiez votre prochaine télédéclaration.
-          </p>
-          <v-btn large class="mb-10" color="primary" :to="{ name: 'PurchasesHome' }">
-            <span class="fr-text-lg">Commencer</span>
-          </v-btn>
-        </div>
-      </v-card-text>
-    </v-card>
-    <v-card :to="link" outlined class="fill-height d-flex flex-column dsfr pa-6" v-else-if="diagnostic">
+    <v-card
+      :to="{
+        name: 'MyProgress',
+        params: {
+          canteenUrlComponent: this.canteenUrlComponent,
+          year: this.diagnostic.year,
+          measure: 'qualite-des-produits',
+        },
+      }"
+      outlined
+      class="fill-height d-flex flex-column dsfr pa-6"
+      v-else-if="diagnostic"
+    >
       <v-card-title>
         <v-icon small :color="keyMeasure.mdiIconColor" class="mx-2">
           {{ keyMeasure.mdiIcon }}
@@ -88,6 +69,42 @@
         <v-icon color="primary" class="mr-n1">$arrow-right-line</v-icon>
       </v-card-actions>
     </v-card>
+    <div v-else-if="isTdYear" class="fr-text fill-height d-flex flex-column justify-center">
+      <p><b>C’est le moment de se lancer !</b></p>
+      <p>
+        Réalisez un bilan complet pour mesurer votre avancée par rapport aux objectifs de la loi EGAlim, et parcourez
+        des ressources personnalisées selon votre situation et vos résultats pour vous aider dans votre transition vers
+        une alimentation plus durable.
+      </p>
+    </div>
+    <v-card outlined class="fill-height d-flex flex-column dsfr pa-6" v-else-if="isCurrentYear">
+      <v-card-title>
+        <v-icon small :color="keyMeasure.mdiIconColor" class="mx-2">
+          {{ keyMeasure.mdiIcon }}
+        </v-icon>
+        <h3 class="font-weight-bold fr-text">{{ keyMeasure.shortTitle }}</h3>
+      </v-card-title>
+      <v-card-text class="fill-height mt-2">
+        <div class="overlay d-flex flex-column align-center justify-center fill-height pa-6">
+          <p class="fr-text text-center my-10">
+            Avec l’outil de suivi d’achats, pilotez en temps réel votre progression EGAlim sur l’année en cours, et
+            simplifiez votre prochaine télédéclaration.
+          </p>
+          <v-btn v-if="!hasPurchases" large class="mb-10" color="primary" :to="{ name: 'PurchasesHome' }">
+            <span class="fr-text-lg">Commencer</span>
+          </v-btn>
+          <v-btn v-else outlined large class="mb-10" color="primary" :to="{ name: 'PurchasesHome' }">
+            <span class="fr-text-lg">Gérer mes achats</span>
+          </v-btn>
+        </div>
+      </v-card-text>
+    </v-card>
+    <div v-else class="fr-text fill-height d-flex flex-column justify-center">
+      <p><b>Allez plus loin</b></p>
+      <p>
+        Réalisez un bilan pour communiquer votre progrès auprès vos convives avec votre vitrine en ligne.
+      </p>
+    </div>
   </div>
 </template>
 <script>
@@ -132,17 +149,14 @@ export default {
     isCurrentYear() {
       return this.year === this.lastYear + 1
     },
+    isTdYear() {
+      return this.year === this.lastYear
+    },
     level() {
       return Constants.Levels.BEGINNER
     },
-    showFirstTimeView() {
-      return !this.hasPurchases && !this.diagnostic && !this.hasLastYearDiagnostic
-    },
     hasPurchases() {
       return false
-    },
-    hasLastYearDiagnostic() {
-      return !!this.lastYearDiagnostic
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
@@ -158,18 +172,6 @@ export default {
       return this.canteen.centralProducerSiret
         ? `l'établissement avec le SIRET ${this.canteen.centralProducerSiret}`
         : "un établissement inconnu"
-    },
-    link() {
-      return this.diagnostic
-        ? {
-            name: "MyProgress",
-            params: {
-              canteenUrlComponent: this.canteenUrlComponent,
-              year: this.diagnostic.year,
-              measure: "qualite-des-produits",
-            },
-          }
-        : null
     },
   },
 }

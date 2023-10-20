@@ -37,7 +37,7 @@
               params: { canteenUrlComponent, year: year, measure: 'qualite-des-produits' },
             }"
           >
-            <span class="fr-text-lg">Commencer</span>
+            <span class="fr-text-lg">Faire le bilan {{ year }}</span>
           </v-btn>
         </div>
         <v-col cols="12" md="6" class="pt-md-0">
