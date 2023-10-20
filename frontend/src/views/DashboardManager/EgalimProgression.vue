@@ -25,10 +25,7 @@
     </v-col>
     <v-col cols="12" md="8">
       <v-row style="position: relative; height: 100%" class="ma-0">
-        <div
-          class="overlay d-flex align-center justify-center"
-          v-if="!hasPurchases && !otherMeasuresDiagnostic && !hasLastYearDiagnostic"
-        >
+        <div class="overlay d-flex align-center justify-center" v-if="!otherMeasuresDiagnostic">
           <v-btn
             large
             color="primary"
@@ -117,9 +114,6 @@ export default {
     hasPurchases() {
       return false
     },
-    hasLastYearDiagnostic() {
-      return !!this.lastYearDiagnostic
-    },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
@@ -127,9 +121,7 @@ export default {
       return this.year === lastYear() + 1
     },
     needsData() {
-      return (
-        !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic) && !this.hasLastYearDiagnostic
-      )
+      return !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)
     },
   },
 }
