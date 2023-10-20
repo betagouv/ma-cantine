@@ -178,10 +178,11 @@ export default {
         )
       }
       this.centralKitchenDiagnosticMode = this.diagnostic?.centralKitchenDiagnosticMode
-      this.redirectTabFromMode()
+      this.initialiseTab()
     },
-    assignTab() {
+    initialiseTab() {
       const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
+      const approId = "qualite-des-produits"
       if (!initialTab) {
         this.$router.replace({
           name: this.$route.name,
@@ -191,9 +192,15 @@ export default {
             measure: this.tabHeaders[0].urlSlug,
           },
         })
-        this.tab = 0
-      } else this.tab = this.tabHeaders.indexOf(initialTab)
-      this.redirectTabFromMode()
+      } else if (
+        this.centralKitchenDiagnosticMode === "APPRO" &&
+        this.measure !== approId &&
+        this.measure !== "etablissement"
+      ) {
+        this.$router.replace({ name: "MyProgress", params: { measure: approId } })
+      } else {
+        this.tab = this.tabHeaders.indexOf(initialTab)
+      }
     },
     usesSatelliteDiagnosticForMeasure(tabItem) {
       const tabAlwaysShown = tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement"
@@ -202,16 +209,6 @@ export default {
     },
     tabTextClasses(tabItem) {
       return this.usesSatelliteDiagnosticForMeasure(tabItem) ? "grey--text" : "black--text"
-    },
-    redirectTabFromMode() {
-      const approId = "qualite-des-produits"
-      if (
-        this.centralKitchenDiagnosticMode === "APPRO" &&
-        this.measure !== approId &&
-        this.measure !== "etablissement"
-      ) {
-        this.$router.replace({ name: "MyProgress", params: { measure: approId } })
-      }
     },
   },
   watch: {
@@ -230,7 +227,7 @@ export default {
       this.assignDiagnostic()
     },
     $route() {
-      this.assignTab()
+      this.initialiseTab()
     },
     centralKitchenDiagnosticMode(newMode) {
       if (!this.isCentralKitchen || !this.canteen) return
@@ -242,12 +239,11 @@ export default {
         id: this.diagnostic.id,
         payload: { centralKitchenDiagnosticMode: newMode },
       })
-      this.redirectTabFromMode()
+      this.initialiseTab()
     },
   },
   beforeMount() {
     this.fetchCanteen()
-    this.assignTab()
   },
 }
 </script>
