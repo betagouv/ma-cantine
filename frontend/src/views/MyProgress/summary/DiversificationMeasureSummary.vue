@@ -3,45 +3,61 @@
     <ul>
       <li v-if="displayDiagnostic.vegetarianWeeklyRecurrence">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        J’ai mis en place un menu végétarien dans ma cantine :
-        <span class="font-weight-bold">{{ weeklyRecurrence }}</span>
+        <div>
+          J’ai mis en place un menu végétarien dans ma cantine :
+          <span class="font-weight-bold">{{ weeklyRecurrence }}</span>
+        </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        Je n'ai pas renseigné la périodicité du menu végétarien dans ma cantine
+        <div>
+          Je n'ai pas renseigné la périodicité du menu végétarien dans ma cantine
+        </div>
       </li>
 
       <li v-if="displayDiagnostic.vegetarianMenuType">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        Le menu végétarien proposé est :
-        <span class="font-weight-bold">{{ menuType }}</span>
+        <div>
+          Le menu végétarien proposé est :
+          <span class="font-weight-bold">{{ menuType }}</span>
+        </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        Je n'ai pas renseigné le type de menu végétarien servi dans ma cantine
+        <div>
+          Je n'ai pas renseigné le type de menu végétarien servi dans ma cantine
+        </div>
       </li>
 
       <li v-if="displayDiagnostic.vegetarianMenuBases && displayDiagnostic.vegetarianMenuBases.length">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        Le plat principal de mon menu végétarien est majoritairement à base de :
-        <ul class="mt-2">
-          <li class="fr-text-xs ml-9 mb-1" v-for="base in menuBases" :key="base">
-            {{ base }}
-          </li>
-        </ul>
+        <div>
+          Le plat principal de mon menu végétarien est majoritairement à base de :
+          <ul class="mt-2">
+            <li class="fr-text-xs mb-1" v-for="base in menuBases" :key="base">
+              {{ base }}
+            </li>
+          </ul>
+        </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        Je n'ai pas renseigné les bases utilisées pour mon menu végétarien
+        <div>
+          Je n'ai pas renseigné les bases utilisées pour mon menu végétarien
+        </div>
       </li>
 
       <li v-if="canteen.vegetarianExpeParticipant">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        Je suis volontaire pour l’expérimentation de l’option végétarienne quotidienne
+        <div>
+          Je suis volontaire pour l’expérimentation de l’option végétarienne quotidienne
+        </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        Je ne suis pas volontaire pour l’expérimentation de l’option végétarienne quotidienne
+        <div>
+          Je ne suis pas volontaire pour l’expérimentation de l’option végétarienne quotidienne
+        </div>
       </li>
     </ul>
   </div>
@@ -101,5 +117,9 @@ ul {
 }
 li {
   margin-bottom: 14px;
+  display: flex;
+}
+li .v-icon {
+  align-items: baseline;
 }
 </style>
