@@ -7,7 +7,7 @@
         <span class="font-weight-bold">{{ weeklyRecurrence }}</span>
       </li>
       <li v-else>
-        <v-icon color="grey darken-1" class="mr-2">$information-line</v-icon>
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
         Je n'ai pas renseigné la périodicité du menu végétarien dans ma cantine
       </li>
 
@@ -17,7 +17,7 @@
         <span class="font-weight-bold">{{ menuType }}</span>
       </li>
       <li v-else>
-        <v-icon color="grey darken-1" class="mr-2">$information-line</v-icon>
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
         Je n'ai pas renseigné le type de menu végétarien servi dans ma cantine
       </li>
 
@@ -36,7 +36,7 @@
         Je suis volontaire pour l’expérimentation de l’option végétarienne quotidienne
       </li>
       <li v-else>
-        <v-icon color="grey darken-1" class="mr-2">$information-line</v-icon>
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
         Je ne suis pas volontaire pour l’expérimentation de l’option végétarienne quotidienne
       </li>
     </ul>
