@@ -28,6 +28,10 @@
           </li>
         </ul>
       </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
+        Je n’ai pas encore mis en place des actions concrètes contre le gaspillage
+      </li>
 
       <li v-if="displayDiagnostic.hasWasteMeasures">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
