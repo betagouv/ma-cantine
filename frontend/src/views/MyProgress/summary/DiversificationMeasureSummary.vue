@@ -30,6 +30,10 @@
           </li>
         </ul>
       </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
+        Je n'ai pas renseigné les bases utilisées pour mon menu végétarien
+      </li>
 
       <li v-if="canteen.vegetarianExpeParticipant">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
