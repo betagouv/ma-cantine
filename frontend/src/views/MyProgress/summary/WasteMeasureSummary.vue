@@ -6,7 +6,7 @@
         J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
       </li>
       <li v-else>
-        <v-icon color="grey darken-1" class="mr-2">$information-line</v-icon>
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
         Je n’ai pas encore réalisé un diagnostic sur les causes probables de gaspillage alimentaire
       </li>
 
@@ -15,7 +15,7 @@
         J’ai mis en place un plan d’action adapté au diagnostic réalisé
       </li>
       <li v-else>
-        <v-icon color="grey darken-1" class="mr-2">$information-line</v-icon>
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
         Je n’ai pas encore mis en place un plan d’action adapté au diagnostic réalisé
       </li>
 
@@ -41,7 +41,7 @@
       </li>
 
       <li v-else>
-        <v-icon color="grey darken-1" class="mr-2">$information-line</v-icon>
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
         Je n’ai pas encore réalisé des mesures de mon gaspillage alimentaire
       </li>
 
@@ -50,7 +50,7 @@
         Je suis volontaire pour l’expérimentation autour de la réservation de repas
       </li>
       <li v-else>
-        <v-icon color="grey darken-1" class="mr-2">$information-line</v-icon>
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
         Je ne suis pas volontaire pour l’expérimentation autour de la réservation de repas
       </li>
     </ul>
