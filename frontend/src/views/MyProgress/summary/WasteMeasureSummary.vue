@@ -63,10 +63,7 @@ import wasteActions from "@/data/waste-actions.json"
 export default {
   name: "WasteMeasureSummary",
   props: {
-    diagnostic: {
-      type: Object,
-      required: true,
-    },
+    diagnostic: {},
     centralDiagnostic: {},
     canteen: {
       type: Object,
