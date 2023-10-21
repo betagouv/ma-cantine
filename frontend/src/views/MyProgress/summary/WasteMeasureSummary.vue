@@ -1,7 +1,7 @@
 <template>
   <div class="fr-text">
     <ul>
-      <li v-if="diagnostic.hasWasteDiagnostic">
+      <li v-if="displayDiagnostic.hasWasteDiagnostic">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
       </li>
@@ -10,7 +10,7 @@
         Je n’ai pas encore réalisé un diagnostic sur les causes probables de gaspillage alimentaire
       </li>
 
-      <li v-if="diagnostic.hasWastePlan">
+      <li v-if="displayDiagnostic.hasWastePlan">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         J’ai mis en place un plan d’action adapté au diagnostic réalisé
       </li>
@@ -29,7 +29,7 @@
         </ul>
       </li>
 
-      <li v-if="diagnostic.hasWasteMeasures">
+      <li v-if="displayDiagnostic.hasWasteMeasures">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         J’ai réalisé des mesures de mon gaspillage alimentaire :
         <ul class="mt-2">
@@ -67,6 +67,7 @@ export default {
       type: Object,
       required: true,
     },
+    centralDiagnostic: {},
     canteen: {
       type: Object,
       required: true,
@@ -74,20 +75,26 @@ export default {
   },
   computed: {
     appliedWasteActions() {
-      if (!this.diagnostic.wasteActions?.length) return null
+      if (!this.displayDiagnostic.wasteActions?.length) return null
       return [
-        ...this.diagnostic.wasteActions.map((x) => wasteActions[x]),
-        ...[this.diagnostic.otherWasteAction],
+        ...this.displayDiagnostic.wasteActions.map((x) => wasteActions[x]),
+        ...[this.displayDiagnostic.otherWasteAction],
       ].filter((x) => !!x)
     },
     wasteMeasures() {
-      const diag = this.diagnostic
+      const diag = this.displayDiagnostic
       return [
         { label: "Reste de pain", value: diag.breadLeftovers ? `${diag.breadLeftovers} kg/an` : "—" },
         { label: "Reste plateau", value: diag.servedLeftovers ? `${diag.servedLeftovers} kg/an` : "—" },
         { label: "Reste en production", value: diag.unservedLeftovers ? `${diag.unservedLeftovers} kg/an` : "—" },
         { label: "Reste de composantes", value: diag.sideLeftovers ? `${diag.sideLeftovers} kg/an` : "—" },
       ]
+    },
+    usesCentralDiagnostic() {
+      return this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL"
+    },
+    displayDiagnostic() {
+      return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
     },
   },
 }
