@@ -3,38 +3,54 @@
     <ul>
       <li v-if="displayDiagnostic.cookingPlasticSubstituted">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        Je n’utilise plus de contenants alimentaires de cuisson / de réchauffe en plastique
+        <div>
+          Je n’utilise plus de contenants alimentaires de cuisson / de réchauffe en plastique
+        </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        J’utilise encore de contenants alimentaires de cuisson / de réchauffe en plastique
+        <div>
+          J’utilise encore de contenants alimentaires de cuisson / de réchauffe en plastique
+        </div>
       </li>
 
       <li v-if="displayDiagnostic.servingPlasticSubstituted">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        Je n’utilise plus de contenants alimentaires de service en plastique
+        <div>
+          Je n’utilise plus de contenants alimentaires de service en plastique
+        </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        J’utilise encore de contenants alimentaires de service en plastique
+        <div>
+          J’utilise encore de contenants alimentaires de service en plastique
+        </div>
       </li>
 
       <li v-if="displayDiagnostic.plasticBottlesSubstituted">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        Je ne mets plus à disposition des convives des bouteilles d’eau plate en plastique
+        <div>
+          Je ne mets plus à disposition des convives des bouteilles d’eau plate en plastique
+        </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        Je mets encore à disposition des convives des bouteilles d’eau plate en plastique
+        <div>
+          Je mets encore à disposition des convives des bouteilles d’eau plate en plastique
+        </div>
       </li>
 
       <li v-if="displayDiagnostic.plasticTablewareSubstituted">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        Je ne mets plus à disposition des convives des ustensiles à usage unique en matière plastique
+        <div>
+          Je ne mets plus à disposition des convives des ustensiles à usage unique en matière plastique
+        </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        Je mets encore à disposition des convives des ustensiles à usage unique en matière plastique
+        <div>
+          Je mets encore à disposition des convives des ustensiles à usage unique en matière plastique
+        </div>
       </li>
     </ul>
   </div>
@@ -65,5 +81,9 @@ ul {
 }
 li {
   margin-bottom: 14px;
+  display: flex;
+}
+li .v-icon {
+  align-items: baseline;
 }
 </style>
