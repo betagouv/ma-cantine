@@ -511,10 +511,12 @@ export default Object.freeze({
     {
       key: "ALL",
       label: "Je rentre les données concernant toutes les mesures EGAlim pour mes cantines satellites",
+      shortLabel: "Les données sur l’ensemble des mesures EGAlim",
     },
     {
       key: "APPRO",
       label: "Je rentre seulement les données d'approvisionnement pour mes cantines satellites",
+      shortLabel: "Les données d’approvisionnement seulement",
     },
   ],
   SectorCategoryTranslations: {

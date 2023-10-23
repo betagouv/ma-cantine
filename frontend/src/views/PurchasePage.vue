@@ -446,9 +446,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-fieldset {
-  border: none;
-}
-</style>
