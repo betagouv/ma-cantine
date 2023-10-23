@@ -299,8 +299,4 @@ export default {
   color: grey;
   font-size: 0.8em;
 }
-
-fieldset {
-  border: none;
-}
 </style>

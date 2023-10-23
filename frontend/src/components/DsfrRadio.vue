@@ -46,10 +46,6 @@ export default {
 </script>
 
 <style scoped>
-fieldset {
-  border: none;
-}
-
 .v-radio >>> label {
   color: inherit;
 }
