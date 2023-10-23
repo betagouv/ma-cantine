@@ -29,6 +29,9 @@ export default {
     chartOptions() {
       return {
         chart: {
+          animations: {
+            enabled: false,
+          },
           type: "bar",
           stacked: true,
           toolbar: { show: false },
