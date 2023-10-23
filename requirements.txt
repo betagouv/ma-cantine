@@ -108,7 +108,7 @@ tinycss2==1.2.1
 toml==0.10.2
 tomli==2.0.1
 tomlkit==0.11.8
-tqdm==4.65.0
+tqdm==4.66.1
 typing_extensions==4.8.0
 tzdata==2023.3
 tzlocal==5.0.1
