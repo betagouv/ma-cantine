@@ -1,11 +1,11 @@
 <template>
   <div>
-    Canteen Progress
+    Appro information
   </div>
 </template>
 
 <script>
 export default {
-  name: "CanteenProgress",
+  name: "QualityMeasureInfo",
 }
 </script>

@@ -12,7 +12,12 @@
         </v-col>
       </v-row>
       <div>
-        <DataInfoBadge :currentYear="isCurrentYear" :missingData="needsData" class="mt-4" />
+        <DataInfoBadge
+          :currentYear="isCurrentYear"
+          :missingData="needsData"
+          :readyToTeledeclare="readyToTeledeclare"
+          class="mt-4"
+        />
         <hr aria-hidden="true" role="presentation" class="my-6" />
       </div>
       <ApproSegment
@@ -56,7 +61,7 @@
 
 <script>
 import DsfrSelect from "@/components/DsfrSelect"
-import { lastYear, diagnosticYears } from "@/utils"
+import { lastYear, diagnosticYears, hasDiagnosticApproData } from "@/utils"
 import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
 import NoPlasticCard from "./NoPlasticCard"
@@ -131,6 +136,17 @@ export default {
     },
     needsData() {
       return !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)
+    },
+    readyToTeledeclare() {
+      const inTdCampaign = window.ENABLE_TELEDECLARATION && this.year === lastYear()
+      if (!inTdCampaign) return false
+      if (this.centralDiagnostic) {
+        const noNeedToTd = this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
+        const requiresOtherData = !noNeedToTd
+        const hasOtherData = !!this.canteenDiagnostic
+        return requiresOtherData && hasOtherData
+      }
+      return this.canteenDiagnostic && hasDiagnosticApproData(this.canteenDiagnostic)
     },
   },
 }

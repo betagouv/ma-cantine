@@ -1,11 +1,11 @@
 <template>
   <div>
-    Waste Progress
+    Plastic summary
   </div>
 </template>
 
 <script>
 export default {
-  name: "WasteProgress",
+  name: "NoPlasticMeasureSummary",
 }
 </script>
