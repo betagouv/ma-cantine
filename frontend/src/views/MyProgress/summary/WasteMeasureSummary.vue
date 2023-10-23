@@ -65,6 +65,26 @@
         </div>
       </li>
 
+      <li v-if="displayDonationAgreementSegment && displayDiagnostic.hasDonationAgreement">
+        <v-icon color="primary" class="mr-2">$check-line</v-icon>
+        <div>
+          Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire
+          <ul class="mt-2">
+            <li class="fr-text-xs mb-1" v-for="measure in donationMeasures" :key="measure.label">
+              {{ measure.label }} :
+              <span class="font-weight-bold">{{ measure.value }}</span>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li v-else-if="displayDonationAgreementSegment">
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
+        <div>
+          Je ne propose pas de convention de dons à des associations habilitées d’aide alimentaire
+        </div>
+      </li>
+
       <li v-if="canteen.reservationExpeParticipant">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
@@ -83,6 +103,7 @@
 
 <script>
 import wasteActions from "@/data/waste-actions.json"
+import { applicableDiagnosticRules } from "@/utils"
 
 export default {
   name: "WasteMeasureSummary",
@@ -116,6 +137,17 @@ export default {
     },
     displayDiagnostic() {
       return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
+    },
+    displayDonationAgreementSegment() {
+      return applicableDiagnosticRules(this.canteen).hasDonationAgreement
+    },
+    donationMeasures() {
+      const d = this.displayDiagnostic
+      return [
+        { label: "Fréquence de dons", value: d.donationFrequency ? `${d.donationFrequency} dons/an` : "—" },
+        { label: "Quantité des denrées données", value: d.donationQuantity ? `${d.donationQuantity} kg/an` : "—" },
+        { label: "Type de denrées données", value: d.donationFoodType ? `${d.donationFoodType}` : "—" },
+      ]
     },
   },
 }
