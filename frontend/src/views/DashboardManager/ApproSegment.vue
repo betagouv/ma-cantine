@@ -101,7 +101,7 @@
 <script>
 import { hasDiagnosticApproData, lastYear } from "@/utils"
 import Constants from "@/constants"
-import ApproGraph from "./ApproGraph"
+import ApproGraph from "@/components/ApproGraph"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {

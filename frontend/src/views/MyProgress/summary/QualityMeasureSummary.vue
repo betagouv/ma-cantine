@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import ApproGraph from "@/views/DashboardManager/ApproGraph"
+import ApproGraph from "@/components/ApproGraph"
 import { hasDiagnosticApproData } from "@/utils"
 
 export default {
