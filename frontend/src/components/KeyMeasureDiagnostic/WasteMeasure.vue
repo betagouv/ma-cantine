@@ -279,6 +279,9 @@ export default {
           id: this.canteen.id,
           payload: { reservationExpeParticipant: checked },
         })
+        .then((canteen) => {
+          this.$emit("update:canteen", canteen)
+        })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
 
       if (checked) this.showExpeModal = true
