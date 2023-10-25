@@ -2,10 +2,8 @@
   <div class="fr-text">
     <p>
       Tous les restaurants collectifs scolaires (publics ou privés), de la maternelle au lycée, doivent proposer, au
-      moins une fois par semaine, un menu végétarien (
-      <a>en savoir plus sur la définition du menu végétarien</a>
-      ). Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à
-      la qualité nutritionnelle.
+      moins une fois par semaine, un menu végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan
+      alimentaire respectueux des exigences relatives à la qualité nutritionnelle.
     </p>
     <p>
       Tous les gestionnaires de cantine servant plus de 200 couverts par jour doivent élaborer un plan pluriannuel de
