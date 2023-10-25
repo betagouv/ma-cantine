@@ -50,9 +50,17 @@
       </li>
 
       <li v-if="displayDiagnostic.communicationSupportUrl">
-        <v-icon color="primary" class="mr-2">$external-link-line</v-icon>
+        <v-icon color="primary" class="mr-2">$links-line</v-icon>
         <div>
-          <a :href="displayDiagnostic.communicationSupportUrl" rel="noopener">Lien vers le support de communication</a>
+          <a
+            :href="displayDiagnostic.communicationSupportUrl"
+            target="_blank"
+            rel="noopener"
+            class="grey--text text--darken-4"
+          >
+            Lien vers le support de communication
+            <v-icon small color="grey darken-4" class="ml-1">mdi-open-in-new</v-icon>
+          </a>
         </div>
       </li>
       <li v-else>
