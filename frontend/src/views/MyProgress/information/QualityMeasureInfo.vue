@@ -28,7 +28,7 @@
     </ul>
     <p>
       Pour cela, vous avez besoin a minima de connaître la valeur totale de vos achats de l’année, et les valeurs
-      totales d’achats bios, de qualité, et durables. Sauf mention contraire, toutes les questions sont obligatoires.
+      totales d’achats bios, de qualité, et durables.
     </p>
   </div>
 </template>
