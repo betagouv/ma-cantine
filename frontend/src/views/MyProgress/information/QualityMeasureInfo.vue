@@ -3,7 +3,10 @@
     <p>
       Depuis 2022, les repas doivent comporter au moins {{ applicableRules.qualityThreshold }} % de produits de qualité
       et durables dont au moins {{ applicableRules.bioThreshold }} % issus de l’agriculture biologique ou en conversion,
-      pour les cantines {{ regionDisplayName ? `dans la région de ${regionDisplayName}` : "en France métropolitaine" }}.
+      pour les cantines
+      {{
+        applicableRules.hasQualityException ? `dans la région « ${regionDisplayName} »` : "en France métropolitaine"
+      }}.
     </p>
     <p>Faites le bilan de vos achats pour</p>
     <ul class="mb-4">
@@ -50,9 +53,7 @@ export default {
       return applicableDiagnosticRules(this.canteen)
     },
     regionDisplayName() {
-      return this.applicableRules.hasQualityException
-        ? regions.find((r) => r.regionCode === this.canteen.region).regionName
-        : ""
+      return regions.find((r) => r.regionCode === this.canteen.region).regionName
     },
   },
 }
