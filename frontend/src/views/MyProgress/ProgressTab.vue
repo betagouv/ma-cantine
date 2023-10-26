@@ -23,6 +23,7 @@
       <div v-if="(!diagnostic && !centralDiagnostic) || showIntro">
         <component
           :is="`${keyMeasure.baseComponent}Info`"
+          :canteen="canteen"
           :diagnostic="diagnostic"
           :centralDiagnostic="centralDiagnostic"
         />
@@ -115,7 +116,7 @@ export default {
       required: true,
     },
     year: {
-      type: String,
+      type: Number,
       required: true,
     },
     canteen: {

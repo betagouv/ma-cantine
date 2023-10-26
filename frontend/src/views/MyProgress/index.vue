@@ -22,6 +22,34 @@
         <DsfrSelect hide-details label="Année" :items="years" v-model="year" v-else-if="canteen" />
       </v-col>
       <v-col cols="12" sm="9" md="10">
+        <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
+          <fieldset class="fr-text">
+            <legend class="font-weight-bold">
+              Pour mes cantines satellites, je saisis :
+            </legend>
+            <v-radio-group
+              v-model="centralKitchenDiagnosticMode"
+              :readonly="hasActiveTeledeclaration"
+              :disabled="hasActiveTeledeclaration"
+              class="py-0"
+              hide-details
+              row
+            >
+              <v-radio
+                v-for="type in centralKitchenDiagnosticModes"
+                :key="type.key"
+                :label="type.shortLabel"
+                :value="type.key"
+              >
+                <template v-slot:label>
+                  <span class="fr-text mr-2 mr-lg-8 grey--text text--darken-4">
+                    {{ type.shortLabel }}
+                  </span>
+                </template>
+              </v-radio>
+            </v-radio-group>
+          </fieldset>
+        </v-card>
         <DsfrTabsVue
           v-model="tab"
           :enableMobileView="$vuetify.breakpoint.smAndDown"
@@ -36,15 +64,15 @@
               :key="tabItem.text"
               :disabled="usesSatelliteDiagnosticForMeasure(tabItem)"
             >
-              <v-icon small class="mr-1">{{ tabItem.icon }}</v-icon>
-              {{ tabItem.text }}
+              <v-icon small :class="`mr-1 ${tabTextClasses(tabItem)}`">{{ tabItem.icon }}</v-icon>
+              <span :class="tabTextClasses(tabItem)">{{ tabItem.text }}</span>
             </v-tab>
           </template>
           <template v-slot:items>
             <v-tab-item class="my-4" v-for="(item, index) in tabHeaders" :key="`${index}-content`">
               <ProgressTab
                 :measureId="item.urlSlug"
-                :year="year"
+                :year="+year"
                 :canteen="canteen"
                 :diagnostic="diagnostic"
                 :centralDiagnostic="centralDiagnostic"
@@ -64,6 +92,7 @@ import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrSelect from "@/components/DsfrSelect"
 import { diagnosticYears } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
+import Constants from "@/constants"
 
 export default {
   name: "MyProgress",
@@ -96,6 +125,8 @@ export default {
       ],
       canteen: null,
       years: diagnosticYears().map((x) => x.toString()),
+      centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
+      centralKitchenDiagnosticMode: null,
     }
   },
   props: {
@@ -109,6 +140,12 @@ export default {
     mobileSelectItems() {
       return this.tabHeaders.map((x, index) => ({ text: x.text, value: index }))
     },
+    hasActiveTeledeclaration() {
+      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+    },
+    isCentralKitchen() {
+      return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
+    },
   },
   methods: {
     updateCanteen(newCanteen) {
@@ -119,7 +156,6 @@ export default {
       return this.$store
         .dispatch("fetchCanteen", { id })
         .then((canteen) => this.updateCanteen(canteen))
-        .then(this.assignDiagnostic)
         .catch(() => {
           this.$store.dispatch("notify", {
             message: "Nous n'avons pas trouvé cette cantine",
@@ -141,9 +177,12 @@ export default {
           this.canteen?.centralKitchenDiagnostics?.find((x) => +x.year === +this.year)
         )
       }
+      this.centralKitchenDiagnosticMode = this.diagnostic?.centralKitchenDiagnosticMode
+      this.initialiseTab()
     },
-    assignTab() {
+    initialiseTab() {
       const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
+      const approId = "qualite-des-produits"
       if (!initialTab) {
         this.$router.replace({
           name: this.$route.name,
@@ -153,15 +192,23 @@ export default {
             measure: this.tabHeaders[0].urlSlug,
           },
         })
-        this.tab = 0
-      } else this.tab = this.tabHeaders.indexOf(initialTab)
+      } else if (
+        this.centralKitchenDiagnosticMode === "APPRO" &&
+        this.measure !== approId &&
+        this.measure !== "etablissement"
+      ) {
+        this.$router.replace({ name: "MyProgress", params: { measure: approId } })
+      } else {
+        this.tab = this.tabHeaders.indexOf(initialTab)
+      }
     },
     usesSatelliteDiagnosticForMeasure(tabItem) {
       const tabAlwaysShown = tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement"
       if (tabAlwaysShown) return false
-      const isCentralKitchen =
-        this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
-      return isCentralKitchen && this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
+      return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
+    },
+    tabTextClasses(tabItem) {
+      return this.usesSatelliteDiagnosticForMeasure(tabItem) ? "grey--text" : "black--text"
     },
   },
   watch: {
@@ -180,12 +227,23 @@ export default {
       this.assignDiagnostic()
     },
     $route() {
-      this.assignTab()
+      this.initialiseTab()
+    },
+    centralKitchenDiagnosticMode(newMode) {
+      if (!this.isCentralKitchen || !this.canteen) return
+      if (!this.diagnostic || !this.diagnostic.id) return
+      if (!newMode || this.diagnostic.centralKitchenDiagnosticMode === newMode) return
+      this.diagnostic.centralKitchenDiagnosticMode = newMode
+      this.$store.dispatch("updateDiagnostic", {
+        canteenId: this.canteen.id,
+        id: this.diagnostic.id,
+        payload: { centralKitchenDiagnosticMode: newMode },
+      })
+      this.initialiseTab()
     },
   },
   beforeMount() {
     this.fetchCanteen()
-    this.assignTab()
   },
 }
 </script>

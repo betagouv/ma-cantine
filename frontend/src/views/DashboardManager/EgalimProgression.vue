@@ -20,23 +20,26 @@
         />
         <hr aria-hidden="true" role="presentation" class="my-6" />
       </div>
-      <ApproSegment :purchases="null" :diagnostic="approDiagnostic" :lastYearDiagnostic="null" :canteen="canteen" />
+      <ApproSegment
+        :purchases="null"
+        :diagnostic="approDiagnostic"
+        :lastYearDiagnostic="lastYearDiagnostic"
+        :canteen="canteen"
+        :year="year"
+      />
     </v-col>
     <v-col cols="12" md="8">
       <v-row style="position: relative; height: 100%" class="ma-0">
-        <div
-          class="overlay d-flex align-center justify-center"
-          v-if="!hasPurchases && !otherMeasuresDiagnostic && !hasLastYearDiagnostic"
-        >
+        <div class="overlay d-flex align-center justify-center" v-if="!otherMeasuresDiagnostic">
           <v-btn
             large
             color="primary"
             :to="{
               name: 'MyProgress',
-              params: { canteenUrlComponent, year: year, measure: 'qualite-des-produits' },
+              params: { canteenUrlComponent, year: year, measure: firstActionableMeasure },
             }"
           >
-            <span class="fr-text-lg">Commencer</span>
+            <span class="fr-text-lg">Faire le bilan {{ year }}</span>
           </v-btn>
         </div>
         <v-col cols="12" md="6" class="pt-md-0">
@@ -85,6 +88,7 @@ export default {
   },
   data() {
     return {
+      lastYear: lastYear(),
       year: lastYear(),
       allowedYears: diagnosticYears().map((year) => ({ text: year, value: year })),
     }
@@ -92,6 +96,9 @@ export default {
   computed: {
     canteenDiagnostic() {
       return this.canteen.diagnostics.find((x) => x.year === this.year)
+    },
+    lastYearDiagnostic() {
+      return this.canteen.diagnostics.find((x) => x.year === this.lastYear)
     },
     centralDiagnostic() {
       if (this.canteen.productionType === "site_cooked_elsewhere") {
@@ -109,10 +116,16 @@ export default {
       }
       return this.canteenDiagnostic
     },
-    hasPurchases() {
-      return false
+    firstActionableMeasure() {
+      if (
+        this.canteen.productionType === "site_cooked_elsewhere" &&
+        this.centralDiagnostic?.centralKitchenDiagnosticMode === "APPRO"
+      ) {
+        return "gaspillage-alimentaire"
+      }
+      return "qualite-des-produits"
     },
-    hasLastYearDiagnostic() {
+    hasPurchases() {
       return false
     },
     canteenUrlComponent() {
@@ -122,9 +135,7 @@ export default {
       return this.year === lastYear() + 1
     },
     needsData() {
-      return (
-        !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic) && !this.hasLastYearDiagnostic
-      )
+      return !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)
     },
     readyToTeledeclare() {
       const inTdCampaign = window.ENABLE_TELEDECLARATION && this.year === lastYear()
