@@ -228,6 +228,9 @@ export default {
           id: this.canteen.id,
           payload: { vegetarianExpeParticipant: checked },
         })
+        .then((canteen) => {
+          this.$emit("update:canteen", canteen)
+        })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
 
       if (checked) this.showExpeModal = true
@@ -235,9 +238,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-fieldset {
-  border: none;
-}
-</style>

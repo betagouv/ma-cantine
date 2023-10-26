@@ -184,4 +184,7 @@ export default {
 .fr-btn--tertiary {
   border: thin solid #ddd;
 }
+fieldset {
+  border: none;
+}
 </style>
