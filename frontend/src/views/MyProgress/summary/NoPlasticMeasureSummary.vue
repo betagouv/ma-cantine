@@ -1,6 +1,6 @@
 <template>
   <div class="fr-text">
-    <ul>
+    <ul role="list">
       <li v-if="displayDiagnostic.cookingPlasticSubstituted">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
