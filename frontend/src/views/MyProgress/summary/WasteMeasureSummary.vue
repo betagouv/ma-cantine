@@ -52,7 +52,7 @@
           <ul role="list" class="mt-2">
             <li class="fr-text-xs mb-1" v-for="measure in wasteMeasures" :key="measure.label">
               {{ measure.label }} :
-              <span class="font-weight-bold">{{ measure.value }}</span>
+              <span class="font-weight-bold ml-1">{{ measure.value }}</span>
             </li>
           </ul>
         </div>
@@ -72,7 +72,7 @@
           <ul role="list" class="mt-2">
             <li class="fr-text-xs mb-1" v-for="measure in donationMeasures" :key="measure.label">
               {{ measure.label }} :
-              <span class="font-weight-bold">{{ measure.value }}</span>
+              <span class="font-weight-bold ml-1">{{ measure.value }}</span>
             </li>
           </ul>
         </div>
