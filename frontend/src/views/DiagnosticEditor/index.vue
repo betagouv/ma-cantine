@@ -204,7 +204,7 @@
             :disabled="!showNonApproPanels"
           >
             <v-form ref="waste" v-model="formIsValid.waste">
-              <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen="originalCanteen" />
+              <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen.sync="canteen" />
             </v-form>
           </DiagnosticExpansionPanel>
 
@@ -219,7 +219,7 @@
               <DiversificationMeasure
                 :diagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
-                :canteen="originalCanteen"
+                :canteen.sync="canteen"
               />
             </v-form>
           </DiagnosticExpansionPanel>

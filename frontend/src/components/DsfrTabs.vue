@@ -8,7 +8,7 @@
       v-model="tab"
       v-if="enableMobileView"
     />
-    <v-tabs v-bind="$attrs" v-model="tab" v-on="$listeners" v-else>
+    <v-tabs v-bind="$attrs" v-model="tab" v-on="$listeners" grow v-else>
       <slot name="tabs" />
     </v-tabs>
 
