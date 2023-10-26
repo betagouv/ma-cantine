@@ -6,7 +6,7 @@
         <div>
           J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de
           protéines végétales
-          <ul role="list" class="mt-2">
+          <ul role="list" class="mt-2" v-if="appliedDiversificationActions && appliedDiversificationActions.length">
             <li class="fr-text-xs mb-1" v-for="action in appliedDiversificationActions" :key="action">
               {{ action }}
             </li>
@@ -53,7 +53,7 @@
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           Le plat principal de mon menu végétarien est majoritairement à base de :
-          <ul role="list" class="mt-2">
+          <ul role="list" class="mt-2" v-if="menuBases && menuBases.length">
             <li class="fr-text-xs mb-1" v-for="base in menuBases" :key="base">
               {{ base }}
             </li>
