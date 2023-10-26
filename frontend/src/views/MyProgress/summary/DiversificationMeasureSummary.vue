@@ -85,6 +85,7 @@
 
 <script>
 import { applicableDiagnosticRules } from "@/utils"
+import Constants from "@/constants"
 
 export default {
   name: "DiversificationMeasureSummary",
@@ -132,15 +133,10 @@ export default {
       return applicableDiagnosticRules(this.canteen).hasDiversificationPlan
     },
     appliedDiversificationActions() {
-      const diversificationPlanActions = {
-        PRODUCTS:
-          "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
-        PRESENTATION: "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
-        MENU: "Agir sur la manière dont les menus sont conçus en soulignant attributs positifs des plats",
-        PROMOTION: "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
-        TRAINING:
-          "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
-      }
+      const diversificationPlanActions = Constants.DiversificationPlanActions.reduce((acc, val) => {
+        acc[val.value] = val.label
+        return acc
+      }, {})
       if (!this.displayDiagnostic.diversificationPlanActions?.length) return null
       return this.displayDiagnostic.diversificationPlanActions
         .map((x) => diversificationPlanActions[x])

@@ -547,4 +547,28 @@ export default Object.freeze({
       colorClass: "green--text text--darken-4",
     },
   },
+  DiversificationPlanActions: [
+    {
+      label:
+        "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
+      value: "PRODUCTS",
+    },
+    {
+      label: "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
+      value: "PRESENTATION",
+    },
+    {
+      label: "Agir sur la manière dont les menus sont conçus en soulignant attributs positifs des plats",
+      value: "MENU",
+    },
+    {
+      label: "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
+      value: "PROMOTION",
+    },
+    {
+      label:
+        "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
+      value: "TRAINING",
+    },
+  ],
 })
