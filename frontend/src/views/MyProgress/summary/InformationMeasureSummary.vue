@@ -6,10 +6,9 @@
         <div>
           J’informe mes convives sur la part de produits de qualité et durables, entrant dans la composition des repas
           servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet alimentaire territorial)
-          <br />
-          <span v-if="displayDiagnostic.communicationFrequency" class="font-weight-bold">
-            {{ displayDiagnostic.communicationFrequency }}
-          </span>
+          <div v-if="displayDiagnostic.communicationFrequency" class="font-weight-bold mt-2">
+            {{ communicationFrequency }}
+          </div>
         </div>
       </li>
       <li v-else>
