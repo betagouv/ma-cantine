@@ -1,6 +1,6 @@
 <template>
   <div class="fr-text">
-    <ul>
+    <ul role="list">
       <li v-if="displayDiagnostic.hasWasteDiagnostic">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
@@ -31,7 +31,7 @@
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J’ai mis en place les actions suivantes :
-          <ul class="mt-2">
+          <ul role="list" class="mt-2">
             <li class="fr-text-xs mb-1" v-for="(action, index) in appliedWasteActions" :key="`${action}-${index}`">
               {{ action }}
             </li>
@@ -49,7 +49,7 @@
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J’ai réalisé des mesures de mon gaspillage alimentaire :
-          <ul class="mt-2">
+          <ul role="list" class="mt-2">
             <li class="fr-text-xs mb-1" v-for="measure in wasteMeasures" :key="measure.label">
               {{ measure.label }} :
               <span class="font-weight-bold">{{ measure.value }}</span>
@@ -69,7 +69,7 @@
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire
-          <ul class="mt-2">
+          <ul role="list" class="mt-2">
             <li class="fr-text-xs mb-1" v-for="measure in donationMeasures" :key="measure.label">
               {{ measure.label }} :
               <span class="font-weight-bold">{{ measure.value }}</span>
