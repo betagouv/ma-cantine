@@ -1,6 +1,6 @@
 <template>
   <div class="fr-text">
-    <ul>
+    <ul role="list">
       <li v-if="displayDiagnostic.communicatesOnFoodQuality">
         <v-icon color="primary" class="fill-height mr-2">$check-line</v-icon>
         <div>
@@ -22,7 +22,7 @@
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J’informe les convives sur la qualité des approvisionnements :
-          <ul class="mt-2">
+          <ul role="list" class="mt-2">
             <li class="fr-text-xs mb-1" v-for="(support, idx) in communicationSupports" :key="`${support}-${idx}`">
               {{ support }}
             </li>
