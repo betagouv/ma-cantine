@@ -14,7 +14,11 @@
               comporter, au cours de l'année 2022, {{ applicableRules.qualityThreshold }} % de produits de qualité et
               durables dont {{ applicableRules.bioThreshold }} % issus de l’agriculture biologique ou en conversion,
               pour les cantines
-              {{ regionDisplayName ? `dans la région de ${regionDisplayName}` : "en France métropolitaine" }}.
+              {{
+                applicableRules.hasQualityException
+                  ? `dans la région « ${regionDisplayName} »`
+                  : "en France métropolitaine"
+              }}.
             </p>
             <MultiYearSummaryStatistics
               :diagnostics="dashboardDiagnostics"
@@ -253,9 +257,7 @@ export default {
       return applicableDiagnosticRules(this.canteen)
     },
     regionDisplayName() {
-      return this.applicableRules.hasQualityException
-        ? regions.find((r) => r.regionCode === this.canteen.region).regionName
-        : ""
+      return regions.find((r) => r.regionCode === this.canteen.region).regionName
     },
     columnClasses() {
       return this.singleColumn ? "pa-0" : ""
