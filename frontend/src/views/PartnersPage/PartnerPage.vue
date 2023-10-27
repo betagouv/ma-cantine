@@ -12,7 +12,14 @@
           </h1>
           <PartnerIndicators :partner="partner" class="grey--text text--darken-3 text-body-2" />
           <v-spacer></v-spacer>
-          <v-btn outlined color="primary" v-if="partner.website" :href="partner.website" width="fit-content">
+          <v-btn
+            outlined
+            color="primary"
+            class="mt-2"
+            v-if="partner.website"
+            :href="partner.website"
+            width="fit-content"
+          >
             <v-icon small class="mr-1">$global-fill</v-icon>
             Site web
           </v-btn>

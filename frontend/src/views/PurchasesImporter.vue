@@ -41,14 +41,26 @@
       <span class="mt-1">Traitement en cours...</span>
     </v-card>
     <div v-if="!isNaN(purchaseCount) && !importInProgress">
-      <v-alert type="success" outlined v-if="purchaseCount > 0">
+      <v-alert type="success" outlined v-if="!duplicateFile && purchaseCount > 0">
         <span class="grey--text text--darken-4 body-2">
           {{ purchaseCount }} achats
           <span>ont été créés.</span>
         </span>
       </v-alert>
-      <div v-if="errors && errors.length">
-        <p class="text-body-2 red--text text--darken-4" v-if="purchaseCount === 0">
+      <div v-if="duplicateFile">
+        <p class="orange--text text--darken-4">
+          Ce fichier a déjà été utilisé pour importer {{ purchaseCount }}
+          <span v-if="purchaseCount > 1">achats.</span>
+          <span v-else>achat.</span>
+        </p>
+        <p class="orange--text text--darken-4" v-if="purchaseCount > 10">
+          Les premiers dix achats sont affichés ci-dessous.
+        </p>
+        <p class="orange--text text--darken-4" v-else>Les achats sont affichés ci-dessous.</p>
+        <PurchasesTable :purchases="purchases" :hide-default-footer="true" class="mb-6" />
+      </div>
+      <div v-else-if="errors && errors.length">
+        <p class="red--text text--darken-4" v-if="purchaseCount === 0">
           Nous n'avons pas pu traiter votre fichier. Vous trouverez ci-dessous des informations sur les erreurs
           rencontrées.
         </p>
@@ -62,7 +74,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="error in errors" :key="error.row">
+                <tr v-for="(error, idx) in errors" :key="idx">
                   <td>{{ error.row }}</td>
                   <td>{{ error.message }}</td>
                 </tr>
@@ -133,12 +145,13 @@
 
 <script>
 import FileDrop from "@/components/FileDrop"
+import PurchasesTable from "@/components/PurchasesTable"
 import validators from "@/validators"
 import Constants from "@/constants"
 
 export default {
   name: "ImportPurchases",
-  components: { FileDrop },
+  components: { FileDrop, PurchasesTable },
   data() {
     const user = this.$store.state.loggedUser
     const numberFormatExample = "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>."
@@ -205,18 +218,25 @@ export default {
       ],
       validators,
       isStaff: user.isStaff,
+      duplicateFile: false,
+      purchases: null,
     }
   },
   methods: {
     upload() {
       this.importInProgress = true
+      this.duplicateFile = false
       this.$store
         .dispatch("importPurchases", { file: this.file })
         .then((json) => {
           this.importInProgress = false
           this.file = null
           this.purchaseCount = json.count
+          this.purchases = json.purchases
           this.errors = json.errors
+          if (this.errors.length && this.errors[0].message === "Ce fichier a déjà été utilisé pour un import") {
+            this.duplicateFile = true
+          }
           this.seconds = json.seconds
           this.$store.dispatch("notify", {
             message: `Fichier traité en ${Math.round(this.seconds)} secondes`,

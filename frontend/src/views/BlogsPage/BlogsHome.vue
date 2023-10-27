@@ -1,6 +1,6 @@
 <template>
   <div id="blogs-home">
-    <BreadcrumbsNav :links="[{ to: { name: 'CommunityPage' } }]" />
+    <BreadcrumbsNav />
     <v-card elevation="0" class="text-center text-md-left mb-10">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
         <v-col cols="12">
@@ -22,10 +22,22 @@
     </v-card>
 
     <v-row>
-      <v-spacer></v-spacer>
-      <v-col cols="12" sm="4">
+      <v-col cols="12" sm="6" md="8">
+        <DsfrSearchField
+          v-model="searchTerm"
+          placeholder="Rechercher par titre ou contenu"
+          hide-details
+          clearable
+          :clearAction="clearSearch"
+          :searchAction="search"
+          label="Rechercher"
+        />
+      </v-col>
+
+      <v-col cols="12" sm="6" md="4">
         <DsfrSelect
           v-model="tag"
+          placeholder="Tous types d'articles"
           :items="tags"
           clearable
           hide-details
@@ -37,11 +49,20 @@
         />
       </v-col>
     </v-row>
+    <div
+      v-if="searchTerm && (!visibleBlogPosts || visibleBlogPosts.length === 0)"
+      class="d-flex flex-column align-center py-10"
+    >
+      <v-spacer></v-spacer>
+      <v-icon large>mdi-inbox-remove</v-icon>
+      <p class="text-body-1 grey--text text--darken-1 my-2">Cette recherche n'a pas permis de trouver d'article</p>
+    </div>
+
     <div v-if="loading" class="mt-8">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
 
-    <div v-else>
+    <div v-if="!loading && visibleBlogPosts && visibleBlogPosts.length > 0">
       <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(blogPostCount / limit)" />
       <v-progress-circular class="my-10" indeterminate v-if="!visibleBlogPosts"></v-progress-circular>
       <v-row v-else class="cta-group pa-2 mt-2">
@@ -64,10 +85,11 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import BlogCard from "./BlogCard"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrPagination from "@/components/DsfrPagination"
+import DsfrSearchField from "@/components/DsfrSearchField"
 
 export default {
   name: "BlogsHome",
-  components: { BlogCard, BreadcrumbsNav, DsfrSelect, DsfrPagination },
+  components: { BlogCard, BreadcrumbsNav, DsfrSelect, DsfrPagination, DsfrSearchField },
   data() {
     return {
       limit: 6,
@@ -76,6 +98,12 @@ export default {
       tags: [],
       visibleBlogPosts: null,
       blogPostCount: null,
+      searchTerm: null,
+      options: {
+        sortBy: [],
+        sortDesc: [],
+        page: 1,
+      },
     }
   },
   computed: {
@@ -87,9 +115,22 @@ export default {
     },
   },
   methods: {
+    search() {
+      if (this.searchTerm && this.options.page !== 1) this.options.page = 1
+      else this.$router.push({ query: this.getUrlQueryParams() }).catch(() => {})
+    },
+    getUrlQueryParams() {
+      let urlQueryParams = { page: this.options.page }
+      if (this.searchTerm) urlQueryParams["recherche"] = this.searchTerm
+      return urlQueryParams
+    },
     fetchCurrentPage() {
+      if (this.searchTerm) {
+        let urlQueryParams = { page: this.options.page }
+        urlQueryParams["recherche"] = this.searchTerm
+      }
       this.$store
-        .dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag })
+        .dispatch("fetchBlogPosts", { offset: this.offset, tag: this.tag, search: this.searchTerm })
         .then((response) => {
           this.tags = response.tags
           this.visibleBlogPosts = response.results
@@ -98,6 +139,10 @@ export default {
         .catch(() => {
           this.$store.dispatch("notifyServerError")
         })
+    },
+    clearSearch() {
+      this.searchTerm = ""
+      this.search()
     },
     updateRoute() {
       let query = { page: this.page }

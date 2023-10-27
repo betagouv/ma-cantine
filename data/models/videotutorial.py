@@ -20,6 +20,7 @@ class VideoTutorial(models.Model):
     description = models.TextField(verbose_name="description")
     published = models.BooleanField(default=False, verbose_name="publié")
     video = models.FileField(verbose_name="vidéo", upload_to="videos/")
+    subtitles = models.FileField(null=True, blank=True, verbose_name="sous-titres", upload_to="subtitles/")
     categories = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=VideoTutorialCategory.choices),
         blank=True,
@@ -31,3 +32,7 @@ class VideoTutorial(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def sous_titré(self):
+        return "✅ oui" if self.subtitles else "❌ non"

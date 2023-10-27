@@ -1,8 +1,10 @@
 import csv
 import time
 import logging
+import hashlib
+import io
+import uuid
 from django.db import IntegrityError, transaction
-from django.utils import timezone
 from django.conf import settings
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
 from django.http import JsonResponse
@@ -11,7 +13,8 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 from api.permissions import IsAuthenticated
 from data.models import Purchase, Canteen
-from .utils import normalise_siret
+from api.serializers import PurchaseSerializer
+from .utils import normalise_siret, camelize
 
 logger = logging.getLogger(__name__)
 
@@ -20,76 +23,106 @@ class ImportPurchasesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def __init__(self, **kwargs):
-        self.purchases_created = 0
+        self.purchases = []
+        self.purchases_count = 0
+        self.errors = []
+        self.start = None
+        self.file_digest = None
+        self.tmp_id = uuid.uuid4()
+        self.file = None
+        self.dialect = None
         super().__init__(**kwargs)
 
     def post(self, request):
-        start = time.time()
+        self.start = time.time()
         logger.info("Purchase bulk import started")
         try:
+            self.file = request.data["file"]
+            self._verify_file_size()
             with transaction.atomic():
-                file = request.data["file"]
-                ImportPurchasesView._verify_file_size(file)
-                (purchases, errors) = self._treat_csv_file(file)
+                self._process_file()
 
-                if errors:
+                # If at least an error has been detected, we raise an error to interrupt the 
+                # transaction and rollback the insertion of any data
+                if self.errors:
                     raise IntegrityError()
+                
+                # The duplication check is called after the processing. The cost of eventually processing
+                # the file for nothing appears to be smaller than read the file twice.
+                self._check_duplication()
 
-            return ImportPurchasesView._get_success_response([], self.purchases_created, errors, start)
+                # Update all purchases's import source with file digest
+                Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.file_digest)
+
+            return self._get_success_response()
 
         except IntegrityError as e:
             logger.warning(f"L'import du fichier CSV a échoué:\n{e}")
-            return ImportPurchasesView._get_success_response([], 0, errors, start)
+            return self._get_success_response()
 
         except UnicodeDecodeError as e:
             message = e.reason
             logger.warning(f"UnicodeDecodeError: {message}")
             self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
-            return ImportPurchasesView._get_success_response([], 0, errors, start)
+            return self._get_success_response()
 
         except ValidationError as e:
             message = e.message
             logger.warning(message)
             message = message
-            errors = [{"row": 0, "status": 400, "message": message}]
-            return ImportPurchasesView._get_success_response([], 0, errors, start)
+            self.errors = [{"row": 0, "status": 400, "message": message}]
+            return self._get_success_response()
 
         except Exception as e:
             message = "Échec lors de la lecture du fichier"
             logger.exception(f"{message}:\n{e}")
-            errors = [{"row": 0, "status": 400, "message": message}]
-            return ImportPurchasesView._get_success_response([], 0, errors, start)
+            self.errors = [{"row": 0, "status": 400, "message": message}]
+            return self._get_success_response()
+        
+    def _process_file(self):
+        file_hash = hashlib.md5()
+        chunk = []
+        row_count = 1
+        for row in self.file:
+            # Sniffing header
+            if self.dialect is None:
+                self.dialect = csv.Sniffer().sniff(row.decode())
 
-    @staticmethod
-    def _verify_file_size(file):
-        if file.size > settings.CSV_IMPORT_MAX_SIZE:
+            file_hash.update(row)
+            
+            # Split into chunks
+            chunk.append(row.decode())
+
+            # Process full chunk
+            if row_count == settings.CSV_PURCHASE_CHUNK_LINES:
+                self._process_chunk(chunk)
+                chunk = []
+                row_count = 0
+            row_count += 1
+
+        # Process the last chunk
+        if len(chunk) > 0:
+            self._process_chunk(chunk)
+
+        self.file_digest = file_hash.hexdigest()
+
+    def _verify_file_size(self):
+        if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
-    def _treat_csv_file(self, file):
-        purchases = []
+    def _check_duplication(self):
+        matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
+        if matching_purchases.exists():
+            self.purchases = matching_purchases.all()
+            raise ValidationError("Ce fichier a déjà été utilisé pour un import")
+
+    def _process_chunk(self, chunk):
         errors = []
+        self.purchases = []
 
-        filestring = file.read().decode("utf-8-sig")
-        filelines = filestring.splitlines()
-
-        if len(filelines) > settings.CSV_PURCHASES_MAX_LINES:
-            return (
-                [],
-                [
-                    ImportPurchasesView._get_error(
-                        "Too many lines",
-                        f"Le fichier ne peut pas contenir plus de {settings.CSV_PURCHASES_MAX_LINES} lignes.",
-                        400,
-                        len(filelines),
-                    )
-                ],
-            )
-
-        dialect = csv.Sniffer().sniff(filelines[0])
-
-        csvreader = csv.reader(filelines, dialect=dialect)
-        import_source = f"Import du fichier CSV {timezone.now()}"
+        csvreader = csv.reader(io.StringIO("".join(chunk)), self.dialect)
         for row_number, row in enumerate(csvreader, start=1):
+            # If header, pass
             if row_number == 1 and row[0].lower().__contains__("siret"):
                 continue
             try:
@@ -101,16 +134,18 @@ class ImportPurchasesView(APIView):
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = normalise_siret(siret)
-                purchase = self._create_purchase_for_canteen(siret, row, import_source)
-                purchases.append(purchase)
+                self._create_purchase_for_canteen(siret, row)
 
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
-        return (purchases, errors)
+        self.errors += errors
 
-    @transaction.atomic
-    def _create_purchase_for_canteen(self, siret, row, import_source):
+        # If no error has been detected in the file so far, we insert the chunk into the db
+        if not self.errors:
+            Purchase.objects.bulk_create(self.purchases)
+
+    def _create_purchase_for_canteen(self, siret, row):
         if not Canteen.objects.filter(siret=siret).exists():
             raise ObjectDoesNotExist()
         canteen = Canteen.objects.get(siret=siret)
@@ -147,22 +182,18 @@ class ImportPurchasesView(APIView):
             family=family.strip(),
             characteristics=characteristics,
             local_definition=local_definition.strip(),
-            import_source=import_source,
+            import_source=self.tmp_id,
         )
         purchase.full_clean()
-        purchase.save()
-        self.purchases_created += 1
+        self.purchases.append(purchase)
 
-        return purchase
-
-    @staticmethod
-    def _get_success_response(purchases, count, errors, start_time):
+    def _get_success_response(self):
         return JsonResponse(
             {
-                "purchases": purchases,
-                "count": count,
-                "errors": errors,
-                "seconds": time.time() - start_time,
+                "purchases": camelize(PurchaseSerializer(self.purchases[:10], many=True).data),
+                "count": len(self.purchases),
+                "errors": self.errors,
+                "seconds": time.time() - self.start,
             },
             status=status.HTTP_200_OK,
         )

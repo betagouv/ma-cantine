@@ -9,7 +9,7 @@
         <p>Cliquez sur le lien pour activer votre compte.</p>
         <p>Vérifiez votre dossier spam, vos courriers indésirables, ou tout autre dossier pour voir si le message a été filtré par votre fournisseur de messagerie. </p>
     </div>
-    <hr />
+    <hr aria-hidden="true" />
     <form method="post" action="{% url 'registration_email' %}">
         {% csrf_token %}
         <input type="hidden" name="username" value="{{ username }}">

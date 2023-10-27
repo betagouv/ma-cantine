@@ -23,6 +23,7 @@ import BlogPage from "@/views/BlogsPage/BlogPage"
 import PartnersPage from "@/views/PartnersPage"
 import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
+import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
 import CGU from "@/views/CGU.vue"
 import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
@@ -54,6 +55,9 @@ import SiteMap from "@/views/SiteMap"
 import DeveloperPage from "@/views/DeveloperPage"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
+import TerritoryCanteens from "@/views/TerritoryCanteens"
+import VideoTutorial from "@/views/VideoTutorial"
+import MyProgress from "@/views/MyProgress"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -172,8 +176,8 @@ const routes = [
     sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
+    // if you change this path, update the visitor view count logic in the publication widget
     path: "/nos-cantines",
-    name: "CanteensPage",
     component: CanteensPage,
     children: [
       {
@@ -210,7 +214,6 @@ const routes = [
   },
   {
     path: "/blog",
-    name: "BlogsPage",
     component: BlogsPage,
     children: [
       {
@@ -236,7 +239,6 @@ const routes = [
   },
   {
     path: "/acteurs-de-l-eco-systeme",
-    name: "PartnersPage",
     component: PartnersPage,
     children: [
       {
@@ -255,6 +257,15 @@ const routes = [
         props: true,
       },
     ],
+  },
+  {
+    path: "/nouveau-acteur-de-l-ecosysteme",
+    name: "NewPartner",
+    component: NewPartner,
+    meta: {
+      title: "Nouvel acteur de l'éco-système",
+    },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/cgu",
@@ -557,15 +568,45 @@ const routes = [
       title: "Mesures de notre impact",
     },
   },
+  {
+    path: "/webinaires/:webinaireUrlComponent",
+    name: "VideoTutorial",
+    component: VideoTutorial,
+    props: true,
+  },
+  {
+    path: "/les-cantines-de-mon-territoire",
+    name: "TerritoryCanteens",
+    component: TerritoryCanteens,
+    meta: {
+      title: "Les cantines de mon territoire",
+      authenticationRequired: true,
+    },
+    beforeEnter: (_to, _from, next) => {
+      store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "ManagementPage" })
+    },
+  },
 ]
 
 if (window.ENABLE_DASHBOARD) {
   routes.push({
-    path: "/dashboard",
+    path: "/dashboard/:canteenUrlComponent",
     name: "DashboardManager",
     component: DashboardManager,
+    props: true,
     meta: {
       title: "Tableau de bord",
+      authenticationRequired: true,
+    },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
+  })
+  routes.push({
+    path: "/ma-progression/:canteenUrlComponent/:year/:measure",
+    name: "MyProgress",
+    component: MyProgress,
+    props: true,
+    meta: {
+      title: "Ma progression",
       authenticationRequired: true,
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,

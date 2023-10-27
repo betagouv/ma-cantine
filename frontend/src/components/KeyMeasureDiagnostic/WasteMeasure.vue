@@ -279,6 +279,9 @@ export default {
           id: this.canteen.id,
           payload: { reservationExpeParticipant: checked },
         })
+        .then((canteen) => {
+          this.$emit("update:canteen", canteen)
+        })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
 
       if (checked) this.showExpeModal = true
@@ -298,9 +301,5 @@ export default {
 .explanation {
   color: grey;
   font-size: 0.8em;
-}
-
-fieldset {
-  border: none;
 }
 </style>

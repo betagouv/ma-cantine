@@ -427,6 +427,30 @@ export default Object.freeze({
       icon: "$checkbox-circle-fill",
     },
   ],
+  CentralKitchenImportLevels: [
+    {
+      key: "CC_SIMPLE",
+      urlSlug: "cuisine-centrale-diagnostics-simples",
+      title: "Mettre à jour vos satellites et renseigner des diagnostics simples",
+      description:
+        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement simplifiées au niveau de la cuisine centrale et de lister vos cantines satellites seulement avec leurs données d'établissement. Les données d'approvisionnement restent donc seulement nécessaires pour les cuisines centrales.",
+      label: "Cuisine centrale avec diagnostic simple",
+      help:
+        "Vous voulez renseigner vos satellites et vous connaissez les valeurs totaux, bio, et de qualité et durable",
+      icon: "$bar-chart-box-fill",
+    },
+    {
+      key: "CC_COMPLETE",
+      urlSlug: "cuisine-centrale-diagnostics-complets",
+      title: "Mettre à jour vos satellites et renseigner des diagnostics complets",
+      description:
+        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement complètes au niveau de la cuisine centrale et de lister vos cantines satellites seulement avec leurs données d'établissement. Les données d'approvisionnement restent donc seulement nécessaires pour les cuisines centrales.",
+      label: "Cuisine centrale avec diagnostic complet",
+      help:
+        "Vous voulez renseigner vos satellites et vous connaissez les labels et les familles de produits de vos achats",
+      icon: "$checkbox-circle-fill",
+    },
+  ],
   MiscLabelIcons: {
     FERMIER: {
       icon: "mdi-cow",
@@ -487,10 +511,12 @@ export default Object.freeze({
     {
       key: "ALL",
       label: "Je rentre les données concernant toutes les mesures EGAlim pour mes cantines satellites",
+      shortLabel: "Les données sur l’ensemble des mesures EGAlim",
     },
     {
       key: "APPRO",
       label: "Je rentre seulement les données d'approvisionnement pour mes cantines satellites",
+      shortLabel: "Les données d’approvisionnement seulement",
     },
   ],
   SectorCategoryTranslations: {
@@ -502,5 +528,23 @@ export default Object.freeze({
     leisure: "Loisirs",
     enterprise: "Entreprise",
     inconnu: "Inconnu",
+  },
+  Levels: {
+    UNKNOWN: {
+      text: "INCONNU",
+      colorClass: "grey--text text--darken-2",
+    },
+    BEGINNER: {
+      text: "NOVICE",
+      colorClass: "grey--text text--darken-2",
+    },
+    ADVANCED: {
+      text: "AVANCÉ",
+      colorClass: "blue--text text--darken-3",
+    },
+    EXPERT: {
+      text: "EXPERT",
+      colorClass: "green--text text--darken-4",
+    },
   },
 })

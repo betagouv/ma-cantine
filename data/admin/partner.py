@@ -8,6 +8,8 @@ class PartnerForm(forms.ModelForm):
         widgets = {
             "name": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "short_description": forms.Textarea(attrs={"cols": 55, "rows": 2}),
+            "contact_name": forms.Textarea(attrs={"cols": 55, "rows": 1}),
+            "contact_message": forms.Textarea(attrs={"cols": 55, "rows": 2}),
         }
 
 
@@ -18,7 +20,6 @@ def publish(modeladmin, request, queryset):
 
 @admin.register(Partner)
 class PartnerAdmin(admin.ModelAdmin):
-
     form = PartnerForm
     fields = (
         "name",
@@ -28,11 +29,16 @@ class PartnerAdmin(admin.ModelAdmin):
         "image",
         "website",
         "types",
-        "departments",
         "national",
-        "free",
+        "departments",
+        "sector_categories",
+        "gratuity_option",
         "economic_model",
         "published",
+        "contact_name",
+        "contact_email",
+        "contact_message",
+        "contact_phone_number",
     )
     filter_vertical = ("types",)
     list_display = (
@@ -41,7 +47,7 @@ class PartnerAdmin(admin.ModelAdmin):
         "creation_date",
         "modification_date",
     )
-    list_filter = ("published",)
+    list_filter = ("published", "types", "sector_categories")
     actions = [publish]
 
     def published_state(self, obj):

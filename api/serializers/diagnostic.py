@@ -168,6 +168,7 @@ NON_APPRO_FIELDS = (
 
 META_FIELDS = (
     "id",
+    "canteen_id",
     "year",
     "creation_date",
     "modification_date",

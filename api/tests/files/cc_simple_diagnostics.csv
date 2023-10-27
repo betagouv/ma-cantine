@@ -1,0 +1,8 @@
+SIRET,Nom de la cantine,INSEE,Code postal,SIRET cuisine centrale,Nombre de repas par jour,Nombre de repas par an,Secteurs,Mode de production,Mode de gestion,Secteur économique,Gestionnaires additionnels,Nombre de cantines satellites,Année du diagnostic,Total,Bio,SIQO,Environnement,Autre egalim,Viandes,Viandes egalim,Viandes france,Poissons,Poissons egalim
+29969025300230,CC Ma Cantine,69123,69001,,700,14000,,central,conceded,public,,3,2021,10500,500,100.10,0,0,0,0,0,0,0
+96463820453707,CC Ma deuxième Cantine,69123,69001,,790,14000,,central,conceded,public,,2,2022,30300,1000,900,800,700,6000,500,400,3000,200
+38589540005962,Sat Ma Cantine 1,69123,69001,29969025300230,20,400,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
+30218342886548,Sat Ma Cantine 2,69123,69001,29969025300230,30,500,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
+27309825823572,Sat Ma Cantine 3,69123,69001,29969025300230,40,600,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
+65436828882140,Sat Ma deuxième Cantine 1,69123,69001,96463820453707,50,700,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
+21231178258956,Sat Ma deuxième Cantine 2,69123,69001,96463820453707,60,800,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,

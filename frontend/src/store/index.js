@@ -49,6 +49,7 @@ export default new Vuex.Store({
     initialDataLoaded: false,
     upcomingCommunityEvents: [],
     videoTutorials: [],
+    partnerTypes: [],
 
     notification: {
       message: "",
@@ -148,6 +149,9 @@ export default new Vuex.Store({
     SET_SHOW_WEBINAIRE_BANNER(state, showWebinaireBanner) {
       state.showWebinaireBanner = showWebinaireBanner
     },
+    SET_PARTNER_TYPES(state, types) {
+      state.partnerTypes = types
+    },
   },
 
   actions: {
@@ -190,6 +194,17 @@ export default new Vuex.Store({
         })
     },
 
+    fetchPartnerTypes(context) {
+      return fetch("/api/v1/partnerTypes/")
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_PARTNER_TYPES", response)
+        })
+        .catch((e) => {
+          console.log("fetchPartnerTypes", e)
+        })
+    },
+
     fetchUserCanteenPreviews(context) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch("/api/v1/canteenPreviews/")
@@ -204,9 +219,10 @@ export default new Vuex.Store({
         })
     },
 
-    fetchBlogPosts(context, { limit = 6, offset, tag }) {
+    fetchBlogPosts(context, { limit = 6, offset, tag, search }) {
       let url = `/api/v1/blogPosts/?limit=${limit}&offset=${offset}`
       if (tag) url += `&tag=${tag}`
+      if (search) url += `&search=${search}`
       return fetch(url)
         .then(verifyResponse)
         .then((response) => {
@@ -215,14 +231,24 @@ export default new Vuex.Store({
     },
 
     fetchInitialData(context) {
-      return Promise.all([
-        context.dispatch("fetchLoggedUser"),
-        context.dispatch("fetchSectors"),
-        context.dispatch("fetchUpcomingCommunityEvents"),
-        context.dispatch("fetchVideoTutorials"),
-      ])
-        .then(() => {
-          if (context.state.loggedUser) return context.dispatch("fetchUserCanteenPreviews")
+      context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      context.commit("SET_VIDEO_TUTORIALS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
+      return fetch("/api/v1/initialData/")
+        .then(verifyResponse)
+        .then((response) => {
+          context.commit("SET_LOGGED_USER", response.loggedUser)
+          context.commit("SET_SECTORS", response.sectors)
+          context.commit("SET_PARTNER_TYPES", response.partnerTypes)
+          context.commit("SET_UPCOMING_COMMUNITY_EVENTS", response.communityEvents)
+          context.commit("SET_VIDEO_TUTORIALS", response.videoTutorials)
+          context.commit("SET_USER_CANTEEN_PREVIEWS", response.canteenPreviews)
+
+          context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("SET_COMMUNITY_EVENTS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
+          context.commit("SET_VIDEO_TUTORIALS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
         })
         .then(() => {
           const criticalLoadingStatuses = ["canteensLoadingStatus"]
@@ -449,7 +475,14 @@ export default new Vuex.Store({
     importDiagnostics(context, { importLevel, payload }) {
       let form = new FormData()
       form.append("file", payload.file)
-      return fetch(`/api/v1/importDiagnostics/${importLevel === "COMPLETE" ? "complete" : "simple"}/`, {
+      const importLevels = {
+        COMPLETE: "complete",
+        SIMPLE: "simple",
+        NONE: "simple",
+        CC_SIMPLE: "ccSimple",
+        CC_COMPLETE: "ccComplete",
+      }
+      return fetch(`/api/v1/importDiagnostics/${importLevels[importLevel]}/`, {
         method: "POST",
         headers: {
           "X-CSRFToken": window.CSRF_TOKEN || "",
@@ -828,6 +861,17 @@ export default new Vuex.Store({
 
     setShowWebinaireBanner(context, showWebinaireBanner) {
       context.commit("SET_SHOW_WEBINAIRE_BANNER", showWebinaireBanner)
+    },
+
+    createPartner(context, { payload }) {
+      return fetch("/api/v1/partners/", { method: "POST", headers, body: JSON.stringify(payload) })
+        .then(verifyResponse)
+        .then((response) => {
+          return response
+        })
+        .catch((e) => {
+          throw e
+        })
     },
   },
 

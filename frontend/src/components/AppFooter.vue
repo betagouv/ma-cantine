@@ -12,22 +12,56 @@
           <p>
             « ma cantine » est un outil pour accompagner les acteurs de la restauration collective à proposer une
             alimentation de qualité, saine et durable.
-            <a href="https://beta.gouv.fr/startups/ma-cantine-egalim.html" class="grey--text text--darken-3">
+            <a
+              href="https://beta.gouv.fr/startups/ma-cantine-egalim.html"
+              class="grey--text text--darken-3"
+              target="_blank"
+              rel="noopener"
+            >
               Découvrez notre page produit
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
           </p>
           <p>
             Le code source est ouvert et les contributions sont bienvenues.
-            <a href="https://github.com/betagouv/ma-cantine/" class="grey--text text--darken-3">
+            <a
+              href="https://github.com/betagouv/ma-cantine/"
+              class="grey--text text--darken-3"
+              target="_blank"
+              rel="noopener"
+            >
               Voir le code source
+              <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
+            </a>
+            . Vous pouvez également obtenir des informations concernant la
+            <a href="https://updown.io/2l7f" class="grey--text text--darken-3" target="_blank" rel="noopener">
+              disponibilité de la plateforme
+              <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
+            </a>
+            ,
+            <router-link :to="{ name: 'ImpactMeasuresPage' }" class="grey--text text--darken-3">
+              mesures de notre impact
+            </router-link>
+            , et
+            <a
+              href="https://stats.data.gouv.fr/index.php?idSite=162"
+              class="grey--text text--darken-3"
+              target="_blank"
+              rel="noopener"
+            >
+              l'usage du site
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
           </p>
           <!-- ml-n1 here makes up for the a11y need of ::before on li elements for them to be recognised by all screen readers -->
           <ul class="d-flex justify-space-between font-weight-bold pl-0 ml-n1 flex-wrap link-group">
             <li class="mr-1 mt-2" v-for="link in govLinks" :key="link">
-              <a class="grey--text text--darken-4 font-weight-bold" :href="`https://${link}`">
+              <a
+                class="grey--text text--darken-4 font-weight-bold"
+                :href="`https://${link}`"
+                target="_blank"
+                rel="noopener"
+              >
                 {{ link }}
               </a>
               <v-icon small color="grey darken-4">mdi-open-in-new</v-icon>
@@ -35,17 +69,22 @@
           </ul>
         </v-col>
       </v-row>
-      <v-divider v-if="!showSmallFooter" class="mt-6"></v-divider>
+      <v-divider v-if="!showSmallFooter" class="mt-6 mb-2"></v-divider>
       <ul class="d-flex justify-sm-space-between flex-wrap link-group pl-0">
-        <li v-for="(link, index) in bottomLinks" :key="link.text" class="d-flex">
-          <v-btn class="caption px-0" :to="link.to" text plain>{{ link.text }}</v-btn>
-          <div class="footer-divider mt-3 mx-4" v-if="index < bottomLinks.length - 1"></div>
+        <li v-for="(link, index) in bottomLinks" :key="link.text" class="d-flex my-1">
+          <router-link class="caption px-0 grey--text text--darken-2" :to="link.to">{{ link.text }}</router-link>
+          <div class="footer-divider mx-4" v-if="index < bottomLinks.length - 1"></div>
         </li>
         <v-spacer></v-spacer>
       </ul>
       <p class="caption mt-2 mb-0 grey--text text--darken-2">
         Sauf mention contraire, tous les contenus de ce site sont sous
-        <a href="https://github.com/betagouv/ma-cantine/blob/staging/LICENSE" class="grey--text text--darken-2">
+        <a
+          href="https://github.com/betagouv/ma-cantine/blob/staging/LICENSE"
+          class="grey--text text--darken-2"
+          target="_blank"
+          rel="noopener"
+        >
           licence MIT
           <v-icon small color="grey-darken-2" class="ml-1">mdi-open-in-new</v-icon>
         </a>
@@ -97,7 +136,7 @@ export default {
 .footer-divider {
   background-color: #d7d8de;
   width: 1px;
-  height: 16px;
+  height: inherit;
 }
 .tab-bar-spacer {
   height: 56px;
@@ -111,5 +150,9 @@ export default {
 }
 .link-group > li > a {
   text-decoration: none;
+}
+.link-group > li > a:hover,
+.link-group > li > a:focus {
+  text-decoration: underline;
 }
 </style>

@@ -204,7 +204,7 @@
             :disabled="!showNonApproPanels"
           >
             <v-form ref="waste" v-model="formIsValid.waste">
-              <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen="originalCanteen" />
+              <WasteMeasure :diagnostic="diagnostic" :readonly="hasActiveTeledeclaration" :canteen.sync="canteen" />
             </v-form>
           </DiagnosticExpansionPanel>
 
@@ -219,7 +219,7 @@
               <DiversificationMeasure
                 :diagnostic="diagnostic"
                 :readonly="hasActiveTeledeclaration"
-                :canteen="originalCanteen"
+                :canteen.sync="canteen"
               />
             </v-form>
           </DiagnosticExpansionPanel>
@@ -562,8 +562,8 @@ export default {
     },
     dataDelegatedNotice() {
       if (this.isCentralCanteen || this.showApproPanel) return null
-      const centralKitchen = this.originalCanteen.centralKitchenName
-        ? `« ${this.originalCanteen.centralKitchenName} »`
+      const centralKitchen = this.originalCanteen.centralKitchen?.name
+        ? `« ${this.originalCanteen.centralKitchen.name} »`
         : ""
       if (!this.showApproPanel && this.showNonApproPanels) {
         return {

@@ -1,50 +1,58 @@
 <template>
-  <v-row>
-    <v-col cols="12" md="4">
-      <v-card outlined>
-        <v-card-title class="text-body-1 font-weight-bold">
-          <v-icon class="mr-2" size="20" color="red">mdi-food-apple</v-icon>
-          Qualité des produits
-        </v-card-title>
-      </v-card>
-    </v-col>
-    <v-col cols="12" md="4">
+  <v-row style="position: relative;">
+    <v-col cols="12" md="4" class="d-flex flex-column">
       <v-row>
-        <v-col cols="12">
-          <v-card outlined>
-            <v-card-title class="text-body-1 font-weight-bold">
-              <v-icon class="mr-2" size="20" color="orange darken-2">mdi-offer</v-icon>
-              Lutte contre le gaspillage
-            </v-card-title>
-          </v-card>
+        <v-col cols="8">
+          <h2 class="fr-h3 mb-0 mt-1 align-center">
+            Ma progression
+          </h2>
         </v-col>
-        <v-col cols="12">
-          <v-card outlined>
-            <v-card-title class="text-body-1 font-weight-bold">
-              <v-icon class="mr-2" size="20" color="blue darken-1">mdi-weather-windy</v-icon>
-              Interdiction du plastique
-            </v-card-title>
-          </v-card>
+        <v-col cols="4">
+          <DsfrSelect v-model="year" :items="allowedYears" hide-details="auto" placeholder="Année" />
         </v-col>
       </v-row>
+      <div>
+        <DataInfoBadge
+          :currentYear="isCurrentYear"
+          :missingData="needsData"
+          :readyToTeledeclare="readyToTeledeclare"
+          class="mt-4"
+        />
+        <hr aria-hidden="true" role="presentation" class="my-6" />
+      </div>
+      <ApproSegment
+        :purchases="null"
+        :diagnostic="approDiagnostic"
+        :lastYearDiagnostic="lastYearDiagnostic"
+        :canteen="canteen"
+        :year="year"
+      />
     </v-col>
-    <v-col cols="12" md="4">
-      <v-row>
-        <v-col cols="12">
-          <v-card outlined>
-            <v-card-title class="text-body-1 font-weight-bold">
-              <v-icon class="mr-2" size="20" color="green darken-2">$leaf-fill</v-icon>
-              Diversification des menus
-            </v-card-title>
-          </v-card>
+    <v-col cols="12" md="8">
+      <v-row style="position: relative; height: 100%" class="ma-0">
+        <div class="overlay d-flex align-center justify-center" v-if="!otherMeasuresDiagnostic">
+          <v-btn
+            large
+            color="primary"
+            :to="{
+              name: 'MyProgress',
+              params: { canteenUrlComponent, year: year, measure: firstActionableMeasure },
+            }"
+          >
+            <span class="fr-text-lg">Faire le bilan {{ year }}</span>
+          </v-btn>
+        </div>
+        <v-col cols="12" md="6" class="pt-md-0">
+          <FoodWasteCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
-        <v-col cols="12">
-          <v-card outlined>
-            <v-card-title class="text-body-1 font-weight-bold">
-              <v-icon class="mr-2" size="20" color="amber darken-2">mdi-bullhorn</v-icon>
-              Information des convives
-            </v-card-title>
-          </v-card>
+        <v-col cols="12" md="6" class="pt-md-0">
+          <DiversificationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
+        </v-col>
+        <v-col cols="12" md="6" class="pb-md-0">
+          <NoPlasticCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
+        </v-col>
+        <v-col cols="12" md="6" class="pb-md-0">
+          <InformationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
       </v-row>
     </v-col>
@@ -52,7 +60,113 @@
 </template>
 
 <script>
+import DsfrSelect from "@/components/DsfrSelect"
+import { lastYear, diagnosticYears, hasDiagnosticApproData } from "@/utils"
+import FoodWasteCard from "./FoodWasteCard"
+import DiversificationCard from "./DiversificationCard"
+import NoPlasticCard from "./NoPlasticCard"
+import InformationCard from "./InformationCard"
+import DataInfoBadge from "./DataInfoBadge"
+import ApproSegment from "./ApproSegment"
+
 export default {
   name: "EgalimProgression",
+  components: {
+    DsfrSelect,
+    FoodWasteCard,
+    DiversificationCard,
+    NoPlasticCard,
+    InformationCard,
+    DataInfoBadge,
+    ApproSegment,
+  },
+  props: {
+    canteen: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      lastYear: lastYear(),
+      year: lastYear(),
+      allowedYears: diagnosticYears().map((year) => ({ text: year, value: year })),
+    }
+  },
+  computed: {
+    canteenDiagnostic() {
+      return this.canteen.diagnostics.find((x) => x.year === this.year)
+    },
+    lastYearDiagnostic() {
+      return this.canteen.diagnostics.find((x) => x.year === this.lastYear)
+    },
+    centralDiagnostic() {
+      if (this.canteen.productionType === "site_cooked_elsewhere") {
+        const ccDiag = this.canteen.centralKitchenDiagnostics?.find((x) => x.year === this.year)
+        return ccDiag
+      }
+      return null
+    },
+    approDiagnostic() {
+      return this.centralDiagnostic || this.canteenDiagnostic
+    },
+    otherMeasuresDiagnostic() {
+      if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
+        return this.centralDiagnostic
+      }
+      return this.canteenDiagnostic
+    },
+    firstActionableMeasure() {
+      if (
+        this.canteen.productionType === "site_cooked_elsewhere" &&
+        this.centralDiagnostic?.centralKitchenDiagnosticMode === "APPRO"
+      ) {
+        return "gaspillage-alimentaire"
+      }
+      return "qualite-des-produits"
+    },
+    hasPurchases() {
+      return false
+    },
+    canteenUrlComponent() {
+      return this.$store.getters.getCanteenUrlComponent(this.canteen)
+    },
+    isCurrentYear() {
+      return this.year === lastYear() + 1
+    },
+    needsData() {
+      return !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)
+    },
+    readyToTeledeclare() {
+      const inTdCampaign = window.ENABLE_TELEDECLARATION && this.year === lastYear()
+      if (!inTdCampaign) return false
+      if (this.centralDiagnostic) {
+        const noNeedToTd = this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
+        const requiresOtherData = !noNeedToTd
+        const hasOtherData = !!this.canteenDiagnostic
+        return requiresOtherData && hasOtherData
+      }
+      return this.canteenDiagnostic && hasDiagnosticApproData(this.canteenDiagnostic)
+    },
+  },
 }
 </script>
+
+<style scoped>
+.overlay {
+  position: absolute;
+  top: 4%;
+  left: 5%;
+  z-index: 1;
+  background: rgba(245, 245, 254, 0.2);
+  width: 90%;
+  height: 92%;
+  backdrop-filter: blur(7px);
+  border: 1.5px dashed #000091;
+  border-radius: 5px;
+  color: #3a3a3a;
+}
+.v-card.dsfr {
+  border: solid 1.5px #dddddd;
+}
+</style>

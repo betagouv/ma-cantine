@@ -5,6 +5,7 @@
     <v-row class="my-4 mx-0">
       <v-icon large class="mr-4" color="black">{{ type.icon }}</v-icon>
       <h1>{{ type.title }}</h1>
+      <p v-if="type.description">{{ type.description }}</p>
     </v-row>
     <h2 class="my-4">1. Préparer le fichier</h2>
     <p>
@@ -184,9 +185,35 @@
         </tbody>
       </template>
     </v-simple-table>
+    <p v-if="ccDocumentation && ccDocumentation.length > 0">
+      Les champs suivants concernent les cuisines centrales
+    </p>
+    <v-simple-table class="mt-0 mb-6" v-if="ccDocumentation.length && ccDocumentation.length > 0">
+      <template v-slot:default>
+        <thead>
+          <tr>
+            <th>Colonne</th>
+            <th>Champ</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Exemple</th>
+            <th>Obligatoire</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(field, idx) in ccDocumentation" :key="idx">
+            <td class="text-center">{{ sharedDocumentation.length + idx + 1 }}</td>
+            <td>{{ field.name }}</td>
+            <td v-html="field.description"></td>
+            <td>{{ field.type }}</td>
+            <td>{{ field.example }}</td>
+            <td class="text-center">{{ field.optional ? "✘" : "✔" }}</td>
+          </tr>
+        </tbody>
+      </template>
+    </v-simple-table>
     <p>
-      Les champs suivants changent selon le type de diagnostic choisit. À terme, seule le diagnostic complet sera
-      accepté.
+      Les champs suivants concernent les données d'approvisionnement.
     </p>
     <v-simple-table class="my-2" v-if="diagnosticDocumentation.length">
       <template v-slot:default>
@@ -202,7 +229,7 @@
         </thead>
         <tbody>
           <tr v-for="(field, idx) in diagnosticDocumentation" :key="idx">
-            <td class="text-center">{{ sharedDocumentation.length + idx + 1 }}</td>
+            <td class="text-center">{{ sharedDocumentation.length + ccDocumentation.length + idx + 1 }}</td>
             <td>{{ field.name }}</td>
             <td v-html="field.description"></td>
             <td>{{ field.type }}</td>
@@ -237,8 +264,10 @@ export default {
   props: ["importUrlSlug"],
   data() {
     const user = this.$store.state.loggedUser
+    const importLevels = Constants.DiagnosticImportLevels.concat(Constants.CentralKitchenImportLevels)
     return {
-      importLevel: Constants.DiagnosticImportLevels.find((x) => x.urlSlug === this.importUrlSlug)["key"],
+      importLevels,
+      importLevel: importLevels.find((x) => x.urlSlug === this.importUrlSlug)["key"],
       file: undefined,
       canteens: undefined,
       canteenCount: undefined,
@@ -249,13 +278,13 @@ export default {
       importInProgress: false,
       sharedDocumentation: [
         {
-          name: "SIRET de la cuisine-site",
+          name: "SIRET de l'établissement",
           description: "Ce SIRET doit être unique car il correspond à un lieu physique.",
           type: "14 chiffres, avec ou sans espaces",
           example: "000 000 000 00000",
         },
         {
-          name: "Nom de la cantine",
+          name: "Nom de l'établissement",
           example: "Ma Cantine",
           type: "Texte libre",
         },
@@ -333,7 +362,20 @@ export default {
   },
   computed: {
     type() {
-      return Constants.DiagnosticImportLevels.find((level) => level.key === this.importLevel)
+      return this.importLevels.find((level) => level.key === this.importLevel)
+    },
+    ccDocumentation() {
+      if (this.importLevel !== "CC_SIMPLE" && this.importLevel !== "CC_COMPLETE") return []
+      return [
+        {
+          name: "Nombre de cantines satellites",
+          description:
+            "Nombre de cantines/lieux de service à qui je fournis des repas. Obligatoire pour les cuisines centrales.",
+          type: "Chiffre entier",
+          example: "14",
+          optional: true,
+        },
+      ]
     },
     diagnosticDocumentation() {
       if (this.importLevel === "NONE") return []
@@ -364,7 +406,7 @@ export default {
           example: "1234.99",
         },
       ]
-      if (this.importLevel === "COMPLETE") {
+      if (this.importLevel === "COMPLETE" || this.importLevel === "CC_COMPLETE") {
         valuesArray = [
           "La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
           "La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total",
@@ -500,6 +542,16 @@ export default {
         csv: "CSV",
       }
       const importSizes = {
+        CC_COMPLETE: {
+          csv: "5.5 ko",
+          ods: "21 ko",
+          xlsx: "9.4 ko",
+        },
+        CC_SIMPLE: {
+          csv: "782 o",
+          ods: "17.1 ko",
+          xlsx: "6 ko",
+        },
         COMPLETE: {
           csv: "5 Ko",
           ods: "15 Ko",
@@ -518,6 +570,8 @@ export default {
       }
       let filename = "/static/documents/"
       if (this.importLevel === "COMPLETE") filename = filename + "fichier_exemple_complet_ma_cantine"
+      else if (this.importLevel === "CC_SIMPLE") filename = filename + "fichier_exemple_ma_cantine_cc_simple"
+      else if (this.importLevel === "CC_COMPLETE") filename = filename + "fichier_exemple_ma_cantine_cc_complet"
       else if (this.importLevel === "NONE") filename = filename + "fichier_exemple_ma_cantine_no_diag"
       else filename = filename + "fichier_exemple_ma_cantine"
       return ["xlsx", "ods", "csv"].map((fileType) => ({
@@ -531,6 +585,8 @@ export default {
         SIMPLE: "l'import simple",
         COMPLETE: "l'import complet",
         NONE: "l'import de cantines seulement",
+        CC_SIMPLE: "la mise à jour des satellites et l'import simple",
+        CC_COMPLETE: "la mise à jour des satellites et l'import complet",
       }[this.importLevel]
     },
   },
@@ -575,14 +631,14 @@ export default {
     },
   },
   beforeRouteEnter(to, from, next) {
-    const legacyUrlKeys = Constants.DiagnosticImportLevels.map((x) => ({ key: x.key, slug: x.urlSlug }))
+    const importLevels = Constants.DiagnosticImportLevels.concat(Constants.CentralKitchenImportLevels)
+    const legacyUrlKeys = importLevels.map((x) => ({ key: x.key, slug: x.urlSlug }))
     for (let i = 0; i < legacyUrlKeys.length; i++) {
       if (to.params.importUrlSlug === legacyUrlKeys[i].key)
         return next({ name: "DiagnosticImportPage", params: { importUrlSlug: legacyUrlKeys[i].slug } })
     }
 
-    if (Constants.DiagnosticImportLevels.map((x) => x.urlSlug).indexOf(to.params.importUrlSlug) === -1)
-      return next({ name: "NotFound" })
+    if (importLevels.map((x) => x.urlSlug).indexOf(to.params.importUrlSlug) === -1) return next({ name: "NotFound" })
 
     return next()
   },

@@ -2,6 +2,8 @@
 
 ## Mise en place de l'environnement dev
 
+Please note that the `staging` and `main` branches are protected and all commits must come through a pull request.
+
 ### À installer localement
 
 - [Python3](https://www.python.org/downloads/) (de préference 3.8)
@@ -91,6 +93,7 @@ MONCOMPTEPRO_CLIENT_ID= Optionnel - Client ID utilisé pour l'authentification v
 MONCOMPTEPRO_SECRET= Optionnel - Secret utilisé pour l'authentification via [MonComptePro](https://github.com/betagouv/moncomptepro).
 MONCOMPTEPRO_CONFIG= Optionnel - Url de configuration utilisé pour l'authentification via [MonComptePro](https://github.com/betagouv/moncomptepro). Par exemple : `https://app-test.moncomptepro.beta.gouv.fr/.well-known/openid-configuration`
 MAX_DAYS_HISTORICAL_RECORDS= Optionnel - Flag pour indiquer le nombre de jours pendant lequels on garde l'historique des modèles. Utilisé lors d'une tâche Celery.
+CSV_PURCHASE_CHUNK_LINES= Optionnel - Définit le nombre de lignes dans chaque chunk pour l'import des achats. Le choix par défaut est de 81920 ce qui représente en moyenne des chunks de 3Mb.
 ```
 
 ### Activer les feature flags

@@ -281,6 +281,7 @@ export default {
       return validators
     },
     userCanteens() {
+      if (!this.isAuthenticated) return []
       const canteens = this.$store.state.userCanteenPreviews
       return canteens.sort((a, b) => {
         return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0

@@ -1110,16 +1110,19 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_get_central_kitchen_name(self):
+    def test_get_central_kitchen(self):
         central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
-        satellite = CanteenFactory.create(central_producer_siret=central_kitchen.siret)
+        satellite = CanteenFactory.create(
+            central_producer_siret=central_kitchen.siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+        )
         satellite.managers.add(authenticate.user)
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
-        self.assertEqual(body["centralKitchenName"], central_kitchen.name)
+        self.assertEqual(body["centralKitchen"]["name"], central_kitchen.name)
+        self.assertEqual(body["centralKitchen"]["id"], central_kitchen.id)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
@@ -1165,3 +1168,61 @@ class TestCanteenApi(APITestCase):
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
+
+    @authenticate
+    def test_territory_canteens_list(self):
+        """
+        Elected profiles should get information on canteens in their
+        geographical area even if they are not the managers
+        """
+
+        # Set an elected profile
+        user = authenticate.user
+        user.is_elected_official = True
+        user.departments = ["01", "02"]
+        user.save()
+
+        # Create canteens
+        published_canteen = CanteenFactory.create(
+            department="01", publication_status=Canteen.PublicationStatus.PUBLISHED
+        )
+        unpublished_canteen = CanteenFactory.create(
+            department="02", publication_status=Canteen.PublicationStatus.DRAFT
+        )
+        out_of_place_canteen = CanteenFactory.create(department="03")
+
+        # Make request
+        response = self.client.get(reverse("territory_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()["results"]
+
+        self.assertEqual(len(body), 2)
+        ids = list(map(lambda x: x["id"], body))
+
+        self.assertIn(published_canteen.id, ids)
+        self.assertIn(unpublished_canteen.id, ids)
+        self.assertNotIn(out_of_place_canteen.id, ids)
+
+    @authenticate
+    def test_not_elected_official_territory_canteens_list(self):
+        """
+        Profiles not enabled as "elected" should not get information on
+        canteens via the territory_canteens API endpoint
+        """
+
+        # Set an elected profile
+        user = authenticate.user
+        user.is_elected_official = False
+        user.save()
+
+        # Make request
+        response = self.client.get(reverse("territory_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_unauthenticated_territory_canteens_list(self):
+        """
+        Profiles not authenticated should not be able to use the endpoint
+        territory_canteens
+        """
+        response = self.client.get(reverse("territory_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

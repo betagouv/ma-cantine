@@ -12,6 +12,9 @@ from api.views import (
     CanteenPurchasesSummaryView,
     DiagnosticsFromPurchasesView,
     UsernameSuggestionView,
+    ImportSimpleCentralKitchenView,
+    ImportCompleteCentralKitchenView,
+    TerritoryCanteensListView,
 )
 from api.views import UpdateUserView, UserCanteensView, CanteenStatisticsView
 from api.views import PublishedCanteensView, PublishManyCanteensView, PublishedCanteenSingleView
@@ -22,12 +25,14 @@ from api.views import AddManagerView, RemoveManagerView
 from api.views import ImportSimpleDiagnosticsView, ImportCompleteDiagnosticsView
 from api.views import TeledeclarationCreateView, TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
-from api.views import UserCanteenPreviews, CanteenLocationsView, PartnerView, PartnersView
+from api.views import UserCanteenPreviews, CanteenLocationsView
+from api.views import PartnerView, PartnersView, PartnerTypeListView
 from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView, ImportPurchasesView
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
 from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, UndoClaimCanteenView, SatelliteListCreateView
 from api.views import ActionableCanteensListView, ActionableCanteenRetrieveView
 from api.views import CanteenStatusView, VideoTutorialListView, DiagnosticsToTeledeclareListView
+from api.views import InitialDataView
 
 
 urlpatterns = {
@@ -71,6 +76,7 @@ urlpatterns = {
     ),
     path("canteenStatistics/", CanteenStatisticsView.as_view(), name="canteen_statistics"),
     path("sectors/", SectorListView.as_view(), name="sectors_list"),
+    path("partnerTypes/", PartnerTypeListView.as_view(), name="partner_types_list"),
     path("blogPosts/", BlogPostsView.as_view(), name="blog_posts_list"),
     path("blogPosts/<int:pk>", BlogPostView.as_view(), name="single_blog_post"),
     path("partners/", PartnersView.as_view(), name="partners_list"),
@@ -98,6 +104,12 @@ urlpatterns = {
     ),
     path("importDiagnostics/simple/", ImportSimpleDiagnosticsView.as_view(), name="import_diagnostics"),
     path("importDiagnostics/complete/", ImportCompleteDiagnosticsView.as_view(), name="import_complete_diagnostics"),
+    path("importDiagnostics/ccSimple/", ImportSimpleCentralKitchenView.as_view(), name="import_cc_diagnostics"),
+    path(
+        "importDiagnostics/ccComplete/",
+        ImportCompleteCentralKitchenView.as_view(),
+        name="import_cc_complete_diagnostics",
+    ),
     path("emailDiagnosticImportFile/", EmailDiagnosticImportFileView.as_view(), name="email_diagnostic_file"),
     path(
         "teledeclaration/",
@@ -175,6 +187,8 @@ urlpatterns = {
     ),
     path("canteenStatus/siret/<str:siret>", CanteenStatusView.as_view(), name="canteen_status"),
     path("videoTutorials/", VideoTutorialListView.as_view(), name="video_tutorials"),
+    path("initialData/", InitialDataView.as_view(), name="initial_data"),
+    path("territoryCanteens/", TerritoryCanteensListView.as_view(), name="territory_canteens"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -167,22 +167,25 @@ export default {
           })
         })
     },
+    loadCanteen() {
+      const previousIdVersion = this.canteenUrlComponent.indexOf("--") === -1
+      const id = previousIdVersion ? this.canteenUrlComponent : this.canteenUrlComponent.split("--")[0]
+      return fetch(`/api/v1/publishedCanteens/${id}`)
+        .then((response) => {
+          if (response.status != 200) throw new Error()
+          response.json().then(this.setCanteen)
+        })
+        .catch(() => {
+          this.$store.dispatch("notify", {
+            message: "Nous n'avons pas trouvé cette cantine",
+            status: "error",
+          })
+          this.$router.push({ name: "CanteensHome" })
+        })
+    },
   },
   beforeMount() {
-    const previousIdVersion = this.canteenUrlComponent.indexOf("--") === -1
-    const id = previousIdVersion ? this.canteenUrlComponent : this.canteenUrlComponent.split("--")[0]
-    return fetch(`/api/v1/publishedCanteens/${id}`)
-      .then((response) => {
-        if (response.status != 200) throw new Error()
-        response.json().then(this.setCanteen)
-      })
-      .catch(() => {
-        this.$store.dispatch("notify", {
-          message: "Nous n'avons pas trouvé cette cantine",
-          status: "error",
-        })
-        this.$router.push({ name: "CanteensHome" })
-      })
+    this.loadCanteen()
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -191,6 +194,12 @@ export default {
         vm.canteensHomeBacklink = from
       }
     })
+  },
+  watch: {
+    canteenUrlComponent() {
+      this.canteen = null
+      this.loadCanteen()
+    },
   },
 }
 </script>

@@ -26,6 +26,7 @@ from .canteen import (  # noqa: F401
     ActionableCanteensListView,
     ActionableCanteenRetrieveView,
     CanteenStatusView,
+    TerritoryCanteensListView,
 )
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
@@ -36,8 +37,11 @@ from .diagnostic import (  # noqa: F401
 from .diagnosticimport import (  # noqa: F401
     ImportSimpleDiagnosticsView,
     ImportCompleteDiagnosticsView,
+    ImportSimpleCentralKitchenView,
+    ImportCompleteCentralKitchenView,
 )
 from .sector import SectorListView  # noqa: F401
+from .partnertype import PartnerTypeListView  # noqa: F401
 from .blog import BlogPostsView, BlogPostView  # noqa: F401
 from .subscription import SubscribeNewsletter  # noqa: F401
 from .teledeclaration import (  # noqa: F401
@@ -64,3 +68,4 @@ from .review import ReviewView  # noqa: F401
 from .communityevent import CommunityEventsView  # noqa: F401
 from .partner import PartnersView, PartnerView  # noqa: F401
 from .videotutorial import VideoTutorialListView  # noqa: F401
+from .initial import InitialDataView  # noqa: F401

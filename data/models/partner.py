@@ -1,16 +1,23 @@
 from urllib.parse import quote
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from ckeditor_uploader.fields import RichTextUploadingField
 from data.department_choices import Department
 from data.utils import optimize_image
 from data.fields import ChoiceArrayField
 from .partnertype import PartnerType
+from .sector import Sector
 
 
 class Partner(models.Model):
     class EconomicModel(models.TextChoices):
         PUBLIC = "public", "Public"
         PRIVATE = "private", "Privé"
+
+    class GratuityOption(models.TextChoices):
+        FREE = "free", "Gratuit"
+        PAID = "paid", "Payant"
+        MIX = "mix", "Mixte"
 
     class PartnerCategory(models.TextChoices):
         APPRO = "appro", "Améliorer ma part de bio / durable"
@@ -20,6 +27,8 @@ class Partner(models.Model):
         TRAINING = "training", "Me former ou former mon personnel"
         SUIVI = "suivi", "Assurer mon suivi d'approvisionnement"
         VEGE = "vege", "Diversifier mes sources de protéines"
+        NETWORK = "network", "Mise en réseau d’acteurs de terrain"
+        FINANCIAL = "financial", "Aide financière / matérielle"
 
     class Meta:
         verbose_name = "partenaire"
@@ -55,10 +64,21 @@ class Partner(models.Model):
         null=True,
         verbose_name="Le partenaire est présent dans tout le territoire national (tous les departements)",
     )
-    free = models.BooleanField(
+    sectors = models.ManyToManyField(Sector, blank=True, verbose_name="secteurs d'activité")
+    sector_categories = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=Sector.Categories.choices),
         blank=True,
         null=True,
-        verbose_name="Gratuit",
+        size=None,
+        verbose_name="Catégorie du secteur dans lequel ce partenaire situe son activité",
+    )
+
+    gratuity_option = models.CharField(
+        max_length=50,
+        choices=GratuityOption.choices,
+        null=True,
+        blank=True,
+        verbose_name="Type d'offre",
     )
     economic_model = models.CharField(
         max_length=50,
@@ -68,6 +88,11 @@ class Partner(models.Model):
         verbose_name="Secteur économique",
     )
     published = models.BooleanField(default=False, verbose_name="publié")
+
+    contact_email = models.EmailField(_("email address"), blank=True, null=True)
+    contact_name = models.TextField(verbose_name="Nom de contact", blank=True, null=True)
+    contact_message = models.TextField(verbose_name="Commentaires sur la demande", blank=True, null=True)
+    contact_phone_number = models.CharField("Numéro téléphone", max_length=50, null=True, blank=True)
 
     @property
     def url_slug(self):
@@ -82,3 +107,6 @@ class Partner(models.Model):
         if self.image:
             self.image = optimize_image(self.image, self.image.name, max_image_size)
         super(Partner, self).save(force_insert, force_update, using, update_fields)
+
+    def __str__(self):
+        return f'Partenaire "{self.name}"'

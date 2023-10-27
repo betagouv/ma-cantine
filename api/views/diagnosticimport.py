@@ -16,6 +16,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
+from simple_history.utils import update_change_reason
 from api.serializers import FullCanteenSerializer
 from data.models import Canteen, Sector
 from api.permissions import IsAuthenticated
@@ -158,6 +159,7 @@ class ImportDiagnosticsView(ABC, APIView):
         )
         diagnostic.full_clean()
         diagnostic.save()
+        update_change_reason(diagnostic, f"Mass CSV import. {self.__class__.__name__[:100]}")
         self.diagnostics_created += 1
         return diagnostic
 
@@ -255,6 +257,7 @@ class ImportDiagnosticsView(ABC, APIView):
                     canteen.city = row[5]
                     canteen.department = row[6].split(",")[0]
                     canteen.save()
+                    update_change_reason(canteen, f"Mass CSV import - Geo data. {self.__class__.__name__[:100]}")
         except Exception as e:
             logger.exception(f"Error while updating location data : {repr(e)} - {e}")
 
@@ -297,14 +300,26 @@ class ImportDiagnosticsView(ABC, APIView):
             raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
         return manager_emails
 
+    def _has_canteen_permission(self, canteen):
+        return self.request.user in canteen.managers.all()
+
     def _update_or_create_canteen(
-        self, row, import_source, publication_status, manager_emails, silently_added_manager_emails
+        self,
+        row,
+        import_source,
+        publication_status,
+        manager_emails,
+        silently_added_manager_emails,
+        satellite_canteens_count=None,
     ):
         siret = normalise_siret(row[0])
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
 
-        if canteen_exists and self.request.user not in canteen.managers.all():
+        if not canteen_exists:
+            update_change_reason(canteen, f"Mass CSV import - canteen creation. {self.__class__.__name__[:100]}")
+
+        if canteen_exists and not self._has_canteen_permission(canteen):
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
         should_update_geolocation = (
@@ -322,6 +337,8 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.economic_model = row[10].strip().lower() if len(row) > 10 else None
         canteen.import_source = import_source
         canteen.publication_status = publication_status
+        if satellite_canteens_count:
+            canteen.satellite_canteens_count = satellite_canteens_count
 
         # full_clean must be before the relation-model updates bc they don't require a save().
         # If an exception is launched by full_clean, it must be here.
@@ -335,6 +352,7 @@ class ImportDiagnosticsView(ABC, APIView):
             )
 
         canteen.save()
+        update_change_reason(canteen, f"Mass CSV import. {self.__class__.__name__[:100]}")
 
         if not self.request.user.is_staff:
             canteen.managers.add(self.request.user)
@@ -568,6 +586,102 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
 
     def _column_count_error_message(self, row):
         return f"Données manquantes : au moins 13 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
+
+
+class CCImportMixin:
+    total_value_idx = 14
+    year_idx = 13
+    cc_satellite_dict = {}
+
+    def _validate_row(self, row):
+        is_central_kitchen = CCImportMixin._is_central_kitchen(row)
+        last_mandatory_column = self.manager_column_idx - 1
+
+        if is_central_kitchen:
+            if len(row) < self.year_idx + 1:
+                raise IndexError()
+            elif len(row) > self.final_value_idx + 1:
+                raise FileFormatError(
+                    detail=f"Format fichier : {self.final_value_idx + 1} colonnes attendues, {len(row)} trouvées."
+                )
+
+        elif len(row) < last_mandatory_column:
+            raise IndexError()
+
+    def _treat_csv_file(self, file):
+        return_value = super()._treat_csv_file(file)
+        self._clean_removed_satellites()
+        return return_value
+
+    def _clean_removed_satellites(self):
+        for central_cuisine_siret in self.cc_satellite_dict:
+            satellite_sirets = self.cc_satellite_dict[central_cuisine_siret]
+            canteens_to_remove = Canteen.objects.filter(central_producer_siret=central_cuisine_siret).exclude(
+                siret__in=satellite_sirets
+            )
+            canteens_to_remove.update(central_producer_siret=None)
+            for canteen in canteens_to_remove:
+                update_change_reason(canteen, f"Mass CSV import - unlinking CC. {self.__class__.__name__[:100]}")
+
+    def _validate_diagnostic(self, row):
+        is_central_kitchen = CCImportMixin._is_central_kitchen(row)
+        if is_central_kitchen:
+            return super()._validate_diagnostic(row)
+        return None, None, None
+
+    def _update_or_create_canteen(
+        self,
+        row,
+        import_source,
+        publication_status,
+        manager_emails,
+        silently_added_manager_emails,
+        satellite_canteens_count=None,
+    ):
+        is_central_kitchen = CCImportMixin._is_central_kitchen(row)
+        if is_central_kitchen:
+            satellite_canteens_count = row[12].strip()
+        return super()._update_or_create_canteen(
+            row,
+            import_source,
+            publication_status,
+            manager_emails,
+            silently_added_manager_emails,
+            satellite_canteens_count,
+        )
+
+    @staticmethod
+    def _is_central_kitchen(row):
+        production_type = row[8].strip().lower()
+        return (
+            production_type == Canteen.ProductionType.CENTRAL.value
+            or production_type == Canteen.ProductionType.CENTRAL_SERVING.value
+        )
+
+    def _save_data_from_row(self, row):
+        canteen, should_update_geolocation = super()._save_data_from_row(row)
+        if CCImportMixin._is_central_kitchen(row) and canteen.siret not in self.cc_satellite_dict:
+            self.cc_satellite_dict[canteen.siret] = []
+        else:
+            if canteen.central_producer_siret in self.cc_satellite_dict:
+                self.cc_satellite_dict[canteen.central_producer_siret].append(canteen.siret)
+            else:
+                self.cc_satellite_dict[canteen.central_producer_siret] = [canteen.siret]
+        return (canteen, should_update_geolocation)
+
+
+class ImportSimpleCentralKitchenView(CCImportMixin, ImportSimpleDiagnosticsView):
+    final_value_idx = 23
+
+    def _column_count_error_message(self, row):
+        return f"Données manquantes : 24 colonnes attendues, {len(row)} trouvées."
+
+
+class ImportCompleteCentralKitchenView(CCImportMixin, ImportCompleteDiagnosticsView):
+    final_value_idx = 128
+
+    def _column_count_error_message(self, row):
+        return f"Données manquantes : au moins 129 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
 
 
 class FileFormatError(Exception):

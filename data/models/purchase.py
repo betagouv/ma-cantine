@@ -10,6 +10,7 @@ class Purchase(SoftDeletionModel):
         verbose_name = "achat"
         verbose_name_plural = "achats"
         ordering = ["-date", "-creation_date"]
+        indexes = [models.Index(fields=["import_source"])]
 
     class Category(models.TextChoices):
         VIANDES_VOLAILLES = "VIANDES_VOLAILLES", "Viandes, volailles"
@@ -117,3 +118,7 @@ class Purchase(SoftDeletionModel):
             except Exception:
                 pass
         return ", ".join(valid_characteristics) if valid_characteristics else None
+
+    @property
+    def created_by_import(self):
+        return bool(self.import_source)

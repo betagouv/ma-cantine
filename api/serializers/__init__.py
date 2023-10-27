@@ -9,6 +9,7 @@ from .canteen import (  # noqa: F401
     CanteenStatusSerializer,
     CanteenTeledeclarationSerializer,
     SatelliteTeledeclarationSerializer,
+    ElectedCanteenSerializer,
 )
 from .diagnostic import (  # noqa: F401
     ManagerDiagnosticSerializer,
@@ -23,6 +24,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticAndCanteenSerializer,
 )
 from .sector import SectorSerializer  # noqa: F401
+from .partnertype import PartnerTypeSerializer  # noqa: F401
 from .blogpost import BlogPostSerializer  # noqa: F401
 from .password import PasswordSerializer  # noqa: F401
 from .managerinvitation import ManagerInvitationSerializer  # noqa: F401
@@ -33,5 +35,5 @@ from .vegetarianexpe import VegetarianExpeSerializer  # noqa: F401
 from .message import MessageSerializer  # noqa: F401
 from .review import ReviewSerializer  # noqa: F401
 from .communityevent import CommunityEventSerializer  # noqa: F401
-from .partner import PartnerSerializer, PartnerShortSerializer  # noqa: F401
+from .partner import PartnerSerializer, PartnerShortSerializer, PartnerContactSerializer  # noqa: F401
 from .videotutorial import VideoTutorialSerializer  # noqa: F401

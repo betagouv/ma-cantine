@@ -40,16 +40,16 @@
         <div>
 
         </div>
-        <hr />
+        <hr aria-hidden="true" />
 
 
         {% csrf_token %}
 
         {% if form.non_field_errors %}
             {% for error in form.non_field_errors %}
-                <div class="error-container">
+                <p class="error-container">
                     {{ error }}
-                </div>
+                </p>
             {% endfor %}
         {% endif %}
 
@@ -64,9 +64,9 @@
                     <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
                         {{ field }}
                         {% for error in field.errors %}
-                        <div class="inline-error-container">
+                        <p class="inline-error-container">
                             {{ error | safe }}
-                        </div>
+                        </p>
                         {% endfor %}
                     </div>
                 {% endfor %}
@@ -78,9 +78,9 @@
                     <label class="control-label" for="{{field.id_for_label}}">{{ field.label }}</label>
                         {{ field }}
                         {% for error in field.errors %}
-                        <div class="inline-error-container">
+                        <p class="inline-error-container">
                             {{ error | safe }}
-                        </div>
+                        </p>
                         {% endfor %}
                     </div>
                 {% endfor %}
@@ -90,15 +90,15 @@
                         {{ form.cgu_approved }}
                         <label class="control-label" for="{{form.cgu_approved.id_for_label}}">{{ form.cgu_approved.label }}</label>
                         {% for error in form.cgu_approved.errors %}
-                            <div class="inline-error-container">
+                            <p class="inline-error-container">
                                 {{ error | safe }}
-                            </div>
+                            </p>
                         {% endfor %}
                         </div>
                     </div>
             </div>
         </div>
-        <hr />
+        <hr aria-hidden="true" />
 
         <div class="control-group">
             <div class="controls">
@@ -167,13 +167,13 @@
 
     </form>
     <div>
-        <a href="{% url 'login' %}"><button>J'ai déjà un compte</button></a>
+        <a href="{% url 'login' %}">J'ai déjà un compte</a>
     </div>
     {% uses_moncomptepro as show_mcp_button %}
     {% if show_mcp_button %}
     <div style="margin-top: 16px;">
         <a href="{% url 'oidc-login' %}">
-            <img src="{% static 'images/button-moncomptepro.svg' %}" />
+            <img src="{% static 'images/button-moncomptepro.svg' %}" alt="S'identifier avec MonComptePro" />
         </a>
     </div>
     {% endif %}

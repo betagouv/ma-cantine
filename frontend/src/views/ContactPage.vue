@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav :links="[{ to: { name: 'FaqPage' } }]" />
+    <BreadcrumbsNav />
     <h1 class="text-h4 font-weight-black mt-12 mb-8">Contactez-nous</h1>
     <h2 class="mb-4">Ressources</h2>
     <ul class="text-body-2 mb-8">
