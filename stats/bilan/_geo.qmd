@@ -1,0 +1,143 @@
+# Focus géographique 
+
+```{python}
+# | echo: false
+# | output: asis
+
+import utils
+import pandas as pd
+import ast
+
+tds = {}
+tds_commun = {}
+
+# Whether we use cache or ot, we re-read the file to have consistency in the dataframe
+if len(tds) == 0 or len(tds_commun) == 0:
+    for year in utils.CAMPAGNES.keys():
+        tds[year] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}.csv", sep=";")
+        # Application de la stratégie Je Ne Sais pas
+        tds[f"Campagne {year}"] = tds[year].dropna(
+            how="any",
+            subset=[
+                "teledeclaration.value_total_ht",
+                "teledeclaration.value_bio_ht",
+            ],
+        )
+        tds_commun[f"Campagne {year}"] = pd.read_csv(f"data/assidus_{year}.csv", sep=";", index_col=False)
+
+year = "Campagne 2023"
+```
+
+## Photo 2023
+### Analyse par région
+
+
+```{python}
+# | echo: false
+# | output: asis
+decoupage = "region"
+value = "nombre_td"
+
+print("#### Carte des régions de France en fonction du nombre de TD")
+utils.display_map_(tds["Campagne 2023"], decoupage, value)
+sf, _ = utils.aggregate_geo(tds["Campagne 2023"], decoupage, value)
+sf["libelle"] = sf[f"canteen.{decoupage}"].apply(lambda x: utils.fill_region(f"{int(x):02d}"))
+print(
+    sf[[f"canteen.{decoupage}", "libelle", "value"]]
+    .rename(columns={"value": "Nombre TD"})
+    .set_index(f"canteen.{decoupage}")
+    .to_html()
+)
+
+value = "taux_bio"
+
+print("#### Carte des régions de France en fonction du taux de bio")
+utils.display_map_(tds["Campagne 2023"], decoupage, value="taux_bio")
+sf, _ = utils.aggregate_geo(tds["Campagne 2023"], decoupage, value)
+sf["libelle"] = sf[f"canteen.{decoupage}"].apply(lambda x: utils.fill_region(f"{int(x):02d}"))
+print(
+    sf[[f"canteen.{decoupage}", "libelle", "value"]]
+    .rename(columns={"value": "Taux bio"})
+    .set_index(f"canteen.{decoupage}")
+    .to_html()
+)
+
+```
+
+### Analyse par départements
+
+```{python}
+# | echo: false
+# | output: asis
+decoupage = "department"
+value = "nombre_td"
+
+print("#### Carte des départements de France en fonction du nombre de TD")
+utils.display_map_(tds["Campagne 2023"], decoupage, value)
+sf, _ = utils.aggregate_geo(tds["Campagne 2023"], decoupage, value)
+sf["libelle"] = sf[f"canteen.{decoupage}"].apply(lambda x: utils.fill_departement(x))
+print(
+    sf[[f"canteen.{decoupage}", "libelle", "value"]]
+    .rename(columns={"value": "Nombre TD"})
+    .set_index(f"canteen.{decoupage}")
+    .to_html()
+)
+
+value = "taux_bio"
+
+print("#### Carte des départements de France en fonction du taux de bio")
+utils.display_map_(tds["Campagne 2023"], decoupage, value="taux_bio")
+sf, _ = utils.aggregate_geo(tds["Campagne 2023"], decoupage, value)
+sf["libelle"] = sf[f"canteen.{decoupage}"].apply(lambda x: utils.fill_departement(x))
+print(
+    sf[[f"canteen.{decoupage}", "libelle", "value"]]
+    .rename(columns={"value": "Taux bio"})
+    .set_index(f"canteen.{decoupage}")
+    .to_html()
+)
+
+```
+
+## Comparaison isopérimetrique de l'évolution du taux de bio
+
+
+### Région
+```{python}
+# | echo: false
+# | output: asis
+
+df_2022, _ = utils.aggregate_geo(tds_commun["Campagne 2022"], decoupage="region", value="taux_bio")
+df_2023, _ = utils.aggregate_geo(tds_commun["Campagne 2023"], decoupage="region", value="taux_bio")
+cmp = df_2022.merge(df_2023, on="canteen.region", suffixes=("_2022", "_2023"))
+cmp["libelle"] = cmp["canteen.region"].apply(lambda x: utils.fill_region(f"{int(x):02d}"))
+cmp = cmp.rename(columns={"value_2022": "Taux bio 2022", "value_2023": "Taux bio 2023"})
+cmp = cmp[["canteen.region", "libelle", "Taux bio 2022", "Taux bio 2023"]]
+cmp["Comparaison"] = cmp["Taux bio 2023"] - cmp["Taux bio 2022"]
+utils.display_map_(cmp, decoupage="region", value="Comparaison")
+cmp["Comparaison"] = cmp["Comparaison"].apply(utils.points_formatter)
+
+cmp.to_html()
+```
+
+### Départements
+```{python}
+# | echo: false
+# | output: asis
+
+decoupage = "department"
+
+df_2022, _ = utils.aggregate_geo(tds_commun["Campagne 2022"], decoupage=decoupage, value="taux_bio")
+df_2023, _ = utils.aggregate_geo(tds_commun["Campagne 2023"], decoupage=decoupage, value="taux_bio")
+cmp = df_2022.merge(df_2023, on=f"canteen.{decoupage}", suffixes=("_2022", "_2023"))
+cmp["libelle"] = cmp[f"canteen.{decoupage}"].apply(
+    lambda x: utils.fill_departement(f"{x:02d}") if isinstance(x, float) else utils.fill_departement(x)
+)
+cmp = cmp.rename(columns={"value_2022": "Taux bio 2022", "value_2023": "Taux bio 2023"})
+cmp = cmp[["canteen.department", "libelle", "Taux bio 2022", "Taux bio 2023"]]
+cmp["Comparaison"] = cmp["Taux bio 2023"] - cmp["Taux bio 2022"]
+utils.display_map_(cmp, decoupage="department", value="Comparaison")
+cmp["Comparaison"] = cmp["Comparaison"].apply(utils.points_formatter)
+
+cmp.to_html()
+
+```

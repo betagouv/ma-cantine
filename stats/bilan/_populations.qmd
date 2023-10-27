@@ -1,7 +1,25 @@
 ```{python}
 # | output: asis
 # | echo: false
+
 import utils
+import pandas as pd
+import ast
+from unidecode import unidecode
+
+tds = {}
+
+# Whether we use cache or ot, we re-read the file to have consistency in the dataframe
+for year in utils.CAMPAGNES.keys():
+    tds[year] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}.csv", sep=";")
+    # Application de la stratégie Je Ne Sais pas
+    tds[f"Campagne {year}"] = tds[year].dropna(
+        how="any",
+        subset=[
+            "teledeclaration.value_total_ht",
+            "teledeclaration.value_bio_ht",
+        ],
+    )
 ```
 
 # Etudes des populations de déclarants
@@ -9,18 +27,20 @@ import utils
 # | echo: false
 # | output: asis
 
-print(f"Il y a **{len(entrants)} nouveaux teledeclarants** (ayant déclaré sur la campagne 2023 mais pas celle de 2023)\n")
+print(
+    f"Il y a **{len(entrants)} nouveaux teledeclarants** (ayant déclaré sur la campagne 2023 mais pas celle de 2023)\n"
+)
 
 # Télédeclarants présents dans les siret 2022 mais non 2023
-sortants = list(set([item for item in td_pop['2022'] if item not in td_pop['2023']]))
+sortants = list(set([item for item in td_pop["2022"] if item not in td_pop["2023"]]))
 print(
     f"Il y a **{len(sortants)} teledeclarants** n'ayant pas renouvellé (ayant déclaré sur la campagne 2023 mais pas celle de 2023)\n"
 )
 
 # Télédéclarants présents lors des deux campagnes
-restants = [item for item in td_pop['2022'] if item in td_pop['2023']]
+restants = [item for item in td_pop["2022"] if item in td_pop["2023"]]
 
-print(f'**{len(restants)} teledeclarants ont participé aux deux campagnes.**\n')
+print(f"**{len(restants)} teledeclarants ont participé aux deux campagnes.**\n")
 ```
 
 
@@ -37,16 +57,16 @@ La suite de ces travaux est en cours de réalisation. Il est encore incomplet et
 # | echo: false
 
 tds_cmp = {}
-tds_cmp['Sortants (données 2022)'] = tds['Campagne 2022'][tds['Campagne 2022']["canteen.id"].isin(sortants)]
-tds_cmp['Entrants (données 2023)'] = tds['Campagne 2023'][tds['Campagne 2023']["canteen.id"].isin(entrants)]
+tds_cmp["Sortants (données 2022)"] = tds["Campagne 2022"][tds["Campagne 2022"]["canteen.id"].isin(sortants)]
+tds_cmp["Entrants (données 2023)"] = tds["Campagne 2023"][tds["Campagne 2023"]["canteen.id"].isin(entrants)]
 
-indic_divers, indic_appro = utils.calcul_indicateur(tds_cmp, years=['Sortants (données 2022)', 'Entrants (données 2023)'])
+indic_divers, indic_appro = utils.calcul_indicateur(
+    tds_cmp, years=["Sortants (données 2022)", "Entrants (données 2023)"]
+)
 
 # indic_divers = utils.ajout_col_comparaison(indic_divers)
 utils.display_indicateurs(indic_divers)
 
-# indic_appro = utils.ajout_col_comparaison(indic_appro)
-utils.display_indicateurs(indic_appro)
 ```
 
 ```{python}
@@ -58,72 +78,43 @@ df_indic_divers = pd.DataFrame(indic_divers)
 df_indic_appro = pd.DataFrame(indic_appro)
 
 # Isolate the values with numbers
-divers_colonnes_nombre = ['Nombre de cantines centrales',  'Nombre de cantines sur place (sites et satellites)', 'Nombre de Télédéclarations']
+divers_colonnes_nombre = [
+    "Nombre de cantines centrales",
+    "Nombre de cantines sur place (sites et satellites)",
+    "Nombre de Télédéclarations",
+]
 
-utils.display_stacked_bars(df_indic_divers.T[divers_colonnes_nombre].T, title='Comparaison des profils',  fmt=utils.nombre_formatter)
+utils.display_stacked_bars(
+    df_indic_divers.T[divers_colonnes_nombre].T, title="Comparaison des profils", fmt=utils.nombre_formatter
+)
 
 # Isolate the values with ratios
-divers_colonnes_ratios = [col for col in df_indic_divers.index if col.startswith('Taux')]
+divers_colonnes_ratios = [col for col in df_indic_divers.index if col.startswith("Taux")]
 
-utils.display_stacked_bars(df_indic_divers.T[divers_colonnes_ratios].T, title='Comparaison des profils', fmt=utils.taux_formatter, legend=False)
+utils.display_stacked_bars(
+    df_indic_divers.T[divers_colonnes_ratios].T,
+    title="Comparaison des profils",
+    fmt=utils.taux_formatter,
+    legend=False,
+)
 
 # Isolate the values with numbers
-appro_colonnes_montants = ['Montant d\'achat alimentaires bio', 'Montant d\'achat alimentaires EGALIM (bio inclus)', 'Montant d\'achat alimentaires total']
+appro_colonnes_montants = [
+    "Montant d'achat alimentaires bio",
+    "Montant d'achat alimentaires EGALIM (bio inclus)",
+    "Montant d'achat alimentaires total",
+]
 utils.display_indicateurs(indic_appro)
-utils.display_stacked_bars(df_indic_appro.T[appro_colonnes_montants].T, title='Comparaison des montants alimentaires dépensés',  fmt=utils.montant_formatter)
+utils.display_stacked_bars(
+    df_indic_appro.T[appro_colonnes_montants].T,
+    title="Comparaison des montants alimentaires dépensés",
+    fmt=utils.montant_formatter,
+)
 
 # Isolate the values with ratios
-appro_colonnes_taux = ['Taux global des achats en bio',  'Taux global des achats EGALIM (bio inclus)']
-utils.display_stacked_bars(df_indic_appro.T[appro_colonnes_taux].T, title='Comparaison des ratios sur les montants',  fmt=utils.taux_formatter)
+appro_colonnes_taux = ["Taux global des achats en bio", "Taux global des achats EGALIM (bio inclus)"]
+utils.display_stacked_bars(
+    df_indic_appro.T[appro_colonnes_taux].T, title="Comparaison des ratios sur les montants", fmt=utils.taux_formatter
+)
 
-```
-
-
-
-## Comparaison des profils de cantines "entrantes" et "sortantes"
-
-```{python}
-# | echo: false
-
-import seaborn as sns
-
-td_raw = pd.concat([tds['Campagne 2023'], tds['Campagne 2022']], axis=0, ignore_index=True)
-td_without_good_students = td_raw[~td_raw['canteen.id'].isin(restants)]
-td_without_good_students["canteen.daily_meal_count_log"] = np.log10(td_without_good_students[["canteen.daily_meal_count"]].replace(0, 1))
-td_without_good_students["canteen.yearly_meal_count_log"] = np.log10(td_without_good_students[["canteen.yearly_meal_count"]].replace(0, 1))
-
-fig, axes = plt.subplots(3, 1, figsize=(8, 25))
-
-# Daily meals
-sns.histplot(data=td_without_good_students, x="canteen.daily_meal_count_log", hue='year', ax=axes[0], palette='deep', kde=True)
-axes[0].set_title('Distribution du nombre de repas moyen servi par jour en fonction de profils entrants et sortants', fontsize='large')
-axes[0].set_ylabel('Nombre de TD', fontsize='large')
-axes[0].set_xlabel('Nombre de repas journaliers moyens (log)', fontsize='large')
-
-# Yearly meals
-sns.histplot(data=td_without_good_students, x="canteen.management_type", hue='year', ax=axes[1], palette='deep')
-axes[1].set_title('Répartition des types de gérance en fonction des profils entrants et sortants', fontsize='large')
-axes[1].set_ylabel('Nombre de TD', fontsize='large')
-axes[1].set_xlabel('Type de gérance', fontsize='large')
-
-sns.histplot(data=td_without_good_students, x="canteen.production_type", hue='year', ax=axes[2], palette='deep')
-axes[2].set_title('Répartition des types de production en fonction des profils entrants et sortants', fontsize='large')
-axes[2].set_ylabel('Nombre de TD', fontsize='large')
-axes[2].set_xlabel('Type de production', fontsize='large')
-# sns.histplot(data=td_raw, x="canteen.satellite_canteens_count", hue='year', ax=axes[4], palette='deep')
-# sns.histplot(data=td_raw, x="canteen.economic_model", hue='year', ax=axes[5], palette='deep')
-
-# for ax in axes:
-#     ax.set_title('Distribution des valeurs d\'achats en € totales et bio', fontsize='large')
-#     ax.set_ylabel('Nombre de TD', fontsize='large')
-#     ax.set_xlabel('Nombre de repas journaliers moyens', fontsize='large')
-# g
-
-```
-
-```{python}
-tds['Campagne 2023'][tds['Campagne 2023']['canteen.id'].isin(entrants)].to_csv('data/entrants.csv', sep=';', index=False)
-tds['Campagne 2022'][tds['Campagne 2022']['canteen.id'].isin(sortants)].to_csv('data/sortants.csv', sep=';', index=False)
-tds_commun['Campagne 2023'].to_csv('data/assidus_2023.csv', sep=';', index=False)
-tds_commun['Campagne 2022'].to_csv('data/assidus_2022.csv', sep=';', index=False)
 ```

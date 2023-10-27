@@ -3,13 +3,12 @@ title: "Bilan statistique de la campagne ma-cantine portant sur l'année 2023 (t
 author:
   - "Quentin Loridant"
   - "Valérie Merle"
-date: "2023-09-07"
 format:
   html:
-    embed-resources: true
+    embed-resources: true       
     code-fold: true
     theme:
-      - flatly
+      - cosmo
     toc: true
     toc-depth: 5
 execute:
@@ -47,10 +46,11 @@ import utils
 
 Les données sont extraites de la base de données de ma-cantine. Plusieurs filtres sont appliqués :
 
-1. date : les télédéclarations doivent être comprises dans les dates de campagne: `creation_date BETWEEN XX mars au 30 juin 2023`
+1. date : les télédéclarations doivent être comprises dans les dates de campagne: `creation_date ENTRE 13 février au 30 juin 2023`
 2. statut : la télédéclaration doit avoir été validée par son éditeur. `status="SUBMITTED"`
 3. année 2023 : `year==2023`
-4. `teledeclaration.value_total_ht` non vide
+4. `teledeclaration.value_total_ht` non vide*
+5. Filtrage des TD dont les montants télédacalrés sont aberrants > 
 
 
 Vous pouvez retrouver l'intégralité du code utilisé sur la page [github de ma-cantine](https://github.com/betagouv/ma-cantine/tree/staging/stats).
@@ -60,7 +60,6 @@ Vous pouvez retrouver l'intégralité du code utilisé sur la page [github de ma
 
 tds = {}
 cache=True
-
 
 if not cache:
     td_raw = utils.load_td()
@@ -78,9 +77,6 @@ if not cache:
 
         tds[year].to_csv(f"data/export_dataset_stats_campagne_{year}.csv", sep=";", index=False)
         
-        # TODO Parser siret comme str
-        # TODO YEAR and ID en int et pas float
-
 
 # Whether we use cache or ot, we re-read the file to have consistency in the dataframe
 for year in utils.CAMPAGNES.keys():
@@ -102,6 +98,16 @@ for year in ['2022', '2023']:
             "teledeclaration.value_bio_ht",
         ],
     )
+    tds[f"strat_max_{year}"] = tds[year].dropna(
+        how="any",
+        subset=[
+        "teledeclaration.value_bio_ht",
+        "teledeclaration.value_total_ht",
+        "teledeclaration.value_egalim_others_ht",
+        "teledeclaration.value_sustainable_ht",
+        "teledeclaration.value_externality_performance_ht",
+        ],
+    )
 
 # Définition des populations assidus, entrantes et sortantes
 td_pop = {}
@@ -109,9 +115,11 @@ td_pop['2023'] = list(set(tds['Campagne 2023']['canteen.id'].values.tolist()))
 td_pop['2022'] = list(set(tds['Campagne 2022']['canteen.id'].values.tolist())) 
 # Télédeclarants présents dans les siret 2023 mais non 2022
 entrants = list(set([item for item in td_pop['2023'] if item not in td_pop['2022']]))
+tds['Campagne 2023'][tds['Campagne 2023']['canteen.id'].isin(entrants)].to_csv('data/entrants.csv', sep=';', index=False)
 
 # Télédeclarants présents dans les siret 2022 mais non 2023
 sortants = list(set([item for item in td_pop['2022'] if item not in td_pop['2023']]))
+tds['Campagne 2022'][tds['Campagne 2022']['canteen.id'].isin(sortants)].to_csv('data/sortants.csv', sep=';', index=False)
 
 # Télédéclarants présents lors des deux campagnes
 restants = [item for item in td_pop['2022'] if item in td_pop['2023']]
@@ -120,8 +128,27 @@ tds_commun = {}
 for year in ['2022', '2023', 'Campagne 2022', 'Campagne 2023', '2022_strat_hist', '2023_strat_hist']:
     tds_commun[year] = tds[year][tds[year]["canteen.id"].isin(restants)]
     tds_commun[year] = tds_commun[year].drop_duplicates('canteen.id')
+
+# Filtrage des assidus dont les montants déclarés entre les 2 campganes sont trop différents
+iso = tds_commun['Campagne 2023'].merge(tds_commun['Campagne 2022'], on='canteen.id', suffixes=('_2023', '_2022'))
+iso['evo_montant_achats'] = iso['teledeclaration.value_total_ht_2023'] / iso['teledeclaration.value_total_ht_2022']
+iso = iso[iso['evo_montant_achats'] < 2]
+iso = iso[iso['evo_montant_achats'] > 0.5]
+asssidus_clean = list(iso['canteen.id'])
+
+for year in ['2022', '2023', 'Campagne 2022', 'Campagne 2023', '2022_strat_hist', '2023_strat_hist']:
+    tds_commun[year] = tds_commun[year][tds_commun[year]['canteen.id'].isin(asssidus_clean)]
+    tds_commun[year].to_csv(f'data/assidus_{year}.csv', sep=';', index=False)
+
 ```
 
+
+```{python Compare assidus} 
+# | echo: false
+# | output: asis
+
+
+```
 
 ## Qualité des données
 
@@ -299,6 +326,10 @@ for year in utils.CAMPAGNES.keys():
 utils.display_indicateurs(pd.DataFrame.from_dict(indic, orient='index').rename(columns={0: 'teledeclaration.value_bio_ht'}).T.rename(columns={'2022': "2022 : Nombre de valeurs manquantes, remplaçées par 0", '2023': '2023 : Nombre de valeurs manquantes, remplaçées par 0'}))
 ```
 
+### Stratégie Maximale
+La stratégie maximale permet d'établir le haut de la fourchette pour le taux d'achats EGALIM.
+Pour ce faire,  nous avons gardé uniquement les TD dont tous les champs appros ont été remplis.
+
 
 # Chiffres clés
 
@@ -308,9 +339,9 @@ utils.display_indicateurs(pd.DataFrame.from_dict(indic, orient='index').rename(c
 # | echo: false
 # | output: asis
 
-indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["Campagne 2022", "2022_strat_hist", "Campagne 2023", "2023_strat_hist"])
+indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["Campagne 2022", "2022_strat_hist", "Campagne 2023", "2023_strat_hist", "strat_max_2023"])
 
-indic_divers = indic_divers.rename(columns={'Campagne 2022': 'Campagne 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Campagne 2022 - Stratégie "Historique"', 'Campagne 2023': 'Campagne 2023 - Stratégie "Je Ne Sais Pas"', '2023_strat_hist': 'Campagne 2023 - Stratégie "Historique"'})
+indic_divers = indic_divers.rename(columns={'Campagne 2022': 'Campagne 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Campagne 2022 - Stratégie "Historique"', 'Campagne 2023': 'Campagne 2023 - Stratégie "Je Ne Sais Pas"', '2023_strat_hist': 'Campagne 2023 - Stratégie "Historique"', 'strat_max_2023': 'Campagne 2023 - Stratégie Maximale'})
 
 utils.display_indicateurs(indic_divers[['Campagne 2022 - Stratégie "Je Ne Sais Pas"', 'Campagne 2022 - Stratégie "Historique"']])
 ```
@@ -319,7 +350,7 @@ utils.display_indicateurs(indic_divers[['Campagne 2022 - Stratégie "Je Ne Sais 
 ```{python Nombre de sites de restauration concernés par la télédéclaration}
 # | echo: false
 # | output: asis
-indic_appro = indic_appro.rename(columns={'Campagne 2022': 'Campagne 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Campagne 2022 - Stratégie "Historique"', 'Campagne 2023': 'Campagne 2023 - Stratégie "Je Ne Sais Pas"', '2023_strat_hist': 'Campagne 2023 - Stratégie "Historique"'})
+indic_appro = indic_appro.rename(columns={'Campagne 2022': 'Campagne 2022 - Stratégie "Je Ne Sais Pas"', '2022_strat_hist': 'Campagne 2022 - Stratégie "Historique"', 'Campagne 2023': 'Campagne 2023 - Stratégie "Je Ne Sais Pas"', '2023_strat_hist': 'Campagne 2023 - Stratégie "Historique"', 'strat_max_2023': 'Campagne 2023 - Stratégie Maximale'})
 utils.display_indicateurs(indic_appro[['Campagne 2022 - Stratégie "Je Ne Sais Pas"', 'Campagne 2022 - Stratégie "Historique"']])
 ```
 
@@ -329,7 +360,7 @@ utils.display_indicateurs(indic_appro[['Campagne 2022 - Stratégie "Je Ne Sais P
 # | echo: false
 # | output: asis
 
-utils.display_indicateurs(indic_divers[['Campagne 2023 - Stratégie "Je Ne Sais Pas"', 'Campagne 2023 - Stratégie "Historique"']])
+utils.display_indicateurs(indic_divers[['Campagne 2023 - Stratégie "Je Ne Sais Pas"', 'Campagne 2023 - Stratégie "Historique"', "Campagne 2023 - Stratégie Maximale"]])
 ```
 
 ### Chiffres appro
@@ -337,7 +368,7 @@ utils.display_indicateurs(indic_divers[['Campagne 2023 - Stratégie "Je Ne Sais 
 # | echo: false
 # | output: asis
 
-utils.display_indicateurs(indic_appro[['Campagne 2023 - Stratégie "Je Ne Sais Pas"', 'Campagne 2023 - Stratégie "Historique"']])
+utils.display_indicateurs(indic_appro[['Campagne 2023 - Stratégie "Je Ne Sais Pas"', 'Campagne 2023 - Stratégie "Historique"', "Campagne 2023 - Stratégie Maximale"]])
 ```
 
 ## ⚖️ Comparaison isopérimètre
@@ -392,13 +423,66 @@ Pour la suite de l'étude, nous utiliserons uniquement la stratégie "**Je Ne Sa
 ::: {.callout-warning}
 Pour le moment, ces chiffres ne décrivent que les télédéclarations de type simplifiées. L'ajout de télédéclaration complètes est en cours. A priori, les ratio devraient cependant rester sembables.
 :::
+
+::: {.callout-note}
+:::
+## 📷 2023
+
 ```{python Nombre de sites de restauration concernés par la télédéclaration}
 # | echo: false
 # | output: asis
-indic_famille = utils.calcul_indicateur_famille(tds, years=["Campagne 2022", "Campagne 2023"])
+indic_famille = utils.calcul_indicateur_famille(tds, years=["Campagne 2023"])
+utils.display_indicateurs(indic_famille['Campagne 2023'])
+```
+
+## Comparaison isopérimetrique
+
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+# | echo: false
+# | output: asis
+indic_famille = utils.calcul_indicateur_famille(tds_commun, years=["Campagne 2022", "Campagne 2023"])
 indic_famille = utils.ajout_col_comparaison(indic_famille)
 utils.display_indicateurs(indic_famille)
 ```
 
+# Répartition des télédéclarants par taille de cantines
+## 📷 2023
+```{python}
+
+def categorisation_taille(x):
+    if x <= 200:
+        return 'Inférieur ou égal à 200'
+    elif 200 < x <= 700:
+        return 'De 200 à 700'
+    elif 700 < x <= 1500:
+        return 'De 700 à 1500'
+    elif x > 1500:
+        return 'Supérieur à 1500'
+    else: 
+        return 'Taille inconnue'
+
+year = 'Campagne 2023'
+df_taille = tds[year].copy()[['canteen.id', 'canteen.daily_meal_count']]
+df_taille = df_taille.sort_values('canteen.daily_meal_count')
+df_taille['taille'] = df_taille['canteen.daily_meal_count'].apply(lambda x: categorisation_taille(x))
+sns.histplot(df_taille['taille'])
+plt.xticks(rotation=60)
+df_taille = df_taille.groupby('taille').count()[['canteen.id']].rename(columns={'canteen.id': 'Nombre'})
+taille_totale = len(tds[year])
+df_taille['Pourcentage'] = df_taille.apply(lambda x: utils.taux_formatter(x['Nombre']/taille_totale), axis=1)
+```
+
+```{python}
+# | echo: false
+# | output: asis
+
+# Cout denrées - Données Aberrantes
+# cout_denrees_errors = tds['Campagne 2023'][tds['Campagne 2023']['teledeclaration.cout_denrees'] > 10]
+# cout_denrees_errors = cout_denrees_errors.sort_values('teledeclaration.cout_denrees', ascending=False)
+# cout_denrees_errors.to_csv('data/cout_denrees_errors.csv', sep=';', index=False)
+# cout_denrees_errors.to_html()
+```
+
 {{< include _secteurs.qmd >}}
 {{< include _populations.qmd >}}
+{{< include _geo.qmd >}}

@@ -3,7 +3,19 @@ import requests
 import os
 import json
 
+from unidecode import unidecode
 from dotenv import load_dotenv
+
+
+import geoviews as gv
+import geoviews.feature as gf
+import xarray as xr
+from cartopy import crs
+import numpy as np
+import geopandas as gpd
+from geoviews import dim
+
+gv.extension("bokeh")
 
 
 ######################
@@ -42,7 +54,7 @@ SECTORS = {
     "IME/ITEP": "social",
     "Hôpitaux": "health",
     "Supérieur et Universitaire": "education",
-    "Secteurs multiples": 'multiple_sectors'
+    "Secteurs multiples": "multiple_sectors",
 }
 
 APPRO_SIMPLIFIED = [
@@ -94,7 +106,21 @@ COLUMNS_TO_SAVE = [
     "teledeclaration.value_meat_poultry_france_ht",
     "teledeclaration.value_fish_ht",
     "teledeclaration.value_fish_egalim_ht",
+    "teledeclaration.cout_denrees",
 ]
+
+
+def mapper_sector_diff(sector):
+    sector = sector.replace("IME / ITEP", "IME/ITEP")
+    sector = sector.replace(
+        "EHPAD / maisons de retraite / foyers de personnes âgées",
+        "EHPAD/ maisons de retraite / foyers de personnes âgées",
+    )
+    sector = sector.replace("ESAT / Etablissements spécialisés", "ESAT/établissements spécialisés")
+    sector = sector.replace(
+        "Restaurants des armées / police / gendarmerie", "Restaurants des armées/police/gendarmerie"
+    )
+    return sector
 
 
 ######################
@@ -110,9 +136,37 @@ def aggregation_col(df, categ="bio", sub_categ=["_bio"]):
     return df
 
 
+def normalize_sector(secteur):
+    return unidecode(secteur.lower())
+
+
 ######################
 # Extract
 ######################
+
+
+def clean_td(td):
+    # Suppression de valeurs extremes
+    n_lines = len(td)
+    td = td.drop(labels=["1321", "63380"], axis=0)
+    print(f"{n_lines - len(td)} lignes ont été supprimées")
+    return td
+
+
+def transform_td(td_raw):
+    """
+    Transformation du jeu de données de télédéclarations
+    Les traitements sur les dates sont fait plus tard
+    """
+    # Suppression des diagnostics non soumis
+    td = td_raw[td_raw.status == "SUBMITTED"]
+    # Suppression des td sans information appros
+    td = td.copy().dropna(
+        how="all",
+        subset=APPRO_SIMPLIFIED,
+    )
+    td = clean_td(td)
+    return td
 
 
 def load_td():
@@ -121,7 +175,6 @@ def load_td():
 
     if not os.environ.get("METABASE_TOKEN"):
         raise Exception("Pas de token Metabase trouvé")
-
     header = {
         "Content-Type": "application/json",
         "X-Metabase-Session": os.environ.get("METABASE_TOKEN"),
@@ -139,11 +192,8 @@ def load_td():
     td_json = pd.json_normalize(td_raw["declared_data"])
     td_raw = pd.concat([td_raw.drop("declared_data", axis=1), td_json], axis=1)
 
-    # Suppression des td sans information appros
-    td_raw = td_raw.dropna(
-        how="all",
-        subset=APPRO_SIMPLIFIED,
-    )
+    td = transform_td(td_raw)
+
     td_raw = aggregation_col(td_raw, "bio", ["_bio"])
     td_raw = aggregation_col(td_raw, "sustainable", ["_sustainable", "_label_rouge", "_aocaop_igp_stg"])
     td_raw = aggregation_col(
@@ -154,10 +204,13 @@ def load_td():
     td_raw = aggregation_col(
         td_raw, "externality_performance", ["_externality_performance", "_performance", "_externalites"]
     )
+    td_raw["teledeclaration.cout_denrees"] = td_raw.apply(
+        lambda row: row["teledeclaration.value_total_ht"] / row["canteen.yearly_meal_count"], axis=1
+    )
     return td_raw
 
 
-def add_canteen_info(df):
+def add_canteen_info(df, add_carac=True, add_geo=True):
     url = "https://ma-cantine-metabase.cleverapps.io/api/card/820/query/json"
     res = requests.post(
         url,
@@ -167,30 +220,41 @@ def add_canteen_info(df):
         },
     )
     td_canteen = pd.DataFrame(res.json())
-    col_to_rename = {}
-    for col in ["production_type", "management_type", "yearly_meal_count", "daily_meal_count", "sectors"]:
-        del df[f"canteen.{col}"]
-        col_to_rename[f"{col}"] = f"canteen.{col}"
-    td_canteen = td_canteen.rename(columns=col_to_rename)
 
-    df = df.merge(right=td_canteen, left_on="canteen.id", right_on="id")
+    col_to_merge = []
+    if add_carac:
+        col_to_merge = col_to_merge + [
+            "production_type",
+            "management_type",
+            "yearly_meal_count",
+            "daily_meal_count",
+            "sectors",
+        ]
+    if add_geo:
+        col_to_merge = col_to_merge + ["region", "department", "city_insee_code"]
+
+    for col in col_to_merge:
+        del df[f"canteen.{col}"]
+    td_canteen = td_canteen.add_prefix("canteen.")
+    col_to_merge = ["canteen." + sub for sub in col_to_merge]
+    df = df.merge(right=td_canteen[col_to_merge + ["canteen.id"]], on="canteen.id")
     return df
 
 
 def split_td_into_years(td_raw):
     tds = {}
     td = td_raw.copy()
-    td = td[td.status == "SUBMITTED"]
     for year in CAMPAGNES.keys():
         tds[year] = td.copy()
-        tds[year]['year'] = tds[year]['year'].apply(lambda x: x + 1)
+        tds[year]["year"] = tds[year]["year"].apply(lambda x: x + 1)
         tds[year] = tds[year][tds[year].year == int(year)]
         tds[year]["creation_date"] = tds[year]["creation_date"].apply(lambda x: x.split("T")[0])
         tds[year] = tds[year][
             (tds[year]["creation_date"] >= CAMPAGNES[year]["start_date"])
             & (tds[year]["creation_date"] <= CAMPAGNES[year]["end_date"])
         ]
-    tds["2022"] = add_canteen_info(tds["2022"])
+    tds["2022"] = add_canteen_info(tds["2022"], add_carac=True, add_geo=True)
+    tds["2023"] = add_canteen_info(tds["2023"], add_carac=False, add_geo=True)
     return tds
 
 
@@ -228,7 +292,7 @@ def calcul_indicateur_divers(tds: {}, years=[], col_comparaison=True):
         indicateurs[year]["Taux de cantines en gestion directe"] = len(
             tds[year][tds[year]["canteen.management_type"] == "direct"]
         ) / len(tds[year])
-        
+
         indicateurs[year]["Taux de TD détaillées"] = len(
             tds[year][tds[year]["teledeclaration.diagnostic_type"] == "COMPLETE"]
         ) / len(tds[year])
@@ -240,15 +304,46 @@ def calcul_indicateur_famille(tds: {}, years=[], col_comparaison=True):
     for year in years if len(years) else tds.keys():
         indicateurs[year] = {}
 
-        indicateurs[year]["Taux d'achat alimentaires de la famille Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum()) / int(tds[year]["teledeclaration.value_total_ht"].sum())
-        indicateurs[year]["Montant d'achat alimentaires Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
-        indicateurs[year]["Taux d'achat alimentaires Egalim au sein de la famille Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_egalim_ht"].sum()) / int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
-        indicateurs[year]["Montant d'achat alimentaires Egalim Viande/Volaille"] = int(tds[year]["teledeclaration.value_meat_poultry_egalim_ht"].sum())
-        
-        indicateurs[year]["Taux d'achat alimentaires de la famille Poissons/produits de la mer"] = int(tds[year]["teledeclaration.value_fish_ht"].sum()) / int(tds[year]["teledeclaration.value_total_ht"].sum())
-        indicateurs[year]["Taux d'achat alimentaires Egalim au sein de la famille  Poissons/Produits de la mer"] = int(tds[year]["teledeclaration.value_fish_egalim_ht"].sum()) / int(tds[year]["teledeclaration.value_fish_ht"].sum())
-        indicateurs[year]["Montant d'achat alimentaires Poissons/Produits de la mer"] = int(tds[year]["teledeclaration.value_fish_ht"].sum())
-        indicateurs[year]["Montant d'achat alimentaires Egalim Poissons/Produits de la mer"] = int(tds[year]["teledeclaration.value_fish_egalim_ht"].sum())
+        indicateurs[year]["Nombre de TD prises en compte"] = len(tds[year])
+        indicateurs[year]["Nombre de TD déclarant NSP pour la famille Viande/Volaille 🥩"] = len(
+            tds[year][tds[year]["teledeclaration.value_meat_poultry_ht"].isna()]
+        )
+        indicateurs[year]["Taux d'achat alimentaires de la famille Viande/Volaille 🥩"] = int(
+            tds[year]["teledeclaration.value_meat_poultry_ht"].sum()
+        ) / int(tds[year]["teledeclaration.value_total_ht"].sum())
+        indicateurs[year]["Montant d'achat alimentaires Viande/Volaille 🥩"] = int(
+            tds[year]["teledeclaration.value_meat_poultry_ht"].sum()
+        )
+        indicateurs[year]["Taux d'achat alimentaires Egalim au sein de la famille Viande/Volaille 🥩"] = int(
+            tds[year]["teledeclaration.value_meat_poultry_egalim_ht"].sum()
+        ) / int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
+        indicateurs[year]["Montant d'achat alimentaires Egalim Viande/Volaille 🥩"] = int(
+            tds[year]["teledeclaration.value_meat_poultry_egalim_ht"].sum()
+        )
+        indicateurs[year]["Taux d'achat alimentaires origine France 🇫🇷 au sein de la famille Viande/Volaille 🥩"] = int(
+            tds[year]["teledeclaration.value_meat_poultry_france_ht"].sum()
+        ) / int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
+        indicateurs[year]["Montant d'achat alimentaires origine France 🇫🇷 Viande/Volaille 🥩"] = int(
+            tds[year]["teledeclaration.value_meat_poultry_france_ht"].sum()
+        )
+
+        indicateurs[year]["Nombre de TD déclarant NSP pour la famille Poissons/produits de la mer 🐟"] = len(
+            tds[year][tds[year]["teledeclaration.value_fish_ht"].isna()]
+        )
+        indicateurs[year]["Taux d'achat alimentaires de la famille Poissons/produits de la mer 🐟"] = int(
+            tds[year]["teledeclaration.value_fish_ht"].sum()
+        ) / int(tds[year]["teledeclaration.value_total_ht"].sum())
+        indicateurs[year][
+            "Taux d'achat alimentaires Egalim au sein de la famille  Poissons/Produits de la mer 🐟"
+        ] = int(tds[year]["teledeclaration.value_fish_egalim_ht"].sum()) / int(
+            tds[year]["teledeclaration.value_fish_ht"].sum()
+        )
+        indicateurs[year]["Montant d'achat alimentaires Poissons/Produits de la mer 🐟"] = int(
+            tds[year]["teledeclaration.value_fish_ht"].sum()
+        )
+        indicateurs[year]["Montant d'achat alimentaires Egalim Poissons/Produits de la mer 🐟"] = int(
+            tds[year]["teledeclaration.value_fish_egalim_ht"].sum()
+        )
 
     return pd.DataFrame(indicateurs)
 
@@ -258,7 +353,9 @@ def calcul_indicateur_appro(tds: {}, years=[], col_comparaison=True):
     for year in years if len(years) else tds.keys():
         indicateurs[year] = {}
 
-        indicateurs[year]["Montant d'achat alimentaires total"] = int(tds[year]["teledeclaration.value_total_ht"].sum())
+        indicateurs[year]["Montant d'achat alimentaires total"] = int(
+            tds[year]["teledeclaration.value_total_ht"].sum()
+        )
 
         indicateurs[year]["Taux global des achats en bio"] = (
             tds[year]["teledeclaration.value_bio_ht"].sum() / tds[year]["teledeclaration.value_total_ht"].sum()
@@ -269,15 +366,27 @@ def calcul_indicateur_appro(tds: {}, years=[], col_comparaison=True):
             tds[year][tds[year]["teledeclaration.value_bio_ht"] == 0]
         )
 
-        indicateurs[year]["Taux global des achats SIQO"] = (tds[year]["teledeclaration.value_sustainable_ht"].sum()) / tds[year]["teledeclaration.value_total_ht"].sum()
-        indicateurs[year]["Montant d'achat alimentaires SIQO"] = tds[year]["teledeclaration.value_sustainable_ht"].sum()
-        
-        indicateurs[year]["Taux global des autres achats Egalim"] = (tds[year]["teledeclaration.value_egalim_others_ht"].sum()) / tds[year]["teledeclaration.value_total_ht"].sum()
-        indicateurs[year]["Montant des autres achats Egalim"] = tds[year]["teledeclaration.value_egalim_others_ht"].sum()
-        
-        indicateurs[year]["Taux global des achats perf/ext"] = (tds[year]["teledeclaration.value_externality_performance_ht"].sum()) / tds[year]["teledeclaration.value_total_ht"].sum()
-        indicateurs[year]["Montant des achats perf/ext"] = tds[year]["teledeclaration.value_externality_performance_ht"].sum()
-        
+        indicateurs[year]["Taux global des achats SIQO"] = (
+            tds[year]["teledeclaration.value_sustainable_ht"].sum()
+        ) / tds[year]["teledeclaration.value_total_ht"].sum()
+        indicateurs[year]["Montant d'achat alimentaires SIQO"] = tds[year][
+            "teledeclaration.value_sustainable_ht"
+        ].sum()
+
+        indicateurs[year]["Taux global des autres achats Egalim"] = (
+            tds[year]["teledeclaration.value_egalim_others_ht"].sum()
+        ) / tds[year]["teledeclaration.value_total_ht"].sum()
+        indicateurs[year]["Montant des autres achats Egalim"] = tds[year][
+            "teledeclaration.value_egalim_others_ht"
+        ].sum()
+
+        indicateurs[year]["Taux global des achats perf/ext"] = (
+            tds[year]["teledeclaration.value_externality_performance_ht"].sum()
+        ) / tds[year]["teledeclaration.value_total_ht"].sum()
+        indicateurs[year]["Montant des achats perf/ext"] = tds[year][
+            "teledeclaration.value_externality_performance_ht"
+        ].sum()
+
         indicateurs[year]["Taux global des achats EGALIM (bio inclus)"] = (
             tds[year]["teledeclaration.value_egalim_others_ht"].sum()
             + tds[year]["teledeclaration.value_externality_performance_ht"].sum()
@@ -292,7 +401,7 @@ def calcul_indicateur_appro(tds: {}, years=[], col_comparaison=True):
             + tds[year]["teledeclaration.value_bio_ht"].sum()
             + tds[year]["teledeclaration.value_sustainable_ht"].sum()
         )
-        
+
     return pd.DataFrame(indicateurs)
 
 
@@ -315,9 +424,19 @@ def taux_formatter(value):
     return f"{100 * value:.2f} %"
 
 
+def points_formatter(value):
+    # Your custom formatting logic here
+    return f"{value:.2f} pts"
+
+
 def montant_formatter(value):
     # Your custom formatting logic here
     return f"{value:,.0f} €".replace(",", " ")
+
+
+def cout_formatter(value):
+    # Your custom formatting logic here
+    return f"{value:,.2f} €".replace(",", " ")
 
 
 def apply_formatters(df):
@@ -327,30 +446,39 @@ def apply_formatters(df):
     df[df.columns[df.columns.str.startswith("Montant")]] = df[
         df.columns[df.columns.str.startswith("Montant")]
     ].applymap(montant_formatter)
+    df[df.columns[df.columns.str.startswith("Coût")]] = df[df.columns[df.columns.str.startswith("Coût")]].applymap(
+        cout_formatter
+    )
     df[df.columns[df.columns.str.startswith("Nombre")]] = df[df.columns[df.columns.str.startswith("Nombre")]].applymap(
         nombre_formatter
     )
     return df
 
 
-def display_indicateurs(df, transpose=True):
-    if transpose:
-        df = df.T
-    try:
-        df = apply_formatters(df)
-    except Exception as e:
-        pass
-    if transpose:
-        df = df.T
+def display_indicateurs(df, transpose=True, format=True):
+    if isinstance(df, pd.Series):
+        df = df.to_frame()
+    if format:
+        if transpose:
+            df = df.T
+        try:
+            df = apply_formatters(df)
+        except Exception as e:
+            pass
+        if transpose:
+            df = df.T
+        if isinstance(df, pd.DataFrame):
+            if "Comparaison" in df.columns:
+                df["Comparaison"] = df["Comparaison"].apply(lambda x: x.replace("%", "pts"))
     print(df.to_html())
 
 
-def display_stacked_bars(df, title='Comparaison entre les campagnes 2022 et 2023', fmt=nombre_formatter, legend=True):
+def display_stacked_bars(df, title="Comparaison entre les campagnes 2022 et 2023", fmt=nombre_formatter, legend=True):
     # Choosing order of bars displaying
-    
-    ax = df.plot.barh(color=("#4FC4AF", "#063442"), figsize=(8, 2.))
+
+    ax = df.plot.barh(color=("#4FC4AF", "#063442"), figsize=(8, 2.0))
     for bars in ax.containers:
-        ax.bar_label(bars, fmt=fmt, label_type='edge')
+        ax.bar_label(bars, fmt=fmt, label_type="edge")
 
     ax.set_title(title)
     if not legend:
@@ -377,6 +505,84 @@ def display_data_coverage(dfs, sub_columns=[], years=[]):
         columns={"2023": "Part des valeurs renseignées (2023)", "2022": "Part des valeurs renseignées (2022)"}
     )
     print(pourcentage_in_file_to_display.to_html())
+
+
+def aggregate_geo(td, decoupage, value):
+    tds_geo = {}
+    cmap = ""
+    if value == "nombre_td":
+        cmap = "Blues"
+        tds_geo = td.groupby(f"canteen.{decoupage}").count()
+        tds_geo["value"] = tds_geo["canteen.id"]
+    elif value == "taux_bio":
+        cmap = "Greens"
+        tds_geo = td.groupby(f"canteen.{decoupage}").sum()
+        tds_geo["value"] = 100 * tds_geo["teledeclaration.value_bio_ht"] / tds_geo["teledeclaration.value_total_ht"]
+    elif value == "Comparaison":
+        cmap = "PRGn"
+        tds_geo = td
+        tds_geo = tds_geo.rename(columns={"Comparaison": "value"})
+    else:
+        print("Error : Wrong attribute")
+    tds_geo = tds_geo.reset_index()
+    tds_geo = tds_geo[["value", f"canteen.{decoupage}"]]
+    return tds_geo, cmap
+
+
+def display_map_(td, decoupage="department", value="nombre_td"):
+    tds_geo, cmap = aggregate_geo(td, decoupage, value)
+    tds_geo = tds_geo.dropna(subset=f"canteen.{decoupage}")
+    if decoupage == "region":
+        tds_geo[f"canteen.{decoupage}"] = tds_geo[f"canteen.{decoupage}"].apply(lambda x: f"{int(x):02d}")
+    try:
+        sf = gpd.read_file(f"france-geojson/{decoupage}s-version-simplifiee.geojson")
+    except Exception:
+        print(
+            "Les contours des départements/régions doivent être téléchargés et déposes dans un dossier france-geojson \n"
+        )
+        print(
+            "Lien Départements : https://github.com/gregoiredavid/france-geojson/blob/master/departements-version-simplifiee.geojson"
+        )
+        print(
+            "Lien Départements : https://github.com/gregoiredavid/france-geojson/blob/master/regions-version-simplifiee.geojson"
+        )
+        return 0
+    sf = pd.merge(sf, tds_geo[[f"canteen.{decoupage}", "value"]], left_on="code", right_on=f"canteen.{decoupage}")
+    geo_element = gv.Polygons(sf, vdims=["nom", "value"])
+    geo_element.opts(
+        width=600,
+        height=600,
+        toolbar="above",
+        color=dim("value"),
+        colorbar=True,
+        tools=["hover"],
+        aspect="equal",
+        cmap=cmap,
+    )
+    gv.output(geo_element)
+    return sf
+
+
+def fill_region(code_insee):
+    try:
+        url = f"https://geo.api.gouv.fr/regions/{code_insee}"
+        res = requests.get(
+            url,
+        )
+        return res.json()["nom"]
+    except Exception as e:
+        return "Erreur geo"
+
+
+def fill_departement(code_insee):
+    try:
+        url = f"https://geo.api.gouv.fr/departements/{code_insee}"
+        res = requests.get(
+            url,
+        )
+        return res.json()["nom"]
+    except Exception as e:
+        return "Erreur geo"
 
 
 ######################
