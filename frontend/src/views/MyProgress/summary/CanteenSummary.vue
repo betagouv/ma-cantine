@@ -77,9 +77,9 @@
         </div>
         <div class="mt-n1">
           <p class="my-0 fr-text-sm grey--text text--darken-1">Couverts moyens par jour</p>
-          <p class="my-0">{{ canteen.dailyMealCount || "—" }}</p>
+          <p class="my-0">{{ parseInt(canteen.dailyMealCount).toLocaleString("fr-FR") || "—" }}</p>
           <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Nombre total de couverts à l’année</p>
-          <p class="my-0">{{ canteen.yearlyMealCount || "—" }}</p>
+          <p class="my-0">{{ parseInt(canteen.yearlyMealCount).toLocaleString("fr-FR") || "—" }}</p>
         </div>
       </v-col>
     </v-row>
