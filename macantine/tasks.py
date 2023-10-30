@@ -2,10 +2,6 @@ import logging
 import datetime
 import requests
 import csv
-import math
-import pandas as pd
-import json
-import os
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
@@ -13,13 +9,11 @@ from django.core.paginator import Paginator
 from django.db.models import F
 from django.db.models.functions import Length
 from django.core.management import call_command
-from data.models import User, Canteen, Teledeclaration, Sector
-from data.department_choices import Department
-from data.region_choices import Region
-from api.serializers import SectorSerializer
-from api.views.utils import camelize
+from data.models import User, Canteen
+
 from .celery import app
-from django.core.files.storage import default_storage
+from .extract_open_data import ETL_TD, ETL_CANTEEN
+
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
@@ -269,162 +263,19 @@ def delete_old_historical_records():
     call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)
 
 
-def _fill_geo_name(df):
-    departments = {i.value: i.label for i in Department}
-    regions = {i.value: i.label for i in Region}
-
-    if "department" in df.columns:  # Registre cantine dataset
-        dep_col_name = "department"
-        region_col_name = "region"
-    else:  # Td dataset
-        dep_col_name = "canteen_department"
-        region_col_name = "canteen_region"
-
-    # Cleaning col that were created empty from schema
-    del df[f"{dep_col_name}_lib"], df[f"{region_col_name}_lib"]
-
-    df.insert(
-        df.columns.get_loc(dep_col_name) + 1,
-        f"{dep_col_name}_lib",
-        df[dep_col_name].apply(lambda x: departments[x].split("-")[1].lstrip() if isinstance(x, str) else None),
-    )
-    df.insert(
-        df.columns.get_loc(region_col_name) + 1,
-        f"{region_col_name}_lib",
-        df[region_col_name].apply(lambda x: regions[x].split("-")[1].lstrip() if isinstance(x, str) else None),
-    )
-    return df
-
-
-def _flatten_declared_data(df):
-    tmp_df = pd.json_normalize(df["declared_data"])
-    df = pd.concat([df.drop("declared_data", axis=1), tmp_df], axis=1)
-    return df
-
-
-def _clean_dataset(df, schema):
-    columns = [i["name"].replace("canteen_", "canteen.") for i in schema["fields"]]
-
-    df = df.loc[:, ~df.columns.duplicated()]
-
-    df = df.reindex(columns, axis="columns")
-    df.columns = df.columns.str.replace(".", "_")
-    df = df.drop_duplicates(subset=["id"])
-    df = df.reset_index(drop=True)
-
-    for col_int in schema["fields"]:
-        if col_int["type"] == "integer":
-            # Force column o Int64 to maintain an integer column despite the NaN values
-            df[col_int["name"]] = df[col_int["name"]].astype("Int64")
-        if col_int["type"] == "float":
-            df[col_int["name"]] = df[col_int["name"]].round(decimals=4)
-    df = df.replace("<NA>", "")
-    return df
-
-
-def _extract_dataset_teledeclaration(year):
-    schema = json.load(open("data/schemas/schema_teledeclaration.json"))
-    if year == 2021:
-        td = pd.DataFrame(
-            Teledeclaration.objects.filter(
-                year=year,
-                creation_date__range=(datetime.date(2022, 7, 17), datetime.date(2022, 12, 15)),
-                status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-                canteen_id__isnull=False,
-            ).values()
-        )
-    else:
-        td = pd.DataFrame(
-            Teledeclaration.objects.filter(year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values()
-        )
-    if len(td) == 0:
-        logger.warning('TD campagne dataset is empty')
-        return td
-    logger.info('TD campagne : Flatten declared data...')
-    td = _flatten_declared_data(td)
-    td["teledeclaration_ratio_bio"] = td["teledeclaration.value_bio_ht"] / td["teledeclaration.value_total_ht"]
-    td["teledeclaration_ratio_egalim_hors_bio"] = (
-        td["teledeclaration.value_sustainable_ht"] / td["teledeclaration.value_total_ht"]
-    )
-    logger.info('TD campagne : Clean dataset...')
-    td = _clean_dataset(td, schema)
-    logger.info('TD campagne : Filter by sector...')
-    td = _filter_by_sectors(td)
-    logger.info('TD campagne : Fill geo name...')
-    td = _fill_geo_name(td)
-
-    return td
-
-
-def _extract_sectors(canteens):
-    # Fetching sectors information and aggreting in list in order to have only one row per canteen
-    canteens["sectors"] = canteens["sectors"].apply(
-        lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data) if (x and not math.isnan(x)) else ""
-    )
-    canteens_sectors = canteens.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
-    del canteens["sectors"]
-
-    return canteens.merge(canteens_sectors, on="id")
-
-
-def _filter_by_sectors(df):
-    sector_col_name = "sectors" if "sectors" in df.columns else "canteen_sectors"
-    return df[df.apply(lambda x: "Restaurants des armées/police/gendarmerie" not in str(x[sector_col_name]), axis=1)]
-
-
-def _extract_dataset_canteen():
-    schema = json.load(open("data/schemas/schema_cantine.json"))
-    all_canteens_col = [i["name"] for i in schema["fields"]]
-    canteens_col_from_db = all_canteens_col.copy()
-    canteens_col_from_db.remove("active_on_ma_cantine")
-    canteens_col_from_db.remove("department_lib")
-    canteens_col_from_db.remove("region_lib")
-
-    all_canteens = Canteen.objects.filter(deletion_date__isnull=True)
-    if all_canteens.count() == 0:
-        return pd.DataFrame(columns=canteens_col_from_db)
-
-    active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
-
-    # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-    canteens = pd.DataFrame(all_canteens.values(*canteens_col_from_db))
-
-    # Adding the active_on_ma_cantine column
-    canteens["active_on_ma_cantine"] = canteens["id"].apply(lambda x: x in active_canteens_id)
-    
-    logger.info('Canteens : Extract sectors...')
-    canteens = _extract_sectors(canteens)
-    logger.info('Canteens : Filter by sectors...')
-    canteens = _filter_by_sectors(canteens)
-
-    bucket_url = os.environ.get("CELLAR_HOST")
-    bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
-    canteens["logo"] = canteens["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
-
-    logger.info('Canteens : Clean dataset...')
-    canteens = _clean_dataset(canteens, schema)
-    logger.info('Canteens : Fill geo name...')
-    canteens = _fill_geo_name(canteens)
-
-    return canteens
-
-
-def _export_dataset(td, file_name):
-    with default_storage.open(f"open_data/{file_name}", "w") as file:
-        td.to_csv(file, sep=";", index=False, na_rep="")
-
-
 @app.task()
 def export_datasets():
-    logger.info('Starting datasets extractions')
+    logger.info("Starting datasets extractions")
     # Campagnes de télédéclaration
-    logger.info('A) Starting campagne teledeclaration 2021 dataset extraction')
-    td_2021 = _extract_dataset_teledeclaration(2021)
-    logger.info(f'A) Saving campagne teledeclaration 2021 dataset. Dataset size : {len(td_2021)} lines')
-    _export_dataset(td_2021, "campagne_td_2021.csv")
+    logger.info("A) Starting campagne teledeclaration 2021 dataset extraction")
+    etl_td = ETL_TD(2021)
+    etl_td.extract_dataset()
+    logger.info(f"A) Saving campagne teledeclaration 2021 dataset. Dataset size : {etl_td.len_dataset()} lines")
+    etl_td.export_dataset()
 
     # Registre des cantines
-    logger.info('B) Starting cantines dataset extraction')
-    canteens = _extract_dataset_canteen()
-    logger.info(f'B) Saving cantines teledeclaration dataset. Dataset size : {len(canteens)} lines')
-    _export_dataset(canteens, "registre_cantines.csv")
+    logger.info("B) Starting cantines dataset extraction")
+    etl_canteen = ETL_CANTEEN()
+    etl_canteen.extract_dataset()
+    logger.info(f"B) Saving cantines teledeclaration dataset. Dataset size : {etl_canteen.len_dataset()} lines")
+    etl_canteen.export_dataset()
