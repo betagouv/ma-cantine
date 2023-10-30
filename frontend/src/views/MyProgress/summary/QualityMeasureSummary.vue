@@ -59,11 +59,61 @@
         </p>
       </v-col>
     </v-row>
-    <hr aria-hidden="true" role="presentation" class="mt-10 mb-4 faint" />
-    <div>
-      <p>Données détaillées</p>
-      TODO only if simplified TODO button modifier
-    </div>
+    <v-expansion-panels hover accordion tile flat class="mt-10">
+      <v-expansion-panel class="dsfr">
+        <v-expansion-panel-header class="px-3 primary--text" v-slot="{ open }">
+          <h3 class="fr-text" :class="open && 'font-weight-bold'">
+            Données détaillées
+          </h3>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content class="ml-n3 py-4">
+          <QualityDiagnosticValue
+            v-for="(field, idx) in totalFields"
+            :key="`total-${idx}`"
+            :text="field.text"
+            :value="diagnostic[field.key]"
+          />
+          <div class="my-8">
+            <QualityDiagnosticValue
+              text="Mode de saisie des données"
+              :value="diagnostic.diagnosticType === 'COMPLETE' ? 'Détaillée' : 'Simplifiée'"
+            />
+          </div>
+          <div class="my-8">
+            <QualityDiagnosticValue
+              v-for="(field, idx) in egalimFields"
+              :key="`egalim-${idx}`"
+              :text="field.text"
+              :value="diagnostic[field.key]"
+            />
+          </div>
+          <div class="my-8">
+            <QualityDiagnosticValue
+              v-for="(field, idx) in familyFields"
+              :key="`family-${idx}`"
+              :text="field.text"
+              :value="diagnostic[field.key]"
+            />
+          </div>
+          <v-btn
+            outlined
+            small
+            color="primary"
+            class="fr-btn--tertiary px-2 mb-6"
+            :to="{
+              name: 'DiagnosticModification',
+              params: {
+                canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen),
+                year: diagnostic.year,
+              },
+            }"
+          >
+            <v-icon small class="mr-2">$pencil-line</v-icon>
+            Modifier mes données
+          </v-btn>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </div>
   <div class="fr-text" v-else>
     <p>
@@ -87,11 +137,12 @@
 
 <script>
 import ApproGraph from "@/components/ApproGraph"
+import QualityDiagnosticValue from "./QualityDiagnosticValue"
 import { hasDiagnosticApproData, applicableDiagnosticRules, getSustainableTotal, getPercentage } from "@/utils"
 
 export default {
   name: "QualityMeasureSummary",
-  components: { ApproGraph },
+  components: { ApproGraph, QualityDiagnosticValue },
   props: {
     diagnostic: {},
     centralDiagnostic: {},
@@ -99,6 +150,57 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      totalFields: [
+        {
+          text: "Total (en HT) de mes achats alimentaires",
+          key: "valueTotalHt",
+        },
+        {
+          text: "Total (en HT) des mes achats en viandes et volailles fraiches ou surgelées",
+          key: "valueMeatPoultryHt",
+        },
+        {
+          text: "Total (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture",
+          key: "valueFishHt",
+        },
+      ],
+      egalimFields: [
+        {
+          text: "Total (en HT) de mes achats Bio ou en conversion Bio",
+          key: "valueBioHt",
+        },
+        {
+          text: "Total (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)",
+          key: "valueSustainableHt",
+        },
+        {
+          text: "Total (en HT) des autres achats EGAlim",
+          key: "valueEgalimOthersHt",
+        },
+        {
+          text:
+            "Total (en € HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
+          key: "valueExternalityPerformanceHt",
+        },
+      ],
+      familyFields: [
+        {
+          text: "Total (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+          key: "valueMeatPoultryEgalimHt",
+        },
+        {
+          text: "Total (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
+          key: "valueMeatPoultryFranceHt",
+        },
+        {
+          text: "Total (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
+          key: "valueFishEgalimHt",
+        },
+      ],
+    }
   },
   computed: {
     usesCentralDiagnostic() {
@@ -156,5 +258,8 @@ span.percentage {
   display: inline-block;
   width: 3em;
   text-align: right;
+}
+.dsfr.v-expansion-panel {
+  box-shadow: inset 0 1px 0 0 #ddd, 0 1px 0 0 #ddd;
 }
 </style>
