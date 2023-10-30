@@ -768,6 +768,8 @@ class TestPublishedCanteenApi(APITestCase):
             value_bio_ht=600,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            value_fish_ht=100,
+            value_fish_egalim_ht=80,
         )
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
@@ -784,6 +786,8 @@ class TestPublishedCanteenApi(APITestCase):
 
         self.assertIn("percentageValueTotalHt", serialized_diag_2021)
         self.assertIn("hasWasteDiagnostic", serialized_diag_2021)
+        self.assertIn("percentageValueFishEgalimHt", serialized_diag_2021)
+        # TODO self.assertNotIn("valueFishEgalimHt", serialized_diag_2021)
 
     def test_percentage_values(self):
         """
