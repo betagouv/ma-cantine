@@ -145,17 +145,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-ul {
-  list-style-type: none;
-  padding-left: 0;
-}
-li {
-  margin-bottom: 14px;
-  display: flex;
-}
-li .v-icon {
-  align-items: baseline;
-}
-</style>
