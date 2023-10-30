@@ -87,8 +87,9 @@
     </div>
     <div v-else>
       <h3 class="fr-h6 font-weight-bold mb-4">
-        Établissement
+        Données relatives à mon établissement
       </h3>
+      <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
       <CanteenSummary :canteen="canteen" />
     </div>
   </div>

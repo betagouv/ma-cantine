@@ -1,9 +1,24 @@
 <template>
   <div class="fr-text">
+    <div class="d-flex justify-space-between align-center mb-4">
+      <p class="ma-0 text-uppercase font-weight-bold">Synthèse</p>
+      <v-btn
+        class="fr-text-sm font-weight-medium"
+        outlined
+        color="primary"
+        :to="{
+          name: 'CanteenForm',
+          params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+        }"
+      >
+        <v-icon small color="primary" class="mr-2">$pencil-line</v-icon>
+        Modifier mes données
+      </v-btn>
+    </div>
     <p class="my-0 fr-text-sm grey--text text--darken-1">Nom de la cantine</p>
     <p class="mt-1 mb-4 font-weight-bold">{{ canteen.name }}</p>
     <DsfrCallout>
-      <p>
+      <p class="ma-0">
         Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple
         :
         <span class="font-italic">
