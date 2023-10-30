@@ -76,6 +76,7 @@
 
 <script>
 import communicationSupports from "@/data/communication-supports.json"
+import { selectListToObject } from "@/utils"
 import Constants from "@/constants"
 
 export default {
@@ -92,10 +93,7 @@ export default {
       return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
     },
     communicationFrequency() {
-      const items = Constants.CommunicationFrequencies.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const items = selectListToObject(Constants.CommunicationFrequencies)
       return items[this.displayDiagnostic.communicationFrequency]
     },
     communicationSupports() {

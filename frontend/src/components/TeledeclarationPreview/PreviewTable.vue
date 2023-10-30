@@ -71,7 +71,7 @@
 <script>
 import Constants from "@/constants"
 import communicationSupports from "@/data/communication-supports.json"
-import { capitalise, sectorsSelectList, approSummary, toCurrency } from "@/utils"
+import { capitalise, sectorsSelectList, approSummary, toCurrency, selectListToObject } from "@/utils"
 
 export default {
   props: {
@@ -583,35 +583,23 @@ export default {
     },
     getDiversificationPlanActions(diversificationPlanActions) {
       if (!diversificationPlanActions || !diversificationPlanActions.length) return "Non renseigné"
-      const actionItems = Constants.DiversificationPlanActions.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const actionItems = selectListToObject(Constants.DiversificationPlanActions)
       const labels = diversificationPlanActions.map((x) => actionItems[x]).filter((x) => !!x)
       return labels.join(", ")
     },
     getVegetarianWeeklyRecurrence(vegetarianWeeklyRecurrence) {
       if (!vegetarianWeeklyRecurrence) return "Non renseigné"
-      const items = Constants.VegetarianRecurrence.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const items = selectListToObject(Constants.VegetarianRecurrence)
       return items[vegetarianWeeklyRecurrence] || "Non renseigné"
     },
     getVegetarianMenuType(vegetarianMenuType) {
       if (!vegetarianMenuType) return "Non renseigné"
-      const items = Constants.VegetarianMenuTypes.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const items = selectListToObject(Constants.VegetarianMenuTypes)
       return items[vegetarianMenuType] || "Non renseigné"
     },
     getVegetarianMenuBases(vegetarianMenuBases) {
       if (!vegetarianMenuBases || !vegetarianMenuBases.length) return "Non renseigné"
-      const actionItems = Constants.VegetarianMenuBases.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const actionItems = selectListToObject(Constants.VegetarianMenuBases)
       const labels = vegetarianMenuBases.map((x) => actionItems[x]).filter((x) => !!x)
       return labels.join(", ")
     },
@@ -622,10 +610,7 @@ export default {
     },
     getCommunicationFrequency(communicationFrequency) {
       if (!communicationFrequency) return "Non renseigné"
-      const items = Constants.CommunicationFrequencies.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const items = selectListToObject(Constants.CommunicationFrequencies)
       return items[communicationFrequency] || "Non renseigné"
     },
     isTruthyOrZero(value) {

@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { applicableDiagnosticRules } from "@/utils"
+import { applicableDiagnosticRules, selectListToObject } from "@/utils"
 import Constants from "@/constants"
 
 export default {
@@ -105,34 +105,22 @@ export default {
       return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
     },
     weeklyRecurrence() {
-      const items = Constants.VegetarianRecurrence.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const items = selectListToObject(Constants.VegetarianRecurrence)
       return items[this.displayDiagnostic.vegetarianWeeklyRecurrence]
     },
     menuType() {
-      const types = Constants.VegetarianMenuTypes.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const types = selectListToObject(Constants.VegetarianMenuTypes)
       return types[this.displayDiagnostic.vegetarianMenuType]
     },
     menuBases() {
-      const bases = Constants.VegetarianMenuBases.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const bases = selectListToObject(Constants.VegetarianMenuBases)
       return this.displayDiagnostic.vegetarianMenuBases.map((x) => bases[x])
     },
     displayDiversificationPlanSegment() {
       return applicableDiagnosticRules(this.canteen).hasDiversificationPlan
     },
     appliedDiversificationActions() {
-      const diversificationPlanActions = Constants.DiversificationPlanActions.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const diversificationPlanActions = selectListToObject(Constants.DiversificationPlanActions)
       if (!this.displayDiagnostic.diversificationPlanActions?.length) return null
       return this.displayDiagnostic.diversificationPlanActions
         .map((x) => diversificationPlanActions[x])
