@@ -66,7 +66,7 @@ class ETL(ABC):
                 self.df[col_int["name"]] = self.df[col_int["name"]].round(decimals=4)
         self.df = self.df.replace("<NA>", "")
         return self.df
-    
+
     def _extract_sectors(self):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
         self.df["sectors"] = self.df["sectors"].apply(
@@ -87,8 +87,17 @@ class ETL(ABC):
     def extract_dataset(self):
         pass
 
+    def get_schema(self):
+        return self.schema
+
+    def get_dataset(self):
+        return self.df
+
     def len_dataset(self):
-        return len(self.df)
+        if isinstance(self.df, pd.DataFrame):
+            return len(self.df)
+        else:
+            return 0
 
     def export_dataset(self,):
         with default_storage.open(f"open_data/{self.dataset_name}.csv", "w") as file:
@@ -139,8 +148,6 @@ class ETL_TD(ETL):
     def __init__(self, year: int):
         super().__init__()
         self.year = year
-        if self.year not in [2021, 2022, 2023]:
-            raise Exception('This year is not covered by a TD campaign')
         self.dataset_name = f'campagne_td_{year}'
         self.schema = json.load(open("data/schemas/schema_teledeclaration.json"))
 
@@ -161,7 +168,7 @@ class ETL_TD(ETL):
                 ).values()
             )
         if len(self.df) == 0:
-            logger.warning("TD campagne dataset is empty")
+            logger.warning(f"TD campagne dataset is empty for year : {self.year}")
             return self.df
         logger.info("TD campagne : Flatten declared data...")
         self.df = self._flatten_declared_data()
