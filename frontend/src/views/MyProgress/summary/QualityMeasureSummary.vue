@@ -9,7 +9,7 @@
             <p class="mb-0">Produits bio</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold">{{ bioPercentage }} %</p>
+            <p class="mb-0 font-weight-bold">{{ bioPercentage || "—" }} %</p>
           </v-col>
           <v-col cols="4">
             <p class="mb-0">
@@ -22,7 +22,7 @@
             <p class="mb-0">Produits durables et de qualité (hors bio)</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold">{{ sustainablePercentage }} %</p>
+            <p class="mb-0 font-weight-bold">{{ sustainablePercentage || "—" }} %</p>
           </v-col>
         </v-row>
         <hr aria-hidden="true" role="presentation" class="my-6" />
@@ -31,7 +31,7 @@
             <p class="mb-0">Produits EGAlim</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold">{{ egalimPercentage }} %</p>
+            <p class="mb-0 font-weight-bold">{{ egalimPercentage || "—" }} %</p>
           </v-col>
           <v-col cols="4">
             <p class="mb-0">
@@ -44,17 +44,17 @@
         <p class="font-weight-bold">Par famille de produits</p>
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$award-line</v-icon>
-          <span class="font-weight-bold percentage">{{ percentageMeatPoultryEgalim }} %</span>
+          <span class="font-weight-bold percentage">{{ percentageMeatPoultryEgalim || "—" }} %</span>
           de viandes et volailles EGAlim
         </p>
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$france-line</v-icon>
-          <span class="font-weight-bold percentage">{{ percentageMeatPoultryFrance }} %</span>
+          <span class="font-weight-bold percentage">{{ percentageMeatPoultryFrance || "—" }} %</span>
           de viandes et volailles provenance France
         </p>
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$anchor-line</v-icon>
-          <span class="font-weight-bold percentage">{{ percentageFishEgalim }} %</span>
+          <span class="font-weight-bold percentage">{{ percentageFishEgalim || "—" }} %</span>
           de produits aquatiques EGAlim
         </p>
       </v-col>
@@ -66,7 +66,22 @@
     </div>
   </div>
   <div class="fr-text" v-else>
-    TODO
+    <p>
+      Renseignez la valeur (en HT) de vos achats alimentaires total et au moins un autre champ par label de produit pour
+      voir la sythèse de vos données.
+    </p>
+    <v-btn
+      color="primary"
+      :to="{
+        name: 'DiagnosticModification',
+        params: {
+          canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen),
+          year: diagnostic.year,
+        },
+      }"
+    >
+      Complèter mes données
+    </v-btn>
   </div>
 </template>
 
@@ -114,15 +129,15 @@ export default {
       return this.bioPercentage + this.sustainablePercentage
     },
     percentageMeatPoultryEgalim() {
-      if (!this.diagnostic.valueMeatPoultryHt) return "—"
+      if (!this.diagnostic.valueMeatPoultryHt) return null
       return getPercentage(this.diagnostic.valueMeatPoultryEgalimHt, this.diagnostic.valueMeatPoultryHt)
     },
     percentageMeatPoultryFrance() {
-      if (!this.diagnostic.valueMeatPoultryHt) return "—"
+      if (!this.diagnostic.valueMeatPoultryHt) return null
       return getPercentage(this.diagnostic.valueMeatPoultryFranceHt, this.diagnostic.valueMeatPoultryHt)
     },
     percentageFishEgalim() {
-      if (!this.diagnostic.valueFishHt) return "—"
+      if (!this.diagnostic.valueFishHt) return null
       return getPercentage(this.diagnostic.valueFishEgalimHt, this.diagnostic.valueFishHt)
     },
   },
