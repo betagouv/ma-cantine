@@ -12,8 +12,8 @@
       </p>
     </DsfrCallout>
     <v-row>
-      <v-col cols="12" sm="6" class="d-flex align-center py-8">
-        <div class="mr-6">
+      <v-col cols="12" sm="6" class="d-flex align-center pa-0 left-border">
+        <div class="mx-8">
           <v-icon color="primary" x-large>$file-line</v-icon>
         </div>
         <div class="mt-n1">
@@ -21,8 +21,8 @@
           <p class="my-0">{{ canteen.siret || "—" }}</p>
         </div>
       </v-col>
-      <v-col cols="12" sm="6" class="d-flex align-center py-8">
-        <div class="mr-6">
+      <v-col cols="12" sm="6" class="d-flex align-center pa-0 left-border">
+        <div class="mx-8">
           <v-icon color="primary" x-large>$france-line</v-icon>
         </div>
         <div class="mt-n1">
@@ -32,8 +32,8 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" class="d-flex align-center py-8">
-        <div class="mr-6">
+      <v-col cols="12" class="d-flex align-center pa-0 left-border">
+        <div class="mx-8">
           <v-icon color="primary" x-large>$team-line</v-icon>
         </div>
         <div class="mt-n1">
@@ -45,8 +45,8 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" sm="6" class="d-flex align-center py-8">
-        <div class="mr-6">
+      <v-col cols="12" sm="6" class="d-flex align-center pa-0 left-border">
+        <div class="mx-8">
           <v-icon color="primary" x-large>$building-line</v-icon>
         </div>
         <div class="mt-n1">
@@ -56,8 +56,8 @@
           <p class="my-0">{{ managementType || "—" }}</p>
         </div>
       </v-col>
-      <v-col cols="12" sm="6" class="d-flex align-center py-8">
-        <div class="mr-6">
+      <v-col cols="12" sm="6" class="d-flex align-center pa-0 left-border">
+        <div class="mx-8">
           <v-icon color="primary" x-large>$restaurant-line</v-icon>
         </div>
         <div class="mt-n1">
@@ -109,3 +109,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.left-border {
+  border-left: solid #e3e3fd;
+}
+.row {
+  margin: 36px 0;
+}
+</style>
