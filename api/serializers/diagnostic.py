@@ -241,11 +241,12 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
         This method pops non-appro fields if that is the case from the JSON representation
         """
         representation = super().to_representation(instance)
+        representation = appro_to_percentages(representation, instance)
         if instance.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
             [representation.pop(field, "") for field in NON_APPRO_FIELDS]
         if instance.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
             [representation.pop(field, "") for field in COMPLETE_APPRO_FIELDS]
-        return appro_to_percentages(representation, instance)
+        return representation
 
 
 class PublicDiagnosticSerializer(serializers.ModelSerializer):

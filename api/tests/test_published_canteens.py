@@ -786,8 +786,8 @@ class TestPublishedCanteenApi(APITestCase):
 
         self.assertIn("percentageValueTotalHt", serialized_diag_2021)
         self.assertIn("hasWasteDiagnostic", serialized_diag_2021)
-        # self.assertIn("percentageValueFishEgalimHt", serialized_diag_2021)
         self.assertNotIn("valueFishEgalimHt", serialized_diag_2021)
+        self.assertIn("percentageValueFishEgalimHt", serialized_diag_2021)
 
     def test_percentage_values(self):
         """
