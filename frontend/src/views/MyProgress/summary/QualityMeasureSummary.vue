@@ -9,10 +9,10 @@
             <p class="mb-0">Produits bio</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold">{{ bioPercentage || "—" }} %</p>
+            <p class="mb-0 font-weight-bold color-bio">{{ bioPercentage || "—" }} %</p>
           </v-col>
           <v-col cols="4">
-            <p class="mb-0">
+            <p class="mb-0 color-bio">
               <i>objectif : {{ applicableRules.bioThreshold }} %</i>
             </p>
           </v-col>
@@ -25,16 +25,20 @@
             <p class="mb-0 font-weight-bold">{{ sustainablePercentage || "—" }} %</p>
           </v-col>
         </v-row>
-        <hr aria-hidden="true" role="presentation" class="my-6" />
+        <v-row class="mt-1">
+          <v-col cols="8">
+            <hr aria-hidden="true" role="presentation" />
+          </v-col>
+        </v-row>
         <v-row class="mt-0">
           <v-col cols="6">
             <p class="mb-0">Produits EGAlim</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold">{{ egalimPercentage || "—" }} %</p>
+            <p class="mb-0 font-weight-bold color-egalim">{{ egalimPercentage || "—" }} %</p>
           </v-col>
           <v-col cols="4">
-            <p class="mb-0">
+            <p class="mb-0 color-egalim">
               <i>objectif : {{ applicableRules.qualityThreshold }} %</i>
             </p>
           </v-col>
@@ -257,12 +261,12 @@ export default {
 </script>
 
 <style scoped>
-hr.faint {
+hr {
   border: none;
   height: 1px;
   /* Set the hr color */
-  color: #ddd; /* old IE */
-  background-color: #ddd; /* Modern Browsers */
+  color: #929292; /* old IE */
+  background-color: #929292; /* Modern Browsers */
 }
 span.percentage {
   display: inline-block;
@@ -271,5 +275,11 @@ span.percentage {
 }
 .dsfr.v-expansion-panel {
   box-shadow: inset 0 1px 0 0 #ddd, 0 1px 0 0 #ddd;
+}
+.color-bio {
+  color: #297254;
+}
+.color-egalim {
+  color: #00a95f;
 }
 </style>
