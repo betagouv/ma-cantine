@@ -27,7 +27,7 @@
       </p>
     </DsfrCallout>
     <v-row>
-      <v-col cols="12" sm="6" class="d-flex align-center pa-0 left-border">
+      <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
         <div class="mx-8">
           <v-icon color="primary" x-large>$file-line</v-icon>
         </div>
@@ -36,7 +36,7 @@
           <p class="my-0">{{ canteen.siret || "—" }}</p>
         </div>
       </v-col>
-      <v-col cols="12" sm="6" class="d-flex align-center pa-0 left-border">
+      <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
         <div class="mx-8">
           <v-icon color="primary" x-large>$france-line</v-icon>
         </div>
@@ -47,7 +47,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" class="d-flex align-center pa-0 left-border">
+      <v-col cols="12" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
         <div class="mx-8">
           <v-icon color="primary" x-large>$team-line</v-icon>
         </div>
@@ -60,7 +60,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" sm="6" class="d-flex align-center pa-0 left-border">
+      <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
         <div class="mx-8">
           <v-icon color="primary" x-large>$building-line</v-icon>
         </div>
@@ -71,7 +71,7 @@
           <p class="my-0">{{ managementType || "—" }}</p>
         </div>
       </v-col>
-      <v-col cols="12" sm="6" class="d-flex align-center pa-0 left-border">
+      <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
         <div class="mx-8">
           <v-icon color="primary" x-large>$restaurant-line</v-icon>
         </div>
