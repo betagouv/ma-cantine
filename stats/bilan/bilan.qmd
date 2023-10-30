@@ -143,13 +143,6 @@ for year in ['2022', '2023', 'Campagne 2022', 'Campagne 2023', '2022_strat_hist'
 ```
 
 
-```{python Compare assidus} 
-# | echo: false
-# | output: asis
-
-
-```
-
 ## Qualité des données
 
 Avant d'étudier les chiffres clés de la télédéclaration, nous vous présentons des informations sur la disponibilité des données. Ces informations sont importantes pour saisir au mieux la portée des indicateurs.
@@ -262,8 +255,6 @@ for year in utils.CAMPAGNES.keys():
         valeurs_manquantes[year][col.replace('teledeclaration.', '')] = tds[f"{year}_strat_hist"][col].isna().sum()    
         valeurs_manquantes_iso_perim[year][col.replace('teledeclaration.', '')] = tds_commun[f"{year}_strat_hist"][col].isna().sum()    
 
-    # Creating the version of the dataset using this strategy
-    # tds[f"{year}_strat_hist"][col_achats] = tds[f"{year}_strat_hist"][col_achats].fillna(0)
 
 def display_data_coverage(year):
     print(f'Après filtrage des lignes dont les 5 champs sont manquants, nous avons gardé **{len(tds[f"{year}_strat_hist"])}** télédéclarations sur les **{len(tds[year])}** télédéclarations totales.\n Ensuite nous avons remplaçé par 0 les valeurs manquantes : \n')
@@ -472,15 +463,15 @@ taille_totale = len(tds[year])
 df_taille['Pourcentage'] = df_taille.apply(lambda x: utils.taux_formatter(x['Nombre']/taille_totale), axis=1)
 ```
 
-```{python}
+```{python Coût denrées}
 # | echo: false
 # | output: asis
 
 # Cout denrées - Données Aberrantes
-# cout_denrees_errors = tds['Campagne 2023'][tds['Campagne 2023']['teledeclaration.cout_denrees'] > 10]
-# cout_denrees_errors = cout_denrees_errors.sort_values('teledeclaration.cout_denrees', ascending=False)
-# cout_denrees_errors.to_csv('data/cout_denrees_errors.csv', sep=';', index=False)
-# cout_denrees_errors.to_html()
+cout_denrees_errors = tds['Campagne 2023'][tds['Campagne 2023']['teledeclaration.cout_denrees'] > 10]
+cout_denrees_errors = cout_denrees_errors.sort_values('teledeclaration.cout_denrees', ascending=False)
+cout_denrees_errors.to_csv('data/cout_denrees_errors.csv', sep=';', index=False)
+cout_denrees_errors.to_html()
 ```
 
 {{< include _secteurs.qmd >}}
