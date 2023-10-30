@@ -76,6 +76,7 @@
                 :canteen="canteen"
                 :diagnostic="diagnostic"
                 :centralDiagnostic="centralDiagnostic"
+                :measures="tabHeaders"
               />
             </v-tab-item>
           </template>
@@ -111,6 +112,7 @@ export default {
         ...keyMeasures.map((x) => ({
           urlSlug: x.id,
           text: x.tabText,
+          title: x.title,
           icon: x.mdiIcon,
           to: { params: { measure: x.id } },
         })),
@@ -118,6 +120,7 @@ export default {
           {
             urlSlug: "etablissement",
             text: "Établissement",
+            title: "Établissement",
             icon: "$building-fill",
             to: { params: { measure: "etablissement" } },
           },
