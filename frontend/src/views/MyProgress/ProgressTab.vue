@@ -23,6 +23,7 @@
       <div v-if="(!diagnostic && !centralDiagnostic) || showIntro">
         <component
           :is="`${keyMeasure.baseComponent}Info`"
+          :canteen="canteen"
           :diagnostic="diagnostic"
           :centralDiagnostic="centralDiagnostic"
         />
@@ -36,7 +37,7 @@
           Commencer
         </v-btn>
       </div>
-      <div v-if="diagnostic || centralDiagnostic">
+      <div v-if="diagnostic || centralDiagnostic" class="summary">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
         <div v-if="usesOtherDiagnosticForMeasure && isSatellite" class="fr-text pa-6 grey lighten-4 mb-6">
           <p class="mb-1 grey--text text--darken-4">
@@ -206,5 +207,16 @@ hr {
   /* Set the hr color */
   color: #ddd; /* old IE */
   background-color: #ddd; /* Modern Browsers */
+}
+.summary >>> ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+.summary >>> li {
+  margin-bottom: 14px;
+  display: flex;
+}
+.summary >>> li .v-icon {
+  align-items: baseline;
 }
 </style>
