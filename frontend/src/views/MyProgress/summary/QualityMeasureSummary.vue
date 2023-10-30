@@ -42,7 +42,21 @@
       </v-col>
       <v-col cols="12" md="6">
         <p class="font-weight-bold">Par famille de produits</p>
-        TODO
+        <p class="mb-md-4">
+          <v-icon class="mr-2" color="#00A95F">$award-line</v-icon>
+          <span class="font-weight-bold percentage">{{ percentageMeatPoultryEgalim }} %</span>
+          de viandes et volailles EGAlim
+        </p>
+        <p class="mb-md-4">
+          <v-icon class="mr-2" color="#00A95F">$france-line</v-icon>
+          <span class="font-weight-bold percentage">{{ percentageMeatPoultryFrance }} %</span>
+          de viandes et volailles provenance France
+        </p>
+        <p class="mb-md-4">
+          <v-icon class="mr-2" color="#00A95F">$anchor-line</v-icon>
+          <span class="font-weight-bold percentage">{{ percentageFishEgalim }} %</span>
+          de produits aquatiques EGAlim
+        </p>
       </v-col>
     </v-row>
     <hr aria-hidden="true" role="presentation" class="mt-10 mb-4 faint" />
@@ -99,6 +113,18 @@ export default {
     egalimPercentage() {
       return this.bioPercentage + this.sustainablePercentage
     },
+    percentageMeatPoultryEgalim() {
+      if (!this.diagnostic.valueMeatPoultryHt) return "—"
+      return getPercentage(this.diagnostic.valueMeatPoultryEgalimHt, this.diagnostic.valueMeatPoultryHt)
+    },
+    percentageMeatPoultryFrance() {
+      if (!this.diagnostic.valueMeatPoultryHt) return "—"
+      return getPercentage(this.diagnostic.valueMeatPoultryFranceHt, this.diagnostic.valueMeatPoultryHt)
+    },
+    percentageFishEgalim() {
+      if (!this.diagnostic.valueFishHt) return "—"
+      return getPercentage(this.diagnostic.valueFishEgalimHt, this.diagnostic.valueFishHt)
+    },
   },
 }
 </script>
@@ -110,5 +136,10 @@ hr.faint {
   /* Set the hr color */
   color: #ddd; /* old IE */
   background-color: #ddd; /* Modern Browsers */
+}
+span.percentage {
+  display: inline-block;
+  width: 3em;
+  text-align: right;
 }
 </style>
