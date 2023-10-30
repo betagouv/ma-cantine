@@ -188,12 +188,10 @@ def appro_to_percentages(representation, instance):
         value = representation.get(field)
         if value:
             representation[f"percentage_{field}"] = value / meat_total
-        representation.pop(field, None)
         field = "value_meat_poultry_france_ht"
         value = representation.get(field)
         if value:
             representation[f"percentage_{field}"] = value / meat_total
-        representation.pop(field, None)
 
     fish_total = representation.get("value_fish_ht")
     if fish_total:
@@ -201,7 +199,6 @@ def appro_to_percentages(representation, instance):
         value = representation.get(field)
         if value:
             representation[f"percentage_{field}"] = value / fish_total
-        representation.pop(field, None)
 
     appro_field = (
         "value_total_ht",
@@ -220,6 +217,9 @@ def appro_to_percentages(representation, instance):
 
     representation["percentage_value_total_ht"] = 1
     representation.pop("value_total_ht", None)
+    representation.pop("value_meat_poultry_egalim_ht", None)
+    representation.pop("value_meat_poultry_france_ht", None)
+    representation.pop("value_fish_egalim_ht", None)
 
     return representation
 

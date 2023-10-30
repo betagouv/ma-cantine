@@ -833,3 +833,35 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertNotIn("valueMeatPoultryEgalimHt", serialized_diag)
         self.assertNotIn("valueFishHt", serialized_diag)
         self.assertNotIn("valueFishEgalimHt", serialized_diag)
+
+    def test_remove_raw_values_when_missing_totals(self):
+        """
+        The published endpoint should not contain the real economic data, only percentages.
+        Even when the meat and fish totals are absent, but EGAlim and France totals are present.
+        """
+        central_siret = "22730656663081"
+        canteen = CanteenFactory.create(
+            siret=central_siret,
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status="published",
+        )
+
+        DiagnosticFactory.create(
+            canteen=canteen,
+            year=2021,
+            value_meat_poultry_ht=None,
+            value_meat_poultry_egalim_ht=100,
+            value_meat_poultry_france_ht=100,
+            value_fish_ht=None,
+            value_fish_egalim_ht=100,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+        )
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+
+        serialized_diag = body.get("diagnostics")[0]
+
+        self.assertNotIn("valueMeatPoultryEgalimHt", serialized_diag)
+        self.assertNotIn("valueMeatPoultryFranceHt", serialized_diag)
+        self.assertNotIn("valueFishEgalimHt", serialized_diag)
