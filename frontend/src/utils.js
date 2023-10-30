@@ -419,6 +419,14 @@ export const sectorsSelectList = (sectors) => {
   return sectors
 }
 
+export const sectorDisplayString = (canteenSectors, sectors) => {
+  if (!canteenSectors) return ""
+  const sectorDisplay = canteenSectors
+    .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
+    .join(", ")
+  return capitalise(sectorDisplay)
+}
+
 export const readCookie = (name) => {
   const nameEQ = name + "="
   const cookieArr = document.cookie.split(";")

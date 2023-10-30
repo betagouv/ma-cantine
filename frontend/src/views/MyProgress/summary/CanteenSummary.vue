@@ -74,7 +74,7 @@
 <script>
 import DsfrCallout from "@/components/DsfrCallout"
 import Constants from "@/constants"
-import { capitalise } from "@/utils"
+import { sectorDisplayString } from "@/utils"
 
 export default {
   name: "CanteenSummary",
@@ -95,12 +95,7 @@ export default {
       return managementType?.text
     },
     sectors() {
-      if (!this.canteen.sectors) return ""
-      const sectors = this.$store.state.sectors
-      const sectorDisplay = this.canteen.sectors
-        .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
-        .join(", ")
-      return capitalise(sectorDisplay)
+      return sectorDisplayString(this.canteen.sectors, this.$store.state.sectors)
     },
     economicModel() {
       const managementType = Constants.EconomicModels.find((x) => x.value === this.canteen.economicModel)
