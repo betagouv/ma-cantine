@@ -76,7 +76,7 @@
           <div class="my-8">
             <QualityDiagnosticValue
               text="Mode de saisie des données"
-              :value="diagnostic.diagnosticType === 'COMPLETE' ? 'Détaillée' : 'Simplifiée'"
+              :value="isDetailedDiagnostic ? 'Détaillée' : 'Simplifiée'"
             />
           </div>
           <div class="my-8">
@@ -94,6 +94,12 @@
               :text="field.text"
               :value="diagnostic[field.key]"
             />
+          </div>
+          <div v-if="isDetailedDiagnostic">
+            <h3 class="font-weight-black fr-text grey--text text--darken-3 mt-4">
+              Catégories EGAlim par famille de produit
+            </h3>
+            <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
           </div>
           <v-btn
             outlined
@@ -137,12 +143,13 @@
 
 <script>
 import ApproGraph from "@/components/ApproGraph"
+import FamiliesGraph from "@/components/FamiliesGraph"
 import QualityDiagnosticValue from "./QualityDiagnosticValue"
 import { hasDiagnosticApproData, applicableDiagnosticRules, getSustainableTotal, getPercentage } from "@/utils"
 
 export default {
   name: "QualityMeasureSummary",
-  components: { ApproGraph, QualityDiagnosticValue },
+  components: { ApproGraph, FamiliesGraph, QualityDiagnosticValue },
   props: {
     diagnostic: {},
     centralDiagnostic: {},
@@ -241,6 +248,9 @@ export default {
     percentageFishEgalim() {
       if (!this.diagnostic.valueFishHt) return null
       return getPercentage(this.diagnostic.valueFishEgalimHt, this.diagnostic.valueFishHt)
+    },
+    isDetailedDiagnostic() {
+      return this.diagnostic.diagnosticType === "COMPLETE"
     },
   },
 }
