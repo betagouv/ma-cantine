@@ -1,7 +1,7 @@
 <template>
   <div class="pa-8 pb-4">
     <div v-if="measureId !== establishmentId">
-      <v-row v-if="diagnostic || centralDiagnostic">
+      <v-row v-if="diagnostic || hasCentralDiagnosticForMeasure">
         <v-col cols="12" md="8">
           <h3 class="fr-h6 font-weight-bold mb-0">
             {{ keyMeasure.title }}
@@ -20,7 +20,7 @@
       <h3 v-else class="fr-h6 font-weight-bold mb-4">
         {{ keyMeasure.title }}
       </h3>
-      <div v-if="(!diagnostic && !centralDiagnostic) || showIntro">
+      <div v-if="(!diagnostic && !hasCentralDiagnosticForMeasure) || showIntro">
         <component
           :is="`${keyMeasure.baseComponent}Info`"
           :canteen="canteen"
@@ -37,7 +37,7 @@
           Commencer
         </v-btn>
       </div>
-      <div v-if="diagnostic || centralDiagnostic" class="summary">
+      <div v-if="diagnostic || hasCentralDiagnosticForMeasure" class="summary">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
         <div v-if="usesOtherDiagnosticForMeasure && isSatellite" class="fr-text pa-6 grey lighten-4 mb-6">
           <p class="mb-1 grey--text text--darken-4">
@@ -142,7 +142,7 @@ export default {
   },
   data() {
     return {
-      approId: "produits-de-qualite",
+      approId: "qualite-des-produits",
       establishmentId: "etablissement",
       showIntro: false,
     }
@@ -195,6 +195,12 @@ export default {
     },
     levelMessage() {
       return "Vous êtes au point, bravo ! Partagez vos meilleures idées pour inspirer d'autres cantines !"
+    },
+    hasCentralDiagnosticForMeasure() {
+      if (!this.centralDiagnostic) return false
+      if (this.measureId === this.establishmentId) return false
+      if (this.measureId === this.approId) return true
+      return this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
     },
   },
 }
