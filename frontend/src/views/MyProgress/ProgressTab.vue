@@ -1,7 +1,7 @@
 <template>
   <div class="pa-8 pb-4">
-    <div v-if="measureId !== establishmentId">
-      <v-row v-if="diagnostic || centralDiagnostic">
+    <div>
+      <v-row v-if="(diagnostic || centralDiagnostic) && !isCanteenTab">
         <v-col cols="12" md="8">
           <h3 class="fr-h6 font-weight-bold mb-0">
             {{ keyMeasure.title }}
@@ -20,7 +20,7 @@
       <h3 v-else class="fr-h6 font-weight-bold mb-4">
         {{ keyMeasure.title }}
       </h3>
-      <div v-if="(!diagnostic && !centralDiagnostic) || showIntro">
+      <div v-if="!isCanteenTab && ((!diagnostic && !centralDiagnostic) || showIntro)">
         <component
           :is="`${keyMeasure.baseComponent}Info`"
           :canteen="canteen"
@@ -37,9 +37,12 @@
           Commencer
         </v-btn>
       </div>
-      <div v-if="diagnostic || centralDiagnostic" class="summary">
+      <div v-if="diagnostic || centralDiagnostic || isCanteenTab" class="summary">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
-        <div v-if="usesOtherDiagnosticForMeasure && isSatellite" class="fr-text pa-6 grey lighten-4 mb-6">
+        <div
+          v-if="!isCanteenTab && usesOtherDiagnosticForMeasure && isSatellite"
+          class="fr-text pa-6 grey lighten-4 mb-6"
+        >
           <p class="mb-1 grey--text text--darken-4">
             Votre cantine sert des repas préparés par
             <span class="font-weight-bold">{{ centralKitchenName }}</span>
@@ -58,12 +61,12 @@
           </v-col>
           <v-col class="text-right">
             <v-btn
-              v-if="!hasActiveTeledeclaration && !usesOtherDiagnosticForMeasure"
+              v-if="isCanteenTab || (!hasActiveTeledeclaration && !usesOtherDiagnosticForMeasure)"
               outlined
               small
               color="primary"
               class="fr-btn--tertiary px-2"
-              :to="{ name: 'DiagnosticModification', params: { canteenUrlComponent, year: year } }"
+              :to="modificationLink"
             >
               <v-icon small class="mr-2">$pencil-line</v-icon>
               Modifier mes données
@@ -85,13 +88,6 @@
           <router-link :to="{}">Next tab</router-link>
         </v-col>
       </v-row>
-    </div>
-    <div v-else>
-      <h3 class="fr-h6 font-weight-bold mb-4">
-        Données relatives à mon établissement
-      </h3>
-      <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
-      <CanteenSummary :canteen="canteen" />
     </div>
   </div>
 </template>
@@ -149,9 +145,12 @@ export default {
     }
   },
   computed: {
+    isCanteenTab() {
+      return this.measureId === this.establishmentId
+    },
     keyMeasure() {
-      if (this.measureId === this.establishmentId) {
-        return { title: "Établissement" }
+      if (this.isCanteenTab) {
+        return { title: "Données relatives à mon établissement", baseComponent: "Canteen" }
       }
       return keyMeasures.find((x) => x.id === this.measureId)
     },
@@ -196,6 +195,11 @@ export default {
     },
     levelMessage() {
       return "Vous êtes au point, bravo ! Partagez vos meilleures idées pour inspirer d'autres cantines !"
+    },
+    modificationLink() {
+      return this.isCanteenTab
+        ? { name: "CanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
+        : { name: "DiagnosticModification", params: { canteenUrlComponent: this.canteenUrlComponent, year: this.year } }
     },
   },
 }
