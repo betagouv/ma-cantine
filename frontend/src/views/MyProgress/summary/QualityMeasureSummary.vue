@@ -6,34 +6,35 @@
         <p class="font-weight-bold">Détail du calcul de mes taux EGAlim</p>
         <v-row>
           <v-col cols="6">
-            <p>Produits bio</p>
+            <p class="mb-0">Produits bio</p>
           </v-col>
           <v-col cols="2">
-            <p class="font-weight-bold">{{ bioPercentage }} %</p>
+            <p class="mb-0 font-weight-bold">{{ bioPercentage }} %</p>
           </v-col>
           <v-col cols="4">
-            <p>
+            <p class="mb-0">
               <i>objectif : {{ applicableRules.bioThreshold }} %</i>
             </p>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="mt-0">
           <v-col cols="6">
-            <p>Produits durables et de qualité (hors bio)</p>
+            <p class="mb-0">Produits durables et de qualité (hors bio)</p>
           </v-col>
           <v-col cols="2">
-            <p class="font-weight-bold">{{ sustainablePercentage }} %</p>
+            <p class="mb-0 font-weight-bold">{{ sustainablePercentage }} %</p>
           </v-col>
         </v-row>
-        <v-row>
+        <hr aria-hidden="true" role="presentation" class="my-6" />
+        <v-row class="mt-0">
           <v-col cols="6">
-            <p>Produits EGAlim</p>
+            <p class="mb-0">Produits EGAlim</p>
           </v-col>
           <v-col cols="2">
-            <p class="font-weight-bold">{{ egalimPercentage }} %</p>
+            <p class="mb-0 font-weight-bold">{{ egalimPercentage }} %</p>
           </v-col>
           <v-col cols="4">
-            <p>
+            <p class="mb-0">
               <i>objectif : {{ applicableRules.qualityThreshold }} %</i>
             </p>
           </v-col>
@@ -44,7 +45,7 @@
         TODO
       </v-col>
     </v-row>
-    <hr />
+    <hr aria-hidden="true" role="presentation" class="mt-10 mb-4 faint" />
     <div>
       <p>Données détaillées</p>
       TODO only if simplified TODO button modifier
@@ -101,3 +102,13 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+hr.faint {
+  border: none;
+  height: 1px;
+  /* Set the hr color */
+  color: #ddd; /* old IE */
+  background-color: #ddd; /* Modern Browsers */
+}
+</style>
