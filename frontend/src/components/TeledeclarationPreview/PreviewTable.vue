@@ -583,15 +583,10 @@ export default {
     },
     getDiversificationPlanActions(diversificationPlanActions) {
       if (!diversificationPlanActions || !diversificationPlanActions.length) return "Non renseigné"
-      const actionItems = {
-        PRODUCTS:
-          "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
-        PRESENTATION: "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
-        MENU: "Agir sur la manière dont les menus sont conçus ces plats en soulignant leurs attributs positifs",
-        PROMOTION: "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
-        TRAINING:
-          "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
-      }
+      const actionItems = Constants.DiversificationPlanActions.reduce((acc, val) => {
+        acc[val.value] = val.label
+        return acc
+      }, {})
       const labels = diversificationPlanActions.map((x) => actionItems[x]).filter((x) => !!x)
       return labels.join(", ")
     },

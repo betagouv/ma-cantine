@@ -72,6 +72,7 @@
         </v-row>
         <component
           :is="`${keyMeasure.baseComponent}Summary`"
+          :canteen="canteen"
           :diagnostic="diagnostic"
           :centralDiagnostic="centralDiagnostic"
         />
