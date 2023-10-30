@@ -3,7 +3,7 @@
     <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
     <v-row>
       <v-col cols="12" md="6">
-        <p class="font-weight-bold">Détail du calcul de mes taux EGAlim</p>
+        <h5 class="mb-4 font-weight-bold fr-text">Détail du calcul de mes taux EGAlim</h5>
         <v-row>
           <v-col cols="6">
             <p class="mb-0">Produits bio</p>
@@ -41,7 +41,7 @@
         </v-row>
       </v-col>
       <v-col cols="12" md="6">
-        <p class="font-weight-bold">Par famille de produits</p>
+        <h5 class="mb-4 font-weight-bold fr-text">Par famille de produits</h5>
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$award-line</v-icon>
           <span class="font-weight-bold percentage">{{ percentageMeatPoultryEgalim || "—" }} %</span>
@@ -61,10 +61,10 @@
     </v-row>
     <v-expansion-panels hover accordion tile flat class="mt-10">
       <v-expansion-panel class="dsfr">
-        <v-expansion-panel-header class="px-3 primary--text" v-slot="{ open }">
-          <h3 class="fr-text" :class="open && 'font-weight-bold'">
+        <v-expansion-panel-header class="px-3 primary--text">
+          <h5 class="fr-text font-weight-normal">
             Données détaillées
-          </h3>
+          </h5>
         </v-expansion-panel-header>
         <v-expansion-panel-content class="ml-n3 py-4">
           <QualityDiagnosticValue
@@ -96,9 +96,9 @@
             />
           </div>
           <div v-if="isDetailedDiagnostic">
-            <h3 class="font-weight-black fr-text grey--text text--darken-3 mt-4">
+            <h6 class="font-weight-bold fr-text grey--text text--darken-3 mt-4">
               Catégories EGAlim par famille de produit
-            </h3>
+            </h6>
             <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
           </div>
           <v-btn
