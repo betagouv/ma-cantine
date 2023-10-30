@@ -804,6 +804,8 @@ class TestPublishedCanteenApi(APITestCase):
             value_sustainable_ht=300,
             value_meat_poultry_ht=200,
             value_meat_poultry_egalim_ht=100,
+            value_fish_ht=10,
+            value_fish_egalim_ht=8,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
 
@@ -819,3 +821,11 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(serialized_diag["percentageValueSustainableHt"], 0.25)
         # the following is a percentage of the meat total, not global total
         self.assertEqual(serialized_diag["percentageValueMeatPoultryEgalimHt"], 0.5)
+        self.assertEqual(serialized_diag["percentageValueFishEgalimHt"], 0.8)
+        # ensure the raw values are not included in the diagnostic
+        self.assertNotIn("valueTotalHt", serialized_diag)
+        self.assertNotIn("valueBioHt", serialized_diag)
+        self.assertNotIn("valueMeatPoultryHt", serialized_diag)
+        self.assertNotIn("valueMeatPoultryEgalimHt", serialized_diag)
+        self.assertNotIn("valueFishHt", serialized_diag)
+        self.assertNotIn("valueFishEgalimHt", serialized_diag)
