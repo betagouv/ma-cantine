@@ -1,6 +1,18 @@
 <template>
   <div class="fill-height">
-    <v-card v-if="hasCentralKitchen" outlined class="fill-height d-flex flex-column dsfr pa-6">
+    <v-card
+      :to="{
+        name: 'MyProgress',
+        params: {
+          canteenUrlComponent: this.canteenUrlComponent,
+          year: this.diagnostic.year,
+          measure: 'qualite-des-produits',
+        },
+      }"
+      v-if="hasCentralKitchen"
+      outlined
+      class="fill-height d-flex flex-column dsfr pa-6"
+    >
       <v-card-title>
         <v-icon small :color="keyMeasure.mdiIconColor" class="mx-2">
           {{ keyMeasure.mdiIcon }}
