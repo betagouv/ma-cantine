@@ -30,6 +30,40 @@
         <DsfrSelect hide-details label="Année" :items="years" v-model="year" v-else-if="canteen" />
       </v-col>
       <v-col cols="12" sm="9" md="10">
+        <v-card v-if="hasActiveTeledeclaration" class="pa-6 mb-4 mr-1" style="background: #f6f6f6">
+          <p class="fr-text-sm font-weight-bold mb-0">
+            Votre bilan 2023 a bien été télédéclaré et ne peut plus être modifié.
+          </p>
+          <p class="fr-text-sm">
+            Votre bilan a été télédéclaré
+            <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
+            <span v-if="inTeledeclarationCampaign">
+              Si vous vous rendez compte d’une erreur, vous pouvez annuler votre télédéclaration et modifier vos données
+              jusqu’au
+              {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
+            </span>
+            <span v-else>
+              Si vous vous rendez compte d’une erreur, veuillez
+              <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">nous contacter</router-link>
+              .
+            </span>
+          </p>
+          <v-card-actions class="px-0 pt-1 pb-0 align-start">
+            <DownloadLink
+              :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
+              label="Télécharger le justificatif"
+              sizeStr="60 Ko"
+              target="_blank"
+              class="mt-n1 mb-0 mr-4"
+            />
+            <TeledeclarationCancelDialog
+              v-model="cancelDialog"
+              v-if="inTeledeclarationCampaign"
+              @cancel="cancelTeledeclaration"
+              :diagnostic="diagnostic"
+            />
+          </v-card-actions>
+        </v-card>
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
           <fieldset class="fr-text">
             <legend class="font-weight-bold">
@@ -117,7 +151,9 @@ import ProductionTypeTag from "@/components/ProductionTypeTag"
 import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrSelect from "@/components/DsfrSelect"
-import { diagnosticYears } from "@/utils"
+import DownloadLink from "@/components/DownloadLink"
+import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
+import { diagnosticYears, timeAgo, lastYear } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
 
@@ -129,6 +165,8 @@ export default {
     ProgressTab,
     DsfrTabsVue,
     DsfrSelect,
+    DownloadLink,
+    TeledeclarationCancelDialog,
   },
   data() {
     return {
@@ -157,6 +195,8 @@ export default {
       years: diagnosticYears().map((x) => x.toString()),
       centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
       centralKitchenDiagnosticMode: null,
+      cancelDialog: false,
+      campaignEndDate: new Date("2024-03-15"),
     }
   },
   props: {
@@ -178,6 +218,9 @@ export default {
     },
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
+    },
+    inTeledeclarationCampaign() {
+      return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
     },
   },
   methods: {
@@ -242,6 +285,21 @@ export default {
     },
     tabTextClasses(tabItem) {
       return this.usesSatelliteDiagnosticForMeasure(tabItem) ? "grey--text" : "black--text"
+    },
+    timeAgo,
+    cancelTeledeclaration() {
+      if (!this.canteen || !this.diagnostic) return
+      return this.$store
+        .dispatch("cancelTeledeclaration", {
+          canteenId: this.canteen.id,
+          id: this.diagnostic.teledeclaration.id,
+        })
+        .then(() => {
+          this.$store.dispatch("notify", {
+            title: "Votre télédéclaration a bien été annulée",
+          })
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
   watch: {
