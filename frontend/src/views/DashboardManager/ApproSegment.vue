@@ -1,6 +1,18 @@
 <template>
   <div class="fill-height">
-    <v-card v-if="hasCentralKitchen" outlined class="fill-height d-flex flex-column dsfr pa-6">
+    <v-card
+      :to="{
+        name: 'MyProgress',
+        params: {
+          canteenUrlComponent: this.canteenUrlComponent,
+          year: this.diagnostic.year,
+          measure: 'qualite-des-produits',
+        },
+      }"
+      v-if="hasCentralKitchen"
+      outlined
+      class="fill-height d-flex flex-column dsfr pa-6"
+    >
       <v-card-title>
         <v-icon small :color="keyMeasure.mdiIconColor" class="mx-2">
           {{ keyMeasure.mdiIcon }}
@@ -30,6 +42,11 @@
         </div>
         <v-spacer />
       </v-card-text>
+      <v-spacer></v-spacer>
+      <v-card-actions class="px-4">
+        <v-spacer></v-spacer>
+        <v-icon color="primary" class="mr-n1">$arrow-right-line</v-icon>
+      </v-card-actions>
     </v-card>
     <v-card
       :to="{
@@ -110,7 +127,7 @@
 <script>
 import { hasDiagnosticApproData, lastYear } from "@/utils"
 import Constants from "@/constants"
-import ApproGraph from "./ApproGraph"
+import ApproGraph from "@/components/ApproGraph"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
