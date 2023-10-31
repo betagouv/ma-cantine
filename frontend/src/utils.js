@@ -254,6 +254,26 @@ export const getSustainableTotal = (diagnostic) => {
   return sustainableSum
 }
 
+// returns a dict of integers (null/0-100) for the appro %
+export const getApproPercentages = (diagnostic) => {
+  // two cases: 1) raw data in diagnostic; 2) only percentages in diagnostic
+  const valueTotal = diagnostic.percentageValueTotalHt || diagnostic.valueTotalHt
+  const valueBio = diagnostic.percentageValueBioHt || diagnostic.valueBioHt
+  const valueMeatPoultryEgalim = diagnostic.percentageValueMeatPoultryEgalimHt || diagnostic.valueMeatPoultryEgalimHt
+  const valueMeatPoultryFrance = diagnostic.percentageValueMeatPoultryFranceHt || diagnostic.valueMeatPoultryFranceHt
+  const valueFishEgalim = diagnostic.percentageValueFishEgalimHt || diagnostic.valueFishEgalimHt
+
+  const allSustainable = getSustainableTotal(diagnostic)
+  return {
+    bio: getPercentage(valueBio, valueTotal),
+    allSustainable: getPercentage(allSustainable, valueTotal),
+    egalim: getPercentage(valueBio || 0 + allSustainable || 0, valueTotal),
+    meatPoultryEgalim: getPercentage(valueMeatPoultryEgalim, valueTotal),
+    meatPoultryFrance: getPercentage(valueMeatPoultryFrance, valueTotal),
+    fishEgalim: getPercentage(valueFishEgalim, valueTotal),
+  }
+}
+
 export const badges = (canteen, diagnostic, sectors) => {
   let applicable = JSON.parse(JSON.stringify(jsonBadges))
   if (!diagnostic) return applicable

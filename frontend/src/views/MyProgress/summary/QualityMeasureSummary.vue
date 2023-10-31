@@ -1,6 +1,6 @@
 <template>
   <div class="fr-text" v-if="hasApproData">
-    <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
+    <ApproGraph :diagnostic="displayDiagnostic" :canteen="canteen" />
     <v-row>
       <v-col cols="12" md="6">
         <h5 class="mb-4 font-weight-bold fr-text">Détail du calcul de mes taux EGAlim</h5>
@@ -9,7 +9,7 @@
             <p class="mb-0">Produits bio</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold color-bio">{{ bioPercentage || "—" }} %</p>
+            <p class="mb-0 font-weight-bold color-bio">{{ percentages.bio || "—" }} %</p>
           </v-col>
           <v-col cols="4">
             <p class="mb-0 color-bio">
@@ -22,7 +22,7 @@
             <p class="mb-0">Produits durables et de qualité (hors bio)</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold">{{ sustainablePercentage || "—" }} %</p>
+            <p class="mb-0 font-weight-bold">{{ percentages.allSustainable || "—" }} %</p>
           </v-col>
         </v-row>
         <v-row class="mt-1">
@@ -35,7 +35,7 @@
             <p class="mb-0">Produits EGAlim</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold color-egalim">{{ egalimPercentage || "—" }} %</p>
+            <p class="mb-0 font-weight-bold color-egalim">{{ percentages.egalim || "—" }} %</p>
           </v-col>
           <v-col cols="4">
             <p class="mb-0 color-egalim">
@@ -48,22 +48,22 @@
         <h5 class="mb-4 font-weight-bold fr-text">Par famille de produits</h5>
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$award-line</v-icon>
-          <span class="font-weight-bold percentage">{{ percentageMeatPoultryEgalim || "—" }} %</span>
+          <span class="font-weight-bold percentage">{{ percentages.meatPoultryEgalim || "—" }} %</span>
           de viandes et volailles EGAlim
         </p>
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$france-line</v-icon>
-          <span class="font-weight-bold percentage">{{ percentageMeatPoultryFrance || "—" }} %</span>
+          <span class="font-weight-bold percentage">{{ percentages.meatPoultryFrance || "—" }} %</span>
           de viandes et volailles provenance France
         </p>
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$anchor-line</v-icon>
-          <span class="font-weight-bold percentage">{{ percentageFishEgalim || "—" }} %</span>
+          <span class="font-weight-bold percentage">{{ percentages.fishEgalim || "—" }} %</span>
           de produits aquatiques EGAlim
         </p>
       </v-col>
     </v-row>
-    <v-expansion-panels hover accordion tile flat class="mt-10">
+    <v-expansion-panels v-if="!usesCentralDiagnostic" hover accordion tile flat class="mt-10">
       <v-expansion-panel class="dsfr">
         <v-expansion-panel-header class="px-3 primary--text">
           <h5 class="fr-text font-weight-normal">
@@ -125,10 +125,15 @@
       </v-expansion-panel>
     </v-expansion-panels>
   </div>
+  <div class="fr-text" v-else-if="usesCentralDiagnostic">
+    <p>
+      Une synthèse de données sera disponible dès que votre cuisine centrale remplit leur diagnostic.
+    </p>
+  </div>
   <div class="fr-text" v-else>
     <p>
       Renseignez la valeur (en HT) de vos achats alimentaires total et au moins un autre champ par label de produit pour
-      voir la sythèse de vos données.
+      voir la synthèse de vos données.
     </p>
     <v-btn
       color="primary"
@@ -149,7 +154,7 @@
 import ApproGraph from "@/components/ApproGraph"
 import FamiliesGraph from "@/components/FamiliesGraph"
 import QualityDiagnosticValue from "./QualityDiagnosticValue"
-import { hasDiagnosticApproData, applicableDiagnosticRules, getSustainableTotal, getPercentage } from "@/utils"
+import { hasDiagnosticApproData, applicableDiagnosticRules, getApproPercentages } from "@/utils"
 
 export default {
   name: "QualityMeasureSummary",
@@ -215,7 +220,7 @@ export default {
   },
   computed: {
     usesCentralDiagnostic() {
-      return this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL"
+      return !!this.centralDiagnostic
     },
     displayDiagnostic() {
       return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
@@ -226,32 +231,8 @@ export default {
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
     },
-    bioPercentage() {
-      return (
-        Math.round(this.diagnostic.percentageValueBioHt * 100) ||
-        getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt, true)
-      )
-    },
-    sustainablePercentage() {
-      return (
-        Math.round(this.diagnostic.percentageValueSustainableHt * 100) ||
-        getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt, true)
-      )
-    },
-    egalimPercentage() {
-      return this.bioPercentage + this.sustainablePercentage
-    },
-    percentageMeatPoultryEgalim() {
-      if (!this.diagnostic.valueMeatPoultryHt) return null
-      return getPercentage(this.diagnostic.valueMeatPoultryEgalimHt, this.diagnostic.valueMeatPoultryHt)
-    },
-    percentageMeatPoultryFrance() {
-      if (!this.diagnostic.valueMeatPoultryHt) return null
-      return getPercentage(this.diagnostic.valueMeatPoultryFranceHt, this.diagnostic.valueMeatPoultryHt)
-    },
-    percentageFishEgalim() {
-      if (!this.diagnostic.valueFishHt) return null
-      return getPercentage(this.diagnostic.valueFishEgalimHt, this.diagnostic.valueFishHt)
+    percentages() {
+      return getApproPercentages(this.displayDiagnostic)
     },
     isDetailedDiagnostic() {
       return this.diagnostic.diagnosticType === "COMPLETE"
