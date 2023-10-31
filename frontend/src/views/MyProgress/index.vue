@@ -48,13 +48,13 @@
               .
             </span>
           </p>
-          <v-card-actions class="px-0 pt-1 pb-0 align-start">
+          <v-card-actions class="px-0 pt-0 pb-0 align-start">
             <DownloadLink
               :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
               label="Télécharger le justificatif"
               sizeStr="60 Ko"
               target="_blank"
-              class="mt-n1 mb-0 mr-4"
+              class="mt-1 mb-0 mr-4"
             />
             <TeledeclarationCancelDialog
               v-model="cancelDialog"
@@ -152,7 +152,7 @@ import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrSelect from "@/components/DsfrSelect"
 import DownloadLink from "@/components/DownloadLink"
-import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
+import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import { diagnosticYears, timeAgo, lastYear } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"

@@ -373,7 +373,7 @@ import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure
 import CanteenPanel from "./CanteenPanel"
 import DownloadLink from "@/components/DownloadLink"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
-import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
+import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
 import SimplifiedQualityValues from "./SimplifiedQualityValues"
 import ExtendedQualityValues from "./ExtendedQualityValues"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
