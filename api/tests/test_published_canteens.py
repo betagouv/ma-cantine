@@ -768,6 +768,8 @@ class TestPublishedCanteenApi(APITestCase):
             value_bio_ht=600,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            value_fish_ht=100,
+            value_fish_egalim_ht=80,
         )
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
@@ -784,6 +786,8 @@ class TestPublishedCanteenApi(APITestCase):
 
         self.assertIn("percentageValueTotalHt", serialized_diag_2021)
         self.assertIn("hasWasteDiagnostic", serialized_diag_2021)
+        self.assertNotIn("valueFishEgalimHt", serialized_diag_2021)
+        self.assertIn("percentageValueFishEgalimHt", serialized_diag_2021)
 
     def test_percentage_values(self):
         """
@@ -804,6 +808,8 @@ class TestPublishedCanteenApi(APITestCase):
             value_sustainable_ht=300,
             value_meat_poultry_ht=200,
             value_meat_poultry_egalim_ht=100,
+            value_fish_ht=10,
+            value_fish_egalim_ht=8,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
 
@@ -819,3 +825,43 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(serialized_diag["percentageValueSustainableHt"], 0.25)
         # the following is a percentage of the meat total, not global total
         self.assertEqual(serialized_diag["percentageValueMeatPoultryEgalimHt"], 0.5)
+        self.assertEqual(serialized_diag["percentageValueFishEgalimHt"], 0.8)
+        # ensure the raw values are not included in the diagnostic
+        self.assertNotIn("valueTotalHt", serialized_diag)
+        self.assertNotIn("valueBioHt", serialized_diag)
+        self.assertNotIn("valueMeatPoultryHt", serialized_diag)
+        self.assertNotIn("valueMeatPoultryEgalimHt", serialized_diag)
+        self.assertNotIn("valueFishHt", serialized_diag)
+        self.assertNotIn("valueFishEgalimHt", serialized_diag)
+
+    def test_remove_raw_values_when_missing_totals(self):
+        """
+        The published endpoint should not contain the real economic data, only percentages.
+        Even when the meat and fish totals are absent, but EGAlim and France totals are present.
+        """
+        central_siret = "22730656663081"
+        canteen = CanteenFactory.create(
+            siret=central_siret,
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status="published",
+        )
+
+        DiagnosticFactory.create(
+            canteen=canteen,
+            year=2021,
+            value_meat_poultry_ht=None,
+            value_meat_poultry_egalim_ht=100,
+            value_meat_poultry_france_ht=100,
+            value_fish_ht=None,
+            value_fish_egalim_ht=100,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+        )
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+
+        serialized_diag = body.get("diagnostics")[0]
+
+        self.assertNotIn("valueMeatPoultryEgalimHt", serialized_diag)
+        self.assertNotIn("valueMeatPoultryFranceHt", serialized_diag)
+        self.assertNotIn("valueFishEgalimHt", serialized_diag)

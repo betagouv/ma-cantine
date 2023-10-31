@@ -135,60 +135,9 @@ export default {
     return {
       showExpeModal: false,
       diversificationPlanActions: Constants.DiversificationPlanActions,
-      frequency: [
-        {
-          label: "Moins d'une fois par semaine",
-          value: "LOW",
-        },
-        {
-          label: "Une fois par semaine",
-          value: "MID",
-        },
-        {
-          label: "Plus d'une fois par semaine",
-          value: "HIGH",
-        },
-        {
-          label: "De façon quotidienne",
-          value: "DAILY",
-        },
-      ],
-      menuTypes: [
-        {
-          label: "Un menu végétarien en plat unique, sans choix",
-          value: "UNIQUE",
-        },
-        {
-          label: "Un menu végétarien composé de plusieurs choix de plats végétariens",
-          value: "SEVERAL",
-        },
-        {
-          label: "Un menu végétarien au choix, en plus d'autres plats non végétariens",
-          value: "ALTERNATIVES",
-        },
-      ],
-      menuBases: [
-        {
-          label: "De céréales et/ou les légumes secs (hors soja)",
-          value: "GRAIN",
-        },
-        {
-          label: "De soja",
-          value: "SOY",
-        },
-        {
-          label: "De fromage",
-          value: "CHEESE",
-        },
-        {
-          label: "D’œufs",
-          value: "EGG",
-        },
-        {
-          label: "De plats transformés prêts à l'emploi",
-          value: "READYMADE",
-        },
-      ],
+      frequency: Constants.VegetarianRecurrence,
+      menuTypes: Constants.VegetarianMenuTypes,
+      menuBases: Constants.VegetarianMenuBases,
     }
   },
   computed: {

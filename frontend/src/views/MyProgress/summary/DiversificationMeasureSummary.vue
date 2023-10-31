@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { applicableDiagnosticRules } from "@/utils"
+import { applicableDiagnosticRules, selectListToObject } from "@/utils"
 import Constants from "@/constants"
 
 export default {
@@ -105,38 +105,22 @@ export default {
       return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
     },
     weeklyRecurrence() {
-      return {
-        LOW: "Moins d'une fois par semaine",
-        MID: "Une fois par semaine",
-        HIGH: "Plus d'une fois par semaine",
-        DAILY: "De façon quotidienne",
-      }[this.displayDiagnostic.vegetarianWeeklyRecurrence]
+      const items = selectListToObject(Constants.VegetarianRecurrence)
+      return items[this.displayDiagnostic.vegetarianWeeklyRecurrence]
     },
     menuType() {
-      return {
-        UNIQUE: "Un menu végétarien en plat unique, sans choix",
-        SEVERAL: "Un menu végétarien composé de plusieurs choix de plats végétariens",
-        ALTERNATIVES: "Un menu végétarien au choix, en plus d'autres plats non végétariens",
-      }[this.displayDiagnostic.vegetarianMenuType]
+      const types = selectListToObject(Constants.VegetarianMenuTypes)
+      return types[this.displayDiagnostic.vegetarianMenuType]
     },
     menuBases() {
-      const bases = {
-        GRAIN: "De céréales et/ou les légumes secs (hors soja)",
-        SOY: "De soja",
-        CHEESE: "De fromage",
-        EGG: "D’œufs",
-        READYMADE: "Plats prêts à l'emploi",
-      }
+      const bases = selectListToObject(Constants.VegetarianMenuBases)
       return this.displayDiagnostic.vegetarianMenuBases.map((x) => bases[x])
     },
     displayDiversificationPlanSegment() {
       return applicableDiagnosticRules(this.canteen).hasDiversificationPlan
     },
     appliedDiversificationActions() {
-      const diversificationPlanActions = Constants.DiversificationPlanActions.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const diversificationPlanActions = selectListToObject(Constants.DiversificationPlanActions)
       if (!this.displayDiagnostic.diversificationPlanActions?.length) return null
       return this.displayDiagnostic.diversificationPlanActions
         .map((x) => diversificationPlanActions[x])

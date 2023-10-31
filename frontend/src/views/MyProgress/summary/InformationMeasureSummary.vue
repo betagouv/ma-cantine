@@ -75,6 +75,10 @@
 </template>
 
 <script>
+import communicationSupports from "@/data/communication-supports.json"
+import { selectListToObject } from "@/utils"
+import Constants from "@/constants"
+
 export default {
   name: "InformationMeasureSummary",
   props: {
@@ -89,21 +93,14 @@ export default {
       return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
     },
     communicationFrequency() {
-      return {
-        REGULARLY: "Régulièrement au cours de l’année",
-        YEARLY: "Une fois par an",
-        LESS_THAN_YEARLY: "Moins d'une fois par an",
-      }[this.displayDiagnostic.communicationFrequency]
+      const items = selectListToObject(Constants.CommunicationFrequencies)
+      return items[this.displayDiagnostic.communicationFrequency]
     },
     communicationSupports() {
       if (!this.displayDiagnostic.communicationSupports?.length && !this.displayDiagnostic.otherCommunicationSupport)
         return null
-      const supports = {
-        DISPLAY: "Par affichage sur le lieu de restauration",
-        DIGITAL: "Par voie électronique (envoi d’e-mail aux convives, sur site internet ou intranet (mairie, pronote))",
-      }
       return [
-        ...this.displayDiagnostic.communicationSupports.map((x) => supports[x]),
+        ...this.displayDiagnostic.communicationSupports.map((x) => communicationSupports[x]),
         ...[this.displayDiagnostic.otherCommunicationSupport],
       ].filter((x) => !!x)
     },
