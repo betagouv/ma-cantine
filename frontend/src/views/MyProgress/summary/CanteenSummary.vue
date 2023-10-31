@@ -53,7 +53,7 @@
           <p class="my-0 fr-text-sm grey--text text--darken-1">Secteur d'activité</p>
           <p class="my-0">{{ sectors || "—" }}</p>
           <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Type d'établissement</p>
-          <p class="my-0">{{ managementType || "—" }}</p>
+          <p class="my-0">{{ economicModel || "—" }}</p>
         </div>
       </v-col>
       <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
