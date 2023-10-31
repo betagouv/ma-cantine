@@ -1,11 +1,11 @@
 <template>
   <div v-if="canteen.isCentralCuisine || isSatellite">
-    <div class="tag mt-2">
-      <p v-if="canteen.isCentralCuisine" class="mb-0 fr-text-sm">
+    <div class="tag px-2">
+      <p v-if="canteen.isCentralCuisine" class="mb-0 fr-text-xs">
         <v-icon class="mt-n1 grey--text text--darken-4" small>$community-fill</v-icon>
         Cuisine centrale
       </p>
-      <p v-else-if="isSatellite" class="mb-0 fr-text-sm">
+      <p v-else-if="isSatellite" class="mb-0 fr-text-xs">
         <v-icon class="mt-n1 grey--text text--darken-4" small>$restaurant-fill</v-icon>
         Cantine satellite
       </p>

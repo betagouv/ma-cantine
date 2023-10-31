@@ -1,8 +1,16 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav :links="[{ to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' }]" />
-    <h1 class="mb-10 fr-h2" v-if="canteen">{{ canteen.name }}</h1>
-    <v-row v-if="canteen">
+    <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
+    <h1 class="fr-h3 my-2" v-if="canteen">{{ canteen.name }}</h1>
+    <v-row v-if="canteenPreviews.length > 1">
+      <v-col>
+        <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
+          Changer d'établissement
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row v-if="canteen" class="mt-10">
       <v-col cols="12" sm="3" md="2" style="border-right: 1px solid #DDD;">
         <h2 class="fr-h5">Ma progression</h2>
         <nav aria-label="Année du diagnostic" v-if="canteen && $vuetify.breakpoint.smAndUp">
@@ -87,6 +95,7 @@
 
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import ProductionTypeTag from "@/components/ProductionTypeTag"
 import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrSelect from "@/components/DsfrSelect"
@@ -98,6 +107,7 @@ export default {
   name: "MyProgress",
   components: {
     BreadcrumbsNav,
+    ProductionTypeTag,
     ProgressTab,
     DsfrTabsVue,
     DsfrSelect,
@@ -145,6 +155,9 @@ export default {
     },
     isCentralKitchen() {
       return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
+    },
+    canteenPreviews() {
+      return this.$store.state.userCanteenPreviews
     },
   },
   methods: {

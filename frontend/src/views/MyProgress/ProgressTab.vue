@@ -1,7 +1,7 @@
 <template>
   <div class="pa-8 pb-4">
     <div>
-      <v-row v-if="(diagnostic || centralDiagnostic) && !isCanteenTab">
+      <v-row v-if="(diagnostic || hasCentralDiagnosticForMeasure) && !isCanteenTab">
         <v-col cols="12" md="8">
           <h3 class="fr-h6 font-weight-bold mb-0">
             {{ keyMeasure.title }}
@@ -20,7 +20,7 @@
       <h3 v-else class="fr-h6 font-weight-bold mb-4">
         {{ keyMeasure.title }}
       </h3>
-      <div v-if="!isCanteenTab && ((!diagnostic && !centralDiagnostic) || showIntro)">
+      <div v-if="!isCanteenTab && ((!diagnostic && !hasCentralDiagnosticForMeasure) || showIntro)">
         <component
           :is="`${keyMeasure.baseComponent}Info`"
           :canteen="canteen"
@@ -37,7 +37,7 @@
           Commencer
         </v-btn>
       </div>
-      <div v-if="diagnostic || centralDiagnostic || isCanteenTab" class="summary">
+      <div v-if="diagnostic || hasCentralDiagnosticForMeasure || isCanteenTab" class="summary">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
         <div
           v-if="!isCanteenTab && usesOtherDiagnosticForMeasure && isSatellite"
@@ -139,7 +139,7 @@ export default {
   },
   data() {
     return {
-      approId: "produits-de-qualite",
+      approId: "qualite-des-produits",
       establishmentId: "etablissement",
       showIntro: false,
     }
@@ -200,6 +200,12 @@ export default {
       return this.isCanteenTab
         ? { name: "CanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
         : { name: "DiagnosticModification", params: { canteenUrlComponent: this.canteenUrlComponent, year: this.year } }
+    },
+    hasCentralDiagnosticForMeasure() {
+      if (!this.centralDiagnostic) return false
+      if (this.isCanteenTab) return false
+      if (this.measureId === this.approId) return true
+      return this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
     },
   },
 }

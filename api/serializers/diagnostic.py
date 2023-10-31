@@ -188,12 +188,10 @@ def appro_to_percentages(representation, instance):
         value = representation.get(field)
         if value:
             representation[f"percentage_{field}"] = value / meat_total
-        representation.pop(field, None)
         field = "value_meat_poultry_france_ht"
         value = representation.get(field)
         if value:
             representation[f"percentage_{field}"] = value / meat_total
-        representation.pop(field, None)
 
     fish_total = representation.get("value_fish_ht")
     if fish_total:
@@ -201,7 +199,6 @@ def appro_to_percentages(representation, instance):
         value = representation.get(field)
         if value:
             representation[f"percentage_{field}"] = value / fish_total
-        representation.pop(field, None)
 
     appro_field = (
         "value_total_ht",
@@ -220,6 +217,9 @@ def appro_to_percentages(representation, instance):
 
     representation["percentage_value_total_ht"] = 1
     representation.pop("value_total_ht", None)
+    representation.pop("value_meat_poultry_egalim_ht", None)
+    representation.pop("value_meat_poultry_france_ht", None)
+    representation.pop("value_fish_egalim_ht", None)
 
     return representation
 
@@ -241,11 +241,12 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
         This method pops non-appro fields if that is the case from the JSON representation
         """
         representation = super().to_representation(instance)
+        representation = appro_to_percentages(representation, instance)
         if instance.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
             [representation.pop(field, "") for field in NON_APPRO_FIELDS]
         if instance.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
             [representation.pop(field, "") for field in COMPLETE_APPRO_FIELDS]
-        return appro_to_percentages(representation, instance)
+        return representation
 
 
 class PublicDiagnosticSerializer(serializers.ModelSerializer):
