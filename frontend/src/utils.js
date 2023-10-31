@@ -524,6 +524,13 @@ export const departmentItems = jsonDepartments.map((x) => ({
   value: x.departmentCode,
 }))
 
+export const selectListToObject = (selectList) => {
+  return selectList.reduce((acc, val) => {
+    acc[val.value] = val.label
+    return acc
+  }, {})
+}
+
 function hasValue(val) {
   if (typeof val === "string") {
     return !!val
