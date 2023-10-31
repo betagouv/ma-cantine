@@ -42,6 +42,11 @@
         </div>
         <v-spacer />
       </v-card-text>
+      <v-spacer></v-spacer>
+      <v-card-actions class="px-4">
+        <v-spacer></v-spacer>
+        <v-icon color="primary" class="mr-n1">$arrow-right-line</v-icon>
+      </v-card-actions>
     </v-card>
     <v-card
       :to="{
