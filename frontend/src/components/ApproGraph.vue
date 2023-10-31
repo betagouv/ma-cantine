@@ -125,10 +125,9 @@ export default {
       )
     },
     sustainablePercentage() {
-      return (
-        Math.round(this.diagnostic.percentageValueSustainableHt * 100) ||
-        getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt, true)
-      )
+      return "percentageValueTotalHt" in this.diagnostic
+        ? Math.round(getSustainableTotal(this.diagnostic) * 100)
+        : getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
     },
   },
 }
