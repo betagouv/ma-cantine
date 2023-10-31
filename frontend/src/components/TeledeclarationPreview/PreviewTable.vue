@@ -71,7 +71,7 @@
 <script>
 import Constants from "@/constants"
 import communicationSupports from "@/data/communication-supports.json"
-import { capitalise, sectorsSelectList, approSummary, toCurrency, selectListToObject } from "@/utils"
+import { sectorDisplayString, sectorsSelectList, approSummary, toCurrency, selectListToObject } from "@/utils"
 
 export default {
   props: {
@@ -532,12 +532,7 @@ export default {
       ]
     },
     sectors() {
-      if (!this.canteen.sectors) return ""
-      const sectors = this.$store.state.sectors
-      const sectorDisplay = this.canteen.sectors
-        .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
-        .join(", ")
-      return capitalise(sectorDisplay)
+      return sectorDisplayString(this.canteen.sectors, this.$store.state.sectors)
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
