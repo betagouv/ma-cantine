@@ -140,7 +140,7 @@
         },
       }"
     >
-      Complèter mes données
+      Compléter mes données
     </v-btn>
   </div>
 </template>
