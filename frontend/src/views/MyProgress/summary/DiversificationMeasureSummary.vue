@@ -1,7 +1,7 @@
 <template>
   <div class="fr-text">
     <ul role="list">
-      <li v-if="displayDiversificationPlanSegment && displayDiagnostic.hasDiversificationPlan">
+      <li v-if="displayDiversificationPlanSegment && diagnostic.hasDiversificationPlan">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de
@@ -21,7 +21,7 @@
         </div>
       </li>
 
-      <li v-if="displayDiagnostic.vegetarianWeeklyRecurrence">
+      <li v-if="diagnostic.vegetarianWeeklyRecurrence">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J’ai mis en place un menu végétarien dans ma cantine :
@@ -35,7 +35,7 @@
         </div>
       </li>
 
-      <li v-if="displayDiagnostic.vegetarianMenuType">
+      <li v-if="diagnostic.vegetarianMenuType">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           Le menu végétarien proposé est :
@@ -49,7 +49,7 @@
         </div>
       </li>
 
-      <li v-if="displayDiagnostic.vegetarianMenuBases && displayDiagnostic.vegetarianMenuBases.length">
+      <li v-if="diagnostic.vegetarianMenuBases && diagnostic.vegetarianMenuBases.length">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           Le plat principal de mon menu végétarien est majoritairement à base de :
@@ -91,40 +91,31 @@ export default {
   name: "DiversificationMeasureSummary",
   props: {
     diagnostic: {},
-    centralDiagnostic: {},
     canteen: {
       type: Object,
       required: true,
     },
   },
   computed: {
-    usesCentralDiagnostic() {
-      return this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL"
-    },
-    displayDiagnostic() {
-      return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
-    },
     weeklyRecurrence() {
       const items = selectListToObject(Constants.VegetarianRecurrence)
-      return items[this.displayDiagnostic.vegetarianWeeklyRecurrence]
+      return items[this.diagnostic.vegetarianWeeklyRecurrence]
     },
     menuType() {
       const types = selectListToObject(Constants.VegetarianMenuTypes)
-      return types[this.displayDiagnostic.vegetarianMenuType]
+      return types[this.diagnostic.vegetarianMenuType]
     },
     menuBases() {
       const bases = selectListToObject(Constants.VegetarianMenuBases)
-      return this.displayDiagnostic.vegetarianMenuBases.map((x) => bases[x])
+      return this.diagnostic.vegetarianMenuBases.map((x) => bases[x])
     },
     displayDiversificationPlanSegment() {
       return applicableDiagnosticRules(this.canteen).hasDiversificationPlan
     },
     appliedDiversificationActions() {
       const diversificationPlanActions = selectListToObject(Constants.DiversificationPlanActions)
-      if (!this.displayDiagnostic.diversificationPlanActions?.length) return null
-      return this.displayDiagnostic.diversificationPlanActions
-        .map((x) => diversificationPlanActions[x])
-        .filter((x) => !!x)
+      if (!this.diagnostic.diversificationPlanActions?.length) return null
+      return this.diagnostic.diversificationPlanActions.map((x) => diversificationPlanActions[x]).filter((x) => !!x)
     },
   },
 }

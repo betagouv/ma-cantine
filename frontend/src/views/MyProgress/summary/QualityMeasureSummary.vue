@@ -1,6 +1,6 @@
 <template>
   <div class="fr-text" v-if="hasApproData">
-    <ApproGraph :diagnostic="displayDiagnostic" :canteen="canteen" />
+    <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
     <v-row>
       <v-col cols="12" md="6">
         <h5 class="mb-4 font-weight-bold fr-text">Détail du calcul de mes taux EGAlim</h5>
@@ -161,7 +161,7 @@ export default {
   components: { ApproGraph, FamiliesGraph, QualityDiagnosticValue },
   props: {
     diagnostic: {},
-    centralDiagnostic: {},
+    usesCentralDiagnostic: {},
     canteen: {
       type: Object,
       required: true,
@@ -219,20 +219,14 @@ export default {
     }
   },
   computed: {
-    usesCentralDiagnostic() {
-      return !!this.centralDiagnostic
-    },
-    displayDiagnostic() {
-      return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
-    },
     hasApproData() {
-      return hasDiagnosticApproData(this.displayDiagnostic)
+      return hasDiagnosticApproData(this.diagnostic)
     },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
     },
     percentages() {
-      return getApproPercentages(this.displayDiagnostic)
+      return getApproPercentages(this.diagnostic)
     },
     isDetailedDiagnostic() {
       return this.diagnostic.diagnosticType === "COMPLETE"

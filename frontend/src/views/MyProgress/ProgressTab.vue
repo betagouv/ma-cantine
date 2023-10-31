@@ -21,12 +21,7 @@
         {{ keyMeasure.title }}
       </h3>
       <div v-if="!isCanteenTab && ((!diagnostic && !hasCentralDiagnosticForMeasure) || showIntro)">
-        <component
-          :is="`${keyMeasure.baseComponent}Info`"
-          :canteen="canteen"
-          :diagnostic="diagnostic"
-          :centralDiagnostic="centralDiagnostic"
-        />
+        <component :is="`${keyMeasure.baseComponent}Info`" :canteen="canteen" />
         <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
         <v-btn
           v-if="measureId !== establishmentId && !diagnostic && !usesOtherDiagnosticForMeasure"
@@ -75,9 +70,9 @@
         </v-row>
         <component
           :is="`${keyMeasure.baseComponent}Summary`"
+          :usesCentralDiagnostic="hasCentralDiagnosticForMeasure"
           :canteen="canteen"
-          :diagnostic="diagnostic"
-          :centralDiagnostic="centralDiagnostic"
+          :diagnostic="displayDiagnostic"
         />
       </div>
     </div>
@@ -198,6 +193,9 @@ export default {
       if (this.isCanteenTab) return false
       if (this.measureId === this.approId) return true
       return this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
+    },
+    displayDiagnostic() {
+      return this.hasCentralDiagnosticForMeasure ? this.centralDiagnostic : this.diagnostic
     },
   },
 }
