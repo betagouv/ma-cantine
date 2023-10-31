@@ -83,6 +83,7 @@
 <script>
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
+import Constants from "@/constants"
 
 export default {
   components: { DsfrTextField },
@@ -95,20 +96,7 @@ export default {
   },
   data() {
     return {
-      communicationFrequencies: [
-        {
-          label: "Régulièrement au cours de l’année",
-          value: "REGULARLY",
-        },
-        {
-          label: "Une fois par an",
-          value: "YEARLY",
-        },
-        {
-          label: "Moins d'une fois par an",
-          value: "LESS_THAN_YEARLY",
-        },
-      ],
+      communicationFrequencies: Constants.CommunicationFrequencies,
       communicationSupports: [
         {
           label: "Par affichage sur le lieu de restauration",

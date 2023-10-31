@@ -571,4 +571,72 @@ export default Object.freeze({
       value: "TRAINING",
     },
   ],
+  VegetarianMenuTypes: [
+    {
+      label: "Un menu végétarien en plat unique, sans choix",
+      value: "UNIQUE",
+    },
+    {
+      label: "Un menu végétarien composé de plusieurs choix de plats végétariens",
+      value: "SEVERAL",
+    },
+    {
+      label: "Un menu végétarien au choix, en plus d'autres plats non végétariens",
+      value: "ALTERNATIVES",
+    },
+  ],
+  VegetarianMenuBases: [
+    {
+      label: "De céréales et/ou les légumes secs (hors soja)",
+      value: "GRAIN",
+    },
+    {
+      label: "De soja",
+      value: "SOY",
+    },
+    {
+      label: "De fromage",
+      value: "CHEESE",
+    },
+    {
+      label: "D’œufs",
+      value: "EGG",
+    },
+    {
+      label: "De plats transformés prêts à l'emploi",
+      value: "READYMADE",
+    },
+  ],
+  VegetarianRecurrence: [
+    {
+      label: "Moins d'une fois par semaine",
+      value: "LOW",
+    },
+    {
+      label: "Une fois par semaine",
+      value: "MID",
+    },
+    {
+      label: "Plus d'une fois par semaine",
+      value: "HIGH",
+    },
+    {
+      label: "De façon quotidienne",
+      value: "DAILY",
+    },
+  ],
+  CommunicationFrequencies: [
+    {
+      label: "Régulièrement au cours de l’année",
+      value: "REGULARLY",
+    },
+    {
+      label: "Une fois par an",
+      value: "YEARLY",
+    },
+    {
+      label: "Moins d'une fois par an",
+      value: "LESS_THAN_YEARLY",
+    },
+  ],
 })

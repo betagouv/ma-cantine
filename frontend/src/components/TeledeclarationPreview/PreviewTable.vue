@@ -70,8 +70,8 @@
 
 <script>
 import Constants from "@/constants"
-
-import { sectorsSelectList, approSummary, toCurrency, sectorDisplayString } from "@/utils"
+import communicationSupports from "@/data/communication-supports.json"
+import { sectorDisplayString, sectorsSelectList, approSummary, toCurrency, selectListToObject } from "@/utils"
 
 export default {
   props: {
@@ -578,63 +578,34 @@ export default {
     },
     getDiversificationPlanActions(diversificationPlanActions) {
       if (!diversificationPlanActions || !diversificationPlanActions.length) return "Non renseigné"
-      const actionItems = Constants.DiversificationPlanActions.reduce((acc, val) => {
-        acc[val.value] = val.label
-        return acc
-      }, {})
+      const actionItems = selectListToObject(Constants.DiversificationPlanActions)
       const labels = diversificationPlanActions.map((x) => actionItems[x]).filter((x) => !!x)
       return labels.join(", ")
     },
     getVegetarianWeeklyRecurrence(vegetarianWeeklyRecurrence) {
       if (!vegetarianWeeklyRecurrence) return "Non renseigné"
-      const items = {
-        LOW: "Moins d'une fois par semaine",
-        MID: "Une fois par semaine",
-        HIGH: "Plus d'une fois par semaine",
-        DAILY: "De façon quotidienne",
-      }
+      const items = selectListToObject(Constants.VegetarianRecurrence)
       return items[vegetarianWeeklyRecurrence] || "Non renseigné"
     },
     getVegetarianMenuType(vegetarianMenuType) {
       if (!vegetarianMenuType) return "Non renseigné"
-      const items = {
-        UNIQUE: "Un menu végétarien en plat unique, sans choix",
-        SEVERAL: "Un menu végétarien composé de plusieurs choix de plats végétariens",
-        ALTERNATIVES: "Un menu végétarien au choix, en plus d'autres plats non végétariens",
-      }
+      const items = selectListToObject(Constants.VegetarianMenuTypes)
       return items[vegetarianMenuType] || "Non renseigné"
     },
     getVegetarianMenuBases(vegetarianMenuBases) {
       if (!vegetarianMenuBases || !vegetarianMenuBases.length) return "Non renseigné"
-      const actionItems = {
-        GRAIN: "De céréales et/ou les légumes secs (hors soja)",
-        SOY: "De soja",
-        CHEESE: "De fromage",
-        EGG: "D’œufs",
-        READYMADE: "Plats prêts à l'emploi",
-      }
+      const actionItems = selectListToObject(Constants.VegetarianMenuBases)
       const labels = vegetarianMenuBases.map((x) => actionItems[x]).filter((x) => !!x)
       return labels.join(", ")
     },
-    getCommunicationSupports(communicationSupports) {
-      if (!communicationSupports || !communicationSupports.length) return "Aucun"
-      const supportItems = {
-        EMAIL: "Envoi d'e-mail aux convives ou à leurs représentants",
-        DISPLAY: "Par affichage sur le lieu de restauration",
-        WEBSITE: "Sur site internet ou intranet (mairie, cantine)",
-        OTHER: "Autres moyens d'affichage et de communication électronique",
-        DIGITAL: "Par voie électronique",
-      }
-      const labels = communicationSupports.map((x) => supportItems[x]).filter((x) => !!x)
+    getCommunicationSupports(supports) {
+      if (!supports || !supports.length) return "Aucun"
+      const labels = supports.map((x) => communicationSupports[x]).filter((x) => !!x)
       return labels.join(", ")
     },
     getCommunicationFrequency(communicationFrequency) {
       if (!communicationFrequency) return "Non renseigné"
-      const items = {
-        REGULARLY: "Régulièrement au cours de l’année",
-        YEARLY: "Une fois par an",
-        LESS_THAN_YEARLY: "Moins d'une fois par an",
-      }
+      const items = selectListToObject(Constants.CommunicationFrequencies)
       return items[communicationFrequency] || "Non renseigné"
     },
     isTruthyOrZero(value) {
