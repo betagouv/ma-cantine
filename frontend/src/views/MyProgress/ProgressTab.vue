@@ -80,14 +80,6 @@
           :centralDiagnostic="centralDiagnostic"
         />
       </div>
-      <v-row class="mt-6">
-        <v-col cols="6">
-          <router-link :to="{}">Previous tab</router-link>
-        </v-col>
-        <v-col cols="6" class="text-right">
-          <router-link :to="{}">Next tab</router-link>
-        </v-col>
-      </v-row>
     </div>
   </div>
 </template>
