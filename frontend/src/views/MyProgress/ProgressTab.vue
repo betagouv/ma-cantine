@@ -80,22 +80,6 @@
           :centralDiagnostic="centralDiagnostic"
         />
       </div>
-      <v-row class="mt-6">
-        <v-col v-if="previousTab">
-          <p class="fr-text-sm">
-            <v-icon small color="primary" class="mr-1">$arrow-left-line</v-icon>
-            <router-link :to="{ params: { measure: previousTab.urlSlug } }">
-              {{ previousTab.title }}
-            </router-link>
-          </p>
-        </v-col>
-        <v-col v-if="nextTab" class="text-right">
-          <p class="fr-text-sm">
-            <router-link :to="{ params: { measure: nextTab.urlSlug } }">{{ nextTab.title }}</router-link>
-            <v-icon small color="primary" class="ml-1">$arrow-right-line</v-icon>
-          </p>
-        </v-col>
-      </v-row>
     </div>
   </div>
 </template>
@@ -131,10 +115,6 @@ export default {
     },
     diagnostic: Object,
     centralDiagnostic: Object,
-    measures: {
-      type: Array,
-      required: true,
-    },
   },
   components: {
     QualityMeasureInfo,
@@ -218,17 +198,6 @@ export default {
       if (this.isCanteenTab) return false
       if (this.measureId === this.approId) return true
       return this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
-    },
-
-    previousTab() {
-      if (this.measureId === this.approId) return null
-      const thisTabIdx = this.measures.findIndex((m) => m.urlSlug === this.measureId)
-      return this.measures[thisTabIdx - 1]
-    },
-    nextTab() {
-      if (this.measureId === this.establishmentId) return null
-      const thisTabIdx = this.measures.findIndex((m) => m.urlSlug === this.measureId)
-      return this.measures[thisTabIdx + 1]
     },
   },
 }

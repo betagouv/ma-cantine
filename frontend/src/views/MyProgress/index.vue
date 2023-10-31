@@ -84,8 +84,25 @@
                 :canteen="canteen"
                 :diagnostic="diagnostic"
                 :centralDiagnostic="centralDiagnostic"
-                :measures="tabHeaders"
               />
+              <v-row class="mt-6">
+                <v-col v-if="index > 0">
+                  <p class="fr-text-sm">
+                    <v-icon small color="primary" class="mr-1">$arrow-left-line</v-icon>
+                    <router-link :to="{ params: { measure: tabHeaders[index - 1].urlSlug } }">
+                      {{ tabHeaders[index - 1].title }}
+                    </router-link>
+                  </p>
+                </v-col>
+                <v-col v-if="index < tabHeaders.length - 1" class="text-right">
+                  <p class="fr-text-sm">
+                    <router-link :to="{ params: { measure: tabHeaders[index + 1].urlSlug } }">
+                      {{ tabHeaders[index + 1].title }}
+                    </router-link>
+                    <v-icon small color="primary" class="ml-1">$arrow-right-line</v-icon>
+                  </p>
+                </v-col>
+              </v-row>
             </v-tab-item>
           </template>
         </DsfrTabsVue>
