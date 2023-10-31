@@ -294,12 +294,21 @@ export default {
           canteenId: this.canteen.id,
           id: this.diagnostic.teledeclaration.id,
         })
-        .then(() => {
+        .then((diagnostic) => {
           this.$store.dispatch("notify", {
             title: "Votre télédéclaration a bien été annulée",
           })
+          this.updateFromServer(diagnostic)
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+        .finally(() => (this.cancelDialog = false))
+    },
+    updateFromServer(diagnostic) {
+      const diagnosticIndex = this.canteen.diagnostics.findIndex((x) => x.id === diagnostic.id)
+      if (diagnosticIndex > -1) {
+        this.canteen.diagnostics.splice(diagnosticIndex, 1, diagnostic)
+        this.assignDiagnostic()
+      }
     },
   },
   watch: {
