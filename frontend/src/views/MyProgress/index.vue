@@ -48,29 +48,39 @@
               .
             </span>
           </p>
-          <v-card-actions class="px-0 pt-0 pb-0 align-start">
-            <DownloadLink
-              :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
-              label="Télécharger le justificatif"
-              sizeStr="60 Ko"
-              target="_blank"
-              class="mb-0 mr-4"
-            />
-            <TeledeclarationCancelDialog
-              v-model="cancelDialog"
-              v-if="inTeledeclarationCampaign"
-              @cancel="cancelTeledeclaration"
-              :diagnostic="diagnostic"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <a class="ml-4 text-decoration-underline" v-on="on" v-bind="attrs">
-                  Annuler ma télédéclaration
-                  <v-icon color="primary" size="1rem" class="ml-2 mb-1 close" aria-hidden="false" aria-label="Annuler">
-                    $close-line
-                  </v-icon>
-                </a>
-              </template>
-            </TeledeclarationCancelDialog>
+          <v-card-actions class="px-0 pt-0 pb-0 align-start d-block d-md-flex">
+            <div>
+              <DownloadLink
+                :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
+                label="Télécharger le justificatif"
+                sizeStr="60 Ko"
+                target="_blank"
+                class="mb-0 mr-4"
+              />
+            </div>
+            <div class="mt-4 mt-md-0">
+              <TeledeclarationCancelDialog
+                v-model="cancelDialog"
+                v-if="inTeledeclarationCampaign"
+                @cancel="cancelTeledeclaration"
+                :diagnostic="diagnostic"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <a class="ml-0 ml-md-4 text-decoration-underline" v-on="on" v-bind="attrs">
+                    Annuler ma télédéclaration
+                    <v-icon
+                      color="primary"
+                      size="1rem"
+                      class="ml-0 mb-1 close-icon"
+                      aria-hidden="false"
+                      aria-label="Annuler"
+                    >
+                      $close-line
+                    </v-icon>
+                  </a>
+                </template>
+              </TeledeclarationCancelDialog>
+            </div>
           </v-card-actions>
         </v-card>
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
@@ -382,7 +392,7 @@ export default {
   background-color: #e5e5e5 !important;
   color: #929292 !important;
 }
-.close {
+.close-icon {
   border-bottom: solid 1px;
 }
 </style>
