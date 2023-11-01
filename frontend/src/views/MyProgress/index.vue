@@ -54,14 +54,23 @@
               label="Télécharger le justificatif"
               sizeStr="60 Ko"
               target="_blank"
-              class="mt-1 mb-0 mr-4"
+              class="mb-0 mr-4"
             />
             <TeledeclarationCancelDialog
               v-model="cancelDialog"
               v-if="inTeledeclarationCampaign"
               @cancel="cancelTeledeclaration"
               :diagnostic="diagnostic"
-            />
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <a class="ml-4 text-decoration-underline" v-on="on" v-bind="attrs">
+                  Annuler ma télédéclaration
+                  <v-icon color="primary" size="1rem" class="ml-2 mb-1 close" aria-hidden="false" aria-label="Annuler">
+                    $close-line
+                  </v-icon>
+                </a>
+              </template>
+            </TeledeclarationCancelDialog>
           </v-card-actions>
         </v-card>
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
@@ -152,7 +161,7 @@ import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrSelect from "@/components/DsfrSelect"
 import DownloadLink from "@/components/DownloadLink"
-import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
+import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
 import { diagnosticYears, timeAgo, lastYear } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
@@ -372,5 +381,8 @@ export default {
   opacity: 100%;
   background-color: #e5e5e5 !important;
   color: #929292 !important;
+}
+.close {
+  border-bottom: solid 1px;
 }
 </style>
