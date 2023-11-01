@@ -39,8 +39,13 @@
             <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
             <span v-if="inTeledeclarationCampaign">
               Si vous vous rendez compte d’une erreur, vous pouvez annuler votre télédéclaration et modifier vos données
-              jusqu’au
-              {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
+              <span v-if="campaignEndDate">
+                jusqu’au
+                {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
+              </span>
+              <span v-else>
+                jusqu’à la fin de la campagne.
+              </span>
             </span>
             <span v-else>
               Si vous vous rendez compte d’une erreur, veuillez
@@ -215,7 +220,7 @@ export default {
       centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
       centralKitchenDiagnosticMode: null,
       cancelDialog: false,
-      campaignEndDate: new Date("2024-03-15"),
+      campaignEndDate: window.TELEDECLARATION_END_DATE ? new Date(window.TELEDECLARATION_END_DATE) : null,
     }
   },
   props: {

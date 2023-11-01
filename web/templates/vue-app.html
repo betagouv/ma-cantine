@@ -38,6 +38,7 @@
         window.ENABLE_DASHBOARD = "{% enable_dashboard %}" === "True"
         window.ENABLE_PARTNERS = "{% enable_partners %}" === "True"
         window.ENABLE_TELEDECLARATION = "{% enable_teledeclaration %}" === "True"
+        window.TELEDECLARATION_END_DATE = "{% teledeclaration_end_date %}" || null
         window.IS_WIDGET = "{{ is_widget }}"
     </script>
     {% if is_widget != True %}

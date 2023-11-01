@@ -103,6 +103,7 @@ ENABLE_XP_RESERVATION= Optionnel - `True` pour activer la feature de l'expérime
 ENABLE_XP_VEGE= Optionnel - `True` pour activer la feature de l'expérimentation de l'offre quotidien de repas végétariens.
 ENABLE_PARTNERS= Optionnel - `True` pour afficher nos partenaires sur la page d'accueil.
 ENABLE_TELEDECLARATION= Optionnel - `True` pour permettre les utilisateurs de télédéclarer leur diagnostic.
+TELEDECLARATION_END_DATE= Optionnel - Celle-ci n'est pas exactement une feature flag mais fonctionne avec le flag précedent. Il faut indiquer une date pour la fin de la campagne de la télédéclaration (par exemple, `2024-03-15`)
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
 ```
 
