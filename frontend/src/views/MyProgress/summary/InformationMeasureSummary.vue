@@ -1,12 +1,12 @@
 <template>
   <div class="fr-text">
     <ul role="list">
-      <li v-if="displayDiagnostic.communicatesOnFoodQuality">
+      <li v-if="diagnostic.communicatesOnFoodQuality">
         <v-icon color="primary" class="fill-height mr-2">$check-line</v-icon>
         <div>
           J’informe mes convives sur la part de produits de qualité et durables, entrant dans la composition des repas
           servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet alimentaire territorial)
-          <div v-if="displayDiagnostic.communicationFrequency" class="font-weight-bold mt-2">
+          <div v-if="diagnostic.communicationFrequency" class="font-weight-bold mt-2">
             {{ communicationFrequency }}
           </div>
         </div>
@@ -37,7 +37,7 @@
         </div>
       </li>
 
-      <li v-if="displayDiagnostic.communicatesOnFoodPlan">
+      <li v-if="diagnostic.communicatesOnFoodPlan">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J'informe sur la qualité nutritionnelle des repas
@@ -50,11 +50,11 @@
         </div>
       </li>
 
-      <li v-if="displayDiagnostic.communicationSupportUrl">
+      <li v-if="diagnostic.communicationSupportUrl">
         <v-icon color="primary" class="mr-2">$links-line</v-icon>
         <div>
           <a
-            :href="displayDiagnostic.communicationSupportUrl"
+            :href="diagnostic.communicationSupportUrl"
             target="_blank"
             rel="noopener"
             class="grey--text text--darken-4"
@@ -83,25 +83,17 @@ export default {
   name: "InformationMeasureSummary",
   props: {
     diagnostic: {},
-    centralDiagnostic: {},
   },
   computed: {
-    usesCentralDiagnostic() {
-      return this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL"
-    },
-    displayDiagnostic() {
-      return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
-    },
     communicationFrequency() {
       const items = selectListToObject(Constants.CommunicationFrequencies)
-      return items[this.displayDiagnostic.communicationFrequency]
+      return items[this.diagnostic.communicationFrequency]
     },
     communicationSupports() {
-      if (!this.displayDiagnostic.communicationSupports?.length && !this.displayDiagnostic.otherCommunicationSupport)
-        return null
+      if (!this.diagnostic.communicationSupports?.length && !this.diagnostic.otherCommunicationSupport) return null
       return [
-        ...this.displayDiagnostic.communicationSupports.map((x) => communicationSupports[x]),
-        ...[this.displayDiagnostic.otherCommunicationSupport],
+        ...this.diagnostic.communicationSupports.map((x) => communicationSupports[x]),
+        ...[this.diagnostic.otherCommunicationSupport],
       ].filter((x) => !!x)
     },
   },

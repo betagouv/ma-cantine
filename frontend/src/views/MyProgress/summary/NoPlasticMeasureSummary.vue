@@ -1,7 +1,7 @@
 <template>
   <div class="fr-text">
     <ul role="list">
-      <li v-if="displayDiagnostic.cookingPlasticSubstituted">
+      <li v-if="diagnostic.cookingPlasticSubstituted">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           Je n’utilise plus de contenants alimentaires de cuisson / de réchauffe en plastique
@@ -14,7 +14,7 @@
         </div>
       </li>
 
-      <li v-if="displayDiagnostic.servingPlasticSubstituted">
+      <li v-if="diagnostic.servingPlasticSubstituted">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           Je n’utilise plus de contenants alimentaires de service en plastique
@@ -27,7 +27,7 @@
         </div>
       </li>
 
-      <li v-if="displayDiagnostic.plasticBottlesSubstituted">
+      <li v-if="diagnostic.plasticBottlesSubstituted">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           Je ne mets plus à disposition des convives des bouteilles d’eau plate en plastique
@@ -40,7 +40,7 @@
         </div>
       </li>
 
-      <li v-if="displayDiagnostic.plasticTablewareSubstituted">
+      <li v-if="diagnostic.plasticTablewareSubstituted">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           Je ne mets plus à disposition des convives des ustensiles à usage unique en matière plastique
@@ -61,15 +61,6 @@ export default {
   name: "NoPlasticMeasureSummary",
   props: {
     diagnostic: {},
-    centralDiagnostic: {},
-  },
-  computed: {
-    usesCentralDiagnostic() {
-      return this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL"
-    },
-    displayDiagnostic() {
-      return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
-    },
   },
 }
 </script>

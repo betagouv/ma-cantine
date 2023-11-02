@@ -1,7 +1,7 @@
 <template>
   <div class="fr-text">
     <ul role="list">
-      <li v-if="displayDiagnostic.hasWasteDiagnostic">
+      <li v-if="diagnostic.hasWasteDiagnostic">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
@@ -14,7 +14,7 @@
         </div>
       </li>
 
-      <li v-if="displayDiagnostic.hasWastePlan">
+      <li v-if="diagnostic.hasWastePlan">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J’ai mis en place un plan d’action adapté au diagnostic réalisé
@@ -45,7 +45,7 @@
         </div>
       </li>
 
-      <li v-if="displayDiagnostic.hasWasteMeasures">
+      <li v-if="diagnostic.hasWasteMeasures">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J’ai réalisé des mesures de mon gaspillage alimentaire :
@@ -65,7 +65,7 @@
         </div>
       </li>
 
-      <li v-if="displayDonationAgreementSegment && displayDiagnostic.hasDonationAgreement">
+      <li v-if="displayDonationAgreementSegment && diagnostic.hasDonationAgreement">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire
@@ -109,7 +109,6 @@ export default {
   name: "WasteMeasureSummary",
   props: {
     diagnostic: {},
-    centralDiagnostic: {},
     canteen: {
       type: Object,
       required: true,
@@ -117,14 +116,14 @@ export default {
   },
   computed: {
     appliedWasteActions() {
-      if (!this.displayDiagnostic.wasteActions?.length) return null
+      if (!this.diagnostic.wasteActions?.length) return null
       return [
-        ...this.displayDiagnostic.wasteActions.map((x) => wasteActions[x]),
-        ...[this.displayDiagnostic.otherWasteAction],
+        ...this.diagnostic.wasteActions.map((x) => wasteActions[x]),
+        ...[this.diagnostic.otherWasteAction],
       ].filter((x) => !!x)
     },
     wasteMeasures() {
-      const diag = this.displayDiagnostic
+      const diag = this.diagnostic
       return [
         { label: "Reste de pain", value: diag.breadLeftovers ? `${diag.breadLeftovers} kg/an` : "—" },
         { label: "Reste plateau", value: diag.servedLeftovers ? `${diag.servedLeftovers} kg/an` : "—" },
@@ -132,17 +131,11 @@ export default {
         { label: "Reste de composantes", value: diag.sideLeftovers ? `${diag.sideLeftovers} kg/an` : "—" },
       ]
     },
-    usesCentralDiagnostic() {
-      return this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL"
-    },
-    displayDiagnostic() {
-      return this.usesCentralDiagnostic ? this.centralDiagnostic : this.diagnostic
-    },
     displayDonationAgreementSegment() {
       return applicableDiagnosticRules(this.canteen).hasDonationAgreement
     },
     donationMeasures() {
-      const d = this.displayDiagnostic
+      const d = this.diagnostic
       return [
         { label: "Fréquence de dons", value: d.donationFrequency ? `${d.donationFrequency} dons/an` : "—" },
         { label: "Quantité des denrées données", value: d.donationQuantity ? `${d.donationQuantity} kg/an` : "—" },
