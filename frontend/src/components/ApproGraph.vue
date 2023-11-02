@@ -119,10 +119,10 @@ export default {
       return applicableDiagnosticRules(this.canteen)
     },
     bioPercentage() {
-      return (
+      const percentage =
         Math.round(this.diagnostic.percentageValueBioHt * 100) ||
         getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt, true)
-      )
+      return percentage || 0
     },
     sustainablePercentage() {
       return "percentageValueTotalHt" in this.diagnostic
