@@ -38,7 +38,7 @@
             Votre bilan a été télédéclaré
             <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
             <span v-if="inTeledeclarationCampaign">
-              Si vous vous rendez compte d’une erreur, vous pouvez annuler votre télédéclaration et modifier vos données
+              En cas d'erreur, vous pouvez annuler votre télédéclaration et modifier vos données
               <span v-if="campaignEndDate">
                 jusqu’au
                 {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
