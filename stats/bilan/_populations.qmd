@@ -1,0 +1,120 @@
+```{python}
+# | output: asis
+# | echo: false
+
+import utils
+import pandas as pd
+import ast
+from unidecode import unidecode
+
+tds = {}
+
+# Whether we use cache or ot, we re-read the file to have consistency in the dataframe
+for year in utils.CAMPAGNES.keys():
+    tds[year] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}.csv", sep=";")
+    # Application de la stratégie Je Ne Sais pas
+    tds[f"Campagne {year}"] = tds[year].dropna(
+        how="any",
+        subset=[
+            "teledeclaration.value_total_ht",
+            "teledeclaration.value_bio_ht",
+        ],
+    )
+```
+
+# Etudes des populations de déclarants
+```{python}
+# | echo: false
+# | output: asis
+
+print(
+    f"Il y a **{len(entrants)} nouveaux teledeclarants** (ayant déclaré sur la campagne 2023 mais pas celle de 2023)\n"
+)
+
+# Télédeclarants présents dans les siret 2022 mais non 2023
+sortants = list(set([item for item in td_pop["2022"] if item not in td_pop["2023"]]))
+print(
+    f"Il y a **{len(sortants)} teledeclarants** n'ayant pas renouvellé (ayant déclaré sur la campagne 2023 mais pas celle de 2023)\n"
+)
+
+# Télédéclarants présents lors des deux campagnes
+restants = [item for item in td_pop["2022"] if item in td_pop["2023"]]
+
+print(f"**{len(restants)} teledeclarants ont participé aux deux campagnes.**\n")
+```
+
+
+## Comparaison entre le sortants et les nouveaux arrivants
+::: {.callout-warning}
+La suite de ces travaux est en cours de réalisation. Il est encore incomplet et peut contenir des erreurs.
+:::
+
+1. Sortants : "Ayant télédéclaré leur données 2022 mais pas 2023"
+2. Entrants : "Ayant télédéclaré leur données 2023 mais pas 2022"
+
+```{python}
+# | output: asis
+# | echo: false
+
+tds_cmp = {}
+tds_cmp["Sortants (données 2022)"] = tds["Campagne 2022"][tds["Campagne 2022"]["canteen.id"].isin(sortants)]
+tds_cmp["Entrants (données 2023)"] = tds["Campagne 2023"][tds["Campagne 2023"]["canteen.id"].isin(entrants)]
+
+indic_divers, indic_appro = utils.calcul_indicateur(
+    tds_cmp, years=["Sortants (données 2022)", "Entrants (données 2023)"]
+)
+
+# indic_divers = utils.ajout_col_comparaison(indic_divers)
+utils.display_indicateurs(indic_divers)
+
+```
+
+```{python}
+# | echo: false
+# | output: asis
+
+# Graph view
+df_indic_divers = pd.DataFrame(indic_divers)
+df_indic_appro = pd.DataFrame(indic_appro)
+
+# Isolate the values with numbers
+divers_colonnes_nombre = [
+    "Nombre de cantines centrales",
+    "Nombre de cantines sur place (sites et satellites)",
+    "Nombre de Télédéclarations",
+]
+
+utils.display_stacked_bars(
+    df_indic_divers.T[divers_colonnes_nombre].T, title="Comparaison des profils", fmt=utils.nombre_formatter
+)
+
+# Isolate the values with ratios
+divers_colonnes_ratios = [col for col in df_indic_divers.index if col.startswith("Taux")]
+
+utils.display_stacked_bars(
+    df_indic_divers.T[divers_colonnes_ratios].T,
+    title="Comparaison des profils",
+    fmt=utils.taux_formatter,
+    legend=False,
+)
+
+# Isolate the values with numbers
+appro_colonnes_montants = [
+    "Montant d'achat alimentaires bio",
+    "Montant d'achat alimentaires EGALIM (bio inclus)",
+    "Montant d'achat alimentaires total",
+]
+utils.display_indicateurs(indic_appro)
+utils.display_stacked_bars(
+    df_indic_appro.T[appro_colonnes_montants].T,
+    title="Comparaison des montants alimentaires dépensés",
+    fmt=utils.montant_formatter,
+)
+
+# Isolate the values with ratios
+appro_colonnes_taux = ["Taux global des achats en bio", "Taux global des achats EGALIM (bio inclus)"]
+utils.display_stacked_bars(
+    df_indic_appro.T[appro_colonnes_taux].T, title="Comparaison des ratios sur les montants", fmt=utils.taux_formatter
+)
+
+```

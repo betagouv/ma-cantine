@@ -1,0 +1,218 @@
+---
+title: "Bilan statistique de la campagne ma-cantine portant sur l'année 2023 (travail en cours)"
+---
+
+# Focus par secteurs
+
+Nous nous intéressions à la répartition des télédéclaration en fonction des secteurs principaux et secondaires, pour la campagne sur les données 2023. Nous utilisons la stratégie **Je Ne Sais Pas** pour le traitement des valeurs manquantes.
+
+::: {.callout-note}
+Les cuisines centrales ont été supprimées car elles cumulent plusieurs secteurs (`central` et `central_serving`)
+:::
+
+
+```{python}
+# | echo: false
+# | output: asis
+
+import utils
+import pandas as pd
+import ast
+tds = {}
+
+# Whether we use cache or ot, we re-read the file to have consistency in the dataframe
+for year in utils.CAMPAGNES.keys():
+    tds[year] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}.csv", sep=";")
+    # Application de la stratégie Je Ne Sais pas
+    tds[f"Campagne {year}"] = tds[year].dropna(
+        how="any",
+        subset=[
+            "teledeclaration.value_total_ht",
+            "teledeclaration.value_bio_ht",
+        ],
+    )
+```
+
+```{python}
+# | echo: false
+# | output: asis
+
+def traitement_secteurs(tds, year):
+    df = tds[year].copy()
+     
+    if '2022' not in year:  # Transform the dict into a list of category
+        df["canteen.sectors_"] = df["canteen.sectors"].fillna('[]')
+        df["canteen.sectors_"] = df["canteen.sectors_"].apply(lambda x: [utils.normalize_sector(item["name"]) for item in ast.literal_eval(x)])
+    else:
+        df["canteen.sectors_"] = df["canteen.sectors"].fillna('')
+        df["canteen.sectors_"] = df["canteen.sectors_"].apply(utils.mapper_sector_diff)
+        df["canteen.sectors_"] = df["canteen.sectors_"].apply(lambda x: utils.normalize_sector(x).split(","))
+    # Process all central kitchen as one sector
+    df['canteen.sectors_'] = df['canteen.sectors_'].apply(lambda x: ['secteurs multiples'] if str(x).count(',') > 0 else x)
+    df['canteen.sectors_'].to_csv('sectors.csv')
+
+    # Explode the lists into separate rows
+    df_exploded = df.explode("canteen.sectors_")
+
+    # Use get_dummies to create dummy columns for each category
+    categories_dummies = pd.get_dummies(df_exploded["canteen.sectors_"])
+
+    # Group by the index (items) and sum the dummy columns
+    categories_dummies_grouped = categories_dummies.groupby(by=categories_dummies.index).sum()
+    
+    # Concatenate the dummy columns with the original DataFrame
+    df_normalized = pd.concat([df, categories_dummies_grouped], axis=1)
+
+    # Drop the 'categories' column since we have the dummies
+    df_normalized = df_normalized.drop(columns=["canteen.sectors_"])
+
+    return df_normalized
+
+def calcul_indicateurs_secteurs(tds, year, suffix=''):
+    sectors = {}
+    sectors[year] = {}
+    df_processed_sectors = traitement_secteurs(tds, year)
+
+    sectors_normalized = {utils.normalize_sector(k):utils.normalize_sector(v) for k,v in utils.SECTORS.items()}
+
+    columns_sectors = [utils.normalize_sector(col) for col in df_processed_sectors.columns]
+    for cat in sectors_normalized.keys():
+        cat = utils.normalize_sector(cat)
+        sectors[year][cat] = {}
+        if cat in columns_sectors:
+            df_cat = df_processed_sectors[df_processed_sectors[cat] > 0]
+            # Couverture
+            sectors[year][cat][f'Nombre de TD{suffix}'] = df_cat[cat].sum()
+            sectors[year][cat][f'Taux achats secteurs{suffix}'] = df_cat["teledeclaration.value_total_ht"].sum()/ tds[year]["teledeclaration.value_total_ht"].sum()
+            sectors[year][cat][f'Taux des TD pris en compte{suffix}'] = len(df_cat[cat])/len(tds[year])
+            sectors[year][cat][f'Montant total des achats{suffix}'] = df_cat["teledeclaration.value_total_ht"].sum()
+            # Bio
+            sectors[year][cat][f'Montant des achats Bio{suffix}'] = df_cat["teledeclaration.value_bio_ht"].sum()
+            # EGAlim
+            sectors[year][cat][f'Montant des achats EGAlim{suffix}'] = df_cat["teledeclaration.value_bio_ht"].sum() + df_cat["teledeclaration.value_externality_performance_ht"].sum() + df_cat["teledeclaration.value_sustainable_ht"].sum() + df_cat["teledeclaration.value_egalim_others_ht"].sum()
+            # Caractéristiques cuisine
+            sectors[year][cat][f'Nombre TD cuisine centrale{suffix}'] = df_cat[df_cat["canteen.production_type"].isin(['central', 'central_serving'])]['canteen.id'].count()
+            sectors[year][cat][f'Nombre TD satellite{suffix}'] = df_cat[df_cat["canteen.production_type"].isin(['site', 'site_cooked_elsewhere'])]['canteen.id'].count()
+            sectors[year][cat][f'Nombre TD gestion directe{suffix}'] = df_cat[df_cat["canteen.management_type"] == 'direct']['canteen.id'].count()
+            sectors[year][cat][f'Nombre TD gestion concédée{suffix}'] = df_cat[df_cat["canteen.management_type"] == 'conceded']['canteen.id'].count()
+            # Cout denrées
+            sectors[year][cat][f'Coût denrées/repas{suffix} (moyenne)'] = df_cat["teledeclaration.value_total_ht"].sum() /df_cat["canteen.yearly_meal_count"].sum()
+            sectors[year][cat][f'Nombre de repas/an{suffix}'] = df_cat["canteen.yearly_meal_count"].sum()
+
+
+    summary = pd.DataFrame.from_dict(sectors[year]).T
+    # Ajout des catégories pour caractériser chaque sous-catégorie
+    summary['sector'] = summary.index.map(sectors_normalized)
+    summary = summary.reset_index(names='sub_sector')
+
+    # Calcul des totaux par secteurs
+    summary_by_sector = summary.groupby(['sector']).sum()
+    summary_by_sector['sub_sector'] = ['total (somme)'] * len(summary_by_sector)
+    summary_by_sector = summary_by_sector.reset_index(names='sector')
+
+    # Agregation des sous secteur et secteurs
+    summary_by_sub_sector = pd.concat([summary, summary_by_sector])
+    summary_by_sub_sector = summary_by_sub_sector.groupby(['sector', 'sub_sector']).sum()
+
+    # Calcul des taux (ne peut pas être fait avant a cause de l aggregation)
+    summary_by_sub_sector[f'Taux des achats Bio{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Montant des achats Bio{suffix}'] / x[f'Montant total des achats{suffix}'], axis=1)
+    summary_by_sub_sector[f'Taux des achats EGAlim{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Montant des achats EGAlim{suffix}'] / x[f'Montant total des achats{suffix}'], axis=1)
+    summary_by_sub_sector[f'Taux achats secteurs{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Montant total des achats{suffix}'] / tds[year]["teledeclaration.value_total_ht"].sum(), axis=1)
+    
+    summary_by_sub_sector[f'Taux cuisine centrale{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Nombre TD cuisine centrale{suffix}'] / x[f'Nombre de TD{suffix}'], axis=1)
+    summary_by_sub_sector[f'Taux satellite{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Nombre TD satellite{suffix}'] / x[f'Nombre de TD{suffix}'], axis=1)
+
+    summary_by_sub_sector[f'Taux TD gestion concédée{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Nombre TD gestion concédée{suffix}'] / x[f'Nombre de TD{suffix}'], axis=1)
+    summary_by_sub_sector[f'Taux TD gestion directe{suffix}'] = summary_by_sub_sector.apply(lambda x: x[f'Nombre TD gestion directe{suffix}'] / x[f'Nombre de TD{suffix}'], axis=1)
+
+    summary_by_sub_sector[f'Coût denrées/repas{suffix} (moyenne)'] = summary_by_sub_sector.apply(lambda x: x[f'Montant total des achats{suffix}'] / x[f'Nombre de repas/an{suffix}'], axis=1)
+
+    del summary_by_sub_sector[f'Nombre TD satellite{suffix}']
+    del summary_by_sub_sector[f'Nombre TD cuisine centrale{suffix}']
+    del summary_by_sub_sector[f'Nombre de repas/an{suffix}']
+
+
+    return summary_by_sub_sector
+```
+
+## 📷 2022
+```{python}
+# | echo: false
+# | output: asis
+
+summary = calcul_indicateurs_secteurs(tds, 'Campagne 2022')
+utils.display_indicateurs(summary, transpose=False)
+```
+
+## 📷 2023
+```{python}
+# | echo: false
+# | output: asis
+
+summary = calcul_indicateurs_secteurs(tds, 'Campagne 2023')
+utils.display_indicateurs(summary, transpose=False)
+```
+
+```{python}
+# | echo: false
+# | output: asis
+
+summary = calcul_indicateurs_secteurs(tds, 'Campagne 2023')
+
+def display_sub_sector(summary, sector, type='photo_2023'):
+    summary_sector = summary[summary.index.isin([sector], level=0)].copy()
+    summary_sector = summary_sector.reset_index(0)
+    del summary_sector['sector']
+    summary_sector.index = summary_sector.index.set_names('Sous Secteur')
+    utils.display_indicateurs(summary_sector, transpose=False)
+    # summary_sector = summary_sector.astype(float)
+    summary_sector.to_excel(f"data/{type}_{sector}.xlsx")
+    # summary_sector.to_csv(f"data/{type}_{sector}.csv", sep=';')
+
+print('### Enseignement')
+display_sub_sector(summary, 'education')
+
+print('### Médico Social')
+display_sub_sector(summary, 'social')
+
+print('### Santé')
+display_sub_sector(summary, 'health')
+
+print('### Administration')
+display_sub_sector(summary, 'administration')
+
+print('### Multi Secteurs')
+display_sub_sector(summary, 'multiple_sectors')
+
+```
+
+## ⚖️ Comparaison isopérimètre
+```{python}
+# | echo: false
+# | output: asis
+summary_2022 = calcul_indicateurs_secteurs(tds_commun, 'Campagne 2022', suffix=' 2022')
+summary_2023 = calcul_indicateurs_secteurs(tds_commun, 'Campagne 2023', suffix=' 2023')
+summary = pd.concat([summary_2022, summary_2023], axis=1)
+# utils.display_indicateurs(summary, transpose=False)
+
+```
+```{python}
+# | echo: false
+# | output: asis
+
+print('### Enseignement')
+display_sub_sector(summary, 'education', type='comparaison_isoperimetre')
+
+print('### Médico Social')
+display_sub_sector(summary, 'social', type='comparaison_isoperimetre')
+
+print('### Santé')
+display_sub_sector(summary, 'health', type='comparaison_isoperimetre')
+
+print('### Administration')
+display_sub_sector(summary, 'administration', type='comparaison_isoperimetre')
+
+print('### Multi Secteurs')
+display_sub_sector(summary, 'multiple_sectors', type='comparaison_isoperimetre')
+
+```

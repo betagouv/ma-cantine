@@ -4,3 +4,6 @@ ydata-profiling==4.6.0
 ipywidgets==8.1.0
 frictionless==5.16.0
 nbformat==5.9.0
+nbclient==0.8.0
+jupyter-cache==0.6.1
+plotly==5.15.0
