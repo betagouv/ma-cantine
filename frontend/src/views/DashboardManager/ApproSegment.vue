@@ -73,11 +73,17 @@
           <span class="font-weight-black">{{ level.text }}</span>
         </p>
       </v-card-text>
-      <v-card-text class="fr-text-xs">
+      <v-card-text class="fr-text-xs" v-if="hasApproData">
         <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
         <p>
           C’est parti ! Découvrez les outils et les ressources personnalisées pour vous aider à atteindre un des deux
           objectifs EGAlim et passer au niveau suivant !
+        </p>
+      </v-card-text>
+      <v-card-text v-else class="fr-text-xs">
+        <p>
+          Renseignez la valeur (en HT) de vos achats alimentaires total et au moins un autre champ par label de produit
+          pour voir la synthèse de vos données.
         </p>
       </v-card-text>
       <v-spacer></v-spacer>
