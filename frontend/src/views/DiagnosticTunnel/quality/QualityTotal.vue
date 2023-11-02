@@ -25,11 +25,12 @@ export default {
       payload: {
         valueTotalHt: this.diagnostic.valueTotalHt,
       },
+      formIsValid: true, // TODO
     }
   },
   methods: {
     updatePayload() {
-      this.$emit("updatePayload", this.payload)
+      this.$emit("updatePayload", { payload: this.payload, formIsValid: this.formIsValid })
     },
   },
 }

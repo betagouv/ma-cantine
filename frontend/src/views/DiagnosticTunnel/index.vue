@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left">
+  <div v-if="step" class="text-left">
     <v-row class="header">
       <v-row class="mx-auto constrained pt-6">
         <v-col cols="9">
@@ -17,7 +17,7 @@
           </p>
         </v-col>
         <v-col v-if="!step.isSynthesis" cols="12">
-          <p class="fr-text-sm">Étape {{ step.number }} sur {{ measure.stepTotal }}</p>
+          <p class="fr-text-sm">Étape {{ stepIdx + 1 }} sur {{ measure.stepTotal }}</p>
           <h1 class="fr-h6">{{ step.title }}</h1>
           <!-- TODO: DSFR stepper component which will include everything else in this column as well -->
           <p v-if="nextStep" class="fr-text-xs grey--text text--darken-2">
@@ -30,7 +30,7 @@
     <div v-if="diagnostic" class="mx-auto constrained pa-10">
       <!-- TODO: padding/centering and sorting out scrolling -->
       <!-- TODO: question OR synthesis (move existing syntheses to /components/ to reuse) -->
-      <component :is="step.componentName" :diagnostic="diagnostic" @updatePayload="updatePayload" />
+      <component :is="componentName" :canteen="canteen" :diagnostic="diagnostic" @updatePayload="updatePayload" />
     </div>
     <v-row class="footer">
       <v-row class="mx-auto constrained">
@@ -43,14 +43,15 @@
         <v-spacer />
         <v-col>
           <v-row class="py-10 align-center justify-end">
-            <p v-if="step.isSynthesis" class="mb-0"><router-link :to="measure.firstStep">Modifier</router-link></p>
+            <p v-if="step.isSynthesis" class="mb-0"><router-link :to="firstStep">Modifier</router-link></p>
             <p v-else class="mb-0">
               <!-- TODO: handle previousStep === null properly -->
               <router-link :to="previousStep ? previousStep.to : {}">
                 Revenir à l'étape précédente
               </router-link>
             </p>
-            <v-btn primary :disabled="!formIsValid" @click="continueAction" class="ml-4">
+            <!-- TODO: make this tab first instead of Revenir link -->
+            <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-4">
               {{ continueActionText }}
             </v-btn>
           </v-row>
@@ -62,10 +63,25 @@
 
 <script>
 import QualityTotal from "./quality/QualityTotal"
+import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
+
+const stepsByMeasure = {
+  "qualite-des-produits": [
+    {
+      title: "Valeurs totales des achats alimentaires",
+      number: 1,
+      componentName: "QualityTotal",
+    },
+    {
+      title: "Synthèse",
+      isSynthesis: true,
+      componentName: "QualityMeasureSummary",
+    },
+  ],
+}
 
 export default {
   name: "DiagnosticTunnel",
-  components: { QualityTotal },
   props: {
     canteenUrlComponent: {
       type: String,
@@ -78,14 +94,18 @@ export default {
       type: String,
       required: true,
     },
-    // TODO: have optional componentName in link to go directly to a particular step
+    componentName: {
+      type: String,
+    },
   },
+  components: { QualityTotal, QualityMeasureSummary },
   data() {
     return {
       formIsValid: false,
       canteen: null,
       diagnostic: null,
       payload: {},
+      steps: stepsByMeasure[this.measureId],
     }
   },
   computed: {
@@ -100,24 +120,18 @@ export default {
         firstStep: {}, // TODO: this should be in the structure of a router-link `to`
       }
     },
+    stepIdx() {
+      const idx = this.steps.findIndex((step) => step.componentName === this.componentName)
+      return idx > -1 ? idx : 0
+    },
     step() {
-      // TODO: find from list using prop `componentName`, default to first step in measure
-      return {
-        title: "Valeurs totales des achats alimentaires",
-        number: 1,
-        next: {
-          title: "Synthèse",
-          isSynthesis: true,
-        },
-        previous: null,
-        componentName: "QualityTotal",
-      }
+      return this.steps[this.stepIdx]
     },
     nextStep() {
-      return this.step.next
+      return this.stepIdx < this.steps.length - 1 ? this.steps[this.stepIdx + 1] : null
     },
     previousStep() {
-      return this.step.previous
+      return this.stepIdx > 0 ? this.steps[this.stepIdx - 1] : null
     },
     continueActionText() {
       const returnToTable = this.step.isFinal
@@ -141,10 +155,14 @@ export default {
         },
       }
     },
+    firstStep() {
+      return { params: { componentName: this.steps[0].componentName } }
+    },
   },
   methods: {
-    updatePayload(payload) {
+    updatePayload({ payload, formIsValid }) {
       this.payload = payload
+      this.formIsValid = formIsValid
     },
     fetchCanteen() {
       const id = this.canteenId
@@ -162,9 +180,9 @@ export default {
       this.formIsValid = true
     },
     saveDiagnostic() {
-      if (!this.canteen || !this.diagnostic) return
+      if (!this.canteen || !this.diagnostic) return Promise.reject()
       this.updateProgress()
-      this.$store.dispatch("updateDiagnostic", {
+      return this.$store.dispatch("updateDiagnostic", {
         canteenId: this.canteen.id,
         id: this.diagnostic.id,
         payload: this.payload,
@@ -174,19 +192,31 @@ export default {
     continueAction() {
       if (!this.formIsValid) return
       this.saveDiagnostic().then(() => {
-        this.$route.push(this.nextStep.to)
+        if (this.nextStep) {
+          this.$router.push({ params: { componentName: this.nextStep.componentName } })
+        }
       })
     },
     updateProgress() {
       if (this.isSynthesis) this.payload.qualityProgress = "COMPLETE"
       else if (this.step.isFinal) this.payload.isComplete = true
+      // save progress as the last 'incomplete' tab
       this.payload.qualityProgress = this.nextStep?.componentName
       // TODO: is any error going to fail too silently?
+    },
+    setPageTitle() {
+      document.title = `${this.step?.title} - ${this.year} - ${this.canteen?.name} - ${this.$store.state.pageTitleSuffix}`
     },
   },
   mounted() {
     this.fetchCanteen().then(() => this.fetchDiagnostic())
-    // TODO: document.title
+    this.setPageTitle()
+  },
+  $watch: {
+    step() {
+      this.setPageTitle()
+    },
+    componentName() {},
   },
 }
 </script>

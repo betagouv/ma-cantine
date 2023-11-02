@@ -86,12 +86,12 @@ import DiversificationMeasureInfo from "./information/DiversificationMeasureInfo
 import InformationMeasureInfo from "./information/InformationMeasureInfo"
 import NoPlasticMeasureInfo from "./information/NoPlasticMeasureInfo"
 import WasteMeasureInfo from "./information/WasteMeasureInfo"
-import QualityMeasureSummary from "./summary/QualityMeasureSummary"
-import DiversificationMeasureSummary from "./summary/DiversificationMeasureSummary"
-import InformationMeasureSummary from "./summary/InformationMeasureSummary"
-import NoPlasticMeasureSummary from "./summary/NoPlasticMeasureSummary"
-import WasteMeasureSummary from "./summary/WasteMeasureSummary"
-import CanteenSummary from "./summary/CanteenSummary"
+import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
+import DiversificationMeasureSummary from "@/components/DiagnosticSummary/DiversificationMeasureSummary"
+import InformationMeasureSummary from "@/components/DiagnosticSummary/InformationMeasureSummary"
+import NoPlasticMeasureSummary from "@/components/DiagnosticSummary/NoPlasticMeasureSummary"
+import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSummary"
+import CanteenSummary from "@/components/DiagnosticSummary/CanteenSummary"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
@@ -189,7 +189,12 @@ export default {
         ? { name: "CanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
         : {
             name: "DiagnosticTunnel",
-            params: { canteenUrlComponent: this.canteenUrlComponent, year: this.year, measureId: this.measureId },
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+              year: this.year,
+              measureId: this.measureId,
+              componentName: "QualityTotal", // TODO: how to not have to pass this?
+            },
           }
     },
     hasCentralDiagnosticForMeasure() {
