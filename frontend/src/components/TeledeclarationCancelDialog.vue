@@ -1,10 +1,8 @@
 <template>
   <v-dialog v-model="isOpen" width="500">
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn class="text-caption mb-4 px-0" x-small text plain v-bind="attrs" v-on="on">
-        <v-icon x-small class="mr-1" aria-hidden="false" aria-label="Annuler">$close-line</v-icon>
-        Annuler ma télédéclaration
-      </v-btn>
+    <slot v-for="(_, name) in $slots" :name="name" :slot="name" />
+    <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
+      <slot :name="name" v-bind="slotData" />
     </template>
 
     <v-card class="text-left">

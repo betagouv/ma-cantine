@@ -117,7 +117,14 @@
             v-if="isTeledeclarationPhase"
             @cancel="cancelTeledeclaration"
             :diagnostic="diagnostic"
-          />
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn class="text-caption mb-4 px-0" x-small text plain v-bind="attrs" v-on="on">
+                <v-icon x-small class="mr-1" aria-hidden="false" aria-label="Annuler">$close-line</v-icon>
+                Annuler ma télédéclaration
+              </v-btn>
+            </template>
+          </TeledeclarationCancelDialog>
         </div>
 
         <v-card v-if="dataDelegatedNotice" color="primary lighten-4" class="dsfr mb-6">
@@ -373,7 +380,7 @@ import NoPlasticMeasure from "@/components/KeyMeasureDiagnostic/NoPlasticMeasure
 import CanteenPanel from "./CanteenPanel"
 import DownloadLink from "@/components/DownloadLink"
 import DiagnosticExpansionPanel from "./DiagnosticExpansionPanel"
-import TeledeclarationCancelDialog from "./TeledeclarationCancelDialog"
+import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
 import SimplifiedQualityValues from "./SimplifiedQualityValues"
 import ExtendedQualityValues from "./ExtendedQualityValues"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
