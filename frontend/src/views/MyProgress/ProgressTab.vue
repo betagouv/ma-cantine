@@ -29,6 +29,7 @@
           :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
           class="mt-4"
         >
+          <!-- TODO: change this to an action, which creates the diagnostic then redirects to DiagnosticTunnel -->
           Commencer
         </v-btn>
       </div>
@@ -186,7 +187,10 @@ export default {
     modificationLink() {
       return this.isCanteenTab
         ? { name: "CanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
-        : { name: "DiagnosticModification", params: { canteenUrlComponent: this.canteenUrlComponent, year: this.year } }
+        : {
+            name: "DiagnosticTunnel",
+            params: { canteenUrlComponent: this.canteenUrlComponent, year: this.year, measureId: this.measureId },
+          }
     },
     hasCentralDiagnosticForMeasure() {
       if (!this.centralDiagnostic) return false
