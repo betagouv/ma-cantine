@@ -48,7 +48,7 @@
               </span>
             </span>
             <span v-else>
-              Si vous vous rendez compte d’une erreur, veuillez
+              En cas d'erreur, veuillez
               <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">nous contacter</router-link>
               .
             </span>
