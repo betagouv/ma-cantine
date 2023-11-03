@@ -33,7 +33,7 @@
           Commencer
         </v-btn>
       </div>
-      <div v-if="diagnostic || hasCentralDiagnosticForMeasure || isCanteenTab" class="summary">
+      <div v-if="diagnostic || hasCentralDiagnosticForMeasure || isCanteenTab">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
         <div
           v-if="!isCanteenTab && usesOtherDiagnosticForMeasure && isSatellite"
@@ -216,16 +216,5 @@ hr {
   /* Set the hr color */
   color: #ddd; /* old IE */
   background-color: #ddd; /* Modern Browsers */
-}
-.summary >>> ul {
-  list-style-type: none;
-  padding-left: 0;
-}
-.summary >>> li {
-  margin-bottom: 14px;
-  display: flex;
-}
-.summary >>> li .v-icon {
-  align-items: baseline;
 }
 </style>
