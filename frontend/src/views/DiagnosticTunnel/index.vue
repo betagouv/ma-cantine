@@ -4,7 +4,7 @@
       <v-row class="mx-auto constrained pt-6">
         <v-col cols="9">
           <!-- TODO: section icons -->
-          <p class="fr-text-xs text-transform-uppercase mb-0">{{ measure.title }}</p>
+          <p class="fr-text-xs text-transform-uppercase mb-0">{{ measure.shortTitle }}</p>
         </v-col>
         <v-col class="text-right">
           <p class="mb-0">
@@ -17,7 +17,7 @@
           </p>
         </v-col>
         <v-col v-if="step && !step.isSynthesis" cols="12">
-          <p class="fr-text-sm">Étape {{ stepIdx + 1 }} sur {{ measure.stepTotal }}</p>
+          <p class="fr-text-sm">Étape {{ stepIdx + 1 }} sur {{ stepTotal }}</p>
           <h1 class="fr-h6">{{ step.title }}</h1>
           <!-- TODO: DSFR stepper component which will include everything else in this column as well -->
           <p v-if="nextStep" class="fr-text-xs grey--text text--darken-2">
@@ -31,7 +31,7 @@
       <!-- TODO: padding/centering and sorting out scrolling -->
       <!-- TODO: question OR synthesis (move existing syntheses to /components/ to reuse) -->
       <component
-        :is="measure.componentName"
+        :is="`${measure.baseComponent}Steps`"
         :canteen="canteen"
         :diagnostic="diagnostic"
         :stepUrlSlug="stepUrlSlug"
@@ -69,7 +69,9 @@
 </template>
 
 <script>
-import QualitySteps from "./QualitySteps"
+import keyMeasures from "@/data/key-measures.json"
+import QualityMeasureSteps from "./QualityMeasureSteps"
+import WasteMeasureSteps from "./WasteMeasureSteps"
 
 export default {
   name: "DiagnosticTunnel",
@@ -86,7 +88,7 @@ export default {
       required: true,
     },
   },
-  components: { QualitySteps },
+  components: { QualityMeasureSteps, WasteMeasureSteps },
   data() {
     return {
       formIsValid: false,
@@ -101,12 +103,7 @@ export default {
       return this.canteenUrlComponent.split("--")[0]
     },
     measure() {
-      return {
-        title: "Qualité des approvisionnements",
-        stepTotal: 6,
-        id: "qualite-des-produits",
-        componentName: "QualitySteps",
-      }
+      return keyMeasures.find((measure) => measure.id === this.measureId)
     },
     stepUrlSlug() {
       return this.$route.query.étape
@@ -153,6 +150,9 @@ export default {
     },
     firstStep() {
       return { query: {} }
+    },
+    stepTotal() {
+      return this.steps.length
     },
   },
   methods: {

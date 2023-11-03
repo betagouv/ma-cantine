@@ -3,11 +3,10 @@
 </template>
 
 <script>
-import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
-import QualityTotalStep from "./QualityTotalStep"
+import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSummary"
 
 export default {
-  name: "QualitySteps",
+  name: "WasteSteps",
   props: {
     canteen: {
       type: Object,
@@ -22,21 +21,15 @@ export default {
     },
   },
   components: {
-    QualityTotalStep,
-    QualityMeasureSummary,
+    WasteMeasureSummary,
   },
   data() {
     return {
       steps: [
         {
-          title: "Valeurs totales des achats alimentaires",
-          componentName: "QualityTotalStep",
-          urlSlug: "total",
-        },
-        {
           title: "Synthèse",
           isSynthesis: true,
-          componentName: "QualityMeasureSummary",
+          componentName: "WasteMeasureSummary",
           urlSlug: "synthèse",
         },
       ],
@@ -50,7 +43,6 @@ export default {
   },
   methods: {
     updatePayload(data) {
-      console.log(data)
       this.$emit("updatePayload", data)
     },
   },
@@ -59,5 +51,3 @@ export default {
   },
 }
 </script>
-
-<style></style>
