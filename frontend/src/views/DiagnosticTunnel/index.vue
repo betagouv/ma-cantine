@@ -162,7 +162,7 @@ export default {
       }
     },
     firstStep() {
-      return { params: { componentName: this.steps[0].componentName } }
+      return { query: {} }
     },
   },
   methods: {
