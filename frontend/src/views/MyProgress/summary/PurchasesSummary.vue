@@ -17,7 +17,7 @@
       </div>
     </div>
     <div v-else>
-      <DsfrCallout icon="">
+      <DsfrCallout>
         <p class="fr-text font-weight-bold">Résultats intermédiaires</p>
         <p class="fr-text-sm grey-text text--darken-3">
           Les résultats ci-dessous sont calculés automatiquement à partir des données d’achats renseignées à date via
