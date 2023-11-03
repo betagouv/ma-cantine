@@ -193,7 +193,6 @@ export default {
               canteenUrlComponent: this.canteenUrlComponent,
               year: this.year,
               measureId: this.measureId,
-              componentName: "QualityTotal", // TODO: how to not have to pass this?
             },
           }
     },

@@ -30,7 +30,8 @@
     <div v-if="diagnostic" class="mx-auto constrained pa-10">
       <!-- TODO: padding/centering and sorting out scrolling -->
       <!-- TODO: question OR synthesis (move existing syntheses to /components/ to reuse) -->
-      <component :is="componentName" :canteen="canteen" :diagnostic="diagnostic" @updatePayload="updatePayload" />
+      <!-- TODO: make 6 components for each measure which then handles the question stepping -->
+      <component :is="step.componentName" :canteen="canteen" :diagnostic="diagnostic" @updatePayload="updatePayload" />
     </div>
     <v-row class="footer">
       <v-row class="mx-auto constrained">
@@ -62,20 +63,21 @@
 </template>
 
 <script>
-import QualityTotal from "./quality/QualityTotal"
+import QualityTotalStep from "./quality/QualityTotalStep"
 import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
 
 const stepsByMeasure = {
   "qualite-des-produits": [
     {
       title: "Valeurs totales des achats alimentaires",
-      number: 1,
-      componentName: "QualityTotal",
+      componentName: "QualityTotalStep",
+      urlSlug: "total",
     },
     {
       title: "Synthèse",
       isSynthesis: true,
       componentName: "QualityMeasureSummary",
+      urlSlug: "synthèse",
     },
   ],
 }
@@ -94,11 +96,8 @@ export default {
       type: String,
       required: true,
     },
-    componentName: {
-      type: String,
-    },
   },
-  components: { QualityTotal, QualityMeasureSummary },
+  components: { QualityTotalStep, QualityMeasureSummary },
   data() {
     return {
       formIsValid: false,
@@ -117,12 +116,19 @@ export default {
         title: "Qualité des approvisionnements",
         stepTotal: 6,
         id: "qualite-des-produits",
-        firstStep: {}, // TODO: this should be in the structure of a router-link `to`
       }
     },
+    stepUrlSlug() {
+      return this.$route.query.étape
+    },
     stepIdx() {
-      const idx = this.steps.findIndex((step) => step.componentName === this.componentName)
-      return idx > -1 ? idx : 0
+      let idx = 0
+      if (this.stepUrlSlug) {
+        idx = this.steps.findIndex((step) => step.urlSlug === this.stepUrlSlug)
+        idx = idx > -1 ? idx : 0
+        // TODO: remove query param from URL with a router.replace if it's nonsense ?
+      }
+      return idx
     },
     step() {
       return this.steps[this.stepIdx]
@@ -193,15 +199,14 @@ export default {
       if (!this.formIsValid) return
       this.saveDiagnostic().then(() => {
         if (this.nextStep) {
-          this.$router.push({ params: { componentName: this.nextStep.componentName } })
+          this.$router.push({ query: { étape: this.nextStep.urlSlug } })
         }
       })
     },
     updateProgress() {
-      if (this.isSynthesis) this.payload.qualityProgress = "COMPLETE"
-      else if (this.step.isFinal) this.payload.isComplete = true
-      // save progress as the last 'incomplete' tab
-      this.payload.qualityProgress = this.nextStep?.componentName
+      if (this.isSynthesis) this.payload.tunnelQuality = "COMPLETE"
+      else if (this.step.isFinal) this.payload.tunnelComplete = true
+      this.payload.tunnelQuality = this.step?.componentName
       // TODO: is any error going to fail too silently?
     },
     setPageTitle() {
@@ -216,7 +221,6 @@ export default {
     step() {
       this.setPageTitle()
     },
-    componentName() {},
   },
 }
 </script>
@@ -224,11 +228,13 @@ export default {
 <style>
 .header {
   background-color: #f5f5fe;
+  /* TODO: sticky */
   /* position: fixed;
   top: 0%; */
 }
 .footer {
   background-color: #f5f5fe;
+  /* TODO: sticky */
   /* position: fixed;
   bottom: 0%; */
 }

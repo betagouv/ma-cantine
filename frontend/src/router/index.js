@@ -425,7 +425,7 @@ const routes = [
     ],
   },
   {
-    path: "/diagnostic-tunnel/:canteenUrlComponent/:year/:measureId/:componentName",
+    path: "/diagnostic-tunnel/:canteenUrlComponent/:year/:measureId",
     name: "DiagnosticTunnel",
     component: DiagnosticTunnel,
     props: true,

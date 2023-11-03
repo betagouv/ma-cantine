@@ -12,7 +12,7 @@
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 
 export default {
-  name: "QualityTotal",
+  name: "QualityTotalStep",
   components: { DsfrCurrencyField },
   props: {
     diagnostic: {
