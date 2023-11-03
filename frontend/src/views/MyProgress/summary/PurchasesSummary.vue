@@ -25,7 +25,7 @@
         </p>
         <v-row class="align-center my-4 mx-0">
           <v-btn class="mr-2" outlined color="primary" :to="{ name: 'PurchasesHome' }">Compléter mes achats</v-btn>
-          <p class="fr-text-sm grey--text text--darken-3 mb-0">
+          <p v-if="lastPurchaseAddDate" class="fr-text-sm grey--text text--darken-3 mb-0">
             Dernières données :
             <b>{{ lastUpdate }}.</b>
           </p>
@@ -39,7 +39,7 @@
 <script>
 import DsfrCallout from "@/components/DsfrCallout"
 import QualityMeasureSummary from "./QualityMeasureSummary"
-import { lastYear } from "@/utils"
+import { lastYear, timeAgo } from "@/utils"
 
 export default {
   name: "PurchasesSummary",
@@ -58,11 +58,12 @@ export default {
     return {
       year: lastYear() + 1,
       purchasesSummary: null,
+      lastPurchaseAddDate: null,
     }
   },
   computed: {
     lastUpdate() {
-      return "il y a trois jours"
+      return this.lastPurchaseAddDate ? timeAgo(this.lastPurchaseAddDate, true) : null
     },
     noPurchases() {
       return !this.purchasesSummary?.valueTotalHt
@@ -70,14 +71,30 @@ export default {
   },
   methods: {
     fetchPurchasesSummary() {
-      if (this.canteen?.id)
-        fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.year}`)
+      if (this.canteen?.id) {
+        return fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.year}`)
           .then((response) => (response.ok ? response.json() : {}))
           .then((response) => (this.purchasesSummary = response))
+      }
+    },
+    fetchLastAddedPurchase() {
+      if (this.canteen?.id) {
+        const query = `limit=1&ordering=-creation_date&canteen__id=${this.canteen.id}&date__year=${this.year}`
+        return fetch(`/api/v1/purchases/?${query}`)
+          .then((response) => {
+            if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+            return response.json()
+          })
+          .then((response) => {
+            const purchases = response.results
+            this.lastPurchaseAddDate = purchases.length ? purchases[0].creationDate : null
+          })
+      }
     },
   },
   mounted() {
     this.fetchPurchasesSummary()
+    this.fetchLastAddedPurchase()
   },
 }
 </script>

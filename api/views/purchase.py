@@ -97,6 +97,7 @@ class PurchaseListCreateView(ListCreateAPIView):
         django_filters.DjangoFilterBackend,
     ]
     ordering_fields = [
+        "creation_date",
         "date",
         "provider",
         "price_ht",
